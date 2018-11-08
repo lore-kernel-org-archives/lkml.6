@@ -7,44 +7,46 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1691C43441
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:18:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 851DFC43441
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:19:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E68820818
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:18:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42BF120818
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:19:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="enLYnomr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E68820818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="o/Gbwfsn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42BF120818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732003AbeKIHoI (ORCPT
+        id S1731304AbeKIH4n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:44:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36872 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:56:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36824 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730680AbeKIHoH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:44:07 -0500
+        id S1730989AbeKIHoG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:44:06 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8EFE9208A3;
-        Thu,  8 Nov 2018 22:06:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 596C620989;
+        Thu,  8 Nov 2018 22:06:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714796;
-        bh=JwCji18mLBr0BS4O8Pe3klBrSwRBvz2tUYigkbOYRPI=;
+        s=default; t=1541714795;
+        bh=fEvbDRnsiWl0SiVRAmuOMc2bzoChH+JZPFQHvfUZNpE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=enLYnomrwanevmvzQDKrpWpXmLe24EdeZiaVRkHW6u13i5HfKXqQpr7KiUCHfNLQt
-         bzDonB3Zux9rLHhF1DqvxtHNllf48k7a1KOf/7SLVQbgkuuexD5Db9iV0LRjSm7enp
-         xgo5v/pelEd0BRszmoWhEvisUKLzVRQjMQTX5su4=
+        b=o/GbwfsnT1OiyiVz62Dxl+zRkx1jgUij7Z8aRraJ6LWrqyHwBpIgG+1gyKwy1lw1I
+         Oc+lYeThL3kcOZgLkWYsNt8sVM1bRuZjUKIkiAKAfKqUoPp076BWiIAXEiSB4FGHhI
+         SX6H2wAh3ZgT+Xsf8DMBKpOjWgK+dlROE4NGAG94=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Jessica Yu <jeyu@redhat.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 105/171] module: fix DEBUG_SET_MODULE_RONX typo
-Date:   Thu,  8 Nov 2018 13:51:15 -0800
-Message-Id: <20181108215134.991522354@linuxfoundation.org>
+        stable@vger.kernel.org, Khazhismel Kumykov <khazhy@google.com>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 130/171] fs/fat/fatent.c: add cond_resched() to fat_count_free_clusters()
+Date:   Thu,  8 Nov 2018 13:51:40 -0800
+Message-Id: <20181108215136.619819469@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -62,42 +64,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 4d217a5adccf5e806790c37c61cc374a08bd7381 ]
+[ Upstream commit ac081c3be3fae6d0cc3e1862507fca3862d30b67 ]
 
-The newly added 'rodata_enabled' global variable is protected by
-the wrong #ifdef, leading to a link error when CONFIG_DEBUG_SET_MODULE_RONX
-is turned on:
+On non-preempt kernels this loop can take a long time (more than 50 ticks)
+processing through entries.
 
-kernel/module.o: In function `disable_ro_nx':
-module.c:(.text.unlikely.disable_ro_nx+0x88): undefined reference to `rodata_enabled'
-kernel/module.o: In function `module_disable_ro':
-module.c:(.text.module_disable_ro+0x8c): undefined reference to `rodata_enabled'
-kernel/module.o: In function `module_enable_ro':
-module.c:(.text.module_enable_ro+0xb0): undefined reference to `rodata_enabled'
-
-CONFIG_SET_MODULE_RONX does not exist, so use the correct one instead.
-
-Fixes: 39290b389ea2 ("module: extend 'rodata=off' boot cmdline parameter to module mappings")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Jessica Yu <jeyu@redhat.com>
+Link: http://lkml.kernel.org/r/20181010172623.57033-1-khazhy@google.com
+Signed-off-by: Khazhismel Kumykov <khazhy@google.com>
+Acked-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- init/main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/fat/fatent.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/init/main.c b/init/main.c
-index 4313772d634a..3c7f71d8e704 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -915,7 +915,7 @@ static int try_to_run_init_process(const char *init_filename)
- 
- static noinline void __init kernel_init_freeable(void);
- 
--#if defined(CONFIG_DEBUG_RODATA) || defined(CONFIG_SET_MODULE_RONX)
-+#if defined(CONFIG_DEBUG_RODATA) || defined(CONFIG_DEBUG_SET_MODULE_RONX)
- bool rodata_enabled __ro_after_init = true;
- static int __init set_debug_rodata(char *str)
- {
+diff --git a/fs/fat/fatent.c b/fs/fat/fatent.c
+index 3b7644e43796..a9cad9b60790 100644
+--- a/fs/fat/fatent.c
++++ b/fs/fat/fatent.c
+@@ -681,6 +681,7 @@ int fat_count_free_clusters(struct super_block *sb)
+ 			if (ops->ent_get(&fatent) == FAT_ENT_FREE)
+ 				free++;
+ 		} while (fat_ent_next(sbi, &fatent));
++		cond_resched();
+ 	}
+ 	sbi->free_clusters = free;
+ 	sbi->free_clus_valid = 1;
 -- 
 2.17.1
 
