@@ -6,69 +6,125 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 698A7C32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:08:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D3D7C32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:13:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B41420827
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:08:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B41420827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 470492081D
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:13:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 470492081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726952AbeKHWoD (ORCPT
+        id S1726719AbeKHWsv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 17:44:03 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:37374 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726417AbeKHWoD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 17:44:03 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id B51F7224CD; Thu,  8 Nov 2018 14:08:36 +0100 (CET)
-Received: from bbrezillon (aaubervilliers-681-1-30-49.w90-88.abo.wanadoo.fr [90.88.15.49])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 720FB207BB;
-        Thu,  8 Nov 2018 14:08:26 +0100 (CET)
-Date:   Thu, 8 Nov 2018 14:08:26 +0100
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     <Tudor.Ambarus@microchip.com>
-Cc:     <marek.vasut@gmail.com>, <dwmw2@infradead.org>,
-        <computersforpeace@gmail.com>, <richard@nod.at>,
-        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <yogeshnarayan.gaur@nxp.com>, <cyrille.pitchen@wedev4u.fr>
-Subject: Re: [PATCH 3/7] mtd: spi-nor: add restriction for nmaps in smpt
- parser
-Message-ID: <20181108140826.428b77ed@bbrezillon>
-In-Reply-To: <20181108135447.36a0314c@bbrezillon>
-References: <20181108110653.21063-1-tudor.ambarus@microchip.com>
-        <20181108110653.21063-4-tudor.ambarus@microchip.com>
-        <20181108135447.36a0314c@bbrezillon>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 8 Nov 2018 17:48:51 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:14638 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726375AbeKHWsv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 17:48:51 -0500
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id E6AFC4D53ECE4;
+        Thu,  8 Nov 2018 21:13:20 +0800 (CST)
+Received: from [127.0.0.1] (10.177.21.79) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.408.0; Thu, 8 Nov 2018
+ 21:13:15 +0800
+To:     <stable@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        "Leizhen (ThunderTown, Euler)" <thunder.leizhen@huawei.com>,
+        "Libin (Huawei)" <huawei.libin@huawei.com>
+From:   Tan Xiaojun <tanxiaojun@huawei.com>
+Subject: [Question] A UBSAN problem in stable-4.4
+Message-ID: <5BE4366A.5020400@huawei.com>
+Date:   Thu, 8 Nov 2018 21:13:14 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.21.79]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 8 Nov 2018 13:54:47 +0100
-Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+Hi, all,
 
-> > -	while (i < smpt_len) {
-> > +	for (nmaps = 0; i < smpt_len; nmaps++) {
-> > +		/*
-> > +		 * The map selector is limited to a maximum of 8 bits, allowing
-> > +		 * for a maximum of 256 possible map configurations. The total
-> > +		 * number of map configurations should be addressable by the
-> > +		 * total number of bits described by the detection commands.
-> > +		 */
-> > +		if (ncmds && nmaps >= (1 << (ncmds + 1)))
-> > +			break;
-> > +  
-> 
-> Maybe I missed something but it sounds like this change is just
-> optimizing the SPMT parsing a bit, and to be honest, I'm not sure this
-> is really needed. Most of the time, smpt_len will be rather small, so
-> trying to bail out earlier is not bringing much perf improvements.
+I found the following problem (attached to the end) when testing stable-4.4 with
+Syzkaller. This is not an easy-to-trigger problem, so the tool does not generate
+code for recurring problems.
 
-To make it clearer, I don't think the extra complexity is worth the tiny
-perf improvement.
+>From the call stack, it is because the first parameter in ktime_sub is large, and
+the second parameter offset is a negative number, causing the final result to
+overflow into the sign bit and become a large negative number.
+
+--------------
+...
+ktime_t expires = ktime_sub(hrtimer_get_expires(timer), base->offset);
+...
+--------------
+
+But I don't know how to fix this problem. The mainline code is also different from
+stable-4.4, and I have not found a patch to fix this problem in the mainline
+repository.
+
+So I am a bit confused about how to fix it. Can anyone give me some advice?
+
+Thanks.
+Xiaojun.
+
+================================================================================
+UBSAN: Undefined behaviour in kernel/time/hrtimer.c:615:20
+signed integer overflow:
+9223372036854775807 - -495588161 cannot be represented in type 'long long int'
+CPU: 0 PID: 4542 Comm: syz-executor0 Not tainted 4.4.156-514.55.6.9.x86_64+ #8
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.9.3-0-ge2fc41e-prebuilt.qemu-project.org 04/01/2014
+ 1ffff100391dbf45 ad071d3307b76e03 ffff8801c8edfab0 ffffffff81c9f586
+ 0000000041b58ab3 ffffffff831fd4e6 ffffffff81c9f478 ffff8801c8edfad8
+ ffff8801c8edfa78 00000000000014a9 ad071d3307b76e03 ffffffff837fd660
+Call Trace:
+ [<ffffffff81c9f586>] __dump_stack lib/dump_stack.c:15 [inline]
+ [<ffffffff81c9f586>] dump_stack+0x10e/0x1a8 lib/dump_stack.c:51
+ [<ffffffff81d814a6>] ubsan_epilogue+0x12/0x8f lib/ubsan.c:164
+ [<ffffffff81d830a1>] handle_overflow+0x23e/0x299 lib/ubsan.c:195
+ [<ffffffff81d83157>] __ubsan_handle_sub_overflow+0x2a/0x31 lib/ubsan.c:211
+ [<ffffffff813d8c33>] hrtimer_reprogram kernel/time/hrtimer.c:615 [inline]
+ [<ffffffff813d8c33>] hrtimer_start_range_ns+0x1083/0x1580 kernel/time/hrtimer.c:1024
+ [<ffffffff813fde1f>] hrtimer_start include/linux/hrtimer.h:393 [inline]
+ [<ffffffff813fde1f>] alarm_start+0xcf/0x130 kernel/time/alarmtimer.c:328
+ [<ffffffff813fed66>] alarm_timer_set+0x296/0x4a0 kernel/time/alarmtimer.c:632
+ [<ffffffff813e1a3e>] SYSC_timer_settime kernel/time/posix-timers.c:914 [inline]
+ [<ffffffff813e1a3e>] SyS_timer_settime+0x2be/0x3d0 kernel/time/posix-timers.c:885
+ [<ffffffff82c2fb61>] entry_SYSCALL_64_fastpath+0x1e/0x9e
+================================================================================
+================================================================================
+UBSAN: Undefined behaviour in kernel/time/hrtimer.c:490:13
+signed integer overflow:
+9223372036854775807 - -495588161 cannot be represented in type 'long long int'
+CPU: 0 PID: 4542 Comm: syz-executor0 Not tainted 4.4.156-514.55.6.9.x86_64+ #8
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.9.3-0-ge2fc41e-prebuilt.qemu-project.org 04/01/2014
+ 1ffff1003ed40f8b ad071d3307b76e03 ffff8801f6a07ce0 ffffffff81c9f586
+ 0000000041b58ab3 ffffffff831fd4e6 ffffffff81c9f478 ffff8801f6a07d08
+ ffff8801f6a07ca8 000000000000000a ad071d3307b76e03 ffffffff837fd660
+Call Trace:
+ <IRQ>  [<ffffffff81c9f586>] __dump_stack lib/dump_stack.c:15 [inline]
+ <IRQ>  [<ffffffff81c9f586>] dump_stack+0x10e/0x1a8 lib/dump_stack.c:51
+ [<ffffffff81d814a6>] ubsan_epilogue+0x12/0x8f lib/ubsan.c:164
+ [<ffffffff81d830a1>] handle_overflow+0x23e/0x299 lib/ubsan.c:195
+ [<ffffffff81d83157>] __ubsan_handle_sub_overflow+0x2a/0x31 lib/ubsan.c:211
+ [<ffffffff813d43ea>] __hrtimer_get_next_event+0x1da/0x2b0 kernel/time/hrtimer.c:490
+ [<ffffffff813d9532>] hrtimer_interrupt+0x202/0x580 kernel/time/hrtimer.c:1361
+ [<ffffffff8113e7ad>] local_apic_timer_interrupt+0x9d/0x150 arch/x86/kernel/apic/apic.c:901
+ [<ffffffff82c32ea0>] smp_apic_timer_interrupt+0x80/0xb0 arch/x86/kernel/apic/apic.c:925
+ [<ffffffff82c30ac5>] apic_timer_interrupt+0xa5/0xb0 arch/x86/entry/entry_64.S:563
+ <EOI>  [<ffffffff82c2f0fb>] ? arch_local_irq_restore arch/x86/include/asm/paravirt.h:812 [inline]
+ <EOI>  [<ffffffff82c2f0fb>] ? __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:162 [inline]
+ <EOI>  [<ffffffff82c2f0fb>] ? _raw_spin_unlock_irqrestore+0x3b/0x60 kernel/locking/spinlock.c:191
+ [<ffffffff813e1a4f>] unlock_timer include/linux/spinlock.h:362 [inline]
+ [<ffffffff813e1a4f>] SYSC_timer_settime kernel/time/posix-timers.c:916 [inline]
+ [<ffffffff813e1a4f>] SyS_timer_settime+0x2cf/0x3d0 kernel/time/posix-timers.c:885
+ [<ffffffff82c2fb61>] entry_SYSCALL_64_fastpath+0x1e/0x9e
+================================================================================
+
+
+
