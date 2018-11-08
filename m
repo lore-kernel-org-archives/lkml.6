@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 349FCECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:57:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F164ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:57:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E62792146D
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:57:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03F982146D
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:57:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qszJgXAc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E62792146D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kYEpn7fW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03F982146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729401AbeKIHep (ORCPT
+        id S1729419AbeKIHeq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:34:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51364 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:34:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51392 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726926AbeKIHeo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:34:44 -0500
+        id S1727076AbeKIHep (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:34:45 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA5F220892;
-        Thu,  8 Nov 2018 21:57:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 58EFC2089A;
+        Thu,  8 Nov 2018 21:57:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714236;
-        bh=qmzza5Wuq3KTp/kzgYC9I56VBGY8sAAxZT1/hRtFKgg=;
+        s=default; t=1541714237;
+        bh=L4ybJl7+ZCbUU4ALFI6VW+OrS58fUCHqtputtQUEbkc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qszJgXAc7Nw+N1oZl5tGR2t9k1FdeWPkcYHXlyWHyvxMzgNDGjVPOzLGLe9nLfVUF
-         efVIjDz3Zk1hgBoj8FBD0R45XichF4c+po7ugxPtnCturNqOUr+RwqhjpmfaluCW/M
-         W/c02hjChtOmi1aU1VHLh/xD5p4N5mn/n634EwJo=
+        b=kYEpn7fWfMIKY2PPmheAz/jcimt2Ipc3DyC0uxPxXL9sO3m6JqJl8Y9s5W75acYU6
+         WBeMXsy6k4iaIrezYDX/9o4PuPouPeu8QeHHcQev4mDBUFOqeviy7XsBeyZ9/WQ5MM
+         gL1/HW9+S0YurLRgsi25t6P4Xx4sq9gDSJLGb8x0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Ezequiel Garcia <ezequiel.garcia@imgtec.com>,
-        Niklas Cassel <niklass@axis.com>, linux-mips@linux-mips.org,
-        Ralf Baechle <ralf@linux-mips.org>,
+        stable@vger.kernel.org, Jan Beulich <jbeulich@suse.com>,
+        Aaron Brown <aaron.f.brown@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 098/144] MIPS: Fix up obsolete cpu_set usage
-Date:   Thu,  8 Nov 2018 13:51:09 -0800
-Message-Id: <20181108215104.760339510@linuxfoundation.org>
+Subject: [PATCH 3.18 121/144] igb: fix NULL derefs due to skipped SR-IOV enabling
+Date:   Thu,  8 Nov 2018 13:51:32 -0800
+Message-Id: <20181108215106.799908533@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215054.826084593@linuxfoundation.org>
 References: <20181108215054.826084593@linuxfoundation.org>
@@ -65,40 +64,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 7363cb7de3999e84243bca79ffea257fd86a2cc6 ]
+[ Upstream commit be06998f96ecb93938ad2cce46c4289bf7cf45bc ]
 
-cpu_set was removed (along with a bunch of cpumask helpers) by
-commit 2f0f267ea072 ("cpumask: remove deprecated functions.").
+The combined effect of commits 6423fc3416 ("igb: do not re-init SR-IOV
+during probe") and ceee3450b3 ("igb: make sure SR-IOV init uses the
+right number of queues") causes VFs no longer getting set up, leading
+to NULL pointer dereferences due to the adapter's ->vf_data being NULL
+while ->vfs_allocated_count is non-zero. The first commit not only
+neglected the side effect of igb_sriov_reinit() that the second commit
+tried to account for, but also that of setting IGB_FLAG_HAS_MSIX,
+without which igb_enable_sriov() is effectively a no-op. Calling
+igb_{,re}set_interrupt_capability() as done here seems to address this,
+but I'm not sure whether this is better than sinply reverting the other
+two commits.
 
-Fix this by replacing cpu_set with cpumask_set_cpu. Without this
-fix the following error is triggered when CONFIG_MIPS_MT_FPAFF=y.
-
-  arch/mips/kernel/smp-cps.c: In function 'cps_smp_setup':
-  arch/mips/kernel/smp-cps.c:95:3: error: implicit declaration of function 'cpu_set' [-Werror=implicit-function-declaration]
-
-Fixes: 90db024f140d ("MIPS: smp-cps: cpu_set FPU mask if FPU present")
-Signed-off-by: Ezequiel Garcia <ezequiel.garcia@imgtec.com>
-Acked-by: Niklas Cassel <niklass@axis.com>
-Cc: linux-mips@linux-mips.org
-Patchwork: https://patchwork.linux-mips.org/patch/9912/
-Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
+Signed-off-by: Jan Beulich <jbeulich@suse.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/kernel/smp-cps.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/intel/igb/igb_main.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/mips/kernel/smp-cps.c b/arch/mips/kernel/smp-cps.c
-index 0854f17829f3..5680ff0eb599 100644
---- a/arch/mips/kernel/smp-cps.c
-+++ b/arch/mips/kernel/smp-cps.c
-@@ -92,7 +92,7 @@ static void __init cps_smp_setup(void)
- #ifdef CONFIG_MIPS_MT_FPAFF
- 	/* If we have an FPU, enroll ourselves in the FPU-full mask */
- 	if (cpu_has_fpu)
--		cpu_set(0, mt_fpu_cpumask);
-+		cpumask_set_cpu(0, &mt_fpu_cpumask);
- #endif /* CONFIG_MIPS_MT_FPAFF */
- }
+diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
+index 84049078c4f0..b73c896ed184 100644
+--- a/drivers/net/ethernet/intel/igb/igb_main.c
++++ b/drivers/net/ethernet/intel/igb/igb_main.c
+@@ -2866,6 +2866,13 @@ static void igb_probe_vfs(struct igb_adapter *adapter)
+ 	if ((hw->mac.type == e1000_i210) || (hw->mac.type == e1000_i211))
+ 		return;
+ 
++	/* Of the below we really only want the effect of getting
++	 * IGB_FLAG_HAS_MSIX set (if available), without which
++	 * igb_enable_sriov() has no effect.
++	 */
++	igb_set_interrupt_capability(adapter, true);
++	igb_reset_interrupt_capability(adapter);
++
+ 	pci_sriov_set_totalvfs(pdev, 7);
+ 	igb_enable_sriov(pdev, max_vfs);
  
 -- 
 2.17.1
