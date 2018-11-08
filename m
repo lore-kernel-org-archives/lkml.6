@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C18F0ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:54:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 325B9ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:54:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8378F21019
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:54:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF2EA21019
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:54:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VOy+9aP8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8378F21019
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oO/ilfQo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF2EA21019
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728225AbeKIHcD (ORCPT
+        id S1728245AbeKIHcE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:32:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46888 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:32:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728193AbeKIHcC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:32:02 -0500
+        id S1728193AbeKIHcD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:32:03 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EEFF620857;
-        Thu,  8 Nov 2018 21:54:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B96C420892;
+        Thu,  8 Nov 2018 21:54:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714075;
-        bh=O6wCBmRH3Y+Qh5shot7GVZU6ZOQAXbD7djWTYiSuMYU=;
+        s=default; t=1541714076;
+        bh=HTvYbxqUPMrklAC+aPJ4RLP6kS884OPM1SYM5CVJqjI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VOy+9aP8dTGyxJbDJk8jaLfRqU5bW2BmCTt5EjbNrqGrTdZUTSRVQAs/64qeVXTgX
-         i1WT1xXlwR6sAVW+K9NYTQeuXdtW1yRNfT7cuQoo0Muct+BKld9k5XJmpH8bgORRS1
-         UIXWDfdDMqRDVzpfkbCiJSpcyEEEE8Zssh1IKzUI=
+        b=oO/ilfQozN077xWVjjteRskADDAFgpO4YiAaamfKjoV70ALi8/iVMVB92BTJAXR7L
+         yVygExkLz184QgODnbOuvSU+9FuzKA6NVmNGG8WzLnQLeo+/dGg+N3vLGT4ljaIfH3
+         VZavRHETc64IRzrPTqGn5ndQmG12+QvpApkM5vfc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alex Chen <alex.chen@huawei.com>,
-        Joseph Qi <joseph.qi@huawei.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Mark Fasheh <mfasheh@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 033/144] ocfs2: fix journal commit deadlock in ocfs2_convert_inline_data_to_extents
-Date:   Thu,  8 Nov 2018 13:50:04 -0800
-Message-Id: <20181108215057.265594456@linuxfoundation.org>
+Subject: [PATCH 3.18 044/144] ARM: shmobile: r8a7740: Instantiate GIC from C board code in legacy builds
+Date:   Thu,  8 Nov 2018 13:50:15 -0800
+Message-Id: <20181108215058.047629028@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215054.826084593@linuxfoundation.org>
 References: <20181108215054.826084593@linuxfoundation.org>
@@ -67,83 +65,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 15eba0fe3eeaeb1b80489c1ebb9d47d6d7003f57 ]
+[ Upstream commit d034f53cc6c5c09a4e10cb9716986f3844c58514 ]
 
-Similar to ocfs2_write_end_nolock() which is metioned at commit
-136f49b91710 ("ocfs2: fix journal commit deadlock"), we should unlock
-pages before ocfs2_commit_trans() in ocfs2_convert_inline_data_to_extents.
+As of commit 9a1091ef0017c40a ("irqchip: gic: Support hierarchy irq
+domain."), armadillo-legacy hangs during boot with:
 
-Otherwise, it will cause a deadlock with journal commit threads.
+     sh-tmu.0: ch0: used for clock events
+     sh-tmu.0: ch0: used for periodic clock events
+     sh-tmu.0: ch0: failed to request irq 230
+     sh-tmu.0: ch1: used as clock source
+     sh-cmt-48.1: ch0: failed to request irq 90
+     sh-cmt-48.1: ch0: registration failed
+    earlytimer: unable to probe sh-cmt-48 early.
+    Calibrating delay loop...
 
-Signed-off-by: Alex Chen <alex.chen@huawei.com>
-Reviewed-by: Joseph Qi <joseph.qi@huawei.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Mark Fasheh <mfasheh@suse.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+This happens because the IRQ numbers of the GIC are now virtual, and no
+longer match the hardcoded hardware IRQ numbers in the platform board
+code.
+To fix this, instantiate the GIC from platform board code when compiling
+a legacy kernel, like is done on sh73a0 for kzm9g-legacy.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ocfs2/alloc.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ arch/arm/mach-shmobile/setup-r8a7740.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
-index d9db90446c9d..3564b896a92e 100644
---- a/fs/ocfs2/alloc.c
-+++ b/fs/ocfs2/alloc.c
-@@ -6871,7 +6871,7 @@ int ocfs2_convert_inline_data_to_extents(struct inode *inode,
- 	if (IS_ERR(handle)) {
- 		ret = PTR_ERR(handle);
- 		mlog_errno(ret);
--		goto out_unlock;
-+		goto out;
- 	}
+diff --git a/arch/arm/mach-shmobile/setup-r8a7740.c b/arch/arm/mach-shmobile/setup-r8a7740.c
+index 8894e1b7ab0e..6ccdc4574c89 100644
+--- a/arch/arm/mach-shmobile/setup-r8a7740.c
++++ b/arch/arm/mach-shmobile/setup-r8a7740.c
+@@ -792,7 +792,14 @@ void __init r8a7740_init_irq_of(void)
+ 	void __iomem *intc_msk_base = ioremap_nocache(0xe6900040, 0x10);
+ 	void __iomem *pfc_inta_ctrl = ioremap_nocache(0xe605807c, 0x4);
  
- 	ret = ocfs2_journal_access_di(handle, INODE_CACHE(inode), di_bh,
-@@ -6929,7 +6929,7 @@ int ocfs2_convert_inline_data_to_extents(struct inode *inode,
- 		if (ret) {
- 			mlog_errno(ret);
- 			need_free = 1;
--			goto out_commit;
-+			goto out_unlock;
- 		}
- 
- 		page_end = PAGE_CACHE_SIZE;
-@@ -6962,12 +6962,16 @@ int ocfs2_convert_inline_data_to_extents(struct inode *inode,
- 		if (ret) {
- 			mlog_errno(ret);
- 			need_free = 1;
--			goto out_commit;
-+			goto out_unlock;
- 		}
- 
- 		inode->i_blocks = ocfs2_inode_sector_count(inode);
- 	}
- 
-+out_unlock:
-+	if (pages)
-+		ocfs2_unlock_and_free_pages(pages, num_pages);
++#ifdef CONFIG_ARCH_SHMOBILE_LEGACY
++	void __iomem *gic_dist_base = ioremap_nocache(0xc2800000, 0x1000);
++	void __iomem *gic_cpu_base = ioremap_nocache(0xc2000000, 0x1000);
 +
- out_commit:
- 	if (ret < 0 && did_quota)
- 		dquot_free_space_nodirty(inode,
-@@ -6987,15 +6991,11 @@ out_commit:
++	gic_init(0, 29, gic_dist_base, gic_cpu_base);
++#else
+ 	irqchip_init();
++#endif
  
- 	ocfs2_commit_trans(osb, handle);
- 
--out_unlock:
-+out:
- 	if (data_ac)
- 		ocfs2_free_alloc_context(data_ac);
--
--out:
--	if (pages) {
--		ocfs2_unlock_and_free_pages(pages, num_pages);
-+	if (pages)
- 		kfree(pages);
--	}
- 
- 	return ret;
- }
+ 	/* route signals to GIC */
+ 	iowrite32(0x0, pfc_inta_ctrl);
 -- 
 2.17.1
 
