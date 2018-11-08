@@ -2,169 +2,184 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3748ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:31:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB60CECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:32:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BF3D20825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:31:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BF3D20825
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id A20BA20825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:32:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i3tXl8BW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A20BA20825
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727038AbeKIBHR (ORCPT
+        id S1727062AbeKIBIR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 20:07:17 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55306 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726774AbeKIBHQ (ORCPT
+        Thu, 8 Nov 2018 20:08:17 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:40293 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726774AbeKIBIQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 20:07:16 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA8FG0D4136182
-        for <linux-kernel@vger.kernel.org>; Thu, 8 Nov 2018 10:31:14 -0500
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nmqb1ht9a-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 10:31:14 -0500
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 8 Nov 2018 15:31:13 -0000
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 8 Nov 2018 15:31:11 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA8FVAfE28836068
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 8 Nov 2018 15:31:10 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 42083B2066;
-        Thu,  8 Nov 2018 15:31:10 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2427EB2068;
-        Thu,  8 Nov 2018 15:31:10 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.145.141])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  8 Nov 2018 15:31:10 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id BA2AD16C3A85; Thu,  8 Nov 2018 07:31:09 -0800 (PST)
-Date:   Thu, 8 Nov 2018 07:31:09 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: Question on comment header for for_each_domain()
-Reply-To: paulmck@linux.ibm.com
-References: <20181107230002.GA15577@linux.ibm.com>
- <20181108092151.GM9761@hirez.programming.kicks-ass.net>
+        Thu, 8 Nov 2018 20:08:16 -0500
+Received: by mail-ot1-f65.google.com with SMTP id s5so4528474oth.7;
+        Thu, 08 Nov 2018 07:32:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=murMYxtjWPsWn9Aubu2j4AsNnVLvszMG5YHqdZB2qe4=;
+        b=i3tXl8BWJOdHRZUV4KXvQZ76eTmEWJ+PjnqFJJivUriQ6IOZvp9C5sY9GF7wpnMdv2
+         g9fdb98n5IOdJcFrB5jcbIgBC1Ld/2s6cWZhsscONbLtpnwLtw7MiuOisUJFZZjHc6z3
+         uKeLwde0FsC6ApPET52GOdPpQSJ5xZGie1cOUcx7YDkE6mvxdknUZPDSW6BgkV/qtKSU
+         AxWpd0Hl7r+KltIBhJRH6V9T5lbDlMCEEYzHFWpj3eU0dZHb4MpxRlhRZ+XTVeW7/eGX
+         A7hPUhHTu0gk1tm23v789APzZCJjufgFojAdOL6WxsYt/qiO4+sZaCW2MYBvE4Hm1u6K
+         MOZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=murMYxtjWPsWn9Aubu2j4AsNnVLvszMG5YHqdZB2qe4=;
+        b=sG3UklGCSXevf0kC8wZHjLk5Lth76/OGFLIKkcLrtXEGeNTIfj5W+Ri9R0WqydyFNn
+         I8+ZSKMk/yL351xkgN1grVK86VQQdAEI13Fuo8L4dLhjG3C8WKqOM3BflqAPzo7pxrH+
+         mY4X2ichdKzsU7kT0mAuAc4SLwYIoDMayir6GDJ/zNxu6MkQKA3ndYe/B4V700DS0uGk
+         PnQ0UEBQihamFnqAWdjxjky8irjvWtZI0CUpRArY8K0DflPVDBzHaV6mGY6I1tJaKOut
+         o33ZN0Z7igUoVyJDDlZMoBhtEwOQEbW69jDOfkMHB6x4agZxwag5E8mXtAHtJEUwKdbh
+         tGcA==
+X-Gm-Message-State: AGRZ1gJJWPSs9u0O5Jof1cUQc4U/rlO5I1Fp1BZ9h5DDA0zPA6W4Q0lN
+        w/wi6zeedokKYIkdhMKF76oAPEhPiD+nE+H5rLo=
+X-Google-Smtp-Source: AJdET5dhOTVCUa6dFe0lnzqJCThX48pUPU5pocFwNbB3LrF7dzXhWfGp5tATgAm/omLGkOuEcSnKfajASyNFjOCD8OY=
+X-Received: by 2002:a9d:784a:: with SMTP id c10mr3108826otm.175.1541691134530;
+ Thu, 08 Nov 2018 07:32:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181108092151.GM9761@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18110815-0052-0000-0000-00000352B0A4
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010008; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000269; SDB=6.01114499; UDB=6.00577820; IPR=6.00894597;
- MB=3.00024076; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-08 15:31:12
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110815-0053-0000-0000-00005EB2CC48
-Message-Id: <20181108153109.GF4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-08_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811080129
+References: <20181107093613.26734-1-peron.clem@gmail.com> <20181107093613.26734-2-peron.clem@gmail.com>
+ <20181107162908.tejzekhc35pbknut@pengutronix.de> <CAJiuCccMtBsCVHeqxQhXRj_Ltdv91Qk-6WDKAhb5S7whZOWsAw@mail.gmail.com>
+ <20181108105922.p557jxrebjlhnsho@pengutronix.de>
+In-Reply-To: <20181108105922.p557jxrebjlhnsho@pengutronix.de>
+From:   Tim Kryger <tim.kryger@gmail.com>
+Date:   Thu, 8 Nov 2018 07:32:02 -0800
+Message-ID: <CAD7vxxKA3feHK97WiQsb-003qp4Cvj2CQ3C+1sfpo9iZUBhm_A@mail.gmail.com>
+Subject: Re: [PATCH 2/2] pwm: bcm-kona: apply pwm settings on enable
+To:     u.kleine-koenig@pengutronix.de
+Cc:     peron.clem@gmail.com, Thierry Reding <thierry.reding@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Linux PWM <linux-pwm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        suji.velupillai@broadcom.com, Tim Kryger <tim.kryger@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 10:21:51AM +0100, Peter Zijlstra wrote:
-> On Wed, Nov 07, 2018 at 03:00:02PM -0800, Paul E. McKenney wrote:
-> > Hello!
-> > 
-> > The header comment for for_each_domain() talks about a call to
-> > synchronize_sched() within detach_destroy_domains(), but I am not
-> > seeing any such call.  Because synchronize_sched() is now folded into
-> > synchronize_rcu(), I have a patch that edits the comment, but it looks
-> > like a larger change is needed.
-> > 
-> > Or am I blind today?
-> 
-> I think you're quite right and that comment is a wee bit stale.
-> 
-> The sched domain tree is indeed protected by regular RCU (not RCU-sched
-> as the comment seems to imply) and this is per destroy_sched_domains()
-> using call_rcu().
-> 
-> And most (I didn't look at all) uses for the sched-domain tree do indeed
-> employ rcu_read_lock().
+On Thu, Nov 8, 2018 at 2:59 AM Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
+>
+> Hello,
+>
+> adding Tim Kryger as the initial author of the bcm-kona driver to Cc:.
+> Maybe he can shed some light to the questions below?
+>
+> On Thu, Nov 08, 2018 at 11:47:17AM +0100, Cl=C3=A9ment P=C3=A9ron wrote:
+> > On Wed, 7 Nov 2018 at 17:29, Uwe Kleine-K=C3=B6nig
+> > <u.kleine-koenig@pengutronix.de> wrote:
+> > > On Wed, Nov 07, 2018 at 10:36:13AM +0100, Cl=C3=A9ment P=C3=A9ron wro=
+te:
+> > > > From: Suji Velupillai <suji.velupillai@broadcom.com>
+> > > >
+> > > > When pwm_bl framework calls enable, a call to pwm_is_enabled(pwm) s=
+till
+> > > > return false, this prevents the backlight being turn on at boot tim=
+e.
+> > > >
+> > > > Signed-off-by: Suji Velupillai <suji.velupillai@broadcom.com>
+> > > > Signed-off-by: Cl=C3=A9ment P=C3=A9ron <peron.clem@gmail.com>
+> > > > ---
+> > > >  drivers/pwm/pwm-bcm-kona.c | 16 +++++++++++-----
+> > > >  1 file changed, 11 insertions(+), 5 deletions(-)
+> > > >
+> > > > diff --git a/drivers/pwm/pwm-bcm-kona.c b/drivers/pwm/pwm-bcm-kona.=
+c
+> > > > index 09a95aeb3a70..d991d53c4b38 100644
+> > > > --- a/drivers/pwm/pwm-bcm-kona.c
+> > > > +++ b/drivers/pwm/pwm-bcm-kona.c
+> > > > @@ -108,8 +108,8 @@ static void kona_pwmc_apply_settings(struct kon=
+a_pwmc *kp, unsigned int chan)
+> > > >       ndelay(400);
+> > > >  }
+> > > >
+> > > > -static int kona_pwmc_config(struct pwm_chip *chip, struct pwm_devi=
+ce *pwm,
+> > > > -                         int duty_ns, int period_ns)
+> > > > +static int __pwmc_config(struct pwm_chip *chip, struct pwm_device =
+*pwm,
+> > > > +                      int duty_ns, int period_ns, bool pwmc_enable=
+d)
+> > > >  {
+> > > >       struct kona_pwmc *kp =3D to_kona_pwmc(chip);
+> > > >       u64 val, div, rate;
+> > > > @@ -155,7 +155,7 @@ static int kona_pwmc_config(struct pwm_chip *ch=
+ip, struct pwm_device *pwm,
+> > > >        * always calculated above to ensure the new values are
+> > > >        * validated immediately instead of on enable.
+> > > >        */
+> > > > -     if (pwm_is_enabled(pwm)) {
+> > > > +     if (pwm_is_enabled(pwm) || pwmc_enabled) {
+> > >
+> > > Having pwm-API-calls in hw-drivers is ugly. Apart from not giving the
+> > > intended return code this function should IMHO be reserved to pwm
+> > > consumers. The underlaying problem is that pwm-bl does:
+> > >
+> > >         pwm_config(pwm, duty_cycle, period);
+> > >         pwm_enable(pwm);
+> > >
+> > > and expects that the duty_cycle and period is used then. Doesn't
+> > > everything works just fine if the if-block is always executed?
+> >
+> > Tested and works fine for me. But I only have a Cygnus proc.
+> > Maybe there is some issue with Kona as explained by the comment (even
+> > if I don't understand it well).
+> >
+> >  * Don't apply settings if disabled. The period and duty cycle are
+> >  * always calculated above to ensure the new values are
+> >  * validated immediately instead of on enable.
+>
+> I wouldn't understand that as "If you apply settings on a disabled PWM a
+> kitten dies". I think it only means: At the current point in time
+> duty_cycle and period are not important as the hardware is off. So don't
+> bother to write these values to the hardware.
+>
+> @Tim: Do you think (or can test if) there is a problem when doing
+>
+> -       if (pwm_is_enabled(pwm)) {
+> +       if (1) {
+>
+> in kona_pwmc_config? (For sure the comment needs adaption and the if (1)
+> shouldn't make it into the driver, just used that as shorthand for the
+> change I want to suggest.)
+>
+> But still better than dropping the check is to convert the driver to the
+> atomic API. With that this problem would simply not occur.
+>
+> Best regards
+> Uwe
+>
+> --
+> Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig       =
+     |
+> Industrial Linux Solutions                 | http://www.pengutronix.de/  =
+|
 
-Ah, thank you for the info!  Would this patch do the trick?
+There is no per channel disable in the hardware so to simulate a
+disable, duty is set to zero.
 
-							Thanx, Paul
-
-------------------------------------------------------------------------
-
-commit 4182d416309b11d16e882ab637ab11cecef0bddc
-Author: Paul E. McKenney <paulmck@linux.ibm.com>
-Date:   Tue Nov 6 19:10:53 2018 -0800
-
-    sched: Replace call_rcu_sched() with call_rcu()
-    
-    Now that call_rcu()'s callback is not invoked until after all
-    preempt-disable regions of code have completed (in addition to explicitly
-    marked RCU read-side critical sections), call_rcu() can be used in place
-    of call_rcu_sched().  This commit therefore makes that change.
-    
-    While in the area, this commit also updates an outdated header comment
-    for for_each_domain().
-    
-    Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
-    Cc: Ingo Molnar <mingo@redhat.com>
-    Cc: Peter Zijlstra <peterz@infradead.org>
-
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 618577fc9aa8..00b91d16af9f 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1237,7 +1237,7 @@ extern void sched_ttwu_pending(void);
- 
- /*
-  * The domain tree (rq->sd) is protected by RCU's quiescent state transition.
-- * See detach_destroy_domains: synchronize_sched for details.
-+ * See destroy_sched_domains: call_rcu for details.
-  *
-  * The domain tree of any CPU may only be accessed from within
-  * preempt-disabled sections.
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 8d7f15ba5916..04d458faf2c1 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -248,7 +248,7 @@ void rq_attach_root(struct rq *rq, struct root_domain *rd)
- 	raw_spin_unlock_irqrestore(&rq->lock, flags);
- 
- 	if (old_rd)
--		call_rcu_sched(&old_rd->rcu, free_rootdomain);
-+		call_rcu(&old_rd->rcu, free_rootdomain);
- }
- 
- void sched_get_rd(struct root_domain *rd)
-@@ -261,7 +261,7 @@ void sched_put_rd(struct root_domain *rd)
- 	if (!atomic_dec_and_test(&rd->refcount))
- 		return;
- 
--	call_rcu_sched(&rd->rcu, free_rootdomain);
-+	call_rcu(&rd->rcu, free_rootdomain);
- }
- 
- static int init_rootdomain(struct root_domain *rd)
-
+The check is there to prevent new config values from applying until
+the channel is enabled.
