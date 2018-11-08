@@ -2,104 +2,102 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A14E6C32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:07:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87037C46465
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:08:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57F582081D
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:07:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 283F62081D
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 13:08:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="eFtwDMG+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57F582081D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="nNQCYeOf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 283F62081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726754AbeKHWmq (ORCPT
+        id S1726834AbeKHWnX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 17:42:46 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35320 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726375AbeKHWmq (ORCPT
+        Thu, 8 Nov 2018 17:43:23 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:37902 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726609AbeKHWnX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 17:42:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=UvprL5nelySR5nv6RI0/A89mRrdXRo7NZFZVu4WT4bg=; b=eFtwDMG+wIJ/enE7oRCcv9rT3
-        FhlYoRL33D6oMXlkRbMHNpj9f73H5oRbbqkzViyezJZ609yQTQGMU5oKCGSL/v2ZANivYqGCCpPKj
-        AHH97hXN8JLb1HWsjgjjLTKJxz06Cb+Zoo9Keb1MPWEyS/ElZKP59KxgfOrtQ+bvPJffE=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gKk1j-0008NE-D8; Thu, 08 Nov 2018 13:07:15 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id D3AB51124D9D; Thu,  8 Nov 2018 13:07:14 +0000 (GMT)
-Date:   Thu, 8 Nov 2018 13:07:14 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Maciej Purski <m.purski@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org
-Subject: Re: [PATCH v1 10/11] regulator: core: Use ww_mutex for regulators
- locking
-Message-ID: <20181108130714.GE6675@sirena.org.uk>
-References: <20181005153638.1886-1-digetx@gmail.com>
- <20181005153638.1886-11-digetx@gmail.com>
+        Thu, 8 Nov 2018 17:43:23 -0500
+Received: by mail-wr1-f68.google.com with SMTP id d10-v6so21185214wrs.5
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 05:07:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VMANpgw3nwcwWTbuyAAxjzE/eF1CssOReOoXUx3LoKo=;
+        b=nNQCYeOfYYQt63bplmqDiT+aO28GZA2R8b/GEF7XDaaUpplruh0HWNh9xn3fy1nB+J
+         sEKuo1hlZPQMzjqUcOoay0JpvegjTS5v6NxxfRMK6/syEutcw3wsnVJjxWjc4L0QUQ6e
+         n+Rpx3Uz1oSnfPhwJdoLNPPtGKnaATXaRbdfEb6hlUO+c/hE4h0qTeBwoHHVCp53xj5B
+         XCvtKtcPDj+/TztDxmijcR/Lol2sRduJRK8MsP+pZfp1KUU8n3VaKMFtnZYDqJQume0J
+         pSC/c3nxRoJC5ITiG4TRc6VD0TS/AgZ+cQueGJXLLUY9q98Kr0//x2PvpABypDeCU70e
+         ocuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VMANpgw3nwcwWTbuyAAxjzE/eF1CssOReOoXUx3LoKo=;
+        b=A2WNokHzUurKjjWBU5DPl16tlDjAEOaQ1HsRW3X2uK3I8LWCvqmJv224dKv3ZY+2dT
+         xF2jwcyxGcQWCzSWvIeuhrioeY0rkbdaK2WQA+sQyqz8E3IzvdK6ENieq3IRtgYTpOW3
+         gJs8OuVLJ+nfTPERrT1OT6XXsiiM/6cJheVgOZQfsYNhk1T8E7YF7j5e8nlG6JdqkC7W
+         dRG5iucAO0wXVEumj4a4z0E5WdU+PfWJFPhSYygtVVyrWPTdrNgS8g3MC82XlnqEcUBq
+         t/DUdDpkXLIZpEnZQZpfKVxrMh4C9CTUPBcQgNE8DrFCChrIW8zRoPwNGtJa8N581hB0
+         YO+Q==
+X-Gm-Message-State: AGRZ1gIRIEYpzdEhs3dCjponXdYB4PJKMdlOLGo98En2SIQZkeUxrYrV
+        k0T/wP0Fjb3Hidm/jVAjZBrGrtC9GAA=
+X-Google-Smtp-Source: AJdET5fcYq86ss3tPTM1DZ24HTInam8bGUeXPCUeKSzIrqjMqWqK7hnhVLrAXB1zpvKiMt1PdD1w9g==
+X-Received: by 2002:adf:a31c:: with SMTP id c28-v6mr4115303wrb.195.1541682476843;
+        Thu, 08 Nov 2018 05:07:56 -0800 (PST)
+Received: from boomer.local ([90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id y83-v6sm2916138wmg.13.2018.11.08.05.07.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 08 Nov 2018 05:07:56 -0800 (PST)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, devicetree@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: meson-axg: add secure monitor
+Date:   Thu,  8 Nov 2018 14:07:44 +0100
+Message-Id: <20181108130744.32323-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="2qXFWqzzG3v1+95a"
-Content-Disposition: inline
-In-Reply-To: <20181005153638.1886-11-digetx@gmail.com>
-X-Cookie: I'm having a BIG BANG THEORY!!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add the secure monitor device to the axg platform.
+With this, we can read the SoC serial number.
 
---2qXFWqzzG3v1+95a
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-On Fri, Oct 05, 2018 at 06:36:37PM +0300, Dmitry Osipenko wrote:
+diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+index e0139f174726..3cc0044d3468 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+@@ -110,6 +110,10 @@
+ 		};
+ 	};
+ 
++	sm: secure-monitor {
++		compatible = "amlogic,meson-gxbb-sm";
++	};
++
+ 	psci {
+ 		compatible = "arm,psci-1.0";
+ 		method = "smc";
+-- 
+2.19.1
 
-> Wait/wound mutex shall be used in order to avoid lockups on locking of
-> coupled regulators.
-
-This breaks the build due to a few of the drivers (wm8350 and da9210 at
-least) taking rdev locks in their interrupt handlers.  I'd suggest
-adding a function for those drivers to use - exposing the ww context
-seems like the wrong thing to do there.
-
-Otherwise the series looks good, I've applied everything up to here.
-Thanks for taking the time to pick this up, and especially for figuring
-out the ww_mutex conversion.
-
---2qXFWqzzG3v1+95a
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvkNQIACgkQJNaLcl1U
-h9CBHgf+NUaKw5RG4K/VmM+a/RA5SHTaEUvbBkj0rbZxteC/KbFdAKRHaHyEMfdO
-INQon26sjFFX8o8qiiYJHfFkWnJN1tKxODp474RfIL/Sy5U8pNMUfjUPS52qgd56
-1onsQCk0cqWlswJAvntF5Ui7XW3MwZXL0xm4/QQsU8yiET9lR2nG8p5Y/Fnn+Enx
-9phPizZN1F8+DolLlTjMvuGQXOGXxg8K/UZMHFE3Wtni3aaCGnQsv+eZvge/ga8h
-wrxfR9cB7usKdNOFHr0lRwHTrKP0nBus0hgeaGBGGcv5Le3IGLJ4jeVBpolui+jd
-1m7N+z7cn27BHlChofvH/ST5ypkq4w==
-=oaPc
------END PGP SIGNATURE-----
-
---2qXFWqzzG3v1+95a--
