@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F72DECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:54:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82551ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:54:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65A47214F0
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:54:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40CE620892
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:54:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mC2LI74z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65A47214F0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="M2hHnv5Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40CE620892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728453AbeKIHcV (ORCPT
+        id S1728473AbeKIHcV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 9 Nov 2018 02:32:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47434 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:47466 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728358AbeKIHcT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:32:19 -0500
+        id S1728380AbeKIHcV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:32:21 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A5F4721019;
-        Thu,  8 Nov 2018 21:54:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 493162145D;
+        Thu,  8 Nov 2018 21:54:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714092;
-        bh=lWWY8GPcTJuC98u2z/ke4H9dZZnjNt007Do03LgRWx4=;
+        s=default; t=1541714094;
+        bh=3uQAofjn341EXCo8HgnZPxXRA1/mlBWVNaUladPEY7w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mC2LI74zxRiYE19jDI21LWd5yS9sNGblcwfiUik5OHsTI2zTgGEXFxVTBQEfLKKEc
-         ZyK6oi1F7kcva8Z/1MfrYu7ha1H6p/SOdyb8AzHO6ZV5np6LdFTR4N6hYd/EqNZIkh
-         rlFUQqdGFvdqbAOpJYK29FwdPKut0qTmNo1WFtlk=
+        b=M2hHnv5QXlXv1GMHwY0pgY7q+EYjWWwzfeawtIWYOsy1bOw7YhMK96ZSdCHJpUfiD
+         yXEaGpKHaND9bDJmWwuNr1z55PfkNpZOp1Nt6TfQoMxqaYUqux7pWCTsHBIKOeYPpe
+         PpumeB4ltKuePaNH4ACAX+e++j+f/dm41aiDFpwo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 053/144] ARM: OMAP2+: Fix n900 board name for legacy user space
-Date:   Thu,  8 Nov 2018 13:50:24 -0800
-Message-Id: <20181108215058.676426973@linuxfoundation.org>
+Subject: [PATCH 3.18 037/144] s390/ftrace/jprobes: Fix conflict between jprobes and function graph tracing
+Date:   Thu,  8 Nov 2018 13:50:08 -0800
+Message-Id: <20181108215057.544813888@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215054.826084593@linuxfoundation.org>
 References: <20181108215054.826084593@linuxfoundation.org>
@@ -64,54 +64,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 71c4f6027da75c6c1fd92e05b63108a09ec2b109 ]
+[ Upstream commit e64a5470dcd2900ab8f8f83638c00098b10e6300 ]
 
-N900 legacy user space apps need the board name in
-/proc/cpuinfo to work properly for the Hardware entry.
+This fixes the same issue Steven already fixed for x86
+in following commit:
 
-For other boards this should not be an issues and they
-can use the generic Hardware entry.
+  237d28db036e ftrace/jprobes/x86: Fix conflict between jprobes and function graph tracing
 
-Let's fix the issue by adding a custom DT_MACHINE_START
-for n900.
+It fixes the crash, that happens when function graph tracing
+and jprobes are used simultaneously. Please refer to above
+commit for details.
 
-Tested-by: Pali Rohár <pali.rohar@gmail.com>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Acked-by: Steven Rostedt <rostedt@goodmis.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-omap2/board-generic.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ arch/s390/kernel/kprobes.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm/mach-omap2/board-generic.c b/arch/arm/mach-omap2/board-generic.c
-index 608079a1aba6..b61c049f92d6 100644
---- a/arch/arm/mach-omap2/board-generic.c
-+++ b/arch/arm/mach-omap2/board-generic.c
-@@ -77,6 +77,24 @@ MACHINE_END
- #endif
+diff --git a/arch/s390/kernel/kprobes.c b/arch/s390/kernel/kprobes.c
+index 014d4729b134..ee03d8f0ee60 100644
+--- a/arch/s390/kernel/kprobes.c
++++ b/arch/s390/kernel/kprobes.c
+@@ -633,6 +633,15 @@ int __kprobes setjmp_pre_handler(struct kprobe *p, struct pt_regs *regs)
+ 	stack = (unsigned long) regs->gprs[15];
  
- #ifdef CONFIG_ARCH_OMAP3
-+/* Some boards need board name for legacy userspace in /proc/cpuinfo */
-+static const char *const n900_boards_compat[] __initconst = {
-+	"nokia,omap3-n900",
-+	NULL,
-+};
+ 	memcpy(kcb->jprobes_stack, (void *) stack, MIN_STACK_SIZE(stack));
 +
-+DT_MACHINE_START(OMAP3_N900_DT, "Nokia RX-51 board")
-+	.reserve	= omap_reserve,
-+	.map_io		= omap3_map_io,
-+	.init_early	= omap3430_init_early,
-+	.init_machine	= omap_generic_init,
-+	.init_late	= omap3_init_late,
-+	.init_time	= omap3_sync32k_timer_init,
-+	.dt_compat	= n900_boards_compat,
-+	.restart	= omap3xxx_restart,
-+MACHINE_END
++	/*
++	 * jprobes use jprobe_return() which skips the normal return
++	 * path of the function, and this messes up the accounting of the
++	 * function graph tracer to get messed up.
++	 *
++	 * Pause function graph tracing while performing the jprobe function.
++	 */
++	pause_graph_tracing();
+ 	return 1;
+ }
+ 
+@@ -646,6 +655,9 @@ int __kprobes longjmp_break_handler(struct kprobe *p, struct pt_regs *regs)
+ 	struct kprobe_ctlblk *kcb = get_kprobe_ctlblk();
+ 	unsigned long stack;
+ 
++	/* It's OK to start function graph tracing again */
++	unpause_graph_tracing();
 +
-+/* Generic omap3 boards, most boards can use these */
- static const char *const omap3_boards_compat[] __initconst = {
- 	"ti,omap3430",
- 	"ti,omap3",
+ 	stack = (unsigned long) kcb->jprobe_saved_regs.gprs[15];
+ 
+ 	/* Put the regs back */
 -- 
 2.17.1
 
