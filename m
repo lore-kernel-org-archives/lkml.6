@@ -2,127 +2,110 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E100C32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 12:55:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F7F2C32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 12:57:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3289520827
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 12:55:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3289520827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id E8E8620825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 12:57:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UFCsLs7b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8E8620825
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726963AbeKHWaW (ORCPT
+        id S1727037AbeKHWcx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 17:30:22 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:36920 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726781AbeKHWaW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 17:30:22 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 4920E224CF; Thu,  8 Nov 2018 13:54:58 +0100 (CET)
-Received: from bbrezillon (aaubervilliers-681-1-30-49.w90-88.abo.wanadoo.fr [90.88.15.49])
-        by mail.bootlin.com (Postfix) with ESMTPSA id EB13B224CC;
-        Thu,  8 Nov 2018 13:54:47 +0100 (CET)
-Date:   Thu, 8 Nov 2018 13:54:47 +0100
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     <Tudor.Ambarus@microchip.com>
-Cc:     <marek.vasut@gmail.com>, <dwmw2@infradead.org>,
-        <computersforpeace@gmail.com>, <richard@nod.at>,
-        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <yogeshnarayan.gaur@nxp.com>, <cyrille.pitchen@wedev4u.fr>
-Subject: Re: [PATCH 3/7] mtd: spi-nor: add restriction for nmaps in smpt
- parser
-Message-ID: <20181108135447.36a0314c@bbrezillon>
-In-Reply-To: <20181108110653.21063-4-tudor.ambarus@microchip.com>
-References: <20181108110653.21063-1-tudor.ambarus@microchip.com>
-        <20181108110653.21063-4-tudor.ambarus@microchip.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 8 Nov 2018 17:32:53 -0500
+Received: from mail-lj1-f180.google.com ([209.85.208.180]:44753 "EHLO
+        mail-lj1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726571AbeKHWcx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 17:32:53 -0500
+Received: by mail-lj1-f180.google.com with SMTP id k19-v6so17868586lji.11
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 04:57:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=dXgw/9fNedfxWHe/AZOfyHek9BfS91z8Nq/WDBm4x+s=;
+        b=UFCsLs7b8gCMFkkJDqX1o+cHSOIdzMXf9drY56cPWTcMi9USqU/61Hly3uxZ7b1ALG
+         r/VCDwTCTgK0majX6NlU1facFhUNWvvjfOf+BkQdfGBvNvneVNwqBvzF6xbkU0tWHzim
+         gWRQzyQnNVWY04pr3Y9FVAXPr02N9h6qFKFiIbV4m122BfYIDZsgdNdnJWfW5b6BzvV8
+         ChosPHSxhZqTHhEjDI7tiDDwVMeSSiuZHqjSnXKiX9+FH5I14CTvMWKML7YVac2fucmh
+         1Q/ZYeCWr0m+i0jylETASwp4ICFfjxxawrz1rJJ3SNCn+1pkFJc27WCAT6Tv5yPaCpWE
+         4IJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=dXgw/9fNedfxWHe/AZOfyHek9BfS91z8Nq/WDBm4x+s=;
+        b=j79sirw/LkHoG39Yqr7f+bI1aYXd0YQqrLbM0G7BDcYKYCjcIQHMf3scsByNenLj00
+         OYbPdMHZlksjmD9rjX6sWXeTFfajj9B98rcGHxP0edh2vkXIRL+wHHvVYph28ZjWq3Ns
+         6VFZWYsdRCtGDchbNFix0WSZhQoxe2bnV9/HJqwx8+liNp97AQ5NbtSVhsdvjOzCjYwq
+         gZdcxmuZtPpR6mBP2zh7xbA2W6mSLGrmF1vesrT0amajtX9yFuH0IU1E9zH4lZSd1/iL
+         eNAIZzcawW6fLGeCvlmfu0+b0YPFZtSCmtNay+5YTgzMtEn9knF5hwYre16TaSaeswSq
+         58LA==
+X-Gm-Message-State: AGRZ1gJi5WWe16OAm4s7fsazNaRixCS9KFzQYoWFrugx6F9aU4gO1YX/
+        ogL5voRi9n7jNSe6eCjWOwsT/f+mFowriSWtCCA=
+X-Google-Smtp-Source: AJdET5cjVusNkuKDrfKsZcXT3ynTpsvJzuvxxoilM3XYRYKgYTbGmzpEOgodkAvuwySNpMiXiCScanOw+1tTkG1scQ4=
+X-Received: by 2002:a2e:9017:: with SMTP id h23-v6mr2381146ljg.71.1541681848466;
+ Thu, 08 Nov 2018 04:57:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <1530853846-30215-1-git-send-email-ks77sj@gmail.com>
+ <CAMJBoFPGZ_pYFQTXb06U4QxM1ibUhmdxr6efwZigXdUo=4S=Vw@mail.gmail.com> <CALbL15bGHL_M=ofWy_VrDZU_7b2DOC7BnpqJ63gfQ_1gNcG_9A@mail.gmail.com>
+In-Reply-To: <CALbL15bGHL_M=ofWy_VrDZU_7b2DOC7BnpqJ63gfQ_1gNcG_9A@mail.gmail.com>
+From:   Vitaly Wool <vitalywool@gmail.com>
+Date:   Thu, 8 Nov 2018 13:57:17 +0100
+Message-ID: <CAMJBoFP3C5NffHf2bPaY-W2qXPLs6z+Ker+Z+Sq_3MHV5xekHQ@mail.gmail.com>
+Subject: Re: [PATCH] z3fold: fix wrong handling of headless pages
+To:     =?UTF-8?B?6rmA7KKF7ISd?= <ks77sj@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 8 Nov 2018 11:07:11 +0000
-<Tudor.Ambarus@microchip.com> wrote:
+Den tors 8 nov. 2018 kl 13:34 skrev =EA=B9=80=EC=A2=85=EC=84=9D <ks77sj@gma=
+il.com>:
+>
+> Hi Vitaly,
+> thank you for the reply.
+>
+> I agree your a new solution is more comprehensive and drop my patch is si=
+mple way.
+> But, I think it's not fair.
+> If my previous patch was not wrong, is (my patch -> your patch) the right=
+ way?
 
-> The map selector is limited to a maximum of 8 bits, allowing
-> for a maximum of 256 possible map configurations. The total
-> number of map configurations should be addressable by the
-> total number of bits described by the detection commands.
-> 
-> For example: if there are five to eight possible sector map
-> configurations, at least three configuration detection commands
-> will be needed to extract three bits of configuration selection
-> information from the device in order to identify which configuration
-> is currently in use.
-> 
-> Suggested-by: Boris Brezillon <boris.brezillon@bootlin.com>
+I could apply the new patch on top of yours but that would effectively
+revert most of your changes.
+Would it be ok for you if I add you to Signed-off-by for the new patch inst=
+ead?
 
-I don't remember suggesting this :-).
+~Vitaly
 
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-> ---
->  drivers/mtd/spi-nor/spi-nor.c | 15 +++++++++++++--
->  1 file changed, 13 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-> index 59dcedb08691..bd1866d714f2 100644
-> --- a/drivers/mtd/spi-nor/spi-nor.c
-> +++ b/drivers/mtd/spi-nor/spi-nor.c
-> @@ -2868,7 +2868,7 @@ static const u32 *spi_nor_get_map_in_use(struct spi_nor *nor, const u32 *smpt,
->  	const u32 *ret = NULL;
->  	u32 addr;
->  	int err;
-> -	u8 i;
-> +	u8 i, ncmds, nmaps;
->  	u8 addr_width, read_opcode, read_dummy;
->  	u8 read_data_mask, data_byte, map_id;
->  
-> @@ -2877,6 +2877,7 @@ static const u32 *spi_nor_get_map_in_use(struct spi_nor *nor, const u32 *smpt,
->  	read_opcode = nor->read_opcode;
->  
->  	map_id = 0;
-> +	ncmds = 0;
->  	/* Determine if there are any optional Detection Command Descriptors */
->  	for (i = 0; i < smpt_len; i += 2) {
->  		if (smpt[i] & SMPT_DESC_TYPE_MAP)
-> @@ -2896,6 +2897,7 @@ static const u32 *spi_nor_get_map_in_use(struct spi_nor *nor, const u32 *smpt,
->  		 * Configuration that is currently in use.
->  		 */
->  		map_id = map_id << 1 | !!(data_byte & read_data_mask);
-> +		ncmds++;
->  	}
->  
->  	/*
-> @@ -2905,7 +2907,16 @@ static const u32 *spi_nor_get_map_in_use(struct spi_nor *nor, const u32 *smpt,
->  	 *
->  	 * Find the matching configuration map.
->  	 */
-> -	while (i < smpt_len) {
-> +	for (nmaps = 0; i < smpt_len; nmaps++) {
-> +		/*
-> +		 * The map selector is limited to a maximum of 8 bits, allowing
-> +		 * for a maximum of 256 possible map configurations. The total
-> +		 * number of map configurations should be addressable by the
-> +		 * total number of bits described by the detection commands.
-> +		 */
-> +		if (ncmds && nmaps >= (1 << (ncmds + 1)))
-> +			break;
-> +
-
-Maybe I missed something but it sounds like this change is just
-optimizing the SPMT parsing a bit, and to be honest, I'm not sure this
-is really needed. Most of the time, smpt_len will be rather small, so
-trying to bail out earlier is not bringing much perf improvements.
-
->  		if (SMPT_MAP_ID(smpt[i]) == map_id) {
->  			ret = smpt + i;
->  			break;
-
+> I'm sorry I sent reply twice.
+>
+> Best regards,
+> Jongseok
+>
+>
+> > On 6/11/2018 4:48 PM, Vitaly Wool wrote:
+> > Hi Jongseok,
+>
+> > thank you for your work, we've now got a more comprehensive solution:
+> > https://lkml.org/lkml/2018/11/5/726
+>
+> > Would you please confirm that it works for you? Also, would you be
+> >okay with dropping your patch in favor of the new one?
+>
+> > ~Vitaly
