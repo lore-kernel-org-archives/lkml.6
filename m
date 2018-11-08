@@ -2,106 +2,96 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 293CEECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:19:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2260ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:22:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA8F820817
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:19:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="fqc/2lru"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA8F820817
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6D47E206BA
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:22:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D47E206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.us
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727028AbeKIC4O (ORCPT
+        id S1726974AbeKIC6n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 21:56:14 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:39032 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726585AbeKIC4N (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 21:56:13 -0500
-Received: by mail-oi1-f193.google.com with SMTP id 192-v6so16808525oii.6
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 09:19:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RJB4NUn9UPTiP1FJtiTjQxBiUAPHBytuBDNQAPJxmXU=;
-        b=fqc/2lru6ZtKk5WtbtIueLqSG87WSn3uCirBxUG3Vl6ylcMo4yeO+S9kDcdz03WccK
-         ox1l4kv0T0vQ1uOo2MT6uZMUG2UXaGYC0IMTza086Y8SRTktsxsr5RPdI5goUvW2MUt5
-         USZkveLhupkBqCTMxN1O+13i/AUZCVqvadFJev9688Pz32H+6KDZ/ao32lEeCj+RlJJo
-         l39zsYzVAn/tvs0b7TMKvzl9AiI/cQLZqtN8uQE3+6UipDklAzh8DlSPSu7TDO+5QgY6
-         SG3pzdo/yWMVell+tqt4gDgS5Fn3r8qPWLejvQe2jJfzwz0VO2WLQ8AOgvwq1FD729Mx
-         ygTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RJB4NUn9UPTiP1FJtiTjQxBiUAPHBytuBDNQAPJxmXU=;
-        b=CZfT+Kbv/AVjPwwxuWr1Ov/Nf8k6gi/tkoyfKLLfvNzTnpyTFvsVjeacTIGwcMBCsi
-         PfFvUqw/cCxuOlVf5bESjgp/ocgiGuSE/Dh7bbY5W4jA5XcdCQpcmcN4TEUp/Z97QtTH
-         nQ3PNbnMwYWrelCiqGTWbXhscuYILzUBdDg2pqMvTVdBRLjAOgaFLGRAowh+AWGS0Cfd
-         NSJPFscfrXx3ZMiG0LDIx4uXUooI00inc2jh1JUL85RuvcuBNVyYEdsCDFDlWYsWq3m0
-         c9SAQGclpRu96/wMH/qQrLMjvB/+0mEbxnor4eAjQKIrCSQIboivSDP2ARZKJzzPh6uc
-         ZSNg==
-X-Gm-Message-State: AGRZ1gIAkGRz2HzJqIwsHyMythY0Qpu4dn7Fv4KgWhg9xnVRlv0Eeiu/
-        W1GVMFJ+uQDHYb76Mdcxg3hU9OswhCNzurZLnEFFEA==
-X-Google-Smtp-Source: AJdET5dVHYX16lgGcxgWnfQyyWWV6Yt7kGyGxdMcBqxE4vdkw6/PXfNP0Lh+LO8DMF/wWWDKGH80Bi6f9nC3Y7Pyaw4=
-X-Received: by 2002:a54:4188:: with SMTP id 8-v6mr3275458oiy.105.1541697584617;
- Thu, 08 Nov 2018 09:19:44 -0800 (PST)
+        Thu, 8 Nov 2018 21:58:43 -0500
+Received: from mout.gmx.net ([212.227.17.20]:36733 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726585AbeKIC6n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 21:58:43 -0500
+Received: from [66.187.233.206] ([66.187.233.206]) by web-mail.gmx.net
+ (3c-app-mailcom-bs15.server.lan [172.19.170.183]) (via HTTP); Thu, 8 Nov
+ 2018 18:22:12 +0100
 MIME-Version: 1.0
-References: <20181107171010.421878737@linutronix.de> <20181107171149.165693799@linutronix.de>
- <20181108074012.GD20032@gmail.com> <20181108091251.GL9761@hirez.programming.kicks-ass.net>
-In-Reply-To: <20181108091251.GL9761@hirez.programming.kicks-ass.net>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 8 Nov 2018 09:19:33 -0800
-Message-ID: <CAPcyv4iCc32VpHA2c8QMRTFy1wGRAmhFQV1xVUiAo2zYKOfJrQ@mail.gmail.com>
-Subject: Re: [patch 2/2] Documentation/process: Add tip tree handbook
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        X86 ML <x86@kernel.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        John Stultz <john.stultz@linaro.org>, acme@redhat.com,
-        frederic@kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <trinity-73b7af5e-ab88-495b-932a-2ffd6dd81623-1541697732607@3c-app-mailcom-bs15>
+From:   "Qian Cai" <cai@gmx.us>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-mm@kvack.org, "Ard Biesheuvel" <ard.biesheuvel@linaro.org>,
+        linux-efi@vger.kernel.org
+Subject: Re: BUG: sleeping function called from invalid context at
+ mm/slab.h:421
+Content-Type: text/plain; charset=UTF-8
+Date:   Thu, 8 Nov 2018 18:22:12 +0100
+Importance: normal
+Sensitivity: Normal
+In-Reply-To: <trinity-7128b38b-7a1d-4584-aa34-174a2906ec88-1541694235634@3c-app-mailcom-bs15>
+References: <trinity-7128b38b-7a1d-4584-aa34-174a2906ec88-1541694235634@3c-app-mailcom-bs15>
+X-UI-Message-Type: mail
+X-Priority: 3
+X-Provags-ID: V03:K1:JSDxI+IpPwfSHnC3yq7Bt2wANp76gaE1yGsTsg1Lq/XpBNLTPQ6hLwkZPOZmZCY8zcK9x
+ J4ReQaMe7ZBjOHkSb9heJzMySvEvVDyHZY9MA21z3uhIFQ/KlPpnvhBSIGbzPP010mCUGAim3xAJ
+ Jnc2qciLVQ9vmyNJu/BQIr9d0VuvCpvL/xNLSDVzWyYQAmj3RBc3hH6A+mk/rRc5vX4Otp2muXcg
+ 8rAbnexOYispRRb9xjAsBFzZbxqo7LkCVHxZLG1vuFT5gGYnAWJtU70XBxtFPG7Av6pb6E7b2oU1
+ FM=
+X-UI-Out-Filterresults: notjunk:1;V01:K0:7CxU67IgCMw=:htSe5oB9k6dw0p2YXUdKIq
+ Ik6AC/eMr4nZPhfpvxHFPQlci5xRtONVKM6BkcHWTqGAvDnyp7hIPkD6Cmcpss5b/P5hSNzg3
+ KX1rsmMaJhYww4P0eJjDiYf91EJsWIDJXID6Q0jgMFMGLLmjo/gA1tXV2oP8ukjXtIIQQbiLZ
+ NDnSI5zbpuAmg82v8fYiW6xHcAZ1NTDJAZtaTSZHa46ozXbHpk/7nuNtVdMWpxxSI+KdatxsM
+ H0lD+xuQ47oum59pTo/M4Z3Bqi/lZZq7C8/JILcie7wVQsARj0KaI6D4pXoXrrOO96K7qcKcn
+ kmTqPmRzc1QgCud2cToANVDqpsCzEMhgH1xRZb96BjV/HA6va+7wJvj79wO11jY5d+d7mTV6V
+ fhxQ1BrftnjK1EL/QX2+VWmBvQnH+utIJeYzwYriMxxgXETAD7HoMbcdfjKZo/es0GEr+y2G6
+ hr6wqAVpCMChEvLw1U3rRZ50saFtuSnJxgUEytX/oilr0xPysSp8DEMgeN9Hrj7xF8lrGKrRl
+ UJlaIaQRDb6KOaoym+lbO0ujijlqT4ndE1LC465FzIxGrMmISoFHJcFaGdSl7whWA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 8, 2018 at 1:13 AM Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Thu, Nov 08, 2018 at 08:40:12AM +0100, Ingo Molnar wrote:
-> > > + - Cc: ``cc-ed-person <person@mail>``
-> > > +
-> > > +   If the patch should be backported to stable, then please add a '``Cc:
-> > > +   stable@vger.kernel.org``' tag, but do not Cc stable when sending your
-> > > +   mail.
-> >
-> > Can I suggest a more canonical form:
-> >
-> >       Cc: <stable@vger.kernel.org> # v4.18 and later kernels
-> >
-> > It would be nice if people adding Cc: stable lines would actually try to
-> > figure out which exact kernel versions are affected.
+Looks like more of an EFI issue where it called efi_mem_reserve_persistent().
 
-I know at least StGit mail does not grok that "#"notation. I've
-stopped using it in favor of a "Fixes:" tag. I would think "Fixes:" is
-preferred over "# <KVER>" if only because it can be used to track
-fixes to commits that have been backported to stable. Is there any
-reason for "# <KVER>" to continue in a world where we have "Fixes:"?
+> Sent: Thursday, November 08, 2018 at 11:23 AM
+> From: "Qian Cai" <cai@gmx.us>
+> To: linux-kernel@vger.kernel.org
+> Cc: linux-mm@kvack.org
+> Subject: BUG: sleeping function called from invalid context at mm/slab.h:421
+>
+> Just booting up the latest git master (b00d209) on an aarch64 server and saw this.
+> 
+> Nov  8 11:06:36 huawei-t2280-03 kernel: BUG: sleeping function called from invalid context at mm/slab.h:421
+> Nov  8 11:06:36 huawei-t2280-03 kernel: in_atomic(): 1, irqs_disabled(): 128, pid: 0, name: swapper/1
+> Nov  8 11:06:36 huawei-t2280-03 kernel: no locks held by swapper/1/0.
+> Nov  8 11:06:36 huawei-t2280-03 kernel: irq event stamp: 0
+> Nov  8 11:06:36 huawei-t2280-03 kernel: hardirqs last  enabled at (0): [<0000000000000000>]           (null)
+> Nov  8 11:06:36 huawei-t2280-03 kernel: hardirqs last disabled at (0): [<ffff2000080e24ec>] copy_process.isra.32.part.33+0x460/0x1534
+> Nov  8 11:06:36 huawei-t2280-03 kernel: softirqs last  enabled at (0): [<ffff2000080e24ec>] copy_process.isra.32.part.33+0x460/0x1534
+> Nov  8 11:06:36 huawei-t2280-03 kernel: softirqs last disabled at (0): [<0000000000000000>]           (null)
+> Nov  8 11:06:36 huawei-t2280-03 kernel: CPU: 1 PID: 0 Comm: swapper/1 Not tainted 4.20.0-rc1+ #3
+> Nov  8 11:06:36 huawei-t2280-03 kernel: Call trace:
+> Nov  8 11:06:36 huawei-t2280-03 kernel: dump_backtrace+0x0/0x190
+> Nov  8 11:06:36 huawei-t2280-03 kernel: show_stack+0x24/0x2c
+> Nov  8 11:06:36 huawei-t2280-03 kernel: dump_stack+0xa4/0xe0
+> Nov  8 11:06:36 huawei-t2280-03 kernel: ___might_sleep+0x208/0x234
+> Nov  8 11:06:36 huawei-t2280-03 kernel: __might_sleep+0x58/0x8c
+> Nov  8 11:06:36 huawei-t2280-03 kernel: kmem_cache_alloc_trace+0x29c/0x420
+> Nov  8 11:06:36 huawei-t2280-03 kernel: efi_mem_reserve_persistent+0x50/0xe8
+> Nov  8 11:06:36 huawei-t2280-03 kernel: its_cpu_init_lpis+0x298/0x2e0
+> Nov  8 11:06:36 huawei-t2280-03 kernel: its_cpu_init+0x7c/0x1a8
+> Nov  8 11:06:36 huawei-t2280-03 kernel: gic_starting_cpu+0x28/0x34
+> Nov  8 11:06:36 huawei-t2280-03 kernel: cpuhp_invoke_callback+0x104/0xd04
+> Nov  8 11:06:36 huawei-t2280-03 kernel: notify_cpu_starting+0x60/0xa0
+> Nov  8 11:06:36 huawei-t2280-03 kernel: secondary_start_kernel+0xcc/0x178
+> 
+> Any idea?
