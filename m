@@ -2,144 +2,152 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A41E7C32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 09:52:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 869F1C32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 09:54:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BE5D20685
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 09:52:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E7FF20685
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 09:54:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uIxNB/iJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BE5D20685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="kK+fI7t4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E7FF20685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axentia.se
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727136AbeKHT10 (ORCPT
+        id S1727027AbeKHT3O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 14:27:26 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:57654 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727024AbeKHT10 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 14:27:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=LlkJUTLDNsaj+mk6xpXWJLdd4sLNgs8yF4/l4NiECRU=; b=uIxNB/iJt7uxD8nPM776cm+1dT
-        oQ7g9d0STGAJutUxCjhbeGvv100HZ6BbQmhKSYhVm5iwtWv/MTvqDQnLor8kxoIc2gAxGO3MMm0NV
-        AjqVUcq49JWcilnSisSeCot1VEdQkc5YMyO3TBM9uQR72o3p8WnA8Bvfo6r+OtE4GLuehYKGwaxDn
-        3P9zCLHc2XRZ9m4wmbBPBwU41G+sbCRV3tMFiz/OcvitIrpfvSoDHsjfL3XVJYtBB6xVsU6jWwepn
-        nH1A1jEAQ4dHilIBUcwSn4gY08GTx7sWmJzdXSX+1vlXVA2eTIP5IzUP5RHMtUCUngOyxy6PpNKar
-        UeX/4eOA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gKgzR-00087b-BJ; Thu, 08 Nov 2018 09:52:42 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id AED2D20284F98; Thu,  8 Nov 2018 10:52:39 +0100 (CET)
-Date:   Thu, 8 Nov 2018 10:52:39 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Muchun Song <smuchun@gmail.com>
-Cc:     Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        rostedt@goodmis.org
-Subject: Re: [PATCH] sched/rt: Introduce prio_{higher,lower}() helper for
- comparing RT task prority
-Message-ID: <20181108095239.GO9761@hirez.programming.kicks-ass.net>
-References: <20181107161505.42769-1-smuchun@gmail.com>
- <20181107173140.GK9761@hirez.programming.kicks-ass.net>
- <CAPSr9jGXPr-fcywjBTmGa5myeKSoGn+N3ybs9b2s2ayfU=sL2A@mail.gmail.com>
+        Thu, 8 Nov 2018 14:29:14 -0500
+Received: from mail-eopbgr30108.outbound.protection.outlook.com ([40.107.3.108]:6426
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726517AbeKHT3N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 14:29:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=r4B32P8crnXVkmTx7UrGf0olpER2uul+79u8Mp0iqkM=;
+ b=kK+fI7t4vyb8g6rJouEsPVSIX11Quve3UMbBN13b1AZOVUA+nirJdqEMzAEPodsuD3H3FGMKIDQE4rDzcyFKELyYklQuDYI8U/hoTSOfcHoapNhPIbGEF9gxGU4CQ15Px8ArFEdECM1Dic6sKP8bgEsLojV790VWv5wsX6JYXzM=
+Received: from AM5PR0201MB2451.eurprd02.prod.outlook.com (10.169.244.8) by
+ AM5PR0201MB2322.eurprd02.prod.outlook.com (10.169.243.9) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.21; Thu, 8 Nov 2018 09:54:28 +0000
+Received: from AM5PR0201MB2451.eurprd02.prod.outlook.com
+ ([fe80::7d9b:e9c1:14e6:b72a]) by AM5PR0201MB2451.eurprd02.prod.outlook.com
+ ([fe80::7d9b:e9c1:14e6:b72a%3]) with mapi id 15.20.1294.034; Thu, 8 Nov 2018
+ 09:54:28 +0000
+From:   Peter Rosin <peda@axentia.se>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     Peter Rosin <peda@axentia.se>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Fabian Frederick <ffrederick@users.sourceforge.net>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Geoff Levand <geoff@infradead.org>,
+        James Simmons <jsimmons@users.sf.net>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>
+Subject: [REGRESSION PATCH] fbdev: fbmem: behave better with small rotated
+ displays and many CPUs
+Thread-Topic: [REGRESSION PATCH] fbdev: fbmem: behave better with small
+ rotated displays and many CPUs
+Thread-Index: AQHUd0kJeMKk7GNIpUCu5UKgc0OKYA==
+Date:   Thu, 8 Nov 2018 09:54:28 +0000
+Message-ID: <20181108095347.19326-1-peda@axentia.se>
+Accept-Language: en-US, sv-SE
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.11.0
+x-originating-ip: [85.226.244.23]
+x-clientproxiedby: HE1PR07CA0042.eurprd07.prod.outlook.com
+ (2603:10a6:7:66::28) To AM5PR0201MB2451.eurprd02.prod.outlook.com
+ (2603:10a6:203:35::8)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peda@axentia.se; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM5PR0201MB2322;6:aO5mj1juLd/J8r/+vHM/HSz1RqNspLA8aeGlvSkj+0jIF2ua6zSdXiWOZZ8Sam0eHOCp/Q0CI6u5qYPVTpoF/343gbLPyWqgCsyDyeROuhK79HarJMkqgGqxLIUga33/JUEqznBthOWs968WMfmHsaAOwjBrXQvaJVMth1lquwEs0Yx0ac24ROpHCJilWhx+p/jQPXZxKnsrDOFb5+IyFO7zrQowcFR+ocl8m/MJD/JGDU+10qGCV9LXmxhtRRRRXQfEjHHebL4mCYZNuurXqF6i3BEJZIa33bC0HDYb4RwITw+gTzP6GutelrMzCHkYvr9Z3/NS1gGm2aCW0PxkN3PkJ0WavIA+mdI5nD1u/k41KL2MWmjZ4lm6xATwxAk2nXpsbtn6Ms4CkkuMsiosmuVJJ7ESPGq99uyBViyHzNSD4w9YIslgpINcSuUSxStlzmU1cKsw032EX6W8l7ndwA==;5:/o9PLRFKsGqV49yz9fcptabIkZsb9v1wZO7dB8Ql+2tyOmob0L/zi6CW9qpp0QAJX+YsJYL06EBKIJ8rClDuoVKe02MCZCb/6wXtEfRp6XdfA5nymIAztiX0hyPGyuF1j6FUvg1Prp3P88v7JWYGz/14ZajZgaYpycQ1uJ+RQyo=;7:A36KEY9huqBstKSaQBWx3XIlmtpUgMezefRSqW5pvMod8FsmE3iuUikynakGl07IDcce4SsaeBAhna/LQTAp7aJtqSB/XKM2WZRSOOaQHhYHTAwVL2SMBeWIIg8Wwzl9ke7ds7rcKzwMSbyX+mX2Kw==
+x-ms-office365-filtering-correlation-id: de42e3d0-65a0-44c5-b222-08d645602c2c
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:AM5PR0201MB2322;
+x-ms-traffictypediagnostic: AM5PR0201MB2322:
+x-microsoft-antispam-prvs: <AM5PR0201MB2322928FFF194D43FCCDCE75BCC50@AM5PR0201MB2322.eurprd02.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231382)(944501410)(52105095)(148016)(149066)(150057)(6041310)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(2016111802025)(6043046)(201708071742011)(7699051)(76991095);SRVR:AM5PR0201MB2322;BCL:0;PCL:0;RULEID:;SRVR:AM5PR0201MB2322;
+x-forefront-prvs: 0850800A29
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(136003)(366004)(39830400003)(376002)(346002)(189003)(199004)(186003)(508600001)(2900100001)(486006)(6486002)(66066001)(105586002)(8936002)(52116002)(36756003)(99286004)(50226002)(2501003)(5660300001)(97736004)(68736007)(25786009)(14444005)(386003)(6506007)(256004)(3846002)(6116002)(7736002)(1076002)(8676002)(81166006)(86362001)(575784001)(81156014)(316002)(4326008)(6916009)(305945005)(6512007)(74482002)(6436002)(2616005)(2906002)(54906003)(71190400001)(14454004)(53936002)(26005)(102836004)(106356001)(71200400001)(5640700003)(476003)(2351001)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:AM5PR0201MB2322;H:AM5PR0201MB2451.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: axentia.se does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: laFrL/WcLXxBGHRYNKUhF+1vewvQvr3+cYtekPfjZ5c8QWCx55SE/VO6aVMIAlNQkTMjqAoTWJKaczixKZdj3BezHB2JXZNwPtpro/08/Pv3VKOqHZ/tswqqNerdoTH8Pp+xRJE2t+TpfdNreAvQBra0SRPLR75wBu5siaL7LApbF5wzPhP8Ey2Py1lK235aEkmK1MF+xzRx152NCyPNqhwq8lYDQr9RTY8vaI2vQ0i4tX5l1FhBN0HXIA/WNTO7vVe5wZrHJ6Et0HbAUEhnD1NMLPC4pPeVspzql6HwYrJYoRLrCC5jAsNx2aNqyPwAWVZLZ3in7ggXa4hM0CNPUol+OPzStYkcFMb0Ly6wTFM=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPSr9jGXPr-fcywjBTmGa5myeKSoGn+N3ybs9b2s2ayfU=sL2A@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: axentia.se
+X-MS-Exchange-CrossTenant-Network-Message-Id: de42e3d0-65a0-44c5-b222-08d645602c2c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Nov 2018 09:54:28.3390
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4ee68585-03e1-4785-942a-df9c1871a234
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0201MB2322
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 10:15:49AM +0800, Muchun Song wrote:
-> Peter Zijlstra <peterz@infradead.org> 于2018年11月8日周四 上午1:31写道：
+Blitting an image with "negative" offsets is not working since there
+is no clipping. It hopefully just crashes. For the bootup logo, there
+is protection so that blitting does not happen as the image is drawn
+further and further to the right (ROTATE_UR) or further and further
+down (ROTATE_CW). There is however no protection when drawing in the
+opposite directions (ROTATE_UD and ROTATE_CCW).
 
-> > I think you only need the less thing, because:
-> >
-> > static inline bool prio_lower(int a, int b)
-> > {
-> >         return a > b;
-> > }
-> >
-> > prio_higher(a,b) := prio_lower(b,a)
-> > prio_higher_eq(a,b) := !prio_lower(a,b)
-> > prio_lower_eq(a,b) := !prio_lower(b,a)
-> 
-> Yeah, it can be simpler here. Thanks for your advice.
-> I will send a v2 patch which will fix it.
-> 
-> >
-> > Now, I'm not sure if that actually improves readability if you go around
-> > and directly substitute those identities instead of doing those defines.
-> >
-> 
-> When I first read rt.c, I couldn't quickly realize which priority was higher
-> in if condition. With this patch applied, if I know what's the meaning
-> of prio_higher()
-> or prio_lower() so that I can quickly know who's priority is higher.
-> So I think that
-> it can improves readability.
+Add back this protection.
 
-Ah, yes, I agree it improves readability; what I wondered was if instead
-of doing:
+The regression is 20-odd years old but the mindless warning-killing
+mentality displayed in commit 34bdb666f4b2 ("fbdev: fbmem: remove
+positive test on unsigned values") is also to blame, methinks.
 
-@@ -1424,7 +1446,7 @@ select_task_rq_rt(struct task_struct *p, int cpu, int sd_flag, int flags)
- 	 */
- 	if (curr && unlikely(rt_task(curr)) &&
- 	    (curr->nr_cpus_allowed < 2 ||
--	     curr->prio <= p->prio)) {
-+	     prio_higher_eq(curr->prio, p->prio))) {
- 		int target = find_lowest_rq(p);
- 
- 		/*
-@@ -1432,7 +1454,7 @@ select_task_rq_rt(struct task_struct *p, int cpu, int sd_flag, int flags)
- 		 * not running a lower priority task.
- 		 */
- 		if (target != -1 &&
--		    p->prio < cpu_rq(target)->rt.highest_prio.curr)
-+		    prio_higher(p->prio, cpu_rq(target)->rt.highest_prio.curr))
- 			cpu = target;
- 	}
- 	rcu_read_unlock();
+Fixes: 448d479747b8 ("fbdev: fb_do_show_logo() updates")
+Signed-off-by: Peter Rosin <peda@axentia.se>
+---
+ drivers/video/fbdev/core/fbmem.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fb=
+mem.c
+index bb7f5f23e347..1abeb0b72455 100644
+--- a/drivers/video/fbdev/core/fbmem.c
++++ b/drivers/video/fbdev/core/fbmem.c
+@@ -435,7 +435,9 @@ static void fb_do_show_logo(struct fb_info *info, struc=
+t fb_image *image,
+ 			image->dx +=3D image->width + 8;
+ 		}
+ 	} else if (rotate =3D=3D FB_ROTATE_UD) {
+-		for (x =3D 0; x < num; x++) {
++		u32 dx =3D image->dx;
++
++		for (x =3D 0; x < num && image->dx <=3D dx; x++) {
+ 			info->fbops->fb_imageblit(info, image);
+ 			image->dx -=3D image->width + 8;
+ 		}
+@@ -447,7 +449,9 @@ static void fb_do_show_logo(struct fb_info *info, struc=
+t fb_image *image,
+ 			image->dy +=3D image->height + 8;
+ 		}
+ 	} else if (rotate =3D=3D FB_ROTATE_CCW) {
+-		for (x =3D 0; x < num; x++) {
++		u32 dy =3D image->dy;
++
++		for (x =3D 0; x < num && image->dy <=3D dy; x++) {
+ 			info->fbops->fb_imageblit(info, image);
+ 			image->dy -=3D image->height + 8;
+ 		}
+--=20
+2.11.0
 
-Something like so might be better:
-
-
-@@ -1424,7 +1446,7 @@ select_task_rq_rt(struct task_struct *p, int cpu, int sd_flag, int flags)
- 	 */
- 	if (curr && unlikely(rt_task(curr)) &&
- 	    (curr->nr_cpus_allowed < 2 ||
--	     curr->prio <= p->prio)) {
-+	     !prio_lower(curr->prio, p->prio))) {
- 		int target = find_lowest_rq(p);
- 
- 		/*
-@@ -1432,7 +1454,7 @@ select_task_rq_rt(struct task_struct *p, int cpu, int sd_flag, int flags)
- 		 * not running a lower priority task.
- 		 */
- 		if (target != -1 &&
--		    p->prio < cpu_rq(target)->rt.highest_prio.curr)
-+		    prio_lower(cpu_rq(target)->rt.highest_prio.curr, p->prio))
- 			cpu = target;
- 	}
- 	rcu_read_unlock();
-
-That is, always use prio_lower() and not introduce the other helpers.
-
-I'm not sure; those identities are faily basic for me; but I can imagine
-someone who's not yet read code for 30 odd years might struggle with
-that a bit.
