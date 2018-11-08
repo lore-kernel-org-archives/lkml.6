@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC852ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:08:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B9E5ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:08:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 781032089F
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:08:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00B36214E0
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:08:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WR9zIW9u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 781032089F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mj4CAvbi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00B36214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731186AbeKIHp3 (ORCPT
+        id S1732445AbeKIHpe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:45:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38768 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:45:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38856 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730889AbeKIHp3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:45:29 -0500
+        id S1730889AbeKIHpe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:45:34 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 205FB208A3;
-        Thu,  8 Nov 2018 22:07:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B2C9A2089F;
+        Thu,  8 Nov 2018 22:08:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714877;
-        bh=rGO2aSKoLnT9I17MHG9I/bfZAmADU+ZqThHb8fnx+vk=;
+        s=default; t=1541714882;
+        bh=DRQHfGtiDHkBggQGUAvoEl+UgKT8fHXr2fHND0oBSZ4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WR9zIW9uq9at+2kifhQEBZwj0KaKZhPnKBr3+9yC37zAPP/zme7yRpWWu2UmDgGut
-         ANe0aLYRxMQ4HX4WjjGQWDTvqStzXa8IZxGvfJmRsHrIXMVihHWX+r/4rhRWzl5wpL
-         83RjvqIU2fvt8O+fPievs5fRy67xM6WCbNH5skgI=
+        b=mj4CAvbiays69W1mEmCY0zrl7d46PMmg9VoSI2dMQI5Pod5oPHYxmNRE1pp9nDK66
+         ppq5PiQ2J3ne8wUyMuT3dQkytm2OAIAtx5FIFqCHxnOC1Gc9svFSQW0kdech7KNJ/5
+         +9R/IPOOrQOXLKkRW6/2mwcMM39eEGXIkgU1uYkg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Phil Auld <pauld@redhat.com>,
-        Ben Segall <bsegall@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 167/171] sched/fair: Fix throttle_list starvation with low CFS quota
-Date:   Thu,  8 Nov 2018 13:52:17 -0800
-Message-Id: <20181108215139.024528929@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, hpa@zytor.com,
+        eric.dumazet@gmail.com, bp@alien8.de
+Subject: [PATCH 4.9 168/171] x86/percpu: Fix this_cpu_read()
+Date:   Thu,  8 Nov 2018 13:52:18 -0800
+Message-Id: <20181108215139.102085686@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -66,175 +64,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Phil Auld <pauld@redhat.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
-commit baa9be4ffb55876923dc9716abc0a448e510ba30 upstream.
+commit b59167ac7bafd804c91e49ad53c6d33a7394d4c8 upstream.
 
-With a very low cpu.cfs_quota_us setting, such as the minimum of 1000,
-distribute_cfs_runtime may not empty the throttled_list before it runs
-out of runtime to distribute. In that case, due to the change from
-c06f04c7048 to put throttled entries at the head of the list, later entries
-on the list will starve.  Essentially, the same X processes will get pulled
-off the list, given CPU time and then, when expired, get put back on the
-head of the list where distribute_cfs_runtime will give runtime to the same
-set of processes leaving the rest.
+Eric reported that a sequence count loop using this_cpu_read() got
+optimized out. This is wrong, this_cpu_read() must imply READ_ONCE()
+because the interface is IRQ-safe, therefore an interrupt can have
+changed the per-cpu value.
 
-Fix the issue by setting a bit in struct cfs_bandwidth when
-distribute_cfs_runtime is running, so that the code in throttle_cfs_rq can
-decide to put the throttled entry on the tail or the head of the list.  The
-bit is set/cleared by the callers of distribute_cfs_runtime while they hold
-cfs_bandwidth->lock.
-
-This is easy to reproduce with a handful of CPU consumers. I use 'crash' on
-the live system. In some cases you can simply look at the throttled list and
-see the later entries are not changing:
-
-  crash> list cfs_rq.throttled_list -H 0xffff90b54f6ade40 -s cfs_rq.runtime_remaining | paste - - | awk '{print $1"  "$4}' | pr -t -n3
-    1     ffff90b56cb2d200  -976050
-    2     ffff90b56cb2cc00  -484925
-    3     ffff90b56cb2bc00  -658814
-    4     ffff90b56cb2ba00  -275365
-    5     ffff90b166a45600  -135138
-    6     ffff90b56cb2da00  -282505
-    7     ffff90b56cb2e000  -148065
-    8     ffff90b56cb2fa00  -872591
-    9     ffff90b56cb2c000  -84687
-   10     ffff90b56cb2f000  -87237
-   11     ffff90b166a40a00  -164582
-
-  crash> list cfs_rq.throttled_list -H 0xffff90b54f6ade40 -s cfs_rq.runtime_remaining | paste - - | awk '{print $1"  "$4}' | pr -t -n3
-    1     ffff90b56cb2d200  -994147
-    2     ffff90b56cb2cc00  -306051
-    3     ffff90b56cb2bc00  -961321
-    4     ffff90b56cb2ba00  -24490
-    5     ffff90b166a45600  -135138
-    6     ffff90b56cb2da00  -282505
-    7     ffff90b56cb2e000  -148065
-    8     ffff90b56cb2fa00  -872591
-    9     ffff90b56cb2c000  -84687
-   10     ffff90b56cb2f000  -87237
-   11     ffff90b166a40a00  -164582
-
-Sometimes it is easier to see by finding a process getting starved and looking
-at the sched_info:
-
-  crash> task ffff8eb765994500 sched_info
-  PID: 7800   TASK: ffff8eb765994500  CPU: 16  COMMAND: "cputest"
-    sched_info = {
-      pcount = 8,
-      run_delay = 697094208,
-      last_arrival = 240260125039,
-      last_queued = 240260327513
-    },
-  crash> task ffff8eb765994500 sched_info
-  PID: 7800   TASK: ffff8eb765994500  CPU: 16  COMMAND: "cputest"
-    sched_info = {
-      pcount = 8,
-      run_delay = 697094208,
-      last_arrival = 240260125039,
-      last_queued = 240260327513
-    },
-
-Signed-off-by: Phil Auld <pauld@redhat.com>
-Reviewed-by: Ben Segall <bsegall@google.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: 7c3576d261ce ("[PATCH] i386: Convert PDA into the percpu section")
+Reported-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Eric Dumazet <edumazet@google.com>
+Cc: hpa@zytor.com
+Cc: eric.dumazet@gmail.com
+Cc: bp@alien8.de
 Cc: stable@vger.kernel.org
-Fixes: c06f04c70489 ("sched: Fix potential near-infinite distribute_cfs_runtime() loop")
-Link: http://lkml.kernel.org/r/20181008143639.GA4019@pauld.bos.csb
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://lkml.kernel.org/r/20181011104019.748208519@infradead.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/sched/fair.c  |   22 +++++++++++++++++++---
- kernel/sched/sched.h |    2 ++
- 2 files changed, 21 insertions(+), 3 deletions(-)
+ arch/x86/include/asm/percpu.h |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -3976,9 +3976,13 @@ static void throttle_cfs_rq(struct cfs_r
- 
- 	/*
- 	 * Add to the _head_ of the list, so that an already-started
--	 * distribute_cfs_runtime will not see us
-+	 * distribute_cfs_runtime will not see us. If disribute_cfs_runtime is
-+	 * not running add to the tail so that later runqueues don't get starved.
- 	 */
--	list_add_rcu(&cfs_rq->throttled_list, &cfs_b->throttled_cfs_rq);
-+	if (cfs_b->distribute_running)
-+		list_add_rcu(&cfs_rq->throttled_list, &cfs_b->throttled_cfs_rq);
-+	else
-+		list_add_tail_rcu(&cfs_rq->throttled_list, &cfs_b->throttled_cfs_rq);
- 
- 	/*
- 	 * If we're the first throttled task, make sure the bandwidth
-@@ -4121,14 +4125,16 @@ static int do_sched_cfs_period_timer(str
- 	 * in us over-using our runtime if it is all used during this loop, but
- 	 * only by limited amounts in that extreme case.
- 	 */
--	while (throttled && cfs_b->runtime > 0) {
-+	while (throttled && cfs_b->runtime > 0 && !cfs_b->distribute_running) {
- 		runtime = cfs_b->runtime;
-+		cfs_b->distribute_running = 1;
- 		raw_spin_unlock(&cfs_b->lock);
- 		/* we can't nest cfs_b->lock while distributing bandwidth */
- 		runtime = distribute_cfs_runtime(cfs_b, runtime,
- 						 runtime_expires);
- 		raw_spin_lock(&cfs_b->lock);
- 
-+		cfs_b->distribute_running = 0;
- 		throttled = !list_empty(&cfs_b->throttled_cfs_rq);
- 
- 		cfs_b->runtime -= min(runtime, cfs_b->runtime);
-@@ -4239,6 +4245,11 @@ static void do_sched_cfs_slack_timer(str
- 
- 	/* confirm we're still not at a refresh boundary */
- 	raw_spin_lock(&cfs_b->lock);
-+	if (cfs_b->distribute_running) {
-+		raw_spin_unlock(&cfs_b->lock);
-+		return;
-+	}
-+
- 	if (runtime_refresh_within(cfs_b, min_bandwidth_expiration)) {
- 		raw_spin_unlock(&cfs_b->lock);
- 		return;
-@@ -4248,6 +4259,9 @@ static void do_sched_cfs_slack_timer(str
- 		runtime = cfs_b->runtime;
- 
- 	expires = cfs_b->runtime_expires;
-+	if (runtime)
-+		cfs_b->distribute_running = 1;
-+
- 	raw_spin_unlock(&cfs_b->lock);
- 
- 	if (!runtime)
-@@ -4258,6 +4272,7 @@ static void do_sched_cfs_slack_timer(str
- 	raw_spin_lock(&cfs_b->lock);
- 	if (expires == cfs_b->runtime_expires)
- 		cfs_b->runtime -= min(runtime, cfs_b->runtime);
-+	cfs_b->distribute_running = 0;
- 	raw_spin_unlock(&cfs_b->lock);
- }
- 
-@@ -4366,6 +4381,7 @@ void init_cfs_bandwidth(struct cfs_bandw
- 	cfs_b->period_timer.function = sched_cfs_period_timer;
- 	hrtimer_init(&cfs_b->slack_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
- 	cfs_b->slack_timer.function = sched_cfs_slack_timer;
-+	cfs_b->distribute_running = 0;
- }
- 
- static void init_cfs_rq_runtime(struct cfs_rq *cfs_rq)
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -255,6 +255,8 @@ struct cfs_bandwidth {
- 	/* statistics */
- 	int nr_periods, nr_throttled;
- 	u64 throttled_time;
-+
-+	bool distribute_running;
- #endif
- };
- 
+--- a/arch/x86/include/asm/percpu.h
++++ b/arch/x86/include/asm/percpu.h
+@@ -184,22 +184,22 @@ do {									\
+ 	typeof(var) pfo_ret__;				\
+ 	switch (sizeof(var)) {				\
+ 	case 1:						\
+-		asm(op "b "__percpu_arg(1)",%0"		\
++		asm volatile(op "b "__percpu_arg(1)",%0"\
+ 		    : "=q" (pfo_ret__)			\
+ 		    : "m" (var));			\
+ 		break;					\
+ 	case 2:						\
+-		asm(op "w "__percpu_arg(1)",%0"		\
++		asm volatile(op "w "__percpu_arg(1)",%0"\
+ 		    : "=r" (pfo_ret__)			\
+ 		    : "m" (var));			\
+ 		break;					\
+ 	case 4:						\
+-		asm(op "l "__percpu_arg(1)",%0"		\
++		asm volatile(op "l "__percpu_arg(1)",%0"\
+ 		    : "=r" (pfo_ret__)			\
+ 		    : "m" (var));			\
+ 		break;					\
+ 	case 8:						\
+-		asm(op "q "__percpu_arg(1)",%0"		\
++		asm volatile(op "q "__percpu_arg(1)",%0"\
+ 		    : "=r" (pfo_ret__)			\
+ 		    : "m" (var));			\
+ 		break;					\
 
 
