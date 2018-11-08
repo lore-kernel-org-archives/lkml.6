@@ -2,122 +2,108 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57235ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:11:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6024ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:12:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 271A120825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:11:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 271A120825
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 85E9A20825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:12:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85E9A20825
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727115AbeKIArA (ORCPT
+        id S1727285AbeKIAsG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 19:47:00 -0500
-Received: from mail-io1-f70.google.com ([209.85.166.70]:42330 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726421AbeKIArA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 19:47:00 -0500
-Received: by mail-io1-f70.google.com with SMTP id q22-v6so23590610iog.9
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 07:11:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=GgEHNiSQq/HFaVjMagNnXCetd1D4OcEPlMoCZBN4kOM=;
-        b=I2wrpIrVAg8+j/MclldCB7kXqkLX7bRxlrMI+qYMMYzbXzzQTJFWrLC/QhhZsVUYHG
-         48LYj3PiDlBKmW6sfdFWKSB9XWjkyq8fIkKR3PjnDi8nBPxlL/NBkt4zQHkGLH9Euxqo
-         SSA3GwXQK6jo6ZxPA0F/2ynsNaG593utuKQx/TkGE3erSMp5t1MX28B2l8sFEYkS4End
-         lczNkRVVm1LDcs0jhhxdCKTPN3tA7tGjqR8PEhBWxzg+XrDFVnEBXmXc/ZB4aShXjVhE
-         yDZdUDbRcQ4UxsUEmCZQi12E8ir0tNyRuESLXNXAnYwS+K2WkDre0YwhFor1vUIamRMs
-         vqbQ==
-X-Gm-Message-State: AGRZ1gJBE1mW6bduI6eFpCtSsm3ma/UP3oURB7t/CETSEMul8bNmEsoO
-        wEQkBj5VKkvjS9F9hxySB/Fg1s7K3xQcEyW2diWC4PIcRJ2H
-X-Google-Smtp-Source: AJdET5cxujVorq4EhhsaeZyj7KfWCZNS8AmCwm3K97OSFlrQJCF+AS6h4LnCgI3tFUNjrwhMxr0Ds6cu1tBEIb9ytV8MocMwxS19
+        Thu, 8 Nov 2018 19:48:06 -0500
+Received: from mga04.intel.com ([192.55.52.120]:13191 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726421AbeKIAsG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 19:48:06 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 07:12:09 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,480,1534834800"; 
+   d="scan'208";a="278183129"
+Received: from ibanaga-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.75])
+  by fmsmga005.fm.intel.com with ESMTP; 08 Nov 2018 07:11:58 -0800
+Date:   Thu, 8 Nov 2018 17:11:56 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Rich Felker <dalias@libc.org>, Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Jann Horn <jannh@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
+        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Carlos O'Donell <carlos@redhat.com>,
+        adhemerval.zanella@linaro.org
+Subject: Re: RFC: userspace exception fixups
+Message-ID: <20181108151156.GC14072@linux.intel.com>
+References: <1541518670.7839.31.camel@intel.com>
+ <AF4A5C77-0A79-403F-A205-0F93B7CD6E26@amacapital.net>
+ <1541524750.7839.51.camel@intel.com>
+ <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
+ <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com>
+ <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
+ <20181106231730.GR5150@brightrain.aerifal.cx>
+ <20181106232616.GA11101@linux.intel.com>
+ <20181107212758.GU5150@brightrain.aerifal.cx>
+ <20181107214058.GG27170@linux.intel.com>
 MIME-Version: 1.0
-X-Received: by 2002:a24:bdc7:: with SMTP id x190-v6mr1222726ite.21.1541689863377;
- Thu, 08 Nov 2018 07:11:03 -0800 (PST)
-Date:   Thu, 08 Nov 2018 07:11:03 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a91c14057a28a4ae@google.com>
-Subject: KASAN: global-out-of-bounds Read in tpg_print_str_4
-From:   syzbot <syzbot+ccf0a61ed12f2a7313ee@syzkaller.appspotmail.com>
-To:     bwinther@cisco.com, hverkuil@xs4all.nl, keescook@chromium.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        mchehab@kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181107214058.GG27170@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Wed, Nov 07, 2018 at 01:40:59PM -0800, Sean Christopherson wrote:
+> > In that case it seems like the only way to use SGX that's not a gaping
+> > security hole is to run the SGX enclave in its own fully-seccomp (or
+> > equivalent) process, with no host application in the same address
+> > space. Since the host application can't see the contents of the
+> > enclave to make any determination of whether it's safe to run, running
+> > it in the same address space only makes sense if the cpu provides
+> > protection against unwanted accesses to the host's memory from the
+> > enclave -- and according to you, it doesn't.
+> 
+> The enclave's code (and any initial data) isn't encrypted until the
+> pages are loaded into the Enclave Page Cache (EPC), which can only
+> be done by the kernel (via ENCLS[EADD]).  In other words, both the
+> kernel and userspace can vet the code/data before running an enclave.
+> 
+> Practically speaking, an enclave will be coupled with an untrusted
+> userspace runtime, i.e. it's loader.  Enclaves are also measured
+> as part of their build process, and so the enclave loader needs to
+> know which pages to add to the measurement, and in what order.  I
+> guess technically speaking an enclave could have zero pages added
+> to its measurement, but that'd probably be a big red flag that said
+> enclave is up to something fishy.
 
-syzbot found the following crash on:
+IMHO the whole idea adds too much policy into kernel even if it would
+be doable. You can easily spawn untrusted run-time and enclave to its
+own process.
 
-HEAD commit:    85758777c2a2 Merge tag 'hwmon-for-v4.20-rc2' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=157af45d400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8f559fee2fc3375a
-dashboard link: https://syzkaller.appspot.com/bug?extid=ccf0a61ed12f2a7313ee
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-userspace arch: i386
+Seccomp limits the syscall space and enclaves cannot do syscalls in the
+first place. It is the URT that will do them behalf of the enclave.
 
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+ccf0a61ed12f2a7313ee@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: global-out-of-bounds in tpg_print_str_4+0xbc9/0xd70  
-drivers/media/common/v4l2-tpg/v4l2-tpg-core.c:1820
-Read of size 1 at addr ffffffff88631c50 by task vivid-000-vid-c/7282
-
-CPU: 0 PID: 7282 Comm: vivid-000-vid-c Not tainted 4.20.0-rc1+ #228
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  print_address_description.cold.7+0x58/0x1ff mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
-  __asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:430
-  tpg_print_str_4+0xbc9/0xd70  
-drivers/media/common/v4l2-tpg/v4l2-tpg-core.c:1820
-  tpg_gen_text+0x4ba/0x540 drivers/media/common/v4l2-tpg/v4l2-tpg-core.c:1874
-  vivid_fillbuff+0x3ff7/0x68e0  
-drivers/media/platform/vivid/vivid-kthread-cap.c:532
-  vivid_thread_vid_cap_tick  
-drivers/media/platform/vivid/vivid-kthread-cap.c:709 [inline]
-  vivid_thread_vid_cap+0xbc1/0x2650  
-drivers/media/platform/vivid/vivid-kthread-cap.c:813
-  kthread+0x35a/0x440 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-
-The buggy address belongs to the variable:
-  font_vga_8x16+0x50/0x60
-
-Memory state around the buggy address:
-  ffffffff88631b00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  ffffffff88631b80: 00 00 00 00 fa fa fa fa 00 fa fa fa fa fa fa fa
-> ffffffff88631c00: 00 00 00 00 00 fa fa fa fa fa fa fa 00 00 00 00
-                                                  ^
-  ffffffff88631c80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  ffffffff88631d00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+/Jarkko
