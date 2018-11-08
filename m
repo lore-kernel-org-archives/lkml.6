@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FF36ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:52:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 592C2ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:52:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D03F020827
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:52:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24CEA20817
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 17:52:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tEBZdGtg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D03F020827
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="y/jirScV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24CEA20817
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727517AbeKID2n (ORCPT
+        id S1727543AbeKID2r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 22:28:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40522 "EHLO mail.kernel.org"
+        Thu, 8 Nov 2018 22:28:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40584 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726672AbeKID2m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 22:28:42 -0500
+        id S1727518AbeKID2q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 22:28:46 -0500
 Received: from localhost.localdomain (unknown [171.76.98.79])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 549BB20840;
-        Thu,  8 Nov 2018 17:52:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C32220817;
+        Thu,  8 Nov 2018 17:52:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541699526;
-        bh=zZpXSbmNbp/b/hkBQO15rUMRnsw6ga9X7VfhMkxt3Y8=;
+        s=default; t=1541699530;
+        bh=AMfSvoBq+hhcOypFEn6oS0EAtCmrf1UhvhdQ/m6VLyA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tEBZdGtga7mil3B0DoRbPvjTEf6aBS2krx6YYgiPsIrP/yhBItpEJYCfxmGXgdNrL
-         il+f91CqnaDpcMWKinkPlrCUCdaUjER8zNUlXJpxDmginy/7TzKtOmY7z0Czq39Xzx
-         hv16rQESgl6RO8sqGkv/x3bOXqo68jJeyNXKLkMQ=
+        b=y/jirScVWwCpOSTy4H1MfshIzkqAbvir/kqTSQ5KARcRyfwqiwnbVHyuTrugW5zWO
+         9/1nP/x4wLPTcGT8qLbofwOx/0vl7WxxDnspXK509QN2ApUH8BhmALl4Y8vOA8MyqN
+         ZrwGi64Nhjp8j6HAUPzq4jaZLuoWFg4icVFGJr6w=
 From:   Vinod Koul <vkoul@kernel.org>
 To:     Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>
@@ -44,10 +44,11 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH v3 06/18] arm64: dts: qcom: qcs404: add smp2p nodes
-Date:   Thu,  8 Nov 2018 23:20:37 +0530
-Message-Id: <20181108175049.7090-7-vkoul@kernel.org>
+Subject: [PATCH v3 07/18] arm64: dts: qcom: qcs404: Add TLMM pinctrl node
+Date:   Thu,  8 Nov 2018 23:20:38 +0530
+Message-Id: <20181108175049.7090-8-vkoul@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181108175049.7090-1-vkoul@kernel.org>
 References: <20181108175049.7090-1-vkoul@kernel.org>
@@ -56,83 +57,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the smp2p-adsp, smp2p-cdsp and smp2p-wcss nodes found in QCS404.
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Add the QCS404 TLMM pinctrl node with its three tiles.
+
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Vinod Koul <vkoul@kernel.org>
 ---
- arch/arm64/boot/dts/qcom/qcs404.dtsi | 60 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
+ arch/arm64/boot/dts/qcom/qcs404.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-index e21b4a549e75..cc4dd3186ae9 100644
+index cc4dd3186ae9..3b6e659e3d1f 100644
 --- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
 +++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-@@ -257,4 +257,64 @@
- 			     <GIC_PPI 4 0xff08>,
- 			     <GIC_PPI 1 0xff08>;
- 	};
-+
-+	smp2p-adsp {
-+		compatible = "qcom,smp2p";
-+		qcom,smem = <443>, <429>;
-+		interrupts = <GIC_SPI 291 IRQ_TYPE_EDGE_RISING>;
-+		mboxes = <&apcs_glb 10>;
-+		qcom,local-pid = <0>;
-+		qcom,remote-pid = <2>;
-+
-+		adsp_smp2p_out: master-kernel {
-+			qcom,entry-name = "master-kernel";
-+			#qcom,smem-state-cells = <1>;
-+		};
-+
-+		adsp_smp2p_in: slave-kernel {
-+			qcom,entry-name = "slave-kernel";
+@@ -153,6 +153,20 @@
+ 			reg = <0x00060000 0x6000>;
+ 		};
+ 
++		tlmm: pinctrl@1000000 {
++			compatible = "qcom,qcs404-pinctrl";
++			reg = <0x01000000 0x200000>,
++			      <0x01300000 0x200000>,
++			      <0x07b00000 0x200000>;
++			reg-names = "south", "north", "east";
++			interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
++			gpio-ranges = <&tlmm 0 0 120>;
++			gpio-controller;
++			#gpio-cells = <2>;
 +			interrupt-controller;
 +			#interrupt-cells = <2>;
 +		};
-+	};
 +
-+	smp2p-cdsp {
-+		compatible = "qcom,smp2p";
-+		qcom,smem = <94>, <432>;
-+		interrupts = <GIC_SPI 143 IRQ_TYPE_EDGE_RISING>;
-+		mboxes = <&apcs_glb 14>;
-+		qcom,local-pid = <0>;
-+		qcom,remote-pid = <5>;
-+
-+		cdsp_smp2p_out: master-kernel {
-+			qcom,entry-name = "master-kernel";
-+			#qcom,smem-state-cells = <1>;
-+		};
-+
-+		cdsp_smp2p_in: slave-kernel {
-+			qcom,entry-name = "slave-kernel";
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+	};
-+
-+	smp2p-wcss {
-+		compatible = "qcom,smp2p";
-+		qcom,smem = <435>, <428>;
-+		interrupts = <GIC_SPI 158 IRQ_TYPE_EDGE_RISING>;
-+		mboxes = <&apcs_glb 18>;
-+		qcom,local-pid = <0>;
-+		qcom,remote-pid = <1>;
-+
-+		wcss_smp2p_out: master-kernel {
-+			qcom,entry-name = "master-kernel";
-+			#qcom,smem-state-cells = <1>;
-+		};
-+
-+		wcss_smp2p_in: slave-kernel {
-+			qcom,entry-name = "slave-kernel";
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+	};
- };
+ 		gcc: clock-controller@1800000 {
+ 			compatible = "qcom,gcc-qcs404";
+ 			reg = <0x01800000 0x80000>;
 -- 
 2.14.4
 
