@@ -2,147 +2,98 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99058C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 02:19:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4DEAC0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 02:20:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 343DF20837
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 02:19:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 343DF20837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id 87ED620837
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 02:20:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HfL3UTNO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87ED620837
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728627AbeKHLwr (ORCPT
+        id S1728640AbeKHLyD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 06:52:47 -0500
-Received: from gate.crashing.org ([63.228.1.57]:59003 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726684AbeKHLwr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 06:52:47 -0500
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id wA82JH75005044;
-        Wed, 7 Nov 2018 20:19:18 -0600
-Message-ID: <3454d08ef5a656288c57624a68ba448cd3b468bd.camel@kernel.crashing.org>
-Subject: Re: radeon vs radeonfb Mobility quirks (Thinkpad X32)
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Eric Wong <e@80x24.org>
-Cc:     David Airlie <airlied@linux.ie>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>
-Date:   Thu, 08 Nov 2018 13:19:17 +1100
-In-Reply-To: <20181108000335.a7usqftcmxvu7ywk@untitled>
-References: <20181104042328.jzavn47y2wloprbs@untitled>
-         <365d8b24f1c6a28c32998924a95b6a2a74655526.camel@kernel.crashing.org>
-         <20181108000335.a7usqftcmxvu7ywk@untitled>
+        Thu, 8 Nov 2018 06:54:03 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:45620 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726684AbeKHLyD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 06:54:03 -0500
+Received: by mail-ot1-f67.google.com with SMTP id g10so16768449otl.12;
+        Wed, 07 Nov 2018 18:20:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DfulK6y0TmSOofhkgrb/ZQyeyjv5YvqQ4s/da2+6Jls=;
+        b=HfL3UTNOcFZL3tvKxV6ljtRlsaJ50xuSMzDkuvqedresIaaWzbHyvmHqBbaLb3imlr
+         nmmwj4mvHOjHTfJOsJX6VjxpPXMsInk1eQr9JXGgPGG+HNELGRXs2QmoTmDC/u65LZza
+         i/Nn3maBGMZJ6tF25k7V3gtxCA/uReW8jlcvcH+PiaLih1Lef9prEfWICiPqil30fD8M
+         WIR4d08speweAI+kDVHxF3RWeKNXmFFq/x09ttTaueCd3PKzvm5VsRA5SkmNrCcKeRwy
+         UDpuCTAzohQbn2Hf7teOI2eCHxHQnZi1RnMO4UFSDQWQTZ7TqJhRwOIJPMUCprCUfbEJ
+         NJnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DfulK6y0TmSOofhkgrb/ZQyeyjv5YvqQ4s/da2+6Jls=;
+        b=tuxfw9b+0SI/0+r/ovJLh69bMa2hqFGg/Q/bIF67rsgsTaawgFIrjL5NOLAoRF++R0
+         tTeRQMx6otbgS/Wu2b66qmTs6p53NJBxjXmiAfGusxi1jtM8W57hT0CNtmDqWkIJBTBB
+         y21gPuRHNjbK6nNYb31jpAsPqFcpWL14+CQykDD2/bgsya6z0jSTz1yOKqwLm0rvIC+C
+         D09I1vj282FyUNlYP1aiHov/ezPz1CAzx9kYOdVpL6rSsuMCd8aCZH/sLuBZxvrwSrFE
+         xRcuYtGOwuMc0SuV2dMgQ3N52mA5sBMUMD1ICyE/0vrBRayHJj9Y2KQFrGY+3zsYlINI
+         SXpw==
+X-Gm-Message-State: AGRZ1gJcjWLlQ78bZMCAiEA4bgdX5Se1fY6RT0dH2YJx1dY+Sb4k980f
+        sAy4XE2LsOfAPAkeoIHz++GoivHDPPZANi+c1xQ=
+X-Google-Smtp-Source: AJdET5eGw+q6Wq7K1YuB6VMmgzNB3DMbE8Pp1jd9mVeZGzgR1zBKiOxs9Azw/GKDyvbwV1Gr2mzvHwLkZX5fuFEX1AY=
+X-Received: by 2002:a9d:437d:: with SMTP id y58mr1621407oti.287.1541643652985;
+ Wed, 07 Nov 2018 18:20:52 -0800 (PST)
+MIME-Version: 1.0
+References: <1541567625-11812-1-git-send-email-Anson.Huang@nxp.com>
+ <CAOMZO5AL03yy6Vj_eC=h7scSDnuja1G8rsWER+r7w3FEVaceDg@mail.gmail.com> <DB3PR0402MB3916B318947B803BC5ADF4A6F5C50@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+In-Reply-To: <DB3PR0402MB3916B318947B803BC5ADF4A6F5C50@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Thu, 8 Nov 2018 00:20:45 -0200
+Message-ID: <CAOMZO5DiTbEsVXTCfE8fJ=4+yU4oXR1gex7Bj-k=FowKHWJaxw@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: imx7d-sdb: add rev-a board support
+To:     Yongcai Huang <anson.huang@nxp.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        NXP Linux Team <linux-imx@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.1 (3.30.1-1.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-11-08 at 00:03 +0000, Eric Wong wrote:
-> Benjamin Herrenschmidt <benh@kernel.crashing.org> wrote:
-> > There's a whole pile of power management stuff for ancient laptops that
-> > never quite made it from radeonfb to the radeon DRM driver... sadly it
-> > also prevents sleep on old PowerBooks but I haven't had many complaints
-> > so...
-> 
-> Thanks for the confirmation that stuff is missing from the DRM driver.
-> 
-> > The code for D2 and D3 on those old things is reasonably self
-> > contained, it shouldn't be that hard to move it over I suppose.
-> 
-> I started working on the following (dirty) patch for my X32,
-> but hasn't made a difference with just PCI_D2:
+Hi Anson,
 
-Yes, as you noticed below, you need the rest of the stuff. If you stick
-to D2 and avoid the Mac "D3 cold" stuff, it's easier. You also need to
-look at some of the dynamic clock stuff.
+On Wed, Nov 7, 2018 at 11:24 PM Anson Huang <anson.huang@nxp.com> wrote:
 
-Cheers,
-Ben.
+> Regarding the fec2 settings in imx7d-sdb.dts, originally it uses Rev-A board (but some nodes are
+> using Rev-B board), in this patch, I clean up all the settings in imx7d-sdb.dts using Rev-B board,
+> so below is added to imx7d-sdb.dts for Rev-B board, and in imx7d-sdb-reva.dts I have to
+> delete it, since Rev-A board has no this pin.
+>
+> -       pinctrl-0 = <&pinctrl_enet2>;
+> +       pinctrl-0 = <&pinctrl_enet2 &pinctrl_enet2_epdc0_en>;
+> +       pinctrl-assert-gpios = <&gpio1 4 GPIO_ACTIVE_LOW>;
 
-> diff --git a/drivers/gpu/drm/radeon/radeon_device.c b/drivers/gpu/drm/radeon/radeon_device.c
-> index 59c8a6647ff2..acc587b18ad2 100644
-> --- a/drivers/gpu/drm/radeon/radeon_device.c
-> +++ b/drivers/gpu/drm/radeon/radeon_device.c
-> @@ -1548,6 +1548,23 @@ void radeon_device_fini(struct radeon_device *rdev)
->  		radeon_doorbell_fini(rdev);
->  }
->  
-> +/* XXX copy of radeonfb_whack_power_state */
-> +static void radeon_whack_power_state(struct pci_dev *pdev, pci_power_t state)
-> +{
-> +	u16 pwr_cmd;
-> +
-> +	for (;;) {
-> +		pci_read_config_word(pdev, pdev->pm_cap + PCI_PM_CTRL,
-> +				     &pwr_cmd);
-> +		if (pwr_cmd & state)
-> +			break;
-> +		pwr_cmd = (pwr_cmd & ~PCI_PM_CTRL_STATE_MASK) | state;
-> +		pci_write_config_word(pdev, pdev->pm_cap + PCI_PM_CTRL,
-> +				      pwr_cmd);
-> +		msleep(500);
-> +	}
-> +	pdev->current_state = state;
-> +}
->  
->  /*
->   * Suspend & resume.
-> @@ -1596,6 +1613,7 @@ int radeon_suspend_kms(struct drm_device *dev, bool suspend,
->  
->  		if (radeon_crtc->cursor_bo) {
->  			struct radeon_bo *robj = gem_to_radeon_bo(radeon_crtc->cursor_bo);
-> +
->  			r = radeon_bo_reserve(robj, false);
->  			if (r == 0) {
->  				radeon_bo_unpin(robj);
-> @@ -1647,7 +1665,13 @@ int radeon_suspend_kms(struct drm_device *dev, bool suspend,
->  	} else if (suspend) {
->  		/* Shut down the device */
->  		pci_disable_device(dev->pdev);
-> -		pci_set_power_state(dev->pdev, PCI_D3hot);
-> +
-> +		if ("X32") {
-> +			radeon_whack_power_state(dev->pdev, PCI_D2);
-> +			__pci_complete_power_transition(dev->pdev, PCI_D2);
-> +		} else {
-> +			pci_set_power_state(dev->pdev, PCI_D3hot);
-> +		}
->  	}
->  
->  	if (fbcon) {
-> 
-> 
-> I suppose some of the mobility stuff from
-> drivers/video/fbdev/aty/radeon_pm.c is necessary, but I haven't
-> figured it out for the DRM driver.  Not sure when/if I'll have
-> time to figure it out, or if I'll stick to the radeonfb driver
-> for now.
-> 
-> 		/* Prepare mobility chips for suspend.
-> 		 */
-> 		if (rinfo->is_mobility) {
-> 			/* Program V2CLK */
-> 			radeon_pm_program_v2clk(rinfo);
-> 		
-> 			/* Disable IO PADs */
-> 			radeon_pm_disable_iopad(rinfo);
-> 
-> 			/* Set low current */
-> 			radeon_pm_low_current(rinfo);
-> 
-> 			/* Prepare chip for power management */
-> 			radeon_pm_setup_for_suspend(rinfo);
-
+"pinctrl-assert-gpios" only exists in the NXP vendor kernel, so you
+cannot use such property in mainline.
