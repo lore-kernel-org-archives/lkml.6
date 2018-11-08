@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 325B9ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:54:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6EEAECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:54:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF2EA21019
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:54:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DF7520989
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:54:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oO/ilfQo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF2EA21019
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1SaictxJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DF7520989
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728245AbeKIHcE (ORCPT
+        id S1728289AbeKIHcG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:32:04 -0500
+        Fri, 9 Nov 2018 02:32:06 -0500
 Received: from mail.kernel.org ([198.145.29.99]:47002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728193AbeKIHcD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:32:03 -0500
+        id S1728193AbeKIHcF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:32:05 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B96C420892;
-        Thu,  8 Nov 2018 21:54:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 77257208E3;
+        Thu,  8 Nov 2018 21:54:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714076;
-        bh=HTvYbxqUPMrklAC+aPJ4RLP6kS884OPM1SYM5CVJqjI=;
+        s=default; t=1541714078;
+        bh=3WY2PTXAZjzv37tKtoFmpcMqKIEVZKxhtpVNyY7ubH0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oO/ilfQozN077xWVjjteRskADDAFgpO4YiAaamfKjoV70ALi8/iVMVB92BTJAXR7L
-         yVygExkLz184QgODnbOuvSU+9FuzKA6NVmNGG8WzLnQLeo+/dGg+N3vLGT4ljaIfH3
-         VZavRHETc64IRzrPTqGn5ndQmG12+QvpApkM5vfc=
+        b=1SaictxJ4iRLR7wT0zHwXrbthmQqWVcj1u+x39pIvvjYwAqnoKFEkL1WSQL0u9rI2
+         M7f9IMuXJX978JmMI5mBEPHsB9bk4nyd3vCp0Vcj5GU02e5YPiuXE3NdYtSvzCnW2Q
+         A8yh4RJ3o7qWjtpBRtstQGBhvyqDoI9p8FzgNbCg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
+        stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+        Jim Davis <jim.epost@gmail.com>,
+        Tony Lindgren <tony@atomide.com>, Felipe Balbi <balbi@ti.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 044/144] ARM: shmobile: r8a7740: Instantiate GIC from C board code in legacy builds
-Date:   Thu,  8 Nov 2018 13:50:15 -0800
-Message-Id: <20181108215058.047629028@linuxfoundation.org>
+Subject: [PATCH 3.18 047/144] usb: musb: Fix randconfig build issues for Kconfig options
+Date:   Thu,  8 Nov 2018 13:50:18 -0800
+Message-Id: <20181108215058.255896807@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215054.826084593@linuxfoundation.org>
 References: <20181108215054.826084593@linuxfoundation.org>
@@ -65,53 +64,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit d034f53cc6c5c09a4e10cb9716986f3844c58514 ]
+[ Upstream commit c0442479652b99b62dd1ffccb34231caff25751c ]
 
-As of commit 9a1091ef0017c40a ("irqchip: gic: Support hierarchy irq
-domain."), armadillo-legacy hangs during boot with:
+Commit 82c02f58ba3a ("usb: musb: Allow multiple glue layers to be
+built in") enabled selecting multiple glue layers, which in turn
+exposed things more for randconfig builds. If NOP_USB_XCEIV is
+built-in and TUSB6010 is a loadable module, we will get:
 
-     sh-tmu.0: ch0: used for clock events
-     sh-tmu.0: ch0: used for periodic clock events
-     sh-tmu.0: ch0: failed to request irq 230
-     sh-tmu.0: ch1: used as clock source
-     sh-cmt-48.1: ch0: failed to request irq 90
-     sh-cmt-48.1: ch0: registration failed
-    earlytimer: unable to probe sh-cmt-48 early.
-    Calibrating delay loop...
+drivers/built-in.o: In function `tusb_remove':
+tusb6010.c:(.text+0x16a817): undefined reference to `usb_phy_generic_unregister'
+drivers/built-in.o: In function `tusb_probe':
+tusb6010.c:(.text+0x16b24e): undefined reference to `usb_phy_generic_register'
+make: *** [vmlinux] Error 1
 
-This happens because the IRQ numbers of the GIC are now virtual, and no
-longer match the hardcoded hardware IRQ numbers in the platform board
-code.
-To fix this, instantiate the GIC from platform board code when compiling
-a legacy kernel, like is done on sh73a0 for kzm9g-legacy.
+Let's fix this the same way as commit 70c1ff4b3c86 ("usb: musb:
+tusb-dma can't be built-in if tusb is not").
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+And while at it, let's not allow selecting the glue layers except
+on platforms really using them unless COMPILE_TEST is specified:
+
+- TUSB6010 is in practise only used on omaps
+
+- DSPS is only used on TI platforms
+
+- UX500 is only used on STE platforms
+
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Reported-by: Jim Davis <jim.epost@gmail.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Felipe Balbi <balbi@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-shmobile/setup-r8a7740.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/usb/musb/Kconfig | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm/mach-shmobile/setup-r8a7740.c b/arch/arm/mach-shmobile/setup-r8a7740.c
-index 8894e1b7ab0e..6ccdc4574c89 100644
---- a/arch/arm/mach-shmobile/setup-r8a7740.c
-+++ b/arch/arm/mach-shmobile/setup-r8a7740.c
-@@ -792,7 +792,14 @@ void __init r8a7740_init_irq_of(void)
- 	void __iomem *intc_msk_base = ioremap_nocache(0xe6900040, 0x10);
- 	void __iomem *pfc_inta_ctrl = ioremap_nocache(0xe605807c, 0x4);
+diff --git a/drivers/usb/musb/Kconfig b/drivers/usb/musb/Kconfig
+index dbc56eb5eee4..5ab24cd38f37 100644
+--- a/drivers/usb/musb/Kconfig
++++ b/drivers/usb/musb/Kconfig
+@@ -73,6 +73,8 @@ config USB_MUSB_DA8XX
  
-+#ifdef CONFIG_ARCH_SHMOBILE_LEGACY
-+	void __iomem *gic_dist_base = ioremap_nocache(0xc2800000, 0x1000);
-+	void __iomem *gic_cpu_base = ioremap_nocache(0xc2000000, 0x1000);
-+
-+	gic_init(0, 29, gic_dist_base, gic_cpu_base);
-+#else
- 	irqchip_init();
-+#endif
+ config USB_MUSB_TUSB6010
+ 	tristate "TUSB6010"
++	depends on ARCH_OMAP2PLUS || COMPILE_TEST
++	depends on NOP_USB_XCEIV = USB_MUSB_HDRC # both built-in or both modules
  
- 	/* route signals to GIC */
- 	iowrite32(0x0, pfc_inta_ctrl);
+ config USB_MUSB_OMAP2PLUS
+ 	tristate "OMAP2430 and onwards"
+@@ -86,6 +88,7 @@ config USB_MUSB_AM35X
+ config USB_MUSB_DSPS
+ 	tristate "TI DSPS platforms"
+ 	select USB_MUSB_AM335X_CHILD
++	depends on ARCH_OMAP2PLUS || COMPILE_TEST
+ 	depends on OF_IRQ
+ 
+ config USB_MUSB_BLACKFIN
+@@ -94,6 +97,7 @@ config USB_MUSB_BLACKFIN
+ 
+ config USB_MUSB_UX500
+ 	tristate "Ux500 platforms"
++	depends on ARCH_U8500 || COMPILE_TEST
+ 
+ config USB_MUSB_JZ4740
+ 	tristate "JZ4740"
 -- 
 2.17.1
 
