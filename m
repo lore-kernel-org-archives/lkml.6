@@ -2,231 +2,122 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30145ECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:11:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ED10ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:14:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1E822081C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:11:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GMfWyq+i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1E822081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id E44F820818
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:14:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E44F820818
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727265AbeKIGsa (ORCPT
+        id S1727045AbeKIGvV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 01:48:30 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:46566 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725922AbeKIGsa (ORCPT
+        Fri, 9 Nov 2018 01:51:21 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:57387 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726724AbeKIGvV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 01:48:30 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wA8LB66U078519;
-        Thu, 8 Nov 2018 15:11:06 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1541711466;
-        bh=TV7x3WCU22TIU4GajKiEiF9JKQgo58Q/s81rAT3Gfms=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=GMfWyq+iNnKa5wq2eOxxc2IeNZA1xNFWrNHm1En9TynJo5bl8EK8cadNvvTeC09vu
-         0wK95Z/iNfevaFbMnhulFtwO2yI9Oili/8JznDLQ7wjoNzBlYOLSN3zy/R5agAwyge
-         Aey+giXqiZKnCsfzp/hKkXKiRi+lnuB3N3ZyE4ss=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wA8LB6CB071854
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 8 Nov 2018 15:11:06 -0600
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 8 Nov
- 2018 15:11:06 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 8 Nov 2018 15:11:06 -0600
-Received: from [172.22.187.225] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wA8LB6k1006809;
-        Thu, 8 Nov 2018 15:11:06 -0600
-Subject: Re: [PATCH 12/24] leds: lm3692x: Use led_compose_name()
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        <linux-leds@vger.kernel.org>
-CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <pavel@ucw.cz>, <robh@kernel.org>
-References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
- <1541542052-10081-13-git-send-email-jacek.anaszewski@gmail.com>
- <d1267477-e000-f392-290f-2546f8ee379c@ti.com>
- <a58cdce3-3d15-0ab4-de98-01e526a142a1@gmail.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <8584e8a2-44df-33b1-4d9e-9fb3fb2cb98d@ti.com>
-Date:   Thu, 8 Nov 2018 15:11:05 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 9 Nov 2018 01:51:21 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gKrcm-0002Sz-KS; Thu, 08 Nov 2018 22:14:00 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gKrcl-0007bu-Pp; Thu, 08 Nov 2018 22:13:59 +0100
+Date:   Thu, 8 Nov 2018 22:13:59 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Bamvor Jian Zhang <bamv2005@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] gpio: mockup: add locking
+Message-ID: <20181108211359.44scwickq4pxsuqy@pengutronix.de>
+References: <20181108165255.9940-1-brgl@bgdev.pl>
+ <20181108165255.9940-3-brgl@bgdev.pl>
 MIME-Version: 1.0
-In-Reply-To: <a58cdce3-3d15-0ab4-de98-01e526a142a1@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181108165255.9940-3-brgl@bgdev.pl>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jacek
+On Thu, Nov 08, 2018 at 05:52:54PM +0100, Bartosz Golaszewski wrote:
+> While no user reported any race condition problems with gpio-mockup,
+> let's be on the safe side and use a mutex when performing any changes
+> on the dummy chip structures.
+> 
+> Suggested-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+> ---
+>  drivers/gpio/gpio-mockup.c | 50 ++++++++++++++++++++++++++++++++------
+>  1 file changed, 43 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-mockup.c b/drivers/gpio/gpio-mockup.c
+> index 6a50f9f59c90..3cd92912c414 100644
+> --- a/drivers/gpio/gpio-mockup.c
+> +++ b/drivers/gpio/gpio-mockup.c
+> @@ -54,6 +54,7 @@ struct gpio_mockup_chip {
+>  	struct gpio_mockup_line_status *lines;
+>  	struct irq_sim irqsim;
+>  	struct dentry *dbg_dir;
+> +	struct mutex lock;
+>  };
+>  
+>  struct gpio_mockup_dbgfs_private {
+> @@ -82,29 +83,53 @@ static int gpio_mockup_range_ngpio(unsigned int index)
+>  	return gpio_mockup_ranges[index * 2 + 1];
+>  }
+>  
+> -static int gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
+> +static int __gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
+>  {
+>  	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
+>  
+>  	return chip->lines[offset].value;
+>  }
+>  
+> -static void gpio_mockup_set(struct gpio_chip *gc,
+> -			    unsigned int offset, int value)
+> +static int gpio_mockup_get(struct gpio_chip *gc, unsigned int offset)
+> +{
+> +	struct gpio_mockup_chip *chip = gpiochip_get_data(gc);
+> +	int val;
+> +
+> +	mutex_lock(&chip->lock);
+> +	val = __gpio_mockup_get(gc, offset);
+> +	mutex_unlock(&chip->lock);
+> +
+> +	return val;
+> +}
 
-On 11/08/2018 02:48 PM, Jacek Anaszewski wrote:
-> Dan,
-> 
-> On 11/08/2018 07:14 PM, Dan Murphy wrote:
->> On 11/06/2018 04:07 PM, Jacek Anaszewski wrote:
->>> Switch to using generic LED support for composing LED class
->>> device name.
->>>
->>> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
->>> Cc: Dan Murphy <dmurphy@ti.com>
->>> ---
->>>  drivers/leds/leds-lm3692x.c | 39 ++++++++++++++++++++-------------------
->>>  1 file changed, 20 insertions(+), 19 deletions(-)
->>>
->>> diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
->>> index 4f413a7..9dfc0f2 100644
->>> --- a/drivers/leds/leds-lm3692x.c
->>> +++ b/drivers/leds/leds-lm3692x.c
->>> @@ -13,7 +13,6 @@
->>>  #include <linux/regmap.h>
->>>  #include <linux/regulator/consumer.h>
->>>  #include <linux/slab.h>
->>> -#include <uapi/linux/uleds.h>
->>>  
->>>  #define LM36922_MODEL	0
->>>  #define LM36923_MODEL	1
->>> @@ -95,6 +94,9 @@
->>>  #define LM3692X_FAULT_FLAG_SHRT BIT(3)
->>>  #define LM3692X_FAULT_FLAG_OPEN BIT(4)
->>>  
->>> +#define LM36922_NAME "lm36922"
->>> +#define LM36923_NAME "lm36923"
->>> +
->>>  /**
->>>   * struct lm3692x_led -
->>>   * @lock - Lock for reading/writing the device
->>> @@ -103,7 +105,6 @@
->>>   * @regmap - Devices register map
->>>   * @enable_gpio - VDDIO/EN gpio to enable communication interface
->>>   * @regulator - LED supply regulator pointer
->>> - * @label - LED label
->>>   * @led_enable - LED sync to be enabled
->>>   * @model_id - Current device model ID enumerated
->>>   */
->>> @@ -114,7 +115,6 @@ struct lm3692x_led {
->>>  	struct regmap *regmap;
->>>  	struct gpio_desc *enable_gpio;
->>>  	struct regulator *regulator;
->>> -	char label[LED_MAX_NAME_SIZE];
->>>  	int led_enable;
->>>  	int model_id;
->>>  };
->>> @@ -325,7 +325,8 @@ static int lm3692x_init(struct lm3692x_led *led)
->>>  static int lm3692x_probe_dt(struct lm3692x_led *led)
->>>  {
->>>  	struct fwnode_handle *child = NULL;
->>> -	const char *name;
->>> +	struct led_init_data init_data;
->>> +	char *model_name;
->>>  	int ret;
->>>  
->>>  	led->enable_gpio = devm_gpiod_get_optional(&led->client->dev,
->>> @@ -346,17 +347,20 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
->>>  		dev_err(&led->client->dev, "No LED Child node\n");
->>>  		return -ENODEV;
->>>  	}
->>> +	init_data.fwnode = child;
->>>  
->>> -	fwnode_property_read_string(child, "linux,default-trigger",
->>> -				    &led->led_dev.default_trigger);
->>> +	if (led->model_id == LM36922_MODEL)
->>> +		model_name =  LM36922_NAME;
->>> +	else
->>> +		model_name =  LM36923_NAME;
->>>  
->>> -	ret = fwnode_property_read_string(child, "label", &name);
->>> +	ret = led_compose_name(child, model_name, ":backlight_cluster",
->>> +			       init_data.name);
->>>  	if (ret)
->>> -		snprintf(led->label, sizeof(led->label),
->>> -			"%s::", led->client->name);
->>> -	else
->>> -		snprintf(led->label, sizeof(led->label),
->>> -			 "%s:%s", led->client->name, name);
->>> +		return ret;
->>> +
->>> +	fwnode_property_read_string(child, "linux,default-trigger",
->>> +				    &led->led_dev.default_trigger);
->>>  
->>>  	ret = fwnode_property_read_u32(child, "reg", &led->led_enable);
->>>  	if (ret) {
->>> @@ -364,16 +368,13 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
->>>  		return ret;
->>>  	}
->>>  
->>> -	led->led_dev.name = led->label;
->>> -
->>> -	ret = devm_led_classdev_register(&led->client->dev, &led->led_dev);
->>> +	ret = devm_led_classdev_register_ext(&led->client->dev, &led->led_dev,
->>> +					     &init_data);
->>>  	if (ret) {
->>>  		dev_err(&led->client->dev, "led register err: %d\n", ret);
->>>  		return ret;
->>>  	}
->>>  
->>> -	led->led_dev.dev->of_node = to_of_node(child);
->>> -
->>>  	return 0;
->>>  }
->>>  
->>> @@ -439,8 +440,8 @@ static int lm3692x_remove(struct i2c_client *client)
->>>  }
->>>  
->>>  static const struct i2c_device_id lm3692x_id[] = {
->>> -	{ "lm36922", LM36922_MODEL },
->>> -	{ "lm36923", LM36923_MODEL },
->>> +	{ LM36922_NAME, LM36922_MODEL },
->>> +	{ LM36923_NAME, LM36923_MODEL },
->>
->> How is this change relevant?
->> No mention in the comments about this change.
-> 
-> Unrelated. It is a remnant from the stage of development, where I had
-> an impression that i2c_client name is taken from this array
-> somehow. Only later I learned that it is taken from OF compatible
-> property after removing vendor prefix with comma.
-> 
-> Afterwards I decide to abide by this change since it seems to be
-> just an improvement - if I'm adding the string definition anyway,
-> then why not replace other matching literals?
-> 
-> I will add the explanation if the commit message if there are no
-> other objections.
+I think this function doesn't need locking. I returns a single value and
+if there is a race and some other process currently changes the value it
+matters little if the return value is zero or not.
 
-That works for me.  Just did not want the change to be "hidden" even without
-the intent of hiding it.
+But even with this kept unchanged the patch looks good.
 
-Dan
+Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-> 
->>>  	{ }
->>>  };
->>>  MODULE_DEVICE_TABLE(i2c, lm3692x_id);
->>>
->>
->>
-> 
+Thanks
+Uwe
 
 
 -- 
-------------------
-Dan Murphy
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
