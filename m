@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FF6AECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:09:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72E3BECDE4C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:09:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3870F2147D
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:09:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F29A214DA
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:09:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="e3+IQYfv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3870F2147D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wzvnRhcC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F29A214DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732812AbeKIHq7 (ORCPT
+        id S1732839AbeKIHrA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:46:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40768 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:47:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728473AbeKIHq7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730877AbeKIHq7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 9 Nov 2018 02:46:59 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 52F6D2089F;
+        by mail.kernel.org (Postfix) with ESMTPSA id DC52520989;
         Thu,  8 Nov 2018 22:09:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714967;
-        bh=PKlodnIPaHPk0d6mBDwlfs3skm+Bt7QCFvO8B2Aqvyo=;
+        s=default; t=1541714968;
+        bh=Iu0ByeQGvht0AYy34sDOMAB2WacFFW7Fgngv0uJBSZ0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e3+IQYfv3YJqEtzSilYp5PBvApaCS0NEeoybovoNn9m2fu/Qf5xW8oY1d+ebIVgzi
-         dIFl6GsBJ/Xsy6qf7Nobhz6LaMuSLNfqD8jDNmg0+xirSPVIXOvqrI+KW2iuq9dixp
-         K8a5TlHg4h560V2aVg+q1bpH7ePllTr3ixi1xzXs=
+        b=wzvnRhcCWplGbozI1GjsF5i4wcWBb2vWbWkxYtHwANkwIgqqelqT/Phoj4fZMMweW
+         SH1i63RFmUlYqNYgzPIo9DHA1srGkP4myID94R3Nlu9F3Q2KP76nN1fA2KE3p1cngd
+         YTnEqvmXph+wTHbnF10fWOf4WaxwJgqE94lRJg9k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         Doug Ledford <dledford@redhat.com>
-Subject: [PATCH 4.18 13/34] RDMA/ucma: Fix Spectre v1 vulnerability
-Date:   Thu,  8 Nov 2018 13:52:42 -0800
-Message-Id: <20181108215139.732097529@linuxfoundation.org>
+Subject: [PATCH 4.18 14/34] IB/ucm: Fix Spectre v1 vulnerability
+Date:   Thu,  8 Nov 2018 13:52:43 -0800
+Message-Id: <20181108215139.787148915@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215138.892971755@linuxfoundation.org>
 References: <20181108215138.892971755@linuxfoundation.org>
@@ -65,15 +65,15 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit a3671a4f973ee9d9621d60166cc3b037c397d604 upstream.
+commit 0295e39595e1146522f2722715dba7f7fba42217 upstream.
 
 hdr.cmd can be indirectly controlled by user-space, hence leading to
 a potential exploitation of the Spectre variant 1 vulnerability.
 
 This issue was detected with the help of Smatch:
 
-drivers/infiniband/core/ucma.c:1686 ucma_write() warn: potential
-spectre issue 'ucma_cmd_table' [r] (local cap)
+drivers/infiniband/core/ucm.c:1127 ib_ucm_write() warn: potential
+spectre issue 'ucm_cmd_table' [r] (local cap)
 
 Fix this by sanitizing hdr.cmd before using it to index
 ucm_cmd_table.
@@ -90,25 +90,25 @@ Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/core/ucma.c |    3 +++
+ drivers/infiniband/core/ucm.c |    3 +++
  1 file changed, 3 insertions(+)
 
---- a/drivers/infiniband/core/ucma.c
-+++ b/drivers/infiniband/core/ucma.c
-@@ -44,6 +44,8 @@
- #include <linux/module.h>
- #include <linux/nsproxy.h>
+--- a/drivers/infiniband/core/ucm.c
++++ b/drivers/infiniband/core/ucm.c
+@@ -46,6 +46,8 @@
+ #include <linux/mutex.h>
+ #include <linux/slab.h>
  
 +#include <linux/nospec.h>
 +
- #include <rdma/rdma_user_cm.h>
- #include <rdma/ib_marshall.h>
- #include <rdma/rdma_cm.h>
-@@ -1676,6 +1678,7 @@ static ssize_t ucma_write(struct file *f
+ #include <linux/uaccess.h>
  
- 	if (hdr.cmd >= ARRAY_SIZE(ucma_cmd_table))
+ #include <rdma/ib.h>
+@@ -1123,6 +1125,7 @@ static ssize_t ib_ucm_write(struct file
+ 
+ 	if (hdr.cmd >= ARRAY_SIZE(ucm_cmd_table))
  		return -EINVAL;
-+	hdr.cmd = array_index_nospec(hdr.cmd, ARRAY_SIZE(ucma_cmd_table));
++	hdr.cmd = array_index_nospec(hdr.cmd, ARRAY_SIZE(ucm_cmd_table));
  
  	if (hdr.in + sizeof(hdr) > len)
  		return -EINVAL;
