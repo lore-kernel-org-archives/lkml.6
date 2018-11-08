@@ -4,45 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08552C43441
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:17:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F483C43441
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:17:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC87420883
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:17:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44B0F20883
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:17:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zj/jYv4K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC87420883
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bteKs759"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44B0F20883
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732234AbeKIHol (ORCPT
+        id S1732221AbeKIHof (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:44:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37774 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:44:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37516 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730302AbeKIHok (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:44:40 -0500
+        id S1732181AbeKIHoe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:44:34 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4999420989;
-        Thu,  8 Nov 2018 22:07:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F18E21479;
+        Thu,  8 Nov 2018 22:07:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714829;
-        bh=vaY++PS1SOI3w0J/Jj9jFa1p9O0EGwRVnkHIFHqEjZs=;
+        s=default; t=1541714823;
+        bh=QLGcZ5zaX/wWLMm0p8VzMKwTxxl4oa7eb3kGxxPPC8s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zj/jYv4K+2oXWC1FatRjceZZ+gwgvure3y6Ub/V61+D3FUmR6BIKbczYbdAv4qBNx
-         tlMK1iq3VsToY1eiOFwAIar4CGB1I1SymIwI7wU66ywhznX24XT3pMZTfuUw0KAdou
-         LCTQSi0pMzwFm1OSW+8eE6th1bQRU50hlTByXOEg=
+        b=bteKs759RE6PefmVNcHQpCjywKywYaXK88Rp38l5AJqBUxaOBj1OcS+lUs1kIFlo7
+         rTd6YnLDH/Z8PVtZjGhC9P7gmfWeCsZYScR70KfrSW8nvHllPTq7qnHU3ylllnD1Bn
+         jZl2tGA4lck8MlpRHXj9pLOYJIuYYnSHXnp4ApGA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 153/171] Revert "x86/mm: Expand static page table for fixmap space"
-Date:   Thu,  8 Nov 2018 13:52:03 -0800
-Message-Id: <20181108215137.868071598@linuxfoundation.org>
+        stable@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>,
+        Vlad Yasevich <vyasevich@gmail.com>,
+        David Ahern <dsahern@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 151/171] rtnetlink: Disallow FDB configuration for non-Ethernet device
+Date:   Thu,  8 Nov 2018 13:52:01 -0800
+Message-Id: <20181108215137.761320858@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -60,145 +64,124 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-This reverts commit 3a8304b7ad2e291777e8499e39390145d932a2fd, which was
-upstream commit 05ab1d8a4b36ee912b7087c6da127439ed0a903e.
+From: Ido Schimmel <idosch@mellanox.com>
 
-Ben Hutchings writes:
+[ Upstream commit da71577545a52be3e0e9225a946e5fd79cfab015 ]
 
-This backport is incorrect.  The part that updated __startup_64() in
-arch/x86/kernel/head64.c was dropped, presumably because that function
-doesn't exist in 4.9.  However that seems to be an essential of the
-fix.  In 4.9 the startup_64 routine in arch/x86/kernel/head_64.S would
-need to be changed instead.
+When an FDB entry is configured, the address is validated to have the
+length of an Ethernet address, but the device for which the address is
+configured can be of any type.
 
-I also found that this introduces new boot-time warnings on some
-systems if CONFIG_DEBUG_WX is enabled.
+The above can result in the use of uninitialized memory when the address
+is later compared against existing addresses since 'dev->addr_len' is
+used and it may be greater than ETH_ALEN, as with ip6tnl devices.
 
-So, unless someone provides fixes for those issues, I think this should
-be reverted for the 4.9 branch.
+Fix this by making sure that FDB entries are only configured for
+Ethernet devices.
 
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+BUG: KMSAN: uninit-value in memcmp+0x11d/0x180 lib/string.c:863
+CPU: 1 PID: 4318 Comm: syz-executor998 Not tainted 4.19.0-rc3+ #49
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x14b/0x190 lib/dump_stack.c:113
+  kmsan_report+0x183/0x2b0 mm/kmsan/kmsan.c:956
+  __msan_warning+0x70/0xc0 mm/kmsan/kmsan_instr.c:645
+  memcmp+0x11d/0x180 lib/string.c:863
+  dev_uc_add_excl+0x165/0x7b0 net/core/dev_addr_lists.c:464
+  ndo_dflt_fdb_add net/core/rtnetlink.c:3463 [inline]
+  rtnl_fdb_add+0x1081/0x1270 net/core/rtnetlink.c:3558
+  rtnetlink_rcv_msg+0xa0b/0x1530 net/core/rtnetlink.c:4715
+  netlink_rcv_skb+0x36e/0x5f0 net/netlink/af_netlink.c:2454
+  rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4733
+  netlink_unicast_kernel net/netlink/af_netlink.c:1317 [inline]
+  netlink_unicast+0x1638/0x1720 net/netlink/af_netlink.c:1343
+  netlink_sendmsg+0x1205/0x1290 net/netlink/af_netlink.c:1908
+  sock_sendmsg_nosec net/socket.c:621 [inline]
+  sock_sendmsg net/socket.c:631 [inline]
+  ___sys_sendmsg+0xe70/0x1290 net/socket.c:2114
+  __sys_sendmsg net/socket.c:2152 [inline]
+  __do_sys_sendmsg net/socket.c:2161 [inline]
+  __se_sys_sendmsg+0x2a3/0x3d0 net/socket.c:2159
+  __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2159
+  do_syscall_64+0xb8/0x100 arch/x86/entry/common.c:291
+  entry_SYSCALL_64_after_hwframe+0x63/0xe7
+RIP: 0033:0x440ee9
+Code: e8 cc ab 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
+ff 0f 83 bb 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fff6a93b518 EFLAGS: 00000213 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000440ee9
+RDX: 0000000000000000 RSI: 0000000020000240 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 00000000004002c8 R09: 00000000004002c8
+R10: 00000000004002c8 R11: 0000000000000213 R12: 000000000000b4b0
+R13: 0000000000401ec0 R14: 0000000000000000 R15: 0000000000000000
+
+Uninit was created at:
+  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:256 [inline]
+  kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:181
+  kmsan_kmalloc+0x98/0x100 mm/kmsan/kmsan_hooks.c:91
+  kmsan_slab_alloc+0x10/0x20 mm/kmsan/kmsan_hooks.c:100
+  slab_post_alloc_hook mm/slab.h:446 [inline]
+  slab_alloc_node mm/slub.c:2718 [inline]
+  __kmalloc_node_track_caller+0x9e7/0x1160 mm/slub.c:4351
+  __kmalloc_reserve net/core/skbuff.c:138 [inline]
+  __alloc_skb+0x2f5/0x9e0 net/core/skbuff.c:206
+  alloc_skb include/linux/skbuff.h:996 [inline]
+  netlink_alloc_large_skb net/netlink/af_netlink.c:1189 [inline]
+  netlink_sendmsg+0xb49/0x1290 net/netlink/af_netlink.c:1883
+  sock_sendmsg_nosec net/socket.c:621 [inline]
+  sock_sendmsg net/socket.c:631 [inline]
+  ___sys_sendmsg+0xe70/0x1290 net/socket.c:2114
+  __sys_sendmsg net/socket.c:2152 [inline]
+  __do_sys_sendmsg net/socket.c:2161 [inline]
+  __se_sys_sendmsg+0x2a3/0x3d0 net/socket.c:2159
+  __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2159
+  do_syscall_64+0xb8/0x100 arch/x86/entry/common.c:291
+  entry_SYSCALL_64_after_hwframe+0x63/0xe7
+
+v2:
+* Make error message more specific (David)
+
+Fixes: 090096bf3db1 ("net: generic fdb support for drivers without ndo_fdb_<op>")
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Reported-and-tested-by: syzbot+3a288d5f5530b901310e@syzkaller.appspotmail.com
+Reported-and-tested-by: syzbot+d53ab4e92a1db04110ff@syzkaller.appspotmail.com
+Cc: Vlad Yasevich <vyasevich@gmail.com>
+Cc: David Ahern <dsahern@gmail.com>
+Reviewed-by: David Ahern <dsahern@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/fixmap.h     |   10 ----------
- arch/x86/include/asm/pgtable_64.h |    3 +--
- arch/x86/kernel/head_64.S         |   16 ++++------------
- arch/x86/mm/pgtable.c             |    9 ---------
- arch/x86/xen/mmu.c                |    8 ++------
- 5 files changed, 7 insertions(+), 39 deletions(-)
+ net/core/rtnetlink.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/arch/x86/include/asm/fixmap.h
-+++ b/arch/x86/include/asm/fixmap.h
-@@ -14,16 +14,6 @@
- #ifndef _ASM_X86_FIXMAP_H
- #define _ASM_X86_FIXMAP_H
- 
--/*
-- * Exposed to assembly code for setting up initial page tables. Cannot be
-- * calculated in assembly code (fixmap entries are an enum), but is sanity
-- * checked in the actual fixmap C code to make sure that the fixmap is
-- * covered fully.
-- */
--#define FIXMAP_PMD_NUM	2
--/* fixmap starts downwards from the 507th entry in level2_fixmap_pgt */
--#define FIXMAP_PMD_TOP	507
--
- #ifndef __ASSEMBLY__
- #include <linux/kernel.h>
- #include <asm/acpi.h>
---- a/arch/x86/include/asm/pgtable_64.h
-+++ b/arch/x86/include/asm/pgtable_64.h
-@@ -13,14 +13,13 @@
- #include <asm/processor.h>
- #include <linux/bitops.h>
- #include <linux/threads.h>
--#include <asm/fixmap.h>
- 
- extern pud_t level3_kernel_pgt[512];
- extern pud_t level3_ident_pgt[512];
- extern pmd_t level2_kernel_pgt[512];
- extern pmd_t level2_fixmap_pgt[512];
- extern pmd_t level2_ident_pgt[512];
--extern pte_t level1_fixmap_pgt[512 * FIXMAP_PMD_NUM];
-+extern pte_t level1_fixmap_pgt[512];
- extern pgd_t init_level4_pgt[];
- 
- #define swapper_pg_dir init_level4_pgt
---- a/arch/x86/kernel/head_64.S
-+++ b/arch/x86/kernel/head_64.S
-@@ -23,7 +23,6 @@
- #include "../entry/calling.h"
- #include <asm/export.h>
- #include <asm/nospec-branch.h>
--#include <asm/fixmap.h>
- 
- #ifdef CONFIG_PARAVIRT
- #include <asm/asm-offsets.h>
-@@ -494,20 +493,13 @@ NEXT_PAGE(level2_kernel_pgt)
- 		KERNEL_IMAGE_SIZE/PMD_SIZE)
- 
- NEXT_PAGE(level2_fixmap_pgt)
--	.fill	(512 - 4 - FIXMAP_PMD_NUM),8,0
--	pgtno = 0
--	.rept (FIXMAP_PMD_NUM)
--	.quad level1_fixmap_pgt + (pgtno << PAGE_SHIFT) - __START_KERNEL_map \
--		+ _PAGE_TABLE;
--	pgtno = pgtno + 1
--	.endr
--	/* 6 MB reserved space + a 2MB hole */
--	.fill	4,8,0
-+	.fill	506,8,0
-+	.quad	level1_fixmap_pgt - __START_KERNEL_map + _PAGE_TABLE
-+	/* 8MB reserved for vsyscalls + a 2MB hole = 4 + 1 entries */
-+	.fill	5,8,0
- 
- NEXT_PAGE(level1_fixmap_pgt)
--	.rept (FIXMAP_PMD_NUM)
- 	.fill	512,8,0
--	.endr
- 
- #undef PMDS
- 
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -536,15 +536,6 @@ void __native_set_fixmap(enum fixed_addr
- {
- 	unsigned long address = __fix_to_virt(idx);
- 
--#ifdef CONFIG_X86_64
--       /*
--	* Ensure that the static initial page tables are covering the
--	* fixmap completely.
--	*/
--	BUILD_BUG_ON(__end_of_permanent_fixed_addresses >
--		     (FIXMAP_PMD_NUM * PTRS_PER_PTE));
--#endif
--
- 	if (idx >= __end_of_fixed_addresses) {
- 		BUG();
- 		return;
---- a/arch/x86/xen/mmu.c
-+++ b/arch/x86/xen/mmu.c
-@@ -1936,7 +1936,7 @@ void __init xen_setup_kernel_pagetable(p
- 		 * L3_k[511] -> level2_fixmap_pgt */
- 		convert_pfn_mfn(level3_kernel_pgt);
- 
--		/* L3_k[511][508-FIXMAP_PMD_NUM ... 507] -> level1_fixmap_pgt */
-+		/* L3_k[511][506] -> level1_fixmap_pgt */
- 		convert_pfn_mfn(level2_fixmap_pgt);
+--- a/net/core/rtnetlink.c
++++ b/net/core/rtnetlink.c
+@@ -2987,6 +2987,11 @@ static int rtnl_fdb_add(struct sk_buff *
+ 		return -EINVAL;
  	}
- 	/* We get [511][511] and have Xen's version of level2_kernel_pgt */
-@@ -1970,11 +1970,7 @@ void __init xen_setup_kernel_pagetable(p
- 		set_page_prot(level2_ident_pgt, PAGE_KERNEL_RO);
- 		set_page_prot(level2_kernel_pgt, PAGE_KERNEL_RO);
- 		set_page_prot(level2_fixmap_pgt, PAGE_KERNEL_RO);
--
--		for (i = 0; i < FIXMAP_PMD_NUM; i++) {
--			set_page_prot(level1_fixmap_pgt + i * PTRS_PER_PTE,
--				      PAGE_KERNEL_RO);
--		}
-+		set_page_prot(level1_fixmap_pgt, PAGE_KERNEL_RO);
  
- 		/* Pin down new L4 */
- 		pin_pagetable_pfn(MMUEXT_PIN_L4_TABLE,
++	if (dev->type != ARPHRD_ETHER) {
++		pr_info("PF_BRIDGE: FDB add only supported for Ethernet devices");
++		return -EINVAL;
++	}
++
+ 	addr = nla_data(tb[NDA_LLADDR]);
+ 
+ 	err = fdb_vid_parse(tb[NDA_VLAN], &vid);
+@@ -3090,6 +3095,11 @@ static int rtnl_fdb_del(struct sk_buff *
+ 		return -EINVAL;
+ 	}
+ 
++	if (dev->type != ARPHRD_ETHER) {
++		pr_info("PF_BRIDGE: FDB delete only supported for Ethernet devices");
++		return -EINVAL;
++	}
++
+ 	addr = nla_data(tb[NDA_LLADDR]);
+ 
+ 	err = fdb_vid_parse(tb[NDA_VLAN], &vid);
 
 
