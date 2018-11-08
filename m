@@ -2,187 +2,159 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A8ABECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:13:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9749ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:13:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CA3C20857
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:13:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0AF420883
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:13:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1OfIIziT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CA3C20857
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kAsVnCWo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0AF420883
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731672AbeKIHu4 (ORCPT
+        id S1732096AbeKIHu6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:50:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39742 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:50:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732682AbeKIHqK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:46:10 -0500
+        id S1731528AbeKIHu5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:50:57 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CFD0D215EA;
-        Thu,  8 Nov 2018 22:08:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8BC32081D;
+        Thu,  8 Nov 2018 22:13:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714918;
-        bh=K75gvTX5AV3VzBZ+tkC2HEQ6rO0UNgDJOJntQonx4xo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1OfIIziTbW8V4x7lViiCh3x4CJUHwAwk0aark2jGwhYJWzxBXr6tBGXJ5n2bbLfEb
-         Phk+XBQ50pCi5yQSetiRQ94RqiNmE4Lz1eocjn5PQZMcXA2raKlhBzYAImpbsDYC7V
-         GqfsrsYshWwN6ELnxa4dV2wRopadvollLmvegQfw=
+        s=default; t=1541715203;
+        bh=5M1VOJvvYq/OFBB6DLvzqTe/U/E4V5r3oHEXRB0cirs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kAsVnCWoH6o97XE5zky7RNUtHzAM+q7p8Xk6zToloxMoN22gKc12xZl/4ziYxKpIY
+         M+38sAObudf0apph6LAK5mTgGtU5+rndGSFJZVYSQpKWma58Hpd/qkOEMIUwYxHYRB
+         tykMNQGmui/QlSdJlZzw0efOTUXdFhQ4ph4Kwusc=
+Date:   Thu, 8 Nov 2018 14:01:17 -0800
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 31/31] net: fs_enet: do not call phy_stop() in interrupts
-Date:   Thu,  8 Nov 2018 13:52:55 -0800
-Message-Id: <20181108215132.182156135@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181108215129.641434673@linuxfoundation.org>
-References: <20181108215129.641434673@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+        linux-pci@vger.kernel.org, keith.busch@intel.com,
+        alex_gagniuc@dellteam.com, austin_bolen@dell.com,
+        shyam_iyer@dell.com, linux-kernel@vger.kernel.org,
+        Jonathan Derrick <jonathan.derrick@intel.com>,
+        Lukas Wunner <lukas@wunner.de>,
+        Russell Currey <ruscur@russell.cc>,
+        Sam Bobroff <sbobroff@linux.ibm.com>,
+        Oliver O'Halloran <oohall@gmail.com>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v2] PCI/MSI: Don't touch MSI bits when the PCI device is
+ disconnected
+Message-ID: <20181108220117.GA11466@kroah.com>
+References: <20180918221501.13112-1-mr.nuke.me@gmail.com>
+ <20181107234257.GC41183@google.com>
+ <20181108200855.GE41183@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181108200855.GE41183@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On Thu, Nov 08, 2018 at 02:09:17PM -0600, Bjorn Helgaas wrote:
+> [+cc Jonathan, Greg, Lukas, Russell, Sam, Oliver for discussion about
+> PCI error recovery in general]
+> 
+> On Wed, Nov 07, 2018 at 05:42:57PM -0600, Bjorn Helgaas wrote:
+> > On Tue, Sep 18, 2018 at 05:15:00PM -0500, Alexandru Gagniuc wrote:
+> > > When a PCI device is gone, we don't want to send IO to it if we can
+> > > avoid it. We expose functionality via the irq_chip structure. As
+> > > users of that structure may not know about the underlying PCI device,
+> > > it's our responsibility to guard against removed devices.
+> > > 
+> > > .irq_write_msi_msg() is already guarded inside __pci_write_msi_msg().
+> > > .irq_mask/unmask() are not. Guard them for completeness.
+> > > 
+> > > For example, surprise removal of a PCIe device triggers teardown. This
+> > > touches the irq_chips ops some point to disable the interrupts. I/O
+> > > generated here can crash the system on firmware-first machines.
+> > > Not triggering the IO in the first place greatly reduces the
+> > > possibility of the problem occurring.
+> > > 
+> > > Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+> > 
+> > Applied to pci/misc for v4.21, thanks!
+> 
+> I'm having second thoughts about this.  One thing I'm uncomfortable
+> with is that sprinkling pci_dev_is_disconnected() around feels ad hoc
+> instead of systematic, in the sense that I don't know how we convince
+> ourselves that this (and only this) is the correct place to put it.
 
-------------------
+I think my stance always has been that this call is not good at all
+because once you call it you never really know if it is still true as
+the device could have been removed right afterward.
 
-[ Upstream commit f8b39039cbf2a15f2b8c9f081e1cbd5dee00aaf5 ]
+So almost any code that relies on it is broken, there is no locking and
+it can and will race and you will loose.
 
-In case of TX timeout, fs_timeout() calls phy_stop(), which
-triggers the following BUG_ON() as we are in interrupt.
+I think your patch suffers from this race:
 
-[92708.199889] kernel BUG at drivers/net/phy/mdio_bus.c:482!
-[92708.204985] Oops: Exception in kernel mode, sig: 5 [#1]
-[92708.210119] PREEMPT
-[92708.212107] CMPC885
-[92708.214216] CPU: 0 PID: 3 Comm: ksoftirqd/0 Tainted: G        W       4.9.61 #39
-[92708.223227] task: c60f0a40 task.stack: c6104000
-[92708.227697] NIP: c02a84bc LR: c02a947c CTR: c02a93d8
-[92708.232614] REGS: c6105c70 TRAP: 0700   Tainted: G        W        (4.9.61)
-[92708.241193] MSR: 00021032 <ME,IR,DR,RI>[92708.244818]   CR: 24000822  XER: 20000000
-[92708.248767]
-GPR00: c02a947c c6105d20 c60f0a40 c62b4c00 00000005 0000001f c069aad8 0001a688
-GPR08: 00000007 00000100 c02a93d8 00000000 000005fc 00000000 c6213240 c06338e4
-GPR16: 00000001 c06330d4 c0633094 00000000 c0680000 c6104000 c6104000 00000000
-GPR24: 00000200 00000000 ffffffff 00000004 00000078 00009032 00000000 c62b4c00
-NIP [c02a84bc] mdiobus_read+0x20/0x74
-[92708.281517] LR [c02a947c] kszphy_config_intr+0xa4/0xc4
-[92708.286547] Call Trace:
-[92708.288980] [c6105d20] [c6104000] 0xc6104000 (unreliable)
-[92708.294339] [c6105d40] [c02a947c] kszphy_config_intr+0xa4/0xc4
-[92708.300098] [c6105d50] [c02a5330] phy_stop+0x60/0x9c
-[92708.305007] [c6105d60] [c02c84d0] fs_timeout+0xdc/0x110
-[92708.310197] [c6105d80] [c035cd48] dev_watchdog+0x268/0x2a0
-[92708.315593] [c6105db0] [c0060288] call_timer_fn+0x34/0x17c
-[92708.321014] [c6105dd0] [c00605f0] run_timer_softirq+0x21c/0x2e4
-[92708.326887] [c6105e50] [c001e19c] __do_softirq+0xf4/0x2f4
-[92708.332207] [c6105eb0] [c001e3c8] run_ksoftirqd+0x2c/0x40
-[92708.337560] [c6105ec0] [c003b420] smpboot_thread_fn+0x1f0/0x258
-[92708.343405] [c6105ef0] [c003745c] kthread+0xbc/0xd0
-[92708.348217] [c6105f40] [c000c400] ret_from_kernel_thread+0x5c/0x64
-[92708.354275] Instruction dump:
-[92708.357207] 7c0803a6 bbc10018 38210020 4e800020 7c0802a6 9421ffe0 54290024 bfc10018
-[92708.364865] 90010024 7c7f1b78 81290008 552902ee <0f090000> 3bc3002c 7fc3f378 90810008
-[92708.372711] ---[ end trace 42b05441616fafd7 ]---
+> +static u32 mmio_readl(struct pci_dev *dev, const volatile void __iomem *addr)
+> +{
+> +	u32 val, id;
+> +
+> +	if (pci_dev_is_disconnected(dev))
+> +		return ~0;
 
-This patch moves fs_timeout() actions into an async worker.
+Great, but what happens if I yank the device out right here?
 
-Fixes: commit 48257c4f168e5 ("Add fs_enet ethernet network driver, for several embedded platforms")
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- .../ethernet/freescale/fs_enet/fs_enet-main.c    | 16 +++++++++++++---
- drivers/net/ethernet/freescale/fs_enet/fs_enet.h |  1 +
- 2 files changed, 14 insertions(+), 3 deletions(-)
+> +	val = readl(addr);
 
-diff --git a/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c b/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
-index 753259091b22..28bd4cf61741 100644
---- a/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
-+++ b/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
-@@ -613,9 +613,11 @@ static int fs_enet_start_xmit(struct sk_buff *skb, struct net_device *dev)
- 	return NETDEV_TX_OK;
- }
- 
--static void fs_timeout(struct net_device *dev)
-+static void fs_timeout_work(struct work_struct *work)
- {
--	struct fs_enet_private *fep = netdev_priv(dev);
-+	struct fs_enet_private *fep = container_of(work, struct fs_enet_private,
-+						   timeout_work);
-+	struct net_device *dev = fep->ndev;
- 	unsigned long flags;
- 	int wake = 0;
- 
-@@ -627,7 +629,6 @@ static void fs_timeout(struct net_device *dev)
- 		phy_stop(dev->phydev);
- 		(*fep->ops->stop)(dev);
- 		(*fep->ops->restart)(dev);
--		phy_start(dev->phydev);
- 	}
- 
- 	phy_start(dev->phydev);
-@@ -639,6 +640,13 @@ static void fs_timeout(struct net_device *dev)
- 		netif_wake_queue(dev);
- }
- 
-+static void fs_timeout(struct net_device *dev)
-+{
-+	struct fs_enet_private *fep = netdev_priv(dev);
-+
-+	schedule_work(&fep->timeout_work);
-+}
-+
- /*-----------------------------------------------------------------------------
-  *  generic link-change handler - should be sufficient for most cases
-  *-----------------------------------------------------------------------------*/
-@@ -759,6 +767,7 @@ static int fs_enet_close(struct net_device *dev)
- 	netif_stop_queue(dev);
- 	netif_carrier_off(dev);
- 	napi_disable(&fep->napi);
-+	cancel_work_sync(&fep->timeout_work);
- 	phy_stop(dev->phydev);
- 
- 	spin_lock_irqsave(&fep->lock, flags);
-@@ -1019,6 +1028,7 @@ static int fs_enet_probe(struct platform_device *ofdev)
- 
- 	ndev->netdev_ops = &fs_enet_netdev_ops;
- 	ndev->watchdog_timeo = 2 * HZ;
-+	INIT_WORK(&fep->timeout_work, fs_timeout_work);
- 	netif_napi_add(ndev, &fep->napi, fs_enet_napi, fpi->napi_weight);
- 
- 	ndev->ethtool_ops = &fs_ethtool_ops;
-diff --git a/drivers/net/ethernet/freescale/fs_enet/fs_enet.h b/drivers/net/ethernet/freescale/fs_enet/fs_enet.h
-index 168e10ea487f..837c802ca302 100644
---- a/drivers/net/ethernet/freescale/fs_enet/fs_enet.h
-+++ b/drivers/net/ethernet/freescale/fs_enet/fs_enet.h
-@@ -125,6 +125,7 @@ struct fs_enet_private {
- 	spinlock_t lock;	/* during all ops except TX pckt processing */
- 	spinlock_t tx_lock;	/* during fs_start_xmit and fs_tx         */
- 	struct fs_platform_info *fpi;
-+	struct work_struct timeout_work;
- 	const struct fs_ops *ops;
- 	int rx_ring, tx_ring;
- 	dma_addr_t ring_mem_addr;
--- 
-2.17.1
+This value could now be all FF, if the device is gone, so what did the
+check above help with?
 
+> +	/*
+> +	 * If an MMIO read from the device returns ~0 data, that data may
+> +	 * be valid, or it may indicate a bus error.  If config space is
+> +	 * readable, assume it's valid data; otherwise, assume a bus error.
+> +	 */
+> +	if (val == ~0) {
+> +		pci_read_config_dword(dev, PCI_VENDOR_ID, &id);
+> +		if (id == ~0)
+> +			pci_dev_set_disconnected(dev, NULL);
 
+So why do the check above for "is disconnected"?  What does this buy us
+here, just short-circuiting the readl()?
 
+> +	}
+> +
+> +	return val;
+> +}
+> +
+> +static void mmio_writel(struct pci_dev *dev, u32 val,
+> +			volatile void __iomem *addr)
+> +{
+> +	if (pci_dev_is_disconnected(dev))
+> +		return;
+> +
+> +	writel(val, addr);
+
+Why even check, what's wrong with always doing the write?
+
+I understand the wish to make this easier, but I think the only way is
+that the driver themselves should be checking on their reads.  And they
+have to check on all reads, or at least on some subset of reads and be
+able to handle 0xff for the other ones without going crazy.
+
+I _think_ the xhci driver does this given that it is hot added/removed
+all the time dynamically due to the way that modern laptops are made
+where the bios adds/removed the xhci controller when a USB device is
+added/removed.
+
+thanks,
+
+greg k-h
