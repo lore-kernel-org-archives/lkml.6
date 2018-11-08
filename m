@@ -6,47 +6,45 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48248ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:07:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74E11ECDE4C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:07:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E43321479
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:07:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3187320989
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:07:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0swfoOjh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E43321479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ynXimXGS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3187320989
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732304AbeKIHou (ORCPT
+        id S1732316AbeKIHov (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:44:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38074 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:44:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732277AbeKIHou (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:44:50 -0500
+        id S1727468AbeKIHov (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:44:51 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1925520989;
+        by mail.kernel.org (Postfix) with ESMTPSA id ACB4D2148E;
         Thu,  8 Nov 2018 22:07:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541714839;
-        bh=o8UMET9v51xLDfoBlum7ggh41ZvtOeRD2t7Qyzm9NA0=;
+        bh=i5p9Y2ds2HZEJJQRms7rCUTbJuPGP4avv/RmDI3qlJU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0swfoOjhHmAQ2VEFfcenaaMTyFjqBO8W+fKRoIq95P+0HnOMy15KctB/lTdX/Iklq
-         Rstq3rNQomfgEbQ9565qKT0ajQpGyV9uLPJ55v9hd4EN4aKdxKhWcbI8o97PQIQj6J
-         b/4EDq+xQue/7nsXTmKWtdnezCvP2IIgri03LLtM=
+        b=ynXimXGSp9D+PhrkjR3djlHyGoNtlOh2cXrlt5LhTOGI8Zuhso/J9XBfILmage/vb
+         Y6OLtUgt2QBOGwsKA+8H4AxSoCHgDu5rTEdNoRAsEea74lghuzQjVUJcLQ/h0ASdJZ
+         LoAbmJ/7GBNUXYjdRqvZX7x8PXPaa2QldMxH8TIk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ying Xu <yinxu@redhat.com>,
-        Hangbin Liu <liuhangbin@gmail.com>,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        Roopa Prabhu <roopa@cumulusnetworks.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 134/171] bridge: do not add port to router list when receives query with source 0.0.0.0
-Date:   Thu,  8 Nov 2018 13:51:44 -0800
-Message-Id: <20181108215136.822301253@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Doug Ledford <dledford@redhat.com>
+Subject: [PATCH 4.9 161/171] RDMA/ucma: Fix Spectre v1 vulnerability
+Date:   Thu,  8 Nov 2018 13:52:11 -0800
+Message-Id: <20181108215138.551393143@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -64,57 +62,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hangbin Liu <liuhangbin@gmail.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit 5a2de63fd1a59c30c02526d427bc014b98adf508 upstream.
+commit a3671a4f973ee9d9621d60166cc3b037c397d604 upstream.
 
-Based on RFC 4541, 2.1.1.  IGMP Forwarding Rules
+hdr.cmd can be indirectly controlled by user-space, hence leading to
+a potential exploitation of the Spectre variant 1 vulnerability.
 
-  The switch supporting IGMP snooping must maintain a list of
-  multicast routers and the ports on which they are attached.  This
-  list can be constructed in any combination of the following ways:
+This issue was detected with the help of Smatch:
 
-  a) This list should be built by the snooping switch sending
-     Multicast Router Solicitation messages as described in IGMP
-     Multicast Router Discovery [MRDISC].  It may also snoop
-     Multicast Router Advertisement messages sent by and to other
-     nodes.
+drivers/infiniband/core/ucma.c:1686 ucma_write() warn: potential
+spectre issue 'ucma_cmd_table' [r] (local cap)
 
-  b) The arrival port for IGMP Queries (sent by multicast routers)
-     where the source address is not 0.0.0.0.
+Fix this by sanitizing hdr.cmd before using it to index
+ucm_cmd_table.
 
-We should not add the port to router list when receives query with source
-0.0.0.0.
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
 
-Reported-by: Ying Xu <yinxu@redhat.com>
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-Acked-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-Acked-by: Roopa Prabhu <roopa@cumulusnetworks.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/bridge/br_multicast.c |   10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ drivers/infiniband/core/ucma.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/net/bridge/br_multicast.c
-+++ b/net/bridge/br_multicast.c
-@@ -1287,7 +1287,15 @@ static void br_multicast_query_received(
- 		return;
+--- a/drivers/infiniband/core/ucma.c
++++ b/drivers/infiniband/core/ucma.c
+@@ -44,6 +44,8 @@
+ #include <linux/module.h>
+ #include <linux/nsproxy.h>
  
- 	br_multicast_update_query_timer(br, query, max_delay);
--	br_multicast_mark_router(br, port);
++#include <linux/nospec.h>
 +
-+	/* Based on RFC4541, section 2.1.1 IGMP Forwarding Rules,
-+	 * the arrival port for IGMP Queries where the source address
-+	 * is 0.0.0.0 should not be added to router port list.
-+	 */
-+	if ((saddr->proto == htons(ETH_P_IP) && saddr->u.ip4) ||
-+	    (saddr->proto == htons(ETH_P_IPV6) &&
-+	     !ipv6_addr_any(&saddr->u.ip6)))
-+		br_multicast_mark_router(br, port);
- }
+ #include <rdma/rdma_user_cm.h>
+ #include <rdma/ib_marshall.h>
+ #include <rdma/rdma_cm.h>
+@@ -1637,6 +1639,7 @@ static ssize_t ucma_write(struct file *f
  
- static int br_ip4_multicast_query(struct net_bridge *br,
+ 	if (hdr.cmd >= ARRAY_SIZE(ucma_cmd_table))
+ 		return -EINVAL;
++	hdr.cmd = array_index_nospec(hdr.cmd, ARRAY_SIZE(ucma_cmd_table));
+ 
+ 	if (hdr.in + sizeof(hdr) > len)
+ 		return -EINVAL;
 
 
