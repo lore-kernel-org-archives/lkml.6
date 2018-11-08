@@ -2,117 +2,126 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAD3FC32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 04:00:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D4FEC32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 04:06:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A80D2086A
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 04:00:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A80D2086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 47FB620827
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 04:06:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NNBsb3OH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47FB620827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728787AbeKHNeA (ORCPT
+        id S1728796AbeKHNjd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 08:34:00 -0500
-Received: from mga18.intel.com ([134.134.136.126]:16014 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728499AbeKHNeA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 08:34:00 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2018 20:00:32 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,478,1534834800"; 
-   d="scan'208";a="98536525"
-Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
-  by orsmga003.jf.intel.com with ESMTP; 07 Nov 2018 20:00:31 -0800
-Received: from fmsmsx156.amr.corp.intel.com (10.18.116.74) by
- FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Wed, 7 Nov 2018 20:00:23 -0800
-Received: from shsmsx102.ccr.corp.intel.com (10.239.4.154) by
- fmsmsx156.amr.corp.intel.com (10.18.116.74) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Wed, 7 Nov 2018 20:00:23 -0800
-Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.117]) by
- shsmsx102.ccr.corp.intel.com ([169.254.2.84]) with mapi id 14.03.0415.000;
- Thu, 8 Nov 2018 12:00:20 +0800
-From:   "Liu, Yi L" <yi.l.liu@intel.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>
-CC:     "Raj, Ashok" <ashok.raj@intel.com>,
-        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
-        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        "Sun, Yi Y" <yi.y.sun@intel.com>,
-        "peterx@redhat.com" <peterx@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: RE: [PATCH v4 06/12] iommu/vt-d: Add second level page table
- interface
-Thread-Topic: [PATCH v4 06/12] iommu/vt-d: Add second level page table
- interface
-Thread-Index: AQHUdMlG2B4LjCEoyEG7Np1y1OKvIqVD5GeAgADBPQCAAJ+AkA==
-Date:   Thu, 8 Nov 2018 04:00:20 +0000
-Message-ID: <A2975661238FB949B60364EF0F2C257439D60506@SHSMSX104.ccr.corp.intel.com>
-References: <20181105053151.7173-1-baolu.lu@linux.intel.com>
- <20181105053151.7173-7-baolu.lu@linux.intel.com>
- <A2975661238FB949B60364EF0F2C257439D5FB11@SHSMSX104.ccr.corp.intel.com>
- <e987773c-a547-01e4-a04f-1f34506420ac@linux.intel.com>
-In-Reply-To: <e987773c-a547-01e4-a04f-1f34506420ac@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNmMyN2VmMmQtYzU1YS00MjlhLTkyMjAtYjAwZmQxNDU2MjkzIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiaXZIY251NXZ3N3hPSDV4K3IyaFo1REhkeXZHZnZ4TjRhZVNFMWFNakViVTRYeG5Ub21XcmJXQ1hxcUoxQmJROSJ9
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Thu, 8 Nov 2018 08:39:33 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:46840 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728621AbeKHNjd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 08:39:33 -0500
+Received: by mail-pl1-f193.google.com with SMTP id c13-v6so8882888plz.13
+        for <linux-kernel@vger.kernel.org>; Wed, 07 Nov 2018 20:06:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Wfll4NfKYnOomX3sinK/PWBAaaFD7tqVawO4DHolG4Q=;
+        b=NNBsb3OHPZZjVqC5ZpQBnDBmmL6H7hloMRR1fM88iDmO87Vfymb7bcrO+gIpG9sOUE
+         B/8Y/kvKlalDgm1Vdyn6o6+AdxspNbtUPTpxAGJSPAUxw8dzKJGkhcOsXabAuuDTLcf0
+         7qkufQmmegUtIcLCQy+fYmqUBFrBBYI2+TOnY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Wfll4NfKYnOomX3sinK/PWBAaaFD7tqVawO4DHolG4Q=;
+        b=i1vo7k23okt2dPs/qjmJKpt6+jyoMQtt3pFY6HA4Q0nW7AMpNpCx8vORsxkagPAqKk
+         gMU0GAxWD6dNMa8zK8SVY4HqVeUaa8JxFZ3vjbQuGRcgwO0jMQUe3KowqyygVRajU+RN
+         8cfPnv7pUE72D6LaZF30673Q9Tv53xja08dAs/NjdZ6AgOvJYBkdr9hAqGXVzaQ+VS78
+         dBG3T0o3924LJaf0Rh8eQvtvtoCBatrCmdvO7JtyNMo3WMTbU0ovNjRh2ZEgXhMLafWq
+         6R9XLE9A/i8xcWSDIgTRk1eubyhzQ0asi0ZJjfxIpAGWubcmbeUptlK8l0NFjY0nNYA8
+         XomA==
+X-Gm-Message-State: AGRZ1gIF6bygxGJXP5903MN7km+PCuen1Ore0aBH571jtyBEC3sZGuKv
+        LZ/ejFeLqYLb2/bbEbKNbnO5iMuBBg==
+X-Google-Smtp-Source: AJdET5dN71awQb5D5lu5g/1V/D8iTo8ZraYVkQ0Qp2jtZFOy+edAir+gHBis1qGoVUVTM/lkqllo9g==
+X-Received: by 2002:a17:902:6948:: with SMTP id k8-v6mr3067733plt.22.1541649963983;
+        Wed, 07 Nov 2018 20:06:03 -0800 (PST)
+Received: from Mani-XPS-13-9360 ([2409:4072:600a:38ce:49ff:31b1:1894:e040])
+        by smtp.gmail.com with ESMTPSA id v12-v6sm2723156pfa.167.2018.11.07.20.05.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 07 Nov 2018 20:06:03 -0800 (PST)
+Date:   Thu, 8 Nov 2018 09:35:54 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Yingjoe Chen <yingjoe.chen@mediatek.com>
+Cc:     sean.wang@kernel.org, linus.walleij@linaro.org,
+        matthias.bgg@gmail.com, robh+dt@kernel.org,
+        linux-kernel@vger.kernel.org, amit.kucheria@linaro.org,
+        linux-gpio@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 1/4] dt-bindings: pinctrl: Add devicetree bindings for
+ MT6797 SoC Pinctrl
+Message-ID: <20181108040551.GB3046@Mani-XPS-13-9360>
+References: <20181107174844.5381-1-manivannan.sadhasivam@linaro.org>
+ <20181107174844.5381-2-manivannan.sadhasivam@linaro.org>
+ <1541643072.23791.3.camel@mtksdaap41>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1541643072.23791.3.camel@mtksdaap41>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksDQoNCj4gRnJvbTogTHUgQmFvbHUgW21haWx0bzpiYW9sdS5sdUBsaW51eC5pbnRlbC5jb21d
-DQo+IFNlbnQ6IFRodXJzZGF5LCBOb3ZlbWJlciA4LCAyMDE4IDEwOjI4IEFNDQo+IFN1YmplY3Q6
-IFJlOiBbUEFUQ0ggdjQgMDYvMTJdIGlvbW11L3Z0LWQ6IEFkZCBzZWNvbmQgbGV2ZWwgcGFnZSB0
-YWJsZSBpbnRlcmZhY2UNCj4gDQo+IEhpLA0KPiANCj4gT24gMTEvNy8xOCAzOjEzIFBNLCBMaXUs
-IFlpIEwgd3JvdGU6DQo+ID4gSGkgQmFvbHUsDQo+ID4NCj4gPj4gRnJvbTogTHUgQmFvbHUgW21h
-aWx0bzpiYW9sdS5sdUBsaW51eC5pbnRlbC5jb21dDQo+ID4+IFNlbnQ6IE1vbmRheSwgTm92ZW1i
-ZXIgNSwgMjAxOCAxOjMyIFBNDQo+ID4+DQo+ID4+IFRoaXMgYWRkcyB0aGUgaW50ZXJmYWNlcyB0
-byBzZXR1cCBvciB0ZWFyIGRvd24gdGhlIHN0cnVjdHVyZXMgZm9yDQo+ID4+IHNlY29uZCBsZXZl
-bCBwYWdlIHRhYmxlIHRyYW5zbGF0aW9ucy4gVGhpcyBpbmNsdWRlcyB0eXBlcyBvZiBzZWNvbmQN
-Cj4gPj4gbGV2ZWwgb25seSB0cmFuc2xhdGlvbiBhbmQgcGFzcyB0aHJvdWdoLg0KPiA+DQo+ID4g
-QSBsaXR0bGUgYml0IHJlZmluaW5nIHRvIHRoZSBkZXNjcmlwdGlvbjopICJUaGlzIHBhdGNoIGFk
-ZHMgaW50ZXJmYWNlcw0KPiA+IGZvciBzZXR1cCBvciB0ZWFyIGRvd24gc2Vjb25kIGxldmVsIHRy
-YW5zbGF0aW9uIGluIFBBU0lEIGdyYW51bGFyaXR5Lg0KPiA+IFRyYW5zbGF0aW9uIHR5cGUgaW5j
-bHVkZXMgc2Vjb25kIGxldmVsIG9ubHkgdHlwZSBhbmQgcGFzcy10aHJvdWdoDQo+ID4gdHlwZS4i
-DQo+ID4NCj4gPj4gQ2M6IEFzaG9rIFJhaiA8YXNob2sucmFqQGludGVsLmNvbT4NCj4gPj4gQ2M6
-IEphY29iIFBhbiA8amFjb2IuanVuLnBhbkBsaW51eC5pbnRlbC5jb20+DQo+ID4+IENjOiBLZXZp
-biBUaWFuIDxrZXZpbi50aWFuQGludGVsLmNvbT4NCj4gPj4gQ2M6IExpdSBZaSBMIDx5aS5sLmxp
-dUBpbnRlbC5jb20+DQo+ID4+IFNpZ25lZC1vZmYtYnk6IFNhbmpheSBLdW1hciA8c2FuamF5Lmsu
-a3VtYXJAaW50ZWwuY29tPg0KPiA+DQo+ID4gWy4uLl0NCj4gPg0KPiA+PiArDQo+ID4+ICt2b2lk
-IGludGVsX3Bhc2lkX3RlYXJfZG93bl9lbnRyeShzdHJ1Y3QgaW50ZWxfaW9tbXUgKmlvbW11LA0K
-PiA+PiArCQkJCSBzdHJ1Y3QgZGV2aWNlICpkZXYsIGludCBwYXNpZCkNCj4gPj4gK3sNCj4gPj4g
-KwlzdHJ1Y3QgcGFzaWRfZW50cnkgKnB0ZTsNCj4gPg0KPiA+IHB0ZSBpcyBjb25mdXNpbmcgYXMg
-aXQgaXMgc2ltaWxhciB3aXRoIHB0ZSBpbiBwYWdpbmcgc3RydWN0dXJlcy4gbWF5DQo+ID4gdXNl
-IHB0X2VudHJ5IG9yIGp1c3QgcGFzaWRfZW50cnkuIFRoaXMgY29tbWVudCBhcHBsaWVzIHRvIG90
-aGVyICJwdGUicw0KPiA+IGluIHRoaXMgcGF0Y2guDQo+IA0KPiAicHRlIiBpbiB0aGlzIGZpbGUg
-bWVhbnMgInBhc2lkIHRhYmxlIGVudHJ5Iiwgbm90ICJwYWdlIHRhYmxlIGVudHJ5Ii4NCj4gVGhp
-cyBmaWxlIGhvbGRzIGNvZGUgdG8gaGFuZGxlIHBhc2lkIHRhYmxlIHJlbGF0ZWQgc3RhZmYuIEl0
-IGhhcyBub3RoaW5nIHRvIGRvIHdpdGgNCj4gcGFnaW5nIHN0cnVjdHVyZS4gSSB0aGluayB0aGVy
-ZSBzaG91bGQgYmUgbm8gY29uZnVzaW9uIGhlcmUuDQo+IDotKQ0KDQpJIHNlZS4gVGhlbiB1cCB0
-byB5b3UuIDopIEl0J3MganVzdCBteSBmZWVsaW5nIHdoZW4gcmVhZGluZyB0aGUgcGF0Y2gsIGl0
-IGxlYWRzIG1lIHRvDQpiZWxpZXZlIGl0IGlzIHBhZ2luZyBzdHJ1Y3R1cmUuDQoNClJlZ2FyZHMs
-DQpZaSBMaXUNCg==
+On Thu, Nov 08, 2018 at 10:11:12AM +0800, Yingjoe Chen wrote:
+> On Wed, 2018-11-07 at 23:18 +0530, Manivannan Sadhasivam wrote:
+> > Add devicetree bindings for Mediatek MT6797 SoC Pin Controller.
+> > 
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> >  .../bindings/pinctrl/pinctrl-mt6797.txt       |   83 +
+> >  include/dt-bindings/pinctrl/mt6797-pinfunc.h  | 1368 +++++++++++++++++
+> >  2 files changed, 1451 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-mt6797.txt
+> >  create mode 100644 include/dt-bindings/pinctrl/mt6797-pinfunc.h
+> > diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt6797.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt6797.txt
+> > new file mode 100644
+> > index 000000000000..bd83401e6179
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt6797.txt
+> 
+> Sorry if this is discussed.
+> 
+> What's the difference between this and
+> Documentation/devicetree/bindings/pinctrl/pinctrl-mt65xx.txt?
+> Should this be added to pinctrl-mt65xx.txt?
+>
+
+Currently there are 3 different pinctrl core's available for MediaTek
+SoCs:
+
+1. Legacy core - pinctrl-mtk-common.c
+2. Moore core - pinctrl-moore.c pinctrl-mtk-common-v2.c
+3. Paris core - pinctrl-paris.c pinctrl-mtk-common-v2.c
+
+AFAIU pinctrl-mt65xx binding documents the SoC's based on MediaTek's legacy
+pinctrl-mtk-common.c core. Whereas MT6797 is based on the MediaTek's Paris
+core. There isn't any binding doc available for the Paris core SoC's yet.
+That's why I have created a new bindings doc and expecting the remaining SoC's
+of Paris family to be included in new pinctrl-mt6797.txt.
+
+Hope this makes clear!
+
+Thanks,
+Mani
+
+> Joe.C
+> 
+> 
