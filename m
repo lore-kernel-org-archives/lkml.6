@@ -2,152 +2,123 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0CD1ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:30:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 496F7ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:31:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E3FF20825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:30:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E3FF20825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fieldses.org
+	by mail.kernel.org (Postfix) with ESMTP id 085EF20844
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:31:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DJ88Q6Pb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 085EF20844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727311AbeKIHHx (ORCPT
+        id S1727349AbeKIHIw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:07:53 -0500
-Received: from fieldses.org ([173.255.197.46]:39158 "EHLO fieldses.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725882AbeKIHHx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:07:53 -0500
-Received: by fieldses.org (Postfix, from userid 2815)
-        id D0AF32014; Thu,  8 Nov 2018 16:30:30 -0500 (EST)
-Date:   Thu, 8 Nov 2018 16:30:30 -0500
-From:   "J. Bruce Fields" <bfields@fieldses.org>
-To:     NeilBrown <neilb@suse.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Martin Wilck <mwilck@suse.de>, linux-fsdevel@vger.kernel.org,
-        Frank Filz <ffilzlnx@mindspring.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 10/12] fs/locks: create a tree of dependent requests.
-Message-ID: <20181108213030.GF6090@fieldses.org>
-References: <154138128401.31651.1381177427603557514.stgit@noble>
- <154138144796.31651.14201944346371750178.stgit@noble>
+        Fri, 9 Nov 2018 02:08:52 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:39304 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726182AbeKIHIw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:08:52 -0500
+Received: by mail-lj1-f194.google.com with SMTP id t9-v6so16166337ljh.6;
+        Thu, 08 Nov 2018 13:31:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=C3pszWJZIvtEEQQnKu7V/MM4CVUt13HqVhxs6osWXLo=;
+        b=DJ88Q6PbNjIst8NPGoPzV7IHSPXhCY0q6Zpi+fXMK16oJVp8RF4zq+2PjWybBZx8Kb
+         9M3eVr8lfxinKtpBWutaA89N0kircSOm90m+dlQv0hzboCSF/eq9ZeUd9/SUyEdziVjH
+         z2oylMhL0s3GUVes8FI1BSKeC3m4XSM8+ljakiTmCld2Dng75k7LqAPE4QezOAZbh8V8
+         q+tGG+/9rJ+C7TSUszwtNuLQeO1ncen90T8Gd90lnr+zpU4SY3t5yElz+fdS/oUKojmd
+         yuMqQB6Guw0IMCG7T6jelMG8HyMerM5qmpgnvMb0Dob7nw6+XEqww4GNXhrssbs67nnf
+         1cUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=C3pszWJZIvtEEQQnKu7V/MM4CVUt13HqVhxs6osWXLo=;
+        b=RYYuUD62ghdNCKxR5ILBlJnUCNDJC58EHIKJJ+YKTw62E+Z/3OYmrf0tjlivxIBeoK
+         v17nlqpwNMZlMW3ibT77bufggt/yrbGStgMTPMR4L0ruWnmFxd74kSHMlWHX+ucevYiY
+         rxcQZnX2Q+oeejc9ixKsmNZat4XyQKrKN+3fZA/yzQS3eLdK07O4ET+oAwtS5GUDnHKd
+         iH6Ngg7oTjrHmyWNhfFkbcf8nzvybb62EbHus6FSEH6XCbCbzNvK4BcO7mpvnlh0OUgp
+         t+amiRspHWsGKBpi8M3d86BljfnEL+0B4vE/sWusRb6m1XvGT1J2vtN/eHytatro4bnN
+         jXEQ==
+X-Gm-Message-State: AGRZ1gJO+GJeKhbQqGg3be/gdc+zNe6r1TI074eKcf77D2rhKeA67bBE
+        BldVNiGPCga9aFovrAplaoU=
+X-Google-Smtp-Source: AJdET5dbEG3eYFre48+1i197sdZiWB6EdEFXocIy9/rtVJ7XK2KQafC3QLUyETv9+TzimN5bvy++hQ==
+X-Received: by 2002:a2e:92ca:: with SMTP id k10-v6mr3806897ljh.103.1541712687899;
+        Thu, 08 Nov 2018 13:31:27 -0800 (PST)
+Received: from uranus.localdomain ([5.18.102.224])
+        by smtp.gmail.com with ESMTPSA id u12-v6sm871897ljk.79.2018.11.08.13.31.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 08 Nov 2018 13:31:26 -0800 (PST)
+Received: by uranus.localdomain (Postfix, from userid 1000)
+        id 4471D4607EF; Fri,  9 Nov 2018 00:31:26 +0300 (MSK)
+Date:   Fri, 9 Nov 2018 00:31:26 +0300
+From:   Cyrill Gorcunov <gorcunov@gmail.com>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H. J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>
+Subject: Re: [PATCH v5 04/27] x86/fpu/xstate: Add XSAVES system states for
+ shadow stack
+Message-ID: <20181108213126.GD13195@uranus.lan>
+References: <20181011151523.27101-1-yu-cheng.yu@intel.com>
+ <20181011151523.27101-5-yu-cheng.yu@intel.com>
+ <CALCETrVAe8R=crVHoD5QmbN-gAW+V-Rwkwe4kQP7V7zQm9TM=Q@mail.gmail.com>
+ <4295b8f786c10c469870a6d9725749ce75dcdaa2.camel@intel.com>
+ <CALCETrUKzXYzRrWRdi8Z7AdAF0uZW5Gs7J4s=55dszoyzc29rw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <154138144796.31651.14201944346371750178.stgit@noble>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <CALCETrUKzXYzRrWRdi8Z7AdAF0uZW5Gs7J4s=55dszoyzc29rw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 05, 2018 at 12:30:48PM +1100, NeilBrown wrote:
-> When we find an existing lock which conflicts with a request,
-> and the request wants to wait, we currently add the request
-> to a list.  When the lock is removed, the whole list is woken.
-> This can cause the thundering-herd problem.
-> To reduce the problem, we make use of the (new) fact that
-> a pending request can itself have a list of blocked requests.
-> When we find a conflict, we look through the existing blocked requests.
-> If any one of them blocks the new request, the new request is attached
-> below that request, otherwise it is added to the list of blocked
-> requests, which are now known to be mutually non-conflicting.
+On Thu, Nov 08, 2018 at 01:22:54PM -0800, Andy Lutomirski wrote:
+> > >
+> > > Why are these __packed?  It seems like it'll generate bad code for no
+> > > obvious purpose.
+> >
+> > That prevents any possibility that the compiler will insert padding, although in
+> > 64-bit kernel this should not happen to either struct.  Also all xstate
+> > components here are packed.
+> >
 > 
-> This way, when the lock is released, only a set of non-conflicting
-> locks will be woken, the rest can stay asleep.
-> If the lock request cannot be granted and the request needs to be
-> requeued, all the other requests it blocks will then be woken
+> They both seem like bugs, perhaps.  As I understand it, __packed
+> removes padding, but it also forces the compiler to expect the fields
+> to be unaligned even if they are actually aligned.
 
-So, to make sure I understand: the tree of blocking locks only ever has
-three levels (the active lock, the locks blocking on it, and their
-children?)
-
---b.
-
-> 
-> Reported-and-tested-by: Martin Wilck <mwilck@suse.de>
-> Signed-off-by: NeilBrown <neilb@suse.com>
-> ---
->  fs/locks.c |   29 +++++++++++++++++++++++------
->  1 file changed, 23 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/locks.c b/fs/locks.c
-> index 802d5853acd5..1b0eac6b2918 100644
-> --- a/fs/locks.c
-> +++ b/fs/locks.c
-> @@ -715,11 +715,25 @@ static void locks_delete_block(struct file_lock *waiter)
->   * fl_blocked list itself is protected by the blocked_lock_lock, but by ensuring
->   * that the flc_lock is also held on insertions we can avoid taking the
->   * blocked_lock_lock in some cases when we see that the fl_blocked list is empty.
-> + *
-> + * Rather than just adding to the list, we check for conflicts with any existing
-> + * waiters, and add beneath any waiter that blocks the new waiter.
-> + * Thus wakeups don't happen until needed.
->   */
->  static void __locks_insert_block(struct file_lock *blocker,
-> -					struct file_lock *waiter)
-> +				 struct file_lock *waiter,
-> +				 bool conflict(struct file_lock *,
-> +					       struct file_lock *))
->  {
-> +	struct file_lock *fl;
->  	BUG_ON(!list_empty(&waiter->fl_block));
-> +
-> +new_blocker:
-> +	list_for_each_entry(fl, &blocker->fl_blocked, fl_block)
-> +		if (conflict(fl, waiter)) {
-> +			blocker =  fl;
-> +			goto new_blocker;
-> +		}
->  	waiter->fl_blocker = blocker;
->  	list_add_tail(&waiter->fl_block, &blocker->fl_blocked);
->  	if (IS_POSIX(blocker) && !IS_OFDLCK(blocker))
-> @@ -734,10 +748,12 @@ static void __locks_insert_block(struct file_lock *blocker,
->  
->  /* Must be called with flc_lock held. */
->  static void locks_insert_block(struct file_lock *blocker,
-> -					struct file_lock *waiter)
-> +			       struct file_lock *waiter,
-> +			       bool conflict(struct file_lock *,
-> +					     struct file_lock *))
->  {
->  	spin_lock(&blocked_lock_lock);
-> -	__locks_insert_block(blocker, waiter);
-> +	__locks_insert_block(blocker, waiter, conflict);
->  	spin_unlock(&blocked_lock_lock);
->  }
->  
-> @@ -996,7 +1012,7 @@ static int flock_lock_inode(struct inode *inode, struct file_lock *request)
->  		if (!(request->fl_flags & FL_SLEEP))
->  			goto out;
->  		error = FILE_LOCK_DEFERRED;
-> -		locks_insert_block(fl, request);
-> +		locks_insert_block(fl, request, flock_locks_conflict);
->  		goto out;
->  	}
->  	if (request->fl_flags & FL_ACCESS)
-> @@ -1071,7 +1087,8 @@ static int posix_lock_inode(struct inode *inode, struct file_lock *request,
->  			spin_lock(&blocked_lock_lock);
->  			if (likely(!posix_locks_deadlock(request, fl))) {
->  				error = FILE_LOCK_DEFERRED;
-> -				__locks_insert_block(fl, request);
-> +				__locks_insert_block(fl, request,
-> +						     posix_locks_conflict);
->  			}
->  			spin_unlock(&blocked_lock_lock);
->  			goto out;
-> @@ -1542,7 +1559,7 @@ int __break_lease(struct inode *inode, unsigned int mode, unsigned int type)
->  		break_time -= jiffies;
->  	if (break_time == 0)
->  		break_time++;
-> -	locks_insert_block(fl, new_fl);
-> +	locks_insert_block(fl, new_fl, leases_conflict);
->  	trace_break_lease_block(inode, new_fl);
->  	spin_unlock(&ctx->flc_lock);
->  	percpu_up_read_preempt_enable(&file_rwsem);
-> 
+How is that? Andy, mind to point where you get that this
+attribute forces compiler to make such assumption?
