@@ -2,133 +2,163 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04E8BECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:00:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9314ECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:01:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B23C120827
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:00:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7C8420827
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:01:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="vgIALi6l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B23C120827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uWrWN162"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7C8420827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727065AbeKIAgd (ORCPT
+        id S1727099AbeKIAhR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 19:36:33 -0500
-Received: from esa4.microchip.iphmx.com ([68.232.154.123]:28139 "EHLO
-        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726469AbeKIAgc (ORCPT
+        Thu, 8 Nov 2018 19:37:17 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:40069 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726469AbeKIAhR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 19:36:32 -0500
-X-IronPort-AV: E=Sophos;i="5.54,480,1534834800"; 
-   d="scan'208";a="22547399"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 08 Nov 2018 08:00:38 -0700
-Received: from NAM03-BY2-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.107) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Thu, 8 Nov 2018 08:00:38 -0700
+        Thu, 8 Nov 2018 19:37:17 -0500
+Received: by mail-wm1-f65.google.com with SMTP id b203-v6so1498965wme.5;
+        Thu, 08 Nov 2018 07:01:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IC5EtX/kwHi0AvwOv2MfeYf464/2l7fSeWAz3dzRsCs=;
- b=vgIALi6lmqKDDG4njeImFPn5ItrznKJ7hWX4rZ6LlS51HjNx3oRybmUGg0WI1Y5XqqSmKM9TMKwtiXFT1w35InKv0/Jrd9w+RyeTwYr6nSV/LeWaQEEwOGUpknlMOWxHi+nsPgXBbqIYsHCYCIKHz6HbPAdr938PuNbbmAHpkH4=
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com (10.175.99.146) by
- BN6PR11MB1540.namprd11.prod.outlook.com (10.172.22.143) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.30; Thu, 8 Nov 2018 15:00:35 +0000
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::11b7:21db:803a:7cfa]) by BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::11b7:21db:803a:7cfa%5]) with mapi id 15.20.1294.034; Thu, 8 Nov 2018
- 15:00:35 +0000
-From:   <Tudor.Ambarus@microchip.com>
-To:     <boris.brezillon@bootlin.com>
-CC:     <marek.vasut@gmail.com>, <dwmw2@infradead.org>,
-        <computersforpeace@gmail.com>, <richard@nod.at>,
-        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <yogeshnarayan.gaur@nxp.com>, <cyrille.pitchen@wedev4u.fr>
-Subject: Re: [PATCH 3/7] mtd: spi-nor: add restriction for nmaps in smpt
- parser
-Thread-Topic: [PATCH 3/7] mtd: spi-nor: add restriction for nmaps in smpt
- parser
-Thread-Index: AQHUd1My2DY7uJrddEu3eJNAMbNdY6VF1c6AgAAR3gCAAASWgIAACTUAgAABtwCAAAHCAA==
-Date:   Thu, 8 Nov 2018 15:00:34 +0000
-Message-ID: <e6e7b441-9dff-1265-4820-e29ad2ae0e0b@microchip.com>
-References: <20181108110653.21063-1-tudor.ambarus@microchip.com>
- <20181108110653.21063-4-tudor.ambarus@microchip.com>
- <20181108135447.36a0314c@bbrezillon>
- <86d16e39-15df-c12c-7bf3-25996db0c3a9@microchip.com>
- <20181108151509.364e3a85@bbrezillon>
- <4de81d92-ca8e-34f1-55b2-ef1b6b9dcec7@microchip.com>
- <20181108155414.48b64084@bbrezillon>
-In-Reply-To: <20181108155414.48b64084@bbrezillon>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR0102CA0058.eurprd01.prod.exchangelabs.com
- (2603:10a6:803::35) To BN6PR11MB1842.namprd11.prod.outlook.com
- (2603:10b6:404:103::18)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Tudor.Ambarus@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [94.177.32.154]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR11MB1540;6:x1wWK7LqXUHE5Ed6KoFGYrL1C6G945/h3RxUJaP+OSX0kNAXoZi8x19zDkZpHyjLsw6e5gUWGBkLX6PRy/j3lKqDAHRS3dOU6BMl7yFP507L0WWmZ3gVAk9VJIMz8ONBuBnx6rGBCyft+Ct0Z1FgkTNiaifmQFVpTko7GIh/dWSx/i/S6Tnj8RnWd09EdEB0c1DlUxjvjQzfSbJfa6LkSGwduIy5uetmrXyT2A8zt+bk5drRxQgZ6NflzW1Os5kW3VUAciM74jILmY2yGlcSzI00xPQmksQDJe87eC5XWkQTz1EwMDrkQwBdP+IDS2RE5D7kxM2dF4NSEHkxGitHFGRiRDQKM3+w54yM/T4ht0MeorWp64jx906K3YbEzuWNQstjN/nFPLR/IQ1cIZeYSNV2szjvgFpf3y5J96wpkcZDn+O4DUVbLIBgxB7dWUK5YOyI5Mi3Bo1V+uHbDeol/A==;5:AGZ1EG8JKZtj+gbQeM1cZB4dVXomtTrNYAV3jjdjv55zQAbRnTYKFOY62VyjPTiGNrm2IMokUIwkHiGVrGyy84lfQIy5FuJ53/nwRyC8UEP82DZTPMGd4FeG5XeK6qqKvkMZUnstlABlYGST72GFZRfa2DreVmuavOQA4kDhD9M=;7:jsyFp16kEyqve8EzjOa+jZB5Aqv0Kq83pZe3JVgRL14SBqLcq9I39Gf7OIeSyIEtC2xpP5f/pc4kFNHU1Givw5mJyRKOj2H2cwrv/4QrT7Fjd1gfvU6PcFYdPqvara9SaNXAaQ6z3U2Z/RGCnwynmg==
-x-ms-office365-filtering-correlation-id: 3fda85fe-a7c9-4692-30fc-08d6458aef24
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BN6PR11MB1540;
-x-ms-traffictypediagnostic: BN6PR11MB1540:
-x-microsoft-antispam-prvs: <BN6PR11MB15401094104FA48E3B9788E9F0C50@BN6PR11MB1540.namprd11.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231382)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(148016)(149066)(150057)(6041310)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:BN6PR11MB1540;BCL:0;PCL:0;RULEID:;SRVR:BN6PR11MB1540;
-x-forefront-prvs: 0850800A29
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(39860400002)(136003)(396003)(376002)(366004)(189003)(199004)(71190400001)(478600001)(4326008)(6246003)(71200400001)(81166006)(6916009)(81156014)(31686004)(53936002)(6512007)(476003)(2906002)(105586002)(25786009)(6486002)(6436002)(14454004)(11346002)(39060400002)(2616005)(256004)(486006)(72206003)(229853002)(446003)(5660300001)(2900100001)(26005)(52116002)(76176011)(86362001)(99286004)(31696002)(186003)(68736007)(106356001)(316002)(386003)(7736002)(66066001)(6506007)(54906003)(8936002)(305945005)(6116002)(3846002)(93886005)(53546011)(102836004)(36756003)(97736004)(8676002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB1540;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: U0Pym0zGWnRBsyjqf4ssEcolbMlHi1ky88pLoEy6JU2aLyD084J7qh+PmP1nTTyiQSc4wHq4OGdMJgFcw9Jcs523gPVMSDvpWp8fjrkm14V0dogc80Erpe62HMl96ck+d5Jg3KfaYSAAxtbq3AoxvH9zyoLSwlMBPu9badVtvitc7YtA+jYWlq/Fd3e4XtUVbu+/0/zOd3W/Qgi2SU5HoaqVYX29borS5DQyzk/sGHmy2wmVZZin4SmOO1g80JvOhb79U/mzG107bseI2RQKVJD5RWz0ABs9qgJaFzWESURhnSoJHS9bO1NdS6oa0FjQ1WXv1PHll5g50P/0whQTyqfIhoB7pIb+sP8SDpZSYxY=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <273C3E1FA3093547980F297270F06D0C@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1sKunXkCnbt4d4DCRYomB2Du9d0WmVfFrUlP7zNSSxs=;
+        b=uWrWN162PhEPlt5U65i3uibUivtA1eXT3I//Nl3cSLJGYL13g5k28vV3Xbb9JUc+cP
+         FJLiDa+7nP2jzJ3Zd5/axo6jpch+sQdOzZHdusuBE8djTxNowWZ/Jb9AOogua1U+DtL5
+         tCh6OZduV+FntrAiYIWWA3s4nWLJIpFLTsyZVY7mYm23upQzRZS1ihRlw7/WLV4DW83M
+         8wq9ZBCaDlEgsSNeizq0xaJ5PA30IOz+QCnxYBBa4iq0PPas/37CQ+71H2+HXSU2ikyV
+         Yh7nkBOsF8x3Dg5Zy+wtVwyiNEC3ayvLdRsd1I/ySFykv3hi8Mh0GgXEROp8egSSEcOc
+         asiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1sKunXkCnbt4d4DCRYomB2Du9d0WmVfFrUlP7zNSSxs=;
+        b=QelZz2Zn+nKavkID1uNqkv5UtqaTA9v7IlUuJwYUThAjdFr0hF0ZBX5NWkf5BkRjHa
+         Z9J+PDI7jHz6VsWGm4PDnHXjqMf3dmcBmPnEys3HVYndlyrTpcTgVHLqREn5yLIu8ZBd
+         oAFfx3X+q5pcmqJ1IJscQ0HCOqrazLPhSY/jtbOCcey9UZpJU8ihWIM6cck9p8EZSpSv
+         JlNVFHBpOfuwdpU1A3BwKVacH4C1j2yRJKEIa2/Rgw6i04Ly1tjdknTq3aIfcrUJtGPX
+         IdSp8LTuz0EkVRASW8zw+1xfdBhFP6827NOB40QKRIDSM/ZjWaExSWQQnno6iP9Uk0nT
+         7Zng==
+X-Gm-Message-State: AGRZ1gJSqAdUZcjhbQOP4HZtKWKZkjXDSVu/nbODzvQVCSUeHK2sEw80
+        6nCRf6WVAoHcLoFdOHku3p5vi8lpwCo=
+X-Google-Smtp-Source: AJdET5fPsjSL4r7o8hdiqWT9k2lcGL76RMQPyN6FD+KVg93cn34WJc7DCK81qry2WKEcETpk1osINQ==
+X-Received: by 2002:a1c:61d6:: with SMTP id v205-v6mr1605273wmb.10.1541689281171;
+        Thu, 08 Nov 2018 07:01:21 -0800 (PST)
+Received: from flashbox ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id z6-v6sm5354027wrs.19.2018.11.08.07.01.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 08 Nov 2018 07:01:18 -0800 (PST)
+Date:   Thu, 8 Nov 2018 08:01:16 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Michal Simek <michal.simek@xilinx.com>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] pinctrl: zynq: Use define directive for
+ PIN_CONFIG_IO_STANDARD
+Message-ID: <20181108150116.GA2830@flashbox>
+References: <20181101005724.9622-1-natechancellor@gmail.com>
+ <68ae935a-aec3-915c-bfe6-d69bfb93d702@xilinx.com>
+ <20181107085503.GA31517@flashbox>
+ <9d52cd84-440f-9a40-d0ec-1397abb24c98@xilinx.com>
+ <CAKwvOdmkC1LqMokhQUebpEZRoWWWwtQnbm8xGwiwdBy9UOMT5Q@mail.gmail.com>
+ <af717713-9e51-139d-1206-1682b83ae434@xilinx.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3fda85fe-a7c9-4692-30fc-08d6458aef24
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Nov 2018 15:00:35.0282
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB1540
-X-OriginatorOrg: microchip.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <af717713-9e51-139d-1206-1682b83ae434@xilinx.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDExLzA4LzIwMTggMDQ6NTQgUE0sIEJvcmlzIEJyZXppbGxvbiB3cm90ZToNCj4gT24g
-VGh1LCA4IE5vdiAyMDE4IDE0OjQ4OjExICswMDAwDQo+IDxUdWRvci5BbWJhcnVzQG1pY3JvY2hp
-cC5jb20+IHdyb3RlOg0KPiAgIA0KPj4+Pj4+ICsgICAgDQo+Pj4+Pg0KPj4+Pj4gTWF5YmUgSSBt
-aXNzZWQgc29tZXRoaW5nIGJ1dCBpdCBzb3VuZHMgbGlrZSB0aGlzIGNoYW5nZSBpcyBqdXN0DQo+
-Pj4+PiBvcHRpbWl6aW5nIHRoZSBTUE1UIHBhcnNpbmcgYSBiaXQsIGFuZCB0byBiZSBob25lc3Qs
-IEknbSBub3Qgc3VyZSB0aGlzDQo+Pj4+PiBpcyByZWFsbHkgbmVlZGVkLiBNb3N0IG9mIHRoZSB0
-aW1lLCBzbXB0X2xlbiB3aWxsIGJlIHJhdGhlciBzbWFsbCwgc28NCj4+Pj4+IHRyeWluZyB0byBi
-YWlsIG91dCBlYXJsaWVyIGlzIG5vdCBicmluZ2luZyBtdWNoIHBlcmYgaW1wcm92ZW1lbnRzLiAg
-ICANCj4+Pj4NCj4+Pj4gSXQncyByYXRoZXIgYSBzbXRwIHZhbGlkaXR5IGNoZWNrLiBJIHdhbnQg
-dG8gcmV0dXJuIGFuIGVycm9yIGlmIHRoZXJlIGFyZSBub3QNCj4+Pj4gZW5vdWdoIGRldGVjdGlv
-biBjb21tYW5kcyB0byBpZGVudGlmeSB0aGUgbWFwIGlkLiAgDQo+Pj4NCj4+PiBZb3Ugd291bGQg
-aGF2ZSBmYWlsZWQgdGhlIHNhbWUgd2F5IHdpdGhvdXQgdGhpcyB2YWxpZGl0eSBjaGVjayBhZnRl
-ciBhDQo+Pj4gbWF4aW11bSBvZiBzbXB0X2xlbiBpdGVyYXRpb25zLCByaWdodD8NCj4+PiAgIA0K
-Pj4NCj4+IFJpZ2h0LiBUaGUgY29ycmVjdCBmaXggd291bGQgYmUgdG8gY291bnQgbm1hcHMgaW4g
-YSBsb29wLCB0aGVuIGRvIHRoZXNlIGNoZWNrcywNCj4+IGFuZCBpZiBhbGwgb2ssIHNlYXJjaCBm
-b3IgdGhlIG1hcF9pZCBpbiBhbm90aGVyIGxvb3AgOikuDQo+IA0KPiBPciBqdXN0IGVycm9yIG91
-dCB3aGVuICFuY21kcyAmJiBubWFwcyA+IDEuDQoNClNvbHZlcyBwYXJ0aWFsbHkgdGhlIHByb2Js
-ZW0uDQoNCj4gDQo+IElmIHlvdSBpbnNpc3Qgb24ga2VlcGluZyB0aGUgbmNtZHMgJiYgbm1hcHMg
-Pj0gKDEgPDwgKG5jbWRzICsgMSkpDQo+IGNoZWNrLCB0aGF0J3MgZmluZSwgYnV0IGl0J3Mgbm90
-IHJlcGxhY2luZyB0aGUgY29uc2lzdGVuY3kgY2hlY2sgSSB3YXMNCj4gZG9pbmcgOy0pLg0KPiAN
-Cg0KSSBkb24ndCBoYXZlIGEgc3Ryb25nIG9waW5pb24gb24gdGhpcywgd2UgY2FuIGxpdmUgd2l0
-aG91dCB0aGVzZSBjaGVja3MgYXMgd2VsbC4NCg==
+On Thu, Nov 08, 2018 at 07:45:42AM +0100, Michal Simek wrote:
+> On 07. 11. 18 18:48, Nick Desaulniers wrote:
+> > On Wed, Nov 7, 2018 at 1:01 AM Michal Simek <michal.simek@xilinx.com> wrote:
+> >>
+> >> On 07. 11. 18 9:55, Nathan Chancellor wrote:
+> >>> On Wed, Nov 07, 2018 at 09:46:12AM +0100, Michal Simek wrote:
+> >>>> On 01. 11. 18 1:57, Nathan Chancellor wrote:
+> >>>>> Clang warns when one enumerated type is implicitly converted to another:
+> >>>>>
+> >>>>> drivers/pinctrl/pinctrl-zynq.c:985:18: warning: implicit conversion from
+> >>>>> enumeration type 'enum zynq_pin_config_param' to different enumeration
+> >>>>> type 'enum pin_config_param' [-Wenum-conversion]
+> >>>>>         {"io-standard", PIN_CONFIG_IOSTANDARD, zynq_iostd_lvcmos18},
+> >>>>>         ~               ^~~~~~~~~~~~~~~~~~~~~
+> >>>>> drivers/pinctrl/pinctrl-zynq.c:990:16: warning: implicit conversion from
+> >>>>> enumeration type 'enum zynq_pin_config_param' to different enumeration
+> >>>>> type 'enum pin_config_param' [-Wenum-conversion]
+> >>>>>         = { PCONFDUMP(PIN_CONFIG_IOSTANDARD, "IO-standard", NULL, true),
+> >>>>>             ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> >>>>> ./include/linux/pinctrl/pinconf-generic.h:163:11: note: expanded from
+> >>>>> macro 'PCONFDUMP'
+> >>>>>         .param = a, .display = b, .format = c, .has_arg = d     \
+> >>>>>                  ^
+> >>>>> 2 warnings generated.
+> >>>>
+> >>>> This is interesting. I have never tried to use llvm for building the
+> >>>> kernel. Do you have any description how this can be done?
+> >>>>
+> >>>
+> >>> Depending on what version of Clang you have access to, it is usually just as
+> >>> simple as running 'make ARCH=arm CC=clang CROSS_COMPILE=arm-linux-gnueabi-'.
+> >>>
+> >>> Clang 7.0+ is recommended but 6.0 might work too.
+> >>
+> >> TBH I would expect to download container and run this there to make sure
+> >> that I don't break anything else.
+> > 
+> > This is the first request we've had for a container in order to test a
+> > patch.  If it comes up again from other folks, I think it makes sense
+> > to create one.  Until then, its nice to have.  It's definitely
+> > overkill for this patch.
+> 
+> I have played with it to see that error and here are some steps I did.
+> 
+> docker run --name test-clang -it --rm debian:latest bash
+> apt-get update
+> apt-get install gcc-arm-linux-gnueabi gcc-aarch64-linux-gnu clang git bc
+> build-essential bison flex make llvm vim libssl-dev sparse
+> 
+> git clone
+> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git --depth 1
+> cd linux
+> 
+> export ARCH=arm64
+> export CROSS_COMPILE=aarch64-linux-gnu-
+> 
+> make defconfig
+
+This should also have 'CC=clang' because compiler detection happens in
+Kconfig now so compiler flags get properly set. Other than that, looks
+good and I was able to build pinctrl-zynq.o without any issues with
+those commands.
+
+Cheers!
+Nathan
+
+> make CC=clang drivers/pinctrl/pinctrl-zynq.o C=1 V=1
+> 
+> There was not a problem to run it for arm64 but I had issues to run this
+> for arm32.
+> Do you see any problem with above steps?
+> 
+> Thanks,
+> Michal
+> 
