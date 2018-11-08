@@ -2,208 +2,123 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86B5CECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:07:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A57AAECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:08:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49EF420827
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:07:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49EF420827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 7442A20827
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:08:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7442A20827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727473AbeKHXn1 (ORCPT
+        id S1727489AbeKHXn5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 18:43:27 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:33640 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726931AbeKHXn1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 18:43:27 -0500
-Received: by mail-qk1-f196.google.com with SMTP id o89so26663129qko.0;
-        Thu, 08 Nov 2018 06:07:48 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Cmq8Z0t3Y75ezhc956JefSNbsuMUAafAojsLMquh094=;
-        b=IPIBXIV/ep/RDOcv3F9zFRmceMoJZqUb2X9ZrdbNcdVYeGs/3qHIfL8W04jcqIFGuW
-         EIEHUcWG4rtoyq8fXBToBhqA83agjuBZFaj+woNnEXxW+5JwRs/9A8Bwky0JaFGa4dyI
-         XTk6CbkEkcBg10YSsi5wyxtyJCOUGiSacYGJTCER5hIGNcpxWZktG2rGnZoALOv+uOPs
-         MWzayxDYCP8IZ6wOTMfgS2/yd6DEeOmCOPhw8F++Mq+rbiWDOLoXxg8rXmbZpfj8+BSU
-         W82qWPYyj97fZiWfe1lLwhFdPsWlmxjN36EuWcCnF6PHo/umUAuuf0YiY6PSMmwS6DOm
-         I83g==
-X-Gm-Message-State: AGRZ1gLxJxOw1hzK9hEKQ0Tk0OjwIkK8ZGrZSpcMcAcIy36T8w0zqmXt
-        Xuu2nGSbyqZob6aafdkG/GgQTrL+HZKRg7fh3PA=
-X-Google-Smtp-Source: AJdET5eG18D9cs1PiXm7ZSsgZXikMxz1ig9A5aZECjeCdB1mHLbOxd39CIXmFoA822IHM966WyMv9Nh4alu0O+Tl90s=
-X-Received: by 2002:a0c:dc0f:: with SMTP id s15mr4426963qvk.40.1541686067792;
- Thu, 08 Nov 2018 06:07:47 -0800 (PST)
+        Thu, 8 Nov 2018 18:43:57 -0500
+Received: from mga01.intel.com ([192.55.52.88]:39216 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726801AbeKHXn4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 18:43:56 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 06:08:18 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,478,1534834800"; 
+   d="scan'208";a="94661856"
+Received: from ibanaga-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.75])
+  by FMSMGA003.fm.intel.com with ESMTP; 08 Nov 2018 06:08:15 -0800
+Date:   Thu, 8 Nov 2018 16:08:14 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+Subject: Re: [PATCH v4 6/6] tpm: ensure that the output of PCR read contains
+ the correct digest size
+Message-ID: <20181108140814.GF8922@linux.intel.com>
+References: <20181106150159.1136-1-roberto.sassu@huawei.com>
+ <20181106150159.1136-7-roberto.sassu@huawei.com>
 MIME-Version: 1.0
-References: <20181104155501.14767-1-TheSven73@googlemail.com> <20181104155501.14767-5-TheSven73@googlemail.com>
-In-Reply-To: <20181104155501.14767-5-TheSven73@googlemail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 8 Nov 2018 15:07:24 +0100
-Message-ID: <CAK8P3a3DnKcRxL5dG_pvBVTngFh5eDL2JdEqZzgL0RXJy5dZGw@mail.gmail.com>
-Subject: Re: [PATCH anybus v3 4/6] bus: support HMS Anybus-S bus
-To:     thesven73@gmail.com
-Cc:     svendev@arcx.com, Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Thierry Reding <treding@nvidia.com>,
-        David Lechner <david@lechnology.com>, noralf@tronnes.org,
-        Johan Hovold <johan@kernel.org>,
-        Michal Simek <monstr@monstr.eu>, michal.vokac@ysoft.com,
-        gregkh <gregkh@linuxfoundation.org>,
-        John Garry <john.garry@huawei.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Sebastien Bourdelin <sebastien.bourdelin@savoirfairelinux.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Stuart Yoder <stuyoder@gmail.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181106150159.1136-7-roberto.sassu@huawei.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 4, 2018 at 4:55 PM <thesven73@gmail.com> wrote:
-> From: Sven Van Asbroeck <svendev@arcx.com>
+On Tue, Nov 06, 2018 at 04:01:59PM +0100, Roberto Sassu wrote:
+> This patch protects against data corruption that could happen in the bus,
+> by checking that that the digest size returned by the TPM during a PCR read
+> matches the size of the algorithm passed as argument to tpm2_pcr_read().
+> 
+> This check is performed after information about the PCR banks has been
+> retrieved.
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>  drivers/char/tpm/tpm2-cmd.c | 16 +++++++++++++++-
+>  1 file changed, 15 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> index e2d5b84286a7..3b0b5b032901 100644
+> --- a/drivers/char/tpm/tpm2-cmd.c
+> +++ b/drivers/char/tpm/tpm2-cmd.c
+> @@ -187,15 +187,28 @@ struct tpm2_pcr_read_out {
+>  int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx,
+>  		  struct tpm_digest *digest_struct, u16 *digest_size_ptr)
+>  {
+> +	int i;
+>  	int rc;
+>  	struct tpm_buf buf;
+>  	struct tpm2_pcr_read_out *out;
+>  	u8 pcr_select[TPM2_PCR_SELECT_MIN] = {0};
+>  	u16 digest_size;
+> +	u16 expected_digest_size = 0;
+>  
+>  	if (pcr_idx >= TPM2_PLATFORM_PCR)
+>  		return -EINVAL;
+>  
+> +	if (!digest_size_ptr) {
+> +		for (i = 0; i < chip->nr_active_banks &&
+> +		     chip->active_banks[i].alg_id != digest_struct->alg_id; i++)
+> +			;
 
-> +struct anybus_mbox_hdr {
-> +       u16 id;
-> +       u16 info;
-> +       u16 cmd_num;
-> +       u16 data_size;
-> +       u16 frame_count;
-> +       u16 frame_num;
-> +       u16 offset_high;
-> +       u16 offset_low;
-> +       u16 extended[8];
-> +} __packed;
-
-I don't think you want this to be __packed, it won't change the layout
-but instead force byte accesses on architectures that don't have
-fast unaligned load/store instructions.
-
-Instead of the __packed, it's almost always better to ensure that
-the structure itself is aligned to a 16-bit address.
-
-> +static struct ab_task *ab_task_create_get(struct kmem_cache *cache,
-> +                       ab_task_fn_t task_fn)
-> +{
-> +       struct ab_task *t;
+Not sure if the semicolon should be in its own line.
+`
 > +
-> +       t = kmem_cache_alloc(cache, GFP_KERNEL);
-> +       if (!t)
-> +               return NULL;
-> +       t->cache = cache;
-> +       refcount_set(&t->refcnt, 1);
-> +       t->task_fn = task_fn;
-> +       t->done_fn = NULL;
-> +       t->result = 0;
-> +       init_completion(&t->done);
-> +       return t;
-> +}
-
-It looks like you build your own object management here. Maybe
-use kobject, or at least kref instead of the refcount_t based
-low-level implementation?
-
-> +struct anybuss_host {
-> +       struct device *dev;
-> +       struct anybuss_client *client;
-> +       struct reset_control *reset;
-> +       struct regmap *regmap;
-> +       int irq;
-> +       struct task_struct *qthread;
-> +       wait_queue_head_t wq;
-> +       struct completion card_boot;
-> +       atomic_t ind_ab;
-> +       spinlock_t qlock;
-> +       struct kmem_cache *qcache;
-> +       struct kfifo qs[3];
-> +       struct kfifo *powerq;
-> +       struct kfifo *mboxq;
-> +       struct kfifo *areaq;
-> +       bool power_on;
-> +       bool softint_pending;
-> +       atomic_t dc_event;
-> +       wait_queue_head_t dc_wq;
-> +       atomic_t fieldbus_online;
-> +       struct kernfs_node *fieldbus_online_sd;
-> +};
-
-Similarly, should that anybuss_host sturcture maybe be based on
-a 'struct device' itself? What is the hierarchy of devices in sysfs?
-
+> +		if (i == chip->nr_active_banks)
+> +			return -EINVAL;
 > +
-> +static int read_ind_ab(struct regmap *regmap)
-> +{
-> +       unsigned long timeout = jiffies + HZ/2;
-> +       unsigned int a, b;
+> +		expected_digest_size = chip->active_banks[i].digest_size;
+> +	}
 > +
-> +       while (time_before_eq(jiffies, timeout)) {
-> +               regmap_read(regmap, REG_IND_AB, &a);
-> +               regmap_read(regmap, REG_IND_AB, &b);
-> +               if (likely(a == b))
-> +                       return (int)a;
-> +               cpu_relax();
-> +       }
-> +       WARN(1, "IND_AB register not stable");
-> +       return -ETIMEDOUT;
-> +}
+>  	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_PCR_READ);
+>  	if (rc)
+>  		return rc;
+> @@ -215,7 +228,8 @@ int tpm2_pcr_read(struct tpm_chip *chip, int pcr_idx,
+>  
+>  	out = (struct tpm2_pcr_read_out *)&buf.data[TPM_HEADER_SIZE];
+>  	digest_size = be16_to_cpu(out->digest_size);
+> -	if (digest_size > sizeof(digest_struct->digest)) {
+> +	if (digest_size > sizeof(digest_struct->digest) ||
+> +	    (!digest_size_ptr && digest_size != expected_digest_size)) {
+>  		rc = -EINVAL;
+>  		goto out;
+>  	}
+> -- 
+> 2.17.1
+> 
 
-500ms is an awfully long time for a busy loop. Can you change the
-cpu_relax() into a msleep() or usleep_range() to let other processes
-get some time?
+Please add
 
-I see this is called from the interrupt handler at the moment, which
-means you cannot call sleeping functions, but it also means that
-the timeout may never happen because the timer tick IRQ cannot
-get through. That means you may have to change the irq handler
-logic, e.g. to try this a few times but then defer to a bottom half
-if it fails for a long time.
+Cc: stable@vger.kernel.org.
 
-> +/* -------------------------- mailbox tasks ----------------------- */
-> +
-> +struct msgAnybusInit {
-> +       u16 input_io_len;
-> +       u16 input_dpram_len;
-> +       u16 input_total_len;
-> +       u16 output_io_len;
-> +       u16 output_dpram_len;
-> +       u16 output_total_len;
-> +       u16 op_mode;
-> +       u16 notif_config;
-> +       u16 wd_val;
-> +} __packed;
-
-Again, probably not __packed here.
-
-> +static int task_fn_mbox_2(struct anybuss_host *cd, struct ab_task *t)
-> +{
-> +       struct mbox_priv *pd = &t->mbox_pd;
-> +       unsigned int ind_ap;
-> +
-> +       if (!cd->power_on)
-> +               return -EIO;
-> +       regmap_read(cd->regmap, REG_IND_AP, &ind_ap);
-> +       if (((atomic_read(&cd->ind_ab) ^ ind_ap) & IND_AX_MOUT) == 0) {
-> +               /* output message not here */
-> +               if (time_after(jiffies, t->start_jiffies + TIMEOUT))
-> +                       return -ETIMEDOUT;
-> +               return -EINPROGRESS;
-> +       }
-
-Again, avoid busy loops with long timeouts like this.
-
-       Arnd
+/Jarkko
