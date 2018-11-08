@@ -2,76 +2,100 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E92FECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:49:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B5ECECDE4C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:54:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF8072081C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:49:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF8072081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.us
+	by mail.kernel.org (Postfix) with ESMTP id 5E6DC20840
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 20:54:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="glXkCfej"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E6DC20840
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727653AbeKIG0N (ORCPT
+        id S1727265AbeKIGb2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 01:26:13 -0500
-Received: from mout.gmx.net ([212.227.17.20]:40853 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725882AbeKIG0N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 01:26:13 -0500
-Received: from dhcp-41-57.bos.redhat.com ([66.187.233.206]) by mail.gmx.com
- (mrgmx101 [212.227.17.174]) with ESMTPSA (Nemesis) id
- 0MCxfb-1gCqjq0CjD-009j64; Thu, 08 Nov 2018 21:48:41 +0100
-Message-ID: <1541710117.12945.3.camel@gmx.us>
-Subject: Re: [PATCH] efi: permit calling efi_mem_reserve_persistent from
- atomic context
-From:   Qian Cai <cai@gmx.us>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-efi@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, marc.zyngier@arm.com,
-        will.deacon@arm.com
-Date:   Thu, 08 Nov 2018 15:48:37 -0500
-In-Reply-To: <20181108180511.30239-1-ard.biesheuvel@linaro.org>
-References: <20181108180511.30239-1-ard.biesheuvel@linaro.org>
+        Fri, 9 Nov 2018 01:31:28 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:35176 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725723AbeKIGb2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 01:31:28 -0500
+Received: by mail-io1-f67.google.com with SMTP id 79-v6so15704781iou.2;
+        Thu, 08 Nov 2018 12:54:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PQdS+FHmR8qURlp+S44E114Dtf5AHtGCvkRmM+6aZp0=;
+        b=glXkCfejZTP2G7pzZI7SfSd9G0l4SlyIueLj8kKTpHMp0neogHpEtTbwczorZA+/fT
+         KpE1epQdZQDOIsii9Q3MqXQmv7kikvSk2pHGRjVAzcPG3s4xqPvJyMLQ099wI99uBKJT
+         HEbR2k16WzogJhXEi2QbbcHiyl7JJXV+AQgqFqiB4BIrv4MAJG0a9WuMdG7CLu2VyJAG
+         qteSPI84fYxUpjNfhGn1Bb1KBaPHLe76nbS/0u7rsAu1w3fjf0gWrRArAPw4kP0Mqudu
+         OvqrD1nq5i5Pfbclifbr5beFogbdqH4JnzNC6b7pTnc69pGQH2j5BbDH3uiidm/s3w8J
+         dMkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PQdS+FHmR8qURlp+S44E114Dtf5AHtGCvkRmM+6aZp0=;
+        b=awPsI5UPnN9k6UdDEtIexkBlutusOVkU3ax5fx4rXl0qSWCwSbeO1JGg0yk1Y4VKcI
+         R1wQRWdCm/XaVMJtcyU1a75h6UblqSqczNTGM2H3CN+VvUx0S4D/mG6ePY2Su2xPRHa0
+         JiILZw3/A6UnaxLvwP1nfe3c+okDgf51N63Wu4Axm+4wHGaF/cPUTZm3o/4KYHMmYP7h
+         vShggi0/qxMEE+gclRqpT55cW1YOS8D9r3yYSS1Hbbdm9vvsySTMK9FotyJGjmpxHwSd
+         KNYnMx3OKboxrF/KZZECPz52RCAPCOkFA+dfueTU14lUuVztOjpt/37DkfTbta8w75CI
+         29Xg==
+X-Gm-Message-State: AGRZ1gL11Q+X1clAL0xWxYIWSa3n1whvC0l2/eKxzmpK0ZEw7mmJ4mhF
+        0KwGc2FRVgAG58+X38Nb6lj8LMsjuqa3Zp7zGhs=
+X-Google-Smtp-Source: AJdET5dyqzhj6hBHrJShZhI3EL/MoTuStP/v7rmujm4nuXI7DbnCtONKL2bmT28k2c9qynvYiX+KOaSLXVsfITP/d3c=
+X-Received: by 2002:a6b:ca03:: with SMTP id a3-v6mr5052194iog.208.1541710453179;
+ Thu, 08 Nov 2018 12:54:13 -0800 (PST)
+MIME-Version: 1.0
+References: <20181104171124.5717-1-ahmedsoliman0x666@gmail.com> <24f900ba-6459-c6aa-4e97-92f0ec744896@redhat.com>
+In-Reply-To: <24f900ba-6459-c6aa-4e97-92f0ec744896@redhat.com>
+From:   Ahmed Soliman <ahmedsoliman0x666@gmail.com>
+Date:   Thu, 8 Nov 2018 22:54:00 +0200
+Message-ID: <CAAGnT3Y8SwD-jm2x2k7y2EZMsHdfua4-tnfu8o_ajyV+n4imcA@mail.gmail.com>
+Subject: Re: [PATCH V6 0/8] KVM: X86: Introducing ROE Protection Kernel Hardening
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        nathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>, kvm@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?B?6rmA7J246rK4?= <ovich00@gmail.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        nigel.edwards@hpe.com, Boris Lukashev <blukashev@sempervictus.com>,
+        Hossam Hassan <7ossam9063@gmail.com>,
+        Ahmed Lotfy <A7med.lotfey@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:sr6VZ7qbDoJ2AdeKbKLrFYcoKiJouBM9InoiVlNox5/nUwkL7om
- taCpf2Jb8pmsUgPYLb9yqgQBsq7rTFoEB0FPNpPOxf8DOJTEPj7YH7Un6bos+F65el/DGzj
- 3l187puWW25oshIUHN8ImM2yrDYpxAAORO1KfiTlKcIibAu5uu45vCIJ1EKtSRtpw7rQ9Jf
- 78thHQVlyLLv2CsNQSFwg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:lC74UsjpE4A=:rFgNm/19xpgNkFhRL7zTq4
- iFogGwo5j8uPghuj0EHriyyEUbv76cMzN2VYswepoIn6emtPl7ASGmI/IDtY8T3m+xLywPnWD
- XEqQxOIOB5bF7Li0XvXzO+X9idToftEn+rAfALK+Y1uNbi09YEJFu+pJmBja6DyFMD5gZa6kQ
- +6feZ0T2gPs4FgJNSe/RXSqN3glXvRtNDAyZFlT8GaZyR1X4NM4OvmHtgMP2vlalNDEs3g5sF
- UqLxn87tiLVw5CvaEJeO2dZQYlnZ2UylxVRvv5G+///oh/O/Zbqz6w7xkOWtUC2OZ4dd1iKDO
- G0n+XvYh5AQF6i7uCkJrhuPmsCKUfAZg5L8nM1ClBsuLxqqK69v3AjPmKRx/+MXM5hVj6gA17
- s7a2mspVlM13/TFDGdL5Og+liJzXVWlSXYZ1j6M7EzSlQdaacFpKESAzIb/jkyt4LlvEPKDlt
- ziQ/vcmRmW0wF6otxIjxk7guNAA8ymxe7VIZB3iwSNTb7iptGA/I2OAelqZ5ZLTrnAmKZxMG9
- INWrNUVIy/KtUfY8IxE88mgJUF4fGp4FxeVjnShmqAWCCHm9IBhD2uTH/X43g+HpPLSSVTPrg
- UbN9b6yJSyMFVqkfvCdAyydexEL2wuz/iPDvhMufAdA8TNFS3z1/x+tOePc6WMUTBFEN1lGVG
- K+P5HbUIbe08BvsvSs6ZVTTHaMVwpnFIRArCIq2eDVR+GPExbCUH1xIte46abT/KWqGojQ90o
- rK6JWVKrBP5KzBbaQFl6lv+xW8pvOWxhUYKG2ZCind2htlZn99b9ZDIfznLgCuctEclDAWMz1
- qXKjqnRLrd2wmHR/fOAerd8Ew+yKFnM+gvdz4eminyUk2/98xvph3eaFKKlGRJ+yJlavRJGpY
- fzMapUBLhq5ppPxBwp4OckBC75boBC341VloYMKzDMn4ld7Us/SkmXKbIzDbY1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-11-08 at 19:05 +0100, Ard Biesheuvel wrote:
-> Currently, efi_mem_reserve_persistent() may not be called from atomic
-> context, since both the kmalloc() call and the memremap() call may
-> sleep.
-> 
-> The kmalloc() call is easy enough to fix, but the memremap() call
-> needs to be moved into an init hook since we cannot control the
-> memory allocation behavior of memremap() at the call site.
-> 
-> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Tested-by: Qian Cai <cai@gmx.us>
+Hello,
+
+> Do you have patches that enable usage of ROE in the kernel?
+> Alternatively you can write testcases in tools/testing/selftests/kvm to
+> test how guests should use it.
+
+As for now ROE isn't integrated yet into the kernel, I did have some
+tests I will
+have them in  selftests/kvm in the next patch set
+
+> I would remove CONFIG_KVM_ROE altogether.  You can enable it
+> unconditionally.
+
+Noted, I will have it enabled unconditionally in the next patch set.
+
+> I will continue reviewing the patches soon.
+>
+> Paolo
