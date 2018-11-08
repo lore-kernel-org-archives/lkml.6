@@ -2,204 +2,132 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77E7CECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:48:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C59FECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:49:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 297EF2086C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:48:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="hPTufmQN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 297EF2086C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id 6AF8A2081D
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 14:49:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AF8A2081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwn.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727874AbeKIAYH (ORCPT
+        id S1727299AbeKIAZN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 19:24:07 -0500
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:7291 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727851AbeKIAYG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 19:24:06 -0500
-X-IronPort-AV: E=Sophos;i="5.54,480,1534834800"; 
-   d="scan'208";a="23010832"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 08 Nov 2018 07:48:15 -0700
-Received: from NAM01-SN1-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.38) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Thu, 8 Nov 2018 07:48:15 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9BPpoeaXIBMrl3lp4SWFE+szTqYVQIZTVtSD9Kuw2Hk=;
- b=hPTufmQNKzv135LVrsIFAV8RuT/EfLs3MsvrjRxXOeh4W3Hf5aiskJZyPzrn1jUbl/kh28PddxuZG180CdH22kxS7wyMXsqk6og3jE3By+qiBp2AK8wVJls+WZHmkisVzguZDBF7IRW+HhauPZRkSqBWoWV2MLk+AR1l3Kw6WV4=
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com (10.175.99.146) by
- BN6PR11MB1666.namprd11.prod.outlook.com (10.172.24.15) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.28; Thu, 8 Nov 2018 14:48:11 +0000
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::11b7:21db:803a:7cfa]) by BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::11b7:21db:803a:7cfa%5]) with mapi id 15.20.1294.034; Thu, 8 Nov 2018
- 14:48:11 +0000
-From:   <Tudor.Ambarus@microchip.com>
-To:     <boris.brezillon@bootlin.com>
-CC:     <marek.vasut@gmail.com>, <dwmw2@infradead.org>,
-        <computersforpeace@gmail.com>, <richard@nod.at>,
-        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <yogeshnarayan.gaur@nxp.com>, <cyrille.pitchen@wedev4u.fr>
-Subject: Re: [PATCH 3/7] mtd: spi-nor: add restriction for nmaps in smpt
- parser
-Thread-Topic: [PATCH 3/7] mtd: spi-nor: add restriction for nmaps in smpt
- parser
-Thread-Index: AQHUd1My2DY7uJrddEu3eJNAMbNdY6VF1c6AgAAR3gCAAASWgIAACTUA
-Date:   Thu, 8 Nov 2018 14:48:11 +0000
-Message-ID: <4de81d92-ca8e-34f1-55b2-ef1b6b9dcec7@microchip.com>
-References: <20181108110653.21063-1-tudor.ambarus@microchip.com>
- <20181108110653.21063-4-tudor.ambarus@microchip.com>
- <20181108135447.36a0314c@bbrezillon>
- <86d16e39-15df-c12c-7bf3-25996db0c3a9@microchip.com>
- <20181108151509.364e3a85@bbrezillon>
-In-Reply-To: <20181108151509.364e3a85@bbrezillon>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR06CA0103.eurprd06.prod.outlook.com
- (2603:10a6:803:8c::32) To BN6PR11MB1842.namprd11.prod.outlook.com
- (2603:10b6:404:103::18)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [94.177.32.154]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR11MB1666;6:h7XQM1fznzFW7FjHbLWgxPSyWKmDQZaJcOl3dqbb1qpOoU2+uBlU7/g5F1pGRQH3qfDp9/wMn4T6di2N/OWVyJdF82z+78fdLfpFnxNjJidaucXr2HhkFLPpRx1vRO3XWbFvPYRXt2H+I9r0wYd19Afwny2nAEUAqbry2WdULtmdHt919OF+lomfBCPafs5IjLvEGMpLmYQqqP6mA3FF4Bpq6Z1Yfo6LEpQnT+blN5Gg+eMrQcdiEbb2VNqRNsp6ivNZEDhlh/nSe6jnxbIywMKel+mHilFbBaUSdvBrfirJfN2Qs5YWO4F0mIeMb3ZXC8GX5S1Vx6A19jJ8EMvzXONALuUv16/ZDhINQuX+HPtvJdkUTt5fDy23OWU0nwSecyqrbcixrM1TfKtX4XKjfBgWIg2lxo6LfN/t2scxrvmqmF/jSnZEDpQu8OxbB2wnvgckObp6guBPOW0yGMXuTA==;5:37gMWvWVxwxuSY0sfhuJlir28hjmJyqFc9avHGTuskNsFgoWVQcVF6ciAgOu/muqFoLEEwuHOdf3//14SqjVkERv1+OWHes9oZRkVUjvu3/xYUbRLWhZHf3LVa++5d8S7UZA71N3sbjVUglA+F0vpgUebF+b2AuxrbWikm+5qek=;7:uaeBC8UuaDuDCDKN0LeBdvJFn3ZWNfE1hZeHdatdMQH0W3qYVQUUMXpuiP3GEsE6fffeDH9EOC86szPoZd0F5sR0djvSNVLOCCWwljHPBJGUEIl5nt9IL2qj0BV1lvbm/piFJ2AfTo3doo1T4NX0lw==
-x-ms-office365-filtering-correlation-id: a4b4d01e-4a6c-4fa8-0d8b-08d645893443
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BN6PR11MB1666;
-x-ms-traffictypediagnostic: BN6PR11MB1666:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Tudor.Ambarus@microchip.com; 
-x-microsoft-antispam-prvs: <BN6PR11MB1666480EBEE1EBF99361D622F0C50@BN6PR11MB1666.namprd11.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231382)(944501410)(52105095)(10201501046)(3002001)(93006095)(93001095)(148016)(149066)(150057)(6041310)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:BN6PR11MB1666;BCL:0;PCL:0;RULEID:;SRVR:BN6PR11MB1666;
-x-forefront-prvs: 0850800A29
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(39860400002)(376002)(346002)(136003)(189003)(199004)(476003)(6916009)(102836004)(26005)(11346002)(256004)(446003)(14444005)(14454004)(2616005)(305945005)(71190400001)(6246003)(68736007)(72206003)(2906002)(6436002)(71200400001)(486006)(6506007)(31696002)(53546011)(86362001)(386003)(229853002)(7736002)(6486002)(6512007)(52116002)(186003)(5660300001)(8676002)(66066001)(105586002)(8936002)(39060400002)(76176011)(97736004)(316002)(99286004)(478600001)(36756003)(4326008)(25786009)(54906003)(93886005)(2900100001)(81156014)(81166006)(31686004)(6116002)(3846002)(106356001)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB1666;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 7pnxs73kIRmaggOeKiB/C+80qy3PNx/8RJC8DPV1A6sN3XPRTaALT3/rZAM0euTgLCcrUyHNQwgpt91QY5T8xd8zZ0kAqmevWsLEc+ggh6Qfy+xdE6vyBUbkjUtJ00UDLhl4BVJDLbcqWlHhZDspdZRzwElhECUhH2pT5U3asAg5k+LrVgFfFiYnWv12FOWkDwlTU7YBN5/uVdRpQFTm3qkGYI7TBYEQpGXIMgMAUPf9RyN+0Oxkx03ei7Ewj7CzD1PUrimNXMx3WgiinQ26XKE1VcR81pKLF6i8iFp7pXVvhuI1Pmgcx5/q5slVsMY0v+hjT82J+HRPnaBtCR1as1vdXEwg1yko1O7aK5Hemow=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <3B66719ACAC24B4BB4E01FC32805EF9D@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Thu, 8 Nov 2018 19:25:13 -0500
+Received: from ms.lwn.net ([45.79.88.28]:58898 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726509AbeKIAZM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 19:25:12 -0500
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 367154FA;
+        Thu,  8 Nov 2018 14:49:21 +0000 (UTC)
+Date:   Thu, 8 Nov 2018 07:49:20 -0700
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        X86 ML <x86@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        john.stultz@linaro.org, acme@redhat.com, frederic@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>, daniel.lezcano@linaro.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: Re: [patch 0/2] Documentation/process: Add subsystem/tree handbook
+Message-ID: <20181108074920.4c601ee3@lwn.net>
+In-Reply-To: <alpine.DEB.2.21.1811072134060.1666@nanos.tec.linutronix.de>
+References: <20181107171010.421878737@linutronix.de>
+        <20181107124855.328133e7@lwn.net>
+        <CAPcyv4goT+7t1foOhEYgGTz2kRV2Oou8QOs38D13rdC-TpfX+Q@mail.gmail.com>
+        <alpine.DEB.2.21.1811072134060.1666@nanos.tec.linutronix.de>
+Organization: LWN.net
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: a4b4d01e-4a6c-4fa8-0d8b-08d645893443
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Nov 2018 14:48:11.5164
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB1666
-X-OriginatorOrg: microchip.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDExLzA4LzIwMTggMDQ6MTUgUE0sIEJvcmlzIEJyZXppbGxvbiB3cm90ZToNCj4gT24g
-VGh1LCA4IE5vdiAyMDE4IDEzOjU4OjQ1ICswMDAwDQo+IDxUdWRvci5BbWJhcnVzQG1pY3JvY2hp
-cC5jb20+IHdyb3RlOg0KPiANCj4+IE9uIDExLzA4LzIwMTggMDI6NTQgUE0sIEJvcmlzIEJyZXpp
-bGxvbiB3cm90ZToNCj4+PiBPbiBUaHUsIDggTm92IDIwMTggMTE6MDc6MTEgKzAwMDANCj4+PiA8
-VHVkb3IuQW1iYXJ1c0BtaWNyb2NoaXAuY29tPiB3cm90ZToNCj4+PiAgIA0KPj4+PiBUaGUgbWFw
-IHNlbGVjdG9yIGlzIGxpbWl0ZWQgdG8gYSBtYXhpbXVtIG9mIDggYml0cywgYWxsb3dpbmcNCj4+
-Pj4gZm9yIGEgbWF4aW11bSBvZiAyNTYgcG9zc2libGUgbWFwIGNvbmZpZ3VyYXRpb25zLiBUaGUg
-dG90YWwNCj4+Pj4gbnVtYmVyIG9mIG1hcCBjb25maWd1cmF0aW9ucyBzaG91bGQgYmUgYWRkcmVz
-c2FibGUgYnkgdGhlDQo+Pj4+IHRvdGFsIG51bWJlciBvZiBiaXRzIGRlc2NyaWJlZCBieSB0aGUg
-ZGV0ZWN0aW9uIGNvbW1hbmRzLg0KPj4+Pg0KPj4+PiBGb3IgZXhhbXBsZTogaWYgdGhlcmUgYXJl
-IGZpdmUgdG8gZWlnaHQgcG9zc2libGUgc2VjdG9yIG1hcA0KPj4+PiBjb25maWd1cmF0aW9ucywg
-YXQgbGVhc3QgdGhyZWUgY29uZmlndXJhdGlvbiBkZXRlY3Rpb24gY29tbWFuZHMNCj4+Pj4gd2ls
-bCBiZSBuZWVkZWQgdG8gZXh0cmFjdCB0aHJlZSBiaXRzIG9mIGNvbmZpZ3VyYXRpb24gc2VsZWN0
-aW9uDQo+Pj4+IGluZm9ybWF0aW9uIGZyb20gdGhlIGRldmljZSBpbiBvcmRlciB0byBpZGVudGlm
-eSB3aGljaCBjb25maWd1cmF0aW9uDQo+Pj4+IGlzIGN1cnJlbnRseSBpbiB1c2UuDQo+Pj4+DQo+
-Pj4+IFN1Z2dlc3RlZC1ieTogQm9yaXMgQnJlemlsbG9uIDxib3Jpcy5icmV6aWxsb25AYm9vdGxp
-bi5jb20+ICANCj4+Pg0KPj4+IEkgZG9uJ3QgcmVtZW1iZXIgc3VnZ2VzdGluZyB0aGlzIDotKS4g
-IA0KPj4NCj4+IEkgc2VlIHRoaXMgd2hlbiB5b3UgZGlzY3Vzc2VkIHdpdGggWW9nZXNoOg0KPj4N
-Cj4+ICsgICAgICAgZm9yIChubWFwcyA9IDA7IGk8IHNtcHRfbGVuOyBubWFwcysrKSB7DQo+PiAr
-ICAgICAgICAgICAgICAgaWYoIShzbXB0W2ldICYgU01QVF9ERVNDX1RZUEVfTUFQKSkgew0KPj4g
-KyAgICAgICAgICAgICAgICAgICAgICAgaSArPSAyOw0KPj4gKyAgICAgICAgICAgICAgICAgICAg
-ICAgY29udGludWU7DQo+PiArICAgICAgICAgICAgICAgfQ0KPj4gKw0KPj4gKyAgICAgICAgICAg
-ICAgIGlmKCFtYXBfaWRfaXNfdmFsaWQpIHsNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgIGlm
-IChubWFwcykgew0KPj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICByZXQgPSBOVUxM
-Ow0KPj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBicmVhazsNCj4+ICsgICAgICAg
-ICAgICAgICAgICAgICAgIH0NCj4+DQo+PiBJZiBJIHVuZGVyc3RhbmQgY29ycmVjdGx5LCB5b3Ug
-bWVhbnQgdGhhdCBpZiB0aGVyZSBhcmUgbm8gZGV0ZWN0aW9uIGNvbW1hbmRzLA0KPj4gYW5kIG1v
-cmUgdGhhbiBhIGNvbmZpZ3VyYXRpb24gbWFwLCB0aGVuIHJldHVybiBhbiBlcnJvci4NCj4gDQo+
-IFllcywgYmVjYXVzZSBpbiB0aGlzIGNhc2Ugd2UgaGF2ZSBubyB3YXkgdG8ga25vdyB3aGF0IGNv
-bmZpZyBpcw0KPiBjdXJyZW50bHkgc2VsZWN0ZWQuDQo+IA0KPj4NCj4+IFRoaXMgaXMgY29ycmVj
-dCBpbiBteSBvcGluaW9uLiBXaGF0IEkgZGlkIHdhcyB0byBnZW5lcmFsaXplIHRoaXMgaWRlYS4g
-SWYgc210cA0KPj4gZGVmaW5lcyBtb3JlIG1hcHMgdGhhbiB5b3UgY2FuIHNlbGVjdCB1c2luZyBk
-ZXRlY3Rpb24gY29tbWFuZHMsIHJldHVybiBlcnJvci4NCj4gDQo+IEFGQUlDVCB5b3UncmUgbm8g
-bG9uZ2VyIGNoZWNraW5nIHRoYXQgbWFwX2lkIGlzIHZhbGlkIChzZWUgYmVsb3cpLg0KPiANCj4+
-DQo+PiArDQo+PiArICAgICAgICAgICAgICAgICAgICAgICByZXQgPSBzbXB0K2k7DQo+PiArICAg
-ICAgICAgICAgICAgfSBlbHNlIGlmIChtYXBfaWQgPT0gU01QVF9NQVBfSUQoc21wdFtpXSkpIHsN
-Cj4+ICsgICAgICAgICAgICAgICAgICAgICAgIHJldCA9IHNtcHQraTsNCj4+ICsgICAgICAgICAg
-ICAgICAgICAgICAgIGJyZWFrOw0KPj4gKyAgICAgICAgICAgICAgIH0NCj4+ICsNCj4+ICAgICAg
-ICAgICAgICAgICAvKiBpbmNyZW1lbnQgdGhlIHRhYmxlIGluZGV4IHRvIHRoZSBuZXh0IG1hcCAq
-Lw0KPj4gICAgICAgICAgICAgICAgIGkgKz0gU01QVF9NQVBfUkVHSU9OX0NPVU5UKHNtcHRbaV0p
-ICsgMTsNCj4+ICAgICAgICAgfQ0KPj4NCj4+PiAgIA0KPj4+PiBTaWduZWQtb2ZmLWJ5OiBUdWRv
-ciBBbWJhcnVzIDx0dWRvci5hbWJhcnVzQG1pY3JvY2hpcC5jb20+DQo+Pj4+IC0tLQ0KPj4+PiAg
-ZHJpdmVycy9tdGQvc3BpLW5vci9zcGktbm9yLmMgfCAxNSArKysrKysrKysrKysrLS0NCj4+Pj4g
-IDEgZmlsZSBjaGFuZ2VkLCAxMyBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQ0KPj4+Pg0K
-Pj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tdGQvc3BpLW5vci9zcGktbm9yLmMgYi9kcml2ZXJz
-L210ZC9zcGktbm9yL3NwaS1ub3IuYw0KPj4+PiBpbmRleCA1OWRjZWRiMDg2OTEuLmJkMTg2NmQ3
-MTRmMiAxMDA2NDQNCj4+Pj4gLS0tIGEvZHJpdmVycy9tdGQvc3BpLW5vci9zcGktbm9yLmMNCj4+
-Pj4gKysrIGIvZHJpdmVycy9tdGQvc3BpLW5vci9zcGktbm9yLmMNCj4+Pj4gQEAgLTI4NjgsNyAr
-Mjg2OCw3IEBAIHN0YXRpYyBjb25zdCB1MzIgKnNwaV9ub3JfZ2V0X21hcF9pbl91c2Uoc3RydWN0
-IHNwaV9ub3IgKm5vciwgY29uc3QgdTMyICpzbXB0LA0KPj4+PiAgCWNvbnN0IHUzMiAqcmV0ID0g
-TlVMTDsNCj4+Pj4gIAl1MzIgYWRkcjsNCj4+Pj4gIAlpbnQgZXJyOw0KPj4+PiAtCXU4IGk7DQo+
-Pj4+ICsJdTggaSwgbmNtZHMsIG5tYXBzOw0KPj4+PiAgCXU4IGFkZHJfd2lkdGgsIHJlYWRfb3Bj
-b2RlLCByZWFkX2R1bW15Ow0KPj4+PiAgCXU4IHJlYWRfZGF0YV9tYXNrLCBkYXRhX2J5dGUsIG1h
-cF9pZDsNCj4+Pj4gIA0KPj4+PiBAQCAtMjg3Nyw2ICsyODc3LDcgQEAgc3RhdGljIGNvbnN0IHUz
-MiAqc3BpX25vcl9nZXRfbWFwX2luX3VzZShzdHJ1Y3Qgc3BpX25vciAqbm9yLCBjb25zdCB1MzIg
-KnNtcHQsDQo+Pj4+ICAJcmVhZF9vcGNvZGUgPSBub3ItPnJlYWRfb3Bjb2RlOw0KPj4+PiAgDQo+
-Pj4+ICAJbWFwX2lkID0gMDsNCj4+Pj4gKwluY21kcyA9IDA7DQo+Pj4+ICAJLyogRGV0ZXJtaW5l
-IGlmIHRoZXJlIGFyZSBhbnkgb3B0aW9uYWwgRGV0ZWN0aW9uIENvbW1hbmQgRGVzY3JpcHRvcnMg
-Ki8NCj4+Pj4gIAlmb3IgKGkgPSAwOyBpIDwgc21wdF9sZW47IGkgKz0gMikgew0KPj4+PiAgCQlp
-ZiAoc21wdFtpXSAmIFNNUFRfREVTQ19UWVBFX01BUCkNCj4+Pj4gQEAgLTI4OTYsNiArMjg5Nyw3
-IEBAIHN0YXRpYyBjb25zdCB1MzIgKnNwaV9ub3JfZ2V0X21hcF9pbl91c2Uoc3RydWN0IHNwaV9u
-b3IgKm5vciwgY29uc3QgdTMyICpzbXB0LA0KPj4+PiAgCQkgKiBDb25maWd1cmF0aW9uIHRoYXQg
-aXMgY3VycmVudGx5IGluIHVzZS4NCj4+Pj4gIAkJICovDQo+Pj4+ICAJCW1hcF9pZCA9IG1hcF9p
-ZCA8PCAxIHwgISEoZGF0YV9ieXRlICYgcmVhZF9kYXRhX21hc2spOw0KPj4+PiArCQluY21kcysr
-Ow0KPj4+PiAgCX0NCj4+Pj4gIA0KPj4+PiAgCS8qDQo+Pj4+IEBAIC0yOTA1LDcgKzI5MDcsMTYg
-QEAgc3RhdGljIGNvbnN0IHUzMiAqc3BpX25vcl9nZXRfbWFwX2luX3VzZShzdHJ1Y3Qgc3BpX25v
-ciAqbm9yLCBjb25zdCB1MzIgKnNtcHQsDQo+Pj4+ICAJICoNCj4+Pj4gIAkgKiBGaW5kIHRoZSBt
-YXRjaGluZyBjb25maWd1cmF0aW9uIG1hcC4NCj4+Pj4gIAkgKi8NCj4+Pj4gLQl3aGlsZSAoaSA8
-IHNtcHRfbGVuKSB7DQo+Pj4+ICsJZm9yIChubWFwcyA9IDA7IGkgPCBzbXB0X2xlbjsgbm1hcHMr
-Kykgew0KPj4+PiArCQkvKg0KPj4+PiArCQkgKiBUaGUgbWFwIHNlbGVjdG9yIGlzIGxpbWl0ZWQg
-dG8gYSBtYXhpbXVtIG9mIDggYml0cywgYWxsb3dpbmcNCj4+Pj4gKwkJICogZm9yIGEgbWF4aW11
-bSBvZiAyNTYgcG9zc2libGUgbWFwIGNvbmZpZ3VyYXRpb25zLiBUaGUgdG90YWwNCj4+Pj4gKwkJ
-ICogbnVtYmVyIG9mIG1hcCBjb25maWd1cmF0aW9ucyBzaG91bGQgYmUgYWRkcmVzc2FibGUgYnkg
-dGhlDQo+Pj4+ICsJCSAqIHRvdGFsIG51bWJlciBvZiBiaXRzIGRlc2NyaWJlZCBieSB0aGUgZGV0
-ZWN0aW9uIGNvbW1hbmRzLg0KPj4+PiArCQkgKi8NCj4+Pj4gKwkJaWYgKG5jbWRzICYmIG5tYXBz
-ID49ICgxIDw8IChuY21kcyArIDEpKSkNCj4+Pj4gKwkJCWJyZWFrOw0KPiANCj4gWW91J3JlIG5v
-IGxvbmdlciBjaGVja2luZyB0aGF0IHdoZW4gbmNtZHMgPT0gMCBubWFwcyBoYXMgdG8gYmUgMS4g
-U28sDQo+IHNheSB0aGUgY2hpcCBleHBvc2VkIG5vIHNtcHQgY29tbWFuZHMgYW5kIGhhcyBzZXZl
-cmFsIG1hcHMgZGVmaW5lZCwNCj4gbWFwX2lkIHdpbGwgYmUgMCB3aGlsZSBpdCBzaG91bGQgaGF2
-ZSBiZSAidW5kZWZpbmVkIi4gTXkgdmVyc2lvbg0KPiB3b3VsZCByZXR1cm4gYW4gZXJyb3IsIGJ1
-dCB5b3VycyB0cmllcyB0byBmaW5kIG1hcF9pZCAwLg0KDQp5ZXAsIEkgbWlzc2VkIHRoZSBuY21k
-cyA9PSAwIGNhc2UuDQoNCj4gDQo+Pj4+ICsgIA0KPj4+DQo+Pj4gTWF5YmUgSSBtaXNzZWQgc29t
-ZXRoaW5nIGJ1dCBpdCBzb3VuZHMgbGlrZSB0aGlzIGNoYW5nZSBpcyBqdXN0DQo+Pj4gb3B0aW1p
-emluZyB0aGUgU1BNVCBwYXJzaW5nIGEgYml0LCBhbmQgdG8gYmUgaG9uZXN0LCBJJ20gbm90IHN1
-cmUgdGhpcw0KPj4+IGlzIHJlYWxseSBuZWVkZWQuIE1vc3Qgb2YgdGhlIHRpbWUsIHNtcHRfbGVu
-IHdpbGwgYmUgcmF0aGVyIHNtYWxsLCBzbw0KPj4+IHRyeWluZyB0byBiYWlsIG91dCBlYXJsaWVy
-IGlzIG5vdCBicmluZ2luZyBtdWNoIHBlcmYgaW1wcm92ZW1lbnRzLiAgDQo+Pg0KPj4gSXQncyBy
-YXRoZXIgYSBzbXRwIHZhbGlkaXR5IGNoZWNrLiBJIHdhbnQgdG8gcmV0dXJuIGFuIGVycm9yIGlm
-IHRoZXJlIGFyZSBub3QNCj4+IGVub3VnaCBkZXRlY3Rpb24gY29tbWFuZHMgdG8gaWRlbnRpZnkg
-dGhlIG1hcCBpZC4NCj4gDQo+IFlvdSB3b3VsZCBoYXZlIGZhaWxlZCB0aGUgc2FtZSB3YXkgd2l0
-aG91dCB0aGlzIHZhbGlkaXR5IGNoZWNrIGFmdGVyIGENCj4gbWF4aW11bSBvZiBzbXB0X2xlbiBp
-dGVyYXRpb25zLCByaWdodD8NCj4gDQoNClJpZ2h0LiBUaGUgY29ycmVjdCBmaXggd291bGQgYmUg
-dG8gY291bnQgbm1hcHMgaW4gYSBsb29wLCB0aGVuIGRvIHRoZXNlIGNoZWNrcywNCmFuZCBpZiBh
-bGwgb2ssIHNlYXJjaCBmb3IgdGhlIG1hcF9pZCBpbiBhbm90aGVyIGxvb3AgOikuDQo=
+On Wed, 7 Nov 2018 21:51:38 +0100 (CET)
+Thomas Gleixner <tglx@linutronix.de> wrote:
+
+> So I agree with Dan, that we should collect as much documentation from
+> subsystems/maintainers and get it into the tree so we can:
+> 
+>    - give contributors immediate access to subsystem/maintainer specific
+>      quirks
+> 
+>    - extract common views and move them into the general guidelines
+> 
+>    - have a clear idea which kind of things need to be discussed and agreed
+>      on and what might be left in the susbsystem/maintainer specific
+>      interpretation/expectation realm.
+
+Ah, but Dan said:
+
+> Not at all, and this is one of the thrusts of my talk next week at
+> Plumbers. I *do* want to propose that sub-systems document all their
+> local quirks. 
+
+My concern is that you're going far beyond "local quirks" here, and
+actually hiding the real quirks in the process. Just one example from
+Ingo's email storm this (US/Mountain) morning:
+
+> Even after a decade of introducing Git I still see Signed-off-by used as 
+> an Acked-by or Reviewed-by substitutes, so I'd suggest adding this small 
+> explanation as well:
+> 
+>   +   SOB chains should reflect the *real* route a patch took as it was 
+>   +   propagated to us, with the first SOB entry signalling primary
+>   +   authorship of a single author. Acks should be given as Acked-by 
+>   +   lines and review approvals as Reviewed-by lines.
+
+If SOB means anything like what it's supposed to mean, this *can't* be a
+"local quirk" - we have to agree on it globally.
+
+If you want to push this into the tree in something like its current form,
+I'm not going to resist too hard - far be it from me to say we don't want
+more documentation!  But allow me to complain a little.
+
+Suppose I came along with my nifty new architecture, and it dragged in a
+whole new set of timer and interrupt subsystems that duplicated a lot of
+what's in the kernel now, but buried a few "local quirks" deep in the
+middle.  "Don't worry", I say, "we'll factor out the common stuff later
+once we figure out what it is; I'd rather not deal with the bikeshedding
+now". Correct me if I'm wrong, but I suspect I might just get a response
+back from you.  That's not how we normally do things.
+
+This proposal takes a similar approach to the documentation.  Changelog
+rules, your comment rules (other than tail comments), brace rules, line
+breaks, etc. are common stuff; if they are not well-enough documented in
+the global docs, the fix should really be applied there.  If it lands in
+the current form, you know as well as I do that it will almost certainly
+stay there for years, if not indefinitely.
+
+IMO, the subsystem-specific documentation should be something that an
+existing kernel developer can use to quickly learn how to avoid surprises
+when wandering into a different subsystem.  So it should be concise and
+strongly focused on the local customs.  If we don't start that way, I'm
+afraid we'll never have that.  Then developers will miss the important
+information, and we'll reinforce the image of the kernel project as a
+collection of little fiefdoms that one wanders into at one's own risk.
+And Documentation/ will continue to be a painful mess.
+
+</soapbox>
+
+Might it be worth asking Ted for a kernel summit slot to talk about this
+next week?
+
+(And thanks again for doing this!  I like the material and think we
+definitely want it.)
+
+jon
