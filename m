@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93368C43441
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:21:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F9F8C43441
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:21:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5428320818
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:21:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B607320883
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:21:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WJ4OhMsJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5428320818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="i90oSF5W"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B607320883
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731273AbeKIH6y (ORCPT
+        id S1731775AbeKIHnO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:58:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35818 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:43:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35516 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727227AbeKIHn0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:43:26 -0500
+        id S1729245AbeKIHnN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:43:13 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E2E220892;
-        Thu,  8 Nov 2018 22:05:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9147221019;
+        Thu,  8 Nov 2018 22:05:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714756;
-        bh=DVoUi4tWamRKu1Czsfrvv9+rJkWxgCXhZEymfhVMqG4=;
+        s=default; t=1541714742;
+        bh=2K5Xnf9C8gaaPw7hh8MQp4N66WiTxlJjdCWhyOiRKB0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WJ4OhMsJBmuczmnjuQa6O/pSnfcHt8tWNJ4dVn2714G87nNTNgZprvHKtpPR5Kvkf
-         B9mi54UazFxkvLupYo+/iqLGJ8i07Ykdzhl86iiDvhzuN7ulqFV5Vbrn1NzhZf9Eg0
-         BWwxIWFVzoowC/cQ7Hq4Xsmb/gJa+CPENrbU1C0g=
+        b=i90oSF5WnMvoNWoFMJGEh8fOKTgSOm/FgWL5xlGb0DePOmgsX3HWY0eZ/EcSq+sRZ
+         r5787zJqka7EbVfLypG2DALVAD9wIlA3TaMo2gYL/WzW+bAsCbhQvxOm98YvAUjTjI
+         FthimQVmxAFMpjcM1+dhxpDphu0HesqY721e+tIc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Moshe Shemesh <moshe@mellanox.com>,
+        stable@vger.kernel.org, Helmut Grauer <helmut.grauer@de.ibm.com>,
+        Talat Batheesh <talatb@mellanox.com>,
         Saeed Mahameed <saeedm@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 078/171] net/mlx5: Fix health work queue spin lock to IRQ safe
-Date:   Thu,  8 Nov 2018 13:50:48 -0800
-Message-Id: <20181108215133.199210073@linuxfoundation.org>
+Subject: [PATCH 4.9 073/171] net/mlx5e: Fix fixpoint divide exception in mlx5e_am_stats_compare
+Date:   Thu,  8 Nov 2018 13:50:43 -0800
+Message-Id: <20181108215132.834039205@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -63,50 +65,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 6377ed0bbae6fa28853e1679d068a9106c8a8908 ]
+[ Upstream commit e58edaa4863583b54409444f11b4f80dff0af1cd ]
 
-spin_lock/unlock of health->wq_lock should be IRQ safe.
-It was changed to spin_lock_irqsave since adding commit 0179720d6be2
-("net/mlx5: Introduce trigger_health_work function") which uses
-spin_lock from asynchronous event (IRQ) context.
-Thus, all spin_lock/unlock of health->wq_lock should have been moved
-to IRQ safe mode.
-However, one occurrence on new code using this lock missed that
-change, resulting in possible deadlock:
-  kernel: Possible unsafe locking scenario:
-  kernel:       CPU0
-  kernel:       ----
-  kernel:  lock(&(&health->wq_lock)->rlock);
-  kernel:  <Interrupt>
-  kernel:    lock(&(&health->wq_lock)->rlock);
-  kernel: #012 *** DEADLOCK ***
+Helmut reported a bug about division by zero while
+running traffic and doing physical cable pull test.
 
-Fixes: 2a0165a034ac ("net/mlx5: Cancel delayed recovery work when unloading the driver")
-Signed-off-by: Moshe Shemesh <moshe@mellanox.com>
+When the cable unplugged the ppms become zero, so when
+dividing the current ppms by the previous ppms in the
+next dim iteration there is division by zero.
+
+This patch prevent this division for both ppms and epms.
+
+Fixes: c3164d2fc48f ("net/mlx5e: Added BW check for DIM decision mechanism")
+Reported-by: Helmut Grauer <helmut.grauer@de.ibm.com>
+Signed-off-by: Talat Batheesh <talatb@mellanox.com>
 Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/health.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_rx_am.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/health.c b/drivers/net/ethernet/mellanox/mlx5/core/health.c
-index 448e71e07668..264f51b3409d 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/health.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/health.c
-@@ -369,10 +369,11 @@ void mlx5_drain_health_wq(struct mlx5_core_dev *dev)
- void mlx5_drain_health_recovery(struct mlx5_core_dev *dev)
- {
- 	struct mlx5_core_health *health = &dev->priv.health;
-+	unsigned long flags;
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_rx_am.c b/drivers/net/ethernet/mellanox/mlx5/core/en_rx_am.c
+index 23ccec4cb7f5..a1f3556307c7 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_rx_am.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rx_am.c
+@@ -197,9 +197,15 @@ static int mlx5e_am_stats_compare(struct mlx5e_rx_am_stats *curr,
+ 		return (curr->bpms > prev->bpms) ? MLX5E_AM_STATS_BETTER :
+ 						   MLX5E_AM_STATS_WORSE;
  
--	spin_lock(&health->wq_lock);
-+	spin_lock_irqsave(&health->wq_lock, flags);
- 	set_bit(MLX5_DROP_NEW_RECOVERY_WORK, &health->flags);
--	spin_unlock(&health->wq_lock);
-+	spin_unlock_irqrestore(&health->wq_lock, flags);
- 	cancel_delayed_work_sync(&dev->priv.health.recover_work);
- }
++	if (!prev->ppms)
++		return curr->ppms ? MLX5E_AM_STATS_BETTER :
++				    MLX5E_AM_STATS_SAME;
++
+ 	if (IS_SIGNIFICANT_DIFF(curr->ppms, prev->ppms))
+ 		return (curr->ppms > prev->ppms) ? MLX5E_AM_STATS_BETTER :
+ 						   MLX5E_AM_STATS_WORSE;
++	if (!prev->epms)
++		return MLX5E_AM_STATS_SAME;
  
+ 	if (IS_SIGNIFICANT_DIFF(curr->epms, prev->epms))
+ 		return (curr->epms < prev->epms) ? MLX5E_AM_STATS_BETTER :
 -- 
 2.17.1
 
