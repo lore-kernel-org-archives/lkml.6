@@ -2,110 +2,101 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1028C32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:55:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42D32C32789
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:55:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A65B20825
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:55:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A65B20825
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 1471B20825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:55:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1471B20825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726695AbeKHS3p (ORCPT
+        id S1726801AbeKHS3r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 13:29:45 -0500
-Received: from mga01.intel.com ([192.55.52.88]:18554 "EHLO mga01.intel.com"
+        Thu, 8 Nov 2018 13:29:47 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:50174 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726143AbeKHS3p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 13:29:45 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 00:55:17 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,478,1534834800"; 
-   d="scan'208";a="272358525"
-Received: from kohsamui.iil.intel.com (HELO [10.236.193.12]) ([10.236.193.12])
-  by orsmga005.jf.intel.com with ESMTP; 08 Nov 2018 00:55:14 -0800
-Subject: Re: [PATCH] lib/genaloc: Fix allocation of aligned buffer from
- non-aligned chunk
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     sbates@raithlin.com, logang@deltatee.com, danielmentz@google.com,
-        mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
-        labbott@redhat.com
-References: <1541506853-10685-1-git-send-email-alexey.skidanov@intel.com>
- <20181106141542.08a9d7de30a439ec9fe50486@linux-foundation.org>
- <fa2b502b-13a1-2f93-02aa-de1121b6e602@intel.com>
- <20181107141244.624161486d7b187eb02b714a@linux-foundation.org>
-From:   Alexey Skidanov <alexey.skidanov@intel.com>
-Message-ID: <8d68007d-9be4-cf1b-2c6e-ed711fd3e673@intel.com>
-Date:   Thu, 8 Nov 2018 10:56:50 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1726145AbeKHS3q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 13:29:46 -0500
+Received: from ip5f5a905a.dynamic.kabel-deutschland.de ([95.90.144.90] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.0:ECDHE_RSA_AES_256_CBC_SHA1:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1gKg5s-00025l-4Q; Thu, 08 Nov 2018 09:55:16 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Brian Norris <briannorris@chromium.org>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.co.uk>,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+        Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] input: cros_ec_keyb: fix button/switch capability reports
+Date:   Thu, 08 Nov 2018 09:55:14 +0100
+Message-ID: <3546338.6jxQVHVFiU@phil>
+In-Reply-To: <20181107223813.178462-1-briannorris@chromium.org>
+References: <20181107223813.178462-1-briannorris@chromium.org>
 MIME-Version: 1.0
-In-Reply-To: <20181107141244.624161486d7b187eb02b714a@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Am Mittwoch, 7. November 2018, 23:38:13 CET schrieb Brian Norris:
+> The cros_ec_keyb_bs array lists buttons and switches together, expecting
+> that its users will match the appropriate type and bit fields. But
+> cros_ec_keyb_register_bs() only checks the 'bit' field, which causes
+> misreported input capabilities in some cases. For example, tablets
+> (e.g., Scarlet -- a.k.a. Acer Chromebook Tab 10) were reporting a SW_LID
+> capability, because EC_MKBP_POWER_BUTTON and EC_MKBP_LID_OPEN happen to
+> share the same bit.
+> 
+> (This has comedic effect on a tablet, in which a power-management daemon
+> then thinks this "lid" is closed, and so puts the system to sleep as
+> soon as it boots!)
+> 
+> To fix this, check both the 'ev_type' and 'bit' fields before reporting
+> the capability.
+> 
+> Tested with a lid (Kevin / Samsung Chromebook Plus) and without a lid
+> (Scarlet / Acer Chromebook Tab 10).
+> 
+> This error got introduced when porting the feature from the downstream
+> Chromium OS kernel to be upstreamed.
+> 
+> Fixes: cdd7950e7aa4 ("input: cros_ec_keyb: Add non-matrix buttons and switches")
+> Cc: <stable@vger.kernel.org>
+> Cc: Douglas Anderson <dianders@chromium.org>
+> Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
+
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
 
-On 11/8/18 00:12, Andrew Morton wrote:
-> On Wed, 7 Nov 2018 08:27:31 +0200 Alexey Skidanov <alexey.skidanov@intel.com> wrote:
+> ---
+>  drivers/input/keyboard/cros_ec_keyb.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
->>
->>
->> On 11/7/18 12:15 AM, Andrew Morton wrote:
->>> On Tue,  6 Nov 2018 14:20:53 +0200 Alexey Skidanov <alexey.skidanov@intel.com> wrote:
->>>
->>>> On success, gen_pool_first_fit_align() returns the bit number such that
->>>> chunk_start_addr + (bit << order) is properly aligned. On failure,
->>>> the bitmap size parameter is returned.
->>>>
->>>> When the chunk_start_addr isn't aligned properly, the
->>>> chunk_start_addr + (bit << order) isn't aligned too.
->>>>
->>>> To fix this, gen_pool_first_fit_align() takes into account
->>>> the chunk_start_addr alignment and returns the bit value such that
->>>> chunk_start_addr + (bit << order) is properly aligned
->>>> (exactly as it done in CMA).
->>>>
->>>> ...
->>>>
->>>> --- a/include/linux/genalloc.h
->>>> +++ b/include/linux/genalloc.h
->>>>
->>>> ...
->>>>
->>>> +		struct gen_pool *pool, unsigned long start_add)
->>>>
->>>> ...
->>>>
->>>> +		struct gen_pool *pool, unsigned long start_add)
->>>>
->>>> ...
->>>>
->>>> +		struct gen_pool *pool, unsigned long start_add)
->>>>
->>>> ...
->>>>
->>>
->>> We have three typos here.  Which makes me wonder why we're passing the
->>> new argument and then not using it?
->>>
->> genpool uses allocation callbacks function that implement some
->> allocation strategy - bes fit, first fit, ... All of them has the same
->> type. The added chunk start_addr is used only in one of them -
->> gen_pool_first_fit_align()
+> diff --git a/drivers/input/keyboard/cros_ec_keyb.c b/drivers/input/keyboard/cros_ec_keyb.c
+> index 81be6f781f0b..d56001181598 100644
+> --- a/drivers/input/keyboard/cros_ec_keyb.c
+> +++ b/drivers/input/keyboard/cros_ec_keyb.c
+> @@ -493,7 +493,8 @@ static int cros_ec_keyb_register_bs(struct cros_ec_keyb *ckdev)
+>  	for (i = 0; i < ARRAY_SIZE(cros_ec_keyb_bs); i++) {
+>  		const struct cros_ec_bs_map *map = &cros_ec_keyb_bs[i];
+>  
+> -		if (buttons & BIT(map->bit))
+> +		if ((map->ev_type == EV_KEY && (buttons & BIT(map->bit))) ||
+> +		    (map->ev_type == EV_SW && (switches & BIT(map->bit))))
+>  			input_set_capability(idev, map->ev_type, map->code);
+>  	}
+>  
 > 
-> OK, but the argument name here is start_add, not start_addr.
-> 
-Sure, I'll fix.
+
+
+
+
