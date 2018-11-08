@@ -2,78 +2,121 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48DD9C32789
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:33:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FB53C46465
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:33:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A8DF20827
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:33:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A8DF20827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id CDA3A20827
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 08:33:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDA3A20827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zonque.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726765AbeKHSHg (ORCPT
+        id S1726833AbeKHSHr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 13:07:36 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:42904 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726708AbeKHSHg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 13:07:36 -0500
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1gKfkP-0001qg-BY; Thu, 08 Nov 2018 09:33:05 +0100
-Date:   Thu, 8 Nov 2018 09:33:04 +0100
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     linux-kernel@vger.kernel.org
-Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH 23/23] x86/fpu: Defer FPU state load until return to
- userspace
-Message-ID: <20181108083304.trxqwwhw4dgdtogn@linutronix.de>
-References: <20181107194858.9380-1-bigeasy@linutronix.de>
- <20181107194858.9380-24-bigeasy@linutronix.de>
+        Thu, 8 Nov 2018 13:07:47 -0500
+Received: from mail.bugwerft.de ([46.23.86.59]:58088 "EHLO mail.bugwerft.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726774AbeKHSHr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 13:07:47 -0500
+Received: from [192.168.178.170] (pD95EF942.dip0.t-ipconnect.de [217.94.249.66])
+        by mail.bugwerft.de (Postfix) with ESMTPSA id 3231A2A7776;
+        Thu,  8 Nov 2018 08:31:00 +0000 (UTC)
+Subject: Re: [PATCH 08/24] leds: lt3593: Use led_compose_name()
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        linux-leds@vger.kernel.org
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        pavel@ucw.cz, robh@kernel.org
+References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
+ <1541542052-10081-9-git-send-email-jacek.anaszewski@gmail.com>
+ <42d68eae-6905-e787-3797-f0f16b0dfb84@zonque.org>
+ <6666ef06-c19d-b0d8-a32b-44cecb8bc4b3@gmail.com>
+From:   Daniel Mack <daniel@zonque.org>
+Message-ID: <b7deca0c-bb4f-0ec6-8b73-aec6617d2b8e@zonque.org>
+Date:   Thu, 8 Nov 2018 09:33:21 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181107194858.9380-24-bigeasy@linutronix.de>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <6666ef06-c19d-b0d8-a32b-44cecb8bc4b3@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-11-07 20:48:58 [+0100], To linux-kernel@vger.kernel.org wrote:
-> index 8c03b42416656..d10b60d80d35a 100644
-> --- a/arch/x86/include/asm/fpu/api.h
-> +++ b/arch/x86/include/asm/fpu/api.h
+On 7/11/2018 8:49 PM, Jacek Anaszewski wrote:
+> On 11/07/2018 08:37 PM, Daniel Mack wrote:
+>> On 6/11/2018 11:07 PM, Jacek Anaszewski wrote:
+>>> Switch to using generic LED support for composing LED class
+>>> device name.
+>>
+>> Thanks for the rework!
+>>
+>>> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+>>> ---
+>>>    drivers/leds/leds-lt3593.c | 19 ++++++++-----------
+>>>    1 file changed, 8 insertions(+), 11 deletions(-)
+>>>
+>>> diff --git a/drivers/leds/leds-lt3593.c b/drivers/leds/leds-lt3593.c
+>>> index de3623e..d005abc 100644
+>>> --- a/drivers/leds/leds-lt3593.c
+>>> +++ b/drivers/leds/leds-lt3593.c
+>>> @@ -10,10 +10,10 @@
+>>>    #include <linux/slab.h>
+>>>    #include <linux/module.h>
+>>>    #include <linux/of.h>
+>>> -#include <uapi/linux/uleds.h>
+>>> +
+>>> +#define LED_LT3593_NAME "lt3593"
+>>>      struct lt3593_led_data {
+>>> -    char name[LED_MAX_NAME_SIZE];
+>>>        struct led_classdev cdev;
+>>>        struct gpio_desc *gpiod;
+>>>    };
+>>> @@ -111,6 +111,7 @@ static int lt3593_led_probe(struct platform_device
+>>> *pdev)
+>>>        struct fwnode_handle *child;
+>>>        int ret, state = LEDS_GPIO_DEFSTATE_OFF;
+>>>        enum gpiod_flags flags = GPIOD_OUT_LOW;
+>>> +    struct led_init_data init_data;
+>>>        const char *tmp;
+>>>          if (dev_get_platdata(dev)) {
+>>> @@ -138,14 +139,11 @@ static int lt3593_led_probe(struct
+>>> platform_device *pdev)
+>>>            return PTR_ERR(led_data->gpiod);
+>>>          child = device_get_next_child_node(dev, NULL);
+>>> +    init_data.fwnode = child;
+>>
+>> Not quite following. `fwnode' is the only member of that struct that is
+>> initialized?
+>>
+>>>    -    ret = fwnode_property_read_string(child, "label", &tmp);
+>>> -    if (ret < 0)
+>>> -        snprintf(led_data->name, sizeof(led_data->name),
+>>> -             "lt3593::");
+>>> -    else
+>>> -        snprintf(led_data->name, sizeof(led_data->name),
+>>> -             "lt3593:%s", tmp);
+>>> +    ret = led_compose_name(child, LED_LT3593_NAME, ":", init_data.name);
+>>
+>> ... and here, a member that wasn't written before is used? What am I
+>> missing?
+> 
+> init_data.name pointer is passed to led_compose_name(), which fills
+> this array with the composed name.
 
-The bot complained about missing definition for local_bh_disable() so I
-swapped the preempt.h for bottom_half.h at the beginning of this file.
+Ah, that's the target. Stupid me!
 
-> @@ -27,17 +27,31 @@ extern void __kernel_fpu_end(void);
->  extern void kernel_fpu_begin(void);
->  extern void kernel_fpu_end(void);
->  extern bool irq_fpu_usable(void);
-> +extern void fpregs_mark_activate(void);
->  
->  static inline void __fpregs_changes_begin(void)
->  {
->  	preempt_disable();
-> +	local_bh_disable();
->  }
->  
->  static inline void __fpregs_changes_end(void)
->  {
-> +	local_bh_enable();
->  	preempt_enable();
->  }
+With this:
 
-Sebastian
+Acked-by: Daniel Mack <daniel@zonque.org>
+
+
+Thanks,
+Daniel
+
