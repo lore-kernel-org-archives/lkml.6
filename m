@@ -2,108 +2,144 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA76DECDE4C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:08:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 620A1ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:11:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A19922081C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:08:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A19922081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 232E92081C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 19:11:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 232E92081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727168AbeKIEpc (ORCPT
+        id S1727474AbeKIEr4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 23:45:32 -0500
-Received: from mga12.intel.com ([192.55.52.136]:53864 "EHLO mga12.intel.com"
+        Thu, 8 Nov 2018 23:47:56 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:31325 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726801AbeKIEpb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 23:45:31 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 11:08:40 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,480,1534834800"; 
-   d="scan'208";a="90556687"
-Received: from smartikx-mobl2.ger.corp.intel.com (HELO localhost) ([10.249.254.135])
-  by orsmga008.jf.intel.com with ESMTP; 08 Nov 2018 11:08:36 -0800
-Date:   Thu, 8 Nov 2018 21:08:35 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Peter Huewe <peterhuewe@gmx.de>
-Cc:     Roberto Sassu <roberto.sassu@huawei.com>, zohar@linux.ibm.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v4 4/6] tpm: modify tpm_pcr_read() definition to pass a
- TPM hash algorithm
-Message-ID: <20181108190835.GF20608@linux.intel.com>
-References: <20181106150159.1136-1-roberto.sassu@huawei.com>
- <20181106150159.1136-5-roberto.sassu@huawei.com>
- <20181108140454.GE8922@linux.intel.com>
- <7a43680a-a216-a191-62a3-c2fb4e72d699@huawei.com>
- <20181108151504.GD14072@linux.intel.com>
- <289C0413-4FFB-4831-B82A-D0C3A965053D@gmx.de>
+        id S1726995AbeKIEr4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 23:47:56 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D037B81108;
+        Thu,  8 Nov 2018 19:11:03 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-55.bos.redhat.com [10.18.17.55])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 28744104C529;
+        Thu,  8 Nov 2018 19:11:01 +0000 (UTC)
+Subject: Re: [PATCH v5 3/5] cgroup/cpuset: make callback_lock raw
+To:     Juri Lelli <juri.lelli@redhat.com>, Tejun Heo <tj@kernel.org>
+Cc:     lizefan@huawei.com, linux-kernel@vger.kernel.org,
+        luca.abeni@santannapisa.it, claudio@evidence.eu.com,
+        tommaso.cucinotta@santannapisa.it, bristot@redhat.com,
+        mathieu.poirier@linaro.org, cgroups@vger.kernel.org,
+        peterz@infradead.org, mingo@redhat.com, rostedt@goodmis.org
+References: <20180903142801.20046-1-juri.lelli@redhat.com>
+ <20180903142801.20046-4-juri.lelli@redhat.com>
+ <20180925143416.GD25664@localhost.localdomain>
+ <20181107155330.GA2509588@devbig004.ftw2.facebook.com>
+ <20181107163841.GA18091@localhost.localdomain>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <95aeb057-d63f-a6b8-cf0e-cdff80e79021@redhat.com>
+Date:   Thu, 8 Nov 2018 14:11:01 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <289C0413-4FFB-4831-B82A-D0C3A965053D@gmx.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181107163841.GA18091@localhost.localdomain>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 08 Nov 2018 19:11:04 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 04:19:09PM +0100, Peter Huewe wrote:
-> 
-> 
-> Am 8. November 2018 16:15:04 MEZ schrieb Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>:
-> >On Thu, Nov 08, 2018 at 03:16:03PM +0100, Roberto Sassu wrote:
-> >> On 11/8/2018 3:04 PM, Jarkko Sakkinen wrote:
-> >> > On Tue, Nov 06, 2018 at 04:01:57PM +0100, Roberto Sassu wrote:
-> >> > > Currently the TPM driver allows other kernel subsystems to read
-> >only the
-> >> > > SHA1 PCR bank. This patch modifies the parameters of
-> >tpm_pcr_read() and
-> >> > > tpm2_pcr_read() to pass a tpm_digest structure, which contains
-> >the desired
-> >> > > hash algorithm. Also, since commit 125a22105410 ("tpm: React
-> >correctly to
-> >> > > RC_TESTING from TPM 2.0 self tests") removed the call to
-> >tpm2_pcr_read(),
-> >> > > the new parameter is expected to be always not NULL.
-> >> > > 
-> >> > > Due to the API change, IMA functions have been modified.
-> >> > > 
-> >> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> >> > > Acked-by: Mimi Zohar <zohar@linux.ibm.com>
-> >> > 
-> >> > Does not apply to the current upstream (with tpm1-cmd.c).
-> >> 
-> >> Unfortunately, I cannot fetch the repository as infradead.org only
-> >> supports the git protocol (I'm behind a proxy).
-> >> 
-> >> Roberto
-> >
-> >I use a proxy script similar to this:
-> >
-> >https://gist.github.com/sit/49288
-> >
-> >(random googling but gives the idea)
-> >
-> >/Jarkko
-> Moving to a kernel.org repo would be really a benefit or convincing them to have a https interface as well.
-> We have the same proxy issue with infradead.
-> Peter
-> -- 
-> Sent from my mobile
+On 11/07/2018 11:38 AM, Juri Lelli wrote:
+> Hi,
+>
+> On 07/11/18 07:53, Tejun Heo wrote:
+>> Hello,
+>>
+>> On Tue, Sep 25, 2018 at 04:34:16PM +0200, Juri Lelli wrote:
+>>> It would be great if you could please have a look at the proposed change
+>>> below (and the rest of the set of course :-).
+>> Yeah, looks good to me.  Please feel free to add
+>>
+>>  Acked-by: Tejun Heo <tj@kernel.org>
+> Thanks!
+>
+>>> Another bit that I'd be more comfortable after hearing your word on it
+>>> is this one (discussed over 5/5):
+>>>
+>>> https://lore.kernel.org/lkml/20180925130750.GA25664@localhost.localdomain/
+>> Can you please loop Waiman Long <longman@redhat.com> into discussion?
+>> He's working on cgroup2 cpuset support which might collide.
+> Sure, I've been originally working on this on top of his series, but
+> didn't try with latest version. Hopefully the two series don't generate
+> too much collisions. I'll try to find some time soon to check again.
+>
+> In the meantime, Waiman Long, how do you feel about it? :-)
+>
+> Thread starts at (you if missed it)
+>
+> https://lore.kernel.org/lkml/20180903142801.20046-1-juri.lelli@redhat.com/
+>
+> Best,
+>
+> - Juri
 
-So you are unable to use core.gitproxy to configure the proxy?
+Your patches look good to me. There will be some minor conflicts, I
+think, but nothing big.
 
-/Jarkko
+Cheers,
+Longman
+
