@@ -3,196 +3,146 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41127C0044C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 02:19:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99058C0044C
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 02:19:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E94DE20857
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 02:19:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E94DE20857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 343DF20837
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 02:19:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 343DF20837
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728594AbeKHLwf (ORCPT
+        id S1728627AbeKHLwr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 06:52:35 -0500
-Received: from mga05.intel.com ([192.55.52.43]:45676 "EHLO mga05.intel.com"
+        Thu, 8 Nov 2018 06:52:47 -0500
+Received: from gate.crashing.org ([63.228.1.57]:59003 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726915AbeKHLwf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 06:52:35 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Nov 2018 18:19:25 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,478,1534834800"; 
-   d="scan'208";a="94533242"
-Received: from allen-box.sh.intel.com (HELO [10.239.161.122]) ([10.239.161.122])
-  by FMSMGA003.fm.intel.com with ESMTP; 07 Nov 2018 18:19:22 -0800
-Cc:     baolu.lu@linux.intel.com, "Raj, Ashok" <ashok.raj@intel.com>,
-        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
-        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        "Sun, Yi Y" <yi.y.sun@intel.com>,
-        "peterx@redhat.com" <peterx@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: Re: [PATCH v4 04/12] iommu/vt-d: Add 256-bit invalidation descriptor
- support
-To:     "Liu, Yi L" <yi.l.liu@intel.com>, Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>
-References: <20181105053151.7173-1-baolu.lu@linux.intel.com>
- <20181105053151.7173-5-baolu.lu@linux.intel.com>
- <A2975661238FB949B60364EF0F2C257439D5FAA2@SHSMSX104.ccr.corp.intel.com>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <a6e43ddd-0889-4a4a-b908-993db28c6d87@linux.intel.com>
-Date:   Thu, 8 Nov 2018 10:16:51 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <A2975661238FB949B60364EF0F2C257439D5FAA2@SHSMSX104.ccr.corp.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        id S1726684AbeKHLwr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 06:52:47 -0500
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id wA82JH75005044;
+        Wed, 7 Nov 2018 20:19:18 -0600
+Message-ID: <3454d08ef5a656288c57624a68ba448cd3b468bd.camel@kernel.crashing.org>
+Subject: Re: radeon vs radeonfb Mobility quirks (Thinkpad X32)
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Eric Wong <e@80x24.org>
+Cc:     David Airlie <airlied@linux.ie>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>
+Date:   Thu, 08 Nov 2018 13:19:17 +1100
+In-Reply-To: <20181108000335.a7usqftcmxvu7ywk@untitled>
+References: <20181104042328.jzavn47y2wloprbs@untitled>
+         <365d8b24f1c6a28c32998924a95b6a2a74655526.camel@kernel.crashing.org>
+         <20181108000335.a7usqftcmxvu7ywk@untitled>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.1 (3.30.1-1.fc29) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yi,
+On Thu, 2018-11-08 at 00:03 +0000, Eric Wong wrote:
+> Benjamin Herrenschmidt <benh@kernel.crashing.org> wrote:
+> > There's a whole pile of power management stuff for ancient laptops that
+> > never quite made it from radeonfb to the radeon DRM driver... sadly it
+> > also prevents sleep on old PowerBooks but I haven't had many complaints
+> > so...
+> 
+> Thanks for the confirmation that stuff is missing from the DRM driver.
+> 
+> > The code for D2 and D3 on those old things is reasonably self
+> > contained, it shouldn't be that hard to move it over I suppose.
+> 
+> I started working on the following (dirty) patch for my X32,
+> but hasn't made a difference with just PCI_D2:
 
-On 11/7/18 2:07 PM, Liu, Yi L wrote:
-> Hi Baolu,
-> 
->> From: Lu Baolu [mailto:baolu.lu@linux.intel.com]
->> Sent: Monday, November 5, 2018 1:32 PM
-> 
-> [...]
-> 
->> ---
->>   drivers/iommu/dmar.c                | 83 +++++++++++++++++++----------
->>   drivers/iommu/intel-svm.c           | 76 ++++++++++++++++----------
->>   drivers/iommu/intel_irq_remapping.c |  6 ++-
->>   include/linux/intel-iommu.h         |  9 +++-
->>   4 files changed, 115 insertions(+), 59 deletions(-)
->>
->> diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
->> index d9c748b6f9e4..ec10427b98ac 100644
->> --- a/drivers/iommu/dmar.c
->> +++ b/drivers/iommu/dmar.c
->> @@ -1160,6 +1160,7 @@ static int qi_check_fault(struct intel_iommu *iommu, int
->> index)
->>   	int head, tail;
->>   	struct q_inval *qi = iommu->qi;
->>   	int wait_index = (index + 1) % QI_LENGTH;
->> +	int shift = qi_shift(iommu);
->>
->>   	if (qi->desc_status[wait_index] == QI_ABORT)
->>   		return -EAGAIN;
->> @@ -1173,13 +1174,15 @@ static int qi_check_fault(struct intel_iommu *iommu,
->> int index)
->>   	 */
->>   	if (fault & DMA_FSTS_IQE) {
->>   		head = readl(iommu->reg + DMAR_IQH_REG);
->> -		if ((head >> DMAR_IQ_SHIFT) == index) {
->> +		if ((head >> shift) == index) {
->> +			struct qi_desc *desc = qi->desc + head;
->> +
->>   			pr_err("VT-d detected invalid descriptor: "
->>   				"low=%llx, high=%llx\n",
->> -				(unsigned long long)qi->desc[index].low,
->> -				(unsigned long long)qi->desc[index].high);
->> -			memcpy(&qi->desc[index], &qi->desc[wait_index],
->> -					sizeof(struct qi_desc));
->> +				(unsigned long long)desc->qw0,
->> +				(unsigned long long)desc->qw1);
-> 
-> Still missing qw2 and qw3. May make the print differ based on if smts is configed.
+Yes, as you noticed below, you need the rest of the stuff. If you stick
+to D2 and avoid the Mac "D3 cold" stuff, it's easier. You also need to
+look at some of the dynamic clock stuff.
 
-qw2 and qw3 are reserved from software point of view. We don't need to
-print it for information.
+Cheers,
+Ben.
 
+> diff --git a/drivers/gpu/drm/radeon/radeon_device.c b/drivers/gpu/drm/radeon/radeon_device.c
+> index 59c8a6647ff2..acc587b18ad2 100644
+> --- a/drivers/gpu/drm/radeon/radeon_device.c
+> +++ b/drivers/gpu/drm/radeon/radeon_device.c
+> @@ -1548,6 +1548,23 @@ void radeon_device_fini(struct radeon_device *rdev)
+>  		radeon_doorbell_fini(rdev);
+>  }
+>  
+> +/* XXX copy of radeonfb_whack_power_state */
+> +static void radeon_whack_power_state(struct pci_dev *pdev, pci_power_t state)
+> +{
+> +	u16 pwr_cmd;
+> +
+> +	for (;;) {
+> +		pci_read_config_word(pdev, pdev->pm_cap + PCI_PM_CTRL,
+> +				     &pwr_cmd);
+> +		if (pwr_cmd & state)
+> +			break;
+> +		pwr_cmd = (pwr_cmd & ~PCI_PM_CTRL_STATE_MASK) | state;
+> +		pci_write_config_word(pdev, pdev->pm_cap + PCI_PM_CTRL,
+> +				      pwr_cmd);
+> +		msleep(500);
+> +	}
+> +	pdev->current_state = state;
+> +}
+>  
+>  /*
+>   * Suspend & resume.
+> @@ -1596,6 +1613,7 @@ int radeon_suspend_kms(struct drm_device *dev, bool suspend,
+>  
+>  		if (radeon_crtc->cursor_bo) {
+>  			struct radeon_bo *robj = gem_to_radeon_bo(radeon_crtc->cursor_bo);
+> +
+>  			r = radeon_bo_reserve(robj, false);
+>  			if (r == 0) {
+>  				radeon_bo_unpin(robj);
+> @@ -1647,7 +1665,13 @@ int radeon_suspend_kms(struct drm_device *dev, bool suspend,
+>  	} else if (suspend) {
+>  		/* Shut down the device */
+>  		pci_disable_device(dev->pdev);
+> -		pci_set_power_state(dev->pdev, PCI_D3hot);
+> +
+> +		if ("X32") {
+> +			radeon_whack_power_state(dev->pdev, PCI_D2);
+> +			__pci_complete_power_transition(dev->pdev, PCI_D2);
+> +		} else {
+> +			pci_set_power_state(dev->pdev, PCI_D3hot);
+> +		}
+>  	}
+>  
+>  	if (fbcon) {
 > 
->> +			memcpy(desc, qi->desc + (wait_index << shift),
 > 
-> Would "memcpy(desc, (unsigned long long) (qi->desc +  (wait_index << shift)," be
-> more safe?
+> I suppose some of the mobility stuff from
+> drivers/video/fbdev/aty/radeon_pm.c is necessary, but I haven't
+> figured it out for the DRM driver.  Not sure when/if I'll have
+> time to figure it out, or if I'll stick to the radeonfb driver
+> for now.
+> 
+> 		/* Prepare mobility chips for suspend.
+> 		 */
+> 		if (rinfo->is_mobility) {
+> 			/* Program V2CLK */
+> 			radeon_pm_program_v2clk(rinfo);
+> 		
+> 			/* Disable IO PADs */
+> 			radeon_pm_disable_iopad(rinfo);
+> 
+> 			/* Set low current */
+> 			radeon_pm_low_current(rinfo);
+> 
+> 			/* Prepare chip for power management */
+> 			radeon_pm_setup_for_suspend(rinfo);
 
-Can that be compiled? memcpy() requires a "const void *" for the second
-parameter. By the way, why it's safer with this casting?
-
-> 
->> +			       1 << shift);
->>   			writel(DMA_FSTS_IQE, iommu->reg + DMAR_FSTS_REG);
->>   			return -EINVAL;
->>   		}
->> @@ -1191,10 +1194,10 @@ static int qi_check_fault(struct intel_iommu *iommu,
->> int index)
->>   	 */
->>   	if (fault & DMA_FSTS_ITE) {
->>   		head = readl(iommu->reg + DMAR_IQH_REG);
->> -		head = ((head >> DMAR_IQ_SHIFT) - 1 + QI_LENGTH) % QI_LENGTH;
->> +		head = ((head >> shift) - 1 + QI_LENGTH) % QI_LENGTH;
->>   		head |= 1;
->>   		tail = readl(iommu->reg + DMAR_IQT_REG);
->> -		tail = ((tail >> DMAR_IQ_SHIFT) - 1 + QI_LENGTH) % QI_LENGTH;
->> +		tail = ((tail >> shift) - 1 + QI_LENGTH) % QI_LENGTH;
->>
->>   		writel(DMA_FSTS_ITE, iommu->reg + DMAR_FSTS_REG);
->>
->> @@ -1222,15 +1225,14 @@ int qi_submit_sync(struct qi_desc *desc, struct
->> intel_iommu *iommu)
->>   {
->>   	int rc;
->>   	struct q_inval *qi = iommu->qi;
->> -	struct qi_desc *hw, wait_desc;
->> +	int offset, shift, length;
->> +	struct qi_desc wait_desc;
->>   	int wait_index, index;
->>   	unsigned long flags;
->>
->>   	if (!qi)
->>   		return 0;
->>
->> -	hw = qi->desc;
->> -
->>   restart:
->>   	rc = 0;
->>
->> @@ -1243,16 +1245,21 @@ int qi_submit_sync(struct qi_desc *desc, struct
->> intel_iommu *iommu)
->>
->>   	index = qi->free_head;
->>   	wait_index = (index + 1) % QI_LENGTH;
->> +	shift = qi_shift(iommu);
->> +	length = 1 << shift;
->>
->>   	qi->desc_status[index] = qi->desc_status[wait_index] = QI_IN_USE;
->>
->> -	hw[index] = *desc;
->> -
->> -	wait_desc.low = QI_IWD_STATUS_DATA(QI_DONE) |
->> +	offset = index << shift;
->> +	memcpy(qi->desc + offset, desc, length);
->> +	wait_desc.qw0 = QI_IWD_STATUS_DATA(QI_DONE) |
->>   			QI_IWD_STATUS_WRITE | QI_IWD_TYPE;
->> -	wait_desc.high = virt_to_phys(&qi->desc_status[wait_index]);
->> +	wait_desc.qw1 = virt_to_phys(&qi->desc_status[wait_index]);
->> +	wait_desc.qw2 = 0;
->> +	wait_desc.qw3 = 0;
->>
->> -	hw[wait_index] = wait_desc;
->> +	offset = wait_index << shift;
->> +	memcpy(qi->desc + offset, &wait_desc, length);
-> 
-> same question with above one.
-> 
-
-Ditto.
-
-Best regards,
-Lu Baolu
