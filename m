@@ -7,43 +7,45 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51162ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:09:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E1EEECDE4B
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:09:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A8662089F
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:09:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 143BA208A3
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:09:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FrxjgR38"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A8662089F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EcGhnY0f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 143BA208A3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732850AbeKIHrM (ORCPT
+        id S1732862AbeKIHrN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:47:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40916 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:47:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40970 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730877AbeKIHrG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:47:06 -0500
+        id S1730057AbeKIHrM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:47:12 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC42A2147A;
-        Thu,  8 Nov 2018 22:09:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5223B2089F;
+        Thu,  8 Nov 2018 22:09:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714974;
-        bh=28iVcZyyRuGpTcZh4ZLX26lUnJR/kBlSW7jTTv8Muwk=;
+        s=default; t=1541714980;
+        bh=TgTN6bi/pdn2ucemKGhMCEnKtsTiqNQKZWFGJwtUeqY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FrxjgR38e4Y5h3aPuCZmDaBR1r0UgwGTtLQetwC+vvNJ9WjBbR9bnWG4CWl9i6Oql
-         8axz6C4PWEQr0nFLdndq4Zf12Nm01rTKZa9UjljtyAMpV+MoH5nHPEjD0W0fQc74xh
-         OhxBfajOeFdPJYdkcFXzd8SoziWKOEsGKE79h+KI=
+        b=EcGhnY0fkvyHbvgrT8dLrTYpBB/6aV8rQwmJfJ7jazU4I1X/FWscmUb5HeewK7jvU
+         Z+spHsAsmQlGFeg/A3nLSG5OdmUsMDEFbvSMMynvtKahYbOAB0bvyLxwVotuF0WOBm
+         4OwX9dT6+83wOd7QGlYf279b6uWUqeHUzbXB+i1o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>
-Subject: [PATCH 4.18 17/34] cdc-acm: fix race between reset and control messaging
-Date:   Thu,  8 Nov 2018 13:52:46 -0800
-Message-Id: <20181108215139.972329313@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+bccc1fe10b70fadc78d0@syzkaller.appspotmail.com,
+        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
+Subject: [PATCH 4.18 18/34] usb: usbip: Fix BUG: KASAN: slab-out-of-bounds in vhci_hub_control()
+Date:   Thu,  8 Nov 2018 13:52:47 -0800
+Message-Id: <20181108215140.026511010@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215138.892971755@linuxfoundation.org>
 References: <20181108215138.892971755@linuxfoundation.org>
@@ -61,32 +63,180 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 
-commit 9397940ed812b942c520e0c25ed4b2c64d57e8b9 upstream.
+commit 81f7567c51ad97668d1c3a48e8ecc482e64d4161 upstream.
 
-If a device splits up a control message and a reset() happens
-between the parts, the message is lost and already recieved parts
-must be dropped.
+vhci_hub_control() accesses port_status array with out of bounds port
+value. Fix it to reference port_status[] only with a valid rhport value
+when invalid_rhport flag is true.
 
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Fixes: 1aba579f3cf51 ("cdc-acm: handle read pipe errors")
+The invalid_rhport flag is set early on after detecting in port value
+is within the bounds or not.
+
+The following is used reproduce the problem and verify the fix:
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14ed8ab6400000
+
+Reported-by: syzbot+bccc1fe10b70fadc78d0@syzkaller.appspotmail.com
 Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/class/cdc-acm.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/usbip/vhci_hcd.c |   57 +++++++++++++++++++++++++++++++------------
+ 1 file changed, 42 insertions(+), 15 deletions(-)
 
---- a/drivers/usb/class/cdc-acm.c
-+++ b/drivers/usb/class/cdc-acm.c
-@@ -1641,6 +1641,7 @@ static int acm_pre_reset(struct usb_inte
- 	struct acm *acm = usb_get_intfdata(intf);
+--- a/drivers/usb/usbip/vhci_hcd.c
++++ b/drivers/usb/usbip/vhci_hcd.c
+@@ -318,8 +318,9 @@ static int vhci_hub_control(struct usb_h
+ 	struct vhci_hcd	*vhci_hcd;
+ 	struct vhci	*vhci;
+ 	int             retval = 0;
+-	int		rhport;
++	int		rhport = -1;
+ 	unsigned long	flags;
++	bool invalid_rhport = false;
  
- 	clear_bit(EVENT_RX_STALL, &acm->flags);
-+	acm->nb_index = 0; /* pending control transfers are lost */
+ 	u32 prev_port_status[VHCI_HC_PORTS];
  
- 	return 0;
+@@ -334,9 +335,19 @@ static int vhci_hub_control(struct usb_h
+ 	usbip_dbg_vhci_rh("typeReq %x wValue %x wIndex %x\n", typeReq, wValue,
+ 			  wIndex);
+ 
+-	if (wIndex > VHCI_HC_PORTS)
+-		pr_err("invalid port number %d\n", wIndex);
+-	rhport = wIndex - 1;
++	/*
++	 * wIndex can be 0 for some request types (typeReq). rhport is
++	 * in valid range when wIndex >= 1 and < VHCI_HC_PORTS.
++	 *
++	 * Reference port_status[] only with valid rhport when
++	 * invalid_rhport is false.
++	 */
++	if (wIndex < 1 || wIndex > VHCI_HC_PORTS) {
++		invalid_rhport = true;
++		if (wIndex > VHCI_HC_PORTS)
++			pr_err("invalid port number %d\n", wIndex);
++	} else
++		rhport = wIndex - 1;
+ 
+ 	vhci_hcd = hcd_to_vhci_hcd(hcd);
+ 	vhci = vhci_hcd->vhci;
+@@ -345,8 +356,9 @@ static int vhci_hub_control(struct usb_h
+ 
+ 	/* store old status and compare now and old later */
+ 	if (usbip_dbg_flag_vhci_rh) {
+-		memcpy(prev_port_status, vhci_hcd->port_status,
+-			sizeof(prev_port_status));
++		if (!invalid_rhport)
++			memcpy(prev_port_status, vhci_hcd->port_status,
++				sizeof(prev_port_status));
+ 	}
+ 
+ 	switch (typeReq) {
+@@ -354,8 +366,10 @@ static int vhci_hub_control(struct usb_h
+ 		usbip_dbg_vhci_rh(" ClearHubFeature\n");
+ 		break;
+ 	case ClearPortFeature:
+-		if (rhport < 0)
++		if (invalid_rhport) {
++			pr_err("invalid port number %d\n", wIndex);
+ 			goto error;
++		}
+ 		switch (wValue) {
+ 		case USB_PORT_FEAT_SUSPEND:
+ 			if (hcd->speed == HCD_USB3) {
+@@ -415,9 +429,10 @@ static int vhci_hub_control(struct usb_h
+ 		break;
+ 	case GetPortStatus:
+ 		usbip_dbg_vhci_rh(" GetPortStatus port %x\n", wIndex);
+-		if (wIndex < 1) {
++		if (invalid_rhport) {
+ 			pr_err("invalid port number %d\n", wIndex);
+ 			retval = -EPIPE;
++			goto error;
+ 		}
+ 
+ 		/* we do not care about resume. */
+@@ -513,16 +528,20 @@ static int vhci_hub_control(struct usb_h
+ 				goto error;
+ 			}
+ 
+-			if (rhport < 0)
++			if (invalid_rhport) {
++				pr_err("invalid port number %d\n", wIndex);
+ 				goto error;
++			}
+ 
+ 			vhci_hcd->port_status[rhport] |= USB_PORT_STAT_SUSPEND;
+ 			break;
+ 		case USB_PORT_FEAT_POWER:
+ 			usbip_dbg_vhci_rh(
+ 				" SetPortFeature: USB_PORT_FEAT_POWER\n");
+-			if (rhport < 0)
++			if (invalid_rhport) {
++				pr_err("invalid port number %d\n", wIndex);
+ 				goto error;
++			}
+ 			if (hcd->speed == HCD_USB3)
+ 				vhci_hcd->port_status[rhport] |= USB_SS_PORT_STAT_POWER;
+ 			else
+@@ -531,8 +550,10 @@ static int vhci_hub_control(struct usb_h
+ 		case USB_PORT_FEAT_BH_PORT_RESET:
+ 			usbip_dbg_vhci_rh(
+ 				" SetPortFeature: USB_PORT_FEAT_BH_PORT_RESET\n");
+-			if (rhport < 0)
++			if (invalid_rhport) {
++				pr_err("invalid port number %d\n", wIndex);
+ 				goto error;
++			}
+ 			/* Applicable only for USB3.0 hub */
+ 			if (hcd->speed != HCD_USB3) {
+ 				pr_err("USB_PORT_FEAT_BH_PORT_RESET req not "
+@@ -543,8 +564,10 @@ static int vhci_hub_control(struct usb_h
+ 		case USB_PORT_FEAT_RESET:
+ 			usbip_dbg_vhci_rh(
+ 				" SetPortFeature: USB_PORT_FEAT_RESET\n");
+-			if (rhport < 0)
++			if (invalid_rhport) {
++				pr_err("invalid port number %d\n", wIndex);
+ 				goto error;
++			}
+ 			/* if it's already enabled, disable */
+ 			if (hcd->speed == HCD_USB3) {
+ 				vhci_hcd->port_status[rhport] = 0;
+@@ -565,8 +588,10 @@ static int vhci_hub_control(struct usb_h
+ 		default:
+ 			usbip_dbg_vhci_rh(" SetPortFeature: default %d\n",
+ 					  wValue);
+-			if (rhport < 0)
++			if (invalid_rhport) {
++				pr_err("invalid port number %d\n", wIndex);
+ 				goto error;
++			}
+ 			if (hcd->speed == HCD_USB3) {
+ 				if ((vhci_hcd->port_status[rhport] &
+ 				     USB_SS_PORT_STAT_POWER) != 0) {
+@@ -608,7 +633,7 @@ error:
+ 	if (usbip_dbg_flag_vhci_rh) {
+ 		pr_debug("port %d\n", rhport);
+ 		/* Only dump valid port status */
+-		if (rhport >= 0) {
++		if (!invalid_rhport) {
+ 			dump_port_status_diff(prev_port_status[rhport],
+ 					      vhci_hcd->port_status[rhport],
+ 					      hcd->speed == HCD_USB3);
+@@ -618,8 +643,10 @@ error:
+ 
+ 	spin_unlock_irqrestore(&vhci->lock, flags);
+ 
+-	if ((vhci_hcd->port_status[rhport] & PORT_C_MASK) != 0)
++	if (!invalid_rhport &&
++	    (vhci_hcd->port_status[rhport] & PORT_C_MASK) != 0) {
+ 		usb_hcd_poll_rh_status(hcd);
++	}
+ 
+ 	return retval;
  }
 
 
