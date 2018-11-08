@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6959DECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:09:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86A51ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:09:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 138342086C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:09:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 138342086C
+	by mail.kernel.org (Postfix) with ESMTP id 5834E20825
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 15:09:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5834E20825
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727377AbeKIApS (ORCPT
+        id S1727471AbeKIApW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 8 Nov 2018 19:45:18 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:40706 "EHLO mx1.redhat.com"
+        Thu, 8 Nov 2018 19:45:22 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:58622 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726862AbeKIApS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 8 Nov 2018 19:45:18 -0500
+        id S1726672AbeKIApV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 8 Nov 2018 19:45:21 -0500
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 459D5307DAA9;
-        Thu,  8 Nov 2018 15:09:21 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 22D9730820D4;
+        Thu,  8 Nov 2018 15:09:25 +0000 (UTC)
 Received: from llong.com (dhcp-17-55.bos.redhat.com [10.18.17.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B8906648B4;
-        Thu,  8 Nov 2018 15:09:15 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 76E0E648B4;
+        Thu,  8 Nov 2018 15:09:23 +0000 (UTC)
 From:   Waiman Long <longman@redhat.com>
 To:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
         Johannes Weiner <hannes@cmpxchg.org>,
@@ -43,270 +43,74 @@ Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
         Patrick Bellasi <patrick.bellasi@arm.com>,
         Tom Hromatka <tom.hromatka@oracle.com>,
         Waiman Long <longman@redhat.com>
-Subject: [PATCH v15 07/12] cpuset: Make CPU hotplug work with partition
-Date:   Thu,  8 Nov 2018 10:08:41 -0500
-Message-Id: <1541689726-20088-8-git-send-email-longman@redhat.com>
+Subject: [PATCH v15 09/12] cpuset: Expose cpus.effective and mems.effective on cgroup v2 root
+Date:   Thu,  8 Nov 2018 10:08:43 -0500
+Message-Id: <1541689726-20088-10-git-send-email-longman@redhat.com>
 In-Reply-To: <1541689726-20088-1-git-send-email-longman@redhat.com>
 References: <1541689726-20088-1-git-send-email-longman@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 08 Nov 2018 15:09:22 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 08 Nov 2018 15:09:25 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When there is a cpu hotplug event (CPU online or offline), the partitions
-may need to be reconfigured and regenerated. So code is added to the
-hotplug functions to make them work with new subparts_cpus mask to
-compute the right effective_cpus for each of the affected cpusets.
-It may also change the state of a partition root from real one to an
-erroneous one or vice versa.
+Because of the fact that setting the "cpuset.sched.partition" in
+a direct child of root can remove CPUs from the root's effective CPU
+list, it makes sense to know what CPUs are left in the root cgroup for
+scheduling purpose. So the "cpuset.cpus.effective" control file is now
+exposed in the v2 cgroup root.
+
+For consistency, the "cpuset.mems.effective" control file is exposed
+as well.
 
 Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- kernel/cgroup/cpuset.c | 131 +++++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 116 insertions(+), 15 deletions(-)
+ Documentation/admin-guide/cgroup-v2.rst | 4 ++--
+ kernel/cgroup/cpuset.c                  | 2 --
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
+diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+index 01b70f6..595b075 100644
+--- a/Documentation/admin-guide/cgroup-v2.rst
++++ b/Documentation/admin-guide/cgroup-v2.rst
+@@ -1653,7 +1653,7 @@ Cpuset Interface Files
+ 	and won't be affected by any CPU hotplug events.
+ 
+   cpuset.cpus.effective
+-	A read-only multiple values file which exists on non-root
++	A read-only multiple values file which exists on all
+ 	cpuset-enabled cgroups.
+ 
+ 	It lists the onlined CPUs that are actually granted to this
+@@ -1693,7 +1693,7 @@ Cpuset Interface Files
+ 	and won't be affected by any memory nodes hotplug events.
+ 
+   cpuset.mems.effective
+-	A read-only multiple values file which exists on non-root
++	A read-only multiple values file which exists on all
+ 	cpuset-enabled cgroups.
+ 
+ 	It lists the onlined memory nodes that are actually granted to
 diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 21eaa89..82c88c6 100644
+index 3960de7..fc1a809 100644
 --- a/kernel/cgroup/cpuset.c
 +++ b/kernel/cgroup/cpuset.c
-@@ -113,6 +113,9 @@ struct cpuset {
- 	 * CPUs allocated to child sub-partitions (default hierarchy only)
- 	 * - CPUs granted by the parent = effective_cpus U subparts_cpus
- 	 * - effective_cpus and subparts_cpus are mutually exclusive.
-+	 *
-+	 * effective_cpus contains only onlined CPUs, but subparts_cpus
-+	 * may have offlined ones.
- 	 */
- 	cpumask_var_t subparts_cpus;
+@@ -2574,14 +2574,12 @@ static s64 cpuset_read_s64(struct cgroup_subsys_state *css, struct cftype *cft)
+ 		.name = "cpus.effective",
+ 		.seq_show = cpuset_common_seq_show,
+ 		.private = FILE_EFFECTIVE_CPULIST,
+-		.flags = CFTYPE_NOT_ON_ROOT,
+ 	},
  
-@@ -994,7 +997,9 @@ static void update_tasks_cpumask(struct cpuset *cs)
-  * @parent: the parent cpuset
-  *
-  * If the parent has subpartition CPUs, include them in the list of
-- * allowable CPUs in computing the new effective_cpus mask.
-+ * allowable CPUs in computing the new effective_cpus mask. Since offlined
-+ * CPUs are not removed from subparts_cpus, we have to use cpu_active_mask
-+ * to mask those out.
-  */
- static void compute_effective_cpumask(struct cpumask *new_cpus,
- 				      struct cpuset *cs, struct cpuset *parent)
-@@ -1003,6 +1008,7 @@ static void compute_effective_cpumask(struct cpumask *new_cpus,
- 		cpumask_or(new_cpus, parent->effective_cpus,
- 			   parent->subparts_cpus);
- 		cpumask_and(new_cpus, new_cpus, cs->cpus_allowed);
-+		cpumask_and(new_cpus, new_cpus, cpu_active_mask);
- 	} else {
- 		cpumask_and(new_cpus, cs->cpus_allowed, parent->effective_cpus);
- 	}
-@@ -1125,9 +1131,20 @@ static int update_parent_subparts_cpumask(struct cpuset *cpuset, int cmd,
- 		/*
- 		 * Return error if the new effective_cpus could become empty.
- 		 */
--		if (adding && !deleting &&
--		    cpumask_equal(parent->effective_cpus, tmp->addmask))
--			return -EINVAL;
-+		if (adding &&
-+		    cpumask_equal(parent->effective_cpus, tmp->addmask)) {
-+			if (!deleting)
-+				return -EINVAL;
-+			/*
-+			 * As some of the CPUs in subparts_cpus might have
-+			 * been offlined, we need to compute the real delmask
-+			 * to confirm that.
-+			 */
-+			if (!cpumask_and(tmp->addmask, tmp->delmask,
-+					 cpu_active_mask))
-+				return -EINVAL;
-+			cpumask_copy(tmp->addmask, parent->effective_cpus);
-+		}
- 	} else {
- 		/*
- 		 * partcmd_update w/o newmask:
-@@ -1197,6 +1214,10 @@ static int update_parent_subparts_cpumask(struct cpuset *cpuset, int cmd,
- 	if (deleting) {
- 		cpumask_andnot(parent->subparts_cpus,
- 			       parent->subparts_cpus, tmp->delmask);
-+		/*
-+		 * Some of the CPUs in subparts_cpus might have been offlined.
-+		 */
-+		cpumask_and(tmp->delmask, tmp->delmask, cpu_active_mask);
- 		cpumask_or(parent->effective_cpus,
- 			   parent->effective_cpus, tmp->delmask);
- 	}
-@@ -2863,20 +2884,29 @@ static void remove_tasks_in_empty_cpuset(struct cpuset *cs)
- 		update_tasks_nodemask(cs);
- }
+ 	{
+ 		.name = "mems.effective",
+ 		.seq_show = cpuset_common_seq_show,
+ 		.private = FILE_EFFECTIVE_MEMLIST,
+-		.flags = CFTYPE_NOT_ON_ROOT,
+ 	},
  
-+static bool force_rebuild;
-+
-+void cpuset_force_rebuild(void)
-+{
-+	force_rebuild = true;
-+}
-+
- /**
-  * cpuset_hotplug_update_tasks - update tasks in a cpuset for hotunplug
-  * @cs: cpuset in interest
-+ * @tmp: the tmpmasks structure pointer
-  *
-  * Compare @cs's cpu and mem masks against top_cpuset and if some have gone
-  * offline, update @cs accordingly.  If @cs ends up with no CPU or memory,
-  * all its tasks are moved to the nearest ancestor with both resources.
-  */
--static void cpuset_hotplug_update_tasks(struct cpuset *cs)
-+static void cpuset_hotplug_update_tasks(struct cpuset *cs, struct tmpmasks *tmp)
- {
- 	static cpumask_t new_cpus;
- 	static nodemask_t new_mems;
- 	bool cpus_updated;
- 	bool mems_updated;
-+	struct cpuset *parent;
- retry:
- 	wait_event(cpuset_attach_wq, cs->attach_in_progress == 0);
- 
-@@ -2891,9 +2921,60 @@ static void cpuset_hotplug_update_tasks(struct cpuset *cs)
- 		goto retry;
- 	}
- 
--	cpumask_and(&new_cpus, cs->cpus_allowed, parent_cs(cs)->effective_cpus);
--	nodes_and(new_mems, cs->mems_allowed, parent_cs(cs)->effective_mems);
-+	parent =  parent_cs(cs);
-+	compute_effective_cpumask(&new_cpus, cs, parent);
-+	nodes_and(new_mems, cs->mems_allowed, parent->effective_mems);
-+
-+	if (cs->nr_subparts_cpus)
-+		/*
-+		 * Make sure that CPUs allocated to child partitions
-+		 * do not show up in effective_cpus.
-+		 */
-+		cpumask_andnot(&new_cpus, &new_cpus, cs->subparts_cpus);
-+
-+	if (!tmp || !cs->partition_root_state)
-+		goto update_tasks;
-+
-+	/*
-+	 * In the unlikely event that a partition root has empty
-+	 * effective_cpus or its parent becomes erroneous, we have to
-+	 * transition it to the erroneous state.
-+	 */
-+	if (is_partition_root(cs) && (cpumask_empty(&new_cpus) ||
-+	   (parent->partition_root_state == PRS_ERROR))) {
-+		if (cs->nr_subparts_cpus) {
-+			cs->nr_subparts_cpus = 0;
-+			cpumask_clear(cs->subparts_cpus);
-+			compute_effective_cpumask(&new_cpus, cs, parent);
-+		}
- 
-+		/*
-+		 * If the effective_cpus is empty because the child
-+		 * partitions take away all the CPUs, we can keep
-+		 * the current partition and let the child partitions
-+		 * fight for available CPUs.
-+		 */
-+		if ((parent->partition_root_state == PRS_ERROR) ||
-+		     cpumask_empty(&new_cpus)) {
-+			update_parent_subparts_cpumask(cs, partcmd_disable,
-+						       NULL, tmp);
-+			cs->partition_root_state = PRS_ERROR;
-+		}
-+		cpuset_force_rebuild();
-+	}
-+
-+	/*
-+	 * On the other hand, an erroneous partition root may be transitioned
-+	 * back to a regular one or a partition root with no CPU allocated
-+	 * from the parent may change to erroneous.
-+	 */
-+	if (is_partition_root(parent) &&
-+	   ((cs->partition_root_state == PRS_ERROR) ||
-+	    !cpumask_intersects(&new_cpus, parent->subparts_cpus)) &&
-+	     update_parent_subparts_cpumask(cs, partcmd_update, NULL, tmp))
-+		cpuset_force_rebuild();
-+
-+update_tasks:
- 	cpus_updated = !cpumask_equal(&new_cpus, cs->effective_cpus);
- 	mems_updated = !nodes_equal(new_mems, cs->effective_mems);
- 
-@@ -2907,13 +2988,6 @@ static void cpuset_hotplug_update_tasks(struct cpuset *cs)
- 	mutex_unlock(&cpuset_mutex);
- }
- 
--static bool force_rebuild;
--
--void cpuset_force_rebuild(void)
--{
--	force_rebuild = true;
--}
--
- /**
-  * cpuset_hotplug_workfn - handle CPU/memory hotunplug for a cpuset
-  *
-@@ -2936,6 +3010,10 @@ static void cpuset_hotplug_workfn(struct work_struct *work)
- 	static nodemask_t new_mems;
- 	bool cpus_updated, mems_updated;
- 	bool on_dfl = is_in_v2_mode();
-+	struct tmpmasks tmp, *ptmp = NULL;
-+
-+	if (on_dfl && !alloc_cpumasks(NULL, &tmp))
-+		ptmp = &tmp;
- 
- 	mutex_lock(&cpuset_mutex);
- 
-@@ -2943,6 +3021,11 @@ static void cpuset_hotplug_workfn(struct work_struct *work)
- 	cpumask_copy(&new_cpus, cpu_active_mask);
- 	new_mems = node_states[N_MEMORY];
- 
-+	/*
-+	 * If subparts_cpus is populated, it is likely that the check below
-+	 * will produce a false positive on cpus_updated when the cpu list
-+	 * isn't changed. It is extra work, but it is better to be safe.
-+	 */
- 	cpus_updated = !cpumask_equal(top_cpuset.effective_cpus, &new_cpus);
- 	mems_updated = !nodes_equal(top_cpuset.effective_mems, new_mems);
- 
-@@ -2951,6 +3034,22 @@ static void cpuset_hotplug_workfn(struct work_struct *work)
- 		spin_lock_irq(&callback_lock);
- 		if (!on_dfl)
- 			cpumask_copy(top_cpuset.cpus_allowed, &new_cpus);
-+		/*
-+		 * Make sure that CPUs allocated to child partitions
-+		 * do not show up in effective_cpus. If no CPU is left,
-+		 * we clear the subparts_cpus & let the child partitions
-+		 * fight for the CPUs again.
-+		 */
-+		if (top_cpuset.nr_subparts_cpus) {
-+			if (cpumask_subset(&new_cpus,
-+					   top_cpuset.subparts_cpus)) {
-+				top_cpuset.nr_subparts_cpus = 0;
-+				cpumask_clear(top_cpuset.subparts_cpus);
-+			} else {
-+				cpumask_andnot(&new_cpus, &new_cpus,
-+					       top_cpuset.subparts_cpus);
-+			}
-+		}
- 		cpumask_copy(top_cpuset.effective_cpus, &new_cpus);
- 		spin_unlock_irq(&callback_lock);
- 		/* we don't mess with cpumasks of tasks in top_cpuset */
-@@ -2979,7 +3078,7 @@ static void cpuset_hotplug_workfn(struct work_struct *work)
- 				continue;
- 			rcu_read_unlock();
- 
--			cpuset_hotplug_update_tasks(cs);
-+			cpuset_hotplug_update_tasks(cs, ptmp);
- 
- 			rcu_read_lock();
- 			css_put(&cs->css);
-@@ -2992,6 +3091,8 @@ static void cpuset_hotplug_workfn(struct work_struct *work)
- 		force_rebuild = false;
- 		rebuild_sched_domains();
- 	}
-+
-+	free_cpumasks(NULL, ptmp);
- }
- 
- void cpuset_update_active_cpus(void)
+ 	{
 -- 
 1.8.3.1
 
