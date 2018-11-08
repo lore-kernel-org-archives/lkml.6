@@ -2,146 +2,140 @@ Return-Path: <SRS0=fmpj=NT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0DEEECDE4B
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:08:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 801AAECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:08:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3FF62081C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:08:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45F3D20840
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 21:08:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="UemQzDjZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3FF62081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dmvo/hml"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45F3D20840
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727430AbeKIGpi (ORCPT
+        id S1727665AbeKIGpq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 01:45:38 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:57340 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725922AbeKIGpi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 01:45:38 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id wA8L842I102428;
-        Thu, 8 Nov 2018 15:08:04 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1541711284;
-        bh=MlaUlKrjYIJefiXlZWY+jsWDZbVPJmf+oZrOCRLez64=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=UemQzDjZ+UOw7ZjLBqKBMHCcmKqgMhH6+iAKI8G2Th02F8n9wgfIcr4w0UgyvqXvQ
-         vf0809fEZFd1pKFwuzB4ZBwQSy1OH9nRh30IE3bK+tX7se7QuquFZ4vHHmRmD+zAan
-         G3fJWclpDpek42/ufkJPytnko6s/eAzeYR15XI0I=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wA8L84fs005116
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 8 Nov 2018 15:08:04 -0600
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 8 Nov
- 2018 15:08:03 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 8 Nov 2018 15:08:03 -0600
-Received: from [172.22.187.225] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wA8L83oP028418;
-        Thu, 8 Nov 2018 15:08:03 -0600
-Subject: Re: [PATCH 04/24] dt-bindings: leds: Add function and color
- properties
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        <linux-leds@vger.kernel.org>
-CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <pavel@ucw.cz>, <robh@kernel.org>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Daniel Mack <daniel@zonque.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Oleh Kravchenko <oleg@kaa.org.ua>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Simon Shields <simon@lineageos.org>,
-        Xiaotong Lu <xiaotong.lu@spreadtrum.com>
-References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
- <1541542052-10081-5-git-send-email-jacek.anaszewski@gmail.com>
- <26714494-06f8-163d-1ef8-75f75c25a467@ti.com>
- <c650a9eb-afae-2a27-e39c-d448a5b3eadd@gmail.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <81884969-956c-9d21-4114-4cb10d1e90e3@ti.com>
-Date:   Thu, 8 Nov 2018 15:08:02 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 9 Nov 2018 01:45:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59096 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725922AbeKIGpp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 01:45:45 -0500
+Received: from localhost (unknown [208.72.13.198])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 81EB32081C;
+        Thu,  8 Nov 2018 21:08:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541711308;
+        bh=0FCJO6of94dflib1N81VdKGKxwPLfueMDNzxES8bLOY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dmvo/hmlyXY+1aGUFq6JIkSqBfk3tjvzWtCX2bWrNkbtt+KXQ28jRELWIWHZjr4TG
+         oRC+x8gMdQHUtqAUYcSMg2iDyUr6HLshCjKEJX6bvW03xrrVDro2v82mJz5kQPHyjn
+         Ej/9MNcfFMA0XOD8sUtMnUUJpchCGSgTS4OKBYVI=
+Date:   Thu, 8 Nov 2018 13:08:28 -0800
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        X86 ML <x86@kernel.org>, John Stultz <john.stultz@linaro.org>,
+        acme@redhat.com, frederic@kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: Re: [patch 2/2] Documentation/process: Add tip tree handbook
+Message-ID: <20181108210828.GD22691@kroah.com>
+References: <20181107171010.421878737@linutronix.de>
+ <20181107171149.165693799@linutronix.de>
+ <20181108074012.GD20032@gmail.com>
+ <20181108091251.GL9761@hirez.programming.kicks-ass.net>
+ <CAPcyv4iCc32VpHA2c8QMRTFy1wGRAmhFQV1xVUiAo2zYKOfJrQ@mail.gmail.com>
+ <20181108174006.GP4170@linux.ibm.com>
+ <alpine.DEB.2.21.1811082042001.1640@nanos.tec.linutronix.de>
+ <20181108210615.GC22691@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <c650a9eb-afae-2a27-e39c-d448a5b3eadd@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181108210615.GC22691@kroah.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jacek
-
-On 11/08/2018 02:47 PM, Jacek Anaszewski wrote:
-> Dan,
+On Thu, Nov 08, 2018 at 01:06:15PM -0800, Greg KH wrote:
+> On Thu, Nov 08, 2018 at 08:58:32PM +0100, Thomas Gleixner wrote:
+> > On Thu, 8 Nov 2018, Paul E. McKenney wrote:
+> > > On Thu, Nov 08, 2018 at 09:19:33AM -0800, Dan Williams wrote:
+> > > > On Thu, Nov 8, 2018 at 1:13 AM Peter Zijlstra <peterz@infradead.org> wrote:
+> > > > >
+> > > > > On Thu, Nov 08, 2018 at 08:40:12AM +0100, Ingo Molnar wrote:
+> > > > > > > + - Cc: ``cc-ed-person <person@mail>``
+> > > > > > > +
+> > > > > > > +   If the patch should be backported to stable, then please add a '``Cc:
+> > > > > > > +   stable@vger.kernel.org``' tag, but do not Cc stable when sending your
+> > > > > > > +   mail.
+> > > > > >
+> > > > > > Can I suggest a more canonical form:
+> > > > > >
+> > > > > >       Cc: <stable@vger.kernel.org> # v4.18 and later kernels
+> > > > > >
+> > > > > > It would be nice if people adding Cc: stable lines would actually try to
+> > > > > > figure out which exact kernel versions are affected.
+> > > > 
+> > > > I know at least StGit mail does not grok that "#"notation. I've
+> > > > stopped using it in favor of a "Fixes:" tag. I would think "Fixes:" is
+> > > > preferred over "# <KVER>" if only because it can be used to track
+> > > > fixes to commits that have been backported to stable. Is there any
+> > > > reason for "# <KVER>" to continue in a world where we have "Fixes:"?
+> > > 
+> > > I sometimes have fixes that need to be different for different past
+> > > releases.  And there have been cases where RCU patches would apply and
+> > > build cleanly against releases for which it was not appropriate, but
+> > > would have some low-probability failure.  Which meant that it could be
+> > > expected to pass light testing.  :-/
+> > > 
+> > > So I sometimes need a way of saying which versions a given patch applies
+> > > to, independent of the version into which the bug was introduced.
+> > 
+> > I can understand that you want to limit the scope of automatic backports.
+> > 
+> > But we really should try to always use of the Fixes: tag. In most cases the
+> > SHA1 of the commit in the fixes tag defines the backport scope. 
+> > 
+> > For the rare cases where the buggy commit is really old, but you want to
+> > limit the backport scope for a reason then I really like to avoid to
+> > overload the Cc stable tag and have a dedicated tag instead. Something
+> > like:
+> > 
+> >     Fixes: 1234567890AB ("subsys/comp: Short summary")
+> >     Backport-to: 4.14
 > 
-> On 11/08/2018 07:00 PM, Dan Murphy wrote:
->> Jacek
->>
->> On 11/06/2018 04:07 PM, Jacek Anaszewski wrote:
->>> Introduce dedicated properties for conveying information about
->>> LED function and color. Mark old "label" property as deprecated.
->>>
->>> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
->>> Cc: Baolin Wang <baolin.wang@linaro.org>
->>> Cc: Daniel Mack <daniel@zonque.org>
->>> Cc: Dan Murphy <dmurphy@ti.com>
->>> Cc: Linus Walleij <linus.walleij@linaro.org>
->>> Cc: Oleh Kravchenko <oleg@kaa.org.ua>
->>> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
->>> Cc: Simon Shields <simon@lineageos.org>
->>> Cc: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
->>> ---
->>>  Documentation/devicetree/bindings/leds/common.txt | 52 +++++++++++++++++++----
->>>  1 file changed, 44 insertions(+), 8 deletions(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
->>> index aa13998..3efc826 100644
->>> --- a/Documentation/devicetree/bindings/leds/common.txt
->>> +++ b/Documentation/devicetree/bindings/leds/common.txt
->>> @@ -10,14 +10,20 @@ can influence the way of the LED device initialization, the LED components
->>>  have to be tightly coupled with the LED device binding. They are represented
->>>  by child nodes of the parent LED device binding.
->>>  
->>> +
->>>  Optional properties for child nodes:
->>>  - led-sources : List of device current outputs the LED is connected to. The
->>>  		outputs are identified by the numbers that must be defined
->>>  		in the LED device binding documentation.
->>> +- function: LED functon. Use one of the LED_FUNCTION_* prefixed definitions
->>> +	    from the header include/dt-bindings/leds/functions.h.
->>> +	    If there is no matching LED_FUNCTION available, add a new one.
->>> +- color : Color of the LED.
->>
->> Should we define the colors too?  There are only really 4.  Red, green, blue and white.
->>
->> Generally varying colors are created base on the primary colors.  Even the amber color
+> Ick, no.  Just stick to the "Fixes:" tag.  My scripts can now track when
+> a patch is backported to a stable tree so that I know to apply it to
+> older ones despite the original patch showing up in a newer release.
 > 
-> No problem, I can add LED colors. However, I don't quite follow how
-> the mix of base color strings would give "amber" ? :-)
-> 
+> And yes, those scripts are new, as Sasha is about to point out all of
+> the places where I missed this in the past :)
 
-Amber or yellow.  Red and green with a hint of blue or no blue depending on how dark you want it.
+Here's the script if others are curious:
+	https://github.com/gregkh/gregkh-linux/blob/master/scripts/fix_in_what_release
 
-You don't always have to turn the LED on full to mix.  Sometimes lowering the level of the stronger colors like red 
-and upping weaker colors like green you can different color
+Yes, I know it's horrid, I abuse the fact that 'git grep' is very fast
+on the stable-queue repo :)
 
-Dan
+thanks,
 
--- 
-------------------
-Dan Murphy
+greg k-h
