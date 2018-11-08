@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17C95ECDE4D
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:03:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D471AECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:03:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C87662081C
-	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:03:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EE4D208A3
+	for <linux-kernel@archiver.kernel.org>; Thu,  8 Nov 2018 22:03:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PMRrEuDV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C87662081C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vg4/UkPk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EE4D208A3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731258AbeKIHkx (ORCPT
+        id S1729894AbeKIHk6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 02:40:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60652 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 02:40:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60862 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727514AbeKIHkw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 02:40:52 -0500
+        id S1727514AbeKIHk6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 02:40:58 -0500
 Received: from localhost (unknown [208.72.13.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0227B208E3;
-        Thu,  8 Nov 2018 22:03:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9765B2081C;
+        Thu,  8 Nov 2018 22:03:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541714603;
-        bh=8SaVQCYyGTBLgf2bwckgxS/HgkE57P+W9kLrJl+C9UA=;
+        s=default; t=1541714608;
+        bh=KF1+SMMpaPgtXyqm8gCUM7YzS+VrUMvFDzDc3ijra4I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PMRrEuDVgiMDMIj2ACPkBYtFqkWHtY+IUzeN5RZjnHvocT0GODQgbi8L21QgICR6k
-         iiaw0eOKDStu+3hlwhdGmchf7APlXehb4mnk/3/9LS7UWf3AnhMcxNPeBf6p0wQ1x0
-         Cnne4K5WJkjquPKOU4I7h74RS1R+rADjmicd9opc=
+        b=Vg4/UkPkVQAHurECDpYfCU9UHO0Z7iLZBVGrWW57NUstOnbi7vZ3ohFTffHMFyJwl
+         YzAHL4mwv0tn73UwXVeQy3NLKffPPZ2/jB9836tlr4AqmEz521aJp8gtJbPUA48vS4
+         428W6EkbGyhdkVrzCYElZvsr3RKJdvNSygbAqslo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dongdong Liu <liudongdong3@huawei.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
+        stable@vger.kernel.org, Peter Robinson <pbrobinson@gmail.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 040/171] PCI: Disable MSI for HiSilicon Hip06/Hip07 only in Root Port mode
-Date:   Thu,  8 Nov 2018 13:50:10 -0800
-Message-Id: <20181108215130.357291687@linuxfoundation.org>
+Subject: [PATCH 4.9 041/171] i2c: bcm2835: Avoid possible NULL ptr dereference
+Date:   Thu,  8 Nov 2018 13:50:11 -0800
+Message-Id: <20181108215130.468707918@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
 References: <20181108215127.257643509@linuxfoundation.org>
@@ -64,40 +65,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit deb86999323661c019ef2740eb9d479d1e526b5c ]
+[ Upstream commit ababb08938df7ac245d30a58b95b94ecf8dc04fc ]
 
-HiSilicon Hip06/Hip07 can operate as either a Root Port or an Endpoint.  It
-always advertises an MSI capability, but it can only generate MSIs when in
-Endpoint mode.
+Since commit e2474541032d ("bcm2835: Fix hang for writing messages
+larger than 16 bytes") the interrupt handler is prone to a possible
+NULL pointer dereference. This could happen if an interrupt fires
+before curr_msg is set by bcm2835_i2c_xfer_msg() and randomly occurs
+on the RPi 3. Even this is an unexpected behavior the driver must
+handle that with an error instead of a crash.
 
-The device has the same Vendor and Device IDs in both modes, so check the
-Class Code and disable MSI only when operating as a Root Port.
-
-[bhelgaas: changelog]
-Fixes: 72f2ff0deb87 ("PCI: Disable MSI for HiSilicon Hip06/Hip07 Root Ports")
-Signed-off-by: Dongdong Liu <liudongdong3@huawei.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Zhou Wang <wangzhou1@hisilicon.com>
-Cc: stable@vger.kernel.org	# v4.11+
+Reported-by: Peter Robinson <pbrobinson@gmail.com>
+Fixes: e2474541032d ("bcm2835: Fix hang for writing messages larger than 16 bytes")
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+Acked-by: Noralf Trønnes <noralf@tronnes.org>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/quirks.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/i2c/busses/i2c-bcm2835.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index c7a695c2303a..2250f0d33481 100644
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -1634,8 +1634,8 @@ static void quirk_pcie_mch(struct pci_dev *pdev)
- DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL,	PCI_DEVICE_ID_INTEL_E7520_MCH,	quirk_pcie_mch);
- DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL,	PCI_DEVICE_ID_INTEL_E7320_MCH,	quirk_pcie_mch);
- DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL,	PCI_DEVICE_ID_INTEL_E7525_MCH,	quirk_pcie_mch);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_HUAWEI,	0x1610,	quirk_pcie_mch);
+diff --git a/drivers/i2c/busses/i2c-bcm2835.c b/drivers/i2c/busses/i2c-bcm2835.c
+index f283b714aa79..7ed09865cb4b 100644
+--- a/drivers/i2c/busses/i2c-bcm2835.c
++++ b/drivers/i2c/busses/i2c-bcm2835.c
+@@ -128,7 +128,9 @@ static irqreturn_t bcm2835_i2c_isr(int this_irq, void *data)
+ 	}
  
-+DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_HUAWEI, 0x1610, PCI_CLASS_BRIDGE_PCI, 8, quirk_pcie_mch);
- 
- /*
-  * It's possible for the MSI to get corrupted if shpc and acpi
+ 	if (val & BCM2835_I2C_S_DONE) {
+-		if (i2c_dev->curr_msg->flags & I2C_M_RD) {
++		if (!i2c_dev->curr_msg) {
++			dev_err(i2c_dev->dev, "Got unexpected interrupt (from firmware?)\n");
++		} else if (i2c_dev->curr_msg->flags & I2C_M_RD) {
+ 			bcm2835_drain_rxfifo(i2c_dev);
+ 			val = bcm2835_i2c_readl(i2c_dev, BCM2835_I2C_S);
+ 		}
 -- 
 2.17.1
 
