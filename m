@@ -6,58 +6,59 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AC28C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:54:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2A44C43610
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:54:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BEBC20855
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:54:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BEBC20855
+	by mail.kernel.org (Postfix) with ESMTP id 7510A20855
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:54:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7510A20855
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727946AbeKITds (ORCPT
+        id S1728048AbeKITdz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 14:33:48 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:37404 "EHLO
+        Fri, 9 Nov 2018 14:33:55 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:37414 "EHLO
         deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727552AbeKITds (ORCPT
+        with ESMTP id S1727552AbeKITdz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 14:33:48 -0500
+        Fri, 9 Nov 2018 14:33:55 -0500
 Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
         by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1gL3U8-00024B-8A; Fri, 09 Nov 2018 17:53:52 +0800
+        id 1gL3UH-00024J-VZ; Fri, 09 Nov 2018 17:54:02 +0800
 Received: from herbert by gondobar with local (Exim 4.89)
         (envelope-from <herbert@gondor.apana.org.au>)
-        id 1gL3U7-0005lZ-Fr; Fri, 09 Nov 2018 17:53:51 +0800
-Date:   Fri, 9 Nov 2018 17:53:51 +0800
+        id 1gL3UH-0005ln-FK; Fri, 09 Nov 2018 17:54:01 +0800
+Date:   Fri, 9 Nov 2018 17:54:01 +0800
 From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Harsh Jain <harsh@chelsio.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] crypto: chelsio: clean up various indentation issues
-Message-ID: <20181109095351.4gku2rszhjxtd5wv@gondor.apana.org.au>
-References: <20181030120158.23323-1-colin.king@canonical.com>
+To:     Gilad Ben-Yossef <gilad@benyossef.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Ofir Drang <Ofir.Drang@arm.com>,
+        Yael Chemla <Yael.Chemla@arm.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] crypto: mark cts(cbc(aes)) as FIPS allowed
+Message-ID: <20181109095401.aof4j52ootfac5mr@gondor.apana.org.au>
+References: <1541325924-14777-1-git-send-email-gilad@benyossef.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181030120158.23323-1-colin.king@canonical.com>
+In-Reply-To: <1541325924-14777-1-git-send-email-gilad@benyossef.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 12:01:58PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Sun, Nov 04, 2018 at 10:05:24AM +0000, Gilad Ben-Yossef wrote:
+> As per Sp800-38A addendum from Oct 2010[1], cts(cbc(aes)) is
+> allowed as a FIPS mode algorithm. Mark it as such.
 > 
-> Trivial fix to clean up varous indentation issue
+> [1] https://csrc.nist.gov/publications/detail/sp/800-38a/addendum/final
 > 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
 > ---
->  drivers/crypto/chelsio/chcr_algo.c | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
+>  crypto/testmgr.c | 1 +
+>  1 file changed, 1 insertion(+)
 
 Patch applied.  Thanks.
 -- 
