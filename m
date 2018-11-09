@@ -2,141 +2,173 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98939C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 12:14:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4DF0C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 12:14:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 627F620892
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 12:14:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 627F620892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 90B1F2081C
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 12:14:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HJeieoQ0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90B1F2081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727977AbeKIVzI (ORCPT
+        id S1728184AbeKIVzR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 16:55:08 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58858 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727560AbeKIVzH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 16:55:07 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BE12BADFF;
-        Fri,  9 Nov 2018 12:14:43 +0000 (UTC)
-Subject: Re: [PATCH RFC 1/3] mm: When CONFIG_ZONE_DMA32 is set, use DMA32 for
- SLAB_CACHE_DMA
-To:     Nicolas Boichat <drinkcat@chromium.org>
-Cc:     robin.murphy@arm.com, will.deacon@arm.com, joro@8bytes.org,
-        cl@linux.com, penberg@kernel.org, rientjes@google.com,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>, mhocko@suse.com,
-        mgorman@techsingularity.net, yehs1@lenovo.com,
-        rppt@linux.vnet.ibm.com,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        iommu@lists.linux-foundation.org,
-        lkml <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        yong.wu@mediatek.com, Matthias Brugger <matthias.bgg@gmail.com>,
-        tfiga@google.com, yingjoe.chen@mediatek.com,
-        Alexander.Levin@microsoft.com
-References: <20181109082448.150302-1-drinkcat@chromium.org>
- <20181109082448.150302-2-drinkcat@chromium.org>
- <00afe803-22dd-5a75-70aa-dda0c7752470@suse.cz>
- <CANMq1KB84Lpe_QbiuaKaBOwSsYr9Cis-gv5xpXaV5qjU=ON=7w@mail.gmail.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <8f58b778-f8ef-d32e-8803-2a20f171a0b1@suse.cz>
-Date:   Fri, 9 Nov 2018 13:14:41 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 9 Nov 2018 16:55:17 -0500
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:36756 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727560AbeKIVzR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 16:55:17 -0500
+Received: by mail-vk1-f195.google.com with SMTP id u62so350469vkb.3;
+        Fri, 09 Nov 2018 04:14:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Mtv0MhXkFuh1a35otS4l3lB20Jjm1yTnaOUS0XFU9Zs=;
+        b=HJeieoQ0UXQ72poa0nStNT9FY8U76yxqwsXNYfQS/2rYtQIbe7APBEZGVjfc5rg6G2
+         jOhDfhqGSsTLJCB9JIo+pAH2eS4+1Ex4H5H66NtRAt+2yQ1FH377wHVV8k5bGErNahQi
+         W86IltjkffW1mKG4c3RPPzHRGkga+IC2kHsOAKpkMtah1cpUbPTBsDcgSQrkq5IJCZFM
+         CTZvmCg6N97/fDRXZ8+QJAcYqh3WKs+qCjxSsCI+efsLp52jzXLRzPZuVJtq0ACbJnYe
+         tWst1dc8WnuqKfWgFcjwiGveXRE88UBIoQ3WRM/d+QSEVGbyWIZ0AUTRBU6y8CNf7Zbo
+         87fA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Mtv0MhXkFuh1a35otS4l3lB20Jjm1yTnaOUS0XFU9Zs=;
+        b=DxtfYiMDTXCjMHLRkWRjoAC6JsY2aFl+m0xHKuf5ns+PhCikDIHx2tkD+ZabVf+ksO
+         AzF+ia+6I/qTO/htl056zYVy3j5XW25qItTrg5Qzs5aR4u8pfyBtyLEbw6J01qK3jPrx
+         pHwVOYyTjTY9SPgQb2EsmmuYZre/Qu6PnkbBUQMHr3SSRXoOSkH0H6p41gcZfOr7e4jN
+         /npgTkky7JzWm2kPJGJOioRFpPUo8z2HaJzbpe0f0JChEyjXygRx/mYZp/Q9gosslVU4
+         jYE3TY/1H19wIwVV2d9LKDx7qpaK5SViyyWmBDFg2i9WK1mp1wR7/KEA3jPYMgsohuxM
+         3qyQ==
+X-Gm-Message-State: AGRZ1gIc2pTQKSyRxzIZJ57dZNeVEgmRktw/Xl/dbTqBXvYSSAiDuB83
+        BiQxJmtejTlWdmNXV5Z2FJBtKR4+RaC4NvFs86g=
+X-Google-Smtp-Source: AJdET5cTfEWxkieBeHdAMFpZqRuvEbgZ/c5uaaKtch2aNBppSXOhjJUEOGFyPKgKFTTpVQmruWr7b0XgGV+NTJgPrzU=
+X-Received: by 2002:a1f:ac4:: with SMTP id 187mr3721600vkk.31.1541765694235;
+ Fri, 09 Nov 2018 04:14:54 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CANMq1KB84Lpe_QbiuaKaBOwSsYr9Cis-gv5xpXaV5qjU=ON=7w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CAOGqxeWBmAahswHp+b_PzkyGs-9sOx3COpJnFVsbKhx14KLuUw@mail.gmail.com>
+ <1541641432.32173.71.camel@mhfsdcap03> <CAOGqxeXmMWK53pAmjeUtpdXNeTa7UH7=VA6pAJyhxg_BsmU5+w@mail.gmail.com>
+ <1541750924.32173.81.camel@mhfsdcap03>
+In-Reply-To: <1541750924.32173.81.camel@mhfsdcap03>
+From:   Alan Cooper <alcooperx@gmail.com>
+Date:   Fri, 9 Nov 2018 07:14:50 -0500
+Message-ID: <CAOGqxeWt=uF1YgjcMF-miGJsewyvmTcNjB8fge-HT06P5_pgcg@mail.gmail.com>
+Subject: Re: [PATCH V2 2/6] usb: core: Add ability to skip phy exit on suspend
+ and init on resume
+To:     chunfeng yun <chunfeng.yun@mediatek.com>
+Cc:     ": Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Alban Bedel <albeu@free.fr>, Alex Elder <elder@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Avi Fishman <avifishman70@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        DTML <devicetree@vger.kernel.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jianguo Sun <sunjianguo1@huawei.com>,
+        Johan Hovold <johan@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Rishabh Bhatnagar <rishabhb@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>, Roger Quadros <rogerq@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/9/18 12:57 PM, Nicolas Boichat wrote:
-> On Fri, Nov 9, 2018 at 6:43 PM Vlastimil Babka <vbabka@suse.cz> wrote:
->> Also I'm probably missing the point of this all. In patch 3 you use
->> __get_dma32_pages() thus __get_free_pages(__GFP_DMA32), which uses
->> alloc_pages, thus the page allocator directly, and there's no slab
->> caches involved.
-> 
-> __get_dma32_pages fixes level 1 page allocations in the patch 3.
-> 
-> This change fixes level 2 page allocations
-> (kmem_cache_zalloc(data->l2_tables, gfp | GFP_DMA)), by transparently
-> remapping GFP_DMA to an underlying ZONE_DMA32.
-> 
-> The alternative would be to create a new SLAB_CACHE_DMA32 when
-> CONFIG_ZONE_DMA32 is defined, but then I'm concerned that the callers
-> would need to choose between the 2 (GFP_DMA or GFP_DMA32...), and also
-> need to use some ifdefs (but maybe that's not a valid concern?).
-> 
->> It makes little sense to involve slab for page table
->> allocations anyway, as those tend to be aligned to a page size (or
->> high-order page size). So what am I missing?
-> 
-> Level 2 tables are ARM_V7S_TABLE_SIZE(2) => 1kb, so we'd waste 3kb if
-> we allocated a full page.
+On Fri, Nov 9, 2018 at 3:08 AM Chunfeng Yun <chunfeng.yun@mediatek.com> wrote:
+>
+> On Thu, 2018-11-08 at 17:50 -0500, Alan Cooper wrote:
+> > On Wed, Nov 7, 2018 at 8:43 PM Chunfeng Yun <chunfeng.yun@mediatek.com> wrote:
+> > >
+> > > hi,
+> > > On Tue, 2018-10-30 at 18:30 -0400, Alan Cooper wrote:
+> > > > On 10/17/18 9:46 PM, Chunfeng Yun wrote:> hi,
+> > > > >
+> > > > > On Wed, 2018-10-17 at 18:29 -0400, Al Cooper wrote:
+> > > > >> Add the ability to skip calling the PHY's exit routine on suspend
+> > > > >> and the PHY's init routine on resume. This is to handle a USB PHY
+> > > > >> that should have it's power_off function called on suspend but
+> > > > cannot
+> > > > >> have it's exit function called because on exit it will disable the
+> > > > >> PHY to the point where register accesses to the Host Controllers
+> > > > >> using the PHY will be disabled and the host drivers will crash.
+> > > > >>
+> > > > >> This is enabled with the HCD flag "suspend_without_phy_exit" which
+> > > > >> can be set from any HCD driver.
+> > > > >>
+> > > > >> Signed-off-by: Al Cooper<alcooperx@gmail.com>
+> > > > >> ---
+> > > > >>   drivers/usb/core/hcd.c  |  8 ++++----
+> > > > >>   drivers/usb/core/phy.c  | 18 ++++++++++++------
+> > > > >>   drivers/usb/core/phy.h  |  9 ++++++---
+> > > > >>   include/linux/usb/hcd.h |  3 +++
+> > > > >>   4 files changed, 25 insertions(+), 13 deletions(-)
+> > > > >>
+> > >
+> > >
+> > > > >>       unsigned        skip_phy_initialization:1;
+> > > > >>
+> > > > >> +    /* Some phys don't want the phy's exit/init called on
+> > > > suspend/resume */
+> > > > >> +    unsigned        suspend_without_phy_exit:1;
+> > > > > As suggested before, you can skip phy's exit/init during
+> > > > suspend/resume
+> > > > > by enabling wakeup of hcd, so needn't add a new variable for it.
+> > > >
+> > > > I still need to be able to enable and disable wakeup for this driver.
+> > > Just use device_init_wakeup(dev, true) instead of
+> > > device_wakeup_enable(dev) for your controller driver, you can try it.
+> > >
+> > > Sorry for the late replay
+> >
+> > What about the case where sysfs is used to disable wakeup?
+> Oh, It's a problem in this case.
+>
+> BTW: Why the host driver will crash when access host controller's
+> register after power-off phy? they are usually independent.
 
-Oh, I see.
+Unfortunately, they are not independent in our design. The PHY
+supplies the clock needed to read/write the OHCI, EHCI and XHCI
+registers.
 
-Well, I think indeed the most transparent would be to support
-SLAB_CACHE_DMA32. The callers of kmem_cache_zalloc() would then need not
-add anything special to gfp, as that's stored internally upon
-kmem_cache_create(). Of course SLAB_BUG_MASK would no longer have to
-treat __GFP_DMA32 as unexpected. It would be unexpected when passed to
-kmalloc() which doesn't have special dma32 caches, but for a cache
-explicitly created to allocate from ZONE_DMA32, I don't see why not. I'm
-somewhat surprised that there wouldn't be a need for this earlier, so
-maybe I'm still missing something.
+Al
 
-> Thanks,
-> 
-
+>
+> >
+> > Al
+> > > >
+> > > > >
+> > > > >> +
+> > > > >>       /* The next flag is a stopgap, to be removed when all the
+> > > > HCDs
+> > > > >>        * support the new root-hub polling mechanism. */
+> > > > >>       unsigned        uses_new_polling:1;
+> > > > >
+> > >
+> > >
+>
+>
