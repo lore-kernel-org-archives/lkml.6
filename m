@@ -2,61 +2,63 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CD4BC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 06:07:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2AF8C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 06:07:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA2A0208E3
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 06:07:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 715702089A
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 06:07:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VajyWENW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA2A0208E3
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="obSE5JEN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 715702089A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727781AbeKIPqp (ORCPT
+        id S1727822AbeKIPqr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 10:46:45 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:36005 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727485AbeKIPqp (ORCPT
+        Fri, 9 Nov 2018 10:46:47 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:40441 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727485AbeKIPqq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 10:46:45 -0500
-Received: by mail-pg1-f193.google.com with SMTP id z17-v6so411686pgv.3;
-        Thu, 08 Nov 2018 22:07:44 -0800 (PST)
+        Fri, 9 Nov 2018 10:46:46 -0500
+Received: by mail-pl1-f196.google.com with SMTP id q19-v6so446640pll.7;
+        Thu, 08 Nov 2018 22:07:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=79i22JUyVLOfuuR8WUkDKY87eLaLzqp9WcRkjfo7ANg=;
-        b=VajyWENWqlTq91fpxUnnqu480vt6YSrJcLN4mm3aJqg4E/mFtMdJvXW0ZvoX54Bt0d
-         YKNYSWHxPDIw6zKt0DB7cBec5ISIS/TSA9onO12KK9mGxjZTY/78KcibZLcz1CkZAYDO
-         ig6r03ScKFtpwczaiIhakiuX8lyF+zbx/BOrwGsUHWTU5ULMG9J3+kX0vL/g2QWh6Eq9
-         16FypJmxG1YLfdA2j/sek0TN275LJyD2rmJNlgmrV/R3eKWRKXCHQ9TuLaVN+xJj9gqc
-         wYXcHa1qXIrZsfoDlcYIfZyoh7l3IfKhM7a/jVCAW8TmKKWAi3UcbXHtBxQfEdJ0Rklc
-         birQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=l5ozhvvWzyBZj5k6LPtNqGH+J//xUcwxsT/zIZkxQ34=;
+        b=obSE5JENCbWtFID5myPmb3gngun8kkHApC5voypc3FLHUtHFxDQ7SVFv6IoZTDX+DM
+         8nsvPrCIt/gTNs4vLWRx+0Ke8qlUaHfnZkhaeCeoRyGHBqVdkIOmdMUuvDTL5h9+DY+b
+         Wo5Vsut8dz8gkWUECjFEKocLWNAGqMxX+f2cMjX4HdiRp0BlP585ZAGxe4YXJu25POam
+         QnT8b9aZo62tHQLdNAFuCv1lEEd/9f4czgXlD9/0zGnGvM3cTMen1Xed1Y1VAX1QslyZ
+         UmkCgvsWRy3hY2qh983pXQS6k6OaQEanYR4mzpqoZsPmDp3ViT2pBGsUJgR7uVDSmZpI
+         UnAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=79i22JUyVLOfuuR8WUkDKY87eLaLzqp9WcRkjfo7ANg=;
-        b=BaYb2tXswD/bKzfrb8Uylo7e1243/M25nvEIpYkjO+ect6OIDWVrmK69deXWyBTlcG
-         y9mAC/IEMNI84VIYp8nkAxPUUQvTnWlJ5cTPcjAVvBU+AnEIkFvFVA7s5QMWRwK+92zE
-         dWqaCVxDXjaK9VhdZ8a/FpckkYU58PAOuVzKKseq6ZoG6Fj1gw65tOWI+vCJaRVgqauf
-         zhVUURE0pDep68ReQcLzeVqhSH6mOCqXhAo7g3zXBtX4XvKIk+UUI1TIaS1v4Tvlt7uS
-         XIMPZ+YhIfx3Cu/fNTbg27rZ/G5SGAOYbenkh3O9FgGmAoT8UhEDC+rvJ1o09Bqidwa/
-         xlXw==
-X-Gm-Message-State: AGRZ1gLVlhQ5qvHzKpu7EdHdQGDOmZAU0fyLiJlc/+5SKu+4zQuwEKn4
-        j2LDtHRMYmlf8Md4WVuRspt0YK4g
-X-Google-Smtp-Source: AJdET5fJdYO3GAfQ/Z/wHohJ2vzI4rYpjr5Qko8sGiSy/bxJLZHrq29FZLddGUnk4GpgqtTc9kNKmA==
-X-Received: by 2002:a63:8549:: with SMTP id u70mr6352729pgd.401.1541743664239;
-        Thu, 08 Nov 2018 22:07:44 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=l5ozhvvWzyBZj5k6LPtNqGH+J//xUcwxsT/zIZkxQ34=;
+        b=R3hTVxLSoFsBgW6dxEQ21o07nnXKVU05ypJMDQHGdoFfsdwH9q+7eLAXhGSeuoQhE3
+         kjKoeMsJui2UesLx2KG3FzZ3w1MAuUKU/seCHru7mQak+uUrZ44Sg/VgCl61sgGZPZ5H
+         SVRTd0ZU4D6cxeOsL4ClvZ+fm7dxnfAaM6yQb+0kz2FVLrea5Ew5TwsVMUG+mycs+1sM
+         UrxrnsZt6Ma5f672SnkBX06/zbwQ+8J59EgZtOXfPTjbK4guDwYRFoLR5HUwJKWE1cAt
+         TcvaZACUP4LejgkWVxvLrEVFlMOpcXDOWo+4NcTQXyBrebl9fNYXDJf94wto9e9OF+tz
+         Xq6A==
+X-Gm-Message-State: AGRZ1gKmOhqqnwHKmYdtW6XwnRnqDgAtfqSe8Cl+YTwWuHkmYNNgtriB
+        aLdbruoMP3nhNBpTwYTEtrY=
+X-Google-Smtp-Source: AJdET5c+zkphJnGo8gmz6T2aoEJBOSOaFnCBjhRw43wZ44XMm1hiEaVTY9xjxmhahYJieUv+/fAuTw==
+X-Received: by 2002:a17:902:e10f:: with SMTP id cc15-v6mr7809574plb.309.1541743665663;
+        Thu, 08 Nov 2018 22:07:45 -0800 (PST)
 Received: from localhost.localdomain (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id c70-v6sm6620722pfg.97.2018.11.08.22.07.42
+        by smtp.gmail.com with ESMTPSA id c70-v6sm6620722pfg.97.2018.11.08.22.07.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 08 Nov 2018 22:07:43 -0800 (PST)
+        Thu, 08 Nov 2018 22:07:45 -0800 (PST)
 From:   frowand.list@gmail.com
 To:     Rob Herring <robh+dt@kernel.org>,
         Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
@@ -66,10 +68,12 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         devicetree@vger.kernel.org, linux-fpga@vger.kernel.org
-Subject: [PATCH v7 00/17] of: overlay: validation checks, subsequent fixes
-Date:   Thu,  8 Nov 2018 22:05:48 -0800
-Message-Id: <1541743565-23163-1-git-send-email-frowand.list@gmail.com>
+Subject: [PATCH v7 01/17] of: overlay: add tests to validate kfrees from overlay removal
+Date:   Thu,  8 Nov 2018 22:05:49 -0800
+Message-Id: <1541743565-23163-2-git-send-email-frowand.list@gmail.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1541743565-23163-1-git-send-email-frowand.list@gmail.com>
+References: <1541743565-23163-1-git-send-email-frowand.list@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -77,122 +81,114 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Frank Rowand <frank.rowand@sony.com>
 
-Add checks to (1) overlay apply process and (2) memory freeing
-triggered by overlay release.  The checks are intended to detect
-possible memory leaks and invalid overlays.
+Add checks:
+  - attempted kfree due to refcount reaching zero before overlay
+    is removed
+  - properties linked to an overlay node when the node is removed
+  - node refcount > one during node removal in a changeset destroy,
+    if the node was created by the changeset
 
-The checks revealed bugs in existing code.  Fixed the bugs.
+After applying this patch, several validation warnings will be
+reported from the devicetree unittest during boot due to
+pre-existing devicetree bugs. The warnings will be similar to:
 
-While fixing bugs, noted other issues, which are fixed in
-separate patches.
+  OF: ERROR: of_node_release(), unexpected properties in /testcase-data/overlay-node/test-bus/test-unittest11
+  OF: ERROR: memory leak, expected refcount 1 instead of 2, of_node_get()/of_node_put() unbalanced - destroy cset entry: attach overlay node /testcase-data-2/substation@100/
+  hvac-medium-2
 
-FPGA folks:
+Tested-by: Alan Tull <atull@kernel.org>
+Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+---
+ drivers/of/dynamic.c | 29 +++++++++++++++++++++++++++++
+ drivers/of/overlay.c |  1 +
+ include/linux/of.h   | 15 ++++++++++-----
+ 3 files changed, 40 insertions(+), 5 deletions(-)
 
-  I made the validation checks that should result in an
-  invalid live devicetree report "ERROR" and cause the overlay apply
-  to fail.
-
-  I made the memory leak validation tests report "WARNING" and allow
-  the overlay apply to complete successfully.  Please let me know
-  if you encounter the warnings.  There are at least two paths
-  forward to deal with the cases that trigger the warning: (1) change
-  the warning to an error and fail the overlay apply, or (2) find a
-  way to detect the potential memory leaks and free the memory
-  appropriately.
-
-ALL people:
-
-  The validations do _not_ address another major concern I have with
-  releasing overlays, which is use after free errors.
-
-Changes since v6:
-  - 03/18 Add acked-by from Michael Ellerman
-  - 03/18 Move info from post "---" into header comment
-  - 04/18 Add acked-by from Michael Ellerman
-  - 03/18 Move info from post "---" into header comment, add more info
-  - 07/18 Drop.
-
-Changes since v5:
-  - move from 4.19-rc1 to 4.20-rc1
-  - all patches: add tested-by Alan Tull
-  - 05/18: update for context change from commit a613b26a50136 ("of:
-    Convert to using %pOFn instead of device_node.name")
-
-Changes since v4:
-  - 01/18: make error message format consistent, error first, path last
-  - 09/18: create of_prop_val_eq() and change open code to use it
-  - 09/18: remove extra blank lines
-
-Changes since v3:
-  - 01/18: Add expected value of refcount for destroy cset entry error.  Also
-    explain the cause of the error.
-
-  - 09/18: for errors of an overlay changing the value of #size-cells or
-    #address-cells, return -EINVAL so that overlay apply will fail
-  - 09/18: for errors of an overlay changing the value of #size-cells or
-    #address-cells, make the message more direct.
-    Old message:
-      OF: overlay: ERROR: overlay and/or live tree #size-cells invalid in node /soc/base_fpga_region
-    New message:
-      OF: overlay: ERROR: changing value of /soc/base_fpga_region/#size-cells not allowed
-
-  - 13/18: Update patch comment header to state that this patch modifies the
-    previous patch to not return immediately on fragment error and
-    explain this is not a performance issue.
-  - 13/18: remove redundant "overlay" from two error messages.  "OF: overlay:"
-    is already present in pr_fmt()
-
-Changes since v2:
-
-  - 13/18: Use continue to reduce indentation in find_dup_cset_node_entry()
-    and find_dup_cset_prop()
-
-Changes since v1:
-
-  - move patch 16/16 to 17/18
-  - move patch 15/16 to 18/18
-  - new patch 15/18
-  - new patch 16/18
-
-  - 05/18: add_changeset_node() header comment: incorrect comment for @target
-
-  - 18/18: add same fix for of_parse_phandle_with_args()
-  - 18/18: add same fix for of_parse_phandle_with_args_map()
-
-Frank Rowand (17):
-  of: overlay: add tests to validate kfrees from overlay removal
-  of: overlay: add missing of_node_put() after add new node to changeset
-  of: overlay: add missing of_node_get() in __of_attach_node_sysfs
-  powerpc/pseries: add of_node_put() in dlpar_detach_node()
-  of: overlay: use prop add changeset entry for property in new nodes
-  of: overlay: do not duplicate properties from overlay for new nodes
-  of: overlay: reorder fields in struct fragment
-  of: overlay: validate overlay properties #address-cells and
-    #size-cells
-  of: overlay: make all pr_debug() and pr_err() messages unique
-  of: overlay: test case of two fragments adding same node
-  of: overlay: check prevents multiple fragments add or delete same node
-  of: overlay: check prevents multiple fragments touching same property
-  of: unittest: remove unused of_unittest_apply_overlay() argument
-  of: overlay: set node fields from properties when add new overlay node
-  of: unittest: allow base devicetree to have symbol metadata
-  of: unittest: find overlays[] entry by name instead of index
-  of: unittest: initialize args before calling of_*parse_*()
-
- arch/powerpc/platforms/pseries/dlpar.c             |   2 +
- drivers/of/dynamic.c                               |  59 ++++-
- drivers/of/kobj.c                                  |   4 +-
- drivers/of/overlay.c                               | 292 ++++++++++++++++-----
- drivers/of/unittest-data/Makefile                  |   2 +
- .../of/unittest-data/overlay_bad_add_dup_node.dts  |  28 ++
- .../of/unittest-data/overlay_bad_add_dup_prop.dts  |  24 ++
- drivers/of/unittest-data/overlay_base.dts          |   1 +
- drivers/of/unittest.c                              |  96 +++++--
- include/linux/of.h                                 |  21 +-
- 10 files changed, 432 insertions(+), 97 deletions(-)
- create mode 100644 drivers/of/unittest-data/overlay_bad_add_dup_node.dts
- create mode 100644 drivers/of/unittest-data/overlay_bad_add_dup_prop.dts
-
+diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
+index f4f8ed9b5454..12c3f9a15e94 100644
+--- a/drivers/of/dynamic.c
++++ b/drivers/of/dynamic.c
+@@ -330,6 +330,25 @@ void of_node_release(struct kobject *kobj)
+ 	if (!of_node_check_flag(node, OF_DYNAMIC))
+ 		return;
+ 
++	if (of_node_check_flag(node, OF_OVERLAY)) {
++
++		if (!of_node_check_flag(node, OF_OVERLAY_FREE_CSET)) {
++			/* premature refcount of zero, do not free memory */
++			pr_err("ERROR: memory leak before free overlay changeset,  %pOF\n",
++			       node);
++			return;
++		}
++
++		/*
++		 * If node->properties non-empty then properties were added
++		 * to this node either by different overlay that has not
++		 * yet been removed, or by a non-overlay mechanism.
++		 */
++		if (node->properties)
++			pr_err("ERROR: %s(), unexpected properties in %pOF\n",
++			       __func__, node);
++	}
++
+ 	property_list_free(node->properties);
+ 	property_list_free(node->deadprops);
+ 
+@@ -434,6 +453,16 @@ struct device_node *__of_node_dup(const struct device_node *np,
+ 
+ static void __of_changeset_entry_destroy(struct of_changeset_entry *ce)
+ {
++	if (ce->action == OF_RECONFIG_ATTACH_NODE &&
++	    of_node_check_flag(ce->np, OF_OVERLAY)) {
++		if (kref_read(&ce->np->kobj.kref) > 1) {
++			pr_err("ERROR: memory leak, expected refcount 1 instead of %d, of_node_get()/of_node_put() unbalanced - destroy cset entry: attach overlay node %pOF\n",
++			       kref_read(&ce->np->kobj.kref), ce->np);
++		} else {
++			of_node_set_flag(ce->np, OF_OVERLAY_FREE_CSET);
++		}
++	}
++
+ 	of_node_put(ce->np);
+ 	list_del(&ce->node);
+ 	kfree(ce);
+diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
+index 42b1f73ac5f6..f5fc8859a7ee 100644
+--- a/drivers/of/overlay.c
++++ b/drivers/of/overlay.c
+@@ -373,6 +373,7 @@ static int add_changeset_node(struct overlay_changeset *ovcs,
+ 			return -ENOMEM;
+ 
+ 		tchild->parent = target_node;
++		of_node_set_flag(tchild, OF_OVERLAY);
+ 
+ 		ret = of_changeset_attach_node(&ovcs->cset, tchild);
+ 		if (ret)
+diff --git a/include/linux/of.h b/include/linux/of.h
+index a5aee3c438ad..664cd5573ae2 100644
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@ -138,11 +138,16 @@ static inline void of_node_put(struct device_node *node) { }
+ extern struct device_node *of_stdout;
+ extern raw_spinlock_t devtree_lock;
+ 
+-/* flag descriptions (need to be visible even when !CONFIG_OF) */
+-#define OF_DYNAMIC	1 /* node and properties were allocated via kmalloc */
+-#define OF_DETACHED	2 /* node has been detached from the device tree */
+-#define OF_POPULATED	3 /* device already created for the node */
+-#define OF_POPULATED_BUS	4 /* of_platform_populate recursed to children of this node */
++/*
++ * struct device_node flag descriptions
++ * (need to be visible even when !CONFIG_OF)
++ */
++#define OF_DYNAMIC		1 /* (and properties) allocated via kmalloc */
++#define OF_DETACHED		2 /* detached from the device tree */
++#define OF_POPULATED		3 /* device already created */
++#define OF_POPULATED_BUS	4 /* platform bus created for children */
++#define OF_OVERLAY		5 /* allocated for an overlay */
++#define OF_OVERLAY_FREE_CSET	6 /* in overlay cset being freed */
+ 
+ #define OF_BAD_ADDR	((u64)-1)
+ 
 -- 
 Frank Rowand <frank.rowand@sony.com>
 
