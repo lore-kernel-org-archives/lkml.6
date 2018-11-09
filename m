@@ -7,58 +7,57 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AADB4C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:04:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76B34C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:05:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74A8920840
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:04:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 406E120840
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:05:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="zeh4fjQL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74A8920840
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="tX9ObQSo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 406E120840
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alliedtelesis.co.nz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728205AbeKIQnc (ORCPT
+        id S1728360AbeKIQoR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 11:43:32 -0500
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:45835 "EHLO
+        Fri, 9 Nov 2018 11:44:17 -0500
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:45836 "EHLO
         gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728133AbeKIQnb (ORCPT
+        with ESMTP id S1728132AbeKIQnc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 11:43:31 -0500
+        Fri, 9 Nov 2018 11:43:32 -0500
 Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 0313C886BF;
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 1E650886D4;
         Fri,  9 Nov 2018 20:04:16 +1300 (NZDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
         s=mail181024; t=1541747056;
-        bh=/6Vb8QkaEI2xPJOKG7kW7DCX8djb/m2hFP9GgmfZjLs=;
+        bh=PMQhtDSc3oJyhBzmJkl78Lhqhbao3oLy+FftS3ZfJuw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=zeh4fjQLFGvvzxp6LS1LV9MBKoHf+ILzwhWyNdrJ+/DaCpgMC7QbomoINznk7ema6
-         tjq1tFoFjbff0ACbeGD8rntxIpUzMv+8MVKddCu9UFjsJ95iOCWi4MDBmFbqhzhzq6
-         fkgnEp0aSWxXicwcLCMYEroQYZ4blKSeH8AdyfZbk5BBB1xm288PBtvt2VW9WDpYkt
-         vf+irlbYkS4sU11ObAHgDyKQzknnvhUoRbLcnJkyN6hrExsPYE+bnKVh0VfGDPZdHY
-         7wGhrupIK4X/qgh/IAT4sPe5GS/Ja/fCusdHDtVvZ7p9MtsX21KpNiHk4kCp9O4pKx
-         MAPsmJqbOU3qg==
+        b=tX9ObQSo0ioBaTl2hn6Mt2wyQWHYBzlwCBQ/foWQPR2hhXqoRo/L1I5ivHW9IAB8W
+         QktDVglIwH7qaVT5n/jbq7JlQPICh1lN7SkB06frFcOSCMGCebXKIoKjLFRnxY3cCi
+         Mw6SkPC8FL8kC+PKhcxwugAb7juuKD9ZfZUWa6IXksS7rt7ZGJd+/4VAmPX6UL5GUZ
+         8Ir+fMyrms6yMWTqlO2LMI0qyWwG8zjAv041QtHCAR4UkJvXXO3S5LhYDWKfqdpfSS
+         H0cJIGXRPmfBOVjn9nF9sh7FMm6nfN+NwX/2YgP/K4ZQYS+FQ5BSOLKsPhR8Nswmof
+         qPeOTf7LqRUJA==
 Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5be5315f0005>; Fri, 09 Nov 2018 20:04:00 +1300
+        id <B5be531600001>; Fri, 09 Nov 2018 20:04:00 +1300
 Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-        by smtp (Postfix) with ESMTP id A993A13EEA1;
+        by smtp (Postfix) with ESMTP id E4AC613EEA1;
         Fri,  9 Nov 2018 20:04:04 +1300 (NZDT)
 Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-        id 867FE1E0BC9; Fri,  9 Nov 2018 20:03:59 +1300 (NZDT)
+        id C16CC1E0BC9; Fri,  9 Nov 2018 20:03:59 +1300 (NZDT)
 From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
 To:     linux@armlinux.org.uk, bp@alien8.de, arnd@arndb.de,
         jlu@pengutronix.de, gregory.clement@bootlin.com
 Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
         Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v6 5/9] dt-bindings: ARM: document marvell,ecc-enable binding
-Date:   Fri,  9 Nov 2018 20:03:45 +1300
-Message-Id: <20181109070349.20464-6-chris.packham@alliedtelesis.co.nz>
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: [PATCH v6 7/9] EDAC: Add missing debugfs_create_x32 wrapper
+Date:   Fri,  9 Nov 2018 20:03:47 +1300
+Message-Id: <20181109070349.20464-8-chris.packham@alliedtelesis.co.nz>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181109070349.20464-1-chris.packham@alliedtelesis.co.nz>
 References: <20181109070349.20464-1-chris.packham@alliedtelesis.co.nz>
@@ -70,37 +69,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add documentation for the marvell,ecc-enable and marvell,ecc-disable
-properties which can be used to enable/disable ECC on the Marvell aurora
-cache.
+From: Jan Luebbe <jlu@pengutronix.de>
 
+We already have wrappers for x8 and x16, so add the missing x32 one.
+
+Signed-off-by: Jan Luebbe <jlu@pengutronix.de>
+Reviewed-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 ---
+=20drivers/edac/debugfs.c     | 11 +++++++++++
+=20drivers/edac/edac_module.h |  5 +++++
+=202 files changed, 16 insertions(+)
 
-Notes:
-=20   Changes in v6:
-=20   - new (split binding doc from implementation).
+diff --git a/drivers/edac/debugfs.c b/drivers/edac/debugfs.c
+index 92dbb7e2320c..268ede7a60b2 100644
+--- a/drivers/edac/debugfs.c
++++ b/drivers/edac/debugfs.c
+@@ -161,3 +161,14 @@ struct dentry *edac_debugfs_create_x16(const char *n=
+ame, umode_t mode,
+=20	return debugfs_create_x16(name, mode, parent, value);
+=20}
+=20EXPORT_SYMBOL_GPL(edac_debugfs_create_x16);
++
++/* Wrapper for debugfs_create_x32() */
++struct dentry *edac_debugfs_create_x32(const char *name, umode_t mode,
++				       struct dentry *parent, u32 *value)
++{
++	if (!parent)
++		parent =3D edac_debugfs;
++
++	return debugfs_create_x32(name, mode, parent, value);
++}
++EXPORT_SYMBOL_GPL(edac_debugfs_create_x32);
+diff --git a/drivers/edac/edac_module.h b/drivers/edac/edac_module.h
+index dec88dcea036..546b16e29221 100644
+--- a/drivers/edac/edac_module.h
++++ b/drivers/edac/edac_module.h
+@@ -82,6 +82,8 @@ struct dentry *
+=20edac_debugfs_create_x8(const char *name, umode_t mode, struct dentry *=
+parent, u8 *value);
+=20struct dentry *
+=20edac_debugfs_create_x16(const char *name, umode_t mode, struct dentry =
+*parent, u16 *value);
++struct dentry *
++edac_debugfs_create_x32(const char *name, umode_t mode, struct dentry *p=
+arent, u32 *value);
+=20#else
+=20static inline int edac_debugfs_init(void)					{ return -ENODEV; }
+=20static inline void edac_debugfs_exit(void)					{ }
+@@ -98,6 +100,9 @@ edac_debugfs_create_x8(const char *name, umode_t mode,=
 
-=20Documentation/devicetree/bindings/arm/l2c2x0.txt | 2 ++
-=201 file changed, 2 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/arm/l2c2x0.txt b/Documenta=
-tion/devicetree/bindings/arm/l2c2x0.txt
-index fbe6cb21f4cf..15a84f0ba9f1 100644
---- a/Documentation/devicetree/bindings/arm/l2c2x0.txt
-+++ b/Documentation/devicetree/bindings/arm/l2c2x0.txt
-@@ -76,6 +76,8 @@ Optional properties:
-=20  specified to indicate that such transforms are precluded.
-=20- arm,parity-enable : enable parity checking on the L2 cache (L220 or =
-PL310).
-=20- arm,parity-disable : disable parity checking on the L2 cache (L220 o=
-r PL310).
-+- marvell,ecc-enable : enable ECC protection on the L2 cache
-+- marvell,ecc-disable : disable ECC protection on the L2 cache
-=20- arm,outer-sync-disable : disable the outer sync operation on the L2 =
-cache.
-=20  Some core tiles, especially ARM PB11MPCore have a faulty L220 cache =
-that
-=20  will randomly hang unless outer sync operations are disabled.
+=20static inline struct dentry *
+=20edac_debugfs_create_x16(const char *name, umode_t mode,
+=20		       struct dentry *parent, u16 *value)			{ return NULL; }
++static inline struct dentry *
++edac_debugfs_create_x32(const char *name, umode_t mode,
++		       struct dentry *parent, u32 *value)			{ return NULL; }
+=20#endif
+=20
+=20/*
 --=20
 2.19.1
