@@ -2,42 +2,41 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E98DC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 05:08:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6470FC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 05:22:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2FBD20825
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 05:08:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D9CF20855
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 05:22:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VTqy399c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2FBD20825
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GmaKkdcy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D9CF20855
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727703AbeKIOrU (ORCPT
+        id S1727742AbeKIPBU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 09:47:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54720 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 10:01:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727474AbeKIOrU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 09:47:20 -0500
+        id S1727521AbeKIPBU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 10:01:20 -0500
 Received: from localhost (unknown [171.76.98.79])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 31F4D20825;
-        Fri,  9 Nov 2018 05:08:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA12820855;
+        Fri,  9 Nov 2018 05:22:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541740107;
-        bh=1L28arPKFWUF6jSRFWKhiDxW1RaTDBxiuS6IaI3NviA=;
+        s=default; t=1541740945;
+        bh=UUPQJCJ/nfxhnXt4TYqHfq44ocXRXTX8xMaA+2PDgp8=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VTqy399cLvmPV6yDpr7GjbfI7SCNh5rloo+z4Z3LeBbDyLTSs2POp1fDTBsGhRWwV
-         20MWmHfZ/uSo9cm+cwMUwDogQUqBveJjeTfBa4fhGe6ecLnG2odzMnHdl8gSOSplxw
-         yHvcc1wwM5fo5yexAVXscRhWsxmKKidHAOeFLaYE=
-Date:   Fri, 9 Nov 2018 10:38:19 +0530
+        b=GmaKkdcyE2NGlKEwgrlemwvJGDc/Z7Vlv2jXBlRXu9/ee8Q1smZS3xuj8+BrwlQ8p
+         A8eKB/2xgmCp6viz17k6vCvaDvT7yCSXvkIlgJ1HhzCvy1PYuoKdgmXvJbCXLZMnbV
+         NInSr9D3vKXN0arrIdm9rMWnsVFGR7DYrWE9yQ1s=
+Date:   Fri, 9 Nov 2018 10:52:17 +0530
 From:   Vinod Koul <vkoul@kernel.org>
 To:     Shawn Guo <shawn.guo@linaro.org>
 Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
@@ -47,15 +46,14 @@ Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: phy: Add Qualcomm Synopsys High-Speed
- USB PHY binding
-Message-ID: <20181109050819.GK12092@vkoul-mobl>
+Subject: Re: [PATCH 2/2] phy: qualcomm: Add Synopsys High-Speed USB PHY driver
+Message-ID: <20181109052217.GL12092@vkoul-mobl>
 References: <20181108070449.23572-1-shawn.guo@linaro.org>
- <20181108070449.23572-2-shawn.guo@linaro.org>
+ <20181108070449.23572-3-shawn.guo@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181108070449.23572-2-shawn.guo@linaro.org>
+In-Reply-To: <20181108070449.23572-3-shawn.guo@linaro.org>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -63,48 +61,112 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 08-11-18, 15:04, Shawn Guo wrote:
-> From: Sriharsha Allenki <sallenki@codeaurora.org>
-> 
-> It adds bindings for Synopsys 28nm femto phy controller that supports
-> LS/FS/HS usb connectivity on Qualcomm chipsets.
-> 
-> Signed-off-by: Sriharsha Allenki <sallenki@codeaurora.org>
-> Signed-off-by: Anu Ramanathan <anur@codeaurora.org>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
-> ---
->  .../phy/qcom,snps-28nm-usb-hs-phy.txt         | 101 ++++++++++++++++++
->  1 file changed, 101 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/qcom,snps-28nm-usb-hs-phy.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/qcom,snps-28nm-usb-hs-phy.txt b/Documentation/devicetree/bindings/phy/qcom,snps-28nm-usb-hs-phy.txt
-> new file mode 100644
-> index 000000000000..75e7a09dd558
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/qcom,snps-28nm-usb-hs-phy.txt
-> @@ -0,0 +1,101 @@
-> +Qualcomm Synopsys 28nm Femto phy controller
-> +===========================================
+> +static int qcom_snps_hsphy_config_regulators(struct hsphy_priv *priv, int high)
+> +{
+> +	int min, ret, i;
 > +
-> +Synopsys 28nm femto phy controller supports LS/FS/HS usb connectivity on
-> +Qualcomm chipsets.
+> +	min = high ? 1 : 0; /* low or none? */
 > +
-> +Required properties:
-> +
-> +- compatible:
-> +    Value type: <string>
-> +    Definition: Should contain "qcom,usb-snps-hsphy".
-> +
-> +- reg:
-> +    Value type: <prop-encoded-array>
-> +    Definition: USB PHY base address and length of the register map.
-> +
-> +- #phy-cells:
-> +    Value type: <u32>
-> +    Definition: Should be 0.
+> +	for (i = 0; i < VREG_NUM; i++) {
+> +		ret = regulator_set_voltage(priv->vregs[i].consumer,
+> +					    priv->voltages[i][min],
+> +					    priv->voltages[i][VOL_MAX]);
+> +		if (ret)
+> +			return ret;
 
-I dont quite understand the definition that it should be 0, maybe you
-mean allowed value is 0, if so why have this property?
+should we not roll back the set voltages on error?
 
+> +static int qcom_snps_hsphy_por_reset(struct hsphy_priv *priv)
+> +{
+> +	int ret;
+> +
+> +	ret = reset_control_assert(priv->por_reset);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/*
+> +	 * The Femto PHY is POR reset in the following scenarios.
+
+POR?
+
+> +static int qcom_snps_hsphy_init(struct phy *phy)
+> +{
+> +	struct hsphy_priv *priv = phy_get_drvdata(phy);
+> +	int state;
+> +	int ret;
+
+perhaps they can be in a single line :)
+
+> +static int qcom_snps_hsphy_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct phy_provider *provider;
+> +	struct hsphy_priv *priv;
+> +	struct resource *res;
+> +	struct phy *phy;
+> +	int size;
+> +	int ret;
+> +	int i;
+> +
+> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	priv->base = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(priv->base))
+> +		return PTR_ERR(priv->base);
+> +
+> +	priv->num_clks = ARRAY_SIZE(qcom_snps_hsphy_clks);
+> +	priv->clks = devm_kcalloc(dev, priv->num_clks, sizeof(*priv->clks),
+> +				  GFP_KERNEL);
+> +	if (!priv->clks)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < priv->num_clks; i++)
+> +		priv->clks[i].id = qcom_snps_hsphy_clks[i];
+> +
+> +	ret = devm_clk_bulk_get(dev, priv->num_clks, priv->clks);
+> +	if (ret)
+> +		return ret;
+> +
+> +	priv->phy_reset = devm_reset_control_get(dev, "phy");
+> +	if (IS_ERR(priv->phy_reset))
+> +		return PTR_ERR(priv->phy_reset);
+> +
+> +	priv->por_reset = devm_reset_control_get(dev, "por");
+> +	if (IS_ERR(priv->por_reset))
+> +		return PTR_ERR(priv->por_reset);
+> +
+> +	priv->vregs[VDD].supply = "vdd";
+> +	priv->vregs[VDDA_1P8].supply = "vdda1p8";
+> +	priv->vregs[VDDA_3P3].supply = "vdda3p3";
+> +
+> +	ret = devm_regulator_bulk_get(dev, VREG_NUM, priv->vregs);
+> +	if (ret)
+> +		return ret;
+> +
+> +	priv->voltages[VDDA_1P8][VOL_NONE] = 0;
+> +	priv->voltages[VDDA_1P8][VOL_MIN] = 1800000;
+> +	priv->voltages[VDDA_1P8][VOL_MAX] = 1800000;
+> +
+> +	priv->voltages[VDDA_3P3][VOL_NONE] = 0;
+> +	priv->voltages[VDDA_3P3][VOL_MIN] = 3050000;
+> +	priv->voltages[VDDA_3P3][VOL_MAX] = 3300000;
+> +
+> +	ret = of_property_read_u32_array(dev->of_node, "qcom,vdd-voltage-level",
+> +					 priv->voltages[VDD], VOL_NUM);
+> +	if (ret) {
+> +		dev_err(dev, "failed to read qcom,vdd-voltage-level\n");
+> +		return ret;
+> +	}
+> +
+> +	size = of_property_count_u32_elems(dev->of_node, "qcom,init-seq");
+> +	if (size < 0)
+> +		size = 0;
+> +
+> +	priv->init_seq = devm_kcalloc(dev, (size / 3) + 1,
+
+size/3? I think it would be good to add a common explaining this
 -- 
 ~Vinod
