@@ -2,109 +2,195 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57146C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:38:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DF9DC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:38:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B31620883
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:38:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B31620883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lge.com
+	by mail.kernel.org (Postfix) with ESMTP id 6455620840
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:38:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6455620840
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727667AbeKISRd (ORCPT
+        id S1727736AbeKISS2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 13:17:33 -0500
-Received: from lgeamrelo12.lge.com ([156.147.23.52]:48572 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727366AbeKISRd (ORCPT
+        Fri, 9 Nov 2018 13:18:28 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38534 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727676AbeKISS2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 13:17:33 -0500
-Received: from unknown (HELO lgeamrelo04.lge.com) (156.147.1.127)
-        by 156.147.23.52 with ESMTP; 9 Nov 2018 17:37:59 +0900
-X-Original-SENDERIP: 156.147.1.127
-X-Original-MAILFROM: chanho.min@lge.com
-Received: from unknown (HELO kernel.lge.com) (165.186.175.97)
-        by 156.147.1.127 with ESMTP; 9 Nov 2018 17:37:59 +0900
-X-Original-SENDERIP: 165.186.175.97
-X-Original-MAILFROM: chanho.min@lge.com
-From:   Chanho Min <chanho.min@lge.com>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Christian Brauner <christian@brauner.io>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Seungho Park <seungho1.park@lge.com>,
-        Inkyu Hwang <inkyu.hwang@lge.com>,
-        Donghwan Jung <donghwan.jung@lge.com>,
-        Jongsung Kim <neidhard.kim@lge.com>,
-        Chanho Min <chanho.min@lge.com>
-Subject: [PATCH] exec: make de_thread() freezable
-Date:   Fri,  9 Nov 2018 17:37:36 +0900
-Message-Id: <1541752656-12857-1-git-send-email-chanho.min@lge.com>
-X-Mailer: git-send-email 2.1.4
+        Fri, 9 Nov 2018 13:18:28 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA98Z35F081954
+        for <linux-kernel@vger.kernel.org>; Fri, 9 Nov 2018 03:38:55 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2nn192uar7-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 03:38:55 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Fri, 9 Nov 2018 08:38:53 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 9 Nov 2018 08:38:51 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA98codP64684168
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 9 Nov 2018 08:38:50 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B0950A405B;
+        Fri,  9 Nov 2018 08:38:50 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DAA3AA4054;
+        Fri,  9 Nov 2018 08:38:49 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.205.51])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Fri,  9 Nov 2018 08:38:49 +0000 (GMT)
+Date:   Fri, 9 Nov 2018 10:38:48 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     =?utf-8?B?6ZmI5Y2O5omN?= <chenhc@lemote.com>
+Cc:     Thomas Bogendoerfer <tbogendoerfer@suse.de>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        linux-mips <linux-mips@linux-mips.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        rppt <rppt@linux.vnet.ibm.com>
+Subject: Re: [[PATCH]] mips: Fix switch to NO_BOOTMEM for SGI-IP27/loongons3
+ NUMA
+References: <20181108144428.28149-1-tbogendoerfer@suse.de>
+ <20181108161823.GB15707@rapoport-lnx>
+ <20181108175217.f55065d6115edbafd6aa3487@suse.de>
+ <43783525-DEC2-46A5-A61E-4C3BF3DDE4A0@linux.ibm.com>
+ <tencent_4F1049E7045AD21E19098484@qq.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <tencent_4F1049E7045AD21E19098484@qq.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18110908-4275-0000-0000-000002DE3988
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110908-4276-0000-0000-000037EB3B91
+Message-Id: <20181109083847.GA7819@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-09_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811090081
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Suspend fails due to the exec family of functions blocking the freezer.
-The casue is that de_thread() sleeps in TASK_UNINTERRUPTIBLE waiting for
-all sub-threads to die, and we have the deadlock if one of them is frozen.
-In our machine, it causes freeze timeout as bellows.
+On Fri, Nov 09, 2018 at 10:54:26AM +0800, 陈华才 wrote:
+> Hi,
+> 
+> It seems the patch below can solve many problems after switched to NO_BOOTMEM, because the memory allocation behavior is more similar as before.
 
-Freezing of tasks failed after 20.010 seconds (1 tasks refusing to freeze, wq_busy=0):
-setcpushares-ls D ffffffc00008ed70     0  5817   1483 0x0040000d
- Call trace:
-[<ffffffc00008ed70>] __switch_to+0x88/0xa0
-[<ffffffc000d1c30c>] __schedule+0x1bc/0x720
-[<ffffffc000d1ca90>] schedule+0x40/0xa8
-[<ffffffc0001cd784>] flush_old_exec+0xdc/0x640
-[<ffffffc000220360>] load_elf_binary+0x2a8/0x1090
-[<ffffffc0001ccff4>] search_binary_handler+0x9c/0x240
-[<ffffffc00021c584>] load_script+0x20c/0x228
-[<ffffffc0001ccff4>] search_binary_handler+0x9c/0x240
-[<ffffffc0001ce8e0>] do_execveat_common.isra.14+0x4f8/0x6e8
-[<ffffffc0001cedd0>] compat_SyS_execve+0x38/0x48
-[<ffffffc00008de30>] el0_svc_naked+0x24/0x28
-
-To fix this, make de_thread() freezable. It looks safe and works fine.
-
-Suggested-by: Oleg Nesterov <oleg@redhat.com>
-Signed-off-by: Chanho Min <chanho.min@lge.com>
----
- fs/exec.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/fs/exec.c b/fs/exec.c
-index 1ebf6e5..70ccfc8 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -62,6 +62,7 @@
- #include <linux/oom.h>
- #include <linux/compat.h>
- #include <linux/vmalloc.h>
-+#include <linux/freezer.h>
+Yes, this should work.
+Still, simplifying the max_low_pfn evaluation has it's value regardless.
  
- #include <linux/uaccess.h>
- #include <asm/mmu_context.h>
-@@ -1083,7 +1084,7 @@ static int de_thread(struct task_struct *tsk)
- 	while (sig->notify_count) {
- 		__set_current_state(TASK_KILLABLE);
- 		spin_unlock_irq(lock);
--		schedule();
-+		freezable_schedule();
- 		if (unlikely(__fatal_signal_pending(tsk)))
- 			goto killed;
- 		spin_lock_irq(lock);
+> diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
+> index 070234b..7a449d9 100644
+> --- a/arch/mips/kernel/setup.c
+> +++ b/arch/mips/kernel/setup.c
+> @@ -839,6 +839,7 @@ static void __init arch_mem_init(char **cmdline_p)
+> 
+>         /* call board setup routine */
+>         plat_mem_setup();
+> +       memblock_set_bottom_up(true);
+> 
+>         /*
+>          * Make sure all kernel memory is in the maps.  The "UP" and
+> diff --git a/arch/mips/kernel/traps.c b/arch/mips/kernel/traps.c
+> index 0f852e1..15e103c 100644
+> --- a/arch/mips/kernel/traps.c
+> +++ b/arch/mips/kernel/traps.c
+> @@ -2260,10 +2260,8 @@ void __init trap_init(void)
+>                 unsigned long size = 0x200 + VECTORSPACING*64;
+>                 phys_addr_t ebase_pa;
+> 
+> -               memblock_set_bottom_up(true);
+>                 ebase = (unsigned long)
+>                         memblock_alloc_from(size, 1 << fls(size), 0);
+> -               memblock_set_bottom_up(false);
+> 
+>                 /*
+>                  * Try to ensure ebase resides in KSeg0 if possible.
+> @@ -2307,6 +2305,7 @@ void __init trap_init(void)
+>         if (board_ebase_setup)
+>                 board_ebase_setup();
+>         per_cpu_trap_init(true);
+> +       memblock_set_bottom_up(false);
+> 
+>         /*
+>          * Copy the generic exception handlers to their final destination.
+> 
+>  
+> ------------------ Original ------------------
+> From:  "Mike Rapoport"<rppt@linux.ibm.com>;
+> Date:  Fri, Nov 9, 2018 02:01 AM
+> To:  "Thomas Bogendoerfer"<tbogendoerfer@suse.de>;
+> Cc:  "Ralf Baechle"<ralf@linux-mips.org>; "Paul Burton"<paul.burton@mips.com>; "James Hogan"<jhogan@kernel.org>; "Huacai Chen"<chenhc@lemote.com>; "linux-mips"<linux-mips@linux-mips.org>; "linux-kernel"<linux-kernel@vger.kernel.org>; "rppt"<rppt@linux.vnet.ibm.com>;
+> Subject:  Re: [[PATCH]] mips: Fix switch to NO_BOOTMEM for SGI-IP27/loongons3 NUMA
+>  
+> 
+> 
+> On November 8, 2018 6:52:17 PM GMT+02:00, Thomas Bogendoerfer <tbogendoerfer@suse.de> wrote:
+> >On Thu, 8 Nov 2018 18:18:23 +0200
+> >Mike Rapoport <rppt@linux.ibm.com> wrote:
+> >
+> >> On Thu, Nov 08, 2018 at 03:44:28PM +0100, Thomas Bogendoerfer wrote:
+> >> > Commit bcec54bf3118 ("mips: switch to NO_BOOTMEM") broke SGI-IP27
+> >> > and NUMA enabled loongson3 by doing memblock_set_current_limit()
+> >> > before max_low_pfn has been evaluated. Both platforms need to do
+> >the
+> >> > memblock_set_current_limit() in platform specific code. For
+> >> > consistency the call to memblock_set_current_limit() is moved
+> >> > to the common bootmem_init(), where max_low_pfn is calculated
+> >> > for non NUMA enabled platforms.
+> >> [..]
+> >> 
+> >> As for SGI-IP27, the initialization of max_low_pfn as late as in
+> >> paging_init() seems to be broken because it's value is used in
+> >> arch_mem_init() and in finalize_initrd() anyway.
+> >
+> >well, the patch is tested on real hardware and the first caller of
+> >a memblock_alloc* function is in a function called by
+> >free_area_init_nodes().
+>  
+> Then, apparently, I've missed something else.
+> The Onyx2 I worked on is dead for a couple of years now ;-)
+> 
+> >> AFAIU, both platforms set max_low_pfn to last available pfn, so it
+> >seems we
+> >> can simply do
+> >> 
+> >> max_low_pfn = PFN_PHYS(memblock_end_of_DRAM())
+> >>
+> 
+> Should have been PHYS_PFN, sorry.
+> 
+> >> in the prom_meminit() function for both platforms and drop the loop
+> >> evaluating max_low_pfn in paging_init().
+> >
+> >sounds like a better plan. I'll prepare a new patch.
+> >
+> >Thomas.
+> 
+> -- 
+> Sent from my Android device with K-9 Mail. Please excuse my brevity.
+
 -- 
-2.1.4
+Sincerely yours,
+Mike.
 
