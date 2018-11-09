@@ -2,179 +2,113 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CE40C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:03:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7182C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:04:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 114AF20840
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:03:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 114AF20840
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 9ECEF20883
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:04:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="1jTz1c5T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ECEF20883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alliedtelesis.co.nz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727996AbeKIQmc (ORCPT
+        id S1728126AbeKIQna (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 11:42:32 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33120 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727485AbeKIQmb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 11:42:31 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BB3B4B003;
-        Fri,  9 Nov 2018 07:03:17 +0000 (UTC)
-Subject: Re: [PATCH] xen: remove size limit of privcmd-buf mapping interface
-To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org
-Cc:     boris.ostrovsky@oracle.com, sstabellini@kernel.org,
-        stable@vger.kernel.org
-References: <20181101123307.8424-1-jgross@suse.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <e60dacf6-9674-8fd6-d93c-a412667c5d6f@suse.com>
-Date:   Fri, 9 Nov 2018 08:03:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 9 Nov 2018 11:43:30 -0500
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:45790 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728072AbeKIQna (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 11:43:30 -0500
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 8969680237;
+        Fri,  9 Nov 2018 20:04:15 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1541747055;
+        bh=mTaA5V5SDbaoUTifccvwBOpV2UZw2RIkrTYYv2E8CzU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=1jTz1c5TLPep9gKDlRLjaR04Vu8HtoTwSKh5ihxAIa34IDInniZL2ITRWj+39hdYG
+         dgkyVfrHOZ87H894jYZ90ErKELwMynXgzmJjD6XCvs/KdMirdWOHD2c0LDHVDoQ8dQ
+         UV1Pc4mt66sI4V0hQ5siGoVvfGNn7CSe6WnRIx355C93c3f6kEgWquc6ChLCtj8Cra
+         xsNuAvS9EsyndmnAdiobYaQ4JKZeekiW4TxboVnx6k/muSgHQIb17PN+Yd4nre2o7c
+         q57Qif57JudVmlinTtxnSPX/Ikrw6L8SHtJUYMUrMOETW9kYlqY7xSPRDHwDRor3IE
+         snU3OIEb0N+yQ==
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5be5315f0002>; Fri, 09 Nov 2018 20:03:59 +1300
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+        by smtp (Postfix) with ESMTP id 5C86C13EEA1;
+        Fri,  9 Nov 2018 20:04:04 +1300 (NZDT)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+        id 398591E0BC9; Fri,  9 Nov 2018 20:03:59 +1300 (NZDT)
+From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
+To:     linux@armlinux.org.uk, bp@alien8.de, arnd@arndb.de,
+        jlu@pengutronix.de, gregory.clement@bootlin.com
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH v6 2/9] ARM: aurora-l2: add prefix to MAX_RANGE_SIZE
+Date:   Fri,  9 Nov 2018 20:03:42 +1300
+Message-Id: <20181109070349.20464-3-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181109070349.20464-1-chris.packham@alliedtelesis.co.nz>
+References: <20181109070349.20464-1-chris.packham@alliedtelesis.co.nz>
 MIME-Version: 1.0
-In-Reply-To: <20181101123307.8424-1-jgross@suse.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+x-atlnz-ls: pat
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ping?
+From: Jan Luebbe <jlu@pengutronix.de>
 
-Jan's remark regarding de-privileged qemu is no issue as the hypercall
-node is being closed by the de-privilege library function.
+The macro name is too generic, so add a AURORA_ prefix.
 
+Signed-off-by: Jan Luebbe <jlu@pengutronix.de>
+Reviewed-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+---
+=20arch/arm/include/asm/hardware/cache-aurora-l2.h | 2 +-
+=20arch/arm/mm/cache-l2x0.c                        | 4 ++--
+=202 files changed, 3 insertions(+), 3 deletions(-)
 
-Juergen
-
-On 01/11/2018 13:33, Juergen Gross wrote:
-> Currently the size of hypercall buffers allocated via
-> /dev/xen/hypercall is limited to a default of 64 memory pages. For live
-> migration of guests this might be too small as the page dirty bitmask
-> needs to be sized according to the size of the guest. This means
-> migrating a 8GB sized guest is already exhausting the default buffer
-> size for the dirty bitmap.
-> 
-> There is no sensible way to set a sane limit, so just remove it
-> completely. The device node's usage is limited to root anyway, so there
-> is no additional DOS scenario added by allowing unlimited buffers.
-> 
-> While at it make the error path for the -ENOMEM case a little bit
-> cleaner by setting n_pages to the number of successfully allocated
-> pages instead of the target size.
-> 
-> Fixes: c51b3c639e01f2 ("xen: add new hypercall buffer mapping device")
-> Cc: <stable@vger.kernel.org> #4.18
-> Signed-off-by: Juergen Gross <jgross@suse.com>
-> ---
->  drivers/xen/privcmd-buf.c | 22 ++++------------------
->  1 file changed, 4 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/xen/privcmd-buf.c b/drivers/xen/privcmd-buf.c
-> index df1ed37c3269..de01a6d0059d 100644
-> --- a/drivers/xen/privcmd-buf.c
-> +++ b/drivers/xen/privcmd-buf.c
-> @@ -21,15 +21,9 @@
->  
->  MODULE_LICENSE("GPL");
->  
-> -static unsigned int limit = 64;
-> -module_param(limit, uint, 0644);
-> -MODULE_PARM_DESC(limit, "Maximum number of pages that may be allocated by "
-> -			"the privcmd-buf device per open file");
-> -
->  struct privcmd_buf_private {
->  	struct mutex lock;
->  	struct list_head list;
-> -	unsigned int allocated;
->  };
->  
->  struct privcmd_buf_vma_private {
-> @@ -60,13 +54,10 @@ static void privcmd_buf_vmapriv_free(struct privcmd_buf_vma_private *vma_priv)
->  {
->  	unsigned int i;
->  
-> -	vma_priv->file_priv->allocated -= vma_priv->n_pages;
-> -
->  	list_del(&vma_priv->list);
->  
->  	for (i = 0; i < vma_priv->n_pages; i++)
-> -		if (vma_priv->pages[i])
-> -			__free_page(vma_priv->pages[i]);
-> +		__free_page(vma_priv->pages[i]);
->  
->  	kfree(vma_priv);
->  }
-> @@ -146,8 +137,7 @@ static int privcmd_buf_mmap(struct file *file, struct vm_area_struct *vma)
->  	unsigned int i;
->  	int ret = 0;
->  
-> -	if (!(vma->vm_flags & VM_SHARED) || count > limit ||
-> -	    file_priv->allocated + count > limit)
-> +	if (!(vma->vm_flags & VM_SHARED))
->  		return -EINVAL;
->  
->  	vma_priv = kzalloc(sizeof(*vma_priv) + count * sizeof(void *),
-> @@ -155,19 +145,15 @@ static int privcmd_buf_mmap(struct file *file, struct vm_area_struct *vma)
->  	if (!vma_priv)
->  		return -ENOMEM;
->  
-> -	vma_priv->n_pages = count;
-> -	count = 0;
-> -	for (i = 0; i < vma_priv->n_pages; i++) {
-> +	for (i = 0; i < count; i++) {
->  		vma_priv->pages[i] = alloc_page(GFP_KERNEL | __GFP_ZERO);
->  		if (!vma_priv->pages[i])
->  			break;
-> -		count++;
-> +		vma_priv->n_pages++;
->  	}
->  
->  	mutex_lock(&file_priv->lock);
->  
-> -	file_priv->allocated += count;
-> -
->  	vma_priv->file_priv = file_priv;
->  	vma_priv->users = 1;
->  
-> 
-
+diff --git a/arch/arm/include/asm/hardware/cache-aurora-l2.h b/arch/arm/i=
+nclude/asm/hardware/cache-aurora-l2.h
+index c86124769831..dc5c479ec4c3 100644
+--- a/arch/arm/include/asm/hardware/cache-aurora-l2.h
++++ b/arch/arm/include/asm/hardware/cache-aurora-l2.h
+@@ -41,7 +41,7 @@
+=20#define AURORA_ACR_FORCE_WRITE_THRO_POLICY	\
+=20	(2 << AURORA_ACR_FORCE_WRITE_POLICY_OFFSET)
+=20
+-#define MAX_RANGE_SIZE		1024
++#define AURORA_MAX_RANGE_SIZE	1024
+=20
+=20#define AURORA_WAY_SIZE_SHIFT	2
+=20
+diff --git a/arch/arm/mm/cache-l2x0.c b/arch/arm/mm/cache-l2x0.c
+index a00d6f7fd34c..7d2d2a3c67d0 100644
+--- a/arch/arm/mm/cache-l2x0.c
++++ b/arch/arm/mm/cache-l2x0.c
+@@ -1364,8 +1364,8 @@ static unsigned long aurora_range_end(unsigned long=
+=20start, unsigned long end)
+=20	 * since cache range operations stall the CPU pipeline
+=20	 * until completion.
+=20	 */
+-	if (end > start + MAX_RANGE_SIZE)
+-		end =3D start + MAX_RANGE_SIZE;
++	if (end > start + AURORA_MAX_RANGE_SIZE)
++		end =3D start + AURORA_MAX_RANGE_SIZE;
+=20
+=20	/*
+=20	 * Cache range operations can't straddle a page boundary.
+--=20
+2.19.1
