@@ -2,109 +2,98 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1DB5C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 02:22:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C088CC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 02:25:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A7AF20855
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 02:22:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H/X/Sg6g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A7AF20855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 85B1C20855
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 02:25:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85B1C20855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727763AbeKIMBB (ORCPT
+        id S1727789AbeKIMDb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 07:01:01 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:37883 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727336AbeKIMBB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 07:01:01 -0500
-Received: by mail-pf1-f196.google.com with SMTP id u13-v6so205441pfm.4;
-        Thu, 08 Nov 2018 18:22:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=g3QhBtf6jNvkA2GmYOUwsZB+KOpJk6PTtBMaxwVft6Q=;
-        b=H/X/Sg6g06H2WW07LAu9Iew1lT/ZM3HKevP1ZQaTyf04+5dqNsG4cPv4YCdwGoQAwg
-         TuRbTeT2nK5UnSafIe/ko2ZHApFrAylaMFQEV59zJkeKJE/OjaIf1WjgWlHKdODkoznz
-         Ugpr6NpWHhG5iVBpJRzZ2WiVQykcYKA0EqnOZBXfOxIDbFPl5+giHDVI+ZJJ9i/KwPwP
-         zQcQ9D7KnjJ0xK9+wnaSPJT+dO+SBr31hZEpEeU2olkD4faDaX5kVkueIw9oGMLPpigR
-         Y2xKKkFyz7V7guQn//vpY0otk2qu/qTRVn3BNc1Paf37E2PIrGl/fuzjoGtMbVf/Uqoq
-         NFDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=g3QhBtf6jNvkA2GmYOUwsZB+KOpJk6PTtBMaxwVft6Q=;
-        b=E33f4yzlGWKL/JtXyTIkL3Iazm0PiAndrFwnNcBze30IpRLriv9ZZEhNJaVIUDGnH8
-         365pmXJ6WL0ibihFvXktOlrjbpDbc4JPJpvMSdniEhv4dagphjDzVQew4ICjDjjhvcxA
-         VGzvZced+K+A89I8I9z8iO/XcA1LEhB4CDP/puDCw3p+YI6J7H/LmawwU41/rn737ZCh
-         yC3hGFUQmI8bC1qMsqLwZsRSzzcsCuoGTyqhB797I1AE9YvG4Uot2dwqaisKnUPJ7NWK
-         ADhcGj9XsOo6uMK57BT+ELcek7iqi0g4Swcl4Zv4TK9f8XUC04rNm3uRTTfntxOagK4h
-         QC3g==
-X-Gm-Message-State: AGRZ1gJ2RLWVyxEKWdq3qTtoSd/4wmmuNU8yMt8QmrDIMspXieSMCsIk
-        8bjE/k7/HZ2uG1GGZonwd3E=
-X-Google-Smtp-Source: AJdET5ekUOkJTeuW3KPyGr7PH5GFvJVbgefOJodVPWkRntpU/40ISo/WDO8PBP3ycFCuG/69qQvWwA==
-X-Received: by 2002:a62:9f42:: with SMTP id g63-v6mr6997765pfe.144.1541730154355;
-        Thu, 08 Nov 2018 18:22:34 -0800 (PST)
-Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id 67-v6sm5835334pfk.134.2018.11.08.18.22.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 08 Nov 2018 18:22:33 -0800 (PST)
-Subject: Re: [PATCH 0/2] sony-cxd2880: add optional vcc regulator
-To:     Neil Armstrong <narmstrong@baylibre.com>,
-        Yasunari.Takiguchi@sony.com
-Cc:     mchehab@kernel.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1541681410-8187-1-git-send-email-narmstrong@baylibre.com>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <5328b351-e768-6c4a-66c4-c5f6d5894244@gmail.com>
-Date:   Thu, 8 Nov 2018 18:22:32 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 9 Nov 2018 07:03:31 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:44131 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727390AbeKIMDa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 07:03:30 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id EAD669998938;
+        Fri,  9 Nov 2018 10:25:00 +0800 (CST)
+Received: from [127.0.0.1] (10.177.29.68) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.408.0; Fri, 9 Nov 2018
+ 10:24:59 +0800
+Message-ID: <5BE4EFFA.80608@huawei.com>
+Date:   Fri, 9 Nov 2018 10:24:58 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
 MIME-Version: 1.0
-In-Reply-To: <1541681410-8187-1-git-send-email-narmstrong@baylibre.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+To:     Michal Hocko <mhocko@kernel.org>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Andrea Arcangeli" <aarcange@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "'Kirill A . Shutemov'" <kirill.shutemov@linux.intel.com>
+CC:     Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [Question] There is a thp count left when the process exits
+References: <5BE44FDB.6040303@huawei.com>
+In-Reply-To: <5BE44FDB.6040303@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.68]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Neil,
++LKML
 
-On 11/8/18 4:50 AM, Neil Armstrong wrote:
-> This patchset adds an optional VCC regulator to the bindings and driver to
-> make sure power is enabled to the module before starting attaching to
-> the device.
-> 
-> Neil Armstrong (2):
->   media: cxd2880-spi: Add optional vcc regulator
->   media: sony-cxd2880: add optional vcc regulator to bindings
-> 
->  .../devicetree/bindings/media/spi/sony-cxd2880.txt       |  4 ++++
->  drivers/media/spi/cxd2880-spi.c                          | 16 ++++++++++++++++
->  2 files changed, 20 insertions(+)
-> 
+I can not find the possibility when I check the code. because the mmap_sem and spin_lock will
+protect the concurrence.
 
-Please see Documentation/devicetree/bindings/submitting-patches.txt
-for some helpful information about submitting a series that includes
-a bindings patch.
-
-You will want to add 'dt-bindings:' into the subject line, along with the
-current 'media:'.  And getmaintainer will give you Rob's and Mark's
-emails.
+I will be appreciated if anyone has some clue.
 
 Thanks,
+zhong jiang
 
-Frank
+
+On 2018/11/8 23:01, zhong jiang wrote:
+> Hi, 
+>
+> Recently,  I hit  the following issue in linux 3.10 stable.  and hard to recur.
+>
+> bad pmd ffff880c13ecea80(80000017b16000e7)
+>
+> Call Trace:
+>   [<ffffffff8164195f>] dump_stack+0x19/0x1b
+>   [<ffffffff8107b230>] warn_slowpath_common+0x70/0xb0
+>   [<ffffffff8107b37a>] warn_slowpath_null+0x1a/0x20
+>   [<ffffffff811a2b86>] exit_mmap+0x196/0x1a0
+>   [<ffffffff810782e7>] mmput+0x67/0xf0
+>   [<ffffffff81081b2c>] do_exit+0x28c/0xa60
+>   [<ffffffff810a9dc0>] ? hrtimer_get_res+0x50/0x50
+>   [<ffffffff8108237f>] do_group_exit+0x3f/0xa0
+>   [<ffffffff81093240>] get_signal_to_deliver+0x1d0/0x6d0
+>   [<ffffffff81014427>] do_signal+0x57/0x6b0
+>   [<ffffffff810e4f92>] ? futex_wait_queue_me+0xa2/0x120
+>   [<ffffffff8164d323>] ? __do_page_fault+0x183/0x470
+>   [<ffffffff81014adf>] do_notify_resume+0x5f/0xb0
+>   [<ffffffff816520bd>] int_signal+0x12/0x17
+>
+> BUG: Bad rss-counter state mm:ffff8820136b5dc0 idx:1 val:512
+>
+> The pmd entry show that it is still a thp. but It fails to check and clear the pmd.
+> hence,   page fault will produce a new page for pmd when accessing the page,
+> which thp count will reduplicative increase.
+>
+> Thanks,
+> zhong jiang
+
+
