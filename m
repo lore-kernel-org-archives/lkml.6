@@ -6,116 +6,134 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D673DC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:12:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8966C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:13:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 909A420827
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:12:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A116D20827
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:13:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="c17H/Qa8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 909A420827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="ZtWj7PlW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A116D20827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728676AbeKJEyX (ORCPT
+        id S1728696AbeKJEzk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 23:54:23 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:50790 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727961AbeKJEyX (ORCPT
+        Fri, 9 Nov 2018 23:55:40 -0500
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:34480 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727961AbeKJEzk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 23:54:23 -0500
-Received: by mail-it1-f193.google.com with SMTP id k206-v6so4546089ite.0
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 11:12:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=/RtZ3MIx7jsJHd6nyiuy5o2cZGKQ6Xp7R/TlgscXQZI=;
-        b=c17H/Qa8xStIYpAdDTEbEXdpp3YxPj5e6IxZXeLNB2WRIIrqha18u5Fw9zgsWP+8ON
-         wqfefFPnznPEyK6PwS+jQStOMduS17AHHWk9JpMP+/ZgrpCu3LtrUvyc6y6Tx/0hTD+L
-         m6SOLlAwdRHwC26JZgrGsOLBBkDtWAPrWVEQQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=/RtZ3MIx7jsJHd6nyiuy5o2cZGKQ6Xp7R/TlgscXQZI=;
-        b=sjHpHhmJDvNPSoIQiNZx1n/f72Ta3f6yp1bwYAQ+3U41x4D8DK3FEfZmjacWt81w1S
-         3ZGQouceOlM7n8qpS6XBB1ZnAJKUx8hYtB9Ru3rdOrcMqX8okDoZGWAi1tuf8skavqqe
-         bCdZE9cbJNWLAUaNfAKOSp5iueemjcL9MPeQHWsQwbj0J4vpm2kVaDazCQ9Ya5iOv5cS
-         QpnJHHLG/xUP6u38RH/sffDYhMRgWBzI+A2nzeIgalPVtt1+drwEBUTLX9hGdZOdeMl2
-         DgHaB+Vh5jCYmkg1YAFZdmb76TprpRfPwttURjFTzL8YIC20EZRVuvSfIIwRrmBJbhMP
-         XmUg==
-X-Gm-Message-State: AGRZ1gKfSBnt2AeS0st+LUnOrsJtkGQVD2ptQEyf44bi6oH+RR+iY0t+
-        Nc6IDGhIH73j+DsvgQPjpP5Cxj+gcJvIrIkYzKiEaw==
-X-Google-Smtp-Source: AJdET5eQ3mY85VGkFjalNGuAIqHaatMkvua6VXWIrD+dWuj+JwniDIcTxhG03TRKZ1ehvvkl1G9rKvRC4l5XjJXqkhQ=
-X-Received: by 2002:a24:2190:: with SMTP id e138-v6mr3386590ita.71.1541790747413;
- Fri, 09 Nov 2018 11:12:27 -0800 (PST)
-MIME-Version: 1.0
-Received: by 2002:a6b:4f16:0:0:0:0:0 with HTTP; Fri, 9 Nov 2018 11:12:26 -0800 (PST)
-In-Reply-To: <20181109190320.tn3fpaegg5dkgvdb@treble>
-References: <3cf04e113d71c9f8e4be95fb84a510f085aa4afa.1541711457.git.jpoimboe@redhat.com>
- <CAKv+Gu9bMkFEx_GxH3uLm0gveQurp7ELDi6C5NvpugufPFMbRA@mail.gmail.com>
- <20181109151028.faifw66enzye32gg@treble> <CAKv+Gu_J1b30+pMNRF0icEpyew4TM_VP3ShG=4HkLnk=fRL9zg@mail.gmail.com>
- <CAKv+Gu-DOW2WT=h8C0x5igbCDAc2bp3mTRM6U_wTJST+RnVicg@mail.gmail.com>
- <20181109173106.kbghzsdsu7oachl6@treble> <CAKv+Gu-9XYOwAPJ5m6F4Cn9Uo6dvbtEG9p0knX+_XcjHp2QKGA@mail.gmail.com>
- <20181109174608.eahqh4fkyl3k2gvs@treble> <CAKv+Gu8b1KbRtJPrbXk3+K=1uRV6OcvB+zEMYk-UK3sFxKzsgQ@mail.gmail.com>
- <CAKv+Gu9iJAyZ1u5AjPjTyxP4QJYOjMsMBi1eoMahtUjnLwqSHQ@mail.gmail.com> <20181109190320.tn3fpaegg5dkgvdb@treble>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Fri, 9 Nov 2018 20:12:26 +0100
-Message-ID: <CAKv+Gu_REsDKZ4q4xSTTO8y7ZMMYd6kormb5NE5D-eV=GnwcZg@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/3] static_call: Add static call infrastructure
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
+        Fri, 9 Nov 2018 23:55:40 -0500
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 4233324E0C6C;
+        Fri,  9 Nov 2018 11:13:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1541790824; bh=Vcdhe8R88kwv7D7J9tmH9NkBzU2i0AfwKuMAJoSXsCk=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
+        b=ZtWj7PlWbHv13S8pze1Ob0M+qXo746TEIMQfieuy4gLgYFBptt1NXELSPQukm7pkv
+         Nzy9bCubwlPgV7J0LAnv4dwaO+oEUHyDTFsnGYooIx4l43Zs3G4nIQMUtazvL4iMAt
+         8TIv9XNx6voMGBpusgKGC/idJlNAfDb/SlMCoASlNsk9BHZ1FhnsRq55QV2a2HqmK4
+         ow9KZPAsroKyyh8eONpI2alhFEO7oTEL+NT/NEkpXSRQm6+QT2zRjdasYovD3cYUyC
+         qGwew/5lG41crtuq+yoSAR6f3Ys+arHmL8Jr9dPyhqoDfJcvQjaBnsirU9IxFUCVeX
+         MAaQv4UmjUj8w==
+Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2.internal.synopsys.com [10.12.239.237])
+        by mailhost.synopsys.com (Postfix) with ESMTP id E6A7A3C7F;
+        Fri,  9 Nov 2018 11:13:43 -0800 (PST)
+Received: from IN01WEHTCB.internal.synopsys.com (10.144.199.106) by
+ US01WEHTC2.internal.synopsys.com (10.12.239.237) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 9 Nov 2018 11:13:43 -0800
+Received: from IN01WEHTCA.internal.synopsys.com (10.144.199.103) by
+ IN01WEHTCB.internal.synopsys.com (10.144.199.105) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Sat, 10 Nov 2018 00:43:40 +0530
+Received: from [10.10.161.72] (10.10.161.72) by
+ IN01WEHTCA.internal.synopsys.com (10.144.199.243) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Sat, 10 Nov 2018 00:43:40 +0530
+Subject: Re: [PATCH 06/13] arc: define syscall_get_arch()
+To:     Andy Lutomirski <luto@amacapital.net>
+CC:     "Dmitry V. Levin" <ldv@altlinux.org>,
         Andy Lutomirski <luto@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@aculab.com>,
-        Borislav Petkov <bp@alien8.de>
-Content-Type: text/plain; charset="UTF-8"
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@redhat.com>,
+        "Elvira Khabirova" <lineprinter@altlinux.org>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>,
+        "linux-audit@redhat.com" <linux-audit@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Newsgroups: gmane.linux.kernel,gmane.linux.kernel.arc,gmane.linux.redhat.security.audit
+References: <20181109031605.GF21511@altlinux.org>
+ <C2D7FE5348E1B147BCA15975FBA23075013A59239B@us01wembx1.internal.synopsys.com>
+ <6C398ED8-30BC-4483-B5CF-1EB2F2699B0D@amacapital.net>
+From:   Vineet Gupta <vineet.gupta1@synopsys.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vgupta@synopsys.com; keydata=
+ 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
+ i91ThhqBJlyU6MVUa6vZNv8E
+Message-ID: <f5858051-57fa-dc3f-158a-6afe7fc04ca4@synopsys.com>
+Date:   Fri, 9 Nov 2018 11:13:33 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <6C398ED8-30BC-4483-B5CF-1EB2F2699B0D@amacapital.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.10.161.72]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9 November 2018 at 20:03, Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-> On Fri, Nov 09, 2018 at 06:53:21PM +0100, Ard Biesheuvel wrote:
->> > It's a bit fiddly since inline and out-of-line both use
->> > arch_static_call_transform(), but what I need to do is basically:
->> >
->> > - for out-of-line, the trampoline needs to be patched into a
->> > movn/movk/movk/br sequence if the target is too far
->> > - for inline, the trampoline itself needs to be patched from
->> > adrp/ldr/br (which does a load and a indirect branch) to
->> > movn/movk/movk/br (which uses immediates), and the call sites need to
->> > be patched into calls to the veneer if the target is out of range.
->> >
->> > So arch_static_call_transform() needs to know where the trampoline is
->> > for this use case, so could we perhaps add a 'void *orig' in the key
->> > struct that keeps track of the original value of 'addr' ?
+On 11/9/18 11:03 AM, Andy Lutomirski wrote:
+>> Does ptrace (or user of this API) need a unique value per arch. Otherwise instead
+>> of adding the boilerplate code to all arches, they could simply define AUDIT_ARCH
+>> and common code could return it. Also the EM_xxx are not there in
+>> include/uapi/linux/elf.h to begin with since libc elf.h already defines them.
 >>
->> ... and pass it to arch_static_call_transform
->
-> Ok.  So in both cases, you need both the call site address and the tramp
-> address, right?  We could add a 'tramp' pointer to the key struct -- I
-> assume that's what you mean?
->
+> A lot of architectures allow multiple audit_arches at runtime due to compat support and similar features, so it really does want to be a function.  The goal of this patch set is to get it supported everywhere.
+> 
 
-Yes.
+I was wondering if we could have a common syscall_get_arch() simply returning an
+per-arch AUDIT_ARCH. But seems like the function itself needs to be per arch
+anyways due to the nuances above.
 
-> And also change
->
->   void arch_static_call_transform(unsigned long insn, void *dest)
->
-> to
->
->   void arch_static_call_transform(void *call_site, void *tramp, void *dest)
->
-
-Indeed.
