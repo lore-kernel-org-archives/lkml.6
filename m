@@ -2,149 +2,142 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DC8EC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:33:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A99FC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:34:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E816D2086C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:33:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E816D2086C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alphalink.fr
+	by mail.kernel.org (Postfix) with ESMTP id 4E12520827
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:34:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E12520827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cs.rutgers.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728007AbeKJBOl (ORCPT
+        id S1728132AbeKJBPQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 20:14:41 -0500
-Received: from zimbra.alphalink.fr ([217.15.80.77]:46369 "EHLO
-        zimbra.alphalink.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727806AbeKJBOl (ORCPT
+        Fri, 9 Nov 2018 20:15:16 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:36928 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727806AbeKJBPP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 20:14:41 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail-2-cbv2.admin.alphalink.fr (Postfix) with ESMTP id A92E12B52055;
-        Fri,  9 Nov 2018 16:33:34 +0100 (CET)
-Received: from zimbra.alphalink.fr ([127.0.0.1])
-        by localhost (mail-2-cbv2.admin.alphalink.fr [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id Gl5HQgL6xXBH; Fri,  9 Nov 2018 16:33:33 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by mail-2-cbv2.admin.alphalink.fr (Postfix) with ESMTP id 16A8E2B5213B;
-        Fri,  9 Nov 2018 16:33:33 +0100 (CET)
-X-Virus-Scanned: amavisd-new at mail-2-cbv2.admin.alphalink.fr
-Received: from zimbra.alphalink.fr ([127.0.0.1])
-        by localhost (mail-2-cbv2.admin.alphalink.fr [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 5hXsKFU8k1Wk; Fri,  9 Nov 2018 16:33:32 +0100 (CET)
-Received: from c-dev-0.admin.alphalink.fr (94-84-15-217.reverse.alphalink.fr [217.15.84.94])
-        by mail-2-cbv2.admin.alphalink.fr (Postfix) with ESMTP id DEA422B52055;
-        Fri,  9 Nov 2018 16:33:32 +0100 (CET)
-Received: by c-dev-0.admin.alphalink.fr (Postfix, from userid 1000)
-        id C0C5260188; Fri,  9 Nov 2018 16:33:32 +0100 (CET)
-Date:   Fri, 9 Nov 2018 16:33:32 +0100
-From:   Guillaume Nault <g.nault@alphalink.fr>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.4 063/114] l2tp: hold socket before dropping lock in
- l2tp_ip{, 6}_recv()
-Message-ID: <20181109153332.GD1415@alphalink.fr>
-References: <20181108215059.051093652@linuxfoundation.org>
- <20181108215106.791041209@linuxfoundation.org>
+        Fri, 9 Nov 2018 20:15:15 -0500
+Received: by mail-qk1-f196.google.com with SMTP id 131so2192357qkd.4
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 07:34:11 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version;
+        bh=yacDC3JuCl38C2BFu988fyntgsFlryKh2rqAwtDxvYI=;
+        b=Uci/dF3yMzavG882NkmITMRtpHyND27xW6bREzfjHewJlvM5RZGoep6WaIU0lpKd3M
+         azpQ8Pgqzh0Kf2CJ01jzDhiyUv66gok/Mpmzb5RaL6v1uCPKj6vNP+Vc07lVX+eM6PST
+         QOsxM47JCTs8jDEPRhkQo6seXcrEZx82EK9P/jz41/wb9TlFCrOhKFMytYyhV82IDcLt
+         3HM+9YWegvZHolwD7Bx9GW7sw9Kn9VyvBHTPdclBr5TGpsw79Nac6k6AIweHOgKc4D+C
+         00ZfYQMaK9xE/VeoMTVP5Q/47P5ctGV0VYPaF1L51SdNnTCOKO/OiZtaAC2Rg4cIAHgo
+         4Q7Q==
+X-Gm-Message-State: AGRZ1gJSJEURSVL/387L7b8Wd03lS5y0zDoL2tIH4a+Dimy0d/Drt6Qh
+        u3du2qnuLVknObjOUuyU/G7yCg==
+X-Google-Smtp-Source: AJdET5c8CYaSW5TuahPU6KOq9i+KjXF6qeQrjOCq70XIWOGa8Tu5EvCjLPipcJzmBJ+sSRWJeGd2cA==
+X-Received: by 2002:ac8:520f:: with SMTP id r15mr8877032qtn.167.1541777650314;
+        Fri, 09 Nov 2018 07:34:10 -0800 (PST)
+Received: from [172.25.141.180] (pool-128-6-37-107.nat.rutgers.edu. [128.6.37.107])
+        by smtp.gmail.com with ESMTPSA id q14-v6sm3598967qtl.65.2018.11.09.07.34.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 09 Nov 2018 07:34:09 -0800 (PST)
+From:   "Zi Yan" <zi.yan@cs.rutgers.edu>
+To:     "Mel Gorman" <mgorman@techsingularity.net>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     "Anthony Yznaga" <anthony.yznaga@oracle.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, aarcange@redhat.com,
+        aneesh.kumar@linux.ibm.com, akpm@linux-foundation.org,
+        jglisse@redhat.com, khandual@linux.vnet.ibm.com,
+        kirill.shutemov@linux.intel.com, mhocko@kernel.org,
+        minchan@kernel.org, peterz@infradead.org, rientjes@google.com,
+        vbabka@suse.cz, willy@infradead.org, ying.huang@intel.com,
+        nitingupta910@gmail.com
+Subject: Re: [RFC PATCH] mm: thp: implement THP reservations for anonymous
+ memory
+Date:   Fri, 09 Nov 2018 10:34:07 -0500
+X-Mailer: MailMate (1.12.1r5552)
+Message-ID: <EEBCAF4D-138C-4CF7-B4B7-C55F1192A026@cs.rutgers.edu>
+In-Reply-To: <20181109131128.GE23260@techsingularity.net>
+References: <1541746138-6706-1-git-send-email-anthony.yznaga@oracle.com>
+ <20181109121318.3f3ou56ceegrqhcp@kshutemo-mobl1>
+ <20181109131128.GE23260@techsingularity.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181108215106.791041209@linuxfoundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed;
+ boundary="=_MailMate_16C263ED-FC1F-46C8-ADD9-BAA932760252_=";
+ micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 01:51:18PM -0800, Greg Kroah-Hartman wrote:
-> 4.4-stable review patch.  If anyone has any objections, please let me know.
-> 
-This patch was partly wrong. Here is the followup fix:
-94d7ee0baa8b ("l2tp: hold tunnel socket when handling control frames in l2tp_ip and l2tp_ip6")
+This is an OpenPGP/MIME signed message (RFC 3156 and 4880).
 
-Both a3c18422a4 ("l2tp: hold socket before dropping lock in l2tp_ip{, 6}_recv()")
-and 94d7ee0baa8b ("l2tp: hold tunnel socket when handling control frames in l2tp_ip and l2tp_ip6")
-should be applied/backported together.
+--=_MailMate_16C263ED-FC1F-46C8-ADD9-BAA932760252_=
+Content-Type: text/plain
 
-> ------------------
-> 
-> [ Upstream commit a3c18422a4b4e108bcf6a2328f48867e1003fd95 ]
-> 
-> Socket must be held while under the protection of the l2tp lock; there
-> is no guarantee that sk remains valid after the read_unlock_bh() call.
-> 
-> Same issue for l2tp_ip and l2tp_ip6.
-> 
-> Signed-off-by: Guillaume Nault <g.nault@alphalink.fr>
-> Signed-off-by: David S. Miller <davem@davemloft.net>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  net/l2tp/l2tp_ip.c  | 11 ++++++-----
->  net/l2tp/l2tp_ip6.c | 11 ++++++-----
->  2 files changed, 12 insertions(+), 10 deletions(-)
-> 
-> diff --git a/net/l2tp/l2tp_ip.c b/net/l2tp/l2tp_ip.c
-> index 48ab93842322..c7e6098c924e 100644
-> --- a/net/l2tp/l2tp_ip.c
-> +++ b/net/l2tp/l2tp_ip.c
-> @@ -184,14 +184,15 @@ pass_up:
->  
->  		read_lock_bh(&l2tp_ip_lock);
->  		sk = __l2tp_ip_bind_lookup(net, iph->daddr, 0, tunnel_id);
-> +		if (!sk) {
-> +			read_unlock_bh(&l2tp_ip_lock);
-> +			goto discard;
-> +		}
-> +
-> +		sock_hold(sk);
-sock_hold(sk) is missing in the 'if' branch of this condition.
+On 9 Nov 2018, at 8:11, Mel Gorman wrote:
 
->  		read_unlock_bh(&l2tp_ip_lock);
->  	}
->  
-> -	if (sk == NULL)
-> -		goto discard;
-> -
-> -	sock_hold(sk);
-> -
-Original sock_hold(sk) covered both parts of the condition.
+> On Fri, Nov 09, 2018 at 03:13:18PM +0300, Kirill A. Shutemov wrote:
+>> On Thu, Nov 08, 2018 at 10:48:58PM -0800, Anthony Yznaga wrote:
+>>> The basic idea as outlined by Mel Gorman in [2] is:
+>>>
+>>> 1) On first fault in a sufficiently sized range, allocate a huge page
+>>>    sized and aligned block of base pages.  Map the base page
+>>>    corresponding to the fault address and hold the rest of the pages in
+>>>    reserve.
+>>> 2) On subsequent faults in the range, map the pages from the reservation.
+>>> 3) When enough pages have been mapped, promote the mapped pages and
+>>>    remaining pages in the reservation to a huge page.
+>>> 4) When there is memory pressure, release the unused pages from their
+>>>    reservations.
+>>
+>> I haven't yet read the patch in details, but I'm skeptical about the
+>> approach in general for few reasons:
+>>
+>> - PTE page table retracting to replace it with huge PMD entry requires
+>>   down_write(mmap_sem). It makes the approach not practical for many
+>>   multi-threaded workloads.
+>>
+>>   I don't see a way to avoid exclusive lock here. I will be glad to
+>>   be proved otherwise.
+>>
+>
+> That problem is somewhat fundamental to the mmap_sem itself and
+> conceivably it could be alleviated by range-locking (if that gets
+> completed). The other thing to bear in mind is the timing. If the
+> promotion is in-place due to reservations, there isn't the allocation
+> overhead and the hold times *should* be short.
+>
 
->  	if (!xfrm4_policy_check(sk, XFRM_POLICY_IN, skb))
->  		goto discard_put;
->  
-> diff --git a/net/l2tp/l2tp_ip6.c b/net/l2tp/l2tp_ip6.c
-> index bcdab1cba773..5fe0a6f6af3d 100644
-> --- a/net/l2tp/l2tp_ip6.c
-> +++ b/net/l2tp/l2tp_ip6.c
-> @@ -196,14 +196,15 @@ pass_up:
->  		read_lock_bh(&l2tp_ip6_lock);
->  		sk = __l2tp_ip6_bind_lookup(&init_net, &iph->daddr,
->  					    0, tunnel_id);
-> +		if (!sk) {
-> +			read_unlock_bh(&l2tp_ip6_lock);
-> +			goto discard;
-> +		}
-> +
-> +		sock_hold(sk);
-Same here.
+Is it possible to convert all these PTEs to migration entries during
+the promotion and replace them with a huge PMD entry afterwards?
+AFAIK, migrating pages does not require holding a mmap_sem.
+Basically, it will act like migrating 512 base pages to a THP without
+actually doing the page copy.
 
->  		read_unlock_bh(&l2tp_ip6_lock);
->  	}
->  
-> -	if (sk == NULL)
-> -		goto discard;
-> -
-> -	sock_hold(sk);
-> -
->  	if (!xfrm6_policy_check(sk, XFRM_POLICY_IN, skb))
->  		goto discard_put;
->  
-> -- 
-> 2.17.1
-> 
+--
+Best Regards
+Yan Zi
+
+--=_MailMate_16C263ED-FC1F-46C8-ADD9-BAA932760252_=
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename=signature.asc
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - https://gpgtools.org
+
+iQFKBAEBCgA0FiEEOXBxLIohamfZUwd5QYsvEZxOpswFAlvlqO8WHHppLnlhbkBj
+cy5ydXRnZXJzLmVkdQAKCRBBiy8RnE6mzOsMCACj3xPbOIFF7BqEziJHcPZ1C6vI
+vTSqfLtiihNb8cPqNbZa9tds6lYuGVW5dVopevbhcNbi5pQ39ZYKbPGFOTMCzcQ/
+8k5wuMR8kJkA2RYrD8dN+3UrEChxEB0r35GH92X9kvwbS9Aqtp/G3ECqBBIInLq3
+QeV+XpqQHydQvLhAN33dzxC7ounHlYTKaEEl5Ca6aD6/6A5YtYKEuGeNwZeP7aHk
+jzts84ic+pNFXfodgp+pTLwwG37Kne/NB3QwuFmC5Oe5Y9lnjywYk9TlUjdZjVuk
+98VW/c3EKRiIKkbabm61ZgtWdzCdpbEzj+GkvTIISluChzsg3WsrgywgBCXI
+=9Ao+
+-----END PGP SIGNATURE-----
+
+--=_MailMate_16C263ED-FC1F-46C8-ADD9-BAA932760252_=--
