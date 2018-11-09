@@ -2,96 +2,120 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BAC8C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:30:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CD09C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:31:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4221C20825
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:30:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LO5q3O5B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4221C20825
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1B06E20855
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:31:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B06E20855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728635AbeKJDLt (ORCPT
+        id S1728519AbeKJDMo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 22:11:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45580 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 22:12:44 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:44376 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728169AbeKJDLs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 22:11:48 -0500
-Received: from localhost (unknown [131.107.159.120])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728108AbeKJDMn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 22:12:43 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07AB720825;
-        Fri,  9 Nov 2018 17:30:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541784616;
-        bh=iyI/hbmy46o35RqNWVQfJMo632zfTpKvxFoQw538i8U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LO5q3O5BdE9txruBXs1J7l+8XT4pZ9boGJiavtegdltBZvt00fM7cYQaKqSn0yzRy
-         JCUyEyXzOZ9qtCyUHb5miSOLLyzINcHhmQyh3CkbkXR854/nQIrQBizt/agg3VAP7D
-         BwaU/hlhajeQuq5eIlZ191CAJS7VtA8VwOxZguBI=
-Date:   Fri, 9 Nov 2018 12:30:15 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>, bunk@kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        "Chiang, AlanX" <alanx.chiang@intel.com>,
-        "Yeh, Andy" <andy.yeh@intel.com>
-Subject: Re: [PATCH 4.14 01/31] eeprom: at24: Add support for address-width
- property
-Message-ID: <20181109173015.GD14882@sasha-vm>
-References: <20181108215129.641434673@linuxfoundation.org>
- <20181108215129.753982396@linuxfoundation.org>
- <CAMRc=MdckdCj=dwn8J6Y5O1gPPykGrzK50td24_iFOa-MwEEJQ@mail.gmail.com>
- <20181109111604.GB26335@kroah.com>
- <CAMRc=Mep_vQfKjep4Z3Qf_=b5dCkuNqSY7-4RdfkUB96Cc5RvA@mail.gmail.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id A8ED1308ED4B;
+        Fri,  9 Nov 2018 17:31:10 +0000 (UTC)
+Received: from treble (ovpn-124-61.rdu2.redhat.com [10.10.124.61])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id ADDF560A9C;
+        Fri,  9 Nov 2018 17:31:08 +0000 (UTC)
+Date:   Fri, 9 Nov 2018 11:31:06 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@aculab.com>,
+        Borislav Petkov <bp@alien8.de>
+Subject: Re: [RFC PATCH 1/3] static_call: Add static call infrastructure
+Message-ID: <20181109173106.kbghzsdsu7oachl6@treble>
+References: <cover.1541711457.git.jpoimboe@redhat.com>
+ <3cf04e113d71c9f8e4be95fb84a510f085aa4afa.1541711457.git.jpoimboe@redhat.com>
+ <CAKv+Gu9bMkFEx_GxH3uLm0gveQurp7ELDi6C5NvpugufPFMbRA@mail.gmail.com>
+ <20181109151028.faifw66enzye32gg@treble>
+ <CAKv+Gu_J1b30+pMNRF0icEpyew4TM_VP3ShG=4HkLnk=fRL9zg@mail.gmail.com>
+ <CAKv+Gu-DOW2WT=h8C0x5igbCDAc2bp3mTRM6U_wTJST+RnVicg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=Mep_vQfKjep4Z3Qf_=b5dCkuNqSY7-4RdfkUB96Cc5RvA@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAKv+Gu-DOW2WT=h8C0x5igbCDAc2bp3mTRM6U_wTJST+RnVicg@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Fri, 09 Nov 2018 17:31:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 09, 2018 at 12:25:34PM +0100, Bartosz Golaszewski wrote:
->pt., 9 lis 2018 o 12:16 Greg Kroah-Hartman
-><gregkh@linuxfoundation.org> napisał(a):
->>
->> On Fri, Nov 09, 2018 at 08:48:32AM +0100, Bartosz Golaszewski wrote:
->> > czw., 8 lis 2018 o 23:08 Greg Kroah-Hartman
->> > <gregkh@linuxfoundation.org> napisał(a):
->> > >
->> > > 4.14-stable review patch.  If anyone has any objections, please let me know.
->> > >
->> >
->> > Hi Greg,
->> >
->> > this looks like a new feature, not a fix. Are you sure this should go
->> > into the stable branch?
->>
->> Adrian Bunk asked for it to be included as he said it was a good "quirk"
->> support for some hardware enablement issues.
->>
->> If you think it should be dropped, I'll be glad to do so, but it seems
->> harmless to me.
->>
->
->Nah I'm fine, it just seemed like it didn't really fulfill the
->requirements for stable.
+On Fri, Nov 09, 2018 at 06:25:24PM +0100, Ard Biesheuvel wrote:
+> On 9 November 2018 at 16:14, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+> > On 9 November 2018 at 16:10, Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+> >> On Fri, Nov 09, 2018 at 02:39:17PM +0100, Ard Biesheuvel wrote:
+> >>> > +       for (site = start; site < stop; site++) {
+> >>> > +               struct static_call_key *key = static_call_key(site);
+> >>> > +               unsigned long addr = static_call_addr(site);
+> >>> > +
+> >>> > +               if (list_empty(&key->site_mods)) {
+> >>> > +                       struct static_call_mod *mod;
+> >>> > +
+> >>> > +                       mod = kzalloc(sizeof(*mod), GFP_KERNEL);
+> >>> > +                       if (!mod) {
+> >>> > +                               WARN(1, "Failed to allocate memory for static calls");
+> >>> > +                               return;
+> >>> > +                       }
+> >>> > +
+> >>> > +                       mod->sites = site;
+> >>> > +                       list_add_tail(&mod->list, &key->site_mods);
+> >>> > +
+> >>> > +                       /*
+> >>> > +                        * The trampoline should no longer be used.  Poison it
+> >>> > +                        * it with a BUG() to catch any stray callers.
+> >>> > +                        */
+> >>> > +                       arch_static_call_poison_tramp(addr);
+> >>>
+> >>> This patches the wrong thing: the trampoline is at key->func not addr.
+> >>
+> >> If you look at the x86 implementation, it actually does poison the
+> >> trampoline.
+> >>
+> >> The address of the trampoline isn't actually known here.  key->func
+> >> isn't the trampoline address; it's the destination func address.
+> >>
+> >> So instead I passed the address of the call instruction.  The arch code
+> >> then reads the instruction to find the callee (the trampoline).
+> >>
+> >> The code is a bit confusing.  To make it more obvious, maybe we should
+> >> add another arch function to read the call destination.  Then this code
+> >> can pass that into arch_static_call_poison_tramp().
+> >>
+> >
+> > Ah right, so I am basically missing a dereference in my
+> > arch_static_call_poison_tramp() code if this breaks.
+> >
+> 
+> Could we call it 'defuse' rather than 'poision'? On arm64, we will
+> need to keep it around to bounce function calls that are out of range,
+> and replace it with a PLT sequence.
 
-From my understanding this patch enabled the use of new devices, even
-though the description of the patch doesn't specify that.
+Ok, but doesn't that defeat the purpose of the inline approach?
 
---
-Thanks,
-Sasha
+-- 
+Josh
