@@ -2,85 +2,62 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D53CC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 00:22:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 228AFC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 00:24:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 214FE2086C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 00:22:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aZjmUqDV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 214FE2086C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id E06A020840
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 00:24:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E06A020840
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727668AbeKIKAJ (ORCPT
+        id S1727479AbeKIKCP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 05:00:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43320 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727076AbeKIKAI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 05:00:08 -0500
-Received: from localhost (unknown [208.72.13.198])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64B7F2086C;
-        Fri,  9 Nov 2018 00:22:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541722924;
-        bh=k2LIrz+XhigLTuud+Mb+H0q64Wb1C41W0hwl2wsMxuw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aZjmUqDVFfRrD3c6kRbKjcJICE9FCaWIiUkIPnVRaHPyF8sWq4Tk9nRJIKTyLUxUc
-         +OTwooVXe/u5+/7Bcqw72FXhzNcUiQhc5bYKRd5OlEYGR2cr1SttQmiOpSia/VWKwo
-         3VTEPA8EBjJJYKX4nceZ/Y1lQqOXSasg6yk73nps=
-Date:   Thu, 8 Nov 2018 16:22:03 -0800
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     dsterba@suse.cz, linux-kernel@vger.kernel.org,
-        Jiri Kosina <jkosina@suse.cz>, stable@vger.kernel.org
-Subject: Re: [PATCH 4.4 026/114] btrfs: cleaner_kthread() doesnt need
- explicit freeze
-Message-ID: <20181109002203.GB7382@kroah.com>
-References: <20181108215059.051093652@linuxfoundation.org>
- <20181108215101.483013816@linuxfoundation.org>
- <20181108232809.GI24115@suse.cz>
- <20181109000438.GB14882@sasha-vm>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181109000438.GB14882@sasha-vm>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 9 Nov 2018 05:02:15 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:40042 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727076AbeKIKCP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 05:02:15 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 9FD931475C6D7;
+        Thu,  8 Nov 2018 16:24:10 -0800 (PST)
+Date:   Thu, 08 Nov 2018 16:24:09 -0800 (PST)
+Message-Id: <20181108.162409.271877198178704379.davem@davemloft.net>
+To:     tanhuazhong@huawei.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        salil.mehta@huawei.com, yisen.zhuang@huawei.com,
+        linuxarm@huawei.com
+Subject: Re: [Patch net] net: hns3: bugfix for not checking return value
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <1541643199-57792-1-git-send-email-tanhuazhong@huawei.com>
+References: <1541643199-57792-1-git-send-email-tanhuazhong@huawei.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 08 Nov 2018 16:24:10 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 07:04:38PM -0500, Sasha Levin wrote:
-> On Fri, Nov 09, 2018 at 12:28:10AM +0100, David Sterba wrote:
-> > On Thu, Nov 08, 2018 at 01:50:41PM -0800, Greg Kroah-Hartman wrote:
-> > > 4.4-stable review patch.  If anyone has any objections, please let me know.
-> > 
-> > > [ Upstream commit 838fe1887765f4cc679febea60d87d2a06bd300e ]
-> > 
-> > Please check the discussion under
-> > 
-> > https://lore.kernel.org/lkml/20181025141705.213937-8-sashal@kernel.org/
-> > 
-> > Jiri's reply:
-> > 
-> > "This patch just removes pointless try_to_freeze(), that's guaranteed
-> > not to do anything and return immediately, as the btrfs kthread is not
-> > freezable.  So I don't think it's needed in stable; the semantics is
-> > equivalent before and after."
-> > 
-> > Sasha was fine with dropping the patch from stable candidates and this
-> > has not changed. Thanks.
+From: Huazhong Tan <tanhuazhong@huawei.com>
+Date: Thu, 8 Nov 2018 10:13:19 +0800
+
+> hns3_reset_notify_init_enet() only return error early if the return
+> value of hns3_restore_vlan() is not 0.
 > 
-> Indeed, I thought I dropped it but I see that I didn't. My bad, sorry.
+> This patch adds checking for the return value of hns3_restore_vlan.
+> 
+> Fixes: 7fa6be4fd2f6 ("net: hns3: fix incorrect return value/type of some functions")
+> Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
 
-I've now dropped this.  David, thanks for letting us know.
-
-greg k-h
+Applied, thank you.
