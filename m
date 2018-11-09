@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06FF0C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:25:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E9C5C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:25:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2EC220855
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:25:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 484B220892
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:25:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kXRqBVeN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2EC220855
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Iur53HJy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 484B220892
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727789AbeKISEh (ORCPT
+        id S1727830AbeKISEl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 13:04:37 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:44807 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727518AbeKISEg (ORCPT
+        Fri, 9 Nov 2018 13:04:41 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:38738 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727518AbeKISEk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 13:04:36 -0500
-Received: by mail-pg1-f195.google.com with SMTP id w3-v6so541993pgs.11
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 00:25:07 -0800 (PST)
+        Fri, 9 Nov 2018 13:04:40 -0500
+Received: by mail-pg1-f193.google.com with SMTP id f8-v6so553341pgq.5
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 00:25:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=LemySw+6VGiamWvqm4d+lqoRj+4VmarF9XYWRMSCiY0=;
-        b=kXRqBVeNEZdfgT3ytQbgbNo0uRTe3Xsc6d3oPkkEZhjcWlI18sIckVu6vbliNO90tc
-         olUj5T/CnTthMuYB9ChqlAk12gsPARZ7DmsTtDZXCLYlzQAffFO20/PQnFgJJl2kYV6j
-         5FpNkBRpuQUMncbBrRoIectbjBfuwZzMPWSr8=
+        bh=yRFndY2zWJb5bN9k8QGyB+00poAzGsSVjzJBS2+e7OE=;
+        b=Iur53HJyqMem/YVgQlfnZkpmkDpU75IDHa1psWcirqFy2J7OUTJYecd2nH/Tm1VU4Y
+         wHD0Wj4ikT4n1v9ophkIXv8eHbTkqamS77yub3whxQJ3ALJ5ShBRCmalyGimLeM0OTKZ
+         KD55YMwDGgVT3dwjemx/XmpVCxgR0pphrkUVY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=LemySw+6VGiamWvqm4d+lqoRj+4VmarF9XYWRMSCiY0=;
-        b=oUxcsI+KmWEq7xTeq8p/XjvIOpU85WqFkdqFlwzBQ0IoMwNJ9E7NuU0Ab2RIAsP1nA
-         nGNqqP8L9dl2wxXBSL+9AvDUQgIoxA1qIKamEyATwDsqyL1Mpj+BOVNTz0k0lPG1ScWr
-         6Way69CCYSQzPHfrDXbETRa7MpI8wVn6J/fKa9AqDxwAWqLJEqN3PqBvG1rfz/S8pZsm
-         xCsKLjAPAeDJxma82SoC5K1bDCuh3NvCauUl0oKRtTOLHEy2AHI0aFSVx/u1n4J1x4Gs
-         cJzoDbzssCAeQcp8ldmSWTcGSRJFFutUzh3qSpW1ZcgvKHvLYonlJNOAP0Igy4CASqNW
-         oXrQ==
-X-Gm-Message-State: AGRZ1gJGlK8C9UuEjtmWgxSKonRc1LMc8zbFHoSXyTf5wKcY6ml+U2gT
-        MFzLCT5weJzZLUdc10EROSEnvQ==
-X-Google-Smtp-Source: AJdET5eNDtelDWete20VE7bb/tq+ntm0saZaFjUUpOGpXNsrDwjhGsWR0JG3+RHsaoUhprmNgBhOCQ==
-X-Received: by 2002:a62:7514:: with SMTP id q20-v6mr8165586pfc.8.1541751906702;
-        Fri, 09 Nov 2018 00:25:06 -0800 (PST)
+        bh=yRFndY2zWJb5bN9k8QGyB+00poAzGsSVjzJBS2+e7OE=;
+        b=pb92zYKZeRhCvWKCr/xwW2ro4Fos5LK+YzjsNI2mtw3i9MPuOa94RmlDfLlUwQQMGh
+         VsX4pSNcdrlom1d59yokTVS0KQrUhd6ns+HzmDfT0N+1hgUklQp3lMervjNCJNhpO7KM
+         UEwRmR6D+bt4g6wp/80J/XUF3Kl7FiSw09AheawB6osaj11LzLbbbWRZ6WCCj14+Fh0E
+         2sIVWGpgbXL5a3dCdDZEg4oilKSrAHBRkxo3L4/mJ6O7+pdxWIt/jZ4qz/QCnKviCVva
+         28TmLWHRNeKYKWtMOLrcfYfwuZXIrG/fb2voBb7jTlWI62z6N5hQBYngaqo0vbpxs01M
+         X3fQ==
+X-Gm-Message-State: AGRZ1gKRWFR0YbseZbZ7g4NlT1sVyD6sdfL9L9R6W9jOP1wBsbXZyDbj
+        +NNcZVIxDLqdtcAmXy12EssmcA==
+X-Google-Smtp-Source: AJdET5dCO8mv60sae7fHIDtGCVEJeKFEfFmKIeaExlKA/10SNZoPYXI7O9H3owoxai+S1I+fmnLhmg==
+X-Received: by 2002:a63:6984:: with SMTP id e126mr6756085pgc.143.1541751910462;
+        Fri, 09 Nov 2018 00:25:10 -0800 (PST)
 Received: from drinkcat2.tpe.corp.google.com ([2401:fa00:1:b:f659:7f17:ea11:4e8e])
-        by smtp.gmail.com with ESMTPSA id u2-v6sm6415667pfn.50.2018.11.09.00.25.03
+        by smtp.gmail.com with ESMTPSA id u2-v6sm6415667pfn.50.2018.11.09.00.25.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 09 Nov 2018 00:25:06 -0800 (PST)
+        Fri, 09 Nov 2018 00:25:09 -0800 (PST)
 From:   Nicolas Boichat <drinkcat@chromium.org>
 To:     Robin Murphy <robin.murphy@arm.com>
 Cc:     Will Deacon <will.deacon@arm.com>, Joerg Roedel <joro@8bytes.org>,
@@ -75,9 +75,9 @@ Cc:     Will Deacon <will.deacon@arm.com>, Joerg Roedel <joro@8bytes.org>,
         linux-mm@kvack.org, Yong Wu <yong.wu@mediatek.com>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         Tomasz Figa <tfiga@google.com>, yingjoe.chen@mediatek.com
-Subject: [PATCH RFC 2/3] include/linux/gfp.h: Add __get_dma32_pages macro
-Date:   Fri,  9 Nov 2018 16:24:47 +0800
-Message-Id: <20181109082448.150302-3-drinkcat@chromium.org>
+Subject: [PATCH RFC 3/3] iommu/io-pgtable-arm-v7s: Request DMA32 memory, and improve debugging
+Date:   Fri,  9 Nov 2018 16:24:48 +0800
+Message-Id: <20181109082448.150302-4-drinkcat@chromium.org>
 X-Mailer: git-send-email 2.19.1.930.g4563a0d9d0-goog
 In-Reply-To: <20181109082448.150302-1-drinkcat@chromium.org>
 References: <20181109082448.150302-1-drinkcat@chromium.org>
@@ -88,28 +88,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some callers (e.g. iommu/io-pgtable-arm-v7s) require DMA32 memory
-when calling __get_dma_pages. Add a new macro for that purpose.
+For level 1 pages, use __get_dma32_pages to make sure physical
+memory address is 32-bit.
+
+For level 2 pages, kmem_cache_zalloc with GFP_DMA has been modified
+in a previous patch to be allocated in DMA32 zone.
+
+Also, print an error when the physical address does not fit in
+32-bit, to make debugging easier in the future.
 
 Fixes: ad67f5a6545f ("arm64: replace ZONE_DMA with ZONE_DMA32")
 Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
 ---
- include/linux/gfp.h | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/iommu/io-pgtable-arm-v7s.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/gfp.h b/include/linux/gfp.h
-index 76f8db0b0e715c..50e04896b78017 100644
---- a/include/linux/gfp.h
-+++ b/include/linux/gfp.h
-@@ -535,6 +535,8 @@ void * __meminit alloc_pages_exact_nid(int nid, size_t size, gfp_t gfp_mask);
+diff --git a/drivers/iommu/io-pgtable-arm-v7s.c b/drivers/iommu/io-pgtable-arm-v7s.c
+index 445c3bde04800c..862fd404de84d8 100644
+--- a/drivers/iommu/io-pgtable-arm-v7s.c
++++ b/drivers/iommu/io-pgtable-arm-v7s.c
+@@ -198,13 +198,15 @@ static void *__arm_v7s_alloc_table(int lvl, gfp_t gfp,
+ 	void *table = NULL;
  
- #define __get_dma_pages(gfp_mask, order) \
- 		__get_free_pages((gfp_mask) | GFP_DMA, (order))
-+#define __get_dma32_pages(gfp_mask, order) \
-+		__get_free_pages((gfp_mask) | GFP_DMA32, (order))
- 
- extern void __free_pages(struct page *page, unsigned int order);
- extern void free_pages(unsigned long addr, unsigned int order);
+ 	if (lvl == 1)
+-		table = (void *)__get_dma_pages(__GFP_ZERO, get_order(size));
++		table = (void *)__get_dma32_pages(__GFP_ZERO, get_order(size));
+ 	else if (lvl == 2)
+ 		table = kmem_cache_zalloc(data->l2_tables, gfp | GFP_DMA);
+ 	phys = virt_to_phys(table);
+-	if (phys != (arm_v7s_iopte)phys)
++	if (phys != (arm_v7s_iopte)phys) {
+ 		/* Doesn't fit in PTE */
++		dev_err(dev, "Page table does not fit: %pa", &phys);
+ 		goto out_free;
++	}
+ 	if (table && !(cfg->quirks & IO_PGTABLE_QUIRK_NO_DMA)) {
+ 		dma = dma_map_single(dev, table, size, DMA_TO_DEVICE);
+ 		if (dma_mapping_error(dev, dma))
 -- 
 2.19.1.930.g4563a0d9d0-goog
 
