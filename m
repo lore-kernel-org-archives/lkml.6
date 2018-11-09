@@ -2,69 +2,76 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D01C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:59:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32AB1C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 18:02:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BC8C20818
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:59:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE77B20818
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 18:02:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ddk/uJQ7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BC8C20818
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C5SO2kWx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE77B20818
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728581AbeKJDlS (ORCPT
+        id S1728548AbeKJDnt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 22:41:18 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:37048 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728026AbeKJDlR (ORCPT
+        Fri, 9 Nov 2018 22:43:49 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:43388 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727995AbeKJDnt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 22:41:17 -0500
-Received: by mail-lj1-f196.google.com with SMTP id e5-v6so2344178lja.4
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 09:59:37 -0800 (PST)
+        Fri, 9 Nov 2018 22:43:49 -0500
+Received: by mail-io1-f66.google.com with SMTP id t81-v6so1873477iod.10;
+        Fri, 09 Nov 2018 10:02:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=n0jjdD3gVHEVQjOy2yYXIZuKztdvSoU+u9kYir6x/0Q=;
-        b=Ddk/uJQ7Xhu0O+1fqNtvv1NS9304nLtjcxl4s44krX8qeSP+HrgieXrG0gyqBfzjJB
-         niFhxeFzthF478QcxnzG6iRFTzeCjBiO3BxCSCv/7jhFW5c7SiGIgmJaamnjoq4XBinB
-         4M4ZeCD7W0vJQqvTfqr+q2KsUSwEIJ39ImyDU=
+        bh=RcBD/xuEh1VvpIJKRXOUNsvXPJPxOki1FrUqfSszYrc=;
+        b=C5SO2kWxKLjJ3M9ijxYSYz8IePLdpfC7SkiZ++YVnaXTEWrDyy2AVAgH9iLqYEdmTJ
+         qBTihwVbRM8Z+FxfaSsGJpupeRcjGlusFpsVt422jmUPVB8Yuk9xR5V8PsFopZvEerQB
+         U3vAoB1lyKZkeFCQIajsPyXdueJZfLRCh7hZd4hZTMxoeH7HZR7aD8ZL86bX9m41gS9/
+         puefGV4O2CD9R1oc+OlYs+XovAzkhpO1dS4Lfo4w6gZc2nHw117kX1D6V0lpoJ07GiLZ
+         C5K00GoA7bLSNLvOjBKNntg+jN+WQBUz6mJAjkNmOrOyr2grmcTDgRdeScTb+BDtRDHB
+         /WSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=n0jjdD3gVHEVQjOy2yYXIZuKztdvSoU+u9kYir6x/0Q=;
-        b=ELrBSHX6/DY8Nb16d75GInnB/C8Hh1Xdqyfk1rZ8llMgrbaEs7NmB4t4FsTGe6c4ag
-         CwQcUFo8rBFVgQ6tTWHRUd7K/Gc8KcvlfdJNnddhEyqpIWtWzdAHECCe3rOt6bbuDXFZ
-         Kq0ExJsUsrioJHsT3AYtyRT4G6IG0oPpjlg3g8ibkXfX0HjdEZUeUIXGOvMc+Ll1GxCE
-         v4Pbe1vfR+wUAhEUOoLhabirzgKhCG3CfcH+0C5Wshw5KLuG4i6CTzkVj/hJGxUKk+1u
-         BCdnCXbRbnejFycEeTe7bNyEvrWQrTDzH0PITuswOOikO8QguDiuuqx4qoIIcAjk2fFD
-         i1dw==
-X-Gm-Message-State: AGRZ1gL2WGrmscKmMYvUAogG3MqcYXVexuMVAeOjjo6kVEijA3GyaL/u
-        5V7tax7n77xBccJdstIxAQ0OZXI71P716Eke2ETG7mXR
-X-Google-Smtp-Source: AJdET5eqkJGiZnlEVLeW83CrWAMn7QWj/eEX2dzOmD/6sTEe1vaRIcD+s/sClXyvGWbS1yuY6rLW7pt8Xptm1BfxFJs=
-X-Received: by 2002:a2e:9c08:: with SMTP id s8-v6mr5344682lji.149.1541786376575;
- Fri, 09 Nov 2018 09:59:36 -0800 (PST)
+        bh=RcBD/xuEh1VvpIJKRXOUNsvXPJPxOki1FrUqfSszYrc=;
+        b=QCC2zjrIzmkOEbcRhNZTJVTyjPgphQbhr6poPmk3a1EgCHgAWN3EeLOa4TYy7YskMQ
+         SIWClyqIKQQ2WEHjttcB4Gf7WGV4z3A6q8kN97zSE1WD+XDofT2FDZXfJtTrP7FP1CJk
+         VZI6vI6lQK2ho8bQ2Tf4qsWxaqVaq7ary275/27wolDa10FqeCkbPdP6d0+3WrKQ2OfL
+         bSX2F3Abi7It40iTVZJuWzg6mMyTYhvkhq10uDCEOX9hFJfhtWhi8vm17qohkiG/ooc5
+         L0mTPIWV/1Y0lfrcKmOeTtvAHRQJ312Quspa61AQFW0AlgNBEEDMTooCEdIg72mQ7iSA
+         zO7Q==
+X-Gm-Message-State: AGRZ1gIL4QQnKgWhrKeTamgVMo9K7FYPZCxmZiMZpMDCh0pWTHkvSb4W
+        H6780jkCaWoyswwGN8obXudsnCtnoz4R0XZtLBEj6Q==
+X-Google-Smtp-Source: AJdET5fd4PR45uP6MvypwRjeER8DYqv0BYM12r1m2pCcrQ6vKIEGJ/aBd+u4RjojFnWQJEv5JFGPCaUAfkQEG7flm3I=
+X-Received: by 2002:a6b:8ec9:: with SMTP id q192-v6mr7677253iod.248.1541786527885;
+ Fri, 09 Nov 2018 10:02:07 -0800 (PST)
 MIME-Version: 1.0
-References: <1541632132-1252-1-git-send-email-mathieu.poirier@linaro.org>
- <1541632132-1252-4-git-send-email-mathieu.poirier@linaro.org> <102c6181-189e-0ce4-02be-15c1a2744334@arm.com>
-In-Reply-To: <102c6181-189e-0ce4-02be-15c1a2744334@arm.com>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Fri, 9 Nov 2018 10:59:25 -0700
-Message-ID: <CANLsYkxbzk3=uA0Tx6HNNoXGBnDUPAhgnWZM9Q7jqLSzBhDr-g@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] coresight: etm3x: Deal with CLAIM tag before and
- after accessing HW
-To:     "Suzuki K. Poulose" <suzuki.poulose@arm.com>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Leo Yan <leo.yan@linaro.org>, coresight@lists.linaro.org,
+References: <20180927224609.19515-1-robdclark@gmail.com> <20181029191000.GD16739@arm.com>
+In-Reply-To: <20181029191000.GD16739@arm.com>
+From:   Rob Clark <robdclark@gmail.com>
+Date:   Fri, 9 Nov 2018 13:01:55 -0500
+Message-ID: <CAF6AEGtgC0V6ii2=p2HGmqvHFKNJhaOLi8873SGPDsrg70xGRg@mail.gmail.com>
+Subject: Re: [PATCH] iommu: arm-smmu: Set SCTLR.HUPCF bit
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <joro@8bytes.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -72,79 +79,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 8 Nov 2018 at 10:13, Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
+On Mon, Oct 29, 2018 at 3:09 PM Will Deacon <will.deacon@arm.com> wrote:
 >
-> Hi,
->
-> On 07/11/2018 23:08, Mathieu Poirier wrote:
-> > This patch moves access to the CLAIM tag so that no modification to the HW
-> > happens before and after the CLAIM operation has been carried.
+> On Thu, Sep 27, 2018 at 06:46:07PM -0400, Rob Clark wrote:
+> > We seem to need to set either this or CFCFG (stall), otherwise gpu
+> > faults trigger problems with other in-flight transactions from the
+> > GPU causing CP errors, etc.
 > >
-> > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > In the ARM SMMU spec, the 'Hit under previous context fault' bit is
+> > described as:
+> >
+> >  '0' - Stall or terminate subsequent transactions in the presence
+> >        of an outstanding context fault
+> >  '1' - Process all subsequent transactions independently of any
+> >        outstanding context fault.
+> >
+> > Since we don't enable CFCFG (stall) the behavior of terminating
+> > other transactions makes sense.  And is probably not what we want
+> > (and definately not what we want for GPU).
+> >
+> > Signed-off-by: Rob Clark <robdclark@gmail.com>
 > > ---
-> >   drivers/hwtracing/coresight/coresight-etm3x.c | 16 ++++++++--------
-> >   1 file changed, 8 insertions(+), 8 deletions(-)
+> > So I hit this issue a long time back on 820 (msm8996) and at the
+> > time I solved it with a patch that enabled CFCFG.  And it resurfaced
+> > more recently on sdm845.  But at the time CFCFG was rejected, iirc
+> > because of concern that it would cause problems on other non-qcom
+> > arm smmu implementations.  And I think I forgot to send this version
+> > of the solution.
 > >
-> > diff --git a/drivers/hwtracing/coresight/coresight-etm3x.c b/drivers/hwtracing/coresight/coresight-etm3x.c
-> > index fd5c4cca7db5..4f638d81a66a 100644
-> > --- a/drivers/hwtracing/coresight/coresight-etm3x.c
-> > +++ b/drivers/hwtracing/coresight/coresight-etm3x.c
-> > @@ -363,15 +363,16 @@ static int etm_enable_hw(struct etm_drvdata *drvdata)
+> > If enabling HUPCF is anticipated to cause problems on other ARM
+> > SMMU implementations, I think I can come up with a variant of this
+> > patch which conditionally enables it for snapdragon.
 > >
-> >       CS_UNLOCK(drvdata->base);
-> >
-> > +     rc = coresight_claim_device_unlocked(drvdata->base);
-> > +     if (rc)
-> > +             goto done;
-> > +
-> >       /* Turn engine on */
-> >       etm_clr_pwrdwn(drvdata);
-> >       /* Apply power to trace registers */
-> >       etm_set_pwrup(drvdata);
-> >       /* Make sure all registers are accessible */
-> >       etm_os_unlock(drvdata);
-> > -     rc = coresight_claim_device_unlocked(drvdata->base);
-> > -     if (rc)
-> > -             goto done;
-> >
-> >       etm_set_prog(drvdata);
-> >
-> > @@ -422,12 +423,11 @@ static int etm_enable_hw(struct etm_drvdata *drvdata)
-> >       etm_clr_prog(drvdata);
-> >
-> >   done:
-> > -     if (rc)
-> > -             etm_set_pwrdwn(drvdata);
-> >       CS_LOCK(drvdata->base);
-> >
-> > -     dev_dbg(drvdata->dev, "cpu: %d enable smp call done: %d\n",
-> > -             drvdata->cpu, rc);
-> > +     if (!rc)
-> > +             dev_dbg(drvdata->dev, "cpu: %d enable smp call done: %d\n",
-> > +                     drvdata->cpu, rc);
+> > Either way, I'd really like to get some variant of this fix merged
+> > (and probably it would be a good idea for stable kernel branches
+> > too), since current behaviour with the GPU means faults turn into
+> > a fantastic cascade of fail.
 >
-> Isn't it good to report the failure case too ? Anyway it is dev_dbg and
-> will be a useful info when we debug issues. Otherwise,
+> Can you describe how this fantastic cascade of fail improves with this
+> patch, please? If you're getting context faults then something has already
+> gone horribly wrong, so I'm trying to work out how this improves things.
+>
 
-Simply removing the "if (!rc)" will do the trick.  Can I do the
-modification and add your tag or you prefer to see another revision?
+There are plenty of cases where getting iommu faults with a GPU is
+"normal", or at least not something the kernel or even GL driver can
+control.
 
+With this patch, you still get the iommu fault, but it doesn't cause
+the gpu to crash.  But without it, other memory accesses in flight
+while the fault occurs, like the GPU command-processor reading further
+ahead in the cmdstream to setup next draw, would return zero's,
+causing the GPU to crash or get into a bad state.
+
+BR,
+-R
+
+> > diff --git a/drivers/iommu/arm-smmu-regs.h b/drivers/iommu/arm-smmu-regs.h
+> > index a1226e4ab5f8..2291925eb800 100644
+> > --- a/drivers/iommu/arm-smmu-regs.h
+> > +++ b/drivers/iommu/arm-smmu-regs.h
+> > @@ -178,6 +178,7 @@ enum arm_smmu_s2cr_privcfg {
+> >  #define ARM_SMMU_CB_ATSR             0x8f0
+> >
+> >  #define SCTLR_S1_ASIDPNE             (1 << 12)
+> > +#define SCTLR_HUPCF                  (1 << 8)
+> >  #define SCTLR_CFCFG                  (1 << 7)
+> >  #define SCTLR_CFIE                   (1 << 6)
+> >  #define SCTLR_CFRE                   (1 << 5)
+> > diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+> > index f7a96bcf94a6..47ffc9aade72 100644
+> > --- a/drivers/iommu/arm-smmu.c
+> > +++ b/drivers/iommu/arm-smmu.c
+> > @@ -713,9 +713,9 @@ static void arm_smmu_write_context_bank(struct arm_smmu_device *smmu, int idx)
+> >       reg = SCTLR_CFIE | SCTLR_CFRE | SCTLR_AFE | SCTLR_TRE | SCTLR_M;
+> >       if (stage1)
+> >               reg |= SCTLR_S1_ASIDPNE;
+> > +     reg |= SCTLR_HUPCF;
 >
-> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Maybe just throw this into the assignment a couple of lines above?
 >
-> >       return rc;
-> >   }
-> >
-> > @@ -577,9 +577,9 @@ static void etm_disable_hw(void *info)
-> >       for (i = 0; i < drvdata->nr_cntr; i++)
-> >               config->cntr_val[i] = etm_readl(drvdata, ETMCNTVRn(i));
-> >
-> > +     etm_set_pwrdwn(drvdata);
-> >       coresight_disclaim_device_unlocked(drvdata->base);
-> >
-> > -     etm_set_pwrdwn(drvdata);
-> >       CS_LOCK(drvdata->base);
-> >
-> >       dev_dbg(drvdata->dev, "cpu: %d disable smp call done\n", drvdata->cpu);
-> >
+> >       if (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN))
+> >               reg |= SCTLR_E;
+> > -
 >
+> Random whitespace change.
+>
+> Will
