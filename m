@@ -6,60 +6,62 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E8CEC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:52:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98F4CC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:52:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E8E220840
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:52:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E8E220840
+	by mail.kernel.org (Postfix) with ESMTP id 6CD092081C
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:52:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CD092081C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728308AbeKIRbW (ORCPT
+        id S1728357AbeKIRcC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 12:31:22 -0500
-Received: from verein.lst.de ([213.95.11.211]:60404 "EHLO newverein.lst.de"
+        Fri, 9 Nov 2018 12:32:02 -0500
+Received: from verein.lst.de ([213.95.11.211]:60409 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727962AbeKIRbW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 12:31:22 -0500
+        id S1727962AbeKIRcC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 12:32:02 -0500
 Received: by newverein.lst.de (Postfix, from userid 2407)
-        id A829268C48; Fri,  9 Nov 2018 08:51:58 +0100 (CET)
-Date:   Fri, 9 Nov 2018 08:51:58 +0100
+        id 9897468C48; Fri,  9 Nov 2018 08:52:38 +0100 (CET)
+Date:   Fri, 9 Nov 2018 08:52:38 +0100
 From:   Christoph Hellwig <hch@lst.de>
-To:     Guo Ren <ren_guo@c-sky.com>
-Cc:     Christoph Hellwig <hch@lst.de>, iommu@lists.linux-foundation.org,
-        Robin Murphy <robin.murphy@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
+To:     iommu@lists.linux-foundation.org
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org, Guo Ren <ren_guo@c-sky.com>,
         Laura Abbott <labbott@redhat.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 9/9] csky: use the generic remapping dma alloc
- implementation
-Message-ID: <20181109075158.GB27489@lst.de>
-References: <20181105121931.13481-1-hch@lst.de> <20181105121931.13481-10-hch@lst.de> <20181106070140.GA6232@guoren-Inspiron-7460>
+        Robin Murphy <robin.murphy@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: move the arm arch_dma_alloc implementation to common code
+Message-ID: <20181109075238.GA27578@lst.de>
+References: <20181105121931.13481-1-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181106070140.GA6232@guoren-Inspiron-7460>
+In-Reply-To: <20181105121931.13481-1-hch@lst.de>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 06, 2018 at 03:01:41PM +0800, Guo Ren wrote:
-> > +	return dma_atomic_pool_init(GFP_KERNEL, pgprot_noncached(PAGE_KERNEL));
-> >  }
-> >  postcore_initcall(atomic_pool_init);
-> Seems also could remove atomic_pool_init from csky, why not put them in
-> common?
+Can I get a quick review from the arm64 folks?  I think it should
+be fine there as it basically is a code move, but an additional pair
+or two of eyes always helps to weed out bugs.
 
-The code basically moved to common code, but the architecture needs
-to pick the gfp mask (GFP_DMA32 on arm vs GFP_KERNEL on csky for example)
-and the pgprot it needs for uncached remappings.
-
-> Reviewed-by: Guo Ren <ren_guo@c-sky.com>
+On Mon, Nov 05, 2018 at 01:19:22PM +0100, Christoph Hellwig wrote:
+> Hi all,
 > 
-> Compile is OK, qemu boot OK. Functions are the same and just move to common.
-
-Thanks for your review!
+> this series moves the existing arm64 implementation of arch_dma_alloc and
+> arch_dma_free to common code given that it is not arm64-specific, and
+> then also uses it for csky.  Given how many architectures remap memory
+> for the DMA coherent implementation it should be usable for many more,
+> and the new cache flushing hook and the generic atomic pool are also
+> enablers for implementing the IOMMU API dma ops in common code in a
+> follow on series.
+> _______________________________________________
+> iommu mailing list
+> iommu@lists.linux-foundation.org
+> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+---end quoted text---
