@@ -3,122 +3,129 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF50C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 21:10:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E1FC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 21:11:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B22A620825
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 21:10:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B22A620825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
+	by mail.kernel.org (Postfix) with ESMTP id F237620825
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 21:11:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F237620825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728230AbeKJGxM (ORCPT
+        id S1728292AbeKJGyD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 01:53:12 -0500
-Received: from anholt.net ([50.246.234.109]:45832 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725799AbeKJGxL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 01:53:11 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id E51B110A1314;
-        Fri,  9 Nov 2018 13:10:51 -0800 (PST)
-X-Virus-Scanned: Debian amavisd-new at anholt.net
-Received: from anholt.net ([127.0.0.1])
-        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id U4U9VTzFJ08J; Fri,  9 Nov 2018 13:10:50 -0800 (PST)
-Received: from eliezer.anholt.net (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 8597B10A01F2;
-        Fri,  9 Nov 2018 13:10:50 -0800 (PST)
-Received: by eliezer.anholt.net (Postfix, from userid 1000)
-        id 163CB2FE1B8F; Fri,  9 Nov 2018 13:10:50 -0800 (PST)
-From:   Eric Anholt <eric@anholt.net>
-To:     zhoucm1 <zhoucm1@amd.com>, christian.koenig@amd.com,
-        "dri-devel\@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] drm: Revert syncobj timeline changes.
-In-Reply-To: <d9d76fbc-44ad-891d-e535-34d0e8f615de@amd.com>
-References: <20181108160422.17743-1-eric@anholt.net> <20181108160422.17743-3-eric@anholt.net> <635caa27-eb0b-a4d6-5a1d-3fbe5382bd6b@amd.com> <c5af6df2-d5d5-5276-3628-4bac0fd53c98@gmail.com> <d9d76fbc-44ad-891d-e535-34d0e8f615de@amd.com>
-User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
-Date:   Fri, 09 Nov 2018 13:10:49 -0800
-Message-ID: <87d0rex8h2.fsf@anholt.net>
+        Sat, 10 Nov 2018 01:54:03 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:47255 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725799AbeKJGyC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 01:54:02 -0500
+Received: from hanvin-mobl2.amr.corp.intel.com (fmdmzpr03-ext.fm.intel.com [192.55.54.38])
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id wA9LAn272522899
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Fri, 9 Nov 2018 13:10:50 -0800
+Subject: Re: [Qemu-devel] [RFC/PoC PATCH 1/3] i386: set initrd_max to 4G - 1
+ to allow up to 4G initrd
+To:     Li Zhijian <zhijianx.li@intel.com>,
+        Juergen Gross <jgross@suse.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Li Zhijian <lizhijian@cn.fujitsu.com>
+Cc:     Peter Maydell <peter.maydell@linaro.org>, x86@kernel.org,
+        bp@alien8.de, mingo@redhat.com, tglx@linutronix.de,
+        QEMU Developers <qemu-devel@nongnu.org>,
+        Philip Li <philip.li@intel.com>, linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Kees Cook <keescook@chromium.org>
+References: <1541674784-25936-1-git-send-email-lizhijian@cn.fujitsu.com>
+ <1541674784-25936-2-git-send-email-lizhijian@cn.fujitsu.com>
+ <CAFEAcA_47wyar3WNhuBmNPdr02RHx-wn_TeyFaajpjzvzG8j5Q@mail.gmail.com>
+ <c50d103e-95c3-c44c-d852-b6d7f8114b3a@cn.fujitsu.com>
+ <20181109072015.GA86700@gmail.com>
+ <38905d35-29af-b522-1629-b13e98a47a42@intel.com>
+ <d30b404d-624e-0497-879a-2d5df2eb9f31@suse.com>
+ <b7b608dc-1743-5e1f-3b88-94d784c4cab2@intel.com>
+From:   "H. Peter Anvin" <hpa@zytor.com>
+Message-ID: <d9c293bd-b43f-999c-55f1-3b90a6020065@zytor.com>
+Date:   Fri, 9 Nov 2018 13:10:49 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+In-Reply-To: <b7b608dc-1743-5e1f-3b88-94d784c4cab2@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+On 11/9/18 5:40 AM, Li Zhijian wrote:
+> Just noticed that there is a field xloadflags at recent protocol
+>   60 Protocol 2.12:  (Kernel 3.8) Added the xloadflags field and
+> extension fields
+>   61                 to struct boot_params for loading bzImage and ramdisk
+>   62                 above 4G in 64bit.
+> [snip]
+>  617 Field name:     xloadflags
+>  618 Type:           read
+>  619 Offset/size:    0x236/2
+>  620 Protocol:       2.12+
+>  621
+>  622   This field is a bitmask.
+>  623
+>  624   Bit 0 (read): XLF_KERNEL_64
+>  625         - If 1, this kernel has the legacy 64-bit entry point at
+> 0x200.
+>  626
+>  627   Bit 1 (read): XLF_CAN_BE_LOADED_ABOVE_4G
+>  628         - If 1, kernel/boot_params/cmdline/ramdisk can be above 4G.
+>  629
+> 
+> maybe we can reuse this field and append a new Bit 5
+> XLF_INITRD_MAX_SIZE_4G and increase header version.
+> For the old protocol version 2.12+, if  XLF_CAN_BE_LOADED_ABOVE_4G is
+> set, we can also realize ~4GB initrd is allowed.
+> 
+> bootloader side:
+> if protocol >= 2.15
+>    if XLF_INITRD_LOAD_BELOW_4G
+>       support ~4G initrd
+>    fi
+> else if protocol >=2.12
+>    if XLF_CAN_BE_LOADED_ABOVE_4G
+>     support ~4G initrd
+>    fi
+> fi
+> 
 
-zhoucm1 <zhoucm1@amd.com> writes:
+The two are equivalent.  Obviously you have to load above 4 GB if you
+have more than 4 GB of initrd.  If XLF_CAN_BE_LOADED_ABOVE_4G is not
+set, then you most likely are on a 32-bit kernel and there are more
+fundamental limits (even if you were to load it above the 2 GB mark, you
+would be limited by the size of kernel memory.)
 
-> On 2018=E5=B9=B411=E6=9C=8809=E6=97=A5 00:52, Christian K=C3=B6nig wrote:
->> Am 08.11.18 um 17:07 schrieb Koenig, Christian:
->>> Am 08.11.18 um 17:04 schrieb Eric Anholt:
->>>> Daniel suggested I submit this, since we're still seeing regressions
->>>> from it.=C2=A0 This is a revert to before 48197bc564c7 ("drm: add sync=
-obj
->>>> timeline support v9") and its followon fixes.
->>> This is a harmless false positive from lockdep, Chouming and I are
->>> already working on a fix.
->>
->> On the other hand we had enough trouble with that patch, so if it=20
->> really bothers you feel free to add my Acked-by: Christian K=C3=B6nig=20
->> <christian.koenig@amd.com> and push it.
-> NAK, please no, I don't think this needed, the Warning totally isn't=20
-> related to syncobj timeline, but fence-array implementation flaw, just=20
-> exposed by syncobj.
-> In addition, Christian already has a fix for this Warning, I've tested.=20
-> Please Christian send to public review.
+So, in case you are wondering: the bootloader that broke when setting
+the initrd_max field above 2 GB was, of course, Grub.
 
-I backed out my revert of #2 (#1 still necessary) after adding the
-lockdep regression fix, and now my CTS run got oomkilled after just a
-few hours, with these notable lines in the unreclaimable slab info list:
+So just use XLF_CAN_BE_LOADED_ABOVE_4G. There is no need for a new flag
+or new field.
 
-[ 6314.373099] drm_sched_fence        69095KB      69095KB
-[ 6314.373653] kmemleak_object       428249KB     428384KB
-[ 6314.373736] kmalloc-262144           256KB        256KB
-[ 6314.373743] kmalloc-131072           128KB        128KB
-[ 6314.373750] kmalloc-65536             64KB         64KB
-[ 6314.373756] kmalloc-32768           1472KB       1728KB
-[ 6314.373763] kmalloc-16384             64KB         64KB
-[ 6314.373770] kmalloc-8192             208KB        208KB
-[ 6314.373778] kmalloc-4096            2408KB       2408KB
-[ 6314.373784] kmalloc-2048             288KB        336KB
-[ 6314.373792] kmalloc-1024            1457KB       1512KB
-[ 6314.373800] kmalloc-512              854KB       1048KB
-[ 6314.373808] kmalloc-256              188KB        268KB
-[ 6314.373817] kmalloc-192            69141KB      69142KB
-[ 6314.373824] kmalloc-64             47703KB      47704KB
-[ 6314.373886] kmalloc-128            46396KB      46396KB
-[ 6314.373894] kmem_cache                31KB         35KB
+Also note that the ext_ramdisk_image and ext_ramdisk_size are part of
+struct boot_params as opposed to struct setup_header, which means that
+they are not supported when entering via the 16-bit BIOS entry point,
+and I am willing to bet that there will be, ahem, "strangeness" if
+entered via the 32-bit entry point if at least the command line is
+loaded above the 4 GB mark; the initrd should be fine, though.
 
-No results from kmemleak, though.
+This is obviosly not an issue in EFI environments, where we enter
+through the EFI handover entry point.
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+The main reason these were not added to struct setup_header is that
+there are only 24 bytes left in that header and so space is highly
+precious. One way to deal with that if we really, really need to would
+be to add an initrd/initramfs type of setup_data.
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlvl99kACgkQtdYpNtH8
-nuj9hw/+NbLJVtUTuhRABbEBNgTYLQ9qKQmErvhz+KGiANmLIkYSWxVTtLelfHN2
-3tRO9YcuJkW6X9UEK2ntL1ptgyOpBJY8Ns9daPV7gqvuUu8B+Oy+Se2t1GR9m8A4
-R2Lq60PZpOuqaQ13fPqsq4XnSqlW7DHDYoW0nCyzMklHMZJg9WHMZQdeZ3iaimrP
-BGMV9AtZ7Bkjr4bPyq6i8ThGRVX7QoHfkyWQ/X64hfXgggQuz8c5ublHveLYosuF
-S/yIgmwGepQD2UO5JeHrDAOnUf6LqixSsy7xudsSmC+M0DneuhWEvHJokaUt+F9g
-0CnFZB+W6QCiv5MeI6+EUFSSJF/AjQbfOtzum1XHwpyIGIfaMS0AZZ6hpyMZL9W1
-0viQZ/5fKbFqifUkz9GjK/Zko32yc0qicBms+LC1VMs05Z0i3n0FC1hJ/zgNsSJd
-0T96Z2kNWMBGTOvqw/uxvWzHEBaXlz7v6BH4YrFUYNYWpiVSVstHMlTjdnNzLWDJ
-7m2YsAjghnknGVazMg82WJLBPlZ3rzb3YirAnnh/X2sOcFUf1RG9KdC5Kv526IzO
-Rx5OCNvln90P1Tn73xFTQzF/BDhFoy+n56AIj5SI67nEFYMDwQf74gwNzDF09f2O
-NbFc1JVLxDUZKv2CWc5Yjsp24+Vsbgmaa6fh/ZfVjBlltGobb1Y=
-=l4ru
------END PGP SIGNATURE-----
---=-=-=--
+	-hpa
