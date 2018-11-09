@@ -2,181 +2,144 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E69D2C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:20:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5F9BC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:23:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B84820818
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:20:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ayerToHq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B84820818
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id ACD4020827
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:23:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACD4020827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728645AbeKJIDB (ORCPT
+        id S1728419AbeKJIGS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 03:03:01 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:37383 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728429AbeKJIDA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 03:03:00 -0500
-Received: by mail-vs1-f65.google.com with SMTP id h18so1955300vsj.4
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 14:20:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=zucEkTnEnReQSNzGX3ud7pupDV2EMGlTBiWx6dB58Ww=;
-        b=ayerToHqG4XyqeHnAEnaw1Bef6MszHcjhOcMr1dbBg+1X1op9RoAVjYjqyMQ+uACGe
-         MvbtxjmkwXCxU58kc+ZNqkQ3YuMX0yvO04U1ekKpqMa/itCVsI9VmSwVYGka1Z5JepL9
-         BhzRtyNp60HPp1TUqdFYuJOdB3732ZYspNV4es+YZQcJs5qRzVSzJFmFvPCBVyDEQ/Xh
-         pxgnmucrOdONIW5f/n5iM5siW+vFPmLFpgdzBPyrHq72Rq8EeLsNtuT6QfSWfMBHLg+D
-         //WLDLIxjpgcSmJQ47tEdmcrP8mJ3Kqy0MZul3sujs6sLOd77cSFhQxTyIORFutrKGP0
-         qx7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=zucEkTnEnReQSNzGX3ud7pupDV2EMGlTBiWx6dB58Ww=;
-        b=oAXVXU+q1FGsVJJEMxMrBUNC9twIRndpKd7/b0uI41Tf4tEQwmdSUAesCXiYYapLuH
-         9HZTIm/okCVQkckgsnsjMwh0IBGKHGsrSfmRXBYovkY9NZlAiSjB24BtjCuvqkTSRk6B
-         JANBSpNQxi/9oQh4+d/lrXfJbn4tydHyKIs+3bXsUjRwFSQS3BuOD/ad/0R4NgfZFUnT
-         cH/1gGnjWHueiw/QftQoUE+cNQMbtAFZEc4utSn6pHJiO7ivPdBoQJQYwqgINXSYK89i
-         7WA5aNrDETPgdya8gyWko/VHRiMjBxnizM3NQ7azQJ7Jawbs0JF2ZHZBT7oR3WAmTHR+
-         l60Q==
-X-Gm-Message-State: AGRZ1gLTO45MBbz/fwA/Z054S5Ur8/TRErjgaXGmWaB6/xew6mTJOP1G
-        PoGMjcmM9jjZ9/n7b1rjI5sJN8+QakaUgjA6Zlisgw==
-X-Google-Smtp-Source: AJdET5c84DHPkoZes7Jz6rS5AC/9f2TvrAhXJxhbxNMqN1pffEvfbqiDUtQsH9JY6lTq20ZKWs+USiCzD81xzZSRE20=
-X-Received: by 2002:a67:105:: with SMTP id 5mr4495582vsb.183.1541802019264;
- Fri, 09 Nov 2018 14:20:19 -0800 (PST)
+        Sat, 10 Nov 2018 03:06:18 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:33163 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726572AbeKJIGR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 03:06:17 -0500
+Received: from hanvin-mobl2.amr.corp.intel.com (fmdmzpr03-ext.fm.intel.com [192.55.54.38])
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id wA9MN5O92543672
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Fri, 9 Nov 2018 14:23:12 -0800
+Subject: PLEASE REVERT URGENTLY: Re: [PATCH v5 2/3] x86/boot: add acpi rsdp
+ address to setup_header
+To:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xenproject.org, x86@kernel.org,
+        linux-doc@vger.kernel.org
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, corbet@lwn.net,
+        boris.ostrovsky@oracle.com
+References: <20181010061456.22238-1-jgross@suse.com>
+ <20181010061456.22238-3-jgross@suse.com>
+From:   "H. Peter Anvin" <hpa@zytor.com>
+Message-ID: <f7c78ee7-b548-7f04-24da-7321b6c64c97@zytor.com>
+Date:   Fri, 9 Nov 2018 14:23:04 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Received: by 2002:a67:f48d:0:0:0:0:0 with HTTP; Fri, 9 Nov 2018 14:20:18 -0800 (PST)
-In-Reply-To: <CAG48ez1h=v-JYnDw81HaYJzOfrNhwYksxmc2r=cJvdQVgYM+NA@mail.gmail.com>
-References: <20181108041537.39694-1-joel@joelfernandes.org> <CAG48ez1h=v-JYnDw81HaYJzOfrNhwYksxmc2r=cJvdQVgYM+NA@mail.gmail.com>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Fri, 9 Nov 2018 14:20:18 -0800
-Message-ID: <CAKOZuesw1wG-YynWL7bVb+4BWtYp0Ei62vweWF+mqF1Ln-_2Tg@mail.gmail.com>
-Subject: Re: [PATCH v3 resend 1/2] mm: Add an F_SEAL_FUTURE_WRITE seal to memfd
-To:     Jann Horn <jannh@google.com>
-Cc:     Joel Fernandes <joel@joelfernandes.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        John Reck <jreck@google.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Todd Kjos <tkjos@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Bruce Fields <bfields@fieldses.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Khalid Aziz <khalid.aziz@oracle.com>, Lei.Yang@windriver.com,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>, marcandre.lureau@redhat.com,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Shuah Khan <shuah@kernel.org>, valdis.kletnieks@vt.edu,
-        Hugh Dickins <hughd@google.com>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181010061456.22238-3-jgross@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 9, 2018 at 1:06 PM, Jann Horn <jannh@google.com> wrote:
->
-> +linux-api for API addition
-> +hughd as FYI since this is somewhat related to mm/shmem
->
-> On Fri, Nov 9, 2018 at 9:46 PM Joel Fernandes (Google)
-> <joel@joelfernandes.org> wrote:
-> > Android uses ashmem for sharing memory regions. We are looking forward
-> > to migrating all usecases of ashmem to memfd so that we can possibly
-> > remove the ashmem driver in the future from staging while also
-> > benefiting from using memfd and contributing to it. Note staging drivers
-> > are also not ABI and generally can be removed at anytime.
-> >
-> > One of the main usecases Android has is the ability to create a region
-> > and mmap it as writeable, then add protection against making any
-> > "future" writes while keeping the existing already mmap'ed
-> > writeable-region active.  This allows us to implement a usecase where
-> > receivers of the shared memory buffer can get a read-only view, while
-> > the sender continues to write to the buffer.
-> > See CursorWindow documentation in Android for more details:
-> > https://developer.android.com/reference/android/database/CursorWindow
-> >
-> > This usecase cannot be implemented with the existing F_SEAL_WRITE seal.
-> > To support the usecase, this patch adds a new F_SEAL_FUTURE_WRITE seal
-> > which prevents any future mmap and write syscalls from succeeding while
-> > keeping the existing mmap active.
->
-> Please CC linux-api@ on patches like this. If you had done that, I
-> might have criticized your v1 patch instead of your v3 patch...
->
-> > The following program shows the seal
-> > working in action:
-> [...]
-> > Cc: jreck@google.com
-> > Cc: john.stultz@linaro.org
-> > Cc: tkjos@google.com
-> > Cc: gregkh@linuxfoundation.org
-> > Cc: hch@infradead.org
-> > Reviewed-by: John Stultz <john.stultz@linaro.org>
-> > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> > ---
-> [...]
-> > diff --git a/mm/memfd.c b/mm/memfd.c
-> > index 2bb5e257080e..5ba9804e9515 100644
-> > --- a/mm/memfd.c
-> > +++ b/mm/memfd.c
-> [...]
-> > @@ -219,6 +220,25 @@ static int memfd_add_seals(struct file *file, unsigned int seals)
-> >                 }
-> >         }
-> >
-> > +       if ((seals & F_SEAL_FUTURE_WRITE) &&
-> > +           !(*file_seals & F_SEAL_FUTURE_WRITE)) {
-> > +               /*
-> > +                * The FUTURE_WRITE seal also prevents growing and shrinking
-> > +                * so we need them to be already set, or requested now.
-> > +                */
-> > +               int test_seals = (seals | *file_seals) &
-> > +                                (F_SEAL_GROW | F_SEAL_SHRINK);
-> > +
-> > +               if (test_seals != (F_SEAL_GROW | F_SEAL_SHRINK)) {
-> > +                       error = -EINVAL;
-> > +                       goto unlock;
-> > +               }
-> > +
-> > +               spin_lock(&file->f_lock);
-> > +               file->f_mode &= ~(FMODE_WRITE | FMODE_PWRITE);
-> > +               spin_unlock(&file->f_lock);
-> > +       }
->
-> So you're fiddling around with the file, but not the inode? How are
-> you preventing code like the following from re-opening the file as
-> writable?
+I just noticed this patch -- I missed it because the cover message
+seemed far more harmless so I didn't notice this change.
 
-Good catch. That's fixable too though, isn't it, just by fiddling with
-the inode, right?
+THIS PATCH IS FATALLY WRONG AND NEEDS TO BE IMMEDIATELY REVERTED BEFORE
+ANYONE STARTS RELYING ON IT; IT HAS THE POTENTIAL OF BREAKING THE
+BOOTLOADER PROTOCOL FOR ALL FUTURE.
 
-Another, more general fix might be to prevent /proc/pid/fd/N opens
-from "upgrading" access modes. But that'd be a bigger ABI break.
+It seems to be based on fundamental misconceptions about the various
+data structures in the protocol, and does so in a way that completely
+breaks the way the protocol is designed to work.
 
-> That aside: I wonder whether a better API would be something that
-> allows you to create a new readonly file descriptor, instead of
-> fiddling with the writability of an existing fd.
+The protocol is specifically designed such that fields are not version
+dependencies. The version number is strictly to inform the boot loader
+about which capabilities the kernel has, so that the boot loader can
+know if a certain data field is meaningful and/or honored.
 
-That doesn't work, unfortunately. The ashmem API we're replacing with
-memfd requires file descriptor continuity. I also looked into opening
-a new FD and dup2(2)ing atop the old one, but this approach doesn't
-work in the case that the old FD has already leaked to some other
-context (e.g., another dup, SCM_RIGHTS). See
-https://developer.android.com/ndk/reference/group/memory. We can't
-break ASharedMemory_setProt.
+> +Protocol 2.14:	(Kernel 4.20) Added acpi_rsdp_addr holding the physical
+> +		address of the ACPI RSDP table.
+> +		The bootloader updates version with:
+> +		0x8000 | min(kernel-version, bootloader-version)
+> +		kernel-version being the protocol version supported by
+> +		the kernel and bootloader-version the protocol version
+> +		supported by the bootloader.
+
+[...]
+
+>  **** MEMORY LAYOUT
+>
+>  The traditional memory map for the kernel loader, used for Image or
+> @@ -197,6 +209,7 @@ Offset	Proto	Name		Meaning
+>  0258/8	2.10+	pref_address	Preferred loading address
+>  0260/4	2.10+	init_size	Linear memory required during initialization
+>  0264/4	2.11+	handover_offset	Offset of handover entry point
+> +0268/8	2.14+	acpi_rsdp_addr	Physical address of RSDP table
+
+NO.
+
+That is not how struct setup_header works, nor does this belong here.
+
+struct setup_header contains *initialized data*, and has a length byte
+at offset 0x201.  The bootloader is responsible for copying the full
+structure into the appropriate offset (0x1f1) in struct boot_params.
+
+The length byte isn't actually a requirement, since the maximum possible
+size of this structure is 144 bytes, and the kernel will (obviously) not
+look at the older fields anyway, but it is good practice. The kernel or
+any other entity is free to zero out the bytes past this length pointer.
+
+There are only 24 bytes left in this structure, and this would occupy 8
+of them for no valid reason.  The *only* valid reason to put a
+zero-initialized field in struct setup_header is if it used by the
+16-bit legacy BIOS boot, which is obviously not the case here.
+
+This field thus belongs in struct boot_params, not struct setup_header.
+
+>  
+> @@ -317,6 +330,12 @@ Protocol:	2.00+
+>    e.g. 0x0204 for version 2.04, and 0x0a11 for a hypothetical version
+>    10.17.
+>  
+> +  Up to protocol version 2.13 this information is only read by the
+> +  bootloader. From protocol version 2.14 onwards the bootloader will
+> +  write the used protocol version ored with 0x8000 to the field. The
+> +  used protocol version will be the minimum of the supported protocol
+> +  versions of the bootloader and the kernel.
+> +
+
+Again, this is completely wrong. The version number is communication to
+the bootloader, which may end up going through multiple stages.
+Modifying this field breaks this invariant in a not-very-subtle way.
+
+Fields in struct setup_header are to be initialized from the image
+provided in the kernel header.
+
+Fields in struct boot_params are to be initialized to zero.
+
+There is a field called "sentinel" which attempts to detect broken
+bootloaders which do not do this correctly; however, when enabling new
+bootloaders the Right Thing to do is to make sure they adhere to the
+protocol as defined, rather than pushing a new hack onto the kernel.
+
+Thus:
+
+1. Please revert this patch immediately, and destroy any boot loaders
+   which tries to implement this.
+2. Add the acpi_rsdp_addr to struct boot_params.
+3. DO NOT modify the boot protocol version header field. Instead
+   make sure that the bootloader follows the protocol and zeroes
+   all unknown fields in struct boot_params.
+4. Possibly make the kernel panic if it notices that the boot version
+   header has been mucked with, in case some of these boot loaders
+   have already escaped into the field.
+
