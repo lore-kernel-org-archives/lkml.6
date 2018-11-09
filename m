@@ -3,155 +3,109 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C5BCC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:27:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E152C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:28:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3877820840
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:27:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3877820840
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
+	by mail.kernel.org (Postfix) with ESMTP id F186520840
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:28:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F186520840
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728075AbeKJIJh (ORCPT
+        id S1728140AbeKJILT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 03:09:37 -0500
-Received: from anholt.net ([50.246.234.109]:46322 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726181AbeKJIJh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 03:09:37 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id E681610A1314;
-        Fri,  9 Nov 2018 14:27:00 -0800 (PST)
-X-Virus-Scanned: Debian amavisd-new at anholt.net
-Received: from anholt.net ([127.0.0.1])
-        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id RHJU0tWRG4Vj; Fri,  9 Nov 2018 14:26:59 -0800 (PST)
-Received: from eliezer.anholt.net (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 5FCE310A01F2;
-        Fri,  9 Nov 2018 14:26:59 -0800 (PST)
-Received: by eliezer.anholt.net (Postfix, from userid 1000)
-        id E170B2FE1B8F; Fri,  9 Nov 2018 14:26:58 -0800 (PST)
-From:   Eric Anholt <eric@anholt.net>
-To:     zhoucm1 <zhoucm1@amd.com>, christian.koenig@amd.com,
-        "dri-devel\@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] drm: Revert syncobj timeline changes.
-In-Reply-To: <87d0rex8h2.fsf@anholt.net>
-References: <20181108160422.17743-1-eric@anholt.net> <20181108160422.17743-3-eric@anholt.net> <635caa27-eb0b-a4d6-5a1d-3fbe5382bd6b@amd.com> <c5af6df2-d5d5-5276-3628-4bac0fd53c98@gmail.com> <d9d76fbc-44ad-891d-e535-34d0e8f615de@amd.com> <87d0rex8h2.fsf@anholt.net>
-User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
-Date:   Fri, 09 Nov 2018 14:26:58 -0800
-Message-ID: <87y3a1sx8t.fsf@anholt.net>
+        Sat, 10 Nov 2018 03:11:19 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:58062 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726181AbeKJILS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 03:11:18 -0500
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 9A35172CBF9;
+        Sat, 10 Nov 2018 01:28:39 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+        id 8E7D77CD1FF; Sat, 10 Nov 2018 01:28:39 +0300 (MSK)
+Date:   Sat, 10 Nov 2018 01:28:39 +0300
+From:   "Dmitry V. Levin" <ldv@altlinux.org>
+To:     David Abdurachmanov <david.abdurachmanov@gmail.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Palmer Dabbelt <palmer@sifive.com>, aou@eecs.berkeley.edu,
+        Paul Moore <paul@paul-moore.com>, eparis@redhat.com,
+        Elvira Khabirova <lineprinter@altlinux.org>,
+        linux-riscv@lists.infradead.org, linux-audit@redhat.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 12/13] riscv: define syscall_get_arch()
+Message-ID: <20181109222839.GB2054@altlinux.org>
+Mail-Followup-To: David Abdurachmanov <david.abdurachmanov@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Palmer Dabbelt <palmer@sifive.com>, aou@eecs.berkeley.edu,
+        Paul Moore <paul@paul-moore.com>, eparis@redhat.com,
+        Elvira Khabirova <lineprinter@altlinux.org>,
+        linux-riscv@lists.infradead.org, linux-audit@redhat.com,
+        linux-kernel@vger.kernel.org
+References: <20181109031303.GA20906@altlinux.org>
+ <20181109031712.GL21511@altlinux.org>
+ <CAEn-LTpbzdpeWv8wqo_ptBw2t3Ypzzp0JcB+TGMG4NZbEGBnkw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="XF85m9dhOBO43t/C"
+Content-Disposition: inline
+In-Reply-To: <CAEn-LTpbzdpeWv8wqo_ptBw2t3Ypzzp0JcB+TGMG4NZbEGBnkw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain; charset=utf-8
+
+--XF85m9dhOBO43t/C
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Eric Anholt <eric@anholt.net> writes:
+On Fri, Nov 09, 2018 at 07:59:13AM +0100, David Abdurachmanov wrote:
+> On Fri, Nov 9, 2018 at 4:17 AM Dmitry V. Levin <ldv@altlinux.org> wrote:
+> >
+> > syscall_get_arch() is required to be implemented on all architectures
+> > that use tracehook_report_syscall_entry() in order to extend
+> > the generic ptrace API with PTRACE_GET_SYSCALL_INFO request.
+>=20
+> I have posted audit support patch for RISC-V in October. Pending review.
+> It defines both AUDIT_ARCH_RISCV32 and AUDIT_ARCH_RISCV64.
+>=20
+> See thread: http://lists.infradead.org/pipermail/linux-riscv/2018-October=
+/001933.html
 
-> [ Unknown signature status ]
-> zhoucm1 <zhoucm1@amd.com> writes:
->
->> On 2018=E5=B9=B411=E6=9C=8809=E6=97=A5 00:52, Christian K=C3=B6nig wrote:
->>> Am 08.11.18 um 17:07 schrieb Koenig, Christian:
->>>> Am 08.11.18 um 17:04 schrieb Eric Anholt:
->>>>> Daniel suggested I submit this, since we're still seeing regressions
->>>>> from it.=C2=A0 This is a revert to before 48197bc564c7 ("drm: add syn=
-cobj
->>>>> timeline support v9") and its followon fixes.
->>>> This is a harmless false positive from lockdep, Chouming and I are
->>>> already working on a fix.
->>>
->>> On the other hand we had enough trouble with that patch, so if it=20
->>> really bothers you feel free to add my Acked-by: Christian K=C3=B6nig=20
->>> <christian.koenig@amd.com> and push it.
->> NAK, please no, I don't think this needed, the Warning totally isn't=20
->> related to syncobj timeline, but fence-array implementation flaw, just=20
->> exposed by syncobj.
->> In addition, Christian already has a fix for this Warning, I've tested.=
-=20
->> Please Christian send to public review.
->
-> I backed out my revert of #2 (#1 still necessary) after adding the
-> lockdep regression fix, and now my CTS run got oomkilled after just a
-> few hours, with these notable lines in the unreclaimable slab info list:
->
-> [ 6314.373099] drm_sched_fence        69095KB      69095KB
-> [ 6314.373653] kmemleak_object       428249KB     428384KB
-> [ 6314.373736] kmalloc-262144           256KB        256KB
-> [ 6314.373743] kmalloc-131072           128KB        128KB
-> [ 6314.373750] kmalloc-65536             64KB         64KB
-> [ 6314.373756] kmalloc-32768           1472KB       1728KB
-> [ 6314.373763] kmalloc-16384             64KB         64KB
-> [ 6314.373770] kmalloc-8192             208KB        208KB
-> [ 6314.373778] kmalloc-4096            2408KB       2408KB
-> [ 6314.373784] kmalloc-2048             288KB        336KB
-> [ 6314.373792] kmalloc-1024            1457KB       1512KB
-> [ 6314.373800] kmalloc-512              854KB       1048KB
-> [ 6314.373808] kmalloc-256              188KB        268KB
-> [ 6314.373817] kmalloc-192            69141KB      69142KB
-> [ 6314.373824] kmalloc-64             47703KB      47704KB
-> [ 6314.373886] kmalloc-128            46396KB      46396KB
-> [ 6314.373894] kmem_cache                31KB         35KB
->
-> No results from kmemleak, though.
+I'll take your version of RISC-V related change of include/uapi/linux/audit=
+=2Eh
+to this series, thanks!
 
-OK, it looks like the #2 revert probably isn't related to the OOM issue.
-Running a single job on otherwise unused DRM, watching /proc/slabinfo
-every second for drm_sched_fence, I get:
+P.S. It would be great if you replied to me as well.
 
-drm_sched_fence        0      0    192   21    1 : tunables   32   16    8 =
-: slabdata      0      0      0 : globalstat       0      0     0    0    0=
-    0    0    0    0 : cpustat      0      0      0      0
-drm_sched_fence       16     21    192   21    1 : tunables   32   16    8 =
-: slabdata      1      1      0 : globalstat      16     16     1    0    0=
-    0    0    0    0 : cpustat      5      1      6      0
-drm_sched_fence       13     21    192   21    1 : tunables   32   16    8 =
-: slabdata      1      1      0 : globalstat      16     16     1    0    0=
-    0    0    0    0 : cpustat      5      1      6      0
-drm_sched_fence        6     21    192   21    1 : tunables   32   16    8 =
-: slabdata      1      1      0 : globalstat      16     16     1    0    0=
-    0    0    0    0 : cpustat      5      1      6      0
-drm_sched_fence        4     21    192   21    1 : tunables   32   16    8 =
-: slabdata      1      1      0 : globalstat      16     16     1    0    0=
-    0    0    0    0 : cpustat      5      1      6      0
-drm_sched_fence        2     21    192   21    1 : tunables   32   16    8 =
-: slabdata      1      1      0 : globalstat      16     16     1    0    0=
-    0    0    0    0 : cpustat      5      1      6      0
-drm_sched_fence        0     21    192   21    1 : tunables   32   16    8 =
-: slabdata      0      1      0 : globalstat      16     16     1    0    0=
-    0    0    0    0 : cpustat      5      1      6      0
 
-So we generate a ton of fences, and I guess free them slowly because of
-RCU?  And presumably kmemleak was sucking up lots of memory because of
-how many of these objects were laying around.
+--=20
+ldv
 
---=-=-=
+--XF85m9dhOBO43t/C
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlvmCbIACgkQtdYpNtH8
-nug3FA//dSeupJhOUQlYzR/yEjezWSaHnRezKzRVfofkIOEpwvxuEJ52tkeUMR/G
-bqseYn3rZAREeDw0uj5gJenSHO0u06clcMuVjOMu/zbRXT89mAFYre2txEoShDwv
-YnH/vm9PxOAEGpXcSB/gquqmlyhBaig53hIXwKVUl0qA1G01biFiySgN6DYvu/Us
-pAy3UZ07xHBMn0zpm3ZpDdHShEXOS8XQEEeJm6Y3BOWqEhOVsb9M9WIiFFDwBm6H
-GvUnN4SA5QfloSlWHwBR1CL5shCAhmVf2XNd4RwsyqkrRi1aExXirxCL8d0u1dIK
-A0T2K919aokdvpiUWOHIBJJaw7BkCLFk3Ysdn2ygWxrV6Ipi2ux3wdmbmB/Ojbz2
-FEV+6NDisp05a4wI03VZc2ZgkQQGkcg+k1pFfpAepDq1GqdjoWerkGM8OlvZFuYP
-m0qTrdawwcSLaYWT9N47gSOJm5QepxjAxtMA3uMXWSQH4+b8F8GO6RWagyxGEw1D
-ayZ/2ANtSNG9KTTETgdl75kJPUSdgZxm2OtZHCngsufIJM4Yj/kfonle3BJJskv0
-UdIb4GKRhXE+T9sBCjcIazhWbJ4oftwbXbGCgGAFFSq+IFU+UWecG0AMGdILHItp
-KoL1bzoGWzBJAU3EOLB8cJmBzNYNlbFgOX1qQfHQ9fHx/I3QdPM=
-=a3+X
+iQIcBAEBCAAGBQJb5goXAAoJEAVFT+BVnCUIjBAP/RryYu/a/aHNZcoZXIOFxfXE
+02HB/UcnCDdFjXcibkWZz79BRfjsi5GwRYqsFqA+xnGT2/yXP0lw8Onl39rUHQg1
+dX9qIy0u9hFwf43eQqTRHoX4v1+k/l5c97Zoejzj/3sMYW2RVzp7zNdYaYLlwkVl
+w0tO1ant3BmWvU5zGAASeOlBr0js28afy/5tHYQs6pJ7x6SjeVYSEDvLIhh50R2s
+OMNivE9N0NQpDJqRmptrpcsWUnS/EcCGii/SWIjILjO7mHA+krjhURnN0T8zBEKJ
+LMg50l7N8v+l3RXL3jZd5qX9pF+g9C5RApFAJqeFqUd0TGypKQEuvw7CnJH2qNpv
+3sgdlKlueiB8YdyFXYq2iMq+dSS9xSW+Jo5jsxYARToBFO2fI4CZUoEWux6NIpZ5
+9N+hli3P8Q1K0Fl2skEikclyeIE61+2f9n3n73qWLOyp0H4qn6ZjNeDGP0Vsp1c5
+KT2p07b1UV+XvY04qPMXyuft/FUeGYRiVLqu2okTxjaIx7QLqAp0HDbugUHGGNRx
+8ClhF55ByoNDPvbX8WvmXhHtCK8BhMABxL+iRQl26nzQbKdsuFq8ulAr3Kb+NWsu
+etwtV96eA+snnob1tLTq/fwj5wq1PQAbrJdnFsb/6TxcspM5ia8VmjuVuFeW/Ofj
+S3kY9ZU0UqCUkTNXF6oQ
+=GUwG
 -----END PGP SIGNATURE-----
---=-=-=--
+
+--XF85m9dhOBO43t/C--
