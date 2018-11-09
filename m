@@ -2,203 +2,110 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 538BFC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 13:15:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2E01C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 13:16:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1520C20827
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 13:15:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1520C20827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7650C20827
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 13:16:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="X/m1KbZU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7650C20827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727837AbeKIWze (ORCPT
+        id S1727988AbeKIW5O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 17:55:34 -0500
-Received: from mga14.intel.com ([192.55.52.115]:46851 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727667AbeKIWze (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 17:55:34 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Nov 2018 05:14:59 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,483,1534834800"; 
-   d="scan'208";a="88012441"
-Received: from mke-mobl.ccr.corp.intel.com (HELO [192.168.4.139]) ([10.255.30.228])
-  by orsmga007.jf.intel.com with ESMTP; 09 Nov 2018 05:11:21 -0800
-Subject: Re: [Qemu-devel] [RFC/PoC PATCH 1/3] i386: set initrd_max to 4G - 1
- to allow up to 4G initrd
-To:     Juergen Gross <jgross@suse.com>, Ingo Molnar <mingo@kernel.org>,
-        Li Zhijian <lizhijian@cn.fujitsu.com>
-Cc:     Peter Maydell <peter.maydell@linaro.org>, x86@kernel.org,
-        hpa@zytor.com, bp@alien8.de, mingo@redhat.com, tglx@linutronix.de,
-        QEMU Developers <qemu-devel@nongnu.org>,
-        Philip Li <philip.li@intel.com>, linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Kees Cook <keescook@chromium.org>
-References: <1541674784-25936-1-git-send-email-lizhijian@cn.fujitsu.com>
- <1541674784-25936-2-git-send-email-lizhijian@cn.fujitsu.com>
- <CAFEAcA_47wyar3WNhuBmNPdr02RHx-wn_TeyFaajpjzvzG8j5Q@mail.gmail.com>
- <c50d103e-95c3-c44c-d852-b6d7f8114b3a@cn.fujitsu.com>
- <20181109072015.GA86700@gmail.com>
- <38905d35-29af-b522-1629-b13e98a47a42@intel.com>
- <d30b404d-624e-0497-879a-2d5df2eb9f31@suse.com>
-From:   Li Zhijian <zhijianx.li@intel.com>
-Message-ID: <01ae76b5-bc70-7859-91e3-7e60e3cca247@intel.com>
-Date:   Fri, 9 Nov 2018 21:11:17 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Fri, 9 Nov 2018 17:57:14 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:39178 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727725AbeKIW5N (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 17:57:13 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA9D4TpI126442;
+        Fri, 9 Nov 2018 13:11:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=1vsrHPF0i32laW0hDwp5/dt37q797it8Bef0vgYQh9o=;
+ b=X/m1KbZUJobRrWSTcTywhZ8iC3xMRwNEd0Y7KOz1qfUOSNSJ3DqThO8YmoM8MbkYzknn
+ 0pSY2aDHZhkBGtX450T46M9ytgBLkK3JiKkJWCkyksR9WtfotL4Cx5uUK0eWF6ZDdHXM
+ n0fbrXaubcNGvFP6/iCReXNpmNb54+FJ0vGB7cmsjH0Gz4/QJaSJPgHl1xtZPGBlS1Xg
+ H7tYT45DFzhmEMuXhHz3xg7O2tUQqrUU/4KqzEZnepfj7Kwr7aqizy49BqedGuk7LY9b
+ 8E33ypFt8S2kC1Sqig1hVJTwgMaa3SR/vJTMFxzyJ9fn8/IdXzXaJmdojkB1EtHeTF0r zA== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2120.oracle.com with ESMTP id 2nh3mq6yhc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 09 Nov 2018 13:11:17 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wA9DBGKB000416
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 9 Nov 2018 13:11:16 GMT
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wA9DBED7003994;
+        Fri, 9 Nov 2018 13:11:15 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 09 Nov 2018 05:11:14 -0800
+To:     John Garry <john.garry@huawei.com>
+Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Janek Kotas <jank@cadence.com>,
+        "vinholikatti\@gmail.com" <vinholikatti@gmail.com>,
+        "jejb\@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
+        "robh+dt\@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland\@arm.com" <mark.rutland@arm.com>,
+        "devicetree\@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-scsi\@vger.kernel.org" <linux-scsi@vger.kernel.org>
+Subject: Re: [PATCH v4 2/2] scsi: ufs: Add UFS platform driver for Cadence UFS
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <C77CE2E3-F88A-4B1E-BECB-5D031E2930E3@global.cadence.com>
+        <1A428C77-982A-4EB8-8FDD-A33979753660@global.cadence.com>
+        <yq1tvkt1vly.fsf@oracle.com>
+        <38D3DEAD-C318-4BE2-8605-102FF572AD45@global.cadence.com>
+        <yq1tvkrvvad.fsf@oracle.com>
+        <c4937848-8459-1201-5ec1-2f453df15e1e@huawei.com>
+Date:   Fri, 09 Nov 2018 08:11:11 -0500
+In-Reply-To: <c4937848-8459-1201-5ec1-2f453df15e1e@huawei.com> (John Garry's
+        message of "Fri, 9 Nov 2018 11:51:59 +0000")
+Message-ID: <yq18t22wg40.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <d30b404d-624e-0497-879a-2d5df2eb9f31@suse.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9071 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=469
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1811090122
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just noticed that there is a field xloadflags at recent protocol
-   60 Protocol 2.12:  (Kernel 3.8) Added the xloadflags field and extension fields
-   61                 to struct boot_params for loading bzImage and ramdisk
-   62                 above 4G in 64bit.
-[snip]
-  617 Field name:     xloadflags
-  618 Type:           read
-  619 Offset/size:    0x236/2
-  620 Protocol:       2.12+
-  621
-  622   This field is a bitmask.
-  623
-  624   Bit 0 (read): XLF_KERNEL_64
-  625         - If 1, this kernel has the legacy 64-bit entry point at 0x200.
-  626
-  627   Bit 1 (read): XLF_CAN_BE_LOADED_ABOVE_4G
-  628         - If 1, kernel/boot_params/cmdline/ramdisk can be above 4G.
-  629
 
-maybe we can reuse this field and append a new Bit 5 XLF_INITRD_SIZE_4G or such
+John,
 
-
-thanks
-Zhijian
-
-  
-
-On 11/9/2018 6:04 PM, Juergen Gross wrote:
-> On 09/11/2018 10:57, Li Zhijian wrote:
->> On 11/9/2018 3:20 PM, Ingo Molnar wrote:
->>> * Li Zhijian <lizhijian@cn.fujitsu.com> wrote:
->>>
->>>>> If the kernel initrd creation process creates an initrd which
->>>>> is larger than 2GB and also claims that it can't be placed
->>>>> with any part of it above 2GB, then that sounds like a bug
->>>>> in the initrd creation process...
->>>> Exactly, it's a real problem.
->>>>
->>>> Add x86 maintainers and LKML:
->>>>
->>>> The background is that QEMU want to support up to 4G initrd. but
->>>> linux header (
->>>> initrd_addr_max field) only allow 2G-1.
->>>> Is one of the below approaches reasonable:
->>>> 1) change initrd_addr_max to 4G-1 directly
->>>> simply(arch/x86/boot/header.S)?
->>>> 2) lie QEMU bootloader the initrd_addr_max is 4G-1 even though header
->>>> said 2G-1
->>>> 3) any else
->>> A 10 years old comment from hpa says:
->>>
->>>     initrd_addr_max: .long 0x7fffffff
->>>                                           # (Header version 0x0203 or
->>> later)
->>>                                           # The highest safe address for
->>>                                           # the contents of an initrd
->>>                                           # The current kernel allows
->>> up to 4 GB,
->>>                                           # but leave it at 2 GB to avoid
->>>                                           # possible bootloader bugs.
->>>
->>> To avoid the potential of bugs lurking in dozens of major and hundreds of
->>> minor iterations of various Linux bootloaders I'd prefer a real solution
->>> and extend it - because if there's a 2GB initrd for some weird reason
->>> today there might be a 4GB one in two years.
->> thank a lots. that's amazing.
->>
->>
->>> The real solution would be to:
->>>
->>>    - Extend the boot protocol with a 64-bit field, named initrd_addr64_max
->>>      or such.
->>>    - We don't change the old field - but if the new field is set by new
->>>      kernels then new bootloaders can use that as a new initrd_addr64_max
->>>      value. (or reject to load the kernel if the address is too high.)
->>>
->>>    - The kernel build should also emit a warning when building larger than
->>>      2GB initrds, with a list of bootloaders that support the new
->>> protocol.
->> Actually i just knew QEMU(Seabios + optionrom(linuxboot_dma.bin)) can
->> support ~4GB initrd so far.
->>
->> i just drafted at patch to add this field. could you have a look.
->> another patch which is to document initrd_addr64_max is ongoing.
->>
->> commit db463ac9c1975f115d1ce2acb82d530c2b63b888
->> Author: Li Zhijian <lizhijian@cn.fujitsu.com>
->> Date:   Fri Nov 9 17:24:14 2018 +0800
->>
->>      x86: Add header field initrd_addr64_max
->>          Years ago, kernel had support load ~4GB initrd. But for some
->> weird reasons (
->>      avoid possible bootloader bugs), it only allow leave initrd under
->> 2GB address
->>      space(see initrd_addr_max fild at arch/x86/boot/header.S).
->>          So modern bootloaders have not chance to load >=2G initrd
->> previously.
->>          To avoid the potential of bugs lurking in dozens of major and
->> hundreds of
->>      minor iterations of various Linux bootloaders. Ingo suggests to add
->> a new field
->>      initrd_addr64_max. If bootloader believes that it can load initrd to
->>> =2G
->>      address space, it can use initrd_addr64_max as the maximum loading
->> address in
->>      stead of the old field initrd_addr_max.
->>
->> diff --git a/arch/x86/boot/header.S b/arch/x86/boot/header.S
->> index 4c881c8..5fc3ebe 100644
->> --- a/arch/x86/boot/header.S
->> +++ b/arch/x86/boot/header.S
->> @@ -300,7 +300,7 @@ _start:
->>          # Part 2 of the header, from the old setup.S
->>   
->>                  .ascii  "HdrS"          # header signature
->> -               .word   0x020e          # header version number (>= 0x0105)
->> +               .word   0x020f          # header version number (>= 0x0105)
->>                                          # or else old loadlin-1.5 will
->> fail)
->>                  .globl realmode_swtch
->>   realmode_swtch:        .word   0, 0            # default_switch, SETUPSEG
->> @@ -562,6 +562,12 @@ acpi_rsdp_addr:            .quad 0
->> # 64-bit physical pointer to the
->>                                                  # ACPI RSDP table, added
->> with
->>                                                  # version 2.14
->>   
->> +#ifdef CONFIG_INITRD_SIZE_4GB
->> +initrd_addr64_max:     .quad 0xffffffff        # allow ~4G initrd since
->> 2.15
->> +#else
->> +initrd_addr64_max:     .quad 0
-> Shouldn't this be 0x7fffffff?
+> I am building your 4.21 queue today, and it seems to be broken from
+> this patch:
 >
-> And please update Documentation/x86/boot.txt
+> https://kernel.googlesource.com/pub/scm/linux/kernel/git/mkp/scsi/+/b3874a425510d1164fd3428ab99273c07d210d82
 >
+> You seemed to miss adding the c-file:
+> make[3]: *** No rule to make target `drivers/scsi/ufs/cdns-pltfrm.o',
+> needed by `drivers/scsi/ufs/built-in.a'. Stop
 >
-> Juergen
+> Or am I missing something?
+
+A corner case wrt. handling of new files in my pre-commit hook prevented
+the .c file from getting properly committed.
+
+Fixed up, thanks!
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
