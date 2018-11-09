@@ -2,101 +2,156 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DATE_IN_PAST_24_48,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46508C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:38:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 640CDC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:38:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BD7B20840
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:38:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2628020825
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:38:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KyrD64xg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BD7B20840
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jT7uWQkG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2628020825
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728587AbeKJIUy (ORCPT
+        id S1728666AbeKJIVM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 03:20:54 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:33227 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726572AbeKJIUx (ORCPT
+        Sat, 10 Nov 2018 03:21:12 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:46801 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728612AbeKJIVM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 03:20:53 -0500
-Received: by mail-qk1-f196.google.com with SMTP id o89so4486800qko.0;
-        Fri, 09 Nov 2018 14:38:15 -0800 (PST)
+        Sat, 10 Nov 2018 03:21:12 -0500
+Received: by mail-ot1-f67.google.com with SMTP id w25so2343288otm.13
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 14:38:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references;
-        bh=adn9WeK/Tj/r2MSSsNdCYtTeqx4f7Pg9VC8oEd04F+s=;
-        b=KyrD64xgLc5aTNq/3V9R5OXgKT1naYkH7Gg1+0jgo763VN6nFYdCc5r3qdUWNRD58J
-         wA3HDDP9m83KMvE+Zwkv1zZfgL6A3OZV7WlsYyTrg8MZUZIzusUjZO32l9Kzm2I4JZTv
-         k6BrnHIOmd8gS62fc0LoprCNmMyMpnGfs82fn9xS5QzwtTJJMYrHdhB2cirDI5TmVMOW
-         mtHDYQtdN+Mjn6JSgfjanavbiOF+ulP428/Rv2QyrGeiobuUa8B3eu2SzbUW0CqmCi1D
-         c4ce4B+zfE9yQu7TXCfzsX9Ip+9YmUY8S7V90K4r5lLR92oQGKuJJ52k5btuUc54vD8k
-         NNTA==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=UBQZ3UPix5ecMKfxrx4oPXZzIm1CD4Si3oc6178k9EY=;
+        b=jT7uWQkGTaclv0/w97aydBMPqMqq27yzFu/WqYoxGfQWnNQJLNeUof4t6dPMR0ac5L
+         RhOaCAyweulEhhf+j+mF1qfbrjkpuR5KAnr0d+AOvUOpikNOhjLb/JrmLm1daf9Kh8AP
+         0yjxxLAiJh3vrR2Zb5S//Z/FohaHEooKzTdPU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references;
-        bh=adn9WeK/Tj/r2MSSsNdCYtTeqx4f7Pg9VC8oEd04F+s=;
-        b=rq7wdp94frpk/MHbnyaw6CrAaYpEAAlDFRliZsmN14VAj3G8jAkDI/I7Imnaq2+Rje
-         i+ONWt6zJ3W2EFFD0HpHa12AkpCV6KRbhBtk4ZlxtAIhLBh/I0MR9B7Qe4nyZ45GSKru
-         IBoogFV5mavIWTb9+cTZabnmek+abKe6weSOg1uAiVw6oJbymoZm/Nu1yDJo50VvFAf+
-         iywrsRBQjbrKsFsBW+/m9lxZXkHXo511GcgLqFWcFJNk1y800u7qI7mzHMCZeu36722L
-         t6t1LzmPbvODj0lLMaaCUJvfqhav8Ievf2k/2UtveLV2x4QozNtJIUzYc8ssfvxTeJaJ
-         Wtlg==
-X-Gm-Message-State: AGRZ1gJwmmDjj4QMuvuTO+KQBUl+ZR5oPw14cJO8S2BjFj4tMXmAz+Aw
-        rgjDJr4o2bJ5ulkbj1Egi1VuZmhu
-X-Google-Smtp-Source: AJdET5cAENoK+9jQ0PrKgl3Gzio3bKNdkOKXhIs9SXgGixuRfILTEyk9ZSrHP+0zaSOdIVS9JIow1Q==
-X-Received: by 2002:aed:3221:: with SMTP id y30mr10604846qtd.126.1541803094601;
-        Fri, 09 Nov 2018 14:38:14 -0800 (PST)
-Received: from ubuntu.localdomain ([177.194.48.25])
-        by smtp.gmail.com with ESMTPSA id b8sm6065968qka.79.2018.11.09.14.38.12
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=UBQZ3UPix5ecMKfxrx4oPXZzIm1CD4Si3oc6178k9EY=;
+        b=rGGr+tNVbuj7RVMVvPMXvvVQuGA0PwGMSTqQjHjLrhhJi26ImQDsyrve0dETvKtYxg
+         TuEf7hwU0XvK9azmyWZZx7SH51sy9XbrzxVbA6tANN6aizZg0+SCFx4yXvXd+pZBZ/kz
+         CTv5mCykYLFYaiYzmdRzcgtcZeMvXSNv3R/wNIgYsfnAgmh2fXE9i6bAGiFYEzjuZQ1g
+         HZmIunvhx66ViXMefmZLL2fDwBmpL68iWvaPhSdO3tMPHukExlZ8Z8WuZc0QvEqn8fZT
+         ouymNNFWX8o2k/vEROPznbOD1Jf/a0VARphbxrPmw2red6OQyNHVks3pepVXypOAlNNB
+         dl9w==
+X-Gm-Message-State: AGRZ1gIMgfqH+iapN2W1EoV3csNogqE4enLr9CCUxLetFHJPZ9KXFb76
+        9kjclDBJoG2xeuQQFdsMK25R4A==
+X-Google-Smtp-Source: AJdET5fa1/eQ8nM6AaAdjo3Pfz+TrNiL37wMzPrrJLJ1f81PjQ0p4wWL+nxa8k/4EJNdhGezTXfQqA==
+X-Received: by 2002:a9d:6287:: with SMTP id x7mr6648197otk.304.1541803113362;
+        Fri, 09 Nov 2018 14:38:33 -0800 (PST)
+Received: from [172.22.22.26] (c-71-195-29-92.hsd1.mn.comcast.net. [71.195.29.92])
+        by smtp.googlemail.com with ESMTPSA id q65-v6sm889234oif.6.2018.11.09.14.38.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 09 Nov 2018 14:38:14 -0800 (PST)
-From:   capetry.dev@gmail.com
-To:     atull@kernel.org, mdf@kernel.org, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] fpga: altera-cvp: Fix function definition argument
-Date:   Wed,  7 Nov 2018 23:13:12 -0200
-Message-Id: <20181108011312.29587-3-capetry.dev@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181108011312.29587-1-capetry.dev@gmail.com>
-References: <20181108011312.29587-1-capetry.dev@gmail.com>
+        Fri, 09 Nov 2018 14:38:32 -0800 (PST)
+Subject: Re: [RFC PATCH 01/12] dt-bindings: soc: qcom: add IPA bindings
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        David Miller <davem@davemloft.net>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        Networking <netdev@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        syadagir@codeaurora.org, mjavid@codeaurora.org
+References: <20181107003250.5832-1-elder@linaro.org>
+ <20181107003250.5832-2-elder@linaro.org>
+ <CAK8P3a1rXwADsgVJ4EAtV3u_qg840tfGnbKcyxuBXDB10sYi3Q@mail.gmail.com>
+From:   Alex Elder <elder@linaro.org>
+Message-ID: <d5c89037-f4fa-6ab7-dbca-d63f64c90fdc@linaro.org>
+Date:   Fri, 9 Nov 2018 16:38:30 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <CAK8P3a1rXwADsgVJ4EAtV3u_qg840tfGnbKcyxuBXDB10sYi3Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Carlos A Petry <capetry.dev@gmail.com>
+On 11/7/18 5:50 AM, Arnd Bergmann wrote:
+> On Wed, Nov 7, 2018 at 1:33 AM Alex Elder <elder@linaro.org> wrote:
+>>
+>> Add the binding definitions for the "qcom,ipa" and "qcom,rmnet-ipa"
+>> device tree nodes.
+>>
+>> Signed-off-by: Alex Elder <elder@linaro.org>
+>> ---
+>>  .../devicetree/bindings/soc/qcom/qcom,ipa.txt | 136 ++++++++++++++++++
+>>  .../bindings/soc/qcom/qcom,rmnet-ipa.txt      |  15 ++
+>>  2 files changed, 151 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,ipa.txt
+>>  create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,rmnet-ipa.txt
+> 
+> I think this should go into bindings/net instead of bindings/soc, since it's
+> mostly about networking rather than a specific detail of managing the SoC
+> itself.
 
-Fix the following checkpatch warning:
-WARNING: function definition argument 'struct altera_cvp_conf *'
+Done (in my tree--and will be reflected next time I send something out).
 
-Signed-off-by: Carlos A Petry <capetry.dev@gmail.com>
+>> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,ipa.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,ipa.txt
+>> new file mode 100644
+>> index 000000000000..d4d3d37df029
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,ipa.txt
+>> @@ -0,0 +1,136 @@
+>> +Qualcomm IPA (IP Accelerator) Driver
+>> +
+>> +This binding describes the Qualcomm IPA.  The IPA is capable of offloading
+>> +certain network processing tasks (e.g. filtering, routing, and NAT) from
+>> +the main processor.  The IPA currently serves only as a network interface,
+>> +providing access to an LTE network available via a modem.
+> 
+> That doesn't belong into the binding. Say what the hardware can do here,
+> not what a specific implementation of the driver does at this moment.
+> The binding should be written in an OS independent way after all.
 
----
- drivers/fpga/altera-cvp.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+OK.
 
-diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
-index 45b7c8c0b..150a9f5dd 100644
---- a/drivers/fpga/altera-cvp.c
-+++ b/drivers/fpga/altera-cvp.c
-@@ -66,7 +66,8 @@ struct altera_cvp_conf {
- 	struct fpga_manager	*mgr;
- 	struct pci_dev		*pci_dev;
- 	void __iomem		*map;
--	void			(*write_data)(struct altera_cvp_conf *, u32);
-+	void			(*write_data)(struct altera_cvp_conf *conf,
-+					      u32 data);
- 	char			mgr_name[64];
- 	u8			numclks;
- };
--- 
-2.17.1
+>> +- interrupts-extended:
+>> +       Specifies the IRQs used by the IPA.  Four cells are required,
+>> +       specifying: the IPA IRQ; the GSI IRQ; the clock query interrupt
+>> +       from the modem; and the "ready for stage 2 initialization"
+>> +       interrupt from the modem.  The first two are hardware IRQs; the
+>> +       third and fourth are SMP2P input interrupts.
+> 
+> You mean 'four interrupts', not 'four cells' -- each interrupt specifier
+> already consists of at least two cells (one for the phandle to the
+> irqchip, plus one or more cells to describe that interrupt).
+
+OK.
+
+>> +- interconnects:
+>> +       Specifies the interconnects used by the IPA.  Three cells are
+>> +       required, specifying:  the path from the IPA to memory; from
+>> +       IPA to internal (SoC resident) memory; and between the AP
+>> +       subsystem and IPA for register access.
+> 
+> Same here and in the rest.
+
+OK, I've fixed all of these.  Thank you.
+
+					-Alex
+
+> 
+>       Arnd
+> 
 
