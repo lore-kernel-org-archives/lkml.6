@@ -2,142 +2,133 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C51E8C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:53:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 263DAC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:53:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B4C420825
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:53:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WO2pNtLC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B4C420825
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id ED2CF20825
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:53:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED2CF20825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728234AbeKIUdE (ORCPT
+        id S1728256AbeKIUdT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 15:33:04 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:40145 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727596AbeKIUdD (ORCPT
+        Fri, 9 Nov 2018 15:33:19 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:48609 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728235AbeKIUdT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 15:33:03 -0500
-Received: by mail-pl1-f194.google.com with SMTP id q19-v6so789287pll.7
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 02:52:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rL8v/LvROlSKem8FDX3J+LREw8VykS3KF8XCvW2PKeY=;
-        b=WO2pNtLCGa/s1z0cme4MYKVM087TgaPILs0UhxCDQDBYctc9/LnXdobLvQ/Njzgnf+
-         RyBYWvnNbtZnSGRTDbU48HZ6q4OIUIgAwPJLP4ivfhwWQOFrIyZbmt3QBTeTqzXapNvF
-         9klZfn5en1gkeWc7eTTmvs+2ISn4/B88XWOgZrEXX5dApyaUcqbyT3kE9F5YIQnLbWqG
-         kH90rIdeTbTN19JaI2HR9HdO57J1egzBobfp4Jv/i0OQ686IsZN9RwndKZoflaJjTLFx
-         8Z3jxl8cwx3N0dUcyXdHbNvYIIIssdof4kkgXWf1H8xhZTuwDfO7vWeBn8ovzaRM4Are
-         ZLBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rL8v/LvROlSKem8FDX3J+LREw8VykS3KF8XCvW2PKeY=;
-        b=FG9uGGdAJhojnRzBBQwg2fYx6guAfWfIKdcS7Yc8Lqn6DA5B7xx4J3ZHVYGcAn0k0B
-         Dfh99eooQGW8PYjyjY1APsmBbolYh4TZPxZIyBxFmmjo04Nm8/dwntfwqzqZhOUb8lht
-         6k5ra675irEDRUxPSl5aBCm8ERjy0qLKNJh6Mhqgm+aOzjBet1Ix1uD3sCj3idoGDhzW
-         wvCY8RbOd8P7xo+AEGCjjh6VjJIaLzYdDcqS4LXFn9OiVsAWKitQWC0u6QpdQ+crs97t
-         J1NQHNs+yyf/litrbbK/kTTi35vWn3otBcQbmE537VYn6ro0EwF4FP3rv/PPbCIitc8s
-         IrCA==
-X-Gm-Message-State: AGRZ1gLWjjh847f68KXrIDhO+nTElE2n//ntsCxcrkIfbzaIB3y3ujzP
-        zTqBH1aOrhqez9VUUs15gNg=
-X-Google-Smtp-Source: AJdET5cID7S5SDzzw4aCKOs+nzs0hkFhXlE8XEds6dN5AsoDcaLkEI16y8CzVMzQWMfYx4t0Tp4aEg==
-X-Received: by 2002:a17:902:28a8:: with SMTP id f37-v6mr8493555plb.264.1541760778997;
-        Fri, 09 Nov 2018 02:52:58 -0800 (PST)
-Received: from localhost (14-202-194-140.static.tpgi.com.au. [14.202.194.140])
-        by smtp.gmail.com with ESMTPSA id 64-v6sm15623921pfa.120.2018.11.09.02.52.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 09 Nov 2018 02:52:58 -0800 (PST)
-Date:   Fri, 9 Nov 2018 21:52:55 +1100
-From:   Balbir Singh <bsingharora@gmail.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Kyungtae Kim <kt0755@gmail.com>, akpm@linux-foundation.org,
-        pavel.tatashin@microsoft.com, vbabka@suse.cz, osalvador@suse.de,
-        rppt@linux.vnet.ibm.com, aaron.lu@intel.com,
-        iamjoonsoo.kim@lge.com, alexander.h.duyck@linux.intel.com,
-        mgorman@techsingularity.net, lifeasageek@gmail.com,
-        threeearcat@gmail.com, syzkaller@googlegroups.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Subject: Re: UBSAN: Undefined behaviour in mm/page_alloc.c
-Message-ID: <20181109105255.GF9042@350D>
-References: <CAEAjamseRRHu+TaTkd1TwpLNm8mtDGP=2K0WKLF0wH-3iLcW_w@mail.gmail.com>
- <20181109084353.GA5321@dhcp22.suse.cz>
- <b51aae15-eb5d-47f0-1222-bfc1ef21e06c@I-love.SAKURA.ne.jp>
- <20181109095604.GC5321@dhcp22.suse.cz>
+        Fri, 9 Nov 2018 15:33:19 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gL4PY-00039s-LS; Fri, 09 Nov 2018 11:53:12 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gL4PY-0007zH-9o; Fri, 09 Nov 2018 11:53:12 +0100
+Date:   Fri, 9 Nov 2018 11:53:12 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Scott Branden <scott.branden@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-pwm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] pwm: kconfig: enable kona pwm to be built for cygnus
+ arch
+Message-ID: <20181109105312.lzeue3toefszv6sh@pengutronix.de>
+References: <20181107093613.26734-1-peron.clem@gmail.com>
+ <20181107161247.sesu2comhes2d4kx@pengutronix.de>
+ <dbd99d36-4ff2-8e14-cc54-0896459fdb0e@broadcom.com>
+ <CAJiuCccuFKaht93QPvT+taaT8g7CHGS9uP9Ekr0VWASp+ZGZmA@mail.gmail.com>
+ <20181108122246.GB1340@ulmo>
+ <CAJiuCcc07mTfqk1UOKqkSuJGOR-2AN18EJZ7qcvzkKoTGeUhaA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20181109095604.GC5321@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJiuCcc07mTfqk1UOKqkSuJGOR-2AN18EJZ7qcvzkKoTGeUhaA@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 09, 2018 at 10:56:04AM +0100, Michal Hocko wrote:
-> On Fri 09-11-18 18:41:53, Tetsuo Handa wrote:
-> > On 2018/11/09 17:43, Michal Hocko wrote:
-> > > @@ -4364,6 +4353,17 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
-> > >  	gfp_t alloc_mask; /* The gfp_t that was actually used for allocation */
-> > >  	struct alloc_context ac = { };
-> > >  
-> > > +	/*
-> > > +	 * In the slowpath, we sanity check order to avoid ever trying to
-> > 
-> > Please keep the comment up to dated.
+On Fri, Nov 09, 2018 at 10:58:41AM +0100, Clément Péron wrote:
+> Hi Thierry,
 > 
-> Does this following look better?
+> On Thu, 8 Nov 2018 at 13:22, Thierry Reding <thierry.reding@gmail.com> wrote:
+> >
+> > On Thu, Nov 08, 2018 at 11:47:53AM +0100, Clément Péron wrote:
+> > > Hi Uwe, Scott,
+> > >
+> > > On Wed, 7 Nov 2018 at 17:48, Scott Branden <scott.branden@broadcom.com> wrote:
+> > > >
+> > > >
+> > > > On 2018-11-07 8:12 a.m., Uwe Kleine-König wrote:
+> > > > > On Wed, Nov 07, 2018 at 10:36:12AM +0100, Clément Péron wrote:
+> > > > >> The Cygnus architecture use a Kona PWM. This is already present
+> > > > >> in the device tree but can't be built actually. Hence, allow the
+> > > > >> Kona PWM to be built for Cygnus arch.
+> > > > >>
+> > > > >> Signed-off-by: Clément Péron <peron.clem@gmail.com>
+> > > > >> ---
+> > > > >>   drivers/pwm/Kconfig | 3 ++-
+> > > > >>   1 file changed, 2 insertions(+), 1 deletion(-)
+> > > > >>
+> > > > >> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+> > > > >> index 763ee50ea57d..76d56fc8b1b7 100644
+> > > > >> --- a/drivers/pwm/Kconfig
+> > > > >> +++ b/drivers/pwm/Kconfig
+> > > > >> @@ -88,7 +88,8 @@ config PWM_BCM_IPROC
+> > > > >>
+> > > > >>   config PWM_BCM_KONA
+> > > > >>      tristate "Kona PWM support"
+> > > > >> -    depends on ARCH_BCM_MOBILE
+> > > > >> +    depends on ARCH_BCM_MOBILE || ARCH_BCM_CYGNUS
+> > > > >> +    default ARCH_BCM_CYGNUS
+> > > > > Is it possible to build this driver also on other arches? Then you might
+> > > > > want to consider
+> > > > >
+> > > > >       depends on ARCH_BCM_MOBILE || ARCH_BCM_CYGNUS || COMPILE_TEST
+> > > > good idea to add the COMPILE_TEST just to increase compile coverage
+> > >
+> > > Will Do.
+> >
+> > This is known to potentially break builds on things like UM where we
+> > have !HAS_IOMEM. Please make sure you thoroughly build-test before you
+> > switch on COMPILE_TEST.
 > 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 9fc10a1029cf..bf9aecba4222 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -4354,10 +4354,8 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
->  	struct alloc_context ac = { };
->  
->  	/*
-> -	 * In the slowpath, we sanity check order to avoid ever trying to
-> -	 * reclaim >= MAX_ORDER areas which will never succeed. Callers may
-> -	 * be using allocators in order of preference for an area that is
-> -	 * too large.
-> +	 * There are several places where we assume that the order value is sane
-> +	 * so bail out early if the request is out of bound.
->  	 */
->  	if (order >= MAX_ORDER) {
->  		WARN_ON_ONCE(!(gfp_mask & __GFP_NOWARN));
+> Thanks for the point, so something like this (but maybe it's too
+> protective no ?) :
+> 
+> config PWM_BCM_KONA
+>         tristate "Kona PWM support"
+>         depends on ARCH_BCM_MOBILE || ARCH_BCM_CYGNUS || COMPILE_TEST
+>         depends on COMMON_CLK && HAS_IOMEM && OF
 
-if (unlikely()) might help
+Instead of COMMON_CLK HAVE_CLK should be good enough. Just for compile
+testing the default implementations provided in include/linux/clk.h
+should even be good enough in the !HAVE_CLK case.
 
-> 
-> > I don't like that comments in OOM code is outdated.
-> > 
-> > > +	 * reclaim >= MAX_ORDER areas which will never succeed. Callers may
-> > > +	 * be using allocators in order of preference for an area that is
-> > > +	 * too large.
-> > > +	 */
-> > > +	if (order >= MAX_ORDER) {
-> > 
-> > Also, why not to add BUG_ON(gfp_mask & __GFP_NOFAIL); here?
-> 
-> Because we do not want to blow up the kernel just because of a stupid
-> usage of the allocator. Can you think of an example where it would
-> actually make any sense?
-> 
-> I would argue that such a theoretical abuse would blow up on an
-> unchecked NULL ptr access. Isn't that enough?
-> -- 
+Also OF might not be necessary, at least the driver compiles fine on
+amd64 without OF.
 
-Balbir Singh.
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
