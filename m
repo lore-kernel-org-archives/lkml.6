@@ -2,151 +2,143 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BCD8C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 01:51:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0E0EC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 01:57:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D87092086C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 01:51:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D87092086C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3DCBC20840
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 01:57:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iKHI3O8a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DCBC20840
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727825AbeKILaJ (ORCPT
+        id S1727760AbeKILfj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 06:30:09 -0500
-Received: from mga02.intel.com ([134.134.136.20]:32618 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727157AbeKILaJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 06:30:09 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 17:51:47 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,481,1534834800"; 
-   d="scan'208";a="98801745"
-Received: from btwcube1.sh.intel.com (HELO debian) ([10.67.104.173])
-  by orsmga003.jf.intel.com with ESMTP; 08 Nov 2018 17:51:45 -0800
-Date:   Fri, 9 Nov 2018 09:50:11 +0800
-From:   Tiwei Bie <tiwei.bie@intel.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Jason Wang <jasowang@redhat.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        virtio-dev@lists.oasis-open.org, wexu@redhat.com,
-        jfreimann@redhat.com
-Subject: Re: [PATCH net-next v2 3/5] virtio_ring: add packed ring support
-Message-ID: <20181109015011.GA24544@debian>
-References: <20180711022711.7090-1-tiwei.bie@intel.com>
- <20180711022711.7090-4-tiwei.bie@intel.com>
- <20181107123933-mutt-send-email-mst@kernel.org>
- <20181108013759.GA20591@debian>
- <2d46a41e-bc00-276a-e19a-105c9dffc75a@redhat.com>
- <20181108115148.GA15701@debian>
- <20181108103155-mutt-send-email-mst@kernel.org>
+        Fri, 9 Nov 2018 06:35:39 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:56588 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727157AbeKILfj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 06:35:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=RG6RaekDd2Lt5YJR7bhlFE8zXN2KReUj4+YZ0MxjvTA=; b=iKHI3O8ax8+U0Ythn0upq+imb
+        dOTioGMtW/ag+Uiot97Sv3avq/TWFJd5ZcBRr3C/UH8wFv9bFdmaZV2o0ag4jd35+H+bFdKhtlFx7
+        dt20clT2IIhGdPvY6lqELARciyaGXz36vbrz6EJdiC2zfsx9baSaWzyQ/HuLEic84ImNzfRJeKCFB
+        k9srqe0un5asMc4PQLPfEjuxkwTCVSlOgyibizGxvnTgI+KPm2oArgvNFnTEZOpz+jjd/EGNLjWPN
+        JvKp1RQyM9ntk/Ea77m4OFmM3KFlAQOxXXXDz2wNGqCpesAmUlipE+2D2tyMylce+qDAy36T6nql7
+        XbMhCLlPQ==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gKw2u-0003bC-03; Fri, 09 Nov 2018 01:57:16 +0000
+Subject: Re: drivers/acpi/pmic/intel_pmic_xpower.c:183: undefined reference to
+ `iosf_mbi_block_punit_i2c_access'
+To:     kbuild test robot <lkp@intel.com>,
+        Hans de Goede <hdegoede@redhat.com>
+Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+References: <201811030142.IIRPWNE6%fengguang.wu@intel.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <82320bbc-7e74-558a-284d-5f37d6a4cda7@infradead.org>
+Date:   Thu, 8 Nov 2018 17:57:15 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181108103155-mutt-send-email-mst@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <201811030142.IIRPWNE6%fengguang.wu@intel.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 10:56:02AM -0500, Michael S. Tsirkin wrote:
-> On Thu, Nov 08, 2018 at 07:51:48PM +0800, Tiwei Bie wrote:
-> > On Thu, Nov 08, 2018 at 04:18:25PM +0800, Jason Wang wrote:
-> > > 
-> > > On 2018/11/8 上午9:38, Tiwei Bie wrote:
-> > > > > > +
-> > > > > > +	if (vq->vq.num_free < descs_used) {
-> > > > > > +		pr_debug("Can't add buf len %i - avail = %i\n",
-> > > > > > +			 descs_used, vq->vq.num_free);
-> > > > > > +		/* FIXME: for historical reasons, we force a notify here if
-> > > > > > +		 * there are outgoing parts to the buffer.  Presumably the
-> > > > > > +		 * host should service the ring ASAP. */
-> > > > > I don't think we have a reason to do this for packed ring.
-> > > > > No historical baggage there, right?
-> > > > Based on the original commit log, it seems that the notify here
-> > > > is just an "optimization". But I don't quite understand what does
-> > > > the "the heuristics which KVM uses" refer to. If it's safe to drop
-> > > > this in packed ring, I'd like to do it.
-> > > 
-> > > 
-> > > According to the commit log, it seems like a workaround of lguest networking
-> > > backend.
-> > 
-> > Do you know why removing this notify in Tx will break "the
-> > heuristics which KVM uses"? Or what does "the heuristics
-> > which KVM uses" refer to?
+On 11/2/18 10:28 AM, kbuild test robot wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   d81f50bd34646d8373b989e55180c0fc9af94e0b
+> commit: 3c670dba864d9ab0a23612a93b7d98700734bd44 ACPI / PMIC: xpower: Block P-Unit I2C access during read-modify-write
+> date:   8 days ago
+> config: x86_64-randconfig-s3-11022323 (attached as .config)
+> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
+> reproduce:
+>         git checkout 3c670dba864d9ab0a23612a93b7d98700734bd44
+>         # save the attached .config to linux build tree
+>         make ARCH=x86_64 
 > 
-> Yes. QEMU has a mode where it disables notifications and processes TX
-> ring periodically from a timer.  It's off by default but used to be on
-> by default a long time ago. If ring becomes full this causes traffic
-> stalls.  As a work-around Rusty put in this hack to kick on ring full
-> even with notifications disabled.  It's easy enough to make sure QEMU
-> does not combine devices with packed ring support with the timer hack.
-> And I am guessing it's safe enough to also block that option completely
-> e.g. when virtio 1.0 is enabled.
-
-I see. Thanks!
-
+> All errors (new ones prefixed by >>):
 > 
-> > 
-> > > I agree to drop it, we should not have such burden.
-> > > 
-> > > But we should notice that, with this removed, the compare between packed vs
-> > > split is kind of unfair. Consider the removal of lguest support recently,
-> > > maybe we can drop this for split ring as well?
-> > > 
-> > > Thanks
-> > > 
-> > > 
-> > > > 
-> > > > commit 44653eae1407f79dff6f52fcf594ae84cb165ec4
-> > > > Author: Rusty Russell<rusty@rustcorp.com.au>
-> > > > Date:   Fri Jul 25 12:06:04 2008 -0500
-> > > > 
-> > > >      virtio: don't always force a notification when ring is full
-> > > >      We force notification when the ring is full, even if the host has
-> > > >      indicated it doesn't want to know.  This seemed like a good idea at
-> > > >      the time: if we fill the transmit ring, we should tell the host
-> > > >      immediately.
-> > > >      Unfortunately this logic also applies to the receiving ring, which is
-> > > >      refilled constantly.  We should introduce real notification thesholds
-> > > >      to replace this logic.  Meanwhile, removing the logic altogether breaks
-> > > >      the heuristics which KVM uses, so we use a hack: only notify if there are
-> > > >      outgoing parts of the new buffer.
-> > > >      Here are the number of exits with lguest's crappy network implementation:
-> > > >      Before:
-> > > >              network xmit 7859051 recv 236420
-> > > >      After:
-> > > >              network xmit 7858610 recv 118136
-> > > >      Signed-off-by: Rusty Russell<rusty@rustcorp.com.au>
-> > > > 
-> > > > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> > > > index 72bf8bc09014..21d9a62767af 100644
-> > > > --- a/drivers/virtio/virtio_ring.c
-> > > > +++ b/drivers/virtio/virtio_ring.c
-> > > > @@ -87,8 +87,11 @@ static int vring_add_buf(struct virtqueue *_vq,
-> > > >   	if (vq->num_free < out + in) {
-> > > >   		pr_debug("Can't add buf len %i - avail = %i\n",
-> > > >   			 out + in, vq->num_free);
-> > > > -		/* We notify*even if*  VRING_USED_F_NO_NOTIFY is set here. */
-> > > > -		vq->notify(&vq->vq);
-> > > > +		/* FIXME: for historical reasons, we force a notify here if
-> > > > +		 * there are outgoing parts to the buffer.  Presumably the
-> > > > +		 * host should service the ring ASAP. */
-> > > > +		if (out)
-> > > > +			vq->notify(&vq->vq);
-> > > >   		END_USE(vq);
-> > > >   		return -ENOSPC;
-> > > >   	}
-> > > > 
-> > > > 
+>    drivers/acpi/pmic/intel_pmic_xpower.o: In function `intel_xpower_pmic_update_power':
+>>> drivers/acpi/pmic/intel_pmic_xpower.c:183: undefined reference to `iosf_mbi_block_punit_i2c_access'
+>>> drivers/acpi/pmic/intel_pmic_xpower.c:200: undefined reference to `iosf_mbi_unblock_punit_i2c_access'
+
+This happens because of
+CONFIG_PMIC_OPREGION=y
+CONFIG_XPOWER_PMIC_OPREGION=y
+CONFIG_IOSF_MBI=m
+
+where XPOWER_PMIC_OPREGION (bool) depends on IOSF_MBI (tristate, =m).
+
+This build error could possibly be fixed by adding
+	select IOSF_MBI
+and dropping the "depends on" for XPOWER_PMIC_OPREGION, or by changing
+the "depends on" like this:
+
+ config XPOWER_PMIC_OPREGION
+ 	bool "ACPI operation region support for XPower AXP288 PMIC"
+-	depends on MFD_AXP20X_I2C && IOSF_MBI
++	depends on MFD_AXP20X_I2C && IOSF_MBI=y
+
+
+
+> vim +183 drivers/acpi/pmic/intel_pmic_xpower.c
+> 
+>    172	
+>    173	static int intel_xpower_pmic_update_power(struct regmap *regmap, int reg,
+>    174						  int bit, bool on)
+>    175	{
+>    176		int data, ret;
+>    177	
+>    178		/* GPIO1 LDO regulator needs special handling */
+>    179		if (reg == XPOWER_GPI1_CTRL)
+>    180			return regmap_update_bits(regmap, reg, GPI1_LDO_MASK,
+>    181						  on ? GPI1_LDO_ON : GPI1_LDO_OFF);
+>    182	
+>  > 183		ret = iosf_mbi_block_punit_i2c_access();
+>    184		if (ret)
+>    185			return ret;
+>    186	
+>    187		if (regmap_read(regmap, reg, &data)) {
+>    188			ret = -EIO;
+>    189			goto out;
+>    190		}
+>    191	
+>    192		if (on)
+>    193			data |= BIT(bit);
+>    194		else
+>    195			data &= ~BIT(bit);
+>    196	
+>    197		if (regmap_write(regmap, reg, data))
+>    198			ret = -EIO;
+>    199	out:
+>  > 200		iosf_mbi_unblock_punit_i2c_access();
+>    201	
+>    202		return ret;
+>    203	}
+>    204	
+> 
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+
+cheers.
+-- 
+~Randy
