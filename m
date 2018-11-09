@@ -8,57 +8,57 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D158C04EB8
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 06:08:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 824BDC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 06:08:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F37E214C1
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 06:08:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37E6F2086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 06:08:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sUuZQP+1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F37E214C1
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s0wH8Yom"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37E6F2086C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728178AbeKIPrD (ORCPT
+        id S1728203AbeKIPrE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 10:47:03 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:41697 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727603AbeKIPrC (ORCPT
+        Fri, 9 Nov 2018 10:47:04 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:41697 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728158AbeKIPrD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 10:47:02 -0500
-Received: by mail-pl1-f194.google.com with SMTP id p16-v6so445766plr.8;
-        Thu, 08 Nov 2018 22:08:01 -0800 (PST)
+        Fri, 9 Nov 2018 10:47:03 -0500
+Received: by mail-pl1-f193.google.com with SMTP id p16-v6so445792plr.8;
+        Thu, 08 Nov 2018 22:08:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=SEAqeXPr99Q2vo/zszVi0jNkz0OnJqyskwx/aIyN+c0=;
-        b=sUuZQP+10rT8qlPm2G+qfWMYj4ZkNH/cfarDkYfOZHWJPXn8l038Dp2+G0Y1j3foCV
-         nM9u2fo9QoAEoVXDfBNU4OxDtecin8e5nqfy2/l30/+U/08mOTUiE5ZmpHfgEED0BNi4
-         M9bX4eag8EpJfLUvZ2TsZAMrLEDkGwfQhYVbVkzJ1S2oArjFwA3j+SsguOKo5krsk8qO
-         wfPofyDeEIMECCuLKjRq0fvkusTeHOLLEFVt1rCzhIxAPHH54i2YS8qKjywUO+5ji+Dg
-         n7nJ90GNrGYU/tGlPP8xj0QSr8FODQOj59OiuaB1YTcniJ+lHv2Z2++xc6Vozdmq1FZS
-         aTPw==
+        bh=B33kF9iV0Uu4RxMZKXEawnQNU8qd2/woHNjsUwzS9rE=;
+        b=s0wH8YomeWLrPb03gdpSrV8FvNg+cry98nME9qdxQmtbwOeGmOq0GmEX8IbGOxkJvv
+         oZd96a5pZLvLvIF78gGHg2Xig3uLwfgMSwRFMoy7/p8rF4cQtTUj2A/N4REYk1cYRgKD
+         e2WUgV1RWVU7Mw5onOqqHfJJzubT5HOIMZ1VrIFK0xP6ZlZb+9Tp598x2zOERaW2P9UP
+         SlArPRpKTIKONZ2BFUkPPwwhnuDmd4MsWh4T0Jkg324fUjflYp2uCV7Q3WPf258/L/jq
+         ggd6I3LlYjUaD/1M4mT++5i1gyfKAyPf8wrO42Wxwb2uAss0UlTvxhY13j/P0OBhJ2+a
+         mhxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=SEAqeXPr99Q2vo/zszVi0jNkz0OnJqyskwx/aIyN+c0=;
-        b=q6KGb4uJ/nmF5Czw/3RYWhphOJZFYQbcQg5iyxVH+trnBtYskvsb4Eo+1w1MX9ww61
-         gVufo50XSS8il0/8hzWHPNi3Q0pYpZFaLGu8/VtIQp7XaIaTMgHzxjl4gX2Txo6FatX3
-         vnytyH4+oU8EZWMbm44x6K7PxUo+zOFwHfGuAkv/WDu4++de+pfEs9bcghzrAe6qiLaA
-         hQMWJkd796p0KiLtKpinFr3o0tpSLY3UATXHrQXaWHoSKWC7+DtUd/ZgOYqDtDQ5bn01
-         to6Rk6ylJJn7g4biFJ/R1WMW/ktW311b/ziVI+toy5wRvaH737Ehi5uJl5JKfgt7Rg9p
-         xlPg==
-X-Gm-Message-State: AGRZ1gIhKnbcbYWLVgIz8n2DxbeaB9x8A7/qWj4d7daEfe48xb7R2xNy
-        1Mj6hWN97tt4Y+bBC9829b4=
-X-Google-Smtp-Source: AJdET5cMsTSKiMyXr64yn47kz42UP04SOaNqSeIGg7BWi5Mv7S6bh5ySF2KAkRL3kIc1MkWOYyxYDw==
-X-Received: by 2002:a17:902:5a43:: with SMTP id f3-v6mr7670203plm.57.1541743681300;
-        Thu, 08 Nov 2018 22:08:01 -0800 (PST)
+        bh=B33kF9iV0Uu4RxMZKXEawnQNU8qd2/woHNjsUwzS9rE=;
+        b=nRr9bSFucy4seN8nAUbHypLUWKWiKZa5cb4H+hwnlUH0X7qxhqnpo0wg5xuJYS5Gu4
+         EnvDNpgYWokrULohSICq5LE+GRX7jw3crAiadjq1H4YokI4CEqKQTd/iwuAikF7t2RC8
+         kUDhQsR3coZByVxT+3GeJeO9TKjjXdcv8lIgsmGqbr+1rlM43TYG6WNIlF3VKw2f8Rx0
+         71/or2L0oA/9B4pSOGnjAlPYd2riXC+abiRZnBhl0ptZD76tqrtLHKbErZFtBR9GBEbJ
+         8o5M+WfMXVqQx5MH/Eks1pVgVRUUXUUGQviIywam7FkGDw70K8GVWcGKodOF8RQk2lZA
+         Ip2Q==
+X-Gm-Message-State: AGRZ1gKfIpMpoVnEzTDwWoOB5yJnPUAvfWYs0NnOUVEq3E561r8HvcZv
+        tqUEww4UAqZlxI15GhNqD9E=
+X-Google-Smtp-Source: AJdET5ezU26q3qtFV5XI8uVFXwC43rVlxWbKko340mCXDyN6CqYYMNG3rUhPWdsBExyKgyvIP0cg8A==
+X-Received: by 2002:a17:902:163:: with SMTP id 90-v6mr7711103plb.87.1541743682489;
+        Thu, 08 Nov 2018 22:08:02 -0800 (PST)
 Received: from localhost.localdomain (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id c70-v6sm6620722pfg.97.2018.11.08.22.08.00
+        by smtp.gmail.com with ESMTPSA id c70-v6sm6620722pfg.97.2018.11.08.22.08.01
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 08 Nov 2018 22:08:00 -0800 (PST)
+        Thu, 08 Nov 2018 22:08:01 -0800 (PST)
 From:   frowand.list@gmail.com
 To:     Rob Herring <robh+dt@kernel.org>,
         Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
@@ -68,9 +68,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         devicetree@vger.kernel.org, linux-fpga@vger.kernel.org
-Subject: [PATCH v7 14/17] of: overlay: set node fields from properties when add new overlay node
-Date:   Thu,  8 Nov 2018 22:06:02 -0800
-Message-Id: <1541743565-23163-15-git-send-email-frowand.list@gmail.com>
+Subject: [PATCH v7 15/17] of: unittest: allow base devicetree to have symbol metadata
+Date:   Thu,  8 Nov 2018 22:06:03 -0800
+Message-Id: <1541743565-23163-16-git-send-email-frowand.list@gmail.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1541743565-23163-1-git-send-email-frowand.list@gmail.com>
 References: <1541743565-23163-1-git-send-email-frowand.list@gmail.com>
@@ -81,132 +81,110 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Frank Rowand <frank.rowand@sony.com>
 
-Overlay nodes added by add_changeset_node() do not have the node
-fields name, phandle, and type set.
+The overlay metadata nodes in the FDT created from testcases.dts
+are not handled properly.
 
-The node passed to __of_attach_node() when the add node changeset
-entry is processed does not contain any properties.  The node's
-properties are located in add property changeset entries that will
-be processed after the add node changeset is applied.
+The __fixups__ and __local_fixups__ node were added to the live
+devicetree, but should not be.
 
-Set the node's fields in the node contained in the add node
-changeset entry and do not set them to incorrect values in
-add_changeset_node().
-
-A visible symptom that is fixed by this patch is the names of nodes
-added by overlays that have an entry in /sys/bus/platform/drivers/*/
-will contain the unit-address but the node-name will be <NULL>,  for
-example, "fc4ab000.<NULL>".  After applying the patch the name, in
-this example, for node restart@fc4ab000 is "fc4ab000.restart".
+Only the first property in the /__symbols__ node was added to the
+live devicetree if the live devicetree already contained a
+/__symbols node.  All of the node's properties must be added.
 
 Tested-by: Alan Tull <atull@kernel.org>
 Signed-off-by: Frank Rowand <frank.rowand@sony.com>
 ---
- drivers/of/dynamic.c | 27 ++++++++++++++++++---------
- drivers/of/overlay.c | 29 ++++++++++++++++++++++++-----
- 2 files changed, 42 insertions(+), 14 deletions(-)
+ drivers/of/unittest.c | 43 +++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 35 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
-index 146681540487..b4e5b90cb314 100644
---- a/drivers/of/dynamic.c
-+++ b/drivers/of/dynamic.c
-@@ -205,15 +205,24 @@ static void __of_attach_node(struct device_node *np)
- 	const __be32 *phandle;
- 	int sz;
- 
--	np->name = __of_get_property(np, "name", NULL) ? : "<NULL>";
--	np->type = __of_get_property(np, "device_type", NULL) ? : "<NULL>";
--
--	phandle = __of_get_property(np, "phandle", &sz);
--	if (!phandle)
--		phandle = __of_get_property(np, "linux,phandle", &sz);
--	if (IS_ENABLED(CONFIG_PPC_PSERIES) && !phandle)
--		phandle = __of_get_property(np, "ibm,phandle", &sz);
--	np->phandle = (phandle && (sz >= 4)) ? be32_to_cpup(phandle) : 0;
-+	if (!of_node_check_flag(np, OF_OVERLAY)) {
-+		np->name = __of_get_property(np, "name", NULL);
-+		np->type = __of_get_property(np, "device_type", NULL);
-+		if (!np->name)
-+			np->name = "<NULL>";
-+		if (!np->type)
-+			np->type = "<NULL>";
-+
-+		phandle = __of_get_property(np, "phandle", &sz);
-+		if (!phandle)
-+			phandle = __of_get_property(np, "linux,phandle", &sz);
-+		if (IS_ENABLED(CONFIG_PPC_PSERIES) && !phandle)
-+			phandle = __of_get_property(np, "ibm,phandle", &sz);
-+		if (phandle && (sz >= 4))
-+			np->phandle = be32_to_cpup(phandle);
-+		else
-+			np->phandle = 0;
-+	}
- 
- 	np->child = NULL;
- 	np->sibling = np->parent->child;
-diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
-index 184cc2c4a931..2b5ac43a5690 100644
---- a/drivers/of/overlay.c
-+++ b/drivers/of/overlay.c
-@@ -307,10 +307,11 @@ static int add_changeset_property(struct overlay_changeset *ovcs,
- 	int ret = 0;
- 	bool check_for_non_overlay_node = false;
- 
--	if (!of_prop_cmp(overlay_prop->name, "name") ||
--	    !of_prop_cmp(overlay_prop->name, "phandle") ||
--	    !of_prop_cmp(overlay_prop->name, "linux,phandle"))
--		return 0;
-+	if (target->in_livetree)
-+		if (!of_prop_cmp(overlay_prop->name, "name") ||
-+		    !of_prop_cmp(overlay_prop->name, "phandle") ||
-+		    !of_prop_cmp(overlay_prop->name, "linux,phandle"))
-+			return 0;
- 
- 	if (target->in_livetree)
- 		prop = of_find_property(target->np, overlay_prop->name, NULL);
-@@ -330,6 +331,10 @@ static int add_changeset_property(struct overlay_changeset *ovcs,
- 
- 	if (!prop) {
- 		check_for_non_overlay_node = true;
-+		if (!target->in_livetree) {
-+			new_prop->next = target->np->deadprops;
-+			target->np->deadprops = new_prop;
-+		}
- 		ret = of_changeset_add_property(&ovcs->cset, target->np,
- 						new_prop);
- 	} else if (!of_prop_cmp(prop->name, "#address-cells")) {
-@@ -400,9 +405,10 @@ static int add_changeset_node(struct overlay_changeset *ovcs,
- 		struct target *target, struct device_node *node)
+diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
+index 14838b21ec6a..d625a91a7f60 100644
+--- a/drivers/of/unittest.c
++++ b/drivers/of/unittest.c
+@@ -1071,20 +1071,44 @@ static void __init of_unittest_platform_populate(void)
+  *	of np into dup node (present in live tree) and
+  *	updates parent of children of np to dup.
+  *
+- *	@np:	node already present in live tree
++ *	@np:	node whose properties are being added to the live tree
+  *	@dup:	node present in live tree to be updated
+  */
+ static void update_node_properties(struct device_node *np,
+ 					struct device_node *dup)
  {
- 	const char *node_kbasename;
-+	const __be32 *phandle;
- 	struct device_node *tchild;
- 	struct target target_child;
--	int ret = 0;
-+	int ret = 0, size;
+ 	struct property *prop;
++	struct property *save_next;
+ 	struct device_node *child;
+-
+-	for_each_property_of_node(np, prop)
+-		of_add_property(dup, prop);
++	int ret;
  
- 	node_kbasename = kbasename(node->full_name);
- 
-@@ -416,6 +422,19 @@ static int add_changeset_node(struct overlay_changeset *ovcs,
- 			return -ENOMEM;
- 
- 		tchild->parent = target->np;
-+		tchild->name = __of_get_property(node, "name", NULL);
-+		tchild->type = __of_get_property(node, "device_type", NULL);
+ 	for_each_child_of_node(np, child)
+ 		child->parent = dup;
 +
-+		if (!tchild->name)
-+			tchild->name = "<NULL>";
-+		if (!tchild->type)
-+			tchild->type = "<NULL>";
++	/*
++	 * "unittest internal error: unable to add testdata property"
++	 *
++	 *    If this message reports a property in node '/__symbols__' then
++	 *    the respective unittest overlay contains a label that has the
++	 *    same name as a label in the live devicetree.  The label will
++	 *    be in the live devicetree only if the devicetree source was
++	 *    compiled with the '-@' option.  If you encounter this error,
++	 *    please consider renaming __all__ of the labels in the unittest
++	 *    overlay dts files with an odd prefix that is unlikely to be
++	 *    used in a real devicetree.
++	 */
 +
-+		/* ignore obsolete "linux,phandle" */
-+		phandle = __of_get_property(node, "phandle", &size);
-+		if (phandle && (size == 4))
-+			tchild->phandle = be32_to_cpup(phandle);
-+
- 		of_node_set_flag(tchild, OF_OVERLAY);
++	/*
++	 * open code for_each_property_of_node() because of_add_property()
++	 * sets prop->next to NULL
++	 */
++	for (prop = np->properties; prop != NULL; prop = save_next) {
++		save_next = prop->next;
++		ret = of_add_property(dup, prop);
++		if (ret)
++			pr_err("unittest internal error: unable to add testdata property %pOF/%s",
++			       np, prop->name);
++	}
+ }
  
- 		ret = of_changeset_attach_node(&ovcs->cset, tchild);
+ /**
+@@ -1093,18 +1117,23 @@ static void update_node_properties(struct device_node *np,
+  *
+  *	@np:	Node to attach to live tree
+  */
+-static int attach_node_and_children(struct device_node *np)
++static void attach_node_and_children(struct device_node *np)
+ {
+ 	struct device_node *next, *dup, *child;
+ 	unsigned long flags;
+ 	const char *full_name;
+ 
+ 	full_name = kasprintf(GFP_KERNEL, "%pOF", np);
++
++	if (!strcmp(full_name, "/__local_fixups__") ||
++	    !strcmp(full_name, "/__fixups__"))
++		return;
++
+ 	dup = of_find_node_by_path(full_name);
+ 	kfree(full_name);
+ 	if (dup) {
+ 		update_node_properties(np, dup);
+-		return 0;
++		return;
+ 	}
+ 
+ 	child = np->child;
+@@ -1125,8 +1154,6 @@ static int attach_node_and_children(struct device_node *np)
+ 		attach_node_and_children(child);
+ 		child = next;
+ 	}
+-
+-	return 0;
+ }
+ 
+ /**
 -- 
 Frank Rowand <frank.rowand@sony.com>
 
