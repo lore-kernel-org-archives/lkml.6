@@ -2,118 +2,121 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38480C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:00:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64C4AC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:00:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E95432086C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:00:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E95432086C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 1C3E72086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:00:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C3E72086C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=angband.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728644AbeKJEmO (ORCPT
+        id S1728712AbeKJEmT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 23:42:14 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34226 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728162AbeKJEmO (ORCPT
+        Fri, 9 Nov 2018 23:42:19 -0500
+Received: from tartarus.angband.pl ([54.37.238.230]:51088 "EHLO
+        tartarus.angband.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728162AbeKJEmR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 23:42:14 -0500
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5CA057A9;
-        Fri,  9 Nov 2018 19:00:20 +0000 (UTC)
-Date:   Fri, 9 Nov 2018 11:00:19 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     David Laight <David.Laight@ACULAB.COM>,
-        "'Bart Van Assche'" <bvanassche@acm.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Christoph Lameter <cl@linux.com>, Roman Gushchin <guro@fb.com>,
-        "Darryl T. Agostinelli" <dagostinelli@gmail.com>
-Subject: Re: [PATCH] slab.h: Avoid using & for logical and of booleans
-Message-Id: <20181109110019.c82fba8125d4e2891fbe4a6c@linux-foundation.org>
-In-Reply-To: <cbc1fc52-dc8c-aa38-8f29-22da8bcd91c1@suse.cz>
-References: <20181105204000.129023-1-bvanassche@acm.org>
-        <62188a351f2249188ce654ee03c894b1@AcuMS.aculab.com>
-        <e44e6c8b-e4e4-e7cb-a5ca-88e9559eb0d7@suse.cz>
-        <3c9adab0f1f74c46a60b3d4401030337@AcuMS.aculab.com>
-        <60deb90d-e521-39e5-5072-fc9efb98e365@suse.cz>
-        <9af3ac1d43bb422cb3c41e7e8e422e6e@AcuMS.aculab.com>
-        <cbc1fc52-dc8c-aa38-8f29-22da8bcd91c1@suse.cz>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Fri, 9 Nov 2018 23:42:17 -0500
+Received: from kilobyte by tartarus.angband.pl with local (Exim 4.89)
+        (envelope-from <kilobyte@angband.pl>)
+        id 1gLC0X-000503-84; Fri, 09 Nov 2018 19:59:53 +0100
+Date:   Fri, 9 Nov 2018 19:59:53 +0100
+From:   Adam Borowski <kilobyte@angband.pl>
+To:     linux-kernel@vger.kernel.org, Nick Terrell <terrelln@fb.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-m68k@lists.linux-m68k.org,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>,
+        openrisc@lists.librecores.org,
+        "James E.J. Bottomley" <jejb@parisc-linux.org>,
+        Helge Deller <deller@gmx.de>, linux-parisc@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        linux-s390@vger.kernel.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        linux-xtensa@linux-xtensa.org
+Subject: [PATCH 0/17] Kernel compression: add ZSTD, remove LZMA1 and BZIP2
+Message-ID: <20181109185953.xwyelyqnygbskkxk@angband.pl>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-Junkbait: aaron@angband.pl, zzyx@angband.pl
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: kilobyte@angband.pl
+X-SA-Exim-Scanned: No (on tartarus.angband.pl); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 9 Nov 2018 09:12:09 +0100 Vlastimil Babka <vbabka@suse.cz> wrote:
+Hi!
+As new compressors get invented, they tend to find their way into the
+kernel, yet we never prune superseded ones.  It's time to do so.
 
-> Multiple people have reported the following sparse warning:
-> 
-> ./include/linux/slab.h:332:43: warning: dubious: x & !y
-> 
-> The minimal fix would be to change the logical & to boolean &&, which emits the
-> same code, but Andrew has suggested that the branch-avoiding tricks are maybe
-> not worthwile. David Laight provided a nice comparison of disassembly of
-> multiple variants, which shows that the current version produces a 4 deep
-> dependency chain, and fixing the sparse warning by changing logical and to
-> multiplication emits an IMUL, making it even more expensive.
-> 
-> The code as rewritten by this patch yielded the best disassembly, with a single
-> predictable branch for the most common case, and a ternary operator for the
-> rest, which gcc seems to compile without a branch or cmov by itself.
-> 
-> The result should be more readable, without a sparse warning and probably also
-> faster for the common case.
-> 
-> Reported-by: Bart Van Assche <bvanassche@acm.org>
-> Reported-by: Darryl T. Agostinelli <dagostinelli@gmail.com>
-> Suggested-by: Andrew Morton <akpm@linux-foundation.org>
-> Suggested-by: David Laight <David.Laight@ACULAB.COM>
-> Fixes: 1291523f2c1d ("mm, slab/slub: introduce kmalloc-reclaimable caches")
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> ---
->  include/linux/slab.h | 24 ++++++++++++------------
->  1 file changed, 12 insertions(+), 12 deletions(-)
-> 
-> diff --git a/include/linux/slab.h b/include/linux/slab.h
-> index 918f374e7156..18c6920c2803 100644
-> --- a/include/linux/slab.h
-> +++ b/include/linux/slab.h
-> @@ -304,6 +304,8 @@ enum kmalloc_cache_type {
->  	KMALLOC_RECLAIM,
->  #ifdef CONFIG_ZONE_DMA
->  	KMALLOC_DMA,
-> +#else
-> +	KMALLOC_DMA = KMALLOC_NORMAL,
->  #endif
->  	NR_KMALLOC_TYPES
->  };
+In particular, BZIP2 is drastically slower than other compressors we
+have, even when they achieve smaller sizes.  It takes more memory, too.
+And, BZIP2 is not used anywhere else in the kernel -- just for booting
+the kernel itself and the initrd.  Thus, we can drop it from the tree
+completely, making Linus happier by around 900 lines.
 
-I don't think this works correctly.  Resetting KMALLOC_DMA to 0 will
-cause NR_KMALLOC_TYPES to have value 1.
+LZMA1 is redundant with XZ (LZMA2), and unlike the latter, it uses its own
+copy of code that's not shared with anything else (some drivers use XZ).
+Let's drop it as well.  Some bootloaders can use it thus let's keep the
+Kconfig option, but I left no piece of code inside the kernel itself.
+
+On the other hand, Nick Terrell has a couple of patches adding ZSTD support
+(using code already in use in multiple pieces around the kernel).  ZSTD is
+strong and fast, obsoleting all mid-range compressors.  As the removal of
+BZIP2 and LZMA1 would be hopelessly entangled with this addition, I'm
+resending Nick's patches here.  I've been booting using them since Oct'17
+on amd64 (kernel+initrd), armhf and arm64 (initrd) without issues, other
+folks tested various other architectures as well.
+
+Thus, I'd recommend people to use:
+* XZ for most machines
+* ZSTD where speed is important
+* maaaaybe LZ4 is some special cases
+(grub and u-boot are ridiculously slow at reading, making fast but weak
+decompressors a net loss.  On the other hand, XZ decompresses pretty fast
+but is very slow at compress time, making ZSTD preferred for rapid devel
+cycles.)
+
+* we can't get rid of GZIP in foreseable future
+* LZO is obsolete but is used elsewhere in the kernel
+
+Total:
+ 69 files changed, 518 insertions(+), 1785 deletions(-)
+
+Not sure whose tree this patchset should go through.  I'm also not sure
+how finely split into commits you want the arch bits be; I included
+defconfig bits all together, yet separated code changes per-arch.
 
 
-enum foo {
-	a = 0,
-	b,
-	c = 0,
-	d
-}
-
-main()
-{
-	printf("%d %d %d %d\n", a, b, c, d);
-}
-
-akpm3> ./a.out
-0 1 0 1
-
+Meow!
+-- 
+⢀⣴⠾⠻⢶⣦⠀ 
+⣾⠁⢠⠒⠀⣿⡁ A dumb species has no way to open a tuna can.
+⢿⡄⠘⠷⠚⠋⠀ A smart species invents a can opener.
+⠈⠳⣄⠀⠀⠀⠀ A master species delegates.
