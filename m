@@ -2,111 +2,108 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F21EC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:22:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 385D9C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:25:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECFC9204FD
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:22:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECFC9204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E87AA20855
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:25:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="A/SA9FCl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E87AA20855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727655AbeKISCO (ORCPT
+        id S1727666AbeKISE3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 13:02:14 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:56542 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727366AbeKISCO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 13:02:14 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9FCDE308429E;
-        Fri,  9 Nov 2018 08:22:45 +0000 (UTC)
-Received: from krava (unknown [10.40.205.8])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 54457600D4;
-        Fri,  9 Nov 2018 08:22:43 +0000 (UTC)
-Date:   Fri, 9 Nov 2018 09:22:42 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v15 0/3]: perf: reduce data loss when profiling highly
- parallel CPU bound workloads
-Message-ID: <20181109082242.GJ29732@krava>
-References: <75e779bf-dc6b-ea24-67a5-f53a39bb7374@linux.intel.com>
+        Fri, 9 Nov 2018 13:04:29 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33758 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727518AbeKISE2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 13:04:28 -0500
+Received: by mail-pf1-f196.google.com with SMTP id v68-v6so618098pfk.0
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 00:24:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Xt7QCGw++akA77vlfkmWoTE9LyFDe/QX/BbsCJDsPBk=;
+        b=A/SA9FClORwx0R6elb0IcLTjl5KNb0T15LI40GkkJrx+BXwnXE6fcM1HCD61ERQX5w
+         YmWs9aU0cWpVJfRjp0vD5bk1ab8ZBXXulsNByoHxTgM1jPmdzosCsmVIeJSh084dwyfd
+         kdNi0jL3MAm5aBAQ5Clrw3O4ZdZL/5wTPxF8w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Xt7QCGw++akA77vlfkmWoTE9LyFDe/QX/BbsCJDsPBk=;
+        b=c/tTiYwv0jhcDQJgfW/EAI1qh+nHEJyu6TIY8rg1WTTDtFwDzoaWpxiswV/A/55ToT
+         K4w3TyuP44nZ/2VnesC4OvvcNEaJECO9N2WIR5t5H39zdAf3wN4V5uS11WrAwpZGobO9
+         JonRRLvUF+eGumE2v2d6u/vAT+p8YeV/7h9wal5zVIQH/VSox9GHf5DiwzHzTMk41lKH
+         8y6Caz3H1EJuLpA6x/8qOEc13SvhYn8RQ076r1KfbYwYgxe33M30n+YOWSDIz8nFnqeG
+         yqIyJGuyKvcAmZGhnX1Hq0wkxVS8k4fjTiwHLRac+Yp30jszgnQcXB/XVwhEkeLPbtlR
+         gDBw==
+X-Gm-Message-State: AGRZ1gIyjn1fWNT2sF3pA0pLAluD+dfYwPLHKdYZ0IdLfhvZZDhKx0pm
+        oCF0jVawUwdAuAL98tfgi7ge7g==
+X-Google-Smtp-Source: AJdET5eSKbdk5UJHF0yrZ4GLXOcx7jYFXEFEDcZtMrya6XPJm7znurvMH5vqsl7N0/k3jYB0+0UiNA==
+X-Received: by 2002:a62:f599:: with SMTP id b25-v6mr8149413pfm.253.1541751899094;
+        Fri, 09 Nov 2018 00:24:59 -0800 (PST)
+Received: from drinkcat2.tpe.corp.google.com ([2401:fa00:1:b:f659:7f17:ea11:4e8e])
+        by smtp.gmail.com with ESMTPSA id u2-v6sm6415667pfn.50.2018.11.09.00.24.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 09 Nov 2018 00:24:58 -0800 (PST)
+From:   Nicolas Boichat <drinkcat@chromium.org>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     Will Deacon <will.deacon@arm.com>, Joerg Roedel <joro@8bytes.org>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@suse.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Levin Alexander <alexander.levin@verizon.com>,
+        Huaisheng Ye <yehs1@lenovo.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Yong Wu <yong.wu@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Tomasz Figa <tfiga@google.com>, yingjoe.chen@mediatek.com
+Subject: [PATCH RFC 0/3] iommu/io-pgtable-arm-v7s: Use DMA32 zone for page tables
+Date:   Fri,  9 Nov 2018 16:24:45 +0800
+Message-Id: <20181109082448.150302-1-drinkcat@chromium.org>
+X-Mailer: git-send-email 2.19.1.930.g4563a0d9d0-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <75e779bf-dc6b-ea24-67a5-f53a39bb7374@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Fri, 09 Nov 2018 08:22:45 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 06, 2018 at 11:53:02AM +0300, Alexey Budankov wrote:
-> 
-> Currently in record mode the tool implements trace writing serially. 
-> The algorithm loops over mapped per-cpu data buffers and stores 
-> ready data chunks into a trace file using write() system call.
-> 
-> At some circumstances the kernel may lack free space in a buffer 
-> because the other buffer's half is not yet written to disk due to 
-> some other buffer's data writing by the tool at the moment.
-> 
-> Thus serial trace writing implementation may cause the kernel 
-> to loose profiling data and that is what observed when profiling 
-> highly parallel CPU bound workloads on machines with big number 
-> of cores.
-> 
-> Experiment with profiling matrix multiplication code executing 128 
-> threads on Intel Xeon Phi (KNM) with 272 cores, like below,
-> demonstrates data loss metrics value of 98%:
-> 
-> /usr/bin/time perf record -o /tmp/perf-ser.data -a -N -B -T -R -g \
->     --call-graph dwarf,1024 --user-regs=IP,SP,BP --switch-events \
->     -e cycles,instructions,ref-cycles,software/period=1,name=cs,config=0x3/Duk -- \
->     matrix.gcc
-> 
-> Data loss metrics is the ratio lost_time/elapsed_time where 
-> lost_time is the sum of time intervals containing PERF_RECORD_LOST 
-> records and elapsed_time is the elapsed application run time 
-> under profiling.
-> 
-> Applying asynchronous trace streaming thru Posix AIO API [1] lowers 
-> data loss metrics value providing 2x improvement (from 98% to ~1%)
-> 
-> Asynchronous trace streaming is currently limited to glibc linkage.
-> musl libc [5] also provides Posix AIO API implementation, however 
-> the patchkit is not tested with it. There may be other libc libraries 
-> linked by Perf tool that currently lack Posix AIO API support [2], 
-> [3], [4] so NO_AIO define may be used to limit Perf tool binary to 
-> serial streaming only.
-> 
-> ---
->  Alexey Budankov (3):
-> 	perf util: map data buffer for preserving collected data
-> 	perf record: enable asynchronous trace writing
-> 	perf record: extend trace writing to multi AIO
+This is a follow-up to the discussion in [1], to make sure that the page tables
+allocated by iommu/io-pgtable-arm-v7s are contained within 32-bit physical
+address space.
 
-FYI I was rebasing my threads branch on top of this and
-first 2 won't apply anymore on Arnaldo's perf/core
+[1] https://lists.linuxfoundation.org/pipermail/iommu/2018-November/030876.html
 
-Arnaldo,
-could we get this merged soon? the world around is moving
-fast and we don't want 20th revision on this ;-)
+Nicolas Boichat (3):
+  mm: When CONFIG_ZONE_DMA32 is set, use DMA32 for SLAB_CACHE_DMA
+  include/linux/gfp.h: Add __get_dma32_pages macro
+  iommu/io-pgtable-arm-v7s: Request DMA32 memory, and improve debugging
 
-thanks,
-jirka
+ drivers/iommu/io-pgtable-arm-v7s.c |  6 ++++--
+ include/linux/gfp.h                |  2 ++
+ include/linux/slab.h               | 13 ++++++++++++-
+ mm/slab.c                          |  2 +-
+ mm/slub.c                          |  2 +-
+ 5 files changed, 20 insertions(+), 5 deletions(-)
+
+-- 
+2.19.1.930.g4563a0d9d0-goog
+
