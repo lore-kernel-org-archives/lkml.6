@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7459DC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 13:00:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84A8FC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 13:00:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2810C2081C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 13:00:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3885420840
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 13:00:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="qMGXJDeq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2810C2081C
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="gXUsaWE4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3885420840
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728245AbeKIWlR (ORCPT
+        id S1728279AbeKIWlU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 17:41:17 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:54634 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728140AbeKIWlQ (ORCPT
+        Fri, 9 Nov 2018 17:41:20 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:58196 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728140AbeKIWlU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 17:41:16 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA9Cx68S122216;
-        Fri, 9 Nov 2018 13:00:15 GMT
+        Fri, 9 Nov 2018 17:41:20 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA9Cwwn9111212;
+        Fri, 9 Nov 2018 13:00:20 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=6w2dSfBnF+4vTOXQEb5VsZryWqdLGnr2U0vY3Q8Zsao=;
- b=qMGXJDeqeWZejTnVxhCrwUQVHjezwgh9Nljvb/WcOPaTedxYpj3kNu5L+55ede+eaXoV
- sMb7HYsFaFIaP3DeJxTF3mt5ioNVlrzzfkXo2nzxz56Uogv1AacL44lWb02gttlheH7Q
- mzuKEYZZVpR3rgKGeXzlcAocINclGJVQSmRUHuj5v+0c1h/G5tMKwLx6HW9431z8m6tM
- CrPPJYgJB/+MR9BsnUAeiJ3tpeaZeHrcLXIIhISp05FdyeNBWlyxVCL9euS67AhBfL6e
- lWNNhW8zgKfYJp/OjO8pLv1yIx6XgjK9HluElqTbMyetgMArgcX/G3XR1NbaVH1ySS2u Qw== 
+ bh=pbGGMWq6aG6jrZEkbtBvXAcOs0Iji6TqkVLEky8So1g=;
+ b=gXUsaWE4DWIct+ZmwbzBczRRIDQeJfJJv2aV5uePFw+Ag+bvitBozZaw2etzgxIfskIj
+ S8LyujEnje/b1+IRcArufDXvC3P4p8MGqZtmwFS1wGv4Q+an1Uc1GVnw79yhnxCrYX3M
+ 6lEGdP1/EIksKye3pWkwQnrRkVZLo9aAeIU18HCYMtZfM59VwLpD5GLjqW/n6FyS/X2G
+ EZ57Vla+Kcacba3MZ7XIne4quRE1804o87/Ahm1GdRXN0BQs5VXegHXRqT9ZKqm4JA1q
+ zbkXbQsisVbR1dL5t1C6bn+8guD19aGuKm9jbPYeVb9DZVxemEj617QmWu8sxDD0LvGe Eg== 
 Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2120.oracle.com with ESMTP id 2nh3mq6x4a-1
+        by userp2130.oracle.com with ESMTP id 2nh33uex2f-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 09 Nov 2018 13:00:15 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wA9D0EDL016454
+        Fri, 09 Nov 2018 13:00:20 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wA9D0Dh7016221
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 9 Nov 2018 13:00:15 GMT
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wA9D0EIf031167;
         Fri, 9 Nov 2018 13:00:14 GMT
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wA9D0DiM028234;
+        Fri, 9 Nov 2018 13:00:13 GMT
 Received: from ca-dev63.us.oracle.com (/10.211.8.221)
         by default (Oracle Beehive Gateway v4.0)
         with ESMTP ; Fri, 09 Nov 2018 05:00:13 -0800
@@ -60,9 +60,9 @@ Cc:     subhra.mazumdar@oracle.com, dhaval.giani@oracle.com,
         valentin.schneider@arm.com, vincent.guittot@linaro.org,
         quentin.perret@arm.com, steven.sistare@oracle.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 10/10] sched/fair: Provide idle search schedstats
-Date:   Fri,  9 Nov 2018 04:50:40 -0800
-Message-Id: <1541767840-93588-11-git-send-email-steven.sistare@oracle.com>
+Subject: [PATCH v3 09/10] sched/fair: disable stealing if too many NUMA nodes
+Date:   Fri,  9 Nov 2018 04:50:39 -0800
+Message-Id: <1541767840-93588-10-git-send-email-steven.sistare@oracle.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1541767840-93588-1-git-send-email-steven.sistare@oracle.com>
 References: <1541767840-93588-1-git-send-email-steven.sistare@oracle.com>
@@ -76,355 +76,233 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add schedstats to measure the effectiveness of searching for idle CPUs
-and stealing tasks.  This is a temporary patch intended for use during
-development only.  SCHEDSTAT_VERSION is bumped to 16, and the following
-fields are added to the per-CPU statistics of /proc/schedstat:
+The STEAL feature causes regressions on hackbench on larger NUMA systems,
+so disable it on systems with more than sched_steal_node_limit nodes
+(default 2).  Note that the feature remains enabled as seen in features.h
+and /sys/kernel/debug/sched_features, but stealing is only performed if
+nodes <= sched_steal_node_limit.  This arrangement allows users to activate
+stealing on reboot by setting the kernel parameter sched_steal_node_limit
+on kernels built without CONFIG_SCHED_DEBUG.  The parameter is temporary
+and will be deleted when the regression is fixed.
 
-field 10: # of times select_idle_sibling "easily" found an idle CPU --
-          prev or target is idle.
-field 11: # of times select_idle_sibling searched and found an idle cpu.
-field 12: # of times select_idle_sibling searched and found an idle core.
-field 13: # of times select_idle_sibling failed to find anything idle.
-field 14: time in nanoseconds spent in functions that search for idle
-          CPUs and search for tasks to steal.
-field 15: # of times an idle CPU steals a task from another CPU.
-field 16: # of times try_steal finds overloaded CPUs but no task is
-           migratable.
+Details of the regression follow.  With the STEAL feature set, hackbench
+is slower on many-node systems:
+
+X5-8: 8 sockets * 18 cores * 2 hyperthreads = 288 CPUs
+Intel(R) Xeon(R) CPU E7-8895 v3 @ 2.60GHz
+Average of 10 runs of: hackbench <groups> processes 50000
+
+          --- base --    --- new ---
+groups    time %stdev    time %stdev  %speedup
+     1   3.627   15.8   3.876    7.3      -6.5
+     2   4.545   24.7   5.583   16.7     -18.6
+     3   5.716   25.0   7.367   14.2     -22.5
+     4   6.901   32.9   7.718   14.5     -10.6
+     8   8.604   38.5   9.111   16.0      -5.6
+    16   7.734    6.8  11.007    8.2     -29.8
+
+Total CPU time increases.  Profiling shows that CPU time increases
+uniformly across all functions, suggesting a systemic increase in cache
+or memory latency.  This may be due to NUMA migrations, as they cause
+loss of LLC cache footprint and remote memory latencies.
+
+The domains for this system and their flags are:
+
+  domain0 (SMT) : 1 core
+    SD_LOAD_BALANCE SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK
+    SD_SHARE_PKG_RESOURCES SD_PREFER_SIBLING SD_SHARE_CPUCAPACITY
+    SD_WAKE_AFFINE
+
+  domain1 (MC) : 1 socket
+    SD_LOAD_BALANCE SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK
+    SD_SHARE_PKG_RESOURCES SD_PREFER_SIBLING
+    SD_WAKE_AFFINE
+
+  domain2 (NUMA) : 4 sockets
+    SD_LOAD_BALANCE SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK
+    SD_SERIALIZE SD_OVERLAP SD_NUMA
+    SD_WAKE_AFFINE
+
+  domain3 (NUMA) : 8 sockets
+    SD_LOAD_BALANCE SD_BALANCE_NEWIDLE
+    SD_SERIALIZE SD_OVERLAP SD_NUMA
+
+Schedstats point to the root cause of the regression.  hackbench is run
+10 times per group and the average schedstat accumulation per-run and
+per-cpu is shown below.  Note that domain3 moves are zero because
+SD_WAKE_AFFINE is not set there.
+
+NO_STEAL
+                                         --- domain2 ---   --- domain3 ---
+grp time %busy sched  idle   wake steal remote  move pull remote  move pull
+ 1 20.3 10.3  28710  14346  14366     0    490  3378    0   4039     0    0
+ 2 26.4 18.8  56721  28258  28469     0    792  7026   12   9229     0    7
+ 3 29.9 28.3  90191  44933  45272     0   5380  7204   19  16481     0    3
+ 4 30.2 35.8 121324  60409  60933     0   7012  9372   27  21438     0    5
+ 8 27.7 64.2 229174 111917 117272     0  11991  1837  168  44006     0   32
+16 32.6 74.0 334615 146784 188043     0   3404  1468   49  61405     0    8
+
+STEAL
+                                         --- domain2 ---   --- domain3 ---
+grp time %busy sched  idle   wake steal remote  move pull remote  move pull
+ 1 20.6 10.2  28490  14232  14261    18      3  3525    0   4254     0    0
+ 2 27.9 18.8  56757  28203  28562   303   1675  7839    5   9690     0    2
+ 3 35.3 27.7  87337  43274  44085   698    741 12785   14  15689     0    3
+ 4 36.8 36.0 118630  58437  60216  1579   2973 14101   28  18732     0    7
+ 8 48.1 73.8 289374 133681 155600 18646  35340 10179  171  65889     0   34
+16 41.4 82.5 268925  91908 177172 47498  17206  6940  176  71776     0   20
+
+Cross-numa-node migrations are caused by load balancing pulls and
+wake_affine moves.  Pulls are small and similar for no_steal and steal.
+However, moves are significantly higher for steal, and rows above with the
+highest moves have the worst regressions for time; see for example grp=8.
+
+Moves increase for steal due to the following logic in wake_affine_idle()
+for synchronous wakeup:
+
+    if (sync && cpu_rq(this_cpu)->nr_running == 1)
+        return this_cpu;        // move the task
+
+The steal feature does a better job of smoothing the load between idle
+and busy CPUs, so nr_running is 1 more often, and moves are performed
+more often.  For hackbench, cross-node affine moves early in the run are
+good because they colocate wakers and wakees from the same group on the
+same node, but continued moves later in the run are bad, because the wakee
+is moved away from peers on its previous node.  Note that even no_steal
+is far from optimal; binding an instance of "hackbench 2" to each of the
+8 NUMA nodes runs much faster than running "hackbench 16" with no binding.
+
+Clearing SD_WAKE_AFFINE for domain2 eliminates the affine cross-node
+migrations and eliminates the difference between no_steal and steal
+performance.  However, overall performance is lower than WA_IDLE because
+some migrations are helpful as explained above.
+
+I have tried many heuristics in a attempt to optimize the number of
+cross-node moves in all conditions, with limited success.  The fundamental
+problem is that the scheduler does not track which groups of tasks talk to
+each other.  Parts of several groups become entrenched on the same node,
+filling it to capacity, leaving no room for either group to pull its peers
+over, and there is neither data nor mechanism for the scheduler to evict
+one group to make room for the other.
+
+For now, disable STEAL on such systems until we can do better, or it is
+shown that hackbench is atypical and most workloads benefit from stealing.
 
 Signed-off-by: Steve Sistare <steven.sistare@oracle.com>
 ---
- kernel/sched/core.c  | 30 +++++++++++++++++++++++++++--
- kernel/sched/fair.c  | 54 ++++++++++++++++++++++++++++++++++++++++++++++------
- kernel/sched/sched.h |  9 +++++++++
- kernel/sched/stats.c | 11 ++++++++++-
- kernel/sched/stats.h | 13 +++++++++++++
- 5 files changed, 108 insertions(+), 9 deletions(-)
+ kernel/sched/fair.c     | 16 +++++++++++++---
+ kernel/sched/sched.h    |  2 +-
+ kernel/sched/topology.c | 25 +++++++++++++++++++++++++
+ 3 files changed, 39 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index f12225f..49b48da 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -2220,17 +2220,43 @@ int sysctl_numa_balancing(struct ctl_table *table, int write,
- DEFINE_STATIC_KEY_FALSE(sched_schedstats);
- static bool __initdata __sched_schedstats = false;
- 
-+unsigned long schedstat_skid;
-+
-+static void compute_skid(void)
-+{
-+	int i, n = 0;
-+	s64 t, skid = 0;
-+
-+	for (i = 0; i < 100; i++) {
-+		t = local_clock();
-+		t = local_clock() - t;
-+		if (t > 0 && t < 1000) {	/* only use sane samples */
-+			skid += t;
-+			n++;
-+		}
-+	}
-+
-+	if (n > 0)
-+		schedstat_skid = skid / n;
-+	else
-+		schedstat_skid = 0;
-+	pr_info("schedstat_skid = %lu\n", schedstat_skid);
-+}
-+
- static void set_schedstats(bool enabled)
- {
--	if (enabled)
-+	if (enabled) {
-+		compute_skid();
- 		static_branch_enable(&sched_schedstats);
--	else
-+	} else {
- 		static_branch_disable(&sched_schedstats);
-+	}
- }
- 
- void force_schedstat_enabled(void)
- {
- 	if (!schedstat_enabled()) {
-+		compute_skid();
- 		pr_info("kernel profiling enabled schedstats, disable via kernel.sched_schedstats.\n");
- 		static_branch_enable(&sched_schedstats);
- 	}
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index ac5bbf7..115b1a1 100644
+index 97bdea2..ac5bbf7 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -3740,29 +3740,35 @@ static inline bool steal_enabled(void)
+@@ -3727,11 +3727,21 @@ static inline void update_misfit_status(struct task_struct *p, struct rq *rq)
+ 
+ #define IF_SMP(statement)	statement
+ 
++static inline bool steal_enabled(void)
++{
++#ifdef CONFIG_NUMA
++	bool allow = static_branch_likely(&sched_steal_allow);
++#else
++	bool allow = true;
++#endif
++	return sched_feat(STEAL) && allow;
++}
++
  static void overload_clear(struct rq *rq)
  {
  	struct sparsemask *overload_cpus;
-+	unsigned long time;
  
- 	if (!steal_enabled())
+-	if (!sched_feat(STEAL))
++	if (!steal_enabled())
  		return;
  
-+	time = schedstat_start_time();
  	rcu_read_lock();
- 	overload_cpus = rcu_dereference(rq->cfs_overload_cpus);
- 	if (overload_cpus)
- 		sparsemask_clear_elem(rq->cpu, overload_cpus);
- 	rcu_read_unlock();
-+	schedstat_end_time(rq->find_time, time);
- }
- 
- static void overload_set(struct rq *rq)
+@@ -3745,7 +3755,7 @@ static void overload_set(struct rq *rq)
  {
  	struct sparsemask *overload_cpus;
-+	unsigned long time;
  
- 	if (!steal_enabled())
+-	if (!sched_feat(STEAL))
++	if (!steal_enabled())
  		return;
  
-+	time = schedstat_start_time();
  	rcu_read_lock();
- 	overload_cpus = rcu_dereference(rq->cfs_overload_cpus);
- 	if (overload_cpus)
- 		sparsemask_set_elem(rq->cpu, overload_cpus);
- 	rcu_read_unlock();
-+	schedstat_end_time(rq->find_time, time);
- }
- 
- static int try_steal(struct rq *this_rq, struct rq_flags *rf);
-@@ -6183,6 +6189,16 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int t
- 	return cpu;
- }
- 
-+#define SET_STAT(STAT)							\
-+	do {								\
-+		if (schedstat_enabled()) {				\
-+			struct rq *rq = this_rq();			\
-+									\
-+			if (rq)						\
-+				__schedstat_inc(rq->STAT);		\
-+		}							\
-+	} while (0)
-+
- /*
-  * Try and locate an idle core/thread in the LLC cache domain.
-  */
-@@ -6191,14 +6207,18 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
- 	struct sched_domain *sd;
- 	int i, recent_used_cpu;
- 
--	if (available_idle_cpu(target))
-+	if (available_idle_cpu(target)) {
-+		SET_STAT(found_idle_cpu_easy);
- 		return target;
-+	}
- 
- 	/*
- 	 * If the previous CPU is cache affine and idle, don't be stupid:
- 	 */
--	if (prev != target && cpus_share_cache(prev, target) && available_idle_cpu(prev))
-+	if (prev != target && cpus_share_cache(prev, target) && available_idle_cpu(prev)) {
-+		SET_STAT(found_idle_cpu_easy);
- 		return prev;
-+	}
- 
- 	/* Check a recently used CPU as a potential idle candidate: */
- 	recent_used_cpu = p->recent_used_cpu;
-@@ -6211,26 +6231,36 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
- 		 * Replace recent_used_cpu with prev as it is a potential
- 		 * candidate for the next wake:
- 		 */
-+		SET_STAT(found_idle_cpu_easy);
- 		p->recent_used_cpu = prev;
- 		return recent_used_cpu;
- 	}
- 
- 	sd = rcu_dereference(per_cpu(sd_llc, target));
--	if (!sd)
-+	if (!sd) {
-+		SET_STAT(nofound_idle_cpu);
- 		return target;
-+	}
- 
- 	i = select_idle_core(p, sd, target);
--	if ((unsigned)i < nr_cpumask_bits)
-+	if ((unsigned)i < nr_cpumask_bits) {
-+		SET_STAT(found_idle_core);
- 		return i;
-+	}
- 
- 	i = select_idle_cpu(p, sd, target);
--	if ((unsigned)i < nr_cpumask_bits)
-+	if ((unsigned)i < nr_cpumask_bits) {
-+		SET_STAT(found_idle_cpu);
- 		return i;
-+	}
- 
- 	i = select_idle_smt(p, sd, target);
--	if ((unsigned)i < nr_cpumask_bits)
-+	if ((unsigned)i < nr_cpumask_bits) {
-+		SET_STAT(found_idle_cpu);
- 		return i;
-+	}
- 
-+	SET_STAT(nofound_idle_cpu);
- 	return target;
- }
- 
-@@ -6384,6 +6414,7 @@ static int wake_cap(struct task_struct *p, int cpu, int prev_cpu)
- static int
- select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_flags)
- {
-+	unsigned long time = schedstat_start_time();
- 	struct sched_domain *tmp, *sd = NULL;
- 	int cpu = smp_processor_id();
- 	int new_cpu = prev_cpu;
-@@ -6432,6 +6463,7 @@ static int wake_cap(struct task_struct *p, int cpu, int prev_cpu)
- 			current->recent_used_cpu = cpu;
- 	}
- 	rcu_read_unlock();
-+	schedstat_end_time(cpu_rq(cpu)->find_time, time);
- 
- 	return new_cpu;
- }
-@@ -6678,6 +6710,7 @@ static void check_preempt_wakeup(struct rq *rq, struct task_struct *p, int wake_
- 	struct sched_entity *se;
- 	struct task_struct *p;
- 	int new_tasks;
-+	unsigned long time;
- 
- again:
- 	if (!cfs_rq->nr_running)
-@@ -6792,6 +6825,8 @@ static void check_preempt_wakeup(struct rq *rq, struct task_struct *p, int wake_
- idle:
- 	update_misfit_status(NULL, rq);
- 
-+	time = schedstat_start_time();
-+
- 	/*
- 	 * We must set idle_stamp _before_ calling try_steal() or
- 	 * idle_balance(), such that we measure the duration as idle time.
-@@ -6805,6 +6840,8 @@ static void check_preempt_wakeup(struct rq *rq, struct task_struct *p, int wake_
- 	if (new_tasks)
- 		IF_SMP(rq->idle_stamp = 0;)
- 
-+	schedstat_end_time(rq->find_time, time);
-+
- 	/*
- 	 * Because try_steal() and idle_balance() release (and re-acquire)
- 	 * rq->lock, it is possible for any higher priority task to appear.
-@@ -9878,6 +9915,7 @@ static int steal_from(struct rq *dst_rq, struct rq_flags *dst_rf, bool *locked,
- 		update_rq_clock(dst_rq);
- 		attach_task(dst_rq, p);
- 		stolen = 1;
-+		schedstat_inc(dst_rq->steal);
- 	}
- 	local_irq_restore(rf.flags);
- 
-@@ -9902,6 +9940,7 @@ static int try_steal(struct rq *dst_rq, struct rq_flags *dst_rf)
- 	int dst_cpu = dst_rq->cpu;
- 	bool locked = true;
+@@ -9894,7 +9904,7 @@ static int try_steal(struct rq *dst_rq, struct rq_flags *dst_rf)
  	int stolen = 0;
-+	bool any_overload = false;
  	struct sparsemask *overload_cpus;
  
- 	if (!steal_enabled())
-@@ -9944,6 +9983,7 @@ static int try_steal(struct rq *dst_rq, struct rq_flags *dst_rf)
- 			stolen = 1;
- 			goto out;
- 		}
-+		any_overload = true;
- 	}
+-	if (!sched_feat(STEAL))
++	if (!steal_enabled())
+ 		return 0;
  
- out:
-@@ -9955,6 +9995,8 @@ static int try_steal(struct rq *dst_rq, struct rq_flags *dst_rf)
- 	stolen |= (dst_rq->cfs.h_nr_running > 0);
- 	if (dst_rq->nr_running != dst_rq->cfs.h_nr_running)
- 		stolen = -1;
-+	if (!stolen && any_overload)
-+		schedstat_inc(dst_rq->steal_fail);
- 	return stolen;
- }
- 
+ 	if (!cpu_active(dst_cpu))
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 2a28340..f61f640 100644
+index eacf5db..2a28340 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -915,6 +915,15 @@ struct rq {
- 	/* try_to_wake_up() stats */
- 	unsigned int		ttwu_count;
- 	unsigned int		ttwu_local;
-+
-+	/* Idle search stats */
-+	unsigned int		found_idle_core;
-+	unsigned int		found_idle_cpu;
-+	unsigned int		found_idle_cpu_easy;
-+	unsigned int		nofound_idle_cpu;
-+	unsigned long		find_time;
-+	unsigned int		steal;
-+	unsigned int		steal_fail;
+@@ -936,7 +936,6 @@ static inline int cpu_of(struct rq *rq)
+ #endif
+ }
+ 
+-
+ #ifdef CONFIG_SCHED_SMT
+ 
+ extern struct static_key_false sched_smt_present;
+@@ -1185,6 +1184,7 @@ enum numa_topology_type {
  #endif
  
- #ifdef CONFIG_SMP
-diff --git a/kernel/sched/stats.c b/kernel/sched/stats.c
-index 750fb3c..00b3de5 100644
---- a/kernel/sched/stats.c
-+++ b/kernel/sched/stats.c
-@@ -10,7 +10,7 @@
-  * Bump this up when changing the output format or the meaning of an existing
-  * format, so that tools can adapt (or abort)
-  */
--#define SCHEDSTAT_VERSION 15
-+#define SCHEDSTAT_VERSION 16
+ #ifdef CONFIG_NUMA
++extern struct static_key_true sched_steal_allow;
+ extern void sched_init_numa(void);
+ extern void sched_domains_numa_masks_set(unsigned int cpu);
+ extern void sched_domains_numa_masks_clear(unsigned int cpu);
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index 6455bde..fc511de 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -1345,6 +1345,30 @@ static void init_numa_topology_type(void)
+ 	}
+ }
  
- static int show_schedstat(struct seq_file *seq, void *v)
- {
-@@ -37,6 +37,15 @@ static int show_schedstat(struct seq_file *seq, void *v)
- 		    rq->rq_cpu_time,
- 		    rq->rq_sched_info.run_delay, rq->rq_sched_info.pcount);
- 
-+		seq_printf(seq, " %u %u %u %u %lu %u %u",
-+			   rq->found_idle_cpu_easy,
-+			   rq->found_idle_cpu,
-+			   rq->found_idle_core,
-+			   rq->nofound_idle_cpu,
-+			   rq->find_time,
-+			   rq->steal,
-+			   rq->steal_fail);
++DEFINE_STATIC_KEY_TRUE(sched_steal_allow);
++static int sched_steal_node_limit;
++#define SCHED_STEAL_NODE_LIMIT_DEFAULT 2
 +
- 		seq_printf(seq, "\n");
++static int __init steal_node_limit_setup(char *buf)
++{
++	get_option(&buf, &sched_steal_node_limit);
++	return 0;
++}
++
++early_param("sched_steal_node_limit", steal_node_limit_setup);
++
++static void check_node_limit(void)
++{
++	int n = num_possible_nodes();
++
++	if (sched_steal_node_limit == 0)
++		sched_steal_node_limit = SCHED_STEAL_NODE_LIMIT_DEFAULT;
++	if (n > sched_steal_node_limit) {
++		static_branch_disable(&sched_steal_allow);
++		pr_debug("Suppressing sched STEAL. To enable, reboot with sched_steal_node_limit=%d", n);
++	}
++}
++
+ void sched_init_numa(void)
+ {
+ 	int next_distance, curr_distance = node_distance(0, 0);
+@@ -1493,6 +1517,7 @@ void sched_init_numa(void)
+ 	sched_max_numa_distance = sched_domains_numa_distance[level - 1];
  
- #ifdef CONFIG_SMP
-diff --git a/kernel/sched/stats.h b/kernel/sched/stats.h
-index 4904c46..63ba3c2 100644
---- a/kernel/sched/stats.h
-+++ b/kernel/sched/stats.h
-@@ -39,6 +39,17 @@
- #define   schedstat_set(var, val)	do { if (schedstat_enabled()) { var = (val); } } while (0)
- #define   schedstat_val(var)		(var)
- #define   schedstat_val_or_zero(var)	((schedstat_enabled()) ? (var) : 0)
-+#define   schedstat_start_time()	schedstat_val_or_zero(local_clock())
-+#define   schedstat_end_time(stat, time)			\
-+	do {							\
-+		unsigned long endtime;				\
-+								\
-+		if (schedstat_enabled() && (time)) {		\
-+			endtime = local_clock() - (time) - schedstat_skid; \
-+			schedstat_add((stat), endtime);		\
-+		}						\
-+	} while (0)
-+extern unsigned long schedstat_skid;
+ 	init_numa_topology_type();
++	check_node_limit();
+ }
  
- #else /* !CONFIG_SCHEDSTATS: */
- static inline void rq_sched_info_arrive  (struct rq *rq, unsigned long long delta) { }
-@@ -53,6 +64,8 @@ static inline void rq_sched_info_depart  (struct rq *rq, unsigned long long delt
- # define   schedstat_set(var, val)	do { } while (0)
- # define   schedstat_val(var)		0
- # define   schedstat_val_or_zero(var)	0
-+# define   schedstat_start_time()	0
-+# define   schedstat_end_time(stat, t)	do { } while (0)
- #endif /* CONFIG_SCHEDSTATS */
- 
- #ifdef CONFIG_PSI
+ void sched_domains_numa_masks_set(unsigned int cpu)
 -- 
 1.8.3.1
 
