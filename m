@@ -5,141 +5,153 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5F9BC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:23:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C5BCC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:27:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACD4020827
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:23:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACD4020827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 3877820840
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:27:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3877820840
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728419AbeKJIGS (ORCPT
+        id S1728075AbeKJIJh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 03:06:18 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:33163 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726572AbeKJIGR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 03:06:17 -0500
-Received: from hanvin-mobl2.amr.corp.intel.com (fmdmzpr03-ext.fm.intel.com [192.55.54.38])
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id wA9MN5O92543672
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Fri, 9 Nov 2018 14:23:12 -0800
-Subject: PLEASE REVERT URGENTLY: Re: [PATCH v5 2/3] x86/boot: add acpi rsdp
- address to setup_header
-To:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, x86@kernel.org,
-        linux-doc@vger.kernel.org
-Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, corbet@lwn.net,
-        boris.ostrovsky@oracle.com
-References: <20181010061456.22238-1-jgross@suse.com>
- <20181010061456.22238-3-jgross@suse.com>
-From:   "H. Peter Anvin" <hpa@zytor.com>
-Message-ID: <f7c78ee7-b548-7f04-24da-7321b6c64c97@zytor.com>
-Date:   Fri, 9 Nov 2018 14:23:04 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Sat, 10 Nov 2018 03:09:37 -0500
+Received: from anholt.net ([50.246.234.109]:46322 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726181AbeKJIJh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 03:09:37 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id E681610A1314;
+        Fri,  9 Nov 2018 14:27:00 -0800 (PST)
+X-Virus-Scanned: Debian amavisd-new at anholt.net
+Received: from anholt.net ([127.0.0.1])
+        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id RHJU0tWRG4Vj; Fri,  9 Nov 2018 14:26:59 -0800 (PST)
+Received: from eliezer.anholt.net (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id 5FCE310A01F2;
+        Fri,  9 Nov 2018 14:26:59 -0800 (PST)
+Received: by eliezer.anholt.net (Postfix, from userid 1000)
+        id E170B2FE1B8F; Fri,  9 Nov 2018 14:26:58 -0800 (PST)
+From:   Eric Anholt <eric@anholt.net>
+To:     zhoucm1 <zhoucm1@amd.com>, christian.koenig@amd.com,
+        "dri-devel\@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] drm: Revert syncobj timeline changes.
+In-Reply-To: <87d0rex8h2.fsf@anholt.net>
+References: <20181108160422.17743-1-eric@anholt.net> <20181108160422.17743-3-eric@anholt.net> <635caa27-eb0b-a4d6-5a1d-3fbe5382bd6b@amd.com> <c5af6df2-d5d5-5276-3628-4bac0fd53c98@gmail.com> <d9d76fbc-44ad-891d-e535-34d0e8f615de@amd.com> <87d0rex8h2.fsf@anholt.net>
+User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
+Date:   Fri, 09 Nov 2018 14:26:58 -0800
+Message-ID: <87y3a1sx8t.fsf@anholt.net>
 MIME-Version: 1.0
-In-Reply-To: <20181010061456.22238-3-jgross@suse.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I just noticed this patch -- I missed it because the cover message
-seemed far more harmless so I didn't notice this change.
+--=-=-=
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-THIS PATCH IS FATALLY WRONG AND NEEDS TO BE IMMEDIATELY REVERTED BEFORE
-ANYONE STARTS RELYING ON IT; IT HAS THE POTENTIAL OF BREAKING THE
-BOOTLOADER PROTOCOL FOR ALL FUTURE.
+Eric Anholt <eric@anholt.net> writes:
 
-It seems to be based on fundamental misconceptions about the various
-data structures in the protocol, and does so in a way that completely
-breaks the way the protocol is designed to work.
-
-The protocol is specifically designed such that fields are not version
-dependencies. The version number is strictly to inform the boot loader
-about which capabilities the kernel has, so that the boot loader can
-know if a certain data field is meaningful and/or honored.
-
-> +Protocol 2.14:	(Kernel 4.20) Added acpi_rsdp_addr holding the physical
-> +		address of the ACPI RSDP table.
-> +		The bootloader updates version with:
-> +		0x8000 | min(kernel-version, bootloader-version)
-> +		kernel-version being the protocol version supported by
-> +		the kernel and bootloader-version the protocol version
-> +		supported by the bootloader.
-
-[...]
-
->  **** MEMORY LAYOUT
+> [ Unknown signature status ]
+> zhoucm1 <zhoucm1@amd.com> writes:
 >
->  The traditional memory map for the kernel loader, used for Image or
-> @@ -197,6 +209,7 @@ Offset	Proto	Name		Meaning
->  0258/8	2.10+	pref_address	Preferred loading address
->  0260/4	2.10+	init_size	Linear memory required during initialization
->  0264/4	2.11+	handover_offset	Offset of handover entry point
-> +0268/8	2.14+	acpi_rsdp_addr	Physical address of RSDP table
+>> On 2018=E5=B9=B411=E6=9C=8809=E6=97=A5 00:52, Christian K=C3=B6nig wrote:
+>>> Am 08.11.18 um 17:07 schrieb Koenig, Christian:
+>>>> Am 08.11.18 um 17:04 schrieb Eric Anholt:
+>>>>> Daniel suggested I submit this, since we're still seeing regressions
+>>>>> from it.=C2=A0 This is a revert to before 48197bc564c7 ("drm: add syn=
+cobj
+>>>>> timeline support v9") and its followon fixes.
+>>>> This is a harmless false positive from lockdep, Chouming and I are
+>>>> already working on a fix.
+>>>
+>>> On the other hand we had enough trouble with that patch, so if it=20
+>>> really bothers you feel free to add my Acked-by: Christian K=C3=B6nig=20
+>>> <christian.koenig@amd.com> and push it.
+>> NAK, please no, I don't think this needed, the Warning totally isn't=20
+>> related to syncobj timeline, but fence-array implementation flaw, just=20
+>> exposed by syncobj.
+>> In addition, Christian already has a fix for this Warning, I've tested.=
+=20
+>> Please Christian send to public review.
+>
+> I backed out my revert of #2 (#1 still necessary) after adding the
+> lockdep regression fix, and now my CTS run got oomkilled after just a
+> few hours, with these notable lines in the unreclaimable slab info list:
+>
+> [ 6314.373099] drm_sched_fence        69095KB      69095KB
+> [ 6314.373653] kmemleak_object       428249KB     428384KB
+> [ 6314.373736] kmalloc-262144           256KB        256KB
+> [ 6314.373743] kmalloc-131072           128KB        128KB
+> [ 6314.373750] kmalloc-65536             64KB         64KB
+> [ 6314.373756] kmalloc-32768           1472KB       1728KB
+> [ 6314.373763] kmalloc-16384             64KB         64KB
+> [ 6314.373770] kmalloc-8192             208KB        208KB
+> [ 6314.373778] kmalloc-4096            2408KB       2408KB
+> [ 6314.373784] kmalloc-2048             288KB        336KB
+> [ 6314.373792] kmalloc-1024            1457KB       1512KB
+> [ 6314.373800] kmalloc-512              854KB       1048KB
+> [ 6314.373808] kmalloc-256              188KB        268KB
+> [ 6314.373817] kmalloc-192            69141KB      69142KB
+> [ 6314.373824] kmalloc-64             47703KB      47704KB
+> [ 6314.373886] kmalloc-128            46396KB      46396KB
+> [ 6314.373894] kmem_cache                31KB         35KB
+>
+> No results from kmemleak, though.
 
-NO.
+OK, it looks like the #2 revert probably isn't related to the OOM issue.
+Running a single job on otherwise unused DRM, watching /proc/slabinfo
+every second for drm_sched_fence, I get:
 
-That is not how struct setup_header works, nor does this belong here.
+drm_sched_fence        0      0    192   21    1 : tunables   32   16    8 =
+: slabdata      0      0      0 : globalstat       0      0     0    0    0=
+    0    0    0    0 : cpustat      0      0      0      0
+drm_sched_fence       16     21    192   21    1 : tunables   32   16    8 =
+: slabdata      1      1      0 : globalstat      16     16     1    0    0=
+    0    0    0    0 : cpustat      5      1      6      0
+drm_sched_fence       13     21    192   21    1 : tunables   32   16    8 =
+: slabdata      1      1      0 : globalstat      16     16     1    0    0=
+    0    0    0    0 : cpustat      5      1      6      0
+drm_sched_fence        6     21    192   21    1 : tunables   32   16    8 =
+: slabdata      1      1      0 : globalstat      16     16     1    0    0=
+    0    0    0    0 : cpustat      5      1      6      0
+drm_sched_fence        4     21    192   21    1 : tunables   32   16    8 =
+: slabdata      1      1      0 : globalstat      16     16     1    0    0=
+    0    0    0    0 : cpustat      5      1      6      0
+drm_sched_fence        2     21    192   21    1 : tunables   32   16    8 =
+: slabdata      1      1      0 : globalstat      16     16     1    0    0=
+    0    0    0    0 : cpustat      5      1      6      0
+drm_sched_fence        0     21    192   21    1 : tunables   32   16    8 =
+: slabdata      0      1      0 : globalstat      16     16     1    0    0=
+    0    0    0    0 : cpustat      5      1      6      0
 
-struct setup_header contains *initialized data*, and has a length byte
-at offset 0x201.  The bootloader is responsible for copying the full
-structure into the appropriate offset (0x1f1) in struct boot_params.
+So we generate a ton of fences, and I guess free them slowly because of
+RCU?  And presumably kmemleak was sucking up lots of memory because of
+how many of these objects were laying around.
 
-The length byte isn't actually a requirement, since the maximum possible
-size of this structure is 144 bytes, and the kernel will (obviously) not
-look at the older fields anyway, but it is good practice. The kernel or
-any other entity is free to zero out the bytes past this length pointer.
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-There are only 24 bytes left in this structure, and this would occupy 8
-of them for no valid reason.  The *only* valid reason to put a
-zero-initialized field in struct setup_header is if it used by the
-16-bit legacy BIOS boot, which is obviously not the case here.
+-----BEGIN PGP SIGNATURE-----
 
-This field thus belongs in struct boot_params, not struct setup_header.
-
->  
-> @@ -317,6 +330,12 @@ Protocol:	2.00+
->    e.g. 0x0204 for version 2.04, and 0x0a11 for a hypothetical version
->    10.17.
->  
-> +  Up to protocol version 2.13 this information is only read by the
-> +  bootloader. From protocol version 2.14 onwards the bootloader will
-> +  write the used protocol version ored with 0x8000 to the field. The
-> +  used protocol version will be the minimum of the supported protocol
-> +  versions of the bootloader and the kernel.
-> +
-
-Again, this is completely wrong. The version number is communication to
-the bootloader, which may end up going through multiple stages.
-Modifying this field breaks this invariant in a not-very-subtle way.
-
-Fields in struct setup_header are to be initialized from the image
-provided in the kernel header.
-
-Fields in struct boot_params are to be initialized to zero.
-
-There is a field called "sentinel" which attempts to detect broken
-bootloaders which do not do this correctly; however, when enabling new
-bootloaders the Right Thing to do is to make sure they adhere to the
-protocol as defined, rather than pushing a new hack onto the kernel.
-
-Thus:
-
-1. Please revert this patch immediately, and destroy any boot loaders
-   which tries to implement this.
-2. Add the acpi_rsdp_addr to struct boot_params.
-3. DO NOT modify the boot protocol version header field. Instead
-   make sure that the bootloader follows the protocol and zeroes
-   all unknown fields in struct boot_params.
-4. Possibly make the kernel panic if it notices that the boot version
-   header has been mucked with, in case some of these boot loaders
-   have already escaped into the field.
-
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlvmCbIACgkQtdYpNtH8
+nug3FA//dSeupJhOUQlYzR/yEjezWSaHnRezKzRVfofkIOEpwvxuEJ52tkeUMR/G
+bqseYn3rZAREeDw0uj5gJenSHO0u06clcMuVjOMu/zbRXT89mAFYre2txEoShDwv
+YnH/vm9PxOAEGpXcSB/gquqmlyhBaig53hIXwKVUl0qA1G01biFiySgN6DYvu/Us
+pAy3UZ07xHBMn0zpm3ZpDdHShEXOS8XQEEeJm6Y3BOWqEhOVsb9M9WIiFFDwBm6H
+GvUnN4SA5QfloSlWHwBR1CL5shCAhmVf2XNd4RwsyqkrRi1aExXirxCL8d0u1dIK
+A0T2K919aokdvpiUWOHIBJJaw7BkCLFk3Ysdn2ygWxrV6Ipi2ux3wdmbmB/Ojbz2
+FEV+6NDisp05a4wI03VZc2ZgkQQGkcg+k1pFfpAepDq1GqdjoWerkGM8OlvZFuYP
+m0qTrdawwcSLaYWT9N47gSOJm5QepxjAxtMA3uMXWSQH4+b8F8GO6RWagyxGEw1D
+ayZ/2ANtSNG9KTTETgdl75kJPUSdgZxm2OtZHCngsufIJM4Yj/kfonle3BJJskv0
+UdIb4GKRhXE+T9sBCjcIazhWbJ4oftwbXbGCgGAFFSq+IFU+UWecG0AMGdILHItp
+KoL1bzoGWzBJAU3EOLB8cJmBzNYNlbFgOX1qQfHQ9fHx/I3QdPM=
+=a3+X
+-----END PGP SIGNATURE-----
+--=-=-=--
