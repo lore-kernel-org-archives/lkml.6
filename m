@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23D75C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:09:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6963BC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:09:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E46E720825
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:09:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E46E720825
+	by mail.kernel.org (Postfix) with ESMTP id 3BF0220840
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:09:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BF0220840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728741AbeKIXtp (ORCPT
+        id S1728489AbeKIXso (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 18:49:45 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:48894 "EHLO huawei.com"
+        Fri, 9 Nov 2018 18:48:44 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:48890 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728424AbeKIXsp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 18:48:45 -0500
+        id S1728422AbeKIXso (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 18:48:44 -0500
 Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id EE3B1D7B55DB5;
+        by Forcepoint Email with ESMTP id E4533B20DE9F6;
         Fri,  9 Nov 2018 22:07:55 +0800 (CST)
 Received: from localhost.localdomain (10.67.212.132) by
  DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
- 14.3.408.0; Fri, 9 Nov 2018 22:07:47 +0800
+ 14.3.408.0; Fri, 9 Nov 2018 22:07:46 +0800
 From:   Huazhong Tan <tanhuazhong@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <linuxarm@huawei.com>
-Subject: [Patch net-next 10/11] net: hns3: do VF's pci re-initialization while PF doing FLR
-Date:   Fri, 9 Nov 2018 22:07:55 +0800
-Message-ID: <1541772476-41478-11-git-send-email-tanhuazhong@huawei.com>
+Subject: [Patch net-next 08/11] net: hns3: implement the IMP reset processing for PF
+Date:   Fri, 9 Nov 2018 22:07:53 +0800
+Message-ID: <1541772476-41478-9-git-send-email-tanhuazhong@huawei.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1541772476-41478-1-git-send-email-tanhuazhong@huawei.com>
 References: <1541772476-41478-1-git-send-email-tanhuazhong@huawei.com>
@@ -48,192 +48,159 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While doing PF FLR, VF's PCIe configuration space will be cleared, so
-the pci and vector of VF should be re-initialized in the VF's reset
-process while PF doing FLR.
+The current code only print the prompt message after receiving
+the IMP reset interrupt and does not perform the corresponding driver
+reset operation. This patch implements the missing IMP reset handling
+in the driver.
+1. The driver sets the HCLGE_STATE_CMD_DISABLE to stop sending command
+   after receiving the IMP reset interrupt.
+2. The driver needs to notify the hardware to reload the IMP firmware.
+3. The IMP firmware reloading makes the reset time of hardware longer,
+   so it is necessary to extend the driver's waiting time to wait for
+   the hardware reset to complete.
+4. In hclge_check_event_cause, IMP reset event should have higher
+   priority than other events.
 
-Also, this patch fixes some memory not freed problem when pci
-re-initialization is done during reset process.
+Also, after clearing HCLGE_STATE_CMD_DISABLE in the hclge_cmd_init(),
+it needs to check whether there is a pending reset, if so, just set
+the HCLGE_STATE_CMD_DISABLE back and return.
 
 Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    | 24 +++++++--
- .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c  | 57 ++++++++++++++++++++--
- .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h  |  1 +
- 3 files changed, 74 insertions(+), 8 deletions(-)
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c | 11 ++++++++-
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 27 +++++++++++++++-------
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |  8 +++++++
+ 3 files changed, 37 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index e527898..8d07ec6 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -3849,21 +3849,31 @@ static int hns3_reset_notify_init_enet(struct hnae3_handle *handle)
- 	/* Carrier off reporting is important to ethtool even BEFORE open */
- 	netif_carrier_off(netdev);
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
+index 690f62e..8af0cef 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c
+@@ -350,11 +350,20 @@ int hclge_cmd_init(struct hclge_dev *hdev)
+ 	hdev->hw.cmq.crq.next_to_use = 0;
  
-+	ret = hns3_nic_alloc_vector_data(priv);
-+	if (ret)
-+		return ret;
+ 	hclge_cmd_init_regs(&hdev->hw);
+-	clear_bit(HCLGE_STATE_CMD_DISABLE, &hdev->state);
+ 
+ 	spin_unlock_bh(&hdev->hw.cmq.crq.lock);
+ 	spin_unlock_bh(&hdev->hw.cmq.csq.lock);
+ 
++	clear_bit(HCLGE_STATE_CMD_DISABLE, &hdev->state);
 +
- 	hns3_restore_coal(priv);
- 
- 	ret = hns3_nic_init_vector_data(priv);
- 	if (ret)
--		return ret;
-+		goto err_dealloc_vector;
- 
- 	ret = hns3_init_all_ring(priv);
--	if (ret) {
--		hns3_nic_uninit_vector_data(priv);
--		priv->ring_data = NULL;
--	}
-+	if (ret)
-+		goto err_uninit_vector;
- 
- 	set_bit(HNS3_NIC_STATE_INITED, &priv->state);
- 
- 	return ret;
++	/* Check if there is new reset pending, because the higher level
++	 * reset may happen when lower level reset is being processed.
++	 */
++	if ((hclge_is_reset_pending(hdev))) {
++		set_bit(HCLGE_STATE_CMD_DISABLE, &hdev->state);
++		return -EBUSY;
++	}
 +
-+err_uninit_vector:
-+	hns3_nic_uninit_vector_data(priv);
-+	priv->ring_data = NULL;
-+err_dealloc_vector:
-+	hns3_nic_dealloc_vector_data(priv);
+ 	ret = hclge_cmd_query_firmware_version(&hdev->hw, &version);
+ 	if (ret) {
+ 		dev_err(&hdev->pdev->dev,
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index ba6ea6b..7dbab29 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -2144,6 +2144,14 @@ static u32 hclge_check_event_cause(struct hclge_dev *hdev, u32 *clearval)
+ 	 */
+ 
+ 	/* check for vector0 reset event sources */
++	if (BIT(HCLGE_VECTOR0_IMPRESET_INT_B) & rst_src_reg) {
++		dev_info(&hdev->pdev->dev, "IMP reset interrupt\n");
++		set_bit(HNAE3_IMP_RESET, &hdev->reset_pending);
++		set_bit(HCLGE_STATE_CMD_DISABLE, &hdev->state);
++		*clearval = BIT(HCLGE_VECTOR0_IMPRESET_INT_B);
++		return HCLGE_VECTOR0_EVENT_RST;
++	}
 +
-+	return ret;
- }
- 
- static int hns3_reset_notify_uninit_enet(struct hnae3_handle *handle)
-@@ -3887,6 +3897,10 @@ static int hns3_reset_notify_uninit_enet(struct hnae3_handle *handle)
- 
- 	hns3_store_coal(priv);
- 
-+	ret = hns3_nic_dealloc_vector_data(priv);
-+	if (ret)
-+		netdev_err(netdev, "dealloc vector error\n");
-+
- 	ret = hns3_uninit_all_ring(priv);
- 	if (ret)
- 		netdev_err(netdev, "uninit ring error\n");
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-index 4dfac6c..8f1c681 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-@@ -1766,6 +1766,7 @@ static int hclgevf_init_msi(struct hclgevf_dev *hdev)
- 	hdev->vector_irq = devm_kcalloc(&pdev->dev, hdev->num_msi,
- 					sizeof(int), GFP_KERNEL);
- 	if (!hdev->vector_irq) {
-+		devm_kfree(&pdev->dev, hdev->vector_status);
- 		pci_free_irq_vectors(pdev);
- 		return -ENOMEM;
+ 	if (BIT(HCLGE_VECTOR0_GLOBALRESET_INT_B) & rst_src_reg) {
+ 		dev_info(&hdev->pdev->dev, "global reset interrupt\n");
+ 		set_bit(HCLGE_STATE_CMD_DISABLE, &hdev->state);
+@@ -2160,13 +2168,6 @@ static u32 hclge_check_event_cause(struct hclge_dev *hdev, u32 *clearval)
+ 		return HCLGE_VECTOR0_EVENT_RST;
  	}
-@@ -1777,6 +1778,8 @@ static void hclgevf_uninit_msi(struct hclgevf_dev *hdev)
+ 
+-	if (BIT(HCLGE_VECTOR0_IMPRESET_INT_B) & rst_src_reg) {
+-		dev_info(&hdev->pdev->dev, "IMP reset interrupt\n");
+-		set_bit(HNAE3_IMP_RESET, &hdev->reset_pending);
+-		*clearval = BIT(HCLGE_VECTOR0_IMPRESET_INT_B);
+-		return HCLGE_VECTOR0_EVENT_RST;
+-	}
+-
+ 	/* check for vector0 mailbox(=CMDQ RX) event source */
+ 	if (BIT(HCLGE_VECTOR0_RX_CMDQ_INT_B) & cmdq_src_reg) {
+ 		cmdq_src_reg &= ~BIT(HCLGE_VECTOR0_RX_CMDQ_INT_B);
+@@ -2352,11 +2353,15 @@ static int hclge_notify_roce_client(struct hclge_dev *hdev,
+ static int hclge_reset_wait(struct hclge_dev *hdev)
  {
- 	struct pci_dev *pdev = hdev->pdev;
+ #define HCLGE_RESET_WATI_MS	100
+-#define HCLGE_RESET_WAIT_CNT	5
++#define HCLGE_RESET_WAIT_CNT	200
+ 	u32 val, reg, reg_bit;
+ 	u32 cnt = 0;
  
-+	devm_kfree(&pdev->dev, hdev->vector_status);
-+	devm_kfree(&pdev->dev, hdev->vector_irq);
- 	pci_free_irq_vectors(pdev);
+ 	switch (hdev->reset_type) {
++	case HNAE3_IMP_RESET:
++		reg = HCLGE_GLOBAL_RESET_REG;
++		reg_bit = HCLGE_IMP_RESET_BIT;
++		break;
+ 	case HNAE3_GLOBAL_RESET:
+ 		reg = HCLGE_GLOBAL_RESET_REG;
+ 		reg_bit = HCLGE_GLOBAL_RESET_BIT;
+@@ -2561,6 +2566,7 @@ static int hclge_reset_prepare_down(struct hclge_dev *hdev)
+ 
+ static int hclge_reset_prepare_wait(struct hclge_dev *hdev)
+ {
++	u32 reg_val;
+ 	int ret = 0;
+ 
+ 	switch (hdev->reset_type) {
+@@ -2583,6 +2589,11 @@ static int hclge_reset_prepare_wait(struct hclge_dev *hdev)
+ 		 */
+ 		set_bit(HCLGE_STATE_CMD_DISABLE, &hdev->state);
+ 		break;
++	case HNAE3_IMP_RESET:
++		reg_val = hclge_read_dev(&hdev->hw, HCLGE_PF_OTHER_INT_REG);
++		hclge_write_dev(&hdev->hw, HCLGE_PF_OTHER_INT_REG,
++				BIT(HCLGE_VECTOR0_IMP_RESET_INT_B) | reg_val);
++		break;
+ 	default:
+ 		break;
+ 	}
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+index 8ab974c..b0e683e 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+@@ -97,6 +97,7 @@ enum HLCGE_PORT_TYPE {
+ #define HCLGE_NETWORK_PORT_ID_M		GENMASK(3, 0)
+ 
+ /* Reset related Registers */
++#define HCLGE_PF_OTHER_INT_REG		0x20600
+ #define HCLGE_MISC_RESET_STS_REG	0x20700
+ #define HCLGE_MISC_VECTOR_INT_STS	0x20800
+ #define HCLGE_GLOBAL_RESET_REG		0x20A00
+@@ -116,6 +117,8 @@ enum HLCGE_PORT_TYPE {
+ /* CMDQ register bits for RX event(=MBX event) */
+ #define HCLGE_VECTOR0_RX_CMDQ_INT_B	1
+ 
++#define HCLGE_VECTOR0_IMP_RESET_INT_B	1
++
+ #define HCLGE_MAC_DEFAULT_FRAME \
+ 	(ETH_HLEN + ETH_FCS_LEN + VLAN_HLEN + ETH_DATA_LEN)
+ #define HCLGE_MAC_MIN_FRAME		64
+@@ -775,6 +778,11 @@ static inline int hclge_get_queue_id(struct hnae3_queue *queue)
+ 	return tqp->index;
  }
  
-@@ -2001,11 +2004,52 @@ static int hclgevf_query_vf_resource(struct hclgevf_dev *hdev)
- 	return 0;
- }
- 
-+static int hclgevf_pci_reset(struct hclgevf_dev *hdev)
++static inline bool hclge_is_reset_pending(struct hclge_dev *hdev)
 +{
-+	struct pci_dev *pdev = hdev->pdev;
-+	int ret = 0;
-+
-+	if (hdev->reset_type == HNAE3_VF_FULL_RESET &&
-+	    test_bit(HCLGEVF_STATE_IRQ_INITED, &hdev->state)) {
-+		hclgevf_misc_irq_uninit(hdev);
-+		hclgevf_uninit_msi(hdev);
-+		clear_bit(HCLGEVF_STATE_IRQ_INITED, &hdev->state);
-+	}
-+
-+	if (!test_bit(HCLGEVF_STATE_IRQ_INITED, &hdev->state)) {
-+		pci_set_master(pdev);
-+		ret = hclgevf_init_msi(hdev);
-+		if (ret) {
-+			dev_err(&pdev->dev,
-+				"failed(%d) to init MSI/MSI-X\n", ret);
-+			return ret;
-+		}
-+
-+		ret = hclgevf_misc_irq_init(hdev);
-+		if (ret) {
-+			hclgevf_uninit_msi(hdev);
-+			dev_err(&pdev->dev, "failed(%d) to init Misc IRQ(vector0)\n",
-+				ret);
-+			return ret;
-+		}
-+
-+		set_bit(HCLGEVF_STATE_IRQ_INITED, &hdev->state);
-+	}
-+
-+	return ret;
++	return !!hdev->reset_pending;
 +}
 +
- static int hclgevf_reset_hdev(struct hclgevf_dev *hdev)
- {
- 	struct pci_dev *pdev = hdev->pdev;
- 	int ret;
- 
-+	ret = hclgevf_pci_reset(hdev);
-+	if (ret) {
-+		dev_err(&pdev->dev, "pci reset failed %d\n", ret);
-+		return ret;
-+	}
-+
- 	ret = hclgevf_cmd_init(hdev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "cmd failed %d\n", ret);
-@@ -2076,6 +2120,8 @@ static int hclgevf_init_hdev(struct hclgevf_dev *hdev)
- 		goto err_misc_irq_init;
- 	}
- 
-+	set_bit(HCLGEVF_STATE_IRQ_INITED, &hdev->state);
-+
- 	ret = hclgevf_configure(hdev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "failed(%d) to fetch configuration\n", ret);
-@@ -2123,16 +2169,21 @@ static int hclgevf_init_hdev(struct hclgevf_dev *hdev)
- 	hclgevf_cmd_uninit(hdev);
- err_cmd_queue_init:
- 	hclgevf_pci_uninit(hdev);
-+	clear_bit(HCLGEVF_STATE_IRQ_INITED, &hdev->state);
- 	return ret;
- }
- 
- static void hclgevf_uninit_hdev(struct hclgevf_dev *hdev)
- {
- 	hclgevf_state_uninit(hdev);
--	hclgevf_misc_irq_uninit(hdev);
-+
-+	if (test_bit(HCLGEVF_STATE_IRQ_INITED, &hdev->state)) {
-+		hclgevf_misc_irq_uninit(hdev);
-+		hclgevf_uninit_msi(hdev);
-+		hclgevf_pci_uninit(hdev);
-+	}
-+
- 	hclgevf_cmd_uninit(hdev);
--	hclgevf_uninit_msi(hdev);
--	hclgevf_pci_uninit(hdev);
- }
- 
- static int hclgevf_init_ae_dev(struct hnae3_ae_dev *ae_dev)
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h
-index ffe3d49..028c52e 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.h
-@@ -73,6 +73,7 @@ enum hclgevf_states {
- 	/* device states */
- 	HCLGEVF_STATE_DOWN,
- 	HCLGEVF_STATE_DISABLED,
-+	HCLGEVF_STATE_IRQ_INITED,
- 	/* task states */
- 	HCLGEVF_STATE_SERVICE_SCHED,
- 	HCLGEVF_STATE_RST_SERVICE_SCHED,
+ int hclge_inform_reset_assert_to_vf(struct hclge_vport *vport);
+ int hclge_cfg_mac_speed_dup(struct hclge_dev *hdev, int speed, u8 duplex);
+ int hclge_set_vlan_filter(struct hnae3_handle *handle, __be16 proto,
 -- 
 2.7.4
 
