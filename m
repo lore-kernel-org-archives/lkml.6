@@ -2,115 +2,108 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A9DBC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:11:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CF06C0044C
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:12:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57B3C20818
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:11:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57B3C20818
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 2D5D620818
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:12:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sf4PMi1A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D5D620818
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728300AbeKJCwv (ORCPT
+        id S1728466AbeKJCxq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 21:52:51 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:20786 "EHLO pegase1.c-s.fr"
+        Fri, 9 Nov 2018 21:53:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40434 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727961AbeKJCwv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 21:52:51 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42s6BB6mTlz9v0XK;
-        Fri,  9 Nov 2018 18:11:14 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 9qqDz3jeip2V; Fri,  9 Nov 2018 18:11:14 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42s6BB6BLNz9v0XJ;
-        Fri,  9 Nov 2018 18:11:14 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id AA23E8B899;
-        Fri,  9 Nov 2018 18:11:20 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id BY4XbDnqDaX1; Fri,  9 Nov 2018 18:11:20 +0100 (CET)
-Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 682598B887;
-        Fri,  9 Nov 2018 18:11:20 +0100 (CET)
-From:   Christophe LEROY <christophe.leroy@c-s.fr>
-Subject: UBSAN: Undefined behaviour in kernel/rcu/tree_plugin.h in 4.20-rc1
-To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc:     "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Message-ID: <dc5e555d-129e-aae8-889d-7b4e82197b3b@c-s.fr>
-Date:   Fri, 9 Nov 2018 18:11:20 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1727961AbeKJCxq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 21:53:46 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 325C920818;
+        Fri,  9 Nov 2018 17:12:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541783537;
+        bh=eQYW/0sECoOUchB0kgzicyHU4OR/etvZrEpPsp6yiBU=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=Sf4PMi1AB1D8/LpZbdeWSgkmSCglG4ZEno3SXL9hruIB1dQr+iOodcMDuuRQ7zapd
+         vS+B5LtQU82SzqnCJg/ETK/a1uhV9DDX+pW/ldcqYy8fbQFmJUMqH+KWNyzzZKm2Tf
+         2IueODkJRYJ0fN6Wdn1ux4B+d104yRgdCXr95yzc=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Vinod Koul <vkoul@kernel.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20181109095054.13924-1-vkoul@kernel.org>
+Cc:     Vinod Koul <vkoul@kernel.org>, Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181109095054.13924-1-vkoul@kernel.org>
+Message-ID: <154178353645.88331.795912528906051068@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH] clk: qcom: gcc: Fix board clock node name
+Date:   Fri, 09 Nov 2018 09:12:16 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(Resending due to error in Paul's address)
+Quoting Vinod Koul (2018-11-09 01:50:54)
+> Device tree node name are not supposed to have "_" in them so fix the
+> node name use of xo_board to xo-board
+> =
 
-Paul
+> Fixes: 652f1813c113 ("clk: qcom: gcc: Add global clock controller driver =
+for QCS404")
+> Signed-off-by: Vinod Koul <vkoul@kernel.org>
+> ---
+> =
 
-I get the following UBSAN reports in 4.20-rc1 on an MPC8321E 
-(powerpc/book3s/32)
+> Steve: RobH pointed this on DTS patches, would be great if you can pick t=
+his
+> as a fix
 
-I bisected it to 3e31009898699dfc ("rcu: Defer reporting RCU-preempt 
-quiescent states when disabled")
+Ok.
 
-Thanks
-Christophe
+> =
 
-[    4.919995] 
-================================================================================
-[    4.928428] UBSAN: Undefined behaviour in kernel/rcu/tree_plugin.h:623:28
-[    4.935198] signed integer overflow:
-[    4.938766] 0 - -2147483648 cannot be represented in type 'int'
-[    4.944678] CPU: 0 PID: 119 Comm: mkdir Not tainted 
-4.19.0-rc1-s3k-dev-00005-g5a60513 #214
-[    4.952908] Call Trace:
-[    4.955382] [dec4fd20] [c02cb0d0] ubsan_epilogue+0x18/0x74 (unreliable)
-[    4.962003] [dec4fd30] [c02cb5e0] handle_overflow+0xd0/0xe0
-[    4.967588] [dec4fdb0] [c007b424] rcu_preempt_deferred_qs+0xc0/0xc8
-[    4.973857] [dec4fdd0] [c007be28] rcu_note_context_switch+0x74/0x608
-[    4.980217] [dec4fe10] [c064b790] __schedule+0x58/0x6e0
-[    4.985448] [dec4fe50] [c064bfdc] preempt_schedule_common+0x48/0x9c
-[    4.991717] [dec4fe70] [c01308c8] handle_mm_fault+0x10fc/0x1ecc
-[    4.997639] [dec4fee0] [c001339c] do_page_fault+0x10c/0x760
-[    5.003225] [dec4ff40] [c001234c] handle_page_fault+0x14/0x40
-[    5.008968] --- interrupt: 401 at 0xff9cff8
-[    5.008968]     LR = 0xfeefd78
-[    5.016170] 
-================================================================================
-[    5.024591] 
-================================================================================
-[    5.033005] UBSAN: Undefined behaviour in kernel/rcu/tree_plugin.h:627:28
-[    5.039775] signed integer overflow:
-[    5.043342] -2147483648 + -2147483648 cannot be represented in type 'int'
-[    5.050118] CPU: 0 PID: 119 Comm: mkdir Not tainted 
-4.19.0-rc1-s3k-dev-00005-g5a60513 #214
-[    5.058348] Call Trace:
-[    5.060813] [dec4fd20] [c02cb0d0] ubsan_epilogue+0x18/0x74 (unreliable)
-[    5.067433] [dec4fd30] [c02cb5e0] handle_overflow+0xd0/0xe0
-[    5.073014] [dec4fdb0] [c007b408] rcu_preempt_deferred_qs+0xa4/0xc8
-[    5.079283] [dec4fdd0] [c007be28] rcu_note_context_switch+0x74/0x608
-[    5.085640] [dec4fe10] [c064b790] __schedule+0x58/0x6e0
-[    5.090871] [dec4fe50] [c064bfdc] preempt_schedule_common+0x48/0x9c
-[    5.097139] [dec4fe70] [c01308c8] handle_mm_fault+0x10fc/0x1ecc
-[    5.103059] [dec4fee0] [c001339c] do_page_fault+0x10c/0x760
-[    5.108642] [dec4ff40] [c001234c] handle_page_fault+0x14/0x40
-[    5.114385] --- interrupt: 401 at 0xff9cff8
-[    5.114385]     LR = 0xfeefd78
-[    5.121588] 
-================================================================================
+>  drivers/clk/qcom/gcc-qcs404.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> =
+
+> diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
+> index e4ca6a45f313..ef1b267cb058 100644
+> --- a/drivers/clk/qcom/gcc-qcs404.c
+> +++ b/drivers/clk/qcom/gcc-qcs404.c
+> @@ -265,7 +265,7 @@ static struct clk_fixed_factor cxo =3D {
+>         .div =3D 1,
+>         .hw.init =3D &(struct clk_init_data){
+>                 .name =3D "cxo",
+> -               .parent_names =3D (const char *[]){ "xo_board" },
+> +               .parent_names =3D (const char *[]){ "xo-board" },
+
+We have xo_board used everywhere else in drivers/clk/qcom/ so this makes
+me concerned. Wouldn't a better answer be to add clock-output-names to
+the xo-board DT node and have arm-soc merge that through. I mostly want
+to keep things consistent here so that if we need to inject an xo_board
+clk into the system then we can do so generically instead of making it
+per-platform. Of course, if we're never going to have this problem on
+qcs404 then it will be fine to start differing here. So I'm leaning
+towards merge this patch, just please ack my concern here and tell me it
+won't be a problem and I'll be happy to merge to clk-fixes.
+
+BTW, can you also specify a 'clocks' property in the GCC node and send
+the xo_board node there? In fact, we should do that for every GCC node
+in the tree. Care to do that and also add sleep_clk to each clock
+controller node that uses it? This is useful to do so that we can more
+easily see where clocks are going between clock controller nodes.
+
