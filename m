@@ -2,183 +2,118 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63D82C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:38:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCA87C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:38:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24A7F20892
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:38:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5A022086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:38:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="l3YVCiH9";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="l3YVCiH9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24A7F20892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EraU+Qkx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5A022086C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728254AbeKIRRt (ORCPT
+        id S1728296AbeKIRSB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 12:17:49 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:49258 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727789AbeKIRRt (ORCPT
+        Fri, 9 Nov 2018 12:18:01 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:41875 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727789AbeKIRSA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 12:17:49 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E0FB06076A; Fri,  9 Nov 2018 07:38:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541749108;
-        bh=ABXPg95O802jNFGglS72EGnbG4FSLXoLy67LX2f7GaQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=l3YVCiH9cKBGfuBfuzHXgqdowTd9mpDZ2Ht++3UtRX6S9cxdpBWs9wNcSXDPERp22
-         1qOE7PC50vPxDrGNusJ94WcJAha2pHu7t7wOR7Aqbv2G3nBmRPvYofyAdQAYtF/An3
-         uO8m7cVJZvT5LXAOOHkXEKqmp/74NwpTlDhDTZCg=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 06A9260271;
-        Fri,  9 Nov 2018 07:38:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1541749108;
-        bh=ABXPg95O802jNFGglS72EGnbG4FSLXoLy67LX2f7GaQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=l3YVCiH9cKBGfuBfuzHXgqdowTd9mpDZ2Ht++3UtRX6S9cxdpBWs9wNcSXDPERp22
-         1qOE7PC50vPxDrGNusJ94WcJAha2pHu7t7wOR7Aqbv2G3nBmRPvYofyAdQAYtF/An3
-         uO8m7cVJZvT5LXAOOHkXEKqmp/74NwpTlDhDTZCg=
+        Fri, 9 Nov 2018 12:18:00 -0500
+Received: by mail-pg1-f193.google.com with SMTP id 70so498829pgh.8;
+        Thu, 08 Nov 2018 23:38:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mv3W8L/OrmYU2mKhLZMK0Ul1e9qD7XLq6l5YIls48S0=;
+        b=EraU+Qkxc1/6VnYGNeJltz2WWcrkWjQb3lT4M94pebvZEncZkOanqM8NMOtEsYV1ym
+         BBAYztr89QWKEm16QTvyD0Y2ZiHIF0wSRuKzWnXqmObAo5laVAb193h1xe9moZDjldPl
+         lE0MoiZbLzSugt0ZokfL3l9DNtTf/Da7o97R8/EjPXhdreBgeUL7X4EnKb+t9uJhdm1C
+         ioiITfy+1bMogec6cjbDbbzJ9R1ak+V79dhvngrXPdPy+x/EKKD97mGnPJr/916lqrc4
+         Zv/Ml+Txp5hTTTlezV5+hB8CPEZqrz1gNKlaHURoUzq7ZK70yVFfKPFoheroiUEgYRsb
+         xq9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mv3W8L/OrmYU2mKhLZMK0Ul1e9qD7XLq6l5YIls48S0=;
+        b=DDGPpqu+GzmK/1tObpIii+YX4nv3/0cSsFLoslIOg3QQVCOMi2QrRIi+jN4jaQqAW5
+         oh5kTSFJzX3WQwdMA62SD1GXuD+eIryreo3EWsI1WBNJfyKYqeaYYumkruZHovvKO385
+         WWrkOsA5jzwfBISCLWI8dw+quzb31iy1OVkdRaQR1+lm0LwV14NjTHCZjIdcvqvEUqJs
+         eNV2WTx6fdcGebOovZt34I4V8Ef3TyQs+buYjm+LUprhhUnw6hCc6HfBz8qLteNradO8
+         UfqycpXSPfHdjNUNMRCm2eT3VSmD2pyrypCsnEDaD51bkfqaBlEMRpm5HRS06JdKaRdH
+         LsgA==
+X-Gm-Message-State: AGRZ1gIkaQJ2en+QPZmbpE9PFevgaquHIY7tzGR1/vNt/82kqvSuCcK9
+        zzUYcObi4bZ7DHDL7l0GsMc=
+X-Google-Smtp-Source: AJdET5dQ4HDrzyjxjzqP5hL2Hi1PKdgkZ/fdve9EViF7H6OcM6TjzCzniUg/QqY3lueR3kXKC7pKdQ==
+X-Received: by 2002:a63:4e41:: with SMTP id o1mr6705523pgl.282.1541749120981;
+        Thu, 08 Nov 2018 23:38:40 -0800 (PST)
+Received: from nishad ([106.210.186.71])
+        by smtp.gmail.com with ESMTPSA id r6-v6sm333838pfk.157.2018.11.08.23.38.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 08 Nov 2018 23:38:40 -0800 (PST)
+Date:   Fri, 9 Nov 2018 13:08:32 +0530
+From:   Nishad Kamdar <nishadkamdar@gmail.com>
+To:     Lars-Peter Clausen <lars@metafoo.de>
+Cc:     Michael Hennerich <Michael.Hennerich@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 4/4] staging: iio: ad7816: Add device tree table.
+Message-ID: <209172d47d8d14c1244556e5f05bbd6455b4de04.1541733949.git.nishadkamdar@gmail.com>
+References: <cover.1541733949.git.nishadkamdar@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 09 Nov 2018 07:38:27 +0000
-From:   mgottam@codeaurora.org
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        vgarodia@codeaurora.org
-Subject: Re: [PATCH] media: venus: add support for selection rectangles
-In-Reply-To: <CAAFQd5AgQNZpNfAf_aoZfqzpZj7iohCKaBO0t4bntL2q1SyVhg@mail.gmail.com>
-References: <1539071603-1588-1-git-send-email-mgottam@codeaurora.org>
- <0e0f689e-f6e3-73a6-e145-deb2ef7cafc8@linaro.org>
- <5037ca4b0dd0de80750e35ca889d4225@codeaurora.org>
- <4ccc50dc-c819-ca49-11d2-415053c02c0a@linaro.org>
- <CAAFQd5AgQNZpNfAf_aoZfqzpZj7iohCKaBO0t4bntL2q1SyVhg@mail.gmail.com>
-Message-ID: <a94ef2231f195e757d8af9483cf44899@codeaurora.org>
-X-Sender: mgottam@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1541733949.git.nishadkamdar@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-11-02 03:16, Tomasz Figa wrote:
-> On Fri, Nov 2, 2018 at 12:02 AM Stanimir Varbanov
-> <stanimir.varbanov@linaro.org> wrote:
->> 
->> Hi Malathi,
->> 
->> On 11/1/18 3:10 PM, mgottam@codeaurora.org wrote:
->> > On 2018-10-16 15:11, Stanimir Varbanov wrote:
->> >> Hi Malathi,
->> >>
->> >> On 10/09/2018 10:53 AM, Malathi Gottam wrote:
->> >>> Handles target type crop by setting the new active rectangle
->> >>> to hardware. The new rectangle should be within YUV size.
->> >>>
->> >>> Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
->> >>> ---
->> >>>  drivers/media/platform/qcom/venus/venc.c | 19 +++++++++++++++++--
->> >>>  1 file changed, 17 insertions(+), 2 deletions(-)
->> >>>
->> >>> diff --git a/drivers/media/platform/qcom/venus/venc.c
->> >>> b/drivers/media/platform/qcom/venus/venc.c
->> >>> index 3f50cd0..754c19a 100644
->> >>> --- a/drivers/media/platform/qcom/venus/venc.c
->> >>> +++ b/drivers/media/platform/qcom/venus/venc.c
->> >>> @@ -478,16 +478,31 @@ static int venc_g_fmt(struct file *file, void
->> >>> *fh, struct v4l2_format *f)
->> >>>  venc_s_selection(struct file *file, void *fh, struct v4l2_selection *s)
->> >>>  {
->> >>>      struct venus_inst *inst = to_inst(file);
->> >>> +    int ret;
->> >>> +    u32 buftype;
->> >>>
->> >>>      if (s->type != V4L2_BUF_TYPE_VIDEO_OUTPUT)
->> >>>          return -EINVAL;
->> >>>
->> >>>      switch (s->target) {
->> >>>      case V4L2_SEL_TGT_CROP:
->> >>> -        if (s->r.width != inst->out_width ||
->> >>> -            s->r.height != inst->out_height ||
->> >>> +        if (s->r.width > inst->out_width ||
->> >>> +            s->r.height > inst->out_height ||
->> >>>              s->r.top != 0 || s->r.left != 0)
->> >>>              return -EINVAL;
-> 
-> Note that returning -EINVAL is not what VIDIOC_S_SELECTION should do 
-> here.
-> 
-> As per the general V4L2 spec [1], VIDIOC_S_SELECTION is expected to
-> adjust the crop rectangle "as close as possible to the requested one".
-> In this case that would likely mean something like this:
-> 
-> if (s->r.left != 0) {
->     s->r.width += s->r.left;
->     s->r.left = 0;
-> }
-> 
-> if (s->r.top != 0) {
->     s->r.height += s->r.top;
->     s->r.top = 0;
-> }
-> 
-> if (s->r.width > inst->out_width)
->     s->r.width = inst->out_width;
-> 
-> if (s->r.height > inst->out_height)
->     s->r.height = inst->out_height;
-> 
-> [1]
-> https://www.kernel.org/doc/html/latest/media/uapi/v4l/vidioc-g-selection.html
-> 
+Add device tree table for matching vendor ID.
 
-Yes Tomasz, I overlooked the spec that we cannot return EINVAL in this 
-case.
+Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
+---
+ drivers/staging/iio/adc/ad7816.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-I will make the necessary changes and update the new patch.
->> >>> +        if (s->r.width != inst->width ||
->> >>> +            s->r.height != inst->height) {
->> >>> +            buftype = HFI_BUFFER_OUTPUT;
->> >>> +            ret = venus_helper_set_output_resolution(inst,
->> >>> +                                 s->r.width,
->> >>> +                                 s->r.height,
->> >>> +                                 buftype);
->> >>
->> >> I'm afraid that set_output_resolution cannot be called at any time. Do
->> >> you think we can set it after start_session?
->> >
->> > Yes Stan, we can set output_resolution after the session has been
->> > initialization.
->> > As per the spec, this call s_selection is an optional step under
->> > Initialization
->> > procedure of encoder even before we request buffers.
+diff --git a/drivers/staging/iio/adc/ad7816.c b/drivers/staging/iio/adc/ad7816.c
+index a2fead85cd46..b8a9149fbac1 100644
+--- a/drivers/staging/iio/adc/ad7816.c
++++ b/drivers/staging/iio/adc/ad7816.c
+@@ -422,6 +422,12 @@ static int ad7816_probe(struct spi_device *spi_dev)
+ 	return 0;
+ }
+ 
++static const struct of_device_id ad7816_of_match[] = {
++	{ .compatible = "adi,ad7816", },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, ad7816_of_match);
++
+ static const struct spi_device_id ad7816_id[] = {
+ 	{ "ad7816", ID_AD7816 },
+ 	{ "ad7817", ID_AD7817 },
+@@ -434,6 +440,7 @@ MODULE_DEVICE_TABLE(spi, ad7816_id);
+ static struct spi_driver ad7816_driver = {
+ 	.driver = {
+ 		.name = "ad7816",
++		.of_match_table = of_match_ptr(ad7816_of_match),
+ 	},
+ 	.probe = ad7816_probe,
+ 	.id_table = ad7816_id,
+-- 
+2.17.1
 
-Setting this output resolution here I feel it as a repetition as we
-have this width and height set to firmware as a part of 
-VIDIOC_REQBUFS().
-So updating the selection rectangle would be sufficient in this case.
-
->> 
->> What spec you are referring to? The spec for the encoders [1] or
->> something else.
-> 
-> For our convenience, Hans was nice enough to host a compiled version 
-> at:
-> https://hverkuil.home.xs4all.nl/request-api/uapi/v4l/dev-encoder.html
-> 
-> Best regards,
-> Tomasz
