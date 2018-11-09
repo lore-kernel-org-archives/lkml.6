@@ -4,224 +4,171 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAD61C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:41:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEF87C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:41:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79D9120827
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:41:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AF0E2086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:41:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="bvzuX9jj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79D9120827
+	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="HM6B6V2D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AF0E2086C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=analog.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728148AbeKJBWP (ORCPT
+        id S1728198AbeKJBWl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 20:22:15 -0500
-Received: from mail-by2nam03on0074.outbound.protection.outlook.com ([104.47.42.74]:9728
+        Fri, 9 Nov 2018 20:22:41 -0500
+Received: from mail-by2nam03on0043.outbound.protection.outlook.com ([104.47.42.43]:35616
         "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727784AbeKJBWO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 20:22:14 -0500
+        id S1727802AbeKJBWl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 20:22:41 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=analog.onmicrosoft.com; s=selector1-analog-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ta1iOIb9ZLNq2QsifkMsCizZobh2+1tKMbeTAUpGyPg=;
- b=bvzuX9jjbMutNDWjgjzIlWd/WPROoXtzHfiTMlUb54q6748calw51eKlTrDu/jM6+E0itgvHCASZLtvZ+I9qyh369oyR3ticAzi02BPkjMf+eDx/JZ2KY+UfAWU1/HRYSAHSaHg8/uV+O8NyAfY9+Q8aYBeg3qIS6Kf+MqLGmsY=
-Received: from BN3PR03CA0114.namprd03.prod.outlook.com (2603:10b6:400:4::32)
- by BLUPR03MB550.namprd03.prod.outlook.com (2a01:111:e400:880::28) with
+ bh=p9WGURcCdIqdhb8UxhR6h+ivoMZXGQsMWRcq4NCw2N8=;
+ b=HM6B6V2DrpPSUSQVkSfrhQkwvDn3IfdXW8D9yMwlqwL23jfgMFJmu3PN478eJD89K8IAgORR3037rYvx/tKnfN8Z7MPGpne2v3I63q7NcCmgiH5Rkttco5yMptbAlAnZ9e83kUwPbmov4OYzEHTxVPNMYSNdMpBgnDjvzRHzQ5s=
+Received: from CY4PR03CA0082.namprd03.prod.outlook.com (2603:10b6:910:4d::23)
+ by SN2PR03MB2272.namprd03.prod.outlook.com (2603:10b6:804:d::17) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1294.24; Fri, 9 Nov
- 2018 15:40:13 +0000
-Received: from BN1AFFO11FD005.protection.gbl (2a01:111:f400:7c10::103) by
- BN3PR03CA0114.outlook.office365.com (2603:10b6:400:4::32) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1294.20 via Frontend Transport; Fri, 9 Nov 2018 15:40:13 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1294.20; Fri, 9 Nov
+ 2018 15:41:13 +0000
+Received: from BN1AFFO11FD021.protection.gbl (2a01:111:f400:7c10::129) by
+ CY4PR03CA0082.outlook.office365.com (2603:10b6:910:4d::23) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1294.23 via Frontend Transport; Fri, 9 Nov 2018 15:41:13 +0000
+Authentication-Results: spf=pass (sender IP is 137.71.25.57)
+ smtp.mailfrom=analog.com; gmx.de; dkim=none (message not signed)
+ header.d=none;gmx.de; dmarc=bestguesspass action=none header.from=analog.com;
 Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
  137.71.25.57 as permitted sender) receiver=protection.outlook.com;
  client-ip=137.71.25.57; helo=nwd2mta4.analog.com;
 Received: from nwd2mta4.analog.com (137.71.25.57) by
- BN1AFFO11FD005.mail.protection.outlook.com (10.58.52.65) with Microsoft SMTP
+ BN1AFFO11FD021.mail.protection.outlook.com (10.58.52.81) with Microsoft SMTP
  Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1339.12
- via Frontend Transport; Fri, 9 Nov 2018 15:40:13 +0000
+ via Frontend Transport; Fri, 9 Nov 2018 15:41:12 +0000
 Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
-        by nwd2mta4.analog.com (8.13.8/8.13.8) with ESMTP id wA9FeDwA017418
+        by nwd2mta4.analog.com (8.13.8/8.13.8) with ESMTP id wA9FfCgd017688
         (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Fri, 9 Nov 2018 07:40:13 -0800
+        Fri, 9 Nov 2018 07:41:12 -0800
 Received: from linux.ad.analog.com (10.32.224.122) by
  NWD2HUBCAS7.ad.analog.com (10.64.69.107) with Microsoft SMTP Server id
- 14.3.301.0; Fri, 9 Nov 2018 10:40:12 -0500
+ 14.3.301.0; Fri, 9 Nov 2018 10:41:12 -0500
 From:   Stefan Popa <stefan.popa@analog.com>
-To:     <jic23@kernel.org>
-CC:     <Michael.Hennerich@analog.com>, <knaack.h@gmx.de>,
-        <lars@metafoo.de>, <pmeerw@pmeerw.net>,
-        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>, <stefan.popa@analog.com>
-Subject: [PATCH v4 1/4] iio: ad_sigma_delta: Allow to provide custom data register address
-Date:   Fri, 9 Nov 2018 17:39:58 +0200
-Message-ID: <1541777998-7518-1-git-send-email-stefan.popa@analog.com>
+To:     <jic23@kernel.org>, <robh+dt@kernel.org>
+CC:     <mark.rutland@arm.com>, <knaack.h@gmx.de>, <lars@metafoo.de>,
+        <pmeerw@pmeerw.net>, <Michael.Hennerich@analog.com>,
+        <gregkh@linuxfoundation.org>, <linux-iio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <stefan.popa@analog.com>
+Subject: [PATCH v4 2/4] dt-bindings: iio: adc: Add common ADCs properties to a separate file
+Date:   Fri, 9 Nov 2018 17:40:55 +0200
+Message-ID: <1541778055-7629-1-git-send-email-stefan.popa@analog.com>
 X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
 Content-Type: text/plain
 X-ADIRoutedOnPrem: True
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(396003)(376002)(346002)(136003)(2980300002)(438002)(189003)(199004)(26005)(54906003)(4326008)(5660300001)(36756003)(106002)(77096007)(6916009)(246002)(186003)(2351001)(16586007)(316002)(356004)(106466001)(6666004)(107886003)(305945005)(426003)(47776003)(50226002)(478600001)(72206003)(51416003)(6346003)(8936002)(336012)(2616005)(7696005)(48376002)(486006)(8676002)(44832011)(2906002)(7636002)(50466002)(476003)(126002);DIR:OUT;SFP:1101;SCL:1;SRVR:BLUPR03MB550;H:nwd2mta4.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: 1;BN1AFFO11FD005;1:kJrj8g7s8xylC2pqisADN4A6CuL8cL0wymVHMVPT/TFWP6IlgTG+Y31oYEV/PJaWwSlUKh7a/ozspn3S/vaRghBDuUrGmNdz6CBdgrHqnKJhKTdvMKv4VaJ/hFliCmMO
+X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(346002)(39860400002)(396003)(376002)(2980300002)(438002)(199004)(189003)(50466002)(51416003)(16586007)(305945005)(2616005)(106466001)(106002)(7696005)(486006)(5660300001)(476003)(126002)(48376002)(356004)(2906002)(6666004)(107886003)(316002)(54906003)(110136005)(26005)(77096007)(44832011)(7636002)(36756003)(426003)(47776003)(7416002)(478600001)(4326008)(8936002)(336012)(72206003)(50226002)(186003)(246002)(8676002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN2PR03MB2272;H:nwd2mta4.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;BN1AFFO11FD021;1:sqf0sQnm3YJ8HgT1/lo7rn+CrsPbPRCDsG6dkB3KDzZM8ZZSbMAcohaQPBGvh34CXCxfCQKeMaQJkMAUEMrVyUMY+3uPwzNaVfRx/n2maRp3yiDnKHTdnR6gfixwD2ou
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 339efc24-e0b1-4a8b-b4ad-08d64659a3f5
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:BLUPR03MB550;
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB550;3:E31JHEYgFIrbXE88WiEFpBjK+9K5tudfJesgZE+ul06jtOcrdY5pxUoFB5L3U5fhXZVz2yHPOhkAd2gt6Tc+r6Vr3oCsqJkS5tPP7AQ/x0z148uEBLtym9TYk/MS4XMYi3lG3zbVwAuRJmYvieWPhvbnLZD1LBO1b+jXgv6YdTDhuunm3Z9gdjbzQNV6wBfDURrOhKdKihbiJ/JOakh8+/zqVUW1P5WzKqbfzAPIH/0jZDm3ZIbQvqMrEOH+K0m+acsov+K+9T3vS3/SSE8ZnUiMfE778FpeoSz4wltZXyp6APemm7j99CaGcz5PTO9chvUTDN3JLB1m11WNw/8vggRfEHtYUQlKxU983kVWcB4=;25:STzbU1W4cW6AspyROUhDIcJmpfy2lCWBjdU7QjyhXxpWL6XJVaXYuncHx+PlTdjtuvbAzlBbDqOmQQptPV0U15xMNKp4Q6gYFECi7eepv44IW0dWzxfYKHKTa5PUYpeOLY5fY44KpmXDhxw5CaKqB5JheQNu/pJtLMG9vHc0n8DBa3GbdMJp7Pfyd48Ju6S4q5cqCURwVaf1YNrNH9H8KZFpb3jO/1CPQCAgNf8PQSRR72HGAGottKbb9W2CfE0T3NwI86+IF3yVGUsOOa0x+JAjJeStXjzuqs0yPKV8ZVsK2WtgDG7/2BZiWCj8Eq+sSYKlZ4OGI1KBNJxOD409xA==
-X-MS-TrafficTypeDiagnostic: BLUPR03MB550:
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB550;31:QpyNeIBd+/+MV9Qau8yG4yaxDubnhe8v8nflGLu0+K/nHsBLDOkG+MGrJ5uLA6H4SQELSoCAiWAD1nEFbzG9a4XMzX7nL5pGHYQeyDWkkM9VI+K/09SC90LjLq4+4lL6yyg3+NRJ0y6WT+cBlK7xEZuFrwRjxUgFIgiGcOpD+zIvzQKEFW+AtZqVs4ySI0XBZLJ74cVpdKUrZ4a5ZW2uoa079CnUIe3v+gPd3h5aSfI=;20:PhrgpTfnKnNGRAy22mRPsUmVsXhs1Zhf5GXJWWTcUbdmpu/4DI3uNwApJER9mTqK4erFO+/7BCXN3wqkuido/RCzB4j/xKYT7rS6xcFOyjqJZLhv1IcAwTIf7xXCVKW/P+9CaVCJGu4tAZV3v+Lmg3Sv/a9QEOQCGnxYCRSOcTr5o0QMwAY7BQLY5tqBG83aGzPQlwK7OW9f0+jqa0XxsJOKR/ZjzEGKG5LPulwxst0Kg88COcoRAS6zbnkObaL2aWTHTO/DtumUaA2JrAv4d0/ZfHgLnN1wIKygLM4R+cPOyNwnEbVlSc3YngSTohpmAj8nAme9lgqUS0KLP3LpDfIL/JnPy9pNinKJQ1DPT9qrqCNVZjWMN6/1ssi8pYwvuupcIZlt71hyDPwTa7bmnETKyqJcmLIsmefdTpwP6m2VB8oqXLM2NvUD/M4Gf15cp51/bLPgwBNXl4foOttgdl+lAQbAIz8n+hWUxR1G1c38vTzFK6FdnEXkyicTFKbg
-X-Microsoft-Antispam-PRVS: <BLUPR03MB550E5568F4863F9D02CEC5E9DC60@BLUPR03MB550.namprd03.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 673799a8-2951-463a-9d61-08d64659c737
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:SN2PR03MB2272;
+X-Microsoft-Exchange-Diagnostics: 1;SN2PR03MB2272;3:YXcfusQewXP2e0Jwnzn4ySQKKCn2IZehdkks2vS9icZ/gNfAY7iEtgq07d0l0LLEnTtrXrOg+l1B54s4taqv6bSYpvWKCXOX+Z1q873gbnU4idybL3kPKB1b+eGXj++d56ColYPVre5KjAOmoZxbwbpamwo4U2jZ+tfGQ81a0aWr5N47tYgmf9jcwJ2QLQWpgvxBjotUEiUZ841nRxuB/W7ZRLm0hnK4Pwozx4jwlPEK7f5bzIOLIEGuu2qYfcArnHuQhp7trmXQFd4qDADY5xZdQ4WdkoWq4reE0Wl+7KwhhZu/K9HMP1XAanPeIRA/MRrOYATMUWJfJWEorJ3jKdixBlRJgxr6+IUYkijxrkk=;25:YjuZfSxTGKXbvc88nocXkFy4GTdiroxtLvnqK8sD0g0w8lOskedhHg6HYJ1RjAo14YSbe61IbJoW4Rj8MuY78LFZk4NJUIXDsrD5rypfrGD4wa5aGL4kxjw0S/7sJ+vzxA+hRwfsSYIrkWCLWINH8Igsnv82x3vuy/YpB81F2w4vgwp5E4E6VBC1SctWbYKXcZ0jj/sz88jQ0tkdA7+C5I3len0gkR0v7VN/aiI+sCWVh8z6lj4Mtus5dSO+gYK/RH/fwiLd7QV76iEf13hm2Ph59VrxPP2bbCc9UB7BNPQ7Ku3u2wBExOXHGhFERO1QLVBrfzHzqeEJx7GcdiwgVQ==
+X-MS-TrafficTypeDiagnostic: SN2PR03MB2272:
+X-Microsoft-Exchange-Diagnostics: 1;SN2PR03MB2272;31:pQENZVnGr+7CIVM5xs2ZR7a/fJt0Z4bMNmPIDYE2gab8/qnvlcVnhQLB0/DveylQT7VFOvLvvYpGOVncNUsI5eU8H6ogQsNgeQPQM1bEgRkgndiM+9Qjsbhwpa9yYnH5Q63bVRR0tWn+kSE3MNIU23S+uSpK8plZnwGaUhSj1L6KIeYMVSDchTzk+vVpjrHIDsXAZbKg6e8PfNc5zAZmSJJ5FbJr20mM+5rgVB0yDN4=;20:t6U1DW358X+rWE3WMgckCYRRvoqfxNctBr8MM6WvTYw3lwfAyeVH6T4PRCQGalgKJF78s2p+vINu+1krBhfYQOq+7xKgyYllpEIJPKRNZF1rpBQbAH8ky398Yfa6szskBXKzlH5Hs8gBeuS5zSFoHf/WlYspzFKu0xQzRMndJb77UkLUnNpsu1G96rvcIYcGKzpUOGNonv7EdSgjomaROpPS0IOkApa4h+2dXOCzpM7LGnHDnQ07YiDqCQf329AhpVg41fQQQULYBu32kka8FNzgWVIxX7fyWWH4wl/0P1Nkng2NdnVAnXaMFrOL9Kx1eBKvPfyau0PrxkzKYpD/w5/y+OM0b1AXnNwu9SrmFj9zwucKSG5iCej2afFONVDZi1u6QBz/Eo+D7F/brFP/y63IJ7q/NiUfgLIiE/Hpy4cQYMo9Mv8AMPFO9eJxzR41IaQKxKM6MBK5PzR6XRAKDYVdqyRue86YAkx9cu7fYC3bN1UmbEXVeF5DJsc3kivA
+X-Microsoft-Antispam-PRVS: <SN2PR03MB227255B06E3F7A50E5DFD44C9DC60@SN2PR03MB2272.namprd03.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(232431446821674);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93004095)(3231382)(944501410)(52105095)(10201501046)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:BLUPR03MB550;BCL:0;PCL:0;RULEID:;SRVR:BLUPR03MB550;
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB550;4:A3V67diZZ/F8rRQziQjR0o+Kli3Y1R3u5h+QM9IYU11BngXXW0EyniPq1foj2kKbO9nHnu451uK8I/LnFLgNJFo0dP/LaTYhUi8asTZ8hy7LLRTWhMIkwWElb6q53VXbon4GkP77AAKZbQL8BIbOQ12WPI8H9LmlxMNe+SjWcJ89SBcVopqKqh2nBu+wfbl9sBf7KyPQKksJsuNjwQgQO3A24mcdhXrr7lSCRjtd2bQ2c015xm+SYy+3ucRdF4QXLOaODFo6EB7Ej4vrNV0Ibudz2yKX9Yzn9Oms7WEx/zQxreWTkJy5Z6LieKAw1nU1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231382)(944501410)(52105095)(10201501046)(93006095)(93004095)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:SN2PR03MB2272;BCL:0;PCL:0;RULEID:;SRVR:SN2PR03MB2272;
+X-Microsoft-Exchange-Diagnostics: 1;SN2PR03MB2272;4:xylqlANS7uP9IthhPmFLEYrY9Z/o09FKYipG44df99hdvGaPtRntBYybAZJgDf0tChF59F1iujOOslsQ/tmLL+wBtFttAF0cSE8g4WwOyAb5H5o6RlJZbW05clxsKjZBga/4WFY6gSgcu+r12Q8Z77xEREURiKIOE6kcYhbs1E70eSLnF6HIa+7Ed7EeEtl1KBwtCfZv2IP/oK1mr+aeoSv5j+mC+Xy6Mow9Q5lGMMg//U2g9qB6YM84bKHVcXW8UjHaRm/9hLLatZ4ws2DPjyhLkhHAGKgyYGcm93+EMlb716K9S6L6b4UCf1MRRSGr
 X-Forefront-PRVS: 08512C5403
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BLUPR03MB550;23:m3YcRny/R/CcZAIvendu49X/eIkfaAtUgI3WrrnUdm?=
- =?us-ascii?Q?7CsAEqHPi/bbuoheUVQOTz8Loq7910p2a3lBLA53R/e1JtvwJ/UaLEu4pLDb?=
- =?us-ascii?Q?e00aibZH6eq/ZfmyS9CVXWpK3hYppYbUvx7r6isR2eaJ5z6ENgSpxb+P/s58?=
- =?us-ascii?Q?be4PGEJeiWn23DlVgN9XsyhQshBTK45JtwyvImeIHi/PF59pnOqRWugW0xnD?=
- =?us-ascii?Q?p90bm7I8DzbD60Trs8/NYFYM1npkSWk/ONedt2ki3ksskInUPib7Z9CaHasq?=
- =?us-ascii?Q?Ot/7fT5MEL5LekEiienxZbjIrWGZ6otFHQAWp4W2bcbCbVVkME5+6IJUlM3B?=
- =?us-ascii?Q?QqkY4ZTQ582yzdAJzJyhCaoShef8OY72y2LJp1zAWUpd0cv4YqnldXRekSh6?=
- =?us-ascii?Q?yG8sfqak/WZ1gAOycx3XbDb5TW8D39kPdnFxK6s/o3cstUaQwNqVKkaaVltD?=
- =?us-ascii?Q?bj00oMd5wCnD9c6ZE5JHTunGZu+mCSxJFfT5woFwZJlu3S8fQHX0fJotJW2f?=
- =?us-ascii?Q?7/WwIS0NKJTAG4yYoUY/EXtPFhNi1Q9D6/BWIKlrnXgKWlDR4CbI6T5zG1Uj?=
- =?us-ascii?Q?fru1crQB0ntSl7OkqtXNHk3QyTecDDNbvQeNHJbx5Ft+NETIKMYEVzC72hZK?=
- =?us-ascii?Q?MKWJKodQdAqapZda4kmajz9Kb+5GUw5jGQmne5C9+W/S6290pjyXcNJdw+iy?=
- =?us-ascii?Q?rTpuzzmtROOMhssVH08XabhPjgjtgks3ZZvk2s4J3IX1vd1g1ZR+qd98VkuB?=
- =?us-ascii?Q?TnNk4cRU+I7At6ZVuXXOYyhe34OWwpI3I4gd6mSVDZhcl0J+sDGX7yMFP6ED?=
- =?us-ascii?Q?mhs0ELrAfUgxOdIlkqZCoXQNDqPpAfESEgIeC1L+enXZ67W86UcmpnrWYL47?=
- =?us-ascii?Q?5p8pUIkp380m4a4Y6LEY7VVykA8C4wkjfIOPJn792qkRlc1kk0sh3q9kHCkc?=
- =?us-ascii?Q?K/bqY8f9u7nwq+D7kWr7nS+5xpHEvm57V0m6viqY+YmqZn7qMnK1XIebfqdn?=
- =?us-ascii?Q?vrjd+5bpG+rMO/qjgK7pMzmBxIbZkJ4W8CnIuM77CT8Q=3D=3D?=
-X-Microsoft-Antispam-Message-Info: Vaj9z/G6s5c0glCflDYdCs9aZlDJlvhNPAUpSSRlfyGH0WsU7PJISPk09r8fHfG85laxhhyOvuYQ87/qmrXuAglAW9S0JbipE45IHBSJr2rTfOibBMQpYfF4D0iNPIbtTWhV5ouT1PXsSCM/ChMM6QKQ4iU5GC1zROWfTEF5yhKmk+AR5Su/1DBTMihV2OIAgWcPvBm1MF4ud1CcxVY57CIRv8wLaZJBDAQ7ceKr8NVT9KxvYkvu1ZnVA98H05CqRv2rA/OHmA3KP7h2KXQBFK4EJkSmF0BP+w4Coe2/4cz2qVxFyQBvqaKwCtr/5+bTIWgbhcr8zskas01C1i7v3WSmqiC0aY7aPM6XUmHVE5Y=
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB550;6:g7lm9Ys3qX0fkhmtIlTVb41MZQnlFmGxbN56eGL0km21WQAtN1DI3fZEBErqvMzq7lfbVOBjXshs5+Ha9qhf4y9KH9KUZ8bTxPp4whf1TULwnz+gVRhTbbbzw3BT0AcahrFoKWHEW0dV2806QezENsh8thE9KKIgM9vckrvzIth6kl85GvlNXym6vsauNf1MnIIeYNOsit4mafnH1pIapC7JCBrFxbRa8JasZzAjRVBuW8vsMf2WaKbAujZ+HxX5ZyFQYRPnliNY7/kKWljoU0/hPyVbjMN85tKQdnYmtbjbpBFsXq+TIdrclWDw/mWL1LOzKxMydVpOEYibeEJT2MZX0co795N2pJ9Vnft0oREdaczagP8lNQWot4l+p77/2MmZk5nMqIhyvRehQpAN5FalKgxJ9wl66+/nVb9DMB1Ca3aTW4hVjvRPyWTm8QW8uZGgwXBOZl/uzDgmij7I/w==;5:vOxR4pg/KTL2YS8CbTH7rHx6PYJ7iAJn6lN6tb6oTAKRhG0Hhq3UM+DDL/UMoSUfmQ4cwWvQXMHPEyvIL1Vxu7GpZg95wlkfU9xhOxNbUR5lc1CMEr8NKQAu87gprml6OnO6PmrS+/tsaYkYoayicEiLh25UdCTaEalCdyBV7aA=;7:6zVlKLHHt3uzl494O6siTRoDS1Gqfcb85RGlU3PAbD1UFG8eglQvMZm1K2ZWSVAmXZf5ekGCeWnOrard1dpdZB24gnhOu1QYYQQH+W7fKMitXUO/6GgFc5loXSiORD0PfgiKl4zFguS1dnr3ncNTuw==
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN2PR03MB2272;23:bw3qtzevSij4PN75F+4q1rTLtH3ie5p3GgejntUEh?=
+ =?us-ascii?Q?v1Xoh+JKwbmLc/e/0ZjobM3cR4mTx9KYyD2SdXS9/JXqAdkqHmgUa1yjwDXZ?=
+ =?us-ascii?Q?w0DChM1u4Wpvcx48dAv6JG1NPti7qv5KTeKs1hit0nTjc8Aq7mGfq1eKyi4k?=
+ =?us-ascii?Q?KMmlYNIs8B/FAefoAagd/USFjNY8tfc6RZMXCfpxa6Esjvoy1oRJDgBLp3Va?=
+ =?us-ascii?Q?pNHu57TfRMX2MApTTVZUZWLiExiqoRrR7//dPzttXI6gZQWdAKJXi+pxvTU8?=
+ =?us-ascii?Q?8myXgHT9fEXqFnmuAXa8CJccOJ5GSo36MeuzcRy4M6/4z9Fh9bbdIEKDDuVD?=
+ =?us-ascii?Q?WqTFgJFhgAuvtb68txKywg84KEhML71X8TuE0pPAwbV4ghxPJdgSFTv2rVaL?=
+ =?us-ascii?Q?hGgYIiVESDC7gCEqWZUuZL1L62l2zjHPKz6HcwFIyhQGCfEWUt5FnnwO80vs?=
+ =?us-ascii?Q?704XaCzEU623j3WvJl0gJF1YfBjEiaarL9oGTiqMJULfM9gUXSH51OSueHT5?=
+ =?us-ascii?Q?AJnlmjXdGqXF0jqEYjW39tllKL9heg2oFuOuFIXmKsACVbWft2NzcTHwVEWI?=
+ =?us-ascii?Q?mM09zdwYsm/wgQx0O22qGfkMXDUHQRqpHmiruzFQec9K7TPLXX+97aqgpfuT?=
+ =?us-ascii?Q?g6+4OE51lxIKJhJ1HNtPz9UPBufcN4R8GHZfzGSDef5rkJvzxSrJXckxtJ2l?=
+ =?us-ascii?Q?lgbZ+6U1Alj+fhjODl95kK4pqT9kVMweuTZq+FZ6tshWqh27WlKgFIOC+NQg?=
+ =?us-ascii?Q?h4yYBEuhEvCnB+gA0qBw7YWQSmGje3AAWMEatcIpQbX86fq4yCL3gRMa5MAy?=
+ =?us-ascii?Q?lYxm4sN4kM5IFC9jZQmXqspYiw+oGmET+N/WPDdMDETMLdG2KFhg8lSdVCxi?=
+ =?us-ascii?Q?u8iWZ5752Yy0rOZbRpjPEOuUG8WJGcGFdOe+oyC7E3Cj2kmXur35MPzNvW+I?=
+ =?us-ascii?Q?6OEHuTRaKLhv0T+E46JbGf9Jl+5EGJh6dCoBiq37ZN8wakWcPMQIAGOq3ma6?=
+ =?us-ascii?Q?kfG1q3HqPkPW+hmkiTSyiAv?=
+X-Microsoft-Antispam-Message-Info: Vhi8LKGqRmpTae6TDsds5+hjWCo6fLqy5pB7nLfXmqq668vV9DMEczcNLCdn0zzERtdNDGHvQfWv9QG1JiFzfQUO8YRDSGIDe3WJ5mQdB+x+vQueguL8oqOVkfF/A1lwEIUe8gtaebUlxgzKERZqx09Ot0mg4oi8ZSY5/+FFSmAgzxkYFupOyCkHED6hkFjeKK6nZwJLNu8WJC+PAQH9VhPGza9xYd3dRi9perRjf9yxzuuSRG5eYwoD6YG4FGqrS5NGXVHa1x7/cPM6EsYC15m6X5aSI9NvJ6VYgHih+5gjCFbLGVqEeWHS+R3iZW8BZ7dznxTLnEbIy4hpPhiqp0GY3G17TcCL78/COZJxBQ8=
+X-Microsoft-Exchange-Diagnostics: 1;SN2PR03MB2272;6:EK7XCQ1r1MI4BB6OnzQOFVpi/osDHUsrypkG4zyfNXM4YofNwOhefkUzUwrqMMxXnrmIwKH1FpQUzyg7ZwpkP8IKDYOaPOGiJiIY12VvpdysI07RC/Thh3Fle8gNfMOdTWJN1UxGl8Z5Ux3eQ8Nj78GQWQgbAbPQi/i30bxnlo3zul0flxcX3f0qjP9v1+iyUapCQ9EcYyB7wE0Paig3pBju+hCMk0D/L6M5Rb2n/8j0Ylq6m+OnPTpeL//yu/zLSJrbYoVcOaNkxeZQNsMGg46s6QPqAOojSLswRW07434dJ48FXVbiSjsx/R7siJpEiUdopYzqJl0cUn6GMrC1G5x77EhHF6PODXk/2DjV3dcX76mmqaVcPQY4Qa2GCKmM52V618twcPdzjoi78OjKZIfhF8BZmXJx46GHPq6bxsU0vFaeFOzP5iE4G0MEb8leVtFTEUxLINfUD7ad4NxeZA==;5:i5Xg6N9VLJXFX4SdHlExjgy/aatZ2Klvqt625ib9qqOy9YyOQixQWvV3ko5EpnjBdEP0QCxCqPwauFzknPGMOo2004lnaSXUSZ+ifW20AnDPj6jk8C6VsOJEaZaHXrGeiINsCI1zxUVO7bMsVl2UNLf26DH2JAii6SoAwnBSRCY=;7:iZcGBFKlEJ/EAitytUJS02rU6cJ7uCP/PGUVK8ZcWbSuSmSLfWAFk0zCMp4Ev2UaSoCZcg2fZ5JoS2/Txkz4YMJI4pJMrXn1yUw+l5LLBkXG+8A9zqahgo6B2iFh3NkZbJ5T3FkuaridcshLxu0Gqw==
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Nov 2018 15:40:13.5233
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Nov 2018 15:41:12.6754
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 339efc24-e0b1-4a8b-b4ad-08d64659a3f5
+X-MS-Exchange-CrossTenant-Network-Message-Id: 673799a8-2951-463a-9d61-08d64659c737
 X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta4.analog.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLUPR03MB550
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN2PR03MB2272
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lars-Peter Clausen <lars@metafoo.de>
+There are several ADC drivers that depend on the same device tree
+bindings. Rather than continue to duplicate the properties, this patch
+adds a common adc binding document that can be referenced. For beginning,
+only two properties are documented.
 
-Some newer devices from the Sigma-Delta ADC family do have their data
-register at a different address than the current default address. Add a
-parameter to the ad_sigma_delta_info struct which allows to override the
-default address.
-
-Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
 Signed-off-by: Stefan Popa <stefan.popa@analog.com>
 ---
-Changes in v2:
-	- Added this commit.
-Changes in v3:
-	- Nothing changed.
+Changes in v2, v3:
+	- N/A.
 Changes in v4:
-	- Nothing changed.
+	- Added this commit.
 
- drivers/iio/adc/ad_sigma_delta.c       | 22 +++++++++++++++++-----
- include/linux/iio/adc/ad_sigma_delta.h |  3 +++
- 2 files changed, 20 insertions(+), 5 deletions(-)
+ Documentation/devicetree/bindings/iio/adc/adc.txt | 25 +++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/adc.txt
 
-diff --git a/drivers/iio/adc/ad_sigma_delta.c b/drivers/iio/adc/ad_sigma_delta.c
-index fc95107..ff5f2da 100644
---- a/drivers/iio/adc/ad_sigma_delta.c
-+++ b/drivers/iio/adc/ad_sigma_delta.c
-@@ -278,6 +278,7 @@ int ad_sigma_delta_single_conversion(struct iio_dev *indio_dev,
- {
- 	struct ad_sigma_delta *sigma_delta = iio_device_get_drvdata(indio_dev);
- 	unsigned int sample, raw_sample;
-+	unsigned int data_reg;
- 	int ret = 0;
- 
- 	if (iio_buffer_enabled(indio_dev))
-@@ -305,7 +306,12 @@ int ad_sigma_delta_single_conversion(struct iio_dev *indio_dev,
- 	if (ret < 0)
- 		goto out;
- 
--	ret = ad_sd_read_reg(sigma_delta, AD_SD_REG_DATA,
-+	if (sigma_delta->info->data_reg != 0)
-+		data_reg = sigma_delta->info->data_reg;
-+	else
-+		data_reg = AD_SD_REG_DATA;
+diff --git a/Documentation/devicetree/bindings/iio/adc/adc.txt b/Documentation/devicetree/bindings/iio/adc/adc.txt
+new file mode 100644
+index 0000000..1e3cc21
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/adc/adc.txt
+@@ -0,0 +1,25 @@
++Common ADCs properties
 +
-+	ret = ad_sd_read_reg(sigma_delta, data_reg,
- 		DIV_ROUND_UP(chan->scan_type.realbits + chan->scan_type.shift, 8),
- 		&raw_sample);
- 
-@@ -392,6 +398,7 @@ static irqreturn_t ad_sd_trigger_handler(int irq, void *p)
- 	struct iio_dev *indio_dev = pf->indio_dev;
- 	struct ad_sigma_delta *sigma_delta = iio_device_get_drvdata(indio_dev);
- 	unsigned int reg_size;
-+	unsigned int data_reg;
- 	uint8_t data[16];
- 	int ret;
- 
-@@ -401,18 +408,23 @@ static irqreturn_t ad_sd_trigger_handler(int irq, void *p)
- 			indio_dev->channels[0].scan_type.shift;
- 	reg_size = DIV_ROUND_UP(reg_size, 8);
- 
-+	if (sigma_delta->info->data_reg != 0)
-+		data_reg = sigma_delta->info->data_reg;
-+	else
-+		data_reg = AD_SD_REG_DATA;
++This binding is a work-in-progress
 +
- 	switch (reg_size) {
- 	case 4:
- 	case 2:
- 	case 1:
--		ret = ad_sd_read_reg_raw(sigma_delta, AD_SD_REG_DATA,
--			reg_size, &data[0]);
-+		ret = ad_sd_read_reg_raw(sigma_delta, data_reg, reg_size,
-+			&data[0]);
- 		break;
- 	case 3:
- 		/* We store 24 bit samples in a 32 bit word. Keep the upper
- 		 * byte set to zero. */
--		ret = ad_sd_read_reg_raw(sigma_delta, AD_SD_REG_DATA,
--			reg_size, &data[1]);
-+		ret = ad_sd_read_reg_raw(sigma_delta, data_reg, reg_size,
-+			&data[1]);
- 		break;
- 	}
- 
-diff --git a/include/linux/iio/adc/ad_sigma_delta.h b/include/linux/iio/adc/ad_sigma_delta.h
-index 730ead1..7e84351 100644
---- a/include/linux/iio/adc/ad_sigma_delta.h
-+++ b/include/linux/iio/adc/ad_sigma_delta.h
-@@ -39,6 +39,8 @@ struct iio_dev;
-  *		if there is just one read-only sample data shift register.
-  * @addr_shift: Shift of the register address in the communications register.
-  * @read_mask: Mask for the communications register having the read bit set.
-+ * @data_reg: Address of the data register, if 0 the default address of 0x3 will
-+ *   be used.
-  */
- struct ad_sigma_delta_info {
- 	int (*set_channel)(struct ad_sigma_delta *, unsigned int channel);
-@@ -47,6 +49,7 @@ struct ad_sigma_delta_info {
- 	bool has_registers;
- 	unsigned int addr_shift;
- 	unsigned int read_mask;
-+	unsigned int data_reg;
- };
- 
- /**
++Optional properties for child nodes:
++- bipolar : Boolean, if set the channel is used in bipolar mode.
++- diff-channels : Differential channels muxed for this ADC. The first value
++		specifies the positive input pin, the second value the negative
++		input pin.
++
++Example:
++	adc@0 {
++		compatible = "some,adc";
++		...
++		channel@0 {
++			bipolar;
++			diff-channels = <0 1>;
++			...
++		};
++
++		channel@1 {
++			diff-channels = <2 3>;
++			...
++		};
++	};
 -- 
 2.7.4
 
