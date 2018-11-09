@@ -2,136 +2,84 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95A4BC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 03:10:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E28DC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 03:11:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E32520855
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 03:10:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="QsbnJ9oW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E32520855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
+	by mail.kernel.org (Postfix) with ESMTP id 3FAA220855
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 03:11:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FAA220855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727602AbeKIMsk (ORCPT
+        id S1727604AbeKIMtw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 07:48:40 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:50488 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727526AbeKIMsj (ORCPT
+        Fri, 9 Nov 2018 07:49:52 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:41958 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727238AbeKIMtw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 07:48:39 -0500
-Received: by mail-wm1-f66.google.com with SMTP id 124-v6so670422wmw.0
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 19:10:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:to:from:cc;
-        bh=2bUIEZ6aye5K7oeTcESxPSTMB0OYGKhJ1UdH/QEPHnY=;
-        b=QsbnJ9oWLmOxfqViMRx/UJyw6m5Kln6FyoKrBA9VEKIOyWqcQuaUL6wyDvQ/zZTknn
-         gb5yCioZuUqEOROpkroMZOs5qml61ypE7iGOfuzxWqF1gZQq2550W2j1JNn4X29Bl5nI
-         zfxPUyZaPBTMXmh8/Ra8P5eAN8xI+l9lhHmFcN8cUji1/GiHtb94A+v5ORSDWKcb3jyQ
-         M+yw3rrFonqUBZnUQMAl1jomixNyV51DJWMo+5lkyJlWZbf54oxGkceEzds7xm3GyCmO
-         +Vrnv4+JGChmDbTfjrHtS8utTPAeJJS0sCX37wvkHC1eX1hqquGj6ncykDlvjpM6rO+V
-         Pd+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
-        bh=2bUIEZ6aye5K7oeTcESxPSTMB0OYGKhJ1UdH/QEPHnY=;
-        b=FfR0Z2TJQ0solTwgIYMnFuAnZxbfiunPoyHrOxlSV7AOvw2EJzbxTeV+fFFtZ5AWm8
-         CaK2OyXeb/YGWJgiry+8LBJEefGNDgFHMdROpbK9zUyJ8Po43bzUZuFwzbsRRsISP4DQ
-         rTE/X3jLetIll9bWilDQZcDInahQrobulGqg08GS5BWrIFPMIKw0W4useNfaE/2IMaj0
-         QRO+lLjdvB5yCN2UjiO7RfhO5dS3QQp8ywblUWiuw4G5PZlogLvPAI+TbmWsJ6KdDY2G
-         7FA4L0H132yq5IyF3obIfJr+sLHB2H1dpsV3XzEgOltYoe8OaIxrwoLSG46L1Qh8oeRN
-         J++Q==
-X-Gm-Message-State: AGRZ1gJ8PaLftFB4tLd2VeNrr7gWUkLDQbzHdPH6JB3RuZHk+POui0Ju
-        1Q3AsPLaX+ev9+vbpSfs9/SKwA==
-X-Google-Smtp-Source: AJdET5fkXSWUsD0RsVzjZu5cdxk5KRlJoYYTkEecld0CWiXecUwApQW/pR1qiM+yRKR7U/jDMaOTRQ==
-X-Received: by 2002:a1c:e355:: with SMTP id a82-v6mr3253141wmh.74.1541733002121;
-        Thu, 08 Nov 2018 19:10:02 -0800 (PST)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id p125-v6sm435612wmp.2.2018.11.08.19.10.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 08 Nov 2018 19:10:01 -0800 (PST)
-Message-ID: <5be4fa89.1c69fb81.8f337.1df8@mx.google.com>
-Date:   Thu, 08 Nov 2018 19:10:01 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v3.18.124-145-g70889240432b
-X-Kernelci-Branch: linux-3.18.y
-X-Kernelci-Tree: stable-rc
-In-Reply-To: <20181108215054.826084593@linuxfoundation.org>
-References: <20181108215054.826084593@linuxfoundation.org>
-Subject: Re: [PATCH 3.18 000/144] 3.18.125-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
+        Fri, 9 Nov 2018 07:49:52 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id AA4D614B3D579;
+        Thu,  8 Nov 2018 19:11:16 -0800 (PST)
+Date:   Thu, 08 Nov 2018 19:11:16 -0800 (PST)
+Message-Id: <20181108.191116.1317160901826988583.davem@davemloft.net>
+To:     robh@kernel.org
+Cc:     frowand.list@gmail.com, linux-kernel@vger.kernel.org,
+        sparclinux@vger.kernel.org
+Subject: Re: [PATCH 2/8] of: Drop full path from Sparc PDT full_name
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20181107223151.14991-3-robh@kernel.org>
+References: <20181107223151.14991-1-robh@kernel.org>
+        <20181107223151.14991-3-robh@kernel.org>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 08 Nov 2018 19:11:16 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-stable-rc/linux-3.18.y boot: 62 boots: 5 failed, 51 passed with 6 offline (=
-v3.18.124-145-g70889240432b)
+From: Rob Herring <robh@kernel.org>
+Date: Wed,  7 Nov 2018 16:31:45 -0600
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--3.18.y/kernel/v3.18.124-145-g70889240432b/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-3.18.=
-y/kernel/v3.18.124-145-g70889240432b/
+> @@ -32,24 +32,7 @@ unsigned int of_pdt_unique_id __initdata;
+>  
+>  static char * __init of_pdt_build_full_name(struct device_node *dp)
+>  {
+> -	int len, ourlen, plen;
+> -	char *n;
+> -
+> -	dp->path_component_name = build_path_component(dp);
+> -
+> -	plen = strlen(dp->parent->full_name);
+> -	ourlen = strlen(dp->path_component_name);
+> -	len = ourlen + plen + 2;
+> -
+> -	n = prom_early_alloc(len);
+> -	strcpy(n, dp->parent->full_name);
+> -	if (!of_node_is_root(dp->parent)) {
+> -		strcpy(n + plen, "/");
+> -		plen++;
+> -	}
+> -	strcpy(n + plen, dp->path_component_name);
+> -
+> -	return n;
+> +	return build_path_component(dp);
+>  }
+>  
+>  #else /* CONFIG_SPARC */
 
-Tree: stable-rc
-Branch: linux-3.18.y
-Git Describe: v3.18.124-145-g70889240432b
-Git Commit: 70889240432bb789ca9ef4ec1ba90206367fe696
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 26 unique boards, 12 SoC families, 14 builds out of 183
+Hmmm, shouldn't this be doing what the non-SPARC version of
+of_pdt_build_full_name() does which is to return the component string
+appended to the parent's full_name?
 
-Boot Failures Detected:
-
-arm:
-
-    exynos_defconfig
-        exynos4412-odroidx2: 1 failed lab
-
-x86:
-
-    x86_64_defconfig
-        qemu: 3 failed labs
-        x86-atom330: 1 failed lab
-
-Offline Platforms:
-
-arm:
-
-    tegra_defconfig:
-        tegra124-jetson-tk1: 1 offline lab
-
-    bcm2835_defconfig:
-        bcm2835-rpi-b: 1 offline lab
-
-    omap2plus_defconfig:
-        am335x-boneblack: 1 offline lab
-
-    multi_v7_defconfig:
-        am335x-boneblack: 1 offline lab
-        tegra124-jetson-tk1: 1 offline lab
-
-    sama5_defconfig:
-        at91-sama5d4ek: 1 offline lab
-
----
-For more info write to <info@kernelci.org>
+You're just returning the component string here.
