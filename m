@@ -2,66 +2,108 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30AF6C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:43:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67B8EC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:44:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0357420827
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:43:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0357420827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 1694C20883
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:44:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wMOh6Thb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1694C20883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727840AbeKITXe (ORCPT
+        id S1727846AbeKITYm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 14:23:34 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:37258 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727537AbeKITXd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 14:23:33 -0500
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1gL3KM-0001zH-Cz; Fri, 09 Nov 2018 17:43:46 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1gL3KI-0005EV-J0; Fri, 09 Nov 2018 17:43:42 +0800
-Date:   Fri, 9 Nov 2018 17:43:42 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     John Garry <john.garry@huawei.com>
-Cc:     davem@davemloft.net, Jonathan.Cameron@huawei.com,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxarm@huawei.com
-Subject: Re: [PATCH 0/2] crypto: hisilicon - A couple of fixes
-Message-ID: <20181109094342.vp52m6ckyhiya3yz@gondor.apana.org.au>
-References: <1541421315-25623-1-git-send-email-john.garry@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1541421315-25623-1-git-send-email-john.garry@huawei.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Fri, 9 Nov 2018 14:24:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53204 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727560AbeKITYm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 14:24:42 -0500
+Received: from localhost.localdomain (unknown [171.76.98.79])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6FFCE20827;
+        Fri,  9 Nov 2018 09:44:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541756696;
+        bh=MpdBFoGtwFgplFqFFXbxNM7KITb7miV6sFseNZi2aKw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=wMOh6ThbWTt0EIT6bhRG6ydhWGIbzs/4bvA2BhsRBv/G3+ATnG2X4fjI5C73vOXWh
+         x8bugvzDZd9MXo4dtBZ7L+X9xdmJArvMpNfLkHK096iIQDwdtzYFWQOCbO3IDJVTvt
+         yhcXb8lZkCqV3NS+1uZNRBYNsfzGbHm9ngAKYJo0=
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Andy Gross <andy.gross@linaro.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH v5 00/18]  arm64: dts: qcom: qcs404: Add Device tree nodes
+Date:   Fri,  9 Nov 2018 15:13:59 +0530
+Message-Id: <20181109094417.12109-1-vkoul@kernel.org>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 05, 2018 at 08:35:13PM +0800, John Garry wrote:
-> This patchset fixes a couple of issues I discovered while attempting to
-> bringup the driver.
-> 
-> John Garry (2):
->   crypto: hisilicon -  Fix NULL dereference for same dst and src
->   crypto: hisilicon -  Fix reference after free of memories on error
->  path
-> 
->  drivers/crypto/hisilicon/sec/sec_algs.c | 31 +++++++++++++++++--------------
->  1 file changed, 17 insertions(+), 14 deletions(-)
+This series adds support for various nodes for QCS404-EVB.
 
-All applied.  Thanks.
+Based on v4.20-rc1
+
+Changes in v5:
+ - Fix warns reported with W=12
+ - Fix comments by Rob
+
+Changes in v4:
+ - correct the v3 post (sent wrong branch)
+
+Changes in v3:
+ - Make the DTS files sorted alphabetcially and by node addresses
+ - Add reviewed by from Bjorn
+ - Split out the DTS files for EVB 1000 and EVB 4000 boards and add common
+   evb dts files for common part
+
+Changes in v2:
+ Fix cpu binding
+
+Bjorn Andersson (7):
+  arm64: dts: qcom: qcs404: Add reserved-memory regions
+  arm64: dts: qcom: qcs404: Add RPM GLINK related nodes
+  arm64: dts: qcom: qcs404: Add PMS405 RPM regulators
+  arm64: dts: qcom: qcs404: Add TLMM pinctrl node
+  arm64: dts: qcom: qcs404: Add sdcc1 node
+  arm64: dts: qcom: qcs404: Add scm firmware node
+  arm64: dts: qcom: qcs404: Add remoteproc nodes
+
+Vinod Koul (11):
+  arm64: dts: qcom: qcs404: add base dts files
+  arm64: dts: qcom: qcs404-evb: add dts files for EVBs
+  arm64: dts: qcom: qcs404: add smp2p nodes
+  arm64: dts: qcom: pms405: add spmi node
+  arm64: dts: qcom: qcs404: add spmi node
+  arm64: dts: qcom: pms405: add rtc node
+  arm64: dts: qcom: pms405: add gpios
+  arm64: dts: qcom: qcs404: add prng-ee node
+  arm64: dts: qcom: qcs404: Add BAM DMA node
+  arm64: dts: qcom: qcs404: Use BAM DMA for serial uart2
+  arm64: dts: qcom: pms405: Add pon and pwrkey nodes
+
+ arch/arm64/boot/dts/qcom/Makefile            |   2 +
+ arch/arm64/boot/dts/qcom/pms405.dtsi         |  55 +++
+ arch/arm64/boot/dts/qcom/qcs404-evb-1000.dts |  11 +
+ arch/arm64/boot/dts/qcom/qcs404-evb-4000.dts |  11 +
+ arch/arm64/boot/dts/qcom/qcs404-evb.dtsi     | 188 ++++++++++
+ arch/arm64/boot/dts/qcom/qcs404.dtsi         | 490 +++++++++++++++++++++++++++
+ 6 files changed, 757 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/qcom/pms405.dtsi
+ create mode 100644 arch/arm64/boot/dts/qcom/qcs404-evb-1000.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/qcs404-evb-4000.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
+ create mode 100644 arch/arm64/boot/dts/qcom/qcs404.dtsi
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.14.4
+
