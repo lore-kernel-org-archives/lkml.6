@@ -2,122 +2,133 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09873C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 06:27:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12BF7C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 06:29:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B974720840
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 06:27:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NS3IIYvC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B974720840
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id D8A3920840
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 06:29:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8A3920840
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727773AbeKIQGf (ORCPT
+        id S1727807AbeKIQIH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 11:06:35 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:34077 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727549AbeKIQGf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 11:06:35 -0500
-Received: by mail-pl1-f193.google.com with SMTP id f12-v6so483358plo.1
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 22:27:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=SWzl7OukwhybX1iOcUp/6Ya3iTdfFdz2L5vI1Y/+WC0=;
-        b=NS3IIYvC9cG0i3eStT75xUOGkGAmsylsUeMaI6Gd+9uFaf+wSypRMnqy5WoWcL6NuY
-         pV6SE8Pl6RCy+Y2omiczefmW4Hj35WM/FpdyWYLfRTNRDo2no5r2YsvB+UR49/uT20uX
-         JYvwvCgNQPqaoc2/cgJQcSjCsg3pTH8xuiA6A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SWzl7OukwhybX1iOcUp/6Ya3iTdfFdz2L5vI1Y/+WC0=;
-        b=TpO55xoWynjgs2P9yL6gVGI/RHqNV4k1yapwQ4aOIJ7BFe6K3+ASSQG1qcW53cJPXb
-         CKEgPZoVbkm0du/oNzrINGB6++rqorv+IHL+mvcoNHGS7Y+T6GtGzYxEY4mi4L3c7HxI
-         Dn8J8U1DbuJlaLoQmRtcuswV0klyjpHRI05Jebd29cXbkGzXmD6tV86FTfov5sY05gek
-         QCbKuk+QXFfjA38BxstZ/DTfGDIIWyWjvYGR0qU2Co/O0Ef+Ijva2Bg2WEnQHVGhQT77
-         gdUxd5ThoRHKlQJphGMMH+CPVsKanapmbYT0c5mJFZ8v37drX3i/bgu7XfvD5u/TYXm7
-         iKbg==
-X-Gm-Message-State: AGRZ1gKEM5X4snT9yGBFSDF8ypvwfFcibkgOdwbHlwSPlaVq9FqOuWMz
-        h2R7G6AFRE0bcvSeKGfAFQaNyA==
-X-Google-Smtp-Source: AJdET5f7jhM+M5tiys8e3Y7UZ8W/OGLUs7oeG1bbg4jRQeAPdWB7aHIdoVjEL6Z6EHGrfPfdZWpsLw==
-X-Received: by 2002:a17:902:1e3:: with SMTP id b90-v6mr4813793plb.117.1541744850234;
-        Thu, 08 Nov 2018 22:27:30 -0800 (PST)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id t78-v6sm9926366pfk.59.2018.11.08.22.27.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 08 Nov 2018 22:27:29 -0800 (PST)
-Date:   Thu, 8 Nov 2018 22:27:27 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 2/2] arm64: defconfig: Enable some qcom remoteproc configs
-Message-ID: <20181109062727.GB10915@tuxbook-pro>
-References: <20181109061631.8245-1-vkoul@kernel.org>
- <20181109061631.8245-2-vkoul@kernel.org>
+        Fri, 9 Nov 2018 11:08:07 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:33646 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727693AbeKIQIH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 11:08:07 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 7115920787; Fri,  9 Nov 2018 07:29:00 +0100 (CET)
+Received: from bbrezillon (unknown [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 1B448206D8;
+        Fri,  9 Nov 2018 07:29:00 +0100 (CET)
+Date:   Fri, 9 Nov 2018 07:28:57 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
+Cc:     <miquel.raynal@bootlin.com>, <richard@nod.at>,
+        <dwmw2@infradead.org>, <computersforpeace@gmail.com>,
+        <marek.vasut@gmail.com>, <michals@xilinx.com>,
+        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <nagasuresh12@gmail.com>, <robh@kernel.org>
+Subject: Re: [LINUX PATCH v12 1/3] dt-bindings: mtd: arasan: Add device tree
+ binding documentation
+Message-ID: <20181109072857.75e86cb6@bbrezillon>
+In-Reply-To: <1541739641-17789-2-git-send-email-naga.sureshkumar.relli@xilinx.com>
+References: <1541739641-17789-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
+        <1541739641-17789-2-git-send-email-naga.sureshkumar.relli@xilinx.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181109061631.8245-2-vkoul@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 08 Nov 22:16 PST 2018, Vinod Koul wrote:
+On Fri, 9 Nov 2018 10:30:39 +0530
+Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com> wrote:
 
-> From: Bjorn Andersson <bjorn.andersson@linaro.org>
+> This patch adds the dts binding document for arasan nand flash controller
 > 
-> Enable remoteproc configs to boot the remoteprocs on QC chipsets. These
-> are common configs and not specific to a specific SoC so should be enabled
-> across the board.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Signed-off-by: Vinod Koul <vkoul@kernel.org>
+> Signed-off-by: Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
 > ---
->  arch/arm64/configs/defconfig | 6 ++++++
->  1 file changed, 6 insertions(+)
+> Changes in v12:
+>  - Removed interrupt-parent description as it is implied as suggested by
+>    Rob Herring
+>  - Added missing ';' as required
+> Changes in v11:
+>  - Updated compatible description as suggested by Boris
+>  - Removed arasan-has-dma property
+> Changes in v10:
+>  - None
+> Changes in v9:
+>  - None
+> Changes in v8:
+>  - Updated compatible and clock-names as per Boris comments
+> Changes in v7:
+>  - Corrected the acronyms those should be in caps
+> Changes in v6:
+>  - Removed num-cs property
+>  - Separated nandchip from nand controller
+> Changes in v5:
+>  - None
+> Changes in v4:
+>  - Added num-cs property
+>  - Added clock support
+> Changes in v3:
+>  - None
+> Changes in v2:
+>  - None
+> ---
+>  .../devicetree/bindings/mtd/arasan_nand.txt        | 32 ++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mtd/arasan_nand.txt
 > 
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index b02da2e7a39a..b38d92c96c81 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -614,9 +614,15 @@ CONFIG_TEGRA_IOMMU_SMMU=y
->  CONFIG_ARM_SMMU=y
->  CONFIG_ARM_SMMU_V3=y
->  CONFIG_QCOM_IOMMU=y
-> +CONFIG_REMOTEPROC=m
-> +CONFIG_QCOM_ADSP_PIL=m
+> diff --git a/Documentation/devicetree/bindings/mtd/arasan_nand.txt b/Documentation/devicetree/bindings/mtd/arasan_nand.txt
+> new file mode 100644
+> index 0000000..b522daf
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mtd/arasan_nand.txt
+> @@ -0,0 +1,32 @@
+> +Arasan NAND Flash Controller with ONFI 3.1 support
+> +
+> +Required properties:
+> +- compatible:		Should be "xlnx,zynqmp-nand", "arasan,nfc-v3p10"
+> +- reg:			Memory map for module access
+> +- interrupts:		Should contain the interrupt for the device
+> +- clock-name:		List of input clocks - "sys", "flash"
+> +			(See clock bindings for details)
+> +- clocks:		Clock phandles (see clock bindings for details)
+> +
+> +Required properties for child node:
+> +- nand-ecc-mode: see nand.txt
 
-This is now CONFIG_QCOM_Q6V5_PAS
+Why is it required? Can't you fallback to HW when this prop is missing?
+Oh, and reg is not listed in the required props.
 
-> +CONFIG_QCOM_Q6V5_PIL=m
+> +
+> +For NAND partition information please refer the below file
+> +Documentation/devicetree/bindings/mtd/partition.txt
+> +
+> +Example:
+> +	nfc: nand@ff100000 {
+> +		compatible = "xlnx,zynqmp-nand", "arasan,nfc-v3p10";
+> +		reg = <0x0 0xff100000 0x1000>;
+> +		clock-name = "sys", "flash";
+> +		clocks = <&misc_clk &misc_clk>;
+> +		interrupt-parent = <&gic>;
+> +		interrupts = <0 14 4>;
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		nand@0 {
+> +			reg = <0>;
+> +			nand-ecc-mode = "hw";
+> +		};
+> +	};
 
-and CONFIG_QCOM_Q6V5_MSS
-
-> +CONFIG_QCOM_SYSMON=m
->  CONFIG_RPMSG_QCOM_GLINK_RPM=y
-> +CONFIG_RPMSG_QCOM_GLINK_SMEM=m
->  CONFIG_RPMSG_QCOM_SMD=y
->  CONFIG_RASPBERRYPI_POWER=y
-> +CONFIG_QCOM_GLINK_SSR=m
->  CONFIG_QCOM_SMEM=y
->  CONFIG_QCOM_SMD_RPM=y
->  CONFIG_QCOM_SMP2P=y
-
-Apart from that this looks good.
-
-Regards,
-Bjorn
