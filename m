@@ -2,160 +2,134 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACE52C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:43:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91811C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:45:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69FFC20892
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:43:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69FFC20892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 4EAAB20892
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:45:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BobaWjrk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EAAB20892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728219AbeKIUXa (ORCPT
+        id S1728090AbeKIUZt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 15:23:30 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58164 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727560AbeKIUXa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 15:23:30 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4F1BAAF58;
-        Fri,  9 Nov 2018 10:43:26 +0000 (UTC)
-Subject: Re: [PATCH RFC 1/3] mm: When CONFIG_ZONE_DMA32 is set, use DMA32 for
- SLAB_CACHE_DMA
-To:     Nicolas Boichat <drinkcat@chromium.org>,
-        Robin Murphy <robin.murphy@arm.com>
-Cc:     Will Deacon <will.deacon@arm.com>, Joerg Roedel <joro@8bytes.org>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Levin Alexander <alexander.levin@verizon.com>,
-        Huaisheng Ye <yehs1@lenovo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Yong Wu <yong.wu@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Tomasz Figa <tfiga@google.com>, yingjoe.chen@mediatek.com
-References: <20181109082448.150302-1-drinkcat@chromium.org>
- <20181109082448.150302-2-drinkcat@chromium.org>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <00afe803-22dd-5a75-70aa-dda0c7752470@suse.cz>
-Date:   Fri, 9 Nov 2018 11:43:23 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 9 Nov 2018 15:25:49 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:36923 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727532AbeKIUZs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 15:25:48 -0500
+Received: by mail-pf1-f193.google.com with SMTP id u13-v6so771234pfm.4
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 02:45:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=H5jOHBWLP9V4yMpJUdT5opRiCEzhy4pJ+9dwy88Qjv0=;
+        b=BobaWjrklokqt01lje4/gfHXGrRCqxrTqIJwyvW7aURjkDzbX5x9lOkeztGY/KYyBh
+         bEZerRu1AOOMA+V0XGfTP2peenAlCMnz/vgu6diovn8vPVxjEu6xJJ733006Qw6zZl6D
+         a584bnrBel7jQ1/lHQumHWwj5f1WN5mQLlojZakL/Qex+/AgHeZOYzqSiY221eALhspi
+         TDP35H3Lg4mcd9eAyz4Us0tcPtT2JzoZkLfjM5NNAizms4fS3fMSLJDuORhvKj0UjXvb
+         z8eoV3/s88wLN9QXToT7d1g4z/xP3biwDhuzysBblLH9doOV9PE2gCbV5p6W2EkviJRb
+         EM2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=H5jOHBWLP9V4yMpJUdT5opRiCEzhy4pJ+9dwy88Qjv0=;
+        b=dyUIQgQ63uV5QpGeZuL9NNm67gALzJbNHnesf7a2wrdSQ3/zNOubdD4fi3oroUfV9Q
+         oNAo5nhBaUIdocjv3CNVqy1KkNkEiNY1df+30c0tFmQ8jUivbeYtIWu2es2aeUgpcqEL
+         Ey+hXYp2ZXZZWDTNdrkT32JVBhmn4Yw8Rmk8vXuKfkh/AdW4vGlsS9B/KAuZMxFsCdax
+         HG+NaaroKTcjTIht/qmYP+jbQcUjDYsWoUo3W8y41YhguO6Ctj0k3l9vxc/94futWCDU
+         x2nLhknuMPhnJq2Xpjazc2YcFFAo9hrY892f67FXhPvVEEqixEldT1PJWwB20hx89YrG
+         74/Q==
+X-Gm-Message-State: AGRZ1gK20B/7zYF6mKdfGKPFlVJFS2gHwrW9B0Bu4O+X8uSv0UI6apDE
+        s1sKtA2pUPPIxMuaaosIc6kpCyGu
+X-Google-Smtp-Source: AJdET5fr689ZohvLg44dWKJ0DiLGWngjfM9FUuHuF8co1NxXvfuFwEjHSvMzkGRo4ljIWP1hjlEgnQ==
+X-Received: by 2002:a63:42c1:: with SMTP id p184mr6948053pga.202.1541760346419;
+        Fri, 09 Nov 2018 02:45:46 -0800 (PST)
+Received: from localhost (14-202-194-140.static.tpgi.com.au. [14.202.194.140])
+        by smtp.gmail.com with ESMTPSA id n17-v6sm14611656pfj.148.2018.11.09.02.45.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 09 Nov 2018 02:45:44 -0800 (PST)
+Date:   Fri, 9 Nov 2018 21:45:41 +1100
+From:   Balbir Singh <bsingharora@gmail.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Baoquan He <bhe@redhat.com>,
+        Oscar Salvador <OSalvador@suse.com>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm, memory_hotplug: check zone_movable in
+ has_unmovable_pages
+Message-ID: <20181109104541.GE9042@350D>
+References: <20181106095524.14629-1-mhocko@kernel.org>
+ <20181106203518.GC9042@350D>
+ <20181107073548.GU27423@dhcp22.suse.cz>
+ <20181107125324.GD9042@350D>
+ <20181107130655.GE27423@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20181109082448.150302-2-drinkcat@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181107130655.GE27423@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/9/18 9:24 AM, Nicolas Boichat wrote:
-> Some callers, namely iommu/io-pgtable-arm-v7s, expect the physical
-> address returned by kmem_cache_alloc with GFP_DMA parameter to be
-> a 32-bit address.
+On Wed, Nov 07, 2018 at 02:06:55PM +0100, Michal Hocko wrote:
+> On Wed 07-11-18 23:53:24, Balbir Singh wrote:
+> > On Wed, Nov 07, 2018 at 08:35:48AM +0100, Michal Hocko wrote:
+> > > On Wed 07-11-18 07:35:18, Balbir Singh wrote:
+> [...]
+> > > > The check seems to be quite aggressive and in a loop that iterates
+> > > > pages, but has nothing to do with the page, did you mean to make
+> > > > the check
+> > > > 
+> > > > zone_idx(page_zone(page)) == ZONE_MOVABLE
+> > > 
+> > > Does it make any difference? Can we actually encounter a page from a
+> > > different zone here?
+> > > 
+> > 
+> > Just to avoid page state related issues, do we want to go ahead
+> > with the migration if zone_idx(page_zone(page)) != ZONE_MOVABLE.
 > 
-> Instead of adding a separate SLAB_CACHE_DMA32 (and then audit
-> all the calls to check if they require memory from DMA or DMA32
-> zone), we simply allocate SLAB_CACHE_DMA cache in DMA32 region,
-> if CONFIG_ZONE_DMA32 is set.
+> Could you be more specific what kind of state related issues you have in
+> mind?
 > 
-> Fixes: ad67f5a6545f ("arm64: replace ZONE_DMA with ZONE_DMA32")
-> Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
-> ---
->  include/linux/slab.h | 13 ++++++++++++-
->  mm/slab.c            |  2 +-
->  mm/slub.c            |  2 +-
->  3 files changed, 14 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/slab.h b/include/linux/slab.h
-> index 918f374e7156f4..390afe90c5dec0 100644
-> --- a/include/linux/slab.h
-> +++ b/include/linux/slab.h
-> @@ -30,7 +30,7 @@
->  #define SLAB_POISON		((slab_flags_t __force)0x00000800U)
->  /* Align objs on cache lines */
->  #define SLAB_HWCACHE_ALIGN	((slab_flags_t __force)0x00002000U)
-> -/* Use GFP_DMA memory */
-> +/* Use GFP_DMA or GFP_DMA32 memory */
->  #define SLAB_CACHE_DMA		((slab_flags_t __force)0x00004000U)
->  /* DEBUG: Store the last owner for bug hunting */
->  #define SLAB_STORE_USER		((slab_flags_t __force)0x00010000U)
-> @@ -126,6 +126,17 @@
->  #define ZERO_OR_NULL_PTR(x) ((unsigned long)(x) <= \
->  				(unsigned long)ZERO_SIZE_PTR)
->  
-> +/*
-> + * When ZONE_DMA32 is defined, have SLAB_CACHE_DMA allocate memory with
-> + * GFP_DMA32 instead of GFP_DMA, as this is what some of the callers
-> + * require (instead of duplicating cache for DMA and DMA32 zones).
-> + */
-> +#ifdef CONFIG_ZONE_DMA32
-> +#define SLAB_CACHE_DMA_GFP GFP_DMA32
-> +#else
-> +#define SLAB_CACHE_DMA_GFP GFP_DMA
-> +#endif
 
-AFAICS this will break e.g. x86 which can have both ZONE_DMA and
-ZONE_DMA32, and now you would make kmalloc(__GFP_DMA) return objects
-from ZONE_DMA32 instead of __ZONE_DMA, which can break something.
+I was wondering if page_zone() is setup correctly, but it's setup
+upfront, so I don't think that is ever an issue.
 
-Also I'm probably missing the point of this all. In patch 3 you use
-__get_dma32_pages() thus __get_free_pages(__GFP_DMA32), which uses
-alloc_pages, thus the page allocator directly, and there's no slab
-caches involved. It makes little sense to involve slab for page table
-allocations anyway, as those tend to be aligned to a page size (or
-high-order page size). So what am I missing?
+> > > > it also skips all checks for pinned pages and other checks
+> > > 
+> > > Yes, this is intentional and the comment tries to explain why. I wish we
+> > > could be add a more specific checks for movable pages - e.g. detect long
+> > > term pins that would prevent migration - but we do not have any facility
+> > > for that. Please note that the worst case of a false positive is a
+> > > repeated migration failure and user has a way to break out of migration
+> > > by a signal.
+> > >
+> > 
+> > Basically isolate_pages() will fail as opposed to hotplug failing upfront.
+> > The basic assertion this patch makes is that all ZONE_MOVABLE pages that
+> > are not reserved are hotpluggable.
+> 
+> Yes, that is correct.
+>
+
+I wonder if it is easier to catch a __SetPageReserved() on ZONE_MOVABLE memory
+at set time, the downside is that we never know if that memory will ever be
+hot(un)plugged. The patch itself, I think is OK
+
+Acked-by: Balbir Singh <bsingharora@gmail.com>
+
+Balbir Singh.
