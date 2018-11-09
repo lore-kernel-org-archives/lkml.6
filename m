@@ -2,353 +2,103 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 072ECC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:55:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA119C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:56:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B89F820855
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:55:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B89F820855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id A6E7520883
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:56:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6E7520883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727955AbeKITfR (ORCPT
+        id S1727999AbeKITf6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 14:35:17 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:43954 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727537AbeKITfQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 14:35:16 -0500
-Received: from fsav104.sakura.ne.jp (fsav104.sakura.ne.jp [27.133.134.231])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wA99tP32015340;
-        Fri, 9 Nov 2018 18:55:25 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav104.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp);
- Fri, 09 Nov 2018 18:55:25 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank060157065137.bbtec.net [60.157.65.137])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id wA99tPXM015330
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Fri, 9 Nov 2018 18:55:25 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH 3/3] lockdep: Use line-buffered printk() for lockdep
- messages.
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Dmitriy Vyukov <dvyukov@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Alexander Potapenko <glider@google.com>,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>
-References: <1541165517-3557-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <1541165517-3557-3-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <20181107151900.gxmdvx42qeanpoah@pathway.suse.cz>
- <20181108044510.GC2343@jagdpanzerIV>
- <9648a384-853c-942e-6a8d-80432d943aae@i-love.sakura.ne.jp>
- <20181109061204.GC599@jagdpanzerIV>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <07dcbcb8-c5a7-8188-b641-c110ade1c5da@i-love.sakura.ne.jp>
-Date:   Fri, 9 Nov 2018 18:55:26 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Fri, 9 Nov 2018 14:35:58 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39800 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727537AbeKITf5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 14:35:57 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AE4D6ADDD;
+        Fri,  9 Nov 2018 09:56:06 +0000 (UTC)
+Date:   Fri, 9 Nov 2018 10:56:04 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc:     Kyungtae Kim <kt0755@gmail.com>, akpm@linux-foundation.org,
+        pavel.tatashin@microsoft.com, vbabka@suse.cz, osalvador@suse.de,
+        rppt@linux.vnet.ibm.com, aaron.lu@intel.com,
+        iamjoonsoo.kim@lge.com, alexander.h.duyck@linux.intel.com,
+        mgorman@techsingularity.net, lifeasageek@gmail.com,
+        threeearcat@gmail.com, syzkaller@googlegroups.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Subject: Re: UBSAN: Undefined behaviour in mm/page_alloc.c
+Message-ID: <20181109095604.GC5321@dhcp22.suse.cz>
+References: <CAEAjamseRRHu+TaTkd1TwpLNm8mtDGP=2K0WKLF0wH-3iLcW_w@mail.gmail.com>
+ <20181109084353.GA5321@dhcp22.suse.cz>
+ <b51aae15-eb5d-47f0-1222-bfc1ef21e06c@I-love.SAKURA.ne.jp>
 MIME-Version: 1.0
-In-Reply-To: <20181109061204.GC599@jagdpanzerIV>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b51aae15-eb5d-47f0-1222-bfc1ef21e06c@I-love.SAKURA.ne.jp>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/11/09 15:12, Sergey Senozhatsky wrote:
-> On (11/08/18 20:37), Tetsuo Handa wrote:
-> > On 2018/11/08 13:45, Sergey Senozhatsky wrote:
-> > > So, can we just do the following? /* a sketch */
-> > > 
-> > > lockdep.c
-> > > 	printk_safe_enter_irqsave(flags);
-> > > 	lockdep_report();
-> > > 	printk_safe_exit_irqrestore(flags);
-> > 
-> > If buffer size were large enough to hold messages from out_of_memory(),
-> > I would like to use it for out_of_memory() because delaying SIGKILL
-> > due to waiting for printk() to complete is not good. Surely we can't
-> > hold all messages because amount from dump_tasks() is unpredictable.
-> > Maybe we can hold all messages from dump_header() except dump_tasks().
-> > 
-> > But isn't it essentially same with
-> > http://lkml.kernel.org/r/1493560477-3016-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp
-> > which Linus does not want?
+On Fri 09-11-18 18:41:53, Tetsuo Handa wrote:
+> On 2018/11/09 17:43, Michal Hocko wrote:
+> > @@ -4364,6 +4353,17 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
+> >  	gfp_t alloc_mask; /* The gfp_t that was actually used for allocation */
+> >  	struct alloc_context ac = { };
+> >  
+> > +	/*
+> > +	 * In the slowpath, we sanity check order to avoid ever trying to
 > 
-> Dunno. I guess we still haven't heard from Linus because he did quite a good
-> job setting up his 'email filters' ;)
-> 
-> Converting the existing users to buffered printk is not so simple.
+> Please keep the comment up to dated.
 
-Yes. We will need to ask for huge modifications for rare events.
+Does this following look better?
 
-> Apparently there are different paths; some can afford buffered printk, some
-> cannot. Some of 'cont' users tend to get advantage of transparent 'cont'
-> context: start 'cont' output in function A: A()->pr_cont(), continue it in
-> B: A()->B()->pr_cont(), and then in C: A()->B()->C()->pr_cont(), and
-> finally flush in A: A()->pr_cont(\n).
-
-Yes, both OOM reporting and lockdep reporting have such dependency.
-
-Linus said
-
-  It might actually be a good idea to help those things, by making
-  helper functions available that do the marshalling.
-
-  So not calling "printk()" directly, but having a set of simple
-  "buffer_print()" functions where each user has its own buffer, and
-  then the "buffer_print()" functions will help people do nicely output
-  data.
-
-in https://lore.kernel.org/lkml/CA+55aFyzR4LKhJKLFgvvd9OTsos2_g4-9fova782BX4kyA3bLA@mail.gmail.com/ .
-
-But since scattering "struct printk_buffer *" around as a function argument
-is not realistic, scattering "a data structure which Linus suggested (i.e.
-no printk() from helper functions)" around as a function argument will not be
-realistic as well. We will need to calculate appropriate buffer size which
-traverses many functions, in addition to passing that data structure as
-a function argument.
-
->                                       And then some paths have the
-> early_printk requirement. We can break the 'transparent cont' by passing
-> buffer pointers around [it can get a bit hairy; looking at lockdep patch],
-> but early_printk requirement is a different beast.
-
-How early_printk requirement affects line buffered printk() API?
-
-I don't think it is impossible to convert from
-
-     printk("Testing feature XYZ..");
-     this_may_blow_up_because_of_hw_bugs();
-     printk(KERN_CONT " ... ok\n");
-
-to
-
-     printk("Testing feature XYZ:\n");
-     this_may_blow_up_because_of_hw_bugs();
-     printk("Testing feature XYZ.. ... ok\n");
-
-in https://lore.kernel.org/lkml/CA+55aFwmwdY_mMqdEyFPpRhCKRyeqj=+aCqe5nN108v8ELFvPw@mail.gmail.com/ .
-
-> 
-> So in my email I was not advertising printk_safe as a "buffered printk for
-> everyone", I was just talking about lockdep. It's a bit doubtful that Peter
-> will ACK lockdep transition to buffered printk.
-
-What Linus is suggesting is "helper functions with no printk()", which is
-more difficult than my "helper functions with printk()" because we need to
-calculate enough buffer size (which may traverse many functions) because
-we can't printk() from helper functions when buffer size is too small.
-
-I'm wondering if Linus still insists scattering "a data structure which
-Linus suggested" around. Rather, I'd like to propose below one. This is not
-perfect but modification is much smaller.
-
- kernel/printk/printk.c | 166 +++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 166 insertions(+)
-
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 1b2a029..c339594 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -1950,6 +1950,168 @@ asmlinkage int printk_emit(int facility, int level,
- }
- EXPORT_SYMBOL(printk_emit);
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 9fc10a1029cf..bf9aecba4222 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -4354,10 +4354,8 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
+ 	struct alloc_context ac = { };
  
-+static void buffered_printk_emit(const char *fmt, ...)
-+{
-+	va_list args;
-+
-+	va_start(args, fmt);
-+	vprintk_emit(0, LOGLEVEL_DEFAULT, NULL, 0, fmt, args);
-+	va_end(args);
-+}
-+
-+static int get_completed_lines(char *buf, int pos)
-+{
-+	while (pos > 0) {
-+		if (buf[--pos] != '\n')
-+			continue;
-+		buf[pos++] = '\0';
-+		return pos;
-+	}
-+	return 0;
-+}
-+
-+/* A structure for line-buffered printk() output. */
-+struct printk_buffer {
-+	/*
-+	 * State of this line buffer.
-+	 *
-+	 * 0: Nobody has reserved, and is not using now.
-+	 *
-+	 * 1 to NR_CPUS: An interrupt context reserved, but is not using now.
-+	 * NR_CPUS+1 to ULONG_MAX-1: Some task context reserved, but is not
-+	 *                           using now.
-+	 *
-+	 * ULONG_MAX: Somebody has reserved, and is using now.
-+	 *            This value is used as a lock.
-+	 */
-+	unsigned long context;
-+	/* Valid bytes in buf[]. */
-+	unsigned short int len;
-+	char buf[LOG_LINE_MAX];
-+	/* Last accessed jiffies. */
-+	unsigned long stamp;
-+} __aligned(1024);
-+
-+/* Number of line buffers. */
-+#define NUM_LINE_BUFFERS 16
-+
-+/*
-+ * Line buffered printk() tries to assign a buffer when printk() from a new
-+ * context identifier comes in. And it automatically releases that buffer when
-+ * one of three conditions listed below became true.
-+ *
-+ *   (1) printk() from that context identifier emitted '\n' as the last
-+ *       character of output.
-+ *   (2) printk() from that context identifier tried to print a too long line
-+ *       which cannot be stored into a buffer.
-+ *   (3) printk() from a new context identifier noticed that some context
-+ *       identifier is reserving a buffer for more than 10 seconds without
-+ *       emitting '\n'.
-+ *
-+ * Since (3) is based on a heuristic that somebody forgot to emit '\n' as the
-+ * last character of output(), pr_cont()/KERN_CONT users are expected to emit
-+ * '\n' within 10 seconds even if they reserved a buffer.
-+ *
-+ * There is a limitation that a buffer cannot be released if an oops occurred
-+ * while that buffer is locked (context == ULONG_MAX).
-+ *
-+ * The granularity of context is a bit sparse. If printk() was called from task
-+ * context, the address of current thread is used as context identifier. If
-+ * printk() was called from non-task context, current processor ID is used as
-+ * context identifier.
-+ */
-+static int try_buffered_printk(const char *fmt, va_list args)
-+{
-+	static struct printk_buffer printk_buffers[NUM_LINE_BUFFERS];
-+	va_list tmp_args;
-+	int pos;
-+	int r;
-+	const unsigned long context = in_task() ?
-+		(unsigned long) current : raw_smp_processor_id() + 1;
-+	struct printk_buffer *ptr;
-+	const unsigned long now = jiffies;
-+
-+	/* Check if this context can lock a reserved buffer. */
-+	for (pos = 0; pos < NUM_LINE_BUFFERS; pos++) {
-+		ptr = &printk_buffers[pos];
-+		if (context == ptr->context && context ==
-+		    cmpxchg_acquire(&ptr->context, context, ULONG_MAX))
-+			goto found;
-+	}
-+	/* Check if somebody is reserving a buffer for too long. */
-+	for (pos = 0; pos < NUM_LINE_BUFFERS; pos++) {
-+		unsigned long tmp;
-+
-+		ptr = &printk_buffers[pos];
-+		if (likely(!ptr->len ||
-+			   !time_after(now, ptr->stamp + 10 * HZ)))
-+			continue;
-+		tmp = ptr->context;
-+		if (tmp == 0 || tmp == ULONG_MAX ||
-+		    cmpxchg_acquire(&ptr->context, tmp, ULONG_MAX) != tmp)
-+			continue;
-+		if (ptr->len && time_after(now, ptr->stamp + 10 * HZ)) {
-+			ptr->buf[ptr->len] = '\0';
-+			buffered_printk_emit("%s\n", ptr->buf);
-+			ptr->len = 0;
-+		}
-+		xchg_release(&ptr->context, 0);
-+	}
-+	/* Check if this context can reserve and lock a buffer. */
-+	for (pos = 0; pos < NUM_LINE_BUFFERS; pos++) {
-+		ptr = &printk_buffers[pos];
-+		if (ptr->context == 0 &&
-+		    cmpxchg_acquire(&ptr->context, 0, ULONG_MAX) == 0)
-+			goto found;
-+	}
-+	/* All buffers are reserved. Fallback to normal printk(). */
-+	return -1;
-+ found:
-+	ptr->stamp = now;
-+	while (true) {
-+		pos = ptr->len && (printk_get_level(fmt) == 'c') ? 2 : 0;
-+		va_copy(tmp_args, args);
-+		r = vsnprintf(ptr->buf + ptr->len, sizeof(ptr->buf) - ptr->len,
-+			      fmt + pos, tmp_args);
-+		va_end(tmp_args);
-+		if (likely(r + ptr->len < sizeof(ptr->buf)))
-+			break;
-+		/* Oops. Line was too long to store into this buffer. */
-+		if (!ptr->len) {
-+			/*
-+			 * We can do nothing. Fallback to normal printk(). But
-+			 * be prepared for this printk() being the last call
-+			 * from this context.
-+			 */
-+			r = -1;
-+			goto out;
-+		}
-+		/* Retry after flushing incomplete line in this buffer. */
-+		ptr->buf[ptr->len] = '\0';
-+		buffered_printk_emit("%s", ptr->buf);
-+		ptr->len = 0;
-+	}
-+	ptr->len += r;
-+	/* Flush already completed lines. */
-+	pos = get_completed_lines(ptr->buf, ptr->len);
-+	if (pos) {
-+		buffered_printk_emit("%s\n", ptr->buf);
-+		ptr->len -= pos;
-+		memmove(ptr->buf, ptr->buf + pos, ptr->len);
-+	}
-+ out:
-+	/*
-+	 * Release this buffer if this buffer became empty because this
-+	 * printk() might be the last call from this context. Otherwise, keep
-+	 * this buffer for future printk() calls from this context.
-+	 */
-+	if (!ptr->len)
-+		xchg_release(&ptr->context, 0);
-+	else
-+		xchg_release(&ptr->context, context);
-+	return r;
-+}
-+
- int vprintk_default(const char *fmt, va_list args)
- {
- 	int r;
-@@ -1961,6 +2123,10 @@ int vprintk_default(const char *fmt, va_list args)
- 		return r;
- 	}
- #endif
-+	r = try_buffered_printk(fmt, args);
-+	if (r >= 0)
-+		return r;
-+
- 	r = vprintk_emit(0, LOGLEVEL_DEFAULT, NULL, 0, fmt, args);
- 
- 	return r;
+ 	/*
+-	 * In the slowpath, we sanity check order to avoid ever trying to
+-	 * reclaim >= MAX_ORDER areas which will never succeed. Callers may
+-	 * be using allocators in order of preference for an area that is
+-	 * too large.
++	 * There are several places where we assume that the order value is sane
++	 * so bail out early if the request is out of bound.
+ 	 */
+ 	if (order >= MAX_ORDER) {
+ 		WARN_ON_ONCE(!(gfp_mask & __GFP_NOWARN));
+
+> I don't like that comments in OOM code is outdated.
+> 
+> > +	 * reclaim >= MAX_ORDER areas which will never succeed. Callers may
+> > +	 * be using allocators in order of preference for an area that is
+> > +	 * too large.
+> > +	 */
+> > +	if (order >= MAX_ORDER) {
+> 
+> Also, why not to add BUG_ON(gfp_mask & __GFP_NOFAIL); here?
+
+Because we do not want to blow up the kernel just because of a stupid
+usage of the allocator. Can you think of an example where it would
+actually make any sense?
+
+I would argue that such a theoretical abuse would blow up on an
+unchecked NULL ptr access. Isn't that enough?
 -- 
-1.8.3.1
+Michal Hocko
+SUSE Labs
