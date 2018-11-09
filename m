@@ -2,200 +2,189 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6EF6C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:36:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0903EC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:38:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A774520827
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:36:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sDGE7fQA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A774520827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id BE90420827
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:38:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE90420827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728336AbeKJBRg (ORCPT
+        id S1728084AbeKJBTI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 20:17:36 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:42423 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728027AbeKJBRg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 20:17:36 -0500
-Received: by mail-wr1-f65.google.com with SMTP id y15-v6so2335415wru.9;
-        Fri, 09 Nov 2018 07:36:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=w+fkUspOL3VZewTi0QyvsHpyL6yNBIZaP09UJQVYLJo=;
-        b=sDGE7fQALVrc+a0xSF4UQPiLfAeaQ0jnEp+sGxHg7aTiMj4GpF7Q1ArXMixNzYM+oL
-         QZlhsvO//OFXAs0aDXWYHDXeUoSDy6S4WJNpg/4L4eJQ/3jhrIvP/jHMzEVflLC7Ijzc
-         A+LPwZCd0xPCEz27K0vkk9z8kI/5ISPYpSrzQ/ZS9Qmv60DhEpNgIkj1siBWje7jW4/C
-         E3MzXFyfgEqa0dtgOpgA6UiHWHNYDdv5TsL/c2MYV8aed29KFzhJFZHu1oJ+k78TvKfk
-         7WEPhMXxZXtxXidzh+DzEmddW+C1mmf3O3UBN26QxZj723QtY3VARW8vqIXxb/p3TqnT
-         5z4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=w+fkUspOL3VZewTi0QyvsHpyL6yNBIZaP09UJQVYLJo=;
-        b=q96a0RtJ/YO+r2DdjfOfC3+qJaNgoroC82Ur+NRnl/fHqxIT1fP8gVbnCs6dqff37N
-         W4ivoI5BJo2biVcnOvuZkQJmFs9agV4aen8uvxpEIb51inDD0lqdBedIbXfp6kgmv/3K
-         +W0tyAp2mKyyHMIQxFj4ItQVQFpPCd6Z73NdPnHSLo4PI/Lf2zogdr8A+8kfLgUM+mWk
-         jFGBU67nZ+zsjKaK4N6eatPCTD0rgfMJ8YHbeURbIM6O+KknslDla/H8A4llfF/LfEe2
-         nHJZb6dDls8CFKWyCI7Bib/UHpc+rOkhpt+WLgyOLvyUeGjRT/cuM7erOl5dCGLsb0u9
-         4ORA==
-X-Gm-Message-State: AGRZ1gKJCxPMGQPlSkI01588Xf5lpo4i4WHj9GD3+HE/re/8NNsn0/mY
-        NZYXngaeI7ApAnMvBZvf3FM=
-X-Google-Smtp-Source: AJdET5fBqu0t4uCsTg+CKov5VrNSFIhbF2Vs2Hpl6wzTHYgCKw36io6czlfL3Lj4rPe/Si5STXRfhA==
-X-Received: by 2002:adf:fb12:: with SMTP id c18-v6mr8623725wrr.200.1541777789234;
-        Fri, 09 Nov 2018 07:36:29 -0800 (PST)
-Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id p7-v6sm7692540wrs.23.2018.11.09.07.36.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 09 Nov 2018 07:36:28 -0800 (PST)
-Date:   Fri, 9 Nov 2018 08:36:26 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Michal Simek <michal.simek@xilinx.com>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] pinctrl: zynq: Use define directive for
- PIN_CONFIG_IO_STANDARD
-Message-ID: <20181109153626.GA6494@flashbox>
-References: <20181101005724.9622-1-natechancellor@gmail.com>
- <68ae935a-aec3-915c-bfe6-d69bfb93d702@xilinx.com>
- <20181107085503.GA31517@flashbox>
- <9d52cd84-440f-9a40-d0ec-1397abb24c98@xilinx.com>
- <CAKwvOdmkC1LqMokhQUebpEZRoWWWwtQnbm8xGwiwdBy9UOMT5Q@mail.gmail.com>
- <af717713-9e51-139d-1206-1682b83ae434@xilinx.com>
- <20181108150116.GA2830@flashbox>
- <40a17c3e-6c81-6f59-cff6-003a91e10b29@xilinx.com>
+        Fri, 9 Nov 2018 20:19:08 -0500
+Received: from foss.arm.com ([217.140.101.70]:33528 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727806AbeKJBTI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 20:19:08 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 280D880D;
+        Fri,  9 Nov 2018 07:38:03 -0800 (PST)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2FF443F5BD;
+        Fri,  9 Nov 2018 07:38:02 -0800 (PST)
+Subject: Re: WARNING: CPU: 0 PID: 0 at drivers/irqchip/irq-gic-v3-its.c
+To:     Qian Cai <cai@gmx.us>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jason Cooper <jason@lakedaemon.net>
+References: <1541710771.12945.7.camel@gmx.us>
+ <c8ff3004-33ee-19d5-8eb8-38d41f78c8ee@arm.com>
+ <trinity-e1d06dde-12e1-4e2a-8871-d6c5f4af9f51-1541766480902@msvc-mesg-gmx023>
+ <b23b62b4-9ecb-8b76-57e5-d323cc9926ce@arm.com>
+ <13A11479-97FB-4EFD-A182-61DA63CB64D6@gmx.us>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: ARM Ltd
+Message-ID: <b74e43d3-a7e1-08e9-c176-5584ad379629@arm.com>
+Date:   Fri, 9 Nov 2018 15:38:00 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <40a17c3e-6c81-6f59-cff6-003a91e10b29@xilinx.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <13A11479-97FB-4EFD-A182-61DA63CB64D6@gmx.us>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 09, 2018 at 10:33:00AM +0100, Michal Simek wrote:
-> On 08. 11. 18 16:01, Nathan Chancellor wrote:
-> > On Thu, Nov 08, 2018 at 07:45:42AM +0100, Michal Simek wrote:
-> >> On 07. 11. 18 18:48, Nick Desaulniers wrote:
-> >>> On Wed, Nov 7, 2018 at 1:01 AM Michal Simek <michal.simek@xilinx.com> wrote:
-> >>>>
-> >>>> On 07. 11. 18 9:55, Nathan Chancellor wrote:
-> >>>>> On Wed, Nov 07, 2018 at 09:46:12AM +0100, Michal Simek wrote:
-> >>>>>> On 01. 11. 18 1:57, Nathan Chancellor wrote:
-> >>>>>>> Clang warns when one enumerated type is implicitly converted to another:
-> >>>>>>>
-> >>>>>>> drivers/pinctrl/pinctrl-zynq.c:985:18: warning: implicit conversion from
-> >>>>>>> enumeration type 'enum zynq_pin_config_param' to different enumeration
-> >>>>>>> type 'enum pin_config_param' [-Wenum-conversion]
-> >>>>>>>         {"io-standard", PIN_CONFIG_IOSTANDARD, zynq_iostd_lvcmos18},
-> >>>>>>>         ~               ^~~~~~~~~~~~~~~~~~~~~
-> >>>>>>> drivers/pinctrl/pinctrl-zynq.c:990:16: warning: implicit conversion from
-> >>>>>>> enumeration type 'enum zynq_pin_config_param' to different enumeration
-> >>>>>>> type 'enum pin_config_param' [-Wenum-conversion]
-> >>>>>>>         = { PCONFDUMP(PIN_CONFIG_IOSTANDARD, "IO-standard", NULL, true),
-> >>>>>>>             ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >>>>>>> ./include/linux/pinctrl/pinconf-generic.h:163:11: note: expanded from
-> >>>>>>> macro 'PCONFDUMP'
-> >>>>>>>         .param = a, .display = b, .format = c, .has_arg = d     \
-> >>>>>>>                  ^
-> >>>>>>> 2 warnings generated.
-> >>>>>>
-> >>>>>> This is interesting. I have never tried to use llvm for building the
-> >>>>>> kernel. Do you have any description how this can be done?
-> >>>>>>
-> >>>>>
-> >>>>> Depending on what version of Clang you have access to, it is usually just as
-> >>>>> simple as running 'make ARCH=arm CC=clang CROSS_COMPILE=arm-linux-gnueabi-'.
-> >>>>>
-> >>>>> Clang 7.0+ is recommended but 6.0 might work too.
-> >>>>
-> >>>> TBH I would expect to download container and run this there to make sure
-> >>>> that I don't break anything else.
-> >>>
-> >>> This is the first request we've had for a container in order to test a
-> >>> patch.  If it comes up again from other folks, I think it makes sense
-> >>> to create one.  Until then, its nice to have.  It's definitely
-> >>> overkill for this patch.
-> >>
-> >> I have played with it to see that error and here are some steps I did.
-> >>
-> >> docker run --name test-clang -it --rm debian:latest bash
-> >> apt-get update
-> >> apt-get install gcc-arm-linux-gnueabi gcc-aarch64-linux-gnu clang git bc
-> >> build-essential bison flex make llvm vim libssl-dev sparse
-> >>
-> >> git clone
-> >> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git --depth 1
-> >> cd linux
-> >>
-> >> export ARCH=arm64
-> >> export CROSS_COMPILE=aarch64-linux-gnu-
-> >>
-> >> make defconfig
-> > 
-> > This should also have 'CC=clang' because compiler detection happens in
-> > Kconfig now so compiler flags get properly set. Other than that, looks
-> > good and I was able to build pinctrl-zynq.o without any issues with
-> > those commands.
-> 
-> For arm32 I am still getting compilation issue (arm64 is fine)
-> Below are my steps and version I use. Do you know what could be the
-> problem?
-> 
-> Thanks,
-> Michal
-> 
-> root@1e15921e6d15:~/linux# arm-linux-gnueabi-gcc --version
-> arm-linux-gnueabi-gcc (Debian 6.3.0-18) 6.3.0 20170516
-> Copyright (C) 2016 Free Software Foundation, Inc.
-> This is free software; see the source for copying conditions.  There is NO
-> warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-> 
-> root@1e15921e6d15:~/linux# clang --version
-> clang version 3.8.1-24 (tags/RELEASE_381/final)
-> Target: x86_64-pc-linux-gnu
-> Thread model: posix
-> InstalledDir: /usr/bin
+On 09/11/18 15:28, Qian Cai wrote:
 > 
 > 
-> export ARCH=arm
-> export CROSS_COMPILE=arm-linux-gnuaebi-
-> make CC=clang defconfig
-> make CC=clang drivers/pinctrl/pinctrl-zynq.o
-> 
-> and I get
-> clang: error: unsupported argument '-W' to option 'Wa,'
-> scripts/Makefile.build:305: recipe for target 'scripts/mod/empty.o' failed
-> make[2]: *** [scripts/mod/empty.o] Error 1
-> scripts/Makefile.build:546: recipe for target 'scripts/mod' failed
-> 
+>> On Nov 9, 2018, at 8:50 AM, Marc Zyngier <marc.zyngier@arm.com> wrote:
+>>
+>> On 09/11/18 12:28, Qian Cai wrote:
+>>>
+>>> On 11/9/18 at 7:08 AM, Marc Zyngier wrote:
+>>>
+>>>> [+Ard]
+>>>>
+>>>> On 08/11/18 20:59, Qian Cai wrote:
+>>>>> Just booting up the latest git master (b00d209) on an aarch64 server and saw
+>>>>> this. Not sure about the third warning (at kernel/cpu.c:315
+>>>>> lockdep_assert_cpus_held+0x50/0x60) relates to irqchip or not, but appended it
+>>>>> to here anyway just in case.
+>>>>>
+>>>>> [    0.000000] WARNING: CPU: 0 PID: 0 at drivers/irqchip/irq-gic-v3-its.c:1696
+>>>>> its_init+0x588/0xb54
+>>>>
+>>>> It looks like EFI cannot manage to reserve the memory for your GIC
+>>>> redistributors. Pretty annoying. At the same time, you have reported
+>>>> other issues with the EFI reservation mechanism, such as:
+>>>>
+>>>> https://lore.kernel.org/patchwork/patch/1008413/
+>>>>
+>>>> for which you have given a "Tested-by:". Is that related?
+>>> No, I don’t think so. Those warnings are still there even after applied the patch above.
+>>
+>> Do you also have this series[1] applied? I'd otherwise need your
+>> configuration to try and reproduce it, as I can't manage to trigger it
+>> on my own setup.
+>>
+>> Thanks,
+>>
+>> 	M.
+>>
+>> [1] https://www.spinics.net/lists/arm-kernel/msg685751.html
+> After applied the above series on the top of the mainline (b00d209), the only
+> warning exist is,
 
-Ah because Debian's regular Clang is ancient.
+OK, so the EFI/GICv3 stuff is sorted.
 
-For testing, we use the builds from apt.llvm.org. Commands assuming
-you're using the normal Debian image:
+> 
+> [    0.000000] WARNING: CPU: 0 PID: 0 at kernel/cpu.c:315
+> lockdep_assert_cpus_held+0x50/0x60
+> [    0.000000] Modules linked in:
+> [    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G                T 4.20.0-rc1+ #9
+> [    0.000000] pstate: 20000085 (nzCv daIf -PAN -UAO)
+> [    0.000000] pc : lockdep_assert_cpus_held+0x50/0x60
+> [    0.000000] lr : lockdep_assert_cpus_held+0x4c/0x60
+> [    0.000000] sp : ffff200009c97b10
+> [    0.000000] x29: ffff200009c97b10 x28: ffff200009e39000 
+> [    0.000000] x27: ffff200009cd1000 x26: ffff200009cd2000 
+> [    0.000000] x25: ffff200009125000 x24: ffff200009cc9868 
+> [    0.000000] x23: ffff200009c7c040 x22: 0000000000001000 
+> [    0.000000] x21: 0000000000000012 x20: ffff200009cc9000 
+> [    0.000000] x19: ffff200009cd5000 x18: 000000000000003f 
+> [    0.000000] x17: 0000000000000000 x16: 0000000000000000 
+> [    0.000000] x15: 0000000000000007 x14: ffff200009461cd4 
+> [    0.000000] x13: ffff2000094695ac x12: ffff2000095149a4 
+> [    0.000000] x11: ffff2000094e4478 x10: ffff2000094e0a50 
+> [    0.000000] x9 : ffff200009516aa8 x8 : ffff0ffbffcc4004 
+> [    0.000000] x7 : 1fffeffbffcc4003 x6 : ffff0ffbffcc4003 
+> [    0.000000] x5 : ffff7fdffe62001b x4 : ffff0ffbffcc4004 
+> [    0.000000] x3 : ffff0ffbffcc4004 x2 : dfff200000000000 
+> [    0.000000] x1 : 0000000000000000 x0 : 0000000000000000 
+> [    0.000000] Call trace:
+> [    0.000000]  lockdep_assert_cpus_held+0x50/0x60
+> [    0.000000]  static_key_enable_cpuslocked+0x30/0xe8
+> [    0.000000]  arch_timer_check_ool_workaround+0x128/0x2d0
+> [    0.000000]  arch_timer_acpi_init+0x274/0x6ac
+> [    0.000000]  acpi_table_parse+0x1ac/0x218
+> [    0.000000]  __acpi_probe_device_table+0x164/0x1ec
+> [    0.000000]  timer_probe+0x1bc/0x254
+> [    0.000000]  time_init+0x44/0x98
+> [    0.000000]  start_kernel+0x4ec/0x7d4
+> [    0.000000] irq event stamp: 0
+> [    0.000000] hardirqs last  enabled at (0): [<0000000000000000>]           (null)
+> [    0.000000] hardirqs last disabled at (0): [<0000000000000000>]           (null)
+> [    0.000000] softirqs last  enabled at (0): [<0000000000000000>]           (null)
+> [    0.000000] softirqs last disabled at (0): [<0000000000000000>]           (null)
+> [    0.000000] ---[ end trace 1dc5085680256ac1 ]—
 
-curl https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
-echo "deb http://apt.llvm.org/stretch/ llvm-toolchain-stretch main" | tee -a /etc/apt/sources.list
-apt-get update -qq && apt-get install -y clang-8
+Now this one: what machine is this? What is the workaround that gets
+applied?
 
-Then use `CC=clang-8' instead of 'CC=clang' for all make invocations.
+Thanks,
 
-Let me know if there are any more issues!
-Nathan
+	M.
+-- 
+Jazz is not dead. It just smells funny...
