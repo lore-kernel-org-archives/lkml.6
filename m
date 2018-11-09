@@ -2,130 +2,110 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E1FC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 21:11:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2711C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 21:15:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F237620825
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 21:11:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F237620825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id ABE2E20840
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 21:15:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="ck10cOqM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABE2E20840
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=soleen.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728292AbeKJGyD (ORCPT
+        id S1728050AbeKJG5p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 01:54:03 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:47255 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725799AbeKJGyC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 01:54:02 -0500
-Received: from hanvin-mobl2.amr.corp.intel.com (fmdmzpr03-ext.fm.intel.com [192.55.54.38])
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id wA9LAn272522899
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Fri, 9 Nov 2018 13:10:50 -0800
-Subject: Re: [Qemu-devel] [RFC/PoC PATCH 1/3] i386: set initrd_max to 4G - 1
- to allow up to 4G initrd
-To:     Li Zhijian <zhijianx.li@intel.com>,
-        Juergen Gross <jgross@suse.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Li Zhijian <lizhijian@cn.fujitsu.com>
-Cc:     Peter Maydell <peter.maydell@linaro.org>, x86@kernel.org,
-        bp@alien8.de, mingo@redhat.com, tglx@linutronix.de,
-        QEMU Developers <qemu-devel@nongnu.org>,
-        Philip Li <philip.li@intel.com>, linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Kees Cook <keescook@chromium.org>
-References: <1541674784-25936-1-git-send-email-lizhijian@cn.fujitsu.com>
- <1541674784-25936-2-git-send-email-lizhijian@cn.fujitsu.com>
- <CAFEAcA_47wyar3WNhuBmNPdr02RHx-wn_TeyFaajpjzvzG8j5Q@mail.gmail.com>
- <c50d103e-95c3-c44c-d852-b6d7f8114b3a@cn.fujitsu.com>
- <20181109072015.GA86700@gmail.com>
- <38905d35-29af-b522-1629-b13e98a47a42@intel.com>
- <d30b404d-624e-0497-879a-2d5df2eb9f31@suse.com>
- <b7b608dc-1743-5e1f-3b88-94d784c4cab2@intel.com>
-From:   "H. Peter Anvin" <hpa@zytor.com>
-Message-ID: <d9c293bd-b43f-999c-55f1-3b90a6020065@zytor.com>
-Date:   Fri, 9 Nov 2018 13:10:49 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Sat, 10 Nov 2018 01:57:45 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:35273 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725799AbeKJG5p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 01:57:45 -0500
+Received: by mail-qk1-f196.google.com with SMTP id w204so4141788qka.2
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 13:15:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=d1jLP0vvLb2F8QBsHv2P1ODyTO4vmGSriZo5+RA6cXM=;
+        b=ck10cOqMcv/andnIqMi3kYyLlNiZAC9R8jMrGBx22lJ4vI28Sb9X+LlVoooQwCx8eu
+         Cw7qRP8KS9rJyf+WH+S8sIEUQ2rGWlxTtRjyQAXUGKsCKQ5q1zp/H6nZbV3WNbEQDLxg
+         5SIDilLN7bL2ZvndhoPUBARm4NTM02VrBMadST2s56uJq5BuCTuMzmidryYUNhZsMFSG
+         CwtRrxVD9lDhW7wdmyacOpsvhLIgkH5D32AryqAe/d3rYV/2m2TSB/q5mhv4wAXl1w7b
+         jvBhpxDNSCWBViqbOz5SZv4dznjIRE7Dop97Fkje9pXAAlOe/iiGXZzageeg6/Wuyo81
+         CwaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=d1jLP0vvLb2F8QBsHv2P1ODyTO4vmGSriZo5+RA6cXM=;
+        b=kp9LIMTcw6xQMrjPOjNfCYpZdHn7VotC+QxDrPWAN0aUVK5J0MW3MJCQ9ILO4CFIiQ
+         BMVgovd/tg7BBOB6KYbtPAJ5cvNnPODXqQFU5kqU+qGKjJJzm1GohQqZ8mGL5ote9IF7
+         L4lZ/uFcmWJFnsDUd4aaVH/e1n0nYtTY8gugiHv9v8pdymBTOjN+vwyd2wW9sy8aTB0y
+         fE/5AChuL/2VwXmGi8cl4stQwwsdukQ65kWql3eT5GQUVePVU0er8in5eiMADF+iiVtV
+         eIJlgjip2hWyt1JPvmwnH9Hsxynv4v68VJAo+QMeh7A0Ltmi8CD1BpGD57PE6YIStypL
+         MJmw==
+X-Gm-Message-State: AGRZ1gLbvabCoxe3G5tibyVuQaMQoe/E/V/3QTfpYYVKh+hhLkH+/YNJ
+        9xCi5yQ3KlYmm5Yv0x/141KinQ==
+X-Google-Smtp-Source: AJdET5cNxqgGHDTlxR1FRJV0mlMG8VKwLZAc+swlnnS+X/K8gEhvEE6KAdt9lGjqbfL8GX7bV07qwA==
+X-Received: by 2002:ac8:160b:: with SMTP id p11mr10092610qtj.113.1541798123874;
+        Fri, 09 Nov 2018 13:15:23 -0800 (PST)
+Received: from xakep.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
+        by smtp.gmail.com with ESMTPSA id w34sm5002599qtj.27.2018.11.09.13.15.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 09 Nov 2018 13:15:22 -0800 (PST)
+Date:   Fri, 9 Nov 2018 16:15:21 -0500
+From:   Pavel Tatashin <pasha.tatashin@soleen.com>
+To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        daniel.m.jordan@oracle.com
+Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
+        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, davem@davemloft.net,
+        pavel.tatashin@microsoft.com, mhocko@suse.com, mingo@kernel.org,
+        kirill.shutemov@linux.intel.com, dan.j.williams@intel.com,
+        dave.jiang@intel.com, rppt@linux.vnet.ibm.com, willy@infradead.org,
+        vbabka@suse.cz, khalid.aziz@oracle.com, ldufour@linux.vnet.ibm.com,
+        mgorman@techsingularity.net, yi.z.zhang@linux.intel.com
+Subject: Re: [mm PATCH v5 0/7] Deferred page init improvements
+Message-ID: <20181109211521.5ospn33pp552k2xv@xakep.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <b7b608dc-1743-5e1f-3b88-94d784c4cab2@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <154145268025.30046.11742652345962594283.stgit@ahduyck-desk1.jf.intel.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/9/18 5:40 AM, Li Zhijian wrote:
-> Just noticed that there is a field xloadflags at recent protocol
->   60 Protocol 2.12:  (Kernel 3.8) Added the xloadflags field and
-> extension fields
->   61                 to struct boot_params for loading bzImage and ramdisk
->   62                 above 4G in 64bit.
-> [snip]
->  617 Field name:     xloadflags
->  618 Type:           read
->  619 Offset/size:    0x236/2
->  620 Protocol:       2.12+
->  621
->  622   This field is a bitmask.
->  623
->  624   Bit 0 (read): XLF_KERNEL_64
->  625         - If 1, this kernel has the legacy 64-bit entry point at
-> 0x200.
->  626
->  627   Bit 1 (read): XLF_CAN_BE_LOADED_ABOVE_4G
->  628         - If 1, kernel/boot_params/cmdline/ramdisk can be above 4G.
->  629
+On 18-11-05 13:19:25, Alexander Duyck wrote:
+> This patchset is essentially a refactor of the page initialization logic
+> that is meant to provide for better code reuse while providing a
+> significant improvement in deferred page initialization performance.
 > 
-> maybe we can reuse this field and append a new Bit 5
-> XLF_INITRD_MAX_SIZE_4G and increase header version.
-> For the old protocol version 2.12+, if  XLF_CAN_BE_LOADED_ABOVE_4G is
-> set, we can also realize ~4GB initrd is allowed.
-> 
-> bootloader side:
-> if protocol >= 2.15
->    if XLF_INITRD_LOAD_BELOW_4G
->       support ~4G initrd
->    fi
-> else if protocol >=2.12
->    if XLF_CAN_BE_LOADED_ABOVE_4G
->     support ~4G initrd
->    fi
-> fi
-> 
+> In my testing on an x86_64 system with 384GB of RAM and 3TB of persistent
+> memory per node I have seen the following. In the case of regular memory
+> initialization the deferred init time was decreased from 3.75s to 1.06s on
+> average. For the persistent memory the initialization time dropped from
+> 24.17s to 19.12s on average. This amounts to a 253% improvement for the
+> deferred memory initialization performance, and a 26% improvement in the
+> persistent memory initialization performance.
 
-The two are equivalent.  Obviously you have to load above 4 GB if you
-have more than 4 GB of initrd.  If XLF_CAN_BE_LOADED_ABOVE_4G is not
-set, then you most likely are on a 32-bit kernel and there are more
-fundamental limits (even if you were to load it above the 2 GB mark, you
-would be limited by the size of kernel memory.)
+Hi Alex,
 
-So, in case you are wondering: the bootloader that broke when setting
-the initrd_max field above 2 GB was, of course, Grub.
+Please try to run your persistent memory init experiment with Daniel's
+patches:
 
-So just use XLF_CAN_BE_LOADED_ABOVE_4G. There is no need for a new flag
-or new field.
+https://lore.kernel.org/lkml/20181105165558.11698-1-daniel.m.jordan@oracle.com/
 
-Also note that the ext_ramdisk_image and ext_ramdisk_size are part of
-struct boot_params as opposed to struct setup_header, which means that
-they are not supported when entering via the 16-bit BIOS entry point,
-and I am willing to bet that there will be, ahem, "strangeness" if
-entered via the 32-bit entry point if at least the command line is
-loaded above the 4 GB mark; the initrd should be fine, though.
+The performance should improve by much more than 26%.
 
-This is obviosly not an issue in EFI environments, where we enter
-through the EFI handover entry point.
+Overall, your works looks good, but it needs to be considered how easy it will be
+to merge with ktask. I will try to complete the review today.
 
-The main reason these were not added to struct setup_header is that
-there are only 24 bytes left in that header and so space is highly
-precious. One way to deal with that if we really, really need to would
-be to add an initrd/initramfs type of setup_data.
-
-	-hpa
+Thank you,
+Pasha
