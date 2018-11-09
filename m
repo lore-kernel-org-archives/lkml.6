@@ -2,205 +2,114 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50EF3C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 13:39:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFD00C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 13:40:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BEA720840
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 13:39:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UoPOHMeA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BEA720840
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 92CB62081C
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 13:40:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92CB62081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728004AbeKIXT7 (ORCPT
+        id S1728008AbeKIXVb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 18:19:59 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:39599 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727784AbeKIXT6 (ORCPT
+        Fri, 9 Nov 2018 18:21:31 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55352 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727784AbeKIXVa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 18:19:58 -0500
-Received: by mail-it1-f195.google.com with SMTP id m15so3210344itl.4
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 05:39:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=41kNbker7pjMlSrMXESCPMU6qoot3isUmOITc7YdAuc=;
-        b=UoPOHMeA60tmrLPtRQrqJKmsdP4J+jX9orOhFyzJRoTxXxU+CWPtZ5kqK95Gnkmjp9
-         n4rzVhKX1bgWNX1CrhQm75CW/OpVpnLPCoB/QwRwOFhf6ytuW/ks7SdWh8s91URW5u0w
-         +E0+Jzj3tOifeiH6fUlhakmmkBwqW2k/pufSY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=41kNbker7pjMlSrMXESCPMU6qoot3isUmOITc7YdAuc=;
-        b=mkUUDFaBP8utLPqGCRSl9QWQfamoeoWMY0zMfOm61hgIxA/2DfmPPH/f2P3ODzDxTA
-         IJz15PlYKdA+T5+gzjeoYmTlKDxk03N9txa97RuDn3Tw949sNZqCEa+lmKEXItD6Fqu2
-         REsodChaKqMgX85I2MWNcsvsKTPXGaOokjkWZ00bwH3eYnHPwIv5Gypxt3WbVjMXo4Ja
-         TWJDbdOxgAO7/3rXVkCRmEK+me4B9iTVANDdTuOSx/x51l1/66ntkkf4xDoa70K9No0D
-         qs0hW5CAIq+1eBT+rpWz/r3GUjlbGHLSBjbi/3P3+RxYfkzaCB43MwpR9QxXiRiAFhl5
-         eT0A==
-X-Gm-Message-State: AGRZ1gLCZ4kgK6EoZ2/WJkJBlA3vKkxO5y/PHWxuX+dBqBaK4zSnbeD8
-        sr6gB1ifA7u4YACKnIFvQ84oRsXIjKrCE3RyUeVEQg==
-X-Google-Smtp-Source: AJdET5cmaA7gBiiQ16XnYNHEtiKEWZZRKMUaJkAxQycCMVXvUU/wRW7NIBxAU7yDDeLe3eg/bmUH6Uxa5SbJ5TCJXzg=
-X-Received: by 2002:a24:7d8d:: with SMTP id b135-v6mr1903970itc.121.1541770757881;
- Fri, 09 Nov 2018 05:39:17 -0800 (PST)
+        Fri, 9 Nov 2018 18:21:30 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA9DdbJ0043058
+        for <linux-kernel@vger.kernel.org>; Fri, 9 Nov 2018 08:40:49 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nn991wu5c-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 08:40:49 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <schwidefsky@de.ibm.com>;
+        Fri, 9 Nov 2018 13:40:47 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 9 Nov 2018 13:40:44 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA9DehFU60358796
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 9 Nov 2018 13:40:43 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CB0255204F;
+        Fri,  9 Nov 2018 13:40:43 +0000 (GMT)
+Received: from mschwideX1 (unknown [9.152.212.164])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id A4C4152050;
+        Fri,  9 Nov 2018 13:40:43 +0000 (GMT)
+Date:   Fri, 9 Nov 2018 14:40:42 +0100
+From:   Martin Schwidefsky <schwidefsky@de.ibm.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-s390@vger.kernel.org, heiko.carstens@de.ibm.com
+Subject: Re: [GIT PULL] s390 patches for 4.20 #2
+In-Reply-To: <CAHk-=wj+HK7htwua62MnT9e_vsfgboiACR08MQDsXj9+4WQEBg@mail.gmail.com>
+References: <20181109081402.777716d1@mschwideX1>
+        <CAHk-=wj+HK7htwua62MnT9e_vsfgboiACR08MQDsXj9+4WQEBg@mail.gmail.com>
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Received: by 2002:a6b:4f16:0:0:0:0:0 with HTTP; Fri, 9 Nov 2018 05:39:17 -0800 (PST)
-In-Reply-To: <3cf04e113d71c9f8e4be95fb84a510f085aa4afa.1541711457.git.jpoimboe@redhat.com>
-References: <cover.1541711457.git.jpoimboe@redhat.com> <3cf04e113d71c9f8e4be95fb84a510f085aa4afa.1541711457.git.jpoimboe@redhat.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Fri, 9 Nov 2018 14:39:17 +0100
-Message-ID: <CAKv+Gu9bMkFEx_GxH3uLm0gveQurp7ELDi6C5NvpugufPFMbRA@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/3] static_call: Add static call infrastructure
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@aculab.com>,
-        Borislav Petkov <bp@alien8.de>
-Content-Type: text/plain; charset="UTF-8"
+X-TM-AS-GCONF: 00
+x-cbid: 18110913-4275-0000-0000-000002DE5AD1
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110913-4276-0000-0000-000037EB5E0E
+Message-Id: <20181109144042.4546b7ce@mschwideX1>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-09_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811090127
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8 November 2018 at 22:15, Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-> Add a static call infrastructure.  Static calls use code patching to
-> hard-code function pointers into direct branch instructions.  They give
-> the flexibility of function pointers, but with improved performance.
-> This is especially important for cases where retpolines would otherwise
-> be used, as retpolines can significantly impact performance.
->
-> This code is heavily inspired by the jump label code (aka "static
-> jumps"), as some of the concepts are very similar.
->
-> There are three implementations, depending on arch support:
->
-> 1) optimized: patched call sites (CONFIG_HAVE_STATIC_CALL_OPTIMIZED)
-> 2) unoptimized: patched trampolines (CONFIG_HAVE_STATIC_CALL_UNOPTIMIZED)
-> 3) basic function pointers
->
-> For more details, see the comments in include/linux/static_call.h.
->
-> Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-> ---
->  arch/Kconfig                      |   6 +
->  include/asm-generic/vmlinux.lds.h |  11 ++
->  include/linux/module.h            |  10 +
->  include/linux/static_call.h       | 186 +++++++++++++++++++
->  include/linux/static_call_types.h |  19 ++
->  kernel/Makefile                   |   1 +
->  kernel/module.c                   |   5 +
->  kernel/static_call.c              | 297 ++++++++++++++++++++++++++++++
->  8 files changed, 535 insertions(+)
->  create mode 100644 include/linux/static_call.h
->  create mode 100644 include/linux/static_call_types.h
->  create mode 100644 kernel/static_call.c
->
-> diff --git a/kernel/static_call.c b/kernel/static_call.c
-> new file mode 100644
-> index 000000000000..599ebc6fc4f1
-> --- /dev/null
-> +++ b/kernel/static_call.c
-...
-> +static void __init static_call_init(void)
-> +{
-> +       struct static_call_site *start = __start_static_call_sites;
-> +       struct static_call_site *stop  = __stop_static_call_sites;
-> +       struct static_call_site *site;
-> +
-> +       if (start == stop) {
-> +               pr_warn("WARNING: empty static call table\n");
-> +               return;
-> +       }
-> +
-> +       cpus_read_lock();
-> +       static_call_lock();
-> +
-> +       static_call_sort_entries(start, stop);
-> +
-> +       for (site = start; site < stop; site++) {
-> +               struct static_call_key *key = static_call_key(site);
-> +               unsigned long addr = static_call_addr(site);
-> +
-> +               if (list_empty(&key->site_mods)) {
-> +                       struct static_call_mod *mod;
-> +
-> +                       mod = kzalloc(sizeof(*mod), GFP_KERNEL);
-> +                       if (!mod) {
-> +                               WARN(1, "Failed to allocate memory for static calls");
-> +                               return;
-> +                       }
-> +
-> +                       mod->sites = site;
-> +                       list_add_tail(&mod->list, &key->site_mods);
-> +
-> +                       /*
-> +                        * The trampoline should no longer be used.  Poison it
-> +                        * it with a BUG() to catch any stray callers.
-> +                        */
-> +                       arch_static_call_poison_tramp(addr);
+On Fri, 9 Nov 2018 06:39:07 -0600
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-This patches the wrong thing: the trampoline is at key->func not addr.
+> On Fri, Nov 9, 2018 at 1:14 AM Martin Schwidefsky
+> <schwidefsky@de.ibm.com> wrote:
+> >
+> > s390 updates for 4.20-rc2  
+> 
+> Pulled.
+> 
+> >  - A fix for the pgtable_bytes misaccounting on s390. The patch changes
+> >    common code part in regard to page table folding and adds extra
+> >    checks to mm_[inc|dec]_nr_[pmds|puds].  
+> 
+> Ugh. This is somewhat invasive, I worry  that some header include or
+> architecture doesn't pick up on the subtle __PAGETABLE_XYZ_FOLDED
+> things (if you don't get the includes, the mm_xyz_folded() maros will
+> be mis-defined.
+> 
+> Has this been in linux-next or any other wide testing? The changes
+> aren't _new_, but...
 
-However, patching it here means we poison it before all users are
-patched. I added this on top
+Just checked linux-next, the first version that picked up the patches
+is 2018-11-19. The one dated 2018-10-19 does not have them.
 
-diff --git a/kernel/static_call.c b/kernel/static_call.c
-index 599ebc6fc4f1..d9562329bec6 100644
---- a/kernel/static_call.c
-+++ b/kernel/static_call.c
-@@ -248,6 +248,7 @@ static void __init static_call_init(void)
-        struct static_call_site *start = __start_static_call_sites;
-        struct static_call_site *stop  = __stop_static_call_sites;
-        struct static_call_site *site;
-+       struct static_call_key *prev_key = NULL;
+Bad timing, no wider testing has been done. The bug itself shows up
+as a false warning, nothing really breaks. I would understand if you
+prefer not to have them in the official tree at this time.
 
-        if (start == stop) {
-                pr_warn("WARNING: empty static call table\n");
-@@ -279,7 +280,9 @@ static void __init static_call_init(void)
-                         * The trampoline should no longer be used.  Poison it
-                         * it with a BUG() to catch any stray callers.
-                         */
--                       arch_static_call_poison_tramp(addr);
-+                       if (prev_key)
-+
-arch_static_call_poison_tramp((unsigned long)prev_key->func);
-+                       prev_key = key;
-                }
+-- 
+blue skies,
+   Martin.
 
-                arch_static_call_transform(addr, key->func);
+"Reality continues to ruin my life." - Calvin.
 
-
-> +               }
-> +
-> +               arch_static_call_transform(addr, key->func);
-> +       }
-> +
-> +       static_call_initialized = true;
-> +
-> +       static_call_unlock();
-> +       cpus_read_unlock();
-> +
-> +#ifdef CONFIG_MODULES
-> +       register_module_notifier(&static_call_module_nb);
-> +#endif
-> +}
-> +early_initcall(static_call_init);
-> --
-> 2.17.2
->
