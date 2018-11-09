@@ -2,159 +2,141 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADEA0C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 20:00:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 851BAC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 20:06:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65FB420825
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 20:00:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A52620855
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 20:06:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B1BQtIUr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65FB420825
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GTNTcHks"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A52620855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728692AbeKJFm2 (ORCPT
+        id S1726977AbeKJFtB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 00:42:28 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45643 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725883AbeKJFm1 (ORCPT
+        Sat, 10 Nov 2018 00:49:01 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:37947 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725799AbeKJFtB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 00:42:27 -0500
-Received: by mail-wr1-f67.google.com with SMTP id k15-v6so3093638wre.12;
-        Fri, 09 Nov 2018 12:00:21 -0800 (PST)
+        Sat, 10 Nov 2018 00:49:01 -0500
+Received: by mail-ot1-f67.google.com with SMTP id f24so2751691otl.5
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 12:06:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ioxSwm0dGrklDc0TwkbOc8BCspbfINnsEVGDj6FBrbM=;
-        b=B1BQtIUrCgGweUBnwx9iW4ANN5utcy3DnDX4LVLTV2LMcvgzBlR8/fyPUbGvGo+GU6
-         mT+Rm8sbPsNO9rBRg1f63MaFTMBGBi70SGqihKm2pps8d9lxHPlKF+Kn9iGqjhcQm6ii
-         dxfkbj8uVVKjYVLtfWWWOv/dRIZzNDD2+BnpMhbv1aBX3j81pSdQnY9kfTKv4fNqJCgw
-         OVz9Ss/JK7yWCn93EoLg7iJW06ZdV+m5XRdqu5yWqF0EMvcFGzgaS39SGZhPB20MOCty
-         wfxVXgapWEVIj9a0ffSerIj2Ria1AktPJB8NR+Jmqpw1aLLeD141Z1H7G+3fnTf+JZjU
-         4cHA==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xUFwZLkG3322nZXRMsXrrVbQjUnjyTIpP7ff0qsSub8=;
+        b=GTNTcHksHHTi8ChoQnEk787Gxg5f3rdjV0lM9oXCRRb0rfVz+qNlUbWRYvEIMh3xEE
+         uATjNn3RlQ/XC5WcxLHS6B8WKTbk91pWdkWd1XKBq2Xhg1TqH+Ax2VK9Ez8G+Y+vdKcf
+         eneJ7pWbt+Gt7R6rU1WzX4VmlbVISw7a1htrwzxRiGiRH7o3lAhUhBuP10AzBQsz6jS9
+         9UHg+TLVnRv12bttP2FIQhdYfDw3Qz9SWyesREXejsWqczM0wVK/f37qF82amtubknRw
+         P0cTbT6frnRjiLkottKRnsezXmCDNpKJVwx3oirzBLYyb5Yyi50VDe8iHfCK2/rB3NGR
+         VFYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ioxSwm0dGrklDc0TwkbOc8BCspbfINnsEVGDj6FBrbM=;
-        b=rpiCI6xUvLLAclkikLRNXYDuz62cJh139aim17zYtuQX4pe1cGBRPfZVJEz1OVa94A
-         GZTx9JCfWOvfizvOYCZ//bNmiwY5a3hvhd+haxEh4JTeXq19i7UEsF8w3FSK1aNki/Ax
-         daK4sbUtS0jKVi43Lim1zhvm+azRSeOWeox++an4czhLtNnP3g+WY/5NWYHnzYURluJ4
-         mv6VqMI5YPLCoNDhkXNvDqcU51TgJDd5rgw/4jci6xaKY7HVTE7kcZdWqQ/wvCQ4B6oS
-         OMFOyhddifh+6RXdFsyBWBAPD3FxrKs3AV4XROuXThH3UrSyGTAicaXkGJcg40N3t9TN
-         wdig==
-X-Gm-Message-State: AGRZ1gK6Tgjg+x7UJ3DH0CQnMdNYzyDrymzuT+X5SSVm6+lcHhVaw9Kw
-        ArGVVvIExz5dwbJ9bRV7AhE=
-X-Google-Smtp-Source: AJdET5fg7dimDhn9axtlM1fnLxqzwaeFIHSU1NP8s5BrXW0mXgIyVzFOVo1UWHXlbKddT9Muzmwntw==
-X-Received: by 2002:adf:cd0c:: with SMTP id w12-v6mr9587585wrm.67.1541793620603;
-        Fri, 09 Nov 2018 12:00:20 -0800 (PST)
-Received: from [192.168.1.18] (coo53.neoplus.adsl.tpnet.pl. [83.31.194.53])
-        by smtp.gmail.com with ESMTPSA id e5-v6sm4954443wru.88.2018.11.09.12.00.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 09 Nov 2018 12:00:19 -0800 (PST)
-Subject: Re: [PATCH 04/24] dt-bindings: leds: Add function and color
- properties
-To:     Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pavel@ucw.cz, robh@kernel.org,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Daniel Mack <daniel@zonque.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Oleh Kravchenko <oleg@kaa.org.ua>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Simon Shields <simon@lineageos.org>,
-        Xiaotong Lu <xiaotong.lu@spreadtrum.com>
-References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
- <1541542052-10081-5-git-send-email-jacek.anaszewski@gmail.com>
- <26714494-06f8-163d-1ef8-75f75c25a467@ti.com>
- <c650a9eb-afae-2a27-e39c-d448a5b3eadd@gmail.com>
- <81884969-956c-9d21-4114-4cb10d1e90e3@ti.com>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <f573f259-9458-10b7-5e1e-423ffcd7f8ee@gmail.com>
-Date:   Fri, 9 Nov 2018 21:00:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xUFwZLkG3322nZXRMsXrrVbQjUnjyTIpP7ff0qsSub8=;
+        b=nF/B+ys7vhiyW4UXbXY59SfrB2l1V4Y/iqm0cnMfmXndMYCHBXiZgLsiW6xaRe67SJ
+         x4fxDgGs4db5FkE3BJyArhgOS5ZoJa2J7inMGCQ0U43kugjGzxuWS8CHzWWQox6AdzYB
+         O/+xlGfrqothBGRdcR8kOBCfzdx6/p1wcWVPe1h+gMNF1KkTfrFw3adcJTbTLrj6Xg//
+         ZLsRGjK7co3SRWTgAF+EMeFTfNL+aNDCky/B4mdXGM/cyCE2QaEZlWEbW6lYqHJRQYAl
+         MAUno8/I1vaL226jcvhC0YveW2C/Uxowg5LxoVwjmXy7mU6hACsYlLgo1Y94uoEPhj0q
+         6kkQ==
+X-Gm-Message-State: AGRZ1gK6u9FO3nG7SNAo11jt+BvZFqeVv2ed5SwA1tlbh/7ED3zu+Q+B
+        lpDhmVfj7UN5XrHhF71Iv8JAopfJxuiEKiVjR9nIpg==
+X-Google-Smtp-Source: AJdET5cXjXs2PLvXxsWygz6kywbzJDwHn04YUfcy0v93QqKZU9IwZvla3ETGhspDM0gSH4nZFdv8qzJc99CvBLJMFcA=
+X-Received: by 2002:a9d:460e:: with SMTP id y14mr6444829ote.198.1541794013885;
+ Fri, 09 Nov 2018 12:06:53 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <81884969-956c-9d21-4114-4cb10d1e90e3@ti.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <5be58a6e.w0IbLdKsiRknTygq%lkp@intel.com>
+In-Reply-To: <5be58a6e.w0IbLdKsiRknTygq%lkp@intel.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Fri, 9 Nov 2018 21:06:27 +0100
+Message-ID: <CAG48ez2xSLFGjMYSYJTLwEnZoZJuXUfdoCp6_vGrywBU4SQNkQ@mail.gmail.com>
+Subject: Re: afaef01c00 ("x86/entry: Add STACKLEAK erasing the kernel stack
+ .."): double fault: 0000 [#1]
+To:     alex.popov@linux.com, Andy Lutomirski <luto@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     lkp@01.org, lkp@intel.com,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-doc@vger.kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dan,
++Andy, Thomas, Ingo
 
-On 11/08/2018 10:08 PM, Dan Murphy wrote:
-> Jacek
-> 
-> On 11/08/2018 02:47 PM, Jacek Anaszewski wrote:
->> Dan,
->>
->> On 11/08/2018 07:00 PM, Dan Murphy wrote:
->>> Jacek
->>>
->>> On 11/06/2018 04:07 PM, Jacek Anaszewski wrote:
->>>> Introduce dedicated properties for conveying information about
->>>> LED function and color. Mark old "label" property as deprecated.
->>>>
->>>> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
->>>> Cc: Baolin Wang <baolin.wang@linaro.org>
->>>> Cc: Daniel Mack <daniel@zonque.org>
->>>> Cc: Dan Murphy <dmurphy@ti.com>
->>>> Cc: Linus Walleij <linus.walleij@linaro.org>
->>>> Cc: Oleh Kravchenko <oleg@kaa.org.ua>
->>>> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
->>>> Cc: Simon Shields <simon@lineageos.org>
->>>> Cc: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
->>>> ---
->>>>  Documentation/devicetree/bindings/leds/common.txt | 52 +++++++++++++++++++----
->>>>  1 file changed, 44 insertions(+), 8 deletions(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/leds/common.txt b/Documentation/devicetree/bindings/leds/common.txt
->>>> index aa13998..3efc826 100644
->>>> --- a/Documentation/devicetree/bindings/leds/common.txt
->>>> +++ b/Documentation/devicetree/bindings/leds/common.txt
->>>> @@ -10,14 +10,20 @@ can influence the way of the LED device initialization, the LED components
->>>>  have to be tightly coupled with the LED device binding. They are represented
->>>>  by child nodes of the parent LED device binding.
->>>>  
->>>> +
->>>>  Optional properties for child nodes:
->>>>  - led-sources : List of device current outputs the LED is connected to. The
->>>>  		outputs are identified by the numbers that must be defined
->>>>  		in the LED device binding documentation.
->>>> +- function: LED functon. Use one of the LED_FUNCTION_* prefixed definitions
->>>> +	    from the header include/dt-bindings/leds/functions.h.
->>>> +	    If there is no matching LED_FUNCTION available, add a new one.
->>>> +- color : Color of the LED.
->>>
->>> Should we define the colors too?  There are only really 4.  Red, green, blue and white.
->>>
->>> Generally varying colors are created base on the primary colors.  Even the amber color
->>
->> No problem, I can add LED colors. However, I don't quite follow how
->> the mix of base color strings would give "amber" ? :-)
->>
-> 
-> Amber or yellow.  Red and green with a hint of blue or no blue depending on how dark you want it.
-> 
-> You don't always have to turn the LED on full to mix.  Sometimes lowering the level of the stronger colors like red 
-> and upping weaker colors like green you can different color
+On Fri, Nov 9, 2018 at 2:24 PM kernel test robot <lkp@intel.com> wrote:
+> 0day kernel testing robot got the below dmesg and the first bad commit is
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+>
+> commit afaef01c001537fa97a25092d7f54d764dc7d8c1
+> Author:     Alexander Popov <alex.popov@linux.com>
+> AuthorDate: Fri Aug 17 01:16:58 2018 +0300
+> Commit:     Kees Cook <keescook@chromium.org>
+> CommitDate: Tue Sep 4 10:35:47 2018 -0700
+>
+>     x86/entry: Add STACKLEAK erasing the kernel stack at the end of syscalls
+[...]
+> [  127.808225] double fault: 0000 [#1]
+> [  127.808695] CPU: 0 PID: 414 Comm: trinity-main Tainted: G                T 4.19.0-rc2-00001-gafaef01 #1
+> [  127.809799] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+> [  127.810760] RIP: 0010:ftrace_ops_test+0x27/0xa0
+> [  127.811289] Code: eb 9a 90 41 54 55 49 89 f4 53 48 89 d3 48 89 fd 48 81 ec b0 00 00 00 65 48 8b 04 25 28 00 00 00 48 89 84 24 a8 00 00 00 31 c0 <e8> 54 df ff ff 48 85 db 74 57 e8 4a df ff ff 48 8b 85 d0 00 00 00
+> [  127.813385] RSP: 0018:fffffe0000001fb8 EFLAGS: 00010046
+[...]
+> [  127.819762] CR2: fffffe0000001fa8 CR3: 000000001579a000 CR4: 00000000000006b0
+[...]
+> [  127.822234] Call Trace:
+> [  127.822530]  <ENTRY_TRAMPOLINE>
+> [  127.822914]  ? __ia32_sys_rseq+0x2f0/0x2f0
+> [  127.823395]  ftrace_ops_list_func+0xa5/0x1b0
+> [  127.823922]  ftrace_call+0x5/0x34
+> [  127.824318]  ? stackleak_erase+0x5/0xf0
+> [  127.824789]  ? stackleak_erase+0x43/0xf0
+> [  127.825260]  stackleak_erase+0x5/0xf0
+> [  127.825699]  syscall_return_via_sysret+0x61/0x81
+> [  127.826238] WARNING: stack recursion on stack type 4
+> [  127.826243] WARNING: can't dereference registers at (____ptrval____) for ip syscall_return_via_sysret+0x61/0x81
+> [  127.826246]  </ENTRY_TRAMPOLINE>
+> [  127.828342] ---[ end trace e9f96d3f45575499 ]---
+> [  127.828911] RIP: 0010:ftrace_ops_test+0x27/0xa0
 
-That's obvious. I was rather curious what you had on mind by mentioning
-four colors (red, green, blue and white) in the context of "amber".
-Just to remind: we're still talking about LED names, not the values.
+CR2: fffffe0000001fa8, RSP: 0018:fffffe0000001fb8; this is a pagefault
+on the stack. fffffe0000000000 is CPU_ENTRY_AREA_RO_IDT;
+fffffe0000001000 is CPU_ENTRY_AREA_PER_CPU; so fffffe0000002000 is the
+page with the entry stack for cpu 0, and you overflowed from that into
+the readonly gdt at fffffe0000001000, which doubles as a guard page
+for the entry stack:
 
--- 
-Best regards,
-Jacek Anaszewski
+struct cpu_entry_area {
+        char gdt[PAGE_SIZE];
+
+        /*
+         * The GDT is just below entry_stack and thus serves (on x86_64) as
+         * a a read-only guard page.
+         */
+        struct entry_stack_page entry_stack_page;
+[...]
+};
+
+In other words: You're calling C code on the entry trampoline stack;
+this C code can call into ftrace; and the entry trampoline stack isn't
+big enough for ftrace shenanigans. I think you probably shouldn't be
+calling C code on the entry stack, but maybe one of the X86 folks has
+a different opinion?
