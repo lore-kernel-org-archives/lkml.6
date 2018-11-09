@@ -2,116 +2,87 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94949C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:25:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 517C9C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:28:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5866B20855
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:25:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ppdJ3MXA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5866B20855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1B55820825
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:28:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B55820825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728556AbeKJDHB (ORCPT
+        id S1728489AbeKJDJt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 22:07:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44840 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728026AbeKJDG7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 22:06:59 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 330E520825;
-        Fri,  9 Nov 2018 17:25:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541784327;
-        bh=64jkRqERJySVcWmUXw0AJES6FxXiNsluBrHirkZNkj8=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=ppdJ3MXAUv4HeSjgMRy1015AoNy91PdoKFCMMD4HzlhURPqwDN7PFnuo/b62oV3LN
-         TXiRaCtxKq8krTiJkt5+1GVJrIZtlF2eL0Q1TzZ83WV7pWFH5DNsqlVlFiyvJkHHRf
-         XfTbk8KXd1Qi+9cnCXJHNIM03yfReaqGgrfSetJw=
-Content-Type: text/plain; charset="utf-8"
+        Fri, 9 Nov 2018 22:09:49 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40816 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727995AbeKJDJt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 22:09:49 -0500
+Received: by mail-wr1-f66.google.com with SMTP id i17-v6so2712344wre.7
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 09:28:16 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MYGqs1VkAAmOXim62cmhAUgSmzpI1bqQVQVUbS41Vv8=;
+        b=D45Or2aL1Bb1rQktiXIE4wpNeLJCjerv6K5Ja7JGL8tlP0niKi09RusmDu/tdxh95Z
+         YcsIcKS/4EmaU9ttHbkbxWOMADfJKAQwnifAvaztq3nLhHdyOMxeyY/BIcaG71LyqLEg
+         WaYG5avB6vUrhKnrtlQnpWdNR1IST+HWbE8zX7NQvWMZ5AmQH6foj2MU0TNQqpZ5EEiZ
+         j64n2q55SfcQ9Xy0apC0B1sBUZ3wnKFsxpNDaGKOeI6HWh80uY/KQKRwoeRApAsyAISU
+         enwo/GIPp9Tk6TWpC1Ili4kR5i9oWXRBsSFsk2zOXtRpGRwOvWQF7563Sm7V1EVByTny
+         Xdrw==
+X-Gm-Message-State: AGRZ1gKdOsyUrAkDb2oMWX+xK9/58ZH/pvGQgr3m2939PjFSEpZRBETi
+        gfufFifjrx7FLs/lkXeqIr1A9Xa8p6rK0qW6Gt6xmkzd
+X-Google-Smtp-Source: AJdET5dFic2bHAz2TScqkqQ4plcjZEKZ5PBj4ZeEMukXjTvE3xKMhFEW0zbyVD1IVJTiJxouT3QMOFpySMMNoS+cAm4=
+X-Received: by 2002:adf:ff4e:: with SMTP id u14-v6mr8877714wrs.232.1541784495493;
+ Fri, 09 Nov 2018 09:28:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Abel Vesa <abel.vesa@nxp.com>, kbuild test robot <lkp@intel.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <201811091832.kSh4BXdS%fengguang.wu@intel.com>
-Cc:     kbuild-all@01.org, Sascha Hauer <kernel@pengutronix.de>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Abel Vesa <abelvesa@linux.com>, Abel Vesa <abel.vesa@nxp.com>
-References: <1541594266-16712-3-git-send-email-abel.vesa@nxp.com>
- <201811091832.kSh4BXdS%fengguang.wu@intel.com>
-Message-ID: <154178432653.88331.17907414252177481094@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v12 2/5] clk: imx: add fractional PLL output clock
-Date:   Fri, 09 Nov 2018 09:25:26 -0800
+References: <1541710771.12945.7.camel@gmx.us> <c8ff3004-33ee-19d5-8eb8-38d41f78c8ee@arm.com>
+ <trinity-e1d06dde-12e1-4e2a-8871-d6c5f4af9f51-1541766480902@msvc-mesg-gmx023>
+ <b23b62b4-9ecb-8b76-57e5-d323cc9926ce@arm.com> <13A11479-97FB-4EFD-A182-61DA63CB64D6@gmx.us>
+ <b74e43d3-a7e1-08e9-c176-5584ad379629@arm.com> <F47320A5-4A6B-4AEB-A0DC-E4EBC6B4EC2A@gmx.us>
+ <930d61db-6e44-8501-983d-09cd3759d153@arm.com>
+In-Reply-To: <930d61db-6e44-8501-983d-09cd3759d153@arm.com>
+From:   Sudeep Holla <sudeep.holla@arm.com>
+Date:   Fri, 9 Nov 2018 17:28:04 +0000
+Message-ID: <CAPKp9uY7DOV9xMhCQcAC8yh0z3-=2U-CmZq064Br=d4VYrcg=A@mail.gmail.com>
+Subject: Re: WARNING: CPU: 0 PID: 0 at drivers/irqchip/irq-gic-v3-its.c
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     cai@gmx.us, open list <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        ard.biesheuvel@linaro.org, Jason Cooper <jason@lakedaemon.net>,
+        Sudeep Holla <sudeep.holla@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting kbuild test robot (2018-11-09 02:18:24)
-> Hi Lucas,
-> =
+On Fri, Nov 9, 2018 at 4:10 PM Marc Zyngier <marc.zyngier@arm.com> wrote:
+>
+[...]
 
-> I love your patch! Yet something to improve:
-> =
+>
+> See bb42ca474010 and d003d029cea8 for details.
+>
+> Now, activating this workaround leads to lockdep being really angry,
+> most likely because the cpus_read_lock is not taken, which is a change
+> in behaviour...
+>
+> I'm trying to dig into this now.
+>
 
-> [auto build test ERROR on shawnguo/for-next]
-> [also build test ERROR on v4.20-rc1 next-20181109]
-> [if your patch is applied to the wrong git tree, please drop us a note to=
- help improve the system]
-> =
+Yes we found similar issue in kernel/sched/core.c sched_init_smp
+There's a fix with detailed description in -next
+(Commit 40fa3780bac2 ("sched/core: Take the hotplug lock in sched_init_smp()")
 
-> url:    https://github.com/0day-ci/linux/commits/Abel-Vesa/Add-i-MX8MQ-cl=
-ock-driver/20181109-063930
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.gi=
-t for-next
-> config: arm-multi_v5_defconfig (attached as .config)
-> compiler: arm-linux-gnueabi-gcc (Debian 7.2.0-11) 7.2.0
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbi=
-n/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         GCC_VERSION=3D7.2.0 make.cross ARCH=3Darm =
+The behaviour changed since  commit cb538267ea1e ("jump_label/lockdep:
+Assert we hold the hotplug lock for _cpuslocked() operations")
 
-> =
-
-> All errors (new ones prefixed by >>):
-> =
-
->    drivers/clk/imx/clk-frac-pll.o: In function `clk_pll_recalc_rate':
-> >> clk-frac-pll.c:(.text+0x74): undefined reference to `__aeabi_uldivmod'
->    drivers/clk/imx/clk-frac-pll.o: In function `clk_pll_round_rate':
->    clk-frac-pll.c:(.text+0xbc): undefined reference to `__aeabi_uldivmod'
-> =
-
-
-Why does the code do essentially:
-
-	u64 val;
-
-	do_div(val, div);
-	val /=3D div2;
-
-That should be using do_div() twice it seems.
-
+--
+Regards,
+Sudeep
