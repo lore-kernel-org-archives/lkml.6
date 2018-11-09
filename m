@@ -2,85 +2,77 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDADAC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 11:39:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEA52C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 11:40:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71D5820883
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 11:39:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71D5820883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 8FDD120883
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 11:40:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FDD120883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728252AbeKIVTS (ORCPT
+        id S1728294AbeKIVUi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 16:19:18 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:34719 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727596AbeKIVTR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 16:19:17 -0500
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id D536CD7FB8133;
-        Fri,  9 Nov 2018 19:38:57 +0800 (CST)
-Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
- (10.3.19.212) with Microsoft SMTP Server (TLS) id 14.3.408.0; Fri, 9 Nov 2018
- 19:38:49 +0800
-Subject: Re: How can I get user space tools of erofs?
-To:     cgxu519 <cgxu519@gmx.com>
-References: <cce741a4-8e15-a48c-070e-d16d71b864c3@gmx.com>
-From:   Gao Xiang <gaoxiang25@huawei.com>
-CC:     Gao Xiang <hsiangkao@aol.com>, <linux-erofs@lists.ozlabs.org>,
-        <devel@driverdev.osuosl.org>, LKML <linux-kernel@vger.kernel.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "liguifu (C)" <bluce.liguifu@huawei.com>,
-        "fangwei (I)" <fangwei1@huawei.com>, Chao Yu <yuchao0@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>
-Message-ID: <923d8f98-bd0c-47e1-63a5-512547d6a77d@huawei.com>
-Date:   Fri, 9 Nov 2018 19:38:46 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Fri, 9 Nov 2018 16:20:38 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:37327 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727691AbeKIVUi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 16:20:38 -0500
+Received: by mail-qk1-f194.google.com with SMTP id 131so957691qkd.4;
+        Fri, 09 Nov 2018 03:40:23 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Oum+toPf621R0xaQ60JDahqKDtyXnFbn55zYgi5DzXQ=;
+        b=VKNTquMUdHG4K1eJTp6wzFShZnIcIztjiS0RBn9D9PjaQ4qp3+9b4fRXaHB5wbpX0m
+         P8odnOdybxq++LDN3xZSi9tC8e34I9lJcU6BuyL01MEGMpiP++Uu0wIuTlJGGdOVhoIH
+         Q+8AT3bn03D22+Z6JvXwpvcH0TGYUyPUd3VNMhc3wr55eJ6kN7icnj1aDI2pyRBW2ImI
+         rH7jKczq1v/AlgzBJbhYvCCQz1i1AIE8kBposSytvhXLGtBqxHV7A8xOc3rtFTPMS+Kr
+         f1g+Hf0iWvCAsyxJ5gz66sQPBPP6NY3KjJjGSkeprx09GC8lxFS5XGA0yH86KB12tz/p
+         GkcA==
+X-Gm-Message-State: AGRZ1gI/raDJq4Kxq7lVdZ8jPFibyUmUK/SM7l23SlEYSJi26mCAP/Z9
+        bbAXS4AVfMQOSfcn5wwoebfHqQiS/saT7TiaGJqY0Q==
+X-Google-Smtp-Source: AJdET5fv9xMk3tDYNUV7JpWDZ8uXYKcjMhGKYxEqNMqFJiY0cT7UGRIvhYHp4B7tV4Hj76mMHCCxmM0QAYc2aDLi0cM=
+X-Received: by 2002:ac8:7451:: with SMTP id h17mr8086158qtr.319.1541763622912;
+ Fri, 09 Nov 2018 03:40:22 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <cce741a4-8e15-a48c-070e-d16d71b864c3@gmx.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.151.23.176]
-X-CFilter-Loop: Reflected
+References: <20181109070349.20464-1-chris.packham@alliedtelesis.co.nz> <20181109070349.20464-6-chris.packham@alliedtelesis.co.nz>
+In-Reply-To: <20181109070349.20464-6-chris.packham@alliedtelesis.co.nz>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 9 Nov 2018 12:40:06 +0100
+Message-ID: <CAK8P3a3PNvBhyQw0bfGxKmxj+KeJB2_TXtDx2R1BpjTCYNqVkA@mail.gmail.com>
+Subject: Re: [PATCH v6 5/9] dt-bindings: ARM: document marvell,ecc-enable binding
+To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Borislav Petkov <bp@alien8.de>, jlu@pengutronix.de,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        DTML <devicetree@vger.kernel.org>, linux-edac@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chengguang,
+On Fri, Nov 9, 2018 at 8:04 AM Chris Packham
+<chris.packham@alliedtelesis.co.nz> wrote:
+>
+> Add documentation for the marvell,ecc-enable and marvell,ecc-disable
+> properties which can be used to enable/disable ECC on the Marvell aurora
+> cache.
+>
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> ---
 
-Good question! It's in the final stage of preparation to open source erofs-mkfs (actually they are now struggle at how to properly spilt
-into reasonable patches this week), hopefully the implementation could be released at the next week. (sorry I didn't mean to delay,
-I have to put it in the first place --- successfully launch our linux-erofs products to the market)
+Why do you need both enable and disable? Wouldn't one of them be enough here?
 
-@Guifu Li <bluce.liguifu@huawei.com> is the original author of erofs-mkfs, he will post the original mkfs source code to linux-erofs mailing list
-and he will maintain erofs-mkfs together with @Wei Fang <fangwei1@huawei.com> later. You can contact them for further informations.
----  these piece of code is actually not clean enough (a lot hacked/dirty code compared to the kernel code) so a lot of cleanup will be done then.
-
-currently, you can get erofs-mkfs binary from (still sorry to say that...):
-https://github.com/hsiangkao/erofs_mkfs_binary
-
-erofs is now in productization for these months, if all things go well, you'll see that HUAWEI mobile phones on the market run in erofs in few months. :)
-
-These months I'm busy in solving bugs found by internal beta users and tuning memory policy in heavy memory workload for the best performance compared to ext4
-(we have native in-place decompression compared with squashfs/btrfs, thus less extra memory allocation results in lower memory memory reclaim / page-writeback
-for devices with limited memory, see: https://lists.ozlabs.org/pipermail/linux-erofs/2018-August/000494.html) in order to gain the competitive user experience
-comparing to uncompressed filesystem solutions. I will update a document to describe our core design and linux-erofs future roadmap in this linux-4.21 round.
-
-Thanks,
-Gao Xiang
-
-On 2018/11/9 16:37, cgxu519 wrote:
-> Hi Xiang,
-> 
-> Could I ask a simple question about where can I get user space tools(like mkfs) of erofs?
-> 
-> 
-> Thanks.
-> 
+      Arnd
