@@ -2,94 +2,149 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C69FCC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 06:54:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73F11C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 06:56:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EC4D2086C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 06:54:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3271F2086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 06:56:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Xw74aCLE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EC4D2086C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oe5HHdak"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3271F2086C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728014AbeKIQdx (ORCPT
+        id S1728023AbeKIQf1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 11:33:53 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:55092 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727693AbeKIQdx (ORCPT
+        Fri, 9 Nov 2018 11:35:27 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:41712 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727693AbeKIQf1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 11:33:53 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA96oUTI019476;
-        Fri, 9 Nov 2018 06:54:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2018-07-02;
- bh=YaUMgYVEE8rGGmtrAJZKLM0JQVY9Xo9K5T9WoSnTHdA=;
- b=Xw74aCLEifecwEJTOScNQPf/CP6EEa47l52riKUmdMCzG2wlk5hfw6W34KiLo1pO1oXF
- SSecrEAE2SNo0/x/TZIKKiGw4bMNDukMqkq6k1U1s/44dGo1+q+jSypAHTPGq8zs2u+n
- 1ojwo56AFcCb0Sx9VwqpSDmiW0KcoSqPCFJWr1sspbZ3pHA+m9ObNeBSucFIjVEq4Jvi
- 1E/u8PPWhI+2XTe5Wi86j9eUyELrhbdZJEDLiy3dD2Qx+kOOIVCpXS/84GRjTAnV3FB/
- Nr5aVGVNyTXMd40dWo0Cj0NdKwqyPuLtHDQLAfQdL9h+kdGX05uvAoSlrXFLyl5jRSbN qQ== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2nh33udegq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 09 Nov 2018 06:54:37 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wA96sbNP027440
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 9 Nov 2018 06:54:37 GMT
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wA96sa3x004578;
-        Fri, 9 Nov 2018 06:54:36 GMT
-Received: from jw-M900.cn.oracle.com (/10.182.70.161)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 08 Nov 2018 22:54:36 -0800
-From:   Jacob Wen <jian.w.wen@oracle.com>
-To:     netdev@vger.kernel.org
-Cc:     jgross@suse.com, xen-devel@lists.xenproject.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] xen/netfront: remove unnecessary wmb
-Date:   Fri,  9 Nov 2018 14:53:59 +0800
-Message-Id: <20181109065359.14900-1-jian.w.wen@oracle.com>
-X-Mailer: git-send-email 2.17.1
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9071 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=760
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1811090064
+        Fri, 9 Nov 2018 11:35:27 -0500
+Received: by mail-pg1-f194.google.com with SMTP id 70so452960pgh.8;
+        Thu, 08 Nov 2018 22:56:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=ZfD90Hvp0FuovJUhMX05MqKYD8ZCEtw5w94uyNFI8Qo=;
+        b=oe5HHdakLh9BH1W8MU3AFu1RzNoBlN/4tVsxRE/UQYqJI8N4qTm8fx2e0OcSlKqlP5
+         O23wL4TRdei2KvgdoUFmb5KNYUk/KkkQmpYzkALD2XF6565COSai4DIhcKSmY+iCX5rg
+         cSKz+Fi3+gDqQvJsPq7rYh8NYEaY5p1FBrYa4kZKDSD1vIq8nsQe0SmMLdTeofHGmPV+
+         YVPgnXcJSNFDuKN04oFZ4yRoKp27EVetYuSal8ZUbmJW1imjT2+tlpnxeRRJBKJr4xxA
+         8rNSnpT/ZSsWe1JVbb1j4O0kynwZevYWdKt+ZigJX9h0qWpFgya5lUuY5SLH8XrJ5kP8
+         bfgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=ZfD90Hvp0FuovJUhMX05MqKYD8ZCEtw5w94uyNFI8Qo=;
+        b=rihPY1qgi9s4RnpmQk12d1o6o/C1Zt6Q1pTRrWMJxLwAs7BF9tO4sjmO3lmGwOhDys
+         CQMmURm5IvdawxNTqWL3oEZtHrUSmvt9FBdqe2Kh0WAqnye91RvuETN5/uBAj2Ihfdf2
+         4ls5antgT3D+KkQzC7OHGnIWMN9fiN8lNqYYOVH/0V8NeonNjxGGgetAo3LRCFpRpoTt
+         ppDSiGqDPmXmp6+14r4gLg9zd4XW8ZfQZyirBRDMh2TKENFgBcB6/Z3YfJmePjkeIEPm
+         p+c57EWLHzf6yw/W0CRipf8P01owQZFnQWXGEVY42rNhHErz7X5hTGiqo5iapClkzrEL
+         /MBw==
+X-Gm-Message-State: AGRZ1gK4OuSf8h10lwmBbYk4D56ZabwJKWs2C52RkkxN0q8qsbS+w80F
+        8Krq/cuYDd8OKOvYaAV7nP4=
+X-Google-Smtp-Source: AJdET5cJP7EBKyx+ty0Uz7zyAJ2LqRX4p3tJUuzYGVqeJCbd8TVYNpQ14Vj7fd2VGQAfhDcD+tqivQ==
+X-Received: by 2002:a62:160c:: with SMTP id 12-v6mr7776030pfw.45.1541746575691;
+        Thu, 08 Nov 2018 22:56:15 -0800 (PST)
+Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
+        by smtp.gmail.com with ESMTPSA id e65-v6sm7181502pfa.90.2018.11.08.22.56.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 08 Nov 2018 22:56:15 -0800 (PST)
+To:     Rob Herring <robh+dt@kernel.org>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>
+Cc:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-fpga@vger.kernel.org
+From:   Frank Rowand <frowand.list@gmail.com>
+Subject: [GIT PULL] of: overlay: validation checks, subsequent fixes for v20
+Message-ID: <262419e9-5c9f-1193-f119-33f373d81e43@gmail.com>
+Date:   Thu, 8 Nov 2018 22:56:13 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RING_PUSH_REQUESTS_AND_CHECK_NOTIFY is already able to make sure backend sees
-requests before req_prod is updated.
+Hi Rob,
 
-Signed-off-by: Jacob Wen <jian.w.wen@oracle.com>
----
- drivers/net/xen-netfront.c | 2 --
- 1 file changed, 2 deletions(-)
+Please pull the changes to add the overlay validation checks.
 
-diff --git a/drivers/net/xen-netfront.c b/drivers/net/xen-netfront.c
-index f17f602e6171..a8303afa15f1 100644
---- a/drivers/net/xen-netfront.c
-+++ b/drivers/net/xen-netfront.c
-@@ -337,8 +337,6 @@ static void xennet_alloc_rx_buffers(struct netfront_queue *queue)
- 		return;
- 	}
- 
--	wmb();		/* barrier so backend seens requests */
--
- 	RING_PUSH_REQUESTS_AND_CHECK_NOTIFY(&queue->rx, notify);
- 	if (notify)
- 		notify_remote_via_irq(queue->rx_irq);
--- 
-2.17.1
+This is the v7 version of the patch series.
 
+-Frank
+
+
+The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+
+  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/frowand/linux.git tags/kfree_validate_v7-for-4.20
+
+for you to fetch changes up to eeb07c573ec307c53fe2f6ac6d8d11c261f64006:
+
+  of: unittest: initialize args before calling of_*parse_*() (2018-11-08 22:12:37 -0800)
+
+----------------------------------------------------------------
+Add checks to (1) overlay apply process and (2) memory freeing
+triggered by overlay release.  The checks are intended to detect
+possible memory leaks and invalid overlays.
+
+The checks revealed bugs in existing code.  Fixed the bugs.
+
+While fixing bugs, noted other issues, which are fixed in
+separate patches.
+
+----------------------------------------------------------------
+Frank Rowand (17):
+      of: overlay: add tests to validate kfrees from overlay removal
+      of: overlay: add missing of_node_put() after add new node to changeset
+      of: overlay: add missing of_node_get() in __of_attach_node_sysfs
+      powerpc/pseries: add of_node_put() in dlpar_detach_node()
+      of: overlay: use prop add changeset entry for property in new nodes
+      of: overlay: do not duplicate properties from overlay for new nodes
+      of: overlay: reorder fields in struct fragment
+      of: overlay: validate overlay properties #address-cells and #size-cells
+      of: overlay: make all pr_debug() and pr_err() messages unique
+      of: overlay: test case of two fragments adding same node
+      of: overlay: check prevents multiple fragments add or delete same node
+      of: overlay: check prevents multiple fragments touching same property
+      of: unittest: remove unused of_unittest_apply_overlay() argument
+      of: overlay: set node fields from properties when add new overlay node
+      of: unittest: allow base devicetree to have symbol metadata
+      of: unittest: find overlays[] entry by name instead of index
+      of: unittest: initialize args before calling of_*parse_*()
+
+ arch/powerpc/platforms/pseries/dlpar.c             |   2 +
+ drivers/of/dynamic.c                               |  59 ++++-
+ drivers/of/kobj.c                                  |   4 +-
+ drivers/of/overlay.c                               | 292 ++++++++++++++++-----
+ drivers/of/unittest-data/Makefile                  |   2 +
+ .../of/unittest-data/overlay_bad_add_dup_node.dts  |  28 ++
+ .../of/unittest-data/overlay_bad_add_dup_prop.dts  |  24 ++
+ drivers/of/unittest-data/overlay_base.dts          |   1 +
+ drivers/of/unittest.c                              |  96 +++++--
+ include/linux/of.h                                 |  21 +-
+ 10 files changed, 432 insertions(+), 97 deletions(-)
+ create mode 100644 drivers/of/unittest-data/overlay_bad_add_dup_node.dts
+ create mode 100644 drivers/of/unittest-data/overlay_bad_add_dup_prop.dts
