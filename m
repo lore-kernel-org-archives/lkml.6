@@ -2,91 +2,243 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D54DFC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 23:21:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6B0EC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 23:22:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D69C20827
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 23:21:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A00920840
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 23:22:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fh6q3u7i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D69C20827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XsN5b5dr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A00920840
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728688AbeKJJEi (ORCPT
+        id S1728795AbeKJJEr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 04:04:38 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:33493 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727012AbeKJJEi (ORCPT
+        Sat, 10 Nov 2018 04:04:47 -0500
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:40232 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727012AbeKJJEq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 04:04:38 -0500
-Received: by mail-ot1-f65.google.com with SMTP id q1so3196309otk.0
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 15:21:52 -0800 (PST)
+        Sat, 10 Nov 2018 04:04:46 -0500
+Received: by mail-yb1-f193.google.com with SMTP id g9-v6so1737624ybh.7
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 15:22:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=qts3v6PmQYWsu+lBnxMQTyFzGNDMvJGvPCzX9bXMAK4=;
-        b=Fh6q3u7id6gFGD4pHWrweZvU4TAH7hB9wRxIoxApX45OMoPSAIetfTpnjBukg/ct7l
-         lewjayK061ZpgT0NY5yhUTwqDB3G4QXcmE7w3PLJSSjzdGTOfng4IPm1/nDP6oq/B8j2
-         4JFFOoJM08zaN/6vOir9cm/lCAFrZDQBJ1a94=
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=a1T7f3ptIvjuJHACqDYegUHUMmTMhlIrExoT7VexCjU=;
+        b=XsN5b5dr4DdUlqQA7Vblr3hYziw51KYS2nHqQr1W40D3VIt5uu9Pz3p4EbM4THSpOy
+         rz+1/5bAhZ5ZAJbWqs3KCwgpbAADzcQgKxC/UCQKqOBy91hrize9L+yBBW8L8amsbS1F
+         cFL0GQ6S5YFjhO2zwtPCYaJZurDiwgPhK9Au8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qts3v6PmQYWsu+lBnxMQTyFzGNDMvJGvPCzX9bXMAK4=;
-        b=jP10NMs+b/aV8+g54Er/ePpZtt6tMc6aR/6lKOEXbe4LIFR+xx7DDYir7yb8Qvu3ux
-         75QExT0Kh1nWsGydEo8gIXE+LCWG232urPcsSmoxMBUjunVWXvEAxY8iBpZQ3uSEBTBv
-         UJXZT+3vHsqYwzEUzj6nw5p3aQiuHGxsRR54GXnLnMT8TzAxf7Q214BWknjN2nX8ZpP8
-         0sLkvNZg6gJjbnfIJZcBVvX2mXUIib5kJaqBHSaqxmZzCxCOE7TeiuOht4zU6di8oh19
-         6OwbDBySjc18CIlkA0Fo2AATPj/0kN6Amk00yAJ0AwiWK4TdgVrstIGPrkRBS9GzAHyx
-         RLkA==
-X-Gm-Message-State: AGRZ1gJdZguzxlAxrayYBmcc6+lWe8HiVNsNxQFgNNjksyNBCiKbAsV0
-        1OiVcZZM+JaoqlpPulHeF9/z/w==
-X-Google-Smtp-Source: AJdET5ent6sFCsZWF6nRnbwJ2KJDQNR3Vm68LKldVBseyy6yoj+TSQcthOTMYreD2d2+hMVCzGMz8g==
-X-Received: by 2002:a9d:fae:: with SMTP id d43mr6006591otd.368.1541805712358;
-        Fri, 09 Nov 2018 15:21:52 -0800 (PST)
-Received: from localhost ([2600:1700:141:4960:2c8b:81ba:25b4:a1fc])
-        by smtp.gmail.com with ESMTPSA id w31sm4641006otb.57.2018.11.09.15.21.50
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=a1T7f3ptIvjuJHACqDYegUHUMmTMhlIrExoT7VexCjU=;
+        b=qfHMQNCgqPRGKUP2lHCP7UL9HaAZfjlMPpQMtv7MJqTwVY5u/bVk9yUAxCAOFQF747
+         NOfb18DM3DBoa9ufEBOnW+t7m6zsWQHbSetrl2qC4BJdWpFCPgAhebDFue2LarEC3W6a
+         rfcYUspUivmlYs2SkVSMmrsOegbY+wZwTy+AF8VJU5j9qxn/3210yLuRaR1FI62v+0EC
+         N70WBjNJ8lozb2XX9ao7ycbTDFz59HKDO0N9ZRSTyTzafyCNfrRRqoAz46udncfUBPml
+         SnlieeA7APEKXG0QcghqjxLY7QbktxTulj4NRf41ADamkLCHOEQfgnEl6bXiBkmpjgaz
+         pAXA==
+X-Gm-Message-State: AGRZ1gLyZePkA5UBbwgIIeLllq10TjhL/MyqM6RHu2U1hoG6XOFPGAkb
+        V/60A5KenQVQS0Wjv0Sc4kl/NdM79ZI=
+X-Google-Smtp-Source: AJdET5dB3WNNOck/B9KGspM3fOlco1fcaUr2OsJIDmScRC/QhZkq/A5F3ZmPTKQH14msEPwvtcaJBA==
+X-Received: by 2002:a25:1043:: with SMTP id 64-v6mr10682483ybq.159.1541805719116;
+        Fri, 09 Nov 2018 15:21:59 -0800 (PST)
+Received: from mail-yw1-f52.google.com (mail-yw1-f52.google.com. [209.85.161.52])
+        by smtp.gmail.com with ESMTPSA id j131-v6sm1658154ywa.84.2018.11.09.15.21.57
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 09 Nov 2018 15:21:50 -0800 (PST)
-Date:   Fri, 9 Nov 2018 17:21:49 -0600
-From:   Andy Gross <andy.gross@linaro.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: qcom: sdm845-mtp: Mark protected gcc clocks
-Message-ID: <20181109232149.GA8686@hector.attlocal.net>
-References: <20181105194011.43770-1-swboyd@chromium.org>
- <20181106055013.11271-1-bjorn.andersson@linaro.org>
+        Fri, 09 Nov 2018 15:21:57 -0800 (PST)
+Received: by mail-yw1-f52.google.com with SMTP id h21-v6so2316683ywa.3
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 15:21:57 -0800 (PST)
+X-Received: by 2002:a0d:d302:: with SMTP id v2-v6mr10757632ywd.124.1541805716996;
+ Fri, 09 Nov 2018 15:21:56 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181106055013.11271-1-bjorn.andersson@linaro.org>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+Received: by 2002:a25:b906:0:0:0:0:0 with HTTP; Fri, 9 Nov 2018 15:21:56 -0800 (PST)
+In-Reply-To: <e902f017-43f3-2532-69ad-3cdfca6d75c8@linux.com>
+References: <5be58a6e.w0IbLdKsiRknTygq%lkp@intel.com> <CAG48ez2xSLFGjMYSYJTLwEnZoZJuXUfdoCp6_vGrywBU4SQNkQ@mail.gmail.com>
+ <2B681F10-752C-4327-9960-3987CE17A619@amacapital.net> <e902f017-43f3-2532-69ad-3cdfca6d75c8@linux.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Fri, 9 Nov 2018 17:21:56 -0600
+X-Gmail-Original-Message-ID: <CAGXu5jKZf7-E1SQArgZKVp716OdJmUB2_h5=ZiJXO=Y0C0UBsg@mail.gmail.com>
+Message-ID: <CAGXu5jKZf7-E1SQArgZKVp716OdJmUB2_h5=ZiJXO=Y0C0UBsg@mail.gmail.com>
+Subject: Re: afaef01c00 ("x86/entry: Add STACKLEAK erasing the kernel stack
+ .."): double fault: 0000 [#1]
+To:     Alexander Popov <alex.popov@linux.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Jann Horn <jannh@google.com>, Joerg Roedel <joro@8bytes.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, LKP <lkp@01.org>,
+        kbuild test robot <lkp@intel.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 05, 2018 at 09:50:13PM -0800, Bjorn Andersson wrote:
-> As of v4.20-rc1 probing the GCC driver on a SDM845 device with the
-> standard security implementation causes an access violation and an
-> immediate system restart. Use the protected-clocks property to mark the
-> offending clocks protected for the MTP, in order to allow it to boot.
-> 
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+On Fri, Nov 9, 2018 at 5:09 PM, Alexander Popov <alex.popov@linux.com> wrot=
+e:
+>
+> On 09.11.2018 23:46, Andy Lutomirski wrote:
+>>> On Nov 9, 2018, at 12:06 PM, Jann Horn <jannh@google.com> wrote:
+>>>
+>>> +Andy, Thomas, Ingo
+>>>
+>>>> On Fri, Nov 9, 2018 at 2:24 PM kernel test robot <lkp@intel.com> wrote=
+:
+>>>> 0day kernel testing robot got the below dmesg and the first bad commit=
+ is
+>>>>
+>>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git mas=
+ter
+>>>>
+>>>> commit afaef01c001537fa97a25092d7f54d764dc7d8c1
+>>>> Author:     Alexander Popov <alex.popov@linux.com>
+>>>> AuthorDate: Fri Aug 17 01:16:58 2018 +0300
+>>>> Commit:     Kees Cook <keescook@chromium.org>
+>>>> CommitDate: Tue Sep 4 10:35:47 2018 -0700
+>>>>
+>>>>    x86/entry: Add STACKLEAK erasing the kernel stack at the end of sys=
+calls
+>>> [...]
+>>>> [  127.808225] double fault: 0000 [#1]
+>>>> [  127.808695] CPU: 0 PID: 414 Comm: trinity-main Tainted: G          =
+      T 4.19.0-rc2-00001-gafaef01 #1
+>>>> [  127.809799] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), =
+BIOS 1.10.2-1 04/01/2014
+>>>> [  127.810760] RIP: 0010:ftrace_ops_test+0x27/0xa0
+>>>> [  127.811289] Code: eb 9a 90 41 54 55 49 89 f4 53 48 89 d3 48 89 fd 4=
+8 81 ec b0 00 00 00 65 48 8b 04 25 28 00 00 00 48 89 84 24 a8 00 00 00 31 c=
+0 <e8> 54 df ff ff 48 85 db 74 57 e8 4a df ff ff 48 8b 85 d0 00 00 00
+>>>> [  127.813385] RSP: 0018:fffffe0000001fb8 EFLAGS: 00010046
+>>> [...]
+>>>> [  127.819762] CR2: fffffe0000001fa8 CR3: 000000001579a000 CR4: 000000=
+00000006b0
+>>> [...]
+>>>> [  127.822234] Call Trace:
+>>>> [  127.822530]  <ENTRY_TRAMPOLINE>
+>>>> [  127.822914]  ? __ia32_sys_rseq+0x2f0/0x2f0
+>>>> [  127.823395]  ftrace_ops_list_func+0xa5/0x1b0
+>>>> [  127.823922]  ftrace_call+0x5/0x34
+>>>> [  127.824318]  ? stackleak_erase+0x5/0xf0
+>>>> [  127.824789]  ? stackleak_erase+0x43/0xf0
+>>>> [  127.825260]  stackleak_erase+0x5/0xf0
+>>>> [  127.825699]  syscall_return_via_sysret+0x61/0x81
+>>>> [  127.826238] WARNING: stack recursion on stack type 4
+>>>> [  127.826243] WARNING: can't dereference registers at (____ptrval____=
+) for ip syscall_return_via_sysret+0x61/0x81
+>>>> [  127.826246]  </ENTRY_TRAMPOLINE>
+>>>> [  127.828342] ---[ end trace e9f96d3f45575499 ]---
+>>>> [  127.828911] RIP: 0010:ftrace_ops_test+0x27/0xa0
+>>>
+>>> CR2: fffffe0000001fa8, RSP: 0018:fffffe0000001fb8; this is a pagefault
+>>> on the stack. fffffe0000000000 is CPU_ENTRY_AREA_RO_IDT;
+>>> fffffe0000001000 is CPU_ENTRY_AREA_PER_CPU; so fffffe0000002000 is the
+>>> page with the entry stack for cpu 0, and you overflowed from that into
+>>> the readonly gdt at fffffe0000001000, which doubles as a guard page
+>>> for the entry stack:
+>>>
+>>> struct cpu_entry_area {
+>>>        char gdt[PAGE_SIZE];
+>>>
+>>>        /*
+>>>         * The GDT is just below entry_stack and thus serves (on x86_64)=
+ as
+>>>         * a a read-only guard page.
+>>>         */
+>>>        struct entry_stack_page entry_stack_page;
+>>> [...]
+>>> };
+>>>
+>>> In other words: You're calling C code on the entry trampoline stack;
+>>> this C code can call into ftrace; and the entry trampoline stack isn't
+>>> big enough for ftrace shenanigans. I think you probably shouldn't be
+>>> calling C code on the entry stack, but maybe one of the X86 folks has
+>>> a different opinion?
+>>
+>> My opinion was that, on x86_32, the entry stack ought to be fairly large=
+ so
+>> that NMIs could execute on the entry stack.  I don=E2=80=99t remember wh=
+at the code
+>> actually does, though.
+>>
+>> But stackleak_erase should probably not run on the entry stack. That see=
+ms
+>> like it=E2=80=99s just asking for trouble.
+>
+> Hello Jann and Andy,
+>
+>
+> The stackleak_erase() function is called on the trampoline stack at the e=
+nd of
+> syscall, it erases the used part of the kernel thread stack after the sys=
+call is
+> handled.
+>
+>
+> I've reproduced such a double fault with function tracing for stackleak_e=
+rase():
+>
+>   # mount -t tracefs nodev /sys/kernel/tracing
+>   # echo 'p:myprobe stackleak_erase' > /sys/kernel/debug/tracing/kprobe_e=
+vents
+>   # echo 1 > /sys/kernel/debug/tracing/events/kprobes/myprobe/enable
+>
+>
+> I think we should simply not allow function tracing for stackleak_*() fun=
+ctions:
+>
+> diff --git a/kernel/Makefile b/kernel/Makefile
+> index 7343b3a..0906f6d 100644
+> --- a/kernel/Makefile
+> +++ b/kernel/Makefile
+> @@ -18,6 +18,7 @@ obj-$(CONFIG_MULTIUSER) +=3D groups.o
+>  ifdef CONFIG_FUNCTION_TRACER
+>  # Do not trace internal ftrace files
+>  CFLAGS_REMOVE_irq_work.o =3D $(CC_FLAGS_FTRACE)
+> +CFLAGS_REMOVE_stackleak.o =3D $(CC_FLAGS_FTRACE)
+>  endif
 
-This looks fine to me.
+Yeah, that's what I was suspecting on IRC. This looks like the right
+fix. Can you send that to me as a "regular" patch with changelog, etc,
+and I'll send it up to Linus.
 
-Acked-by: Andy Gross <andy.gross@linaro.org>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+
+Thanks for everyone's attention on this! I've been travelling this
+week, so I've been a little slow. :)
+
+-Kees
+
+>
+>
+> With this patch setting kprobe event for stackleak_erase() is not allowed=
+. This
+> is the corresponding dmesg output:
+>   [   75.660478] trace_kprobe: Could not probe notrace function stackleak=
+_erase
+>
+>
+> If you agree, I'll prepare the patch for LKML.
+>
+> Best regards,
+> Alexander
+
+
+
+--=20
+Kees Cook
