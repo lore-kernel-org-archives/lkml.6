@@ -2,1034 +2,466 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E785C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:14:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04F7DC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:16:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3214620840
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:14:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3214620840
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9C1A020883
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:16:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hdeGigpo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C1A020883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728169AbeKIQxa convert rfc822-to-8bit (ORCPT
+        id S1728159AbeKIQzP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 11:53:30 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34188 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728135AbeKIQx3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 11:53:29 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA979Zbr038931
-        for <linux-kernel@vger.kernel.org>; Fri, 9 Nov 2018 02:14:11 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nn207xyvy-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 02:14:11 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <schwidefsky@de.ibm.com>;
-        Fri, 9 Nov 2018 07:14:09 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 9 Nov 2018 07:14:05 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA97E4MX1769876
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 9 Nov 2018 07:14:04 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8D1F04C04A;
-        Fri,  9 Nov 2018 07:14:04 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4B8314C040;
-        Fri,  9 Nov 2018 07:14:04 +0000 (GMT)
-Received: from mschwideX1 (unknown [9.145.60.154])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri,  9 Nov 2018 07:14:04 +0000 (GMT)
-Date:   Fri, 9 Nov 2018 08:14:02 +0100
-From:   Martin Schwidefsky <schwidefsky@de.ibm.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: [GIT PULL] s390 patches for 4.20 #2
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-X-TM-AS-GCONF: 00
-x-cbid: 18110907-0016-0000-0000-0000022430C0
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110907-0017-0000-0000-0000327C32D0
-Message-Id: <20181109081402.777716d1@mschwideX1>
+        Fri, 9 Nov 2018 11:55:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37682 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727869AbeKIQzO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 11:55:14 -0500
+Received: from devnote (p19194-mobac01.tokyo.ocn.ne.jp [153.233.10.194])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F0CCC20840;
+        Fri,  9 Nov 2018 07:15:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541747758;
+        bh=k9CN/myP8tqt5ie05VDUfMpukNiYLcE17P1u+o7xKbw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=hdeGigpo37LMHYhqHbaM+OnCCIdEAdLSzxADQj0dv/+XvbadFbpCn9T0W5u4hD7Gf
+         4xMj9HwP3Lfj7BbDmhOJXN1HkPRMaXLeHzO4EXHtYJUIRdJI5szHDSJUpeAmfrzIqj
+         H3xBR2ckOQepEjRKwboJlplmAAv9Qc0VLIRb9/VM=
+Date:   Fri, 9 Nov 2018 16:15:51 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Christian Brauner <christian@brauner.io>,
+        Aleksa Sarai <asarai@suse.de>, netdev@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: Re: [PATCH v3 1/2] kretprobe: produce sane stack traces
+Message-Id: <20181109161551.6b96bd7d932c71432ac65e83@kernel.org>
+In-Reply-To: <20181108080448.rggfn4zawi3por23@yavin>
+References: <20181101083551.3805-1-cyphar@cyphar.com>
+        <20181101083551.3805-2-cyphar@cyphar.com>
+        <20181101204720.6ed3fe37@vmware.local.home>
+        <20181102050509.tw3dhvj5urudvtjl@yavin>
+        <20181102065932.bdt4pubbrkvql4mp@yavin>
+        <20181102091658.1bc979a4@gandalf.local.home>
+        <20181103070253.ajrqzs5xu2vf5stu@yavin>
+        <20181104115913.74l4yzecisvtt2j5@yavin>
+        <20181106171501.59ccabbc@gandalf.local.home>
+        <20181108074612.ldy6rozdpsdps6bf@yavin>
+        <20181108080448.rggfn4zawi3por23@yavin>
+X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-09_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811090067
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Thu, 8 Nov 2018 19:04:48 +1100
+Aleksa Sarai <cyphar@cyphar.com> wrote:
 
-please pull s390 fixes for 4.20-rc2
+> On 2018-11-08, Aleksa Sarai <cyphar@cyphar.com> wrote:
+> > I will attach what I have at the moment to hopefully explain what the
+> > issue I've found is (re-using the kretprobe architecture but with the
+> > shadow-stack idea).
+> 
+> Here is the patch I have at the moment (it works, except for the
+> question I have about how to handle the top-level pt_regs -- I've marked
+> that code with XXX).
+> 
+> -- 
+> Aleksa Sarai
+> Senior Software Engineer (Containers)
+> SUSE Linux GmbH
+> <https://www.cyphar.com/>
+> 
+> --8<---------------------------------------------------------------------
+> 
+> Since the return address is modified by kretprobe, the various unwinders
+> can produce invalid and confusing stack traces. ftrace mostly solved
+> this problem by teaching each unwinder how to find the original return
+> address for stack trace purposes. This same technique can be applied to
+> kretprobes by simply adding a pointer to where the return address was
+> replaced in the stack, and then looking up the relevant
+> kretprobe_instance when a stack trace is requested.
+> 
+> [WIP: This is currently broken because the *first entry* will not be
+>       overwritten since it looks like the stack pointer is different
+>       when we are provided pt_regs. All other addresses are correctly
+>       handled.]
+> 
+> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> ---
+>  arch/x86/events/core.c         |  6 +++-
+>  arch/x86/include/asm/ptrace.h  |  1 +
+>  arch/x86/kernel/kprobes/core.c |  5 ++--
+>  arch/x86/kernel/stacktrace.c   | 10 +++++--
+>  arch/x86/kernel/unwind_frame.c |  2 ++
+>  arch/x86/kernel/unwind_guess.c |  5 +++-
+>  arch/x86/kernel/unwind_orc.c   |  2 ++
+>  include/linux/kprobes.h        | 15 +++++++++-
+>  kernel/kprobes.c               | 55 ++++++++++++++++++++++++++++++++++
+>  9 files changed, 93 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+> index de32741d041a..d71062702179 100644
+> --- a/arch/x86/events/core.c
+> +++ b/arch/x86/events/core.c
+> @@ -2371,7 +2371,11 @@ perf_callchain_kernel(struct perf_callchain_entry_ctx *entry, struct pt_regs *re
+>  		return;
+>  	}
+>  
+> -	if (perf_callchain_store(entry, regs->ip))
+> +	/* XXX: Currently broken -- stack_addr(regs) doesn't match entry. */
+> +	addr = regs->ip;
+> +	//addr = ftrace_graph_ret_addr(current, &state.graph_idx, addr, stack_addr(regs));
+> +	addr = kretprobe_ret_addr(current, addr, stack_addr(regs));
+> +	if (perf_callchain_store(entry, addr))
+>  		return;
+>  
+>  	for (unwind_start(&state, current, regs, NULL); !unwind_done(&state);
+> diff --git a/arch/x86/include/asm/ptrace.h b/arch/x86/include/asm/ptrace.h
+> index ee696efec99f..c4dfafd43e11 100644
+> --- a/arch/x86/include/asm/ptrace.h
+> +++ b/arch/x86/include/asm/ptrace.h
+> @@ -172,6 +172,7 @@ static inline unsigned long kernel_stack_pointer(struct pt_regs *regs)
+>  	return regs->sp;
+>  }
+>  #endif
+> +#define stack_addr(regs) ((unsigned long *) kernel_stack_pointer(regs))
 
-The following changes since commit e5f6d9afa3415104e402cd69288bb03f7165eeba:
+No, you should use kernel_stack_pointer(regs) itself instead of stack_addr().
 
-  Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/sparc (2018-10-25 18:14:31 -0700)
+> 
+>  #define GET_IP(regs) ((regs)->ip)
+>  #define GET_FP(regs) ((regs)->bp)
+> diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
+> index b0d1e81c96bb..eb4da885020c 100644
+> --- a/arch/x86/kernel/kprobes/core.c
+> +++ b/arch/x86/kernel/kprobes/core.c
+> @@ -69,8 +69,6 @@
+>  DEFINE_PER_CPU(struct kprobe *, current_kprobe) = NULL;
+>  DEFINE_PER_CPU(struct kprobe_ctlblk, kprobe_ctlblk);
+>  
+> -#define stack_addr(regs) ((unsigned long *)kernel_stack_pointer(regs))
 
-are available in the git repository at:
+I don't like keeping this meaningless macro... this should be replaced with generic
+kernel_stack_pointer() macro.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git s390-4.20-2
+> -
+>  #define W(row, b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, ba, bb, bc, bd, be, bf)\
+>  	(((b0##UL << 0x0)|(b1##UL << 0x1)|(b2##UL << 0x2)|(b3##UL << 0x3) |   \
+>  	  (b4##UL << 0x4)|(b5##UL << 0x5)|(b6##UL << 0x6)|(b7##UL << 0x7) |   \
+> @@ -568,7 +566,8 @@ void arch_prepare_kretprobe(struct kretprobe_instance *ri, struct pt_regs *regs)
+>  {
+>  	unsigned long *sara = stack_addr(regs);
+>  
+> -	ri->ret_addr = (kprobe_opcode_t *) *sara;
+> +	ri->ret_addrp = (kprobe_opcode_t **) sara;
+> +	ri->ret_addr = *ri->ret_addrp;
+>  
+>  	/* Replace the return addr with trampoline addr */
+>  	*sara = (unsigned long) &kretprobe_trampoline;
+> diff --git a/arch/x86/kernel/stacktrace.c b/arch/x86/kernel/stacktrace.c
+> index 7627455047c2..8a4fb3109d6b 100644
+> --- a/arch/x86/kernel/stacktrace.c
+> +++ b/arch/x86/kernel/stacktrace.c
+> @@ -8,6 +8,7 @@
+>  #include <linux/sched/task_stack.h>
+>  #include <linux/stacktrace.h>
+>  #include <linux/export.h>
+> +#include <linux/kprobes.h>
+>  #include <linux/uaccess.h>
+>  #include <asm/stacktrace.h>
+>  #include <asm/unwind.h>
+> @@ -37,8 +38,13 @@ static void noinline __save_stack_trace(struct stack_trace *trace,
+>  	struct unwind_state state;
+>  	unsigned long addr;
+>  
+> -	if (regs)
+> -		save_stack_address(trace, regs->ip, nosched);
+> +	if (regs) {
+> +		/* XXX: Currently broken -- stack_addr(regs) doesn't match entry. */
+> +		addr = regs->ip;
 
-for you to fetch changes up to 0bb2ae1b26e1fb7543ec7474cdd374ac4b88c4da:
+Since this part is for storing regs->ip as a top of call-stack, this
+seems correct code. Stack unwind will be done next block.
 
-  s390/perf: Change CPUM_CF return code in event init function (2018-11-08 07:58:16 +0100)
+> +		//addr = ftrace_graph_ret_addr(current, &state.graph_idx, addr, stack_addr(regs));
 
-----------------------------------------------------------------
-s390 updates for 4.20-rc2
+so func graph return trampoline address will be shown only when unwinding stack entries.
+I mean func-graph tracer is not used as an event, so it never kicks stackdump.
 
- - A fix for the pgtable_bytes misaccounting on s390. The patch changes
-   common code part in regard to page table folding and adds extra
-   checks to mm_[inc|dec]_nr_[pmds|puds].
+> +		addr = kretprobe_ret_addr(current, addr, stack_addr(regs));
 
- - Add FORCE for all build targets using if_changed
+But since kretprobe will be an event, which can kick the stackdump.
+BTW, from kretprobe, regs->ip should always be the trampoline handler, 
+see arch/x86/kernel/kprobes/core.c:772 :-)
+So it must be fixed always.
 
- - Use non-loadable phdr for the .vmlinux.info section to avoid
-   a segment overlap that confuses kexec
+> +		save_stack_address(trace, addr, nosched);
+> +	}
+>  
+>  	for (unwind_start(&state, task, regs, NULL); !unwind_done(&state);
+>  	     unwind_next_frame(&state)) {
+> diff --git a/arch/x86/kernel/unwind_frame.c b/arch/x86/kernel/unwind_frame.c
+> index 3dc26f95d46e..47062427e9a3 100644
+> --- a/arch/x86/kernel/unwind_frame.c
+> +++ b/arch/x86/kernel/unwind_frame.c
+> @@ -1,4 +1,5 @@
+>  #include <linux/sched.h>
+> +#include <linux/kprobes.h>
+>  #include <linux/sched/task.h>
+>  #include <linux/sched/task_stack.h>
+>  #include <linux/interrupt.h>
+> @@ -270,6 +271,7 @@ static bool update_stack_state(struct unwind_state *state,
+>  		addr = READ_ONCE_TASK_STACK(state->task, *addr_p);
+>  		state->ip = ftrace_graph_ret_addr(state->task, &state->graph_idx,
+>  						  addr, addr_p);
+> +		state->ip = kretprobe_ret_addr(state->task, state->ip, addr_p);
+>  	}
+>  
+>  	/* Save the original stack pointer for unwind_dump(): */
+> diff --git a/arch/x86/kernel/unwind_guess.c b/arch/x86/kernel/unwind_guess.c
+> index 4f0e17b90463..554fd7c5c331 100644
+> --- a/arch/x86/kernel/unwind_guess.c
+> +++ b/arch/x86/kernel/unwind_guess.c
+> @@ -1,5 +1,6 @@
+>  #include <linux/sched.h>
+>  #include <linux/ftrace.h>
+> +#include <linux/kprobes.h>
+>  #include <asm/ptrace.h>
+>  #include <asm/bitops.h>
+>  #include <asm/stacktrace.h>
+> @@ -14,8 +15,10 @@ unsigned long unwind_get_return_address(struct unwind_state *state)
+>  
+>  	addr = READ_ONCE_NOCHECK(*state->sp);
+>  
+> -	return ftrace_graph_ret_addr(state->task, &state->graph_idx,
+> +	addr = ftrace_graph_ret_addr(state->task, &state->graph_idx,
+>  				     addr, state->sp);
+> +	addr = kretprobe_ret_addr(state->task, addr, state->sp);
+> +	return addr;
+>  }
+>  EXPORT_SYMBOL_GPL(unwind_get_return_address);
+>  
+> diff --git a/arch/x86/kernel/unwind_orc.c b/arch/x86/kernel/unwind_orc.c
+> index 26038eacf74a..b6393500d505 100644
+> --- a/arch/x86/kernel/unwind_orc.c
+> +++ b/arch/x86/kernel/unwind_orc.c
+> @@ -1,5 +1,6 @@
+>  #include <linux/module.h>
+>  #include <linux/sort.h>
+> +#include <linux/kprobes.h>
+>  #include <asm/ptrace.h>
+>  #include <asm/stacktrace.h>
+>  #include <asm/unwind.h>
+> @@ -462,6 +463,7 @@ bool unwind_next_frame(struct unwind_state *state)
+>  
+>  		state->ip = ftrace_graph_ret_addr(state->task, &state->graph_idx,
+>  						  state->ip, (void *)ip_p);
+> +		state->ip = kretprobe_ret_addr(state->task, state->ip, (void *)ip_p);
+>  
+>  		state->sp = sp;
+>  		state->regs = NULL;
+> diff --git a/include/linux/kprobes.h b/include/linux/kprobes.h
+> index e909413e4e38..3a01f9998064 100644
+> --- a/include/linux/kprobes.h
+> +++ b/include/linux/kprobes.h
+> @@ -172,6 +172,7 @@ struct kretprobe_instance {
+>  	struct hlist_node hlist;
+>  	struct kretprobe *rp;
+>  	kprobe_opcode_t *ret_addr;
+> +	kprobe_opcode_t **ret_addrp;
+>  	struct task_struct *task;
+>  	char data[0];
+>  };
+> @@ -203,6 +204,7 @@ static inline int kprobes_built_in(void)
+>  extern void arch_prepare_kretprobe(struct kretprobe_instance *ri,
+>  				   struct pt_regs *regs);
+>  extern int arch_trampoline_kprobe(struct kprobe *p);
+> +extern void kretprobe_trampoline(void);
+>  #else /* CONFIG_KRETPROBES */
+>  static inline void arch_prepare_kretprobe(struct kretprobe *rp,
+>  					struct pt_regs *regs)
+> @@ -212,6 +214,9 @@ static inline int arch_trampoline_kprobe(struct kprobe *p)
+>  {
+>  	return 0;
+>  }
+> +static inline void kretprobe_trampoline(void)
+> +{
+> +}
+>  #endif /* CONFIG_KRETPROBES */
+>  
+>  extern struct kretprobe_blackpoint kretprobe_blacklist[];
+> @@ -341,7 +346,7 @@ struct kprobe *get_kprobe(void *addr);
+>  void kretprobe_hash_lock(struct task_struct *tsk,
+>  			 struct hlist_head **head, unsigned long *flags);
+>  void kretprobe_hash_unlock(struct task_struct *tsk, unsigned long *flags);
+> -struct hlist_head * kretprobe_inst_table_head(struct task_struct *tsk);
+> +struct hlist_head *kretprobe_inst_table_head(struct task_struct *tsk);
+>  
+>  /* kprobe_running() will just return the current_kprobe on this CPU */
+>  static inline struct kprobe *kprobe_running(void)
+> @@ -371,6 +376,9 @@ void unregister_kretprobe(struct kretprobe *rp);
+>  int register_kretprobes(struct kretprobe **rps, int num);
+>  void unregister_kretprobes(struct kretprobe **rps, int num);
+>  
+> +unsigned long kretprobe_ret_addr(struct task_struct *tsk, unsigned long ret,
+> +				 unsigned long *retp);
+> +
+>  void kprobe_flush_task(struct task_struct *tk);
+>  void recycle_rp_inst(struct kretprobe_instance *ri, struct hlist_head *head);
+>  
+> @@ -425,6 +433,11 @@ static inline void unregister_kretprobe(struct kretprobe *rp)
+>  static inline void unregister_kretprobes(struct kretprobe **rps, int num)
+>  {
+>  }
+> +unsigned long kretprobe_ret_addr(struct task_struct *task, unsigned long ret,
+> +				 unsigned long *retp)
+> +{
+> +	return ret;
+> +}
+>  static inline void kprobe_flush_task(struct task_struct *tk)
+>  {
+>  }
+> diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+> index 90e98e233647..ed78141664ec 100644
+> --- a/kernel/kprobes.c
+> +++ b/kernel/kprobes.c
+> @@ -83,6 +83,11 @@ static raw_spinlock_t *kretprobe_table_lock_ptr(unsigned long hash)
+>  	return &(kretprobe_table_locks[hash].lock);
+>  }
+>  
+> +struct hlist_head *kretprobe_inst_table_head(struct task_struct *tsk)
+> +{
+> +	return &kretprobe_inst_table[hash_ptr(tsk, KPROBE_HASH_BITS)];
+> +}
+> +
+>  /* Blacklist -- list of struct kprobe_blacklist_entry */
+>  static LIST_HEAD(kprobe_blacklist);
+>  
+> @@ -1206,6 +1211,15 @@ __releases(hlist_lock)
+>  }
+>  NOKPROBE_SYMBOL(kretprobe_table_unlock);
+>  
+> +static bool kretprobe_hash_is_locked(struct task_struct *tsk)
+> +{
+> +	unsigned long hash = hash_ptr(tsk, KPROBE_HASH_BITS);
+> +	raw_spinlock_t *hlist_lock = kretprobe_table_lock_ptr(hash);
+> +
+> +	return raw_spin_is_locked(hlist_lock);
+> +}
+> +NOKPROBE_SYMBOL(kretprobe_hash_is_locked);
+> +
+>  /*
+>   * This function is called from finish_task_switch when task tk becomes dead,
+>   * so that we can recycle any function-return probe instances associated
+> @@ -1856,6 +1870,41 @@ static int pre_handler_kretprobe(struct kprobe *p, struct pt_regs *regs)
+>  }
+>  NOKPROBE_SYMBOL(pre_handler_kretprobe);
+>  
+> +unsigned long kretprobe_ret_addr(struct task_struct *tsk, unsigned long ret,
+> +				 unsigned long *retp)
+> +{
+> +	struct kretprobe_instance *ri;
+> +	unsigned long flags = 0;
+> +	struct hlist_head *head;
+> +	bool need_lock;
+> +
+> +	if (likely(ret != (unsigned long) &kretprobe_trampoline))
+> +		return ret;
+> +
+> +	need_lock = !kretprobe_hash_is_locked(tsk);
+> +	if (WARN_ON(need_lock))
+> +		kretprobe_hash_lock(tsk, &head, &flags);
+> +	else
+> +		head = kretprobe_inst_table_head(tsk);
 
- - Cleanup the attribute definition for the diagnostic sampling
+This may not work unless this is called from the kretprobe handler context,
+since if we are out of kretprobe handler context, another CPU can lock the
+hash table and it can be detected by kretprobe_hash_is_locked();.
 
- - Increase stack size for CONFIG_KASAN=y builds
+So, we should check we are in the kretprobe handler context if tsk == current,
+if not, we definately can lock the hash lock without any warning. This can
+be something like;
 
- - Export __node_distance to fix a build error
+if (is_kretprobe_handler_context()) {
+  // kretprobe_hash_lock(current == tsk) has been locked by caller  
+  if (tsk != current && kretprobe_hash(tsk) != kretprobe_hash(current))
+    // the hash of tsk and current can be same.
+    need_lock = true;
+} else
+  // we should take a lock for tsk.
+  need_lock = true;
 
- - Correct return code of a PMU event init function
 
- - An update for the default configs
+Thank you,
 
-----------------------------------------------------------------
-Heiko Carstens (1):
-      s390: update defconfigs
+> +
+> +	hlist_for_each_entry(ri, head, hlist) {
+> +		if (ri->task != current)
+> +			continue;
+> +		if (ri->ret_addr == (kprobe_opcode_t *) &kretprobe_trampoline)
+> +			continue;
+> +		if (ri->ret_addrp == (kprobe_opcode_t **) retp) {
+> +			ret = (unsigned long) ri->ret_addr;
+> +			goto out;
+> +		}
+> +	}
+> +
+> +out:
+> +	if (need_lock)
+> +		kretprobe_hash_unlock(tsk, &flags);
+> +	return ret;
+> +}
+> +NOKPROBE_SYMBOL(kretprobe_ret_addr);
+> +
+>  bool __weak arch_kprobe_on_func_entry(unsigned long offset)
+>  {
+>  	return !offset;
+> @@ -2005,6 +2054,12 @@ static int pre_handler_kretprobe(struct kprobe *p, struct pt_regs *regs)
+>  }
+>  NOKPROBE_SYMBOL(pre_handler_kretprobe);
+>  
+> +unsigned long kretprobe_ret_addr(struct task_struct *tsk, unsigned long ret,
+> +				 unsigned long *retp)
+> +{
+> +	return ret;
+> +}
+> +NOKPROBE_SYMBOL(kretprobe_ret_addr);
+>  #endif /* CONFIG_KRETPROBES */
+>  
+>  /* Set the kprobe gone and remove its instruction buffer. */
+> -- 
+> 2.19.1
 
-Justin M. Forbes (1):
-      s390/mm: Fix ERROR: "__node_distance" undefined!
 
-Martin Schwidefsky (4):
-      mm: make the __PAGETABLE_PxD_FOLDED defines non-empty
-      mm: introduce mm_[p4d|pud|pmd]_folded
-      mm: add mm_pxd_folded checks to pgtable_bytes accounting functions
-      s390/mm: fix mis-accounting of pgtable_bytes
-
-Thomas Richter (2):
-      s390/cpum_sf: Rework attribute definition for diagnostic sampling
-      s390/perf: Change CPUM_CF return code in event init function
-
-Vasily Gorbik (4):
-      s390/decompressor: add missing FORCE to build targets
-      s390/vdso: add missing FORCE to build targets
-      s390: avoid vmlinux segments overlap
-      s390/kasan: increase instrumented stack size to 64k
-
- arch/arm/include/asm/pgtable-2level.h    |  2 +-
- arch/m68k/include/asm/pgtable_mm.h       |  4 +-
- arch/microblaze/include/asm/pgtable.h    |  2 +-
- arch/nds32/include/asm/pgtable.h         |  2 +-
- arch/parisc/include/asm/pgtable.h        |  2 +-
- arch/s390/Makefile                       |  2 +-
- arch/s390/boot/compressed/Makefile       | 16 +++----
- arch/s390/configs/debug_defconfig        | 14 ++++--
- arch/s390/configs/performance_defconfig  | 13 +++++-
- arch/s390/defconfig                      | 79 +++++++++++++++++---------------
- arch/s390/include/asm/mmu_context.h      |  5 --
- arch/s390/include/asm/pgalloc.h          |  6 +--
- arch/s390/include/asm/pgtable.h          | 18 ++++++++
- arch/s390/include/asm/thread_info.h      |  2 +-
- arch/s390/include/asm/tlb.h              |  6 +--
- arch/s390/kernel/entry.S                 |  6 +--
- arch/s390/kernel/perf_cpum_cf.c          |  2 +-
- arch/s390/kernel/perf_cpum_sf.c          | 33 +++++++++++--
- arch/s390/kernel/vdso32/Makefile         |  6 +--
- arch/s390/kernel/vdso64/Makefile         |  6 +--
- arch/s390/kernel/vmlinux.lds.S           |  4 +-
- arch/s390/mm/pgalloc.c                   |  1 +
- arch/s390/numa/numa.c                    |  1 +
- include/asm-generic/4level-fixup.h       |  2 +-
- include/asm-generic/5level-fixup.h       |  2 +-
- include/asm-generic/pgtable-nop4d-hack.h |  2 +-
- include/asm-generic/pgtable-nop4d.h      |  2 +-
- include/asm-generic/pgtable-nopmd.h      |  2 +-
- include/asm-generic/pgtable-nopud.h      |  2 +-
- include/asm-generic/pgtable.h            | 16 +++++++
- include/linux/mm.h                       |  8 ++++
- 31 files changed, 175 insertions(+), 93 deletions(-)
-
-diff --git a/arch/arm/include/asm/pgtable-2level.h b/arch/arm/include/asm/pgtable-2level.h
-index 92fd2c8..12659ce 100644
---- a/arch/arm/include/asm/pgtable-2level.h
-+++ b/arch/arm/include/asm/pgtable-2level.h
-@@ -10,7 +10,7 @@
- #ifndef _ASM_PGTABLE_2LEVEL_H
- #define _ASM_PGTABLE_2LEVEL_H
- 
--#define __PAGETABLE_PMD_FOLDED
-+#define __PAGETABLE_PMD_FOLDED 1
- 
- /*
-  * Hardware-wise, we have a two level page table structure, where the first
-diff --git a/arch/m68k/include/asm/pgtable_mm.h b/arch/m68k/include/asm/pgtable_mm.h
-index 6181e41..fe3ddd7 100644
---- a/arch/m68k/include/asm/pgtable_mm.h
-+++ b/arch/m68k/include/asm/pgtable_mm.h
-@@ -55,12 +55,12 @@
-  */
- #ifdef CONFIG_SUN3
- #define PTRS_PER_PTE   16
--#define __PAGETABLE_PMD_FOLDED
-+#define __PAGETABLE_PMD_FOLDED 1
- #define PTRS_PER_PMD   1
- #define PTRS_PER_PGD   2048
- #elif defined(CONFIG_COLDFIRE)
- #define PTRS_PER_PTE	512
--#define __PAGETABLE_PMD_FOLDED
-+#define __PAGETABLE_PMD_FOLDED 1
- #define PTRS_PER_PMD	1
- #define PTRS_PER_PGD	1024
- #else
-diff --git a/arch/microblaze/include/asm/pgtable.h b/arch/microblaze/include/asm/pgtable.h
-index f64ebb9..e14b662 100644
---- a/arch/microblaze/include/asm/pgtable.h
-+++ b/arch/microblaze/include/asm/pgtable.h
-@@ -63,7 +63,7 @@ extern int mem_init_done;
- 
- #include <asm-generic/4level-fixup.h>
- 
--#define __PAGETABLE_PMD_FOLDED
-+#define __PAGETABLE_PMD_FOLDED 1
- 
- #ifdef __KERNEL__
- #ifndef __ASSEMBLY__
-diff --git a/arch/nds32/include/asm/pgtable.h b/arch/nds32/include/asm/pgtable.h
-index d3e19a5..9f52db9 100644
---- a/arch/nds32/include/asm/pgtable.h
-+++ b/arch/nds32/include/asm/pgtable.h
-@@ -4,7 +4,7 @@
- #ifndef _ASMNDS32_PGTABLE_H
- #define _ASMNDS32_PGTABLE_H
- 
--#define __PAGETABLE_PMD_FOLDED
-+#define __PAGETABLE_PMD_FOLDED 1
- #include <asm-generic/4level-fixup.h>
- #include <asm-generic/sizes.h>
- 
-diff --git a/arch/parisc/include/asm/pgtable.h b/arch/parisc/include/asm/pgtable.h
-index b941ac7..c7bb74e 100644
---- a/arch/parisc/include/asm/pgtable.h
-+++ b/arch/parisc/include/asm/pgtable.h
-@@ -111,7 +111,7 @@ static inline void purge_tlb_entries(struct mm_struct *mm, unsigned long addr)
- #if CONFIG_PGTABLE_LEVELS == 3
- #define BITS_PER_PMD	(PAGE_SHIFT + PMD_ORDER - BITS_PER_PMD_ENTRY)
- #else
--#define __PAGETABLE_PMD_FOLDED
-+#define __PAGETABLE_PMD_FOLDED 1
- #define BITS_PER_PMD	0
- #endif
- #define PTRS_PER_PMD    (1UL << BITS_PER_PMD)
-diff --git a/arch/s390/Makefile b/arch/s390/Makefile
-index 0b33577..e21053e 100644
---- a/arch/s390/Makefile
-+++ b/arch/s390/Makefile
-@@ -27,7 +27,7 @@ KBUILD_CFLAGS_DECOMPRESSOR += $(call cc-option,-ffreestanding)
- KBUILD_CFLAGS_DECOMPRESSOR += $(if $(CONFIG_DEBUG_INFO),-g)
- KBUILD_CFLAGS_DECOMPRESSOR += $(if $(CONFIG_DEBUG_INFO_DWARF4), $(call cc-option, -gdwarf-4,))
- UTS_MACHINE	:= s390x
--STACK_SIZE	:= $(if $(CONFIG_KASAN),32768,16384)
-+STACK_SIZE	:= $(if $(CONFIG_KASAN),65536,16384)
- CHECKFLAGS	+= -D__s390__ -D__s390x__
- 
- export LD_BFD
-diff --git a/arch/s390/boot/compressed/Makefile b/arch/s390/boot/compressed/Makefile
-index 5930396..b1bdd15 100644
---- a/arch/s390/boot/compressed/Makefile
-+++ b/arch/s390/boot/compressed/Makefile
-@@ -22,10 +22,10 @@ OBJCOPYFLAGS :=
- OBJECTS := $(addprefix $(obj)/,$(obj-y))
- 
- LDFLAGS_vmlinux := --oformat $(LD_BFD) -e startup -T
--$(obj)/vmlinux: $(obj)/vmlinux.lds $(objtree)/arch/s390/boot/startup.a $(OBJECTS)
-+$(obj)/vmlinux: $(obj)/vmlinux.lds $(objtree)/arch/s390/boot/startup.a $(OBJECTS) FORCE
- 	$(call if_changed,ld)
- 
--OBJCOPYFLAGS_info.bin := -O binary --only-section=.vmlinux.info
-+OBJCOPYFLAGS_info.bin := -O binary --only-section=.vmlinux.info --set-section-flags .vmlinux.info=load
- $(obj)/info.bin: vmlinux FORCE
- 	$(call if_changed,objcopy)
- 
-@@ -46,17 +46,17 @@ suffix-$(CONFIG_KERNEL_LZMA)  := .lzma
- suffix-$(CONFIG_KERNEL_LZO)  := .lzo
- suffix-$(CONFIG_KERNEL_XZ)  := .xz
- 
--$(obj)/vmlinux.bin.gz: $(vmlinux.bin.all-y)
-+$(obj)/vmlinux.bin.gz: $(vmlinux.bin.all-y) FORCE
- 	$(call if_changed,gzip)
--$(obj)/vmlinux.bin.bz2: $(vmlinux.bin.all-y)
-+$(obj)/vmlinux.bin.bz2: $(vmlinux.bin.all-y) FORCE
- 	$(call if_changed,bzip2)
--$(obj)/vmlinux.bin.lz4: $(vmlinux.bin.all-y)
-+$(obj)/vmlinux.bin.lz4: $(vmlinux.bin.all-y) FORCE
- 	$(call if_changed,lz4)
--$(obj)/vmlinux.bin.lzma: $(vmlinux.bin.all-y)
-+$(obj)/vmlinux.bin.lzma: $(vmlinux.bin.all-y) FORCE
- 	$(call if_changed,lzma)
--$(obj)/vmlinux.bin.lzo: $(vmlinux.bin.all-y)
-+$(obj)/vmlinux.bin.lzo: $(vmlinux.bin.all-y) FORCE
- 	$(call if_changed,lzo)
--$(obj)/vmlinux.bin.xz: $(vmlinux.bin.all-y)
-+$(obj)/vmlinux.bin.xz: $(vmlinux.bin.all-y) FORCE
- 	$(call if_changed,xzkern)
- 
- OBJCOPYFLAGS_piggy.o := -I binary -O elf64-s390 -B s390:64-bit --rename-section .data=.vmlinux.bin.compressed
-diff --git a/arch/s390/configs/debug_defconfig b/arch/s390/configs/debug_defconfig
-index 259d169..c69cb04 100644
---- a/arch/s390/configs/debug_defconfig
-+++ b/arch/s390/configs/debug_defconfig
-@@ -64,6 +64,8 @@ CONFIG_NUMA=y
- CONFIG_PREEMPT=y
- CONFIG_HZ_100=y
- CONFIG_KEXEC_FILE=y
-+CONFIG_EXPOLINE=y
-+CONFIG_EXPOLINE_AUTO=y
- CONFIG_MEMORY_HOTPLUG=y
- CONFIG_MEMORY_HOTREMOVE=y
- CONFIG_KSM=y
-@@ -84,9 +86,11 @@ CONFIG_PCI_DEBUG=y
- CONFIG_HOTPLUG_PCI=y
- CONFIG_HOTPLUG_PCI_S390=y
- CONFIG_CHSC_SCH=y
-+CONFIG_VFIO_AP=m
- CONFIG_CRASH_DUMP=y
- CONFIG_BINFMT_MISC=m
- CONFIG_HIBERNATION=y
-+CONFIG_PM_DEBUG=y
- CONFIG_NET=y
- CONFIG_PACKET=y
- CONFIG_PACKET_DIAG=m
-@@ -161,8 +165,6 @@ CONFIG_NF_CONNTRACK_TFTP=m
- CONFIG_NF_CT_NETLINK=m
- CONFIG_NF_CT_NETLINK_TIMEOUT=m
- CONFIG_NF_TABLES=m
--CONFIG_NFT_EXTHDR=m
--CONFIG_NFT_META=m
- CONFIG_NFT_CT=m
- CONFIG_NFT_COUNTER=m
- CONFIG_NFT_LOG=m
-@@ -365,6 +367,8 @@ CONFIG_NET_ACT_SKBEDIT=m
- CONFIG_NET_ACT_CSUM=m
- CONFIG_DNS_RESOLVER=y
- CONFIG_OPENVSWITCH=m
-+CONFIG_VSOCKETS=m
-+CONFIG_VIRTIO_VSOCKETS=m
- CONFIG_NETLINK_DIAG=m
- CONFIG_CGROUP_NET_PRIO=y
- CONFIG_BPF_JIT=y
-@@ -461,6 +465,7 @@ CONFIG_PPTP=m
- CONFIG_PPPOL2TP=m
- CONFIG_PPP_ASYNC=m
- CONFIG_PPP_SYNC_TTY=m
-+CONFIG_ISM=m
- CONFIG_INPUT_EVDEV=y
- # CONFIG_INPUT_KEYBOARD is not set
- # CONFIG_INPUT_MOUSE is not set
-@@ -486,9 +491,12 @@ CONFIG_MLX4_INFINIBAND=m
- CONFIG_MLX5_INFINIBAND=m
- CONFIG_VFIO=m
- CONFIG_VFIO_PCI=m
-+CONFIG_VFIO_MDEV=m
-+CONFIG_VFIO_MDEV_DEVICE=m
- CONFIG_VIRTIO_PCI=m
- CONFIG_VIRTIO_BALLOON=m
- CONFIG_VIRTIO_INPUT=y
-+CONFIG_S390_AP_IOMMU=y
- CONFIG_EXT4_FS=y
- CONFIG_EXT4_FS_POSIX_ACL=y
- CONFIG_EXT4_FS_SECURITY=y
-@@ -615,7 +623,6 @@ CONFIG_DEBUG_CREDENTIALS=y
- CONFIG_RCU_TORTURE_TEST=m
- CONFIG_RCU_CPU_STALL_TIMEOUT=300
- CONFIG_NOTIFIER_ERROR_INJECTION=m
--CONFIG_PM_NOTIFIER_ERROR_INJECT=m
- CONFIG_NETDEV_NOTIFIER_ERROR_INJECT=m
- CONFIG_FAULT_INJECTION=y
- CONFIG_FAILSLAB=y
-@@ -727,3 +734,4 @@ CONFIG_APPLDATA_BASE=y
- CONFIG_KVM=m
- CONFIG_KVM_S390_UCONTROL=y
- CONFIG_VHOST_NET=m
-+CONFIG_VHOST_VSOCK=m
-diff --git a/arch/s390/configs/performance_defconfig b/arch/s390/configs/performance_defconfig
-index 37fd60c..32f539d 100644
---- a/arch/s390/configs/performance_defconfig
-+++ b/arch/s390/configs/performance_defconfig
-@@ -65,6 +65,8 @@ CONFIG_NR_CPUS=512
- CONFIG_NUMA=y
- CONFIG_HZ_100=y
- CONFIG_KEXEC_FILE=y
-+CONFIG_EXPOLINE=y
-+CONFIG_EXPOLINE_AUTO=y
- CONFIG_MEMORY_HOTPLUG=y
- CONFIG_MEMORY_HOTREMOVE=y
- CONFIG_KSM=y
-@@ -82,9 +84,11 @@ CONFIG_PCI=y
- CONFIG_HOTPLUG_PCI=y
- CONFIG_HOTPLUG_PCI_S390=y
- CONFIG_CHSC_SCH=y
-+CONFIG_VFIO_AP=m
- CONFIG_CRASH_DUMP=y
- CONFIG_BINFMT_MISC=m
- CONFIG_HIBERNATION=y
-+CONFIG_PM_DEBUG=y
- CONFIG_NET=y
- CONFIG_PACKET=y
- CONFIG_PACKET_DIAG=m
-@@ -159,8 +163,6 @@ CONFIG_NF_CONNTRACK_TFTP=m
- CONFIG_NF_CT_NETLINK=m
- CONFIG_NF_CT_NETLINK_TIMEOUT=m
- CONFIG_NF_TABLES=m
--CONFIG_NFT_EXTHDR=m
--CONFIG_NFT_META=m
- CONFIG_NFT_CT=m
- CONFIG_NFT_COUNTER=m
- CONFIG_NFT_LOG=m
-@@ -362,6 +364,8 @@ CONFIG_NET_ACT_SKBEDIT=m
- CONFIG_NET_ACT_CSUM=m
- CONFIG_DNS_RESOLVER=y
- CONFIG_OPENVSWITCH=m
-+CONFIG_VSOCKETS=m
-+CONFIG_VIRTIO_VSOCKETS=m
- CONFIG_NETLINK_DIAG=m
- CONFIG_CGROUP_NET_PRIO=y
- CONFIG_BPF_JIT=y
-@@ -458,6 +462,7 @@ CONFIG_PPTP=m
- CONFIG_PPPOL2TP=m
- CONFIG_PPP_ASYNC=m
- CONFIG_PPP_SYNC_TTY=m
-+CONFIG_ISM=m
- CONFIG_INPUT_EVDEV=y
- # CONFIG_INPUT_KEYBOARD is not set
- # CONFIG_INPUT_MOUSE is not set
-@@ -483,9 +488,12 @@ CONFIG_MLX4_INFINIBAND=m
- CONFIG_MLX5_INFINIBAND=m
- CONFIG_VFIO=m
- CONFIG_VFIO_PCI=m
-+CONFIG_VFIO_MDEV=m
-+CONFIG_VFIO_MDEV_DEVICE=m
- CONFIG_VIRTIO_PCI=m
- CONFIG_VIRTIO_BALLOON=m
- CONFIG_VIRTIO_INPUT=y
-+CONFIG_S390_AP_IOMMU=y
- CONFIG_EXT4_FS=y
- CONFIG_EXT4_FS_POSIX_ACL=y
- CONFIG_EXT4_FS_SECURITY=y
-@@ -666,3 +674,4 @@ CONFIG_APPLDATA_BASE=y
- CONFIG_KVM=m
- CONFIG_KVM_S390_UCONTROL=y
- CONFIG_VHOST_NET=m
-+CONFIG_VHOST_VSOCK=m
-diff --git a/arch/s390/defconfig b/arch/s390/defconfig
-index 7cb6a52..4d58a92 100644
---- a/arch/s390/defconfig
-+++ b/arch/s390/defconfig
-@@ -26,14 +26,23 @@ CONFIG_CGROUP_CPUACCT=y
- CONFIG_CGROUP_PERF=y
- CONFIG_NAMESPACES=y
- CONFIG_USER_NS=y
-+CONFIG_CHECKPOINT_RESTORE=y
- CONFIG_BLK_DEV_INITRD=y
- CONFIG_EXPERT=y
- # CONFIG_SYSFS_SYSCALL is not set
--CONFIG_CHECKPOINT_RESTORE=y
- CONFIG_BPF_SYSCALL=y
- CONFIG_USERFAULTFD=y
- # CONFIG_COMPAT_BRK is not set
- CONFIG_PROFILING=y
-+CONFIG_LIVEPATCH=y
-+CONFIG_NR_CPUS=256
-+CONFIG_NUMA=y
-+CONFIG_HZ_100=y
-+CONFIG_KEXEC_FILE=y
-+CONFIG_CRASH_DUMP=y
-+CONFIG_HIBERNATION=y
-+CONFIG_PM_DEBUG=y
-+CONFIG_CMM=m
- CONFIG_OPROFILE=y
- CONFIG_KPROBES=y
- CONFIG_JUMP_LABEL=y
-@@ -44,11 +53,7 @@ CONFIG_BLK_DEV_INTEGRITY=y
- CONFIG_PARTITION_ADVANCED=y
- CONFIG_IBM_PARTITION=y
- CONFIG_DEFAULT_DEADLINE=y
--CONFIG_LIVEPATCH=y
--CONFIG_NR_CPUS=256
--CONFIG_NUMA=y
--CONFIG_HZ_100=y
--CONFIG_KEXEC_FILE=y
-+CONFIG_BINFMT_MISC=m
- CONFIG_MEMORY_HOTPLUG=y
- CONFIG_MEMORY_HOTREMOVE=y
- CONFIG_KSM=y
-@@ -60,9 +65,6 @@ CONFIG_ZBUD=m
- CONFIG_ZSMALLOC=m
- CONFIG_ZSMALLOC_STAT=y
- CONFIG_IDLE_PAGE_TRACKING=y
--CONFIG_CRASH_DUMP=y
--CONFIG_BINFMT_MISC=m
--CONFIG_HIBERNATION=y
- CONFIG_NET=y
- CONFIG_PACKET=y
- CONFIG_UNIX=y
-@@ -98,6 +100,7 @@ CONFIG_BLK_DEV_NBD=m
- CONFIG_BLK_DEV_RAM=y
- CONFIG_VIRTIO_BLK=y
- CONFIG_SCSI=y
-+# CONFIG_SCSI_MQ_DEFAULT is not set
- CONFIG_BLK_DEV_SD=y
- CONFIG_CHR_DEV_ST=y
- CONFIG_BLK_DEV_SR=y
-@@ -131,6 +134,7 @@ CONFIG_EQUALIZER=m
- CONFIG_TUN=m
- CONFIG_VIRTIO_NET=y
- # CONFIG_NET_VENDOR_ALACRITECH is not set
-+# CONFIG_NET_VENDOR_AURORA is not set
- # CONFIG_NET_VENDOR_CORTINA is not set
- # CONFIG_NET_VENDOR_SOLARFLARE is not set
- # CONFIG_NET_VENDOR_SOCIONEXT is not set
-@@ -157,33 +161,6 @@ CONFIG_TMPFS=y
- CONFIG_TMPFS_POSIX_ACL=y
- CONFIG_HUGETLBFS=y
- # CONFIG_NETWORK_FILESYSTEMS is not set
--CONFIG_DEBUG_INFO=y
--CONFIG_DEBUG_INFO_DWARF4=y
--CONFIG_GDB_SCRIPTS=y
--CONFIG_UNUSED_SYMBOLS=y
--CONFIG_DEBUG_SECTION_MISMATCH=y
--CONFIG_DEBUG_FORCE_WEAK_PER_CPU=y
--CONFIG_MAGIC_SYSRQ=y
--CONFIG_DEBUG_PAGEALLOC=y
--CONFIG_DETECT_HUNG_TASK=y
--CONFIG_PANIC_ON_OOPS=y
--CONFIG_PROVE_LOCKING=y
--CONFIG_LOCK_STAT=y
--CONFIG_DEBUG_LOCKDEP=y
--CONFIG_DEBUG_ATOMIC_SLEEP=y
--CONFIG_DEBUG_LIST=y
--CONFIG_DEBUG_SG=y
--CONFIG_DEBUG_NOTIFIERS=y
--CONFIG_RCU_CPU_STALL_TIMEOUT=60
--CONFIG_LATENCYTOP=y
--CONFIG_SCHED_TRACER=y
--CONFIG_FTRACE_SYSCALLS=y
--CONFIG_TRACER_SNAPSHOT_PER_CPU_SWAP=y
--CONFIG_STACK_TRACER=y
--CONFIG_BLK_DEV_IO_TRACE=y
--CONFIG_FUNCTION_PROFILER=y
--# CONFIG_RUNTIME_TESTING_MENU is not set
--CONFIG_S390_PTDUMP=y
- CONFIG_CRYPTO_CRYPTD=m
- CONFIG_CRYPTO_AUTHENC=m
- CONFIG_CRYPTO_TEST=m
-@@ -193,6 +170,7 @@ CONFIG_CRYPTO_CBC=y
- CONFIG_CRYPTO_CFB=m
- CONFIG_CRYPTO_CTS=m
- CONFIG_CRYPTO_LRW=m
-+CONFIG_CRYPTO_OFB=m
- CONFIG_CRYPTO_PCBC=m
- CONFIG_CRYPTO_XTS=m
- CONFIG_CRYPTO_CMAC=m
-@@ -231,7 +209,6 @@ CONFIG_CRYPTO_USER_API_HASH=m
- CONFIG_CRYPTO_USER_API_SKCIPHER=m
- CONFIG_CRYPTO_USER_API_RNG=m
- CONFIG_ZCRYPT=m
--CONFIG_ZCRYPT_MULTIDEVNODES=y
- CONFIG_PKEY=m
- CONFIG_CRYPTO_PAES_S390=m
- CONFIG_CRYPTO_SHA1_S390=m
-@@ -247,4 +224,30 @@ CONFIG_CRC7=m
- # CONFIG_XZ_DEC_ARM is not set
- # CONFIG_XZ_DEC_ARMTHUMB is not set
- # CONFIG_XZ_DEC_SPARC is not set
--CONFIG_CMM=m
-+CONFIG_DEBUG_INFO=y
-+CONFIG_DEBUG_INFO_DWARF4=y
-+CONFIG_GDB_SCRIPTS=y
-+CONFIG_UNUSED_SYMBOLS=y
-+CONFIG_DEBUG_SECTION_MISMATCH=y
-+CONFIG_DEBUG_FORCE_WEAK_PER_CPU=y
-+CONFIG_MAGIC_SYSRQ=y
-+CONFIG_DEBUG_PAGEALLOC=y
-+CONFIG_DETECT_HUNG_TASK=y
-+CONFIG_PANIC_ON_OOPS=y
-+CONFIG_PROVE_LOCKING=y
-+CONFIG_LOCK_STAT=y
-+CONFIG_DEBUG_LOCKDEP=y
-+CONFIG_DEBUG_ATOMIC_SLEEP=y
-+CONFIG_DEBUG_LIST=y
-+CONFIG_DEBUG_SG=y
-+CONFIG_DEBUG_NOTIFIERS=y
-+CONFIG_RCU_CPU_STALL_TIMEOUT=60
-+CONFIG_LATENCYTOP=y
-+CONFIG_SCHED_TRACER=y
-+CONFIG_FTRACE_SYSCALLS=y
-+CONFIG_TRACER_SNAPSHOT_PER_CPU_SWAP=y
-+CONFIG_STACK_TRACER=y
-+CONFIG_BLK_DEV_IO_TRACE=y
-+CONFIG_FUNCTION_PROFILER=y
-+# CONFIG_RUNTIME_TESTING_MENU is not set
-+CONFIG_S390_PTDUMP=y
-diff --git a/arch/s390/include/asm/mmu_context.h b/arch/s390/include/asm/mmu_context.h
-index dbd689d..ccbb53e 100644
---- a/arch/s390/include/asm/mmu_context.h
-+++ b/arch/s390/include/asm/mmu_context.h
-@@ -46,8 +46,6 @@ static inline int init_new_context(struct task_struct *tsk,
- 		mm->context.asce_limit = STACK_TOP_MAX;
- 		mm->context.asce = __pa(mm->pgd) | _ASCE_TABLE_LENGTH |
- 				   _ASCE_USER_BITS | _ASCE_TYPE_REGION3;
--		/* pgd_alloc() did not account this pud */
--		mm_inc_nr_puds(mm);
- 		break;
- 	case -PAGE_SIZE:
- 		/* forked 5-level task, set new asce with new_mm->pgd */
-@@ -63,9 +61,6 @@ static inline int init_new_context(struct task_struct *tsk,
- 		/* forked 2-level compat task, set new asce with new mm->pgd */
- 		mm->context.asce = __pa(mm->pgd) | _ASCE_TABLE_LENGTH |
- 				   _ASCE_USER_BITS | _ASCE_TYPE_SEGMENT;
--		/* pgd_alloc() did not account this pmd */
--		mm_inc_nr_pmds(mm);
--		mm_inc_nr_puds(mm);
- 	}
- 	crst_table_init((unsigned long *) mm->pgd, pgd_entry_type(mm));
- 	return 0;
-diff --git a/arch/s390/include/asm/pgalloc.h b/arch/s390/include/asm/pgalloc.h
-index f0f9bcf..5ee7337 100644
---- a/arch/s390/include/asm/pgalloc.h
-+++ b/arch/s390/include/asm/pgalloc.h
-@@ -36,11 +36,11 @@ static inline void crst_table_init(unsigned long *crst, unsigned long entry)
- 
- static inline unsigned long pgd_entry_type(struct mm_struct *mm)
- {
--	if (mm->context.asce_limit <= _REGION3_SIZE)
-+	if (mm_pmd_folded(mm))
- 		return _SEGMENT_ENTRY_EMPTY;
--	if (mm->context.asce_limit <= _REGION2_SIZE)
-+	if (mm_pud_folded(mm))
- 		return _REGION3_ENTRY_EMPTY;
--	if (mm->context.asce_limit <= _REGION1_SIZE)
-+	if (mm_p4d_folded(mm))
- 		return _REGION2_ENTRY_EMPTY;
- 	return _REGION1_ENTRY_EMPTY;
- }
-diff --git a/arch/s390/include/asm/pgtable.h b/arch/s390/include/asm/pgtable.h
-index 411d435..0637324 100644
---- a/arch/s390/include/asm/pgtable.h
-+++ b/arch/s390/include/asm/pgtable.h
-@@ -493,6 +493,24 @@ static inline int is_module_addr(void *addr)
- 				   _REGION_ENTRY_PROTECT | \
- 				   _REGION_ENTRY_NOEXEC)
- 
-+static inline bool mm_p4d_folded(struct mm_struct *mm)
-+{
-+	return mm->context.asce_limit <= _REGION1_SIZE;
-+}
-+#define mm_p4d_folded(mm) mm_p4d_folded(mm)
-+
-+static inline bool mm_pud_folded(struct mm_struct *mm)
-+{
-+	return mm->context.asce_limit <= _REGION2_SIZE;
-+}
-+#define mm_pud_folded(mm) mm_pud_folded(mm)
-+
-+static inline bool mm_pmd_folded(struct mm_struct *mm)
-+{
-+	return mm->context.asce_limit <= _REGION3_SIZE;
-+}
-+#define mm_pmd_folded(mm) mm_pmd_folded(mm)
-+
- static inline int mm_has_pgste(struct mm_struct *mm)
- {
- #ifdef CONFIG_PGSTE
-diff --git a/arch/s390/include/asm/thread_info.h b/arch/s390/include/asm/thread_info.h
-index 27248f4..ce4e17c 100644
---- a/arch/s390/include/asm/thread_info.h
-+++ b/arch/s390/include/asm/thread_info.h
-@@ -14,7 +14,7 @@
-  * General size of kernel stacks
-  */
- #ifdef CONFIG_KASAN
--#define THREAD_SIZE_ORDER 3
-+#define THREAD_SIZE_ORDER 4
- #else
- #define THREAD_SIZE_ORDER 2
- #endif
-diff --git a/arch/s390/include/asm/tlb.h b/arch/s390/include/asm/tlb.h
-index 457b7ba..b31c779 100644
---- a/arch/s390/include/asm/tlb.h
-+++ b/arch/s390/include/asm/tlb.h
-@@ -136,7 +136,7 @@ static inline void pte_free_tlb(struct mmu_gather *tlb, pgtable_t pte,
- static inline void pmd_free_tlb(struct mmu_gather *tlb, pmd_t *pmd,
- 				unsigned long address)
- {
--	if (tlb->mm->context.asce_limit <= _REGION3_SIZE)
-+	if (mm_pmd_folded(tlb->mm))
- 		return;
- 	pgtable_pmd_page_dtor(virt_to_page(pmd));
- 	tlb_remove_table(tlb, pmd);
-@@ -152,7 +152,7 @@ static inline void pmd_free_tlb(struct mmu_gather *tlb, pmd_t *pmd,
- static inline void p4d_free_tlb(struct mmu_gather *tlb, p4d_t *p4d,
- 				unsigned long address)
- {
--	if (tlb->mm->context.asce_limit <= _REGION1_SIZE)
-+	if (mm_p4d_folded(tlb->mm))
- 		return;
- 	tlb_remove_table(tlb, p4d);
- }
-@@ -167,7 +167,7 @@ static inline void p4d_free_tlb(struct mmu_gather *tlb, p4d_t *p4d,
- static inline void pud_free_tlb(struct mmu_gather *tlb, pud_t *pud,
- 				unsigned long address)
- {
--	if (tlb->mm->context.asce_limit <= _REGION2_SIZE)
-+	if (mm_pud_folded(tlb->mm))
- 		return;
- 	tlb_remove_table(tlb, pud);
- }
-diff --git a/arch/s390/kernel/entry.S b/arch/s390/kernel/entry.S
-index 724fba4..39191a0 100644
---- a/arch/s390/kernel/entry.S
-+++ b/arch/s390/kernel/entry.S
-@@ -236,10 +236,10 @@ ENTRY(__switch_to)
- 	stmg	%r6,%r15,__SF_GPRS(%r15)	# store gprs of prev task
- 	lghi	%r4,__TASK_stack
- 	lghi	%r1,__TASK_thread
--	lg	%r5,0(%r4,%r3)			# start of kernel stack of next
-+	llill	%r5,STACK_INIT
- 	stg	%r15,__THREAD_ksp(%r1,%r2)	# store kernel stack of prev
--	lgr	%r15,%r5
--	aghi	%r15,STACK_INIT			# end of kernel stack of next
-+	lg	%r15,0(%r4,%r3)			# start of kernel stack of next
-+	agr	%r15,%r5			# end of kernel stack of next
- 	stg	%r3,__LC_CURRENT		# store task struct of next
- 	stg	%r15,__LC_KERNEL_STACK		# store end of kernel stack
- 	lg	%r15,__THREAD_ksp(%r1,%r3)	# load kernel stack of next
-diff --git a/arch/s390/kernel/perf_cpum_cf.c b/arch/s390/kernel/perf_cpum_cf.c
-index cc085e2..74091fd 100644
---- a/arch/s390/kernel/perf_cpum_cf.c
-+++ b/arch/s390/kernel/perf_cpum_cf.c
-@@ -373,7 +373,7 @@ static int __hw_perf_event_init(struct perf_event *event)
- 		return -ENOENT;
- 
- 	if (ev > PERF_CPUM_CF_MAX_CTR)
--		return -EINVAL;
-+		return -ENOENT;
- 
- 	/* Obtain the counter set to which the specified counter belongs */
- 	set = get_counter_set(ev);
-diff --git a/arch/s390/kernel/perf_cpum_sf.c b/arch/s390/kernel/perf_cpum_sf.c
-index 7bf604f..bfabeb1 100644
---- a/arch/s390/kernel/perf_cpum_sf.c
-+++ b/arch/s390/kernel/perf_cpum_sf.c
-@@ -1842,10 +1842,30 @@ static void cpumsf_pmu_del(struct perf_event *event, int flags)
- CPUMF_EVENT_ATTR(SF, SF_CYCLES_BASIC, PERF_EVENT_CPUM_SF);
- CPUMF_EVENT_ATTR(SF, SF_CYCLES_BASIC_DIAG, PERF_EVENT_CPUM_SF_DIAG);
- 
--static struct attribute *cpumsf_pmu_events_attr[] = {
--	CPUMF_EVENT_PTR(SF, SF_CYCLES_BASIC),
--	NULL,
--	NULL,
-+/* Attribute list for CPU_SF.
-+ *
-+ * The availablitiy depends on the CPU_MF sampling facility authorization
-+ * for basic + diagnositic samples. This is determined at initialization
-+ * time by the sampling facility device driver.
-+ * If the authorization for basic samples is turned off, it should be
-+ * also turned off for diagnostic sampling.
-+ *
-+ * During initialization of the device driver, check the authorization
-+ * level for diagnostic sampling and installs the attribute
-+ * file for diagnostic sampling if necessary.
-+ *
-+ * For now install a placeholder to reference all possible attributes:
-+ * SF_CYCLES_BASIC and SF_CYCLES_BASIC_DIAG.
-+ * Add another entry for the final NULL pointer.
-+ */
-+enum {
-+	SF_CYCLES_BASIC_ATTR_IDX = 0,
-+	SF_CYCLES_BASIC_DIAG_ATTR_IDX,
-+	SF_CYCLES_ATTR_MAX
-+};
-+
-+static struct attribute *cpumsf_pmu_events_attr[SF_CYCLES_ATTR_MAX + 1] = {
-+	[SF_CYCLES_BASIC_ATTR_IDX] = CPUMF_EVENT_PTR(SF, SF_CYCLES_BASIC)
- };
- 
- PMU_FORMAT_ATTR(event, "config:0-63");
-@@ -2040,7 +2060,10 @@ static int __init init_cpum_sampling_pmu(void)
- 
- 	if (si.ad) {
- 		sfb_set_limits(CPUM_SF_MIN_SDB, CPUM_SF_MAX_SDB);
--		cpumsf_pmu_events_attr[1] =
-+		/* Sampling of diagnostic data authorized,
-+		 * install event into attribute list of PMU device.
-+		 */
-+		cpumsf_pmu_events_attr[SF_CYCLES_BASIC_DIAG_ATTR_IDX] =
- 			CPUMF_EVENT_PTR(SF, SF_CYCLES_BASIC_DIAG);
- 	}
- 
-diff --git a/arch/s390/kernel/vdso32/Makefile b/arch/s390/kernel/vdso32/Makefile
-index eb8aebe..e76309f 100644
---- a/arch/s390/kernel/vdso32/Makefile
-+++ b/arch/s390/kernel/vdso32/Makefile
-@@ -37,7 +37,7 @@ KASAN_SANITIZE := n
- $(obj)/vdso32_wrapper.o : $(obj)/vdso32.so
- 
- # link rule for the .so file, .lds has to be first
--$(obj)/vdso32.so.dbg: $(src)/vdso32.lds $(obj-vdso32)
-+$(obj)/vdso32.so.dbg: $(src)/vdso32.lds $(obj-vdso32) FORCE
- 	$(call if_changed,vdso32ld)
- 
- # strip rule for the .so file
-@@ -46,12 +46,12 @@ $(obj)/%.so: $(obj)/%.so.dbg FORCE
- 	$(call if_changed,objcopy)
- 
- # assembly rules for the .S files
--$(obj-vdso32): %.o: %.S
-+$(obj-vdso32): %.o: %.S FORCE
- 	$(call if_changed_dep,vdso32as)
- 
- # actual build commands
- quiet_cmd_vdso32ld = VDSO32L $@
--      cmd_vdso32ld = $(CC) $(c_flags) -Wl,-T $^ -o $@
-+      cmd_vdso32ld = $(CC) $(c_flags) -Wl,-T $(filter %.lds %.o,$^) -o $@
- quiet_cmd_vdso32as = VDSO32A $@
-       cmd_vdso32as = $(CC) $(a_flags) -c -o $@ $<
- 
-diff --git a/arch/s390/kernel/vdso64/Makefile b/arch/s390/kernel/vdso64/Makefile
-index a22b2cf..f849ac6 100644
---- a/arch/s390/kernel/vdso64/Makefile
-+++ b/arch/s390/kernel/vdso64/Makefile
-@@ -37,7 +37,7 @@ KASAN_SANITIZE := n
- $(obj)/vdso64_wrapper.o : $(obj)/vdso64.so
- 
- # link rule for the .so file, .lds has to be first
--$(obj)/vdso64.so.dbg: $(src)/vdso64.lds $(obj-vdso64)
-+$(obj)/vdso64.so.dbg: $(src)/vdso64.lds $(obj-vdso64) FORCE
- 	$(call if_changed,vdso64ld)
- 
- # strip rule for the .so file
-@@ -46,12 +46,12 @@ $(obj)/%.so: $(obj)/%.so.dbg FORCE
- 	$(call if_changed,objcopy)
- 
- # assembly rules for the .S files
--$(obj-vdso64): %.o: %.S
-+$(obj-vdso64): %.o: %.S FORCE
- 	$(call if_changed_dep,vdso64as)
- 
- # actual build commands
- quiet_cmd_vdso64ld = VDSO64L $@
--      cmd_vdso64ld = $(CC) $(c_flags) -Wl,-T $^ -o $@
-+      cmd_vdso64ld = $(CC) $(c_flags) -Wl,-T $(filter %.lds %.o,$^) -o $@
- quiet_cmd_vdso64as = VDSO64A $@
-       cmd_vdso64as = $(CC) $(a_flags) -c -o $@ $<
- 
-diff --git a/arch/s390/kernel/vmlinux.lds.S b/arch/s390/kernel/vmlinux.lds.S
-index 21eb7407..8429ab0 100644
---- a/arch/s390/kernel/vmlinux.lds.S
-+++ b/arch/s390/kernel/vmlinux.lds.S
-@@ -154,14 +154,14 @@ SECTIONS
- 	 * uncompressed image info used by the decompressor
- 	 * it should match struct vmlinux_info
- 	 */
--	.vmlinux.info 0 : {
-+	.vmlinux.info 0 (INFO) : {
- 		QUAD(_stext)					/* default_lma */
- 		QUAD(startup_continue)				/* entry */
- 		QUAD(__bss_start - _stext)			/* image_size */
- 		QUAD(__bss_stop - __bss_start)			/* bss_size */
- 		QUAD(__boot_data_start)				/* bootdata_off */
- 		QUAD(__boot_data_end - __boot_data_start)	/* bootdata_size */
--	}
-+	} :NONE
- 
- 	/* Debugging sections.	*/
- 	STABS_DEBUG
-diff --git a/arch/s390/mm/pgalloc.c b/arch/s390/mm/pgalloc.c
-index 76d89ee..814f265 100644
---- a/arch/s390/mm/pgalloc.c
-+++ b/arch/s390/mm/pgalloc.c
-@@ -101,6 +101,7 @@ int crst_table_upgrade(struct mm_struct *mm, unsigned long end)
- 			mm->context.asce_limit = _REGION1_SIZE;
- 			mm->context.asce = __pa(mm->pgd) | _ASCE_TABLE_LENGTH |
- 				_ASCE_USER_BITS | _ASCE_TYPE_REGION2;
-+			mm_inc_nr_puds(mm);
- 		} else {
- 			crst_table_init(table, _REGION1_ENTRY_EMPTY);
- 			pgd_populate(mm, (pgd_t *) table, (p4d_t *) pgd);
-diff --git a/arch/s390/numa/numa.c b/arch/s390/numa/numa.c
-index 5bd3744..6c151b4 100644
---- a/arch/s390/numa/numa.c
-+++ b/arch/s390/numa/numa.c
-@@ -54,6 +54,7 @@ int __node_distance(int a, int b)
- {
- 	return mode->distance ? mode->distance(a, b) : 0;
- }
-+EXPORT_SYMBOL(__node_distance);
- 
- int numa_debug_enabled;
- 
-diff --git a/include/asm-generic/4level-fixup.h b/include/asm-generic/4level-fixup.h
-index 89f3b03..e3667c9 100644
---- a/include/asm-generic/4level-fixup.h
-+++ b/include/asm-generic/4level-fixup.h
-@@ -3,7 +3,7 @@
- #define _4LEVEL_FIXUP_H
- 
- #define __ARCH_HAS_4LEVEL_HACK
--#define __PAGETABLE_PUD_FOLDED
-+#define __PAGETABLE_PUD_FOLDED 1
- 
- #define PUD_SHIFT			PGDIR_SHIFT
- #define PUD_SIZE			PGDIR_SIZE
-diff --git a/include/asm-generic/5level-fixup.h b/include/asm-generic/5level-fixup.h
-index 9c2e070..73474bb 100644
---- a/include/asm-generic/5level-fixup.h
-+++ b/include/asm-generic/5level-fixup.h
-@@ -3,7 +3,7 @@
- #define _5LEVEL_FIXUP_H
- 
- #define __ARCH_HAS_5LEVEL_HACK
--#define __PAGETABLE_P4D_FOLDED
-+#define __PAGETABLE_P4D_FOLDED 1
- 
- #define P4D_SHIFT			PGDIR_SHIFT
- #define P4D_SIZE			PGDIR_SIZE
-diff --git a/include/asm-generic/pgtable-nop4d-hack.h b/include/asm-generic/pgtable-nop4d-hack.h
-index 0c34215..1d6dd38 100644
---- a/include/asm-generic/pgtable-nop4d-hack.h
-+++ b/include/asm-generic/pgtable-nop4d-hack.h
-@@ -5,7 +5,7 @@
- #ifndef __ASSEMBLY__
- #include <asm-generic/5level-fixup.h>
- 
--#define __PAGETABLE_PUD_FOLDED
-+#define __PAGETABLE_PUD_FOLDED 1
- 
- /*
-  * Having the pud type consist of a pgd gets the size right, and allows
-diff --git a/include/asm-generic/pgtable-nop4d.h b/include/asm-generic/pgtable-nop4d.h
-index 1a29b2a..04cb913 100644
---- a/include/asm-generic/pgtable-nop4d.h
-+++ b/include/asm-generic/pgtable-nop4d.h
-@@ -4,7 +4,7 @@
- 
- #ifndef __ASSEMBLY__
- 
--#define __PAGETABLE_P4D_FOLDED
-+#define __PAGETABLE_P4D_FOLDED 1
- 
- typedef struct { pgd_t pgd; } p4d_t;
- 
-diff --git a/include/asm-generic/pgtable-nopmd.h b/include/asm-generic/pgtable-nopmd.h
-index f35f6e8..b85b827 100644
---- a/include/asm-generic/pgtable-nopmd.h
-+++ b/include/asm-generic/pgtable-nopmd.h
-@@ -8,7 +8,7 @@
- 
- struct mm_struct;
- 
--#define __PAGETABLE_PMD_FOLDED
-+#define __PAGETABLE_PMD_FOLDED 1
- 
- /*
-  * Having the pmd type consist of a pud gets the size right, and allows
-diff --git a/include/asm-generic/pgtable-nopud.h b/include/asm-generic/pgtable-nopud.h
-index e950b9c..9bef475 100644
---- a/include/asm-generic/pgtable-nopud.h
-+++ b/include/asm-generic/pgtable-nopud.h
-@@ -9,7 +9,7 @@
- #else
- #include <asm-generic/pgtable-nop4d.h>
- 
--#define __PAGETABLE_PUD_FOLDED
-+#define __PAGETABLE_PUD_FOLDED 1
- 
- /*
-  * Having the pud type consist of a p4d gets the size right, and allows
-diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
-index 88ebc61..15fd027 100644
---- a/include/asm-generic/pgtable.h
-+++ b/include/asm-generic/pgtable.h
-@@ -1127,4 +1127,20 @@ static inline bool arch_has_pfn_modify_check(void)
- #endif
- #endif
- 
-+/*
-+ * On some architectures it depends on the mm if the p4d/pud or pmd
-+ * layer of the page table hierarchy is folded or not.
-+ */
-+#ifndef mm_p4d_folded
-+#define mm_p4d_folded(mm)	__is_defined(__PAGETABLE_P4D_FOLDED)
-+#endif
-+
-+#ifndef mm_pud_folded
-+#define mm_pud_folded(mm)	__is_defined(__PAGETABLE_PUD_FOLDED)
-+#endif
-+
-+#ifndef mm_pmd_folded
-+#define mm_pmd_folded(mm)	__is_defined(__PAGETABLE_PMD_FOLDED)
-+#endif
-+
- #endif /* _ASM_GENERIC_PGTABLE_H */
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index daa2b8f..a3701e9 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1742,11 +1742,15 @@ int __pud_alloc(struct mm_struct *mm, p4d_t *p4d, unsigned long address);
- 
- static inline void mm_inc_nr_puds(struct mm_struct *mm)
- {
-+	if (mm_pud_folded(mm))
-+		return;
- 	atomic_long_add(PTRS_PER_PUD * sizeof(pud_t), &mm->pgtables_bytes);
- }
- 
- static inline void mm_dec_nr_puds(struct mm_struct *mm)
- {
-+	if (mm_pud_folded(mm))
-+		return;
- 	atomic_long_sub(PTRS_PER_PUD * sizeof(pud_t), &mm->pgtables_bytes);
- }
- #endif
-@@ -1766,11 +1770,15 @@ int __pmd_alloc(struct mm_struct *mm, pud_t *pud, unsigned long address);
- 
- static inline void mm_inc_nr_pmds(struct mm_struct *mm)
- {
-+	if (mm_pmd_folded(mm))
-+		return;
- 	atomic_long_add(PTRS_PER_PMD * sizeof(pmd_t), &mm->pgtables_bytes);
- }
- 
- static inline void mm_dec_nr_pmds(struct mm_struct *mm)
- {
-+	if (mm_pmd_folded(mm))
-+		return;
- 	atomic_long_sub(PTRS_PER_PMD * sizeof(pmd_t), &mm->pgtables_bytes);
- }
- #endif
-
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
