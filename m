@@ -2,105 +2,85 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4275C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:03:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA56BC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:04:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CCBC20825
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:03:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="dTaE2r/7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CCBC20825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id B0E5820825
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:04:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0E5820825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728095AbeKJAow (ORCPT
+        id S1728148AbeKJApi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 19:44:52 -0500
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:51611 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727781AbeKJAow (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 19:44:52 -0500
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id wA9F3n81003024;
-        Sat, 10 Nov 2018 00:03:50 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com wA9F3n81003024
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1541775830;
-        bh=lnl0k8/exJjW0C8pJHoI2ZQSB0LBILxRMe+ld0cwDL8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=dTaE2r/7qYAia5IdOxt0b0cXlHNmddyE3jw2GTkAsvDlJzUiSskqCpUeb0jF6Bs48
-         sNv362YmpnOaRZY7GNt5EBEcNJoq9ETQ3bxrTU6NdQ2WLKgAFjrNB9Mns4vUc3ETfM
-         yXV35FLCpBDjxGdtFRieYN96PoUrZCIMyOmPEnCZDpfOG7zZaAxgrRnh9EQ18PdR2f
-         C7/kmk31Iz9SDoYDHG14ShuwA1O7ZUt1zF/igOPXD7gaar0cz69MYDzvSl15x53pdh
-         Xu5GA3dC+UhYCgfTAvvDMaL7OIVwcibQPtbOjxDVQdHzlVbnOrAU8QbEay3Z2zqoXW
-         uY8jtPz5hTjwA==
-X-Nifty-SrcIP: [209.85.217.47]
-Received: by mail-vs1-f47.google.com with SMTP id h78so1184688vsi.6;
-        Fri, 09 Nov 2018 07:03:50 -0800 (PST)
-X-Gm-Message-State: AGRZ1gLcEZA4wYnBSI1BioEganXukD0dSjnkE46riZFAeGrt0fK2SGFk
-        qnZn/LQGtsZlVopxHQRCtgDWlgSXAtwyJU0q/to=
-X-Google-Smtp-Source: AJdET5diGZjjgsoIQg5UtwR1iRoSHjCpZhCDIPI6f5DgVhHs5RPh2C8zbvvNaS9poF1HR47FE9ArO0hXne8er+uv7PU=
-X-Received: by 2002:a67:385a:: with SMTP id f87mr3948463vsa.179.1541775829153;
- Fri, 09 Nov 2018 07:03:49 -0800 (PST)
+        Fri, 9 Nov 2018 19:45:38 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:36292 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727781AbeKJApi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 19:45:38 -0500
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id L2QG8UH_H8Eg; Fri,  9 Nov 2018 16:04:40 +0100 (CET)
+Received: from zn.tnic (p200300EC2BD03D00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bd0:3d00:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id ED4F31EC03C8;
+        Fri,  9 Nov 2018 16:04:39 +0100 (CET)
+From:   Borislav Petkov <bp@alien8.de>
+To:     X86 ML <x86@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/4] Add SPDX identifiers to some more files
+Date:   Fri,  9 Nov 2018 16:04:27 +0100
+Message-Id: <20181109150431.14147-1-bp@alien8.de>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-References: <20181105151719.4552-1-changbin.du@gmail.com>
-In-Reply-To: <20181105151719.4552-1-changbin.du@gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Sat, 10 Nov 2018 00:03:13 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARFMPn2SN5vShCWX94UbTGF5WY6fjnVnS8ZFmFpXj-TpQ@mail.gmail.com>
-Message-ID: <CAK7LNARFMPn2SN5vShCWX94UbTGF5WY6fjnVnS8ZFmFpXj-TpQ@mail.gmail.com>
-Subject: Re: [PATCH] init/Kconfig: make CC_OPTIMIZE_FOR_DEBUGGING visible only
- for GCC
-To:     Changbin Du <changbin.du@gmail.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 6, 2018 at 12:18 AM Changbin Du <changbin.du@gmail.com> wrote:
->
-> Currently CC_OPTIMIZE_FOR_DEBUGGING is only able to build with GCC.
-> For clang, -Og optimization level could break kernel build. So make
-> CC_OPTIMIZE_FOR_DEBUGGING visible only for GCC.
->
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Signed-off-by: Changbin Du <changbin.du@gmail.com>
-> ---
+From: Borislav Petkov <bp@suse.de>
 
-I squashed this into the previous patch in the kbuild tree.
+Hi,
 
-Thanks!
+here's some more files converted to SPDX identifiers.
 
+In the MCE and microcode cases, I've made one patch per subsystem as
+this is shared functionality so maybe splitting them even more would not
+make any sense.
 
->  init/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/init/Kconfig b/init/Kconfig
-> index 0fb9c0b5f1a1..d5fb0ee1400a 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -1107,6 +1107,7 @@ config CC_OPTIMIZE_FOR_SIZE
->
->  config CC_OPTIMIZE_FOR_DEBUGGING
->         bool "Optimize for better debugging experience (-Og)"
-> +       depends on CC_IS_GCC
->         depends on $(cc-option,-Og)
->         select NO_AUTO_INLINE
->         help
-> --
-> 2.17.1
->
+But I could be wrong and the lawyer logic could very well work in a
+completely different way so I'm open to suggestions here.
 
+Thanks.
+
+Borislav Petkov (4):
+  EDAC, mce_amd: Add an SPDX identifier
+  EDAC, amd64: Add SPDX identifiers
+  x86/microcode: Add SPDX license identifiers
+  x86/mce: Add an SPDX license identifiers
+
+ arch/x86/kernel/cpu/mcheck/dev-mcelog.c   |  1 +
+ arch/x86/kernel/cpu/mcheck/mce-apei.c     | 14 +-------------
+ arch/x86/kernel/cpu/mcheck/mce-genpool.c  |  3 +--
+ arch/x86/kernel/cpu/mcheck/mce-inject.c   |  9 +--------
+ arch/x86/kernel/cpu/mcheck/mce-severity.c |  6 +-----
+ arch/x86/kernel/cpu/mcheck/mce.c          |  1 +
+ arch/x86/kernel/cpu/mcheck/therm_throt.c  |  1 +
+ arch/x86/kernel/cpu/microcode/amd.c       |  4 +---
+ arch/x86/kernel/cpu/microcode/core.c      |  6 +-----
+ arch/x86/kernel/cpu/microcode/intel.c     |  6 +-----
+ drivers/edac/amd64_edac.c                 |  1 +
+ drivers/edac/amd64_edac.h                 |  4 +---
+ drivers/edac/mce_amd.c                    |  1 +
+ 13 files changed, 13 insertions(+), 44 deletions(-)
 
 -- 
-Best Regards
-Masahiro Yamada
+2.19.1
+
