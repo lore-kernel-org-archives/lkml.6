@@ -2,97 +2,80 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C691AC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:31:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B19ACC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:33:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74F1120827
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:31:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="V3xJjk+u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74F1120827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 7BB9820827
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:33:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BB9820827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728092AbeKJIOQ (ORCPT
+        id S1728294AbeKJIPy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 03:14:16 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:33625 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726181AbeKJIOQ (ORCPT
+        Sat, 10 Nov 2018 03:15:54 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:45744 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726306AbeKJIPx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 03:14:16 -0500
-Received: by mail-lj1-f196.google.com with SMTP id v1-v6so2928680ljd.0
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 14:31:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OAu/qG3Rm4avcQq7MEHa/IP3OR71kYSg98mMEZUx5bE=;
-        b=V3xJjk+uD/aXTqC4Sbmhsl4RJLnAvBNBIaOjKCdDZCv+awHrknRGUo/IzcOKnjBUbm
-         KeBGMe5zW4K0TMeIMW1q17dM2IEwwKXgAWYKogQDVmrCSX4kqttNWXzDspEgYmgBsLzs
-         dKnTTHUdrNVMPeXZ89QUGzyld99nTLR+j/jO0=
+        Sat, 10 Nov 2018 03:15:53 -0500
+Received: by mail-qk1-f196.google.com with SMTP id d135so4463996qkc.12;
+        Fri, 09 Nov 2018 14:33:16 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=OAu/qG3Rm4avcQq7MEHa/IP3OR71kYSg98mMEZUx5bE=;
-        b=GKqW7dZlkzhyk2C7kbSlj+dpsrcZ0EmzzScsEvF0tTe7NwnrZgfVzuSp+MzjT0+9XK
-         9O9I47CN5T/k3eSDc9MgUreMB+4l17bYHFs54UTxW7JOvItYwdYLhRr/aPTYUxOfG4EA
-         Oc35AGkJBGQvn+FNYvHpI7eSDfKwP0ERKrm7UWnrZPypvEYETENcyi7WrMB8dXGISR01
-         /cC8X78LzVESisaXQlrMN8nlnRRG3tLMiYfhPYhlFAGpLwJmb2B1pOeX2mMdXsKLzx00
-         rmALEQB/U0v0yIRVzfEtWP0QsNoUStCm7SAwE2iAvh9wUc/p6Z0HF19SuW31OBmxO7AR
-         bhbw==
-X-Gm-Message-State: AGRZ1gI17ZffUp4gC5dTG48lazOqj6AlfiC72sXg9PN1hxDA6HfIGYxC
-        25sb8KbOPHXheGKQLmRb71IHfdrlJBA=
-X-Google-Smtp-Source: AJdET5cS7yKaq5AmaP0GavhqRsVTTnv+DfrebmirLU29ViTKDeixUwj0wV4rMKr7o0ZqEciIgSkd7Q==
-X-Received: by 2002:a2e:b04f:: with SMTP id d15-v6mr7213261ljl.3.1541802696842;
-        Fri, 09 Nov 2018 14:31:36 -0800 (PST)
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
-        by smtp.gmail.com with ESMTPSA id a18-v6sm1559394ljk.86.2018.11.09.14.31.35
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 09 Nov 2018 14:31:36 -0800 (PST)
-Received: by mail-lf1-f44.google.com with SMTP id p86so2451084lfg.5
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 14:31:35 -0800 (PST)
-X-Received: by 2002:a19:c014:: with SMTP id q20mr5741618lff.16.1541802695342;
- Fri, 09 Nov 2018 14:31:35 -0800 (PST)
+        bh=d5b1sHamJErQlHBdiqqeqNmArA6ZPJTXRSbT7EBxxuM=;
+        b=lKM68fqKdluzwJaeOVnt25VWWOB7x5iGKU8vfL5n3gfwToSPX4UDeZskp71WlQvyCw
+         v5NkSgve3Rb8eSYNVX1h9cImjwtBMtNcu73ULPdqccne1hXce2lNesvhgQY5BtxMin/x
+         08nJ+f+s6WasdmsiEbxMgN8ULbyDt0fqbP6Cv6NgfPb5MeTvcndvUvdvd2QHiGseQPN6
+         EmqsdG5/iCNfmiEZz0H7UCdpRS/ZxqsWD5WWxqKVmeqorffZDlhK0XjtAqREHW8sRv0y
+         37esO7WGyqsc5ixQQ1faV3WvAAdL3oWBn8oSrMzrTm/nX4jJfHLuv3CIoW7pPljJyd70
+         +s8g==
+X-Gm-Message-State: AGRZ1gLJ7Uobc7yf7GV1OZTYkV4NqfY2kHx0ktNtSZCGZlkucOm/x7mA
+        gdaV0bgkvSRLCXhIVcaA3MN1RiNI+As7UtPQQB0=
+X-Google-Smtp-Source: AJdET5cACwczp8E3S8n836ioPdZiiK4/ttinqSI+I2vVrEHd/rwNcPhWCgtvvEOVvz+cnW4bShWJ9+IVncLOPeQkqK4=
+X-Received: by 2002:ac8:7451:: with SMTP id h17mr10289092qtr.319.1541802795930;
+ Fri, 09 Nov 2018 14:33:15 -0800 (PST)
 MIME-Version: 1.0
-References: <20181109164755.13100-1-idryomov@gmail.com>
-In-Reply-To: <20181109164755.13100-1-idryomov@gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 9 Nov 2018 16:31:18 -0600
-X-Gmail-Original-Message-ID: <CAHk-=wjSArODWM+seBzUGRFgtfMWjorFsna_Ftb8XYW55fab0Q@mail.gmail.com>
-Message-ID: <CAHk-=wjSArODWM+seBzUGRFgtfMWjorFsna_Ftb8XYW55fab0Q@mail.gmail.com>
-Subject: Re: [GIT PULL] Ceph fixes for 4.20-rc2
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     ceph-devel@vger.kernel.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+References: <20181104155501.14767-1-TheSven73@googlemail.com>
+ <CAGngYiU+8k4ZHYhFVQGKXW8mATEDi64Mi9PsVkX-5vn2PCY3ew@mail.gmail.com>
+ <CAK8P3a1STE+vN_yF0Zyu8gGX_KCWZEV=muPxVE6M1EUqdhO4Pg@mail.gmail.com> <CAGngYiWtmHPShpbLOj4qYJCe6PvNT7ZUDd-0jRsRyxD+HWbByQ@mail.gmail.com>
+In-Reply-To: <CAGngYiWtmHPShpbLOj4qYJCe6PvNT7ZUDd-0jRsRyxD+HWbByQ@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 9 Nov 2018 23:32:50 +0100
+Message-ID: <CAK8P3a1zME8G0FjqLaL65F6yYOEuPLJLNs6Mdve7YF=Q2BpU5w@mail.gmail.com>
+Subject: Re: [PATCH anybus v3 0/6] Support HMS Profinet Card over Anybus
+To:     Sven Van Asbroeck <thesven73@gmail.com>
+Cc:     svendev@arcx.com, Rob Herring <robh@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 9, 2018 at 10:48 AM Ilya Dryomov <idryomov@gmail.com> wrote:
+On Fri, Nov 9, 2018 at 10:47 PM Sven Van Asbroeck <thesven73@gmail.com> wrote:
 >
-> Two CephFS fixes (copy_file_range and quota) and a small feature bit
-> cleanup.
+> On Fri, Nov 9, 2018 at 4:22 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> >
+> >
+> > As usual, it comes down to the user space interfaces I think. Designing
+> > a user interface is hard, most importantly because you cannot change it
+> > once anyone starts relying on it, as opposed to implementation details
+> > that you are free to change at any point.
+>
+> Thanks for the feedback !
+> I will rework v4 so it uses a userspace interface shared with other
+> fieldbus drivers - uio.
 
-.. I'm doing a few final manual "pulled" ack emails just to let people
-know that I'll be stopping them, because Konstantin's pr-tracker-bot
-automation should now be in place if the message is cc'd to lkml.
+You mentioned this before, but I don't see how this would actually
+work. Isn't uio just a slim wrapper for allowing user space access
+to hardware registers while avoiding a kernel driver?
 
-NOTE! It's currently only lkml, afaik, so other people who don't cc
-lkml for their pulls won't get the automation, but I also won't be
-looking at "which lists were cc'd", so I won't be doing the manual
-ones.
-
-And if you want to use lkml but don't want to see the automated "it
-has been merged" emails, there's opt-out too. I know some people hate
-getting automated emails.
-
-             Linus
+      Arnd
