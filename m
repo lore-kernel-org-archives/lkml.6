@@ -6,45 +6,43 @@ X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E2CAC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:45:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BB02C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:45:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E0A920892
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:45:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14311208A3
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:45:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MKVUja3w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E0A920892
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="W295eH9f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14311208A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728302AbeKITZO (ORCPT
+        id S1728328AbeKITZQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 14:25:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53926 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 14:25:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53976 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727560AbeKITZN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 14:25:13 -0500
+        id S1727560AbeKITZP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 14:25:15 -0500
 Received: from localhost.localdomain (unknown [171.76.98.79])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1529320827;
-        Fri,  9 Nov 2018 09:45:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E58D20883;
+        Fri,  9 Nov 2018 09:45:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541756726;
-        bh=GHdaaX1cXlF25Je63NgdwW2/C7sQ6Ne1s3CvXcpG1uQ=;
+        s=default; t=1541756728;
+        bh=k/HkHPLz8v8k4289x6jbEUV48N1zC/aNr+A48EagtHw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MKVUja3wD67xJSQ2doDfuMpZ2ddGo2Osbr2RqiCn6BsXlWwtiIBgTAeLammtnchJh
-         OXHM0/Nskyyk22M6sBZiS6ItjPM/YGWKG/lgERT+g1S7aEp1KxL+RYPTpaKg27M/JL
-         w1fluUdHQXRMLCAP2RoN8CZz3HXIRg9iB6W0Ebyk=
+        b=W295eH9fUtEmWqef+Eaz8QS9Ic3OJPnHEqwgn9klhv5f55ZLUHkEqJlznd07u37gr
+         UETU3RABW1Ddz7crTUMxQNKyf9X2Qmm+iLdTppen9RLsUAE5lQkKEA70GqIMINL30e
+         59ODZqG9T88e8IQdQHubBLSQDqWFnCtgkzdEMqpo=
 From:   Vinod Koul <vkoul@kernel.org>
 To:     Andy Gross <andy.gross@linaro.org>
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH v5 14/18] arm64: dts: qcom: qcs404: Add remoteproc nodes
-Date:   Fri,  9 Nov 2018 15:14:13 +0530
-Message-Id: <20181109094417.12109-15-vkoul@kernel.org>
+        linux-arm-msm@vger.kernel.org, Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH v5 15/18] arm64: dts: qcom: qcs404: add prng-ee node
+Date:   Fri,  9 Nov 2018 15:14:14 +0530
+Message-Id: <20181109094417.12109-16-vkoul@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181109094417.12109-1-vkoul@kernel.org>
 References: <20181109094417.12109-1-vkoul@kernel.org>
@@ -53,145 +51,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+RNG hardware in QCS404 features (Execution Environment) EE for
+HLOS to use, add the node for prng-ee for QCS404.
 
-Add the TrustZone based remoteproc nodes and their glink edges for
-adsp, cdsp and wcss. Enable them for EVB common DTS.
-
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Vinod Koul <vkoul@kernel.org>
 ---
- arch/arm64/boot/dts/qcom/qcs404-evb.dtsi | 12 +++++
- arch/arm64/boot/dts/qcom/qcs404.dtsi     | 93 ++++++++++++++++++++++++++++++++
- 2 files changed, 105 insertions(+)
+ arch/arm64/boot/dts/qcom/qcs404.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-index db035fef67d9..a39924efebe4 100644
---- a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-@@ -21,6 +21,18 @@
- 	};
- };
- 
-+&remoteproc_adsp {
-+	status = "ok";
-+};
-+
-+&remoteproc_cdsp {
-+	status = "ok";
-+};
-+
-+&remoteproc_wcss {
-+	status = "ok";
-+};
-+
- &rpm_requests {
- 	pms405-regulators {
- 		compatible = "qcom,rpm-pms405-regulators";
 diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-index 46fce264c8fe..06607419c9d6 100644
+index 06607419c9d6..c58774bb9698 100644
 --- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
 +++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-@@ -80,6 +80,99 @@
- 		method = "smc";
- 	};
+@@ -253,6 +253,13 @@
+ 			reg = <0x00060000 0x6000>;
+ 		};
  
-+	remoteproc_adsp: remoteproc-adsp {
-+		compatible = "qcom,qcs404-adsp-pas";
-+
-+		interrupts-extended = <&intc GIC_SPI 293 IRQ_TYPE_EDGE_RISING>,
-+				      <&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+				      <&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+				      <&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+				      <&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-+		interrupt-names = "wdog", "fatal", "ready",
-+				  "handover", "stop-ack";
-+
-+		clocks = <&xo_board>;
-+		clock-names = "xo";
-+
-+		memory-region = <&adsp_fw_mem>;
-+
-+		qcom,smem-states = <&adsp_smp2p_out 0>;
-+		qcom,smem-state-names = "stop";
-+
-+		status = "disabled";
-+
-+		glink-edge {
-+			interrupts = <GIC_SPI 289 IRQ_TYPE_EDGE_RISING>;
-+
-+			qcom,remote-pid = <2>;
-+			mboxes = <&apcs_glb 8>;
-+
-+			label = "adsp";
++		rng: rng@e3000 {
++			compatible = "qcom,prng-ee";
++			reg = <0x000e3000 0x1000>;
++			clocks = <&gcc GCC_PRNG_AHB_CLK>;
++			clock-names = "core";
 +		};
-+	};
 +
-+	remoteproc_cdsp: remoteproc-cdsp {
-+		compatible = "qcom,qcs404-cdsp-pas";
-+
-+		interrupts-extended = <&intc GIC_SPI 229 IRQ_TYPE_EDGE_RISING>,
-+				      <&cdsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+				      <&cdsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+				      <&cdsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+				      <&cdsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-+		interrupt-names = "wdog", "fatal", "ready",
-+				  "handover", "stop-ack";
-+
-+		clocks = <&xo_board>;
-+		clock-names = "xo";
-+
-+		memory-region = <&cdsp_fw_mem>;
-+
-+		qcom,smem-states = <&cdsp_smp2p_out 0>;
-+		qcom,smem-state-names = "stop";
-+
-+		status = "disabled";
-+
-+		glink-edge {
-+			interrupts = <GIC_SPI 141 IRQ_TYPE_EDGE_RISING>;
-+
-+			qcom,remote-pid = <5>;
-+			mboxes = <&apcs_glb 12>;
-+
-+			label = "cdsp";
-+		};
-+	};
-+
-+	remoteproc_wcss: remoteproc-wcss {
-+		compatible = "qcom,qcs404-wcss-pas";
-+
-+		interrupts-extended = <&intc GIC_SPI 153 IRQ_TYPE_EDGE_RISING>,
-+				      <&wcss_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+				      <&wcss_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+				      <&wcss_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+				      <&wcss_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-+		interrupt-names = "wdog", "fatal", "ready",
-+				  "handover", "stop-ack";
-+
-+		clocks = <&xo_board>;
-+		clock-names = "xo";
-+
-+		memory-region = <&wlan_fw_mem>;
-+
-+		qcom,smem-states = <&wcss_smp2p_out 0>;
-+		qcom,smem-state-names = "stop";
-+
-+		status = "disabled";
-+
-+		glink-edge {
-+			interrupts = <GIC_SPI 156 IRQ_TYPE_EDGE_RISING>;
-+
-+			qcom,remote-pid = <1>;
-+			mboxes = <&apcs_glb 16>;
-+
-+			label = "wcss";
-+		};
-+	};
-+
- 	reserved-memory {
- 		#address-cells = <2>;
- 		#size-cells = <2>;
+ 		tlmm: pinctrl@1000000 {
+ 			compatible = "qcom,qcs404-pinctrl";
+ 			reg = <0x01000000 0x200000>,
 -- 
 2.14.4
 
