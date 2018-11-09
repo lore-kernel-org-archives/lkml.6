@@ -2,163 +2,119 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC76FC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:34:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F9CAC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:35:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4BD420827
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:34:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nra4ahcR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4BD420827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DE05D20827
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:35:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE05D20827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728188AbeKJBPd (ORCPT
+        id S1728229AbeKJBQw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 20:15:33 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:53148 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727802AbeKJBPd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 20:15:33 -0500
-Received: by mail-wm1-f67.google.com with SMTP id r11-v6so2404460wmb.2
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 07:34:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=i7bPd0KFtrx4upiwcWVI3jqwhe/7maSjWHYHWiZrJWQ=;
-        b=Nra4ahcR4fKM1vZmpMJ/hk+z6yYlK7WsEd9YB5DkiynHYKS1oxk5I/DnTqzP+tL+Bs
-         9L5VCBWmuTKOn3dV4/pxW8nSMfzN7xgZEtOtoC2kMDbzKyNFVwSBIUdY8fpjGaEICEIP
-         RG/8AogjozI2R6UmfoBRdNX1Wap4JQYMLA+fPCmdIcDxW4RL7G8Mdwtv4WoOEatti975
-         AFiXs07LS3PZ/CaQmwbP8mLUwODH77YLcQ+VqqJu3JCrLMDywBMYDbf8N1RyzmwAWDhJ
-         RO373sscIFN8hEtKwAYTmhm1Ywn4Aroa84EqlKYVeL+Tx/yNJUlUR1+B84oYQbrGC+aX
-         uqdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=i7bPd0KFtrx4upiwcWVI3jqwhe/7maSjWHYHWiZrJWQ=;
-        b=fC62eSvwVHUcwZnav/hP+mKk0cXD9aBn9abdvRssGnHIV3EBh9YN1R/KhWTBzYKBto
-         ORak9FX6ZGbttxTYQLPni0W1L80FW4swFTg117sWsibV95OUKx8T35xUydSIC7Fe9LSF
-         zVaO+4fOiD9DbLG3slxNVzBXhTvX8DbXvCKiw2Uo19fPoLFSI0gNoCRV/mw4BKBYqMCA
-         D1Q/zh/7v+ZtymK0Kcxrlwisxc7W1FZQhvTZFqTRZkmRKQf9Z80GzDfGc8i2c49PzYOV
-         ig5BlDnUT7TC3fTNeTBsLFp1teOI85AWQM3GPX58Fcq7xGRbAiwIHRNIZo/BtEvw4uDR
-         7y8w==
-X-Gm-Message-State: AGRZ1gIRxhxC7sDk8ENjz467JN+CEMw9GZGSg/YlL1ZcCXj7BgbnVnKm
-        ktBQrhMIg4BNtlgO0825yYUWpXYKnWk40NVGLWo/Pg==
-X-Google-Smtp-Source: AJdET5fA8rFIkP9qKC4lA3L/Yl8QaxgEScFR6g1AikS0AxKEJv7GNMS7eKzK7/1rXwZfv5OEFUUkYO2vQd37dsG2Y4A=
-X-Received: by 2002:a1c:cf08:: with SMTP id f8-v6mr5091797wmg.56.1541777667644;
- Fri, 09 Nov 2018 07:34:27 -0800 (PST)
+        Fri, 9 Nov 2018 20:16:52 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35670 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727827AbeKJBQv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 20:16:51 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 661DDAE18;
+        Fri,  9 Nov 2018 15:35:45 +0000 (UTC)
+Subject: Re: [Xen-devel] [PATCH] xen: fix xen_qlock_wait()
+To:     Sander Eikelenboom <linux@eikelenboom.it>,
+        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org
+Cc:     sstabellini@kernel.org, stable@vger.kernel.org, mingo@redhat.com,
+        bp@alien8.de, hpa@zytor.com, boris.ostrovsky@oracle.com,
+        tglx@linutronix.de
+References: <20181109120413.9539-1-jgross@suse.com>
+ <400409f5-397e-780b-d13b-19a1ee578f44@eikelenboom.it>
+ <068f9560-598b-0228-463b-bc7f202cf8e0@suse.com>
+ <913d7f22-9ec2-54be-3edb-a93a6adf4fda@eikelenboom.it>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <67e80fc6-e47a-3ba2-09ce-b1c8557cc74c@suse.com>
+Date:   Fri, 9 Nov 2018 16:35:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181109150431.14147-1-bp@alien8.de> <20181109150431.14147-4-bp@alien8.de>
-In-Reply-To: <20181109150431.14147-4-bp@alien8.de>
-From:   Tigran Aivazian <aivazian.tigran@gmail.com>
-Date:   Fri, 9 Nov 2018 15:34:16 +0000
-Message-ID: <CAK+_RLmV2rm=7zQ6BeJxUg0x1K7Kwv7AfHXmJ=YEV6xQuufbVA@mail.gmail.com>
-Subject: Re: [PATCH 3/4] x86/microcode: Add SPDX license identifiers
-To:     bp@alien8.de
-Cc:     x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        "Yu, Fenghua" <fenghua.yu@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, shli@kernel.org,
-        thomas.lendacky@amd.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <913d7f22-9ec2-54be-3edb-a93a6adf4fda@eikelenboom.it>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Borislav,
+On 09/11/2018 16:29, Sander Eikelenboom wrote:
+> On 09/11/18 16:20, Juergen Gross wrote:
+>> On 09/11/2018 16:02, Sander Eikelenboom wrote:
+>>> On 09/11/18 13:04, Juergen Gross wrote:
+>>>> Commit a856531951dc80 ("xen: make xen_qlock_wait() nestable")
+>>>> introduced a regression for Xen guests running fully virtualized
+>>>> (HVM or PVH mode). The Xen hypervisor wouldn't return from the poll
+>>>> hypercall with interrupts disabled in case of an interrupt (for PV
+>>>> guests it does).
+>>>>
+>>>> So instead of disabling interrupts in xen_qlock_wait() use a nesting
+>>>> counter to avoid calling xen_clear_irq_pending() in case
+>>>> xen_qlock_wait() is nested.
+>>>>
+>>>> Fixes: a856531951dc80 ("xen: make xen_qlock_wait() nestable")
+>>>> Cc: stable@vger.kernel.org
+>>>> Signed-off-by: Juergen Gross <jgross@suse.com>
+>>>
+>>> Although you don't seem too interested, you can stick on a:
+>>> Tested-by: Sander Eikelenboom <linux@eikelenboom.it>
+>>> if you like.
+>>
+>> I am interested.
+>>
+>> OTOH I wanted to post the patch officially to give others the chance to
+>> send remarks.
+> 
+> OK, would be nice to at least be CC'ed on patches going upstream when
+> you have been reporting stuff.
 
-Ok, that's fine. I noticed these things when changing BFS code a
-couple of days ago and wondered what they were --- now I know :)
+Sorry, my fault.
 
-Kind regards,
-Tigran
-On Fri, 9 Nov 2018 at 15:04, Borislav Petkov <bp@alien8.de> wrote:
->
-> From: Borislav Petkov <bp@suse.de>
->
-> ... and drop the GPL v2 license free text.
->
-> Signed-off-by: Borislav Petkov <bp@suse.de>
-> Cc: Fenghua Yu <fenghua.yu@intel.com>
-> Cc: "H Peter Anvin" <hpa@zytor.com>
-> Cc: Shaohua Li <shli@kernel.org>
-> Cc: Tigran Aivazian <aivazian.tigran@gmail.com>
-> Cc: Tom Lendacky <thomas.lendacky@amd.com>
-> ---
->  arch/x86/kernel/cpu/microcode/amd.c   | 4 +---
->  arch/x86/kernel/cpu/microcode/core.c  | 6 +-----
->  arch/x86/kernel/cpu/microcode/intel.c | 6 +-----
->  3 files changed, 3 insertions(+), 13 deletions(-)
->
-> diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
-> index 07b5fc00b188..a1b02f2f0697 100644
-> --- a/arch/x86/kernel/cpu/microcode/amd.c
-> +++ b/arch/x86/kernel/cpu/microcode/amd.c
-> @@ -1,3 +1,4 @@
-> +// SPDX-License-Identifier: GPL-2.0
->  /*
->   *  AMD CPU Microcode Update Driver for Linux
->   *
-> @@ -17,9 +18,6 @@
->   *
->   *  Author: Jacob Shin <jacob.shin@amd.com>
->   *  Fixes: Borislav Petkov <bp@suse.de>
-> - *
-> - *  Licensed under the terms of the GNU General Public
-> - *  License version 2. See file COPYING for details.
->   */
->  #define pr_fmt(fmt) "microcode: " fmt
->
-> diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
-> index 2637ff09d6a0..b126180c15db 100644
-> --- a/arch/x86/kernel/cpu/microcode/core.c
-> +++ b/arch/x86/kernel/cpu/microcode/core.c
-> @@ -1,3 +1,4 @@
-> +// SPDX-License-Identifier: GPL-2.0+
->  /*
->   * CPU Microcode Update Driver for Linux
->   *
-> @@ -12,11 +13,6 @@
->   *               (C) 2015 Borislav Petkov <bp@alien8.de>
->   *
->   * This driver allows to upgrade microcode on x86 processors.
-> - *
-> - * This program is free software; you can redistribute it and/or
-> - * modify it under the terms of the GNU General Public License
-> - * as published by the Free Software Foundation; either version
-> - * 2 of the License, or (at your option) any later version.
->   */
->
->  #define pr_fmt(fmt) "microcode: " fmt
-> diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
-> index 16936a24795c..e199d3140be0 100644
-> --- a/arch/x86/kernel/cpu/microcode/intel.c
-> +++ b/arch/x86/kernel/cpu/microcode/intel.c
-> @@ -1,3 +1,4 @@
-> +// SPDX-License-Identifier: GPL-2.0+
->  /*
->   * Intel CPU Microcode Update Driver for Linux
->   *
-> @@ -8,11 +9,6 @@
->   *
->   * Copyright (C) 2012 Fenghua Yu <fenghua.yu@intel.com>
->   *                   H Peter Anvin" <hpa@zytor.com>
-> - *
-> - * This program is free software; you can redistribute it and/or
-> - * modify it under the terms of the GNU General Public License
-> - * as published by the Free Software Foundation; either version
-> - * 2 of the License, or (at your option) any later version.
->   */
->
->  /*
-> --
-> 2.19.1
->
+
+Juergen
