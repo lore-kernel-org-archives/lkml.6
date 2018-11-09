@@ -2,161 +2,105 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E38FC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:14:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC2FCC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:15:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35EDC20827
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:14:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A9C720989
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:15:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="h6PkiK7u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35EDC20827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="ZQCkKqOz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A9C720989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728252AbeKJAzq (ORCPT
+        id S1728294AbeKJA4Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 19:55:46 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:36543 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727735AbeKJAzq (ORCPT
+        Fri, 9 Nov 2018 19:56:24 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:37044 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727941AbeKJA4X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 19:55:46 -0500
-Received: by mail-it1-f193.google.com with SMTP id w7-v6so3715941itd.1
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 07:14:46 -0800 (PST)
+        Fri, 9 Nov 2018 19:56:23 -0500
+Received: by mail-pg1-f193.google.com with SMTP id 80so974227pge.4
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 07:15:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=QmEOCZhKoy4tMYvrz4DsulhuUxwi7kZKfWHrSbAKPsY=;
-        b=h6PkiK7uJATjFMAioiq1SOdVFad8kUSj7BiEsR5IOgT/GlVzhm7NbSlFLNBmePuckV
-         R5Iq7/W+UPfV6M0RKNpSHQdg+nh6Y8QaYu7e0G+mSRPYJQGTSKFvnxarwb2bnEZvuxpC
-         XcTdtdgq476dsCYw2fYLwV3BIc3TR2nAjoJSM=
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Kogkxzw+fq2Is8CHmsTDlaVGnODviCCJxOZoap3Dfu0=;
+        b=ZQCkKqOzZ37sa/fGbd3LD59VBRylVU6rkQyD4Itt0NgJ1IGEKlwuKocEV5xFbGnHnd
+         +MVE6CE6e4CYQAJfqU/nXpyXxjyhLPpNBuswgEk1GJw5MTczKr64Z/sv630Rv5BExQ1K
+         kUron6vDAqBwbBb3AGlPbRlRKLwj28dHUmTahmjrF3loSCD5UxbA0aW11bP+cRiuMWE7
+         8Q9WB/U4J0czz3FZMNQa9Np6SDCWCUA98KTnijb/0Bl0hzUpNOS7N8vV8L0OAEgipypa
+         xCA8fcFoHxTc9ypnZGoJqtz6gesxKSM19BzgxmLqR01fJo+YbDQgTUk/QPTwHGL67DDn
+         KLZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=QmEOCZhKoy4tMYvrz4DsulhuUxwi7kZKfWHrSbAKPsY=;
-        b=ZVelGXAwO6aiIktaSF3LpTd7X3rICog1Fr+15FM1MCkGno90mFmIqACpZ05KH49pXE
-         DbCnI+D0hRvebEQ92K5HZ839QSk0RXbRomN3IlyQirryFHEi2Z76OthO7f1Qrq4MMIb+
-         Dd5Wf/uEdzUA9NmxEmRfQEtL7kudgYLTrn6XTgSpRw2Puk7oGZeL86HBQx8Zk9wNl90Q
-         Pqmn/mg543IQx84IVL3SOU9ZA+N7p6YA2Ymj/guwA2XWl1U0+AY1X9miavYpCe5Cf6SA
-         am2CstC137adPd8G8k6TOPwLOfrnwicm1r6sAa9C+jkpN16o39COIvRAwdNaECaYfE2+
-         jujQ==
-X-Gm-Message-State: AGRZ1gKq41+6cTWjm84D+qGEp5X7ALBA7FrWH+Es9pV881JDEO/smWqW
-        b0qRxXVK6YCFoFrsqDWOHCsY84diNiPAhrn6dQ5NOg==
-X-Google-Smtp-Source: AJdET5fpylLbcAtUxE/QkoKHwnJLz4SyodegVxyf8NX/2XD/jMGs5NCb2tdExYqerNwrZN1HfJHs/pRDZdF2z7C0wYU=
-X-Received: by 2002:a02:8449:: with SMTP id l9-v6mr8480077jah.130.1541776486303;
- Fri, 09 Nov 2018 07:14:46 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Kogkxzw+fq2Is8CHmsTDlaVGnODviCCJxOZoap3Dfu0=;
+        b=UrrThHNrKUYLCE19oQBGN/8FQZdJfbKKIH/ggQNsuRAcmlEsfs8nYtoZkkGIcCz+6E
+         oy9TkqLIvtjeT4L1TeMiPMDZY4gB42Qvw5gROg+6lEvEx6ow11dkF6alzh7jmM8DxjFq
+         KmD9rEIWwvKfwgKg1aMd0pbL8qspkwG7jj7+FTlKlnb2PGhcaVIWLVlr52Mka0jgb0gd
+         s2dIzGHN+HgQ1o84adg18TlqKW5cSxv0m3Sys492/v/ftuS16HBih++T1yXcEVHMa1Ib
+         xs9hD7ck3vLsNmC8K2qqtFgAf9YVgH4YhhVHmOocnYRBlkyPwI71FVNojvU3SL8AOfXo
+         dR+Q==
+X-Gm-Message-State: AGRZ1gLCCct+fKgOTkp+EvQGuGODQoYrr/XWYcyLi7dNN1o9HT+gZsgk
+        11UV4DNajnkBgW7wkwhpheDSCxaF324=
+X-Google-Smtp-Source: AJdET5cUdLe2pU4k/VUxmG6U+LdYbLnxWAqUrSUK7FllMeneeh7sy4Db5gHF0tvpVAJMpRum/WJ+Rw==
+X-Received: by 2002:a63:c10f:: with SMTP id w15mr7744859pgf.199.1541776523619;
+        Fri, 09 Nov 2018 07:15:23 -0800 (PST)
+Received: from cisco ([128.107.241.164])
+        by smtp.gmail.com with ESMTPSA id p14-v6sm6856538pgn.45.2018.11.09.07.15.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 09 Nov 2018 07:15:22 -0800 (PST)
+Date:   Fri, 9 Nov 2018 08:15:20 -0700
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     David Teigland <teigland@redhat.com>
+Cc:     Christine Caulfield <ccaulfie@redhat.com>,
+        cluster-devel@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] dlm: fix various incorrect behaviors
+Message-ID: <20181109151520.GD3645@cisco>
+References: <20181102201822.12518-1-tycho@tycho.ws>
+ <20181107222042.GA24927@redhat.com>
 MIME-Version: 1.0
-Received: by 2002:a6b:4f16:0:0:0:0:0 with HTTP; Fri, 9 Nov 2018 07:14:45 -0800 (PST)
-In-Reply-To: <20181109151028.faifw66enzye32gg@treble>
-References: <cover.1541711457.git.jpoimboe@redhat.com> <3cf04e113d71c9f8e4be95fb84a510f085aa4afa.1541711457.git.jpoimboe@redhat.com>
- <CAKv+Gu9bMkFEx_GxH3uLm0gveQurp7ELDi6C5NvpugufPFMbRA@mail.gmail.com> <20181109151028.faifw66enzye32gg@treble>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Fri, 9 Nov 2018 16:14:45 +0100
-Message-ID: <CAKv+Gu_J1b30+pMNRF0icEpyew4TM_VP3ShG=4HkLnk=fRL9zg@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/3] static_call: Add static call infrastructure
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@aculab.com>,
-        Borislav Petkov <bp@alien8.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181107222042.GA24927@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9 November 2018 at 16:10, Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-> On Fri, Nov 09, 2018 at 02:39:17PM +0100, Ard Biesheuvel wrote:
->> > +       for (site = start; site < stop; site++) {
->> > +               struct static_call_key *key = static_call_key(site);
->> > +               unsigned long addr = static_call_addr(site);
->> > +
->> > +               if (list_empty(&key->site_mods)) {
->> > +                       struct static_call_mod *mod;
->> > +
->> > +                       mod = kzalloc(sizeof(*mod), GFP_KERNEL);
->> > +                       if (!mod) {
->> > +                               WARN(1, "Failed to allocate memory for static calls");
->> > +                               return;
->> > +                       }
->> > +
->> > +                       mod->sites = site;
->> > +                       list_add_tail(&mod->list, &key->site_mods);
->> > +
->> > +                       /*
->> > +                        * The trampoline should no longer be used.  Poison it
->> > +                        * it with a BUG() to catch any stray callers.
->> > +                        */
->> > +                       arch_static_call_poison_tramp(addr);
->>
->> This patches the wrong thing: the trampoline is at key->func not addr.
->
-> If you look at the x86 implementation, it actually does poison the
-> trampoline.
->
-> The address of the trampoline isn't actually known here.  key->func
-> isn't the trampoline address; it's the destination func address.
->
-> So instead I passed the address of the call instruction.  The arch code
-> then reads the instruction to find the callee (the trampoline).
->
-> The code is a bit confusing.  To make it more obvious, maybe we should
-> add another arch function to read the call destination.  Then this code
-> can pass that into arch_static_call_poison_tramp().
->
+On Wed, Nov 07, 2018 at 04:20:42PM -0600, David Teigland wrote:
+> On Fri, Nov 02, 2018 at 02:18:19PM -0600, Tycho Andersen wrote:
+> > Hi,
+> > 
+> > here's a series to fix some bugs I noticed in the DLM. The third patch
+> > in the series and maybe the first should probably go to stable, assuming
+> > everyone agrees they're indeed bugs.
+> > 
+> > Thanks,
+> > 
+> > Tycho
+> > 
+> > Tycho Andersen (3):
+> >   dlm: fix invalid free
+> >   dlm: don't allow zero length names
+> >   dlm: don't leak kernel pointer to userspace
+> > 
+> >  fs/dlm/lockspace.c | 2 +-
+> >  fs/dlm/member.c    | 5 +++--
+> >  fs/dlm/user.c      | 2 +-
+> >  3 files changed, 5 insertions(+), 4 deletions(-)
+> 
+> I've pushed these to linux-dlm next.
 
-Ah right, so I am basically missing a dereference in my
-arch_static_call_poison_tramp() code if this breaks.
+Great, thanks! Should we send 1 and 3 to stable?
 
->> However, patching it here means we poison it before all users are
->> patched. I added this on top
->>
->> diff --git a/kernel/static_call.c b/kernel/static_call.c
->> index 599ebc6fc4f1..d9562329bec6 100644
->> --- a/kernel/static_call.c
->> +++ b/kernel/static_call.c
->> @@ -248,6 +248,7 @@ static void __init static_call_init(void)
->>         struct static_call_site *start = __start_static_call_sites;
->>         struct static_call_site *stop  = __stop_static_call_sites;
->>         struct static_call_site *site;
->> +       struct static_call_key *prev_key = NULL;
->>
->>         if (start == stop) {
->>                 pr_warn("WARNING: empty static call table\n");
->> @@ -279,7 +280,9 @@ static void __init static_call_init(void)
->>                          * The trampoline should no longer be used.  Poison it
->>                          * it with a BUG() to catch any stray callers.
->>                          */
->> -                       arch_static_call_poison_tramp(addr);
->> +                       if (prev_key)
->> +
->> arch_static_call_poison_tramp((unsigned long)prev_key->func);
->> +                       prev_key = key;
->>                 }
->>
->>                 arch_static_call_transform(addr, key->func);
->
-> While it does indeed poison the trampoline before all users are patched,
-> I had been thinking that it didn't really matter because this is before
-> the other CPUs have been booted.
->
-> But I believe interrupts are enabled at this point during the boot, so
-> it would indeed be wise to poison it afterwards, in case an irq handler
-> makes a static call.
->
-
-And kmalloc(GFP_KERNEL) itself could cascade into lots of other code as well.
+Tycho
