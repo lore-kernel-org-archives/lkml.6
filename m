@@ -2,145 +2,307 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1AF3C0044C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:08:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B635C43610
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:08:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0F9420818
+	by mail.kernel.org (Postfix) with ESMTP id F105420883
 	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:08:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0F9420818
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F105420883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728459AbeKJHvQ (ORCPT
+        id S1728594AbeKJHvT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 02:51:16 -0500
-Received: from mga11.intel.com ([192.55.52.93]:60976 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726181AbeKJHvQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 02:51:16 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Nov 2018 14:08:44 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,484,1534834800"; 
-   d="scan'208";a="278595589"
-Received: from schen9-desk.jf.intel.com (HELO [10.54.74.144]) ([10.54.74.144])
-  by fmsmga005.fm.intel.com with ESMTP; 09 Nov 2018 14:08:44 -0800
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-References: <cover.1540923609.git.tim.c.chen@linux.intel.com>
- <a3035781690278fdea781f4d718917985994e0af.1540923609.git.tim.c.chen@linux.intel.com>
- <alpine.DEB.2.21.1811031914470.3160@nanos.tec.linutronix.de>
-From:   Tim Chen <tim.c.chen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
- 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
-Subject: Re: [Patch v4 08/18] sched: Deprecate sched_smt_present and use
- cpu_smt_enabled static key
-Message-ID: <e6b4af48-d848-8567-5927-745bbf6a388b@linux.intel.com>
-Date:   Fri, 9 Nov 2018 14:08:43 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.0
+        Sat, 10 Nov 2018 02:51:19 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:15074 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726181AbeKJHvT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 02:51:19 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id B387E1A20CD1;
+        Sat, 10 Nov 2018 06:08:43 +0800 (CST)
+Received: from S00293818-DELL1.china.huawei.com (10.202.226.54) by
+ DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
+ 14.3.408.0; Sat, 10 Nov 2018 06:08:38 +0800
+From:   Salil Mehta <salil.mehta@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <salil.mehta@huawei.com>, <andrew@lunn.ch>, <yuvalm@mellanox.com>,
+        <leon@kernel.org>, <yisen.zhuang@huawei.com>,
+        <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
+        liuzhongzhu <liuzhongzhu@huawei.com>
+Subject: [RFC PATCH 01/10] net: hns3: Add debugfs framework registration
+Date:   Fri, 9 Nov 2018 22:07:34 +0000
+Message-ID: <20181109220743.10264-2-salil.mehta@huawei.com>
+X-Mailer: git-send-email 2.8.3
+In-Reply-To: <20181109220743.10264-1-salil.mehta@huawei.com>
+References: <20181109220743.10264-1-salil.mehta@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1811031914470.3160@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.202.226.54]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thomas,
+From: liuzhongzhu <liuzhongzhu@huawei.com>
 
-> 
->> The cpu_smt_enabled static key serves identical purpose as cpu_smt_enabled
-> 
-> That doesn't make any sense.
-> 
->> to enable SMT specific code.
->>
->> This patch replaces sched_smt_present in the scheduler with
->> cpu_smt_enabled and deprecate sched_smt_present.
-> 
-> It's not deprecating it, it's replacing and removing it and thereby
-> breaking all architectures which select SCHED_SMT except x86.
+Add the debugfs framework to the driver and create a debugfs
+command interface for each device.
 
-But the cpu_smt_enabled key is not x86 specific.  It is set and
-defined in generic kernel/cpu.c and include/linux/cpu.h and available
-for all architectures.
+example command:
+"echo queue info > cmd" Query the packet forwarding queue information.
 
-Why would it break other architectures?  I am missing something?
+Signed-off-by: liuzhongzhu <liuzhongzhu@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+---
+ drivers/net/ethernet/hisilicon/hns3/Makefile       |   2 +-
+ drivers/net/ethernet/hisilicon/hns3/hnae3.h        |   1 +
+ drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c | 133 +++++++++++++++++++++
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    |  17 ++-
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.h    |   4 +
+ 5 files changed, 154 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
 
-Thanks.
+diff --git a/drivers/net/ethernet/hisilicon/hns3/Makefile b/drivers/net/ethernet/hisilicon/hns3/Makefile
+index 002534f..d01bf53 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/Makefile
++++ b/drivers/net/ethernet/hisilicon/hns3/Makefile
+@@ -9,6 +9,6 @@ obj-$(CONFIG_HNS3) += hns3vf/
+ obj-$(CONFIG_HNS3) += hnae3.o
+ 
+ obj-$(CONFIG_HNS3_ENET) += hns3.o
+-hns3-objs = hns3_enet.o hns3_ethtool.o
++hns3-objs = hns3_enet.o hns3_ethtool.o hns3_debugfs.o
+ 
+ hns3-$(CONFIG_HNS3_DCB) += hns3_dcbnl.o
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hnae3.h b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
+index 5b3b104..994aee1 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hnae3.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
+@@ -544,6 +544,7 @@ struct hnae3_handle {
+ 	u32 numa_node_mask;	/* for multi-chip support */
+ 
+ 	u8 netdev_flags;
++	struct dentry *hnae3_dbgfs;
+ };
+ 
+ #define hnae3_set_field(origin, mask, shift, val) \
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c b/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
+new file mode 100644
+index 0000000..954e204
+--- /dev/null
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
+@@ -0,0 +1,133 @@
++// SPDX-License-Identifier: GPL-2.0+
++// Copyright (c) 2018-2019 Hisilicon Limited.
++
++#include <linux/debugfs.h>
++#include <linux/device.h>
++
++#include "hnae3.h"
++#include "hns3_enet.h"
++
++#define HNS3_DBG_READ_LEN 256
++
++static struct dentry *hns3_dbgfs_root;
++
++static void hns3_dbg_help(struct hnae3_handle *h)
++{
++	dev_info(&h->pdev->dev, "available commands\n");
++	dev_info(&h->pdev->dev, "queue info [number]\n");
++	dev_info(&h->pdev->dev, "dump fd tcam\n");
++}
++
++static ssize_t hns3_dbg_cmd_read(struct file *filp, char __user *buffer,
++				 size_t count, loff_t *ppos)
++{
++	int uncopy_bytes;
++	char *buf;
++	int len;
++
++	if (*ppos != 0)
++		return 0;
++
++	if (count < HNS3_DBG_READ_LEN)
++		return -ENOSPC;
++
++	buf = kzalloc(HNS3_DBG_READ_LEN, GFP_KERNEL);
++	if (!buf)
++		return -ENOMEM;
++
++	len = snprintf(buf, HNS3_DBG_READ_LEN, "%s\n",
++		       "Please echo help to cmd to get help information");
++	uncopy_bytes = copy_to_user(buffer, buf, len);
++
++	kfree(buf);
++
++	if (uncopy_bytes)
++		return -EFAULT;
++
++	return (*ppos = len);
++}
++
++static ssize_t hns3_dbg_cmd_write(struct file *filp, const char __user *buffer,
++				  size_t count, loff_t *ppos)
++{
++	struct hnae3_handle *handle = filp->private_data;
++	char *cmd_buf, *cmd_buf_tmp;
++	int uncopied_bytes;
++	int ret = 0;
++
++	if (*ppos != 0)
++		return 0;
++
++	cmd_buf = kzalloc(count + 1, GFP_KERNEL);
++	if (!cmd_buf)
++		return count;
++
++	uncopied_bytes = copy_from_user(cmd_buf, buffer, count);
++	if (uncopied_bytes) {
++		kfree(cmd_buf);
++		return -EFAULT;
++	}
++
++	cmd_buf[count] = '\0';
++
++	cmd_buf_tmp = strchr(cmd_buf, '\n');
++	if (cmd_buf_tmp) {
++		*cmd_buf_tmp = '\0';
++		count = cmd_buf_tmp - cmd_buf + 1;
++	}
++
++	if (ret)
++		hns3_dbg_help(handle);
++
++	kfree(cmd_buf);
++	cmd_buf = NULL;
++
++	return count;
++}
++
++static const struct file_operations hns3_dbg_cmd_fops = {
++	.owner = THIS_MODULE,
++	.open  = simple_open,
++	.read  = hns3_dbg_cmd_read,
++	.write = hns3_dbg_cmd_write,
++};
++
++void hns3_dbg_init(struct hnae3_handle *handle)
++{
++	const char *name = pci_name(handle->pdev);
++	struct dentry *pfile;
++
++	handle->hnae3_dbgfs = debugfs_create_dir(name, hns3_dbgfs_root);
++	if (!handle->hnae3_dbgfs)
++		return;
++
++	pfile = debugfs_create_file("cmd", 0600, handle->hnae3_dbgfs, handle,
++				    &hns3_dbg_cmd_fops);
++	if (!pfile) {
++		debugfs_remove_recursive(handle->hnae3_dbgfs);
++		handle->hnae3_dbgfs = NULL;
++		dev_warn(&handle->pdev->dev, "create file for %s fail\n",
++			 name);
++	}
++}
++
++void hns3_dbg_uninit(struct hnae3_handle *handle)
++{
++	debugfs_remove_recursive(handle->hnae3_dbgfs);
++	handle->hnae3_dbgfs = NULL;
++}
++
++void hns3_dbg_register_debugfs(const char *debugfs_dir_name)
++{
++	hns3_dbgfs_root = debugfs_create_dir(debugfs_dir_name, NULL);
++	if (!hns3_dbgfs_root) {
++		pr_warn("Register debugfs for %s fail\n", debugfs_dir_name);
++		return;
++	}
++}
++
++void hns3_dbg_unregister_debugfs(void)
++{
++	debugfs_remove_recursive(hns3_dbgfs_root);
++	hns3_dbgfs_root = NULL;
++}
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index 183fd83..7183c3b 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -3418,6 +3418,8 @@ static int hns3_client_init(struct hnae3_handle *handle)
+ 
+ 	hns3_dcbnl_setup(handle);
+ 
++	hns3_dbg_init(handle);
++
+ 	/* MTU range: (ETH_MIN_MTU(kernel default) - 9706) */
+ 	netdev->max_mtu = HNS3_MAX_MTU - (ETH_HLEN + ETH_FCS_LEN + VLAN_HLEN);
+ 
+@@ -3472,6 +3474,8 @@ static void hns3_client_uninit(struct hnae3_handle *handle, bool reset)
+ 
+ 	hns3_put_ring_config(priv);
+ 
++	hns3_dbg_uninit(handle);
++
+ 	priv->ring_data = NULL;
+ 
+ out_netdev_free:
+@@ -4026,15 +4030,23 @@ static int __init hns3_init_module(void)
+ 
+ 	INIT_LIST_HEAD(&client.node);
+ 
++	hns3_dbg_register_debugfs(hns3_driver_name);
++
+ 	ret = hnae3_register_client(&client);
+ 	if (ret)
+-		return ret;
++		goto err_reg_client;
+ 
+ 	ret = pci_register_driver(&hns3_driver);
+ 	if (ret)
+-		hnae3_unregister_client(&client);
++		goto err_reg_driver;
+ 
+ 	return ret;
++
++err_reg_driver:
++	hnae3_unregister_client(&client);
++err_reg_client:
++	hns3_dbg_unregister_debugfs();
++	return ret;
+ }
+ module_init(hns3_init_module);
+ 
+@@ -4046,6 +4058,7 @@ static void __exit hns3_exit_module(void)
+ {
+ 	pci_unregister_driver(&hns3_driver);
+ 	hnae3_unregister_client(&client);
++	hns3_dbg_unregister_debugfs();
+ }
+ module_exit(hns3_exit_module);
+ 
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
+index cfd6a71..bf520a2 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
+@@ -665,4 +665,8 @@ void hns3_dcbnl_setup(struct hnae3_handle *handle);
+ static inline void hns3_dcbnl_setup(struct hnae3_handle *handle) {}
+ #endif
+ 
++void hns3_dbg_init(struct hnae3_handle *handle);
++void hns3_dbg_uninit(struct hnae3_handle *handle);
++void hns3_dbg_register_debugfs(const char *debugfs_dir_name);
++void hns3_dbg_unregister_debugfs(void);
+ #endif
+-- 
+2.7.4
 
-Tim
+
