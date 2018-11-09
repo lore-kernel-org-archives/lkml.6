@@ -2,142 +2,166 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C26AC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:20:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC008C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:21:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40F7B20883
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:20:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40F7B20883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 1B95D20825
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:21:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="1PFnXvZ9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B95D20825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728533AbeKJDCV (ORCPT
+        id S1728553AbeKJDDH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 22:02:21 -0500
-Received: from mga14.intel.com ([192.55.52.115]:65502 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728108AbeKJDCV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 22:02:21 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Nov 2018 09:20:51 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,483,1534834800"; 
-   d="scan'208";a="106912362"
-Received: from ray.jf.intel.com (HELO [10.7.201.15]) ([10.7.201.15])
-  by orsmga001.jf.intel.com with ESMTP; 09 Nov 2018 09:20:50 -0800
-Subject: Re: [PATCH v5 04/27] x86/fpu/xstate: Add XSAVES system states for
- shadow stack
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H. J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>
-References: <20181011151523.27101-1-yu-cheng.yu@intel.com>
- <20181011151523.27101-5-yu-cheng.yu@intel.com>
- <CALCETrVAe8R=crVHoD5QmbN-gAW+V-Rwkwe4kQP7V7zQm9TM=Q@mail.gmail.com>
- <4295b8f786c10c469870a6d9725749ce75dcdaa2.camel@intel.com>
- <CALCETrUKzXYzRrWRdi8Z7AdAF0uZW5Gs7J4s=55dszoyzc29rw@mail.gmail.com>
- <043a17ef-dc9f-56d2-5fba-1a58b7b0fd4d@intel.com>
- <20181108220054.GP3074@bombadil.infradead.org>
- <ead230ab-a904-50d6-c4cf-46d5804f6151@intel.com>
- <20181109003225.GQ3074@bombadil.infradead.org>
- <6cd2ae51-2d2a-9c68-df7c-45b49e0a813f@intel.com>
- <20181109171740.GT3074@bombadil.infradead.org>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <ded6f43a-11d1-89bf-e00c-66c281786cff@intel.com>
-Date:   Fri, 9 Nov 2018 09:20:50 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 9 Nov 2018 22:03:07 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:38471 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727995AbeKJDDH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 22:03:07 -0500
+Received: by mail-wr1-f67.google.com with SMTP id e3-v6so2704354wrs.5
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 09:21:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ytS6uxOcV99jAW8dOhmzJXuNQTkloeOsNiy+jM2ANyI=;
+        b=1PFnXvZ9XUZx3pfDZ5VdhqhNDqDP1spNnV4oiKbCVDEyqqmREOR9QkoCQRaIkLFUFu
+         d9ju0RTop6XK5vFUu1PwUP9C09OCB/A+AgMZGLsWg/gLClaK9dXWKj9JsVMX85h9nITC
+         00aa2VxLszWpk8Y38b8DrxQUN4DitFeA8wcCBl3/yiU/Vr35DefJy1WSlkGlSVubmUBB
+         Wk4fEoWOMrWdwdcAcBG5afcicWxpCq7f2FytJ1rJ9IY0rZgmbo0aekk0496OX2YoGkEK
+         oYDcQYZkWaRfvsRfyfZI3Bvh8UNb/7Zb3pABvLrNYWLAnxB2TF0/zssxHaE6W3U96T2y
+         VzUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ytS6uxOcV99jAW8dOhmzJXuNQTkloeOsNiy+jM2ANyI=;
+        b=CglmcXbxkMdyUPdMqo2Ykg1iOdAXtDcdtHZAkmfBrgD4xxYyiN7XuHYBmZhvzYd9cS
+         mm2WDt7TeQZOt3/B8EJ25NJgF3BegrzPR9JJTrccyNxahKgMdcExGCWnF/TWLwAcAjg6
+         UaJg7Ds9iyGXXwq1TIy/lzo6Y7ETr6Umgdvs8HRfbPq69AmmFnFZVg6XY9Y6BQuqCjfJ
+         fnp0zakSlqI0NWMJ0a3vukUAbJiqq5/1WU3PTj9b14Jq5i1u7/SpKRbo7C5Nb9OhOq3I
+         nQr4UAgMQ472GrhflmnwfJw3RC3BdZV7hHIlZRDqxgpfswHNcUS+j/mHNYr+l4P5BUXG
+         2C7g==
+X-Gm-Message-State: AGRZ1gLqCm8y5/b/4dh54ShNOVK6A1vBvgyjAVsthRM7kAtbQIiOX4rg
+        h75UzXmaHunBYWMvPcMFdfFfK0zDMUc=
+X-Google-Smtp-Source: AJdET5ckJCnHWsND2nGnK3xAmX9fa4+QjmNXLKd4/m/CeiTP9jCBRAnyH9MUjr5hv7a624GeHyA7Ug==
+X-Received: by 2002:a5d:620b:: with SMTP id y11-v6mr8744379wru.105.1541784095016;
+        Fri, 09 Nov 2018 09:21:35 -0800 (PST)
+Received: from localhost.localdomain (lfbn-mar-1-609-89.w90-118.abo.wanadoo.fr. [90.118.185.89])
+        by smtp.gmail.com with ESMTPSA id r3-v6sm2864699wmd.25.2018.11.09.09.21.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 09 Nov 2018 09:21:34 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH] irq/irq_sim: store multiple interrupt offsets in a bitmap
+Date:   Fri,  9 Nov 2018 18:21:32 +0100
+Message-Id: <20181109172132.30939-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <20181109171740.GT3074@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/9/18 9:17 AM, Matthew Wilcox wrote:
->> But, later versions of the hardware have instructions that don't have
->> static offsets for the state components (when the XSAVES/XSAVEC
->> instructions are used).  So, for those, the structure embedding isn't
->> used at *all* since some state might not be present.
-> But *when present*, this structure is always aligned on an 8-byte
-> boundary, right?
+Two threads can try to fire the irq_sim with different offsets and will
+end up fighting for the irq_work asignment. Thomas Gleixner suggested a
+solution based on a bitfield where we set a bit for every offset
+associated with an interrupt that should be fired and then iterate over
+all set bits in the interrupt handler.
 
-There's no guarantee of that.
+This is a slightly modified solution using a bitmap so that we don't
+impose a limit on the number of interrupts one can allocate with
+irq_sim.
 
-There is an "aligned" attribute for each XSAVE state component, but I do
-not believe it is set for anything yet.
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+---
+ include/linux/irq_sim.h |  2 +-
+ kernel/irq/irq_sim.c    | 23 +++++++++++++++++++++--
+ 2 files changed, 22 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/irq_sim.h b/include/linux/irq_sim.h
+index 630a57e55db6..4500d453a63e 100644
+--- a/include/linux/irq_sim.h
++++ b/include/linux/irq_sim.h
+@@ -16,7 +16,7 @@
+ 
+ struct irq_sim_work_ctx {
+ 	struct irq_work		work;
+-	int			irq;
++	unsigned long		*pending;
+ };
+ 
+ struct irq_sim_irq_ctx {
+diff --git a/kernel/irq/irq_sim.c b/kernel/irq/irq_sim.c
+index dd20d0d528d4..98a20e1594ce 100644
+--- a/kernel/irq/irq_sim.c
++++ b/kernel/irq/irq_sim.c
+@@ -34,9 +34,20 @@ static struct irq_chip irq_sim_irqchip = {
+ static void irq_sim_handle_irq(struct irq_work *work)
+ {
+ 	struct irq_sim_work_ctx *work_ctx;
++	unsigned int offset = 0;
++	struct irq_sim *sim;
++	int irqnum;
+ 
+ 	work_ctx = container_of(work, struct irq_sim_work_ctx, work);
+-	handle_simple_irq(irq_to_desc(work_ctx->irq));
++	sim = container_of(work_ctx, struct irq_sim, work_ctx);
++
++	while (!bitmap_empty(work_ctx->pending, sim->irq_count)) {
++		offset = find_next_bit(work_ctx->pending,
++				       sim->irq_count, offset);
++		clear_bit(offset, work_ctx->pending);
++		irqnum = irq_sim_irqnum(sim, offset);
++		handle_simple_irq(irq_to_desc(irqnum));
++	}
+ }
+ 
+ /**
+@@ -63,6 +74,13 @@ int irq_sim_init(struct irq_sim *sim, unsigned int num_irqs)
+ 		return sim->irq_base;
+ 	}
+ 
++	sim->work_ctx.pending = bitmap_zalloc(num_irqs, GFP_KERNEL);
++	if (!sim->work_ctx.pending) {
++		kfree(sim->irqs);
++		irq_free_descs(sim->irq_base, num_irqs);
++		return -ENOMEM;
++	}
++
+ 	for (i = 0; i < num_irqs; i++) {
+ 		sim->irqs[i].irqnum = sim->irq_base + i;
+ 		sim->irqs[i].enabled = false;
+@@ -89,6 +107,7 @@ EXPORT_SYMBOL_GPL(irq_sim_init);
+ void irq_sim_fini(struct irq_sim *sim)
+ {
+ 	irq_work_sync(&sim->work_ctx.work);
++	bitmap_free(sim->work_ctx.pending);
+ 	irq_free_descs(sim->irq_base, sim->irq_count);
+ 	kfree(sim->irqs);
+ }
+@@ -143,7 +162,7 @@ EXPORT_SYMBOL_GPL(devm_irq_sim_init);
+ void irq_sim_fire(struct irq_sim *sim, unsigned int offset)
+ {
+ 	if (sim->irqs[offset].enabled) {
+-		sim->work_ctx.irq = irq_sim_irqnum(sim, offset);
++		set_bit(offset, sim->work_ctx.pending);
+ 		irq_work_queue(&sim->work_ctx.work);
+ 	}
+ }
+-- 
+2.19.1
+
