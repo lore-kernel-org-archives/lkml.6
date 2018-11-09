@@ -2,114 +2,182 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DC33C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:09:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 536BDC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:09:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3B0320827
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:09:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="1oUjRwmP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3B0320827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 156CD20827
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:09:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 156CD20827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728724AbeKJEvI (ORCPT
+        id S1728775AbeKJEva (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 23:51:08 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:48268 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727961AbeKJEvI (ORCPT
+        Fri, 9 Nov 2018 23:51:30 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:47709 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727961AbeKJEva (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 23:51:08 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA9J46kr180604;
-        Fri, 9 Nov 2018 19:09:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=0WaWR8gIBeRbcmv6zOXJNTzvAuMriPI5IYpKB0K/xFI=;
- b=1oUjRwmP2OgNNRCxuzGY7g4I2MNbQgEs7zWkNi0Ytle5iHCuNrP6acsOmr29Ke/wB/SW
- hPtC2pCWw00qHqYZP02KyOvG7aTYDN5wfz+BClrLBXaLiGKp1yHlR1t7lhE9Fdbwdomx
- 8t2ekebyIamzyd/SL7X5M+YxWn/EH0T5+W5FmVY86DzhWgar78Op8JDMwrXSqSQj2qUh
- HP5Phq7MSXDYsmHKt2vd3PZnVy+umHpC7wk6clYqTxTxHUtmzEboF9w3FdJnORM9sCnw
- vmsYlCtpODErJnBBjqU9fR9lDZHmh9CjcAW3nT7n2saZ5AOcq25qM6ZfB1tv9KZtq4Pr 9A== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2120.oracle.com with ESMTP id 2nh4ar8pa7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 09 Nov 2018 19:09:05 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wA9J8xvR017743
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 9 Nov 2018 19:08:59 GMT
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wA9J8vd3019775;
-        Fri, 9 Nov 2018 19:08:58 GMT
-Received: from [10.211.47.62] (/10.211.47.62)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 09 Nov 2018 11:08:57 -0800
-Subject: Re: [Xen-devel] [PATCH v2] xen-blkfront: fix kernel panic with
- blkfront_remove()
-To:     Juergen Gross <jgross@suse.com>, boris.ostrovsky@oracle.com,
-        konrad.wilk@oracle.com, roger.pau@citrix.com
-Cc:     axboe@kernel.dk, xen-devel@lists.xenproject.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-References: <1541725843-2019-1-git-send-email-manjunath.b.patil@oracle.com>
- <9414b993-15f6-941a-fc2b-e96147e4fb26@suse.com>
-From:   Manjunath Patil <manjunath.b.patil@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <28e89b14-add7-348d-f054-975af74bdf52@oracle.com>
-Date:   Fri, 9 Nov 2018 11:08:56 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 9 Nov 2018 23:51:30 -0500
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1gLC9p-00036f-K0; Fri, 09 Nov 2018 20:09:29 +0100
+Date:   Fri, 9 Nov 2018 20:09:29 +0100
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        kvm list <kvm@vger.kernel.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH 22/23] x86/fpu: Don't restore the FPU state directly from
+ userland in __fpu__restore_sig()
+Message-ID: <20181109190929.xb7nciwy3yvntja6@linutronix.de>
+References: <20181107194858.9380-1-bigeasy@linutronix.de>
+ <20181107194858.9380-23-bigeasy@linutronix.de>
+ <CALCETrXYTSsxYUmxb6FmvQrSaMPJ77jqgnfzG_7yRGxLUw3_QQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <9414b993-15f6-941a-fc2b-e96147e4fb26@suse.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9072 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=991
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1811090173
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CALCETrXYTSsxYUmxb6FmvQrSaMPJ77jqgnfzG_7yRGxLUw3_QQ@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-oops! sorry for not noticing this.
+On 2018-11-08 10:25:24 [-0800], Andy Lutomirski wrote:
+> On Wed, Nov 7, 2018 at 11:49 AM Sebastian Andrzej Siewior
+> <bigeasy@linutronix.de> wrote:
+> >
+> > __fpu__restore_sig() restores the CPU's FPU state directly from
+> > userland. If we restore registers on return to userland then we can't
+> > load them directly from userland because a context switch/BH could
+> > destroy them.
+> >
+> > Restore the FPU registers after they have been copied from userland.
+> > __fpregs_changes_begin() ensures that they are not modified while beeing
+> > worked on. TIF_NEED_FPU_LOAD is clreared we want to keep our state, not
+> > the saved state.
+> 
+> I'm conceptually okay with this change, but what happens if the
+> registers that are copied into the kernel are garbage?  We used to
+> fail the restore and presumably kill the task.  What happens now?
 
--Manjunath
+What means garbage? Assume you mean something like memset(xstate, 0xff,)
+then this would happen:
 
-On 11/8/2018 10:16 PM, Juergen Gross wrote:
-> On 09/11/2018 02:10, Manjunath Patil wrote:
->> When we try to detach the device, blkfront_remove() tries to access
->> blkfront_info leading to kernel panic.
->>
->> Typical call stack involving panic -
->>   #10 page_fault at ffffffff816f25df
->>       [exception RIP: blkif_free+46]
->>   #11 blkfront_remove at ffffffffa004de47 [xen_blkfront]
->>   #12 xenbus_dev_remove at ffffffff813faa4c
->>   #13 __device_release_driver at ffffffff814769aa
->>   #14 device_release_driver at ffffffff81476a63
->>   #15 bus_remove_device at ffffffff814762eb
->>   #16 device_del at ffffffff81472684
->>   #17 device_unregister at ffffffff814727e2
->>   #18 xenbus_dev_changed at ffffffff813fa89f
->>   #19 frontend_changed at ffffffff813fca19
->>   #20 xenwatch_thread at ffffffff813f88f9
->>   #21 kthread at ffffffff810a486b
->>   #22 ret_from_fork at ffffffff816ed2a8
->>
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Manjunath Patil <manjunath.b.patil@oracle.com>
-> Commit f92898e7f32e3 already added that.
->
->
-> Juergen
+| ------------[ cut here ]------------
+| Bad FPU state detected at __fpu__restore_sig+0x2a3/0x660, reinitializing FPU registers.
+| WARNING: CPU: 0 PID: 1687 at arch/x86/mm/extable.c:113 ex_handler_fprestore+0x60/0x70
+| Modules linked in:
+| CPU: 0 PID: 1687 Comm: ssltc Not tainted 4.20.0-rc1+ #116
+| Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.11.1-1 04/01/2014
+| RIP: 0010:ex_handler_fprestore+0x60/0x70
+| Code: 00 00 00 5d c3 48 0f ae 0d 0d 13 2c 01 b8 01 00 00 00 5d c3 48 89 c6 48 c7 c7 40 39 02 82 c6 05 c3 1d 2b 01 01 e8 0a 01 01 00 <0f> 0b eb b9 66 66 2e 0f 1f 84 00 00 7
+| RSP: 0018:ffffc90000563cf8 EFLAGS: 00010282
+| RAX: 0000000000000000 RBX: ffffc90000563d68 RCX: 0000000000000000
+| RDX: 0000000000000046 RSI: 0000000000000000 RDI: ffff88003a1516c0
+| RBP: ffffc90000563cf8 R08: 0000000000000000 R09: 0000000000000000
+| R10: 0000000000000000 R11: 0000000000000000 R12: 000000000000000d
+| R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+| FS:  00007f17678f1b80(0000) GS:ffff88003e800000(0000) knlGS:0000000000000000
+| CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+| CR2: 00007f1767dc2000 CR3: 000000003d0b6003 CR4: 0000000000060ef0
+| Call Trace:
+|  fixup_exception+0x45/0x5c
+|  do_general_protection+0x61/0x1a0
+|  general_protection+0x1e/0x30
+| RIP: 0010:__fpu__restore_sig+0x2a3/0x660
+| Code: 00 00 48 8b 95 48 ff ff ff 48 f7 d2 48 21 d0 0f 85 73 03 00 00 48 8b 85 48 ff ff ff 4c 89 f7 48 89 c2 48 c1 ea 20 48 0f ae 2f <65> 48 8b 04 25 00 4f 01 00 f0 80 60 e
+| RSP: 0018:ffffc90000563e18 EFLAGS: 00010246
+| RAX: 0000000000000007 RBX: 00007ffe7f19df40 RCX: 00000000000031d7
+| RDX: 0000000000000000 RSI: 0000000000000200 RDI: ffff88003a152a40
+| RBP: ffffc90000563ed0 R08: 0000000000000000 R09: 0000000000000000
+| R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000000
+| R13: ffff88003a1516c0 R14: ffff88003a152a40 R15: ffff88003a152a00
+|  ? __fpu__restore_sig+0x261/0x660
+|  ? trace_hardirqs_on+0x22/0x110
+|  fpu__restore_sig+0x28/0x40
+|  __ia32_sys_rt_sigreturn+0x218/0x2aa
+|  do_syscall_64+0x50/0x1a0
+|  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+| RIP: 0033:0x7f1767ca8a7b
+| Code: 31 d8 0f a4 ed 05 c5 79 7f 4c 24 30 01 fa 21 c6 c5 b9 72 d4 1f 31 d8 01 ea 0f ac ed 07 31 de c5 a9 73 fc 0c c5 d9 fe e4 89 d7 <03> 4c 24 08 31 c5 0f a4 d2 05 c4 c1 1
+| RSP: 002b:00007ffe7f19e340 EFLAGS: 00000282
+| RAX: 000000001c9f00ab RBX: 00000000837732a0 RCX: 000000001bff4f26
+| RDX: 0000000037535a7c RSI: 00000000979700a8 RDI: 0000000037535a7c
+| RBP: 00000000053caff3 R08: 00005615ffd442a0 R09: 00007f1767dc54c0
+| R10: 00007f1767dc6000 R11: 00007ffe7f19e3c8 R12: 00007f1767dc2000
+| R13: 00005615ff6c30a0 R14: 00007f1767cab080 R15: 00007f1767d95100
+| irq event stamp: 12775
+| hardirqs last  enabled at (12774): [<ffffffff810de72c>] vprintk_emit+0xac/0x270
+| hardirqs last disabled at (12775): [<ffffffff81001c01>] trace_hardirqs_off_thunk+0x1a/0x1c
+| softirqs last  enabled at (12756): [<ffffffff81c003a2>] __do_softirq+0x3a2/0x4d1
+| softirqs last disabled at (12760): [<ffffffff8102a210>] __fpu__restore_sig+0x230/0x660
+| ---[ end trace 163c456a84752e26 ]---
 
+and the task continues. Before we had this:
+| BUG: GPF in non-whitelisted uaccess (non-canonical address?)
+| general protection fault: 0000 [#2] PREEMPT SMP DEBUG_PAGEALLOC PTI
+| CPU: 1 PID: 1687 Comm: ssltc Tainted: G      D           4.20.0-rc1+ #120
+| Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.11.1-1 04/01/2014
+| RIP: 0010:__fpu__restore_sig+0x2fa/0x710
+| Code: 34 8b 95 5c ff ff ff 85 d2 75 2a 4c 89 fa 48 f7 d2 48 21 d0 0f 85 b8 03 00 00 66 66 90 4c 89 fa 48 89 df 44 89 f8 48 c1 ea 20 <48> 0f ae 2f 31 db 66 66 90 eb 24 48 2
+| RSP: 0018:ffffc900004abe20 EFLAGS: 00010246
+| RAX: 0000000000000007 RBX: 00007ffe5b4c1680 RCX: 0000000000000000
+| RDX: 0000000000000000 RSI: ffffffff820544ad RDI: 00007ffe5b4c1680
+| RBP: ffffc900004abed0 R08: 0000000000000000 R09: 0000000000000001
+| R10: 0000000000000000 R11: 0000000000000000 R12: ffff8800394440c0
+| R13: ffff880039442d80 R14: ffff8800394440c0 R15: 0000000000000007
+| FS:  00007f81db2d4b80(0000) GS:ffff88003e880000(0000) knlGS:0000000000000000
+| CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+| CR2: 00007f81db7a5000 CR3: 000000003aafa002 CR4: 0000000000060ee0
+| Call Trace:
+|  ? trace_hardirqs_on+0x22/0x110
+|  fpu__restore_sig+0x28/0x40
+|  __ia32_sys_rt_sigreturn+0x218/0x2aa
+|  do_syscall_64+0x50/0x180
+|  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+| RIP: 0033:0x7f81db68bdc7
+| Code: 54 24 14 31 df 89 ee 0f a4 ed 05 c5 b9 72 d1 1e c5 79 7f 0c 24 01 fa 31 de 0f ac c0 07 01 ea c5 f1 72 f1 02 03 4c 24 18 31 c6 <89> d7 0f a4 d2 05 01 f1 31 c7 0f ac 3
+| RSP: 002b:00007ffe5b4c1a80 EFLAGS: 00000286
+| RAX: 00000000ad356612 RBX: 000000007d63f272 RCX: 00000000adc87c8e
+| RDX: 00000000d90909d0 RSI: 000000008b541c65 RDI: 00000000188b44f4
+| RBP: 00000000605100ab R08: 0000555c9ecd52a0 R09: 00007f81db7a8f80
+| R10: 00007f81db7a9000 R11: 00007ffe5b4c1ae8 R12: 00007f81db7a5000
+| R13: 0000555c9d0c60a0 R14: 00007f81db68e080 R15: 00007f81db778100
+| Modules linked in:
+| Dumping ftrace buffer:
+|    (ftrace buffer empty)
+| ---[ end trace a16fb09d293317cc ]---
+| RIP: 0010:__fpu__restore_sig+0x2fa/0x710
+| Code: 34 8b 95 5c ff ff ff 85 d2 75 2a 4c 89 fa 48 f7 d2 48 21 d0 0f 85 b8 03 00 00 66 66 90 4c 89 fa 48 89 df 44 89 f8 48 c1 ea 20 <48> 0f ae 2f 31 db 66 66 90 eb 24 48 2
+| RSP: 0018:ffffc900004abe20 EFLAGS: 00010246
+| RAX: 0000000000000007 RBX: 00007ffe1945ae40 RCX: 0000000000000000
+| RDX: 0000000000000000 RSI: 00000000ffffffff RDI: 00007ffe1945ae40
+| RBP: ffffc900004abed0 R08: 0000000000000000 R09: 0000000000000000
+| R10: 0000000000000000 R11: 0000000000000000 R12: ffff8800394440c0
+| R13: ffff880039442d80 R14: ffff8800394440c0 R15: 0000000000000007
+| FS:  00007f81db2d4b80(0000) GS:ffff88003e880000(0000) knlGS:0000000000000000
+| CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+| CR2: 00007f81db7a5000 CR3: 000000003aafa002 CR4: 0000000000060ee0
+
+Noisier but the task segfaulted.
+I could add validate_xstate_header() + sanitize_restored_xstate() which
+is what we do for 32bit-frames and should catch garbage. Then it ends
+with:
+| ssltc[1724] bad frame in rt_sigreturn frame:00000000ac8c6496 ip:7f4a10e36eda sp:7fff75054540 orax:ffffffffffffffff in libcrypto.so.1.1[7f4a10ce9000+19f000]
+
+which would be also a segfault but with a smaller backtrace. Also
+checking for XFEATURE_MASK_SUPERVISOR sounds like a good thing.
+Right now XFEATURE_MASK_SUPERVISOR is not enabled in BV so it should not
+make a difference but should be save in future.
+
+Sebastian
