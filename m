@@ -2,199 +2,721 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 736C2C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:48:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF85C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:49:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D86D20825
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:48:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D86D20825
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9684D20825
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:49:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="I5X8WR1F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9684D20825
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728054AbeKJB3t convert rfc822-to-8bit (ORCPT
+        id S1728172AbeKJBa1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 20:29:49 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:40112 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727784AbeKJB3t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 20:29:49 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BCD72C0495B5;
-        Fri,  9 Nov 2018 15:48:41 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-55.bos.redhat.com [10.18.17.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C6E682BC70;
-        Fri,  9 Nov 2018 15:48:39 +0000 (UTC)
-Subject: Re: [RFC PATCH 00/12] locking/lockdep: Add a new class of terminal
- locks
-To:     Ingo Molnar <mingo@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-        linux-mm@kvack.org, Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Tejun Heo <tj@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <1541709268-3766-1-git-send-email-longman@redhat.com>
- <20181109080412.GC86700@gmail.com>
-From:   Waiman Long <longman@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- weim8xU=
-Organization: Red Hat
-Message-ID: <1fcaa330-a4be-0f8a-7974-7b17f0ce01ad@redhat.com>
-Date:   Fri, 9 Nov 2018 10:48:39 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 9 Nov 2018 20:30:27 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:39732 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727806AbeKJBa1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 20:30:27 -0500
+Received: by mail-qk1-f195.google.com with SMTP id e4so2283808qkh.6
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 07:49:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=pIUvwIgsSfIYRUVaDVeKFS78IbUSIGODtjgXLvqenYI=;
+        b=I5X8WR1Fihu1usO84VaIC9n1r/tRLaT+UsmPH1InPfw1PuUcy5W61J5pTPd82FLXdD
+         Densm3E2quCs8CTJIdDOp7pw2OfZQTH9ujmWo43tPelHYBUv3xdMN5K7DnkO8ugiltkB
+         WaFvrqumibIro/jegTiOXF6an6vDMnt1fwkug=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=pIUvwIgsSfIYRUVaDVeKFS78IbUSIGODtjgXLvqenYI=;
+        b=BphjOshK5SOHkJlz9FKeTplZ8XJh5rjKNmg2tfifFvuiDfFGRq6wtvkKaOmFGkUds8
+         Hd1TXQVPNYU1F6S3irggYuVSWQ1rBuQRMJFfXYOksa872DiWJu8Ew7A5TSDGMDIAUXlJ
+         o0NvijMiYVXybJb2TJjxU2Z/bNpwq25WKohgO7dSzEKqEkTYN3TpxzQnY0vgxe++omvc
+         jZ/Lm3g+w/3tR3bPkMm7aDsliJiLgARVhTftwkm+W3xDxh2IicBCPaxcuQB64G6dPPI2
+         Dq2SsbcUEUHk4VnHtIWajni0WuEeZxpsG/zVnGCzxZgVsbdsbJpfKSTPDi+NiKHyilux
+         VSlQ==
+X-Gm-Message-State: AGRZ1gLNDk1hGxFD5rJJLCTGRobBrK/GyQhVbDX/dw4D9slYzQsOlqyb
+        h7cwbjXHHVTxZ3YfWtTb6E1TWw==
+X-Google-Smtp-Source: AJdET5ebDimdsHs1JRN9Pne+NAGElqJ7Aa+TvTGV0tO0Wh5qRPlR5LC8L7JSUOViQ+p515WqjzpeKA==
+X-Received: by 2002:ac8:33fc:: with SMTP id d57mr8865557qtb.82.1541778556661;
+        Fri, 09 Nov 2018 07:49:16 -0800 (PST)
+Received: from workstation.celeiro.br ([168.194.163.12])
+        by smtp.gmail.com with ESMTPSA id a3sm1916081qta.21.2018.11.09.07.49.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 09 Nov 2018 07:49:15 -0800 (PST)
+From:   Rafael David Tinoco <rafael.tinoco@linaro.org>
+To:     shuah@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        rafael.tinoco@linaro.org, peterz@infradead.org, tglx@linutronix.de,
+        mingo@kernel.org, mathieu.desnoyers@efficios.com
+Subject: [PATCH v5] selftests: membarrier: re-organize test
+Date:   Fri,  9 Nov 2018 13:49:11 -0200
+Message-Id: <20181109154911.24464-1-rafael.tinoco@linaro.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <dcc20b51-3069-6854-3190-b8958e2f9b96@kernel.org>
+References: <dcc20b51-3069-6854-3190-b8958e2f9b96@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20181109080412.GC86700@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Fri, 09 Nov 2018 15:48:42 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/09/2018 03:04 AM, Ingo Molnar wrote:
-> * Waiman Long <longman@redhat.com> wrote:
->
->> The purpose of this patchset is to add a new class of locks called
->> terminal locks and converts some of the low level raw or regular
->> spinlocks to terminal locks. A terminal lock does not have forward
->> dependency and it won't allow a lock or unlock operation on another
->> lock. Two level nesting of terminal locks is allowed, though.
->>
->> Only spinlocks that are acquired with the _irq/_irqsave variants or
->> acquired in an IRQ disabled context should be classified as terminal
->> locks.
->>
->> Because of the restrictions on terminal locks, we can do simple checks on
->> them without using the lockdep lock validation machinery. The advantages
->> of making these changes are as follows:
->>
->>  1) The lockdep check will be faster for terminal locks without using
->>     the lock validation code.
->>  2) It saves table entries used by the validation code and hence make
->>     it harder to overflow those tables.
->>
->> In fact, it is possible to overflow some of the tables by running
->> a variety of different workloads on a debug kernel. I have seen bug
->> reports about exhausting MAX_LOCKDEP_KEYS, MAX_LOCKDEP_ENTRIES and
->> MAX_STACK_TRACE_ENTRIES. This patch will help to reduce the chance
->> of overflowing some of the tables.
->>
->> Performance wise, there was no statistically significant difference in
->> performanace when doing a parallel kernel build on a debug kernel.
-> Could you please measure a locking intense workload instead, such as:
->
->    $ perf stat --null --sync --repeat 10 perf bench sched messaging
->
-> and profile which locks used there could be marked terminal, and measure 
-> the before/after performance impact?
+This commit re-organizes membarrier test, solving issues when testing
+LTS kernels. Now, the code:
 
-I will run the test. It will probably be done after the LPC next week.
+ - always run the same amount of tests (even on older kernels).
+ - allows each test to succeed, fail or be skipped independently.
+ - allows testing features even when explicitly unsupported (force=1).
+ - checks false positive/negative by checking ret code and errno.
+ - can be extended easily: to expand an array with commands.
 
->> Below were selected output lines from the lockdep_stats files of the
->> patched and unpatched kernels after bootup and running parallel kernel
->> builds.
->>
->>   Item                     Unpatched kernel  Patched kernel  % Change
->>   ----                     ----------------  --------------  --------
->>   direct dependencies           9732             8994          -7.6%
->>   dependency chains            18776            17033          -9.3%
->>   dependency chain hlocks      76044            68419         -10.0%
->>   stack-trace entries         110403           104341          -5.5%
-> That's pretty impressive!
->
->> There were some reductions in the size of the lockdep tables. They were
->> not significant, but it is still a good start to rein in the number of
->> entries in those tables to make it harder to overflow them.
-> Agreed.
->
-> BTW., if you are interested in more radical approaches to optimize 
-> lockdep, we could also add a static checker via objtool driven call graph 
-> analysis, and mark those locks terminal that we can prove are terminal.
->
-> This would require the unified call graph of the kernel image and of all 
-> modules to be examined in a final pass, but that's within the principal 
-> scope of objtool. (This 'final pass' could also be done during bootup, at 
-> least in initial versions.)
->
-> Note that beyond marking it 'terminal' such a static analysis pass would 
-> also allow the detection of obvious locking bugs at the build (or boot) 
-> stage already - plus it would allow the disabling of lockdep for 
-> self-contained locks that don't interact with anything else.
->
-> I.e. the static analysis pass would 'augment' lockdep and leave only 
-> those locks active for runtime lockdep tracking whose dependencies it 
-> cannot prove to be correct yet.
+Note: like this, the test is pretty close to the LTP membarrier basic
+tests, and both can be maintained together.
 
-It is a pretty interesting idea to use objtool to scan for locks. The
-list of locks that I marked as terminal in this patch was found by
-looking at /proc/lockdep for those that only have backward dependencies,
-but no forward dependency. I focused on those with a large number of BDs
-and check the code to see if they could marked as terminal. This is a
-rather labor intensive process and is subject to error. It would be nice
-if it can be done by an automated tool. So I am going to look into that,
-but it won't be part of this initial patchset, though.
+Link: https://bugs.linaro.org/show_bug.cgi?id=3771
+Link: http://lists.linux.it/pipermail/ltp/2018-October/009578.html
+Signed-off-by: Rafael David Tinoco <rafael.tinoco@linaro.org>
+---
+ .../selftests/membarrier/membarrier_test.c    | 566 ++++++++++--------
+ 1 file changed, 314 insertions(+), 252 deletions(-)
 
-I sent this patchset out to see if anyone has any objection to it. It
-seems you don't have any objection to that. So I am going to move ahead
-to do more testing and performance analysis.
-
-Thanks,
-Longman
+diff --git a/tools/testing/selftests/membarrier/membarrier_test.c b/tools/testing/selftests/membarrier/membarrier_test.c
+index 6793f8ecc8e7..7eb0e2395cbd 100644
+--- a/tools/testing/selftests/membarrier/membarrier_test.c
++++ b/tools/testing/selftests/membarrier/membarrier_test.c
+@@ -8,305 +8,367 @@
+ 
+ #include "../kselftest.h"
+ 
++#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
++
++struct test_case {
++	char testname[80];
++	int command;		/* membarrier cmd                            */
++	int needregister;	/* membarrier cmd needs register cmd	     */
++	int flags;		/* flags for given membarrier cmd	     */
++	long exp_ret;		/* expected return code for given cmd        */
++	int exp_errno;		/* expected errno for given cmd failure      */
++	int enabled;		/* enabled, despite results from CMD_QUERY   */
++	int always;		/* CMD_QUERY should always enable this test  */
++	int force;		/* force if CMD_QUERY reports not enabled    */
++	int force_exp_errno;	/* expected errno after forced cmd           */
++};
++
++struct test_case tc[] = {
++	{
++	 /*
++	  * case 00) invalid cmd
++	  *     - enabled by default
++	  *     - should always fail with EINVAL
++	  */
++	 .testname = "cmd_fail",
++	 .command = -1,
++	 .exp_ret = -1,
++	 .exp_errno = EINVAL,
++	 .enabled = 1,
++	 },
++	{
++	 /*
++	  * case 01) invalid flags
++	  *     - enabled by default
++	  *     - should always fail with EINVAL
++	  */
++	 .testname = "cmd_flags_fail",
++	 .command = MEMBARRIER_CMD_QUERY,
++	 .flags = 1,
++	 .exp_ret = -1,
++	 .exp_errno = EINVAL,
++	 .enabled = 1,
++	 },
++	{
++	 /*
++	  * case 02) global barrier
++	  *     - should ALWAYS be enabled by CMD_QUERY
++	  *     - should always succeed
++	  */
++	 .testname = "cmd_global_success",
++	 .command = MEMBARRIER_CMD_GLOBAL,
++	 .flags = 0,
++	 .exp_ret = 0,
++	 .always = 1,
++	 },
++	 /*
++	  * commit 22e4ebb975 (v4.14-rc1) added cases 03, 04 and 05 features:
++	  */
++	{
++	 /*
++	  * case 03) private expedited barrier with no registrations
++	  *     - should fail with errno=EPERM due to no registrations
++	  *     - or be skipped if unsupported by running kernel
++	  */
++	 .testname = "cmd_private_expedited_fail",
++	 .command = MEMBARRIER_CMD_PRIVATE_EXPEDITED,
++	 .flags = 0,
++	 .exp_ret = -1,
++	 .exp_errno = EPERM,
++	 },
++	{
++	 /*
++	  * case 04) register private expedited
++	  *     - should succeed when supported by running kernel
++	  *     - or fail with errno=EINVAL if unsupported and forced
++	  */
++	 .testname = "cmd_private_expedited_register_success",
++	 .command = MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED,
++	 .flags = 0,
++	 .exp_ret = 0,
++	 .force = 1,
++	 .force_exp_errno = EINVAL,
++	 },
++	{
++	 /*
++	  * case 05) private expedited barrier with registration
++	  *     - should succeed due to existing registration
++	  *     - or fail with errno=EINVAL if unsupported and forced
++	  *     - NOTE: commit 70216e18e5 (v4.16-rc1) changed behavior:
++	  *     -       (a) if unsupported, and forced, < 4.16 , errno is EINVAL
++	  *     -       (b) if unsupported, and forced, >= 4.16, errno is EPERM
++	  */
++	 .testname = "cmd_private_expedited_success",
++	 .needregister = MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED,
++	 .command = MEMBARRIER_CMD_PRIVATE_EXPEDITED,
++	 .flags = 0,
++	 .exp_ret = 0,
++	 .force = 1,
++	 .force_exp_errno = EPERM,
++	 },
++	 /*
++	  * commit 70216e18e5 (v4.16-rc1) added cases 06, 07 and 08 features:
++	  */
++	{
++	 /*
++	  * case 06) private expedited sync core barrier with no registrations
++	  *     - should fail with errno=EPERM due to no registrations
++	  *     - or be skipped if unsupported by running kernel
++	  */
++	 .testname = "cmd_private_expedited_sync_core_fail",
++	 .command = MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE,
++	 .flags = 0,
++	 .exp_ret = -1,
++	 .exp_errno = EPERM,
++	 },
++	{
++	 /*
++	  * case 07) register private expedited sync core
++	  *     - should succeed when supported by running kernel
++	  *     - or fail with errno=EINVAL if unsupported and forced
++	  */
++	 .testname = "cmd_private_expedited_sync_core_register_success",
++	 .command = MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE,
++	 .flags = 0,
++	 .exp_ret = 0,
++	 .force = 1,
++	 .force_exp_errno = EINVAL,
++	 },
++	{
++	 /*
++	  * case 08) private expedited sync core barrier with registration
++	  *     - should succeed due to existing registration
++	  *     - or fail with errno=EINVAL if unsupported and forced
++	  */
++	 .testname = "cmd_private_expedited_sync_core_success",
++	 .needregister = MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE,
++	 .command = MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE,
++	 .flags = 0,
++	 .exp_ret = 0,
++	 .force = 1,
++	 .force_exp_errno = EINVAL,
++	 },
++	 /*
++	  * commit c5f58bd58f4 (v4.16-rc1) added cases 09, 10 and 11 features:
++	  */
++	{
++	 /*
++	  * case 09) global expedited barrier with no registrations
++	  *     - should never fail due to no registrations
++	  *     - or be skipped if unsupported by running kernel
++	  */
++	 .testname = "cmd_global_expedited_success",
++	 .command = MEMBARRIER_CMD_GLOBAL_EXPEDITED,
++	 .flags = 0,
++	 .exp_ret = 0,
++	 },
++	{
++	 /*
++	  * case 10) register global expedited
++	  *     - should succeed when supported by running kernel
++	  *     - or fail with errno=EINVAL if unsupported and forced
++	  */
++	 .testname = "cmd_global_expedited_register_success",
++	 .command = MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED,
++	 .flags = 0,
++	 .exp_ret = 0,
++	 .force = 1,
++	 .force_exp_errno = EINVAL,
++	 },
++	{
++	 /*
++	  * case 11) global expedited barrier with registration
++	  *     - should also succeed with registrations
++	  *     - or fail with errno=EINVAL if unsupported and forced
++	  */
++	 .testname = "cmd_global_expedited_success",
++	 .needregister = MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED,
++	 .command = MEMBARRIER_CMD_GLOBAL_EXPEDITED,
++	 .flags = 0,
++	 .exp_ret = 0,
++	 .force = 1,
++	 .force_exp_errno = EINVAL,
++	 },
++};
++
++#define passed_ok(_test)						       \
++	do {								       \
++		ksft_test_result_pass("membarrier(2): %s passed.\n",	       \
++			_test.testname);				       \
++		return;							       \
++	} while (0)
++
++#define passed_unexpec(_test)						       \
++	do {								       \
++		ksft_exit_fail_msg("membarrier(2): %s passed unexpectedly. "   \
++			"ret = %ld with errno %d were expected. (force: %d)\n",\
++			_test.testname, _test.exp_ret, _test.exp_errno,        \
++			_test.force);					       \
++		return;							       \
++	} while (0)
++
++#define failed_ok(_test)						       \
++	do {								       \
++		ksft_test_result_pass("membarrier(2): %s failed as "	       \
++			"expected.\n", _test.testname);			       \
++		return;							       \
++	} while (0)
++
++#define failed_ok_unsupported(_test)					       \
++	do {								       \
++		ksft_test_result_pass("membarrier(2): %s failed as expected.\n"\
++			"(unsupported)", _test.testname);		       \
++		return;							       \
++	} while (0)
++
++#define failed_not_ok(_test, _gotret, _goterr)				       \
++	do {								       \
++		ksft_exit_fail_msg("membarrier(2): %s failed. "		       \
++			"ret = %ld when expected was %ld. "		       \
++			"errno = %d when expected was %d. (force: %d)\n",      \
++			_test.testname, _gotret, _test.exp_ret, _goterr,       \
++			_test.exp_errno, _test.force);			       \
++		return;							       \
++	} while (0)
++
++#define failed_unexpec(_test, _gotret, _goterr) 			       \
++	do {								       \
++		ksft_exit_fail_msg("membarrier(2): %s failed unexpectedly. "   \
++			"Got ret = %ld with errno %d. (force: %d)\n",	       \
++			_test.testname, _gotret, _goterr, _test.force);	       \
++		return;							       \
++	} while (0)
++
++#define skipped(_test)							       \
++	do {								       \
++		ksft_test_result_pass("membarrier(2): %s skipped (unsupp)\n",  \
++			_test.testname);				       \
++		return;							       \
++	} while (0)
++
++#define skipped_fail(_test)						       \
++	do {								       \
++		ksft_exit_fail_msg("membarrier(2): %s reported as "	       \
++			"unsupported\n", _test.testname);		       \
++		return;							       \
++	} while (0)
++
+ static int sys_membarrier(int cmd, int flags)
+ {
+ 	return syscall(__NR_membarrier, cmd, flags);
+ }
+ 
+-static int test_membarrier_cmd_fail(void)
++static void test_membarrier_setup(void)
+ {
+-	int cmd = -1, flags = 0;
+-	const char *test_name = "sys membarrier invalid command";
++	size_t i;
++	int ret;
+ 
+-	if (sys_membarrier(cmd, flags) != -1) {
+-		ksft_exit_fail_msg(
+-			"%s test: command = %d, flags = %d. Should fail, but passed\n",
+-			test_name, cmd, flags);
+-	}
+-	if (errno != EINVAL) {
+-		ksft_exit_fail_msg(
+-			"%s test: flags = %d. Should return (%d: \"%s\"), but returned (%d: \"%s\").\n",
+-			test_name, flags, EINVAL, strerror(EINVAL),
+-			errno, strerror(errno));
++	ret = sys_membarrier(MEMBARRIER_CMD_QUERY, 0);
++	if (ret < 0) {
++		if (errno == ENOSYS)
++			ksft_test_result_skip("membarrier(2): not supported\n");
+ 	}
+ 
+-	ksft_test_result_pass(
+-		"%s test: command = %d, flags = %d, errno = %d. Failed as expected\n",
+-		test_name, cmd, flags, errno);
+-	return 0;
+-}
+-
+-static int test_membarrier_flags_fail(void)
+-{
+-	int cmd = MEMBARRIER_CMD_QUERY, flags = 1;
+-	const char *test_name = "sys membarrier MEMBARRIER_CMD_QUERY invalid flags";
+-
+-	if (sys_membarrier(cmd, flags) != -1) {
+-		ksft_exit_fail_msg(
+-			"%s test: flags = %d. Should fail, but passed\n",
+-			test_name, flags);
++	for (i = 0; i < ARRAY_SIZE(tc); i++) {
++		if ((tc[i].command > 0) && (ret & tc[i].command))
++			tc[i].enabled = 1;
+ 	}
+-	if (errno != EINVAL) {
+-		ksft_exit_fail_msg(
+-			"%s test: flags = %d. Should return (%d: \"%s\"), but returned (%d: \"%s\").\n",
+-			test_name, flags, EINVAL, strerror(EINVAL),
+-			errno, strerror(errno));
+-	}
+-
+-	ksft_test_result_pass(
+-		"%s test: flags = %d, errno = %d. Failed as expected\n",
+-		test_name, flags, errno);
+-	return 0;
+ }
+ 
+-static int test_membarrier_global_success(void)
++static void test_membarrier_run(unsigned int i)
+ {
+-	int cmd = MEMBARRIER_CMD_GLOBAL, flags = 0;
+-	const char *test_name = "sys membarrier MEMBARRIER_CMD_GLOBAL";
++	int ret, err = 0;
+ 
+-	if (sys_membarrier(cmd, flags) != 0) {
+-		ksft_exit_fail_msg(
+-			"%s test: flags = %d, errno = %d\n",
+-			test_name, flags, errno);
+-	}
++	/* not enabled and not enforced: test is skipped */
+ 
+-	ksft_test_result_pass(
+-		"%s test: flags = %d\n", test_name, flags);
+-	return 0;
+-}
++	if (!tc[i].enabled && !tc[i].force) {
+ 
+-static int test_membarrier_private_expedited_fail(void)
+-{
+-	int cmd = MEMBARRIER_CMD_PRIVATE_EXPEDITED, flags = 0;
+-	const char *test_name = "sys membarrier MEMBARRIER_CMD_PRIVATE_EXPEDITED not registered failure";
++		if (tc[i].always == 0)
++			skipped(tc[i]);
+ 
+-	if (sys_membarrier(cmd, flags) != -1) {
+-		ksft_exit_fail_msg(
+-			"%s test: flags = %d. Should fail, but passed\n",
+-			test_name, flags);
+-	}
+-	if (errno != EPERM) {
+-		ksft_exit_fail_msg(
+-			"%s test: flags = %d. Should return (%d: \"%s\"), but returned (%d: \"%s\").\n",
+-			test_name, flags, EPERM, strerror(EPERM),
+-			errno, strerror(errno));
++		skipped_fail(tc[i]);
+ 	}
+ 
+-	ksft_test_result_pass(
+-		"%s test: flags = %d, errno = %d\n",
+-		test_name, flags, errno);
+-	return 0;
+-}
++	/* iterations: registration needed for some cases */
+ 
+-static int test_membarrier_register_private_expedited_success(void)
+-{
+-	int cmd = MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED, flags = 0;
+-	const char *test_name = "sys membarrier MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED";
+-
+-	if (sys_membarrier(cmd, flags) != 0) {
+-		ksft_exit_fail_msg(
+-			"%s test: flags = %d, errno = %d\n",
+-			test_name, flags, errno);
++	if (tc[i].needregister && tc[i].enabled) {
++		ret = sys_membarrier(tc[i].needregister, 0);
++		if (ret < 0) {
++			ksft_test_result_fail("membarrier(2): %s could not"
++					"register\n", tc[i].testname);
++		}
+ 	}
+ 
+-	ksft_test_result_pass(
+-		"%s test: flags = %d\n",
+-		test_name, flags);
+-	return 0;
+-}
++	ret = sys_membarrier(tc[i].command, tc[i].flags);
++	err = errno;
+ 
+-static int test_membarrier_private_expedited_success(void)
+-{
+-	int cmd = MEMBARRIER_CMD_PRIVATE_EXPEDITED, flags = 0;
+-	const char *test_name = "sys membarrier MEMBARRIER_CMD_PRIVATE_EXPEDITED";
++	/* enabled and not enforced: regular expected results only */
+ 
+-	if (sys_membarrier(cmd, flags) != 0) {
+-		ksft_exit_fail_msg(
+-			"%s test: flags = %d, errno = %d\n",
+-			test_name, flags, errno);
+-	}
++	if (tc[i].enabled && !tc[i].force) {
+ 
+-	ksft_test_result_pass(
+-		"%s test: flags = %d\n",
+-		test_name, flags);
+-	return 0;
+-}
++		if (ret >= 0 && tc[i].exp_ret == ret)
++			passed_ok(tc[i]);
+ 
+-static int test_membarrier_private_expedited_sync_core_fail(void)
+-{
+-	int cmd = MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE, flags = 0;
+-	const char *test_name = "sys membarrier MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE not registered failure";
+-
+-	if (sys_membarrier(cmd, flags) != -1) {
+-		ksft_exit_fail_msg(
+-			"%s test: flags = %d. Should fail, but passed\n",
+-			test_name, flags);
+-	}
+-	if (errno != EPERM) {
+-		ksft_exit_fail_msg(
+-			"%s test: flags = %d. Should return (%d: \"%s\"), but returned (%d: \"%s\").\n",
+-			test_name, flags, EPERM, strerror(EPERM),
+-			errno, strerror(errno));
+-	}
+-
+-	ksft_test_result_pass(
+-		"%s test: flags = %d, errno = %d\n",
+-		test_name, flags, errno);
+-	return 0;
+-}
+-
+-static int test_membarrier_register_private_expedited_sync_core_success(void)
+-{
+-	int cmd = MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE, flags = 0;
+-	const char *test_name = "sys membarrier MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE";
+-
+-	if (sys_membarrier(cmd, flags) != 0) {
+-		ksft_exit_fail_msg(
+-			"%s test: flags = %d, errno = %d\n",
+-			test_name, flags, errno);
++		if (ret < 0) {
++			if (tc[i].exp_ret == ret)
++				failed_ok(tc[i]);
++			else
++				failed_not_ok(tc[i], ret, err);
++		}
+ 	}
+ 
+-	ksft_test_result_pass(
+-		"%s test: flags = %d\n",
+-		test_name, flags);
+-	return 0;
+-}
++	/* not enabled and enforced: failure and expected errors */
+ 
+-static int test_membarrier_private_expedited_sync_core_success(void)
+-{
+-	int cmd = MEMBARRIER_CMD_PRIVATE_EXPEDITED, flags = 0;
+-	const char *test_name = "sys membarrier MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE";
++	if (!tc[i].enabled && tc[i].force) {
+ 
+-	if (sys_membarrier(cmd, flags) != 0) {
+-		ksft_exit_fail_msg(
+-			"%s test: flags = %d, errno = %d\n",
+-			test_name, flags, errno);
+-	}
++		if (ret >= 0)
++			passed_unexpec(tc[i]);
+ 
+-	ksft_test_result_pass(
+-		"%s test: flags = %d\n",
+-		test_name, flags);
+-	return 0;
+-}
+-
+-static int test_membarrier_register_global_expedited_success(void)
+-{
+-	int cmd = MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED, flags = 0;
+-	const char *test_name = "sys membarrier MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED";
+-
+-	if (sys_membarrier(cmd, flags) != 0) {
+-		ksft_exit_fail_msg(
+-			"%s test: flags = %d, errno = %d\n",
+-			test_name, flags, errno);
++		if (ret < 0) {
++			if (tc[i].force_exp_errno == err)
++				failed_ok_unsupported(tc[i]);
++			else
++				failed_unexpec(tc[i], ret, err);
++		}
+ 	}
+ 
+-	ksft_test_result_pass(
+-		"%s test: flags = %d\n",
+-		test_name, flags);
+-	return 0;
+-}
++	/* enabled and enforced: tricky */
+ 
+-static int test_membarrier_global_expedited_success(void)
+-{
+-	int cmd = MEMBARRIER_CMD_GLOBAL_EXPEDITED, flags = 0;
+-	const char *test_name = "sys membarrier MEMBARRIER_CMD_GLOBAL_EXPEDITED";
++	if (tc[i].enabled && tc[i].force) {
+ 
+-	if (sys_membarrier(cmd, flags) != 0) {
+-		ksft_exit_fail_msg(
+-			"%s test: flags = %d, errno = %d\n",
+-			test_name, flags, errno);
+-	}
++		if (ret >= 0) {
++			if (tc[i].exp_ret == ret)
++				passed_ok(tc[i]);
++			else
++				passed_unexpec(tc[i]);
++		}
+ 
+-	ksft_test_result_pass(
+-		"%s test: flags = %d\n",
+-		test_name, flags);
+-	return 0;
+-}
++		if (ret < 0) {
+ 
+-static int test_membarrier(void)
+-{
+-	int status;
+-
+-	status = test_membarrier_cmd_fail();
+-	if (status)
+-		return status;
+-	status = test_membarrier_flags_fail();
+-	if (status)
+-		return status;
+-	status = test_membarrier_global_success();
+-	if (status)
+-		return status;
+-	status = test_membarrier_private_expedited_fail();
+-	if (status)
+-		return status;
+-	status = test_membarrier_register_private_expedited_success();
+-	if (status)
+-		return status;
+-	status = test_membarrier_private_expedited_success();
+-	if (status)
+-		return status;
+-	status = sys_membarrier(MEMBARRIER_CMD_QUERY, 0);
+-	if (status < 0) {
+-		ksft_test_result_fail("sys_membarrier() failed\n");
+-		return status;
+-	}
+-	if (status & MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE) {
+-		status = test_membarrier_private_expedited_sync_core_fail();
+-		if (status)
+-			return status;
+-		status = test_membarrier_register_private_expedited_sync_core_success();
+-		if (status)
+-			return status;
+-		status = test_membarrier_private_expedited_sync_core_success();
+-		if (status)
+-			return status;
+-	}
+-	/*
+-	 * It is valid to send a global membarrier from a non-registered
+-	 * process.
+-	 */
+-	status = test_membarrier_global_expedited_success();
+-	if (status)
+-		return status;
+-	status = test_membarrier_register_global_expedited_success();
+-	if (status)
+-		return status;
+-	status = test_membarrier_global_expedited_success();
+-	if (status)
+-		return status;
+-	return 0;
+-}
++			if (tc[i].exp_ret == ret) {
+ 
+-static int test_membarrier_query(void)
+-{
+-	int flags = 0, ret;
++				if (tc[i].exp_errno == err)
++					failed_ok(tc[i]);
++				else
++					failed_unexpec(tc[i], ret, err);
++			}
+ 
+-	ret = sys_membarrier(MEMBARRIER_CMD_QUERY, flags);
+-	if (ret < 0) {
+-		if (errno == ENOSYS) {
+-			/*
+-			 * It is valid to build a kernel with
+-			 * CONFIG_MEMBARRIER=n. However, this skips the tests.
+-			 */
+-			ksft_exit_skip(
+-				"sys membarrier (CONFIG_MEMBARRIER) is disabled.\n");
++			/* unknown on force failure if enabled and forced */
++			failed_unexpec(tc[i], ret, err);
+ 		}
+-		ksft_exit_fail_msg("sys_membarrier() failed\n");
+ 	}
+-	if (!(ret & MEMBARRIER_CMD_GLOBAL))
+-		ksft_exit_skip(
+-			"sys_membarrier unsupported: CMD_GLOBAL not found.\n");
+-
+-	ksft_test_result_pass("sys_membarrier available\n");
+-	return 0;
+ }
+ 
+ int main(int argc, char **argv)
+ {
++	size_t i;
++
+ 	ksft_print_header();
+ 
+-	test_membarrier_query();
+-	test_membarrier();
++	test_membarrier_setup();
++
++	for (i = 0; i < ARRAY_SIZE(tc); i++)
++		test_membarrier_run(i);
+ 
+ 	return ksft_exit_pass();
+ }
+-- 
+2.19.1
 
