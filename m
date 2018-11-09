@@ -2,84 +2,105 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 571FDC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 12:18:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1109EC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 12:22:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 143D920825
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 12:18:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GlgjF6ba"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 143D920825
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id BADC9206BA
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 12:22:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BADC9206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728287AbeKIV6r (ORCPT
+        id S1727843AbeKIWC5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 16:58:47 -0500
-Received: from mail-pg1-f170.google.com ([209.85.215.170]:45411 "EHLO
-        mail-pg1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727560AbeKIV6r (ORCPT
+        Fri, 9 Nov 2018 17:02:57 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:51648 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727560AbeKIWC5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 16:58:47 -0500
-Received: by mail-pg1-f170.google.com with SMTP id y4so776386pgc.12;
-        Fri, 09 Nov 2018 04:18:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=2j7PfuQgbZ58588hn2iU83YD9edHxteeT4rq6HCABZ0=;
-        b=GlgjF6bahBXm81mDj2MdXYEU/6bv4x2or1tZ3gJkYgKUrcIr6AMwPu5Jbrmyo6PlPR
-         kuw7MXX9n8XHSn2cv5wc3H0aYSRnMIlX2k1cE1gQkpKt8OHSN7AyllxxfZ3wWo2Eklr6
-         jdPxJqQI2i/9xMESEvkY3Ws/1bSmS9Fctpd1MgiL6oXrjhNMmbC9nPT0SHbOz9CmrNsp
-         vxkCuLAxCJR/0DNNQVHvmX9hClCR5LzQAH0ztzJgkfksR0zTsVVAeUym4Cz7ayUUgRTY
-         V4E24IULms43sNr0+O+IvBSogJD1oZ4LLKsfNDhVGuCpEQRPca7P+X89snSoXJM6eqfS
-         eiVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=2j7PfuQgbZ58588hn2iU83YD9edHxteeT4rq6HCABZ0=;
-        b=mpdIx8CAT+HQ0laD4CNbZQM6NzXL5UZwAkEWbdtTrNDHJkRHLSZIsYPmnKI9eZ/4nl
-         9lcq+Qg/CKmsfyOf5VYElhQAxjx3dP/h+irZDdeKUs0W1meg72BbsF7pshkkTNCGVp8Q
-         Dqlb+bosb/tZCBFghw2w9Sj7vLsjJJd4eERzgIOnykp+WRp5eNltbsHUAQ4Dk7CyyTxh
-         QknQsxcxCB7Z3KC0VvKtIV6AeobT907VFReoBT3Sgc05QDlTncLP82obh+ycV9HM72sY
-         IFGk22XFWVyCPycCsxSGKYQ0nyHzwuh0xnNnTx//jlp8HIgXeJyaOuhVfQWwXKx/2geA
-         onqQ==
-X-Gm-Message-State: AGRZ1gKkilLjxL505NZ9wo4iaNysKHgSqklrtv6zWI7HI7hh8JLO7Sb1
-        VWUaGGmQJG8nrE+i8n5VRKI=
-X-Google-Smtp-Source: AJdET5eiPC559jKPulkrgJ74F9kMUZghAZ4/iY82arGbOnC6XWGvqLlr+khyiOVzqRLurKCRxuW6+g==
-X-Received: by 2002:a63:f241:: with SMTP id d1mr7325520pgk.2.1541765904420;
-        Fri, 09 Nov 2018 04:18:24 -0800 (PST)
-Received: from suraj-Inspiron-5370.nitk.ac.in ([2409:4071:211d:4f4e:b056:9584:f527:78d6])
-        by smtp.gmail.com with ESMTPSA id 18sm5490752pgl.50.2018.11.09.04.18.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 09 Nov 2018 04:18:23 -0800 (PST)
-From:   Suraj Singh <suraj1998@gmail.com>
-To:     davem@davemloft.net
-Cc:     kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        suraj1998@gmail.com, LinoSanfilippo@gmx.de
-Subject: Re: net: ipv4: tcp_westwood
-Date:   Fri,  9 Nov 2018 17:48:07 +0530
-Message-Id: <1541765887-2923-1-git-send-email-suraj1998@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1541670377-17483-1-git-send-email-suraj1998@gmail.com>
-References: <1541670377-17483-1-git-send-email-suraj1998@gmail.com>
+        Fri, 9 Nov 2018 17:02:57 -0500
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
+   d="scan'208";a="47736632"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 09 Nov 2018 20:22:27 +0800
+Received: from G08CNEXCHPEKD02.g08.fujitsu.local (unknown [10.167.33.83])
+        by cn.fujitsu.com (Postfix) with ESMTP id 8A1904B71EA6;
+        Fri,  9 Nov 2018 20:22:27 +0800 (CST)
+Received: from TSAO.g08.fujitsu.local (10.167.226.60) by
+ G08CNEXCHPEKD02.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 9 Nov 2018 20:22:26 +0800
+From:   Cao jin <caoj.fnst@cn.fujitsu.com>
+To:     <x86@kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+        <hpa@zytor.com>
+Subject: [PATCH] x86/mkpiggy: Drop endianness transforming
+Date:   Fri, 9 Nov 2018 20:19:29 +0800
+Message-ID: <20181109121929.11448-1-caoj.fnst@cn.fujitsu.com>
+X-Mailer: git-send-email 2.17.2
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.167.226.60]
+X-yoursite-MailScanner-ID: 8A1904B71EA6.ABB5E
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: caoj.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lino,
+gzip file has 4-byte little-endian file size encoded at the end of file,
+while all the other compressed kernel file has size_append operation in
+the Makefile which also append the 4-byte little-endian file size. There
+is no need to do endianness transforming by mkpiggy.
 
-Thank you for clarifying the doubts I had and for the suggestion on where to
-start contributing. Previously, and in this patch  I hadn't configured mutt 
-and was manually using git send-mail to respond to each thread using the 
-corresponding mail-id. That's why I wasn't sure why even in this patch, 
-"staging: " had appeared even after editing the commit message. Now that I've 
-got the email client setup, I'll fix that "staging: " issue and send a [v3] 
-patch.
+Signed-off-by: Cao jin <caoj.fnst@cn.fujitsu.com>
+---
+
+A simple printf debug line before transformation also shows they are the
+same among 6 compression.
+
+ arch/x86/boot/compressed/Makefile  | 1 -
+ arch/x86/boot/compressed/mkpiggy.c | 2 --
+ 2 files changed, 3 deletions(-)
+
+diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
+index 466f66c8a7f8..8b2bcfd65920 100644
+--- a/arch/x86/boot/compressed/Makefile
++++ b/arch/x86/boot/compressed/Makefile
+@@ -58,7 +58,6 @@ endif
+ LDFLAGS_vmlinux := -T
+ 
+ hostprogs-y	:= mkpiggy
+-HOST_EXTRACFLAGS += -I$(srctree)/tools/include
+ 
+ sed-voffset := -e 's/^\([0-9a-fA-F]*\) [ABCDGRSTVW] \(_text\|__bss_start\|_end\)$$/\#define VO_\2 _AC(0x\1,UL)/p'
+ 
+diff --git a/arch/x86/boot/compressed/mkpiggy.c b/arch/x86/boot/compressed/mkpiggy.c
+index 72bad2c8debe..d5402fcd844a 100644
+--- a/arch/x86/boot/compressed/mkpiggy.c
++++ b/arch/x86/boot/compressed/mkpiggy.c
+@@ -28,7 +28,6 @@
+ #include <stdio.h>
+ #include <string.h>
+ #include <inttypes.h>
+-#include <tools/le_byteshift.h>
+ 
+ int main(int argc, char *argv[])
+ {
+@@ -61,7 +60,6 @@ int main(int argc, char *argv[])
+ 	}
+ 
+ 	ilen = ftell(f);
+-	olen = get_unaligned_le32(&olen);
+ 
+ 	printf(".section \".rodata..compressed\",\"a\",@progbits\n");
+ 	printf(".globl z_input_len\n");
+-- 
+2.17.0
+
+
+
