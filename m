@@ -3,36 +3,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C673CC43610
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:03:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C6D4C0044C
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:03:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9666D20855
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:03:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9666D20855
+	by mail.kernel.org (Postfix) with ESMTP id 3CA4F20855
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:03:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CA4F20855
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=angband.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728870AbeKJEpX (ORCPT
+        id S1728897AbeKJEpY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 23:45:23 -0500
-Received: from tartarus.angband.pl ([54.37.238.230]:51362 "EHLO
+        Fri, 9 Nov 2018 23:45:24 -0500
+Received: from tartarus.angband.pl ([54.37.238.230]:51400 "EHLO
         tartarus.angband.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728763AbeKJEpV (ORCPT
+        with ESMTP id S1728683AbeKJEpX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 23:45:21 -0500
+        Fri, 9 Nov 2018 23:45:23 -0500
 Received: from 89-64-163-218.dynamic.chello.pl ([89.64.163.218] helo=barad-dur.angband.pl)
         by tartarus.angband.pl with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <kilobyte@angband.pl>)
-        id 1gLC3t-00052m-Rv; Fri, 09 Nov 2018 20:03:23 +0100
+        id 1gLC3v-000537-7L; Fri, 09 Nov 2018 20:03:24 +0100
 Received: from kholdan.angband.pl ([2001:470:64f4::5])
         by barad-dur.angband.pl with smtp (Exim 4.89)
         (envelope-from <kilobyte@angband.pl>)
-        id 1gLC3s-00059v-BH; Fri, 09 Nov 2018 20:03:21 +0100
-Received: by kholdan.angband.pl (sSMTP sendmail emulation); Fri, 09 Nov 2018 20:03:20 +0100
+        id 1gLC3t-00059y-MG; Fri, 09 Nov 2018 20:03:22 +0100
+Received: by kholdan.angband.pl (sSMTP sendmail emulation); Fri, 09 Nov 2018 20:03:21 +0100
 From:   Adam Borowski <kilobyte@angband.pl>
 To:     linux-kernel@vger.kernel.org, Nick Terrell <terrelln@fb.com>,
         Russell King <linux@armlinux.org.uk>,
@@ -62,8 +62,8 @@ To:     linux-kernel@vger.kernel.org, Nick Terrell <terrelln@fb.com>,
         Max Filippov <jcmvbkbc@gmail.com>,
         linux-xtensa@linux-xtensa.org
 Cc:     Adam Borowski <kilobyte@angband.pl>
-Date:   Fri,  9 Nov 2018 20:02:53 +0100
-Message-Id: <20181109190304.8573-6-kilobyte@angband.pl>
+Date:   Fri,  9 Nov 2018 20:02:54 +0100
+Message-Id: <20181109190304.8573-7-kilobyte@angband.pl>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181109190304.8573-1-kilobyte@angband.pl>
 References: <20181109185953.xwyelyqnygbskkxk@angband.pl>
@@ -72,7 +72,7 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 89.64.163.218
 X-SA-Exim-Mail-From: kilobyte@angband.pl
-Subject: [PATCH 06/17] parisc: Remove support for BZIP2 and LZMA compressed kernel
+Subject: [PATCH 07/17] s390: Remove support for BZIP2 and LZMA compressed kernel
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on tartarus.angband.pl)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -84,50 +84,48 @@ Made redundant by newer choices.
 
 Signed-off-by: Adam Borowski <kilobyte@angband.pl>
 ---
- arch/parisc/Kconfig                  |  2 --
- arch/parisc/boot/compressed/Makefile | 10 ++--------
- arch/parisc/boot/compressed/misc.c   |  8 --------
- 3 files changed, 2 insertions(+), 18 deletions(-)
+ arch/s390/Kconfig                        | 2 --
+ arch/s390/boot/compressed/Makefile       | 8 +-------
+ arch/s390/boot/compressed/decompressor.c | 8 --------
+ 3 files changed, 1 insertion(+), 17 deletions(-)
 
-diff --git a/arch/parisc/Kconfig b/arch/parisc/Kconfig
-index 92a339ee28b3..a9cca7d1a8d8 100644
---- a/arch/parisc/Kconfig
-+++ b/arch/parisc/Kconfig
-@@ -18,10 +18,8 @@ config PARISC
- 	select BUG
- 	select BUILDTIME_EXTABLE_SORT
- 	select HAVE_PERF_EVENTS
+diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+index 5173366af8f3..96adb6127246 100644
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -150,10 +150,8 @@ config S390
+ 	select HAVE_FUNCTION_TRACER
+ 	select HAVE_FUTEX_CMPXCHG if FUTEX
+ 	select HAVE_GCC_PLUGINS
 -	select HAVE_KERNEL_BZIP2
  	select HAVE_KERNEL_GZIP
  	select HAVE_KERNEL_LZ4
 -	select HAVE_KERNEL_LZMA
  	select HAVE_KERNEL_LZO
+ 	select HAVE_KERNEL_UNCOMPRESSED
  	select HAVE_KERNEL_XZ
- 	select GENERIC_ATOMIC64 if !64BIT
-diff --git a/arch/parisc/boot/compressed/Makefile b/arch/parisc/boot/compressed/Makefile
-index 777533cdea31..a05f36f9279b 100644
---- a/arch/parisc/boot/compressed/Makefile
-+++ b/arch/parisc/boot/compressed/Makefile
-@@ -8,8 +8,8 @@ KCOV_INSTRUMENT := n
- GCOV_PROFILE := n
- UBSAN_SANITIZE := n
+diff --git a/arch/s390/boot/compressed/Makefile b/arch/s390/boot/compressed/Makefile
+index 593039620487..ddd9d44fb7a8 100644
+--- a/arch/s390/boot/compressed/Makefile
++++ b/arch/s390/boot/compressed/Makefile
+@@ -11,7 +11,7 @@ UBSAN_SANITIZE := n
+ KASAN_SANITIZE := n
  
--targets := vmlinux.lds vmlinux vmlinux.bin vmlinux.bin.gz vmlinux.bin.bz2
--targets += vmlinux.bin.xz vmlinux.bin.lzma vmlinux.bin.lzo vmlinux.bin.lz4
-+targets := vmlinux.lds vmlinux vmlinux.bin vmlinux.bin.gz
-+targets += vmlinux.bin.xz vmlinux.bin.lzo vmlinux.bin.lz4
- targets += misc.o piggy.o sizes.h head.o real2.o firmware.o
+ obj-y	:= $(if $(CONFIG_KERNEL_UNCOMPRESSED),,decompressor.o) piggy.o info.o
+-targets	:= vmlinux.lds vmlinux vmlinux.bin vmlinux.bin.gz vmlinux.bin.bz2
++targets	:= vmlinux.lds vmlinux vmlinux.bin vmlinux.bin.gz
+ targets += vmlinux.bin.xz vmlinux.bin.lzma vmlinux.bin.lzo vmlinux.bin.lz4
+ targets += info.bin $(obj-y)
  
- KBUILD_CFLAGS := -D__KERNEL__ -O2 -DBOOTLOADER
-@@ -60,20 +60,14 @@ $(obj)/vmlinux.bin: vmlinux
+@@ -40,20 +40,14 @@ $(obj)/vmlinux.bin: vmlinux FORCE
  vmlinux.bin.all-y := $(obj)/vmlinux.bin
  
- suffix-$(CONFIG_KERNEL_GZIP)  := gz
--suffix-$(CONFIG_KERNEL_BZIP2) := bz2
- suffix-$(CONFIG_KERNEL_LZ4)  := lz4
--suffix-$(CONFIG_KERNEL_LZMA)  := lzma
- suffix-$(CONFIG_KERNEL_LZO)  := lzo
- suffix-$(CONFIG_KERNEL_XZ)  := xz
+ suffix-$(CONFIG_KERNEL_GZIP)  := .gz
+-suffix-$(CONFIG_KERNEL_BZIP2) := .bz2
+ suffix-$(CONFIG_KERNEL_LZ4)  := .lz4
+-suffix-$(CONFIG_KERNEL_LZMA)  := .lzma
+ suffix-$(CONFIG_KERNEL_LZO)  := .lzo
+ suffix-$(CONFIG_KERNEL_XZ)  := .xz
  
  $(obj)/vmlinux.bin.gz: $(vmlinux.bin.all-y)
  	$(call if_changed,gzip)
@@ -140,11 +138,11 @@ index 777533cdea31..a05f36f9279b 100644
  $(obj)/vmlinux.bin.lzo: $(vmlinux.bin.all-y)
  	$(call if_changed,lzo)
  $(obj)/vmlinux.bin.xz: $(vmlinux.bin.all-y)
-diff --git a/arch/parisc/boot/compressed/misc.c b/arch/parisc/boot/compressed/misc.c
-index 2556bb181813..1ca59916071e 100644
---- a/arch/parisc/boot/compressed/misc.c
-+++ b/arch/parisc/boot/compressed/misc.c
-@@ -42,18 +42,10 @@ static unsigned long free_mem_end_ptr;
+diff --git a/arch/s390/boot/compressed/decompressor.c b/arch/s390/boot/compressed/decompressor.c
+index 45046630c56a..3995a6fe60f5 100644
+--- a/arch/s390/boot/compressed/decompressor.c
++++ b/arch/s390/boot/compressed/decompressor.c
+@@ -42,18 +42,10 @@ static unsigned long free_mem_end_ptr = (unsigned long) _end + HEAP_SIZE;
  #include "../../../../lib/decompress_inflate.c"
  #endif
  
