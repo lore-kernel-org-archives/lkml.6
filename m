@@ -2,92 +2,118 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29C6EC43441
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BCAAC43610
 	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:02:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95BB320825
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 21:52:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95BB320825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.us
+	by mail.kernel.org (Postfix) with ESMTP id 2CCC9208E3
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 21:56:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KKXYxgrr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CCC9208E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728326AbeKJHem (ORCPT
+        id S1728393AbeKJHi1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 02:34:42 -0500
-Received: from mout.gmx.net ([212.227.17.20]:45947 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727181AbeKJHem (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 02:34:42 -0500
-Received: from [192.168.1.153] ([74.104.183.64]) by mail.gmx.com (mrgmx103
- [212.227.17.174]) with ESMTPSA (Nemesis) id 0Ln8gj-1fryoJ1FUb-00hRFw; Fri, 09
- Nov 2018 22:51:54 +0100
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
-Subject: Re: ODEBUG: Out of memory. ODEBUG disabled
-From:   Qian Cai <cai@gmx.us>
-In-Reply-To: <5c3b1cf4-1d83-c0a5-4243-28fde66b5cd9@linux.alibaba.com>
-Date:   Fri, 9 Nov 2018 16:51:50 -0500
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Waiman Long <longman@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Zhong Jiang <zhongjiang@huawei.com>
-Content-Transfer-Encoding: 7bit
-Message-Id: <9762E093-FCDD-4DAA-8FCE-9D6B953B6F17@gmx.us>
-References: <54B1AA39-2C58-4B0C-B8A8-9F85EBA7C963@gmx.us>
- <5c3b1cf4-1d83-c0a5-4243-28fde66b5cd9@linux.alibaba.com>
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-X-Mailer: Apple Mail (2.3445.100.39)
-X-Provags-ID: V03:K1:4SqzdXBWIxzxUGmcadSeBzIIuT/FFvTX9ty9vKdPzYeCBn5TJhR
- veQoB2IpdSvaUdTGxY+sTfRqrxvUlW6Yf/a8YRIlmQVaME/9kWS7XBlJ79XFNjDT38U/vxw
- A6B6loa4zW3gKSYsWjAq1l/Bm8IULMQAdO3ZfcCR2lEMAbpDV1AqxrBQFT5SMSwmzHHtKwz
- dZShKPwu7olDXREi6P6tw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:WjM0q5enBF0=:srCsAmSGuZ7UQ2Z2ZE2nH5
- qYbYxogJXBOSZMzGC3AkzWDLbjfmixCKufPD8nABF2ezAtSud99vFKi2NN31jwYvl1JFVoBxw
- YzPmSKDwDvwv9NeCgFnpOvG4DFEHcF5cfmXKRZ8UBUQk6mS5mG881JmDycPQDkmiFT1J5lxec
- p+km2HO/oZI6spJPdqWkgJAXXaKGFYj2B3ZdXM3i6OPnwuL1RYsWaxUCZVdieUAYh0hAqhWj+
- 6hbUJGwqtVNFeeyZweEenQU+31GNOldeu2VR5kG3CL9LrdDNHMgOkBCSJ4SHnweumqEIfwZ0x
- sK0pz/GRjGPh8wjLBPO8Y+48GC3WClMxTEp7CH7HoF1cF+d6vkB0RzzlkZ9sw0M6kXsAxsuX9
- seTcOOLCbU5/203fjBMNbiihD69sCtRQYnxGHF+W6mWvtpTmu3kpGec18icty0/10lCFF39YN
- 0kQ0rs6rCioo1+L9YouLUaAcXuiC6rxBH8qlCMrMAsY81QrVaQl3LouM5yPMrTX3ziyQEBXpk
- clZpHawj8Ay8Kz4nbemLmqW3Rxzk6kvv9Ff/okjeOO0YrC9rWmtW+YRSq7CSKx1RGTvRGmnKD
- hbsDDoV3moRj56arQ0Txs+dQ0Bn77EZOPdPluep/drzM0cSfiYnVxpqyl7qycTLppB+3dMbvD
- HVrFkf1Czquhd1GoWC+JySYj8O8eT2c8O1o+kvUsy/XjbFvIBZMl2a1YvFk4FuHD8CHoFBiQE
- fOMFxG4Fry9YgL1gALygtFed/ht9iRZGC7ioTppem6m5mgoZL6wrZpiKdSl/sQ3uDTGByvGvc
- ZvNuWgqzixYuYxuPaC1dqTDmwG0swD9dmEzfvrewPrimbgvOw3YJU7Qo6wIXMYjbByLeiuTWU
- 7gbSEB1vGH8hx1UzfTQyOVRVIV5xQtl246HTDPUt4SkRHDI/RO3XadEUokXEYs
+        Sat, 10 Nov 2018 02:38:27 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:52808 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727023AbeKJHi0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 02:38:26 -0500
+Received: by mail-it1-f194.google.com with SMTP id t190-v6so5126181itb.2
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 13:55:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=GTudZ/Gt0tKt03v4CL/v+cvGb77MBzTtv5Yl1iAgsfM=;
+        b=KKXYxgrrF0H++NQxbsAckUUgDToa3oUBAvyFrqVxqhjDlIbdQAve1OGOAnzMDE5LSm
+         OGIIAnxyWGzRpUuxoQO6htZoqqTb1CdNK+DUE38+zBxNOYSKRTw4eyu9KqI5qbbfchcG
+         Ls1ZgoArY+fMRo2D0t17FMsLbWKFyEWYCJzc4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=GTudZ/Gt0tKt03v4CL/v+cvGb77MBzTtv5Yl1iAgsfM=;
+        b=iyo3B5+Ulm87DclDau7X6m0nm/IhOrQuTfo5nTn/IgQ51LFVKdkVdBANWQHOuflffy
+         mRYn7PFX8JeRKCx8BVE0k4/fJ3FDEPtakkSay27wmfCV8420v57TBgpDOfERPz7puX6T
+         HWvSkSyO7gxvLixwT10gf2/E95qOsN6PXy1kodUWa30a64au2M4UzdpOw6l88/Hb9/UR
+         fNWyrsbXu5J3G3pESmycasmWBMbPfrH55FOrjcUCP0MeLIfne4cARZqhMuofrxrnXr1S
+         JELs3jFrJ6OoU6qWKoYOj1MW2swaWizNWbzaInJ8yi+4BON6zR006ioQ8IUBlOd9tWH/
+         HetQ==
+X-Gm-Message-State: AGRZ1gJQigvEXPRx2XTXeocMdEYw4KC0vek9aOXH7E+CFmYZC1Exvm4R
+        DiRUmtucNU3CzHifNoUj8xnzyA==
+X-Google-Smtp-Source: AJdET5fdBxYpJ/kzj+dxUtyXCNEK3wuBDh3va9JswI0FEEwxmiGU20RoWK8qoqNBLRFTj/kJkKSc1Q==
+X-Received: by 2002:a24:7283:: with SMTP id x125-v6mr3646366itc.66.1541800556569;
+        Fri, 09 Nov 2018 13:55:56 -0800 (PST)
+Received: from localhost (c-107-2-67-121.hsd1.mn.comcast.net. [107.2.67.121])
+        by smtp.gmail.com with ESMTPSA id t25-v6sm3238980iob.73.2018.11.09.13.55.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 09 Nov 2018 13:55:55 -0800 (PST)
+Date:   Fri, 9 Nov 2018 15:55:54 -0600
+From:   Dan Rue <dan.rue@linaro.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, shuah@kernel.org,
+        patches@kernelci.org, lkft-triage@lists.linaro.org,
+        ben.hutchings@codethink.co.uk, stable@vger.kernel.org,
+        akpm@linux-foundation.org, torvalds@linux-foundation.org,
+        linux@roeck-us.net
+Subject: Re: [PATCH 4.9 000/171] 4.9.136-stable review
+Message-ID: <20181109215554.bhjy3wwfmt5222k2@xps.therub.org>
+Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, shuah@kernel.org,
+        patches@kernelci.org, lkft-triage@lists.linaro.org,
+        ben.hutchings@codethink.co.uk, stable@vger.kernel.org,
+        akpm@linux-foundation.org, torvalds@linux-foundation.org,
+        linux@roeck-us.net
+References: <20181108215127.257643509@linuxfoundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Nov 08, 2018 at 01:49:30PM -0800, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.136 release.
+> There are 171 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat Nov 10 21:50:40 UTC 2018.
+> Anything received after that time might be too late.
+
+Results from Linaro’s test farm.
+No regressions on arm64, arm, x86_64, and i386.
+
+Summary
+------------------------------------------------------------------------
+
+kernel: 4.9.136-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+git branch: linux-4.9.y
+git commit: cc46a1dedc8bc44d1f238a21ee2848ff2ca6f6d4
+git describe: v4.9.135-172-gcc46a1dedc8b
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/build/v4.9.135-172-gcc46a1dedc8b
 
 
-> On Nov 9, 2018, at 4:42 PM, Yang Shi <yang.shi@linux.alibaba.com> wrote:
-> 
-> 
-> 
-> On 11/9/18 1:36 PM, Qian Cai wrote:
->> It is a bit annoying on this aarch64 server with 64 CPUs that is
->> booting the latest mainline (3541833fd1f2) causes object debugging
->> always running out of memory.
-> 
-> May you please paste the detail failure log?
-I assume you mean dmesg.
+No regressions (compared to build v4.9.135)
 
-Here is the dmesg for 64 CPUs,
-https://paste.ubuntu.com/p/BnhvXXhn7k/
->> 
->> I have to boot the kernel with only 16 CPUs instead (nr_cpus=16)
->> to make it work. Is it expected that object debugging is not going
->> to work with large machines?
-> 
-> I don't think so. I'm supposed it works well with large CPU number on x86.
-Here is the one with nr_cpus workaround,
-https://paste.ubuntu.com/p/qMpd2CCPSV/
+
+No fixes (compared to build v4.9.135)
+
+-- 
+Linaro LKFT
+https://lkft.linaro.org
