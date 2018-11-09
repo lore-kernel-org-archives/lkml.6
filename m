@@ -2,130 +2,213 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4638EC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 16:28:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02C96C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 16:28:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0ECEB20825
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 16:28:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="jEEaBwSC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ECEB20825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id BFEFC20825
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 16:28:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFEFC20825
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728887AbeKJCJf (ORCPT
+        id S1728906AbeKJCJi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 21:09:35 -0500
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:33259 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727955AbeKJCJf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 21:09:35 -0500
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id wA9GS5sN018058;
-        Sat, 10 Nov 2018 01:28:06 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com wA9GS5sN018058
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1541780886;
-        bh=iBHJlD26G8IQ/Tpcn+xbn58aF33WVcfgE+SRD629VqY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=jEEaBwSCF5SlYLvQuFeuLVbATHxkfNoZZIrIWoNX9A4GFFzBe5viwRIXqkPRSaelh
-         4Rbd+ka0BHJf1XQbPdxW8P4nzmert7HDhWmojY5VFptssCNHx2yHnNT3e/4owjQT5R
-         Aa+Sfe9lYmjVa4idJu0PtyX4obxZtm9GCd/UvSycygWo8Dc0kmtYAKmJ/A9keHygoc
-         BuhF11mc9zR5xwbtexwIHIRJPaEKg0WOWwLBe9Qo1cE696PKBbEcvA9iV3+Xs7Huy8
-         5kykHCgxREX4NvZucvg+mPe9NPEt5gVhaaCJQiDpSEC+/W4I+8mAMS5HrayDX9yOw3
-         FTTH2NQA3KRnQ==
-X-Nifty-SrcIP: [209.85.217.46]
-Received: by mail-vs1-f46.google.com with SMTP id p74so1378247vsc.0;
-        Fri, 09 Nov 2018 08:28:06 -0800 (PST)
-X-Gm-Message-State: AGRZ1gJFRgTUpzsCm6GCtdHyo9Jx5H8WhvEi+pFdAtahErMgh7n8rgtH
-        7SoPE0i5q5DFpzieiLzJozYNJgO7wSq6wb/3SA8=
-X-Google-Smtp-Source: AJdET5cCrBM6FJEIcC36UW/emOG9a0+sPMQZSHfXtN1p1wdpU8W59Xq5gbZ2oqrHFF5HI3k9DRsYSGiLZR5jeCtcOSk=
-X-Received: by 2002:a67:5f03:: with SMTP id t3mr4135836vsb.155.1541780884990;
- Fri, 09 Nov 2018 08:28:04 -0800 (PST)
-MIME-Version: 1.0
-References: <20181028130945.23581-1-changbin.du@gmail.com> <20181028130945.23581-2-changbin.du@gmail.com>
- <20181028140911.21d49629@vmware.local.home> <CAK7LNATixykqHqdu5W3NpfXqBXMNsP0OLKjNdsFc_EzJ_diOxA@mail.gmail.com>
- <20181102112728.GC14602@zn.tnic>
-In-Reply-To: <20181102112728.GC14602@zn.tnic>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Sat, 10 Nov 2018 01:27:29 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQcdpU+_LOYQ8X+4K4sxd3D-+Z7k6BuBjUOJ9LR0j+zfA@mail.gmail.com>
-Message-ID: <CAK7LNAQcdpU+_LOYQ8X+4K4sxd3D-+Z7k6BuBjUOJ9LR0j+zfA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] x86/mm: declare check_la57_support() as inline
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Changbin Du <changbin.du@gmail.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        X86 ML <x86@kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-sparse@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 9 Nov 2018 21:09:38 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:50578 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727955AbeKJCJg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 21:09:36 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 772BDC05D3F7;
+        Fri,  9 Nov 2018 16:28:19 +0000 (UTC)
+Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 709FC26563;
+        Fri,  9 Nov 2018 16:28:12 +0000 (UTC)
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@lst.de>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>
+Subject: [PATCH V8 17/18] block: kill QUEUE_FLAG_NO_SG_MERGE
+Date:   Sat, 10 Nov 2018 00:26:09 +0800
+Message-Id: <20181109162610.18981-18-ming.lei@redhat.com>
+In-Reply-To: <20181109162610.18981-1-ming.lei@redhat.com>
+References: <20181109162610.18981-1-ming.lei@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 09 Nov 2018 16:28:19 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 2, 2018 at 8:28 PM Borislav Petkov <bp@alien8.de> wrote:
->
-> On Mon, Oct 29, 2018 at 10:04:46PM +0900, Masahiro Yamada wrote:
-> > On Mon, Oct 29, 2018 at 3:09 AM Steven Rostedt <rostedt@goodmis.org> wrote:
-> > >
-> > > On Sun, 28 Oct 2018 13:09:42 +0000
-> > > Changbin Du <changbin.du@gmail.com> wrote:
-> > >
-> > > > The level4_kernel_pgt is only defined when X86_5LEVEL is enabled.
-> > > > So declare check_la57_support() as inline to make sure the code
-> > > > referring to level4_kernel_pgt is optimized out. This is a preparation
-> > > > for CONFIG_CC_OPTIMIZE_FOR_DEBUGGING.
-> > > >
-> > > > Signed-off-by: Changbin Du <changbin.du@gmail.com>
-> > >
-> > > Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> > >
-> > > -- Steve
-> > >
-> >
-> > Applied to linux-kbuild.
->
-> Next time, before you route a patch through your tree, please get an x86
-> maintainer's ACK first.
+Since bdced438acd83ad83a6c ("block: setup bi_phys_segments after splitting"),
+physical segment number is mainly figured out in blk_queue_split() for
+fast path, and the flag of BIO_SEG_VALID is set there too.
 
+Now only blk_recount_segments() and blk_recalc_rq_segments() use this
+flag.
 
-I changed my mind, and did not include this in my previous pull request
-because this series is causing many warnings.
+Basically blk_recount_segments() is bypassed in fast path given BIO_SEG_VALID
+is set in blk_queue_split().
 
-Now, it is aiming for v5.0-rc1
+For another user of blk_recalc_rq_segments():
 
-So, it is not too late.
+- run in partial completion branch of blk_update_request, which is an unusual case
 
-If x86 maintainers issue Acked-by,
-I am happy to add it.
+- run in blk_cloned_rq_check_limits(), still not a big problem if the flag is killed
+since dm-rq is the only user.
 
+Multi-page bvec is enabled now, QUEUE_FLAG_NO_SG_MERGE doesn't make sense any more.
 
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Mike Snitzer <snitzer@redhat.com>
+Cc: Kent Overstreet <kent.overstreet@gmail.com>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+---
+ block/blk-merge.c      | 31 ++++++-------------------------
+ block/blk-mq-debugfs.c |  1 -
+ block/blk-mq.c         |  3 ---
+ drivers/md/dm-table.c  | 13 -------------
+ include/linux/blkdev.h |  1 -
+ 5 files changed, 6 insertions(+), 43 deletions(-)
 
-
-> Thx.
->
-> --
-> Regards/Gruss,
->     Boris.
->
-> Good mailing practices for 400: avoid top-posting and trim the reply.
-
-
-
+diff --git a/block/blk-merge.c b/block/blk-merge.c
+index 153a659fde74..06be298be332 100644
+--- a/block/blk-merge.c
++++ b/block/blk-merge.c
+@@ -351,8 +351,7 @@ void blk_queue_split(struct request_queue *q, struct bio **bio)
+ EXPORT_SYMBOL(blk_queue_split);
+ 
+ static unsigned int __blk_recalc_rq_segments(struct request_queue *q,
+-					     struct bio *bio,
+-					     bool no_sg_merge)
++					     struct bio *bio)
+ {
+ 	struct bio_vec bv, bvprv = { NULL };
+ 	int cluster, prev = 0;
+@@ -379,13 +378,6 @@ static unsigned int __blk_recalc_rq_segments(struct request_queue *q,
+ 	nr_phys_segs = 0;
+ 	for_each_bio(bio) {
+ 		bio_for_each_bvec(bv, bio, iter) {
+-			/*
+-			 * If SG merging is disabled, each bio vector is
+-			 * a segment
+-			 */
+-			if (no_sg_merge)
+-				goto new_segment;
+-
+ 			if (prev && cluster) {
+ 				if (seg_size + bv.bv_len
+ 				    > queue_max_segment_size(q))
+@@ -420,27 +412,16 @@ static unsigned int __blk_recalc_rq_segments(struct request_queue *q,
+ 
+ void blk_recalc_rq_segments(struct request *rq)
+ {
+-	bool no_sg_merge = !!test_bit(QUEUE_FLAG_NO_SG_MERGE,
+-			&rq->q->queue_flags);
+-
+-	rq->nr_phys_segments = __blk_recalc_rq_segments(rq->q, rq->bio,
+-			no_sg_merge);
++	rq->nr_phys_segments = __blk_recalc_rq_segments(rq->q, rq->bio);
+ }
+ 
+ void blk_recount_segments(struct request_queue *q, struct bio *bio)
+ {
+-	unsigned short seg_cnt = bio_segments(bio);
+-
+-	if (test_bit(QUEUE_FLAG_NO_SG_MERGE, &q->queue_flags) &&
+-			(seg_cnt < queue_max_segments(q)))
+-		bio->bi_phys_segments = seg_cnt;
+-	else {
+-		struct bio *nxt = bio->bi_next;
++	struct bio *nxt = bio->bi_next;
+ 
+-		bio->bi_next = NULL;
+-		bio->bi_phys_segments = __blk_recalc_rq_segments(q, bio, false);
+-		bio->bi_next = nxt;
+-	}
++	bio->bi_next = NULL;
++	bio->bi_phys_segments = __blk_recalc_rq_segments(q, bio);
++	bio->bi_next = nxt;
+ 
+ 	bio_set_flag(bio, BIO_SEG_VALID);
+ }
+diff --git a/block/blk-mq-debugfs.c b/block/blk-mq-debugfs.c
+index f021f4817b80..e188b1090759 100644
+--- a/block/blk-mq-debugfs.c
++++ b/block/blk-mq-debugfs.c
+@@ -128,7 +128,6 @@ static const char *const blk_queue_flag_name[] = {
+ 	QUEUE_FLAG_NAME(SAME_FORCE),
+ 	QUEUE_FLAG_NAME(DEAD),
+ 	QUEUE_FLAG_NAME(INIT_DONE),
+-	QUEUE_FLAG_NAME(NO_SG_MERGE),
+ 	QUEUE_FLAG_NAME(POLL),
+ 	QUEUE_FLAG_NAME(WC),
+ 	QUEUE_FLAG_NAME(FUA),
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 4880e13e2394..c57d5eeda516 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -2756,9 +2756,6 @@ struct request_queue *blk_mq_init_allocated_queue(struct blk_mq_tag_set *set,
+ 
+ 	q->queue_flags |= QUEUE_FLAG_MQ_DEFAULT;
+ 
+-	if (!(set->flags & BLK_MQ_F_SG_MERGE))
+-		queue_flag_set_unlocked(QUEUE_FLAG_NO_SG_MERGE, q);
+-
+ 	q->sg_reserved_size = INT_MAX;
+ 
+ 	INIT_DELAYED_WORK(&q->requeue_work, blk_mq_requeue_work);
+diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
+index 9038c302d5c2..22fed6987aea 100644
+--- a/drivers/md/dm-table.c
++++ b/drivers/md/dm-table.c
+@@ -1698,14 +1698,6 @@ static int device_is_not_random(struct dm_target *ti, struct dm_dev *dev,
+ 	return q && !blk_queue_add_random(q);
+ }
+ 
+-static int queue_supports_sg_merge(struct dm_target *ti, struct dm_dev *dev,
+-				   sector_t start, sector_t len, void *data)
+-{
+-	struct request_queue *q = bdev_get_queue(dev->bdev);
+-
+-	return q && !test_bit(QUEUE_FLAG_NO_SG_MERGE, &q->queue_flags);
+-}
+-
+ static bool dm_table_all_devices_attribute(struct dm_table *t,
+ 					   iterate_devices_callout_fn func)
+ {
+@@ -1902,11 +1894,6 @@ void dm_table_set_restrictions(struct dm_table *t, struct request_queue *q,
+ 	if (!dm_table_supports_write_zeroes(t))
+ 		q->limits.max_write_zeroes_sectors = 0;
+ 
+-	if (dm_table_all_devices_attribute(t, queue_supports_sg_merge))
+-		blk_queue_flag_clear(QUEUE_FLAG_NO_SG_MERGE, q);
+-	else
+-		blk_queue_flag_set(QUEUE_FLAG_NO_SG_MERGE, q);
+-
+ 	dm_table_verify_integrity(t);
+ 
+ 	/*
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 9b1f470cc784..c58d8b3fe9ce 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -606,7 +606,6 @@ struct request_queue {
+ #define QUEUE_FLAG_SAME_FORCE  15	/* force complete on same CPU */
+ #define QUEUE_FLAG_DEAD        16	/* queue tear-down finished */
+ #define QUEUE_FLAG_INIT_DONE   17	/* queue is initialized */
+-#define QUEUE_FLAG_NO_SG_MERGE 18	/* don't attempt to merge SG segments*/
+ #define QUEUE_FLAG_POLL	       19	/* IO polling enabled if set */
+ #define QUEUE_FLAG_WC	       20	/* Write back caching */
+ #define QUEUE_FLAG_FUA	       21	/* device supports FUA writes */
 -- 
-Best Regards
-Masahiro Yamada
+2.9.5
+
