@@ -3,120 +3,85 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64C4AC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:00:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37605C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:02:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C3E72086C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:00:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C3E72086C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=angband.pl
+	by mail.kernel.org (Postfix) with ESMTP id AB1A320817
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:02:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB1A320817
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sai.msu.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728712AbeKJEmT (ORCPT
+        id S1728664AbeKJEol (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 23:42:19 -0500
-Received: from tartarus.angband.pl ([54.37.238.230]:51088 "EHLO
-        tartarus.angband.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728162AbeKJEmR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 23:42:17 -0500
-Received: from kilobyte by tartarus.angband.pl with local (Exim 4.89)
-        (envelope-from <kilobyte@angband.pl>)
-        id 1gLC0X-000503-84; Fri, 09 Nov 2018 19:59:53 +0100
-Date:   Fri, 9 Nov 2018 19:59:53 +0100
-From:   Adam Borowski <kilobyte@angband.pl>
-To:     linux-kernel@vger.kernel.org, Nick Terrell <terrelln@fb.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-m68k@lists.linux-m68k.org,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org,
-        Jonas Bonn <jonas@southpole.se>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        Stafford Horne <shorne@gmail.com>,
-        openrisc@lists.librecores.org,
-        "James E.J. Bottomley" <jejb@parisc-linux.org>,
-        Helge Deller <deller@gmx.de>, linux-parisc@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev@lists.ozlabs.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        linux-s390@vger.kernel.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        linux-xtensa@linux-xtensa.org
-Subject: [PATCH 0/17] Kernel compression: add ZSTD, remove LZMA1 and BZIP2
-Message-ID: <20181109185953.xwyelyqnygbskkxk@angband.pl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-X-Junkbait: aaron@angband.pl, zzyx@angband.pl
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: kilobyte@angband.pl
-X-SA-Exim-Scanned: No (on tartarus.angband.pl); SAEximRunCond expanded to false
+        Fri, 9 Nov 2018 23:44:41 -0500
+Received: from lnfm1.sai.msu.ru ([93.180.26.255]:36208 "EHLO lnfm1.sai.msu.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728162AbeKJEol (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 23:44:41 -0500
+Received: from dragon.sai.msu.ru (dragon.sai.msu.ru [93.180.26.172])
+        by lnfm1.sai.msu.ru (8.14.1/8.12.8) with ESMTP id wA9J1mIi013105;
+        Fri, 9 Nov 2018 22:01:54 +0300
+Received: from alpha.local (unknown [92.243.181.209])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client did not present a certificate)
+        by dragon.sai.msu.ru (Postfix) with ESMTPSA id 099D1691B;
+        Fri,  9 Nov 2018 22:01:49 +0300 (MSK)
+From:   "Matwey V. Kornilov" <matwey@sai.msu.ru>
+To:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     matwey.kornilov@gmail.com,
+        "Matwey V. Kornilov" <matwey@sai.msu.ru>, tfiga@chromium.org,
+        laurent.pinchart@ideasonboard.com, stern@rowland.harvard.edu,
+        ezequiel@collabora.com, hdegoede@redhat.com, hverkuil@xs4all.nl,
+        mchehab@kernel.org, rostedt@goodmis.org, mingo@redhat.com,
+        isely@pobox.com, bhumirks@gmail.com, colin.king@canonical.com,
+        kieran.bingham@ideasonboard.com, keiichiw@chromium.org
+Subject: [PATCH v6 0/2] media: usb: pwc: Don't use coherent DMA buffers for ISO transfer
+Date:   Fri,  9 Nov 2018 22:01:19 +0300
+Message-Id: <20181109190121.23492-1-matwey@sai.msu.ru>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
-As new compressors get invented, they tend to find their way into the
-kernel, yet we never prune superseded ones.  It's time to do so.
+DMA cocherency slows the transfer down on systems without hardware coherent
+DMA. In order to demontrate this we introduce performance measurement
+facilities in patch 1 and fix the performance issue in patch 2 in order to
+obtain 3.3 times speedup.
 
-In particular, BZIP2 is drastically slower than other compressors we
-have, even when they achieve smaller sizes.  It takes more memory, too.
-And, BZIP2 is not used anywhere else in the kernel -- just for booting
-the kernel itself and the initrd.  Thus, we can drop it from the tree
-completely, making Linus happier by around 900 lines.
+Changes since v5:
+ * add dma_sync_single_for_device() as required by Laurent Pinchart
 
-LZMA1 is redundant with XZ (LZMA2), and unlike the latter, it uses its own
-copy of code that's not shared with anything else (some drivers use XZ).
-Let's drop it as well.  Some bootloaders can use it thus let's keep the
-Kconfig option, but I left no piece of code inside the kernel itself.
+Changes since v4:
+ * fix fields order in trace events 
+ * minor style fixes
 
-On the other hand, Nick Terrell has a couple of patches adding ZSTD support
-(using code already in use in multiple pieces around the kernel).  ZSTD is
-strong and fast, obsoleting all mid-range compressors.  As the removal of
-BZIP2 and LZMA1 would be hopelessly entangled with this addition, I'm
-resending Nick's patches here.  I've been booting using them since Oct'17
-on amd64 (kernel+initrd), armhf and arm64 (initrd) without issues, other
-folks tested various other architectures as well.
+Changes since v3:
+ * fix scripts/checkpatch.pl errors
+ * use __string to store name in trace events
 
-Thus, I'd recommend people to use:
-* XZ for most machines
-* ZSTD where speed is important
-* maaaaybe LZ4 is some special cases
-(grub and u-boot are ridiculously slow at reading, making fast but weak
-decompressors a net loss.  On the other hand, XZ decompresses pretty fast
-but is very slow at compress time, making ZSTD preferred for rapid devel
-cycles.)
+Changes since v2:
+ * use dma_sync_single_for_cpu() to achive better performance
+ * remeasured performance
 
-* we can't get rid of GZIP in foreseable future
-* LZO is obsolete but is used elsewhere in the kernel
+Changes since v1:
+ * trace_pwc_handler_exit() call moved to proper place
+ * detailed description added for commit 1
+ * additional output added to trace to track separate frames
 
-Total:
- 69 files changed, 518 insertions(+), 1785 deletions(-)
+Matwey V. Kornilov (2):
+  media: usb: pwc: Introduce TRACE_EVENTs for pwc_isoc_handler()
+  media: usb: pwc: Don't use coherent DMA buffers for ISO transfer
 
-Not sure whose tree this patchset should go through.  I'm also not sure
-how finely split into commits you want the arch bits be; I included
-defconfig bits all together, yet separated code changes per-arch.
+ drivers/media/usb/pwc/pwc-if.c | 69 ++++++++++++++++++++++++++++++++++--------
+ include/trace/events/pwc.h     | 65 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 121 insertions(+), 13 deletions(-)
+ create mode 100644 include/trace/events/pwc.h
 
-
-Meow!
 -- 
-⢀⣴⠾⠻⢶⣦⠀ 
-⣾⠁⢠⠒⠀⣿⡁ A dumb species has no way to open a tuna can.
-⢿⡄⠘⠷⠚⠋⠀ A smart species invents a can opener.
-⠈⠳⣄⠀⠀⠀⠀ A master species delegates.
+2.16.4
+
