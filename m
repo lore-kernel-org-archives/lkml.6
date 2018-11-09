@@ -2,110 +2,140 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2FD3C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 13:53:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FC10C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 13:53:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0E6E20827
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 13:53:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0E6E20827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axis.com
+	by mail.kernel.org (Postfix) with ESMTP id D5EB820827
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 13:53:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="B/539OWI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5EB820827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728147AbeKIXds (ORCPT
+        id S1728155AbeKIXeL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 18:33:48 -0500
-Received: from bastet.se.axis.com ([195.60.68.11]:59531 "EHLO
-        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727735AbeKIXds (ORCPT
+        Fri, 9 Nov 2018 18:34:11 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:46310 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727735AbeKIXeK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 18:33:48 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bastet.se.axis.com (Postfix) with ESMTP id 2EBFD185B0;
-        Fri,  9 Nov 2018 14:53:02 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at bastet.se.axis.com
-Received: from bastet.se.axis.com ([IPv6:::ffff:127.0.0.1])
-        by localhost (bastet.se.axis.com [::ffff:127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id S1q5t2goXaH4; Fri,  9 Nov 2018 14:53:01 +0100 (CET)
-Received: from boulder03.se.axis.com (boulder03.se.axis.com [10.0.8.17])
-        by bastet.se.axis.com (Postfix) with ESMTPS id 59D001818A;
-        Fri,  9 Nov 2018 14:53:01 +0100 (CET)
-Received: from boulder03.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3A7331E07D;
-        Fri,  9 Nov 2018 14:53:01 +0100 (CET)
-Received: from boulder03.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2E5881E07C;
-        Fri,  9 Nov 2018 14:53:01 +0100 (CET)
-Received: from thoth.se.axis.com (unknown [10.0.2.173])
-        by boulder03.se.axis.com (Postfix) with ESMTP;
-        Fri,  9 Nov 2018 14:53:01 +0100 (CET)
-Received: from lnxartpec.se.axis.com (lnxartpec.se.axis.com [10.88.4.9])
-        by thoth.se.axis.com (Postfix) with ESMTP id 211E92EA5;
-        Fri,  9 Nov 2018 14:53:01 +0100 (CET)
-Received: by lnxartpec.se.axis.com (Postfix, from userid 10564)
-        id 1CCA580C23; Fri,  9 Nov 2018 14:53:01 +0100 (CET)
-Date:   Fri, 9 Nov 2018 14:53:01 +0100
-From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
-To:     Jessica Yu <jeyu@kernel.org>
-Cc:     linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org
-Subject: Re: [PATCH v2] ARM: module: Fix function kallsyms on Thumb-2
-Message-ID: <20181109135300.3tyord6amvd7wy54@axis.com>
-References: <20181031084253.9650-1-vincent.whitchurch@axis.com>
- <20181031155341.GA27878@linux-8ccs>
- <20181101152913.r2isskngiahi6o2u@axis.com>
- <20181102135322.GA5289@linux-8ccs>
+        Fri, 9 Nov 2018 18:34:10 -0500
+Received: by mail-io1-f65.google.com with SMTP id y22-v6so1261038ioj.13
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 05:53:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=ZzZKA2mowjJsWpyH62tDEWelFTlq84VqIoHpTa9gjsI=;
+        b=B/539OWIu4Dch7dodn6J4bQqlmnVLUNKflLyLKl4+vEPgrlWYhQ1/Jj2MrSwfJEsJX
+         M0HpEgBXbpYZ56MpmV7nm+uUUNn8V1RdpfzqrCefUvwiVRugMM/+NrBaP0x/abJ3y0Wm
+         Amuz+4Z8/DYYusm/QDH7uU+JA5Dui9p6AmmtdI8a7/jWXHb6yscVk0lgJfTJimbVMnfJ
+         QdNdSJllDPN7Ptn7ygYDWcPuZy1TjoBE5iuhb7m21R7rM5+HmnfNcdXV7hxI6olUOT3g
+         aTiD/SUscVwTKW/4FybD/C6uOpZ4+G3DVRmu5ld98zUHEhc2ADytxII6KikgO2Xp4kvv
+         eNuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ZzZKA2mowjJsWpyH62tDEWelFTlq84VqIoHpTa9gjsI=;
+        b=KpQnX0MnOA7s8+YZ2TYpnZb3QYQyJE2Zc2N63ShjCoLKtgGrsg3kt8WXk8z+Udkk78
+         BRxAhExa810lSJnHC4v6n4sjs4js+xNingp0nQT0JTG2PfD6CMV+vD0LGePHa9L99AV7
+         G3QCw3hIblU9FMQ5+H3rLKuBr3wxfLRefPk+izICL0rm42+XDKaIJ1RgFvJ6U28jupr0
+         lcRtyDsZkHSwXAci2kLnrDXEm7VIiU3ffb2PWRMNY7oNxGbDPgL4No+4MUp2U2d9c9Pa
+         3CRlPhKolwNl6qKJGHG6+TRcOmWtIwWwILcVbCu157aisMkfSc3n89/Q6KPnhn53NKrq
+         Xelw==
+X-Gm-Message-State: AGRZ1gK4QsuvOp+wgkeJz7oQwNa3iKzB8kFRwOjxeTf8tM/DQnLI+EB8
+        F0ijnOkyfWjLOFV+VPknO1Fg1bpLHqztLu+M01ZDZGmw
+X-Google-Smtp-Source: AJdET5dm6dWzzsThIDosLFVfzRTnzpGaa+2wkgpyTPAYpdcopIcWCJPrq9xZ+IL0y5PmOCnQPYqBjKYX9z2gGBTTJtE=
+X-Received: by 2002:a5e:9e0a:: with SMTP id i10-v6mr7468396ioq.111.1541771607064;
+ Fri, 09 Nov 2018 05:53:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181102135322.GA5289@linux-8ccs>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-TM-AS-GCONF: 00
+References: <20181108165255.9940-1-brgl@bgdev.pl> <20181108165255.9940-2-brgl@bgdev.pl>
+ <20181108203546.54rncnydgamud5z3@pengutronix.de> <CAMRc=Mev6RMvVox2Sx6s80+obLg4QWAL=_hwcf34m2iMXwEbOg@mail.gmail.com>
+ <20181109115424.pe4w26nmt6xplzto@pengutronix.de> <CAMRc=Mdf1GHR0_7uQ4PFFCwL9p3NyKBDMSBkipR826BhTYpz=g@mail.gmail.com>
+ <20181109131036.v6d645ojv6jr7v3y@pengutronix.de>
+In-Reply-To: <20181109131036.v6d645ojv6jr7v3y@pengutronix.de>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Fri, 9 Nov 2018 14:53:16 +0100
+Message-ID: <CAMRc=Mf18udrM=2=SZHMg3M2akcccPXb7Fr81vXODpNgjf+uJw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] gpio: mockup: fix indicated direction
+To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Bamvor Jian Zhang <bamv2005@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 02, 2018 at 02:53:22PM +0100, Jessica Yu wrote:
-> +++ Vincent Whitchurch [01/11/18 16:29 +0100]:
-> > On Wed, Oct 31, 2018 at 04:53:41PM +0100, Jessica Yu wrote:
-> > > Could this be done in modpost? I'm guessing the answer is no as some
-> > > relocations may rely on that bit being set in st_value, right?
-> > > Therefore we can only clear the bit _after_ relocations to the module
-> > > are applied at runtime, correct?
-> > 
-> > Yes, that's correct, it needs to be done after the relocations.
-> > 
-> > > I'm not against having an arch-specific kallsyms fixup function, my
-> > > only concern would be if this would interfere with the delayed
-> > > relocations livepatching does, if there are plans in the future to
-> > > have livepatching on arm (IIRC there was an attempt at a port in
-> > > 2016). If there exists some Thumb-2 relocation types that rely on that
-> > > lowest bit in st_value being set in order to be applied, and we clear
-> > > it permanently from the symtab, then livepatching wouldn't be able to
-> > > apply those types of relocations anymore. If this is a legitimate
-> > > concern, then perhaps an alternative solution would be to have an
-> > > arch-specific kallsyms symbol-value-fixup function for accesses to
-> > > sym.st_value, without modifying the module symtab.
-> > 
-> > I'm not familiar with livepatching, but yes, if it needs to do
-> > relocations later I guess we should preserve the original value.
-> 
-> Yeah, I think the symtab needs to remain unmodified for livepatch to
-> be able to do delayed relocations after module load.
-> 
-> > I gave the alternative solution a go and it seems to work.
-> > add_kallsyms() currently overwrites st_info so I had to move the
-> > elf_type to the unused st_other field instead to preserve st_info:
-> 
-> I think that's fine, I think the only usages of st_other I've found
-> are during relocations, and the field is big enough for a char, so it
-> should be fine to reuse it afterwards.
+pt., 9 lis 2018 o 14:10 Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> napisa=C5=82(a):
+>
+> Hello,
+>
+> On Fri, Nov 09, 2018 at 01:24:36PM +0100, Bartosz Golaszewski wrote:
+> > pt., 9 lis 2018 o 12:54 Uwe Kleine-K=C3=B6nig
+> > <u.kleine-koenig@pengutronix.de> napisa=C5=82(a):
+> > > On Fri, Nov 09, 2018 at 12:13:44PM +0100, Bartosz Golaszewski wrote:
+> > > > czw., 8 lis 2018 o 21:35 Uwe Kleine-K=C3=B6nig
+> > > > <u.kleine-koenig@pengutronix.de> napisa=C5=82(a):
+> > > > > On Thu, Nov 08, 2018 at 05:52:53PM +0100, Bartosz Golaszewski wro=
+te:
+> > > > > > Commit 3edfb7bd76bd ("gpiolib: Show correct direction from the
+> > > > > > beginning") fixed an existing issue but broke libgpiod tests by
+> > > > > > changing the default direction of dummy lines to output.
+> > > > >
+> > > > > The indicated commit only changed what was shown in debugfs, but =
+didn't
+> > > > > touch the actual direction of a GPIO, doesn't it? If someone call=
+ed
+> > > > > gpiod_get_direction before it would have returned "output", too, =
+unless
+> > > > > I miss something.
+> > > > >
+> > > >
+> > > > This commit (3edfb7bd76bd) sets the correct direction of the line b=
+y
+> > > > actually calling get_direction() instead of assuming input if
+> > > > direction_input is not NULL. It just so happened that previously th=
+e
+> > > > default direction of gpio-mockup lines was output but it would be
+> > > > displayed as input due to this inconsistency.
+> > >
+> > > Does the test that fails since 3edfb7bd76bd use debugfs/gpio to find =
+out
+> > > the direction of a gpio? I'd say it's a bad idea to depend on this as
+> > > (AFAICT) debugfs is only a debug aid and you shouldn't depend on stuf=
+f
+> > > contained in it.
+> >
+> > No, this is what we get from the LINEINFO ioctl(). I only use debugfs
+> > for triggering dummy interrupts.
+>
+> A right, gpio_ioctl uses these flags, too.
+>
+> > > I'd weaken the commit log a bit to not claim that the commit broke
+> > > libgpiod but that it only made the inconsistency visible. After all t=
+his
+> > > commit didn't "change the default direction of dummy lines to output"=
+,
+> > > they were an output already before.
+> >
+> > Well it did break the tests you know. ;)
+>
+> Which test failed exactly?
+>
 
-If livepatch can do relocations later, doesn't that mean that we _can't_
-reuse st_other for storing the elf_type?  OTOH, the current code
-overwrites st_info, and I see that used from various archs' relocation
-functions too, so perhaps I'm missing something.
+All gpioinfo tests that check the output of this command and expect to
+see input as line direction.
+
+Bart
