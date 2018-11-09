@@ -2,101 +2,81 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30B01C0044C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 16:30:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2286EC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 16:31:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E504020883
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 16:30:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pofcNiPp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E504020883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E57DF20883
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 16:31:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E57DF20883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alphalink.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728576AbeKJCLn (ORCPT
+        id S1728587AbeKJCMS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 21:11:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50676 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727845AbeKJCLn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 21:11:43 -0500
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A8A720883;
-        Fri,  9 Nov 2018 16:30:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541781025;
-        bh=e0cgVl2QlG8CrHpu2myDpziM/BVAydAUsg5tbUr7DS0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=pofcNiPpLyVYrdOadj7VTBsAHdLKfgnaEeGxqbsOr3/uDnkYWJN6rfh57InFwo51P
-         oIh/mDv9uCHfIYvlSfPC1aYptHBBvOW8CVJc6JOf+0PcOw1rfWAekEB9GmtRqhwOC5
-         ybVkYh9JXaIDeUPMCpOTmb1nN6mn+/1u3G352TLk=
-Received: by mail-qk1-f174.google.com with SMTP id y16so2531330qki.7;
-        Fri, 09 Nov 2018 08:30:25 -0800 (PST)
-X-Gm-Message-State: AGRZ1gKJOob8uoblD+rsRWJiHMIL7i/5791iw3lmCq6hBQ+hX1iaVgyG
-        BoiJBzndNyVlJCSUzhJvnuEMSEfDbot141iR4Q==
-X-Google-Smtp-Source: AJdET5eDwkqfwYyknGMAjMhOxbqFTffkWslfJ4XGq8H9hJWvBqZsksXvRtHj+N1TEJdI3DQZm7QmZ0a4i7Zwn7N1iCs=
-X-Received: by 2002:ac8:173d:: with SMTP id w58mr9122465qtj.76.1541781024298;
- Fri, 09 Nov 2018 08:30:24 -0800 (PST)
+        Fri, 9 Nov 2018 21:12:18 -0500
+Received: from zimbra.alphalink.fr ([217.15.80.77]:52341 "EHLO
+        zimbra.alphalink.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727845AbeKJCMS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 21:12:18 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mail-2-cbv2.admin.alphalink.fr (Postfix) with ESMTP id 051A22B52055;
+        Fri,  9 Nov 2018 17:30:58 +0100 (CET)
+Received: from zimbra.alphalink.fr ([127.0.0.1])
+        by localhost (mail-2-cbv2.admin.alphalink.fr [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id uGi4Sc2yRSTW; Fri,  9 Nov 2018 17:30:56 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by mail-2-cbv2.admin.alphalink.fr (Postfix) with ESMTP id BC36E2B52140;
+        Fri,  9 Nov 2018 17:30:56 +0100 (CET)
+X-Virus-Scanned: amavisd-new at mail-2-cbv2.admin.alphalink.fr
+Received: from zimbra.alphalink.fr ([127.0.0.1])
+        by localhost (mail-2-cbv2.admin.alphalink.fr [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id fAeFFVqGgJSB; Fri,  9 Nov 2018 17:30:56 +0100 (CET)
+Received: from c-dev-0.admin.alphalink.fr (94-84-15-217.reverse.alphalink.fr [217.15.84.94])
+        by mail-2-cbv2.admin.alphalink.fr (Postfix) with ESMTP id 8FBE22B52055;
+        Fri,  9 Nov 2018 17:30:56 +0100 (CET)
+Received: by c-dev-0.admin.alphalink.fr (Postfix, from userid 1000)
+        id 713EC60188; Fri,  9 Nov 2018 17:30:56 +0100 (CET)
+Date:   Fri, 9 Nov 2018 17:30:56 +0100
+From:   Guillaume Nault <g.nault@alphalink.fr>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 4.4 063/114] l2tp: hold socket before dropping lock in
+ l2tp_ip{, 6}_recv()
+Message-ID: <20181109163056.GE1415@alphalink.fr>
+References: <20181108215059.051093652@linuxfoundation.org>
+ <20181108215106.791041209@linuxfoundation.org>
+ <20181109153332.GD1415@alphalink.fr>
+ <20181109162856.GA2407@kroah.com>
 MIME-Version: 1.0
-References: <20181106183609.207702-1-sboyd@kernel.org> <20181106183609.207702-2-sboyd@kernel.org>
- <efa13e0b-0daf-3bf3-27ba-ed90f15c7dfe@gmail.com> <154169993998.88331.10494065577891939152@swboyd.mtv.corp.google.com>
- <0f2bb386-ba92-544c-e980-c95309944b22@gmail.com> <CAMuHMdWm2P8fa6d9vLhYtWHBe0uNPj9jfyL1rtmdLixPEi1rUg@mail.gmail.com>
-In-Reply-To: <CAMuHMdWm2P8fa6d9vLhYtWHBe0uNPj9jfyL1rtmdLixPEi1rUg@mail.gmail.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Fri, 9 Nov 2018 10:30:11 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+VuP6EkObw4wFeqOKoZEd9ktEErQaFfncz-2DfvNhp0A@mail.gmail.com>
-Message-ID: <CAL_Jsq+VuP6EkObw4wFeqOKoZEd9ktEErQaFfncz-2DfvNhp0A@mail.gmail.com>
-Subject: Re: [PATCH 1/4] of/device: Add a way to probe drivers by match data
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Frank Rowand <frowand.list@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181109162856.GA2407@kroah.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 9, 2018 at 4:36 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Matthias,
->
-> On Fri, Nov 9, 2018 at 11:29 AM Matthias Brugger <matthias.bgg@gmail.com> wrote:
-> > On 08/11/2018 18:58, Stephen Boyd wrote:
-> > > Quoting Matthias Brugger (2018-11-08 00:29:46)
-> > >> On 06/11/2018 19:36, Stephen Boyd wrote:
-> > >>> +int platform_driver_probe_by_of_match_data(struct platform_device *pdev)
-> > >>> +{
-> > >>> +     int (*probe_func)(struct platform_device *pdev);
-> > >>> +
-> > >>> +     probe_func = of_device_get_match_data(&pdev->dev);
-> > >>
-> > >> Shouldn't we check if probe_func is not NULL?
-> > >
-> > > Is the oops from the NULL pointer deref insufficient?
-> >
-> > Do you think we should crash the machine if someone uses the call wrongly? Or
-> > should we provide the possibility to error out on the caller side?
->
-> I believe that would be a bug in the driver, to be discovered ASAP.
-> So yes, please do crash ;-)
-
-Depends on the driver. If it's not needed to get a console out, then
-it should just WARN. Otherwise, you've got to go enable earlycon to
-see the crash. Of course, someone could just as easily stick data in
-here instead of a function ptr and we'll be back to a crash.
-
-Rob
+On Fri, Nov 09, 2018 at 08:28:56AM -0800, Greg Kroah-Hartman wrote:
+> On Fri, Nov 09, 2018 at 04:33:32PM +0100, Guillaume Nault wrote:
+> > On Thu, Nov 08, 2018 at 01:51:18PM -0800, Greg Kroah-Hartman wrote:
+> > > 4.4-stable review patch.  If anyone has any objections, please let me know.
+> > > 
+> > This patch was partly wrong. Here is the followup fix:
+> > 94d7ee0baa8b ("l2tp: hold tunnel socket when handling control frames in l2tp_ip and l2tp_ip6")
+> > 
+> > Both a3c18422a4 ("l2tp: hold socket before dropping lock in l2tp_ip{, 6}_recv()")
+> > and 94d7ee0baa8b ("l2tp: hold tunnel socket when handling control frames in l2tp_ip and l2tp_ip6")
+> > should be applied/backported together.
+> 
+> Thanks for letting me know, I've now backported this as well.
+> 
+Great, it should all be fine now.
+Thanks.
