@@ -2,116 +2,104 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96175C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:57:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A5DBC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:59:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B8112089A
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:57:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31D1320827
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:59:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="efWXMrUC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B8112089A
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CnExe5do"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31D1320827
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727972AbeKISgy (ORCPT
+        id S1727806AbeKISi6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 13:36:54 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:55954 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727735AbeKISgy (ORCPT
+        Fri, 9 Nov 2018 13:38:58 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:41124 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727603AbeKISi6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 13:36:54 -0500
-Received: by mail-wm1-f67.google.com with SMTP id s10-v6so1228687wmc.5
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 00:57:16 -0800 (PST)
+        Fri, 9 Nov 2018 13:38:58 -0500
+Received: by mail-lf1-f65.google.com with SMTP id c16so758822lfj.8
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 00:59:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=qYKootPcIB4r8J6KSprtoc4R+LBMZo96WYHAZXPL+38=;
-        b=efWXMrUCkJ9fz8c/mSEpZ+Rt2LUdVaHuJyPrySeIRifl/+adC5g2iFJYigRnnCZg9O
-         4NCdyhapUIDLelIRBo/T0w3QC1qsvQ2ye5GCBc1hZ8LSOnR/6fMc+u4PVLFpxQnyKYPW
-         9UN2oNsGBwQrNaFl9XY8BToX4vQds/Adl+xxg=
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=03XSgks2iiQkNbx2TWJrKMU+6zb5k/LCbR94oOE7ukk=;
+        b=CnExe5doS6RIm6AGsKJ8xNi3Nu+VRUcSjtqs7D5ngBzN94rfp/d4O8wqSC+bGwBXQw
+         tmWhcEVMOoZrszh8/vapUNfJ539gKMQwnfD1Oa7Tcz71ILpGnthA0r6X06mqXgDBgrah
+         v/TAdgGrMA96Bsl8ILB+4RgVNJQhsmiX/EWgs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=qYKootPcIB4r8J6KSprtoc4R+LBMZo96WYHAZXPL+38=;
-        b=Uo/lOht8kQNVh7m8oy0/8EXDPcJYrETmhj+Lx9UECyqpO5sSeWArvgMSA5KLjFKVWf
-         okR5JQ9/1mM/PNm6m/Kk57itoF6oHyXFJ5IqbqKxfLCgE4hTeh5O45Vkn1R6RzM7Q/nu
-         qBz1933xvbZvszQQ0g6Vo1Jyw9LJZ49+5sCTanpBc86KGrz7ayu8KSnmKQ0tFVql27n+
-         suOleBLK1QcGytQWrWvw+SnDYEJR/0AMtC8TN/Paq4GvKFXhkIyMVDOnaY14BlSnDsYV
-         AFzrWYy/mJPwyj7wnDW0NxW0tLMmxVU+nW2tgZtuxTgI2kO55Le5bJcFo/i6o6W04iuz
-         NrNw==
-X-Gm-Message-State: AGRZ1gJFgCFAG/Ff6IDBHD5I+/lTxFCiMcNXTq3cmUUe1fmOnChMJuXp
-        we6fgbuLmyH9x+sMAKR0YL6AbG5DITE=
-X-Google-Smtp-Source: AJdET5fa2pWQIiM0v+RaV7nMpbfPTBtW7hT0L4ygrjX4210pDH2EryEJk2A4OiBSmloFA8ubrD7JfA==
-X-Received: by 2002:a1c:1605:: with SMTP id 5-v6mr3900754wmw.126.1541753835449;
-        Fri, 09 Nov 2018 00:57:15 -0800 (PST)
-Received: from [192.168.27.197] ([37.157.136.206])
-        by smtp.gmail.com with ESMTPSA id m69-v6sm894155wmb.8.2018.11.09.00.57.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 09 Nov 2018 00:57:14 -0800 (PST)
-Subject: Re: [PATCH] dt-bindings: media: i2c: Fix i2c address for OV5645
- camera sensor
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        mchehab@kernel.org, robh+dt@kernel.org, hansverk@cisco.com
-Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20181109075643.17575-1-manivannan.sadhasivam@linaro.org>
-From:   Todor Tomov <todor.tomov@linaro.org>
-Message-ID: <a777f934-9adb-83d7-b0b6-0777563410c0@linaro.org>
-Date:   Fri, 9 Nov 2018 10:57:14 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=03XSgks2iiQkNbx2TWJrKMU+6zb5k/LCbR94oOE7ukk=;
+        b=FS97pyrCLsoFogWsRXL9tJO4J/aqhUDjBH1Cx6ZPqfgVzRnqsJBHA8RDTKudOnSPZs
+         s6v5XxPKXYn+ykq7bWKxu7zzLzVyQsazdNH65HhV+7hwys7pYGqEaEKMzI9sbYXy5W+T
+         k4+JF7PxCHt/hw0s2veTVjIQMcFJe0+OH1p4V/uDuGYptQxKMbsA0Fd6oaj6yuuxiG9V
+         EmYcIdijl17gspXtt7a7KXDJ4xEkwN5Wx3IrpkoFBMcQN0cU/3ObNXYOsrRKgiyJ2+n+
+         4wvNwAfIeYRUXBw6IkLhDEbnCqJ7QX3oMELxwiKYNkWVqvGwE9f7AKDNSDY5XLVtBYDe
+         cHyg==
+X-Gm-Message-State: AGRZ1gIngz2jcsQxkKIqomZspXGfYvvh/Aq6LYf+uqtIZzWT/PUt1Kwc
+        Zg5SHb5634+yv6mSdSu7fQ+r9gnJnvKJu0mDg+FSFQ==
+X-Google-Smtp-Source: AJdET5c25ToILMI4uT5kgls/KHLC5wpy7wpn2Rzr9SZx4bNZ2EYWfGUGqXuyxSDYt4E0uNA505gZ9gVmWsyGPbxUD5A=
+X-Received: by 2002:a19:5154:: with SMTP id f81mr4958591lfb.96.1541753959870;
+ Fri, 09 Nov 2018 00:59:19 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181109075643.17575-1-manivannan.sadhasivam@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181101001149.13453-1-masneyb@onstation.org> <20181101001149.13453-6-masneyb@onstation.org>
+In-Reply-To: <20181101001149.13453-6-masneyb@onstation.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 9 Nov 2018 09:59:08 +0100
+Message-ID: <CACRpkdaabE-ekKQp93CiFtN_Qp6OohEUE-qufsX=12u2p_SXtw@mail.gmail.com>
+Subject: Re: [PATCH v2 5/7] pinctrl: qcom: spmi-gpio: fix gpio-hog related
+ boot issues
+To:     masneyb@onstation.org, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        jonathan@marek.ca
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mani,
+On Thu, Nov 1, 2018 at 1:12 AM Brian Masney <masneyb@onstation.org> wrote:
 
-On  9.11.2018 09:56, Manivannan Sadhasivam wrote:
-> The i2c address for the Omnivision OV5645 camera sensor is 0x3c. It is
-> incorrectly mentioned as 0x78 in binding. Hence fix that.
+> When attempting to setup up a gpio hog, device probing would repeatedly
+> fail with -EPROBE_DEFERED errors. It was caused by a circular dependency
+> between the gpio and pinctrl frameworks. If the gpio-ranges property is
+> present in device tree, then the gpio framework will handle the gpio pin
+> registration and eliminate the circular dependency.
+>
+> See Christian Lamparter's commit a86caa9ba5d7 ("pinctrl: msm: fix
+> gpio-hog related boot issues") for a detailed commit message that
+> explains the issue in much more detail. The code comment in this commit
+> came from Christian's commit.
+>
+> Signed-off-by: Brian Masney <masneyb@onstation.org>
 
-The seven bit i2c address of ov5645 is really 0x3c.
-Thank you for finding this and sending the fix!
+No word from Bjorn but I trust my own intuition and applied it.
 
-Best regards,
-Todor
+Bj=C3=B6rn: shout if it's wrong.
 
-> 
-> Fixes: 09c716af36e6 [media] media: i2c/ov5645: add the device tree binding document
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->  Documentation/devicetree/bindings/media/i2c/ov5645.txt | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/i2c/ov5645.txt b/Documentation/devicetree/bindings/media/i2c/ov5645.txt
-> index fd7aec9f8e24..1a68ca5eb9a3 100644
-> --- a/Documentation/devicetree/bindings/media/i2c/ov5645.txt
-> +++ b/Documentation/devicetree/bindings/media/i2c/ov5645.txt
-> @@ -26,9 +26,9 @@ Example:
->  	&i2c1 {
->  		...
->  
-> -		ov5645: ov5645@78 {
-> +		ov5645: ov5645@3c {
->  			compatible = "ovti,ov5645";
-> -			reg = <0x78>;
-> +			reg = <0x3c>;
->  
->  			enable-gpios = <&gpio1 6 GPIO_ACTIVE_HIGH>;
->  			reset-gpios = <&gpio5 20 GPIO_ACTIVE_LOW>;
-> 
+Question: should this also be done for pinctrl-ssbi-gpio.c?
 
+Yours,
+Linus Walleij
