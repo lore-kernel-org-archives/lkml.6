@@ -2,136 +2,169 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E00EFC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 20:45:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A39A2C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 20:46:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99A1220818
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 20:45:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A24420818
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 20:46:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="lIRyjgsA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99A1220818
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="KhVvCXqj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A24420818
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728256AbeKJG1O (ORCPT
+        id S1728245AbeKJG2r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 01:27:14 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:37606 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726110AbeKJG1O (ORCPT
+        Sat, 10 Nov 2018 01:28:47 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:34643 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725997AbeKJG2r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 01:27:14 -0500
-Received: by mail-pf1-f195.google.com with SMTP id u13-v6so1442940pfm.4
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 12:44:59 -0800 (PST)
+        Sat, 10 Nov 2018 01:28:47 -0500
+Received: by mail-pl1-f193.google.com with SMTP id f12-v6so1458853plo.1
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 12:46:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=HqeW8MnbDg2PokJJQw17Go2b59puuLzNW0F5TYLSyF8=;
-        b=lIRyjgsALz9gD/229FsCi+xZO42yKODRhEtA94EbIdH9kMpjesJTiu/MZ55+iRXj3W
-         q0kRgJH2ycJ+wK0EW0k6EUSQFkq85E7Sr0c1+NMS3LEFqjA+tape7E9pKTk8PpJxcKRT
-         qtJWWDvus0vyU214sA2SnllSlsRSgIa5QzdTdVDIzW2vzyHPsIgjGcCwXw0y6aPUIfHw
-         +sp8hqHQggVqDopKopfjs3Q2dMegTTcJ3rQE20UAlktTdZEsq38HLpUeH0XXx9943+2l
-         AJLPEviyaHiGJ1wzx5iDl1b/el+y6qg9OSeOrsT7NuuLU8MtrxXjHmjLGeK0l5Q1d5ov
-         8Enw==
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=z3cT5Pw2wUEAlev8kV/vpVeePw6wc3P0Gr59IdrASFA=;
+        b=KhVvCXqjNpgs5mO1CwaMzbw53NBMRompT5U1Pj6I5zbHgTBUqgLM8sscgGaszQWWRZ
+         dvPrsWvTOeILL+13+f9XYkvLq2aKx8XtEO4hQvK20p/0RDhjOt4a1fdS26W9odSwENqu
+         Fj7v6KgVTEABfsfhC5Mzrw/xv9McrSqpv1FzW9GwDE9RZyVQPRu15M/ZMVfUvACCqdX8
+         GsIsT4BjfKqxnsmxlayMZDfPxMfzFCJMkddsGhmqn33c1gvltXIjlHOALJ7eKfkoGdzF
+         KN5ODQVDHL+aI3P7h0nwVHkgj3YLZ++N3rCWyoKQ7gGiQgDkSSag+anJYPb2q0Hn7h+A
+         1GxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HqeW8MnbDg2PokJJQw17Go2b59puuLzNW0F5TYLSyF8=;
-        b=E39GzPMPITFaAxwgSi94bu49CZhu56qXxNzZLBeExuvGwpLknrVLD7t+OavMn55QlD
-         0ozoZuCzNnvZffMjnBLipmniq5rxZx3/NzB74/eJRBllE/by01AFE4HJ6Zt2laqnWI41
-         OKBqxRDAsPZtMTRROfdr0eRUNqFJEy//dkJFaYYIBzB+p9BL5klkNmZYU22kvQO6RZDG
-         77OtD9RWCqRE2nHdIGhr/+pLGml6N8q7+UJ/bIo3uaWUBX9MSlVwKBNaaTje5fTVqFaq
-         qTalF7REUye4hSzBCXdlw9YLv01Q5tUWXCAGVQN7JcvrH/FNYItuNf7dYkk1wVETcrsG
-         WuyA==
-X-Gm-Message-State: AGRZ1gKqZPUgKeGcyYIV3hNGIxSgaPadjTn9V0IyUbuHU/TOyCiq/5jV
-        gPaYFFyHW0iHJGs3HT+txBeojw==
-X-Google-Smtp-Source: AJdET5eWwoHtGLMfTDdHqHY7anf02icBEwNZ5H7snwAT1XAxQpdlCA9zVqIC7QP2OeInZDm4VofZcA==
-X-Received: by 2002:a62:d8c3:: with SMTP id e186-v6mr10738230pfg.52.1541796298802;
-        Fri, 09 Nov 2018 12:44:58 -0800 (PST)
-Received: from cisco ([128.107.241.186])
-        by smtp.gmail.com with ESMTPSA id c7-v6sm9397934pfh.25.2018.11.09.12.44.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 09 Nov 2018 12:44:57 -0800 (PST)
-Date:   Fri, 9 Nov 2018 13:44:54 -0700
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Dmitry Safonov <dima@arista.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Daniel Axtens <dja@axtens.net>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Neuling <mikey@neuling.org>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        Nathan March <nathan@gt.net>,
-        Pasi =?iso-8859-1?Q?K=E4rkk=E4inen?= <pasik@iki.fi>,
-        Peter Hurley <peter@hurleysoftware.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rong, Chen" <rong.a.chen@intel.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Tan Xiaojun <tanxiaojun@huawei.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Jiri Slaby <jslaby@suse.cz>,
-        syzbot+3aa9784721dfb90e984d@syzkaller.appspotmail.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, stable@vger.kernel.org
-Subject: Re: [PATCHv6 2/7] tty: Hold tty_ldisc_lock() during tty_reopen()
-Message-ID: <20181109204454.GF3645@cisco>
-References: <20181101002452.5483-1-dima@arista.com>
- <20181101002452.5483-3-dima@arista.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181101002452.5483-3-dima@arista.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=z3cT5Pw2wUEAlev8kV/vpVeePw6wc3P0Gr59IdrASFA=;
+        b=a2BtZCdweAZpZTAvkXfUaDlamloYUUfDvJXKxr3utwYc7fXjCXUTbwRiAU9W7rr/5K
+         vla2Bnttj11w43m8UaVhSI7Rnr47rJ3iDfUwzGuQyh9Kj8LY6hKhLl5TmjXIIdh4i/Pv
+         oq7ZpUXfHgjmqRvjsn2MqVanewqUYHr69RHEZcBqu0CkPrCnyIjJnJsP+3+vXhCBIgTm
+         Eqqbp+4y8mEZgeh119Aun+t2RMuOQQ5tIqrmFYDZ9TdrJCLGoCzmyan4Hgd1vUladVzH
+         f80PXGdPFY6rqANQAhNdnu49upUH/02D7SJi/nG3V6qk6fA8XeM/aSNTm127ThzE7V68
+         FSrg==
+X-Gm-Message-State: AGRZ1gIcTMLRIMpaPN/yqMamSbkrYyhXOpD0kGSjAlMiSj1MKb0tVqcJ
+        cTRbG2SziJqXQ3ry1Wt/OnrDrw==
+X-Google-Smtp-Source: AJdET5c93wXMOz30GcguG9OwCKrFU3Bk6Pr8dOLM53sGJJPc1lMOPeYRUFdhWDkTiq3hrigwebh1fw==
+X-Received: by 2002:a17:902:6b87:: with SMTP id p7-v6mr10570515plk.282.1541796391592;
+        Fri, 09 Nov 2018 12:46:31 -0800 (PST)
+Received: from ?IPv6:2600:1010:b002:666:dc7a:5a83:1f2b:9078? ([2600:1010:b002:666:dc7a:5a83:1f2b:9078])
+        by smtp.gmail.com with ESMTPSA id k129sm11737599pgk.29.2018.11.09.12.46.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 09 Nov 2018 12:46:30 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: afaef01c00 ("x86/entry: Add STACKLEAK erasing the kernel stack .."): double fault: 0000 [#1]
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16A404)
+In-Reply-To: <CAG48ez2xSLFGjMYSYJTLwEnZoZJuXUfdoCp6_vGrywBU4SQNkQ@mail.gmail.com>
+Date:   Fri, 9 Nov 2018 12:46:29 -0800
+Cc:     alex.popov@linux.com, Andy Lutomirski <luto@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, lkp@01.org,
+        lkp@intel.com,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-doc@vger.kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <2B681F10-752C-4327-9960-3987CE17A619@amacapital.net>
+References: <5be58a6e.w0IbLdKsiRknTygq%lkp@intel.com> <CAG48ez2xSLFGjMYSYJTLwEnZoZJuXUfdoCp6_vGrywBU4SQNkQ@mail.gmail.com>
+To:     Jann Horn <jannh@google.com>, Joerg Roedel <joro@8bytes.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On Thu, Nov 01, 2018 at 12:24:47AM +0000, Dmitry Safonov wrote:
-> tty_ldisc_reinit() doesn't race with neither tty_ldisc_hangup()
-> nor set_ldisc() nor tty_ldisc_release() as they use tty lock.
-> But it races with anyone who expects line discipline to be the same
-> after hoding read semaphore in tty_ldisc_ref().
-> 
-> We've seen the following crash on v4.9.108 stable:
-> 
-> BUG: unable to handle kernel paging request at 0000000000002260
-> IP: [..] n_tty_receive_buf_common+0x5f/0x86d
-> Workqueue: events_unbound flush_to_ldisc
-> Call Trace:
->  [..] n_tty_receive_buf2
->  [..] tty_ldisc_receive_buf
->  [..] flush_to_ldisc
->  [..] process_one_work
->  [..] worker_thread
->  [..] kthread
->  [..] ret_from_fork
-> 
-> tty_ldisc_reinit() should be called with ldisc_sem hold for writing,
-> which will protect any reader against line discipline changes.
-> 
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Jiri Slaby <jslaby@suse.com>
-> Cc: stable@vger.kernel.org # b027e2298bd5 ("tty: fix data race between tty_init_dev and flush of buf")
-> Reviewed-by: Jiri Slaby <jslaby@suse.cz>
-> Reported-by: syzbot+3aa9784721dfb90e984d@syzkaller.appspotmail.com
-> Tested-by: Mark Rutland <mark.rutland@arm.com>
-> Tested-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
 
-Feel free to add
+> On Nov 9, 2018, at 12:06 PM, Jann Horn <jannh@google.com> wrote:
+>=20
+> +Andy, Thomas, Ingo
+>=20
+>> On Fri, Nov 9, 2018 at 2:24 PM kernel test robot <lkp@intel.com> wrote:
+>> 0day kernel testing robot got the below dmesg and the first bad commit is=
 
-Tested-by: Tycho Andersen <tycho@tycho.ws>
+>>=20
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master=
 
-to this as well. We've recently seen this bug (well, the one that
-syzbot reported), and this patch fixes it.
+>>=20
+>> commit afaef01c001537fa97a25092d7f54d764dc7d8c1
+>> Author:     Alexander Popov <alex.popov@linux.com>
+>> AuthorDate: Fri Aug 17 01:16:58 2018 +0300
+>> Commit:     Kees Cook <keescook@chromium.org>
+>> CommitDate: Tue Sep 4 10:35:47 2018 -0700
+>>=20
+>>    x86/entry: Add STACKLEAK erasing the kernel stack at the end of syscal=
+ls
+> [...]
+>> [  127.808225] double fault: 0000 [#1]
+>> [  127.808695] CPU: 0 PID: 414 Comm: trinity-main Tainted: G             =
+   T 4.19.0-rc2-00001-gafaef01 #1
+>> [  127.809799] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIO=
+S 1.10.2-1 04/01/2014
+>> [  127.810760] RIP: 0010:ftrace_ops_test+0x27/0xa0
+>> [  127.811289] Code: eb 9a 90 41 54 55 49 89 f4 53 48 89 d3 48 89 fd 48 8=
+1 ec b0 00 00 00 65 48 8b 04 25 28 00 00 00 48 89 84 24 a8 00 00 00 31 c0 <e=
+8> 54 df ff ff 48 85 db 74 57 e8 4a df ff ff 48 8b 85 d0 00 00 00
+>> [  127.813385] RSP: 0018:fffffe0000001fb8 EFLAGS: 00010046
+> [...]
+>> [  127.819762] CR2: fffffe0000001fa8 CR3: 000000001579a000 CR4: 000000000=
+00006b0
+> [...]
+>> [  127.822234] Call Trace:
+>> [  127.822530]  <ENTRY_TRAMPOLINE>
+>> [  127.822914]  ? __ia32_sys_rseq+0x2f0/0x2f0
+>> [  127.823395]  ftrace_ops_list_func+0xa5/0x1b0
+>> [  127.823922]  ftrace_call+0x5/0x34
+>> [  127.824318]  ? stackleak_erase+0x5/0xf0
+>> [  127.824789]  ? stackleak_erase+0x43/0xf0
+>> [  127.825260]  stackleak_erase+0x5/0xf0
+>> [  127.825699]  syscall_return_via_sysret+0x61/0x81
+>> [  127.826238] WARNING: stack recursion on stack type 4
+>> [  127.826243] WARNING: can't dereference registers at (____ptrval____) f=
+or ip syscall_return_via_sysret+0x61/0x81
+>> [  127.826246]  </ENTRY_TRAMPOLINE>
+>> [  127.828342] ---[ end trace e9f96d3f45575499 ]---
+>> [  127.828911] RIP: 0010:ftrace_ops_test+0x27/0xa0
+>=20
+> CR2: fffffe0000001fa8, RSP: 0018:fffffe0000001fb8; this is a pagefault
+> on the stack. fffffe0000000000 is CPU_ENTRY_AREA_RO_IDT;
+> fffffe0000001000 is CPU_ENTRY_AREA_PER_CPU; so fffffe0000002000 is the
+> page with the entry stack for cpu 0, and you overflowed from that into
+> the readonly gdt at fffffe0000001000, which doubles as a guard page
+> for the entry stack:
+>=20
+> struct cpu_entry_area {
+>        char gdt[PAGE_SIZE];
+>=20
+>        /*
+>         * The GDT is just below entry_stack and thus serves (on x86_64) as=
 
-Tycho
+>         * a a read-only guard page.
+>         */
+>        struct entry_stack_page entry_stack_page;
+> [...]
+> };
+>=20
+> In other words: You're calling C code on the entry trampoline stack;
+> this C code can call into ftrace; and the entry trampoline stack isn't
+> big enough for ftrace shenanigans. I think you probably shouldn't be
+> calling C code on the entry stack, but maybe one of the X86 folks has
+> a different opinion?
+
+My opinion was that, on x86_32, the entry stack ought to be fairly large so t=
+hat NMIs could execute on the entry stack.  I don=E2=80=99t remember what th=
+e code actually does, though.
+
+But stackleak_erase should probably not run on the entry stack. That seems l=
+ike it=E2=80=99s just asking for trouble.=
