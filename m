@@ -1,163 +1,167 @@
 Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EBC7C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:59:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65C85C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:04:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32A4E20883
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:59:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32A4E20883
+	by mail.kernel.org (Postfix) with ESMTP id 1CC6820855
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:04:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oHAa+UI4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CC6820855
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728392AbeKIRin (ORCPT
+        id S1728257AbeKIRnl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 12:38:43 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40748 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728088AbeKIRin (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 12:38:43 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id F1CCDACE5;
-        Fri,  9 Nov 2018 07:59:16 +0000 (UTC)
-Date:   Fri, 9 Nov 2018 08:59:14 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Oscar Salvador <OSalvador@suse.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [RFC PATCH] mm, memory_hotplug: do not clear numa_node
- association after hot_remove
-Message-ID: <20181109075914.GD18390@dhcp22.suse.cz>
-References: <20181108100413.966-1-mhocko@kernel.org>
- <20181108102917.GV27423@dhcp22.suse.cz>
- <048c04ae-7394-d03f-813e-42acdc965dd2@arm.com>
+        Fri, 9 Nov 2018 12:43:41 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:38972 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728149AbeKIRnl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 12:43:41 -0500
+Received: by mail-wr1-f67.google.com with SMTP id b13so841248wrx.6
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 00:04:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=whY3cdlLymYbAemwAFA7cNzdmUGnDBNaeGZFtOPUr0A=;
+        b=oHAa+UI4kykma9/3SOV4qWLXl/MkBZMZv+t8OxJUQLMb19XB6BVVae8jsQIeuODb2B
+         OWC2e2jaZTvLoe7bcKRN3KWqZDRYyOql9fcEtIbXUpHXQkY3kIWtKXdIoDk0mqTtd5/X
+         2ywiHUUuhjk0tgBat4Q5r0B2rzIYwuiDtC9KAg/hmZ99I8Dw9/sKIPBqpGd7JjEzJJvf
+         IbHZa/njh2DV8s9fITsidqE9n4pseNG2Aczxxvwue9UDYeEfDr30ScJLvyIaXZT5N8ga
+         2jVJ4J4ITCdbl1/VP4E1We07D3skv8AMclrfVrY+Ic2thjIAx1YAMjMX4C4A1KKlVpsO
+         nvvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=whY3cdlLymYbAemwAFA7cNzdmUGnDBNaeGZFtOPUr0A=;
+        b=W0w+htKQNtLQm4+6qzXfAdL92HaE+FPD9RM6LfPDHF/pGskIzs/GToY75fwggwk/L7
+         5HAH/YnNlWQVg89JqCBlrUDhfzRYsIVdFIiNwPXjlsse1YQTt+4XZM+HI15J0TDf4PcD
+         k+izpTudaAzbT5HlHJkOzEGbuuaclHiULxmK25KNQLvdup0J1qD0bUEPlpTAz+4Nj6cS
+         cWdBdKoU8HJ29Shqn/sKGxvvX1PI2hu//s1JrizM2xepMuYDopQBFByB9YibPaqvR6v4
+         7pItgQ19+wbst9oKAF950G5NVZ33NH6FyG8DLgfDFe4Qlj13kKVsln0xSqBPHXomJENV
+         ad9g==
+X-Gm-Message-State: AGRZ1gKcTHTP9Zq1GbNmY7Reyimn3UyJA+uPFpzsK+KZ6XFu0Nmlx4VE
+        G1Se0+oG/T2bsE8y/nE1igY=
+X-Google-Smtp-Source: AJdET5d7EfVlfyXqyLNdjCJu5mvgkCTgnW6NkAILg8K+sExX26PYk7PujQP6zrWvNAfamRVPRLMFAw==
+X-Received: by 2002:adf:9022:: with SMTP id h31-v6mr7355477wrh.297.1541750655114;
+        Fri, 09 Nov 2018 00:04:15 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id 82-v6sm708891wms.17.2018.11.09.00.04.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 09 Nov 2018 00:04:14 -0800 (PST)
+Date:   Fri, 9 Nov 2018 09:04:12 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Waiman Long <longman@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
+        linux-mm@kvack.org, Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Tejun Heo <tj@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [RFC PATCH 00/12] locking/lockdep: Add a new class of terminal
+ locks
+Message-ID: <20181109080412.GC86700@gmail.com>
+References: <1541709268-3766-1-git-send-email-longman@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <048c04ae-7394-d03f-813e-42acdc965dd2@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1541709268-3766-1-git-send-email-longman@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 09-11-18 09:12:09, Anshuman Khandual wrote:
-> 
-> 
-> On 11/08/2018 03:59 PM, Michal Hocko wrote:
-> > [Removing Wen Congyang and Tang Chen from the CC list because their
-> >  emails bounce. It seems that we will never learn about their motivation]
-> > 
-> > On Thu 08-11-18 11:04:13, Michal Hocko wrote:
-> >> From: Michal Hocko <mhocko@suse.com>
-> >>
-> >> Per-cpu numa_node provides a default node for each possible cpu. The
-> >> association gets initialized during the boot when the architecture
-> >> specific code explores cpu->NUMA affinity. When the whole NUMA node is
-> >> removed though we are clearing this association
-> >>
-> >> try_offline_node
-> >>   check_and_unmap_cpu_on_node
-> >>     unmap_cpu_on_node
-> >>       numa_clear_node
-> >>         numa_set_node(cpu, NUMA_NO_NODE)
-> >>
-> >> This means that whoever calls cpu_to_node for a cpu associated with such
-> >> a node will get NUMA_NO_NODE. This is problematic for two reasons. First
-> >> it is fragile because __alloc_pages_node would simply blow up on an
-> >> out-of-bound access. We have encountered this when loading kvm module
-> >> BUG: unable to handle kernel paging request at 00000000000021c0
-> >> IP: [<ffffffff8119ccb3>] __alloc_pages_nodemask+0x93/0xb70
-> >> PGD 800000ffe853e067 PUD 7336bbc067 PMD 0
-> >> Oops: 0000 [#1] SMP
-> >> [...]
-> >> CPU: 88 PID: 1223749 Comm: modprobe Tainted: G        W          4.4.156-94.64-default #1
-> >> task: ffff88727eff1880 ti: ffff887354490000 task.ti: ffff887354490000
-> >> RIP: 0010:[<ffffffff8119ccb3>]  [<ffffffff8119ccb3>] __alloc_pages_nodemask+0x93/0xb70
-> >> RSP: 0018:ffff887354493b40  EFLAGS: 00010202
-> >> RAX: 00000000000021c0 RBX: 0000000000000000 RCX: 0000000000000000
-> >> RDX: 0000000000000000 RSI: 0000000000000002 RDI: 00000000014000c0
-> >> RBP: 00000000014000c0 R08: ffffffffffffffff R09: 0000000000000000
-> >> R10: ffff88fffc89e790 R11: 0000000000014000 R12: 0000000000000101
-> >> R13: ffffffffa0772cd4 R14: ffffffffa0769ac0 R15: 0000000000000000
-> >> FS:  00007fdf2f2f1700(0000) GS:ffff88fffc880000(0000) knlGS:0000000000000000
-> >> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> >> CR2: 00000000000021c0 CR3: 00000077205ee000 CR4: 0000000000360670
-> >> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> >> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> >> Stack:
-> >>  0000000000000086 014000c014d20400 ffff887354493bb8 ffff882614d20f4c
-> >>  0000000000000000 0000000000000046 0000000000000046 ffffffff810ac0c9
-> >>  ffff88ffe78c0000 ffffffff0000009f ffffe8ffe82d3500 ffff88ff8ac55000
-> >> Call Trace:
-> >>  [<ffffffffa07476cd>] alloc_vmcs_cpu+0x3d/0x90 [kvm_intel]
-> >>  [<ffffffffa0772c0c>] hardware_setup+0x781/0x849 [kvm_intel]
-> >>  [<ffffffffa04a1c58>] kvm_arch_hardware_setup+0x28/0x190 [kvm]
-> >>  [<ffffffffa04856fc>] kvm_init+0x7c/0x2d0 [kvm]
-> >>  [<ffffffffa0772cf2>] vmx_init+0x1e/0x32c [kvm_intel]
-> >>  [<ffffffff8100213a>] do_one_initcall+0xca/0x1f0
-> >>  [<ffffffff81193886>] do_init_module+0x5a/0x1d7
-> >>  [<ffffffff81112083>] load_module+0x1393/0x1c90
-> >>  [<ffffffff81112b30>] SYSC_finit_module+0x70/0xa0
-> >>  [<ffffffff8161cbc3>] entry_SYSCALL_64_fastpath+0x1e/0xb7
-> >> DWARF2 unwinder stuck at entry_SYSCALL_64_fastpath+0x1e/0xb7
-> >>
-> >> on an older kernel but the code is basically the same in the current
-> >> Linus tree as well. alloc_vmcs_cpu could use alloc_pages_nodemask which
-> >> would recognize NUMA_NO_NODE and use alloc_pages_node which would translate
-> >> it to numa_mem_id but that is wrong as well because it would use a cpu
-> >> affinity of the local CPU which might be quite far from the original node.
-> 
-> But then the original node is getting/already off-lined. The allocation is
-> going to come from a different node. alloc_pages_node() at least steer the
-> allocation alway from VM_BUG_ON() because of NUMA_NO_NODE by replacing it
-> with numa_mem_id().
-> 
-> If node fallback order is important for this allocation then could not it
-> use __alloc_pages_nodemask() directly giving preference for its zonelist
-> node and nodemask. Just curious.
 
-How does the caller get the right node to allocate from? We do have the
-proper zone list for the offline node so why not use it?
+* Waiman Long <longman@redhat.com> wrote:
 
-> >> It is also reasonable to expect that cpu_to_node will provide a sane value
-> >> and there might be many more callers like that.
+> The purpose of this patchset is to add a new class of locks called
+> terminal locks and converts some of the low level raw or regular
+> spinlocks to terminal locks. A terminal lock does not have forward
+> dependency and it won't allow a lock or unlock operation on another
+> lock. Two level nesting of terminal locks is allowed, though.
 > 
-> AFAICS there are two choices here. Either mark them NUMA_NO_NODE for all
-> cpus of a node going offline or keep the existing mapping in case the node
-> comes back again.
-
-Or update the mapping to the closeses node. I have chosen to keep the
-mapping because it is the easiest and the most natural one.
-
-> >> The second problem is that __register_one_node relies on cpu_to_node
-> >> to properly associate cpus back to the node when it is onlined. We do
-> >> not want to lose that link as there is no arch independent way to get it
-> >> from the early boot time AFAICS.
+> Only spinlocks that are acquired with the _irq/_irqsave variants or
+> acquired in an IRQ disabled context should be classified as terminal
+> locks.
 > 
-> Retaining the links seems to be right unless unmap_cpu_on_node() is sort
-> of a weak callback letting arch to decide.
+> Because of the restrictions on terminal locks, we can do simple checks on
+> them without using the lockdep lock validation machinery. The advantages
+> of making these changes are as follows:
 > 
-> >>
-> >> Drop the whole check_and_unmap_cpu_on_node machinery and keep the
-> >> association to fix both issues. The NODE_DATA(nid) is not deallocated
-> Though retaining the link is a problem in itself but the allocation related
-> crash could be solved by exploring __alloc_pages_nodemask() options.
+>  1) The lockdep check will be faster for terminal locks without using
+>     the lock validation code.
+>  2) It saves table entries used by the validation code and hence make
+>     it harder to overflow those tables.
+> 
+> In fact, it is possible to overflow some of the tables by running
+> a variety of different workloads on a debug kernel. I have seen bug
+> reports about exhausting MAX_LOCKDEP_KEYS, MAX_LOCKDEP_ENTRIES and
+> MAX_STACK_TRACE_ENTRIES. This patch will help to reduce the chance
+> of overflowing some of the tables.
+> 
+> Performance wise, there was no statistically significant difference in
+> performanace when doing a parallel kernel build on a debug kernel.
 
-Yes that is the case but this looks like a very fragile fix to me. If
-you are getting a node number from cpu_to_node then you shouldn't really
-think about obscurities like which allocation function to use, right?
-You should just get a valid node number.
+Could you please measure a locking intense workload instead, such as:
 
-Do you see any problems with the patch as is?
--- 
-Michal Hocko
-SUSE Labs
+   $ perf stat --null --sync --repeat 10 perf bench sched messaging
+
+and profile which locks used there could be marked terminal, and measure 
+the before/after performance impact?
+
+> Below were selected output lines from the lockdep_stats files of the
+> patched and unpatched kernels after bootup and running parallel kernel
+> builds.
+> 
+>   Item                     Unpatched kernel  Patched kernel  % Change
+>   ----                     ----------------  --------------  --------
+>   direct dependencies           9732             8994          -7.6%
+>   dependency chains            18776            17033          -9.3%
+>   dependency chain hlocks      76044            68419         -10.0%
+>   stack-trace entries         110403           104341          -5.5%
+
+That's pretty impressive!
+
+> There were some reductions in the size of the lockdep tables. They were
+> not significant, but it is still a good start to rein in the number of
+> entries in those tables to make it harder to overflow them.
+
+Agreed.
+
+BTW., if you are interested in more radical approaches to optimize 
+lockdep, we could also add a static checker via objtool driven call graph 
+analysis, and mark those locks terminal that we can prove are terminal.
+
+This would require the unified call graph of the kernel image and of all 
+modules to be examined in a final pass, but that's within the principal 
+scope of objtool. (This 'final pass' could also be done during bootup, at 
+least in initial versions.)
+
+Note that beyond marking it 'terminal' such a static analysis pass would 
+also allow the detection of obvious locking bugs at the build (or boot) 
+stage already - plus it would allow the disabling of lockdep for 
+self-contained locks that don't interact with anything else.
+
+I.e. the static analysis pass would 'augment' lockdep and leave only 
+those locks active for runtime lockdep tracking whose dependencies it 
+cannot prove to be correct yet.
+
+Thanks,
+
+	Ingo
