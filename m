@@ -2,299 +2,295 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C1C8C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:07:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA194C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:08:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 202C120855
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:07:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 202C120855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 51E4D20855
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:08:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="GuJsbjXS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51E4D20855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=analog.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728376AbeKIRrD (ORCPT
+        id S1728422AbeKIRsA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 12:47:03 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:35593 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728149AbeKIRrD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 12:47:03 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id D003B207B0; Fri,  9 Nov 2018 09:07:35 +0100 (CET)
-Received: from bbrezillon (aaubervilliers-681-1-30-49.w90-88.abo.wanadoo.fr [90.88.15.49])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 798112039F;
-        Fri,  9 Nov 2018 09:07:35 +0100 (CET)
-Date:   Fri, 9 Nov 2018 09:07:33 +0100
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
-Cc:     <miquel.raynal@bootlin.com>, <richard@nod.at>,
-        <dwmw2@infradead.org>, <computersforpeace@gmail.com>,
-        <marek.vasut@gmail.com>, <michals@xilinx.com>,
-        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <nagasuresh12@gmail.com>, <robh@kernel.org>
-Subject: Re: [LINUX PATCH v12 3/3] mtd: rawnand: arasan: Add support for
- Arasan NAND Flash Controller
-Message-ID: <20181109090733.41ef6edf@bbrezillon>
-In-Reply-To: <1541739641-17789-4-git-send-email-naga.sureshkumar.relli@xilinx.com>
-References: <1541739641-17789-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
-        <1541739641-17789-4-git-send-email-naga.sureshkumar.relli@xilinx.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Fri, 9 Nov 2018 12:48:00 -0500
+Received: from mail-sn1nam02on0061.outbound.protection.outlook.com ([104.47.36.61]:29376
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728149AbeKIRr7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 12:47:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=analog.onmicrosoft.com; s=selector1-analog-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wvVSYmL949rX9GNwbAGshRnz7k+sKnzh3fPsDYoLAEw=;
+ b=GuJsbjXS7DR9YZWpeMyQLFd17hqFmGOFVs3Tkhw2pOpr+ncfSmu48EyfO0/Au97dK1AALC9sOvx/hmggE2xj+yRz55h5nyZ1wUsjGtKzzWlh8k2eu8jSzYL4s9VE1S1DjSK1/c5A5DnysJzqCUkYexn8q0Lm3QTPvCqL6HlPiE0=
+Received: from DM5PR03CA0051.namprd03.prod.outlook.com (2603:10b6:4:3b::40) by
+ BLUPR03MB550.namprd03.prod.outlook.com (2a01:111:e400:880::28) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.24; Fri, 9 Nov 2018 08:08:27 +0000
+Received: from BY2FFO11FD016.protection.gbl (2a01:111:f400:7c0c::118) by
+ DM5PR03CA0051.outlook.office365.com (2603:10b6:4:3b::40) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1294.26 via Frontend Transport; Fri, 9 Nov 2018 08:08:27 +0000
+Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
+ 137.71.25.57 as permitted sender) receiver=protection.outlook.com;
+ client-ip=137.71.25.57; helo=nwd2mta4.analog.com;
+Received: from nwd2mta4.analog.com (137.71.25.57) by
+ BY2FFO11FD016.mail.protection.outlook.com (10.1.14.148) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1294.14
+ via Frontend Transport; Fri, 9 Nov 2018 08:08:26 +0000
+Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
+        by nwd2mta4.analog.com (8.13.8/8.13.8) with ESMTP id wA988PGR028621
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
+        Fri, 9 Nov 2018 00:08:25 -0800
+Received: from NWD2MBX7.ad.analog.com ([fe80::190e:f9c1:9a22:9663]) by
+ NWD2HUBCAS7.ad.analog.com ([fe80::595b:ced1:cc03:539d%12]) with mapi id
+ 14.03.0301.000; Fri, 9 Nov 2018 03:08:26 -0500
+From:   "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>
+To:     "lars@metafoo.de" <lars@metafoo.de>,
+        "nishadkamdar@gmail.com" <nishadkamdar@gmail.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "knaack.h@gmx.de" <knaack.h@gmx.de>,
+        "jic23@kernel.org" <jic23@kernel.org>,
+        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v3 1/4] staging: iio: ad7816: Switch to the gpio
+ descriptor interface
+Thread-Topic: [PATCH v3 1/4] staging: iio: ad7816: Switch to the gpio
+ descriptor interface
+Thread-Index: AQHUd/7L37rIC1t68USz+f9UpOm+2KVHacAAgAAA2QA=
+Date:   Fri, 9 Nov 2018 08:08:24 +0000
+Message-ID: <3c8e9f9ced57c33dc7182cae91d6f72e0fdb6c58.camel@analog.com>
+References: <cover.1541733949.git.nishadkamdar@gmail.com>
+         <3f9ea18864230b2758f86899b9bd1acb020dd176.1541733949.git.nishadkamdar@gmail.com>
+         <5dc38ef5d09e176e720b3f3e31642f7c68ecb4a4.camel@analog.com>
+In-Reply-To: <5dc38ef5d09e176e720b3f3e31642f7c68ecb4a4.camel@analog.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.50.1.244]
+x-adiroutedonprem: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <0D61E535522E1844A45988E4AB61B4CD@analog.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(396003)(376002)(136003)(346002)(2980300002)(438002)(189003)(199004)(110136005)(575784001)(54906003)(5660300001)(36756003)(86362001)(106002)(26005)(4326008)(118296001)(246002)(186003)(229853002)(14444005)(316002)(2501003)(356004)(106466001)(2900100001)(8676002)(476003)(446003)(47776003)(305945005)(426003)(76176011)(436003)(6116002)(3846002)(478600001)(7636002)(6246003)(11346002)(23676004)(2486003)(336012)(8936002)(6346003)(14454004)(2616005)(7696005)(486006)(102836004)(39060400002)(2906002)(50466002)(7736002)(126002);DIR:OUT;SFP:1101;SCL:1;SRVR:BLUPR03MB550;H:nwd2mta4.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;BY2FFO11FD016;1:qpnyZzNCRIPBYfjRlN+7X3E2ZLz7xGF5wxtCAnHFzxCehtEhbmsQnYIibpg2j4W4pGhg2EurcfP7FAhL1SZuDeU6lowQX5bC3B3ooHX1g0B53f7QAwU6ThdAjaJHoZr2
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 4b1f9545-66c9-4b7f-8703-08d6461a8720
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4608076)(2017052603328)(7153060)(7193020);SRVR:BLUPR03MB550;
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB550;3:upbJZDoHzw0eSfjJX24uhOfUMhJAih58HZbBt+xX+7srhLUUazMTfOD0q2phy0bWLHpHN1OgM6UAaTPfAbN1T0QhzEqJ7U14aoxYRYbD2DIt3DwKXJVoxg9fNwJJo/bXmgoJTndK/aV4I7i5hwmbXbVUJgvR6hsJpksujbJdL7HzIBb6XZTQjHOdpCLmD9/6JhhPS+XIwlbTDcrRpGaHIF9C8PLCd2EgDwz3uny/r1+RtPybkeK6u5D5h9tqEWyCnOYSvJitWoHvLQpvr0jUyOhkFuGM9VSQey++VFRUjgPFb7L3Dq/EV5t8JYsSqOzSHcdM4nIMkuCBDI26U+w1yiqA9DoZHSsPKSFMNB2/FhA=;25:XPyld8Q0GGIZa1XY0Idh0ky/fZVjV7GA2w45BJM0EmvbQCg837RuHj782sT/GmWoSPCIIeVuq78akiZ7ps1uI1hLVVIlieSURJR3SM3Bdf++l9FejMYLbXD8MbGydZQx3DiblWEM6J46O3ZAWNhNTNUukvEowsXBynzoLEK2OQA0W/2U050TjluK/4LYjMzzBduBKSCKJMqXkA9E+SnYuCDt8yMsk/To94jFgI5nJS5W1G1fIRxl6b3pv7SN3J4DXBl4KJbEZt3EkPZTSoUJ/0v1QtYfEtwIxofGiuhKuuxTnc40uteeHqeXc2uhoVxXHgglmyAfc93MY8TZFLV7IA==
+X-MS-TrafficTypeDiagnostic: BLUPR03MB550:
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB550;31:euOkGwIQUpAGlFtuE7rJSPWB+HbmSx0Fxe/HPOBqxZ3Aq2erHzK8nogtXrDuMmVzq6gQo46VwB70wCHOF00W4m/Nxmf7ILdTm8Sk0bpDyL6jRCJDrIqDrzzZkBJNyfvBPkger1jQVs2lMSAA4LWWdLGdiYAshV12189G5Hz43zuHNu0hAk1W/SlGhu/QvVywRU+NrHrYtC0f5MOk89mvM1yQvzuymqcUPPZh7PXHIaQ=;20:marge+AhEOxPesh21t3tUnAjTwfhWl1HiTHVvNIAU8X63MTzJSMHKLhPLNJtlRJtLs/kihpY59qGORcrgPGCufy02USldo7+FO/DtEtpL31nE40VDO+3KlzneAqB0sOdO7xMDH8CtBDFDT6cks3uGbJKtqT5C1o/qEHZNE2uCDwSVmXWHTs/66P1iX+8TA6JeJhHGBz8SPFAlPFB6FWm7ykdOYdx+yifxdUIH78waiRxS9q6kEUVTB+q8+LuzWugtLpUgoMGl6vzeCCIO4o4S70RE0YziNlZU7PzGl7+muwp7lDaLbpM/CdogFBE8RyZ19erW8hlDYpc5CVuMseyOrTrznqjoZR3j7pI8Mlo73GDkF7yLOzFpUiREVk4RujgF61DgrB1V65fBz4iSjuCUpf+MQAEaIv8Se7x4RJFLtsAEOJNR0BRkZKppPDfhG+FFz0qEqJfoQQXEe3fw14u7gsI+2CUxOX03LUBlmkLpijGsbetimHGgtTTG31GI3op
+X-Microsoft-Antispam-PRVS: <BLUPR03MB550A82B5D70687DF05277A4F9C60@BLUPR03MB550.namprd03.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(85827821059158)(163750095850);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93004095)(3231382)(944501410)(52105095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:BLUPR03MB550;BCL:0;PCL:0;RULEID:;SRVR:BLUPR03MB550;
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB550;4:TmPDLl377/lHAkLZ1HZXwAEMXJDPDjZScPGIt/xkQXk1DKq5V4P1v14TLaUzurSQ+8V+9mKqHs1gLcfP2i/k34vl9tB+VS1jG2CQBBpIRQrnF7RyTbf7vyYMFoOq5BW6glCAVm0bKbo8UoGDRsFCIBonivto8BlMToNcUvYqzIJMGLqFWovR37m911UQokd6X/CkFtMj2Z4FInuxN2ie50xCNm1OFZ3QNJbs+lEAh3RoyyQH0y4O5dMzqv3WXyTAW8AWys8o7fmtPBjFZa+AUmBo4RAu1C9xOI9W2PGrf+y7W/ETrOQGWK5sO0pSQRzYGGT+ZHFW90mKA+8dxT7qxh7lv7QLfNIGk7//HHkHfWI=
+X-Forefront-PRVS: 08512C5403
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtCTFVQUjAzTUI1NTA7MjM6UDRFOFcxekFFUFlFcnBub2Q5K2NTL0N4TUhL?=
+ =?utf-8?B?RUlDSVNaM1ZxNDMvL2pOWGV4UmJ0NkV2Zm1NSnY3d2wrci96akpDNnpSdHJL?=
+ =?utf-8?B?YklVOGtFZjlXbk12YTIrYkwxcS9mKzJBQndhdm5xWWZaQkoyY2ZoM2Z1cHFI?=
+ =?utf-8?B?RVN0TSt6aElNR1cyL1RTYVdKVXNKTVZ6TWJVWXdaODlndWYvcFhpYTdEZWYv?=
+ =?utf-8?B?OXZndDhhVU1jdVg5SEtJMGpob1JaczZpMEVOSjk5N1dBWkw1eWROMy90Yy9R?=
+ =?utf-8?B?NlZMbEMvdW1WeEoveEJCRVRvd1ZmOENudWdMNkoybVBtVjQ5SkdoWkVKRWlF?=
+ =?utf-8?B?a3hPNW1ueXBNb2JIS3dJRlYyS1dLakowWWI0cElrTFNxN0dKaStzcXlLVFYv?=
+ =?utf-8?B?b0FPMUFrUmw0eUwrUDB2VDFPOThxNDFRSlNMYkt0WjE3dWVLYlNnd3Bzd2k1?=
+ =?utf-8?B?RGVrWktBb0JsVnEzb2V0eVBOQkxQa1hPWHZDS3BqR00wQ2hIbW5PWGcrZ3JZ?=
+ =?utf-8?B?cTJZdWZyUzEyWjlLNUlhakZoazNmb1hRb0h6dDlGV21uSXZlbHVpZlRDQVZN?=
+ =?utf-8?B?SVkyQ0hGek1YNkRzL2E3M0NSSTJMUFNZOGdqTS94T1B0MmN1enJjbnMrTHRr?=
+ =?utf-8?B?eDU2Mmp6d1RDN0krdzkwa1JZV083cEtMTUpUaTZ4VndnUXhmQk0wdFRMK0hI?=
+ =?utf-8?B?THF6MTdrMjlpRmVIcDhBWllqQjRPVldaWnBLTnp1WFNpdE9zbzhnbHZEUTBD?=
+ =?utf-8?B?aldEQVVYQllPMW81WXlaaHFjT2gyY3N2V2hYZk5yaWwwcjgxaDEyNUZUb2Jj?=
+ =?utf-8?B?cXRnUHJIelVUN1RIRXlwd05YVkRVRW9pK2tkbmFwWWNlNjg0emZ5MjJ2M1V1?=
+ =?utf-8?B?UzF4SUR1MTRNZlNnbVcyb2pCakdOalVPMEUzYmZzc2dUTndvcG8vN0Z0SGls?=
+ =?utf-8?B?c3hwRlNoNXNPQ250bFFhaS9aU2E2SVR6dllIUnJUQlBSVE9aMHZGSVdaQmEy?=
+ =?utf-8?B?UUlVVDE2M0syMVg5Ym5BSXJJNGx6ZWtEb2p0NWFSK0ViWW5mV3k3cXJ5RGtO?=
+ =?utf-8?B?WVNaNkFZR2tpMlE2QUdvbW9KbFJpUXNFaGFZMk5jdEFCZjl5endDOFJBV0dE?=
+ =?utf-8?B?WE9JSlZKUmc2QXFoN0NiYUV5bmtRRXFwUTQ4VU5iR3RWYnNOaGhqVStaRExX?=
+ =?utf-8?B?Qm9ndG9zMlNTd2I3SmtUbjk5RTljbUZnNkVKTEdCVmd6Slh2V2lCSlM5TEZa?=
+ =?utf-8?B?TmtMQTZ4ajRIeksyWGNzSmYwd2VKNXNTM3lRdFJSTEJKaFdkcUJSaVZnQkVK?=
+ =?utf-8?B?MS9nOEJRR2hyM3pZL0Q5N2l6aEhBS1pkczFuMEQybFF3dVdRSUxKNHlaMnlO?=
+ =?utf-8?B?VG1xd2JycjB4ZWJvbGJxSlpVREdZVEM1Ymx6eGh4ZkIrZE1BR1lHTk5vQ25X?=
+ =?utf-8?B?VjgrN1g4YlpwY29hNTdPQ2JwT1k4VDZHWmtCTDh0ZlRteFphTVlwNjVvdDFE?=
+ =?utf-8?B?VnhpY3FCb3Y2RnhXVGpTYS9lUkJYTEU5LzZLSm5JUzdsL0pJMjVXTmR1ejR3?=
+ =?utf-8?B?Y1FsWDZTR1lQeDFEcFFsaDQ1Z2lIMTBuTVUrVDRIWGRtUmtrS1NhdWhIakRu?=
+ =?utf-8?B?ZUplVDBQZld6S1g1b3RGdHJWRk9vQmw5TTNkOTdHSm9HRXVOTVVNcXc9PQ==?=
+X-Microsoft-Antispam-Message-Info: MbfTuKXBfQuGL2f22zcRnucYk9jCEmh3KmLT6z4iqmh4pHpocZAgY6VT5rhy1atCKm+LYlN3NesqvTHypT/htxTDWEaJAdtsDmbRTu57LvUoNcOhCRzkQjeGgl6m8gACuskaJLSCEZBegNyiwcNiJ9oEPBNNMaXtULR/EnAk5zeF61yYW1n9Fa3GsWld8QxCXLnFsg8lXEUdYdqK2vCmR3jXErCIJlCM2VY72qpcSh6HtA0+melyhK7Y+F466Qc9nUgBbX6EKTJbsCPfhpfd4vtCUcmV/fU/rF2s7aBu1JYzsx6zLF8FtE253fyI6OyJhlmZ/Xq5E+Zt/+giNAlyY3S/qXCvXqTyGAM67VXJR3A=
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB550;6:5THz3L7C5gKEW8O9pim+T/6dF8v3YN4e+MgNyj0zEFyaNck2+Kh3x+LpGGS1V2y7u26eVqvsfQmOHayi9tUwnx0cCBdI96OMSWjRMNLIoCoeiQ3ZsmbTmiT0Miel8G+5d1HJxUy7HfUoEWtPCy2OHQVARz0TFCxcoAOAU41tiHLanf2jXqGHbkTuOyE3yucf3d94XgzS6o1f1HiU+KPIkNpaFZVBA07RAd0aTkQ2sFVzadHYyXA/DcX80f/VHrB++80EjHu8gxAFdHQEL/c+93NNJTiquUcyeIetCyWAO3rxP4dl0PYTlm4BvqGhOUPTcsL+cihD9np7TGrBDr7doELk+YgGRbEh7HPAGciLPXLKSp4QQEcG2Ey7hKNn9IbeU65/6Zc9xlrfgvKAOKnb0WRDc0sQ/Id1DmfksVb7i/bRRcyQJHqa1zm4Noi3Xsc/8yFhFzX2oNygO9ObdZ3dFA==;5:ldsmA2SzHt0glP47wWhbXaoy8uWn+2o5Lbh7Qml5sZNKT6Gg8LD8nWQzfMI3jesVHsFe03z9QhyArfvEzGL3ztxqlKG9o/IQzKCEuvssPT/5jzAYg73rihh/bPvudANz0ExWDFM1hHTGcACQhDGJmgsbx4vIcY/NGRD0o3RJnTs=;7:KfVgERuH0JCEcvY0xaUmDHzUOVgP45x/2XYL52VbQWqNpBaP83F7tFhfotfwgxaVjhfClbdq9/rCWTdw3X+x4jLoemyNI2Mi0HaYA6TrrwXV2YKG+MwNfHUu3Y3lGDdpK9bbPCBYXQ5+VLMhFr71pw==
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Nov 2018 08:08:26.6841
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4b1f9545-66c9-4b7f-8703-08d6461a8720
+X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta4.analog.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLUPR03MB550
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Naga,
-
-Just a preliminary review. I still think we have problems with how you
-execute NAND operations. You seem to assume that read/write operation
-are always page write/read operation with a size aligned on a page
-size. This is wrong, either the controller is able to execute the exact
-operation that has been requested or it returns -ENOTSUPP.
-
-On Fri, 9 Nov 2018 10:30:41 +0530
-Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com> wrote:
-
-> +
-> +/**
-> + * struct anfc_nand_chip - Defines the nand chip related information
-> + * @node:		Used to store NAND chips into a list.
-> + * @chip:		NAND chip information structure.
-> + * @strength:		Bch or Hamming mode enable/disable.
-
-The name is still confusing. BTW, can't you deduce Hamming vs BCH from
-the strength? Hamming strength is 1, while BCH strengths seem to start
-at 4.
-
-> + * @ecc_strength:	Ecc strength 4.8/12/16.
-
-				      ^/
-
-> + * @eccval:		Ecc config value.
-> + * @spare_caddr_cycles:	Column address cycle information for spare area.
-> + * @pktsize:		Packet size for read / write operation.
-> + * @csnum:		chipselect number to be used.
-> + * @spktsize:		Packet size in ddr mode for status operation.
-> + * @inftimeval:		Data interface and timing mode information
-> + */
-> +struct anfc_nand_chip {
-> +	struct list_head node;
-> +	struct nand_chip chip;
-> +	bool strength;
-> +	u32 ecc_strength;
-> +	u32 eccval;
-> +	u16 spare_caddr_cycles;
-> +	u32 pktsize;
-> +	int csnum;
-> +	u32 spktsize;
-> +	u32 inftimeval;
-> +};
-> +
-> +/**
-> + * struct anfc_nand_controller - Defines the Arasan NAND flash controller
-> + *				 driver instance
-> + * @controller:		base controller structure.
-> + * @chips:		list of all nand chips attached to the ctrler.
-> + * @dev:		Pointer to the device structure.
-> + * @base:		Virtual address of the NAND flash device.
-> + * @clk_sys:		Pointer to the system clock.
-> + * @clk_flash:		Pointer to the flash clock.
-> + * @dma:		Dma enable/disable.
-> + * @buf:		Buffer used for read/write byte operations.
-> + * @irq:		irq number
-
-You should need this field. Just get the irq num in you probe path an
-register an irq handler with devm_request_irq().
-
-> + * @bufshift:		Variable used for indexing buffer operation
-> + * @csnum:		Chip select number currently inuse.
-
-						     ^ in use
-
-> + * @event:		Completion event for nand status events.
-> + * @status:		Status of the flash device.
-> + * @prog:		Used to initiate controller operations.
-> + */
-> +struct anfc_nand_controller {
-> +	struct nand_controller controller;
-> +	struct list_head chips;
-> +	struct device *dev;
-> +	void __iomem *base;
-> +	struct clk *clk_sys;
-> +	struct clk *clk_flash;
-> +	int irq;
-> +	int csnum;
-> +	struct completion event;
-> +	int status;
-> +	u8 buf[TEMP_BUF_SIZE];
-
-Allocate this buf dynamically.
-
-> +	u32 eccval;
-> +};
-
-> +static int anfc_page_write_type_exec(struct nand_chip *chip,
-> +				     const struct nand_subop *subop)
-> +{
-> +	const struct nand_op_instr *instr;
-> +	struct anfc_nand_chip *achip = to_anfc_nand(chip);
-> +	struct anfc_nand_controller *nfc = to_anfc(chip->controller);
-> +	unsigned int op_id, len;
-> +	struct anfc_op nfc_op = {};
-> +	struct mtd_info *mtd = nand_to_mtd(chip);
-> +
-> +	anfc_parse_instructions(chip, subop, &nfc_op);
-> +	instr = nfc_op.data_instr;
-> +	op_id = nfc_op.data_instr_idx;
-> +	anfc_prepare_cmd(chip, nfc_op.cmds[0], nfc_op.cmds[1], 1,
-> +			 mtd->writesize, nfc_op.naddrcycles);
-> +	anfc_setpagecoladdr(nfc, nfc_op.row, nfc_op.col);
-> +	if (!nfc_op.data_instr)
-> +		return 0;
-> +
-> +	len = nand_subop_get_data_len(subop, op_id);
-> +	anfc_write_data_op(chip,  (char *)instr->ctx.data.buf.out,
-
-				^ extra white space here
-and please drop the cast.
-
-Can you please run checkpatch --strict prior to submitting patches?
-
-> +			   mtd->writesize,
-> +			   DIV_ROUND_UP(mtd->writesize, achip->pktsize),
-
-No, that's wrong. You should use instr->ctx.data.len here, and the
-DIV_ROUND_UP() thing is a bit scary. That means you might be writing
-more data than requested.
-
-> +			   achip->pktsize);
-> +
-> +	return 0;
-> +}
-> +
-
-> +
-> +static int anfc_probe(struct platform_device *pdev)
-> +{
-> +	struct anfc_nand_controller *nfc;
-> +	struct anfc_nand_chip *anand_chip;
-> +	struct device_node *np = pdev->dev.of_node, *child;
-> +	struct resource *res;
-> +	int err;
-> +
-> +	nfc = devm_kzalloc(&pdev->dev, sizeof(*nfc), GFP_KERNEL);
-> +	if (!nfc)
-> +		return -ENOMEM;
-> +
-> +	nand_controller_init(&nfc->controller);
-> +	INIT_LIST_HEAD(&nfc->chips);
-> +	init_completion(&nfc->event);
-> +	nfc->dev = &pdev->dev;
-> +	platform_set_drvdata(pdev, nfc);
-> +	nfc->csnum = -1;
-> +	nfc->controller.ops = &anfc_nand_controller_ops;
-
-Add a blank line here please
-
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	nfc->base = devm_ioremap_resource(&pdev->dev, res);
-> +	if (IS_ERR(nfc->base))
-> +		return PTR_ERR(nfc->base);
-
-and here
-
-> +	nfc->irq = platform_get_irq(pdev, 0);
-> +	if (nfc->irq < 0) {
-> +		dev_err(&pdev->dev, "platform_get_irq failed\n");
-> +		return -ENXIO;
-> +	}
-
-and here
-
-> +	dma_set_mask(&pdev->dev, DMA_BIT_MASK(64));
-
-Is this really needed?
-
-> +	err = devm_request_irq(&pdev->dev, nfc->irq, anfc_irq_handler,
-> +			       0, "arasannfc", nfc);
-> +	if (err)
-> +		return err;
-
-Add a blank line here too.
-
-> +	nfc->clk_sys = devm_clk_get(&pdev->dev, "clk_sys");
-> +	if (IS_ERR(nfc->clk_sys)) {
-> +		dev_err(&pdev->dev, "sys clock not found.\n");
-> +		return PTR_ERR(nfc->clk_sys);
-> +	}
-> +
-> +	nfc->clk_flash = devm_clk_get(&pdev->dev, "clk_flash");
-> +	if (IS_ERR(nfc->clk_flash)) {
-> +		dev_err(&pdev->dev, "flash clock not found.\n");
-> +		return PTR_ERR(nfc->clk_flash);
-> +	}
-> +
-> +	err = clk_prepare_enable(nfc->clk_sys);
-> +	if (err) {
-> +		dev_err(&pdev->dev, "Unable to enable sys clock.\n");
-> +		return err;
-> +	}
-> +
-> +	err = clk_prepare_enable(nfc->clk_flash);
-> +	if (err) {
-> +		dev_err(&pdev->dev, "Unable to enable flash clock.\n");
-> +		goto clk_dis_sys;
-> +	}
-> +
-> +	for_each_available_child_of_node(np, child) {
-> +		anand_chip = devm_kzalloc(&pdev->dev, sizeof(*anand_chip),
-> +					  GFP_KERNEL);
-> +		if (!anand_chip) {
-> +			of_node_put(child);
-> +			err = -ENOMEM;
-> +			goto nandchip_clean_up;
-> +		}
-
-and here.
-
-> +		err = anfc_nand_chip_init(nfc, anand_chip, child);
-> +		if (err) {
-> +			devm_kfree(&pdev->dev, anand_chip);
-
-We usually try to avoid calling devm_kfree(). I guess you do it to
-avoid keeping the chip obj around when init failed, but this should
-be rare enough so we can actually ignore it and let the mem allocated
-for the NFC lifetime.
-
-> +			continue;
-> +		}
-> +
-> +		list_add_tail(&anand_chip->node, &nfc->chips);
-> +	}
-> +	return 0;
-> +
-> +nandchip_clean_up:
-> +	list_for_each_entry(anand_chip, &nfc->chips, node)
-> +		nand_release(&anand_chip->chip);
-
-Blank line here.
-
-> +	clk_disable_unprepare(nfc->clk_flash);
-
-Blank line here.
-
-> +clk_dis_sys:
-> +	clk_disable_unprepare(nfc->clk_sys);
-> +
-> +	return err;
-> +}
-
-Regards,
-
-Boris
+T24gRnJpLCAyMDE4LTExLTA5IGF0IDA4OjA1ICswMDAwLCBBcmRlbGVhbiwgQWxleGFuZHJ1IHdy
+b3RlOg0KPiBPbiBGcmksIDIwMTgtMTEtMDkgYXQgMTM6MDUgKzA1MzAsIE5pc2hhZCBLYW1kYXIg
+d3JvdGU6DQo+ID4gVXNlIHRoZSBncGlvZCBpbnRlcmZhY2UgZm9yIHJkd3JfcGluLCBjb252ZXJ0
+X3BpbiBhbmQgYnVzeV9waW4NCj4gPiBpbnN0ZWFkIG9mIHRoZSBkZXByZWNhdGVkIG9sZCBub24t
+ZGVzY3JpcHRvciBpbnRlcmZhY2UuDQo+ID4gDQo+IA0KPiBQYXRjaCBsb29rcyBnb29kLg0KPiBJ
+IGRvIGhhdmUgc29tZSB0aG91Z2h0cyBhYm91dCBpdC4gU2VlIGlubGluZS4NCj4gDQoNCk5ldmVy
+bWluZCB3aGF0IEkganVzdCBzYWlkIGhlcmU7IEkganVzdCBzYXcgcGF0Y2gzOiBgaWlvOiBhZDc4
+MTY6IFNldCBSRC9XUg0KcGluIGFuZCBDT05WU1QgcGluIGFzIG91dHB1dHMuYA0KDQpUaGlzIGxv
+b2tzIGdvb2QgYXMgaXMgaW4gdGhlIGNvbnRleHQgb2YgdGhlIHBhdGNoIHNlcmllcy4NCg0KPiAN
+Cj4gPiBTaWduZWQtb2ZmLWJ5OiBOaXNoYWQgS2FtZGFyIDxuaXNoYWRrYW1kYXJAZ21haWwuY29t
+Pg0KPiA+IC0tLQ0KPiA+ICBkcml2ZXJzL3N0YWdpbmcvaWlvL2FkYy9hZDc4MTYuYyB8IDgwICsr
+KysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAzNCBp
+bnNlcnRpb25zKCspLCA0NiBkZWxldGlvbnMoLSkNCj4gPiANCj4gPiBkaWZmIC0tZ2l0IGEvZHJp
+dmVycy9zdGFnaW5nL2lpby9hZGMvYWQ3ODE2LmMNCj4gPiBiL2RyaXZlcnMvc3RhZ2luZy9paW8v
+YWRjL2FkNzgxNi5jDQo+ID4gaW5kZXggYmY3NmE4NjIwYmRiLi4xMmM0ZTBhYjQ3MTMgMTAwNjQ0
+DQo+ID4gLS0tIGEvZHJpdmVycy9zdGFnaW5nL2lpby9hZGMvYWQ3ODE2LmMNCj4gPiArKysgYi9k
+cml2ZXJzL3N0YWdpbmcvaWlvL2FkYy9hZDc4MTYuYw0KPiA+IEBAIC03LDcgKzcsNyBAQA0KPiA+
+ICAgKi8NCj4gPiAgDQo+ID4gICNpbmNsdWRlIDxsaW51eC9pbnRlcnJ1cHQuaD4NCj4gPiAtI2lu
+Y2x1ZGUgPGxpbnV4L2dwaW8uaD4NCj4gPiArI2luY2x1ZGUgPGxpbnV4L2dwaW8vY29uc3VtZXIu
+aD4NCj4gPiAgI2luY2x1ZGUgPGxpbnV4L2RldmljZS5oPg0KPiA+ICAjaW5jbHVkZSA8bGludXgv
+a2VybmVsLmg+DQo+ID4gICNpbmNsdWRlIDxsaW51eC9zbGFiLmg+DQo+ID4gQEAgLTQ0LDkgKzQ0
+LDkgQEANCj4gPiAgDQo+ID4gIHN0cnVjdCBhZDc4MTZfY2hpcF9pbmZvIHsNCj4gPiAgCXN0cnVj
+dCBzcGlfZGV2aWNlICpzcGlfZGV2Ow0KPiA+IC0JdTE2IHJkd3JfcGluOw0KPiA+IC0JdTE2IGNv
+bnZlcnRfcGluOw0KPiA+IC0JdTE2IGJ1c3lfcGluOw0KPiA+ICsJc3RydWN0IGdwaW9fZGVzYyAq
+cmR3cl9waW47DQo+ID4gKwlzdHJ1Y3QgZ3Bpb19kZXNjICpjb252ZXJ0X3BpbjsNCj4gPiArCXN0
+cnVjdCBncGlvX2Rlc2MgKmJ1c3lfcGluOw0KPiANCj4gT25seSBpZiB5b3Ugd2FudCB0byBkbyBh
+IHJlLXNwaW4sIGhlcmUncyBhbiBpZGVhLg0KPiBJZiB5b3UgZG9uJ3Qgd2FudCB0bywgZmVlbCBm
+cmVlIHRvIGRpc3JlZ2FyZCwgc2luY2UgeW91ciBwYXRjaCBpcyBnb29kLg0KPiANCj4gWW91IGNv
+dWxkIGNvbXBhY3QgdGhpbmdzIGEgYml0OyBJIGtub3cgdGhpcyB3YXNuJ3Qgd2hhdCB0aGUgaW5p
+dGlhbCBjb2RlDQo+IHdhcyBkb2luZywgYnV0IGl0J3MgYW4gb3B0aW9uLg0KPiANCj4gU29tZXRo
+aW5nIGxpa2U6DQo+IA0KPiBlbnVtIHsNCj4gCUdQSU9fUldEUiwNCj4gCUdQSU9fQ09OVkVSVCwN
+Cj4gCUdQSU9fQlVTWSwNCj4gCV9fR1BJT19NQVgsDQo+IH0NCj4gDQo+IFRoZW4sIHdoYXQgeW91
+IGVuZCB1cCBoYXZpbmcgaXM6DQo+IA0KPiAgc3RydWN0IGFkNzgxNl9jaGlwX2luZm8gew0KPiAg
+IAlzdHJ1Y3Qgc3BpX2RldmljZSAqc3BpX2RldjsNCj4gIC0JdTE2IHJkd3JfcGluOw0KPiAgLQl1
+MTYgY29udmVydF9waW47DQo+ICAtCXUxNiBidXN5X3BpbjsNCj4gICsJc3RydWN0IGdwaW9fZGVz
+YyAqZ3Bpb3NbX19HUElPX01BWF07DQo+ICANCj4gDQo+IC8vIENvbnRpbnVlZCBiZWxvdw0KPiAN
+Cj4gDQo+ID4gIAl1OCAgb3RpX2RhdGFbQUQ3ODE2X0NTX01BWCArIDFdOw0KPiA+ICAJdTggIGNo
+YW5uZWxfaWQ7CS8qIDAgYWx3YXlzIGJlIHRlbXBlcmF0dXJlICovDQo+ID4gIAl1OCAgbW9kZTsN
+Cj4gPiBAQCAtNjEsMjggKzYxLDI4IEBAIHN0YXRpYyBpbnQgYWQ3ODE2X3NwaV9yZWFkKHN0cnVj
+dCBhZDc4MTZfY2hpcF9pbmZvDQo+ID4gKmNoaXAsIHUxNiAqZGF0YSkNCj4gPiAgCWludCByZXQg
+PSAwOw0KPiA+ICAJX19iZTE2IGJ1ZjsNCj4gPiAgDQo+ID4gLQlncGlvX3NldF92YWx1ZShjaGlw
+LT5yZHdyX3BpbiwgMSk7DQo+ID4gLQlncGlvX3NldF92YWx1ZShjaGlwLT5yZHdyX3BpbiwgMCk7
+DQo+ID4gKwlncGlvZF9zZXRfdmFsdWUoY2hpcC0+cmR3cl9waW4sIDEpOw0KPiA+ICsJZ3Bpb2Rf
+c2V0X3ZhbHVlKGNoaXAtPnJkd3JfcGluLCAwKTsNCj4gDQo+IE9idmlvdXNseSwgaW4gdGhlIGFi
+b3ZlIGNvbnRleHQsIHRoaXMgYmVjb21lczoNCj4gICsJZ3Bpb2Rfc2V0X3ZhbHVlKGNoaXAtPmdw
+aW9zW0dQSU9fUldEUl0sIDEpOw0KPiAgKwlncGlvZF9zZXRfdmFsdWUoY2hpcC0+Z3Bpb3NbR1BJ
+T19SV0RSXSwgMCk7DQo+IA0KPiA+ICAJcmV0ID0gc3BpX3dyaXRlKHNwaV9kZXYsICZjaGlwLT5j
+aGFubmVsX2lkLCBzaXplb2YoY2hpcC0NCj4gPiA+IGNoYW5uZWxfaWQpKTsNCj4gPiANCj4gPiAg
+CWlmIChyZXQgPCAwKSB7DQo+ID4gIAkJZGV2X2Vycigmc3BpX2Rldi0+ZGV2LCAiU1BJIGNoYW5u
+ZWwgc2V0dGluZyBlcnJvclxuIik7DQo+ID4gIAkJcmV0dXJuIHJldDsNCj4gPiAgCX0NCj4gPiAt
+CWdwaW9fc2V0X3ZhbHVlKGNoaXAtPnJkd3JfcGluLCAxKTsNCj4gPiArCWdwaW9kX3NldF92YWx1
+ZShjaGlwLT5yZHdyX3BpbiwgMSk7DQo+ID4gIA0KPiA+ICAJaWYgKGNoaXAtPm1vZGUgPT0gQUQ3
+ODE2X1BEKSB7IC8qIG9wZXJhdGluZyBtb2RlIDIgKi8NCj4gPiAtCQlncGlvX3NldF92YWx1ZShj
+aGlwLT5jb252ZXJ0X3BpbiwgMSk7DQo+ID4gLQkJZ3Bpb19zZXRfdmFsdWUoY2hpcC0+Y29udmVy
+dF9waW4sIDApOw0KPiA+ICsJCWdwaW9kX3NldF92YWx1ZShjaGlwLT5jb252ZXJ0X3BpbiwgMSk7
+DQo+ID4gKwkJZ3Bpb2Rfc2V0X3ZhbHVlKGNoaXAtPmNvbnZlcnRfcGluLCAwKTsNCj4gPiAgCX0g
+ZWxzZSB7IC8qIG9wZXJhdGluZyBtb2RlIDEgKi8NCj4gPiAtCQlncGlvX3NldF92YWx1ZShjaGlw
+LT5jb252ZXJ0X3BpbiwgMCk7DQo+ID4gLQkJZ3Bpb19zZXRfdmFsdWUoY2hpcC0+Y29udmVydF9w
+aW4sIDEpOw0KPiA+ICsJCWdwaW9kX3NldF92YWx1ZShjaGlwLT5jb252ZXJ0X3BpbiwgMCk7DQo+
+ID4gKwkJZ3Bpb2Rfc2V0X3ZhbHVlKGNoaXAtPmNvbnZlcnRfcGluLCAxKTsNCj4gPiAgCX0NCj4g
+PiAgDQo+ID4gLQl3aGlsZSAoZ3Bpb19nZXRfdmFsdWUoY2hpcC0+YnVzeV9waW4pKQ0KPiA+ICsJ
+d2hpbGUgKGdwaW9kX2dldF92YWx1ZShjaGlwLT5idXN5X3BpbikpDQo+ID4gIAkJY3B1X3JlbGF4
+KCk7DQo+ID4gIA0KPiA+IC0JZ3Bpb19zZXRfdmFsdWUoY2hpcC0+cmR3cl9waW4sIDApOw0KPiA+
+IC0JZ3Bpb19zZXRfdmFsdWUoY2hpcC0+cmR3cl9waW4sIDEpOw0KPiA+ICsJZ3Bpb2Rfc2V0X3Zh
+bHVlKGNoaXAtPnJkd3JfcGluLCAwKTsNCj4gPiArCWdwaW9kX3NldF92YWx1ZShjaGlwLT5yZHdy
+X3BpbiwgMSk7DQo+ID4gIAlyZXQgPSBzcGlfcmVhZChzcGlfZGV2LCAmYnVmLCBzaXplb2YoKmRh
+dGEpKTsNCj4gPiAgCWlmIChyZXQgPCAwKSB7DQo+ID4gIAkJZGV2X2Vycigmc3BpX2Rldi0+ZGV2
+LCAiU1BJIGRhdGEgcmVhZCBlcnJvclxuIik7DQo+ID4gQEAgLTk5LDggKzk5LDggQEAgc3RhdGlj
+IGludCBhZDc4MTZfc3BpX3dyaXRlKHN0cnVjdCBhZDc4MTZfY2hpcF9pbmZvDQo+ID4gKmNoaXAs
+IHU4IGRhdGEpDQo+ID4gIAlzdHJ1Y3Qgc3BpX2RldmljZSAqc3BpX2RldiA9IGNoaXAtPnNwaV9k
+ZXY7DQo+ID4gIAlpbnQgcmV0ID0gMDsNCj4gPiAgDQo+ID4gLQlncGlvX3NldF92YWx1ZShjaGlw
+LT5yZHdyX3BpbiwgMSk7DQo+ID4gLQlncGlvX3NldF92YWx1ZShjaGlwLT5yZHdyX3BpbiwgMCk7
+DQo+ID4gKwlncGlvZF9zZXRfdmFsdWUoY2hpcC0+cmR3cl9waW4sIDEpOw0KPiA+ICsJZ3Bpb2Rf
+c2V0X3ZhbHVlKGNoaXAtPnJkd3JfcGluLCAwKTsNCj4gPiAgCXJldCA9IHNwaV93cml0ZShzcGlf
+ZGV2LCAmZGF0YSwgc2l6ZW9mKGRhdGEpKTsNCj4gPiAgCWlmIChyZXQgPCAwKQ0KPiA+ICAJCWRl
+dl9lcnIoJnNwaV9kZXYtPmRldiwgIlNQSSBvdGkgZGF0YSB3cml0ZSBlcnJvclxuIik7DQo+ID4g
+QEAgLTEyOSwxMCArMTI5LDEwIEBAIHN0YXRpYyBzc2l6ZV90IGFkNzgxNl9zdG9yZV9tb2RlKHN0
+cnVjdCBkZXZpY2UNCj4gPiAqZGV2LA0KPiA+ICAJc3RydWN0IGFkNzgxNl9jaGlwX2luZm8gKmNo
+aXAgPSBpaW9fcHJpdihpbmRpb19kZXYpOw0KPiA+ICANCj4gPiAgCWlmIChzdHJjbXAoYnVmLCAi
+ZnVsbCIpKSB7DQo+ID4gLQkJZ3Bpb19zZXRfdmFsdWUoY2hpcC0+cmR3cl9waW4sIDEpOw0KPiA+
+ICsJCWdwaW9kX3NldF92YWx1ZShjaGlwLT5yZHdyX3BpbiwgMSk7DQo+ID4gIAkJY2hpcC0+bW9k
+ZSA9IEFENzgxNl9GVUxMOw0KPiA+ICAJfSBlbHNlIHsNCj4gPiAtCQlncGlvX3NldF92YWx1ZShj
+aGlwLT5yZHdyX3BpbiwgMCk7DQo+ID4gKwkJZ3Bpb2Rfc2V0X3ZhbHVlKGNoaXAtPnJkd3JfcGlu
+LCAwKTsNCj4gPiAgCQljaGlwLT5tb2RlID0gQUQ3ODE2X1BEOw0KPiA+ICAJfQ0KPiA+ICANCj4g
+PiBAQCAtMzQ1LDE1ICszNDUsOSBAQCBzdGF0aWMgaW50IGFkNzgxNl9wcm9iZShzdHJ1Y3Qgc3Bp
+X2RldmljZQ0KPiA+ICpzcGlfZGV2KQ0KPiA+ICB7DQo+ID4gIAlzdHJ1Y3QgYWQ3ODE2X2NoaXBf
+aW5mbyAqY2hpcDsNCj4gPiAgCXN0cnVjdCBpaW9fZGV2ICppbmRpb19kZXY7DQo+ID4gLQl1bnNp
+Z25lZCBzaG9ydCAqcGlucyA9IGRldl9nZXRfcGxhdGRhdGEoJnNwaV9kZXYtPmRldik7DQo+ID4g
+IAlpbnQgcmV0ID0gMDsNCj4gPiAgCWludCBpOw0KPiA+ICANCj4gPiAtCWlmICghcGlucykgew0K
+PiA+IC0JCWRldl9lcnIoJnNwaV9kZXYtPmRldiwgIk5vIG5lY2Vzc2FyeSBHUElPIHBsYXRmb3Jt
+DQo+ID4gZGF0YS5cbiIpOw0KPiA+IC0JCXJldHVybiAtRUlOVkFMOw0KPiA+IC0JfQ0KPiA+IC0N
+Cj4gPiAgCWluZGlvX2RldiA9IGRldm1faWlvX2RldmljZV9hbGxvYygmc3BpX2Rldi0+ZGV2LCBz
+aXplb2YoKmNoaXApKTsNCj4gPiAgCWlmICghaW5kaW9fZGV2KQ0KPiA+ICAJCXJldHVybiAtRU5P
+TUVNOw0KPiA+IEBAIC0zNjQsMzQgKzM1OCwyOCBAQCBzdGF0aWMgaW50IGFkNzgxNl9wcm9iZShz
+dHJ1Y3Qgc3BpX2RldmljZQ0KPiA+ICpzcGlfZGV2KQ0KPiA+ICAJY2hpcC0+c3BpX2RldiA9IHNw
+aV9kZXY7DQo+ID4gIAlmb3IgKGkgPSAwOyBpIDw9IEFENzgxNl9DU19NQVg7IGkrKykNCj4gPiAg
+CQljaGlwLT5vdGlfZGF0YVtpXSA9IDIwMzsNCj4gPiAtCWNoaXAtPnJkd3JfcGluID0gcGluc1sw
+XTsNCj4gPiAtCWNoaXAtPmNvbnZlcnRfcGluID0gcGluc1sxXTsNCj4gPiAtCWNoaXAtPmJ1c3lf
+cGluID0gcGluc1syXTsNCj4gPiAtDQo+ID4gLQlyZXQgPSBkZXZtX2dwaW9fcmVxdWVzdCgmc3Bp
+X2Rldi0+ZGV2LCBjaGlwLT5yZHdyX3BpbiwNCj4gPiAtCQkJCXNwaV9nZXRfZGV2aWNlX2lkKHNw
+aV9kZXYpLT5uYW1lKTsNCj4gPiAtCWlmIChyZXQpIHsNCj4gPiAtCQlkZXZfZXJyKCZzcGlfZGV2
+LT5kZXYsICJGYWlsIHRvIHJlcXVlc3QgcmR3ciBncGlvIFBJTg0KPiA+ICVkLlxuIiwNCj4gPiAt
+CQkJY2hpcC0+cmR3cl9waW4pOw0KPiA+ICsNCj4gPiArCWNoaXAtPnJkd3JfcGluID0gZGV2bV9n
+cGlvZF9nZXQoJnNwaV9kZXYtPmRldiwgInJkd3IiLCBHUElPRF9JTik7DQo+ID4gKwlpZiAoSVNf
+RVJSKGNoaXAtPnJkd3JfcGluKSkgew0KPiA+ICsJCXJldCA9IFBUUl9FUlIoY2hpcC0+cmR3cl9w
+aW4pOw0KPiA+ICsJCWRldl9lcnIoJnNwaV9kZXYtPmRldiwgIkZhaWxlZCB0byByZXF1ZXN0IHJk
+d3IgR1BJTzogJWRcbiIsDQo+ID4gKwkJCXJldCk7DQo+ID4gIAkJcmV0dXJuIHJldDsNCj4gPiAg
+CX0NCj4gDQo+IEJ1dCB0aGUgcmVhbCBiZW5lZml0IGlmIHRoaXMgYXBwcm9hY2ggY29tZXMgaGVy
+ZS4NCj4gWW91IGNvdWxkIGRvOg0KPiANCj4gc3RhdGljIGNvbnN0IGNoYXIgKmdwaW9fbmFtZXNb
+X19HUElPX01BWF0gPSB7DQo+IAlbR1BJT19SV0RSXSA9ICJyd2RyIiwNCj4gCVtHUElPX0NPTlZF
+UlRdID0gImNvbnZlcnQiLA0KPiAJW0dQSU9fQlVTWV0gPSAiYnVzeSIsDQo+IH07DQo+IA0KPiAv
+LyBjb2RlIGZvciBwYXRjaDIJDQo+IGJvb2wgaGF2ZV9idXN5X3BpbiA9IChjaGlwLT5pZCA9PSBJ
+RF9BRDc4MTYgfHwgY2hpcC0+aWQgPT0gSURfQUQ3ODE3KTsNCj4gLy8gZW5kIGNvZGUgZm9yIHBh
+dGNoMgkNCj4gDQo+IA0KPiBmb3IgKGkgPSAwOyBpIDwgX19HUElPX01BWDsgaSsrKSB7DQo+IC8v
+IGNvZGUgZm9yIHBhdGNoMgkNCj4gCWlmIChpID09IEdQSU9fQlVTWSAmJiAhaGF2ZV9idXN5X3Bp
+bikNCj4gCQljb250aW51ZTsNCj4gLy8gZW5kIGNvZGUgZm9yIHBhdGNoMgkNCj4gDQo+IAljaGlw
+LT5ncGlvc1tpXSA9IGRldm1fZ3Bpb2RfZ2V0KCZzcGlfZGV2LT5kZXYsIGdwaW9fbmFtZXNbaV0s
+IA0KPiAJCQkJCUdQSU9EX0lOKTsNCj4gCWlmIChJU19FUlIoY2hpcC0+Z3Bpb3NbaV0pKSB7DQo+
+IAkJcmV0ID0gUFRSX0VSUihjaGlwLT5ncGlvc1tpXSk7DQo+IAkJZGV2X2Vycigmc3BpX2Rldi0+
+ZGV2LCAiRmFpbGVkIHRvIHJlcXVlc3QgcmR3ciBHUElPOiAlZFxuIiwNCj4gCQkJcmV0Ow0KPiAJ
+CXJldHVybiByZXQ7DQo+IAl9DQo+IH0NCj4gDQo+IFRoZW4sIGluIHlvdXIgcGF0Y2gyIChpLmUg
+IiBzdGFnaW5nOiBpaW86IGFkNzgxNjogRG8gbm90IHVzZSBidXN5X3BpbiBpbg0KPiBjYXNlIG9m
+IEFENzgxOCIpLCB3aGF0IHlvdSBjb3VsZCBkbywgaXMgdG8gYWRkIHRoYXQgY29kZSAoYWxvbmcg
+d2l0aCB0aGUNCj4gb3RoZXIgSUQgY29kZSkuDQo+IA0KPiBBbmQgZmluYWx5IHdoYXQgeW91IGNv
+dWxkIGRvIGluIHBhdGNoMiwgaXM6DQo+IA0KPiAJd2hpbGUgKGNoaXAtPmdwaW9zW0dQSU9fQlVT
+WV0gJiYNCj4gCSAgICAgICBncGlvZF9nZXRfdmFsdWUoY2hpcC0+YnVzeV9waW4pKQ0KPiAJCWNw
+dV9yZWxheCgpOw0KPiANCj4gDQo+IA0KPiA+IC0JZ3Bpb19kaXJlY3Rpb25faW5wdXQoY2hpcC0+
+cmR3cl9waW4pOw0KPiA+IC0JcmV0ID0gZGV2bV9ncGlvX3JlcXVlc3QoJnNwaV9kZXYtPmRldiwg
+Y2hpcC0+Y29udmVydF9waW4sDQo+ID4gLQkJCQlzcGlfZ2V0X2RldmljZV9pZChzcGlfZGV2KS0+
+bmFtZSk7DQo+ID4gLQlpZiAocmV0KSB7DQo+ID4gLQkJZGV2X2Vycigmc3BpX2Rldi0+ZGV2LCAi
+RmFpbCB0byByZXF1ZXN0IGNvbnZlcnQgZ3BpbyBQSU4NCj4gPiAlZC5cbiIsDQo+ID4gLQkJCWNo
+aXAtPmNvbnZlcnRfcGluKTsNCj4gPiArCWNoaXAtPmNvbnZlcnRfcGluID0gZGV2bV9ncGlvZF9n
+ZXQoJnNwaV9kZXYtPmRldiwgImNvbnZlcnQiLA0KPiA+IEdQSU9EX0lOKTsNCj4gPiArCWlmIChJ
+U19FUlIoY2hpcC0+Y29udmVydF9waW4pKSB7DQo+ID4gKwkJcmV0ID0gUFRSX0VSUihjaGlwLT5j
+b252ZXJ0X3Bpbik7DQo+ID4gKwkJZGV2X2Vycigmc3BpX2Rldi0+ZGV2LCAiRmFpbGVkIHRvIHJl
+cXVlc3QgY29udmVydCBHUElPOg0KPiA+ICVkXG4iLA0KPiA+ICsJCQlyZXQpOw0KPiA+ICAJCXJl
+dHVybiByZXQ7DQo+ID4gIAl9DQo+ID4gLQlncGlvX2RpcmVjdGlvbl9pbnB1dChjaGlwLT5jb252
+ZXJ0X3Bpbik7DQo+ID4gLQlyZXQgPSBkZXZtX2dwaW9fcmVxdWVzdCgmc3BpX2Rldi0+ZGV2LCBj
+aGlwLT5idXN5X3BpbiwNCj4gPiAtCQkJCXNwaV9nZXRfZGV2aWNlX2lkKHNwaV9kZXYpLT5uYW1l
+KTsNCj4gPiAtCWlmIChyZXQpIHsNCj4gPiAtCQlkZXZfZXJyKCZzcGlfZGV2LT5kZXYsICJGYWls
+IHRvIHJlcXVlc3QgYnVzeSBncGlvIFBJTg0KPiA+ICVkLlxuIiwNCj4gPiAtCQkJY2hpcC0+YnVz
+eV9waW4pOw0KPiA+ICsJY2hpcC0+YnVzeV9waW4gPSBkZXZtX2dwaW9kX2dldCgmc3BpX2Rldi0+
+ZGV2LCAiYnVzeSIsIEdQSU9EX0lOKTsNCj4gPiArCWlmIChJU19FUlIoY2hpcC0+YnVzeV9waW4p
+KSB7DQo+ID4gKwkJcmV0ID0gUFRSX0VSUihjaGlwLT5idXN5X3Bpbik7DQo+ID4gKwkJZGV2X2Vy
+cigmc3BpX2Rldi0+ZGV2LCAiRmFpbGVkIHRvIHJlcXVlc3QgYnVzeSBHUElPOiAlZFxuIiwNCj4g
+PiArCQkJcmV0KTsNCj4gPiAgCQlyZXR1cm4gcmV0Ow0KPiA+ICAJfQ0KPiA+IC0JZ3Bpb19kaXJl
+Y3Rpb25faW5wdXQoY2hpcC0+YnVzeV9waW4pOw0KPiA+ICANCj4gPiAgCWluZGlvX2Rldi0+bmFt
+ZSA9IHNwaV9nZXRfZGV2aWNlX2lkKHNwaV9kZXYpLT5uYW1lOw0KPiA+ICAJaW5kaW9fZGV2LT5k
+ZXYucGFyZW50ID0gJnNwaV9kZXYtPmRldjsNCg==
