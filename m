@@ -3,61 +3,93 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 228AFC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 00:24:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B432C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 00:29:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E06A020840
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 00:24:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E06A020840
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id BF0CD2081D
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 00:29:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF0CD2081D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lge.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727479AbeKIKCP (ORCPT
+        id S1727403AbeKIKHu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 05:02:15 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:40042 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727076AbeKIKCP (ORCPT
+        Fri, 9 Nov 2018 05:07:50 -0500
+Received: from lgeamrelo13.lge.com ([156.147.23.53]:36600 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726915AbeKIKHu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 05:02:15 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 9FD931475C6D7;
-        Thu,  8 Nov 2018 16:24:10 -0800 (PST)
-Date:   Thu, 08 Nov 2018 16:24:09 -0800 (PST)
-Message-Id: <20181108.162409.271877198178704379.davem@davemloft.net>
-To:     tanhuazhong@huawei.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        salil.mehta@huawei.com, yisen.zhuang@huawei.com,
-        linuxarm@huawei.com
-Subject: Re: [Patch net] net: hns3: bugfix for not checking return value
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1541643199-57792-1-git-send-email-tanhuazhong@huawei.com>
-References: <1541643199-57792-1-git-send-email-tanhuazhong@huawei.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        Fri, 9 Nov 2018 05:07:50 -0500
+Received: from unknown (HELO lgemrelse6q.lge.com) (156.147.1.121)
+        by 156.147.23.53 with ESMTP; 9 Nov 2018 09:29:42 +0900
+X-Original-SENDERIP: 156.147.1.121
+X-Original-MAILFROM: chanho.min@lge.com
+Received: from unknown (HELO WMRRD11NA101CK) (10.178.32.163)
+        by 156.147.1.121 with ESMTP; 9 Nov 2018 09:29:42 +0900
+X-Original-SENDERIP: 10.178.32.163
+X-Original-MAILFROM: chanho.min@lge.com
+From:   "Chanho Min" <chanho.min@lge.com>
+To:     "'Oleg Nesterov'" <oleg@redhat.com>
+Cc:     "'Rafael J. Wysocki'" <rjw@rjwysocki.net>,
+        "'Pavel Machek'" <pavel@ucw.cz>,
+        "'Len Brown'" <len.brown@intel.com>,
+        "'Andrew Morton'" <akpm@linux-foundation.org>,
+        "'Eric W. Biederman'" <ebiederm@xmission.com>,
+        "'Christian Brauner'" <christian@brauner.io>,
+        "'Anna-Maria Gleixner'" <anna-maria@linutronix.de>,
+        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "'Seungho Park'" <seungho1.park@lge.com>,
+        "'Jongsung Kim'" <neidhard.kim@lge.com>,
+        "'Inkyu Hwang'" <inkyu.hwang@lge.com>,
+        "'donghwan.jung'" <donghwan.jung@lge.com>
+References: <1541671796-8725-1-git-send-email-chanho.min@lge.com> <20181108105030.GB9939@redhat.com>
+In-Reply-To: <20181108105030.GB9939@redhat.com>
+Subject: RE: [PATCH] freezer: fix freeze timeout on exec
+Date:   Fri, 9 Nov 2018 09:29:42 +0900
+Message-ID: <02ce01d477c3$4ebec440$ec3c4cc0$@lge.com>
+MIME-Version: 1.0
+Content-Type: text/plain;
+        charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 08 Nov 2018 16:24:10 -0800 (PST)
+X-Mailer: Microsoft Outlook 15.0
+Thread-Index: AQDMxpYjKJ+WuoJrEZbXJl5GJ1YyTAISrvFpp0VR2WA=
+Content-Language: ko
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Huazhong Tan <tanhuazhong@huawei.com>
-Date: Thu, 8 Nov 2018 10:13:19 +0800
-
-> hns3_reset_notify_init_enet() only return error early if the return
-> value of hns3_restore_vlan() is not 0.
+> >
+> > To fix this, I suggest a patch by emboding the mentioned solution.
+> > First, revive and rework cancel_freezing_and_thaw() function whitch
+> > stops the task from sleeping in refrigirator reliably. And, The task
+> > to be killed does not allow to freeze.
 > 
-> This patch adds checking for the return value of hns3_restore_vlan.
+> Can't we simply change de_thread() to use freezable_schedule() ?
 > 
-> Fixes: 7fa6be4fd2f6 ("net: hns3: fix incorrect return value/type of some functions")
-> Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+> Oleg.
 
-Applied, thank you.
+We need to change freezable_schedule_timeout() instead.
+freezable_schedule also can't be frozen if sub-threads can't stop
+schedule().
+Furthermore, I'm not sure if it is safe to freeze it at de_thread().
+
+diff --git a/fs/exec.c b/fs/exec.c
+index 9c5ee2a..291cbd6 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -942,7 +942,7 @@ static int de_thread(struct task_struct *tsk)
+        while (sig->notify_count) {
+                __set_current_state(TASK_KILLABLE);
+                spin_unlock_irq(lock);
+-               schedule();
++               while (!freezable_schedule_timeout(HZ));
+                if (unlikely(__fatal_signal_pending(tsk)))
+                        goto killed;
+                spin_lock_irq(lock);
+
+Chanho
+
