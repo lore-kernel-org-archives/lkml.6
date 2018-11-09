@@ -3,96 +3,94 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 992F5C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 16:27:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EBE0C43610
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 16:27:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D19520825
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 16:27:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D19520825
+	by mail.kernel.org (Postfix) with ESMTP id CC55120825
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 16:27:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC55120825
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728676AbeKJCIY (ORCPT
+        id S1728700AbeKJCI3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 21:08:24 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41784 "EHLO mx1.redhat.com"
+        Fri, 9 Nov 2018 21:08:29 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:50010 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727828AbeKJCIY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 21:08:24 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        id S1727828AbeKJCI2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 21:08:28 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4EF323082A26;
-        Fri,  9 Nov 2018 16:27:07 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4059FC0587CE;
+        Fri,  9 Nov 2018 16:27:12 +0000 (UTC)
 Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7EB41600CD;
-        Fri,  9 Nov 2018 16:27:04 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7F05C608C2;
+        Fri,  9 Nov 2018 16:27:09 +0000 (UTC)
 From:   Ming Lei <ming.lei@redhat.com>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@lst.de>,
         David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
-Subject: [PATCH V8 07/18] btrfs: use bvec_last_segment to get bio's last page
-Date:   Sat, 10 Nov 2018 00:25:59 +0800
-Message-Id: <20181109162610.18981-8-ming.lei@redhat.com>
+Subject: [PATCH V8 08/18] btrfs: move bio_pages_all() to btrfs
+Date:   Sat, 10 Nov 2018 00:26:00 +0800
+Message-Id: <20181109162610.18981-9-ming.lei@redhat.com>
 In-Reply-To: <20181109162610.18981-1-ming.lei@redhat.com>
 References: <20181109162610.18981-1-ming.lei@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Fri, 09 Nov 2018 16:27:07 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 09 Nov 2018 16:27:12 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Preparing for supporting multi-page bvec.
+BTRFS is the only user of this helper, so move this helper into
+BTRFS, and implement it via bio_for_each_segment_all(), since
+bio->bi_vcnt may not equal to number of pages after multipage bvec
+is enabled.
 
 Cc: Christoph Hellwig <hch@lst.de>
 Cc: David Sterba <dsterba@suse.com>
 Cc: linux-btrfs@vger.kernel.org
 Signed-off-by: Ming Lei <ming.lei@redhat.com>
 ---
- fs/btrfs/compression.c | 5 ++++-
- fs/btrfs/extent_io.c   | 5 +++--
- 2 files changed, 7 insertions(+), 3 deletions(-)
+ fs/btrfs/extent_io.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
-index 2955a4ea2fa8..161e14b8b180 100644
---- a/fs/btrfs/compression.c
-+++ b/fs/btrfs/compression.c
-@@ -400,8 +400,11 @@ blk_status_t btrfs_submit_compressed_write(struct inode *inode, u64 start,
- static u64 bio_end_offset(struct bio *bio)
- {
- 	struct bio_vec *last = bio_last_bvec_all(bio);
-+	struct bio_vec bv;
- 
--	return page_offset(last->bv_page) + last->bv_len + last->bv_offset;
-+	bvec_last_segment(last, &bv);
-+
-+	return page_offset(bv.bv_page) + bv.bv_len + bv.bv_offset;
- }
- 
- static noinline int add_ra_bio_pages(struct inode *inode,
 diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-index d228f706ff3e..5d5965297e7e 100644
+index 5d5965297e7e..874bb9aeebdc 100644
 --- a/fs/btrfs/extent_io.c
 +++ b/fs/btrfs/extent_io.c
-@@ -2720,11 +2720,12 @@ static int __must_check submit_one_bio(struct bio *bio, int mirror_num,
- {
- 	blk_status_t ret = 0;
- 	struct bio_vec *bvec = bio_last_bvec_all(bio);
--	struct page *page = bvec->bv_page;
-+	struct bio_vec bv;
- 	struct extent_io_tree *tree = bio->bi_private;
- 	u64 start;
+@@ -2348,6 +2348,18 @@ struct bio *btrfs_create_repair_bio(struct inode *inode, struct bio *failed_bio,
+ 	return bio;
+ }
  
--	start = page_offset(page) + bvec->bv_offset;
-+	bvec_last_segment(bvec, &bv);
-+	start = page_offset(bv.bv_page) + bv.bv_offset;
++static unsigned btrfs_bio_pages_all(struct bio *bio)
++{
++	unsigned i;
++	struct bio_vec *bv;
++
++	WARN_ON_ONCE(bio_flagged(bio, BIO_CLONED));
++
++	bio_for_each_segment_all(bv, bio, i)
++		;
++	return i;
++}
++
+ /*
+  * this is a generic handler for readpage errors (default
+  * readpage_io_failed_hook). if other copies exist, read those and write back
+@@ -2368,7 +2380,7 @@ static int bio_readpage_error(struct bio *failed_bio, u64 phy_offset,
+ 	int read_mode = 0;
+ 	blk_status_t status;
+ 	int ret;
+-	unsigned failed_bio_pages = bio_pages_all(failed_bio);
++	unsigned failed_bio_pages = btrfs_bio_pages_all(failed_bio);
  
- 	bio->bi_private = NULL;
+ 	BUG_ON(bio_op(failed_bio) == REQ_OP_WRITE);
  
 -- 
 2.9.5
