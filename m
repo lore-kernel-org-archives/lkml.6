@@ -2,141 +2,149 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 851BAC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 20:06:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9250BC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 20:10:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A52620855
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 20:06:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GTNTcHks"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A52620855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 225FD20855
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 20:10:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 225FD20855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726977AbeKJFtB (ORCPT
+        id S1727118AbeKJFxA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 00:49:01 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:37947 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725799AbeKJFtB (ORCPT
+        Sat, 10 Nov 2018 00:53:00 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43302 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725872AbeKJFxA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 00:49:01 -0500
-Received: by mail-ot1-f67.google.com with SMTP id f24so2751691otl.5
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 12:06:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xUFwZLkG3322nZXRMsXrrVbQjUnjyTIpP7ff0qsSub8=;
-        b=GTNTcHksHHTi8ChoQnEk787Gxg5f3rdjV0lM9oXCRRb0rfVz+qNlUbWRYvEIMh3xEE
-         uATjNn3RlQ/XC5WcxLHS6B8WKTbk91pWdkWd1XKBq2Xhg1TqH+Ax2VK9Ez8G+Y+vdKcf
-         eneJ7pWbt+Gt7R6rU1WzX4VmlbVISw7a1htrwzxRiGiRH7o3lAhUhBuP10AzBQsz6jS9
-         9UHg+TLVnRv12bttP2FIQhdYfDw3Qz9SWyesREXejsWqczM0wVK/f37qF82amtubknRw
-         P0cTbT6frnRjiLkottKRnsezXmCDNpKJVwx3oirzBLYyb5Yyi50VDe8iHfCK2/rB3NGR
-         VFYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xUFwZLkG3322nZXRMsXrrVbQjUnjyTIpP7ff0qsSub8=;
-        b=nF/B+ys7vhiyW4UXbXY59SfrB2l1V4Y/iqm0cnMfmXndMYCHBXiZgLsiW6xaRe67SJ
-         x4fxDgGs4db5FkE3BJyArhgOS5ZoJa2J7inMGCQ0U43kugjGzxuWS8CHzWWQox6AdzYB
-         O/+xlGfrqothBGRdcR8kOBCfzdx6/p1wcWVPe1h+gMNF1KkTfrFw3adcJTbTLrj6Xg//
-         ZLsRGjK7co3SRWTgAF+EMeFTfNL+aNDCky/B4mdXGM/cyCE2QaEZlWEbW6lYqHJRQYAl
-         MAUno8/I1vaL226jcvhC0YveW2C/Uxowg5LxoVwjmXy7mU6hACsYlLgo1Y94uoEPhj0q
-         6kkQ==
-X-Gm-Message-State: AGRZ1gK6u9FO3nG7SNAo11jt+BvZFqeVv2ed5SwA1tlbh/7ED3zu+Q+B
-        lpDhmVfj7UN5XrHhF71Iv8JAopfJxuiEKiVjR9nIpg==
-X-Google-Smtp-Source: AJdET5cXjXs2PLvXxsWygz6kywbzJDwHn04YUfcy0v93QqKZU9IwZvla3ETGhspDM0gSH4nZFdv8qzJc99CvBLJMFcA=
-X-Received: by 2002:a9d:460e:: with SMTP id y14mr6444829ote.198.1541794013885;
- Fri, 09 Nov 2018 12:06:53 -0800 (PST)
+        Sat, 10 Nov 2018 00:53:00 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA9KAmVT035036
+        for <linux-kernel@vger.kernel.org>; Fri, 9 Nov 2018 15:10:52 -0500
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nnev6wdtt-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 15:10:49 -0500
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Fri, 9 Nov 2018 20:10:34 -0000
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 9 Nov 2018 20:10:32 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA9KAV0Y46465056
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 9 Nov 2018 20:10:31 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5D018B205F;
+        Fri,  9 Nov 2018 20:10:31 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3E2A0B2064;
+        Fri,  9 Nov 2018 20:10:31 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.161.168])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri,  9 Nov 2018 20:10:31 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id F04EC16C5D5F; Fri,  9 Nov 2018 12:10:30 -0800 (PST)
+Date:   Fri, 9 Nov 2018 12:10:30 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Christophe LEROY <christophe.leroy@c-s.fr>
+Cc:     "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: UBSAN: Undefined behaviour in kernel/rcu/tree_plugin.h in
+ 4.20-rc1
+Reply-To: paulmck@linux.ibm.com
+References: <dc5e555d-129e-aae8-889d-7b4e82197b3b@c-s.fr>
 MIME-Version: 1.0
-References: <5be58a6e.w0IbLdKsiRknTygq%lkp@intel.com>
-In-Reply-To: <5be58a6e.w0IbLdKsiRknTygq%lkp@intel.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Fri, 9 Nov 2018 21:06:27 +0100
-Message-ID: <CAG48ez2xSLFGjMYSYJTLwEnZoZJuXUfdoCp6_vGrywBU4SQNkQ@mail.gmail.com>
-Subject: Re: afaef01c00 ("x86/entry: Add STACKLEAK erasing the kernel stack
- .."): double fault: 0000 [#1]
-To:     alex.popov@linux.com, Andy Lutomirski <luto@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     lkp@01.org, lkp@intel.com,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-doc@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dc5e555d-129e-aae8-889d-7b4e82197b3b@c-s.fr>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18110920-0040-0000-0000-0000048FCCEA
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010016; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01115069; UDB=6.00577119; IPR=6.00895168;
+ MB=3.00024093; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-09 20:10:34
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18110920-0041-0000-0000-00000898D413
+Message-Id: <20181109201030.GI4170@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-09_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=995 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811090181
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Andy, Thomas, Ingo
+On Fri, Nov 09, 2018 at 06:11:20PM +0100, Christophe LEROY wrote:
+> (Resending due to error in Paul's address)
+> 
+> Paul
+> 
+> I get the following UBSAN reports in 4.20-rc1 on an MPC8321E
+> (powerpc/book3s/32)
+> 
+> I bisected it to 3e31009898699dfc ("rcu: Defer reporting RCU-preempt
+> quiescent states when disabled")
 
-On Fri, Nov 9, 2018 at 2:24 PM kernel test robot <lkp@intel.com> wrote:
-> 0day kernel testing robot got the below dmesg and the first bad commit is
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
->
-> commit afaef01c001537fa97a25092d7f54d764dc7d8c1
-> Author:     Alexander Popov <alex.popov@linux.com>
-> AuthorDate: Fri Aug 17 01:16:58 2018 +0300
-> Commit:     Kees Cook <keescook@chromium.org>
-> CommitDate: Tue Sep 4 10:35:47 2018 -0700
->
->     x86/entry: Add STACKLEAK erasing the kernel stack at the end of syscalls
-[...]
-> [  127.808225] double fault: 0000 [#1]
-> [  127.808695] CPU: 0 PID: 414 Comm: trinity-main Tainted: G                T 4.19.0-rc2-00001-gafaef01 #1
-> [  127.809799] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-> [  127.810760] RIP: 0010:ftrace_ops_test+0x27/0xa0
-> [  127.811289] Code: eb 9a 90 41 54 55 49 89 f4 53 48 89 d3 48 89 fd 48 81 ec b0 00 00 00 65 48 8b 04 25 28 00 00 00 48 89 84 24 a8 00 00 00 31 c0 <e8> 54 df ff ff 48 85 db 74 57 e8 4a df ff ff 48 8b 85 d0 00 00 00
-> [  127.813385] RSP: 0018:fffffe0000001fb8 EFLAGS: 00010046
-[...]
-> [  127.819762] CR2: fffffe0000001fa8 CR3: 000000001579a000 CR4: 00000000000006b0
-[...]
-> [  127.822234] Call Trace:
-> [  127.822530]  <ENTRY_TRAMPOLINE>
-> [  127.822914]  ? __ia32_sys_rseq+0x2f0/0x2f0
-> [  127.823395]  ftrace_ops_list_func+0xa5/0x1b0
-> [  127.823922]  ftrace_call+0x5/0x34
-> [  127.824318]  ? stackleak_erase+0x5/0xf0
-> [  127.824789]  ? stackleak_erase+0x43/0xf0
-> [  127.825260]  stackleak_erase+0x5/0xf0
-> [  127.825699]  syscall_return_via_sysret+0x61/0x81
-> [  127.826238] WARNING: stack recursion on stack type 4
-> [  127.826243] WARNING: can't dereference registers at (____ptrval____) for ip syscall_return_via_sysret+0x61/0x81
-> [  127.826246]  </ENTRY_TRAMPOLINE>
-> [  127.828342] ---[ end trace e9f96d3f45575499 ]---
-> [  127.828911] RIP: 0010:ftrace_ops_test+0x27/0xa0
+Fixed by dfdc33585b0a ("rcu: Avoid signed integer overflow in
+rcu_preempt_deferred_qs()") in my -rcu tree and in -next, which I intend
+to push into the next merge window.
 
-CR2: fffffe0000001fa8, RSP: 0018:fffffe0000001fb8; this is a pagefault
-on the stack. fffffe0000000000 is CPU_ENTRY_AREA_RO_IDT;
-fffffe0000001000 is CPU_ENTRY_AREA_PER_CPU; so fffffe0000002000 is the
-page with the entry stack for cpu 0, and you overflowed from that into
-the readonly gdt at fffffe0000001000, which doubles as a guard page
-for the entry stack:
+							Thanx, Paul
 
-struct cpu_entry_area {
-        char gdt[PAGE_SIZE];
+> Thanks
+> Christophe
+> 
+> [    4.919995] ================================================================================
+> [    4.928428] UBSAN: Undefined behaviour in kernel/rcu/tree_plugin.h:623:28
+> [    4.935198] signed integer overflow:
+> [    4.938766] 0 - -2147483648 cannot be represented in type 'int'
+> [    4.944678] CPU: 0 PID: 119 Comm: mkdir Not tainted
+> 4.19.0-rc1-s3k-dev-00005-g5a60513 #214
+> [    4.952908] Call Trace:
+> [    4.955382] [dec4fd20] [c02cb0d0] ubsan_epilogue+0x18/0x74 (unreliable)
+> [    4.962003] [dec4fd30] [c02cb5e0] handle_overflow+0xd0/0xe0
+> [    4.967588] [dec4fdb0] [c007b424] rcu_preempt_deferred_qs+0xc0/0xc8
+> [    4.973857] [dec4fdd0] [c007be28] rcu_note_context_switch+0x74/0x608
+> [    4.980217] [dec4fe10] [c064b790] __schedule+0x58/0x6e0
+> [    4.985448] [dec4fe50] [c064bfdc] preempt_schedule_common+0x48/0x9c
+> [    4.991717] [dec4fe70] [c01308c8] handle_mm_fault+0x10fc/0x1ecc
+> [    4.997639] [dec4fee0] [c001339c] do_page_fault+0x10c/0x760
+> [    5.003225] [dec4ff40] [c001234c] handle_page_fault+0x14/0x40
+> [    5.008968] --- interrupt: 401 at 0xff9cff8
+> [    5.008968]     LR = 0xfeefd78
+> [    5.016170] ================================================================================
+> [    5.024591] ================================================================================
+> [    5.033005] UBSAN: Undefined behaviour in kernel/rcu/tree_plugin.h:627:28
+> [    5.039775] signed integer overflow:
+> [    5.043342] -2147483648 + -2147483648 cannot be represented in type 'int'
+> [    5.050118] CPU: 0 PID: 119 Comm: mkdir Not tainted
+> 4.19.0-rc1-s3k-dev-00005-g5a60513 #214
+> [    5.058348] Call Trace:
+> [    5.060813] [dec4fd20] [c02cb0d0] ubsan_epilogue+0x18/0x74 (unreliable)
+> [    5.067433] [dec4fd30] [c02cb5e0] handle_overflow+0xd0/0xe0
+> [    5.073014] [dec4fdb0] [c007b408] rcu_preempt_deferred_qs+0xa4/0xc8
+> [    5.079283] [dec4fdd0] [c007be28] rcu_note_context_switch+0x74/0x608
+> [    5.085640] [dec4fe10] [c064b790] __schedule+0x58/0x6e0
+> [    5.090871] [dec4fe50] [c064bfdc] preempt_schedule_common+0x48/0x9c
+> [    5.097139] [dec4fe70] [c01308c8] handle_mm_fault+0x10fc/0x1ecc
+> [    5.103059] [dec4fee0] [c001339c] do_page_fault+0x10c/0x760
+> [    5.108642] [dec4ff40] [c001234c] handle_page_fault+0x14/0x40
+> [    5.114385] --- interrupt: 401 at 0xff9cff8
+> [    5.114385]     LR = 0xfeefd78
+> [    5.121588] ================================================================================
+> 
 
-        /*
-         * The GDT is just below entry_stack and thus serves (on x86_64) as
-         * a a read-only guard page.
-         */
-        struct entry_stack_page entry_stack_page;
-[...]
-};
-
-In other words: You're calling C code on the entry trampoline stack;
-this C code can call into ftrace; and the entry trampoline stack isn't
-big enough for ftrace shenanigans. I think you probably shouldn't be
-calling C code on the entry stack, but maybe one of the X86 folks has
-a different opinion?
