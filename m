@@ -2,120 +2,130 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3242C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 21:08:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BD09C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 21:09:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7616620840
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 21:08:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1w9M7nci"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7616620840
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6A35E20840
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 21:09:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A35E20840
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728411AbeKJGuW (ORCPT
+        id S1728200AbeKJGvT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 01:50:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35798 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725799AbeKJGuW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 01:50:22 -0500
-Received: from [192.168.1.22] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2187320825;
-        Fri,  9 Nov 2018 21:08:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541797682;
-        bh=1gwKoWDogbJnjqkLXUT15TpmYkXnfCyrBZq+OMyu8yU=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=1w9M7nciSY5hvblDJmHM4cLR5bKpF0sskn4JYSLLD7kIYsCk6VfHzcErNnTi3NeW+
-         Hbkb1iL3YYI0WoyT6/bGsXYt4vTvrlQXxi75D5MWRObAwx1VeMHbJv4evMN72uLQh3
-         yKZL8jIkMqjQy0hgsW0rZJfw7sU6TeKiWIwAxsg4=
-Subject: Re: [PATCH] ARM: dts: socfpga: use tabs for indentation
-To:     Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marek Vasut <marex@denx.de>
-References: <20181105203900.23788-1-simon.k.r.goldschmidt@gmail.com>
-From:   Dinh Nguyen <dinguyen@kernel.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <0ade3acc-4e92-8cd0-c4bb-249c00503f32@kernel.org>
-Date:   Fri, 9 Nov 2018 15:08:01 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181105203900.23788-1-simon.k.r.goldschmidt@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Sat, 10 Nov 2018 01:51:19 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51460 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725799AbeKJGvS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 01:51:18 -0500
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 94221B5D;
+        Fri,  9 Nov 2018 21:08:58 +0000 (UTC)
+Date:   Fri, 9 Nov 2018 13:08:57 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     hughd@google.com, aarcange@redhat.com,
+        kirill.shutemov@linux.intel.com, andriy.shevchenko@linux.intel.com,
+        mhocko@suse.com, rppt@linux.vnet.ibm.com,
+        imbrenda@linux.vnet.ibm.com, corbet@lwn.net,
+        ndesaulniers@google.com, dave.jiang@intel.com, jglisse@redhat.com,
+        jia.he@hxt-semitech.com, paulmck@linux.vnet.ibm.com,
+        colin.king@canonical.com, jiang.biao2@zte.com.cn,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] ksm: Assist buddy allocator to assemble 1-order
+ pages
+Message-Id: <20181109130857.54a1f383629e771b4f3888c4@linux-foundation.org>
+In-Reply-To: <153995241537.4096.15189862239521235797.stgit@localhost.localdomain>
+References: <153995241537.4096.15189862239521235797.stgit@localhost.localdomain>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 19 Oct 2018 15:33:39 +0300 Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
 
-
-On 11/5/18 2:39 PM, Simon Goldschmidt wrote:
-> In two of the gen5 socfpga devicetree files, there are some lines
-> indented using spaces instead of tabs.
+> v3: Comment improvements.
+> v2: Style improvements.
 > 
-> Fix this by correctly indenting them with tabs.
+> try_to_merge_two_pages() merges two pages, one of them
+> is a page of currently scanned mm, the second is a page
+> with identical hash from unstable tree. Currently, we
+> merge the page from unstable tree into the first one,
+> and then free it.
 > 
-> Signed-off-by: Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
-> ---
->  arch/arm/boot/dts/socfpga.dtsi               | 2 +-
->  arch/arm/boot/dts/socfpga_cyclone5_sodia.dts | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
+> The idea of this patch is to prefer freeing that page
+> of them, which has a free neighbour (i.e., neighbour
+> with zero page_count()). This allows buddy allocator
+> to assemble at least 1-order set from the freed page
+> and its neighbour; this is a kind of cheep passive
+> compaction.
+> 
+> AFAIK, 1-order pages set consists of pages with PFNs
+> [2n, 2n+1] (odd, even), so the neighbour's pfn is
+> calculated via XOR with 1. We check the result pfn
+> is valid and its page_count(), and prefer merging
+> into @tree_page if neighbour's usage count is zero.
+> 
+> There a is small difference with current behavior
+> in case of error path. In case of the second
+> try_to_merge_with_ksm_page() is failed, we return
+> from try_to_merge_two_pages() with @tree_page
+> removed from unstable tree. It does not seem to matter,
+> but if we do not want a change at all, it's not
+> a problem to move remove_rmap_item_from_tree() from
+> try_to_merge_with_ksm_page() to its callers.
+>
 
-Applied!
+Seems sensible.
 
-Thanks,
-Dinh
+> 
+> ...
+>
+> --- a/mm/ksm.c
+> +++ b/mm/ksm.c
+> @@ -1321,6 +1321,23 @@ static struct page *try_to_merge_two_pages(struct rmap_item *rmap_item,
+>  {
+>  	int err;
+>  
+> +	if (IS_ENABLED(CONFIG_COMPACTION)) {
+> +		unsigned long pfn;
+> +
+> +		/*
+> +		 * Find neighbour of @page containing 1-order pair in buddy
+> +		 * allocator and check whether its count is 0. If so, we
+> +		 * consider the neighbour as a free page (this is more
+> +		 * probable than it's freezed via page_ref_freeze()), and
+> +		 * we try to use @tree_page as ksm page and to free @page.
+> +		 */
+> +		pfn = page_to_pfn(page) ^ 1;
+> +		if (pfn_valid(pfn) && page_count(pfn_to_page(pfn)) == 0) {
+> +			swap(rmap_item, tree_rmap_item);
+> +			swap(page, tree_page);
+> +		}
+> +	}
+> +
+
+A few thoughts
+
+- if tree_page's neighbor is unused, there was no point in doing this
+  swapping?
+
+- if both *page and *tree_page have unused neighbors we could go
+  further and look for an opportunity to create an order-2 page. 
+  etcetera.  This may b excessive ;)
+
+- are we really sure that this optimization causes desirable results?
+  If we always merge from one tree into the other, we maximise the
+  opportunities for page coalescing in the long term.  But if we
+  sometimes merge one way and sometimes merge the other way, we might
+  end up with less higher-order page coalescing?  Or am I confusing
+  myself?
+
