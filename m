@@ -2,175 +2,132 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B85C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 04:00:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C72B1C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 04:09:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C841E20989
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 04:00:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C841E20989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 8550820840
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 04:09:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mwOBQfXF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8550820840
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727693AbeKINjQ (ORCPT
+        id S1727524AbeKINsT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 08:39:16 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:55714 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727311AbeKINjP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 08:39:15 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5814089AE6;
-        Fri,  9 Nov 2018 04:00:33 +0000 (UTC)
-Received: from redhat.com (ovpn-120-200.rdu2.redhat.com [10.10.120.200])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6A4F567647;
-        Fri,  9 Nov 2018 04:00:29 +0000 (UTC)
-Date:   Thu, 8 Nov 2018 23:00:28 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     Tiwei Bie <tiwei.bie@intel.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        virtio-dev@lists.oasis-open.org, wexu@redhat.com,
-        jfreimann@redhat.com
-Subject: Re: [PATCH net-next v2 3/5] virtio_ring: add packed ring support
-Message-ID: <20181108225858-mutt-send-email-mst@kernel.org>
-References: <20180711022711.7090-1-tiwei.bie@intel.com>
- <20180711022711.7090-4-tiwei.bie@intel.com>
- <20181107123933-mutt-send-email-mst@kernel.org>
- <20181108013759.GA20591@debian>
- <2d46a41e-bc00-276a-e19a-105c9dffc75a@redhat.com>
- <20181108115148.GA15701@debian>
- <20181108103155-mutt-send-email-mst@kernel.org>
- <67bd6a88-00f2-ed13-ad13-bdfe92ceeffc@redhat.com>
+        Fri, 9 Nov 2018 08:48:19 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:44531 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727378AbeKINsT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 08:48:19 -0500
+Received: by mail-io1-f65.google.com with SMTP id c6-v6so365437iob.11
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 20:09:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=QZTt1M1Bhslsqs5FDY7sztKF5nMC2rhSbk9Lt25tVAM=;
+        b=mwOBQfXFfb1JdZdmauszOr310DoiIag9mbZ0eaHEZdYHkIXgrqnXCsmwGAc+RDOgaS
+         vy9DmvKhq0s/xnvKhw9WxYPhJxX+/Yo5NjFLb4WgK13uTyndXyB9ye4yZ7hntjO2nT0F
+         HKIqA51rPPHukiRRcUSEqEuvT768JV21AYxiLU3R0u17gmrIrAbZN5QZsAqc55dmTJC1
+         6sVpFXC88siDJDZeLqvzTvUguw4c52svSFvd8VUsPgzX/zSkYP9By9XF9wbMXjKLuESY
+         cPsuawCrMg3oaNQjmgZrAYdTpPmzdqOYlIqq1fjbvdQZpuZxDWA9v9BeUfmkc9HCguIW
+         XR8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=QZTt1M1Bhslsqs5FDY7sztKF5nMC2rhSbk9Lt25tVAM=;
+        b=cZvqvXXAH1S/A2H1yW1x7LyDCdu5Lp9KYZwksT5oPVRasjlqt+Y4X4uRNUJBihJPMQ
+         auqtMRFgyQoecpVEeo8IS+GJ+D8UkrqtpyyuwNhpakJYZ64ZrJxDUoHa+ue4hkQoYKpk
+         FfWFaZrkkdtHNjSIHLQUwdS7p3SwRyhYakXoRMhaMEScSIyWkzUmv59i88EERyL9F6KT
+         qpcUd5q+DM9PW07HisjSl/5jis89RgeKT6MlIszYQg2kP2FMLWiisVIVEP9obTEFG7IR
+         0pfF47GYDouYx9omYhOy9sdf0Pl6qjlhZXkCrAEElFduWctapZR2tdPK+fo0BVRMI4Oa
+         zk/Q==
+X-Gm-Message-State: AGRZ1gLC0yd8zRhIM+cVLq+ZrFC7z28Wjtc3DcIn20j6IaFqZHL61eGo
+        3Fswyl/HZLBhz9LEsBI+Ti3IB+qEfeSIuc9TSi8=
+X-Google-Smtp-Source: AJdET5ee7bcbyOAJscdp6jl1OalWr1dn7EUSFKpu+VCNl+f/73u50PSkJMVwEVzGDpNe53A9O176t6iYSPRd0agLTzs=
+X-Received: by 2002:a6b:d305:: with SMTP id s5-v6mr4809061iob.190.1541736575098;
+ Thu, 08 Nov 2018 20:09:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <67bd6a88-00f2-ed13-ad13-bdfe92ceeffc@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Fri, 09 Nov 2018 04:00:33 +0000 (UTC)
+From:   Kyungtae Kim <kt0755@gmail.com>
+Date:   Thu, 8 Nov 2018 23:09:23 -0500
+Message-ID: <CAEAjamseRRHu+TaTkd1TwpLNm8mtDGP=2K0WKLF0wH-3iLcW_w@mail.gmail.com>
+Subject: UBSAN: Undefined behaviour in mm/page_alloc.c
+To:     akpm@linux-foundation.org, mhocko@suse.com,
+        pavel.tatashin@microsoft.com, vbabka@suse.cz, osalvador@suse.de,
+        rppt@linux.vnet.ibm.com, aaron.lu@intel.com,
+        iamjoonsoo.kim@lge.com, alexander.h.duyck@linux.intel.com,
+        mgorman@techsingularity.net
+Cc:     lifeasageek@gmail.com, threeearcat@gmail.com,
+        syzkaller@googlegroups.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 09, 2018 at 10:30:50AM +0800, Jason Wang wrote:
-> 
-> On 2018/11/8 下午11:56, Michael S. Tsirkin wrote:
-> > On Thu, Nov 08, 2018 at 07:51:48PM +0800, Tiwei Bie wrote:
-> > > On Thu, Nov 08, 2018 at 04:18:25PM +0800, Jason Wang wrote:
-> > > > On 2018/11/8 上午9:38, Tiwei Bie wrote:
-> > > > > > > +
-> > > > > > > +	if (vq->vq.num_free < descs_used) {
-> > > > > > > +		pr_debug("Can't add buf len %i - avail = %i\n",
-> > > > > > > +			 descs_used, vq->vq.num_free);
-> > > > > > > +		/* FIXME: for historical reasons, we force a notify here if
-> > > > > > > +		 * there are outgoing parts to the buffer.  Presumably the
-> > > > > > > +		 * host should service the ring ASAP. */
-> > > > > > I don't think we have a reason to do this for packed ring.
-> > > > > > No historical baggage there, right?
-> > > > > Based on the original commit log, it seems that the notify here
-> > > > > is just an "optimization". But I don't quite understand what does
-> > > > > the "the heuristics which KVM uses" refer to. If it's safe to drop
-> > > > > this in packed ring, I'd like to do it.
-> > > > 
-> > > > According to the commit log, it seems like a workaround of lguest networking
-> > > > backend.
-> > > Do you know why removing this notify in Tx will break "the
-> > > heuristics which KVM uses"? Or what does "the heuristics
-> > > which KVM uses" refer to?
-> > Yes. QEMU has a mode where it disables notifications and processes TX
-> > ring periodically from a timer.  It's off by default but used to be on
-> > by default a long time ago. If ring becomes full this causes traffic
-> > stalls.
-> 
-> 
-> Do you mean tx-timer? If yes, we can still enable it for packed ring
+We report a bug in v4.19-rc2 (4.20-rc1 as well, I guess):
 
-Yes we can but I doubt anyone does.
+kernel config: https://kt0755.github.io/etc/config_v2-4.19
+repro: https://kt0755.github.io/etc/repro.c4074.c
 
-> and the
-> timer will finally fired and we can go.
+In the middle of page request, this arose because order is too large to handle
+ (mm/page_alloc.c:3119). It actually comes from that order is
+controllable by user input
+via raw_cmd_ioctl without its sanity check, thereby causing memory problem.
+To stop it, we can use like MAX_ORDER for bounds check before using it.
 
-on tx ring full we probably don't want to wait for timer.
-But I think we can just prevent qemu from using tx timer
-with virtio 1.
+=========================================
+UBSAN: Undefined behaviour in mm/page_alloc.c:3117:19
+shift exponent 51 is too large for 32-bit type 'int'
+CPU: 0 PID: 6520 Comm: syz-executor1 Not tainted 4.19.0-rc2 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0xd2/0x148 lib/dump_stack.c:113
+ ubsan_epilogue+0x12/0x94 lib/ubsan.c:159
+ __ubsan_handle_shift_out_of_bounds+0x2b6/0x30b lib/ubsan.c:425
+ __zone_watermark_ok+0x2c7/0x400 mm/page_alloc.c:3117
+ zone_watermark_fast mm/page_alloc.c:3216 [inline]
+ get_page_from_freelist+0xc49/0x44c0 mm/page_alloc.c:3300
+ __alloc_pages_nodemask+0x21e/0x640 mm/page_alloc.c:4370
+ alloc_pages_current+0xcc/0x210 mm/mempolicy.c:2093
+ alloc_pages include/linux/gfp.h:509 [inline]
+ __get_free_pages+0x12/0x60 mm/page_alloc.c:4414
+ dma_mem_alloc+0x36/0x50 arch/x86/include/asm/floppy.h:156
+ raw_cmd_copyin drivers/block/floppy.c:3159 [inline]
+ raw_cmd_ioctl drivers/block/floppy.c:3206 [inline]
+ fd_locked_ioctl+0xa00/0x2c10 drivers/block/floppy.c:3544
+ fd_ioctl+0x40/0x60 drivers/block/floppy.c:3571
+ __blkdev_driver_ioctl block/ioctl.c:303 [inline]
+ blkdev_ioctl+0xb3c/0x1a30 block/ioctl.c:601
+ block_ioctl+0x105/0x150 fs/block_dev.c:1883
+ vfs_ioctl fs/ioctl.c:46 [inline]
+ do_vfs_ioctl+0x1c0/0x1150 fs/ioctl.c:687
+ ksys_ioctl+0x9e/0xb0 fs/ioctl.c:702
+ __do_sys_ioctl fs/ioctl.c:709 [inline]
+ __se_sys_ioctl fs/ioctl.c:707 [inline]
+ __x64_sys_ioctl+0x7e/0xc0 fs/ioctl.c:707
+ do_syscall_64+0xc4/0x510 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x4497b9
+Code: e8 8c 9f 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48
+89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
+01 f0 ff ff 0f 83 9b 6b fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fb5ef0e2c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007fb5ef0e36cc RCX: 00000000004497b9
+RDX: 0000000020000040 RSI: 0000000000000258 RDI: 0000000000000014
+RBP: 000000000071bea0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 0000000000005490 R14: 00000000006ed530 R15: 00007fb5ef0e3700
+=========================================================
 
-> 
-> > As a work-around Rusty put in this hack to kick on ring full
-> > even with notifications disabled.
-> 
-> 
-> From the commit log it looks more like a performance workaround instead of a
-> bug fix.
 
-it's a quality of implementation issue, yes.
-
-> 
-> > It's easy enough to make sure QEMU
-> > does not combine devices with packed ring support with the timer hack.
-> > And I am guessing it's safe enough to also block that option completely
-> > e.g. when virtio 1.0 is enabled.
-> 
-> 
-> I agree.
-> 
-> Thanks
-> 
-> 
-> > > > I agree to drop it, we should not have such burden.
-> > > > 
-> > > > But we should notice that, with this removed, the compare between packed vs
-> > > > split is kind of unfair. Consider the removal of lguest support recently,
-> > > > maybe we can drop this for split ring as well?
-> > > > 
-> > > > Thanks
-> > > > 
-> > > > 
-> > > > > commit 44653eae1407f79dff6f52fcf594ae84cb165ec4
-> > > > > Author: Rusty Russell<rusty@rustcorp.com.au>
-> > > > > Date:   Fri Jul 25 12:06:04 2008 -0500
-> > > > > 
-> > > > >       virtio: don't always force a notification when ring is full
-> > > > >       We force notification when the ring is full, even if the host has
-> > > > >       indicated it doesn't want to know.  This seemed like a good idea at
-> > > > >       the time: if we fill the transmit ring, we should tell the host
-> > > > >       immediately.
-> > > > >       Unfortunately this logic also applies to the receiving ring, which is
-> > > > >       refilled constantly.  We should introduce real notification thesholds
-> > > > >       to replace this logic.  Meanwhile, removing the logic altogether breaks
-> > > > >       the heuristics which KVM uses, so we use a hack: only notify if there are
-> > > > >       outgoing parts of the new buffer.
-> > > > >       Here are the number of exits with lguest's crappy network implementation:
-> > > > >       Before:
-> > > > >               network xmit 7859051 recv 236420
-> > > > >       After:
-> > > > >               network xmit 7858610 recv 118136
-> > > > >       Signed-off-by: Rusty Russell<rusty@rustcorp.com.au>
-> > > > > 
-> > > > > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> > > > > index 72bf8bc09014..21d9a62767af 100644
-> > > > > --- a/drivers/virtio/virtio_ring.c
-> > > > > +++ b/drivers/virtio/virtio_ring.c
-> > > > > @@ -87,8 +87,11 @@ static int vring_add_buf(struct virtqueue *_vq,
-> > > > >    	if (vq->num_free < out + in) {
-> > > > >    		pr_debug("Can't add buf len %i - avail = %i\n",
-> > > > >    			 out + in, vq->num_free);
-> > > > > -		/* We notify*even if*  VRING_USED_F_NO_NOTIFY is set here. */
-> > > > > -		vq->notify(&vq->vq);
-> > > > > +		/* FIXME: for historical reasons, we force a notify here if
-> > > > > +		 * there are outgoing parts to the buffer.  Presumably the
-> > > > > +		 * host should service the ring ASAP. */
-> > > > > +		if (out)
-> > > > > +			vq->notify(&vq->vq);
-> > > > >    		END_USE(vq);
-> > > > >    		return -ENOSPC;
-> > > > >    	}
-> > > > > 
-> > > > > 
+Thanks,
+Kyungtae Kim
