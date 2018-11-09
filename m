@@ -2,122 +2,170 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF42DC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:14:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22329C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:14:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF5A220855
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:14:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF5A220855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id BF7C720883
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:14:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="qdMqyOG1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF7C720883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=analog.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728443AbeKIRyL convert rfc822-to-8bit (ORCPT
+        id S1728472AbeKIRyV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 12:54:11 -0500
-Received: from mga12.intel.com ([192.55.52.136]:42858 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727529AbeKIRyL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 12:54:11 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Nov 2018 00:14:44 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,482,1534834800"; 
-   d="scan'208";a="94910480"
-Received: from lftan-mobl.gar.corp.intel.com (HELO ubuntu) ([10.226.248.106])
-  by FMSMGA003.fm.intel.com with SMTP; 09 Nov 2018 00:14:43 -0800
-Received: by ubuntu (sSMTP sendmail emulation); Fri, 09 Nov 2018 16:14:39 +0800
-Message-ID: <1541751278.79160.2.camel@intel.com>
-Subject: Re: [PATCH] nios2: ksyms: Add missing symbol exports
-From:   Ley Foon Tan <ley.foon.tan@intel.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     nios2-dev@lists.rocketboards.org, linux-kernel@vger.kernel.org
-Date:   Fri, 09 Nov 2018 16:14:38 +0800
-In-Reply-To: <1538924000-17898-1-git-send-email-linux@roeck-us.net>
-References: <1538924000-17898-1-git-send-email-linux@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.1 
-Mime-Version: 1.0
+        Fri, 9 Nov 2018 12:54:21 -0500
+Received: from mail-eopbgr710080.outbound.protection.outlook.com ([40.107.71.80]:58096
+        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727519AbeKIRyU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 12:54:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=analog.onmicrosoft.com; s=selector1-analog-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UwrZc19yUkMI6tsuC6E1vpYtp8ViwpHkybMUTlCB5gc=;
+ b=qdMqyOG1e+Z3YIrsiKqZIjqLj5zPeSCUycbll9+ODLyx8tyLW0rgBj77KziWlZWDXbYdFt8HBDrI/h7vRsXY/OdT8FOrbPKwCZyO+NLouubpoY5Y68KTS0jcMzv+3CvW87hYxdQm1kS67t3G523xXJTpYb/rndAWUzZQVBHuj60=
+Received: from MWHPR03CA0031.namprd03.prod.outlook.com (2603:10b6:301:3b::20)
+ by CY1PR03MB2266.namprd03.prod.outlook.com (2a01:111:e400:c614::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1294.27; Fri, 9 Nov
+ 2018 08:11:59 +0000
+Received: from BY2FFO11FD015.protection.gbl (2a01:111:f400:7c0c::149) by
+ MWHPR03CA0031.outlook.office365.com (2603:10b6:301:3b::20) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1294.20 via Frontend Transport; Fri, 9 Nov 2018 08:11:59 +0000
+Authentication-Results: spf=pass (sender IP is 137.71.25.57)
+ smtp.mailfrom=analog.com; linuxfoundation.org; dkim=none (message not signed)
+ header.d=none;linuxfoundation.org; dmarc=bestguesspass action=none
+ header.from=analog.com;
+Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
+ 137.71.25.57 as permitted sender) receiver=protection.outlook.com;
+ client-ip=137.71.25.57; helo=nwd2mta4.analog.com;
+Received: from nwd2mta4.analog.com (137.71.25.57) by
+ BY2FFO11FD015.mail.protection.outlook.com (10.1.14.131) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1294.14
+ via Frontend Transport; Fri, 9 Nov 2018 08:11:58 +0000
+Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
+        by nwd2mta4.analog.com (8.13.8/8.13.8) with ESMTP id wA98Bv90032598
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
+        Fri, 9 Nov 2018 00:11:57 -0800
+Received: from NWD2MBX7.ad.analog.com ([fe80::190e:f9c1:9a22:9663]) by
+ NWD2HUBCAS7.ad.analog.com ([fe80::595b:ced1:cc03:539d%12]) with mapi id
+ 14.03.0301.000; Fri, 9 Nov 2018 03:11:57 -0500
+From:   "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>
+To:     "lars@metafoo.de" <lars@metafoo.de>,
+        "nishadkamdar@gmail.com" <nishadkamdar@gmail.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "knaack.h@gmx.de" <knaack.h@gmx.de>,
+        "jic23@kernel.org" <jic23@kernel.org>,
+        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v3 4/4] staging: iio: ad7816: Add device tree table.
+Thread-Topic: [PATCH v3 4/4] staging: iio: ad7816: Add device tree table.
+Thread-Index: AQHUd/96fS2jV+XUv0Wnufmc5t+zd6VHa5SA
+Date:   Fri, 9 Nov 2018 08:11:57 +0000
+Message-ID: <c2dd05ea2893315e848bcf48af5e51b415d7a22c.camel@analog.com>
+References: <cover.1541733949.git.nishadkamdar@gmail.com>
+         <209172d47d8d14c1244556e5f05bbd6455b4de04.1541733949.git.nishadkamdar@gmail.com>
+In-Reply-To: <209172d47d8d14c1244556e5f05bbd6455b4de04.1541733949.git.nishadkamdar@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.50.1.244]
+x-adiroutedonprem: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <0D997048BD7C6745A7580BB51D05BACC@analog.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(39860400002)(376002)(136003)(396003)(2980300002)(438002)(189003)(199004)(6246003)(478600001)(26005)(2906002)(14454004)(5660300001)(356004)(102836004)(36756003)(126002)(7736002)(47776003)(305945005)(118296001)(7636002)(39060400002)(486006)(106466001)(50466002)(54906003)(2501003)(316002)(110136005)(476003)(436003)(2900100001)(336012)(2616005)(446003)(426003)(6116002)(11346002)(246002)(8676002)(8936002)(86362001)(7696005)(4326008)(76176011)(2486003)(186003)(23676004)(106002)(3846002)(229853002);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR03MB2266;H:nwd2mta4.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;BY2FFO11FD015;1:Vo9hly/CjA/iBQ0rAbKTvAudld2h1LMtE60ZZdaC62oOZTD+1Ue1p3uBPaTbDMq443/pVsEt3Ma9XU1qL8w7nkX+25DT4ity37O0yLFMJoH60N3mrrItsOtJNLW8K21s
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 0289acb3-4816-41ae-53f1-08d6461b059e
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4608076)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:CY1PR03MB2266;
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR03MB2266;3:uP/hW2Fp8+8f/STVv92VLDxnFNNGCq9kHgTkLE6oyMdmxtVTBg7oBY7xxPqFuQpjYNyZX0cikAe2VY1Yr0PsuNiO2Vn40v1JKsz3PXcIpEbn0LZH5WspxqE4GaGM8reTV5gDn8UiToxNmKVnN9iFSQY722elR4kNHKO8T/TYkugZS1Kwa6W0lQhiVua/2t8hEThn4Gu7ocrEd0RzsEzXx1tc0MreBXOejsV4jUC+Ipe/YFPEqAawxggA+Q2Ijr4zEs+1d1PDVM5wjb2fMSN4HzJlkue87tIQ+XqD1NRvFaay/MKBL+pxqOZAwID/cjuWHZn0orTNLeEZSIYoUAT900knSReWoGmn4LRQw2unls8=;25:HdXLUxKthhbfWp+h9R8EUUaOMuxtXeevkZOR6HMc+k+f9rVfqt3lYIXZUpQOAfJb+D8sti7mKvfqtsM0oriy52vhJcxgW4D5K5u7rhrMqGv52zxO/8JcUlrAVN+hdwNwJ9aaSWt6aRrOLsnQcQoaTEp8TbTB31rnFBWtZp2DZ+1xe2g06NLTfO2rwRbIfXGGr0Mo8Qs3m9eaicqVB0QrbQhVjamkDCsR1rUdz1BxXgH7S4bv6+KE6RKUPuAJ8JFy6D7X3E6Zow2aJkDfprfteAboWpIaAliN2nNjIiyKbg4l+qghmc6uQ8JKzGhOVjKS+UIHRAgXzy1d/coxroup4g==
+X-MS-TrafficTypeDiagnostic: CY1PR03MB2266:
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR03MB2266;31:8sJuuq2Fv42nPOQV8LRKCnRVvadRbIPhKPSfMd/v0E+FIOR/5SaSVQxJbULGWb5hQwzkrzZlpEAV+THPdn1GcvymfhTqrT7xGh2LH+uvmJCgsS5Xo92KeD4w5NCebeWMShU66euA6Zu1+G5sJUbNdKwajb/kn1d6bv6DweKDaxhQfa/keIiNqy/cxxXXR+OOV+cuxU7Aw8BeOJAsEuhEITA2grdAnTbCjFNP9Tm0IWw=;20:QqSgO23KmVFtu6wR65XfM58Zos9yH79N6q/IaZddo8QU9UZjj37kVdQCY0783Kknt97wbcG6Y5wI+Ku3uAib0EZdk8DLKTxNERcxfQZsXAvm+VUMhQiN3L0ZfPQV3y6J/aOwaVx3asxtdRDk/aa/X061ecSRikkX1lRO+U6R21yf3L8fo6fgB8cndfXFLUUuBR7dNN/yP8rJKX9Mjja7w0shErvuJM6XEz7t01JVpVxJdX4WmiFfgP8No3Nni8nBbSTcNAsoKv9Q23h4i/dfzpNbfxMkVaAH19pi3PIpMIksKyeadXedLQ6hF2zEtDCK9UaIoaDCDbUUuF4079Cyx4DxaSbkiFOBlu9YJ8FAH+QAFDjQ2PaTN/bR1ju0HU0345Od2vnmOFWTZmUHXZur3xXfAs8FikA52nuzjd2KUTAdc+E5iZCtivyx4WORsRk1lPUhgFPBzY+3dIMkEG6Leq6iWPIM6iSK92shjhyFBrEaZv3MIzQMCWQbjZOorcKJ
+X-Microsoft-Antispam-PRVS: <CY1PR03MB226667E1A8B046E4692D0763F9C60@CY1PR03MB2266.namprd03.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(85827821059158);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231382)(944501410)(52105095)(93006095)(93004095)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123558120)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:CY1PR03MB2266;BCL:0;PCL:0;RULEID:;SRVR:CY1PR03MB2266;
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR03MB2266;4:6jQnWVYHD+DMMUrvcvTAbf3WlMmvGl0TXNjCT1ZIP3td+3AllBqcI4bAwA2MNP0IlRMkwDUiSU+V3BFmk/tEchora0CvAx0/Pq7X4vWLcTy7HmI3pIjZCs74UdSJo9Nx8XaRLpzUvFdkOOX9Bv9dRtG5adRX9ldwukf+4ZPj+jKE80fBIoKU+WgCSy9p0jgY9qCKqzjzvQCvT+RBXLm2/3n47390csHENKOIadERqIFGFGDK0wFvfMGesrVS9VSodt4OV7vKPM/HKFzwDONcaH/IAZesCIX8Pd7NJqRW00S/8j3UWeTeFSxzgPS3uat8
+X-Forefront-PRVS: 08512C5403
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtDWTFQUjAzTUIyMjY2OzIzOkxvMGpmS0dPTmZlTWRDOHUxTXNROFk1d2xN?=
+ =?utf-8?B?QS9DUGhWWnhsMWJKMXFSVWVRUWp1YkROc1E1QThGN0VYTGU0elJJcktDc1Ns?=
+ =?utf-8?B?anpaZGFDRENJQVhjeXpBNFk0VXNJMUpDem8wMlBSdGl5cGp6SDBSdXNKL2xO?=
+ =?utf-8?B?VmthbnA1cFlvYytaa2s5b1R0YldqaXNXNUErSXdYbTBzM0tzZlMyL1p4Qyty?=
+ =?utf-8?B?QTlYSlJOWDFKNUZuOFNUZFRxYit2US9KSmdkMEtoL0J0bHdpMTl2MFpYaTMx?=
+ =?utf-8?B?Q0hTdHI1QXUvdkl3cEFpZHpFeEdGTkVYZU1KNkJuQ0xzWHFETFU2SWJGK3hX?=
+ =?utf-8?B?d2pvQnp2NytJN2h2WXY4ZXlmRGVtUnM2bEVNQUlhYlh1LytKbjROVGtSNjkx?=
+ =?utf-8?B?OHB5QTc1MUJpbkZOSndkalVQZWlnMWxhRXZKaFdCVVg1RmVuLzdCVS82UjVt?=
+ =?utf-8?B?TEFNR3VRcEVtYUdnZGlQYUxGZkJZam15TnAxWlNROUxLZ3FkZXAzQVIrSmcy?=
+ =?utf-8?B?RDFBVXpnRXFpb1c3TmxLU05lUUcyQnIrZVpGdVZxQWZ5czF5SzZZRC8zQmhJ?=
+ =?utf-8?B?RlBxSkRiNFQ3cmlaczdJZHV4S01pdmRVaVpNSW43RVdncXJFMGFnQk0xanY4?=
+ =?utf-8?B?MkhjU1ROaVRjK0l1VGdycDlUT2E3cC9SSXYvM3FDd2Z3eXR4Q3ZDaEFlTkwr?=
+ =?utf-8?B?djRISkpIVHU4REZzeUNnSHhhTk5uaVFkbkVVMHBKSGVSQVJvMzdCR2xOYTU2?=
+ =?utf-8?B?K2hLWnpIOTJ1ZEhSaXcvdUxYNTM0T0xzd3YyZTRwcXFHcXRNOFBPSFlUWkVa?=
+ =?utf-8?B?ZnRWOWYvSWRQQkFsbVBTMlJIQzh0RGJMZUlObTlrcjNUa3kyRnoyczJjKzBT?=
+ =?utf-8?B?UmV6WXN4UjlhNHpTK3BpZitWeHhUYzZKOEgwSDAwMHVMRUoyTGpjV0NqeXA3?=
+ =?utf-8?B?NUxGSmU0OVZiblhDQWV6NU9xbjd4cklQanVRY1hJbVpxeStZNm9lVEw4Q3Zk?=
+ =?utf-8?B?eEFzU1Vmd1c0VjZzUk9YYTlPL1hMR0hSRVY0aVlGUkU4U1lQYlVMdnVwWDBo?=
+ =?utf-8?B?WXJFYXcvc1pTNnd0dW1hdlQ1OVd2YnFWOGIrS2lZZC9yT0lya2dBdkp3MCtt?=
+ =?utf-8?B?eGFkVnc2QlloVUduNSsrMk5tdksrM2gvTDQ3aGlCdnBEWU9MUEFycGZLVHh0?=
+ =?utf-8?B?a0xaZzEyeGhubWxRVlpVT0cvMWhzaGlic2Z3aGtLWUhwUllSZUhDTmpjUnVX?=
+ =?utf-8?B?ckhaY0Rndkh0anBVTzYrYlJQRnB6ZDBhMFl0Ty9TNERZODhEZW84UncrQnds?=
+ =?utf-8?B?UHZZMm1mczhZZlJxVnBjTVNBM2VJenR6YTZNYlhndExqTGFnaitDdEQ0Yzhr?=
+ =?utf-8?B?NmhEdUtPdnBja2o2STQ4ZVVoTVp3Z2RKcERmb2J5M2djU0xXUThUNDJwM29R?=
+ =?utf-8?B?Sy9USjBvYXNJc3hzVWxGbzNjSmZ3YTZiV3RtaXkzblFVcFlVRHd4RVhCVDl5?=
+ =?utf-8?B?OFhrWW54cHM4cnhJa292VG42bnlXTzZqRFNNSGxvelMzbHk1Z0ZaaDRIemx1?=
+ =?utf-8?Q?ii5ZV2kOlYLqDypsoZhuMIn0aZXvjgtxHEDmMoSY7+SM=3D?=
+X-Microsoft-Antispam-Message-Info: v7WKynWnuf3JB/UVx0R0RG11HBM7HiF9FY+2SL6+JHxVXaTr5f3a5VjPRhezabdM8Znw98GThsmPo7vPW3OnkwEStIrXo6Ks8HLI2hAcUZJgwfhZlaRNN9qJNI4Z27KAyuGpios7iiHUDZbguSyx1r9RYqaF2+rLGM+T7577Ageozlip7hiad8h3bgeyPuYalz3UsNIQBSaVoA5+SyGWc+Z1ngsAnJ8tPa9k1j9sL713BE9zfcI4FLgzqG5A04oIzh0fkxmFdEXz6QH2oH4uPwzfuvVq/c85byCLYOMAbwmuO4PCgF1Tvgqwr5ArLMZlB7EKd7c/X+jaE4IDY611kjI6oPCgG7Yq94+L9aWGW7o=
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR03MB2266;6:hdOvblN19PVWFKfeZ0C3tB4O6vGZRg5djDUOkJi/i9FDfvbXyEHDSrFJfIFTydX3+cKxRlb1+N4VXUhibz0Is1XS2WP3ERf6r2k0x2zvjGcZDrAqu24dlkQt2OGi1arZFo9ukdr7eC8AhaR/SjQ6J5sE4S7Pb24I+r0zHCBbfTzA9RjdE3vQ18TPBIhh/SNUwvrzpqn5Q2b1FGhA1F1UOnq+8ExXwx60rH1axhXqC337NgThKSypeOqxXxixnppZAcMdpcN26I/ZuULRmEmlQuZz6YAXFRQbyKTLQdiWkfWXBzeYOThPts5B+brPLPc8JaHaDBbNmmh83EY7kfqMXeapfoRXQQIMvUhAsHFhh43eL7ddejTzJTcr6XujPOaiR3+g2GF1l5gG5XdchvHOPQyvp/3KCo6BCDopzRDqmR7rBUDD3nUjzN7K5xY9lzOHLn+BIFeg9Pf9e9aXBnXMaQ==;5:UkgCVcNT2Xgkv6pKkk9Zl16stugO78zj0O0kd2m972HrdLOYbEKGkFk1xRBhJ6ktjDua9lQ183KTpZzrLEovhvqFsqGjiCFka2c1fc8kSozz56sYwJkHp4Whh1GFO/TCnr41/8QUEwtTtvxWV0a1/C2l2YsEWuQefrj3y/p6oyo=;7:HqTvlZVY1iv8KP+j667lpwsDBWiIx7GFjaWpxZw4vVX5IOHNTFoimmwxwzLIapUu313a7XWGpJK4kTNdBKHjYMaOZ5UOPwwhZztOyS02ONKcF4vGzEI37U16blkPlGtLpHPiS/VF2quX0Yfg63k4EA==
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Nov 2018 08:11:58.8702
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0289acb3-4816-41ae-53f1-08d6461b059e
+X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta4.analog.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR03MB2266
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-10-07 at 07:53 -0700, Guenter Roeck wrote:
-> Building nios2:allmodconfig fails as follows (each symbol is only
-> listed
-> once).
-> 
-> ERROR: "__ashldi3" [drivers/md/dm-writecache.ko] undefined!
-> ERROR: "__ashrdi3" [fs/xfs/xfs.ko] undefined!
-> ERROR: "__ucmpdi2" [drivers/media/i2c/adv7842.ko] undefined!
-> ERROR: "__lshrdi3" [drivers/md/dm-zoned.ko] undefined!
-> ERROR: "flush_icache_range" [drivers/misc/lkdtm/lkdtm.ko] undefined!
-> ERROR: "empty_zero_page" [drivers/md/dm-mod.ko] undefined!
-> 
-> The problem is seen with gcc 7.3.0.
-> 
-> Export the missing symbols.
-> 
-> Fixes: 2fc8483fdcde ("nios2: Build infrastructure")
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Acked-by: Ley Foon Tan <ley.foon.tan@intel.com>
-
-> ---
->  arch/nios2/kernel/nios2_ksyms.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/arch/nios2/kernel/nios2_ksyms.c
-> b/arch/nios2/kernel/nios2_ksyms.c
-> index bf2f55d10a4d..4e704046a150 100644
-> --- a/arch/nios2/kernel/nios2_ksyms.c
-> +++ b/arch/nios2/kernel/nios2_ksyms.c
-> @@ -9,12 +9,20 @@
->  #include <linux/export.h>
->  #include <linux/string.h>
-> 
-> +#include <asm/cacheflush.h>
-> +#include <asm/pgtable.h>
-> +
->  /* string functions */
-> 
->  EXPORT_SYMBOL(memcpy);
->  EXPORT_SYMBOL(memset);
->  EXPORT_SYMBOL(memmove);
-> 
-> +/* memory management */
-> +
-> +EXPORT_SYMBOL(empty_zero_page);
-> +EXPORT_SYMBOL(flush_icache_range);
-> +
->  /*
->   * libgcc functions - functions that are used internally by the
->   * compiler...  (prototypes are not correct though, but that
-> @@ -31,3 +39,7 @@ DECLARE_EXPORT(__udivsi3);
->  DECLARE_EXPORT(__umoddi3);
->  DECLARE_EXPORT(__umodsi3);
->  DECLARE_EXPORT(__muldi3);
-> +DECLARE_EXPORT(__ucmpdi2);
-> +DECLARE_EXPORT(__lshrdi3);
-> +DECLARE_EXPORT(__ashldi3);
-> +DECLARE_EXPORT(__ashrdi3);
-> --
-> 2.7.4
-> 
-> 
-> ________________________________
-> 
-> Confidentiality Notice.
-> This message may contain information that is confidential or
-> otherwise protected from disclosure. If you are not the intended
-> recipient, you are hereby notified that any use, disclosure,
-> dissemination, distribution, or copying of this message, or any
-> attachments, is strictly prohibited. If you have received this
-> message in error, please advise the sender by reply e-mail, and
-> delete the message and any attachments. Thank you.
+T24gRnJpLCAyMDE4LTExLTA5IGF0IDEzOjA4ICswNTMwLCBOaXNoYWQgS2FtZGFyIHdyb3RlOg0K
+PiBBZGQgZGV2aWNlIHRyZWUgdGFibGUgZm9yIG1hdGNoaW5nIHZlbmRvciBJRC4NCg0KT25lIGNv
+bW1lbnQgaW5saW5lIGZvciB0aGlzLg0KDQpUaGFua3MNCkFsZXgNCg0KPiANCj4gU2lnbmVkLW9m
+Zi1ieTogTmlzaGFkIEthbWRhciA8bmlzaGFka2FtZGFyQGdtYWlsLmNvbT4NCj4gLS0tDQo+ICBk
+cml2ZXJzL3N0YWdpbmcvaWlvL2FkYy9hZDc4MTYuYyB8IDcgKysrKysrKw0KPiAgMSBmaWxlIGNo
+YW5nZWQsIDcgaW5zZXJ0aW9ucygrKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2lu
+Zy9paW8vYWRjL2FkNzgxNi5jDQo+IGIvZHJpdmVycy9zdGFnaW5nL2lpby9hZGMvYWQ3ODE2LmMN
+Cj4gaW5kZXggYTJmZWFkODVjZDQ2Li5iOGE5MTQ5ZmJhYzEgMTAwNjQ0DQo+IC0tLSBhL2RyaXZl
+cnMvc3RhZ2luZy9paW8vYWRjL2FkNzgxNi5jDQo+ICsrKyBiL2RyaXZlcnMvc3RhZ2luZy9paW8v
+YWRjL2FkNzgxNi5jDQo+IEBAIC00MjIsNiArNDIyLDEyIEBAIHN0YXRpYyBpbnQgYWQ3ODE2X3By
+b2JlKHN0cnVjdCBzcGlfZGV2aWNlICpzcGlfZGV2KQ0KPiAgCXJldHVybiAwOw0KPiAgfQ0KPiAg
+DQo+ICtzdGF0aWMgY29uc3Qgc3RydWN0IG9mX2RldmljZV9pZCBhZDc4MTZfb2ZfbWF0Y2hbXSA9
+IHsNCj4gKwl7IC5jb21wYXRpYmxlID0gImFkaSxhZDc4MTYiLCB9LA0KDQpJIHRoaW5rIHlvdSBh
+bHNvIG5lZWQgdG8gYWRkOg0KKwl7IC5jb21wYXRpYmxlID0gImFkaSxhZDc4MTciLCB9LA0KKwl7
+IC5jb21wYXRpYmxlID0gImFkaSxhZDc4MTgiLCB9LA0KDQo+ICsJeyB9DQo+ICt9Ow0KPiArTU9E
+VUxFX0RFVklDRV9UQUJMRShvZiwgYWQ3ODE2X29mX21hdGNoKTsNCj4gKw0KPiAgc3RhdGljIGNv
+bnN0IHN0cnVjdCBzcGlfZGV2aWNlX2lkIGFkNzgxNl9pZFtdID0gew0KPiAgCXsgImFkNzgxNiIs
+IElEX0FENzgxNiB9LA0KPiAgCXsgImFkNzgxNyIsIElEX0FENzgxNyB9LA0KPiBAQCAtNDM0LDYg
+KzQ0MCw3IEBAIE1PRFVMRV9ERVZJQ0VfVEFCTEUoc3BpLCBhZDc4MTZfaWQpOw0KPiAgc3RhdGlj
+IHN0cnVjdCBzcGlfZHJpdmVyIGFkNzgxNl9kcml2ZXIgPSB7DQo+ICAJLmRyaXZlciA9IHsNCj4g
+IAkJLm5hbWUgPSAiYWQ3ODE2IiwNCj4gKwkJLm9mX21hdGNoX3RhYmxlID0gb2ZfbWF0Y2hfcHRy
+KGFkNzgxNl9vZl9tYXRjaCksDQo+ICAJfSwNCj4gIAkucHJvYmUgPSBhZDc4MTZfcHJvYmUsDQo+
+ICAJLmlkX3RhYmxlID0gYWQ3ODE2X2lkLA0K
