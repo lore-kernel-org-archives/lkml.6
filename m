@@ -2,501 +2,148 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED,
-	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 938A1C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:34:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8139AC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:35:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49C2B20855
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:34:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="KQA4bqRG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49C2B20855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=cisco.com
+	by mail.kernel.org (Postfix) with ESMTP id 5558420855
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:35:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5558420855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728897AbeKJDQO (ORCPT
+        id S1728614AbeKJDRA convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 22:16:14 -0500
-Received: from rcdn-iport-6.cisco.com ([173.37.86.77]:45942 "EHLO
-        rcdn-iport-6.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728553AbeKJDQO (ORCPT
+        Fri, 9 Nov 2018 22:17:00 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:47494 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728430AbeKJDRA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 22:16:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=12702; q=dns/txt;
-  s=iport; t=1541784879; x=1542994479;
-  h=from:to:cc:subject:date:message-id;
-  bh=vP7r5v5r+hVEgevozqOTYs/5aZaL8r4xUEfZiuJrrJ4=;
-  b=KQA4bqRGt0yylN95PxKSM72P9aZ86TQNqU8CIKbX8Q+pDyn/r47DuHZ/
-   79fZPUcb6Miz9XSvFP0ei9Uo85tKL9aZ+X2asZ3TePST4YRm8YYu6y1ox
-   VkfIYMbr2Vj2wN5Zl0GXqijyo/zm3Btuko9mTt5zc03R3u3baMs5Kos5j
-   g=;
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0AEAAA+xOVb/4cNJK1jGgEBAQEBAgE?=
- =?us-ascii?q?BAQEHAgEBAQGBUQUBAQEBCwGCA4FoJ4wQi3uZP4F6DYRsgyYiNA0NAQMBAQI?=
- =?us-ascii?q?BAQJtKIY6KYEVE4MhggKpGIolFIc+hCoXgUE/gRGNSSICiRGGZ49UCYIcjnI?=
- =?us-ascii?q?LGJBul3GBQziBVTMaCBsVgyeQex4DMI0RAQE?=
-X-IronPort-AV: E=Sophos;i="5.54,483,1534809600"; 
-   d="scan'208";a="479397811"
-Received: from alln-core-2.cisco.com ([173.36.13.135])
-  by rcdn-iport-6.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Nov 2018 17:34:38 +0000
-Received: from zorba.cisco.com ([10.24.43.135])
-        by alln-core-2.cisco.com (8.15.2/8.15.2) with ESMTP id wA9HYXVu010556;
-        Fri, 9 Nov 2018 17:34:37 GMT
-From:   Daniel Walker <danielwa@cisco.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     xe-linux-external@cisco.com, Daniel Walker <dwalker@fifo99.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] powerpc: convert config files to generic cmdline
-Date:   Fri,  9 Nov 2018 09:34:33 -0800
-Message-Id: <20181109173433.1271-3-danielwa@cisco.com>
-X-Mailer: git-send-email 2.14.1
-X-Auto-Response-Suppress: DR, OOF, AutoReply
-X-Outbound-SMTP-Client: 10.24.43.135, [10.24.43.135]
-X-Outbound-Node: alln-core-2.cisco.com
+        Fri, 9 Nov 2018 22:17:00 -0500
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1gLAgj-00015V-DS; Fri, 09 Nov 2018 18:35:21 +0100
+Date:   Fri, 9 Nov 2018 18:35:21 +0100
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH 02/23] x86/fpu: Remove fpu->initialized usage in
+ __fpu__restore_sig()
+Message-ID: <20181109173521.2m6iijp5wkncgi77@linutronix.de>
+References: <20181107194858.9380-1-bigeasy@linutronix.de>
+ <20181107194858.9380-3-bigeasy@linutronix.de>
+ <20181108145721.GC7543@zn.tnic>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20181108145721.GC7543@zn.tnic>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a scripted mass convert of the config files to use
-the new generic cmdline. There is a bit of a trim effect here.
-It would seems that some of the config haven't been trimmed in
-a while.
+On 2018-11-08 15:57:21 [+0100], Borislav Petkov wrote:
+> On Wed, Nov 07, 2018 at 08:48:37PM +0100, Sebastian Andrzej Siewior wrote:
+> > This is a preparation for the removal of the ->initialized member in the
+> > fpu struct.
+> > __fpu__restore_sig() is deactivating the FPU via fpu__drop() and then
+> > setting manually ->initialized followed by fpu__restore(). The result is
+> > that it is possible to manipulate fpu->state and the state of registers
+> > won't be saved/restore on a context switch which would overwrite state.
+> 
+> 		restored
+> 
+> > 
+> > Don't access the fpu->state while the content is read from user space
+> > and examined / sanitized. Use a temporary buffer kmalloc() buffer for
+> 
+> one "buffer" too many.
 
-The script used to convert is as follows,
+corrected.
 
-if [[ -z "$1" || -z "$2" ]]; then
-        echo "Two arguments are needed."
-        exit 1
-fi
-mkdir $1
-cp $2 $1/.config
-sed -i 's/CONFIG_CMDLINE=/CONFIG_CMDLINE_PREPEND=/g' $1/.config
-make ARCH=$1 O=$1 olddefconfig
-make ARCH=$1 O=$1 savedefconfig
-cp $1/defconfig $2
-rm -Rf $1
+> More importantly, what I'm missing here is more detailed explanation
+> about how that manipulation can happen. Especially since the comment
+> over fpu__drop() you're removing below is claiming the exact opposite.
+> AFAICT.
 
-Cc: xe-linux-external@cisco.com
-Cc: Daniel Walker <dwalker@fifo99.com>
-Signed-off-by: Daniel Walker <danielwa@cisco.com>
----
- arch/powerpc/configs/44x/fsp2_defconfig       | 29 ++++++++--------
- arch/powerpc/configs/44x/iss476-smp_defconfig | 24 +++++++-------
- arch/powerpc/configs/44x/warp_defconfig       | 12 +++----
- arch/powerpc/configs/holly_defconfig          | 12 +++----
- arch/powerpc/configs/mvme5100_defconfig       | 25 +++++++-------
- arch/powerpc/configs/skiroot_defconfig        | 48 +++++++++++++--------------
- arch/powerpc/configs/storcenter_defconfig     | 15 ++++-----
- 7 files changed, 80 insertions(+), 85 deletions(-)
+fpu__drop() stets ->initialized to 0. As a result the context switch
+will not save current FPU registers and so _not_ write to fpu->state.
+This also means that CPU's FPU register will be random (inherited from
+the last context) after the context switch. This is also true for usage
+in softirq via kernel_fpu_begin().
 
-diff --git a/arch/powerpc/configs/44x/fsp2_defconfig b/arch/powerpc/configs/44x/fsp2_defconfig
-index bae6b26bcfba..bafea495c9b8 100644
---- a/arch/powerpc/configs/44x/fsp2_defconfig
-+++ b/arch/powerpc/configs/44x/fsp2_defconfig
-@@ -1,8 +1,6 @@
--CONFIG_44x=y
- # CONFIG_SWAP is not set
- CONFIG_SYSVIPC=y
- # CONFIG_CROSS_MEMORY_ATTACH is not set
--# CONFIG_FHANDLE is not set
- CONFIG_NO_HZ=y
- CONFIG_HIGH_RES_TIMERS=y
- CONFIG_IKCONFIG=y
-@@ -13,25 +11,26 @@ CONFIG_BLK_DEV_INITRD=y
- # CONFIG_RD_XZ is not set
- # CONFIG_RD_LZO is not set
- # CONFIG_RD_LZ4 is not set
-+# CONFIG_FHANDLE is not set
- CONFIG_KALLSYMS_ALL=y
- CONFIG_BPF_SYSCALL=y
- CONFIG_EMBEDDED=y
- CONFIG_PROFILING=y
--CONFIG_OPROFILE=y
--CONFIG_MODULES=y
--CONFIG_MODULE_UNLOAD=y
--# CONFIG_BLK_DEV_BSG is not set
-+CONFIG_CMDLINE_BOOL=y
-+CONFIG_CMDLINE_PREPEND="ip=on rw"
-+CONFIG_44x=y
- CONFIG_PPC_47x=y
- # CONFIG_EBONY is not set
- CONFIG_FSP2=y
- CONFIG_476FPE_ERR46=y
--CONFIG_SWIOTLB=y
- CONFIG_KEXEC=y
- CONFIG_CRASH_DUMP=y
--CONFIG_CMDLINE_BOOL=y
--CONFIG_CMDLINE="ip=on rw"
- # CONFIG_SUSPEND is not set
- # CONFIG_PCI is not set
-+CONFIG_OPROFILE=y
-+CONFIG_MODULES=y
-+CONFIG_MODULE_UNLOAD=y
-+# CONFIG_BLK_DEV_BSG is not set
- CONFIG_NET=y
- CONFIG_PACKET=y
- CONFIG_UNIX=y
-@@ -112,6 +111,12 @@ CONFIG_NFS_V3_ACL=y
- CONFIG_NFS_V4=y
- CONFIG_ROOT_NFS=y
- CONFIG_NLS_DEFAULT="n"
-+CONFIG_CRYPTO_CBC=y
-+CONFIG_CRYPTO_ECB=y
-+CONFIG_CRYPTO_PCBC=y
-+CONFIG_CRYPTO_MD5=y
-+CONFIG_CRYPTO_DES=y
-+# CONFIG_CRYPTO_HW is not set
- CONFIG_XZ_DEC=y
- CONFIG_PRINTK_TIME=y
- CONFIG_MESSAGE_LOGLEVEL_DEFAULT=3
-@@ -119,9 +124,3 @@ CONFIG_DYNAMIC_DEBUG=y
- CONFIG_DEBUG_INFO=y
- CONFIG_MAGIC_SYSRQ=y
- CONFIG_DETECT_HUNG_TASK=y
--CONFIG_CRYPTO_CBC=y
--CONFIG_CRYPTO_ECB=y
--CONFIG_CRYPTO_PCBC=y
--CONFIG_CRYPTO_MD5=y
--CONFIG_CRYPTO_DES=y
--# CONFIG_CRYPTO_HW is not set
-diff --git a/arch/powerpc/configs/44x/iss476-smp_defconfig b/arch/powerpc/configs/44x/iss476-smp_defconfig
-index d24bfa6ecd62..775b25178714 100644
---- a/arch/powerpc/configs/44x/iss476-smp_defconfig
-+++ b/arch/powerpc/configs/44x/iss476-smp_defconfig
-@@ -1,5 +1,3 @@
--CONFIG_44x=y
--CONFIG_SMP=y
- CONFIG_SYSVIPC=y
- CONFIG_POSIX_MQUEUE=y
- CONFIG_LOG_BUF_SHIFT=14
-@@ -7,21 +5,23 @@ CONFIG_BLK_DEV_INITRD=y
- CONFIG_EXPERT=y
- CONFIG_KALLSYMS_ALL=y
- CONFIG_PROFILING=y
--CONFIG_OPROFILE=y
--CONFIG_MODULES=y
--CONFIG_MODULE_UNLOAD=y
--# CONFIG_BLK_DEV_BSG is not set
-+CONFIG_CMDLINE_BOOL=y
-+CONFIG_CMDLINE_PREPEND="root=/dev/issblk0"
-+CONFIG_44x=y
-+CONFIG_SMP=y
- CONFIG_PPC_47x=y
- # CONFIG_EBONY is not set
- CONFIG_ISS4xx=y
- CONFIG_HZ_100=y
- CONFIG_MATH_EMULATION=y
- CONFIG_IRQ_ALL_CPUS=y
--CONFIG_CMDLINE_BOOL=y
--CONFIG_CMDLINE="root=/dev/issblk0"
- # CONFIG_PCI is not set
- CONFIG_ADVANCED_OPTIONS=y
- CONFIG_DYNAMIC_MEMSTART=y
-+CONFIG_OPROFILE=y
-+CONFIG_MODULES=y
-+CONFIG_MODULE_UNLOAD=y
-+# CONFIG_BLK_DEV_BSG is not set
- CONFIG_NET=y
- CONFIG_PACKET=y
- CONFIG_UNIX=y
-@@ -62,13 +62,13 @@ CONFIG_PROC_KCORE=y
- CONFIG_TMPFS=y
- CONFIG_CRAMFS=y
- # CONFIG_NETWORK_FILESYSTEMS is not set
--CONFIG_DEBUG_INFO=y
--CONFIG_MAGIC_SYSRQ=y
--CONFIG_DETECT_HUNG_TASK=y
--CONFIG_PPC_EARLY_DEBUG=y
- CONFIG_CRYPTO_CBC=y
- CONFIG_CRYPTO_ECB=y
- CONFIG_CRYPTO_PCBC=y
- CONFIG_CRYPTO_MD5=y
- CONFIG_CRYPTO_DES=y
- # CONFIG_CRYPTO_HW is not set
-+CONFIG_DEBUG_INFO=y
-+CONFIG_MAGIC_SYSRQ=y
-+CONFIG_DETECT_HUNG_TASK=y
-+CONFIG_PPC_EARLY_DEBUG=y
-diff --git a/arch/powerpc/configs/44x/warp_defconfig b/arch/powerpc/configs/44x/warp_defconfig
-index 6c02f53271cd..4b76897e323f 100644
---- a/arch/powerpc/configs/44x/warp_defconfig
-+++ b/arch/powerpc/configs/44x/warp_defconfig
-@@ -1,4 +1,3 @@
--CONFIG_44x=y
- CONFIG_LOCALVERSION="-pika"
- # CONFIG_LOCALVERSION_AUTO is not set
- CONFIG_SYSVIPC=y
-@@ -7,16 +6,17 @@ CONFIG_IKCONFIG_PROC=y
- CONFIG_LOG_BUF_SHIFT=14
- CONFIG_BLK_DEV_INITRD=y
- CONFIG_EXPERT=y
--CONFIG_MODULES=y
--CONFIG_MODULE_UNLOAD=y
--# CONFIG_BLK_DEV_BSG is not set
-+CONFIG_CMDLINE_BOOL=y
-+CONFIG_CMDLINE_PREPEND="ip=on"
-+CONFIG_44x=y
- # CONFIG_EBONY is not set
- CONFIG_WARP=y
- CONFIG_PPC4xx_GPIO=y
- CONFIG_HZ_1000=y
--CONFIG_CMDLINE_BOOL=y
--CONFIG_CMDLINE="ip=on"
- # CONFIG_PCI is not set
-+CONFIG_MODULES=y
-+CONFIG_MODULE_UNLOAD=y
-+# CONFIG_BLK_DEV_BSG is not set
- CONFIG_NET=y
- CONFIG_PACKET=y
- CONFIG_UNIX=y
-diff --git a/arch/powerpc/configs/holly_defconfig b/arch/powerpc/configs/holly_defconfig
-index 71d8d2430b6c..0f233b4f78eb 100644
---- a/arch/powerpc/configs/holly_defconfig
-+++ b/arch/powerpc/configs/holly_defconfig
-@@ -4,18 +4,18 @@ CONFIG_HIGH_RES_TIMERS=y
- CONFIG_LOG_BUF_SHIFT=14
- CONFIG_BLK_DEV_INITRD=y
- CONFIG_EXPERT=y
--CONFIG_MODULES=y
--# CONFIG_BLK_DEV_BSG is not set
--CONFIG_PARTITION_ADVANCED=y
-+CONFIG_CMDLINE_BOOL=y
-+CONFIG_CMDLINE_PREPEND="console=ttyS0,115200"
- # CONFIG_PPC_CHRP is not set
- # CONFIG_PPC_PMAC is not set
- CONFIG_EMBEDDED6xx=y
- CONFIG_PPC_HOLLY=y
- CONFIG_GEN_RTC=y
--CONFIG_BINFMT_MISC=y
--CONFIG_CMDLINE_BOOL=y
--CONFIG_CMDLINE="console=ttyS0,115200"
- # CONFIG_SECCOMP is not set
-+CONFIG_MODULES=y
-+# CONFIG_BLK_DEV_BSG is not set
-+CONFIG_PARTITION_ADVANCED=y
-+CONFIG_BINFMT_MISC=y
- CONFIG_NET=y
- CONFIG_PACKET=y
- CONFIG_UNIX=y
-diff --git a/arch/powerpc/configs/mvme5100_defconfig b/arch/powerpc/configs/mvme5100_defconfig
-index 63e38c7220f1..29913bf3fb6e 100644
---- a/arch/powerpc/configs/mvme5100_defconfig
-+++ b/arch/powerpc/configs/mvme5100_defconfig
-@@ -11,19 +11,19 @@ CONFIG_LOG_BUF_SHIFT=14
- # CONFIG_NET_NS is not set
- CONFIG_CC_OPTIMIZE_FOR_SIZE=y
- # CONFIG_COMPAT_BRK is not set
--CONFIG_MODULES=y
--CONFIG_MODULE_UNLOAD=y
--# CONFIG_BLK_DEV_BSG is not set
-+CONFIG_CMDLINE_BOOL=y
-+CONFIG_CMDLINE_PREPEND="console=ttyS0,9600 ip=dhcp root=/dev/nfs"
- # CONFIG_PPC_CHRP is not set
- # CONFIG_PPC_PMAC is not set
- CONFIG_EMBEDDED6xx=y
- CONFIG_MVME5100=y
- CONFIG_KVM_GUEST=y
- CONFIG_HZ_100=y
-+CONFIG_MODULES=y
-+CONFIG_MODULE_UNLOAD=y
-+# CONFIG_BLK_DEV_BSG is not set
- # CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
- # CONFIG_COMPACTION is not set
--CONFIG_CMDLINE_BOOL=y
--CONFIG_CMDLINE="console=ttyS0,9600 ip=dhcp root=/dev/nfs"
- CONFIG_NET=y
- CONFIG_PACKET=y
- CONFIG_UNIX=y
-@@ -46,7 +46,6 @@ CONFIG_NF_CONNTRACK_TFTP=m
- CONFIG_NETFILTER_XT_MATCH_MAC=m
- CONFIG_NETFILTER_XT_MATCH_PKTTYPE=m
- CONFIG_NETFILTER_XT_MATCH_STATE=m
--CONFIG_NF_CONNTRACK_IPV4=m
- CONFIG_IP_NF_IPTABLES=m
- CONFIG_IP_NF_FILTER=m
- CONFIG_IP_NF_TARGET_REJECT=m
-@@ -111,13 +110,6 @@ CONFIG_NLS_CODEPAGE_437=m
- CONFIG_NLS_CODEPAGE_932=m
- CONFIG_NLS_ISO8859_1=m
- CONFIG_NLS_UTF8=m
--CONFIG_CRC_CCITT=m
--CONFIG_CRC_T10DIF=y
--CONFIG_XZ_DEC=y
--CONFIG_MAGIC_SYSRQ=y
--CONFIG_DEBUG_KERNEL=y
--CONFIG_DETECT_HUNG_TASK=y
--CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=20
- CONFIG_CRYPTO_CBC=y
- CONFIG_CRYPTO_PCBC=m
- CONFIG_CRYPTO_MD5=y
-@@ -128,3 +120,10 @@ CONFIG_CRYPTO_DES=y
- CONFIG_CRYPTO_SERPENT=m
- CONFIG_CRYPTO_TWOFISH=m
- CONFIG_CRYPTO_DEFLATE=m
-+CONFIG_CRC_CCITT=m
-+CONFIG_CRC_T10DIF=y
-+CONFIG_XZ_DEC=y
-+CONFIG_MAGIC_SYSRQ=y
-+CONFIG_DEBUG_KERNEL=y
-+CONFIG_DETECT_HUNG_TASK=y
-+CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=20
-diff --git a/arch/powerpc/configs/skiroot_defconfig b/arch/powerpc/configs/skiroot_defconfig
-index cfdd08897a06..bf31334efbce 100644
---- a/arch/powerpc/configs/skiroot_defconfig
-+++ b/arch/powerpc/configs/skiroot_defconfig
-@@ -1,8 +1,3 @@
--CONFIG_PPC64=y
--CONFIG_ALTIVEC=y
--CONFIG_VSX=y
--CONFIG_NR_CPUS=2048
--CONFIG_CPU_LITTLE_ENDIAN=y
- CONFIG_KERNEL_XZ=y
- # CONFIG_SWAP is not set
- CONFIG_SYSVIPC=y
-@@ -29,15 +24,13 @@ CONFIG_EXPERT=y
- CONFIG_PERF_EVENTS=y
- # CONFIG_COMPAT_BRK is not set
- CONFIG_SLAB_FREELIST_HARDENED=y
--CONFIG_JUMP_LABEL=y
--CONFIG_STRICT_KERNEL_RWX=y
--CONFIG_MODULES=y
--CONFIG_MODULE_UNLOAD=y
--CONFIG_MODULE_SIG=y
--CONFIG_MODULE_SIG_FORCE=y
--CONFIG_MODULE_SIG_SHA512=y
--CONFIG_PARTITION_ADVANCED=y
--# CONFIG_IOSCHED_DEADLINE is not set
-+CONFIG_CMDLINE_BOOL=y
-+CONFIG_CMDLINE_PREPEND="console=tty0 console=hvc0 ipr.fast_reboot=1 quiet"
-+CONFIG_PPC64=y
-+CONFIG_ALTIVEC=y
-+CONFIG_VSX=y
-+CONFIG_NR_CPUS=2048
-+CONFIG_CPU_LITTLE_ENDIAN=y
- # CONFIG_PPC_VAS is not set
- # CONFIG_PPC_PSERIES is not set
- # CONFIG_PPC_OF_BOOT_TRAMPOLINE is not set
-@@ -47,15 +40,22 @@ CONFIG_HZ_100=y
- CONFIG_KEXEC=y
- CONFIG_IRQ_ALL_CPUS=y
- CONFIG_NUMA=y
--# CONFIG_COMPACTION is not set
--# CONFIG_MIGRATION is not set
--# CONFIG_BOUNCE is not set
- CONFIG_PPC_64K_PAGES=y
- CONFIG_SCHED_SMT=y
--CONFIG_CMDLINE_BOOL=y
--CONFIG_CMDLINE="console=tty0 console=hvc0 ipr.fast_reboot=1 quiet"
- # CONFIG_SECCOMP is not set
- # CONFIG_PPC_MEM_KEYS is not set
-+CONFIG_JUMP_LABEL=y
-+CONFIG_STRICT_KERNEL_RWX=y
-+CONFIG_MODULES=y
-+CONFIG_MODULE_UNLOAD=y
-+CONFIG_MODULE_SIG=y
-+CONFIG_MODULE_SIG_FORCE=y
-+CONFIG_MODULE_SIG_SHA512=y
-+CONFIG_PARTITION_ADVANCED=y
-+# CONFIG_IOSCHED_DEADLINE is not set
-+# CONFIG_COMPACTION is not set
-+# CONFIG_MIGRATION is not set
-+# CONFIG_BOUNCE is not set
- CONFIG_NET=y
- CONFIG_PACKET=y
- CONFIG_UNIX=y
-@@ -139,7 +139,6 @@ CONFIG_ACENIC_OMIT_TIGON_I=y
- CONFIG_TIGON3=m
- CONFIG_BNX2X=m
- # CONFIG_NET_VENDOR_BROCADE is not set
--# CONFIG_NET_CADENCE is not set
- # CONFIG_NET_VENDOR_CAVIUM is not set
- CONFIG_CHELSIO_T1=m
- # CONFIG_NET_VENDOR_CISCO is not set
-@@ -155,7 +154,6 @@ CONFIG_IGB=m
- CONFIG_IXGB=m
- CONFIG_IXGBE=m
- CONFIG_I40E=m
--CONFIG_S2IO=m
- # CONFIG_NET_VENDOR_MARVELL is not set
- CONFIG_MLX4_EN=m
- # CONFIG_MLX4_CORE_GEN2 is not set
-@@ -163,11 +161,11 @@ CONFIG_MLX5_CORE=m
- # CONFIG_NET_VENDOR_MICREL is not set
- CONFIG_MYRI10GE=m
- # CONFIG_NET_VENDOR_NATSEMI is not set
-+CONFIG_S2IO=m
- # CONFIG_NET_VENDOR_NETRONOME is not set
- # CONFIG_NET_VENDOR_NI is not set
- # CONFIG_NET_VENDOR_NVIDIA is not set
- # CONFIG_NET_VENDOR_OKI is not set
--# CONFIG_NET_PACKET_ENGINE is not set
- CONFIG_QLGE=m
- CONFIG_NETXEN_NIC=m
- # CONFIG_NET_VENDOR_QUALCOMM is not set
-@@ -268,6 +266,9 @@ CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_ASCII=y
- CONFIG_NLS_ISO8859_1=y
- CONFIG_NLS_UTF8=y
-+CONFIG_ENCRYPTED_KEYS=y
-+# CONFIG_CRYPTO_ECHAINIV is not set
-+# CONFIG_CRYPTO_HW is not set
- CONFIG_CRC16=y
- CONFIG_CRC_ITU_T=y
- CONFIG_LIBCRC32C=y
-@@ -289,6 +290,3 @@ CONFIG_WQ_WATCHDOG=y
- # CONFIG_RUNTIME_TESTING_MENU is not set
- CONFIG_XMON=y
- CONFIG_XMON_DEFAULT=y
--CONFIG_ENCRYPTED_KEYS=y
--# CONFIG_CRYPTO_ECHAINIV is not set
--# CONFIG_CRYPTO_HW is not set
-diff --git a/arch/powerpc/configs/storcenter_defconfig b/arch/powerpc/configs/storcenter_defconfig
-index 74bca2eccd0f..8c849339bfe5 100644
---- a/arch/powerpc/configs/storcenter_defconfig
-+++ b/arch/powerpc/configs/storcenter_defconfig
-@@ -2,19 +2,19 @@ CONFIG_SYSVIPC=y
- CONFIG_LOG_BUF_SHIFT=14
- CONFIG_EXPERT=y
- # CONFIG_KALLSYMS is not set
--CONFIG_MODULES=y
--CONFIG_MODULE_UNLOAD=y
--# CONFIG_BLK_DEV_BSG is not set
--CONFIG_PARTITION_ADVANCED=y
-+CONFIG_CMDLINE_BOOL=y
-+CONFIG_CMDLINE_PREPEND="console=ttyS0,115200"
- # CONFIG_PPC_CHRP is not set
- # CONFIG_PPC_PMAC is not set
- CONFIG_EMBEDDED6xx=y
- CONFIG_STORCENTER=y
- CONFIG_HZ_100=y
--CONFIG_BINFMT_MISC=y
--CONFIG_CMDLINE_BOOL=y
--CONFIG_CMDLINE="console=ttyS0,115200"
- # CONFIG_SECCOMP is not set
-+CONFIG_MODULES=y
-+CONFIG_MODULE_UNLOAD=y
-+# CONFIG_BLK_DEV_BSG is not set
-+CONFIG_PARTITION_ADVANCED=y
-+CONFIG_BINFMT_MISC=y
- CONFIG_NET=y
- CONFIG_PACKET=m
- CONFIG_UNIX=y
-@@ -81,5 +81,4 @@ CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_ISO8859_1=y
- CONFIG_NLS_UTF8=y
- CONFIG_CRC_T10DIF=y
--# CONFIG_ENABLE_WARN_DEPRECATED is not set
- # CONFIG_ENABLE_MUST_CHECK is not set
--- 
-2.14.1
+The "new" FPU state is prepared in fpu->state and once it is done, it
+gets loaded via
+  fpu->initialized = 1; // make sure fpu__initialize() in fpu__restore()
+                        // is a nop
+  fpu__restore();	// Load the registers.
 
+Since I plan to remove the ->initialized member, I don't have the luxury
+to play with fpu->state because the "new" content obtained by
+copy_from_user() will be overwritten with CPU's current FPU state during
+a context switch.
+Now with that information, what do you plan to alter? :)
+
+> Yeah, FPU code has always been nasty and tricky to follow so I think
+> we'd need to have this stuff explained in much more detail.
+
+Yeah, tell me about it. Now that you made me look into this again, I
+spotted this gem:
+
+| __fpu__restore_sig()
+…
+|        if (ia32_fxstate) {
+…
+|                 fpu__drop(fpu);
+…
+|	/* prepare new FPU state in fpu->state */
+| 
+|                 fpu->initialized = 1;
+
+*BOOM* context switch. ->initialized == 1 is seen so it stashes current
+CPU's FPU state into fpu->state and overwrites what has been prepared
+before.
+
+On the switch back to this task, the fpu__restore() becomes a "nop"
+because the saved registers are the same but not what was expected /
+prepared before.
+
+|                 preempt_disable();
+|                 fpu__restore(fpu);
+|                 preempt_enable();
+|
+
+So. The fix would be:
+@@ -344,10 +344,10 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
+                        sanitize_restored_xstate(tsk, &env, xfeatures, fx_only);
+                }
+ 
++               local_bh_disable();
+                fpu->initialized = 1;
+-               preempt_disable();
+                fpu__restore(fpu);
+-               preempt_enable();
++               local_bh_enable();
+ 
+                return err;
+        } else {
+
+local_bh_disable() due to possible kernel_fpu_begin() usage in softirq.
+How much do we care here about a theoretical race on 32bit anyway? I
+don't think someone complained :) I would have to rebase my queue…
+otherwise…
+
+> Thx.
+
+Sebastian
