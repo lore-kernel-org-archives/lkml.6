@@ -2,196 +2,295 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59875C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:05:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AEA4C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:05:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D80B20892
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:05:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D80B20892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 5A2C020883
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:05:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="nOm2ynYW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A2C020883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728376AbeKIXqU (ORCPT
+        id S1728213AbeKIXpu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 18:46:20 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:47755 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728237AbeKIXqU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 18:46:20 -0500
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id EF6015679302F;
-        Fri,  9 Nov 2018 22:05:04 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.75) by
- DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.408.0; Fri, 9 Nov 2018 22:04:55 +0800
-From:   John Garry <john.garry@huawei.com>
-To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
-CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, Xiang Chen <chenxiang66@hisilicon.com>,
-        John Garry <john.garry@huawei.com>
-Subject: [PATCH 3/5] scsi: hisi_sas: Add support for interrupt coalescing for v3 hw
-Date:   Fri, 9 Nov 2018 22:06:34 +0800
-Message-ID: <1541772396-161814-4-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 2.8.1
-In-Reply-To: <1541772396-161814-1-git-send-email-john.garry@huawei.com>
-References: <1541772396-161814-1-git-send-email-john.garry@huawei.com>
+        Fri, 9 Nov 2018 18:45:50 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:40966 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728045AbeKIXpt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 18:45:49 -0500
+Received: by mail-wr1-f65.google.com with SMTP id v18-v6so2018826wrt.8
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 06:05:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=5/+LTD+fuRT1vJpsOEDqaSSNT5CxZ1kKqaaiFemNQAc=;
+        b=nOm2ynYWRy8mJ+DrTVG5b378frSIZWIq+mzRqi1werHbbBd2ouk2kmiA60ndUbxOr1
+         8fsx9BokSGX4hyc4xU9N14uWHo/FmTflKqlSsSmQKb07VsD5xgcFu6RZanFE9YiI22NX
+         9jJakJuKo+2wYc4ZdDmOhl6lDT8tJ6W6CsQq1E0WkcHmwmMtDc3SUkrhxXR2iqNQ+zwY
+         m74KCVcP4uNRJH5uQe6mNCQNNAm8Aj0iE2E36mRV72DasuQEeICeHt06PWjiCSR+dR5c
+         Fu6o0VlF01l86iBqtxwHlBrYTPh3KyRCe1MHHSPVj9HEa/MqXiB07tSHTtxZ4okNzg5C
+         Y4HQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=5/+LTD+fuRT1vJpsOEDqaSSNT5CxZ1kKqaaiFemNQAc=;
+        b=dKMNT6aDYPaN3ar1lh9STh2psw5bbGJGoDNlBmx9KEWGUqC1sxOsm6AvfJfP/BDal7
+         5fZhaBZx6Ge/44SxJPT4vuALM6R/qpLjvGqXHBkuhPI16YGzBGRD8KX4xdtb9TKufZdP
+         Sy+NmmajMktju9roVLXVN9IRD8KEX6lRv8cuOnN2mLM/SYGK3OZ9Zsz+OPm3de+2Q0vS
+         lNNC2mveLkS+15nFTDvxuPOPkDLk9pN0iBRACjXp9mUrTVAdLPNWEjc4ThAPOHlkojL0
+         VTVHp6VE2Z7jcbwdlj4+aDXqTD44A0D04QIblKAlvikinTlGQ3G0ehEMG1JOgxt0Wdma
+         q1XA==
+X-Gm-Message-State: AGRZ1gIsj5CLvrr7YTeFbdkbmiHRVbneP73sHJSD/TQRkeVzgifqAh4J
+        CJ+PKsmD0bD2SH6OOvP+UI+RWw==
+X-Google-Smtp-Source: AJdET5epIfPIkhOvGZCStU7fzGfAT+stqgoM4MHpqUfF34YxLPp5f8heWxtzf/S5da/ygJtFD4GcjQ==
+X-Received: by 2002:adf:f24d:: with SMTP id b13-v6mr7646460wrp.142.1541772303455;
+        Fri, 09 Nov 2018 06:05:03 -0800 (PST)
+Received: from boomer.baylibre.com ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
+        by smtp.googlemail.com with ESMTPSA id w18-v6sm15964987wrn.66.2018.11.09.06.05.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 09 Nov 2018 06:05:02 -0800 (PST)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, devicetree@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 4/4] ARM: dts: meson: consistently disable pin bias
+Date:   Fri,  9 Nov 2018 15:04:45 +0100
+Message-Id: <20181109140445.17795-5-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181109140445.17795-1-jbrunet@baylibre.com>
+References: <20181109140445.17795-1-jbrunet@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiang Chen <chenxiang66@hisilicon.com>
+On Amlogic chipsets, the bias set through pinconf applies to the pad
+itself, not only the GPIO function. This means that even when we change
+the function of the pad from GPIO to anything else, the bias previously
+set still applies.
 
-If INT_COAL_EN is enabled, config time and count of interrupt coalescing.
-Then if CQ collects count of CQ entries in time, it will report the
-interrupt. Or if CQ doesn't collect enough CQ entries in time, it Will
-report the interrupt at timeout.
+As we have seen with the eMMC, depending on the bias type and the function,
+it may trigger problems.
 
-As all the registers are not supported to be changed dynamically, so
-need to config those register between disable and enable PHYs.
+The underlying issue is that we inherit whatever was left by previous user
+of the pad (pinconf, u-boot or the ROM code). As a consequence, the actual
+setup we will get is undefined.
 
-Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
-Signed-off-by: John Garry <john.garry@huawei.com>
+There is nothing mentioned in the documentation about pad bias and pinmux
+function, however leaving it undefined is not an option.
+
+This change consistently disable the pad bias for every pinmux functions.
+It seems to work well, we can only assume that the necessary bias (if any)
+is already provided by the pin function itself.
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/scsi/hisi_sas/hisi_sas.h       |   2 +
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 100 +++++++++++++++++++++++++++++++++
- 2 files changed, 102 insertions(+)
+ arch/arm/boot/dts/meson8.dtsi   | 12 ++++++++++++
+ arch/arm/boot/dts/meson8b.dtsi  |  9 +++++++++
+ arch/arm/boot/dts/meson8m2.dtsi |  1 +
+ 3 files changed, 22 insertions(+)
 
-diff --git a/drivers/scsi/hisi_sas/hisi_sas.h b/drivers/scsi/hisi_sas/hisi_sas.h
-index 94a9e13..535c613 100644
---- a/drivers/scsi/hisi_sas/hisi_sas.h
-+++ b/drivers/scsi/hisi_sas/hisi_sas.h
-@@ -322,6 +322,8 @@ struct hisi_hba {
- 	unsigned long sata_dev_bitmap[BITS_TO_LONGS(HISI_SAS_MAX_DEVICES)];
- 	struct work_struct rst_work;
- 	u32 phy_state;
-+	u32 intr_coal_ticks;	/* Time of interrupt coalesce in us */
-+	u32 intr_coal_count;	/* Interrupt count to coalesce */
+diff --git a/arch/arm/boot/dts/meson8.dtsi b/arch/arm/boot/dts/meson8.dtsi
+index 7162e0ca05b0..08c54cf5420a 100644
+--- a/arch/arm/boot/dts/meson8.dtsi
++++ b/arch/arm/boot/dts/meson8.dtsi
+@@ -163,6 +163,7 @@
+ 			mux {
+ 				groups = "uart_tx_ao_a", "uart_rx_ao_a";
+ 				function = "uart_ao";
++				bias-disable;
+ 			};
+ 		};
+ 
+@@ -170,6 +171,7 @@
+ 			mux {
+ 				groups = "i2c_mst_sck_ao", "i2c_mst_sda_ao";
+ 				function = "i2c_mst_ao";
++				bias-disable;
+ 			};
+ 		};
+ 
+@@ -177,6 +179,7 @@
+ 			mux {
+ 				groups = "remote_input";
+ 				function = "remote";
++				bias-disable;
+ 			};
+ 		};
+ 
+@@ -184,6 +187,7 @@
+ 			mux {
+ 				groups = "pwm_f_ao";
+ 				function = "pwm_f_ao";
++				bias-disable;
+ 			};
+ 		};
+ 	};
+@@ -238,6 +242,7 @@
+ 				groups = "sd_d0_a", "sd_d1_a", "sd_d2_a",
+ 					"sd_d3_a", "sd_clk_a", "sd_cmd_a";
+ 				function = "sd_a";
++				bias-disable;
+ 			};
+ 		};
+ 
+@@ -246,6 +251,7 @@
+ 				groups = "sd_d0_b", "sd_d1_b", "sd_d2_b",
+ 					"sd_d3_b", "sd_clk_b", "sd_cmd_b";
+ 				function = "sd_b";
++				bias-disable;
+ 			};
+ 		};
+ 
+@@ -254,6 +260,7 @@
+ 				groups = "sd_d0_c", "sd_d1_c", "sd_d2_c",
+ 					"sd_d3_c", "sd_clk_c", "sd_cmd_c";
+ 				function = "sd_c";
++				bias-disable;
+ 			};
+ 		};
+ 
+@@ -261,6 +268,7 @@
+ 			mux {
+ 				groups = "nor_d", "nor_q", "nor_c", "nor_cs";
+ 				function = "nor";
++				bias-disable;
+ 			};
+ 		};
+ 
+@@ -272,6 +280,7 @@
+ 					 "eth_rxd1", "eth_rxd0", "eth_mdio",
+ 					 "eth_mdc";
+ 				function = "ethernet";
++				bias-disable;
+ 			};
+ 		};
+ 
+@@ -279,6 +288,7 @@
+ 			mux {
+ 				groups = "pwm_e";
+ 				function = "pwm_e";
++				bias-disable;
+ 			};
+ 		};
+ 
+@@ -287,6 +297,7 @@
+ 				groups = "uart_tx_a1",
+ 				       "uart_rx_a1";
+ 				function = "uart_a";
++				bias-disable;
+ 			};
+ 		};
+ 
+@@ -295,6 +306,7 @@
+ 				groups = "uart_cts_a1",
+ 				       "uart_rts_a1";
+ 				function = "uart_a";
++				bias-disable;
+ 			};
+ 		};
+ 	};
+diff --git a/arch/arm/boot/dts/meson8b.dtsi b/arch/arm/boot/dts/meson8b.dtsi
+index cd1ca9dda126..46b3564a6536 100644
+--- a/arch/arm/boot/dts/meson8b.dtsi
++++ b/arch/arm/boot/dts/meson8b.dtsi
+@@ -146,6 +146,7 @@
+ 			mux {
+ 				groups = "uart_tx_ao_a", "uart_rx_ao_a";
+ 				function = "uart_ao";
++				bias-disable;
+ 			};
+ 		};
+ 
+@@ -153,6 +154,7 @@
+ 			mux {
+ 				groups = "remote_input";
+ 				function = "remote";
++				bias-disable;
+ 			};
+ 		};
+ 	};
+@@ -220,6 +222,7 @@
+ 					 "eth_txd2",
+ 					 "eth_txd3";
+ 				function = "ethernet";
++				bias-disable;
+ 			};
+ 		};
+ 
+@@ -235,6 +238,7 @@
+ 					 "eth_mdio_en",
+ 					 "eth_mdc";
+ 				function = "ethernet";
++				bias-disable;
+ 			};
+ 		};
+ 
+@@ -242,6 +246,7 @@
+ 			mux {
+ 				groups = "i2c_sda_a", "i2c_sck_a";
+ 				function = "i2c_a";
++				bias-disable;
+ 			};
+ 		};
+ 
+@@ -250,6 +255,7 @@
+ 				groups = "sd_d0_b", "sd_d1_b", "sd_d2_b",
+ 					"sd_d3_b", "sd_clk_b", "sd_cmd_b";
+ 				function = "sd_b";
++				bias-disable;
+ 			};
+ 		};
+ 
+@@ -257,6 +263,7 @@
+ 			mux {
+ 				groups = "pwm_c1";
+ 				function = "pwm_c";
++				bias-disable;
+ 			};
+ 		};
+ 
+@@ -265,6 +272,7 @@
+ 				groups = "uart_tx_b0",
+ 				       "uart_rx_b0";
+ 				function = "uart_b";
++				bias-disable;
+ 			};
+ 		};
+ 
+@@ -273,6 +281,7 @@
+ 				groups = "uart_cts_b0",
+ 				       "uart_rts_b0";
+ 				function = "uart_b";
++				bias-disable;
+ 			};
+ 		};
+ 	};
+diff --git a/arch/arm/boot/dts/meson8m2.dtsi b/arch/arm/boot/dts/meson8m2.dtsi
+index 3e1f92273d7b..d1a28c2adac5 100644
+--- a/arch/arm/boot/dts/meson8m2.dtsi
++++ b/arch/arm/boot/dts/meson8m2.dtsi
+@@ -45,6 +45,7 @@
+ 				 "eth_rxd1", "eth_rxd0",
+ 				 "eth_mdio", "eth_mdc";
+ 			function = "ethernet";
++			bias-disable;
+ 		};
+ 	};
  };
- 
- /* Generic HW DMA host memory structures */
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index 10d1651..0c3fa43 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -2107,9 +2107,109 @@ static ssize_t intr_conv_v3_hw_show(struct device *dev,
- }
- static DEVICE_ATTR_RO(intr_conv_v3_hw);
- 
-+static void config_intr_coal_v3_hw(struct hisi_hba *hisi_hba)
-+{
-+	/* config those registers between enable and disable PHYs */
-+	hisi_sas_stop_phys(hisi_hba);
-+
-+	if (hisi_hba->intr_coal_ticks == 0 ||
-+	    hisi_hba->intr_coal_count == 0) {
-+		hisi_sas_write32(hisi_hba, INT_COAL_EN, 0x1);
-+		hisi_sas_write32(hisi_hba, OQ_INT_COAL_TIME, 0x1);
-+		hisi_sas_write32(hisi_hba, OQ_INT_COAL_CNT, 0x1);
-+	} else {
-+		hisi_sas_write32(hisi_hba, INT_COAL_EN, 0x3);
-+		hisi_sas_write32(hisi_hba, OQ_INT_COAL_TIME,
-+				 hisi_hba->intr_coal_ticks);
-+		hisi_sas_write32(hisi_hba, OQ_INT_COAL_CNT,
-+				 hisi_hba->intr_coal_count);
-+	}
-+	phys_init_v3_hw(hisi_hba);
-+}
-+
-+static ssize_t intr_coal_ticks_v3_hw_show(struct device *dev,
-+					  struct device_attribute *attr,
-+					  char *buf)
-+{
-+	struct Scsi_Host *shost = class_to_shost(dev);
-+	struct hisi_hba *hisi_hba = shost_priv(shost);
-+
-+	return scnprintf(buf, PAGE_SIZE, "%u\n",
-+			 hisi_hba->intr_coal_ticks);
-+}
-+
-+static ssize_t intr_coal_ticks_v3_hw_store(struct device *dev,
-+					   struct device_attribute *attr,
-+					   const char *buf, size_t count)
-+{
-+	struct Scsi_Host *shost = class_to_shost(dev);
-+	struct hisi_hba *hisi_hba = shost_priv(shost);
-+	u32 intr_coal_ticks;
-+	int ret;
-+
-+	ret = kstrtou32(buf, 10, &intr_coal_ticks);
-+	if (ret) {
-+		dev_err(dev, "Input data of interrupt coalesce unmatch\n");
-+		return -EINVAL;
-+	}
-+
-+	if (intr_coal_ticks >= BIT(24)) {
-+		dev_err(dev, "intr_coal_ticks must be less than 2^24!\n");
-+		return -EINVAL;
-+	}
-+
-+	hisi_hba->intr_coal_ticks = intr_coal_ticks;
-+
-+	config_intr_coal_v3_hw(hisi_hba);
-+
-+	return count;
-+}
-+static DEVICE_ATTR_RW(intr_coal_ticks_v3_hw);
-+
-+static ssize_t intr_coal_count_v3_hw_show(struct device *dev,
-+					  struct device_attribute
-+					  *attr, char *buf)
-+{
-+	struct Scsi_Host *shost = class_to_shost(dev);
-+	struct hisi_hba *hisi_hba = shost_priv(shost);
-+
-+	return scnprintf(buf, PAGE_SIZE, "%u\n",
-+			 hisi_hba->intr_coal_count);
-+}
-+
-+static ssize_t intr_coal_count_v3_hw_store(struct device *dev,
-+		struct device_attribute
-+		*attr, const char *buf, size_t count)
-+{
-+	struct Scsi_Host *shost = class_to_shost(dev);
-+	struct hisi_hba *hisi_hba = shost_priv(shost);
-+	u32 intr_coal_count;
-+	int ret;
-+
-+	ret = kstrtou32(buf, 10, &intr_coal_count);
-+	if (ret) {
-+		dev_err(dev, "Input data of interrupt coalesce unmatch\n");
-+		return -EINVAL;
-+	}
-+
-+	if (intr_coal_count >= BIT(8)) {
-+		dev_err(dev, "intr_coal_count must be less than 2^8!\n");
-+		return -EINVAL;
-+	}
-+
-+	hisi_hba->intr_coal_count = intr_coal_count;
-+
-+	config_intr_coal_v3_hw(hisi_hba);
-+
-+	return count;
-+}
-+static DEVICE_ATTR_RW(intr_coal_count_v3_hw);
-+
- struct device_attribute *host_attrs_v3_hw[] = {
- 	&dev_attr_phy_event_threshold,
- 	&dev_attr_intr_conv_v3_hw,
-+	&dev_attr_intr_coal_ticks_v3_hw,
-+	&dev_attr_intr_coal_count_v3_hw,
- 	NULL
- };
- 
 -- 
-1.9.1
+2.19.1
 
