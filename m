@@ -2,92 +2,144 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 216BDC43610
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8368BC43441
 	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 11:07:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E898120827
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 11:07:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E898120827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
+	by mail.kernel.org (Postfix) with ESMTP id 55C2E20827
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 11:07:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55C2E20827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728371AbeKIUr2 (ORCPT
+        id S1728398AbeKIUr2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 9 Nov 2018 15:47:28 -0500
-Received: from 8bytes.org ([81.169.241.247]:48936 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728249AbeKIUr1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 15:47:27 -0500
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 74A4748C; Fri,  9 Nov 2018 12:07:19 +0100 (CET)
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Alex Williamson <alex.williamson@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>
-Cc:     iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jroedel@suse.de
-Subject: [PATCH 2/7] iommu/amd: Introduce free_sub_pt() function
-Date:   Fri,  9 Nov 2018 12:07:07 +0100
-Message-Id: <20181109110712.12469-3-joro@8bytes.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181109110712.12469-1-joro@8bytes.org>
-References: <20181109110712.12469-1-joro@8bytes.org>
+Received: from mx2.suse.de ([195.135.220.15]:38670 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728272AbeKIUr2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 15:47:28 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id BCB4FAF3E;
+        Fri,  9 Nov 2018 11:07:19 +0000 (UTC)
+Date:   Fri, 9 Nov 2018 12:07:13 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Anshuman Khandual <anshuman.khandual@arm.com>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <OSalvador@suse.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [RFC PATCH] mm, memory_hotplug: do not clear numa_node
+ association after hot_remove
+Message-ID: <20181109110713.GG5321@dhcp22.suse.cz>
+References: <20181108100413.966-1-mhocko@kernel.org>
+ <20181108102917.GV27423@dhcp22.suse.cz>
+ <048c04ae-7394-d03f-813e-42acdc965dd2@arm.com>
+ <20181109075914.GD18390@dhcp22.suse.cz>
+ <f9dd3dd0-3b20-446f-a131-70180fb733bf@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f9dd3dd0-3b20-446f-a131-70180fb733bf@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joerg Roedel <jroedel@suse.de>
+On Fri 09-11-18 16:34:29, Anshuman Khandual wrote:
+> 
+> 
+> On 11/09/2018 01:29 PM, Michal Hocko wrote:
+> > On Fri 09-11-18 09:12:09, Anshuman Khandual wrote:
+> >>
+> >>
+> >> On 11/08/2018 03:59 PM, Michal Hocko wrote:
+> >>> [Removing Wen Congyang and Tang Chen from the CC list because their
+> >>>  emails bounce. It seems that we will never learn about their motivation]
+> >>>
+> >>> On Thu 08-11-18 11:04:13, Michal Hocko wrote:
+> >>>> From: Michal Hocko <mhocko@suse.com>
+> >>>>
+> >>>> Per-cpu numa_node provides a default node for each possible cpu. The
+> >>>> association gets initialized during the boot when the architecture
+> >>>> specific code explores cpu->NUMA affinity. When the whole NUMA node is
+> >>>> removed though we are clearing this association
+> >>>>
+> >>>> try_offline_node
+> >>>>   check_and_unmap_cpu_on_node
+> >>>>     unmap_cpu_on_node
+> >>>>       numa_clear_node
+> >>>>         numa_set_node(cpu, NUMA_NO_NODE)
+> >>>>
+> >>>> This means that whoever calls cpu_to_node for a cpu associated with such
+> >>>> a node will get NUMA_NO_NODE. This is problematic for two reasons. First
+> >>>> it is fragile because __alloc_pages_node would simply blow up on an
+> >>>> out-of-bound access. We have encountered this when loading kvm module
+> >>>> BUG: unable to handle kernel paging request at 00000000000021c0
+> >>>> IP: [<ffffffff8119ccb3>] __alloc_pages_nodemask+0x93/0xb70
+> >>>> PGD 800000ffe853e067 PUD 7336bbc067 PMD 0
+> >>>> Oops: 0000 [#1] SMP
+> >>>> [...]
+> >>>> CPU: 88 PID: 1223749 Comm: modprobe Tainted: G        W          4.4.156-94.64-default #1
+> >>>> task: ffff88727eff1880 ti: ffff887354490000 task.ti: ffff887354490000
+> >>>> RIP: 0010:[<ffffffff8119ccb3>]  [<ffffffff8119ccb3>] __alloc_pages_nodemask+0x93/0xb70
+> >>>> RSP: 0018:ffff887354493b40  EFLAGS: 00010202
+> >>>> RAX: 00000000000021c0 RBX: 0000000000000000 RCX: 0000000000000000
+> >>>> RDX: 0000000000000000 RSI: 0000000000000002 RDI: 00000000014000c0
+> >>>> RBP: 00000000014000c0 R08: ffffffffffffffff R09: 0000000000000000
+> >>>> R10: ffff88fffc89e790 R11: 0000000000014000 R12: 0000000000000101
+> >>>> R13: ffffffffa0772cd4 R14: ffffffffa0769ac0 R15: 0000000000000000
+> >>>> FS:  00007fdf2f2f1700(0000) GS:ffff88fffc880000(0000) knlGS:0000000000000000
+> >>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> >>>> CR2: 00000000000021c0 CR3: 00000077205ee000 CR4: 0000000000360670
+> >>>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> >>>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> >>>> Stack:
+> >>>>  0000000000000086 014000c014d20400 ffff887354493bb8 ffff882614d20f4c
+> >>>>  0000000000000000 0000000000000046 0000000000000046 ffffffff810ac0c9
+> >>>>  ffff88ffe78c0000 ffffffff0000009f ffffe8ffe82d3500 ffff88ff8ac55000
+> >>>> Call Trace:
+> >>>>  [<ffffffffa07476cd>] alloc_vmcs_cpu+0x3d/0x90 [kvm_intel]
+> >>>>  [<ffffffffa0772c0c>] hardware_setup+0x781/0x849 [kvm_intel]
+> >>>>  [<ffffffffa04a1c58>] kvm_arch_hardware_setup+0x28/0x190 [kvm]
+> >>>>  [<ffffffffa04856fc>] kvm_init+0x7c/0x2d0 [kvm]
+> >>>>  [<ffffffffa0772cf2>] vmx_init+0x1e/0x32c [kvm_intel]
+> >>>>  [<ffffffff8100213a>] do_one_initcall+0xca/0x1f0
+> >>>>  [<ffffffff81193886>] do_init_module+0x5a/0x1d7
+> >>>>  [<ffffffff81112083>] load_module+0x1393/0x1c90
+> >>>>  [<ffffffff81112b30>] SYSC_finit_module+0x70/0xa0
+> >>>>  [<ffffffff8161cbc3>] entry_SYSCALL_64_fastpath+0x1e/0xb7
+> >>>> DWARF2 unwinder stuck at entry_SYSCALL_64_fastpath+0x1e/0xb7
+> >>>>
+> >>>> on an older kernel but the code is basically the same in the current
+> >>>> Linus tree as well. alloc_vmcs_cpu could use alloc_pages_nodemask which
+> >>>> would recognize NUMA_NO_NODE and use alloc_pages_node which would translate
+> >>>> it to numa_mem_id but that is wrong as well because it would use a cpu
+> >>>> affinity of the local CPU which might be quite far from the original node.
+> >>
+> >> But then the original node is getting/already off-lined. The allocation is
+> >> going to come from a different node. alloc_pages_node() at least steer the
+> >> allocation alway from VM_BUG_ON() because of NUMA_NO_NODE by replacing it
+> >> with numa_mem_id().
+> >>
+> >> If node fallback order is important for this allocation then could not it
+> >> use __alloc_pages_nodemask() directly giving preference for its zonelist
+> >> node and nodemask. Just curious.
+> > 
+> > How does the caller get the right node to allocate from? We do have the
+> > proper zone list for the offline node so why not use it?
+> I get your point. NODE_DATA() for the off lined node is still around and
+> so does the proper zone list for allocation, so why the caller should work
+> around the problem by building it's preferred nodemask_t etc. No problem,
+> I was just curious.
 
-The function is a more generic version of free_pagetable()
-and will be used to free only specific sub-trees of a
-page-table.
-
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
----
- drivers/iommu/amd_iommu.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index 2655bd91af93..1186571f77e1 100644
---- a/drivers/iommu/amd_iommu.c
-+++ b/drivers/iommu/amd_iommu.c
-@@ -1367,12 +1367,10 @@ DEFINE_FREE_PT_FN(l4, free_pt_l3)
- DEFINE_FREE_PT_FN(l5, free_pt_l4)
- DEFINE_FREE_PT_FN(l6, free_pt_l5)
- 
--static void free_pagetable(struct protection_domain *domain)
-+static struct page *free_sub_pt(unsigned long root, int mode,
-+				struct page *freelist)
- {
--	unsigned long root = (unsigned long)domain->pt_root;
--	struct page *freelist = NULL;
--
--	switch (domain->mode) {
-+	switch (mode) {
- 	case PAGE_MODE_NONE:
- 		break;
- 	case PAGE_MODE_1_LEVEL:
-@@ -1397,6 +1395,16 @@ static void free_pagetable(struct protection_domain *domain)
- 		BUG();
- 	}
- 
-+	return freelist;
-+}
-+
-+static void free_pagetable(struct protection_domain *domain)
-+{
-+	unsigned long root = (unsigned long)domain->pt_root;
-+	struct page *freelist = NULL;
-+
-+	free_sub_pt(root, domain->mode, freelist);
-+
- 	free_page_list(freelist);
- }
- 
+I thought I've made it cler in the changelog. If not, I am open to
+suggestions on how to make it more clear.
 -- 
-2.17.1
-
+Michal Hocko
+SUSE Labs
