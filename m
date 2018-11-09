@@ -2,68 +2,108 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A04DAC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:59:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C4CBC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 16:01:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7053420825
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:59:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7053420825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id C479220825
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 16:01:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C479220825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hale.at
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728393AbeKJBkJ (ORCPT
+        id S1728169AbeKJBmw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 20:40:09 -0500
-Received: from foss.arm.com ([217.140.101.70]:33822 "EHLO foss.arm.com"
+        Fri, 9 Nov 2018 20:42:52 -0500
+Received: from gw.hale.at ([89.26.116.210]:51598 "EHLO gw.hale.at"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727784AbeKJBkI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 20:40:08 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D822B80D;
-        Fri,  9 Nov 2018 07:58:58 -0800 (PST)
-Received: from brain-police (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8DA8A3F5BD;
-        Fri,  9 Nov 2018 07:58:58 -0800 (PST)
-Date:   Fri, 9 Nov 2018 15:58:56 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Jan Glauber <Jan.Glauber@cavium.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: dcache_readdir NULL inode oops
-Message-ID: <20181109155856.GC2091@brain-police>
-References: <20181109143744.GA12128@hc>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181109143744.GA12128@hc>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1727828AbeKJBmw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 20:42:52 -0500
+X-HALE-Mailborder-Watermark: 1542384098.42688@F2Nco1YLxCKxPERdX17yaA
+X-HALE-Mailborder-From: michael.thalmeier@hale.at
+X-HALE-Mailborder-SpamCheck: not spam,
+        SpamAssassin (nicht zwischen gespeichert, Wertung=-2.899,
+        benoetigt 3, autolearn=not spam, ALL_TRUSTED -1.00, BAYES_00 -1.90,
+        SURBL_BLOCKED 0.00)
+X-HALE-Mailborder-IP-Protocol: IPv4
+X-HALE-Mailborder: Found to be clean
+X-HALE-Mailborder-ID: 63E6F2C1BE8.AABDB
+X-HALE-Mailborder-Information: Please contact your admin for more information
+Received: from mail.hale (mail.hale [192.168.100.5])
+        by gw.hale.at (Postfix) with ESMTP id 63E6F2C1BE8;
+        Fri,  9 Nov 2018 17:01:35 +0100 (CET)
+Received: from mail.hale (localhost.localdomain [127.0.0.1])
+        by mail.hale (Postfix) with ESMTP id 5E04F660D0B;
+        Fri,  9 Nov 2018 17:01:35 +0100 (CET)
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by mail.hale (Postfix) with ESMTP id 5193F660CC2;
+        Fri,  9 Nov 2018 17:01:35 +0100 (CET)
+Received: from mail.hale ([127.0.0.1])
+        by localhost (mail.hale [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id rAkxE8y98vVO; Fri,  9 Nov 2018 17:01:35 +0100 (CET)
+Received: from entw49.HALE (entw49.hale [192.168.100.117])
+        by mail.hale (Postfix) with ESMTP id 360286605E0;
+        Fri,  9 Nov 2018 17:01:35 +0100 (CET)
+From:   Michael Thalmeier <michael.thalmeier@hale.at>
+To:     Samuel Ortiz <sameo@linux.intel.com>
+Cc:     Michael Thalmeier <michael@thalmeier.at>,
+        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
+        linux-nfc@lists.01.org
+Subject: [PATCH] NFC: nci: clear NCI_DATA_EXCHANGE before calling the NFC stack callback
+Date:   Fri,  9 Nov 2018 17:01:18 +0100
+Message-Id: <20181109160118.32737-1-michael.thalmeier@hale.at>
+X-Mailer: git-send-email 2.9.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 09, 2018 at 02:37:51PM +0000, Jan Glauber wrote:
-> I'm seeing the following oops reproducible with upstream kernel on arm64
-> (ThunderX2):
+From: Michael Thalmeier <michael@thalmeier.at>
 
-[...]
+By calling the nfc core callback (cb) in nci_data_exchange_complete the
+userspace task will get notified that response data is available for the
+current request.
+When the userspace task then reads the return data and immediately
+issues another request, it was possible that this will be done before
+the NCI_DATA_EXCHANGE is cleared.
+The result is that nci_transceive will return -EBUSY and the NFC stack
+(rawsock.c:rawsock_tx_work) will report an error and shut down the
+socket. Not only is this quite a harsh behaviour for this situation,
+but additionally any following attempt to poll for NFC tags will result
+in an error "there is an active target" since the previous active tag is
+not cleanly deactivated.
 
-> It happens after 1-3 hours of running 'stress-ng --dev 128'. This testcase
-> does a scandir of /dev and then calls random stuff like ioctl, lseek,
-> open/close etc. on the entries. I assume no files are deleted under /dev
-> during the testcase.
-> 
-> The NULL pointer is the inode pointer of next. The next dentry->d_flags is
-> DCACHE_RCUACCESS when this happens.
-> 
-> Any hints on how to further debug this?
+With this change NCI_DATA_EXCHANGE will get cleard before calling into
+the NFC stack, which fixes this situation.
 
-Can you reproduce the issue with vanilla -rc1 and do you have a "known good"
-kernel?
+Signed-off-by: Michael Thalmeier <michael.thalmeier@hale.at>
+---
+ net/nfc/nci/data.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Will
+diff --git a/net/nfc/nci/data.c b/net/nfc/nci/data.c
+index 908f25e..57d5980 100644
+--- a/net/nfc/nci/data.c
++++ b/net/nfc/nci/data.c
+@@ -56,6 +56,7 @@ void nci_data_exchange_complete(struct nci_dev *ndev, struct sk_buff *skb,
+ 	/* data exchange is complete, stop the data timer */
+ 	del_timer_sync(&ndev->data_timer);
+ 	clear_bit(NCI_DATA_EXCHANGE_TO, &ndev->flags);
++	clear_bit(NCI_DATA_EXCHANGE, &ndev->flags);
+ 
+ 	if (cb) {
+ 		/* forward skb to nfc core */
+@@ -66,6 +67,7 @@ void nci_data_exchange_complete(struct nci_dev *ndev, struct sk_buff *skb,
+ 		/* no waiting callback, free skb */
+ 		kfree_skb(skb);
+ 	}
++	return;
+ 
+ exit:
+ 	clear_bit(NCI_DATA_EXCHANGE, &ndev->flags);
+-- 
+2.9.2
+
