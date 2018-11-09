@@ -2,208 +2,145 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFF34C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:49:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF355C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:50:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9079C20827
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:49:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7621620827
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:50:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="LqZn1tLp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9079C20827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="157Pkpf4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7621620827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727773AbeKIS3H (ORCPT
+        id S1727861AbeKIS3u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 13:29:07 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:33061 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727598AbeKIS3G (ORCPT
+        Fri, 9 Nov 2018 13:29:50 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:38375 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727775AbeKIS3t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 13:29:06 -0500
-Received: by mail-pl1-f195.google.com with SMTP id w22-v6so658053plk.0
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 00:49:31 -0800 (PST)
+        Fri, 9 Nov 2018 13:29:49 -0500
+Received: by mail-wm1-f66.google.com with SMTP id f2-v6so1178227wme.3
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 00:50:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=R/hrbUm35PJ6nZfWdm8oo3/XINMe68XP0KMb7dR8xDI=;
-        b=LqZn1tLpeg5592FM9YEnqXtA3xZpTqiB6IcNGqAAsyadn83l2+VfaQu4sdVeBJpKtz
-         kCwN5wAQEGRI1Xrl7hLcShwVOMG3l23FQTyf7fHWc0Ab/YZPdyRFO4QxXHJ5SWIbqNnq
-         DKpFIYTngk8clLF3D+vMZTHf4S/dPj89jZS/c=
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:openpgp:autocrypt:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=oKsZvW81DQ7dTNUylOUC3pGW7J94hNiePNe736TDnvU=;
+        b=157Pkpf4Qmxh9UERK2AjIODn9VjNQKKt2wqRGnexp2o2/GJhLei9cgT9aF5imryrJN
+         uFfb/wYQCS69Kmoh2YPkFlpqfwgnskMmEVfwteCwweS2THZG21USUjQ7xEgjGXV1OSK1
+         5BJDWrOPmdcYvAcbU1DMsHXTxA4AIhV2Qmd2UiGQQ2GkK8DS2m978PhjhETyl9GWehDw
+         TfV/90ftpq07Lit/lqWFe7Epa+CKhHkOQzrkIA+d898jdtijqSH2R4LU4n34C+1GOY/6
+         JDPazq0D118DfAqDKlqQNFs2LYMoCMN0e2lN0rJpgnpRStlgX6EQ7tRgI/IlyTAb13QZ
+         ukug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=R/hrbUm35PJ6nZfWdm8oo3/XINMe68XP0KMb7dR8xDI=;
-        b=LoUEpvZkZt6gWsnJ4iEv6ckNjXsJp9kLgiRsBLNQHoFvltCMx5JocVFQ/E09w6XykM
-         JSRA0Zetja4QLuECjBBsGthzDdx37QBBbilVAWwf6y4PcmwAjy9F2H7mtQtRmDb0LKI7
-         2pvr/qxQe36713iKp2ymmdscQQatQjcgpCk/WPG7veoB4XME91+7hLFo3O1elCRwAE2Y
-         PwIUurY5Q4EvH1/vnjDmcwpi++RDhbR0gWc1zZyedDafwKDcjUm55xl6t756p1qv7ORn
-         mZrqadCBHds+M9Lp1mUWffzRJ53k2K52UTgHtvxR01PiCpb53tABaA3OfDTbbhds7nd+
-         0qAw==
-X-Gm-Message-State: AGRZ1gK6LsGFJaK+5OqF0MJY7dd43rnlDjcavYvjhXh9tOCwjSp5LFTM
-        zVKtlkJsfbPxf44UIvJwlPoVJlvQ2xU=
-X-Google-Smtp-Source: AJdET5dhfSVnqjXLCi7EwC3vUhic4PX4u/fKZvBhOfrnGK/Gm10ovPHGKwgJC60x38Aey1was4wcNQ==
-X-Received: by 2002:a17:902:6a87:: with SMTP id n7-v6mr5078510plk.86.1541753370499;
-        Fri, 09 Nov 2018 00:49:30 -0800 (PST)
-Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
-        by smtp.gmail.com with ESMTPSA id b5-v6sm5754812pfe.60.2018.11.09.00.49.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 09 Nov 2018 00:49:29 -0800 (PST)
-Date:   Fri, 9 Nov 2018 00:49:28 -0800
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     linux-kernel@vger.kernel.org, hch@infradead.org
-Cc:     jreck@google.com, john.stultz@linaro.org, tkjos@google.com,
-        gregkh@linuxfoundation.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>, dancol@google.com,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Lei Yang <Lei.Yang@windriver.com>,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-mm@kvack.org,
-        =?iso-8859-1?Q?Marc-Andr=E9?= Lureau 
-        <marcandre.lureau@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>, minchan@kernel.org,
-        Shuah Khan <shuah@kernel.org>, valdis.kletnieks@vt.edu
-Subject: Re: [PATCH v3 resend 1/2] mm: Add an F_SEAL_FUTURE_WRITE seal to
- memfd
-Message-ID: <20181109084928.GA37614@google.com>
-References: <20181108041537.39694-1-joel@joelfernandes.org>
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=oKsZvW81DQ7dTNUylOUC3pGW7J94hNiePNe736TDnvU=;
+        b=uI7ndw/VtyFLiN9ImSWEUdRD2bMvt/JFEtrY0H0Bbj4sV+4HhLc+rpUxSx6x9jLrfY
+         PKVgkFtJZg3XpAff2lpboyXyEqLTqxwOjmmqtIQ+tRGamxOX5OEIkq5TaMpMQ7tGLkjd
+         olwv5VaJgabTlo81GorVX6WK+E1abWczsXNL+btDkQ7IDRFDcGPiKP7B8mMZ5CTSQpRd
+         kAbtxXpU3Fsp+r461V+11MdNo2HvDWU+UFmkp6WrP28i2lCEYYBRlwKyPAw/zZIAALKt
+         /CURqMYy9h4cqS5lQauvS04fE34lrS91xA0Cv2tiK4KCdfCTFG0y25cW14F/JAiQL/bW
+         ZR2g==
+X-Gm-Message-State: AGRZ1gI2ahAAkFlvFvIj7IuWrabz4YQMJZ7te7RAsB7m2RZjWkDE93vo
+        Y4ghTvHhLOXStVYtUEurAYxWk/ks9X0=
+X-Google-Smtp-Source: AJdET5f1Go4AmU9Q7OHRdNo5C6TkNKULEWXNnMP3w9ZtHeVHtUNf9b/k9Wk8SXsyq2otgLTy5rT5Lw==
+X-Received: by 2002:a1c:1383:: with SMTP id 125-v6mr4054324wmt.71.1541753413263;
+        Fri, 09 Nov 2018 00:50:13 -0800 (PST)
+Received: from [10.1.2.12] ([90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id r126-v6sm800820wmg.1.2018.11.09.00.50.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 09 Nov 2018 00:50:12 -0800 (PST)
+Subject: Re: [PATCH 0/2] sony-cxd2880: add optional vcc regulator
+To:     Frank Rowand <frowand.list@gmail.com>, Yasunari.Takiguchi@sony.com
+Cc:     mchehab@kernel.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1541681410-8187-1-git-send-email-narmstrong@baylibre.com>
+ <5328b351-e768-6c4a-66c4-c5f6d5894244@gmail.com>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
+ GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
+ RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
+ NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
+ 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
+ ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
+ YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
+ GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
+ coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
+ SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
+ YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
+ mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
+ zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
+ 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
+ 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
+ RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
+ C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
+ Acmp6h8g
+Organization: Baylibre
+Message-ID: <b1a8f0c4-de98-5c8e-bfce-84c8f32789aa@baylibre.com>
+Date:   Fri, 9 Nov 2018 09:50:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181108041537.39694-1-joel@joelfernandes.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <5328b351-e768-6c4a-66c4-c5f6d5894244@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 07, 2018 at 08:15:36PM -0800, Joel Fernandes (Google) wrote:
-> Android uses ashmem for sharing memory regions. We are looking forward
-> to migrating all usecases of ashmem to memfd so that we can possibly
-> remove the ashmem driver in the future from staging while also
-> benefiting from using memfd and contributing to it. Note staging drivers
-> are also not ABI and generally can be removed at anytime.
-> 
-> One of the main usecases Android has is the ability to create a region
-> and mmap it as writeable, then add protection against making any
-> "future" writes while keeping the existing already mmap'ed
-> writeable-region active.  This allows us to implement a usecase where
-> receivers of the shared memory buffer can get a read-only view, while
-> the sender continues to write to the buffer.
-> See CursorWindow documentation in Android for more details:
-> https://developer.android.com/reference/android/database/CursorWindow
-> 
-> This usecase cannot be implemented with the existing F_SEAL_WRITE seal.
-> To support the usecase, this patch adds a new F_SEAL_FUTURE_WRITE seal
-> which prevents any future mmap and write syscalls from succeeding while
-> keeping the existing mmap active. The following program shows the seal
-> working in action:
-> 
-[...] 
-> The output of running this program is as follows:
-> ret=3
-> map 0 passed
-> write passed
-> map 1 prot-write passed as expected
-> future-write seal now active
-> write failed as expected due to future-write seal
-> map 2 prot-write failed as expected due to seal
-> : Permission denied
-> map 3 prot-read passed as expected
-> 
-> Cc: jreck@google.com
-> Cc: john.stultz@linaro.org
-> Cc: tkjos@google.com
-> Cc: gregkh@linuxfoundation.org
-> Cc: hch@infradead.org
-> Reviewed-by: John Stultz <john.stultz@linaro.org>
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> ---
-> v1->v2: No change, just added selftests to the series. manpages are
-> ready and I'll submit them once the patches are accepted.
-> 
-> v2->v3: Updated commit message to have more support code (John Stultz)
->  	Renamed seal from F_SEAL_FS_WRITE to F_SEAL_FUTURE_WRITE
-> 						(Christoph Hellwig)
-> 	Allow for this seal only if grow/shrink seals are also
-> 	either previous set, or are requested along with this seal.
-> 						(Christoph Hellwig)
-> 	Added locking to synchronize access to file->f_mode.
-> 						(Christoph Hellwig)
+Hi Frank,
 
-
-Christoph, do the patches look Ok to you now? If so, then could you give an
-Acked-by or Reviewed-by tag?
-
-Thanks a lot,
-
- - Joel
-
-
->  include/uapi/linux/fcntl.h |  1 +
->  mm/memfd.c                 | 22 +++++++++++++++++++++-
->  2 files changed, 22 insertions(+), 1 deletion(-)
+On 09/11/2018 03:22, Frank Rowand wrote:
+> Hi Neil,
 > 
-> diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-> index 6448cdd9a350..a2f8658f1c55 100644
-> --- a/include/uapi/linux/fcntl.h
-> +++ b/include/uapi/linux/fcntl.h
-> @@ -41,6 +41,7 @@
->  #define F_SEAL_SHRINK	0x0002	/* prevent file from shrinking */
->  #define F_SEAL_GROW	0x0004	/* prevent file from growing */
->  #define F_SEAL_WRITE	0x0008	/* prevent writes */
-> +#define F_SEAL_FUTURE_WRITE	0x0010  /* prevent future writes while mapped */
->  /* (1U << 31) is reserved for signed error codes */
->  
->  /*
-> diff --git a/mm/memfd.c b/mm/memfd.c
-> index 2bb5e257080e..5ba9804e9515 100644
-> --- a/mm/memfd.c
-> +++ b/mm/memfd.c
-> @@ -150,7 +150,8 @@ static unsigned int *memfd_file_seals_ptr(struct file *file)
->  #define F_ALL_SEALS (F_SEAL_SEAL | \
->  		     F_SEAL_SHRINK | \
->  		     F_SEAL_GROW | \
-> -		     F_SEAL_WRITE)
-> +		     F_SEAL_WRITE | \
-> +		     F_SEAL_FUTURE_WRITE)
->  
->  static int memfd_add_seals(struct file *file, unsigned int seals)
->  {
-> @@ -219,6 +220,25 @@ static int memfd_add_seals(struct file *file, unsigned int seals)
->  		}
->  	}
->  
-> +	if ((seals & F_SEAL_FUTURE_WRITE) &&
-> +	    !(*file_seals & F_SEAL_FUTURE_WRITE)) {
-> +		/*
-> +		 * The FUTURE_WRITE seal also prevents growing and shrinking
-> +		 * so we need them to be already set, or requested now.
-> +		 */
-> +		int test_seals = (seals | *file_seals) &
-> +				 (F_SEAL_GROW | F_SEAL_SHRINK);
-> +
-> +		if (test_seals != (F_SEAL_GROW | F_SEAL_SHRINK)) {
-> +			error = -EINVAL;
-> +			goto unlock;
-> +		}
-> +
-> +		spin_lock(&file->f_lock);
-> +		file->f_mode &= ~(FMODE_WRITE | FMODE_PWRITE);
-> +		spin_unlock(&file->f_lock);
-> +	}
-> +
->  	*file_seals |= seals;
->  	error = 0;
->  
-> -- 
-> 2.19.1.930.g4563a0d9d0-goog
+> On 11/8/18 4:50 AM, Neil Armstrong wrote:
+>> This patchset adds an optional VCC regulator to the bindings and driver to
+>> make sure power is enabled to the module before starting attaching to
+>> the device.
+>>
+>> Neil Armstrong (2):
+>>   media: cxd2880-spi: Add optional vcc regulator
+>>   media: sony-cxd2880: add optional vcc regulator to bindings
+>>
+>>  .../devicetree/bindings/media/spi/sony-cxd2880.txt       |  4 ++++
+>>  drivers/media/spi/cxd2880-spi.c                          | 16 ++++++++++++++++
+>>  2 files changed, 20 insertions(+)
+>>
+> 
+> Please see Documentation/devicetree/bindings/submitting-patches.txt
+> for some helpful information about submitting a series that includes
+> a bindings patch.
+> 
+> You will want to add 'dt-bindings:' into the subject line, along with the
+> current 'media:'.  And getmaintainer will give you Rob's and Mark's
+> emails.
+
+I'll re-spin with dt-bindings, but some maintainers don't want or don't care,
+so it's always a wild guess at some point !
+
+> 
+> Thanks,
+> 
+> Frank
+> 
+
+Neil
