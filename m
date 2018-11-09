@@ -2,107 +2,265 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F95FC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 20:49:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40DA1C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 20:52:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2ABC320818
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 20:49:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2ABC320818
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id D0E3F20827
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 20:52:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="1zBSYafE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0E3F20827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728123AbeKJGbT (ORCPT
+        id S1728160AbeKJGes (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 01:31:19 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:54393 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725799AbeKJGbT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 01:31:19 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wA9Kmp4W2516120
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 9 Nov 2018 12:48:51 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wA9KmpNb2516117;
-        Fri, 9 Nov 2018 12:48:51 -0800
-Date:   Fri, 9 Nov 2018 12:48:51 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   "tip-bot for Steven Rostedt (VMware)" <tipbot@zytor.com>
-Message-ID: <tip-15035388439f892017d38b05214d3cda6578af64@git.kernel.org>
-Cc:     mingo@kernel.org, bp@suse.de, tglx@linutronix.de, x86@kernel.org,
-        akataria@vmware.com, hpa@zytor.com, gy741.kim@gmail.com,
-        linux-kernel@vger.kernel.org, rostedt@goodmis.org
-Reply-To: linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-          akataria@vmware.com, hpa@zytor.com, gy741.kim@gmail.com,
-          x86@kernel.org, tglx@linutronix.de, mingo@kernel.org, bp@suse.de
-In-Reply-To: <20181109152207.4d3e7d70@gandalf.local.home>
-References: <20181109152207.4d3e7d70@gandalf.local.home>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/cpu/vmware: Do not trace vmware_sched_clock()
-Git-Commit-ID: 15035388439f892017d38b05214d3cda6578af64
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Sat, 10 Nov 2018 01:34:48 -0500
+Received: from mail-eopbgr740074.outbound.protection.outlook.com ([40.107.74.74]:39808
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725799AbeKJGer (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 01:34:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xzAp/ADE92F3gjLzN6vNcarGdx39efxzPJY5hcj46Ko=;
+ b=1zBSYafEvCl0uVDro5OPbOkxIuM7pOyVV5Dr01l52P/eF1ayTg5qZuyvNVzP9+GyU9HOCT9wsSnbqA+peqAMZq5X3LHTiDz5ffhVdkHxMYaM8DKnDxvyka1MCdkc69wHVd9GQIPhRdekK0dzfrs05jz/zPXVPQjoE+2DEHvQdiM=
+Received: from DM5PR12MB2471.namprd12.prod.outlook.com (52.132.141.138) by
+ DM5PR12MB1675.namprd12.prod.outlook.com (10.172.40.144) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.23; Fri, 9 Nov 2018 20:52:23 +0000
+Received: from DM5PR12MB2471.namprd12.prod.outlook.com
+ ([fe80::4c23:f551:bc6a:554e]) by DM5PR12MB2471.namprd12.prod.outlook.com
+ ([fe80::4c23:f551:bc6a:554e%4]) with mapi id 15.20.1294.034; Fri, 9 Nov 2018
+ 20:52:23 +0000
+From:   "Moger, Babu" <Babu.Moger@amd.com>
+To:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>, "corbet@lwn.net" <corbet@lwn.net>,
+        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
+        "reinette.chatre@intel.com" <reinette.chatre@intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+CC:     "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "pombredanne@nexb.com" <pombredanne@nexb.com>,
+        "rafael@kernel.org" <rafael@kernel.org>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "qianyue.zj@alibaba-inc.com" <qianyue.zj@alibaba-inc.com>,
+        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "Singh, Brijesh" <brijesh.singh@amd.com>,
+        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "jannh@google.com" <jannh@google.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "rian@alum.mit.edu" <rian@alum.mit.edu>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "Moger, Babu" <Babu.Moger@amd.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Subject: [PATCH v7 00/13] arch/x86: AMD QoS support
+Thread-Topic: [PATCH v7 00/13] arch/x86: AMD QoS support
+Thread-Index: AQHUeG4dJz0szErVIk6LNqmmQKnpfw==
+Date:   Fri, 9 Nov 2018 20:52:23 +0000
+Message-ID: <20181109205153.14811-1-babu.moger@amd.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SN4PR0701CA0005.namprd07.prod.outlook.com
+ (2603:10b6:803:28::15) To DM5PR12MB2471.namprd12.prod.outlook.com
+ (2603:10b6:4:b5::10)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Babu.Moger@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [165.204.78.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR12MB1675;20:HXvxSPyJHPLSe2ZHDMvu0KrhAcWVejhr97wRCHgQvFoRGignpFn0Xm0KipMKIsyXjxJgaXCFZxLzZEnqiVWBh9BsesuOKKW6C9vweWCfUGfcQykqEzbfCt83bmFbf1BzNzN8boTVshlp15oBFizuldtaEbFj/+ohCj2hmEpq24Uu8nlV9KYIzXBlsRuWv3+GRlGWbWeflugIuExQMjyWM+5vzAMTatlZ4xDB14JSyJ6RzCCepTY/p2+oWsrRWGmK
+x-ms-office365-filtering-correlation-id: a70d732e-4a1a-4917-6dd7-08d646853f5e
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB1675;
+x-ms-traffictypediagnostic: DM5PR12MB1675:
+x-microsoft-antispam-prvs: <DM5PR12MB167563FB82BA635CCB6087E795C60@DM5PR12MB1675.namprd12.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(72170088055959)(269456686620040)(767451399110)(84791874153150);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823302103)(93006095)(93001095)(10201501046)(3002001)(3231382)(944501410)(52105095)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:DM5PR12MB1675;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1675;
+x-forefront-prvs: 08512C5403
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(376002)(396003)(346002)(136003)(366004)(199004)(189003)(305945005)(4326008)(14454004)(6116002)(66066001)(72206003)(36756003)(105586002)(6486002)(3846002)(6436002)(102836004)(386003)(6506007)(6512007)(478600001)(99286004)(2906002)(5660300001)(25786009)(6306002)(86362001)(2900100001)(68736007)(2501003)(2201001)(26005)(7406005)(81156014)(81166006)(486006)(476003)(2616005)(186003)(1076002)(52116002)(53936002)(8936002)(7736002)(106356001)(14444005)(256004)(110136005)(71200400001)(966005)(71190400001)(8676002)(54906003)(316002)(7416002)(97736004)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1675;H:DM5PR12MB2471.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: tp8W3oNkamJsBefa6e3hjC+elYgbk7tlBaRi9izJDiYYr48mPkhIruyhiqlbnsSJTR3VYo6/A7eQ6Pcw1+GfUuxYnt01xGYlRjaiF7J1ln+uPdCs42+c96EE5te3+NhqyG+sRX+dnadsuNNqUUFAeL5qh2HAo2nMWxmvzlJG22wdUah1gSjC1q+/sQDmEDFlga5bQyK/xzdXj4i/fZogj0CcTO7SBG9yhwkE35Zl/VBsHnLOCL8cYPtlt/YPxODsokjH9hN+NlEhspYwSXYl3NXaZQi3jXloAH8V0w+OWVOkU9T4HXCaEYOsaMLgxJTnVK3tLMVNM/1j1e8Y4+WYBssm5IIPEVdibhO6IPy0SUw=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a70d732e-4a1a-4917-6dd7-08d646853f5e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Nov 2018 20:52:23.0624
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1675
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  15035388439f892017d38b05214d3cda6578af64
-Gitweb:     https://git.kernel.org/tip/15035388439f892017d38b05214d3cda6578af64
-Author:     Steven Rostedt (VMware) <rostedt@goodmis.org>
-AuthorDate: Fri, 9 Nov 2018 15:22:07 -0500
-Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Fri, 9 Nov 2018 21:39:14 +0100
+This series adds support for AMD64 architectural extensions for Platform
+Quality of Service. These extensions are intended to provide for the
+monitoring of the usage of certain system resources by one or more
+processors and for the separate allocation and enforcement of limits on
+the use of certain system resources by one or more processors.
 
-x86/cpu/vmware: Do not trace vmware_sched_clock()
+The monitoring and enforcement are not necessarily applied across the
+entire system, but in general apply to a QOS domain which corresponds to
+some shared system resource.  The set of resources which are monitored and
+the set for which the enforcement of limits is provided are implementation
+dependent. Platform QOS features are implemented on a logical processor bas=
+is.
+Therefore, multiple hardware threads of a single physical CPU core may have
+independent resource monitoring and enforcement configurations.
 
-When running function tracing on a Linux guest running on VMware
-Workstation, the guest would crash. This is due to tracing of the
-sched_clock internal call of the VMware vmware_sched_clock(), which
-causes an infinite recursion within the tracing code (clock calls must
-not be traced).
+AMD's next generation of processors support following QoS sub-features.
+- L3 Cache allocation enforcement
+- L3 Cache occupancy monitoring
+- L3 Code-Data Prioritization support
+- Memory Bandwidth Enforcement(Allocation)
 
-Make vmware_sched_clock() not traced by ftrace.
+The public specification for this feature is available at
+https://developer.amd.com/wp-content/resources/56375.pdf
 
-Fixes: 80e9a4f21fd7c ("x86/vmware: Add paravirt sched clock")
-Reported-by: GwanYeong Kim <gy741.kim@gmail.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-CC: Alok Kataria <akataria@vmware.com>
-CC: GwanYeong Kim <gy741.kim@gmail.com>
-CC: "H. Peter Anvin" <hpa@zytor.com>
-CC: Ingo Molnar <mingo@kernel.org>
-Cc: stable@vger.kernel.org
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: virtualization@lists.linux-foundation.org
-CC: x86-ml <x86@kernel.org>
-Link: http://lkml.kernel.org/r/20181109152207.4d3e7d70@gandalf.local.home
----
- arch/x86/kernel/cpu/vmware.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Obviously, there are multiple ways we can go about these changes. We felt
+it is appropriate to rename and re-organize the code little bit before
+making the functional changes. The first few patches(1-10) renames and
+re-organizes the sources in preparation. Rest of the patches(7-11) adds
+support for AMD QoS features.
 
-diff --git a/arch/x86/kernel/cpu/vmware.c b/arch/x86/kernel/cpu/vmware.c
-index d9ab49bed8af..0eda91f8eeac 100644
---- a/arch/x86/kernel/cpu/vmware.c
-+++ b/arch/x86/kernel/cpu/vmware.c
-@@ -77,7 +77,7 @@ static __init int setup_vmw_sched_clock(char *s)
- }
- early_param("no-vmw-sched-clock", setup_vmw_sched_clock);
- 
--static unsigned long long vmware_sched_clock(void)
-+static unsigned long long notrace vmware_sched_clock(void)
- {
- 	unsigned long long ns;
- 
+Please review.
+
+Changes from v6 -> v7:
+ a. Mainly addressed the comments from Mattew Wilcox. Removed both=20
+    CONFIG_INTEL_RDT and CONFIG_AMD_QOS config parameter. We dont need
+    to use two separate config parameter to enable this feature. The
+    final code will be same in both the cases. So, used the new vendor
+    neutral parameter CONFIG_RESCTRL to enable resource control feature
+    for both Intel and AMD=20
+
+Changes from v5 -> v6:
+https://lore.kernel.org/lkml/20181106154034.15386-1-babu.moger@amd.com/
+ a. Addressed comments from Fenghua Yu. Added vendor check while
+    detecting MBA software controller support.
+ a. Rebased again on top of
+    git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/cache
+
+Changes from v4 -> v5:
+https://lore.kernel.org/lkml/20181018225124.23043-1-babu.moger@amd.com/
+ a. Addressed comments from Fenghua Yu.
+ b. The functions update_mba_bw and set_mba_sc is not required for AMD.
+    Removed all the changes related to these functions.
+
+Changes from v3 -> v4:
+https://lore.kernel.org/lkml/20181015205514.25387-1-babu.moger@amd.com/
+ a. Addressed comments from Reinette Chatre and Borislav Petkov.
+ b. Removed X86 dependency for CONFIG_AMD_QOS. Implicitly is it already
+    dependent on X86.
+ c. Updated the MAINTAINER file for name changes.
+ d. Addressed most of "checkpatch.pl --strict" issues.
+ d. Updated Documentation/x86/resctrl_ui.txt(previously
+    intel_rdt_ui.txt) file with AMD specific details. Changed few names
+    to resctrl from intel_rdt.
+
+Changes from v2 -> v3:
+ https://lore.kernel.org/lkml/20181011203223.18157-1-babu.moger@amd.com/
+ a. Rebased the patches on top of below branch as suggested by Thomas Gleix=
+ner.
+    git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/cache
+ b. Addressed comments from Reinette Chatre, Fenghua Yu and Borislav Petkov=
+.
+ c. Main changes are related to renaming the files and functions.
+    Renamed from intel_rdt to more generic resctrl(patches 1 to 3).
+ d. Config parameter changed from PLATFORM_QOS to more generic RESCTRL.
+ e. Fixed minor indentation issues.
+
+Changes from v1 -> v2:
+ https://lore.kernel.org/lkml/20181005205512.29545-1-babu.moger@amd.com/
+ a. Removed RFC from subject header. Based on the discussion so far,=20
+    plan is to go ahead with these patches and eventually re-structure
+    the code to make arch and non-arch separate.
+ b. Addressed comments from Reinette Chatre and Fenghua Yu.
+ c. Separated quirks and MBA from rdt init code. Kept the rest of the
+    code as is.
+ d. Added _intel suffixes all the Intel only code just like AMD code.
+ e. Added one more patch to bring the macros into header file.
+ f. Few minor text changes.
+
+v1:
+ https://lore.kernel.org/lkml/20180924191841.29111-1-babu.moger@amd.com/
+
+Babu Moger (12):
+  arch/x86: Start renaming the rdt files to more generic names
+  arch/x86: Rename the RDT functions and definitions
+  arch/x86: Re-arrange RDT init code
+  arch/x86: Bring all the macros to resctrl.h
+  arch/x86: Rename config parameter INTEL_RDT to RESCTRL
+  arch/x86: Initialize the resource functions that are different
+  arch/x86: Bring cbm_validate function into the resource structure
+  arch/x86: Add vendor check for MBA software controller
+  arch/x86: Update the RESCTRL config parameter
+  arch/x86: Introduce QOS feature for AMD
+  Documentation/x86: Rename and update intel_rdt_ui.txt
+  MAINTAINERS: Update the file and documentation names in arch/x86
+
+Sherry Hurwitz (1):
+  arch/x86: Add AMD feature bit X86_FEATURE_MBA in cpuid bits array
+
+ .../x86/{intel_rdt_ui.txt =3D> resctrl_ui.txt}  |   9 +-
+ MAINTAINERS                                   |   6 +-
+ arch/x86/Kconfig                              |  23 ++-
+ .../{intel_rdt_sched.h =3D> resctrl_sched.h}    |  28 +--
+ arch/x86/kernel/cpu/Makefile                  |   6 +-
+ .../x86/kernel/cpu/{intel_rdt.c =3D> resctrl.c} | 168 +++++++++++++++---
+ .../x86/kernel/cpu/{intel_rdt.h =3D> resctrl.h} |  37 ++--
+ ...dt_ctrlmondata.c =3D> resctrl_ctrlmondata.c} |  80 ++++++++-
+ ...{intel_rdt_monitor.c =3D> resctrl_monitor.c} |  20 +--
+ ...dt_pseudo_lock.c =3D> resctrl_pseudo_lock.c} |   6 +-
+ ...ck_event.h =3D> resctrl_pseudo_lock_event.h} |   2 +-
+ ...ntel_rdt_rdtgroup.c =3D> resctrl_rdtgroup.c} |  19 +-
+ arch/x86/kernel/cpu/scattered.c               |   7 +-
+ arch/x86/kernel/process_32.c                  |   4 +-
+ arch/x86/kernel/process_64.c                  |   4 +-
+ include/linux/sched.h                         |   2 +-
+ 16 files changed, 318 insertions(+), 103 deletions(-)
+ rename Documentation/x86/{intel_rdt_ui.txt =3D> resctrl_ui.txt} (99%)
+ rename arch/x86/include/asm/{intel_rdt_sched.h =3D> resctrl_sched.h} (77%)
+ rename arch/x86/kernel/cpu/{intel_rdt.c =3D> resctrl.c} (85%)
+ rename arch/x86/kernel/cpu/{intel_rdt.h =3D> resctrl.h} (94%)
+ rename arch/x86/kernel/cpu/{intel_rdt_ctrlmondata.c =3D> resctrl_ctrlmonda=
+ta.c} (86%)
+ rename arch/x86/kernel/cpu/{intel_rdt_monitor.c =3D> resctrl_monitor.c} (9=
+7%)
+ rename arch/x86/kernel/cpu/{intel_rdt_pseudo_lock.c =3D> resctrl_pseudo_lo=
+ck.c} (99%)
+ rename arch/x86/kernel/cpu/{intel_rdt_pseudo_lock_event.h =3D> resctrl_pse=
+udo_lock_event.h} (95%)
+ rename arch/x86/kernel/cpu/{intel_rdt_rdtgroup.c =3D> resctrl_rdtgroup.c} =
+(99%)
+
+--=20
+2.17.1
+
