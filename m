@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72D41C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:11:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D09FC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:11:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30E55208E3
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:11:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5227220825
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:11:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V3gAjg3r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30E55208E3
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vKfyOps6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5227220825
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728746AbeKIXwU (ORCPT
+        id S1728778AbeKIXwW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 18:52:20 -0500
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:40502 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728046AbeKIXwT (ORCPT
+        Fri, 9 Nov 2018 18:52:22 -0500
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:37501 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728604AbeKIXwV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 18:52:19 -0500
-Received: by mail-yb1-f194.google.com with SMTP id g9-v6so1078036ybh.7;
-        Fri, 09 Nov 2018 06:11:32 -0800 (PST)
+        Fri, 9 Nov 2018 18:52:21 -0500
+Received: by mail-yw1-f67.google.com with SMTP id v77-v6so1678124ywc.4;
+        Fri, 09 Nov 2018 06:11:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=SJTlmwHK0QaJa76tDiqzpr+Ll6iBfOd6+RCAreENEmk=;
-        b=V3gAjg3re2HeM6zvgwn/JWPBmgabme7oBKOk7OU2yRhvmBpWeRQ+VepLqPpxMndvft
-         nmUt6z1LQXByt9Vpb/uqB50/sL6he0s7F+RjvKtH3VKx8DvVoAM6p7bc57xpZE67g4nf
-         Yz1nj90A/eMhxQhrLwbIUGzGqIzTNsQQAC0LDZlz7RP83PipMtbrzjTEse+8+6vX1QtJ
-         BfJr96t2wARJcfw8P9wD8ugSQLeYDJAew7mqONN6T/ruE2k3A4epYZ/+Ufxifs9ZH7ds
-         diroWUYDnghCUl+M3PCsN1j3DEcA1aotKQKN6XwjTEoSdvqLMs7Ss4PYflx3U5d5hXeg
-         t53g==
+        bh=EVb7VCq6Tf3SsekKc2jGmlWIMkhRfo5YqgMjxLjryJ0=;
+        b=vKfyOps6b0oePBBZXQIgLp73Oisq7GqaMlxB9UxGxe1IL22RnlLGMGSOZKcMCuWpA8
+         fliCbt3TC1Sa6+b+fdsW2D7AI18JXEP0kgRMJlmxSEk9zbj8Le8xI+noSCTZYgX1AArr
+         46WR1E9xxWHPPIpy3u3xXrxROIriS93vffbmKteqKcVoroEG4u119puv0WKaYVlSs9Te
+         PtYZ/aGVTeohpjqI57p41HEOIJbQ240JDCwxew3foBM85Sctq3pDwMgKggSZKA2HcOMN
+         9UoJ4GjGcxxI7/zc46Q05Ky/1Gfqpkx1W91iCIZ3UIuMbm9uTEScRxdxV5VkjLzGpXgd
+         wTpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=SJTlmwHK0QaJa76tDiqzpr+Ll6iBfOd6+RCAreENEmk=;
-        b=Vfja4KIniSIY220EdpnZSEpZScC2nv1mlkudctin+liHV49dDNfXNHhxmzyVkwFAfM
-         0PR96hro274ji13aHqRCkoYaRoODYTCR7HTkqh94SVigjR0xqeDnBiEhILqT6C3Qh3MS
-         eqEvyRmXnD8KDMgoPv7OWPRWwHccQaCiDXUJUFH9ZH0HWPu8yoR9XjsCcz6MRjVEXmt9
-         NEHky+cS0y1EVtwdLrkWjo7S3tGl0mFh91oG6Dl61vIeWA8M2Ktv4f+v02vnCyug50J5
-         5oUTplfvSd0HCAkoIT72rL7VlerWNud+IlpoqVB+LYvMMErnChXHux1oZ2VmT7yjurTe
-         KO5w==
-X-Gm-Message-State: AGRZ1gIxL2AKM42N8YFTb6FXHDSvQVx09c8yCRYK8TWZJTfFpLkpYJVZ
-        bnSRV2AWI9Xrlp3Glk9mjVSxUW3xy8I=
-X-Google-Smtp-Source: AJdET5f9e0eXkypU9Krr0PSlQZ6nenFmdMEAdbEQEr3SykAN0aGwNaEaHlRSTIY+uvDy8nuDbWu5rw==
-X-Received: by 2002:a25:46c5:: with SMTP id t188-v6mr8943772yba.108.1541772691287;
-        Fri, 09 Nov 2018 06:11:31 -0800 (PST)
+        bh=EVb7VCq6Tf3SsekKc2jGmlWIMkhRfo5YqgMjxLjryJ0=;
+        b=lxIvW+qxxk74G+SQfjfIbx8zlN8DA6SYsdunSbuNSRzIQhqJ+GkxE49Hg41kDWCctV
+         tOIiBHSCCbwub6aKSbJRF/XyTFkVbLKqFrBOR1LxLRU1aAZpIU1uy+22OUXuWBBHe5K0
+         /l3JcRqGp9Vut17+6NERyh5XfOyt5wzsBSELUIGoJ/XVzRr/dFPRoH0Yun+e3IZdlusr
+         uu7uC5hlotR/4zwzYfGcMd1cGjdIXuJqY1BuhVu6ae9dE0S1Z6HzCY43KkFflDZlA31+
+         rJOilTYhGZ3hAYD6jcaTDtke2Kfvi5HLO/NsiKp0E6Z4iwXQinNttJAm59Udjvz4xVHZ
+         K+GQ==
+X-Gm-Message-State: AGRZ1gKq3I5eB+xzgfJ9o4fyfj1lozKzd39El86MC+pO3WuSFpTp9+Wf
+        DM9r4qb5G6R4Q8605YOXrIJ/IvbqQd0=
+X-Google-Smtp-Source: AJdET5dEVJm4QYG9hKajNrQ2pyDtb5+1K3FY1L6n3kwtxDOzdb7BM4sZQW6ha2hJhW+ztuE7/VKT5w==
+X-Received: by 2002:a81:6f57:: with SMTP id k84-v6mr8883177ywc.348.1541772694862;
+        Fri, 09 Nov 2018 06:11:34 -0800 (PST)
 Received: from stbsrv-and-3.and.broadcom.com ([192.19.231.250])
-        by smtp.gmail.com with ESMTPSA id c6-v6sm7301965ywh.34.2018.11.09.06.11.29
+        by smtp.gmail.com with ESMTPSA id c6-v6sm7301965ywh.34.2018.11.09.06.11.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 09 Nov 2018 06:11:30 -0800 (PST)
+        Fri, 09 Nov 2018 06:11:34 -0800 (PST)
 From:   Al Cooper <alcooperx@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Al Cooper <alcooperx@gmail.com>,
@@ -85,9 +85,9 @@ Cc:     Al Cooper <alcooperx@gmail.com>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Rishabh Bhatnagar <rishabhb@codeaurora.org>,
         Rob Herring <robh+dt@kernel.org>, Roger Quadros <rogerq@ti.com>
-Subject: [PATCH V4 2/5] usb: core: Add ability to skip phy exit on suspend and init on resume
-Date:   Fri,  9 Nov 2018 09:01:57 -0500
-Message-Id: <1541772120-40394-3-git-send-email-alcooperx@gmail.com>
+Subject: [PATCH V4 4/5] usb: ehci: Add new EHCI driver for Broadcom STB SoC's
+Date:   Fri,  9 Nov 2018 09:01:59 -0500
+Message-Id: <1541772120-40394-5-git-send-email-alcooperx@gmail.com>
 X-Mailer: git-send-email 1.9.0.138.g2de3478
 In-Reply-To: <1541772120-40394-1-git-send-email-alcooperx@gmail.com>
 References: <1541772120-40394-1-git-send-email-alcooperx@gmail.com>
@@ -96,194 +96,309 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the ability to skip calling the PHY's exit routine on suspend
-and the PHY's init routine on resume. This is to handle a USB PHY
-that should have it's power_off function called on suspend but cannot
-have it's exit function called because on exit it will disable the
-PHY to the point where all USB clocks are stopped and register
-accesses to the Host Controllers using the PHY will be disabled
-and the host drivers will crash.
-
-This is enabled with the HCD flag "phy_supplies_usb_clock" which
-can be set from any HCD driver or with the device tree property
-"phy-supplies-usb-clock".
+Add a new EHCI driver for Broadcom STB SoC's. A new EHCI driver
+was created instead of adding support to the existing ehci platform
+driver because of the code required to workaround bugs in the EHCI
+controller.
 
 Signed-off-by: Al Cooper <alcooperx@gmail.com>
 ---
- drivers/usb/core/hcd.c  |  8 ++++----
- drivers/usb/core/phy.c  | 28 ++++++++++++++++++++--------
- drivers/usb/core/phy.h  |  9 ++++++---
- include/linux/usb/hcd.h |  6 ++++++
- 4 files changed, 36 insertions(+), 15 deletions(-)
+ drivers/usb/host/ehci-brcm.c | 286 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 286 insertions(+)
+ create mode 100644 drivers/usb/host/ehci-brcm.c
 
-diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
-index 487025d31d44..5ebc82a69403 100644
---- a/drivers/usb/core/hcd.c
-+++ b/drivers/usb/core/hcd.c
-@@ -2249,7 +2249,7 @@ int hcd_bus_suspend(struct usb_device *rhdev, pm_message_t msg)
- 		hcd->state = HC_STATE_SUSPENDED;
- 
- 		if (!PMSG_IS_AUTO(msg))
--			usb_phy_roothub_suspend(hcd->self.sysdev,
-+			usb_phy_roothub_suspend(hcd,
- 						hcd->phy_roothub);
- 
- 		/* Did we race with a root-hub wakeup event? */
-@@ -2290,7 +2290,7 @@ int hcd_bus_resume(struct usb_device *rhdev, pm_message_t msg)
- 	}
- 
- 	if (!PMSG_IS_AUTO(msg)) {
--		status = usb_phy_roothub_resume(hcd->self.sysdev,
-+		status = usb_phy_roothub_resume(hcd,
- 						hcd->phy_roothub);
- 		if (status)
- 			return status;
-@@ -2333,7 +2333,7 @@ int hcd_bus_resume(struct usb_device *rhdev, pm_message_t msg)
- 		}
- 	} else {
- 		hcd->state = old_state;
--		usb_phy_roothub_suspend(hcd->self.sysdev, hcd->phy_roothub);
-+		usb_phy_roothub_suspend(hcd, hcd->phy_roothub);
- 		dev_dbg(&rhdev->dev, "bus %s fail, err %d\n",
- 				"resume", status);
- 		if (status != -ESHUTDOWN)
-@@ -2730,7 +2730,7 @@ int usb_add_hcd(struct usb_hcd *hcd,
- 	struct usb_device *rhdev;
- 
- 	if (!hcd->skip_phy_initialization && usb_hcd_is_primary_hcd(hcd)) {
--		hcd->phy_roothub = usb_phy_roothub_alloc(hcd->self.sysdev);
-+		hcd->phy_roothub = usb_phy_roothub_alloc(hcd);
- 		if (IS_ERR(hcd->phy_roothub))
- 			return PTR_ERR(hcd->phy_roothub);
- 
-diff --git a/drivers/usb/core/phy.c b/drivers/usb/core/phy.c
-index 38b2c776c4b4..8bfbacb52a7b 100644
---- a/drivers/usb/core/phy.c
-+++ b/drivers/usb/core/phy.c
-@@ -46,10 +46,11 @@ static int usb_phy_roothub_add_phy(struct device *dev, int index,
- 	return 0;
- }
- 
--struct usb_phy_roothub *usb_phy_roothub_alloc(struct device *dev)
-+struct usb_phy_roothub *usb_phy_roothub_alloc(struct usb_hcd *hcd)
- {
- 	struct usb_phy_roothub *phy_roothub;
- 	int i, num_phys, err;
-+	struct device *dev = hcd->self.sysdev;
- 
- 	if (!IS_ENABLED(CONFIG_GENERIC_PHY))
- 		return NULL;
-@@ -59,6 +60,9 @@ struct usb_phy_roothub *usb_phy_roothub_alloc(struct device *dev)
- 	if (num_phys <= 0)
- 		return NULL;
- 
-+	if (device_property_read_bool(dev, "phy-supplies-usb-clock"))
-+		hcd->phy_supplies_usb_clock = 1;
+diff --git a/drivers/usb/host/ehci-brcm.c b/drivers/usb/host/ehci-brcm.c
+new file mode 100644
+index 000000000000..eb0ea030a4c8
+--- /dev/null
++++ b/drivers/usb/host/ehci-brcm.c
+@@ -0,0 +1,286 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (c) 2018, Broadcom */
 +
- 	phy_roothub = devm_kzalloc(dev, sizeof(*phy_roothub), GFP_KERNEL);
- 	if (!phy_roothub)
- 		return ERR_PTR(-ENOMEM);
-@@ -162,26 +166,33 @@ void usb_phy_roothub_power_off(struct usb_phy_roothub *phy_roothub)
- }
- EXPORT_SYMBOL_GPL(usb_phy_roothub_power_off);
- 
--int usb_phy_roothub_suspend(struct device *controller_dev,
-+int usb_phy_roothub_suspend(struct usb_hcd *hcd,
- 			    struct usb_phy_roothub *phy_roothub)
- {
-+	struct device *controller_dev = hcd->self.sysdev;
-+
- 	usb_phy_roothub_power_off(phy_roothub);
- 
--	/* keep the PHYs initialized so the device can wake up the system */
--	if (device_may_wakeup(controller_dev))
-+	/*
-+	 * keep the PHYs initialized so the device can wake up the system
-+	 * or if needed to keep the USB clocks enabled.
-+	 */
-+	if (device_may_wakeup(controller_dev) || hcd->phy_supplies_usb_clock)
- 		return 0;
- 
- 	return usb_phy_roothub_exit(phy_roothub);
- }
- EXPORT_SYMBOL_GPL(usb_phy_roothub_suspend);
- 
--int usb_phy_roothub_resume(struct device *controller_dev,
-+int usb_phy_roothub_resume(struct usb_hcd *hcd,
- 			   struct usb_phy_roothub *phy_roothub)
- {
-+	struct device *controller_dev = hcd->self.sysdev;
- 	int err;
- 
--	/* if the device can't wake up the system _exit was called */
--	if (!device_may_wakeup(controller_dev)) {
-+	/* if _exit was called on suspend */
-+	if (!device_may_wakeup(controller_dev) &&
-+	    !hcd->phy_supplies_usb_clock) {
- 		err = usb_phy_roothub_init(phy_roothub);
- 		if (err)
- 			return err;
-@@ -190,7 +201,8 @@ int usb_phy_roothub_resume(struct device *controller_dev,
- 	err = usb_phy_roothub_power_on(phy_roothub);
- 
- 	/* undo _init if _power_on failed */
--	if (err && !device_may_wakeup(controller_dev))
-+	if (err && !device_may_wakeup(controller_dev)
-+	    && !hcd->phy_supplies_usb_clock)
- 		usb_phy_roothub_exit(phy_roothub);
- 
- 	return err;
-diff --git a/drivers/usb/core/phy.h b/drivers/usb/core/phy.h
-index 88a3c037e9df..34293e11a917 100644
---- a/drivers/usb/core/phy.h
-+++ b/drivers/usb/core/phy.h
-@@ -5,13 +5,16 @@
-  * Copyright (C) 2018 Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-  */
- 
++#include <linux/acpi.h>
++#include <linux/clk.h>
++#include <linux/dma-mapping.h>
++#include <linux/err.h>
++#include <linux/kernel.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
 +#include <linux/usb.h>
 +#include <linux/usb/hcd.h>
 +
- #ifndef __USB_CORE_PHY_H_
- #define __USB_CORE_PHY_H_
- 
- struct device;
- struct usb_phy_roothub;
- 
--struct usb_phy_roothub *usb_phy_roothub_alloc(struct device *dev);
-+struct usb_phy_roothub *usb_phy_roothub_alloc(struct usb_hcd *hcd);
- 
- int usb_phy_roothub_init(struct usb_phy_roothub *phy_roothub);
- int usb_phy_roothub_exit(struct usb_phy_roothub *phy_roothub);
-@@ -19,9 +22,9 @@
- int usb_phy_roothub_power_on(struct usb_phy_roothub *phy_roothub);
- void usb_phy_roothub_power_off(struct usb_phy_roothub *phy_roothub);
- 
--int usb_phy_roothub_suspend(struct device *controller_dev,
-+int usb_phy_roothub_suspend(struct usb_hcd *hcd,
- 			    struct usb_phy_roothub *phy_roothub);
--int usb_phy_roothub_resume(struct device *controller_dev,
-+int usb_phy_roothub_resume(struct usb_hcd *hcd,
- 			   struct usb_phy_roothub *phy_roothub);
- 
- #endif /* __USB_CORE_PHY_H_ */
-diff --git a/include/linux/usb/hcd.h b/include/linux/usb/hcd.h
-index 97e2ddec18b1..7c42cf0f6835 100644
---- a/include/linux/usb/hcd.h
-+++ b/include/linux/usb/hcd.h
-@@ -157,6 +157,12 @@ struct usb_hcd {
- 	 */
- 	unsigned		skip_phy_initialization:1;
- 
-+	/*
-+	 * Some phys supply the USB controller clocks and should not
-+	 * have exit called on suspend.
-+	 */
-+	unsigned		phy_supplies_usb_clock:1;
++#include "ehci.h"
 +
- 	/* The next flag is a stopgap, to be removed when all the HCDs
- 	 * support the new root-hub polling mechanism. */
- 	unsigned		uses_new_polling:1;
++#define BRCM_DRIVER_DESC "EHCI Broadcom STB driver"
++
++#define hcd_to_ehci_priv(h) ((struct brcm_priv *)hcd_to_ehci(h)->priv)
++
++struct brcm_priv {
++	struct clk *clk;
++};
++
++static const char brcm_hcd_name[] = "ehci-brcm";
++
++static int (*org_hub_control)(struct usb_hcd *hcd,
++			u16 typeReq, u16 wValue, u16 wIndex,
++			char *buf, u16 wLength);
++
++/* ehci_brcm_wait_for_sof
++ * Wait for start of next microframe, then wait extra delay microseconds
++ */
++static inline void ehci_brcm_wait_for_sof(struct ehci_hcd *ehci, u32 delay)
++{
++	int frame_idx = ehci_readl(ehci, &ehci->regs->frame_index);
++
++	while (frame_idx == ehci_readl(ehci, &ehci->regs->frame_index))
++		;
++	udelay(delay);
++}
++
++/*
++ * ehci_brcm_hub_control
++ * Intercept echi-hcd request to complete RESUME and align it to the start
++ * of the next microframe.
++ * If RESUME is complete too late in the microframe, host controller
++ * detects babble on suspended port and resets the port afterwards.
++ * This s/w workaround allows to avoid this problem.
++ * See SWLINUX-1909 for more details
++ */
++static int ehci_brcm_hub_control(
++	struct usb_hcd	*hcd,
++	u16		typeReq,
++	u16		wValue,
++	u16		wIndex,
++	char		*buf,
++	u16		wLength)
++{
++	struct ehci_hcd	*ehci = hcd_to_ehci(hcd);
++	int		ports = HCS_N_PORTS(ehci->hcs_params);
++	u32 __iomem	*status_reg = &ehci->regs->port_status[
++				(wIndex & 0xff) - 1];
++	unsigned long flags;
++	int retval, irq_disabled = 0;
++
++	/*
++	 * RESUME is cleared when GetPortStatus() is called 20ms after start
++	 * of RESUME
++	 */
++	if ((typeReq == GetPortStatus) &&
++	    (wIndex && wIndex <= ports) &&
++	    ehci->reset_done[wIndex-1] &&
++	    time_after_eq(jiffies, ehci->reset_done[wIndex-1]) &&
++	    (ehci_readl(ehci, status_reg) & PORT_RESUME)) {
++
++		/*
++		 * to make sure we are not interrupted until RESUME bit
++		 * is cleared, disable interrupts on current CPU
++		 */
++		ehci_dbg(ehci, "SOF alignment workaround\n");
++		irq_disabled = 1;
++		local_irq_save(flags);
++		ehci_brcm_wait_for_sof(ehci, 5);
++	}
++	retval = (*org_hub_control)(hcd, typeReq, wValue, wIndex, buf, wLength);
++	if (irq_disabled)
++		local_irq_restore(flags);
++	return retval;
++}
++
++static int ehci_brcm_reset(struct usb_hcd *hcd)
++{
++	struct ehci_hcd *ehci = hcd_to_ehci(hcd);
++
++	ehci->big_endian_mmio = 1;
++
++	ehci->caps = (struct ehci_caps *) hcd->regs;
++	ehci->regs = (struct ehci_regs *) (hcd->regs +
++		HC_LENGTH(ehci, ehci_readl(ehci, &ehci->caps->hc_capbase)));
++
++	/* This fixes the lockup during reboot due to prior interrupts */
++	ehci_writel(ehci, CMD_RESET, &ehci->regs->command);
++	mdelay(10);
++
++	/*
++	 * SWLINUX-1705: Avoid OUT packet underflows during high memory
++	 *   bus usage
++	 * port_status[0x0f] = Broadcom-proprietary USB_EHCI_INSNREG00 @ 0x90
++	 */
++	ehci_writel(ehci, 0x00800040, &ehci->regs->port_status[0x10]);
++	ehci_writel(ehci, 0x00000001, &ehci->regs->port_status[0x12]);
++
++	return ehci_setup(hcd);
++}
++
++static struct hc_driver __read_mostly ehci_brcm_hc_driver;
++
++static const struct ehci_driver_overrides brcm_overrides __initconst = {
++
++	.reset =	ehci_brcm_reset,
++	.extra_priv_size = sizeof(struct brcm_priv),
++};
++
++static int ehci_brcm_probe(struct platform_device *pdev)
++{
++	struct usb_hcd *hcd;
++	struct resource *res_mem;
++	struct brcm_priv *priv;
++	int irq;
++	int err;
++
++	if (usb_disabled())
++		return -ENODEV;
++
++	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
++	if (err)
++		return err;
++
++	irq = platform_get_irq(pdev, 0);
++	if (irq < 0) {
++		dev_err(&pdev->dev, "no irq provided");
++		return irq;
++	}
++
++	/* Hook the hub control routine to work around a bug */
++	if (org_hub_control == NULL)
++		org_hub_control = ehci_brcm_hc_driver.hub_control;
++	ehci_brcm_hc_driver.hub_control = ehci_brcm_hub_control;
++
++	/* initialize hcd */
++	hcd = usb_create_hcd(&ehci_brcm_hc_driver,
++			&pdev->dev, dev_name(&pdev->dev));
++	if (!hcd)
++		return -ENOMEM;
++
++	platform_set_drvdata(pdev, hcd);
++	priv = hcd_to_ehci_priv(hcd);
++
++	priv->clk = devm_clk_get(&pdev->dev, NULL);
++	if (IS_ERR(priv->clk)) {
++		dev_err(&pdev->dev, "Clock not found in Device Tree\n");
++		priv->clk = NULL;
++	}
++	err = clk_prepare_enable(priv->clk);
++	if (err)
++		goto err_hcd;
++
++	res_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	hcd->regs = devm_ioremap_resource(&pdev->dev, res_mem);
++	if (IS_ERR(hcd->regs)) {
++		err = PTR_ERR(hcd->regs);
++		goto err_clk;
++	}
++	hcd->rsrc_start = res_mem->start;
++	hcd->rsrc_len = resource_size(res_mem);
++	err = usb_add_hcd(hcd, irq, IRQF_SHARED);
++	if (err)
++		goto err_clk;
++
++	device_wakeup_enable(hcd->self.controller);
++	device_enable_async_suspend(hcd->self.controller);
++	platform_set_drvdata(pdev, hcd);
++
++	return err;
++
++err_clk:
++	clk_disable_unprepare(priv->clk);
++err_hcd:
++	usb_put_hcd(hcd);
++
++	return err;
++}
++
++static int ehci_brcm_remove(struct platform_device *dev)
++{
++	struct usb_hcd *hcd = platform_get_drvdata(dev);
++	struct brcm_priv *priv = hcd_to_ehci_priv(hcd);
++
++	usb_remove_hcd(hcd);
++	clk_disable_unprepare(priv->clk);
++	usb_put_hcd(hcd);
++	return 0;
++}
++
++#ifdef CONFIG_PM_SLEEP
++
++static int ehci_brcm_suspend(struct device *dev)
++{
++	int ret;
++	struct usb_hcd *hcd = dev_get_drvdata(dev);
++	struct brcm_priv *priv = hcd_to_ehci_priv(hcd);
++	bool do_wakeup = device_may_wakeup(dev);
++
++	ret = ehci_suspend(hcd, do_wakeup);
++	clk_disable_unprepare(priv->clk);
++	return ret;
++}
++
++static int ehci_brcm_resume(struct device *dev)
++{
++	struct usb_hcd *hcd = dev_get_drvdata(dev);
++	struct ehci_hcd *ehci = hcd_to_ehci(hcd);
++	struct brcm_priv *priv = hcd_to_ehci_priv(hcd);
++	int err;
++
++	err = clk_prepare_enable(priv->clk);
++	if (err)
++		return err;
++	/*
++	 * SWLINUX-1705: Avoid OUT packet underflows during high memory
++	 *   bus usage
++	 * port_status[0x0f] = Broadcom-proprietary USB_EHCI_INSNREG00
++	 * @ 0x90
++	 */
++	ehci_writel(ehci, 0x00800040, &ehci->regs->port_status[0x10]);
++	ehci_writel(ehci, 0x00000001, &ehci->regs->port_status[0x12]);
++
++	ehci_resume(hcd, false);
++	return 0;
++}
++#endif /* CONFIG_PM_SLEEP */
++
++static SIMPLE_DEV_PM_OPS(ehci_brcm_pm_ops, ehci_brcm_suspend,
++		ehci_brcm_resume);
++
++static const struct of_device_id brcm_ehci_of_match[] = {
++	{ .compatible = "brcm,bcm7445-ehci", },
++	{}
++};
++
++static struct platform_driver ehci_brcm_driver = {
++	.probe		= ehci_brcm_probe,
++	.remove		= ehci_brcm_remove,
++	.shutdown	= usb_hcd_platform_shutdown,
++	.driver		= {
++		.owner	= THIS_MODULE,
++		.name	= "ehci-brcm",
++		.pm	= &ehci_brcm_pm_ops,
++		.of_match_table = brcm_ehci_of_match,
++	}
++};
++
++static int __init ehci_brcm_init(void)
++{
++	if (usb_disabled())
++		return -ENODEV;
++
++	pr_info("%s: " BRCM_DRIVER_DESC "\n", brcm_hcd_name);
++
++	ehci_init_driver(&ehci_brcm_hc_driver, &brcm_overrides);
++	return platform_driver_register(&ehci_brcm_driver);
++}
++module_init(ehci_brcm_init);
++
++static void __exit ehci_brcm_exit(void)
++{
++	platform_driver_unregister(&ehci_brcm_driver);
++}
++module_exit(ehci_brcm_exit);
++
++MODULE_ALIAS("platform:ehci-brcm");
++MODULE_DESCRIPTION(BRCM_DRIVER_DESC);
++MODULE_AUTHOR("Al Cooper");
++MODULE_LICENSE("GPL");
 -- 
 1.9.0.138.g2de3478
 
