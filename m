@@ -2,189 +2,226 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0903EC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:38:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAD61C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:41:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE90420827
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:38:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE90420827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 79D9120827
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:41:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="bvzuX9jj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79D9120827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=analog.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728084AbeKJBTI (ORCPT
+        id S1728148AbeKJBWP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 20:19:08 -0500
-Received: from foss.arm.com ([217.140.101.70]:33528 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727806AbeKJBTI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 20:19:08 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 280D880D;
-        Fri,  9 Nov 2018 07:38:03 -0800 (PST)
-Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2FF443F5BD;
-        Fri,  9 Nov 2018 07:38:02 -0800 (PST)
-Subject: Re: WARNING: CPU: 0 PID: 0 at drivers/irqchip/irq-gic-v3-its.c
-To:     Qian Cai <cai@gmx.us>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>
-References: <1541710771.12945.7.camel@gmx.us>
- <c8ff3004-33ee-19d5-8eb8-38d41f78c8ee@arm.com>
- <trinity-e1d06dde-12e1-4e2a-8871-d6c5f4af9f51-1541766480902@msvc-mesg-gmx023>
- <b23b62b4-9ecb-8b76-57e5-d323cc9926ce@arm.com>
- <13A11479-97FB-4EFD-A182-61DA63CB64D6@gmx.us>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: ARM Ltd
-Message-ID: <b74e43d3-a7e1-08e9-c176-5584ad379629@arm.com>
-Date:   Fri, 9 Nov 2018 15:38:00 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 9 Nov 2018 20:22:15 -0500
+Received: from mail-by2nam03on0074.outbound.protection.outlook.com ([104.47.42.74]:9728
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727784AbeKJBWO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 20:22:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=analog.onmicrosoft.com; s=selector1-analog-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ta1iOIb9ZLNq2QsifkMsCizZobh2+1tKMbeTAUpGyPg=;
+ b=bvzuX9jjbMutNDWjgjzIlWd/WPROoXtzHfiTMlUb54q6748calw51eKlTrDu/jM6+E0itgvHCASZLtvZ+I9qyh369oyR3ticAzi02BPkjMf+eDx/JZ2KY+UfAWU1/HRYSAHSaHg8/uV+O8NyAfY9+Q8aYBeg3qIS6Kf+MqLGmsY=
+Received: from BN3PR03CA0114.namprd03.prod.outlook.com (2603:10b6:400:4::32)
+ by BLUPR03MB550.namprd03.prod.outlook.com (2a01:111:e400:880::28) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1294.24; Fri, 9 Nov
+ 2018 15:40:13 +0000
+Received: from BN1AFFO11FD005.protection.gbl (2a01:111:f400:7c10::103) by
+ BN3PR03CA0114.outlook.office365.com (2603:10b6:400:4::32) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1294.20 via Frontend Transport; Fri, 9 Nov 2018 15:40:13 +0000
+Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
+ 137.71.25.57 as permitted sender) receiver=protection.outlook.com;
+ client-ip=137.71.25.57; helo=nwd2mta4.analog.com;
+Received: from nwd2mta4.analog.com (137.71.25.57) by
+ BN1AFFO11FD005.mail.protection.outlook.com (10.58.52.65) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1339.12
+ via Frontend Transport; Fri, 9 Nov 2018 15:40:13 +0000
+Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
+        by nwd2mta4.analog.com (8.13.8/8.13.8) with ESMTP id wA9FeDwA017418
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
+        Fri, 9 Nov 2018 07:40:13 -0800
+Received: from linux.ad.analog.com (10.32.224.122) by
+ NWD2HUBCAS7.ad.analog.com (10.64.69.107) with Microsoft SMTP Server id
+ 14.3.301.0; Fri, 9 Nov 2018 10:40:12 -0500
+From:   Stefan Popa <stefan.popa@analog.com>
+To:     <jic23@kernel.org>
+CC:     <Michael.Hennerich@analog.com>, <knaack.h@gmx.de>,
+        <lars@metafoo.de>, <pmeerw@pmeerw.net>,
+        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
+        <linux-iio@vger.kernel.org>, <stefan.popa@analog.com>
+Subject: [PATCH v4 1/4] iio: ad_sigma_delta: Allow to provide custom data register address
+Date:   Fri, 9 Nov 2018 17:39:58 +0200
+Message-ID: <1541777998-7518-1-git-send-email-stefan.popa@analog.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <13A11479-97FB-4EFD-A182-61DA63CB64D6@gmx.us>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRoutedOnPrem: True
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(396003)(376002)(346002)(136003)(2980300002)(438002)(189003)(199004)(26005)(54906003)(4326008)(5660300001)(36756003)(106002)(77096007)(6916009)(246002)(186003)(2351001)(16586007)(316002)(356004)(106466001)(6666004)(107886003)(305945005)(426003)(47776003)(50226002)(478600001)(72206003)(51416003)(6346003)(8936002)(336012)(2616005)(7696005)(48376002)(486006)(8676002)(44832011)(2906002)(7636002)(50466002)(476003)(126002);DIR:OUT;SFP:1101;SCL:1;SRVR:BLUPR03MB550;H:nwd2mta4.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;BN1AFFO11FD005;1:kJrj8g7s8xylC2pqisADN4A6CuL8cL0wymVHMVPT/TFWP6IlgTG+Y31oYEV/PJaWwSlUKh7a/ozspn3S/vaRghBDuUrGmNdz6CBdgrHqnKJhKTdvMKv4VaJ/hFliCmMO
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 339efc24-e0b1-4a8b-b4ad-08d64659a3f5
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:BLUPR03MB550;
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB550;3:E31JHEYgFIrbXE88WiEFpBjK+9K5tudfJesgZE+ul06jtOcrdY5pxUoFB5L3U5fhXZVz2yHPOhkAd2gt6Tc+r6Vr3oCsqJkS5tPP7AQ/x0z148uEBLtym9TYk/MS4XMYi3lG3zbVwAuRJmYvieWPhvbnLZD1LBO1b+jXgv6YdTDhuunm3Z9gdjbzQNV6wBfDURrOhKdKihbiJ/JOakh8+/zqVUW1P5WzKqbfzAPIH/0jZDm3ZIbQvqMrEOH+K0m+acsov+K+9T3vS3/SSE8ZnUiMfE778FpeoSz4wltZXyp6APemm7j99CaGcz5PTO9chvUTDN3JLB1m11WNw/8vggRfEHtYUQlKxU983kVWcB4=;25:STzbU1W4cW6AspyROUhDIcJmpfy2lCWBjdU7QjyhXxpWL6XJVaXYuncHx+PlTdjtuvbAzlBbDqOmQQptPV0U15xMNKp4Q6gYFECi7eepv44IW0dWzxfYKHKTa5PUYpeOLY5fY44KpmXDhxw5CaKqB5JheQNu/pJtLMG9vHc0n8DBa3GbdMJp7Pfyd48Ju6S4q5cqCURwVaf1YNrNH9H8KZFpb3jO/1CPQCAgNf8PQSRR72HGAGottKbb9W2CfE0T3NwI86+IF3yVGUsOOa0x+JAjJeStXjzuqs0yPKV8ZVsK2WtgDG7/2BZiWCj8Eq+sSYKlZ4OGI1KBNJxOD409xA==
+X-MS-TrafficTypeDiagnostic: BLUPR03MB550:
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB550;31:QpyNeIBd+/+MV9Qau8yG4yaxDubnhe8v8nflGLu0+K/nHsBLDOkG+MGrJ5uLA6H4SQELSoCAiWAD1nEFbzG9a4XMzX7nL5pGHYQeyDWkkM9VI+K/09SC90LjLq4+4lL6yyg3+NRJ0y6WT+cBlK7xEZuFrwRjxUgFIgiGcOpD+zIvzQKEFW+AtZqVs4ySI0XBZLJ74cVpdKUrZ4a5ZW2uoa079CnUIe3v+gPd3h5aSfI=;20:PhrgpTfnKnNGRAy22mRPsUmVsXhs1Zhf5GXJWWTcUbdmpu/4DI3uNwApJER9mTqK4erFO+/7BCXN3wqkuido/RCzB4j/xKYT7rS6xcFOyjqJZLhv1IcAwTIf7xXCVKW/P+9CaVCJGu4tAZV3v+Lmg3Sv/a9QEOQCGnxYCRSOcTr5o0QMwAY7BQLY5tqBG83aGzPQlwK7OW9f0+jqa0XxsJOKR/ZjzEGKG5LPulwxst0Kg88COcoRAS6zbnkObaL2aWTHTO/DtumUaA2JrAv4d0/ZfHgLnN1wIKygLM4R+cPOyNwnEbVlSc3YngSTohpmAj8nAme9lgqUS0KLP3LpDfIL/JnPy9pNinKJQ1DPT9qrqCNVZjWMN6/1ssi8pYwvuupcIZlt71hyDPwTa7bmnETKyqJcmLIsmefdTpwP6m2VB8oqXLM2NvUD/M4Gf15cp51/bLPgwBNXl4foOttgdl+lAQbAIz8n+hWUxR1G1c38vTzFK6FdnEXkyicTFKbg
+X-Microsoft-Antispam-PRVS: <BLUPR03MB550E5568F4863F9D02CEC5E9DC60@BLUPR03MB550.namprd03.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(232431446821674);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93004095)(3231382)(944501410)(52105095)(10201501046)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:BLUPR03MB550;BCL:0;PCL:0;RULEID:;SRVR:BLUPR03MB550;
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB550;4:A3V67diZZ/F8rRQziQjR0o+Kli3Y1R3u5h+QM9IYU11BngXXW0EyniPq1foj2kKbO9nHnu451uK8I/LnFLgNJFo0dP/LaTYhUi8asTZ8hy7LLRTWhMIkwWElb6q53VXbon4GkP77AAKZbQL8BIbOQ12WPI8H9LmlxMNe+SjWcJ89SBcVopqKqh2nBu+wfbl9sBf7KyPQKksJsuNjwQgQO3A24mcdhXrr7lSCRjtd2bQ2c015xm+SYy+3ucRdF4QXLOaODFo6EB7Ej4vrNV0Ibudz2yKX9Yzn9Oms7WEx/zQxreWTkJy5Z6LieKAw1nU1
+X-Forefront-PRVS: 08512C5403
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BLUPR03MB550;23:m3YcRny/R/CcZAIvendu49X/eIkfaAtUgI3WrrnUdm?=
+ =?us-ascii?Q?7CsAEqHPi/bbuoheUVQOTz8Loq7910p2a3lBLA53R/e1JtvwJ/UaLEu4pLDb?=
+ =?us-ascii?Q?e00aibZH6eq/ZfmyS9CVXWpK3hYppYbUvx7r6isR2eaJ5z6ENgSpxb+P/s58?=
+ =?us-ascii?Q?be4PGEJeiWn23DlVgN9XsyhQshBTK45JtwyvImeIHi/PF59pnOqRWugW0xnD?=
+ =?us-ascii?Q?p90bm7I8DzbD60Trs8/NYFYM1npkSWk/ONedt2ki3ksskInUPib7Z9CaHasq?=
+ =?us-ascii?Q?Ot/7fT5MEL5LekEiienxZbjIrWGZ6otFHQAWp4W2bcbCbVVkME5+6IJUlM3B?=
+ =?us-ascii?Q?QqkY4ZTQ582yzdAJzJyhCaoShef8OY72y2LJp1zAWUpd0cv4YqnldXRekSh6?=
+ =?us-ascii?Q?yG8sfqak/WZ1gAOycx3XbDb5TW8D39kPdnFxK6s/o3cstUaQwNqVKkaaVltD?=
+ =?us-ascii?Q?bj00oMd5wCnD9c6ZE5JHTunGZu+mCSxJFfT5woFwZJlu3S8fQHX0fJotJW2f?=
+ =?us-ascii?Q?7/WwIS0NKJTAG4yYoUY/EXtPFhNi1Q9D6/BWIKlrnXgKWlDR4CbI6T5zG1Uj?=
+ =?us-ascii?Q?fru1crQB0ntSl7OkqtXNHk3QyTecDDNbvQeNHJbx5Ft+NETIKMYEVzC72hZK?=
+ =?us-ascii?Q?MKWJKodQdAqapZda4kmajz9Kb+5GUw5jGQmne5C9+W/S6290pjyXcNJdw+iy?=
+ =?us-ascii?Q?rTpuzzmtROOMhssVH08XabhPjgjtgks3ZZvk2s4J3IX1vd1g1ZR+qd98VkuB?=
+ =?us-ascii?Q?TnNk4cRU+I7At6ZVuXXOYyhe34OWwpI3I4gd6mSVDZhcl0J+sDGX7yMFP6ED?=
+ =?us-ascii?Q?mhs0ELrAfUgxOdIlkqZCoXQNDqPpAfESEgIeC1L+enXZ67W86UcmpnrWYL47?=
+ =?us-ascii?Q?5p8pUIkp380m4a4Y6LEY7VVykA8C4wkjfIOPJn792qkRlc1kk0sh3q9kHCkc?=
+ =?us-ascii?Q?K/bqY8f9u7nwq+D7kWr7nS+5xpHEvm57V0m6viqY+YmqZn7qMnK1XIebfqdn?=
+ =?us-ascii?Q?vrjd+5bpG+rMO/qjgK7pMzmBxIbZkJ4W8CnIuM77CT8Q=3D=3D?=
+X-Microsoft-Antispam-Message-Info: Vaj9z/G6s5c0glCflDYdCs9aZlDJlvhNPAUpSSRlfyGH0WsU7PJISPk09r8fHfG85laxhhyOvuYQ87/qmrXuAglAW9S0JbipE45IHBSJr2rTfOibBMQpYfF4D0iNPIbtTWhV5ouT1PXsSCM/ChMM6QKQ4iU5GC1zROWfTEF5yhKmk+AR5Su/1DBTMihV2OIAgWcPvBm1MF4ud1CcxVY57CIRv8wLaZJBDAQ7ceKr8NVT9KxvYkvu1ZnVA98H05CqRv2rA/OHmA3KP7h2KXQBFK4EJkSmF0BP+w4Coe2/4cz2qVxFyQBvqaKwCtr/5+bTIWgbhcr8zskas01C1i7v3WSmqiC0aY7aPM6XUmHVE5Y=
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB550;6:g7lm9Ys3qX0fkhmtIlTVb41MZQnlFmGxbN56eGL0km21WQAtN1DI3fZEBErqvMzq7lfbVOBjXshs5+Ha9qhf4y9KH9KUZ8bTxPp4whf1TULwnz+gVRhTbbbzw3BT0AcahrFoKWHEW0dV2806QezENsh8thE9KKIgM9vckrvzIth6kl85GvlNXym6vsauNf1MnIIeYNOsit4mafnH1pIapC7JCBrFxbRa8JasZzAjRVBuW8vsMf2WaKbAujZ+HxX5ZyFQYRPnliNY7/kKWljoU0/hPyVbjMN85tKQdnYmtbjbpBFsXq+TIdrclWDw/mWL1LOzKxMydVpOEYibeEJT2MZX0co795N2pJ9Vnft0oREdaczagP8lNQWot4l+p77/2MmZk5nMqIhyvRehQpAN5FalKgxJ9wl66+/nVb9DMB1Ca3aTW4hVjvRPyWTm8QW8uZGgwXBOZl/uzDgmij7I/w==;5:vOxR4pg/KTL2YS8CbTH7rHx6PYJ7iAJn6lN6tb6oTAKRhG0Hhq3UM+DDL/UMoSUfmQ4cwWvQXMHPEyvIL1Vxu7GpZg95wlkfU9xhOxNbUR5lc1CMEr8NKQAu87gprml6OnO6PmrS+/tsaYkYoayicEiLh25UdCTaEalCdyBV7aA=;7:6zVlKLHHt3uzl494O6siTRoDS1Gqfcb85RGlU3PAbD1UFG8eglQvMZm1K2ZWSVAmXZf5ekGCeWnOrard1dpdZB24gnhOu1QYYQQH+W7fKMitXUO/6GgFc5loXSiORD0PfgiKl4zFguS1dnr3ncNTuw==
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Nov 2018 15:40:13.5233
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 339efc24-e0b1-4a8b-b4ad-08d64659a3f5
+X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta4.analog.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLUPR03MB550
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/11/18 15:28, Qian Cai wrote:
-> 
-> 
->> On Nov 9, 2018, at 8:50 AM, Marc Zyngier <marc.zyngier@arm.com> wrote:
->>
->> On 09/11/18 12:28, Qian Cai wrote:
->>>
->>> On 11/9/18 at 7:08 AM, Marc Zyngier wrote:
->>>
->>>> [+Ard]
->>>>
->>>> On 08/11/18 20:59, Qian Cai wrote:
->>>>> Just booting up the latest git master (b00d209) on an aarch64 server and saw
->>>>> this. Not sure about the third warning (at kernel/cpu.c:315
->>>>> lockdep_assert_cpus_held+0x50/0x60) relates to irqchip or not, but appended it
->>>>> to here anyway just in case.
->>>>>
->>>>> [    0.000000] WARNING: CPU: 0 PID: 0 at drivers/irqchip/irq-gic-v3-its.c:1696
->>>>> its_init+0x588/0xb54
->>>>
->>>> It looks like EFI cannot manage to reserve the memory for your GIC
->>>> redistributors. Pretty annoying. At the same time, you have reported
->>>> other issues with the EFI reservation mechanism, such as:
->>>>
->>>> https://lore.kernel.org/patchwork/patch/1008413/
->>>>
->>>> for which you have given a "Tested-by:". Is that related?
->>> No, I don’t think so. Those warnings are still there even after applied the patch above.
->>
->> Do you also have this series[1] applied? I'd otherwise need your
->> configuration to try and reproduce it, as I can't manage to trigger it
->> on my own setup.
->>
->> Thanks,
->>
->> 	M.
->>
->> [1] https://www.spinics.net/lists/arm-kernel/msg685751.html
-> After applied the above series on the top of the mainline (b00d209), the only
-> warning exist is,
+From: Lars-Peter Clausen <lars@metafoo.de>
 
-OK, so the EFI/GICv3 stuff is sorted.
+Some newer devices from the Sigma-Delta ADC family do have their data
+register at a different address than the current default address. Add a
+parameter to the ad_sigma_delta_info struct which allows to override the
+default address.
 
-> 
-> [    0.000000] WARNING: CPU: 0 PID: 0 at kernel/cpu.c:315
-> lockdep_assert_cpus_held+0x50/0x60
-> [    0.000000] Modules linked in:
-> [    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G                T 4.20.0-rc1+ #9
-> [    0.000000] pstate: 20000085 (nzCv daIf -PAN -UAO)
-> [    0.000000] pc : lockdep_assert_cpus_held+0x50/0x60
-> [    0.000000] lr : lockdep_assert_cpus_held+0x4c/0x60
-> [    0.000000] sp : ffff200009c97b10
-> [    0.000000] x29: ffff200009c97b10 x28: ffff200009e39000 
-> [    0.000000] x27: ffff200009cd1000 x26: ffff200009cd2000 
-> [    0.000000] x25: ffff200009125000 x24: ffff200009cc9868 
-> [    0.000000] x23: ffff200009c7c040 x22: 0000000000001000 
-> [    0.000000] x21: 0000000000000012 x20: ffff200009cc9000 
-> [    0.000000] x19: ffff200009cd5000 x18: 000000000000003f 
-> [    0.000000] x17: 0000000000000000 x16: 0000000000000000 
-> [    0.000000] x15: 0000000000000007 x14: ffff200009461cd4 
-> [    0.000000] x13: ffff2000094695ac x12: ffff2000095149a4 
-> [    0.000000] x11: ffff2000094e4478 x10: ffff2000094e0a50 
-> [    0.000000] x9 : ffff200009516aa8 x8 : ffff0ffbffcc4004 
-> [    0.000000] x7 : 1fffeffbffcc4003 x6 : ffff0ffbffcc4003 
-> [    0.000000] x5 : ffff7fdffe62001b x4 : ffff0ffbffcc4004 
-> [    0.000000] x3 : ffff0ffbffcc4004 x2 : dfff200000000000 
-> [    0.000000] x1 : 0000000000000000 x0 : 0000000000000000 
-> [    0.000000] Call trace:
-> [    0.000000]  lockdep_assert_cpus_held+0x50/0x60
-> [    0.000000]  static_key_enable_cpuslocked+0x30/0xe8
-> [    0.000000]  arch_timer_check_ool_workaround+0x128/0x2d0
-> [    0.000000]  arch_timer_acpi_init+0x274/0x6ac
-> [    0.000000]  acpi_table_parse+0x1ac/0x218
-> [    0.000000]  __acpi_probe_device_table+0x164/0x1ec
-> [    0.000000]  timer_probe+0x1bc/0x254
-> [    0.000000]  time_init+0x44/0x98
-> [    0.000000]  start_kernel+0x4ec/0x7d4
-> [    0.000000] irq event stamp: 0
-> [    0.000000] hardirqs last  enabled at (0): [<0000000000000000>]           (null)
-> [    0.000000] hardirqs last disabled at (0): [<0000000000000000>]           (null)
-> [    0.000000] softirqs last  enabled at (0): [<0000000000000000>]           (null)
-> [    0.000000] softirqs last disabled at (0): [<0000000000000000>]           (null)
-> [    0.000000] ---[ end trace 1dc5085680256ac1 ]—
+Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
+Signed-off-by: Stefan Popa <stefan.popa@analog.com>
+---
+Changes in v2:
+	- Added this commit.
+Changes in v3:
+	- Nothing changed.
+Changes in v4:
+	- Nothing changed.
 
-Now this one: what machine is this? What is the workaround that gets
-applied?
+ drivers/iio/adc/ad_sigma_delta.c       | 22 +++++++++++++++++-----
+ include/linux/iio/adc/ad_sigma_delta.h |  3 +++
+ 2 files changed, 20 insertions(+), 5 deletions(-)
 
-Thanks,
-
-	M.
+diff --git a/drivers/iio/adc/ad_sigma_delta.c b/drivers/iio/adc/ad_sigma_delta.c
+index fc95107..ff5f2da 100644
+--- a/drivers/iio/adc/ad_sigma_delta.c
++++ b/drivers/iio/adc/ad_sigma_delta.c
+@@ -278,6 +278,7 @@ int ad_sigma_delta_single_conversion(struct iio_dev *indio_dev,
+ {
+ 	struct ad_sigma_delta *sigma_delta = iio_device_get_drvdata(indio_dev);
+ 	unsigned int sample, raw_sample;
++	unsigned int data_reg;
+ 	int ret = 0;
+ 
+ 	if (iio_buffer_enabled(indio_dev))
+@@ -305,7 +306,12 @@ int ad_sigma_delta_single_conversion(struct iio_dev *indio_dev,
+ 	if (ret < 0)
+ 		goto out;
+ 
+-	ret = ad_sd_read_reg(sigma_delta, AD_SD_REG_DATA,
++	if (sigma_delta->info->data_reg != 0)
++		data_reg = sigma_delta->info->data_reg;
++	else
++		data_reg = AD_SD_REG_DATA;
++
++	ret = ad_sd_read_reg(sigma_delta, data_reg,
+ 		DIV_ROUND_UP(chan->scan_type.realbits + chan->scan_type.shift, 8),
+ 		&raw_sample);
+ 
+@@ -392,6 +398,7 @@ static irqreturn_t ad_sd_trigger_handler(int irq, void *p)
+ 	struct iio_dev *indio_dev = pf->indio_dev;
+ 	struct ad_sigma_delta *sigma_delta = iio_device_get_drvdata(indio_dev);
+ 	unsigned int reg_size;
++	unsigned int data_reg;
+ 	uint8_t data[16];
+ 	int ret;
+ 
+@@ -401,18 +408,23 @@ static irqreturn_t ad_sd_trigger_handler(int irq, void *p)
+ 			indio_dev->channels[0].scan_type.shift;
+ 	reg_size = DIV_ROUND_UP(reg_size, 8);
+ 
++	if (sigma_delta->info->data_reg != 0)
++		data_reg = sigma_delta->info->data_reg;
++	else
++		data_reg = AD_SD_REG_DATA;
++
+ 	switch (reg_size) {
+ 	case 4:
+ 	case 2:
+ 	case 1:
+-		ret = ad_sd_read_reg_raw(sigma_delta, AD_SD_REG_DATA,
+-			reg_size, &data[0]);
++		ret = ad_sd_read_reg_raw(sigma_delta, data_reg, reg_size,
++			&data[0]);
+ 		break;
+ 	case 3:
+ 		/* We store 24 bit samples in a 32 bit word. Keep the upper
+ 		 * byte set to zero. */
+-		ret = ad_sd_read_reg_raw(sigma_delta, AD_SD_REG_DATA,
+-			reg_size, &data[1]);
++		ret = ad_sd_read_reg_raw(sigma_delta, data_reg, reg_size,
++			&data[1]);
+ 		break;
+ 	}
+ 
+diff --git a/include/linux/iio/adc/ad_sigma_delta.h b/include/linux/iio/adc/ad_sigma_delta.h
+index 730ead1..7e84351 100644
+--- a/include/linux/iio/adc/ad_sigma_delta.h
++++ b/include/linux/iio/adc/ad_sigma_delta.h
+@@ -39,6 +39,8 @@ struct iio_dev;
+  *		if there is just one read-only sample data shift register.
+  * @addr_shift: Shift of the register address in the communications register.
+  * @read_mask: Mask for the communications register having the read bit set.
++ * @data_reg: Address of the data register, if 0 the default address of 0x3 will
++ *   be used.
+  */
+ struct ad_sigma_delta_info {
+ 	int (*set_channel)(struct ad_sigma_delta *, unsigned int channel);
+@@ -47,6 +49,7 @@ struct ad_sigma_delta_info {
+ 	bool has_registers;
+ 	unsigned int addr_shift;
+ 	unsigned int read_mask;
++	unsigned int data_reg;
+ };
+ 
+ /**
 -- 
-Jazz is not dead. It just smells funny...
+2.7.4
+
