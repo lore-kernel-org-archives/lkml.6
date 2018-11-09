@@ -2,139 +2,139 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADE27C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 20:56:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E0FDC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 21:03:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42FEC20827
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 20:56:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cfMpjB2Y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42FEC20827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2146920827
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 21:03:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2146920827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728252AbeKJGif (ORCPT
+        id S1728165AbeKJGps (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 01:38:35 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45514 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726110AbeKJGie (ORCPT
+        Sat, 10 Nov 2018 01:45:48 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:34602 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725799AbeKJGps (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 01:38:34 -0500
-Received: by mail-wr1-f65.google.com with SMTP id k15-v6so3218137wre.12;
-        Fri, 09 Nov 2018 12:56:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=fjiC47mu09Tm8wmDlfD2pLaxgXCXHtrPln6GXxW3maA=;
-        b=cfMpjB2YyDbvUGgoAZkBYpz9GyklSpB898Xs9sLoUVellQ07ZWcaKbcECUNjAP9aPq
-         lYJWAgo4ZbSV+SvuTnu5K4roBjwH4X9KKWsLS6vATOSzT/7WvKZ4gFrI2GFB7clJMZt3
-         g4X0KZ8uCkOA5JPRQsKopsQQ8Zab0gVe0NwFmcZckyPiqAPnQZshANW6KdH7qN2sGE73
-         fF4uAceKw6LaIJw1z1GeDtOtj7G+wTxPl03gRxRR1p4NXp4tXwM4LJLAd433jv6KQVqr
-         vtLgucW7/EHXa4wij69t4Pz3hYaVOl6GuZ0G+ZpqTFbjH7pCvCdLEDFkqtEWqn2iBbli
-         5xMA==
+        Sat, 10 Nov 2018 01:45:48 -0500
+Received: by mail-qk1-f194.google.com with SMTP id a132so4092641qkg.1;
+        Fri, 09 Nov 2018 13:03:29 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=fjiC47mu09Tm8wmDlfD2pLaxgXCXHtrPln6GXxW3maA=;
-        b=tsD7FaT+9pjXj69/HVrMNReyBxxLNDgkBGldpiSbsPHbBlVkx/Xez/QJYcL4VfHUbN
-         jJjee4vzEKwD4Q8JIjb6ujWsOGhxRNGuCZ6VMpLet0z1L3TfUpnccK+luBiw9EdMG+v1
-         MYeBWJTN2kYOGHxM9U/G7UGgd+B5coSoO/YqwuGlhwUyDBBKhjIy/j/GGGzOIyEQd7JS
-         8ne7WKKcNk8IEFVfayKyC3EWrBnP8TZOWN/xS0Pfnjg8eC9+NnODC69d3UqqlrG92pwd
-         72YbZGEkElH77QEGdLMn2acu8f2GNw0E8hwefdJ26oWYeyvuE/Sy6+r64hiXh4WE6wiI
-         /4Qw==
-X-Gm-Message-State: AGRZ1gIaxE9+fwH/tIl0YyMUGIGy2dgicJPUGL0vIBxUeVOB8/PwOc60
-        L1X5h9Uzo5IxQSd08US5JIM=
-X-Google-Smtp-Source: AJdET5flKoCdzsOFhXvFzwcudpuvteHEF5vwrzNXHZoAy4YH4jD82AxjZDUIVBtDOXjOgpOqoBFQMA==
-X-Received: by 2002:adf:ff4e:: with SMTP id u14-v6mr9433490wrs.232.1541796975953;
-        Fri, 09 Nov 2018 12:56:15 -0800 (PST)
-Received: from ?IPv6:2003:ea:8bcf:e300:28f6:f26:503:ad45? (p200300EA8BCFE30028F60F260503AD45.dip0.t-ipconnect.de. [2003:ea:8bcf:e300:28f6:f26:503:ad45])
-        by smtp.googlemail.com with ESMTPSA id x8-v6sm18117320wrd.54.2018.11.09.12.56.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 09 Nov 2018 12:56:15 -0800 (PST)
-Subject: Re: [PATCH net-next v3 1/2] net: phy: replace PHY_HAS_INTERRUPT with
- a check for config_intr and ack_interrupt
-To:     Florian Fainelli <f.fainelli@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>
-Cc:     David Miller <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "maintainer:BROADCOM BCM63XX ARM ARCHITECTURE" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:BROADCOM BCM63XX ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/Amlogic Meson SoC support" 
-        <linux-amlogic@lists.infradead.org>
-References: <203c4d9e-f39a-7a08-46c3-4ee6e61f181e@gmail.com>
- <fd9674b3-4033-95c6-a93e-10c8b5ba2e6a@gmail.com>
- <20181109201307.GV5259@lunn.ch>
- <44b503b8-9f2a-50ac-c4c9-d25258d98ef5@gmail.com>
- <4330cb5b-b1a5-5004-af51-39199943639d@gmail.com>
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-Message-ID: <c067d321-c69e-706d-304a-04e1e477b47c@gmail.com>
-Date:   Fri, 9 Nov 2018 21:56:10 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CoIf/x7u1sm6xzv64OQZepUoudpT+9X/87qTrGsSHR0=;
+        b=Ayf7EVBPzwuLnvVXoNBN5cfAK+rWRq0jCOaDZgtsCVGTsD7Dd5ToIpq18X74HaD3gg
+         3TiEJwMOhb+BeNKtRPRc4SJjzHFfjfBjgxiJGy/1OuiKTKbd4JMZBCu/aTlkc7U+9JsF
+         V9ErDd0aN1q34EI16apN37AlWOtyJefZ7VFvRe6yy+2lukxRDR7LC6qJ/rr6yiDRGrRX
+         Kz2RTkfIrSmleDsmLAeVrOaY8OX1ikP90lvwfWl9h4HD2Nd/cyRn0NOvt98IeiAxMhWr
+         ejjiqS/EJ+e6wjpVb0OJJSDUEvN7XyuiBXo7mLD+YKnJrsqYZsG/OWCnYswnUN661CUf
+         e0lw==
+X-Gm-Message-State: AGRZ1gLMtVg2r9PiU6T7mFRLXRnOPbv8yia4laufPIwmcfC2LO6u3vIj
+        fAr06YW6nHs24tA6D1YXtk4zv1zdyA9vjOiVljc=
+X-Google-Smtp-Source: AJdET5eZ/Ni9rSYUHTpjTDAqZOoEqDO3Rit1FlhMvVYD7Yua+BTOOhSA1P4z5jmOgHNdOlG+nW/M5B2rBQ5bd1aAE64=
+X-Received: by 2002:ac8:7451:: with SMTP id h17mr10040803qtr.319.1541797409160;
+ Fri, 09 Nov 2018 13:03:29 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <4330cb5b-b1a5-5004-af51-39199943639d@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181104155501.14767-1-TheSven73@googlemail.com>
+ <20181104155501.14767-5-TheSven73@googlemail.com> <CAK8P3a3DnKcRxL5dG_pvBVTngFh5eDL2JdEqZzgL0RXJy5dZGw@mail.gmail.com>
+ <CAGngYiWxhSbLLsPaRZ90wEMhhF7e1jt06ZhhRcuhjM53-RYRwg@mail.gmail.com>
+In-Reply-To: <CAGngYiWxhSbLLsPaRZ90wEMhhF7e1jt06ZhhRcuhjM53-RYRwg@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 9 Nov 2018 22:03:12 +0100
+Message-ID: <CAK8P3a3=2PUy4Zv9r7oN3Jrp6+vf5iZ+3wi2VNee61mmnFsXNA@mail.gmail.com>
+Subject: Re: [PATCH anybus v3 4/6] bus: support HMS Anybus-S bus
+To:     Sven Van Asbroeck <thesven73@gmail.com>
+Cc:     svendev@arcx.com, Rob Herring <robh+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Thierry Reding <treding@nvidia.com>,
+        David Lechner <david@lechnology.com>, noralf@tronnes.org,
+        Johan Hovold <johan@kernel.org>,
+        Michal Simek <monstr@monstr.eu>, michal.vokac@ysoft.com,
+        gregkh <gregkh@linuxfoundation.org>,
+        John Garry <john.garry@huawei.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Sebastien Bourdelin <sebastien.bourdelin@savoirfairelinux.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Stuart Yoder <stuyoder@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09.11.2018 21:33, Florian Fainelli wrote:
-> On 11/9/18 12:22 PM, Heiner Kallweit wrote:
->> On 09.11.2018 21:13, Andrew Lunn wrote:
->>> Hi Heiner
->>>
->>>> +static bool phy_drv_supports_irq(struct phy_driver *phydrv)
->>>> +{
->>>> +	return phydrv->config_intr || phydrv->ack_interrupt;
->>>> +}
->>>
->>> Should this be && not || ? I thought both needed to be provided for
->>> interrupts to work. 
->>>
->>> 	   Andrew
->>>
->> I've seen at least one driver which configures interrupts in
->> config_init and doesn't define a config_intr callback
->> (ack_interrupt callback is there)
-> 
-> That driver should probably be fixed, while it most likely does not make
-> any significant difference during probe/connect, since config_init() and
-> config_intr() are virtually happening at the same time, this is not
-> necessarily true when disconnecting from the PHY where we really want
-> config_intr() to effectively disable the interrupts and not leaving
-> something enabled that would now become unmaskable, because no more
-> driver attached.
-> 
-Found the driver: It's the IP101A/G in icplus.c
-It should be easy to fix the behavior and move the interrupt config
-to a config_intr callback. But the last real changes to the driver
-have been done 6 years ago, so I'm not sure there's anybody out
-there who can test.
+On Fri, Nov 9, 2018 at 5:25 PM Sven Van Asbroeck <thesven73@gmail.com> wrote:
+>
+> On Thu, Nov 8, 2018 at 9:07 AM Arnd Bergmann <arnd@arndb.de> wrote:
+> >
+> > > +struct anybus_mbox_hdr {
+> > > +       u16 id;
+> > > +       u16 info;
+> > > +       u16 cmd_num;
+> > > +       u16 data_size;
+> > > +       u16 frame_count;
+> > > +       u16 frame_num;
+> > > +       u16 offset_high;
+> > > +       u16 offset_low;
+> > > +       u16 extended[8];
+> > > +} __packed;
+> >
+> > I don't think you want this to be __packed, it won't change the layout
+> > but instead force byte accesses on architectures that don't have
+> > fast unaligned load/store instructions.
+> >
+> > Instead of the __packed, it's almost always better to ensure that
+> > the structure itself is aligned to a 16-bit address.
+> >
+>
+> A general question about __packed.
+>
+> My current understanding is this:
+> (please tell me if it's incorrect or incomplete)
+>
+> + without __packed, the compiler is free to pad the struct in whatever
+> way it feels is best.
+> + with __packed, the fields have to be laid out EXACTLY as specified.
 
->> Intention of this check is not to ensure that the driver defines
->> everything to make interrupts work. All it states:
->> If at least one of the irq-related callbacks is defined, then
->> we interpret this as indicator that the PHY supports interrupts.
-> 
-> I agree with Andrew here, that this should be an AND here, both
-> callbacks must be implemented for interrupts to work correctly.
-> 
+It's not up to the compiler but the ELF ABI. The rules are largely consisten
+among the architectures we support, but there are a couple of notable
+exceptions:
 
+- ARM OABI requires 32-bit alignment for structures
+- x86-32 aligns 64-bit members to 32-bit rather than 64-bit
+- m68k has some oddities, I think they can pack certain
+  members (don't remember the details)
+
+> Is it possible that someone will compile this on an architecture that 'likes'
+> 16-bit ints to be 32-bit aligned? If such an architecture does not currently
+> exist, could it appear in the future?
+
+I'm fairly sure Linux would not be portable to an architecture like this
+without a major development effort.
+
+> If the compiler changes the padding in the struct, the driver will
+> break, as the struct layout is tightly defined by the anybus spec.
+>
+> Would it be better to stay safe, and keep __packed in case of such
+> tightly defined structures?
+
+Generally I think it does more harm than good. If you require
+__packed attributes for correct structure layout,
+then only apply it to those members that are not naturally
+aligned, and mark the structure itself as __aligned(n) with
+the alignment you expect if that makes a difference.
+
+        Arnd
