@@ -2,101 +2,103 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F291EC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:10:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52965C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:11:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCA3D20892
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:10:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="I2mD7hct"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCA3D20892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1B27020855
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:11:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B27020855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728527AbeKIRuS (ORCPT
+        id S1728530AbeKIRvL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 12:50:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52828 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 12:51:11 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:44256 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727962AbeKIRuS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 12:50:18 -0500
-Received: from localhost (unknown [171.76.98.79])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727519AbeKIRvL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 12:51:11 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5055320855;
-        Fri,  9 Nov 2018 08:10:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541751052;
-        bh=PnTytqRUO10WrgWb54CcstnRWXcCBw/biMxfPDYyHH0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=I2mD7hctXKuH7dcx1DDJIBShbjFdxt3w5A7nfqW9vH5hp+bc5lnMLUfWNHuv3nMHJ
-         ZBt+GvMxSKvLY9a3dCEF54S6MmfyisWN5CTeKXc/ZezSv+jAx5+wNDWYUvvxpGl126
-         abRRewV/K7JFJAIcXWUpPqqrUBpykECWlz6K4qQI=
-Date:   Fri, 9 Nov 2018 13:40:43 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 01/18] arm64: dts: qcom: qcs404: add base dts files
-Message-ID: <20181109081043.GN12092@vkoul-mobl>
-References: <20181108184009.18430-1-vkoul@kernel.org>
- <20181108184009.18430-2-vkoul@kernel.org>
- <CAL_JsqKsCpofdsP_TojGxeCkv59r5Ce7-4Sz1B1V_QCL1eQDVg@mail.gmail.com>
- <20181109050058.GI12092@vkoul-mobl>
+        by mx1.redhat.com (Postfix) with ESMTPS id 45B129981B;
+        Fri,  9 Nov 2018 08:11:45 +0000 (UTC)
+Received: from krava (unknown [10.40.205.8])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 5902319492;
+        Fri,  9 Nov 2018 08:11:43 +0000 (UTC)
+Date:   Fri, 9 Nov 2018 09:11:42 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     leo.yan@linaro.org
+Cc:     acme@redhat.com, Jiri Olsa <jolsa@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Coresight ML <coresight@lists.linaro.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: Question: perf dso support for /proc/kallsyms
+Message-ID: <20181109081142.GH29732@krava>
+References: <20181102025516.GA25374@leoy-ThinkPad-X240s>
+ <20181107141006.GD12870@krava>
+ <20181108085152.GA1925@leoy-ThinkPad-X240s>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181109050058.GI12092@vkoul-mobl>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20181108085152.GA1925@leoy-ThinkPad-X240s>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Fri, 09 Nov 2018 08:11:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09-11-18, 10:30, Vinod Koul wrote:
-
-> > > +       clocks {
-> > > +               xo_board: xo_board {
-> > 
-> > Build your dtbs with "W=12" and fix any warnings. You should get a
-> > warning about '_'.
+On Thu, Nov 08, 2018 at 04:51:52PM +0800, leo.yan@linaro.org wrote:
+> Hi Jiri,
 > 
-> I did built it with W=1 though, so _ is not allowed?
-
-I have fixed most of these with the exception of mmc-ddr-1_8v, as this
-is documented in mmc bindings, so cant change this one. For this one I
-am going to update gcc driver as well
-
-> > > +       cpus {
-> > > +               #address-cells = <1>;
-> > > +               #size-cells = <0>;
-> > > +
-> > > +               CPU0: cpu@0 {
+> On Wed, Nov 07, 2018 at 03:10:06PM +0100, Jiri Olsa wrote:
+> > On Fri, Nov 02, 2018 at 10:55:16AM +0800, leo.yan@linaro.org wrote:
+> > > Hi all,
+> > > 
+> > > Now I found that if use the command 'perf script' for Arm CoreSight trace
+> > > data, it fails to parse kernel symbols if we don't specify kernel vmlinux
+> > > file.   So when we don't specify kernel symbol files then perf tool will
+> > > roll back to use /proc/kallsyms for kernel symbols parsing, as result it will
+> > > run into below flow:
 > > 
-> > unit address is wrong.
-> 
-> Sorry am not sure I follow, can you please explain how..
-
-Fixed now, thanks to Bjorn.
-
-> > > +       memory@80000000 {
-> > > +               device_type = "memory";
-> > > +               /* We expect the bootloader to fill in the reg */
+> > yep, AFAIK if there's no vmlinux found we fallback to /proc/kallsyms
 > > 
-> > Can't you put in a default or base address at least.
+> > > 
+> > >   thread__find_addr_map(thread, cpumode, MAP__FUNCTION, address, &al);
+> > >   map__load(al.map);
+> > >   dso__data_read_offset(al.map->dso, machine, offset, buffer, size);
+> > >     `-> data_read_offset()
+> > 
+> > so what is the actual error you see in the perf script?
+> > unresolved samples? could you please describe your config
+> > and workload?
 > 
-> Okay will try
+> So at my side the error is the CoreSight trace decoder fails to
+> generate samples if the sample has kernel address, thus the decoder
+> doesn't generate any kernel sample if use kallsyms as dso.
+> 
+> For more detailed info is: the CoreSight decoder needs firstly to get
+> dso related info by calling dso__data_read_offset() [1], if we use
+> kallsyms then this function always returns failure then this leads the
+> docoder to discard all kernel samples.
 
-Added now, will send update shortly
+I haven't checked on this code for some time but AFAICS
+before you call dso__data_read_offset you need to check
+  dso->data.status != DSO_DATA_STATUS_ERROR
 
--- 
-~Vinod
+map__load call ahead should take care on setting this and
+find the source of the data
+
+check the intel_pt code (intel_pt_walk_next_insn)
+or for example grab_bb in perf script
+
+I guess you need to have either vmlinux or kcore in place
+to get some data out of it
+
+jirka
