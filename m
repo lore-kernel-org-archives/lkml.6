@@ -2,473 +2,149 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB580C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:13:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB43BC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:14:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 764B620825
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:13:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 764B620825
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7B0E620825
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:14:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B0E620825
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728059AbeKJAyu (ORCPT
+        id S1728169AbeKJAzY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 19:54:50 -0500
-Received: from mga01.intel.com ([192.55.52.88]:22194 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727735AbeKJAyt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 19:54:49 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Nov 2018 07:13:44 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,483,1534834800"; 
-   d="scan'208";a="84598946"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by fmsmga007.fm.intel.com with ESMTP; 09 Nov 2018 07:13:42 -0800
-Received: from andy by smile with local (Exim 4.91)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1gL8Td-0006Fu-Cw; Fri, 09 Nov 2018 17:13:41 +0200
-Date:   Fri, 9 Nov 2018 17:13:41 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v2 6/6] device property: Remove struct property_set
-Message-ID: <20181109151341.GX10650@smile.fi.intel.com>
-References: <20181109142138.54770-1-heikki.krogerus@linux.intel.com>
- <20181109142138.54770-7-heikki.krogerus@linux.intel.com>
+        Fri, 9 Nov 2018 19:55:24 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:56330 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727735AbeKJAzY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 19:55:24 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wA9FECWH124133;
+        Fri, 9 Nov 2018 09:14:12 -0600
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wA9FECUX061561
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 9 Nov 2018 09:14:12 -0600
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 9 Nov
+ 2018 09:14:12 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Fri, 9 Nov 2018 09:14:12 -0600
+Received: from [172.22.160.4] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wA9FEBcb024063;
+        Fri, 9 Nov 2018 09:14:12 -0600
+Subject: Re: [RFC PATCH 1/3] can: m_can: Create m_can core to leverage common
+ code
+To:     Wolfgang Grandegger <wg@grandegger.com>, <mkl@pengutronix.de>,
+        <davem@davemloft.net>
+CC:     <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20181010142055.25271-1-dmurphy@ti.com>
+ <20181010142055.25271-2-dmurphy@ti.com>
+ <52811b27-00c0-f5e2-2b18-608ccf846723@grandegger.com>
+ <349ef8be-f4c7-25cc-2c33-7ce1fd0b0f40@ti.com>
+ <9003a544-83cf-7dce-7f14-4abd292d470e@grandegger.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <6bd6596d-bdcb-512d-dc6c-0e4309c39a66@ti.com>
+Date:   Fri, 9 Nov 2018 09:14:10 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181109142138.54770-7-heikki.krogerus@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <9003a544-83cf-7dce-7f14-4abd292d470e@grandegger.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 09, 2018 at 05:21:38PM +0300, Heikki Krogerus wrote:
-> Replacing struct property_set with the software nodes that
-> were just introduced.
+Wolfgang
+
+On 11/03/2018 05:45 AM, Wolfgang Grandegger wrote:
+> Hello Dan,
 > 
-> The API and functionality for adding properties to devices
-> remains the same, however, the goal is to convert the
-> drivers to use the API for software nodes when the device
-> has no real firmware node, and use the old API only when
-> "extra" build-in properties are needed.
+> Am 31.10.2018 um 21:15 schrieb Dan Murphy:
+>> Wolfgang
+>>
+>> Thanks for the review
+>>
+>> On 10/27/2018 09:19 AM, Wolfgang Grandegger wrote:
+>>> Hello Dan,
+>>>
+>>> for the RFC, could you please just do the necessary changes to the
+>>> existing code. We can discuss about better names, etc. later. For
+>>> the review if the common code I quickly did:
+>>>
+>>>   mv m_can.c m_can_platform.c
+>>>   mv m_can_core.c m_can.c
+>>>
+>>> The file names are similar to what we have for the C_CAN driver.
+>>>
+>>>   s/classdev/priv/
+>>>   variable name s/m_can_dev/priv/
+>>>
+>>> Then your patch 1/3 looks as shown below. I'm going to comment on that
+>>> one. The comments start with "***"....
+>>>
+>>
+>> So you would like me to align the names with the c_can driver?
+> 
+> That would be the obvious choice.
+>> <snip>
+>>>
+>>> *** I didn't review the rest of the patch for now.
+>>>
+>>
+>> snipped the code to reply to the comment.
+>>
+>>> Looking to the generic code, you didn't really change the way
+>>> the driver is accessing the registers. Also the interrupt handling
+>>> and rx polling is as it was before. Does that work properly using
+>>> the SPI interface of the TCAN4x5x?
+>>
+>> I don't want to change any of that yet.  Maybe my cover letter was not clear
+>> or did not go through.
+>>
+>> But the intention was just to break out the functionality to create a MCAN framework
+>> that can be used by devices that contain the Bosch MCAN core and provider their own protocal to access
+>> the registers in the device.
+>>
+>> I don't want to do any functional changes at this time on the IP code itself until we have a framework.
+>> There should be no regression in the io mapped code.
+>>
+>> I did comment on the interrupt handling and asked if a threaded work queue would affect CAN timing.
+>> For the original TCAN driver this was the way it was implemented.
+> 
+> Do threaded interrupts with RX polling make sense? I think we need a
+> common interface allowing to select hard-irqs+napi or threaded-irqs.
 > 
 
-Much better, thanks!
-One minor comment below.
+Sorry for the late reply I have been dealing with personal issues.
 
-> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> ---
->  drivers/base/property.c | 332 ++--------------------------------------
->  1 file changed, 17 insertions(+), 315 deletions(-)
+I guess it would only make sense if the IRQ was edge trigger and not level.
+
+If the message is being processed and the interrupt is not cleared until later the
+device may produce another interrupt which may be missed by the processor for external
+devices.  Or when coming out of suspend the edge may be missed.
+
+Otherwise if it was a level only then they do not make sense to support both and having to
+be able to select between the two would be good.
+
+Dan
+
+> Wolfgang.
 > 
-> diff --git a/drivers/base/property.c b/drivers/base/property.c
-> index e20642759c67..240cd0f40605 100644
-> --- a/drivers/base/property.c
-> +++ b/drivers/base/property.c
-> @@ -18,198 +18,6 @@
->  #include <linux/etherdevice.h>
->  #include <linux/phy.h>
->  
-> -struct property_set {
-> -	struct device *dev;
-> -	struct fwnode_handle fwnode;
-> -	const struct property_entry *properties;
-> -};
-> -
-> -static const struct fwnode_operations pset_fwnode_ops;
-> -
-> -static inline bool is_pset_node(const struct fwnode_handle *fwnode)
-> -{
-> -	return !IS_ERR_OR_NULL(fwnode) && fwnode->ops == &pset_fwnode_ops;
-> -}
-> -
-> -#define to_pset_node(__fwnode)						\
-> -	({								\
-> -		typeof(__fwnode) __to_pset_node_fwnode = __fwnode;	\
-> -									\
-> -		is_pset_node(__to_pset_node_fwnode) ?			\
-> -			container_of(__to_pset_node_fwnode,		\
-> -				     struct property_set, fwnode) :	\
-> -			NULL;						\
-> -	})
-> -
-> -static const struct property_entry *
-> -pset_prop_get(const struct property_set *pset, const char *name)
-> -{
-> -	const struct property_entry *prop;
-> -
-> -	if (!pset || !pset->properties)
-> -		return NULL;
-> -
-> -	for (prop = pset->properties; prop->name; prop++)
-> -		if (!strcmp(name, prop->name))
-> -			return prop;
-> -
-> -	return NULL;
-> -}
-> -
-> -static const void *property_get_pointer(const struct property_entry *prop)
-> -{
-> -	switch (prop->type) {
-> -	case DEV_PROP_U8:
-> -		if (prop->is_array)
-> -			return prop->pointer.u8_data;
-> -		return &prop->value.u8_data;
-> -	case DEV_PROP_U16:
-> -		if (prop->is_array)
-> -			return prop->pointer.u16_data;
-> -		return &prop->value.u16_data;
-> -	case DEV_PROP_U32:
-> -		if (prop->is_array)
-> -			return prop->pointer.u32_data;
-> -		return &prop->value.u32_data;
-> -	case DEV_PROP_U64:
-> -		if (prop->is_array)
-> -			return prop->pointer.u64_data;
-> -		return &prop->value.u64_data;
-> -	case DEV_PROP_STRING:
-> -		if (prop->is_array)
-> -			return prop->pointer.str;
-> -		return &prop->value.str;
-> -	default:
-> -		return NULL;
-> -	}
-> -}
-> -
-> -static const void *pset_prop_find(const struct property_set *pset,
-> -				  const char *propname, size_t length)
-> -{
-> -	const struct property_entry *prop;
-> -	const void *pointer;
-> -
-> -	prop = pset_prop_get(pset, propname);
-> -	if (!prop)
-> -		return ERR_PTR(-EINVAL);
-> -	pointer = property_get_pointer(prop);
-> -	if (!pointer)
-> -		return ERR_PTR(-ENODATA);
-> -	if (length > prop->length)
-> -		return ERR_PTR(-EOVERFLOW);
-> -	return pointer;
-> -}
-> -
-> -static int pset_prop_read_u8_array(const struct property_set *pset,
-> -				   const char *propname,
-> -				   u8 *values, size_t nval)
-> -{
-> -	const void *pointer;
-> -	size_t length = nval * sizeof(*values);
-> -
-> -	pointer = pset_prop_find(pset, propname, length);
-> -	if (IS_ERR(pointer))
-> -		return PTR_ERR(pointer);
-> -
-> -	memcpy(values, pointer, length);
-> -	return 0;
-> -}
-> -
-> -static int pset_prop_read_u16_array(const struct property_set *pset,
-> -				    const char *propname,
-> -				    u16 *values, size_t nval)
-> -{
-> -	const void *pointer;
-> -	size_t length = nval * sizeof(*values);
-> -
-> -	pointer = pset_prop_find(pset, propname, length);
-> -	if (IS_ERR(pointer))
-> -		return PTR_ERR(pointer);
-> -
-> -	memcpy(values, pointer, length);
-> -	return 0;
-> -}
-> -
-> -static int pset_prop_read_u32_array(const struct property_set *pset,
-> -				    const char *propname,
-> -				    u32 *values, size_t nval)
-> -{
-> -	const void *pointer;
-> -	size_t length = nval * sizeof(*values);
-> -
-> -	pointer = pset_prop_find(pset, propname, length);
-> -	if (IS_ERR(pointer))
-> -		return PTR_ERR(pointer);
-> -
-> -	memcpy(values, pointer, length);
-> -	return 0;
-> -}
-> -
-> -static int pset_prop_read_u64_array(const struct property_set *pset,
-> -				    const char *propname,
-> -				    u64 *values, size_t nval)
-> -{
-> -	const void *pointer;
-> -	size_t length = nval * sizeof(*values);
-> -
-> -	pointer = pset_prop_find(pset, propname, length);
-> -	if (IS_ERR(pointer))
-> -		return PTR_ERR(pointer);
-> -
-> -	memcpy(values, pointer, length);
-> -	return 0;
-> -}
-> -
-> -static int pset_prop_count_elems_of_size(const struct property_set *pset,
-> -					 const char *propname, size_t length)
-> -{
-> -	const struct property_entry *prop;
-> -
-> -	prop = pset_prop_get(pset, propname);
-> -	if (!prop)
-> -		return -EINVAL;
-> -
-> -	return prop->length / length;
-> -}
-> -
-> -static int pset_prop_read_string_array(const struct property_set *pset,
-> -				       const char *propname,
-> -				       const char **strings, size_t nval)
-> -{
-> -	const struct property_entry *prop;
-> -	const void *pointer;
-> -	size_t array_len, length;
-> -
-> -	/* Find out the array length. */
-> -	prop = pset_prop_get(pset, propname);
-> -	if (!prop)
-> -		return -EINVAL;
-> -
-> -	if (!prop->is_array)
-> -		/* The array length for a non-array string property is 1. */
-> -		array_len = 1;
-> -	else
-> -		/* Find the length of an array. */
-> -		array_len = pset_prop_count_elems_of_size(pset, propname,
-> -							  sizeof(const char *));
-> -
-> -	/* Return how many there are if strings is NULL. */
-> -	if (!strings)
-> -		return array_len;
-> -
-> -	array_len = min(nval, array_len);
-> -	length = array_len * sizeof(*strings);
-> -
-> -	pointer = pset_prop_find(pset, propname, length);
-> -	if (IS_ERR(pointer))
-> -		return PTR_ERR(pointer);
-> -
-> -	memcpy(strings, pointer, length);
-> -
-> -	return array_len;
-> -}
-> -
->  struct fwnode_handle *dev_fwnode(struct device *dev)
->  {
->  	return IS_ENABLED(CONFIG_OF) && dev->of_node ?
-> @@ -217,51 +25,6 @@ struct fwnode_handle *dev_fwnode(struct device *dev)
->  }
->  EXPORT_SYMBOL_GPL(dev_fwnode);
->  
-> -static bool pset_fwnode_property_present(const struct fwnode_handle *fwnode,
-> -					 const char *propname)
-> -{
-> -	return !!pset_prop_get(to_pset_node(fwnode), propname);
-> -}
-> -
-> -static int pset_fwnode_read_int_array(const struct fwnode_handle *fwnode,
-> -				      const char *propname,
-> -				      unsigned int elem_size, void *val,
-> -				      size_t nval)
-> -{
-> -	const struct property_set *node = to_pset_node(fwnode);
-> -
-> -	if (!val)
-> -		return pset_prop_count_elems_of_size(node, propname, elem_size);
-> -
-> -	switch (elem_size) {
-> -	case sizeof(u8):
-> -		return pset_prop_read_u8_array(node, propname, val, nval);
-> -	case sizeof(u16):
-> -		return pset_prop_read_u16_array(node, propname, val, nval);
-> -	case sizeof(u32):
-> -		return pset_prop_read_u32_array(node, propname, val, nval);
-> -	case sizeof(u64):
-> -		return pset_prop_read_u64_array(node, propname, val, nval);
-> -	}
-> -
-> -	return -ENXIO;
-> -}
-> -
-> -static int
-> -pset_fwnode_property_read_string_array(const struct fwnode_handle *fwnode,
-> -				       const char *propname,
-> -				       const char **val, size_t nval)
-> -{
-> -	return pset_prop_read_string_array(to_pset_node(fwnode), propname,
-> -					   val, nval);
-> -}
-> -
-> -static const struct fwnode_operations pset_fwnode_ops = {
-> -	.property_present = pset_fwnode_property_present,
-> -	.property_read_int_array = pset_fwnode_read_int_array,
-> -	.property_read_string_array = pset_fwnode_property_read_string_array,
-> -};
-> -
->  /**
->   * device_property_present - check if a property of a device is present
->   * @dev: Device whose property is being checked
-> @@ -721,82 +484,25 @@ int fwnode_property_get_reference_args(const struct fwnode_handle *fwnode,
->  }
->  EXPORT_SYMBOL_GPL(fwnode_property_get_reference_args);
->  
-> -/**
-> - * pset_free_set - releases memory allocated for copied property set
-> - * @pset: Property set to release
-> - *
-> - * Function takes previously copied property set and releases all the
-> - * memory allocated to it.
-> - */
-> -static void pset_free_set(struct property_set *pset)
-> -{
-> -	if (!pset)
-> -		return;
-> -
-> -	property_entries_free(pset->properties);
-> -	kfree(pset);
-> -}
-> -
-> -/**
-> - * pset_copy_set - copies property set
-> - * @pset: Property set to copy
-> - *
-> - * This function takes a deep copy of the given property set and returns
-> - * pointer to the copy. Call device_free_property_set() to free resources
-> - * allocated in this function.
-> - *
-> - * Return: Pointer to the new property set or error pointer.
-> - */
-> -static struct property_set *pset_copy_set(const struct property_set *pset)
-> -{
-> -	struct property_entry *properties;
-> -	struct property_set *p;
-> -
-> -	p = kzalloc(sizeof(*p), GFP_KERNEL);
-> -	if (!p)
-> -		return ERR_PTR(-ENOMEM);
-> -
-> -	properties = property_entries_dup(pset->properties);
-> -	if (IS_ERR(properties)) {
-> -		kfree(p);
-> -		return ERR_CAST(properties);
-> -	}
-> -
-> -	p->properties = properties;
-> -	return p;
-> -}
-> -
->  /**
->   * device_remove_properties - Remove properties from a device object.
->   * @dev: Device whose properties to remove.
->   *
->   * The function removes properties previously associated to the device
-> - * secondary firmware node with device_add_properties(). Memory allocated
-> - * to the properties will also be released.
-> + * firmware node with device_add_properties(). Memory allocated to the
-> + * properties will also be released.
->   */
->  void device_remove_properties(struct device *dev)
->  {
 
-> -	struct fwnode_handle *fwnode;
-> -	struct property_set *pset;
-> +	struct fwnode_handle *fwnode = dev_fwnode(dev);
->  
-> -	fwnode = dev_fwnode(dev);
-
-I think you may leave these lines (except pset one) as in the original code.
-
->  	if (!fwnode)
->  		return;
-> -	/*
-> -	 * Pick either primary or secondary node depending which one holds
-> -	 * the pset. If there is no real firmware node (ACPI/DT) primary
-> -	 * will hold the pset.
-> -	 */
-> -	pset = to_pset_node(fwnode);
-> -	if (pset) {
-> -		set_primary_fwnode(dev, NULL);
-> -	} else {
-> -		pset = to_pset_node(fwnode->secondary);
-> -		if (pset && dev == pset->dev)
-> -			set_secondary_fwnode(dev, NULL);
-> +
-> +	if (is_software_node(fwnode->secondary)) {
-> +		fwnode_remove_software_node(fwnode->secondary);
-> +		set_secondary_fwnode(dev, NULL);
->  	}
-> -	if (pset && dev == pset->dev)
-> -		pset_free_set(pset);
->  }
->  EXPORT_SYMBOL_GPL(device_remove_properties);
->  
-> @@ -806,26 +512,22 @@ EXPORT_SYMBOL_GPL(device_remove_properties);
->   * @properties: Collection of properties to add.
->   *
->   * Associate a collection of device properties represented by @properties with
-> - * @dev as its secondary firmware node. The function takes a copy of
-> - * @properties.
-> + * @dev. The function takes a copy of @properties.
-> + *
-> + * WARNING: The callers should not use this function if it is known that there
-> + * is no real firmware node associated with @dev! In that case the callers
-> + * should create a software node and assign it to @dev directly.
->   */
->  int device_add_properties(struct device *dev,
->  			  const struct property_entry *properties)
->  {
-> -	struct property_set *p, pset;
-> -
-> -	if (!properties)
-> -		return -EINVAL;
-> -
-> -	pset.properties = properties;
-> +	struct fwnode_handle *fwnode;
->  
-> -	p = pset_copy_set(&pset);
-> -	if (IS_ERR(p))
-> -		return PTR_ERR(p);
-> +	fwnode = fwnode_create_software_node(properties, NULL);
-> +	if (IS_ERR(fwnode))
-> +		return PTR_ERR(fwnode);
->  
-> -	p->fwnode.ops = &pset_fwnode_ops;
-> -	set_secondary_fwnode(dev, &p->fwnode);
-> -	p->dev = dev;
-> +	set_secondary_fwnode(dev, fwnode);
->  	return 0;
->  }
->  EXPORT_SYMBOL_GPL(device_add_properties);
-> -- 
-> 2.19.1
-> 
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+------------------
+Dan Murphy
