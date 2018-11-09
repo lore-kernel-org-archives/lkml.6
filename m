@@ -2,140 +2,161 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=0.2 required=3.0 tests=DATE_IN_PAST_03_06,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5030C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 00:27:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E20CDC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 00:28:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F98E2081C
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 00:27:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AAB02081C
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 00:28:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=usp-br.20150623.gappssmtp.com header.i=@usp-br.20150623.gappssmtp.com header.b="qzTxhZnh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F98E2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=usp.br
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dEWXr1tW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AAB02081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728211AbeKJKK3 (ORCPT
+        id S1728420AbeKJKLz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 05:10:29 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:54607 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727210AbeKJKK3 (ORCPT
+        Sat, 10 Nov 2018 05:11:55 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:39559 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727210AbeKJKLz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 05:10:29 -0500
-Received: by mail-it1-f196.google.com with SMTP id d6so5488408itl.4
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 16:27:28 -0800 (PST)
+        Sat, 10 Nov 2018 05:11:55 -0500
+Received: by mail-oi1-f196.google.com with SMTP id 192-v6so2987172oii.6;
+        Fri, 09 Nov 2018 16:28:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=usp-br.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Ns5aFoZvRPtJDKv1Do449qIHO53eyfwRwHYGxfzMRrc=;
-        b=qzTxhZnhWLh5zqDVXrJSRsi8fRM9qPWdzRhFPn5JTECm2Y8RM+fz/LS/EUKbSUB3Aq
-         mPyLuWK7UhW/KUE2PsrEpyo0KtxscgVKhV89BI+7KksXtAISI2ReIl+N4/3+wo4QX8XU
-         /OU1M/d+A9QLZCYW0WZBKRxyu6+QFCGKV+PhZ0xZ409EGFOpG0oBlEYfu668z0AiVOAi
-         jrYBfqq2tt/ajK0DQNTnCLhANqrkvhmvRN2PPaavtN6SEW2pGWPADzy+LzJlkWSsXsB0
-         0GyCSFkPIKi0W9vdk17MXeOSNyfoIU8+XqeBEUswEd4UFnwXTkY2mx0I5gtBkqAz213W
-         xbUw==
+        bh=rSGiimb4wwQ0/s+NRUDVwpBe1mUBs+4hLpom055mtdg=;
+        b=dEWXr1tWeu1cFQXd1B+yz7BpPPlcUXnx0ludlx5wd1xf7YrDsYtWK6vybi28WTs/kX
+         HYkf/AKePyd941zdHQJN3Nh/UmZu0pp9QUxIUhvxae/x0JuQL/G/uwAwBB7Ahz0CDC/8
+         lml/9GE9KlpcVb/Qu4mvHCjj9ZK/H84GyMTfVK+bacI649qreHi2wxjw19Zda+g98ybt
+         WDXMAcA8K7w8fbqNWKZ3Qw3qLkzJgOT2nq1/FoPJ+/J2NDy9KydfSYrepwjF1KS9qn4V
+         oIsIdrxQ0Lg2OqwXsoG+OIeT1Ga3SJ8WUsAkoMLSU8SUdWfOw2AuoT9tspQBJ3THg9UZ
+         t4aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Ns5aFoZvRPtJDKv1Do449qIHO53eyfwRwHYGxfzMRrc=;
-        b=DP5Ui5CVcMHcnjmhskcul1M6TNcRlKV9twgjNLO7SafwM6MRNXvaJE/MVgiazwMyoU
-         79FI29t7cu/yG95GfeZayuylYPbJiGhMiZ8LMz1xjVWh7ERMRRzL13oLRWY8XmyYV3ih
-         3Eg7GvXeGQzyailePfiF5yqH/adXflnfg48348DXhT5u5c6Fl9y9wMxfi9iGN/C30RKl
-         X7hP8JZCv+JRH5Es5Sz8QAJSmIbjNxtv5sjU0bRgh/TO80yUhpcSQMFOSVj3HRUGDyMc
-         sXahKaisv5uZq2zEDCFYQS876AFCIl1i8YDxDU7nIp/Oz1rdWHd8VJnYZcwrwV5sQqrP
-         ArMg==
-X-Gm-Message-State: AGRZ1gLg/7a+Hpn4f6/0gYF6ZDMxN1cN1P+JLmXgtVmm+C8hJBo/sewg
-        xxy6WGHdV706Sy3bP6I1pPvEQAc+bNtBqPDXGHmyGw==
-X-Google-Smtp-Source: AJdET5ePWBrn4WbBN1i+6b0qhbbyPMv1qV+tHNIXS8jLV29jS9hgoxd2ZQiJMy/blj8RS1mXGMXZD40T6pgmdiI5f4s=
-X-Received: by 2002:a24:338e:: with SMTP id k136-v6mr3833551itk.86.1541809647507;
- Fri, 09 Nov 2018 16:27:27 -0800 (PST)
+        bh=rSGiimb4wwQ0/s+NRUDVwpBe1mUBs+4hLpom055mtdg=;
+        b=mjdx2ESrsSS1iwp14ahj1bGbnc0KZ0WgNrfYZ0xMZwDk014AzI/OjVZ7cTXMSLWD8H
+         uXia5AyiYfw87x+4hpnA4hS0f9u6OdSPtUQQO97shY+YQgIKjQJYK5Orfq8rZuC5Rc9C
+         MizbuC/Dhr8lRyqAttlCmBdv8jyQ7fM5z4kjVinZM/YueRaDyhIxB3DQhJhVhibqdSzN
+         vICa100w6h7gkxFPShVPvUhE4/AFYtNTe5LkXYsYhy+cIsrMgbO6Y8NgxGW7lBAE0HlV
+         BO2BV3QFeuNFmAvm+4C6Ktkte9hK4sLm8sonPc8IfcX0NPwucpG+0cM9VUGxiiLpha4+
+         AASg==
+X-Gm-Message-State: AGRZ1gIYlxNzEcmNIAep75q+GwYW+4Y9rxBcDivvaxxvySPPSnHs1297
+        5x366jhOzuibtO3aVfpE7RUyG/9CcwjRT+5axrk=
+X-Google-Smtp-Source: AJdET5dAxt0VGTQ817Nft1SQAofiOcGqspbOmKmHmdbjCXNi0PWr2HraTESBNJID37SjYVXCcJuOm+mXaFzmJqyEeZc=
+X-Received: by 2002:aca:d886:: with SMTP id p128-v6mr6289558oig.346.1541809733286;
+ Fri, 09 Nov 2018 16:28:53 -0800 (PST)
 MIME-Version: 1.0
-References: <20181109220044.24843-1-matheus.bernardino@usp.br>
- <20181109220044.24843-6-matheus.bernardino@usp.br> <CAOMZO5DVr7TBoNtB7Bwjv1rpaCdOyg8+iU=iCwBRjSD4iWeBUw@mail.gmail.com>
- <CAHd-oW4wo7fShsNMf7a1udnCepUL+ok+Gk7jzVoEUEUjaPCXpw@mail.gmail.com> <20181110002018.GA3938@kroah.com>
-In-Reply-To: <20181110002018.GA3938@kroah.com>
-From:   Matheus Tavares Bernardino <matheus.bernardino@usp.br>
-Date:   Fri, 9 Nov 2018 22:27:15 -0200
-Message-ID: <CAHd-oW4uWFco9qcVwMphetXE9LK4YJQmDAbBUPBEBCT3UHZSkA@mail.gmail.com>
-Subject: Re: [PATCH 5/6] staging:iio:ad2s90: Add SPDX license identifier
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     festevam@gmail.com, Mark Rutland <mark.rutland@arm.com>,
-        devel@driverdev.osuosl.org, Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com,
-        Rob Herring <robh+dt@kernel.org>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        Victor Colombo <victorcolombo@gmail.com>,
-        Jonathan Cameron <jic23@kernel.org>
+References: <20181108041537.39694-1-joel@joelfernandes.org>
+ <CAG48ez1h=v-JYnDw81HaYJzOfrNhwYksxmc2r=cJvdQVgYM+NA@mail.gmail.com> <A7EC46BC-441A-4A06-9E2F-A26DA88B5320@amacapital.net>
+In-Reply-To: <A7EC46BC-441A-4A06-9E2F-A26DA88B5320@amacapital.net>
+From:   Michael Tirado <mtirado418@gmail.com>
+Date:   Fri, 9 Nov 2018 20:02:14 +0000
+Message-ID: <CAMkWEXOLJ=ymbVjQfA2MD8XA7Y9Lu3ByJYUY-JvpnYKJ5gkY1w@mail.gmail.com>
+Subject: Re: [PATCH v3 resend 1/2] mm: Add an F_SEAL_FUTURE_WRITE seal to memfd
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Jann Horn <jannh@google.com>, joel@joelfernandes.org,
+        LKML <linux-kernel@vger.kernel.org>, jreck@google.com,
+        john.stultz@linaro.org, tkjos@google.com,
+        gregkh@linuxfoundation.org, hch@infradead.org,
+        viro@zeniv.linux.org.uk, Andrew Morton <akpm@linux-foundation.org>,
+        dancol@google.com, bfields@fieldses.org, jlayton@kernel.org,
+        khalid.aziz@oracle.com, Lei.Yang@windriver.com,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-mm@kvack.org, marcandre.lureau@redhat.com,
+        mike.kravetz@oracle.com, minchan@kernel.org, shuah@kernel.org,
+        valdis.kletnieks@vt.edu, hughd@google.com,
+        linux-api@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 9, 2018 at 10:20 PM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Fri, Nov 9, 2018 at 9:41 PM Andy Lutomirski <luto@amacapital.net> wrote:
 >
-> On Fri, Nov 09, 2018 at 09:19:52PM -0200, Matheus Tavares Bernardino wrote:
-> > On Fri, Nov 9, 2018 at 8:13 PM Fabio Estevam <festevam@gmail.com> wrote:
-> > >
-> > > Hi Matheus,
-> > >
+>
+>
+> > On Nov 9, 2018, at 1:06 PM, Jann Horn <jannh@google.com> wrote:
 > >
-> > Hi, Fabio
+> > +linux-api for API addition
+> > +hughd as FYI since this is somewhat related to mm/shmem
 > >
-> > > On Fri, Nov 9, 2018 at 8:01 PM Matheus Tavares
-> > > <matheus.bernardino@usp.br> wrote:
-> > > >
-> > > > This patch adds the SPDX GPL-2.0-only license identifier to ad2s90.c,
-> > > > which solves the checkpatch.pl warning:
-> > > > "WARNING: Missing or malformed SPDX-License-Identifier tag in line 1".
-> > > >
-> > > > Signed-off-by: Matheus Tavares <matheus.bernardino@usp.br>
-> > > > ---
-> > > >  drivers/staging/iio/resolver/ad2s90.c | 1 +
-> > > >  1 file changed, 1 insertion(+)
-> > > >
-> > > > diff --git a/drivers/staging/iio/resolver/ad2s90.c b/drivers/staging/iio/resolver/ad2s90.c
-> > > > index 949ff55ac6b0..f439da721df8 100644
-> > > > --- a/drivers/staging/iio/resolver/ad2s90.c
-> > > > +++ b/drivers/staging/iio/resolver/ad2s90.c
-> > > > @@ -1,3 +1,4 @@
-> > > > +// SPDX-License-Identifier: GPL-2.0-only
-> > >
-> > > This should be:
-> > > // SPDX-License-Identifier: GPL-2.0
+> > On Fri, Nov 9, 2018 at 9:46 PM Joel Fernandes (Google)
+> > <joel@joelfernandes.org> wrote:
+> >> Android uses ashmem for sharing memory regions. We are looking forward
+> >> to migrating all usecases of ashmem to memfd so that we can possibly
+> >> remove the ashmem driver in the future from staging while also
+> >> benefiting from using memfd and contributing to it. Note staging drivers
+> >> are also not ABI and generally can be removed at anytime.
+> >>
+> >> One of the main usecases Android has is the ability to create a region
+> >> and mmap it as writeable, then add protection against making any
+> >> "future" writes while keeping the existing already mmap'ed
+> >> writeable-region active.  This allows us to implement a usecase where
+> >> receivers of the shared memory buffer can get a read-only view, while
+> >> the sender continues to write to the buffer.
+
+Oh I remember trying this years ago with a new seal, F_SEAL_WRITE_PEER,
+or something like that.
+
 > >
-> > Hm, but it seems that the identifier "GPL-2.0" is deprecated, look:
-> > https://spdx.org/licenses/GPL-2.0.html. It has been updated to
-> > "GPL-2.0-only" in license list v3
-> > (https://spdx.org/licenses/GPL-2.0-only.html). Is there some other
-> > reason to use the deprecated "GPL-2.0" that I'm not aware of?
->
-> Yes, please read the in-kernel documentation for all of this at:
->         Documentation/process/license-rules.rst
->
-> Long story short, we started the adding of these tags to the kernel
-> before the crazyness of the "-only" markings for GPL in spdx.  Let's
-> keep it this way for now, if we ever get the whole kernel finished, then
-> we can revisit the markings and maybe do a wholesale conversion, if it's
-> really needed.
->
+> > So you're fiddling around with the file, but not the inode? How are
+> > you preventing code like the following from re-opening the file as
+> > writable?
+> >
+> > $ cat memfd.c
+> > #define _GNU_SOURCE
+> > #include <unistd.h>
+> > #include <sys/syscall.h>
+> > #include <printf.h>
+> > #include <fcntl.h>
+> > #include <err.h>
+> > #include <stdio.h>
+> >
+> > int main(void) {
+> >  int fd = syscall(__NR_memfd_create, "testfd", 0);
+> >  if (fd == -1) err(1, "memfd");
+> >  char path[100];
+> >  sprintf(path, "/proc/self/fd/%d", fd);
+> >  int fd2 = open(path, O_RDWR);
+> >  if (fd2 == -1) err(1, "reopen");
+> >  printf("reopen successful: %d\n", fd2);
+> > }
+> > $ gcc -o memfd memfd.c
+> > $ ./memfd
+> > reopen successful: 4
+> > $
+> >
 
-Got it, thanks for the explanation! I'll correct this in v2.
+The race condition between memfd_create and applying seals in fcntl?
+I think it would be possible to block new write mappings from peer processes if
+there is a new memfd_create api that accepts seals. Allowing caller to
+set a seal
+like the one I proposed years ago, though in a race-free manner. Then
+also consider
+how to properly handle blocking inherited +W mapping through
+clone/fork. Maybe I'm
+forgetting some other pitfalls?
 
-Thanks,
-Matheus
 
-> thanks,
+
+> > That aside: I wonder whether a better API would be something that
+> > allows you to create a new readonly file descriptor, instead of
+> > fiddling with the writability of an existing fd.
 >
-> greg k-h
+> Every now and then I try to write a patch to prevent using proc to reopen a file with greater permission than the original open.
+>
+> I like your idea to have a clean way to reopen a a memfd with reduced permissions. But I would make it a syscall instead and maybe make it only work for memfd at first.  And the proc issue would need to be fixed, too.
+
+IMO the best solution would handle the issue at memfd creation time by
+removing the race condition.
