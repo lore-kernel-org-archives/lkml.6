@@ -2,126 +2,152 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52884C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 13:50:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AD40C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 13:50:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC28B20827
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 13:50:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C74AE20840
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 13:50:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T/JLRYYa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC28B20827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="J92Nkn/7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C74AE20840
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727991AbeKIXa4 (ORCPT
+        id S1728031AbeKIXbM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 18:30:56 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:45337 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727793AbeKIXaz (ORCPT
+        Fri, 9 Nov 2018 18:31:12 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:43851 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727781AbeKIXbM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 18:30:55 -0500
-Received: by mail-pf1-f194.google.com with SMTP id p17-v6so946771pfj.12;
-        Fri, 09 Nov 2018 05:50:13 -0800 (PST)
+        Fri, 9 Nov 2018 18:31:12 -0500
+Received: by mail-io1-f67.google.com with SMTP id t81-v6so1265766iod.10
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 05:50:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=BjK7PR5O39/BvvFoC8MLSk5lVwNceqZ0xl84trD3NMk=;
-        b=T/JLRYYaoB6x/nVlB8hrhrJi5wuxl1Qn+Si9FD7rAcbx/46DpzJYNVLhZaEV6ktrv2
-         FbWvNC6LWtUlzA+UDkFaJSs1RDrjm2ovfBlfy64DoSqKWHBVIF3ZpIGB9madIyuu/+m2
-         xxAcvRfM9vVHWnL8IMOMnSvI+eP4F3L65ufPnkjrErGGrThLIDutVPXdIkRWKRHUUZSS
-         F3osLLoI9JidLMBflBUl2zLy0cEHMrfR6nqkWnXf1IcMRL+z9/e/yWhQwO6tCBlaIbdy
-         2J4tKVTb1SuHLOog5wCJ49ye3VYOwq/PDYy+ClnxEPzBkGch6pySTyiPAejtkqSDeBdv
-         Rk9g==
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=XCG/V04jlegloMSWsjMPIYWmvNahieLfPQIduirITOQ=;
+        b=J92Nkn/7mFYY7NnCBUAv+ehrb1wild+Cj7uEP9ILYzZubTMZtab0pgFoN8yAkYJvoU
+         dljxioQr6w+VTC0BJONTFYlBBg44vjUslUOvnzwhB/9BHPNoqeqpHMI7xk2CoMktW4BH
+         BVMZPhcZrpdtvFp3ZKK+tsVAEBi8X4KeAXalM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=BjK7PR5O39/BvvFoC8MLSk5lVwNceqZ0xl84trD3NMk=;
-        b=B8FY8+IXzHW2Zl1bpnWBcw7vQHa8TEBssoMnva6YaHwka8G9Sqvw87wY0pD6RpbuCu
-         t0DF1fHDOHGKrmt0eCfYo/60C/qu51/irD+Y3R7SRvYIw8/byMk8bUkIPYXbGUUYyBo8
-         q9vox2GqBYXK9+3tR/f90wmxYLBYyqsT/FrzxYkVWK7WlZRPPaM46mf387r4Rk6w+RgU
-         I/dEXz5XRS2W8461Sd92pFEalu+49GUOINRbawURf0ugNtHo0FpO6Nh36bg2nMwGxrcm
-         IqSe9jciPZRVedJOv4vk1G9s8pMtHCRJz/iSUYAlSrs84I/TM/kbCcpr03ZdHze+wl42
-         +1jA==
-X-Gm-Message-State: AGRZ1gJ0R7KszRtG20kfXVjImEjvodLyG7OEpc65Ml1gkEP3YtMYetou
-        Aqhv/DmQb3eIsigAKUzZ+X/FfDn7
-X-Google-Smtp-Source: AJdET5cD8285k5TvjHmP+GjPInjXCiQC43YGcUsOrLFu/0DPzKf21EFpHNqsdJyoJ2bizNiQCdcb9g==
-X-Received: by 2002:a62:8012:: with SMTP id j18-v6mr9006420pfd.202.1541771412178;
-        Fri, 09 Nov 2018 05:50:12 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id g190sm6802355pgc.28.2018.11.09.05.50.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 09 Nov 2018 05:50:11 -0800 (PST)
-Subject: Re: [PATCH 4.4 000/114] 4.4.163-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-References: <20181108215059.051093652@linuxfoundation.org>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <86d97b16-dbbc-27bd-ad7b-9a96210070a4@roeck-us.net>
-Date:   Fri, 9 Nov 2018 05:50:09 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=XCG/V04jlegloMSWsjMPIYWmvNahieLfPQIduirITOQ=;
+        b=B1ZsKSGhPAEf1V+PqotFOU1kGFKaiWgClONwQXoLBlkyE7fNvnp5cNC5+H8HYhHF1z
+         hJN0VRlB0rqQcBVeOU24MlYbtAkkaN9YVohje49BGBmaNqtDdw3pn41VqTzIg22zMhJH
+         tM7LtlFEOQK/v/WmjODhIyDo8CjG4x59HtLTJhbZsBwbc0fX83TOUC5fkPVAA86Pt1Bu
+         DxJfWj/kROWN0nBwg1r4c+bRxY1J/vGnEXQCprGCcnODEX9BTXTNaKIFZFkWXcSzvciN
+         Ik+c5hM5pkX4l+OOq1/wP0W76ZJHVUn9u8zVnavKQey3QFkGOkQ+/i5u4G14h2cAsMr/
+         jX3w==
+X-Gm-Message-State: AGRZ1gJsU472C89x7SL1TdXsoGKDysKVuQggXpt6Is94TUjZe2hFPBHv
+        c17Ia7eoW7klXVYQiDx3/ot5lhZoDyUw63CJ1NWMijp6Uc8=
+X-Google-Smtp-Source: AJdET5cNJEf9aBvr/z6NFl0OfM5dgY13bjeJBWwYAphWtxflSTNqjVFr1vC/UdGVUE5DtXnc98LNs01sC1e4HgHRZs4=
+X-Received: by 2002:a6b:37c2:: with SMTP id e185-v6mr7094932ioa.173.1541771428539;
+ Fri, 09 Nov 2018 05:50:28 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181108215059.051093652@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a6b:4f16:0:0:0:0:0 with HTTP; Fri, 9 Nov 2018 05:50:27 -0800 (PST)
+In-Reply-To: <20181109072811.GB86700@gmail.com>
+References: <cover.1541711457.git.jpoimboe@redhat.com> <20181109072811.GB86700@gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Fri, 9 Nov 2018 14:50:27 +0100
+Message-ID: <CAKv+Gu-3OfrgGafO3OY3hAir723tD6shEaWTLJ5Ec4YcW4yZyQ@mail.gmail.com>
+Subject: Re: [PATCH RFC 0/3] Static calls
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@aculab.com>,
+        Borislav Petkov <bp@alien8.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/8/18 1:50 PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.4.163 release.
-> There are 114 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat Nov 10 21:50:28 UTC 2018.
-> Anything received after that time might be too late.
-> 
+On 9 November 2018 at 08:28, Ingo Molnar <mingo@kernel.org> wrote:
+>
+> * Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+>
+>> These patches are related to two similar patch sets from Ard and Steve:
+>>
+>> - https://lkml.kernel.org/r/20181005081333.15018-1-ard.biesheuvel@linaro.org
+>> - https://lkml.kernel.org/r/20181006015110.653946300@goodmis.org
+>>
+>> The code is also heavily inspired by the jump label code, as some of the
+>> concepts are very similar.
+>>
+>> There are three separate implementations, depending on what the arch
+>> supports:
+>>
+>>   1) CONFIG_HAVE_STATIC_CALL_OPTIMIZED: patched call sites - requires
+>>      objtool and a small amount of arch code
+>>
+>>   2) CONFIG_HAVE_STATIC_CALL_UNOPTIMIZED: patched trampolines - requires
+>>      a small amount of arch code
+>>
+>>   3) If no arch support, fall back to regular function pointers
+>>
+>>
+>> TODO:
+>>
+>> - I'm not sure about the objtool approach.  Objtool is (currently)
+>>   x86-64 only, which means we have to use the "unoptimized" version
+>>   everywhere else.  I may experiment with a GCC plugin instead.
+>
+> I'd prefer the objtool approach. It's a pretty reliable first-principles
+> approach while GCC plugin would have to be replicated for Clang and any
+> other compilers, etc.
+>
 
-Building i386:allnoconfig ... failed
---------------
-Error log:
-kernel/built-in.o: In function `cpu_startup_entry':
-(.text+0x1a2e9): undefined reference to `cpuidle_devices'
-make[1]: *** [vmlinux] Error 1
-make: *** [sub-make] Error 2
+I implemented the GCC plugin approach here for arm64
 
+https://git.kernel.org/pub/scm/linux/kernel/git/ardb/linux.git/log/?h=static-calls
 
-Bisect results:
+That implements both the unoptimized and the optimized versions.
 
-# bad: [70cfa9ca6595d3238b36b9f6b36cf6e18dfd2c3b] Linux 4.4.163-rc1
-# good: [24c2342b8e51ab3185e68470709904150a1e3ee0] Linux 4.4.162
-git bisect start 'HEAD' 'v4.4.162'
-# good: [008f87b2e9c5db7dd3756832a9e449415d837c7d] ixgbe: fix RSS limit for X550
-git bisect good 008f87b2e9c5db7dd3756832a9e449415d837c7d
-# good: [5d92c564ec3dd9a5833974f3ce113cc7a94e0f6a] mtd: spi-nor: Add support for is25wp series chips
-git bisect good 5d92c564ec3dd9a5833974f3ce113cc7a94e0f6a
-# good: [71fba871e4a07400eb1400b1e6b45ca3a5487834] rtnetlink: Disallow FDB configuration for non-Ethernet device
-git bisect good 71fba871e4a07400eb1400b1e6b45ca3a5487834
-# good: [4d1024282b1259209bb4601f4b51dce367cf8a02] IB/ucm: Fix Spectre v1 vulnerability
-git bisect good 4d1024282b1259209bb4601f4b51dce367cf8a02
-# good: [fe9d47ae282ebd2bb10a36ec2bace1afd0ba050e] Input: elan_i2c - add ACPI ID for Lenovo IdeaPad 330-15IGM
-git bisect good fe9d47ae282ebd2bb10a36ec2bace1afd0ba050e
-# bad: [573e8431fe60169157440664f74c6af254b3b00e] x86/percpu: Fix this_cpu_read()
-git bisect bad 573e8431fe60169157440664f74c6af254b3b00e
-# good: [be0ac51f4181a18c458080d79919aeee17ce0c68] sched/fair: Fix throttle_list starvation with low CFS quota
-git bisect good be0ac51f4181a18c458080d79919aeee17ce0c68
-# first bad commit: [573e8431fe60169157440664f74c6af254b3b00e] x86/percpu: Fix this_cpu_read()
+I do take your point about GCC and other compilers, but on arm64 we
+don't have a lot of choice.
 
-Full results will follow later, after builds are complete.
+As far as I can tell, the GCC plugin is generic (i.e., it does not
+rely on any ARM specific passes, but obviously, this requires a *lot*
+of testing and validation to be taken seriously.
 
-Guenter
+>> - Does this feature have much value without retpolines?  If not, should
+>>   we make it depend on retpolines somehow?
+>
+> Paravirt patching, as you mention in your later reply?
+>
+>> - Find some actual users of the interfaces (tracepoints? crypto?)
+>
+> I'd be very happy with a demonstrated paravirt optimization already -
+> i.e. seeing the before/after effect on the vmlinux with an x86 distro
+> config.
+>
+> All major Linux distributions enable CONFIG_PARAVIRT=y and
+> CONFIG_PARAVIRT_XXL=y on x86 at the moment, so optimizing it away as much
+> as possible in the 99.999% cases where it's not used is a primary
+> concern.
+>
+> All other usecases are bonus, but it would certainly be interesting to
+> investigate the impact of using these APIs for tracing: that too is a
+> feature enabled everywhere but utilized only by a small fraction of Linux
+> users - so literally every single cycle or instruction saved or hot-path
+> shortened is a major win.
+>
+> Thanks,
+>
+>         Ingo
