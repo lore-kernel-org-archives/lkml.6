@@ -2,113 +2,182 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F223C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 11:04:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 666B0C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 11:04:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08D9620883
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 11:04:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08D9620883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id 27C9520840
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 11:04:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27C9520840
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728065AbeKIUoX (ORCPT
+        id S1728195AbeKIUok (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 15:44:23 -0500
-Received: from sauhun.de ([88.99.104.3]:44510 "EHLO pokefinder.org"
+        Fri, 9 Nov 2018 15:44:40 -0500
+Received: from foss.arm.com ([217.140.101.70]:57276 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727532AbeKIUoX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 15:44:23 -0500
-Received: from localhost (p54B3380A.dip0.t-ipconnect.de [84.179.56.10])
-        by pokefinder.org (Postfix) with ESMTPSA id 87C893E4482;
-        Fri,  9 Nov 2018 12:04:14 +0100 (CET)
-Date:   Fri, 9 Nov 2018 12:04:14 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Dien Pham <dien.pham.ry@renesas.com>
-Subject: Re: [PATCH] mfd: bd9571mwv: add volatile register to make DVFS work
-Message-ID: <20181109110413.GC1031@kunai>
-References: <20181003135841.4984-1-wsa+renesas@sang-engineering.com>
+        id S1727532AbeKIUok (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 15:44:40 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CE33AA78;
+        Fri,  9 Nov 2018 03:04:33 -0800 (PST)
+Received: from [10.162.0.72] (p8cg001049571a15.blr.arm.com [10.162.0.72])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C58013F718;
+        Fri,  9 Nov 2018 03:04:31 -0800 (PST)
+Subject: Re: [RFC PATCH] mm, memory_hotplug: do not clear numa_node
+ association after hot_remove
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <OSalvador@suse.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Vlastimil Babka <vbabka@suse.cz>
+References: <20181108100413.966-1-mhocko@kernel.org>
+ <20181108102917.GV27423@dhcp22.suse.cz>
+ <048c04ae-7394-d03f-813e-42acdc965dd2@arm.com>
+ <20181109075914.GD18390@dhcp22.suse.cz>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <f9dd3dd0-3b20-446f-a131-70180fb733bf@arm.com>
+Date:   Fri, 9 Nov 2018 16:34:29 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="5G06lTa6Jq83wMTw"
-Content-Disposition: inline
-In-Reply-To: <20181003135841.4984-1-wsa+renesas@sang-engineering.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181109075914.GD18390@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---5G06lTa6Jq83wMTw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 03, 2018 at 03:58:41PM +0200, Wolfram Sang wrote:
-> From: Dien Pham <dien.pham.ry@renesas.com>
->=20
-> Because BD9571MWV_DVFS_MONIVDAC is not defined in the volatile table,
-> the physical register value is not updated by regmap and DVFS doesn't
-> work as expected. Fix it!
->=20
-> Signed-off-by: Dien Pham <dien.pham.ry@renesas.com>
-> [wsa: rebase, add 'Fixes', reword commit message]
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Fixes: d3ea21272094 ("mfd: Add ROHM BD9571MWV-M MFD PMIC driver")
-> ---
+On 11/09/2018 01:29 PM, Michal Hocko wrote:
+> On Fri 09-11-18 09:12:09, Anshuman Khandual wrote:
+>>
+>>
+>> On 11/08/2018 03:59 PM, Michal Hocko wrote:
+>>> [Removing Wen Congyang and Tang Chen from the CC list because their
+>>>  emails bounce. It seems that we will never learn about their motivation]
+>>>
+>>> On Thu 08-11-18 11:04:13, Michal Hocko wrote:
+>>>> From: Michal Hocko <mhocko@suse.com>
+>>>>
+>>>> Per-cpu numa_node provides a default node for each possible cpu. The
+>>>> association gets initialized during the boot when the architecture
+>>>> specific code explores cpu->NUMA affinity. When the whole NUMA node is
+>>>> removed though we are clearing this association
+>>>>
+>>>> try_offline_node
+>>>>   check_and_unmap_cpu_on_node
+>>>>     unmap_cpu_on_node
+>>>>       numa_clear_node
+>>>>         numa_set_node(cpu, NUMA_NO_NODE)
+>>>>
+>>>> This means that whoever calls cpu_to_node for a cpu associated with such
+>>>> a node will get NUMA_NO_NODE. This is problematic for two reasons. First
+>>>> it is fragile because __alloc_pages_node would simply blow up on an
+>>>> out-of-bound access. We have encountered this when loading kvm module
+>>>> BUG: unable to handle kernel paging request at 00000000000021c0
+>>>> IP: [<ffffffff8119ccb3>] __alloc_pages_nodemask+0x93/0xb70
+>>>> PGD 800000ffe853e067 PUD 7336bbc067 PMD 0
+>>>> Oops: 0000 [#1] SMP
+>>>> [...]
+>>>> CPU: 88 PID: 1223749 Comm: modprobe Tainted: G        W          4.4.156-94.64-default #1
+>>>> task: ffff88727eff1880 ti: ffff887354490000 task.ti: ffff887354490000
+>>>> RIP: 0010:[<ffffffff8119ccb3>]  [<ffffffff8119ccb3>] __alloc_pages_nodemask+0x93/0xb70
+>>>> RSP: 0018:ffff887354493b40  EFLAGS: 00010202
+>>>> RAX: 00000000000021c0 RBX: 0000000000000000 RCX: 0000000000000000
+>>>> RDX: 0000000000000000 RSI: 0000000000000002 RDI: 00000000014000c0
+>>>> RBP: 00000000014000c0 R08: ffffffffffffffff R09: 0000000000000000
+>>>> R10: ffff88fffc89e790 R11: 0000000000014000 R12: 0000000000000101
+>>>> R13: ffffffffa0772cd4 R14: ffffffffa0769ac0 R15: 0000000000000000
+>>>> FS:  00007fdf2f2f1700(0000) GS:ffff88fffc880000(0000) knlGS:0000000000000000
+>>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>> CR2: 00000000000021c0 CR3: 00000077205ee000 CR4: 0000000000360670
+>>>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>>>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>>>> Stack:
+>>>>  0000000000000086 014000c014d20400 ffff887354493bb8 ffff882614d20f4c
+>>>>  0000000000000000 0000000000000046 0000000000000046 ffffffff810ac0c9
+>>>>  ffff88ffe78c0000 ffffffff0000009f ffffe8ffe82d3500 ffff88ff8ac55000
+>>>> Call Trace:
+>>>>  [<ffffffffa07476cd>] alloc_vmcs_cpu+0x3d/0x90 [kvm_intel]
+>>>>  [<ffffffffa0772c0c>] hardware_setup+0x781/0x849 [kvm_intel]
+>>>>  [<ffffffffa04a1c58>] kvm_arch_hardware_setup+0x28/0x190 [kvm]
+>>>>  [<ffffffffa04856fc>] kvm_init+0x7c/0x2d0 [kvm]
+>>>>  [<ffffffffa0772cf2>] vmx_init+0x1e/0x32c [kvm_intel]
+>>>>  [<ffffffff8100213a>] do_one_initcall+0xca/0x1f0
+>>>>  [<ffffffff81193886>] do_init_module+0x5a/0x1d7
+>>>>  [<ffffffff81112083>] load_module+0x1393/0x1c90
+>>>>  [<ffffffff81112b30>] SYSC_finit_module+0x70/0xa0
+>>>>  [<ffffffff8161cbc3>] entry_SYSCALL_64_fastpath+0x1e/0xb7
+>>>> DWARF2 unwinder stuck at entry_SYSCALL_64_fastpath+0x1e/0xb7
+>>>>
+>>>> on an older kernel but the code is basically the same in the current
+>>>> Linus tree as well. alloc_vmcs_cpu could use alloc_pages_nodemask which
+>>>> would recognize NUMA_NO_NODE and use alloc_pages_node which would translate
+>>>> it to numa_mem_id but that is wrong as well because it would use a cpu
+>>>> affinity of the local CPU which might be quite far from the original node.
+>>
+>> But then the original node is getting/already off-lined. The allocation is
+>> going to come from a different node. alloc_pages_node() at least steer the
+>> allocation alway from VM_BUG_ON() because of NUMA_NO_NODE by replacing it
+>> with numa_mem_id().
+>>
+>> If node fallback order is important for this allocation then could not it
+>> use __alloc_pages_nodemask() directly giving preference for its zonelist
+>> node and nodemask. Just curious.
+> 
+> How does the caller get the right node to allocate from? We do have the
+> proper zone list for the offline node so why not use it?
+I get your point. NODE_DATA() for the off lined node is still around and
+so does the proper zone list for allocation, so why the caller should work
+around the problem by building it's preferred nodemask_t etc. No problem,
+I was just curious.
 
-Any blockers for this one?
+> 
+>>>> It is also reasonable to expect that cpu_to_node will provide a sane value
+>>>> and there might be many more callers like that.
+>>
+>> AFAICS there are two choices here. Either mark them NUMA_NO_NODE for all
+>> cpus of a node going offline or keep the existing mapping in case the node
+>> comes back again.
+> 
+> Or update the mapping to the closeses node. I have chosen to keep the
+> mapping because it is the easiest and the most natural one.
 
->=20
-> Grabbed from the BSP and confirmed by the datasheet. The register is RO
-> and reflecting states depending on other registers.
->=20
->  drivers/mfd/bd9571mwv.c | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/mfd/bd9571mwv.c b/drivers/mfd/bd9571mwv.c
-> index 503979c81dae..fab3cdc27ed6 100644
-> --- a/drivers/mfd/bd9571mwv.c
-> +++ b/drivers/mfd/bd9571mwv.c
-> @@ -59,6 +59,7 @@ static const struct regmap_access_table bd9571mwv_writa=
-ble_table =3D {
->  };
-> =20
->  static const struct regmap_range bd9571mwv_volatile_yes_ranges[] =3D {
-> +	regmap_reg_range(BD9571MWV_DVFS_MONIVDAC, BD9571MWV_DVFS_MONIVDAC),
->  	regmap_reg_range(BD9571MWV_GPIO_IN, BD9571MWV_GPIO_IN),
->  	regmap_reg_range(BD9571MWV_GPIO_INT, BD9571MWV_GPIO_INT),
->  	regmap_reg_range(BD9571MWV_INT_INTREQ, BD9571MWV_INT_INTREQ),
-> --=20
-> 2.19.0
->=20
+Agreed.
 
---5G06lTa6Jq83wMTw
-Content-Type: application/pgp-signature; name="signature.asc"
+> 
+>>>> The second problem is that __register_one_node relies on cpu_to_node
+>>>> to properly associate cpus back to the node when it is onlined. We do
+>>>> not want to lose that link as there is no arch independent way to get it
+>>>> from the early boot time AFAICS.
+>>
+>> Retaining the links seems to be right unless unmap_cpu_on_node() is sort
+>> of a weak callback letting arch to decide.
+>>
+>>>>
+>>>> Drop the whole check_and_unmap_cpu_on_node machinery and keep the
+>>>> association to fix both issues. The NODE_DATA(nid) is not deallocated
+>> Though retaining the link is a problem in itself but the allocation related
+>> crash could be solved by exploring __alloc_pages_nodemask() options.
+> 
+> Yes that is the case but this looks like a very fragile fix to me. If
+> you are getting a node number from cpu_to_node then you shouldn't really
+> think about obscurities like which allocation function to use, right?
+> You should just get a valid node number.
 
------BEGIN PGP SIGNATURE-----
+Probably not worth it for the caller.
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvlaaoACgkQFA3kzBSg
-KbZmyQ/9HdBVCRii9XEPQwsnVJVfjBRwXDZd42cdiN7Oid//ecgUav6omCPP5U3M
-uPw3FHXM8tbTqMw5pTkc7SresKAHgcP8xnoZpjwdBt2p8EPTAhAHjbYX396jTaOR
-qLOIhMD8PgWm0/4Swo5XylkPI5eQ54D8uLPYTPbWe1BZ4ZsbL2g/TLjAHpo7Xxdn
-wcrJw00+RhB55s5Mm8obz4Yt8zk4KNzWC/5dd0dsbBUtEd6sxT7dspN7kD532uUv
-CRYj3+IEhwEdbTX1Ez/d7Ha5s2d/M6g3DYDVjdg6R5lWvZ498H5Wmg0KZ9lVxSjL
-n9ZqxtLrtPHAHCdQlHoaQeR19J5pSZoIhrPf/zz22YEJq6IqLEkSQW7X3ulFJhCY
-042TzL2zzGcTU4V06YSZoeiPri5BhPYwhNkAdz9cwmEazU9DhJEY7F7htzLQmZdW
-u2uiSjZ1KeKDDBbbgxvDqPE2Wxl4hDHE1IHpYD6TMk6KoF3Et6TsbxTz1ZunFBN5
-YnyT+Q76D0u4r5U4eutULrvfLaBaJsnW09APAhw3y1ufrWGSeVUxLFcQ0J+EG3HU
-BhmO3+lEiRkRrqGpSXWv2e6SzwQpE/1/wENxoZHYCf5sDllqccqYyL2ef9CXfjRd
-fyshKJR7nDr8dV1ySzx5hP5I+KkA+Woz1WMnXK0DREQtfnbys1s=
-=0IVk
------END PGP SIGNATURE-----
+> 
+> Do you see any problems with the patch as is?
 
---5G06lTa6Jq83wMTw--
+No, this patch does remove an erroneous node-cpu map update which help solve
+a real crash.
