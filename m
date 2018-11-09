@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 331D7C0044C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:08:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41BDCC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:08:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E45D720883
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:07:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 009E820883
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:08:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=austad-us.20150623.gappssmtp.com header.i=@austad-us.20150623.gappssmtp.com header.b="L/PaauLg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E45D720883
+	dkim=pass (2048-bit key) header.d=austad-us.20150623.gappssmtp.com header.i=@austad-us.20150623.gappssmtp.com header.b="CBzyzSVb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 009E820883
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=austad.us
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728079AbeKITrt (ORCPT
+        id S1728150AbeKITrx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 14:47:49 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:42976 "EHLO
+        Fri, 9 Nov 2018 14:47:53 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:37826 "EHLO
         mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727702AbeKITrs (ORCPT
+        with ESMTP id S1728078AbeKITrv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 14:47:48 -0500
-Received: by mail-lf1-f68.google.com with SMTP id q6-v6so898714lfh.9
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 02:07:54 -0800 (PST)
+        Fri, 9 Nov 2018 14:47:51 -0500
+Received: by mail-lf1-f68.google.com with SMTP id p17so914987lfh.4
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 02:07:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=austad-us.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=NzUpbpt5uUD/V2avclLhcnVn21lHeoeOctiQEWsrDJo=;
-        b=L/PaauLgJE4hHzlxaajSK/VD2JBSREI8zN/rEuW0H5ihYOZSPrFaXqi93q4JjB59HY
-         ylzqJcjfuXPiznfPplCAUsV+ClB25BllSIC2uP/xdr4vflWHbKhkwj1t1TZbjJZ3A6Wi
-         cgoZAg703NXAE6o6PDuQTUOeMi4+cBmYkHCPqS0oGFujm2wIThot71PO1mNbBFaonHGo
-         XG9rZrAr6nXwA9Z9ZfDuo8RMIA6oYr3WAk0QnZqHv31+T49yyHLLHoH21+7kG/vyw4TC
-         L78a03JJ2CnDoHVw2lhGEuRh9dtQFLtfu7/XxX0RDFYBVJVAyoVemXPsP48ZnRcCfASZ
-         kIFA==
+        bh=Qv1gJptpDadZ7xmFGWambplvl4vFsB88kJL0ym+PObY=;
+        b=CBzyzSVbSRQt4tmbJxUg5TUxNIKIo0u5cosWt/d6OhNGb8DmD2UZ42Eq53Ypz1FEAn
+         hBm/ab+Cf5xO1u1rOcd2B6HP9FQqUJ5ofCj49Oflfx/6D6h9WHsbcBe10kW+2pVRFEJL
+         sbYK4H+7MO9jUZPSAukK6u0T23JDi2FKLmvIMCaZ6eBZTuneAteOsyATAYTO/VQREWpT
+         NzZVQvg3hPyFbmBDtD/+kNEpwLvd5A6A5T9l3MkPyjMAJoDQLLeT9bQJA5ZcmF/3v58G
+         UYgdow9T7/NUbefnfKerL1rNi6n30/Xyk7/MRhc0yvY5Tq5MKhpTJRA0/aKWGSvMkNZC
+         M1yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=NzUpbpt5uUD/V2avclLhcnVn21lHeoeOctiQEWsrDJo=;
-        b=QANyxI4GOoyp9mshzVhvxcharyG8sX08ShG1lxQyS6TOEsTzO9ilP2pDXUDzzQnrdQ
-         lo7aWEkPhZJ+6w5bFlF7xXqrsZKNx+Kqz666G62SVN8doOBMqMpYfL0FQ9O2llUC5LkF
-         iv+ftF21IT7ptOYXj5pRok5PxAVOEwWunoXd5unBznTnw3iScixEkH61XTuEiQAJC1rj
-         zD4gCJxGdlFOGQV/utGLRqXrSNHE1oQ8PbH+kiMVBRUzo6v1305nYvwn0Bi7V+KCGto3
-         SXO649onU66cB5OOyxmp56vBog0VzQuFrk8ZD9+XCER6SWCWTdlGDgYacoqpPmh4h2by
-         fAWg==
-X-Gm-Message-State: AGRZ1gKQWL1ruJJBSf3qLni8UYcFZtLX75NyQm4SpPdsWBp1jDwS91NB
-        RxQxi48pglN7KPk3fGKDUlPuBQfAbCDtOeqv
-X-Google-Smtp-Source: AJdET5fg5yX76pgAyGFGepfY+fnRDaSB+Zdqd6CsmqUC2wEA96kk4o3PiDmrbi+L1UwyU8nd7dUBnA==
-X-Received: by 2002:a19:3b9c:: with SMTP id d28mr5252866lfl.30.1541758073268;
-        Fri, 09 Nov 2018 02:07:53 -0800 (PST)
+        bh=Qv1gJptpDadZ7xmFGWambplvl4vFsB88kJL0ym+PObY=;
+        b=MXO65+95Zq7qA7a/8Nna/s7gHMOCskzqMcAmd9KO1EyIpxPL06xWxQczsAYMd6rrT2
+         TqM/XTaauPkazt+0h4GWOhjsSFgS3tvg+ZIWSeFkCh9s0zjuR53rpEmPq/0OIWxQKYII
+         M0mvSnoK3G5Qd5OnZu1NvHvpIQFWjGpmmw1KkJbTHmVpNpFjAbaUUoYYKp1/51x2N5fK
+         gCn9mHKLGIdP2ibf/1r5Yby/aFOrHxrCBLGjQDSom27CvW8vy5fJGGsWv+ZIqJs+RtGR
+         koal52KoA8BXZW1wkcQ0sVQWjEPPTXWlzgtWf0CiXV0dNUkGWS9mgHmBxW16HW5F6D6M
+         GefA==
+X-Gm-Message-State: AGRZ1gIKoCDpV1uoplalgBHdTmz2YYDAPDeeou022rV2GMRPyvfA2Xof
+        Lz0D7rzBH4vs4ELDffc9aJRX7ziueucBgdy2
+X-Google-Smtp-Source: AJdET5fSgPNqh4tJXIwdR/HTGQXuhQLITFxjzhvoGWX7XNrPfTEaCztuvQXr3gJLfSOID3nijqX7gA==
+X-Received: by 2002:a19:d295:: with SMTP id j143mr4904496lfg.50.1541758075867;
+        Fri, 09 Nov 2018 02:07:55 -0800 (PST)
 Received: from sisyphus.home.austad.us (11.92-220-88.customer.lyse.net. [92.220.88.11])
-        by smtp.gmail.com with ESMTPSA id u65sm1265576lff.54.2018.11.09.02.07.52
+        by smtp.gmail.com with ESMTPSA id u65sm1265576lff.54.2018.11.09.02.07.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 09 Nov 2018 02:07:52 -0800 (PST)
+        Fri, 09 Nov 2018 02:07:55 -0800 (PST)
 From:   Henrik Austad <henrik@austad.us>
 To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -67,9 +67,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         mathieu.desnoyers@efficios.com, jdesfossez@efficios.com,
         dvhart@infradead.org, bristot@redhat.com,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 01/17] futex: Cleanup variable names for futex_top_waiter()
-Date:   Fri,  9 Nov 2018 11:07:29 +0100
-Message-Id: <1541758065-10952-2-git-send-email-henrik@austad.us>
+Subject: [PATCH 03/17] futex: Remove rt_mutex_deadlock_account_*()
+Date:   Fri,  9 Nov 2018 11:07:31 +0100
+Message-Id: <1541758065-10952-4-git-send-email-henrik@austad.us>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1541758065-10952-1-git-send-email-henrik@austad.us>
 References: <1541758065-10952-1-git-send-email-henrik@austad.us>
@@ -80,10 +80,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Peter Zijlstra <peterz@infradead.org>
 
-commit 499f5aca2cdd5e958b27e2655e7e7f82524f46b1 uptream.
+commit fffa954fb528963c2fb7b0c0084eb77e2be7ab52 upstream
 
-futex_top_waiter() returns the top-waiter on the pi_mutex. Assinging
-this to a variable 'match' totally obscures the code.
+These are unused and clutter up the code.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: juri.lelli@arm.com
@@ -94,107 +93,184 @@ Cc: mathieu.desnoyers@efficios.com
 Cc: jdesfossez@efficios.com
 Cc: dvhart@infradead.org
 Cc: bristot@redhat.com
-Link: http://lkml.kernel.org/r/20170322104151.554710645@infradead.org
+Link: http://lkml.kernel.org/r/20170322104151.652692478@infradead.org
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+
+Conflicts:
+	kernel/locking/rtmutex.c (WAKE_Q)
 Tested-by: Henrik Austad <haustad@cisco.com>
 ---
- kernel/futex.c | 30 +++++++++++++++---------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+ kernel/locking/rtmutex-debug.c |  9 --------
+ kernel/locking/rtmutex-debug.h |  3 ---
+ kernel/locking/rtmutex.c       | 47 ++++++++++++++++--------------------------
+ kernel/locking/rtmutex.h       |  2 --
+ 4 files changed, 18 insertions(+), 43 deletions(-)
 
-diff --git a/kernel/futex.c b/kernel/futex.c
-index a26d217..bb87324 100644
---- a/kernel/futex.c
-+++ b/kernel/futex.c
-@@ -1116,14 +1116,14 @@ static int attach_to_pi_owner(u32 uval, union futex_key *key,
- static int lookup_pi_state(u32 uval, struct futex_hash_bucket *hb,
- 			   union futex_key *key, struct futex_pi_state **ps)
- {
--	struct futex_q *match = futex_top_waiter(hb, key);
-+	struct futex_q *top_waiter = futex_top_waiter(hb, key);
- 
- 	/*
- 	 * If there is a waiter on that futex, validate it and
- 	 * attach to the pi_state when the validation succeeds.
- 	 */
--	if (match)
--		return attach_to_pi_state(uval, match->pi_state, ps);
-+	if (top_waiter)
-+		return attach_to_pi_state(uval, top_waiter->pi_state, ps);
- 
- 	/*
- 	 * We are the first waiter - try to look up the owner based on
-@@ -1170,7 +1170,7 @@ static int futex_lock_pi_atomic(u32 __user *uaddr, struct futex_hash_bucket *hb,
- 				struct task_struct *task, int set_waiters)
- {
- 	u32 uval, newval, vpid = task_pid_vnr(task);
--	struct futex_q *match;
-+	struct futex_q *top_waiter;
- 	int ret;
- 
- 	/*
-@@ -1196,9 +1196,9 @@ static int futex_lock_pi_atomic(u32 __user *uaddr, struct futex_hash_bucket *hb,
- 	 * Lookup existing state first. If it exists, try to attach to
- 	 * its pi_state.
- 	 */
--	match = futex_top_waiter(hb, key);
--	if (match)
--		return attach_to_pi_state(uval, match->pi_state, ps);
-+	top_waiter = futex_top_waiter(hb, key);
-+	if (top_waiter)
-+		return attach_to_pi_state(uval, top_waiter->pi_state, ps);
- 
- 	/*
- 	 * No waiter and user TID is 0. We are here because the
-@@ -1288,11 +1288,11 @@ static void mark_wake_futex(struct wake_q_head *wake_q, struct futex_q *q)
- 	q->lock_ptr = NULL;
+diff --git a/kernel/locking/rtmutex-debug.c b/kernel/locking/rtmutex-debug.c
+index 62b6cee..0613c4b 100644
+--- a/kernel/locking/rtmutex-debug.c
++++ b/kernel/locking/rtmutex-debug.c
+@@ -173,12 +173,3 @@ void debug_rt_mutex_init(struct rt_mutex *lock, const char *name)
+ 	lock->name = name;
  }
  
--static int wake_futex_pi(u32 __user *uaddr, u32 uval, struct futex_q *this,
-+static int wake_futex_pi(u32 __user *uaddr, u32 uval, struct futex_q *top_waiter,
- 			 struct futex_hash_bucket *hb)
+-void
+-rt_mutex_deadlock_account_lock(struct rt_mutex *lock, struct task_struct *task)
+-{
+-}
+-
+-void rt_mutex_deadlock_account_unlock(struct task_struct *task)
+-{
+-}
+-
+diff --git a/kernel/locking/rtmutex-debug.h b/kernel/locking/rtmutex-debug.h
+index d0519c3..b585af9 100644
+--- a/kernel/locking/rtmutex-debug.h
++++ b/kernel/locking/rtmutex-debug.h
+@@ -9,9 +9,6 @@
+  * This file contains macros used solely by rtmutex.c. Debug version.
+  */
+ 
+-extern void
+-rt_mutex_deadlock_account_lock(struct rt_mutex *lock, struct task_struct *task);
+-extern void rt_mutex_deadlock_account_unlock(struct task_struct *task);
+ extern void debug_rt_mutex_init_waiter(struct rt_mutex_waiter *waiter);
+ extern void debug_rt_mutex_free_waiter(struct rt_mutex_waiter *waiter);
+ extern void debug_rt_mutex_init(struct rt_mutex *lock, const char *name);
+diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
+index b066724d..6cf9dab7 100644
+--- a/kernel/locking/rtmutex.c
++++ b/kernel/locking/rtmutex.c
+@@ -937,8 +937,6 @@ takeit:
+ 	 */
+ 	rt_mutex_set_owner(lock, task);
+ 
+-	rt_mutex_deadlock_account_lock(lock, task);
+-
+ 	return 1;
+ }
+ 
+@@ -1331,8 +1329,6 @@ static bool __sched rt_mutex_slowunlock(struct rt_mutex *lock,
+ 
+ 	debug_rt_mutex_unlock(lock);
+ 
+-	rt_mutex_deadlock_account_unlock(current);
+-
+ 	/*
+ 	 * We must be careful here if the fast path is enabled. If we
+ 	 * have no waiters queued we cannot set owner to NULL here
+@@ -1398,11 +1394,10 @@ rt_mutex_fastlock(struct rt_mutex *lock, int state,
+ 				struct hrtimer_sleeper *timeout,
+ 				enum rtmutex_chainwalk chwalk))
  {
- 	struct task_struct *new_owner;
--	struct futex_pi_state *pi_state = this->pi_state;
-+	struct futex_pi_state *pi_state = top_waiter->pi_state;
- 	u32 uninitialized_var(curval), newval;
+-	if (likely(rt_mutex_cmpxchg_acquire(lock, NULL, current))) {
+-		rt_mutex_deadlock_account_lock(lock, current);
++	if (likely(rt_mutex_cmpxchg_acquire(lock, NULL, current)))
+ 		return 0;
+-	} else
+-		return slowfn(lock, state, NULL, RT_MUTEX_MIN_CHAINWALK);
++
++	return slowfn(lock, state, NULL, RT_MUTEX_MIN_CHAINWALK);
+ }
+ 
+ static inline int
+@@ -1414,21 +1409,19 @@ rt_mutex_timed_fastlock(struct rt_mutex *lock, int state,
+ 				      enum rtmutex_chainwalk chwalk))
+ {
+ 	if (chwalk == RT_MUTEX_MIN_CHAINWALK &&
+-	    likely(rt_mutex_cmpxchg_acquire(lock, NULL, current))) {
+-		rt_mutex_deadlock_account_lock(lock, current);
++	    likely(rt_mutex_cmpxchg_acquire(lock, NULL, current)))
+ 		return 0;
+-	} else
+-		return slowfn(lock, state, timeout, chwalk);
++
++	return slowfn(lock, state, timeout, chwalk);
+ }
+ 
+ static inline int
+ rt_mutex_fasttrylock(struct rt_mutex *lock,
+ 		     int (*slowfn)(struct rt_mutex *lock))
+ {
+-	if (likely(rt_mutex_cmpxchg_acquire(lock, NULL, current))) {
+-		rt_mutex_deadlock_account_lock(lock, current);
++	if (likely(rt_mutex_cmpxchg_acquire(lock, NULL, current)))
+ 		return 1;
+-	}
++
+ 	return slowfn(lock);
+ }
+ 
+@@ -1438,19 +1431,18 @@ rt_mutex_fastunlock(struct rt_mutex *lock,
+ 				   struct wake_q_head *wqh))
+ {
  	WAKE_Q(wake_q);
- 	bool deboost;
-@@ -1313,11 +1313,11 @@ static int wake_futex_pi(u32 __user *uaddr, u32 uval, struct futex_q *this,
++	bool deboost;
  
- 	/*
- 	 * It is possible that the next waiter (the one that brought
--	 * this owner to the kernel) timed out and is no longer
-+	 * top_waiter owner to the kernel) timed out and is no longer
- 	 * waiting on the lock.
- 	 */
- 	if (!new_owner)
--		new_owner = this->task;
-+		new_owner = top_waiter->task;
+-	if (likely(rt_mutex_cmpxchg_release(lock, current, NULL))) {
+-		rt_mutex_deadlock_account_unlock(current);
++	if (likely(rt_mutex_cmpxchg_release(lock, current, NULL)))
++		return;
  
- 	/*
- 	 * We pass it to the next owner. The WAITERS bit is always
-@@ -2639,7 +2639,7 @@ static int futex_unlock_pi(u32 __user *uaddr, unsigned int flags)
- 	u32 uninitialized_var(curval), uval, vpid = task_pid_vnr(current);
- 	union futex_key key = FUTEX_KEY_INIT;
- 	struct futex_hash_bucket *hb;
--	struct futex_q *match;
-+	struct futex_q *top_waiter;
- 	int ret;
+-	} else {
+-		bool deboost = slowfn(lock, &wake_q);
++	deboost = slowfn(lock, &wake_q);
  
- retry:
-@@ -2663,9 +2663,9 @@ retry:
- 	 * all and we at least want to know if user space fiddled
- 	 * with the futex value instead of blindly unlocking.
- 	 */
--	match = futex_top_waiter(hb, &key);
--	if (match) {
--		ret = wake_futex_pi(uaddr, uval, match, hb);
-+	top_waiter = futex_top_waiter(hb, &key);
-+	if (top_waiter) {
-+		ret = wake_futex_pi(uaddr, uval, top_waiter, hb);
- 		/*
- 		 * In case of success wake_futex_pi dropped the hash
- 		 * bucket lock.
+-		wake_up_q(&wake_q);
++	wake_up_q(&wake_q);
+ 
+-		/* Undo pi boosting if necessary: */
+-		if (deboost)
+-			rt_mutex_adjust_prio(current);
+-	}
++	/* Undo pi boosting if necessary: */
++	if (deboost)
++		rt_mutex_adjust_prio(current);
+ }
+ 
+ /**
+@@ -1561,10 +1553,9 @@ EXPORT_SYMBOL_GPL(rt_mutex_unlock);
+ bool __sched rt_mutex_futex_unlock(struct rt_mutex *lock,
+ 				   struct wake_q_head *wqh)
+ {
+-	if (likely(rt_mutex_cmpxchg_release(lock, current, NULL))) {
+-		rt_mutex_deadlock_account_unlock(current);
++	if (likely(rt_mutex_cmpxchg_release(lock, current, NULL)))
+ 		return false;
+-	}
++
+ 	return rt_mutex_slowunlock(lock, wqh);
+ }
+ 
+@@ -1622,7 +1613,6 @@ void rt_mutex_init_proxy_locked(struct rt_mutex *lock,
+ 	__rt_mutex_init(lock, NULL);
+ 	debug_rt_mutex_proxy_lock(lock, proxy_owner);
+ 	rt_mutex_set_owner(lock, proxy_owner);
+-	rt_mutex_deadlock_account_lock(lock, proxy_owner);
+ }
+ 
+ /**
+@@ -1638,7 +1628,6 @@ void rt_mutex_proxy_unlock(struct rt_mutex *lock,
+ {
+ 	debug_rt_mutex_proxy_unlock(lock);
+ 	rt_mutex_set_owner(lock, NULL);
+-	rt_mutex_deadlock_account_unlock(proxy_owner);
+ }
+ 
+ /**
+diff --git a/kernel/locking/rtmutex.h b/kernel/locking/rtmutex.h
+index c406058..6607802 100644
+--- a/kernel/locking/rtmutex.h
++++ b/kernel/locking/rtmutex.h
+@@ -11,8 +11,6 @@
+  */
+ 
+ #define rt_mutex_deadlock_check(l)			(0)
+-#define rt_mutex_deadlock_account_lock(m, t)		do { } while (0)
+-#define rt_mutex_deadlock_account_unlock(l)		do { } while (0)
+ #define debug_rt_mutex_init_waiter(w)			do { } while (0)
+ #define debug_rt_mutex_free_waiter(w)			do { } while (0)
+ #define debug_rt_mutex_lock(l)				do { } while (0)
 -- 
 2.7.4
 
