@@ -2,181 +2,115 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35105C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 23:27:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 278ABC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 23:31:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E62F020883
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 23:27:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEEFF20840
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 23:31:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="IPjHIHNX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E62F020883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=soleen.com
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="ZeTXhse9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEEFF20840
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728660AbeKJJJp (ORCPT
+        id S1728768AbeKJJOk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 04:09:45 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:33715 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728283AbeKJJJo (ORCPT
+        Sat, 10 Nov 2018 04:14:40 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38629 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727557AbeKJJOj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 04:09:44 -0500
-Received: by mail-qk1-f195.google.com with SMTP id o89so4642980qko.0
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 15:26:57 -0800 (PST)
+        Sat, 10 Nov 2018 04:14:39 -0500
+Received: by mail-lj1-f196.google.com with SMTP id q186-v6so2997126ljb.5
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 15:31:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=m9PAnTOd08pSiQIPc3bviF7/DRAFlnQ3yDM0KRJ7Syo=;
-        b=IPjHIHNXY/knYtykIhU8zUpfubWHNMb5g2aXH27RAX7667/k0Su6u3C0HGJW0GOFtR
-         hWb1X8/xSPWiYeOaAHOH0iy92HrODevp6JBx24gcqLuBGtcx086o1BCJMlDsCQ4qHIBQ
-         MH/zpDR9XNZ5JFh4dFQeQCRvoyCF8k+z7/jx9Ipbph7lbW7fODfkF/AE4e2NdS71jdYG
-         orNq8I3g43mPmHhQxokRq9NfyNwfffuVjwxlG4aBzss5qk+ySlZgL7i4u17a7WILS4LD
-         m3uLMThutlWaJFB8ndw0muJcW06oaTRCeN9SCrXU8yjOIyCFd2if3KhAtR5JybFEx1QV
-         8VnA==
+        d=rasmusvillemoes.dk; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Z0l0SdMTYNNTHU04lMS5cs5ZttICkchRvRart0qeZJY=;
+        b=ZeTXhse9O5xoFXb/D/v3EfJBV0FkmCr5V41lSDwsKQd4FXxsiBAJ0KX0Fmkicr6zBY
+         FFF23OqwWj6eHFeurSeSlIF5KVYtSZkHdIU+adRNKyYxpmiQAFelNxdOYHOPE6Sz2OHQ
+         7h1VrJGqhTEc5NV+n+cIBONj1V7RsNbCczRvU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=m9PAnTOd08pSiQIPc3bviF7/DRAFlnQ3yDM0KRJ7Syo=;
-        b=pyjzKcugdRuO7tQ7QzGFGgyQZuF8Y9SDz1NM30YOnQqTVivh/pl2ds1lk10QJ36WzO
-         1kbByFkrreEG62trUcXwc1ChakcbpYCekzLslolqP23fgiK3AsStSRb5+MpoyjgalktD
-         MViIJrvoOTTaSmlVYIET9T3qSQ/BZHVSRW/3zumZdVFUVlAsAb5PW8TPyarpww0zRw1p
-         UjLZU8PMeqn5S30Um6RsRR8mcu4ssQYqlIm2JqScjKr1QKtIL3/mHWawIFFOXfIe/UEu
-         h3idIIVKgn5Lh/0dWpnU2u7wK+Dd0yp8yAmu6qU7NE62efGlD9VHrfYM35WRFubX5EyL
-         TzPg==
-X-Gm-Message-State: AGRZ1gIlUBUveVGk+0XwatGflV0aybjWGYMIj3O1jVu7EyKfO3yhzyHp
-        9CIHhxikpN6Nl5cP6i8BSLZauA==
-X-Google-Smtp-Source: AJdET5fSR0yXcOwiPXz9u5/Fp+71Wl5VHt6DP5hWgHgF5iBkFpTav6prLZbVc/nm+G48zoSPgQrwnQ==
-X-Received: by 2002:a37:a7c3:: with SMTP id q186mr10409917qke.89.1541806017501;
-        Fri, 09 Nov 2018 15:26:57 -0800 (PST)
-Received: from xakep.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id i65sm6725824qkh.49.2018.11.09.15.26.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 09 Nov 2018 15:26:55 -0800 (PST)
-Date:   Fri, 9 Nov 2018 18:26:54 -0500
-From:   Pavel Tatashin <pasha.tatashin@soleen.com>
-To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
-        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, davem@davemloft.net,
-        pavel.tatashin@microsoft.com, mhocko@suse.com, mingo@kernel.org,
-        kirill.shutemov@linux.intel.com, dan.j.williams@intel.com,
-        dave.jiang@intel.com, rppt@linux.vnet.ibm.com, willy@infradead.org,
-        vbabka@suse.cz, khalid.aziz@oracle.com, ldufour@linux.vnet.ibm.com,
-        mgorman@techsingularity.net, yi.z.zhang@linux.intel.com
-Subject: Re: [mm PATCH v5 3/7] mm: Implement new zone specific memblock
- iterator
-Message-ID: <20181109232654.bi37bdkrqbogbdcx@xakep.localdomain>
-References: <154145268025.30046.11742652345962594283.stgit@ahduyck-desk1.jf.intel.com>
- <154145278071.30046.9022571960145979137.stgit@ahduyck-desk1.jf.intel.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Z0l0SdMTYNNTHU04lMS5cs5ZttICkchRvRart0qeZJY=;
+        b=CPXjd7FuuL1CWyyb035fqRmVYLhAkynsVnGJdQ3LM1VUKkahU2+c4AByrcBQBVm9n7
+         02H8Vt4YtJ58oFdGQQLY9kJOmQV6kJTkgUm1/bSYhCatVGbCWcBapZVjDN/wEdujDzjG
+         RyaL0bh245VJ1Vtg1hvEptqBl224XbIA2qe7D59FhC+zpJjjw3JuHynf8GnCpOoNQk/f
+         eppDdLVoi4m7HDbpwBXqrYgKGh5TOQ3eQfx8pSV4/OivWQLYqj1wIVuEHFgbFV8MyUjy
+         O1qG2t/JzMlZF+EqeXqnmPnJBGk4DH2fo2WNUP2WaZqKJjGOFxKmGyk/58LAqDGGIs9V
+         KSSQ==
+X-Gm-Message-State: AGRZ1gJsRgLgec26ol9DH0Xy1mKOcnkM265JE4oPfyFi/SPwArraux1q
+        68QoZVf9JwvuRabPR8HNnCzJjg==
+X-Google-Smtp-Source: AJdET5e7SnJUfE4+SiCzw7a5wxM8lvwYATF+8tRux9EJ07FgIDLbvfxPWjuOh+Vjw03mdsWaMyvEQg==
+X-Received: by 2002:a2e:4745:: with SMTP id u66-v6mr6540665lja.37.1541806310375;
+        Fri, 09 Nov 2018 15:31:50 -0800 (PST)
+Received: from [192.168.0.189] (dhcp-5-186-114-252.cgn.ip.fibianet.dk. [5.186.114.252])
+        by smtp.gmail.com with ESMTPSA id h2sm1666692lfb.49.2018.11.09.15.31.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 09 Nov 2018 15:31:49 -0800 (PST)
+Subject: Re: [PATCH v3 04/23] linux/net.h: use unique identifier for each
+ struct _ddebug
+To:     Joe Perches <joe@perches.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jason Baron <jbaron@akamai.com>
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+References: <20181009112013.14238-1-linux@rasmusvillemoes.dk>
+ <20181109231021.11658-1-linux@rasmusvillemoes.dk>
+ <20181109231021.11658-5-linux@rasmusvillemoes.dk>
+ <2358250f27022be9eb5c4e6a3d95ee869c3af45f.camel@perches.com>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <e35f20ed-d93b-89ca-4123-a088c65df902@rasmusvillemoes.dk>
+Date:   Sat, 10 Nov 2018 00:31:47 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <154145278071.30046.9022571960145979137.stgit@ahduyck-desk1.jf.intel.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <2358250f27022be9eb5c4e6a3d95ee869c3af45f.camel@perches.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +/**
-> + * for_each_free_mem_range_in_zone - iterate through zone specific free
-> + * memblock areas
-> + * @i: u64 used as loop variable
-> + * @zone: zone in which all of the memory blocks reside
-> + * @p_start: ptr to phys_addr_t for start address of the range, can be %NULL
-> + * @p_end: ptr to phys_addr_t for end address of the range, can be %NULL
-> + *
-> + * Walks over free (memory && !reserved) areas of memblock in a specific
-> + * zone. Available as soon as memblock is initialized.
-> + */
-> +#define for_each_free_mem_pfn_range_in_zone(i, zone, p_start, p_end)	\
-> +	for (i = 0,							\
-> +	     __next_mem_pfn_range_in_zone(&i, zone, p_start, p_end);	\
-> +	     i != (u64)ULLONG_MAX;					\
-> +	     __next_mem_pfn_range_in_zone(&i, zone, p_start, p_end))
-> +#endif /* CONFIG_DEFERRED_STRUCT_PAGE_INIT */
+On 10/11/2018 00.22, Joe Perches wrote:
+> On Sat, 2018-11-10 at 00:10 +0100, Rasmus Villemoes wrote:
+>> Changes on x86-64 later in this series require that all struct _ddebug
+>> descriptors in a translation unit uses distinct identifiers. Realize
+>> that for net_dbg_ratelimited by generating such an identifier via
+>> __UNIQUE_ID and pass that to an extra level of macros.
+>>
+>> No functional change.
+> 
+> Why does this require an extra indirection _<macro>?
+> 
 
-Use U64_MAX instead of ULLONG_MAX, and avoid u64 cast. I know other
-places in this file use UULONG_MAX with cast, but I think U64_MAX is
-better.
+Because the identifier used in the
 
-> +
->  /**
->   * for_each_free_mem_range - iterate through free memblock areas
->   * @i: u64 used as loop variable
-> diff --git a/mm/memblock.c b/mm/memblock.c
-> index 7df468c8ebc8..f1d1fbfd1ae7 100644
-> --- a/mm/memblock.c
-> +++ b/mm/memblock.c
-> @@ -1239,6 +1239,69 @@ int __init_memblock memblock_set_node(phys_addr_t base, phys_addr_t size,
->  	return 0;
->  }
->  #endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
-> +#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
-> +/**
-> + * __next_mem_pfn_range_in_zone - iterator for for_each_*_range_in_zone()
-> + *
-> + * @idx: pointer to u64 loop variable
-> + * @zone: zone in which all of the memory blocks reside
-> + * @out_start: ptr to ulong for start pfn of the range, can be %NULL
-> + * @out_end: ptr to ulong for end pfn of the range, can be %NULL
-> + *
-> + * This function is meant to be a zone/pfn specific wrapper for the
-> + * for_each_mem_range type iterators. Specifically they are used in the
-> + * deferred memory init routines and as such we were duplicating much of
-> + * this logic throughout the code. So instead of having it in multiple
-> + * locations it seemed like it would make more sense to centralize this to
-> + * one new iterator that does everything they need.
-> + */
-> +void __init_memblock
-> +__next_mem_pfn_range_in_zone(u64 *idx, struct zone *zone,
-> +			     unsigned long *out_spfn, unsigned long *out_epfn)
-> +{
-> +	int zone_nid = zone_to_nid(zone);
-> +	phys_addr_t spa, epa;
-> +	int nid;
-> +
-> +	__next_mem_range(idx, zone_nid, MEMBLOCK_NONE,
-> +			 &memblock.memory, &memblock.reserved,
-> +			 &spa, &epa, &nid);
-> +
-> +	while (*idx != ULLONG_MAX) {
+>>  	DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt);
 
-Ditto, use U64_MAX
+line must be the same as the one in the
 
-> +		unsigned long epfn = PFN_DOWN(epa);
-> +		unsigned long spfn = PFN_UP(spa);
-> +
-> +		/*
-> +		 * Verify the end is at least past the start of the zone and
-> +		 * that we have at least one PFN to initialize.
-> +		 */
-> +		if (zone->zone_start_pfn < epfn && spfn < epfn) {
-> +			/* if we went too far just stop searching */
-> +			if (zone_end_pfn(zone) <= spfn)
-> +				break;
+>>  	if (DYNAMIC_DEBUG_BRANCH(descriptor) &&	
 
-Set *idx = U64_MAX here, then break. This way after we are outside this
-while loop idx is always equals to U64_MAX.
+line. That identifier used to be simply "descriptor", with C scope rules
+making that ok. But because of the asm games I'm playing later, I need
+to generate a fresh identifier for each instance. That identifier must
+be referenced in two places in the C source - hence the need to use an
+extra level of macros to have the __UNIQUE_ID() expanded before
+_net_dbg_ratelimited gets expanded.
 
-> +
-> +			if (out_spfn)
-> +				*out_spfn = max(zone->zone_start_pfn, spfn);
-> +			if (out_epfn)
-> +				*out_epfn = min(zone_end_pfn(zone), epfn);
+More or less every use of __UNIQUE_ID requires such an extra level
+(because one very rarely needs to use an identifier exactly once - the
+point of giving stuff a name is to refer to it again.)
 
-Don't we need to verify after adjustment that out_spfn != out_epfn, so
-there is at least one PFN to initialize?
-
-The rest looks good. Once the above is fixed:
-
-Reviewed-by: Pavel Tatashin <pasha.tatashin@soleen.com>
-
-Thank you,
-Pasha
+Rasmus
