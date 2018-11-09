@@ -2,90 +2,83 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F5AFC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 00:04:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0A08C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 00:04:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44D5620855
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 00:04:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44D5620855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7FED220855
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 00:04:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="k5Yrw03K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FED220855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727615AbeKIJmQ (ORCPT
+        id S1727662AbeKIJmj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 04:42:16 -0500
-Received: from mail-vs1-f50.google.com ([209.85.217.50]:41886 "EHLO
-        mail-vs1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727289AbeKIJmQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 04:42:16 -0500
-Received: by mail-vs1-f50.google.com with SMTP id t17so45350vsc.8
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 16:04:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CAk+1k0shuYGopg8VVtccJNGDqJOzQz7q3/ZAZfqn88=;
-        b=oAhZmuGexP0m72k3+vCsfgxU68+wAP0Ozd1XCi1eg1OwFYKX5pclNQTzaAUc8eu/ib
-         DeFjxGJ/6bDh6h0ZdTj++cGD+JAvsoIhISXbpBbiUi9itDXN5/pS44f44fMEYFwt0LkY
-         hhIazgCHaXkiySc2rRFIrhxMD5PbjUqVWH9cMrpajk3hYvM0YJOBbqcMci6MxJlXQlAs
-         6a9WkllvnVlr6WT+xrS5Gj2+tecJRaUNwgMgQt8+RGiaOpdu2Rm/YfVh0WRcMX7keq02
-         wQU7RcEZI4Kwtll5MMigLUpTjO/2nRzGl9vSWypA4xikgP3mMPR1NexqlAe+ydPqS0ss
-         oi1A==
-X-Gm-Message-State: AGRZ1gL85Fx+rE/oZMHUwhkDa59it1u249aHghudVYatArKZLThkTfzf
-        hJZrFLFVvwoEir1lni9LZUnZyzAyWX7T27FiyOC8WA==
-X-Google-Smtp-Source: AJdET5fmi8nhtdaUB3SXVLxCytgm6Pk1Z9FW+tUV1rqmmfzum337OFBdK/x54yTeYF3RDAIU1Yn18go/IsPOV4XCz7U=
-X-Received: by 2002:a67:6e87:: with SMTP id j129mr2959928vsc.171.1541721855642;
- Thu, 08 Nov 2018 16:04:15 -0800 (PST)
+        Fri, 9 Nov 2018 04:42:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35876 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727289AbeKIJmj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 04:42:39 -0500
+Received: from localhost (unknown [167.220.2.187])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4F41A20855;
+        Fri,  9 Nov 2018 00:04:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541721879;
+        bh=pg3IOsCooCKbpDzY2LvNyPjv/LOQFWLn5g8rmKsDoQE=;
+        h=Date:From:To:Subject:References:In-Reply-To:From;
+        b=k5Yrw03KbxOvWX/QCRnTYPDfra3ThW9hHG17Egf733wbGgFs+Vrn1kDefR4eCVd9v
+         dWW+T8AjI+ict8+QuePRD0ZXSILy0y3jmKBkUUnj/QhYA2HlzalV1lXLMnjOZ+jwwd
+         GvGOoHBt0LUvo5dVHLLA2J9Z6QUFjok33f6fkpms=
+Date:   Thu, 8 Nov 2018 19:04:38 -0500
+From:   Sasha Levin <sashal@kernel.org>
+To:     dsterba@suse.cz, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.4 026/114] btrfs: cleaner_kthread() doesnt need
+ explicit freeze
+Message-ID: <20181109000438.GB14882@sasha-vm>
+References: <20181108215059.051093652@linuxfoundation.org>
+ <20181108215101.483013816@linuxfoundation.org>
+ <20181108232809.GI24115@suse.cz>
 MIME-Version: 1.0
-References: <20181101162707.598c1718@endymion> <20181108130509.3b2d42ff@endymion>
-In-Reply-To: <20181108130509.3b2d42ff@endymion>
-From:   David Airlie <airlied@redhat.com>
-Date:   Fri, 9 Nov 2018 10:04:03 +1000
-Message-ID: <CAMwc25oWstf8bFfWfb=FFR8GfFhx+jM77TzqE-qfi+ev2pMvFw@mail.gmail.com>
-Subject: Re: Performance regression in ast drm driver
-To:     jdelvare@suse.de
-Cc:     christian.koenig@amd.com, "Iwai, Takashi" <tiwai@suse.de>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20181108232809.GI24115@suse.cz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 8, 2018 at 10:05 PM Jean Delvare <jdelvare@suse.de> wrote:
+On Fri, Nov 09, 2018 at 12:28:10AM +0100, David Sterba wrote:
+>On Thu, Nov 08, 2018 at 01:50:41PM -0800, Greg Kroah-Hartman wrote:
+>> 4.4-stable review patch.  If anyone has any objections, please let me know.
 >
-> On Thu, 1 Nov 2018 16:27:07 +0100, Jean Delvare wrote:
-> > Hi David,
-> >
-> > The following commit:
-> >
-> > commit 7cf321d118a825c1541b43ca45294126fd474efa
-> > Author: Dave Airlie
-> > Date:   Mon Oct 24 15:37:48 2016 +1000
-> >
-> >     drm/drivers: add support for using the arch wc mapping API.
-> >
-> > is causing a huge performance regression for the ast drm driver. In a
-> > text console, if I call "cat" on a large text file, it takes almost
-> > twice as much time to be displayed and scrolled completely.
-> >
-> > Can you please check that the ast driver portion of that commit is both
-> > correct and complete?
+>> [ Upstream commit 838fe1887765f4cc679febea60d87d2a06bd300e ]
 >
-> And in the meantime, what bad will happen if we just revert the ast
-> portion of that commit?
+>Please check the discussion under
 >
+>https://lore.kernel.org/lkml/20181025141705.213937-8-sashal@kernel.org/
+>
+>Jiri's reply:
+>
+>"This patch just removes pointless try_to_freeze(), that's guaranteed
+>not to do anything and return immediately, as the btrfs kthread is not
+>freezable.  So I don't think it's needed in stable; the semantics is
+>equivalent before and after."
+>
+>Sasha was fine with dropping the patch from stable candidates and this
+>has not changed. Thanks.
 
-This seems likely to be a hw problem with PCI writes to the AST "GPU",
-since it's just some sort of RAM + ARM on the end of a PCIE bus, we've
-definitely seen possible issues in the past with write combining
-around some of the mga GPUs with some CPUs.
+Indeed, I thought I dropped it but I see that I didn't. My bad, sorry.
 
-Have we seen the problem across a number of AST devices?
-
-Dave.
+--
+Thanks,
+Sasha
