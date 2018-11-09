@@ -2,168 +2,248 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D635DC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 20:35:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54C84C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 20:35:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0CFC20827
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 20:35:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0CFC20827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E829320827
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 20:35:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o6c2G66u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E829320827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728285AbeKJGRQ (ORCPT
+        id S1728367AbeKJGRe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 01:17:16 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:50500 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726110AbeKJGRP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 01:17:15 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 297CC3DE04;
-        Fri,  9 Nov 2018 20:35:03 +0000 (UTC)
-Received: from treble (ovpn-124-61.rdu2.redhat.com [10.10.124.61])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 723F75D9CA;
-        Fri,  9 Nov 2018 20:35:01 +0000 (UTC)
-Date:   Fri, 9 Nov 2018 14:34:59 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Borislav Petkov <bp@alien8.de>
-Subject: Re: [RFC PATCH 1/3] static_call: Add static call infrastructure
-Message-ID: <20181109203459.wbftlkxcvfnwo2bm@treble>
-References: <cover.1541711457.git.jpoimboe@redhat.com>
- <3cf04e113d71c9f8e4be95fb84a510f085aa4afa.1541711457.git.jpoimboe@redhat.com>
- <20181109133337.63487e3a@gandalf.local.home>
- <20181109193505.5p5iddrtgpk2cpb4@treble>
- <20181109145746.0037da3f@gandalf.local.home>
+        Sat, 10 Nov 2018 01:17:34 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:37002 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726110AbeKJGRe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 01:17:34 -0500
+Received: by mail-pf1-f194.google.com with SMTP id u13-v6so1433445pfm.4;
+        Fri, 09 Nov 2018 12:35:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=6BqGzylHo0e5lotjTRL+3A5zT2VrDKc7Dl1pkDhyRsU=;
+        b=o6c2G66ubTkTe+gYr3VFNOtRY5wnN1bPWTf7wHDOJbiiYZWL4V8Uqs+SuwzwjsO015
+         bCGkJt+fd4Vuk6hpn7ahNI/eqEpIbHwXj3tGtsz+DdzDgvOhszvq2qet37XMooezKQy5
+         IHG9JYcClXV13AtA4YX9Ro8j9nUb7zaO8K0sVBHgJQc4RNUwu/9JugPBDFdgqvB23HN0
+         ota05jnhV5Z6tB6vvcSEt4q08fD+or0OQ741CO+W+xlgLkgTxiccvyQT2hL5uN0Y/YhE
+         78oTUG8Evyn763Bf2sGjaouiS9m9feQf/yKXzq+3+Qmjomk8Gj8F7DWYxwDqW3QE8EdO
+         MHwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=6BqGzylHo0e5lotjTRL+3A5zT2VrDKc7Dl1pkDhyRsU=;
+        b=ICxe1FxhFvF3VURtFKYZAk/BOhbh/ulhNbZtfFx0FWWeWOlCAL+OUzlKhRArYm6xJ2
+         YVcibXXuqW4fffxtqA1FkxDMWiKtOqmdTFU09vl+dOh9DSgDSv+qvuvQ9/g0G/8c67Z+
+         dfTtd4W3wR+d16meC3+9ortauqqvBsiIktzUj9LrvBaO+I7CalX7WsBRmrEzzy/+mZh8
+         SssptCOGAHWYwfvgRFXUJEi1TqMRY28yBMbDd0aFn/7Ms02hkBpyoeM9HJ6l/2E67ytX
+         jTXalt62ZMQOYVLRIHgwpQCZYA3o8z9mU1xAlhRtgYitpFnIOt/Bc0dwEDyZK/25DQ+q
+         ibNQ==
+X-Gm-Message-State: AGRZ1gKdBNBuZPzJUp+8sWG9d62b9eoqzMUq7dcOoMgC7DbABDekw0I2
+        50ICqx+gf+w+WOCteWvHU1Q=
+X-Google-Smtp-Source: AJdET5duWH9t6lzoQ8MzZdN1h8M279Bf1lM8RY8bnAlINmPx/yHJtkR2NSI13O3x6fS1OncI9nP34A==
+X-Received: by 2002:a63:7b06:: with SMTP id w6mr8737414pgc.288.1541795720890;
+        Fri, 09 Nov 2018 12:35:20 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id o195-v6sm8993587pfg.112.2018.11.09.12.35.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 09 Nov 2018 12:35:19 -0800 (PST)
+Date:   Fri, 9 Nov 2018 12:35:18 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Ming Lei <tom.leiming@gmail.com>, Jens Axboe <axboe@fb.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Hannes Reinecke <hare@suse.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        linux-scsi@vger.kernel.org
+Subject: kobject lifetime issues in blk-mq
+Message-ID: <20181109203518.GA7130@roeck-us.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181109145746.0037da3f@gandalf.local.home>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 09 Nov 2018 20:35:03 +0000 (UTC)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 09, 2018 at 02:57:46PM -0500, Steven Rostedt wrote:
-> On Fri, 9 Nov 2018 13:35:05 -0600
-> Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-> 
-> 
-> > > > +#define DECLARE_STATIC_CALL(key, func)					\
-> > > > +	extern struct static_call_key key;				\
-> > > > +	extern typeof(func) STATIC_CALL_TRAMP(key);			\
-> > > > +	/* Preserve the ELF symbol so objtool can access it: */		\
-> > > > +	__ADDRESSABLE(key)  
-> > > 
-> > > Does the __ADDRESSABLE(key) need to be in the DECLARE part?
-> > > If so, there needs to be more explanation than just the comment above
-> > > it.  
-> > 
-> > For each call site, objtool creates a struct in .static_call_sites:
-> > 
-> > 	struct static_call_site {
-> > 		s32 addr;
-> > 		s32 key;
-> > 	};
-> > 
-> > In order to do that, it needs to create a relocation which references
-> > the key symbol.  If the key is defined in another .o file, then the
-> > current .o will not have an ELF symbol associated with the key.  The
-> > __ADDRESSABLE(key) thing tells GCC to leave the key symbol in the .o
-> > file, even though it's not referenced anywhere.  That makes objtool's
-> > job easier, so it doesn't have to edit the symbol table.
-> > 
-> > I could add a comment saying as much, though it's hard to explain it in
-> > fewer words than I just did :-)
-> 
-> Does this have to do with adding the references by relative address?
-> 
-> In record_mcount, I just picked an existing symbol and referenced that..
-> But perhaps this is a cleaner way.
+Hi,
 
-I think recordmcount is different.  It creates references (in
-__mcount_loc) to functions which are already in the object file, so they
-already have symbols associated with them.
+Images with CONFIG_DEBUG_KOBJECT=y, CONFIG_DEBUG_KOBJECT_RELEASE=y
+enabled report kobject lifetime issues when booting an image in qemu
+using virtio-scsi-pci.
 
-But in this case, when objtool is creating references, the symbol it
-needs to reference is outside the .o file, so there's no symbol to
-associate it with.
+Bisect points to two different commits, depending on the kernel
+configuration.
 
-> Adding a more in depth comment wont hurt.
-> 
-> > 
-> > > > +	/*
-> > > > +	 * If called before init, leave the call sites unpatched for now.
-> > > > +	 * In the meantime they'll continue to call the temporary trampoline.
-> > > > +	 */
-> > > > +	if (!static_call_initialized)
-> > > > +		goto done;
-> > > > +
-> > > > +	list_for_each_entry(mod, &key->site_mods, list) {  
-> > > 
-> > > Since I'm expecting a lot of sites, I'm wondering if we should just do
-> > > this as an array, like I do with the ftrace call sites.
-> > > 
-> > > But this can be an enhancement for later. Let's focus on getting this
-> > > working first.  
-> > 
-> > But it's not a static list.  It can grow/shrink as modules are
-> > loaded/unload.
-> 
-> Neither is ftrace :-) What I did was make one array for the core kernel
-> code, and an array for each module, and link list those (single link,
-> although double link may not be hard either). That will save a lot of
-> memory than having each instance have a link pointer, as it only grows
-> or shrinks in chunks.
+1st configuration: defconfig plus:
 
-That sounds exactly like what I did :-)
+CONFIG_VIRTIO_BLK=y
+CONFIG_SCSI_LOWLEVEL=y
+CONFIG_SCSI_VIRTIO=y
+CONFIG_VIRTIO_PCI=y
+CONFIG_VIRTIO_MMIO=y
+CONFIG_DEBUG_OBJECTS=y
+CONFIG_DEBUG_OBJECTS_FREE=y
+CONFIG_DEBUG_OBJECTS_TIMERS=y
+CONFIG_DEBUG_KOBJECT=y
+CONFIG_DEBUG_KOBJECT_RELEASE=y
 
-The site_mods list is a list of static_call_mods.  Each static_call_mod
-has a pointer to an array (which is that module/vmlinux's
-.static_call_site section).
+Bisecting this configuration points to commit b5b6e8c8d3b4 ("scsi:
+virtio_scsi: fix IO hang caused by automatic irq vector affinity")
+as the culprit. This commit enforces the use of blk-mq for virtio_scsi;
+the bisect log is therefore a bit misleading.
 
-> > > So what's the reason for skipping init calls?  
-> > 
-> > This is the runtime changing code (static_call_update).  Presumably the
-> > init sections no longer exist and we shouldn't write to any (former)
-> > call sites there.
-> > 
-> > That's probably a dangerous assumption though...  If
-> > static_call_update() were called early, some init code might not get
-> > patched and then call into the wrong function.
-> > 
-> > I'm thinking we should just disallow static call sites in init sections.
-> > I can't think of a good reason why they would be needed in init code.
-> > We can WARN when detecting them during boot / module init.
-> > 
-> 
-> What I would do is to allow init (like ftrace now does). I have
-> ftrace_free_init_mem() that removes all the mcount references for init
-> calls from its list. You could add a static_call_free_init() to
-> kernel_init() in init/main.c too.
+2nd configuration: As above, plus:
+CONFIG_SCSI_MQ_DEFAULT=y
 
-That makes sense for ftrace, but I don't see much point in allowing it
-for static calls.  Maybe we could just add support for it later if it
-turns out to be useful.
+With this configuration, bisect points to commit 7ea5fe31c12d
+("blk-mq: make lifetime consitent between q/ctx and its kobject").
 
--- 
-Josh
+The qemu command line used to reproduce the problem is as follows.
+The qemu version does not seem to matter (I tested with qemu versions
+2.5, 2.11, and 3.0).
+
+qemu-system-x86_64 \
+	-kernel arch/x86/boot/bzImage \
+	-device virtio-scsi-pci,id=scsi \
+	-device scsi-hd,bus=scsi.0,drive=d0 \
+	-drive file=./wheezy.img,format=raw,if=none,id=d0 \
+	-snapshot \
+	-m 2G -smp 4 -enable-kvm \
+	-net user,host=10.0.2.10,hostfwd=tcp::10022-:22 -net nic \
+	-nographic -monitor none \
+	-no-reboot \
+	-append "console=ttyS0 root=/dev/sda earlyprintk=serial panic_on_warn=1 panic=-1"
+
+Root file system:
+	https://storage.googleapis.com/syzkaller/wheezy.img
+or:
+	https://github.com/groeck/linux-build-test/blob/master/rootfs/x86_64/rootfs.ext2.gz
+
+It seems that any root file system can be used to reproduce the problem.
+Also, the problem is not limited to virtio-scsi-pci. I also tried
+am53c974, lsi53c810, and lsi53c895a (after enabling the respective
+drivers), with the same result.
+
+Overall, this suggests that the problem is related to blk-mq and was
+indeed introduced with commit 7ea5fe31c12d.
+
+For reference, I attached an actual crash log as well as a set of bisect
+logs below.
+
+Unfortunately, my understanding of blk-mq is not good enough to find the
+underlying problem and suggest a fix. Please let me know if there is
+anything else I can do to help fixing the problem.
+
+Note that the problem was originally reported by syzbot running a test
+on chromeos-4.14. It may well be that the problem has already been
+reported and is being worked on. If so, please apologize the noise.
+
+Thanks,
+Guenter
+
+---
+[    8.700038] ------------[ cut here ]------------
+[    8.700376] ODEBUG: free active (active state 0) object type: timer_list hint: delayed_work_timer_fn+0x0/0x10
+[    8.701032] WARNING: CPU: 0 PID: 0 at lib/debugobjects.c:329 debug_print_object+0x6a/0x80
+[    8.701032] Kernel panic - not syncing: panic_on_warn set ...
+[    8.701032] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.20.0-rc1 #30
+[    8.701032] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+[    8.701032] Call Trace:
+[    8.701032]  <IRQ>
+[    8.701032]  dump_stack+0x46/0x5b
+[    8.701032]  panic+0xf3/0x246
+[    8.701032]  ? debug_print_object+0x6a/0x80
+[    8.701032]  __warn+0xeb/0xf0
+[    8.701032]  ? debug_print_object+0x6a/0x80
+[    8.701032]  ? debug_print_object+0x6a/0x80
+[    8.701032]  report_bug+0xb1/0x120
+[    8.701032]  fixup_bug.part.10+0x13/0x30
+[    8.701032]  do_error_trap+0x8f/0xb0
+[    8.701032]  do_invalid_op+0x31/0x40
+[    8.701032]  ? debug_print_object+0x6a/0x80
+[    8.701032]  invalid_op+0x14/0x20
+[    8.701032] RIP: 0010:debug_print_object+0x6a/0x80
+[    8.701032] Code: 8b 43 10 83 c2 01 8b 4b 14 89 15 c1 e2 78 01 4c 8b 45 00 4c
+89 e6 48 c7 c7 f0 ca 41 a6 48 8b 14 c5 a0 f7 24 a6 e8 06 8e cc ff <0f> 0b 5b 83
+05 70 47 1a 01 01 5d 41 5c c3 83 05 65 47 1a 01 01 c3
+[    8.701032] RSP: 0018:ffff89b9fda03e48 EFLAGS: 00010082
+[    8.701032] RAX: 0000000000000000 RBX: ffff89b9fd49d0c8 RCX: ffffffffa6646e18
+[    8.701032] RDX: 0000000000000001 RSI: 0000000000000082 RDI: ffffffffa6cc596c
+[    8.701032] RBP: ffffffffa664a5c0 R08: 79616c6564203a74 R09: 5f6b726f775f6465
+[    8.701032] R10: ffff89b9fda03f10 R11: 3178302f3078302b R12: ffffffffa6403e22
+[    8.701032] R13: 0000000000000001 R14: ffffffffa6d4d458 R15: ffff89b9fc4c8780
+[    8.701032]  ? debug_print_object+0x6a/0x80
+[    8.701032]  debug_check_no_obj_freed+0x1b8/0x1ea
+[    8.701032]  ? rcu_process_callbacks+0x2a7/0x750
+[    8.701032]  kmem_cache_free+0x6e/0x1a0
+[    8.701032]  ? __blk_release_queue+0x150/0x150
+[    8.701032]  rcu_process_callbacks+0x2a7/0x750
+[    8.701032]  __do_softirq+0xf2/0x2c7
+[    8.701032]  irq_exit+0xb7/0xc0
+[    8.701032]  smp_apic_timer_interrupt+0x67/0x130
+[    8.701032]  apic_timer_interrupt+0xf/0x20
+[    8.701032]  </IRQ>
+[    8.701032] RIP: 0010:default_idle+0x12/0x140
+[    8.701032] Code: fe ff ff c6 43 08 00 fb eb b0 31 c0 eb b4 e8 65 c8 60 ff 90
+90 90 90 90 41 54 55 53 65 8b 2d 15 c4 3b 5a 66 66 66 66 90 fb f4 <65> 8b 2d 07
+c4 3b 5a 66 66 66 66 90 5b 5d 41 5c c3 65 8b 05 f6 c3
+[    8.701032] RSP: 0018:ffffffffa6603e98 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+[    8.701032] RAX: ffffffffa5c52d10 RBX: 0000000000000000 RCX: 0000000000000000
+[    8.701032] RDX: 0000000000000001 RSI: 0000000000000000 RDI: 000000020605092a
+[    8.701032] RBP: 0000000000000000 R08: ffffffffcff7766a R09: ffff89b9fda20b00
+[    8.701032] R10: 0000000000000000 R11: 0000000000002400 R12: ffffffffa6611740
+[    8.701032] R13: 0000000000000000 R14: 0000000000000000 R15: ffffffffa6611740
+[    8.701032]  ? __sched_text_end+0x5/0x5
+[    8.701032]  do_idle+0x19c/0x230
+[    8.701032]  cpu_startup_entry+0x14/0x20
+[    8.701032]  start_kernel+0x491/0x4b1
+[    8.701032]  secondary_startup_64+0xa4/0xb0
+[    8.701032] Kernel Offset: 0x24200000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+
+---
+# bad: [a351e9b9fc24e982ec2f0e76379a49826036da12] Linux 4.11
+# good: [c470abd4fde40ea6a0846a2beab642a578c0b8cd] Linux 4.10
+git bisect start 'v4.11' 'v4.10'
+# good: [1ec5c1867af085897bb9e0f67bef3713334dbe7f] Merge tag 'gpio-v4.11-1' of git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio
+git bisect good 1ec5c1867af085897bb9e0f67bef3713334dbe7f
+# good: [79b17ea740d9fab178d6a1aa15d848b5e6c01b82] Merge tag 'trace-v4.11' of git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace
+git bisect good 79b17ea740d9fab178d6a1aa15d848b5e6c01b82
+# bad: [d4ee21ef61dfcaeba7542cdc1c9242364a8ca5c0] Merge tag 'reset-fixes-for-4.11-2' of git://git.pengutronix.de/git/pza/linux into fixes
+git bisect bad d4ee21ef61dfcaeba7542cdc1c9242364a8ca5c0
+# good: [5eca1c10cbaa9c366c18ca79f81f21c731e3dcc7] sched/headers: Clean up <linux/sched.h>
+git bisect good 5eca1c10cbaa9c366c18ca79f81f21c731e3dcc7
+# good: [2d62e0768d3c28536d4cfe4c40ba1e5e8e442a93] Merge tag 'kvm-4.11-2' of git://git.kernel.org/pub/scm/virt/kvm/kvm
+git bisect good 2d62e0768d3c28536d4cfe4c40ba1e5e8e442a93
+# bad: [9db61d6fd65f53eaee13fbb451fd761ce926dea9] Merge tag 'xfs-4.11-fixes-1' of git://git.kernel.org/pub/scm/fs/xfs/xfs-linux
+git bisect bad 9db61d6fd65f53eaee13fbb451fd761ce926dea9
+# good: [f7d6a7283aa1de430c6323a9714d1a787bc2d1ea] Merge tag 'powerpc-4.11-3' of git://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux
+git bisect good f7d6a7283aa1de430c6323a9714d1a787bc2d1ea
+# good: [ec3b93ae0bf4742e9cbb40e1964129926c1464e0] Merge branch 'x86-urgent-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+git bisect good ec3b93ae0bf4742e9cbb40e1964129926c1464e0
+# bad: [34bbce9e344b47e8871273409632f525973afad4] Merge branch 'for-linus' of git://git.kernel.dk/linux-block
+git bisect bad 34bbce9e344b47e8871273409632f525973afad4
+# good: [bb61ce54e8986ea18f7eb13cfa4a6fa8eb311bbd] Merge tag 'media/v4.11-2' of git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media
+git bisect good bb61ce54e8986ea18f7eb13cfa4a6fa8eb311bbd
+# bad: [b0bfdfc2bf7fa85317824c6a389fc373dfcef5bc] block/sed: Fix opal user range check and unused variables
+git bisect bad b0bfdfc2bf7fa85317824c6a389fc373dfcef5bc
+# bad: [6c8b232efea1ad3d263ff8b9c16b7e8767a77488] blk-mq: make lifetime consistent between hctx and its kobject
+git bisect bad 6c8b232efea1ad3d263ff8b9c16b7e8767a77488
+# bad: [7ea5fe31c12dd8bcf4a9c5a4a7e8e23826a9a3b8] blk-mq: make lifetime consitent between q/ctx and its kobject
+git bisect bad 7ea5fe31c12dd8bcf4a9c5a4a7e8e23826a9a3b8
+# good: [737f98cfe7de8df7433a4d846850aa8efa44bd48] blk-mq: initialize mq kobjects in blk_mq_init_allocated_queue()
+git bisect good 737f98cfe7de8df7433a4d846850aa8efa44bd48
+# first bad commit: [7ea5fe31c12dd8bcf4a9c5a4a7e8e23826a9a3b8] blk-mq: make lifetime consitent between q/ctx and its kobject
