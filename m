@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C246FC43610
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:03:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A075C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:03:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8658520855
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:03:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8658520855
+	by mail.kernel.org (Postfix) with ESMTP id BCB342086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:03:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCB342086C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=angband.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729006AbeKJEpc (ORCPT
+        id S1729031AbeKJEpd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 23:45:32 -0500
-Received: from tartarus.angband.pl ([54.37.238.230]:51600 "EHLO
+        Fri, 9 Nov 2018 23:45:33 -0500
+Received: from tartarus.angband.pl ([54.37.238.230]:51704 "EHLO
         tartarus.angband.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728225AbeKJEp3 (ORCPT
+        with ESMTP id S1728683AbeKJEpc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 23:45:29 -0500
+        Fri, 9 Nov 2018 23:45:32 -0500
 Received: from 89-64-163-218.dynamic.chello.pl ([89.64.163.218] helo=barad-dur.angband.pl)
         by tartarus.angband.pl with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <kilobyte@angband.pl>)
-        id 1gLC40-00054h-J6; Fri, 09 Nov 2018 20:03:30 +0100
+        id 1gLC43-00056I-EP; Fri, 09 Nov 2018 20:03:33 +0100
 Received: from kholdan.angband.pl ([2001:470:64f4::5])
         by barad-dur.angband.pl with smtp (Exim 4.89)
         (envelope-from <kilobyte@angband.pl>)
-        id 1gLC3z-0005AA-1i; Fri, 09 Nov 2018 20:03:28 +0100
-Received: by kholdan.angband.pl (sSMTP sendmail emulation); Fri, 09 Nov 2018 20:03:27 +0100
+        id 1gLC41-0005AG-Rq; Fri, 09 Nov 2018 20:03:30 +0100
+Received: by kholdan.angband.pl (sSMTP sendmail emulation); Fri, 09 Nov 2018 20:03:29 +0100
 From:   Adam Borowski <kilobyte@angband.pl>
 To:     linux-kernel@vger.kernel.org, Nick Terrell <terrelln@fb.com>,
         Russell King <linux@armlinux.org.uk>,
@@ -62,8 +62,8 @@ To:     linux-kernel@vger.kernel.org, Nick Terrell <terrelln@fb.com>,
         Max Filippov <jcmvbkbc@gmail.com>,
         linux-xtensa@linux-xtensa.org
 Cc:     Adam Borowski <kilobyte@angband.pl>
-Date:   Fri,  9 Nov 2018 20:02:58 +0100
-Message-Id: <20181109190304.8573-11-kilobyte@angband.pl>
+Date:   Fri,  9 Nov 2018 20:03:00 +0100
+Message-Id: <20181109190304.8573-13-kilobyte@angband.pl>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181109190304.8573-1-kilobyte@angband.pl>
 References: <20181109185953.xwyelyqnygbskkxk@angband.pl>
@@ -72,7 +72,7 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 89.64.163.218
 X-SA-Exim-Mail-From: kilobyte@angband.pl
-Subject: [PATCH 11/17] Kconfig: Remove support for BZIP2-compressed initrd and kernel
+Subject: [PATCH 13/17] arch/*: Purge references to CONFIG_RD_BZIP2/LZMA from various defconfigs
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on tartarus.angband.pl)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -80,166 +80,325 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In no case it's a rational choice anymore: it's much slower than newer
-algorithms at similar compression strength, and takes lots of memory
-as well.
-
-Removal of compression algorithms for vmlinuz is completely safe (the
-kernel gets compressed by this very Makefile), less so for initrd as
-someone might have requested it in initramfs.conf -- but it's not an
-option users tend to alter, and they'd use a better algorithm anyway.
-Thus, user damage is possible but on par with removal of an ancient
-filesystem.
+They don't exist anymore.
 
 Signed-off-by: Adam Borowski <kilobyte@angband.pl>
 ---
- Makefile                   |  1 -
- init/Kconfig               | 17 ++---------------
- init/do_mounts_rd.c        |  1 -
- kernel/configs/tiny.config |  1 -
- usr/Kconfig                | 24 ------------------------
- 5 files changed, 2 insertions(+), 42 deletions(-)
+ arch/arm/configs/aspeed_g4_defconfig       | 1 -
+ arch/arm/configs/aspeed_g5_defconfig       | 1 -
+ arch/arm/configs/clps711x_defconfig        | 1 -
+ arch/arm/configs/ezx_defconfig             | 2 --
+ arch/arm/configs/hisi_defconfig            | 1 -
+ arch/arm/configs/imote2_defconfig          | 2 --
+ arch/arm/configs/lpc18xx_defconfig         | 2 --
+ arch/arm/configs/vf610m4_defconfig         | 2 --
+ arch/m68k/configs/stmark2_defconfig        | 2 --
+ arch/mips/configs/ar7_defconfig            | 1 -
+ arch/mips/configs/ath25_defconfig          | 1 -
+ arch/mips/configs/ath79_defconfig          | 1 -
+ arch/mips/configs/lemote2f_defconfig       | 2 --
+ arch/mips/configs/loongson3_defconfig      | 2 --
+ arch/mips/configs/nlm_xlp_defconfig        | 2 --
+ arch/mips/configs/nlm_xlr_defconfig        | 2 --
+ arch/mips/configs/pistachio_defconfig      | 2 --
+ arch/openrisc/configs/simple_smp_defconfig | 2 --
+ arch/powerpc/configs/44x/fsp2_defconfig    | 1 -
+ arch/powerpc/configs/skiroot_defconfig     | 2 --
+ arch/sh/configs/sdk7786_defconfig          | 2 --
+ arch/xtensa/configs/cadence_csp_defconfig  | 2 --
+ arch/xtensa/configs/nommu_kc705_defconfig  | 2 --
+ 23 files changed, 38 deletions(-)
 
-diff --git a/Makefile b/Makefile
-index 9fce8b91c15f..c812467bfe11 100644
---- a/Makefile
-+++ b/Makefile
-@@ -938,7 +938,6 @@ export mod_compress_cmd
- # This shall be used by the dracut(8) tool while creating an initramfs image.
- #
- INITRD_COMPRESS-y                  := gzip
--INITRD_COMPRESS-$(CONFIG_RD_BZIP2) := bzip2
- INITRD_COMPRESS-$(CONFIG_RD_LZMA)  := lzma
- INITRD_COMPRESS-$(CONFIG_RD_XZ)    := xz
- INITRD_COMPRESS-$(CONFIG_RD_LZO)   := lzo
-diff --git a/init/Kconfig b/init/Kconfig
-index ffa5ae4abc88..412ba93673fa 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -119,9 +119,6 @@ config BUILD_SALT
- config HAVE_KERNEL_GZIP
- 	bool
- 
--config HAVE_KERNEL_BZIP2
--	bool
--
- config HAVE_KERNEL_LZMA
- 	bool
- 
-@@ -143,7 +140,7 @@ config HAVE_KERNEL_UNCOMPRESSED
- choice
- 	prompt "Kernel compression mode"
- 	default KERNEL_GZIP
--	depends on HAVE_KERNEL_GZIP || HAVE_KERNEL_BZIP2 || HAVE_KERNEL_LZMA || HAVE_KERNEL_XZ || HAVE_KERNEL_LZO || HAVE_KERNEL_LZ4 || HAVE_KERNEL_ZSTD || HAVE_KERNEL_UNCOMPRESSED
-+	depends on HAVE_KERNEL_GZIP || HAVE_KERNEL_LZMA || HAVE_KERNEL_XZ || HAVE_KERNEL_LZO || HAVE_KERNEL_LZ4 || HAVE_KERNEL_ZSTD || HAVE_KERNEL_UNCOMPRESSED
- 	help
- 	  The linux kernel is a kind of self-extracting executable.
- 	  Several compression algorithms are available, which differ
-@@ -151,7 +148,7 @@ choice
- 	  Compression speed is only relevant when building a kernel.
- 	  Decompression speed is relevant at each boot.
- 
--	  If you have any problems with bzip2 or lzma compressed
-+	  If you have any problems with lzma compressed
- 	  kernels, mail me (Alain Knaff) <alain@knaff.lu>. (An older
- 	  version of this functionality (bzip2 only), for 2.4, was
- 	  supplied by Christian Ludwig)
-@@ -169,16 +166,6 @@ config KERNEL_GZIP
- 	  The old and tried gzip compression. It provides a good balance
- 	  between compression ratio and decompression speed.
- 
--config KERNEL_BZIP2
--	bool "Bzip2"
--	depends on HAVE_KERNEL_BZIP2
--	help
--	  Its compression ratio and speed is intermediate.
--	  Decompression speed is slowest among the choices.  The kernel
--	  size is about 10% smaller with bzip2, in comparison to gzip.
--	  Bzip2 uses a large amount of memory. For modern kernels you
--	  will need at least 8MB RAM or more for booting.
--
- config KERNEL_LZMA
- 	bool "LZMA"
- 	depends on HAVE_KERNEL_LZMA
-diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
-index 32fb049d18f9..5f26365ea8b1 100644
---- a/init/do_mounts_rd.c
-+++ b/init/do_mounts_rd.c
-@@ -48,7 +48,6 @@ static int __init crd_load(int in_fd, int out_fd, decompress_fn deco);
-  *	cramfs
-  *	squashfs
-  *	gzip
-- *	bzip2
-  *	lzma
-  *	xz
-  *	lzo
-diff --git a/kernel/configs/tiny.config b/kernel/configs/tiny.config
-index 7fa0c4ae6394..c5480f87fae3 100644
---- a/kernel/configs/tiny.config
-+++ b/kernel/configs/tiny.config
+diff --git a/arch/arm/configs/aspeed_g4_defconfig b/arch/arm/configs/aspeed_g4_defconfig
+index 1446262921b4..2e978ba5fab3 100644
+--- a/arch/arm/configs/aspeed_g4_defconfig
++++ b/arch/arm/configs/aspeed_g4_defconfig
+@@ -8,7 +8,6 @@ CONFIG_IKCONFIG_PROC=y
+ CONFIG_LOG_BUF_SHIFT=16
+ CONFIG_CGROUPS=y
+ CONFIG_BLK_DEV_INITRD=y
+-# CONFIG_RD_BZIP2 is not set
+ # CONFIG_RD_LZO is not set
+ # CONFIG_RD_LZ4 is not set
+ # CONFIG_UID16 is not set
+diff --git a/arch/arm/configs/aspeed_g5_defconfig b/arch/arm/configs/aspeed_g5_defconfig
+index 02fa3a41add5..4fef8a5d208a 100644
+--- a/arch/arm/configs/aspeed_g5_defconfig
++++ b/arch/arm/configs/aspeed_g5_defconfig
+@@ -8,7 +8,6 @@ CONFIG_IKCONFIG_PROC=y
+ CONFIG_LOG_BUF_SHIFT=16
+ CONFIG_CGROUPS=y
+ CONFIG_BLK_DEV_INITRD=y
+-# CONFIG_RD_BZIP2 is not set
+ # CONFIG_RD_LZO is not set
+ # CONFIG_RD_LZ4 is not set
+ # CONFIG_UID16 is not set
+diff --git a/arch/arm/configs/clps711x_defconfig b/arch/arm/configs/clps711x_defconfig
+index fc105c9178cc..63e029d9c5a6 100644
+--- a/arch/arm/configs/clps711x_defconfig
++++ b/arch/arm/configs/clps711x_defconfig
+@@ -2,7 +2,6 @@ CONFIG_KERNEL_LZMA=y
+ CONFIG_SYSVIPC=y
+ CONFIG_LOG_BUF_SHIFT=14
+ CONFIG_BLK_DEV_INITRD=y
+-CONFIG_RD_LZMA=y
+ CONFIG_EMBEDDED=y
+ CONFIG_SLOB=y
+ CONFIG_JUMP_LABEL=y
+diff --git a/arch/arm/configs/ezx_defconfig b/arch/arm/configs/ezx_defconfig
+index 484e51fbd4a6..47bbd7b20f07 100644
+--- a/arch/arm/configs/ezx_defconfig
++++ b/arch/arm/configs/ezx_defconfig
+@@ -4,8 +4,6 @@ CONFIG_SYSVIPC=y
+ CONFIG_LOG_BUF_SHIFT=14
+ CONFIG_SYSFS_DEPRECATED_V2=y
+ CONFIG_BLK_DEV_INITRD=y
+-CONFIG_RD_BZIP2=y
+-CONFIG_RD_LZMA=y
+ CONFIG_EXPERT=y
+ # CONFIG_COMPAT_BRK is not set
+ CONFIG_SLAB=y
+diff --git a/arch/arm/configs/hisi_defconfig b/arch/arm/configs/hisi_defconfig
+index 74d611e41e02..c8660e175f15 100644
+--- a/arch/arm/configs/hisi_defconfig
++++ b/arch/arm/configs/hisi_defconfig
 @@ -1,7 +1,6 @@
- # CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE is not set
+ CONFIG_NO_HZ=y
+ CONFIG_HIGH_RES_TIMERS=y
+ CONFIG_BLK_DEV_INITRD=y
+-CONFIG_RD_LZMA=y
+ CONFIG_ARCH_HISI=y
+ CONFIG_ARCH_HI3xxx=y
+ CONFIG_PARTITION_ADVANCED=y
+diff --git a/arch/arm/configs/imote2_defconfig b/arch/arm/configs/imote2_defconfig
+index f204017c26b9..5cd017270f1e 100644
+--- a/arch/arm/configs/imote2_defconfig
++++ b/arch/arm/configs/imote2_defconfig
+@@ -3,8 +3,6 @@ CONFIG_SYSVIPC=y
+ CONFIG_LOG_BUF_SHIFT=14
+ CONFIG_SYSFS_DEPRECATED_V2=y
+ CONFIG_BLK_DEV_INITRD=y
+-CONFIG_RD_BZIP2=y
+-CONFIG_RD_LZMA=y
+ CONFIG_EXPERT=y
+ # CONFIG_COMPAT_BRK is not set
+ CONFIG_SLAB=y
+diff --git a/arch/arm/configs/lpc18xx_defconfig b/arch/arm/configs/lpc18xx_defconfig
+index 23df2518203d..f0d36814111a 100644
+--- a/arch/arm/configs/lpc18xx_defconfig
++++ b/arch/arm/configs/lpc18xx_defconfig
+@@ -1,8 +1,6 @@
+ CONFIG_CROSS_COMPILE="arm-linux-gnueabihf-"
+ CONFIG_HIGH_RES_TIMERS=y
+ CONFIG_BLK_DEV_INITRD=y
+-# CONFIG_RD_BZIP2 is not set
+-# CONFIG_RD_LZMA is not set
+ # CONFIG_RD_XZ is not set
+ # CONFIG_RD_LZO is not set
+ # CONFIG_RD_LZ4 is not set
+diff --git a/arch/arm/configs/vf610m4_defconfig b/arch/arm/configs/vf610m4_defconfig
+index a89f035c3b01..6b34e135035b 100644
+--- a/arch/arm/configs/vf610m4_defconfig
++++ b/arch/arm/configs/vf610m4_defconfig
+@@ -1,7 +1,5 @@
+ CONFIG_NAMESPACES=y
+ CONFIG_BLK_DEV_INITRD=y
+-# CONFIG_RD_BZIP2 is not set
+-# CONFIG_RD_LZMA is not set
+ # CONFIG_RD_XZ is not set
+ # CONFIG_RD_LZ4 is not set
+ CONFIG_KALLSYMS_ALL=y
+diff --git a/arch/m68k/configs/stmark2_defconfig b/arch/m68k/configs/stmark2_defconfig
+index 3d07b1de7eb0..fe82d37ba81d 100644
+--- a/arch/m68k/configs/stmark2_defconfig
++++ b/arch/m68k/configs/stmark2_defconfig
+@@ -5,8 +5,6 @@ CONFIG_SYSVIPC=y
+ CONFIG_LOG_BUF_SHIFT=14
+ CONFIG_NAMESPACES=y
+ CONFIG_BLK_DEV_INITRD=y
+-# CONFIG_RD_BZIP2 is not set
+-# CONFIG_RD_LZMA is not set
+ # CONFIG_RD_XZ is not set
+ # CONFIG_RD_LZO is not set
+ # CONFIG_RD_LZ4 is not set
+diff --git a/arch/mips/configs/ar7_defconfig b/arch/mips/configs/ar7_defconfig
+index 5651f4d8f45c..a0ce69fb4fcb 100644
+--- a/arch/mips/configs/ar7_defconfig
++++ b/arch/mips/configs/ar7_defconfig
+@@ -12,7 +12,6 @@ CONFIG_LOG_BUF_SHIFT=14
+ CONFIG_SYSFS_DEPRECATED_V2=y
+ CONFIG_RELAY=y
+ CONFIG_BLK_DEV_INITRD=y
+-CONFIG_RD_LZMA=y
+ CONFIG_EXPERT=y
+ # CONFIG_KALLSYMS is not set
+ # CONFIG_ELF_CORE is not set
+diff --git a/arch/mips/configs/ath25_defconfig b/arch/mips/configs/ath25_defconfig
+index b8d48038e74f..1a83f91dad42 100644
+--- a/arch/mips/configs/ath25_defconfig
++++ b/arch/mips/configs/ath25_defconfig
+@@ -9,7 +9,6 @@ CONFIG_SYSVIPC=y
+ CONFIG_HIGH_RES_TIMERS=y
+ CONFIG_BLK_DEV_INITRD=y
+ # CONFIG_RD_GZIP is not set
+-# CONFIG_RD_BZIP2 is not set
+ # CONFIG_RD_XZ is not set
+ # CONFIG_RD_LZO is not set
+ # CONFIG_RD_LZ4 is not set
+diff --git a/arch/mips/configs/ath79_defconfig b/arch/mips/configs/ath79_defconfig
+index 951c4231bdb8..c11f1870ed6f 100644
+--- a/arch/mips/configs/ath79_defconfig
++++ b/arch/mips/configs/ath79_defconfig
+@@ -12,7 +12,6 @@ CONFIG_SYSVIPC=y
+ CONFIG_HIGH_RES_TIMERS=y
+ CONFIG_BLK_DEV_INITRD=y
+ # CONFIG_RD_GZIP is not set
+-CONFIG_RD_LZMA=y
+ # CONFIG_KALLSYMS is not set
+ # CONFIG_AIO is not set
+ CONFIG_EMBEDDED=y
+diff --git a/arch/mips/configs/lemote2f_defconfig b/arch/mips/configs/lemote2f_defconfig
+index 02be95c1b712..2e2561f1aec3 100644
+--- a/arch/mips/configs/lemote2f_defconfig
++++ b/arch/mips/configs/lemote2f_defconfig
+@@ -17,8 +17,6 @@ CONFIG_IKCONFIG_PROC=y
+ CONFIG_LOG_BUF_SHIFT=15
+ CONFIG_SYSFS_DEPRECATED_V2=y
+ CONFIG_BLK_DEV_INITRD=y
+-CONFIG_RD_BZIP2=y
+-CONFIG_RD_LZMA=y
+ # CONFIG_CC_OPTIMIZE_FOR_SIZE is not set
+ CONFIG_EXPERT=y
+ CONFIG_PROFILING=y
+diff --git a/arch/mips/configs/loongson3_defconfig b/arch/mips/configs/loongson3_defconfig
+index 324dfee23dfb..42eae3436bb4 100644
+--- a/arch/mips/configs/loongson3_defconfig
++++ b/arch/mips/configs/loongson3_defconfig
+@@ -32,8 +32,6 @@ CONFIG_SCHED_AUTOGROUP=y
+ CONFIG_SYSFS_DEPRECATED=y
+ CONFIG_RELAY=y
+ CONFIG_BLK_DEV_INITRD=y
+-CONFIG_RD_BZIP2=y
+-CONFIG_RD_LZMA=y
+ CONFIG_SYSCTL_SYSCALL=y
+ CONFIG_EMBEDDED=y
+ CONFIG_MODULES=y
+diff --git a/arch/mips/configs/nlm_xlp_defconfig b/arch/mips/configs/nlm_xlp_defconfig
+index e8e1dd8e0e99..16e44d0f1d29 100644
+--- a/arch/mips/configs/nlm_xlp_defconfig
++++ b/arch/mips/configs/nlm_xlp_defconfig
+@@ -21,8 +21,6 @@ CONFIG_HIGH_RES_TIMERS=y
+ CONFIG_CGROUPS=y
+ CONFIG_NAMESPACES=y
+ CONFIG_BLK_DEV_INITRD=y
+-CONFIG_RD_BZIP2=y
+-CONFIG_RD_LZMA=y
+ CONFIG_KALLSYMS_ALL=y
+ CONFIG_EMBEDDED=y
+ # CONFIG_COMPAT_BRK is not set
+diff --git a/arch/mips/configs/nlm_xlr_defconfig b/arch/mips/configs/nlm_xlr_defconfig
+index c4477a4d40c1..9340f42184f7 100644
+--- a/arch/mips/configs/nlm_xlr_defconfig
++++ b/arch/mips/configs/nlm_xlr_defconfig
+@@ -22,8 +22,6 @@ CONFIG_NAMESPACES=y
+ CONFIG_SCHED_AUTOGROUP=y
+ CONFIG_BLK_DEV_INITRD=y
+ CONFIG_INITRAMFS_SOURCE=""
+-CONFIG_RD_BZIP2=y
+-CONFIG_RD_LZMA=y
+ CONFIG_INITRAMFS_COMPRESSION_GZIP=y
+ CONFIG_EXPERT=y
+ CONFIG_KALLSYMS_ALL=y
+diff --git a/arch/mips/configs/pistachio_defconfig b/arch/mips/configs/pistachio_defconfig
+index b22a3cf149b6..4257f90d1272 100644
+--- a/arch/mips/configs/pistachio_defconfig
++++ b/arch/mips/configs/pistachio_defconfig
+@@ -21,8 +21,6 @@ CONFIG_CFS_BANDWIDTH=y
+ CONFIG_NAMESPACES=y
+ CONFIG_USER_NS=y
+ CONFIG_BLK_DEV_INITRD=y
+-# CONFIG_RD_BZIP2 is not set
+-# CONFIG_RD_LZMA is not set
+ # CONFIG_RD_LZO is not set
+ # CONFIG_RD_LZ4 is not set
  CONFIG_CC_OPTIMIZE_FOR_SIZE=y
- # CONFIG_KERNEL_GZIP is not set
--# CONFIG_KERNEL_BZIP2 is not set
- # CONFIG_KERNEL_LZMA is not set
- CONFIG_KERNEL_XZ=y
- # CONFIG_KERNEL_LZO is not set
-diff --git a/usr/Kconfig b/usr/Kconfig
-index 5ff529b75ee1..05b6be569041 100644
---- a/usr/Kconfig
-+++ b/usr/Kconfig
-@@ -61,15 +61,6 @@ config RD_GZIP
- 	  Support loading of a gzip encoded initial ramdisk or cpio buffer.
- 	  If unsure, say Y.
- 
--config RD_BZIP2
--	bool "Support initial ramdisk/ramfs compressed using bzip2"
--	default y
--	depends on BLK_DEV_INITRD
--	select DECOMPRESS_BZIP2
--	help
--	  Support loading of a bzip2 encoded initial ramdisk or cpio buffer
--	  If unsure, say N.
--
- config RD_LZMA
- 	bool "Support initial ramdisk/ramfs compressed using LZMA"
- 	default y
-@@ -161,19 +152,6 @@ config INITRAMFS_COMPRESSION_GZIP
- 	  supported by your build system as the gzip tool is present by default
- 	  on most distros.
- 
--config INITRAMFS_COMPRESSION_BZIP2
--	bool "Bzip2"
--	depends on RD_BZIP2
--	help
--	  It's compression ratio and speed is intermediate. Decompression speed
--	  is slowest among the choices. The initramfs size is about 10% smaller
--	  with bzip2, in comparison to gzip. Bzip2 uses a large amount of
--	  memory. For modern kernels you will need at least 8MB RAM or more for
--	  booting.
--
--	  If you choose this, keep in mind that you need to have the bzip2 tool
--	  available to be able to compress the initram.
--
- config INITRAMFS_COMPRESSION_LZMA
- 	bool "LZMA"
- 	depends on RD_LZMA
-@@ -241,7 +219,6 @@ config INITRAMFS_COMPRESSION
- 	string
- 	default ""      if INITRAMFS_COMPRESSION_NONE
- 	default ".gz"   if INITRAMFS_COMPRESSION_GZIP
--	default ".bz2"  if INITRAMFS_COMPRESSION_BZIP2
- 	default ".lzma" if INITRAMFS_COMPRESSION_LZMA
- 	default ".xz"   if INITRAMFS_COMPRESSION_XZ
- 	default ".lzo"  if INITRAMFS_COMPRESSION_LZO
-@@ -252,6 +229,5 @@ config INITRAMFS_COMPRESSION
- 	default ".lzo"  if RD_LZO
- 	default ".xz"   if RD_XZ
- 	default ".lzma" if RD_LZMA
--	default ".bz2"  if RD_BZIP2
- 	default ".zst"  if RD_ZSTD
- 	default ""
+diff --git a/arch/openrisc/configs/simple_smp_defconfig b/arch/openrisc/configs/simple_smp_defconfig
+index b6e3c7e158e7..03b7633a9a2b 100644
+--- a/arch/openrisc/configs/simple_smp_defconfig
++++ b/arch/openrisc/configs/simple_smp_defconfig
+@@ -4,8 +4,6 @@ CONFIG_NO_HZ=y
+ CONFIG_LOG_BUF_SHIFT=14
+ CONFIG_BLK_DEV_INITRD=y
+ # CONFIG_RD_GZIP is not set
+-# CONFIG_RD_BZIP2 is not set
+-# CONFIG_RD_LZMA is not set
+ # CONFIG_RD_XZ is not set
+ # CONFIG_RD_LZO is not set
+ # CONFIG_RD_LZ4 is not set
+diff --git a/arch/powerpc/configs/44x/fsp2_defconfig b/arch/powerpc/configs/44x/fsp2_defconfig
+index bae6b26bcfba..8ccae1052efb 100644
+--- a/arch/powerpc/configs/44x/fsp2_defconfig
++++ b/arch/powerpc/configs/44x/fsp2_defconfig
+@@ -9,7 +9,6 @@ CONFIG_IKCONFIG=y
+ CONFIG_IKCONFIG_PROC=y
+ CONFIG_LOG_BUF_SHIFT=16
+ CONFIG_BLK_DEV_INITRD=y
+-# CONFIG_RD_LZMA is not set
+ # CONFIG_RD_XZ is not set
+ # CONFIG_RD_LZO is not set
+ # CONFIG_RD_LZ4 is not set
+diff --git a/arch/powerpc/configs/skiroot_defconfig b/arch/powerpc/configs/skiroot_defconfig
+index cfdd08897a06..5d790a65e733 100644
+--- a/arch/powerpc/configs/skiroot_defconfig
++++ b/arch/powerpc/configs/skiroot_defconfig
+@@ -16,8 +16,6 @@ CONFIG_IKCONFIG_PROC=y
+ CONFIG_LOG_BUF_SHIFT=20
+ CONFIG_BLK_DEV_INITRD=y
+ # CONFIG_RD_GZIP is not set
+-# CONFIG_RD_BZIP2 is not set
+-# CONFIG_RD_LZMA is not set
+ # CONFIG_RD_LZO is not set
+ # CONFIG_RD_LZ4 is not set
+ CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+diff --git a/arch/sh/configs/sdk7786_defconfig b/arch/sh/configs/sdk7786_defconfig
+index e9ee0c878ead..4e71a98bc814 100644
+--- a/arch/sh/configs/sdk7786_defconfig
++++ b/arch/sh/configs/sdk7786_defconfig
+@@ -29,8 +29,6 @@ CONFIG_USER_NS=y
+ CONFIG_PID_NS=y
+ CONFIG_NET_NS=y
+ CONFIG_BLK_DEV_INITRD=y
+-CONFIG_RD_BZIP2=y
+-CONFIG_RD_LZMA=y
+ CONFIG_RD_LZO=y
+ # CONFIG_COMPAT_BRK is not set
+ CONFIG_SLAB=y
+diff --git a/arch/xtensa/configs/cadence_csp_defconfig b/arch/xtensa/configs/cadence_csp_defconfig
+index 3221b7053fa3..e7b295ec6acd 100644
+--- a/arch/xtensa/configs/cadence_csp_defconfig
++++ b/arch/xtensa/configs/cadence_csp_defconfig
+@@ -15,8 +15,6 @@ CONFIG_SCHED_AUTOGROUP=y
+ CONFIG_RELAY=y
+ CONFIG_BLK_DEV_INITRD=y
+ CONFIG_INITRAMFS_SOURCE="$$KERNEL_INITRAMFS_SOURCE"
+-# CONFIG_RD_BZIP2 is not set
+-# CONFIG_RD_LZMA is not set
+ # CONFIG_RD_XZ is not set
+ # CONFIG_RD_LZO is not set
+ # CONFIG_RD_LZ4 is not set
+diff --git a/arch/xtensa/configs/nommu_kc705_defconfig b/arch/xtensa/configs/nommu_kc705_defconfig
+index f3fc4f970ca8..9a449d13eb1e 100644
+--- a/arch/xtensa/configs/nommu_kc705_defconfig
++++ b/arch/xtensa/configs/nommu_kc705_defconfig
+@@ -15,8 +15,6 @@ CONFIG_NAMESPACES=y
+ CONFIG_SCHED_AUTOGROUP=y
+ CONFIG_RELAY=y
+ CONFIG_BLK_DEV_INITRD=y
+-# CONFIG_RD_BZIP2 is not set
+-# CONFIG_RD_LZMA is not set
+ # CONFIG_RD_XZ is not set
+ # CONFIG_RD_LZO is not set
+ # CONFIG_RD_LZ4 is not set
 -- 
 2.19.1
 
