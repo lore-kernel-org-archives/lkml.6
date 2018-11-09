@@ -2,177 +2,89 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5F2EC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 12:49:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E1F8C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 12:53:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9A542081C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 12:49:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9A542081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id D55BD20840
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 12:53:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D55BD20840
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727955AbeKIWaD (ORCPT
+        id S1727941AbeKIWeU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 17:30:03 -0500
-Received: from foss.arm.com ([217.140.101.70]:59738 "EHLO foss.arm.com"
+        Fri, 9 Nov 2018 17:34:20 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:58822 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727802AbeKIWaD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 17:30:03 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7249080D;
-        Fri,  9 Nov 2018 04:49:34 -0800 (PST)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A57143F718;
-        Fri,  9 Nov 2018 04:49:32 -0800 (PST)
-Date:   Fri, 9 Nov 2018 12:49:30 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>
-Cc:     Peter Maydell <peter.maydell@linaro.org>,
-        kvm-devel <kvm@vger.kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Christoffer Dall <christoffer.dall@linaro.org>,
-        kvmarm@lists.cs.columbia.edu,
-        arm-mail-list <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [RFC PATCH] KVM: arm64: don't single-step for non-emulated faults
-Message-ID: <20181109124930.axelmyohmrcb63b4@lakrids.cambridge.arm.com>
-References: <20181107171031.22573-1-alex.bennee@linaro.org>
- <20181107180120.urnvkcrkh46ytsdb@lakrids.cambridge.arm.com>
- <20181107180829.sex54bxhd5wyqvan@lakrids.cambridge.arm.com>
- <87r2fv68us.fsf@linaro.org>
- <20181108135122.llmfsel32dbe2q7o@lakrids.cambridge.arm.com>
- <87pnvf63u2.fsf@linaro.org>
- <CAFEAcA9v+XvAJBWpDMvEQPeJ7ALM15Yz5KY+wfGPmLG2a8yPRQ@mail.gmail.com>
- <20181109115644.f4qjqnv2kogoke42@lakrids.cambridge.arm.com>
- <87lg625th2.fsf@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87lg625th2.fsf@linaro.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1727676AbeKIWeU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 17:34:20 -0500
+Received: from wd0474.dip.tu-dresden.de ([141.76.109.218] helo=phil.dip.tu-dresden.de)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1gL6IH-0008Ln-G1; Fri, 09 Nov 2018 13:53:49 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     sre@kernel.org
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        heiko@sntech.de, Heiko Stuebner <heiko.stuebner@bq.com>
+Subject: [PATCH] power: supply: bq24190_charger: add support for bq24196 variant
+Date:   Fri,  9 Nov 2018 13:53:35 +0100
+Message-Id: <20181109125335.1219-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 09, 2018 at 12:24:41PM +0000, Alex Bennée wrote:
-> Mark Rutland <mark.rutland@arm.com> writes:
-> > On Thu, Nov 08, 2018 at 02:38:43PM +0000, Peter Maydell wrote:
-> >> On 8 November 2018 at 14:28, Alex Bennée <alex.bennee@linaro.org> wrote:
-> >> >
-> >> > Mark Rutland <mark.rutland@arm.com> writes:
-> >> >> One problem is that I couldn't spot when we advance the PC for an MMIO
-> >> >> trap. I presume we do that in the kernel, *after* the MMIO trap, but I
-> >> >> can't see where that happens.
-> >> >
-> >> > Nope it gets done before during decode_hsr in mmio.c:
-> >> >
-> >> >         /*
-> >> >          * The MMIO instruction is emulated and should not be re-executed
-> >> >          * in the guest.
-> >> >          */
-> >> >         kvm_skip_instr(vcpu, kvm_vcpu_trap_il_is32bit(vcpu));
-> >>
-> >> I think that this attempt to do the PC-advance early is
-> >> probably an underlying problem that is not helping the
-> >> code structure here.
-> >>
-> >> An enhancement that's been floated previously is that the
-> >> MMIO emulation in userspace should be able to report back
-> >> to KVM "nope, that access should generate a guest synchronous
-> >> external abort (with ESR_EL1.EA = 0/1)".
-> >> If we have that, then we definitely need to not advance the
-> >> PC until after userspace has done the emulation and told
-> >> us whether the memory access succeeded or not...
-> >
-> > Yup.
-> >
-> > I think that we absolutely want to do all the CPU state advancement (PC,
-> > SS bit, etc) at the point we apply the effects of the instruction. Not
-> > before we emulate the instruction, and not higher/lower in the call
-> > stack.
-> 
-> There is certainly an argument to abstract some of the advancement logic
-> so we can make debug related decisions in one place. I don't know how
-> much churn we would need to get there.
+From: Heiko Stuebner <heiko.stuebner@bq.com>
 
-I'm not saying anything about *decisions*. I'm saying that we can make
-the state consistent by advancing the singlestep state in the same way
-that HW does, at the instant it advances the PC.
+The bq24196 is another variant of the bq24190 charger ic.
+Its register set is identical to the bq24192 and it even reuses
+the same part number (0x5).
 
-i.e. do that in kvm_skip_instr(), as I've done in my local tree.
+Signed-off-by: Heiko Stuebner <heiko.stuebner@bq.com>
+---
+This should go on top of the bq24192 support patches from Brian Masney /
+Jonathan Marek [0]
 
-That mirrors the HW, and we don't need to special-case any handling for
-emulated vs non-emulated instructions.
+[0] https://patchwork.kernel.org/patch/10663409/
 
-> Currently most of the guest debug decisions are made in one place as we
-> head into the guest run. Generally I don't think the emulation code want
-> to know or care about the SS bit or what debug is currently happening
-> although I guess the presence of the SS bit could be used to decide on
-> exactly what exit type you are going to do - back to guest or out to
-> user space. Currently kvm_arm_handle_step_debug on cares about host
-> directed debug but we could expand it to raise the appropriate guest
-> exception if required.
+ drivers/power/supply/bq24190_charger.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-So long as we consistently advance the singlestep state when we emulate
-an instruction, we shouldn't need kvm_arm_handle_step_debug() at all. If
-we emulate an instruction, we'll return to the guest with PSTATE.SS
-clear, and the HW will generate the exception for us.
+diff --git a/drivers/power/supply/bq24190_charger.c b/drivers/power/supply/bq24190_charger.c
+index 4e64e6ac95c5..effa7c3c21e6 100644
+--- a/drivers/power/supply/bq24190_charger.c
++++ b/drivers/power/supply/bq24190_charger.c
+@@ -143,7 +143,7 @@
+ #define BQ24190_REG_VPRS_PN_MASK		(BIT(5) | BIT(4) | BIT(3))
+ #define BQ24190_REG_VPRS_PN_SHIFT		3
+ #define BQ24190_REG_VPRS_PN_24190			0x4
+-#define BQ24190_REG_VPRS_PN_24192			0x5 /* Also 24193 */
++#define BQ24190_REG_VPRS_PN_24192			0x5 /* Also 24193, 24196 */
+ #define BQ24190_REG_VPRS_PN_24192I			0x3
+ #define BQ24190_REG_VPRS_TS_PROFILE_MASK	BIT(2)
+ #define BQ24190_REG_VPRS_TS_PROFILE_SHIFT	2
+@@ -1973,6 +1973,7 @@ static const struct i2c_device_id bq24190_i2c_ids[] = {
+ 	{ "bq24190" },
+ 	{ "bq24192" },
+ 	{ "bq24192i" },
++	{ "bq24196" },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(i2c, bq24190_i2c_ids);
+@@ -1982,6 +1983,7 @@ static const struct of_device_id bq24190_of_match[] = {
+ 	{ .compatible = "ti,bq24190", },
+ 	{ .compatible = "ti,bq24192", },
+ 	{ .compatible = "ti,bq24192i", },
++	{ .compatible = "ti,bq24196", },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, bq24190_of_match);
+-- 
+2.18.0
 
-This is *vastly* simpler to reason about.
-
-I have local patches which I intend to post shortly.
-
-> > We have a big problem in that guest-directed singlestep and
-> > host-directed singlestep don't compose, and given that host-directed
-> > singlestep doesn't work reliably today I'd be tempted to rip that out
-> > until we've fixed guest-directed singlestep.
-> 
-> Getting host and guest debug to run at the same time is tricky given we
-> end up subverting guest state when the host debug is in control. It did
-> make my head spin when I worked on it originally which led to the
-> acceptance that guest debug couldn't be expected to work transparently
-> while host directed debug was in effect. If we can support it without
-> adding complexity then that would be great but it's a pretty niche use
-> case.
-
-At the very least we need to define whether the kernel or userspace is
-responsible for this. If we say it's userspace's responsibility to
-virtualize this when it takes control of guest debug, but QEMU doesn't
-do so, that's fine by me.
-
-> I'd be loathed to rip out the current single step support as it does
-> actually work pretty well - it's just corner cases with emulated MMIO
-> and first step that are failing. Last I looked these were cases x86
-> didn't even get right and no one has called to remove it's single step
-> support AFAIK.
-> 
-> > We should have a story for how host-directed debug is handled
-> > transparently from the PoV of a guest using guest-directed debug.
-> 
-> What's the use case for this apart from having a cleaner abstraction?
-
-Providing the architecturally mandated behaviour to the guest.
-
-> Do users really spend time running multiple gdbs at different levels
-> in the stack?
-
-It's not just about GDB. Things like kprobes, live patching, etc in a
-guest may use singlestep, and this may be *critical* to the correct
-operation of a given guest.
-
-People *will* want to debug such features under a hypervisor. I know
-that I personally want to be able to do so.
-
-In general, a debugger shouldn't silently corrupt guest state or
-behaviour, as KVM_GUESTDBG_SINGLESTEP behaviour effectively does today.
-
-Thanks,
-Mark.
