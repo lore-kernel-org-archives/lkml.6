@@ -2,121 +2,88 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30E09C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 18:05:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47E47C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 18:07:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E89A120818
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 18:05:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E36132086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 18:07:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HP+DWaXe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E89A120818
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="M4N/C1wt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E36132086C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=aol.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728651AbeKJDqw (ORCPT
+        id S1728615AbeKJDsq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 22:46:52 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:45059 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727961AbeKJDqw (ORCPT
+        Fri, 9 Nov 2018 22:48:46 -0500
+Received: from sonic310-21.consmr.mail.gq1.yahoo.com ([98.137.69.147]:46770
+        "EHLO sonic310-21.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728162AbeKJDsp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 22:46:52 -0500
-Received: by mail-ed1-f66.google.com with SMTP id w39-v6so2431466edw.12
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 10:05:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=K/kmF0EAZL5pcQjaPqhI/9spIMxf6DZWxWBWQC8eOuY=;
-        b=HP+DWaXeTDnTJFhJsNlkSkt0gtEK3G3dNpkLrbA7oW4gtBVRrfTJZFrNw1mNgyXKyz
-         wpsQwKWUa7q1EsUomif0LUbGLoVuADpi95Ooo3QmOYvLlyFsDORuWU/GXn28ke4WwNtF
-         E+x6eI/4obeG9DbLK4em4tK10eLv33YoG9jvGxZIun70ZtsW/X3dLBfUUNHXKkAhqtdx
-         /7qpOvEtvrewhlDSRxaLP2llfODUEK/KtpWSdoOlE+92SqLi1qLcX29XChwVMvsXPnZh
-         HnexsiHEhK4GaHcV8kpaKVuDMSAKHxsyBkOvsGS6gxydZ/ZXulVyXbBNBsI9p7y1+JWQ
-         R5QA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=K/kmF0EAZL5pcQjaPqhI/9spIMxf6DZWxWBWQC8eOuY=;
-        b=UUvw5lC46On+pcakN+9y3FIctgtnrWd6vM7w8wBdiEIEb5slohL3wbkazCVHJms+MA
-         h5NrfO7vA2QEe6xO05p4TJJc/X5KEsPujG52q+a6qgnzpN/F5ub0NQs8nR4vo6pPJHmW
-         pKAE98VQHNo+UBpj1wJdRimC75+ysCZRdaP4e3KYqGioU0B7gEupFasjST54pRyOpCn/
-         AP5gD8XPo4AjgdKfz0b6DkIO+gKOaFZwfYcC8Hw6tBOiFZMMjojXO1S99lytfuf9DKhp
-         Ji0KDRIQbPb0KvQTZGdUW8zlGA3dZP2runS4FY6NlZDW2Li20DhK+udQ1m94G5NgtLrI
-         iSaQ==
-X-Gm-Message-State: AGRZ1gLiLxvkFEcU1gwB64nh5HKDNxJRnIEoB9W1WDO224yuF0UZ/y6u
-        +ZeMVptslPJZMequOK+ZiBbZpXiwFZ5lNwEiLuE=
-X-Google-Smtp-Source: AJdET5cxXDiu+oR7FrZHnoT9LKFy6d43/Co9RSalPf2XALFZn34Upb0ZTLzRWCp1den15QusRCYCcT+jwvfkWbRp+hA=
-X-Received: by 2002:a50:aefd:: with SMTP id f58-v6mr3307171edd.42.1541786710365;
- Fri, 09 Nov 2018 10:05:10 -0800 (PST)
+        Fri, 9 Nov 2018 22:48:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1541786824; bh=yQJkBtN7lSvAJ4kOq/GubbEDzJk3wH13TAO824XnKw4=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=M4N/C1wt0Xl4cjDYzCX1dBVQX6q3PyBuiWeAzuYOyj+nsenZSDjYJq2jbIiQeh79N8JN7ZjJasYCN30tpqeqChxLFJW0hY1rcSAR3agK4CNLNxa0GjnNFNyy+h2p3JOH9Kc6Z1q4syUtudRXD/nd610ZTGszcSVoEdbKhP6dBydiMB5RQZPpiXl9iHc1gZExeiZi4Qw7m8vYN41qG+gb9Ius7hBdVfvgWDhIr5a043ir6WZunSmR+rTx0a+rHTXNDXbb4YjcV9zgXRtsoSXowpTwwu8UsdVz7FG3rPBCuikCtOjE081nJcGedeESpr+eqnVzmTtB4WqBeE/7c4u6iw==
+X-YMail-OSG: KwWXtu8VM1msmCPPgWO5NHz_QpkfgC60YZxLAWih9n2t1zTkZl7C9eq0hVICmwv
+ fV2iJ5yWeeXHVQPdlSjEMjfwXeq7JdAoFjFYhIaDBv_JIjOWVONczLuYLPWEhpxbmhKf5.8DO3c8
+ YoNH83qQf9A7ZbjkyWzH3TliwmwoUrkc2f7c9iGtLKfBUqkxrTpQ1kml.E2ks7ytpPdqacAywEmH
+ O.g4W2Njxk8oqlSOJA2fcfqXC2tHF_EWBabJwX7pjtlGdMAEfMoPmkbvTHYRmQdadfMVlHXuKuCt
+ gX8lvVtZIGrLFTBiprAxfZnEOCEUDygDYSfMsBsJPl1flFN6sOsJJYSbx5YjvPd.aFCeJFu4uB80
+ _xCTdrxpbNMEgNe8Wc8W8hvg1285.5W81QhIy.YDMCw07gEz7IOqiCimzvBGTzxXI_3TUJ_f8Bhk
+ nd5ju.N5_x7OrftpS72ihvoCeUw3vHXbl2TeOizv0HohgJZnqzLLweUmI5Q3S0CmUa0ni9VFwcp7
+ gfRHG9qMgxopkzv1uMQvXVXpUx3.Shl1HT7.MboU2mJNVcDwxo.4ijcyy9rmy.wOs1Mzv_ZGK0rb
+ ZuvpXerdBJjnqPquCOn9Hg.BKYgWemUHLv7H.J2iozhBx2B63N8CY1XRtW0vLsNIgM18F2twydHG
+ .h.QISfasC5a.TNjeiFdS2STM1J0bIz1_eTdvUPNRY7X5_S0Mw.J9d1iDB_UfOs41KXdTlb8CszD
+ r.kWLS0Pricfnt9qG28OMtWFe7wUPr6C_Gt3r6PiwMTMv7GGP8g6Z1uBkEd._35nNzEYFINIjF0B
+ AyNcS1ixfHfkMqVGnN90b3jOOaqHrjlMtGgcoOtbVWv5Hchgc8MCZ_t4SUwj.xSoR0lmQIeXqZ4.
+ Nk2b9CYsWDCpvCLPANYh5xmI7V4Jr8jwgi4Zl7anT_EvFgCds0WxBQPDFznirzOz.thLl53DtBr7
+ K4_niorPfTuBGBM36yExmPLqtByVzolKaVBSCWfhrTU3gN70rXtqG9LfJxvwHhE.r4N5UMePmhTX
+ rqzhevNiHqOxjWJMvcGGdhVK3W0_sEsCeeHPSAP.pDofhlw--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.gq1.yahoo.com with HTTP; Fri, 9 Nov 2018 18:07:04 +0000
+Received: from 115.204.194.147 (EHLO [10.1.1.220]) ([115.204.194.147])
+          by smtp417.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 210425bf1609ea178f945a5cdea3c67d;
+          Fri, 09 Nov 2018 18:06:59 +0000 (UTC)
+Subject: Re: [PATCH] staging: erofs: select LZ4_DECOMPRESS to fix build error
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-erofs@lists.ozlabs.org, kbuild test robot <lkp@intel.com>
+References: <e2365d5f-aabb-a631-1338-1e32f8c9bea6@infradead.org>
+From:   Gao Xiang <hsiangkao@aol.com>
+Message-ID: <fcee5841-70cd-d961-8bff-834d0cb2da94@aol.com>
+Date:   Sat, 10 Nov 2018 02:06:53 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-References: <CANmpu8XY10CgYsnGn9hVDzGJQyWdwNihpYu3So62KtNwrkwGXw@mail.gmail.com>
- <20181109174918.GA3594@linux.intel.com>
-In-Reply-To: <20181109174918.GA3594@linux.intel.com>
-From:   Rian Quinn <rianquinn@gmail.com>
-Date:   Fri, 9 Nov 2018 11:04:59 -0700
-Message-ID: <CANmpu8Xuuuqhfa8Tspgd9cHXetNCBkRGuGfFFSovB1A1We=n+A@mail.gmail.com>
-Subject: Re: x86_64 INIT/SIPI Bug
-To:     sean.j.christopherson@intel.com
-Cc:     linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <e2365d5f-aabb-a631-1338-1e32f8c9bea6@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> I apologize upfront if this is the wrong place to post this, pretty new to this.
->>
->> We are working on the Bareflank Hypervisor (www.bareflank.org), and we
->> are passing through the INIT/SIPI process (similar to how a VMX
->> rootkit from EFI might boot the OS) and we noticed that on Arch Linux,
->> the INIT/SIPI process stalls, something we are not seeing on Ubuntu.
->
-> I'm confused, INIT is blocked post-VMXON, what are you passing through?
+Hi Randy,
 
-You are correct that INIT will track unconditionally, but all we do is set the
-activity state to wait-for-sipi and return back, allowing Linux to continue
-its boot process. The code can be seen here:
-https://github.com/rianquinn/extended_apis/blob/hyperkernel_1/bfvmm/src/hve/arch/intel_x64/vmexit/init_signal.cpp
+Thanks for taking time, I have sent a patch to Greg fixing this issue. :)
+https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git/commit/?h=staging-testing&id=7962e63a2f4140631ad10d475d96193a3bc8ec2f
 
-It should be noted that this works great for Linux and Windows, allowing us
-to boot pretty much any OS that we want with the hypervisor running
-(kind of like a VMX rootkit as no traps are really occurring except CPUID
-once the OS is loaded). We are doing something very similar to Intel's KGT,
-and Xen's PVH dom0.
+Thanks,
+Gao Xiang
 
-The problem is, as we started working this we noticed that Ubuntu was booting
-fine, but Arch wasn't and it turns out that Arch must be compiling the kernel
-with this optimization enabled. Once it is enabled, the kernel basically
-sends two SIPI commands before the AP has a chance to trap INIT, set
-the activity
-state, and then reenter, which causes both SIPIs to get dropped by hardware
-. In other words, since Linux is not waiting to send the first SIPI
-like the manual states, the SIPIs are lost if a hypervisor is enabled, even
-if the hypervisor is doing the least possible amount of code (just setting the
-activity state and returning). The working solution is either us a Linux
-distribution that disables this optimization like Ubuntu, or to provide the
-Linux kernel with the boot param to tell it to add the delay.
-
-To root of the issue is the quirk is assuming that the CPU can handle the
-INIT/SIPI/SIPI without a delay, but this assumption doesn't hold if the INIT
-first has to trap to a hypervisor (regardless of the hypervisor). In this case,
-a delay is still needed.
-On Fri, Nov 9, 2018 at 10:49 AM Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
->
-> On Thu, Nov 08, 2018 at 03:23:59PM -0700, Rian Quinn wrote:
-> > I apologize upfront if this is the wrong place to post this, pretty new to this.
-> >
-> > We are working on the Bareflank Hypervisor (www.bareflank.org), and we
-> > are passing through the INIT/SIPI process (similar to how a VMX
-> > rootkit from EFI might boot the OS) and we noticed that on Arch Linux,
-> > the INIT/SIPI process stalls, something we are not seeing on Ubuntu.
->
-> I'm confused, INIT is blocked post-VMXON, what are you passing through?
+On 2018/11/10 1:58, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@infradead.org>
+> 
+> EROFS Data Compression support uses LZ4 decompression, so it
+> should select LZ4_DECOMPRESS to prevent this build error:
+> 
+> drivers/staging/erofs/unzip_vle_lz4.o: In function `z_erofs_unzip_lz4':
+> drivers/staging/erofs/unzip_vle_lz4.c:18: undefined reference to `LZ4_decompress_safe_partial'
+> 
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Reported-by: kbuild test robot <lkp@intel.com>
