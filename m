@@ -2,100 +2,107 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E666C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 23:12:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E6CBC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 23:12:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EA4920827
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 23:12:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EA4920827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 4EFB420827
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 23:12:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="CgacSZn2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EFB420827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729148AbeKJIzV (ORCPT
+        id S1729155AbeKJIzj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 03:55:21 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:60856 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728672AbeKJIzV (ORCPT
+        Sat, 10 Nov 2018 03:55:39 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:35707 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728703AbeKJIxv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 03:55:21 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id D7D2D14BF672F;
-        Fri,  9 Nov 2018 15:12:36 -0800 (PST)
-Date:   Fri, 09 Nov 2018 15:12:34 -0800 (PST)
-Message-Id: <20181109.151234.2231390463846593374.davem@davemloft.net>
-To:     hch@lst.de
-Cc:     iommu@lists.linux-foundation.org, torvalds@linux-foundation.org,
-        linux-alpha@vger.kernel.org, linux-arch@vger.kernel.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC] remove the ->mapping_error method from dma_map_ops
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20181109084632.22848-1-hch@lst.de>
-References: <20181109084632.22848-1-hch@lst.de>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 09 Nov 2018 15:12:37 -0800 (PST)
+        Sat, 10 Nov 2018 03:53:51 -0500
+Received: by mail-lf1-f68.google.com with SMTP id e26so713146lfc.2
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 15:11:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=zA3jXv5BwmvrTp+thE10lUJ1l9/RcLdDyVc1hor/QEw=;
+        b=CgacSZn2X4rLN7XgLyqzMjAvclCpVIdnt6qKmwoKY5pacJmrW/nSI47wv5uHhynAWV
+         6JhlO7MPOLVLzK2CmyCeFGgf4IO5jByfSzUx8tHp6rVv/6zCXJU66c62wZ+08BbYU18o
+         jVH7oZ0q2voBigVxZJj/8yZ/jKyLkoqbPjEkg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=zA3jXv5BwmvrTp+thE10lUJ1l9/RcLdDyVc1hor/QEw=;
+        b=qoNBLIq3N3bIIjR7EKRGsQor/vdA4LVtk5GirWT0FDgEOVELvWBg9o40xUMU0yD68L
+         ltkxW4dcTXaKFQNzZKCMgw1PsqKCL9FzQHwSlaG9lCgMftsOSeLVkieHVaRHWHgu1wDe
+         7mTJil8/q57JelzIp28AqWrrfZwzyjzzJOOK/4j5pQ0y5gg1QF3pbx52U6yTelcymsDs
+         mV45wZVUlynZrQf5f/VLh/ySt4j0WGdNcXGmjNFhP6guH6FcY/DeHruXddu9EEpjmmz0
+         yLEbMg3qUt7Uikx2noheJv4mVbQ2Kz028wqCxKsJMfyLMVSIvVdOxFd8CiZf0ypWZ1VB
+         OcfA==
+X-Gm-Message-State: AGRZ1gIaLXntTAWxHuY+HUhFr5HGUzh0IhnVtBZTmBmYAQ3Ou4gXMecl
+        CkPmUU4KrWK+7s7NePikyxZdYA==
+X-Google-Smtp-Source: AJdET5e5sgLWNLk5En+aW9pc8+bCOaWSsXGjsmvrbCof6zNTLjYY9uR8xoptmrYeJXI5rLdZpuM+aA==
+X-Received: by 2002:a19:750a:: with SMTP id y10mr6488689lfe.43.1541805065962;
+        Fri, 09 Nov 2018 15:11:05 -0800 (PST)
+Received: from prevas-ravi.prevas.se (dhcp-5-186-114-252.cgn.ip.fibianet.dk. [5.186.114.252])
+        by smtp.gmail.com with ESMTPSA id x16sm1584012lff.26.2018.11.09.15.11.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 09 Nov 2018 15:11:05 -0800 (PST)
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Jason Baron <jbaron@akamai.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH v3 05/23] linux/printk.h: use DYNAMIC_DEBUG_BRANCH in pr_debug_ratelimited
+Date:   Sat, 10 Nov 2018 00:10:03 +0100
+Message-Id: <20181109231021.11658-6-linux@rasmusvillemoes.dk>
+X-Mailer: git-send-email 2.19.1.6.gbde171bbf5
+In-Reply-To: <20181109231021.11658-1-linux@rasmusvillemoes.dk>
+References: <20181009112013.14238-1-linux@rasmusvillemoes.dk>
+ <20181109231021.11658-1-linux@rasmusvillemoes.dk>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christoph Hellwig <hch@lst.de>
-Date: Fri,  9 Nov 2018 09:46:30 +0100
+pr_debug_ratelimited tests the dynamic debug descriptor the old-fashioned
+way, and doesn't utilize the static key/jump label implementation on
+architectures that HAVE_JUMP_LABEL. Use the DYNAMIC_DEBUG_BRANCH which
+is defined appropriately.
 
-> Error reporting for the dma_map_single and dma_map_page operations is
-> currently a mess.  Both APIs directly return the dma_addr_t to be used for
-> the DMA, with a magic error escape that is specific to the instance and
-> checked by another method provided.  This has a few downsides:
-> 
->  - the error check is easily forgotten and a __must_check marker doesn't
->    help as the value always is consumed anyway
->  - the error checking requires another indirect call, which have gotten
->    incredibly expensive
->  - a lot of code is wasted on implementing these methods
-> 
-> The historical reason for this is that people thought DMA mappings would
-> not fail when the API was created, which sounds like a really bad
-> assumption in retrospective, and then we tried to cram error handling
-> onto it later on.
-> 
-> There basically are two variants:  the error code is 0 because the
-> implementation will never return 0 as a valid DMA address, or the error
-> code is all-F as the implementation won't ever return an address that
-> high.  The old AMD GART is the only one not falling into these two camps
-> as it picks sort of a relative zero relative to where it is mapped.
-> 
-> The 0 return doesn't work for a lot of IOMMUs that start allocating
-> bus space from address zero, so we can't consolidate on that, but I think
-> we can move everyone to all-Fs, which the patch here does.  The reason
-> for that is that there is only one way to ever get this address: by
-> doing a 1-byte long, 1-byte aligned mapping, but all our mappings
-> are not only longer but generally aligned, and the mappings have to
-> keep at least the basic alignment.  Please try to poke holes into this
-> idea as it would simplify our logic a lot, and also allow to change
-> at least the not so commonly used yet dma_map_single_attrs and
-> dma_map_page_attrs to actually return an error code and further improve
-> the error handling flow in the drivers.
+Acked-by: Petr Mladek <pmladek@suse.com>
+Acked-by: Jason Baron <jbaron@akamai.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+---
+ include/linux/printk.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I have no problem with patch #1, it looks great.
-
-But patch #2 on the other hand, not so much.
-
-I hate seeing values returned by reference, it adds cost especially
-on cpus where all argments and return values fit in registers (we end
-up forcing a stack slot and memory references).
-
-And we don't need it here.
-
-DMA addresses are like pointers, and therefore we can return errors and
-valid success values in the same dma_addr_t just fine.  PTR_ERR() --> DMA_ERR(),
-IS_PTR_ERR() --> IS_DMA_ERR, etc.
+diff --git a/include/linux/printk.h b/include/linux/printk.h
+index cf3eccfe1543..d3ba3245531d 100644
+--- a/include/linux/printk.h
++++ b/include/linux/printk.h
+@@ -466,7 +466,7 @@ do {									\
+ 				      DEFAULT_RATELIMIT_INTERVAL,	\
+ 				      DEFAULT_RATELIMIT_BURST);		\
+ 	DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, pr_fmt(fmt));		\
+-	if (unlikely(descriptor.flags & _DPRINTK_FLAGS_PRINT) &&	\
++	if (DYNAMIC_DEBUG_BRANCH(descriptor) &&				\
+ 	    __ratelimit(&_rs))						\
+ 		__dynamic_pr_debug(&descriptor, pr_fmt(fmt), ##__VA_ARGS__);	\
+ } while (0)
+-- 
+2.19.1.6.gbde171bbf5
 
