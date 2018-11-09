@@ -2,193 +2,237 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A5E7C0044C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:04:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BE80C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:04:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F43021104
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:04:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F43021104
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 41B90208A3
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:04:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41B90208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728252AbeKJApm (ORCPT
+        id S1728310AbeKJApv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 19:45:42 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:36310 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728190AbeKJApl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 19:45:41 -0500
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id ecbT6y9onMEn; Fri,  9 Nov 2018 16:04:43 +0100 (CET)
-Received: from zn.tnic (p200300EC2BD03D00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bd0:3d00:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7EF601EC03C8;
-        Fri,  9 Nov 2018 16:04:43 +0100 (CET)
-From:   Borislav Petkov <bp@alien8.de>
-To:     X86 ML <x86@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Andi Kleen <ak@linux.intel.com>, dmitriyz@google.com,
-        Huang Ying <ying.huang@intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Tony Luck <tony.luck@intel.com>
-Subject: [PATCH 4/4] x86/mce: Add an SPDX license identifiers
-Date:   Fri,  9 Nov 2018 16:04:31 +0100
-Message-Id: <20181109150431.14147-5-bp@alien8.de>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181109150431.14147-1-bp@alien8.de>
-References: <20181109150431.14147-1-bp@alien8.de>
+        Fri, 9 Nov 2018 19:45:51 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58982 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728190AbeKJApv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 19:45:51 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 088A4AC11;
+        Fri,  9 Nov 2018 15:04:50 +0000 (UTC)
+Date:   Sat, 10 Nov 2018 02:06:29 +1100
+From:   Aleksa Sarai <asarai@suse.de>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Christian Brauner <christian@brauner.io>,
+        netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: Re: [PATCH v3 1/2] kretprobe: produce sane stack traces
+Message-ID: <20181109150629.wpedwxsgbftkl3ab@mikami>
+References: <20181101204720.6ed3fe37@vmware.local.home>
+ <20181102050509.tw3dhvj5urudvtjl@yavin>
+ <20181102065932.bdt4pubbrkvql4mp@yavin>
+ <20181102091658.1bc979a4@gandalf.local.home>
+ <20181103070253.ajrqzs5xu2vf5stu@yavin>
+ <20181104115913.74l4yzecisvtt2j5@yavin>
+ <20181106171501.59ccabbc@gandalf.local.home>
+ <20181108074612.ldy6rozdpsdps6bf@yavin>
+ <20181108080448.rggfn4zawi3por23@yavin>
+ <20181109161551.6b96bd7d932c71432ac65e83@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="dlusgdlwys367xnp"
+Content-Disposition: inline
+In-Reply-To: <20181109161551.6b96bd7d932c71432ac65e83@kernel.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@suse.de>
 
-Add the SPDX tag and remove the GPL-v2 free text.
+--dlusgdlwys367xnp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: <dmitriyz@google.com>
-Cc: Huang Ying <ying.huang@intel.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Tony Luck <tony.luck@intel.com>
----
- arch/x86/kernel/cpu/mcheck/dev-mcelog.c   |  1 +
- arch/x86/kernel/cpu/mcheck/mce-apei.c     | 14 +-------------
- arch/x86/kernel/cpu/mcheck/mce-genpool.c  |  3 +--
- arch/x86/kernel/cpu/mcheck/mce-inject.c   |  9 +--------
- arch/x86/kernel/cpu/mcheck/mce-severity.c |  6 +-----
- arch/x86/kernel/cpu/mcheck/mce.c          |  1 +
- arch/x86/kernel/cpu/mcheck/therm_throt.c  |  1 +
- 7 files changed, 7 insertions(+), 28 deletions(-)
+On 2018-11-09, Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> > diff --git a/arch/x86/include/asm/ptrace.h b/arch/x86/include/asm/ptrac=
+e.h
+> > index ee696efec99f..c4dfafd43e11 100644
+> > --- a/arch/x86/include/asm/ptrace.h
+> > +++ b/arch/x86/include/asm/ptrace.h
+> > @@ -172,6 +172,7 @@ static inline unsigned long kernel_stack_pointer(st=
+ruct pt_regs *regs)
+> >  	return regs->sp;
+> >  }
+> >  #endif
+> > +#define stack_addr(regs) ((unsigned long *) kernel_stack_pointer(regs))
+>=20
+> No, you should use kernel_stack_pointer(regs) itself instead of stack_add=
+r().
+>=20
+> >=20
+> >  #define GET_IP(regs) ((regs)->ip)
+> >  #define GET_FP(regs) ((regs)->bp)
+> > diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/c=
+ore.c
+> > index b0d1e81c96bb..eb4da885020c 100644
+> > --- a/arch/x86/kernel/kprobes/core.c
+> > +++ b/arch/x86/kernel/kprobes/core.c
+> > @@ -69,8 +69,6 @@
+> >  DEFINE_PER_CPU(struct kprobe *, current_kprobe) =3D NULL;
+> >  DEFINE_PER_CPU(struct kprobe_ctlblk, kprobe_ctlblk);
+> > =20
+> > -#define stack_addr(regs) ((unsigned long *)kernel_stack_pointer(regs))
+>=20
+> I don't like keeping this meaningless macro... this should be replaced wi=
+th generic
+> kernel_stack_pointer() macro.
 
-diff --git a/arch/x86/kernel/cpu/mcheck/dev-mcelog.c b/arch/x86/kernel/cpu/mcheck/dev-mcelog.c
-index 27f394ac983f..11e521799b1d 100644
---- a/arch/x86/kernel/cpu/mcheck/dev-mcelog.c
-+++ b/arch/x86/kernel/cpu/mcheck/dev-mcelog.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * /dev/mcelog driver
-  *
-diff --git a/arch/x86/kernel/cpu/mcheck/mce-apei.c b/arch/x86/kernel/cpu/mcheck/mce-apei.c
-index 2eee85379689..992c7e599d0b 100644
---- a/arch/x86/kernel/cpu/mcheck/mce-apei.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce-apei.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Bridge between MCE and APEI
-  *
-@@ -13,19 +14,6 @@
-  *
-  * Copyright 2010 Intel Corp.
-  *   Author: Huang Ying <ying.huang@intel.com>
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License version
-- * 2 as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-  */
- 
- #include <linux/export.h>
-diff --git a/arch/x86/kernel/cpu/mcheck/mce-genpool.c b/arch/x86/kernel/cpu/mcheck/mce-genpool.c
-index 217cd4449bc9..f59996563e96 100644
---- a/arch/x86/kernel/cpu/mcheck/mce-genpool.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce-genpool.c
-@@ -1,10 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * MCE event pool management in MCE context
-  *
-  * Copyright (C) 2015 Intel Corp.
-  * Author: Chen, Gong <gong.chen@linux.intel.com>
-- *
-- * This file is licensed under GPLv2.
-  */
- #include <linux/smp.h>
- #include <linux/mm.h>
-diff --git a/arch/x86/kernel/cpu/mcheck/mce-inject.c b/arch/x86/kernel/cpu/mcheck/mce-inject.c
-index 1fc424c40a31..e33ca8ac74a0 100644
---- a/arch/x86/kernel/cpu/mcheck/mce-inject.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce-inject.c
-@@ -1,12 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Machine check injection support.
-  * Copyright 2008 Intel Corporation.
-  *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * as published by the Free Software Foundation; version 2
-- * of the License.
-- *
-  * Authors:
-  * Andi Kleen
-  * Ying Huang
-@@ -16,9 +12,6 @@
-  * built as module so that it can be loaded on production kernels for
-  * testing purposes.
-  *
-- * This file may be distributed under the terms of the GNU General Public
-- * License version 2.
-- *
-  * Copyright (c) 2010-17:  Borislav Petkov <bp@alien8.de>
-  *			   Advanced Micro Devices Inc.
-  */
-diff --git a/arch/x86/kernel/cpu/mcheck/mce-severity.c b/arch/x86/kernel/cpu/mcheck/mce-severity.c
-index 44396d521987..be9bf3d0c6db 100644
---- a/arch/x86/kernel/cpu/mcheck/mce-severity.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce-severity.c
-@@ -1,12 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * MCE grading rules.
-  * Copyright 2008, 2009 Intel Corporation.
-  *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * as published by the Free Software Foundation; version 2
-- * of the License.
-- *
-  * Author: Andi Kleen
-  */
- #include <linux/kernel.h>
-diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
-index 8c66d2fc8f81..20d14aa36a73 100644
---- a/arch/x86/kernel/cpu/mcheck/mce.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Machine check handler.
-  *
-diff --git a/arch/x86/kernel/cpu/mcheck/therm_throt.c b/arch/x86/kernel/cpu/mcheck/therm_throt.c
-index 2da67b70ba98..0d3f6b6a5739 100644
---- a/arch/x86/kernel/cpu/mcheck/therm_throt.c
-+++ b/arch/x86/kernel/cpu/mcheck/therm_throt.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Thermal throttle event support code (such as syslog messaging and rate
-  * limiting) that was factored out from x86_64 (mce_intel.c) and i386 (p4.c).
--- 
-2.19.1
+Sure. This patch was just an example -- I can remove stack_addr() all
+over.
 
+> > -	if (regs)
+> > -		save_stack_address(trace, regs->ip, nosched);
+> > +	if (regs) {
+> > +		/* XXX: Currently broken -- stack_addr(regs) doesn't match entry. */
+> > +		addr =3D regs->ip;
+>=20
+> Since this part is for storing regs->ip as a top of call-stack, this
+> seems correct code. Stack unwind will be done next block.
+
+This comment was referring to the usage of stack_addr(). stack_addr()
+doesn't give you the right result (it isn't the address of the return
+address -- it's slightly wrong). This is the main issue I was having --
+am I doing something wrong here?
+
+> > +		//addr =3D ftrace_graph_ret_addr(current, &state.graph_idx, addr, st=
+ack_addr(regs));
+>=20
+> so func graph return trampoline address will be shown only when unwinding=
+ stack entries.
+> I mean func-graph tracer is not used as an event, so it never kicks stack=
+dump.
+
+Just to make sure I understand what you're saying -- func-graph trace
+will never actually call __ftrace_stack_trace? Because if it does, then
+this code will be necessary (and then I'm a bit confused why the
+unwinder has func-graph trace code -- if stack traces are never taken
+under func-graph then the code in the unwinder is not necessary)
+
+My reason for commenting this out is because at this point "state" isn't
+initialised and thus .graph_idx would not be correctly handled during
+unwind (and it's the same reason I commented it out later).
+
+> > +		addr =3D kretprobe_ret_addr(current, addr, stack_addr(regs));
+>=20
+> But since kretprobe will be an event, which can kick the stackdump.
+> BTW, from kretprobe, regs->ip should always be the trampoline handler,=20
+> see arch/x86/kernel/kprobes/core.c:772 :-)
+> So it must be fixed always.
+
+Right, but kretprobe_ret_addr() is returning the *original* return
+address (and we need to do an (addr =3D=3D kretprobe_trampoline)). The
+real problem is that stack_addr(regs) isn't the same as it is during
+kretprobe setup (but kretprobe_ret_addr() works everywhere else).
+
+> > @@ -1856,6 +1870,41 @@ static int pre_handler_kretprobe(struct kprobe *=
+p, struct pt_regs *regs)
+> >  }
+> >  NOKPROBE_SYMBOL(pre_handler_kretprobe);
+> > =20
+> > +unsigned long kretprobe_ret_addr(struct task_struct *tsk, unsigned lon=
+g ret,
+> > +				 unsigned long *retp)
+> > +{
+> > +	struct kretprobe_instance *ri;
+> > +	unsigned long flags =3D 0;
+> > +	struct hlist_head *head;
+> > +	bool need_lock;
+> > +
+> > +	if (likely(ret !=3D (unsigned long) &kretprobe_trampoline))
+> > +		return ret;
+> > +
+> > +	need_lock =3D !kretprobe_hash_is_locked(tsk);
+> > +	if (WARN_ON(need_lock))
+> > +		kretprobe_hash_lock(tsk, &head, &flags);
+> > +	else
+> > +		head =3D kretprobe_inst_table_head(tsk);
+>=20
+> This may not work unless this is called from the kretprobe handler contex=
+t,
+> since if we are out of kretprobe handler context, another CPU can lock the
+> hash table and it can be detected by kretprobe_hash_is_locked();.
+
+Yeah, I noticed this as well when writing it (but needed a quick impl
+that I could test). I will fix this, thanks!
+
+By is_kretprobe_handler_context() I imagine you are referring to
+checking is_kretprobe(current_kprobe())?
+
+> So, we should check we are in the kretprobe handler context if tsk =3D=3D=
+ current,
+> if not, we definately can lock the hash lock without any warning. This can
+> be something like;
+>=20
+> if (is_kretprobe_handler_context()) {
+>   // kretprobe_hash_lock(current =3D=3D tsk) has been locked by caller =
+=20
+>   if (tsk !=3D current && kretprobe_hash(tsk) !=3D kretprobe_hash(current=
+))
+>     // the hash of tsk and current can be same.
+>     need_lock =3D true;
+> } else
+>   // we should take a lock for tsk.
+>   need_lock =3D true;
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--dlusgdlwys367xnp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEXzbGxhtUYBJKdfWmnhiqJn3bjbQFAlvlonIACgkQnhiqJn3b
+jbSbFQ//SnJ9X96iLygU7suh6KaaaKt6o/NfaDYXPcWMVlPxkktF7hRIVeWllsf3
+hfq9/jqfsd84rFUM4hYQPkWfMS5J3kkjjDMpTe+q1Qn7blVxRNg2BqxcfU7dvIxH
+QRzMjhxNkqHuvbKRS9+j6JxmH0cvW7rrkA8hzLNGDKGMzE4SHBqJaDc7IO7Y4qyF
+Jg53Hm4wIIcZ52bl46eHCsp9enHT3Tb8BOR7bVu/isO2xkYBfh8AHE6lKU2fDSm1
+X9NbUcY7Gl9Vfc/317iAZsu6EyDtkj38YxKk/+8b7VFr3m5DiV/1DuXws/WvWhdG
+uP8KjrGHaaqaunJuRVcltoBVyc3b/A5aZaXHNV+9BbOmCud9hMEzPrhKkoxx9pa/
+qteMUntR5huO6LDnmdhdJMHPqCp1+hVpITKhsxS1bDbNb1XFrdqKLvJxds3pUMjo
+dlpCTpfixkUTSghqMsHIpGm5KZvDDHbbpgCIGQtjvnxMz5IapODidznY9++otN2K
+ybxkGDeq8e7JU0BSEvWhnP3ty0Cv/q6dJO5KmVXLGFXC3Tcvo6rQajeW9zRk/qYu
+ANvpQbc5C/a1XYXmRfyERKEgMMwysLR48oyoxPY2kSzXo/khBLgR0uR84hKblRNh
+g0h9MGH0mE94AMPA3Z7RqMBxmYwmlfKOYRBqTyP9TnGlCQ4ubeo=
+=JgGw
+-----END PGP SIGNATURE-----
+
+--dlusgdlwys367xnp--
