@@ -2,144 +2,252 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EC60C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:43:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C08EC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:43:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21F3A2089A
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:43:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21F3A2089A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id C477820855
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:43:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="ud2H3Aja"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C477820855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=analog.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728371AbeKJBYh (ORCPT
+        id S1728398AbeKJBYk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 20:24:37 -0500
-Received: from mx2.suse.de ([195.135.220.15]:36824 "EHLO mx1.suse.de"
+        Fri, 9 Nov 2018 20:24:40 -0500
+Received: from mail-by2nam03on0044.outbound.protection.outlook.com ([104.47.42.44]:53682
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728059AbeKJBYh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 20:24:37 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0DD6FAE24;
-        Fri,  9 Nov 2018 15:43:29 +0000 (UTC)
-Date:   Fri, 9 Nov 2018 16:43:26 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Dmitriy Vyukov <dvyukov@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Alexander Potapenko <glider@google.com>,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH 3/3] lockdep: Use line-buffered printk() for lockdep
- messages.
-Message-ID: <20181109154326.apqkbsojmbg26o3b@pathway.suse.cz>
-References: <1541165517-3557-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <1541165517-3557-3-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <20181107151900.gxmdvx42qeanpoah@pathway.suse.cz>
- <20181108044510.GC2343@jagdpanzerIV>
- <9648a384-853c-942e-6a8d-80432d943aae@i-love.sakura.ne.jp>
- <20181109061204.GC599@jagdpanzerIV>
- <07dcbcb8-c5a7-8188-b641-c110ade1c5da@i-love.sakura.ne.jp>
+        id S1727802AbeKJBYj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 20:24:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=analog.onmicrosoft.com; s=selector1-analog-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=E3Qx1fChUdK4z2mL96nFjrgbBr3x4YpOkYaowc1yuPU=;
+ b=ud2H3Ajah1bf5iEXSoBhLF5U3WwS5qA1QPuv8E8rU83hN27Dt3QwnYOZq0E/+kxsG8c0G4DQmiFqWO+nnG2VpxqNLBQkm7eAvUBHXpZ2vqGAf69/rgy8FO3UvzGrw5tku5A+/gFgy+lWG4KaH1ejgjye6QrImrISjcoh83S8ycg=
+Received: from CY1PR03CA0026.namprd03.prod.outlook.com (2603:10b6:600::36) by
+ CO2PR03MB2262.namprd03.prod.outlook.com (2603:10b6:102:a::15) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.26; Fri, 9 Nov 2018 15:43:13 +0000
+Received: from BY2FFO11FD014.protection.gbl (2a01:111:f400:7c0c::166) by
+ CY1PR03CA0026.outlook.office365.com (2603:10b6:600::36) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1294.20 via Frontend Transport; Fri, 9 Nov 2018 15:43:13 +0000
+Authentication-Results: spf=pass (sender IP is 137.71.25.57)
+ smtp.mailfrom=analog.com; gmx.de; dkim=none (message not signed)
+ header.d=none;gmx.de; dmarc=bestguesspass action=none header.from=analog.com;
+Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
+ 137.71.25.57 as permitted sender) receiver=protection.outlook.com;
+ client-ip=137.71.25.57; helo=nwd2mta4.analog.com;
+Received: from nwd2mta4.analog.com (137.71.25.57) by
+ BY2FFO11FD014.mail.protection.outlook.com (10.1.14.76) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1339.12
+ via Frontend Transport; Fri, 9 Nov 2018 15:43:12 +0000
+Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
+        by nwd2mta4.analog.com (8.13.8/8.13.8) with ESMTP id wA9FhC7w018257
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
+        Fri, 9 Nov 2018 07:43:12 -0800
+Received: from linux.ad.analog.com (10.32.224.122) by
+ NWD2HUBCAS7.ad.analog.com (10.64.69.107) with Microsoft SMTP Server id
+ 14.3.301.0; Fri, 9 Nov 2018 10:43:11 -0500
+From:   Stefan Popa <stefan.popa@analog.com>
+To:     <jic23@kernel.org>, <robh+dt@kernel.org>
+CC:     <mark.rutland@arm.com>, <knaack.h@gmx.de>, <lars@metafoo.de>,
+        <pmeerw@pmeerw.net>, <Michael.Hennerich@analog.com>,
+        <gregkh@linuxfoundation.org>, <linux-iio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <stefan.popa@analog.com>
+Subject: [PATCH v4 4/4] dt-bindings: iio: adc: Add docs for ad7124
+Date:   Fri, 9 Nov 2018 17:43:00 +0200
+Message-ID: <1541778180-7862-1-git-send-email-stefan.popa@analog.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <07dcbcb8-c5a7-8188-b641-c110ade1c5da@i-love.sakura.ne.jp>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ADIRoutedOnPrem: True
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(346002)(136003)(39860400002)(376002)(2980300002)(438002)(189003)(199004)(7636002)(47776003)(305945005)(110136005)(316002)(478600001)(7416002)(106466001)(72206003)(966005)(575784001)(54906003)(2870700001)(50226002)(8676002)(106002)(2906002)(1720100001)(8936002)(5660300001)(77096007)(50466002)(186003)(23676004)(426003)(7696005)(107886003)(476003)(246002)(4326008)(5820100001)(126002)(2616005)(6666004)(44832011)(486006)(36756003)(336012)(6306002)(356004)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:CO2PR03MB2262;H:nwd2mta4.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;BY2FFO11FD014;1:owTuwYaZHu4DN2sPxdY6VjLOeILEKKfKbU8XqaDppCMDZoK5aNaDaeUIFEuWuFrNOjx/eoKRBUF7XEJ91CnIjUvOgzRwvhdR4Tsb/x1f7gXo8JNknPW1jO9FDDtriDmY
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: cfefec58-ab8c-4c15-acca-08d6465a0f06
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4608076)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:CO2PR03MB2262;
+X-Microsoft-Exchange-Diagnostics: 1;CO2PR03MB2262;3:PAYz4IoniI8Xktc/O8TRLG1j6FysYC2kRouR+ys9OKkjdqW7DnINlKCgvuP4rvXI1HTxg+ubCFE8jNBzQlWbJkqXI2XFv+UupKHjTj9oj/V/qjYKIjoS1Qgisss7f7x0uFGwn8fsuTVj14LZmJA8GPePrYU4boXaYRIOV/TyYzHlq83/9n261gX84Qetk5r3OvBE86f9F3NC7Gk4DyHN0UYDP0PqoduXiUQN3bBiHPZqM3pgx9XLKlzwvxVClaFY2/fJBrME+YgHPchlTT9aub2FVg/j60OS3v5s7Dy1RZ58X00pLaSsIK/LdPmVOrHSxGJwHYPkSQ+IuXQvbdAkM2ykwEDbiXw5WQln8LrPEoQ=;25:7Zb+sKQ8TnFrmLfTYxAHHwcchT/yvrEug3OtWXU+U+XFUwqaRIovdlY03bWQ17Z10UWgwcv1GOnY+63q0Af4MCVzmKIiUxL1qWLfqNw2h9LI9TwfnHO6jwwWruHgBL4pwQQMCUeStQf+hGSod0LSFIG8HmAOKtQTr0LWOjJ7NKsfocdGG/jeO1CiOTnlRZPmHvbsn6uF3xzRBoeKreDlTYWCsG9gNZpDMDf0n1E61TFUiil2in+HWPH+90KZZ3QMjPs+NIHcbx+9sMzzSIgtUj5QCLcH2LXwATaD5lJGMR36G8fql3482ngpm7UWb7LCqjgE19yNXvLVtQHHvWGA4w==
+X-MS-TrafficTypeDiagnostic: CO2PR03MB2262:
+X-Microsoft-Exchange-Diagnostics: 1;CO2PR03MB2262;31:PWBdvZfSPyiWxGv8e83js7NuQpvnTjph8dhfIoi6gs27Z4sF49lYufAefTVz8vyOx8rYMS0ZHZDghRtyNE7ZwMSMxGYvtiGYu3I8xrqEleJGJkbWjl7fiGJA0KaK5H0I9HOn1XdClY+VHQe5P8ha/gY8rTw3o5PVMDw0tx0QLdPk7CSM1LFNnxLOwlVlcbqAZDhPjt9zIGyqL+Sz/uTc/X8KIucucxNesccbocafTq8=;20:KmLwqVq1eiMK+vsckjdZRh5U6VMci+7ade8HeVhFy+N3KNAahkjqT3IuJZTTiPlUxRXdqZ0wY9BX1lTI2gMZRAYPbBnthDV/NqLsV/wuP/33cqutclvTVhiC5Ok7sUU2PQlNdlg8k14uuxX2cY1uN/WHTGFbIuZ44Jjcx42Js8gRIo6TDUXfELeoFFJXFR9MdObgnGfJfeO4IBhqwt1LsNVag2ossElhUlHAD9Rd/SaHh/zjyA/HWQtD/vePYWn7iY4wqjwzFWbFdY1AKsHi+AzH9N1gM2/8l1ThzEorm4mpqSDwMsvfOCrxVMJEXp1UhxOz7+aMO2EsjXcNKz4cdLqw4oDRExh2k+RazrbxLbb6c7jCCm4WkDykVuAbzgFBajRNNqVuimXg4BLSRIWd3ytb2o4udyUmxhgZv/USVKJlXLK1fF4oTKbx3Vi4G5aB4RUaX8jPiv0LecKBYEXvxMSuZtEC0DnRrkorj1klIerTaljCJJrIFMwovzIzTAZ+
+X-Microsoft-Antispam-PRVS: <CO2PR03MB2262DCFF5A3417270A3370759DC60@CO2PR03MB2262.namprd03.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(232431446821674)(9452136761055)(170811661138872)(95692535739014);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93004095)(10201501046)(3002001)(3231382)(944501410)(4982022)(52105095)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123564045)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:CO2PR03MB2262;BCL:0;PCL:0;RULEID:;SRVR:CO2PR03MB2262;
+X-Microsoft-Exchange-Diagnostics: 1;CO2PR03MB2262;4:3bmc/1epHpgVC052LP/QiutrDHC7ebhF7hTlhqWJxgzq17zbPQ9rsykN6MpDrfGdEjgAzDKXuljoRgPhQ9xm9m99KXN8NkIhaiWnwjmhYF9LD6upp3VoByIAkJbBF/YaY3lWXlcKTxMpEmtd8n3YZ8AmR/Zgh9qfmgxFyS3xD5x48KKlEBs0wFgME+CNoCs/KfSaUbFGDPgjhMAaVxo3/ske766J5HBbfXEvzxtwrl3+YeiwdvBKWSWl/FmJxUNBy1NYYlQd8qthFsLYpt7bEr5PK5eH26CH/PlkmsFwCJ8W6IuQqJdi6a3oyHCAzksI4qQlNfIUJD6w47EXDNrhIlxVn8h+k8QkTp87hDag0LsTRDBhyHEYrmzwwiKpBo58Y5yW3JJqZuM1S/lBkeCwHy/XUf9hSUA3X1MGE2IGYLI=
+X-Forefront-PRVS: 08512C5403
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtDTzJQUjAzTUIyMjYyOzIzOjE5blBSKzJVbU04YmFKUGFIUm43QTZTelRS?=
+ =?utf-8?B?UXFrblorei9JZTEvbGZkVWZidmRmRC9LSVpSMFlERDVCbXp5anpFQ3IraUh3?=
+ =?utf-8?B?YVYwd1BFclRGYUx5c20zckJjTjFnZ3R4a2VMTWh0ZTZhY0VGZHJkMUF5ZVg2?=
+ =?utf-8?B?RTNtRy9VdUJGbVQ5VENDSVE0eTM3UW5RY3VNUmZ2NlRWSlBTTnFSTHhEV2hD?=
+ =?utf-8?B?K2pPeHlOVGgxTXR1RnJpWVZHUDE4R3N1NmxjM25Pd3g3Nk1TYldVSDF0d2tO?=
+ =?utf-8?B?OGRuenJINWNTL1hrYllTaVVBb2xpOC9Lc1JDMWI3S3QxM21OT3VWeUw0cFly?=
+ =?utf-8?B?d2lSbXU3b3o5bjFBRnFCMktzNThHMjljSVFFRTQwZTJhaHhUNEVHcGxsSE0v?=
+ =?utf-8?B?RHNyaW1rTFU2UWJnQ0ZWTHBlZzJvTlp3QWN0QzFuaEhES0xXZjdINUZMQmlS?=
+ =?utf-8?B?aEFVWVBqdHhpbkdHQWh1WFBKZlhjSkVKUU55ZlJoSnRpWUJOa2pTYkdpTmNq?=
+ =?utf-8?B?cEtOWnNwZ2xtWUlOaTRoVDdKS2lIN200elJGenRmYmhSVms1Vlc1Y2h4ZWZW?=
+ =?utf-8?B?Yy9Jd2EzUk03c2l6V3pzSkNSNEROcDBiQmIrcGd1d0MxRUlMMWNNWFRBMmFm?=
+ =?utf-8?B?dGt5UWV1ZGV5Vkd1SkdzeHo1TXV6RDVCRDJDenZoYXlZbFlhSnhBb2p2azZO?=
+ =?utf-8?B?TXJvSnQzWXY0b3JERStPYmx4dzlFMjl1TWhKMmIyQ3UzbXB4ZDVLK0ZpcFow?=
+ =?utf-8?B?bUNRbldMSlgyS1pVbFJuaENmbWVucGdBUFcyUHJwcHorc05GMnY0VUpNVmlV?=
+ =?utf-8?B?YklIcWo0SDlxV0pSalRqQlByU204bUorSWxINkhRZ0dZRGw2eWZMYmFISFNh?=
+ =?utf-8?B?UlB6c0RDSlpDS1VlNklZYXRNNS9HSE5hamlub0VYeWhOQzN5b0ZqQitGL2lD?=
+ =?utf-8?B?OTREaHc5RTg5MWJMTFpWbUFBQ1VoRndQUzluRTIxL1NBTUdXRi9HUHNFYTR0?=
+ =?utf-8?B?d1dZNnoybVZXak9SOGtRc3BXNmlIKzZEODNtNWVsQjRqWHVTdlovOVN4eDM2?=
+ =?utf-8?B?NXR4UmRpZ0Z0VmIwa1QwU0dpam52U0hUbTlxQXJicUxYZUNXbzVURUtjZFV0?=
+ =?utf-8?B?ekw4RWJkRm1IdFZHYm4yUmNLeEZ3dTY5TjRhWW56L0pFM1lvdFhIaExDb2tE?=
+ =?utf-8?B?ejQ4ZndnanFaakhaOUtxWDhjQlQ3b1Y1ZmNBNUgxM1dRbTdKb1VrYTJqaFk5?=
+ =?utf-8?B?aVRlT1BGOHhuMVZjTW1yMWFudmk0b2ZKT1JkTmJPL0VkZmwvUG5wN2g3N0Z2?=
+ =?utf-8?B?RXdUcXRvcGFucjJ5MXBpcEJPY0huL2JVd0tydHZWM3RUQVZneHR5Z0tJTmsr?=
+ =?utf-8?B?dm9ybG1Qa1UxV3U5UkJyR2RLT1o0cFNvaUVRaUFSTHVYVnF1MDNxSEQvNlhP?=
+ =?utf-8?B?MFVMZnF6ZTR6LzRmSDBpWnE0UHJ1RlRITDlEM3hKQ0NFNmxYSG5oc3pwUm1B?=
+ =?utf-8?Q?Oak3d0ujXY6YOrpTbod1vb92E=3D?=
+X-Microsoft-Antispam-Message-Info: fn0cUDZrfHvebpjaBKy3VvzvR14h0SCApfrnTPt6GJIYTdVBpREKtZjYK+16anGtzNciwgxXkFkVYuzBVfw0priNmA8jrr8ai49yoGZDB1HJG7SyQlX6dwz8XF9WaBNb0LUcH8buL9t249y2f2HEloDwIdxq4dQlb/PDIC/AGfCz+qh4nHLvJKAR1G9FvfmRzngAA7Kgac9/yFHs+Ck/fM6CX9JkiLUNHmTLWFTpd/NxLInAygtxxEcWTZ7AoZ2iT2odGk8XFXv0po9/KKTTsitGmt8Kaz7aWnEzmX5v4DARCaGkwpNTba+c8fKV3EHCOvphdoxsGz+jZiGYgOhRNkpCi3quMRXXzyRZN7r/wGg=
+X-Microsoft-Exchange-Diagnostics: 1;CO2PR03MB2262;6:ctx8hKyBoLd144qlm+c/Fb1ynv83Lbh56ANOjz8kAZee1+XmH+2RCqCFmO6xpNYhZel6AlVLMuvGyn9x4MoTrWTApRrs0ZUqJPW80cNqbJLetc72PAHEk5YFYuIytcZqXrDEQm0jlEh4qYW87uL1r3JwXzAy/LhH+2Jx4wv0k+pvj95kSlk5i4rrIkEfE4PZWz9trt3WiHMVJ0PT1/1zgrkuJHJeZ/Gc84Fpn5KWQeXIuTSjsucLw5+Yx3uJAGN6LkYIkfG7FCaEU31Z0mLJpcyTwT0uyf/l9etLXI3HTUqswY6hYywXv9EDjj9/B1ib/nGYyDczq1QxAJXatAJWcwbXKq0rPDZz8GEWxK7lpE3d1l8D7gk6uSU+4J0l7Fvri3kxbGWIo0FVvVItNI0jzjs+jK08ZEUAOl8lLtc7eK8khPiB/ccLnr7MNjH20CJ/bw8tzojdYGJV3Bwx/dwR+g==;5:Kj7ugTqpSsCR3QB0hCa5+XLXLtIZeN8NvYeJWpulh7O5QTMEQKloh8uCvFVm2K+XbHWUdz/6DFpVH89v2dCimnUXtDLUmuSDHh0x5jF5T2Ct7NKE3AY3MHveFIgLitI9k9XYtVVqofu2CdVRO+0aQDzKtRIKUqgKSrtNtacvJ0Y=;7:p+8h7ZJXImnozmmYnOdr8vF/H/FUitkpJ1jiDSjRCb/nRV7FjCJ9+heH5HDQSYC7ddj9b9fLrGjxa4Jw2p/gEL0mIjG+CTd4NrO3tZJzoKKOKvYc7R878DQt01aot9FynzYtFQ+YgYtEOhg4PoFHQw==
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Nov 2018 15:43:12.9787
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: cfefec58-ab8c-4c15-acca-08d6465a0f06
+X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta4.analog.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO2PR03MB2262
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 2018-11-09 18:55:26, Tetsuo Handa wrote:
-> On 2018/11/09 15:12, Sergey Senozhatsky wrote:
-> > On (11/08/18 20:37), Tetsuo Handa wrote:
-> > > On 2018/11/08 13:45, Sergey Senozhatsky wrote:
-> How early_printk requirement affects line buffered printk() API?
-> 
-> I don't think it is impossible to convert from
-> 
->      printk("Testing feature XYZ..");
->      this_may_blow_up_because_of_hw_bugs();
->      printk(KERN_CONT " ... ok\n");
-> 
-> to
-> 
->      printk("Testing feature XYZ:\n");
->      this_may_blow_up_because_of_hw_bugs();
->      printk("Testing feature XYZ.. ... ok\n");
-> 
-> in https://lore.kernel.org/lkml/CA+55aFwmwdY_mMqdEyFPpRhCKRyeqj=+aCqe5nN108v8ELFvPw@mail.gmail.com/ .
+Add support for Analog Devices AD7124 4-channels and 8-channels ADC.
 
-I just wonder how this pattern is common. I have tried but I failed
-to find any instance.
+Signed-off-by: Stefan Popa <stefan.popa@analog.com>
+---
+Changes in v2:
+	- Nothing changed.
+Changes in v3:
+	- Removed the "adi,channels" property.
+	- Used the "reg" property to get the channel number and "adi,diff-channels"
+	  for the differential pins. The "adi,channel-number" property was removed.
+	- adi,bipolar is of boolean type.
+Changes in v4:
+	- Used the bipolar and diff-channels properties defined in the new adc.txt doc.
 
-This problem looks like a big argument against explicit buffers.
-But I wonder if it is real.
+ .../devicetree/bindings/iio/adc/adi,ad7124.txt     | 81 ++++++++++++++++++++++
+ MAINTAINERS                                        |  1 +
+ 2 files changed, 82 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad7124.txt
 
-> > 
-> > So in my email I was not advertising printk_safe as a "buffered printk for
-> > everyone", I was just talking about lockdep. It's a bit doubtful that Peter
-> > will ACK lockdep transition to buffered printk.
-> 
-> What Linus is suggesting is "helper functions with no printk()", which is
-> more difficult than my "helper functions with printk()" because we need to
-> calculate enough buffer size (which may traverse many functions) because
-> we can't printk() from helper functions when buffer size is too small.
-> 
-> I'm wondering if Linus still insists scattering "a data structure which
-> Linus suggested" around. Rather, I'd like to propose below one. This is not
-> perfect but modification is much smaller.
-> 
-> + * Line buffered printk() tries to assign a buffer when printk() from a new
-> + * context identifier comes in. And it automatically releases that buffer when
-> + * one of three conditions listed below became true.
-> + *
-> + *   (1) printk() from that context identifier emitted '\n' as the last
-> + *       character of output.
-> + *   (2) printk() from that context identifier tried to print a too long line
-> + *       which cannot be stored into a buffer.
-> + *   (3) printk() from a new context identifier noticed that some context
-> + *       identifier is reserving a buffer for more than 10 seconds without
-> + *       emitting '\n'.
-> + *
-> + * Since (3) is based on a heuristic that somebody forgot to emit '\n' as the
-> + * last character of output(), pr_cont()/KERN_CONT users are expected to emit
-> + * '\n' within 10 seconds even if they reserved a buffer.
+diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7124.txt b/Documentation/devicetree/bindings/iio/adc/adi,ad7124.txt
+new file mode 100644
+index 0000000..fa0c43b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7124.txt
+@@ -0,0 +1,81 @@
++Analog Devices AD7124 ADC device driver
++
++Required properties for the AD7124:
++	- compatible: Must be one of "adi,ad7124-4" or "adi,ad7124-8"
++	- reg: SPI chip select number for the device
++	- spi-max-frequency: Max SPI frequency to use
++		see: Documentation/devicetree/bindings/spi/spi-bus.txt
++	- clocks: phandle to the master clock (mclk)
++		see: Documentation/devicetree/bindings/clock/clock-bindings.txt
++	- clock-names: Must be "mclk".
++	- interrupts: IRQ line for the ADC
++		see: Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
++
++	  Required properties:
++		* #address-cells: Must be 1.
++		* #size-cells: Must be 0.
++
++	  Subnode(s) represent the external channels which are connected to the ADC.
++	  Each subnode represents one channel and has the following properties:
++		Required properties:
++			* reg: The channel number. It can have up to 4 channels on ad7124-4
++			  and 8 channels on ad7124-8, numbered from 0 to 15.
++			* diff-channels: see: Documentation/devicetree/bindings/iio/adc/adc.txt
++
++		Optional properties:
++			* bipolar: see: Documentation/devicetree/bindings/iio/adc/adc.txt
++			* adi,reference-select: Select the reference source to use when
++			  converting on the the specific channel. Valid values are:
++			  0: REFIN1(+)/REFIN1(−).
++			  1: REFIN2(+)/REFIN2(−).
++			  3: AVDD
++			  If this field is left empty, internal reference is selected.
++
++Optional properties:
++	- refin1-supply: refin1 supply can be used as reference for conversion.
++	- refin2-supply: refin2 supply can be used as reference for conversion.
++	- avdd-supply: avdd supply can be used as reference for conversion.
++
++Example:
++	adc@0 {
++		compatible = "adi,ad7124-4";
++		reg = <0>;
++		spi-max-frequency = <5000000>;
++		interrupts = <25 2>;
++		interrupt-parent = <&gpio>;
++		refin1-supply = <&adc_vref>;
++		clocks = <&ad7124_mclk>;
++		clock-names = "mclk";
++
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		channel@0 {
++			reg = <0>;
++			adi,diff-channels = <0 1>;
++			adi,reference-select = <0>;
++			adi,gain = <2>;
++			adi,odr-hz = <10>;
++		};
++
++		channel@1 {
++			reg = <1>;
++			adi,bipolar;
++			adi,diff-channels = <2 3>;
++			adi,reference-select = <0>;
++			adi,gain = <4>;
++			adi,odr-hz = <50>;
++		};
++
++		channel@2 {
++			reg = <2>;
++			adi,diff-channels = <4 5>;
++			adi,gain = <128>;
++			adi,odr-hz = <19200>;
++		};
++
++		channel@3 {
++			reg = <3>;
++			adi,diff-channels = <6 7>;
++		};
++	};
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 3a1bfcb..f2fa508 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -845,6 +845,7 @@ L:	linux-iio@vger.kernel.org
+ W:	http://ez.analog.com/community/linux-device-drivers
+ S:	Supported
+ F:	drivers/iio/adc/ad7124.c
++F:	Documentation/devicetree/bindings/iio/adc/adi,ad7124.txt
+ 
+ ANALOG DEVICES INC AD9389B DRIVER
+ M:	Hans Verkuil <hans.verkuil@cisco.com>
+-- 
+2.7.4
 
-This is my main concern about this approach. It is so easy to omit
-the final '\n'.
-
-They are currently delayed until another printk(). Even this is bad.
-Unfortunately we could not setup timer from printk() because it
-would add more locks into the game.
-
-This patch will make it worse. They might get delayed by 10s or even
-more. Many other lines might appear in between. Also the code is
-more tricky[*].
-
-
-Sign, I am really unhappy how the buffered_printk() conversion
-looks in lockdep.c. But I still think that the approach is more
-reliable. I am going to investigate much more pr_cont() users.
-I wonder how many would be that complicated. I do not want
-to give up just because one use-case that was complicated
-even before.
-
-
-[*] The buffer can get written and flushed by different processes.
-    It is not trivial to do it correctly a lockless way.
-
-    The proposed locking looks right on the first glance. But
-    the code is a bit scary ;-)
