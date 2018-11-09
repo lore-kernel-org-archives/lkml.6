@@ -2,721 +2,211 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF85C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:49:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 786DBC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:52:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9684D20825
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:49:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="I5X8WR1F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9684D20825
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 396B520825
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:52:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 396B520825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.us
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728172AbeKJBa1 (ORCPT
+        id S1728183AbeKJBdZ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 20:30:27 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:39732 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727806AbeKJBa1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 20:30:27 -0500
-Received: by mail-qk1-f195.google.com with SMTP id e4so2283808qkh.6
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 07:49:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=pIUvwIgsSfIYRUVaDVeKFS78IbUSIGODtjgXLvqenYI=;
-        b=I5X8WR1Fihu1usO84VaIC9n1r/tRLaT+UsmPH1InPfw1PuUcy5W61J5pTPd82FLXdD
-         Densm3E2quCs8CTJIdDOp7pw2OfZQTH9ujmWo43tPelHYBUv3xdMN5K7DnkO8ugiltkB
-         WaFvrqumibIro/jegTiOXF6an6vDMnt1fwkug=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=pIUvwIgsSfIYRUVaDVeKFS78IbUSIGODtjgXLvqenYI=;
-        b=BphjOshK5SOHkJlz9FKeTplZ8XJh5rjKNmg2tfifFvuiDfFGRq6wtvkKaOmFGkUds8
-         Hd1TXQVPNYU1F6S3irggYuVSWQ1rBuQRMJFfXYOksa872DiWJu8Ew7A5TSDGMDIAUXlJ
-         o0NvijMiYVXybJb2TJjxU2Z/bNpwq25WKohgO7dSzEKqEkTYN3TpxzQnY0vgxe++omvc
-         jZ/Lm3g+w/3tR3bPkMm7aDsliJiLgARVhTftwkm+W3xDxh2IicBCPaxcuQB64G6dPPI2
-         Dq2SsbcUEUHk4VnHtIWajni0WuEeZxpsG/zVnGCzxZgVsbdsbJpfKSTPDi+NiKHyilux
-         VSlQ==
-X-Gm-Message-State: AGRZ1gLNDk1hGxFD5rJJLCTGRobBrK/GyQhVbDX/dw4D9slYzQsOlqyb
-        h7cwbjXHHVTxZ3YfWtTb6E1TWw==
-X-Google-Smtp-Source: AJdET5ebDimdsHs1JRN9Pne+NAGElqJ7Aa+TvTGV0tO0Wh5qRPlR5LC8L7JSUOViQ+p515WqjzpeKA==
-X-Received: by 2002:ac8:33fc:: with SMTP id d57mr8865557qtb.82.1541778556661;
-        Fri, 09 Nov 2018 07:49:16 -0800 (PST)
-Received: from workstation.celeiro.br ([168.194.163.12])
-        by smtp.gmail.com with ESMTPSA id a3sm1916081qta.21.2018.11.09.07.49.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 09 Nov 2018 07:49:15 -0800 (PST)
-From:   Rafael David Tinoco <rafael.tinoco@linaro.org>
-To:     shuah@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        rafael.tinoco@linaro.org, peterz@infradead.org, tglx@linutronix.de,
-        mingo@kernel.org, mathieu.desnoyers@efficios.com
-Subject: [PATCH v5] selftests: membarrier: re-organize test
-Date:   Fri,  9 Nov 2018 13:49:11 -0200
-Message-Id: <20181109154911.24464-1-rafael.tinoco@linaro.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <dcc20b51-3069-6854-3190-b8958e2f9b96@kernel.org>
-References: <dcc20b51-3069-6854-3190-b8958e2f9b96@kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 9 Nov 2018 20:33:25 -0500
+Received: from mout.gmx.net ([212.227.17.20]:35257 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727845AbeKJBdZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 20:33:25 -0500
+Received: from [192.168.1.153] ([74.104.183.64]) by mail.gmx.com (mrgmx103
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 0LqQTl-1fpx3u1RoH-00e8OX; Fri, 09
+ Nov 2018 16:52:07 +0100
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
+Subject: Re: WARNING: CPU: 0 PID: 0 at drivers/irqchip/irq-gic-v3-its.c
+From:   Qian Cai <cai@gmx.us>
+In-Reply-To: <b74e43d3-a7e1-08e9-c176-5584ad379629@arm.com>
+Date:   Fri, 9 Nov 2018 10:52:04 -0500
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jason Cooper <jason@lakedaemon.net>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <F47320A5-4A6B-4AEB-A0DC-E4EBC6B4EC2A@gmx.us>
+References: <1541710771.12945.7.camel@gmx.us>
+ <c8ff3004-33ee-19d5-8eb8-38d41f78c8ee@arm.com>
+ <trinity-e1d06dde-12e1-4e2a-8871-d6c5f4af9f51-1541766480902@msvc-mesg-gmx023>
+ <b23b62b4-9ecb-8b76-57e5-d323cc9926ce@arm.com>
+ <13A11479-97FB-4EFD-A182-61DA63CB64D6@gmx.us>
+ <b74e43d3-a7e1-08e9-c176-5584ad379629@arm.com>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+X-Mailer: Apple Mail (2.3445.100.39)
+X-Provags-ID: V03:K1:/PCX6Ak0ic2Q2qzycV6sqW3UQy6whQTpeSAYrOsV80BgQMkuT1y
+ IPVoSpl4BToKhZr+nwInx8zQCNBwWCox8pBisZC7DyHq60qRuX26JBYre4t+TurM0vSxlfo
+ QafJagWkjMHPY4HdbelBHtar2QDLqsvxa35UwLk2RvJ0jC22LQqhBXvMC1detPjAKh6RDnn
+ uoTD6ZYGdXvO9Gm9LdKyQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:qQ8HD9N/DmE=:ccO1uGgLHY5T3nO1bU6+RI
+ XNaWp+Wq2D4+olB42nm3QbXT3f6pyioUQb0G2rInPog8o0v58HTmGtAMf8qzOBum/7SAWbELl
+ 6TP+zvbCzTxKydzGDcpLeK0mEY/k9X8mH9tW89oZKPeVyWDhyFUQoBNbLaXUZnTnszQ2Bdqrb
+ jIBr2GN4jLAy6xC/1/Ng70fHHyK98F8r897vGHyQIdpKeZ9UZ36mMAdFeuwycTM7a7gFlz5oj
+ 8nc/YzrlWUrNNH+csCg+esSjSm/i0ctlT1OGTH9kYRR1wc/L2RJC0ixh8SgJSLMwtE7CIrzSY
+ Asx0r9l/+akCGRuvKTjCNLB1gGszSNT71cakBVJnLnuMpxJ4Ethh3Mw5ORNpjt3A23EZR5+6k
+ 01Cxe4zC1p0i8iVrTL/NXS52QVBbf7/ODuF7M++Y7GLgnj4VG45g6CClrTPlprWHug/A6SSvT
+ wRRQ6sfaPLLhDquy7NKb7yhiQMRC6yEM9gizD3p2IzwdD4HF8SBHzlwWXteovEjqdQaKvzqHb
+ 6T/4lUzh62pxU//HCx2xafJKqMqrijvVYy/FzUFkeyW75DEhLrxdzeTCTy3h5EmZWtIlMGB6d
+ ldPpVKzPfGxfemKlad9AjMVdienTBIETsfSkUubhfyBEU8rvH01DTShOMKtkgdDzpjzwyPdAV
+ 3eB4MiRYJhRMTYlrn1Wr30Nw5z1hYEBk+ifNzMm9Haxv2X0l7EMhEVYT5pmpEN7w5awAHy+G+
+ nd1nDvE0WS/49FZbT3vcTHUqlgkvDU8hlfzgmOcz2A00W0v13JsYoIszI+tSKvpzzFsg3yy3J
+ s7T7KHZ/FI2/xz5N0b1nFG9lUo5dHEW4tNyii2+RISOFfaAAHcMEjkLWZImaARCiHKiMv/TX8
+ mPLZ5B/o+bRD9KlUkKw2kBUbxvVABc97YlqyduQcF8RG+0gX42RyhwlXaeV2fsb78qwQsdDRD
+ kvU3vXOOvwTO8i045ET2xTRx4FVM8VNESu7kRE9wwgqaZ16UzD/O1pSscVXo+7Szxi79GKem3
+ GQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit re-organizes membarrier test, solving issues when testing
-LTS kernels. Now, the code:
 
- - always run the same amount of tests (even on older kernels).
- - allows each test to succeed, fail or be skipped independently.
- - allows testing features even when explicitly unsupported (force=1).
- - checks false positive/negative by checking ret code and errno.
- - can be extended easily: to expand an array with commands.
 
-Note: like this, the test is pretty close to the LTP membarrier basic
-tests, and both can be maintained together.
+> On Nov 9, 2018, at 10:38 AM, Marc Zyngier <marc.zyngier@arm.com> wrote:
+> 
+> On 09/11/18 15:28, Qian Cai wrote:
+>> 
+>> 
+>>> On Nov 9, 2018, at 8:50 AM, Marc Zyngier <marc.zyngier@arm.com> wrote:
+>>> 
+>>> On 09/11/18 12:28, Qian Cai wrote:
+>>>> 
+>>>> On 11/9/18 at 7:08 AM, Marc Zyngier wrote:
+>>>> 
+>>>>> [+Ard]
+>>>>> 
+>>>>> On 08/11/18 20:59, Qian Cai wrote:
+>>>>>> Just booting up the latest git master (b00d209) on an aarch64 server and saw
+>>>>>> this. Not sure about the third warning (at kernel/cpu.c:315
+>>>>>> lockdep_assert_cpus_held+0x50/0x60) relates to irqchip or not, but appended it
+>>>>>> to here anyway just in case.
+>>>>>> 
+>>>>>> [    0.000000] WARNING: CPU: 0 PID: 0 at drivers/irqchip/irq-gic-v3-its.c:1696
+>>>>>> its_init+0x588/0xb54
+>>>>> 
+>>>>> It looks like EFI cannot manage to reserve the memory for your GIC
+>>>>> redistributors. Pretty annoying. At the same time, you have reported
+>>>>> other issues with the EFI reservation mechanism, such as:
+>>>>> 
+>>>>> https://lore.kernel.org/patchwork/patch/1008413/
+>>>>> 
+>>>>> for which you have given a "Tested-by:". Is that related?
+>>>> No, I don’t think so. Those warnings are still there even after applied the patch above.
+>>> 
+>>> Do you also have this series[1] applied? I'd otherwise need your
+>>> configuration to try and reproduce it, as I can't manage to trigger it
+>>> on my own setup.
+>>> 
+>>> Thanks,
+>>> 
+>>> 	M.
+>>> 
+>>> [1] https://www.spinics.net/lists/arm-kernel/msg685751.html
+>> After applied the above series on the top of the mainline (b00d209), the only
+>> warning exist is,
+> 
+> OK, so the EFI/GICv3 stuff is sorted.
+> 
+>> 
+>> [    0.000000] WARNING: CPU: 0 PID: 0 at kernel/cpu.c:315
+>> lockdep_assert_cpus_held+0x50/0x60
+>> [    0.000000] Modules linked in:
+>> [    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G                T 4.20.0-rc1+ #9
+>> [    0.000000] pstate: 20000085 (nzCv daIf -PAN -UAO)
+>> [    0.000000] pc : lockdep_assert_cpus_held+0x50/0x60
+>> [    0.000000] lr : lockdep_assert_cpus_held+0x4c/0x60
+>> [    0.000000] sp : ffff200009c97b10
+>> [    0.000000] x29: ffff200009c97b10 x28: ffff200009e39000 
+>> [    0.000000] x27: ffff200009cd1000 x26: ffff200009cd2000 
+>> [    0.000000] x25: ffff200009125000 x24: ffff200009cc9868 
+>> [    0.000000] x23: ffff200009c7c040 x22: 0000000000001000 
+>> [    0.000000] x21: 0000000000000012 x20: ffff200009cc9000 
+>> [    0.000000] x19: ffff200009cd5000 x18: 000000000000003f 
+>> [    0.000000] x17: 0000000000000000 x16: 0000000000000000 
+>> [    0.000000] x15: 0000000000000007 x14: ffff200009461cd4 
+>> [    0.000000] x13: ffff2000094695ac x12: ffff2000095149a4 
+>> [    0.000000] x11: ffff2000094e4478 x10: ffff2000094e0a50 
+>> [    0.000000] x9 : ffff200009516aa8 x8 : ffff0ffbffcc4004 
+>> [    0.000000] x7 : 1fffeffbffcc4003 x6 : ffff0ffbffcc4003 
+>> [    0.000000] x5 : ffff7fdffe62001b x4 : ffff0ffbffcc4004 
+>> [    0.000000] x3 : ffff0ffbffcc4004 x2 : dfff200000000000 
+>> [    0.000000] x1 : 0000000000000000 x0 : 0000000000000000 
+>> [    0.000000] Call trace:
+>> [    0.000000]  lockdep_assert_cpus_held+0x50/0x60
+>> [    0.000000]  static_key_enable_cpuslocked+0x30/0xe8
+>> [    0.000000]  arch_timer_check_ool_workaround+0x128/0x2d0
+>> [    0.000000]  arch_timer_acpi_init+0x274/0x6ac
+>> [    0.000000]  acpi_table_parse+0x1ac/0x218
+>> [    0.000000]  __acpi_probe_device_table+0x164/0x1ec
+>> [    0.000000]  timer_probe+0x1bc/0x254
+>> [    0.000000]  time_init+0x44/0x98
+>> [    0.000000]  start_kernel+0x4ec/0x7d4
+>> [    0.000000] irq event stamp: 0
+>> [    0.000000] hardirqs last  enabled at (0): [<0000000000000000>]           (null)
+>> [    0.000000] hardirqs last disabled at (0): [<0000000000000000>]           (null)
+>> [    0.000000] softirqs last  enabled at (0): [<0000000000000000>]           (null)
+>> [    0.000000] softirqs last disabled at (0): [<0000000000000000>]           (null)
+>> [    0.000000] ---[ end trace 1dc5085680256ac1 ]—
+> 
+> Now this one: what machine is this? What is the workaround that gets
+> applied?
 
-Link: https://bugs.linaro.org/show_bug.cgi?id=3771
-Link: http://lists.linux.it/pipermail/ltp/2018-October/009578.html
-Signed-off-by: Rafael David Tinoco <rafael.tinoco@linaro.org>
----
- .../selftests/membarrier/membarrier_test.c    | 566 ++++++++++--------
- 1 file changed, 314 insertions(+), 252 deletions(-)
+# dmidecode 
+# dmidecode 3.1
+Getting SMBIOS data from sysfs.
+SMBIOS 3.0.0 present.
+Table at 0x397D0000.
 
-diff --git a/tools/testing/selftests/membarrier/membarrier_test.c b/tools/testing/selftests/membarrier/membarrier_test.c
-index 6793f8ecc8e7..7eb0e2395cbd 100644
---- a/tools/testing/selftests/membarrier/membarrier_test.c
-+++ b/tools/testing/selftests/membarrier/membarrier_test.c
-@@ -8,305 +8,367 @@
- 
- #include "../kselftest.h"
- 
-+#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
-+
-+struct test_case {
-+	char testname[80];
-+	int command;		/* membarrier cmd                            */
-+	int needregister;	/* membarrier cmd needs register cmd	     */
-+	int flags;		/* flags for given membarrier cmd	     */
-+	long exp_ret;		/* expected return code for given cmd        */
-+	int exp_errno;		/* expected errno for given cmd failure      */
-+	int enabled;		/* enabled, despite results from CMD_QUERY   */
-+	int always;		/* CMD_QUERY should always enable this test  */
-+	int force;		/* force if CMD_QUERY reports not enabled    */
-+	int force_exp_errno;	/* expected errno after forced cmd           */
-+};
-+
-+struct test_case tc[] = {
-+	{
-+	 /*
-+	  * case 00) invalid cmd
-+	  *     - enabled by default
-+	  *     - should always fail with EINVAL
-+	  */
-+	 .testname = "cmd_fail",
-+	 .command = -1,
-+	 .exp_ret = -1,
-+	 .exp_errno = EINVAL,
-+	 .enabled = 1,
-+	 },
-+	{
-+	 /*
-+	  * case 01) invalid flags
-+	  *     - enabled by default
-+	  *     - should always fail with EINVAL
-+	  */
-+	 .testname = "cmd_flags_fail",
-+	 .command = MEMBARRIER_CMD_QUERY,
-+	 .flags = 1,
-+	 .exp_ret = -1,
-+	 .exp_errno = EINVAL,
-+	 .enabled = 1,
-+	 },
-+	{
-+	 /*
-+	  * case 02) global barrier
-+	  *     - should ALWAYS be enabled by CMD_QUERY
-+	  *     - should always succeed
-+	  */
-+	 .testname = "cmd_global_success",
-+	 .command = MEMBARRIER_CMD_GLOBAL,
-+	 .flags = 0,
-+	 .exp_ret = 0,
-+	 .always = 1,
-+	 },
-+	 /*
-+	  * commit 22e4ebb975 (v4.14-rc1) added cases 03, 04 and 05 features:
-+	  */
-+	{
-+	 /*
-+	  * case 03) private expedited barrier with no registrations
-+	  *     - should fail with errno=EPERM due to no registrations
-+	  *     - or be skipped if unsupported by running kernel
-+	  */
-+	 .testname = "cmd_private_expedited_fail",
-+	 .command = MEMBARRIER_CMD_PRIVATE_EXPEDITED,
-+	 .flags = 0,
-+	 .exp_ret = -1,
-+	 .exp_errno = EPERM,
-+	 },
-+	{
-+	 /*
-+	  * case 04) register private expedited
-+	  *     - should succeed when supported by running kernel
-+	  *     - or fail with errno=EINVAL if unsupported and forced
-+	  */
-+	 .testname = "cmd_private_expedited_register_success",
-+	 .command = MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED,
-+	 .flags = 0,
-+	 .exp_ret = 0,
-+	 .force = 1,
-+	 .force_exp_errno = EINVAL,
-+	 },
-+	{
-+	 /*
-+	  * case 05) private expedited barrier with registration
-+	  *     - should succeed due to existing registration
-+	  *     - or fail with errno=EINVAL if unsupported and forced
-+	  *     - NOTE: commit 70216e18e5 (v4.16-rc1) changed behavior:
-+	  *     -       (a) if unsupported, and forced, < 4.16 , errno is EINVAL
-+	  *     -       (b) if unsupported, and forced, >= 4.16, errno is EPERM
-+	  */
-+	 .testname = "cmd_private_expedited_success",
-+	 .needregister = MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED,
-+	 .command = MEMBARRIER_CMD_PRIVATE_EXPEDITED,
-+	 .flags = 0,
-+	 .exp_ret = 0,
-+	 .force = 1,
-+	 .force_exp_errno = EPERM,
-+	 },
-+	 /*
-+	  * commit 70216e18e5 (v4.16-rc1) added cases 06, 07 and 08 features:
-+	  */
-+	{
-+	 /*
-+	  * case 06) private expedited sync core barrier with no registrations
-+	  *     - should fail with errno=EPERM due to no registrations
-+	  *     - or be skipped if unsupported by running kernel
-+	  */
-+	 .testname = "cmd_private_expedited_sync_core_fail",
-+	 .command = MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE,
-+	 .flags = 0,
-+	 .exp_ret = -1,
-+	 .exp_errno = EPERM,
-+	 },
-+	{
-+	 /*
-+	  * case 07) register private expedited sync core
-+	  *     - should succeed when supported by running kernel
-+	  *     - or fail with errno=EINVAL if unsupported and forced
-+	  */
-+	 .testname = "cmd_private_expedited_sync_core_register_success",
-+	 .command = MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE,
-+	 .flags = 0,
-+	 .exp_ret = 0,
-+	 .force = 1,
-+	 .force_exp_errno = EINVAL,
-+	 },
-+	{
-+	 /*
-+	  * case 08) private expedited sync core barrier with registration
-+	  *     - should succeed due to existing registration
-+	  *     - or fail with errno=EINVAL if unsupported and forced
-+	  */
-+	 .testname = "cmd_private_expedited_sync_core_success",
-+	 .needregister = MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE,
-+	 .command = MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE,
-+	 .flags = 0,
-+	 .exp_ret = 0,
-+	 .force = 1,
-+	 .force_exp_errno = EINVAL,
-+	 },
-+	 /*
-+	  * commit c5f58bd58f4 (v4.16-rc1) added cases 09, 10 and 11 features:
-+	  */
-+	{
-+	 /*
-+	  * case 09) global expedited barrier with no registrations
-+	  *     - should never fail due to no registrations
-+	  *     - or be skipped if unsupported by running kernel
-+	  */
-+	 .testname = "cmd_global_expedited_success",
-+	 .command = MEMBARRIER_CMD_GLOBAL_EXPEDITED,
-+	 .flags = 0,
-+	 .exp_ret = 0,
-+	 },
-+	{
-+	 /*
-+	  * case 10) register global expedited
-+	  *     - should succeed when supported by running kernel
-+	  *     - or fail with errno=EINVAL if unsupported and forced
-+	  */
-+	 .testname = "cmd_global_expedited_register_success",
-+	 .command = MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED,
-+	 .flags = 0,
-+	 .exp_ret = 0,
-+	 .force = 1,
-+	 .force_exp_errno = EINVAL,
-+	 },
-+	{
-+	 /*
-+	  * case 11) global expedited barrier with registration
-+	  *     - should also succeed with registrations
-+	  *     - or fail with errno=EINVAL if unsupported and forced
-+	  */
-+	 .testname = "cmd_global_expedited_success",
-+	 .needregister = MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED,
-+	 .command = MEMBARRIER_CMD_GLOBAL_EXPEDITED,
-+	 .flags = 0,
-+	 .exp_ret = 0,
-+	 .force = 1,
-+	 .force_exp_errno = EINVAL,
-+	 },
-+};
-+
-+#define passed_ok(_test)						       \
-+	do {								       \
-+		ksft_test_result_pass("membarrier(2): %s passed.\n",	       \
-+			_test.testname);				       \
-+		return;							       \
-+	} while (0)
-+
-+#define passed_unexpec(_test)						       \
-+	do {								       \
-+		ksft_exit_fail_msg("membarrier(2): %s passed unexpectedly. "   \
-+			"ret = %ld with errno %d were expected. (force: %d)\n",\
-+			_test.testname, _test.exp_ret, _test.exp_errno,        \
-+			_test.force);					       \
-+		return;							       \
-+	} while (0)
-+
-+#define failed_ok(_test)						       \
-+	do {								       \
-+		ksft_test_result_pass("membarrier(2): %s failed as "	       \
-+			"expected.\n", _test.testname);			       \
-+		return;							       \
-+	} while (0)
-+
-+#define failed_ok_unsupported(_test)					       \
-+	do {								       \
-+		ksft_test_result_pass("membarrier(2): %s failed as expected.\n"\
-+			"(unsupported)", _test.testname);		       \
-+		return;							       \
-+	} while (0)
-+
-+#define failed_not_ok(_test, _gotret, _goterr)				       \
-+	do {								       \
-+		ksft_exit_fail_msg("membarrier(2): %s failed. "		       \
-+			"ret = %ld when expected was %ld. "		       \
-+			"errno = %d when expected was %d. (force: %d)\n",      \
-+			_test.testname, _gotret, _test.exp_ret, _goterr,       \
-+			_test.exp_errno, _test.force);			       \
-+		return;							       \
-+	} while (0)
-+
-+#define failed_unexpec(_test, _gotret, _goterr) 			       \
-+	do {								       \
-+		ksft_exit_fail_msg("membarrier(2): %s failed unexpectedly. "   \
-+			"Got ret = %ld with errno %d. (force: %d)\n",	       \
-+			_test.testname, _gotret, _goterr, _test.force);	       \
-+		return;							       \
-+	} while (0)
-+
-+#define skipped(_test)							       \
-+	do {								       \
-+		ksft_test_result_pass("membarrier(2): %s skipped (unsupp)\n",  \
-+			_test.testname);				       \
-+		return;							       \
-+	} while (0)
-+
-+#define skipped_fail(_test)						       \
-+	do {								       \
-+		ksft_exit_fail_msg("membarrier(2): %s reported as "	       \
-+			"unsupported\n", _test.testname);		       \
-+		return;							       \
-+	} while (0)
-+
- static int sys_membarrier(int cmd, int flags)
- {
- 	return syscall(__NR_membarrier, cmd, flags);
- }
- 
--static int test_membarrier_cmd_fail(void)
-+static void test_membarrier_setup(void)
- {
--	int cmd = -1, flags = 0;
--	const char *test_name = "sys membarrier invalid command";
-+	size_t i;
-+	int ret;
- 
--	if (sys_membarrier(cmd, flags) != -1) {
--		ksft_exit_fail_msg(
--			"%s test: command = %d, flags = %d. Should fail, but passed\n",
--			test_name, cmd, flags);
--	}
--	if (errno != EINVAL) {
--		ksft_exit_fail_msg(
--			"%s test: flags = %d. Should return (%d: \"%s\"), but returned (%d: \"%s\").\n",
--			test_name, flags, EINVAL, strerror(EINVAL),
--			errno, strerror(errno));
-+	ret = sys_membarrier(MEMBARRIER_CMD_QUERY, 0);
-+	if (ret < 0) {
-+		if (errno == ENOSYS)
-+			ksft_test_result_skip("membarrier(2): not supported\n");
- 	}
- 
--	ksft_test_result_pass(
--		"%s test: command = %d, flags = %d, errno = %d. Failed as expected\n",
--		test_name, cmd, flags, errno);
--	return 0;
--}
--
--static int test_membarrier_flags_fail(void)
--{
--	int cmd = MEMBARRIER_CMD_QUERY, flags = 1;
--	const char *test_name = "sys membarrier MEMBARRIER_CMD_QUERY invalid flags";
--
--	if (sys_membarrier(cmd, flags) != -1) {
--		ksft_exit_fail_msg(
--			"%s test: flags = %d. Should fail, but passed\n",
--			test_name, flags);
-+	for (i = 0; i < ARRAY_SIZE(tc); i++) {
-+		if ((tc[i].command > 0) && (ret & tc[i].command))
-+			tc[i].enabled = 1;
- 	}
--	if (errno != EINVAL) {
--		ksft_exit_fail_msg(
--			"%s test: flags = %d. Should return (%d: \"%s\"), but returned (%d: \"%s\").\n",
--			test_name, flags, EINVAL, strerror(EINVAL),
--			errno, strerror(errno));
--	}
--
--	ksft_test_result_pass(
--		"%s test: flags = %d, errno = %d. Failed as expected\n",
--		test_name, flags, errno);
--	return 0;
- }
- 
--static int test_membarrier_global_success(void)
-+static void test_membarrier_run(unsigned int i)
- {
--	int cmd = MEMBARRIER_CMD_GLOBAL, flags = 0;
--	const char *test_name = "sys membarrier MEMBARRIER_CMD_GLOBAL";
-+	int ret, err = 0;
- 
--	if (sys_membarrier(cmd, flags) != 0) {
--		ksft_exit_fail_msg(
--			"%s test: flags = %d, errno = %d\n",
--			test_name, flags, errno);
--	}
-+	/* not enabled and not enforced: test is skipped */
- 
--	ksft_test_result_pass(
--		"%s test: flags = %d\n", test_name, flags);
--	return 0;
--}
-+	if (!tc[i].enabled && !tc[i].force) {
- 
--static int test_membarrier_private_expedited_fail(void)
--{
--	int cmd = MEMBARRIER_CMD_PRIVATE_EXPEDITED, flags = 0;
--	const char *test_name = "sys membarrier MEMBARRIER_CMD_PRIVATE_EXPEDITED not registered failure";
-+		if (tc[i].always == 0)
-+			skipped(tc[i]);
- 
--	if (sys_membarrier(cmd, flags) != -1) {
--		ksft_exit_fail_msg(
--			"%s test: flags = %d. Should fail, but passed\n",
--			test_name, flags);
--	}
--	if (errno != EPERM) {
--		ksft_exit_fail_msg(
--			"%s test: flags = %d. Should return (%d: \"%s\"), but returned (%d: \"%s\").\n",
--			test_name, flags, EPERM, strerror(EPERM),
--			errno, strerror(errno));
-+		skipped_fail(tc[i]);
- 	}
- 
--	ksft_test_result_pass(
--		"%s test: flags = %d, errno = %d\n",
--		test_name, flags, errno);
--	return 0;
--}
-+	/* iterations: registration needed for some cases */
- 
--static int test_membarrier_register_private_expedited_success(void)
--{
--	int cmd = MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED, flags = 0;
--	const char *test_name = "sys membarrier MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED";
--
--	if (sys_membarrier(cmd, flags) != 0) {
--		ksft_exit_fail_msg(
--			"%s test: flags = %d, errno = %d\n",
--			test_name, flags, errno);
-+	if (tc[i].needregister && tc[i].enabled) {
-+		ret = sys_membarrier(tc[i].needregister, 0);
-+		if (ret < 0) {
-+			ksft_test_result_fail("membarrier(2): %s could not"
-+					"register\n", tc[i].testname);
-+		}
- 	}
- 
--	ksft_test_result_pass(
--		"%s test: flags = %d\n",
--		test_name, flags);
--	return 0;
--}
-+	ret = sys_membarrier(tc[i].command, tc[i].flags);
-+	err = errno;
- 
--static int test_membarrier_private_expedited_success(void)
--{
--	int cmd = MEMBARRIER_CMD_PRIVATE_EXPEDITED, flags = 0;
--	const char *test_name = "sys membarrier MEMBARRIER_CMD_PRIVATE_EXPEDITED";
-+	/* enabled and not enforced: regular expected results only */
- 
--	if (sys_membarrier(cmd, flags) != 0) {
--		ksft_exit_fail_msg(
--			"%s test: flags = %d, errno = %d\n",
--			test_name, flags, errno);
--	}
-+	if (tc[i].enabled && !tc[i].force) {
- 
--	ksft_test_result_pass(
--		"%s test: flags = %d\n",
--		test_name, flags);
--	return 0;
--}
-+		if (ret >= 0 && tc[i].exp_ret == ret)
-+			passed_ok(tc[i]);
- 
--static int test_membarrier_private_expedited_sync_core_fail(void)
--{
--	int cmd = MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE, flags = 0;
--	const char *test_name = "sys membarrier MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE not registered failure";
--
--	if (sys_membarrier(cmd, flags) != -1) {
--		ksft_exit_fail_msg(
--			"%s test: flags = %d. Should fail, but passed\n",
--			test_name, flags);
--	}
--	if (errno != EPERM) {
--		ksft_exit_fail_msg(
--			"%s test: flags = %d. Should return (%d: \"%s\"), but returned (%d: \"%s\").\n",
--			test_name, flags, EPERM, strerror(EPERM),
--			errno, strerror(errno));
--	}
--
--	ksft_test_result_pass(
--		"%s test: flags = %d, errno = %d\n",
--		test_name, flags, errno);
--	return 0;
--}
--
--static int test_membarrier_register_private_expedited_sync_core_success(void)
--{
--	int cmd = MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE, flags = 0;
--	const char *test_name = "sys membarrier MEMBARRIER_CMD_REGISTER_PRIVATE_EXPEDITED_SYNC_CORE";
--
--	if (sys_membarrier(cmd, flags) != 0) {
--		ksft_exit_fail_msg(
--			"%s test: flags = %d, errno = %d\n",
--			test_name, flags, errno);
-+		if (ret < 0) {
-+			if (tc[i].exp_ret == ret)
-+				failed_ok(tc[i]);
-+			else
-+				failed_not_ok(tc[i], ret, err);
-+		}
- 	}
- 
--	ksft_test_result_pass(
--		"%s test: flags = %d\n",
--		test_name, flags);
--	return 0;
--}
-+	/* not enabled and enforced: failure and expected errors */
- 
--static int test_membarrier_private_expedited_sync_core_success(void)
--{
--	int cmd = MEMBARRIER_CMD_PRIVATE_EXPEDITED, flags = 0;
--	const char *test_name = "sys membarrier MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE";
-+	if (!tc[i].enabled && tc[i].force) {
- 
--	if (sys_membarrier(cmd, flags) != 0) {
--		ksft_exit_fail_msg(
--			"%s test: flags = %d, errno = %d\n",
--			test_name, flags, errno);
--	}
-+		if (ret >= 0)
-+			passed_unexpec(tc[i]);
- 
--	ksft_test_result_pass(
--		"%s test: flags = %d\n",
--		test_name, flags);
--	return 0;
--}
--
--static int test_membarrier_register_global_expedited_success(void)
--{
--	int cmd = MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED, flags = 0;
--	const char *test_name = "sys membarrier MEMBARRIER_CMD_REGISTER_GLOBAL_EXPEDITED";
--
--	if (sys_membarrier(cmd, flags) != 0) {
--		ksft_exit_fail_msg(
--			"%s test: flags = %d, errno = %d\n",
--			test_name, flags, errno);
-+		if (ret < 0) {
-+			if (tc[i].force_exp_errno == err)
-+				failed_ok_unsupported(tc[i]);
-+			else
-+				failed_unexpec(tc[i], ret, err);
-+		}
- 	}
- 
--	ksft_test_result_pass(
--		"%s test: flags = %d\n",
--		test_name, flags);
--	return 0;
--}
-+	/* enabled and enforced: tricky */
- 
--static int test_membarrier_global_expedited_success(void)
--{
--	int cmd = MEMBARRIER_CMD_GLOBAL_EXPEDITED, flags = 0;
--	const char *test_name = "sys membarrier MEMBARRIER_CMD_GLOBAL_EXPEDITED";
-+	if (tc[i].enabled && tc[i].force) {
- 
--	if (sys_membarrier(cmd, flags) != 0) {
--		ksft_exit_fail_msg(
--			"%s test: flags = %d, errno = %d\n",
--			test_name, flags, errno);
--	}
-+		if (ret >= 0) {
-+			if (tc[i].exp_ret == ret)
-+				passed_ok(tc[i]);
-+			else
-+				passed_unexpec(tc[i]);
-+		}
- 
--	ksft_test_result_pass(
--		"%s test: flags = %d\n",
--		test_name, flags);
--	return 0;
--}
-+		if (ret < 0) {
- 
--static int test_membarrier(void)
--{
--	int status;
--
--	status = test_membarrier_cmd_fail();
--	if (status)
--		return status;
--	status = test_membarrier_flags_fail();
--	if (status)
--		return status;
--	status = test_membarrier_global_success();
--	if (status)
--		return status;
--	status = test_membarrier_private_expedited_fail();
--	if (status)
--		return status;
--	status = test_membarrier_register_private_expedited_success();
--	if (status)
--		return status;
--	status = test_membarrier_private_expedited_success();
--	if (status)
--		return status;
--	status = sys_membarrier(MEMBARRIER_CMD_QUERY, 0);
--	if (status < 0) {
--		ksft_test_result_fail("sys_membarrier() failed\n");
--		return status;
--	}
--	if (status & MEMBARRIER_CMD_PRIVATE_EXPEDITED_SYNC_CORE) {
--		status = test_membarrier_private_expedited_sync_core_fail();
--		if (status)
--			return status;
--		status = test_membarrier_register_private_expedited_sync_core_success();
--		if (status)
--			return status;
--		status = test_membarrier_private_expedited_sync_core_success();
--		if (status)
--			return status;
--	}
--	/*
--	 * It is valid to send a global membarrier from a non-registered
--	 * process.
--	 */
--	status = test_membarrier_global_expedited_success();
--	if (status)
--		return status;
--	status = test_membarrier_register_global_expedited_success();
--	if (status)
--		return status;
--	status = test_membarrier_global_expedited_success();
--	if (status)
--		return status;
--	return 0;
--}
-+			if (tc[i].exp_ret == ret) {
- 
--static int test_membarrier_query(void)
--{
--	int flags = 0, ret;
-+				if (tc[i].exp_errno == err)
-+					failed_ok(tc[i]);
-+				else
-+					failed_unexpec(tc[i], ret, err);
-+			}
- 
--	ret = sys_membarrier(MEMBARRIER_CMD_QUERY, flags);
--	if (ret < 0) {
--		if (errno == ENOSYS) {
--			/*
--			 * It is valid to build a kernel with
--			 * CONFIG_MEMBARRIER=n. However, this skips the tests.
--			 */
--			ksft_exit_skip(
--				"sys membarrier (CONFIG_MEMBARRIER) is disabled.\n");
-+			/* unknown on force failure if enabled and forced */
-+			failed_unexpec(tc[i], ret, err);
- 		}
--		ksft_exit_fail_msg("sys_membarrier() failed\n");
- 	}
--	if (!(ret & MEMBARRIER_CMD_GLOBAL))
--		ksft_exit_skip(
--			"sys_membarrier unsupported: CMD_GLOBAL not found.\n");
--
--	ksft_test_result_pass("sys_membarrier available\n");
--	return 0;
- }
- 
- int main(int argc, char **argv)
- {
-+	size_t i;
-+
- 	ksft_print_header();
- 
--	test_membarrier_query();
--	test_membarrier();
-+	test_membarrier_setup();
-+
-+	for (i = 0; i < ARRAY_SIZE(tc); i++)
-+		test_membarrier_run(i);
- 
- 	return ksft_exit_pass();
- }
--- 
-2.19.1
+Handle 0x0000, DMI type 0, 24 bytes
+BIOS Information
+	Vendor: Huawei
+	Version: 1.50
+	Release Date: 06/01/2018
+	Address: 0xA4800
+	Runtime Size: 366 kB
+	ROM Size: 8192 kB
+	Characteristics:
+		PCI is supported
+		BIOS is upgradeable
+		BIOS shadowing is allowed
+		Boot from CD is supported
+		Selectable boot is supported
+		EDD is supported
+		Japanese floppy for NEC 9800 1.2 MB is supported (int 13h)
+		Japanese floppy for Toshiba 1.2 MB is supported (int 13h)
+		5.25"/360 kB floppy services are supported (int 13h)
+		5.25"/1.2 MB floppy services are supported (int 13h)
+		3.5"/720 kB floppy services are supported (int 13h)
+		3.5"/2.88 MB floppy services are supported (int 13h)
+		8042 keyboard services are supported (int 9h)
+		CGA/mono video services are supported (int 10h)
+		ACPI is supported
+		USB legacy is supported
+		BIOS boot specification is supported
+		Targeted content distribution is supported
+		UEFI is supported
+	BIOS Revision: 0.0
 
+Handle 0x0001, DMI type 1, 27 bytes
+System Information
+	Manufacturer: Huawei
+	Product Name: TaiShan 2280 
+	Version: V100R001C00
+	Serial Number: 2102311TBJ10H7000017
+	UUID: 8d9f1d7e-639a-11e7-9a0a-a08cf8625acc
+	Wake-up Type: Power Switch
+	SKU Number: To be filled by O.E.M.
+	Family: To be filled by O.E.M.
+
+I am not sure if I understand your second question, but there is no workaround
+to make this warning disappear that I am aware of.
