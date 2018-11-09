@@ -2,180 +2,219 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C137C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 03:05:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA3A3C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 03:09:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C896020855
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 03:05:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EWljDkE/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C896020855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A3E672086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 03:09:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3E672086C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fieldses.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727598AbeKIMoG (ORCPT
+        id S1727529AbeKIMru (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 07:44:06 -0500
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:36764 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727238AbeKIMoG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 07:44:06 -0500
-Received: by mail-yw1-f66.google.com with SMTP id h21-v6so702903ywa.3;
-        Thu, 08 Nov 2018 19:05:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=+Vb5r/ZxUkEwwgXqaevKlCQD89ZvLor7zBW+Jl84ucM=;
-        b=EWljDkE/VB5y+6CJK4ZAOojWZE+9pD+hiV7qA6gkst+I99mJfYHtDMvllq2FWk9jpN
-         vg1BpQJvqUGa4A8nY+Nu8F0Garvrl/c1obc/LDDPvDChW+74/1RnCgx4spc8x9Ord0yk
-         PvnAXGytVl8AlkBoaHNYVxdR7c0iMTkJEjteFbb3cAqROnkfcNGin7qHJPrY60D+f++L
-         wCZvorzn2S1npJKLf0p88/y2zHaMX143wYWUBcdVJ2hkQF6ExcNOyPICTePWZaThu9Vx
-         cYXn0fm61hojPh+7AO8KRHf4kUnqaGepoQZobbdU6LaCoTEcB/fRVMrPGIj3trwmSUsO
-         /kzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=+Vb5r/ZxUkEwwgXqaevKlCQD89ZvLor7zBW+Jl84ucM=;
-        b=mH6gGPDpP4wN9FjLT7I1fn1aa8YQifHwWz9JotdWrZPLuRX1RXTpXaMIysUoT8NX1L
-         buq3INy9+PhVXRUFHLqp2taPXovmM0FyBkh3imQ4ri4Oql3tpH38197OvTLrCtc/hNBd
-         iLVJu5buAyntQn6dqBulZFZCU4MdYshqjbu1AVejy24gNx1JERmx7fuWkShL5ifuT/n+
-         tF9W6sdAISLLvoIHuKFgHXe/nUg5eQsPK+LyXgvsoG2hIz8u6Q7INxQfExeEBZEV1iCU
-         t8t8b7JiQmYGjbWq0NbBqOAT6FTzWJLR1SIiHAF/V++1s5EKnTNhp3Ds+gw/XKvys3Bm
-         2S7w==
-X-Gm-Message-State: AGRZ1gK2LDRAKSjuGHqkxbMiYpKrRpq+gpWbhSUoi9za84xA2c6XHnKi
-        SusCUBRcR6rL0qAW34basoTAHej36X5gQtWrFsA=
-X-Google-Smtp-Source: AJdET5dMzUo9IzRWqGBOQzg7vYuhBcRXSYFTChSzu4f93BSNiAC9Dmh5Nk5G6dtnOk+XIGjLgANP96q4ra5SAqxjoI0=
-X-Received: by 2002:a81:29c7:: with SMTP id p190-v6mr6951927ywp.176.1541732729931;
- Thu, 08 Nov 2018 19:05:29 -0800 (PST)
+        Fri, 9 Nov 2018 07:47:50 -0500
+Received: from fieldses.org ([173.255.197.46]:39454 "EHLO fieldses.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727238AbeKIMrt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 07:47:49 -0500
+Received: by fieldses.org (Postfix, from userid 2815)
+        id CB2581E29; Thu,  8 Nov 2018 22:09:13 -0500 (EST)
+Date:   Thu, 8 Nov 2018 22:09:13 -0500
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     NeilBrown <neilb@suse.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Martin Wilck <mwilck@suse.de>, linux-fsdevel@vger.kernel.org,
+        Frank Filz <ffilzlnx@mindspring.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 10/12] fs/locks: create a tree of dependent requests.
+Message-ID: <20181109030913.GA8831@fieldses.org>
+References: <154138128401.31651.1381177427603557514.stgit@noble>
+ <154138144796.31651.14201944346371750178.stgit@noble>
+ <20181108213030.GF6090@fieldses.org>
+ <87k1lnw0ec.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-References: <20181106230117.127616-1-salyzyn@android.com> <20181106230117.127616-2-salyzyn@android.com>
- <20181108200106.GB3663@redhat.com> <b057da99-adc6-b355-fb57-b314a29f298f@android.com>
-In-Reply-To: <b057da99-adc6-b355-fb57-b314a29f298f@android.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 9 Nov 2018 05:05:17 +0200
-Message-ID: <CAOQ4uxjVPKSaJ2oscvM7jtsDVabnq_qMPg7k4KQEyOLAVPojcg@mail.gmail.com>
-Subject: Re: [PATCH v8 2/2] overlayfs: override_creds=off option bypass creator_cred
-To:     Mark Salyzyn <salyzyn@android.com>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-doc@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87k1lnw0ec.fsf@notabene.neil.brown.name>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 8, 2018 at 11:28 PM Mark Salyzyn <salyzyn@android.com> wrote:
->
-> On 11/08/2018 12:01 PM, Vivek Goyal wrote:
->
-> On Tue, Nov 06, 2018 at 03:01:15PM -0800, Mark Salyzyn wrote:
->
-> By default, all access to the upper, lower and work directories is the
-> recorded mounter's MAC and DAC credentials.  The incoming accesses are
-> checked against the caller's credentials.
->
-> Ok, I am trying to think of scenarios where override_creds=3Doff can
-> provide any privilege escalation. How about following.
->
-> $ mkdir lower lower/foo upper upper/foo work merged
-> $ touch lower/foo/bar.txt
-> $ chmod 700 lower/foo/
->
-> # Mount overlay with override_creds=3Doff
->
-> $ mount -t overlay -o
-> lowerdir=3Dlower,upperdir=3Dupper,workdir=3Dwork,override_creds=3Doff non=
-e merged
->
-> # Try to read lower/foo as unpriviliged user. Say "test"
-> # su test
-> # ls merged/foo/
-> ls: cannot access 'merged/foo/': Operation not permitted
->
-> # Now first try to do same operation as root and retry as test user.
-> $ exit
-> $ ls merged/foo
-> bar.txt
-> $ su test
-> $ ls merged/foo
-> bar.txt
->
-> lower/foo/ is not readable by user "test". So it fails in first try. Late=
-r
-> "root" accesses it and it populates cache in overlayfs. When test retries=
-,
-> it gets these entries from cache.
->
-> With override_creds=3Don this is not a problem because overlay provides
-> this as functionality as long as mounter as access to lower/foo/.
->
-> But with override_creds=3Doff, mounter is not providing any such
-> functionality and we are exposing an issue where cache will make
-> something available which is not normally available.
->
-> I think it probably is a good idea to do something about it?
->
-> Thanks
-> Vivek
->
-> Good stuff.
->
-> That sounds like a bug in cache (!) to not recheck caller's credentials. =
-Currently unsure how/where to force bypass of the cache (performance hit) a=
-s it is wired in throughout the code without a clear off switch, or recheck=
-ing of the credentials at access. This does need to be addressed to make th=
-is 'feature' more useful/trusted for non-MAC controlled, use cases.
->
-> This is not a problem in the Android usage case since DAC is simple and a=
-ll can be read, execute bits might be controlled, the owners and perms are =
-otherwise unremarkable in the affected arenas that are utilizing overlayfs.=
- Not using it for a generic r/w backing except in rooted debug scenarios by=
- developers, otherwise everything is r/o, MAC on the other hand is complex =
-and heavily inspected. We do, however, want multi level security in that bo=
-th DAC and MAC can be trusted and can protect each other from holes.
->
-> Sounds like the caveats in the documentation need to be expanded if _no_ =
-solution for this kind of access pattern becomes apparent.
->
+On Fri, Nov 09, 2018 at 11:38:19AM +1100, NeilBrown wrote:
+> On Thu, Nov 08 2018, J. Bruce Fields wrote:
+> 
+> > On Mon, Nov 05, 2018 at 12:30:48PM +1100, NeilBrown wrote:
+> >> When we find an existing lock which conflicts with a request,
+> >> and the request wants to wait, we currently add the request
+> >> to a list.  When the lock is removed, the whole list is woken.
+> >> This can cause the thundering-herd problem.
+> >> To reduce the problem, we make use of the (new) fact that
+> >> a pending request can itself have a list of blocked requests.
+> >> When we find a conflict, we look through the existing blocked requests.
+> >> If any one of them blocks the new request, the new request is attached
+> >> below that request, otherwise it is added to the list of blocked
+> >> requests, which are now known to be mutually non-conflicting.
+> >> 
+> >> This way, when the lock is released, only a set of non-conflicting
+> >> locks will be woken, the rest can stay asleep.
+> >> If the lock request cannot be granted and the request needs to be
+> >> requeued, all the other requests it blocks will then be woken
+> >
+> > So, to make sure I understand: the tree of blocking locks only ever has
+> > three levels (the active lock, the locks blocking on it, and their
+> > children?)
+> 
+> Not correct.
+> Blocks is only vertical, never horizontal.  Siblings never block each
+> other.
+> So one process hold a lock on a byte, and 27 other process want a lock
+> on that byte, then there will be 28 levels in a narrow tree - it is
+> effectively a queue.
+> Branching (via siblings) only happens when a child conflict with only
+> part of the lock held by the parent.
+> So if one process locks 32K, then two other processes request locks on
+> the 2 16K halves, then 4 processes request locks on the 8K quarters, and
+> so-on, then you could end up with 32767 processes in a binary tree, with
+> half of them all waiting on different individual bytes.
 
-I think maybe you could append the "behavior of the overlay is undefined" c=
-lause
-to the caveats to cover issues like the one raised by Vivek.
+Maybe I should actually read the code carefully instead of just skimming
+the changelog and jumping to conclusions.
 
-Mark,
+I think this is correct, but I wish we had an actual written-out
+argument that it's correct, because intuition isn't a great guide for
+posix file locks.
 
-I have some Android internals background, so I have a general
-understanding of the
-use case, but I can understand why people have a hard time connecting to th=
-e
-motivation, thinking "their security model must be flawed".
+Maybe:
 
-I am not sure if you are avoiding laying out the details of the model
-because you
-are not allowed to expose details or because you feel details may confuse u=
-s.
-If the latter, then I think that actually listing the details of the
-overlays used in Android
-and some concrete examples of access policies to those overlays could
-benefit the
-discussion on the feature.
-To clarify, this only a suggestion. I have no objection to the patch.
+Waiting and applied locks are all kept in trees whose properties are:
 
-Thanks,
-Amir.
+	- the root of a tree may be an applied or unapplied lock.
+	- every other node in the tree is an unapplied lock that
+	  conflicts with every ancestor of that node.
+
+Every such tree begins life as an unapplied singleton which obviously
+satisfies the above properties.
+
+The only ways we modify trees preserve these properties:
+
+	1. We may add a new child, but only after first verifying that it
+	   conflicts with all of its ancestors.
+	2. We may remove the root of a tree, creating a new singleton
+	   tree from the root and N new trees rooted in the immediate
+	   children.
+	3. If the root of a tree is not currently an applied lock, we may
+	   apply it (if possible).
+	4. We may upgrade the root of the tree (either extend its range,
+	   or upgrade its entire range from read to write).
+
+When an applied lock is modified in a way that reduces or downgrades any
+part of its range, we remove all its children (2 above).
+
+For each of those child trees: if the root of the tree applies, we do so
+(3).  If it doesn't, it must conflict with some applied lock.  We remove
+all of its children (2), and add it is a new leaf to the tree rooted in
+the applied lock (1).  We then repeat the process recursively with those
+children.
+
+Something like that.
+
+--b.
+
+> 
+> NeilBrown
+> 
+> >
+> > --b.
+> >
+> >> 
+> >> Reported-and-tested-by: Martin Wilck <mwilck@suse.de>
+> >> Signed-off-by: NeilBrown <neilb@suse.com>
+> >> ---
+> >>  fs/locks.c |   29 +++++++++++++++++++++++------
+> >>  1 file changed, 23 insertions(+), 6 deletions(-)
+> >> 
+> >> diff --git a/fs/locks.c b/fs/locks.c
+> >> index 802d5853acd5..1b0eac6b2918 100644
+> >> --- a/fs/locks.c
+> >> +++ b/fs/locks.c
+> >> @@ -715,11 +715,25 @@ static void locks_delete_block(struct file_lock *waiter)
+> >>   * fl_blocked list itself is protected by the blocked_lock_lock, but by ensuring
+> >>   * that the flc_lock is also held on insertions we can avoid taking the
+> >>   * blocked_lock_lock in some cases when we see that the fl_blocked list is empty.
+> >> + *
+> >> + * Rather than just adding to the list, we check for conflicts with any existing
+> >> + * waiters, and add beneath any waiter that blocks the new waiter.
+> >> + * Thus wakeups don't happen until needed.
+> >>   */
+> >>  static void __locks_insert_block(struct file_lock *blocker,
+> >> -					struct file_lock *waiter)
+> >> +				 struct file_lock *waiter,
+> >> +				 bool conflict(struct file_lock *,
+> >> +					       struct file_lock *))
+> >>  {
+> >> +	struct file_lock *fl;
+> >>  	BUG_ON(!list_empty(&waiter->fl_block));
+> >> +
+> >> +new_blocker:
+> >> +	list_for_each_entry(fl, &blocker->fl_blocked, fl_block)
+> >> +		if (conflict(fl, waiter)) {
+> >> +			blocker =  fl;
+> >> +			goto new_blocker;
+> >> +		}
+> >>  	waiter->fl_blocker = blocker;
+> >>  	list_add_tail(&waiter->fl_block, &blocker->fl_blocked);
+> >>  	if (IS_POSIX(blocker) && !IS_OFDLCK(blocker))
+> >> @@ -734,10 +748,12 @@ static void __locks_insert_block(struct file_lock *blocker,
+> >>  
+> >>  /* Must be called with flc_lock held. */
+> >>  static void locks_insert_block(struct file_lock *blocker,
+> >> -					struct file_lock *waiter)
+> >> +			       struct file_lock *waiter,
+> >> +			       bool conflict(struct file_lock *,
+> >> +					     struct file_lock *))
+> >>  {
+> >>  	spin_lock(&blocked_lock_lock);
+> >> -	__locks_insert_block(blocker, waiter);
+> >> +	__locks_insert_block(blocker, waiter, conflict);
+> >>  	spin_unlock(&blocked_lock_lock);
+> >>  }
+> >>  
+> >> @@ -996,7 +1012,7 @@ static int flock_lock_inode(struct inode *inode, struct file_lock *request)
+> >>  		if (!(request->fl_flags & FL_SLEEP))
+> >>  			goto out;
+> >>  		error = FILE_LOCK_DEFERRED;
+> >> -		locks_insert_block(fl, request);
+> >> +		locks_insert_block(fl, request, flock_locks_conflict);
+> >>  		goto out;
+> >>  	}
+> >>  	if (request->fl_flags & FL_ACCESS)
+> >> @@ -1071,7 +1087,8 @@ static int posix_lock_inode(struct inode *inode, struct file_lock *request,
+> >>  			spin_lock(&blocked_lock_lock);
+> >>  			if (likely(!posix_locks_deadlock(request, fl))) {
+> >>  				error = FILE_LOCK_DEFERRED;
+> >> -				__locks_insert_block(fl, request);
+> >> +				__locks_insert_block(fl, request,
+> >> +						     posix_locks_conflict);
+> >>  			}
+> >>  			spin_unlock(&blocked_lock_lock);
+> >>  			goto out;
+> >> @@ -1542,7 +1559,7 @@ int __break_lease(struct inode *inode, unsigned int mode, unsigned int type)
+> >>  		break_time -= jiffies;
+> >>  	if (break_time == 0)
+> >>  		break_time++;
+> >> -	locks_insert_block(fl, new_fl);
+> >> +	locks_insert_block(fl, new_fl, leases_conflict);
+> >>  	trace_break_lease_block(inode, new_fl);
+> >>  	spin_unlock(&ctx->flc_lock);
+> >>  	percpu_up_read_preempt_enable(&file_rwsem);
+> >> 
+
+
