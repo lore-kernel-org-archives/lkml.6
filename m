@@ -2,96 +2,99 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04B7AC0044C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:29:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5501C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:34:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B891E20855
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:29:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B891E20855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+	by mail.kernel.org (Postfix) with ESMTP id 6BCC42086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:34:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PYl1QigC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BCC42086C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728188AbeKIRJN (ORCPT
+        id S1728106AbeKIRNh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 12:09:13 -0500
-Received: from bmailout1.hostsharing.net ([83.223.95.100]:44703 "EHLO
-        bmailout1.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727869AbeKIRJN (ORCPT
+        Fri, 9 Nov 2018 12:13:37 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39640 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727845AbeKIRNg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 12:09:13 -0500
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout1.hostsharing.net (Postfix) with ESMTPS id 77C1630000CD0;
-        Fri,  9 Nov 2018 08:29:53 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id 3F063AEAD; Fri,  9 Nov 2018 08:29:53 +0100 (CET)
-Date:   Fri, 9 Nov 2018 08:29:53 +0100
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>,
-        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-        linux-pci@vger.kernel.org, keith.busch@intel.com,
-        alex_gagniuc@dellteam.com, austin_bolen@dell.com,
-        shyam_iyer@dell.com, linux-kernel@vger.kernel.org,
-        Jonathan Derrick <jonathan.derrick@intel.com>,
-        Russell Currey <ruscur@russell.cc>,
-        Sam Bobroff <sbobroff@linux.ibm.com>,
-        Oliver O'Halloran <oohall@gmail.com>,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v2] PCI/MSI: Don't touch MSI bits when the PCI device is
- disconnected
-Message-ID: <20181109072953.ox7qfpnibb7drmf6@wunner.de>
-References: <20180918221501.13112-1-mr.nuke.me@gmail.com>
- <20181107234257.GC41183@google.com>
- <20181108200855.GE41183@google.com>
- <20181108220117.GA11466@kroah.com>
+        Fri, 9 Nov 2018 12:13:36 -0500
+Received: by mail-pg1-f196.google.com with SMTP id r9-v6so498357pgv.6;
+        Thu, 08 Nov 2018 23:34:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=HnTeUMjknPYuDRExOVIqkJbzR1URO+WU2PNAyXjhYCs=;
+        b=PYl1QigCaG7yFspXTF6hQTsTbvwCKsX1+/bfDFAi8rc2aOC0W5i+WlLJxVx9/Qymj4
+         xmTbd1L0kkuogcU7ZYcKWArJL1E4uK41ydYTp7mWHu+cP+EVkaIVOiYcWQcTJlZZR2Zo
+         9eoO4ftWWKMadWu5pB7XvQI8lKeNCUECaNZ6H4KfLvvAzNTE4K6HwTKy2CIcCe1njUqh
+         cu0e8JPrN83IIQoWredSwZR0/PyU93JARNTD8WiGk7cawWlFVUYyEsTbbBlqp82PWMdc
+         QeJfwuYc+OTLdoIDDsHpplVeHtU3hy9vEBmaseVnY0FR8E0kKajXbUuN3rHkr2FGZiHD
+         3guQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=HnTeUMjknPYuDRExOVIqkJbzR1URO+WU2PNAyXjhYCs=;
+        b=nOg4/O8xAFqh/UGMGBCg1MO01Lrg9MVLOyvnhDFGH18SFYmgd2xoEMhAtTrUT0FfhM
+         6ld5l5qs3R6MEWD7lHLO6j+4Zqn6L7GOpOtYJqh0XTkQrQcvj3x1Cidg6LemDLd3XIS7
+         Lj/1y+5cH6S02+qXXW6wAbDWI0I7rkf1cn7iOi+I97HhO9sKzY9kkL/Gj/MiSR/VzKaP
+         O4/gq8ZtEye+dSegIwv0ypije0tms/Mus3g49WYsvgIvbB3GeP6iRM/zrG2sibTbydVZ
+         nupMYOsK5ZPXX1bIv3WWjqv3YWGc92t0+Z+xLcCa/ibFLbBScUuoaidKLdLf3eL+AXvU
+         19xA==
+X-Gm-Message-State: AGRZ1gLOH8rm+LVdR++fQPuoPoreaUxQwIkd78Qmy3IRjVRpvzH3j06/
+        2sX583S43yCD/BHRE0HDPKzneAF9bvQ=
+X-Google-Smtp-Source: AJdET5fgAK4G++rpXpQeHXMz9C3QodO1erHufkfMeff5Dac9NhnoeeXeviw4gbW2XI1Oc0UCTTgI8A==
+X-Received: by 2002:a62:4dc4:: with SMTP id a187-v6mr7899013pfb.92.1541748857838;
+        Thu, 08 Nov 2018 23:34:17 -0800 (PST)
+Received: from nishad ([106.210.186.71])
+        by smtp.gmail.com with ESMTPSA id y18-v6sm7743149pfa.136.2018.11.08.23.34.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 08 Nov 2018 23:34:17 -0800 (PST)
+Date:   Fri, 9 Nov 2018 13:04:09 +0530
+From:   Nishad Kamdar <nishadkamdar@gmail.com>
+To:     Lars-Peter Clausen <lars@metafoo.de>
+Cc:     Michael Hennerich <Michael.Hennerich@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/4] staging: iio: ad7816: Switch to the gpio descriptor
+ interface
+Message-ID: <cover.1541733949.git.nishadkamdar@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181108220117.GA11466@kroah.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 02:01:17PM -0800, Greg Kroah-Hartman wrote:
-> On Thu, Nov 08, 2018 at 02:09:17PM -0600, Bjorn Helgaas wrote:
-> > I'm having second thoughts about this.  One thing I'm uncomfortable
-> > with is that sprinkling pci_dev_is_disconnected() around feels ad hoc
-> 
-> I think my stance always has been that this call is not good at all
-> because once you call it you never really know if it is still true as
-> the device could have been removed right afterward.
-> 
-> So almost any code that relies on it is broken, there is no locking and
-> it can and will race and you will loose.
+Changes in v4:
+ - Drop busy pin in case of AD7818.
+ - Set RD/WR pin and CONVST pin as outputs.
+ - Add device tree table.
 
-Hm, to be honest if that's your impression I think you must have missed a
-large portion of the discussion we've been having over the past 2 years.
+Nishad Kamdar (4):
+  staging: iio: ad7816: Switch to the gpio descriptor interface
+  staging: iio: ad7816: Do not use busy_pin in case of AD7818
+  staging: iio: ad7816: Set RD/WR pin and CONVST pin as outputs.
+  staging: iio: ad7816: Add device tree table.
 
-Please consider reading this LWN article, particularly the "Surprise
-removal" section, to get up to speed:
+ drivers/staging/iio/adc/ad7816.c | 111 +++++++++++++++++--------------
+ 1 file changed, 60 insertions(+), 51 deletions(-)
 
-https://lwn.net/Articles/767885/
+-- 
+2.17.1
 
-You seem to be assuming that all we care about is the *return value* of
-an mmio read.  However a transaction to a surprise removed device has
-side effects beyond returning all ones, such as a Completion Timeout
-which, with thousands of transactions in flight, added up to many seconds
-to handle removal of an NVMe array and occasionally caused MCEs.
-
-It is not an option to just blindly carry out device accesses even though
-it is known the device is gone, Completion Timeouts be damned.
-
-However there is more to it than just Completion Timeouts, this is all
-detailed in the LWN article.
-
-Thanks,
-
-Lukas
