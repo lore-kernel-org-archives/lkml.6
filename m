@@ -3,71 +3,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17B84C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 04:33:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22A06C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 04:42:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1E6120855
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 04:33:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1E6120855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id DDA9920855
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 04:42:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDA9920855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727576AbeKIOLr (ORCPT
+        id S1727567AbeKIOV3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 09:11:47 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:42950 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727445AbeKIOLr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 09:11:47 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 642DD14B3DBD6;
-        Thu,  8 Nov 2018 20:33:00 -0800 (PST)
-Date:   Thu, 08 Nov 2018 20:32:57 -0800 (PST)
-Message-Id: <20181108.203257.130600128161514091.davem@davemloft.net>
-To:     ivan.khoronzhuk@linaro.org
-Cc:     grygorii.strashko@ti.com, linux-omap@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alexander.h.duyck@intel.com, bjorn@mork.no
-Subject: Re: [PATCH v2 net-next 0/4] net: ethernet: ti: cpsw: fix vlan mcast
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20181108202757.30110-1-ivan.khoronzhuk@linaro.org>
-References: <20181108202757.30110-1-ivan.khoronzhuk@linaro.org>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 08 Nov 2018 20:33:00 -0800 (PST)
+        Fri, 9 Nov 2018 09:21:29 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53182 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727473AbeKIOV3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 09:21:29 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6F462EBD;
+        Thu,  8 Nov 2018 20:42:41 -0800 (PST)
+Received: from [10.162.0.72] (p8cg001049571a15.blr.arm.com [10.162.0.72])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 290793F5CF;
+        Thu,  8 Nov 2018 20:42:39 -0800 (PST)
+Subject: Re: arm64 + ARM64_64K_PAGES=y
+To:     Grygorii Strashko <grygorii.strashko@ti.com>,
+        linux-rt-users@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>
+References: <1ab7ee03-64fe-384a-c88f-f6d519b965db@ti.com>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <5d7cde17-67c4-a222-bd66-b0e85a8725fe@arm.com>
+Date:   Fri, 9 Nov 2018 10:12:37 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <1ab7ee03-64fe-384a-c88f-f6d519b965db@ti.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Date: Thu,  8 Nov 2018 22:27:53 +0200
 
-> The cpsw holds separate mcast entires for vlan entries. At this moment
-> driver adds only not vlan mcast addresses, omitting vlan/mcast entries.
-> As result mcast for vlans doesn't work. It can be fixed by adding same
-> mcast entries for every created vlan, but this patchseries uses more
-> sophisticated way and allows to create mcast entries only for vlans
-> that really require it. Generic functions from this series can be
-> reused for fixing vlan and macvlan unicast.
-> 
-> Simple example of ALE table before and after this series, having same
-> mcast entries as for vlan 100 as for real device (reserved vlan 2),
-> and one mcast address only for vlan 100 - 01:1b:19:00:00:00.
- ...
-> Based on net-next/master
-> 
-> v2..v1:
->   net: ethernet: ti: cpsw: fix vlan mcast
-> 	- removed limit for legacy switch cpsw mode
 
-Series applied.
+On 11/07/2018 03:04 AM, Grygorii Strashko wrote:
+> Hi All,
+> 
+> Do anybody tried to use ARM64 RT with 76K pages enabled?
+> 
+> My attempt shows that enabling  CONFIG_ARM64_64K_PAGES=y increases latencies by ~30%
+
+Depends on what the workload is actually doing. 64K pages should help if
+the mapping is multiple of 64K, persistent and accesses patterns are more
+or less linear to be nice with the TLB. 64K can take bit more time if the
+memory requirement is way smaller than 64K in which case latency probably
+can increase just to zero out the single page allocated. Latency can add
+up if this happens on a regular basis. perf report can help find out more
+on this.
