@@ -2,207 +2,107 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EFBFC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:19:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99F04C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:19:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB00D20818
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:19:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=usp-br.20150623.gappssmtp.com header.i=@usp-br.20150623.gappssmtp.com header.b="WZNt3h+E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB00D20818
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=usp.br
+	by mail.kernel.org (Postfix) with ESMTP id 656C720818
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:19:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 656C720818
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.us
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728453AbeKJIBp (ORCPT
+        id S1728519AbeKJICF convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 03:01:45 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:36881 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726181AbeKJIBp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 03:01:45 -0500
-Received: by mail-ot1-f65.google.com with SMTP id 40so3058582oth.4
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 14:19:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=usp-br.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6zoiiHnPriBSOD/a0+N6SbcuOUfbsH25USCT3RPYLpE=;
-        b=WZNt3h+Ead3Sm2e7VQ2iIKYkhnDZwdlCmod/q6ceHbLQHmyg3HqlixQs3DGWqpbELa
-         r9Avidp5I6pL0oq5Lta8Sq7AbOYeRLSOw8l0wSkI6PX7p8T2HNCubiziHb4sBb3qfybP
-         B6UEt6IC42xeElJatH2Lic+hxZu3NKNzSj643/aPCzwStv6WFB4astVyi0DHy9R1X5vf
-         kTULuSijPP5bCHpurbXsIbPek2t0hVrLFMVPuP0tT8gB9IlHGsRlSywn7rWhDemqHIRo
-         fDgtwkDsAMrTK02CQ+s7NTnVBbtbaoGUVbVsNKeV2za+G6wojUpuPI6qgioRK27Unl+x
-         Pzqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6zoiiHnPriBSOD/a0+N6SbcuOUfbsH25USCT3RPYLpE=;
-        b=SWZ5lN/TqPQZj1vw4RYpDfmG+80JetODgHi0nIJaqskgYjgJVyGuMQTpj26LLe7Bnw
-         ruEoV2dZl5O6d5PSCbRatg13nVmhbvTvaW89iCpOB9OqeluL5tx+IhySe4eP9O9fxhpI
-         3sWo+FdePKRSaqW4d/dF/0z9NA5iPz9IaI6Glh7YNoPK04XbWXUBil/CpWeCh5/z9FkI
-         AAn4F+3JwyQtj11JyuHIfm0O80knlnX1fzWY4cPVak0fKTmyR4nVv4f5xqKR5T/ZkUOx
-         k9cn34oO8MlcN6lwWputvJRQXIgSnScWiTINCQqiUQ03eRLTLxkDWg9dV6XmwA+xHM+U
-         eJAg==
-X-Gm-Message-State: AGRZ1gKpvqu5m5hu06YP3UBAoOl9QolQHK8XhIQdYi0lQKPOFU8yDBIN
-        kPYgtFBt62evqYGSKp5Op/Iueyis39yuWddcqjS9Vw==
-X-Google-Smtp-Source: AJdET5czbbnikuXN02KGzhnJiN/mf2vOlysni1CPDzwpxuUHklo2DDLMJ8WSztsFhhBahstmyCfp7/q7KXBuZJsjbc4=
-X-Received: by 2002:a9d:4282:: with SMTP id r2mr6808665ote.112.1541801950476;
- Fri, 09 Nov 2018 14:19:10 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.1541681371.git.giuliano.belinassi@usp.br>
- <ce8ebadd1638810eaaa3b0b30a961a7b3f88ae34.1541681371.git.giuliano.belinassi@usp.br>
- <43efc182fc7ab9aa1d2f1ca798e27d85c7132e1f.camel@analog.com>
-In-Reply-To: <43efc182fc7ab9aa1d2f1ca798e27d85c7132e1f.camel@analog.com>
-From:   Giuliano Augusto Faulin Belinassi <giuliano.belinassi@usp.br>
-Date:   Fri, 9 Nov 2018 20:18:58 -0200
-Message-ID: <CAEFO=4As4sKqB5tD1vSjVsD2s2zXBWC8-Az603Vy-7L=QdttLA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] staging: iio: ad7780: generates pattern_mask from
- PAT bits
-To:     alexandru.Ardelean@analog.com
-Cc:     lars@metafoo.de, knaack.h@gmx.de, jic23@kernel.org,
-        Michael.Hennerich@analog.com, Renato Geh <renatogeh@gmail.com>,
-        giuliano.belinassi@gmail.com,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        Kernel USP <kernel-usp@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 10 Nov 2018 03:02:05 -0500
+Received: from mout.gmx.net ([212.227.15.19]:46027 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726181AbeKJICF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 03:02:05 -0500
+Received: from [192.168.1.153] ([74.104.183.64]) by mail.gmx.com (mrgmx002
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 0MAgvb-1gEPLs2URv-00Br55; Fri, 09
+ Nov 2018 23:19:23 +0100
+From:   Qian Cai <cai@gmx.us>
+Content-Type: text/plain;
+        charset=us-ascii
+Content-Transfer-Encoding: 8BIT
+Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
+Subject: Object debugging warning from efivar
+Message-Id: <AAACED12-1AAD-4C03-97EF-EF87F05A7056@gmx.us>
+Date:   Fri, 9 Nov 2018 17:19:20 -0500
+Cc:     linux-efi@vger.kernel.org,
+        Matthew Garrett <matthew.garrett@nebula.com>,
+        Jeremy Kerr <jk@ozlabs.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+To:     open list <linux-kernel@vger.kernel.org>
+X-Mailer: Apple Mail (2.3445.100.39)
+X-Provags-ID: V03:K1:R4FNwRxNPwj4JDnGhWiOQfIKxaNtoBoTo3zZnz6HEl3KZkoFdht
+ ACUNlnyVsmAnRKE4FehHpB794tMu0fjfK8xvnu8wyYk8QtuRoJWqHKfHdEdQ95hu9MP4uzB
+ E0zR9cb71omP4YDZwTLdViP4/uJ85H4oW7Wy6Gh7HHF7B9tghdl4Sx1JSGYVQ4kp+a4GClM
+ nBSDx0aSGWRc1mfxuzuPQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:GFa4/yGCAb4=:6lDMa4V6/sZO/kdao4MiXh
+ XrAodOHqSe5p2E1S5kPHnXBI/uhHvKnNRBWdVhxAn51Ee/9Ocz+QoGCl4VaTJ6nMV5GkMdaD/
+ m2CZxxB3etVlMt9I30bdD2wsCEofGGHJCAEAEW9wGBDaImL7V6K9Rl7FEtoetbaxSUe814EKf
+ in3g2Gi5jg+H6vGPxg/o+rFFUqOIpZVE4BT2XiGH6Iud7FsFgeR9p7QmvdZMlhp0w/HT/wsHt
+ 9uVcoZNOE/G7AmIpLWcID04fvcWX/zNPqMZtA6G1wMJHEUHBBWxafl5JDk6M6Zu2IPFLd/BQl
+ jih7p2nysDQxeNTA3BJe15xvhjbZlRwpq3IawgN7BOdMru/TTDDv4Jpjq+mRZzxVwJvFN13l0
+ bCgOvqh+eJowwwg1nhaX2zTdzo85XfUudRsvUKMKgnypnwfO6Y3Tp9XIIkffPX+hP9FRh+CGI
+ eBiIk/oMJ4m2DtWfD3mDe17PdAq8dyoPdOxsMf1O63/PgRdF6p2B664k5a3Op0pAbkGRbl0v/
+ sdX+8KOnl18tCM5aOxF5EwkUU9qWXZvjvYZaCIzIm7jU5mnzEQLpiITsB/Lr4GAKX0crzv0KM
+ fvgk3S8E1M3KAZc8ddQxi3VDdp8c+UDSdiQVE2U0FvrNrsdLw71fQY5sbInuoqSBnuCzgmZuT
+ i99JVA6wbYYUOKiQtblouvmtxilfGyYeMf0/P2DAluWjwWTgsIaTP6w+0dz7JD5TxIPYiNqM2
+ X7ObYPqCGJdJ/UNCzmZjmw0MPXjQj6CG98dFXOyJTpZlgW0m38UpHHBehPh96nzWSMBPxkKbn
+ 3eCwK1w3MPDPZSdsW82uLXIcs8QxkNY7XCpb2m21xAnBLM4SbwXsi5V8QCpW74tSsaIMloyIm
+ nuaqkjL391Z4q7/ySjaveR5uoWVGcJC1XlH+hW3P1JotF0k6/dnszkiKg/Lyo/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+Booting this aarch64 server with the latest mainline (3541833fd1f2) get this warning
+using object debugging. Any idea?
 
->While I agree that it looks nicer to indent all these to the same level,
->you also need to think about the fact that the kernel git repo is already
->pretty big as-is, so it's a good idea if a patch adds as much code/semantic
->value [as possible] with as little change [as possible] and with as good of
->readability [as possible].
-
-Understood. But can't someone else submit another patch fixing these
-indentation issues? That would be another commit and more stuff to the
-repository.
-On Thu, Nov 8, 2018 at 11:51 AM Ardelean, Alexandru
-<alexandru.Ardelean@analog.com> wrote:
->
-> On Thu, 2018-11-08 at 11:03 -0200, Giuliano Belinassi wrote:
-> > Previously, all pattern_masks and patterns in the chip_info table were
-> > hardcoded. Now they are generated using the PAT macros, as described in
-> > the datasheets.
->
-> One comment about indentation/whitespace.
->
-> Rest looks good.
->
-> Alex
->
-> >
-> > Signed-off-by: Giuliano Belinassi <giuliano.belinassi@usp.br>
-> > ---
-> > Changes in v2:
-> >       - Added the PATTERN and PATTERN_MASK macros
-> >       - Update BIT macros alignment to match with PATTERN
-> >       - Generate pattern mask with PATTERN_MASK macros.
-> >
-> > drivers/staging/iio/adc/ad7780.c | 40 +++++++++++++++++++-------------
-> >  1 file changed, 24 insertions(+), 16 deletions(-)
-> >
-> > diff --git a/drivers/staging/iio/adc/ad7780.c
-> > b/drivers/staging/iio/adc/ad7780.c
-> > index 9ec2b002539e..ff8e3b2d0efc 100644
-> > --- a/drivers/staging/iio/adc/ad7780.c
-> > +++ b/drivers/staging/iio/adc/ad7780.c
-> > @@ -22,14 +22,22 @@
-> >  #include <linux/iio/sysfs.h>
-> >  #include <linux/iio/adc/ad_sigma_delta.h>
-> >
-> > -#define AD7780_RDY   BIT(7)
-> > -#define AD7780_FILTER        BIT(6)
-> > -#define AD7780_ERR   BIT(5)
-> > -#define AD7780_ID1   BIT(4)
-> > -#define AD7780_ID0   BIT(3)
-> > -#define AD7780_GAIN  BIT(2)
-> > -#define AD7780_PAT1  BIT(1)
-> > -#define AD7780_PAT0  BIT(0)
-> > +#define AD7780_RDY           BIT(7)
-> > +#define AD7780_FILTER                BIT(6)
-> > +#define AD7780_ERR           BIT(5)
-> > +#define AD7780_ID1           BIT(4)
-> > +#define AD7780_ID0           BIT(3)
-> > +#define AD7780_GAIN          BIT(2)
-> > +#define AD7780_PAT1          BIT(1)
-> > +#define AD7780_PAT0          BIT(0)
->
-> Changing indentation here doesn't add much value; it's mostly
-> patch/whitespace noise.
->
-> While I agree that it looks nicer to indent all these to the same level,
-> you also need to think about the fact that the kernel git repo is already
-> pretty big as-is, so it's a good idea if a patch adds as much code/semantic
-> value [as possible] with as little change [as possible] and with as good of
-> readability [as possible].
-> [ Kind of sounds like a balance act between the 3 things ].
->
->
-> > +
-> > +#define AD7780_PATTERN               (AD7780_PAT0)
-> > +#define AD7780_PATTERN_MASK  (AD7780_PAT0 | AD7780_PAT1)
-> > +
-> > +#define AD7170_PAT2          BIT(2)
-> > +
-> > +#define AD7170_PATTERN               (AD7780_PAT0 | AD7170_PAT2)
-> > +#define AD7170_PATTERN_MASK  (AD7780_PAT0 | AD7780_PAT1 | AD7170_PAT2)
-> >
-> >  struct ad7780_chip_info {
-> >       struct iio_chan_spec    channel;
-> > @@ -136,26 +144,26 @@ static const struct ad_sigma_delta_info
-> > ad7780_sigma_delta_info = {
-> >  static const struct ad7780_chip_info ad7780_chip_info_tbl[] = {
-> >       [ID_AD7170] = {
-> >               .channel = AD7780_CHANNEL(12, 24),
-> > -             .pattern = 0x5,
-> > -             .pattern_mask = 0x7,
-> > +             .pattern = AD7170_PATTERN,
-> > +             .pattern_mask = AD7170_PATTERN_MASK,
-> >               .is_ad778x = false,
-> >       },
-> >       [ID_AD7171] = {
-> >               .channel = AD7780_CHANNEL(16, 24),
-> > -             .pattern = 0x5,
-> > -             .pattern_mask = 0x7,
-> > +             .pattern = AD7170_PATTERN,
-> > +             .pattern_mask = AD7170_PATTERN_MASK,
-> >               .is_ad778x = false,
-> >       },
-> >       [ID_AD7780] = {
-> >               .channel = AD7780_CHANNEL(24, 32),
-> > -             .pattern = 0x1,
-> > -             .pattern_mask = 0x3,
-> > +             .pattern = AD7780_PATTERN,
-> > +             .pattern_mask = AD7780_PATTERN_MASK,
-> >               .is_ad778x = true,
-> >       },
-> >       [ID_AD7781] = {
-> >               .channel = AD7780_CHANNEL(20, 32),
-> > -             .pattern = 0x1,
-> > -             .pattern_mask = 0x3,
-> > +             .pattern = AD7780_PATTERN,
-> > +             .pattern_mask = AD7780_PATTERN_MASK,
-> >               .is_ad778x = true,
-> >       },
-> >  };
->
-> --
-> You received this message because you are subscribed to the Google Groups "Kernel USP" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to kernel-usp+unsubscribe@googlegroups.com.
-> To post to this group, send email to kernel-usp@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/kernel-usp/43efc182fc7ab9aa1d2f1ca798e27d85c7132e1f.camel%40analog.com.
-> For more options, visit https://groups.google.com/d/optout.
+[   34.716558] ODEBUG: object (____ptrval____) is NOT on stack (____ptrval____), but annotated.
+[   34.725266] WARNING: CPU: 0 PID: 1 at lib/debugobjects.c:369 __debug_object_init+0x910/0x918
+[   34.733806] Modules linked in:
+[   34.736903] CPU: 0 PID: 1 Comm: swapper/0 Tainted: G        W         4.20.0-rc1+ #1
+[   34.744740] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.50 06/01/2018
+[   34.752051] pstate: 20000085 (nzCv daIf -PAN -UAO)
+[   34.756902] pc : __debug_object_init+0x910/0x918
+[   34.761576] lr : __debug_object_init+0x594/0x918
+[   34.766249] sp : ffff8096c1a0f420
+[   34.769603] x29: ffff8096c1a0f420 x28: 1ffff012d8341ec6 
+[   34.774984] x27: ffff20000bc21000 x26: ffff20000bc34e40 
+[   34.780364] x25: ffff8096c411e8c8 x24: ffff8096c411e8d0 
+[   34.785743] x23: ffff20000c5654d0 x22: ffff20000bc21c40 
+[   34.791123] x21: ffff801ec1a00060 x20: ffff801ec1a00040 
+[   34.796502] x19: ffff801ec1a00040 x18: 000000000000003f 
+[   34.801881] x17: 0000000000000000 x16: 0000000000000000 
+[   34.807260] x15: 0000000000007fff x14: 6e6120747562202c 
+[   34.812640] x13: 295f5f5f5f6c6176 x12: ffff1012d8341ceb 
+[   34.818019] x11: 00000000f2f2f2f2 x10: dfff200000000000 
+[   34.823399] x9 : ffff20000a0e9848 x8 : ffff801ec1a00b70 
+[   34.828778] x7 : 00000000f2f2f204 x6 : 00000000f2f2f204 
+[   34.834157] x5 : 0000000041b58ab3 x4 : dfff200000000000 
+[   34.839537] x3 : dfff200000000000 x2 : 2b6ba53cf7873600 
+[   34.844916] x1 : 0000000000000000 x0 : 0000000000000050 
+[   34.850295] Call trace:
+[   34.852772]  __debug_object_init+0x910/0x918
+[   34.857095]  debug_object_init_on_stack+0x20/0x28
+[   34.861859]  __init_work+0x34/0x50
+[   34.865304]  virt_efi_get_next_variable+0xbc/0x190
+[   34.870153]  efivar_init+0x144/0x4b0
+[   34.873773]  efisubsys_init+0x1a8/0x428
+[   34.877656]  do_one_initcall+0x160/0x6bc
+[   34.881628]  kernel_init_freeable+0x74c/0x814
+[   34.886040]  kernel_init+0x18/0x11c
+[   34.889572]  ret_from_fork+0x10/0x1c
+[   34.893189] irq event stamp: 882290
+[   34.896723] hardirqs last  enabled at (882289): [<ffff200008fab538>] _raw_spin_unlock_irqrestore+0x80/0x88
+[   34.906496] hardirqs last disabled at (882290): [<ffff200008fab264>] _raw_spin_lock_irqsave+0x34/0x98
+[   34.915829] softirqs last  enabled at (881706): [<ffff200008082210>] __do_softirq+0x7c8/0x9c8
+[   34.924460] softirqs last disabled at (881697): [<ffff20000812dbe4>] irq_exit+0x25c/0x2f0
+[   34.932736] ---[ end trace f86eaf2ac70822cc ]---
