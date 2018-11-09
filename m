@@ -2,289 +2,91 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD822C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:55:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A8DBC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:55:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E0FA20825
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:55:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E0FA20825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id 1996B20825
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:55:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1996B20825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728263AbeKIUfI (ORCPT
+        id S1728266AbeKIUfv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 15:35:08 -0500
-Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:47348 "EHLO
-        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727649AbeKIUfH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 15:35:07 -0500
-Received: from [IPv6:2001:420:44c1:2579:64ae:ee5d:da4d:25e4] ([IPv6:2001:420:44c1:2579:64ae:ee5d:da4d:25e4])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id L4RCgWGxdw2L8L4RFgna6C; Fri, 09 Nov 2018 11:55:00 +0100
-Subject: Re: [PATCH v4 2/2] media: platform: Add Aspeed Video Engine driver
-To:     Eddie James <eajames@linux.vnet.ibm.com>,
-        Eddie James <eajames@linux.ibm.com>,
-        linux-kernel@vger.kernel.org
-Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-aspeed@lists.ozlabs.org, andrew@aj.id.au,
-        openbmc@lists.ozlabs.org, robh+dt@kernel.org, mchehab@kernel.org,
-        linux-media@vger.kernel.org
-References: <1538769466-14860-1-git-send-email-eajames@linux.ibm.com>
- <1538769466-14860-3-git-send-email-eajames@linux.ibm.com>
- <bf07eb1f-bc17-ac59-d341-f19e2ab0c2e2@xs4all.nl>
- <b64d0a4b-f74a-e887-366d-c242ac3f0d1c@linux.vnet.ibm.com>
- <7027cd38-b8f5-08b2-0536-eed1c6a0516b@linux.vnet.ibm.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <c972883e-38fd-64ad-b136-974ea8937467@xs4all.nl>
-Date:   Fri, 9 Nov 2018 11:54:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Fri, 9 Nov 2018 15:35:51 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:55404 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727649AbeKIUfv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 15:35:51 -0500
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id sGylahfVADgx; Fri,  9 Nov 2018 11:55:46 +0100 (CET)
+Received: from zn.tnic (p200300EC2BD03D00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bd0:3d00:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D38BD1EC00E8;
+        Fri,  9 Nov 2018 11:55:45 +0100 (CET)
+Date:   Fri, 9 Nov 2018 11:55:38 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     wang.yi59@zte.com.cn, Greg KH <gregkh@linuxfoundation.org>
+Cc:     matz@suse.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, suravee.suthikulpanit@amd.com, puwen@hygon.cn,
+        davidwang@zhaoxin.com, linux-kernel@vger.kernel.org,
+        zhong.weidong@zte.com.cn
+Subject: Re: [PATCH v2] x86/cpu: fix prototype warning
+Message-ID: <20181109105538.GA21243@zn.tnic>
+References: <20181108172225.GH7543@zn.tnic>
+ <201811090843126464658@zte.com.cn>
 MIME-Version: 1.0
-In-Reply-To: <7027cd38-b8f5-08b2-0536-eed1c6a0516b@linux.vnet.ibm.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfP+liCimk7WmKQfcqMizLyqI3mCQYabsSVDJM3DWgsUvcD4xwkxPSlY0jPpFmA2CAjJ995QIwvgMQWNsLXXGyWulSSha7QbKQvrgRof3fVkLprSK2b42
- WJvkmH/SZFyVp4DpLCbubUz/qNUmbnWq3prwBk4ng+Q0NuFVCMD2oP16gvLAlQgrPWCf8X3axbztvUkRMUFtOXJVmASF+yoUpM5TtAxT+xMYMk7WqNk+glt+
- c3JWC1Sh9u3qi0JnfF1f7gzOw5FUVQm17SK+E/q/X73/YMsGfbw0DuiSLYHJCwQ3TiexltdM2PYCRfEcuQl4eLgOWK+qbwNA6DJ39jSgSfaDpW6+Qj5HwVva
- ziz3nLa2trQc6u8f2w3HS5XTxKOzx+gAl2KJHSOLdscvmEWdqtarjw3uMa52bgYuauOWLst9ikBdnt3odOHq90hc28wGIfFudVL0BVYwYK+GJY9iGMbbpb76
- 7KSuVWgKv212+lFksppqgFFYT8IKLKL943EZt17R/wsBdRipx3QBw2M5NTr5BnndnB722b9IJ/2zNyPCRMCzJFeSIDLmXqGPTA3woG/kJnrYLFAR4kRIizIC
- 3WyDDvuSkSYgvV5I29aynPP2nTidhF1B9FRrw+MAAZk/UmfOroefnQtrFmKrhhQSFHk=
+Content-Disposition: inline
+In-Reply-To: <201811090843126464658@zte.com.cn>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eddie,
+On Fri, Nov 09, 2018 at 08:43:12AM +0800, wang.yi59@zte.com.cn wrote:
+> Yeah, so that is. However, I suppose we should not enable this by default
+> before we fix ALL of these warning,
 
-Sorry for the delay, I've been away for the past two weeks and I've been
-catching up ever since I came back.
+Yeah, the build is really noisy now.
 
-On 11/08/18 16:48, Eddie James wrote:
-> 
-> 
-> On 10/19/2018 03:26 PM, Eddie James wrote:
->>
->>
->> On 10/12/2018 07:22 AM, Hans Verkuil wrote:
->>> On 10/05/2018 09:57 PM, Eddie James wrote:
->>>> The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs
->>>> can capture and compress video data from digital or analog sources. 
->>>> With
->>>> the Aspeed chip acting a service processor, the Video Engine can 
->>>> capture
->>>> the host processor graphics output.
->>>>
->>>> Add a V4L2 driver to capture video data and compress it to JPEG images.
->>>> Make the video frames available through the V4L2 streaming interface.
->>>>
->>>> Signed-off-by: Eddie James <eajames@linux.ibm.com>
->>>> ---
->>>>   MAINTAINERS                           |    8 +
->>>>   drivers/media/platform/Kconfig        |    8 +
->>>>   drivers/media/platform/Makefile       |    1 +
->>>>   drivers/media/platform/aspeed-video.c | 1674 
->>>> +++++++++++++++++++++++++++++++++
->>>>   4 files changed, 1691 insertions(+)
->>>>   create mode 100644 drivers/media/platform/aspeed-video.c
->>>>
->>> <snip>
->>>
->>>> +static int aspeed_video_enum_input(struct file *file, void *fh,
->>>> +                   struct v4l2_input *inp)
->>>> +{
->>>> +    if (inp->index)
->>>> +        return -EINVAL;
->>>> +
->>>> +    strscpy(inp->name, "Host VGA capture", sizeof(inp->name));
->>>> +    inp->type = V4L2_INPUT_TYPE_CAMERA;
->>>> +    inp->capabilities = V4L2_IN_CAP_DV_TIMINGS;
->>>> +    inp->status = V4L2_IN_ST_NO_SIGNAL | V4L2_IN_ST_NO_SYNC;
->>> This can't be right. If there is a valid signal, then status should 
->>> be 0.
->>> And ideally you can tell the difference between no signal and no sync
->>> as well.
->>>
->>>> +
->>>> +    return 0;
->>>> +}
->>>> +
->>>> +static int aspeed_video_get_input(struct file *file, void *fh, 
->>>> unsigned int *i)
->>>> +{
->>>> +    *i = 0;
->>>> +
->>>> +    return 0;
->>>> +}
->>>> +
->>>> +static int aspeed_video_set_input(struct file *file, void *fh, 
->>>> unsigned int i)
->>>> +{
->>>> +    if (i)
->>>> +        return -EINVAL;
->>>> +
->>>> +    return 0;
->>>> +}
->>>> +
->>>> +static int aspeed_video_get_parm(struct file *file, void *fh,
->>>> +                 struct v4l2_streamparm *a)
->>>> +{
->>>> +    struct aspeed_video *video = video_drvdata(file);
->>>> +
->>>> +    a->parm.capture.capability = V4L2_CAP_TIMEPERFRAME;
->>>> +    a->parm.capture.readbuffers = 3;
->>>> +    a->parm.capture.timeperframe.numerator = 1;
->>>> +    if (!video->frame_rate)
->>>> +        a->parm.capture.timeperframe.denominator = MAX_FRAME_RATE + 1;
->>>> +    else
->>>> +        a->parm.capture.timeperframe.denominator = video->frame_rate;
->>>> +
->>>> +    return 0;
->>>> +}
->>>> +
->>>> +static int aspeed_video_set_parm(struct file *file, void *fh,
->>>> +                 struct v4l2_streamparm *a)
->>>> +{
->>>> +    unsigned int frame_rate = 0;
->>>> +    struct aspeed_video *video = video_drvdata(file);
->>>> +
->>>> +    a->parm.capture.capability = V4L2_CAP_TIMEPERFRAME;
->>>> +    a->parm.capture.readbuffers = 3;
->>>> +
->>>> +    if (a->parm.capture.timeperframe.numerator)
->>>> +        frame_rate = a->parm.capture.timeperframe.denominator /
->>>> +            a->parm.capture.timeperframe.numerator;
->>>> +
->>>> +    if (!frame_rate || frame_rate > MAX_FRAME_RATE) {
->>>> +        frame_rate = 0;
->>>> +
->>>> +        /*
->>>> +         * Set to max + 1 to differentiate between max and 0, which
->>>> +         * means "don't care".
->>> But what does "don't care" mean in practice? It's still not clear to 
->>> me how this
->>> is supposed to work.
->>>
->>>> +         */
->>>> +        a->parm.capture.timeperframe.denominator = MAX_FRAME_RATE + 1;
->>> And regardless of anything else this timeperframe is out of the range 
->>> that
->>> aspeed_video_enum_frameintervals() returns.
->>>
->>>> + a->parm.capture.timeperframe.numerator = 1;
->>>> +    }
->>>> +
->>>> +    if (video->frame_rate != frame_rate) {
->>>> +        video->frame_rate = frame_rate;
->>>> +        aspeed_video_update(video, VE_CTRL, VE_CTRL_FRC,
->>>> +                    FIELD_PREP(VE_CTRL_FRC, frame_rate));
->>>> +    }
->>>> +
->>>> +    return 0;
->>>> +}
->>>> +
->>>> +static int aspeed_video_enum_framesizes(struct file *file, void *fh,
->>>> +                    struct v4l2_frmsizeenum *fsize)
->>>> +{
->>>> +    struct aspeed_video *video = video_drvdata(file);
->>>> +
->>>> +    if (fsize->index)
->>>> +        return -EINVAL;
->>>> +
->>>> +    if (fsize->pixel_format != V4L2_PIX_FMT_JPEG)
->>>> +        return -EINVAL;
->>>> +
->>>> +    fsize->discrete.width = video->pix_fmt.width;
->>>> +    fsize->discrete.height = video->pix_fmt.height;
->>>> +    fsize->type = V4L2_FRMSIZE_TYPE_DISCRETE;
->>>> +
->>>> +    return 0;
->>>> +}
->>>> +
->>>> +static int aspeed_video_enum_frameintervals(struct file *file, void 
->>>> *fh,
->>>> +                        struct v4l2_frmivalenum *fival)
->>>> +{
->>>> +    struct aspeed_video *video = video_drvdata(file);
->>>> +
->>>> +    if (fival->index)
->>>> +        return -EINVAL;
->>>> +
->>>> +    if (fival->width != video->width || fival->height != 
->>>> video->height)
->>>> +        return -EINVAL;
->>>> +
->>>> +    if (fival->pixel_format != V4L2_PIX_FMT_JPEG)
->>>> +        return -EINVAL;
->>>> +
->>>> +    fival->type = V4L2_FRMIVAL_TYPE_CONTINUOUS;
->>>> +
->>>> +    fival->stepwise.min.denominator = MAX_FRAME_RATE;
->>>> +    fival->stepwise.min.numerator = 1;
->>>> +    fival->stepwise.max.denominator = 1;
->>>> +    fival->stepwise.max.numerator = 1;
->>>> +    fival->stepwise.step = fival->stepwise.max;
->>>> +
->>>> +    return 0;
->>>> +}
->>>> +
->>>> +static int aspeed_video_set_dv_timings(struct file *file, void *fh,
->>>> +                       struct v4l2_dv_timings *timings)
->>>> +{
->>>> +    struct aspeed_video *video = video_drvdata(file);
->>>> +
->>> If vb2_is_busy() returns true, then return -EBUSY here. It is not 
->>> allowed to
->>> set the timings while vb2 is busy.
->>
->> Buffer ioctls (Input 0):
->>         fail: v4l2-test-buffers.cpp(344): node->s_dv_timings(timings)
->>         fail: v4l2-test-buffers.cpp(452): testCanSetSameTimings(node)
->>     test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: FAIL
->>
->> Streaming ioctls:
->>     test read/write: OK
->>     test blocking wait: OK
->>         fail: v4l2-test-buffers.cpp(344): node->s_dv_timings(timings)
->>         fail: v4l2-test-buffers.cpp(637): testCanSetSameTimings(node)
->>         fail: v4l2-test-buffers.cpp(952): captureBufs(node, q, m2m_q, 
->> frame_count, false)
->>     test MMAP: FAIL
->>
->> Built from v4l-utils c36dbbdfa8b30b2badd4f893b59d0bd4f0bd12aa
->>
->> Adding this causes some of the v4l2-compliance streaming tests to 
->> fail, and prevents my own application from being able to call 
->> S_DV_TIMINGS after detecting a resolution change, despite calling 
->> streamoff and unmapping all the buffers first.
-> 
-> Any thoughts on this Hans?
+> which is really a  hard work. :)
 
-The compliance fail is because there is a requirement that if you set
-new timings that are equal to the existing timings, then that should
-work (and is effectively a NOP operation).
+Yeah, I wonder if adding this to a kernel janitors TODO list or somesuch
+would help speeding up the process.
 
-So in the code you can do something similar to what vivid does:
+Maybe Greg knows.
 
-        if (v4l2_match_dv_timings(timings, &dev->dv_timings_cap, 0, false))
-                return 0;
-        if (vb2_is_busy(&dev->vb_vid_cap_q))
-                return -EBUSY;
+Greg, the question is whether we can get people to help out with
 
-You can probably get away with just checking width, height and interlaced
-in this driver, rather than calling v4l2_match_dv_timings.
+  -Wmissing-prototypes
 
-If the resolution changes, however, then you need to completely free all
-buffers (i.e. close the fd or call VIDIOC_REQBUFS with count = 0) before
-you can set new timings. So streamoff + unmap is not enough.
+fixes around the tree. Currently, there are ~1400 warnings and we want
+to have 0 and then add that option to the main Makefile.
 
-Streamoff only returns the buffers to userspace, it doesn't free them.
+It is very easy to do: you simply build the kernel with W=1, choose one
+-Wmissing-prototypes warning and fix it by adding a function prototype
+or declaring the function static.
 
-Regards,
+It should be a pretty easy for newbies to get involved...
 
-	Hans
+> Aha, I will try my best to to work on this, and as you said, that's a long
+> road to go, so maybe I would only work on modules which I am familiar with. ;-)
+
+Sounds good.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
