@@ -2,140 +2,88 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FC10C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 13:53:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C047AC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:03:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5EB820827
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 13:53:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8196420825
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:03:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="B/539OWI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5EB820827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ZqOy4QyY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8196420825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728155AbeKIXeL (ORCPT
+        id S1728002AbeKIXoC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 18:34:11 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:46310 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727735AbeKIXeK (ORCPT
+        Fri, 9 Nov 2018 18:44:02 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:37880 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727781AbeKIXoB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 18:34:10 -0500
-Received: by mail-io1-f65.google.com with SMTP id y22-v6so1261038ioj.13
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 05:53:27 -0800 (PST)
+        Fri, 9 Nov 2018 18:44:01 -0500
+Received: by mail-lj1-f196.google.com with SMTP id e5-v6so1684356lja.4
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 06:03:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=ZzZKA2mowjJsWpyH62tDEWelFTlq84VqIoHpTa9gjsI=;
-        b=B/539OWIu4Dch7dodn6J4bQqlmnVLUNKflLyLKl4+vEPgrlWYhQ1/Jj2MrSwfJEsJX
-         M0HpEgBXbpYZ56MpmV7nm+uUUNn8V1RdpfzqrCefUvwiVRugMM/+NrBaP0x/abJ3y0Wm
-         Amuz+4Z8/DYYusm/QDH7uU+JA5Dui9p6AmmtdI8a7/jWXHb6yscVk0lgJfTJimbVMnfJ
-         QdNdSJllDPN7Ptn7ygYDWcPuZy1TjoBE5iuhb7m21R7rM5+HmnfNcdXV7hxI6olUOT3g
-         aTiD/SUscVwTKW/4FybD/C6uOpZ4+G3DVRmu5ld98zUHEhc2ADytxII6KikgO2Xp4kvv
-         eNuw==
+         :cc;
+        bh=XDEFGJ/MX0qhAkqCTbcmHAnDUaOKQz3uVxWvtRXNOA0=;
+        b=ZqOy4QyYil2OfdUDm8Q6hHrzPc8a6xntTHnqAT0RiZwe5lSvR5yV/HtRuuIk6LGmBy
+         M+gwLVg48jAFC1OvtjZO/LsEfusgfzdJDENlNw1poKb9FjipnNS7hgIZBGMeU1mwbizi
+         Qzsq3DV7kPCLGuks0Czxbs3hsdKvrNP5Kz3VU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=ZzZKA2mowjJsWpyH62tDEWelFTlq84VqIoHpTa9gjsI=;
-        b=KpQnX0MnOA7s8+YZ2TYpnZb3QYQyJE2Zc2N63ShjCoLKtgGrsg3kt8WXk8z+Udkk78
-         BRxAhExa810lSJnHC4v6n4sjs4js+xNingp0nQT0JTG2PfD6CMV+vD0LGePHa9L99AV7
-         G3QCw3hIblU9FMQ5+H3rLKuBr3wxfLRefPk+izICL0rm42+XDKaIJ1RgFvJ6U28jupr0
-         lcRtyDsZkHSwXAci2kLnrDXEm7VIiU3ffb2PWRMNY7oNxGbDPgL4No+4MUp2U2d9c9Pa
-         3CRlPhKolwNl6qKJGHG6+TRcOmWtIwWwILcVbCu157aisMkfSc3n89/Q6KPnhn53NKrq
-         Xelw==
-X-Gm-Message-State: AGRZ1gK4QsuvOp+wgkeJz7oQwNa3iKzB8kFRwOjxeTf8tM/DQnLI+EB8
-        F0ijnOkyfWjLOFV+VPknO1Fg1bpLHqztLu+M01ZDZGmw
-X-Google-Smtp-Source: AJdET5dm6dWzzsThIDosLFVfzRTnzpGaa+2wkgpyTPAYpdcopIcWCJPrq9xZ+IL0y5PmOCnQPYqBjKYX9z2gGBTTJtE=
-X-Received: by 2002:a5e:9e0a:: with SMTP id i10-v6mr7468396ioq.111.1541771607064;
- Fri, 09 Nov 2018 05:53:27 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=XDEFGJ/MX0qhAkqCTbcmHAnDUaOKQz3uVxWvtRXNOA0=;
+        b=oZa0D9zLLhx+2xguuhhRhJYBZEeA3wC4kV1BxbY4F2moz+uhUqHr1A68jX6JJ9YzFY
+         8OkWkIMi/pythp7Y2rfdrLX2zd4Aof07giDvzvcEINGaHAuWstr+/FO95ByL7fBgIiOU
+         WuyWofwVLY5dxo0vvvv+hDWXLg25hr/WNAuCrB/33CbF8RkpfvrDp/67hZUVmlaT801B
+         EtzRXOmsIycbaYRG59ie6cgRzsIBP5ji+8FoyEqiYfbs7fSpqZotDZBU9Hz00o5Zyfth
+         NcS1iyyAeo/NkWTdg/avr9a6CfSmIs+9+FABx263NIfnGYv/gKJoqFYsSQHQZZBVe0l4
+         dVfw==
+X-Gm-Message-State: AGRZ1gI5e/aREtxL+YaQfGLnL3A1bYstPru9HNlgOBx/NSIJYUH7KIo4
+        H4HS3xZWfmtezndcV33LHZmfcKdDJTs=
+X-Google-Smtp-Source: AJdET5dqCSA7WCzqI1qZSZkYtqI8XQqCkwnInQOwB8zPwleWI3L4e9IdM5pofWiXyV5GY2Xh8thYBw==
+X-Received: by 2002:a2e:8187:: with SMTP id e7-v6mr5754897ljg.50.1541772195565;
+        Fri, 09 Nov 2018 06:03:15 -0800 (PST)
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
+        by smtp.gmail.com with ESMTPSA id y80-v6sm1350980lfd.78.2018.11.09.06.03.14
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 09 Nov 2018 06:03:14 -0800 (PST)
+Received: by mail-lj1-f172.google.com with SMTP id f3-v6so1667963ljk.9
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 06:03:14 -0800 (PST)
+X-Received: by 2002:a2e:9819:: with SMTP id a25-v6mr6203892ljj.6.1541772193811;
+ Fri, 09 Nov 2018 06:03:13 -0800 (PST)
 MIME-Version: 1.0
-References: <20181108165255.9940-1-brgl@bgdev.pl> <20181108165255.9940-2-brgl@bgdev.pl>
- <20181108203546.54rncnydgamud5z3@pengutronix.de> <CAMRc=Mev6RMvVox2Sx6s80+obLg4QWAL=_hwcf34m2iMXwEbOg@mail.gmail.com>
- <20181109115424.pe4w26nmt6xplzto@pengutronix.de> <CAMRc=Mdf1GHR0_7uQ4PFFCwL9p3NyKBDMSBkipR826BhTYpz=g@mail.gmail.com>
- <20181109131036.v6d645ojv6jr7v3y@pengutronix.de>
-In-Reply-To: <20181109131036.v6d645ojv6jr7v3y@pengutronix.de>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Fri, 9 Nov 2018 14:53:16 +0100
-Message-ID: <CAMRc=Mf18udrM=2=SZHMg3M2akcccPXb7Fr81vXODpNgjf+uJw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] gpio: mockup: fix indicated direction
-To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Bamvor Jian Zhang <bamv2005@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <CAEbi=3dou8JWKYq9FpRBtPKRRu4ahhsh=+kHKcF8vg5hyO2ZGQ@mail.gmail.com>
+ <CAEbi=3dCGmCzM7td_-hdsgfpHOVeB_Bc_tFtvWnn1AJqzMbiUw@mail.gmail.com>
+In-Reply-To: <CAEbi=3dCGmCzM7td_-hdsgfpHOVeB_Bc_tFtvWnn1AJqzMbiUw@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 9 Nov 2018 08:02:57 -0600
+X-Gmail-Original-Message-ID: <CAHk-=wgsG7vFfjMU8A3cuOq1KgH7C01tkYtUo+2=fN8qFM+9Bw@mail.gmail.com>
+Message-ID: <CAHk-=wgsG7vFfjMU8A3cuOq1KgH7C01tkYtUo+2=fN8qFM+9Bw@mail.gmail.com>
+Subject: Re: [GIT PULL] nds32 new features and bug fix for 4.20
+To:     green.hu@gmail.com
+Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        greentime@andestech.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pt., 9 lis 2018 o 14:10 Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> napisa=C5=82(a):
+On Fri, Nov 9, 2018 at 4:01 AM Greentime Hu <green.hu@gmail.com> wrote:
 >
-> Hello,
->
-> On Fri, Nov 09, 2018 at 01:24:36PM +0100, Bartosz Golaszewski wrote:
-> > pt., 9 lis 2018 o 12:54 Uwe Kleine-K=C3=B6nig
-> > <u.kleine-koenig@pengutronix.de> napisa=C5=82(a):
-> > > On Fri, Nov 09, 2018 at 12:13:44PM +0100, Bartosz Golaszewski wrote:
-> > > > czw., 8 lis 2018 o 21:35 Uwe Kleine-K=C3=B6nig
-> > > > <u.kleine-koenig@pengutronix.de> napisa=C5=82(a):
-> > > > > On Thu, Nov 08, 2018 at 05:52:53PM +0100, Bartosz Golaszewski wro=
-te:
-> > > > > > Commit 3edfb7bd76bd ("gpiolib: Show correct direction from the
-> > > > > > beginning") fixed an existing issue but broke libgpiod tests by
-> > > > > > changing the default direction of dummy lines to output.
-> > > > >
-> > > > > The indicated commit only changed what was shown in debugfs, but =
-didn't
-> > > > > touch the actual direction of a GPIO, doesn't it? If someone call=
-ed
-> > > > > gpiod_get_direction before it would have returned "output", too, =
-unless
-> > > > > I miss something.
-> > > > >
-> > > >
-> > > > This commit (3edfb7bd76bd) sets the correct direction of the line b=
-y
-> > > > actually calling get_direction() instead of assuming input if
-> > > > direction_input is not NULL. It just so happened that previously th=
-e
-> > > > default direction of gpio-mockup lines was output but it would be
-> > > > displayed as input due to this inconsistency.
-> > >
-> > > Does the test that fails since 3edfb7bd76bd use debugfs/gpio to find =
-out
-> > > the direction of a gpio? I'd say it's a bad idea to depend on this as
-> > > (AFAICT) debugfs is only a debug aid and you shouldn't depend on stuf=
-f
-> > > contained in it.
-> >
-> > No, this is what we get from the LINEINFO ioctl(). I only use debugfs
-> > for triggering dummy interrupts.
->
-> A right, gpio_ioctl uses these flags, too.
->
-> > > I'd weaken the commit log a bit to not claim that the commit broke
-> > > libgpiod but that it only made the inconsistency visible. After all t=
-his
-> > > commit didn't "change the default direction of dummy lines to output"=
-,
-> > > they were an output already before.
-> >
-> > Well it did break the tests you know. ;)
->
-> Which test failed exactly?
->
+> nds32 patches for 4.20
 
-All gpioinfo tests that check the output of this command and expect to
-see input as line direction.
+Much much too late for 4.20.
 
-Bart
+Send these the next merge window please.
+
+                 Linus
