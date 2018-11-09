@@ -2,139 +2,151 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBFE7C0044B
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 01:50:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BCD8C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 01:51:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2E9020840
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 01:50:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="iJhSSYlj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2E9020840
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
+	by mail.kernel.org (Postfix) with ESMTP id D87092086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 01:51:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D87092086C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727966AbeKIL2l (ORCPT
+        id S1727825AbeKILaJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 06:28:41 -0500
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:29616 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727336AbeKIL2d (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 06:28:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1541728213; x=1573264213;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references;
-  bh=wTS7UviMuB1vJqlMidMCF02zuSQf2VK9pjNXvYjC+z4=;
-  b=iJhSSYljHzJKRMvtyPxISDPQdc1gqKN3mkfKYQInsYAHCTULM/zYyuk/
-   sUQv6+KT8PES+hzIeNFEON2ENwNy22a9i2YhRB1fSGNU/NZmfFwJRfdFE
-   0qD18S2jR+DIwRB3JYUSq/pp5751HDw9bVXjMS95AWzucz4CvhQpyPr+O
-   vgvOOEXZtdQJ3WlZ2qVc7U1TSq0miU336efAgDtSGKeeVDR7icONUk693
-   e2Yfs5zJyHVF6omUh3Yc0To0JTWDq5zmEyqlR3afJPESGRZ7F6B7cNlrO
-   yRSkK1hsypAZcxFhNWxjUmfhHrC/OQ+u7VRBNH+apb8Hk7htMuHNDlTUg
-   w==;
-X-IronPort-AV: E=Sophos;i="5.54,481,1534780800"; 
-   d="scan'208";a="98624917"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 09 Nov 2018 09:50:11 +0800
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP; 08 Nov 2018 17:33:44 -0800
-Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
-  by uls-op-cesaip02.wdc.com with ESMTP; 08 Nov 2018 17:50:11 -0800
-From:   Atish Patra <atish.patra@wdc.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-riscv@lists.infradead.org, anup@brainfault.org,
-        Damien.LeMoal@wdc.com, atish.patra@wdc.com,
-        linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
-        robh+dt@kernel.org, sudeep.holla@arm.com, palmer@sifive.com,
-        devicetree@vger.kernel.org, juri.lelli@arm.com, mick@ics.forth.gr,
-        jeremy.linton@arm.com
-Subject: [RFC 3/3] RISC-V: Parse cpu topology during boot.
-Date:   Thu,  8 Nov 2018 17:50:09 -0800
-Message-Id: <1541728209-3224-4-git-send-email-atish.patra@wdc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1541728209-3224-1-git-send-email-atish.patra@wdc.com>
-References: <1541728209-3224-1-git-send-email-atish.patra@wdc.com>
+        Fri, 9 Nov 2018 06:30:09 -0500
+Received: from mga02.intel.com ([134.134.136.20]:32618 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727157AbeKILaJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 06:30:09 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 17:51:47 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,481,1534834800"; 
+   d="scan'208";a="98801745"
+Received: from btwcube1.sh.intel.com (HELO debian) ([10.67.104.173])
+  by orsmga003.jf.intel.com with ESMTP; 08 Nov 2018 17:51:45 -0800
+Date:   Fri, 9 Nov 2018 09:50:11 +0800
+From:   Tiwei Bie <tiwei.bie@intel.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Jason Wang <jasowang@redhat.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        virtio-dev@lists.oasis-open.org, wexu@redhat.com,
+        jfreimann@redhat.com
+Subject: Re: [PATCH net-next v2 3/5] virtio_ring: add packed ring support
+Message-ID: <20181109015011.GA24544@debian>
+References: <20180711022711.7090-1-tiwei.bie@intel.com>
+ <20180711022711.7090-4-tiwei.bie@intel.com>
+ <20181107123933-mutt-send-email-mst@kernel.org>
+ <20181108013759.GA20591@debian>
+ <2d46a41e-bc00-276a-e19a-105c9dffc75a@redhat.com>
+ <20181108115148.GA15701@debian>
+ <20181108103155-mutt-send-email-mst@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181108103155-mutt-send-email-mst@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, there are no topology defined for RISC-V.
-Parse the cpu-map node from device tree and setup the
-cpu topology.
+On Thu, Nov 08, 2018 at 10:56:02AM -0500, Michael S. Tsirkin wrote:
+> On Thu, Nov 08, 2018 at 07:51:48PM +0800, Tiwei Bie wrote:
+> > On Thu, Nov 08, 2018 at 04:18:25PM +0800, Jason Wang wrote:
+> > > 
+> > > On 2018/11/8 上午9:38, Tiwei Bie wrote:
+> > > > > > +
+> > > > > > +	if (vq->vq.num_free < descs_used) {
+> > > > > > +		pr_debug("Can't add buf len %i - avail = %i\n",
+> > > > > > +			 descs_used, vq->vq.num_free);
+> > > > > > +		/* FIXME: for historical reasons, we force a notify here if
+> > > > > > +		 * there are outgoing parts to the buffer.  Presumably the
+> > > > > > +		 * host should service the ring ASAP. */
+> > > > > I don't think we have a reason to do this for packed ring.
+> > > > > No historical baggage there, right?
+> > > > Based on the original commit log, it seems that the notify here
+> > > > is just an "optimization". But I don't quite understand what does
+> > > > the "the heuristics which KVM uses" refer to. If it's safe to drop
+> > > > this in packed ring, I'd like to do it.
+> > > 
+> > > 
+> > > According to the commit log, it seems like a workaround of lguest networking
+> > > backend.
+> > 
+> > Do you know why removing this notify in Tx will break "the
+> > heuristics which KVM uses"? Or what does "the heuristics
+> > which KVM uses" refer to?
+> 
+> Yes. QEMU has a mode where it disables notifications and processes TX
+> ring periodically from a timer.  It's off by default but used to be on
+> by default a long time ago. If ring becomes full this causes traffic
+> stalls.  As a work-around Rusty put in this hack to kick on ring full
+> even with notifications disabled.  It's easy enough to make sure QEMU
+> does not combine devices with packed ring support with the timer hack.
+> And I am guessing it's safe enough to also block that option completely
+> e.g. when virtio 1.0 is enabled.
 
-CPU topology after applying the patch.
-$cat /sys/devices/system/cpu/cpu2/topology/core_siblings_list
-0-3
-$cat /sys/devices/system/cpu/cpu3/topology/core_siblings_list
-0-3
-$cat /sys/devices/system/cpu/cpu3/topology/physical_package_id
-0
-$cat /sys/devices/system/cpu/cpu3/topology/core_id
-3
+I see. Thanks!
 
-Signed-off-by: Atish Patra <atish.patra@wdc.com>
----
- arch/riscv/Kconfig          | 1 +
- arch/riscv/kernel/smpboot.c | 6 +++++-
- 2 files changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 55da93f4..e2d8ddb5 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -42,6 +42,7 @@ config RISCV
- 	select THREAD_INFO_IN_TASK
- 	select RISCV_TIMER
- 	select GENERIC_IRQ_MULTI_HANDLER
-+	select GENERIC_ARCH_TOPOLOGY
- 	select ARCH_HAS_PTE_SPECIAL
- 
- config MMU
-diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.c
-index 18cda0e8..6fa95442 100644
---- a/arch/riscv/kernel/smpboot.c
-+++ b/arch/riscv/kernel/smpboot.c
-@@ -31,6 +31,7 @@
- #include <linux/of.h>
- #include <linux/sched/task_stack.h>
- #include <linux/sched/mm.h>
-+#include <linux/arch_topology.h>
- #include <asm/irq.h>
- #include <asm/mmu_context.h>
- #include <asm/tlbflush.h>
-@@ -42,6 +43,7 @@ void *__cpu_up_task_pointer[NR_CPUS];
- 
- void __init smp_prepare_boot_cpu(void)
- {
-+	init_cpu_topology();
- }
- 
- void __init smp_prepare_cpus(unsigned int max_cpus)
-@@ -108,13 +110,15 @@ void __init smp_cpus_done(unsigned int max_cpus)
- asmlinkage void __init smp_callin(void)
- {
- 	struct mm_struct *mm = &init_mm;
-+	unsigned int cpu = smp_processor_id();
- 
- 	/* All kernel threads share the same mm context.  */
- 	mmgrab(mm);
- 	current->active_mm = mm;
- 
- 	trap_init();
--	notify_cpu_starting(smp_processor_id());
-+	notify_cpu_starting(cpu);
-+	update_siblings_masks(cpu);
- 	set_cpu_online(smp_processor_id(), 1);
- 	/*
- 	 * Remote TLB flushes are ignored while the CPU is offline, so emit
--- 
-2.7.4
-
+> 
+> > 
+> > > I agree to drop it, we should not have such burden.
+> > > 
+> > > But we should notice that, with this removed, the compare between packed vs
+> > > split is kind of unfair. Consider the removal of lguest support recently,
+> > > maybe we can drop this for split ring as well?
+> > > 
+> > > Thanks
+> > > 
+> > > 
+> > > > 
+> > > > commit 44653eae1407f79dff6f52fcf594ae84cb165ec4
+> > > > Author: Rusty Russell<rusty@rustcorp.com.au>
+> > > > Date:   Fri Jul 25 12:06:04 2008 -0500
+> > > > 
+> > > >      virtio: don't always force a notification when ring is full
+> > > >      We force notification when the ring is full, even if the host has
+> > > >      indicated it doesn't want to know.  This seemed like a good idea at
+> > > >      the time: if we fill the transmit ring, we should tell the host
+> > > >      immediately.
+> > > >      Unfortunately this logic also applies to the receiving ring, which is
+> > > >      refilled constantly.  We should introduce real notification thesholds
+> > > >      to replace this logic.  Meanwhile, removing the logic altogether breaks
+> > > >      the heuristics which KVM uses, so we use a hack: only notify if there are
+> > > >      outgoing parts of the new buffer.
+> > > >      Here are the number of exits with lguest's crappy network implementation:
+> > > >      Before:
+> > > >              network xmit 7859051 recv 236420
+> > > >      After:
+> > > >              network xmit 7858610 recv 118136
+> > > >      Signed-off-by: Rusty Russell<rusty@rustcorp.com.au>
+> > > > 
+> > > > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> > > > index 72bf8bc09014..21d9a62767af 100644
+> > > > --- a/drivers/virtio/virtio_ring.c
+> > > > +++ b/drivers/virtio/virtio_ring.c
+> > > > @@ -87,8 +87,11 @@ static int vring_add_buf(struct virtqueue *_vq,
+> > > >   	if (vq->num_free < out + in) {
+> > > >   		pr_debug("Can't add buf len %i - avail = %i\n",
+> > > >   			 out + in, vq->num_free);
+> > > > -		/* We notify*even if*  VRING_USED_F_NO_NOTIFY is set here. */
+> > > > -		vq->notify(&vq->vq);
+> > > > +		/* FIXME: for historical reasons, we force a notify here if
+> > > > +		 * there are outgoing parts to the buffer.  Presumably the
+> > > > +		 * host should service the ring ASAP. */
+> > > > +		if (out)
+> > > > +			vq->notify(&vq->vq);
+> > > >   		END_USE(vq);
+> > > >   		return -ENOSPC;
+> > > >   	}
+> > > > 
+> > > > 
