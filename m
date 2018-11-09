@@ -2,166 +2,173 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EE5EC43610
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:03:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75A17C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:03:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AAE820855
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:03:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="uzfgwJ7F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AAE820855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	by mail.kernel.org (Postfix) with ESMTP id 36E6720855
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:03:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36E6720855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=angband.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728967AbeKJEp3 (ORCPT
+        id S1728992AbeKJEpb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 23:45:29 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:43387 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728947AbeKJEp3 (ORCPT
+        Fri, 9 Nov 2018 23:45:31 -0500
+Received: from tartarus.angband.pl ([54.37.238.230]:51658 "EHLO
+        tartarus.angband.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728676AbeKJEpa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 23:45:29 -0500
-Received: by mail-pf1-f193.google.com with SMTP id g7-v6so1327120pfo.10
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 11:03:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=yn2ADpYGFJB8QoUsSxyXC9rSSLPefLmyAe8EvMBchbQ=;
-        b=uzfgwJ7F3iERagD3R4Ktl0VEFJwr7mVJq2bEjb747G9Za4oEykPZX/UkOOxECq1URl
-         kvi4uH56mtDvNdNp+BHy7daR0oFOs/Gmz6l/+dZeHfiklyMGatkrJN+eEOaTwGBwzz//
-         gwSAwQEwWhfovTnzcuMkZ81pjPiIVwjp8E39mrcXj7m+hLiy2gsqvVa2SumXwWorcglD
-         SRcX08LNyq2xMwpmtDqlo2SfbTKo0eWJODi1xvdhbZt+2aC1ubjlhLKLWrvOGsi0gC8M
-         1X651CeFqIWl/r1FF7qj4QBGhHEzPFSxB7PlRAZFT3HuIyrXDlDQGXDZTJdolJZ1cKxW
-         V4ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=yn2ADpYGFJB8QoUsSxyXC9rSSLPefLmyAe8EvMBchbQ=;
-        b=JroGoRwTPtsNa686cG+ccS0sY4nK1bp1u9Kt6VmCw2XZLIG9T9EnUgO/I7G5sZe9Ft
-         FfsWFhrS0gj/IztRpwpe+YIlBK3HT4WU1XDT42uaccfHj+PM9gbpoG7+UO/Kzz3FFtTP
-         iijMEp2L9TTmR9pQOc8hSLMzUCsQVj6trGQHEgjV8JaiKPvBry8SOH3ZESTCyzPTbHT4
-         G6OvtZy3eHKeQn83kmL+NSne7+wKLYwlZngMNgmr32Em67SZz0p8ly+Mw7o0SuwR3DWA
-         1ama2jEcXO0U3JfveckPUq1m725Vvc2Kc21ogmiYJpf3OVWlrdEfhcG7kpyzfNwwFmGK
-         8K3w==
-X-Gm-Message-State: AGRZ1gIom6SOWANZ7QFP3crTJdhEW9dIoTB6ARlo658CBhBMDDiky1eV
-        fxtBKYa4fyOTOnv/GNpDvHadhe/94rs=
-X-Google-Smtp-Source: AJdET5dTNo933eUXe+O7iTuhs7n4dBeBH6s+BX/eyhjwCmpDpq1KBhARCg5KlpqhSFFjgfqwXFQLjw==
-X-Received: by 2002:a62:a5b:: with SMTP id s88-v6mr10532145pfi.136.1541790215160;
-        Fri, 09 Nov 2018 11:03:35 -0800 (PST)
-Received: from ?IPv6:2600:1010:b002:666:dc7a:5a83:1f2b:9078? ([2600:1010:b002:666:dc7a:5a83:1f2b:9078])
-        by smtp.gmail.com with ESMTPSA id l64sm5784003pge.73.2018.11.09.11.03.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 09 Nov 2018 11:03:34 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH 06/13] arc: define syscall_get_arch()
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16A404)
-In-Reply-To: <C2D7FE5348E1B147BCA15975FBA23075013A59239B@us01wembx1.internal.synopsys.com>
-Date:   Fri, 9 Nov 2018 11:03:32 -0800
-Cc:     "Dmitry V. Levin" <ldv@altlinux.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@redhat.com>,
-        Elvira Khabirova <lineprinter@altlinux.org>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>,
-        "linux-audit@redhat.com" <linux-audit@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <6C398ED8-30BC-4483-B5CF-1EB2F2699B0D@amacapital.net>
-References: <20181109031605.GF21511@altlinux.org> <C2D7FE5348E1B147BCA15975FBA23075013A59239B@us01wembx1.internal.synopsys.com>
-To:     Vineet Gupta <vineet.gupta1@synopsys.com>
+        Fri, 9 Nov 2018 23:45:30 -0500
+Received: from 89-64-163-218.dynamic.chello.pl ([89.64.163.218] helo=barad-dur.angband.pl)
+        by tartarus.angband.pl with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <kilobyte@angband.pl>)
+        id 1gLC42-00055a-0j; Fri, 09 Nov 2018 20:03:31 +0100
+Received: from kholdan.angband.pl ([2001:470:64f4::5])
+        by barad-dur.angband.pl with smtp (Exim 4.89)
+        (envelope-from <kilobyte@angband.pl>)
+        id 1gLC40-0005AD-Dx; Fri, 09 Nov 2018 20:03:29 +0100
+Received: by kholdan.angband.pl (sSMTP sendmail emulation); Fri, 09 Nov 2018 20:03:28 +0100
+From:   Adam Borowski <kilobyte@angband.pl>
+To:     linux-kernel@vger.kernel.org, Nick Terrell <terrelln@fb.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-m68k@lists.linux-m68k.org,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>,
+        openrisc@lists.librecores.org,
+        "James E.J. Bottomley" <jejb@parisc-linux.org>,
+        Helge Deller <deller@gmx.de>, linux-parisc@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        linux-s390@vger.kernel.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        linux-xtensa@linux-xtensa.org
+Cc:     Adam Borowski <kilobyte@angband.pl>
+Date:   Fri,  9 Nov 2018 20:02:59 +0100
+Message-Id: <20181109190304.8573-12-kilobyte@angband.pl>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181109190304.8573-1-kilobyte@angband.pl>
+References: <20181109185953.xwyelyqnygbskkxk@angband.pl>
+ <20181109190304.8573-1-kilobyte@angband.pl>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 89.64.163.218
+X-SA-Exim-Mail-From: kilobyte@angband.pl
+Subject: [PATCH 12/17] Kconfig: Remove support for LZMA-compressed initrd
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on tartarus.angband.pl)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Obsoleted by XZ.
 
+The config option for compressing the kernel stays, as some archs have a
+bootloader outside the kernel that wants LZMA.
 
-> On Nov 9, 2018, at 8:50 AM, Vineet Gupta <vineet.gupta1@synopsys.com> wrot=
-e:
->=20
->> On 11/8/18 7:16 PM, Dmitry V. Levin wrote:
->> syscall_get_arch() is required to be implemented on all architectures
->> that use tracehook_report_syscall_entry() in order to extend
->> the generic ptrace API with PTRACE_GET_SYSCALL_INFO request.
->>=20
->> Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
->> ---
->> arch/arc/include/asm/syscall.h | 6 ++++++
->> include/uapi/linux/audit.h     | 1 +
->> 2 files changed, 7 insertions(+)
->>=20
->> diff --git a/arch/arc/include/asm/syscall.h b/arch/arc/include/asm/syscal=
-l.h
->> index 29de09804306..5662778a7411 100644
->> --- a/arch/arc/include/asm/syscall.h
->> +++ b/arch/arc/include/asm/syscall.h
->> @@ -9,6 +9,7 @@
->> #ifndef _ASM_ARC_SYSCALL_H
->> #define _ASM_ARC_SYSCALL_H  1
->>=20
->> +#include <uapi/linux/audit.h>
->> #include <linux/err.h>
->> #include <linux/sched.h>
->> #include <asm/unistd.h>
->> @@ -68,4 +69,9 @@ syscall_get_arguments(struct task_struct *task, struct p=
-t_regs *regs,
->>    }
->> }
->>=20
->> +static inline int syscall_get_arch(void)
->> +{
->> +    return AUDIT_ARCH_ARC;
->> +}
->> +
->=20
-> Does ptrace (or user of this API) need a unique value per arch. Otherwise i=
-nstead
-> of adding the boilerplate code to all arches, they could simply define AUD=
-IT_ARCH
-> and common code could return it. Also the EM_xxx are not there in
-> include/uapi/linux/elf.h to begin with since libc elf.h already defines th=
-em.
+Signed-off-by: Adam Borowski <kilobyte@angband.pl>
+---
+ Makefile    |  1 -
+ usr/Kconfig | 28 ++--------------------------
+ 2 files changed, 2 insertions(+), 27 deletions(-)
 
-A lot of architectures allow multiple audit_arches at runtime due to compat s=
-upport and similar features, so it really does want to be a function.  The g=
-oal of this patch set is to get it supported everywhere.
+diff --git a/Makefile b/Makefile
+index c812467bfe11..97e4bf26a6d3 100644
+--- a/Makefile
++++ b/Makefile
+@@ -938,7 +938,6 @@ export mod_compress_cmd
+ # This shall be used by the dracut(8) tool while creating an initramfs image.
+ #
+ INITRD_COMPRESS-y                  := gzip
+-INITRD_COMPRESS-$(CONFIG_RD_LZMA)  := lzma
+ INITRD_COMPRESS-$(CONFIG_RD_XZ)    := xz
+ INITRD_COMPRESS-$(CONFIG_RD_LZO)   := lzo
+ INITRD_COMPRESS-$(CONFIG_RD_LZ4)   := lz4
+diff --git a/usr/Kconfig b/usr/Kconfig
+index 05b6be569041..8d99edacabc9 100644
+--- a/usr/Kconfig
++++ b/usr/Kconfig
+@@ -61,15 +61,6 @@ config RD_GZIP
+ 	  Support loading of a gzip encoded initial ramdisk or cpio buffer.
+ 	  If unsure, say Y.
+ 
+-config RD_LZMA
+-	bool "Support initial ramdisk/ramfs compressed using LZMA"
+-	default y
+-	depends on BLK_DEV_INITRD
+-	select DECOMPRESS_LZMA
+-	help
+-	  Support loading of a LZMA encoded initial ramdisk or cpio buffer
+-	  If unsure, say N.
+-
+ config RD_XZ
+ 	bool "Support initial ramdisk/ramfs compressed using XZ"
+ 	depends on BLK_DEV_INITRD
+@@ -118,8 +109,8 @@ choice
+ 	  when building a kernel.  Decompression speed is relevant at
+ 	  each boot. Also the memory usage during decompression may become
+ 	  relevant on memory constrained systems. This is usually based on the
+-	  dictionary size of the algorithm with algorithms like XZ and LZMA
+-	  featuring large dictionary sizes.
++	  dictionary size of the algorithm with algorithms like XZ featuring
++	  large dictionary sizes.
+ 
+ 	  High compression options are mostly useful for users who are
+ 	  low on RAM, since it reduces the memory consumption during
+@@ -152,19 +143,6 @@ config INITRAMFS_COMPRESSION_GZIP
+ 	  supported by your build system as the gzip tool is present by default
+ 	  on most distros.
+ 
+-config INITRAMFS_COMPRESSION_LZMA
+-	bool "LZMA"
+-	depends on RD_LZMA
+-	help
+-	  This algorithm's compression ratio is best but has a large dictionary
+-	  size which might cause issues in memory constrained systems.
+-	  Decompression speed is between the other choices. Compression is
+-	  slowest. The initramfs size is about 33% smaller with LZMA in
+-	  comparison to gzip.
+-
+-	  If you choose this, keep in mind that you may need to install the xz
+-	  or lzma tools to be able to compress the initram.
+-
+ config INITRAMFS_COMPRESSION_XZ
+ 	bool "XZ"
+ 	depends on RD_XZ
+@@ -219,7 +197,6 @@ config INITRAMFS_COMPRESSION
+ 	string
+ 	default ""      if INITRAMFS_COMPRESSION_NONE
+ 	default ".gz"   if INITRAMFS_COMPRESSION_GZIP
+-	default ".lzma" if INITRAMFS_COMPRESSION_LZMA
+ 	default ".xz"   if INITRAMFS_COMPRESSION_XZ
+ 	default ".lzo"  if INITRAMFS_COMPRESSION_LZO
+ 	default ".lz4"  if INITRAMFS_COMPRESSION_LZ4
+@@ -228,6 +205,5 @@ config INITRAMFS_COMPRESSION
+ 	default ".lz4"  if RD_LZ4
+ 	default ".lzo"  if RD_LZO
+ 	default ".xz"   if RD_XZ
+-	default ".lzma" if RD_LZMA
+ 	default ".zst"  if RD_ZSTD
+ 	default ""
+-- 
+2.19.1
 
->> #endif
->> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
->> index 818ae690ab79..a7149ceb5b98 100644
->> --- a/include/uapi/linux/audit.h
->> +++ b/include/uapi/linux/audit.h
->> @@ -375,6 +375,7 @@ enum {
->>=20
->> #define AUDIT_ARCH_AARCH64    (EM_AARCH64|__AUDIT_ARCH_64BIT|__AUDIT_ARCH=
-_LE)
->> #define AUDIT_ARCH_ALPHA    (EM_ALPHA|__AUDIT_ARCH_64BIT|__AUDIT_ARCH_LE)=
-
->> +#define AUDIT_ARCH_ARC        (EM_ARC)
->> #define AUDIT_ARCH_ARM        (EM_ARM|__AUDIT_ARCH_LE)
->> #define AUDIT_ARCH_ARMEB    (EM_ARM)
->> #define AUDIT_ARCH_CRIS        (EM_CRIS|__AUDIT_ARCH_LE)
->=20
-> So I don't have the context of this patch (or coverletter) but what exactl=
-y are we
-> trying to do with this (adding LE to audit)  - what happens when an arch i=
-s
-> capable of either and is say built for BE ?
-
-The primary intent is that the triple (audit_arch, syscall_nr, arg1, ..., ar=
-g6) should describe what system call is being called and what its arguments a=
-re.  I=E2=80=99m personally not sure what, if any, technical value there is i=
-n the LE bit.
-
-I do think it makes sense for BE and LE to have different values.=
