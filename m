@@ -2,214 +2,181 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E22C0C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 13:43:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A475C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 13:43:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A840D2081C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 13:43:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A840D2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3AB3120840
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 13:43:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AB3120840
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728060AbeKIXYJ (ORCPT
+        id S1728099AbeKIXYX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 18:24:09 -0500
-Received: from mga09.intel.com ([134.134.136.24]:65464 "EHLO mga09.intel.com"
+        Fri, 9 Nov 2018 18:24:23 -0500
+Received: from mga05.intel.com ([192.55.52.43]:63678 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727962AbeKIXYJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 18:24:09 -0500
+        id S1727794AbeKIXYX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 18:24:23 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Nov 2018 05:43:28 -0800
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Nov 2018 05:43:42 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,483,1534834800"; 
-   d="scan'208";a="88016971"
-Received: from mke-mobl.ccr.corp.intel.com (HELO [192.168.4.139]) ([10.255.30.228])
-  by orsmga007.jf.intel.com with ESMTP; 09 Nov 2018 05:40:41 -0800
-Subject: Re: [Qemu-devel] [RFC/PoC PATCH 1/3] i386: set initrd_max to 4G - 1
- to allow up to 4G initrd
-To:     Juergen Gross <jgross@suse.com>, Ingo Molnar <mingo@kernel.org>,
-        Li Zhijian <lizhijian@cn.fujitsu.com>
-Cc:     Peter Maydell <peter.maydell@linaro.org>, x86@kernel.org,
-        hpa@zytor.com, bp@alien8.de, mingo@redhat.com, tglx@linutronix.de,
-        QEMU Developers <qemu-devel@nongnu.org>,
-        Philip Li <philip.li@intel.com>, linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Kees Cook <keescook@chromium.org>
-References: <1541674784-25936-1-git-send-email-lizhijian@cn.fujitsu.com>
- <1541674784-25936-2-git-send-email-lizhijian@cn.fujitsu.com>
- <CAFEAcA_47wyar3WNhuBmNPdr02RHx-wn_TeyFaajpjzvzG8j5Q@mail.gmail.com>
- <c50d103e-95c3-c44c-d852-b6d7f8114b3a@cn.fujitsu.com>
- <20181109072015.GA86700@gmail.com>
- <38905d35-29af-b522-1629-b13e98a47a42@intel.com>
- <d30b404d-624e-0497-879a-2d5df2eb9f31@suse.com>
-From:   Li Zhijian <zhijianx.li@intel.com>
-Message-ID: <b7b608dc-1743-5e1f-3b88-94d784c4cab2@intel.com>
-Date:   Fri, 9 Nov 2018 21:40:36 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+   d="scan'208";a="107262960"
+Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.164]) ([10.237.72.164])
+  by orsmga002.jf.intel.com with ESMTP; 09 Nov 2018 05:43:38 -0800
+Subject: Re: USB-C device hotplug issue
+To:     Dennis Wassenberg <dennis.wassenberg@secunet.com>,
+        Alan Stern <stern@rowland.harvard.edu>
+Cc:     Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ravi Chandra Sadineni <ravisadineni@chromium.org>,
+        Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>,
+        Bin Liu <b-liu@ti.com>,
+        Maxim Moseychuk <franchesko.salias.hudro.pedros@gmail.com>,
+        Mike Looijmans <mike.looijmans@topic.nl>,
+        Dominik Bozek <dominikx.bozek@intel.com>,
+        USB list <linux-usb@vger.kernel.org>,
+        Kernel development list <linux-kernel@vger.kernel.org>
+References: <Pine.LNX.4.44L0.1810261000040.1467-100000@iolanthe.rowland.org>
+ <ac4ea7fa-9fd7-0987-a70c-11a26465e680@linux.intel.com>
+ <4140fee5-8935-daed-8438-d04d7f1198b2@secunet.com>
+From:   Mathias Nyman <mathias.nyman@linux.intel.com>
+Message-ID: <0427ea9d-a04c-61bf-9f64-5f2a42ab0072@linux.intel.com>
+Date:   Fri, 9 Nov 2018 15:47:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <d30b404d-624e-0497-879a-2d5df2eb9f31@suse.com>
+In-Reply-To: <4140fee5-8935-daed-8438-d04d7f1198b2@secunet.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
 Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just noticed that there is a field xloadflags at recent protocol
-   60 Protocol 2.12:  (Kernel 3.8) Added the xloadflags field and extension fields
-   61                 to struct boot_params for loading bzImage and ramdisk
-   62                 above 4G in 64bit.
-[snip]
-  617 Field name:     xloadflags
-  618 Type:           read
-  619 Offset/size:    0x236/2
-  620 Protocol:       2.12+
-  621
-  622   This field is a bitmask.
-  623
-  624   Bit 0 (read): XLF_KERNEL_64
-  625         - If 1, this kernel has the legacy 64-bit entry point at 0x200.
-  626
-  627   Bit 1 (read): XLF_CAN_BE_LOADED_ABOVE_4G
-  628         - If 1, kernel/boot_params/cmdline/ramdisk can be above 4G.
-  629
-
-maybe we can reuse this field and append a new Bit 5 XLF_INITRD_MAX_SIZE_4G and increase header version.
-For the old protocol version 2.12+, if  XLF_CAN_BE_LOADED_ABOVE_4G is set, we can also realize ~4GB initrd is allowed.
-
-bootloader side:
-if protocol >= 2.15
-    if XLF_INITRD_LOAD_BELOW_4G
-       support ~4G initrd
-    fi
-else if protocol >=2.12
-    if XLF_CAN_BE_LOADED_ABOVE_4G
-     support ~4G initrd
-    fi
-fi
-
-thanks
-Zhijian
-
-  
-
-On 11/9/2018 6:04 PM, Juergen Gross wrote:
-> On 09/11/2018 10:57, Li Zhijian wrote:
->> On 11/9/2018 3:20 PM, Ingo Molnar wrote:
->>> * Li Zhijian <lizhijian@cn.fujitsu.com> wrote:
+On 07.11.2018 11:08, Dennis Wassenberg wrote:
+> 
+> On 05.11.18 16:35, Mathias Nyman wrote:
+>> On 26.10.2018 17:07, Alan Stern wrote:
+>>> On Fri, 26 Oct 2018, Dennis Wassenberg wrote:
 >>>
->>>>> If the kernel initrd creation process creates an initrd which
->>>>> is larger than 2GB and also claims that it can't be placed
->>>>> with any part of it above 2GB, then that sounds like a bug
->>>>> in the initrd creation process...
->>>> Exactly, it's a real problem.
+>>>>>> --- a/drivers/usb/core/hub.c
+>>>>>> +++ b/drivers/usb/core/hub.c
+>>>>>> @@ -2815,7 +2815,9 @@ static int hub_port_reset(struct usb_hub *hub, int port1,
+>>>>>>                        USB_PORT_FEAT_C_BH_PORT_RESET);
+>>>>>>                usb_clear_port_feature(hub->hdev, port1,
+>>>>>>                        USB_PORT_FEAT_C_PORT_LINK_STATE);
+>>>>>> -            usb_clear_port_feature(hub->hdev, port1,
+>>>>>> +
+>>>>>> +            if (!warm)
+>>>>>> +                usb_clear_port_feature(hub->hdev, port1,
+>>>>>>                        USB_PORT_FEAT_C_CONNECTION);
+>>>>>>                  /*
+>>>>>
+>>>>> The key fact is that connection events can get lost if they happen to
+>>>>> occur during a port reset.
+>>>> Yes.
+>>>>>
+>>>>> I'm not entirely certain of the logic here, but it looks like the
+>>>>> correct test to add should be "if (udev != NULL)", not "if (!warm)".
+>>>>> Perhaps Mathias can confirm this
+>>
+>> Sorry about the late response, got distracted while performing git
+>> archeology.
+>>
+>> "if (udev != NULL)" would seem more reasonable.
+>>
+>> Logs show that clearing the FEAT_C_CONNECTION was originally added
+>> after a hot reset failed, and before issuing a warm reset to a SS.Inactive
+>> link.  (see 10d674a USB: When hot reset for USB3 fails, try warm reset.)
+>>
+>> Apparently all the change flags needed to be cleared for some specific
+>> host + device combination before issuing a warm reset for the enumeration
+>> to work properly.
+>>
+>> The change to always clear FEAT_C_CONNECTION for USB3 was done later in patch:
+>> a24a607 USB: Rip out recursive call on warm port reset.
+>>
+>> Motivation was:
+>>
+>> "In hub_port_finish_reset, unconditionally clear the connect status
+>>   change (CSC) bit for USB 3.0 hubs when the port reset is done.  If we
+>>   had to issue multiple warm resets for a device, that bit may have been
+>>   set if the device went into SS.Inactive and then was successfully warm
+>>   reset."
+>>
+>>>> I don't know if clearing the USB_PORT_FEAT_C_CONNECTION bit is
+>>>> correct in case of a non warm reset. In my case I always observed a
+>>>> warm reset because of the link state change.
+>>>> Thats why I checked the warm variable to not change the behavoir for
+>>>> cases a didn't checked for the first shot.
+>>>
+>>> (The syntax of that last sentence is pretty mangled; I can't understand
+>>> it.)
+>>>
+>>> Think of it this way:
+>>>
+>>>      If a device was not attached before the reset, we don't want
+>>>      to clear the connect-change status because then we wouldn't
+>>>      recognize a device that was plugged in during the reset.
+>>>
+>>>      If a device was attached before the reset, we don't want any
+>>>      connect-change status which might be provoked by the reset to
+>>>      last, because we don't want the core to think that the device
+>>>      was unplugged and replugged when all that happened was a reset.
+>>>
+>>> So the important criterion is whether or not a device was attached to
+>>> the port when the reset started.  It's something of a coincidence that
+>>> you only observe warm resets when there's nothing attached.
+>>>
+>>>> During the first run of usb_hub_reset the udev is NULL because in
+>>>> this situation the device is not attached logically.
 >>>>
->>>> Add x86 maintainers and LKML:
+>>>> [  112.889810] usb 4-1-port1: XXX: port_event: portstatus: 0x2c0, portchange: 0x40!
+>>>> [  113.201192] usb 4-1-port1: XXX: hub_port_reset: udev:            (nil)!
+>>>> [  113.201198] usb 4-1-port1: XXX: hub_port_reset (not clearing USB_PORT_FEAT_C_CONNECTION): 0x203, portchange: 0x1!
+>>>> [  113.253612] usb 4-1-port1: XXX: port_event: portstatus: 0x203, portchange: 0x1!
+>>>> [  113.377208] usb 4-1-port1: XXX: hub_port_reset: udev: ffff88046b302800!
+>>>> [  113.377214] usb 4-1-port1: XXX: hub_port_reset (not clearing USB_PORT_FEAT_C_CONNECTION): 0x203, portchange: 0x0!
+>>>> [  113.429478] usb 4-1.1: new SuperSpeed USB device number 7 using xhci_hcd
+>>>> [  113.442370] usb 4-1.1: New USB device found, idVendor=0781, idProduct=5596
+>>>> [  113.442376] usb 4-1.1: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+>>>> [  113.442381] usb 4-1.1: Product: Ultra T C
+>>>> [  113.442385] usb 4-1.1: Manufacturer: SanDisk
+>>>> [  113.442388] usb 4-1.1: SerialNumber: 4C530001131013121031
 >>>>
->>>> The background is that QEMU want to support up to 4G initrd. but
->>>> linux header (
->>>> initrd_addr_max field) only allow 2G-1.
->>>> Is one of the below approaches reasonable:
->>>> 1) change initrd_addr_max to 4G-1 directly
->>>> simply(arch/x86/boot/header.S)?
->>>> 2) lie QEMU bootloader the initrd_addr_max is 4G-1 even though header
->>>> said 2G-1
->>>> 3) any else
->>> A 10 years old comment from hpa says:
+>>>> Or maybe we can skip clearing the USB_PORT_FEAT_C_CONNECTION bit in
+>>>> case of hub_port_reset completely without any other check?
 >>>
->>>     initrd_addr_max: .long 0x7fffffff
->>>                                           # (Header version 0x0203 or
->>> later)
->>>                                           # The highest safe address for
->>>                                           # the contents of an initrd
->>>                                           # The current kernel allows
->>> up to 4 GB,
->>>                                           # but leave it at 2 GB to avoid
->>>                                           # possible bootloader bugs.
->>>
->>> To avoid the potential of bugs lurking in dozens of major and hundreds of
->>> minor iterations of various Linux bootloaders I'd prefer a real solution
->>> and extend it - because if there's a 2GB initrd for some weird reason
->>> today there might be a 4GB one in two years.
->> thank a lots. that's amazing.
+>>> See above.
 >>
+>> Checking for udev sounds reasonable to me.
+>> Not sure if we should worry about the specific host+device combo that needed flags
+>> cleared before warm reset. See patch:
 >>
->>> The real solution would be to:
->>>
->>>    - Extend the boot protocol with a 64-bit field, named initrd_addr64_max
->>>      or such.
->>>    - We don't change the old field - but if the new field is set by new
->>>      kernels then new bootloaders can use that as a new initrd_addr64_max
->>>      value. (or reject to load the kernel if the address is too high.)
->>>
->>>    - The kernel build should also emit a warning when building larger than
->>>      2GB initrds, with a list of bootloaders that support the new
->>> protocol.
->> Actually i just knew QEMU(Seabios + optionrom(linuxboot_dma.bin)) can
->> support ~4GB initrd so far.
+>> 10d674a USB: When hot reset for USB3 fails, try warm reset.
+>> https://marc.info/?l=linux-usb&m=131603549603799&w=2
 >>
->> i just drafted at patch to add this field. could you have a look.
->> another patch which is to document initrd_addr64_max is ongoing.
->>
->> commit db463ac9c1975f115d1ce2acb82d530c2b63b888
->> Author: Li Zhijian <lizhijian@cn.fujitsu.com>
->> Date:   Fri Nov 9 17:24:14 2018 +0800
->>
->>      x86: Add header field initrd_addr64_max
->>          Years ago, kernel had support load ~4GB initrd. But for some
->> weird reasons (
->>      avoid possible bootloader bugs), it only allow leave initrd under
->> 2GB address
->>      space(see initrd_addr_max fild at arch/x86/boot/header.S).
->>          So modern bootloaders have not chance to load >=2G initrd
->> previously.
->>          To avoid the potential of bugs lurking in dozens of major and
->> hundreds of
->>      minor iterations of various Linux bootloaders. Ingo suggests to add
->> a new field
->>      initrd_addr64_max. If bootloader believes that it can load initrd to
->>> =2G
->>      address space, it can use initrd_addr64_max as the maximum loading
->> address in
->>      stead of the old field initrd_addr_max.
->>
->> diff --git a/arch/x86/boot/header.S b/arch/x86/boot/header.S
->> index 4c881c8..5fc3ebe 100644
->> --- a/arch/x86/boot/header.S
->> +++ b/arch/x86/boot/header.S
->> @@ -300,7 +300,7 @@ _start:
->>          # Part 2 of the header, from the old setup.S
->>   
->>                  .ascii  "HdrS"          # header signature
->> -               .word   0x020e          # header version number (>= 0x0105)
->> +               .word   0x020f          # header version number (>= 0x0105)
->>                                          # or else old loadlin-1.5 will
->> fail)
->>                  .globl realmode_swtch
->>   realmode_swtch:        .word   0, 0            # default_switch, SETUPSEG
->> @@ -562,6 +562,12 @@ acpi_rsdp_addr:            .quad 0
->> # 64-bit physical pointer to the
->>                                                  # ACPI RSDP table, added
->> with
->>                                                  # version 2.14
->>   
->> +#ifdef CONFIG_INITRD_SIZE_4GB
->> +initrd_addr64_max:     .quad 0xffffffff        # allow ~4G initrd since
->> 2.15
->> +#else
->> +initrd_addr64_max:     .quad 0
-> Shouldn't this be 0x7fffffff?
->
-> And please update Documentation/x86/boot.txt
->
->
-> Juergen
+>> -Mathias
+> Checking for udev works well too in my case. So there is no need to check the warm flag.
+> 
+> Regarding the other point about the specific host+device combo which needs the flags cleared, I don't know how to proceed.
+> 
+
+I support just adding a udev check patch, want to send one?
+
+Current hub port reset code is wrong, causing real life issues today.
+
+The issue with the specific host+device is from 2011,
+The port reset code has changed completely since then.
+If it turns out to still be a issue we can make a host/device specific quirk.
+
+-Mathias
