@@ -2,78 +2,99 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5839CC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:21:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50EF8C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:22:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BF5520840
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:21:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BF5520840
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1741220840
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:22:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jBrYoCR9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1741220840
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728086AbeKITBK (ORCPT
+        id S1728100AbeKITBm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 14:01:10 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:44984 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727941AbeKITBK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 14:01:10 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id F1F814DB1F;
-        Fri,  9 Nov 2018 09:21:28 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.31])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 4B1BD1062253;
-        Fri,  9 Nov 2018 09:21:24 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Fri,  9 Nov 2018 10:21:28 +0100 (CET)
-Date:   Fri, 9 Nov 2018 10:21:24 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Chanho Min <chanho.min@lge.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Christian Brauner <christian@brauner.io>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Seungho Park <seungho1.park@lge.com>,
-        Inkyu Hwang <inkyu.hwang@lge.com>,
-        Donghwan Jung <donghwan.jung@lge.com>,
-        Jongsung Kim <neidhard.kim@lge.com>
-Subject: Re: [PATCH] exec: make de_thread() freezable
-Message-ID: <20181109092123.GA29945@redhat.com>
-References: <1541752656-12857-1-git-send-email-chanho.min@lge.com>
+        Fri, 9 Nov 2018 14:01:42 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:45714 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727827AbeKITBm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 14:01:42 -0500
+Received: by mail-lf1-f67.google.com with SMTP id b20so795576lfa.12
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 01:22:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NmPN+Owu6GiPAiCLF13e0L5saaFnuoWUktMMf+tJwsQ=;
+        b=jBrYoCR9Ut9yKMYUSJBx/MGK1qVtU3ETkar3uG9jKsffkcNDlzEQUf699GBJi1Gf0x
+         4MCsv/OyeWzPuB0DUrPdqvj8UKIKC9NuNhS5K1mLpzRYQZ51UL1/299LvjFlxGMmMFbT
+         cL4NxekgAA4oF3maV9qYfMhmZWyqLifi/EDdU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NmPN+Owu6GiPAiCLF13e0L5saaFnuoWUktMMf+tJwsQ=;
+        b=WwQiKc5IWUBlS0ePWx+9O57mXKapidcib8NVgu5abry3+w8jhV3V3FO/DGwHIAvEpY
+         Qifj3Kq01qSqQ+5aqZpF6bLV6n4quGOPicMU2ofKkMKchI5tjXrAK3jXCe5pklG47AKN
+         0quc9czEIh73GSkwubsr5eGw7kZRg2R3IYY4648imFf83p/3LMYAOoaJlXoETH7qGVJ3
+         /ppCId+4qRDNGmGt3sHpBOaMKtz34dvm/31NosxR9rMa/BJ7Rrl6iBd+l8YpuChbzXES
+         hLry6NpQ3j9OJGNYV6Id9BUzCAjwu4vpX29WZbIs+HZH8UUUIH8Q+2AjyA/vR+mEy3Vr
+         bbQA==
+X-Gm-Message-State: AGRZ1gJbgpUn7nwKVYL10RB/Nn3czSr+MxWIlAV5CQ7mWOvGgq1lIpdH
+        RGErvD8pfcTXhJeUCCSOk9Lcxd4RAX0OwH3abkYLNw==
+X-Google-Smtp-Source: AJdET5ePGaVXf7n73hMAAqCJV3P34IgoZ9lE0NqXNXNQmRVlNgANstBFZmgIkn/c18urY5U9yPjyRAPHtzgC2K7njes=
+X-Received: by 2002:a19:8d01:: with SMTP id p1mr4498871lfd.149.1541755319158;
+ Fri, 09 Nov 2018 01:21:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1541752656-12857-1-git-send-email-chanho.min@lge.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 09 Nov 2018 09:21:29 +0000 (UTC)
+References: <20181101004410.6893-1-natechancellor@gmail.com>
+In-Reply-To: <20181101004410.6893-1-natechancellor@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 9 Nov 2018 10:21:47 +0100
+Message-ID: <CACRpkdb_zHuTshzaHYUbkEnSdYhk1Moyu1QWTRzwXOELLNoV1A@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: sprd: Use define directive for
+ sprd_pinconf_params values
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Lyra Zhang <zhang.lyra@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/09, Chanho Min wrote:
+On Thu, Nov 1, 2018 at 1:44 AM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+
+> Clang warns when one enumerated type is implicitly converted to another:
 >
-> @@ -1083,7 +1084,7 @@ static int de_thread(struct task_struct *tsk)
->  	while (sig->notify_count) {
->  		__set_current_state(TASK_KILLABLE);
->  		spin_unlock_irq(lock);
-> -		schedule();
-> +		freezable_schedule();
+> drivers/pinctrl/sprd/pinctrl-sprd.c:845:19: warning: implicit conversion
+> from enumeration type 'enum sprd_pinconf_params' to different
+> enumeration type 'enum pin_config_param' [-Wenum-conversion]
+>         {"sprd,control", SPRD_PIN_CONFIG_CONTROL, 0},
+>         ~                ^~~~~~~~~~~~~~~~~~~~~~~
+> drivers/pinctrl/sprd/pinctrl-sprd.c:846:22: warning: implicit conversion
+> from enumeration type 'enum sprd_pinconf_params' to different
+> enumeration type 'enum pin_config_param' [-Wenum-conversion]
+>         {"sprd,sleep-mode", SPRD_PIN_CONFIG_SLEEP_MODE, 0},
+>         ~                   ^~~~~~~~~~~~~~~~~~~~~~~~~~
+>
+> It is expected that pinctrl drivers can extend pin_config_param because
+> of the gap between PIN_CONFIG_END and PIN_CONFIG_MAX so this conversion
+> isn't an issue. Most drivers that take advantage of this define the
+> PIN_CONFIG variables as constants, rather than enumerated values. Do the
+> same thing here so that Clang no longer warns.
 
-Thanks, but please note another schedule() in "if (!thread_group_leader(tsk))"
-branch, we probably want to change it too?
+Patch applied with Baolin's review tag.
 
-Oleg.
-
+Yours,
+Linus Walleij
