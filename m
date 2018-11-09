@@ -2,142 +2,194 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98596C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 16:11:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E8EC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 16:13:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FB032086C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 16:11:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3DE920883
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 16:13:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="iIQpBkIU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FB032086C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bb4fTrCV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3DE920883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728500AbeKJBwi (ORCPT
+        id S1728300AbeKJBzD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 20:52:38 -0500
-Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:54528 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727784AbeKJBwh (ORCPT
+        Fri, 9 Nov 2018 20:55:03 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:38620 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728115AbeKJBzC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 20:52:37 -0500
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 6100E24E209B;
-        Fri,  9 Nov 2018 08:11:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1541779884; bh=nQH7SD0d3a97arVqZHOJsi9CTq95Qs8G6YR4ra7lzJs=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=iIQpBkIUxtNviXaExTKGhi7LndHlEoDyppS7KcHteOxXUyk3ihtnl2x83DYAxKj3Y
-         gcFzI/eIORmQK24dEKS4NKzcni1TIX89XyMcGGchVbmShRg3GAZ8GW+YYOp8CoMyg5
-         Rh3Mymlh9Jjvmn1HxOJMW+T7Zp6kr08SqsrfPuiUBiLNXxEDwMaS4rnpBtxDYNSjpz
-         cAKnJYUnCf4hg03cyo+BpEDLa3DPdakaTpTt7ETwqKqD/xSfv67HCUjvTzCvimbzR6
-         zocFYscxtWTnMtEbGHE1D+3pU06vl6olgU8w+qRQ/x02gSFbRQhJmxVbqlMRyCy8QJ
-         qv8+9uFYo04yw==
-Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 35C4A335C;
-        Fri,  9 Nov 2018 08:11:24 -0800 (PST)
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 9 Nov 2018 08:11:23 -0800
-Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
- by DE02WEHTCB.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Fri,
- 9 Nov 2018 17:11:21 +0100
-From:   Alexey Brodkin <alexey.brodkin@synopsys.com>
-To:     "luto@amacapital.net" <luto@amacapital.net>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-audit@redhat.com" <linux-audit@redhat.com>,
-        "vineet.gupta1@synopsys.com" <vineet.gupta1@synopsys.com>,
-        "eparis@redhat.com" <eparis@redhat.com>,
-        "ldv@altlinux.org" <ldv@altlinux.org>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "paul@paul-moore.com" <paul@paul-moore.com>,
-        "lineprinter@altlinux.org" <lineprinter@altlinux.org>
-Subject: Re: [PATCH 06/13] arc: define syscall_get_arch()
-Thread-Topic: [PATCH 06/13] arc: define syscall_get_arch()
-Thread-Index: AQHUd9qaMCi82XFEfUiWRqvqbbOyn6VHbuEAgAAPSYCAAAK8AIAACBoAgAAEOYA=
-Date:   Fri, 9 Nov 2018 16:11:21 +0000
-Message-ID: <215d66fd9a197b631973c9ff75943b4c1216b899.camel@synopsys.com>
-References: <20181109031605.GF21511@altlinux.org>
-         <e729da9ed78b6b62463a27d3012ac63c7b66be08.camel@synopsys.com>
-         <CALCETrUzfOcLYDUW6s1Ra2xduDCQSbscKBw=vApCP2HNmfDmMw@mail.gmail.com>
-         <456a69c6e01a6ab5b1af6d459a249388f8b4c1f5.camel@synopsys.com>
-         <C6CF3942-3307-431F-B76C-B550BB48F472@amacapital.net>
-In-Reply-To: <C6CF3942-3307-431F-B76C-B550BB48F472@amacapital.net>
-Accept-Language: en-US, ru-RU
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Evolution 3.30.2 (3.30.2-2.fc29) 
-x-originating-ip: [10.225.15.87]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <EFC7EF57328FDB49A77D330ABAF0DA7D@internal.synopsys.com>
-Content-Transfer-Encoding: base64
+        Fri, 9 Nov 2018 20:55:02 -0500
+Received: by mail-ed1-f67.google.com with SMTP id a2-v6so2179509edi.5
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 08:13:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dDnRpM4qUMnSqIChGLFHEHIQ2tozfkBOGnOeFt7D4vs=;
+        b=Bb4fTrCVhmP62QXdGfS0C/iIXffqmIKcN7LzILXFXF2q+jUmFZe0/CfyRtK1gObXKj
+         ZsdtftCgWY1t/+x0lyoDAU1yRrqKqSfBANqvNyzsSsjiMG2GWKyrJj36WHexBoZbStcE
+         sjEpJgw5u6ZafgnBP+FM5zNqJx1S+LMehEjzj/TtkCX4yUOxqVhuBtowBsHaWpcaVbpi
+         58KnR2KRo6t0z9RGG0rKD98AgaFYeZewe8UD4jT6rSVfq5m4osFeYY7U+n7gTGl4KUoV
+         cVFIxSGrd7iKm7eb8jYjdu0U3UbtsCAM19Sm2KuLLHzhU6X6KMuao9qVviCIzvtnHMXH
+         pbiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dDnRpM4qUMnSqIChGLFHEHIQ2tozfkBOGnOeFt7D4vs=;
+        b=uPX85mco2NCHgmG3DoMY866uoIgPJ+uTjwxTEXo88m4+Z7JrPDnxKtSiMTgRqdeTuG
+         XKrsBeCzbS+zp9JYBEMGONQXEXJ8qch0DmAgLj8oNWwteckvc5hLBPdw58PQ1zwkvYsI
+         UOcrjHaD9w3qZisxphad6QnQlAduBwvIO35O9g/ABH8+NpKaoALnP9Crg3tZ9cx2EUfu
+         gdE1Hcq2ufTrWP74WgubMn7TfA+quoOANgDcH2GonDqaFRLXYNv6nQ9LX3r/HzgOLUyL
+         fnsagNy9avwQUQJIVOe+5aoiVCDHKTpueukWmybzlcardZZLUpMW2QMeU0U4LxUflV/p
+         nnng==
+X-Gm-Message-State: AGRZ1gLSmas3ws3AhHYMw9fAIue7Nu1sNPOJLnCl7KG8yqkEILE1LcSr
+        gqi8WE5BmZZbuu+H1TXqPOA7+uyYzGr12vtqYkY=
+X-Google-Smtp-Source: AJdET5dop/pI+yNO2ejLmSp5RRyNizLTrH/vz4SmuvvupbFmSnoBblwv/yzlLT0CxHMEJDSSqThixGx01hqRY0O33fs=
+X-Received: by 2002:a17:906:753:: with SMTP id z19-v6mr2304222ejb.175.1541780027440;
+ Fri, 09 Nov 2018 08:13:47 -0800 (PST)
 MIME-Version: 1.0
+References: <CANmpu8XY10CgYsnGn9hVDzGJQyWdwNihpYu3So62KtNwrkwGXw@mail.gmail.com>
+ <8736sbkq2w.fsf@xmission.com>
+In-Reply-To: <8736sbkq2w.fsf@xmission.com>
+From:   Rian Quinn <rianquinn@gmail.com>
+Date:   Fri, 9 Nov 2018 09:13:36 -0700
+Message-ID: <CANmpu8Wj+Kq7nnWA48QPcn9ZyJT+=-LcRnbzxkHJL1wq4U_d2Q@mail.gmail.com>
+Subject: Re: x86_64 INIT/SIPI Bug
+To:     ebiederm@xmission.com
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgQW5keSwNCg0KT24gRnJpLCAyMDE4LTExLTA5IGF0IDA3OjU2IC0wODAwLCBBbmR5IEx1dG9t
-aXJza2kgd3JvdGU6DQo+ID4gT24gTm92IDksIDIwMTgsIGF0IDc6MjcgQU0sIEFsZXhleSBCcm9k
-a2luIDxhbGV4ZXkuYnJvZGtpbkBzeW5vcHN5cy5jb20+IHdyb3RlOg0KPiA+IA0KPiA+IEhpIEFu
-ZHksDQo+ID4gDQo+ID4gPiBPbiBGcmksIDIwMTgtMTEtMDkgYXQgMDc6MTcgLTA4MDAsIEFuZHkg
-THV0b21pcnNraSB3cm90ZToNCj4gPiA+IE9uIEZyaSwgTm92IDksIDIwMTggYXQgNjoyMiBBTSBB
-bGV4ZXkgQnJvZGtpbg0KPiA+ID4gPGFsZXhleS5icm9ka2luQHN5bm9wc3lzLmNvbT4gd3JvdGU6
-DQo+ID4gPiA+IEhpIERtaXRyeSwNCj4gPiA+ID4gDQo+ID4gPiA+ID4gT24gRnJpLCAyMDE4LTEx
-LTA5IGF0IDA2OjE2ICswMzAwLCBEbWl0cnkgVi4gTGV2aW4gd3JvdGU6DQo+ID4gPiA+ID4gc3lz
-Y2FsbF9nZXRfYXJjaCgpIGlzIHJlcXVpcmVkIHRvIGJlIGltcGxlbWVudGVkIG9uIGFsbCBhcmNo
-aXRlY3R1cmVzDQo+ID4gPiA+ID4gdGhhdCB1c2UgdHJhY2Vob29rX3JlcG9ydF9zeXNjYWxsX2Vu
-dHJ5KCkgaW4gb3JkZXIgdG8gZXh0ZW5kDQo+ID4gPiA+ID4gdGhlIGdlbmVyaWMgcHRyYWNlIEFQ
-SSB3aXRoIFBUUkFDRV9HRVRfU1lTQ0FMTF9JTkZPIHJlcXVlc3QuDQo+ID4gPiA+ID4gDQo+ID4g
-PiA+ID4gU2lnbmVkLW9mZi1ieTogRG1pdHJ5IFYuIExldmluIDxsZHZAYWx0bGludXgub3JnPg0K
-PiA+ID4gPiA+IC0tLQ0KPiA+ID4gPiA+IGFyY2gvYXJjL2luY2x1ZGUvYXNtL3N5c2NhbGwuaCB8
-IDYgKysrKysrDQo+ID4gPiA+ID4gaW5jbHVkZS91YXBpL2xpbnV4L2F1ZGl0LmggICAgIHwgMSAr
-DQo+ID4gPiA+ID4gMiBmaWxlcyBjaGFuZ2VkLCA3IGluc2VydGlvbnMoKykNCj4gPiA+ID4gDQo+
-ID4gPiA+IFtzbmlwXQ0KPiA+ID4gPiANCj4gPiA+ID4gPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS91
-YXBpL2xpbnV4L2F1ZGl0LmggYi9pbmNsdWRlL3VhcGkvbGludXgvYXVkaXQuaA0KPiA+ID4gPiA+
-IGluZGV4IDgxOGFlNjkwYWI3OS4uYTcxNDljZWI1Yjk4IDEwMDY0NA0KPiA+ID4gPiA+IC0tLSBh
-L2luY2x1ZGUvdWFwaS9saW51eC9hdWRpdC5oDQo+ID4gPiA+ID4gKysrIGIvaW5jbHVkZS91YXBp
-L2xpbnV4L2F1ZGl0LmgNCj4gPiA+ID4gPiBAQCAtMzc1LDYgKzM3NSw3IEBAIGVudW0gew0KPiA+
-ID4gPiA+IA0KPiA+ID4gPiA+ICNkZWZpbmUgQVVESVRfQVJDSF9BQVJDSDY0ICAgKEVNX0FBUkNI
-NjR8X19BVURJVF9BUkNIXzY0QklUfF9fQVVESVRfQVJDSF9MRSkNCj4gPiA+ID4gPiAjZGVmaW5l
-IEFVRElUX0FSQ0hfQUxQSEEgICAgIChFTV9BTFBIQXxfX0FVRElUX0FSQ0hfNjRCSVR8X19BVURJ
-VF9BUkNIX0xFKQ0KPiA+ID4gPiA+ICsjZGVmaW5lIEFVRElUX0FSQ0hfQVJDICAgICAgICAgICAg
-ICAgKEVNX0FSQykNCj4gPiA+ID4gDQo+ID4gPiA+IFNpbWlsYXJseSBoZXJlIHdlIG5lZWQgdG8g
-aGF2ZToNCj4gPiA+ID4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLT44LS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0NCj4gPiA+ID4gKyNkZWZpbmUgQVVESVRfQVJDSF9BUkMgICAgICAg
-ICAoRU1fQVJDfEVNX0FSQ1YyKQ0KPiA+ID4gPiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-PjgtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiA+ID4gPiANCj4gPiA+IA0KPiA+ID4g
-SHVoPyAgSG93IGRvZXMgdGhlIGJpdHdpc2Ugb3Igb2YgdHdvIEVMRiBtYWNoaW5lIGNvZGVzIG1h
-a2UgYW55IHNlbnNlPw0KPiA+IA0KPiA+IE9vcHMuLi4gSSBkaWRuJ3QgcmVhZCBleGFtcGxlcyBv
-ZiBBVURJVF9BUkNIX0FMUEhBIGFib3ZlIDooDQo+ID4gSW5kZWVkIHRoYXQgd2FzIHN0dXBpZC4N
-Cj4gPiANCj4gPiBCdXQgd2hhdCB3b3VsZCBiZSBhIHByb3BlciBmaXggdGhlbj8NCj4gPiANCj4g
-PiBTb21ldGhpbmcgbGlrZSB0aGF0Pw0KPiA+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0+
-OC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+ID4gI2RlZmluZSBBVURJVF9BUkNIX0FS
-QyAgICAgICAgICAgICAgIChFTV9BUkMpDQo+ID4gI2RlZmluZSBBVURJVF9BUkNIX0FSQ1YyICAg
-ICAgICAgICAgIChFTV9BUkNWMikNCj4gPiANCj4gPiANCj4gPiBzdGF0aWMgaW5saW5lIGludCBz
-eXNjYWxsX2dldF9hcmNoKHZvaWQpDQo+ID4gew0KPiA+ICNpZmRlZiBfX0FSQzcwMF9fDQo+ID4g
-ICAgICAgcmV0dXJuIEFVRElUX0FSQ0hfQVJDOw0KPiA+ICNlbHNlDQo+ID4gICAgICAgcmV0dXJu
-IEFVRElUX0FSQ0hfQVJDVjI7DQo+ID4gI2VuZGlmDQo+ID4gfQ0KPiA+IC0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0+OC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+ID4gDQo+IA0K
-PiBNYXliZSwgYnV0IEkga25vdyBiYXNpY2FsbHkgbm90aGluZyBhYm91dCBBUkMuICBJcyB0aGUg
-c3lzY2FsbCBudW1iZXJpbmcgb3IgY2FsbGluZyBjb252ZW50aW9uIGRpZmZlcmVudCBvbiBBUkMg
-dnMgQVJDdjI/DQoNClN5c2NhbGwgbnVtYmVyaW5nIHNob3VsZCBiZSB0aGUgc2FtZSBhcyB3ZSB1
-c2UgVUFQSSBmb3IgYm90aCBBUkNvbXBhY3QgKEFLQSBBUkN2MSkNCmFuZCBBUkN2Mi4gQXMgZm9y
-IGNhbGxpbmcgY29udmVudGlvbiBJIHRoaW5rIGl0IGluZGVlZCBkaWZmZXJzLg0KDQpOb3RlIEFS
-Q29tcGFjdCBhbmQgQVJDdjIgSVNBcyBhcmUgYmluYXJ5IGluY29tcGF0aWJsZSENCg0KRXZlbiB0
-aG91Z2ggYXNzZW1ibHkgbG9vayBwcmV0dHkgbXVjaCB0aGUgc2FtZSAoc2FucyBpbnN0cnVjdGlv
-bnMNCmF2YWlsYWJsZSBvbmx5IGZvciBlaXRoZXIgQVJDb21wYWN0IG9yIEFSQ3YyKSBlbmNvZGlu
-Z3MgYXJlIGRpZmZlcmVudCBzbw0KaW4gdGhhdCBzZW5zZSB0aGVzZSBhcmUgY29tcGxldGVseSBk
-aWZmZXJlbnQgYXJjaGl0ZWN0dXJlcy4NCg0KQWxzbyBJJ20gd29uZGVyaW5nIHdoYXQgY291bGQg
-YmUgb3RoZXIgY2FzZXMgZm9yIHVzZSBvZiBzeXNjYWxsX2dldF9hcmNoKCkuDQoNClNvIEknZCBz
-YXkgaXQncyBiZXR0ZXIgdG8gcmVwb3J0IGRpZmZlcmVudCB2YWx1ZXMgZm9yIEFSQyBJU0FzLg0K
-QW5kIGdpdmVuIHdlIHVzZSB0aGUgc2FtZSB2YWx1ZXMgYXMgaW4gQmludXRpbHMgSU1ITyBpdCB3
-b3VsZCBiZSBnb29kDQp0byBub3QgbWl4IElEcyBoZXJlLg0KDQotQWxleGV5DQo=
+>> I apologize upfront if this is the wrong place to post this, pretty new to this.
+>>
+>> We are working on the Bareflank Hypervisor (www.bareflank.org), and we
+>> are passing through the INIT/SIPI process (similar to how a VMX
+>> rootkit from EFI might boot the OS) and we noticed that on Arch Linux,
+>> the INIT/SIPI process stalls, something we are not seeing on Ubuntu.
+>>
+>> Turns out, to fix the issue, we had to turn on cpu_init_udelay=10000.
+>> The problem is, once a hypervisor is turned on, even one that is doing
+>> nothing but passing through the instructions, the "quick" that is
+>> detailed below fails as the kernel is not giving the CPU enough time
+>> to perform a VMExit/VMEntry (even through the VMExit is not doing
+>> anything).
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/x86/kernel/smpboot.c?h=v4.20-rc1#n650
+>>
+>> You can see our INIT/SIPI code here if you are interested:
+>> https://github.com/rianquinn/extended_apis/blob/hyperkernel_1/bfvmm/src/hve/arch/intel_x64/vmexit/init_signal.cpp
+>>
+>> The reason I suggest this is a bug is the manual clearly states that a
+>> wait is required and the "quirk" that turns off this delay prevents
+>> code like this from working. Would it be possible to either:
+>> - Turn this off by default, but still allow someone to turn it on if
+>> they are confident the delay is not needed?
+>> - Provide a generic way to turn this off (maybe if a hypervisor is
+>> detected, it defaults to off)?
+>>
+>> I'd be more than happy to provide a patch and test, but I'm not sure
+>> if there is any interest in changing this code.
+>
+> I would suggest testing either for your hypervisor or simply for being
+> inside some hypervisor.  As I read the code it is only turning off the
+> 10ms delay on processors where it is know that it is safe to do so.
+> This is a case where it is not safe to disable the 10ms delay,
+> so it makes sense not not turn off the delay.
+
+I think the best solution would be to simply check CPUID leaf 0x40000000
+as every hypervisor (at least the legit ones) set this leaf to a unique
+ID that can be used to see if a hypervisor is running. Specifically, I
+would patch the smp_quirk_init_udelay() function to check to see if
+CPUID 0x40000000 returns 0. If it does, no hypervisor is running in which case
+the quirk can set the delay to 0. If the leaf is not 0, the quirk is ignored
+and the delay is set to UDELAY_10MS_DEFAULT as it does already.
+
+Thoughts? I think the patch would look something like:
+
+    static void __init smp_quirk_init_udelay(void)
+    {
++       unsigned int eax, ebx, ecx, edx;
++
++    eax = 0x40000000;
++    ecx = 0;
++    native_cpuid(&eax, &ebx, &ecx, &edx);
++
+        /* if cmdline changed it from default, leave it alone */
+        if (init_udelay != UINT_MAX)
+            return;
+
++       /* ensure a hypervisor is not running */
++       if (ebx == 0) {
++           /* if modern processor, use no delay */
++           if (((boot_cpu_data.x86_vendor == X86_VENDOR_INTEL) &&
+(boot_cpu_data.x86 == 6)) ||
++               ((boot_cpu_data.x86_vendor == X86_VENDOR_AMD) &&
+(boot_cpu_data.x86 >= 0xF))) {
++               init_udelay = 0;
++               return;
++           }
++       }
++
+-       /* if modern processor, use no delay */
+-       if (((boot_cpu_data.x86_vendor == X86_VENDOR_INTEL) &&
+(boot_cpu_data.x86 == 6)) ||
+-           ((boot_cpu_data.x86_vendor == X86_VENDOR_AMD) &&
+(boot_cpu_data.x86 >= 0xF))) {
+-           init_udelay = 0;
+-           return;
+-       }
+        /* else, use legacy delay */
+        init_udelay = UDELAY_10MS_DEFAULT;
+    }
+
+On Thu, Nov 8, 2018 at 6:16 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>
+> Rian Quinn <rianquinn@gmail.com> writes:
+>
+> > I apologize upfront if this is the wrong place to post this, pretty new to this.
+> >
+> > We are working on the Bareflank Hypervisor (www.bareflank.org), and we
+> > are passing through the INIT/SIPI process (similar to how a VMX
+> > rootkit from EFI might boot the OS) and we noticed that on Arch Linux,
+> > the INIT/SIPI process stalls, something we are not seeing on Ubuntu.
+> >
+> > Turns out, to fix the issue, we had to turn on cpu_init_udelay=10000.
+> > The problem is, once a hypervisor is turned on, even one that is doing
+> > nothing but passing through the instructions, the "quick" that is
+> > detailed below fails as the kernel is not giving the CPU enough time
+> > to perform a VMExit/VMEntry (even through the VMExit is not doing
+> > anything).
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/x86/kernel/smpboot.c?h=v4.20-rc1#n650
+> >
+> > You can see our INIT/SIPI code here if you are interested:
+> > https://github.com/rianquinn/extended_apis/blob/hyperkernel_1/bfvmm/src/hve/arch/intel_x64/vmexit/init_signal.cpp
+> >
+> > The reason I suggest this is a bug is the manual clearly states that a
+> > wait is required and the "quirk" that turns off this delay prevents
+> > code like this from working. Would it be possible to either:
+> > - Turn this off by default, but still allow someone to turn it on if
+> > they are confident the delay is not needed?
+> > - Provide a generic way to turn this off (maybe if a hypervisor is
+> > detected, it defaults to off)?
+> >
+> > I'd be more than happy to provide a patch and test, but I'm not sure
+> > if there is any interest in changing this code.
+>
+> I would suggest testing either for your hypervisor or simply for being
+> inside some hypervisor.  As I read the code it is only turning off the
+> 10ms delay on processors where it is know that it is safe to do so.
+> This is a case where it is not safe to disable the 10ms delay,
+> so it makes sense not not turn off the delay.
+>
+> Eric
+>
