@@ -4,60 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41BDCC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:08:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91741C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:08:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 009E820883
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:08:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F08120840
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:08:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=austad-us.20150623.gappssmtp.com header.i=@austad-us.20150623.gappssmtp.com header.b="CBzyzSVb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 009E820883
+	dkim=pass (2048-bit key) header.d=austad-us.20150623.gappssmtp.com header.i=@austad-us.20150623.gappssmtp.com header.b="qm7Zk+4O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F08120840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=austad.us
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728150AbeKITrx (ORCPT
+        id S1728195AbeKITr4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 14:47:53 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:37826 "EHLO
+        Fri, 9 Nov 2018 14:47:56 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:32942 "EHLO
         mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728078AbeKITrv (ORCPT
+        with ESMTP id S1728086AbeKITrz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 14:47:51 -0500
-Received: by mail-lf1-f68.google.com with SMTP id p17so914987lfh.4
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 02:07:57 -0800 (PST)
+        Fri, 9 Nov 2018 14:47:55 -0500
+Received: by mail-lf1-f68.google.com with SMTP id i26so925223lfc.0
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 02:08:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=austad-us.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Qv1gJptpDadZ7xmFGWambplvl4vFsB88kJL0ym+PObY=;
-        b=CBzyzSVbSRQt4tmbJxUg5TUxNIKIo0u5cosWt/d6OhNGb8DmD2UZ42Eq53Ypz1FEAn
-         hBm/ab+Cf5xO1u1rOcd2B6HP9FQqUJ5ofCj49Oflfx/6D6h9WHsbcBe10kW+2pVRFEJL
-         sbYK4H+7MO9jUZPSAukK6u0T23JDi2FKLmvIMCaZ6eBZTuneAteOsyATAYTO/VQREWpT
-         NzZVQvg3hPyFbmBDtD/+kNEpwLvd5A6A5T9l3MkPyjMAJoDQLLeT9bQJA5ZcmF/3v58G
-         UYgdow9T7/NUbefnfKerL1rNi6n30/Xyk7/MRhc0yvY5Tq5MKhpTJRA0/aKWGSvMkNZC
-         M1yw==
+        bh=4Y32pnofdGwY40blovyeS3tP03mZN23o/Nx3ToDc44c=;
+        b=qm7Zk+4ONa/btjkO7l+0r8cJo/9x8+KRuoJYikoeE/YiaIVPYNrAvEIvxNNMuXv+Xx
+         kflY6jOBmEVO3tcMy5vXBi7YN53LyYh2HNqFNQOvhyHP3CvDNA0W0772oHprlxXoB+8O
+         cwk2cyV8cuZdCyPAlXb6ybfEkjMlE155P4QLPmohMFBVByJ12As9DahwCq3YE+rbVeVS
+         Z6BRDCZu34bY2d1c9OA+CEzBUQbHet+pvKGMJbsqOpW3Mh4A17hlFNNBn5I5fQ+spaCD
+         ZgWwR5ZdSIxIIlADlN5vjNl0s5w4xIgx+Wk5+r82RfRtz+nyq16rOW9+0iyAsX3ipa05
+         xQRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Qv1gJptpDadZ7xmFGWambplvl4vFsB88kJL0ym+PObY=;
-        b=MXO65+95Zq7qA7a/8Nna/s7gHMOCskzqMcAmd9KO1EyIpxPL06xWxQczsAYMd6rrT2
-         TqM/XTaauPkazt+0h4GWOhjsSFgS3tvg+ZIWSeFkCh9s0zjuR53rpEmPq/0OIWxQKYII
-         M0mvSnoK3G5Qd5OnZu1NvHvpIQFWjGpmmw1KkJbTHmVpNpFjAbaUUoYYKp1/51x2N5fK
-         gCn9mHKLGIdP2ibf/1r5Yby/aFOrHxrCBLGjQDSom27CvW8vy5fJGGsWv+ZIqJs+RtGR
-         koal52KoA8BXZW1wkcQ0sVQWjEPPTXWlzgtWf0CiXV0dNUkGWS9mgHmBxW16HW5F6D6M
-         GefA==
-X-Gm-Message-State: AGRZ1gIKoCDpV1uoplalgBHdTmz2YYDAPDeeou022rV2GMRPyvfA2Xof
-        Lz0D7rzBH4vs4ELDffc9aJRX7ziueucBgdy2
-X-Google-Smtp-Source: AJdET5fSgPNqh4tJXIwdR/HTGQXuhQLITFxjzhvoGWX7XNrPfTEaCztuvQXr3gJLfSOID3nijqX7gA==
-X-Received: by 2002:a19:d295:: with SMTP id j143mr4904496lfg.50.1541758075867;
-        Fri, 09 Nov 2018 02:07:55 -0800 (PST)
+        bh=4Y32pnofdGwY40blovyeS3tP03mZN23o/Nx3ToDc44c=;
+        b=AIdn1eMWtUFHGeRrZPKFVoJoICUtHVPG07luPqUH2Wa7Q4sc++wumln1dMrvoei1dL
+         Ed1NNPwIq/KnfXrfIbMl3Q8Pi/Xem8onByLwxKUNohVj1e4ECoRTHqe8tMuY8kjlsXSV
+         PVnxYF7YDNeeJ5Kt3RNNxm/larQByMsdgRH9bO+RKrFJfWSxIbIuxJDbKUqzdi2sAWkS
+         znBy1pYFrC8nqHxgTJQvkWrIOHLgQ8uygheVZRFjz65FIIZUyVgFTUen/zTNJip6f7fK
+         X6/6DNV5jz4sMbhve5Ku5lsyPDoo3pk2btOtjJpFvSAONjYnIv9nF3PWiPuOoVbA4XP2
+         osAQ==
+X-Gm-Message-State: AGRZ1gI3i37a8tf274gEK5EoxSN2JP/pjPzgVMPLvAdNfepso2jjc3st
+        eoGQ0CGNaZRje8qWALkLYDdzBBjTTh0QAeRu
+X-Google-Smtp-Source: AJdET5fZ0j7sog/GOehbQ+ePqyvLsHUiA7hMEdDZOjJJYdvjG+nx1kmRWcSfcV2RPGvPX33f5EM6KA==
+X-Received: by 2002:a19:5059:: with SMTP id z25mr4862170lfj.120.1541758078960;
+        Fri, 09 Nov 2018 02:07:58 -0800 (PST)
 Received: from sisyphus.home.austad.us (11.92-220-88.customer.lyse.net. [92.220.88.11])
-        by smtp.gmail.com with ESMTPSA id u65sm1265576lff.54.2018.11.09.02.07.54
+        by smtp.gmail.com with ESMTPSA id u65sm1265576lff.54.2018.11.09.02.07.57
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 09 Nov 2018 02:07:55 -0800 (PST)
+        Fri, 09 Nov 2018 02:07:57 -0800 (PST)
 From:   Henrik Austad <henrik@austad.us>
 To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -67,9 +67,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         mathieu.desnoyers@efficios.com, jdesfossez@efficios.com,
         dvhart@infradead.org, bristot@redhat.com,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 03/17] futex: Remove rt_mutex_deadlock_account_*()
-Date:   Fri,  9 Nov 2018 11:07:31 +0100
-Message-Id: <1541758065-10952-4-git-send-email-henrik@austad.us>
+Subject: [PATCH 05/17] futex,rt_mutex: Provide futex specific rt_mutex API
+Date:   Fri,  9 Nov 2018 11:07:33 +0100
+Message-Id: <1541758065-10952-6-git-send-email-henrik@austad.us>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1541758065-10952-1-git-send-email-henrik@austad.us>
 References: <1541758065-10952-1-git-send-email-henrik@austad.us>
@@ -80,9 +80,20 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Peter Zijlstra <peterz@infradead.org>
 
-commit fffa954fb528963c2fb7b0c0084eb77e2be7ab52 upstream
+commit 5293c2efda37775346885c7e924d4ef7018ea60b upstream.
 
-These are unused and clutter up the code.
+Part of what makes futex_unlock_pi() intricate is that
+rt_mutex_futex_unlock() -> rt_mutex_slowunlock() can drop
+rt_mutex::wait_lock.
+
+This means it cannot rely on the atomicy of wait_lock, which would be
+preferred in order to not rely on hb->lock so much.
+
+The reason rt_mutex_slowunlock() needs to drop wait_lock is because it can
+race with the rt_mutex fastpath, however futexes have their own fast path.
+
+Since futexes already have a bunch of separate rt_mutex accessors, complete
+that set and implement a rt_mutex variant without fastpath for them.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: juri.lelli@arm.com
@@ -93,184 +104,204 @@ Cc: mathieu.desnoyers@efficios.com
 Cc: jdesfossez@efficios.com
 Cc: dvhart@infradead.org
 Cc: bristot@redhat.com
-Link: http://lkml.kernel.org/r/20170322104151.652692478@infradead.org
+Link: http://lkml.kernel.org/r/20170322104151.702962446@infradead.org
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-
-Conflicts:
-	kernel/locking/rtmutex.c (WAKE_Q)
-Tested-by: Henrik Austad <haustad@cisco.com>
+Tested-by:Henrik Austad <haustad@cisco.com>
 ---
- kernel/locking/rtmutex-debug.c |  9 --------
- kernel/locking/rtmutex-debug.h |  3 ---
- kernel/locking/rtmutex.c       | 47 ++++++++++++++++--------------------------
- kernel/locking/rtmutex.h       |  2 --
- 4 files changed, 18 insertions(+), 43 deletions(-)
+ kernel/futex.c                  | 30 +++++++++++-----------
+ kernel/locking/rtmutex.c        | 55 ++++++++++++++++++++++++++++++-----------
+ kernel/locking/rtmutex_common.h |  9 +++++--
+ 3 files changed, 62 insertions(+), 32 deletions(-)
 
-diff --git a/kernel/locking/rtmutex-debug.c b/kernel/locking/rtmutex-debug.c
-index 62b6cee..0613c4b 100644
---- a/kernel/locking/rtmutex-debug.c
-+++ b/kernel/locking/rtmutex-debug.c
-@@ -173,12 +173,3 @@ void debug_rt_mutex_init(struct rt_mutex *lock, const char *name)
- 	lock->name = name;
- }
+diff --git a/kernel/futex.c b/kernel/futex.c
+index 0f44952..e1200b9 100644
+--- a/kernel/futex.c
++++ b/kernel/futex.c
+@@ -910,7 +910,7 @@ void exit_pi_state_list(struct task_struct *curr)
+ 		pi_state->owner = NULL;
+ 		raw_spin_unlock_irq(&curr->pi_lock);
  
--void
--rt_mutex_deadlock_account_lock(struct rt_mutex *lock, struct task_struct *task)
--{
--}
+-		rt_mutex_unlock(&pi_state->pi_mutex);
++		rt_mutex_futex_unlock(&pi_state->pi_mutex);
+ 
+ 		spin_unlock(&hb->lock);
+ 
+@@ -1358,20 +1358,18 @@ static int wake_futex_pi(u32 __user *uaddr, u32 uval, struct futex_q *top_waiter
+ 	pi_state->owner = new_owner;
+ 	raw_spin_unlock(&new_owner->pi_lock);
+ 
+-	raw_spin_unlock_irq(&pi_state->pi_mutex.wait_lock);
 -
--void rt_mutex_deadlock_account_unlock(struct task_struct *task)
--{
--}
--
-diff --git a/kernel/locking/rtmutex-debug.h b/kernel/locking/rtmutex-debug.h
-index d0519c3..b585af9 100644
---- a/kernel/locking/rtmutex-debug.h
-+++ b/kernel/locking/rtmutex-debug.h
-@@ -9,9 +9,6 @@
-  * This file contains macros used solely by rtmutex.c. Debug version.
-  */
- 
--extern void
--rt_mutex_deadlock_account_lock(struct rt_mutex *lock, struct task_struct *task);
--extern void rt_mutex_deadlock_account_unlock(struct task_struct *task);
- extern void debug_rt_mutex_init_waiter(struct rt_mutex_waiter *waiter);
- extern void debug_rt_mutex_free_waiter(struct rt_mutex_waiter *waiter);
- extern void debug_rt_mutex_init(struct rt_mutex *lock, const char *name);
-diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
-index b066724d..6cf9dab7 100644
---- a/kernel/locking/rtmutex.c
-+++ b/kernel/locking/rtmutex.c
-@@ -937,8 +937,6 @@ takeit:
- 	 */
- 	rt_mutex_set_owner(lock, task);
- 
--	rt_mutex_deadlock_account_lock(lock, task);
--
- 	return 1;
- }
- 
-@@ -1331,8 +1329,6 @@ static bool __sched rt_mutex_slowunlock(struct rt_mutex *lock,
- 
- 	debug_rt_mutex_unlock(lock);
- 
--	rt_mutex_deadlock_account_unlock(current);
+-	deboost = rt_mutex_futex_unlock(&pi_state->pi_mutex, &wake_q);
 -
  	/*
- 	 * We must be careful here if the fast path is enabled. If we
- 	 * have no waiters queued we cannot set owner to NULL here
-@@ -1398,11 +1394,10 @@ rt_mutex_fastlock(struct rt_mutex *lock, int state,
- 				struct hrtimer_sleeper *timeout,
- 				enum rtmutex_chainwalk chwalk))
- {
--	if (likely(rt_mutex_cmpxchg_acquire(lock, NULL, current))) {
--		rt_mutex_deadlock_account_lock(lock, current);
-+	if (likely(rt_mutex_cmpxchg_acquire(lock, NULL, current)))
- 		return 0;
--	} else
--		return slowfn(lock, state, NULL, RT_MUTEX_MIN_CHAINWALK);
+-	 * First unlock HB so the waiter does not spin on it once he got woken
+-	 * up. Second wake up the waiter before the priority is adjusted. If we
+-	 * deboost first (and lose our higher priority), then the task might get
+-	 * scheduled away before the wake up can take place.
++	 * We've updated the uservalue, this unlock cannot fail.
+ 	 */
++	deboost = __rt_mutex_futex_unlock(&pi_state->pi_mutex, &wake_q);
 +
-+	return slowfn(lock, state, NULL, RT_MUTEX_MIN_CHAINWALK);
- }
- 
- static inline int
-@@ -1414,21 +1409,19 @@ rt_mutex_timed_fastlock(struct rt_mutex *lock, int state,
- 				      enum rtmutex_chainwalk chwalk))
- {
- 	if (chwalk == RT_MUTEX_MIN_CHAINWALK &&
--	    likely(rt_mutex_cmpxchg_acquire(lock, NULL, current))) {
--		rt_mutex_deadlock_account_lock(lock, current);
-+	    likely(rt_mutex_cmpxchg_acquire(lock, NULL, current)))
- 		return 0;
--	} else
--		return slowfn(lock, state, timeout, chwalk);
++	raw_spin_unlock_irq(&pi_state->pi_mutex.wait_lock);
+ 	spin_unlock(&hb->lock);
+-	wake_up_q(&wake_q);
+-	if (deboost)
 +
-+	return slowfn(lock, state, timeout, chwalk);
++	if (deboost) {
++		wake_up_q(&wake_q);
+ 		rt_mutex_adjust_prio(current);
++	}
+ 
+ 	return 0;
  }
+@@ -2259,7 +2257,7 @@ static int fixup_owner(u32 __user *uaddr, struct futex_q *q, int locked)
+ 		 * task acquired the rt_mutex after we removed ourself from the
+ 		 * rt_mutex waiters list.
+ 		 */
+-		if (rt_mutex_trylock(&q->pi_state->pi_mutex)) {
++		if (rt_mutex_futex_trylock(&q->pi_state->pi_mutex)) {
+ 			locked = 1;
+ 			goto out;
+ 		}
+@@ -2574,7 +2572,7 @@ retry_private:
+ 	if (!trylock) {
+ 		ret = rt_mutex_timed_futex_lock(&q.pi_state->pi_mutex, to);
+ 	} else {
+-		ret = rt_mutex_trylock(&q.pi_state->pi_mutex);
++		ret = rt_mutex_futex_trylock(&q.pi_state->pi_mutex);
+ 		/* Fixup the trylock return value: */
+ 		ret = ret ? 0 : -EWOULDBLOCK;
+ 	}
+@@ -2597,7 +2595,7 @@ retry_private:
+ 	 * it and return the fault to userspace.
+ 	 */
+ 	if (ret && (rt_mutex_owner(&q.pi_state->pi_mutex) == current))
+-		rt_mutex_unlock(&q.pi_state->pi_mutex);
++		rt_mutex_futex_unlock(&q.pi_state->pi_mutex);
  
- static inline int
- rt_mutex_fasttrylock(struct rt_mutex *lock,
- 		     int (*slowfn)(struct rt_mutex *lock))
- {
--	if (likely(rt_mutex_cmpxchg_acquire(lock, NULL, current))) {
--		rt_mutex_deadlock_account_lock(lock, current);
-+	if (likely(rt_mutex_cmpxchg_acquire(lock, NULL, current)))
- 		return 1;
--	}
-+
- 	return slowfn(lock);
- }
+ 	/* Unqueue and drop the lock */
+ 	unqueue_me_pi(&q);
+@@ -2904,7 +2902,7 @@ static int futex_wait_requeue_pi(u32 __user *uaddr, unsigned int flags,
+ 			spin_lock(q.lock_ptr);
+ 			ret = fixup_pi_state_owner(uaddr2, &q, current);
+ 			if (ret && rt_mutex_owner(&q.pi_state->pi_mutex) == current)
+-				rt_mutex_unlock(&q.pi_state->pi_mutex);
++				rt_mutex_futex_unlock(&q.pi_state->pi_mutex);
+ 			/*
+ 			 * Drop the reference to the pi state which
+ 			 * the requeue_pi() code acquired for us.
+@@ -2944,7 +2942,7 @@ static int futex_wait_requeue_pi(u32 __user *uaddr, unsigned int flags,
+ 		 * userspace.
+ 		 */
+ 		if (ret && rt_mutex_owner(pi_mutex) == current)
+-			rt_mutex_unlock(pi_mutex);
++			rt_mutex_futex_unlock(pi_mutex);
  
-@@ -1438,19 +1431,18 @@ rt_mutex_fastunlock(struct rt_mutex *lock,
- 				   struct wake_q_head *wqh))
- {
- 	WAKE_Q(wake_q);
-+	bool deboost;
+ 		/* Unqueue and drop the lock. */
+ 		unqueue_me_pi(&q);
+diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
+index b8d08c7..28c1d40 100644
+--- a/kernel/locking/rtmutex.c
++++ b/kernel/locking/rtmutex.c
+@@ -1486,15 +1486,23 @@ EXPORT_SYMBOL_GPL(rt_mutex_lock_interruptible);
  
--	if (likely(rt_mutex_cmpxchg_release(lock, current, NULL))) {
--		rt_mutex_deadlock_account_unlock(current);
-+	if (likely(rt_mutex_cmpxchg_release(lock, current, NULL)))
-+		return;
- 
--	} else {
--		bool deboost = slowfn(lock, &wake_q);
-+	deboost = slowfn(lock, &wake_q);
- 
--		wake_up_q(&wake_q);
-+	wake_up_q(&wake_q);
- 
--		/* Undo pi boosting if necessary: */
--		if (deboost)
--			rt_mutex_adjust_prio(current);
--	}
-+	/* Undo pi boosting if necessary: */
-+	if (deboost)
-+		rt_mutex_adjust_prio(current);
- }
- 
- /**
-@@ -1561,10 +1553,9 @@ EXPORT_SYMBOL_GPL(rt_mutex_unlock);
- bool __sched rt_mutex_futex_unlock(struct rt_mutex *lock,
- 				   struct wake_q_head *wqh)
- {
--	if (likely(rt_mutex_cmpxchg_release(lock, current, NULL))) {
--		rt_mutex_deadlock_account_unlock(current);
-+	if (likely(rt_mutex_cmpxchg_release(lock, current, NULL)))
- 		return false;
--	}
-+
- 	return rt_mutex_slowunlock(lock, wqh);
- }
- 
-@@ -1622,7 +1613,6 @@ void rt_mutex_init_proxy_locked(struct rt_mutex *lock,
- 	__rt_mutex_init(lock, NULL);
- 	debug_rt_mutex_proxy_lock(lock, proxy_owner);
- 	rt_mutex_set_owner(lock, proxy_owner);
--	rt_mutex_deadlock_account_lock(lock, proxy_owner);
- }
- 
- /**
-@@ -1638,7 +1628,6 @@ void rt_mutex_proxy_unlock(struct rt_mutex *lock,
- {
- 	debug_rt_mutex_proxy_unlock(lock);
- 	rt_mutex_set_owner(lock, NULL);
--	rt_mutex_deadlock_account_unlock(proxy_owner);
- }
- 
- /**
-diff --git a/kernel/locking/rtmutex.h b/kernel/locking/rtmutex.h
-index c406058..6607802 100644
---- a/kernel/locking/rtmutex.h
-+++ b/kernel/locking/rtmutex.h
-@@ -11,8 +11,6 @@
+ /*
+  * Futex variant with full deadlock detection.
++ * Futex variants must not use the fast-path, see __rt_mutex_futex_unlock().
   */
+-int rt_mutex_timed_futex_lock(struct rt_mutex *lock,
++int __sched rt_mutex_timed_futex_lock(struct rt_mutex *lock,
+ 			      struct hrtimer_sleeper *timeout)
+ {
+ 	might_sleep();
  
- #define rt_mutex_deadlock_check(l)			(0)
--#define rt_mutex_deadlock_account_lock(m, t)		do { } while (0)
--#define rt_mutex_deadlock_account_unlock(l)		do { } while (0)
- #define debug_rt_mutex_init_waiter(w)			do { } while (0)
- #define debug_rt_mutex_free_waiter(w)			do { } while (0)
- #define debug_rt_mutex_lock(l)				do { } while (0)
+-	return rt_mutex_timed_fastlock(lock, TASK_INTERRUPTIBLE, timeout,
+-				       RT_MUTEX_FULL_CHAINWALK,
+-				       rt_mutex_slowlock);
++	return rt_mutex_slowlock(lock, TASK_INTERRUPTIBLE,
++				 timeout, RT_MUTEX_FULL_CHAINWALK);
++}
++
++/*
++ * Futex variant, must not use fastpath.
++ */
++int __sched rt_mutex_futex_trylock(struct rt_mutex *lock)
++{
++	return rt_mutex_slowtrylock(lock);
+ }
+ 
+ /**
+@@ -1553,19 +1561,38 @@ void __sched rt_mutex_unlock(struct rt_mutex *lock)
+ EXPORT_SYMBOL_GPL(rt_mutex_unlock);
+ 
+ /**
+- * rt_mutex_futex_unlock - Futex variant of rt_mutex_unlock
+- * @lock: the rt_mutex to be unlocked
+- *
+- * Returns: true/false indicating whether priority adjustment is
+- * required or not.
++ * Futex variant, that since futex variants do not use the fast-path, can be
++ * simple and will not need to retry.
+  */
+-bool __sched rt_mutex_futex_unlock(struct rt_mutex *lock,
+-				   struct wake_q_head *wqh)
++bool __sched __rt_mutex_futex_unlock(struct rt_mutex *lock,
++				    struct wake_q_head *wake_q)
+ {
+-	if (likely(rt_mutex_cmpxchg_release(lock, current, NULL)))
+-		return false;
++	lockdep_assert_held(&lock->wait_lock);
++
++	debug_rt_mutex_unlock(lock);
++
++	if (!rt_mutex_has_waiters(lock)) {
++		lock->owner = NULL;
++		return false; /* done */
++	}
++
++	mark_wakeup_next_waiter(wake_q, lock);
++	return true; /* deboost and wakeups */
++}
+ 
+-	return rt_mutex_slowunlock(lock, wqh);
++void __sched rt_mutex_futex_unlock(struct rt_mutex *lock)
++{
++	WAKE_Q(wake_q);
++	bool deboost;
++
++	raw_spin_lock_irq(&lock->wait_lock);
++	deboost = __rt_mutex_futex_unlock(lock, &wake_q);
++	raw_spin_unlock_irq(&lock->wait_lock);
++
++	if (deboost) {
++		wake_up_q(&wake_q);
++		rt_mutex_adjust_prio(current);
++	}
+ }
+ 
+ /**
+diff --git a/kernel/locking/rtmutex_common.h b/kernel/locking/rtmutex_common.h
+index e317e1c..2441c2d 100644
+--- a/kernel/locking/rtmutex_common.h
++++ b/kernel/locking/rtmutex_common.h
+@@ -109,9 +109,14 @@ extern int rt_mutex_start_proxy_lock(struct rt_mutex *lock,
+ extern int rt_mutex_finish_proxy_lock(struct rt_mutex *lock,
+ 				      struct hrtimer_sleeper *to,
+ 				      struct rt_mutex_waiter *waiter);
++
+ extern int rt_mutex_timed_futex_lock(struct rt_mutex *l, struct hrtimer_sleeper *to);
+-extern bool rt_mutex_futex_unlock(struct rt_mutex *lock,
+-				  struct wake_q_head *wqh);
++extern int rt_mutex_futex_trylock(struct rt_mutex *l);
++
++extern void rt_mutex_futex_unlock(struct rt_mutex *lock);
++extern bool __rt_mutex_futex_unlock(struct rt_mutex *lock,
++				 struct wake_q_head *wqh);
++
+ extern void rt_mutex_adjust_prio(struct task_struct *task);
+ 
+ #ifdef CONFIG_DEBUG_RT_MUTEXES
 -- 
 2.7.4
 
