@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7C90C0044C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:11:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2590C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:11:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8574C20840
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:11:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9593420840
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:11:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D+1O1HQH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8574C20840
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RdxUyQbk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9593420840
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728800AbeKIXwY (ORCPT
+        id S1728312AbeKIXwU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 18:52:24 -0500
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:41130 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728755AbeKIXwX (ORCPT
+        Fri, 9 Nov 2018 18:52:20 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:45326 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727802AbeKIXwT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 18:52:23 -0500
-Received: by mail-yw1-f65.google.com with SMTP id c126-v6so1651547ywd.8;
-        Fri, 09 Nov 2018 06:11:37 -0800 (PST)
+        Fri, 9 Nov 2018 18:52:19 -0500
+Received: by mail-yb1-f194.google.com with SMTP id 131-v6so1059851ybe.12;
+        Fri, 09 Nov 2018 06:11:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=efu/UKASP4+7G9ySkzD91Wo0xkjeVSO+tKS011qcDmE=;
-        b=D+1O1HQHVbCk5kBHeFAK1F5IltYwl95BWJiTAZEwaj9+EjBZfnev5tQpnlJjZcEsjf
-         UVb2lODWVSlFYvFuj7zssWIoQehXlHnEU7iqjaw75wWjYMDHiCSt63xqGhW3MF8WoF2Q
-         erb+1uKYbjJwp3sXhy1OQQKNSTIdJAre9sZRz0Z2VsM3/MCNUSVD+EQus7fCc+n+oLXw
-         KjjmsURsuXUup/btcHkPLHBM+V9PZtKa1Tu085tum9jZUBTYwIzcf3pkTvQNCf2X/lHE
-         rQN5tORl4+iKD0hA3ExU5NtW3+9DDmmd+8OF9QQYMCHoe1cPbl69Uvx1U1VmlAL6n0db
-         yDyw==
+        bh=SQ1qrcLiIRYqOVmsCK0PkJAXJvvPlMp6EdxfoWbisj0=;
+        b=RdxUyQbkpkC6SAQUQSvaz17J9cY1KfdUEWq03ulBktroBdHbQCT3Xl0zl6sD6FD/Vs
+         9ZQ2IED5qBB3EwGQa4kanWL17vCm1idiTEWQTt273lnTxwT6S7HGXFI0l1TJOA7CZJjb
+         tRvjgLD8da+8wAGmvzsL1n10A2JqKJjoPpMUqUHjnPqN3jiLCyNIeG/vhEbJPjtWQlm8
+         edJa3ttPeND/8V7iyuW2m5Kf8RJJmpsj16pmauC/GZ4GgV836++azscamvxn8a8h1yga
+         vaB8h6pbXL/Jf67+lVzEJCIA2yirmsKff+wpKNgePNJ+zAIvrVSa5zf4inrlpB9RzxR5
+         b1vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=efu/UKASP4+7G9ySkzD91Wo0xkjeVSO+tKS011qcDmE=;
-        b=X+mkTDGuW3w187OBPNkVV6HcYy6G93CsjSERU4H440LW9GclYwUEU+UvUa5sYAfzBL
-         VV6pGLaBGE4OypF0Y6yjLv3rT81w/uZk9wkAgZWyaWKjl7/e323hZWGU/nW+w2zlpGrR
-         JL5q1rAdVcP5Ciz5MFYkggQiMgvDGWwDgG4Ee/cjh1EXdQcuvUE/5kwAbhCNzuoD90fL
-         5k3AGSbDyMLRmJ6kd6zP8uCNRgqvowWitPC4N69iCyvIkRBuKBy6tI3H8lPdQbVKoLEE
-         4JIWM6o+uxbC/8TDQqE1M9TqGCMLFa4KbzDMCbv0qh5o3Jft4jgLFxyUWa31i6NXORrk
-         I9Jw==
-X-Gm-Message-State: AGRZ1gKyrhHOweOmE+vEmwjQGEtpCP27bMt8FR7wdxGyd0vUysJlQHQ/
-        pOayf9E2gP5OPsWJwJ+MKTWqlsV2cuA=
-X-Google-Smtp-Source: AJdET5diqsRhOAgj/KwFl7hVBnfXZZi7NKfjh0NViKBnaVSTl7eU08BWNbTO2AxvO8uorCJaZ6x2Hg==
-X-Received: by 2002:a81:9401:: with SMTP id l1-v6mr8482866ywg.2.1541772696505;
-        Fri, 09 Nov 2018 06:11:36 -0800 (PST)
+        bh=SQ1qrcLiIRYqOVmsCK0PkJAXJvvPlMp6EdxfoWbisj0=;
+        b=VLPCTZ25r7aRjQ+tcOyxojr327ABW2yjptb2iPM1pX1tWCUMLHfnnAotQbcdXSq3Ub
+         +s+pUkI6H0OdYXPRqyUHdsESuAZi2EdBRdS+xMLNxwz9deZO+NdWjH14v3IwkFROWkPS
+         46yL9F6BrGvO/CrFx4SqauUcOw3eP/2FYmBY8wsFDuPO1iyV7YSi2Gxh6CLj5jmLxNwT
+         HMFX8//9xQKkbm62n41gMZfqjjqu1ZpDt63QZUnwmivb/Z1hISvPHQjIKAIwdiQUFY3d
+         my9nM7gyah+CgGtcqukzp9Ef5A6bLqtn1FH6ElFnmWjZAZ/VqUoa69pel92osudytfEI
+         Uwrg==
+X-Gm-Message-State: AGRZ1gLmIXbMPykmzNntlGIIpo2/G99Qo42UD23KYwY0dnjX336uoxKD
+        4/96zEQ5ofedAFIi0UgT9yyQ1s03+bA=
+X-Google-Smtp-Source: AJdET5f5qCC9oQa2WkHIrYuP38sbT2YTTrYLFjU4qmfPyEXSslJMdN8FUzcKETUQigVvtYWhz0adRQ==
+X-Received: by 2002:a25:48c7:: with SMTP id v190-v6mr8705826yba.7.1541772692936;
+        Fri, 09 Nov 2018 06:11:32 -0800 (PST)
 Received: from stbsrv-and-3.and.broadcom.com ([192.19.231.250])
-        by smtp.gmail.com with ESMTPSA id c6-v6sm7301965ywh.34.2018.11.09.06.11.34
+        by smtp.gmail.com with ESMTPSA id c6-v6sm7301965ywh.34.2018.11.09.06.11.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 09 Nov 2018 06:11:36 -0800 (PST)
+        Fri, 09 Nov 2018 06:11:32 -0800 (PST)
 From:   Al Cooper <alcooperx@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Al Cooper <alcooperx@gmail.com>,
@@ -85,9 +85,9 @@ Cc:     Al Cooper <alcooperx@gmail.com>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Rishabh Bhatnagar <rishabhb@codeaurora.org>,
         Rob Herring <robh+dt@kernel.org>, Roger Quadros <rogerq@ti.com>
-Subject: [PATCH V4 5/5] usb: host: Add ability to build new Broadcom STB USB drivers
-Date:   Fri,  9 Nov 2018 09:02:00 -0500
-Message-Id: <1541772120-40394-6-git-send-email-alcooperx@gmail.com>
+Subject: [PATCH V4 3/5] usb: xhci: xhci-plat: Add support for Broadcom STB SoC's
+Date:   Fri,  9 Nov 2018 09:01:58 -0500
+Message-Id: <1541772120-40394-4-git-send-email-alcooperx@gmail.com>
 X-Mailer: git-send-email 1.9.0.138.g2de3478
 In-Reply-To: <1541772120-40394-1-git-send-email-alcooperx@gmail.com>
 References: <1541772120-40394-1-git-send-email-alcooperx@gmail.com>
@@ -96,152 +96,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the build system changes needed to get the Broadcom STB XHCI,
-EHCI and OHCI functionality working. The link order for XHCI was
-changed in the Makefile because of the way STB XHCI, EHCI and OHCI
-controllers share a port which requires that the XHCI driver be
-initialized first. Also update MAINTAINERS.
+Add support for Broadcom STB SoC's to the xhci platform driver
 
 Signed-off-by: Al Cooper <alcooperx@gmail.com>
 ---
- MAINTAINERS                         |  9 +++++++++
- arch/arm/configs/multi_v7_defconfig |  1 +
- arch/arm64/configs/defconfig        |  1 +
- drivers/usb/host/Kconfig            | 26 ++++++++++++++++++++++++++
- drivers/usb/host/Makefile           | 18 ++++++++++++------
- 5 files changed, 49 insertions(+), 6 deletions(-)
+ drivers/usb/host/xhci-brcm.c | 16 ++++++++++++++++
+ drivers/usb/host/xhci-brcm.h | 16 ++++++++++++++++
+ drivers/usb/host/xhci-plat.c |  8 ++++++++
+ 3 files changed, 40 insertions(+)
+ create mode 100644 drivers/usb/host/xhci-brcm.c
+ create mode 100644 drivers/usb/host/xhci-brcm.h
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2f3eba4484aa..932fcc6f8ff5 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2998,6 +2998,15 @@ S:	Supported
- F:	drivers/i2c/busses/i2c-brcmstb.c
- F:	Documentation/devicetree/bindings/i2c/i2c-brcmstb.txt
+diff --git a/drivers/usb/host/xhci-brcm.c b/drivers/usb/host/xhci-brcm.c
+new file mode 100644
+index 000000000000..bf8c0bfd1780
+--- /dev/null
++++ b/drivers/usb/host/xhci-brcm.c
+@@ -0,0 +1,16 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (c) 2018, Broadcom */
++
++#include <linux/usb.h>
++#include <linux/usb/hcd.h>
++
++#include "xhci.h"
++
++int xhci_plat_brcm_init_quirk(struct usb_hcd *hcd)
++{
++	struct xhci_hcd	*xhci = hcd_to_xhci(hcd);
++
++	xhci->quirks |= XHCI_RESET_ON_RESUME;
++	return 0;
++}
++
+diff --git a/drivers/usb/host/xhci-brcm.h b/drivers/usb/host/xhci-brcm.h
+new file mode 100644
+index 000000000000..e64800fae4d5
+--- /dev/null
++++ b/drivers/usb/host/xhci-brcm.h
+@@ -0,0 +1,16 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (c) 2018, Broadcom */
++
++#ifndef _XHCI_BRCM_H
++#define _XHCI_BRCM_H
++
++#if IS_ENABLED(CONFIG_USB_XHCI_BRCM)
++int xhci_plat_brcm_init_quirk(struct usb_hcd *hcd);
++#else
++static inline int xhci_plat_brcm_init_quirk(struct usb_hcd *hcd)
++{
++	return 0;
++}
++#endif
++#endif /* _XHCI_BRCM_H */
++
+diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+index 32b5574ad5c5..5372d4040be6 100644
+--- a/drivers/usb/host/xhci-plat.c
++++ b/drivers/usb/host/xhci-plat.c
+@@ -24,6 +24,7 @@
+ #include "xhci-plat.h"
+ #include "xhci-mvebu.h"
+ #include "xhci-rcar.h"
++#include "xhci-brcm.h"
  
-+BROADCOM BRCMSTB USB XHCI, EHCI and OHCI DRIVERS
-+M:	Al Cooper <alcooperx@gmail.com>
-+L:	linux-usb@vger.kernel.org
-+L:	bcm-kernel-feedback-list@broadcom.com
-+S:	Maintained
-+F:	drivers/usb/host/ehci-brcm.*
-+F:	drivers/usb/host/xhci-brcm.*
-+F:	Documentation/devicetree/bindings/usb/brcm,bcm7445-*.txt
-+
- BROADCOM BRCMSTB USB2 and USB3 PHY DRIVER
- M:	Al Cooper <alcooperx@gmail.com>
- L:	linux-kernel@vger.kernel.org
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 63af6234c1b6..64ca0edb43ed 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -726,6 +726,7 @@ CONFIG_USB_CHIPIDEA_UDC=y
- CONFIG_USB_CHIPIDEA_HOST=y
- CONFIG_USB_ISP1760=y
- CONFIG_USB_HSIC_USB3503=y
-+CONFIG_USB_BRCM=y
- CONFIG_AB8500_USB=y
- CONFIG_KEYSTONE_USB_PHY=m
- CONFIG_NOP_USB_XCEIV=m
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index c9a57d11330b..89637256e7bf 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -520,6 +520,7 @@ CONFIG_USB_GADGET=y
- CONFIG_USB_RENESAS_USBHS_UDC=m
- CONFIG_USB_RENESAS_USB3=m
- CONFIG_USB_ULPI_BUS=y
-+CONFIG_USB_BRCM=y
- CONFIG_MMC=y
- CONFIG_MMC_BLOCK_MINORS=32
- CONFIG_MMC_ARMMMCI=y
-diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
-index 16758b12a5e9..2d0b3060ad05 100644
---- a/drivers/usb/host/Kconfig
-+++ b/drivers/usb/host/Kconfig
-@@ -96,6 +96,32 @@ config USB_XHCI_TEGRA
+ static struct hc_driver __read_mostly xhci_plat_hc_driver;
  
- endif # USB_XHCI_HCD
+@@ -112,6 +113,10 @@ static int xhci_plat_start(struct usb_hcd *hcd)
+ 	.resume_quirk = xhci_rcar_resume_quirk,
+ };
  
-+config USB_OHCI_BRCM
-+       tristate
++static const struct xhci_plat_priv xhci_plat_brcm = {
++	.init_quirk = xhci_plat_brcm_init_quirk
++};
 +
-+config USB_EHCI_BRCM
-+       tristate
-+
-+config USB_XHCI_BRCM
-+       tristate
-+
-+config BRCM_USB_PHY
-+       tristate
-+
-+config USB_BRCM
-+	tristate "Broadcom STB USB support"
-+	depends on ARCH_BRCMSTB || COMPILE_TEST
-+	select USB_OHCI_HCD_PLATFORM if USB_OHCI_HCD
-+	select USB_EHCI_BRCM if USB_EHCI_HCD
-+	select USB_XHCI_BRCM if USB_XHCI_HCD
-+	select USB_XHCI_PLATFORM if USB_XHCI_HCD
-+	help
-+	  Say Y to enable support for XHCI, EHCI and OHCI host controllers
-+	  found in Broadcom STB SoC's.
-+
-+	  Disabling this will keep the controllers and corresponding
-+	  PHYs powered down.
-+
- config USB_EHCI_HCD
- 	tristate "EHCI HCD (USB 2.0) support"
- 	depends on HAS_DMA && HAS_IOMEM
-diff --git a/drivers/usb/host/Makefile b/drivers/usb/host/Makefile
-index 84514f71ae44..9bdd64b710ee 100644
---- a/drivers/usb/host/Makefile
-+++ b/drivers/usb/host/Makefile
-@@ -31,6 +31,10 @@ ifneq ($(CONFIG_USB_XHCI_RCAR), )
- 	xhci-plat-hcd-y		+= xhci-rcar.o
- endif
- 
-+ifneq ($(CONFIG_USB_XHCI_BRCM), )
-+	xhci-plat-hcd-y		+= xhci-brcm.o
-+endif
-+
- ifneq ($(CONFIG_DEBUG_FS),)
- 	xhci-hcd-y		+= xhci-debugfs.o
- endif
-@@ -39,6 +43,13 @@ obj-$(CONFIG_USB_WHCI_HCD)	+= whci/
- 
- obj-$(CONFIG_USB_PCI)	+= pci-quirks.o
- 
-+obj-$(CONFIG_USB_XHCI_HCD)	+= xhci-hcd.o
-+obj-$(CONFIG_USB_XHCI_PCI)	+= xhci-pci.o
-+obj-$(CONFIG_USB_XHCI_PLATFORM) += xhci-plat-hcd.o
-+obj-$(CONFIG_USB_XHCI_HISTB)	+= xhci-histb.o
-+obj-$(CONFIG_USB_XHCI_MTK)	+= xhci-mtk.o
-+obj-$(CONFIG_USB_XHCI_TEGRA)	+= xhci-tegra.o
-+
- obj-$(CONFIG_USB_EHCI_HCD)	+= ehci-hcd.o
- obj-$(CONFIG_USB_EHCI_PCI)	+= ehci-pci.o
- obj-$(CONFIG_USB_EHCI_HCD_PLATFORM)	+= ehci-platform.o
-@@ -52,6 +63,7 @@ obj-$(CONFIG_USB_EHCI_EXYNOS)	+= ehci-exynos.o
- obj-$(CONFIG_USB_EHCI_HCD_AT91) += ehci-atmel.o
- obj-$(CONFIG_USB_EHCI_TEGRA)	+= ehci-tegra.o
- obj-$(CONFIG_USB_W90X900_EHCI)	+= ehci-w90x900.o
-+obj-$(CONFIG_USB_EHCI_BRCM)	+= ehci-brcm.o
- 
- obj-$(CONFIG_USB_OXU210HP_HCD)	+= oxu210hp-hcd.o
- obj-$(CONFIG_USB_ISP116X_HCD)	+= isp116x-hcd.o
-@@ -72,12 +84,6 @@ obj-$(CONFIG_USB_OHCI_HCD_DAVINCI)	+= ohci-da8xx.o
- 
- obj-$(CONFIG_USB_UHCI_HCD)	+= uhci-hcd.o
- obj-$(CONFIG_USB_FHCI_HCD)	+= fhci.o
--obj-$(CONFIG_USB_XHCI_HCD)	+= xhci-hcd.o
--obj-$(CONFIG_USB_XHCI_PCI)	+= xhci-pci.o
--obj-$(CONFIG_USB_XHCI_PLATFORM) += xhci-plat-hcd.o
--obj-$(CONFIG_USB_XHCI_HISTB)	+= xhci-histb.o
--obj-$(CONFIG_USB_XHCI_MTK)	+= xhci-mtk.o
--obj-$(CONFIG_USB_XHCI_TEGRA)	+= xhci-tegra.o
- obj-$(CONFIG_USB_SL811_HCD)	+= sl811-hcd.o
- obj-$(CONFIG_USB_SL811_CS)	+= sl811_cs.o
- obj-$(CONFIG_USB_U132_HCD)	+= u132-hcd.o
+ static const struct of_device_id usb_xhci_of_match[] = {
+ 	{
+ 		.compatible = "generic-xhci",
+@@ -144,6 +149,9 @@ static int xhci_plat_start(struct usb_hcd *hcd)
+ 	}, {
+ 		.compatible = "renesas,rcar-gen3-xhci",
+ 		.data = &xhci_plat_renesas_rcar_gen3,
++	}, {
++		.compatible = "brcm,bcm7445-xhci",
++		.data = &xhci_plat_brcm,
+ 	},
+ 	{},
+ };
 -- 
 1.9.0.138.g2de3478
 
