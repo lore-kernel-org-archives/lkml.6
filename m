@@ -2,141 +2,111 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30315C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:48:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91616C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:49:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDDF320840
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:48:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="fwa6qVp4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDDF320840
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	by mail.kernel.org (Postfix) with ESMTP id 415F020840
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:49:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 415F020840
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=holtmann.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728280AbeKIR2F (ORCPT
+        id S1728344AbeKIR3C convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 12:28:05 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:40066 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727962AbeKIR2F (ORCPT
+        Fri, 9 Nov 2018 12:29:02 -0500
+Received: from coyote.holtmann.net ([212.227.132.17]:41015 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727789AbeKIR3C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 12:28:05 -0500
-Received: by mail-it1-f195.google.com with SMTP id e11so1943605itl.5
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 23:48:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=YgESXJg7JF3T3fapWZ/KGi3xj99jOt56OTy9AvPrYtA=;
-        b=fwa6qVp4/2BVS/D6zt/f3PVMbtbNGgwColFAbPYpvyrofC+DQowPTXcHG6ptLKirVU
-         ueJZm1yqRLTrqJKfXwHyVO6CSCEsJMsMDI/OtpPwnl49eWfdpslxeLjlpq0dqClJTnFy
-         fA2KmsTWQvU8/R3i57Cv408LKkT/xH8RHWPE8b8qYw+6GXwzL4/hteBiquf5CVTxKggh
-         kSyp2yaUUqD8UfmzqtqWG7OEbo1DtJI7LrgrPU7EEkYib8wk57c/4TS7K7YG9LRv9LNw
-         JAvXowkR0Q8AV7UftOSs3jyVuFIdlzSrMc6xsNCGkFXEa9ZR0DK8yoW50ZUrZPi1mLpH
-         +XlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=YgESXJg7JF3T3fapWZ/KGi3xj99jOt56OTy9AvPrYtA=;
-        b=YZwDodVxO4N9Ns+eXlvi7RaKGszAc1OILzfIURjpVZZeCdC9xyxDEsEWfi+PjExccr
-         3hx5FjvZLt/cZVTqYCuSSg4hUS2sQHoHjZzx/FGfxErYWwpXh8g0cTHSjm1af4ZSseAw
-         JOqcC1e627F4sNiPIHFGVgN6PszU1Al/gqQDwt9N1pKDIdhIzFWQTv0kTzHfsdtMvFD+
-         HYeh1ou0e4RxN1GDVVislpHT6ZF7L8zSOUfDU+htUdT0SXyYX4bR64F5vGYNck7NryEx
-         a01DgBz7Zd81PyuSswJlfOXl0dqu0bDOzLPcXpe/D3FRKZRSXGh5KvKbe5BnlJehcN1F
-         uU8g==
-X-Gm-Message-State: AGRZ1gJcE4znc3iFrxKZrl/rLp0Vti56+ys9HWclNHkNQ5Q7dQ+rRzQm
-        b904MO+HQe5z+qZrXq18fdfmsWZssqA78yn7NPNHGw==
-X-Google-Smtp-Source: AJdET5dcbKi1IpZr6+VFrY5jRb6XwqVVTexUmFJu71hN6lAWQbJtCC84Du/0FE6PyiCqWIyro42RRXjZpiXlbFWI7nM=
-X-Received: by 2002:a24:a70e:: with SMTP id a14-v6mr1317640itf.74.1541749723245;
- Thu, 08 Nov 2018 23:48:43 -0800 (PST)
-MIME-Version: 1.0
-References: <20181108215129.641434673@linuxfoundation.org> <20181108215129.753982396@linuxfoundation.org>
-In-Reply-To: <20181108215129.753982396@linuxfoundation.org>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Fri, 9 Nov 2018 08:48:32 +0100
-Message-ID: <CAMRc=MdckdCj=dwn8J6Y5O1gPPykGrzK50td24_iFOa-MwEEJQ@mail.gmail.com>
-Subject: Re: [PATCH 4.14 01/31] eeprom: at24: Add support for address-width property
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        "Chiang, AlanX" <alanx.chiang@intel.com>,
-        "Yeh, Andy" <andy.yeh@intel.com>, sashal@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 9 Nov 2018 12:29:02 -0500
+Received: from marcel-macbook.fritz.box (p4FF9F655.dip0.t-ipconnect.de [79.249.246.85])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 55872CF2C4;
+        Fri,  9 Nov 2018 08:57:07 +0100 (CET)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.1 \(3445.101.1\))
+Subject: Re: [PATCH 3/3] iwlwifi: Load firmware exclusively for Intel WiFi
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20181109000800.15431-1-jprvita@gmail.com>
+Date:   Fri, 9 Nov 2018 08:49:37 +0100
+Cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Intel Linux Wireless <linuxwifi@intel.com>,
+        "open list:NFC SUBSYSTEM" <linux-wireless@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>, linux-kernel@vger.kernel.org,
+        linux@endlessm.com,
+        =?utf-8?Q?Jo=C3=A3o_Paulo_Rechi_Vita?= <jprvita@endlessm.com>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <83CA40B2-1AF3-49FA-9F94-C84A3C916583@holtmann.org>
+References: <20181109000800.15431-1-jprvita@gmail.com>
+To:     =?utf-8?Q?Jo=C3=A3o_Paulo_Rechi_Vita?= <jprvita@gmail.com>
+X-Mailer: Apple Mail (2.3445.101.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-czw., 8 lis 2018 o 23:08 Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> napisa=C5=82(a):
->
-> 4.14-stable review patch.  If anyone has any objections, please let me kn=
-ow.
->
+Hi Joao Paulo,
 
-Hi Greg,
+>>>> I think Canonical were facing some wifi fw load error from some 8260
+>>>> earlier module during the BT still loading the fw.
+>>>> I believe we had later 8260 sku that fixed this issue.
+>>> 
+>>> But there are already 8260 that is affected by this bug in the wild.
+>>> 
+>>> Search "Bluetooth: hci0: Failed to send firmware data (-38)” and there are lots of user are affected.
+>> 
+>> which SKUs are these actually. What are the initial details about the boot loader. For the Bluetooth side, you should be able to grab them from dmesg or by running btmon.
+>> 
+>> So I am not in favor of this kind of hack and creating dependencies between drivers. If you only have a hammer, then everything looks like a nail. And this is a massive hammer trying to squash everything. This problem needs to be debugged. And this starts by providing affected SKU information and firmware information. So get the details about the SKU and its Bluetooth and WiFi boot loaders.
+>> 
+> 
+> I have a Lenovo Yoga 900 which presents this problem and has the same bootloader / firmware information as Kai-Heng already posted:
+> 
+> [    5.992426] Bluetooth: Core ver 2.22
+> [    5.992438] Bluetooth: HCI device and connection manager initialized
+> [    5.992442] Bluetooth: HCI socket layer initialized
+> [    5.992444] Bluetooth: L2CAP socket layer initialized
+> [    5.992450] Bluetooth: SCO socket layer initialized
+> [    6.004941] Bluetooth: hci0: Bootloader revision 0.0 build 2 week 52 2014
+> [    6.010922] Bluetooth: hci0: Device revision is 5
+> [    6.010923] Bluetooth: hci0: Secure boot is enabled
+> [    6.010924] Bluetooth: hci0: OTP lock is enabled
+> [    6.010925] Bluetooth: hci0: API lock is enabled
+> [    6.010926] Bluetooth: hci0: Debug lock is disabled
+> [    6.010927] Bluetooth: hci0: Minimum firmware build 1 week 10 2014
+> [    6.014253] bluetooth hci0: firmware: direct-loading firmware intel/ibt-11-5.sfi
+> [    6.014256] Bluetooth: hci0: Found device firmware: intel/ibt-11-5.sfi
+> [    6.613961] Bluetooth: BNEP (Ethernet Emulation) ver 1.3
+> [    6.613966] Bluetooth: BNEP filters: protocol multicast
+> [    6.613974] Bluetooth: BNEP socket layer initialized
+> [    6.983804] Bluetooth: hci0: Failed to send firmware data (-38)
+> 
+> And the following product id and revision, from usb-devices:
+> 
+> T:  Bus=01 Lev=01 Prnt=01 Port=06 Cnt=02 Dev#=  3 Spd=12  MxCh= 0
+> D:  Ver= 2.00 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
+> P:  Vendor=8087 ProdID=0a2b Rev=00.01
+> C:  #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=100mA
+> I:  If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> I:  If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> 
+> I understand the drawbacks with the approach presented here and lack of clear explanation of the problem, but I can confirm these patches work around the problem on my machine. Is there any extra info or test result I can provide to help debug this? I can also dedicate time to help write a different solution if some guidance is provided.
+> 
+> Kai-Heng, did you end up filling a Bugzilla entry for this?
+> 
+> Please CC-me on the replies as I'm not receiving emails from linux-bluetooth or linux-wireless anymore.
 
-this looks like a new feature, not a fix. Are you sure this should go
-into the stable branch?
+our hardware teams from the Bluetooth and WiFi side really need to look at this. An inter-dependency between the firmware loading of two otherwise independent drivers is really not what I want to see upstream. However I have no idea which boot loaders are affected or if this is something that might be even possible to be fixed in operational firmware. If you can create a binary btmon trace file with the error happening and getting really every single message from the boot we might get a bit further to understand where it goes wrong.
 
-Best regards,
-Bartosz Golaszewski
+Regards
 
-> ------------------
->
-> [ Upstream commit a2b3bf4846e5eed62ea6abb096af2c950961033c ]
->
-> Provide a flexible way to determine the addressing bits of eeprom.
-> Pass the addressing bits to driver through address-width property.
->
-> Signed-off-by: Alan Chiang <alanx.chiang@intel.com>
-> Signed-off-by: Andy Yeh <andy.yeh@intel.com>
-> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  drivers/misc/eeprom/at24.c | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
->
-> diff --git a/drivers/misc/eeprom/at24.c b/drivers/misc/eeprom/at24.c
-> index 4cc0b42f2acc..ded48a0c77ee 100644
-> --- a/drivers/misc/eeprom/at24.c
-> +++ b/drivers/misc/eeprom/at24.c
-> @@ -577,6 +577,23 @@ static void at24_get_pdata(struct device *dev, struc=
-t at24_platform_data *chip)
->         if (device_property_present(dev, "read-only"))
->                 chip->flags |=3D AT24_FLAG_READONLY;
->
-> +       err =3D device_property_read_u32(dev, "address-width", &val);
-> +       if (!err) {
-> +               switch (val) {
-> +               case 8:
-> +                       if (chip->flags & AT24_FLAG_ADDR16)
-> +                               dev_warn(dev, "Override address width to =
-be 8, while default is 16\n");
-> +                       chip->flags &=3D ~AT24_FLAG_ADDR16;
-> +                       break;
-> +               case 16:
-> +                       chip->flags |=3D AT24_FLAG_ADDR16;
-> +                       break;
-> +               default:
-> +                       dev_warn(dev, "Bad \"address-width\" property: %u=
-\n",
-> +                                val);
-> +               }
-> +       }
-> +
->         err =3D device_property_read_u32(dev, "pagesize", &val);
->         if (!err) {
->                 chip->page_size =3D val;
-> --
-> 2.17.1
->
->
->
+Marcel
+
