@@ -2,133 +2,166 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80AACC0044C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:51:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37709C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:52:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47AC720818
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:51:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E73D520685
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:52:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nb5o3L6f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47AC720818
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FBoZN8mv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E73D520685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728560AbeKJDcw (ORCPT
+        id S1728596AbeKJDeJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 22:32:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53446 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727995AbeKJDcw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 22:32:52 -0500
-Received: from localhost (unknown [171.76.98.79])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9141020818;
-        Fri,  9 Nov 2018 17:51:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541785873;
-        bh=YLTSnJvacEwmM2pKERSgfVhsbVa4Ew3wpB/H5WSWem4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nb5o3L6fENBzTc9fxhssBQNe8YX81JNrO8yC94wkEMLppu5UjAdRzr7yRaTf+5BUD
-         2ynCP4TFiD8PtZ5/gpun4VZ8Rc39os8hkGuCjxyXgKyA7DJ7P6GOR7T4NVNz0yQYXj
-         PeoVk+zO5kX+IYUp3EvmYLIAbYZXRlUtHqa56598=
-Date:   Fri, 9 Nov 2018 23:21:05 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: gcc: Fix board clock node name
-Message-ID: <20181109175105.GW12092@vkoul-mobl>
-References: <20181109095054.13924-1-vkoul@kernel.org>
- <154178353645.88331.795912528906051068@swboyd.mtv.corp.google.com>
- <20181109174816.GV12092@vkoul-mobl>
+        Fri, 9 Nov 2018 22:34:09 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:35630 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728108AbeKJDeJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 22:34:09 -0500
+Received: by mail-it1-f194.google.com with SMTP id v11so4542007itj.0
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 09:52:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=E95R29DOT5MM3H1746Z4C+nswoj3mJlY/BGH9VkG6+E=;
+        b=FBoZN8mvfeR23+MowdwI4g93WdTL/aJ/GQOU4WYoxc7wnDBViJVaTNoCahGP7+9BWI
+         fN9fcSbCZkFaOCFvw/aD69a3DcgAA1cTOid5ILrewdpPYappF/cP8vb+YarJ1vheAHJC
+         IihgcsEXJCrXkqjp+N/pK7AqMG3c/etorDPIA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=E95R29DOT5MM3H1746Z4C+nswoj3mJlY/BGH9VkG6+E=;
+        b=CoNl99mBXNejph4WTeC5AEAapIp4jDPEKNpEXvlwbr0jCsJtHKJLCCq7DDVlOsAlBc
+         gxFy8R/3b1S6t6jc1EBApnDozefoW6GkcWln+eZdtgs6a6rVz5FdKYt3bAKQzOakgySl
+         Uy06qtJt4eqMOb6U1xf9020a+7ckAiszS6E82JPE0lwy2RITnaeAo3xW/8lV+Y5n8JB9
+         8i4Jin4r+d9Q48Uu7+Fk8ZXuqjr23wSWGHeSzg3vSfVZRqIMUh1OKD8NNF5bBhFByE+s
+         rSFIKeijaKe10omrRf4nYrAsO/wk4x5L6+91mw/iLOvqe6MPdHMnCRS1d4FAxVarrSw/
+         e5Bg==
+X-Gm-Message-State: AGRZ1gJrcdJyuOMT0U4+PfWbyh/pZ+8Ss5ib3QSGlD1NuSQGSBUvC23J
+        woWfBUSm4yd0vGqKwphwzCnNGOn6V/zc1eeXpN2ZDg==
+X-Google-Smtp-Source: AJdET5cXWNe/fFBo4+BgBFo/uIRAkHV+FnyhZoZLWC2QG1vx9iUDF5UNbmmSHDx4x3E+YTdv1afUgwBvxibnDaJlT2k=
+X-Received: by 2002:a24:8347:: with SMTP id d68-v6mr3295999ite.158.1541785950378;
+ Fri, 09 Nov 2018 09:52:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181109174816.GV12092@vkoul-mobl>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Received: by 2002:a6b:4f16:0:0:0:0:0 with HTTP; Fri, 9 Nov 2018 09:52:29 -0800 (PST)
+In-Reply-To: <20181109174608.eahqh4fkyl3k2gvs@treble>
+References: <cover.1541711457.git.jpoimboe@redhat.com> <3cf04e113d71c9f8e4be95fb84a510f085aa4afa.1541711457.git.jpoimboe@redhat.com>
+ <CAKv+Gu9bMkFEx_GxH3uLm0gveQurp7ELDi6C5NvpugufPFMbRA@mail.gmail.com>
+ <20181109151028.faifw66enzye32gg@treble> <CAKv+Gu_J1b30+pMNRF0icEpyew4TM_VP3ShG=4HkLnk=fRL9zg@mail.gmail.com>
+ <CAKv+Gu-DOW2WT=h8C0x5igbCDAc2bp3mTRM6U_wTJST+RnVicg@mail.gmail.com>
+ <20181109173106.kbghzsdsu7oachl6@treble> <CAKv+Gu-9XYOwAPJ5m6F4Cn9Uo6dvbtEG9p0knX+_XcjHp2QKGA@mail.gmail.com>
+ <20181109174608.eahqh4fkyl3k2gvs@treble>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Fri, 9 Nov 2018 18:52:29 +0100
+Message-ID: <CAKv+Gu8b1KbRtJPrbXk3+K=1uRV6OcvB+zEMYk-UK3sFxKzsgQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/3] static_call: Add static call infrastructure
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@aculab.com>,
+        Borislav Petkov <bp@alien8.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 9 November 2018 at 18:46, Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+> On Fri, Nov 09, 2018 at 06:33:03PM +0100, Ard Biesheuvel wrote:
+>> On 9 November 2018 at 18:31, Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+>> > On Fri, Nov 09, 2018 at 06:25:24PM +0100, Ard Biesheuvel wrote:
+>> >> On 9 November 2018 at 16:14, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+>> >> > On 9 November 2018 at 16:10, Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+>> >> >> On Fri, Nov 09, 2018 at 02:39:17PM +0100, Ard Biesheuvel wrote:
+>> >> >>> > +       for (site = start; site < stop; site++) {
+>> >> >>> > +               struct static_call_key *key = static_call_key(site);
+>> >> >>> > +               unsigned long addr = static_call_addr(site);
+>> >> >>> > +
+>> >> >>> > +               if (list_empty(&key->site_mods)) {
+>> >> >>> > +                       struct static_call_mod *mod;
+>> >> >>> > +
+>> >> >>> > +                       mod = kzalloc(sizeof(*mod), GFP_KERNEL);
+>> >> >>> > +                       if (!mod) {
+>> >> >>> > +                               WARN(1, "Failed to allocate memory for static calls");
+>> >> >>> > +                               return;
+>> >> >>> > +                       }
+>> >> >>> > +
+>> >> >>> > +                       mod->sites = site;
+>> >> >>> > +                       list_add_tail(&mod->list, &key->site_mods);
+>> >> >>> > +
+>> >> >>> > +                       /*
+>> >> >>> > +                        * The trampoline should no longer be used.  Poison it
+>> >> >>> > +                        * it with a BUG() to catch any stray callers.
+>> >> >>> > +                        */
+>> >> >>> > +                       arch_static_call_poison_tramp(addr);
+>> >> >>>
+>> >> >>> This patches the wrong thing: the trampoline is at key->func not addr.
+>> >> >>
+>> >> >> If you look at the x86 implementation, it actually does poison the
+>> >> >> trampoline.
+>> >> >>
+>> >> >> The address of the trampoline isn't actually known here.  key->func
+>> >> >> isn't the trampoline address; it's the destination func address.
+>> >> >>
+>> >> >> So instead I passed the address of the call instruction.  The arch code
+>> >> >> then reads the instruction to find the callee (the trampoline).
+>> >> >>
+>> >> >> The code is a bit confusing.  To make it more obvious, maybe we should
+>> >> >> add another arch function to read the call destination.  Then this code
+>> >> >> can pass that into arch_static_call_poison_tramp().
+>> >> >>
+>> >> >
+>> >> > Ah right, so I am basically missing a dereference in my
+>> >> > arch_static_call_poison_tramp() code if this breaks.
+>> >> >
+>> >>
+>> >> Could we call it 'defuse' rather than 'poision'? On arm64, we will
+>> >> need to keep it around to bounce function calls that are out of range,
+>> >> and replace it with a PLT sequence.
+>> >
+>> > Ok, but doesn't that defeat the purpose of the inline approach?
+>> >
+>>
+>> It does. But this only occurs when a module is loaded far away, and
+>> this will only happen if you have 2 GB range KASLR enabled, or your
+>> 128 MB module region gets exhausted for some reason, so the majority
+>> of calls should use a single relative branch.
+>
+> Makes sense.  Do you also account for the possibility that the original
+> call emitted by GCC was far away and thus used the PLT?
+>
 
-Fix Rob's email id... and looping him correctly :)
+That doesn't really happen. vmlinux is never over 128 MB, and the
+modules are only partially linked, so the linker never gets to the
+stage where it needs to emit veneers.
 
-On 09-11-18, 23:18, Vinod Koul wrote:
-> (Add Rob & Bjorn)
-> 
-> Hi Steve,
-> 
-> On 09-11-18, 09:12, Stephen Boyd wrote:
-> > Quoting Vinod Koul (2018-11-09 01:50:54)
-> > > Device tree node name are not supposed to have "_" in them so fix the
-> > > node name use of xo_board to xo-board
-> > > 
-> > > Fixes: 652f1813c113 ("clk: qcom: gcc: Add global clock controller driver for QCS404")
-> > > Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> > > ---
-> > > 
-> > > Steve: RobH pointed this on DTS patches, would be great if you can pick this
-> > > as a fix
-> > 
-> > Ok.
-> > 
-> > > 
-> > >  drivers/clk/qcom/gcc-qcs404.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
-> > > index e4ca6a45f313..ef1b267cb058 100644
-> > > --- a/drivers/clk/qcom/gcc-qcs404.c
-> > > +++ b/drivers/clk/qcom/gcc-qcs404.c
-> > > @@ -265,7 +265,7 @@ static struct clk_fixed_factor cxo = {
-> > >         .div = 1,
-> > >         .hw.init = &(struct clk_init_data){
-> > >                 .name = "cxo",
-> > > -               .parent_names = (const char *[]){ "xo_board" },
-> > > +               .parent_names = (const char *[]){ "xo-board" },
-> > 
-> > We have xo_board used everywhere else in drivers/clk/qcom/ so this makes
-> > me concerned. Wouldn't a better answer be to add clock-output-names to
-> > the xo-board DT node and have arm-soc merge that through. I mostly want
-> > to keep things consistent here so that if we need to inject an xo_board
-> > clk into the system then we can do so generically instead of making it
-> > per-platform. Of course, if we're never going to have this problem on
-> > qcs404 then it will be fine to start differing here. So I'm leaning
-> > towards merge this patch, just please ack my concern here and tell me it
-> > won't be a problem and I'll be happy to merge to clk-fixes.
-> 
-> So this is a warning from DT compiler and triggered with W=12, I
-> see tons of examples using "_" in node names. Clearly someone realized
-> it (Rob ?) added a warning for it.
-> 
-> As you rightly thought, qcs404 will be okay as we are starting out and following
-> few conventions so keeping this saner :)
-> 
-> > BTW, can you also specify a 'clocks' property in the GCC node and send
-> > the xo_board node there? In fact, we should do that for every GCC node
-> > in the tree. Care to do that and also add sleep_clk to each clock
-> > controller node that uses it? This is useful to do so that we can more
-> > easily see where clocks are going between clock controller nodes.
-> 
-> I agree that it makes sense to add the property in gcc node. I will add
-> this in my list and chase if after my current task completes, if that is
-> fine by you
-> 
-> Thanks
-> -- 
-> ~Vinod
+It's a bit fiddly since inline and out-of-line both use
+arch_static_call_transform(), but what I need to do is basically:
 
--- 
-~Vinod
+- for out-of-line, the trampoline needs to be patched into a
+movn/movk/movk/br sequence if the target is too far
+- for inline, the trampoline itself needs to be patched from
+adrp/ldr/br (which does a load and a indirect branch) to
+movn/movk/movk/br (which uses immediates), and the call sites need to
+be patched into calls to the veneer if the target is out of range.
+
+So arch_static_call_transform() needs to know where the trampoline is
+for this use case, so could we perhaps add a 'void *orig' in the key
+struct that keeps track of the original value of 'addr' ?
