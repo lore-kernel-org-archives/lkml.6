@@ -2,77 +2,90 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DCA4C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 16:37:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E069C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 16:38:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 376D220818
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 16:37:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 376D220818
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 05A7920818
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 16:38:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05A7920818
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728393AbeKJCSw (ORCPT
+        id S1728412AbeKJCTR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 21:18:52 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:50221 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727955AbeKJCSw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 21:18:52 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 5595A207CF; Fri,  9 Nov 2018 17:37:31 +0100 (CET)
-Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 271BC20510;
-        Fri,  9 Nov 2018 17:37:21 +0100 (CET)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH] net: mvneta: correct typo
-Date:   Fri,  9 Nov 2018 17:37:20 +0100
-Message-Id: <20181109163720.17266-1-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.19.1
+        Fri, 9 Nov 2018 21:19:17 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34374 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727955AbeKJCTR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 21:19:17 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5D92DA78;
+        Fri,  9 Nov 2018 08:37:57 -0800 (PST)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D3EF53F5BD;
+        Fri,  9 Nov 2018 08:37:55 -0800 (PST)
+Subject: Re: [PATCH 06/10] swiotlb: use swiotlb_map_page in
+ swiotlb_map_sg_attrs
+To:     Christoph Hellwig <hch@lst.de>,
+        John Stultz <john.stultz@linaro.org>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        konrad.wilk@oracle.com,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        iommu@lists.linux-foundation.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Valentin Schneider <valentin.schneider@arm.com>
+References: <20181008080246.20543-1-hch@lst.de>
+ <20181008080246.20543-7-hch@lst.de>
+ <CANcMJZAzrxA9LGNvP-epv2DwsUacEM_hcgA1n5gmaPuWRJG4iw@mail.gmail.com>
+ <20181109074955.GA27489@lst.de>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <9922f377-ee87-ba36-8d28-26af0f7822e5@arm.com>
+Date:   Fri, 9 Nov 2018 16:37:54 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181109074955.GA27489@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The reserved variable should be named reserved1.
+On 09/11/2018 07:49, Christoph Hellwig wrote:
+> On Tue, Nov 06, 2018 at 05:27:14PM -0800, John Stultz wrote:
+>> But at that point if I just re-apply "swiotlb: use swiotlb_map_page in
+>> swiotlb_map_sg_attrs", I reproduce the hangs.
+>>
+>> Any suggestions for how to further debug what might be going wrong
+>> would be appreciated!
+> 
+> Very odd.  In the end map_sg and map_page are defined to do the same
+> things to start with.  The only real issue we had in this area was:
+> 
+> "[PATCH v2] of/device: Really only set bus DMA mask when appropriate"
+> 
+> so with current mainline + that you still see a problem, and if you
+> rever the commit we are replying to it still goes away?
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/net/ethernet/marvell/mvneta.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+OK, after quite a bit of trying I have managed to provoke a 
+similar-looking problem with straight 4.20-rc1 on my Juno board - so far 
+my "reproducer" is to decompress a ~10GB .tar.xz off an external USB 
+hard disk, wherein after somewhere between 5 minutes and half an hour or 
+so it tends to falls over with xz choking on corrupt data and/or a USB 
+error.
 
-diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
-index 5bfd349bf41a..3ba672e9e353 100644
---- a/drivers/net/ethernet/marvell/mvneta.c
-+++ b/drivers/net/ethernet/marvell/mvneta.c
-@@ -494,7 +494,7 @@ struct mvneta_port {
- #if defined(__LITTLE_ENDIAN)
- struct mvneta_tx_desc {
- 	u32  command;		/* Options used by HW for packet transmitting.*/
--	u16  reserverd1;	/* csum_l4 (for future use)		*/
-+	u16  reserved1;		/* csum_l4 (for future use)		*/
- 	u16  data_size;		/* Data size of transmitted packet in bytes */
- 	u32  buf_phys_addr;	/* Physical addr of transmitted buffer	*/
- 	u32  reserved2;		/* hw_cmd - (for future use, PMT)	*/
-@@ -519,7 +519,7 @@ struct mvneta_rx_desc {
- #else
- struct mvneta_tx_desc {
- 	u16  data_size;		/* Data size of transmitted packet in bytes */
--	u16  reserverd1;	/* csum_l4 (for future use)		*/
-+	u16  reserved1;		/* csum_l4 (for future use)		*/
- 	u32  command;		/* Options used by HW for packet transmitting.*/
- 	u32  reserved2;		/* hw_cmd - (for future use, PMT)	*/
- 	u32  buf_phys_addr;	/* Physical addr of transmitted buffer	*/
--- 
-2.19.1
+ From the presentation, this really smells like there's some corner in 
+which we're either missing cache maintenance or doing it to the wrong 
+address - I've not seen any issues with Juno's main PCIe-attached I/O, 
+but the EHCI here is non-coherent (and 32-bit, so the bus_dma_mask thing 
+doesn't matter) as are the HiKey UFS and SD controller.
 
+I'll keep digging...
+
+Robin.
