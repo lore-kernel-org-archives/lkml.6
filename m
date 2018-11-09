@@ -2,120 +2,158 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE7BDC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:40:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48987C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:41:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 983312081C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:40:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="d5H5cfjC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 983312081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id 1686C2081C
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:41:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1686C2081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728506AbeKJDWB (ORCPT
+        id S1728581AbeKJDXH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 22:22:01 -0500
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:31276 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728007AbeKJDWB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 22:22:01 -0500
-X-IronPort-AV: E=Sophos;i="5.54,483,1534834800"; 
-   d="scan'208";a="23077348"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 09 Nov 2018 10:40:25 -0700
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.49) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Fri, 9 Nov 2018 10:40:24 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Lq8LLtxyLa8nCWFDRY6stJMonGTHgVC6Lg4djPf8yJY=;
- b=d5H5cfjCTU+sCND3iBHYFRAytDwtZGL6ED8V5fIo7t+h5O1fh/z+IuiBGvG1Eh5iNmHHeG4g6yZU4F9Osh9FCwNN05fC/CPe/iZN10MPHICG5bXEy2XUE2CbSlO3A1cKzefqAxJe4H9gNhJ2LeY/xFpmfkef/MJiHa0jsWMULIA=
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com (10.175.99.146) by
- BN6PR11MB1955.namprd11.prod.outlook.com (10.175.100.144) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.26; Fri, 9 Nov 2018 17:40:21 +0000
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::11b7:21db:803a:7cfa]) by BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::11b7:21db:803a:7cfa%5]) with mapi id 15.20.1294.034; Fri, 9 Nov 2018
- 17:40:21 +0000
-From:   <Tudor.Ambarus@microchip.com>
-To:     <boris.brezillon@bootlin.com>, <marek.vasut@gmail.com>,
-        <dwmw2@infradead.org>, <computersforpeace@gmail.com>,
-        <richard@nod.at>
-CC:     <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <cyrille.pitchen@wedev4u.fr>, <Tudor.Ambarus@microchip.com>
-Subject: [PATCH] mtd: spi-nor: mark desirable switch case fall through
-Thread-Topic: [PATCH] mtd: spi-nor: mark desirable switch case fall through
-Thread-Index: AQHUeFNJm6LH43gO+0eRZHpCMxJGwA==
-Date:   Fri, 9 Nov 2018 17:40:21 +0000
-Message-ID: <20181109174017.19269-1-tudor.ambarus@microchip.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR07CA0254.eurprd07.prod.outlook.com
- (2603:10a6:803:b4::21) To BN6PR11MB1842.namprd11.prod.outlook.com
- (2603:10b6:404:103::18)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Tudor.Ambarus@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [94.177.32.154]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR11MB1955;6:rG0COFoLKGjBrmFWypNmt2wVicLxA8QfsglR0yG362gLKrxhPmluv4u+HXvoKljZaBnBJlsFW40dToPZ2Sa/WYDofNAfbM8kXydI0Dup6iXEGMx365uOPS4/za9xRis/pypJdFU6hjG/0RGtD9WS+eBD2RsuQgd7lp/+cAKJQiJoZgUpaZ3Ef5Vxd9dDA4VpZcVnmBg3c3B44WtJJRg5bCo0FqtnUtJrLvwugZoQMcQF/md9YTpub/sgR/pGFQdfr00qhb8SU3lFBZgyZLqNXWWo2XF/Tz5+WSbipMeytDiZQhuMWszYp6IGNwELdFon0f+Yy8jM9gLlDBMcSzTr3KRtg6mf5SBbV2pRthQybnFtujHQG0eumYjPrmkQazUdqb2oC4KuMl38BqN9C8a5k3XHRlu4KPAedudGVwXH2yVg9d6PaWe2a2j+gfifLVUrK8w66jXt43RlPZW3B9Ez+A==;5:fiP/asU1XSd74hnu6NoGtuKOx/gMG7ngG6uonjzv2xXc4+8E4baxeTJ6GFb22gCtBDo7JuROF7S7P+73oS0SJ9/qWLxlk2MY8c2QAvixBEeLJLMHP9ZW2+oOZySLDExg5FQwawY7gMLPw6QQrA2cW1RBs1n6AaCP7fGv+9yz7uk=;7:eoGZq4ZTTMCO3FGHKdexipm0UEWI1vv4O3ve6Fx9JmDp4IZz7bDxSX0zaYI2XBABt/ryiGvUJYnb/oOuayVUjwx1JddWKjHB1M/7R1M/zMSgpBCDLFUDZ7WUXlcxb5AiYfjowwWKniDcaqPh85mkUw==
-x-ms-office365-filtering-correlation-id: c6ee66f8-722b-4a6b-581d-08d6466a6b84
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BN6PR11MB1955;
-x-ms-traffictypediagnostic: BN6PR11MB1955:
-x-microsoft-antispam-prvs: <BN6PR11MB19554096C3CAB0AC174323BCF0C60@BN6PR11MB1955.namprd11.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231382)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:BN6PR11MB1955;BCL:0;PCL:0;RULEID:;SRVR:BN6PR11MB1955;
-x-forefront-prvs: 08512C5403
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39850400004)(136003)(346002)(396003)(376002)(366004)(189003)(199004)(52116002)(25786009)(71190400001)(86362001)(72206003)(256004)(14444005)(99286004)(8936002)(81156014)(81166006)(36756003)(8676002)(97736004)(71200400001)(68736007)(186003)(110136005)(39060400002)(478600001)(5660300001)(386003)(1857600001)(105586002)(26005)(106356001)(2900100001)(6506007)(54906003)(102836004)(316002)(6486002)(6436002)(486006)(305945005)(4326008)(2501003)(7736002)(6512007)(107886003)(6116002)(3846002)(2906002)(1076002)(14454004)(53936002)(66066001)(2201001)(476003)(2616005);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB1955;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: avQTT8a1fnBAnKt21V0JI9eeCU+JgSVXzuCzYPPo7bISiR6LW2GEvCXi97DbS37usmQMiEVIb6mAJZTlZaKu//N1wgRxOA6cy8IUsxrf8iLg7VVOvaW3JW6V+m7TuMGk/+Mu3JfnMq5safP+ub7VFdXdcLyPgiufqMn79Icx1rlwc/ZznT3sVO4AbBKDvKIYMHiM+AoByXXNf476LHvkBnHJSp9Ro3HPXcRcAeNtHojkhEptW3O/NCa0BdGMDpSp695GoYQAP4HK+ivzgmXNDNScbMoRp8S7BPBpq2s9wO7ce3pCiN+z+CpX0sTX3mQ0XLEsVBgm3moIsvC6tYf18qhQAvTq1VtP4j1JcjyynJg=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <CF4E685A3DA8054D8686BC8CA57D5182@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Fri, 9 Nov 2018 22:23:07 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35564 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727961AbeKJDXG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 22:23:06 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6078FA78;
+        Fri,  9 Nov 2018 09:41:30 -0800 (PST)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 110B43F718;
+        Fri,  9 Nov 2018 09:41:27 -0800 (PST)
+Subject: Re: WARNING: CPU: 0 PID: 0 at drivers/irqchip/irq-gic-v3-its.c
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     cai@gmx.us, open list <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        ard.biesheuvel@linaro.org, Jason Cooper <jason@lakedaemon.net>
+References: <1541710771.12945.7.camel@gmx.us>
+ <c8ff3004-33ee-19d5-8eb8-38d41f78c8ee@arm.com>
+ <trinity-e1d06dde-12e1-4e2a-8871-d6c5f4af9f51-1541766480902@msvc-mesg-gmx023>
+ <b23b62b4-9ecb-8b76-57e5-d323cc9926ce@arm.com>
+ <13A11479-97FB-4EFD-A182-61DA63CB64D6@gmx.us>
+ <b74e43d3-a7e1-08e9-c176-5584ad379629@arm.com>
+ <F47320A5-4A6B-4AEB-A0DC-E4EBC6B4EC2A@gmx.us>
+ <930d61db-6e44-8501-983d-09cd3759d153@arm.com>
+ <CAPKp9uY7DOV9xMhCQcAC8yh0z3-=2U-CmZq064Br=d4VYrcg=A@mail.gmail.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: ARM Ltd
+Message-ID: <0e926f4b-1148-289b-39a1-ef76baa8cf9d@arm.com>
+Date:   Fri, 9 Nov 2018 17:41:26 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: c6ee66f8-722b-4a6b-581d-08d6466a6b84
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Nov 2018 17:40:21.1443
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB1955
-X-OriginatorOrg: microchip.com
+In-Reply-To: <CAPKp9uY7DOV9xMhCQcAC8yh0z3-=2U-CmZq064Br=d4VYrcg=A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Z2NjIDcgd2l0aCAtV2ltcGxpY2l0LWZhbGx0aHJvdWdoIHJhaXNlczoNCg0KZHJpdmVycy9tdGQv
-c3BpLW5vci9zcGktbm9yLmM6IEluIGZ1bmN0aW9uIOKAmHNldF80Ynl0ZeKAmToNCmRyaXZlcnMv
-bXRkL3NwaS1ub3Ivc3BpLW5vci5jOjI4OToxMzogd2FybmluZzogdGhpcyBzdGF0ZW1lbnQgbWF5
-IGZhbGwgdGhyb3VnaCBbLVdpbXBsaWNpdC1mYWxsdGhyb3VnaD1dDQogICBuZWVkX3dyZW4gPSB0
-cnVlOw0KICAgfn5+fn5+fn5+fl5+fn5+fg0KZHJpdmVycy9tdGQvc3BpLW5vci9zcGktbm9yLmM6
-MjkwOjI6IG5vdGU6IGhlcmUNCiAgY2FzZSBTTk9SX01GUl9NQUNST05JWDoNCiAgXn5+fg0KDQpR
-dWlldCB0aGUgd2FybmluZyBieSBtYXJraW5nIHRoZSBleHBlY3RlZCBzd2l0Y2ggZmFsbCB0aHJv
-dWdoLg0KDQpTaWduZWQtb2ZmLWJ5OiBUdWRvciBBbWJhcnVzIDx0dWRvci5hbWJhcnVzQG1pY3Jv
-Y2hpcC5jb20+DQotLS0NCiBkcml2ZXJzL210ZC9zcGktbm9yL3NwaS1ub3IuYyB8IDEgKw0KIDEg
-ZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9tdGQv
-c3BpLW5vci9zcGktbm9yLmMgYi9kcml2ZXJzL210ZC9zcGktbm9yL3NwaS1ub3IuYw0KaW5kZXgg
-OTQwN2NhNWY5NDQzLi44MDY1ZDVkNzZiZTUgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL210ZC9zcGkt
-bm9yL3NwaS1ub3IuYw0KKysrIGIvZHJpdmVycy9tdGQvc3BpLW5vci9zcGktbm9yLmMNCkBAIC0y
-ODcsNiArMjg3LDcgQEAgc3RhdGljIGlubGluZSBpbnQgc2V0XzRieXRlKHN0cnVjdCBzcGlfbm9y
-ICpub3IsIGNvbnN0IHN0cnVjdCBmbGFzaF9pbmZvICppbmZvLA0KIAljYXNlIFNOT1JfTUZSX01J
-Q1JPTjoNCiAJCS8qIFNvbWUgTWljcm9uIG5lZWQgV1JFTiBjb21tYW5kOyBhbGwgd2lsbCBhY2Nl
-cHQgaXQgKi8NCiAJCW5lZWRfd3JlbiA9IHRydWU7DQorCQkvKiBmYWxsIHRocm91Z2ggKi8NCiAJ
-Y2FzZSBTTk9SX01GUl9NQUNST05JWDoNCiAJY2FzZSBTTk9SX01GUl9XSU5CT05EOg0KIAkJaWYg
-KG5lZWRfd3JlbikNCi0tIA0KMi45LjQNCg0K
+On 09/11/18 17:28, Sudeep Holla wrote:
+> On Fri, Nov 9, 2018 at 4:10 PM Marc Zyngier <marc.zyngier@arm.com> wrote:
+>>
+> [...]
+> 
+>>
+>> See bb42ca474010 and d003d029cea8 for details.
+>>
+>> Now, activating this workaround leads to lockdep being really angry,
+>> most likely because the cpus_read_lock is not taken, which is a change
+>> in behaviour...
+>>
+>> I'm trying to dig into this now.
+>>
+> 
+> Yes we found similar issue in kernel/sched/core.c sched_init_smp
+> There's a fix with detailed description in -next
+> (Commit 40fa3780bac2 ("sched/core: Take the hotplug lock in sched_init_smp()")
+> 
+> The behaviour changed since  commit cb538267ea1e ("jump_label/lockdep:
+> Assert we hold the hotplug lock for _cpuslocked() operations")
+
+I indeed came to the same conclusion, but the fix is slightly less than
+obvious. I have the following arm64-specific crap, but it is pretty
+terrible:
+
+diff --git a/arch/arm64/kernel/time.c b/arch/arm64/kernel/time.c
+index f258636273c9..9e96e9eaca9b 100644
+--- a/arch/arm64/kernel/time.c
++++ b/arch/arm64/kernel/time.c
+@@ -36,6 +36,7 @@
+ #include <linux/clocksource.h>
+ #include <linux/clk-provider.h>
+ #include <linux/acpi.h>
++#include <linux/cpu.h>
+
+ #include <clocksource/arm_arch_timer.h>
+
+@@ -69,7 +70,9 @@ void __init time_init(void)
+ 	u32 arch_timer_rate;
+
+ 	of_clk_init(NULL);
++	cpus_read_lock();
+ 	timer_probe();
++	cpus_read_unlock();
+
+ 	tick_setup_hrtimer_broadcast();
+
+Qian, can you please let me know if this helps? If it does, we'll have
+to think of something a bit better...
+
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
