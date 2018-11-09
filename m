@@ -2,143 +2,115 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36578C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:15:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55696C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:16:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8E7620818
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:15:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 173FD20825
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:16:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g2a7jnpd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8E7620818
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="NgtqyWd3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 173FD20825
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728422AbeKJC5K (ORCPT
+        id S1728530AbeKJC5p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 21:57:10 -0500
-Received: from mail-wm1-f54.google.com ([209.85.128.54]:52563 "EHLO
-        mail-wm1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727961AbeKJC5J (ORCPT
+        Fri, 9 Nov 2018 21:57:45 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:59298 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727961AbeKJC5p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 21:57:09 -0500
-Received: by mail-wm1-f54.google.com with SMTP id r11-v6so2704370wmb.2;
-        Fri, 09 Nov 2018 09:15:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:subject:to:cc:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=lhXesKLx/wINcjY+P0Mpiqebnq3GEuEM2shSRbnXCSQ=;
-        b=g2a7jnpdiAdkEEZD0aQj0ABric7d6g8hnuSyX86bE7w9/mGiPDdcmiJ6JjAkRFkSDm
-         F6qIvZU2a/H0llHkSLemJuzBxwCmBu5Rcg+u/dfnYv8kADgM8djAX5xewV0+XUpwourW
-         1gCevgx5MsK+nao/XRhsGBcGJpT0fSuYbawOog6VmU2qAO6/7hJcrbTyI7fIXsMxNXhE
-         4V71bSJndUncDYidDl1cUqSidHGp210AdQE3k62+9M1t4xCeQ1KDRvyNZGYsV3itH4+A
-         GT28bD9nXOPt6tOicMHVYgcQrhEeJ08PcWtTtNJFvikGSyx1GOWBNJEagMZgH7DpEt25
-         O3Ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=lhXesKLx/wINcjY+P0Mpiqebnq3GEuEM2shSRbnXCSQ=;
-        b=jDc1DZsBd7wCBsle+kYnNoTI4knHgwU9owj9ipDmFMW8BJZkJuQXEDfCi4asv47XfH
-         xye0s4R/OAZjXCDWeBzlVUnd/0jUrMbq+B74HIVtxnh6BlKe7Kxv2++QnBteabqqvhKN
-         lS4YRWbmc8YIf9HNQxu32Qa4WkssyjOS0258GRhiXC8tJw6xBPUH0YuiNpQ0EYG5RwB0
-         t0PDfjz8hl9NF1Gafdz3vsllWqj68mqHGPufhNPPF0JGxb/e5C7Sb/lIM5aek5DVnBeV
-         zUkcCdwa1uEzI4/gqtha1MNkrjVi4/6pkisnI61t2izXRXGlxNws7k0+yHQjq6EnhJaB
-         M9wQ==
-X-Gm-Message-State: AGRZ1gJw/OBCs1QUSA1Efxn1J9YtLJ5qj0zt21I+6TQRwqyBjklILkVE
-        B1UgkJCEdz9KeGff8j8uxAY=
-X-Google-Smtp-Source: AJdET5dxqVykZZjFw3tUqZHtfBg8R+Cu2Ss9Rsbr+Os3rmqf7rZ0048xQEu0hv2b5ljh7g9kuQBueQ==
-X-Received: by 2002:a1c:4007:: with SMTP id n7-v6mr205809wma.46.1541783739112;
-        Fri, 09 Nov 2018 09:15:39 -0800 (PST)
-Received: from ?IPv6:2003:ea:8bcf:e300:d5f1:833d:6c7e:a28? (p200300EA8BCFE300D5F1833D6C7E0A28.dip0.t-ipconnect.de. [2003:ea:8bcf:e300:d5f1:833d:6c7e:a28])
-        by smtp.googlemail.com with ESMTPSA id m13-v6sm8521926wrw.14.2018.11.09.09.15.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 09 Nov 2018 09:15:38 -0800 (PST)
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-Subject: [PATCH net-next v3 0/2] net: phy: replace PHY_HAS_INTERRUPT with a
- check for config_intr and ack_interrupt
-To:     Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        David Miller <davem@davemloft.net>
-Cc:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "maintainer:BROADCOM BCM63XX ARM ARCHITECTURE" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:BROADCOM BCM63XX ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/Amlogic Meson SoC support" 
-        <linux-amlogic@lists.infradead.org>
-Message-ID: <203c4d9e-f39a-7a08-46c3-4ee6e61f181e@gmail.com>
-Date:   Fri, 9 Nov 2018 18:15:31 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Fri, 9 Nov 2018 21:57:45 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA9HE7mk093378;
+        Fri, 9 Nov 2018 17:16:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=PzSxDdCAAfn0UELXMkkGvuB4gDF44u68SXTYg5cOx7U=;
+ b=NgtqyWd3+tQ3fvPNzYo+00gM5UfHsTS5cUOxKryxYGWlHLMRoQlzbZPRcl7CcIl0d9S6
+ S9klrRjdMKTbz7nPZJ9JB4b6PARsnSAgGy/Ry31qZvGzFloVdxqUR9F5Vghadd3khosW
+ rs6IrAwk1B2qFsezfQ+465oXC5pA/4NoGYklnJp9xQqEpghsMkmuJdWXbayR7pTWzcIQ
+ yw6yQUTzWer+64skWSTaZo7+dCKNz1AUCrc6/YoetQDW0DYrhjiRcGMS+mRxyIg0d1Bx
+ vNdt0bS4LtQfXC1CqqexVT04m2H/r20XnNIky3Tbc2djmzIYRMSN8XT0dzAuiSl5/bc1 zg== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2nh4ar86kj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 09 Nov 2018 17:16:08 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wA9HG7FE030304
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 9 Nov 2018 17:16:07 GMT
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wA9HG6eV032308;
+        Fri, 9 Nov 2018 17:16:06 GMT
+Received: from unbuntlaptop (/148.87.23.33)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 09 Nov 2018 09:16:06 -0800
+Date:   Fri, 9 Nov 2018 20:15:58 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Jerry Lin <wahahab11@gmail.com>
+Cc:     Greg Kroah-Hartman <greg@kroah.com>, devel@driverdev.osuosl.org,
+        Todd Kjos <tkjos@android.com>, ghartman@google.com,
+        astrachan@google.com, linux-kernel@vger.kernel.org,
+        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Martijn Coenen <maco@android.com>
+Subject: Re: [PATCH v3] driver-staging: vsoc.c: Add sysfs support for
+ examining the permissions of regions.
+Message-ID: <20181109171558.GA8323@unbuntlaptop>
+References: <20181107023043.GA18052@ubuntu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181107023043.GA18052@ubuntu>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9072 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1811090157
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Flag PHY_HAS_INTERRUPT is used only here for this small check. I think
-using interrupts isn't possible if a driver defines neither
-config_intr nor ack_interrupts callback. So we can replace checking
-flag PHY_HAS_INTERRUPT with checking for these callbacks.
-This allows to remove this flag from all driver configs.
+On Wed, Nov 07, 2018 at 10:30:43AM +0800, Jerry Lin wrote:
+> Add a attribute called permissions under vsoc device node for examining
+> current granted permissions in vsoc_device.
+> 
+> This file will display permissions in following format:
+>   begin_offset  end_offset  owner_offset  owned_value
+>             %x          %x            %x           %x
+> 
 
-v2:
-- add helper for check in patch 1
-- remove PHY_HAS_INTERRUPT from all drivers, not only Realtek
-- remove flag PHY_HAS_INTERRUPT completely
+(I'm not totally an expert on sysfs rules).
 
-v3:
-- rebase patch 2
+Sysfs are supposed to be one value per file, so instead of doing this
+you would create a directory with four files like
+vsoc_device/begin_offset vsoc_device/end_offset etc.  And each would
+just hae a %x output.
 
-Heiner Kallweit (2):
-  net: phy: replace PHY_HAS_INTERRUPT with a check for config_intr and ack_interrupt
-  net: phy: realtek: remove flag PHY_HAS_INTERRUPT from driver configs
+> +static ssize_t permissions_show(struct device *dev,
+> +				struct device_attribute *attr,
+> +				char *buffer)
+> +{
+> +	struct fd_scoped_permission_node *node;
+> +	char *row;
+> +	int ret;
+> +	ssize_t written = 0;
+> +
+> +	row = kzalloc(sizeof(char) * 128, GFP_KERNEL);
+> +	if (!row)
+> +		return 0;
 
- drivers/net/phy/amd.c          |  1 -
- drivers/net/phy/aquantia.c     |  6 ------
- drivers/net/phy/at803x.c       |  3 ---
- drivers/net/phy/bcm63xx.c      |  4 ++--
- drivers/net/phy/bcm87xx.c      |  2 --
- drivers/net/phy/broadcom.c     | 16 ----------------
- drivers/net/phy/cicada.c       |  2 --
- drivers/net/phy/davicom.c      |  4 ----
- drivers/net/phy/dp83640.c      |  1 -
- drivers/net/phy/dp83822.c      |  1 -
- drivers/net/phy/dp83848.c      |  1 -
- drivers/net/phy/dp83867.c      |  1 -
- drivers/net/phy/dp83tc811.c    |  1 -
- drivers/net/phy/icplus.c       |  1 -
- drivers/net/phy/intel-xway.c   | 10 ----------
- drivers/net/phy/lxt.c          |  2 --
- drivers/net/phy/marvell.c      | 15 ---------------
- drivers/net/phy/meson-gxl.c    |  2 +-
- drivers/net/phy/micrel.c       | 14 --------------
- drivers/net/phy/microchip.c    |  1 -
- drivers/net/phy/microchip_t1.c |  1 -
- drivers/net/phy/mscc.c         |  6 ------
- drivers/net/phy/national.c     |  1 -
- drivers/net/phy/phy_device.c   |  8 ++++++--
- drivers/net/phy/qsemi.c        |  1 -
- drivers/net/phy/realtek.c      |  7 -------
- drivers/net/phy/smsc.c         |  7 +------
- drivers/net/phy/ste10Xp.c      |  2 --
- drivers/net/phy/vitesse.c      |  9 ---------
- include/linux/phy.h            |  5 ++---
- 30 files changed, 12 insertions(+), 123 deletions(-)
+Don't allocate this, just snprintf() directly into the buffer.
 
--- 
-2.19.1
+regards,
+dan carpenter
 
