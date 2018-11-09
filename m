@@ -2,150 +2,245 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 374B3C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:59:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95F99C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:01:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F145120892
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:59:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48F2A20855
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:01:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TEpn8b7p"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F145120892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VTMWb9+h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48F2A20855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728103AbeKITjq (ORCPT
+        id S1727992AbeKITky (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 14:39:46 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:39836 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727637AbeKITjq (ORCPT
+        Fri, 9 Nov 2018 14:40:54 -0500
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:36645 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727596AbeKITkx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 14:39:46 -0500
-Received: by mail-wm1-f68.google.com with SMTP id u13-v6so1365857wmc.4
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 01:59:55 -0800 (PST)
+        Fri, 9 Nov 2018 14:40:53 -0500
+Received: by mail-ua1-f65.google.com with SMTP id j3so423446uap.3
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 02:01:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=KdvVMrhYxojFpjfvQnQuUkHklgoOtGked9DucC83n0c=;
-        b=TEpn8b7px8qYOJ1DWRNYhaThH2i4S0TqApqaq5QNqGY7oeyVodOKrgWfrEHMjcOnZS
-         HCJCeTs14omr9fAItcLev5OsC85BScgliaE04HAbyReKxj1uwvP+2iXXSn+NiBEh/KPB
-         KMUyEkv3G5hxZUU8aF+OwTwTPlr9DZEY9PmPE=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/iYTfJ+xvmHKAYJ8KX+pFriE/QZ4u5ENiz80IeXRRSM=;
+        b=VTMWb9+hAOK8Kedqgu9WP8+B71GvragfwCYfeNQcA8FEXAoWTeV6ZrldSeTasHtq2S
+         vtY/vayIp6ihNT1wyZ/zkfYdVL7EQdEgg0B596g3U9FyqRmKA6p+rymwRh523eybsszm
+         eEm4TMN35UUtZqUdkUW7VI1OF70QTFM2B2rHWMIeQAVP6JyNsXt6kNoF12N6p452N1nZ
+         +IGLCyOdYALNJrPGg+H0UqyQpNyUu1xNR0qdRAO9cYFFFfWpMXH97ZBNRwYXiLY0jEKI
+         3jGpUEjUTMSo85XU/U0+T8UHHtKAAFX0W8EeBMf5sTVP1Nn6VY9CoXR8kQhr9GF+582K
+         Y8Kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=KdvVMrhYxojFpjfvQnQuUkHklgoOtGked9DucC83n0c=;
-        b=T/xnIom+Nbn9bLR11G0+BpVRWG8RCutogiDDi6f6ldKdoVI9II80T9YFfRQagjnyi/
-         43QpzeuOZk0FE/WItbHMug6/PGNtv/Yh1f3/KdYFnH5UrrcVq6B5HY1oDBpryRWQZ7WK
-         ptJpVpQ0mUPkMNtZo8GQWLQkZMKdM7ydTg66J1HZfrJm2CXxojfOkeOSv9zbjVpjru4T
-         +XU+CNZs1SywAWBjJCgDA0vpgke0eWOvcb2N/z88E9Wzi5uTia9y7752nFpU7SPO5gF+
-         r2gTkBVHokJk8I+DG6VQ7g9NCnB4rhckQPn1yRej6c/SU/sKZlTzM5AsHnKBort9h4uv
-         ghBQ==
-X-Gm-Message-State: AGRZ1gJ2ILtlEp0xqaOr/ScwgnImYfgIwmJMmARqopPHhAoc3e/uHQnn
-        PbFi0cUiv89YsMu4Vm8IBIAbMQ==
-X-Google-Smtp-Source: AJdET5fweoFRA+WRqKf/uPJYkzz2ZhMRD3dRzTUEixoVSH0OF9q5hnUx98dJ3xGltfEGjSrJZC17aA==
-X-Received: by 2002:a1c:af07:: with SMTP id y7-v6mr4301245wme.33.1541757594142;
-        Fri, 09 Nov 2018 01:59:54 -0800 (PST)
-Received: from [192.168.27.209] ([37.157.136.206])
-        by smtp.googlemail.com with ESMTPSA id p20-v6sm982702wmd.10.2018.11.09.01.59.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 09 Nov 2018 01:59:53 -0800 (PST)
-Subject: Re: [PATCH v1 3/5] media: venus: do not destroy video session during
- queue setup
-To:     Srinu Gorle <sgorle@codeaurora.org>, stanimir.varbanov@linaro.org,
-        hverkuil@xs4all.nl, mchehab@kernel.org,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Cc:     acourbot@chromium.org, vgarodia@codeaurora.org
-References: <1538222432-25894-1-git-send-email-sgorle@codeaurora.org>
- <1538222432-25894-4-git-send-email-sgorle@codeaurora.org>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <d8cb0c47-a3f7-314b-c65d-3c8eca724e6a@linaro.org>
-Date:   Fri, 9 Nov 2018 11:59:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/iYTfJ+xvmHKAYJ8KX+pFriE/QZ4u5ENiz80IeXRRSM=;
+        b=gwlagdeeIdSIHMHVbxKHdl/A5RojeQBNsjqi3rBQvTxsgXfb9gR3uBJc7mw1CxNa/P
+         4LsFX7BTge5Z7AA45tXG83N6/UGifios29SHTP/PxKPL2JsHFmquglAh3Q2X0eF75uev
+         Q+r9gBCpp+riQDyvUwOvc9ERIRWPPRAclrDTJROsJmK2jAM31s7nhDwgtGrE3+YTmm+Q
+         43MjmV34LfLE2tGs3ZZbybTcebesM6SL4nr0SNoipXMWf8fPWSOG3XlBCqeh7yQz0Dok
+         cPXsk1pEwX51KBwjF42XuY4333JMXq2v1HIPhcXnV7vWR+NfMmyix4TNvYJtlwpP8xK/
+         uquQ==
+X-Gm-Message-State: AGRZ1gL4KRid1W+DNFa6cD79trs5wRVZbfY0nmUww84yhPvtA2YOeZ/N
+        7zyzl69oC2LbV6z0P8GRFkt1/5yI3vc+x8KAt+ZFYw==
+X-Google-Smtp-Source: AJdET5catTyCGLeHhjoVpN1+3dFseCOb+TuUfRbtzf13IfKQqHply+/H+Q4Yv1MfKnPYDzmXyPnkplV4oHpr+pTuGfc=
+X-Received: by 2002:a9f:2622:: with SMTP id 31mr3834138uag.90.1541757661685;
+ Fri, 09 Nov 2018 02:01:01 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1538222432-25894-4-git-send-email-sgorle@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CAEbi=3dou8JWKYq9FpRBtPKRRu4ahhsh=+kHKcF8vg5hyO2ZGQ@mail.gmail.com>
+In-Reply-To: <CAEbi=3dou8JWKYq9FpRBtPKRRu4ahhsh=+kHKcF8vg5hyO2ZGQ@mail.gmail.com>
+From:   Greentime Hu <green.hu@gmail.com>
+Date:   Fri, 9 Nov 2018 18:00:25 +0800
+Message-ID: <CAEbi=3dCGmCzM7td_-hdsgfpHOVeB_Bc_tFtvWnn1AJqzMbiUw@mail.gmail.com>
+Subject: [GIT PULL] nds32 new features and bug fix for 4.20
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greentime <greentime@andestech.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Srinu,
+Hi Linus,
 
-On 9/29/18 3:00 PM, Srinu Gorle wrote:
-> - open and close video sessions for plane properties is incorrect.
+The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
 
-Could you rephrase this statement? I really don't understand what you mean.
+  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
 
-> - add check to ensure, same instance persist from driver open to close.
+are available in the Git repository at:
 
-This assumption is wrong. The v4l client can change the codec by SFMT
-without close the device node, in that case we have to destroy and
-create a new session with new codec.
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/greentime/linux.git
+tags/nds32-for-linus-4.20
 
-> 
-> Signed-off-by: Srinu Gorle <sgorle@codeaurora.org>
-> ---
->  drivers/media/platform/qcom/venus/hfi.c  | 3 +++
->  drivers/media/platform/qcom/venus/vdec.c | 2 ++
->  2 files changed, 5 insertions(+)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/hfi.c b/drivers/media/platform/qcom/venus/hfi.c
-> index 36a4784..59c34ba 100644
-> --- a/drivers/media/platform/qcom/venus/hfi.c
-> +++ b/drivers/media/platform/qcom/venus/hfi.c
-> @@ -207,6 +207,9 @@ int hfi_session_init(struct venus_inst *inst, u32 pixfmt)
->  	const struct hfi_ops *ops = core->ops;
->  	int ret;
->  
-> +	if (inst->state >= INST_INIT && inst->state < INST_STOP)
-> +		return 0;
+for you to fetch changes up to 3fb688b03d0c14e661ef20b11aa129048ccde0bf:
 
-In fact you want to be able to call session_init multiple times but
-deinit the session only once? The hfi.c layer is designed to follow the
-states as they are expected by the firmware side, if you want to call
-session_init multiple times just make a wrapper in the vdec.c with
-reference counting.
+  nds32: support hardware prefetcher (2018-11-08 20:42:49 +0800)
 
-> +
->  	inst->hfi_codec = to_codec_type(pixfmt);
->  	reinit_completion(&inst->done);
->  
-> diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-> index afe3b36..0035cf2 100644
-> --- a/drivers/media/platform/qcom/venus/vdec.c
-> +++ b/drivers/media/platform/qcom/venus/vdec.c
-> @@ -700,6 +700,8 @@ static int vdec_num_buffers(struct venus_inst *inst, unsigned int *in_num,
->  
->  	*out_num = HFI_BUFREQ_COUNT_MIN(&bufreq, ver);
->  
-> +	return 0;
+----------------------------------------------------------------
+nds32 patches for 4.20
 
-OK in present implementation I decided that the codec is settled when
-streamon on both queues is called (i.e. the final session_init is made
-in streamon). IMO the correct one is to init the session in
-reqbuf(output) and deinit session in reqbuf(output, count=0)?
+Here is the nds32 patch set based on 4.20-rc1.
+Contained in here are
+1. Perf support
+2. Power management support
+3. FPU support
+4. Hardware prefetcher support
+5. Build error fixed
+6. Performance enhancement
 
-The problem I see when you skip session_deinit is that the codec cannot
-be changed without closing the video node.
+These are the LTP20170427 testing results.
+Total Tests: 1902
+Total Skipped Tests: 603
+Total Failures: 410
+Kernel Version: 4.20.0-rc1-00016-ge0db606bc023
+Machine Architecture: nds32
+Hostname: greentime-d15-ae3xx
 
-> +
->  deinit:
->  	hfi_session_deinit(inst);
->  
-> 
+----------------------------------------------------------------
+Nick Hu (1):
+      nds32: Power management for nds32
 
--- 
-regards,
-Stan
+Nickhu (5):
+      nds32: Fix gcc 8.0 compiler option incompatible.
+      nds32: Fix bug in bitfield.h
+      nds32: Perf porting
+      nds32: Add perf call-graph support.
+      nds32: Add document for NDS32 PMU.
+
+Nylon Chen (2):
+      nds32: Fix the items of hwcap_str ordering issue.
+      nds32: support hardware prefetcher
+
+Vincent Chen (5):
+      nds32: nds32 FPU port
+      nds32: Support FP emulation
+      nds32: support denormalized result through FP emulator
+      math-emu/op-2.h: Use statement expressions to prevent negative
+constant shift
+      math-emu/soft-fp.h: (_FP_ROUND_ZERO) cast 0 to void to fix warning
+
+YueHaibing (1):
+      nds32: Remove duplicated include from pm.c
+
+Zong Li (2):
+      nds32: Remove the redundant assignment
+      nds32: Fill all TLB entries with kernel image mapping
+
+ Documentation/devicetree/bindings/perf/nds32v3-pmu.txt |   17 ++
+ arch/nds32/Kconfig                                     |   12 +
+ arch/nds32/Kconfig.cpu                                 |   41 ++++
+ arch/nds32/Makefile                                    |   11 +
+ arch/nds32/boot/dts/ae3xx.dts                          |    5 +
+ arch/nds32/include/asm/Kbuild                          |    1 +
+ arch/nds32/include/asm/bitfield.h                      |   25 ++-
+ arch/nds32/include/asm/elf.h                           |   11 +
+ arch/nds32/include/asm/fpu.h                           |  126 +++++++++++
+ arch/nds32/include/asm/fpuemu.h                        |   32 +++
+ arch/nds32/include/asm/nds32_fpu_inst.h                |  109 +++++++++
+ arch/nds32/include/asm/perf_event.h                    |   16 ++
+ arch/nds32/include/asm/pmu.h                           |  386
+++++++++++++++++++++++++++++++++
+ arch/nds32/include/asm/processor.h                     |    7 +
+ arch/nds32/include/asm/sfp-machine.h                   |  158 +++++++++++++
+ arch/nds32/include/asm/stacktrace.h                    |   39 ++++
+ arch/nds32/include/asm/suspend.h                       |   11 +
+ arch/nds32/include/asm/syscalls.h                      |    1 +
+ arch/nds32/include/uapi/asm/auxvec.h                   |    7 +
+ arch/nds32/include/uapi/asm/sigcontext.h               |   14 ++
+ arch/nds32/include/uapi/asm/udftrap.h                  |   13 ++
+ arch/nds32/include/uapi/asm/unistd.h                   |    2 +
+ arch/nds32/kernel/Makefile                             |   13 +-
+ arch/nds32/kernel/ex-entry.S                           |   24 +-
+ arch/nds32/kernel/ex-exit.S                            |   13 +-
+ arch/nds32/kernel/ex-scall.S                           |    8 +-
+ arch/nds32/kernel/fpu.c                                |  269
+++++++++++++++++++++++
+ arch/nds32/kernel/head.S                               |   13 +-
+ arch/nds32/kernel/perf_event_cpu.c                     | 1522
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ arch/nds32/kernel/pm.c                                 |   78 +++++++
+ arch/nds32/kernel/process.c                            |   64 +++++-
+ arch/nds32/kernel/setup.c                              |   22 +-
+ arch/nds32/kernel/signal.c                             |   62 +++++-
+ arch/nds32/kernel/sleep.S                              |  131 +++++++++++
+ arch/nds32/kernel/sys_nds32.c                          |   32 +++
+ arch/nds32/kernel/traps.c                              |   16 ++
+ arch/nds32/math-emu/Makefile                           |    7 +
+ arch/nds32/math-emu/faddd.c                            |   24 ++
+ arch/nds32/math-emu/fadds.c                            |   24 ++
+ arch/nds32/math-emu/fcmpd.c                            |   24 ++
+ arch/nds32/math-emu/fcmps.c                            |   24 ++
+ arch/nds32/math-emu/fd2s.c                             |   22 ++
+ arch/nds32/math-emu/fdivd.c                            |   27 +++
+ arch/nds32/math-emu/fdivs.c                            |   26 +++
+ arch/nds32/math-emu/fmuld.c                            |   23 ++
+ arch/nds32/math-emu/fmuls.c                            |   23 ++
+ arch/nds32/math-emu/fnegd.c                            |   21 ++
+ arch/nds32/math-emu/fnegs.c                            |   21 ++
+ arch/nds32/math-emu/fpuemu.c                           |  357
+++++++++++++++++++++++++++++++
+ arch/nds32/math-emu/fs2d.c                             |   23 ++
+ arch/nds32/math-emu/fsqrtd.c                           |   21 ++
+ arch/nds32/math-emu/fsqrts.c                           |   21 ++
+ arch/nds32/math-emu/fsubd.c                            |   27 +++
+ arch/nds32/math-emu/fsubs.c                            |   27 +++
+ arch/nds32/mm/Makefile                                 |    6 +-
+ arch/nds32/mm/fault.c                                  |   13 +-
+ drivers/irqchip/irq-ativic32.c                         |   31 +++
+ include/math-emu/op-2.h                                |   99 ++++-----
+ include/math-emu/soft-fp.h                             |    2 +-
+ tools/include/asm/barrier.h                            |    2 +
+ tools/perf/arch/nds32/Build                            |    1 +
+ tools/perf/arch/nds32/util/Build                       |    1 +
+ tools/perf/arch/nds32/util/header.c                    |   29 +++
+ tools/perf/pmu-events/arch/nds32/mapfile.csv           |   15 ++
+ tools/perf/pmu-events/arch/nds32/n13/atcpmu.json       |  290
+++++++++++++++++++++++++
+ 65 files changed, 4453 insertions(+), 89 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/perf/nds32v3-pmu.txt
+ create mode 100644 arch/nds32/include/asm/fpu.h
+ create mode 100644 arch/nds32/include/asm/fpuemu.h
+ create mode 100644 arch/nds32/include/asm/nds32_fpu_inst.h
+ create mode 100644 arch/nds32/include/asm/perf_event.h
+ create mode 100644 arch/nds32/include/asm/pmu.h
+ create mode 100644 arch/nds32/include/asm/sfp-machine.h
+ create mode 100644 arch/nds32/include/asm/stacktrace.h
+ create mode 100644 arch/nds32/include/asm/suspend.h
+ create mode 100644 arch/nds32/include/uapi/asm/udftrap.h
+ create mode 100644 arch/nds32/kernel/fpu.c
+ create mode 100644 arch/nds32/kernel/perf_event_cpu.c
+ create mode 100644 arch/nds32/kernel/pm.c
+ create mode 100644 arch/nds32/kernel/sleep.S
+ create mode 100644 arch/nds32/math-emu/Makefile
+ create mode 100644 arch/nds32/math-emu/faddd.c
+ create mode 100644 arch/nds32/math-emu/fadds.c
+ create mode 100644 arch/nds32/math-emu/fcmpd.c
+ create mode 100644 arch/nds32/math-emu/fcmps.c
+ create mode 100644 arch/nds32/math-emu/fd2s.c
+ create mode 100644 arch/nds32/math-emu/fdivd.c
+ create mode 100644 arch/nds32/math-emu/fdivs.c
+ create mode 100644 arch/nds32/math-emu/fmuld.c
+ create mode 100644 arch/nds32/math-emu/fmuls.c
+ create mode 100644 arch/nds32/math-emu/fnegd.c
+ create mode 100644 arch/nds32/math-emu/fnegs.c
+ create mode 100644 arch/nds32/math-emu/fpuemu.c
+ create mode 100644 arch/nds32/math-emu/fs2d.c
+ create mode 100644 arch/nds32/math-emu/fsqrtd.c
+ create mode 100644 arch/nds32/math-emu/fsqrts.c
+ create mode 100644 arch/nds32/math-emu/fsubd.c
+ create mode 100644 arch/nds32/math-emu/fsubs.c
+ create mode 100644 tools/perf/arch/nds32/Build
+ create mode 100644 tools/perf/arch/nds32/util/Build
+ create mode 100644 tools/perf/arch/nds32/util/header.c
+ create mode 100644 tools/perf/pmu-events/arch/nds32/mapfile.csv
+ create mode 100644 tools/perf/pmu-events/arch/nds32/n13/atcpmu.json
