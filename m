@@ -2,91 +2,94 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD86DC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:42:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E25AFC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:43:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AA9520825
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:42:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AA9520825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id AAF1220827
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:43:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Tx7aaIzC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAF1220827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727781AbeKITWY (ORCPT
+        id S1727807AbeKITXJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 14:22:24 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:29985 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727560AbeKITWY (ORCPT
+        Fri, 9 Nov 2018 14:23:09 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:36168 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727537AbeKITXJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 14:22:24 -0500
-Received: from fsav106.sakura.ne.jp (fsav106.sakura.ne.jp [27.133.134.233])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wA99fulv005070;
-        Fri, 9 Nov 2018 18:41:56 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav106.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav106.sakura.ne.jp);
- Fri, 09 Nov 2018 18:41:56 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav106.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank060157065137.bbtec.net [60.157.65.137])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id wA99fqCP005009
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Fri, 9 Nov 2018 18:41:56 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Subject: Re: UBSAN: Undefined behaviour in mm/page_alloc.c
-To:     Michal Hocko <mhocko@kernel.org>, Kyungtae Kim <kt0755@gmail.com>
-Cc:     akpm@linux-foundation.org, pavel.tatashin@microsoft.com,
-        vbabka@suse.cz, osalvador@suse.de, rppt@linux.vnet.ibm.com,
-        aaron.lu@intel.com, iamjoonsoo.kim@lge.com,
-        alexander.h.duyck@linux.intel.com, mgorman@techsingularity.net,
-        lifeasageek@gmail.com, threeearcat@gmail.com,
-        syzkaller@googlegroups.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-References: <CAEAjamseRRHu+TaTkd1TwpLNm8mtDGP=2K0WKLF0wH-3iLcW_w@mail.gmail.com>
- <20181109084353.GA5321@dhcp22.suse.cz>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <b51aae15-eb5d-47f0-1222-bfc1ef21e06c@I-love.SAKURA.ne.jp>
-Date:   Fri, 9 Nov 2018 18:41:53 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Fri, 9 Nov 2018 14:23:09 -0500
+Received: by mail-lj1-f194.google.com with SMTP id s15-v6so1046514lji.3
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 01:43:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VZOuUjB4fjbeuRb1y06FXPyI7XCGREoEand9L0H+BlM=;
+        b=Tx7aaIzCL4eP4N6r6tL8XY3qzqjUs+1Rt2raPBbpPrIUR488kXd4gf+vM4ikVjrGkp
+         eWKrWp+fNOPV1mN2Ui1k2QkBWLH1/v94q7rQDES1Xnu3zqqRIVRWBALdhz1XSPHZQZUD
+         gyYO+RiFRmApPZedAqizscHZRwD7RwoBFddhg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VZOuUjB4fjbeuRb1y06FXPyI7XCGREoEand9L0H+BlM=;
+        b=ArNXrvnZ+m9LKbu1RzBkiBo0DL8KCHdPXt7b/QO362KWfjeFbvvnBTTnY92z9ou1zg
+         8GRKJ8S2IyCCsnLYqKr3z1cxkIBeMa8qPsdicWzEmSUDN6jE8hF7W+Zxe+5EWMZ/l536
+         cmL7/HeCkPYt4Mt0aAa7xeWL4B2Sg8NIfpq3wnHU4CIbZ8CvYvSxGyC0o0+yFLCPunll
+         htzxfmwIJop4FJ2Aq6aU2G9dL7ctuI6CUzeJifZeRhfE6Lguh43CztXuxMQUoRRRYaRH
+         5cPxrlcf/y0jEkbUE0RqWll025Q6yorWYxTHaJPVL8PxMPOWdZT9/BsTUociH4HuNIyG
+         VJpw==
+X-Gm-Message-State: AGRZ1gLE0ctovXYc0qiuivsH/0mI2AUsaTlc6/8fngDMm3CY1Srq9YET
+        EWMylfFk3eTfpj4QRfdPTGu+IqgfrH/FkBIid0nsaQ==
+X-Google-Smtp-Source: AJdET5e/uK3f3DtGY6HBA8l/ttyxzAY8U5W9wpfTr1pnBqypYXnvqWKwDpn2c255M7/uiUCmV+DmMuZ+JxVcyry6yUI=
+X-Received: by 2002:a2e:29d7:: with SMTP id p84-v6mr5085195ljp.12.1541756601225;
+ Fri, 09 Nov 2018 01:43:21 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181109084353.GA5321@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180829082413.2512005-1-sravanhome@gmail.com>
+ <20180829082413.2512005-2-sravanhome@gmail.com> <20180829152049.GA21136@Mani-XPS-13-9360>
+ <7fc376ac-5998-57b6-8989-908d7a0abfd0@gmail.com> <72d4911a-588f-9bf3-4fad-a0b34692ecd4@denx.de>
+In-Reply-To: <72d4911a-588f-9bf3-4fad-a0b34692ecd4@denx.de>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 9 Nov 2018 10:43:09 +0100
+Message-ID: <CACRpkdZK2No9sBRCwUWv=ieCund78hKvaL=oxmQzg5M-Bnhz0Q@mail.gmail.com>
+Subject: Re: [PATCH v5 1/5] pinctrl: actions: define constructor generic to
+ Actions Semi SoC's
+To:     pn@denx.de
+Cc:     saravanan sekar <sravanhome@gmail.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        mp-cs@actions-semi.com, Jeff Chen <jeff.chen@actions-semi.com>,
+        "Thomas C. Liau" <thomas.liau@actions-semi.com>,
+        linux@cubietech.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/11/09 17:43, Michal Hocko wrote:
-> @@ -4364,6 +4353,17 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
->  	gfp_t alloc_mask; /* The gfp_t that was actually used for allocation */
->  	struct alloc_context ac = { };
->  
-> +	/*
-> +	 * In the slowpath, we sanity check order to avoid ever trying to
+On Tue, Nov 6, 2018 at 5:43 PM Parthiban Nallathambi <pn@denx.de> wrote:
 
-Please keep the comment up to dated.
-I don't like that comments in OOM code is outdated.
+> ping on this patch series!
 
-> +	 * reclaim >= MAX_ORDER areas which will never succeed. Callers may
-> +	 * be using allocators in order of preference for an area that is
-> +	 * too large.
-> +	 */
-> +	if (order >= MAX_ORDER) {
+AFAICT there is some feedback with issues that need to be fixed,
+also the patch should probably need to be rebased on top of
+v4.20-rc1.
 
-Also, why not to add BUG_ON(gfp_mask & __GFP_NOFAIL); here?
-
-> +		WARN_ON_ONCE(!(gfp_mask & __GFP_NOWARN));
-> +		return NULL;
-> +	}
-> +
->  	gfp_mask &= gfp_allowed_mask;
->  	alloc_mask = gfp_mask;
->  	if (!prepare_alloc_pages(gfp_mask, order, preferred_nid, nodemask, &ac, &alloc_mask, &alloc_flags))
-> 
+Yours,
+Linus Walleij
