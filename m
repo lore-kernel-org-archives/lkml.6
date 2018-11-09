@@ -2,199 +2,73 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3B82C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 16:28:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 978CDC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 16:28:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9761520825
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 16:28:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9761520825
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5FDC520825
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 16:28:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UEE7Wzym"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FDC520825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728916AbeKJCJ5 (ORCPT
+        id S1728542AbeKJCKO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 21:09:57 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:57506 "EHLO mx1.redhat.com"
+        Fri, 9 Nov 2018 21:10:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50052 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727955AbeKJCJ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 21:09:56 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727955AbeKJCKO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 21:10:14 -0500
+Received: from localhost (71-6-98-120.static-ip.telepacific.net [71.6.98.120])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A85A2315487A;
-        Fri,  9 Nov 2018 16:28:39 +0000 (UTC)
-Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A7B93604D0;
-        Fri,  9 Nov 2018 16:28:21 +0000 (UTC)
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>
-Subject: [PATCH V8 18/18] block: kill BLK_MQ_F_SG_MERGE
-Date:   Sat, 10 Nov 2018 00:26:10 +0800
-Message-Id: <20181109162610.18981-19-ming.lei@redhat.com>
-In-Reply-To: <20181109162610.18981-1-ming.lei@redhat.com>
-References: <20181109162610.18981-1-ming.lei@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Fri, 09 Nov 2018 16:28:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 20A6E20825;
+        Fri,  9 Nov 2018 16:28:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541780937;
+        bh=X8oSKXWD88o7ViU80aO6xOshsClFN7D2qZncz2qfpEc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=UEE7WzymIiP5xPs9nQDkPNQUg0WhOJuJ/Fm8DjH8YVPs3/MlWGPeSlHbayR684YWQ
+         375odOwrBFrmvXIKW4BzRqKhoxiiBsEv8qWzz6jQIwboZPnNNDdd3v7A8ysEEulSVW
+         xocV1PLn5iByDeHqb68JfyNJ6MMOZBx+UVGtKeHA=
+Date:   Fri, 9 Nov 2018 08:28:56 -0800
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Guillaume Nault <g.nault@alphalink.fr>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 4.4 063/114] l2tp: hold socket before dropping lock in
+ l2tp_ip{, 6}_recv()
+Message-ID: <20181109162856.GA2407@kroah.com>
+References: <20181108215059.051093652@linuxfoundation.org>
+ <20181108215106.791041209@linuxfoundation.org>
+ <20181109153332.GD1415@alphalink.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181109153332.GD1415@alphalink.fr>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QUEUE_FLAG_NO_SG_MERGE has been killed, so kill BLK_MQ_F_SG_MERGE too.
+On Fri, Nov 09, 2018 at 04:33:32PM +0100, Guillaume Nault wrote:
+> On Thu, Nov 08, 2018 at 01:51:18PM -0800, Greg Kroah-Hartman wrote:
+> > 4.4-stable review patch.  If anyone has any objections, please let me know.
+> > 
+> This patch was partly wrong. Here is the followup fix:
+> 94d7ee0baa8b ("l2tp: hold tunnel socket when handling control frames in l2tp_ip and l2tp_ip6")
+> 
+> Both a3c18422a4 ("l2tp: hold socket before dropping lock in l2tp_ip{, 6}_recv()")
+> and 94d7ee0baa8b ("l2tp: hold tunnel socket when handling control frames in l2tp_ip and l2tp_ip6")
+> should be applied/backported together.
 
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Mike Snitzer <snitzer@redhat.com>
-Cc: Kent Overstreet <kent.overstreet@gmail.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
----
- block/blk-mq-debugfs.c       | 1 -
- drivers/block/loop.c         | 2 +-
- drivers/block/nbd.c          | 2 +-
- drivers/block/rbd.c          | 2 +-
- drivers/block/skd_main.c     | 1 -
- drivers/block/xen-blkfront.c | 2 +-
- drivers/md/dm-rq.c           | 2 +-
- drivers/mmc/core/queue.c     | 3 +--
- drivers/scsi/scsi_lib.c      | 2 +-
- include/linux/blk-mq.h       | 1 -
- 10 files changed, 7 insertions(+), 11 deletions(-)
+Thanks for letting me know, I've now backported this as well.
 
-diff --git a/block/blk-mq-debugfs.c b/block/blk-mq-debugfs.c
-index e188b1090759..e1c12358391a 100644
---- a/block/blk-mq-debugfs.c
-+++ b/block/blk-mq-debugfs.c
-@@ -250,7 +250,6 @@ static const char *const alloc_policy_name[] = {
- static const char *const hctx_flag_name[] = {
- 	HCTX_FLAG_NAME(SHOULD_MERGE),
- 	HCTX_FLAG_NAME(TAG_SHARED),
--	HCTX_FLAG_NAME(SG_MERGE),
- 	HCTX_FLAG_NAME(BLOCKING),
- 	HCTX_FLAG_NAME(NO_SCHED),
- };
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index a3fd418ec637..d509902a8046 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -1907,7 +1907,7 @@ static int loop_add(struct loop_device **l, int i)
- 	lo->tag_set.queue_depth = 128;
- 	lo->tag_set.numa_node = NUMA_NO_NODE;
- 	lo->tag_set.cmd_size = sizeof(struct loop_cmd);
--	lo->tag_set.flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_SG_MERGE;
-+	lo->tag_set.flags = BLK_MQ_F_SHOULD_MERGE;
- 	lo->tag_set.driver_data = lo;
- 
- 	err = blk_mq_alloc_tag_set(&lo->tag_set);
-diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-index 08696f5f00bb..999c94de78e5 100644
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -1570,7 +1570,7 @@ static int nbd_dev_add(int index)
- 	nbd->tag_set.numa_node = NUMA_NO_NODE;
- 	nbd->tag_set.cmd_size = sizeof(struct nbd_cmd);
- 	nbd->tag_set.flags = BLK_MQ_F_SHOULD_MERGE |
--		BLK_MQ_F_SG_MERGE | BLK_MQ_F_BLOCKING;
-+		BLK_MQ_F_BLOCKING;
- 	nbd->tag_set.driver_data = nbd;
- 
- 	err = blk_mq_alloc_tag_set(&nbd->tag_set);
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 8e5140bbf241..3dfd300b5283 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -3988,7 +3988,7 @@ static int rbd_init_disk(struct rbd_device *rbd_dev)
- 	rbd_dev->tag_set.ops = &rbd_mq_ops;
- 	rbd_dev->tag_set.queue_depth = rbd_dev->opts->queue_depth;
- 	rbd_dev->tag_set.numa_node = NUMA_NO_NODE;
--	rbd_dev->tag_set.flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_SG_MERGE;
-+	rbd_dev->tag_set.flags = BLK_MQ_F_SHOULD_MERGE;
- 	rbd_dev->tag_set.nr_hw_queues = 1;
- 	rbd_dev->tag_set.cmd_size = sizeof(struct work_struct);
- 
-diff --git a/drivers/block/skd_main.c b/drivers/block/skd_main.c
-index a0196477165f..5675f321c659 100644
---- a/drivers/block/skd_main.c
-+++ b/drivers/block/skd_main.c
-@@ -2837,7 +2837,6 @@ static int skd_cons_disk(struct skd_device *skdev)
- 		skdev->sgs_per_request * sizeof(struct scatterlist);
- 	skdev->tag_set.numa_node = NUMA_NO_NODE;
- 	skdev->tag_set.flags = BLK_MQ_F_SHOULD_MERGE |
--		BLK_MQ_F_SG_MERGE |
- 		BLK_ALLOC_POLICY_TO_MQ_FLAG(BLK_TAG_ALLOC_FIFO);
- 	skdev->tag_set.driver_data = skdev;
- 	rc = blk_mq_alloc_tag_set(&skdev->tag_set);
-diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
-index 56452cabce5b..297412bf23e1 100644
---- a/drivers/block/xen-blkfront.c
-+++ b/drivers/block/xen-blkfront.c
-@@ -977,7 +977,7 @@ static int xlvbd_init_blk_queue(struct gendisk *gd, u16 sector_size,
- 	} else
- 		info->tag_set.queue_depth = BLK_RING_SIZE(info);
- 	info->tag_set.numa_node = NUMA_NO_NODE;
--	info->tag_set.flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_SG_MERGE;
-+	info->tag_set.flags = BLK_MQ_F_SHOULD_MERGE;
- 	info->tag_set.cmd_size = sizeof(struct blkif_req);
- 	info->tag_set.driver_data = info;
- 
-diff --git a/drivers/md/dm-rq.c b/drivers/md/dm-rq.c
-index 7cd36e4d1310..140ada0b99fc 100644
---- a/drivers/md/dm-rq.c
-+++ b/drivers/md/dm-rq.c
-@@ -536,7 +536,7 @@ int dm_mq_init_request_queue(struct mapped_device *md, struct dm_table *t)
- 	md->tag_set->ops = &dm_mq_ops;
- 	md->tag_set->queue_depth = dm_get_blk_mq_queue_depth();
- 	md->tag_set->numa_node = md->numa_node_id;
--	md->tag_set->flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_SG_MERGE;
-+	md->tag_set->flags = BLK_MQ_F_SHOULD_MERGE;
- 	md->tag_set->nr_hw_queues = dm_get_blk_mq_nr_hw_queues();
- 	md->tag_set->driver_data = md;
- 
-diff --git a/drivers/mmc/core/queue.c b/drivers/mmc/core/queue.c
-index 6edffeed9953..6a0e9f6b6412 100644
---- a/drivers/mmc/core/queue.c
-+++ b/drivers/mmc/core/queue.c
-@@ -387,8 +387,7 @@ static int mmc_mq_init_queue(struct mmc_queue *mq, int q_depth,
- 	mq->tag_set.ops = mq_ops;
- 	mq->tag_set.queue_depth = q_depth;
- 	mq->tag_set.numa_node = NUMA_NO_NODE;
--	mq->tag_set.flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_SG_MERGE |
--			    BLK_MQ_F_BLOCKING;
-+	mq->tag_set.flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_BLOCKING;
- 	mq->tag_set.nr_hw_queues = 1;
- 	mq->tag_set.cmd_size = sizeof(struct mmc_queue_req);
- 	mq->tag_set.driver_data = mq;
-diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
-index ed81b8e74cfe..aad9f2baaa02 100644
---- a/drivers/scsi/scsi_lib.c
-+++ b/drivers/scsi/scsi_lib.c
-@@ -1898,7 +1898,7 @@ int scsi_mq_setup_tags(struct Scsi_Host *shost)
- 	shost->tag_set.queue_depth = shost->can_queue;
- 	shost->tag_set.cmd_size = cmd_size;
- 	shost->tag_set.numa_node = NUMA_NO_NODE;
--	shost->tag_set.flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_SG_MERGE;
-+	shost->tag_set.flags = BLK_MQ_F_SHOULD_MERGE;
- 	shost->tag_set.flags |=
- 		BLK_ALLOC_POLICY_TO_MQ_FLAG(shost->hostt->tag_alloc_policy);
- 	shost->tag_set.driver_data = shost;
-diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
-index 929e8abc5535..ca7389d7e04f 100644
---- a/include/linux/blk-mq.h
-+++ b/include/linux/blk-mq.h
-@@ -211,7 +211,6 @@ struct blk_mq_ops {
- enum {
- 	BLK_MQ_F_SHOULD_MERGE	= 1 << 0,
- 	BLK_MQ_F_TAG_SHARED	= 1 << 1,
--	BLK_MQ_F_SG_MERGE	= 1 << 2,
- 	BLK_MQ_F_BLOCKING	= 1 << 5,
- 	BLK_MQ_F_NO_SCHED	= 1 << 6,
- 	BLK_MQ_F_ALLOC_POLICY_START_BIT = 8,
--- 
-2.9.5
-
+greg k-h
