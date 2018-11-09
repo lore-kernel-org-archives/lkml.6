@@ -2,128 +2,166 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7DD2C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:39:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DA82C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:40:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 753AB2081C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:39:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 753AB2081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id E9DC32086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:40:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UMxleEng"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9DC32086C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728180AbeKJAUp (ORCPT
+        id S1728222AbeKJAVC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 19:20:45 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:49261 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727941AbeKJAUp (ORCPT
+        Fri, 9 Nov 2018 19:21:02 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:43318 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727846AbeKJAVC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 19:20:45 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gL7wt-0006YB-DY; Fri, 09 Nov 2018 15:39:51 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gL7ws-0005A2-IP; Fri, 09 Nov 2018 15:39:50 +0100
-Date:   Fri, 9 Nov 2018 15:39:50 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Bamvor Jian Zhang <bamv2005@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/3] gpio: mockup: fix indicated direction
-Message-ID: <20181109143950.gy7swu6vgaqgg7dw@pengutronix.de>
-References: <20181108165255.9940-1-brgl@bgdev.pl>
- <20181108165255.9940-2-brgl@bgdev.pl>
- <20181108203546.54rncnydgamud5z3@pengutronix.de>
- <CAMRc=Mev6RMvVox2Sx6s80+obLg4QWAL=_hwcf34m2iMXwEbOg@mail.gmail.com>
- <20181109115424.pe4w26nmt6xplzto@pengutronix.de>
- <CAMRc=Mdf1GHR0_7uQ4PFFCwL9p3NyKBDMSBkipR826BhTYpz=g@mail.gmail.com>
- <20181109131036.v6d645ojv6jr7v3y@pengutronix.de>
- <CAMRc=Mf18udrM=2=SZHMg3M2akcccPXb7Fr81vXODpNgjf+uJw@mail.gmail.com>
+        Fri, 9 Nov 2018 19:21:02 -0500
+Received: by mail-lf1-f68.google.com with SMTP id u18so1482834lff.10
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 06:40:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=SQcgIR1s9phtlv8DEcxb5T8LZvhEYdJxW+FiLMUwXCE=;
+        b=UMxleEng2rCSIcf2JRiJRZD+cH+YsPQlnk791SWN5aPdZfJhdIQUX29VsM86ItFTAU
+         6KILlRZxOWQrlLePHbtpE3bzpanaa59Qpg6Dr8Wf5VJ+3MmiPXlZvcWXJDqCcoZH3T6F
+         BEOXacwTwXHOOcjlwmB7oWE9iuz8ulCtY4hbA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=SQcgIR1s9phtlv8DEcxb5T8LZvhEYdJxW+FiLMUwXCE=;
+        b=ghGpI9bFwecI+pbbr2L/qldthRArC8u8iqYfWzs1AlTn5VhcE6BKGZEg7eYYmFpqW2
+         yqdTCJoTF5yq652/tB7i/BqqfzVyqNsBdwYIoU54gxJjqKGd84PtK2rsCPs1qtXoijSj
+         HW56+IdsuESiVUxWVqJpfZ8hyYmh6FiTAaLJkk2sLnvvJDau2BI4BdHG7HZmL+ceiysF
+         fIXS3M8dlii9IehYJZ34XtTjpXMshEJ+MRpM2J+3JH7L+tD3H0AhUj94sFTa/14fhjBT
+         0vXc3GZRXUv/P7pEo5Z0HKa0gvXrJHZkmrXNj2ph9q6qoQl2QjXn/zolxahKFzbstN2Z
+         XAkA==
+X-Gm-Message-State: AGRZ1gLph8J5iVu3RjSaTTw4WkdWu1C0/pApf3x+rsSCAbbcF+5t7mTd
+        C7v2Dz9cPm5HzPRsb5rifiBTfeeIDMA0xOV0OqwyIApiO8c=
+X-Google-Smtp-Source: AJdET5fgJxg48wmRlMYYNqQqGNUIdDXJM4i84lakblTisOJIazdVg9XZX7fIwHNfHcFepU5WidL+tzUsKzh1HpBoE8c=
+X-Received: by 2002:a19:750a:: with SMTP id y10mr5528845lfe.43.1541774408054;
+ Fri, 09 Nov 2018 06:40:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=Mf18udrM=2=SZHMg3M2akcccPXb7Fr81vXODpNgjf+uJw@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20181108215138.892971755@linuxfoundation.org>
+In-Reply-To: <20181108215138.892971755@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Fri, 9 Nov 2018 20:09:55 +0530
+Message-ID: <CA+G9fYuPgK3ni_CKW9xkpw8CPk5UduNunaz23Tcfci38=MNH6Q@mail.gmail.com>
+Subject: Re: [PATCH 4.18 00/34] 4.18.18-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        lkft-triage@lists.linaro.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        linux- stable <stable@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 09, 2018 at 02:53:16PM +0100, Bartosz Golaszewski wrote:
-> pt., 9 lis 2018 o 14:10 Uwe Kleine-König
-> <u.kleine-koenig@pengutronix.de> napisał(a):
-> >
-> > Hello,
-> >
-> > On Fri, Nov 09, 2018 at 01:24:36PM +0100, Bartosz Golaszewski wrote:
-> > > pt., 9 lis 2018 o 12:54 Uwe Kleine-König
-> > > <u.kleine-koenig@pengutronix.de> napisał(a):
-> > > > On Fri, Nov 09, 2018 at 12:13:44PM +0100, Bartosz Golaszewski wrote:
-> > > > > czw., 8 lis 2018 o 21:35 Uwe Kleine-König
-> > > > > <u.kleine-koenig@pengutronix.de> napisał(a):
-> > > > > > On Thu, Nov 08, 2018 at 05:52:53PM +0100, Bartosz Golaszewski wrote:
-> > > > > > > Commit 3edfb7bd76bd ("gpiolib: Show correct direction from the
-> > > > > > > beginning") fixed an existing issue but broke libgpiod tests by
-> > > > > > > changing the default direction of dummy lines to output.
-> > > > > >
-> > > > > > The indicated commit only changed what was shown in debugfs, but didn't
-> > > > > > touch the actual direction of a GPIO, doesn't it? If someone called
-> > > > > > gpiod_get_direction before it would have returned "output", too, unless
-> > > > > > I miss something.
-> > > > > >
-> > > > >
-> > > > > This commit (3edfb7bd76bd) sets the correct direction of the line by
-> > > > > actually calling get_direction() instead of assuming input if
-> > > > > direction_input is not NULL. It just so happened that previously the
-> > > > > default direction of gpio-mockup lines was output but it would be
-> > > > > displayed as input due to this inconsistency.
-> > > >
-> > > > Does the test that fails since 3edfb7bd76bd use debugfs/gpio to find out
-> > > > the direction of a gpio? I'd say it's a bad idea to depend on this as
-> > > > (AFAICT) debugfs is only a debug aid and you shouldn't depend on stuff
-> > > > contained in it.
-> > >
-> > > No, this is what we get from the LINEINFO ioctl(). I only use debugfs
-> > > for triggering dummy interrupts.
-> >
-> > A right, gpio_ioctl uses these flags, too.
-> >
-> > > > I'd weaken the commit log a bit to not claim that the commit broke
-> > > > libgpiod but that it only made the inconsistency visible. After all this
-> > > > commit didn't "change the default direction of dummy lines to output",
-> > > > they were an output already before.
-> > >
-> > > Well it did break the tests you know. ;)
-> >
-> > Which test failed exactly?
-> >
-> 
-> All gpioinfo tests that check the output of this command and expect to
-> see input as line direction.
+On Fri, 9 Nov 2018 at 03:40, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 4.18.18 release.
+> There are 34 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sat Nov 10 21:51:21 UTC 2018.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.18.18-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.18.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-This wasn't the answer I expected. The background of my question was:
-This failing test seems to expect that a given GPIO is an input. If that
-expectation already exists after the gpio is only requested, then the
-test is broken and a fix is necessary there.
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-Best regards
-Uwe
+Summary
+------------------------------------------------------------------------
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+kernel: 4.18.18-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.18.y
+git commit: 46c86a0ac4a119d8aaa02055e233b2ee550a016e
+git describe: v4.18.17-35-g46c86a0ac4a1
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.18-oe/bu=
+ild/v4.18.17-35-g46c86a0ac4a1
+
+
+No regressions (compared to build v4.18.17)
+
+
+No fixes (compared to build v4.18.17)
+
+
+Ran 21302 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* boot
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* ltp-pty-tests
+* ltp-open-posix-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
