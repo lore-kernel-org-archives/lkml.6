@@ -2,649 +2,208 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55501C43610
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:46:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFF34C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:49:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEE9220840
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:46:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9079C20827
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:49:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gPBz/3jX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEE9220840
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="LqZn1tLp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9079C20827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727952AbeKIS0V (ORCPT
+        id S1727773AbeKIS3H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 13:26:21 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:45572 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727529AbeKIS0U (ORCPT
+        Fri, 9 Nov 2018 13:29:07 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:33061 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727598AbeKIS3G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 13:26:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=2yXfvZojypAt4xkMC3rBlKpCP/Efbx/O2zU3uR5/qfU=; b=gPBz/3jX/kanJZf8CxMMSUIRGI
-        4J4ErjMODCjTuh3PVJj1SIvt8nhpWvMdolYYw8n95jo/cW2a7YnmqLK1fW6id44HNyi4ohqWYvJb7
-        XqkcLFfV6jY66Ij8Sr/cgwXV7tfT3KaLZ4+tF3AzfOgatoijZSleijrqfsXtIQm1AxVXIVY4E9kaj
-        8cev4i2RkUb3UBhbwcnswVaqG+kK+Jv+j/MMkfbFxTMSbKCeqcy02NznBkN0NZNLGxRpv2uivE9dQ
-        Xzir5cqQ72AUtfz3jLDQDII2aIoYTXfzWWIf+jEjZmoOIsXnDqHFKyfB2sXw94VLf2ODfvIHrMOxL
-        gPflCSGA==;
-Received: from 089144211136.atnat0020.highway.a1.net ([89.144.211.136] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gL2RA-0006aY-2T; Fri, 09 Nov 2018 08:46:44 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     iommu@lists.linux-foundation.org
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-alpha@vger.kernel.org, linux-arch@vger.kernel.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] dma-mapping: return errors from dma_map_page and dma_map_attrs
-Date:   Fri,  9 Nov 2018 09:46:32 +0100
-Message-Id: <20181109084632.22848-3-hch@lst.de>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181109084632.22848-1-hch@lst.de>
-References: <20181109084632.22848-1-hch@lst.de>
+        Fri, 9 Nov 2018 13:29:06 -0500
+Received: by mail-pl1-f195.google.com with SMTP id w22-v6so658053plk.0
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 00:49:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=R/hrbUm35PJ6nZfWdm8oo3/XINMe68XP0KMb7dR8xDI=;
+        b=LqZn1tLpeg5592FM9YEnqXtA3xZpTqiB6IcNGqAAsyadn83l2+VfaQu4sdVeBJpKtz
+         kCwN5wAQEGRI1Xrl7hLcShwVOMG3l23FQTyf7fHWc0Ab/YZPdyRFO4QxXHJ5SWIbqNnq
+         DKpFIYTngk8clLF3D+vMZTHf4S/dPj89jZS/c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=R/hrbUm35PJ6nZfWdm8oo3/XINMe68XP0KMb7dR8xDI=;
+        b=LoUEpvZkZt6gWsnJ4iEv6ckNjXsJp9kLgiRsBLNQHoFvltCMx5JocVFQ/E09w6XykM
+         JSRA0Zetja4QLuECjBBsGthzDdx37QBBbilVAWwf6y4PcmwAjy9F2H7mtQtRmDb0LKI7
+         2pvr/qxQe36713iKp2ymmdscQQatQjcgpCk/WPG7veoB4XME91+7hLFo3O1elCRwAE2Y
+         PwIUurY5Q4EvH1/vnjDmcwpi++RDhbR0gWc1zZyedDafwKDcjUm55xl6t756p1qv7ORn
+         mZrqadCBHds+M9Lp1mUWffzRJ53k2K52UTgHtvxR01PiCpb53tABaA3OfDTbbhds7nd+
+         0qAw==
+X-Gm-Message-State: AGRZ1gK6LsGFJaK+5OqF0MJY7dd43rnlDjcavYvjhXh9tOCwjSp5LFTM
+        zVKtlkJsfbPxf44UIvJwlPoVJlvQ2xU=
+X-Google-Smtp-Source: AJdET5dhfSVnqjXLCi7EwC3vUhic4PX4u/fKZvBhOfrnGK/Gm10ovPHGKwgJC60x38Aey1was4wcNQ==
+X-Received: by 2002:a17:902:6a87:: with SMTP id n7-v6mr5078510plk.86.1541753370499;
+        Fri, 09 Nov 2018 00:49:30 -0800 (PST)
+Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id b5-v6sm5754812pfe.60.2018.11.09.00.49.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 09 Nov 2018 00:49:29 -0800 (PST)
+Date:   Fri, 9 Nov 2018 00:49:28 -0800
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     linux-kernel@vger.kernel.org, hch@infradead.org
+Cc:     jreck@google.com, john.stultz@linaro.org, tkjos@google.com,
+        gregkh@linuxfoundation.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>, dancol@google.com,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Lei Yang <Lei.Yang@windriver.com>,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-mm@kvack.org,
+        =?iso-8859-1?Q?Marc-Andr=E9?= Lureau 
+        <marcandre.lureau@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>, minchan@kernel.org,
+        Shuah Khan <shuah@kernel.org>, valdis.kletnieks@vt.edu
+Subject: Re: [PATCH v3 resend 1/2] mm: Add an F_SEAL_FUTURE_WRITE seal to
+ memfd
+Message-ID: <20181109084928.GA37614@google.com>
+References: <20181108041537.39694-1-joel@joelfernandes.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181108041537.39694-1-joel@joelfernandes.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current DMA API map_page and map_single routines use a very bad API
-pattern that makes error checking hard.  The calls to them are far too
-many and too complex to easily change that, but the relatively new _attr
-variants that take an additional attributs argument only have a few
-callers and can be changed easily.  So here we change them to return
-an errno value, and return the dma address by reference to allow for
-much saner error checking.
+On Wed, Nov 07, 2018 at 08:15:36PM -0800, Joel Fernandes (Google) wrote:
+> Android uses ashmem for sharing memory regions. We are looking forward
+> to migrating all usecases of ashmem to memfd so that we can possibly
+> remove the ashmem driver in the future from staging while also
+> benefiting from using memfd and contributing to it. Note staging drivers
+> are also not ABI and generally can be removed at anytime.
+> 
+> One of the main usecases Android has is the ability to create a region
+> and mmap it as writeable, then add protection against making any
+> "future" writes while keeping the existing already mmap'ed
+> writeable-region active.  This allows us to implement a usecase where
+> receivers of the shared memory buffer can get a read-only view, while
+> the sender continues to write to the buffer.
+> See CursorWindow documentation in Android for more details:
+> https://developer.android.com/reference/android/database/CursorWindow
+> 
+> This usecase cannot be implemented with the existing F_SEAL_WRITE seal.
+> To support the usecase, this patch adds a new F_SEAL_FUTURE_WRITE seal
+> which prevents any future mmap and write syscalls from succeeding while
+> keeping the existing mmap active. The following program shows the seal
+> working in action:
+> 
+[...] 
+> The output of running this program is as follows:
+> ret=3
+> map 0 passed
+> write passed
+> map 1 prot-write passed as expected
+> future-write seal now active
+> write failed as expected due to future-write seal
+> map 2 prot-write failed as expected due to seal
+> : Permission denied
+> map 3 prot-read passed as expected
+> 
+> Cc: jreck@google.com
+> Cc: john.stultz@linaro.org
+> Cc: tkjos@google.com
+> Cc: gregkh@linuxfoundation.org
+> Cc: hch@infradead.org
+> Reviewed-by: John Stultz <john.stultz@linaro.org>
+> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> ---
+> v1->v2: No change, just added selftests to the series. manpages are
+> ready and I'll submit them once the patches are accepted.
+> 
+> v2->v3: Updated commit message to have more support code (John Stultz)
+>  	Renamed seal from F_SEAL_FS_WRITE to F_SEAL_FUTURE_WRITE
+> 						(Christoph Hellwig)
+> 	Allow for this seal only if grow/shrink seals are also
+> 	either previous set, or are requested along with this seal.
+> 						(Christoph Hellwig)
+> 	Added locking to synchronize access to file->f_mode.
+> 						(Christoph Hellwig)
 
-In the long run we should move existing callers of dma_map_page and
-dma_map_single to these _attr variants with a 0 attrs argument to get
-the better API everywhere, but without a single flag day.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- Documentation/DMA-API.txt                     |  4 +-
- drivers/crypto/caam/caamalg.c                 |  8 +--
- drivers/crypto/caam/caamalg_qi2.c             | 13 ++--
- drivers/crypto/caam/caamhash.c                |  8 +--
- drivers/crypto/talitos.c                      |  4 +-
- drivers/gpu/drm/i915/i915_gem_gtt.c           | 19 +++---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c     | 20 +++---
- .../ethernet/cavium/thunder/nicvf_queues.c    | 27 ++++----
- drivers/net/ethernet/intel/i40e/i40e_txrx.c   | 11 +---
- drivers/net/ethernet/intel/i40e/i40e_xsk.c    |  5 +-
- drivers/net/ethernet/intel/iavf/iavf_txrx.c   | 11 +---
- drivers/net/ethernet/intel/igb/igb_main.c     | 11 +---
- drivers/net/ethernet/intel/igc/igc_main.c     | 11 +---
- drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 12 +---
- drivers/net/ethernet/intel/ixgbe/ixgbe_xsk.c  |  5 +-
- .../net/ethernet/intel/ixgbevf/ixgbevf_main.c | 11 +---
- .../ethernet/netronome/nfp/nfp_net_common.c   | 12 ++--
- include/linux/dma-mapping.h                   | 62 +++++++++++++------
- 18 files changed, 109 insertions(+), 145 deletions(-)
+Christoph, do the patches look Ok to you now? If so, then could you give an
+Acked-by or Reviewed-by tag?
 
-diff --git a/Documentation/DMA-API.txt b/Documentation/DMA-API.txt
-index ac66ae2509a9..2a9069907470 100644
---- a/Documentation/DMA-API.txt
-+++ b/Documentation/DMA-API.txt
-@@ -439,10 +439,10 @@ See also dma_map_single().
- 
- ::
- 
--	dma_addr_t
-+	int	
- 	dma_map_single_attrs(struct device *dev, void *cpu_addr, size_t size,
- 			     enum dma_data_direction dir,
--			     unsigned long attrs)
-+			     unsigned long attrs, dma_addr_t *dma_handle);
- 
- 	void
- 	dma_unmap_single_attrs(struct device *dev, dma_addr_t dma_addr,
-diff --git a/drivers/crypto/caam/caamalg.c b/drivers/crypto/caam/caamalg.c
-index 869f092432de..cbcd55fda24f 100644
---- a/drivers/crypto/caam/caamalg.c
-+++ b/drivers/crypto/caam/caamalg.c
-@@ -3022,11 +3022,9 @@ static int caam_init_common(struct caam_ctx *ctx, struct caam_alg_entry *caam,
- 	else
- 		ctx->dir = DMA_TO_DEVICE;
- 
--	dma_addr = dma_map_single_attrs(ctx->jrdev, ctx->sh_desc_enc,
--					offsetof(struct caam_ctx,
--						 sh_desc_enc_dma),
--					ctx->dir, DMA_ATTR_SKIP_CPU_SYNC);
--	if (dma_mapping_error(ctx->jrdev, dma_addr)) {
-+	if (dma_map_single_attrs(ctx->jrdev, ctx->sh_desc_enc,
-+			offsetof(struct caam_ctx, sh_desc_enc_dma),
-+			ctx->dir, DMA_ATTR_SKIP_CPU_SYNC, &dma_addr)) {
- 		dev_err(ctx->jrdev, "unable to map key, shared descriptors\n");
- 		caam_jr_free(ctx->jrdev);
- 		return -ENOMEM;
-diff --git a/drivers/crypto/caam/caamalg_qi2.c b/drivers/crypto/caam/caamalg_qi2.c
-index 7d8ac0222fa3..9453dca56798 100644
---- a/drivers/crypto/caam/caamalg_qi2.c
-+++ b/drivers/crypto/caam/caamalg_qi2.c
-@@ -1336,10 +1336,9 @@ static int caam_cra_init(struct caam_ctx *ctx, struct caam_alg_entry *caam,
- 	ctx->dev = caam->dev;
- 	ctx->dir = uses_dkp ? DMA_BIDIRECTIONAL : DMA_TO_DEVICE;
- 
--	dma_addr = dma_map_single_attrs(ctx->dev, ctx->flc,
--					offsetof(struct caam_ctx, flc_dma),
--					ctx->dir, DMA_ATTR_SKIP_CPU_SYNC);
--	if (dma_mapping_error(ctx->dev, dma_addr)) {
-+	if (dma_map_single_attrs(ctx->dev, ctx->flc,
-+			offsetof(struct caam_ctx, flc_dma),
-+			ctx->dir, DMA_ATTR_SKIP_CPU_SYNC, &dma_addr)) {
- 		dev_err(ctx->dev, "unable to map key, shared descriptors\n");
- 		return -ENOMEM;
- 	}
-@@ -4272,10 +4271,8 @@ static int caam_hash_cra_init(struct crypto_tfm *tfm)
- 
- 	ctx->dev = caam_hash->dev;
- 
--	dma_addr = dma_map_single_attrs(ctx->dev, ctx->flc, sizeof(ctx->flc),
--					DMA_BIDIRECTIONAL,
--					DMA_ATTR_SKIP_CPU_SYNC);
--	if (dma_mapping_error(ctx->dev, dma_addr)) {
-+	if (dma_map_single_attrs(ctx->dev, ctx->flc, sizeof(ctx->flc),
-+			DMA_BIDIRECTIONAL, DMA_ATTR_SKIP_CPU_SYNC, &dma_addr)) {
- 		dev_err(ctx->dev, "unable to map shared descriptors\n");
- 		return -ENOMEM;
- 	}
-diff --git a/drivers/crypto/caam/caamhash.c b/drivers/crypto/caam/caamhash.c
-index 46924affa0bd..e0bc10ab891e 100644
---- a/drivers/crypto/caam/caamhash.c
-+++ b/drivers/crypto/caam/caamhash.c
-@@ -1693,11 +1693,9 @@ static int caam_hash_cra_init(struct crypto_tfm *tfm)
- 	priv = dev_get_drvdata(ctx->jrdev->parent);
- 	ctx->dir = priv->era >= 6 ? DMA_BIDIRECTIONAL : DMA_TO_DEVICE;
- 
--	dma_addr = dma_map_single_attrs(ctx->jrdev, ctx->sh_desc_update,
--					offsetof(struct caam_hash_ctx,
--						 sh_desc_update_dma),
--					ctx->dir, DMA_ATTR_SKIP_CPU_SYNC);
--	if (dma_mapping_error(ctx->jrdev, dma_addr)) {
-+	if (dma_map_single_attrs(ctx->jrdev, ctx->sh_desc_update,
-+			offsetof(struct caam_hash_ctx, sh_desc_update_dma),
-+			ctx->dir, DMA_ATTR_SKIP_CPU_SYNC, &dma_addr)) {
- 		dev_err(ctx->jrdev, "unable to map shared descriptors\n");
- 		caam_jr_free(ctx->jrdev);
- 		return -ENOMEM;
-diff --git a/drivers/crypto/talitos.c b/drivers/crypto/talitos.c
-index 6988012deca4..1b0f816994bf 100644
---- a/drivers/crypto/talitos.c
-+++ b/drivers/crypto/talitos.c
-@@ -110,10 +110,12 @@ static void __map_single_talitos_ptr(struct device *dev,
- 				     enum dma_data_direction dir,
- 				     unsigned long attrs)
- {
--	dma_addr_t dma_addr = dma_map_single_attrs(dev, data, len, dir, attrs);
- 	struct talitos_private *priv = dev_get_drvdata(dev);
- 	bool is_sec1 = has_ftr_sec1(priv);
-+	dma_addr_t dma_addr;
- 
-+	/* XXX: this driver badly needs error handling. */
-+	dma_map_single_attrs(dev, data, len, dir, attrs, &dma_addr);
- 	to_talitos_ptr(ptr, dma_addr, len, is_sec1);
- }
- 
-diff --git a/drivers/gpu/drm/i915/i915_gem_gtt.c b/drivers/gpu/drm/i915/i915_gem_gtt.c
-index 56c7f8637311..49a0c275546b 100644
---- a/drivers/gpu/drm/i915/i915_gem_gtt.c
-+++ b/drivers/gpu/drm/i915/i915_gem_gtt.c
-@@ -566,12 +566,9 @@ static int __setup_page_dma(struct i915_address_space *vm,
- 	if (unlikely(!p->page))
- 		return -ENOMEM;
- 
--	p->daddr = dma_map_page_attrs(vm->dma,
--				      p->page, 0, PAGE_SIZE,
--				      PCI_DMA_BIDIRECTIONAL,
--				      DMA_ATTR_SKIP_CPU_SYNC |
--				      DMA_ATTR_NO_WARN);
--	if (unlikely(dma_mapping_error(vm->dma, p->daddr))) {
-+	if (dma_map_page_attrs(vm->dma, p->page, 0, PAGE_SIZE,
-+			PCI_DMA_BIDIRECTIONAL,
-+			DMA_ATTR_SKIP_CPU_SYNC | DMA_ATTR_NO_WARN, &p->daddr)) {
- 		vm_free_page(vm, p->page);
- 		return -ENOMEM;
- 	}
-@@ -651,12 +648,10 @@ setup_scratch_page(struct i915_address_space *vm, gfp_t gfp)
- 		if (unlikely(!page))
- 			goto skip;
- 
--		addr = dma_map_page_attrs(vm->dma,
--					  page, 0, size,
--					  PCI_DMA_BIDIRECTIONAL,
--					  DMA_ATTR_SKIP_CPU_SYNC |
--					  DMA_ATTR_NO_WARN);
--		if (unlikely(dma_mapping_error(vm->dma, addr)))
-+		if (unlikely(dma_map_page_attrs(vm->dma, page, 0, size,
-+				PCI_DMA_BIDIRECTIONAL,
-+				DMA_ATTR_SKIP_CPU_SYNC | DMA_ATTR_NO_WARN,
-+				&addr)))
- 			goto free_page;
- 
- 		if (unlikely(!IS_ALIGNED(addr, size)))
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-index dd85d790f638..b94e13499d68 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -662,9 +662,8 @@ static struct page *__bnxt_alloc_rx_page(struct bnxt *bp, dma_addr_t *mapping,
- 	if (!page)
- 		return NULL;
- 
--	*mapping = dma_map_page_attrs(dev, page, 0, PAGE_SIZE, bp->rx_dir,
--				      DMA_ATTR_WEAK_ORDERING);
--	if (dma_mapping_error(dev, *mapping)) {
-+	if (dma_map_page_attrs(dev, page, 0, PAGE_SIZE, bp->rx_dir,
-+			DMA_ATTR_WEAK_ORDERING, mapping)) {
- 		__free_page(page);
- 		return NULL;
- 	}
-@@ -682,11 +681,9 @@ static inline u8 *__bnxt_alloc_rx_data(struct bnxt *bp, dma_addr_t *mapping,
- 	if (!data)
- 		return NULL;
- 
--	*mapping = dma_map_single_attrs(&pdev->dev, data + bp->rx_dma_offset,
--					bp->rx_buf_use_size, bp->rx_dir,
--					DMA_ATTR_WEAK_ORDERING);
--
--	if (dma_mapping_error(&pdev->dev, *mapping)) {
-+	if (dma_map_single_attrs(&pdev->dev, data + bp->rx_dma_offset,
-+			bp->rx_buf_use_size, bp->rx_dir, DMA_ATTR_WEAK_ORDERING,
-+			mapping)) {
- 		kfree(data);
- 		data = NULL;
- 	}
-@@ -787,10 +784,9 @@ static inline int bnxt_alloc_rx_page(struct bnxt *bp,
- 			return -ENOMEM;
- 	}
- 
--	mapping = dma_map_page_attrs(&pdev->dev, page, offset,
--				     BNXT_RX_PAGE_SIZE, PCI_DMA_FROMDEVICE,
--				     DMA_ATTR_WEAK_ORDERING);
--	if (dma_mapping_error(&pdev->dev, mapping)) {
-+	if (dma_map_page_attrs(&pdev->dev, page, offset,
-+			BNXT_RX_PAGE_SIZE, PCI_DMA_FROMDEVICE,
-+			DMA_ATTR_WEAK_ORDERING, &mapping)) {
- 		__free_page(page);
- 		return -EIO;
- 	}
-diff --git a/drivers/net/ethernet/cavium/thunder/nicvf_queues.c b/drivers/net/ethernet/cavium/thunder/nicvf_queues.c
-index 187a249ff2d1..fd762b5b233d 100644
---- a/drivers/net/ethernet/cavium/thunder/nicvf_queues.c
-+++ b/drivers/net/ethernet/cavium/thunder/nicvf_queues.c
-@@ -213,17 +213,18 @@ static inline int nicvf_alloc_rcv_buffer(struct nicvf *nic, struct rbdr *rbdr,
- 	if (rbdr->is_xdp && pgcache && pgcache->dma_addr) {
- 		*rbuf = pgcache->dma_addr;
- 	} else {
-+		dma_addr_t addr;
- 		/* HW will ensure data coherency, CPU sync not required */
--		*rbuf = (u64)dma_map_page_attrs(&nic->pdev->dev, nic->rb_page,
--						nic->rb_page_offset, buf_len,
--						DMA_FROM_DEVICE,
--						DMA_ATTR_SKIP_CPU_SYNC);
--		if (dma_mapping_error(&nic->pdev->dev, (dma_addr_t)*rbuf)) {
-+		if (dma_map_page_attrs(&nic->pdev->dev, nic->rb_page,
-+				nic->rb_page_offset, buf_len, DMA_FROM_DEVICE,
-+				DMA_ATTR_SKIP_CPU_SYNC, &addr)) {
- 			if (!nic->rb_page_offset)
- 				__free_pages(nic->rb_page, 0);
- 			nic->rb_page = NULL;
- 			return -ENOMEM;
- 		}
-+
-+		*rbuf = addr;
- 		if (pgcache)
- 			pgcache->dma_addr = *rbuf + XDP_PACKET_HEADROOM;
- 		nic->rb_page_offset += buf_len;
-@@ -1576,10 +1577,9 @@ int nicvf_sq_append_skb(struct nicvf *nic, struct snd_queue *sq,
- 	qentry = nicvf_get_nxt_sqentry(sq, qentry);
- 	size = skb_is_nonlinear(skb) ? skb_headlen(skb) : skb->len;
- 	/* HW will ensure data coherency, CPU sync not required */
--	dma_addr = dma_map_page_attrs(&nic->pdev->dev, virt_to_page(skb->data),
--				      offset_in_page(skb->data), size,
--				      DMA_TO_DEVICE, DMA_ATTR_SKIP_CPU_SYNC);
--	if (dma_mapping_error(&nic->pdev->dev, dma_addr)) {
-+	if (dma_map_page_attrs(&nic->pdev->dev, virt_to_page(skb->data),
-+			offset_in_page(skb->data), size, DMA_TO_DEVICE,
-+			DMA_ATTR_SKIP_CPU_SYNC, &dma_addr)) {
- 		nicvf_rollback_sq_desc(sq, qentry, subdesc_cnt);
- 		return 0;
- 	}
-@@ -1597,12 +1597,9 @@ int nicvf_sq_append_skb(struct nicvf *nic, struct snd_queue *sq,
- 
- 		qentry = nicvf_get_nxt_sqentry(sq, qentry);
- 		size = skb_frag_size(frag);
--		dma_addr = dma_map_page_attrs(&nic->pdev->dev,
--					      skb_frag_page(frag),
--					      frag->page_offset, size,
--					      DMA_TO_DEVICE,
--					      DMA_ATTR_SKIP_CPU_SYNC);
--		if (dma_mapping_error(&nic->pdev->dev, dma_addr)) {
-+		if (dma_map_page_attrs(&nic->pdev->dev, skb_frag_page(frag),
-+				frag->page_offset, size, DMA_TO_DEVICE,
-+				DMA_ATTR_SKIP_CPU_SYNC, &dma_addr)) {
- 			/* Free entire chain of mapped buffers
- 			 * here 'i' = frags mapped + above mapped skb->data
- 			 */
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_txrx.c b/drivers/net/ethernet/intel/i40e/i40e_txrx.c
-index aef3c89ee79c..1d1515197bf7 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_txrx.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_txrx.c
-@@ -1535,15 +1535,8 @@ static bool i40e_alloc_mapped_page(struct i40e_ring *rx_ring,
- 	}
- 
- 	/* map page for use */
--	dma = dma_map_page_attrs(rx_ring->dev, page, 0,
--				 i40e_rx_pg_size(rx_ring),
--				 DMA_FROM_DEVICE,
--				 I40E_RX_DMA_ATTR);
--
--	/* if mapping failed free memory back to system since
--	 * there isn't much point in holding memory we can't use
--	 */
--	if (dma_mapping_error(rx_ring->dev, dma)) {
-+	if (dma_map_page_attrs(rx_ring->dev, page, 0, i40e_rx_pg_size(rx_ring),
-+			DMA_FROM_DEVICE, I40E_RX_DMA_ATTR, &dma)) {
- 		__free_pages(page, i40e_rx_pg_order(rx_ring));
- 		rx_ring->rx_stats.alloc_page_failed++;
- 		return false;
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_xsk.c b/drivers/net/ethernet/intel/i40e/i40e_xsk.c
-index add1e457886d..f950160c7e45 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_xsk.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_xsk.c
-@@ -88,9 +88,8 @@ static int i40e_xsk_umem_dma_map(struct i40e_vsi *vsi, struct xdp_umem *umem)
- 
- 	dev = &pf->pdev->dev;
- 	for (i = 0; i < umem->npgs; i++) {
--		dma = dma_map_page_attrs(dev, umem->pgs[i], 0, PAGE_SIZE,
--					 DMA_BIDIRECTIONAL, I40E_RX_DMA_ATTR);
--		if (dma_mapping_error(dev, dma))
-+		if (dma_map_page_attrs(dev, umem->pgs[i], 0, PAGE_SIZE,
-+				DMA_BIDIRECTIONAL, I40E_RX_DMA_ATTR, &dma))
- 			goto out_unmap;
- 
- 		umem->pages[i].dma = dma;
-diff --git a/drivers/net/ethernet/intel/iavf/iavf_txrx.c b/drivers/net/ethernet/intel/iavf/iavf_txrx.c
-index fb9bfad96daf..e973985faf49 100644
---- a/drivers/net/ethernet/intel/iavf/iavf_txrx.c
-+++ b/drivers/net/ethernet/intel/iavf/iavf_txrx.c
-@@ -827,15 +827,8 @@ static bool iavf_alloc_mapped_page(struct iavf_ring *rx_ring,
- 	}
- 
- 	/* map page for use */
--	dma = dma_map_page_attrs(rx_ring->dev, page, 0,
--				 iavf_rx_pg_size(rx_ring),
--				 DMA_FROM_DEVICE,
--				 IAVF_RX_DMA_ATTR);
--
--	/* if mapping failed free memory back to system since
--	 * there isn't much point in holding memory we can't use
--	 */
--	if (dma_mapping_error(rx_ring->dev, dma)) {
-+	if (dma_map_page_attrs(rx_ring->dev, page, 0, iavf_rx_pg_size(rx_ring),
-+			DMA_FROM_DEVICE, IAVF_RX_DMA_ATTR, &dma)) {
- 		__free_pages(page, iavf_rx_pg_order(rx_ring));
- 		rx_ring->rx_stats.alloc_page_failed++;
- 		return false;
-diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-index 5df88ad8ac81..355bdd0004d4 100644
---- a/drivers/net/ethernet/intel/igb/igb_main.c
-+++ b/drivers/net/ethernet/intel/igb/igb_main.c
-@@ -8439,15 +8439,8 @@ static bool igb_alloc_mapped_page(struct igb_ring *rx_ring,
- 	}
- 
- 	/* map page for use */
--	dma = dma_map_page_attrs(rx_ring->dev, page, 0,
--				 igb_rx_pg_size(rx_ring),
--				 DMA_FROM_DEVICE,
--				 IGB_RX_DMA_ATTR);
--
--	/* if mapping failed free memory back to system since
--	 * there isn't much point in holding memory we can't use
--	 */
--	if (dma_mapping_error(rx_ring->dev, dma)) {
-+	if (dma_map_page_attrs(rx_ring->dev, page, 0, igb_rx_pg_size(rx_ring),
-+			DMA_FROM_DEVICE, IGB_RX_DMA_ATTR, &dma)) {
- 		__free_pages(page, igb_rx_pg_order(rx_ring));
- 
- 		rx_ring->rx_stats.alloc_failed++;
-diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethernet/intel/igc/igc_main.c
-index 9d85707e8a81..d2cbc65cf291 100644
---- a/drivers/net/ethernet/intel/igc/igc_main.c
-+++ b/drivers/net/ethernet/intel/igc/igc_main.c
-@@ -1505,15 +1505,8 @@ static bool igc_alloc_mapped_page(struct igc_ring *rx_ring,
- 	}
- 
- 	/* map page for use */
--	dma = dma_map_page_attrs(rx_ring->dev, page, 0,
--				 igc_rx_pg_size(rx_ring),
--				 DMA_FROM_DEVICE,
--				 IGC_RX_DMA_ATTR);
--
--	/* if mapping failed free memory back to system since
--	 * there isn't much point in holding memory we can't use
--	 */
--	if (dma_mapping_error(rx_ring->dev, dma)) {
-+	if (dma_map_page_attrs(rx_ring->dev, page, 0, igc_rx_pg_size(rx_ring),
-+			DMA_FROM_DEVICE, IGC_RX_DMA_ATTR, &dma)) {
- 		__free_page(page);
- 
- 		rx_ring->rx_stats.alloc_failed++;
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-index 113b38e0defb..03f172b1ec4d 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-@@ -1542,16 +1542,8 @@ static bool ixgbe_alloc_mapped_page(struct ixgbe_ring *rx_ring,
- 	}
- 
- 	/* map page for use */
--	dma = dma_map_page_attrs(rx_ring->dev, page, 0,
--				 ixgbe_rx_pg_size(rx_ring),
--				 DMA_FROM_DEVICE,
--				 IXGBE_RX_DMA_ATTR);
--
--	/*
--	 * if mapping failed free memory back to system since
--	 * there isn't much point in holding memory we can't use
--	 */
--	if (dma_mapping_error(rx_ring->dev, dma)) {
-+	if (dma_map_page_attrs(rx_ring->dev, page, 0, ixgbe_rx_pg_size(rx_ring),
-+			DMA_FROM_DEVICE, IXGBE_RX_DMA_ATTR, &dma)) {
- 		__free_pages(page, ixgbe_rx_pg_order(rx_ring));
- 
- 		rx_ring->rx_stats.alloc_rx_page_failed++;
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_xsk.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_xsk.c
-index 65c3e2c979d4..9de8e4890acb 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_xsk.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_xsk.c
-@@ -75,9 +75,8 @@ static int ixgbe_xsk_umem_dma_map(struct ixgbe_adapter *adapter,
- 	dma_addr_t dma;
- 
- 	for (i = 0; i < umem->npgs; i++) {
--		dma = dma_map_page_attrs(dev, umem->pgs[i], 0, PAGE_SIZE,
--					 DMA_BIDIRECTIONAL, IXGBE_RX_DMA_ATTR);
--		if (dma_mapping_error(dev, dma))
-+		if (dma_map_page_attrs(dev, umem->pgs[i], 0, PAGE_SIZE,
-+				DMA_BIDIRECTIONAL, IXGBE_RX_DMA_ATTR, &dma))
- 			goto out_unmap;
- 
- 		umem->pages[i].dma = dma;
-diff --git a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-index 5e47ede7e832..966fefb32ad5 100644
---- a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-+++ b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-@@ -620,14 +620,9 @@ static bool ixgbevf_alloc_mapped_page(struct ixgbevf_ring *rx_ring,
- 	}
- 
- 	/* map page for use */
--	dma = dma_map_page_attrs(rx_ring->dev, page, 0,
--				 ixgbevf_rx_pg_size(rx_ring),
--				 DMA_FROM_DEVICE, IXGBEVF_RX_DMA_ATTR);
--
--	/* if mapping failed free memory back to system since
--	 * there isn't much point in holding memory we can't use
--	 */
--	if (dma_mapping_error(rx_ring->dev, dma)) {
-+	if (dma_map_page_attrs(rx_ring->dev, page, 0,
-+			ixgbevf_rx_pg_size(rx_ring), DMA_FROM_DEVICE,
-+			IXGBEVF_RX_DMA_ATTR, &dma)) {
- 		__free_pages(page, ixgbevf_rx_pg_order(rx_ring));
- 
- 		rx_ring->rx_stats.alloc_rx_page_failed++;
-diff --git a/drivers/net/ethernet/netronome/nfp/nfp_net_common.c b/drivers/net/ethernet/netronome/nfp/nfp_net_common.c
-index 6bddfcfdec34..933b3cfe2234 100644
---- a/drivers/net/ethernet/netronome/nfp/nfp_net_common.c
-+++ b/drivers/net/ethernet/netronome/nfp/nfp_net_common.c
-@@ -60,11 +60,13 @@ void nfp_net_get_fw_version(struct nfp_net_fw_version *fw_ver,
- 	put_unaligned_le32(reg, fw_ver);
- }
- 
--static dma_addr_t nfp_net_dma_map_rx(struct nfp_net_dp *dp, void *frag)
-+static int nfp_net_dma_map_rx(struct nfp_net_dp *dp, void *frag,
-+		dma_addr_t *dma_handle)
- {
- 	return dma_map_single_attrs(dp->dev, frag + NFP_NET_RX_BUF_HEADROOM,
- 				    dp->fl_bufsz - NFP_NET_RX_BUF_NON_DATA,
--				    dp->rx_dma_dir, DMA_ATTR_SKIP_CPU_SYNC);
-+				    dp->rx_dma_dir, DMA_ATTR_SKIP_CPU_SYNC,
-+				    dma_handle);
- }
- 
- static void
-@@ -1188,8 +1190,7 @@ static void *nfp_net_rx_alloc_one(struct nfp_net_dp *dp, dma_addr_t *dma_addr)
- 		return NULL;
- 	}
- 
--	*dma_addr = nfp_net_dma_map_rx(dp, frag);
--	if (dma_mapping_error(dp->dev, *dma_addr)) {
-+	if (nfp_net_dma_map_rx(dp, frag, dma_addr)) {
- 		nfp_net_free_frag(frag, dp->xdp_prog);
- 		nn_dp_warn(dp, "Failed to map DMA RX buffer\n");
- 		return NULL;
-@@ -1215,8 +1216,7 @@ static void *nfp_net_napi_alloc_one(struct nfp_net_dp *dp, dma_addr_t *dma_addr)
- 		frag = page_address(page);
- 	}
- 
--	*dma_addr = nfp_net_dma_map_rx(dp, frag);
--	if (dma_mapping_error(dp->dev, *dma_addr)) {
-+	if (nfp_net_dma_map_rx(dp, frag, dma_addr)) {
- 		nfp_net_free_frag(frag, dp->xdp_prog);
- 		nn_dp_warn(dp, "Failed to map DMA RX buffer\n");
- 		return NULL;
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index c08779649ac0..d70bded7aea8 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -224,22 +224,37 @@ static inline const struct dma_map_ops *get_dma_ops(struct device *dev)
- }
- #endif
- 
--static inline dma_addr_t dma_map_single_attrs(struct device *dev, void *ptr,
--					      size_t size,
--					      enum dma_data_direction dir,
--					      unsigned long attrs)
-+static __must_check inline int
-+dma_map_single_attrs(struct device *dev, void *ptr, size_t size,
-+		enum dma_data_direction dir, unsigned long attrs,
-+		dma_addr_t *dma_handle)
-+{
-+	const struct dma_map_ops *ops = get_dma_ops(dev);
-+
-+	BUG_ON(!valid_dma_direction(dir));
-+	debug_dma_map_single(dev, ptr, size);
-+	*dma_handle = ops->map_page(dev, virt_to_page(ptr), offset_in_page(ptr),
-+			size, dir, attrs);
-+	if (*dma_handle == DMA_MAPPING_ERROR)
-+		return -ENOMEM;
-+
-+	debug_dma_map_page(dev, virt_to_page(ptr), offset_in_page(ptr), size,
-+			dir, *dma_handle, true);
-+	return 0;
-+}
-+
-+static inline dma_addr_t dma_map_single(struct device *dev, void *ptr,
-+		size_t size, enum dma_data_direction dir)
- {
- 	const struct dma_map_ops *ops = get_dma_ops(dev);
- 	dma_addr_t addr;
- 
- 	BUG_ON(!valid_dma_direction(dir));
- 	debug_dma_map_single(dev, ptr, size);
--	addr = ops->map_page(dev, virt_to_page(ptr),
--			     offset_in_page(ptr), size,
--			     dir, attrs);
--	debug_dma_map_page(dev, virt_to_page(ptr),
--			   offset_in_page(ptr), size,
--			   dir, addr, true);
-+	addr = ops->map_page(dev, virt_to_page(ptr), offset_in_page(ptr), size,
-+			dir, 0);
-+	debug_dma_map_page(dev, virt_to_page(ptr), offset_in_page(ptr), size,
-+			dir, addr, true);
- 	return addr;
- }
- 
-@@ -287,19 +302,30 @@ static inline void dma_unmap_sg_attrs(struct device *dev, struct scatterlist *sg
- 		ops->unmap_sg(dev, sg, nents, dir, attrs);
- }
- 
--static inline dma_addr_t dma_map_page_attrs(struct device *dev,
--					    struct page *page,
--					    size_t offset, size_t size,
--					    enum dma_data_direction dir,
--					    unsigned long attrs)
-+static __must_check inline int
-+dma_map_page_attrs(struct device *dev, struct page *page, size_t offset,
-+		size_t size, enum dma_data_direction dir, unsigned long attrs,
-+		dma_addr_t *dma_handle)
-+{
-+	const struct dma_map_ops *ops = get_dma_ops(dev);
-+
-+	BUG_ON(!valid_dma_direction(dir));
-+	*dma_handle = ops->map_page(dev, page, offset, size, dir, attrs);
-+	if (*dma_handle == DMA_MAPPING_ERROR)
-+		return -ENOMEM;
-+	debug_dma_map_page(dev, page, offset, size, dir, *dma_handle, false);
-+	return 0;
-+}
-+
-+static inline dma_addr_t dma_map_page(struct device *dev, struct page *page,
-+		size_t offset, size_t size, enum dma_data_direction dir)
- {
- 	const struct dma_map_ops *ops = get_dma_ops(dev);
- 	dma_addr_t addr;
- 
- 	BUG_ON(!valid_dma_direction(dir));
--	addr = ops->map_page(dev, page, offset, size, dir, attrs);
-+	addr = ops->map_page(dev, page, offset, size, dir, 0);
- 	debug_dma_map_page(dev, page, offset, size, dir, addr, false);
--
- 	return addr;
- }
- 
-@@ -428,11 +454,9 @@ dma_sync_sg_for_device(struct device *dev, struct scatterlist *sg,
- 
- }
- 
--#define dma_map_single(d, a, s, r) dma_map_single_attrs(d, a, s, r, 0)
- #define dma_unmap_single(d, a, s, r) dma_unmap_single_attrs(d, a, s, r, 0)
- #define dma_map_sg(d, s, n, r) dma_map_sg_attrs(d, s, n, r, 0)
- #define dma_unmap_sg(d, s, n, r) dma_unmap_sg_attrs(d, s, n, r, 0)
--#define dma_map_page(d, p, o, s, r) dma_map_page_attrs(d, p, o, s, r, 0)
- #define dma_unmap_page(d, a, s, r) dma_unmap_page_attrs(d, a, s, r, 0)
- 
- static inline void
--- 
-2.19.1
+Thanks a lot,
 
+ - Joel
+
+
+>  include/uapi/linux/fcntl.h |  1 +
+>  mm/memfd.c                 | 22 +++++++++++++++++++++-
+>  2 files changed, 22 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+> index 6448cdd9a350..a2f8658f1c55 100644
+> --- a/include/uapi/linux/fcntl.h
+> +++ b/include/uapi/linux/fcntl.h
+> @@ -41,6 +41,7 @@
+>  #define F_SEAL_SHRINK	0x0002	/* prevent file from shrinking */
+>  #define F_SEAL_GROW	0x0004	/* prevent file from growing */
+>  #define F_SEAL_WRITE	0x0008	/* prevent writes */
+> +#define F_SEAL_FUTURE_WRITE	0x0010  /* prevent future writes while mapped */
+>  /* (1U << 31) is reserved for signed error codes */
+>  
+>  /*
+> diff --git a/mm/memfd.c b/mm/memfd.c
+> index 2bb5e257080e..5ba9804e9515 100644
+> --- a/mm/memfd.c
+> +++ b/mm/memfd.c
+> @@ -150,7 +150,8 @@ static unsigned int *memfd_file_seals_ptr(struct file *file)
+>  #define F_ALL_SEALS (F_SEAL_SEAL | \
+>  		     F_SEAL_SHRINK | \
+>  		     F_SEAL_GROW | \
+> -		     F_SEAL_WRITE)
+> +		     F_SEAL_WRITE | \
+> +		     F_SEAL_FUTURE_WRITE)
+>  
+>  static int memfd_add_seals(struct file *file, unsigned int seals)
+>  {
+> @@ -219,6 +220,25 @@ static int memfd_add_seals(struct file *file, unsigned int seals)
+>  		}
+>  	}
+>  
+> +	if ((seals & F_SEAL_FUTURE_WRITE) &&
+> +	    !(*file_seals & F_SEAL_FUTURE_WRITE)) {
+> +		/*
+> +		 * The FUTURE_WRITE seal also prevents growing and shrinking
+> +		 * so we need them to be already set, or requested now.
+> +		 */
+> +		int test_seals = (seals | *file_seals) &
+> +				 (F_SEAL_GROW | F_SEAL_SHRINK);
+> +
+> +		if (test_seals != (F_SEAL_GROW | F_SEAL_SHRINK)) {
+> +			error = -EINVAL;
+> +			goto unlock;
+> +		}
+> +
+> +		spin_lock(&file->f_lock);
+> +		file->f_mode &= ~(FMODE_WRITE | FMODE_PWRITE);
+> +		spin_unlock(&file->f_lock);
+> +	}
+> +
+>  	*file_seals |= seals;
+>  	error = 0;
+>  
+> -- 
+> 2.19.1.930.g4563a0d9d0-goog
