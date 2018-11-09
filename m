@@ -2,127 +2,95 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AAE6C0044C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:11:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29A61C43610
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:13:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C27620840
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:11:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C27620840
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+	by mail.kernel.org (Postfix) with ESMTP id E51D020840
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:13:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="W5/yu3nF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E51D020840
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728079AbeKIQu5 (ORCPT
+        id S1728109AbeKIQwW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 11:50:57 -0500
-Received: from bmailout2.hostsharing.net ([83.223.90.240]:59375 "EHLO
-        bmailout2.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727789AbeKIQu5 (ORCPT
+        Fri, 9 Nov 2018 11:52:22 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:40018 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727093AbeKIQwV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 11:50:57 -0500
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout2.hostsharing.net (Postfix) with ESMTPS id 45CCA2800B4A4;
-        Fri,  9 Nov 2018 08:11:40 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id E738313125; Fri,  9 Nov 2018 08:11:39 +0100 (CET)
-Date:   Fri, 9 Nov 2018 08:11:39 +0100
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-        linux-pci@vger.kernel.org, keith.busch@intel.com,
-        alex_gagniuc@dellteam.com, austin_bolen@dell.com,
-        shyam_iyer@dell.com, linux-kernel@vger.kernel.org,
-        Jonathan Derrick <jonathan.derrick@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Russell Currey <ruscur@russell.cc>,
-        Sam Bobroff <sbobroff@linux.ibm.com>,
-        Oliver O'Halloran <oohall@gmail.com>,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v2] PCI/MSI: Don't touch MSI bits when the PCI device is
- disconnected
-Message-ID: <20181109071139.uxa6gu7jwsvr7ve6@wunner.de>
-References: <20180918221501.13112-1-mr.nuke.me@gmail.com>
- <20181107234257.GC41183@google.com>
- <20181108200855.GE41183@google.com>
+        Fri, 9 Nov 2018 11:52:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=IrgHHScUgWiQ+RbIbd2HbhtIi//KRrdsNGy7S15z2dc=; b=W5/yu3nFZikOEofUR/GtmZxIv
+        cT/aY4DO+LS2Diy1ebZVnAxEI6Ftzofd2PsUW9Q4iOooZa36wtU4MW+ZH7mpxr6WSnEmCuIhY6yt0
+        SlTLazUYUTWffh5j+o0pFcebkwORwQurVTNNswO5/U/H/HYV8tj6pok1l5uKf1jRbXAxSpgkBB/zR
+        yrpq5OPLBoZY4XaMWyXwSxtPqrQGhk6MiiR60kfbL/EZXu2jAaIJn/A1ALTAJjwsWVAtHD6MmBBAm
+        +LpuZpNE+6XNdV4GhaI6IbMfnxdM865PFPHQZjb1ip2D6TB2wM/XpJdWktPVyEY3jaLxT50dJxhNs
+        dqY/Go4JA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gL0yR-0004Qz-Mc; Fri, 09 Nov 2018 07:12:59 +0000
+Date:   Thu, 8 Nov 2018 23:12:59 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Jann Horn <jannh@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Rich Felker <dalias@libc.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, nhorman@redhat.com,
+        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
+        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Carlos O'Donell <carlos@redhat.com>,
+        adhemerval.zanella@linaro.org
+Subject: Re: RFC: userspace exception fixups
+Message-ID: <20181109071259.GA14784@infradead.org>
+References: <1541524750.7839.51.camel@intel.com>
+ <22596E35-F5D1-4935-86AB-B510DCA0FABE@amacapital.net>
+ <c9659222-efc6-b73a-ce48-30be8bdc5397@intel.com>
+ <CALCETrWBV=1JbAKYn2Jy2LxkGZQvKRtFRnrWUMoejrwQe73VHw@mail.gmail.com>
+ <b9c53669-cd27-e3bc-3d62-f47c77029c43@intel.com>
+ <1C426267-492F-4AE7-8BE8-C7FE278531F9@amacapital.net>
+ <209cf4a5-eda9-2495-539f-fed22252cf02@intel.com>
+ <9B76E95B-5745-412E-8007-7FAA7F83D6FB@amacapital.net>
+ <20181108195420.GA14715@linux.intel.com>
+ <CALCETrUCQbPMfBJVRRg=0apEU=2U2ps74UPTrN8bFqi1k0K4VA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181108200855.GE41183@google.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CALCETrUCQbPMfBJVRRg=0apEU=2U2ps74UPTrN8bFqi1k0K4VA@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 02:09:17PM -0600, Bjorn Helgaas wrote:
-> +	/*
-> +	 * If an MMIO read from the device returns ~0 data, that data may
-> +	 * be valid, or it may indicate a bus error.  If config space is
-> +	 * readable, assume it's valid data; otherwise, assume a bus error.
-> +	 */
-> +	if (val == ~0) {
-> +		pci_read_config_dword(dev, PCI_VENDOR_ID, &id);
-> +		if (id == ~0)
-> +			pci_dev_set_disconnected(dev, NULL);
-> +	}
+On Thu, Nov 08, 2018 at 12:05:42PM -0800, Andy Lutomirski wrote:
+> This whole thing is a mess.  I'm starting to think that the cleanest
+> solution would be to provide a way to just tell the kernel that
+> certain RIP values have exception fixups.
 
-This isn't safe unfortunately because "all ones" may occur for other
-reasons besides disconnectedness.  E.g. on an Uncorrectable Error,
-the device may likewise respond with all ones, but revert to valid
-responses if the error can be recovered through a Secondary Bus Reset.
-In such a case, marking the device disconnected would be inappropriate.
-
-Accessing a device in D3cold would be another example where all ones
-is returned both from mmio and config space despite the device still
-being present and future accesses having a chance to succeed.
-
-In fact, in v2 of Keith's patches adding pci_dev_set_disconnected()
-he attempted the same as what you're doing here and caused issues
-for me with devices in D3cold:
-
-https://spinics.net/lists/linux-pci/msg54337.html
-
-
-> One thing I'm uncomfortable with is that [...].  Another is that the
-> only place we call pci_dev_set_disconnected() is in pciehp and acpiphp,
-> so the only "disconnected" case we catch is if hotplug happens to be
-> involved.
-
-Yes, that's because the hotplug drivers are the only ones who can
-identify removal authoritatively and unambiguously.  They *know*
-when the device is gone and don't have to resort to heuristics
-such as all ones.  (ISTR that dpc also marks devices disconnected.)
-
-
-> sprinkling pci_dev_is_disconnected() around feels ad hoc
-> instead of systematic, in the sense that I don't know how we convince
-> ourselves that this (and only this) is the correct place to put it.
-
-We need to add documentation for driver authors how to deal with
-surprise removal.  Briefly:
-
-* If (pdev->error_state == pci_channel_io_perm_failure), the device
-  is definitely gone and any further device access can be skipped.
-  Otherwise presence of the device is likely, but not guaranteed.
-
-* If a device access can significantly delay device removal due to
-  Completion Timeouts, or can cause an infinite loop, MCE or crash,
-  do check pdev->error_state before carrying out the device access.
-
-* Always be prepared that a device access may fail due to surprise
-  removal, do not blindly trust mmio or config space reads or
-  assume success of writes.
-
-I'm sure this can be extended quite a bit.  There's more information
-in this LWN article in the "Surprise removal" section:
-
-https://lwn.net/Articles/767885/
-
-Thanks,
-
-Lukas
+The bay far cleanest solution would be to say that SGX is sich a mess
+that we are not going to support it at all.  It's not like it is a must
+have a feature to start with.
