@@ -6,40 +6,45 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34622C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 03:16:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08DB5C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 03:16:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 057B720855
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 03:16:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 057B720855
+	by mail.kernel.org (Postfix) with ESMTP id C6FE92086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 03:16:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6FE92086C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727817AbeKIMyh (ORCPT
+        id S1727846AbeKIMyn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 07:54:37 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:48374 "EHLO
+        Fri, 9 Nov 2018 07:54:43 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:48476 "EHLO
         vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727238AbeKIMyh (ORCPT
+        with ESMTP id S1727238AbeKIMyn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 07:54:37 -0500
+        Fri, 9 Nov 2018 07:54:43 -0500
 Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id A6B1E72CC59;
-        Fri,  9 Nov 2018 06:15:59 +0300 (MSK)
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 8BB4372CC59;
+        Fri,  9 Nov 2018 06:16:05 +0300 (MSK)
 Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 9D3E27CD1FF; Fri,  9 Nov 2018 06:15:59 +0300 (MSK)
-Date:   Fri, 9 Nov 2018 06:15:59 +0300
+        id 658B47CD1FF; Fri,  9 Nov 2018 06:16:05 +0300 (MSK)
+Date:   Fri, 9 Nov 2018 06:16:05 +0300
 From:   "Dmitry V. Levin" <ldv@altlinux.org>
 To:     Andy Lutomirski <luto@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
+        Vineet Gupta <vgupta@synopsys.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@redhat.com>
 Cc:     Elvira Khabirova <lineprinter@altlinux.org>,
-        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 05/13] m68k: define syscall_get_arch()
-Message-ID: <20181109031559.GE21511@altlinux.org>
+        linux-snps-arc@lists.infradead.org, linux-audit@redhat.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 06/13] arc: define syscall_get_arch()
+Message-ID: <20181109031605.GF21511@altlinux.org>
 Mail-Followup-To: Andy Lutomirski <luto@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>,
         Elvira Khabirova <lineprinter@altlinux.org>,
-        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
+        linux-snps-arc@lists.infradead.org, linux-audit@redhat.com,
+        linux-kernel@vger.kernel.org
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -55,27 +60,43 @@ the generic ptrace API with PTRACE_GET_SYSCALL_INFO request.
 
 Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
 ---
- arch/m68k/include/asm/syscall.h | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
- create mode 100644 arch/m68k/include/asm/syscall.h
+ arch/arc/include/asm/syscall.h | 6 ++++++
+ include/uapi/linux/audit.h     | 1 +
+ 2 files changed, 7 insertions(+)
 
-diff --git a/arch/m68k/include/asm/syscall.h b/arch/m68k/include/asm/syscall.h
-new file mode 100644
-index 000000000000..d4d7deda8d50
---- /dev/null
-+++ b/arch/m68k/include/asm/syscall.h
-@@ -0,0 +1,12 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_M68K_SYSCALL_H
-+#define _ASM_M68K_SYSCALL_H
-+
+diff --git a/arch/arc/include/asm/syscall.h b/arch/arc/include/asm/syscall.h
+index 29de09804306..5662778a7411 100644
+--- a/arch/arc/include/asm/syscall.h
++++ b/arch/arc/include/asm/syscall.h
+@@ -9,6 +9,7 @@
+ #ifndef _ASM_ARC_SYSCALL_H
+ #define _ASM_ARC_SYSCALL_H  1
+ 
 +#include <uapi/linux/audit.h>
-+
+ #include <linux/err.h>
+ #include <linux/sched.h>
+ #include <asm/unistd.h>
+@@ -68,4 +69,9 @@ syscall_get_arguments(struct task_struct *task, struct pt_regs *regs,
+ 	}
+ }
+ 
 +static inline int syscall_get_arch(void)
 +{
-+	return AUDIT_ARCH_M68K;
++	return AUDIT_ARCH_ARC;
 +}
 +
-+#endif	/* _ASM_M68K_SYSCALL_H */
+ #endif
+diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+index 818ae690ab79..a7149ceb5b98 100644
+--- a/include/uapi/linux/audit.h
++++ b/include/uapi/linux/audit.h
+@@ -375,6 +375,7 @@ enum {
+ 
+ #define AUDIT_ARCH_AARCH64	(EM_AARCH64|__AUDIT_ARCH_64BIT|__AUDIT_ARCH_LE)
+ #define AUDIT_ARCH_ALPHA	(EM_ALPHA|__AUDIT_ARCH_64BIT|__AUDIT_ARCH_LE)
++#define AUDIT_ARCH_ARC		(EM_ARC)
+ #define AUDIT_ARCH_ARM		(EM_ARM|__AUDIT_ARCH_LE)
+ #define AUDIT_ARCH_ARMEB	(EM_ARM)
+ #define AUDIT_ARCH_CRIS		(EM_CRIS|__AUDIT_ARCH_LE)
 -- 
 ldv
