@@ -2,48 +2,51 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08DB5C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 03:16:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72C12C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 03:16:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6FE92086C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 03:16:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6FE92086C
+	by mail.kernel.org (Postfix) with ESMTP id 431C720855
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 03:16:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 431C720855
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727846AbeKIMyn (ORCPT
+        id S1727876AbeKIMyx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 07:54:43 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:48476 "EHLO
+        Fri, 9 Nov 2018 07:54:53 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:48794 "EHLO
         vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727238AbeKIMyn (ORCPT
+        with ESMTP id S1727238AbeKIMyx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 07:54:43 -0500
+        Fri, 9 Nov 2018 07:54:53 -0500
 Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 8BB4372CC59;
-        Fri,  9 Nov 2018 06:16:05 +0300 (MSK)
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 1721472CC6B;
+        Fri,  9 Nov 2018 06:16:14 +0300 (MSK)
 Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 658B47CD1FF; Fri,  9 Nov 2018 06:16:05 +0300 (MSK)
-Date:   Fri, 9 Nov 2018 06:16:05 +0300
+        id 083677CD1FF; Fri,  9 Nov 2018 06:16:13 +0300 (MSK)
+Date:   Fri, 9 Nov 2018 06:16:13 +0300
 From:   "Dmitry V. Levin" <ldv@altlinux.org>
 To:     Andy Lutomirski <luto@kernel.org>,
-        Vineet Gupta <vgupta@synopsys.com>,
+        Mark Salter <msalter@redhat.com>,
+        Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
         Paul Moore <paul@paul-moore.com>,
         Eric Paris <eparis@redhat.com>
 Cc:     Elvira Khabirova <lineprinter@altlinux.org>,
-        linux-snps-arc@lists.infradead.org, linux-audit@redhat.com,
+        linux-c6x-dev@linux-c6x.org, linux-audit@redhat.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 06/13] arc: define syscall_get_arch()
-Message-ID: <20181109031605.GF21511@altlinux.org>
+Subject: [PATCH 07/13] c6x: define syscall_get_arch()
+Message-ID: <20181109031613.GG21511@altlinux.org>
 Mail-Followup-To: Andy Lutomirski <luto@kernel.org>,
-        Vineet Gupta <vgupta@synopsys.com>,
+        Mark Salter <msalter@redhat.com>,
+        Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
         Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>,
         Elvira Khabirova <lineprinter@altlinux.org>,
-        linux-snps-arc@lists.infradead.org, linux-audit@redhat.com,
+        linux-c6x-dev@linux-c6x.org, linux-audit@redhat.com,
         linux-kernel@vger.kernel.org
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -60,43 +63,43 @@ the generic ptrace API with PTRACE_GET_SYSCALL_INFO request.
 
 Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
 ---
- arch/arc/include/asm/syscall.h | 6 ++++++
+ arch/c6x/include/asm/syscall.h | 6 ++++++
  include/uapi/linux/audit.h     | 1 +
  2 files changed, 7 insertions(+)
 
-diff --git a/arch/arc/include/asm/syscall.h b/arch/arc/include/asm/syscall.h
-index 29de09804306..5662778a7411 100644
---- a/arch/arc/include/asm/syscall.h
-+++ b/arch/arc/include/asm/syscall.h
-@@ -9,6 +9,7 @@
- #ifndef _ASM_ARC_SYSCALL_H
- #define _ASM_ARC_SYSCALL_H  1
+diff --git a/arch/c6x/include/asm/syscall.h b/arch/c6x/include/asm/syscall.h
+index ae2be315ee9c..235c1353a44b 100644
+--- a/arch/c6x/include/asm/syscall.h
++++ b/arch/c6x/include/asm/syscall.h
+@@ -11,6 +11,7 @@
+ #ifndef __ASM_C6X_SYSCALL_H
+ #define __ASM_C6X_SYSCALL_H
  
 +#include <uapi/linux/audit.h>
  #include <linux/err.h>
  #include <linux/sched.h>
- #include <asm/unistd.h>
-@@ -68,4 +69,9 @@ syscall_get_arguments(struct task_struct *task, struct pt_regs *regs,
+ 
+@@ -120,4 +121,9 @@ static inline void syscall_set_arguments(struct task_struct *task,
  	}
  }
  
 +static inline int syscall_get_arch(void)
 +{
-+	return AUDIT_ARCH_ARC;
++	return AUDIT_ARCH_C6X;
 +}
 +
- #endif
+ #endif /* __ASM_C6X_SYSCALLS_H */
 diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-index 818ae690ab79..a7149ceb5b98 100644
+index a7149ceb5b98..3eb1397c2b8f 100644
 --- a/include/uapi/linux/audit.h
 +++ b/include/uapi/linux/audit.h
-@@ -375,6 +375,7 @@ enum {
- 
- #define AUDIT_ARCH_AARCH64	(EM_AARCH64|__AUDIT_ARCH_64BIT|__AUDIT_ARCH_LE)
- #define AUDIT_ARCH_ALPHA	(EM_ALPHA|__AUDIT_ARCH_64BIT|__AUDIT_ARCH_LE)
-+#define AUDIT_ARCH_ARC		(EM_ARC)
+@@ -378,6 +378,7 @@ enum {
+ #define AUDIT_ARCH_ARC		(EM_ARC)
  #define AUDIT_ARCH_ARM		(EM_ARM|__AUDIT_ARCH_LE)
  #define AUDIT_ARCH_ARMEB	(EM_ARM)
++#define AUDIT_ARCH_C6X		(EM_TI_C6000)
  #define AUDIT_ARCH_CRIS		(EM_CRIS|__AUDIT_ARCH_LE)
+ #define AUDIT_ARCH_FRV		(EM_FRV)
+ #define AUDIT_ARCH_I386		(EM_386|__AUDIT_ARCH_LE)
 -- 
 ldv
