@@ -2,128 +2,141 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E63D8C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 12:13:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98939C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 12:14:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA8182081C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 12:13:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="ecMs/vgd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA8182081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+	by mail.kernel.org (Postfix) with ESMTP id 627F620892
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 12:14:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 627F620892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728088AbeKIVxp (ORCPT
+        id S1727977AbeKIVzI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 16:53:45 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:36073 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727560AbeKIVxp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 16:53:45 -0500
-Received: by mail-lf1-f68.google.com with SMTP id h192so1174181lfg.3
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 04:13:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=kUsYFeo1kLBI3BPnBoUz9u43BAsr3XJ229Wlh0/P+5g=;
-        b=ecMs/vgdR13EYHuZiFRbTrcMtf0k4CLpYY5+RpjavdlmDQe3rGtZKvs/ngWvPEfX8f
-         ghfM3XTtjDK3a+bC2RgBT6BjLT7RMeGpCjXokcw+IEOW5oYKEVlREf+l2TairfnZ6JRh
-         mlrI3H5Fk0UvYixfIiW0KlcqgiBV8Rg/nWfGZUUca30gWVdu8jApyOnJoEjQa1cK0uCK
-         Nr04/EQSLSMkLtOvfcyvJEIKqhP2117EdM5U0/Lr76UA0ru/sWtLb0PUaDDKDCzNcQqO
-         vK1ZeshFLtG6rnwTlHWQg0iXT5iG5CjJYbrL7MHDfxF1pDDpLOhgPzPihF7gDykM+5sv
-         dXnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kUsYFeo1kLBI3BPnBoUz9u43BAsr3XJ229Wlh0/P+5g=;
-        b=pv4V9HjXWIv0tyi6IkR/txfu3y1gwpw8/EXAsOlKKRGnC2+82jRth1lHOJqDL4aMDP
-         QJw+p2z2Vzo7UXf6dRKoRxgzE7eWzeBXdafeWk+EkjB58kd+ORlrYSKRcMnzIed59A+T
-         pnvjdZXraoeLlIhUVDZGAMk6ZFgF7I3ubkfCToTEDYhW40VMdLfxt5C6dD/eFYwWj3wW
-         9VAjXgWxJYNy6mt0+e/lAak4+e1WIaD6HCDOVabdPJnX/9ghaWyiT6jC2sv05AAtkTlx
-         tWuqj0OWBt0HftZh6ReU1SbYEp2D0shUGhqXRBdm0HSyRiXqklmBYf4/NA9t9q5eIrLx
-         8pGg==
-X-Gm-Message-State: AGRZ1gLJvAtVXgGcybjyf4QW553Nc4/QTflLBOJNZ6uNU+k9uUatRYXS
-        kl21KxujdbcFtmBdzwrwx5Qm3g==
-X-Google-Smtp-Source: AJdET5fpZbsdNoGkEVALLJJlwMwnHqOadDRPC4iT+QOETylDfK2JUZugYztT//enk3STenF+1UGy8g==
-X-Received: by 2002:a19:4345:: with SMTP id m5mr5193889lfj.142.1541765602016;
-        Fri, 09 Nov 2018 04:13:22 -0800 (PST)
-Received: from kshutemo-mobl1.localdomain (mm-34-243-122-178.mgts.dynamic.pppoe.byfly.by. [178.122.243.34])
-        by smtp.gmail.com with ESMTPSA id 10sm1251097lff.62.2018.11.09.04.13.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 09 Nov 2018 04:13:21 -0800 (PST)
-Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
-        id E24653002A1; Fri,  9 Nov 2018 15:13:18 +0300 (+03)
-Date:   Fri, 9 Nov 2018 15:13:18 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Anthony Yznaga <anthony.yznaga@oracle.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        aarcange@redhat.com, aneesh.kumar@linux.ibm.com,
-        akpm@linux-foundation.org, jglisse@redhat.com,
-        khandual@linux.vnet.ibm.com, kirill.shutemov@linux.intel.com,
-        mgorman@techsingularity.net, mhocko@kernel.org, minchan@kernel.org,
-        peterz@infradead.org, rientjes@google.com, vbabka@suse.cz,
-        willy@infradead.org, ying.huang@intel.com, nitingupta910@gmail.com
-Subject: Re: [RFC PATCH] mm: thp: implement THP reservations for anonymous
- memory
-Message-ID: <20181109121318.3f3ou56ceegrqhcp@kshutemo-mobl1>
-References: <1541746138-6706-1-git-send-email-anthony.yznaga@oracle.com>
+        Fri, 9 Nov 2018 16:55:08 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58858 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727560AbeKIVzH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 16:55:07 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id BE12BADFF;
+        Fri,  9 Nov 2018 12:14:43 +0000 (UTC)
+Subject: Re: [PATCH RFC 1/3] mm: When CONFIG_ZONE_DMA32 is set, use DMA32 for
+ SLAB_CACHE_DMA
+To:     Nicolas Boichat <drinkcat@chromium.org>
+Cc:     robin.murphy@arm.com, will.deacon@arm.com, joro@8bytes.org,
+        cl@linux.com, penberg@kernel.org, rientjes@google.com,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>, mhocko@suse.com,
+        mgorman@techsingularity.net, yehs1@lenovo.com,
+        rppt@linux.vnet.ibm.com,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        iommu@lists.linux-foundation.org,
+        lkml <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        yong.wu@mediatek.com, Matthias Brugger <matthias.bgg@gmail.com>,
+        tfiga@google.com, yingjoe.chen@mediatek.com,
+        Alexander.Levin@microsoft.com
+References: <20181109082448.150302-1-drinkcat@chromium.org>
+ <20181109082448.150302-2-drinkcat@chromium.org>
+ <00afe803-22dd-5a75-70aa-dda0c7752470@suse.cz>
+ <CANMq1KB84Lpe_QbiuaKaBOwSsYr9Cis-gv5xpXaV5qjU=ON=7w@mail.gmail.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <8f58b778-f8ef-d32e-8803-2a20f171a0b1@suse.cz>
+Date:   Fri, 9 Nov 2018 13:14:41 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1541746138-6706-1-git-send-email-anthony.yznaga@oracle.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CANMq1KB84Lpe_QbiuaKaBOwSsYr9Cis-gv5xpXaV5qjU=ON=7w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 10:48:58PM -0800, Anthony Yznaga wrote:
-> The basic idea as outlined by Mel Gorman in [2] is:
+On 11/9/18 12:57 PM, Nicolas Boichat wrote:
+> On Fri, Nov 9, 2018 at 6:43 PM Vlastimil Babka <vbabka@suse.cz> wrote:
+>> Also I'm probably missing the point of this all. In patch 3 you use
+>> __get_dma32_pages() thus __get_free_pages(__GFP_DMA32), which uses
+>> alloc_pages, thus the page allocator directly, and there's no slab
+>> caches involved.
 > 
-> 1) On first fault in a sufficiently sized range, allocate a huge page
->    sized and aligned block of base pages.  Map the base page
->    corresponding to the fault address and hold the rest of the pages in
->    reserve.
-> 2) On subsequent faults in the range, map the pages from the reservation.
-> 3) When enough pages have been mapped, promote the mapped pages and
->    remaining pages in the reservation to a huge page.
-> 4) When there is memory pressure, release the unused pages from their
->    reservations.
+> __get_dma32_pages fixes level 1 page allocations in the patch 3.
+> 
+> This change fixes level 2 page allocations
+> (kmem_cache_zalloc(data->l2_tables, gfp | GFP_DMA)), by transparently
+> remapping GFP_DMA to an underlying ZONE_DMA32.
+> 
+> The alternative would be to create a new SLAB_CACHE_DMA32 when
+> CONFIG_ZONE_DMA32 is defined, but then I'm concerned that the callers
+> would need to choose between the 2 (GFP_DMA or GFP_DMA32...), and also
+> need to use some ifdefs (but maybe that's not a valid concern?).
+> 
+>> It makes little sense to involve slab for page table
+>> allocations anyway, as those tend to be aligned to a page size (or
+>> high-order page size). So what am I missing?
+> 
+> Level 2 tables are ARM_V7S_TABLE_SIZE(2) => 1kb, so we'd waste 3kb if
+> we allocated a full page.
 
-I haven't yet read the patch in details, but I'm skeptical about the
-approach in general for few reasons:
+Oh, I see.
 
-- PTE page table retracting to replace it with huge PMD entry requires
-  down_write(mmap_sem). It makes the approach not practical for many
-  multi-threaded workloads.
+Well, I think indeed the most transparent would be to support
+SLAB_CACHE_DMA32. The callers of kmem_cache_zalloc() would then need not
+add anything special to gfp, as that's stored internally upon
+kmem_cache_create(). Of course SLAB_BUG_MASK would no longer have to
+treat __GFP_DMA32 as unexpected. It would be unexpected when passed to
+kmalloc() which doesn't have special dma32 caches, but for a cache
+explicitly created to allocate from ZONE_DMA32, I don't see why not. I'm
+somewhat surprised that there wouldn't be a need for this earlier, so
+maybe I'm still missing something.
 
-  I don't see a way to avoid exclusive lock here. I will be glad to
-  be proved otherwise.
+> Thanks,
+> 
 
-- The promotion will also require TLB flush which might be prohibitively
-  slow on big machines.
-
-- Short living processes will fail to benefit from THP with the policy,
-  even with plenty of free memory in the system: no time to promote to THP
-  or, with synchronous promotion, cost will overweight the benefit.
-
-The goal to reduce memory overhead of THP is admirable, but we need to be
-careful not to kill THP benefit itself. The approach will reduce number of
-THP mapped in the system and/or shift their allocation to later stage of
-process lifetime.
-
-The only way I see it can be useful is if it will be possible to apply the
-policy on per-VMA basis. It will be very useful for malloc()
-implementations, for instance. But as a global policy it's no-go to me.
-
-Prove me wrong with performance data. :)
-
--- 
- Kirill A. Shutemov
