@@ -2,113 +2,105 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FF93C43610
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 21:37:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3D27C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 21:39:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E138A20827
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 21:37:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E138A20827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 68DC220827
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 21:39:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o5TRteu0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68DC220827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728263AbeKJHUR convert rfc822-to-8bit (ORCPT
+        id S1728166AbeKJHWV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 02:20:17 -0500
-Received: from mga02.intel.com ([134.134.136.20]:29687 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726181AbeKJHUR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 02:20:17 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Nov 2018 13:37:52 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,484,1534834800"; 
-   d="scan'208";a="107365449"
-Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
-  by orsmga002.jf.intel.com with ESMTP; 09 Nov 2018 13:37:51 -0800
-Received: from fmsmsx121.amr.corp.intel.com (10.18.125.36) by
- FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Fri, 9 Nov 2018 13:37:51 -0800
-Received: from hasmsx112.ger.corp.intel.com (10.184.198.40) by
- fmsmsx121.amr.corp.intel.com (10.18.125.36) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Fri, 9 Nov 2018 13:37:51 -0800
-Received: from hasmsx108.ger.corp.intel.com ([169.254.9.165]) by
- HASMSX112.ger.corp.intel.com ([169.254.11.97]) with mapi id 14.03.0415.000;
- Fri, 9 Nov 2018 23:37:48 +0200
-From:   "Winkler, Tomas" <tomas.winkler@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        "Nayna Jain" <nayna@linux.ibm.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        "Jason Gunthorpe" <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v5 16/17] tpm: take TPM chip power gating out of
- tpm_transmit()
-Thread-Topic: [PATCH v5 16/17] tpm: take TPM chip power gating out of
- tpm_transmit()
-Thread-Index: AQHUd238CNv13jYvhU+0nbO7Ml7SjKVGNDswgAAq4wCAAZjFgA==
-Date:   Fri, 9 Nov 2018 21:37:48 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9DA190F4@hasmsx108.ger.corp.intel.com>
-References: <20181108141541.12832-1-jarkko.sakkinen@linux.intel.com>
- <20181108141541.12832-17-jarkko.sakkinen@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9DA18602@hasmsx108.ger.corp.intel.com>
- <20181108230700.GA8038@linux.intel.com>
-In-Reply-To: <20181108230700.GA8038@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiODY2ZmE1NjQtNTcyZC00NjIzLTgyMWMtY2RlNWRlYWQyOTg3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiTlpOdjN0TFhjdjBQM3BVNHdJWDNoM3FrVUtnYTRTSEk5VFFTT3VcL2FydktBTU1yQWpOM2NsQnRWQlFPeENiRlIifQ==
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.255.203.64]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Sat, 10 Nov 2018 02:22:21 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:47000 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726110AbeKJHWV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 02:22:21 -0500
+Received: by mail-qk1-f193.google.com with SMTP id q1so4256373qkf.13;
+        Fri, 09 Nov 2018 13:39:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=7KJG27ObTrdYgeblw+pbQpZdm7+ORaCNagHyv+Bl4Mo=;
+        b=o5TRteu0J+PQ3Wc0ntvxU7geZ+9zSvTsAphTleL0wH50W0VIEW0D//GvPdrAj+eXT5
+         DnHHdGK8T2u/rz4lYuR3+tPDfk56vSjoKufVQB2b02hrYBmA5ZpooouCYUseLFrPcywE
+         pGVusxNnDlaiPcxHVZJNv/Q5OWI/TGjMW2w8jvUiPXvYuUeAR4fNT2Stq6ozqenKDIZI
+         bSaH3oybEloYTak9ob4kxIFscfgg+2JLDxMt7sRAqAHx/GvEdfP/MOoZ3Sp0V0HMb+6R
+         U4eIaRs/BY6r9lZEilbwfoUGQR3uzYFbKmdDk9G38NZP9DfPvEDd84rfCNjWuANxiP6D
+         Nf8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=7KJG27ObTrdYgeblw+pbQpZdm7+ORaCNagHyv+Bl4Mo=;
+        b=UzxfVS4j4fm+yM9XNr2XoP4HSsQvTVOZYrnWOFsox8Vd4sB9UErqwCGRZDmMV22ymz
+         FLK4RNJt63k7lzhjLW7OnULVLjO95wk0tHIg5fCR8GhUwtwSYfQWkyB+MYF6vXwIl6M8
+         aSBA90thYL+3cjF3OysmDHBp/p4qcWBYHRmYjgkkKZDItwtPeOjf+srl+D9gxdP7x9Wh
+         RvJEqJYuwSAsw10DlJbWV9AaMBMTI/2Ie4+NNj12E0XDzSjwtXt0iDwIedq249hxDyM2
+         qEYLbfRT60Fxw5q/+YDynf3coH4u5MLI/IncDnzfrjFt/YEp13LbyU8jy4PGOijY1whR
+         U8TQ==
+X-Gm-Message-State: AGRZ1gIjnTNemzMpSntffqzt/zn90aihwmqdJri8J0JT8wwKN7wnPYcU
+        wOYiac0VG21LPRtL1qjwXwB+VJJMmYY2KgamktjJY3Q=
+X-Google-Smtp-Source: AJdET5fZ4OAmtZUIDRkJYgvl/SNegwrGM8SboQ6stX6ik0s634hAYc5fX4Vb60v+xYgSCO1d+nVxqG8KAV3TLe7S9aE=
+X-Received: by 2002:a0c:8c8a:: with SMTP id p10mr10577600qvb.218.1541799595276;
+ Fri, 09 Nov 2018 13:39:55 -0800 (PST)
 MIME-Version: 1.0
+From:   Rob Herring <robherring2@gmail.com>
+Date:   Fri, 9 Nov 2018 15:39:43 -0600
+Message-ID: <CAL_JsqLOqQ3p7mScZVfusQkrEvNCKzCWL+u1Jfe_d91Eh_krwQ@mail.gmail.com>
+Subject: [GIT PULL] Devicetree fixes for 4.20-rc, round 2
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, Frank Rowand <frowand.list@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Linus,
 
+Please pull.
 
-> 
-> On Thu, Nov 08, 2018 at 06:38:59PM +0000, Winkler, Tomas wrote:
-> > > Call tpm_chip_start() and tpm_chip_stop() in
-> > >
-> > > * tpm_try_get_ops() and tpm_put_ops()
-> > > * tpm_chip_register()
-> > > * tpm2_del_space()
-> > >
-> > > And remove these calls from tpm_transmit(). The core reason for this
-> > > change is that in tpm_vtpm_proxy a locality change requires a
-> > > virtual TPM command (a command made up just for that driver).
-> > >
-> > I don't think you can do that,  locality has to be request for each
-> > command, as  for example tboot can request higher locality any time.
-> 
-> That could be a potential problem. How tboot intervention gets prevented
-> without this patch?
-As it was said, need to request locality and relinquish it for each command, I believe thought this is not required for client platforms only for servers. 
-> 
-> > Same for cmd_ready()/go_idle() powergatin, you will prevent the whole
-> > platform entering power save state.
-> 
-> Why would you want that in a middle of using the TPM anyway?
-If I'm reading this patch correctly you do cmd_ready when tpm is opened, it doesn't mean there is a real traffic, so why to keep it awake. 
-Thanks
-Tomas
+Rob
 
+The following changes since commit c961cb3be9064d1097ccc019390f8b5739daafc6:
+
+  of: Fix cpu node iterator to not ignore disabled cpu nodes
+(2018-11-01 16:16:54 -0500)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git
+tags/devicetree-fixes-for-4.20-2
+
+for you to fetch changes up to 89c38422e072bb453e3045b8f1b962a344c3edea:
+
+  of, numa: Validate some distance map rules (2018-11-08 12:44:34 -0600)
+
+----------------------------------------------------------------
+Devicetree fixes for 4.20-rc:
+
+- Add validation of NUMA distance map to prevent crashes with bad map
+
+- Fix setting of dma_mask
+
+----------------------------------------------------------------
+John Garry (1):
+      of, numa: Validate some distance map rules
+
+Robin Murphy (1):
+      of/device: Really only set bus DMA mask when appropriate
+
+ drivers/of/device.c  | 4 +++-
+ drivers/of/of_numa.c | 9 +++++++--
+ 2 files changed, 10 insertions(+), 3 deletions(-)
