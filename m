@@ -2,96 +2,85 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC5DEC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 11:48:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93DE9C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 11:52:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D67620883
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 11:48:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TRXgZoj+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D67620883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 5178620827
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 11:52:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5178620827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728377AbeKIV3M (ORCPT
+        id S1728245AbeKIVca (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 16:29:12 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:37976 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727702AbeKIV3M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 16:29:12 -0500
-Received: by mail-lj1-f196.google.com with SMTP id q186-v6so1335475ljb.5;
-        Fri, 09 Nov 2018 03:48:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=q7LMD7wuQ+tZZhK0MKgl/vW4M4nPLsiexJn280o9gpY=;
-        b=TRXgZoj+L7FUi/yZfx6uAqOl6eE4IPXIuqCBDxBFNTSSPJLr54wy/hQ4kg4iFnntTm
-         aJLBY9k288B7zTrHcx1zYSoQzyxMvdus29uSxOKeXVXCr0OGNmdnTGRWpAKb5fSN0r+g
-         6FA+ea8mryz3YQCKegsBzwdal8iJ8YAY05izUuW614apWpkKI0yyILCcMmGmo3ol3DoR
-         PAXCCPwWbHhW1GzTRJRMoGtJfQNgmMr5oHneAqAabJYnk3e0nVoQFanepi03d6n/agRm
-         dhfJcv8o0IFMo/97C/inNVrv813y3qDMUre11+fHUz1ofmeQQN2xyvKsLufyNGKDE0h4
-         /x/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=q7LMD7wuQ+tZZhK0MKgl/vW4M4nPLsiexJn280o9gpY=;
-        b=uNF/psj6tmY86YxRdvjAKkYLQAdX9A4cd2UdT9zlyiTVqHWzlG/7uwfsQ9XJK1sbeO
-         I3s/k9KsdUNe6b7VgvydvNqfzzI/vKcYx1CM7ApucKY+RGjfLh1gOdtFEN9xyUtdvKpF
-         iRKNR9YoRX1WAgKAdvfaLM/yNHPbm8iMTEJaom7iuj5pocR8dRQVVV6EWfZsv6nrbF1q
-         kmDjrEYnDpGBo4h0BKEZSP8bigYe+jWgmrKKB/O+TKLeeWDf/LK8OpXS+4M7p3T9QY7Z
-         FcunIsJF3GQxwSGS3U1eJ4CbrKyo1LA3TyO2Mr/LnSQWfeB03pzu1e2BKZ3EGEFqvCqJ
-         0M9w==
-X-Gm-Message-State: AGRZ1gKoZTZ4P0Vl3bpQ7pcL5qpPaXFBvjYxtYfswpOSvT70Vr9SrnqM
-        HcNL2dtfSyn5C4tg92IqPkU=
-X-Google-Smtp-Source: AJdET5cb718mQ9GBgN0fd4JoyA+QCr9jiAOyn8T/K9goncQ5eEwWYGX2psoNUzJsliOHj9D9VxCEDA==
-X-Received: by 2002:a2e:6c04:: with SMTP id h4-v6mr2458087ljc.92.1541764133842;
-        Fri, 09 Nov 2018 03:48:53 -0800 (PST)
-Received: from uranus.localdomain ([5.18.102.224])
-        by smtp.gmail.com with ESMTPSA id q5-v6sm1194338lfj.85.2018.11.09.03.48.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 09 Nov 2018 03:48:53 -0800 (PST)
-Received: by uranus.localdomain (Postfix, from userid 1000)
-        id B0EFC460899; Fri,  9 Nov 2018 14:48:50 +0300 (MSK)
-Date:   Fri, 9 Nov 2018 14:48:50 +0300
-From:   Cyrill Gorcunov <gorcunov@gmail.com>
-To:     Rafael David Tinoco <rafael.tinoco@linaro.org>
-Cc:     adobriyan@gmail.com, akpm@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, shuah@kernel.org
-Subject: Re: [PATCH] proc: fix and merge proc-self-map-file tests
-Message-ID: <20181109114850.GL13195@uranus.lan>
-References: <20181108111105.GC13195@uranus.lan>
- <20181109113036.21512-1-rafael.tinoco@linaro.org>
- <20181109114123.GK13195@uranus.lan>
- <1541763936.3280758.1571224480.76F1EF1C@webmail.messagingengine.com>
+        Fri, 9 Nov 2018 16:32:30 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:14639 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727662AbeKIVca (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 16:32:30 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id E47E64BD03711;
+        Fri,  9 Nov 2018 19:52:06 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.41) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.408.0; Fri, 9 Nov 2018
+ 19:52:05 +0800
+Subject: Re: [PATCH v4 2/2] scsi: ufs: Add UFS platform driver for Cadence UFS
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Janek Kotas <jank@cadence.com>
+References: <C77CE2E3-F88A-4B1E-BECB-5D031E2930E3@global.cadence.com>
+ <1A428C77-982A-4EB8-8FDD-A33979753660@global.cadence.com>
+ <yq1tvkt1vly.fsf@oracle.com>
+ <38D3DEAD-C318-4BE2-8605-102FF572AD45@global.cadence.com>
+ <yq1tvkrvvad.fsf@oracle.com>
+CC:     "vinholikatti@gmail.com" <vinholikatti@gmail.com>,
+        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <c4937848-8459-1201-5ec1-2f453df15e1e@huawei.com>
+Date:   Fri, 9 Nov 2018 11:51:59 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1541763936.3280758.1571224480.76F1EF1C@webmail.messagingengine.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <yq1tvkrvvad.fsf@oracle.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.41]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 09, 2018 at 09:45:36AM -0200, Rafael David Tinoco wrote:
-...
-> > today evening or tomorrow. I think this way everybody will be
-> > happy: procfs get passed on arm32 and x86 will still have first
-> > page testing.
-> 
-> Ohh, my understanding was that this was going to be addressed in some other test,
-> like what you said.. I did not understand you wanted me to create a test for
-> it altogether, my bad. I can do it if you want, let me know, pls.
+On 09/11/2018 02:28, Martin K. Petersen wrote:
+>
+> Janek,
+>
+>>> Rob reviewed the dt binding patch but has it been merged or should I
+>>> take both patches through SCSI?
+>
+> Applied to 4.21/scsi-queue. Thank you!
+>
 
-:-) I'll be able to create patch and test in about 10 hours, so
-feel free to beat me if you have time meanwhile.
+
+Hi Martin,
+
+I am building your 4.21 queue today, and it seems to be broken from this 
+patch:
+
+https://kernel.googlesource.com/pub/scm/linux/kernel/git/mkp/scsi/+/b3874a425510d1164fd3428ab99273c07d210d82
+
+You seemed to miss adding the c-file:
+make[3]: *** No rule to make target `drivers/scsi/ufs/cdns-pltfrm.o', 
+needed by `drivers/scsi/ufs/built-in.a'. Stop
+
+Or am I missing something?
+
+John
+
