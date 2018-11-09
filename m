@@ -2,209 +2,76 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94860C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 01:38:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54DC0C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 01:42:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 447AE20855
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 01:38:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Yn0Kqqw2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 447AE20855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 1C2C620855
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 01:42:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C2C620855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727633AbeKILQt (ORCPT
+        id S1727691AbeKILUg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 06:16:49 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:60348 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727157AbeKILQs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 06:16:48 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA91Z3wn015751;
-        Fri, 9 Nov 2018 01:38:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=58Xe588RsaA4e4d5TeFa00hIK8siQXtRcRjGe+16Ouw=;
- b=Yn0Kqqw2Ul/EJ9y4ESHfzsjO6ERNQpN7WUnJB0YUx+vvCBjTgo+OBsS0ALuRk7UKKpM6
- 7sqYHshb4oY8UVyhoF9yBFzrQA6bLBps2ecg4nh/+6V0bmJB7yEKu/w5aH+MBnrunURF
- rDvfOdW7lSby+ufNZ0xpiCS2HTCUREiFGTvbl/lJYFdVGAYD1jlQ8oSv2rr6HarrBXvR
- f+ufVYmlcrLgp4Y1jfhEePp1YxCwWegyAti1lsOt/oVDSKS3KFc9LUR8iXbK5FC4ySPO
- SxHLWicAQNduerQYvcuCXY1TvK9M/9k9wUz/s7N3yPKoObP3DwBkLS/Lhn2Dvkh/DzMh 4w== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2120.oracle.com with ESMTP id 2nh3mq4p9s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 09 Nov 2018 01:38:23 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wA91cM1E006566
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 9 Nov 2018 01:38:23 GMT
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wA91cLhr006135;
-        Fri, 9 Nov 2018 01:38:21 GMT
-Received: from [10.182.69.118] (/10.182.69.118)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 08 Nov 2018 17:38:21 -0800
-Subject: Re: [LKP] a9f38e1dec [ 245.678853] INFO: task mount:580 blocked for
- more than 120 seconds.
-To:     Jens Axboe <axboe@kernel.dk>,
-        kernel test robot <rong.a.chen@intel.com>,
-        Omar Sandoval <osandov@fb.com>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        LKP <lkp@01.org>
-References: <20181107031643.GD24195@shao2-debian>
- <f5f81267-0aea-4ae1-0112-88279598eb07@oracle.com>
- <1de09da9-fc06-b26e-99fa-97d813c0ccf0@kernel.dk>
-From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <912dadf9-2a33-0a36-0aa6-dcff388f6217@oracle.com>
-Date:   Fri, 9 Nov 2018 09:38:29 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <1de09da9-fc06-b26e-99fa-97d813c0ccf0@kernel.dk>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9071 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1811090012
+        Fri, 9 Nov 2018 06:20:36 -0500
+Received: from mx.socionext.com ([202.248.49.38]:41458 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727196AbeKILUg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 06:20:36 -0500
+Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
+  by mx.socionext.com with ESMTP; 09 Nov 2018 10:42:16 +0900
+Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
+        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 6E256180D4F;
+        Fri,  9 Nov 2018 10:42:16 +0900 (JST)
+Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Fri, 9 Nov 2018 10:42:16 +0900
+Received: from plum.e01.socionext.com (unknown [10.213.132.32])
+        by kinkan.css.socionext.com (Postfix) with ESMTP id CABDC1A03A2;
+        Fri,  9 Nov 2018 10:42:15 +0900 (JST)
+From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+To:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Subject: [PATCH 0/4] reset: uniphier: Rename from USB3 reset to glue reset and add AHCI reset support
+Date:   Fri,  9 Nov 2018 10:42:03 +0900
+Message-Id: <1541727727-10821-1-git-send-email-hayashi.kunihiko@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This series renames the reset control of core reset included in USB3 glue
+layer with in the glue layer for generic peripherals to allow other devices
+to use it.
 
+And this series adds support for the core reset included in AHCI glue layer.
 
-On 11/7/18 11:17 PM, Jens Axboe wrote:
-> On 11/7/18 1:22 AM, jianchao.wang wrote:
->>
->>
->> On 11/7/18 11:16 AM, kernel test robot wrote:
->>> Greetings,
->>>
->>> 0day kernel testing robot got the below dmesg and the first bad commit is
->>>
->>> https://urldefense.proofpoint.com/v2/url?u=https-3A__git.kernel.org_pub_scm_linux_kernel_git_torvalds_linux.git&d=DwIBaQ&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=7WdAxUBeiTUTCy8v-7zXyr4qk7sx26ATvfo6QSTvZyQ&m=8qsZc_c8QfZOGoITiebvlt5BO9GBK61cAY4xLOCegFU&s=ZGRhkdRCPvSKvbZzx-HAQtWcDZfzce60e2TMvBQyORo&e= master
->>>
->>> commit a9f38e1dec107af70d81338332494bf0a1e76597
->>> Author:     Omar Sandoval <osandov@fb.com>
->>> AuthorDate: Mon Oct 15 09:21:34 2018 -0600
->>> Commit:     Jens Axboe <axboe@kernel.dk>
->>> CommitDate: Tue Oct 16 09:50:14 2018 -0600
->>>
->>>     floppy: convert to blk-mq
->>>     
->>>     This driver likes to fetch requests from all over the place, so make
->>>     queue_rq put requests on a list so that the logic stays the same. Tested
->>>     with QEMU.
->>>     
->>>     Signed-off-by: Omar Sandoval <osandov@fb.com>
->>>     
->>>     Converted to blk_mq_init_sq_queue() and fixed a few spots where the
->>>     tag_set leaked on cleanup.
->>>     
->>>     Signed-off-by: Jens Axboe <axboe@kernel.dk>
->>>
->>> 6ec3938cff  ataflop: convert to blk-mq
->>> a9f38e1dec  floppy: convert to blk-mq
->>> 8053e5b93e  Merge tag 'trace-v4.20-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace
->>> 337734cbca  Add linux-next specific files for 20181106
->>> +---------------------------------------------------------+------------+------------+------------+---------------+
->>> |                                                         | 6ec3938cff | a9f38e1dec | 8053e5b93e | next-20181106 |
->>> +---------------------------------------------------------+------------+------------+------------+---------------+
->>> | boot_successes                                          | 251        | 68         | 69         | 74            |
->>> | boot_failures                                           | 48         | 27         | 25         | 23            |
->>> | Mem-Info                                                | 48         | 12         | 15         | 7             |
->>> | invoked_oom-killer:gfp_mask=0x                          | 6          | 4          | 3          | 2             |
->>> | EIP:iov_iter_fault_in_readable                          | 4          | 1          |            |               |
->>> | Out_of_memory:Kill_process                              | 3          | 2          | 2          |               |
->>> | Out_of_memory_and_no_killable_processes                 | 3          | 2          | 2          |               |
->>> | Kernel_panic-not_syncing:System_is_deadlocked_on_memory | 3          | 2          | 2          |               |
->>> | EIP:__put_user_4                                        | 1          |            |            |               |
->>> | INFO:task_blocked_for_more_than#seconds                 | 0          | 15         | 10         | 16            |
->>> | EIP:lock_is_held_type                                   | 0          | 1          | 0          | 1             |
->>> | EIP:native_safe_halt                                    | 0          | 3          |            |               |
->>> | Kernel_panic-not_syncing:hung_task:blocked_tasks        | 0          | 15         | 10         | 16            |
->>> | EIP:strnlen_user                                        | 0          | 1          |            |               |
->>> | EIP:_local_bh_enable                                    | 0          | 1          |            |               |
->>> | EIP:__lock_acquire                                      | 0          | 1          | 1          | 1             |
->>> | EIP:vprintk_emit                                        | 0          | 1          |            |               |
->>> | EIP:do_softirq_own_stack                                | 0          | 0          | 1          |               |
->>> | EIP:default_idle                                        | 0          | 0          | 2          | 1             |
->>> | EIP:reschedule_interrupt                                | 0          | 0          | 1          |               |
->>> | EIP:delay_tsc                                           | 0          | 0          | 0          | 1             |
->>> | EIP:copy_page_from_iter                                 | 0          | 0          | 0          | 1             |
->>> | EIP:_cond_resched                                       | 0          | 0          | 0          | 1             |
->>> +---------------------------------------------------------+------------+------------+------------+---------------+
->>>
->>> [  244.196551] random: get_random_u32 called from arch_align_stack+0x2d/0x40 with crng_init=1
->>> [  245.254485] _warn_unseeded_randomness: 54 callbacks suppressed
->>> [  245.254491] random: get_random_u32 called from copy_process+0x1c8/0x17b0 with crng_init=1
->>> [  245.257366] random: get_random_u32 called from arch_pick_mmap_layout+0x110/0x140 with crng_init=1
->>> [  245.258675] random: get_random_u32 called from load_elf_binary+0x2b6/0xb48 with crng_init=1
->>> [  245.678853] INFO: task mount:580 blocked for more than 120 seconds.
->>> [  245.679906]       Tainted: G                T 4.19.0-rc6-00172-ga9f38e1 #1
->>> [  245.680959] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
->>> [  245.682181] mount           D 6372   580      1 0x00000004
->>> [  245.683023] Call Trace:
->>> [  245.683425]  __schedule+0x2df/0x570
->>> [  245.683975]  schedule+0x2d/0x80
->>> [  245.684476]  schedule_timeout+0x19d/0x330
->>> [  245.685090]  ? wait_for_common+0xa5/0x170
->>> [  245.685735]  wait_for_common+0xac/0x170
->>> [  245.686339]  ? do_sched_yield+0x90/0x90
->>> [  245.686935]  wait_for_completion+0x12/0x20
->>> [  245.687571]  __floppy_read_block_0+0xfb/0x150
->>> [  245.688244]  ? floppy_resume+0x40/0x40
->>> [  245.688844]  floppy_revalidate+0x20f/0x240
->>> [  245.689486]  check_disk_change+0x43/0x60
->>> [  245.690087]  floppy_open+0x1ea/0x360
->>> [  245.690653]  __blkdev_get+0xb4/0x4d0
->>> [  245.691212]  ? blkdev_get+0x1db/0x370
->>> [  245.691777]  blkdev_get+0x1f3/0x370
->>> [  245.692351]  ? path_put+0x15/0x20
->>> [  245.692871]  ? lookup_bdev+0x4b/0x90
->>> [  245.693539]  blkdev_get_by_path+0x3d/0x80
->>> [  245.694165]  mount_bdev+0x2a/0x190
->>> [  245.694695]  squashfs_mount+0x10/0x20
->>> [  245.695271]  ? squashfs_alloc_inode+0x30/0x30
->>> [  245.695960]  mount_fs+0xf/0x90
->>> [  245.696451]  vfs_kern_mount+0x43/0x130
->>> [  245.697036]  do_mount+0x187/0xc40
->>> [  245.697563]  ? memdup_user+0x28/0x50
->>> [  245.698124]  ksys_mount+0x60/0xc0
->>> [  245.698639]  sys_mount+0x19/0x20
->>> [  245.699167]  do_int80_syscall_32+0x61/0x130
->>> [  245.699813]  entry_INT80_32+0xc7/0xc7
->>> [  245.700391] EIP: 0x47f46fee
->>> [  245.700829] Code: 11 83 c8 ff eb e2 90 90 90 90 90 90 57 56 53 8b 7c 24 20 8b 74 24 1c 8b 54 24 18 8b 4c 24 14 8b 5c 24 10 b8 15 00 00 00 cd 80 <5b> 5e 5f 3d 01 f0 ff ff 73 01 c3 e8 e8 80 03 00 81 c1 f6 5f 09 00
->>> [  245.703680] EAX: ffffffda EBX: affa4efa ECX: affa4f03 EDX: 080d3630
->>> [  245.704642] ESI: 00008010 EDI: 00000000 EBP: 00000000 ESP: affa45c0
->>> [  245.705637] DS: 007b ES: 007b FS: 0000 GS: 0033 SS: 007b EFLAGS: 00000282
->>
->> There is not a q->queue_lock as blk-legacy to serialize floppy_queue_rq from different contexts.
-> 
-> Doesn't look immediately racy, the internal queue list is protected by
-> the floppy_lock, and the busy start is marked by atomic bit setting.
+Kunihiko Hayashi (4):
+  dt-bindings: reset: uniphier: Replace the expression of USB3 with
+    generic peripherals
+  reset: uniphier-usb3: Rename to reset-uniphier-glue
+  dt-bindings: reset: uniphier: Add AHCI core reset description
+  reset: uniphier-glue: Add AHCI reset control support in glue layer
 
-Oops, I missed the fdc_busy bit set.
-I just looked at the patch and found the biggest change was this.
-Sorry for the noise.
+ .../devicetree/bindings/reset/uniphier-reset.txt   |  25 +--
+ drivers/reset/Kconfig                              |  10 +-
+ drivers/reset/Makefile                             |   2 +-
+ drivers/reset/reset-uniphier-glue.c                | 183 +++++++++++++++++++++
+ drivers/reset/reset-uniphier-usb3.c                | 171 -------------------
+ 5 files changed, 203 insertions(+), 188 deletions(-)
+ create mode 100644 drivers/reset/reset-uniphier-glue.c
+ delete mode 100644 drivers/reset/reset-uniphier-usb3.c
 
-> Do you see an issue with it, or are you just pontificating?
-> 
-> FWIW, just ran qemu with two floppy drives and concurrent access,
-> didn't see an issue.
-> 
+-- 
+2.7.4
 
-Thanks
-Jianchao
