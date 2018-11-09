@@ -2,143 +2,98 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41FB5C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:56:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77A06C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:56:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9AAF20840
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:56:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4034F20892
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:56:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DC638u/n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9AAF20840
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="idp5njpT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4034F20892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728276AbeKIRgA (ORCPT
+        id S1728371AbeKIRgS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 12:36:00 -0500
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:43857 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727864AbeKIRgA (ORCPT
+        Fri, 9 Nov 2018 12:36:18 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:46909 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728151AbeKIRgS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 12:36:00 -0500
-Received: by mail-yw1-f67.google.com with SMTP id j75-v6so1276371ywj.10
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 23:56:36 -0800 (PST)
+        Fri, 9 Nov 2018 12:36:18 -0500
+Received: by mail-pf1-f195.google.com with SMTP id s9-v6so557845pfm.13
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 23:56:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LEPp+EwU9LiR+ySjrZWVA5o0UEDKTJdJ7RvMc4OtLpI=;
-        b=DC638u/nz2Oouwn+qJMXqycF4jVSOEnNnm2sNTK6K+aGBXbIqL0ng1JeDKvp6z/ZCT
-         joljSAlL5K4Lf/R1oY79XY1GEGJZsgCMtz0FEdeMM1ailLWDSgCSyMSdcSMeBA+LdR1q
-         lWLI/GFLxeLZslngYfP7I7glYT688HyIylYig=
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=b0ZI4yKMDm3C+8nerlVTKSyWkE+9ztsGbxX/Wr3Lzqo=;
+        b=idp5njpTylykwWt0S5Xw3IZ7VFhZ8ChpziKqEGnvQn3UoEYVD+n8/C1u3hk2IMtmi6
+         t9Rz3jNn7S7fxMa5cuDgBV+URzFESg2r1phqzC+GEMvQry1IxJcRKr67IDYalFWSYyvb
+         JvGtGYKEVLbowQdLaHVfY2tOtLu/BldXdlye8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LEPp+EwU9LiR+ySjrZWVA5o0UEDKTJdJ7RvMc4OtLpI=;
-        b=SOWm3g60FP97BlB8+14sAyNcnmGoTvZj8x5e14WlwLCTdPO52QYeKCLaYe0oMBOzjx
-         a6dF/grqHa+lUh3RKEI9/7AwnRgbfYX9kV0VQCGTuNHY42viD/SzUM0B3BdV7CkInnkr
-         Ssxwob+D/2CKvsZmyvX6yj9wRA3QIr5DS8BZ069QBWv8STgE+dDnets3il0+Lp/cLWu8
-         Zr/f6qV+dl/fhLzW5S9QIpjdMYprsRoR0K3MBtkv1KIdhJ5H/vv3i6I+CBUIewB6IfKM
-         2eMs3loEFaLIYo5LjbBjfEv8bB23vIx3oPfGRYBSnizATgLknb+y97q5bRRcw8E6Bp0/
-         t19Q==
-X-Gm-Message-State: AGRZ1gKan/XRHH2EhSxaaKdmkwIuwt3G41oyQVMIis3uAil6e8a1GKki
-        jVPyxY8N3bPhv2lawepi2Q2PakEHE9E=
-X-Google-Smtp-Source: AJdET5eB19MicaI2A5Pe6NrIWq1bLEzTEf8hFbIu9+p6LoQqMI/MxO9fxFu+/ZBPqCMtqaGl+CZQvg==
-X-Received: by 2002:a81:4d86:: with SMTP id a128-v6mr7147071ywb.434.1541750195988;
-        Thu, 08 Nov 2018 23:56:35 -0800 (PST)
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com. [209.85.219.179])
-        by smtp.gmail.com with ESMTPSA id 203-v6sm1858021ywz.87.2018.11.08.23.56.34
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=b0ZI4yKMDm3C+8nerlVTKSyWkE+9ztsGbxX/Wr3Lzqo=;
+        b=VFosQkKgV7Q3OYsmzvQhVPEjILw/dwz1813Sxky2ZpqjZgzBUoSp7j/9P0v/CP0r4v
+         ghaOyZ9hWGZVljMnCo2BA5lVbhMgxGxnPbJTAS4YawCSzc+ipXjHkUruG2Kx0UkBbi3V
+         u+MHezWKIORetLMLTzeiRy0+mnrHp87QCNNkONA2qZoRjCnWWg60xiClAcMRogmhcD45
+         9KXyQllf7suTQacr9Ft7ogW8jtW3h/DPfw9JjzTuBq4mj71VGS0AZt6aqtznPxPiQqUC
+         cxEZRmQpQlDNFf0IrgK45MVNxbtJASgiEqNGIb509Fs14nuiCcdZxRIEOCJnimjQHY41
+         cPXQ==
+X-Gm-Message-State: AGRZ1gIoCm1D5NLY58fpahb9f5QwuEtivry+T3gH6MEBFEgEPQOecW4n
+        +LzwsyYbIMDGDrMOzZV4AyGq
+X-Google-Smtp-Source: AJdET5eGFALKDWsb4PYhmoHZ0evbq2gw14/bTVPDy6u3DBO+rHZpwonC/WWksVfRbs1OzK5SwgSQNA==
+X-Received: by 2002:a63:f811:: with SMTP id n17mr6756092pgh.23.1541750214835;
+        Thu, 08 Nov 2018 23:56:54 -0800 (PST)
+Received: from localhost.localdomain ([103.59.133.81])
+        by smtp.googlemail.com with ESMTPSA id f18-v6sm16591110pfh.0.2018.11.08.23.56.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 08 Nov 2018 23:56:35 -0800 (PST)
-Received: by mail-yb1-f179.google.com with SMTP id i17-v6so673125ybp.13
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 23:56:34 -0800 (PST)
-X-Received: by 2002:a25:b3c9:: with SMTP id x9-v6mr7577418ybf.508.1541750193497;
- Thu, 08 Nov 2018 23:56:33 -0800 (PST)
-MIME-Version: 1.0
-References: <1541749141-6989-1-git-send-email-mgottam@codeaurora.org>
-In-Reply-To: <1541749141-6989-1-git-send-email-mgottam@codeaurora.org>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Fri, 9 Nov 2018 16:56:21 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5CwhPTmh4kF6O23Os2tihaWEez1SM=Th6BGkf_wo_LYDA@mail.gmail.com>
-Message-ID: <CAAFQd5CwhPTmh4kF6O23Os2tihaWEez1SM=Th6BGkf_wo_LYDA@mail.gmail.com>
-Subject: Re: [PATCH v2] media: venus: add support for selection rectangles
-To:     mgottam@codeaurora.org
-Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        vgarodia@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 08 Nov 2018 23:56:54 -0800 (PST)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     mchehab@kernel.org, robh+dt@kernel.org, todor.tomov@linaro.org,
+        hansverk@cisco.com
+Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH] dt-bindings: media: i2c: Fix i2c address for OV5645 camera sensor
+Date:   Fri,  9 Nov 2018 13:26:43 +0530
+Message-Id: <20181109075643.17575-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Malathi,
+The i2c address for the Omnivision OV5645 camera sensor is 0x3c. It is
+incorrectly mentioned as 0x78 in binding. Hence fix that.
 
-On Fri, Nov 9, 2018 at 4:39 PM Malathi Gottam <mgottam@codeaurora.org> wrote:
->
-> Handles target type crop by setting the new active rectangle
-> to hardware. The new rectangle should be within YUV size.
->
-> Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
-> ---
->  drivers/media/platform/qcom/venus/venc.c | 26 ++++++++++++++++++++++----
->  1 file changed, 22 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
-> index ce85962..d26c129 100644
-> --- a/drivers/media/platform/qcom/venus/venc.c
-> +++ b/drivers/media/platform/qcom/venus/venc.c
-> @@ -478,16 +478,34 @@ static int venc_g_fmt(struct file *file, void *fh, struct v4l2_format *f)
->  venc_s_selection(struct file *file, void *fh, struct v4l2_selection *s)
->  {
->         struct venus_inst *inst = to_inst(file);
-> +       int ret;
-> +       u32 buftype;
->
->         if (s->type != V4L2_BUF_TYPE_VIDEO_OUTPUT)
->                 return -EINVAL;
->
->         switch (s->target) {
->         case V4L2_SEL_TGT_CROP:
-> -               if (s->r.width != inst->out_width ||
-> -                   s->r.height != inst->out_height ||
-> -                   s->r.top != 0 || s->r.left != 0)
-> -                       return -EINVAL;
-> +               if (s->r.left != 0) {
-> +                       s->r.width += s->r.left;
-> +                       s->r.left = 0;
-> +               }
-> +
-> +               if (s->r.top != 0) {
-> +                       s->r.height += s->r.top;
-> +                       s->r.top = 0;
-> +               }
-> +
-> +               if (s->r.width > inst->width)
-> +                       s->r.width = inst->width;
-> +               else
-> +                       inst->width = s->r.width;
-> +
-> +               if (s->r.height > inst->height)
-> +                       s->r.height = inst->height;
-> +               else
-> +                       inst->height = s->r.height;
-> +
+Fixes: 09c716af36e6 [media] media: i2c/ov5645: add the device tree binding document
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ Documentation/devicetree/bindings/media/i2c/ov5645.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-From semantic point of view, it looks fine, but where is the rectangle
-actually set to the hardware?
+diff --git a/Documentation/devicetree/bindings/media/i2c/ov5645.txt b/Documentation/devicetree/bindings/media/i2c/ov5645.txt
+index fd7aec9f8e24..1a68ca5eb9a3 100644
+--- a/Documentation/devicetree/bindings/media/i2c/ov5645.txt
++++ b/Documentation/devicetree/bindings/media/i2c/ov5645.txt
+@@ -26,9 +26,9 @@ Example:
+ 	&i2c1 {
+ 		...
+ 
+-		ov5645: ov5645@78 {
++		ov5645: ov5645@3c {
+ 			compatible = "ovti,ov5645";
+-			reg = <0x78>;
++			reg = <0x3c>;
+ 
+ 			enable-gpios = <&gpio1 6 GPIO_ACTIVE_HIGH>;
+ 			reset-gpios = <&gpio5 20 GPIO_ACTIVE_LOW>;
+-- 
+2.17.1
 
-Best regards,
-Tomasz
