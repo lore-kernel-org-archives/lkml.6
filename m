@@ -6,77 +6,67 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 709DEC0044C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:52:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F541C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:53:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41EA420855
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:52:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41EA420855
+	by mail.kernel.org (Postfix) with ESMTP id EE3AD20855
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:53:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE3AD20855
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728058AbeKITb6 (ORCPT
+        id S1727789AbeKITdc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 14:31:58 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:37376 "EHLO
+        Fri, 9 Nov 2018 14:33:32 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:37394 "EHLO
         deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727532AbeKITb6 (ORCPT
+        with ESMTP id S1727552AbeKITdc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 14:31:58 -0500
+        Fri, 9 Nov 2018 14:33:32 -0500
 Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
         by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1gL3SC-00023e-5o; Fri, 09 Nov 2018 17:51:52 +0800
+        id 1gL3Tr-000243-9i; Fri, 09 Nov 2018 17:53:35 +0800
 Received: from herbert by gondobar with local (Exim 4.89)
         (envelope-from <herbert@gondor.apana.org.au>)
-        id 1gL3S5-0005jU-HY; Fri, 09 Nov 2018 17:51:45 +0800
-Date:   Fri, 9 Nov 2018 17:51:45 +0800
+        id 1gL3Tp-0005lK-0I; Fri, 09 Nov 2018 17:53:33 +0800
+Date:   Fri, 9 Nov 2018 17:53:32 +0800
 From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Wenwen Wang <wang6495@umn.edu>
-Cc:     Kangjie Lu <kjlu@umn.edu>, "David S. Miller" <davem@davemloft.net>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Srikanth Jampala <Jampala.Srikanth@cavium.com>,
-        Gadam Sreerama <sgadam@cavium.com>,
-        "open list:CRYPTO API" <linux-crypto@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] crypto: cavium/nitrox - fix a DMA pool free failure
-Message-ID: <20181109095145.irclkx232fq3ahqv@gondor.apana.org.au>
-References: <1539910247-9250-1-git-send-email-wang6495@umn.edu>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Steffen Klassert <steffen.klassert@secunet.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pcrypt: use format specifier in kobject_add
+Message-ID: <20181109095332.e6nu33okzpt4wpji@gondor.apana.org.au>
+References: <20181027144926.8433-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1539910247-9250-1-git-send-email-wang6495@umn.edu>
+In-Reply-To: <20181027144926.8433-1-colin.king@canonical.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 07:50:43PM -0500, Wenwen Wang wrote:
-> In crypto_alloc_context(), a DMA pool is allocated through dma_pool_alloc()
-> to hold the crypto context. The meta data of the DMA pool, including the
-> pool used for the allocation 'ndev->ctx_pool' and the base address of the
-> DMA pool used by the device 'dma', are then stored to the beginning of the
-> pool. These meta data are eventually used in crypto_free_context() to free
-> the DMA pool through dma_pool_free(). However, given that the DMA pool can
-> also be accessed by the device, a malicious device can modify these meta
-> data, especially when the device is controlled to deploy an attack. This
-> can cause an unexpected DMA pool free failure.
+On Sat, Oct 27, 2018 at 03:49:26PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> To avoid the above issue, this patch introduces a new structure
-> crypto_ctx_hdr and a new field chdr in the structure nitrox_crypto_ctx hold
-> the meta data information of the DMA pool after the allocation. Note that
-> the original structure ctx_hdr is not changed to ensure the compatibility.
+> Passing string 'name' as the format specifier is potentially hazardous
+> because name could (although very unlikely to) have a format specifier
+> embedded in it causing issues when parsing the non-existent arguments
+> to these.  Follow best practice by using the "%s" format string for
+> the string 'name'.
 > 
-> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+> Cleans up clang warning:
+> crypto/pcrypt.c:397:40: warning: format string is not a string literal
+> (potentially insecure) [-Wformat-security]
+> 
+> Fixes: a3fb1e330dd2 ("pcrypt: Added sysfs interface to pcrypt")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
->  drivers/crypto/cavium/nitrox/nitrox_algs.c | 12 +++++++-----
->  drivers/crypto/cavium/nitrox/nitrox_lib.c  | 22 +++++++++++++++++-----
->  drivers/crypto/cavium/nitrox/nitrox_req.h  |  7 +++++++
->  3 files changed, 31 insertions(+), 10 deletions(-)
+>  crypto/pcrypt.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
 Patch applied.  Thanks.
 -- 
