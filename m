@@ -2,368 +2,162 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77197C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:58:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EBC7C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:59:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 054FA20840
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:58:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=CAVIUMNETWORKS.onmicrosoft.com header.i=@CAVIUMNETWORKS.onmicrosoft.com header.b="jivaQ1yv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 054FA20840
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cavium.com
+	by mail.kernel.org (Postfix) with ESMTP id 32A4E20883
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 07:59:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32A4E20883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728272AbeKIRh7 (ORCPT
+        id S1728392AbeKIRin (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 12:37:59 -0500
-Received: from mail-dm3nam03on0087.outbound.protection.outlook.com ([104.47.41.87]:42592
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        Fri, 9 Nov 2018 12:38:43 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40748 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728088AbeKIRh7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 12:37:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=CAVIUMNETWORKS.onmicrosoft.com; s=selector1-cavium-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IPT8E2VGHVd8SmCnTSNNPy/PN39YUQbYa+xa0IYAP4s=;
- b=jivaQ1yvFJdodr0WbFgDkBC0q0mJqQqEVG8cYRWOpJ59Ggp4XK/tMH4SxNFp/FNaofluHRAOk9DD8DmiL/kmaXQZ9JQMCy9DSXG4qdQlBNKykFAyJgoPmRs1wJ6jhvzji7zwH27oXIItzpvytrv3P7SaAJaWvX2MYhD15Kyh6bg=
-Received: from SN6PR07MB5326.namprd07.prod.outlook.com (52.135.105.33) by
- SN6PR07MB5295.namprd07.prod.outlook.com (52.135.105.26) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.30; Fri, 9 Nov 2018 07:58:30 +0000
-Received: from SN6PR07MB5326.namprd07.prod.outlook.com
- ([fe80::f0b9:acf9:7513:c149]) by SN6PR07MB5326.namprd07.prod.outlook.com
- ([fe80::f0b9:acf9:7513:c149%5]) with mapi id 15.20.1294.034; Fri, 9 Nov 2018
- 07:58:30 +0000
-From:   "Richter, Robert" <Robert.Richter@cavium.com>
-To:     Julien Thierry <julien.thierry@arm.com>
-CC:     Marc Zyngier <marc.zyngier@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Stuart Yoder <stuyoder@gmail.com>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>
-Subject: Re: [PATCH 07/10] irqchip/gic-v3-its: Split probing from its node
- initialization
-Thread-Topic: [PATCH 07/10] irqchip/gic-v3-its: Split probing from its node
- initialization
-Thread-Index: AQHUduW4a8Xj9OqBxEGOxPHNQ+pN26VFvbAAgAFYegA=
-Date:   Fri, 9 Nov 2018 07:58:30 +0000
-Message-ID: <20181109075820.GD4064@rric.localdomain>
-References: <20181107220254.6116-1-rrichter@cavium.com>
- <20181107220254.6116-8-rrichter@cavium.com>
- <3ab57b7c-43e4-f6b8-fa4e-433fd087fc01@arm.com>
-In-Reply-To: <3ab57b7c-43e4-f6b8-fa4e-433fd087fc01@arm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM6PR06CA0003.eurprd06.prod.outlook.com
- (2603:10a6:20b:14::16) To SN6PR07MB5326.namprd07.prod.outlook.com
- (2603:10b6:805:73::33)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Robert.Richter@cavium.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2.245.13.105]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN6PR07MB5295;6:eWQtncu2ew14mPpY1zDo7aBYJ4y6ILxdaUhZbxhhZpEgv+TqVeBAla7A8DYlTQfaNnEnEbDIqh6D6TvK2zfA2/Yd10eu7E6u3pEOTZBzoxtwpFbkiSoiF5FzFaX6nnQ2CQGfaM5Y0zrPfaGOKyqacMLr642gFUXCNJJq8fSr+hGgl72rihPU3qZMsDOg124gJwU1LpK+LOBVlH7YT5uf0QrFkDUh7FJM6nTYcp1cje2ENYZ01ulz+QJpupcusYVPY7BLwQgravg4ZWKqoXeQNfuJEdTpvFtyE2aD+E3XcDXcfJ5WKiVf1zSpvO3TLRXxLHFxukhurnQOirq+xVzvh6sr5rKSDUN2RJPEjCttDpvH2w5jkvgfuGS8GoCNTMxo3G2pj94Uw3KOMh0sFZSfr7gpZuUJA/9HxeSAjjslFZVFImarzM49LCiXYYsCDQm5U6iziGhAvNCOsgcM8qFLEw==;5:WrS7ReG+C8EYH2koA+jMmJTW9mo6/V3hyi1/3nMkO5G1h/9lw+OxUvTXRY2mmD9oqShs+cBlg7BhrwC3i+Ul/LbHL4jrp4TEuF1MAEjEee/TtEKSfIZd5lHxHbmQ2QEvqgtFtOr9jfQm7sajvHVxZ0z/DWRfwKRgtMwIXbzjT2I=;7:TjeLhH2D7osFUVSxLIYAUundXyuBchYqIOpc02E1N/drHkk55ZB8MA6PwL0ZI8Yc9aK8J8FJATEOGBaJ11heecUzddXfARdd0lXJlOYCXLW7qNfxc7unG69qecffWRXwhZaa7N7rKsXNjUVro7dDwg==
-x-ms-office365-filtering-correlation-id: b3d9c69b-bbee-414e-4f27-08d64619233c
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:SN6PR07MB5295;
-x-ms-traffictypediagnostic: SN6PR07MB5295:
-x-microsoft-antispam-prvs: <SN6PR07MB5295EC1696198E5BB08FFADEF1C60@SN6PR07MB5295.namprd07.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231382)(944501410)(52105095)(148016)(149066)(150057)(6041310)(20161123564045)(20161123560045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:SN6PR07MB5295;BCL:0;PCL:0;RULEID:;SRVR:SN6PR07MB5295;
-x-forefront-prvs: 08512C5403
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(346002)(376002)(366004)(396003)(199004)(189003)(72206003)(5660300001)(14444005)(486006)(68736007)(53546011)(186003)(305945005)(316002)(54906003)(26005)(97736004)(14454004)(52116002)(11346002)(6116002)(6506007)(386003)(478600001)(3846002)(446003)(66066001)(2900100001)(1076002)(476003)(256004)(7416002)(6246003)(53936002)(99286004)(25786009)(8676002)(71200400001)(33656002)(2906002)(229853002)(9686003)(6486002)(39060400002)(4326008)(81156014)(6916009)(7736002)(102836004)(33896004)(81166006)(86362001)(76176011)(106356001)(8936002)(71190400001)(6436002)(6512007)(105586002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR07MB5295;H:SN6PR07MB5326.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: cavium.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: Qsbf3KiH4ixi5+IAO5+kmiY7pbBaPPopyfnolJitlDoGOcKi73uLEmum8s9p99Hq9iy2h7WTNuEGgiFbdHOdqbJwgIsuVM87+pt7fHYeiH3ftk0YIDmL2idWswKNLQBhe9h99BJZ6TyE9fayb/h+Z7s6R0woGzMhxLZRFe9QzUybIhUt1p2GvEFYrRJrjeSSVYceS7vLK2k3fEVdS11t7Og1zG09gW8B1j043FHFuw1BiYEkxOCHueo4Y+1GgdExw+4+AK/BnbOenENliokStiYkZBFm0bF3it0sPvehV9VJlB5fduT+G1V9C8TYNIw/c2oHuwzzYnv+woI8d11yntJDxZKgKycahh5CuyZ18nk=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <6614ABC5315A38458C6F167C31DE358D@namprd07.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1728088AbeKIRin (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 12:38:43 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id F1CCDACE5;
+        Fri,  9 Nov 2018 07:59:16 +0000 (UTC)
+Date:   Fri, 9 Nov 2018 08:59:14 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Anshuman Khandual <anshuman.khandual@arm.com>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <OSalvador@suse.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [RFC PATCH] mm, memory_hotplug: do not clear numa_node
+ association after hot_remove
+Message-ID: <20181109075914.GD18390@dhcp22.suse.cz>
+References: <20181108100413.966-1-mhocko@kernel.org>
+ <20181108102917.GV27423@dhcp22.suse.cz>
+ <048c04ae-7394-d03f-813e-42acdc965dd2@arm.com>
 MIME-Version: 1.0
-X-OriginatorOrg: cavium.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b3d9c69b-bbee-414e-4f27-08d64619233c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Nov 2018 07:58:30.4369
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR07MB5295
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <048c04ae-7394-d03f-813e-42acdc965dd2@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08.11.18 11:25:24, Julien Thierry wrote:
-> On 07/11/18 22:03, Robert Richter wrote:
+On Fri 09-11-18 09:12:09, Anshuman Khandual wrote:
+> 
+> 
+> On 11/08/2018 03:59 PM, Michal Hocko wrote:
+> > [Removing Wen Congyang and Tang Chen from the CC list because their
+> >  emails bounce. It seems that we will never learn about their motivation]
+> > 
+> > On Thu 08-11-18 11:04:13, Michal Hocko wrote:
+> >> From: Michal Hocko <mhocko@suse.com>
+> >>
+> >> Per-cpu numa_node provides a default node for each possible cpu. The
+> >> association gets initialized during the boot when the architecture
+> >> specific code explores cpu->NUMA affinity. When the whole NUMA node is
+> >> removed though we are clearing this association
+> >>
+> >> try_offline_node
+> >>   check_and_unmap_cpu_on_node
+> >>     unmap_cpu_on_node
+> >>       numa_clear_node
+> >>         numa_set_node(cpu, NUMA_NO_NODE)
+> >>
+> >> This means that whoever calls cpu_to_node for a cpu associated with such
+> >> a node will get NUMA_NO_NODE. This is problematic for two reasons. First
+> >> it is fragile because __alloc_pages_node would simply blow up on an
+> >> out-of-bound access. We have encountered this when loading kvm module
+> >> BUG: unable to handle kernel paging request at 00000000000021c0
+> >> IP: [<ffffffff8119ccb3>] __alloc_pages_nodemask+0x93/0xb70
+> >> PGD 800000ffe853e067 PUD 7336bbc067 PMD 0
+> >> Oops: 0000 [#1] SMP
+> >> [...]
+> >> CPU: 88 PID: 1223749 Comm: modprobe Tainted: G        W          4.4.156-94.64-default #1
+> >> task: ffff88727eff1880 ti: ffff887354490000 task.ti: ffff887354490000
+> >> RIP: 0010:[<ffffffff8119ccb3>]  [<ffffffff8119ccb3>] __alloc_pages_nodemask+0x93/0xb70
+> >> RSP: 0018:ffff887354493b40  EFLAGS: 00010202
+> >> RAX: 00000000000021c0 RBX: 0000000000000000 RCX: 0000000000000000
+> >> RDX: 0000000000000000 RSI: 0000000000000002 RDI: 00000000014000c0
+> >> RBP: 00000000014000c0 R08: ffffffffffffffff R09: 0000000000000000
+> >> R10: ffff88fffc89e790 R11: 0000000000014000 R12: 0000000000000101
+> >> R13: ffffffffa0772cd4 R14: ffffffffa0769ac0 R15: 0000000000000000
+> >> FS:  00007fdf2f2f1700(0000) GS:ffff88fffc880000(0000) knlGS:0000000000000000
+> >> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> >> CR2: 00000000000021c0 CR3: 00000077205ee000 CR4: 0000000000360670
+> >> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> >> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> >> Stack:
+> >>  0000000000000086 014000c014d20400 ffff887354493bb8 ffff882614d20f4c
+> >>  0000000000000000 0000000000000046 0000000000000046 ffffffff810ac0c9
+> >>  ffff88ffe78c0000 ffffffff0000009f ffffe8ffe82d3500 ffff88ff8ac55000
+> >> Call Trace:
+> >>  [<ffffffffa07476cd>] alloc_vmcs_cpu+0x3d/0x90 [kvm_intel]
+> >>  [<ffffffffa0772c0c>] hardware_setup+0x781/0x849 [kvm_intel]
+> >>  [<ffffffffa04a1c58>] kvm_arch_hardware_setup+0x28/0x190 [kvm]
+> >>  [<ffffffffa04856fc>] kvm_init+0x7c/0x2d0 [kvm]
+> >>  [<ffffffffa0772cf2>] vmx_init+0x1e/0x32c [kvm_intel]
+> >>  [<ffffffff8100213a>] do_one_initcall+0xca/0x1f0
+> >>  [<ffffffff81193886>] do_init_module+0x5a/0x1d7
+> >>  [<ffffffff81112083>] load_module+0x1393/0x1c90
+> >>  [<ffffffff81112b30>] SYSC_finit_module+0x70/0xa0
+> >>  [<ffffffff8161cbc3>] entry_SYSCALL_64_fastpath+0x1e/0xb7
+> >> DWARF2 unwinder stuck at entry_SYSCALL_64_fastpath+0x1e/0xb7
+> >>
+> >> on an older kernel but the code is basically the same in the current
+> >> Linus tree as well. alloc_vmcs_cpu could use alloc_pages_nodemask which
+> >> would recognize NUMA_NO_NODE and use alloc_pages_node which would translate
+> >> it to numa_mem_id but that is wrong as well because it would use a cpu
+> >> affinity of the local CPU which might be quite far from the original node.
+> 
+> But then the original node is getting/already off-lined. The allocation is
+> going to come from a different node. alloc_pages_node() at least steer the
+> allocation alway from VM_BUG_ON() because of NUMA_NO_NODE by replacing it
+> with numa_mem_id().
+> 
+> If node fallback order is important for this allocation then could not it
+> use __alloc_pages_nodemask() directly giving preference for its zonelist
+> node and nodemask. Just curious.
 
-> >-static int its_init_domain(struct fwnode_handle *handle, struct its_nod=
-e *its)
-> >+static int its_init_domain(struct its_node *its)
-> >  {
-> >      struct irq_domain *inner_domain;
-> >      struct msi_domain_info *info;
-> >@@ -3384,7 +3385,8 @@ static int its_init_domain(struct fwnode_handle *h=
-andle, struct its_node *its)
-> >      if (!info)
-> >              return -ENOMEM;
-> >
-> >-     inner_domain =3D irq_domain_create_tree(handle, &its_domain_ops, i=
-ts);
-> >+     inner_domain =3D irq_domain_create_tree(its->fwnode_handle,
-> >+                                     &its_domain_ops, its);
->=20
-> Separate change?
->=20
-> >      if (!inner_domain) {
-> >              kfree(info);
-> >              return -ENOMEM;
-> >@@ -3441,8 +3443,7 @@ static int its_init_vpe_domain(void)
-> >      return 0;
-> >  }
-> >
-> >-static int __init its_compute_its_list_map(struct resource *res,
-> >-                                        void __iomem *its_base)
-> >+static int __init its_compute_its_list_map(struct its_node *its)
-> >  {
-> >      int its_number;
-> >      u32 ctlr;
-> >@@ -3456,15 +3457,15 @@ static int __init its_compute_its_list_map(struc=
-t resource *res,
-> >      its_number =3D find_first_zero_bit(&its_list_map, GICv4_ITS_LIST_M=
-AX);
-> >      if (its_number >=3D GICv4_ITS_LIST_MAX) {
-> >              pr_err("ITS@%pa: No ITSList entry available!\n",
-> >-                    &res->start);
-> >+                    &its->phys_base);
-> >              return -EINVAL;
-> >      }
-> >
-> >-     ctlr =3D readl_relaxed(its_base + GITS_CTLR);
-> >+     ctlr =3D readl_relaxed(its->base + GITS_CTLR);
-> >      ctlr &=3D ~GITS_CTLR_ITS_NUMBER;
-> >      ctlr |=3D its_number << GITS_CTLR_ITS_NUMBER_SHIFT;
-> >-     writel_relaxed(ctlr, its_base + GITS_CTLR);
-> >-     ctlr =3D readl_relaxed(its_base + GITS_CTLR);
-> >+     writel_relaxed(ctlr, its->base + GITS_CTLR);
-> >+     ctlr =3D readl_relaxed(its->base + GITS_CTLR);
->=20
-> This (removal of its_base parameter) also feel like a separate change.
+How does the caller get the right node to allocate from? We do have the
+proper zone list for the offline node so why not use it?
 
-In a separate change the motivation of the change would not be
-obvious. While the change of the variable itself is trivial from the
-perspective of review and testing, I decided to keep it in the context
-of the overall change of this patch.
+> >> It is also reasonable to expect that cpu_to_node will provide a sane value
+> >> and there might be many more callers like that.
+> 
+> AFAICS there are two choices here. Either mark them NUMA_NO_NODE for all
+> cpus of a node going offline or keep the existing mapping in case the node
+> comes back again.
 
->=20
-> Also, I would define a local variable its_base to avoid dereferencing
-> its every time in order to get the base address.
+Or update the mapping to the closeses node. I have chosen to keep the
+mapping because it is the easiest and the most natural one.
 
-Hmm, there is not much difference in reading the code then, while the
-use of a local variable just adds more code without benefit. The
-compiler does not care as the value is probably stored in a register
-anyway. There are also other struct members, should all of them being
-mirrored in a local variable?
+> >> The second problem is that __register_one_node relies on cpu_to_node
+> >> to properly associate cpus back to the node when it is onlined. We do
+> >> not want to lose that link as there is no arch independent way to get it
+> >> from the early boot time AFAICS.
+> 
+> Retaining the links seems to be right unless unmap_cpu_on_node() is sort
+> of a weak callback letting arch to decide.
+> 
+> >>
+> >> Drop the whole check_and_unmap_cpu_on_node machinery and keep the
+> >> association to fix both issues. The NODE_DATA(nid) is not deallocated
+> Though retaining the link is a problem in itself but the allocation related
+> crash could be solved by exploring __alloc_pages_nodemask() options.
 
->=20
-> >      if ((ctlr & GITS_CTLR_ITS_NUMBER) !=3D (its_number << GITS_CTLR_IT=
-S_NUMBER_SHIFT)) {
-> >              its_number =3D ctlr & GITS_CTLR_ITS_NUMBER;
-> >              its_number >>=3D GITS_CTLR_ITS_NUMBER_SHIFT;
-> >@@ -3472,83 +3473,110 @@ static int __init its_compute_its_list_map(stru=
-ct resource *res,
-> >
-> >      if (test_and_set_bit(its_number, &its_list_map)) {
-> >              pr_err("ITS@%pa: Duplicate ITSList entry %d\n",
-> >-                    &res->start, its_number);
-> >+                    &its->phys_base, its_number);
-> >              return -EINVAL;
-> >      }
-> >
-> >      return its_number;
-> >  }
-> >
-> >+static void its_free(struct its_node *its)
-> >+{
-> >+     raw_spin_lock(&its_lock);
-> >+     list_del(&its->entry);
-> >+     raw_spin_unlock(&its_lock);
-> >+
-> >+     kfree(its);
-> >+}
-> >+
-> >+static int __init its_init_one(struct its_node *its);
->=20
-> You might as well define its_init_one here, no?
+Yes that is the case but this looks like a very fragile fix to me. If
+you are getting a node number from cpu_to_node then you shouldn't really
+think about obscurities like which allocation function to use, right?
+You should just get a valid node number.
 
-This is an intermediate definition that will be removed in a later
-patch. Moving the whole code here would make the change less readable.
-
->=20
-> >+
-> >  static int __init its_probe_one(struct resource *res,
-> >                              struct fwnode_handle *handle, int numa_nod=
-e)
-> >  {
-> >      struct its_node *its;
-> >+     int err;
-> >+
-> >+     its =3D kzalloc(sizeof(*its), GFP_KERNEL);
-> >+     if (!its)
-> >+             return -ENOMEM;
-> >+
-> >+     raw_spin_lock_init(&its->lock);
-> >+     INIT_LIST_HEAD(&its->entry);
-> >+     INIT_LIST_HEAD(&its->its_device_list);
-> >+     its->fwnode_handle =3D handle;
-> >+     its->phys_base =3D res->start;
-> >+     its->phys_size =3D resource_size(res);
-> >+     its->numa_node =3D numa_node;
-> >+
-> >+     raw_spin_lock(&its_lock);
-> >+     list_add_tail(&its->entry, &its_nodes);
-> >+     raw_spin_unlock(&its_lock);
-> >+
-> >+     pr_info("ITS %pR\n", res);
-> >+
-> >+     err =3D its_init_one(its);
-> >+     if (err)
-> >+             its_free(its);
-> >+
-> >+     return err;
-> >+}
-> >+
-> >+static int __init its_init_one(struct its_node *its)
-> >+{
-> >      void __iomem *its_base;
-> >      u32 val, ctlr;
-> >      u64 baser, tmp, typer;
-> >      int err;
-> >
-> >-     its_base =3D ioremap(res->start, resource_size(res));
-> >+     its_base =3D ioremap(its->phys_base, its->phys_size);
-> >      if (!its_base) {
-> >-             pr_warn("ITS@%pa: Unable to map ITS registers\n", &res->st=
-art);
-> >-             return -ENOMEM;
-> >+             pr_warn("ITS@%pa: Unable to map ITS registers\n", &its->ph=
-ys_base);
-> >+             err =3D -ENOMEM;
-> >+             goto fail;
-> >      }
-> >
-> >      val =3D readl_relaxed(its_base + GITS_PIDR2) & GIC_PIDR2_ARCH_MASK=
-;
-> >      if (val !=3D 0x30 && val !=3D 0x40) {
-> >-             pr_warn("ITS@%pa: No ITS detected, giving up\n", &res->sta=
-rt);
-> >+             pr_warn("ITS@%pa: No ITS detected, giving up\n", &its->phy=
-s_base);
-> >              err =3D -ENODEV;
-> >              goto out_unmap;
-> >      }
-> >
-> >      err =3D its_force_quiescent(its_base);
-> >      if (err) {
-> >-             pr_warn("ITS@%pa: Failed to quiesce, giving up\n", &res->s=
-tart);
-> >+             pr_warn("ITS@%pa: Failed to quiesce, giving up\n", &its->p=
-hys_base);
-> >              goto out_unmap;
-> >      }
-> >
-> >-     pr_info("ITS %pR\n", res);
-> >-
-> >-     its =3D kzalloc(sizeof(*its), GFP_KERNEL);
-> >-     if (!its) {
-> >-             err =3D -ENOMEM;
-> >-             goto out_unmap;
-> >-     }
-> >-
-> >-     raw_spin_lock_init(&its->lock);
-> >-     INIT_LIST_HEAD(&its->entry);
-> >-     INIT_LIST_HEAD(&its->its_device_list);
-> >      typer =3D gic_read_typer(its_base + GITS_TYPER);
-> >      its->base =3D its_base;
-> >-     its->phys_base =3D res->start;
-> >      its->ite_size =3D GITS_TYPER_ITT_ENTRY_SIZE(typer);
-> >      its->device_ids =3D GITS_TYPER_DEVBITS(typer);
-> >      its->is_v4 =3D !!(typer & GITS_TYPER_VLPIS);
-> >      if (its->is_v4) {
-> >              if (!(typer & GITS_TYPER_VMOVP)) {
-> >-                     err =3D its_compute_its_list_map(res, its_base);
-> >+                     err =3D its_compute_its_list_map(its);
-> >                      if (err < 0)
-> >-                             goto out_free_its;
-> >+                             goto out_unmap;
-> >
-> >                      its->list_nr =3D err;
-> >
-> >                      pr_info("ITS@%pa: Using ITS number %d\n",
-> >-                             &res->start, err);
-> >+                             &its->phys_base, err);
-> >              } else {
-> >-                     pr_info("ITS@%pa: Single VMOVP capable\n", &res->s=
-tart);
-> >+                     pr_info("ITS@%pa: Single VMOVP capable\n",
-> >+                             &its->phys_base);
-> >              }
-> >      }
-> >
-> >-     its->numa_node =3D numa_node;
-> >-
-> >      its->cmd_base =3D (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO=
-,
-> >                                              get_order(ITS_CMD_QUEUE_SZ=
-));
-> >      if (!its->cmd_base) {
-> >              err =3D -ENOMEM;
-> >-             goto out_free_its;
-> >+             goto out_unmap;
-> >      }
-> >      its->cmd_write =3D its->cmd_base;
-> >-     its->fwnode_handle =3D handle;
-> >      its->get_msi_base =3D its_irq_get_msi_base;
-> >      its->msi_domain_flags =3D IRQ_DOMAIN_FLAG_MSI_REMAP;
-> >
-> >@@ -3597,13 +3625,11 @@ static int __init its_probe_one(struct resource =
-*res,
-> >      if (GITS_TYPER_HCC(typer))
-> >              its->flags |=3D ITS_FLAGS_SAVE_SUSPEND_STATE;
-> >
-> >-     err =3D its_init_domain(handle, its);
-> >+     err =3D its_init_domain(its);
->=20
-> I'm not sure what is the logic for "this goes in probe, this goes in init=
-?".
-
-It is fairly simple, gic-its register access is done in init.
-Everything that is detected during devicetree or ACPI device discovery
-is done in the probe function that collects all data in struct
-its_node.
-
->=20
-> >      if (err)
-> >              goto out_free_tables;
-> >
-> >-     raw_spin_lock(&its_lock);
-> >-     list_add_tail(&its->entry, &its_nodes);
-> >-     raw_spin_unlock(&its_lock);
-> >+     pr_info("ITS@%pa: ITS node added\n", &its->phys_base);
-> >
-> >      return 0;
-
-Thanks,
-
--Robert
+Do you see any problems with the patch as is?
+-- 
+Michal Hocko
+SUSE Labs
