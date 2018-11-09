@@ -2,116 +2,108 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 205FDC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:45:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2AEDC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:46:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD4B42086C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:45:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD4B42086C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 68EA32086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:46:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q/ov1Dyn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68EA32086C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728016AbeKJAZ7 (ORCPT
+        id S1728106AbeKJA1K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 19:25:59 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:38165 "EHLO mx1.redhat.com"
+        Fri, 9 Nov 2018 19:27:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39254 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727781AbeKJAZ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 19:25:59 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727735AbeKJA1K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 19:27:10 -0500
+Received: from localhost (71-6-98-120.static-ip.telepacific.net [71.6.98.120])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 82100308FB90;
-        Fri,  9 Nov 2018 14:45:05 +0000 (UTC)
-Received: from treble (ovpn-124-61.rdu2.redhat.com [10.10.124.61])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B3591608C2;
-        Fri,  9 Nov 2018 14:45:03 +0000 (UTC)
-Date:   Fri, 9 Nov 2018 08:45:01 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Borislav Petkov <bp@alien8.de>, Juergen Gross <jgross@suse.com>
-Subject: Re: [PATCH RFC 0/3] Static calls
-Message-ID: <20181109144501.aqhcv3vdjuqlp7pz@treble>
-References: <cover.1541711457.git.jpoimboe@redhat.com>
- <20181109072811.GB86700@gmail.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 61E9C206BA;
+        Fri,  9 Nov 2018 14:46:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541774776;
+        bh=IUJIsNVM786MrQ773mOLm6lIvq36kZkZT/icc+Do9Jk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Q/ov1DynqJcY8HzzbhcT989TiSs17P2eJcsDd8PqBn8RtwMSMlUgY9dFKIhTOAmgk
+         FeJRGR7tnPo/A9QLDoOuMqoraVitR8yFj3+jQDSbOEwCdUfcKijCxUNUnnECiQ2mK9
+         Cs+Da4HiV5Fu7w1aAlXi4WYMB0du8+ulk2kIk8jw=
+Date:   Fri, 9 Nov 2018 06:46:15 -0800
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.4 000/114] 4.4.163-stable review
+Message-ID: <20181109144615.GA19833@kroah.com>
+References: <20181108215059.051093652@linuxfoundation.org>
+ <86d97b16-dbbc-27bd-ad7b-9a96210070a4@roeck-us.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181109072811.GB86700@gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Fri, 09 Nov 2018 14:45:05 +0000 (UTC)
+In-Reply-To: <86d97b16-dbbc-27bd-ad7b-9a96210070a4@roeck-us.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 09, 2018 at 08:28:11AM +0100, Ingo Molnar wrote:
-> > - I'm not sure about the objtool approach.  Objtool is (currently)
-> >   x86-64 only, which means we have to use the "unoptimized" version
-> >   everywhere else.  I may experiment with a GCC plugin instead.
+On Fri, Nov 09, 2018 at 05:50:09AM -0800, Guenter Roeck wrote:
+> On 11/8/18 1:50 PM, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.4.163 release.
+> > There are 114 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Sat Nov 10 21:50:28 UTC 2018.
+> > Anything received after that time might be too late.
+> > 
 > 
-> I'd prefer the objtool approach. It's a pretty reliable first-principles 
-> approach while GCC plugin would have to be replicated for Clang and any 
-> other compilers, etc.
-
-The benefit of a plugin is that we'd only need two of them: GCC and
-Clang.  And presumably, they'd share a lot of code.
-
-The prospect of porting objtool to all architectures is going to be much
-more of a daunting task (though we are at least already considering it
-for some arches).
-
-> > - Does this feature have much value without retpolines?  If not, should
-> >   we make it depend on retpolines somehow?
+> Building i386:allnoconfig ... failed
+> --------------
+> Error log:
+> kernel/built-in.o: In function `cpu_startup_entry':
+> (.text+0x1a2e9): undefined reference to `cpuidle_devices'
+> make[1]: *** [vmlinux] Error 1
+> make: *** [sub-make] Error 2
 > 
-> Paravirt patching, as you mention in your later reply?
 > 
-> > - Find some actual users of the interfaces (tracepoints? crypto?)
+> Bisect results:
 > 
-> I'd be very happy with a demonstrated paravirt optimization already - 
-> i.e. seeing the before/after effect on the vmlinux with an x86 distro 
-> config.
+> # bad: [70cfa9ca6595d3238b36b9f6b36cf6e18dfd2c3b] Linux 4.4.163-rc1
+> # good: [24c2342b8e51ab3185e68470709904150a1e3ee0] Linux 4.4.162
+> git bisect start 'HEAD' 'v4.4.162'
+> # good: [008f87b2e9c5db7dd3756832a9e449415d837c7d] ixgbe: fix RSS limit for X550
+> git bisect good 008f87b2e9c5db7dd3756832a9e449415d837c7d
+> # good: [5d92c564ec3dd9a5833974f3ce113cc7a94e0f6a] mtd: spi-nor: Add support for is25wp series chips
+> git bisect good 5d92c564ec3dd9a5833974f3ce113cc7a94e0f6a
+> # good: [71fba871e4a07400eb1400b1e6b45ca3a5487834] rtnetlink: Disallow FDB configuration for non-Ethernet device
+> git bisect good 71fba871e4a07400eb1400b1e6b45ca3a5487834
+> # good: [4d1024282b1259209bb4601f4b51dce367cf8a02] IB/ucm: Fix Spectre v1 vulnerability
+> git bisect good 4d1024282b1259209bb4601f4b51dce367cf8a02
+> # good: [fe9d47ae282ebd2bb10a36ec2bace1afd0ba050e] Input: elan_i2c - add ACPI ID for Lenovo IdeaPad 330-15IGM
+> git bisect good fe9d47ae282ebd2bb10a36ec2bace1afd0ba050e
+> # bad: [573e8431fe60169157440664f74c6af254b3b00e] x86/percpu: Fix this_cpu_read()
+> git bisect bad 573e8431fe60169157440664f74c6af254b3b00e
+> # good: [be0ac51f4181a18c458080d79919aeee17ce0c68] sched/fair: Fix throttle_list starvation with low CFS quota
+> git bisect good be0ac51f4181a18c458080d79919aeee17ce0c68
+> # first bad commit: [573e8431fe60169157440664f74c6af254b3b00e] x86/percpu: Fix this_cpu_read()
 > 
-> All major Linux distributions enable CONFIG_PARAVIRT=y and 
-> CONFIG_PARAVIRT_XXL=y on x86 at the moment, so optimizing it away as much 
-> as possible in the 99.999% cases where it's not used is a primary 
-> concern.
+> Full results will follow later, after builds are complete.
 
-For paravirt, I was thinking of it as more of a cleanup than an
-optimization.  The paravirt patching code already replaces indirect
-branches with direct ones -- see paravirt_patch_default().
+Ugh, kbuild just reported this as well.  Something's odd with 4.4 and
+this patch, I think I might just drop it as no one has ever reported
+this issue there...
 
-Though it *would* reduce the instruction footprint a bit, as the 7-byte
-indirect calls (later patched to 5-byte direct + 2-byte nop) would
-instead be 5-byte direct calls to begin with.
+Let me dig some more first...
 
-> All other usecases are bonus, but it would certainly be interesting to 
-> investigate the impact of using these APIs for tracing: that too is a 
-> feature enabled everywhere but utilized only by a small fraction of Linux 
-> users - so literally every single cycle or instruction saved or hot-path 
-> shortened is a major win.
-
-With retpolines, and with tracepoints enabled, it's definitely a major
-win.  Steve measured an 8.9% general slowdown on hackbench caused by
-retpolines.
-
-But with tracepoints disabled, I believe static jumps are used, which
-already minimizes the impact on hot paths.
-
--- 
-Josh
+greg k-h
