@@ -2,82 +2,109 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBBC6C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 11:16:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75670C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 11:16:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B439F20827
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 11:16:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B70420827
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 11:16:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0HG9J/Ya"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B439F20827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P4RBczLh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B70420827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728361AbeKIU4P (ORCPT
+        id S1728295AbeKIU4o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 15:56:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39978 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727532AbeKIU4P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 15:56:15 -0500
-Received: from localhost (71-6-98-120.static-ip.telepacific.net [71.6.98.120])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3296D20827;
-        Fri,  9 Nov 2018 11:16:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541762165;
-        bh=UqAi6IvdpTAxbpp+GwLrPqvOm++9VvFLh1BDJNAvcR4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=0HG9J/YaC0SyVFckei/oV0UcNvwsRQ8L6JHxbFTYrw5QjngZIwF1nUY4hSlbMr/2x
-         CypUK0hjfySpQSwG+6Ck+Db8ct2gC6b0j/kmDxxhAngnsD+zk5dqVvGOrQ5nkBnmyt
-         wl/Jtt0A/iPRn91yPLSBK/xhk0PulLlvROtNTSZM=
-Date:   Fri, 9 Nov 2018 03:16:04 -0800
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>, Adrian Bunk <bunk@kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        "Chiang, AlanX" <alanx.chiang@intel.com>,
-        "Yeh, Andy" <andy.yeh@intel.com>, sashal@kernel.org
-Subject: Re: [PATCH 4.14 01/31] eeprom: at24: Add support for address-width
- property
-Message-ID: <20181109111604.GB26335@kroah.com>
-References: <20181108215129.641434673@linuxfoundation.org>
- <20181108215129.753982396@linuxfoundation.org>
- <CAMRc=MdckdCj=dwn8J6Y5O1gPPykGrzK50td24_iFOa-MwEEJQ@mail.gmail.com>
+        Fri, 9 Nov 2018 15:56:44 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:46610 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727560AbeKIU4o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 15:56:44 -0500
+Received: by mail-yw1-f66.google.com with SMTP id v5-v6so1422138ywa.13;
+        Fri, 09 Nov 2018 03:16:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=f5dNdHpiQ+1oo1jUOViTpP0xdazNfPTpsqcc2Xk3taM=;
+        b=P4RBczLhrmI7zcYlDBiEWIcuUFM3e605iKf+WB4nv2NF8OROzFzAN3+lH95mFw87+J
+         UJ+xAoDFlORgfkVH8e6yeG8IKUDXKUQrBz/T3wiwTWkrStiYYHGjRp/Zqk6out+JScFF
+         WagSjxWefo7CI3N2/HmefiDTb7inKGr298/4jCbgF5EEnV3WbIsD/ho/5F8211t4zKAc
+         8jDdf7n1zRlQS9VVnTvpzTRJPtwOdQUGT7QXvWYUvkUEobHXG55miJCTFZQ9l4p7zsNA
+         W4soVNHWvAcLRMwTaylWGdhb3wjDPHL7oA+Rw0H28aqvDEDvj+El1W0aXAKBKpgF7wtC
+         vnJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=f5dNdHpiQ+1oo1jUOViTpP0xdazNfPTpsqcc2Xk3taM=;
+        b=D9lM/UnafywsmKa/2s1LNUBvdeFmqdmy+6otKkeo/JeTtYU8GMcB300oBD2eGHetH2
+         SQW0Az/wNfGVWzAEAZrm4RwEP+enko5gOZ5Nukzy63tLlZ4jAfsRvnc6cm+ElqoC0qS1
+         gAJksHf2wJHoNtxRLmblmuyH7Mb8RP290Kzhzup9L30G6ZfU3L4FrepyRBZ6R0xI1qtj
+         yCjXAIdAnUH8BSdhEw2ojcbUl37a5gav5lh1PiDPrsT+cnDlLOYOsowuVXOBSg8p/PeW
+         J7BXVU1A0z8NRjM8Jinw5qXsXP73fuBgSAfWW08DlOhC5ilP4P/t8wADMFokq40VAcKW
+         ydCQ==
+X-Gm-Message-State: AGRZ1gKmIjx4mB+4WgaR6gh3uw32J2MhxsH2YK6MROekNKejVOvVS3M8
+        f2K3/8njuK4L3iipnw4C+I36Iy0AfdGcrkwaM3c=
+X-Google-Smtp-Source: AJdET5cuwPEwRvgoz+ukhiXL54kOKiu6VywRDULXUG9NZSdcckI2q+BPyQHnw2XU+S5m/KA5exPptYcmBdPLaEcqJpE=
+X-Received: by 2002:a81:7c0b:: with SMTP id x11-v6mr8031983ywc.490.1541762194080;
+ Fri, 09 Nov 2018 03:16:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MdckdCj=dwn8J6Y5O1gPPykGrzK50td24_iFOa-MwEEJQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181028143403.2285-1-diego.viola@gmail.com>
+In-Reply-To: <20181028143403.2285-1-diego.viola@gmail.com>
+From:   Diego Viola <diego.viola@gmail.com>
+Date:   Fri, 9 Nov 2018 09:16:22 -0200
+Message-ID: <CA+ToGPF06Vv8g31mR+Jtz4LjY-Cpxf2catvJ8NC1ONJnWhajgA@mail.gmail.com>
+Subject: Re: [PATCH] Blacklist SAMSUNG MZ7TD256HAFV-000L9 SSD
+To:     axboe@kernel.dk
+Cc:     hdegoede@redhat.com, tj@kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 09, 2018 at 08:48:32AM +0100, Bartosz Golaszewski wrote:
-> czw., 8 lis 2018 o 23:08 Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> napisał(a):
-> >
-> > 4.14-stable review patch.  If anyone has any objections, please let me know.
-> >
-> 
-> Hi Greg,
-> 
-> this looks like a new feature, not a fix. Are you sure this should go
-> into the stable branch?
+On Sun, Oct 28, 2018 at 11:34 AM Diego Viola <diego.viola@gmail.com> wrote:
+>
+> med_power_with_dipm still causes freezes after updating the firmware to
+> the latest version (DXT04L5Q).
+>
+> Set model_rev to NULL and blacklist the device.
+>
+> Signed-off-by: Diego Viola <diego.viola@gmail.com>
+> ---
+>  drivers/ata/libata-core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+> index 6e594644cb1d..a7f5202a4815 100644
+> --- a/drivers/ata/libata-core.c
+> +++ b/drivers/ata/libata-core.c
+> @@ -4553,7 +4553,7 @@ static const struct ata_blacklist_entry ata_device_blacklist [] = {
+>         /* These specific Samsung models/firmware-revs do not handle LPM well */
+>         { "SAMSUNG MZMPC128HBFU-000MV", "CXM14M1Q", ATA_HORKAGE_NOLPM, },
+>         { "SAMSUNG SSD PM830 mSATA *",  "CXM13D1Q", ATA_HORKAGE_NOLPM, },
+> -       { "SAMSUNG MZ7TD256HAFV-000L9", "DXT02L5Q", ATA_HORKAGE_NOLPM, },
+> +       { "SAMSUNG MZ7TD256HAFV-000L9", NULL,       ATA_HORKAGE_NOLPM, },
+>
+>         /* devices that don't properly handle queued TRIM commands */
+>         { "Micron_M500IT_*",            "MU01", ATA_HORKAGE_NO_NCQ_TRIM |
+> --
+> 2.19.1
+>
 
-Adrian Bunk asked for it to be included as he said it was a good "quirk"
-support for some hardware enablement issues.
+Hi Jens,
 
-If you think it should be dropped, I'll be glad to do so, but it seems
-harmless to me.
+When do you plan to merge my patch?
 
-thanks,
+Do you have any objections?
 
-greg k-h
+Thanks,
+Diego
