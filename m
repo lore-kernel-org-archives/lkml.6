@@ -2,171 +2,105 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6470FC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 05:22:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5BECC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 05:28:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D9CF20855
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 05:22:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GmaKkdcy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D9CF20855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6B9F920855
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 05:28:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B9F920855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727742AbeKIPBU (ORCPT
+        id S1727743AbeKIPHV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 10:01:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60662 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727521AbeKIPBU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 10:01:20 -0500
-Received: from localhost (unknown [171.76.98.79])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA12820855;
-        Fri,  9 Nov 2018 05:22:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541740945;
-        bh=UUPQJCJ/nfxhnXt4TYqHfq44ocXRXTX8xMaA+2PDgp8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GmaKkdcyE2NGlKEwgrlemwvJGDc/Z7Vlv2jXBlRXu9/ee8Q1smZS3xuj8+BrwlQ8p
-         A8eKB/2xgmCp6viz17k6vCvaDvT7yCSXvkIlgJ1HhzCvy1PYuoKdgmXvJbCXLZMnbV
-         NInSr9D3vKXN0arrIdm9rMWnsVFGR7DYrWE9yQ1s=
-Date:   Fri, 9 Nov 2018 10:52:17 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Shawn Guo <shawn.guo@linaro.org>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sriharsha Allenki <sallenki@codeaurora.org>,
-        Anu Ramanathan <anur@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] phy: qualcomm: Add Synopsys High-Speed USB PHY driver
-Message-ID: <20181109052217.GL12092@vkoul-mobl>
-References: <20181108070449.23572-1-shawn.guo@linaro.org>
- <20181108070449.23572-3-shawn.guo@linaro.org>
+        Fri, 9 Nov 2018 10:07:21 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:40922 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727567AbeKIPHU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 10:07:20 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wA95SIAN086255;
+        Thu, 8 Nov 2018 23:28:18 -0600
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wA95SI3q129122
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 8 Nov 2018 23:28:18 -0600
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 8 Nov
+ 2018 23:28:18 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Thu, 8 Nov 2018 23:28:18 -0600
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wA95SEMo004744;
+        Thu, 8 Nov 2018 23:28:15 -0600
+Subject: Re: [PATCH RFC 2/3] mmc: sdhci-omap: Add using external dma
+To:     Arnd Bergmann <arnd@arndb.de>
+CC:     Chunyan Zhang <zhang.chunyan@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>, Sekhar Nori <nsekhar@ti.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+References: <1541387810-24867-1-git-send-email-zhang.chunyan@linaro.org>
+ <1541387810-24867-3-git-send-email-zhang.chunyan@linaro.org>
+ <be0a18e8-8ee6-4d4e-6dcc-6ba6e39033c9@ti.com>
+ <CAK8P3a2X4tbx_R-5VgfApF-UPmJ_XuzH3hO_uVAfffC6h8WrJw@mail.gmail.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <44e1a97e-0446-283f-72f7-fd8d39a74b0f@ti.com>
+Date:   Fri, 9 Nov 2018 10:57:45 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181108070449.23572-3-shawn.guo@linaro.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CAK8P3a2X4tbx_R-5VgfApF-UPmJ_XuzH3hO_uVAfffC6h8WrJw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08-11-18, 15:04, Shawn Guo wrote:
-> +static int qcom_snps_hsphy_config_regulators(struct hsphy_priv *priv, int high)
-> +{
-> +	int min, ret, i;
-> +
-> +	min = high ? 1 : 0; /* low or none? */
-> +
-> +	for (i = 0; i < VREG_NUM; i++) {
-> +		ret = regulator_set_voltage(priv->vregs[i].consumer,
-> +					    priv->voltages[i][min],
-> +					    priv->voltages[i][VOL_MAX]);
-> +		if (ret)
-> +			return ret;
+Hi Arnd,
 
-should we not roll back the set voltages on error?
+On 06/11/18 6:21 PM, Arnd Bergmann wrote:
+> On 11/5/18, Kishon Vijay Abraham I <kishon@ti.com> wrote:
+>> On 05/11/18 8:46 AM, Chunyan Zhang wrote:
+>>>
+>>> +	sdhci_switch_extdma(host, true);
+>>
+>> A number of devices using sdhci-omap supports ADMA. So switching to
+>> external
+>> DMA shouldn't be unconditional.
+>>
+>> IMHO sdhci.c should see if the device supports ADMA or SDMA. If not it
+>> should
+>> try switching to external DMA and if external DMA too is not supported, it
+>> should use PIO.
+> 
+> What's the reasoning for preferring ADMA/SDMA over external DMA if
+> both are supported?
 
-> +static int qcom_snps_hsphy_por_reset(struct hsphy_priv *priv)
-> +{
-> +	int ret;
-> +
-> +	ret = reset_control_assert(priv->por_reset);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/*
-> +	 * The Femto PHY is POR reset in the following scenarios.
+Generally from our experiments we've found ADMA gives better throughput than
+DMA. I have to ascertain the actual reasons for that.
+> 
+> I'd expect that if the external DMA for some reason is worse than
+> ADMA, we just wouldn't list it in the DT at all, but if it's listed and
+> ADMA also works, then the driver should try to use it before falling
+> back to ADMA.
 
-POR?
+I would agree that for newer dtbs. However if you consider omap_hsmmc, external
+DMA bindings are already added in dt. If we try to switch to sdhci-omap with
+the same bindings, systems with older dtbs will use external DMA and give
+lesser throughput.
 
-> +static int qcom_snps_hsphy_init(struct phy *phy)
-> +{
-> +	struct hsphy_priv *priv = phy_get_drvdata(phy);
-> +	int state;
-> +	int ret;
-
-perhaps they can be in a single line :)
-
-> +static int qcom_snps_hsphy_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct phy_provider *provider;
-> +	struct hsphy_priv *priv;
-> +	struct resource *res;
-> +	struct phy *phy;
-> +	int size;
-> +	int ret;
-> +	int i;
-> +
-> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	priv->base = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(priv->base))
-> +		return PTR_ERR(priv->base);
-> +
-> +	priv->num_clks = ARRAY_SIZE(qcom_snps_hsphy_clks);
-> +	priv->clks = devm_kcalloc(dev, priv->num_clks, sizeof(*priv->clks),
-> +				  GFP_KERNEL);
-> +	if (!priv->clks)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < priv->num_clks; i++)
-> +		priv->clks[i].id = qcom_snps_hsphy_clks[i];
-> +
-> +	ret = devm_clk_bulk_get(dev, priv->num_clks, priv->clks);
-> +	if (ret)
-> +		return ret;
-> +
-> +	priv->phy_reset = devm_reset_control_get(dev, "phy");
-> +	if (IS_ERR(priv->phy_reset))
-> +		return PTR_ERR(priv->phy_reset);
-> +
-> +	priv->por_reset = devm_reset_control_get(dev, "por");
-> +	if (IS_ERR(priv->por_reset))
-> +		return PTR_ERR(priv->por_reset);
-> +
-> +	priv->vregs[VDD].supply = "vdd";
-> +	priv->vregs[VDDA_1P8].supply = "vdda1p8";
-> +	priv->vregs[VDDA_3P3].supply = "vdda3p3";
-> +
-> +	ret = devm_regulator_bulk_get(dev, VREG_NUM, priv->vregs);
-> +	if (ret)
-> +		return ret;
-> +
-> +	priv->voltages[VDDA_1P8][VOL_NONE] = 0;
-> +	priv->voltages[VDDA_1P8][VOL_MIN] = 1800000;
-> +	priv->voltages[VDDA_1P8][VOL_MAX] = 1800000;
-> +
-> +	priv->voltages[VDDA_3P3][VOL_NONE] = 0;
-> +	priv->voltages[VDDA_3P3][VOL_MIN] = 3050000;
-> +	priv->voltages[VDDA_3P3][VOL_MAX] = 3300000;
-> +
-> +	ret = of_property_read_u32_array(dev->of_node, "qcom,vdd-voltage-level",
-> +					 priv->voltages[VDD], VOL_NUM);
-> +	if (ret) {
-> +		dev_err(dev, "failed to read qcom,vdd-voltage-level\n");
-> +		return ret;
-> +	}
-> +
-> +	size = of_property_count_u32_elems(dev->of_node, "qcom,init-seq");
-> +	if (size < 0)
-> +		size = 0;
-> +
-> +	priv->init_seq = devm_kcalloc(dev, (size / 3) + 1,
-
-size/3? I think it would be good to add a common explaining this
--- 
-~Vinod
+Thanks
+Kishon
