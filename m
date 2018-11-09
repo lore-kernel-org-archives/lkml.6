@@ -2,82 +2,85 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8E35C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:46:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2EBBC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:46:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69F1320827
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:46:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PhUsYLfa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69F1320827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 629EB20827
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:46:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 629EB20827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728404AbeKIT0F (ORCPT
+        id S1728412AbeKIT0V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 14:26:05 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:37208 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727560AbeKIT0F (ORCPT
+        Fri, 9 Nov 2018 14:26:21 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:37302 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727560AbeKIT0V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 14:26:05 -0500
-Received: by mail-lf1-f66.google.com with SMTP id p17so870453lfh.4
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 01:46:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jMz56d4G5hIsOXccuG/Z+HtTjg1/tWvEQ4RM3n68Piw=;
-        b=PhUsYLfauchoNSG7M++2EkbsKyB2hynOMTgX1DYYMk8gW+M+/A1vRBaJ8KlqhM4uYC
-         p745zMkBuov8MEScIUq4Gm+x+qszwi+R2lZVegNVGHOIy14C3+6UCaWjjbWDcyCiDKHI
-         fUYmSSNP9AHdbCH+2r6Dhb/2MFdXhqgljltrw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jMz56d4G5hIsOXccuG/Z+HtTjg1/tWvEQ4RM3n68Piw=;
-        b=CNRPKsjv1sPNnwLmKKLPYhIvEyRV3Oz6ZRALlJaYYQu3pmlX+QCCcW7Ouv0SHRpZZQ
-         zFpjJJBBQkWOtoJPXEarezngh1h2CL0Zc/knDp7qVN6QDHSgMYIFfA6sBLE30eOzGy42
-         OY9sJC4SwQ/geg/tBuIRvpWt7TLzDNgJiZdOTqtYQOnZ6e8UR+XTfhAEB91xKKPkK8x9
-         W67BmyaAslstCYdFBqKU+9R7tHi89005WhBPY29p9GJzERK6I2JURGrw+hDtz63ozmVv
-         iXkZuvE05KKZhyrJqrptV3fwNRtS/xOSsPLPEn7mgtX6eRN/lPREjj5QBCtrNwoCbCnf
-         M8/g==
-X-Gm-Message-State: AGRZ1gLdeNkrnfvh2V2grA+RN9V+EyTN9c9tpaECc/p1GVBL5/V8cFmp
-        BBMC0a3BY1RQVmBcNYv/cAwHzXtPrQMQWaM4p62xXQ==
-X-Google-Smtp-Source: AJdET5cNFPc4zrfEXyrWpQgyvoYHX8Y+2cOSuseL9M9iIomq2/vsruXlHGjX31fVwzqfzSZ8cZtP225F3raO0PRgBM0=
-X-Received: by 2002:a19:5154:: with SMTP id f81mr5064978lfb.96.1541756777080;
- Fri, 09 Nov 2018 01:46:17 -0800 (PST)
+        Fri, 9 Nov 2018 14:26:21 -0500
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1gL3Mz-00020O-Vo; Fri, 09 Nov 2018 17:46:30 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1gL3My-0005f9-Fn; Fri, 09 Nov 2018 17:46:28 +0800
+Date:   Fri, 9 Nov 2018 17:46:28 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-crypto@vger.kernel.org, Corentin Labbe <clabbe@baylibre.com>,
+        Stafford Horne <shorne@gmail.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] crypto: crypto_user reporting fixes and cleanups
+Message-ID: <20181109094628.qdpiykue7eogzcx5@gondor.apana.org.au>
+References: <20181103215603.16250-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-References: <20181101154427.23110-1-tiny.windzz@gmail.com>
-In-Reply-To: <20181101154427.23110-1-tiny.windzz@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 9 Nov 2018 10:46:05 +0100
-Message-ID: <CACRpkdZ4gDfK9TtAiiExo-PyYi8qcpPCf5_KHMV_dnoJ05ychw@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: mt7622: fix small typo
-To:     tiny.windzz@gmail.com
-Cc:     Sean Wang <sean.wang@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181103215603.16250-1-ebiggers@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 1, 2018 at 4:44 PM Yangtao Li <tiny.windzz@gmail.com> wrote:
+On Sat, Nov 03, 2018 at 02:55:59PM -0700, Eric Biggers wrote:
+> This series fixes all the information leaks in crypto_user reporting,
+> removes some redundant reporting functions, and makes some changes to
+> reduce the chance of similar information leaks in the future.  Patch 2
+> is based on a patch already sent by Corentin Labbe, but it was
+> incomplete so I fixed it.
+> 
+> Corentin Labbe (1):
+>   crypto: crypto_user_stat - Zeroize whole structure given to user space
+> 
+> Eric Biggers (3):
+>   crypto: crypto_user - fix leaking uninitialized memory to userspace
+>   crypto: crypto_user - remove redundant reporting functions
+>   crypto: crypto_user - clean up report structure copying
+> 
+>  crypto/ablkcipher.c       |  32 ++++------
+>  crypto/acompress.c        |  10 +---
+>  crypto/aead.c             |  14 ++---
+>  crypto/ahash.c            |  12 ++--
+>  crypto/akcipher.c         |  11 ++--
+>  crypto/blkcipher.c        |  16 ++---
+>  crypto/crypto_user_base.c |  95 +++++------------------------
+>  crypto/crypto_user_stat.c | 123 ++++++++++++++------------------------
+>  crypto/kpp.c              |  10 +---
+>  crypto/rng.c              |  12 ++--
+>  crypto/scompress.c        |  11 ++--
+>  crypto/shash.c            |  12 ++--
+>  crypto/skcipher.c         |  15 ++---
+>  13 files changed, 116 insertions(+), 257 deletions(-)
 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+All applied.  Patches 1-2 went into crypto and 3-4 are in cryptodev.
 
-This patch does not apply to v4.20-rc1, please check and
-rebase of not already fixed, and resend.
-
-Yours,
-Linus Walleij
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
