@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,PLING_QUERY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 558C7C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 00:54:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EED2C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 00:55:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2690320855
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 00:54:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2690320855
+	by mail.kernel.org (Postfix) with ESMTP id CB7BD20855
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 00:55:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB7BD20855
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727598AbeKIKce (ORCPT
+        id S1727703AbeKIKdq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 05:32:34 -0500
-Received: from mga04.intel.com ([192.55.52.120]:60969 "EHLO mga04.intel.com"
+        Fri, 9 Nov 2018 05:33:46 -0500
+Received: from mga11.intel.com ([192.55.52.93]:34554 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726599AbeKIKce (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 05:32:34 -0500
+        id S1726599AbeKIKdq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 05:33:46 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 16:54:23 -0800
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Nov 2018 16:55:35 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,481,1534834800"; 
-   d="scan'208";a="84450513"
+   d="scan'208";a="84450741"
 Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
-  by fmsmga007.fm.intel.com with ESMTP; 08 Nov 2018 16:54:23 -0800
+  by fmsmga007.fm.intel.com with ESMTP; 08 Nov 2018 16:55:35 -0800
 Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 75188301E5E; Thu,  8 Nov 2018 16:54:23 -0800 (PST)
-Date:   Thu, 8 Nov 2018 16:54:23 -0800
+        id 85960301E5E; Thu,  8 Nov 2018 16:55:35 -0800 (PST)
+Date:   Thu, 8 Nov 2018 16:55:35 -0800
 From:   Andi Kleen <ak@linux.intel.com>
 To:     Milian Wolff <milian.wolff@kdab.com>
 Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org,
@@ -43,42 +43,29 @@ Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org,
         Arnaldo Carvalho <acme@kernel.org>
 Subject: Re: PEBS level 2/3 breaks dwarf unwinding! [WAS: Re: Broken dwarf
  unwinding - wrong stack pointer register value?]
-Message-ID: <20181109005423.GZ6218@tassilo.jf.intel.com>
+Message-ID: <20181109005535.GA6218@tassilo.jf.intel.com>
 References: <2335309.gnWok9HYb4@agathebauer>
- <2102566.fCj8pZGm78@agathebauer>
  <20181106202411.GU6218@tassilo.jf.intel.com>
  <1584560.aXQ729uQp3@agathebauer>
+ <7105958.qy8IzDpmRc@agathebauer>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1584560.aXQ729uQp3@agathebauer>
+In-Reply-To: <7105958.qy8IzDpmRc@agathebauer>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> - Independently, when I add a custom printk manually in `arch/x86/events/
-> intel/ds.c` at the end of `setup_pebs_sample_data`, then I'm never seeing any 
-> differences between SP in iregs/pebs/regs. Shouldn't it also be recorded via 
-> PEBS? Or is it just chance that I'm never seeing any difference in 
-> setup_pebs_sample_data between iregs->sp and regs->sp?
+> Can we change this, such that perf_event_output also takes a second set of 
+> registers (iregs) that get sampled for PERF_SAMPLE_REGS_INTR? I'm very new to 
+> real kernel development, what kind of ABI/API stability guarantees exist for 
+> something like "perf_event_output"?
 
-It will depend on the workload.
+Yes you can change it.
 
-> 
-> - Generally, how do we want to handle this bug? If `--intr-regs` would 
-> actually record a different IP than stored in uregs in the perf.data file, 
-> then we could use that as a fallback for unwinding, when it fails the first 
-> time. Or should we always unwind from that IP? How do we mark the "actual" 
-> frame/IP then, if that differs?
-
-I don't think the regs include IP currently? Would need to add it.
-Then could report everything from the original stack in intr-regs,
-and this would address that problem.
-
-Yes it might be useful to add some indication to the sample that
-there is a potential divergence between the backtrace and the IP.
-Would also need to report that in perf report then.
+That's no API/ABI stability guarantee for kernel internal functions, 
+as long as you change all callers in tree.
 
 -Andi
