@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1395CC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:08:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 111DCC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:08:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6E0C20840
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:08:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1A2E20840
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:08:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=austad-us.20150623.gappssmtp.com header.i=@austad-us.20150623.gappssmtp.com header.b="NW3nRPkR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6E0C20840
+	dkim=pass (2048-bit key) header.d=austad-us.20150623.gappssmtp.com header.i=@austad-us.20150623.gappssmtp.com header.b="N1gAtgOu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1A2E20840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=austad.us
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728249AbeKITsB (ORCPT
+        id S1728277AbeKITsE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 14:48:01 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:41496 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728161AbeKITr6 (ORCPT
+        Fri, 9 Nov 2018 14:48:04 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:38508 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728232AbeKITsD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 14:47:58 -0500
-Received: by mail-lj1-f194.google.com with SMTP id z80-v6so1091206ljb.8
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 02:08:04 -0800 (PST)
+        Fri, 9 Nov 2018 14:48:03 -0500
+Received: by mail-lf1-f66.google.com with SMTP id p86so914902lfg.5
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 02:08:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=austad-us.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=tv7acVUEo4rKciCVBEpY1ORnv58bUw3RANmrX4luI34=;
-        b=NW3nRPkRsXOrGfpu8yVhX9Jw4IYH0LlfPEX4tVETUc9WmciqhaktdDO9j3Yu7uPPVG
-         aSQUsnUDf7SQjLle7YbpqHZkZjFh7js92D72iTRdYiZH3DuHDN4WTRTjlv8WoYMEuVM3
-         PJtpIvGoMiTQhA97TVEIBdmYhegRyxFGczXsjq0MdQV9wgSIhyzcjJxujldMfElbIZuv
-         aAfTh7LzklCHL9IRKk2PP8HdKf/bDuGW97jK5GUQ2lt4qCSq0YsoKxVG+PNlYqj3nIHo
-         eRxJhOvXlJidBAD2xZ6zCIOCrOSuJtZRnWjwO4qmFbMwbj3wAs8DFaenuAN+k5VpRDVq
-         vNcg==
+        bh=ESRDNGG5rHe6B1+JK3513LPxadxkE9PyzVQyEQUbrg8=;
+        b=N1gAtgOuMum1935ZucduXxAAvsz5mp+FYliFf5TGQcK/H115dZnwvjm7AmxsZHbpR2
+         6x+2xxewIo51YDYkLsQIX84lcQRCiLBRVx0hHhP3UXdoDQ9GO8rmfa5aXE+w6/NNYVL9
+         e2JkslT9TXfJI89eAZ0xlZhTXiNUUqM6eOqcC3pPzVSBkCUR87fjnzkm+T62FonVWRTo
+         AjZUzbNvJAeTOVEB9LcnKpXYA/p1IXaTPmMmVWBifpEUks8V37KvhW3HUpg68q7gsvjC
+         4BJIo6/KB+CFS6VqqqH+IzRFzRUd5cJ8fpdXP8snOOboRFINIkumCKdPFUD7lHGj3Uuo
+         YRtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=tv7acVUEo4rKciCVBEpY1ORnv58bUw3RANmrX4luI34=;
-        b=dolEZ5+l1/ohdaHOvlxvloFNcL1ZLZHg5+P9/lqnd8Lg4aoyeDg0xEAjPqhBTudQaM
-         wAgTmNwrl2bH/1+p3qp6tZXUJQ8+OON4fuFsWsJak4ERVP1Rcvv20jUCf5KX7+hXfXzr
-         XR6zTavYshLvBx9YrmkNAGFFxPTR5PcDgE8s/OPNkZs2cHdr2KfrVMLe6I2w+9pRfENr
-         6yiciDgTDE78GIa1RRFOghiJ7AiWbcx7HuWta3y+Glz+2fbSOpVH20HDhZ+/gey4W5dM
-         y9fFNrYxqYILEzxR1hqmBKqRo39D5yJAdU97EooBnGvHl+mWJwBiDuQt3oTqMFfx3N3C
-         TirQ==
-X-Gm-Message-State: AGRZ1gJmi5sBvxvPpewzwqO86a1VGOSxpYcncqJDl31yWrgT2Dknb69o
-        IwxulKVVcUOHyeI5asL8wfC7NYmX66xgrANZ
-X-Google-Smtp-Source: AJdET5c9bIwIzvJkkp+I6gqyRFETm44PrAcC9OzRaIMow2ZiUr/lNON05RENol/41luunmBkiDxIyQ==
-X-Received: by 2002:a2e:8045:: with SMTP id p5-v6mr5061333ljg.87.1541758082944;
-        Fri, 09 Nov 2018 02:08:02 -0800 (PST)
+        bh=ESRDNGG5rHe6B1+JK3513LPxadxkE9PyzVQyEQUbrg8=;
+        b=fJ6iSEFhUVUtRh0KD17SFxsl4gHGX3RynsFB8TMfE5g9wDNOWcI0giZKKNy0B+8QKB
+         cxUhKfueMz2d0oqMDTYnM+nL/NJSOLYAy2HaNGWoFgzs6H4Qczsi32SGugfs/Z8RQSAk
+         ZYPD54GxES6skBky8A+TbGG/WPIm2bHYMZI0gG+BRSnWE3dwlibfH5EY4JVSwWVWvcTL
+         Vt8MPCbZgfpKB8P6Fae0rxPTSkiKy44JmBc+3s/dD2kFnKyIdACZGVHTctQgwX8enrPz
+         mBPCdNbpJjtu0iWwag0yQG2mcmAMd0EiAtFUCf5XYnT+B5uoVEWjfC8TOHXXjXNMSs7B
+         dsag==
+X-Gm-Message-State: AGRZ1gIB7vUdcv4N1ZRkD30AOHPCpuQVPl8tPOAu4tNMzG8evqzbf8eA
+        wW+h8ibYCYsEXaseaA1VcQRtkIVC/dS4pIq7
+X-Google-Smtp-Source: AJdET5cZVQkIsTeW3B74Gw1C+2Xnvth41brf21NujoxaUZD8WsMMSD4ZRY/EEJJW30MSgOwCEcOGig==
+X-Received: by 2002:a19:48d0:: with SMTP id v199mr5107634lfa.104.1541758087916;
+        Fri, 09 Nov 2018 02:08:07 -0800 (PST)
 Received: from sisyphus.home.austad.us (11.92-220-88.customer.lyse.net. [92.220.88.11])
-        by smtp.gmail.com with ESMTPSA id u65sm1265576lff.54.2018.11.09.02.08.01
+        by smtp.gmail.com with ESMTPSA id u65sm1265576lff.54.2018.11.09.02.08.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 09 Nov 2018 02:08:02 -0800 (PST)
+        Fri, 09 Nov 2018 02:08:07 -0800 (PST)
 From:   Henrik Austad <henrik@austad.us>
 To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -67,9 +67,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         mathieu.desnoyers@efficios.com, jdesfossez@efficios.com,
         dvhart@infradead.org, bristot@redhat.com,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 08/17] futex: Rework inconsistent rt_mutex/futex_q state
-Date:   Fri,  9 Nov 2018 11:07:36 +0100
-Message-Id: <1541758065-10952-9-git-send-email-henrik@austad.us>
+Subject: [PATCH 12/17] futex,rt_mutex: Restructure rt_mutex_finish_proxy_lock()
+Date:   Fri,  9 Nov 2018 11:07:40 +0100
+Message-Id: <1541758065-10952-13-git-send-email-henrik@austad.us>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1541758065-10952-1-git-send-email-henrik@austad.us>
 References: <1541758065-10952-1-git-send-email-henrik@austad.us>
@@ -80,43 +80,23 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Peter Zijlstra <peterz@infradead.org>
 
-commit 73d786bd043ebc855f349c81ea805f6b11cbf2aa upstream.
+commit 38d589f2fd08f1296aea3ce62bebd185125c6d81 upstream.
 
-There is a weird state in the futex_unlock_pi() path when it interleaves
-with a concurrent futex_lock_pi() at the point where it drops hb->lock.
+With the ultimate goal of keeping rt_mutex wait_list and futex_q waiters
+consistent it's necessary to split 'rt_mutex_futex_lock()' into finer
+parts, such that only the actual blocking can be done without hb->lock
+held.
 
-In this case, it can happen that the rt_mutex wait_list and the futex_q
-disagree on pending waiters, in particular rt_mutex will find no pending
-waiters where futex_q thinks there are. In this case the rt_mutex unlock
-code cannot assign an owner.
+Split split_mutex_finish_proxy_lock() into two parts, one that does the
+blocking and one that does remove_waiter() when the lock acquire failed.
 
-The futex side fixup code has to cleanup the inconsistencies with quite a
-bunch of interesting corner cases.
+When the rtmutex was acquired successfully the waiter can be removed in the
+acquisiton path safely, since there is no concurrency on the lock owner.
 
-Simplify all this by changing wake_futex_pi() to return -EAGAIN when this
-situation occurs. This then gives the futex_lock_pi() code the opportunity
-to continue and the retried futex_unlock_pi() will now observe a coherent
-state.
+This means that, except for futex_lock_pi(), all wait_list modifications
+are done with both hb->lock and wait_lock held.
 
-The only problem is that this breaks RT timeliness guarantees. That
-is, consider the following scenario:
-
-  T1 and T2 are both pinned to CPU0. prio(T2) > prio(T1)
-
-    CPU0
-
-    T1
-      lock_pi()
-      queue_me()  <- Waiter is visible
-
-    preemption
-
-    T2
-      unlock_pi()
-	loops with -EAGAIN forever
-
-Which is undesirable for PI primitives. Future patches will rectify
-this.
+[bigeasy@linutronix.de: fix for futex_requeue_pi_signal_restart]
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: juri.lelli@arm.com
@@ -127,96 +107,139 @@ Cc: mathieu.desnoyers@efficios.com
 Cc: jdesfossez@efficios.com
 Cc: dvhart@infradead.org
 Cc: bristot@redhat.com
-Link: http://lkml.kernel.org/r/20170322104151.850383690@infradead.org
+Link: http://lkml.kernel.org/r/20170322104152.001659630@infradead.org
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Tested-by: Henrik Austad <haustad@cisco.com>
 ---
- kernel/futex.c | 50 ++++++++++++++------------------------------------
- 1 file changed, 14 insertions(+), 36 deletions(-)
+ kernel/futex.c                  |  7 ++++--
+ kernel/locking/rtmutex.c        | 52 +++++++++++++++++++++++++++++++++++------
+ kernel/locking/rtmutex_common.h |  8 ++++---
+ 3 files changed, 55 insertions(+), 12 deletions(-)
 
 diff --git a/kernel/futex.c b/kernel/futex.c
-index 9d7d462..91acb65 100644
+index 4d70fd7..dce3250 100644
 --- a/kernel/futex.c
 +++ b/kernel/futex.c
-@@ -1398,12 +1398,19 @@ static int wake_futex_pi(u32 __user *uaddr, u32 uval, struct futex_q *top_waiter
- 	new_owner = rt_mutex_next_owner(&pi_state->pi_mutex);
+@@ -3045,10 +3045,13 @@ static int futex_wait_requeue_pi(u32 __user *uaddr, unsigned int flags,
+ 		 */
+ 		WARN_ON(!q.pi_state);
+ 		pi_mutex = &q.pi_state->pi_mutex;
+-		ret = rt_mutex_finish_proxy_lock(pi_mutex, to, &rt_waiter);
+-		debug_rt_mutex_free_waiter(&rt_waiter);
++		ret = rt_mutex_wait_proxy_lock(pi_mutex, to, &rt_waiter);
  
- 	/*
--	 * It is possible that the next waiter (the one that brought
--	 * top_waiter owner to the kernel) timed out and is no longer
--	 * waiting on the lock.
-+	 * When we interleave with futex_lock_pi() where it does
-+	 * rt_mutex_timed_futex_lock(), we might observe @this futex_q waiter,
-+	 * but the rt_mutex's wait_list can be empty (either still, or again,
-+	 * depending on which side we land).
-+	 *
-+	 * When this happens, give up our locks and try again, giving the
-+	 * futex_lock_pi() instance time to complete, either by waiting on the
-+	 * rtmutex or removing itself from the futex queue.
- 	 */
--	if (!new_owner)
--		new_owner = top_waiter->task;
-+	if (!new_owner) {
-+		raw_spin_unlock_irq(&pi_state->pi_mutex.wait_lock);
-+		return -EAGAIN;
-+	}
+ 		spin_lock(q.lock_ptr);
++		if (ret && !rt_mutex_cleanup_proxy_lock(pi_mutex, &rt_waiter))
++			ret = 0;
++
++		debug_rt_mutex_free_waiter(&rt_waiter);
+ 		/*
+ 		 * Fixup the pi_state owner and possibly acquire the lock if we
+ 		 * haven't already.
+diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
+index 8778ac3..78ecea6 100644
+--- a/kernel/locking/rtmutex.c
++++ b/kernel/locking/rtmutex.c
+@@ -1743,21 +1743,23 @@ struct task_struct *rt_mutex_next_owner(struct rt_mutex *lock)
+ }
  
- 	/*
- 	 * We pass it to the next owner. The WAITERS bit is always
-@@ -2342,7 +2349,6 @@ static long futex_wait_restart(struct restart_block *restart);
+ /**
+- * rt_mutex_finish_proxy_lock() - Complete lock acquisition
++ * rt_mutex_wait_proxy_lock() - Wait for lock acquisition
+  * @lock:		the rt_mutex we were woken on
+  * @to:			the timeout, null if none. hrtimer should already have
+  *			been started.
+  * @waiter:		the pre-initialized rt_mutex_waiter
+  *
+- * Complete the lock acquisition started our behalf by another thread.
++ * Wait for the the lock acquisition started on our behalf by
++ * rt_mutex_start_proxy_lock(). Upon failure, the caller must call
++ * rt_mutex_cleanup_proxy_lock().
+  *
+  * Returns:
+  *  0 - success
+  * <0 - error, one of -EINTR, -ETIMEDOUT
+  *
+- * Special API call for PI-futex requeue support
++ * Special API call for PI-futex support
   */
- static int fixup_owner(u32 __user *uaddr, struct futex_q *q, int locked)
+-int rt_mutex_finish_proxy_lock(struct rt_mutex *lock,
++int rt_mutex_wait_proxy_lock(struct rt_mutex *lock,
+ 			       struct hrtimer_sleeper *to,
+ 			       struct rt_mutex_waiter *waiter)
  {
--	struct task_struct *owner;
- 	int ret = 0;
+@@ -1770,9 +1772,6 @@ int rt_mutex_finish_proxy_lock(struct rt_mutex *lock,
+ 	/* sleep on the mutex */
+ 	ret = __rt_mutex_slowlock(lock, TASK_INTERRUPTIBLE, to, waiter);
  
- 	if (locked) {
-@@ -2356,43 +2362,15 @@ static int fixup_owner(u32 __user *uaddr, struct futex_q *q, int locked)
- 	}
- 
+-	if (unlikely(ret))
+-		remove_waiter(lock, waiter);
+-
  	/*
--	 * Catch the rare case, where the lock was released when we were on the
--	 * way back before we locked the hash bucket.
--	 */
--	if (q->pi_state->owner == current) {
--		/*
--		 * Try to get the rt_mutex now. This might fail as some other
--		 * task acquired the rt_mutex after we removed ourself from the
--		 * rt_mutex waiters list.
--		 */
--		if (rt_mutex_futex_trylock(&q->pi_state->pi_mutex)) {
--			locked = 1;
--			goto out;
--		}
--
--		/*
--		 * pi_state is incorrect, some other task did a lock steal and
--		 * we returned due to timeout or signal without taking the
--		 * rt_mutex. Too late.
--		 */
--		raw_spin_lock_irq(&q->pi_state->pi_mutex.wait_lock);
--		owner = rt_mutex_owner(&q->pi_state->pi_mutex);
--		if (!owner)
--			owner = rt_mutex_next_owner(&q->pi_state->pi_mutex);
--		raw_spin_unlock_irq(&q->pi_state->pi_mutex.wait_lock);
--		ret = fixup_pi_state_owner(uaddr, q, owner);
--		goto out;
--	}
--
--	/*
- 	 * Paranoia check. If we did not take the lock, then we should not be
- 	 * the owner of the rt_mutex.
- 	 */
--	if (rt_mutex_owner(&q->pi_state->pi_mutex) == current)
-+	if (rt_mutex_owner(&q->pi_state->pi_mutex) == current) {
- 		printk(KERN_ERR "fixup_owner: ret = %d pi-mutex: %p "
- 				"pi-state %p\n", ret,
- 				q->pi_state->pi_mutex.owner,
- 				q->pi_state->owner);
-+	}
+ 	 * try_to_take_rt_mutex() sets the waiter bit unconditionally. We might
+ 	 * have to fix that up.
+@@ -1783,3 +1782,42 @@ int rt_mutex_finish_proxy_lock(struct rt_mutex *lock,
  
- out:
- 	return ret ? ret : locked;
+ 	return ret;
+ }
++
++/**
++ * rt_mutex_cleanup_proxy_lock() - Cleanup failed lock acquisition
++ * @lock:		the rt_mutex we were woken on
++ * @waiter:		the pre-initialized rt_mutex_waiter
++ *
++ * Attempt to clean up after a failed rt_mutex_wait_proxy_lock().
++ *
++ * Unless we acquired the lock; we're still enqueued on the wait-list and can
++ * in fact still be granted ownership until we're removed. Therefore we can
++ * find we are in fact the owner and must disregard the
++ * rt_mutex_wait_proxy_lock() failure.
++ *
++ * Returns:
++ *  true  - did the cleanup, we done.
++ *  false - we acquired the lock after rt_mutex_wait_proxy_lock() returned,
++ *          caller should disregards its return value.
++ *
++ * Special API call for PI-futex support
++ */
++bool rt_mutex_cleanup_proxy_lock(struct rt_mutex *lock,
++				 struct rt_mutex_waiter *waiter)
++{
++	bool cleanup = false;
++
++	raw_spin_lock_irq(&lock->wait_lock);
++	/*
++	 * Unless we're the owner; we're still enqueued on the wait_list.
++	 * So check if we became owner, if not, take us off the wait_list.
++	 */
++	if (rt_mutex_owner(lock) != current) {
++		remove_waiter(lock, waiter);
++		fixup_rt_mutex_waiters(lock);
++		cleanup = true;
++	}
++	raw_spin_unlock_irq(&lock->wait_lock);
++
++	return cleanup;
++}
+diff --git a/kernel/locking/rtmutex_common.h b/kernel/locking/rtmutex_common.h
+index d16de236..fedd5ab 100644
+--- a/kernel/locking/rtmutex_common.h
++++ b/kernel/locking/rtmutex_common.h
+@@ -107,9 +107,11 @@ extern void rt_mutex_init_waiter(struct rt_mutex_waiter *waiter);
+ extern int rt_mutex_start_proxy_lock(struct rt_mutex *lock,
+ 				     struct rt_mutex_waiter *waiter,
+ 				     struct task_struct *task);
+-extern int rt_mutex_finish_proxy_lock(struct rt_mutex *lock,
+-				      struct hrtimer_sleeper *to,
+-				      struct rt_mutex_waiter *waiter);
++extern int rt_mutex_wait_proxy_lock(struct rt_mutex *lock,
++			       struct hrtimer_sleeper *to,
++			       struct rt_mutex_waiter *waiter);
++extern bool rt_mutex_cleanup_proxy_lock(struct rt_mutex *lock,
++				 struct rt_mutex_waiter *waiter);
+ 
+ extern int rt_mutex_timed_futex_lock(struct rt_mutex *l, struct hrtimer_sleeper *to);
+ extern int rt_mutex_futex_trylock(struct rt_mutex *l);
 -- 
 2.7.4
 
