@@ -2,122 +2,132 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CA85C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 18:44:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05F73C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 18:45:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20D052081C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 18:44:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6A452081C
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 18:45:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pl78IHcv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20D052081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="ns7BFJfJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6A452081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728621AbeKJE0T (ORCPT
+        id S1728656AbeKJE1q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 23:26:19 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55874 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727995AbeKJE0T (ORCPT
+        Fri, 9 Nov 2018 23:27:46 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41269 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727995AbeKJE1q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 23:26:19 -0500
-Received: by mail-wm1-f66.google.com with SMTP id s10-v6so2930087wmc.5;
-        Fri, 09 Nov 2018 10:44:28 -0800 (PST)
+        Fri, 9 Nov 2018 23:27:46 -0500
+Received: by mail-pf1-f196.google.com with SMTP id e22-v6so1307550pfn.8
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 10:45:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=yU46RUwW3ShWzI88dU131V4UCp8+XGffSAvlQF+mFzo=;
-        b=pl78IHcv0ovrDMBkDOFfrnGfjtAmLlr4s+clvGb5ojkWJkfcwCucYeYG3u1lIhVJHV
-         THN4zyb8pDgHkm7iLTYWY+SCgOwgVJ06BPTgaU69tq9aRdHUKdwmPw7t9ahQkCJWdgr9
-         nfI3IKnVZ33clbrsb3/RQM/YucVsnOncoO6m0A1RKVGAalUhICc8FZVix3eGl8KnwqLR
-         sQDcD3YT17lwaU1SLiLp6cM5Sdya6SCn5pc/X8I0afrMVaJkQHeywAhdjoPb1ZVNR5Im
-         Sq2vcbzzlnj0tVKdbJFH3MNHsdrbbnX4IUTVTJctA631Bw53jgIZScQMYyq34z09v+Jo
-         +tow==
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vvHbhpCy678InfazlDZuMjGHDVImcw38UcNI4N/yahg=;
+        b=ns7BFJfJ6C5yYBdcEFt2HqmTATpQaFb4HF+xU4aigMrCNBu6jKEgwpxTGWEpLt6MTj
+         BRVPg48zrgq3R6EIRH6G5H1zXqAOYSlSMG3byQMQT2P4iyzit0nnINGZsETe9JBM16bE
+         cG6+W8IF65f42wSgb6EdLVQQK3bWqNXcfJvHG8LJB5jYHNd9mnCOtQeErdvSZk/+1JeT
+         qACQ8A5uTPQ8E021eeRB87TX5pw7V32GOR+p1FUbzLRgJ1KeUcFP3CAud3mVHAjfnxUt
+         4NduTzSnPHzV3RvrWYYWHuCaILFrXUD6qx4VwQTp/txY+IYEVHxpy5jF7WYHh8/IP8o3
+         L5MA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=yU46RUwW3ShWzI88dU131V4UCp8+XGffSAvlQF+mFzo=;
-        b=E9Grn9W1+mo/JAZh3z+ctSC8OltRE4D/KC70XFuH5oykDBzmyeUaKybxEluUFAun3U
-         WQH91n6Xh2kBw9bON+Aydq3E1WmJ6+mM6glhc/mmrhcMViJLswdilNzLLk0z85/1fqSi
-         d8XfNYB36HIOeSSTXc1C9umNMZgDRjAmYt8DH2eXqBjvsQSW6LXj78ZUuDreg3Cw99CZ
-         xHU4FXKyQaX5/7vxgvm0buEz3yD1Cd77CImDNLzded5jyHw3g48aLFEyqBG26M387Sn3
-         QGdWAP3k3fs1zokZGffhgmYtnIMYK2obOSoHEv9t+xCjhvM+53l/Cdh5f/fYzQ0RxprL
-         8LZA==
-X-Gm-Message-State: AGRZ1gIKsJYLffKn3cqCaxSkfNmC6XwBBC8NMi0o2JSMGC5Gw4qvMAii
-        wNtbxqvic1/5dfJ17UIXGj4=
-X-Google-Smtp-Source: AJdET5chCnQhI6qEmxQlWwycYK8xSIHxQ/NelIzFsw4J67PN0ZIXZGNmOYiwtatJ2a0lFsHXbHe8CQ==
-X-Received: by 2002:a1c:4407:: with SMTP id r7-v6mr452139wma.16.1541789067756;
-        Fri, 09 Nov 2018 10:44:27 -0800 (PST)
-Received: from [172.20.10.2] ([2.48.42.190])
-        by smtp.gmail.com with ESMTPSA id j25-v6sm5557057wrd.30.2018.11.09.10.44.14
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=vvHbhpCy678InfazlDZuMjGHDVImcw38UcNI4N/yahg=;
+        b=GBPhCbp6wzPq95z36LBDzIubnCzVDY4MjWuU8mhH5dVIQwdGx5hhq7MC8mHVd+pMTS
+         ZpTNpwNsk2eUT5RC5CoD/PBQdv53DN8mKfwfWTWRl5JuVTrNQl2pwu56mCQx5wBiB3dV
+         DX9/FPFImsZdnTrlrS6gGFwueCCa0f2j2GD9eNI3D7De8201469o9xYWB8PNhPFxu4FP
+         YBXyRrlSXROjf1RB4v9rRSwu3gpNbYaBMAbkt/rPDiMI8lmp+HtDCBeYEvIUdnUHGgKZ
+         VCOLENgrtwZn2ejpsNYyO3fbEb8bOAwFYXpknNLdmZutymIjXpgajSt1cxtXpuXBv5Id
+         d97w==
+X-Gm-Message-State: AGRZ1gKJvXXyTV+i4Ja5wLBEXeVBIPsQew/009tW2naX1t95jQioTLJ8
+        PDYOg16O9SzuP4j+RSt6E9IEIw==
+X-Google-Smtp-Source: AJdET5dZM4EnNQT9KOuW+j14O1CdzgWVgASrArpOuEU5BPZ9wC6IZ7FvTdc3P4SFN3j6fK12zB10Ww==
+X-Received: by 2002:a63:4141:: with SMTP id o62-v6mr7851005pga.370.1541789155537;
+        Fri, 09 Nov 2018 10:45:55 -0800 (PST)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id u76-v6sm9511558pfa.176.2018.11.09.10.45.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 09 Nov 2018 10:44:27 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
-Subject: Re: [PATCH v3 1/3] dt-bindings: Add vendor prefix for Smartlabs LLC
-From:   Christian Hewitt <christianshewitt@gmail.com>
-In-Reply-To: <ae4a4f99-eecc-7a71-5007-d171449c8619@suse.de>
-Date:   Fri, 9 Nov 2018 13:44:01 -0500
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Thierry Reding <treding@nvidia.com>,
-        David Lechner <david@lechnology.com>,
-        =?utf-8?Q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        Johan Hovold <johan@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <5327F4D2-7348-4D5F-A077-D66D4ACB7553@gmail.com>
-References: <1541691207-24768-1-git-send-email-christianshewitt@gmail.com>
- <1541706240-30036-1-git-send-email-christianshewitt@gmail.com>
- <1541706240-30036-2-git-send-email-christianshewitt@gmail.com>
- <ae4a4f99-eecc-7a71-5007-d171449c8619@suse.de>
-To:     =?utf-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
-X-Mailer: Apple Mail (2.3445.9.1)
+        Fri, 09 Nov 2018 10:45:54 -0800 (PST)
+Date:   Fri, 09 Nov 2018 10:45:54 -0800 (PST)
+X-Google-Original-Date: Fri, 09 Nov 2018 10:45:34 PST (-0800)
+Subject:     Re: [PATCH 12/13] riscv: define syscall_get_arch()
+In-Reply-To: <20181109031712.GL21511@altlinux.org>
+CC:     luto@kernel.org, aou@eecs.berkeley.edu, paul@paul-moore.com,
+        eparis@redhat.com, lineprinter@altlinux.org,
+        linux-riscv@lists.infradead.org, linux-audit@redhat.com,
+        linux-kernel@vger.kernel.org
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     ldv@altlinux.org
+Message-ID: <mhng-2fa4cce8-2365-4f36-a07e-5f9ad61cfb88@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9 Nov 2018, at 1:29 pm, Andreas F=C3=A4rber <afaerber@suse.de> wrote:
->=20
->> Smartlabs LLC are a professional integrator of Interactive TV =
-solutions
->> and IPTV/VOD devices (https://www.smartlabs.tv/en/about/).
->>=20
->> Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
->> ---
->> Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
->> 1 file changed, 1 insertion(+)
->>=20
->> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt =
-b/Documentation/devicetree/bindings/vendor-prefixes.txt
->> index 4b1a2a8..c424fe0 100644
->> --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
->> +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
->> @@ -357,6 +357,7 @@ sirf	SiRF Technology, Inc.
->> sis	Silicon Integrated Systems Corp.
->> sitronix	Sitronix Technology Corporation
->> skyworks	Skyworks Solutions, Inc.
->> +smartlabs	Smartlabs LLC
->=20
-> You added the LLC but did not upper-case the L - intentional?
+On Thu, 08 Nov 2018 19:17:13 PST (-0800), ldv@altlinux.org wrote:
+> syscall_get_arch() is required to be implemented on all architectures
+> that use tracehook_report_syscall_entry() in order to extend
+> the generic ptrace API with PTRACE_GET_SYSCALL_INFO request.
+>
+> Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
+> ---
+>  arch/riscv/include/asm/syscall.h | 6 ++++++
+>  include/uapi/linux/audit.h       | 1 +
+>  2 files changed, 7 insertions(+)
+>
+> diff --git a/arch/riscv/include/asm/syscall.h b/arch/riscv/include/asm/syscall.h
+> index 8d25f8904c00..7e1e26ca7317 100644
+> --- a/arch/riscv/include/asm/syscall.h
+> +++ b/arch/riscv/include/asm/syscall.h
+> @@ -18,6 +18,7 @@
+>  #ifndef _ASM_RISCV_SYSCALL_H
+>  #define _ASM_RISCV_SYSCALL_H
+>
+> +#include <uapi/linux/audit.h>
+>  #include <linux/sched.h>
+>  #include <linux/err.h>
+>
+> @@ -99,4 +100,9 @@ static inline void syscall_set_arguments(struct task_struct *task,
+>  	memcpy(&regs->a1 + i * sizeof(regs->a1), args, n * sizeof(regs->a0));
+>  }
+>
+> +static inline int syscall_get_arch(void)
+> +{
+> +	return AUDIT_ARCH_RISCV;
+> +}
+> +
+>  #endif	/* _ASM_RISCV_SYSCALL_H */
+> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+> index c4c8b131af48..ad4105c602a1 100644
+> --- a/include/uapi/linux/audit.h
+> +++ b/include/uapi/linux/audit.h
+> @@ -405,6 +405,7 @@ enum {
+>  /* do not define AUDIT_ARCH_PPCLE since it is not supported by audit */
+>  #define AUDIT_ARCH_PPC64	(EM_PPC64|__AUDIT_ARCH_64BIT)
+>  #define AUDIT_ARCH_PPC64LE	(EM_PPC64|__AUDIT_ARCH_64BIT|__AUDIT_ARCH_LE)
+> +#define AUDIT_ARCH_RISCV	(EM_RISCV|__AUDIT_ARCH_64BIT)
+>  #define AUDIT_ARCH_S390		(EM_S390)
+>  #define AUDIT_ARCH_S390X	(EM_S390|__AUDIT_ARCH_64BIT)
+>  #define AUDIT_ARCH_SH		(EM_SH)
 
-Not intentional. I=E2=80=99ll correct this (and another mention in the =
-dts) in v4.
+I think this is incorrect: EM_RISCV has 32-bit and 64-bit variants, and if I 
+understand what's going on here this is marking all RISC-V targets as 64-bit.  
+Since this is a userspace header, I think the right thing to switch on is 
+__riscv_xlen, which will be defined to either 32 or 64 depending on the base 
+ISA.
 
-Christian=
+We're also little endian.
