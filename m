@@ -2,308 +2,296 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 174DEC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 02:38:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 644B9C0044B
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 02:51:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C583420840
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 02:38:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C583420840
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ics.forth.gr
+	by mail.kernel.org (Postfix) with ESMTP id 2A10E2086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 02:51:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Q/wNTdON"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A10E2086C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727532AbeKIMRI (ORCPT
+        id S1727483AbeKIM3S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 07:17:08 -0500
-Received: from mailgate-4.ics.forth.gr ([139.91.1.7]:65184 "EHLO
-        mailgate-4.ics.forth.gr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727349AbeKIMRI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 07:17:08 -0500
-Received: from av1.ics.forth.gr (av3in.ics.forth.gr. [139.91.1.77])
-        by mailgate-4.ics.forth.gr (8.14.5/ICS-FORTH/V10-1.9-GATE-OUT) with ESMTP id wA92aNJr016280;
-        Fri, 9 Nov 2018 04:36:25 +0200 (EET)
-X-AuditID: 8b5b9d4d-903ff70000000e62-8d-5be4f2a5c8a7
-Received: from enigma.ics.forth.gr (enigma.ics.forth.gr [139.91.1.35])
-        by av1.ics.forth.gr (SMTP Outbound / FORTH / ICS) with SMTP id 91.2C.03682.5A2F4EB5; Fri,  9 Nov 2018 04:36:22 +0200 (EET)
-Received: from webmail.ics.forth.gr (localhost [127.0.0.1])
-        by enigma.ics.forth.gr (8.15.1//ICS-FORTH/V10.5.0C-EXTNULL-SSL-SASL) with ESMTP id wA92aJwa012603;
-        Fri, 9 Nov 2018 04:36:19 +0200
-X-ICS-AUTH-INFO: Authenticated user:  at ics.forth.gr
+        Fri, 9 Nov 2018 07:29:18 -0500
+Received: from mail-eopbgr10054.outbound.protection.outlook.com ([40.107.1.54]:42016
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727349AbeKIM3S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 07:29:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ExHePPG2OHcEYr/1thinBXSgYZNVmJ74UL3P9PxO6NQ=;
+ b=Q/wNTdONJ1CaV/X3x0HfaEKo1zqYgsEc1NzhGhhXAiifIBOGCClNT53hprYX3Jig7T9dY7Feq4qrRbw9SKKzgEKag5Cu8SJQrG4+eHzgyc2KpVFgsckplG2OKJRT3XEuYqrIocNZ/ZRTUg1WP2qKreYSnd896s0kmzPhvAOkTfk=
+Received: from HE1PR04MB1497.eurprd04.prod.outlook.com (10.163.176.23) by
+ HE1PR04MB3049.eurprd04.prod.outlook.com (10.171.196.15) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.31; Fri, 9 Nov 2018 02:50:36 +0000
+Received: from HE1PR04MB1497.eurprd04.prod.outlook.com
+ ([fe80::4070:91bb:7cd2:1f63]) by HE1PR04MB1497.eurprd04.prod.outlook.com
+ ([fe80::4070:91bb:7cd2:1f63%3]) with mapi id 15.20.1294.034; Fri, 9 Nov 2018
+ 02:50:36 +0000
+From:   Xiaowei Bao <xiaowei.bao@nxp.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "M.h. Lian" <minghuan.lian@nxp.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "cyrille.pitchen@free-electrons.com" 
+        <cyrille.pitchen@free-electrons.com>,
+        "pombredanne@nexb.com" <pombredanne@nexb.com>,
+        "shawn.lin@rock-chips.com" <shawn.lin@rock-chips.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+CC:     Jiafei Pan <jiafei.pan@nxp.com>
+Subject: RE: [PATCH 5/6] pci: layerscape: Add the EP mode support.
+Thread-Topic: [PATCH 5/6] pci: layerscape: Add the EP mode support.
+Thread-Index: AQHUbFPBC6aEqg5WuUCTs5ZVrmqyDqUxAPsAgAA8nBCAB2zBkIAAHa2AgAAAvtCACCmfgIAAANHAgAFh7ACAAAXk4IAEefog
+Date:   Fri, 9 Nov 2018 02:50:35 +0000
+Message-ID: <HE1PR04MB1497B7916B579EEFFB3E8BEEF5C60@HE1PR04MB1497.eurprd04.prod.outlook.com>
+References: <20181025110901.5680-1-xiaowei.bao@nxp.com>
+ <20181025110901.5680-5-xiaowei.bao@nxp.com>
+ <d9d07e05-556b-a56d-bb7f-eaec9fb739b8@ti.com>
+ <HE1PR04MB1497DF7D9428A5C791CB6A03F5F00@HE1PR04MB1497.eurprd04.prod.outlook.com>
+ <HE1PR04MB14979058170FA16A7465FF9EF5CD0@HE1PR04MB1497.eurprd04.prod.outlook.com>
+ <a85a6900-2478-0750-6f33-2e787cf80d1d@ti.com>
+ <HE1PR04MB1497DF7378927C9BB5DF3E15F5CD0@HE1PR04MB1497.eurprd04.prod.outlook.com>
+ <8ec7f502-e058-2c28-9140-5d125e4af6ff@ti.com>
+ <HE1PR04MB1497DABC689F9A4A97FD4DF0F5CA0@HE1PR04MB1497.eurprd04.prod.outlook.com>
+ <dfedeaec-9a3b-632e-af37-cb1963dcae7c@ti.com>
+ <HE1PR04MB14972FA5A46885370788B9B7F5CB0@HE1PR04MB1497.eurprd04.prod.outlook.com>
+In-Reply-To: <HE1PR04MB14972FA5A46885370788B9B7F5CB0@HE1PR04MB1497.eurprd04.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=xiaowei.bao@nxp.com; 
+x-originating-ip: [192.88.170.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;HE1PR04MB3049;6:FBBnxGLqCXtOnR8ErdioJ6qzNBDW1SVxfFQBwi5M4oAzt9n73qt+eBA+xwnipUjJ6gaEHjm8919SdDwlCR0iR2H7cdBjUtvnSUTrJTN9NDwrHdhQLK8kdbI8GmXrZbFSRUKK73QRbGsfe12z4T25u6DljjdThL1iO9+I43gqk29JgluaEEjABXHnuzkNNBZRkwJkeubrtg8SX07gLmWadLT77hH6+juPD1z0CKyvH7Jktb8lX9ZIKrJsgnBhOT22HPrTi9VHTe6mdfBv2JGmUM66s5sQeOypwq8CfX3RgAwP8O1q+ufAAwzh9KDhwoJVY88Lo73QY+q1s8JzfzCFXws0FalA1OPQDgEFqa5MsXUGGfhDnPRKCMEu7oXT+NGHZnMPFH8AkO6H2Q9WZPSH2cTodj6WqxdDZXvXSZyV+tfYdSAk6s5h8BNa7JvS0gjsA5dRP20WRhj+i8KdfF74kw==;5:kEhK9TUNA3hDpcjgU1+JWA8IChVikspxNt10dYGLQqzZTNiyGspX4aMPu52dY2Z83TAS1DXoazlxMGtBv1fNJBvzbebVWlh0TDAud004LfHxZ/xxnSBDxDiTelFnU53vbPWAtI5R+o7EmUTEU/gZw/1hf12oOOHSpZsqWoIIJ7Y=;7:3KlelNbEuTioz3K55ExuJ/ZQrQohMoGIMmGu4HI36G+A50tdFptoIKSEQ+cQ2xV2k6F+KninCBs+UV7hNUlx2asgkdLFhNXB0I937aUfodPDlcIXOdUh0KmzcaBSlkAFWX9E9XGD1LdeUzigAIMAgQ==
+x-ms-office365-filtering-correlation-id: b07cf160-bcd0-4160-68be-08d645ee2001
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:HE1PR04MB3049;
+x-ms-traffictypediagnostic: HE1PR04MB3049:
+x-microsoft-antispam-prvs: <HE1PR04MB30494511CD188AD53B3AC6A5F5C60@HE1PR04MB3049.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(211936372134217)(180628864354917)(58145275503218)(9452136761055)(258649278758335)(65623756079841)(31051911155226)(185117386973197);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231382)(944501410)(52105095)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:HE1PR04MB3049;BCL:0;PCL:0;RULEID:;SRVR:HE1PR04MB3049;
+x-forefront-prvs: 08512C5403
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(39860400002)(346002)(366004)(376002)(13464003)(199004)(189003)(110136005)(14444005)(55016002)(6246003)(446003)(6436002)(4326008)(11346002)(25786009)(2501003)(71190400001)(71200400001)(14454004)(93886005)(2201001)(2906002)(8936002)(486006)(53936002)(478600001)(86362001)(68736007)(9686003)(81156014)(476003)(8676002)(316002)(256004)(6116002)(81166006)(3846002)(97736004)(2900100001)(105586002)(6506007)(53546011)(99286004)(102836004)(7416002)(575784001)(44832011)(76176011)(106356001)(186003)(33656002)(229853002)(66066001)(5660300001)(74316002)(7696005)(305945005)(26005)(7736002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR04MB3049;H:HE1PR04MB1497.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: cgAZp3S6k+vOcoewc92rvdw/gli4pWyDvCBd+g0zb1hN+MjOEW0U3xz2bIAYbgLeW5sftZRY6DDC7Z1Rq+nitrsiX19OhStLFvbCO6FCIpGGWIsY83ZPewWOXv7Ce6z9ro1T7+2C+K4x8oVumR1DtokkExvqzdxpPecuV7OHf2etqVcRH8YArFkolPMFLXyURWUulehjz477ISonOiSXqKHfYZKhvGMvUz3f3s3AkjGL5StjnfdtOMGpStTDtkD3rtd9GU1nGVkFyedkGO0Rhq83VOjPVLCP5ZbMazds+7iUcR8F2AenlMxP+ro6LRle9eMQbOAahqfLlSwrqvkkl/L6jkfmf5lK4a32ru2hApU=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Fri, 09 Nov 2018 04:36:19 +0200
-From:   Nick Kossifidis <mick@ics.forth.gr>
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     Nick Kossifidis <mick@ics.forth.gr>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Atish Patra <atish.patra@wdc.com>,
-        linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-        Damien.LeMoal@wdc.com, alankao@andestech.com, zong@andestech.com,
-        anup@brainfault.org, palmer@sifive.com,
-        linux-kernel@vger.kernel.org, hch@infradead.org,
-        robh+dt@kernel.org, tglx@linutronix.de
-Subject: Re: [RFC 0/2] Add RISC-V cpu topology
-Organization: FORTH
-In-Reply-To: <20181108164827.GB10953@e107155-lin>
-References: <1541113468-22097-1-git-send-email-atish.patra@wdc.com>
- <866dedbc78ab4fa0e3b040697e112106@mailhost.ics.forth.gr>
- <20181106141331.GA28458@e107155-lin>
- <969fc2a5198984e0dfe8c3f585dc65f9@mailhost.ics.forth.gr>
- <20181106162051.w7fyweuxrl7ujzuz@lakrids.cambridge.arm.com>
- <abcae019e6ae749b17ecb0c721fd3177@mailhost.ics.forth.gr>
- <20181107122803.GA8433@e107155-lin>
- <d04779705c47b59b94300365e805dbd3@mailhost.ics.forth.gr>
- <20181108164827.GB10953@e107155-lin>
-Message-ID: <b44d94e4a5575e2ce49344b50956bf8e@mailhost.ics.forth.gr>
-X-Sender: mick@mailhost.ics.forth.gr
-User-Agent: Roundcube Webmail/1.1.2
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMIsWRmVeSWpSXmKPExsXSHc2orLvs05Nog7Zn6hbblqxmtWj58I7V
-        YtGK7ywWre3fmCzmHznHanF6wiImi8u75rBZbPvcwmax9PpFJovmd+fYLTZPWMBq0br3CLvF
-        8lM7WCw2b5rKbPF8ZS+bA7/HntOzmD3WzFvD6DH19xkWj4ebLjF5bF6h5bFpVSebx7tz59g9
-        Ni+p97jUfJ3d4/MmOY/2A91MAdxRXDYpqTmZZalF+nYJXBmbX99mKvjsUvG3jaOBsdOsi5GT
-        Q0LARKLt62zmLkYuDiGBw4wS3z83sEI4Bxklrs6/zApRZSoxe28nI4jNKyAocXLmExYQm1nA
-        QmLqlf2MELa8RPNWkEmcHCwCqhIHX09hA7HZBDQl5l86CFYvIqAuseTsFkaQBcwC85glpu/Z
-        ArZAWEBPomnDTTCbX0BY4tPdi0A2BwengKHEgYPmEAc9ZJZ4/WcfE8QRLhK9p7cwQhynIvHh
-        9wN2EFtUQFnixYnprBMYhWYhuXUWkltnIbl1ASPzKkaBxDJjvczkYr20/KKSDL30ok2M4Kic
-        67uD8dwC+0OMAhyMSjy8KxqeRAuxJpYVV+YeYpTgYFYS4bXcBxTiTUmsrEotyo8vKs1JLT7E
-        KM3BoiTOe/hFeJCQQHpiSWp2ampBahFMlomDU6qBUavx/DsJhjyVso1Nec+fZrG/mury7cJm
-        lR0H351UmGL/Z/LN9oexF1jShQp6sx3NW95qmxwscDoq77kogGWp2iGB0Jj5MwWqTPvrEll3
-        xsnezJo285j8pLNV1wMWnKxdXHWcUWRZZd4aE7569+ZJTq2Ra7j/Tz197NYjdfsXlW1mSwsX
-        znY8p8RSnJFoqMVcVJwIAOq4b5PGAgAA
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b07cf160-bcd0-4160-68be-08d645ee2001
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Nov 2018 02:50:35.7957
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR04MB3049
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Στις 2018-11-08 18:48, Sudeep Holla έγραψε:
-> On Thu, Nov 08, 2018 at 04:52:30PM +0200, Nick Kossifidis wrote:
->> Στις 2018-11-07 14:28, Sudeep Holla έγραψε:
->> >
->> > I agree, but we have kernel code using it(arm64/kernel/topology.c). It's
->> > too late to remove it. But we can always keep to optional if we move the
->> > ARM64 binding as generic to start with and mandate it for only ARM64.
->> >
->> 
->> That's my point as well, if we are going to define something to be 
->> used
->> by everybody and in this case, at least for RISC-V, there is no need 
->> to
->> carry this from the ARM64 binding.
-> 
-> Sure, whatever you don't need in RISC-V you can see if they can be made
-> optional. I don't think that should be a problem.
-> 
->> It shouldn't be that hard to fix this
->> in the future for ARM64 as well, we may give the new mapping another 
->> name,
->> maybe cpu-map2 or cpu-topology to slowly move to the new one.
-> 
-> No, we have it and we will continue to support it. It's not broken to
-> fix on ARM64. Why do you think that it's broken on ARM64 ?
-> 
-
-I never said it's broken, I just assumed that if this binding becomes 
-common
-across archs you'd probably like to switch to it, so it should either be
-backwards compatible with what you have (or as you said "keep them 
-optional")
-or take steps for the transition. I'm ok either way, It's not such a 
-serious
-thing to have the <thread> nodes supported or keep the distinction 
-between
-"cores", "clusters" or whatever, I'm sorry if it looked that way. I'm 
-just
-saying that I'd like to have something cleaner for RISC-V and/or a 
-binding
-that's common for all, we can support both and be backwards compatible, 
-or we
-can keep it as is and mandate the <thread> nodes only for ARM64 as you
-suggested.
-
->> Changing the
->> dts files shouldn't be this hard, we can provide a script for it. We 
->> can
->> even contain some compatibility code that also understands <thread> 
->> nodes
->> and e.g. merges them together on a core node.
->> 
-> 
-> Sure, hang on this idea of scripting, we can make a better use of it.
-> Details later further in the mail.
-> 
-> [...]
-> 
->> > > The same also happens with the generic numa binding on
->> > > Documentation/devicetree/bindings/numa.txt
->> > > which says we should add the nuna-node-id on each of the cpu nodes.
->> > >
->> >
->> > Yes, but again what's the problem ?
->> >
->> 
->> There is no problem with the above bindings, the problem is that we 
->> have
->> to put them on each cpu node which is messy. We could instead put them
->> (optionally) on the various groupings used on cpu-map. This would 
->> allow
->> cpu-map to be more specific of what is shared across the members of 
->> each
->> group (core/cluster/whatever).
->> 
-> 
-> I think Mark has already explain why/how generic bindings are useful.
-> If you still have concerns, take it up separately and see how you can
-> build *perfect* bindings for RISC-V to avoid any legacy baggage.
-> 
-> We have reasons why we can't assume information about cache or power
-> domain topology from CPU topology. I have summarised them already and
-> we are not discussing.
-
-But that's what you do on arch/arm/kernel/topology.c, you assume
-information on power domain and cache topology based on the CPU topology
-when you define the scheduling domain topology levels.
-
-PowerPC also does the same on arch/powerpc/kernel/smp.c and basically if
-you track the usage of struct sched_domain_topology_level you'll see 
-that
-every arch that uses it to instruct the scheduler about the scheduling
-domains, does it based on its CPU topology, which I think we both agree
-is wrong.
-
-> There may not be perfect bindings but there are
-> already supported and nothing is broken here to fix. DT bindings are
-> *not* same as code to fix it with a patch to the bindings themselves.
-> Once agreed and merged, they need to be treated like user ABI.
-> 
-
-The only use of the devicetree spec bindings for caches if I'm not
-mistaken are used on your cacheinfo driver for exporting them to 
-userspace
-through sysfs (thank you for cleaning this up btw). Even if we have the
-cache topology  using the generic bindings, we are not doing anything 
-with
-that information but export it to userspace.
-
-As for the power domain bindings, we have drivers/base/power/domain.c 
-that
-handles the generic bindings and it's being used by some drivers to put
-devices to power domains (something used by the pm code), but from a 
-quick
-search it's not used for cpu nodes and I didn't see this info being used
-for providing hints to the scheduler either. Even with the generic power
-domain bindings in place, for CPU idle states, on ARM we have another
-binding that's basically the same with the addition of 
-"wakeup-latency-us".
-
-For having different capacity there is no generic binding but I guess we
-could use ARM's.
-
-Of the generic bindings that relate to the scheduler's behavior, only 
-the
-numa binding is used as expected and only by ARM64, powerpc and sparc 
-use
-their own stuff.
-
-So there may be nothing broken regarding the generic / already existing
-bindings, but their support needs fixing. The way they are now we can't
-use them on RISC-V for configuring the scheduler and supporting SMT and
-MC properly + I'm not in favor of using CPU topology blindly as the
-other archs do.
-
->> As I wrote on my answer to Mark previously, the bindings for infering
->> the cache topology, numa topology, power domain topology etc are 
->> already
->> there, they are in the devicet tree spec and provide very specific
->> informations we can use. Much "stronger" hints of what's going on at
->> the hw level. The cpu-map doesn't provide such information, it just
->> provides a view of how the various harts/threads are "packed" on the 
->> chip,
->> not what they share inside each level of "packing". It's useful 
->> because
->> it saves people from having to define a bunch of cache nodes and 
->> describe
->> the cache hierarchy on the device tree using the standard spec.
->> 
-> 
-> Ah, here comes. If you want to save people's time or whatever, you can 
-> use
-> your scripting magic you have mentioned above to define those bunch of 
-> nodes
-> you want to avoid.
-> 
-
-I mentioned the script as a transitioning method, but you are right, it 
-goes
-both ways.
-
->> So since cpu-map is there for convenience let's make it more 
->> convenient !
->> What I'm saying is that cpu-map could be a more compact way of using 
->> the
->> existing bindings for adding properties on groups of harts instead of
->> putting them on each hart individually. It will simplify the 
->> representation
->> and may also optimize the implementation a bit (we may get the 
->> information
->> we need faster). I don't see any other reason for using cpu-map on 
->> RISC-V
->> or for making it global across archs.
->> 
-> 
-> Sure, I don't have strong opinions there. Just stop mentioning that 
-> this
-> is the only solution and all existing ones are broken. They are not and
-> needs to be supported until they are explicitly deprecated, becomes
-> obsolete and finally removed.
-> 
-> [...]
-> 
-
-But I never said that's "the only solution and everything else is 
-broken" !
-I'm just proposing an extension to cpu-map since Mark suggested that 
-it's
-possible. My goal is to try and consolidate cpu-map with what Atish 
-proposed
-for RISC-V (so that we can use the same code) and point out some issues
-on how we use and define the CPU topology.
-
->> >
->> > Why are you so keen on optimising the representation ?
->> > If you are worried about large systems, generate one instead of
->> > handcrafted.
->> >
->> 
->> I don't see a reason not to try to optimize it, since we are talking
->> about a binding to be used by RISC-V and potentially everybody, I 
->> think
->> it makes sens to improve upon what we already have.
->> 
-> 
-> Sure, you can always unless you stop treating existing ones are broken.
-> I have already told DT bindings are not *normal code*. You can just
-> replace existing ones with new optimised ones. You can only add the new
-> (*optimised*) ones to the existing ones. You *need* to understand that
-> concept first, otherwise there's not point in this endless discussion
-> IMO.
-> 
-> I will stop here as I will have to repeat whatever I have already
-> mentioned to comment on your arguments below.
-> 
-> In summary, I am not against improving the bindings if you think it's
-> possible, but I don't see how it's more beneficially especially if we
-> are going to support existing ones also. Mark has already given all the
-> details.
-> 
-
-ACK, thanks a lot for your time and the discussion so far, I really
-appreciate it.
-
-Regards,
-Nick
-
+DQoNCi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQpGcm9tOiBYaWFvd2VpIEJhbyANClNlbnQ6
+IDIwMTjlubQxMeaciDbml6UgMTQ6NDgNClRvOiAnS2lzaG9uIFZpamF5IEFicmFoYW0gSScgPGtp
+c2hvbkB0aS5jb20+OyBiaGVsZ2Fhc0Bnb29nbGUuY29tOyByb2JoK2R0QGtlcm5lbC5vcmc7IG1h
+cmsucnV0bGFuZEBhcm0uY29tOyBzaGF3bmd1b0BrZXJuZWwub3JnOyBMZW8gTGkgPGxlb3lhbmcu
+bGlAbnhwLmNvbT47IGxvcmVuem8ucGllcmFsaXNpQGFybS5jb207IGFybmRAYXJuZGIuZGU7IGdy
+ZWdraEBsaW51eGZvdW5kYXRpb24ub3JnOyBNLmguIExpYW4gPG1pbmdodWFuLmxpYW5AbnhwLmNv
+bT47IE1pbmdrYWkgSHUgPG1pbmdrYWkuaHVAbnhwLmNvbT47IFJveSBaYW5nIDxyb3kuemFuZ0Bu
+eHAuY29tPjsga3N0ZXdhcnRAbGludXhmb3VuZGF0aW9uLm9yZzsgY3lyaWxsZS5waXRjaGVuQGZy
+ZWUtZWxlY3Ryb25zLmNvbTsgcG9tYnJlZGFubmVAbmV4Yi5jb207IHNoYXduLmxpbkByb2NrLWNo
+aXBzLmNvbTsgbGludXgtcGNpQHZnZXIua2VybmVsLm9yZzsgZGV2aWNldHJlZUB2Z2VyLmtlcm5l
+bC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWFybS1rZXJuZWxAbGlz
+dHMuaW5mcmFkZWFkLm9yZzsgbGludXhwcGMtZGV2QGxpc3RzLm96bGFicy5vcmcNCkNjOiBKaWFm
+ZWkgUGFuIDxqaWFmZWkucGFuQG54cC5jb20+DQpTdWJqZWN0OiBSRTogW1BBVENIIDUvNl0gcGNp
+OiBsYXllcnNjYXBlOiBBZGQgdGhlIEVQIG1vZGUgc3VwcG9ydC4NCg0KSGkgS2lzaG9u77yMDQoN
+Ci0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQpGcm9tOiBLaXNob24gVmlqYXkgQWJyYWhhbSBJ
+IDxraXNob25AdGkuY29tPg0KU2VudDogMjAxOOW5tDEx5pyINuaXpSAxNDowNw0KVG86IFhpYW93
+ZWkgQmFvIDx4aWFvd2VpLmJhb0BueHAuY29tPjsgYmhlbGdhYXNAZ29vZ2xlLmNvbTsgcm9iaCtk
+dEBrZXJuZWwub3JnOyBtYXJrLnJ1dGxhbmRAYXJtLmNvbTsgc2hhd25ndW9Aa2VybmVsLm9yZzsg
+TGVvIExpIDxsZW95YW5nLmxpQG54cC5jb20+OyBsb3JlbnpvLnBpZXJhbGlzaUBhcm0uY29tOyBh
+cm5kQGFybmRiLmRlOyBncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZzsgTS5oLiBMaWFuIDxtaW5n
+aHVhbi5saWFuQG54cC5jb20+OyBNaW5na2FpIEh1IDxtaW5na2FpLmh1QG54cC5jb20+OyBSb3kg
+WmFuZyA8cm95LnphbmdAbnhwLmNvbT47IGtzdGV3YXJ0QGxpbnV4Zm91bmRhdGlvbi5vcmc7IGN5
+cmlsbGUucGl0Y2hlbkBmcmVlLWVsZWN0cm9ucy5jb207IHBvbWJyZWRhbm5lQG5leGIuY29tOyBz
+aGF3bi5saW5Acm9jay1jaGlwcy5jb207IGxpbnV4LXBjaUB2Z2VyLmtlcm5lbC5vcmc7IGRldmlj
+ZXRyZWVAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBsaW51
+eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7IGxpbnV4cHBjLWRldkBsaXN0cy5vemxh
+YnMub3JnDQpDYzogSmlhZmVpIFBhbiA8amlhZmVpLnBhbkBueHAuY29tPg0KU3ViamVjdDogUmU6
+IFtQQVRDSCA1LzZdIHBjaTogbGF5ZXJzY2FwZTogQWRkIHRoZSBFUCBtb2RlIHN1cHBvcnQuDQoN
+CihSZW1vdmVkIE5pa2xhcyBhcyBtYWlscyB0byBoaW0gaXMgYm91bmNpbmcpDQoNCkhpLA0KDQpQ
+bGVhc2UgZml4IHlvdXIgZW1haWwgY2xpZW50LiBSZWZlciBEb2N1bWVudGF0aW9uL3Byb2Nlc3Mv
+ZW1haWwtY2xpZW50cy5yc3QNCg0KT24gMDUvMTEvMTggMjo0NSBQTSwgWGlhb3dlaSBCYW8gd3Jv
+dGU6DQo+IA0KPiANCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogS2lzaG9u
+IFZpamF5IEFicmFoYW0gSSA8a2lzaG9uQHRpLmNvbT4NCj4gU2VudDogMjAxOOW5tDEx5pyINeaX
+pSAxNjo1Nw0KPiBUbzogWGlhb3dlaSBCYW8gPHhpYW93ZWkuYmFvQG54cC5jb20+OyBiaGVsZ2Fh
+c0Bnb29nbGUuY29tOw0KPiByb2JoK2R0QGtlcm5lbC5vcmc7IG1hcmsucnV0bGFuZEBhcm0uY29t
+OyBzaGF3bmd1b0BrZXJuZWwub3JnOyBMZW8gTGkNCj4gPGxlb3lhbmcubGlAbnhwLmNvbT47IGxv
+cmVuem8ucGllcmFsaXNpQGFybS5jb207IGFybmRAYXJuZGIuZGU7IA0KPiBncmVna2hAbGludXhm
+b3VuZGF0aW9uLm9yZzsgTS5oLiBMaWFuIDxtaW5naHVhbi5saWFuQG54cC5jb20+OyBNaW5na2Fp
+IA0KPiBIdSA8bWluZ2thaS5odUBueHAuY29tPjsgUm95IFphbmcgPHJveS56YW5nQG54cC5jb20+
+OyANCj4ga3N0ZXdhcnRAbGludXhmb3VuZGF0aW9uLm9yZzsgY3lyaWxsZS5waXRjaGVuQGZyZWUt
+ZWxlY3Ryb25zLmNvbTsNCj4gcG9tYnJlZGFubmVAbmV4Yi5jb207IHNoYXduLmxpbkByb2NrLWNo
+aXBzLmNvbTsgDQo+IG5pa2xhcy5jYXNzZWxAYXhpcy5jb207IGxpbnV4LXBjaUB2Z2VyLmtlcm5l
+bC5vcmc7IA0KPiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIu
+a2VybmVsLm9yZzsgDQo+IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsgbGlu
+dXhwcGMtZGV2QGxpc3RzLm96bGFicy5vcmcNCj4gQ2M6IEppYWZlaSBQYW4gPGppYWZlaS5wYW5A
+bnhwLmNvbT4NCj4gU3ViamVjdDogUmU6IFtQQVRDSCA1LzZdIHBjaTogbGF5ZXJzY2FwZTogQWRk
+IHRoZSBFUCBtb2RlIHN1cHBvcnQuDQo+IA0KPiBIaSwNCj4gDQo+IE9uIDMxLzEwLzE4IDQ6MDgg
+UE0sIFhpYW93ZWkgQmFvIHdyb3RlOg0KPj4NCj4+DQo+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2Ut
+LS0tLQ0KPj4gRnJvbTogS2lzaG9uIFZpamF5IEFicmFoYW0gSSA8a2lzaG9uQHRpLmNvbT4NCj4+
+IFNlbnQ6IDIwMTjlubQxMOaciDMx5pelIDEyOjE1DQo+PiBUbzogWGlhb3dlaSBCYW8gPHhpYW93
+ZWkuYmFvQG54cC5jb20+OyBiaGVsZ2Fhc0Bnb29nbGUuY29tOw0KPj4gcm9iaCtkdEBrZXJuZWwu
+b3JnOyBtYXJrLnJ1dGxhbmRAYXJtLmNvbTsgc2hhd25ndW9Aa2VybmVsLm9yZzsgTGVvIExpDQo+
+PiA8bGVveWFuZy5saUBueHAuY29tPjsgbG9yZW56by5waWVyYWxpc2lAYXJtLmNvbTsgYXJuZEBh
+cm5kYi5kZTsgDQo+PiBncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZzsgTS5oLiBMaWFuIDxtaW5n
+aHVhbi5saWFuQG54cC5jb20+OyANCj4+IE1pbmdrYWkgSHUgPG1pbmdrYWkuaHVAbnhwLmNvbT47
+IFJveSBaYW5nIDxyb3kuemFuZ0BueHAuY29tPjsgDQo+PiBrc3Rld2FydEBsaW51eGZvdW5kYXRp
+b24ub3JnOyBjeXJpbGxlLnBpdGNoZW5AZnJlZS1lbGVjdHJvbnMuY29tOw0KPj4gcG9tYnJlZGFu
+bmVAbmV4Yi5jb207IHNoYXduLmxpbkByb2NrLWNoaXBzLmNvbTsgDQo+PiBuaWtsYXMuY2Fzc2Vs
+QGF4aXMuY29tOyBsaW51eC1wY2lAdmdlci5rZXJuZWwub3JnOyANCj4+IGRldmljZXRyZWVAdmdl
+ci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyANCj4+IGxpbnV4LWFy
+bS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsgbGludXhwcGMtZGV2QGxpc3RzLm96bGFicy5v
+cmcNCj4+IENjOiBKaWFmZWkgUGFuIDxqaWFmZWkucGFuQG54cC5jb20+DQo+PiBTdWJqZWN0OiBS
+ZTogW1BBVENIIDUvNl0gcGNpOiBsYXllcnNjYXBlOiBBZGQgdGhlIEVQIG1vZGUgc3VwcG9ydC4N
+Cj4+DQo+PiBIaSwNCj4+DQo+PiBPbiAzMS8xMC8xOCA4OjAzIEFNLCBYaWFvd2VpIEJhbyB3cm90
+ZToNCj4+Pg0KPj4+DQo+Pj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4+PiBGcm9tOiBY
+aWFvd2VpIEJhbw0KPj4+IFNlbnQ6IDIwMTjlubQxMOaciDI25pelIDE3OjE5DQo+Pj4gVG86ICdL
+aXNob24gVmlqYXkgQWJyYWhhbSBJJyA8a2lzaG9uQHRpLmNvbT47IGJoZWxnYWFzQGdvb2dsZS5j
+b207DQo+Pj4gcm9iaCtkdEBrZXJuZWwub3JnOyBtYXJrLnJ1dGxhbmRAYXJtLmNvbTsgc2hhd25n
+dW9Aa2VybmVsLm9yZzsgTGVvIA0KPj4+IHJvYmgrTGkNCj4+PiA8bGVveWFuZy5saUBueHAuY29t
+PjsgbG9yZW56by5waWVyYWxpc2lAYXJtLmNvbTsgYXJuZEBhcm5kYi5kZTsgDQo+Pj4gZ3JlZ2to
+QGxpbnV4Zm91bmRhdGlvbi5vcmc7IE0uaC4gTGlhbiA8bWluZ2h1YW4ubGlhbkBueHAuY29tPjsg
+DQo+Pj4gTWluZ2thaSBIdSA8bWluZ2thaS5odUBueHAuY29tPjsgUm95IFphbmcgPHJveS56YW5n
+QG54cC5jb20+OyANCj4+PiBrc3Rld2FydEBsaW51eGZvdW5kYXRpb24ub3JnOyBjeXJpbGxlLnBp
+dGNoZW5AZnJlZS1lbGVjdHJvbnMuY29tOw0KPj4+IHBvbWJyZWRhbm5lQG5leGIuY29tOyBzaGF3
+bi5saW5Acm9jay1jaGlwcy5jb207IA0KPj4+IG5pa2xhcy5jYXNzZWxAYXhpcy5jb207IGxpbnV4
+LXBjaUB2Z2VyLmtlcm5lbC5vcmc7IA0KPj4+IGRldmljZXRyZWVAdmdlci5rZXJuZWwub3JnOyBs
+aW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyANCj4+PiBsaW51eC1hcm0ta2VybmVsQGxpc3Rz
+LmluZnJhZGVhZC5vcmc7IGxpbnV4cHBjLWRldkBsaXN0cy5vemxhYnMub3JnDQo+Pj4gQ2M6IEpp
+YWZlaSBQYW4gPGppYWZlaS5wYW5AbnhwLmNvbT4NCj4+PiBTdWJqZWN0OiBSRTogW1BBVENIIDUv
+Nl0gcGNpOiBsYXllcnNjYXBlOiBBZGQgdGhlIEVQIG1vZGUgc3VwcG9ydC4NCj4+Pg0KPj4+DQo+
+Pj4NCj4+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPj4+IEZyb206IEtpc2hvbiBWaWph
+eSBBYnJhaGFtIEkgPGtpc2hvbkB0aS5jb20+DQo+Pj4gU2VudDogMjAxOOW5tDEw5pyIMjbml6Ug
+MTM6MjkNCj4+PiBUbzogWGlhb3dlaSBCYW8gPHhpYW93ZWkuYmFvQG54cC5jb20+OyBiaGVsZ2Fh
+c0Bnb29nbGUuY29tOw0KPj4+IHJvYmgrZHRAa2VybmVsLm9yZzsgbWFyay5ydXRsYW5kQGFybS5j
+b207IHNoYXduZ3VvQGtlcm5lbC5vcmc7IExlbyANCj4+PiByb2JoK0xpDQo+Pj4gPGxlb3lhbmcu
+bGlAbnhwLmNvbT47IGxvcmVuem8ucGllcmFsaXNpQGFybS5jb207IGFybmRAYXJuZGIuZGU7IA0K
+Pj4+IGdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnOyBNLmguIExpYW4gPG1pbmdodWFuLmxpYW5A
+bnhwLmNvbT47IA0KPj4+IE1pbmdrYWkgSHUgPG1pbmdrYWkuaHVAbnhwLmNvbT47IFJveSBaYW5n
+IDxyb3kuemFuZ0BueHAuY29tPjsgDQo+Pj4ga3N0ZXdhcnRAbGludXhmb3VuZGF0aW9uLm9yZzsg
+Y3lyaWxsZS5waXRjaGVuQGZyZWUtZWxlY3Ryb25zLmNvbTsNCj4+PiBwb21icmVkYW5uZUBuZXhi
+LmNvbTsgc2hhd24ubGluQHJvY2stY2hpcHMuY29tOyANCj4+PiBuaWtsYXMuY2Fzc2VsQGF4aXMu
+Y29tOyBsaW51eC1wY2lAdmdlci5rZXJuZWwub3JnOyANCj4+PiBkZXZpY2V0cmVlQHZnZXIua2Vy
+bmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgDQo+Pj4gbGludXgtYXJtLWtl
+cm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51eHBwYy1kZXZAbGlzdHMub3psYWJzLm9yZw0K
+Pj4+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggNS82XSBwY2k6IGxheWVyc2NhcGU6IEFkZCB0aGUgRVAg
+bW9kZSBzdXBwb3J0Lg0KPj4+DQo+Pj4gSGksDQo+Pj4NCj4+PiBPbiBUaHVyc2RheSAyNSBPY3Rv
+YmVyIDIwMTggMDQ6MzkgUE0sIFhpYW93ZWkgQmFvIHdyb3RlOg0KPj4+PiBBZGQgdGhlIFBDSWUg
+RVAgbW9kZSBzdXBwb3J0IGZvciBsYXllcnNjYXBlIHBsYXRmb3JtLg0KPj4+Pg0KPj4+PiBTaWdu
+ZWQtb2ZmLWJ5OiBYaWFvd2VpIEJhbyA8eGlhb3dlaS5iYW9AbnhwLmNvbT4NCj4+Pj4gLS0tDQo+
+Pj4+ICBkcml2ZXJzL3BjaS9jb250cm9sbGVyL2R3Yy9NYWtlZmlsZSAgICAgICAgICAgIHwgICAg
+MiArLQ0KPj4+PiAgZHJpdmVycy9wY2kvY29udHJvbGxlci9kd2MvcGNpLWxheWVyc2NhcGUtZXAu
+YyB8ICAxNjENCj4+Pj4gKysrKysrKysrKysrKysrKysrKysrKysrDQo+Pj4+ICAyIGZpbGVzIGNo
+YW5nZWQsIDE2MiBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9ucygtKSAgY3JlYXRlIG1vZGUNCj4+
+Pj4gMTAwNjQ0IGRyaXZlcnMvcGNpL2NvbnRyb2xsZXIvZHdjL3BjaS1sYXllcnNjYXBlLWVwLmMN
+Cj4+Pj4NCj4+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGNpL2NvbnRyb2xsZXIvZHdjL01ha2Vm
+aWxlDQo+Pj4+IGIvZHJpdmVycy9wY2kvY29udHJvbGxlci9kd2MvTWFrZWZpbGUNCj4+Pj4gaW5k
+ZXggNWQyY2U3Mi4uYjI2ZDYxNyAxMDA2NDQNCj4+Pj4gLS0tIGEvZHJpdmVycy9wY2kvY29udHJv
+bGxlci9kd2MvTWFrZWZpbGUNCj4+Pj4gKysrIGIvZHJpdmVycy9wY2kvY29udHJvbGxlci9kd2Mv
+TWFrZWZpbGUNCj4+Pj4gQEAgLTgsNyArOCw3IEBAIG9iai0kKENPTkZJR19QQ0lfRVhZTk9TKSAr
+PSBwY2ktZXh5bm9zLm8NCj4+Pj4gIG9iai0kKENPTkZJR19QQ0lfSU1YNikgKz0gcGNpLWlteDYu
+bw0KPj4+PiAgb2JqLSQoQ09ORklHX1BDSUVfU1BFQVIxM1hYKSArPSBwY2llLXNwZWFyMTN4eC5v
+DQo+Pj4+ICBvYmotJChDT05GSUdfUENJX0tFWVNUT05FKSArPSBwY2kta2V5c3RvbmUtZHcubyBw
+Y2kta2V5c3RvbmUubw0KPj4+PiAtb2JqLSQoQ09ORklHX1BDSV9MQVlFUlNDQVBFKSArPSBwY2kt
+bGF5ZXJzY2FwZS5vDQo+Pj4+ICtvYmotJChDT05GSUdfUENJX0xBWUVSU0NBUEUpICs9IHBjaS1s
+YXllcnNjYXBlLm8gDQo+Pj4+ICtwY2ktbGF5ZXJzY2FwZS1lcC5vDQo+Pj4+ICBvYmotJChDT05G
+SUdfUENJRV9RQ09NKSArPSBwY2llLXFjb20ubw0KPj4+PiAgb2JqLSQoQ09ORklHX1BDSUVfQVJN
+QURBXzhLKSArPSBwY2llLWFybWFkYThrLm8NCj4+Pj4gIG9iai0kKENPTkZJR19QQ0lFX0FSVFBF
+QzYpICs9IHBjaWUtYXJ0cGVjNi5vIGRpZmYgLS1naXQgDQo+Pj4+IGEvZHJpdmVycy9wY2kvY29u
+dHJvbGxlci9kd2MvcGNpLWxheWVyc2NhcGUtZXAuYw0KPj4+PiBiL2RyaXZlcnMvcGNpL2NvbnRy
+b2xsZXIvZHdjL3BjaS1sYXllcnNjYXBlLWVwLmMNCj4+Pj4gbmV3IGZpbGUgbW9kZSAxMDA2NDQN
+Cj4+Pj4gaW5kZXggMDAwMDAwMC4uM2IzM2JiYw0KPj4+PiAtLS0gL2Rldi9udWxsDQo+Pj4+ICsr
+KyBiL2RyaXZlcnMvcGNpL2NvbnRyb2xsZXIvZHdjL3BjaS1sYXllcnNjYXBlLWVwLmMNCj4+Pj4g
+QEAgLTAsMCArMSwxNjEgQEANCj4+Pj4gKy8vIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwt
+Mi4wDQo+Pj4+ICsvKg0KPj4+PiArICogUENJZSBjb250cm9sbGVyIEVQIGRyaXZlciBmb3IgRnJl
+ZXNjYWxlIExheWVyc2NhcGUgU29Dcw0KPj4+PiArICoNCj4+Pj4gKyAqIENvcHlyaWdodCAoQykg
+MjAxOCBOWFAgU2VtaWNvbmR1Y3Rvci4NCj4+Pj4gKyAqDQo+Pj4+ICsgKiBBdXRob3I6IFhpYW93
+ZWkgQmFvIDx4aWFvd2VpLmJhb0BueHAuY29tPiAgKi8NCj4+Pj4gKw0KPj4+PiArI2luY2x1ZGUg
+PGxpbnV4L2tlcm5lbC5oPg0KPj4+PiArI2luY2x1ZGUgPGxpbnV4L2luaXQuaD4NCj4+Pj4gKyNp
+bmNsdWRlIDxsaW51eC9vZl9wY2kuaD4NCj4+Pj4gKyNpbmNsdWRlIDxsaW51eC9vZl9wbGF0Zm9y
+bS5oPg0KPj4+PiArI2luY2x1ZGUgPGxpbnV4L29mX2FkZHJlc3MuaD4NCj4+Pj4gKyNpbmNsdWRl
+IDxsaW51eC9wY2kuaD4NCj4+Pj4gKyNpbmNsdWRlIDxsaW51eC9wbGF0Zm9ybV9kZXZpY2UuaD4g
+I2luY2x1ZGUgPGxpbnV4L3Jlc291cmNlLmg+DQo+Pj4+ICsNCj4+Pj4gKyNpbmNsdWRlICJwY2ll
+LWRlc2lnbndhcmUuaCINCj4+Pj4gKw0KPj4+PiArI2RlZmluZSBQQ0lFX0RCSTJfT0ZGU0VUCQkw
+eDEwMDAJLyogREJJMiBiYXNlIGFkZHJlc3MqLw0KPj4+DQo+Pj4gVGhlIGJhc2UgYWRkcmVzcyBz
+aG91bGQgY29tZSBmcm9tIGR0Lg0KPj4+PiArDQo+Pj4+ICtzdHJ1Y3QgbHNfcGNpZV9lcCB7DQo+
+Pj4+ICsJc3RydWN0IGR3X3BjaWUJCSpwY2k7DQo+Pj4+ICt9Ow0KPj4+PiArDQo+Pj4+ICsjZGVm
+aW5lIHRvX2xzX3BjaWVfZXAoeCkJZGV2X2dldF9kcnZkYXRhKCh4KS0+ZGV2KQ0KPj4+PiArDQo+
+Pj4+ICtzdGF0aWMgYm9vbCBsc19wY2llX2lzX2JyaWRnZShzdHJ1Y3QgbHNfcGNpZV9lcCAqcGNp
+ZSkgew0KPj4+PiArCXN0cnVjdCBkd19wY2llICpwY2kgPSBwY2llLT5wY2k7DQo+Pj4+ICsJdTMy
+IGhlYWRlcl90eXBlOw0KPj4+PiArDQo+Pj4+ICsJaGVhZGVyX3R5cGUgPSBpb3JlYWQ4KHBjaS0+
+ZGJpX2Jhc2UgKyBQQ0lfSEVBREVSX1RZUEUpOw0KPj4+PiArCWhlYWRlcl90eXBlICY9IDB4N2Y7
+DQo+Pj4+ICsNCj4+Pj4gKwlyZXR1cm4gaGVhZGVyX3R5cGUgPT0gUENJX0hFQURFUl9UWVBFX0JS
+SURHRTsgfQ0KPj4+PiArDQo+Pj4+ICtzdGF0aWMgaW50IGxzX3BjaWVfZXN0YWJsaXNoX2xpbmso
+c3RydWN0IGR3X3BjaWUgKnBjaSkgew0KPj4+PiArCXJldHVybiAwOw0KPj4+PiArfQ0KPj4+DQo+
+Pj4gVGhlcmUgc2hvdWxkIGJlIHNvbWUgd2F5IGJ5IHdoaWNoIEVQIHNob3VsZCB0ZWxsIFJDIHRo
+YXQgaXQgaXMgbm90IGNvbmZpZ3VyZWQgeWV0LiBBcmUgdGhlcmUgbm8gYml0cyB0byBjb250cm9s
+IExUU1NNIHN0YXRlIGluaXRpYWxpemF0aW9uIG9yIENvbmZpZ3VyYXRpb24gcmV0cnkgc3RhdHVz
+IGVuYWJsaW5nPw0KPj4+IFtYaWFvd2VpIEJhb10gVGhlcmUgaGF2ZSBub3QgYml0cyB0byBjb250
+cm9sIExUU1NNIHN0YXRlIHRvIHRlbGwgdGhlIFJDIGl0IGlzIGNvbmZpZ3VyZWQuIFRoZSBzdGFy
+dCBsaW5rIGlzIGF1dG8gY29tcGxldGVkLg0KPj4+IFtYaWFvd2VpIEJhb10gSGkgS2lzaG9uLCBp
+cyB0aGVyZSBhbnkgYWR2aWNlPw0KPj4NCj4+IElmIHRoZXJlIGlzIG5vIEhXIHN1cHBvcnQsIEkg
+ZG9uJ3QgdGhpbmsgYW55dGhpbmcgY291bGQgYmUgZG9uZSBoZXJlLiBUaGlzIGNvdWxkIHJlc3Vs
+dCBpbiBSQyByZWFkaW5nIGNvbmZpZ3VyYXRpb24gc3BhY2UgZXZlbiBiZWZvcmUgRVAgaXMgZnVs
+bHkgaW5pdGlhbGl6ZWQuDQo+PiBbWGlhb3dlaSBCYW9dIFRoZSBib290bG9hZGVyIGhhdmUgaW5p
+dGlhbGl6ZWQgdGhlIEVQIGRldmljZSBhbmQgc2V0IHRoZSBjb25maWcgcmVhZHkgYml0LCBhbmQg
+dGhlIGtlcm5lbCBkb24ndCBuZWVkIHRvIGRvIGFueXRoaW5nLg0KPiANCj4gV2hhdCBkb2VzIGJv
+b3Rsb2FkZXIgaW5pdGFsaXplPyBUaGUgRVAgZHJpdmVyIGhlcmUgd2lsbCByZWluaXRpYWxpemUg
+ZXZlcnl0aGluZyByaWdodD8NCj4gW1hpYW93ZWkgQmFvXSBUaGUgYm9vdGxvYWRlciBpbml0aWFs
+aXplIEJBUiBzaXplLCBvdXRib3VuZCB3aW5kb3csIGluYm91bmQgd2luZG93IGFuZCBzZXQgdGhl
+IGNvbmZpZyByZWFkeSBiaXQuDQoNCkhvdyB3aWxsIGJvb3Rsb2FkZXIga25vdyB0aGUgQkFSIHNp
+emU/IFRoZSBCQVIgc2l6ZSBpcyBiYXNlZCBvbiB0aGUgZnVuY3Rpb24gZHJpdmVyLiBIb3cgZG9l
+cyBib290bG9hZGVyIGNvbmZpZ3VyZSB0aGUgT0Igd2luZG93PyBUaGUgT0Igd2luZG93IGlzIGNv
+bmZpZ3VyZWQgYmFzZWQgb24gdGhlIHNpemUgYW5kIGFkZHJlc3MgZ2l2ZW4gYnkgdGhlIGhvc3Qg
+ZHluYW1pY2FsbHkgYXQgcnVudGltZS4NCg0KVGhhbmtzDQpLaXNob24NCltYaWFvd2VpIEJhb10g
+V2UgdXNlIHRoZSBib290bG9hZGVyIGlzIHUtYm9vdCwgd2UgaW1wbGVtZW50IHRoZSBFUCBiYXNl
+IGZlYXR1cmUgaW4gdGhlIHUtYm9vdCwgZS5nLihNRU0gc3BhY2UgYWNjZXNzKFJDPD0+RVApLCBD
+T05GSUcgc3BhY2UgYWNjZXNzKFJDPT5FUCkpLCB3ZSBzZXQgdGhlIEVQIEJBUiBzaXplIGxpa2Ug
+a2VybmVsKHNldCB0aGUgUENJX0JBU0VfQUREUkVTU19uIHJlZ2lzdGVyLCBidXQgZGlmZmVyZW50
+IHNpemUpLCBhbmQgdGhlIG91dGJvdW5kIHdpbmRvd3MgYWxzbyBiZSBzZXQsIGFuZCB0aGUgYmFy
+IHNpemUgd2lsbCBiZSBjb3ZlciBieSB0aGUgRVAgZnJhbWV3b3JrIGRyaXZlciB3aGVuIGtlcm5l
+bCBzdGFydCB1cC4NCkkgaGF2ZSB0byBzZXQgdGhlIGR3X3BjaWVfb3BzLCBpZiBkb24ndCBjb25m
+aWcgdGhlIGR3X3BjaWVfb3BzIHRoZXJlIHdpbGwgaGF2ZSBjYWxsIHRyYWNlLCBiZWNhdXNlIHRo
+ZSBEVyBkcml2ZXIgd2lsbCBjYWxsIHRoZSB3cml0ZV9kYmkgb3IgcmVhZF9kYmkgZnVuY3Rpb24g
+ZGlyZWN0bHkgYnV0IG5vdCBjaGVjayB0aGUgZHdfcGNpZV9vcHMgd2hldGhlciBpcyBudWxsLiBJ
+IHJlZmVyIHRvIHRoZSBwY2llLWRlc2lnbndhcmUtcGxhdC5jIHRvIGltcGxlbWVudCBpdC4gSSBk
+b24ndCBrbm93IHdoYXQgeW91IHNhaWQgYWJvdXQgdGhpcywgY291bGQgeW91IHRlbGwgbWUgdGhl
+IGVmZmVjdCwgVGhhbmtzIGEgbG90Lg0KDQpUaGFua3MNClhpYW93ZWkNCltYaWFvd2VpIEJhb10g
+SGkgS2lzaG9uLCBpcyB0aGVyZSBhbnkgYWR2aWNlPyBUaGFua3MuDQoNCg==
