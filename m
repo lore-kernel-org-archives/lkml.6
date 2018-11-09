@@ -2,98 +2,177 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E38FCC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 12:39:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5F2EC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 12:49:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB15A20825
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 12:39:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GkpopHof"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB15A20825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id A9A542081C
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 12:49:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9A542081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728050AbeKIWT4 (ORCPT
+        id S1727955AbeKIWaD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 17:19:56 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:42074 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727662AbeKIWTz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 17:19:55 -0500
-Received: by mail-lj1-f194.google.com with SMTP id f3-v6so1444262ljk.9
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 04:39:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nk21tnnoDwhuNvj9FAuE4Ry3v2AXcRImK4QnDNjlSDo=;
-        b=GkpopHofFpkkvXOfW33KoxZJH4V+9vuEQXZY42rgTi444qJW/a22UCcCY2I1qiVV5f
-         fXCq+ahasxhwa9rOypcYAIIOMP8EaK04zijsRYRno1B5Q/8IbLOgaLKSlGWNHBE/am0/
-         6WGIsPPWnfb1JoY8WiuWyRBqCwzERybAp9d7k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nk21tnnoDwhuNvj9FAuE4Ry3v2AXcRImK4QnDNjlSDo=;
-        b=VZFZHEX/u2w2XBEbbjwp/aR0Sx3p3nuLFtCewmmmIWISskyRIaGv+2uYKNi+aQM2J8
-         xPq6xGFSmtandErA4K8Aj3IU4CLRzodzBUZMOFxnsFkGGvManXFxEeamS5QI7jXYMgmq
-         3qQELnttjgsmLfdufdtCpQzFRhJ/pMc/vuHZHpxiuIQqDXMcv3O6T8vWP+hOoAE0xaTK
-         Ibyrw8wyPf3PQAafXi/IHKWsyKEwhEv65RSec/7kPMTklhPoO7v0ewgKU6ks5spN5AXd
-         VNIGOuYMUuq5Xhj+GJwLXGH+NK8/BV+TMaKMyatKHelcceYarEk6ZMdd6yUJkjURENqP
-         pG3w==
-X-Gm-Message-State: AGRZ1gKPT7EfeC8AxUxaXCkUBoQicOSi2yuBPNQ/rKCkJnRM4NUSUr2w
-        hLb80kqmUTsFA7tBUnljrqGLimVwD2k=
-X-Google-Smtp-Source: AJdET5cgkINTaBSp9fO3L/rKcD7rgQHtwkvx0bWep7iKnDMDgv9t5nximmvKZjP1ttd8YBUefcU64A==
-X-Received: by 2002:a2e:990e:: with SMTP id v14-v6mr5899131lji.60.1541767166123;
-        Fri, 09 Nov 2018 04:39:26 -0800 (PST)
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
-        by smtp.gmail.com with ESMTPSA id v5-v6sm1370329lje.78.2018.11.09.04.39.25
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 09 Nov 2018 04:39:25 -0800 (PST)
-Received: by mail-lf1-f42.google.com with SMTP id p86so1221399lfg.5
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 04:39:25 -0800 (PST)
-X-Received: by 2002:a19:cb94:: with SMTP id b142mr5421215lfg.117.1541767164362;
- Fri, 09 Nov 2018 04:39:24 -0800 (PST)
+        Fri, 9 Nov 2018 17:30:03 -0500
+Received: from foss.arm.com ([217.140.101.70]:59738 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727802AbeKIWaD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 17:30:03 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7249080D;
+        Fri,  9 Nov 2018 04:49:34 -0800 (PST)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A57143F718;
+        Fri,  9 Nov 2018 04:49:32 -0800 (PST)
+Date:   Fri, 9 Nov 2018 12:49:30 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>
+Cc:     Peter Maydell <peter.maydell@linaro.org>,
+        kvm-devel <kvm@vger.kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Christoffer Dall <christoffer.dall@linaro.org>,
+        kvmarm@lists.cs.columbia.edu,
+        arm-mail-list <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [RFC PATCH] KVM: arm64: don't single-step for non-emulated faults
+Message-ID: <20181109124930.axelmyohmrcb63b4@lakrids.cambridge.arm.com>
+References: <20181107171031.22573-1-alex.bennee@linaro.org>
+ <20181107180120.urnvkcrkh46ytsdb@lakrids.cambridge.arm.com>
+ <20181107180829.sex54bxhd5wyqvan@lakrids.cambridge.arm.com>
+ <87r2fv68us.fsf@linaro.org>
+ <20181108135122.llmfsel32dbe2q7o@lakrids.cambridge.arm.com>
+ <87pnvf63u2.fsf@linaro.org>
+ <CAFEAcA9v+XvAJBWpDMvEQPeJ7ALM15Yz5KY+wfGPmLG2a8yPRQ@mail.gmail.com>
+ <20181109115644.f4qjqnv2kogoke42@lakrids.cambridge.arm.com>
+ <87lg625th2.fsf@linaro.org>
 MIME-Version: 1.0
-References: <20181109081402.777716d1@mschwideX1>
-In-Reply-To: <20181109081402.777716d1@mschwideX1>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 9 Nov 2018 06:39:07 -0600
-X-Gmail-Original-Message-ID: <CAHk-=wj+HK7htwua62MnT9e_vsfgboiACR08MQDsXj9+4WQEBg@mail.gmail.com>
-Message-ID: <CAHk-=wj+HK7htwua62MnT9e_vsfgboiACR08MQDsXj9+4WQEBg@mail.gmail.com>
-Subject: Re: [GIT PULL] s390 patches for 4.20 #2
-To:     Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-s390@vger.kernel.org, heiko.carstens@de.ibm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87lg625th2.fsf@linaro.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 9, 2018 at 1:14 AM Martin Schwidefsky
-<schwidefsky@de.ibm.com> wrote:
->
-> s390 updates for 4.20-rc2
+On Fri, Nov 09, 2018 at 12:24:41PM +0000, Alex Bennée wrote:
+> Mark Rutland <mark.rutland@arm.com> writes:
+> > On Thu, Nov 08, 2018 at 02:38:43PM +0000, Peter Maydell wrote:
+> >> On 8 November 2018 at 14:28, Alex Bennée <alex.bennee@linaro.org> wrote:
+> >> >
+> >> > Mark Rutland <mark.rutland@arm.com> writes:
+> >> >> One problem is that I couldn't spot when we advance the PC for an MMIO
+> >> >> trap. I presume we do that in the kernel, *after* the MMIO trap, but I
+> >> >> can't see where that happens.
+> >> >
+> >> > Nope it gets done before during decode_hsr in mmio.c:
+> >> >
+> >> >         /*
+> >> >          * The MMIO instruction is emulated and should not be re-executed
+> >> >          * in the guest.
+> >> >          */
+> >> >         kvm_skip_instr(vcpu, kvm_vcpu_trap_il_is32bit(vcpu));
+> >>
+> >> I think that this attempt to do the PC-advance early is
+> >> probably an underlying problem that is not helping the
+> >> code structure here.
+> >>
+> >> An enhancement that's been floated previously is that the
+> >> MMIO emulation in userspace should be able to report back
+> >> to KVM "nope, that access should generate a guest synchronous
+> >> external abort (with ESR_EL1.EA = 0/1)".
+> >> If we have that, then we definitely need to not advance the
+> >> PC until after userspace has done the emulation and told
+> >> us whether the memory access succeeded or not...
+> >
+> > Yup.
+> >
+> > I think that we absolutely want to do all the CPU state advancement (PC,
+> > SS bit, etc) at the point we apply the effects of the instruction. Not
+> > before we emulate the instruction, and not higher/lower in the call
+> > stack.
+> 
+> There is certainly an argument to abstract some of the advancement logic
+> so we can make debug related decisions in one place. I don't know how
+> much churn we would need to get there.
 
-Pulled.
+I'm not saying anything about *decisions*. I'm saying that we can make
+the state consistent by advancing the singlestep state in the same way
+that HW does, at the instant it advances the PC.
 
->  - A fix for the pgtable_bytes misaccounting on s390. The patch changes
->    common code part in regard to page table folding and adds extra
->    checks to mm_[inc|dec]_nr_[pmds|puds].
+i.e. do that in kvm_skip_instr(), as I've done in my local tree.
 
-Ugh. This is somewhat invasive, I worry  that some header include or
-architecture doesn't pick up on the subtle __PAGETABLE_XYZ_FOLDED
-things (if you don't get the includes, the mm_xyz_folded() maros will
-be mis-defined.
+That mirrors the HW, and we don't need to special-case any handling for
+emulated vs non-emulated instructions.
 
-Has this been in linux-next or any other wide testing? The changes
-aren't _new_, but...
+> Currently most of the guest debug decisions are made in one place as we
+> head into the guest run. Generally I don't think the emulation code want
+> to know or care about the SS bit or what debug is currently happening
+> although I guess the presence of the SS bit could be used to decide on
+> exactly what exit type you are going to do - back to guest or out to
+> user space. Currently kvm_arm_handle_step_debug on cares about host
+> directed debug but we could expand it to raise the appropriate guest
+> exception if required.
 
-             Linus
+So long as we consistently advance the singlestep state when we emulate
+an instruction, we shouldn't need kvm_arm_handle_step_debug() at all. If
+we emulate an instruction, we'll return to the guest with PSTATE.SS
+clear, and the HW will generate the exception for us.
+
+This is *vastly* simpler to reason about.
+
+I have local patches which I intend to post shortly.
+
+> > We have a big problem in that guest-directed singlestep and
+> > host-directed singlestep don't compose, and given that host-directed
+> > singlestep doesn't work reliably today I'd be tempted to rip that out
+> > until we've fixed guest-directed singlestep.
+> 
+> Getting host and guest debug to run at the same time is tricky given we
+> end up subverting guest state when the host debug is in control. It did
+> make my head spin when I worked on it originally which led to the
+> acceptance that guest debug couldn't be expected to work transparently
+> while host directed debug was in effect. If we can support it without
+> adding complexity then that would be great but it's a pretty niche use
+> case.
+
+At the very least we need to define whether the kernel or userspace is
+responsible for this. If we say it's userspace's responsibility to
+virtualize this when it takes control of guest debug, but QEMU doesn't
+do so, that's fine by me.
+
+> I'd be loathed to rip out the current single step support as it does
+> actually work pretty well - it's just corner cases with emulated MMIO
+> and first step that are failing. Last I looked these were cases x86
+> didn't even get right and no one has called to remove it's single step
+> support AFAIK.
+> 
+> > We should have a story for how host-directed debug is handled
+> > transparently from the PoV of a guest using guest-directed debug.
+> 
+> What's the use case for this apart from having a cleaner abstraction?
+
+Providing the architecturally mandated behaviour to the guest.
+
+> Do users really spend time running multiple gdbs at different levels
+> in the stack?
+
+It's not just about GDB. Things like kprobes, live patching, etc in a
+guest may use singlestep, and this may be *critical* to the correct
+operation of a given guest.
+
+People *will* want to debug such features under a hypervisor. I know
+that I personally want to be able to do so.
+
+In general, a debugger shouldn't silently corrupt guest state or
+behaviour, as KVM_GUESTDBG_SINGLESTEP behaviour effectively does today.
+
+Thanks,
+Mark.
