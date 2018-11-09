@@ -2,137 +2,106 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF9C4C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 16:50:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1513C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 16:50:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C47620818
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 16:50:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AA9720818
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 16:50:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="ADj5ptem"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C47620818
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EjgIrpxb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AA9720818
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728414AbeKJCbd (ORCPT
+        id S1728440AbeKJCb5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 21:31:33 -0500
-Received: from smtprelay4.synopsys.com ([198.182.47.9]:56114 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727955AbeKJCbd (ORCPT
+        Fri, 9 Nov 2018 21:31:57 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:40508 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727955AbeKJCb5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 21:31:33 -0500
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id B7DB424E0D1A;
-        Fri,  9 Nov 2018 08:50:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1541782211; bh=D+fj4bVA05n295NozqYkKR7cMfAh541g8rYlP7avEuA=;
-        h=From:To:CC:Subject:Date:References:From;
-        b=ADj5ptemN5XIVa4dmwrElFmFoxGDS74gYUsPz+aG2hAczAWi7w4EV589SefRFDWjK
-         Av1qPauK0qPAORVKRo6NPUIsaQTWUumLiLYLGRrHqPUgh12osdODbPI/zf2FhmVmKA
-         Vmm2KvrqoLl3apuJ0bA3EWPwVimMT21dsKb/fhBpC2WO3cUgqubMfeKWbTvgiSpzhd
-         VitW05pxQjJmzTofsvFYXFR9JwIRdh/KXbHuv33hJ7YNflrR/gJ/PlnHLePR6hCeUM
-         h2e5P9UW8OHLeP5EvkTuDDHd7HE9F1w9ZR72RgbwXqqzrnE212NQuv86q1dkfvwfy/
-         DHBOgLIm2tK/A==
-Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
-        by mailhost.synopsys.com (Postfix) with ESMTP id C4A573D47;
-        Fri,  9 Nov 2018 08:50:09 -0800 (PST)
-Received: from us01wembx1.internal.synopsys.com ([169.254.1.228]) by
- US01WEHTC3.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Fri, 9
- Nov 2018 08:50:09 -0800
-From:   Vineet Gupta <vineet.gupta1@synopsys.com>
-To:     "Dmitry V. Levin" <ldv@altlinux.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@redhat.com>
-CC:     Elvira Khabirova <lineprinter@altlinux.org>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>,
-        "linux-audit@redhat.com" <linux-audit@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 06/13] arc: define syscall_get_arch()
-Thread-Topic: [PATCH 06/13] arc: define syscall_get_arch()
-Thread-Index: AQHUd9qPWfzlAeDkY06iwsmGassPrQ==
-Date:   Fri, 9 Nov 2018 16:50:09 +0000
-Message-ID: <C2D7FE5348E1B147BCA15975FBA23075013A59239B@us01wembx1.internal.synopsys.com>
-References: <20181109031605.GF21511@altlinux.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.144.199.104]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 9 Nov 2018 21:31:57 -0500
+Received: by mail-pf1-f195.google.com with SMTP id x2-v6so1170944pfm.7;
+        Fri, 09 Nov 2018 08:50:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:date:from:to:cc:subject:mime-version:content-disposition
+         :user-agent;
+        bh=6tWW9hFOVhc7fYqnEbfnW1Dt89h1hZSd01jz+18AOuU=;
+        b=EjgIrpxbyzOzYGJcPD3M5KlMdWJtVxAKoUZPbxhzsvWXc9RDxhL3DE/4pBTHpc1Rf3
+         SfR7XqUFvw/A6v/udnvOS/8OkAI8fZG5y9wDRdHsnUebKUTJ2si/F8EXHHcg21G9B7fl
+         DMeJCo49CkokqjFqmysBoMuIjx3WyEP2dy4HQ+k9gjv5bCH7cji2HdqwK7pr+Kl8IQmv
+         V1kiPydXVtELNjR1cF6I7ZsLYX8a+pNgERDLScrclqQV0tcr3zIDf/EPESbHO3ZUMi5s
+         Xs4K2B+Pq9r9KwQg1ag0HLN/hDwJxiux20FdwPvrwHJrOCuV3d7/ZCjTBP5T6fowEEYr
+         yaIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:from:to:cc:subject:mime-version
+         :content-disposition:user-agent;
+        bh=6tWW9hFOVhc7fYqnEbfnW1Dt89h1hZSd01jz+18AOuU=;
+        b=LtGjU4oKxv/XpecbmK6PGxZ/KbJFI5y3RD6FRCryupaXVaaB2mbexcMjYDzvJ7siO9
+         bLSs+1qfY340sM7qZ85zvLFaYt/TcVrpA5bA3MxnBgfsuKeaJeJan7rUVB1mxyKk7R74
+         Wl97D0M39A/6+NzaVdGqtUjwIjCH54z+cXzWXrXa7E5+YgpNUFjmL/nYiHurdv/CV/h8
+         vhjJrSi6a6jA64OuOe+9ObT/olsDkEeGQ6uWInfBrgqCkgeXAkdZzNSpm3pCliRqK5La
+         WC8yCP3pWZidDuaks6985lBo2pzCHJZkWSt3MV7nlY7unFihIYASdHqtV7JmOx0UcN7L
+         2+BA==
+X-Gm-Message-State: AGRZ1gKmhxEi3W39pMRD1Rgr5l6/agiOMmzqptHP7cf+m6yhqCbRNdjX
+        BNhjAYGYY2eT9RBCIQ/+WpY=
+X-Google-Smtp-Source: AJdET5d4ZGGjsfo4aKLZ7SMTmG/okAe1EmFB9uCLm1LLTUJBqo+d4Hh/mhnVqzqmoTAJaST5KSJ5KQ==
+X-Received: by 2002:a63:f412:: with SMTP id g18mr8150308pgi.262.1541782234039;
+        Fri, 09 Nov 2018 08:50:34 -0800 (PST)
+Received: from sabyasachi ([45.116.191.241])
+        by smtp.gmail.com with ESMTPSA id t1-v6sm16089189pfm.169.2018.11.09.08.50.32
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 09 Nov 2018 08:50:33 -0800 (PST)
+Message-ID: <5be5bad9.1c69fb81.db750.d226@mx.google.com>
+X-Google-Original-Message-ID: <20181109165028.GA13638@sabyasachi.linux@gmail.com>
+Date:   Fri, 9 Nov 2018 22:20:29 +0530
+From:   Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+To:     swise@chelsio.com, dledford@redhat.com, jgg@ziepe.ca
+Cc:     jrdr.linux@gmail.com, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, brajeswar.linux@gmail.com
+Subject: [PATCH] infiniband/hw/cxgb3/cxio_hal.c: Use dma_zalloc_coherent
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/8/18 7:16 PM, Dmitry V. Levin wrote:=0A=
-> syscall_get_arch() is required to be implemented on all architectures=0A=
-> that use tracehook_report_syscall_entry() in order to extend=0A=
-> the generic ptrace API with PTRACE_GET_SYSCALL_INFO request.=0A=
->=0A=
-> Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>=0A=
-> ---=0A=
->  arch/arc/include/asm/syscall.h | 6 ++++++=0A=
->  include/uapi/linux/audit.h     | 1 +=0A=
->  2 files changed, 7 insertions(+)=0A=
->=0A=
-> diff --git a/arch/arc/include/asm/syscall.h b/arch/arc/include/asm/syscal=
-l.h=0A=
-> index 29de09804306..5662778a7411 100644=0A=
-> --- a/arch/arc/include/asm/syscall.h=0A=
-> +++ b/arch/arc/include/asm/syscall.h=0A=
-> @@ -9,6 +9,7 @@=0A=
->  #ifndef _ASM_ARC_SYSCALL_H=0A=
->  #define _ASM_ARC_SYSCALL_H  1=0A=
->  =0A=
-> +#include <uapi/linux/audit.h>=0A=
->  #include <linux/err.h>=0A=
->  #include <linux/sched.h>=0A=
->  #include <asm/unistd.h>=0A=
-> @@ -68,4 +69,9 @@ syscall_get_arguments(struct task_struct *task, struct =
-pt_regs *regs,=0A=
->  	}=0A=
->  }=0A=
->  =0A=
-> +static inline int syscall_get_arch(void)=0A=
-> +{=0A=
-> +	return AUDIT_ARCH_ARC;=0A=
-> +}=0A=
-> +=0A=
-=0A=
-Does ptrace (or user of this API) need a unique value per arch. Otherwise i=
-nstead=0A=
-of adding the boilerplate code to all arches, they could simply define AUDI=
-T_ARCH=0A=
-and common code could return it. Also the EM_xxx are not there in=0A=
-include/uapi/linux/elf.h to begin with since libc elf.h already defines the=
-m.=0A=
-=0A=
->  #endif=0A=
-> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h=0A=
-> index 818ae690ab79..a7149ceb5b98 100644=0A=
-> --- a/include/uapi/linux/audit.h=0A=
-> +++ b/include/uapi/linux/audit.h=0A=
-> @@ -375,6 +375,7 @@ enum {=0A=
->  =0A=
->  #define AUDIT_ARCH_AARCH64	(EM_AARCH64|__AUDIT_ARCH_64BIT|__AUDIT_ARCH_L=
-E)=0A=
->  #define AUDIT_ARCH_ALPHA	(EM_ALPHA|__AUDIT_ARCH_64BIT|__AUDIT_ARCH_LE)=
-=0A=
-> +#define AUDIT_ARCH_ARC		(EM_ARC)=0A=
->  #define AUDIT_ARCH_ARM		(EM_ARM|__AUDIT_ARCH_LE)=0A=
->  #define AUDIT_ARCH_ARMEB	(EM_ARM)=0A=
->  #define AUDIT_ARCH_CRIS		(EM_CRIS|__AUDIT_ARCH_LE)=0A=
-=0A=
-So I don't have the context of this patch (or coverletter) but what exactly=
- are we=0A=
-trying to do with this (adding LE to audit)  - what happens when an arch is=
-=0A=
-capable of either and is say built for BE ?=0A=
+Replaced dma_alloc_coherent + memset with dma_zalloc_coherent
+
+Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+---
+ drivers/infiniband/hw/cxgb3/cxio_hal.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/infiniband/hw/cxgb3/cxio_hal.c b/drivers/infiniband/hw/cxgb3/cxio_hal.c
+index dcb4bba..df4f7a3 100644
+--- a/drivers/infiniband/hw/cxgb3/cxio_hal.c
++++ b/drivers/infiniband/hw/cxgb3/cxio_hal.c
+@@ -291,13 +291,12 @@ int cxio_create_qp(struct cxio_rdev *rdev_p, u32 kernel_domain,
+ 	if (!wq->sq)
+ 		goto err3;
+ 
+-	wq->queue = dma_alloc_coherent(&(rdev_p->rnic_info.pdev->dev),
++	wq->queue = dma_zalloc_coherent(&(rdev_p->rnic_info.pdev->dev),
+ 					     depth * sizeof(union t3_wr),
+ 					     &(wq->dma_addr), GFP_KERNEL);
+ 	if (!wq->queue)
+ 		goto err4;
+ 
+-	memset(wq->queue, 0, depth * sizeof(union t3_wr));
+ 	dma_unmap_addr_set(wq, mapping, wq->dma_addr);
+ 	wq->doorbell = (void __iomem *)rdev_p->rnic_info.kdb_addr;
+ 	if (!kernel_domain)
+-- 
+2.7.4
+
