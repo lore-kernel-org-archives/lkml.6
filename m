@@ -2,315 +2,883 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32609C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 02:35:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92661C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 02:35:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC7BC2086C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 02:35:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F03C820840
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 02:35:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CVOuLs9q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC7BC2086C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="EwaFUhFT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F03C820840
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727523AbeKIMOB (ORCPT
+        id S1727604AbeKIMOM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 07:14:01 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:37138 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727349AbeKIMOA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 07:14:00 -0500
-Received: by mail-lf1-f67.google.com with SMTP id p17so245876lfh.4
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 18:35:29 -0800 (PST)
+        Fri, 9 Nov 2018 07:14:12 -0500
+Received: from mail-by2nam03on0076.outbound.protection.outlook.com ([104.47.42.76]:14572
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727349AbeKIMOL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 07:14:11 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=8cQ6S9BBRFzVUrjgDvRYnXp7/yu62ggIzS30Gjpq+hc=;
-        b=CVOuLs9qMbOP/2XGZcWbduKrhaTZSAJYMfnJN3u9DAYserhfgnLKRDX9tJFgmyrF0a
-         E2gmzdvo4h5esNdxdwe7Uf5s8QmhEM75Q1KroVShcreln4RHjOe7hOoZL3UHhCvaeRxF
-         3HhsqEq9GiptbaopYfr/Ka2gbyTLyzt9tXA9M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=8cQ6S9BBRFzVUrjgDvRYnXp7/yu62ggIzS30Gjpq+hc=;
-        b=q+bWn7zPRKfLa50kY1lECdGvrvNYSfS4xsCUxDXPkeOZPH3hEFbcoCZEDBjIegD/ph
-         9zRxe7IO1V53ZZpGf4TKYioy1TS6EwRfwKPY7gaq01QmTdOZq9F7Pb0ooKsZPbHvQ/iR
-         WP1ALr5Fmd4+MZkFmSkm0kqq/s2Zsa/LvRsuwIc026TPD+A+LLxujZO5PluzGtw5xxW7
-         Gcu/oQlX15X3zXJfCLKV0dPfsOH2tNUnUDt1ngcZPMOT3NyA6OvYnraDxHa6Mn2enX5H
-         1RK50JjBI/as1wFZ2uyKmxDT0gxiF3VueisY9VSbWFbxDmEnBqX3H4CYNeYLVxDVH3xu
-         Yxyg==
-X-Gm-Message-State: AGRZ1gLr874X38V747SnaLgV74J3fc8GYL8PDdE21rB1j1oiSqh/Dx8W
-        wkuh585NH64C1kF8UAelvrgGA+l8FD7PjwDfjeR3ZQ==
-X-Google-Smtp-Source: AJdET5fIXoxLIGqdVkN/Qs1zls5IhBJ5LvfPZ4acKBSFycHdaBPNMdi90bZyfO3s1H5AAUPc47cE+phKYe9qrsGuYs4=
-X-Received: by 2002:a19:690d:: with SMTP id e13mr2083935lfc.84.1541730928254;
- Thu, 08 Nov 2018 18:35:28 -0800 (PST)
-MIME-Version: 1.0
-Received: by 2002:a2e:95ca:0:0:0:0:0 with HTTP; Thu, 8 Nov 2018 18:35:27 -0800 (PST)
-In-Reply-To: <3a5ca343-5c48-b257-4ba4-5a7e223efbf8@gmail.com>
-References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
- <1541542052-10081-3-git-send-email-jacek.anaszewski@gmail.com>
- <CAMz4ku+K=Jw56C2YczFMcVGRPUHMpSw4_iWEsNmKDBQgWjmEqQ@mail.gmail.com> <3a5ca343-5c48-b257-4ba4-5a7e223efbf8@gmail.com>
-From:   Baolin Wang <baolin.wang@linaro.org>
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Cc0ZXTCQbiszNzQu6klyZOC7WirSnlCyttSdHaIIcX8=;
+ b=EwaFUhFTBGDFp+iu0zpREx3R+picgzI5eWqA71wVGsAnxaKL/uUS9Ykag9NINWxg8On/eE0FGP5PFPGELUrInxC4iu3ENeRpthPkESysOBrzQHuEWnxreRAJtEyj5WEPZBsC7y73vPjx85xSTtu5pIsgiT5MRZMWX64XQ+SS6V0=
+Received: from BN6PR12CA0040.namprd12.prod.outlook.com (2603:10b6:405:70::26)
+ by BY1PR12MB0424.namprd12.prod.outlook.com (2a01:111:e400:51b2::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1294.23; Fri, 9 Nov
+ 2018 02:35:38 +0000
+Received: from BY2NAM03FT036.eop-NAM03.prod.protection.outlook.com
+ (2a01:111:f400:7e4a::203) by BN6PR12CA0040.outlook.office365.com
+ (2603:10b6:405:70::26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1294.21 via Frontend
+ Transport; Fri, 9 Nov 2018 02:35:38 +0000
+Authentication-Results: spf=none (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; lists.freedesktop.org; dkim=none (message not signed)
+ header.d=none;lists.freedesktop.org; dmarc=permerror action=none
+ header.from=amd.com;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+Received: from SATLEXCHOV01.amd.com (165.204.84.17) by
+ BY2NAM03FT036.mail.protection.outlook.com (10.152.85.141) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1339.10 via Frontend Transport; Fri, 9 Nov 2018 02:35:37 +0000
+Received: from [10.237.74.158] (10.34.1.3) by SATLEXCHOV01.amd.com
+ (10.181.40.71) with Microsoft SMTP Server (TLS) id 14.3.389.1; Thu, 8 Nov
+ 2018 20:35:33 -0600
+Subject: Re: [PATCH 2/2] drm: Revert syncobj timeline changes.
+To:     <christian.koenig@amd.com>, Eric Anholt <eric@anholt.net>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+CC:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20181108160422.17743-1-eric@anholt.net>
+ <20181108160422.17743-3-eric@anholt.net>
+ <635caa27-eb0b-a4d6-5a1d-3fbe5382bd6b@amd.com>
+ <c5af6df2-d5d5-5276-3628-4bac0fd53c98@gmail.com>
+From:   zhoucm1 <zhoucm1@amd.com>
+Message-ID: <d9d76fbc-44ad-891d-e535-34d0e8f615de@amd.com>
 Date:   Fri, 9 Nov 2018 10:35:27 +0800
-Message-ID: <CAMz4ku+fMrrniiLPSAGHsAidhB7n=O=OCL2voZz_tn8TBhcrwA@mail.gmail.com>
-Subject: Re: [PATCH 02/24] leds: core: Add support for composing LED class
- device names
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Rob Herring <robh@kernel.org>, Daniel Mack <daniel@zonque.org>,
-        Dan Murphy <dmurphy@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Oleh Kravchenko <oleg@kaa.org.ua>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Simon Shields <simon@lineageos.org>,
-        Xiaotong Lu <xiaotong.lu@spreadtrum.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <c5af6df2-d5d5-5276-3628-4bac0fd53c98@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Originating-IP: [10.34.1.3]
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(376002)(346002)(136003)(39860400002)(2980300002)(428003)(189003)(199004)(305945005)(7736002)(486006)(2870700001)(6306002)(2501003)(53946003)(66574009)(4744004)(64126003)(16576012)(356004)(53936002)(58126008)(316002)(6666004)(11346002)(126002)(65956001)(2616005)(476003)(65826007)(446003)(6246003)(229853002)(86152003)(47776003)(2906002)(104016004)(3846002)(65806001)(6116002)(966005)(81166006)(31696002)(14444005)(336012)(8676002)(81156014)(8936002)(36756003)(23676004)(97736004)(575784001)(2486003)(426003)(5660300001)(67846002)(72206003)(31686004)(105586002)(106466001)(186003)(76176011)(54906003)(26005)(77096007)(16526019)(110136005)(50466002)(93886005)(4326008)(68736007)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:BY1PR12MB0424;H:SATLEXCHOV01.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;BY2NAM03FT036;1:8Dl7iiP72FkcKPfLsjs5HXaL2WHzMg/z3KCkFHocxas/g+STcWr6isrpgb2u3Bm/yWG16Oe3JYeh8OblUA0wA7uvdSUBXEwPeKSmJa1FMQ+A2s4uXZev7uTty5ga/tNc
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: e61d2c30-a098-4647-ce67-08d645ec0892
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BY1PR12MB0424;
+X-Microsoft-Exchange-Diagnostics: 1;BY1PR12MB0424;3:YVFoZwem1rqtHoi5t6y0tbgwewVQOB8ADkipw8p36wpTTTSsTaBIRi395J2vhJ+E4T6bqEOJsJUmJtrOwNrMwUIn3nyAZZm5H0EKaVsJ5+Vbf2FcidcypHhPu/FXRXqD+ROlokNrQNfPTRXwSPlvhEuXRJXcKWd9n6gOtkjsWF/A9NZCr2f5MD42U0hvat50yUXpYxVjl1XiaJcYAfTkuHh9LbDR+M2vosXWeDWH8AylPoZzAvEFe9ftbo+h8dmwe6Woa7SZcpEju8AVP06eZLyD93y2CPtYk+A65HzuRwHuPioDCBUV0z53Dk8MvTl90KC0fwb3nOLSAiE5ybeK2jAl/nuWW10ejoEsDHODdc4=;25:j82P3TCOglYp5G9XG8CtLictj3KT0MRliP20TdtlcejEmtX+duyNRrRjJJYaGg9AJcH1NKtjF+VzUIkit5vL1osV7JnDNP1oPj7e5QDQRdbHpnydeDk9iXzBazbGlfYOi9W65k3o9ar6MCevDO/kSuaAokv2NxWyDlDMThDHyu/8MN8/PDwGqI2uS+ck5IXv6fzQcysK8/gdjE1fu9zXUjiqPsW8ZRFZ9LEsktMRZd2Fu7sLEg6yfmJjrWxgWSr33YZ/jQbzpY6rGOwNofTREd7mNU303cmDHnhbAru9r3HYvibmOofXnfLkwILB9Xm3tBHLM+4TKmQFQ/8nMYl/SA==
+X-MS-TrafficTypeDiagnostic: BY1PR12MB0424:
+X-Microsoft-Exchange-Diagnostics: 1;BY1PR12MB0424;31:MlB4+9hCSRBr2cp8I1avaf6CuNPLcF/eh5Drcx+6lUfYHLQ6EA6daRdmBHQ8CznHCSZ2zmsDSHe6S3D3Vqn3lbMR2+adMAUtPyhEuV9nPkhe6k/YsDMrsyFaISxe0gwUYyYsOJ6Bs6CRo7cEckx2vGYN+kG3V0121O2no74ov8mxRqHX1q5CuF4KA5ovKGNSEHNzLzPjGeW7vBqcjnYL6DEwgGEEIRGNO5d4LjMjbEo=;20:CMHFDC9cE/58RqEDAHxpILMGzarpY47lFdSSsUbmzkWnRscKQtL1ymr577Ldb+ZAPEwsNKrN9CK6yPXO93WjKcvPeN/uyHKF711AGt9noiC3LMsdm89CIayERy7kx0HxXZ3fKrKg1tbXaAWMLli4NIN21kkoYrquRLLaFubBEmL6tt3dYOGZqfy7/OMf4ABcdjomR571W48QrlHnigM4GfXL8kNF3wWLUZ20jCdmO6jS6ObwqdCoVahuqqRj8S7TPOk6nFVzkTBdZN/vhBFNKAh4zy51EZ8lszmDDO/cA16i+c6esoc9UzcDt3Z9v9T26+iw2xGMvdHyI4BwYqFQRq065IbbjYmq9dSfjSbIEwDMHayF4cPyB6YUIbRTMvxOWBCA8E5BqRTDeMu/VXspQMFSwnJX2Ch7qsVAZovZQCe/1L/Z7YO199twvDKyCUeEO/kEGhpHtZ1w9cat9qvSvl+oJb2A9aqzRVugMwrMKMEWuv/TW5rfoz5JSZ/DeciT
+X-Microsoft-Antispam-PRVS: <BY1PR12MB04245758E291C304D9415452B4C60@BY1PR12MB0424.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(767451399110)(788757137089)(17755550239193)(217544274631240);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231382)(944501410)(52105095)(3002001)(93006095)(93003095)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:BY1PR12MB0424;BCL:0;PCL:0;RULEID:;SRVR:BY1PR12MB0424;
+X-Microsoft-Exchange-Diagnostics: 1;BY1PR12MB0424;4:Fc8GJPIrMQ1ZVUBmTq9XYVxMcvPaQ/Vobi1rE86jWWzy6X/n5RkjIv0LKEcuXsPriMcQ/bb8XSfDT/Gb1Ceed0IvYW9iWl5h0hNYBIADzc7//NBq8Z6nFUZ9tXsRso945oDI1N1WCeaXHOy8IfbtRd9xLhfJ6aA/DLfsPwJ9sl7mDocVr/TWtODj3cY9NvmkgXvZj7yHCxX662K3A7Kqoj2y7m5mT/Y4bChRHmfnAt8Vz83vH75r3/407Cs2G6WxmvyIEXlR/GkLt83pn3Mf/wxxqHFHMdoUWA2m+s8pigw5cF9FOGY3DpUEx/XBHtBF0DpY3XOhZKfO/Q0bPjcEk0IhiOFWc0A9J7rcuwlUwGjwzOI7i8DV8aZn0Tv1gymZjWdAkwQPCyioC99w7im2WGjCuCnrSnOX7w57yYQaRfE=
+X-Forefront-PRVS: 08512C5403
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtCWTFQUjEyTUIwNDI0OzIzOkJUd0MycHVKSzY5NGFKUWoxTFlOTGVQWm04?=
+ =?utf-8?B?dndHdzgzQU5vMTBYRnJxSTJOUkw3TmtJTVRTRjRMQWNUa3U0M0dNOFY0MFo1?=
+ =?utf-8?B?MTU4QjgvMDZTWUlmN2xQQVQ1YjUwaUI0STQ3bzcyWitER21MeVVCeGVacFZt?=
+ =?utf-8?B?aFcrZFRCUEN1enY1RTJMNGVTWUJWVkhFcmhQRXkwM3lmK1lpQkp6a25oSkxm?=
+ =?utf-8?B?ai9HdDZCQTgwVlBjN2REUVFqNElxUTFQaFBvVDBvQ3BodTdDUkFyWERySWlU?=
+ =?utf-8?B?aytUamtTcm5mTmJ1Vmd4NXNFU0dTMjVPTjZiazYvSDUwUzVQL3ZxNTN6VFNJ?=
+ =?utf-8?B?OEp1RjEzUGJ0L2FibG9TTlhuY3lPcnA2MmFtZEF6ZUdVNXpvVUdqWUs2T3JD?=
+ =?utf-8?B?b2VJVitKVG5MVmMyc1NRVUYvMUhTV1JJazFVK3FhS3NtWExUaStWNlFrNmt5?=
+ =?utf-8?B?SkVWRmNaeU13UE5GME1ZUjUzUUtibzZ3OUlFZ3JuQ3pJRGxVSkdRN3ZUcWVT?=
+ =?utf-8?B?dC9HYWNMK0FreDJjNldTTys4RTI3YlNNZ2tMdkdaZnkyUy9SR2R5cWhmTUFU?=
+ =?utf-8?B?NnYxZEZtMzNSUjR2RHcvUkQwZkN0a3dHeXBQbzJhbGgrRzROMzRXQXdlbXZl?=
+ =?utf-8?B?UzR1OHU1dzNzcHVnNklRZXVWUEppQ29YSEY3WDhVUmMrN0lPZy9SRzhTcXE0?=
+ =?utf-8?B?UlltY3l1NlRIeGlkNXJOVk5EVzF3VXZNRjRDa1pZTGVncnI3WHJ6di82Z3Zo?=
+ =?utf-8?B?YnlFMHc0RWZKL0JmelBNUzNmQytJZWNmNTFUV3lhRjEwY01nNVZ0MzdmUXll?=
+ =?utf-8?B?WUt6M2pYY2NIaGJkNzA1UHJTTGViMVZOaXpZUStLVFc1WkNNdnlQTURnNVBV?=
+ =?utf-8?B?RXJrNnJST1pSdDcyNHBWQ0I3d3ZkSDZyV3B2VVBQV2tiUkdidG5xeUFET2Zm?=
+ =?utf-8?B?TVVPYXRSbXdtZ0c5ZkxtdDh1ZFg3SWt5UHpwZENCZ2tXbzA2cFViblZrMG93?=
+ =?utf-8?B?Rm54L3N1aUxLZVZsd2JobzE3enJBSlBmcU5IY3M5b1YyenNMMzU3NkxrYS9U?=
+ =?utf-8?B?c3hRaW43b1lnbDB2NjZlVW1HZXM5U1YxV1k4SWUrQkNOY2xRbXJrREtTMGZ1?=
+ =?utf-8?B?R1lBci9aNWhwam5OR0dWVHRZQTBLMVp1SEpkTGlWVXl5RE51WGlTa1VqUXV1?=
+ =?utf-8?B?anpsZHJaeXg5b0tjQkxDWlRsQm9mQmhJdC9QSnNBU0hpM0tvK0lnNWhGY3Iw?=
+ =?utf-8?B?SGJLRi85M1l6SmF4MEJBZENEMzUxVm5NZTFqbFQ0MUwxUjRGMGswMnhrYmd2?=
+ =?utf-8?B?OEMxT1BjeEpabmUvNHlpOFRoM0x4REJFOFNKVDVlNFV5ZEVpNnhNNktKKzRB?=
+ =?utf-8?B?TjJhbUdYQkNzSmlScmpqNmMzSmpPVkxqUHprN051Q2lsN0FGZC9Hck5UTHEv?=
+ =?utf-8?B?biswZ0tXK0oxdVJIdVArWjQzTmt0T0lIazBKSllhOWpqTVRrY0VyamxXc0RV?=
+ =?utf-8?B?TXpLMnVKSHE3clN1UXd0c0FodTVCZjc5Q2NPaUozbUphai9NMVJhb1pzT2hR?=
+ =?utf-8?B?ck40MDFrNTB2R1FHVHJTVjQvWDRseS9qTXFqTzR3NGVhL1g3MHU2UHFHM2dC?=
+ =?utf-8?B?WjhNbytwakZ2cG40L0FaN0JBejJaeXJycE90dTNtUHd1T2NMazg3a2pmOG1K?=
+ =?utf-8?B?UzRrSTNpd1MyQ3BXd1JrL1RHSU5LeEp6b1BVZm1mZy9ka1JkMHNldUYvUllR?=
+ =?utf-8?B?clViRFc4enRTMEs5Y1huTk9Ea2tTNlMvVzJlMGF5dnpyZ3ZnOGxDaC9NM3ZU?=
+ =?utf-8?B?YURLTUNGN2JDZ3NodE8rMVI0V0hhVmNnamYzOTROQlhjV2tJK1ZGNnlBY0xH?=
+ =?utf-8?B?MFlmSUJsL2tzYkFKclJmdGtQOHhvVVpPYVlkcUtadlYrWVZGd3lmKzlBVEM4?=
+ =?utf-8?B?WW9XZlJTS09xbjdKZ2FYOVMvalBBeEVFYU5lSk9HSVIvbThqTjE4SVdhMHRi?=
+ =?utf-8?B?L3lDT3hKemgzckJWdHpiQks0c0hkR0Jwd2t2RmhLYkZwY0dHSkg1N2ZGMktt?=
+ =?utf-8?B?dWtkWFU0Y2ZOc1dGb09MMUExcnIwM1gvZ0VST0dqMXl1S3Jsbkl5dnFweUYz?=
+ =?utf-8?Q?VVAEnruK0zrejVD3cZWX0Y8m+H76Fd4pfFIZ0gIKrC8r?=
+X-Microsoft-Antispam-Message-Info: 3kTnfXGxjpcU0v9LWXn1n/NrDuPVyXvJmmyczbnjohdalBAayH4o8avnhaEkKc/g2SzEFGxuty4qGPyTuv5JNyIcldROFJ4HQD8N1rfLvT9OybfqRdjBKuIpN79nAxWnPLXa6oAdsWiva2BWq7dBtRe8Kr57fkNh4y782UPog7hzqUVB/fGDSD5lb7sGJh/69TxLSQ6+XheSbVqPIcQw7VqFJp3GIkyM3km15z195TUsDi6qXXPHSJGzyHcnDnjKRSJ5ZH25ZbqomgKXpvEgoUosJySyqb4KnpryzNX8yAgquSSKHA2jhdQ2WqWPRHgLo//fAi/Qm9T9ccq4pzxLhvD5Sfw0uRspBj26S7gzXUo=
+X-Microsoft-Exchange-Diagnostics: 1;BY1PR12MB0424;6:DXXePrE7nf8o01/YTIRvDXyGkQFCOFbaFgoAYa/nogkyOdDBNCCnVyJGZtrGWZHuecqCIg+qizaOlsmjXS+k2Dt9sZ6ZH1fFpaqW+WK1bXOWP4gaCGpz2QbIfWT1JYaPO96JTjqjMpAxT2AWppAlr8It+enfKvt8eGuauvYUZfaJn70RjYg4UYOT2GXakz9jassNzNT9TCF17s3F9aPCEQGlkXgS9lRITU5XSy7u8+4F1d6tCg/Mkiscvqy/xSV1WByBsc3Tx5sbA1DgCUwUoisHg4LD7FVEMPvOOMZOZS9fSG4WMFGk7vHzJ+gq7Sz+G8EDEtNNzGQgVIfl+QkjlVB3HSskefYB2spZ7h/tbenilD9+zKZtjzoA99SiBshM4H/Hy3hMksiWfPJX8PVLbNr4YpL6aS2F16mJI5rUgfCeMXHiZr6ttfnmtpPNOmcCwFSqACF+pr6XQIaNy7JoOw==;5:bV4apPFVWdlaRS0sBGBBafragpn93OrbM/o8nq/lXbRlsgKXyS7BQH27GhvalWZZdAsuvBKxc2yQf6PNY9KFUycJYCvXTycaqpkuAdQMu6n6yAiTc8wciBM/JM9mY96w6snkMeqe9QdAsAVJ32R8iRfHBLgcPfLySI81Otda2uA=;7:a9/B71y5OT3DW80YU9LdquRjZnHy/qK6eEXlkTNwB7MGr1ncTuoEkuMe576gIP8Zu52XQx5H3QMaP1g5SShf1zcUy2fG5O8xWtz2/mc/P1S9JeGGh3+sZyCATBxGjvMMXaKXK0x1LyFj1vTiFptSgw==
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;BY1PR12MB0424;20:LZKwuY5Gbf0wG0II3Nwg/ODAdjqjH3TodEeOdOr/Oe9WIyGa2YIz4xZpcExilHIwo1D9Q0O4FVQwz5e0oVP0J8pip65t1Tk5ThOAC4pG/pf6X+uCNQnqNC6SYCVXjY0vYX+wqUEQGXpA2mIk1wPvxbjYif5iNjq1upNhJ+L8QF3QsZUx1gzrW2IkS0EXwrQnHWuyFysElbTsHMZNloS93XItLna/Kivj3AkeGQvKLo0EmlhF/O9kdWE9fy1qXCV2
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Nov 2018 02:35:37.4347
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e61d2c30-a098-4647-ce67-08d645ec0892
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXCHOV01.amd.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR12MB0424
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacek,
 
-On 9 November 2018 at 04:47, Jacek Anaszewski
-<jacek.anaszewski@gmail.com> wrote:
-> Hi Baolin,
+
+On 2018年11月09日 00:52, Christian König wrote:
+> Am 08.11.18 um 17:07 schrieb Koenig, Christian:
+>> Am 08.11.18 um 17:04 schrieb Eric Anholt:
+>>> Daniel suggested I submit this, since we're still seeing regressions
+>>> from it.  This is a revert to before 48197bc564c7 ("drm: add syncobj
+>>> timeline support v9") and its followon fixes.
+>> This is a harmless false positive from lockdep, Chouming and I are
+>> already working on a fix.
 >
-> Thanks for the review.
+> On the other hand we had enough trouble with that patch, so if it 
+> really bothers you feel free to add my Acked-by: Christian König 
+> <christian.koenig@amd.com> and push it.
+NAK, please no, I don't think this needed, the Warning totally isn't 
+related to syncobj timeline, but fence-array implementation flaw, just 
+exposed by syncobj.
+In addition, Christian already has a fix for this Warning, I've tested. 
+Please Christian send to public review.
+
+-David
 >
-> On 11/07/2018 08:20 AM, Baolin Wang wrote:
->> Hi Jacek,
+> Christian.
+>
 >>
->> On 7 November 2018 at 06:07, Jacek Anaszewski
->> <jacek.anaszewski@gmail.com> wrote:
->>> Add public led_compose_name() API for composing LED class device
->>> name basing on fwnode_handle data. The function composes device name
->>> according to either a new <color:function> pattern or the legacy
->>> <devicename:color:function> pattern. The decision on using the
->>> particular pattern is made basing on whether fwnode contains new
->>> "function" and "color" properties, or the legacy "label" proeprty.
+>> Christian.
+>>
+>>> Fixes this on first V3D testcase execution:
 >>>
->>> Backwards compatibility with in-driver hard-coded LED class device
->>> names is assured thanks to the default_desc argument.
+>>> [   48.767088] ============================================
+>>> [   48.772410] WARNING: possible recursive locking detected
+>>> [   48.777739] 4.19.0-rc6+ #489 Not tainted
+>>> [   48.781668] --------------------------------------------
+>>> [   48.786993] shader_runner/3284 is trying to acquire lock:
+>>> [   48.792408] ce309d7f (&(&array->lock)->rlock){....}, at: 
+>>> dma_fence_add_callback+0x30/0x23c
+>>> [   48.800714]
+>>> [   48.800714] but task is already holding lock:
+>>> [   48.806559] c5952bd3 (&(&array->lock)->rlock){....}, at: 
+>>> dma_fence_add_callback+0x30/0x23c
+>>> [   48.814862]
+>>> [   48.814862] other info that might help us debug this:
+>>> [   48.821410]  Possible unsafe locking scenario:
+>>> [   48.821410]
+>>> [   48.827338]        CPU0
+>>> [   48.829788]        ----
+>>> [   48.832239]   lock(&(&array->lock)->rlock);
+>>> [   48.836434]   lock(&(&array->lock)->rlock);
+>>> [   48.840640]
+>>> [   48.840640]  *** DEADLOCK ***
+>>> [   48.840640]
+>>> [   48.846582]  May be due to missing lock nesting notation
+>>> [  130.763560] 1 lock held by cts-runner/3270:
+>>> [  130.767745]  #0: 7834b793 (&(&array->lock)->rlock){-...}, at: 
+>>> dma_fence_add_callback+0x30/0x23c
+>>> [  130.776461]
+>>>                  stack backtrace:
+>>> [  130.780825] CPU: 1 PID: 3270 Comm: cts-runner Not tainted 
+>>> 4.19.0-rc6+ #486
+>>> [  130.787706] Hardware name: Broadcom STB (Flattened Device Tree)
+>>> [  130.793645] [<c021269c>] (unwind_backtrace) from [<c020db1c>] 
+>>> (show_stack+0x10/0x14)
+>>> [  130.801404] [<c020db1c>] (show_stack) from [<c0c2c4b0>] 
+>>> (dump_stack+0xa8/0xd4)
+>>> [  130.808642] [<c0c2c4b0>] (dump_stack) from [<c0281a84>] 
+>>> (__lock_acquire+0x848/0x1a68)
+>>> [  130.816483] [<c0281a84>] (__lock_acquire) from [<c02835d8>] 
+>>> (lock_acquire+0xd8/0x22c)
+>>> [  130.824326] [<c02835d8>] (lock_acquire) from [<c0c49948>] 
+>>> (_raw_spin_lock_irqsave+0x54/0x68)
+>>> [  130.832777] [<c0c49948>] (_raw_spin_lock_irqsave) from 
+>>> [<c086bf54>] (dma_fence_add_callback+0x30/0x23c)
+>>> [  130.842183] [<c086bf54>] (dma_fence_add_callback) from 
+>>> [<c086d4c8>] (dma_fence_array_enable_signaling+0x58/0xec)
+>>> [  130.852371] [<c086d4c8>] (dma_fence_array_enable_signaling) from 
+>>> [<c086c00c>] (dma_fence_add_callback+0xe8/0x23c)
+>>> [  130.862647] [<c086c00c>] (dma_fence_add_callback) from 
+>>> [<c06d8774>] (drm_syncobj_wait_ioctl+0x518/0x614)
+>>> [  130.872143] [<c06d8774>] (drm_syncobj_wait_ioctl) from 
+>>> [<c06b8458>] (drm_ioctl_kernel+0xb0/0xf0)
+>>> [  130.880940] [<c06b8458>] (drm_ioctl_kernel) from [<c06b8818>] 
+>>> (drm_ioctl+0x1d8/0x390)
+>>> [  130.888782] [<c06b8818>] (drm_ioctl) from [<c03a4510>] 
+>>> (do_vfs_ioctl+0xb0/0x8ac)
+>>> [  130.896187] [<c03a4510>] (do_vfs_ioctl) from [<c03a4d40>] 
+>>> (ksys_ioctl+0x34/0x60)
+>>> [  130.903593] [<c03a4d40>] (ksys_ioctl) from [<c0201000>] 
+>>> (ret_fast_syscall+0x0/0x28)
 >>>
->>> In case none of the aformentioned properties was found, then, for OF
->>> nodes, the node name is adopted for LED class device name.
->>>
->>> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
->>> Cc: Baolin Wang <baolin.wang@linaro.org>
->>> Cc: Daniel Mack <daniel@zonque.org>
->>> Cc: Dan Murphy <dmurphy@ti.com>
->>> Cc: Linus Walleij <linus.walleij@linaro.org>
->>> Cc: Oleh Kravchenko <oleg@kaa.org.ua>
->>> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
->>> Cc: Simon Shields <simon@lineageos.org>
->>> Cc: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
+>>> Cc: Chunming Zhou <david1.zhou@amd.com>
+>>> Cc: Christian König <christian.koenig@amd.com>
+>>> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+>>> Signed-off-by: Eric Anholt <eric@anholt.net>
 >>> ---
->>>  Documentation/leds/leds-class.txt |  2 +-
->>>  drivers/leds/led-core.c           | 71 +++++++++++++++++++++++++++++++++++++++
->>>  include/linux/leds.h              | 32 ++++++++++++++++++
->>>  3 files changed, 104 insertions(+), 1 deletion(-)
+>>>    drivers/gpu/drm/drm_syncobj.c | 359 
+>>> +++++++---------------------------
+>>>    include/drm/drm_syncobj.h     |  73 ++++---
+>>>    2 files changed, 105 insertions(+), 327 deletions(-)
 >>>
->>> diff --git a/Documentation/leds/leds-class.txt b/Documentation/leds/leds-class.txt
->>> index 836cb16..e9009c4 100644
->>> --- a/Documentation/leds/leds-class.txt
->>> +++ b/Documentation/leds/leds-class.txt
->>> @@ -43,7 +43,7 @@ LED Device Naming
->>>
->>>  Is currently of the form:
->>>
->>> -"devicename:colour:function"
->>> +"colour:function"
->>>
->>>  There have been calls for LED properties such as colour to be exported as
->>>  individual led class attributes. As a solution which doesn't incur as much
->>> diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
->>> index ede4fa0..f7371fc 100644
->>> --- a/drivers/leds/led-core.c
->>> +++ b/drivers/leds/led-core.c
->>> @@ -16,6 +16,8 @@
->>>  #include <linux/list.h>
->>>  #include <linux/module.h>
->>>  #include <linux/mutex.h>
->>> +#include <linux/of.h>
->>> +#include <linux/property.h>
->>>  #include <linux/rwsem.h>
->>>  #include "leds.h"
->>>
->>> @@ -327,3 +329,72 @@ void led_sysfs_enable(struct led_classdev *led_cdev)
->>>         led_cdev->flags &= ~LED_SYSFS_DISABLE;
->>>  }
->>>  EXPORT_SYMBOL_GPL(led_sysfs_enable);
+>>> diff --git a/drivers/gpu/drm/drm_syncobj.c 
+>>> b/drivers/gpu/drm/drm_syncobj.c
+>>> index da8175d9c6ff..e2c5b3ca4824 100644
+>>> --- a/drivers/gpu/drm/drm_syncobj.c
+>>> +++ b/drivers/gpu/drm/drm_syncobj.c
+>>> @@ -56,9 +56,6 @@
+>>>    #include "drm_internal.h"
+>>>    #include <drm/drm_syncobj.h>
+>>>    -/* merge normal syncobj to timeline syncobj, the point interval 
+>>> is 1 */
+>>> -#define DRM_SYNCOBJ_BINARY_POINT 1
+>>> -
+>>>    struct drm_syncobj_stub_fence {
+>>>        struct dma_fence base;
+>>>        spinlock_t lock;
+>>> @@ -74,29 +71,7 @@ static const struct dma_fence_ops 
+>>> drm_syncobj_stub_fence_ops = {
+>>>        .get_timeline_name = drm_syncobj_stub_fence_get_name,
+>>>    };
+>>>    -struct drm_syncobj_signal_pt {
+>>> -    struct dma_fence_array *fence_array;
+>>> -    u64    value;
+>>> -    struct list_head list;
+>>> -};
+>>> -
+>>> -static DEFINE_SPINLOCK(signaled_fence_lock);
+>>> -static struct dma_fence signaled_fence;
+>>>    -static struct dma_fence *drm_syncobj_get_stub_fence(void)
+>>> -{
+>>> -    spin_lock(&signaled_fence_lock);
+>>> -    if (!signaled_fence.ops) {
+>>> -        dma_fence_init(&signaled_fence,
+>>> -                   &drm_syncobj_stub_fence_ops,
+>>> -                   &signaled_fence_lock,
+>>> -                   0, 0);
+>>> -        dma_fence_signal_locked(&signaled_fence);
+>>> -    }
+>>> -    spin_unlock(&signaled_fence_lock);
+>>> -
+>>> -    return dma_fence_get(&signaled_fence);
+>>> -}
+>>>    /**
+>>>     * drm_syncobj_find - lookup and reference a sync object.
+>>>     * @file_private: drm file private pointer
+>>> @@ -123,27 +98,6 @@ struct drm_syncobj *drm_syncobj_find(struct 
+>>> drm_file *file_private,
+>>>    }
+>>>    EXPORT_SYMBOL(drm_syncobj_find);
+>>>    -static struct dma_fence *
+>>> -drm_syncobj_find_signal_pt_for_point(struct drm_syncobj *syncobj,
+>>> -                     uint64_t point)
+>>> -{
+>>> -    struct drm_syncobj_signal_pt *signal_pt;
+>>> -
+>>> -    if ((syncobj->type == DRM_SYNCOBJ_TYPE_TIMELINE) &&
+>>> -        (point <= syncobj->timeline))
+>>> -        return drm_syncobj_get_stub_fence();
+>>> -
+>>> -    list_for_each_entry(signal_pt, &syncobj->signal_pt_list, list) {
+>>> -        if (point > signal_pt->value)
+>>> -            continue;
+>>> -        if ((syncobj->type == DRM_SYNCOBJ_TYPE_BINARY) &&
+>>> -            (point != signal_pt->value))
+>>> -            continue;
+>>> -        return dma_fence_get(&signal_pt->fence_array->base);
+>>> -    }
+>>> -    return NULL;
+>>> -}
+>>> -
+>>>    static void drm_syncobj_add_callback_locked(struct drm_syncobj 
+>>> *syncobj,
+>>>                            struct drm_syncobj_cb *cb,
+>>>                            drm_syncobj_func_t func)
+>>> @@ -152,158 +106,53 @@ static void 
+>>> drm_syncobj_add_callback_locked(struct drm_syncobj *syncobj,
+>>>        list_add_tail(&cb->node, &syncobj->cb_list);
+>>>    }
+>>>    -static void drm_syncobj_fence_get_or_add_callback(struct 
+>>> drm_syncobj *syncobj,
+>>> -                          struct dma_fence **fence,
+>>> -                          struct drm_syncobj_cb *cb,
+>>> -                          drm_syncobj_func_t func)
+>>> +static int drm_syncobj_fence_get_or_add_callback(struct drm_syncobj 
+>>> *syncobj,
+>>> +                         struct dma_fence **fence,
+>>> +                         struct drm_syncobj_cb *cb,
+>>> +                         drm_syncobj_func_t func)
+>>>    {
+>>> -    u64 pt_value = 0;
+>>> -
+>>> -    WARN_ON(*fence);
+>>> -
+>>> -    if (syncobj->type == DRM_SYNCOBJ_TYPE_BINARY) {
+>>> -        /*BINARY syncobj always wait on last pt */
+>>> -        pt_value = syncobj->signal_point;
+>>> +    int ret;
+>>>    -        if (pt_value == 0)
+>>> -            pt_value += DRM_SYNCOBJ_BINARY_POINT;
+>>> -    }
+>>> +    *fence = drm_syncobj_fence_get(syncobj);
+>>> +    if (*fence)
+>>> +        return 1;
+>>>    -    mutex_lock(&syncobj->cb_mutex);
+>>> -    spin_lock(&syncobj->pt_lock);
+>>> -    *fence = drm_syncobj_find_signal_pt_for_point(syncobj, pt_value);
+>>> -    spin_unlock(&syncobj->pt_lock);
+>>> -    if (!*fence)
+>>> +    spin_lock(&syncobj->lock);
+>>> +    /* We've already tried once to get a fence and failed. Now that we
+>>> +     * have the lock, try one more time just to be sure we don't add a
+>>> +     * callback when a fence has already been set.
+>>> +     */
+>>> +    if (syncobj->fence) {
+>>> +        *fence = 
+>>> dma_fence_get(rcu_dereference_protected(syncobj->fence,
+>>> + lockdep_is_held(&syncobj->lock)));
+>>> +        ret = 1;
+>>> +    } else {
+>>> +        *fence = NULL;
+>>>            drm_syncobj_add_callback_locked(syncobj, cb, func);
+>>> -    mutex_unlock(&syncobj->cb_mutex);
+>>> -}
+>>> -
+>>> -static void drm_syncobj_remove_callback(struct drm_syncobj *syncobj,
+>>> -                    struct drm_syncobj_cb *cb)
+>>> -{
+>>> -    mutex_lock(&syncobj->cb_mutex);
+>>> -    list_del_init(&cb->node);
+>>> -    mutex_unlock(&syncobj->cb_mutex);
+>>> -}
+>>> +        ret = 0;
+>>> +    }
+>>> +    spin_unlock(&syncobj->lock);
+>>>    -static void drm_syncobj_init(struct drm_syncobj *syncobj)
+>>> -{
+>>> -    spin_lock(&syncobj->pt_lock);
+>>> -    syncobj->timeline_context = dma_fence_context_alloc(1);
+>>> -    syncobj->timeline = 0;
+>>> -    syncobj->signal_point = 0;
+>>> -    init_waitqueue_head(&syncobj->wq);
+>>> -
+>>> -    INIT_LIST_HEAD(&syncobj->signal_pt_list);
+>>> -    spin_unlock(&syncobj->pt_lock);
+>>> +    return ret;
+>>>    }
+>>>    -static void drm_syncobj_fini(struct drm_syncobj *syncobj)
+>>> +void drm_syncobj_add_callback(struct drm_syncobj *syncobj,
+>>> +                  struct drm_syncobj_cb *cb,
+>>> +                  drm_syncobj_func_t func)
+>>>    {
+>>> -    struct drm_syncobj_signal_pt *signal_pt = NULL, *tmp;
+>>> -
+>>> -    spin_lock(&syncobj->pt_lock);
+>>> -    list_for_each_entry_safe(signal_pt, tmp,
+>>> -                 &syncobj->signal_pt_list, list) {
+>>> -        list_del(&signal_pt->list);
+>>> - dma_fence_put(&signal_pt->fence_array->base);
+>>> -        kfree(signal_pt);
+>>> -    }
+>>> -    spin_unlock(&syncobj->pt_lock);
+>>> +    spin_lock(&syncobj->lock);
+>>> +    drm_syncobj_add_callback_locked(syncobj, cb, func);
+>>> +    spin_unlock(&syncobj->lock);
+>>>    }
+>>>    -static int drm_syncobj_create_signal_pt(struct drm_syncobj 
+>>> *syncobj,
+>>> -                    struct dma_fence *fence,
+>>> -                    u64 point)
+>>> +void drm_syncobj_remove_callback(struct drm_syncobj *syncobj,
+>>> +                 struct drm_syncobj_cb *cb)
+>>>    {
+>>> -    struct drm_syncobj_signal_pt *signal_pt =
+>>> -        kzalloc(sizeof(struct drm_syncobj_signal_pt), GFP_KERNEL);
+>>> -    struct drm_syncobj_signal_pt *tail_pt;
+>>> -    struct dma_fence **fences;
+>>> -    int num_fences = 0;
+>>> -    int ret = 0, i;
+>>> -
+>>> -    if (!signal_pt)
+>>> -        return -ENOMEM;
+>>> -    if (!fence)
+>>> -        goto out;
+>>> -
+>>> -    fences = kmalloc_array(sizeof(void *), 2, GFP_KERNEL);
+>>> -    if (!fences) {
+>>> -        ret = -ENOMEM;
+>>> -        goto out;
+>>> -    }
+>>> -    fences[num_fences++] = dma_fence_get(fence);
+>>> -    /* timeline syncobj must take this dependency */
+>>> -    if (syncobj->type == DRM_SYNCOBJ_TYPE_TIMELINE) {
+>>> -        spin_lock(&syncobj->pt_lock);
+>>> -        if (!list_empty(&syncobj->signal_pt_list)) {
+>>> -            tail_pt = list_last_entry(&syncobj->signal_pt_list,
+>>> -                          struct drm_syncobj_signal_pt, list);
+>>> -            fences[num_fences++] =
+>>> - dma_fence_get(&tail_pt->fence_array->base);
+>>> -        }
+>>> -        spin_unlock(&syncobj->pt_lock);
+>>> -    }
+>>> -    signal_pt->fence_array = dma_fence_array_create(num_fences, 
+>>> fences,
+>>> -                            syncobj->timeline_context,
+>>> -                            point, false);
+>>> -    if (!signal_pt->fence_array) {
+>>> -        ret = -ENOMEM;
+>>> -        goto fail;
+>>> -    }
+>>> -
+>>> -    spin_lock(&syncobj->pt_lock);
+>>> -    if (syncobj->signal_point >= point) {
+>>> -        DRM_WARN("A later signal is ready!");
+>>> -        spin_unlock(&syncobj->pt_lock);
+>>> -        goto exist;
+>>> -    }
+>>> -    signal_pt->value = point;
+>>> -    list_add_tail(&signal_pt->list, &syncobj->signal_pt_list);
+>>> -    syncobj->signal_point = point;
+>>> -    spin_unlock(&syncobj->pt_lock);
+>>> -    wake_up_all(&syncobj->wq);
+>>> -
+>>> -    return 0;
+>>> -exist:
+>>> -    dma_fence_put(&signal_pt->fence_array->base);
+>>> -fail:
+>>> -    for (i = 0; i < num_fences; i++)
+>>> -        dma_fence_put(fences[i]);
+>>> -    kfree(fences);
+>>> -out:
+>>> -    kfree(signal_pt);
+>>> -    return ret;
+>>> +    spin_lock(&syncobj->lock);
+>>> +    list_del_init(&cb->node);
+>>> +    spin_unlock(&syncobj->lock);
+>>>    }
+>>>    -static void drm_syncobj_garbage_collection(struct drm_syncobj 
+>>> *syncobj)
+>>> -{
+>>> -    struct drm_syncobj_signal_pt *signal_pt, *tmp, *tail_pt;
+>>> -
+>>> -    spin_lock(&syncobj->pt_lock);
+>>> -    tail_pt = list_last_entry(&syncobj->signal_pt_list,
+>>> -                  struct drm_syncobj_signal_pt,
+>>> -                  list);
+>>> -    list_for_each_entry_safe(signal_pt, tmp,
+>>> -                 &syncobj->signal_pt_list, list) {
+>>> -        if (syncobj->type == DRM_SYNCOBJ_TYPE_BINARY &&
+>>> -            signal_pt == tail_pt)
+>>> -            continue;
+>>> -        if (dma_fence_is_signaled(&signal_pt->fence_array->base)) {
+>>> -            syncobj->timeline = signal_pt->value;
+>>> -            list_del(&signal_pt->list);
+>>> - dma_fence_put(&signal_pt->fence_array->base);
+>>> -            kfree(signal_pt);
+>>> -        } else {
+>>> -            /*signal_pt is in order in list, from small to big, so
+>>> -             * the later must not be signal either */
+>>> -            break;
+>>> -        }
+>>> -    }
+>>> -
+>>> -    spin_unlock(&syncobj->pt_lock);
+>>> -}
+>>>    /**
+>>>     * drm_syncobj_replace_fence - replace fence in a sync object.
+>>>     * @syncobj: Sync object to replace fence in
+>>> @@ -316,30 +165,28 @@ void drm_syncobj_replace_fence(struct 
+>>> drm_syncobj *syncobj,
+>>>                       u64 point,
+>>>                       struct dma_fence *fence)
+>>>    {
+>>> -    u64 pt_value = point;
+>>> -
+>>> -    drm_syncobj_garbage_collection(syncobj);
+>>> -    if (syncobj->type == DRM_SYNCOBJ_TYPE_BINARY) {
+>>> -        if (!fence) {
+>>> -            drm_syncobj_fini(syncobj);
+>>> -            drm_syncobj_init(syncobj);
+>>> -            return;
+>>> -        }
+>>> -        pt_value = syncobj->signal_point +
+>>> -            DRM_SYNCOBJ_BINARY_POINT;
+>>> -    }
+>>> -    drm_syncobj_create_signal_pt(syncobj, fence, pt_value);
+>>> -    if (fence) {
+>>> -        struct drm_syncobj_cb *cur, *tmp;
+>>> -        LIST_HEAD(cb_list);
+>>> +    struct dma_fence *old_fence;
+>>> +    struct drm_syncobj_cb *cur, *tmp;
 >>> +
->>> +static void led_parse_properties(struct fwnode_handle *fwnode,
->>> +                                struct led_properties *props)
->>> +{
->>> +       int ret;
+>>> +    if (fence)
+>>> +        dma_fence_get(fence);
 >>> +
->>> +       if (!fwnode)
->>> +               return;
+>>> +    spin_lock(&syncobj->lock);
+>>>    -        mutex_lock(&syncobj->cb_mutex);
+>>> +    old_fence = rcu_dereference_protected(syncobj->fence,
+>>> + lockdep_is_held(&syncobj->lock));
+>>> +    rcu_assign_pointer(syncobj->fence, fence);
 >>> +
->>> +       ret = fwnode_property_read_string(fwnode, "label", &props->label);
->>> +       if (!ret)
->>> +               return;
+>>> +    if (fence != old_fence) {
+>>>            list_for_each_entry_safe(cur, tmp, &syncobj->cb_list, 
+>>> node) {
+>>>                list_del_init(&cur->node);
+>>>                cur->func(syncobj, cur);
+>>>            }
+>>> -        mutex_unlock(&syncobj->cb_mutex);
+>>>        }
 >>> +
->>> +       ret = fwnode_property_read_string(fwnode, "function", &props->function);
->>> +       if (ret)
->>> +               pr_info("Failed to parse function property\n");
+>>> +    spin_unlock(&syncobj->lock);
 >>> +
->>> +       ret = fwnode_property_read_string(fwnode, "color", &props->color);
->>> +       if (ret)
->>> +               pr_info("Failed to parse color property\n");
->>
->> Now the color and function properties can be optional, so we should
->> deal with different return errors.
->> -EINVAL means we have not set color or function property, which means
->> we should not give failure message for users (maybe "not supply color
->> property\n") and return 0 as success.
->
-> The lack of any of these properties is not critical, therefore this
-> function does not return the error code, but only prints the status.
-> Please note that I'm not using pr_error(), but pr_info().
-> Related to the message text - I agree, I will change it to e.g.
-> "color property not found"
-
-Yes, that's reasonable.
-
->
->> For other errors, we should not ignore them, instead we should give
->> failure messages and return errors.
->
-> I've skimmed through other kernel drivers and vast majority of
-> them don't check exact failure code in case of non-zero return,
-> but assume that property is missing, and eventually report
-> error code. I'd do the same here.
-
-Fair enough. You can still add my tested tag. Thanks.
-
->> Tested-by: Baolin Wang <baolin.wang@linaro.org>
->>
->>> +}
+>>> +    dma_fence_put(old_fence);
+>>>    }
+>>>    EXPORT_SYMBOL(drm_syncobj_replace_fence);
+>>>    @@ -362,64 +209,6 @@ static int 
+>>> drm_syncobj_assign_null_handle(struct drm_syncobj *syncobj)
+>>>        return 0;
+>>>    }
+>>>    -static int
+>>> -drm_syncobj_point_get(struct drm_syncobj *syncobj, u64 point, u64 
+>>> flags,
+>>> -              struct dma_fence **fence)
+>>> -{
+>>> -    int ret = 0;
+>>> -
+>>> -    if (flags & DRM_SYNCOBJ_WAIT_FLAGS_WAIT_FOR_SUBMIT) {
+>>> -        ret = wait_event_interruptible(syncobj->wq,
+>>> -                           point <= syncobj->signal_point);
+>>> -        if (ret < 0)
+>>> -            return ret;
+>>> -    }
+>>> -    spin_lock(&syncobj->pt_lock);
+>>> -    *fence = drm_syncobj_find_signal_pt_for_point(syncobj, point);
+>>> -    if (!*fence)
+>>> -        ret = -EINVAL;
+>>> -    spin_unlock(&syncobj->pt_lock);
+>>> -    return ret;
+>>> -}
+>>> -
+>>> -/**
+>>> - * drm_syncobj_search_fence - lookup and reference the fence in a 
+>>> sync object or
+>>> - * in a timeline point
+>>> - * @syncobj: sync object pointer
+>>> - * @point: timeline point
+>>> - * @flags: DRM_SYNCOBJ_WAIT_FLAGS_WAIT_FOR_SUBMIT or not
+>>> - * @fence: out parameter for the fence
+>>> - *
+>>> - * if flags is DRM_SYNCOBJ_WAIT_FLAGS_WAIT_FOR_SUBMIT, the function 
+>>> will block
+>>> - * here until specific timeline points is reached.
+>>> - * if not, you need a submit thread and block in userspace until 
+>>> all future
+>>> - * timeline points have materialized, only then you can submit to 
+>>> the kernel,
+>>> - * otherwise, function will fail to return fence.
+>>> - *
+>>> - * Returns 0 on success or a negative error value on failure. On 
+>>> success @fence
+>>> - * contains a reference to the fence, which must be released by 
+>>> calling
+>>> - * dma_fence_put().
+>>> - */
+>>> -int drm_syncobj_search_fence(struct drm_syncobj *syncobj, u64 point,
+>>> -                 u64 flags, struct dma_fence **fence)
+>>> -{
+>>> -    u64 pt_value = point;
+>>> -
+>>> -    if (!syncobj)
+>>> -        return -ENOENT;
+>>> -
+>>> -    drm_syncobj_garbage_collection(syncobj);
+>>> -    if (syncobj->type == DRM_SYNCOBJ_TYPE_BINARY) {
+>>> -        /*BINARY syncobj always wait on last pt */
+>>> -        pt_value = syncobj->signal_point;
+>>> -
+>>> -        if (pt_value == 0)
+>>> -            pt_value += DRM_SYNCOBJ_BINARY_POINT;
+>>> -    }
+>>> -    return drm_syncobj_point_get(syncobj, pt_value, flags, fence);
+>>> -}
+>>> -EXPORT_SYMBOL(drm_syncobj_search_fence);
+>>> -
+>>>    /**
+>>>     * drm_syncobj_find_fence - lookup and reference the fence in a 
+>>> sync object
+>>>     * @file_private: drm file private pointer
+>>> @@ -429,7 +218,7 @@ EXPORT_SYMBOL(drm_syncobj_search_fence);
+>>>     * @fence: out parameter for the fence
+>>>     *
+>>>     * This is just a convenience function that combines 
+>>> drm_syncobj_find() and
+>>> - * drm_syncobj_lookup_fence().
+>>> + * drm_syncobj_fence_get().
+>>>     *
+>>>     * Returns 0 on success or a negative error value on failure. On 
+>>> success @fence
+>>>     * contains a reference to the fence, which must be released by 
+>>> calling
+>>> @@ -440,11 +229,16 @@ int drm_syncobj_find_fence(struct drm_file 
+>>> *file_private,
+>>>                   struct dma_fence **fence)
+>>>    {
+>>>        struct drm_syncobj *syncobj = drm_syncobj_find(file_private, 
+>>> handle);
+>>> -    int ret;
+>>> +    int ret = 0;
+>>>    -    ret = drm_syncobj_search_fence(syncobj, point, flags, fence);
+>>> -    if (syncobj)
+>>> -        drm_syncobj_put(syncobj);
+>>> +    if (!syncobj)
+>>> +        return -ENOENT;
 >>> +
->>> +int led_compose_name(struct fwnode_handle *fwnode, const char *led_hw_name,
->>> +                    const char *default_desc, char *led_classdev_name)
->>> +{
->>> +       struct led_properties props = {};
+>>> +    *fence = drm_syncobj_fence_get(syncobj);
+>>> +    if (!*fence) {
+>>> +        ret = -EINVAL;
+>>> +    }
+>>> +    drm_syncobj_put(syncobj);
+>>>        return ret;
+>>>    }
+>>>    EXPORT_SYMBOL(drm_syncobj_find_fence);
+>>> @@ -460,7 +254,7 @@ void drm_syncobj_free(struct kref *kref)
+>>>        struct drm_syncobj *syncobj = container_of(kref,
+>>>                               struct drm_syncobj,
+>>>                               refcount);
+>>> -    drm_syncobj_fini(syncobj);
+>>> +    drm_syncobj_replace_fence(syncobj, 0, NULL);
+>>>        kfree(syncobj);
+>>>    }
+>>>    EXPORT_SYMBOL(drm_syncobj_free);
+>>> @@ -489,13 +283,7 @@ int drm_syncobj_create(struct drm_syncobj 
+>>> **out_syncobj, uint32_t flags,
+>>>           kref_init(&syncobj->refcount);
+>>>        INIT_LIST_HEAD(&syncobj->cb_list);
+>>> -    spin_lock_init(&syncobj->pt_lock);
+>>> -    mutex_init(&syncobj->cb_mutex);
+>>> -    if (flags & DRM_SYNCOBJ_CREATE_TYPE_TIMELINE)
+>>> -        syncobj->type = DRM_SYNCOBJ_TYPE_TIMELINE;
+>>> -    else
+>>> -        syncobj->type = DRM_SYNCOBJ_TYPE_BINARY;
+>>> -    drm_syncobj_init(syncobj);
+>>> +    spin_lock_init(&syncobj->lock);
+>>>           if (flags & DRM_SYNCOBJ_CREATE_SIGNALED) {
+>>>            ret = drm_syncobj_assign_null_handle(syncobj);
+>>> @@ -778,8 +566,7 @@ drm_syncobj_create_ioctl(struct drm_device *dev, 
+>>> void *data,
+>>>            return -EOPNOTSUPP;
+>>>           /* no valid flags yet */
+>>> -    if (args->flags & ~(DRM_SYNCOBJ_CREATE_SIGNALED |
+>>> -                DRM_SYNCOBJ_CREATE_TYPE_TIMELINE))
+>>> +    if (args->flags & ~DRM_SYNCOBJ_CREATE_SIGNALED)
+>>>            return -EINVAL;
+>>>           return drm_syncobj_create_as_handle(file_private,
+>>> @@ -872,8 +659,9 @@ static void syncobj_wait_syncobj_func(struct 
+>>> drm_syncobj *syncobj,
+>>>        struct syncobj_wait_entry *wait =
+>>>            container_of(cb, struct syncobj_wait_entry, syncobj_cb);
+>>>    -    drm_syncobj_search_fence(syncobj, 0, 0, &wait->fence);
+>>> -
+>>> +    /* This happens inside the syncobj lock */
+>>> +    wait->fence = 
+>>> dma_fence_get(rcu_dereference_protected(syncobj->fence,
+>>> + lockdep_is_held(&syncobj->lock)));
+>>>        wake_up_process(wait->task);
+>>>    }
+>>>    @@ -899,8 +687,7 @@ static signed long 
+>>> drm_syncobj_array_wait_timeout(struct drm_syncobj **syncobjs,
+>>>        signaled_count = 0;
+>>>        for (i = 0; i < count; ++i) {
+>>>            entries[i].task = current;
+>>> -        drm_syncobj_search_fence(syncobjs[i], 0, 0,
+>>> -                     &entries[i].fence);
+>>> +        entries[i].fence = drm_syncobj_fence_get(syncobjs[i]);
+>>>            if (!entries[i].fence) {
+>>>                if (flags & DRM_SYNCOBJ_WAIT_FLAGS_WAIT_FOR_SUBMIT) {
+>>>                    continue;
+>>> @@ -931,9 +718,6 @@ static signed long 
+>>> drm_syncobj_array_wait_timeout(struct drm_syncobj **syncobjs,
+>>>           if (flags & DRM_SYNCOBJ_WAIT_FLAGS_WAIT_FOR_SUBMIT) {
+>>>            for (i = 0; i < count; ++i) {
+>>> -            if (entries[i].fence)
+>>> -                continue;
+>>> -
+>>> drm_syncobj_fence_get_or_add_callback(syncobjs[i],
+>>>                                      &entries[i].fence,
+>>> &entries[i].syncobj_cb,
+>>> @@ -1165,13 +949,12 @@ drm_syncobj_reset_ioctl(struct drm_device 
+>>> *dev, void *data,
+>>>        if (ret < 0)
+>>>            return ret;
+>>>    -    for (i = 0; i < args->count_handles; i++) {
+>>> -        drm_syncobj_fini(syncobjs[i]);
+>>> -        drm_syncobj_init(syncobjs[i]);
+>>> -    }
+>>> +    for (i = 0; i < args->count_handles; i++)
+>>> +        drm_syncobj_replace_fence(syncobjs[i], 0, NULL);
 >>> +
->>> +       if (!led_classdev_name)
->>> +               return -EINVAL;
->>> +
->>> +       led_parse_properties(fwnode, &props);
->>> +
->>> +       if (props.label) {
->>> +               /*
->>> +                * Presence of 'label' DT property implies legacy LED name,
->>> +                * formatted as <devicename:color:function>, with possible
->>> +                * section omission if doesn't apply to given device.
->>> +                *
->>> +                * If no led_hw_name has been passed, then it indicates that
->>> +                * DT label should be used as-is for LED class device name.
->>> +                * Otherwise the label is prepended with led_hw_name to compose
->>> +                * the final LED class device name.
->>> +                */
->>> +               if (!led_hw_name) {
->>> +                       strncpy(led_classdev_name, props.label,
->>> +                               LED_MAX_NAME_SIZE);
->>> +               } else {
->>> +                       snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%s:%s",
->>> +                                led_hw_name, props.label);
->>> +               }
->>> +       } else if (props.function || props.color) {
->>> +               snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%s:%s",
->>> +                        props.color ?: "", props.function ?: "");
->>> +       } else if (default_desc) {
->>> +               if (!led_hw_name) {
->>> +                       pr_err("Legacy LED naming requires devicename segment");
->>> +                       return -EINVAL;
->>> +               }
->>> +               snprintf(led_classdev_name, LED_MAX_NAME_SIZE, "%s:%s",
->>> +                        led_hw_name, default_desc);
->>> +       } else if (is_of_node(fwnode)) {
->>> +               strncpy(led_classdev_name, to_of_node(fwnode)->name,
->>> +                       LED_MAX_NAME_SIZE);
->>> +       } else
->>> +               return -EINVAL;
->>> +
->>> +       return 0;
->>> +}
->>> +EXPORT_SYMBOL_GPL(led_compose_name);
->>> diff --git a/include/linux/leds.h b/include/linux/leds.h
->>> index 646c49a..ddb4001 100644
->>> --- a/include/linux/leds.h
->>> +++ b/include/linux/leds.h
->>> @@ -238,6 +238,32 @@ extern void led_sysfs_disable(struct led_classdev *led_cdev);
->>>  extern void led_sysfs_enable(struct led_classdev *led_cdev);
->>>
->>>  /**
->>> + * led_compose_name - compose LED class device name
->>> + * @child: child fwnode_handle describing a LED,
->>> + *        or a group of synchronized LEDs.
->>> + * @led_hw_name: name of the LED controller, used when falling back to legacy
->>> + *              LED naming; it should be set to NULL in new LED class drivers
->>> + * @default_desc: default <color:function> tuple, for backwards compatibility
->>> + *               with in-driver hard-coded LED names used as a fallback when
->>> + *               "label" DT property was absent; it should be set to NULL
->>> + *               in new LED class drivers
->>> + * @led_classdev_name: composed LED class device name
+>>>        drm_syncobj_array_free(syncobjs, args->count_handles);
+>>>    -    return ret;
+>>> +    return 0;
+>>>    }
+>>>       int
+>>> diff --git a/include/drm/drm_syncobj.h b/include/drm/drm_syncobj.h
+>>> index 29244cbcd05e..2eda44def639 100644
+>>> --- a/include/drm/drm_syncobj.h
+>>> +++ b/include/drm/drm_syncobj.h
+>>> @@ -30,15 +30,10 @@
+>>>       struct drm_syncobj_cb;
+>>>    -enum drm_syncobj_type {
+>>> -    DRM_SYNCOBJ_TYPE_BINARY,
+>>> -    DRM_SYNCOBJ_TYPE_TIMELINE
+>>> -};
+>>> -
+>>>    /**
+>>>     * struct drm_syncobj - sync object.
+>>>     *
+>>> - * This structure defines a generic sync object which is timeline 
+>>> based.
+>>> + * This structure defines a generic sync object which wraps a 
+>>> &dma_fence.
+>>>     */
+>>>    struct drm_syncobj {
+>>>        /**
+>>> @@ -46,42 +41,21 @@ struct drm_syncobj {
+>>>         */
+>>>        struct kref refcount;
+>>>        /**
+>>> -     * @type: indicate syncobj type
+>>> -     */
+>>> -    enum drm_syncobj_type type;
+>>> -    /**
+>>> -     * @wq: wait signal operation work queue
+>>> -     */
+>>> -    wait_queue_head_t    wq;
+>>> -    /**
+>>> -     * @timeline_context: fence context used by timeline
+>>> +     * @fence:
+>>> +     * NULL or a pointer to the fence bound to this object.
+>>> +     *
+>>> +     * This field should not be used directly. Use 
+>>> drm_syncobj_fence_get()
+>>> +     * and drm_syncobj_replace_fence() instead.
+>>>         */
+>>> -    u64 timeline_context;
+>>> +    struct dma_fence __rcu *fence;
+>>>        /**
+>>> -     * @timeline: syncobj timeline value, which indicates point is 
+>>> signaled.
+>>> +     * @cb_list: List of callbacks to call when the &fence gets 
+>>> replaced.
+>>>         */
+>>> -    u64 timeline;
+>>> -    /**
+>>> -     * @signal_point: which indicates the latest signaler point.
+>>> -     */
+>>> -    u64 signal_point;
+>>> -    /**
+>>> -     * @signal_pt_list: signaler point list.
+>>> -     */
+>>> -    struct list_head signal_pt_list;
+>>> -
+>>> -    /**
+>>> -         * @cb_list: List of callbacks to call when the &fence gets 
+>>> replaced.
+>>> -         */
+>>>        struct list_head cb_list;
+>>>        /**
+>>> -     * @pt_lock: Protects pt list.
+>>> +     * @lock: Protects &cb_list and write-locks &fence.
+>>>         */
+>>> -    spinlock_t pt_lock;
+>>> -    /**
+>>> -     * @cb_mutex: Protects syncobj cb list.
+>>> -     */
+>>> -    struct mutex cb_mutex;
+>>> +    spinlock_t lock;
+>>>        /**
+>>>         * @file: A file backing for this syncobj.
+>>>         */
+>>> @@ -94,7 +68,7 @@ typedef void (*drm_syncobj_func_t)(struct 
+>>> drm_syncobj *syncobj,
+>>>    /**
+>>>     * struct drm_syncobj_cb - callback for drm_syncobj_add_callback
+>>>     * @node: used by drm_syncob_add_callback to append this struct to
+>>> - *       &drm_syncobj.cb_list
+>>> + *      &drm_syncobj.cb_list
+>>>     * @func: drm_syncobj_func_t to call
+>>>     *
+>>>     * This struct will be initialized by drm_syncobj_add_callback, 
+>>> additional
+>>> @@ -132,6 +106,29 @@ drm_syncobj_put(struct drm_syncobj *obj)
+>>>        kref_put(&obj->refcount, drm_syncobj_free);
+>>>    }
+>>>    +/**
+>>> + * drm_syncobj_fence_get - get a reference to a fence in a sync object
+>>> + * @syncobj: sync object.
 >>> + *
->>> + * Create LED class device name basing on the configuration provided by the
->>> + * board firmware. The name can have a legacy form <devicename:color:function>,
->>> + * or a new form <color:function>. The latter is chosen if at least one of
->>> + * "color" or "function" properties is present in the fwnode, leaving the
->>> + * section blank if the related property is absent. The former is applied
->>> + * when legacy "label" property is present in the fwnode. In case none of the
->>> + * aformentioned properties was found, then, for OF nodes, the node name
->>> + * is adopted for LED class device name.
+>>> + * This acquires additional reference to &drm_syncobj.fence 
+>>> contained in @obj,
+>>> + * if not NULL. It is illegal to call this without already holding 
+>>> a reference.
+>>> + * No locks required.
 >>> + *
->>> + * Returns: 0 on success or negative error value on failure
+>>> + * Returns:
+>>> + * Either the fence of @obj or NULL if there's none.
 >>> + */
->>> +extern int led_compose_name(struct fwnode_handle *child, const char *led_hw_name,
->>> +                           const char *default_desc, char *led_classdev_name);
+>>> +static inline struct dma_fence *
+>>> +drm_syncobj_fence_get(struct drm_syncobj *syncobj)
+>>> +{
+>>> +    struct dma_fence *fence;
 >>> +
->>> +/**
->>>   * led_sysfs_is_disabled - check if LED sysfs interface is disabled
->>>   * @led_cdev: the LED to query
->>>   *
->>> @@ -414,6 +440,12 @@ struct led_platform_data {
->>>         struct led_info *leds;
->>>  };
->>>
->>> +struct led_properties {
->>> +       const char *color;
->>> +       const char *function;
->>> +       const char *label;
->>> +};
+>>> +    rcu_read_lock();
+>>> +    fence = dma_fence_get_rcu_safe(&syncobj->fence);
+>>> +    rcu_read_unlock();
 >>> +
->>>  struct gpio_desc;
->>>  typedef int (*gpio_blink_set_t)(struct gpio_desc *desc, int state,
->>>                                 unsigned long *delay_on,
->>> --
->>> 2.1.4
->>>
->>
->>
->>
+>>> +    return fence;
+>>> +}
+>>> +
+>>>    struct drm_syncobj *drm_syncobj_find(struct drm_file *file_private,
+>>>                         u32 handle);
+>>>    void drm_syncobj_replace_fence(struct drm_syncobj *syncobj, u64 
+>>> point,
+>>> @@ -145,7 +142,5 @@ int drm_syncobj_create(struct drm_syncobj 
+>>> **out_syncobj, uint32_t flags,
+>>>    int drm_syncobj_get_handle(struct drm_file *file_private,
+>>>                   struct drm_syncobj *syncobj, u32 *handle);
+>>>    int drm_syncobj_get_fd(struct drm_syncobj *syncobj, int *p_fd);
+>>> -int drm_syncobj_search_fence(struct drm_syncobj *syncobj, u64 
+>>> point, u64 flags,
+>>> -                 struct dma_fence **fence);
+>>>       #endif
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 >
-> --
-> Best regards,
-> Jacek Anaszewski
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-
-
--- 
-Baolin Wang
-Best Regards
