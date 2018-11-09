@@ -2,110 +2,187 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2711C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 21:15:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CD89C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 21:19:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABE2E20840
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 21:15:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A5CA20825
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 21:19:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="ck10cOqM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABE2E20840
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=soleen.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mNc03Un0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A5CA20825
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728050AbeKJG5p (ORCPT
+        id S1728102AbeKJHBx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 01:57:45 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:35273 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725799AbeKJG5p (ORCPT
+        Sat, 10 Nov 2018 02:01:53 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:45719 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725799AbeKJHBx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 01:57:45 -0500
-Received: by mail-qk1-f196.google.com with SMTP id w204so4141788qka.2
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 13:15:24 -0800 (PST)
+        Sat, 10 Nov 2018 02:01:53 -0500
+Received: by mail-ot1-f66.google.com with SMTP id 32so2373547ota.12
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 13:19:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=d1jLP0vvLb2F8QBsHv2P1ODyTO4vmGSriZo5+RA6cXM=;
-        b=ck10cOqMcv/andnIqMi3kYyLlNiZAC9R8jMrGBx22lJ4vI28Sb9X+LlVoooQwCx8eu
-         Cw7qRP8KS9rJyf+WH+S8sIEUQ2rGWlxTtRjyQAXUGKsCKQ5q1zp/H6nZbV3WNbEQDLxg
-         5SIDilLN7bL2ZvndhoPUBARm4NTM02VrBMadST2s56uJq5BuCTuMzmidryYUNhZsMFSG
-         CwtRrxVD9lDhW7wdmyacOpsvhLIgkH5D32AryqAe/d3rYV/2m2TSB/q5mhv4wAXl1w7b
-         jvBhpxDNSCWBViqbOz5SZv4dznjIRE7Dop97Fkje9pXAAlOe/iiGXZzageeg6/Wuyo81
-         CwaQ==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1uPTTTRfBBUmhrV7HkwLUyi9TvQ18jgLmCuRVixcUFM=;
+        b=mNc03Un05t32DPuvTXCqgJ6zyMbgFSmMAwqTgC1oyfoNDZ3MLGeXDsDODxT/aAe67I
+         aTNO6tL0ILk7e0omr8AxfaGr4cxTXqS5xEKQbSHeOYbtsmTZOVIV0rz0ttmkEAfJ3rx4
+         KB54AvNoPRG3FomVb6qFLBA2eO+yuTSlaeTs3fnIJpdEn7AgoOJbYEMG60w5Y6Ym1NVb
+         fKMOow4ysm7T9ze5myRedFfLa22lI52hpfKUx5dIN2BT77/rXAPd24OuUJ3TzEJZL7Ic
+         SAreYwrV4LpH6RwP8Sc0xqYbuA4vRAf9ck26BIhOHqA3o4TMVxBWivs3cW3YqVqbgg08
+         HGrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=d1jLP0vvLb2F8QBsHv2P1ODyTO4vmGSriZo5+RA6cXM=;
-        b=kp9LIMTcw6xQMrjPOjNfCYpZdHn7VotC+QxDrPWAN0aUVK5J0MW3MJCQ9ILO4CFIiQ
-         BMVgovd/tg7BBOB6KYbtPAJ5cvNnPODXqQFU5kqU+qGKjJJzm1GohQqZ8mGL5ote9IF7
-         L4lZ/uFcmWJFnsDUd4aaVH/e1n0nYtTY8gugiHv9v8pdymBTOjN+vwyd2wW9sy8aTB0y
-         fE/5AChuL/2VwXmGi8cl4stQwwsdukQ65kWql3eT5GQUVePVU0er8in5eiMADF+iiVtV
-         eIJlgjip2hWyt1JPvmwnH9Hsxynv4v68VJAo+QMeh7A0Ltmi8CD1BpGD57PE6YIStypL
-         MJmw==
-X-Gm-Message-State: AGRZ1gLbvabCoxe3G5tibyVuQaMQoe/E/V/3QTfpYYVKh+hhLkH+/YNJ
-        9xCi5yQ3KlYmm5Yv0x/141KinQ==
-X-Google-Smtp-Source: AJdET5cNxqgGHDTlxR1FRJV0mlMG8VKwLZAc+swlnnS+X/K8gEhvEE6KAdt9lGjqbfL8GX7bV07qwA==
-X-Received: by 2002:ac8:160b:: with SMTP id p11mr10092610qtj.113.1541798123874;
-        Fri, 09 Nov 2018 13:15:23 -0800 (PST)
-Received: from xakep.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id w34sm5002599qtj.27.2018.11.09.13.15.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 09 Nov 2018 13:15:22 -0800 (PST)
-Date:   Fri, 9 Nov 2018 16:15:21 -0500
-From:   Pavel Tatashin <pasha.tatashin@soleen.com>
-To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        daniel.m.jordan@oracle.com
-Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
-        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, davem@davemloft.net,
-        pavel.tatashin@microsoft.com, mhocko@suse.com, mingo@kernel.org,
-        kirill.shutemov@linux.intel.com, dan.j.williams@intel.com,
-        dave.jiang@intel.com, rppt@linux.vnet.ibm.com, willy@infradead.org,
-        vbabka@suse.cz, khalid.aziz@oracle.com, ldufour@linux.vnet.ibm.com,
-        mgorman@techsingularity.net, yi.z.zhang@linux.intel.com
-Subject: Re: [mm PATCH v5 0/7] Deferred page init improvements
-Message-ID: <20181109211521.5ospn33pp552k2xv@xakep.localdomain>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1uPTTTRfBBUmhrV7HkwLUyi9TvQ18jgLmCuRVixcUFM=;
+        b=j/J7Nrg+MH6tkwKdN6fx+1J66DKON7WCKAs4sOF0fQyGEZfGmOiqUvgjoC4qNtviDy
+         DtGypZBXbwSU3Lman9X2IlsSBHe48nqutKNgmIh2bWd0Wyr19V62b9hMSvBY+Zs3nvSA
+         VC/Vuz7p9Je3cG2DfQjLQOlyL0pIENUoO82o1brmzDtIZJ/5NN8Ws73O2gJkCfbI3iKr
+         jD85E8t9S66jUbYlpByNN3y2/2PgSVGpgrIdYO8EAD+lJAjhk+tEd29mG/GXmCgSmZet
+         KK6N7HTcdRwgDmIsJY59IGJcBr9H1c+W8Ve1ZnhZ1ysEZaOF5AYb1aNN38mXvxRrrbDg
+         Pc8w==
+X-Gm-Message-State: AGRZ1gLM2FxXgSQKNtvZ41UCPAwQwomgznU82bLIcDMqiuj4ypgrSvjp
+        0qBIoBOPmcLewUWeVrmCB735aqyi1slwXFTQzdXj2A==
+X-Google-Smtp-Source: AJdET5e4sizQ9O4HQEyc1xGSEFRA5B+61hmiuXzL8KCZZs7Zxdr4O5MDH67JShltdhcd/8J1+ZdEPNR06LakTlj0NR0=
+X-Received: by 2002:a9d:421a:: with SMTP id q26mr6703290ote.255.1541798370528;
+ Fri, 09 Nov 2018 13:19:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <154145268025.30046.11742652345962594283.stgit@ahduyck-desk1.jf.intel.com>
-User-Agent: NeoMutt/20180716
+References: <20181108041537.39694-1-joel@joelfernandes.org> <CAG48ez1h=v-JYnDw81HaYJzOfrNhwYksxmc2r=cJvdQVgYM+NA@mail.gmail.com>
+In-Reply-To: <CAG48ez1h=v-JYnDw81HaYJzOfrNhwYksxmc2r=cJvdQVgYM+NA@mail.gmail.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Fri, 9 Nov 2018 22:19:03 +0100
+Message-ID: <CAG48ez0kQ4d566bXTFOYANDgii-stL-Qj-oyaBzvfxdV=PU-7g@mail.gmail.com>
+Subject: Re: [PATCH v3 resend 1/2] mm: Add an F_SEAL_FUTURE_WRITE seal to memfd
+To:     joel@joelfernandes.org
+Cc:     kernel list <linux-kernel@vger.kernel.org>, jreck@google.com,
+        John Stultz <john.stultz@linaro.org>,
+        Todd Kjos <tkjos@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Daniel Colascione <dancol@google.com>,
+        Bruce Fields <bfields@fieldses.org>, jlayton@kernel.org,
+        Khalid Aziz <khalid.aziz@oracle.com>, Lei.Yang@windriver.com,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>, marcandre.lureau@redhat.com,
+        Mike Kravetz <mike.kravetz@oracle.com>, minchan@kernel.org,
+        shuah@kernel.org, valdis.kletnieks@vt.edu,
+        Hugh Dickins <hughd@google.com>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18-11-05 13:19:25, Alexander Duyck wrote:
-> This patchset is essentially a refactor of the page initialization logic
-> that is meant to provide for better code reuse while providing a
-> significant improvement in deferred page initialization performance.
-> 
-> In my testing on an x86_64 system with 384GB of RAM and 3TB of persistent
-> memory per node I have seen the following. In the case of regular memory
-> initialization the deferred init time was decreased from 3.75s to 1.06s on
-> average. For the persistent memory the initialization time dropped from
-> 24.17s to 19.12s on average. This amounts to a 253% improvement for the
-> deferred memory initialization performance, and a 26% improvement in the
-> persistent memory initialization performance.
+On Fri, Nov 9, 2018 at 10:06 PM Jann Horn <jannh@google.com> wrote:
+> On Fri, Nov 9, 2018 at 9:46 PM Joel Fernandes (Google)
+> <joel@joelfernandes.org> wrote:
+> > Android uses ashmem for sharing memory regions. We are looking forward
+> > to migrating all usecases of ashmem to memfd so that we can possibly
+> > remove the ashmem driver in the future from staging while also
+> > benefiting from using memfd and contributing to it. Note staging drivers
+> > are also not ABI and generally can be removed at anytime.
+> >
+> > One of the main usecases Android has is the ability to create a region
+> > and mmap it as writeable, then add protection against making any
+> > "future" writes while keeping the existing already mmap'ed
+> > writeable-region active.  This allows us to implement a usecase where
+> > receivers of the shared memory buffer can get a read-only view, while
+> > the sender continues to write to the buffer.
+> > See CursorWindow documentation in Android for more details:
+> > https://developer.android.com/reference/android/database/CursorWindow
+> >
+> > This usecase cannot be implemented with the existing F_SEAL_WRITE seal.
+> > To support the usecase, this patch adds a new F_SEAL_FUTURE_WRITE seal
+> > which prevents any future mmap and write syscalls from succeeding while
+> > keeping the existing mmap active.
+>
+> Please CC linux-api@ on patches like this. If you had done that, I
+> might have criticized your v1 patch instead of your v3 patch...
+>
+> > The following program shows the seal
+> > working in action:
+> [...]
+> > Cc: jreck@google.com
+> > Cc: john.stultz@linaro.org
+> > Cc: tkjos@google.com
+> > Cc: gregkh@linuxfoundation.org
+> > Cc: hch@infradead.org
+> > Reviewed-by: John Stultz <john.stultz@linaro.org>
+> > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> > ---
+> [...]
+> > diff --git a/mm/memfd.c b/mm/memfd.c
+> > index 2bb5e257080e..5ba9804e9515 100644
+> > --- a/mm/memfd.c
+> > +++ b/mm/memfd.c
+> [...]
+> > @@ -219,6 +220,25 @@ static int memfd_add_seals(struct file *file, unsigned int seals)
+> >                 }
+> >         }
+> >
+> > +       if ((seals & F_SEAL_FUTURE_WRITE) &&
+> > +           !(*file_seals & F_SEAL_FUTURE_WRITE)) {
+> > +               /*
+> > +                * The FUTURE_WRITE seal also prevents growing and shrinking
+> > +                * so we need them to be already set, or requested now.
+> > +                */
+> > +               int test_seals = (seals | *file_seals) &
+> > +                                (F_SEAL_GROW | F_SEAL_SHRINK);
+> > +
+> > +               if (test_seals != (F_SEAL_GROW | F_SEAL_SHRINK)) {
+> > +                       error = -EINVAL;
+> > +                       goto unlock;
+> > +               }
+> > +
+> > +               spin_lock(&file->f_lock);
+> > +               file->f_mode &= ~(FMODE_WRITE | FMODE_PWRITE);
+> > +               spin_unlock(&file->f_lock);
+> > +       }
+>
+> So you're fiddling around with the file, but not the inode? How are
+> you preventing code like the following from re-opening the file as
+> writable?
+>
+> $ cat memfd.c
+> #define _GNU_SOURCE
+> #include <unistd.h>
+> #include <sys/syscall.h>
+> #include <printf.h>
+> #include <fcntl.h>
+> #include <err.h>
+> #include <stdio.h>
+>
+> int main(void) {
+>   int fd = syscall(__NR_memfd_create, "testfd", 0);
+>   if (fd == -1) err(1, "memfd");
+>   char path[100];
+>   sprintf(path, "/proc/self/fd/%d", fd);
+>   int fd2 = open(path, O_RDWR);
+>   if (fd2 == -1) err(1, "reopen");
+>   printf("reopen successful: %d\n", fd2);
+> }
+> $ gcc -o memfd memfd.c
+> $ ./memfd
+> reopen successful: 4
+> $
+>
+> That aside: I wonder whether a better API would be something that
+> allows you to create a new readonly file descriptor, instead of
+> fiddling with the writability of an existing fd.
 
-Hi Alex,
-
-Please try to run your persistent memory init experiment with Daniel's
-patches:
-
-https://lore.kernel.org/lkml/20181105165558.11698-1-daniel.m.jordan@oracle.com/
-
-The performance should improve by much more than 26%.
-
-Overall, your works looks good, but it needs to be considered how easy it will be
-to merge with ktask. I will try to complete the review today.
-
-Thank you,
-Pasha
+My favorite approach would be to forbid open() on memfds, hope that
+nobody notices the tiny API break, and then add an ioctl for "reopen
+this memfd with reduced permissions" - but that's just my personal
+opinion.
