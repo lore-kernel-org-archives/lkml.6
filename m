@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 804E6C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 20:52:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8212AC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 20:52:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A48320840
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 20:52:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 335AB20840
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 20:52:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="f16JXTYc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A48320840
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="QMHJAdPr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 335AB20840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728408AbeKJGey (ORCPT
+        id S1728470AbeKJGe5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 01:34:54 -0500
+        Sat, 10 Nov 2018 01:34:57 -0500
 Received: from mail-eopbgr740074.outbound.protection.outlook.com ([40.107.74.74]:39808
         "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725799AbeKJGew (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 01:34:52 -0500
+        id S1728302AbeKJGez (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 01:34:55 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RTJGryTYnbQo2+6ihzRWcSrpPG22WuAPhY+VfYR+hBY=;
- b=f16JXTYcsvsbPHv8DetLJmiYTj5O99CqsThUrqyOigoiMH31WorMGC6fyx+SWQyXK66jc8afQi7KnEIi9yezrWJdwBR7urYc42UaAAzTQwlddG1ynch6zVrmr3S8UPVqVV6l1T8DLJCqhSc1Dw+ooBldoEMjhlz7cW+kd4NuWTA=
+ bh=BjvmQoXHltYj2bwnEMzrmnG6F9+A4sudshaqtUvgCUc=;
+ b=QMHJAdPrN6soI5aV6/onkk07lINFFboTAApQ1LU2hcOkm9zsTbddq9stH3I8WUDvpGuCeZzwXg/fwtqnjCX9C7K026a3Pc9O83b+0wDassEHjnUWFlDmAskuPILIdkdrHo5JNt6AZZ2kt/rYncMYuG9JlXrtaIdurVaJTTa+ghs=
 Received: from DM5PR12MB2471.namprd12.prod.outlook.com (52.132.141.138) by
  DM5PR12MB1675.namprd12.prod.outlook.com (10.172.40.144) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.23; Fri, 9 Nov 2018 20:52:27 +0000
+ 15.20.1294.23; Fri, 9 Nov 2018 20:52:31 +0000
 Received: from DM5PR12MB2471.namprd12.prod.outlook.com
  ([fe80::4c23:f551:bc6a:554e]) by DM5PR12MB2471.namprd12.prod.outlook.com
  ([fe80::4c23:f551:bc6a:554e%4]) with mapi id 15.20.1294.034; Fri, 9 Nov 2018
- 20:52:27 +0000
+ 20:52:31 +0000
 From:   "Moger, Babu" <Babu.Moger@amd.com>
 To:     "tglx@linutronix.de" <tglx@linutronix.de>,
         "mingo@redhat.com" <mingo@redhat.com>,
@@ -72,12 +72,11 @@ CC:     "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
         "Moger, Babu" <Babu.Moger@amd.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-Subject: [PATCH v7 02/13] arch/x86: Rename the RDT functions and definitions
-Thread-Topic: [PATCH v7 02/13] arch/x86: Rename the RDT functions and
- definitions
-Thread-Index: AQHUeG4fqjo7t998rUWNtgkgxfyZ6A==
-Date:   Fri, 9 Nov 2018 20:52:27 +0000
-Message-ID: <20181109205153.14811-3-babu.moger@amd.com>
+Subject: [PATCH v7 04/13] arch/x86: Bring all the macros to resctrl.h
+Thread-Topic: [PATCH v7 04/13] arch/x86: Bring all the macros to resctrl.h
+Thread-Index: AQHUeG4hJDBHzpKgRkOEqIKd1h+Qew==
+Date:   Fri, 9 Nov 2018 20:52:31 +0000
+Message-ID: <20181109205153.14811-5-babu.moger@amd.com>
 References: <20181109205153.14811-1-babu.moger@amd.com>
 In-Reply-To: <20181109205153.14811-1-babu.moger@amd.com>
 Accept-Language: en-US
@@ -92,28 +91,28 @@ authentication-results: spf=none (sender IP is )
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [165.204.78.1]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR12MB1675;20:rL8EiuF/+yb0MViErCeKGxfmpvsGm+Z8TKlMghVgC3BZbYrriiksvrPJ4pycwGHUaWllo8/9nkwOau/mkpVgry1LinBy33yTFyAZ1x6lhFpnF8BlQjm4w7GIZ4wBY58JuZsCcK7SrreCK5p2O+aHQX34MsvD1P28ga+LQAtD9oYrK0iTrNfpLj6luS1CfKkjpGuQ5PknFEyfVVIL7xoVWxTLcs2DtkRLvLBX+pHS7Dm4qwmlw687xRDMSCyV+3sK
-x-ms-office365-filtering-correlation-id: e8501260-1ca0-49a5-e85b-08d6468541d4
+x-microsoft-exchange-diagnostics: 1;DM5PR12MB1675;20:Pa54CmRuLrtX8ajVXz1C+jjYVY3vRHyOKjiQHRr6HMNWtdNXG+YtQIbSArcTsQC9h6r2laHNzmdDNGb03+3o6Iea+EygB8REg2M47kQ7ty0TZ6GeKXR07a9xOjeARcwzSgitcNdx+7fKS70nN/8JdOuEI5ZmHSZ3BPoohZoiw4RApYoHlh9b7PdMveKvcc+RFgLK/uaf8vrpOPDDT3DmDtROJu+ZjSWVpwBWulNk/pgiwfvSGSoQdfk1SQbStEAf
+x-ms-office365-filtering-correlation-id: 9de58d4d-94b3-4aca-90d7-08d646854433
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB1675;
 x-ms-traffictypediagnostic: DM5PR12MB1675:
-x-microsoft-antispam-prvs: <DM5PR12MB167545DBCF9DED7F849E089395C60@DM5PR12MB1675.namprd12.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(788757137089)(72170088055959)(269456686620040)(767451399110);
+x-microsoft-antispam-prvs: <DM5PR12MB1675F0B1EB29477EB627EA2895C60@DM5PR12MB1675.namprd12.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(767451399110);
 x-ms-exchange-senderadcheck: 1
 x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823302103)(93006095)(93001095)(10201501046)(3002001)(3231382)(944501410)(52105095)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:DM5PR12MB1675;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1675;
 x-forefront-prvs: 08512C5403
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(376002)(396003)(346002)(136003)(366004)(199004)(189003)(305945005)(4326008)(14454004)(6116002)(66066001)(72206003)(36756003)(105586002)(6486002)(3846002)(6436002)(102836004)(386003)(6506007)(6512007)(478600001)(99286004)(2906002)(5660300001)(25786009)(86362001)(2900100001)(68736007)(575784001)(2501003)(2201001)(26005)(11346002)(7406005)(81156014)(446003)(81166006)(486006)(476003)(2616005)(186003)(1076002)(52116002)(53936002)(8936002)(7736002)(106356001)(14444005)(256004)(110136005)(71200400001)(76176011)(71190400001)(8676002)(54906003)(316002)(7416002)(97736004)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1675;H:DM5PR12MB2471.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(39860400002)(376002)(396003)(346002)(136003)(366004)(199004)(189003)(305945005)(4326008)(14454004)(6116002)(66066001)(72206003)(36756003)(105586002)(6486002)(3846002)(6436002)(102836004)(386003)(6506007)(6512007)(478600001)(99286004)(2906002)(5660300001)(25786009)(86362001)(2900100001)(68736007)(575784001)(2501003)(2201001)(26005)(11346002)(7406005)(81156014)(446003)(81166006)(486006)(476003)(2616005)(186003)(1076002)(52116002)(53936002)(8936002)(7736002)(106356001)(14444005)(256004)(110136005)(71200400001)(76176011)(71190400001)(8676002)(54906003)(316002)(7416002)(97736004)(921003)(1121003)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1675;H:DM5PR12MB2471.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: amd.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: vvj4sWagJ3MGasZYr3EEH3LlLfJ3vYMA2tvvIDlv5Zb900DwlvSxFSELDcrF2a1H8XLROeXJH3J5h7PDqTiiVy4hLbJ3BidnCsFhup5sEvcYnuP2VnFXbytEjWqHPCnayTEqlOnQEdkkJF/rq2f1uQS9Cl6tuu6zJEL0Hwl8zEO5iJOy+e1kbR6urFv+esT9McdpBo2lCwZteYGdP0LW0i1UYkjvZsi+QCy4atPGccgJ7pv1/C8hlezaNdEBvcTBnnjyGuFLTBU83WNL8DhKNBK9FWrqQ+bdvTQQZjFObruRhwsqt3zgS5KfBbwU8XmYtTxEqPl1sMAbGa7TuE2dsRYwZ15o9sl9NlNkeqjvVvs=
+x-microsoft-antispam-message-info: fIEGvbs2dOLiBxQeeSfZnIJHrSuyES21jcIYvEre6EAjSva//DblMUVBHsLuOKAff+JhW0tLPKQPVBLqxVUXJIkBMNJzVixwI8y0H1NQzI7Je+6vSd4dzAiTT8Qz1pAE8QAiDHpsTXfc62eVAKinaCI86ixlRTLyBjo6mtyT8zu+2J9n6QVYsXEL1x8pZ1G18nURo/7OjctZAQL80i7wFfCx2/SzvyC842aEqZfrUP7WPM1tswSSowwqFz8gN0UuGlKXVmBzQG/3e0vZcdgsCdf95EFi4P/VJtyQAIeDkKfgkIqJSIwZrQapqjJJU0DPCNp4V5aYNW7rxAbTSX5SJ564WSIPZKlhygjzV4D5K7s=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e8501260-1ca0-49a5-e85b-08d6468541d4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Nov 2018 20:52:27.0582
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9de58d4d-94b3-4aca-90d7-08d646854433
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Nov 2018 20:52:31.0920
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
@@ -123,338 +122,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As AMD is starting to support RDT(or QOS) features, rename
-the RDT functions and definitions to more generic names.
-
-Replace intel_rdt to resctrl where applicable.
+Bring all the macros to resctrl.h and rename for consistency.
 
 Signed-off-by: Babu Moger <babu.moger@amd.com>
 ---
- arch/x86/include/asm/resctrl_sched.h   | 24 ++++++++++++------------
- arch/x86/kernel/cpu/resctrl.c          | 26 +++++++++++++-------------
- arch/x86/kernel/cpu/resctrl.h          |  2 +-
- arch/x86/kernel/cpu/resctrl_monitor.c  | 11 ++++++-----
- arch/x86/kernel/cpu/resctrl_rdtgroup.c | 10 +++++-----
- arch/x86/kernel/process_32.c           |  2 +-
- arch/x86/kernel/process_64.c           |  2 +-
- 7 files changed, 39 insertions(+), 38 deletions(-)
+ arch/x86/kernel/cpu/resctrl.c         | 3 ---
+ arch/x86/kernel/cpu/resctrl.h         | 5 +++++
+ arch/x86/kernel/cpu/resctrl_monitor.c | 7 ++-----
+ 3 files changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/arch/x86/include/asm/resctrl_sched.h b/arch/x86/include/asm/re=
-sctrl_sched.h
-index 9acb06b6f81e..6e082697a613 100644
---- a/arch/x86/include/asm/resctrl_sched.h
-+++ b/arch/x86/include/asm/resctrl_sched.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0 */
--#ifndef _ASM_X86_INTEL_RDT_SCHED_H
--#define _ASM_X86_INTEL_RDT_SCHED_H
-+#ifndef _ASM_X86_RESCTRL_SCHED_H
-+#define _ASM_X86_RESCTRL_SCHED_H
-=20
- #ifdef CONFIG_INTEL_RDT
-=20
-@@ -10,7 +10,7 @@
- #define IA32_PQR_ASSOC	0x0c8f
-=20
- /**
-- * struct intel_pqr_state - State cache for the PQR MSR
-+ * struct resctrl_pqr_state - State cache for the PQR MSR
-  * @cur_rmid:		The cached Resource Monitoring ID
-  * @cur_closid:	The cached Class Of Service ID
-  * @default_rmid:	The user assigned Resource Monitoring ID
-@@ -24,21 +24,21 @@
-  * The cache also helps to avoid pointless updates if the value does
-  * not change.
-  */
--struct intel_pqr_state {
-+struct resctrl_pqr_state {
- 	u32			cur_rmid;
- 	u32			cur_closid;
- 	u32			default_rmid;
- 	u32			default_closid;
- };
-=20
--DECLARE_PER_CPU(struct intel_pqr_state, pqr_state);
-+DECLARE_PER_CPU(struct resctrl_pqr_state, pqr_state);
-=20
- DECLARE_STATIC_KEY_FALSE(rdt_enable_key);
- DECLARE_STATIC_KEY_FALSE(rdt_alloc_enable_key);
- DECLARE_STATIC_KEY_FALSE(rdt_mon_enable_key);
-=20
- /*
-- * __intel_rdt_sched_in() - Writes the task's CLOSid/RMID to IA32_PQR_MSR
-+ * __resctrl_sched_in() - Writes the task's CLOSid/RMID to IA32_PQR_MSR
-  *
-  * Following considerations are made so that this has minimal impact
-  * on scheduler hot path:
-@@ -51,9 +51,9 @@ DECLARE_STATIC_KEY_FALSE(rdt_mon_enable_key);
-  *   simple as possible.
-  * Must be called with preemption disabled.
-  */
--static void __intel_rdt_sched_in(void)
-+static void __resctrl_sched_in(void)
- {
--	struct intel_pqr_state *state =3D this_cpu_ptr(&pqr_state);
-+	struct resctrl_pqr_state *state =3D this_cpu_ptr(&pqr_state);
- 	u32 closid =3D state->default_closid;
- 	u32 rmid =3D state->default_rmid;
-=20
-@@ -78,16 +78,16 @@ static void __intel_rdt_sched_in(void)
- 	}
- }
-=20
--static inline void intel_rdt_sched_in(void)
-+static inline void resctrl_sched_in(void)
- {
- 	if (static_branch_likely(&rdt_enable_key))
--		__intel_rdt_sched_in();
-+		__resctrl_sched_in();
- }
-=20
- #else
-=20
--static inline void intel_rdt_sched_in(void) {}
-+static inline void resctrl_sched_in(void) {}
-=20
- #endif /* CONFIG_INTEL_RDT */
-=20
--#endif /* _ASM_X86_INTEL_RDT_SCHED_H */
-+#endif /* _ASM_X86_RESCTRL_SCHED_H */
 diff --git a/arch/x86/kernel/cpu/resctrl.c b/arch/x86/kernel/cpu/resctrl.c
-index 3f1a135a4ae0..5d526dc45751 100644
+index fd5320dddddc..ddb2c65a309a 100644
 --- a/arch/x86/kernel/cpu/resctrl.c
 +++ b/arch/x86/kernel/cpu/resctrl.c
-@@ -40,12 +40,12 @@
+@@ -33,9 +33,6 @@
+ #include <asm/resctrl_sched.h>
+ #include "resctrl.h"
+=20
+-#define MBA_IS_LINEAR	0x4
+-#define MBA_MAX_MBPS	U32_MAX
+-
+ /* Mutex to protect rdtgroup access. */
  DEFINE_MUTEX(rdtgroup_mutex);
 =20
- /*
-- * The cached intel_pqr_state is strictly per CPU and can never be
-+ * The cached resctrl_pqr_state is strictly per CPU and can never be
-  * updated from a remote CPU. Functions which modify the state
-  * are called with interrupts disabled and no preemption, which
-  * is sufficient for the protection.
-  */
--DEFINE_PER_CPU(struct intel_pqr_state, pqr_state);
-+DEFINE_PER_CPU(struct resctrl_pqr_state, pqr_state);
-=20
- /*
-  * Used to store the max resource name width and max resource data width
-@@ -639,7 +639,7 @@ static void domain_remove_cpu(int cpu, struct rdt_resou=
-rce *r)
-=20
- static void clear_closid_rmid(int cpu)
- {
--	struct intel_pqr_state *state =3D this_cpu_ptr(&pqr_state);
-+	struct resctrl_pqr_state *state =3D this_cpu_ptr(&pqr_state);
-=20
- 	state->default_closid =3D 0;
- 	state->default_rmid =3D 0;
-@@ -648,7 +648,7 @@ static void clear_closid_rmid(int cpu)
- 	wrmsr(IA32_PQR_ASSOC, 0, 0);
- }
-=20
--static int intel_rdt_online_cpu(unsigned int cpu)
-+static int resctrl_online_cpu(unsigned int cpu)
- {
- 	struct rdt_resource *r;
-=20
-@@ -674,7 +674,7 @@ static void clear_childcpus(struct rdtgroup *r, unsigne=
-d int cpu)
- 	}
- }
-=20
--static int intel_rdt_offline_cpu(unsigned int cpu)
-+static int resctrl_offline_cpu(unsigned int cpu)
- {
- 	struct rdtgroup *rdtgrp;
- 	struct rdt_resource *r;
-@@ -866,7 +866,7 @@ static __init bool get_rdt_resources(void)
-=20
- static enum cpuhp_state rdt_online;
-=20
--static int __init intel_rdt_late_init(void)
-+static int __init resctrl_late_init(void)
- {
- 	struct rdt_resource *r;
- 	int state, ret;
-@@ -877,8 +877,8 @@ static int __init intel_rdt_late_init(void)
- 	rdt_init_padding();
-=20
- 	state =3D cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
--				  "x86/rdt/cat:online:",
--				  intel_rdt_online_cpu, intel_rdt_offline_cpu);
-+				  "x86/resctrl/cat:online:",
-+				  resctrl_online_cpu, resctrl_offline_cpu);
- 	if (state < 0)
- 		return state;
-=20
-@@ -890,20 +890,20 @@ static int __init intel_rdt_late_init(void)
- 	rdt_online =3D state;
-=20
- 	for_each_alloc_capable_rdt_resource(r)
--		pr_info("Intel RDT %s allocation detected\n", r->name);
-+		pr_info("%s allocation detected\n", r->name);
-=20
- 	for_each_mon_capable_rdt_resource(r)
--		pr_info("Intel RDT %s monitoring detected\n", r->name);
-+		pr_info("%s monitoring detected\n", r->name);
-=20
- 	return 0;
- }
-=20
--late_initcall(intel_rdt_late_init);
-+late_initcall(resctrl_late_init);
-=20
--static void __exit intel_rdt_exit(void)
-+static void __exit resctrl_exit(void)
- {
- 	cpuhp_remove_state(rdt_online);
- 	rdtgroup_exit();
- }
-=20
--__exitcall(intel_rdt_exit);
-+__exitcall(resctrl_exit);
 diff --git a/arch/x86/kernel/cpu/resctrl.h b/arch/x86/kernel/cpu/resctrl.h
-index a9d906767bb2..abf5c7e4c625 100644
+index abf5c7e4c625..e5f7bf6a8d09 100644
 --- a/arch/x86/kernel/cpu/resctrl.h
 +++ b/arch/x86/kernel/cpu/resctrl.h
-@@ -69,7 +69,7 @@ struct rmid_read {
- 	u64			val;
- };
+@@ -12,6 +12,9 @@
+ #define IA32_L2_CBM_BASE	0xd10
+ #define IA32_MBA_THRTL_BASE	0xd50
 =20
--extern unsigned int intel_cqm_threshold;
-+extern unsigned int resctrl_cqm_threshold;
- extern bool rdt_alloc_capable;
- extern bool rdt_mon_capable;
- extern unsigned int rdt_mon_features;
++#define IA32_QM_CTR		0x0c8e
++#define IA32_QM_EVTSEL		0x0c8d
++
+ #define L3_QOS_CDP_ENABLE	0x01ULL
+=20
+ #define L2_QOS_CDP_ENABLE	0x01ULL
+@@ -29,6 +32,8 @@
+ #define MBM_CNTR_WIDTH			24
+ #define MBM_OVERFLOW_INTERVAL		1000
+ #define MAX_MBA_BW			100u
++#define MBA_IS_LINEAR			0x4
++#define MBA_MAX_MBPS			U32_MAX
+=20
+ #define RMID_VAL_ERROR			BIT_ULL(63)
+ #define RMID_VAL_UNAVAIL		BIT_ULL(62)
 diff --git a/arch/x86/kernel/cpu/resctrl_monitor.c b/arch/x86/kernel/cpu/re=
 sctrl_monitor.c
-index 211d97bcbde5..68dbdbbf47df 100644
+index 68dbdbbf47df..ad0107bc16a0 100644
 --- a/arch/x86/kernel/cpu/resctrl_monitor.c
 +++ b/arch/x86/kernel/cpu/resctrl_monitor.c
-@@ -73,7 +73,7 @@ unsigned int rdt_mon_features;
-  * This is the threshold cache occupancy at which we will consider an
-  * RMID available for re-allocation.
-  */
--unsigned int intel_cqm_threshold;
-+unsigned int resctrl_cqm_threshold;
+@@ -28,9 +28,6 @@
+ #include <asm/cpu_device_id.h>
+ #include "resctrl.h"
 =20
- static inline struct rmid_entry *__rmid_entry(u32 rmid)
- {
-@@ -107,7 +107,7 @@ static bool rmid_dirty(struct rmid_entry *entry)
- {
- 	u64 val =3D __rmid_read(entry->rmid, QOS_L3_OCCUP_EVENT_ID);
-=20
--	return val >=3D intel_cqm_threshold;
-+	return val >=3D resctrl_cqm_threshold;
- }
-=20
- /*
-@@ -187,7 +187,7 @@ static void add_rmid_to_limbo(struct rmid_entry *entry)
- 	list_for_each_entry(d, &r->domains, list) {
- 		if (cpumask_test_cpu(cpu, &d->cpu_mask)) {
- 			val =3D __rmid_read(entry->rmid, QOS_L3_OCCUP_EVENT_ID);
--			if (val <=3D intel_cqm_threshold)
-+			if (val <=3D resctrl_cqm_threshold)
- 				continue;
- 		}
-=20
-@@ -637,10 +637,11 @@ int rdt_get_mon_l3_config(struct rdt_resource *r)
- 	 *
- 	 * For a 35MB LLC and 56 RMIDs, this is ~1.8% of the LLC.
+-#define MSR_IA32_QM_CTR		0x0c8e
+-#define MSR_IA32_QM_EVTSEL		0x0c8d
+-
+ struct rmid_entry {
+ 	u32				rmid;
+ 	int				busy;
+@@ -97,8 +94,8 @@ static u64 __rmid_read(u32 rmid, u32 eventid)
+ 	 * IA32_QM_CTR.Error (bit 63) and IA32_QM_CTR.Unavailable (bit 62)
+ 	 * are error bits.
  	 */
--	intel_cqm_threshold =3D boot_cpu_data.x86_cache_size * 1024 / r->num_rmid=
-;
-+	resctrl_cqm_threshold =3D boot_cpu_data.x86_cache_size * 1024 /
-+				r->num_rmid;
+-	wrmsr(MSR_IA32_QM_EVTSEL, eventid, rmid);
+-	rdmsrl(MSR_IA32_QM_CTR, val);
++	wrmsr(IA32_QM_EVTSEL, eventid, rmid);
++	rdmsrl(IA32_QM_CTR, val);
 =20
- 	/* h/w works in units of "boot_cpu_data.x86_cache_occ_scale" */
--	intel_cqm_threshold /=3D r->mon_scale;
-+	resctrl_cqm_threshold /=3D r->mon_scale;
-=20
- 	ret =3D dom_data_init(r);
- 	if (ret)
-diff --git a/arch/x86/kernel/cpu/resctrl_rdtgroup.c b/arch/x86/kernel/cpu/r=
-esctrl_rdtgroup.c
-index 6308ba3905e5..8b6b4a8bb7ca 100644
---- a/arch/x86/kernel/cpu/resctrl_rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl_rdtgroup.c
-@@ -298,7 +298,7 @@ static int rdtgroup_cpus_show(struct kernfs_open_file *=
-of,
- }
-=20
- /*
-- * This is safe against intel_rdt_sched_in() called from __switch_to()
-+ * This is safe against resctrl_sched_in() called from __switch_to()
-  * because __switch_to() is executed with interrupts disabled. A local cal=
-l
-  * from update_closid_rmid() is proteced against __switch_to() because
-  * preemption is disabled.
-@@ -317,7 +317,7 @@ static void update_cpu_closid_rmid(void *info)
- 	 * executing task might have its own closid selected. Just reuse
- 	 * the context switch code.
- 	 */
--	intel_rdt_sched_in();
-+	resctrl_sched_in();
- }
-=20
- /*
-@@ -542,7 +542,7 @@ static void move_myself(struct callback_head *head)
-=20
- 	preempt_disable();
- 	/* update PQR_ASSOC MSR to make resource group go into effect */
--	intel_rdt_sched_in();
-+	resctrl_sched_in();
- 	preempt_enable();
-=20
- 	kfree(callback);
-@@ -926,7 +926,7 @@ static int max_threshold_occ_show(struct kernfs_open_fi=
-le *of,
- {
- 	struct rdt_resource *r =3D of->kn->parent->priv;
-=20
--	seq_printf(seq, "%u\n", intel_cqm_threshold * r->mon_scale);
-+	seq_printf(seq, "%u\n", resctrl_cqm_threshold * r->mon_scale);
-=20
- 	return 0;
- }
-@@ -945,7 +945,7 @@ static ssize_t max_threshold_occ_write(struct kernfs_op=
-en_file *of,
- 	if (bytes > (boot_cpu_data.x86_cache_size * 1024))
- 		return -EINVAL;
-=20
--	intel_cqm_threshold =3D bytes / r->mon_scale;
-+	resctrl_cqm_threshold =3D bytes / r->mon_scale;
-=20
- 	return nbytes;
- }
-diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
-index d16207e7d1e5..dc4d92764d1a 100644
---- a/arch/x86/kernel/process_32.c
-+++ b/arch/x86/kernel/process_32.c
-@@ -302,7 +302,7 @@ __switch_to(struct task_struct *prev_p, struct task_str=
-uct *next_p)
- 	this_cpu_write(current_task, next_p);
-=20
- 	/* Load the Intel cache allocation PQR MSR. */
--	intel_rdt_sched_in();
-+	resctrl_sched_in();
-=20
- 	return prev_p;
- }
-diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-index af73223ad6ba..5ada7354b5d4 100644
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -536,7 +536,7 @@ __switch_to(struct task_struct *prev_p, struct task_str=
-uct *next_p)
- 	}
-=20
- 	/* Load the Intel cache allocation PQR MSR. */
--	intel_rdt_sched_in();
-+	resctrl_sched_in();
-=20
- 	return prev_p;
+ 	return val;
  }
 --=20
 2.17.1
