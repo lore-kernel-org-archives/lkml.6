@@ -3,129 +3,141 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFEACC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:20:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C26AC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:20:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C03D20855
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:20:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C03D20855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 40F7B20883
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 17:20:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40F7B20883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728402AbeKJDBv (ORCPT
+        id S1728533AbeKJDCV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 22:01:51 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:32834 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728115AbeKJDBv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 22:01:51 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 09F3467893910;
-        Sat, 10 Nov 2018 01:20:13 +0800 (CST)
-Received: from [127.0.0.1] (10.210.169.145) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.408.0; Sat, 10 Nov 2018
- 01:20:03 +0800
-Subject: Re: [PATCH 00/10] irqdomain, gic-v3-its: Implement late irq domain
- initialization
-To:     Robert Richter <rrichter@cavium.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
+        Fri, 9 Nov 2018 22:02:21 -0500
+Received: from mga14.intel.com ([192.55.52.115]:65502 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728108AbeKJDCV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 22:02:21 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Nov 2018 09:20:51 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,483,1534834800"; 
+   d="scan'208";a="106912362"
+Received: from ray.jf.intel.com (HELO [10.7.201.15]) ([10.7.201.15])
+  by orsmga001.jf.intel.com with ESMTP; 09 Nov 2018 09:20:50 -0800
+Subject: Re: [PATCH v5 04/27] x86/fpu/xstate: Add XSAVES system states for
+ shadow stack
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>
-References: <20181107220254.6116-1-rrichter@cavium.com>
-CC:     Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Stuart Yoder <stuyoder@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Richter, Robert" <Robert.Richter@cavium.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Linuxarm <linuxarm@huawei.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <e93e7a95-bd12-5695-18da-1ac80b8d595d@huawei.com>
-Date:   Fri, 9 Nov 2018 17:19:54 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H. J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>
+References: <20181011151523.27101-1-yu-cheng.yu@intel.com>
+ <20181011151523.27101-5-yu-cheng.yu@intel.com>
+ <CALCETrVAe8R=crVHoD5QmbN-gAW+V-Rwkwe4kQP7V7zQm9TM=Q@mail.gmail.com>
+ <4295b8f786c10c469870a6d9725749ce75dcdaa2.camel@intel.com>
+ <CALCETrUKzXYzRrWRdi8Z7AdAF0uZW5Gs7J4s=55dszoyzc29rw@mail.gmail.com>
+ <043a17ef-dc9f-56d2-5fba-1a58b7b0fd4d@intel.com>
+ <20181108220054.GP3074@bombadil.infradead.org>
+ <ead230ab-a904-50d6-c4cf-46d5804f6151@intel.com>
+ <20181109003225.GQ3074@bombadil.infradead.org>
+ <6cd2ae51-2d2a-9c68-df7c-45b49e0a813f@intel.com>
+ <20181109171740.GT3074@bombadil.infradead.org>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <ded6f43a-11d1-89bf-e00c-66c281786cff@intel.com>
+Date:   Fri, 9 Nov 2018 09:20:50 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181107220254.6116-1-rrichter@cavium.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.210.169.145]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20181109171740.GT3074@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/11/2018 22:03, Robert Richter wrote:
-> This patch series is a rework of the gic-v3-its initialization. It is
-> in preparation of a further series that uses CMA memory allocation for
-> ITS tables. For this the CMA framework must be available and thus ITS
-> needs to be initialized after the arch_initcalls. This requires two
-> major reworks.
->
-> First we must remove all irq domain init order dependencies (patches
-> #1-#5), second the ITS initialization must be split into an early
-> probe and a later init part (patches #6-#10).
->
-> Patch #1 introduces a new interface to request an irq domain, see the
-> patch description for details. In patches #2-#5 all ITS related irq
-> domains are converted to use the new interface. There are no order
-> dependencies for parent and client irq domain initialization anymore
-> which allows us to initialize all ITS irq domains in the same initcall
-> (moving to the later subsys_initcall). Note that I do not have fsl
-> hardware available, the code should work, but is only carefully
-> reviewed and compile tested, please test on that hardware.
->
-> The remaining patches #6-#10 are an incremental rework of the ITS
-> initialization, basically splitting probe and init (patch #7) and
-> separating it from gic-v3 code (patch #8). Patches #9 and #10 change
-> initcall levels for various drivers.
->
-> Patches have been tested with Cavium ThunderX and ThunderX2. I have an
-> implementation of CMA ITS table allocation on top of this series
-> available, I will send out patches for this in a couple of days.
+On 11/9/18 9:17 AM, Matthew Wilcox wrote:
+>> But, later versions of the hardware have instructions that don't have
+>> static offsets for the state components (when the XSAVES/XSAVEC
+>> instructions are used).  So, for those, the structure embedding isn't
+>> used at *all* since some state might not be present.
+> But *when present*, this structure is always aligned on an 8-byte
+> boundary, right?
 
-Hi,
+There's no guarantee of that.
 
-For this follow-on patchset, will it conflict with this:
-https://lkml.org/lkml/2017/6/25/75
-
-We were planning on reposting with some results.
-
-Thanks,
-John
-
->
-> Robert Richter (10):
->   irqdomain: Add interface to request an irq domain
->   irqchip/gic-v3-its-platform-msi: Remove domain init order dependencies
->   irqchip/irq-gic-v3-its-pci-msi: Remove domain init order dependencies
->   irqchip/irq-gic-v3-its-fsl-mc-msi: Remove domain init order
->     dependencies
->   fsl-mc/dprc-driver: Remove domain init order dependencies
->   irqchip/gic-v3-its: Initialize its nodes in probe order
->   irqchip/gic-v3-its: Split probing from its node initialization
->   irqchip/gic-v3-its: Decouple its initialization from gic
->   irqchip/gic-v3-its: Initialize its nodes later
->   irqchip/gic-v3-its: Initialize MSIs with subsys_initcalls
->
->  drivers/bus/fsl-mc/dprc-driver.c              |  41 +++++++
->  drivers/bus/fsl-mc/fsl-mc-msi.c               |   6 +-
->  drivers/irqchip/irq-gic-v3-its-fsl-mc-msi.c   |  49 +++++---
->  drivers/irqchip/irq-gic-v3-its-pci-msi.c      |  68 ++++++-----
->  drivers/irqchip/irq-gic-v3-its-platform-msi.c |  56 ++++++---
->  drivers/irqchip/irq-gic-v3-its.c              | 160 +++++++++++++++++---------
->  drivers/irqchip/irq-gic-v3.c                  |  12 +-
->  include/linux/cpuhotplug.h                    |   1 +
->  include/linux/irqchip/arm-gic-v3.h            |   5 +-
->  include/linux/irqdomain.h                     |  15 +++
->  kernel/irq/irqdomain.c                        | 158 +++++++++++++++++++++++++
->  11 files changed, 441 insertions(+), 130 deletions(-)
->
-
-
+There is an "aligned" attribute for each XSAVE state component, but I do
+not believe it is set for anything yet.
