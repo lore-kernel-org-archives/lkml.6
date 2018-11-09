@@ -1,239 +1,96 @@
 Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CB1CC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 11:30:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAD6EC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 11:32:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA7D92081C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 11:30:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D8BA20825
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 11:32:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="X0/w6Oti"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA7D92081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OqqwG676"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D8BA20825
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728167AbeKIVKz (ORCPT
+        id S1728311AbeKIVMQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 16:10:55 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:37470 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727662AbeKIVKz (ORCPT
+        Fri, 9 Nov 2018 16:12:16 -0500
+Received: from mail-wm1-f42.google.com ([209.85.128.42]:34406 "EHLO
+        mail-wm1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727552AbeKIVMQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 16:10:55 -0500
-Received: by mail-qk1-f195.google.com with SMTP id 131so917750qkd.4
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 03:30:42 -0800 (PST)
+        Fri, 9 Nov 2018 16:12:16 -0500
+Received: by mail-wm1-f42.google.com with SMTP id f1-v6so3571036wmg.1;
+        Fri, 09 Nov 2018 03:32:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=PlS5AWWWpD/Zv7MPE6e/bI9tGD+2AhsGTOQaUcenEXU=;
-        b=X0/w6OtiiQeqMm13Cd1JKzpHrzR4Ycp60TdmsTEkKOQ9HLRoEoRyxUXb1U3tS7UG81
-         1hTo32LSeZh4GUkyyPI+iG38zbr0rxWo/QLSnE3B/GeJtEGRT07qbY255XkSsQUPMmiQ
-         P3lDxuVNiJnU7oDSwizINOykbv2gLVVhE/ym0=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=FbKqNyIPkJTXuz0eRpsx+9KaLLnlFzlLi8t1Syeq0Ms=;
+        b=OqqwG676TpPE0l6TBtia/yS33u1Sqsh6Ntqx/8Jc8kPQNGBZ3ZKQYVY5Q787rVc+np
+         sjLblSLBO0GHqJdhWpnphmCMVOAgK5q8PB/QwPHl5XguUeBdFQm+Rl1uASIqJSC8IU2T
+         L+7uw7AY7ysZhOwrgyf/1BzoXMqkOmBcRHUE981pMN5pBDzWj6klNHPXKPDJmmb5bZ8W
+         SP8ZWuc6M9HmaJ+JNUlAOC3On3lNlqWEfg0X+hlAd0LesXQu5TOoEA+zu3ahdtlbX0l6
+         u5Dqa8xEAQcUR11Dg8Z2cYpiBq55yA7DISGQ/E6/8ps2bTGQyNmFgcBVWzcwQHYgJEi5
+         0R9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=PlS5AWWWpD/Zv7MPE6e/bI9tGD+2AhsGTOQaUcenEXU=;
-        b=TP5dFifLV/aA2IEBUr7SZq4UMenrDgqxQDJgk0NXT+W56X4CHtAAMtQ0wP4f4nF8OO
-         /6eZDvABuOAz8gDOELreSuLiI69fRHKOypGzHyoe3Tm0DymMjLT2mZF6DDhFUBqK5LlZ
-         RuKM9OMTR+oT2njzNpvW7LPU9Wf3tTE1scNAJgwPa0wfctO+RroD3ld+G6Y2BQhafOoJ
-         s/qA/Z2AVH2mJyAk4pHzcq22mD1yOajIBczBJ2ExbTCtKNQvSoNoULkx4RcZBrTfvv9W
-         UfeJrxGoD4adbXEJ5z4lZzT7B5nLkqtJbfIt093GJth3p/dYY9hQyKdkrPjDGZqvV43O
-         HZXg==
-X-Gm-Message-State: AGRZ1gI1J3laAS9kSh0L2xQtuLm0iwHVeQDznFdklhYqAaaVgoHyG+5L
-        8480c5g0wNcHjybdA+S98qu/RQ==
-X-Google-Smtp-Source: AJdET5emaHgc60yNggwbeuBQIKli49THvbPSKnPUPbOSupq9W/Y8dxz12JJIbpdWR2+gRlMKa5BicQ==
-X-Received: by 2002:aed:3b25:: with SMTP id p34mr8168968qte.310.1541763041572;
-        Fri, 09 Nov 2018 03:30:41 -0800 (PST)
-Received: from workstation.celeiro.br ([168.194.163.12])
-        by smtp.gmail.com with ESMTPSA id p31sm5172435qkh.86.2018.11.09.03.30.38
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FbKqNyIPkJTXuz0eRpsx+9KaLLnlFzlLi8t1Syeq0Ms=;
+        b=U5Xt6nlg+K0BJNDYrxLllF86u1HX2uSeOJMCW6Pmzosz1O4h5O+QUc6wKSKDJQTVHg
+         sKIUcCiM2aEMhs4BG7+hw9IpTJ+V5sRxa+6daBzuwG9aLM9wisTYu6DRdK3DquPwxfb9
+         CqPje7INZQ+LUpX1oMisLfxW4BIHfwlj/MTeVcVpcQgL/hMBe3IDnMPMkq0ovMfUXGvg
+         d3U6jzf7wUeajvSqZzr/hIuG0OeV5/LpJZH8VIVKyJvT9i5SirwgkebwVbkIORspEwyS
+         /vcaiiFEIwNJiTTetZUzMQis868JvJT+Yw/+U1vA8tiBXOrGoHqk0V0I6G6Ow8yMFRUR
+         v+pQ==
+X-Gm-Message-State: AGRZ1gKRuz0+AJ2SBsti2uL2Oik/WmBxIkujEV5hXiBnxWkQ+JkLEMSN
+        AZduzu7nEbA9k6AVGkezSLI=
+X-Google-Smtp-Source: AJdET5e5i8RYeMurc38n9KkAjW5vq52LvcTVUfuRNJ3xAII0+gJtX9PlGAxG6wboRMrv6inQh60cOA==
+X-Received: by 2002:a1c:6555:: with SMTP id z82-v6mr4519714wmb.66.1541763121537;
+        Fri, 09 Nov 2018 03:32:01 -0800 (PST)
+Received: from gmail.com (net-2-42-72-229.cust.vodafonedsl.it. [2.42.72.229])
+        by smtp.gmail.com with ESMTPSA id z8-v6sm8223745wrr.94.2018.11.09.03.32.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 09 Nov 2018 03:30:40 -0800 (PST)
-From:   Rafael David Tinoco <rafael.tinoco@linaro.org>
-To:     gorcunov@gmail.com
-Cc:     adobriyan@gmail.com, akpm@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, rafael.tinoco@linaro.org,
-        shuah@kernel.org
-Subject: [PATCH] proc: fix and merge proc-self-map-file tests
-Date:   Fri,  9 Nov 2018 09:30:36 -0200
-Message-Id: <20181109113036.21512-1-rafael.tinoco@linaro.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181108111105.GC13195@uranus.lan>
-References: <20181108111105.GC13195@uranus.lan>
+        Fri, 09 Nov 2018 03:32:00 -0800 (PST)
+Date:   Fri, 9 Nov 2018 12:31:59 +0100
+From:   Paolo Pisati <p.pisati@gmail.com>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     Paolo Pisati <p.pisati@gmail.com>,
+        Woojung Huh <woojung.huh@microchip.com>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        netdev@vger.kernel.org, stable@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] [stable, netdev 4.4+] lan78xx: make sure RX_ADDRL &
+ RX_ADDRH regs are always up to date
+Message-ID: <20181109113159.GA22785@harukaze>
+References: <1541609457-28725-1-git-send-email-p.pisati@gmail.com>
+ <20181108001751.GA8097@sasha-vm>
+ <20181108110127.GA8415@harukaze>
+ <20181108154904.GD8097@sasha-vm>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181108154904.GD8097@sasha-vm>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Merge proc-self-map-files tests into one since this test should focus in
-testing readlink in /proc/self/map_files/* only, and not trying to test
-mapping virtual address 0.
+On Thu, Nov 08, 2018 at 10:49:04AM -0500, Sasha Levin wrote:
+> 
+> Can you confirm it actually works on 4.4?
 
-Lowest virtual address for user space mapping in other architectures,
-like arm, is *at least* *(PAGE_SIZE * 2) and NULL hint does not
-guarantee that when MAP_FIXED flag, important to this test, is given.
-This patch also fixes this issue in remaining test.
+Yes, built and tested on 4.4.y:
 
-Link: https://bugs.linaro.org/show_bug.cgi?id=3782
-Signed-off-by: Rafael David Tinoco <rafael.tinoco@linaro.org>
----
- tools/testing/selftests/proc/.gitignore       |  1 -
- tools/testing/selftests/proc/Makefile         |  1 -
- .../selftests/proc/proc-self-map-files-001.c  |  5 +-
- .../selftests/proc/proc-self-map-files-002.c  | 85 -------------------
- 4 files changed, 3 insertions(+), 89 deletions(-)
- delete mode 100644 tools/testing/selftests/proc/proc-self-map-files-002.c
-
-diff --git a/tools/testing/selftests/proc/.gitignore b/tools/testing/selftests/proc/.gitignore
-index 82121a81681f..d44ec8755879 100644
---- a/tools/testing/selftests/proc/.gitignore
-+++ b/tools/testing/selftests/proc/.gitignore
-@@ -3,7 +3,6 @@
- /fd-003-kthread
- /proc-loadavg-001
- /proc-self-map-files-001
--/proc-self-map-files-002
- /proc-self-syscall
- /proc-self-wchan
- /proc-uptime-001
-diff --git a/tools/testing/selftests/proc/Makefile b/tools/testing/selftests/proc/Makefile
-index 1c12c34cf85d..6c17557c2f9a 100644
---- a/tools/testing/selftests/proc/Makefile
-+++ b/tools/testing/selftests/proc/Makefile
-@@ -7,7 +7,6 @@ TEST_GEN_PROGS += fd-002-posix-eq
- TEST_GEN_PROGS += fd-003-kthread
- TEST_GEN_PROGS += proc-loadavg-001
- TEST_GEN_PROGS += proc-self-map-files-001
--TEST_GEN_PROGS += proc-self-map-files-002
- TEST_GEN_PROGS += proc-self-syscall
- TEST_GEN_PROGS += proc-self-wchan
- TEST_GEN_PROGS += proc-uptime-001
-diff --git a/tools/testing/selftests/proc/proc-self-map-files-001.c b/tools/testing/selftests/proc/proc-self-map-files-001.c
-index 4209c64283d6..646d8d3fba3a 100644
---- a/tools/testing/selftests/proc/proc-self-map-files-001.c
-+++ b/tools/testing/selftests/proc/proc-self-map-files-001.c
-@@ -46,16 +46,17 @@ static void fail(const char *fmt, unsigned long a, unsigned long b)
- 
- int main(void)
- {
--	const unsigned int PAGE_SIZE = sysconf(_SC_PAGESIZE);
- 	void *p;
- 	int fd;
- 	unsigned long a, b;
-+	const long PAGE_SIZE = sysconf(_SC_PAGESIZE);
- 
- 	fd = open("/dev/zero", O_RDONLY);
- 	if (fd == -1)
- 		return 1;
- 
--	p = mmap(NULL, PAGE_SIZE, PROT_NONE, MAP_PRIVATE|MAP_FILE, fd, 0);
-+	p = mmap((void *) (2 * PAGE_SIZE), PAGE_SIZE, PROT_NONE,
-+			MAP_PRIVATE|MAP_FILE, fd, 0);
- 	if (p == MAP_FAILED)
- 		return 1;
- 
-diff --git a/tools/testing/selftests/proc/proc-self-map-files-002.c b/tools/testing/selftests/proc/proc-self-map-files-002.c
-deleted file mode 100644
-index 6f1f4a6e1ecb..000000000000
---- a/tools/testing/selftests/proc/proc-self-map-files-002.c
-+++ /dev/null
-@@ -1,85 +0,0 @@
--/*
-- * Copyright © 2018 Alexey Dobriyan <adobriyan@gmail.com>
-- *
-- * Permission to use, copy, modify, and distribute this software for any
-- * purpose with or without fee is hereby granted, provided that the above
-- * copyright notice and this permission notice appear in all copies.
-- *
-- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-- */
--/* Test readlink /proc/self/map_files/... with address 0. */
--#include <errno.h>
--#include <sys/types.h>
--#include <sys/stat.h>
--#include <fcntl.h>
--#include <stdio.h>
--#include <unistd.h>
--#include <sys/mman.h>
--#include <stdlib.h>
--
--static void pass(const char *fmt, unsigned long a, unsigned long b)
--{
--	char name[64];
--	char buf[64];
--
--	snprintf(name, sizeof(name), fmt, a, b);
--	if (readlink(name, buf, sizeof(buf)) == -1)
--		exit(1);
--}
--
--static void fail(const char *fmt, unsigned long a, unsigned long b)
--{
--	char name[64];
--	char buf[64];
--
--	snprintf(name, sizeof(name), fmt, a, b);
--	if (readlink(name, buf, sizeof(buf)) == -1 && errno == ENOENT)
--		return;
--	exit(1);
--}
--
--int main(void)
--{
--	const unsigned int PAGE_SIZE = sysconf(_SC_PAGESIZE);
--	void *p;
--	int fd;
--	unsigned long a, b;
--
--	fd = open("/dev/zero", O_RDONLY);
--	if (fd == -1)
--		return 1;
--
--	p = mmap(NULL, PAGE_SIZE, PROT_NONE, MAP_PRIVATE|MAP_FILE|MAP_FIXED, fd, 0);
--	if (p == MAP_FAILED) {
--		if (errno == EPERM)
--			return 2;
--		return 1;
--	}
--
--	a = (unsigned long)p;
--	b = (unsigned long)p + PAGE_SIZE;
--
--	pass("/proc/self/map_files/%lx-%lx", a, b);
--	fail("/proc/self/map_files/ %lx-%lx", a, b);
--	fail("/proc/self/map_files/%lx -%lx", a, b);
--	fail("/proc/self/map_files/%lx- %lx", a, b);
--	fail("/proc/self/map_files/%lx-%lx ", a, b);
--	fail("/proc/self/map_files/0%lx-%lx", a, b);
--	fail("/proc/self/map_files/%lx-0%lx", a, b);
--	if (sizeof(long) == 4) {
--		fail("/proc/self/map_files/100000000%lx-%lx", a, b);
--		fail("/proc/self/map_files/%lx-100000000%lx", a, b);
--	} else if (sizeof(long) == 8) {
--		fail("/proc/self/map_files/10000000000000000%lx-%lx", a, b);
--		fail("/proc/self/map_files/%lx-10000000000000000%lx", a, b);
--	} else
--		return 1;
--
--	return 0;
--}
+Tested-by: Paolo Pisati <p.pisati@gmail.com>
 -- 
-2.19.1
-
+bye,
+p.
