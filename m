@@ -2,91 +2,113 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A8DBC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:55:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F223C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 11:04:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1996B20825
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:55:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1996B20825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 08D9620883
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 11:04:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08D9620883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728266AbeKIUfv (ORCPT
+        id S1728065AbeKIUoX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 15:35:51 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:55404 "EHLO mail.skyhub.de"
+        Fri, 9 Nov 2018 15:44:23 -0500
+Received: from sauhun.de ([88.99.104.3]:44510 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727649AbeKIUfv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 15:35:51 -0500
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id sGylahfVADgx; Fri,  9 Nov 2018 11:55:46 +0100 (CET)
-Received: from zn.tnic (p200300EC2BD03D00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bd0:3d00:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D38BD1EC00E8;
-        Fri,  9 Nov 2018 11:55:45 +0100 (CET)
-Date:   Fri, 9 Nov 2018 11:55:38 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     wang.yi59@zte.com.cn, Greg KH <gregkh@linuxfoundation.org>
-Cc:     matz@suse.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, suravee.suthikulpanit@amd.com, puwen@hygon.cn,
-        davidwang@zhaoxin.com, linux-kernel@vger.kernel.org,
-        zhong.weidong@zte.com.cn
-Subject: Re: [PATCH v2] x86/cpu: fix prototype warning
-Message-ID: <20181109105538.GA21243@zn.tnic>
-References: <20181108172225.GH7543@zn.tnic>
- <201811090843126464658@zte.com.cn>
+        id S1727532AbeKIUoX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 15:44:23 -0500
+Received: from localhost (p54B3380A.dip0.t-ipconnect.de [84.179.56.10])
+        by pokefinder.org (Postfix) with ESMTPSA id 87C893E4482;
+        Fri,  9 Nov 2018 12:04:14 +0100 (CET)
+Date:   Fri, 9 Nov 2018 12:04:14 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Dien Pham <dien.pham.ry@renesas.com>
+Subject: Re: [PATCH] mfd: bd9571mwv: add volatile register to make DVFS work
+Message-ID: <20181109110413.GC1031@kunai>
+References: <20181003135841.4984-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="5G06lTa6Jq83wMTw"
 Content-Disposition: inline
-In-Reply-To: <201811090843126464658@zte.com.cn>
+In-Reply-To: <20181003135841.4984-1-wsa+renesas@sang-engineering.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 09, 2018 at 08:43:12AM +0800, wang.yi59@zte.com.cn wrote:
-> Yeah, so that is. However, I suppose we should not enable this by default
-> before we fix ALL of these warning,
 
-Yeah, the build is really noisy now.
+--5G06lTa6Jq83wMTw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> which is really a  hard work. :)
+On Wed, Oct 03, 2018 at 03:58:41PM +0200, Wolfram Sang wrote:
+> From: Dien Pham <dien.pham.ry@renesas.com>
+>=20
+> Because BD9571MWV_DVFS_MONIVDAC is not defined in the volatile table,
+> the physical register value is not updated by regmap and DVFS doesn't
+> work as expected. Fix it!
+>=20
+> Signed-off-by: Dien Pham <dien.pham.ry@renesas.com>
+> [wsa: rebase, add 'Fixes', reword commit message]
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Fixes: d3ea21272094 ("mfd: Add ROHM BD9571MWV-M MFD PMIC driver")
+> ---
 
-Yeah, I wonder if adding this to a kernel janitors TODO list or somesuch
-would help speeding up the process.
+Any blockers for this one?
 
-Maybe Greg knows.
+>=20
+> Grabbed from the BSP and confirmed by the datasheet. The register is RO
+> and reflecting states depending on other registers.
+>=20
+>  drivers/mfd/bd9571mwv.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/mfd/bd9571mwv.c b/drivers/mfd/bd9571mwv.c
+> index 503979c81dae..fab3cdc27ed6 100644
+> --- a/drivers/mfd/bd9571mwv.c
+> +++ b/drivers/mfd/bd9571mwv.c
+> @@ -59,6 +59,7 @@ static const struct regmap_access_table bd9571mwv_writa=
+ble_table =3D {
+>  };
+> =20
+>  static const struct regmap_range bd9571mwv_volatile_yes_ranges[] =3D {
+> +	regmap_reg_range(BD9571MWV_DVFS_MONIVDAC, BD9571MWV_DVFS_MONIVDAC),
+>  	regmap_reg_range(BD9571MWV_GPIO_IN, BD9571MWV_GPIO_IN),
+>  	regmap_reg_range(BD9571MWV_GPIO_INT, BD9571MWV_GPIO_INT),
+>  	regmap_reg_range(BD9571MWV_INT_INTREQ, BD9571MWV_INT_INTREQ),
+> --=20
+> 2.19.0
+>=20
 
-Greg, the question is whether we can get people to help out with
+--5G06lTa6Jq83wMTw
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  -Wmissing-prototypes
+-----BEGIN PGP SIGNATURE-----
 
-fixes around the tree. Currently, there are ~1400 warnings and we want
-to have 0 and then add that option to the main Makefile.
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvlaaoACgkQFA3kzBSg
+KbZmyQ/9HdBVCRii9XEPQwsnVJVfjBRwXDZd42cdiN7Oid//ecgUav6omCPP5U3M
+uPw3FHXM8tbTqMw5pTkc7SresKAHgcP8xnoZpjwdBt2p8EPTAhAHjbYX396jTaOR
+qLOIhMD8PgWm0/4Swo5XylkPI5eQ54D8uLPYTPbWe1BZ4ZsbL2g/TLjAHpo7Xxdn
+wcrJw00+RhB55s5Mm8obz4Yt8zk4KNzWC/5dd0dsbBUtEd6sxT7dspN7kD532uUv
+CRYj3+IEhwEdbTX1Ez/d7Ha5s2d/M6g3DYDVjdg6R5lWvZ498H5Wmg0KZ9lVxSjL
+n9ZqxtLrtPHAHCdQlHoaQeR19J5pSZoIhrPf/zz22YEJq6IqLEkSQW7X3ulFJhCY
+042TzL2zzGcTU4V06YSZoeiPri5BhPYwhNkAdz9cwmEazU9DhJEY7F7htzLQmZdW
+u2uiSjZ1KeKDDBbbgxvDqPE2Wxl4hDHE1IHpYD6TMk6KoF3Et6TsbxTz1ZunFBN5
+YnyT+Q76D0u4r5U4eutULrvfLaBaJsnW09APAhw3y1ufrWGSeVUxLFcQ0J+EG3HU
+BhmO3+lEiRkRrqGpSXWv2e6SzwQpE/1/wENxoZHYCf5sDllqccqYyL2ef9CXfjRd
+fyshKJR7nDr8dV1ySzx5hP5I+KkA+Woz1WMnXK0DREQtfnbys1s=
+=0IVk
+-----END PGP SIGNATURE-----
 
-It is very easy to do: you simply build the kernel with W=1, choose one
--Wmissing-prototypes warning and fix it by adding a function prototype
-or declaring the function static.
-
-It should be a pretty easy for newbies to get involved...
-
-> Aha, I will try my best to to work on this, and as you said, that's a long
-> road to go, so maybe I would only work on modules which I am familiar with. ;-)
-
-Sounds good.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+--5G06lTa6Jq83wMTw--
