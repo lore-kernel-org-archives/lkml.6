@@ -2,114 +2,118 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D273CC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:15:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36140C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:21:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9390C20825
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:15:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECFE22081C
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:21:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Pmv1WnNz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9390C20825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="M4yadYkX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECFE22081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728123AbeKIXzs (ORCPT
+        id S1727988AbeKJABq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 18:55:48 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:44865 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728057AbeKIXzs (ORCPT
+        Fri, 9 Nov 2018 19:01:46 -0500
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:50316 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727735AbeKJABq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 18:55:48 -0500
-Received: by mail-lf1-f67.google.com with SMTP id z13so1414390lfe.11
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 06:15:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QLn+HK9QDuLOMgu6adkepEnVNp1iAcq2+lQnBNtoVOs=;
-        b=Pmv1WnNzmqepX4C/1lwqdXj597aj15n+JvPJ6OzJ6XI4kPtAebeBII6UN8QVpfbYtW
-         pKckBnTvlL/t8+XRCSSJSFNBTrxpTQjgltrU666jzBWMiTzcPjblrmurj7B6OW5n5n0T
-         gY0UFzfr6UIB7o4ywoJHLsaxF6KcCerXOSSNA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QLn+HK9QDuLOMgu6adkepEnVNp1iAcq2+lQnBNtoVOs=;
-        b=CFopgfjiHLQjuAcUy3pejWm94VNCk7vSi6w+qO3h0eepdcjxNlnqOCnqV7yOZV/REj
-         nPwC+o3OaeL9aFGHJUdH6KU/Eh9SYRS4SlxBw64FAT51VReq1rQLPqRwW8zDxf4kBBLm
-         dDgXyjY/vkbOY0meAnplzIdBKaVGEoX3Kz8SeYFU+dn78E5T11YS/+mD6o5DivZb2pJD
-         Yh+aoU1OW+Gi58+5tua8JbVh48zOcPpRRwZ+MtMBEDAVxIydR0Gs77p617Vi3gPFn+Fk
-         /9fbq//Rd1KIb3Wdu9MXv5tZZRV56t7Yb1uXj6K2QSiyl6GNY4X/DwZt6vcFqo5LEGBL
-         2DCg==
-X-Gm-Message-State: AGRZ1gL3WZ564ZodUJyEG4Ir5ia1rNJ+t8TuA2w/e9+IZj1lxY/oMGSI
-        YcO3a+ofiyhy8aBKAOsfwGq3pSuMRpU=
-X-Google-Smtp-Source: AJdET5fjojma/AVH/7iShLpzAsrXP+tJcBr6/OkrJEaDgQj/57TsOwINl8ZdjJ8qXzxbxAzS9X4gCg==
-X-Received: by 2002:a19:4e59:: with SMTP id c86mr5760651lfb.132.1541772899217;
-        Fri, 09 Nov 2018 06:14:59 -0800 (PST)
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
-        by smtp.gmail.com with ESMTPSA id o5-v6sm1330695ljh.75.2018.11.09.06.14.58
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 09 Nov 2018 06:14:58 -0800 (PST)
-Received: by mail-lf1-f49.google.com with SMTP id p86so1436966lfg.5
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 06:14:58 -0800 (PST)
-X-Received: by 2002:a19:7019:: with SMTP id h25-v6mr5673962lfc.147.1541772510018;
- Fri, 09 Nov 2018 06:08:30 -0800 (PST)
+        Fri, 9 Nov 2018 19:01:46 -0500
+Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 6F1D224E096E;
+        Fri,  9 Nov 2018 06:20:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1541773258; bh=TR+XpSyEJfvsXKXwcIVjqgoCL6DmXKpa3iQs27vLTjY=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=M4yadYkX/b5/wicbte3fm8tFa3RTYLYZC5BcQq1x/TX5cqN6m9Zyje9UmilbHVSwm
+         B9yx0qyPiBJ8MCgIaf4YJ5cEL5izjIR/XluGA9wpETFHZWMAQftWcTLCr+eKBWXqi5
+         mZe4CH5RAiysSBUTeS6WL0WHopGCaFU6SOgneFBx5ZsVeXGnTnJTi/8RiWMospuCWO
+         8nf7hI4Gh57LZjZXN3gzT+5oZL9V9X2Jcu1lJXeAYl+miaWwv+PgmAtqJjK49IBQPt
+         eP8gHXIxT0nFkLEa9WADijOCYsdvmJU5IsbvEnacodmeWwHPmVoGJ6N9yBZZKxoKDF
+         rv1MotWglTD9A==
+Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 5331F3E05;
+        Fri,  9 Nov 2018 06:20:58 -0800 (PST)
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 9 Nov 2018 06:20:58 -0800
+Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
+ by DE02WEHTCB.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Fri,
+ 9 Nov 2018 15:20:56 +0100
+From:   Alexey Brodkin <alexey.brodkin@synopsys.com>
+To:     "ldv@altlinux.org" <ldv@altlinux.org>
+CC:     "lineprinter@altlinux.org" <lineprinter@altlinux.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "vineet.gupta1@synopsys.com" <vineet.gupta1@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>
+Subject: Re: [PATCH 02/13] elf-em.h: add EM_ARC
+Thread-Topic: [PATCH 02/13] elf-em.h: add EM_ARC
+Thread-Index: AQHUd9qM9aFs73hD9Uit6LJSRYSl/aVHbmAA
+Date:   Fri, 9 Nov 2018 14:20:55 +0000
+Message-ID: <662c91c2859af216fb7c16351d8136310afd05cd.camel@synopsys.com>
+References: <20181109031536.GB21511@altlinux.org>
+In-Reply-To: <20181109031536.GB21511@altlinux.org>
+Accept-Language: en-US, ru-RU
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Evolution 3.30.2 (3.30.2-2.fc29) 
+x-originating-ip: [10.225.15.87]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <69956CFF419EE2438AAD060261880F38@internal.synopsys.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <1541165517-3557-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <1541165517-3557-3-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <20181107151900.gxmdvx42qeanpoah@pathway.suse.cz> <20181108044510.GC2343@jagdpanzerIV>
- <9648a384-853c-942e-6a8d-80432d943aae@i-love.sakura.ne.jp> <20181109061204.GC599@jagdpanzerIV>
-In-Reply-To: <20181109061204.GC599@jagdpanzerIV>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 9 Nov 2018 08:08:13 -0600
-X-Gmail-Original-Message-ID: <CAHk-=wizC7pn=+F5kNWaz65hb=meyVGLgkGGfZ82mNXp=-E=tQ@mail.gmail.com>
-Message-ID: <CAHk-=wizC7pn=+F5kNWaz65hb=meyVGLgkGGfZ82mNXp=-E=tQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] lockdep: Use line-buffered printk() for lockdep messages.
-To:     sergey.senozhatsky.work@gmail.com
-Cc:     penguin-kernel@i-love.sakura.ne.jp, Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        dvyukov@google.com, Steven Rostedt <rostedt@goodmis.org>,
-        glider@google.com, fengguang.wu@intel.com, jpoimboe@redhat.com,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 9, 2018 at 12:12 AM Sergey Senozhatsky
-<sergey.senozhatsky.work@gmail.com> wrote:
->
-> Dunno. I guess we still haven't heard from Linus because he did quite a good
-> job setting up his 'email filters' ;)
-
-Not filters, just long threads that I lurk on.
-
-I don't actually care too much about this - the part I care about is
-that when panics etc happen, things go out with a true best effort.
-
-And "best effort" actually means "reality", not "theory". I don't care
-one whit for some broken odd serial console that has a lock and
-deadlocks if you get a panic just in the right place. I care about the
-main printk/tty code doing the right thing, and avoiding the locks
-with the scheduler and timers etc. So the timestamping and wakeup code
-needing locks - or thinking you can delay things and print them out
-later (when no later happens because you're panicing in an NMI) -
-*that* is what I care deeply about.
-
-Something like having a line buffering interface for random debugging
-messages etc, I just don't get excited about. It just needs to be
-simple enough and robust enough. You guys seem to be talking it out
-ok.
-
-             Linus
+SGkgRG1pdHJ5LA0KDQpPbiBGcmksIDIwMTgtMTEtMDkgYXQgMDY6MTUgKzAzMDAsIERtaXRyeSBW
+LiBMZXZpbiB3cm90ZToNCj4gVGhlIHVhcGkvbGludXgvYXVkaXQuaCBoZWFkZXIgaXMgZ29pbmcg
+dG8gdXNlIEVNX0FSQyBpbiBvcmRlcg0KPiB0byBkZWZpbmUgQVVESVRfQVJDSF9BUkMgd2hpY2gg
+aXMgbmVlZGVkIHRvIGltcGxlbWVudA0KPiBzeXNjYWxsX2dldF9hcmNoKCkgd2hpY2ggaW4gdHVy
+biBpcyByZXF1aXJlZCB0byBleHRlbmQNCj4gdGhlIGdlbmVyaWMgcHRyYWNlIEFQSSB3aXRoIFBU
+UkFDRV9HRVRfU1lTQ0FMTF9JTkZPIHJlcXVlc3QuDQo+IA0KPiBUaGUgdmFsdWUgZm9yIEVNX0FS
+QyBoYXMgYmVlbiB0YWtlbiBmcm9tDQo+IGh0dHBzOi8vdXJsZGVmZW5zZS5wcm9vZnBvaW50LmNv
+bS92Mi91cmw/dT1odHRwLTNBX193d3cuc2NvLmNvbV9kZXZlbG9wZXJzX2dhYmlfMjAxMi0yRDEy
+LTJEMzFfY2g0LmVoZWFkZXIuaHRtbCZkPUR3SUNBZyZjPURQTDZfWF82SmtYRng3QVhXcUIwdGcm
+cj1scWRlZVNTRWVzMEdGRERsNjU2ZVZpWE83YnJlUzU1eXRXa2hwazVSODFJJm09WGg3UE85WmN3
+dGJId3p3dWd3aHUwTlp5cE85T2JNNXpNa1hpUTJqYS1RSSZzPTIzcHFqcDM3VVhLU3hRQzBBRnpx
+QmpQcXVKZHJoXzRGalNXMDBGTFJmNGsmZT0NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IERtaXRyeSBW
+LiBMZXZpbiA8bGR2QGFsdGxpbnV4Lm9yZz4NCj4gLS0tDQo+ICBpbmNsdWRlL3VhcGkvbGludXgv
+ZWxmLWVtLmggfCAxICsNCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKQ0KPiANCj4g
+ZGlmZiAtLWdpdCBhL2luY2x1ZGUvdWFwaS9saW51eC9lbGYtZW0uaCBiL2luY2x1ZGUvdWFwaS9s
+aW51eC9lbGYtZW0uaA0KPiBpbmRleCBiYTM2OTZlM2Q2OTQuLjU2ZmYzZjlkOTYzMyAxMDA2NDQN
+Cj4gLS0tIGEvaW5jbHVkZS91YXBpL2xpbnV4L2VsZi1lbS5oDQo+ICsrKyBiLw0KPiBAQCAtMjYs
+NiArMjYsNyBAQA0KPiAgI2RlZmluZSBFTV9BUk0JCTQwCS8qIEFSTSAzMiBiaXQgKi8NCj4gICNk
+ZWZpbmUgRU1fU0gJCTQyCS8qIFN1cGVySCAqLw0KPiAgI2RlZmluZSBFTV9TUEFSQ1Y5CTQzCS8q
+IFNQQVJDIHY5IDY0LWJpdCAqLw0KPiArI2RlZmluZSBFTV9BUkMJCTQ1CS8qIEFyZ29uYXV0IFJJ
+U0MgQ29yZSAqLw0KPiAgI2RlZmluZSBFTV9IOF8zMDAJNDYJLyogUmVuZXNhcyBIOC8zMDAgKi8N
+Cj4gICNkZWZpbmUgRU1fSUFfNjQJNTAJLyogSFAvSW50ZWwgSUEtNjQgKi8NCj4gICNkZWZpbmUg
+RU1fWDg2XzY0CTYyCS8qIEFNRCB4ODYtNjQgKi8NCg0KSSBndWVzcyB3ZSBuZWVkIHRvIGFkZCBB
+UkN2MiBoZXJlIGFzIHdlbGwgbGlrZSB0aGF0Og0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tPjgt
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KZGlmZiAtLWdpdCBhL2luY2x1ZGUvdWFwaS9saW51eC9l
+bGYtZW0uaCBiL2luY2x1ZGUvdWFwaS9saW51eC9lbGYtZW0uaA0KaW5kZXggMzFhYTEwMTc4MzM1
+Li41YzZjMjYzZDVjNjkgMTAwNjQ0DQotLS0gYS9pbmNsdWRlL3VhcGkvbGludXgvZWxmLWVtLmgN
+CisrKyBiL2luY2x1ZGUvdWFwaS9saW51eC9lbGYtZW0uaA0KQEAgLTQxLDYgKzQxLDcgQEANCiAj
+ZGVmaW5lIEVNX1RJTEVQUk8gICAgIDE4OCAgICAgLyogVGlsZXJhIFRJTEVQcm8gKi8NCiAjZGVm
+aW5lIEVNX01JQ1JPQkxBWkUgIDE4OSAgICAgLyogWGlsaW54IE1pY3JvQmxhemUgKi8NCiAjZGVm
+aW5lIEVNX1RJTEVHWCAgICAgIDE5MSAgICAgLyogVGlsZXJhIFRJTEUtR3ggKi8NCisjZGVmaW5l
+IEVNX0FSQ1YyICAgICAgIDE5NSAgICAgLyogU3lub3BzeXMgQVJDdjIgSVNBICovDQogI2RlZmlu
+ZSBFTV9CUEYgICAgICAgICAyNDcgICAgIC8qIExpbnV4IEJQRiAtIGluLWtlcm5lbCB2aXJ0dWFs
+IG1hY2hpbmUgKi8NCiAjZGVmaW5lIEVNX0ZSViAgICAgICAgIDB4NTQ0MSAgLyogRnVqaXRzdSBG
+Ui1WICovDQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0+OC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+DQoNClNlZSBodHRwczovL3NvdXJjZXdhcmUub3JnL2dpdC9naXR3ZWIuY2dpP3A9YmludXRpbHMt
+Z2RiLmdpdDthPWJsb2I7Zj1pbmNsdWRlL2VsZi9jb21tb24uaDtoYj1IRUFEI2wzMDkNCk5vdGUg
+dGhvdWdoIHRoYXQgd2UncmUgbW92aW5nIGZyb20gRU1fQVJDX0NPTVBBQ1QyIHRvIEVNX0FSQ1Yy
+IG5hbWUNCnNvIGl0IG1hdGNoZXMgcmVhbCBJU0EgbmFtZS4gVGhpcyBpcyB3aGF0IHdlIHVzZSBp
+biBHbGliYyBwb3J0IHdlJ3JlDQp1cHN0cmVhbWluZyBub3cuDQoNCi1BbGV4ZXkNCg==
