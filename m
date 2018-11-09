@@ -7,63 +7,64 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 495E6C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 23:11:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DEB9C0044C
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 23:11:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0251F20855
+	by mail.kernel.org (Postfix) with ESMTP id C9C6520827
 	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 23:11:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="LnD4YQ42"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0251F20855
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="L0qMGqCQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9C6520827
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728954AbeKJIyD (ORCPT
+        id S1728976AbeKJIyE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 03:54:03 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:44735 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728765AbeKJIyC (ORCPT
+        Sat, 10 Nov 2018 03:54:04 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:42979 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728927AbeKJIyD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 03:54:02 -0500
-Received: by mail-lj1-f196.google.com with SMTP id k19-v6so2945635lji.11
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 15:11:16 -0800 (PST)
+        Sat, 10 Nov 2018 03:54:03 -0500
+Received: by mail-lf1-f67.google.com with SMTP id q6-v6so2486175lfh.9
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 15:11:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=uNoGVf7Ddr77R5P/EQPIC/miS/nc7l5r4RHb00Kf/Yo=;
-        b=LnD4YQ42GCIwbo+93Vyt7RcSEJlTcE7sH0hvPl2xRzqZv8ujMb1duNIiwzwuQr9iyo
-         G9+enmFbh0wuV9Fbx5HBe3nfmLA3M05pE2OAEXFtqgr2GJWe/ZQ+aQqIFtlCee1CiS4j
-         GcMxIrgJbnAJgdZKsY8mCaDn3BuWEBNwYRSU0=
+        bh=lsgMgygo+bKUNjEuYg81iTooxPuNEFXNyVxX3YHOF7s=;
+        b=L0qMGqCQlWAsJz2kWOzOsR61qdGYeI2Yl90qRkJ0akHq4cbeMGAC0AtBZo8u3qcEgd
+         4d308ELwzCfeDvUQYSB7PkIXikjbncqC/IB77FBPP/xjce4gX5HeAPanK4ZcXj05y7D2
+         sw2oN/0gXxFpNpqMrJmObf8DVukmxOB0lSqA8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=uNoGVf7Ddr77R5P/EQPIC/miS/nc7l5r4RHb00Kf/Yo=;
-        b=OhpclxLAG29hWefg4Fyx0sSHYZCAZdUmOgL/7LG7CBwagrTLOJQWuAnSur7RuppH7x
-         7nGyDct6O6Dmtwb+y82mlO1BW3vrPQvrjn93lpkk9dkbh25BhxWSpRjN0Fc7/eA59mv0
-         NG1F4VZshVmYPxvHfwyqrgj23JD5Dkl7x8/AGuE3K1xVHUTiO6Pj8WnTEZGI64aDqlGv
-         +vLB5Arif/gHZmXDhF5HRVzwGIKhI3YmtC7DOjq/0Lv3PLIKTDlv0Et0ZpHruX9565Ak
-         nl5DNqkCKHKmkOIAqvNu2SmljIxYgJtnNlWgGuYhlf2HiaTE6S4DNuTpp0zZB6hBO36F
-         JZ6g==
-X-Gm-Message-State: AGRZ1gIfR8e7M2cesmRu0W4SGd5CtskGgDMw2A42AJeT/XD/p93FbNg4
-        BjACbQGx5H8X02jKaTKxCEQod93Bf9Xw5w==
-X-Google-Smtp-Source: AJdET5cmGghbCvRNZ9T2lXy0xqH4jBC4Gru8INUhEKRHVbvtFz9UPsU3OvGFKSJGsyxGac+yTtCmcQ==
-X-Received: by 2002:a2e:8643:: with SMTP id i3-v6mr5883593ljj.43.1541805075553;
-        Fri, 09 Nov 2018 15:11:15 -0800 (PST)
+        bh=lsgMgygo+bKUNjEuYg81iTooxPuNEFXNyVxX3YHOF7s=;
+        b=sfNCt5+V6xQb8wKy6FyNGYqQb+IAcXpb3GwXCzzyYJMFKQjCaG2xUxZvHjiRyEOtxC
+         e40PHqO5HZ6ECv4FZu5o/b3qEqOnT+HPq01Q653NuuWdWXeA/dyMec+O2YpY77z7ut7I
+         EpapORdSliSnkodP0i5d+aOVqfdHF7t/mTcxFx5w1cJ41sFhnW6inG3dBh13GVYCa0Dc
+         6LgrddCowaqfWeLi+VVdloBjeG+OPlI3Co3TqzVP/I7kqmXDMzLkkAmOM9rIA4Jvtgqf
+         A0Voou5pO/uZneQtjni90mqoVTigJ0a/YPias8WbxkGogtRl9ZY9QV+5mbBWltKZQJ/W
+         7UsA==
+X-Gm-Message-State: AGRZ1gIzxNp9SYj6GjoPQIUtMvkKQ05iULdMSEV6W5POKd6dJyMHTUKQ
+        y/eFM5N2KEyQu7B9TM/c3pqOWQ==
+X-Google-Smtp-Source: AJdET5fs8/NrIQG9kDl06bPcF53Bk1yNW+bqJdnjFcXVIr9+cVoH/wp7HtGweU9OJ+rrtZdZ1wps+g==
+X-Received: by 2002:a19:d445:: with SMTP id l66mr6814388lfg.26.1541805077046;
+        Fri, 09 Nov 2018 15:11:17 -0800 (PST)
 Received: from prevas-ravi.prevas.se (dhcp-5-186-114-252.cgn.ip.fibianet.dk. [5.186.114.252])
-        by smtp.gmail.com with ESMTPSA id x16sm1584012lff.26.2018.11.09.15.11.14
+        by smtp.gmail.com with ESMTPSA id x16sm1584012lff.26.2018.11.09.15.11.15
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 09 Nov 2018 15:11:15 -0800 (PST)
+        Fri, 09 Nov 2018 15:11:16 -0800 (PST)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Jason Baron <jbaron@akamai.com>
 Cc:     linux-kernel@vger.kernel.org,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH v3 13/23] dynamic_debug: refactor dynamic_pr_debug and friends
-Date:   Sat, 10 Nov 2018 00:10:11 +0100
-Message-Id: <20181109231021.11658-14-linux@rasmusvillemoes.dk>
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>
+Subject: [PATCH v3 14/23] btrfs: implement btrfs_debug* in terms of helper macro
+Date:   Sat, 10 Nov 2018 00:10:12 +0100
+Message-Id: <20181109231021.11658-15-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.19.1.6.gbde171bbf5
 In-Reply-To: <20181109231021.11658-1-linux@rasmusvillemoes.dk>
 References: <20181009112013.14238-1-linux@rasmusvillemoes.dk>
@@ -75,114 +76,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For the upcoming 'define the _ddebug descriptor in assembly', we need
-all the descriptors in a translation unit to have distinct
-names (because asm does not understand C scope). The easiest way to
-achieve that is as usual with an extra level of macros, passing the
-identifier to use to the innermost macro, generating it via __UNIQUE_ID
-or something.
+First, the btrfs_debug macros open-code (one possible definition of)
+DYNAMIC_DEBUG_BRANCH, so they don't benefit from the HAVE_JUMP_LABEL
+optimization.
 
-However, instead of repeating that exercise for dynamic_pr_debug,
-dynamic_dev_dbg, dynamic_netdev_dbg and dynamic_hex_dump separately, we
-can use the similarity between their bodies to implement them via a
-common macro, _dynamic_func_call - though the hex_dump case requires
-a slight variant, since print_hex_dump does not take the _ddebug
-descriptor. We'll also get to use that variant elsewhere (btrfs).
+Second, changes on x86-64 later in this series require that all struct
+_ddebug descriptors in a translation unit use distinct identifiers.
 
+Using the new _dynamic_func_call_no_desc helper macro from
+dynamic_debug.h takes care of both of these.
+
+Cc: linux-btrfs@vger.kernel.org
+Acked-by: David Sterba <dsterba@suse.com>
 Acked-by: Jason Baron <jbaron@akamai.com>
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- include/linux/dynamic_debug.h | 72 +++++++++++++++++++++--------------
- 1 file changed, 43 insertions(+), 29 deletions(-)
+ fs/btrfs/ctree.h | 34 ++++++++++------------------------
+ 1 file changed, 10 insertions(+), 24 deletions(-)
 
-diff --git a/include/linux/dynamic_debug.h b/include/linux/dynamic_debug.h
-index 6a002b789d51..b9424097df37 100644
---- a/include/linux/dynamic_debug.h
-+++ b/include/linux/dynamic_debug.h
-@@ -112,40 +112,54 @@ void __dynamic_netdev_dbg(struct _ddebug *descriptor,
+diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
+index 80953528572d..0d55bf56872f 100644
+--- a/fs/btrfs/ctree.h
++++ b/fs/btrfs/ctree.h
+@@ -3334,31 +3334,17 @@ void btrfs_printk(const struct btrfs_fs_info *fs_info, const char *fmt, ...);
  
- #endif
- 
--#define dynamic_pr_debug(fmt, ...)				\
--do {								\
--	DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt);		\
--	if (DYNAMIC_DEBUG_BRANCH(descriptor))			\
--		__dynamic_pr_debug(&descriptor, pr_fmt(fmt),	\
--				   ##__VA_ARGS__);		\
-+#define __dynamic_func_call(id, fmt, func, ...) do {	\
-+	DEFINE_DYNAMIC_DEBUG_METADATA(id, fmt);		\
-+	if (DYNAMIC_DEBUG_BRANCH(id))			\
-+		func(&id, ##__VA_ARGS__);		\
- } while (0)
- 
--#define dynamic_dev_dbg(dev, fmt, ...)				\
--do {								\
--	DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt);		\
--	if (DYNAMIC_DEBUG_BRANCH(descriptor))			\
--		__dynamic_dev_dbg(&descriptor, dev, fmt,	\
--				  ##__VA_ARGS__);		\
-+#define __dynamic_func_call_no_desc(id, fmt, func, ...) do {	\
-+	DEFINE_DYNAMIC_DEBUG_METADATA(id, fmt);			\
-+	if (DYNAMIC_DEBUG_BRANCH(id))				\
-+		func(__VA_ARGS__);				\
- } while (0)
- 
--#define dynamic_netdev_dbg(dev, fmt, ...)			\
--do {								\
--	DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt);		\
--	if (DYNAMIC_DEBUG_BRANCH(descriptor))			\
--		__dynamic_netdev_dbg(&descriptor, dev, fmt,	\
--				     ##__VA_ARGS__);		\
+ #if defined(CONFIG_DYNAMIC_DEBUG)
+ #define btrfs_debug(fs_info, fmt, args...)				\
+-do {									\
+-        DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt);         	\
+-        if (unlikely(descriptor.flags & _DPRINTK_FLAGS_PRINT))  	\
+-		btrfs_printk(fs_info, KERN_DEBUG fmt, ##args);		\
 -} while (0)
-+/*
-+ * "Factory macro" for generating a call to func, guarded by a
-+ * DYNAMIC_DEBUG_BRANCH. The dynamic debug decriptor will be
-+ * initialized using the fmt argument. The function will be called with
-+ * the address of the descriptor as first argument, followed by all
-+ * the varargs. Note that fmt is repeated in invocations of this
-+ * macro.
-+ */
-+#define _dynamic_func_call(fmt, func, ...)				\
-+	__dynamic_func_call(__UNIQUE_ID(ddebug), fmt, func, ##__VA_ARGS__)
-+/*
-+ * A variant that does the same, except that the descriptor is not
-+ * passed as the first argument to the function; it is only called
-+ * with precisely the macro's varargs.
-+ */
-+#define _dynamic_func_call_no_desc(fmt, func, ...)	\
-+	__dynamic_func_call_no_desc(__UNIQUE_ID(ddebug), fmt, func, ##__VA_ARGS__)
- 
--#define dynamic_hex_dump(prefix_str, prefix_type, rowsize,	\
--			 groupsize, buf, len, ascii)		\
--do {								\
--	DEFINE_DYNAMIC_DEBUG_METADATA(descriptor,		\
--		__builtin_constant_p(prefix_str) ? prefix_str : "hexdump");\
--	if (DYNAMIC_DEBUG_BRANCH(descriptor))			\
--		print_hex_dump(KERN_DEBUG, prefix_str,		\
--			       prefix_type, rowsize, groupsize,	\
--			       buf, len, ascii);		\
+-#define btrfs_debug_in_rcu(fs_info, fmt, args...) 			\
+-do {									\
+-        DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt); 	        \
+-        if (unlikely(descriptor.flags & _DPRINTK_FLAGS_PRINT)) 		\
+-		btrfs_printk_in_rcu(fs_info, KERN_DEBUG fmt, ##args);	\
 -} while (0)
-+#define dynamic_pr_debug(fmt, ...)				\
-+	_dynamic_func_call(fmt,	__dynamic_pr_debug,		\
-+			   pr_fmt(fmt), ##__VA_ARGS__)
-+
-+#define dynamic_dev_dbg(dev, fmt, ...)				\
-+	_dynamic_func_call(fmt,__dynamic_dev_dbg, 		\
-+			   dev, fmt, ##__VA_ARGS__)
-+
-+#define dynamic_netdev_dbg(dev, fmt, ...)			\
-+	_dynamic_func_call(fmt, __dynamic_netdev_dbg,		\
-+			   dev, fmt, ##__VA_ARGS__)
-+
-+#define dynamic_hex_dump(prefix_str, prefix_type, rowsize,		\
-+			 groupsize, buf, len, ascii)			\
-+	_dynamic_func_call_no_desc(__builtin_constant_p(prefix_str) ? prefix_str : "hexdump", \
-+				   print_hex_dump,			\
-+				   KERN_DEBUG, prefix_str, prefix_type,	\
-+				   rowsize, groupsize, buf, len, ascii)
- 
- #else
- 
++	_dynamic_func_call_no_desc(fmt, btrfs_printk,			\
++				   fs_info, KERN_DEBUG fmt, ##args)
++#define btrfs_debug_in_rcu(fs_info, fmt, args...)			\
++	_dynamic_func_call_no_desc(fmt, btrfs_printk_in_rcu,		\
++				   fs_info, KERN_DEBUG fmt, ##args)
+ #define btrfs_debug_rl_in_rcu(fs_info, fmt, args...)			\
+-do {									\
+-        DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt);         	\
+-        if (unlikely(descriptor.flags & _DPRINTK_FLAGS_PRINT))  	\
+-		btrfs_printk_rl_in_rcu(fs_info, KERN_DEBUG fmt,		\
+-				       ##args);\
+-} while (0)
+-#define btrfs_debug_rl(fs_info, fmt, args...) 				\
+-do {									\
+-        DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt);         	\
+-        if (unlikely(descriptor.flags & _DPRINTK_FLAGS_PRINT))  	\
+-		btrfs_printk_ratelimited(fs_info, KERN_DEBUG fmt,	\
+-					 ##args);			\
+-} while (0)
++	_dynamic_func_call_no_desc(fmt, btrfs_printk_rl_in_rcu,		\
++				   fs_info, KERN_DEBUG fmt, ##args)
++#define btrfs_debug_rl(fs_info, fmt, args...)				\
++	_dynamic_func_call_no_desc(fmt, btrfs_printk_ratelimited,	\
++				   fs_info, KERN_DEBUG fmt, ##args)
+ #elif defined(DEBUG)
+ #define btrfs_debug(fs_info, fmt, args...) \
+ 	btrfs_printk(fs_info, KERN_DEBUG fmt, ##args)
 -- 
 2.19.1.6.gbde171bbf5
 
