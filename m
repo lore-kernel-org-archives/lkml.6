@@ -2,193 +2,190 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8C77C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:59:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBAF5C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 23:03:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 786322081C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:59:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65FA72081C
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 23:03:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="L8/zOYds"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 786322081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U9cw0aDF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65FA72081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728376AbeKJIm1 (ORCPT
+        id S1728532AbeKJIqj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 03:42:27 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:35517 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727557AbeKJIm0 (ORCPT
+        Sat, 10 Nov 2018 03:46:39 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:41666 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728057AbeKJIqj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 03:42:26 -0500
-Received: by mail-io1-f66.google.com with SMTP id 79-v6so2456678iou.2
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 14:59:44 -0800 (PST)
+        Sat, 10 Nov 2018 03:46:39 -0500
+Received: by mail-pl1-f195.google.com with SMTP id p16-v6so1572118plr.8;
+        Fri, 09 Nov 2018 15:03:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=U5XNH8HaqeoJ5/jUdE3lpJrv2wXwKHXt0e0uHsejo24=;
-        b=L8/zOYdsHT0kiKfEwBN7e0htm2fULR88l/McUXVU1N+k0NWjK0V10bVCDW5bX+qjEP
-         9Ka9EuAdVn5uhUDPI/10YtAd1j7QCeROQxG35jQidBe6WPIoQiEZcT0Dj7Q5CrosmAcg
-         l3VgSrq/hj6L+L9ZGe9KcHTD4pNGcRfG+cAaOl3NfWzttBqZ9u9C+1deHOYgE7rYlK+d
-         kaOPbvfsMLUE6K7NjWHEdVo6bGO2mMNLsuZP/HEd9n1tzNP9d3SFFfev4ZSbI83e9d/T
-         tPCCt7u+dOyIZGfOZ916B+Kfkmwdvf17pl+zqBGX2QQ1qVAeu8fs2hy+zNm9EkT6FBwd
-         8VrA==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1KHa9FEM+C0nJ9FiDRagU71AKdQSw1kawizngfVg6SQ=;
+        b=U9cw0aDFS8L7by7nDYSuG1whUunjyJSZcxtiYo7xl2jYCftilr5IRneGE0If3RCfLy
+         GhSZ3UBsM4LOu15SmEq2HATx8SXAwCigl0YpBpL1QQspuBWg59Vi8IJKtpYg5vH2DLNZ
+         OSCmcY5tkfHstAKPvMvLIjgBpDtZxQtCI44VXImOgtCGMppbkDIMnW/Aw31s1Yo6uEOR
+         H3BnzD8E36yC52PNsDcAVPltop6H6qMkAQdwWCjjTpS+XUMZkk4PloPSqcJomRWyGalr
+         nM14VOdIl2VcYXOiWkURPyDzZFzIJyGwba0MkE1wHOBt8ortemskH2rA9F8juUrBDcOr
+         aOkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=U5XNH8HaqeoJ5/jUdE3lpJrv2wXwKHXt0e0uHsejo24=;
-        b=hAXABXyk/Vm2K8jYUsCatKdJWrjJOHfZeYFokZjSJzDdO500LQG1kSxv5DXr4wCMTj
-         CRpAfgeKJPqxSGuzMELr1A92a0UFJ3IaFo2AMnQ2Nsl7OHzdY28z+u2IPdWVOaQ50Ixj
-         fgRGHcTMD+7HEzLWWX77K+C9hiunJ4LG/CG+dc952EVU/sKLnq1gMhMCoi1fyZ/BIemA
-         VDdQpXjgxDHf07dGBOf8SZMZ67l3M9T3he++Hhq+Ns877LM/RRNSJTLu+HaJMV0QGc7Q
-         SXQBgMnuWeGABHUC7438/eovsp6/eVA+nl0g2yln5EDSpUDDLyL1PQmGwgVYBc+3flh0
-         oSqw==
-X-Gm-Message-State: AGRZ1gJmU9i9rJ9qdQYYUj61/pCNK6fGL8yMAjtj+z/0GICXb/xL92Kv
-        I2/irLkTuwUGaXx6FWc0EW3U1WU4LeI=
-X-Google-Smtp-Source: AJdET5ft54xNcOQ+U6n8gCXF9dXxu7TS7+rK3YRLPpwW7moB+TYgelvGTLyNRbWChT2nJFydsGYFEA==
-X-Received: by 2002:a6b:cd08:: with SMTP id d8-v6mr8752955iog.121.1541804383474;
-        Fri, 09 Nov 2018 14:59:43 -0800 (PST)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id f133-v6sm1337660itf.10.2018.11.09.14.59.42
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1KHa9FEM+C0nJ9FiDRagU71AKdQSw1kawizngfVg6SQ=;
+        b=QSsZ4N9g932+vnCmIwrW7ENRlrsH4Cn1Psz5ey1cN8p6of4u31Sq/mjOlvifJnXDqx
+         c0WflbduxImUw08bDqGsGGyEusgpxHntgsm7BbJ/DRFUa+BESUXCc/i+IM8MK+zqjM6B
+         zzqX3wpO95+k2sRfIL96yZ++HSh1GJag0ylOK/MK+Ctb3GP2pxndmAfp8s2mLYoPl3/z
+         OXeHflje4Yu49ggT4BsFP89vrdQBwHWwvvjGwo0YZUGEsh7C98HN8000+4u0Kp9zYasj
+         X00wXcLjUw2tvcptuvZ2fRD7w8OZMGvZcosA61yQRkzDHVZgVo+EGp/ay94gqNZcKjYY
+         68EQ==
+X-Gm-Message-State: AGRZ1gKyUPDupSf+hrz77ChP8Z2Gid6K9auj+YOUYECeseSPwwrq2agS
+        gDgD2ftbwPTaRN2i3PLsexlHR+qw
+X-Google-Smtp-Source: AJdET5csB80xm0MDuX4s8pVmNxA4e/OJTZWbXu+wnoRatOeo9bV7hxxaMNRLzohFadf+e2+O9oq3vw==
+X-Received: by 2002:a17:902:7882:: with SMTP id q2-v6mr10923835pll.188.1541804635789;
+        Fri, 09 Nov 2018 15:03:55 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 18sm6976022pgl.50.2018.11.09.15.03.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 09 Nov 2018 14:59:42 -0800 (PST)
-Subject: Re: [LKP] a9f38e1dec [ 245.678853] INFO: task mount:580 blocked for
- more than 120 seconds.
-To:     kernel test robot <rong.a.chen@intel.com>,
-        Omar Sandoval <osandov@fb.com>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        LKP <lkp@01.org>
-References: <20181107031643.GD24195@shao2-debian>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <6914078b-a348-f92d-abbb-b2ccb162fc80@kernel.dk>
-Date:   Fri, 9 Nov 2018 15:59:41 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 09 Nov 2018 15:03:55 -0800 (PST)
+Date:   Fri, 9 Nov 2018 15:03:54 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Eddie James <eajames@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        devicetree@vger.kernel.org, jdelvare@suse.com,
+        linux-doc@vger.kernel.org, gregkh@linuxfoundation.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, rdunlap@infradead.org,
+        benh@kernel.crashing.org, Eddie James <eajames@linux.vnet.ibm.com>
+Subject: Re: [PATCH v6 00/10] hwmon and fsi: Add On-Chip Controller Driver
+Message-ID: <20181109230354.GA31326@roeck-us.net>
+References: <1541711129-26631-1-git-send-email-eajames@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20181107031643.GD24195@shao2-debian>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1541711129-26631-1-git-send-email-eajames@linux.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/6/18 8:16 PM, kernel test robot wrote:
-> Greetings,
+On Thu, Nov 08, 2018 at 03:05:19PM -0600, Eddie James wrote:
+> From: Eddie James <eajames@linux.vnet.ibm.com>
 > 
-> 0day kernel testing robot got the below dmesg and the first bad commit is
+> This series adds a hwmon driver to support the OCC on POWER8 and POWER9
+> processors. The OCC is an embedded processor that provides realtime power and
+> thermal monitoring and management.
 > 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> The series also adds a "bus" driver to handle atomic communication between the
+> service processor and the OCC on a POWER9 chip. This communication takes place
+> over FSI bus to the SBE (Self-Boot engine) FIFO, which in turn communicates
+> with the OCC. The driver for the SBEFIFO is already available as an FSI client
+> driver.
 > 
-> commit a9f38e1dec107af70d81338332494bf0a1e76597
-> Author:     Omar Sandoval <osandov@fb.com>
-> AuthorDate: Mon Oct 15 09:21:34 2018 -0600
-> Commit:     Jens Axboe <axboe@kernel.dk>
-> CommitDate: Tue Oct 16 09:50:14 2018 -0600
+> For POWER8 OCCs, communication between the service processor and the OCC is
+> achieved over I2C bus.
 > 
->     floppy: convert to blk-mq
->     
->     This driver likes to fetch requests from all over the place, so make
->     queue_rq put requests on a list so that the logic stays the same. Tested
->     with QEMU.
->     
->     Signed-off-by: Omar Sandoval <osandov@fb.com>
->     
->     Converted to blk_mq_init_sq_queue() and fixed a few spots where the
->     tag_set leaked on cleanup.
->     
->     Signed-off-by: Jens Axboe <axboe@kernel.dk>
+I am not entirely happy with the series - there are still lots of proprietary
+attributes, and I would have preferred the use of the _info API at this point -
+but this has taken long enough. Series applied to hwmon-next. Please send any
+fixes as follow-up patches.
 
-I don't think this is the reason for the hang, I think it just exposed
-it. I posted a patch to fix this, hopefully, it's included below as
-well. Can you give it a try?
+Thanks,
+Guenter
 
-
-From fd85da23e51d8c055592c2fde5bc36d43eb29074 Mon Sep 17 00:00:00 2001
-From: Jens Axboe <axboe@kernel.dk>
-Date: Fri, 9 Nov 2018 15:53:04 -0700
-Subject: [PATCH] floppy: fix race condition in __floppy_read_block_0()
-
-LKP recently reported a hang at bootup in the floppy code:
-
-[  245.678853] INFO: task mount:580 blocked for more than 120 seconds.
-[  245.679906]       Tainted: G                T 4.19.0-rc6-00172-ga9f38e1 #1
-[  245.680959] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-[  245.682181] mount           D 6372   580      1 0x00000004
-[  245.683023] Call Trace:
-[  245.683425]  __schedule+0x2df/0x570
-[  245.683975]  schedule+0x2d/0x80
-[  245.684476]  schedule_timeout+0x19d/0x330
-[  245.685090]  ? wait_for_common+0xa5/0x170
-[  245.685735]  wait_for_common+0xac/0x170
-[  245.686339]  ? do_sched_yield+0x90/0x90
-[  245.686935]  wait_for_completion+0x12/0x20
-[  245.687571]  __floppy_read_block_0+0xfb/0x150
-[  245.688244]  ? floppy_resume+0x40/0x40
-[  245.688844]  floppy_revalidate+0x20f/0x240
-[  245.689486]  check_disk_change+0x43/0x60
-[  245.690087]  floppy_open+0x1ea/0x360
-[  245.690653]  __blkdev_get+0xb4/0x4d0
-[  245.691212]  ? blkdev_get+0x1db/0x370
-[  245.691777]  blkdev_get+0x1f3/0x370
-[  245.692351]  ? path_put+0x15/0x20
-[  245.692871]  ? lookup_bdev+0x4b/0x90
-[  245.693539]  blkdev_get_by_path+0x3d/0x80
-[  245.694165]  mount_bdev+0x2a/0x190
-[  245.694695]  squashfs_mount+0x10/0x20
-[  245.695271]  ? squashfs_alloc_inode+0x30/0x30
-[  245.695960]  mount_fs+0xf/0x90
-[  245.696451]  vfs_kern_mount+0x43/0x130
-[  245.697036]  do_mount+0x187/0xc40
-[  245.697563]  ? memdup_user+0x28/0x50
-[  245.698124]  ksys_mount+0x60/0xc0
-[  245.698639]  sys_mount+0x19/0x20
-[  245.699167]  do_int80_syscall_32+0x61/0x130
-[  245.699813]  entry_INT80_32+0xc7/0xc7
-
-showing that we never complete that read request. The reason is that
-the completion setup is racy - it initializes the completion event
-AFTER submitting the IO, which means that the IO could complete
-before/during the init. If it does, we are passing garbage to
-complete() and we may sleep forever waiting for the event to
-occur.
-
-Fixes: 7b7b68bba5ef ("floppy: bail out in open() if drive is not responding to block0 read")
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- drivers/block/floppy.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
-index a8cfa011c284..fb23578e9a41 100644
---- a/drivers/block/floppy.c
-+++ b/drivers/block/floppy.c
-@@ -4148,10 +4148,11 @@ static int __floppy_read_block_0(struct block_device *bdev, int drive)
- 	bio.bi_end_io = floppy_rb0_cb;
- 	bio_set_op_attrs(&bio, REQ_OP_READ, 0);
- 
-+	init_completion(&cbdata.complete);
-+
- 	submit_bio(&bio);
- 	process_fd_request();
- 
--	init_completion(&cbdata.complete);
- 	wait_for_completion(&cbdata.complete);
- 
- 	__free_page(page);
--- 
-2.17.1
-
-
--- 
-Jens Axboe
-
+> Changes since v5:
+>  * Makefile fix when compiling both P8 and P9 versions
+>  * Spelling fix in hwmon doc
+>  * Added an additional sentence for P9 binding doc to explain that OCC isn't
+>    an FSI slave device.
+> 
+> Changes since v4:
+>  * Make the hwmon attributes conform almost completely to standard names and
+>    values. The only exception is powerX_cap_user and powerX_cap_user_source.
+>  * Improve hwmon documentation.
+>  * Add ibm,p9-occ dt documentation.
+> 
+> Changes since v3:
+>  * Add the FSI OCC driver.
+>  * Pull the sysfs attribute code into it's own file for cleanliness.
+>  * Various fixes for attribute creation and integer overflow.
+> 
+> Changes since v2:
+>  * Add sysfs_notify for the error and throttling attributes when change is
+>    detected.
+>  * Removed occs_present counting of devices bound.
+>  * Improved remove() of P9 driver to avoid bad behavior with relation to OCC
+>    driver when unbound.
+>  * Added default cases (return EINVAL) for all sensor show functions.
+>  * Added temperature fault sensor.
+>  * Added back dt binding documentation for P9 to address checkpatch warning.
+>  * Added occs_present attribute from the poll response.
+> 
+> Changes since v1:
+>  * Remove wait loop in P9 code, as that is now handled by FSI OCC driver.
+>  * Removed dt binding documentation for P9, FSI OCC driver will probe OCC hwmon
+>    driver automatically.
+>  * Moved OCC response code definitions to the OCC include file.
+>  * Fixed includes.
+>  * Changed some structure fields to __beXX as that is what they are.
+>  * Changed some errnos.
+>  * Removed some dev_err().
+>  * Refactored P8 code a bit to use #defined addresses and magic values, and
+>    changed "goto retry" to a loop.
+>  * Refactored error handling a bit.
+> 
+> Eddie James (10):
+>   dt-bindings: fsi: Add P9 OCC device documentation
+>   fsi: Add On-Chip Controller (OCC) driver
+>   Documentation: hwmon: Add OCC documentation
+>   dt-bindings: i2c: Add P8 OCC hwmon device documentation
+>   hwmon: Add On-Chip Controller (OCC) hwmon driver
+>   hwmon (occ): Add command transport method for P8 and P9
+>   hwmon (occ): Parse OCC poll response
+>   hwmon (occ): Add sensor types and versions
+>   hwmon (occ): Add sensor attributes and register hwmon device
+>   hwmon (occ): Add sysfs attributes for additional OCC data
+> 
+>  .../devicetree/bindings/fsi/ibm,p9-occ.txt         |   16 +
+>  .../devicetree/bindings/i2c/ibm,p8-occ-hwmon.txt   |   25 +
+>  Documentation/hwmon/occ                            |  112 ++
+>  drivers/fsi/Kconfig                                |   10 +
+>  drivers/fsi/Makefile                               |    1 +
+>  drivers/fsi/fsi-occ.c                              |  599 +++++++++++
+>  drivers/hwmon/Kconfig                              |    2 +
+>  drivers/hwmon/Makefile                             |    1 +
+>  drivers/hwmon/occ/Kconfig                          |   31 +
+>  drivers/hwmon/occ/Makefile                         |    5 +
+>  drivers/hwmon/occ/common.c                         | 1098 ++++++++++++++++++++
+>  drivers/hwmon/occ/common.h                         |  128 +++
+>  drivers/hwmon/occ/p8_i2c.c                         |  255 +++++
+>  drivers/hwmon/occ/p9_sbe.c                         |  106 ++
+>  drivers/hwmon/occ/sysfs.c                          |  188 ++++
+>  include/linux/fsi-occ.h                            |   25 +
+>  16 files changed, 2602 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/fsi/ibm,p9-occ.txt
+>  create mode 100644 Documentation/devicetree/bindings/i2c/ibm,p8-occ-hwmon.txt
+>  create mode 100644 Documentation/hwmon/occ
+>  create mode 100644 drivers/fsi/fsi-occ.c
+>  create mode 100644 drivers/hwmon/occ/Kconfig
+>  create mode 100644 drivers/hwmon/occ/Makefile
+>  create mode 100644 drivers/hwmon/occ/common.c
+>  create mode 100644 drivers/hwmon/occ/common.h
+>  create mode 100644 drivers/hwmon/occ/p8_i2c.c
+>  create mode 100644 drivers/hwmon/occ/p9_sbe.c
+>  create mode 100644 drivers/hwmon/occ/sysfs.c
+>  create mode 100644 include/linux/fsi-occ.h
+> 
+> -- 
+> 1.8.3.1
+> 
