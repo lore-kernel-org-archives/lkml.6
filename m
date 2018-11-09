@@ -2,219 +2,136 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA3A3C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 03:09:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95A4BC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 03:10:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3E672086C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 03:09:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3E672086C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fieldses.org
+	by mail.kernel.org (Postfix) with ESMTP id 5E32520855
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 03:10:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="QsbnJ9oW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E32520855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727529AbeKIMru (ORCPT
+        id S1727602AbeKIMsk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 07:47:50 -0500
-Received: from fieldses.org ([173.255.197.46]:39454 "EHLO fieldses.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727238AbeKIMrt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 07:47:49 -0500
-Received: by fieldses.org (Postfix, from userid 2815)
-        id CB2581E29; Thu,  8 Nov 2018 22:09:13 -0500 (EST)
-Date:   Thu, 8 Nov 2018 22:09:13 -0500
-From:   "J. Bruce Fields" <bfields@fieldses.org>
-To:     NeilBrown <neilb@suse.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Martin Wilck <mwilck@suse.de>, linux-fsdevel@vger.kernel.org,
-        Frank Filz <ffilzlnx@mindspring.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 10/12] fs/locks: create a tree of dependent requests.
-Message-ID: <20181109030913.GA8831@fieldses.org>
-References: <154138128401.31651.1381177427603557514.stgit@noble>
- <154138144796.31651.14201944346371750178.stgit@noble>
- <20181108213030.GF6090@fieldses.org>
- <87k1lnw0ec.fsf@notabene.neil.brown.name>
+        Fri, 9 Nov 2018 07:48:40 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:50488 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727526AbeKIMsj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 07:48:39 -0500
+Received: by mail-wm1-f66.google.com with SMTP id 124-v6so670422wmw.0
+        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 19:10:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
+         :references:subject:to:from:cc;
+        bh=2bUIEZ6aye5K7oeTcESxPSTMB0OYGKhJ1UdH/QEPHnY=;
+        b=QsbnJ9oWLmOxfqViMRx/UJyw6m5Kln6FyoKrBA9VEKIOyWqcQuaUL6wyDvQ/zZTknn
+         gb5yCioZuUqEOROpkroMZOs5qml61ypE7iGOfuzxWqF1gZQq2550W2j1JNn4X29Bl5nI
+         zfxPUyZaPBTMXmh8/Ra8P5eAN8xI+l9lhHmFcN8cUji1/GiHtb94A+v5ORSDWKcb3jyQ
+         M+yw3rrFonqUBZnUQMAl1jomixNyV51DJWMo+5lkyJlWZbf54oxGkceEzds7xm3GyCmO
+         +Vrnv4+JGChmDbTfjrHtS8utTPAeJJS0sCX37wvkHC1eX1hqquGj6ncykDlvjpM6rO+V
+         Pd+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
+        bh=2bUIEZ6aye5K7oeTcESxPSTMB0OYGKhJ1UdH/QEPHnY=;
+        b=FfR0Z2TJQ0solTwgIYMnFuAnZxbfiunPoyHrOxlSV7AOvw2EJzbxTeV+fFFtZ5AWm8
+         CaK2OyXeb/YGWJgiry+8LBJEefGNDgFHMdROpbK9zUyJ8Po43bzUZuFwzbsRRsISP4DQ
+         rTE/X3jLetIll9bWilDQZcDInahQrobulGqg08GS5BWrIFPMIKw0W4useNfaE/2IMaj0
+         QRO+lLjdvB5yCN2UjiO7RfhO5dS3QQp8ywblUWiuw4G5PZlogLvPAI+TbmWsJ6KdDY2G
+         7FA4L0H132yq5IyF3obIfJr+sLHB2H1dpsV3XzEgOltYoe8OaIxrwoLSG46L1Qh8oeRN
+         J++Q==
+X-Gm-Message-State: AGRZ1gJ8PaLftFB4tLd2VeNrr7gWUkLDQbzHdPH6JB3RuZHk+POui0Ju
+        1Q3AsPLaX+ev9+vbpSfs9/SKwA==
+X-Google-Smtp-Source: AJdET5fkXSWUsD0RsVzjZu5cdxk5KRlJoYYTkEecld0CWiXecUwApQW/pR1qiM+yRKR7U/jDMaOTRQ==
+X-Received: by 2002:a1c:e355:: with SMTP id a82-v6mr3253141wmh.74.1541733002121;
+        Thu, 08 Nov 2018 19:10:02 -0800 (PST)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id p125-v6sm435612wmp.2.2018.11.08.19.10.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 08 Nov 2018 19:10:01 -0800 (PST)
+Message-ID: <5be4fa89.1c69fb81.8f337.1df8@mx.google.com>
+Date:   Thu, 08 Nov 2018 19:10:01 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87k1lnw0ec.fsf@notabene.neil.brown.name>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: boot
+X-Kernelci-Kernel: v3.18.124-145-g70889240432b
+X-Kernelci-Branch: linux-3.18.y
+X-Kernelci-Tree: stable-rc
+In-Reply-To: <20181108215054.826084593@linuxfoundation.org>
+References: <20181108215054.826084593@linuxfoundation.org>
+Subject: Re: [PATCH 3.18 000/144] 3.18.125-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 09, 2018 at 11:38:19AM +1100, NeilBrown wrote:
-> On Thu, Nov 08 2018, J. Bruce Fields wrote:
-> 
-> > On Mon, Nov 05, 2018 at 12:30:48PM +1100, NeilBrown wrote:
-> >> When we find an existing lock which conflicts with a request,
-> >> and the request wants to wait, we currently add the request
-> >> to a list.  When the lock is removed, the whole list is woken.
-> >> This can cause the thundering-herd problem.
-> >> To reduce the problem, we make use of the (new) fact that
-> >> a pending request can itself have a list of blocked requests.
-> >> When we find a conflict, we look through the existing blocked requests.
-> >> If any one of them blocks the new request, the new request is attached
-> >> below that request, otherwise it is added to the list of blocked
-> >> requests, which are now known to be mutually non-conflicting.
-> >> 
-> >> This way, when the lock is released, only a set of non-conflicting
-> >> locks will be woken, the rest can stay asleep.
-> >> If the lock request cannot be granted and the request needs to be
-> >> requeued, all the other requests it blocks will then be woken
-> >
-> > So, to make sure I understand: the tree of blocking locks only ever has
-> > three levels (the active lock, the locks blocking on it, and their
-> > children?)
-> 
-> Not correct.
-> Blocks is only vertical, never horizontal.  Siblings never block each
-> other.
-> So one process hold a lock on a byte, and 27 other process want a lock
-> on that byte, then there will be 28 levels in a narrow tree - it is
-> effectively a queue.
-> Branching (via siblings) only happens when a child conflict with only
-> part of the lock held by the parent.
-> So if one process locks 32K, then two other processes request locks on
-> the 2 16K halves, then 4 processes request locks on the 8K quarters, and
-> so-on, then you could end up with 32767 processes in a binary tree, with
-> half of them all waiting on different individual bytes.
+stable-rc/linux-3.18.y boot: 62 boots: 5 failed, 51 passed with 6 offline (=
+v3.18.124-145-g70889240432b)
 
-Maybe I should actually read the code carefully instead of just skimming
-the changelog and jumping to conclusions.
+Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
+-3.18.y/kernel/v3.18.124-145-g70889240432b/
+Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-3.18.=
+y/kernel/v3.18.124-145-g70889240432b/
 
-I think this is correct, but I wish we had an actual written-out
-argument that it's correct, because intuition isn't a great guide for
-posix file locks.
+Tree: stable-rc
+Branch: linux-3.18.y
+Git Describe: v3.18.124-145-g70889240432b
+Git Commit: 70889240432bb789ca9ef4ec1ba90206367fe696
+Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git
+Tested: 26 unique boards, 12 SoC families, 14 builds out of 183
 
-Maybe:
+Boot Failures Detected:
 
-Waiting and applied locks are all kept in trees whose properties are:
+arm:
 
-	- the root of a tree may be an applied or unapplied lock.
-	- every other node in the tree is an unapplied lock that
-	  conflicts with every ancestor of that node.
+    exynos_defconfig
+        exynos4412-odroidx2: 1 failed lab
 
-Every such tree begins life as an unapplied singleton which obviously
-satisfies the above properties.
+x86:
 
-The only ways we modify trees preserve these properties:
+    x86_64_defconfig
+        qemu: 3 failed labs
+        x86-atom330: 1 failed lab
 
-	1. We may add a new child, but only after first verifying that it
-	   conflicts with all of its ancestors.
-	2. We may remove the root of a tree, creating a new singleton
-	   tree from the root and N new trees rooted in the immediate
-	   children.
-	3. If the root of a tree is not currently an applied lock, we may
-	   apply it (if possible).
-	4. We may upgrade the root of the tree (either extend its range,
-	   or upgrade its entire range from read to write).
+Offline Platforms:
 
-When an applied lock is modified in a way that reduces or downgrades any
-part of its range, we remove all its children (2 above).
+arm:
 
-For each of those child trees: if the root of the tree applies, we do so
-(3).  If it doesn't, it must conflict with some applied lock.  We remove
-all of its children (2), and add it is a new leaf to the tree rooted in
-the applied lock (1).  We then repeat the process recursively with those
-children.
+    tegra_defconfig:
+        tegra124-jetson-tk1: 1 offline lab
 
-Something like that.
+    bcm2835_defconfig:
+        bcm2835-rpi-b: 1 offline lab
 
---b.
+    omap2plus_defconfig:
+        am335x-boneblack: 1 offline lab
 
-> 
-> NeilBrown
-> 
-> >
-> > --b.
-> >
-> >> 
-> >> Reported-and-tested-by: Martin Wilck <mwilck@suse.de>
-> >> Signed-off-by: NeilBrown <neilb@suse.com>
-> >> ---
-> >>  fs/locks.c |   29 +++++++++++++++++++++++------
-> >>  1 file changed, 23 insertions(+), 6 deletions(-)
-> >> 
-> >> diff --git a/fs/locks.c b/fs/locks.c
-> >> index 802d5853acd5..1b0eac6b2918 100644
-> >> --- a/fs/locks.c
-> >> +++ b/fs/locks.c
-> >> @@ -715,11 +715,25 @@ static void locks_delete_block(struct file_lock *waiter)
-> >>   * fl_blocked list itself is protected by the blocked_lock_lock, but by ensuring
-> >>   * that the flc_lock is also held on insertions we can avoid taking the
-> >>   * blocked_lock_lock in some cases when we see that the fl_blocked list is empty.
-> >> + *
-> >> + * Rather than just adding to the list, we check for conflicts with any existing
-> >> + * waiters, and add beneath any waiter that blocks the new waiter.
-> >> + * Thus wakeups don't happen until needed.
-> >>   */
-> >>  static void __locks_insert_block(struct file_lock *blocker,
-> >> -					struct file_lock *waiter)
-> >> +				 struct file_lock *waiter,
-> >> +				 bool conflict(struct file_lock *,
-> >> +					       struct file_lock *))
-> >>  {
-> >> +	struct file_lock *fl;
-> >>  	BUG_ON(!list_empty(&waiter->fl_block));
-> >> +
-> >> +new_blocker:
-> >> +	list_for_each_entry(fl, &blocker->fl_blocked, fl_block)
-> >> +		if (conflict(fl, waiter)) {
-> >> +			blocker =  fl;
-> >> +			goto new_blocker;
-> >> +		}
-> >>  	waiter->fl_blocker = blocker;
-> >>  	list_add_tail(&waiter->fl_block, &blocker->fl_blocked);
-> >>  	if (IS_POSIX(blocker) && !IS_OFDLCK(blocker))
-> >> @@ -734,10 +748,12 @@ static void __locks_insert_block(struct file_lock *blocker,
-> >>  
-> >>  /* Must be called with flc_lock held. */
-> >>  static void locks_insert_block(struct file_lock *blocker,
-> >> -					struct file_lock *waiter)
-> >> +			       struct file_lock *waiter,
-> >> +			       bool conflict(struct file_lock *,
-> >> +					     struct file_lock *))
-> >>  {
-> >>  	spin_lock(&blocked_lock_lock);
-> >> -	__locks_insert_block(blocker, waiter);
-> >> +	__locks_insert_block(blocker, waiter, conflict);
-> >>  	spin_unlock(&blocked_lock_lock);
-> >>  }
-> >>  
-> >> @@ -996,7 +1012,7 @@ static int flock_lock_inode(struct inode *inode, struct file_lock *request)
-> >>  		if (!(request->fl_flags & FL_SLEEP))
-> >>  			goto out;
-> >>  		error = FILE_LOCK_DEFERRED;
-> >> -		locks_insert_block(fl, request);
-> >> +		locks_insert_block(fl, request, flock_locks_conflict);
-> >>  		goto out;
-> >>  	}
-> >>  	if (request->fl_flags & FL_ACCESS)
-> >> @@ -1071,7 +1087,8 @@ static int posix_lock_inode(struct inode *inode, struct file_lock *request,
-> >>  			spin_lock(&blocked_lock_lock);
-> >>  			if (likely(!posix_locks_deadlock(request, fl))) {
-> >>  				error = FILE_LOCK_DEFERRED;
-> >> -				__locks_insert_block(fl, request);
-> >> +				__locks_insert_block(fl, request,
-> >> +						     posix_locks_conflict);
-> >>  			}
-> >>  			spin_unlock(&blocked_lock_lock);
-> >>  			goto out;
-> >> @@ -1542,7 +1559,7 @@ int __break_lease(struct inode *inode, unsigned int mode, unsigned int type)
-> >>  		break_time -= jiffies;
-> >>  	if (break_time == 0)
-> >>  		break_time++;
-> >> -	locks_insert_block(fl, new_fl);
-> >> +	locks_insert_block(fl, new_fl, leases_conflict);
-> >>  	trace_break_lease_block(inode, new_fl);
-> >>  	spin_unlock(&ctx->flc_lock);
-> >>  	percpu_up_read_preempt_enable(&file_rwsem);
-> >> 
+    multi_v7_defconfig:
+        am335x-boneblack: 1 offline lab
+        tegra124-jetson-tk1: 1 offline lab
 
+    sama5_defconfig:
+        at91-sama5d4ek: 1 offline lab
 
+---
+For more info write to <info@kernelci.org>
