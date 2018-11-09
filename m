@@ -2,152 +2,166 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94051C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:28:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 522EDC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:29:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 599C42080D
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:28:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 599C42080D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.us
+	by mail.kernel.org (Postfix) with ESMTP id 1885E20827
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 15:29:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=eikelenboom.it header.i=@eikelenboom.it header.b="E1tt++88"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1885E20827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=eikelenboom.it
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728300AbeKJBJV convert rfc822-to-8bit (ORCPT
+        id S1728311AbeKJBKU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 20:09:21 -0500
-Received: from mout.gmx.net ([212.227.17.20]:39941 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727784AbeKJBJV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 20:09:21 -0500
-Received: from [192.168.1.153] ([74.104.183.64]) by mail.gmx.com (mrgmx103
- [212.227.17.174]) with ESMTPSA (Nemesis) id 0MhQju-1g8ZfU0gVe-00MbEx; Fri, 09
- Nov 2018 16:28:10 +0100
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
-Subject: Re: WARNING: CPU: 0 PID: 0 at drivers/irqchip/irq-gic-v3-its.c
-From:   Qian Cai <cai@gmx.us>
-In-Reply-To: <b23b62b4-9ecb-8b76-57e5-d323cc9926ce@arm.com>
-Date:   Fri, 9 Nov 2018 10:28:06 -0500
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jason Cooper <jason@lakedaemon.net>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <13A11479-97FB-4EFD-A182-61DA63CB64D6@gmx.us>
-References: <1541710771.12945.7.camel@gmx.us>
- <c8ff3004-33ee-19d5-8eb8-38d41f78c8ee@arm.com>
- <trinity-e1d06dde-12e1-4e2a-8871-d6c5f4af9f51-1541766480902@msvc-mesg-gmx023>
- <b23b62b4-9ecb-8b76-57e5-d323cc9926ce@arm.com>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-X-Mailer: Apple Mail (2.3445.100.39)
-X-Provags-ID: V03:K1:rPJwO6RxgO0SFVphsh6B7EeAOlmTurcyYpAr0Um5NNA1UaZVAPa
- XFA0654qNUkAdZnAg90+1Pl383usjRucwfkQQD5C/Kmhoc7P7IzWH6rp8zZDYa06S4ZorDm
- OIIHLEE30l/TOT9I1DUy17Ljehh24uc4T/yooOx9ZfTpoU56MQjFQYZunEsLGWDfqVZcyVF
- 8VOYpPA1+RN16UnT4Da2w==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:eoJMFF+wqTs=:v48fVdWTZpt/huh3tkb+NT
- JjaHgmd4YTEoaqPktgKl5v5MDxsMB2O1LE15Alf87vDNCep5mhqAkHcQ4s62WuYEJ44H0KuOf
- P/8tduNbbLb9Iidp1LVAYnH75HCwX79t9KB54iFke0ecAE5ZuBJQ0wP6E0IKFzEV3fr3PDzYO
- U8J6zAYgenqpKKrPBcaUxclRic9utgjyMkBkEg5WyUsf9uGrQN6+At5jWEwt7V6Wj829/MTU9
- twB2Ntkn2GuUfTZjgEqSxv7a0HCpNp22ELvez7yaCSqjei/CYUAfi8vMZsz0fwV0dgTJXNX3i
- pb+JM/BtQjcamwc4FVXXNtNE++O3NfqxyMP7KFaQJguNw3bzRqXm7oOk6MwYYtqr0Usi5R5wC
- lO9X/l8nvsu9kLQa2tFtb96NNgpwXCQOAz93rbGHg9PtHz/gBk1VDyjSYqQq4RvkIQn9NGpbE
- 2Tf3Hyw2UMs+MVj4JUniM88k254Pwy8oaCqYdCCDv8UTAG3YS+Pr72DAkiZQZtZVT23gYhEiK
- nI1y0xEHq+Ct0PrCXVHxQFd8B+5gM40Y5ZPnnHo6vznrhifD+dpy4yBcNxNl0GtacbfdN3KAb
- OVlDg5d/qzFI58/OpqjWdngULQ/ykKZ56QqJXeK8n/HNq0cfawXspPwzEwLyXWuQVX+SVxNxu
- BEOj0jsgpJemJzIB9CPQAfw1M0Djnl/jpz//1etkqZCdKPM4ii6jLkW8rELU4WA0Bf31m0Jkf
- ZsfQAzdbqGk6NftxKDDTfix04nRSwe2JuqRnhq/pflKHmhBnv+j7K2WiW6zBVPTIIQEPwLSqz
- +shZvHa7o5PsbUiuQnCFu/tiKAUeFyIQ1KqyWnunNDPJBAqDh3H96CDpTa/0TNuAnWld/mRsO
- 4eJrafWXZj6y0dJkWcaWZIboHI5EHZxvKKkXz5jVlWm6z9ZfXw5RQ9InyH3gKN
+        Fri, 9 Nov 2018 20:10:20 -0500
+Received: from server.eikelenboom.it ([91.121.65.215]:57358 "EHLO
+        server.eikelenboom.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727845AbeKJBKT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 20:10:19 -0500
+X-Greylist: delayed 1621 seconds by postgrey-1.27 at vger.kernel.org; Fri, 09 Nov 2018 20:10:18 EST
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=eikelenboom.it; s=20180706; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=gdrpT8Blps2lYTcCcnjOd/aLBxI+Er/zE12ocCDhAx0=; b=E1tt++88X4euXltR5gyZKA894m
+        oXnrdQTXB4iuQljcwr9rhRYOd8QFyeI+AJdz/w8CbiFITxOCC2GFW6I0JIoy0siS9L+yp7tvn1rBZ
+        0d/p5SRR6evR9ZgiDOdWwlqXhcmz079ES8LERDOdreZzC8Jm7iXBXm0hS6KOI1vX1XL0=;
+Received: from ip4da85049.direct-adsl.nl ([77.168.80.73]:44956 helo=[172.16.1.49])
+        by server.eikelenboom.it with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <linux@eikelenboom.it>)
+        id 1gL8iI-0002qL-Nn; Fri, 09 Nov 2018 16:28:50 +0100
+Subject: Re: [Xen-devel] [PATCH] xen: fix xen_qlock_wait()
+To:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xenproject.org, x86@kernel.org
+Cc:     boris.ostrovsky@oracle.com, sstabellini@kernel.org, hpa@zytor.com,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        stable@vger.kernel.org
+References: <20181109120413.9539-1-jgross@suse.com>
+ <400409f5-397e-780b-d13b-19a1ee578f44@eikelenboom.it>
+ <068f9560-598b-0228-463b-bc7f202cf8e0@suse.com>
+From:   Sander Eikelenboom <linux@eikelenboom.it>
+Message-ID: <913d7f22-9ec2-54be-3edb-a93a6adf4fda@eikelenboom.it>
+Date:   Fri, 9 Nov 2018 16:29:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <068f9560-598b-0228-463b-bc7f202cf8e0@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-> On Nov 9, 2018, at 8:50 AM, Marc Zyngier <marc.zyngier@arm.com> wrote:
+On 09/11/18 16:20, Juergen Gross wrote:
+> On 09/11/2018 16:02, Sander Eikelenboom wrote:
+>> On 09/11/18 13:04, Juergen Gross wrote:
+>>> Commit a856531951dc80 ("xen: make xen_qlock_wait() nestable")
+>>> introduced a regression for Xen guests running fully virtualized
+>>> (HVM or PVH mode). The Xen hypervisor wouldn't return from the poll
+>>> hypercall with interrupts disabled in case of an interrupt (for PV
+>>> guests it does).
+>>>
+>>> So instead of disabling interrupts in xen_qlock_wait() use a nesting
+>>> counter to avoid calling xen_clear_irq_pending() in case
+>>> xen_qlock_wait() is nested.
+>>>
+>>> Fixes: a856531951dc80 ("xen: make xen_qlock_wait() nestable")
+>>> Cc: stable@vger.kernel.org
+>>> Signed-off-by: Juergen Gross <jgross@suse.com>
+>>
+>> Although you don't seem too interested, you can stick on a:
+>> Tested-by: Sander Eikelenboom <linux@eikelenboom.it>
+>> if you like.
 > 
-> On 09/11/18 12:28, Qian Cai wrote:
->> 
->> On 11/9/18 at 7:08 AM, Marc Zyngier wrote:
->> 
->>> [+Ard]
->>> 
->>> On 08/11/18 20:59, Qian Cai wrote:
->>>> Just booting up the latest git master (b00d209) on an aarch64 server and saw
->>>> this. Not sure about the third warning (at kernel/cpu.c:315
->>>> lockdep_assert_cpus_held+0x50/0x60) relates to irqchip or not, but appended it
->>>> to here anyway just in case.
->>>> 
->>>> [    0.000000] WARNING: CPU: 0 PID: 0 at drivers/irqchip/irq-gic-v3-its.c:1696
->>>> its_init+0x588/0xb54
->>> 
->>> It looks like EFI cannot manage to reserve the memory for your GIC
->>> redistributors. Pretty annoying. At the same time, you have reported
->>> other issues with the EFI reservation mechanism, such as:
->>> 
->>> https://lore.kernel.org/patchwork/patch/1008413/
->>> 
->>> for which you have given a "Tested-by:". Is that related?
->> No, I don’t think so. Those warnings are still there even after applied the patch above.
+> I am interested.
 > 
-> Do you also have this series[1] applied? I'd otherwise need your
-> configuration to try and reproduce it, as I can't manage to trigger it
-> on my own setup.
-> 
-> Thanks,
-> 
-> 	M.
-> 
-> [1] https://www.spinics.net/lists/arm-kernel/msg685751.html
-After applied the above series on the top of the mainline (b00d209), the only
-warning exist is,
+> OTOH I wanted to post the patch officially to give others the chance to
+> send remarks.
 
-[    0.000000] WARNING: CPU: 0 PID: 0 at kernel/cpu.c:315
-lockdep_assert_cpus_held+0x50/0x60
-[    0.000000] Modules linked in:
-[    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G                T 4.20.0-rc1+ #9
-[    0.000000] pstate: 20000085 (nzCv daIf -PAN -UAO)
-[    0.000000] pc : lockdep_assert_cpus_held+0x50/0x60
-[    0.000000] lr : lockdep_assert_cpus_held+0x4c/0x60
-[    0.000000] sp : ffff200009c97b10
-[    0.000000] x29: ffff200009c97b10 x28: ffff200009e39000 
-[    0.000000] x27: ffff200009cd1000 x26: ffff200009cd2000 
-[    0.000000] x25: ffff200009125000 x24: ffff200009cc9868 
-[    0.000000] x23: ffff200009c7c040 x22: 0000000000001000 
-[    0.000000] x21: 0000000000000012 x20: ffff200009cc9000 
-[    0.000000] x19: ffff200009cd5000 x18: 000000000000003f 
-[    0.000000] x17: 0000000000000000 x16: 0000000000000000 
-[    0.000000] x15: 0000000000000007 x14: ffff200009461cd4 
-[    0.000000] x13: ffff2000094695ac x12: ffff2000095149a4 
-[    0.000000] x11: ffff2000094e4478 x10: ffff2000094e0a50 
-[    0.000000] x9 : ffff200009516aa8 x8 : ffff0ffbffcc4004 
-[    0.000000] x7 : 1fffeffbffcc4003 x6 : ffff0ffbffcc4003 
-[    0.000000] x5 : ffff7fdffe62001b x4 : ffff0ffbffcc4004 
-[    0.000000] x3 : ffff0ffbffcc4004 x2 : dfff200000000000 
-[    0.000000] x1 : 0000000000000000 x0 : 0000000000000000 
-[    0.000000] Call trace:
-[    0.000000]  lockdep_assert_cpus_held+0x50/0x60
-[    0.000000]  static_key_enable_cpuslocked+0x30/0xe8
-[    0.000000]  arch_timer_check_ool_workaround+0x128/0x2d0
-[    0.000000]  arch_timer_acpi_init+0x274/0x6ac
-[    0.000000]  acpi_table_parse+0x1ac/0x218
-[    0.000000]  __acpi_probe_device_table+0x164/0x1ec
-[    0.000000]  timer_probe+0x1bc/0x254
-[    0.000000]  time_init+0x44/0x98
-[    0.000000]  start_kernel+0x4ec/0x7d4
-[    0.000000] irq event stamp: 0
-[    0.000000] hardirqs last  enabled at (0): [<0000000000000000>]           (null)
-[    0.000000] hardirqs last disabled at (0): [<0000000000000000>]           (null)
-[    0.000000] softirqs last  enabled at (0): [<0000000000000000>]           (null)
-[    0.000000] softirqs last disabled at (0): [<0000000000000000>]           (null)
-[    0.000000] ---[ end trace 1dc5085680256ac1 ]—
+OK, would be nice to at least be CC'ed on patches going upstream when
+you have been reporting stuff.
 
-Here is the kernel config used,
-https://c.gmx.com/@642631272677512867/tqD5eulbQAC-1h-fkVe1Iw
+--
+Sander
 
 
+> 
+> Juergen
+> 
+>>
+>> --
+>> Sander
+>>
+>>> ---
+>>>  arch/x86/xen/spinlock.c | 14 ++++++++------
+>>>  1 file changed, 8 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/arch/x86/xen/spinlock.c b/arch/x86/xen/spinlock.c
+>>> index 441c88262169..1c8a8816a402 100644
+>>> --- a/arch/x86/xen/spinlock.c
+>>> +++ b/arch/x86/xen/spinlock.c
+>>> @@ -9,6 +9,7 @@
+>>>  #include <linux/log2.h>
+>>>  #include <linux/gfp.h>
+>>>  #include <linux/slab.h>
+>>> +#include <linux/atomic.h>
+>>>  
+>>>  #include <asm/paravirt.h>
+>>>  #include <asm/qspinlock.h>
+>>> @@ -21,6 +22,7 @@
+>>>  
+>>>  static DEFINE_PER_CPU(int, lock_kicker_irq) = -1;
+>>>  static DEFINE_PER_CPU(char *, irq_name);
+>>> +static DEFINE_PER_CPU(atomic_t, xen_qlock_wait_nest);
+>>>  static bool xen_pvspin = true;
+>>>  
+>>>  static void xen_qlock_kick(int cpu)
+>>> @@ -39,25 +41,25 @@ static void xen_qlock_kick(int cpu)
+>>>   */
+>>>  static void xen_qlock_wait(u8 *byte, u8 val)
+>>>  {
+>>> -	unsigned long flags;
+>>>  	int irq = __this_cpu_read(lock_kicker_irq);
+>>> +	atomic_t *nest_cnt = this_cpu_ptr(&xen_qlock_wait_nest);
+>>>  
+>>>  	/* If kicker interrupts not initialized yet, just spin */
+>>>  	if (irq == -1 || in_nmi())
+>>>  		return;
+>>>  
+>>> -	/* Guard against reentry. */
+>>> -	local_irq_save(flags);
+>>> +	/* Detect reentry. */
+>>> +	atomic_inc(nest_cnt);
+>>>  
+>>> -	/* If irq pending already clear it. */
+>>> -	if (xen_test_irq_pending(irq)) {
+>>> +	/* If irq pending already and no nested call clear it. */
+>>> +	if (atomic_read(nest_cnt) == 1 && xen_test_irq_pending(irq)) {
+>>>  		xen_clear_irq_pending(irq);
+>>>  	} else if (READ_ONCE(*byte) == val) {
+>>>  		/* Block until irq becomes pending (or a spurious wakeup) */
+>>>  		xen_poll_irq(irq);
+>>>  	}
+>>>  
+>>> -	local_irq_restore(flags);
+>>> +	atomic_dec(nest_cnt);
+>>>  }
+>>>  
+>>>  static irqreturn_t dummy_handler(int irq, void *dev_id)
+>>>
+>>
+>>
+> 
 
