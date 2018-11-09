@@ -2,106 +2,167 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07DF0C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 11:57:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C06C5C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 11:58:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D040820827
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 11:57:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D040820827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7723520883
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 11:58:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mKQeO+1V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7723520883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728380AbeKIVhc (ORCPT
+        id S1728421AbeKIViW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 16:37:32 -0500
-Received: from foss.arm.com ([217.140.101.70]:58152 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727560AbeKIVhc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 16:37:32 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C612A80D;
-        Fri,  9 Nov 2018 03:57:13 -0800 (PST)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0708E3F718;
-        Fri,  9 Nov 2018 03:57:11 -0800 (PST)
-Date:   Fri, 9 Nov 2018 11:56:44 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Peter Maydell <peter.maydell@linaro.org>
-Cc:     Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
-        kvm-devel <kvm@vger.kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Christoffer Dall <christoffer.dall@linaro.org>,
-        kvmarm@lists.cs.columbia.edu,
-        arm-mail-list <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [RFC PATCH] KVM: arm64: don't single-step for non-emulated faults
-Message-ID: <20181109115644.f4qjqnv2kogoke42@lakrids.cambridge.arm.com>
-References: <20181107171031.22573-1-alex.bennee@linaro.org>
- <20181107180120.urnvkcrkh46ytsdb@lakrids.cambridge.arm.com>
- <20181107180829.sex54bxhd5wyqvan@lakrids.cambridge.arm.com>
- <87r2fv68us.fsf@linaro.org>
- <20181108135122.llmfsel32dbe2q7o@lakrids.cambridge.arm.com>
- <87pnvf63u2.fsf@linaro.org>
- <CAFEAcA9v+XvAJBWpDMvEQPeJ7ALM15Yz5KY+wfGPmLG2a8yPRQ@mail.gmail.com>
+        Fri, 9 Nov 2018 16:38:22 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:33119 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727560AbeKIViW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 16:38:22 -0500
+Received: by mail-pg1-f194.google.com with SMTP id q5-v6so781758pgv.0
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 03:58:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oj0qv3KwGcTOa1sp7yqXD7mcastYXWlmJMO9yoT5yBg=;
+        b=mKQeO+1VwBJSyA3ZwMybJc9inoblqXuxzryQ3DP0yj3ClE3ppXhRhMEJSSymn65OJ2
+         kr1cNXCvonXdZXeGkrxZ8S+9weqisvigKiIEdCl6sxjHa6bZ9IZtKxozYgJvsJU202GX
+         zcke2SzDNP8ty/58D6TFKva8x4LdfFJYHe6BU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oj0qv3KwGcTOa1sp7yqXD7mcastYXWlmJMO9yoT5yBg=;
+        b=ZVtJk3cJlXFwPowhkV/OyZjnVRu+it3tOh2gEXaZb9yRTsIzBb9Pntpn26VwYMuH0b
+         5U6UkP6DZG/DwxQGPwCSiu6nA9acmtl+50T9hcOIl+KGGqFGZrmZ7reNnpidmQmPwzgb
+         /lh/agmlEtFQbRxzgeJZhpurl9VzhI+R9IfO6oEKDCd2XltBTT24i7A9wNpvwNdIvinK
+         eTfMFXGz1TxcQh/mHbfT1Ea/YpNYske5mXj2oGtRjoZ7SVMg+Q4LgjmLaF09YZqXk7ve
+         HpshUNKVHzotsQSplgKVeI95GDLKqSuLcwJa5djBNjUpOWxrmC/cWrndfoBgPywTguzm
+         iF5Q==
+X-Gm-Message-State: AGRZ1gIxGhfqZnisYc0lgUXxunyhtmJ9UK+tHujG8F6ZiVXng3VsgFm0
+        nQZ81MDD0IWYcP9+SblMuU7j7rP2fO5P3ltZJiNK/A==
+X-Google-Smtp-Source: AJdET5enU09SuBo3wyZbygGy3ZpUuCTx47thIm2+eJpwL9Epsv6QAEUiIR5N8seTk2FeooweMoIoOM25D31Dj7ULHP8=
+X-Received: by 2002:a62:4251:: with SMTP id p78-v6mr8737695pfa.72.1541764683280;
+ Fri, 09 Nov 2018 03:58:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFEAcA9v+XvAJBWpDMvEQPeJ7ALM15Yz5KY+wfGPmLG2a8yPRQ@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <20181109082448.150302-1-drinkcat@chromium.org>
+ <20181109082448.150302-2-drinkcat@chromium.org> <00afe803-22dd-5a75-70aa-dda0c7752470@suse.cz>
+In-Reply-To: <00afe803-22dd-5a75-70aa-dda0c7752470@suse.cz>
+From:   Nicolas Boichat <drinkcat@chromium.org>
+Date:   Fri, 9 Nov 2018 19:57:50 +0800
+Message-ID: <CANMq1KB84Lpe_QbiuaKaBOwSsYr9Cis-gv5xpXaV5qjU=ON=7w@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/3] mm: When CONFIG_ZONE_DMA32 is set, use DMA32 for SLAB_CACHE_DMA
+To:     vbabka@suse.cz
+Cc:     robin.murphy@arm.com, will.deacon@arm.com, joro@8bytes.org,
+        cl@linux.com, penberg@kernel.org, rientjes@google.com,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>, mhocko@suse.com,
+        mgorman@techsingularity.net, yehs1@lenovo.com,
+        rppt@linux.vnet.ibm.com,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        iommu@lists.linux-foundation.org,
+        lkml <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        yong.wu@mediatek.com, Matthias Brugger <matthias.bgg@gmail.com>,
+        tfiga@google.com, yingjoe.chen@mediatek.com,
+        Alexander.Levin@microsoft.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 02:38:43PM +0000, Peter Maydell wrote:
-> On 8 November 2018 at 14:28, Alex Bennée <alex.bennee@linaro.org> wrote:
+On Fri, Nov 9, 2018 at 6:43 PM Vlastimil Babka <vbabka@suse.cz> wrote:
+>
+> On 11/9/18 9:24 AM, Nicolas Boichat wrote:
+> > Some callers, namely iommu/io-pgtable-arm-v7s, expect the physical
+> > address returned by kmem_cache_alloc with GFP_DMA parameter to be
+> > a 32-bit address.
 > >
-> > Mark Rutland <mark.rutland@arm.com> writes:
-> >> One problem is that I couldn't spot when we advance the PC for an MMIO
-> >> trap. I presume we do that in the kernel, *after* the MMIO trap, but I
-> >> can't see where that happens.
+> > Instead of adding a separate SLAB_CACHE_DMA32 (and then audit
+> > all the calls to check if they require memory from DMA or DMA32
+> > zone), we simply allocate SLAB_CACHE_DMA cache in DMA32 region,
+> > if CONFIG_ZONE_DMA32 is set.
 > >
-> > Nope it gets done before during decode_hsr in mmio.c:
+> > Fixes: ad67f5a6545f ("arm64: replace ZONE_DMA with ZONE_DMA32")
+> > Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
+> > ---
+> >  include/linux/slab.h | 13 ++++++++++++-
+> >  mm/slab.c            |  2 +-
+> >  mm/slub.c            |  2 +-
+> >  3 files changed, 14 insertions(+), 3 deletions(-)
 > >
-> >         /*
-> >          * The MMIO instruction is emulated and should not be re-executed
-> >          * in the guest.
-> >          */
-> >         kvm_skip_instr(vcpu, kvm_vcpu_trap_il_is32bit(vcpu));
-> 
-> I think that this attempt to do the PC-advance early is
-> probably an underlying problem that is not helping the
-> code structure here.
-> 
-> An enhancement that's been floated previously is that the
-> MMIO emulation in userspace should be able to report back
-> to KVM "nope, that access should generate a guest synchronous
-> external abort (with ESR_EL1.EA = 0/1)".
-> If we have that, then we definitely need to not advance the
-> PC until after userspace has done the emulation and told
-> us whether the memory access succeeded or not...
+> > diff --git a/include/linux/slab.h b/include/linux/slab.h
+> > index 918f374e7156f4..390afe90c5dec0 100644
+> > --- a/include/linux/slab.h
+> > +++ b/include/linux/slab.h
+> > @@ -30,7 +30,7 @@
+> >  #define SLAB_POISON          ((slab_flags_t __force)0x00000800U)
+> >  /* Align objs on cache lines */
+> >  #define SLAB_HWCACHE_ALIGN   ((slab_flags_t __force)0x00002000U)
+> > -/* Use GFP_DMA memory */
+> > +/* Use GFP_DMA or GFP_DMA32 memory */
+> >  #define SLAB_CACHE_DMA               ((slab_flags_t __force)0x00004000U)
+> >  /* DEBUG: Store the last owner for bug hunting */
+> >  #define SLAB_STORE_USER              ((slab_flags_t __force)0x00010000U)
+> > @@ -126,6 +126,17 @@
+> >  #define ZERO_OR_NULL_PTR(x) ((unsigned long)(x) <= \
+> >                               (unsigned long)ZERO_SIZE_PTR)
+> >
+> > +/*
+> > + * When ZONE_DMA32 is defined, have SLAB_CACHE_DMA allocate memory with
+> > + * GFP_DMA32 instead of GFP_DMA, as this is what some of the callers
+> > + * require (instead of duplicating cache for DMA and DMA32 zones).
+> > + */
+> > +#ifdef CONFIG_ZONE_DMA32
+> > +#define SLAB_CACHE_DMA_GFP GFP_DMA32
+> > +#else
+> > +#define SLAB_CACHE_DMA_GFP GFP_DMA
+> > +#endif
+>
+> AFAICS this will break e.g. x86 which can have both ZONE_DMA and
+> ZONE_DMA32, and now you would make kmalloc(__GFP_DMA) return objects
+> from ZONE_DMA32 instead of __ZONE_DMA, which can break something.
 
-Yup.
+Oh, I was not aware that both ZONE_DMA and ZONE_DMA32 can be defined
+at the same time. I guess the test should be inverted, something like
+this (can be simplified...):
+#ifdef CONFIG_ZONE_DMA
+#define SLAB_CACHE_DMA_GFP GFP_DMA
+#elif defined(CONFIG_ZONE_DMA32)
+#define SLAB_CACHE_DMA_GFP GFP_DMA32
+#else
+#define SLAB_CACHE_DMA_GFP GFP_DMA // ?
+#endif
 
-I think that we absolutely want to do all the CPU state advancement (PC,
-SS bit, etc) at the point we apply the effects of the instruction. Not
-before we emulate the instruction, and not higher/lower in the call
-stack.
+> Also I'm probably missing the point of this all. In patch 3 you use
+> __get_dma32_pages() thus __get_free_pages(__GFP_DMA32), which uses
+> alloc_pages, thus the page allocator directly, and there's no slab
+> caches involved.
 
-We have a big problem in that guest-directed singlestep and
-host-directed singlestep don't compose, and given that host-directed
-singlestep doesn't work reliably today I'd be tempted to rip that out
-until we've fixed guest-directed singlestep.
+__get_dma32_pages fixes level 1 page allocations in the patch 3.
 
-We should have a story for how host-directed debug is handled
-transparently from the PoV of a guest using guest-directed debug.
+This change fixes level 2 page allocations
+(kmem_cache_zalloc(data->l2_tables, gfp | GFP_DMA)), by transparently
+remapping GFP_DMA to an underlying ZONE_DMA32.
+
+The alternative would be to create a new SLAB_CACHE_DMA32 when
+CONFIG_ZONE_DMA32 is defined, but then I'm concerned that the callers
+would need to choose between the 2 (GFP_DMA or GFP_DMA32...), and also
+need to use some ifdefs (but maybe that's not a valid concern?).
+
+> It makes little sense to involve slab for page table
+> allocations anyway, as those tend to be aligned to a page size (or
+> high-order page size). So what am I missing?
+
+Level 2 tables are ARM_V7S_TABLE_SIZE(2) => 1kb, so we'd waste 3kb if
+we allocated a full page.
 
 Thanks,
-Mark.
