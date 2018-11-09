@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
 	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D8EDC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 01:11:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4BC6C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 01:11:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EE192086C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 01:11:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EE192086C
+	by mail.kernel.org (Postfix) with ESMTP id 7573620840
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 01:11:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7573620840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727861AbeKIKtZ (ORCPT
+        id S1727878AbeKIKtd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 05:49:25 -0500
-Received: from smtp4-g21.free.fr ([212.27.42.4]:3662 "EHLO smtp4-g21.free.fr"
+        Fri, 9 Nov 2018 05:49:33 -0500
+Received: from smtp4-g21.free.fr ([212.27.42.4]:4630 "EHLO smtp4-g21.free.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727375AbeKIKtZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 05:49:25 -0500
+        id S1727375AbeKIKtd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 05:49:33 -0500
 Received: from [192.168.1.42] (unknown [77.207.133.132])
         (Authenticated sender: marc.w.gonzalez)
-        by smtp4-g21.free.fr (Postfix) with ESMTPSA id 17BE219F522;
-        Fri,  9 Nov 2018 02:11:04 +0100 (CET)
-Subject: [PATCH v3 5/9] arm64: defconfig: Replace PINCTRL_MT7622 with
- PINCTRL_MTK_MOORE
+        by smtp4-g21.free.fr (Postfix) with ESMTPSA id 57F3519F59D;
+        Fri,  9 Nov 2018 02:11:11 +0100 (CET)
+Subject: [PATCH v3 6/9] arm64: defconfig: Drop redundant SND_SOC_ROCKCHIP_I2S
 From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
 To:     arm-soc <arm@kernel.org>
 Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
         LKML <linux-kernel@vger.kernel.org>
 References: <49a5d199-4eeb-a7c2-b539-13356162547f@free.fr>
-Message-ID: <cb016b53-906a-adec-d8c6-019d2c74569b@free.fr>
-Date:   Fri, 9 Nov 2018 02:03:20 +0100
+Message-ID: <f893ee9c-210e-8dc2-8660-fc9a9b2a567a@free.fr>
+Date:   Fri, 9 Nov 2018 02:03:55 +0100
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Firefox/52.0 SeaMonkey/2.49.4
 MIME-Version: 1.0
@@ -46,27 +45,24 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit e78d57b2f87c ("pinctrl: mediatek: add pinctrl-moore that
-implements the generic pinctrl dt-bindings") made PINCTRL_MT7622
-depend on PINCTRL_MTK_MOORE.
+SND_SOC_ROCKCHIP_RT5645 selects SND_SOC_ROCKCHIP_I2S
 
 Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
 ---
- arch/arm64/configs/defconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/configs/defconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 6fe418d72337..725b9471b21c 100644
+index 725b9471b21c..8e181cca0a05 100644
 --- a/arch/arm64/configs/defconfig
 +++ b/arch/arm64/configs/defconfig
-@@ -369,7 +369,7 @@ CONFIG_PINCTRL_MSM8994=y
- CONFIG_PINCTRL_MSM8996=y
- CONFIG_PINCTRL_QDF2XXX=y
- CONFIG_PINCTRL_QCOM_SPMI_PMIC=y
--CONFIG_PINCTRL_MT7622=y
-+CONFIG_PINCTRL_MTK_MOORE=y
- CONFIG_GPIO_DWAPB=y
- CONFIG_GPIO_MB86S7X=y
- CONFIG_GPIO_PL061=y
+@@ -493,7 +493,6 @@ CONFIG_SND=y
+ CONFIG_SND_SOC=y
+ CONFIG_SND_BCM2835_SOC_I2S=m
+ CONFIG_SND_SOC_ROCKCHIP=m
+-CONFIG_SND_SOC_ROCKCHIP_I2S=m
+ CONFIG_SND_SOC_ROCKCHIP_SPDIF=m
+ CONFIG_SND_SOC_ROCKCHIP_RT5645=m
+ CONFIG_SND_SOC_RK3399_GRU_SOUND=m
 -- 
 2.8.2
