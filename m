@@ -2,154 +2,198 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D689C0044C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:29:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97BE0C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:31:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE4C8208E3
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:29:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 598BA20855
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:31:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sPZFeK4N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE4C8208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WSQ27YoG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 598BA20855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728079AbeKIUJh (ORCPT
+        id S1727789AbeKIULv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 15:09:37 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:36560 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727537AbeKIUJh (ORCPT
+        Fri, 9 Nov 2018 15:11:51 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:44548 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727596AbeKIULv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 15:09:37 -0500
-Received: by mail-ed1-f65.google.com with SMTP id a2-v6so1352361edt.3;
-        Fri, 09 Nov 2018 02:29:37 -0800 (PST)
+        Fri, 9 Nov 2018 15:11:51 -0500
+Received: by mail-yw1-f66.google.com with SMTP id k6-v6so1402817ywa.11
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 02:31:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=YF+T/GLluQxIa69G1bYUEaY4N9ClRWZ0hbT9RWHTzng=;
-        b=sPZFeK4Nck171B6YsFHyibisU62Ja21sPI8pCr9Btg+0I5upCefjWgm89I0p1VLslW
-         oEYGkITxm4/XLqxhnPwxlA1q1nSOUtSp29ij+mx69zCVMSoZO1IFioWAlCQawPsdgqJr
-         2qorK3aQC3YKQfuzcbZzNasQGQKtxGR0RPu9YrFL92zrBcZhmiT82Z6+2FOmchQh3o/B
-         ZqEvb6Hu7YWd0LauudqdUEz/apzKd2yXeU1c+FAVRy1JshBiUF9+qRNcQlkgARZO96rw
-         oDzUyNzixcpKJusm7MyLmPjGxZYZGiEw3CSs9+VuljNRomFT7hygl03tPSyvcTMe/RUp
-         gsBQ==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZFF4LJwGLa4raDTcemTqAiKKZx5qIFbJw1bPd62m7+E=;
+        b=WSQ27YoGBbStVQxtoEUtlgpQbtyMp3iQWr8HU25ZXF+S9Ec6ptQL29Z30Z84B88v+0
+         k6+tQ/VDnisReBSKDG1RaQ1hz0+G3xuDJC6KwNYW+QmhoX4Ep9hUl/7xVmR+HBDkQk15
+         evFWnVU8GnSepX6DxUm9X0gXyKrgxwe8MLMHY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=YF+T/GLluQxIa69G1bYUEaY4N9ClRWZ0hbT9RWHTzng=;
-        b=IP9petRihebcZ6JndYM0bb8s6AbrcqkCz72PJjN+BxFZ42AVvR1XGX8G7flgWQyhcV
-         kn4YB7z0eAroNBr0MUzjMmyoBBFUihfhlBpfUHwH+gh1pkZDbAzBF/L8h25+erPIh48B
-         0OwCZsJ7zD8hCezEKAVYQnaQPPBvN2r38r7y5CWTuusWaPFKo1B13lBBHwkgJt3ACdC5
-         p09NucPpsko1rCU/+zml+GByNlObYQaZzOgEu6fihfiKViHtjSMLzIvcoZOypGRlrXFb
-         XXIWrgg9ET+yGWpcdb5bttRW63V1TEuyTYdAhih18C3/nVM+YRhRLGVCJwm9huw9wMsI
-         2thA==
-X-Gm-Message-State: AGRZ1gLVxPg6a7Rz8JNtjI3oca1gp5cFD4p3dzdpad9gYjqIcVLcMe//
-        nKgbtMrtEi4G8fI2SbD5/ks=
-X-Google-Smtp-Source: AJdET5dHpi24kdVQO5uIBF7A3HqNFaQ4DbgrQEoMZiw8WGoeFfz8uEESunhe0qxu7lYSGKWsc7aepw==
-X-Received: by 2002:a50:ec19:: with SMTP id g25-v6mr1851745edr.38.1541759376807;
-        Fri, 09 Nov 2018 02:29:36 -0800 (PST)
-Received: from ziggy.stardust ([37.223.147.230])
-        by smtp.gmail.com with ESMTPSA id y16-v6sm1771329eds.45.2018.11.09.02.29.34
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZFF4LJwGLa4raDTcemTqAiKKZx5qIFbJw1bPd62m7+E=;
+        b=qM2jT8rxkj6wBxha2yOPzMEEj0BQU28CR1RZ5pB+QnvdkXfWeCW+qF2hUIwVCHe48m
+         BCDqvYmswEmAz0Ymm8hzLLA5SHLjn6zzDzVmGCS5K+l/dOSlWueS2h5C7TgB25yNZEd2
+         fpWm6Dg7pOFZlOjexeyK8dUdJ26BCLLwc2XovYeOVsIcHxWDNFUm4iWp92HVxN+1Cu/R
+         4ogS/DoXIl7CF3W8EZFv3Ce66Zul4Buz6g8xdGclvSrQOVBcmHl7Wr0rCROtUKmSR+7k
+         ShbdM1ZbKyBwiIzIsUxQhaTyjE2tXwMrIcm8Lp4dh0wIOEurT0FAEk/glKuK+VpfMK0e
+         gt4w==
+X-Gm-Message-State: AGRZ1gJ6CZ3vK4N38fB7wDOlgpq3m6YVgayRQzovuLqs1T+NlZCGBMHl
+        1PssADMDpDLvH6l0oBgdOiLfZAaJPIW2nw==
+X-Google-Smtp-Source: AJdET5c7Aid2GuaxhOnHDcM8jPdalbZzyJAKfBiCBJ0vPN7nrSbClxVNKJxSjcyT7Nl4qjNNwyFnYA==
+X-Received: by 2002:a81:3802:: with SMTP id f2-v6mr7418499ywa.81.1541759511512;
+        Fri, 09 Nov 2018 02:31:51 -0800 (PST)
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com. [209.85.219.170])
+        by smtp.gmail.com with ESMTPSA id s83-v6sm3292545yws.33.2018.11.09.02.31.49
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 09 Nov 2018 02:29:35 -0800 (PST)
-Subject: Re: [PATCH 1/4] of/device: Add a way to probe drivers by match data
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        devicetree@vger.kernel.org, Ryder Lee <ryder.lee@mediatek.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
-References: <20181106183609.207702-1-sboyd@kernel.org>
- <20181106183609.207702-2-sboyd@kernel.org>
- <efa13e0b-0daf-3bf3-27ba-ed90f15c7dfe@gmail.com>
- <154169993998.88331.10494065577891939152@swboyd.mtv.corp.google.com>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
- xsFNBFP1zgUBEAC21D6hk7//0kOmsUrE3eZ55kjc9DmFPKIz6l4NggqwQjBNRHIMh04BbCMY
- fL3eT7ZsYV5nur7zctmJ+vbszoOASXUpfq8M+S5hU2w7sBaVk5rpH9yW8CUWz2+ZpQXPJcFa
- OhLZuSKB1F5JcvLbETRjNzNU7B3TdS2+zkgQQdEyt7Ij2HXGLJ2w+yG2GuR9/iyCJRf10Okq
- gTh//XESJZ8S6KlOWbLXRE+yfkKDXQx2Jr1XuVvM3zPqH5FMg8reRVFsQ+vI0b+OlyekT/Xe
- 0Hwvqkev95GG6x7yseJwI+2ydDH6M5O7fPKFW5mzAdDE2g/K9B4e2tYK6/rA7Fq4cqiAw1+u
- EgO44+eFgv082xtBez5WNkGn18vtw0LW3ESmKh19u6kEGoi0WZwslCNaGFrS4M7OH+aOJeqK
- fx5dIv2CEbxc6xnHY7dwkcHikTA4QdbdFeUSuj4YhIZ+0QlDVtS1QEXyvZbZky7ur9rHkZvP
- ZqlUsLJ2nOqsmahMTIQ8Mgx9SLEShWqD4kOF4zNfPJsgEMB49KbS2o9jxbGB+JKupjNddfxZ
- HlH1KF8QwCMZEYaTNogrVazuEJzx6JdRpR3sFda/0x5qjTadwIW6Cl9tkqe2h391dOGX1eOA
- 1ntn9O/39KqSrWNGvm+1raHK+Ev1yPtn0Wxn+0oy1tl67TxUjQARAQABzSlNYXR0aGlhcyBC
- cnVnZ2VyIDxtYXR0aGlhcy5iZ2dAZ21haWwuY29tPsLBkgQTAQIAPAIbAwYLCQgHAwIGFQgC
- CQoLBBYCAwECHgECF4AWIQTmuZIYwPLDJRwsOhfZFAuyVhMC8QUCWt3scQIZAQAKCRDZFAuy
- VhMC8WzRD/4onkC+gCxG+dvui5SXCJ7bGLCu0xVtiGC673Kz5Aq3heITsERHBV0BqqctOEBy
- ZozQQe2Hindu9lasOmwfH8+vfTK+2teCgWesoE3g3XKbrOCB4RSrQmXGC3JYx6rcvMlLV/Ch
- YMRR3qv04BOchnjkGtvm9aZWH52/6XfChyh7XYndTe5F2bqeTjt+kF/ql+xMc4E6pniqIfkv
- c0wsH4CkBHqoZl9w5e/b9MspTqsU9NszTEOFhy7p2CYw6JEa/vmzR6YDzGs8AihieIXDOfpT
- DUr0YUlDrwDSrlm/2MjNIPTmSGHH94ScOqu/XmGW/0q1iar/Yr0leomUOeeEzCqQtunqShtE
- 4Mn2uEixFL+9jiVtMjujr6mphznwpEqObPCZ3IcWqOFEz77rSL+oqFiEA03A2WBDlMm++Sve
- 9jpkJBLosJRhAYmQ6ey6MFO6Krylw1LXcq5z1XQQavtFRgZoruHZ3XlhT5wcfLJtAqrtfCe0
- aQ0kJW+4zj9/So0uxJDAtGuOpDYnmK26dgFN0tAhVuNInEVhtErtLJHeJzFKJzNyQ4GlCaLw
- jKcwWcqDJcrx9R7LsCu4l2XpKiyxY6fO4O8DnSleVll9NPfAZFZvf8AIy3EQ8BokUsiuUYHz
- wUo6pclk55PZRaAsHDX/fNr24uC6Eh5oNQ+v4Pax/gtyyc7BTQRT9gkSARAApxtQ4zUMC512
- kZ+gCiySFcIF/mAf7+l45689Tn7LI1xmPQrAYJDoqQVXcyh3utgtvBvDLmpQ+1BfEONDWc8K
- RP6Abo35YqBx3udAkLZgr/RmEg3+Tiof+e1PJ2zRh5zmdei5MT8biE2zVd9DYSJHZ8ltEWIA
- LC9lAsv9oa+2L6naC+KFF3i0m5mxklgFoSthswUnonqvclsjYaiVPoSldDrreCPzmRCUd8zn
- f//Z4BxtlTw3SulF8weKLJ+Hlpw8lwb3sUl6yPS6pL6UV45gyWMe677bVUtxLYOu+kiv2B/+
- nrNRDs7B35y/J4t8dtK0S3M/7xtinPiYRmsnJdk+sdAe8TgGkEaooF57k1aczcJlUTBQvlYA
- Eg2NJnqaKg3SCJ4fEuT8rLjzuZmLkoHNumhH/mEbyKca82HvANu5C9clyQusJdU+MNRQLRmO
- Ad/wxGLJ0xmAye7Ozja86AIzbEmuNhNH9xNjwbwSJNZefV2SoZUv0+V9EfEVxTzraBNUZifq
- v6hernMQXGxs+lBjnyl624U8nnQWnA8PwJ2hI3DeQou1HypLFPeY9DfWv4xYdkyeOtGpueeB
- lqhtMoZ0kDw2C3vzj77nWwBgpgn1Vpf4hG/sW/CRR6tuIQWWTvUM3ACa1pgEsBvIEBiVvPxy
- AtL+L+Lh1Sni7w3HBk1EJvUAEQEAAcLBXwQYAQIACQUCU/YJEgIbDAAKCRDZFAuyVhMC8Qnd
- EACuN16mvivnWwLDdypvco5PF8w9yrfZDKW4ggf9TFVB9skzMNCuQc+tc+QM+ni2c4kKIdz2
- jmcg6QytgqVum6V1OsNmpjADaQkVp5jL0tmg6/KA9Tvr07Kuv+Uo4tSrS/4djDjJnXHEp/tB
- +Fw7CArNtUtLlc8SuADCmMD+kBOVWktZyzkBkDfBXlTWl46T/8291lEspDWe5YW1ZAH/HdCR
- 1rQNZWjNCpB2Cic58CYMD1rSonCnbfUeyZYNNhNHZosl4dl7f+am87Q2x3pK0DLSoJRxWb7v
- ZB0uo9CzCSm3I++aYozF25xQoT+7zCx2cQi33jwvnJAK1o4VlNx36RfrxzBqc1uZGzJBCQu4
- 8UjmUSsTwWC3HpE/D9sM+xACs803lFUIZC5H62G059cCPAXKgsFpNMKmBAWweBkVJAisoQeX
- 50OP+/11ArV0cv+fOTfJj0/KwFXJaaYh3LUQNILLBNxkSrhCLl8dUg53IbHx4NfIAgqxLWGf
- XM8DY1aFdU79pac005PuhxCWkKTJz3gCmznnoat4GCnL5gy/m0Qk45l4PFqwWXVLo9AQg2Kp
- 3mlIFZ6fsEKIAN5hxlbNvNb9V2Zo5bFZjPWPFTxOteM0omUAS+QopwU0yPLLGJVf2iCmItHc
- UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <0f2bb386-ba92-544c-e980-c95309944b22@gmail.com>
-Date:   Fri, 9 Nov 2018 11:29:34 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 09 Nov 2018 02:31:50 -0800 (PST)
+Received: by mail-yb1-f170.google.com with SMTP id g192-v6so856312ybf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 02:31:49 -0800 (PST)
+X-Received: by 2002:a25:d64d:: with SMTP id n74-v6mr7966551ybg.204.1541759509040;
+ Fri, 09 Nov 2018 02:31:49 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <154169993998.88331.10494065577891939152@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1541749141-6989-1-git-send-email-mgottam@codeaurora.org>
+ <CAAFQd5CwhPTmh4kF6O23Os2tihaWEez1SM=Th6BGkf_wo_LYDA@mail.gmail.com> <be2906d9d9c3f4618d21d4adef662d75@codeaurora.org>
+In-Reply-To: <be2906d9d9c3f4618d21d4adef662d75@codeaurora.org>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Fri, 9 Nov 2018 19:31:35 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5DE4ajq6HxHhKjYFHaqFpBXJdWNcv3Qr95B9dBP=zGsJQ@mail.gmail.com>
+Message-ID: <CAAFQd5DE4ajq6HxHhKjYFHaqFpBXJdWNcv3Qr95B9dBP=zGsJQ@mail.gmail.com>
+Subject: Re: [PATCH v2] media: venus: add support for selection rectangles
+To:     mgottam@codeaurora.org
+Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        vgarodia@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Malathi,
 
+On Fri, Nov 9, 2018 at 6:20 PM <mgottam@codeaurora.org> wrote:
+>
+> On 2018-11-09 07:56, Tomasz Figa wrote:
+> > Hi Malathi,
+> >
+> > On Fri, Nov 9, 2018 at 4:39 PM Malathi Gottam <mgottam@codeaurora.org>
+> > wrote:
+> >>
+> >> Handles target type crop by setting the new active rectangle
+> >> to hardware. The new rectangle should be within YUV size.
+> >>
+> >> Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
+> >> ---
+> >>  drivers/media/platform/qcom/venus/venc.c | 26
+> >> ++++++++++++++++++++++----
+> >>  1 file changed, 22 insertions(+), 4 deletions(-)
+> >>
+> >> diff --git a/drivers/media/platform/qcom/venus/venc.c
+> >> b/drivers/media/platform/qcom/venus/venc.c
+> >> index ce85962..d26c129 100644
+> >> --- a/drivers/media/platform/qcom/venus/venc.c
+> >> +++ b/drivers/media/platform/qcom/venus/venc.c
+> >> @@ -478,16 +478,34 @@ static int venc_g_fmt(struct file *file, void
+> >> *fh, struct v4l2_format *f)
+> >>  venc_s_selection(struct file *file, void *fh, struct v4l2_selection
+> >> *s)
+> >>  {
+> >>         struct venus_inst *inst = to_inst(file);
+> >> +       int ret;
+> >> +       u32 buftype;
+> >>
+> >>         if (s->type != V4L2_BUF_TYPE_VIDEO_OUTPUT)
+> >>                 return -EINVAL;
+> >>
+> >>         switch (s->target) {
+> >>         case V4L2_SEL_TGT_CROP:
+> >> -               if (s->r.width != inst->out_width ||
+> >> -                   s->r.height != inst->out_height ||
+> >> -                   s->r.top != 0 || s->r.left != 0)
+> >> -                       return -EINVAL;
+> >> +               if (s->r.left != 0) {
+> >> +                       s->r.width += s->r.left;
+> >> +                       s->r.left = 0;
+> >> +               }
+> >> +
+> >> +               if (s->r.top != 0) {
+> >> +                       s->r.height += s->r.top;
+> >> +                       s->r.top = 0;
+> >> +               }
+> >> +
+> >> +               if (s->r.width > inst->width)
+> >> +                       s->r.width = inst->width;
+> >> +               else
+> >> +                       inst->width = s->r.width;
+> >> +
+> >> +               if (s->r.height > inst->height)
+> >> +                       s->r.height = inst->height;
+> >> +               else
+> >> +                       inst->height = s->r.height;
+> >> +
+> >
+> > From semantic point of view, it looks fine, but where is the rectangle
+> > actually set to the hardware?
+> >
+> > Best regards,
+> > Tomasz
+>
+> As this set selection call occurs before the hfi session initialization,
+> for now we are holding these values in driver.
+>
+> As this call is followed by VIDIOC_REQBUFS(), as a part of this
+> we have venc_init_session
+>
+> static int venc_init_session(struct venus_inst *inst)
+> {
+>         int ret;
+>
+>         ret = hfi_session_init(inst, inst->fmt_cap->pixfmt);
+>         if (ret)
+>                 return ret;
+>
+>         ret = venus_helper_set_input_resolution(inst, inst->width,
+>                                                 inst->height);
+>         if (ret)
+>                 goto deinit;
+>
+>         ret = venus_helper_set_output_resolution(inst, inst->width,
+>                                                  inst->height,
+>                                                  HFI_BUFFER_OUTPUT);
 
-On 08/11/2018 18:58, Stephen Boyd wrote:
-> Quoting Matthias Brugger (2018-11-08 00:29:46)
->> On 06/11/2018 19:36, Stephen Boyd wrote:
->>> +int platform_driver_probe_by_of_match_data(struct platform_device *pdev)
->>> +{
->>> +     int (*probe_func)(struct platform_device *pdev);
->>> +
->>> +     probe_func = of_device_get_match_data(&pdev->dev);
->>
->> Shouldn't we check if probe_func is not NULL?
-> 
-> Is the oops from the NULL pointer deref insufficient?
-> 
+Something sounds not right here. Shouldn't one of the width/height be
+the OUPUT format and the other the selection CROP target rectangle?
 
-Do you think we should crash the machine if someone uses the call wrongly? Or
-should we provide the possibility to error out on the caller side?
+>         if (ret)
+>                 goto deinit;
+>
+>         ret = venus_helper_set_color_format(inst, inst->fmt_out->pixfmt);
+>         if (ret)
+>                 goto deinit;
+>
+>         ret = venc_set_properties(inst);
+>
+>
+>  From here we set these values to hardware.
 
-Regards,
-Matthias
+Okay, thanks for the explanation. In this case, we must return -EBUSY
+if selection is attempted to be set after the session is initialized.
+
+Best regards,
+Tomasz
