@@ -2,82 +2,85 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF2C7C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 12:28:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D3F1C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 12:32:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF74D20825
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 12:28:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF74D20825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.us
+	by mail.kernel.org (Postfix) with ESMTP id 5B1BE20827
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 12:32:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gVHNAKXj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B1BE20827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727951AbeKIWIe convert rfc822-to-8bit (ORCPT
+        id S1727837AbeKIWMa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 17:08:34 -0500
-Received: from mout.gmx.net ([212.227.17.21]:45221 "EHLO mout.gmx.net"
+        Fri, 9 Nov 2018 17:12:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41988 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727731AbeKIWIe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 17:08:34 -0500
-Received: from [74.104.183.64] ([74.104.183.64]) by
- msvc-mesg-gmx023.server.lan (via HTTP); Fri, 9 Nov 2018 13:28:00 +0100
+        id S1727560AbeKIWMa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 17:12:30 -0500
+Received: from localhost (71-6-98-120.static-ip.telepacific.net [71.6.98.120])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D8FD520825;
+        Fri,  9 Nov 2018 12:32:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541766725;
+        bh=6p1FuJ58l+NxYdK9mbi5fh7H7aG/ZVSWix+1xuRR+9s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gVHNAKXjIJ7uCRdDUWuzJ1YcFgfHjOZrhmH7p5UI2mPMDbU5HyAxxpGFtBFfOtAMV
+         3+bJTUE1xTQQl8kzZkbKus34Ghv0+u3EX/ghpJUQS+jnO4YknVDJnFvXN2xruXE3lF
+         CYTR3uUCBdFCTGk7eX6kMy4F5tg9bkXB88n9lL34=
+Date:   Fri, 9 Nov 2018 04:32:04 -0800
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Todd Kjos <tkjos@android.com>
+Cc:     tkjos@google.com, arve@android.com, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, maco@google.com,
+        stable@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH] binder: fix race that allows malicious free of live
+ buffer
+Message-ID: <20181109123204.GA11583@kroah.com>
+References: <20181106235532.171646-1-tkjos@google.com>
 MIME-Version: 1.0
-Message-ID: <trinity-e1d06dde-12e1-4e2a-8871-d6c5f4af9f51-1541766480902@msvc-mesg-gmx023>
-From:   "Qian Cai" <cai@gmx.us>
-To:     "Marc Zyngier" <marc.zyngier@arm.com>
-Cc:     linux-kernel@vger.kernel.org,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Ard Biesheuvel" <ard.biesheuvel@linaro.org>,
-        "Jason Cooper" <jason@lakedaemon.net>
-Subject: Re: WARNING: CPU: 0 PID: 0 at drivers/irqchip/irq-gic-v3-its.c
-Content-Type: text/plain; charset=UTF-8
-Date:   Fri, 9 Nov 2018 13:28:00 +0100
-In-Reply-To: <c8ff3004-33ee-19d5-8eb8-38d41f78c8ee@arm.com>
-References: <1541710771.12945.7.camel@gmx.us>
- <c8ff3004-33ee-19d5-8eb8-38d41f78c8ee@arm.com>
-Content-Transfer-Encoding: 8BIT
-X-Provags-ID: V03:K1:subnKnNWiRT0ExeeKzajQGySooqyqbC7y3FHAfAeR6yqdEUnIVUJga0Xe+oNaoUjoT8rk
- D1ojyiQcsSwLmZ3NOMOPep7EBzB8U4Z3cWWpVyv3pg/oKBHZ3n3KFHz1Wgr55Qv9vhl2Se76JdDK
- vv3xxqjQGWNtJ0S2SIXvui4z1XC/N6U61R3kwBCMXPPnm01OtknsOpaWU5TE2OixvuCGridiUn1A
- lvCLjkhIFVGy9lbnqDHwXQk8yvQNhwDLjNxbjbpatmDTWHFnRoqIMYPkCEqgnZ3BRMFaynJqIW5N
- nMuQwwaiwC8/zslRJNQdSS0
-X-UI-Out-Filterresults: notjunk:1;V01:K0:kAIGrQ2VSdk=:NzZfW9B05CnTOsIJASmGtw
- NcG/56PO0+hF8x7ZD54xBKFv9m5+oKfKQlvE7VyZH1V58ACNX5ookmjvXB8IEGwNuQfezVRJl
- 9lMmiAWi+f4NT082/ALErw+KfsDi5YtuY2XsBRSj6GRcMu7j4jjnqZivXSoQnm2FpfacOks/D
- Iwgf3GQeI4jMG5PrjWLTwp8KjsAKXYtsakhFsf+CvjERP2gnbkodHT740bkY5qbK3TzNXb2cK
- tleRPvwLCoQ+RYpY7BlN03aW/9xAPZirO24MUIuSnFDum1mowsy5qnD+2wltrPasxiVq/Op3g
- fI9ux9LGhk9k5M4Kap5xmw/WZF5m3H9kjtHWN/Z+OlonveCC2sH5wd/ouz8bJmEXepyLqGoJ5
- 2joLsr7ylmQ2gYfarq9sPZLS+twdT3yb/vtpmbWc+OnhK+IZBWm8X1A8RpEqaYtpPaN2UeQkp
- ht2wVGj1gc1kIfVzFCHqog6iFOONKOVQfNV2ao0y+4Rzf2LymJFu7Ta/dEhgKLJ9p36lAdxB6
- 0CZs+zwpdkOqxae1At7yvKybNYkfhUAxcy4iaZpJHTTgxWatskAGpF2gtxYkpRH60JNJobqK9
- U3r3x3Moi2K/WTW65W3aGYjrXDZPLRWj2V
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181106235532.171646-1-tkjos@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Nov 06, 2018 at 03:55:32PM -0800, Todd Kjos wrote:
+> Malicious code can attempt to free buffers using the
+> BC_FREE_BUFFER ioctl to binder. There are protections
+> against a user freeing a buffer while in use by the
+> kernel, however there was a window where BC_FREE_BUFFER
+> could be used to free a recently allocated buffer that
+> was not completely initialized. This resulted in a
+> use-after-free detected by KASAN with a malicious
+> test program.
+> 
+> This window is closed by setting the buffer's
+> allow_user_free attribute to 0 when the buffer
+> is allocated or when the user has previously
+> freed it instead of waiting for the caller
+> to set it. The problem was that when the struct
+> buffer was recycled, allow_user_free was stale
+> and set to 1 allowing a free to go through.
+> 
+> Signed-off-by: Todd Kjos <tkjos@google.com>
+> Acked-by: Arve Hj�nnev�g <arve@android.com>
 
-On 11/9/18 at 7:08 AM, Marc Zyngier wrote:
+No "stable" tag here?  Any idea how far back the stable backporting
+should go, if any?
 
-> [+Ard]
-> 
-> On 08/11/18 20:59, Qian Cai wrote:
-> > Just booting up the latest git master (b00d209) on an aarch64 server and saw
-> > this. Not sure about the third warning (at kernel/cpu.c:315
-> > lockdep_assert_cpus_held+0x50/0x60) relates to irqchip or not, but appended it
-> > to here anyway just in case.
-> > 
-> > [    0.000000] WARNING: CPU: 0 PID: 0 at drivers/irqchip/irq-gic-v3-its.c:1696
-> > its_init+0x588/0xb54
-> 
-> It looks like EFI cannot manage to reserve the memory for your GIC
-> redistributors. Pretty annoying. At the same time, you have reported
-> other issues with the EFI reservation mechanism, such as:
-> 
-> https://lore.kernel.org/patchwork/patch/1008413/
-> 
-> for which you have given a "Tested-by:". Is that related?
-No, I don’t think so. Those warnings are still there even after applied the patch above.
+thanks,
+
+greg k-h
