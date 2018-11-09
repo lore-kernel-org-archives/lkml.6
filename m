@@ -3,36 +3,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 653B5C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:03:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 541EAC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:03:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 268112147A
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:03:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 268112147A
+	by mail.kernel.org (Postfix) with ESMTP id 243CC20855
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:03:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 243CC20855
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=angband.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728920AbeKJEpZ (ORCPT
+        id S1728944AbeKJEp2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 23:45:25 -0500
-Received: from tartarus.angband.pl ([54.37.238.230]:51442 "EHLO
+        Fri, 9 Nov 2018 23:45:28 -0500
+Received: from tartarus.angband.pl ([54.37.238.230]:51532 "EHLO
         tartarus.angband.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728225AbeKJEpZ (ORCPT
+        with ESMTP id S1728683AbeKJEp1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 23:45:25 -0500
+        Fri, 9 Nov 2018 23:45:27 -0500
 Received: from 89-64-163-218.dynamic.chello.pl ([89.64.163.218] helo=barad-dur.angband.pl)
         by tartarus.angband.pl with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <kilobyte@angband.pl>)
-        id 1gLC3w-00053U-HK; Fri, 09 Nov 2018 20:03:26 +0100
+        id 1gLC3z-00054E-7m; Fri, 09 Nov 2018 20:03:29 +0100
 Received: from kholdan.angband.pl ([2001:470:64f4::5])
         by barad-dur.angband.pl with smtp (Exim 4.89)
         (envelope-from <kilobyte@angband.pl>)
-        id 1gLC3v-0005A1-0q; Fri, 09 Nov 2018 20:03:24 +0100
-Received: by kholdan.angband.pl (sSMTP sendmail emulation); Fri, 09 Nov 2018 20:03:22 +0100
+        id 1gLC3x-0005A7-NG; Fri, 09 Nov 2018 20:03:26 +0100
+Received: by kholdan.angband.pl (sSMTP sendmail emulation); Fri, 09 Nov 2018 20:03:25 +0100
 From:   Adam Borowski <kilobyte@angband.pl>
 To:     linux-kernel@vger.kernel.org, Nick Terrell <terrelln@fb.com>,
         Russell King <linux@armlinux.org.uk>,
@@ -62,8 +62,8 @@ To:     linux-kernel@vger.kernel.org, Nick Terrell <terrelln@fb.com>,
         Max Filippov <jcmvbkbc@gmail.com>,
         linux-xtensa@linux-xtensa.org
 Cc:     Adam Borowski <kilobyte@angband.pl>
-Date:   Fri,  9 Nov 2018 20:02:55 +0100
-Message-Id: <20181109190304.8573-8-kilobyte@angband.pl>
+Date:   Fri,  9 Nov 2018 20:02:57 +0100
+Message-Id: <20181109190304.8573-10-kilobyte@angband.pl>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181109190304.8573-1-kilobyte@angband.pl>
 References: <20181109185953.xwyelyqnygbskkxk@angband.pl>
@@ -72,7 +72,7 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 89.64.163.218
 X-SA-Exim-Mail-From: kilobyte@angband.pl
-Subject: [PATCH 08/17] sh: Remove support for BZIP2 and LZMA compressed kernel
+Subject: [PATCH 10/17] arm: Remove support for LZMA compressed kernel
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on tartarus.angband.pl)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -80,154 +80,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Made redundant by newer choices.
+You want XZ instead: newer version of same algorithm, has an optimized
+filter for arm32 executables, uses a library shared with other uses of XZ
+in the kernel.
 
 Signed-off-by: Adam Borowski <kilobyte@angband.pl>
 ---
- arch/sh/Kconfig                  |  2 --
- arch/sh/Makefile                 |  4 +---
- arch/sh/boot/Makefile            | 19 ++-----------------
- arch/sh/boot/compressed/Makefile |  5 -----
- arch/sh/boot/compressed/misc.c   | 12 ------------
- 5 files changed, 3 insertions(+), 39 deletions(-)
+ arch/arm/Kconfig                      | 1 -
+ arch/arm/boot/compressed/Makefile     | 1 -
+ arch/arm/boot/compressed/decompress.c | 4 ----
+ 3 files changed, 6 deletions(-)
 
-diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
-index f82a4da7adf3..fbb2e17275d1 100644
---- a/arch/sh/Kconfig
-+++ b/arch/sh/Kconfig
-@@ -23,8 +23,6 @@ config SUPERH
- 	select HAVE_DEBUG_KMEMLEAK
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 91be74d8df65..637e100de6e3 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -77,7 +77,6 @@ config ARM
+ 	select HAVE_IRQ_TIME_ACCOUNTING
  	select HAVE_KERNEL_GZIP
- 	select CPU_NO_EFFICIENT_FFS
--	select HAVE_KERNEL_BZIP2
+ 	select HAVE_KERNEL_LZ4
 -	select HAVE_KERNEL_LZMA
- 	select HAVE_KERNEL_XZ
  	select HAVE_KERNEL_LZO
- 	select HAVE_UID16
-diff --git a/arch/sh/Makefile b/arch/sh/Makefile
-index c521ade2557c..70925d0cd2a8 100644
---- a/arch/sh/Makefile
-+++ b/arch/sh/Makefile
-@@ -209,7 +209,7 @@ endif
- libs-$(CONFIG_SUPERH32)		:= arch/sh/lib/	$(libs-y)
- libs-$(CONFIG_SUPERH64)		:= arch/sh/lib64/ $(libs-y)
+ 	select HAVE_KERNEL_XZ
+ 	select HAVE_KPROBES if !XIP_KERNEL && !CPU_ENDIAN_BE32 && !CPU_V7M
+diff --git a/arch/arm/boot/compressed/Makefile b/arch/arm/boot/compressed/Makefile
+index 1f5a5ffe7fcf..37e6097b7506 100644
+--- a/arch/arm/boot/compressed/Makefile
++++ b/arch/arm/boot/compressed/Makefile
+@@ -72,7 +72,6 @@ CPPFLAGS_vmlinux.lds := -DTEXT_START="$(ZTEXTADDR)" -DBSS_START="$(ZBSSADDR)"
  
--BOOT_TARGETS = uImage uImage.bz2 uImage.gz uImage.lzma uImage.xz uImage.lzo \
-+BOOT_TARGETS = uImage uImage.bz2 uImage.gz uImage.xz uImage.lzo \
- 	       uImage.srec uImage.bin zImage vmlinux.bin vmlinux.srec \
- 	       romImage
- PHONY += $(BOOT_TARGETS)
-@@ -237,8 +237,6 @@ define archhelp
- 	@echo '  uImage.srec	           - Create an S-record for U-Boot'
- 	@echo '  uImage.bin	           - Kernel-only image for U-Boot (bin)'
- 	@echo '* uImage.gz	           - Kernel-only image for U-Boot (gzip)'
--	@echo '  uImage.bz2	           - Kernel-only image for U-Boot (bzip2)'
--	@echo '  uImage.lzma	           - Kernel-only image for U-Boot (lzma)'
- 	@echo '  uImage.xz	           - Kernel-only image for U-Boot (xz)'
- 	@echo '  uImage.lzo	           - Kernel-only image for U-Boot (lzo)'
- endef
-diff --git a/arch/sh/boot/Makefile b/arch/sh/boot/Makefile
-index 58592dfa5cb6..bf8cf598a5ab 100644
---- a/arch/sh/boot/Makefile
-+++ b/arch/sh/boot/Makefile
-@@ -21,15 +21,12 @@ CONFIG_PHYSICAL_START	?= $(CONFIG_MEMORY_START)
+ compress-$(CONFIG_KERNEL_GZIP) = gzip
+ compress-$(CONFIG_KERNEL_LZO)  = lzo
+-compress-$(CONFIG_KERNEL_LZMA) = lzma
+ compress-$(CONFIG_KERNEL_XZ)   = xzkern
+ compress-$(CONFIG_KERNEL_LZ4)  = lz4
  
- suffix-y := bin
- suffix-$(CONFIG_KERNEL_GZIP)	:= gz
--suffix-$(CONFIG_KERNEL_BZIP2)	:= bz2
--suffix-$(CONFIG_KERNEL_LZMA)	:= lzma
- suffix-$(CONFIG_KERNEL_XZ)	:= xz
- suffix-$(CONFIG_KERNEL_LZO)	:= lzo
- 
- targets := zImage vmlinux.srec romImage uImage uImage.srec uImage.gz \
--	   uImage.bz2 uImage.lzma uImage.xz uImage.lzo uImage.bin
--extra-y += vmlinux.bin vmlinux.bin.gz vmlinux.bin.bz2 vmlinux.bin.lzma \
--	   vmlinux.bin.xz vmlinux.bin.lzo
-+	   uImage.xz uImage.lzo uImage.bin
-+extra-y += vmlinux.bin vmlinux.bin.gz vmlinux.bin.xz vmlinux.bin.lzo
- subdir- := compressed romimage
- 
- $(obj)/zImage: $(obj)/compressed/vmlinux FORCE
-@@ -68,27 +65,15 @@ $(obj)/vmlinux.bin: vmlinux FORCE
- $(obj)/vmlinux.bin.gz: $(obj)/vmlinux.bin FORCE
- 	$(call if_changed,gzip)
- 
--$(obj)/vmlinux.bin.bz2: $(obj)/vmlinux.bin FORCE
--	$(call if_changed,bzip2)
--
--$(obj)/vmlinux.bin.lzma: $(obj)/vmlinux.bin FORCE
--	$(call if_changed,lzma)
--
- $(obj)/vmlinux.bin.xz: $(obj)/vmlinux.bin FORCE
- 	$(call if_changed,xzkern)
- 
- $(obj)/vmlinux.bin.lzo: $(obj)/vmlinux.bin FORCE
- 	$(call if_changed,lzo)
- 
--$(obj)/uImage.bz2: $(obj)/vmlinux.bin.bz2
--	$(call if_changed,uimage,bzip2)
--
- $(obj)/uImage.gz: $(obj)/vmlinux.bin.gz
- 	$(call if_changed,uimage,gzip)
- 
--$(obj)/uImage.lzma: $(obj)/vmlinux.bin.lzma
--	$(call if_changed,uimage,lzma)
--
- $(obj)/uImage.xz: $(obj)/vmlinux.bin.xz
- 	$(call if_changed,uimage,xz)
- 
-diff --git a/arch/sh/boot/compressed/Makefile b/arch/sh/boot/compressed/Makefile
-index f5e1bd779789..abd33fd0d525 100644
---- a/arch/sh/boot/compressed/Makefile
-+++ b/arch/sh/boot/compressed/Makefile
-@@ -6,7 +6,6 @@
- #
- 
- targets		:= vmlinux vmlinux.bin vmlinux.bin.gz \
--		   vmlinux.bin.bz2 vmlinux.bin.lzma \
- 		   vmlinux.bin.xz vmlinux.bin.lzo \
- 		   head_$(BITS).o misc.o piggy.o
- 
-@@ -64,10 +63,6 @@ vmlinux.bin.all-y := $(obj)/vmlinux.bin
- 
- $(obj)/vmlinux.bin.gz: $(vmlinux.bin.all-y) FORCE
- 	$(call if_changed,gzip)
--$(obj)/vmlinux.bin.bz2: $(vmlinux.bin.all-y) FORCE
--	$(call if_changed,bzip2)
--$(obj)/vmlinux.bin.lzma: $(vmlinux.bin.all-y) FORCE
--	$(call if_changed,lzma)
- $(obj)/vmlinux.bin.xz: $(vmlinux.bin.all-y) FORCE
- 	$(call if_changed,xzkern)
- $(obj)/vmlinux.bin.lzo: $(vmlinux.bin.all-y) FORCE
-diff --git a/arch/sh/boot/compressed/misc.c b/arch/sh/boot/compressed/misc.c
-index c15cac9251b9..c82402add51e 100644
---- a/arch/sh/boot/compressed/misc.c
-+++ b/arch/sh/boot/compressed/misc.c
-@@ -44,24 +44,12 @@ extern int _end;
- static unsigned long free_mem_ptr;
- static unsigned long free_mem_end_ptr;
- 
--#ifdef CONFIG_HAVE_KERNEL_BZIP2
--#define HEAP_SIZE	0x400000
--#else
- #define HEAP_SIZE	0x10000
--#endif
- 
- #ifdef CONFIG_KERNEL_GZIP
- #include "../../../../lib/decompress_inflate.c"
+diff --git a/arch/arm/boot/compressed/decompress.c b/arch/arm/boot/compressed/decompress.c
+index c16c1829a5e4..350e7a96f6af 100644
+--- a/arch/arm/boot/compressed/decompress.c
++++ b/arch/arm/boot/compressed/decompress.c
+@@ -41,10 +41,6 @@ extern int memcmp(const void *cs, const void *ct, size_t count);
+ #include "../../../../lib/decompress_unlzo.c"
  #endif
  
--#ifdef CONFIG_KERNEL_BZIP2
--#include "../../../../lib/decompress_bunzip2.c"
--#endif
--
 -#ifdef CONFIG_KERNEL_LZMA
 -#include "../../../../lib/decompress_unlzma.c"
 -#endif
 -
  #ifdef CONFIG_KERNEL_XZ
- #include "../../../../lib/decompress_unxz.c"
- #endif
+ #define memmove memmove
+ #define memcpy memcpy
 -- 
 2.19.1
 
