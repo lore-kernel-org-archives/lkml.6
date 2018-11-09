@@ -2,153 +2,100 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4034DC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:18:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFDE4C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:18:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA52320855
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:18:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA52320855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id AEB8220883
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:18:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEB8220883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727825AbeKIR5i (ORCPT
+        id S1728327AbeKIR6I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 12:57:38 -0500
-Received: from mga17.intel.com ([192.55.52.151]:40340 "EHLO mga17.intel.com"
+        Fri, 9 Nov 2018 12:58:08 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:35738 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727649AbeKIR5i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 12:57:38 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Nov 2018 00:14:08 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,482,1534834800"; 
-   d="scan'208";a="279670785"
-Received: from lftan-mobl.gar.corp.intel.com (HELO ubuntu) ([10.226.248.106])
-  by fmsmga006.fm.intel.com with SMTP; 09 Nov 2018 00:14:06 -0800
-Received: by ubuntu (sSMTP sendmail emulation); Fri, 09 Nov 2018 16:14:03 +0800
-Message-ID: <1541751242.79160.1.camel@intel.com>
-Subject: Re: [PATCH] nios2: remove redundant 'default n' from Kconfig-s
-From:   Ley Foon Tan <ley.foon.tan@intel.com>
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     nios2-dev@lists.rocketboards.org, linux-kernel@vger.kernel.org
-Date:   Fri, 09 Nov 2018 16:14:02 +0800
-In-Reply-To: <20181010150055eucas1p1b50d2fa2333e2b0b84f90c14fb06111b~cR2FGBz6f2704627046eucas1p1B@eucas1p1.samsung.com>
-References: <CGME20181010150055eucas1p1b50d2fa2333e2b0b84f90c14fb06111b@eucas1p1.samsung.com>
-         <20181010150055eucas1p1b50d2fa2333e2b0b84f90c14fb06111b~cR2FGBz6f2704627046eucas1p1B@eucas1p1.samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.1 
-Mime-Version: 1.0
+        id S1727649AbeKIR6I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 12:58:08 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 89B5E207B0; Fri,  9 Nov 2018 09:18:38 +0100 (CET)
+Received: from mc-bl-xps13.lan (aaubervilliers-681-1-30-49.w90-88.abo.wanadoo.fr [90.88.15.49])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 4162B2039F;
+        Fri,  9 Nov 2018 09:18:38 +0100 (CET)
+From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
+To:     davem@davemloft.net
+Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
+        Andrew Lunn <andrew@lunn.ch>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH net] net: mvneta: Don't advertise 2.5G modes
+Date:   Fri,  9 Nov 2018 09:17:33 +0100
+Message-Id: <20181109081733.24458-1-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gV2VkLCAyMDE4LTEwLTEwIGF0IDE3OjAwICswMjAwLCBCYXJ0bG9taWVqIFpvbG5pZXJraWV3
-aWN6IHdyb3RlOgo+ICdkZWZhdWx0IG4nIGlzIHRoZSBkZWZhdWx0IHZhbHVlIGZvciBhbnkgYm9v
-bCBvciB0cmlzdGF0ZSBLY29uZmlnCj4gc2V0dGluZyBzbyB0aGVyZSBpcyBubyBuZWVkIHRvIHdy
-aXRlIGl0IGV4cGxpY2l0bHkuCj4gCj4gQWxzbyBzaW5jZSBjb21taXQgZjQ2N2M1NjQwYzI5ICgi
-a2NvbmZpZzogb25seSB3cml0ZSAnIyBDT05GSUdfRk9PCj4gaXMgbm90IHNldCcgZm9yIHZpc2li
-bGUgc3ltYm9scyIpIHRoZSBLY29uZmlnIGJlaGF2aW9yIGlzIHRoZSBzYW1lCj4gcmVnYXJkbGVz
-cyBvZiAnZGVmYXVsdCBuJyBiZWluZyBwcmVzZW50IG9yIG5vdDoKPiAKPiDCoMKgwqDCoC4uLgo+
-IMKgwqDCoMKgT25lIHNpZGUgZWZmZWN0IG9mIChhbmQgdGhlIG1haW4gbW90aXZhdGlvbiBmb3Ip
-IHRoaXMgY2hhbmdlIGlzCj4gbWFraW5nCj4gwqDCoMKgwqB0aGUgZm9sbG93aW5nIHR3byBkZWZp
-bml0aW9ucyBiZWhhdmUgZXhhY3RseSB0aGUgc2FtZToKPiAKPiDCoMKgwqDCoMKgwqDCoMKgY29u
-ZmlnIEZPTwo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgYm9vbAo+IAo+IMKgwqDC
-oMKgwqDCoMKgwqBjb25maWcgRk9PCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBi
-b29sCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBkZWZhdWx0IG4KPiAKPiDCoMKg
-wqDCoFdpdGggdGhpcyBjaGFuZ2UsIG5laXRoZXIgb2YgdGhlc2Ugd2lsbCBnZW5lcmF0ZSBhCj4g
-wqDCoMKgwqAnIyBDT05GSUdfRk9PIGlzIG5vdCBzZXQnIGxpbmUgKGFzc3VtaW5nIEZPTyBpc24n
-dAo+IHNlbGVjdGVkL2ltcGxpZWQpLgo+IMKgwqDCoMKgVGhhdCBtaWdodCBtYWtlIGl0IGNsZWFy
-ZXIgdG8gcGVvcGxlIHRoYXQgYSBiYXJlICdkZWZhdWx0IG4nIGlzCj4gwqDCoMKgwqByZWR1bmRh
-bnQuCj4gwqDCoMKgwqAuLi4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBCYXJ0bG9taWVqIFpvbG5pZXJr
-aWV3aWN6IDxiLnpvbG5pZXJraWVAc2Ftc3VuZy5jb20+CkFja2VkLWJ5OiBMZXkgRm9vbiBUYW4g
-PGxleS5mb29uLnRhbkBpbnRlbC5jb20+Cj4gLS0tCj4gwqBhcmNoL25pb3MyL0tjb25maWfCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHzCoMKgwqDCoDEgLQo+IMKgYXJjaC9u
-aW9zMi9wbGF0Zm9ybS9LY29uZmlnLnBsYXRmb3JtIHzCoMKgwqDCoDkgLS0tLS0tLS0tCj4gwqAy
-IGZpbGVzIGNoYW5nZWQsIDEwIGRlbGV0aW9ucygtKQo+IAo+IEluZGV4OiBiL2FyY2gvbmlvczIv
-S2NvbmZpZwo+ID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT0KPiAtLS0gYS9hcmNoL25pb3MyL0tjb25maWfCoMKgwqDCoMKg
-wqDCoMKgMjAxOC0xMC0wOSAxNTo1ODozNi41NDMxMjI4NzcgKzAyMDAKPiArKysgYi9hcmNoL25p
-b3MyL0tjb25maWfCoMKgwqDCoMKgwqDCoMKgMjAxOC0xMC0xMCAxNjo1Nzo1MC40MTE5Mjc2NDEg
-KzAyMDAKPiBAQCAtMTI2LDcgKzEyNiw2IEBAIGNvbmZpZyBOSU9TMl9DTURMSU5FX0lHTk9SRV9E
-VEIKPiAKPiDCoGNvbmZpZyBOSU9TMl9QQVNTX0NNRExJTkUKPiDCoMKgwqDCoMKgwqDCoMKgYm9v
-bCAiUGFzc2VkIGtlcm5lbCBjb21tYW5kIGxpbmUgZnJvbSB1LWJvb3QiCj4gLcKgwqDCoMKgwqDC
-oMKgZGVmYXVsdCBuCj4gwqDCoMKgwqDCoMKgwqDCoGhlbHAKPiDCoMKgwqDCoMKgwqDCoMKgwqDC
-oFVzZSBib290YXJncyBlbnYgdmFyaWFibGUgZnJvbSB1LWJvb3QgZm9yIGtlcm5lbCBjb21tYW5k
-Cj4gbGluZS4KPiDCoMKgwqDCoMKgwqDCoMKgwqDCoHdpbGwgb3ZlcnJpZGUgIkRlZmF1bHQga2Vy
-bmVsIGNvbW1hbmQgc3RyaW5nIi4KPiBJbmRleDogYi9hcmNoL25pb3MyL3BsYXRmb3JtL0tjb25m
-aWcucGxhdGZvcm0KPiA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09Cj4gLS0tIGEvYXJjaC9uaW9zMi9wbGF0Zm9ybS9LY29u
-ZmlnLnBsYXRmb3JtwqDCoMKgwqDCoMKgMjAxOC0wOS0wMwo+IDE4OjExOjEyLjA1Nzc5MjQ0MiAr
-MDIwMAo+ICsrKyBiL2FyY2gvbmlvczIvcGxhdGZvcm0vS2NvbmZpZy5wbGF0Zm9ybcKgwqDCoMKg
-wqDCoDIwMTgtMTAtMTAKPiAxNjo1ODozNy45NTE5Mjg4MzggKzAyMDAKPiBAQCAtMTcsNyArMTcs
-NiBAQCBjb21tZW50ICJEZXZpY2UgdHJlZSIKPiAKPiDCoGNvbmZpZyBOSU9TMl9EVEJfQVRfUEhZ
-U19BRERSCj4gwqDCoMKgwqDCoMKgwqDCoGJvb2wgIkRUQiBhdCBwaHlzaWNhbCBhZGRyZXNzIgo+
-IC3CoMKgwqDCoMKgwqDCoGRlZmF1bHQgbgo+IMKgwqDCoMKgwqDCoMKgwqBoZWxwCj4gwqDCoMKg
-wqDCoMKgwqDCoMKgwqBXaGVuIGVuYWJsZWQgeW91IGNhbiBzZWxlY3QgYSBwaHlzaWNhbCBhZGRy
-ZXNzIHRvIGxvYWQgdGhlCj4gZHRiIGZyb20uCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqBOb3JtYWxs
-eSB0aGlzIGFkZHJlc3MgaXMgcGFzc2VkIGJ5IGEgYm9vdGxvYWRlciBzdWNoIGFzIHUtCj4gYm9v
-dCBidXQKPiBAQCAtMzcsNyArMzYsNiBAQCBjb25maWcgTklPUzJfRFRCX1BIWVNfQUREUgo+IAo+
-IMKgY29uZmlnIE5JT1MyX0RUQl9TT1VSQ0VfQk9PTAo+IMKgwqDCoMKgwqDCoMKgwqBib29sICJD
-b21waWxlIGFuZCBsaW5rIGRldmljZSB0cmVlIGludG8ga2VybmVsIGltYWdlIgo+IC3CoMKgwqDC
-oMKgwqDCoGRlZmF1bHQgbgo+IMKgwqDCoMKgwqDCoMKgwqBoZWxwCj4gwqDCoMKgwqDCoMKgwqDC
-oMKgwqBUaGlzIGFsbG93cyB5b3UgdG8gc3BlY2lmeSBhIGR0cyAoZGV2aWNlIHRyZWUgc291cmNl
-KSBmaWxlCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqB3aGljaCB3aWxsIGJlIGNvbXBpbGVkIGFuZCBs
-aW5rZWQgaW50byB0aGUga2VybmVsIGltYWdlLgo+IEBAIC02MiwyMSArNjAsMTggQEAgY29uZmln
-IE5JT1MyX0FSQ0hfUkVWSVNJT04KPiAKPiDCoGNvbmZpZyBOSU9TMl9IV19NVUxfU1VQUE9SVAo+
-IMKgwqDCoMKgwqDCoMKgwqBib29sICJFbmFibGUgTVVMIGluc3RydWN0aW9uIgo+IC3CoMKgwqDC
-oMKgwqDCoGRlZmF1bHQgbgo+IMKgwqDCoMKgwqDCoMKgwqBoZWxwCj4gwqDCoMKgwqDCoMKgwqDC
-oMKgwqBTZXQgdG8gdHJ1ZSBpZiB5b3UgY29uZmlndXJlZCB0aGUgTmlvcyBJSSB0byBpbmNsdWRl
-IHRoZQo+IE1VTAo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgaW5zdHJ1Y3Rpb24uwqDCoFRoaXMgd2ls
-bCBlbmFibGUgdGhlIC1taHctbXVsIGNvbXBpbGVyIGZsYWcuCj4gCj4gwqBjb25maWcgTklPUzJf
-SFdfTVVMWF9TVVBQT1JUCj4gwqDCoMKgwqDCoMKgwqDCoGJvb2wgIkVuYWJsZSBNVUxYIGluc3Ry
-dWN0aW9uIgo+IC3CoMKgwqDCoMKgwqDCoGRlZmF1bHQgbgo+IMKgwqDCoMKgwqDCoMKgwqBoZWxw
-Cj4gwqDCoMKgwqDCoMKgwqDCoMKgwqBTZXQgdG8gdHJ1ZSBpZiB5b3UgY29uZmlndXJlZCB0aGUg
-TmlvcyBJSSB0byBpbmNsdWRlIHRoZQo+IE1VTFgKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoGluc3Ry
-dWN0aW9uLsKgwqBFbmFibGVzIHRoZSAtbWh3LW11bHggY29tcGlsZXIgZmxhZy4KPiAKPiDCoGNv
-bmZpZyBOSU9TMl9IV19ESVZfU1VQUE9SVAo+IMKgwqDCoMKgwqDCoMKgwqBib29sICJFbmFibGUg
-RElWIGluc3RydWN0aW9uIgo+IC3CoMKgwqDCoMKgwqDCoGRlZmF1bHQgbgo+IMKgwqDCoMKgwqDC
-oMKgwqBoZWxwCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqBTZXQgdG8gdHJ1ZSBpZiB5b3UgY29uZmln
-dXJlZCB0aGUgTmlvcyBJSSB0byBpbmNsdWRlIHRoZQo+IERJVgo+IMKgwqDCoMKgwqDCoMKgwqDC
-oMKgaW5zdHJ1Y3Rpb24uwqDCoEVuYWJsZXMgdGhlIC1taHctZGl2IGNvbXBpbGVyIGZsYWcuCj4g
-QEAgLTg0LDcgKzc5LDYgQEAgY29uZmlnIE5JT1MyX0hXX0RJVl9TVVBQT1JUCj4gwqBjb25maWcg
-TklPUzJfQk1YX1NVUFBPUlQKPiDCoMKgwqDCoMKgwqDCoMKgYm9vbCAiRW5hYmxlIEJNWCBpbnN0
-cnVjdGlvbnMiCj4gwqDCoMKgwqDCoMKgwqDCoGRlcGVuZHMgb24gTklPUzJfQVJDSF9SRVZJU0lP
-TiA9IDIKPiAtwqDCoMKgwqDCoMKgwqBkZWZhdWx0IG4KPiDCoMKgwqDCoMKgwqDCoMKgaGVscAo+
-IMKgwqDCoMKgwqDCoMKgwqDCoMKgU2V0IHRvIHRydWUgaWYgeW91IGNvbmZpZ3VyZWQgdGhlIE5p
-b3MgSUkgUjIgdG8gaW5jbHVkZQo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgdGhlIEJNWCBCaXQgTWFu
-aXB1bGF0aW9uIEV4dGVuc2lvbiBpbnN0cnVjdGlvbnMuIEVuYWJsZXMKPiBAQCAtOTMsNyArODcs
-NiBAQCBjb25maWcgTklPUzJfQk1YX1NVUFBPUlQKPiDCoGNvbmZpZyBOSU9TMl9DRFhfU1VQUE9S
-VAo+IMKgwqDCoMKgwqDCoMKgwqBib29sICJFbmFibGUgQ0RYIGluc3RydWN0aW9ucyIKPiDCoMKg
-wqDCoMKgwqDCoMKgZGVwZW5kcyBvbiBOSU9TMl9BUkNIX1JFVklTSU9OID0gMgo+IC3CoMKgwqDC
-oMKgwqDCoGRlZmF1bHQgbgo+IMKgwqDCoMKgwqDCoMKgwqBoZWxwCj4gwqDCoMKgwqDCoMKgwqDC
-oMKgwqBTZXQgdG8gdHJ1ZSBpZiB5b3UgY29uZmlndXJlZCB0aGUgTmlvcyBJSSBSMiB0byBpbmNs
-dWRlCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqB0aGUgQ0RYIEJpdCBNYW5pcHVsYXRpb24gRXh0ZW5z
-aW9uIGluc3RydWN0aW9ucy4gRW5hYmxlcwo+IEBAIC0xMDEsMTMgKzk0LDExIEBAIGNvbmZpZyBO
-SU9TMl9DRFhfU1VQUE9SVAo+IAo+IMKgY29uZmlnIE5JT1MyX0ZQVV9TVVBQT1JUCj4gwqDCoMKg
-wqDCoMKgwqDCoGJvb2wgIkN1c3RvbSBmbG9hdGluZyBwb2ludCBpbnN0ciBzdXBwb3J0Igo+IC3C
-oMKgwqDCoMKgwqDCoGRlZmF1bHQgbgo+IMKgwqDCoMKgwqDCoMKgwqBoZWxwCj4gwqDCoMKgwqDC
-oMKgwqDCoMKgwqBFbmFibGVzIHRoZSAtbWN1c3RvbS1mcHUtY2ZnPTYwLTEgY29tcGlsZXIgZmxh
-Zy4KPiAKPiDCoGNvbmZpZyBOSU9TMl9DSV9TV0FCX1NVUFBPUlQKPiDCoMKgwqDCoMKgwqDCoMKg
-Ym9vbCAiQnl0ZXN3YXAgY3VzdG9tIGluc3RydWN0aW9uIgo+IC3CoMKgwqDCoMKgwqDCoGRlZmF1
-bHQgbgo+IMKgwqDCoMKgwqDCoMKgwqBoZWxwCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqBVc2UgdGhl
-IGJ5dGVzd2FwIChlbmRpYW4gY29udmVydGVyKSBOaW9zIElJIGN1c3RvbQo+IGluc3RydWN0aW9u
-IHByb3ZpZGVkCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqBieSBBbHRlcmEgYW5kIHdoaWNoIGNhbiBi
-ZSBlbmFibGVkIGluIFFTWVMgYnVpbGRlci4gVGhpcwo+IGFjY2VsZXJhdGVzCj4gCj4gX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KPiAKPiBDb25maWRlbnRpYWxpdHkgTm90aWNlLgo+
-IFRoaXMgbWVzc2FnZSBtYXkgY29udGFpbiBpbmZvcm1hdGlvbiB0aGF0IGlzIGNvbmZpZGVudGlh
-bCBvcgo+IG90aGVyd2lzZSBwcm90ZWN0ZWQgZnJvbSBkaXNjbG9zdXJlLiBJZiB5b3UgYXJlIG5v
-dCB0aGUgaW50ZW5kZWQKPiByZWNpcGllbnQsIHlvdSBhcmUgaGVyZWJ5IG5vdGlmaWVkIHRoYXQg
-YW55IHVzZSwgZGlzY2xvc3VyZSwKPiBkaXNzZW1pbmF0aW9uLCBkaXN0cmlidXRpb24sIG9yIGNv
-cHlpbmcgb2YgdGhpcyBtZXNzYWdlLCBvciBhbnkKPiBhdHRhY2htZW50cywgaXMgc3RyaWN0bHkg
-cHJvaGliaXRlZC4gSWYgeW91IGhhdmUgcmVjZWl2ZWQgdGhpcwo+IG1lc3NhZ2UgaW4gZXJyb3Is
-IHBsZWFzZSBhZHZpc2UgdGhlIHNlbmRlciBieSByZXBseSBlLW1haWwsIGFuZAo+IGRlbGV0ZSB0
-aGUgbWVzc2FnZSBhbmQgYW55IGF0dGFjaG1lbnRzLiBUaGFuayB5b3Uu
+Using 2.5G speed relies on the SerDes lanes being configured
+accordingly. The lanes have to be reconfigured to switch between
+1G and 2.5G, and for now only the bootloader does this configuration.
+
+In the case we add a Comphy driver to handle switching the lanes
+dynamically, it's better for now to stick with supporting only 1G and
+add advertisement for 2.5G once we really are capable of handling both
+speeds without problem.
+
+Since the interface mode is initialy taken from the DT, we want to make
+sure that adding comphy support won't break boards that don't update
+their dtb.
+
+Fixes: da58a931f248 ("net: mvneta: Add support for 2500Mbps SGMII")
+Reported-by: Andrew Lunn <andrew@lunn.ch>
+Reported-by: Russell King <linux@armlinux.org.uk>
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+---
+ drivers/net/ethernet/marvell/mvneta.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
+index 5bfd349bf41a..c19ecd153499 100644
+--- a/drivers/net/ethernet/marvell/mvneta.c
++++ b/drivers/net/ethernet/marvell/mvneta.c
+@@ -3343,7 +3343,6 @@ static void mvneta_validate(struct net_device *ndev, unsigned long *supported,
+ 	if (state->interface != PHY_INTERFACE_MODE_NA &&
+ 	    state->interface != PHY_INTERFACE_MODE_QSGMII &&
+ 	    state->interface != PHY_INTERFACE_MODE_SGMII &&
+-	    state->interface != PHY_INTERFACE_MODE_2500BASEX &&
+ 	    !phy_interface_mode_is_8023z(state->interface) &&
+ 	    !phy_interface_mode_is_rgmii(state->interface)) {
+ 		bitmap_zero(supported, __ETHTOOL_LINK_MODE_MASK_NBITS);
+@@ -3357,14 +3356,9 @@ static void mvneta_validate(struct net_device *ndev, unsigned long *supported,
+ 	/* Asymmetric pause is unsupported */
+ 	phylink_set(mask, Pause);
+ 
+-	/* We cannot use 1Gbps when using the 2.5G interface. */
+-	if (state->interface == PHY_INTERFACE_MODE_2500BASEX) {
+-		phylink_set(mask, 2500baseT_Full);
+-		phylink_set(mask, 2500baseX_Full);
+-	} else {
+-		phylink_set(mask, 1000baseT_Full);
+-		phylink_set(mask, 1000baseX_Full);
+-	}
++	/* Half-duplex at speeds higher than 100Mbit is unsupported */
++	phylink_set(mask, 1000baseT_Full);
++	phylink_set(mask, 1000baseX_Full);
+ 
+ 	if (!phy_interface_mode_is_8023z(state->interface)) {
+ 		/* 10M and 100M are only supported in non-802.3z mode */
+-- 
+2.11.0
 
