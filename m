@@ -2,315 +2,137 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2607C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:08:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8220C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:08:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BF9A20818
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:08:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="k713+k6/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BF9A20818
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	by mail.kernel.org (Postfix) with ESMTP id 7C63920818
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:08:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C63920818
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728048AbeKJHuf (ORCPT
+        id S1728397AbeKJHvG convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 02:50:35 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:41274 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726181AbeKJHuf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 02:50:35 -0500
-Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA9M5GJR009852
-        for <linux-kernel@vger.kernel.org>; Fri, 9 Nov 2018 14:08:03 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=facebook;
- bh=IEYz4NjId4OXfR936IGto5FvVt69IVf845vs7FTG2FY=;
- b=k713+k6/Lr8s//gwKY9VGO02+SidnH3TBDisMXjvFwOAHZNfqxEnnDRZQawMqYjqlAEi
- 4uKGqDBtFOXr5FhzmH9UC1FB+Qi+ob54PI+kXx1z1Ev2uMIg2K+Lz00OPoDdMeKYc5eo
- 83tlXH9RfXFwOxRY/TVOeGDmqivLbMxSVmw= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2nnfpj8kq6-12
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 14:08:03 -0800
-Received: from mx-out.facebook.com (2620:10d:c0a1:3::13) by
- mail.thefacebook.com (2620:10d:c021:18::176) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
- Fri, 9 Nov 2018 14:07:58 -0800
-Received: by dev003.prn2.facebook.com (Postfix, from userid 572441)
-        id 3948336413D5; Fri,  9 Nov 2018 14:07:56 -0800 (PST)
-Smtp-Origin-Hostprefix: dev
-From:   Matt Mullins <mmullins@fb.com>
-Smtp-Origin-Hostname: dev003.prn2.facebook.com
-To:     <ast@kernel.org>, <daniel@iogearbox.net>, <netdev@vger.kernel.org>
-CC:     <kernel-team@fb.com>, Matt Mullins <mmullins@fb.com>,
-        Jessica Yu <jeyu@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, <linux-kernel@vger.kernel.org>
-Smtp-Origin-Cluster: prn2c23
-Subject: [PATCH bpf-next] bpf: support raw tracepoints in modules
-Date:   Fri, 9 Nov 2018 14:06:32 -0800
-Message-ID: <20181109220632.3944136-1-mmullins@fb.com>
-X-Mailer: git-send-email 2.17.1
-X-FB-Internal: Safe
+        Sat, 10 Nov 2018 02:51:06 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:43216 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727210AbeKJHvG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 02:51:06 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8D81389ACA;
+        Fri,  9 Nov 2018 22:08:34 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-55.bos.redhat.com [10.18.17.55])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 771B9608C1;
+        Fri,  9 Nov 2018 22:08:33 +0000 (UTC)
+Subject: Re: ODEBUG: Out of memory. ODEBUG disabled
+To:     Qian Cai <cai@gmx.us>, Yang Shi <yang.shi@linux.alibaba.com>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Zhong Jiang <zhongjiang@huawei.com>
+References: <54B1AA39-2C58-4B0C-B8A8-9F85EBA7C963@gmx.us>
+ <5c3b1cf4-1d83-c0a5-4243-28fde66b5cd9@linux.alibaba.com>
+ <9762E093-FCDD-4DAA-8FCE-9D6B953B6F17@gmx.us>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <6698422e-c593-547b-b1c6-1e2649fa49f3@redhat.com>
+Date:   Fri, 9 Nov 2018 17:08:32 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-09_07:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+In-Reply-To: <9762E093-FCDD-4DAA-8FCE-9D6B953B6F17@gmx.us>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Fri, 09 Nov 2018 22:08:34 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Distributions build drivers as modules, including network and filesystem
-drivers which export numerous tracepoints.  This enables
-bpf(BPF_RAW_TRACEPOINT_OPEN) to attach to those tracepoints.
+On 11/09/2018 04:51 PM, Qian Cai wrote:
+>
+>> On Nov 9, 2018, at 4:42 PM, Yang Shi <yang.shi@linux.alibaba.com> wrote:
+>>
+>>
+>>
+>> On 11/9/18 1:36 PM, Qian Cai wrote:
+>>> It is a bit annoying on this aarch64 server with 64 CPUs that is
+>>> booting the latest mainline (3541833fd1f2) causes object debugging
+>>> always running out of memory.
+>> May you please paste the detail failure log?
+> I assume you mean dmesg.
+>
+> Here is the dmesg for 64 CPUs,
+> https://paste.ubuntu.com/p/BnhvXXhn7k/
+>>> I have to boot the kernel with only 16 CPUs instead (nr_cpus=16)
+>>> to make it work. Is it expected that object debugging is not going
+>>> to work with large machines?
+>> I don't think so. I'm supposed it works well with large CPU number on x86.
+> Here is the one with nr_cpus workaround,
+> https://paste.ubuntu.com/p/qMpd2CCPSV/
 
-Signed-off-by: Matt Mullins <mmullins@fb.com>
----
-My apologies if this got duplicated to some of the recipients; I think I have
-SMTP working now.
+The debugobjects code have a set of 1024 statically allocated debug
+objects that can be used in early boot before the slab memory allocator
+is initialized. Apparently, the system may have used up all the
+statically allocated objects. Try double ODEBUG_POOL_SIZE to see if it
+helps.
 
- include/linux/module.h       |  4 ++
- include/linux/trace_events.h |  8 ++-
- kernel/bpf/syscall.c         | 11 +++--
- kernel/module.c              |  5 ++
- kernel/trace/bpf_trace.c     | 96 +++++++++++++++++++++++++++++++++++-
- 5 files changed, 117 insertions(+), 7 deletions(-)
+There are also quite a number of warnings in your console log. So there
+is certainly something wrong with your kernel or config options.
 
-diff --git a/include/linux/module.h b/include/linux/module.h
-index fce6b4335e36..5f147dd5e709 100644
---- a/include/linux/module.h
-+++ b/include/linux/module.h
-@@ -432,6 +432,10 @@ struct module {
- 	unsigned int num_tracepoints;
- 	tracepoint_ptr_t *tracepoints_ptrs;
- #endif
-+#ifdef CONFIG_BPF_EVENTS
-+	unsigned int num_bpf_raw_events;
-+	struct bpf_raw_event_map *bpf_raw_events;
-+#endif
- #ifdef HAVE_JUMP_LABEL
- 	struct jump_entry *jump_entries;
- 	unsigned int num_jump_entries;
-diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
-index 4130a5497d40..8a62731673f7 100644
---- a/include/linux/trace_events.h
-+++ b/include/linux/trace_events.h
-@@ -471,7 +471,8 @@ void perf_event_detach_bpf_prog(struct perf_event *event);
- int perf_event_query_prog_array(struct perf_event *event, void __user *info);
- int bpf_probe_register(struct bpf_raw_event_map *btp, struct bpf_prog *prog);
- int bpf_probe_unregister(struct bpf_raw_event_map *btp, struct bpf_prog *prog);
--struct bpf_raw_event_map *bpf_find_raw_tracepoint(const char *name);
-+struct bpf_raw_event_map *bpf_get_raw_tracepoint(const char *name);
-+void bpf_put_raw_tracepoint(struct bpf_raw_event_map *btp);
- int bpf_get_perf_event_info(const struct perf_event *event, u32 *prog_id,
- 			    u32 *fd_type, const char **buf,
- 			    u64 *probe_offset, u64 *probe_addr);
-@@ -502,10 +503,13 @@ static inline int bpf_probe_unregister(struct bpf_raw_event_map *btp, struct bpf
- {
- 	return -EOPNOTSUPP;
- }
--static inline struct bpf_raw_event_map *bpf_find_raw_tracepoint(const char *name)
-+static inline struct bpf_raw_event_map *bpf_get_raw_tracepoint(const char *name)
- {
- 	return NULL;
- }
-+static inline void bpf_put_raw_tracepoint(struct bpf_raw_event_map *btp)
-+{
-+}
- static inline int bpf_get_perf_event_info(const struct perf_event *event,
- 					  u32 *prog_id, u32 *fd_type,
- 					  const char **buf, u64 *probe_offset,
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index cf5040fd5434..c447aa1ce770 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -1597,6 +1597,7 @@ static int bpf_raw_tracepoint_release(struct inode *inode, struct file *filp)
- 		bpf_probe_unregister(raw_tp->btp, raw_tp->prog);
- 		bpf_prog_put(raw_tp->prog);
- 	}
-+	bpf_put_raw_tracepoint(raw_tp->btp);
- 	kfree(raw_tp);
- 	return 0;
- }
-@@ -1622,13 +1623,15 @@ static int bpf_raw_tracepoint_open(const union bpf_attr *attr)
- 		return -EFAULT;
- 	tp_name[sizeof(tp_name) - 1] = 0;
- 
--	btp = bpf_find_raw_tracepoint(tp_name);
-+	btp = bpf_get_raw_tracepoint(tp_name);
- 	if (!btp)
- 		return -ENOENT;
- 
- 	raw_tp = kzalloc(sizeof(*raw_tp), GFP_USER);
--	if (!raw_tp)
--		return -ENOMEM;
-+	if (!raw_tp) {
-+		err = -ENOMEM;
-+		goto out_put_btp;
-+	}
- 	raw_tp->btp = btp;
- 
- 	prog = bpf_prog_get_type(attr->raw_tracepoint.prog_fd,
-@@ -1656,6 +1659,8 @@ static int bpf_raw_tracepoint_open(const union bpf_attr *attr)
- 	bpf_prog_put(prog);
- out_free_tp:
- 	kfree(raw_tp);
-+out_put_btp:
-+	bpf_put_raw_tracepoint(btp);
- 	return err;
- }
- 
-diff --git a/kernel/module.c b/kernel/module.c
-index 49a405891587..06ec68f08387 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -3093,6 +3093,11 @@ static int find_module_sections(struct module *mod, struct load_info *info)
- 					     sizeof(*mod->tracepoints_ptrs),
- 					     &mod->num_tracepoints);
- #endif
-+#ifdef CONFIG_BPF_EVENTS
-+	mod->bpf_raw_events = section_objs(info, "__bpf_raw_tp_map",
-+					   sizeof(*mod->bpf_raw_events),
-+					   &mod->num_bpf_raw_events);
-+#endif
- #ifdef HAVE_JUMP_LABEL
- 	mod->jump_entries = section_objs(info, "__jump_table",
- 					sizeof(*mod->jump_entries),
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index 08fcfe440c63..a12d28c123eb 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -17,6 +17,43 @@
- #include "trace_probe.h"
- #include "trace.h"
- 
-+#ifdef CONFIG_MODULES
-+struct bpf_trace_module {
-+	struct module *module;
-+	struct list_head list;
-+};
-+
-+static LIST_HEAD(bpf_trace_modules);
-+static DEFINE_MUTEX(bpf_module_mutex);
-+
-+static struct bpf_raw_event_map *bpf_get_raw_tracepoint_module(const char *name)
-+{
-+	struct bpf_raw_event_map *btp, *ret = NULL;
-+	struct bpf_trace_module *btm;
-+	unsigned int i;
-+
-+	mutex_lock(&bpf_module_mutex);
-+	list_for_each_entry(btm, &bpf_trace_modules, list) {
-+		for (i = 0; i < btm->module->num_bpf_raw_events; ++i) {
-+			btp = &btm->module->bpf_raw_events[i];
-+			if (!strcmp(btp->tp->name, name)) {
-+				if (try_module_get(btm->module))
-+					ret = btp;
-+				goto out;
-+			}
-+		}
-+	}
-+out:
-+	mutex_unlock(&bpf_module_mutex);
-+	return ret;
-+}
-+#else
-+static struct bpf_raw_event_map *bpf_get_raw_tracepoint_module(const char *name)
-+{
-+	return NULL;
-+}
-+#endif /* CONFIG_MODULES */
-+
- u64 bpf_get_stackid(u64 r1, u64 r2, u64 r3, u64 r4, u64 r5);
- u64 bpf_get_stack(u64 r1, u64 r2, u64 r3, u64 r4, u64 r5);
- 
-@@ -1074,7 +1111,7 @@ int perf_event_query_prog_array(struct perf_event *event, void __user *info)
- extern struct bpf_raw_event_map __start__bpf_raw_tp[];
- extern struct bpf_raw_event_map __stop__bpf_raw_tp[];
- 
--struct bpf_raw_event_map *bpf_find_raw_tracepoint(const char *name)
-+struct bpf_raw_event_map *bpf_get_raw_tracepoint(const char *name)
- {
- 	struct bpf_raw_event_map *btp = __start__bpf_raw_tp;
- 
-@@ -1082,7 +1119,16 @@ struct bpf_raw_event_map *bpf_find_raw_tracepoint(const char *name)
- 		if (!strcmp(btp->tp->name, name))
- 			return btp;
- 	}
--	return NULL;
-+
-+	return bpf_get_raw_tracepoint_module(name);
-+}
-+
-+void bpf_put_raw_tracepoint(struct bpf_raw_event_map *btp)
-+{
-+	struct module *mod = __module_address((unsigned long)btp);
-+
-+	if (mod)
-+		module_put(mod);
- }
- 
- static __always_inline
-@@ -1220,3 +1266,49 @@ int bpf_get_perf_event_info(const struct perf_event *event, u32 *prog_id,
- 
- 	return err;
- }
-+
-+#ifdef CONFIG_MODULES
-+int bpf_event_notify(struct notifier_block *nb, unsigned long op, void *module)
-+{
-+	struct bpf_trace_module *btm, *tmp;
-+	struct module *mod = module;
-+
-+	if (mod->num_bpf_raw_events == 0)
-+		return 0;
-+
-+	mutex_lock(&bpf_module_mutex);
-+
-+	switch (op) {
-+	case MODULE_STATE_COMING:
-+		btm = kzalloc(sizeof(*btm), GFP_KERNEL);
-+		btm->module = module;
-+		list_add(&btm->list, &bpf_trace_modules);
-+		break;
-+	case MODULE_STATE_GOING:
-+		list_for_each_entry_safe(btm, tmp, &bpf_trace_modules, list) {
-+			if (btm->module == module) {
-+				list_del(&btm->list);
-+				kfree(btm);
-+				break;
-+			}
-+		}
-+		break;
-+	}
-+
-+	mutex_unlock(&bpf_module_mutex);
-+
-+	return 0;
-+}
-+
-+static struct notifier_block bpf_module_nb = {
-+	.notifier_call = bpf_event_notify,
-+};
-+
-+int __init bpf_event_init(void)
-+{
-+	register_module_notifier(&bpf_module_nb);
-+	return 0;
-+}
-+
-+fs_initcall(bpf_event_init);
-+#endif /* CONFIG_MODULES */
--- 
-2.17.1
+Cheers,
+Longman
+
 
