@@ -2,94 +2,113 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8F8CC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 13:04:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B744C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 13:10:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD00520883
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 13:04:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=birdec.tech header.i=@birdec.tech header.b="QxfNOone"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD00520883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=birdec.tech
+	by mail.kernel.org (Postfix) with ESMTP id 328F820827
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 13:10:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 328F820827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728179AbeKIWpU (ORCPT
+        id S1727845AbeKIWvN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 17:45:20 -0500
-Received: from host.euro-space.net ([87.117.239.2]:60316 "EHLO
-        host.euro-space.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727784AbeKIWpT (ORCPT
+        Fri, 9 Nov 2018 17:51:13 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:43499 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727784AbeKIWvM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 17:45:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=birdec.tech
-        ; s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Qm+1QkJK3o1xhQVxZtnhNPRliV76QpTd9/7K1JBty00=; b=QxfNOonedfoPkkpQ3/FsMR8S5v
-        3lmS5jjWamngyGT81goHiSFTMIWPU00frWN2uVJln0XQwgqZgBfR9ErINHr/UTUM+oZ1a88SzYyey
-        gP3lvnfsd6Okeef962q1Sh8mUqVryTikhgeV8606pfH2ZrfBw8gMfGIrm2ckQG5oRpG4MbLHO2Pkh
-        ZL+mHWsqzcxGNebSg5V4s1N2DIbexdgGjtprFuME2sbbQ+DyfvPsTiKAG+LPRxSqH+kRzuT4BTnD+
-        na3iaENFt/SQsUFE7JJGVSsDSfZ4vxTZXDNfqK640DtSq3L9o26i9qii1U/3rr+AqfvLL4+yJ/MXT
-        K+yXX2Fw==;
-Received: from x4e37285c.dyn.telefonica.de ([78.55.40.92]:37570 helo=[192.168.1.3])
-        by host.euro-space.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <kmarinushkin@birdec.tech>)
-        id 1gL6Sq-00030g-5R; Fri, 09 Nov 2018 13:04:44 +0000
-Subject: Re: [PATCH 1/2] ASoC: pcm3060: Add control for differential output
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-References: <20181029085913.17298-1-kmarinushkin@birdec.tech>
- <20181105112036.GC5365@sirena.org.uk>
-From:   Kirill Marinushkin <kmarinushkin@birdec.tech>
-Message-ID: <34162ae4-5000-f355-a5a2-90c7b7c6c3e7@birdec.tech>
-Date:   Fri, 9 Nov 2018 14:06:50 +0100
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+        Fri, 9 Nov 2018 17:51:12 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gL6YW-00073V-Sq; Fri, 09 Nov 2018 14:10:36 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gL6YW-0000Pt-Bn; Fri, 09 Nov 2018 14:10:36 +0100
+Date:   Fri, 9 Nov 2018 14:10:36 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Bamvor Jian Zhang <bamv2005@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/3] gpio: mockup: fix indicated direction
+Message-ID: <20181109131036.v6d645ojv6jr7v3y@pengutronix.de>
+References: <20181108165255.9940-1-brgl@bgdev.pl>
+ <20181108165255.9940-2-brgl@bgdev.pl>
+ <20181108203546.54rncnydgamud5z3@pengutronix.de>
+ <CAMRc=Mev6RMvVox2Sx6s80+obLg4QWAL=_hwcf34m2iMXwEbOg@mail.gmail.com>
+ <20181109115424.pe4w26nmt6xplzto@pengutronix.de>
+ <CAMRc=Mdf1GHR0_7uQ4PFFCwL9p3NyKBDMSBkipR826BhTYpz=g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181105112036.GC5365@sirena.org.uk>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - host.euro-space.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - birdec.tech
-X-Get-Message-Sender-Via: host.euro-space.net: authenticated_id: kmarinushkin@birdec.tech
-X-Authenticated-Sender: host.euro-space.net: kmarinushkin@birdec.tech
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=Mdf1GHR0_7uQ4PFFCwL9p3NyKBDMSBkipR826BhTYpz=g@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Mark,
+Hello,
 
-On 11/05/18 12:20, Mark Brown wrote:
-> On Mon, Oct 29, 2018 at 09:59:12AM +0100, Kirill Marinushkin wrote:
->> DAC may be switched between differential and single-ended output.
+On Fri, Nov 09, 2018 at 01:24:36PM +0100, Bartosz Golaszewski wrote:
+> pt., 9 lis 2018 o 12:54 Uwe Kleine-König
+> <u.kleine-koenig@pengutronix.de> napisał(a):
+> > On Fri, Nov 09, 2018 at 12:13:44PM +0100, Bartosz Golaszewski wrote:
+> > > czw., 8 lis 2018 o 21:35 Uwe Kleine-König
+> > > <u.kleine-koenig@pengutronix.de> napisał(a):
+> > > > On Thu, Nov 08, 2018 at 05:52:53PM +0100, Bartosz Golaszewski wrote:
+> > > > > Commit 3edfb7bd76bd ("gpiolib: Show correct direction from the
+> > > > > beginning") fixed an existing issue but broke libgpiod tests by
+> > > > > changing the default direction of dummy lines to output.
+> > > >
+> > > > The indicated commit only changed what was shown in debugfs, but didn't
+> > > > touch the actual direction of a GPIO, doesn't it? If someone called
+> > > > gpiod_get_direction before it would have returned "output", too, unless
+> > > > I miss something.
+> > > >
+> > >
+> > > This commit (3edfb7bd76bd) sets the correct direction of the line by
+> > > actually calling get_direction() instead of assuming input if
+> > > direction_input is not NULL. It just so happened that previously the
+> > > default direction of gpio-mockup lines was output but it would be
+> > > displayed as input due to this inconsistency.
+> >
+> > Does the test that fails since 3edfb7bd76bd use debugfs/gpio to find out
+> > the direction of a gpio? I'd say it's a bad idea to depend on this as
+> > (AFAICT) debugfs is only a debug aid and you shouldn't depend on stuff
+> > contained in it.
 > 
-> Isn't this something that'd be better controlled by DT - it's usually
-> going to be part of the board design?
+> No, this is what we get from the LINEINFO ioctl(). I only use debugfs
+> for triggering dummy interrupts.
+
+A right, gpio_ioctl uses these flags, too.
+
+> > I'd weaken the commit log a bit to not claim that the commit broke
+> > libgpiod but that it only made the inconsistency visible. After all this
+> > commit didn't "change the default direction of dummy lines to output",
+> > they were an output already before.
 > 
+> Well it did break the tests you know. ;)
 
-I agree with that. I implemented it as a switch, just because that's how other
-codec drivers do. In such situations, I prefer to be aligned with already
-existing code.
+Which test failed exactly?
 
-Indeed, it's more logical to implement such setup via DT. I will rewrite and
-send it as patch v2.
+Best regards
+Uwe
 
-Best Regards,
-Kirill
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
