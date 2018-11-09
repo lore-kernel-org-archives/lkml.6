@@ -2,108 +2,84 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2AEDC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:46:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44F47C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:47:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68EA32086C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:46:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0ACFD20825
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:47:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q/ov1Dyn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68EA32086C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZhadhQ/x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ACFD20825
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728106AbeKJA1K (ORCPT
+        id S1728108AbeKJA2S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 19:27:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39254 "EHLO mail.kernel.org"
+        Fri, 9 Nov 2018 19:28:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727735AbeKJA1K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 19:27:10 -0500
+        id S1727784AbeKJA2S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 19:28:18 -0500
 Received: from localhost (71-6-98-120.static-ip.telepacific.net [71.6.98.120])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61E9C206BA;
-        Fri,  9 Nov 2018 14:46:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 91D3320825;
+        Fri,  9 Nov 2018 14:47:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541774776;
-        bh=IUJIsNVM786MrQ773mOLm6lIvq36kZkZT/icc+Do9Jk=;
+        s=default; t=1541774844;
+        bh=Kcaq68GWhflYELGuA9DICyOnJI5wZvywNYjAtFh7amA=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Q/ov1DynqJcY8HzzbhcT989TiSs17P2eJcsDd8PqBn8RtwMSMlUgY9dFKIhTOAmgk
-         FeJRGR7tnPo/A9QLDoOuMqoraVitR8yFj3+jQDSbOEwCdUfcKijCxUNUnnECiQ2mK9
-         Cs+Da4HiV5Fu7w1aAlXi4WYMB0du8+ulk2kIk8jw=
-Date:   Fri, 9 Nov 2018 06:46:15 -0800
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.4 000/114] 4.4.163-stable review
-Message-ID: <20181109144615.GA19833@kroah.com>
-References: <20181108215059.051093652@linuxfoundation.org>
- <86d97b16-dbbc-27bd-ad7b-9a96210070a4@roeck-us.net>
+        b=ZhadhQ/xSJysa+1uvYHdJUpCazjTEmTChLUYy561o8Cy7J3pWTNAyeENtV79pLLhF
+         p7fsc4pigEJREmJlm1lWpsWLoEDA0QAhcUBzYKwConwnpOmJbpbAfcniDP3AHNWFDU
+         dukNkY/20qPIss0HTk1VOH0G9lMRC7hC1bnSiZgU=
+Date:   Fri, 9 Nov 2018 06:47:24 -0800
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Brajeswar Ghosh <brajeswar.linux@gmail.com>
+Cc:     kbuild test robot <lkp@intel.com>, devel@driverdev.osuosl.org,
+        tkjos@android.com, sabyasachi.linux@gmail.com,
+        linux-kernel@vger.kernel.org, arve@android.com, kbuild-all@01.org,
+        joel@joelfernandes.org, maco@android.com, jrdr.linux@gmail.com
+Subject: Re: [PATCH] drivers/android/binder.c: Remove duplicate header
+Message-ID: <20181109144724.GA20089@kroah.com>
+References: <20181109041425.GA2950@hp-pavilion-15-notebook-pc-brajeswar>
+ <201811092225.ABFKAgV4%fengguang.wu@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <86d97b16-dbbc-27bd-ad7b-9a96210070a4@roeck-us.net>
+In-Reply-To: <201811092225.ABFKAgV4%fengguang.wu@intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 09, 2018 at 05:50:09AM -0800, Guenter Roeck wrote:
-> On 11/8/18 1:50 PM, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.4.163 release.
-> > There are 114 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Sat Nov 10 21:50:28 UTC 2018.
-> > Anything received after that time might be too late.
-> > 
+On Fri, Nov 09, 2018 at 10:40:14PM +0800, kbuild test robot wrote:
+> Hi Brajeswar,
 > 
-> Building i386:allnoconfig ... failed
-> --------------
-> Error log:
-> kernel/built-in.o: In function `cpu_startup_entry':
-> (.text+0x1a2e9): undefined reference to `cpuidle_devices'
-> make[1]: *** [vmlinux] Error 1
-> make: *** [sub-make] Error 2
+> Thank you for the patch! Yet something to improve:
 > 
+> [auto build test ERROR on staging/staging-testing]
+> [also build test ERROR on v4.20-rc1 next-20181109]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 > 
-> Bisect results:
+> url:    https://github.com/0day-ci/linux/commits/Brajeswar-Ghosh/drivers-android-binder-c-Remove-duplicate-header/20181109-154717
+> config: i386-allmodconfig (attached as .config)
+> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
+> reproduce:
+>         # save the attached .config to linux build tree
+>         make ARCH=i386 
 > 
-> # bad: [70cfa9ca6595d3238b36b9f6b36cf6e18dfd2c3b] Linux 4.4.163-rc1
-> # good: [24c2342b8e51ab3185e68470709904150a1e3ee0] Linux 4.4.162
-> git bisect start 'HEAD' 'v4.4.162'
-> # good: [008f87b2e9c5db7dd3756832a9e449415d837c7d] ixgbe: fix RSS limit for X550
-> git bisect good 008f87b2e9c5db7dd3756832a9e449415d837c7d
-> # good: [5d92c564ec3dd9a5833974f3ce113cc7a94e0f6a] mtd: spi-nor: Add support for is25wp series chips
-> git bisect good 5d92c564ec3dd9a5833974f3ce113cc7a94e0f6a
-> # good: [71fba871e4a07400eb1400b1e6b45ca3a5487834] rtnetlink: Disallow FDB configuration for non-Ethernet device
-> git bisect good 71fba871e4a07400eb1400b1e6b45ca3a5487834
-> # good: [4d1024282b1259209bb4601f4b51dce367cf8a02] IB/ucm: Fix Spectre v1 vulnerability
-> git bisect good 4d1024282b1259209bb4601f4b51dce367cf8a02
-> # good: [fe9d47ae282ebd2bb10a36ec2bace1afd0ba050e] Input: elan_i2c - add ACPI ID for Lenovo IdeaPad 330-15IGM
-> git bisect good fe9d47ae282ebd2bb10a36ec2bace1afd0ba050e
-> # bad: [573e8431fe60169157440664f74c6af254b3b00e] x86/percpu: Fix this_cpu_read()
-> git bisect bad 573e8431fe60169157440664f74c6af254b3b00e
-> # good: [be0ac51f4181a18c458080d79919aeee17ce0c68] sched/fair: Fix throttle_list starvation with low CFS quota
-> git bisect good be0ac51f4181a18c458080d79919aeee17ce0c68
-> # first bad commit: [573e8431fe60169157440664f74c6af254b3b00e] x86/percpu: Fix this_cpu_read()
-> 
-> Full results will follow later, after builds are complete.
+> All errors (new ones prefixed by >>):
 
-Ugh, kbuild just reported this as well.  Something's odd with 4.4 and
-this patch, I think I might just drop it as no one has ever reported
-this issue there...
+<snip>
 
-Let me dig some more first...
+Yeah, I was right :(
+
+Always test-build your patches.
 
 greg k-h
