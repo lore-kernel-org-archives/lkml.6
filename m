@@ -2,94 +2,138 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F81FC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 16:02:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C434C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 16:04:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37DA82080D
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 16:02:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IbB6HkTv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37DA82080D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3D9882086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 16:04:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D9882086C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728300AbeKJBn0 (ORCPT
+        id S1728314AbeKJBpq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 20:43:26 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:45952 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727828AbeKJBn0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 20:43:26 -0500
-Received: by mail-oi1-f194.google.com with SMTP id p144-v6so1839476oic.12;
-        Fri, 09 Nov 2018 08:02:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TyJT/Z1FDu6UKvFnNcnXKcjFSXHdIfhIXfpytCDOKDA=;
-        b=IbB6HkTv8p9yr57vR0IJ0/gSy2VMOuvQrm1yfOXDc6ZBclO/thk6pcNUEZMu6WYyGh
-         onr3i7Bw6Pot6z9kbD1EfrsA4fUrF4Sg44SpU/zwb9iP9K+MVAVJNllk4tzaJUBU+N9l
-         8gXZXWrOkg3WIV5s5t6Swcbb382OQU3B8jL5832VoiqThvhp1xMh+RD6CESBdtj3Zj7e
-         hn+nzPIbls+C/o+21/Vc5VpYTm4fQfKT8Y2rRKElbZPuGhAbtUR4L5zI+c6eMzQSVCOO
-         llyUT+Llm5aaj6PsyEXXpipp4qBcyETirEGVfCrr6ZBwzTxcD95e9nMqKzohjetB404Z
-         1NyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TyJT/Z1FDu6UKvFnNcnXKcjFSXHdIfhIXfpytCDOKDA=;
-        b=OvHFtJ+G5/NPAD+ef3JAydC2ZVHZuIDgfO7lfdmXQJn8+5VheGDwWHL9nGaqzIQq/G
-         gu9Fd+aUknUjJ76XI+Y/yqKKuFx7wGZhuOgbF7w9jcsB887fUVmpVnWzVhGIohw4DSYb
-         exKKFlbQGybxxghe2W+pCMbMfIxfqhOCZ8TLZok1l8Mcw6PI8SBXgQAvow8iDh17qxsT
-         r4hFzweDzZhlY04HfmG5iVF4hDSidbCBKy/FdCHoFOLONiqNwZlsk4dQNHptquCpEmJu
-         5NEUgIc3LzcjBTgkJaRPS3ozVHQQLHQL4o1VnNiAuAKHkmc5hldLWeYaLLP9gypf0Lxu
-         6KNQ==
-X-Gm-Message-State: AGRZ1gIJiTeIqDVNzdvDw/aWEjw0UEBoeg+UrukOoomGu5dkQ+a9hh4L
-        ZeeOTD2G9n8QtKcR5PWLJpIcD+T0BE+OKW+u2bA=
-X-Google-Smtp-Source: AJdET5c/3H5pvrInZIPt9bNAfdVoyBgV089DJPieXeGc15Nxcu4Y3kOx58w82R/eXgZ19Y/puo6K+hYV3kH80tQ1mbc=
-X-Received: by 2002:a54:458c:: with SMTP id z12-v6mr5377330oib.297.1541779335394;
- Fri, 09 Nov 2018 08:02:15 -0800 (PST)
+        Fri, 9 Nov 2018 20:45:46 -0500
+Received: from sauhun.de ([88.99.104.3]:46340 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727828AbeKJBpq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 20:45:46 -0500
+Received: from localhost (p54B3380A.dip0.t-ipconnect.de [84.179.56.10])
+        by pokefinder.org (Postfix) with ESMTPSA id 3AD753E4482;
+        Fri,  9 Nov 2018 17:04:33 +0100 (CET)
+Date:   Fri, 9 Nov 2018 17:04:32 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-i2c@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>,
+        Alok Chauhan <alokc@codeaurora.org>
+Subject: Re: [PATCH v2] i2c: i2c-qcom-geni: Fix runtime PM mismatch with
+ child devices
+Message-ID: <20181109160432.GI1031@kunai>
+References: <20181102205732.116851-1-swboyd@chromium.org>
 MIME-Version: 1.0
-References: <20181104155501.14767-1-TheSven73@googlemail.com>
-In-Reply-To: <20181104155501.14767-1-TheSven73@googlemail.com>
-From:   Sven Van Asbroeck <thesven73@gmail.com>
-Date:   Fri, 9 Nov 2018 11:02:04 -0500
-Message-ID: <CAGngYiU+8k4ZHYhFVQGKXW8mATEDi64Mi9PsVkX-5vn2PCY3ew@mail.gmail.com>
-Subject: Re: [PATCH anybus v3 0/6] Support HMS Profinet Card over Anybus
-To:     Sven Van Asbroeck <svendev@arcx.com>,
-        Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="4LwthZj+AV2mq5CX"
+Content-Disposition: inline
+In-Reply-To: <20181102205732.116851-1-swboyd@chromium.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arnd, Rob, Linus,
 
-Many thanks for your constructive feedback so far !
+--4LwthZj+AV2mq5CX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Is there anything in general about this set that would prevent it from being
-mainlined? Perhaps I am trying to do too much at once, dropping a patchset
-that is too complex to be properly reviewed?
+On Fri, Nov 02, 2018 at 01:57:32PM -0700, Stephen Boyd wrote:
+> We need to enable runtime PM on this i2c controller before populating
+> child devices with i2c_add_adapter(). Otherwise, if a child device uses
+> runtime PM and stays runtime PM enabled we'll get the following warning
+> at boot.
+>=20
+>  Enabling runtime PM for inactive device (a98000.i2c) with active children
+>  WARNING: CPU: 4 PID: 1 at drivers/base/power/runtime.c:1300 pm_runtime_e=
+nable+0xd8/0xf8
+>  Modules linked in:
+>  CPU: 4 PID: 1 Comm: swapper/0 Not tainted 4.19.0 #6
+>  elants_i2c 14-0010: 14-0010 supply vccio not found, using dummy regulator
+>  pstate: 60c00089 (nZCv daIf +PAN +UAO)
+>  pc : pm_runtime_enable+0xd8/0xf8
+>  lr : pm_runtime_enable+0xd8/0xf8
+>  sp : ffffffc0de257a30
+>  x29: ffffffc0de257a30 x28: 0000000000061a80
+>  x27: ffffff9008ea7118
+>  x26: ffffffc0d718b058
+>  x25: ffffff9008ea7000 x24: ffffffc0d718a8dc
+>  x23: ffffffc0d718a8b0 x22: ffffffc0d823dd58
+>  x21: 0000000000000000 x20: ffffffc0d823dbc8
+>  x19: ffffffc0d823da90 x18: 000000007f743d9a
+>  x17: 0000000000000080 x16: 0000000000000003
+>  x15: 000000000000003f x14: 0720072007200720
+>  x13: 0720072007200720 x12: 0720072007200720
+>  x11: 0720072007200720 x10: 0720072007200720
+>  x9 : 0720072007200720 x8 : 0720072007200720
+>  x7 : ffffff900816da30 x6 : 0000000000000000
+>  x5 : 0000000000000080 x4 : 0000000000000003
+>  x3 : ffffff900816f304 x2 : ffffffc0de248050
+>  x1 : 25045a74f48a7400 x0 : 25045a74f48a7400
+>  Call trace:
+>   pm_runtime_enable+0xd8/0xf8
+>   geni_i2c_probe+0x440/0x460
+>   platform_drv_probe+0x74/0xc8
+>   really_probe+0x1ac/0x35c
+>   driver_probe_device+0xd4/0x118
+>   __driver_attach+0xc8/0x118
+>   bus_for_each_dev+0xac/0xe8
+>   driver_attach+0x38/0x44
+>   bus_add_driver+0x15c/0x294
+>   driver_register+0x13c/0x198
+>   __platform_driver_register+0x88/0x94
+>   geni_i2c_driver_init+0x20/0x28
+>   do_one_initcall+0x250/0x4ec
+>   kernel_init_freeable+0x6f0/0x7c4
+>   kernel_init+0x18/0x120
+>   ret_from_fork+0x10/0x18
+>=20
+> Let's move the runtime PM enabling and setup to before we add the
+> adapter, so that this device can respond to runtime PM requests from
+> children.
+>=20
+> Cc: Douglas Anderson <dianders@chromium.org>
+> Cc: Alok Chauhan <alokc@codeaurora.org>
+> Fixes: 37692de5d523 ("i2c: i2c-qcom-geni: Add bus driver for the Qualcomm=
+ GENI I2C controller")
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 
-I've been thinking about reworking the host to its simplest, yet feature-
-complete form. Just serialize all card accesses with a single lock.
-Then the kernel thread, kqueue, kcache, kref etc would all disappear.
-The price we pay is a reduction in performance/parallelism.
-We could then increase parallelism at a later stage.
-Would that be of any help?
+Applied to for-current, thanks!
 
-Comments on v3 will go into v4 shortly.
-(Rob, I'm not sure how to address your feedback, other than to s/host/slot/g ?)
 
-Yours,
-Sven
+--4LwthZj+AV2mq5CX
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvlsBAACgkQFA3kzBSg
+KbbEaw/5Afvgtkdph1ZdQUggzxqrOSr2UJqPn3Da3LX62IuONadcoe8LeAp44srL
+juH1PqXRyZtC7GTmDO07afrY/A+PgFHkIloYOCB/OPv+7WQ+H5aXZuB8qXD9Wl+r
+Og76JAUT7/UxAzIUZqNrDkF40i87V7Fh7fuRTIZXF8gl0XWpU5WZSZtAv5rR++Ug
+UDncWYzr1QFVIDZg89LW8+jwud368XD8Sx59a19KQ3pBhEqnsJMLnwghO1/4wI/W
+xBfsXuEHoLUFywiQTYY2UMqlGZ+Os0a+lQzQ+1JYQTvtk2lxdtQPd+K2j7HwZ9NL
+wDIgQWdTJiSSA2Le9YVBhncMrh4lmO7DCV7msAtm/gHGCLFSzITBW9Z7E/xDPpjN
+huKuwVbJv0MMYpftWYG7G/YcpSniPi8IEVaZGehS8zpL2NJaZ930Tt4T2FsZ4bpc
+GlKA+YA7sPb/n30yfyRPnqOnznBbAlqFXsKcCiSCVyJJqeCW9hgitM6npvhMEaqm
+5z9uppIfEnvEG2KHQEQwONLYIeue3ZHnabka95KWolPXsMD7LETEM8fbUFzAbcnY
+kndSKU7CEikSlYo2BM3lTAwNGtobAnncIu/Y9Vgleb2hR0k+JtjtzsJmN7kM92aA
+hbAMypRhUHWuQsxUawmbQAKHuWOWO+WeNM2k3BdE5AB1Duni36E=
+=yLFI
+-----END PGP SIGNATURE-----
+
+--4LwthZj+AV2mq5CX--
