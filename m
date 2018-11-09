@@ -2,401 +2,155 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 231AAC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 03:50:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF16EC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 03:52:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4F9920855
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 03:50:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4F9920855
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id A14C020817
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 03:52:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k6qciurj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A14C020817
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727853AbeKIN3D (ORCPT
+        id S1727793AbeKINbQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 08:29:03 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:36662 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727238AbeKIN3C (ORCPT
+        Fri, 9 Nov 2018 08:31:16 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:38537 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727445AbeKINbQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 08:29:02 -0500
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id A815672CBF9;
-        Fri,  9 Nov 2018 06:49:19 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 98AE77CD1FF; Fri,  9 Nov 2018 06:49:19 +0300 (MSK)
-Date:   Fri, 9 Nov 2018 06:49:19 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>
-Cc:     linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jann Horn <jannh@google.com>,
-        Serge Hallyn <serge.hallyn@ubuntu.com>,
-        Prakash Sangappa <prakash.sangappa@oracle.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Subject: Re: [PATCH v6] pidns: introduce syscall translate_pid
-Message-ID: <20181109034919.GA21681@altlinux.org>
-Mail-Followup-To: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>,
-        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jann Horn <jannh@google.com>,
-        Serge Hallyn <serge.hallyn@ubuntu.com>,
-        Prakash Sangappa <prakash.sangappa@oracle.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-References: <152788068212.768348.15192457501079586650.stgit@buzz>
- <db8d560e-47d1-c32f-e4a2-407110f2b5b6@oracle.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="17pEHd4RhPHOinZp"
-Content-Disposition: inline
-In-Reply-To: <db8d560e-47d1-c32f-e4a2-407110f2b5b6@oracle.com>
+        Fri, 9 Nov 2018 08:31:16 -0500
+Received: by mail-ua1-f67.google.com with SMTP id p9so178017uaa.5;
+        Thu, 08 Nov 2018 19:52:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=kp69naeihrpUWteWnlPaZNQ668DpPHXuKMs/WaC8cFE=;
+        b=k6qciurjrrzRmniG+fA9feSvbxb8G+yHUFQ+LbsoGmM/zUqYYH2I3umFe/54J4Ary2
+         m0MS4aYxjQDfyqTWXVnhTADr6mWfiohntT+nI73tCs3ZEc5CEdJjizki8GV4SRTjpYYD
+         ILRiX/V/lEsL5D+9CgMtRgmkdoSgQqlemCMLBqOF1ib0BQ05Ea7D5KjBFBhc6ajNLL6A
+         i9Jigp2A2KV3Cef5yaQxm8O2YAT+hQTJxoeKOfmX9JW4Qt0BJTGn0VqwryMqHGPnfiUQ
+         kIcfHaRaOy+I2uoml5XB5NcizBCwlqZTGd6WmCeJKEaj3oZKBQ+z9c83jt//stEFxAgx
+         flhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=kp69naeihrpUWteWnlPaZNQ668DpPHXuKMs/WaC8cFE=;
+        b=FiiOvFgpo03uqVvKP2UWZXS2cB4s1259p/Ba5/EexQcpwktmJ3vyWSQkfNZSH+AUG0
+         oWp9Cy0tOCCuMja0Y/JZEsrruuP/Pjv5zJxdMWGyZ6OcWAdS+vmfqhN9CWNsxiMJ1B+F
+         dEfRqQWvHVBdfDyLcdgd+6F+84ZmFwhZW4pBnX9Q7Sk/1Cd+C5q0za51ocEExDmgr9av
+         H/PC5bLigDst5Mx513MXYmhyU2x26eE5TF9+zLkdxhZjLwdsam0Ir6xXC5OAbtI5BdqT
+         +aYxclm63anWGM6LEkvBjO6YX3FtXyGYSsUaeAubO1QDDCo1l3q5RgcHCW0i46+g3axv
+         lTtQ==
+X-Gm-Message-State: AGRZ1gLlf7IQOC69R909WFhGRYWh4h2CLWuiHJLS6nU1gEx1Y0TpPrGW
+        LwEJcjlSO0USw+YXX58VL/OZH1f5Vg==
+X-Google-Smtp-Source: AJdET5fsnhh2UbYvo+5EvGWWiv+P2LGNmYMzsDRm9cbcYtQQdknEXEYu+PNxpaRbSCTwFq2BBxzBmA==
+X-Received: by 2002:ab0:2746:: with SMTP id c6mr3324293uap.123.1541735553727;
+        Thu, 08 Nov 2018 19:52:33 -0800 (PST)
+Received: from 960.ws ([2601:902:c200:6512:a7fd:514d:7aab:c075])
+        by smtp.gmail.com with ESMTPSA id n136sm1148543vka.20.2018.11.08.19.52.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 08 Nov 2018 19:52:33 -0800 (PST)
+Message-ID: <d3c913eb8854efbbf6b737cf94edc95179d58f59.camel@gmail.com>
+Subject: Re: [PATCH v3 1/3] x86: add support for Huawei WMI hotkeys.
+From:   ayman.bagabas@gmail.com
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Kailang Yang <kailang@realtek.com>,
+        Hui Wang <hui.wang@canonical.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>
+Date:   Thu, 08 Nov 2018 22:52:31 -0500
+In-Reply-To: <CAHp75Vev_0ObO=KLHfON8JAco=a9MURycH9uk-a+h1JqrSSQFA@mail.gmail.com>
+References: <20181108171701.4444-1-ayman.bagabas@gmail.com>
+         <20181108171701.4444-2-ayman.bagabas@gmail.com>
+         <CAHp75Vev_0ObO=KLHfON8JAco=a9MURycH9uk-a+h1JqrSSQFA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.1 (3.30.1-1.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 2018-11-08 at 21:58 +0200, Andy Shevchenko wrote:
+> On Thu, Nov 8, 2018 at 7:17 PM Ayman Bagabas <ayman.bagabas@gmail.com
+> > wrote:
+> > This driver adds support for missing hotkeys on some Huawei
+> > laptops.
+> > Currently, only Huawei Matebook X and Matebook X Pro is supported.
+> > 
+> 
+> Thanks for an update, my comments below.
+> 
+> 
+> > +config HUAWEI_LAPTOP
+> > +       tristate "Huawei WMI hotkeys driver"
+> > +       depends on ACPI
+> 
+> Do you need an ACPI dependency be explicit here?
 
---17pEHd4RhPHOinZp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Probably don't need it.
 
-Hi,
-
-On Mon, Jul 16, 2018 at 10:57:48AM -0700, Nagarathnam Muthusamy wrote:
-> On 06/01/2018 12:18 PM, Konstantin Khlebnikov wrote:
-> > Each process have different pids, one for each pid namespace it belongs.
-> > When interaction happens within single pid-ns translation isn't require=
-d.
-> > More complicated scenarios needs special handling.
-> >
-> > For example:
-> > - reading pid-files or logs written inside container with pid namespace
-> > - writing logs with internal pids outside container for pushing them in=
-to
-> > - attaching with ptrace to tasks from different pid namespace
-> >
-> > Generally speaking, any cross pid-ns API with pids needs translation.
-> >
-> > Currently there are several interfaces that could be used here:
-> >
-> > Pid namespaces are identified by device and inode of /proc/[pid]/ns/pid.
-> >
-> > Pids for nested pid namespaces are shown in file /proc/[pid]/status.
-> > In some cases pid translation could be easily done using this informati=
-on.
-> > Backward translation requires scanning all tasks and becomes really
-> > complicated for deeper namespace nesting.
-> >
-> > Unix socket automatically translates pid attached to SCM_CREDENTIALS.
-> > This requires CAP_SYS_ADMIN for sending arbitrary pids and entering
-> > into pid namespace, this expose process and could be insecure.
-> >
-> > This patch adds new syscall for converting pids between pid namespaces:
-> >
-> > pid_t translate_pid(pid_t pid, int source, int target);
-> >
-> > Pid-namespaces are referred file descriptors opened to proc files
-> > /proc/[pid]/ns/pid or /proc/[pid]/ns/pid_for_children.
-> > Negative argument points to current pid namespace.
-> >
-> > Syscall returns pid in target pid-ns or zero if task have no pid there.
-> >
-> > Error codes:
-> > EBADF    - file descriptor is closed
-> > EINVAL   - file descriptor isn't pid namespace
-> > ESRCH    - task not found in @source namespace
-> >
-> > Translation could breach pid-ns isolation and return pids from outer pid
-> > namespaces iff process already has file descriptor for these namespaces.
-> >
-> > Examples:
-> > translate_pid(pid, ns, -1)      - get pid in our pid namespace
-> > translate_pid(pid, -1, ns)      - get pid in other pid namespace
-> > translate_pid(1, ns, -1)        - get pid of init task for namespace
-> > translate_pid(pid, -1, ns) > 0  - is pid is reachable from ns?
-> > translate_pid(1, ns1, ns2) > 0  - is ns1 inside ns2?
-> > translate_pid(1, ns1, ns2) =3D=3D 0 - is ns1 outside ns2?
-> > translate_pid(1, ns1, ns2) =3D=3D 1 - is ns1 equal ns2?
-> >
-> > Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-> > Reanimated-by: Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>
-> >
-> > ---
-> >
-> > v1: https://lkml.org/lkml/2015/9/15/411
-> > v2: https://lkml.org/lkml/2015/9/24/278
-> >   * use namespace-fd as second/third argument
-> >   * add -pid for getting parent pid
-> >   * move code into kernel/sys.c next to getppid
-> >   * drop ifdef CONFIG_PID_NS
-> >   * add generic syscall
-> > v3: https://lkml.org/lkml/2015/9/28/3
-> >   * use proc_ns_fdget()
-> >   * update description
-> >   * rebase to next-20150925
-> >   * fix conflict with mlock2
-> > v4: https://lkml.org/lkml/2017/10/13/177
-> >   * rename from getvpid() into translate_pid()
-> >   * remove syscall if CONFIG_PID_NS=3Dn
-> >   * drop -pid for parent task
-> >   * drop fget-fdget optimizations
-> >   * add helper get_pid_ns_by_fd()
-> >   * wire only into x86
-> > v5: https://lkml.org/lkml/2018/4/4/677
-> >   * rewrite commit message
-> >   * resolve pidns by task pid or by pidns fd
-> >   * add arguments source_type and target_type
-> > v6:
-> >   * revert back minimized v4 design
-> >   * rebase to next-20180601
-> >   * fix COND_SYSCALL stub
-> >   * use next syscall number, old used for io_pgetevents
-> >
-> > --- sample tool ---
-> >
-> > #define _GNU_SOURCE
-> > #include <sys/syscall.h>
-> > #include <sys/types.h>
-> > #include <fcntl.h>
-> > #include <unistd.h>
-> > #include <stdlib.h>
-> > #include <stdio.h>
-> > #include <err.h>
-> >
-> > #ifndef SYS_translate_pid
-> > #ifdef __x86_64__
-> > #define SYS_translate_pid 334
-> > #elif defined __i386__
-> > #define SYS_translate_pid 386
-> > #endif
-> > #endif
-> >
-> > pid_t translate_pid(pid_t pid, int source, int target) {
-> > 	return syscall(SYS_translate_pid, pid, source, target);
-> > }
-> >
-> > int main(int argc, char **argv) {
-> > 	int pid, source, target;
-> > 	char buf[64];
-> >
-> > 	if (argc !=3D 4)
-> > 		errx(1, "usage: %s <pid> <source> <target>", argv[0]);
-> >
-> > 	pid =3D atoi(argv[1]);
-> > 	source =3D atoi(argv[2]);
-> > 	target =3D atoi(argv[3]);
-> >
-> > 	if (source > 0) {
-> > 		snprintf(buf, sizeof(buf), "/proc/%d/ns/pid", source);
-> > 		source =3D open(buf, O_RDONLY);
-> > 		if (source < 0)
-> > 			err(2, "open source %s", buf);
-> > 	}
-> >
-> > 	if (target > 0) {
-> > 		snprintf(buf, sizeof(buf), "/proc/%d/ns/pid", target);
-> > 		target =3D open(buf, O_RDONLY);
-> > 		if (target < 0)
-> > 			err(2, "open target %s", buf);
-> > 	}
-> >
-> > 	pid =3D translate_pid(pid, source, target);
-> > 	if (pid < 0)
-> > 		err(2, "translate_pid");
-> >
-> > 	printf("%d\n", pid);
-> > 	return 0;
-> > }
-> >
-> > ---
-> > ---
-> >   arch/x86/entry/syscalls/syscall_32.tbl |    1
-> >   arch/x86/entry/syscalls/syscall_64.tbl |    1
-> >   include/linux/syscalls.h               |    1
-> >   kernel/pid_namespace.c                 |   66 +++++++++++++++++++++++=
-+++++++++
-> >   kernel/sys_ni.c                        |    3 +
-> >   5 files changed, 72 insertions(+)
-> >
-> > diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/sy=
-scalls/syscall_32.tbl
-> > index 14a2f996e543..e70685750d43 100644
-> > --- a/arch/x86/entry/syscalls/syscall_32.tbl
-> > +++ b/arch/x86/entry/syscalls/syscall_32.tbl
-> > @@ -397,3 +397,4 @@
-> >   383	i386	statx			sys_statx			__ia32_sys_statx
-> >   384	i386	arch_prctl		sys_arch_prctl			__ia32_compat_sys_arch_prctl
-> >   385	i386	io_pgetevents		sys_io_pgetevents		__ia32_compat_sys_io_pgete=
-vents
-> > +386	i386	translate_pid		sys_translate_pid		__ia32_sys_translate_pid
-> > diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/sy=
-scalls/syscall_64.tbl
-> > index cd36232ab62f..ebfd89055424 100644
-> > --- a/arch/x86/entry/syscalls/syscall_64.tbl
-> > +++ b/arch/x86/entry/syscalls/syscall_64.tbl
-> > @@ -342,6 +342,7 @@
-> >   331	common	pkey_free		__x64_sys_pkey_free
-> >   332	common	statx			__x64_sys_statx
-> >   333	common	io_pgetevents		__x64_sys_io_pgetevents
-> > +334	common	translate_pid		__x64_sys_translate_pid
-> >  =20
-> >   #
-> >   # x32-specific system call numbers start at 512 to avoid cache impact
-> > diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-> > index 390e814fdc8d..3f33971cf1c8 100644
-> > --- a/include/linux/syscalls.h
-> > +++ b/include/linux/syscalls.h
-> > @@ -843,6 +843,7 @@ asmlinkage long sys_clock_adjtime(clockid_t which_c=
-lock,
-> >   				struct timex __user *tx);
-> >   asmlinkage long sys_syncfs(int fd);
-> >   asmlinkage long sys_setns(int fd, int nstype);
-> > +asmlinkage long sys_translate_pid(pid_t pid, int source, int target);
-> >   asmlinkage long sys_sendmmsg(int fd, struct mmsghdr __user *msg,
-> >   			     unsigned int vlen, unsigned flags);
-> >   asmlinkage long sys_process_vm_readv(pid_t pid,
-> > diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
-> > index 2a2ac53d8b8b..3b872cbbe264 100644
-> > --- a/kernel/pid_namespace.c
-> > +++ b/kernel/pid_namespace.c
-> > @@ -13,6 +13,7 @@
-> >   #include <linux/user_namespace.h>
-> >   #include <linux/syscalls.h>
-> >   #include <linux/cred.h>
-> > +#include <linux/file.h>
-> >   #include <linux/err.h>
-> >   #include <linux/acct.h>
-> >   #include <linux/slab.h>
-> > @@ -380,6 +381,71 @@ static void pidns_put(struct ns_common *ns)
-> >   	put_pid_ns(to_pid_ns(ns));
-> >   }
-> >  =20
-> > +static struct pid_namespace *get_pid_ns_by_fd(int fd)
-> > +{
-> > +	struct pid_namespace *pidns;
-> > +	struct ns_common *ns;
-> > +	struct file *file;
-> > +
-> > +	file =3D proc_ns_fget(fd);
-> > +	if (IS_ERR(file))
-> > +		return ERR_CAST(file);
-> > +
-> > +	ns =3D get_proc_ns(file_inode(file));
-> > +	if (ns->ops->type =3D=3D CLONE_NEWPID)
-> > +		pidns =3D get_pid_ns(to_pid_ns(ns));
-> > +	else
-> > +		pidns =3D ERR_PTR(-EINVAL);
-> > +
-> > +	fput(file);
-> > +	return pidns;
-> > +}
-> > +
+> 
+> > +       depends on ACPI_WMI
+> > +       depends on INPUT
+> > +       select INPUT_SPARSEKMAP
+> > +       help
+> > +         This driver provides support for Huawei WMI hotkeys.
+> > +         It enables the missing keys and adds support to the
+> > micmute
+> > +         LED found on some of these laptops.
 > > +/*
-> > + * translate_pid - convert pid in source pid-ns into target pid-ns.
-> > + * @pid:    pid for translation
-> > + * @source: pid-ns file descriptor or -1 for active namespace
-> > + * @target: pid-ns file descriptor or -1 for active namesapce
+> > + *  Huawei WMI hotkeys
 > > + *
-> > + * Returns pid in @target pid-ns, zero if task have no pid there,
-> > + * or -ESRCH if task with @pid does not found in @source pid-ns.
-> > + */
-> > +SYSCALL_DEFINE3(translate_pid, pid_t, pid, int, source, int, target)
-> > +{
-> > +	struct pid_namespace *source_ns, *target_ns;
-> > +	struct pid *struct_pid;
-> > +	pid_t result;
-> > +
-> > +	if (source >=3D 0) {
-> > +		source_ns =3D get_pid_ns_by_fd(source);
-> > +		result =3D PTR_ERR(source_ns);
-> > +		if (IS_ERR(source_ns))
-> > +			goto err_source;
-> > +	} else
-> > +		source_ns =3D task_active_pid_ns(current);
-> > +
-> > +	if (target >=3D 0) {
-> > +		target_ns =3D get_pid_ns_by_fd(target);
-> > +		result =3D PTR_ERR(target_ns);
-> > +		if (IS_ERR(target_ns))
-> > +			goto err_target;
-> > +	} else
-> > +		target_ns =3D task_active_pid_ns(current);
-> > +
-> > +	rcu_read_lock();
-> > +	struct_pid =3D find_pid_ns(pid, source_ns);
-> > +	result =3D struct_pid ? pid_nr_ns(struct_pid, target_ns) : -ESRCH;
-> > +	rcu_read_unlock();
-> > +
-> > +	if (target >=3D 0)
-> > +		put_pid_ns(target_ns);
-> > +err_target:
-> > +	if (source >=3D 0)
-> > +		put_pid_ns(source_ns);
-> > +err_source:
-> > +	return result;
-> > +}
-> > +
-> >   static int pidns_install(struct nsproxy *nsproxy, struct ns_common *n=
-s)
-> >   {
-> >   	struct pid_namespace *active =3D task_active_pid_ns(current);
-> > diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
-> > index 06b4ccee0047..bf276e9ace9a 100644
-> > --- a/kernel/sys_ni.c
-> > +++ b/kernel/sys_ni.c
-> > @@ -153,6 +153,9 @@ COND_SYSCALL_COMPAT(kexec_load);
-> >   COND_SYSCALL(init_module);
-> >   COND_SYSCALL(delete_module);
-> >  =20
-> > +/* kernel/pid_namespace.c */
-> > +COND_SYSCALL(translate_pid);
-> > +
-> >   /* kernel/posix-timers.c */
-> >  =20
-> >   /* kernel/printk.c */
-> >
->=20
-> Ping :-) Checking back again for Ack or comments.
+> > + *  Copyright (C) 2018       Ayman Bagabas <
+> > ayman.bagabas@gmail.com>
+> > + *
+> > + *  This program is free software: you can redistribute it and/or
+> > modify
+> > + *  it under the terms of the GNU General Public License as
+> > published by
+> > + *  the Free Software Foundation, either version 2 of the License,
+> > or
+> > + *  (at your option) any later version.
+> > + *
+> > + *  This program is distributed in the hope that it will be
+> > useful,
+> > + *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+> > + *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> > + *  GNU General Public License for more details.
+> > + *
+> > + *  You should have received a copy of the GNU General Public
+> > License
+> > + *  along with this program.  If not, see <
+> > https://www.gnu.org/licenses/>;.
+> > + *
+> 
+> Please, replace this boilerplate text with appropriate SPDX
+> identifier.
 
-JFYI, I'll try to attract more attention to this proposal
-by mentioning it in my talk at the LPC 2018 as a potential solution
-for one of several problems we have in strace, see
-https://www.linuxplumbersconf.org/event/2/contributions/78/
+Soryy about that. This alright?
+
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * Huawei WMI hotkeys
+ *
+ * Copyright (C) 2018		Ayman Bagabas <ayman.bagabas@gmail.com>
+ */
 
 
---=20
-ldv
 
---17pEHd4RhPHOinZp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJb5QO/AAoJEAVFT+BVnCUIbhsP/Rb3dXmc0O3oZ08GSipPJOf9
-wSBxAg6nz0pCHw45dI/N0sC0REvn3LyB7ERRB40RKvcnSBTQJoqK8o85uitFARJz
-TyzDm8vvczgb5SQp893qR8QER/622hZrqh1qNCCyCGy+G+B/tYltcDzh4DbqIjk/
-2gUP5N6m/LdRvc35XzNw24BXlWouez73KjJIZtsZiXZrDSahYvTC60DqEv+I3fb9
-Z6h//N14WvpWQU1dRL7dOZJEDnGkem6D7cbzb1yJWBrjF+mEr/Ufnoi/xkuySjtU
-iqJCE/BoKUkIv94fY0rCABv+qylTAqiYj11OLvDfOhZRWZkhAUR2iMDowhTyGd7x
-2Vt+gQVJNymn0VKFbAN8pW+/uq326uYwnWypQ0Ap8TFrFoOflOZEt0+amtOli+kc
-fwv+yLbrFjsqzw0dP2Dwe6nnAGopE5q4Xs/ncVsvx/2ldeUOPAt3bHjvu9WNCOIw
-sDw1xX7vwzfiUrowRJIDgKJH3wR2bL3kUqzGgyIJOvQrKniVfxw5QnEbJPF2P0tM
-X3MXxZpzSTwUPlXKERIMxP2sOXhUWWtzcI0S8POzIbzXnqngBfySdorzkDGM2Vo8
-a9HZfPETYYu0pkjmtbxaeqTQFp8GjbSf6AOYkYoQfY+051bBAZyXwX9481kPIX23
-ChgZr+nKlceBXTr+2LRo
-=jDif
------END PGP SIGNATURE-----
-
---17pEHd4RhPHOinZp--
