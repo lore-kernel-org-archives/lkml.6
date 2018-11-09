@@ -2,115 +2,120 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF38EC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 21:07:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3242C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 21:08:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A69120825
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 21:07:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A69120825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
+	by mail.kernel.org (Postfix) with ESMTP id 7616620840
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 21:08:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1w9M7nci"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7616620840
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728344AbeKJGtq (ORCPT
+        id S1728411AbeKJGuW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 01:49:46 -0500
-Received: from mx2.suse.de ([195.135.220.15]:36084 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725799AbeKJGtq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 01:49:46 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id F1270AE25;
-        Fri,  9 Nov 2018 21:07:25 +0000 (UTC)
-Date:   Fri, 9 Nov 2018 13:07:19 -0800
-From:   Davidlohr Bueso <dave@stgolabs.net>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     akpm@linux-foundation.org, jbaron@akamai.com,
-        linux-kernel@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>
-Subject: Re: [PATCH 1/2] perf-bench: Add epoll parallel epoll_wait benchmark
-Message-ID: <20181109210719.pr7ohayuwqmfp2wl@linux-r8p5>
-References: <20181106152226.20883-1-dave@stgolabs.net>
- <20181106152226.20883-2-dave@stgolabs.net>
- <20181106182349.thdkpvshkna5vd7o@linux-r8p5>
- <20181106191325.GM7077@kernel.org>
- <20181108134500.GA15568@kernel.org>
+        Sat, 10 Nov 2018 01:50:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35798 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725799AbeKJGuW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 01:50:22 -0500
+Received: from [192.168.1.22] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2187320825;
+        Fri,  9 Nov 2018 21:08:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541797682;
+        bh=1gwKoWDogbJnjqkLXUT15TpmYkXnfCyrBZq+OMyu8yU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=1w9M7nciSY5hvblDJmHM4cLR5bKpF0sskn4JYSLLD7kIYsCk6VfHzcErNnTi3NeW+
+         Hbkb1iL3YYI0WoyT6/bGsXYt4vTvrlQXxi75D5MWRObAwx1VeMHbJv4evMN72uLQh3
+         yKZL8jIkMqjQy0hgsW0rZJfw7sU6TeKiWIwAxsg4=
+Subject: Re: [PATCH] ARM: dts: socfpga: use tabs for indentation
+To:     Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marek Vasut <marex@denx.de>
+References: <20181105203900.23788-1-simon.k.r.goldschmidt@gmail.com>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <0ade3acc-4e92-8cd0-c4bb-249c00503f32@kernel.org>
+Date:   Fri, 9 Nov 2018 15:08:01 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20181108134500.GA15568@kernel.org>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <20181105203900.23788-1-simon.k.r.goldschmidt@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 08 Nov 2018, Arnaldo Carvalho de Melo wrote:
 
->Em Tue, Nov 06, 2018 at 04:13:25PM -0300, Arnaldo Carvalho de Melo escreveu:
->  CC       /tmp/build/perf/bench/futex-lock-pi.o
->  CC       /tmp/build/perf/bench/epoll-wait.o
->bench/epoll-wait.c: In function 'do_threads':
->bench/epoll-wait.c:345:10: error: implicit declaration of function 'pthread_attr_setaffinity_np' [-Werror=implicit-function-declaration]
->    ret = pthread_attr_setaffinity_np(&thread_attr, sizeof(cpu_set_t), &cpuset);
 
-Ah, yes, how about the following?
+On 11/5/18 2:39 PM, Simon Goldschmidt wrote:
+> In two of the gen5 socfpga devicetree files, there are some lines
+> indented using spaces instead of tabs.
+> 
+> Fix this by correctly indenting them with tabs.
+> 
+> Signed-off-by: Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
+> ---
+>  arch/arm/boot/dts/socfpga.dtsi               | 2 +-
+>  arch/arm/boot/dts/socfpga_cyclone5_sodia.dts | 4 ++--
+>  2 files changed, 3 insertions(+), 3 deletions(-)
 
------8<-----------------------------------------------------
-perf-bench: Move HAVE_PTHREAD_ATTR_SETAFFINITY_NP into bench.h
+Applied!
 
-Both futex and epoll need this call, and can cause build failure
-on systems that don't have it pthread_attr_setaffinity_np().
-
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
----
- tools/perf/bench/bench.h | 11 +++++++++++
- tools/perf/bench/futex.h | 12 ------------
- 2 files changed, 11 insertions(+), 12 deletions(-)
-
-diff --git a/tools/perf/bench/bench.h b/tools/perf/bench/bench.h
-index 0e415464931b..fddb3ced9db6 100644
---- a/tools/perf/bench/bench.h
-+++ b/tools/perf/bench/bench.h
-@@ -51,4 +51,15 @@ int bench_epoll_ctl(int argc, const char **argv);
- extern int bench_format;
- extern unsigned int bench_repeat;
- 
-+#ifndef HAVE_PTHREAD_ATTR_SETAFFINITY_NP
-+#include <pthread.h>
-+#include <linux/compiler.h>
-+static inline int pthread_attr_setaffinity_np(pthread_attr_t *attr __maybe_unused,
-+					      size_t cpusetsize __maybe_unused,
-+					      cpu_set_t *cpuset __maybe_unused)
-+{
-+	return 0;
-+}
-+#endif
-+
- #endif
-diff --git a/tools/perf/bench/futex.h b/tools/perf/bench/futex.h
-index db4853f209c7..31b53cc7d5bc 100644
---- a/tools/perf/bench/futex.h
-+++ b/tools/perf/bench/futex.h
-@@ -86,16 +86,4 @@ futex_cmp_requeue(u_int32_t *uaddr, u_int32_t val, u_int32_t *uaddr2, int nr_wak
- 	return futex(uaddr, FUTEX_CMP_REQUEUE, nr_wake, nr_requeue, uaddr2,
- 		 val, opflags);
- }
--
--#ifndef HAVE_PTHREAD_ATTR_SETAFFINITY_NP
--#include <pthread.h>
--#include <linux/compiler.h>
--static inline int pthread_attr_setaffinity_np(pthread_attr_t *attr __maybe_unused,
--					      size_t cpusetsize __maybe_unused,
--					      cpu_set_t *cpuset __maybe_unused)
--{
--	return 0;
--}
--#endif
--
- #endif /* _FUTEX_H */
--- 
-2.16.4
+Thanks,
+Dinh
