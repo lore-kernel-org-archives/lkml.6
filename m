@@ -3,170 +3,298 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36577C0044C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:06:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C1C8C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:07:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 077D3208A3
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:06:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 077D3208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id 202C120855
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 08:07:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 202C120855
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728393AbeKIRph (ORCPT
+        id S1728376AbeKIRrD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 12:45:37 -0500
-Received: from mail-sz2.amlogic.com ([211.162.65.114]:60099 "EHLO
-        mail-sz2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728149AbeKIRph (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 12:45:37 -0500
-X-Greylist: delayed 912 seconds by postgrey-1.27 at vger.kernel.org; Fri, 09 Nov 2018 12:45:33 EST
-Received: from [10.28.16.26] (10.28.16.26) by mail-sz2.amlogic.com
- (10.28.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Fri, 9 Nov 2018
- 15:51:00 +0800
-Subject: Re: [PATCH v4 0/2] clk: meson-g12a: Add EE clock controller driver
-To:     <jbrunet@baylibre.com>, Neil Armstrong <narmstrong@baylibre.com>
-CC:     Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        "Rob Herring" <robh@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <1541682912-120480-1-git-send-email-jian.hu@amlogic.com>
- <1157f0a9419eea01c099d8dc08d7757593720286.camel@baylibre.com>
-From:   Jian Hu <jian.hu@amlogic.com>
-Message-ID: <dae47e53-2ea2-5cfc-e69c-48585b1c4644@amlogic.com>
-Date:   Fri, 9 Nov 2018 15:51:01 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 9 Nov 2018 12:47:03 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:35593 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728149AbeKIRrD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 12:47:03 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id D003B207B0; Fri,  9 Nov 2018 09:07:35 +0100 (CET)
+Received: from bbrezillon (aaubervilliers-681-1-30-49.w90-88.abo.wanadoo.fr [90.88.15.49])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 798112039F;
+        Fri,  9 Nov 2018 09:07:35 +0100 (CET)
+Date:   Fri, 9 Nov 2018 09:07:33 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
+Cc:     <miquel.raynal@bootlin.com>, <richard@nod.at>,
+        <dwmw2@infradead.org>, <computersforpeace@gmail.com>,
+        <marek.vasut@gmail.com>, <michals@xilinx.com>,
+        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <nagasuresh12@gmail.com>, <robh@kernel.org>
+Subject: Re: [LINUX PATCH v12 3/3] mtd: rawnand: arasan: Add support for
+ Arasan NAND Flash Controller
+Message-ID: <20181109090733.41ef6edf@bbrezillon>
+In-Reply-To: <1541739641-17789-4-git-send-email-naga.sureshkumar.relli@xilinx.com>
+References: <1541739641-17789-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
+        <1541739641-17789-4-git-send-email-naga.sureshkumar.relli@xilinx.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <1157f0a9419eea01c099d8dc08d7757593720286.camel@baylibre.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.28.16.26]
-X-ClientProxiedBy: mail-sz2.amlogic.com (10.28.11.6) To mail-sz2.amlogic.com
- (10.28.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jerome
+Hi Naga,
 
-On 2018/11/8 21:34, jbrunet@baylibre.com wrote:
-> On Thu, 2018-11-08 at 21:15 +0800, Jian Hu wrote:
->> Changes since v3 at[4]
->> -add fixed clocks clk_regmap definition
-> 
-> Jian,
-> 
-> When replying to the v1 of your clk_ao patchset :
-> https://patchwork.kernel.org/patch/10562563/#22177627
-> 
-> I have explained that I would like to stop taking clock (such as xtal) from
-> nowhere. Clocks (even the xtal) should be properly claimed through DT.
-> I have specifically asked this to be taken into account for the EE controller.
-> 
-> If you need an exemple on how to get the input clock from DT to your
-> controller, please have look at the axg audio clock controller.
-> 
-> This comment does not appear to be addressed in this version.
-> Please make sure you have addressed all the comments of past reviews before
-> reposting
-> 
-> Thx
-> 
+Just a preliminary review. I still think we have problems with how you
+execute NAND operations. You seem to assume that read/write operation
+are always page write/read operation with a size aligned on a page
+size. This is wrong, either the controller is able to execute the exact
+operation that has been requested or it returns -ENOTSUPP.
 
-Thanks, I will resolve it, I want make sure for it.
+On Fri, 9 Nov 2018 10:30:41 +0530
+Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com> wrote:
 
-I should take the "periphs_xtal" clock in ee g12a clock controller 
-driver through DT , And then I can get its clock name "xtal" by property
-of clock-output-names. Is that right?
+> +
+> +/**
+> + * struct anfc_nand_chip - Defines the nand chip related information
+> + * @node:		Used to store NAND chips into a list.
+> + * @chip:		NAND chip information structure.
+> + * @strength:		Bch or Hamming mode enable/disable.
 
-ee g12a clock dts:
+The name is still confusing. BTW, can't you deduce Hamming vs BCH from
+the strength? Hamming strength is 1, while BCH strengths seem to start
+at 4.
 
-		hiubus: bus@ff63c000 {
-			compatible = "simple-bus";
-			reg = <0x0 0xff63c000 0x0 0x1c00>;
-			#address-cells = <2>;
-			#size-cells = <2>;
-			ranges = <0x0 0x0 0x0 0xff63c000 0x0 0x1c00>;
+> + * @ecc_strength:	Ecc strength 4.8/12/16.
 
-			sysctrl: syscon@0 {
-                                compatible = 
-"amlogic,meson-g12a-hhi-sysctrl", "simple-mfd", "syscon";
-				reg = <0x0 0x0 0x0 0x400>;
+				      ^/
 
-				clkc: clock-controller {
-					compatible = "amlogic,g12a-clkc";
-					#clock-cells = <1>;
-					clocks = <&xtal>;
-					clock-name = "periphs_xtal";
-				};
-			};
-		};
+> + * @eccval:		Ecc config value.
+> + * @spare_caddr_cycles:	Column address cycle information for spare area.
+> + * @pktsize:		Packet size for read / write operation.
+> + * @csnum:		chipselect number to be used.
+> + * @spktsize:		Packet size in ddr mode for status operation.
+> + * @inftimeval:		Data interface and timing mode information
+> + */
+> +struct anfc_nand_chip {
+> +	struct list_head node;
+> +	struct nand_chip chip;
+> +	bool strength;
+> +	u32 ecc_strength;
+> +	u32 eccval;
+> +	u16 spare_caddr_cycles;
+> +	u32 pktsize;
+> +	int csnum;
+> +	u32 spktsize;
+> +	u32 inftimeval;
+> +};
+> +
+> +/**
+> + * struct anfc_nand_controller - Defines the Arasan NAND flash controller
+> + *				 driver instance
+> + * @controller:		base controller structure.
+> + * @chips:		list of all nand chips attached to the ctrler.
+> + * @dev:		Pointer to the device structure.
+> + * @base:		Virtual address of the NAND flash device.
+> + * @clk_sys:		Pointer to the system clock.
+> + * @clk_flash:		Pointer to the flash clock.
+> + * @dma:		Dma enable/disable.
+> + * @buf:		Buffer used for read/write byte operations.
+> + * @irq:		irq number
 
+You should need this field. Just get the irq num in you probe path an
+register an irq handler with devm_request_irq().
 
-		xtal: xtal-clk {
-			compatible = "fixed-clock";
-			clock-frequency = <24000000>;
-			clock-output-names = "xtal"; 
- 
+> + * @bufshift:		Variable used for indexing buffer operation
+> + * @csnum:		Chip select number currently inuse.
 
-			#clock-cells = <0>;
-		};
->>
->> Changes since v2 at[2]
->> -fix fixed clocks's descriptions
->> -fix aligment
->> -add enable bit for plls base on [3] patches
->> -add fixed clock gate bit
->>
->> Changes since v1 at[1]
->> -fix typo of 'Everything'.
->> -change the word 'AmLogic' to 'Amlogic'
->> -squash patch 1 and 2.
->> -delete usless message of "Trying obsolete regs".
->> -delete the empty line in include/dt-bindings/clock/g12a-clkc.h.
->> -rebase on top of the "next/drivers" branch, and add g12a clock patch.
->> -add CLK_MUX_ROUND_CLOSEST for g12a_sd_emmc_b_clk0_sel and
->>   g12a_sd_emmc_c_clk0_sel.
->>
->> [1]
->> https://lkml.kernel.org/r/1531133549-25806-2-git-send-email-jian.hu@amlogic.com
->> [2]
->> https://lkml.kernel.org/r/1531728707-192230-2-git-send-email-jian.hu@amlogic.com
->> [3]https://lkml.kernel.org/r/20180717095617.12240-1-jbrunet@baylibre.com
->> [4]
->> https://lkml.kernel.org/r/1533890858-113020-1-git-send-email-jian.hu@amlogic.com
->>
->> Jian Hu (2):
->>    dt-bindings: clk: meson-g12a: Add G12A EE Clock Bindings
->>    clk: meson-g12a: Add EE Clock controller driver
->>
->>   .../bindings/clock/amlogic,gxbb-clkc.txt           |    1 +
->>   drivers/clk/meson/Kconfig                          |   10 +
->>   drivers/clk/meson/Makefile                         |    1 +
->>   drivers/clk/meson/g12a.c                           | 1134
->> ++++++++++++++++++++
->>   drivers/clk/meson/g12a.h                           |  128 +++
->>   include/dt-bindings/clock/g12a-clkc.h              |   93 ++
->>   6 files changed, 1367 insertions(+)
->>   create mode 100644 drivers/clk/meson/g12a.c
->>   create mode 100644 drivers/clk/meson/g12a.h
->>   create mode 100644 include/dt-bindings/clock/g12a-clkc.h
->>
-> 
-> 
-> .
-> 
+						     ^ in use
+
+> + * @event:		Completion event for nand status events.
+> + * @status:		Status of the flash device.
+> + * @prog:		Used to initiate controller operations.
+> + */
+> +struct anfc_nand_controller {
+> +	struct nand_controller controller;
+> +	struct list_head chips;
+> +	struct device *dev;
+> +	void __iomem *base;
+> +	struct clk *clk_sys;
+> +	struct clk *clk_flash;
+> +	int irq;
+> +	int csnum;
+> +	struct completion event;
+> +	int status;
+> +	u8 buf[TEMP_BUF_SIZE];
+
+Allocate this buf dynamically.
+
+> +	u32 eccval;
+> +};
+
+> +static int anfc_page_write_type_exec(struct nand_chip *chip,
+> +				     const struct nand_subop *subop)
+> +{
+> +	const struct nand_op_instr *instr;
+> +	struct anfc_nand_chip *achip = to_anfc_nand(chip);
+> +	struct anfc_nand_controller *nfc = to_anfc(chip->controller);
+> +	unsigned int op_id, len;
+> +	struct anfc_op nfc_op = {};
+> +	struct mtd_info *mtd = nand_to_mtd(chip);
+> +
+> +	anfc_parse_instructions(chip, subop, &nfc_op);
+> +	instr = nfc_op.data_instr;
+> +	op_id = nfc_op.data_instr_idx;
+> +	anfc_prepare_cmd(chip, nfc_op.cmds[0], nfc_op.cmds[1], 1,
+> +			 mtd->writesize, nfc_op.naddrcycles);
+> +	anfc_setpagecoladdr(nfc, nfc_op.row, nfc_op.col);
+> +	if (!nfc_op.data_instr)
+> +		return 0;
+> +
+> +	len = nand_subop_get_data_len(subop, op_id);
+> +	anfc_write_data_op(chip,  (char *)instr->ctx.data.buf.out,
+
+				^ extra white space here
+and please drop the cast.
+
+Can you please run checkpatch --strict prior to submitting patches?
+
+> +			   mtd->writesize,
+> +			   DIV_ROUND_UP(mtd->writesize, achip->pktsize),
+
+No, that's wrong. You should use instr->ctx.data.len here, and the
+DIV_ROUND_UP() thing is a bit scary. That means you might be writing
+more data than requested.
+
+> +			   achip->pktsize);
+> +
+> +	return 0;
+> +}
+> +
+
+> +
+> +static int anfc_probe(struct platform_device *pdev)
+> +{
+> +	struct anfc_nand_controller *nfc;
+> +	struct anfc_nand_chip *anand_chip;
+> +	struct device_node *np = pdev->dev.of_node, *child;
+> +	struct resource *res;
+> +	int err;
+> +
+> +	nfc = devm_kzalloc(&pdev->dev, sizeof(*nfc), GFP_KERNEL);
+> +	if (!nfc)
+> +		return -ENOMEM;
+> +
+> +	nand_controller_init(&nfc->controller);
+> +	INIT_LIST_HEAD(&nfc->chips);
+> +	init_completion(&nfc->event);
+> +	nfc->dev = &pdev->dev;
+> +	platform_set_drvdata(pdev, nfc);
+> +	nfc->csnum = -1;
+> +	nfc->controller.ops = &anfc_nand_controller_ops;
+
+Add a blank line here please
+
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	nfc->base = devm_ioremap_resource(&pdev->dev, res);
+> +	if (IS_ERR(nfc->base))
+> +		return PTR_ERR(nfc->base);
+
+and here
+
+> +	nfc->irq = platform_get_irq(pdev, 0);
+> +	if (nfc->irq < 0) {
+> +		dev_err(&pdev->dev, "platform_get_irq failed\n");
+> +		return -ENXIO;
+> +	}
+
+and here
+
+> +	dma_set_mask(&pdev->dev, DMA_BIT_MASK(64));
+
+Is this really needed?
+
+> +	err = devm_request_irq(&pdev->dev, nfc->irq, anfc_irq_handler,
+> +			       0, "arasannfc", nfc);
+> +	if (err)
+> +		return err;
+
+Add a blank line here too.
+
+> +	nfc->clk_sys = devm_clk_get(&pdev->dev, "clk_sys");
+> +	if (IS_ERR(nfc->clk_sys)) {
+> +		dev_err(&pdev->dev, "sys clock not found.\n");
+> +		return PTR_ERR(nfc->clk_sys);
+> +	}
+> +
+> +	nfc->clk_flash = devm_clk_get(&pdev->dev, "clk_flash");
+> +	if (IS_ERR(nfc->clk_flash)) {
+> +		dev_err(&pdev->dev, "flash clock not found.\n");
+> +		return PTR_ERR(nfc->clk_flash);
+> +	}
+> +
+> +	err = clk_prepare_enable(nfc->clk_sys);
+> +	if (err) {
+> +		dev_err(&pdev->dev, "Unable to enable sys clock.\n");
+> +		return err;
+> +	}
+> +
+> +	err = clk_prepare_enable(nfc->clk_flash);
+> +	if (err) {
+> +		dev_err(&pdev->dev, "Unable to enable flash clock.\n");
+> +		goto clk_dis_sys;
+> +	}
+> +
+> +	for_each_available_child_of_node(np, child) {
+> +		anand_chip = devm_kzalloc(&pdev->dev, sizeof(*anand_chip),
+> +					  GFP_KERNEL);
+> +		if (!anand_chip) {
+> +			of_node_put(child);
+> +			err = -ENOMEM;
+> +			goto nandchip_clean_up;
+> +		}
+
+and here.
+
+> +		err = anfc_nand_chip_init(nfc, anand_chip, child);
+> +		if (err) {
+> +			devm_kfree(&pdev->dev, anand_chip);
+
+We usually try to avoid calling devm_kfree(). I guess you do it to
+avoid keeping the chip obj around when init failed, but this should
+be rare enough so we can actually ignore it and let the mem allocated
+for the NFC lifetime.
+
+> +			continue;
+> +		}
+> +
+> +		list_add_tail(&anand_chip->node, &nfc->chips);
+> +	}
+> +	return 0;
+> +
+> +nandchip_clean_up:
+> +	list_for_each_entry(anand_chip, &nfc->chips, node)
+> +		nand_release(&anand_chip->chip);
+
+Blank line here.
+
+> +	clk_disable_unprepare(nfc->clk_flash);
+
+Blank line here.
+
+> +clk_dis_sys:
+> +	clk_disable_unprepare(nfc->clk_sys);
+> +
+> +	return err;
+> +}
+
+Regards,
+
+Boris
