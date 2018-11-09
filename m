@@ -2,114 +2,214 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFD00C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 13:40:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E22C0C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 13:43:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92CB62081C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 13:40:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92CB62081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id A840D2081C
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 13:43:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A840D2081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728008AbeKIXVb (ORCPT
+        id S1728060AbeKIXYJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 18:21:31 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55352 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727784AbeKIXVa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 18:21:30 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wA9DdbJ0043058
-        for <linux-kernel@vger.kernel.org>; Fri, 9 Nov 2018 08:40:49 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nn991wu5c-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 08:40:49 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <schwidefsky@de.ibm.com>;
-        Fri, 9 Nov 2018 13:40:47 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 9 Nov 2018 13:40:44 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wA9DehFU60358796
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 9 Nov 2018 13:40:43 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CB0255204F;
-        Fri,  9 Nov 2018 13:40:43 +0000 (GMT)
-Received: from mschwideX1 (unknown [9.152.212.164])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id A4C4152050;
-        Fri,  9 Nov 2018 13:40:43 +0000 (GMT)
-Date:   Fri, 9 Nov 2018 14:40:42 +0100
-From:   Martin Schwidefsky <schwidefsky@de.ibm.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-s390@vger.kernel.org, heiko.carstens@de.ibm.com
-Subject: Re: [GIT PULL] s390 patches for 4.20 #2
-In-Reply-To: <CAHk-=wj+HK7htwua62MnT9e_vsfgboiACR08MQDsXj9+4WQEBg@mail.gmail.com>
-References: <20181109081402.777716d1@mschwideX1>
-        <CAHk-=wj+HK7htwua62MnT9e_vsfgboiACR08MQDsXj9+4WQEBg@mail.gmail.com>
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        Fri, 9 Nov 2018 18:24:09 -0500
+Received: from mga09.intel.com ([134.134.136.24]:65464 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727962AbeKIXYJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 18:24:09 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Nov 2018 05:43:28 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,483,1534834800"; 
+   d="scan'208";a="88016971"
+Received: from mke-mobl.ccr.corp.intel.com (HELO [192.168.4.139]) ([10.255.30.228])
+  by orsmga007.jf.intel.com with ESMTP; 09 Nov 2018 05:40:41 -0800
+Subject: Re: [Qemu-devel] [RFC/PoC PATCH 1/3] i386: set initrd_max to 4G - 1
+ to allow up to 4G initrd
+To:     Juergen Gross <jgross@suse.com>, Ingo Molnar <mingo@kernel.org>,
+        Li Zhijian <lizhijian@cn.fujitsu.com>
+Cc:     Peter Maydell <peter.maydell@linaro.org>, x86@kernel.org,
+        hpa@zytor.com, bp@alien8.de, mingo@redhat.com, tglx@linutronix.de,
+        QEMU Developers <qemu-devel@nongnu.org>,
+        Philip Li <philip.li@intel.com>, linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Kees Cook <keescook@chromium.org>
+References: <1541674784-25936-1-git-send-email-lizhijian@cn.fujitsu.com>
+ <1541674784-25936-2-git-send-email-lizhijian@cn.fujitsu.com>
+ <CAFEAcA_47wyar3WNhuBmNPdr02RHx-wn_TeyFaajpjzvzG8j5Q@mail.gmail.com>
+ <c50d103e-95c3-c44c-d852-b6d7f8114b3a@cn.fujitsu.com>
+ <20181109072015.GA86700@gmail.com>
+ <38905d35-29af-b522-1629-b13e98a47a42@intel.com>
+ <d30b404d-624e-0497-879a-2d5df2eb9f31@suse.com>
+From:   Li Zhijian <zhijianx.li@intel.com>
+Message-ID: <b7b608dc-1743-5e1f-3b88-94d784c4cab2@intel.com>
+Date:   Fri, 9 Nov 2018 21:40:36 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-x-cbid: 18110913-4275-0000-0000-000002DE5AD1
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18110913-4276-0000-0000-000037EB5E0E
-Message-Id: <20181109144042.4546b7ce@mschwideX1>
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <d30b404d-624e-0497-879a-2d5df2eb9f31@suse.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-09_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811090127
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 9 Nov 2018 06:39:07 -0600
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+Just noticed that there is a field xloadflags at recent protocol
+   60 Protocol 2.12:  (Kernel 3.8) Added the xloadflags field and extension fields
+   61                 to struct boot_params for loading bzImage and ramdisk
+   62                 above 4G in 64bit.
+[snip]
+  617 Field name:     xloadflags
+  618 Type:           read
+  619 Offset/size:    0x236/2
+  620 Protocol:       2.12+
+  621
+  622   This field is a bitmask.
+  623
+  624   Bit 0 (read): XLF_KERNEL_64
+  625         - If 1, this kernel has the legacy 64-bit entry point at 0x200.
+  626
+  627   Bit 1 (read): XLF_CAN_BE_LOADED_ABOVE_4G
+  628         - If 1, kernel/boot_params/cmdline/ramdisk can be above 4G.
+  629
 
-> On Fri, Nov 9, 2018 at 1:14 AM Martin Schwidefsky
-> <schwidefsky@de.ibm.com> wrote:
-> >
-> > s390 updates for 4.20-rc2  
-> 
-> Pulled.
-> 
-> >  - A fix for the pgtable_bytes misaccounting on s390. The patch changes
-> >    common code part in regard to page table folding and adds extra
-> >    checks to mm_[inc|dec]_nr_[pmds|puds].  
-> 
-> Ugh. This is somewhat invasive, I worry  that some header include or
-> architecture doesn't pick up on the subtle __PAGETABLE_XYZ_FOLDED
-> things (if you don't get the includes, the mm_xyz_folded() maros will
-> be mis-defined.
-> 
-> Has this been in linux-next or any other wide testing? The changes
-> aren't _new_, but...
+maybe we can reuse this field and append a new Bit 5 XLF_INITRD_MAX_SIZE_4G and increase header version.
+For the old protocol version 2.12+, if  XLF_CAN_BE_LOADED_ABOVE_4G is set, we can also realize ~4GB initrd is allowed.
 
-Just checked linux-next, the first version that picked up the patches
-is 2018-11-19. The one dated 2018-10-19 does not have them.
+bootloader side:
+if protocol >= 2.15
+    if XLF_INITRD_LOAD_BELOW_4G
+       support ~4G initrd
+    fi
+else if protocol >=2.12
+    if XLF_CAN_BE_LOADED_ABOVE_4G
+     support ~4G initrd
+    fi
+fi
 
-Bad timing, no wider testing has been done. The bug itself shows up
-as a false warning, nothing really breaks. I would understand if you
-prefer not to have them in the official tree at this time.
+thanks
+Zhijian
 
--- 
-blue skies,
-   Martin.
+  
 
-"Reality continues to ruin my life." - Calvin.
-
+On 11/9/2018 6:04 PM, Juergen Gross wrote:
+> On 09/11/2018 10:57, Li Zhijian wrote:
+>> On 11/9/2018 3:20 PM, Ingo Molnar wrote:
+>>> * Li Zhijian <lizhijian@cn.fujitsu.com> wrote:
+>>>
+>>>>> If the kernel initrd creation process creates an initrd which
+>>>>> is larger than 2GB and also claims that it can't be placed
+>>>>> with any part of it above 2GB, then that sounds like a bug
+>>>>> in the initrd creation process...
+>>>> Exactly, it's a real problem.
+>>>>
+>>>> Add x86 maintainers and LKML:
+>>>>
+>>>> The background is that QEMU want to support up to 4G initrd. but
+>>>> linux header (
+>>>> initrd_addr_max field) only allow 2G-1.
+>>>> Is one of the below approaches reasonable:
+>>>> 1) change initrd_addr_max to 4G-1 directly
+>>>> simply(arch/x86/boot/header.S)?
+>>>> 2) lie QEMU bootloader the initrd_addr_max is 4G-1 even though header
+>>>> said 2G-1
+>>>> 3) any else
+>>> A 10 years old comment from hpa says:
+>>>
+>>>     initrd_addr_max: .long 0x7fffffff
+>>>                                           # (Header version 0x0203 or
+>>> later)
+>>>                                           # The highest safe address for
+>>>                                           # the contents of an initrd
+>>>                                           # The current kernel allows
+>>> up to 4 GB,
+>>>                                           # but leave it at 2 GB to avoid
+>>>                                           # possible bootloader bugs.
+>>>
+>>> To avoid the potential of bugs lurking in dozens of major and hundreds of
+>>> minor iterations of various Linux bootloaders I'd prefer a real solution
+>>> and extend it - because if there's a 2GB initrd for some weird reason
+>>> today there might be a 4GB one in two years.
+>> thank a lots. that's amazing.
+>>
+>>
+>>> The real solution would be to:
+>>>
+>>>    - Extend the boot protocol with a 64-bit field, named initrd_addr64_max
+>>>      or such.
+>>>    - We don't change the old field - but if the new field is set by new
+>>>      kernels then new bootloaders can use that as a new initrd_addr64_max
+>>>      value. (or reject to load the kernel if the address is too high.)
+>>>
+>>>    - The kernel build should also emit a warning when building larger than
+>>>      2GB initrds, with a list of bootloaders that support the new
+>>> protocol.
+>> Actually i just knew QEMU(Seabios + optionrom(linuxboot_dma.bin)) can
+>> support ~4GB initrd so far.
+>>
+>> i just drafted at patch to add this field. could you have a look.
+>> another patch which is to document initrd_addr64_max is ongoing.
+>>
+>> commit db463ac9c1975f115d1ce2acb82d530c2b63b888
+>> Author: Li Zhijian <lizhijian@cn.fujitsu.com>
+>> Date:   Fri Nov 9 17:24:14 2018 +0800
+>>
+>>      x86: Add header field initrd_addr64_max
+>>          Years ago, kernel had support load ~4GB initrd. But for some
+>> weird reasons (
+>>      avoid possible bootloader bugs), it only allow leave initrd under
+>> 2GB address
+>>      space(see initrd_addr_max fild at arch/x86/boot/header.S).
+>>          So modern bootloaders have not chance to load >=2G initrd
+>> previously.
+>>          To avoid the potential of bugs lurking in dozens of major and
+>> hundreds of
+>>      minor iterations of various Linux bootloaders. Ingo suggests to add
+>> a new field
+>>      initrd_addr64_max. If bootloader believes that it can load initrd to
+>>> =2G
+>>      address space, it can use initrd_addr64_max as the maximum loading
+>> address in
+>>      stead of the old field initrd_addr_max.
+>>
+>> diff --git a/arch/x86/boot/header.S b/arch/x86/boot/header.S
+>> index 4c881c8..5fc3ebe 100644
+>> --- a/arch/x86/boot/header.S
+>> +++ b/arch/x86/boot/header.S
+>> @@ -300,7 +300,7 @@ _start:
+>>          # Part 2 of the header, from the old setup.S
+>>   
+>>                  .ascii  "HdrS"          # header signature
+>> -               .word   0x020e          # header version number (>= 0x0105)
+>> +               .word   0x020f          # header version number (>= 0x0105)
+>>                                          # or else old loadlin-1.5 will
+>> fail)
+>>                  .globl realmode_swtch
+>>   realmode_swtch:        .word   0, 0            # default_switch, SETUPSEG
+>> @@ -562,6 +562,12 @@ acpi_rsdp_addr:            .quad 0
+>> # 64-bit physical pointer to the
+>>                                                  # ACPI RSDP table, added
+>> with
+>>                                                  # version 2.14
+>>   
+>> +#ifdef CONFIG_INITRD_SIZE_4GB
+>> +initrd_addr64_max:     .quad 0xffffffff        # allow ~4G initrd since
+>> 2.15
+>> +#else
+>> +initrd_addr64_max:     .quad 0
+> Shouldn't this be 0x7fffffff?
+>
+> And please update Documentation/x86/boot.txt
+>
+>
+> Juergen
