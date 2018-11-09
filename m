@@ -2,133 +2,289 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 263DAC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:53:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD822C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:55:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED2CF20825
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:53:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED2CF20825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 8E0FA20825
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:55:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E0FA20825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728256AbeKIUdT (ORCPT
+        id S1728263AbeKIUfI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 15:33:19 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:48609 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728235AbeKIUdT (ORCPT
+        Fri, 9 Nov 2018 15:35:08 -0500
+Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:47348 "EHLO
+        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727649AbeKIUfH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 15:33:19 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gL4PY-00039s-LS; Fri, 09 Nov 2018 11:53:12 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gL4PY-0007zH-9o; Fri, 09 Nov 2018 11:53:12 +0100
-Date:   Fri, 9 Nov 2018 11:53:12 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Scott Branden <scott.branden@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com, linux-pwm@vger.kernel.org,
+        Fri, 9 Nov 2018 15:35:07 -0500
+Received: from [IPv6:2001:420:44c1:2579:64ae:ee5d:da4d:25e4] ([IPv6:2001:420:44c1:2579:64ae:ee5d:da4d:25e4])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id L4RCgWGxdw2L8L4RFgna6C; Fri, 09 Nov 2018 11:55:00 +0100
+Subject: Re: [PATCH v4 2/2] media: platform: Add Aspeed Video Engine driver
+To:     Eddie James <eajames@linux.vnet.ibm.com>,
+        Eddie James <eajames@linux.ibm.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] pwm: kconfig: enable kona pwm to be built for cygnus
- arch
-Message-ID: <20181109105312.lzeue3toefszv6sh@pengutronix.de>
-References: <20181107093613.26734-1-peron.clem@gmail.com>
- <20181107161247.sesu2comhes2d4kx@pengutronix.de>
- <dbd99d36-4ff2-8e14-cc54-0896459fdb0e@broadcom.com>
- <CAJiuCccuFKaht93QPvT+taaT8g7CHGS9uP9Ekr0VWASp+ZGZmA@mail.gmail.com>
- <20181108122246.GB1340@ulmo>
- <CAJiuCcc07mTfqk1UOKqkSuJGOR-2AN18EJZ7qcvzkKoTGeUhaA@mail.gmail.com>
+Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-aspeed@lists.ozlabs.org, andrew@aj.id.au,
+        openbmc@lists.ozlabs.org, robh+dt@kernel.org, mchehab@kernel.org,
+        linux-media@vger.kernel.org
+References: <1538769466-14860-1-git-send-email-eajames@linux.ibm.com>
+ <1538769466-14860-3-git-send-email-eajames@linux.ibm.com>
+ <bf07eb1f-bc17-ac59-d341-f19e2ab0c2e2@xs4all.nl>
+ <b64d0a4b-f74a-e887-366d-c242ac3f0d1c@linux.vnet.ibm.com>
+ <7027cd38-b8f5-08b2-0536-eed1c6a0516b@linux.vnet.ibm.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <c972883e-38fd-64ad-b136-974ea8937467@xs4all.nl>
+Date:   Fri, 9 Nov 2018 11:54:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJiuCcc07mTfqk1UOKqkSuJGOR-2AN18EJZ7qcvzkKoTGeUhaA@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <7027cd38-b8f5-08b2-0536-eed1c6a0516b@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfP+liCimk7WmKQfcqMizLyqI3mCQYabsSVDJM3DWgsUvcD4xwkxPSlY0jPpFmA2CAjJ995QIwvgMQWNsLXXGyWulSSha7QbKQvrgRof3fVkLprSK2b42
+ WJvkmH/SZFyVp4DpLCbubUz/qNUmbnWq3prwBk4ng+Q0NuFVCMD2oP16gvLAlQgrPWCf8X3axbztvUkRMUFtOXJVmASF+yoUpM5TtAxT+xMYMk7WqNk+glt+
+ c3JWC1Sh9u3qi0JnfF1f7gzOw5FUVQm17SK+E/q/X73/YMsGfbw0DuiSLYHJCwQ3TiexltdM2PYCRfEcuQl4eLgOWK+qbwNA6DJ39jSgSfaDpW6+Qj5HwVva
+ ziz3nLa2trQc6u8f2w3HS5XTxKOzx+gAl2KJHSOLdscvmEWdqtarjw3uMa52bgYuauOWLst9ikBdnt3odOHq90hc28wGIfFudVL0BVYwYK+GJY9iGMbbpb76
+ 7KSuVWgKv212+lFksppqgFFYT8IKLKL943EZt17R/wsBdRipx3QBw2M5NTr5BnndnB722b9IJ/2zNyPCRMCzJFeSIDLmXqGPTA3woG/kJnrYLFAR4kRIizIC
+ 3WyDDvuSkSYgvV5I29aynPP2nTidhF1B9FRrw+MAAZk/UmfOroefnQtrFmKrhhQSFHk=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 09, 2018 at 10:58:41AM +0100, Clément Péron wrote:
-> Hi Thierry,
+Hi Eddie,
+
+Sorry for the delay, I've been away for the past two weeks and I've been
+catching up ever since I came back.
+
+On 11/08/18 16:48, Eddie James wrote:
 > 
-> On Thu, 8 Nov 2018 at 13:22, Thierry Reding <thierry.reding@gmail.com> wrote:
-> >
-> > On Thu, Nov 08, 2018 at 11:47:53AM +0100, Clément Péron wrote:
-> > > Hi Uwe, Scott,
-> > >
-> > > On Wed, 7 Nov 2018 at 17:48, Scott Branden <scott.branden@broadcom.com> wrote:
-> > > >
-> > > >
-> > > > On 2018-11-07 8:12 a.m., Uwe Kleine-König wrote:
-> > > > > On Wed, Nov 07, 2018 at 10:36:12AM +0100, Clément Péron wrote:
-> > > > >> The Cygnus architecture use a Kona PWM. This is already present
-> > > > >> in the device tree but can't be built actually. Hence, allow the
-> > > > >> Kona PWM to be built for Cygnus arch.
-> > > > >>
-> > > > >> Signed-off-by: Clément Péron <peron.clem@gmail.com>
-> > > > >> ---
-> > > > >>   drivers/pwm/Kconfig | 3 ++-
-> > > > >>   1 file changed, 2 insertions(+), 1 deletion(-)
-> > > > >>
-> > > > >> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-> > > > >> index 763ee50ea57d..76d56fc8b1b7 100644
-> > > > >> --- a/drivers/pwm/Kconfig
-> > > > >> +++ b/drivers/pwm/Kconfig
-> > > > >> @@ -88,7 +88,8 @@ config PWM_BCM_IPROC
-> > > > >>
-> > > > >>   config PWM_BCM_KONA
-> > > > >>      tristate "Kona PWM support"
-> > > > >> -    depends on ARCH_BCM_MOBILE
-> > > > >> +    depends on ARCH_BCM_MOBILE || ARCH_BCM_CYGNUS
-> > > > >> +    default ARCH_BCM_CYGNUS
-> > > > > Is it possible to build this driver also on other arches? Then you might
-> > > > > want to consider
-> > > > >
-> > > > >       depends on ARCH_BCM_MOBILE || ARCH_BCM_CYGNUS || COMPILE_TEST
-> > > > good idea to add the COMPILE_TEST just to increase compile coverage
-> > >
-> > > Will Do.
-> >
-> > This is known to potentially break builds on things like UM where we
-> > have !HAS_IOMEM. Please make sure you thoroughly build-test before you
-> > switch on COMPILE_TEST.
 > 
-> Thanks for the point, so something like this (but maybe it's too
-> protective no ?) :
+> On 10/19/2018 03:26 PM, Eddie James wrote:
+>>
+>>
+>> On 10/12/2018 07:22 AM, Hans Verkuil wrote:
+>>> On 10/05/2018 09:57 PM, Eddie James wrote:
+>>>> The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs
+>>>> can capture and compress video data from digital or analog sources. 
+>>>> With
+>>>> the Aspeed chip acting a service processor, the Video Engine can 
+>>>> capture
+>>>> the host processor graphics output.
+>>>>
+>>>> Add a V4L2 driver to capture video data and compress it to JPEG images.
+>>>> Make the video frames available through the V4L2 streaming interface.
+>>>>
+>>>> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+>>>> ---
+>>>>   MAINTAINERS                           |    8 +
+>>>>   drivers/media/platform/Kconfig        |    8 +
+>>>>   drivers/media/platform/Makefile       |    1 +
+>>>>   drivers/media/platform/aspeed-video.c | 1674 
+>>>> +++++++++++++++++++++++++++++++++
+>>>>   4 files changed, 1691 insertions(+)
+>>>>   create mode 100644 drivers/media/platform/aspeed-video.c
+>>>>
+>>> <snip>
+>>>
+>>>> +static int aspeed_video_enum_input(struct file *file, void *fh,
+>>>> +                   struct v4l2_input *inp)
+>>>> +{
+>>>> +    if (inp->index)
+>>>> +        return -EINVAL;
+>>>> +
+>>>> +    strscpy(inp->name, "Host VGA capture", sizeof(inp->name));
+>>>> +    inp->type = V4L2_INPUT_TYPE_CAMERA;
+>>>> +    inp->capabilities = V4L2_IN_CAP_DV_TIMINGS;
+>>>> +    inp->status = V4L2_IN_ST_NO_SIGNAL | V4L2_IN_ST_NO_SYNC;
+>>> This can't be right. If there is a valid signal, then status should 
+>>> be 0.
+>>> And ideally you can tell the difference between no signal and no sync
+>>> as well.
+>>>
+>>>> +
+>>>> +    return 0;
+>>>> +}
+>>>> +
+>>>> +static int aspeed_video_get_input(struct file *file, void *fh, 
+>>>> unsigned int *i)
+>>>> +{
+>>>> +    *i = 0;
+>>>> +
+>>>> +    return 0;
+>>>> +}
+>>>> +
+>>>> +static int aspeed_video_set_input(struct file *file, void *fh, 
+>>>> unsigned int i)
+>>>> +{
+>>>> +    if (i)
+>>>> +        return -EINVAL;
+>>>> +
+>>>> +    return 0;
+>>>> +}
+>>>> +
+>>>> +static int aspeed_video_get_parm(struct file *file, void *fh,
+>>>> +                 struct v4l2_streamparm *a)
+>>>> +{
+>>>> +    struct aspeed_video *video = video_drvdata(file);
+>>>> +
+>>>> +    a->parm.capture.capability = V4L2_CAP_TIMEPERFRAME;
+>>>> +    a->parm.capture.readbuffers = 3;
+>>>> +    a->parm.capture.timeperframe.numerator = 1;
+>>>> +    if (!video->frame_rate)
+>>>> +        a->parm.capture.timeperframe.denominator = MAX_FRAME_RATE + 1;
+>>>> +    else
+>>>> +        a->parm.capture.timeperframe.denominator = video->frame_rate;
+>>>> +
+>>>> +    return 0;
+>>>> +}
+>>>> +
+>>>> +static int aspeed_video_set_parm(struct file *file, void *fh,
+>>>> +                 struct v4l2_streamparm *a)
+>>>> +{
+>>>> +    unsigned int frame_rate = 0;
+>>>> +    struct aspeed_video *video = video_drvdata(file);
+>>>> +
+>>>> +    a->parm.capture.capability = V4L2_CAP_TIMEPERFRAME;
+>>>> +    a->parm.capture.readbuffers = 3;
+>>>> +
+>>>> +    if (a->parm.capture.timeperframe.numerator)
+>>>> +        frame_rate = a->parm.capture.timeperframe.denominator /
+>>>> +            a->parm.capture.timeperframe.numerator;
+>>>> +
+>>>> +    if (!frame_rate || frame_rate > MAX_FRAME_RATE) {
+>>>> +        frame_rate = 0;
+>>>> +
+>>>> +        /*
+>>>> +         * Set to max + 1 to differentiate between max and 0, which
+>>>> +         * means "don't care".
+>>> But what does "don't care" mean in practice? It's still not clear to 
+>>> me how this
+>>> is supposed to work.
+>>>
+>>>> +         */
+>>>> +        a->parm.capture.timeperframe.denominator = MAX_FRAME_RATE + 1;
+>>> And regardless of anything else this timeperframe is out of the range 
+>>> that
+>>> aspeed_video_enum_frameintervals() returns.
+>>>
+>>>> + a->parm.capture.timeperframe.numerator = 1;
+>>>> +    }
+>>>> +
+>>>> +    if (video->frame_rate != frame_rate) {
+>>>> +        video->frame_rate = frame_rate;
+>>>> +        aspeed_video_update(video, VE_CTRL, VE_CTRL_FRC,
+>>>> +                    FIELD_PREP(VE_CTRL_FRC, frame_rate));
+>>>> +    }
+>>>> +
+>>>> +    return 0;
+>>>> +}
+>>>> +
+>>>> +static int aspeed_video_enum_framesizes(struct file *file, void *fh,
+>>>> +                    struct v4l2_frmsizeenum *fsize)
+>>>> +{
+>>>> +    struct aspeed_video *video = video_drvdata(file);
+>>>> +
+>>>> +    if (fsize->index)
+>>>> +        return -EINVAL;
+>>>> +
+>>>> +    if (fsize->pixel_format != V4L2_PIX_FMT_JPEG)
+>>>> +        return -EINVAL;
+>>>> +
+>>>> +    fsize->discrete.width = video->pix_fmt.width;
+>>>> +    fsize->discrete.height = video->pix_fmt.height;
+>>>> +    fsize->type = V4L2_FRMSIZE_TYPE_DISCRETE;
+>>>> +
+>>>> +    return 0;
+>>>> +}
+>>>> +
+>>>> +static int aspeed_video_enum_frameintervals(struct file *file, void 
+>>>> *fh,
+>>>> +                        struct v4l2_frmivalenum *fival)
+>>>> +{
+>>>> +    struct aspeed_video *video = video_drvdata(file);
+>>>> +
+>>>> +    if (fival->index)
+>>>> +        return -EINVAL;
+>>>> +
+>>>> +    if (fival->width != video->width || fival->height != 
+>>>> video->height)
+>>>> +        return -EINVAL;
+>>>> +
+>>>> +    if (fival->pixel_format != V4L2_PIX_FMT_JPEG)
+>>>> +        return -EINVAL;
+>>>> +
+>>>> +    fival->type = V4L2_FRMIVAL_TYPE_CONTINUOUS;
+>>>> +
+>>>> +    fival->stepwise.min.denominator = MAX_FRAME_RATE;
+>>>> +    fival->stepwise.min.numerator = 1;
+>>>> +    fival->stepwise.max.denominator = 1;
+>>>> +    fival->stepwise.max.numerator = 1;
+>>>> +    fival->stepwise.step = fival->stepwise.max;
+>>>> +
+>>>> +    return 0;
+>>>> +}
+>>>> +
+>>>> +static int aspeed_video_set_dv_timings(struct file *file, void *fh,
+>>>> +                       struct v4l2_dv_timings *timings)
+>>>> +{
+>>>> +    struct aspeed_video *video = video_drvdata(file);
+>>>> +
+>>> If vb2_is_busy() returns true, then return -EBUSY here. It is not 
+>>> allowed to
+>>> set the timings while vb2 is busy.
+>>
+>> Buffer ioctls (Input 0):
+>>         fail: v4l2-test-buffers.cpp(344): node->s_dv_timings(timings)
+>>         fail: v4l2-test-buffers.cpp(452): testCanSetSameTimings(node)
+>>     test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: FAIL
+>>
+>> Streaming ioctls:
+>>     test read/write: OK
+>>     test blocking wait: OK
+>>         fail: v4l2-test-buffers.cpp(344): node->s_dv_timings(timings)
+>>         fail: v4l2-test-buffers.cpp(637): testCanSetSameTimings(node)
+>>         fail: v4l2-test-buffers.cpp(952): captureBufs(node, q, m2m_q, 
+>> frame_count, false)
+>>     test MMAP: FAIL
+>>
+>> Built from v4l-utils c36dbbdfa8b30b2badd4f893b59d0bd4f0bd12aa
+>>
+>> Adding this causes some of the v4l2-compliance streaming tests to 
+>> fail, and prevents my own application from being able to call 
+>> S_DV_TIMINGS after detecting a resolution change, despite calling 
+>> streamoff and unmapping all the buffers first.
 > 
-> config PWM_BCM_KONA
->         tristate "Kona PWM support"
->         depends on ARCH_BCM_MOBILE || ARCH_BCM_CYGNUS || COMPILE_TEST
->         depends on COMMON_CLK && HAS_IOMEM && OF
+> Any thoughts on this Hans?
 
-Instead of COMMON_CLK HAVE_CLK should be good enough. Just for compile
-testing the default implementations provided in include/linux/clk.h
-should even be good enough in the !HAVE_CLK case.
+The compliance fail is because there is a requirement that if you set
+new timings that are equal to the existing timings, then that should
+work (and is effectively a NOP operation).
 
-Also OF might not be necessary, at least the driver compiles fine on
-amd64 without OF.
+So in the code you can do something similar to what vivid does:
 
-Best regards
-Uwe
+        if (v4l2_match_dv_timings(timings, &dev->dv_timings_cap, 0, false))
+                return 0;
+        if (vb2_is_busy(&dev->vb_vid_cap_q))
+                return -EBUSY;
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+You can probably get away with just checking width, height and interlaced
+in this driver, rather than calling v4l2_match_dv_timings.
+
+If the resolution changes, however, then you need to completely free all
+buffers (i.e. close the fd or call VIDIOC_REQBUFS with count = 0) before
+you can set new timings. So streamoff + unmap is not enough.
+
+Streamoff only returns the buffers to userspace, it doesn't free them.
+
+Regards,
+
+	Hans
