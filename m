@@ -2,204 +2,716 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55B70C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:54:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA420C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:55:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A6D120883
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:54:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="UuLjAfWT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A6D120883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 6CF9120883
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 14:55:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CF9120883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728046AbeKJAfD (ORCPT
+        id S1728079AbeKJAgB convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 19:35:03 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:44388 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727735AbeKJAfD (ORCPT
+        Fri, 9 Nov 2018 19:36:01 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:47161 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727784AbeKJAgA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 19:35:03 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wA9ErZXJ009974;
-        Fri, 9 Nov 2018 14:53:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=UfacWX/YugBPIdu0bLQylT6CzN5NQJT1yvk+wLX7ZDs=;
- b=UuLjAfWTzK4HLS3CKfDDgBYxYY6Y0vHLJ+Sfi4v0rTvsXv6MxUPFm8KHLWVH7Yv+ZNru
- 9RWSGS3OcZ7IyzKAbQgPSckGUuAw6NIVe46Unhf1MsDu2/4WWZF2lchb2wwiAtR7GnC2
- 82F5RjZUrysaatFQdXI9UdVthqzp58f2oJ49c8/F7L07kts0n8DIye5tT4KRo88rzRqw
- w3uHNyBLITqLzqQK/6XAkyAg5PadVQERWoVfBWoUyNDXPw+xTpNd9lt+sYhEProOjCS3
- SVibeRlnxNYlhEqbGvBgmMICDHLfdBYSaRCKRlAN8r4j9HDz6CXMszIbYY9tysgJFUpD Lw== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2nh33uff8u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 09 Nov 2018 14:53:39 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wA9ErXTh002940
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 9 Nov 2018 14:53:33 GMT
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wA9ErWLw027102;
-        Fri, 9 Nov 2018 14:53:32 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 09 Nov 2018 06:53:32 -0800
-Subject: Re: [PATCH] xen: fix xen_qlock_wait()
-To:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, x86@kernel.org
-Cc:     sstabellini@kernel.org, hpa@zytor.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, stable@vger.kernel.org
-References: <20181109120413.9539-1-jgross@suse.com>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <17fad46e-293b-65b4-dc75-2b0717306cf8@oracle.com>
-Date:   Fri, 9 Nov 2018 09:53:26 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Fri, 9 Nov 2018 19:36:00 -0500
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1gL8BW-0006Ti-5B; Fri, 09 Nov 2018 15:54:58 +0100
+Date:   Fri, 9 Nov 2018 15:54:58 +0100
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: [ANNOUNCE] v4.19.1-rt3
+Message-ID: <20181109145457.ql57auel3bzwdsk5@linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <20181109120413.9539-1-jgross@suse.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9071 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=878
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1811090137
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/9/18 7:04 AM, Juergen Gross wrote:
-> Commit a856531951dc80 ("xen: make xen_qlock_wait() nestable")
-> introduced a regression for Xen guests running fully virtualized
-> (HVM or PVH mode). The Xen hypervisor wouldn't return from the poll
-> hypercall with interrupts disabled in case of an interrupt (for PV
-> guests it does).
->
-> So instead of disabling interrupts in xen_qlock_wait() use a nesting
-> counter to avoid calling xen_clear_irq_pending() in case
-> xen_qlock_wait() is nested.
->
-> Fixes: a856531951dc80 ("xen: make xen_qlock_wait() nestable")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Juergen Gross <jgross@suse.com>
+Dear RT folks!
 
-This needs Sander's Reported-by.
+I'm pleased to announce the v4.19.1-rt3 patch set. 
 
-> ---
->  arch/x86/xen/spinlock.c | 14 ++++++++------
->  1 file changed, 8 insertions(+), 6 deletions(-)
->
-> diff --git a/arch/x86/xen/spinlock.c b/arch/x86/xen/spinlock.c
-> index 441c88262169..1c8a8816a402 100644
-> --- a/arch/x86/xen/spinlock.c
-> +++ b/arch/x86/xen/spinlock.c
-> @@ -9,6 +9,7 @@
->  #include <linux/log2.h>
->  #include <linux/gfp.h>
->  #include <linux/slab.h>
-> +#include <linux/atomic.h>
->  
->  #include <asm/paravirt.h>
->  #include <asm/qspinlock.h>
-> @@ -21,6 +22,7 @@
->  
->  static DEFINE_PER_CPU(int, lock_kicker_irq) = -1;
->  static DEFINE_PER_CPU(char *, irq_name);
-> +static DEFINE_PER_CPU(atomic_t, xen_qlock_wait_nest);
+Changes since v4.19.1-rt2:
 
-I'd move this to xen_qlock_wait().
+  - A patch to the bcm2835 pinctrl driver to use raw_spinlock_t. Patch
+    by Lukas Wunner.
 
-Either way,
+  - The Atmel TCB timer patch set by Alexandre Belloni has been update
+    to v7.
 
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+  - The RCU Kconfig entry has been tweaked and now it is no longer
+    required to enable RCU_EXPERT in order to enable RCU_BOOST.
+    Suggested by Paul E. McKenney.
 
->  static bool xen_pvspin = true;
->  
->  static void xen_qlock_kick(int cpu)
-> @@ -39,25 +41,25 @@ static void xen_qlock_kick(int cpu)
->   */
->  static void xen_qlock_wait(u8 *byte, u8 val)
->  {
-> -	unsigned long flags;
->  	int irq = __this_cpu_read(lock_kicker_irq);
-> +	atomic_t *nest_cnt = this_cpu_ptr(&xen_qlock_wait_nest);
->  
->  	/* If kicker interrupts not initialized yet, just spin */
->  	if (irq == -1 || in_nmi())
->  		return;
->  
-> -	/* Guard against reentry. */
-> -	local_irq_save(flags);
-> +	/* Detect reentry. */
-> +	atomic_inc(nest_cnt);
->  
-> -	/* If irq pending already clear it. */
-> -	if (xen_test_irq_pending(irq)) {
-> +	/* If irq pending already and no nested call clear it. */
-> +	if (atomic_read(nest_cnt) == 1 && xen_test_irq_pending(irq)) {
->  		xen_clear_irq_pending(irq);
->  	} else if (READ_ONCE(*byte) == val) {
->  		/* Block until irq becomes pending (or a spurious wakeup) */
->  		xen_poll_irq(irq);
->  	}
->  
-> -	local_irq_restore(flags);
-> +	atomic_dec(nest_cnt);
->  }
->  
->  static irqreturn_t dummy_handler(int irq, void *dev_id)
+  - The crypto caam driver did not compile. Patch by Horia Geantă.
 
+  - The kbuild test robot complained about various patches because they
+    did not compile and so hurt bisectibility. As a result a few patches
+    and hunks have been moved to avoid that.
+
+Known issues
+     - A warning triggered in "rcu_note_context_switch" originated from
+       SyS_timer_gettime(). The issue was always there, it is now
+       visible. Reported by Grygorii Strashko and Daniel Wagner.
+
+The delta patch against v4.19.1-rt2 is appended below and can be found here:
+ 
+     https://cdn.kernel.org/pub/linux/kernel/projects/rt/4.19/incr/patch-4.19.1-rt2-rt3.patch.xz
+
+You can get this release via the git tree at:
+
+    git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git v4.19.1-rt3
+
+The RT patch against v4.19.1 can be found here:
+
+    https://cdn.kernel.org/pub/linux/kernel/projects/rt/4.19/older/patch-4.19.1-rt3.patch.xz
+
+The split quilt queue is available at:
+
+    https://cdn.kernel.org/pub/linux/kernel/projects/rt/4.19/older/patches-4.19.1-rt3.tar.xz
+
+Sebastian
+diff --git a/drivers/clocksource/timer-atmel-tcb.c b/drivers/clocksource/timer-atmel-tcb.c
+index bbbacf8c46b0f..63ce3b69338a0 100644
+--- a/drivers/clocksource/timer-atmel-tcb.c
++++ b/drivers/clocksource/timer-atmel-tcb.c
+@@ -11,7 +11,7 @@
+ #include <linux/sched_clock.h>
+ #include <soc/at91/atmel_tcb.h>
+ 
+-static struct atmel_tcb_clksrc {
++struct atmel_tcb_clksrc {
+ 	struct clocksource clksrc;
+ 	struct clock_event_device clkevt;
+ 	struct regmap *regmap;
+@@ -29,56 +29,55 @@ static struct atmel_tcb_clksrc {
+ 	} cache[2];
+ 	u32 bmr_cache;
+ 	bool registered;
+-} tc = {
+-	.clksrc = {
+-		.rating		= 200,
+-		.mask		= CLOCKSOURCE_MASK(32),
+-		.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
+-	},
+-	.clkevt	= {
+-		.features	= CLOCK_EVT_FEAT_ONESHOT,
+-		/* Should be lower than at91rm9200's system timer */
+-		.rating		= 125,
+-	},
++	bool clk_enabled;
+ };
+ 
+-static struct tc_clkevt_device {
+-	struct clock_event_device clkevt;
+-	struct regmap *regmap;
+-	void __iomem *base;
+-	struct clk *slow_clk;
++static struct atmel_tcb_clksrc tc, tce;
++
++static struct clk *tcb_clk_get(struct device_node *node, int channel)
++{
+ 	struct clk *clk;
+-	char name[20];
+-	int channel;
+-	int irq;
+-	struct {
+-		u32 cmr;
+-		u32 imr;
+-		u32 rc;
+-		bool clken;
+-	} cache;
+-	bool registered;
+-} tce = {
+-	.clkevt	= {
+-		.features		= CLOCK_EVT_FEAT_PERIODIC |
+-					  CLOCK_EVT_FEAT_ONESHOT,
+-		/*
+-		 * Should be lower than at91rm9200's system timer
+-		 * but higher than tc.clkevt.rating
+-		 */
+-		.rating			= 140,
+-	},
+-};
++	char clk_name[] = "t0_clk";
++
++	clk_name[1] += channel;
++	clk = of_clk_get_by_name(node->parent, clk_name);
++	if (!IS_ERR(clk))
++		return clk;
++
++	return of_clk_get_by_name(node->parent, "t0_clk");
++}
+ 
+ /*
+  * Clockevent device using its own channel
+  */
++
++static void tc_clkevt2_clk_disable(struct clock_event_device *d)
++{
++	clk_disable(tce.clk[0]);
++	tce.clk_enabled = false;
++}
++
++static void tc_clkevt2_clk_enable(struct clock_event_device *d)
++{
++	if (tce.clk_enabled)
++		return;
++	clk_enable(tce.clk[0]);
++	tce.clk_enabled = true;
++}
++
++static int tc_clkevt2_stop(struct clock_event_device *d)
++{
++	writel(0xff, tce.base + ATMEL_TC_IDR(tce.channels[0]));
++	writel(ATMEL_TC_CCR_CLKDIS, tce.base + ATMEL_TC_CCR(tce.channels[0]));
++
++	return 0;
++}
++
+ static int tc_clkevt2_shutdown(struct clock_event_device *d)
+ {
+-	writel(0xff, tce.base + ATMEL_TC_IDR(tce.channel));
+-	writel(ATMEL_TC_CCR_CLKDIS, tce.base + ATMEL_TC_CCR(tce.channel));
++	tc_clkevt2_stop(d);
+ 	if (!clockevent_state_detached(d))
+-		clk_disable(tce.clk);
++		tc_clkevt2_clk_disable(d);
+ 
+ 	return 0;
+ }
+@@ -93,15 +92,15 @@ static int tc_clkevt2_shutdown(struct clock_event_device *d)
+ static int tc_clkevt2_set_oneshot(struct clock_event_device *d)
+ {
+ 	if (clockevent_state_oneshot(d) || clockevent_state_periodic(d))
+-		tc_clkevt2_shutdown(d);
++		tc_clkevt2_stop(d);
+ 
+-	clk_enable(tce.clk);
++	tc_clkevt2_clk_enable(d);
+ 
+ 	/* slow clock, count up to RC, then irq and stop */
+ 	writel(ATMEL_TC_CMR_TCLK(4) | ATMEL_TC_CMR_CPCSTOP |
+ 	       ATMEL_TC_CMR_WAVE | ATMEL_TC_CMR_WAVESEL_UPRC,
+-	       tce.base + ATMEL_TC_CMR(tce.channel));
+-	writel(ATMEL_TC_CPCS, tce.base + ATMEL_TC_IER(tce.channel));
++	       tce.base + ATMEL_TC_CMR(tce.channels[0]));
++	writel(ATMEL_TC_CPCS, tce.base + ATMEL_TC_IER(tce.channels[0]));
+ 
+ 	return 0;
+ }
+@@ -109,23 +108,23 @@ static int tc_clkevt2_set_oneshot(struct clock_event_device *d)
+ static int tc_clkevt2_set_periodic(struct clock_event_device *d)
+ {
+ 	if (clockevent_state_oneshot(d) || clockevent_state_periodic(d))
+-		tc_clkevt2_shutdown(d);
++		tc_clkevt2_stop(d);
+ 
+ 	/* By not making the gentime core emulate periodic mode on top
+ 	 * of oneshot, we get lower overhead and improved accuracy.
+ 	 */
+-	clk_enable(tce.clk);
++	tc_clkevt2_clk_enable(d);
+ 
+ 	/* slow clock, count up to RC, then irq and restart */
+ 	writel(ATMEL_TC_CMR_TCLK(4) | ATMEL_TC_CMR_WAVE |
+ 	       ATMEL_TC_CMR_WAVESEL_UPRC,
+-	       tce.base + ATMEL_TC_CMR(tce.channel));
+-	writel((32768 + HZ / 2) / HZ, tce.base + ATMEL_TC_RC(tce.channel));
++	       tce.base + ATMEL_TC_CMR(tce.channels[0]));
++	writel((32768 + HZ / 2) / HZ, tce.base + ATMEL_TC_RC(tce.channels[0]));
+ 
+ 	/* Enable clock and interrupts on RC compare */
+-	writel(ATMEL_TC_CPCS, tce.base + ATMEL_TC_IER(tce.channel));
++	writel(ATMEL_TC_CPCS, tce.base + ATMEL_TC_IER(tce.channels[0]));
+ 	writel(ATMEL_TC_CCR_CLKEN | ATMEL_TC_CCR_SWTRG,
+-	       tce.base + ATMEL_TC_CCR(tce.channel));
++	       tce.base + ATMEL_TC_CCR(tce.channels[0]));
+ 
+ 	return 0;
+ }
+@@ -133,9 +132,9 @@ static int tc_clkevt2_set_periodic(struct clock_event_device *d)
+ static int tc_clkevt2_next_event(unsigned long delta,
+ 				 struct clock_event_device *d)
+ {
+-	writel(delta, tce.base + ATMEL_TC_RC(tce.channel));
++	writel(delta, tce.base + ATMEL_TC_RC(tce.channels[0]));
+ 	writel(ATMEL_TC_CCR_CLKEN | ATMEL_TC_CCR_SWTRG,
+-	       tce.base + ATMEL_TC_CCR(tce.channel));
++	       tce.base + ATMEL_TC_CCR(tce.channels[0]));
+ 
+ 	return 0;
+ }
+@@ -144,7 +143,7 @@ static irqreturn_t tc_clkevt2_irq(int irq, void *handle)
+ {
+ 	unsigned int sr;
+ 
+-	sr = readl(tce.base + ATMEL_TC_SR(tce.channel));
++	sr = readl(tce.base + ATMEL_TC_SR(tce.channels[0]));
+ 	if (sr & ATMEL_TC_CPCS) {
+ 		tce.clkevt.event_handler(&tce.clkevt);
+ 		return IRQ_HANDLED;
+@@ -155,29 +154,29 @@ static irqreturn_t tc_clkevt2_irq(int irq, void *handle)
+ 
+ static void tc_clkevt2_suspend(struct clock_event_device *d)
+ {
+-	tce.cache.cmr = readl(tce.base + ATMEL_TC_CMR(tce.channel));
+-	tce.cache.imr = readl(tce.base + ATMEL_TC_IMR(tce.channel));
+-	tce.cache.rc = readl(tce.base + ATMEL_TC_RC(tce.channel));
+-	tce.cache.clken = !!(readl(tce.base + ATMEL_TC_SR(tce.channel)) &
++	tce.cache[0].cmr = readl(tce.base + ATMEL_TC_CMR(tce.channels[0]));
++	tce.cache[0].imr = readl(tce.base + ATMEL_TC_IMR(tce.channels[0]));
++	tce.cache[0].rc = readl(tce.base + ATMEL_TC_RC(tce.channels[0]));
++	tce.cache[0].clken = !!(readl(tce.base + ATMEL_TC_SR(tce.channels[0])) &
+ 				ATMEL_TC_CLKSTA);
+ }
+ 
+ static void tc_clkevt2_resume(struct clock_event_device *d)
+ {
+ 	/* Restore registers for the channel, RA and RB are not used  */
+-	writel(tce.cache.cmr, tc.base + ATMEL_TC_CMR(tce.channel));
+-	writel(tce.cache.rc, tc.base + ATMEL_TC_RC(tce.channel));
+-	writel(0, tc.base + ATMEL_TC_RA(tce.channel));
+-	writel(0, tc.base + ATMEL_TC_RB(tce.channel));
++	writel(tce.cache[0].cmr, tc.base + ATMEL_TC_CMR(tce.channels[0]));
++	writel(tce.cache[0].rc, tc.base + ATMEL_TC_RC(tce.channels[0]));
++	writel(0, tc.base + ATMEL_TC_RA(tce.channels[0]));
++	writel(0, tc.base + ATMEL_TC_RB(tce.channels[0]));
+ 	/* Disable all the interrupts */
+-	writel(0xff, tc.base + ATMEL_TC_IDR(tce.channel));
++	writel(0xff, tc.base + ATMEL_TC_IDR(tce.channels[0]));
+ 	/* Reenable interrupts that were enabled before suspending */
+-	writel(tce.cache.imr, tc.base + ATMEL_TC_IER(tce.channel));
++	writel(tce.cache[0].imr, tc.base + ATMEL_TC_IER(tce.channels[0]));
+ 
+ 	/* Start the clock if it was used */
+-	if (tce.cache.clken)
++	if (tce.cache[0].clken)
+ 		writel(ATMEL_TC_CCR_CLKEN | ATMEL_TC_CCR_SWTRG,
+-		       tc.base + ATMEL_TC_CCR(tce.channel));
++		       tc.base + ATMEL_TC_CCR(tce.channels[0]));
+ }
+ 
+ static int __init tc_clkevt_register(struct device_node *node,
+@@ -185,23 +184,24 @@ static int __init tc_clkevt_register(struct device_node *node,
+ 				     int channel, int irq, int bits)
+ {
+ 	int ret;
++	struct clk *slow_clk;
+ 
+ 	tce.regmap = regmap;
+ 	tce.base = base;
+-	tce.channel = channel;
++	tce.channels[0] = channel;
+ 	tce.irq = irq;
+ 
+-	tce.slow_clk = of_clk_get_by_name(node->parent, "slow_clk");
+-	if (IS_ERR(tce.slow_clk))
+-		return PTR_ERR(tce.slow_clk);
++	slow_clk = of_clk_get_by_name(node->parent, "slow_clk");
++	if (IS_ERR(slow_clk))
++		return PTR_ERR(slow_clk);
+ 
+-	ret = clk_prepare_enable(tce.slow_clk);
++	ret = clk_prepare_enable(slow_clk);
+ 	if (ret)
+ 		return ret;
+ 
+-	tce.clk = tcb_clk_get(node, tce.channel);
+-	if (IS_ERR(tce.clk)) {
+-		ret = PTR_ERR(tce.clk);
++	tce.clk[0] = tcb_clk_get(node, tce.channels[0]);
++	if (IS_ERR(tce.clk[0])) {
++		ret = PTR_ERR(tce.clk[0]);
+ 		goto err_slow;
+ 	}
+ 
+@@ -215,14 +215,17 @@ static int __init tc_clkevt_register(struct device_node *node,
+ 	tce.clkevt.set_state_oneshot = tc_clkevt2_set_oneshot,
+ 	tce.clkevt.suspend = tc_clkevt2_suspend,
+ 	tce.clkevt.resume = tc_clkevt2_resume,
++	tce.clkevt.features = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT;
++	tce.clkevt.rating = 140;
+ 
+ 	/* try to enable clk to avoid future errors in mode change */
+-	ret = clk_prepare_enable(tce.clk);
++	ret = clk_prepare_enable(tce.clk[0]);
+ 	if (ret)
+ 		goto err_slow;
+-	clk_disable(tce.clk);
++	clk_disable(tce.clk[0]);
+ 
+-	clockevents_config_and_register(&tce.clkevt, 32768, 1, BIT(bits) - 1);
++	clockevents_config_and_register(&tce.clkevt, 32768, 1,
++					CLOCKSOURCE_MASK(bits));
+ 
+ 	ret = request_irq(tce.irq, tc_clkevt2_irq, IRQF_TIMER | IRQF_SHARED,
+ 			  tce.clkevt.name, &tce);
+@@ -234,9 +237,9 @@ static int __init tc_clkevt_register(struct device_node *node,
+ 	return 0;
+ 
+ err_clk:
+-	clk_unprepare(tce.clk);
++	clk_unprepare(tce.clk[0]);
+ err_slow:
+-	clk_disable_unprepare(tce.slow_clk);
++	clk_disable_unprepare(slow_clk);
+ 
+ 	return ret;
+ }
+@@ -276,7 +279,6 @@ static int tcb_clkevt_next_event(unsigned long delta,
+ {
+ 	u32 old, next, cur;
+ 
+-
+ 	old = readl(tc.base + ATMEL_TC_CV(tc.channels[0]));
+ 	next = old + delta;
+ 	writel(next, tc.base + ATMEL_TC_RC(tc.channels[0]));
+@@ -503,6 +505,9 @@ static int __init tcb_clksrc_register(struct device_node *node,
+ 	tc.clksrc.name = tc.name;
+ 	tc.clksrc.suspend = tc_clksrc_suspend;
+ 	tc.clksrc.resume = tc_clksrc_resume;
++	tc.clksrc.rating = 200;
++	tc.clksrc.mask = CLOCKSOURCE_MASK(32);
++	tc.clksrc.flags = CLOCK_SOURCE_IS_CONTINUOUS;
+ 
+ 	err = clocksource_register_hz(&tc.clksrc, divided_rate);
+ 	if (err)
+@@ -518,6 +523,9 @@ static int __init tcb_clksrc_register(struct device_node *node,
+ 	tc.clkevt.set_next_event = tcb_clkevt_next_event;
+ 	tc.clkevt.set_state_oneshot = tcb_clkevt_oneshot;
+ 	tc.clkevt.set_state_shutdown = tcb_clkevt_shutdown;
++	tc.clkevt.features = CLOCK_EVT_FEAT_ONESHOT;
++	tc.clkevt.rating = 125;
++
+ 	clockevents_config_and_register(&tc.clkevt, divided_rate, 1,
+ 					BIT(tc.bits) - 1);
+ 
+@@ -546,11 +554,11 @@ static int __init tcb_clksrc_register(struct device_node *node,
+ static int __init tcb_clksrc_init(struct device_node *node)
+ {
+ 	const struct of_device_id *match;
+-	const struct atmel_tcb_info *tcb_info;
+ 	struct regmap *regmap;
+ 	void __iomem *tcb_base;
+ 	u32 channel;
+-	int bits, irq, err, chan1 = -1;
++	int irq, err, chan1 = -1;
++	unsigned bits;
+ 
+ 	if (tc.registered && tce.registered)
+ 		return -ENODEV;
+@@ -571,16 +579,18 @@ static int __init tcb_clksrc_init(struct device_node *node)
+ 	}
+ 
+ 	match = of_match_node(atmel_tcb_dt_ids, node->parent);
+-	tcb_info = match->data;
+-	bits = tcb_info->bits;
++	bits = (uintptr_t)match->data;
+ 
+ 	err = of_property_read_u32_index(node, "reg", 0, &channel);
+ 	if (err)
+ 		return err;
+ 
+-	irq = tcb_irq_get(node, channel);
+-	if (irq < 0)
+-		return irq;
++	irq = of_irq_get(node->parent, channel);
++	if (irq < 0) {
++		irq = of_irq_get(node->parent, 0);
++		if (irq < 0)
++			return irq;
++	}
+ 
+ 	if (tc.registered)
+ 		return tc_clkevt_register(node, regmap, tcb_base, channel, irq,
+@@ -604,5 +614,4 @@ static int __init tcb_clksrc_init(struct device_node *node)
+ 	return tcb_clksrc_register(node, regmap, tcb_base, channel, chan1, irq,
+ 				   bits);
+ }
+-CLOCKSOURCE_OF_DECLARE(atmel_tcb_clksrc, "atmel,tcb-timer",
+-		       tcb_clksrc_init);
++TIMER_OF_DECLARE(atmel_tcb_clksrc, "atmel,tcb-timer", tcb_clksrc_init);
+diff --git a/drivers/crypto/caam/qi.c b/drivers/crypto/caam/qi.c
+index 67f7f8c42c932..b84e6c8b1e138 100644
+--- a/drivers/crypto/caam/qi.c
++++ b/drivers/crypto/caam/qi.c
+@@ -83,13 +83,6 @@ EXPORT_SYMBOL(caam_congested);
+ static u64 times_congested;
+ #endif
+ 
+-/*
+- * CPU from where the module initialised. This is required because QMan driver
+- * requires CGRs to be removed from same CPU from where they were originally
+- * allocated.
+- */
+-static int mod_init_cpu;
+-
+ /*
+  * This is a a cache of buffers, from which the users of CAAM QI driver
+  * can allocate short (CAAM_QI_MEMCACHE_SIZE) buffers. It's faster than
+@@ -492,12 +485,11 @@ void caam_drv_ctx_rel(struct caam_drv_ctx *drv_ctx)
+ }
+ EXPORT_SYMBOL(caam_drv_ctx_rel);
+ 
+-int caam_qi_shutdown(struct device *qidev)
++void caam_qi_shutdown(struct device *qidev)
+ {
+-	int i, ret;
++	int i;
+ 	struct caam_qi_priv *priv = dev_get_drvdata(qidev);
+ 	const cpumask_t *cpus = qman_affine_cpus();
+-	struct cpumask old_cpumask = current->cpus_allowed;
+ 
+ 	for_each_cpu(i, cpus) {
+ 		struct napi_struct *irqtask;
+@@ -510,26 +502,12 @@ int caam_qi_shutdown(struct device *qidev)
+ 			dev_err(qidev, "Rsp FQ kill failed, cpu: %d\n", i);
+ 	}
+ 
+-	/*
+-	 * QMan driver requires CGRs to be deleted from same CPU from where they
+-	 * were instantiated. Hence we get the module removal execute from the
+-	 * same CPU from where it was originally inserted.
+-	 */
+-	set_cpus_allowed_ptr(current, get_cpu_mask(mod_init_cpu));
+-
+-	ret = qman_delete_cgr(&priv->cgr);
+-	if (ret)
+-		dev_err(qidev, "Deletion of CGR failed: %d\n", ret);
+-	else
+-		qman_release_cgrid(priv->cgr.cgrid);
++	qman_delete_cgr_safe(&priv->cgr);
++	qman_release_cgrid(priv->cgr.cgrid);
+ 
+ 	kmem_cache_destroy(qi_cache);
+ 
+-	/* Now that we're done with the CGRs, restore the cpus allowed mask */
+-	set_cpus_allowed_ptr(current, &old_cpumask);
+-
+ 	platform_device_unregister(priv->qi_pdev);
+-	return ret;
+ }
+ 
+ static void cgr_cb(struct qman_portal *qm, struct qman_cgr *cgr, int congested)
+@@ -718,22 +696,11 @@ int caam_qi_init(struct platform_device *caam_pdev)
+ 	struct device *ctrldev = &caam_pdev->dev, *qidev;
+ 	struct caam_drv_private *ctrlpriv;
+ 	const cpumask_t *cpus = qman_affine_cpus();
+-	struct cpumask old_cpumask = current->cpus_allowed;
+ 	static struct platform_device_info qi_pdev_info = {
+ 		.name = "caam_qi",
+ 		.id = PLATFORM_DEVID_NONE
+ 	};
+ 
+-	/*
+-	 * QMAN requires CGRs to be removed from same CPU+portal from where it
+-	 * was originally allocated. Hence we need to note down the
+-	 * initialisation CPU and use the same CPU for module exit.
+-	 * We select the first CPU to from the list of portal owning CPUs.
+-	 * Then we pin module init to this CPU.
+-	 */
+-	mod_init_cpu = cpumask_first(cpus);
+-	set_cpus_allowed_ptr(current, get_cpu_mask(mod_init_cpu));
+-
+ 	qi_pdev_info.parent = ctrldev;
+ 	qi_pdev_info.dma_mask = dma_get_mask(ctrldev);
+ 	qi_pdev = platform_device_register_full(&qi_pdev_info);
+@@ -795,8 +762,6 @@ int caam_qi_init(struct platform_device *caam_pdev)
+ 		return -ENOMEM;
+ 	}
+ 
+-	/* Done with the CGRs; restore the cpus allowed mask */
+-	set_cpus_allowed_ptr(current, &old_cpumask);
+ #ifdef CONFIG_DEBUG_FS
+ 	debugfs_create_file("qi_congested", 0444, ctrlpriv->ctl,
+ 			    &times_congested, &caam_fops_u64_ro);
+diff --git a/drivers/crypto/caam/qi.h b/drivers/crypto/caam/qi.h
+index 357b69f570725..b6c8acc308536 100644
+--- a/drivers/crypto/caam/qi.h
++++ b/drivers/crypto/caam/qi.h
+@@ -174,7 +174,7 @@ int caam_drv_ctx_update(struct caam_drv_ctx *drv_ctx, u32 *sh_desc);
+ void caam_drv_ctx_rel(struct caam_drv_ctx *drv_ctx);
+ 
+ int caam_qi_init(struct platform_device *pdev);
+-int caam_qi_shutdown(struct device *dev);
++void caam_qi_shutdown(struct device *dev);
+ 
+ /**
+  * qi_cache_alloc - Allocate buffers from CAAM-QI cache
+diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+index fa530913a2c8f..08925d24180b0 100644
+--- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
++++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
+@@ -90,7 +90,7 @@ struct bcm2835_pinctrl {
+ 	struct gpio_chip gpio_chip;
+ 	struct pinctrl_gpio_range gpio_range;
+ 
+-	spinlock_t irq_lock[BCM2835_NUM_BANKS];
++	raw_spinlock_t irq_lock[BCM2835_NUM_BANKS];
+ };
+ 
+ /* pins are just named GPIO0..GPIO53 */
+@@ -461,10 +461,10 @@ static void bcm2835_gpio_irq_enable(struct irq_data *data)
+ 	unsigned bank = GPIO_REG_OFFSET(gpio);
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&pc->irq_lock[bank], flags);
++	raw_spin_lock_irqsave(&pc->irq_lock[bank], flags);
+ 	set_bit(offset, &pc->enabled_irq_map[bank]);
+ 	bcm2835_gpio_irq_config(pc, gpio, true);
+-	spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
++	raw_spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
+ }
+ 
+ static void bcm2835_gpio_irq_disable(struct irq_data *data)
+@@ -476,12 +476,12 @@ static void bcm2835_gpio_irq_disable(struct irq_data *data)
+ 	unsigned bank = GPIO_REG_OFFSET(gpio);
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&pc->irq_lock[bank], flags);
++	raw_spin_lock_irqsave(&pc->irq_lock[bank], flags);
+ 	bcm2835_gpio_irq_config(pc, gpio, false);
+ 	/* Clear events that were latched prior to clearing event sources */
+ 	bcm2835_gpio_set_bit(pc, GPEDS0, gpio);
+ 	clear_bit(offset, &pc->enabled_irq_map[bank]);
+-	spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
++	raw_spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
+ }
+ 
+ static int __bcm2835_gpio_irq_set_type_disabled(struct bcm2835_pinctrl *pc,
+@@ -584,7 +584,7 @@ static int bcm2835_gpio_irq_set_type(struct irq_data *data, unsigned int type)
+ 	unsigned long flags;
+ 	int ret;
+ 
+-	spin_lock_irqsave(&pc->irq_lock[bank], flags);
++	raw_spin_lock_irqsave(&pc->irq_lock[bank], flags);
+ 
+ 	if (test_bit(offset, &pc->enabled_irq_map[bank]))
+ 		ret = __bcm2835_gpio_irq_set_type_enabled(pc, gpio, type);
+@@ -596,7 +596,7 @@ static int bcm2835_gpio_irq_set_type(struct irq_data *data, unsigned int type)
+ 	else
+ 		irq_set_handler_locked(data, handle_level_irq);
+ 
+-	spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
++	raw_spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
+ 
+ 	return ret;
+ }
+@@ -1047,7 +1047,7 @@ static int bcm2835_pinctrl_probe(struct platform_device *pdev)
+ 		for_each_set_bit(offset, &events, 32)
+ 			bcm2835_gpio_wr(pc, GPEDS0 + i * 4, BIT(offset));
+ 
+-		spin_lock_init(&pc->irq_lock[i]);
++		raw_spin_lock_init(&pc->irq_lock[i]);
+ 	}
+ 
+ 	err = gpiochip_add_data(&pc->gpio_chip, pc);
+diff --git a/include/soc/at91/atmel_tcb.h b/include/soc/at91/atmel_tcb.h
+index d263ea6772259..657e234b14832 100644
+--- a/include/soc/at91/atmel_tcb.h
++++ b/include/soc/at91/atmel_tcb.h
+@@ -1,4 +1,4 @@
+-// SPDX-License-Identifier: GPL-2.0
++//SPDX-License-Identifier: GPL-2.0
+ /* Copyright (C) 2018 Microchip */
+ 
+ #ifndef __SOC_ATMEL_TCB_H
+@@ -166,48 +166,15 @@
+ #define ATMEL_TC_WPMR_WPKEY		(0x54494d << 8)
+ #define ATMEL_TC_WPMR_WPEN		BIT(0)
+ 
+-static inline struct clk *tcb_clk_get(struct device_node *node, int channel)
+-{
+-	struct clk *clk;
+-	char clk_name[] = "t0_clk";
+-
+-	clk_name[1] += channel;
+-	clk = of_clk_get_by_name(node->parent, clk_name);
+-	if (!IS_ERR(clk))
+-		return clk;
+-
+-	return of_clk_get_by_name(node->parent, "t0_clk");
+-}
+-
+-static inline int tcb_irq_get(struct device_node *node, int channel)
+-{
+-	int irq;
+-
+-	irq = of_irq_get(node->parent, channel);
+-	if (irq > 0)
+-		return irq;
+-
+-	return of_irq_get(node->parent, 0);
+-}
+-
+ static const u8 atmel_tc_divisors[5] = { 2, 8, 32, 128, 0, };
+ 
+-struct atmel_tcb_info {
+-	int bits;
+-};
+-
+-static const struct atmel_tcb_info atmel_tcb_infos[] = {
+-	{ .bits = 16 },
+-	{ .bits = 32 },
+-};
+-
+ static const struct of_device_id atmel_tcb_dt_ids[] = {
+ 	{
+ 		.compatible = "atmel,at91rm9200-tcb",
+-		.data = &atmel_tcb_infos[0],
++		.data = (void *)16,
+ 	}, {
+ 		.compatible = "atmel,at91sam9x5-tcb",
+-		.data = &atmel_tcb_infos[1],
++		.data = (void *)32,
+ 	}, {
+ 		/* sentinel */
+ 	}
+diff --git a/kernel/rcu/Kconfig b/kernel/rcu/Kconfig
+index 0be2c96fb640e..a243a78ff38c0 100644
+--- a/kernel/rcu/Kconfig
++++ b/kernel/rcu/Kconfig
+@@ -36,7 +36,7 @@ config TINY_RCU
+ 
+ config RCU_EXPERT
+ 	bool "Make expert-level adjustments to RCU configuration"
+-	default y if PREEMPT_RT_FULL
++	default n
+ 	help
+ 	  This option needs to be enabled if you wish to make
+ 	  expert-level adjustments to RCU configuration.  By default,
+@@ -190,7 +190,7 @@ config RCU_FAST_NO_HZ
+ 
+ config RCU_BOOST
+ 	bool "Enable RCU priority boosting"
+-	depends on RT_MUTEXES && PREEMPT_RCU && RCU_EXPERT
++	depends on (RT_MUTEXES && PREEMPT_RCU && RCU_EXPERT) || PREEMPT_RT_FULL
+ 	default y if PREEMPT_RT_FULL
+ 	help
+ 	  This option boosts the priority of preempted RCU readers that
+diff --git a/localversion-rt b/localversion-rt
+index c3054d08a1129..1445cd65885cd 100644
+--- a/localversion-rt
++++ b/localversion-rt
+@@ -1 +1 @@
+--rt2
++-rt3
