@@ -2,90 +2,84 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DEFDC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:25:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38DA7C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:25:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 185BB20827
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:25:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 185BB20827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 08E8E20827
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:25:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08E8E20827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727803AbeKIUFS (ORCPT
+        id S1728006AbeKIUFf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 15:05:18 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:64413 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727532AbeKIUFS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 15:05:18 -0500
-Received: from fsav106.sakura.ne.jp (fsav106.sakura.ne.jp [27.133.134.233])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wA9AOlDo038770;
-        Fri, 9 Nov 2018 19:24:47 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav106.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav106.sakura.ne.jp);
- Fri, 09 Nov 2018 19:24:47 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav106.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank060157065137.bbtec.net [60.157.65.137])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id wA9AOlqs038760
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Fri, 9 Nov 2018 19:24:47 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: UBSAN: Undefined behaviour in mm/page_alloc.c
-To:     Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>
+        Fri, 9 Nov 2018 15:05:35 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55672 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727537AbeKIUFf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 15:05:35 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id CBB08AE11;
+        Fri,  9 Nov 2018 10:25:36 +0000 (UTC)
+Date:   Fri, 9 Nov 2018 11:25:36 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
 Cc:     Kyungtae Kim <kt0755@gmail.com>, akpm@linux-foundation.org,
-        pavel.tatashin@microsoft.com, osalvador@suse.de,
+        pavel.tatashin@microsoft.com, vbabka@suse.cz, osalvador@suse.de,
         rppt@linux.vnet.ibm.com, aaron.lu@intel.com,
         iamjoonsoo.kim@lge.com, alexander.h.duyck@linux.intel.com,
         mgorman@techsingularity.net, lifeasageek@gmail.com,
         threeearcat@gmail.com, syzkaller@googlegroups.com,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Subject: Re: UBSAN: Undefined behaviour in mm/page_alloc.c
+Message-ID: <20181109102536.GE5321@dhcp22.suse.cz>
 References: <CAEAjamseRRHu+TaTkd1TwpLNm8mtDGP=2K0WKLF0wH-3iLcW_w@mail.gmail.com>
  <20181109084353.GA5321@dhcp22.suse.cz>
  <b51aae15-eb5d-47f0-1222-bfc1ef21e06c@I-love.SAKURA.ne.jp>
  <20181109095604.GC5321@dhcp22.suse.cz>
- <d8757554-45f4-1240-dc8a-0f918ae0e5f3@suse.cz>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <9e17d033-b2ab-3edb-ae0b-90d4f713e55b@i-love.sakura.ne.jp>
-Date:   Fri, 9 Nov 2018 19:24:48 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+ <a74e6a5d-d4c1-9006-60af-de52afafebb2@i-love.sakura.ne.jp>
 MIME-Version: 1.0
-In-Reply-To: <d8757554-45f4-1240-dc8a-0f918ae0e5f3@suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a74e6a5d-d4c1-9006-60af-de52afafebb2@i-love.sakura.ne.jp>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/11/09 19:10, Vlastimil Babka wrote:>>>> +	 * reclaim >= MAX_ORDER areas which will never succeed. Callers may
->>>> +	 * be using allocators in order of preference for an area that is
->>>> +	 * too large.
->>>> +	 */
->>>> +	if (order >= MAX_ORDER) {
->>>
->>> Also, why not to add BUG_ON(gfp_mask & __GFP_NOFAIL); here?
->>
->> Because we do not want to blow up the kernel just because of a stupid
->> usage of the allocator. Can you think of an example where it would
->> actually make any sense?
->>
->> I would argue that such a theoretical abuse would blow up on an
->> unchecked NULL ptr access. Isn't that enough?
+On Fri 09-11-18 19:07:49, Tetsuo Handa wrote:
+> On 2018/11/09 18:56, Michal Hocko wrote:
+> > Does this following look better?
 > 
-> Agreed.
+> Yes.
 > 
+> >> Also, why not to add BUG_ON(gfp_mask & __GFP_NOFAIL); here?
+> > 
+> > Because we do not want to blow up the kernel just because of a stupid
+> > usage of the allocator. Can you think of an example where it would
+> > actually make any sense?
+> > 
+> > I would argue that such a theoretical abuse would blow up on an
+> > unchecked NULL ptr access. Isn't that enough?
+> 
+> We after all can't avoid blowing up the kernel even if we don't add BUG_ON().
+> Stopping with BUG_ON() is saner than NULL pointer dereference messages.
 
-If someone has written a module with __GFP_NOFAIL for an architecture
-where PAGE_SIZE == 2048KB, and someone else tried to use that module on
-another architecture where PAGE_SIZE == 4KB. You are saying that
-triggering NULL pointer dereference is a fault of that user's ignorance
-about MM. You are saying that everyone knows internal of MM. Sad...
+I disagree (strongly to be more explicit). You never know the context
+the allocator is called from. We do not want to oops with a random state
+(locks heled etc). If the access blows up in the user then be it, the
+bug will be clear and to be fixed but BUG_ON on an invalid core kernel
+function is just a bad idea. I believe Linus was quite explicit about it
+and I fully agree with him.
+
+Besides that this is really off-topic to the issue at hands. Don't you
+think?
+-- 
+Michal Hocko
+SUSE Labs
