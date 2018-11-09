@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 728A3C43610
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:04:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0499C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:04:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43C3520855
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:04:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43C3520855
+	by mail.kernel.org (Postfix) with ESMTP id 63C012086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:04:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63C012086C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sai.msu.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729180AbeKJEqJ (ORCPT
+        id S1729150AbeKJEqH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 23:46:09 -0500
-Received: from lnfm1.sai.msu.ru ([93.180.26.255]:36274 "EHLO lnfm1.sai.msu.ru"
+        Fri, 9 Nov 2018 23:46:07 -0500
+Received: from lnfm1.sai.msu.ru ([93.180.26.255]:36273 "EHLO lnfm1.sai.msu.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729134AbeKJEqI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 23:46:08 -0500
+        id S1729023AbeKJEqH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 23:46:07 -0500
 Received: from dragon.sai.msu.ru (dragon.sai.msu.ru [93.180.26.172])
-        by lnfm1.sai.msu.ru (8.14.1/8.12.8) with ESMTP id wA9J3XX4013186;
-        Fri, 9 Nov 2018 22:03:37 +0300
+        by lnfm1.sai.msu.ru (8.14.1/8.12.8) with ESMTP id wA9J3Yn0013188;
+        Fri, 9 Nov 2018 22:03:39 +0300
 Received: from alpha.local (unknown [92.243.181.209])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (Client did not present a certificate)
-        by dragon.sai.msu.ru (Postfix) with ESMTPSA id 2FF2E37291;
-        Fri,  9 Nov 2018 22:03:34 +0300 (MSK)
+        by dragon.sai.msu.ru (Postfix) with ESMTPSA id 549343D735;
+        Fri,  9 Nov 2018 22:03:35 +0300 (MSK)
 From:   "Matwey V. Kornilov" <matwey@sai.msu.ru>
 To:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     matwey.kornilov@gmail.com,
@@ -39,9 +39,9 @@ Cc:     matwey.kornilov@gmail.com,
         mchehab@kernel.org, rostedt@goodmis.org, mingo@redhat.com,
         isely@pobox.com, bhumirks@gmail.com, colin.king@canonical.com,
         kieran.bingham@ideasonboard.com, keiichiw@chromium.org
-Subject: [PATCH v6 1/2] media: usb: pwc: Introduce TRACE_EVENTs for pwc_isoc_handler()
-Date:   Fri,  9 Nov 2018 22:03:26 +0300
-Message-Id: <20181109190327.23606-2-matwey@sai.msu.ru>
+Subject: [PATCH v6 2/2] media: usb: pwc: Don't use coherent DMA buffers for ISO transfer
+Date:   Fri,  9 Nov 2018 22:03:27 +0300
+Message-Id: <20181109190327.23606-3-matwey@sai.msu.ru>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20181109190327.23606-1-matwey@sai.msu.ru>
 References: <20181109190327.23606-1-matwey@sai.msu.ru>
@@ -50,125 +50,158 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There were reports that PWC-based webcams don't work at some
-embedded ARM platforms. [1] Isochronous transfer handler seems to
-work too long leading to the issues in MUSB USB host subsystem.
-Also note, that urb->giveback() handlers are still called with
-disabled interrupts. In order to be able to measure performance of
-PWC driver, traces are introduced in URB handler section.
+DMA cocherency slows the transfer down on systems without hardware
+coherent DMA.
+Instead we use noncocherent DMA memory and explicit sync at data receive
+handler.
+
+Based on previous commit the following performance benchmarks have been
+carried out. Average memcpy() data transfer rate (rate) and handler
+completion time (time) have been measured when running video stream at
+640x480 resolution at 10fps.
+
+x86_64 based system (Intel Core i5-3470). This platform has hardware
+coherent DMA support and proposed change doesn't make big difference here.
+
+ * kmalloc:            rate = (2.0 +- 0.4) GBps
+                       time = (5.0 +- 3.0) usec
+ * usb_alloc_coherent: rate = (3.4 +- 1.2) GBps
+                       time = (3.5 +- 3.0) usec
+
+We see that the measurements agree within error ranges in this case.
+So theoretically predicted performance downgrade cannot be reliably
+measured here.
+
+armv7l based system (TI AM335x BeagleBone Black @ 300MHz). This platform
+has no hardware coherent DMA support. DMA coherence is implemented via
+disabled page caching that slows down memcpy() due to memory controller
+behaviour.
+
+ * kmalloc:            rate =  ( 94 +- 4) MBps
+                       time =  (101 +- 4) usec
+ * usb_alloc_coherent: rate = (28.1 +- 0.1) MBps
+                       time =  (341 +- 2) usec
+
+Note, that quantative difference leads (this commit leads to 3.3 times
+acceleration) to qualitative behavior change in this case. As it was
+stated before, the video stream cannot be successfully received at AM335x
+platforms with MUSB based USB host controller due to performance issues
+[1].
 
 [1] https://www.spinics.net/lists/linux-usb/msg165735.html
 
 Signed-off-by: Matwey V. Kornilov <matwey@sai.msu.ru>
 ---
- drivers/media/usb/pwc/pwc-if.c |  7 +++++
- include/trace/events/pwc.h     | 65 ++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 72 insertions(+)
- create mode 100644 include/trace/events/pwc.h
+ drivers/media/usb/pwc/pwc-if.c | 62 +++++++++++++++++++++++++++++++++---------
+ 1 file changed, 49 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/media/usb/pwc/pwc-if.c b/drivers/media/usb/pwc/pwc-if.c
-index 72704f4d5330..53c111bd5a22 100644
+index 53c111bd5a22..a81fb319b339 100644
 --- a/drivers/media/usb/pwc/pwc-if.c
 +++ b/drivers/media/usb/pwc/pwc-if.c
-@@ -76,6 +76,9 @@
- #include "pwc-dec23.h"
- #include "pwc-dec1.h"
+@@ -159,6 +159,32 @@ static const struct video_device pwc_template = {
+ /***************************************************************************/
+ /* Private functions */
  
-+#define CREATE_TRACE_POINTS
-+#include <trace/events/pwc.h>
++static void *pwc_alloc_urb_buffer(struct device *dev,
++				  size_t size, dma_addr_t *dma_handle)
++{
++	void *buffer = kmalloc(size, GFP_KERNEL);
 +
- /* Function prototypes and driver templates */
- 
- /* hotplug device table support */
-@@ -260,6 +263,8 @@ static void pwc_isoc_handler(struct urb *urb)
- 	int i, fst, flen;
- 	unsigned char *iso_buf = NULL;
- 
-+	trace_pwc_handler_enter(urb, pdev);
++	if (!buffer)
++		return NULL;
 +
- 	if (urb->status == -ENOENT || urb->status == -ECONNRESET ||
- 	    urb->status == -ESHUTDOWN) {
- 		PWC_DEBUG_OPEN("URB (%p) unlinked %ssynchronously.\n",
-@@ -348,6 +353,8 @@ static void pwc_isoc_handler(struct urb *urb)
++	*dma_handle = dma_map_single(dev, buffer, size, DMA_FROM_DEVICE);
++	if (dma_mapping_error(dev, *dma_handle)) {
++		kfree(buffer);
++		return NULL;
++	}
++
++	return buffer;
++}
++
++static void pwc_free_urb_buffer(struct device *dev,
++				size_t size,
++				void *buffer,
++				dma_addr_t dma_handle)
++{
++	dma_unmap_single(dev, dma_handle, size, DMA_FROM_DEVICE);
++	kfree(buffer);
++}
++
+ static struct pwc_frame_buf *pwc_get_next_fill_buf(struct pwc_device *pdev)
+ {
+ 	unsigned long flags = 0;
+@@ -306,6 +332,11 @@ static void pwc_isoc_handler(struct urb *urb)
+ 	/* Reset ISOC error counter. We did get here, after all. */
+ 	pdev->visoc_errors = 0;
+ 
++	dma_sync_single_for_cpu(&urb->dev->dev,
++				urb->transfer_dma,
++				urb->transfer_buffer_length,
++				DMA_FROM_DEVICE);
++
+ 	/* vsync: 0 = don't copy data
+ 		  1 = sync-hunt
+ 		  2 = synched
+@@ -352,6 +383,11 @@ static void pwc_isoc_handler(struct urb *urb)
+ 		pdev->vlast_packet_size = flen;
  	}
  
++	dma_sync_single_for_device(&urb->dev->dev,
++				   urb->transfer_dma,
++				   urb->transfer_buffer_length,
++				   DMA_FROM_DEVICE);
++
  handler_end:
-+	trace_pwc_handler_exit(urb, pdev);
+ 	trace_pwc_handler_exit(urb, pdev);
+ 
+@@ -428,16 +464,15 @@ static int pwc_isoc_init(struct pwc_device *pdev)
+ 		urb->dev = udev;
+ 		urb->pipe = usb_rcvisocpipe(udev, pdev->vendpoint);
+ 		urb->transfer_flags = URB_ISO_ASAP | URB_NO_TRANSFER_DMA_MAP;
+-		urb->transfer_buffer = usb_alloc_coherent(udev,
+-							  ISO_BUFFER_SIZE,
+-							  GFP_KERNEL,
+-							  &urb->transfer_dma);
++		urb->transfer_buffer_length = ISO_BUFFER_SIZE;
++		urb->transfer_buffer = pwc_alloc_urb_buffer(&udev->dev,
++							    urb->transfer_buffer_length,
++							    &urb->transfer_dma);
+ 		if (urb->transfer_buffer == NULL) {
+ 			PWC_ERROR("Failed to allocate urb buffer %d\n", i);
+ 			pwc_isoc_cleanup(pdev);
+ 			return -ENOMEM;
+ 		}
+-		urb->transfer_buffer_length = ISO_BUFFER_SIZE;
+ 		urb->complete = pwc_isoc_handler;
+ 		urb->context = pdev;
+ 		urb->start_frame = 0;
+@@ -488,15 +523,16 @@ static void pwc_iso_free(struct pwc_device *pdev)
+ 
+ 	/* Freeing ISOC buffers one by one */
+ 	for (i = 0; i < MAX_ISO_BUFS; i++) {
+-		if (pdev->urbs[i]) {
++		struct urb *urb = pdev->urbs[i];
 +
- 	i = usb_submit_urb(urb, GFP_ATOMIC);
- 	if (i != 0)
- 		PWC_ERROR("Error (%d) re-submitting urb in pwc_isoc_handler.\n", i);
-diff --git a/include/trace/events/pwc.h b/include/trace/events/pwc.h
-new file mode 100644
-index 000000000000..a2da764a3b41
---- /dev/null
-+++ b/include/trace/events/pwc.h
-@@ -0,0 +1,65 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#if !defined(_TRACE_PWC_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define _TRACE_PWC_H
-+
-+#include <linux/usb.h>
-+#include <linux/tracepoint.h>
-+
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM pwc
-+
-+TRACE_EVENT(pwc_handler_enter,
-+	TP_PROTO(struct urb *urb, struct pwc_device *pdev),
-+	TP_ARGS(urb, pdev),
-+	TP_STRUCT__entry(
-+		__field(struct urb*, urb)
-+		__field(struct pwc_frame_buf*, fbuf)
-+		__field(int, urb__status)
-+		__field(u32, urb__actual_length)
-+		__field(int, fbuf__filled)
-+		__string(name, pdev->v4l2_dev.name)
-+	),
-+	TP_fast_assign(
-+		__entry->urb = urb;
-+		__entry->fbuf = pdev->fill_buf;
-+		__entry->urb__status = urb->status;
-+		__entry->urb__actual_length = urb->actual_length;
-+		__entry->fbuf__filled = (pdev->fill_buf
-+					 ? pdev->fill_buf->filled : 0);
-+		__assign_str(name, pdev->v4l2_dev.name);
-+	),
-+	TP_printk("dev=%s (fbuf=%p filled=%d) urb=%p (status=%d actual_length=%u)",
-+		__get_str(name),
-+		__entry->fbuf,
-+		__entry->fbuf__filled,
-+		__entry->urb,
-+		__entry->urb__status,
-+		__entry->urb__actual_length)
-+);
-+
-+TRACE_EVENT(pwc_handler_exit,
-+	TP_PROTO(struct urb *urb, struct pwc_device *pdev),
-+	TP_ARGS(urb, pdev),
-+	TP_STRUCT__entry(
-+		__field(struct urb*, urb)
-+		__field(struct pwc_frame_buf*, fbuf)
-+		__field(int, fbuf__filled)
-+		__string(name, pdev->v4l2_dev.name)
-+	),
-+	TP_fast_assign(
-+		__entry->urb = urb;
-+		__entry->fbuf = pdev->fill_buf;
-+		__entry->fbuf__filled = pdev->fill_buf->filled;
-+		__assign_str(name, pdev->v4l2_dev.name);
-+	),
-+	TP_printk(" dev=%s (fbuf=%p filled=%d) urb=%p",
-+		__get_str(name),
-+		__entry->fbuf,
-+		__entry->fbuf__filled,
-+		__entry->urb)
-+);
-+
-+#endif /* _TRACE_PWC_H */
-+
-+/* This part must be outside protection */
-+#include <trace/define_trace.h>
++		if (urb) {
+ 			PWC_DEBUG_MEMORY("Freeing URB\n");
+-			if (pdev->urbs[i]->transfer_buffer) {
+-				usb_free_coherent(pdev->udev,
+-					pdev->urbs[i]->transfer_buffer_length,
+-					pdev->urbs[i]->transfer_buffer,
+-					pdev->urbs[i]->transfer_dma);
+-			}
+-			usb_free_urb(pdev->urbs[i]);
++			if (urb->transfer_buffer)
++				pwc_free_urb_buffer(&urb->dev->dev,
++						    urb->transfer_buffer_length,
++						    urb->transfer_buffer,
++						    urb->transfer_dma);
++			usb_free_urb(urb);
+ 			pdev->urbs[i] = NULL;
+ 		}
+ 	}
 -- 
 2.16.4
 
