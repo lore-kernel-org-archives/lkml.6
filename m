@@ -4,58 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BCAAC43610
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F84BC04EB8
 	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:02:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CCC9208E3
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 21:56:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42E7420840
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 21:55:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KKXYxgrr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CCC9208E3
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GGywii75"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42E7420840
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728393AbeKJHi1 (ORCPT
+        id S1728204AbeKJHiZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 02:38:27 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:52808 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727023AbeKJHi0 (ORCPT
+        Sat, 10 Nov 2018 02:38:25 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:43062 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726764AbeKJHiZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 02:38:26 -0500
-Received: by mail-it1-f194.google.com with SMTP id t190-v6so5126181itb.2
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 13:55:57 -0800 (PST)
+        Sat, 10 Nov 2018 02:38:25 -0500
+Received: by mail-io1-f65.google.com with SMTP id t81-v6so2337246iod.10
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 13:55:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:mail-followup-to:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=GTudZ/Gt0tKt03v4CL/v+cvGb77MBzTtv5Yl1iAgsfM=;
-        b=KKXYxgrrF0H++NQxbsAckUUgDToa3oUBAvyFrqVxqhjDlIbdQAve1OGOAnzMDE5LSm
-         OGIIAnxyWGzRpUuxoQO6htZoqqTb1CdNK+DUE38+zBxNOYSKRTw4eyu9KqI5qbbfchcG
-         Ls1ZgoArY+fMRo2D0t17FMsLbWKFyEWYCJzc4=
+        bh=kOmZAsnQmwyCGQi68TkbO3NX6UT7U0JJm33IPWXG10U=;
+        b=GGywii75Y41gg4Q8r2dwYxFAvreKwWe8EcShxyD0UJi466HASzBuSat768W3HYy6Ib
+         /MVa1CeS6GTY+dFXTXh9Of3POBRUVno1ccX+Jo+z/ifBloeRszU16EufE9nvQ4qq/sap
+         ApSQLrPZd0zRMJEoUWkRy/kXDID137QdPxpSM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id
          :mail-followup-to:references:mime-version:content-disposition
          :content-transfer-encoding:in-reply-to:user-agent;
-        bh=GTudZ/Gt0tKt03v4CL/v+cvGb77MBzTtv5Yl1iAgsfM=;
-        b=iyo3B5+Ulm87DclDau7X6m0nm/IhOrQuTfo5nTn/IgQ51LFVKdkVdBANWQHOuflffy
-         mRYn7PFX8JeRKCx8BVE0k4/fJ3FDEPtakkSay27wmfCV8420v57TBgpDOfERPz7puX6T
-         HWvSkSyO7gxvLixwT10gf2/E95qOsN6PXy1kodUWa30a64au2M4UzdpOw6l88/Hb9/UR
-         fNWyrsbXu5J3G3pESmycasmWBMbPfrH55FOrjcUCP0MeLIfne4cARZqhMuofrxrnXr1S
-         JELs3jFrJ6OoU6qWKoYOj1MW2swaWizNWbzaInJ8yi+4BON6zR006ioQ8IUBlOd9tWH/
-         HetQ==
-X-Gm-Message-State: AGRZ1gJQigvEXPRx2XTXeocMdEYw4KC0vek9aOXH7E+CFmYZC1Exvm4R
-        DiRUmtucNU3CzHifNoUj8xnzyA==
-X-Google-Smtp-Source: AJdET5fdBxYpJ/kzj+dxUtyXCNEK3wuBDh3va9JswI0FEEwxmiGU20RoWK8qoqNBLRFTj/kJkKSc1Q==
-X-Received: by 2002:a24:7283:: with SMTP id x125-v6mr3646366itc.66.1541800556569;
-        Fri, 09 Nov 2018 13:55:56 -0800 (PST)
+        bh=kOmZAsnQmwyCGQi68TkbO3NX6UT7U0JJm33IPWXG10U=;
+        b=ZhFnKk0KnswU5L46GANuj5v9WZ7CKSaVzIKXhb4ck8ogzmg006ZJc1oEikywH1BXbH
+         M+G58oFDjbLfE9avs5mHcziAJc9LMStvvZEA/nzgPj8S207d+oH9VGgk0B7KheK5Twjp
+         7RTbSElfR2L9PNaFSa13M76Q4jSNpoKLckvH1wG48nR16XhyWkhDIp4TLrfDJQkJLhoO
+         FtGb1WICRBmuclA5GNFkflYhm4ftnE6urJ8e28pf4KA33IfyE36oT1GbBEFUVlbSrQYa
+         YeKGb/1V+YUypBaNfUNOZXoL9iXB0aRkIpJZvH9iXb5xHuwjFkFA0EpXcRxzjgBeHqMs
+         VyHA==
+X-Gm-Message-State: AGRZ1gImTrM6e4gex8Zk2fXOeU2Fp/MlupdqH+bu85C60FDYRaOxDui2
+        GNgJwAVhFU7wQKFL/UYkWYGIug==
+X-Google-Smtp-Source: AJdET5fkOTq6wnQuNOpggx5+UrISK7BF3tEr9nefiIqrSOzIep76m2l4p6zG+waArU/r2p7cjLjg5Q==
+X-Received: by 2002:a6b:8fc5:: with SMTP id r188-v6mr8391448iod.128.1541800555823;
+        Fri, 09 Nov 2018 13:55:55 -0800 (PST)
 Received: from localhost (c-107-2-67-121.hsd1.mn.comcast.net. [107.2.67.121])
-        by smtp.gmail.com with ESMTPSA id t25-v6sm3238980iob.73.2018.11.09.13.55.55
+        by smtp.gmail.com with ESMTPSA id x6-v6sm1152789itg.15.2018.11.09.13.55.54
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Fri, 09 Nov 2018 13:55:55 -0800 (PST)
 Date:   Fri, 9 Nov 2018 15:55:54 -0600
@@ -66,33 +66,33 @@ Cc:     linux-kernel@vger.kernel.org, shuah@kernel.org,
         ben.hutchings@codethink.co.uk, stable@vger.kernel.org,
         akpm@linux-foundation.org, torvalds@linux-foundation.org,
         linux@roeck-us.net
-Subject: Re: [PATCH 4.9 000/171] 4.9.136-stable review
-Message-ID: <20181109215554.bhjy3wwfmt5222k2@xps.therub.org>
+Subject: Re: [PATCH 4.4 000/114] 4.4.163-stable review
+Message-ID: <20181109215554.4yhum5dkkib7gvlw@xps.therub.org>
 Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org, shuah@kernel.org,
         patches@kernelci.org, lkft-triage@lists.linaro.org,
         ben.hutchings@codethink.co.uk, stable@vger.kernel.org,
         akpm@linux-foundation.org, torvalds@linux-foundation.org,
         linux@roeck-us.net
-References: <20181108215127.257643509@linuxfoundation.org>
+References: <20181108215059.051093652@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181108215127.257643509@linuxfoundation.org>
+In-Reply-To: <20181108215059.051093652@linuxfoundation.org>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 01:49:30PM -0800, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.136 release.
-> There are 171 patches in this series, all will be posted as a response
+On Thu, Nov 08, 2018 at 01:50:15PM -0800, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.163 release.
+> There are 114 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
 > 
-> Responses should be made by Sat Nov 10 21:50:40 UTC 2018.
+> Responses should be made by Sat Nov 10 21:50:28 UTC 2018.
 > Anything received after that time might be too late.
 
 Results from Linaro’s test farm.
@@ -101,18 +101,18 @@ No regressions on arm64, arm, x86_64, and i386.
 Summary
 ------------------------------------------------------------------------
 
-kernel: 4.9.136-rc1
+kernel: 4.4.163-rc2
 git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-git branch: linux-4.9.y
-git commit: cc46a1dedc8bc44d1f238a21ee2848ff2ca6f6d4
-git describe: v4.9.135-172-gcc46a1dedc8b
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/build/v4.9.135-172-gcc46a1dedc8b
+git branch: linux-4.4.y
+git commit: b63fc4e232dfad182f129c0a55afeb860ea0ce54
+git describe: v4.4.162-116-gb63fc4e232df
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/build/v4.4.162-116-gb63fc4e232df
 
 
-No regressions (compared to build v4.9.135)
+No regressions (compared to build v4.4.162)
 
 
-No fixes (compared to build v4.9.135)
+No fixes (compared to build v4.4.162)
 
 -- 
 Linaro LKFT
