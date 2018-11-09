@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF1ECC43610
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:05:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F350C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:05:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7928E20855
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:05:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7928E20855
+	by mail.kernel.org (Postfix) with ESMTP id 1495020855
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 19:05:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1495020855
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=angband.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728972AbeKJErG (ORCPT
+        id S1729082AbeKJErV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 23:47:06 -0500
-Received: from tartarus.angband.pl ([54.37.238.230]:51346 "EHLO
+        Fri, 9 Nov 2018 23:47:21 -0500
+Received: from tartarus.angband.pl ([54.37.238.230]:51272 "EHLO
         tartarus.angband.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728682AbeKJEpU (ORCPT
+        with ESMTP id S1728668AbeKJEpR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 23:45:20 -0500
+        Fri, 9 Nov 2018 23:45:17 -0500
 Received: from 89-64-163-218.dynamic.chello.pl ([89.64.163.218] helo=barad-dur.angband.pl)
         by tartarus.angband.pl with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <kilobyte@angband.pl>)
-        id 1gLC3s-00052P-G0; Fri, 09 Nov 2018 20:03:22 +0100
+        id 1gLC3p-000520-QG; Fri, 09 Nov 2018 20:03:19 +0100
 Received: from kholdan.angband.pl ([2001:470:64f4::5])
         by barad-dur.angband.pl with smtp (Exim 4.89)
         (envelope-from <kilobyte@angband.pl>)
-        id 1gLC3q-00059s-VN; Fri, 09 Nov 2018 20:03:20 +0100
-Received: by kholdan.angband.pl (sSMTP sendmail emulation); Fri, 09 Nov 2018 20:03:18 +0100
+        id 1gLC3o-00059m-8s; Fri, 09 Nov 2018 20:03:17 +0100
+Received: by kholdan.angband.pl (sSMTP sendmail emulation); Fri, 09 Nov 2018 20:03:16 +0100
 From:   Adam Borowski <kilobyte@angband.pl>
 To:     linux-kernel@vger.kernel.org, Nick Terrell <terrelln@fb.com>,
         Russell King <linux@armlinux.org.uk>,
@@ -62,8 +62,8 @@ To:     linux-kernel@vger.kernel.org, Nick Terrell <terrelln@fb.com>,
         Max Filippov <jcmvbkbc@gmail.com>,
         linux-xtensa@linux-xtensa.org
 Cc:     Adam Borowski <kilobyte@angband.pl>
-Date:   Fri,  9 Nov 2018 20:02:52 +0100
-Message-Id: <20181109190304.8573-5-kilobyte@angband.pl>
+Date:   Fri,  9 Nov 2018 20:02:50 +0100
+Message-Id: <20181109190304.8573-3-kilobyte@angband.pl>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181109190304.8573-1-kilobyte@angband.pl>
 References: <20181109185953.xwyelyqnygbskkxk@angband.pl>
@@ -72,7 +72,7 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 89.64.163.218
 X-SA-Exim-Mail-From: kilobyte@angband.pl
-Subject: [PATCH 05/17] mips: Remove support for BZIP2 and LZMA compressed kernel
+Subject: [PATCH 03/17] .gitignore: add ZSTD-compressed files
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on tartarus.angband.pl)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -80,154 +80,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Made redundant by newer choices.
+For now, that's arch/x86/boot/compressed/vmlinux.bin.zst but probably more
+will come, thus let's be consistent with all other compressors.
 
 Signed-off-by: Adam Borowski <kilobyte@angband.pl>
 ---
- arch/mips/Kconfig                      |  2 --
- arch/mips/boot/Makefile                | 27 --------------------------
- arch/mips/boot/compressed/Makefile     |  2 --
- arch/mips/boot/compressed/decompress.c |  8 --------
- 4 files changed, 39 deletions(-)
+ .gitignore | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index 8272ea4c7264..8f774bb9d22f 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -1834,9 +1834,7 @@ endif # CPU_LOONGSON2F
- config SYS_SUPPORTS_ZBOOT
- 	bool
- 	select HAVE_KERNEL_GZIP
--	select HAVE_KERNEL_BZIP2
- 	select HAVE_KERNEL_LZ4
--	select HAVE_KERNEL_LZMA
- 	select HAVE_KERNEL_LZO
- 	select HAVE_KERNEL_XZ
+diff --git a/.gitignore b/.gitignore
+index 97ba6b79834c..0d09cf1c053c 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -42,6 +42,7 @@
+ *.tab.[ch]
+ *.tar
+ *.xz
++*.zst
+ Module.symvers
+ modules.builtin
  
-diff --git a/arch/mips/boot/Makefile b/arch/mips/boot/Makefile
-index 35704c28a28b..9c5f380a6c20 100644
---- a/arch/mips/boot/Makefile
-+++ b/arch/mips/boot/Makefile
-@@ -24,9 +24,7 @@ strip-flags   := $(addprefix --remove-section=,$(drop-sections))
- hostprogs-y := elf2ecoff
- 
- suffix-y			:= bin
--suffix-$(CONFIG_KERNEL_BZIP2)	:= bz2
- suffix-$(CONFIG_KERNEL_GZIP)	:= gz
--suffix-$(CONFIG_KERNEL_LZMA)	:= lzma
- suffix-$(CONFIG_KERNEL_LZO)	:= lzo
- 
- targets := vmlinux.ecoff
-@@ -54,20 +52,12 @@ UIMAGE_ENTRYADDR = $(VMLINUX_ENTRY_ADDRESS)
- # Compressed vmlinux images
- #
- 
--extra-y += vmlinux.bin.bz2
- extra-y += vmlinux.bin.gz
--extra-y += vmlinux.bin.lzma
- extra-y += vmlinux.bin.lzo
- 
--$(obj)/vmlinux.bin.bz2: $(obj)/vmlinux.bin FORCE
--	$(call if_changed,bzip2)
--
- $(obj)/vmlinux.bin.gz: $(obj)/vmlinux.bin FORCE
- 	$(call if_changed,gzip)
- 
--$(obj)/vmlinux.bin.lzma: $(obj)/vmlinux.bin FORCE
--	$(call if_changed,lzma)
--
- $(obj)/vmlinux.bin.lzo: $(obj)/vmlinux.bin FORCE
- 	$(call if_changed,lzo)
- 
-@@ -77,23 +67,15 @@ $(obj)/vmlinux.bin.lzo: $(obj)/vmlinux.bin FORCE
- 
- targets += uImage
- targets += uImage.bin
--targets += uImage.bz2
- targets += uImage.gz
--targets += uImage.lzma
- targets += uImage.lzo
- 
- $(obj)/uImage.bin: $(obj)/vmlinux.bin FORCE
- 	$(call if_changed,uimage,none)
- 
--$(obj)/uImage.bz2: $(obj)/vmlinux.bin.bz2 FORCE
--	$(call if_changed,uimage,bzip2)
--
- $(obj)/uImage.gz: $(obj)/vmlinux.bin.gz FORCE
- 	$(call if_changed,uimage,gzip)
- 
--$(obj)/uImage.lzma: $(obj)/vmlinux.bin.lzma FORCE
--	$(call if_changed,uimage,lzma)
--
- $(obj)/uImage.lzo: $(obj)/vmlinux.bin.lzo FORCE
- 	$(call if_changed,uimage,lzo)
- 
-@@ -122,7 +104,6 @@ $(obj)/vmlinux.its.S: $(addprefix $(srctree)/arch/mips/$(PLATFORM)/,$(ITS_INPUTS
- 
- targets += vmlinux.its
- targets += vmlinux.gz.its
--targets += vmlinux.bz2.its
- targets += vmlinux.lzmo.its
- targets += vmlinux.lzo.its
- 
-@@ -142,19 +123,11 @@ $(obj)/vmlinux.its: $(obj)/vmlinux.its.S $(VMLINUX) FORCE
- $(obj)/vmlinux.gz.its: $(obj)/vmlinux.its.S $(VMLINUX) FORCE
- 	$(call if_changed,cpp_its_S,gzip,vmlinux.bin.gz)
- 
--$(obj)/vmlinux.bz2.its: $(obj)/vmlinux.its.S $(VMLINUX)  FORCE
--	$(call if_changed,cpp_its_S,bzip2,vmlinux.bin.bz2)
--
--$(obj)/vmlinux.lzma.its: $(obj)/vmlinux.its.S $(VMLINUX) FORCE
--	$(call if_changed,cpp_its_S,lzma,vmlinux.bin.lzma)
--
- $(obj)/vmlinux.lzo.its: $(obj)/vmlinux.its.S $(VMLINUX) FORCE
- 	$(call if_changed,cpp_its_S,lzo,vmlinux.bin.lzo)
- 
- targets += vmlinux.itb
- targets += vmlinux.gz.itb
--targets += vmlinux.bz2.itb
--targets += vmlinux.lzma.itb
- targets += vmlinux.lzo.itb
- 
- quiet_cmd_itb-image = ITB     $@
-diff --git a/arch/mips/boot/compressed/Makefile b/arch/mips/boot/compressed/Makefile
-index 3c453a1f1ff1..a7448d74fe7b 100644
---- a/arch/mips/boot/compressed/Makefile
-+++ b/arch/mips/boot/compressed/Makefile
-@@ -62,9 +62,7 @@ $(obj)/vmlinux.bin: $(KBUILD_IMAGE) FORCE
- 	$(call if_changed,objcopy)
- 
- tool_$(CONFIG_KERNEL_GZIP)    = gzip
--tool_$(CONFIG_KERNEL_BZIP2)   = bzip2
- tool_$(CONFIG_KERNEL_LZ4)     = lz4
--tool_$(CONFIG_KERNEL_LZMA)    = lzma
- tool_$(CONFIG_KERNEL_LZO)     = lzo
- tool_$(CONFIG_KERNEL_XZ)      = xzkern
- 
-diff --git a/arch/mips/boot/compressed/decompress.c b/arch/mips/boot/compressed/decompress.c
-index 81df9047e110..ac6978d210e6 100644
---- a/arch/mips/boot/compressed/decompress.c
-+++ b/arch/mips/boot/compressed/decompress.c
-@@ -56,18 +56,10 @@ void error(char *x)
- #include "../../../../lib/decompress_inflate.c"
- #endif
- 
--#ifdef CONFIG_KERNEL_BZIP2
--#include "../../../../lib/decompress_bunzip2.c"
--#endif
--
- #ifdef CONFIG_KERNEL_LZ4
- #include "../../../../lib/decompress_unlz4.c"
- #endif
- 
--#ifdef CONFIG_KERNEL_LZMA
--#include "../../../../lib/decompress_unlzma.c"
--#endif
--
- #ifdef CONFIG_KERNEL_LZO
- #include "../../../../lib/decompress_unlzo.c"
- #endif
 -- 
 2.19.1
 
