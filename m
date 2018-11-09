@@ -2,165 +2,81 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CF60C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:01:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88EADC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:02:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12421208A3
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:01:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=usp-br.20150623.gappssmtp.com header.i=@usp-br.20150623.gappssmtp.com header.b="fffYERGG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12421208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=usp.br
+	by mail.kernel.org (Postfix) with ESMTP id 25A54208A3
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:02:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25A54208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728658AbeKJHoJ (ORCPT
+        id S1728681AbeKJHoc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 02:44:09 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:37045 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728279AbeKJHoI (ORCPT
+        Sat, 10 Nov 2018 02:44:32 -0500
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:54788 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726181AbeKJHob (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 02:44:08 -0500
-Received: by mail-qk1-f196.google.com with SMTP id 131so4350892qkd.4
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 14:01:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=usp-br.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=MSlin5B0a6rI0+juz072I5/ZS+PXCrHG9HcXDmJFVy0=;
-        b=fffYERGGl4klbiOHWvPifaD8udAr7P8XbIpKfhfLedTudN8DLX333DN/2mKfss8Pqz
-         MWMp1Y3NzfqHmXfeSAhlivp6wpbdjX8eJ5aZr2LvDaAzBawmUEXbc7q0wo53EopmfjCS
-         wFEHEdDc8UwlFLa/vEYpJZYswFW8KwGRIGGEFT7l51seIpfj+GfCGNf3YAMRXvSoIzRZ
-         i9nrmiGfq8AA4FrUDvDFAe6eidNRCeew7FZ/A5KvtDRFscLE+Qi8pTJT5urPAYP+syz6
-         hbgP5gwA+xVbgVOibqAg4CO0aVqNl8bxssOprj71zNV7O7Wzy+m/8OTeNxvL/cGc6mlP
-         TH5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=MSlin5B0a6rI0+juz072I5/ZS+PXCrHG9HcXDmJFVy0=;
-        b=FKVFeZO1bl3dkkBhiwaY12OzUEEfVIJ9Xjiu2hyQ2aN/KdWgacOjYHhsCZZCNfvGmJ
-         cjr/we6aeeT3zkqQStr/OMIVR2Q84VJU0WslO9qyox6wtVaMy7qd3HzAYite5PVs7X6j
-         H9uhXGtHBoPYl1caz5Vje01r3TFIclcVxZ4sFJ2Q/uOO97fVdYq3GoQvpeWSDlYfP0Kw
-         wvP7U7sftZgxcTjmpA4r5+ySbE5CF1lz3NpbgBkFVia2LjvAe9F1AY0/w6ieBHouxO33
-         m/hs6rEEGB0enaJGOp3s3aA1jVkqH6x79fxDVYtUYlzl/xCpS4B8Ix3F5deeFNuwYaeF
-         mfcQ==
-X-Gm-Message-State: AGRZ1gIA8s/QUPagO629aV5ASKU75RHkyzlK72sEAWsXoG0LDEU/TT0i
-        irOyx2GjpDv2p3wUmdFeSi/5jw==
-X-Google-Smtp-Source: AJdET5c7OjS9+1QzyBibM9oyQ+s23wLvblv+dJDoeja92/0ZbFSUI1ly1SL4hdLRfQudQMwVLK8oOw==
-X-Received: by 2002:a37:b405:: with SMTP id d5mr9941364qkf.162.1541800898308;
-        Fri, 09 Nov 2018 14:01:38 -0800 (PST)
-Received: from mango.spo.virtua.com.br ([2804:14c:81:942d::1])
-        by smtp.gmail.com with ESMTPSA id k6sm6082723qtk.41.2018.11.09.14.01.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 09 Nov 2018 14:01:37 -0800 (PST)
-From:   Matheus Tavares <matheus.bernardino@usp.br>
-To:     Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        kernel-usp@googlegroups.com, victorcolombo@gmail.com
-Subject: [PATCH 6/6] staging:iio:ad2s90: Move out of staging
-Date:   Fri,  9 Nov 2018 20:00:44 -0200
-Message-Id: <20181109220044.24843-7-matheus.bernardino@usp.br>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20181109220044.24843-1-matheus.bernardino@usp.br>
-References: <20181109220044.24843-1-matheus.bernardino@usp.br>
+        Sat, 10 Nov 2018 02:44:31 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R761e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04389;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0TCdOrkR_1541800906;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TCdOrkR_1541800906)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sat, 10 Nov 2018 06:01:49 +0800
+Subject: Re: ODEBUG: Out of memory. ODEBUG disabled
+To:     Qian Cai <cai@gmx.us>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Waiman Long <longman@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Zhong Jiang <zhongjiang@huawei.com>
+References: <54B1AA39-2C58-4B0C-B8A8-9F85EBA7C963@gmx.us>
+ <5c3b1cf4-1d83-c0a5-4243-28fde66b5cd9@linux.alibaba.com>
+ <9762E093-FCDD-4DAA-8FCE-9D6B953B6F17@gmx.us>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <0181049f-55bd-b0ad-afe3-302272b69c73@linux.alibaba.com>
+Date:   Fri, 9 Nov 2018 14:01:44 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <9762E093-FCDD-4DAA-8FCE-9D6B953B6F17@gmx.us>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move ad2s90 resolver driver out of staging to the main tree.
 
-Signed-off-by: Matheus Tavares <matheus.bernardino@usp.br>
-Signed-off-by: Victor Colombo <victorcolombo@gmail.com>
----
- drivers/iio/resolver/Kconfig                | 10 ++++++++++
- drivers/iio/resolver/Makefile               |  1 +
- drivers/{staging => }/iio/resolver/ad2s90.c |  0
- drivers/staging/iio/resolver/Kconfig        | 10 ----------
- drivers/staging/iio/resolver/Makefile       |  1 -
- 5 files changed, 11 insertions(+), 11 deletions(-)
- rename drivers/{staging => }/iio/resolver/ad2s90.c (100%)
 
-diff --git a/drivers/iio/resolver/Kconfig b/drivers/iio/resolver/Kconfig
-index 2ced9f22aa70..786801be54f6 100644
---- a/drivers/iio/resolver/Kconfig
-+++ b/drivers/iio/resolver/Kconfig
-@@ -3,6 +3,16 @@
- #
- menu "Resolver to digital converters"
- 
-+config AD2S90
-+	tristate "Analog Devices ad2s90 driver"
-+	depends on SPI
-+	help
-+	  Say yes here to build support for Analog Devices spi resolver
-+	  to digital converters, ad2s90, provides direct access via sysfs.
-+
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called ad2s90.
-+
- config AD2S1200
- 	tristate "Analog Devices ad2s1200/ad2s1205 driver"
- 	depends on SPI
-diff --git a/drivers/iio/resolver/Makefile b/drivers/iio/resolver/Makefile
-index 4e1dccae07e7..398d82d50028 100644
---- a/drivers/iio/resolver/Makefile
-+++ b/drivers/iio/resolver/Makefile
-@@ -2,4 +2,5 @@
- # Makefile for Resolver/Synchro drivers
- #
- 
-+obj-$(CONFIG_AD2S90) += ad2s90.o
- obj-$(CONFIG_AD2S1200) += ad2s1200.o
-diff --git a/drivers/staging/iio/resolver/ad2s90.c b/drivers/iio/resolver/ad2s90.c
-similarity index 100%
-rename from drivers/staging/iio/resolver/ad2s90.c
-rename to drivers/iio/resolver/ad2s90.c
-diff --git a/drivers/staging/iio/resolver/Kconfig b/drivers/staging/iio/resolver/Kconfig
-index 6a469ee6101f..4a727c17bb8f 100644
---- a/drivers/staging/iio/resolver/Kconfig
-+++ b/drivers/staging/iio/resolver/Kconfig
-@@ -3,16 +3,6 @@
- #
- menu "Resolver to digital converters"
- 
--config AD2S90
--	tristate "Analog Devices ad2s90 driver"
--	depends on SPI
--	help
--	  Say yes here to build support for Analog Devices spi resolver
--	  to digital converters, ad2s90, provides direct access via sysfs.
--
--	  To compile this driver as a module, choose M here: the
--	  module will be called ad2s90.
--
- config AD2S1210
- 	tristate "Analog Devices ad2s1210 driver"
- 	depends on SPI
-diff --git a/drivers/staging/iio/resolver/Makefile b/drivers/staging/iio/resolver/Makefile
-index 8d901dc7500b..b2049f2ce36e 100644
---- a/drivers/staging/iio/resolver/Makefile
-+++ b/drivers/staging/iio/resolver/Makefile
-@@ -2,5 +2,4 @@
- # Makefile for Resolver/Synchro drivers
- #
- 
--obj-$(CONFIG_AD2S90) += ad2s90.o
- obj-$(CONFIG_AD2S1210) += ad2s1210.o
--- 
-2.18.0
+On 11/9/18 1:51 PM, Qian Cai wrote:
+>
+>> On Nov 9, 2018, at 4:42 PM, Yang Shi <yang.shi@linux.alibaba.com> wrote:
+>>
+>>
+>>
+>> On 11/9/18 1:36 PM, Qian Cai wrote:
+>>> It is a bit annoying on this aarch64 server with 64 CPUs that is
+>>> booting the latest mainline (3541833fd1f2) causes object debugging
+>>> always running out of memory.
+>> May you please paste the detail failure log?
+> I assume you mean dmesg.
+>
+> Here is the dmesg for 64 CPUs,
+> https://paste.ubuntu.com/p/BnhvXXhn7k/
+
+I don't see the oom message, it looks it boots up successfully with 64 CPUs.
+
+>>> I have to boot the kernel with only 16 CPUs instead (nr_cpus=16)
+>>> to make it work. Is it expected that object debugging is not going
+>>> to work with large machines?
+>> I don't think so. I'm supposed it works well with large CPU number on x86.
+> Here is the one with nr_cpus workaround,
+> https://paste.ubuntu.com/p/qMpd2CCPSV/
 
