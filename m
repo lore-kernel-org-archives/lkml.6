@@ -2,97 +2,82 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6B77C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:45:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8E35C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:46:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B067820892
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:45:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69F1320827
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 09:46:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bimlvx3x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B067820892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PhUsYLfa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69F1320827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728393AbeKITZW (ORCPT
+        id S1728404AbeKIT0F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 14:25:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54130 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727560AbeKITZV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 14:25:21 -0500
-Received: from localhost.localdomain (unknown [171.76.98.79])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 988E120883;
-        Fri,  9 Nov 2018 09:45:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541756735;
-        bh=if+DJ4woeOEmeUfzRmjxb9oJ2+z2jt7vf7jO0fltMfI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bimlvx3xKu2FnPM6n9LYD3LkHtoss7sfr4N/dAwoOgl8xJjjA9DxUPCR1BUlssZRD
-         Lph/3vXteyORGkfIBw7/kurXMclhrekylCjy2I/Z0ltDgDkJfUSNx22vyamxcUnJfd
-         qJIPUoyRW75REmBmqYP3UZp7rIXm0gBsNfFYcwy0=
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Andy Gross <andy.gross@linaro.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH v5 18/18] arm64: dts: qcom: pms405: Add pon and pwrkey nodes
-Date:   Fri,  9 Nov 2018 15:14:17 +0530
-Message-Id: <20181109094417.12109-19-vkoul@kernel.org>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20181109094417.12109-1-vkoul@kernel.org>
-References: <20181109094417.12109-1-vkoul@kernel.org>
+        Fri, 9 Nov 2018 14:26:05 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:37208 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727560AbeKIT0F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 14:26:05 -0500
+Received: by mail-lf1-f66.google.com with SMTP id p17so870453lfh.4
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 01:46:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jMz56d4G5hIsOXccuG/Z+HtTjg1/tWvEQ4RM3n68Piw=;
+        b=PhUsYLfauchoNSG7M++2EkbsKyB2hynOMTgX1DYYMk8gW+M+/A1vRBaJ8KlqhM4uYC
+         p745zMkBuov8MEScIUq4Gm+x+qszwi+R2lZVegNVGHOIy14C3+6UCaWjjbWDcyCiDKHI
+         fUYmSSNP9AHdbCH+2r6Dhb/2MFdXhqgljltrw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jMz56d4G5hIsOXccuG/Z+HtTjg1/tWvEQ4RM3n68Piw=;
+        b=CNRPKsjv1sPNnwLmKKLPYhIvEyRV3Oz6ZRALlJaYYQu3pmlX+QCCcW7Ouv0SHRpZZQ
+         zFpjJJBBQkWOtoJPXEarezngh1h2CL0Zc/knDp7qVN6QDHSgMYIFfA6sBLE30eOzGy42
+         OY9sJC4SwQ/geg/tBuIRvpWt7TLzDNgJiZdOTqtYQOnZ6e8UR+XTfhAEB91xKKPkK8x9
+         W67BmyaAslstCYdFBqKU+9R7tHi89005WhBPY29p9GJzERK6I2JURGrw+hDtz63ozmVv
+         iXkZuvE05KKZhyrJqrptV3fwNRtS/xOSsPLPEn7mgtX6eRN/lPREjj5QBCtrNwoCbCnf
+         M8/g==
+X-Gm-Message-State: AGRZ1gLdeNkrnfvh2V2grA+RN9V+EyTN9c9tpaECc/p1GVBL5/V8cFmp
+        BBMC0a3BY1RQVmBcNYv/cAwHzXtPrQMQWaM4p62xXQ==
+X-Google-Smtp-Source: AJdET5cNFPc4zrfEXyrWpQgyvoYHX8Y+2cOSuseL9M9iIomq2/vsruXlHGjX31fVwzqfzSZ8cZtP225F3raO0PRgBM0=
+X-Received: by 2002:a19:5154:: with SMTP id f81mr5064978lfb.96.1541756777080;
+ Fri, 09 Nov 2018 01:46:17 -0800 (PST)
+MIME-Version: 1.0
+References: <20181101154427.23110-1-tiny.windzz@gmail.com>
+In-Reply-To: <20181101154427.23110-1-tiny.windzz@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 9 Nov 2018 10:46:05 +0100
+Message-ID: <CACRpkdZ4gDfK9TtAiiExo-PyYi8qcpPCf5_KHMV_dnoJ05ychw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: mt7622: fix small typo
+To:     tiny.windzz@gmail.com
+Cc:     Sean Wang <sean.wang@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PMS405 also features PON block, so add PON and PWRKEY nodes
+On Thu, Nov 1, 2018 at 4:44 PM Yangtao Li <tiny.windzz@gmail.com> wrote:
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
----
- arch/arm64/boot/dts/qcom/pms405.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 
-diff --git a/arch/arm64/boot/dts/qcom/pms405.dtsi b/arch/arm64/boot/dts/qcom/pms405.dtsi
-index 8e5a8573430e..ad2b62dfc9f6 100644
---- a/arch/arm64/boot/dts/qcom/pms405.dtsi
-+++ b/arch/arm64/boot/dts/qcom/pms405.dtsi
-@@ -2,6 +2,7 @@
- // Copyright (c) 2018, Linaro Limited
- 
- #include <dt-bindings/spmi/spmi.h>
-+#include <dt-bindings/input/linux-event-codes.h>
- 
- &spmi_bus {
- 	pms405_0: pms405@0 {
-@@ -29,6 +30,21 @@
- 				<0 0xcb 0 IRQ_TYPE_NONE>;
- 		};
- 
-+		pon@800 {
-+			compatible = "qcom,pms405-pon";
-+			reg = <0x0800>;
-+			mode-bootloader = <0x2>;
-+			mode-recovery = <0x1>;
-+
-+			pwrkey {
-+				compatible = "qcom,pm8941-pwrkey";
-+				interrupts = <0x0 0x8 0 IRQ_TYPE_EDGE_BOTH>;
-+				debounce = <15625>;
-+				bias-pull-up;
-+				linux,code = <KEY_POWER>;
-+			};
-+		};
-+
- 		rtc@6000 {
- 			compatible = "qcom,pm8941-rtc";
- 			reg = <0x6000>;
--- 
-2.14.4
+This patch does not apply to v4.20-rc1, please check and
+rebase of not already fixed, and resend.
 
+Yours,
+Linus Walleij
