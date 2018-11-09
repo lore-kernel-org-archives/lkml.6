@@ -2,125 +2,192 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 504CBC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 23:54:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7B6BC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 23:58:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F9892075C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 23:54:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F9892075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id 6B8282075C
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 23:58:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B8282075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728846AbeKJJhX (ORCPT
+        id S1728384AbeKJJli (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 04:37:23 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:49856 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727322AbeKJJhX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 04:37:23 -0500
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id AAE0B72CBF9;
-        Sat, 10 Nov 2018 02:54:26 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 9DB067CD1FF; Sat, 10 Nov 2018 02:54:26 +0300 (MSK)
-Date:   Sat, 10 Nov 2018 02:54:26 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Vineet Gupta <vineet.gupta1@synopsys.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>
-Cc:     Elvira Khabirova <lineprinter@altlinux.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@redhat.com>,
-        linux-snps-arc@lists.infradead.org, linux-audit@redhat.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 06/13 v3] arc: define syscall_get_arch()
-Message-ID: <20181109235426.GD2710@altlinux.org>
-Mail-Followup-To: Vineet Gupta <vineet.gupta1@synopsys.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        Elvira Khabirova <lineprinter@altlinux.org>,
-        Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>,
-        linux-snps-arc@lists.infradead.org, linux-audit@redhat.com,
-        linux-kernel@vger.kernel.org
-References: <20181109031605.GF21511@altlinux.org>
- <e729da9ed78b6b62463a27d3012ac63c7b66be08.camel@synopsys.com>
- <CALCETrUzfOcLYDUW6s1Ra2xduDCQSbscKBw=vApCP2HNmfDmMw@mail.gmail.com>
- <456a69c6e01a6ab5b1af6d459a249388f8b4c1f5.camel@synopsys.com>
- <C6CF3942-3307-431F-B76C-B550BB48F472@amacapital.net>
- <215d66fd9a197b631973c9ff75943b4c1216b899.camel@synopsys.com>
- <CALCETrXCcBBTzcL_yz3agNhby1huZSn2UGtJ9Soo=8n8_rj1Tg@mail.gmail.com>
- <20181109233342.GC2710@altlinux.org>
- <C2D7FE5348E1B147BCA15975FBA23075013A59253C@us01wembx1.internal.synopsys.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <C2D7FE5348E1B147BCA15975FBA23075013A59253C@us01wembx1.internal.synopsys.com>
+        Sat, 10 Nov 2018 04:41:38 -0500
+Received: from mga07.intel.com ([134.134.136.100]:65099 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726688AbeKJJli (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 04:41:38 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Nov 2018 15:58:42 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,485,1534834800"; 
+   d="scan'208";a="90911917"
+Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
+  by orsmga008.jf.intel.com with ESMTP; 09 Nov 2018 15:58:42 -0800
+Message-ID: <d511ee6a18da13b9543557db783e6ff3327ca87b.camel@linux.intel.com>
+Subject: Re: [mm PATCH v5 3/7] mm: Implement new zone specific memblock
+ iterator
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     Pavel Tatashin <pasha.tatashin@soleen.com>
+Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
+        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, davem@davemloft.net,
+        pavel.tatashin@microsoft.com, mhocko@suse.com, mingo@kernel.org,
+        kirill.shutemov@linux.intel.com, dan.j.williams@intel.com,
+        dave.jiang@intel.com, rppt@linux.vnet.ibm.com, willy@infradead.org,
+        vbabka@suse.cz, khalid.aziz@oracle.com, ldufour@linux.vnet.ibm.com,
+        mgorman@techsingularity.net, yi.z.zhang@linux.intel.com
+Date:   Fri, 09 Nov 2018 15:58:42 -0800
+In-Reply-To: <20181109232654.bi37bdkrqbogbdcx@xakep.localdomain>
+References: <154145268025.30046.11742652345962594283.stgit@ahduyck-desk1.jf.intel.com>
+         <154145278071.30046.9022571960145979137.stgit@ahduyck-desk1.jf.intel.com>
+         <20181109232654.bi37bdkrqbogbdcx@xakep.localdomain>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syscall_get_arch() is required to be implemented on all architectures
-that use tracehook_report_syscall_entry() in order to extend
-the generic ptrace API with PTRACE_GET_SYSCALL_INFO request.
+On Fri, 2018-11-09 at 18:26 -0500, Pavel Tatashin wrote:
+> > +/**
+> > + * for_each_free_mem_range_in_zone - iterate through zone specific free
+> > + * memblock areas
+> > + * @i: u64 used as loop variable
+> > + * @zone: zone in which all of the memory blocks reside
+> > + * @p_start: ptr to phys_addr_t for start address of the range, can be %NULL
+> > + * @p_end: ptr to phys_addr_t for end address of the range, can be %NULL
+> > + *
+> > + * Walks over free (memory && !reserved) areas of memblock in a specific
+> > + * zone. Available as soon as memblock is initialized.
+> > + */
+> > +#define for_each_free_mem_pfn_range_in_zone(i, zone, p_start, p_end)	\
+> > +	for (i = 0,							\
+> > +	     __next_mem_pfn_range_in_zone(&i, zone, p_start, p_end);	\
+> > +	     i != (u64)ULLONG_MAX;					\
+> > +	     __next_mem_pfn_range_in_zone(&i, zone, p_start, p_end))
+> > +#endif /* CONFIG_DEFERRED_STRUCT_PAGE_INIT */
+> 
+> Use U64_MAX instead of ULLONG_MAX, and avoid u64 cast. I know other
+> places in this file use UULONG_MAX with cast, but I think U64_MAX is
+> better.
 
-Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
----
-v3: replaced #ifdefs with IS_ENABLED,
-    made LE as default, added BE suffixes variants
-v2: defined AUDIT_ARCH_ARCOMPACT, AUDIT_ARCH_ARCOMPACTLE, AUDIT_ARCH_ARCV2,
-    and AUDIT_ARCH_ARCV2LE instead of AUDIT_ARCH_ARC,
-    updated syscall_get_arch() implementation accordingly.
+Okay, maybe I will submit a follow up that just cleans all of these up.
 
- arch/arc/include/asm/syscall.h | 10 ++++++++++
- include/uapi/linux/audit.h     |  4 ++++
- 2 files changed, 14 insertions(+)
+> > +
+> >  /**
+> >   * for_each_free_mem_range - iterate through free memblock areas
+> >   * @i: u64 used as loop variable
+> > diff --git a/mm/memblock.c b/mm/memblock.c
+> > index 7df468c8ebc8..f1d1fbfd1ae7 100644
+> > --- a/mm/memblock.c
+> > +++ b/mm/memblock.c
+> > @@ -1239,6 +1239,69 @@ int __init_memblock memblock_set_node(phys_addr_t base, phys_addr_t size,
+> >  	return 0;
+> >  }
+> >  #endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
+> > +#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
+> > +/**
+> > + * __next_mem_pfn_range_in_zone - iterator for for_each_*_range_in_zone()
+> > + *
+> > + * @idx: pointer to u64 loop variable
+> > + * @zone: zone in which all of the memory blocks reside
+> > + * @out_start: ptr to ulong for start pfn of the range, can be %NULL
+> > + * @out_end: ptr to ulong for end pfn of the range, can be %NULL
+> > + *
+> > + * This function is meant to be a zone/pfn specific wrapper for the
+> > + * for_each_mem_range type iterators. Specifically they are used in the
+> > + * deferred memory init routines and as such we were duplicating much of
+> > + * this logic throughout the code. So instead of having it in multiple
+> > + * locations it seemed like it would make more sense to centralize this to
+> > + * one new iterator that does everything they need.
+> > + */
+> > +void __init_memblock
+> > +__next_mem_pfn_range_in_zone(u64 *idx, struct zone *zone,
+> > +			     unsigned long *out_spfn, unsigned long *out_epfn)
+> > +{
+> > +	int zone_nid = zone_to_nid(zone);
+> > +	phys_addr_t spa, epa;
+> > +	int nid;
+> > +
+> > +	__next_mem_range(idx, zone_nid, MEMBLOCK_NONE,
+> > +			 &memblock.memory, &memblock.reserved,
+> > +			 &spa, &epa, &nid);
+> > +
+> > +	while (*idx != ULLONG_MAX) {
+> 
+> Ditto, use U64_MAX
 
-diff --git a/arch/arc/include/asm/syscall.h b/arch/arc/include/asm/syscall.h
-index 29de09804306..10b2e7523bc8 100644
---- a/arch/arc/include/asm/syscall.h
-+++ b/arch/arc/include/asm/syscall.h
-@@ -9,6 +9,7 @@
- #ifndef _ASM_ARC_SYSCALL_H
- #define _ASM_ARC_SYSCALL_H  1
- 
-+#include <uapi/linux/audit.h>
- #include <linux/err.h>
- #include <linux/sched.h>
- #include <asm/unistd.h>
-@@ -68,4 +69,13 @@ syscall_get_arguments(struct task_struct *task, struct pt_regs *regs,
- 	}
- }
- 
-+static inline int syscall_get_arch(void)
-+{
-+	return IS_ENABLED(CONFIG_ISA_ARCOMPACT)
-+		? (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)
-+			? AUDIT_ARCH_ARCOMPACTBE : AUDIT_ARCH_ARCOMPACT)
-+		: (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)
-+			? AUDIT_ARCH_ARCV2BE : AUDIT_ARCH_ARCV2);
-+}
-+
- #endif
-diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-index 818ae690ab79..bedf3bf54c3a 100644
---- a/include/uapi/linux/audit.h
-+++ b/include/uapi/linux/audit.h
-@@ -375,6 +375,10 @@ enum {
- 
- #define AUDIT_ARCH_AARCH64	(EM_AARCH64|__AUDIT_ARCH_64BIT|__AUDIT_ARCH_LE)
- #define AUDIT_ARCH_ALPHA	(EM_ALPHA|__AUDIT_ARCH_64BIT|__AUDIT_ARCH_LE)
-+#define AUDIT_ARCH_ARCOMPACT	(EM_ARCOMPACT|__AUDIT_ARCH_LE)
-+#define AUDIT_ARCH_ARCOMPACTBE	(EM_ARCOMPACT)
-+#define AUDIT_ARCH_ARCV2	(EM_ARCV2|__AUDIT_ARCH_LE)
-+#define AUDIT_ARCH_ARCV2BE	(EM_ARCV2)
- #define AUDIT_ARCH_ARM		(EM_ARM|__AUDIT_ARCH_LE)
- #define AUDIT_ARCH_ARMEB	(EM_ARM)
- #define AUDIT_ARCH_CRIS		(EM_CRIS|__AUDIT_ARCH_LE)
--- 
-ldv
+Same here.
+
+> > +		unsigned long epfn = PFN_DOWN(epa);
+> > +		unsigned long spfn = PFN_UP(spa);
+> > +
+> > +		/*
+> > +		 * Verify the end is at least past the start of the zone and
+> > +		 * that we have at least one PFN to initialize.
+> > +		 */
+> > +		if (zone->zone_start_pfn < epfn && spfn < epfn) {
+> > +			/* if we went too far just stop searching */
+> > +			if (zone_end_pfn(zone) <= spfn)
+> > +				break;
+> 
+> Set *idx = U64_MAX here, then break. This way after we are outside this
+> while loop idx is always equals to U64_MAX.
+
+Actually I think what you are asking for is the logic that is outside
+of the while loop we are breaking out of. So if you check at the end of
+the function there is the bit of code with the comment "signal end of
+iteration" where I end up setting *idx to ULLONG_MAX, *out_spfn to
+ULONG_MAX, and *out_epfn to 0.
+
+The general idea I had with the function is that you could use either
+the index or spfn < epfn checks to determine if you keep going or not.
+
+> 
+> > +
+> > +			if (out_spfn)
+> > +				*out_spfn = max(zone->zone_start_pfn, spfn);
+> > +			if (out_epfn)
+> > +				*out_epfn = min(zone_end_pfn(zone), epfn);
+> 
+> Don't we need to verify after adjustment that out_spfn != out_epfn, so
+> there is at least one PFN to initialize?
+
+We have a few checks that I believe prevent that. Before we get to this
+point we have verified the following:
+	zone->zone_start < epfn
+	spfn < epfn
+
+The other check that should be helping to prevent that is the break
+statement above that is forcing us to exit if spfn is somehow already
+past the end of the zone, that essentially maps out:
+	spfn < zone_end_pfn(zone)
+
+So the only check we don't have is:
+	zone->zone_start < zone_end_pfn(zone)
+
+If I am not mistaken that is supposed to be a given is it not? I would
+assume we don't have any zones that are completely empty or inverted
+that would be called here do we?
+
+> The rest looks good. Once the above is fixed:
+> 
+> Reviewed-by: Pavel Tatashin <pasha.tatashin@soleen.com>
+> 
+> Thank you,
+> Pasha
+
+Thanks for the feedback.
+
+- Alex
+
