@@ -2,116 +2,137 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BD1AC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 03:26:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C699DC43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 03:38:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24DDA2086C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 03:26:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FDDA20818
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 03:38:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GJwqF1YA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24DDA2086C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kOkXXRBY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FDDA20818
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727532AbeKINEi (ORCPT
+        id S1727602AbeKINRb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 08:04:38 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:42690 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727378AbeKINEh (ORCPT
+        Fri, 9 Nov 2018 08:17:31 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:32835 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727311AbeKINRb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 08:04:37 -0500
-Received: by mail-pl1-f195.google.com with SMTP id t6-v6so265416plo.9
-        for <linux-kernel@vger.kernel.org>; Thu, 08 Nov 2018 19:26:00 -0800 (PST)
+        Fri, 9 Nov 2018 08:17:31 -0500
+Received: by mail-vs1-f66.google.com with SMTP id p74so289891vsc.0;
+        Thu, 08 Nov 2018 19:38:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=yX2sCd2EA1FTKfmRYjC58TpT5nQVf8lwKNV7j+JnwoA=;
-        b=GJwqF1YAE8+XFqsMPGlLa5K1x5M0ynidJ3srGG1Gsug9GkYRPjW8nKPItLgwL/t5XL
-         tRsXtSnck7I/I/g9dn12vUY8YP7xJLjaZ8iKmkIfoHGA+I8ODwETEG/KVDaE5g4hM0BS
-         KNE4gfzekefEf9dP9Pl1Zfva2OtQGZMkNSStM=
+        d=gmail.com; s=20161025;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=gJGY3tMz5UmZFHbnuWC+rm3bs5Qoe82/kPj1/mytR6s=;
+        b=kOkXXRBYWfeGN3r+ts1IJMONEZqMuc9lNCWwyC0cE3c3MZsCK9rUoaKmpXkujH4YLn
+         TNTkrosFpvDhcrAw6wXJ7QajjYIclCaYfrEkmziHOlVs9DwArN26DLQmWrTEGdLj8sEe
+         0M6jBz+nAy0mZFDuHi4dutttC6uSYgnGpzz/fUJR9CPR7kdnJlBtmQFJpQAzGxloZpvL
+         km6IfhdG8uRvd/k0GZ6cNPyH3/O+/HoZONCB6nQh0n1oE8nRm2O7WsO7SaJcBKDVVL8D
+         f/nEVEyoyE1bwpNt0tX4BbVj0u/tgO0EoSoxEsDdEW1OGOJ7m4aGdVSI4GRW0XXz2UrQ
+         7zwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=yX2sCd2EA1FTKfmRYjC58TpT5nQVf8lwKNV7j+JnwoA=;
-        b=cu/Skcj5yjnzsxxrLDNSreyBmuoJ0uugJ6wMYpa7lYN2fjurNa+33FTY2E4NR3wkb6
-         lKr+zndhGqKzaR/NenS8FjITJzJs1t7oGFZrTICMsRDzN30jNfXbH0+cuAH0dg0lI+A+
-         jMi7vrQjya1reZLFH7r3RdcluzdFTRk20rWW2e77OHMw/51GyrqWDiMPoNvYh3Pxlm8m
-         heg1x0oi59IhsAy6nzH1dXHBrvLIBydHOu2FK0ieH4um9aPM+qzTJxEpKQX95klEvoEd
-         QCuHUNjiAe5/jzGKuASKKM5RbrpykgHB47wO7nOT7t8UezKQEL74ErZG+JwMLgBqgDcc
-         93KQ==
-X-Gm-Message-State: AGRZ1gL3HkQlfR88SuhrYcnCw3h5mRnx5zCteB2ChbmHrXwEP9FHaSDJ
-        9dIFPDlawJ6M137zHiiF7BUz/g==
-X-Google-Smtp-Source: AJdET5ffLVtugP0nUJykP0UozNL8jk5m3ALMixWhiyHtZCc9UbFIoEeKNfEcwEcLtAojDmgRg1u+eA==
-X-Received: by 2002:a17:902:6b46:: with SMTP id g6-v6mr7176191plt.33.1541733959593;
-        Thu, 08 Nov 2018 19:25:59 -0800 (PST)
-Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id h7-v6sm6656675pfd.35.2018.11.08.19.25.55
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 08 Nov 2018 19:25:58 -0800 (PST)
-From:   Baolin Wang <baolin.wang@linaro.org>
-To:     jic23@kernel.org
-Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        freeman.liu@unisoc.com, broonie@kernel.org,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        baolin.wang@linaro.org
-Subject: [PATCH] iio: adc: sc27xx: Add ADC data conversion timeout
-Date:   Fri,  9 Nov 2018 11:25:31 +0800
-Message-Id: <208f9043fbd9b14b7a0c2743f68fa424388f5dcd.1541733478.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=gJGY3tMz5UmZFHbnuWC+rm3bs5Qoe82/kPj1/mytR6s=;
+        b=Yfh/R1LeHyQO7zIlB0Ff5U23ELu1wuoLEzeTyfmyxQscerhIZ8lin7khW77ayJMn5h
+         DoncCNf6VHWU3emqgC1X8QhUFsu7POU+2PB83A0TSKnL9FSiC0/kQ9n0KjAW+p8MFnhW
+         4B2NA9LQHxcydELPE5P6bDmjR/oMv+8LQbvRuolI5aiYUE4BflTsUTwr4t1svMY13L5f
+         LVQcSZgqjcApfUUjfoNtao/d6GZEVtFsG+iSGUD/7TW+5awj+vuj707XaS9V3zXIg1Gb
+         qOIZWdnuZPSGBftmC1v32DeIFd/qB5R/6tJv2dE2C8/fR3bXoBHTtm7aii/3EblyotJG
+         Tztg==
+X-Gm-Message-State: AGRZ1gJqZKWimjyQnTG2HuCBVUJJOpjtdmmPCo/bLZFsOz/fSD9CZFGG
+        SC71qcjPcfnlTFoW5W7IxA==
+X-Google-Smtp-Source: AJdET5dHJFLahRHFL5nMRHX7TylGd4i7Hkxhw8653eYdYr7CdvD0i16fHdt77WHy2ycCWRO6em9M0A==
+X-Received: by 2002:a67:768b:: with SMTP id r133mr3124651vsc.35.1541734730067;
+        Thu, 08 Nov 2018 19:38:50 -0800 (PST)
+Received: from 960.ws ([2601:902:c200:6512:a7fd:514d:7aab:c075])
+        by smtp.gmail.com with ESMTPSA id j133sm1632138vkc.24.2018.11.08.19.38.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 08 Nov 2018 19:38:49 -0800 (PST)
+Message-ID: <0ff07717127d3f3a065c559ad737efcd47dbd75d.camel@gmail.com>
+Subject: Re: [PATCH v3 0/3] Huawei laptops
+From:   ayman.bagabas@gmail.com
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Kailang Yang <kailang@realtek.com>,
+        Hui Wang <hui.wang@canonical.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>
+Date:   Thu, 08 Nov 2018 22:38:47 -0500
+In-Reply-To: <CAHp75VdW-yRDuUd9kvHuV=2AHodpt5Nm1Oo18=FtVEHXrCGkOA@mail.gmail.com>
+References: <20181108171701.4444-1-ayman.bagabas@gmail.com>
+         <CAHp75VdW-yRDuUd9kvHuV=2AHodpt5Nm1Oo18=FtVEHXrCGkOA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.1 (3.30.1-1.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Freeman Liu <freeman.liu@unisoc.com>
+On Thu, 2018-11-08 at 21:59 +0200, Andy Shevchenko wrote:
+> On Thu, Nov 8, 2018 at 7:17 PM Ayman Bagabas <ayman.bagabas@gmail.com
+> > wrote:
+> 
+> Is it supposed to go via PDx86 or ALSA tree?
 
-Sometimes the ADC controller met some problems, and it will not complete
-the data conversion, that will can not wake up the read process any more
-to block users. So we should add one maximum conversion time to avoid
-this issue.
+There isn't much of work done on behave of ALSA. So PDx86?
 
-Signed-off-by: Freeman Liu <freeman.liu@unisoc.com>
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
- drivers/iio/adc/sc27xx_adc.c |   12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/iio/adc/sc27xx_adc.c b/drivers/iio/adc/sc27xx_adc.c
-index 7940b23..f7f7a189 100644
---- a/drivers/iio/adc/sc27xx_adc.c
-+++ b/drivers/iio/adc/sc27xx_adc.c
-@@ -52,6 +52,9 @@
- /* Timeout (ms) for the trylock of hardware spinlocks */
- #define SC27XX_ADC_HWLOCK_TIMEOUT	5000
- 
-+/* Timeout (ms) for ADC data conversion according to ADC datasheet */
-+#define SC27XX_ADC_RDY_TIMEOUT		100
-+
- /* Maximum ADC channel number */
- #define SC27XX_ADC_CHANNEL_MAX		32
- 
-@@ -223,7 +226,14 @@ static int sc27xx_adc_read(struct sc27xx_adc_data *data, int channel,
- 	if (ret)
- 		goto disable_adc;
- 
--	wait_for_completion(&data->completion);
-+	ret = wait_for_completion_timeout(&data->completion,
-+				msecs_to_jiffies(SC27XX_ADC_RDY_TIMEOUT));
-+	if (!ret) {
-+		dev_err(data->dev, "read ADC data timeout\n");
-+		ret = -ETIMEDOUT;
-+	} else {
-+		ret = 0;
-+	}
- 
- disable_adc:
- 	regmap_update_bits(data->regmap, data->base + SC27XX_ADC_CTL,
--- 
-1.7.9.5
+> 
+> > Changes from v2:
+> > * Support for Huawei MBX
+> > * Style and formating issues
+> > 
+> > [PATCH v3 1/3]
+> > The first patch adds support for missing hotkeys on some models.
+> > 
+> > [PATCH v3 2/3]
+> > This one enables the front speakers on the Huawei Matebook X Pro
+> > (MBXP). This
+> > solves bug 200501 
+> > https://bugzilla.kernel.org/show_bug.cgi?id=200501
+> > It simply uses the pins configurations generated by hdajackretast
+> > using the
+> > settings posted on the bug page https://imgur.com/a/N1xsCVZ
+> > 
+> > [PATCH v3 3/3]
+> > This enables the micmute LED on Huawei laptops using ACPI calls.
+> > 
+> > Ayman Bagabas (3):
+> >   x86: add support for Huawei WMI hotkeys.
+> >   ALSA: hda: fix front speakers on Huawei MBXP.
+> >   ALSA: hda: add support for Huawei WMI micmute LED
+> > 
+> >  drivers/platform/x86/Kconfig                 |  11 +
+> >  drivers/platform/x86/Makefile                |   1 +
+> >  drivers/platform/x86/huawei_wmi.c            | 236
+> > +++++++++++++++++++
+> >  include/linux/platform_data/x86/huawei_wmi.h |   9 +
+> >  sound/pci/hda/huawei_wmi_helper.c            |  47 ++++
+> >  sound/pci/hda/patch_realtek.c                |  29 +++
+> >  6 files changed, 333 insertions(+)
+> >  create mode 100644 drivers/platform/x86/huawei_wmi.c
+> >  create mode 100644 include/linux/platform_data/x86/huawei_wmi.h
+> >  create mode 100644 sound/pci/hda/huawei_wmi_helper.c
+> > 
+> > --
+> > 2.17.2
+> > 
+> 
+> 
 
