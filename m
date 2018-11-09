@@ -2,176 +2,156 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CDB7C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:16:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BCD2C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:18:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC20920818
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:16:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=usp-br.20150623.gappssmtp.com header.i=@usp-br.20150623.gappssmtp.com header.b="teyNSHAz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC20920818
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=usp.br
+	by mail.kernel.org (Postfix) with ESMTP id D310A20818
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 22:18:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D310A20818
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728597AbeKJH6c (ORCPT
+        id S1728279AbeKJIAk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 02:58:32 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:40190 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726181AbeKJH6b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 02:58:31 -0500
-Received: by mail-oi1-f193.google.com with SMTP id u130-v6so2780159oie.7
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 14:15:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=usp-br.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ELgrtEXcs6cb8ETxNYp2vyBBc5bX0KK02L7f+8jGKC0=;
-        b=teyNSHAzVb5YziUcx5Z+UsFUCb22ulH7oVZw/Atyxp8Bl/L8zUUZjQaL1gS554l/kG
-         LQHZhpQn+rvNhc253IZq9PxWdpi1SSxvNzLS9DzIRnFAuxYSS4s4ZH6VvWjx+OGVY7CX
-         s+uJ7fD2WBbtWzSrA4apfD2KXFgbkt9PKg3Ye0RAkBTjOSuG4VYSSBegaCmGPzYUk1I7
-         hPEnBnf/6qKrOxO/qN0X9VAlNmf7StiGdBVbcwZ2zGYU0RZqZe5TLOHOvkxl7DN4okZQ
-         d3nPlnQH9xNr5KwHWqHGlrQHFh7aQZNhUfLtvTdJ4g43kfvzdG5PHMKpv5nVtbQcyyPp
-         0xdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ELgrtEXcs6cb8ETxNYp2vyBBc5bX0KK02L7f+8jGKC0=;
-        b=ZNumtT3TjsQ3Wks4ldU/u0got9AcckCsx5u0vnPIl4Cm8oADh56FEca2GyTSgiqTTQ
-         cesbtuJVLN84L01bnt4AoHK59c3kT6daKxeU/aEtDnVY6PWNDQMW/l0zZoxDbz+QHE4d
-         vLq38vvH3TgdrEUHcau+hEaFzkwR11JXT+noEdUlu6BpF293C3w1gYERoJTm/PBfrDcv
-         HGTGtgDt2jU6rY1h+5Dle9hYp15MPMXWFi+zs1D5BuprJDoZ8hA60TmcOuJhtdmuBKMh
-         SQntrTF/MSAxsIZFrIT+cn/Uc51GRdUwRBasHGXGbLuXBw8EzOd+ccZuclAMfW9bN2Km
-         PA+w==
-X-Gm-Message-State: AGRZ1gK1VCLl65Gg2SjXnaY5clKKkDC0saCPqhrTOCPFySoA5rbNlA9D
-        IBEqicA+D+Rb2P/p2z0m0r9GddZYw0PZZ5aGDUrFlw==
-X-Google-Smtp-Source: AJdET5fipVJ+SF6RCEwVL7lgOIxe3W1Znk9fF5Fh68R7DRhHjXhzws/6BgPmNv5wMp88mlI9wiExrjApDSFU6s9/pCc=
-X-Received: by 2002:aca:3246:: with SMTP id y67-v6mr1201235oiy.165.1541801757289;
- Fri, 09 Nov 2018 14:15:57 -0800 (PST)
+        Sat, 10 Nov 2018 03:00:40 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:53376 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726181AbeKJIAk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 03:00:40 -0500
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id KMeVoO7jLcQp; Fri,  9 Nov 2018 23:18:05 +0100 (CET)
+Received: from zn.tnic (p200300EC2BD03D00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bd0:3d00:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B04631EC02A3;
+        Fri,  9 Nov 2018 23:18:04 +0100 (CET)
+Date:   Fri, 9 Nov 2018 23:17:50 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Michael Matz <matz@suse.de>, Thomas Gleixner <tglx@linutronix.de>
+Cc:     Yi Wang <wang.yi59@zte.com.cn>, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, suravee.suthikulpanit@amd.com, puwen@hygon.cn,
+        davidwang@zhaoxin.com, linux-kernel@vger.kernel.org,
+        zhong.weidong@zte.com.cn
+Subject: Re: [PATCH v2] x86/cpu: fix prototype warning
+Message-ID: <20181109221750.GA4971@zn.tnic>
+References: <1541639548-11149-1-git-send-email-wang.yi59@zte.com.cn>
+ <20181108150318.GD7543@zn.tnic>
+ <20181108153226.GF7543@zn.tnic>
+ <alpine.LSU.2.21.1811081538120.21712@wotan.suse.de>
 MIME-Version: 1.0
-References: <cover.1541681371.git.giuliano.belinassi@usp.br>
- <762e851dd819f27e3955cb695cd8422d84a19438.1541681371.git.giuliano.belinassi@usp.br>
- <55b5de74-a607-94b9-8c85-40658e38fbb5@gmail.com>
-In-Reply-To: <55b5de74-a607-94b9-8c85-40658e38fbb5@gmail.com>
-From:   Giuliano Augusto Faulin Belinassi <giuliano.belinassi@usp.br>
-Date:   Fri, 9 Nov 2018 20:15:45 -0200
-Message-ID: <CAEFO=4BVP9GH7-swQHMevuPjfJ=RyaySQmvr2qo+DK5xPB3VjA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] staging: iio: ad7780: check if ad778x before gain update
-To:     tduszyns@gmail.com
-Cc:     giuliano.belinassi@gmail.com, lars@metafoo.de,
-        Michael.Hennerich@analog.com, jic23@kernel.org, knaack.h@gmx.de,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        gregkh@linuxfoundation.org, Renato Geh <renatogeh@gmail.com>,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org,
-        Kernel USP <kernel-usp@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <alpine.LSU.2.21.1811081538120.21712@wotan.suse.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Just some random though. Instead of introducing extra level of indentation you
-> can simply check whether is_ad778x is asserted and simply return.
+On Thu, Nov 08, 2018 at 03:47:32PM +0000, Michael Matz wrote:
+> What tglx said.  If you don't intend such functions to be called 
+> from other units make them static, if you do intend them to be callable 
+> declare the properly.
 
-I agree that the patch would be smaller if I do that, but is it really
-an issue? If yes, then I will update the patch with this change
+Well, I'll be damned!
 
-> Any reason for setting this explicitly? That's going to be false anyway
+That just caught two bugs, the smp_thermal_interrupt() is *exactly* what
+the warning is supposed to catch - functions with changed prototype!
 
-It seems clearer to me :-)
-On Thu, Nov 8, 2018 at 4:26 PM Tomasz Duszynski <tduszyns@gmail.com> wrote:
->
-> Hi Giuliano,
->
-> Comment inline.
->
-> On 11/8/18 2:03 PM, Giuliano Belinassi wrote:
-> > Only the ad778x have the 'gain' status bit. Check it before updating
-> > through a new variable is_ad778x in chip_info.
-> >
-> > Signed-off-by: Giuliano Belinassi <giuliano.belinassi@usp.br>
-> > ---
-> > Changes in v2:
-> >       - Squashed is_ad778x declaration commit with the ad778x checkage
-> >       - Changed is_ad778x type to bool
-> >
-> >  drivers/staging/iio/adc/ad7780.c | 15 +++++++++++----
-> >  1 file changed, 11 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/staging/iio/adc/ad7780.c b/drivers/staging/iio/adc/ad7780.c
-> > index 91e016d534ed..9ec2b002539e 100644
-> > --- a/drivers/staging/iio/adc/ad7780.c
-> > +++ b/drivers/staging/iio/adc/ad7780.c
-> > @@ -35,6 +35,7 @@ struct ad7780_chip_info {
-> >       struct iio_chan_spec    channel;
-> >       unsigned int            pattern_mask;
-> >       unsigned int            pattern;
-> > +     bool                    is_ad778x;
-> >  };
-> >
-> >  struct ad7780_state {
-> > @@ -113,10 +114,12 @@ static int ad7780_postprocess_sample(struct ad_sigma_delta *sigma_delta,
-> >           ((raw_sample & chip_info->pattern_mask) != chip_info->pattern))
-> >               return -EIO;
-> >
-> > -     if (raw_sample & AD7780_GAIN)
-> > -             st->gain = 1;
-> > -     else
-> > -             st->gain = 128;
-> > +     if (chip_info->is_ad778x) {
-> > +             if (raw_sample & AD7780_GAIN)
-> > +                     st->gain = 1;
-> > +             else
-> > +                     st->gain = 128;
-> > +     }
->
-> Just some random though. Instead of introducing extra level of indentation you
-> can simply check whether is_ad778x is asserted and simply return.
->
-> >
-> >       return 0;
-> >  }
-> > @@ -135,21 +138,25 @@ static const struct ad7780_chip_info ad7780_chip_info_tbl[] = {
-> >               .channel = AD7780_CHANNEL(12, 24),
-> >               .pattern = 0x5,
-> >               .pattern_mask = 0x7,
-> > +             .is_ad778x = false,
->
-> Any reason for setting this explicitly? That's going to be false anyway.
->
-> >       },
-> >       [ID_AD7171] = {
-> >               .channel = AD7780_CHANNEL(16, 24),
-> >               .pattern = 0x5,
-> >               .pattern_mask = 0x7,
-> > +             .is_ad778x = false,
-> >       },
-> >       [ID_AD7780] = {
-> >               .channel = AD7780_CHANNEL(24, 32),
-> >               .pattern = 0x1,
-> >               .pattern_mask = 0x3,
-> > +             .is_ad778x = true,
-> >       },
-> >       [ID_AD7781] = {
-> >               .channel = AD7780_CHANNEL(20, 32),
-> >               .pattern = 0x1,
-> >               .pattern_mask = 0x3,
-> > +             .is_ad778x = true,
-> >       },
-> >  };
-> >
->
-> --
-> You received this message because you are subscribed to the Google Groups "Kernel USP" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to kernel-usp+unsubscribe@googlegroups.com.
-> To post to this group, send email to kernel-usp@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/kernel-usp/55b5de74-a607-94b9-8c85-40658e38fbb5%40gmail.com.
-> For more options, visit https://groups.google.com/d/optout.
+---
+From: Borislav Petkov <bp@suse.de>
+Date: Fri, 9 Nov 2018 23:13:13 +0100
+Subject: [PATCH] x86/mce: Fix -Wmissing-prototypes warnings
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Add the proper includes and make smca_get_name() static.
+
+Fix an actual bug too which the warning triggered:
+
+  arch/x86/kernel/cpu/mcheck/therm_throt.c:395:39: error: conflicting \
+  types for ‘smp_thermal_interrupt’
+   asmlinkage __visible void __irq_entry smp_thermal_interrupt(struct pt_regs *r)
+                                         ^~~~~~~~~~~~~~~~~~~~~
+  In file included from arch/x86/kernel/cpu/mcheck/therm_throt.c:29:
+  ./arch/x86/include/asm/traps.h:107:17: note: previous declaration of \
+	  ‘smp_thermal_interrupt’ was here
+   asmlinkage void smp_thermal_interrupt(void);
+
+Signed-off-by: Borislav Petkov <bp@suse.de>
+---
+ arch/x86/kernel/cpu/mcheck/mce_amd.c     | 3 ++-
+ arch/x86/kernel/cpu/mcheck/therm_throt.c | 3 ++-
+ arch/x86/kernel/cpu/mcheck/threshold.c   | 1 +
+ 3 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/mcheck/mce_amd.c b/arch/x86/kernel/cpu/mcheck/mce_amd.c
+index dd33c357548f..87499b997039 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce_amd.c
++++ b/arch/x86/kernel/cpu/mcheck/mce_amd.c
+@@ -23,6 +23,7 @@
+ #include <linux/string.h>
+ 
+ #include <asm/amd_nb.h>
++#include <asm/traps.h>
+ #include <asm/apic.h>
+ #include <asm/mce.h>
+ #include <asm/msr.h>
+@@ -99,7 +100,7 @@ static u32 smca_bank_addrs[MAX_NR_BANKS][NR_BLOCKS] __ro_after_init =
+ 	[0 ... MAX_NR_BANKS - 1] = { [0 ... NR_BLOCKS - 1] = -1 }
+ };
+ 
+-const char *smca_get_name(enum smca_bank_types t)
++static const char *smca_get_name(enum smca_bank_types t)
+ {
+ 	if (t >= N_SMCA_BANK_TYPES)
+ 		return NULL;
+diff --git a/arch/x86/kernel/cpu/mcheck/therm_throt.c b/arch/x86/kernel/cpu/mcheck/therm_throt.c
+index 0d3f6b6a5739..70a05de7ea59 100644
+--- a/arch/x86/kernel/cpu/mcheck/therm_throt.c
++++ b/arch/x86/kernel/cpu/mcheck/therm_throt.c
+@@ -26,6 +26,7 @@
+ #include <linux/cpu.h>
+ 
+ #include <asm/processor.h>
++#include <asm/traps.h>
+ #include <asm/apic.h>
+ #include <asm/mce.h>
+ #include <asm/msr.h>
+@@ -391,7 +392,7 @@ static void unexpected_thermal_interrupt(void)
+ 
+ static void (*smp_thermal_vector)(void) = unexpected_thermal_interrupt;
+ 
+-asmlinkage __visible void __irq_entry smp_thermal_interrupt(struct pt_regs *r)
++asmlinkage __visible void __irq_entry smp_thermal_interrupt(void)
+ {
+ 	entering_irq();
+ 	trace_thermal_apic_entry(THERMAL_APIC_VECTOR);
+diff --git a/arch/x86/kernel/cpu/mcheck/threshold.c b/arch/x86/kernel/cpu/mcheck/threshold.c
+index 2b584b319eff..b0c60beb6312 100644
+--- a/arch/x86/kernel/cpu/mcheck/threshold.c
++++ b/arch/x86/kernel/cpu/mcheck/threshold.c
+@@ -6,6 +6,7 @@
+ #include <linux/kernel.h>
+ 
+ #include <asm/irq_vectors.h>
++#include <asm/traps.h>
+ #include <asm/apic.h>
+ #include <asm/mce.h>
+ #include <asm/trace/irq_vectors.h>
+-- 
+2.19.1
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
