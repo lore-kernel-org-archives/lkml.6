@@ -2,245 +2,205 @@ Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95F99C43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:01:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DAF5C43441
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:04:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48F2A20855
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:01:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VTMWb9+h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48F2A20855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DF49220840
+	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 10:04:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF49220840
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727992AbeKITky (ORCPT
+        id S1727803AbeKIToQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 9 Nov 2018 14:40:54 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:36645 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727596AbeKITkx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 9 Nov 2018 14:40:53 -0500
-Received: by mail-ua1-f65.google.com with SMTP id j3so423446uap.3
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 02:01:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/iYTfJ+xvmHKAYJ8KX+pFriE/QZ4u5ENiz80IeXRRSM=;
-        b=VTMWb9+hAOK8Kedqgu9WP8+B71GvragfwCYfeNQcA8FEXAoWTeV6ZrldSeTasHtq2S
-         vtY/vayIp6ihNT1wyZ/zkfYdVL7EQdEgg0B596g3U9FyqRmKA6p+rymwRh523eybsszm
-         eEm4TMN35UUtZqUdkUW7VI1OF70QTFM2B2rHWMIeQAVP6JyNsXt6kNoF12N6p452N1nZ
-         +IGLCyOdYALNJrPGg+H0UqyQpNyUu1xNR0qdRAO9cYFFFfWpMXH97ZBNRwYXiLY0jEKI
-         3jGpUEjUTMSo85XU/U0+T8UHHtKAAFX0W8EeBMf5sTVP1Nn6VY9CoXR8kQhr9GF+582K
-         Y8Kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/iYTfJ+xvmHKAYJ8KX+pFriE/QZ4u5ENiz80IeXRRSM=;
-        b=gwlagdeeIdSIHMHVbxKHdl/A5RojeQBNsjqi3rBQvTxsgXfb9gR3uBJc7mw1CxNa/P
-         4LsFX7BTge5Z7AA45tXG83N6/UGifios29SHTP/PxKPL2JsHFmquglAh3Q2X0eF75uev
-         Q+r9gBCpp+riQDyvUwOvc9ERIRWPPRAclrDTJROsJmK2jAM31s7nhDwgtGrE3+YTmm+Q
-         43MjmV34LfLE2tGs3ZZbybTcebesM6SL4nr0SNoipXMWf8fPWSOG3XlBCqeh7yQz0Dok
-         cPXsk1pEwX51KBwjF42XuY4333JMXq2v1HIPhcXnV7vWR+NfMmyix4TNvYJtlwpP8xK/
-         uquQ==
-X-Gm-Message-State: AGRZ1gL4KRid1W+DNFa6cD79trs5wRVZbfY0nmUww84yhPvtA2YOeZ/N
-        7zyzl69oC2LbV6z0P8GRFkt1/5yI3vc+x8KAt+ZFYw==
-X-Google-Smtp-Source: AJdET5catTyCGLeHhjoVpN1+3dFseCOb+TuUfRbtzf13IfKQqHply+/H+Q4Yv1MfKnPYDzmXyPnkplV4oHpr+pTuGfc=
-X-Received: by 2002:a9f:2622:: with SMTP id 31mr3834138uag.90.1541757661685;
- Fri, 09 Nov 2018 02:01:01 -0800 (PST)
+        Fri, 9 Nov 2018 14:44:16 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43734 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727596AbeKIToP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 9 Nov 2018 14:44:15 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 29681AD94;
+        Fri,  9 Nov 2018 10:04:21 +0000 (UTC)
+Subject: Re: [Qemu-devel] [RFC/PoC PATCH 1/3] i386: set initrd_max to 4G - 1
+ to allow up to 4G initrd
+To:     Li Zhijian <zhijianx.li@intel.com>, Ingo Molnar <mingo@kernel.org>,
+        Li Zhijian <lizhijian@cn.fujitsu.com>
+Cc:     Peter Maydell <peter.maydell@linaro.org>, x86@kernel.org,
+        hpa@zytor.com, bp@alien8.de, mingo@redhat.com, tglx@linutronix.de,
+        QEMU Developers <qemu-devel@nongnu.org>,
+        Philip Li <philip.li@intel.com>, linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Kees Cook <keescook@chromium.org>
+References: <1541674784-25936-1-git-send-email-lizhijian@cn.fujitsu.com>
+ <1541674784-25936-2-git-send-email-lizhijian@cn.fujitsu.com>
+ <CAFEAcA_47wyar3WNhuBmNPdr02RHx-wn_TeyFaajpjzvzG8j5Q@mail.gmail.com>
+ <c50d103e-95c3-c44c-d852-b6d7f8114b3a@cn.fujitsu.com>
+ <20181109072015.GA86700@gmail.com>
+ <38905d35-29af-b522-1629-b13e98a47a42@intel.com>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
+ ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
+ dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
+ NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
+ XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
+ AAHNHkp1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmRlPsLAeQQTAQIAIwUCU4xw6wIbAwcL
+ CQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJELDendYovxMvi4UH/Ri+OXlObzqMANruTd4N
+ zmVBAZgx1VW6jLc8JZjQuJPSsd/a+bNr3BZeLV6lu4Pf1Yl2Log129EX1KWYiFFvPbIiq5M5
+ kOXTO8Eas4CaScCvAZ9jCMQCgK3pFqYgirwTgfwnPtxFxO/F3ZcS8jovza5khkSKL9JGq8Nk
+ czDTruQ/oy0WUHdUr9uwEfiD9yPFOGqp4S6cISuzBMvaAiC5YGdUGXuPZKXLpnGSjkZswUzY
+ d9BVSitRL5ldsQCg6GhDoEAeIhUC4SQnT9SOWkoDOSFRXZ+7+WIBGLiWMd+yKDdRG5RyP/8f
+ 3tgGiB6cyuYfPDRGsELGjUaTUq3H2xZgIPfOwE0EU4xwFgEIAMsx+gDjgzAY4H1hPVXgoLK8
+ B93sTQFN9oC6tsb46VpxyLPfJ3T1A6Z6MVkLoCejKTJ3K9MUsBZhxIJ0hIyvzwI6aYJsnOew
+ cCiCN7FeKJ/oA1RSUemPGUcIJwQuZlTOiY0OcQ5PFkV5YxMUX1F/aTYXROXgTmSaw0aC1Jpo
+ w7Ss1mg4SIP/tR88/d1+HwkJDVW1RSxC1PWzGizwRv8eauImGdpNnseneO2BNWRXTJumAWDD
+ pYxpGSsGHXuZXTPZqOOZpsHtInFyi5KRHSFyk2Xigzvh3b9WqhbgHHHE4PUVw0I5sIQt8hJq
+ 5nH5dPqz4ITtCL9zjiJsExHuHKN3NZsAEQEAAcLAXwQYAQIACQUCU4xwFgIbDAAKCRCw3p3W
+ KL8TL0P4B/9YWver5uD/y/m0KScK2f3Z3mXJhME23vGBbMNlfwbr+meDMrJZ950CuWWnQ+d+
+ Ahe0w1X7e3wuLVODzjcReQ/v7b4JD3wwHxe+88tgB9byc0NXzlPJWBaWV01yB2/uefVKryAf
+ AHYEd0gCRhx7eESgNBe3+YqWAQawunMlycsqKa09dBDL1PFRosF708ic9346GLHRc6Vj5SRA
+ UTHnQqLetIOXZm3a2eQ1gpQK9MmruO86Vo93p39bS1mqnLLspVrL4rhoyhsOyh0Hd28QCzpJ
+ wKeHTd0MAWAirmewHXWPco8p1Wg+V+5xfZzuQY0f4tQxvOpXpt4gQ1817GQ5/Ed/wsDtBBgB
+ CAAgFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAlrd8NACGwIAgQkQsN6d1ii/Ey92IAQZFggA
+ HRYhBFMtsHpB9jjzHji4HoBcYbtP2GO+BQJa3fDQAAoJEIBcYbtP2GO+TYsA/30H/0V6cr/W
+ V+J/FCayg6uNtm3MJLo4rE+o4sdpjjsGAQCooqffpgA+luTT13YZNV62hAnCLKXH9n3+ZAgJ
+ RtAyDWk1B/0SMDVs1wxufMkKC3Q/1D3BYIvBlrTVKdBYXPxngcRoqV2J77lscEvkLNUGsu/z
+ W2pf7+P3mWWlrPMJdlbax00vevyBeqtqNKjHstHatgMZ2W0CFC4hJ3YEetuRBURYPiGzuJXU
+ pAd7a7BdsqWC4o+GTm5tnGrCyD+4gfDSpkOT53S/GNO07YkPkm/8J4OBoFfgSaCnQ1izwgJQ
+ jIpcG2fPCI2/hxf2oqXPYbKr1v4Z1wthmoyUgGN0LPTIm+B5vdY82wI5qe9uN6UOGyTH2B3p
+ hRQUWqCwu2sqkI3LLbTdrnyDZaixT2T0f4tyF5Lfs+Ha8xVMhIyzNb1byDI5FKCb
+Message-ID: <d30b404d-624e-0497-879a-2d5df2eb9f31@suse.com>
+Date:   Fri, 9 Nov 2018 11:04:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <CAEbi=3dou8JWKYq9FpRBtPKRRu4ahhsh=+kHKcF8vg5hyO2ZGQ@mail.gmail.com>
-In-Reply-To: <CAEbi=3dou8JWKYq9FpRBtPKRRu4ahhsh=+kHKcF8vg5hyO2ZGQ@mail.gmail.com>
-From:   Greentime Hu <green.hu@gmail.com>
-Date:   Fri, 9 Nov 2018 18:00:25 +0800
-Message-ID: <CAEbi=3dCGmCzM7td_-hdsgfpHOVeB_Bc_tFtvWnn1AJqzMbiUw@mail.gmail.com>
-Subject: [GIT PULL] nds32 new features and bug fix for 4.20
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greentime <greentime@andestech.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <38905d35-29af-b522-1629-b13e98a47a42@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On 09/11/2018 10:57, Li Zhijian wrote:
+> On 11/9/2018 3:20 PM, Ingo Molnar wrote:
+>> * Li Zhijian <lizhijian@cn.fujitsu.com> wrote:
+>>
+>>>> If the kernel initrd creation process creates an initrd which
+>>>> is larger than 2GB and also claims that it can't be placed
+>>>> with any part of it above 2GB, then that sounds like a bug
+>>>> in the initrd creation process...
+>>> Exactly, it's a real problem.
+>>>
+>>> Add x86 maintainers and LKML:
+>>>
+>>> The background is that QEMU want to support up to 4G initrd. but
+>>> linux header (
+>>> initrd_addr_max field) only allow 2G-1.
+>>> Is one of the below approaches reasonable:
+>>> 1) change initrd_addr_max to 4G-1 directly
+>>> simply(arch/x86/boot/header.S)?
+>>> 2) lie QEMU bootloader the initrd_addr_max is 4G-1 even though header
+>>> said 2G-1
+>>> 3) any else
+>> A 10 years old comment from hpa says:
+>>
+>>    initrd_addr_max: .long 0x7fffffff
+>>                                          # (Header version 0x0203 or
+>> later)
+>>                                          # The highest safe address for
+>>                                          # the contents of an initrd
+>>                                          # The current kernel allows
+>> up to 4 GB,
+>>                                          # but leave it at 2 GB to avoid
+>>                                          # possible bootloader bugs.
+>>
+>> To avoid the potential of bugs lurking in dozens of major and hundreds of
+>> minor iterations of various Linux bootloaders I'd prefer a real solution
+>> and extend it - because if there's a 2GB initrd for some weird reason
+>> today there might be a 4GB one in two years.
+> 
+> thank a lots. that's amazing.
+> 
+> 
+>>
+>> The real solution would be to:
+>>
+>>   - Extend the boot protocol with a 64-bit field, named initrd_addr64_max
+>>     or such.
+>>   - We don't change the old field - but if the new field is set by new
+>>     kernels then new bootloaders can use that as a new initrd_addr64_max
+>>     value. (or reject to load the kernel if the address is too high.)
+>>
+>>   - The kernel build should also emit a warning when building larger than
+>>     2GB initrds, with a list of bootloaders that support the new
+>> protocol.
+> 
+> Actually i just knew QEMU(Seabios + optionrom(linuxboot_dma.bin)) can
+> support ~4GB initrd so far.
+> 
+> i just drafted at patch to add this field. could you have a look.
+> another patch which is to document initrd_addr64_max is ongoing.
+> 
+> commit db463ac9c1975f115d1ce2acb82d530c2b63b888
+> Author: Li Zhijian <lizhijian@cn.fujitsu.com>
+> Date:   Fri Nov 9 17:24:14 2018 +0800
+> 
+>     x86: Add header field initrd_addr64_max
+>         Years ago, kernel had support load ~4GB initrd. But for some
+> weird reasons (
+>     avoid possible bootloader bugs), it only allow leave initrd under
+> 2GB address
+>     space(see initrd_addr_max fild at arch/x86/boot/header.S).
+>         So modern bootloaders have not chance to load >=2G initrd
+> previously.
+>         To avoid the potential of bugs lurking in dozens of major and
+> hundreds of
+>     minor iterations of various Linux bootloaders. Ingo suggests to add
+> a new field
+>     initrd_addr64_max. If bootloader believes that it can load initrd to
+>>=2G
+>     address space, it can use initrd_addr64_max as the maximum loading
+> address in
+>     stead of the old field initrd_addr_max.
+> 
+> diff --git a/arch/x86/boot/header.S b/arch/x86/boot/header.S
+> index 4c881c8..5fc3ebe 100644
+> --- a/arch/x86/boot/header.S
+> +++ b/arch/x86/boot/header.S
+> @@ -300,7 +300,7 @@ _start:
+>         # Part 2 of the header, from the old setup.S
+>  
+>                 .ascii  "HdrS"          # header signature
+> -               .word   0x020e          # header version number (>= 0x0105)
+> +               .word   0x020f          # header version number (>= 0x0105)
+>                                         # or else old loadlin-1.5 will
+> fail)
+>                 .globl realmode_swtch
+>  realmode_swtch:        .word   0, 0            # default_switch, SETUPSEG
+> @@ -562,6 +562,12 @@ acpi_rsdp_addr:            .quad 0                
+> # 64-bit physical pointer to the
+>                                                 # ACPI RSDP table, added
+> with
+>                                                 # version 2.14
+>  
+> +#ifdef CONFIG_INITRD_SIZE_4GB
+> +initrd_addr64_max:     .quad 0xffffffff        # allow ~4G initrd since
+> 2.15
+> +#else
+> +initrd_addr64_max:     .quad 0
 
-The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+Shouldn't this be 0x7fffffff?
 
-  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+And please update Documentation/x86/boot.txt
 
-are available in the Git repository at:
 
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/greentime/linux.git
-tags/nds32-for-linus-4.20
-
-for you to fetch changes up to 3fb688b03d0c14e661ef20b11aa129048ccde0bf:
-
-  nds32: support hardware prefetcher (2018-11-08 20:42:49 +0800)
-
-----------------------------------------------------------------
-nds32 patches for 4.20
-
-Here is the nds32 patch set based on 4.20-rc1.
-Contained in here are
-1. Perf support
-2. Power management support
-3. FPU support
-4. Hardware prefetcher support
-5. Build error fixed
-6. Performance enhancement
-
-These are the LTP20170427 testing results.
-Total Tests: 1902
-Total Skipped Tests: 603
-Total Failures: 410
-Kernel Version: 4.20.0-rc1-00016-ge0db606bc023
-Machine Architecture: nds32
-Hostname: greentime-d15-ae3xx
-
-----------------------------------------------------------------
-Nick Hu (1):
-      nds32: Power management for nds32
-
-Nickhu (5):
-      nds32: Fix gcc 8.0 compiler option incompatible.
-      nds32: Fix bug in bitfield.h
-      nds32: Perf porting
-      nds32: Add perf call-graph support.
-      nds32: Add document for NDS32 PMU.
-
-Nylon Chen (2):
-      nds32: Fix the items of hwcap_str ordering issue.
-      nds32: support hardware prefetcher
-
-Vincent Chen (5):
-      nds32: nds32 FPU port
-      nds32: Support FP emulation
-      nds32: support denormalized result through FP emulator
-      math-emu/op-2.h: Use statement expressions to prevent negative
-constant shift
-      math-emu/soft-fp.h: (_FP_ROUND_ZERO) cast 0 to void to fix warning
-
-YueHaibing (1):
-      nds32: Remove duplicated include from pm.c
-
-Zong Li (2):
-      nds32: Remove the redundant assignment
-      nds32: Fill all TLB entries with kernel image mapping
-
- Documentation/devicetree/bindings/perf/nds32v3-pmu.txt |   17 ++
- arch/nds32/Kconfig                                     |   12 +
- arch/nds32/Kconfig.cpu                                 |   41 ++++
- arch/nds32/Makefile                                    |   11 +
- arch/nds32/boot/dts/ae3xx.dts                          |    5 +
- arch/nds32/include/asm/Kbuild                          |    1 +
- arch/nds32/include/asm/bitfield.h                      |   25 ++-
- arch/nds32/include/asm/elf.h                           |   11 +
- arch/nds32/include/asm/fpu.h                           |  126 +++++++++++
- arch/nds32/include/asm/fpuemu.h                        |   32 +++
- arch/nds32/include/asm/nds32_fpu_inst.h                |  109 +++++++++
- arch/nds32/include/asm/perf_event.h                    |   16 ++
- arch/nds32/include/asm/pmu.h                           |  386
-++++++++++++++++++++++++++++++++
- arch/nds32/include/asm/processor.h                     |    7 +
- arch/nds32/include/asm/sfp-machine.h                   |  158 +++++++++++++
- arch/nds32/include/asm/stacktrace.h                    |   39 ++++
- arch/nds32/include/asm/suspend.h                       |   11 +
- arch/nds32/include/asm/syscalls.h                      |    1 +
- arch/nds32/include/uapi/asm/auxvec.h                   |    7 +
- arch/nds32/include/uapi/asm/sigcontext.h               |   14 ++
- arch/nds32/include/uapi/asm/udftrap.h                  |   13 ++
- arch/nds32/include/uapi/asm/unistd.h                   |    2 +
- arch/nds32/kernel/Makefile                             |   13 +-
- arch/nds32/kernel/ex-entry.S                           |   24 +-
- arch/nds32/kernel/ex-exit.S                            |   13 +-
- arch/nds32/kernel/ex-scall.S                           |    8 +-
- arch/nds32/kernel/fpu.c                                |  269
-++++++++++++++++++++++
- arch/nds32/kernel/head.S                               |   13 +-
- arch/nds32/kernel/perf_event_cpu.c                     | 1522
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- arch/nds32/kernel/pm.c                                 |   78 +++++++
- arch/nds32/kernel/process.c                            |   64 +++++-
- arch/nds32/kernel/setup.c                              |   22 +-
- arch/nds32/kernel/signal.c                             |   62 +++++-
- arch/nds32/kernel/sleep.S                              |  131 +++++++++++
- arch/nds32/kernel/sys_nds32.c                          |   32 +++
- arch/nds32/kernel/traps.c                              |   16 ++
- arch/nds32/math-emu/Makefile                           |    7 +
- arch/nds32/math-emu/faddd.c                            |   24 ++
- arch/nds32/math-emu/fadds.c                            |   24 ++
- arch/nds32/math-emu/fcmpd.c                            |   24 ++
- arch/nds32/math-emu/fcmps.c                            |   24 ++
- arch/nds32/math-emu/fd2s.c                             |   22 ++
- arch/nds32/math-emu/fdivd.c                            |   27 +++
- arch/nds32/math-emu/fdivs.c                            |   26 +++
- arch/nds32/math-emu/fmuld.c                            |   23 ++
- arch/nds32/math-emu/fmuls.c                            |   23 ++
- arch/nds32/math-emu/fnegd.c                            |   21 ++
- arch/nds32/math-emu/fnegs.c                            |   21 ++
- arch/nds32/math-emu/fpuemu.c                           |  357
-++++++++++++++++++++++++++++++
- arch/nds32/math-emu/fs2d.c                             |   23 ++
- arch/nds32/math-emu/fsqrtd.c                           |   21 ++
- arch/nds32/math-emu/fsqrts.c                           |   21 ++
- arch/nds32/math-emu/fsubd.c                            |   27 +++
- arch/nds32/math-emu/fsubs.c                            |   27 +++
- arch/nds32/mm/Makefile                                 |    6 +-
- arch/nds32/mm/fault.c                                  |   13 +-
- drivers/irqchip/irq-ativic32.c                         |   31 +++
- include/math-emu/op-2.h                                |   99 ++++-----
- include/math-emu/soft-fp.h                             |    2 +-
- tools/include/asm/barrier.h                            |    2 +
- tools/perf/arch/nds32/Build                            |    1 +
- tools/perf/arch/nds32/util/Build                       |    1 +
- tools/perf/arch/nds32/util/header.c                    |   29 +++
- tools/perf/pmu-events/arch/nds32/mapfile.csv           |   15 ++
- tools/perf/pmu-events/arch/nds32/n13/atcpmu.json       |  290
-++++++++++++++++++++++++
- 65 files changed, 4453 insertions(+), 89 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/perf/nds32v3-pmu.txt
- create mode 100644 arch/nds32/include/asm/fpu.h
- create mode 100644 arch/nds32/include/asm/fpuemu.h
- create mode 100644 arch/nds32/include/asm/nds32_fpu_inst.h
- create mode 100644 arch/nds32/include/asm/perf_event.h
- create mode 100644 arch/nds32/include/asm/pmu.h
- create mode 100644 arch/nds32/include/asm/sfp-machine.h
- create mode 100644 arch/nds32/include/asm/stacktrace.h
- create mode 100644 arch/nds32/include/asm/suspend.h
- create mode 100644 arch/nds32/include/uapi/asm/udftrap.h
- create mode 100644 arch/nds32/kernel/fpu.c
- create mode 100644 arch/nds32/kernel/perf_event_cpu.c
- create mode 100644 arch/nds32/kernel/pm.c
- create mode 100644 arch/nds32/kernel/sleep.S
- create mode 100644 arch/nds32/math-emu/Makefile
- create mode 100644 arch/nds32/math-emu/faddd.c
- create mode 100644 arch/nds32/math-emu/fadds.c
- create mode 100644 arch/nds32/math-emu/fcmpd.c
- create mode 100644 arch/nds32/math-emu/fcmps.c
- create mode 100644 arch/nds32/math-emu/fd2s.c
- create mode 100644 arch/nds32/math-emu/fdivd.c
- create mode 100644 arch/nds32/math-emu/fdivs.c
- create mode 100644 arch/nds32/math-emu/fmuld.c
- create mode 100644 arch/nds32/math-emu/fmuls.c
- create mode 100644 arch/nds32/math-emu/fnegd.c
- create mode 100644 arch/nds32/math-emu/fnegs.c
- create mode 100644 arch/nds32/math-emu/fpuemu.c
- create mode 100644 arch/nds32/math-emu/fs2d.c
- create mode 100644 arch/nds32/math-emu/fsqrtd.c
- create mode 100644 arch/nds32/math-emu/fsqrts.c
- create mode 100644 arch/nds32/math-emu/fsubd.c
- create mode 100644 arch/nds32/math-emu/fsubs.c
- create mode 100644 tools/perf/arch/nds32/Build
- create mode 100644 tools/perf/arch/nds32/util/Build
- create mode 100644 tools/perf/arch/nds32/util/header.c
- create mode 100644 tools/perf/pmu-events/arch/nds32/mapfile.csv
- create mode 100644 tools/perf/pmu-events/arch/nds32/n13/atcpmu.json
+Juergen
