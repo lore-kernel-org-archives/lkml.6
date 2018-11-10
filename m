@@ -2,222 +2,97 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 650ADC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 22:04:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76027C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 22:05:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 031BE208E3
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 22:04:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="XsnadgjJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 031BE208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
+	by mail.kernel.org (Postfix) with ESMTP id 40C13208E3
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 22:05:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40C13208E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726575AbeKKHvQ (ORCPT
+        id S1726742AbeKKHwL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 02:51:16 -0500
-Received: from mail-eopbgr780049.outbound.protection.outlook.com ([40.107.78.49]:3211
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725859AbeKKHvQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 02:51:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tLtgZS0GX+K17aU+5st00QiSkdZsD/2NBNYcVU3XCA4=;
- b=XsnadgjJXe6LoQNzhYUVaFRvbWo48nqPm6x9PGMysOsUXLcPfAlDCfp0vpgYIQ4o2zzLzDoNdF1Dlpb9LqOwLgAgQ6hzqO2fVcHIonbokzMLtmdASVZF9KvL61A5/qy09oGQNM0YFMSUGFFQlgJ6u50B5CckpEZFg+4fsqZoSmg=
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
- BYAPR05MB4983.namprd05.prod.outlook.com (20.177.230.161) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1339.14; Sat, 10 Nov 2018 22:04:37 +0000
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::a1b8:a948:4c8c:747d]) by BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::a1b8:a948:4c8c:747d%4]) with mapi id 15.20.1339.017; Sat, 10 Nov 2018
- 22:04:37 +0000
-From:   Nadav Amit <namit@vmware.com>
-To:     Logan Gunthorpe <logang@deltatee.com>,
-        "hpa@zytor.com" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>
-CC:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Michal Marek <michal.lkml@markovi.net>,
+        Sun, 11 Nov 2018 02:52:11 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:36624 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725815AbeKKHwL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Nov 2018 02:52:11 -0500
+Received: by mail-lf1-f66.google.com with SMTP id h192so3740620lfg.3
+        for <linux-kernel@vger.kernel.org>; Sat, 10 Nov 2018 14:05:41 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id;
+        bh=pYkHvT7Kj+Of9cWYDNEc04Shp+/KNmHnxms8QJaJZYM=;
+        b=G21tSs6h5mH7hn2llo3ElqUfhO/5D3S/xXwLToLO9BgT/xM1IzVCuG7tJJurbFy6bb
+         bsh1gUpP+WMTE1JtOZ9h9dC15StTRvKM5Nw73ovX2XoGB+G/i7kIeIO2uljo7YeU6I8H
+         NsWeaFTn6Ydk3Yvetv5fQzUQdkhPvOxqkuoSiYh6+uOtUIMlvHoD+CVd5TIlyhGXf64N
+         l194mx+bA9/CK0NyymQiy4GGwugQWwkDXcWimRD/FsNzZFRppd+bN7at/45ona5JURgG
+         kOBaYKCfO0XMVQvXWKvAOhTHpVNKQF/xeoW/ta6WQRC5UOXsmhClGWuSawhIBjqyYv6d
+         /o1A==
+X-Gm-Message-State: AGRZ1gLZ84mnZvEc2UN6mfptq6UZ3XX6yGRB0CtSckl5G6N49rpicrjI
+        ax5a72m/9gbkiTMYK89XpKU=
+X-Google-Smtp-Source: AJdET5f7i2ZruZqnmoYdoVVrHEZsYq/Rp2mHAvgHHhVMqp/NRJd0HoiMI47tYh4edKTdAA72FeqSzg==
+X-Received: by 2002:a19:920a:: with SMTP id u10mr8101431lfd.122.1541887540432;
+        Sat, 10 Nov 2018 14:05:40 -0800 (PST)
+Received: from hobbit.lan (128-68-186-150.broadband.corbina.ru. [128.68.186.150])
+        by smtp.gmail.com with ESMTPSA id o25sm2058679lfd.29.2018.11.10.14.05.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sat, 10 Nov 2018 14:05:39 -0800 (PST)
+From:   Alexander Popov <alex.popov@linux.com>
+To:     kernel-hardening@lists.openwall.com,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Ingo Molnar <mingo@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Joerg Roedel <joro@8bytes.org>, Borislav Petkov <bp@alien8.de>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Stephen Bates <sbates@raithlin.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH v9 02/10] Makefile: Prepare for using macros for inline
- asm
-Thread-Topic: [PATCH v9 02/10] Makefile: Prepare for using macros for inline
- asm
-Thread-Index: AQHUW2CZ0dZfAolPxUG9hT8O5ZUp5qVDToGAgAAFpACAAAwfgIABcMKAgAAOcACAAAERgIAALpuAgAAB5wCAAI3zgIAAt2kAgAAshwCAAAG8gIAABPyAgANCVAA=
-Date:   Sat, 10 Nov 2018 22:04:37 +0000
-Message-ID: <88901B62-7D98-45A2-8881-352A31802933@vmware.com>
-References: <20181003213100.189959-1-namit@vmware.com>
- <20181003213100.189959-3-namit@vmware.com>
- <89262174-6f15-6116-e67f-436f7c1bfe99@deltatee.com>
- <6651971B-E3AB-4CDD-868C-2338593F7D83@vmware.com>
- <d0812681-4a8f-8cc4-24ce-d02002ee34d2@deltatee.com>
- <DC1EA50F-FAC3-4750-BCF7-0622D1FB4756@vmware.com>
- <a3902c4c-64b1-9c49-02fb-d5e4c9b04314@deltatee.com>
- <192946CF-8543-4CF5-B2A3-93674FCD07E2@vmware.com>
- <7bc80811-8ab3-d26a-6fb3-b7aeebcfce43@deltatee.com>
- <85B77A64-5FF3-4B82-8A07-E045E259C985@zytor.com>
- <3B824A03-AB76-4B34-B1CA-F27C0F1B0575@vmware.com>
- <2c022676-9299-bb5f-023b-5c114cd79f81@deltatee.com>
- <080748A5-2588-47C9-BC2A-E643630FB9A7@vmware.com>
- <3ae6dd1f-9b59-8552-f438-c40b08771226@deltatee.com>
- <C0187502-9FC0-4FE2-BCD3-81B8B992F3A2@vmware.com>
-In-Reply-To: <C0187502-9FC0-4FE2-BCD3-81B8B992F3A2@vmware.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=namit@vmware.com; 
-x-originating-ip: [208.91.2.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR05MB4983;20:gJOxg9Fdo2ILsq9XeVOUTUdNIumLkVkMgtPYvIJoN+oMSC1pCufW8FLDZOlWpP9PCzPsjXAl67FRir5i4aWAxp4/yAf5AOz3VGJsDFe6aLJGT8r6Tld1ws2fUD5gCApIm7jgyXqOKiL3szKeUbJBvm6EW0ciXqm/GObUwjWiWmQ=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: a681bafe-8037-4ea6-451c-08d647588192
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390040)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB4983;
-x-ms-traffictypediagnostic: BYAPR05MB4983:
-x-microsoft-antispam-prvs: <BYAPR05MB49832ADD3A9C9E482C736144D0C70@BYAPR05MB4983.namprd05.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231382)(944501410)(52105095)(3002001)(10201501046)(148016)(149066)(150057)(6041310)(20161123558120)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:BYAPR05MB4983;BCL:0;PCL:0;RULEID:;SRVR:BYAPR05MB4983;
-x-forefront-prvs: 0852EB6797
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(346002)(376002)(136003)(396003)(189003)(199004)(76176011)(11346002)(8936002)(4326008)(6506007)(106356001)(446003)(316002)(2616005)(54906003)(110136005)(105586002)(25786009)(82746002)(229853002)(8676002)(33656002)(99286004)(81156014)(81166006)(486006)(2906002)(476003)(66066001)(478600001)(14454004)(256004)(6486002)(93886005)(83716004)(68736007)(6436002)(6246003)(71200400001)(6116002)(71190400001)(3846002)(186003)(97736004)(86362001)(2501003)(305945005)(7416002)(7736002)(53546011)(6512007)(2900100001)(36756003)(102836004)(26005)(5660300001)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB4983;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 2Nmgzf/wxPBkN+M7j7hRKpRQPxVZcEoKjIxIvGsXKqoE8HxmvOt8n7TLM9iNJzgd2vOUx0b1ddbVJfMVlOKNGpSFslPPnzgB2OZqh7NWbx4/ynegreut7SrhzdeHgQ7BaxaxSKPV6hkBoHBrcL17qR+g6Nzf+DcAYd+s3zwWIgLglCBP9ewVPsw11+QkEXefH7xGtwKRtQuUA45+lFxw9ByXMPB2jk79AplKfY6VTDaXQq5wSPavjoizcT7Cm5LVxlpHQKqLChg+WSzggEbPmlfSnItoYLgGmr5zMKbNgETGfnqQUE72gbUSawePS3HQca5oeRjgG+4hsQzpw/WBaBx3M+7QLU79bVwEKgD41k8=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <6F04DC48874A1240BA12779E9D26B80F@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a681bafe-8037-4ea6-451c-08d647588192
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Nov 2018 22:04:37.0419
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB4983
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>, Jan Kara <jack@suse.cz>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>, x86@kernel.org,
+        alex.popov@linux.com, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] stackleak: Disable ftrace for stackleak.c
+Date:   Sun, 11 Nov 2018 01:05:30 +0300
+Message-Id: <1541887530-16610-1-git-send-email-alex.popov@linux.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogTmFkYXYgQW1pdA0KU2VudDogTm92ZW1iZXIgOCwgMjAxOCBhdCA4OjE4OjIzIFBNIEdN
-VA0KPiBUbzogTG9nYW4gR3VudGhvcnBlIDxsb2dhbmdAZGVsdGF0ZWUuY29tPiwgaHBhQHp5dG9y
-LmNvbSA8aHBhQHp5dG9yLmNvbT4sIEluZ28gTW9sbmFyIDxtaW5nb0ByZWRoYXQuY29tPg0KPiBD
-YzogTEtNTCA8bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZz4sIFg4NiBNTCA8eDg2QGtlcm5l
-bC5vcmc+LCBTYW0gUmF2bmJvcmcgPHNhbUByYXZuYm9yZy5vcmc+LCBNaWNoYWwgTWFyZWsgPG1p
-Y2hhbC5sa21sQG1hcmtvdmkubmV0PiwgVGhvbWFzIEdsZWl4bmVyIDx0Z2x4QGxpbnV0cm9uaXgu
-ZGU+LCBMaW51eCBLYnVpbGQgbWFpbGluZyBsaXN0IDxsaW51eC1rYnVpbGRAdmdlci5rZXJuZWwu
-b3JnPiwgU3RlcGhlbiBCYXRlcyA8c2JhdGVzQHJhaXRobGluLmNvbT4NCj4gU3ViamVjdDogUmU6
-IFtQQVRDSCB2OSAwMi8xMF0gTWFrZWZpbGU6IFByZXBhcmUgZm9yIHVzaW5nIG1hY3JvcyBmb3Ig
-aW5saW5lIGFzbQ0KPiANCj4gDQo+IEZyb206IExvZ2FuIEd1bnRob3JwZQ0KPiBTZW50OiBOb3Zl
-bWJlciA4LCAyMDE4IGF0IDg6MDA6MzMgUE0gR01UDQo+PiBUbzogTmFkYXYgQW1pdCA8bmFtaXRA
-dm13YXJlLmNvbT4sIGhwYUB6eXRvci5jb20gPGhwYUB6eXRvci5jb20+LCBJbmdvIE1vbG5hciA8
-bWluZ29AcmVkaGF0LmNvbT4NCj4+IENjOiBMS01MIDxsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwu
-b3JnPiwgWDg2IE1MIDx4ODZAa2VybmVsLm9yZz4sIFNhbSBSYXZuYm9yZyA8c2FtQHJhdm5ib3Jn
-Lm9yZz4sIE1pY2hhbCBNYXJlayA8bWljaGFsLmxrbWxAbWFya292aS5uZXQ+LCBUaG9tYXMgR2xl
-aXhuZXIgPHRnbHhAbGludXRyb25peC5kZT4sIExpbnV4IEtidWlsZCBtYWlsaW5nIGxpc3QgPGxp
-bnV4LWtidWlsZEB2Z2VyLmtlcm5lbC5vcmc+LCBTdGVwaGVuIEJhdGVzIDxzYmF0ZXNAcmFpdGhs
-aW4uY29tPg0KPj4gU3ViamVjdDogUmU6IFtQQVRDSCB2OSAwMi8xMF0gTWFrZWZpbGU6IFByZXBh
-cmUgZm9yIHVzaW5nIG1hY3JvcyBmb3IgaW5saW5lIGFzbQ0KPj4gDQo+PiANCj4+IA0KPj4gDQo+
-PiBPbiAyMDE4LTExLTA4IDEyOjU0IHAubS4sIE5hZGF2IEFtaXQgd3JvdGU6DQo+Pj4gSSBkb27i
-gJl0IHRoaW5rIHRoZSBhc3NlbWJseSBzdGFnZSBuZWVkcyB0byBiZSBkb25lIGxvY2FsbHkuIGdj
-YyBjYW4gc3RpbGwgYmUNCj4+PiB1c2VkIHRvIGRlcGxveSB0aGUgYXNzZW1ibGVyLiBJIGFtIG5v
-dCB0b28gZmFtaWxpYXIgd2l0aCBkaXN0Y2MsIHNvIEkgZG9u4oCZdA0KPj4+IGtub3cgd2hldGhl
-ciB0aGUgcHJlcHJvY2Vzc2luZyBzdXBwb3J0cyBtdWx0aXBsZSBzb3VyY2UtZmlsZXMsIGFuZCB3
-aGV0aGVyDQo+Pj4gaXQgaGFzIHNvbWUgc3RyYW5nZS1iZWhhdmlvciB3aGVuIGl0IGNvbWVzIHRv
-IC5TLy5zIGZpbGVzLg0KPj4gDQo+PiBUaGUgcHJvYmxlbSBpcyB0aGF0IGl0J3MgdGhlIGFzc2Vt
-Ymx5IHN0YWdlIHRoYXQgbmVlZHMgdGhlIGV4dHJhDQo+PiBtYWNyb3MucyBhbmQgd2l0aG91dCB0
-aGF0IGZpbGUgYmVpbmcgdHJhbnNmZXJyZWQgc29tZWhvdywgdGhhdCBzdGFnZQ0KPj4gbXVzdCBi
-ZSBkb25lIGxvY2FsbHkuDQo+IA0KPiBJIHVuZGVyc3RhbmQsIGJ1dCB0aGUgaWRlYSBpcyB0byBo
-YXZlIHR3byBzdGFnZXMsIGZvciBpbnN0YW5jZToNCj4gDQo+ICBnY2MgLi4uIC1TIC1vIC50bXBf
-W3VuaXRdLlMgW3VuaXRdLmMNCj4gDQo+IGFuZCB0aGVuDQo+IA0KPiAgZ2NjIC4uLiAtRF9fQVNT
-RU1CTFlfXyBhcmNoL3g4Ni9rZXJuZWwvbWFjcm9zLlMgLnRtcF9bdW5pdF0uUw0KPiANCj4gKFll
-cywgSSByZWFsaXplIHRoZSAudG1wX1t1bml0XS5TIHdhcyBhbHJlYWR5IHByZXByb2Nlc3NlZCwg
-YnV0IHRoaXMgd2F5IHlvdQ0KPiBjYW4gY29tYmluZSBib3RoIGlucHV0cykNCj4gDQo+IFVuZm9y
-dHVuYXRlbHksIGFzIEkgd3JpdGUgdGhpcyBlbWFpbCAoYW5kIHJ1biB0ZXN0cykgSSByZWFsaXpl
-IGRpc3RjYyBpcyB0b28NCj4gZHVtYiB0byBoYW5kbGUgdHdvIGlucHV0IGZpbGVzOg0KPiANCj4g
-ICIoZGNjX3NjYW5fYXJncykgZG8gd2UgaGF2ZSB0d28gaW5wdXRzPyAgaSBnaXZlIHVwICINCj4g
-DQo+IEp1c3QgZ3JlYXQuIFNvIEkgZ3Vlc3MgbWFjcm9zLnMgd291bGQgbmVlZCB0byBiZSBjb25j
-YXRlbmF0ZWQgd2l0aA0KPiAudG1wX1t1bml0XS5zIGFzIGEgc2VwYXJhdGUgKGxvY2FsKSBpbnRl
-cmltIHN0YWdlLg0KDQpFcnIuLiBJIGhhdGUgbWFrZWZpbGVzIGFuZCBkaXN0Y2MgZG9lc27igJl0
-IG1ha2UgbGlmZSBlYXNpZXIuIEZvciBpbnN0YW5jZSwgaWYNCml0IHNlZXMgdHdvIHNvdXJjZSBm
-aWxlcyBvbiB0aGUgY29tbWFuZC1saW5lLCBpdCBmcmVha3Mgb3V0IGFuZCBjb21waWxlcyBpdA0K
-bG9jYWxseS4gSXQgYWxzbyBoYXMgYW4gb3B0aW9uIHRvIGRpc3RyaWJ1dGUgYXNzZW1ibHksIGJ1
-dCBpdCBpcyBub3QgZW5hYmxlZA0KYnkgZGVmYXVsdC4NCg0KQW55aG93LCBjYW4geW91IHRyeSB0
-aGUgZm9sbG93aW5nIHBhdGNoPw0KDQotLSA+OCAtLQ0KDQpTdWJqZWN0OiBbUEFUQ0hdIE1ha2Vm
-aWxlOiBGaXggZGlzdGNjIGNvbXBpbGF0aW9uIHdpdGggeDg2IG1hY3Jvcw0KDQpJbnRyb2R1Y2lu
-ZyB0aGUgdXNlIG9mIGFzbSBtYWNyb3MgaW4gYy1jb2RlIGJyb2tlIGRpc3RjYywgc2luY2UgaXQg
-b25seQ0Kc2VuZHMgdGhlIHByZXByb2Nlc3NlZCBzb3VyY2UgZmlsZS4gVGhlIHNvbHV0aW9uIGlz
-IHRvIGJyZWFrIHRoZQ0KY29tcGlsYXRpb24gaW50byB0d28gc2VwYXJhdGUgcGhhc2VzIG9mIGNv
-bXBpbGF0aW9uIGFuZCBhc3NlbWJseSwgYW5kDQpiZXR3ZWVuIHRoZSB0d28gY29uY2F0YW5hdGUg
-dGhlIGFzc2VtYmx5IG1hY3JvcyBhbmQgdGhlIGNvbXBpbGVkICh5ZXQNCm5vdCBhc3NlbWJsZWQp
-IHNvdXJjZSBmaWxlLiBTaW5jZSB0aGlzIGlzIGxlc3MgZWZmaWNpZW50LCB0aGlzDQpjb21waWxh
-dGlvbiBtb2RlIGlzIG9ubHkgdXNlZCB3aGVuIG1ha2UgaXMgY2FsbGVkIHdpdGggdGhlICJESVNU
-Q0M9eSINCnBhcmFtZXRlci4NCg0KTm90ZSB0aGF0IHRoZSBhc3NlbWJseSBzdGFnZSBzaG91bGQg
-YWxzbyBiZSBkaXN0cmlidXRhYmxlLCBpZiBkaXN0Y2MgaXMNCmNvbmZpZ3VyZWQgdXNpbmcgIkNG
-TEFHUz0tREVOQUJMRV9SRU1PVEVfQVNTRU1CTEUiLg0KDQpSZXBvcnRlZC1ieTogTG9nYW4gR3Vu
-dGhvcnBlIDxsb2dhbmdAZGVsdGF0ZWUuY29tPg0KU2lnbmVkLW9mZi1ieTogTmFkYXYgQW1pdCA8
-bmFtaXRAdm13YXJlLmNvbT4NCi0tLQ0KIE1ha2VmaWxlICAgICAgICAgICAgICAgfCAgNCArKyst
-DQogYXJjaC94ODYvTWFrZWZpbGUgICAgICB8ICA0ICsrKy0NCiBzY3JpcHRzL01ha2VmaWxlLmJ1
-aWxkIHwgMjkgKysrKysrKysrKysrKysrKysrKysrKysrKysrLS0NCiAzIGZpbGVzIGNoYW5nZWQs
-IDMzIGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0pDQoNCmRpZmYgLS1naXQgYS9NYWtlZmls
-ZSBiL01ha2VmaWxlDQppbmRleCA5ZmNlOGI5MWMxNWYuLmMwNzM0OWZjMzhjNyAxMDA2NDQNCi0t
-LSBhL01ha2VmaWxlDQorKysgYi9NYWtlZmlsZQ0KQEAgLTc0Myw3ICs3NDMsOSBAQCBLQlVJTERf
-Q0ZMQUdTICAgKz0gJChjYWxsIGNjLW9wdGlvbiwgLWdzcGxpdC1kd2FyZiwgLWcpDQogZWxzZQ0K
-IEtCVUlMRF9DRkxBR1MJKz0gLWcNCiBlbmRpZg0KLUtCVUlMRF9BRkxBR1MJKz0gLVdhLC1nZHdh
-cmYtMg0KK0FGTEFHU19ERUJVR19JTkZPID0gLVdhLC1nZHdhcmYtMg0KK2V4cG9ydCBBRkxBR1Nf
-REVCVUdfSU5GTw0KK0tCVUlMRF9BRkxBR1MJKz0gJChBRkxBR1NfREVCVUdfSU5GTykNCiBlbmRp
-Zg0KIGlmZGVmIENPTkZJR19ERUJVR19JTkZPX0RXQVJGNA0KIEtCVUlMRF9DRkxBR1MJKz0gJChj
-YWxsIGNjLW9wdGlvbiwgLWdkd2FyZi00LCkNCmRpZmYgLS1naXQgYS9hcmNoL3g4Ni9NYWtlZmls
-ZSBiL2FyY2gveDg2L01ha2VmaWxlDQppbmRleCBmNWQ3ZjQxMzQ1MjQuLjA4MGJkOWNiYzRlMSAx
-MDA2NDQNCi0tLSBhL2FyY2gveDg2L01ha2VmaWxlDQorKysgYi9hcmNoL3g4Ni9NYWtlZmlsZQ0K
-QEAgLTIzOCw3ICsyMzgsOSBAQCBhcmNoaGVhZGVyczoNCiBhcmNobWFjcm9zOg0KIAkkKFEpJChN
-QUtFKSAkKGJ1aWxkKT1hcmNoL3g4Ni9rZXJuZWwgYXJjaC94ODYva2VybmVsL21hY3Jvcy5zDQog
-DQotQVNNX01BQ1JPX0ZMQUdTID0gLVdhLGFyY2gveDg2L2tlcm5lbC9tYWNyb3Mucw0KK0FTTV9N
-QUNST19GSUxFID0gYXJjaC94ODYva2VybmVsL21hY3Jvcy5zDQorZXhwb3J0IEFTTV9NQUNST19G
-SUxFDQorQVNNX01BQ1JPX0ZMQUdTID0gLVdhLCQoQVNNX01BQ1JPX0ZJTEUpDQogZXhwb3J0IEFT
-TV9NQUNST19GTEFHUw0KIEtCVUlMRF9DRkxBR1MgKz0gJChBU01fTUFDUk9fRkxBR1MpDQogDQpk
-aWZmIC0tZ2l0IGEvc2NyaXB0cy9NYWtlZmlsZS5idWlsZCBiL3NjcmlwdHMvTWFrZWZpbGUuYnVp
-bGQNCmluZGV4IDZhNmJlOWY0NDBjZi4uMmI3OTc4OWEzZTEwIDEwMDY0NA0KLS0tIGEvc2NyaXB0
-cy9NYWtlZmlsZS5idWlsZA0KKysrIGIvc2NyaXB0cy9NYWtlZmlsZS5idWlsZA0KQEAgLTE1NSw4
-ICsxNTUsMzMgQEAgJChvYmopLyUubGw6ICQoc3JjKS8lLmMgRk9SQ0UNCiANCiBxdWlldF9jbWRf
-Y2Nfb19jID0gQ0MgJChxdWlldF9tb2R0YWcpICAkQA0KIA0KKyMgSWYgZGlzdGNjIGlzIHVzZWQs
-IHRoZW4gd2hlbiBhbiBhc3NlbWJseSBtYWNybyBmaWxlcyBpcyBuZWVkZWQsIHRoZQ0KKyMgY29t
-cGlsYXRpb24gc3RhZ2UgYW5kIHRoZSBhc3NlbWJseSBzdGFnZSBuZWVkIHRvIGJlIHNlcGFyYXRl
-ZC4gUHJvdmlkaW5nDQorIyAiRElTVENDPXkiIG9wdGlvbiBlbmFibGVzIHRoZSBzZXBhcmF0ZSBj
-b21waWxhdGlvbiBhbmQgYXNzZW1ibHkuDQorY21kX2NjX29fY19zaW1wbGUgPSAkKENDKSAkKGNf
-ZmxhZ3MpIC1jIC1vICQoMSkgJDwNCisNCitpZmVxICgkKERJU1RDQykseSkNCithX2ZsYWdzX25v
-X2RlYnVnID0gJChmaWx0ZXItb3V0ICQoQUZMQUdTX0RFQlVHX0lORk8pLCAkKGFfZmxhZ3MpKQ0K
-K2NfZmxhZ3Nfbm9fbWFjcm9zID0gJChmaWx0ZXItb3V0ICQoQVNNX01BQ1JPX0ZMQUdTKSwgJChj
-X2ZsYWdzKSkNCisNCitjbWRfY2Nfb19jX3R3b19zdGVwcyA9CQkJCQkJCVwNCisJJChDQykgJChj
-X2ZsYWdzX25vX21hY3JvcykgJChESVNBQkxFX0xUTykgLWZ2ZXJib3NlLWFzbSAtUyAJXA0KKwkJ
-LW8gJChARCkvLiQoQEY6Lm89LnMpICQ8IDsJCQkJXA0KKwljYXQgJChBU01fTUFDUk9fRklMRSkg
-JChARCkvLiQoQEY6Lm89LnMpID4gCQkJXA0KKwkJJChARCkvLnRtcF8kKEBGOi5vPS5zKTsJCQkJ
-CVwNCisJJChDQykgJChhX2ZsYWdzX25vX2RlYnVnKSAtYyAtbyAkKDEpICQoQEQpLy50bXBfJChA
-Rjoubz0ucykgOyAJXA0KKwlybSAtZiAkKEBEKS8uJChARjoubz0ucykgJChARCkvLnRtcF8kKEBG
-Oi5vPS5zKQkJCVwNCisNCitjbWRfY2Nfb19jX2hlbHBlciA9ICAgIAkJCQkJCQlcDQorCSQoaWYg
-JChmaW5kc3RyaW5nICQoQVNNX01BQ1JPX0ZMQUdTKSwkKGNfZmxhZ3MpKSwJCVwNCisJCSQoY2Fs
-bCBjbWRfY2Nfb19jX3R3b19zdGVwcywgJCgxKSksCQkJXA0KKwkJJChjYWxsIGNtZF9jY19vX2Nf
-c2ltcGxlLCAkKDEpKSkNCitlbHNlDQorY21kX2NjX29fY19oZWxwZXIgPSAkKGNhbGwgY21kX2Nj
-X29fY19zaW1wbGUsICQoMSkpDQorZW5kaWYNCisNCiBpZm5kZWYgQ09ORklHX01PRFZFUlNJT05T
-DQotY21kX2NjX29fYyA9ICQoQ0MpICQoY19mbGFncykgLWMgLW8gJEAgJDwNCitjbWRfY2Nfb19j
-ID0gJChjYWxsIGNtZF9jY19vX2NfaGVscGVyLCRAKQ0KIA0KIGVsc2UNCiAjIFdoZW4gbW9kdWxl
-IHZlcnNpb25pbmcgaXMgZW5hYmxlZCB0aGUgZm9sbG93aW5nIHN0ZXBzIGFyZSBleGVjdXRlZDoN
-CkBAIC0xNzEsNyArMTk2LDcgQEAgZWxzZQ0KICMgICByZXBsYWNlIHRoZSB1bnJlc29sdmVkIHN5
-bWJvbHMgX19jcmNfZXhwb3J0ZWRfc3ltYm9sIHdpdGgNCiAjICAgdGhlIGFjdHVhbCB2YWx1ZSBv
-ZiB0aGUgY2hlY2tzdW0gZ2VuZXJhdGVkIGJ5IGdlbmtzeW1zDQogDQotY21kX2NjX29fYyA9ICQo
-Q0MpICQoY19mbGFncykgLWMgLW8gJChARCkvLnRtcF8kKEBGKSAkPA0KK2NtZF9jY19vX2MgPSAk
-KGNhbGwgY21kX2NjX29fY19oZWxwZXIsJChARCkvLnRtcF8kKEBGKSkNCiANCiBjbWRfbW9kdmVy
-c2lvbnNfYyA9CQkJCQkJCQlcDQogCWlmICQoT0JKRFVNUCkgLWggJChARCkvLnRtcF8kKEBGKSB8
-IGdyZXAgLXEgX19rc3ltdGFiOyB0aGVuCQlcDQotLSANCjIuMTcuMQ0KDQoNCg0K
+The stackleak_erase() function is called on the trampoline stack at the
+end of syscall. This stack is not big enough for ftrace operations,
+e.g. it can be overflowed if we enable kprobe_events for stackleak_erase().
+
+Let's disable ftrace for stackleak.c to avoid such situations.
+
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Alexander Popov <alex.popov@linux.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+---
+ kernel/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/kernel/Makefile b/kernel/Makefile
+index 7343b3a..0906f6d 100644
+--- a/kernel/Makefile
++++ b/kernel/Makefile
+@@ -18,6 +18,7 @@ obj-$(CONFIG_MULTIUSER) += groups.o
+ ifdef CONFIG_FUNCTION_TRACER
+ # Do not trace internal ftrace files
+ CFLAGS_REMOVE_irq_work.o = $(CC_FLAGS_FTRACE)
++CFLAGS_REMOVE_stackleak.o = $(CC_FLAGS_FTRACE)
+ endif
+ 
+ # Prevents flicker of uninteresting __do_softirq()/__local_bh_disable_ip()
+-- 
+2.7.4
+
