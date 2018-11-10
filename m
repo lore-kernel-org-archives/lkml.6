@@ -2,138 +2,166 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F587C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:40:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E580CC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:41:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D76AE20840
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:40:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 941012089A
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:41:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rzzbjuZF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D76AE20840
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HPN7EeNH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 941012089A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727099AbeKKE0a (ORCPT
+        id S1727045AbeKKE1u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 23:26:30 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:37091 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726244AbeKKE0a (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 23:26:30 -0500
-Received: by mail-pf1-f194.google.com with SMTP id u13-v6so2390629pfm.4;
-        Sat, 10 Nov 2018 10:40:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=NqVkS3VJalGB/t0Ng95SkyTAUA42pM749sevTQoLmGw=;
-        b=rzzbjuZF+CflZ1tX8Lj11rshLLCqEdsGKF1Ftqzmbc4m76aZoDX2zOdLa6lA/3/cUf
-         Km4RsmDkD5YppFOWg7EE2VF7UNmUllgjVa8SC14oPexy0AgHaQRFOZj4doztSFlXH+sh
-         WNqZwVpsPLxCot2yf5NqOZexDJbqPGw6t+x8KlUeMSOQaqOyMuMnLXvpaVsCFRUAB/XD
-         2y1OQJdbRZvDgWWGuGNlcL7mEAVBvmFXVU5UAF63UOdva86bikgX5xcszzcJydAs6c+d
-         rdM7zo17k63cHs9j4LPEcG4orAnL2z68MLZA4qI0yPaVQ/a7KdqisRfivzZ9IAOIg1GO
-         BHlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=NqVkS3VJalGB/t0Ng95SkyTAUA42pM749sevTQoLmGw=;
-        b=lXVJ30mJkyS/kU6auiXrYJGw2CqI9L0+ofw34/rw/utC/K6EX2hoyuXAJ696K5ZIxo
-         aSVZseOy6fH9xjObjdicnHXDelhbgkZg6jHGG7IfAd+7s9FVFic/x4bRlU7gGBE/q0hB
-         WOAsoiDoakVdp7F7omdSETW33mTZbsFhVR9BM5BI+hBQQ7RjESWc9nYYmim+6tirrVXv
-         Tc9lszYhsxLIe1KJhRwu6SMnkjrLA7nIkGoErPNpekGsQ2zdgcLYklvL9YukZRR4NQLW
-         vZO3Us5LyQ683wLOQ9IR7KNKb6l8l6X9E5itUeuTB5hm6HeXcX7TM+O8hui0GRgEKMA6
-         QGFQ==
-X-Gm-Message-State: AGRZ1gLUT1ugI/TYLp51kDjpAjNgKQ94MVhVEe59KEuEefkoNO9L8cqE
-        5u4FkZfsSSHvz6RDcJpK4g0=
-X-Google-Smtp-Source: AJdET5fBhND557/ONA0LH62Fc4mClJ1phsYoAIBlB5NbdBZjQugQy8gV7c7jxAV2rJdRjTq0GQ/j3Q==
-X-Received: by 2002:a62:995c:: with SMTP id d89-v6mr13740794pfe.11.1541875233247;
-        Sat, 10 Nov 2018 10:40:33 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id l6-v6sm894837pff.147.2018.11.10.10.40.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 10 Nov 2018 10:40:32 -0800 (PST)
-Subject: Re: [PATCH v1 3/5] staging: typec: fusb302: Rename fcs,extcon-name to
- linux,extcon-name
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-usb@vger.kernel.org, Felipe Balbi <balbi@kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Roger Quadros <rogerq@ti.com>, linux-pm@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>, linux-omap@vger.kernel.org,
-        Darren Hart <dvhart@infradead.org>,
-        platform-driver-x86@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
-        Hans de Goede <hdegoede@redhat.com>
-References: <20181110181101.24557-1-andriy.shevchenko@linux.intel.com>
- <20181110181101.24557-3-andriy.shevchenko@linux.intel.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <951e707e-4774-4c25-92d8-b4b60b772656@roeck-us.net>
-Date:   Sat, 10 Nov 2018 10:40:30 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Sat, 10 Nov 2018 23:27:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52650 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726487AbeKKE1u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 23:27:50 -0500
+Received: from localhost (71-6-98-120.static-ip.telepacific.net [71.6.98.120])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 08BA720858;
+        Sat, 10 Nov 2018 18:41:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541875313;
+        bh=KxFELvIqhXNUKC440YJyV5pO/WeyNsZBmkG7Nacgid4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HPN7EeNHu0D80lV+Yx2ekbJbO9kQA3+RhIMkCN2lNc3EiWW3tP61JZEebnR0h5pdr
+         BoZXqHWMohqXDIstdV6o1D7kbc9FlghcyEZcaFxzKSGFnwNnFNjxUQCDjeJl8CqWAp
+         3iD5PtEAde1tQcY8+x7Z6I/2+xo3TexVhD40XQOM=
+Date:   Sat, 10 Nov 2018 10:41:52 -0800
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Daniel Wagner <wagi@monom.org>
+Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Daniel Wagner <daniel.wagner@siemens.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v4.4] x86/kconfig: Fall back to ticket spinlocks
+Message-ID: <20181110184152.GA890@kroah.com>
+References: <20181031081458.13996-1-wagi@monom.org>
 MIME-Version: 1.0
-In-Reply-To: <20181110181101.24557-3-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181031081458.13996-1-wagi@monom.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/10/18 10:10 AM, Andy Shevchenko wrote:
-> Since we are going to use the same in Designware USB 3 driver,
-> rename the property to be consistent across the drivers.
+On Wed, Oct 31, 2018 at 09:14:58AM +0100, Daniel Wagner wrote:
+> From: Daniel Wagner <daniel.wagner@siemens.com>
 > 
-> No functional change intended.
+> Sebastian writes:
 > 
-> Cc: Hans de Goede <hdegoede@redhat.com>
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-Acked-by: Guenter Roeck <linux@roeck-us.net>
-
+> """
+> We reproducibly observe cache line starvation on a Core2Duo E6850 (2
+> cores), a i5-6400 SKL (4 cores) and on a NXP LS2044A ARM Cortex-A72 (4
+> cores).
+> 
+> The problem can be triggered with a v4.9-RT kernel by starting
+> 
+>     cyclictest -S -p98 -m  -i2000 -b 200
+> 
+> and as "load"
+> 
+>     stress-ng --ptrace 4
+> 
+> The reported maximal latency is usually less than 60us. If the problem
+> triggers then values around 400us, 800us or even more are reported. The
+> upperlimit is the -i parameter.
+> 
+> Reproduction with 4.9-RT is almost immediate on Core2Duo, ARM64 and SKL,
+> but it took 7.5 hours to trigger on v4.14-RT on the Core2Duo.
+> 
+> Instrumentation show always the picture:
+> 
+> CPU0                                         CPU1
+> => do_syscall_64                              => do_syscall_64
+> => SyS_ptrace                                   => syscall_slow_exit_work
+> => ptrace_check_attach                          => ptrace_do_notify / rt_read_unlock
+> => wait_task_inactive                              rt_spin_lock_slowunlock()
+>    -> while task_running()                         __rt_mutex_unlock_common()
+>   /   check_task_state()                           mark_wakeup_next_waiter()
+>  |     raw_spin_lock_irq(&p->pi_lock);             raw_spin_lock(&current->pi_lock);
+>  |     .                                               .
+>  |     raw_spin_unlock_irq(&p->pi_lock);               .
+>   \  cpu_relax()                                       .
+>    -                                                   .
+>     *IRQ*                                          <lock acquired>
+> 
+> In the error case we observe that the while() loop is repeated more than
+> 5000 times which indicates that the pi_lock can be acquired. CPU1 on the
+> other side does not make progress waiting for the same lock with interrupts
+> disabled.
+> 
+> This continues until an IRQ hits CPU0. Once CPU0 starts processing the IRQ
+> the other CPU is able to acquire pi_lock and the situation relaxes.
+> """
+> 
+> This matches with the observeration for v4.4-rt on a Core2Duo E6850:
+> 
+> CPU 0:
+> 
+> - no progress for a very long time in rt_mutex_dequeue_pi):
+> 
+> stress-n-1931    0d..11  5060.891219: function:             __try_to_take_rt_mutex
+> stress-n-1931    0d..11  5060.891219: function:                rt_mutex_dequeue
+> stress-n-1931    0d..21  5060.891220: function:                rt_mutex_enqueue_pi
+> stress-n-1931    0....2  5060.891220: signal_generate:      sig=17 errno=0 code=262148 comm=stress-ng-ptrac pid=1928 grp=1 res=1
+> stress-n-1931    0d..21  5060.894114: function:             rt_mutex_dequeue_pi
+> stress-n-1931    0d.h11  5060.894115: local_timer_entry:    vector=239
+> 
+> CPU 1:
+> 
+> - IRQ at 5060.894114 on CPU 1 followed by the IRQ on CPU 0
+> 
+> stress-n-1928    1....0  5060.891215: sys_enter:            NR 101 (18, 78b, 0, 0, 17, 788)
+> stress-n-1928    1d..11  5060.891216: function:             __try_to_take_rt_mutex
+> stress-n-1928    1d..21  5060.891216: function:                rt_mutex_enqueue_pi
+> stress-n-1928    1d..21  5060.891217: function:             rt_mutex_dequeue_pi
+> stress-n-1928    1....1  5060.891217: function:             rt_mutex_adjust_prio
+> stress-n-1928    1d..11  5060.891218: function:                __rt_mutex_adjust_prio
+> stress-n-1928    1d.h10  5060.894114: local_timer_entry:    vector=239
+> 
+> Thomas writes:
+> 
+> """
+> This has nothing to do with RT. RT is merily exposing the
+> problem in an observable way. The same issue happens with upstream, it's
+> harder to trigger and it's harder to observe for obvious reasons.
+> 
+> If you read through the discussions [see the links below] then you
+> really see that there is an upstream issue with the x86 qrlock
+> implementation and Peter has posted fixes which resolve it, both at
+> the practical and the theoretical level.
+> """
+> 
+> Backporting all qspinlock related patches is very likely to introduce
+> regressions on v4.4. Therefore, the recommended solution by Peter and
+> Thomas is to drop back to ticket spinlocks for v4.4.
+> 
+> Link :https://lkml.kernel.org/r/20180921120226.6xjgr4oiho22ex75@linutronix.de
+> Link: https://lkml.kernel.org/r/20180926110117.405325143@infradead.org
+> Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Signed-off-by: Daniel Wagner <daniel.wagner@siemens.com>
 > ---
->   drivers/platform/x86/intel_cht_int33fe.c | 2 +-
->   drivers/usb/typec/tcpm/fusb302.c         | 2 +-
->   2 files changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/platform/x86/intel_cht_int33fe.c b/drivers/platform/x86/intel_cht_int33fe.c
-> index 464fe93657b5..87cbf18d0305 100644
-> --- a/drivers/platform/x86/intel_cht_int33fe.c
-> +++ b/drivers/platform/x86/intel_cht_int33fe.c
-> @@ -79,7 +79,7 @@ static const struct property_entry max17047_props[] = {
->   };
->   
->   static const struct property_entry fusb302_props[] = {
-> -	PROPERTY_ENTRY_STRING("fcs,extcon-name", "cht_wcove_pwrsrc"),
-> +	PROPERTY_ENTRY_STRING("linux,extcon-name", "cht_wcove_pwrsrc"),
->   	PROPERTY_ENTRY_U32("fcs,max-sink-microvolt", 12000000),
->   	PROPERTY_ENTRY_U32("fcs,max-sink-microamp",   3000000),
->   	PROPERTY_ENTRY_U32("fcs,max-sink-microwatt", 36000000),
-> diff --git a/drivers/usb/typec/tcpm/fusb302.c b/drivers/usb/typec/tcpm/fusb302.c
-> index 6d332066202b..62816ac571a0 100644
-> --- a/drivers/usb/typec/tcpm/fusb302.c
-> +++ b/drivers/usb/typec/tcpm/fusb302.c
-> @@ -1765,7 +1765,7 @@ static int fusb302_probe(struct i2c_client *client,
->   	 * to be set by the platform code which also registers the i2c client
->   	 * for the fusb302.
->   	 */
-> -	if (device_property_read_string(dev, "fcs,extcon-name", &name) == 0) {
-> +	if (device_property_read_string(dev, "linux,extcon-name", &name) == 0) {
->   		chip->extcon = extcon_get_extcon_dev(name);
->   		if (IS_ERR(chip->extcon))
->   			return PTR_ERR(chip->extcon);
+> Thomas suggest following plan for fixing the issues on the varous
+> stable trees:
 > 
+>    4.4:  Trivial by switching back to ticket locks.
 
+Now queued up, thanks,
+
+greg k-h
