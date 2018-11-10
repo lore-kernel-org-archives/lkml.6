@@ -2,551 +2,112 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F39DC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 19:06:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C1AFC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 19:06:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8A222146E
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 19:06:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8A222146E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 45A6621104
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 19:06:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="afi0yMJZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45A6621104
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727086AbeKKEwE (ORCPT
+        id S1727233AbeKKEwr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 23:52:04 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35744 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726323AbeKKEwD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 23:52:03 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2027FAB64;
-        Sat, 10 Nov 2018 19:05:58 +0000 (UTC)
-Message-ID: <1541877001.17878.5.camel@suse.cz>
-Subject: Re: [RFC/RFT][PATCH v5] cpuidle: New timer events oriented governor
- for tickless systems
-From:   Giovanni Gherdovich <ggherdovich@suse.cz>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Doug Smythies <dsmythies@telus.net>
-Cc:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Mel Gorman <mgorman@suse.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Date:   Sat, 10 Nov 2018 20:10:01 +0100
-In-Reply-To: <102783770.7hZjAahU8c@aspire.rjw.lan>
-References: <102783770.7hZjAahU8c@aspire.rjw.lan>
+        Sat, 10 Nov 2018 23:52:47 -0500
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:45705 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726323AbeKKEwr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 23:52:47 -0500
+Received: by mail-vk1-f196.google.com with SMTP id n126so1148187vke.12
+        for <linux-kernel@vger.kernel.org>; Sat, 10 Nov 2018 11:06:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=n5v/iLGMlv7PH3fcfhp2JAhZuyfFV7BC4VmUgPZq/jo=;
+        b=afi0yMJZwGa54wYqGNQGfzIGxyPrgJdtD3ZOR9Qc0BwZ5RoXnC3a3iep+P88MNczn/
+         QQeR1N32HuW/J+7K/geuSQXKMLAON4FopYeD0JsG+FwTBqcJLstiWqUcSxQFGm6rcsJZ
+         FGHK3ZhT0pTMH55mE+z8iTePD5RKPVlirD1yJCIs6GZxqakRhXAsRhK/wgSDUmFQ7T2y
+         0HOq/F819OU7V8d1H7UICLvKj5g6braE3GSOxUNAJ9FP3GXM0++ZIhTHBhlaMmsQ1pvW
+         IhZuH70OKzY8KgllrOtk87kFhb8f1KBzCHAVZxJQ3vKhxhemKhkTqGlphQAqSe3q7t9R
+         9PHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=n5v/iLGMlv7PH3fcfhp2JAhZuyfFV7BC4VmUgPZq/jo=;
+        b=CakiFvNppRFsPOl7WYTt0PaYAlhqtC7QtvzefGbCdpKXQD+zZ/GQ4mAr438xOv/gYj
+         gYkc1iKZ0YTtSQ3Np3tvXd6vd7UsxFNXiNyv7JGvzhbKYAGy1wS5isL+61BNFPKAraB0
+         aVHCv5yhdHLnOceuimUzao+nUEtxxyHsqk3181LPsrWFhw3O9QfCog6ie+LlDMLtgGPE
+         vxZGbnUgbide13e7rWPar7j1IX4LLLsXK7MHKUkR6IzFSaZXv5xFLIZCh7N/wopth0CS
+         OsJ+jTIcE2Esb+yy3TX5ldJgNt73aRo8Vtz8H1oG8jZUeyzN35M4Gjfy39Np6H8J/x1W
+         8FEw==
+X-Gm-Message-State: AGRZ1gJXtZkr1N2MKpcgSzbaEv7tEc7Us9DwGvOHPzO+J1pu5mQmk8ck
+        VjrlpMCDghOQAFpmQTfIUA2o5IEDEcUNcmjt77EAmg==
+X-Google-Smtp-Source: AJdET5ex2RvGkQUeVFCtgLqr9p7l81Ss79otj6gtTdJiSwRuLhokBfPZbYvfXYmAomo8YEZzz5roevSxBWAkotwTZSA=
+X-Received: by 2002:a1f:34c7:: with SMTP id b190mr2263365vka.55.1541876805708;
+ Sat, 10 Nov 2018 11:06:45 -0800 (PST)
+MIME-Version: 1.0
+Received: by 2002:a67:f48d:0:0:0:0:0 with HTTP; Sat, 10 Nov 2018 11:06:45
+ -0800 (PST)
+In-Reply-To: <20181110190132.GA21185@1wt.eu>
+References: <CAKOZuesB4R=dCz4merWQN0FSCGrXmOgUUr4ienSbStBJguNv8g@mail.gmail.com>
+ <20181110190132.GA21185@1wt.eu>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Sat, 10 Nov 2018 11:06:45 -0800
+Message-ID: <CAKOZuevup11kuHGb3QD5GuA1c7_B=Nnq-kDEB5Hbv=OqXVotQQ@mail.gmail.com>
+Subject: Re: Official Linux system wrapper library?
+To:     Willy Tarreau <w@1wt.eu>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Joel Fernandes <joelaf@google.com>,
+        Linux API <linux-api@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-11-08 at 18:25 +0100, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Subject: [PATCH] cpuidle: New timer events oriented governor for tickless systems
-> 
-> The venerable menu governor does some thigns that are quite
-> questionable in my view.
-> 
-> First, it includes timer wakeups in the pattern detection data and
-> mixes them up with wakeups from other sources which in some cases
-> causes it to expect what essentially would be a timer wakeup in a
-> time frame in which no timer wakeups are possible (becuase it knows
-> the time until the next timer event and that is later than the
-> expected wakeup time).
-> 
-> Second, it uses the extra exit latency limit based on the predicted
-> idle duration and depending on the number of tasks waiting on I/O,
-> even though those tasks may run on a different CPU when they are
-> woken up.  Moreover, the time ranges used by it for the sleep length
-> correction factors depend on whether or not there are tasks waiting
-> on I/O, which again doesn't imply anything in particular, and they
-> are not correlated to the list of available idle states in any way
-> whatever.
-> 
-> Also, the pattern detection code in menu may end up considering
-> values that are too large to matter at all, in which cases running
-> it is a waste of time.
-> 
-> A major rework of the menu governor would be required to address
-> these issues and the performance of at least some workloads (tuned
-> specifically to the current behavior of the menu governor) is likely
-> to suffer from that.  It is thus better to introduce an entirely new
-> governor without them and let everybody use the governor that works
-> better with their actual workloads.
-> 
-> The new governor introduced here, the timer events oriented (TEO)
-> governor, uses the same basic strategy as menu: it always tries to
-> find the deepest idle state that can be used in the given conditions.
-> However, it applies a different approach to that problem.
-> 
-> First, it doesn't use "correction factors" for the time till the
-> closest timer, but instead it tries to correlate the measured idle
-> duration values with the available idle states and use that
-> information to pick up the idle state that is most likely to "match"
-> the upcoming CPU idle interval.
-> 
-> Second, it doesn't take the number of "I/O waiters" into account at
-> all and the pattern detection code in it avoids taking timer wakeups
-> into account.  It also only uses idle duration values less than the
-> current time till the closest timer (with the tick excluded) for that
-> purpose.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
-> 
-> v4 -> v5:
->  * Avoid using shallow idle states when the tick has been stopped already.
-> 
-> v3 -> v4:
->  * Make the pattern detection avoid returning too early if the minimum
->    sample is too far from the average.
->  * Reformat the changelog (as requested by Peter).
-> 
-> v2 -> v3:
->  * Simplify the pattern detection code and make it return a value
-> 	lower than the time to the closest timer if the majority of recent
-> 	idle intervals are below it regardless of their variance (that should
-> 	cause it to be slightly more aggressive).
->  * Do not count wakeups from state 0 due to the time limit in poll_idle()
->    as non-timer.
+On Sat, Nov 10, 2018 at 11:01 AM, Willy Tarreau <w@1wt.eu> wrote:
+> On Sat, Nov 10, 2018 at 10:52:06AM -0800, Daniel Colascione wrote:
+>> Now that glibc is basically not adding any new system call wrappers,
+>> how about publishing an "official" system call glue library as part of
+>> the kernel distribution, along with the uapi headers? I don't think
+>> it's reasonable to expect people to keep using syscall(__NR_XXX) for
+>> all new functionality, especially as the system grows increasingly
+>> sophisticated capabilities (like the new mount API, and hopefully the
+>> new process API) outside the strictures of the POSIX process.
 >
-> [...]
+> It's partly related, but you may be interested in something I did that
+> is in the the RCU tree. It's called "nolibc", it's a set of syscall
+> wrappers defined only in include files. It's not complete, but still
+> enough to boot some small init wrappers. Mine can extract tar files
+> and do stuff like this with it. Here is the kernel port in the RCU
+> tree and an example of code using it :
+>
+>    https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git/tree/tools/testing/selftests/rcutorture/bin/nolibc.h?h=rcu/next
+>    https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git/tree/tools/testing/selftests/rcutorture/bin/mkinitrd.sh?h=rcu/next
+>
+> The original one is maintained here (not very active since it works
+> well enough for my use cases now eventhough it's far from being
+> complete) :
+>
+>    http://git.formilux.org/?p=people/willy/nolibc.git
+>
+> Maybe something along this could be done for the vast majority of
+> syscalls and the thicker stuff be left to glibc ? That would allow
+> simple userland to build without glibc using only kernel headers,
+> or by occasionally defining a few extra stuff or glue.
 
-[NOTE: the tables in this message are quite wide, ~130 columns. If this
-doesn't get to you properly formatted you can read a copy of this message at
-the URL https://beta.suse.com/private/ggherdovich/teo-eval/teo-eval.html ]
+Reminds me of LSS: https://chromium.googlesource.com/linux-syscall-support/
 
-
-Hello Rafael,
-
-I have results for v3 and v5. Regarding v4, I made a mistake and didn't get
-valid data; as I saw v5 coming shortly after, I didn't rerun v4.
-
-I'm replying to the v5 thread because that's where these results belong, but
-I'm quoting your text from the v2 email at
-https://lore.kernel.org/lkml/4168371.zz0pVZtGOY@aspire.rjw.lan so that's
-easier to follow along.
-
-The quick summary is:
-
----> sockperf on loopback over UDP, mode "throughput":
-     this had a 12% regression in v2 on 48x-HASWELL-NUMA, which is completely
-     recovered in v3 and v5. Good stuff.
-
----> dbench on xfs:
-     this was down 16% in v2 on 48x-HASWELL-NUMA. On v5 we're at a 10%
-     regression. Slight improvement. What's really hurting here is the single
-     client scenario.
-
----> netperf-udp on loopback:
-     had 6% regression on v2 on 8x-SKYLAKE-UMA, which is the same as what
-     happens in v5.
-
----> tbench on loopback:
-     was down 10% in v2 on 8x-SKYLAKE-UMA, now slightly worse in v5 with a 12%
-     regression. As in dbench, it's at low number of clients that the results
-     are worst. Note that this machine is different from the one that has the
-     dbench regression.
-
-A more detailed report follows below.
-
-I maintain my original opinion from v2 that this governor is largely
-performance-neutral and I'm not overly worried about the numbers above:
-
-* results change from machine to machine: dbench is down 10% on
-  48x-HASWELL-NUMA, but it also gives you the largest win on the board with a
-  4% improvement on 8x-SKYLAKE-UMA. All regressions I mention only manifest on
-  one out of three machines.
-
-* similar benchmarks give contradicting results: dbench seems highly sensitive
-  to this patch, but pgbench, sqlite, and fio are not. netperf-udp is slightly
-  down on 48x-HASWELL-NUMA but sockperf-udp-throughput has benefited from v5
-  on that same machine.
-
-To raise an alert from the performance angle I have to see red on my board
-from an entire category of benchmarks (ie I/O, or networking, or
-scheduler-intensive, etc) and on a variety of hardware configurations. That's
-not happening here.
-
-On Sun, 2018-11-04 at 11:06 +0100, Rafael J. Wysocki wrote:
-> On Wednesday, October 31, 2018 7:36:21 PM CET Giovanni Gherdovich wrote:
-> >
-> > [...]
-> > I've tested your patches applying them on v4.18 (plus the backport
-> > necessary for v2 as Doug helpfully noted), just because it was the latest
-> > release when I started preparing this.
-
-I did the same for v3 and v5: baseline is v4.18, using that backport from
-linux-next.
-
-> > 
-> > I've tested it on three machines, with different generations of Intel CPUs:
-> > 
-> > * single socket E3-1240 v5 (Skylake 8 cores, which I'll call 8x-SKYLAKE-UMA)
-> > * two sockets E5-2698 v4 (Broadwell 80 cores, 80x-BROADWELL-NUMA from here onwards)
-> > * two sockets E5-2670 v3 (Haswell 48 cores, 48x-HASWELL-NUMA from here onwards)
-> >
-
-Same machines.
-
-> > 
-> > BENCHMARKS WITH NEUTRAL RESULTS
-> > ===============================
-> > 
-> > These are the workloads where no noticeable difference is measured (on both
-> > v1 and v2, all machines), together with the corresponding MMTests[1]
-> > configuration file name:
-> > 
-> > * pgbench read-only on xfs, pgbench read/write on xfs
-> >     * global-dhp__db-pgbench-timed-ro-small-xfs
-> >     * global-dhp__db-pgbench-timed-rw-small-xfs
-> > * siege
-> >     * global-dhp__http-siege
-> > * hackbench, pipetest
-> >     * global-dhp__scheduler-unbound
-> > * Linux kernel compilation
-> >     * global-dhp__workload_kerndevel-xfs
-> > * NASA Parallel Benchmarks, C-Class (linear algebra; run both with OpenMP
-> >   and OpenMPI, over xfs)
-> >     * global-dhp__nas-c-class-mpi-full-xfs
-> >     * global-dhp__nas-c-class-omp-full
-> > * FIO (Flexible IO) in several configurations
-> >     * global-dhp__io-fio-randread-async-randwrite-xfs
-> >     * global-dhp__io-fio-randread-async-seqwrite-xfs
-> >     * global-dhp__io-fio-seqread-doublemem-32k-4t-xfs
-> >     * global-dhp__io-fio-seqread-doublemem-4k-4t-xfs
-> > * netperf on loopback over TCP
-> >     * global-dhp__network-netperf-unbound
-> 
-> The above is great to know.
-
-All of the above are confirmed, plus we can add to the group of neutral
-benchmarks:
-
-* xfsrepair
-    * global-dhp__io-xfsrepair-xfs
-* sqlite (insert operations on xfs)
-    * global-dhp__db-sqlite-insert-medium-xfs
-* schbench
-    * global-dhp__workload_schbench
-* gitsource on xfs (git unit tests, shell intensive)
-    * global-dhp__workload_shellscripts-xfs
-
-> 
-> > BENCHMARKS WITH NON-NEUTRAL RESULTS: OVERVIEW
-> > =============================================
-> > 
-> > These are benchmarks which exhibit a variation in their performance;
-> > you'll see the magnitude of the changes is moderate and it's highly variable
-> > from machine to machine. All percentages refer to the v4.18 baseline. In
-> > more than one case the Haswell machine seems to prefer v1 to v2.
-> >
-> > [...]
-> >
-> > * netperf on loopback over UDP
-> >     * global-dhp__network-netperf-unbound
-> > 
-> >                                     teo-v1          teo-v2
-> >             -------------------------------------------------
-> >             8x-SKYLAKE-UMA          no change       6% worse
-> >             80x-BROADWELL-NUMA      1% worse        4% worse
-> >             48x-HASWELL-NUMA        3% better       5% worse
-> >
-
-New data for netperf-udp, as 8x-SKYLAKE-UMA looked slightly off:
-
-* netperf on loopback over UDP
-    * global-dhp__network-netperf-unbound
-
-                        teo-v1          teo-v2          teo-v3          teo-v5
-  ------------------------------------------------------------------------------
-  8x-SKYLAKE-UMA        no change       6% worse        4% worse        6% worse
-  80x-BROADWELL-NUMA    1% worse        4% worse        no change       no change
-  48x-HASWELL-NUMA      3% better       5% worse        7% worse        5% worse
-
-
-> > [...]
-> >
-> > * sockperf on loopback over UDP, mode "throughput"
-> >     * global-dhp__network-sockperf-unbound
-> 
-> Generally speaking, I'm not worried about single-digit percent differences,
-> because overall they tend to fall into the noise range in the grand picture.
-> 
-> >                                     teo-v1          teo-v2
-> >             -------------------------------------------------
-> >             8x-SKYLAKE-UMA          1% worse        1% worse
-> >             80x-BROADWELL-NUMA      3% better       2% better
-> >             48x-HASWELL-NUMA        4% better       12% worse
-> 
-> But the 12% difference here is slightly worrisome.
-
-Following up on the above:
-
-* sockperf on loopback over UDP, mode "throughput"
-    * global-dhp__network-sockperf-unbound
-
-                        teo-v1          teo-v2          teo-v3          teo-v5
-  -------------------------------------------------------------------------------
-  8x-SKYLAKE-UMA        1% worse        1% worse        1% worse        1% worse
-  80x-BROADWELL-NUMA    3% better       2% better       5% better       3% worse
-  48x-HASWELL-NUMA      4% better       12% worse       no change       no change
-
-> >
-> > [...]
-> > 
-> > * dbench on xfs
-> >         * global-dhp__io-dbench4-async-xfs
-> > 
-> >                                     teo-v1          teo-v2
-> >             -------------------------------------------------
-> >             8x-SKYLAKE-UMA          3% better       4% better
-> >             80x-BROADWELL-NUMA      no change       no change
-> >             48x-HASWELL-NUMA        6% worse        16% worse
-> 
-> And same here.
-
-With new data:
-
-* dbench on xfs
-    * global-dhp__io-dbench4-async-xfs
-
-                        teo-v1          teo-v2          teo-v3          teo-v5   
-  -------------------------------------------------------------------------------
-  8x-SKYLAKE-UMA        3% better       4% better       6% better       4% better
-  80x-BROADWELL-NUMA    no change       no change       1% worse        3% worse
-  48x-HASWELL-NUMA      6% worse        16% worse       8% worse        10% worse 
-
-
-> 
-> > * tbench on loopback
-> >     * global-dhp__network-tbench
-> > 
-> >                                     teo-v1          teo-v2
-> >             -------------------------------------------------
-> >             8x-SKYLAKE-UMA          1% worse        10% worse
-> >             80x-BROADWELL-NUMA      1% worse        1% worse
-> >             48x-HASWELL-NUMA        1% worse        2% worse
-> >
-
-Update on tbench:
-
-* tbench on loopback
-    * global-dhp__network-tbench
-
-                        teo-v1          teo-v2          teo-v3          teo-v5
-  ------------------------------------------------------------------------------
-  8x-SKYLAKE-UMA        1% worse        10% worse       11% worse       12% worse
-  80x-BROADWELL-NUMA    1% worse        1% worse        no cahnge       1% worse
-  48x-HASWELL-NUMA      1% worse        2% worse        1% worse        1% worse
-
-> > [...]
-> > 
-> > BENCHMARKS WITH NON-NEUTRAL RESULTS: DETAIL
-> > ===========================================
-> > 
-> > Now some more detail. Each benchmark is run in a variety of configurations
-> > (eg. number of threads, number of concurrent connections and so forth) each
-> > of them giving a result. What you see above is the geometric mean of
-> > "sub-results"; below is the detailed view where there was a regression
-> > larger than 5% (either in v1 or v2, on any of the machines). That means
-> > I'll exclude xfsrepar, sqlite, schbench and the git unit tests "gitsource"
-> > that have negligible swings from the baseline.
-> > 
-> > In all tables asterisks indicate a statement about statistical
-> > significance: the difference with baseline has a p-value smaller than 0.1
-> > (small p-values indicate that the difference is real and not just random
-> > noise).
-> > 
-> > NETPERF-UDP
-> > ===========
-> > NOTES: Test run in mode "stream" over UDP. The varying parameter is the
-> >     message size in bytes. Each measurement is taken 5 times and the
-> >     harmonic mean is reported.
-> > MEASURES: Throughput in MBits/second, both on the sender and on the receiver end.
-> > HIGHER is better
-> > 
-> > machine: 8x-SKYLAKE-UMA
-> >                                      4.18.0                 4.18.0                 4.18.0
-> >                                     vanilla                 teo-v1        teo-v2+backport
-> > -----------------------------------------------------------------------------------------
-> > Hmean     send-64         362.27 (   0.00%)      362.87 (   0.16%)      318.85 * -11.99%*
-> > Hmean     send-128        723.17 (   0.00%)      723.66 (   0.07%)      660.96 *  -8.60%*
-> > Hmean     send-256       1435.24 (   0.00%)     1427.08 (  -0.57%)     1346.22 *  -6.20%*
-> > Hmean     send-1024      5563.78 (   0.00%)     5529.90 *  -0.61%*     5228.28 *  -6.03%*
-> > Hmean     send-2048     10935.42 (   0.00%)    10809.66 *  -1.15%*    10521.14 *  -3.79%*
-> > Hmean     send-3312     16898.66 (   0.00%)    16539.89 *  -2.12%*    16240.87 *  -3.89%*
-> > Hmean     send-4096     19354.33 (   0.00%)    19185.43 (  -0.87%)    18600.52 *  -3.89%*
-> > Hmean     send-8192     32238.80 (   0.00%)    32275.57 (   0.11%)    29850.62 *  -7.41%*
-> > Hmean     send-16384    48146.75 (   0.00%)    49297.23 *   2.39%*    48295.51 (   0.31%)
-> > Hmean     recv-64         362.16 (   0.00%)      362.87 (   0.19%)      318.82 * -11.97%*
-> > Hmean     recv-128        723.01 (   0.00%)      723.66 (   0.09%)      660.89 *  -8.59%*
-> > Hmean     recv-256       1435.06 (   0.00%)     1426.94 (  -0.57%)     1346.07 *  -6.20%*
-> > Hmean     recv-1024      5562.68 (   0.00%)     5529.90 *  -0.59%*     5228.28 *  -6.01%*
-> > Hmean     recv-2048     10934.36 (   0.00%)    10809.66 *  -1.14%*    10519.89 *  -3.79%*
-> > Hmean     recv-3312     16898.65 (   0.00%)    16538.21 *  -2.13%*    16240.86 *  -3.89%*
-> > Hmean     recv-4096     19351.99 (   0.00%)    19183.17 (  -0.87%)    18598.33 *  -3.89%*
-> > Hmean     recv-8192     32238.74 (   0.00%)    32275.13 (   0.11%)    29850.39 *  -7.41%*
-> > Hmean     recv-16384    48146.59 (   0.00%)    49296.23 *   2.39%*    48295.03 (   0.31%)
-> 
-> That is a bit worse than I would like it to be TBH.
-
-update on netperf-udp:
-
-machine: 8x-SKYLAKE-UMA
-                                     4.18.0                 4.18.0                 4.18.0                 4.18.0                 4.18.0
-                                    vanilla                    teo        teo-v2+backport        teo-v3+backport        teo-v5+backport
----------------------------------------------------------------------------------------------------------------------------------------
-Hmean     send-64         362.27 (   0.00%)      362.87 (   0.16%)      318.85 * -11.99%*      347.08 *  -4.19%*      333.48 *  -7.95%*
-Hmean     send-128        723.17 (   0.00%)      723.66 (   0.07%)      660.96 *  -8.60%*      676.46 *  -6.46%*      650.71 * -10.02%*
-Hmean     send-256       1435.24 (   0.00%)     1427.08 (  -0.57%)     1346.22 *  -6.20%*     1359.59 *  -5.27%*     1323.83 *  -7.76%*
-Hmean     send-1024      5563.78 (   0.00%)     5529.90 *  -0.61%*     5228.28 *  -6.03%*     5382.04 *  -3.27%*     5271.99 *  -5.24%*
-Hmean     send-2048     10935.42 (   0.00%)    10809.66 *  -1.15%*    10521.14 *  -3.79%*    10610.29 *  -2.97%*    10544.58 *  -3.57%*
-Hmean     send-3312     16898.66 (   0.00%)    16539.89 *  -2.12%*    16240.87 *  -3.89%*    16271.23 *  -3.71%*    15968.89 *  -5.50%*
-Hmean     send-4096     19354.33 (   0.00%)    19185.43 (  -0.87%)    18600.52 *  -3.89%*    18692.16 *  -3.42%*    18408.69 *  -4.89%*
-Hmean     send-8192     32238.80 (   0.00%)    32275.57 (   0.11%)    29850.62 *  -7.41%*    30066.83 *  -6.74%*    29824.62 *  -7.49%*
-Hmean     send-16384    48146.75 (   0.00%)    49297.23 *   2.39%*    48295.51 (   0.31%)    48800.37 *   1.36%*    48247.73 (   0.21%)
-Hmean     recv-64         362.16 (   0.00%)      362.87 (   0.19%)      318.82 * -11.97%*      347.07 *  -4.17%*      333.48 *  -7.92%*
-Hmean     recv-128        723.01 (   0.00%)      723.66 (   0.09%)      660.89 *  -8.59%*      676.39 *  -6.45%*      650.63 * -10.01%*
-Hmean     recv-256       1435.06 (   0.00%)     1426.94 (  -0.57%)     1346.07 *  -6.20%*     1359.45 *  -5.27%*     1323.81 *  -7.75%*
-Hmean     recv-1024      5562.68 (   0.00%)     5529.90 *  -0.59%*     5228.28 *  -6.01%*     5381.37 *  -3.26%*     5271.45 *  -5.24%*
-Hmean     recv-2048     10934.36 (   0.00%)    10809.66 *  -1.14%*    10519.89 *  -3.79%*    10610.28 *  -2.96%*    10544.58 *  -3.56%*
-Hmean     recv-3312     16898.65 (   0.00%)    16538.21 *  -2.13%*    16240.86 *  -3.89%*    16269.34 *  -3.72%*    15967.13 *  -5.51%*
-Hmean     recv-4096     19351.99 (   0.00%)    19183.17 (  -0.87%)    18598.33 *  -3.89%*    18690.13 *  -3.42%*    18407.45 *  -4.88%*
-Hmean     recv-8192     32238.74 (   0.00%)    32275.13 (   0.11%)    29850.39 *  -7.41%*    30062.78 *  -6.75%*    29824.30 *  -7.49%*
-Hmean     recv-16384    48146.59 (   0.00%)    49296.23 *   2.39%*    48295.03 (   0.31%)    48786.88 *   1.33%*    48246.71 (   0.21%)
-
-Here is a plot of the raw benchmark data, you can better see the distribution
-and variability of the results:
-https://beta.suse.com/private/ggherdovich/teo-eval/teo-eval.html#netperf-udp
-
-> > [...]
-> >
-> > SOCKPERF-UDP-THROUGHPUT
-> > =======================
-> > NOTES: Test run in mode "throughput" over UDP. The varying parameter is the
-> >     message size.
-> > MEASURES: Throughput, in MBits/second
-> > HIGHER is better
-> > 
-> > machine: 48x-HASWELL-NUMA
-> >                               4.18.0                 4.18.0                 4.18.0
-> >                              vanilla                 teo-v1        teo-v2+backport
-> > ----------------------------------------------------------------------------------
-> > Hmean     14        48.16 (   0.00%)       50.94 *   5.77%*       42.50 * -11.77%*
-> > Hmean     100      346.77 (   0.00%)      358.74 *   3.45%*      303.31 * -12.53%*
-> > Hmean     300     1018.06 (   0.00%)     1053.75 *   3.51%*      895.55 * -12.03%*
-> > Hmean     500     1693.07 (   0.00%)     1754.62 *   3.64%*     1489.61 * -12.02%*
-> > Hmean     850     2853.04 (   0.00%)     2948.73 *   3.35%*     2473.50 * -13.30%*
-> 
-> Well, in this case the consistent improvement in v1 turned into a consistent decline
-> in the v2, and over 10% for that matter.  Needs improvement IMO.
-
-Update: this one got resolved in v5,
-
-machine: 48x-HASWELL-NUMA
-                              4.18.0                 4.18.0                 4.18.0                 4.18.0                 4.18.0
-                             vanilla                    teo        teo-v2+backport        teo-v3+backport        teo-v5+backport
---------------------------------------------------------------------------------------------------------------------------------
-Hmean     14        48.16 (   0.00%)       50.94 *   5.77%*       42.50 * -11.77%*       48.91 *   1.55%*       49.06 *   1.87%*
-Hmean     100      346.77 (   0.00%)      358.74 *   3.45%*      303.31 * -12.53%*      350.75 (   1.15%)      347.52 (   0.22%)
-Hmean     300     1018.06 (   0.00%)     1053.75 *   3.51%*      895.55 * -12.03%*     1014.00 (  -0.40%)     1023.99 (   0.58%)
-Hmean     500     1693.07 (   0.00%)     1754.62 *   3.64%*     1489.61 * -12.02%*     1688.50 (  -0.27%)     1698.43 (   0.32%)
-Hmean     850     2853.04 (   0.00%)     2948.73 *   3.35%*     2473.50 * -13.30%*     2836.13 (  -0.59%)     2767.66 *  -2.99%*
-
-plots of raw data at
-https://beta.suse.com/private/ggherdovich/teo-eval/teo-eval.html#sockperf-udp-throughput
-
-> 
-> > DBENCH4
-> > =======
-> > NOTES: asyncronous IO; varies the number of clients up to NUMCPUS*8.
-> > MEASURES: latency (millisecs)
-> > LOWER is better
-> > 
-> > machine: 48x-HASWELL-NUMA
-> >                               4.18.0                 4.18.0                 4.18.0
-> >                              vanilla                 teo-v1        teo-v2+backport
-> > ----------------------------------------------------------------------------------
-> > Amean      1        37.15 (   0.00%)       50.10 ( -34.86%)       39.02 (  -5.03%)
-> > Amean      2        43.75 (   0.00%)       45.50 (  -4.01%)       44.36 (  -1.39%)
-> > Amean      4        54.42 (   0.00%)       58.85 (  -8.15%)       58.17 (  -6.89%)
-> > Amean      8        75.72 (   0.00%)       74.25 (   1.94%)       82.76 (  -9.30%)
-> > Amean      16      116.56 (   0.00%)      119.88 (  -2.85%)      164.14 ( -40.82%)
-> > Amean      32      570.02 (   0.00%)      561.92 (   1.42%)      681.94 ( -19.63%)
-> > Amean      64     3185.20 (   0.00%)     3291.80 (  -3.35%)     4337.43 ( -36.17%)
-> 
-> This one too.
-
-Update:
-
-machine: 48x-HASWELL-NUMA
-                              4.18.0                 4.18.0                 4.18.0                 4.18.0                 4.18.0
-                             vanilla                    teo        teo-v2+backport        teo-v3+backport        teo-v5+backport
---------------------------------------------------------------------------------------------------------------------------------
-Amean      1        37.15 (   0.00%)       50.10 ( -34.86%)       39.02 (  -5.03%)       52.24 ( -40.63%)       51.62 ( -38.96%)
-Amean      2        43.75 (   0.00%)       45.50 (  -4.01%)       44.36 (  -1.39%)       47.25 (  -8.00%)       44.20 (  -1.03%)
-Amean      4        54.42 (   0.00%)       58.85 (  -8.15%)       58.17 (  -6.89%)       55.12 (  -1.29%)       58.07 (  -6.70%)
-Amean      8        75.72 (   0.00%)       74.25 (   1.94%)       82.76 (  -9.30%)       78.63 (  -3.84%)       85.33 ( -12.68%)
-Amean      16      116.56 (   0.00%)      119.88 (  -2.85%)      164.14 ( -40.82%)      124.87 (  -7.13%)      124.54 (  -6.85%)
-Amean      32      570.02 (   0.00%)      561.92 (   1.42%)      681.94 ( -19.63%)      568.93 (   0.19%)      571.23 (  -0.21%)
-Amean      64     3185.20 (   0.00%)     3291.80 (  -3.35%)     4337.43 ( -36.17%)     3181.13 (   0.13%)     3382.48 (  -6.19%)
-
-It doesn't do well in the single-client scenario; v2 was a lot better at
-that, but on the other side it suffered at saturation (64 clients on a 48
-cores box). Plot at
-
-https://beta.suse.com/private/ggherdovich/teo-eval/teo-eval.html#dbench4
-
-> 
-> > TBENCH4
-> > =======
-> > NOTES: networking counterpart of dbench. Varies the number of clients up to NUMCPUS*4
-> > MEASURES: Throughput, MB/sec
-> > HIGHER is better
-> > 
-> > machine: 8x-SKYLAKE-UMA
-> >                                     4.18.0                 4.18.0                 4.18.0
-> >                                    vanilla                    teo        teo-v2+backport
-> > ----------------------------------------------------------------------------------------
-> > Hmean     mb/sec-1       620.52 (   0.00%)      613.98 *  -1.05%*      502.47 * -19.03%*
-> > Hmean     mb/sec-2      1179.05 (   0.00%)     1112.84 *  -5.62%*      820.57 * -30.40%*
-> > Hmean     mb/sec-4      2072.29 (   0.00%)     2040.55 *  -1.53%*     2036.11 *  -1.75%*
-> > Hmean     mb/sec-8      4238.96 (   0.00%)     4205.01 *  -0.80%*     4124.59 *  -2.70%*
-> > Hmean     mb/sec-16     3515.96 (   0.00%)     3536.23 *   0.58%*     3500.02 *  -0.45%*
-> > Hmean     mb/sec-32     3452.92 (   0.00%)     3448.94 *  -0.12%*     3428.08 *  -0.72%*
-> > 
-> 
-> And same here.
-
-New data:
-
-machine: 8x-SKYLAKE-UMA
-                                    4.18.0                 4.18.0                 4.18.0                 4.18.0                 4.18.0
-                                   vanilla                    teo        teo-v2+backport        teo-v3+backport        teo-v5+backport
---------------------------------------------------------------------------------------------------------------------------------------
-Hmean     mb/sec-1       620.52 (   0.00%)      613.98 *  -1.05%*      502.47 * -19.03%*      492.77 * -20.59%*      464.52 * -25.14%*
-Hmean     mb/sec-2      1179.05 (   0.00%)     1112.84 *  -5.62%*      820.57 * -30.40%*      831.23 * -29.50%*      780.97 * -33.76%*
-Hmean     mb/sec-4      2072.29 (   0.00%)     2040.55 *  -1.53%*     2036.11 *  -1.75%*     2016.97 *  -2.67%*     2019.79 *  -2.53%*
-Hmean     mb/sec-8      4238.96 (   0.00%)     4205.01 *  -0.80%*     4124.59 *  -2.70%*     4098.06 *  -3.32%*     4171.64 *  -1.59%*
-Hmean     mb/sec-16     3515.96 (   0.00%)     3536.23 *   0.58%*     3500.02 *  -0.45%*     3438.60 *  -2.20%*     3456.89 *  -1.68%*
-Hmean     mb/sec-32     3452.92 (   0.00%)     3448.94 *  -0.12%*     3428.08 *  -0.72%*     3369.30 *  -2.42%*     3430.09 *  -0.66%*
-
-Again, the pain point is at low client count; v1 OTOH was neutral. Plot at
-https://beta.suse.com/private/ggherdovich/teo-eval/teo-eval.html#tbench4
-
-
-Cheers,
-Giovanni
-
+I'm not a fan of this approach for general-purpose use. There's value
+in having *some* common function-level indirection before actually
+issuing system calls, e.g., for LD_PRELOAD stuff.
