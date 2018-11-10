@@ -7,66 +7,66 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ACD7C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 03:39:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B49AC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 03:39:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 107262081C
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 03:39:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E068A2086C
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 03:39:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h2l/FMIA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 107262081C
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fe0MLgmn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E068A2086C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728794AbeKJNXO (ORCPT
+        id S1728840AbeKJNXS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 08:23:14 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:36890 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728228AbeKJNXO (ORCPT
+        Sat, 10 Nov 2018 08:23:18 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:45782 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728228AbeKJNXS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 08:23:14 -0500
-Received: by mail-pl1-f195.google.com with SMTP id p6-v6so1799111pll.4;
-        Fri, 09 Nov 2018 19:39:43 -0800 (PST)
+        Sat, 10 Nov 2018 08:23:18 -0500
+Received: by mail-pf1-f194.google.com with SMTP id p17-v6so1777690pfj.12;
+        Fri, 09 Nov 2018 19:39:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=wv6fd964pW9dxicq1yuADx/MUx25lUSe35PJfYc6suA=;
-        b=h2l/FMIA6g5DrHx2mpI7QHi03dOzZ9eDQXepMi609VDVYehhWG58tj2QkUh/apHmCu
-         3jhk3pW5pmqXktTHwYDZrG602P8RB+3H6t3lf2bCaTn5SEn9IoXDcabaYYuT0GSMLqf+
-         CnSFvAAcIP66SMtBKKSB1x8DjO+gK6HAv4MUc4iboGcHVLd1gU7F8c9llny4e4EOugsE
-         7Veyy3KXByDZCHbeaM+FJCoJOt5HfSyY0XsX/OWo7KtOVC9PTqQUpa+qy7GVXVPhSnaK
-         5nFXU1n50Wlc9a4jMQqgvISBWU/eHxNalvwv3L4Oalwd9ZuHdTMBR66URiTkELieaxEd
-         Jlrg==
+        bh=Sq/dS5tcLIn+XFiL9cuX2X/teydAN4YKwvXtO/9QKjA=;
+        b=fe0MLgmnD60PRUPCdLReiwc4v8Rz4ianNthHDxS7dc3VM7tgYIbHvoHHCHH3T06dCa
+         XDr7BTYDMb1oXjTYrKSP/w1Nu0u3+CF3Wyvrv7dEgd6q+LVT23RFDOQrrl38SN4Ki5Qd
+         PxbUs356F0D+DGxUN1ix+ZpZp7SC4Ix0sF7orAtmS2m2eHhsp4VXHcTUM2MHIqiv4CJz
+         p0nZmWM4m7p3RqJYiP+dDZB0CGTGs8ZDpTeVoCbF1EVJqjq6RA/DsC/ywqYcjmlHhX3M
+         GLb4YYa95iQ6QLCAcKVpAbnFX44+ZrxSSejCbumO4jiL3vTMQA0QB8Rp5NaJ86rS9EzH
+         sYmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=wv6fd964pW9dxicq1yuADx/MUx25lUSe35PJfYc6suA=;
-        b=pf9XI2gFAfcwKMJH/sLiBUQ+upZ0DhCZoVzuAmy7JECRISCbxmt0opkGzljNAaNiyd
-         t2mFh9wvI/DjiismbVmDQQh2lHKKInT55CvRUVBc8v2mqHTqVrkAptxQiUMiR9x9eGkn
-         TAU3jKlvc2S55JglgI+humMoRWQxqi1lhphfM/Ft/AzPE+2gUfHlgkK2njpbV60MdVR/
-         sSgeywTpPYmVtOhJGDrk7eNOr/jm3Y83yRs3GWJ8vXqnH7TPRHWTIeMkhILhhMwtAGTL
-         4CQoOtC857kbtW8N1Tty3cBwe/dVXG4v/cYabL53xmnvj4CMYyMeX/CNwSTT7w/cFlHB
-         qshA==
-X-Gm-Message-State: AGRZ1gIrGsp2mCe3GfE5DC7IerU8ciOiPgn18AFyTPFl7klv7JLTxbTh
-        qxy6m+B1FuNgBHmHkUDcnGU=
-X-Google-Smtp-Source: AJdET5dsMq9oV0wFSupTYpL0OYVl24KjN3XMZrWXkZCrYc+RNxv5l/kWJuMG3+ALkyAuhwF8igJY+A==
-X-Received: by 2002:a17:902:6185:: with SMTP id u5-v6mr11328973plj.41.1541821183190;
-        Fri, 09 Nov 2018 19:39:43 -0800 (PST)
+        bh=Sq/dS5tcLIn+XFiL9cuX2X/teydAN4YKwvXtO/9QKjA=;
+        b=TId79VBr7TSzSQc24nA52cyjFNhvZf6eXEzhQ5tDLXmY95j9GZZhGFbbVMAkF/A6xS
+         w+XDnx0860Z0ug46mPysEowvta/bRo6m19e1EDOeQtw9eWhG6ylfxQ7yoTYu6xlhQBbB
+         xFSDLAfKDV9e/V8iRsjFQzP3mkiq6h+q6JWjWPtpY0nB3rqCXk3UGJGJ2Nja2TgRJ8qa
+         mu4OqLYNUpR7nVLYTuAuJHFxE6jtArE+/FTSzBYDnJKkYVlAvvT2JWj+2ovNkigjt9ya
+         v3dFFy1625fR9BX/XRxG95vqEHwRjHQwFZx523L4ZviGTLLjWVUuX3fs+7OdG9aKDw9+
+         n/NA==
+X-Gm-Message-State: AGRZ1gJzGu46/+1mjO4W1r2SGfZAynuX239QpgTVIvbqqsI6lxCEBiFs
+        Ru148m2ml0LfkdAYOoNajdw=
+X-Google-Smtp-Source: AJdET5dw1SRtSdHyWDWpaBmijwPKvbdrM9xHLBA3CPSKfVu0LjQByLCUbpUpzno/tzbLy5fV0eKM6A==
+X-Received: by 2002:a62:5904:: with SMTP id n4-v6mr11503864pfb.174.1541821187348;
+        Fri, 09 Nov 2018 19:39:47 -0800 (PST)
 Received: from localhost.localdomain ([45.76.192.69])
-        by smtp.gmail.com with ESMTPSA id w2-v6sm10191359pfn.89.2018.11.09.19.39.39
+        by smtp.gmail.com with ESMTPSA id w2-v6sm10191359pfn.89.2018.11.09.19.39.43
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 09 Nov 2018 19:39:42 -0800 (PST)
+        Fri, 09 Nov 2018 19:39:46 -0800 (PST)
 From:   He Yangxuan <yangxuan8282@gmail.com>
 To:     linux-amlogic@lists.infradead.org
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, carlo@caione.org, khilman@baylibre.com,
         narmstrong@baylibre.com, He Yangxuan <yangxuan8282@gmail.com>
-Subject: [PATCH v5 1/3] arm64: dts: meson-gxl: add support for phicomm n1
-Date:   Sat, 10 Nov 2018 11:39:02 +0800
-Message-Id: <20181110033904.4207-2-yangxuan8282@gmail.com>
+Subject: [PATCH v5 2/3] dt-bindings: Add vendor prefix for PHICOMM Co., Ltd.
+Date:   Sat, 10 Nov 2018 11:39:03 +0800
+Message-Id: <20181110033904.4207-3-yangxuan8282@gmail.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181110033904.4207-1-yangxuan8282@gmail.com>
 References: <20181110033904.4207-1-yangxuan8282@gmail.com>
@@ -77,55 +77,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support for the Phicomm N1. This device based on P230 reference design.
-And this box doesn't have cvbs, so disable related section in device tree.
+PHICOMM Co., Ltd. is a hardware provider headquartered in Shanghai, it's
+product includes router and smart devices.
 
 Signed-off-by: He Yangxuan <yangxuan8282@gmail.com>
 ---
- arch/arm64/boot/dts/amlogic/Makefile                |  1 +
- .../boot/dts/amlogic/meson-gxl-s905d-phicomm-n1.dts | 21 +++++++++++++++++++++
- 2 files changed, 22 insertions(+)
- create mode 100644 arch/arm64/boot/dts/amlogic/meson-gxl-s905d-phicomm-n1.dts
+ Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/amlogic/Makefile b/arch/arm64/boot/dts/amlogic/Makefile
-index c31f29d66..49f3ac5d8 100644
---- a/arch/arm64/boot/dts/amlogic/Makefile
-+++ b/arch/arm64/boot/dts/amlogic/Makefile
-@@ -18,6 +18,7 @@ dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-nexbox-a95x.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-p212.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-p230.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-p231.dtb
-+dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-phicomm-n1.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s805x-p241.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905w-p281.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905w-tx3-mini.dtb
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-phicomm-n1.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-phicomm-n1.dts
-new file mode 100644
-index 000000000..9a8a8a7e4
---- /dev/null
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-phicomm-n1.dts
-@@ -0,0 +1,21 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2018 He Yangxuan
-+ */
-+
-+/dts-v1/;
-+
-+#include "meson-gxl-s905d-p230.dts"
-+
-+/ {
-+	compatible = "phicomm,n1", "amlogic,s905d", "amlogic,meson-gxl";
-+	model = "Phicomm N1";
-+
-+	cvbs-connector {
-+		status = "disabled";
-+	};
-+};
-+
-+&cvbs_vdac_port {
-+	status = "disabled";
-+};
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+index 4b1a2a8fc..8c413d8cc 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -296,6 +296,7 @@ panasonic	Panasonic Corporation
+ parade	Parade Technologies Inc.
+ pericom	Pericom Technology Inc.
+ pervasive	Pervasive Displays, Inc.
++phicomm PHICOMM Co., Ltd.
+ phytec	PHYTEC Messtechnik GmbH
+ picochip	Picochip Ltd
+ pine64	Pine64
 -- 
 2.11.0
 
