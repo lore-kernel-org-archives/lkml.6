@@ -2,100 +2,200 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A333C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 06:19:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05E5EC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 06:26:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6C822081C
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 06:19:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6C822081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B6245206BA
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 06:26:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6245206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728887AbeKJQCu (ORCPT
+        id S1728895AbeKJQJ4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 11:02:50 -0500
-Received: from mga11.intel.com ([192.55.52.93]:26480 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728662AbeKJQCu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 11:02:50 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Nov 2018 21:49:23 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,486,1534834800"; 
-   d="scan'208";a="99134257"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga003.jf.intel.com with ESMTP; 09 Nov 2018 21:49:19 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1gLM90-000E4P-I6; Sat, 10 Nov 2018 13:49:18 +0800
-Date:   Sat, 10 Nov 2018 13:48:46 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Al Cooper <alcooperx@gmail.com>
-Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
-        Al Cooper <alcooperx@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Alban Bedel <albeu@free.fr>, Alex Elder <elder@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Avi Fishman <avifishman70@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        devicetree@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        James Hogan <jhogan@kernel.org>,
-        Johan Hovold <johan@kernel.org>,
-        Kees Cook <keescook@chromium.org>, linux-usb@vger.kernel.org,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Rishabh Bhatnagar <rishabhb@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>, Roger Quadros <rogerq@ti.com>
-Subject: Re: [PATCH V4 5/5] usb: host: Add ability to build new Broadcom STB
- USB drivers
-Message-ID: <201811101309.Z6aKl1xZ%fengguang.wu@intel.com>
-References: <1541772120-40394-6-git-send-email-alcooperx@gmail.com>
+        Sat, 10 Nov 2018 11:09:56 -0500
+Received: from mx2.suse.de ([195.135.220.15]:59194 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728807AbeKJQJ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 11:09:56 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 2736CAE5C;
+        Sat, 10 Nov 2018 06:26:03 +0000 (UTC)
+Subject: Re: PLEASE REVERT URGENTLY: Re: [PATCH v5 2/3] x86/boot: add acpi
+ rsdp address to setup_header
+To:     "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xenproject.org, x86@kernel.org,
+        linux-doc@vger.kernel.org
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, corbet@lwn.net,
+        boris.ostrovsky@oracle.com
+References: <20181010061456.22238-1-jgross@suse.com>
+ <20181010061456.22238-3-jgross@suse.com>
+ <f7c78ee7-b548-7f04-24da-7321b6c64c97@zytor.com>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <bd2d17cd-072c-cad6-94ad-52373700a1c9@suse.com>
+Date:   Sat, 10 Nov 2018 07:26:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1541772120-40394-6-git-send-email-alcooperx@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <f7c78ee7-b548-7f04-24da-7321b6c64c97@zytor.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Al,
+On 09/11/2018 23:23, H. Peter Anvin wrote:
+> I just noticed this patch -- I missed it because the cover message
+> seemed far more harmless so I didn't notice this change.
+> 
+> THIS PATCH IS FATALLY WRONG AND NEEDS TO BE IMMEDIATELY REVERTED BEFORE
+> ANYONE STARTS RELYING ON IT; IT HAS THE POTENTIAL OF BREAKING THE
+> BOOTLOADER PROTOCOL FOR ALL FUTURE.
 
-I love your patch! Perhaps something to improve:
+It is already broken and this patch tries to repair it.
 
-[auto build test WARNING on usb/usb-testing]
-[also build test WARNING on v4.20-rc1 next-20181109]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> It seems to be based on fundamental misconceptions about the various
+> data structures in the protocol, and does so in a way that completely
+> breaks the way the protocol is designed to work.
+> 
+> The protocol is specifically designed such that fields are not version
+> dependencies. The version number is strictly to inform the boot loader
+> about which capabilities the kernel has, so that the boot loader can
+> know if a certain data field is meaningful and/or honored.
 
-url:    https://github.com/0day-ci/linux/commits/Al-Cooper/Add-XHCI-EHCI-and-OHCI-support-for-Broadcom-STB-SoS-s/20181110-065441
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+Right. That was where I started in early 2018.
+
+Unfortunately there are many major distros shipping boot loaders which
+write crap data past the end of setup_header.
+
+> 
+>> +Protocol 2.14:	(Kernel 4.20) Added acpi_rsdp_addr holding the physical
+>> +		address of the ACPI RSDP table.
+>> +		The bootloader updates version with:
+>> +		0x8000 | min(kernel-version, bootloader-version)
+>> +		kernel-version being the protocol version supported by
+>> +		the kernel and bootloader-version the protocol version
+>> +		supported by the bootloader.
+> 
+> [...]
+> 
+>>  **** MEMORY LAYOUT
+>>
+>>  The traditional memory map for the kernel loader, used for Image or
+>> @@ -197,6 +209,7 @@ Offset	Proto	Name		Meaning
+>>  0258/8	2.10+	pref_address	Preferred loading address
+>>  0260/4	2.10+	init_size	Linear memory required during initialization
+>>  0264/4	2.11+	handover_offset	Offset of handover entry point
+>> +0268/8	2.14+	acpi_rsdp_addr	Physical address of RSDP table
+> 
+> NO.
+> 
+> That is not how struct setup_header works, nor does this belong here.
+> 
+> struct setup_header contains *initialized data*, and has a length byte
+> at offset 0x201.  The bootloader is responsible for copying the full
+> structure into the appropriate offset (0x1f1) in struct boot_params.
+
+Yes, but some boot loaders copy more than that clobbering initialized
+kernel data (like in my case acpi_rsdp_addr).
+
+> The length byte isn't actually a requirement, since the maximum possible
+> size of this structure is 144 bytes, and the kernel will (obviously) not
+> look at the older fields anyway, but it is good practice. The kernel or
+> any other entity is free to zero out the bytes past this length pointer.
+> 
+> There are only 24 bytes left in this structure, and this would occupy 8
+> of them for no valid reason.  The *only* valid reason to put a
+> zero-initialized field in struct setup_header is if it used by the
+> 16-bit legacy BIOS boot, which is obviously not the case here.
+> 
+> This field thus belongs in struct boot_params, not struct setup_header.
+
+Okay, I can change that. Hoping that all boot loaders really write
+zeroes to that field in case they don't know it.
+
+>> @@ -317,6 +330,12 @@ Protocol:	2.00+
+>>    e.g. 0x0204 for version 2.04, and 0x0a11 for a hypothetical version
+>>    10.17.
+>>  
+>> +  Up to protocol version 2.13 this information is only read by the
+>> +  bootloader. From protocol version 2.14 onwards the bootloader will
+>> +  write the used protocol version ored with 0x8000 to the field. The
+>> +  used protocol version will be the minimum of the supported protocol
+>> +  versions of the bootloader and the kernel.
+>> +
+> 
+> Again, this is completely wrong. The version number is communication to
+> the bootloader, which may end up going through multiple stages.
+> Modifying this field breaks this invariant in a not-very-subtle way.
+> 
+> Fields in struct setup_header are to be initialized from the image
+> provided in the kernel header.
+> 
+> Fields in struct boot_params are to be initialized to zero.
+
+See above. grub2 in Debian, RHEL, ... doesn't do that reliably.
+
+> There is a field called "sentinel" which attempts to detect broken
+> bootloaders which do not do this correctly; however, when enabling new
+> bootloaders the Right Thing to do is to make sure they adhere to the
+> protocol as defined, rather than pushing a new hack onto the kernel.
+> 
+> Thus:
+> 
+> 1. Please revert this patch immediately, and destroy any boot loaders
+>    which tries to implement this.> 2. Add the acpi_rsdp_addr to struct boot_params.
+> 3. DO NOT modify the boot protocol version header field. Instead
+>    make sure that the bootloader follows the protocol and zeroes
+>    all unknown fields in struct boot_params.
+
+How can I do this for boot loaders shipped since several years?
+
+> 4. Possibly make the kernel panic if it notices that the boot version
+>    header has been mucked with, in case some of these boot loaders
+>    have already escaped into the field.
+
+So don't let a new kernel boot from a disk with above grub2?
+
+I don't think so.
 
 
-coccinelle warnings: (new ones prefixed by >>)
-
->> drivers/usb/host/ehci-brcm.c:258:3-8: No need to set .owner here. The core will do it.
-
-Please review and possibly fold the followup patch.
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Juergen
