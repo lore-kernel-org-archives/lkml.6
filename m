@@ -6,82 +6,77 @@ X-Spam-Status: No, score=-1.2 required=3.0 tests=DATE_IN_PAST_06_12,
 	DKIM_INVALID,DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 425BCC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 22:43:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E8B8C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 22:43:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BA1320892
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 22:43:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53BD920892
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 22:43:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VDEJdPwx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BA1320892
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="zd/plECg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53BD920892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726665AbeKKI3z (ORCPT
+        id S1727175AbeKKIaE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 03:29:55 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:36086 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725859AbeKKI3z (ORCPT
+        Sun, 11 Nov 2018 03:30:04 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:50622 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726868AbeKKIaD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 03:29:55 -0500
+        Sun, 11 Nov 2018 03:30:03 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=kWfHLnXC8cbME/mYsBEh7YwvLGQFj/efe+ilZ0JVN+Y=; b=VDEJdPwxLQpoLwDGJ8FH+xtQ1
-        3sf2Uy1rYvB5oMopdUHkJXbQcJH+KOQBdGo6abr4lxIiFTTqKIsDestYhXLBhbpSXVuprTeh07u8B
-        7FT+2yZJmyysm24XNMR6i3DLzfEjTuDgdOOJ+bIurZ16Sj0Z6KKNQ2S4mpKj+4BSPaaWhaxYOddDG
-        ernwGtOMc7ArO3hiFbD3yGW/wbzM5x5fDqJIm5zenSuaNwPPmD/pAbKCf7Z7tRf7/ms4RtknJRhOz
-        j2MHN3Nuynti3EKw/66JNh2i//6dyrtaq9soDEUyVk1zifD+ylF2/Q3u/cKM7TZG/ZLyRCwhSKUKF
-        GWwmWqp5A==;
+         bh=eeQoAGQ0E6gbxoHfSbeL90uDxTD/cfbE4k/q5ed6dk4=; b=zd/plECgaV5ikESUO/YXZaPfJ
+        Q7St7aEk+/NkfrUOf6N4Px6cGuYD427eIXXqaM10SKs/XmUsPbMVBiK1dAZ0emDTt/xSOEI41Yz1a
+        jqwb2NJ3/guA23rT9oWBtcflilBaiBojMiUe4aPYVvMMOzUF5QaE8/whBuKkYLC3sPDdM5wHMzSNF
+        i8D+sXeocHJh+zNLK1dKcsHEugC9gk9AR003720vNvjyICL3ew1Av0w4E2Dg/zQM/uRNsYClDQtsl
+        0XM24kjObu7v5bi/TGuooV41mtlN1FC3qHL9q+tEUyYaWfFHtD0FFpzTZx/2p0JYFizBXNZPa4cfx
+        +VDnGDAmA==;
 Received: from [64.114.255.114] (helo=worktop)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gLbyE-0001jh-6e; Sat, 10 Nov 2018 22:43:14 +0000
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gLbyE-0000gH-Cm; Sat, 10 Nov 2018 22:43:15 +0000
 Received: by worktop (Postfix, from userid 1000)
-        id 2B3126E08A0; Sat, 10 Nov 2018 15:17:34 +0100 (CET)
-Date:   Sat, 10 Nov 2018 15:17:34 +0100
+        id 8C1E36E07D5; Sat, 10 Nov 2018 14:55:24 +0100 (CET)
+Date:   Sat, 10 Nov 2018 14:55:24 +0100
 From:   Peter Zijlstra <peterz@infradead.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-        linux-mm@kvack.org, Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Tejun Heo <tj@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [RFC PATCH 02/12] locking/lockdep: Add a new terminal lock type
-Message-ID: <20181110141734.GF3339@worktop.programming.kicks-ass.net>
-References: <1541709268-3766-1-git-send-email-longman@redhat.com>
- <1541709268-3766-3-git-send-email-longman@redhat.com>
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org,
+        Will Deacon <will.deacon@arm.com>, Tejun Heo <tj@kernel.org>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: Re: [PATCH 1/2] locking/lockdep: Add support for dynamic depmaps and
+ keys
+Message-ID: <20181110135524.GC3339@worktop.programming.kicks-ass.net>
+References: <20181109234645.10530-1-bvanassche@acm.org>
+ <20181109234645.10530-2-bvanassche@acm.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1541709268-3766-3-git-send-email-longman@redhat.com>
+In-Reply-To: <20181109234645.10530-2-bvanassche@acm.org>
 User-Agent: Mutt/1.5.22.1 (2013-10-16)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 03:34:18PM -0500, Waiman Long wrote:
-> A terminal lock is a lock where further locking or unlocking on another
-> lock is not allowed. IOW, no forward dependency is permitted.
-> 
-> With such a restriction in place, we don't really need to do a full
-> validation of the lock chain involving a terminal lock.  Instead,
-> we just check if there is any further locking or unlocking on another
-> lock when a terminal lock is being held.
+On Fri, Nov 09, 2018 at 03:46:44PM -0800, Bart Van Assche wrote:
+> The lock validator forces to categorize multiple instances of a lock object
+> as the same lock class because it requires that struct lockdep_map and struct
+> lock_class_key instances are static objects. This can result in false
+> positive lockdep reports that are hard to suppress in an elegant way. Hence
+> add support for allocating instances of these objects dynamically.
 
-> @@ -263,6 +270,7 @@ struct held_lock {
->  	unsigned int hardirqs_off:1;
->  	unsigned int references:12;					/* 32 bits */
->  	unsigned int pin_count;
-> +	unsigned int flags;
->  };
+Yeah, I think not. You completely fail to explain how what you propose
+is correct.
 
-I'm thinking we can easily steal some bits off of the pin_count field if
-we have to.
+The thing is; we rely on static objects because they provide
+persistence. Their address will never be re-used.
+
+Dynamic objects do not provide this same guarantee. And when you re-use
+the key address for something else, you'll mix the chains and things
+come unstuck.
+
