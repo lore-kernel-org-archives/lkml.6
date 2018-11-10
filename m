@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 519CEC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:11:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E6FBC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:11:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1ED6B2081C
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:11:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ED6B2081C
+	by mail.kernel.org (Postfix) with ESMTP id F3A7321104
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:11:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3A7321104
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727259AbeKKD5C (ORCPT
+        id S1727310AbeKKD5I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 22:57:02 -0500
-Received: from mga02.intel.com ([134.134.136.20]:37029 "EHLO mga02.intel.com"
+        Sat, 10 Nov 2018 22:57:08 -0500
+Received: from mga17.intel.com ([192.55.52.151]:59727 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727068AbeKKD5B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727072AbeKKD5B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 10 Nov 2018 22:57:01 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Nov 2018 10:11:09 -0800
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Nov 2018 10:11:08 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,488,1534834800"; 
-   d="scan'208";a="107537164"
+   d="scan'208";a="91052701"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga002.jf.intel.com with ESMTP; 10 Nov 2018 10:11:03 -0800
+  by orsmga008.jf.intel.com with ESMTP; 10 Nov 2018 10:11:03 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 117037C6; Sat, 10 Nov 2018 20:11:03 +0200 (EET)
+        id D6A3465; Sat, 10 Nov 2018 20:11:02 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     MyungJoo Ham <myungjoo.ham@samsung.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
@@ -48,9 +48,9 @@ To:     MyungJoo Ham <myungjoo.ham@samsung.com>,
         linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
         Hans de Goede <hdegoede@redhat.com>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 5/5] usb: dwc3: drd: Add support for DR detection through extcon
-Date:   Sat, 10 Nov 2018 20:11:01 +0200
-Message-Id: <20181110181101.24557-5-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 2/5] extcon: Return -EPROBE_DEFER when extcon device is not found
+Date:   Sat, 10 Nov 2018 20:10:58 +0200
+Message-Id: <20181110181101.24557-2-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181110181101.24557-1-andriy.shevchenko@linux.intel.com>
 References: <20181110181101.24557-1-andriy.shevchenko@linux.intel.com>
@@ -61,45 +61,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow extcon device, found by name, to provide DR status for USB.
-This is needed, for example, in case of Intel Merrifield platform,
-where the Intel Basin Cove PMIC provides an extcon device to communicate
-the detected role.
+All current users of extcon_get_extcon_dev() API considers
+an extcon device a mandatory to appear. Thus, they all convert
+NULL pointer to -EPROBE_DEFER error code.
 
-Note, that the "linux,extcon-name" property name is only for kernel
-internal use by X86/ACPI platform code and as such is not documented
-in the device tree bindings.
+There is one more caller anticipated with the same requirements.
+
+To decrease a code duplication and a burden to the callers,
+return -EPROBE_DEFER directly from extcon_get_extcon_dev().
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/usb/dwc3/drd.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/extcon/extcon-axp288.c        | 4 ++--
+ drivers/extcon/extcon.c               | 2 +-
+ drivers/power/supply/axp288_charger.c | 8 ++++----
+ drivers/usb/phy/phy-omap-otg.c        | 6 +++---
+ drivers/usb/typec/tcpm/fusb302.c      | 4 ++--
+ 5 files changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/usb/dwc3/drd.c b/drivers/usb/dwc3/drd.c
-index 5dc4cddd5b68..d6b47829fdca 100644
---- a/drivers/usb/dwc3/drd.c
-+++ b/drivers/usb/dwc3/drd.c
-@@ -485,10 +485,20 @@ static struct extcon_dev *dwc3_get_extcon(struct dwc3 *dwc)
- 	struct device *dev = dwc->dev;
- 	struct device_node *np_phy, *np_conn;
- 	struct extcon_dev *edev;
-+	const char *name;
+diff --git a/drivers/extcon/extcon-axp288.c b/drivers/extcon/extcon-axp288.c
+index a983708b77a6..3472d3b756ed 100644
+--- a/drivers/extcon/extcon-axp288.c
++++ b/drivers/extcon/extcon-axp288.c
+@@ -360,8 +360,8 @@ static int axp288_extcon_probe(struct platform_device *pdev)
+ 		name = acpi_dev_get_first_match_name("INT3496", NULL, -1);
+ 		if (name) {
+ 			info->id_extcon = extcon_get_extcon_dev(name);
+-			if (!info->id_extcon)
+-				return -EPROBE_DEFER;
++			if (IS_ERR(info->id_extcon))
++				return PTR_ERR(info->id_extcon);
  
- 	if (device_property_read_bool(dev, "extcon"))
- 		return extcon_get_edev_by_phandle(dev, 0);
+ 			dev_info(dev, "controlling USB role\n");
+ 		} else {
+diff --git a/drivers/extcon/extcon.c b/drivers/extcon/extcon.c
+index 5ab0498be652..2bd0f2f33f05 100644
+--- a/drivers/extcon/extcon.c
++++ b/drivers/extcon/extcon.c
+@@ -884,7 +884,7 @@ struct extcon_dev *extcon_get_extcon_dev(const char *extcon_name)
+ 		if (!strcmp(sd->name, extcon_name))
+ 			goto out;
+ 	}
+-	sd = NULL;
++	sd = ERR_PTR(-EPROBE_DEFER);
+ out:
+ 	mutex_unlock(&extcon_dev_list_lock);
+ 	return sd;
+diff --git a/drivers/power/supply/axp288_charger.c b/drivers/power/supply/axp288_charger.c
+index 735658ee1c60..8558577fccf5 100644
+--- a/drivers/power/supply/axp288_charger.c
++++ b/drivers/power/supply/axp288_charger.c
+@@ -768,17 +768,17 @@ static int axp288_charger_probe(struct platform_device *pdev)
+ 	info->regmap_irqc = axp20x->regmap_irqc;
  
-+	/*
-+	 * Device tree platforms should get extcon via phandle.
-+	 * On ACPI platforms, we get the name from a device property.
-+	 * This device property is for kernel internal use only and
-+	 * is expected to be set by the glue code.
-+	 */
-+	if (device_property_read_string(dev, "linux,extcon-name", &name) == 0)
-+		return extcon_get_extcon_dev(name);
-+
- 	np_phy = of_parse_phandle(dev->of_node, "phys", 0);
- 	np_conn = of_graph_get_remote_node(np_phy, -1, -1);
+ 	info->cable.edev = extcon_get_extcon_dev(AXP288_EXTCON_DEV_NAME);
+-	if (info->cable.edev == NULL) {
++	if (IS_ERR(info->cable.edev)) {
+ 		dev_dbg(&pdev->dev, "%s is not ready, probe deferred\n",
+ 			AXP288_EXTCON_DEV_NAME);
+-		return -EPROBE_DEFER;
++		return PTR_ERR(info->cable.edev);
+ 	}
  
+ 	if (acpi_dev_present(USB_HOST_EXTCON_HID, NULL, -1)) {
+ 		info->otg.cable = extcon_get_extcon_dev(USB_HOST_EXTCON_NAME);
+-		if (info->otg.cable == NULL) {
++		if (IS_ERR(info->otg.cable)) {
+ 			dev_dbg(dev, "EXTCON_USB_HOST is not ready, probe deferred\n");
+-			return -EPROBE_DEFER;
++			return PTR_ERR(info->otg.cable);
+ 		}
+ 		dev_info(&pdev->dev,
+ 			 "Using " USB_HOST_EXTCON_HID " extcon for usb-id\n");
+diff --git a/drivers/usb/phy/phy-omap-otg.c b/drivers/usb/phy/phy-omap-otg.c
+index ee0863c6553e..605314ddcd3d 100644
+--- a/drivers/usb/phy/phy-omap-otg.c
++++ b/drivers/usb/phy/phy-omap-otg.c
+@@ -91,12 +91,12 @@ static int omap_otg_probe(struct platform_device *pdev)
+ 	int ret;
+ 	u32 rev;
+ 
+-	if (!config || !config->extcon)
++	if (!config)
+ 		return -ENODEV;
+ 
+ 	extcon = extcon_get_extcon_dev(config->extcon);
+-	if (!extcon)
+-		return -EPROBE_DEFER;
++	if (IS_ERR(extcon))
++		return PTR_ERR(extcon);
+ 
+ 	otg_dev = devm_kzalloc(&pdev->dev, sizeof(*otg_dev), GFP_KERNEL);
+ 	if (!otg_dev)
+diff --git a/drivers/usb/typec/tcpm/fusb302.c b/drivers/usb/typec/tcpm/fusb302.c
+index 43b64d9309d0..6d332066202b 100644
+--- a/drivers/usb/typec/tcpm/fusb302.c
++++ b/drivers/usb/typec/tcpm/fusb302.c
+@@ -1767,8 +1767,8 @@ static int fusb302_probe(struct i2c_client *client,
+ 	 */
+ 	if (device_property_read_string(dev, "fcs,extcon-name", &name) == 0) {
+ 		chip->extcon = extcon_get_extcon_dev(name);
+-		if (!chip->extcon)
+-			return -EPROBE_DEFER;
++		if (IS_ERR(chip->extcon))
++			return PTR_ERR(chip->extcon);
+ 	}
+ 
+ 	chip->vbus = devm_regulator_get(chip->dev, "vbus");
 -- 
 2.19.1
 
