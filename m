@@ -2,166 +2,257 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E580CC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:41:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43FFCC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:44:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 941012089A
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:41:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E815F20858
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:44:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HPN7EeNH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 941012089A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q0Rlwj28"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E815F20858
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727045AbeKKE1u (ORCPT
+        id S1726914AbeKKEaI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 23:27:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52650 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726487AbeKKE1u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 23:27:50 -0500
-Received: from localhost (71-6-98-120.static-ip.telepacific.net [71.6.98.120])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 08BA720858;
-        Sat, 10 Nov 2018 18:41:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541875313;
-        bh=KxFELvIqhXNUKC440YJyV5pO/WeyNsZBmkG7Nacgid4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HPN7EeNHu0D80lV+Yx2ekbJbO9kQA3+RhIMkCN2lNc3EiWW3tP61JZEebnR0h5pdr
-         BoZXqHWMohqXDIstdV6o1D7kbc9FlghcyEZcaFxzKSGFnwNnFNjxUQCDjeJl8CqWAp
-         3iD5PtEAde1tQcY8+x7Z6I/2+xo3TexVhD40XQOM=
-Date:   Sat, 10 Nov 2018 10:41:52 -0800
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Daniel Wagner <wagi@monom.org>
-Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Daniel Wagner <daniel.wagner@siemens.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v4.4] x86/kconfig: Fall back to ticket spinlocks
-Message-ID: <20181110184152.GA890@kroah.com>
-References: <20181031081458.13996-1-wagi@monom.org>
+        Sat, 10 Nov 2018 23:30:08 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:46115 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726323AbeKKEaH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 23:30:07 -0500
+Received: by mail-qk1-f193.google.com with SMTP id q1so7230701qkf.13
+        for <linux-kernel@vger.kernel.org>; Sat, 10 Nov 2018 10:44:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=6aaLuXeskcKUGwJpUCQdS6L58xxl9JJsyro7nWkWVpQ=;
+        b=Q0Rlwj28BWvsLIpVDLqBaTd3wWZun1jX+4WQssWK1LZIMkBytarDLXygfF9z3KXeCa
+         Mgi0vTw/lDcJUC2kdyY5P3IiWHZoAZAVEXLGixlgkz6dnEE5PCbwsrW2mql1+Tfg/Rfy
+         dPorTLQ3Cb5mNIjNZaXsToGDtv5lWCXrSfQj0rL4NkSIPsjyTAF+SGfCCWn53i6fBtkw
+         hzfITjlY+zcFSN75ejdzpUT4ZxJpA+HYgTyJFsTQZlpmnj2Vj6TIyupB42RiRe5xRFd1
+         H8Bty5cJbhXDPQhXjyj4ox4h6zQ6LTOPih1udAfE/1RuPlbK/vJkKGEy07S7aGf4xVeP
+         SCWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=6aaLuXeskcKUGwJpUCQdS6L58xxl9JJsyro7nWkWVpQ=;
+        b=ILEKwxA7XKcD7R32mltVCPjkS4UIFtD7q1omCInQIWxFVLxPkn57P/VW5X4evy82oC
+         kjV7AyyLsKKCZL+1AljoTZdMZ/fvXGfjFHCjn0FflmmJPVQ4V2pKg/QOHF9AwgRprY4V
+         S2lO1eQX9DYm8Bmz+FxvUP5vJzzJOf300bqPVS78IcyjkFheThije+fTFcok9vtqHMJV
+         H3BRy+Lze61XvEKpNuAC7kog7M6stbFlLpORGV7Wdg/UEj/hgnBBpMHj/89/BhLl93PQ
+         VGdNE72DyNQ1euQZ/n3/J45SR0i2Tdfj1h4QvsU+S9Ws8Gu9nug37Ot06xveq6BBuPL/
+         5GfQ==
+X-Gm-Message-State: AGRZ1gJ0O/gKr7BF+ErHIzoGIiw1OaXEysUDY85kmi2r4RqOag4rvShW
+        NIuEhQ8qhYgeidN9Hb4ZO6KlJYxlZ9zt5l2H1SeH0yZG
+X-Google-Smtp-Source: AJdET5fFdL18MGkgHhvBIn7OS/qm2WGXt/YhGyTkUD/9d/ZFgUAwzVVkKpemQdrQIPMcu2pGtyEIZrFdmZ+Idf3wuSw=
+X-Received: by 2002:ac8:51d4:: with SMTP id d20mr13374765qtn.365.1541875449556;
+ Sat, 10 Nov 2018 10:44:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181031081458.13996-1-wagi@monom.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+From:   Dave Airlie <airlied@gmail.com>
+Date:   Sun, 11 Nov 2018 04:43:57 +1000
+Message-ID: <CAPM=9tzQBpaa7HcNvCHNxrPUDmF4o4orGy_kTJBA-8KBQO65Mw@mail.gmail.com>
+Subject: [git pull] drm fixes for 4.20-rc2
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 09:14:58AM +0100, Daniel Wagner wrote:
-> From: Daniel Wagner <daniel.wagner@siemens.com>
-> 
-> Sebastian writes:
-> 
-> """
-> We reproducibly observe cache line starvation on a Core2Duo E6850 (2
-> cores), a i5-6400 SKL (4 cores) and on a NXP LS2044A ARM Cortex-A72 (4
-> cores).
-> 
-> The problem can be triggered with a v4.9-RT kernel by starting
-> 
->     cyclictest -S -p98 -m  -i2000 -b 200
-> 
-> and as "load"
-> 
->     stress-ng --ptrace 4
-> 
-> The reported maximal latency is usually less than 60us. If the problem
-> triggers then values around 400us, 800us or even more are reported. The
-> upperlimit is the -i parameter.
-> 
-> Reproduction with 4.9-RT is almost immediate on Core2Duo, ARM64 and SKL,
-> but it took 7.5 hours to trigger on v4.14-RT on the Core2Duo.
-> 
-> Instrumentation show always the picture:
-> 
-> CPU0                                         CPU1
-> => do_syscall_64                              => do_syscall_64
-> => SyS_ptrace                                   => syscall_slow_exit_work
-> => ptrace_check_attach                          => ptrace_do_notify / rt_read_unlock
-> => wait_task_inactive                              rt_spin_lock_slowunlock()
->    -> while task_running()                         __rt_mutex_unlock_common()
->   /   check_task_state()                           mark_wakeup_next_waiter()
->  |     raw_spin_lock_irq(&p->pi_lock);             raw_spin_lock(&current->pi_lock);
->  |     .                                               .
->  |     raw_spin_unlock_irq(&p->pi_lock);               .
->   \  cpu_relax()                                       .
->    -                                                   .
->     *IRQ*                                          <lock acquired>
-> 
-> In the error case we observe that the while() loop is repeated more than
-> 5000 times which indicates that the pi_lock can be acquired. CPU1 on the
-> other side does not make progress waiting for the same lock with interrupts
-> disabled.
-> 
-> This continues until an IRQ hits CPU0. Once CPU0 starts processing the IRQ
-> the other CPU is able to acquire pi_lock and the situation relaxes.
-> """
-> 
-> This matches with the observeration for v4.4-rt on a Core2Duo E6850:
-> 
-> CPU 0:
-> 
-> - no progress for a very long time in rt_mutex_dequeue_pi):
-> 
-> stress-n-1931    0d..11  5060.891219: function:             __try_to_take_rt_mutex
-> stress-n-1931    0d..11  5060.891219: function:                rt_mutex_dequeue
-> stress-n-1931    0d..21  5060.891220: function:                rt_mutex_enqueue_pi
-> stress-n-1931    0....2  5060.891220: signal_generate:      sig=17 errno=0 code=262148 comm=stress-ng-ptrac pid=1928 grp=1 res=1
-> stress-n-1931    0d..21  5060.894114: function:             rt_mutex_dequeue_pi
-> stress-n-1931    0d.h11  5060.894115: local_timer_entry:    vector=239
-> 
-> CPU 1:
-> 
-> - IRQ at 5060.894114 on CPU 1 followed by the IRQ on CPU 0
-> 
-> stress-n-1928    1....0  5060.891215: sys_enter:            NR 101 (18, 78b, 0, 0, 17, 788)
-> stress-n-1928    1d..11  5060.891216: function:             __try_to_take_rt_mutex
-> stress-n-1928    1d..21  5060.891216: function:                rt_mutex_enqueue_pi
-> stress-n-1928    1d..21  5060.891217: function:             rt_mutex_dequeue_pi
-> stress-n-1928    1....1  5060.891217: function:             rt_mutex_adjust_prio
-> stress-n-1928    1d..11  5060.891218: function:                __rt_mutex_adjust_prio
-> stress-n-1928    1d.h10  5060.894114: local_timer_entry:    vector=239
-> 
-> Thomas writes:
-> 
-> """
-> This has nothing to do with RT. RT is merily exposing the
-> problem in an observable way. The same issue happens with upstream, it's
-> harder to trigger and it's harder to observe for obvious reasons.
-> 
-> If you read through the discussions [see the links below] then you
-> really see that there is an upstream issue with the x86 qrlock
-> implementation and Peter has posted fixes which resolve it, both at
-> the practical and the theoretical level.
-> """
-> 
-> Backporting all qspinlock related patches is very likely to introduce
-> regressions on v4.4. Therefore, the recommended solution by Peter and
-> Thomas is to drop back to ticket spinlocks for v4.4.
-> 
-> Link :https://lkml.kernel.org/r/20180921120226.6xjgr4oiho22ex75@linutronix.de
-> Link: https://lkml.kernel.org/r/20180926110117.405325143@infradead.org
-> Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Signed-off-by: Daniel Wagner <daniel.wagner@siemens.com>
-> ---
-> 
-> Thomas suggest following plan for fixing the issues on the varous
-> stable trees:
-> 
->    4.4:  Trivial by switching back to ticket locks.
+Hi Linus,
 
-Now queued up, thanks,
+Nothing too urgent in here, in case you want to leave until post
+holidays. I'm in Vancouver for the next week, but should get most
+stuff line up, though rc3 fixes might be late if I'm flying and
+sleeping.
 
-greg k-h
+amdgpu has some display fixes, KFD ioctl fixes and a Vega20 bios
+interaction fix.
+sun4i has some NULL checks added
+i915 has a 32-bit system fix, LPE audio oops, and HDMI2.0 clock fixes.
+Exynos has a 3 regression fixes (one frame counter, fbdev missing,
+dsi->panel check)
+Etnaviv has a single fencing fix for GPU recovery.
+
+Thanks,
+Dave.
+
+drm-fixes-2018-11-11:
+drm: i915, amdgpu, sun4i, exynos and etnaviv fixes
+The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a=
+:
+
+  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+
+are available in the Git repository at:
+
+  git://anongit.freedesktop.org/drm/drm tags/drm-fixes-2018-11-11
+
+for you to fetch changes up to 73b6f96cbc0162787bcbdac5f538167084c8d605:
+
+  Merge branch 'drm-fixes-4.20' of
+git://people.freedesktop.org/~agd5f/linux into drm-fixes (2018-11-11
+04:23:02 +1000)
+
+----------------------------------------------------------------
+drm: i915, amdgpu, sun4i, exynos and etnaviv fixes
+
+----------------------------------------------------------------
+Alex Deucher (7):
+      Revert "drm/amd/display: set backlight level limit to 1"
+      drm/amdgpu/vega20: add CLK base offset
+      drm/amdgpu/display: check if fbc is available in
+set_static_screen_control (v2)
+      drm/amdgpu: add DC feature mask module parameter
+      drm/amdgpu/display/dc: add FBC to dc_config
+      drm/amdgpu/display/dm: handle FBC dc feature parameter
+      drm/amdgpu/display/dce11: only enable FBC when selected
+
+Andrzej Hajda (2):
+      drm/exynos/dsi: register connector if it is created after drm bind
+      drm/exynos/fbdev: do not skip fbdev init if there are no connectors
+
+Chris Wilson (3):
+      drm/i915: Mark up GTT sizes as u64
+      drm/i915: Compare user's 64b GTT offset even on 32b
+      drm/i915: Mark pin flags as u64
+
+Clint Taylor (1):
+      drm/i915/hdmi: Add HDMI 2.0 audio clock recovery N values
+
+Dan Carpenter (1):
+      drm/exynos: checking for NULL instead of IS_ERR()
+
+Dave Airlie (5):
+      Merge branch 'etnaviv/fixes' of
+https://git.pengutronix.de/git/lst/linux into drm-fixes
+      Merge tag 'exynos-drm-fixes-for-v4.20-rc2' of
+git://git.kernel.org/.../daeinki/drm-exynos into drm-fixes
+      Merge tag 'drm-intel-fixes-2018-11-08' of
+git://anongit.freedesktop.org/drm/drm-intel into drm-fixes
+      Merge tag 'drm-misc-fixes-2018-11-07' of
+git://anongit.freedesktop.org/drm/drm-misc into drm-fixes
+      Merge branch 'drm-fixes-4.20' of
+git://people.freedesktop.org/~agd5f/linux into drm-fixes
+
+Dhinakaran Pandiyan (1):
+      drm/i915: Fix VIDEO_DIP_CTL bit shifts
+
+Dmitry V. Levin (2):
+      uapi: fix linux/kfd_ioctl.h userspace compilation errors
+      uapi: fix more linux/kfd_ioctl.h userspace compilation errors
+
+Evan Quan (2):
+      drm/amd/powerplay: set a default fclk/gfxclk ratio
+      drm/amd/powerplay: always use fast UCLK switching when UCLK DPM enabl=
+ed
+
+Giulio Benetti (2):
+      drm/sun4i: tcon: fix check of tcon->panel null pointer
+      drm/sun4i: tcon: prevent tcon->panel dereference if NULL
+
+Hang Yuan (2):
+      drm/i915/gvt: invalidate old ggtt page when update ggtt entry
+      drm/i915/gvt: support inconsecutive partial gtt entry write
+
+Harry Wentland (1):
+      drm/amd/display: Stop leaking planes
+
+Inki Dae (1):
+      Revert "drm/exynos/decon5433: implement frame counter"
+
+Jerry (Fangzhi) Zuo (2):
+      drm/amd/display: Cleanup MST non-atomic code workaround
+      drm/amd/display: Drop reusing drm connector for MST
+
+Joonas Lahtinen (1):
+      Merge tag 'gvt-fixes-2018-11-07' of
+https://github.com/intel/gvt-linux into drm-intel-fixes
+
+Leo Li (1):
+      drm/amd: Update atom_smu_info_v3_3 structure
+
+Longhe Zheng (1):
+      drm/i915/gvt: Handle values of EDP_PSR_IMR and EDP_PSR_IIR
+
+Lucas Stach (1):
+      drm/etnaviv: fix bogus fence complete check in timeout handler
+
+Lyude Paul (1):
+      drm/amd/amdgpu/dm: Fix dm_dp_create_fake_mst_encoder()
+
+Manasi Navare (1):
+      drm/i915/icl: Fix the macros for DFLEXDPMLE register bits
+
+Rodrigo Vivi (1):
+      drm/i915/glk: Remove 99% limitation.
+
+Shaokun Zhang (1):
+      drm/amd/display: Fix misleading buffer information
+
+Ville Syrj=C3=A4l=C3=A4 (4):
+      drm/i915: Don't apply the 16Gb DIMM wm latency w/a to BXT/GLK
+      drm/i915: Fix error handling for the NV12 fb dimensions check
+      drm/i915: Don't oops during modeset shutdown after lpe audio deinit
+      drm/i915: Fix ilk+ watermarks when disabling pipes
+
+Xinyun Liu (1):
+      drm/i915/gvt: correct mask setting for CSFE_CHICKEN1
+
+ drivers/gpu/drm/amd/amdgpu/amdgpu.h                |   1 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c            |  11 ++
+ drivers/gpu/drm/amd/amdgpu/vega20_reg_init.c       |   1 +
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  |  27 ++---
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h  |   2 -
+ .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.c    |  79 ++------------
+ .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.h    |   1 -
+ drivers/gpu/drm/amd/display/dc/core/dc_link.c      |   4 +-
+ drivers/gpu/drm/amd/display/dc/dc.h                |   1 +
+ .../amd/display/dc/dce110/dce110_hw_sequencer.c    |   7 +-
+ .../drm/amd/display/dc/dce110/dce110_resource.c    |   3 +-
+ drivers/gpu/drm/amd/include/amd_shared.h           |   4 +
+ drivers/gpu/drm/amd/include/atomfirmware.h         |   7 +-
+ drivers/gpu/drm/amd/powerplay/hwmgr/vega20_hwmgr.c |  53 ++++++----
+ drivers/gpu/drm/amd/powerplay/hwmgr/vega20_hwmgr.h |   1 +
+ drivers/gpu/drm/amd/powerplay/inc/vega20_ppsmc.h   |   3 +-
+ drivers/gpu/drm/etnaviv/etnaviv_sched.c            |   2 +-
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c      |   9 --
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c           |  11 --
+ drivers/gpu/drm/exynos/exynos_drm_drv.h            |   1 -
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c            |  14 ++-
+ drivers/gpu/drm/exynos/exynos_drm_fbdev.c          |   2 +-
+ drivers/gpu/drm/i915/gvt/gtt.c                     | 115 +++++++++++------=
+----
+ drivers/gpu/drm/i915/gvt/gtt.h                     |  10 +-
+ drivers/gpu/drm/i915/gvt/handlers.c                |   8 +-
+ drivers/gpu/drm/i915/gvt/mmio_context.c            |   2 +-
+ drivers/gpu/drm/i915/i915_drv.c                    |  15 +--
+ drivers/gpu/drm/i915/i915_drv.h                    |   1 -
+ drivers/gpu/drm/i915/i915_gem_execbuffer.c         |   2 +-
+ drivers/gpu/drm/i915/i915_gem_gtt.c                |   2 +-
+ drivers/gpu/drm/i915/i915_gem_gtt.h                |  36 ++++---
+ drivers/gpu/drm/i915/i915_reg.h                    |  20 ++--
+ drivers/gpu/drm/i915/intel_audio.c                 |  17 +++
+ drivers/gpu/drm/i915/intel_cdclk.c                 |  18 +---
+ drivers/gpu/drm/i915/intel_display.c               |  19 ++--
+ drivers/gpu/drm/i915/intel_lpe_audio.c             |   4 +-
+ drivers/gpu/drm/i915/intel_pm.c                    |   3 +-
+ drivers/gpu/drm/i915/selftests/huge_pages.c        |   2 +-
+ drivers/gpu/drm/i915/selftests/i915_gem_gtt.c      |   6 +-
+ drivers/gpu/drm/sun4i/sun4i_lvds.c                 |   4 +-
+ drivers/gpu/drm/sun4i/sun4i_rgb.c                  |   4 +-
+ drivers/gpu/drm/sun4i/sun4i_tcon.c                 |   5 +-
+ include/uapi/linux/kfd_ioctl.h                     |  18 ++--
+ 43 files changed, 258 insertions(+), 297 deletions(-)
