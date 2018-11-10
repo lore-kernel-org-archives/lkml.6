@@ -2,106 +2,79 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73C7BC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 02:11:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87D34C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 02:36:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 312342081C
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 02:11:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="RivphdJn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 312342081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=soleen.com
+	by mail.kernel.org (Postfix) with ESMTP id 44C5620825
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 02:36:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44C5620825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728604AbeKJLy3 (ORCPT
+        id S1728565AbeKJMTn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 06:54:29 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:39373 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728032AbeKJLy3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 06:54:29 -0500
-Received: by mail-qk1-f196.google.com with SMTP id e4so5043639qkh.6
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 18:11:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mSp2o3TWDZ70zWO0CmvtqB3/VvSLxNKIO8y1G9VIxjc=;
-        b=RivphdJnxwm9lBeQCNhxPYj1T1YFxcuY9PvgDRd3Lf42onfUJwGDsj8snErxU/OQEU
-         ydU4DFtazXJJWObp0NvXppQ6hLPNIH3JP3I7QqQQyDbnNQTRcKlccOZ0X/04VSEYfv2l
-         wJpOsb4mjK8DeVcdOMU+a7JYfndlBhctcWyiuAFyNHKkL28HQMHrMFkXj1847bav5gwX
-         3hcwAn1hX4XGUTwwemO/e4zkt6SyoFDpiUYf+j/Qm50HB0d0TwauKGcLlrhHSc0+vVrr
-         1rdkvnGkf/wNprueea+o/EqIAwR9Jt70apyJ6UmDd/VXto1N3wNEa4O0hcXI7VM3YJCk
-         xS6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mSp2o3TWDZ70zWO0CmvtqB3/VvSLxNKIO8y1G9VIxjc=;
-        b=aXepzIcbg3TL0g7uNx/vL73R394uPqmWDfqtxrRs5Mf01Kf9e03ZRxjm1rIfGhOEZl
-         BOH2yGZb8y09x4AW1QF6vcqj3Vo9YSzXfRL3Pg+OGf/Cz9c690H2rQmaC4NtktZq+tiO
-         aNQWJVl6aQRT1jiMNxu4NqMskrgrIWgtIlMLn6TEq0lLfW5hu4TzIhBbpa4Y5F+6ROvC
-         zlp4OfrxeWYFltff7adOofnTkoAu97ZSi4o/5BQpyz8BlaqrVCY8dBAX3/O1G8FpGZ7O
-         29LnH71bwjc7YrNUnxD14LckMkOra3mcGOU891SOVZyNlk4HwoC56ZkJLk4bKyvvTXBo
-         jGhA==
-X-Gm-Message-State: AGRZ1gK67AS44ZB8CjdTVeAy9BqafMnBT3fjk9qYk4eOD6/kdHNqgNDV
-        SiwwkEBa7gteIqdgmuIrPqiAgw==
-X-Google-Smtp-Source: AJdET5f6l2Xpitck8MasW1uCvzG0P9fL8Id9FZu0wBegBrw+ARqZe662B1AgOXvJ3FmjwP1k3r22jA==
-X-Received: by 2002:aed:2e86:: with SMTP id k6mr10546238qtd.292.1541815870523;
-        Fri, 09 Nov 2018 18:11:10 -0800 (PST)
-Received: from xakep.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id v3-v6sm6920142qth.74.2018.11.09.18.11.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 09 Nov 2018 18:11:07 -0800 (PST)
-Date:   Fri, 9 Nov 2018 21:11:05 -0500
-From:   Pavel Tatashin <pasha.tatashin@soleen.com>
-To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
-        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, davem@davemloft.net,
-        pavel.tatashin@microsoft.com, mhocko@suse.com, mingo@kernel.org,
-        kirill.shutemov@linux.intel.com, dan.j.williams@intel.com,
-        dave.jiang@intel.com, rppt@linux.vnet.ibm.com, willy@infradead.org,
-        vbabka@suse.cz, khalid.aziz@oracle.com, ldufour@linux.vnet.ibm.com,
-        mgorman@techsingularity.net, yi.z.zhang@linux.intel.com
-Subject: Re: [mm PATCH v5 6/7] mm: Add reserved flag setting to set_page_links
-Message-ID: <20181110021105.ln7geexvln5ap5fg@xakep.localdomain>
-References: <154145268025.30046.11742652345962594283.stgit@ahduyck-desk1.jf.intel.com>
- <154145279604.30046.5646399488589213615.stgit@ahduyck-desk1.jf.intel.com>
+        Sat, 10 Nov 2018 07:19:43 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:15079 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726498AbeKJMTm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 07:19:42 -0500
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 21DFD10D9DF87;
+        Sat, 10 Nov 2018 10:36:19 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
+ 14.3.408.0; Sat, 10 Nov 2018 10:36:14 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>
+CC:     YueHaibing <yuehaibing@huawei.com>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] drm/panel: Remove set but not used variable 'config'
+Date:   Sat, 10 Nov 2018 02:45:52 +0000
+Message-ID: <1541817952-20499-1-git-send-email-yuehaibing@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <154145279604.30046.5646399488589213615.stgit@ahduyck-desk1.jf.intel.com>
-User-Agent: NeoMutt/20180716
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18-11-05 13:19:56, Alexander Duyck wrote:
-> This patch modifies the set_page_links function to include the setting of
-> the reserved flag via a simple AND and OR operation. The motivation for
-> this is the fact that the existing __set_bit call still seems to have
-> effects on performance as replacing the call with the AND and OR can reduce
-> initialization time.
-> 
-> Looking over the assembly code before and after the change the main
-> difference between the two is that the reserved bit is stored in a value
-> that is generated outside of the main initialization loop and is then
-> written with the other flags field values in one write to the page->flags
-> value. Previously the generated value was written and then then a btsq
-> instruction was issued.
-> 
-> On my x86_64 test system with 3TB of persistent memory per node I saw the
-> persistent memory initialization time on average drop from 23.49s to
-> 19.12s per node.
-> 
-> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Reviewed-by: Pavel Tatashin <pasha.tatashin@soleen.com>
+drivers/gpu/drm/panel/panel-truly-nt35597.c: In function 'truly_nt35597_panel_add':
+drivers/gpu/drm/panel/panel-truly-nt35597.c:488:31: warning:
+ variable 'config' set but not used [-Wunused-but-set-variable]
+
+It never used since introdution in
+  1dd0b147c1ff ("drm/panel: Add support for Truly NT35597 panel driver")
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/panel/panel-truly-nt35597.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/panel/panel-truly-nt35597.c b/drivers/gpu/drm/panel/panel-truly-nt35597.c
+index fc2a66c..2d5a540 100644
+--- a/drivers/gpu/drm/panel/panel-truly-nt35597.c
++++ b/drivers/gpu/drm/panel/panel-truly-nt35597.c
+@@ -485,9 +485,7 @@ static int truly_nt35597_panel_add(struct truly_nt35597 *ctx)
+ {
+ 	struct device *dev = ctx->dev;
+ 	int ret, i;
+-	const struct nt35597_config *config;
+ 
+-	config = ctx->config;
+ 	for (i = 0; i < ARRAY_SIZE(ctx->supplies); i++)
+ 		ctx->supplies[i].supply = regulator_names[i];
+
+
+
