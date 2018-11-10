@@ -2,198 +2,124 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E353AC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 19:55:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83CBAC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 20:01:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 964852089A
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 19:55:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="BebyAMPh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 964852089A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	by mail.kernel.org (Postfix) with ESMTP id 482982089A
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 20:01:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 482982089A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726080AbeKKFlW (ORCPT
+        id S1726224AbeKKFr1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 00:41:22 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:42782 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725846AbeKKFlW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 00:41:22 -0500
-Received: by mail-pg1-f195.google.com with SMTP id i4-v6so2276021pgq.9
-        for <linux-kernel@vger.kernel.org>; Sat, 10 Nov 2018 11:55:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=jiigZMjCDbHcRQBbEfBJrG2SpZnMvpQe/kVZJTi6EME=;
-        b=BebyAMPhfNbjsp26GZu+NAZbLe0CUnxKLKPTi4Mmh3ii07BoYAYjsneZMzrFWKwnFo
-         4F+7Sz/pRpu5MjdXmNxfnzhzLuHhChBO47tpvdnbM6Cg9dmEpZyXhmwPC1vowbz5tz9P
-         wW7Y+ywXylzX5Wpvhz+isDdZYD9FL86dxgATVF9uQmPdpL33n73SkRjem2c3UKUGv3IC
-         XA0ERVbyGjLN531vXzuJpEIJkhggZljGo+BiNcjsQh25CCaWA/kx5g29kOI+PSehMifa
-         +RQmxJJURUc4YR5GKkDNKkRco8eXfzZJR4JvCD5j3zu9m+FEDUk+/lM5qucW6+SQUVZo
-         o+mQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=jiigZMjCDbHcRQBbEfBJrG2SpZnMvpQe/kVZJTi6EME=;
-        b=KC8X01emKj8+OV7DH5bWSNh89WwvRYwo/GWGdvoLV9FLkHAUNJVmcsW+x1ivjsdApi
-         ZFL13vcfYVgf7uceSRBqISGEY1M+oMWxHG/2iyNhYnZJbft/nIekCLaNKn87PUz+XGyY
-         yD5k7MbdYfb/UEw7Fz0hYuItiruwd7HCZMs20v44fJOK4AVkaqqa/Z28BOmi8mFQp6nn
-         im9V4FGa+5wQ4RT1qFDMKBZe86gv5jLgx9lqOhHe1rZZK2CgZClQ2bi36+p5RQK0gNj/
-         EHV6MY4mv7K/m5uRBRpO1eMP72Ah+zEsgTYE+U30AvNC1ZAbpsUWCiNJ0lasREKV02H2
-         k/XA==
-X-Gm-Message-State: AGRZ1gIjDZqQCgW/+v9bMsKnWz9xwWneBHtVQ6Dg4S/+oz1zDypCL6yc
-        krgwy2n4KQZ/D+PFdleh9rVHQ+8FE7o=
-X-Google-Smtp-Source: AJdET5dsTSMqVRwFo15FkWm0owSMJe2yVeDl2tFdVAeHnckJfbvGq3J7fsHGZASXyzkCPmLoBnwX9w==
-X-Received: by 2002:a62:5285:: with SMTP id g127-v6mr13877288pfb.128.1541879713073;
-        Sat, 10 Nov 2018 11:55:13 -0800 (PST)
-Received: from ?IPv6:2600:1010:b011:f816:90f9:2c3c:c10b:2a0? ([2600:1010:b011:f816:90f9:2c3c:c10b:2a0])
-        by smtp.gmail.com with ESMTPSA id s37sm7162035pgm.19.2018.11.10.11.55.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 10 Nov 2018 11:55:12 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v3 resend 1/2] mm: Add an F_SEAL_FUTURE_WRITE seal to memfd
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16A404)
-In-Reply-To: <CAKOZueum8MtNvJ5P=W7_pRw62TdQdCgyjCwwbG1wezNboC1cxQ@mail.gmail.com>
-Date:   Sat, 10 Nov 2018 11:55:10 -0800
-Cc:     Joel Fernandes <joel@joelfernandes.org>,
-        Jann Horn <jannh@google.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        John Reck <jreck@google.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Todd Kjos <tkjos@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Bruce Fields <bfields@fieldses.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Khalid Aziz <khalid.aziz@oracle.com>, Lei.Yang@windriver.com,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>, marcandre.lureau@redhat.com,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        Hugh Dickins <hughd@google.com>,
+        Sun, 11 Nov 2018 00:47:27 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39898 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725787AbeKKFr0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Nov 2018 00:47:26 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 74F4BAFE0;
+        Sat, 10 Nov 2018 20:01:15 +0000 (UTC)
+Subject: Re: Official Linux system wrapper library?
+To:     Greg KH <gregkh@linuxfoundation.org>,
+        Daniel Colascione <dancol@google.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Joel Fernandes <joelaf@google.com>,
         Linux API <linux-api@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <C6C5D673-4A94-4A79-B5E9-B7DC847F84D1@amacapital.net>
-References: <20181108041537.39694-1-joel@joelfernandes.org> <CAG48ez1h=v-JYnDw81HaYJzOfrNhwYksxmc2r=cJvdQVgYM+NA@mail.gmail.com> <CAG48ez0kQ4d566bXTFOYANDgii-stL-Qj-oyaBzvfxdV=PU-7g@mail.gmail.com> <20181110032005.GA22238@google.com> <69CE06CC-E47C-4992-848A-66EB23EE6C74@amacapital.net> <20181110182405.GB242356@google.com> <CAKOZuesQXRtthJTEr86LByH3gPpAdT-PQM0d1jqr131=zZNRKw@mail.gmail.com> <CAKOZueum8MtNvJ5P=W7_pRw62TdQdCgyjCwwbG1wezNboC1cxQ@mail.gmail.com>
-To:     Daniel Colascione <dancol@google.com>
+References: <CAKOZuesB4R=dCz4merWQN0FSCGrXmOgUUr4ienSbStBJguNv8g@mail.gmail.com>
+ <20181110192027.GA29892@kroah.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <6a415f31-2bce-72fa-2ff0-5cbbd572347b@suse.cz>
+Date:   Sat, 10 Nov 2018 20:58:25 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181110192027.GA29892@kroah.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 11/10/18 8:20 PM, Greg KH wrote:
+> On Sat, Nov 10, 2018 at 10:52:06AM -0800, Daniel Colascione wrote:
+>> Now that glibc is basically not adding any new system call wrappers,
+> 
+> Why are they not doing that anymore?
 
-> On Nov 10, 2018, at 11:11 AM, Daniel Colascione <dancol@google.com> wrote:=
+FYI just noticed there's a topic relevant to this in LPC Toolchain MC:
 
->=20
->> On Sat, Nov 10, 2018 at 10:45 AM, Daniel Colascione <dancol@google.com> w=
-rote:
->>> On Sat, Nov 10, 2018 at 10:24 AM, Joel Fernandes <joel@joelfernandes.org=
-> wrote:
->>> Thanks Andy for your thoughts, my comments below:
-> [snip]
->>> I don't see it as warty, different seals will work differently. It works=
+https://linuxplumbersconf.org/event/2/contributions/149/
 
->>> quite well for our usecase, and since Linux is all about solving real
->>> problems in the real work, it would be useful to have it.
->>>=20
->>>> - causes a probably-observable effect in the file mode in F_GETFL.
->>>=20
->>> Wouldn't that be the right thing to observe anyway?
->>>=20
->>>> - causes reopen to fail.
->>>=20
->>> So this concern isn't true anymore if we make reopen fail only for WRITE=
+> And there's no reason you have to use glibc, there are many other libcs
+> out there that hopefully are adding the new syscalls :)
+> 
+>> how about publishing an "official" system call glue library as part of
+>> the kernel distribution, along with the uapi headers? I don't think
+>> it's reasonable to expect people to keep using syscall(__NR_XXX) for
+>> all new functionality, especially as the system grows increasingly
+>> sophisticated capabilities (like the new mount API, and hopefully the
+>> new process API) outside the strictures of the POSIX process.
+> 
+> Patches are always welcome to be reviewed.  But watch out that they
+> don't conflict with the libc headers.  I know we had a "klibc" proposed
+> a long time ago but that died off for various reasons before it could
+> get merged.
+> 
+> Also, what about the basic work of making sure our uapi header files can
+> actually be used untouched by a libc?  That isn't the case these days as
+> the bionic maintainers like to keep reminding me.  That might be a good
+> thing to do _before_ trying to add new things like syscall wrappers.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
->>> opens as Daniel suggested. I will make this change so that the security f=
-ix
->>> is a clean one.
->>>=20
->>>> - does *not* affect other struct files that may already exist on the sa=
-me inode.
->>>=20
->>> TBH if you really want to block all writes to the file, then you want
->>> F_SEAL_WRITE, not this seal. The usecase we have is the fd is sent over I=
-PC
->>> to another process and we want to prevent any new writes in the receiver=
-
->>> side. There is no way this other receiving process can have an existing f=
-d
->>> unless it was already sent one without the seal applied.  The proposed s=
-eal
->>> could be renamed to F_SEAL_FD_WRITE if that is preferred.
->>>=20
->>>> - mysteriously malfunctions if you try to set it again on another struc=
-t
->>>> file that already exists
->>>>=20
->>>=20
->>> I didn't follow this, could you explain more?
->>>=20
->>>> - probably is insecure when used on hugetlbfs.
->>>=20
->>> The usecase is not expected to prevent all writes, indeed the usecase
->>> requires existing mmaps to continue to be able to write into the memory m=
-ap.
->>> So would you call that a security issue too? The use of the seal wants t=
-o
->>> allow existing mmap regions to be continue to be written into (I mention=
-ed
->>> more details in the cover letter).
->>>=20
->>>> I see two reasonable solutions:
->>>>=20
->>>> 1. Don=E2=80=99t fiddle with the struct file at all. Instead make the i=
-node flag
->>>> work by itself.
->>>=20
->>> Currently, the various VFS paths check only the struct file's f_mode to d=
-eny
->>> writes of already opened files. This would mean more checking in all tho=
-se
->>> paths (and modification of all those paths).
->>>=20
->>> Anyway going with that idea, we could
->>> 1. call deny_write_access(file) from the memfd's seal path which decreme=
-nts
->>> the inode::i_writecount.
->>> 2. call get_write_access(inode) in the various VFS paths in addition to
->>> checking for FMODE_*WRITE and deny the write (incase i_writecount is neg=
-ative)
->>>=20
->>> That will prevent both reopens, and writes from succeeding. However I wo=
-rry a
->>> bit about 2 not being too familiar with VFS internals, about what the
->>> consequences of doing that may be.
->>=20
->> IMHO, modifying both the inode and the struct file separately is fine,
->> since they mean different things. In regular filesystems, it's fine to
->> have a read-write open file description for a file whose inode grants
->> write permission to nobody. Speaking of which: is fchmod enough to
->> prevent this attack?
->=20
-> Well, yes and no. fchmod does prevent reopening the file RW, but
-> anyone with permissions (owner, CAP_FOWNER) can just fchmod it back. A
-> seal is supposed to be irrevocable, so fchmod-as-inode-seal probably
-> isn't sufficient by itself. While it might be good enough for Android
-> (in the sense that it'll prevent RW-reopens from other security
-> contexts to which we send an open memfd file), it's still conceptually
-> ugly, IMHO. Let's go with the original approach of just tweaking the
-> inode so that open-for-write is permanently blocked.
-
-This should be straightforward. Just add a new seal type and wire it up. It s=
-hould be considerably simpler than SEAL_WRITE.=
