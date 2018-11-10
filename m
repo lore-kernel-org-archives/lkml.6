@@ -6,105 +6,91 @@ X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 574ABC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 21:47:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B143C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 21:50:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A8682089A
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 21:47:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 529FC2089A
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 21:50:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=telus.net header.i=@telus.net header.b="a2O1HD+o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A8682089A
+	dkim=pass (2048-bit key) header.d=telus.net header.i=@telus.net header.b="MvE7nQ/5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 529FC2089A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=telus.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726603AbeKKHeK (ORCPT
+        id S1726407AbeKKHgc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 02:34:10 -0500
-Received: from cmta17.telus.net ([209.171.16.90]:55483 "EHLO cmta17.telus.net"
+        Sun, 11 Nov 2018 02:36:32 -0500
+Received: from cmta17.telus.net ([209.171.16.90]:59948 "EHLO cmta17.telus.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725996AbeKKHeJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 02:34:09 -0500
+        id S1725815AbeKKHgc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Nov 2018 02:36:32 -0500
 Received: from dougxps ([173.180.45.4])
         by cmsmtp with SMTP
-        id Lb6MggLYXP96wLb6NgF0xl; Sat, 10 Nov 2018 14:47:42 -0700
+        id Lb8kggMNvP96wLb8lgF1Ty; Sat, 10 Nov 2018 14:50:04 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=telus.net; s=neo;
-        t=1541886462; bh=chq4lRCIFA9c9VB8arC2XcKcz7jKTZN+RdsIca7c3qg=;
+        t=1541886604; bh=nljIwV993PC2xEIE+TtDDnIfIZAeMYFWn8TzZ8B5Lqw=;
         h=From:To:Cc:References:In-Reply-To:Subject:Date;
-        b=a2O1HD+okVcuW+8rHx9AUMxEoUmdT8IkQLxM9yv3SQsFw3XMqJMRwETrh1CWh4qfJ
-         IQMZR5FdnpL82+lgNZlxBo781Qb6HOwiiF4GAL8/WtuOjSnO8rzvXT7B7VfP+4PyjB
-         QRlh1+u+GOvs7GP03ovUk/aPKjVeRm0BE52yC+XVOZuTiICtnFwDxz/5yO9PevtojG
-         6p5NKkoRPgeXMCmpPnwqQhXQDqbxQWXCJYxjacSjYHayKTIIN2Em9fStSej6mlL6hj
-         H6vsU70Yyk7fYbgLxH/3wVBRBJNMVsAzkeLVDeSnCvgH6hIOwdlpy8nTG7BK/lOGq3
-         fTH4pYMKjolCg==
+        b=MvE7nQ/588h4TMV6mUfgzzXrqr7Xe8+ya5jB85TsUFwJdpWQgEYeLXri9wIs5gJ6a
+         /X/Z+4XQzw7ExxI2/wn7JtL2woM/eYwH/X5opv2c6M/8SH15OZ2en7Ep4b0OnuXwmI
+         W2N0KPCygFAHpDlN1AuThgtqTyi4RoBdAg0fVq6wLJeDkQoUJnr4+nkhDjHJtelCId
+         0NEJVtRY8qXes/aIkLMNoOTaTaDAmbqq8mLq7wdkYczMHFg/ggVbXAOCclGM3WHMwn
+         hbSBHWtlmXGdMMNytS3e0MNoG7mA4QKIdmJQyzy2gfNkUBgZ4ldwxInGrrpBWiNnnj
+         nl3+fHWCHOaLQ==
 X-Authority-Analysis: v=2.3 cv=G5vN7Os5 c=1 sm=1 tr=0
  a=zJWegnE7BH9C0Gl4FFgQyA==:117 a=zJWegnE7BH9C0Gl4FFgQyA==:17
- a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=kj9zAlcOel0A:10 a=FGbulvE0AAAA:8
- a=ugkoA4SMqsBuiJswprwA:9 a=PQ8TymTXbGEOm_cX:21 a=vxPhXtqwuZbslzO-:21
- a=CjuIK1q_8ugA:10 a=5JIPC4SmUL4A:10 a=eM4ghy-HDjkA:10
- a=svzTaB3SJmTkU8mK-ULk:22
+ a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=kj9zAlcOel0A:10 a=QyXUC8HyAAAA:8
+ a=0b2Jf5Z5EBbi8pmtcvsA:9 a=CjuIK1q_8ugA:10
 From:   "Doug Smythies" <dsmythies@telus.net>
 To:     "'Rafael J. Wysocki'" <rjw@rjwysocki.net>
-Cc:     "'Srinivas Pandruvada'" <srinivas.pandruvada@linux.intel.com>,
-        "'Peter Zijlstra'" <peterz@infradead.org>,
+Cc:     "'Peter Zijlstra'" <peterz@infradead.org>,
         "'LKML'" <linux-kernel@vger.kernel.org>,
-        "'Frederic Weisbecker'" <frederic@kernel.org>,
-        "'Mel Gorman'" <mgorman@suse.de>,
         "'Daniel Lezcano'" <daniel.lezcano@linaro.org>,
-        "'Linux PM'" <linux-pm@vger.kernel.org>,
-        "'Doug Smythies'" <dsmythies@telus.net>,
-        "'Giovanni Gherdovich'" <ggherdovich@suse.cz>
-References: JLIjge0NMDhAwJLIogChPj KR9ogVaVz6DhgKRFdgxgYz
-In-Reply-To: KR9ogVaVz6DhgKRFdgxgYz
-Subject: RE: [RFC/RFT][PATCH v3] cpuidle: New timer events oriented governor for tickless systems
-Date:   Sat, 10 Nov 2018 13:47:33 -0800
-Message-ID: <001001d4793f$020a7f90$061f7eb0$@net>
+        "'Linux PM'" <linux-pm@vger.kernel.org>
+References: 7Sblgyz0iivID7SbmgCnar
+In-Reply-To: 7Sblgyz0iivID7SbmgCnar
+Subject: RE: [PATCH] cpuidle: poll_state: Revise loop termination condition
+Date:   Sat, 10 Nov 2018 13:50:01 -0800
+Message-ID: <001101d4793f$56535770$02fa0650$@net>
 MIME-Version: 1.0
 Content-Type: text/plain;
         charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 X-Mailer: Microsoft Office Outlook 12.0
-Thread-Index: AdR0W8vD4oREAbGoTFqO9uyL0vrNhgCWrS2wAJOvwLA=
+Thread-Index: AdRaml4NAyS4Rm5GQJemmq5IMHK6MAebdjDg
 Content-Language: en-ca
-X-CMAE-Envelope: MS4wfLTmeI/HcROGLdO/H3saieYM74C4fFio9PF+M3tXeY82yU/gEAYmV9F4kbWJilKKMZjYkfCOiJJGuTozVXSG8dciGM8Yx7fNGATaAHLtxIyj94mjad3a
- 8CXOlGUFs8I2lSJZmGtB4hmHjgCHnI1t/+BFB4uz6LRoWQjzagxalMWjZi8uESgsdVppZoQospr92LiEltAFtWSLkNklrpHa2f6Fj864hetdqYm/kJ0YV85V
- jHyAoo9SEe5WhuMVxKLssKLgwUaxqeCXzJVMUqXDlr4Sao4Z/eOlcECztanXlMpIBaK6feguXJJGuUg7oCPAvaUfrdcMmIpe9uym3XHywn8mpBQClikKaJxa
- FHUmjHEyAhlPg0FbD2hbQOLcTaoDqsGebXT4QFOuurI5wG86Zlo3Z13k6TVI71N+QF1FYCSnIdk8jp5qDC06V51Litv9MHxwIHvll2/ee+o3JF2/yVRrm+1H
- 8v5RQ0XWEaljQIL6
+X-CMAE-Envelope: MS4wfLlkR6KjhRlm8RxY6J7jZ9t39B8Ag8IfTr9blGAKcL78aZXT81ga3oiGQyQRmDrY3qO84e6QHh9/Yqbj/DmkBjkoyIYTreZkQnyM0F1kGvVLkiNU1b5c
+ HAAG3k0bXHxBC6vXuuIOrg1afNtKe0B9iVM+lUo7EeOCFG0KHkLcEXlmaFfsEHVdgCp8UO7D/WKcTB/7AMHz0EYAjl2YjYrzbKjlS/nUyXUCOVb7V2elb9J5
+ R8MTCOBLYhdpkc1kOGiXHoWSxDj1m5VxOODP0XzJUXXeAGvb2jMC70zPLMclBAjhQXrFSMuChMb9QtLlrjA0tw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018.11.07 09:04 Doug Smythies wrote:
+On 2018.10.02 14:51 Rafael J. Wysocki wrote:
 
-> The Phoronix dbench test was run under the option to run all
-> the tests, instead of just one number of clients. This was done
-> with a reference/baseline kernel of 4.20-rc1, and also with this
-> TEO version 3 patch. The tests were also repeated with trace
-> enabled for 5000 seconds. Idle information and processor
-> package power were sampled once per minute in all test runs.
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 >
-> The results are:
-> http://fast.smythies.com/linux-pm/k420/k420-dbench-teo3.htm
-> http://fast.smythies.com/linux-pm/k420/histo_compare.htm
+> If need_resched() returns "false", breaking out of the loop in
+> poll_idle() will cause a new idle state to be selected, so in fact
+> usually it doesn't make sense to spin in it longer than the target
+> residency of the second state.  [Note that the "polling" state is
+> used only if there is at least one "real" state defined in addition
+> to it.]  On the other hand, breaking out of it early (say in case
+> the next state is disabled) shouldn't hurt as it is polling anyway.
 
-Another observation from the data, and for the reference/
-baseline 4.20-rc1 kernel, idle state 0 histogram plots
-is that there are several (280) long idle durations.
+While I agree that it is polling anyway, this change can add significant
+burden when debugging and trace is enabled for cpu_idle, if idle state 0
+is used often.
 
-For unknown reasons, these are consistently dominated by
-CPU 5 on my system (264 of the 280, in this case).
+For example: Phoronix dbench test, 96 clients: 900 second trace:
 
-No other test that I have tried shows this issue,
-But other tests also tend to set the need_resched
-flag whereas the dbench test doesn't.
+Kernel 4.20-rc1:
+idle state 0 entry exits: 686,724
+Does trace being enabled effect the system under test: Yes.
 
-Older kernels also have the issue. I tried: 4.19, 4.18
-4.17, 4.16+"V9" idle re-work patch set of the time.
-There is no use going back further, because "V9" was
-to address excessively long durations in shallow idle states.
-
-I have not made progress towards determining the root issue.
+Kernel 4.20-rc1 with this patch reverted:
+idle state 0 entry exits: 66,185
+Does trace being enabled effect the system under test: No, or minimal.
 
 ... Doug
 
