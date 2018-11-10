@@ -2,120 +2,105 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCE20C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:49:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53B27C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:50:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6945E20858
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:49:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 198F92089A
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:50:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CwRFwIG7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6945E20858
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WjQ8sM4F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 198F92089A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbeKKEfW (ORCPT
+        id S1727299AbeKKEgA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 23:35:22 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:43511 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726323AbeKKEfW (ORCPT
+        Sat, 10 Nov 2018 23:36:00 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:42137 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727218AbeKKEf7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 23:35:22 -0500
-Received: by mail-wr1-f68.google.com with SMTP id y3-v6so5155312wrh.10
-        for <linux-kernel@vger.kernel.org>; Sat, 10 Nov 2018 10:49:23 -0800 (PST)
+        Sat, 10 Nov 2018 23:35:59 -0500
+Received: by mail-wr1-f65.google.com with SMTP id y15-v6so5175186wru.9;
+        Sat, 10 Nov 2018 10:50:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=pWThVh5cfNbHfJo9lFRyeOiCX3rKajXV9sEu9P0Kadw=;
-        b=CwRFwIG7o27BkKBd7lHdBM8qmEU4uGRQ+FBTpMKI+bSOgy09ejk+/kHuYTyyWbYBzf
-         DDm2u9T3y+Ol/fbNQDL6dItwFn2sBss6l0N/jidZNzjEJUtGq/bVIcYx73ojfcgFluaq
-         EjS1f1i16Ykyy+B9s70iPtpf8ZSjKgCTjHW6av4sbg/LLFnpj2q/KglvQfv96KaxYreZ
-         2GcuolOGCBro2wAFXi4LeDV6RzmSzTdnCoLSmSeoVJrYU2hm5wJGbfx8Mr8U4WamZoLc
-         lksF6PalNbTJqkk6Ab6AZoLxOBIlFLy8ehhlAsZf+hjOMWrUIqZeFQTv70UKvKGlYyxZ
-         b5hw==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=JUdZNl057h1ppg7CeFOZ/uN3JSVoi5GN7FTUDrPfd+Q=;
+        b=WjQ8sM4FH5jDGFhHV+VNi6a8WSFzTqAieUer8QoNu9eqvcN2L7p+USlkP65WfMKjqg
+         dm2GnPcLDpm3xem+fxXJFCYtw5CmNutE55HscK3J+ee8GQ06QYff1WehyV0nfmN+RkKG
+         g/gUN5a0qxCgf2uPHJBgH2/UdKIO3sNzVwUoKmiAC3AiZ5oiy/f98T1IxESEhO/9ahBO
+         JudB+4t3B5taX1xsZ8NvJ8gJ4938ZWNxHcoCaBWf/A7+mIhWUj7sfqFk9tOl/dOPlj0f
+         3aU+dsJhgb7KWc03NEIGFLRLk3l/tOlHQ/Lqws4zgUZ289R5lOPHnXOXZb2KFmdsXQeH
+         k3Iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=pWThVh5cfNbHfJo9lFRyeOiCX3rKajXV9sEu9P0Kadw=;
-        b=o0ner7N0fqc5MfsxUs08VL6leV3oiWW21dlXUG9pXu+PirSW3Vaqb5OxHzF5Rl43O5
-         6p9ybzBeQFQbE6YpOxTPKzv2JGiF/TsFgGAYXYddhZIyru1xLfRitZ+Zl7yXhkLMuePq
-         3xMChDEP95KXdJVylPLn5cAGt5/I8ficL6UONzPLW631GBiM73nRM6mtha/aWQu2ito6
-         FQWA5fN1uAflV60xG2jO/MuxwjMfTkfx3a3vd+Q8g3jNWjMCGHGq1rPRnwODXveRQVe7
-         VJEjq3UWefKOxZjlzpamaatVUBps0UDPVizj18FjYAiokcBjnfpCRtr92X2yR9heymuU
-         dYeQ==
-X-Gm-Message-State: AGRZ1gJEb1ob3MC5s/VXl9C4yFMpYTCPIRsmCFf+/2ll0KDWVRGkqOe9
-        F6K7PH1iuUKKlwaY0kYJEg==
-X-Google-Smtp-Source: AJdET5cCDDL9dVG80GhQEz5UE/IfrXFxPc4a5/rdaliClLkXkntVEBIwfhvJ9XM/DsysQpdr9ELofQ==
-X-Received: by 2002:a5d:64c2:: with SMTP id y2-v6mr12685130wrv.209.1541875762792;
-        Sat, 10 Nov 2018 10:49:22 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JUdZNl057h1ppg7CeFOZ/uN3JSVoi5GN7FTUDrPfd+Q=;
+        b=fd9pX61c7yrLL/xKTu3LIb5VllAFWGf6t99xLSCGYI9KMbTZPWBwzksEWDl//x/myl
+         5Lm2sYZTu4ygWkCnfl0Q0Vq0RXHzhn1m2ij7QzDGIsajPnYZF6CLEurJJ0jlX9YVZcyx
+         07H7WTsml9R4x2QzXpxhvN6H57CcAK/6gp1i1NK4xNNE3iYUash4gxJCiQPUowXNlx8B
+         wvKT8GqpFWe0fLqs/b/smd1pKApw7Pp7GuNaxYvWEZFHE7weEE+7V0d1i0qk8jiGM2eh
+         I7IMqHu1XZKmU76Hql0gKEN26QDPR2BISJKKjxO5UzVBDEP0LW18rCwRyPknHA0VDuat
+         uCPg==
+X-Gm-Message-State: AGRZ1gIB5ayaGkCCP70KftSbw7FiOO1Ew7xneFYHqqemvw+k40DFjRvT
+        sN7+Z7reRJrHopGVeH5eQg==
+X-Google-Smtp-Source: AJdET5f8l7mHngcj1bw0jngY2C0+qQFnWUAbJPtZhzpcN9GicE7ZGyrhA1XYz9VPOdJfnP67pZW4Lw==
+X-Received: by 2002:adf:a512:: with SMTP id i18-v6mr13145325wrb.220.1541875800321;
+        Sat, 10 Nov 2018 10:50:00 -0800 (PST)
 Received: from avx2 (nat5-minsk-pool-46-53-217-92.telecom.by. [46.53.217.92])
-        by smtp.gmail.com with ESMTPSA id h4-v6sm10440780wrt.76.2018.11.10.10.49.21
+        by smtp.gmail.com with ESMTPSA id h5-v6sm17347541wrs.51.2018.11.10.10.49.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 10 Nov 2018 10:49:22 -0800 (PST)
-Date:   Sat, 10 Nov 2018 21:49:20 +0300
+        Sat, 10 Nov 2018 10:49:59 -0800 (PST)
+Date:   Sat, 10 Nov 2018 21:49:57 +0300
 From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     akpm@linux-foundation.org
-Cc:     rafael.tinoco@linaro.org, linux-kernel@vger.kernel.org,
-        gorcunov@gmail.com
-Subject: [PATCH] proc: fixup map_files test on arm
-Message-ID: <20181110184920.GA18252@avx2>
+To:     Rafael David Tinoco <rafael.tinoco@linaro.org>
+Cc:     gorcunov@gmail.com, akpm@linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, shuah@kernel.org
+Subject: Re: [PATCH] proc: fix and merge proc-self-map-file tests
+Message-ID: <20181110184957.GB18252@avx2>
+References: <20181108111105.GC13195@uranus.lan>
+ <20181109113036.21512-1-rafael.tinoco@linaro.org>
+ <20181110174727.GA26417@avx2>
+ <1541872563.3175498.1572453416.153B57C9@webmail.messagingengine.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+In-Reply-To: <1541872563.3175498.1572453416.153B57C9@webmail.messagingengine.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-https://bugs.linaro.org/show_bug.cgi?id=3782
+On Sat, Nov 10, 2018 at 03:56:03PM -0200, Rafael David Tinoco wrote:
+> On Sat, Nov 10, 2018, at 3:47 PM, Alexey Dobriyan wrote:
+> > On Fri, Nov 09, 2018 at 09:30:36AM -0200, Rafael David Tinoco wrote:
+> > > Merge proc-self-map-files tests into one since this test should focus in
+> > > testing readlink in /proc/self/map_files/* only, and not trying to test
+> > > mapping virtual address 0.
+> > > 
+> > > Lowest virtual address for user space mapping in other architectures,
+> > > like arm, is *at least* *(PAGE_SIZE * 2) and NULL hint does not
+> > > guarantee that when MAP_FIXED flag, important to this test, is given.
+> > > This patch also fixes this issue in remaining test.
+> > 
+> > > -	p = mmap(NULL, PAGE_SIZE, PROT_NONE, MAP_PRIVATE|MAP_FILE, fd, 0);
+> > > +	p = mmap((void *) (2 * PAGE_SIZE), PAGE_SIZE, PROT_NONE,
+> > 
+> > I don't know ARM. Is this 2 page limitation a limitation of hardware or
+> > kernel's?
+> 
+> Kernel:
+> https://bugs.linaro.org/show_bug.cgi?id=3782#c7
 
-Turns out arm doesn't allow to map address 0, so try minimum virtual
-address instead.
-
-Reported-by: Rafael David Tinoco <rafael.tinoco@linaro.org>
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
-
- tools/testing/selftests/proc/proc-self-map-files-002.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
---- a/tools/testing/selftests/proc/proc-self-map-files-002.c
-+++ b/tools/testing/selftests/proc/proc-self-map-files-002.c
-@@ -13,7 +13,7 @@
-  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-  */
--/* Test readlink /proc/self/map_files/... with address 0. */
-+/* Test readlink /proc/self/map_files/... with minimum address. */
- #include <errno.h>
- #include <sys/types.h>
- #include <sys/stat.h>
-@@ -47,6 +47,11 @@ static void fail(const char *fmt, unsigned long a, unsigned long b)
- int main(void)
- {
- 	const unsigned int PAGE_SIZE = sysconf(_SC_PAGESIZE);
-+#ifdef __arm__
-+	unsigned long va = 2 * PAGE_SIZE;
-+#else
-+	unsigned long va = 0;
-+#endif
- 	void *p;
- 	int fd;
- 	unsigned long a, b;
-@@ -55,7 +60,7 @@ int main(void)
- 	if (fd == -1)
- 		return 1;
- 
--	p = mmap(NULL, PAGE_SIZE, PROT_NONE, MAP_PRIVATE|MAP_FILE|MAP_FIXED, fd, 0);
-+	p = mmap(va, PAGE_SIZE, PROT_NONE, MAP_PRIVATE|MAP_FILE|MAP_FIXED, fd, 0);
- 	if (p == MAP_FAILED) {
- 		if (errno == EPERM)
- 			return 2;
+Ahh. please test the path I've sent, I don't have arm install readily
+available.
