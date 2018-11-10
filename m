@@ -2,349 +2,225 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0802C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 16:35:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8772DC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 16:44:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A909021486
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 16:35:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A909021486
+	by mail.kernel.org (Postfix) with ESMTP id 21BB420818
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 16:44:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21BB420818
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727325AbeKKCVV (ORCPT
+        id S1726859AbeKKC3w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 21:21:21 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:39082 "EHLO mx1.redhat.com"
+        Sat, 10 Nov 2018 21:29:52 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:40048 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727271AbeKKCVU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 21:21:20 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        id S1726188AbeKKC3w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 21:29:52 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6C62058E3F;
-        Sat, 10 Nov 2018 16:35:44 +0000 (UTC)
-Received: from 640k.localdomain.com (ovpn-112-24.ams2.redhat.com [10.36.112.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 880B2608C2;
-        Sat, 10 Nov 2018 16:35:42 +0000 (UTC)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-scsi@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>
-Subject: [PATCH 3/3] block: add back command filter modification via sysfs
-Date:   Sat, 10 Nov 2018 17:35:33 +0100
-Message-Id: <1541867733-7836-4-git-send-email-pbonzini@redhat.com>
-In-Reply-To: <1541867733-7836-1-git-send-email-pbonzini@redhat.com>
-References: <1541867733-7836-1-git-send-email-pbonzini@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Sat, 10 Nov 2018 16:35:44 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 114B858E2D;
+        Sat, 10 Nov 2018 16:44:14 +0000 (UTC)
+Received: from sky.random (ovpn-123-95.rdu2.redhat.com [10.10.123.95])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 42D835D6B3;
+        Sat, 10 Nov 2018 16:44:13 +0000 (UTC)
+Date:   Sat, 10 Nov 2018 11:44:12 -0500
+From:   Andrea Arcangeli <aarcange@redhat.com>
+To:     Mel Gorman <mgorman@techsingularity.net>
+Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Anthony Yznaga <anthony.yznaga@oracle.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, aneesh.kumar@linux.ibm.com,
+        akpm@linux-foundation.org, jglisse@redhat.com,
+        khandual@linux.vnet.ibm.com, kirill.shutemov@linux.intel.com,
+        mhocko@kernel.org, minchan@kernel.org, peterz@infradead.org,
+        rientjes@google.com, vbabka@suse.cz, willy@infradead.org,
+        ying.huang@intel.com, nitingupta910@gmail.com
+Subject: Re: [RFC PATCH] mm: thp: implement THP reservations for anonymous
+ memory
+Message-ID: <20181110164412.GB22642@redhat.com>
+References: <1541746138-6706-1-git-send-email-anthony.yznaga@oracle.com>
+ <20181109121318.3f3ou56ceegrqhcp@kshutemo-mobl1>
+ <20181109195150.GA24747@redhat.com>
+ <20181110132249.GH23260@techsingularity.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181110132249.GH23260@techsingularity.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Sat, 10 Nov 2018 16:44:14 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds two new sysfs attributes to the queue kobject.  The attributes
-allow reading and writing the whitelist of unprivileged commands.
+On Sat, Nov 10, 2018 at 01:22:49PM +0000, Mel Gorman wrote:
+> On Fri, Nov 09, 2018 at 02:51:50PM -0500, Andrea Arcangeli wrote:
+> > And if you're in the camp that is concerned about the use of more RAM
+> > or/and about the higher latency of COW faults, I'm afraid the
+> > intermediate solution will be still slower than the already available
+> > MADV_NOHUGEPAGE or enabled=madvise.
+> > 
+> 
+> Does that not prevent huge page usage? Maybe you can spell it out a bit
 
-This is again a bit different from what was removed in commit 018e044
-(block: get rid of queue-private command filter, 2009-06-26), but the idea
-is the same.  One difference is that it does not use a separate kobject.
-Also, the supported sysfs syntax is a bit more expressive: it includes
-ranges, the ability to replace all of the filter with a single command,
-and does not force usage of hexadecimal.
+Yes it prevents huge page usage, but preventing the huge page usage is
+also what is achieved with the reservation.
 
-Since the names are different, and the old ones were anyway never really
-enabled, the different userspace API is not a problem.
+> better. What is the set of system calls an application should make to
+> not use huge pages either for the address space or on a per-VMA basis
+> and defer to kcompactd? I know that can be tuned globally but that's not
+> quite the same thing given that multiple applications or containers can
+> be running with different requirements.
 
-Cc: linux-scsi@vger.kernel.org
-Cc: Hannes Reinecke <hare@suse.com>
-Cc: Martin K. Petersen <martin.petersen@oracle.com>
-Cc: James Bottomley <James.Bottomley@hansenpartnership.com>
-Suggested-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- Documentation/block/queue-sysfs.txt |  19 ++++++
- block/Kconfig                       |  10 +++
- block/blk-sysfs.c                   |  41 +++++++++++++
- block/scsi_ioctl.c                  | 117 ++++++++++++++++++++++++++++++++++++
- include/linux/blkdev.h              |   9 +++
- 5 files changed, 196 insertions(+)
+Yes, in terms of inheritance that could be used to tune a container
+we've only PR_SET_THP_DISABLE, and that will render MADV_HUGEPAGE
+useless too, but then for microservices that should not be a
+concern. How to make those sysfs tunables reentrant in namespaces is a
+separate issue I think.
 
-diff --git a/Documentation/block/queue-sysfs.txt b/Documentation/block/queue-sysfs.txt
-index 2c1e67058fd3..1fe5fe5fd80a 100644
---- a/Documentation/block/queue-sysfs.txt
-+++ b/Documentation/block/queue-sysfs.txt
-@@ -162,6 +162,25 @@ control of this block device to that new IO scheduler. Note that writing
- an IO scheduler name to this file will attempt to load that IO scheduler
- module, if it isn't already present in the system.
- 
-+sgio_read_filter (RW)
-+---------------------
-+When read, this file will display a list of SCSI commands (i.e. values of
-+the first byte of a CDB) that are always available for unprivileged users
-+via /dev/bsg, /dev/sgNN, or ioctls such as SG_IO and CDROM_SEND_PACKET.
-+When written, the list of commands will be modified.  The default filter
-+can be restored by writing "default" to the file; otherwise the input should
-+be a list of byte values or ranges such as "0x00-0xff".  In the latter case,
-+instead of replacing the filter completely you can add to the commands,
-+by writing a string that begins with '+', or remove them by writing a
-+string that begins with '-'.
-+
-+sgio_write_filter (RW)
-+----------------------
-+When read, this file will display a list of SCSI commands (i.e. values of
-+the first byte of a CDB) that are available for unprivileged users
-+when the block device is open for writing.  Writing to this file behaves
-+as for sgio_read_filter.
-+
- write_cache (RW)
- ----------------
- When read, this file will display whether the device has write back
-diff --git a/block/Kconfig b/block/Kconfig
-index 1f2469a0123c..a5bc37d50e07 100644
---- a/block/Kconfig
-+++ b/block/Kconfig
-@@ -71,6 +71,16 @@ config BLK_DEV_BSG
- 	  access device serial numbers, etc.
- 
- 	  If unsure, say Y.
-+ 
-+config BLK_DEV_SG_FILTER_SYSFS
-+	bool "Customizable SG_IO filters in sysfs"
-+	default y
-+	help
-+	  Saying Y here will let you use sysfs to customize the list
-+	  of SCSI commands that are available (via /dev/sg, /dev/bsg or
-+	  ioctls such as SG_IO) to unprivileged users.
-+
-+	  If unsure, say Y.
- 
- config BLK_DEV_BSGLIB
- 	bool "Block layer SG support v4 helper lib"
-diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
-index d1ec150a3478..ea2a47272bcf 100644
---- a/block/blk-sysfs.c
-+++ b/block/blk-sysfs.c
-@@ -703,6 +703,43 @@ static ssize_t queue_dax_show(struct request_queue *q, char *page)
- };
- #endif
- 
-+#ifdef CONFIG_BLK_DEV_SG_FILTER_SYSFS
-+static ssize_t queue_sgio_filter_read_show(struct request_queue *q, char *page)
-+{
-+	return blk_filter_show(q, page, READ);
-+}
-+
-+static ssize_t queue_sgio_filter_write_show(struct request_queue *q,
-+					    char *page)
-+{
-+	return blk_filter_show(q, page, WRITE);
-+}
-+
-+static ssize_t queue_sgio_filter_read_store(struct request_queue *q,
-+					    const char *page, size_t count)
-+{
-+	return blk_filter_store(q, page, count, READ);
-+}
-+
-+static ssize_t queue_sgio_filter_write_store(struct request_queue *q,
-+					     const char *page, size_t count)
-+{
-+	return blk_filter_store(q, page, count, WRITE);
-+}
-+
-+static struct queue_sysfs_entry queue_sgio_filter_read_entry = {
-+	.attr = { .name = "sgio_filter_read", .mode = S_IRUGO | S_IWUSR },
-+	.show = queue_sgio_filter_read_show,
-+	.store = queue_sgio_filter_read_store,
-+};
-+
-+static struct queue_sysfs_entry queue_sgio_filter_write_entry = {
-+	.attr = {.name = "sgio_filter_write", .mode = S_IRUGO | S_IWUSR },
-+	.show = queue_sgio_filter_write_show,
-+	.store = queue_sgio_filter_write_store,
-+};
-+#endif
-+
- static struct attribute *default_attrs[] = {
- 	&queue_requests_entry.attr,
- 	&queue_ra_entry.attr,
-@@ -740,6 +777,10 @@ static ssize_t queue_dax_show(struct request_queue *q, char *page)
- #ifdef CONFIG_BLK_DEV_THROTTLING_LOW
- 	&throtl_sample_time_entry.attr,
- #endif
-+#ifdef CONFIG_BLK_DEV_SG_FILTER_SYSFS
-+	&queue_sgio_filter_read_entry.attr,
-+	&queue_sgio_filter_write_entry.attr,
-+#endif
- 	NULL,
- };
- 
-diff --git a/block/scsi_ioctl.c b/block/scsi_ioctl.c
-index 5d577c89f9e6..c5f089e7d869 100644
---- a/block/scsi_ioctl.c
-+++ b/block/scsi_ioctl.c
-@@ -19,6 +19,7 @@
- #include <linux/kernel.h>
- #include <linux/errno.h>
- #include <linux/string.h>
-+#include <linux/ctype.h>
- #include <linux/module.h>
- #include <linux/blkdev.h>
- #include <linux/capability.h>
-@@ -725,6 +726,125 @@ void scsi_req_init(struct scsi_request *req)
- }
- EXPORT_SYMBOL(scsi_req_init);
- 
-+
-+#ifdef CONFIG_BLK_DEV_SG_FILTER_SYSFS
-+ssize_t blk_filter_show(struct request_queue *q, char *page, int rw)
-+{
-+	struct blk_cmd_filter *filter;
-+	char *p = page;
-+	unsigned long *okbits;
-+	int i;
-+
-+	filter = q->cmd_filter;
-+	if (!filter)
-+		filter = &blk_default_cmd_filter;
-+
-+	if (rw == READ)
-+		okbits = filter->read_ok;
-+	else
-+		okbits = filter->write_ok;
-+
-+	for (i = 0; i < BLK_SCSI_MAX_CMDS; i++)
-+		if (test_bit(i, okbits))
-+			p += sprintf(p, "0x%02x ", i);
-+
-+	if (p > page)
-+		p[-1] = '\n';
-+
-+	return p - page;
-+}
-+EXPORT_SYMBOL_GPL(blk_filter_show);
-+
-+ssize_t blk_filter_store(struct request_queue *q,
-+			 const char *page, size_t count, int rw)
-+{
-+	unsigned long bits[BLK_SCSI_CMD_PER_LONG], *target_bits;
-+	bool set;
-+	const char *p = page;
-+	char *endp;
-+	int start = -1, cmd;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	if (sysfs_streq(p, "default")) {
-+		if (!q->cmd_filter)
-+			return 0;
-+		if (rw == READ)
-+			memcpy(q->cmd_filter->read_ok,
-+			       blk_default_cmd_filter.read_ok,
-+			       sizeof(blk_default_cmd_filter.read_ok));
-+		else
-+			memcpy(q->cmd_filter->write_ok,
-+			       blk_default_cmd_filter.write_ok,
-+			       sizeof(blk_default_cmd_filter.write_ok));
-+		return count;
-+	}
-+
-+	if (!q->cmd_filter) {
-+		q->cmd_filter = kmemdup(&blk_default_cmd_filter,
-+					sizeof(struct blk_cmd_filter),
-+					GFP_KERNEL);
-+		if (!q->cmd_filter)
-+			return -ENOMEM;
-+	}
-+
-+	if (rw == READ)
-+		target_bits = q->cmd_filter->read_ok;
-+	else
-+		target_bits = q->cmd_filter->write_ok;
-+
-+	set = (p[0] != '-');
-+	if (p[0] != '-' && p[0] != '+')
-+		memset(bits, 0, sizeof(bits));
-+	else {
-+		memcpy(bits, target_bits, sizeof(bits));
-+		p++;
-+	}
-+
-+	while (p < page + count) {
-+		if (start == -1 && isspace(*p)) {
-+			p++;
-+			continue;
-+		}
-+
-+		cmd = simple_strtol(p, &endp, 0);
-+		if (endp == p || cmd < 0 || cmd >= BLK_SCSI_MAX_CMDS)
-+			return -EINVAL;
-+
-+		/* Verify the character immediately after the number, if any */
-+		p = endp;
-+		if (p < page + count) {
-+			if (start == -1 && *p == '-') {
-+				start = cmd;
-+				p++;
-+				continue;
-+			}
-+			if (!isspace(*p))
-+				return -EINVAL;
-+		}
-+
-+		if (start == -1)
-+			start = cmd;
-+
-+		for (; start <= cmd; start++)
-+			if (set)
-+				__set_bit(start, bits);
-+			else
-+				__clear_bit(start, bits);
-+		start = -1;
-+	}
-+
-+	/* Did the string end with a dash?  */
-+	if (start != -1)
-+		return -EINVAL;
-+
-+	memcpy(target_bits, bits, sizeof(bits));
-+	return count;
-+}
-+EXPORT_SYMBOL_GPL(blk_filter_store);
-+#endif
-+
- static int __init blk_scsi_ioctl_init(void)
- {
- 	blk_set_cmd_filter_defaults(&blk_default_cmd_filter);
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index df46a36c9467..5110cd6d0d16 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -1430,9 +1430,18 @@ static inline int sb_issue_zeroout(struct super_block *sb, sector_t block,
- 				    gfp_mask, 0);
- }
- 
-+/*
-+ * Command filter functions
-+ */
- extern int blk_verify_command(struct request_queue *q, unsigned char *cmd,
- 			      fmode_t mode);
- 
-+#ifdef CONFIG_BLK_DEV_SG_FILTER_SYSFS
-+ssize_t blk_filter_show(struct request_queue *q, char *page, int rw);
-+ssize_t blk_filter_store(struct request_queue *q,
-+			 const char *page, size_t count, int rw);
-+#endif /* CONFIG_BLK_DEV_SG_FILTER_SYSFS */
-+
- enum blk_default_limits {
- 	BLK_MAX_SEGMENTS	= 128,
- 	BLK_SAFE_MAX_SECTORS	= 255,
--- 
-1.8.3.1
+The difference is that with the reservation over time they can be
+promoted, with MADV_NOHUGEPAGE they cannot become hugepages later, not
+even khugepaged will scan that vma anymore.
 
+The benefit of the reservation will showup in those regions that will
+not become hugepages, so if you can predict beforehand that those
+ranges don't benefit from THP, it's better if userland calls
+madvise(MADV_NOHUGEPAGE) on the range and then there's no need to undo
+the reservation later during memory pressure.
+
+The reservation and promotion is a bit like auto-detecting when
+MADV_NOHUGEPAGE should be set, so it boils down of how much of a
+corner case that is.
+
+I'm not so concerned about the RAM wasted because I don't think it's
+very significant, after all the application can just do a smaller
+malloc if it wants to reduce memory usage.
+
+A massive amount of huge RAM waste is fairly rare and to the extreme
+it could still be wasted even with 4k if the app uses only 1 bit from
+every 4k page it allocates with malloc.
+
+I'm more concerned about cases where THP is wasting CPU: like in redis
+that is hurted by the 2M COWs. redis will map all pages and they will
+be all promoted to THP also with the reservation logic applied, but
+when the parent writes to the memory (after fork) it must trigger 4k
+cows (not 2M cows) and in turn split the THP before the COW, or it
+won't work as fast as with THP disabled. In addition we should try to
+reuse the same IPI for the transhuge pmd split to cover the COW too.
+
+If we add the reservation and that work makes zero difference for the
+redis corner case, and redis must still use MADV_NOHUGEPAGE, it's not
+great in my view. It looks like we're trying to optimize issues that
+are less critical.
+
+The redis+THP case should be possible to optimize later with uffd WP
+model (once completed, Peter Xu is working on it), and uffd WP will
+also remove fork() and it'll convert it to a clone(). The granularity
+of the fault is decided by the userland that way so when uffd
+wrprotects a 4k fragment of a THP, the THP will be split during the
+uffd mprotect ioctl.
+
+> > Now about the implementation: the whole point of the reservation
+> > complexity is to skip the khugepaged copy, so it can collapse in
+> > place. Is skipping the copy worth it? Isn't the big cost the IPI
+> > anyway to avoid leaving two simultaneous TLB mappings of different
+> > granularity?
+> > 
+> 
+> Not necessarily. With THP anon in the simple case, it might be just a
+> single thread and kcompact so that's one IPI (kcompactd flushes local and
+> one IPI to the CPU the thread was running on assuming it's not migrating
+> excessively). It would scale up with the number of threads but I suspect
+> the main cost is the actual copying, page table manipulation and the
+> locking required.
+
+Agreed, the IPI wouldn't be a concern for a single threaded app. I was
+looking more at the worst case scenario. For a single threaded app the
+locking should not be too bad either.
+
+> As an aside, a universal benefit would be looking at reducing the time
+> to allocate the necessary huge page as we know that can be excessive. It
+> would be ortogonal to this series.
+
+With what I suggested the allocation would happen as usual in
+khugepaged at slow peace, without holding locks. So I don't see
+obvious disadvantages in terms of THP allocation latency.
+
+> Could you and Kirill outline what sort of workloads you would consider
+> acceptable for evaluating this series? One would assume it covers at
+> least the following, potentially with a number of workloads.
+
+I would prefer to add intelligence to detect when COWs after fork
+should be done at 2m or 4k granularity (in the latter case by
+splitting the pmd before the actual COW while leaving the transhuge
+pmd intact in the other mm), because that would save CPU (and it'd
+automatically optimize redis). The snapshot process especially would
+run faster as it will read with THP performance.
+
+I'm more worried to ensure THP doesn't cause more CPU usage like it
+happens to the above case in COWs, than to just try to save RAM when
+the virtual ranges are only partially utilized by the app.
+
+> 1. Evaluate the collapse and copying costs (probing the entire time
+>    spent in collapse_huge_page might do it)
+> 2. Evaluate mmap_sem hold time during hugepage collapse
+> 3. Estimate excessive RAM use due to unnecessary THP usage
+> 4. Estimate the slowdown due to delayed THP usage 
+> 
+> 1 and 2 would indicate how much time is lost due to not using
+> reservations. That potentially goes in the direction of simply making
+> this faster -- fragmentation reduction (posted but unreviewed), faster
+> compaction searches, better page isolation during compaction to
+> avoid free pages being reused before an order-9 is free.
+> 
+> 3 should be straight-forward but 4 would be the hardest to evaluate
+> because it would have to be determimed if 4 is offset by improvements to
+> 1-3. If 1-3 is improved enough, it might remove the motivation for the
+> series entirely.
+> 
+> In other words, if we agree on a workload in advance, it might bring
+> this the right direction and not accidentally throw Anthony down a hole
+> working on a series that never gets ack'd.
+> 
+> I'm not necessarily the best person to answer because my natural inclination
+> after the fragmentation series would be to keep using thpfiosacle
+> (from the fragmentation avoidance series) and work on improving the THP
+> allocation success rates and reduce latencies. I've tunnel vision on that
+> for the moment.
+
+Deciding the workloads is a good question indeed, but I would also be
+curious to how many of those pages would not end up to be promoted
+with this logic.
+
+What's the number of pte_none that you require in each pmd to avoid
+promotion? If it's just 1 then apps will run slower, if there's
+partial utilization THP already helps. I've an hard time to think at
+an ideal ratio, this is why max_ptes_none is 511 after all.
+
+Can we start by counting the total number of pte_none() in all pmds
+that can fit a THP according to vma->vm_start/end? The pagetable
+dumper in debugfs may already provide the info we need by scanning all
+mm and by printing the number of "none" pte that would generate
+"wasted" memory (and marginally wasted CPU during copy/clear).
+
+Then you can exactly tell how many pmds won't be promoted to transhuge
+pmds with the patch applied in the real life workloads, even before
+running any benchmark. It'd be good to be sure we're talking about a
+significant number in real life workloads or there's not much to
+optimize to begin with.
+
+If the amount of RAM saved is significant in real life workloads and
+in turn there's a chance of having a worthwhile tradeoff from the
+reservation logic, then we can do the benchmarks because the behavior
+will be different for the page fault, and it'll end up running slower
+with the reservation logic.
+
+Thanks,
+Andrea
