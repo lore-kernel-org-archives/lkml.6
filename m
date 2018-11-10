@@ -2,117 +2,291 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07445C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 07:02:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AFADC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 07:11:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2E4020815
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 07:02:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2E4020815
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 3A3FD20840
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 07:11:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A3FD20840
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728909AbeKJQqq (ORCPT
+        id S1728914AbeKJQzu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 11:46:46 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34136 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728644AbeKJQqq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 11:46:46 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 54139AF67;
-        Sat, 10 Nov 2018 07:02:47 +0000 (UTC)
-Subject: Re: PLEASE REVERT URGENTLY: Re: [PATCH v5 2/3] x86/boot: add acpi
- rsdp address to setup_header
-To:     "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, x86@kernel.org,
-        linux-doc@vger.kernel.org
-Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, corbet@lwn.net,
-        boris.ostrovsky@oracle.com
-References: <20181010061456.22238-1-jgross@suse.com>
- <20181010061456.22238-3-jgross@suse.com>
- <f7c78ee7-b548-7f04-24da-7321b6c64c97@zytor.com>
- <bd2d17cd-072c-cad6-94ad-52373700a1c9@suse.com>
- <2934552c-d150-0afb-6fa9-9398cb94d86a@zytor.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <5a2f5cb8-7332-f490-eabf-cfcbdcd1abc4@suse.com>
-Date:   Sat, 10 Nov 2018 08:02:45 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <2934552c-d150-0afb-6fa9-9398cb94d86a@zytor.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Sat, 10 Nov 2018 11:55:50 -0500
+Received: from mga09.intel.com ([134.134.136.24]:1585 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728644AbeKJQzt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 11:55:49 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Nov 2018 23:11:47 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,486,1534834800"; 
+   d="scan'208";a="272915222"
+Received: from allen-box.sh.intel.com ([10.239.161.122])
+  by orsmga005.jf.intel.com with ESMTP; 09 Nov 2018 23:11:45 -0800
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+To:     Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>
+Cc:     ashok.raj@intel.com, Christoph Hellwig <hch@infradead.org>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Sohil Mehta <sohil.mehta@intel.com>
+Subject: [PATCH 1/1] iommu/vtd: Cleanup dma_remapping.h header
+Date:   Sat, 10 Nov 2018 15:08:44 +0800
+Message-Id: <20181110070844.28353-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/11/2018 07:32, H. Peter Anvin wrote:
->>
->> Unfortunately there are many major distros shipping boot loaders which
->> write crap data past the end of setup_header.
->>
-> 
-> Yes. We know that and it is resolved by:
-> 
-> a) the length field in setup_header;
-> b) the "sentinel" field which catches legacy non-compliant bootloaders.
+Commit e61d98d8dad00 ("x64, x2apic/intr-remap: Intel vt-d, IOMMU
+code reorganization") moved dma_remapping.h from drivers/pci/ to
+current place. It is entirely VT-d specific, but uses a generic
+name. This merges dma_remapping.h with include/linux/intel-iommu.h
+and removes dma_remapping.h as the result.
 
-Doesn't help for boot loaders reading struct setup_header from the
-kernel image and then writing e.g. 512 bytes back to the setup_header
-location. The sentinel is cleared and the length field just isn't
-taken into account. And this is what happened.
+Cc: Ashok Raj <ashok.raj@intel.com>
+Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Cc: Sohil Mehta <sohil.mehta@intel.com>
+Suggested-by: Christoph Hellwig <hch@infradead.org>
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+---
+ arch/x86/kernel/tboot.c                    |  2 +-
+ drivers/gpu/drm/i915/i915_gem_execbuffer.c |  2 +-
+ drivers/gpu/drm/i915/intel_display.c       |  2 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_drv.c        |  2 +-
+ drivers/misc/mic/scif/scif_rma.c           |  2 +-
+ drivers/misc/mic/scif/scif_rma.h           |  2 +-
+ include/linux/dma_remapping.h              | 58 ----------------------
+ include/linux/intel-iommu.h                | 49 +++++++++++++++++-
+ 8 files changed, 53 insertions(+), 66 deletions(-)
+ delete mode 100644 include/linux/dma_remapping.h
 
-> 
->>>
->>> This field thus belongs in struct boot_params, not struct setup_header.
->>
->> Okay, I can change that. Hoping that all boot loaders really write
->> zeroes to that field in case they don't know it.
->>
-> 
-> This is what we added the sentinel field for: bootloaders which don't zero
-> unknown fields (read: Grub) will trigger the sentinel, and we wipe most of
-> this structure.
+diff --git a/arch/x86/kernel/tboot.c b/arch/x86/kernel/tboot.c
+index a2486f444073..6e5ef8fb8a02 100644
+--- a/arch/x86/kernel/tboot.c
++++ b/arch/x86/kernel/tboot.c
+@@ -19,7 +19,7 @@
+  *
+  */
+ 
+-#include <linux/dma_remapping.h>
++#include <linux/intel-iommu.h>
+ #include <linux/init_task.h>
+ #include <linux/spinlock.h>
+ #include <linux/export.h>
+diff --git a/drivers/gpu/drm/i915/i915_gem_execbuffer.c b/drivers/gpu/drm/i915/i915_gem_execbuffer.c
+index 09187286d346..d8ccc77fdbaf 100644
+--- a/drivers/gpu/drm/i915/i915_gem_execbuffer.c
++++ b/drivers/gpu/drm/i915/i915_gem_execbuffer.c
+@@ -26,7 +26,7 @@
+  *
+  */
+ 
+-#include <linux/dma_remapping.h>
++#include <linux/intel-iommu.h>
+ #include <linux/reservation.h>
+ #include <linux/sync_file.h>
+ #include <linux/uaccess.h>
+diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
+index 9741cc419e1b..45334a84fab1 100644
+--- a/drivers/gpu/drm/i915/intel_display.c
++++ b/drivers/gpu/drm/i915/intel_display.c
+@@ -47,7 +47,7 @@
+ #include <drm/drm_plane_helper.h>
+ #include <drm/drm_rect.h>
+ #include <drm/drm_atomic_uapi.h>
+-#include <linux/dma_remapping.h>
++#include <linux/intel-iommu.h>
+ #include <linux/reservation.h>
+ 
+ /* Primary plane formats for gen <= 3 */
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
+index 61a84b958d67..c3e80a3b09fc 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
+@@ -34,7 +34,7 @@
+ #include <drm/ttm/ttm_placement.h>
+ #include <drm/ttm/ttm_bo_driver.h>
+ #include <drm/ttm/ttm_module.h>
+-#include <linux/dma_remapping.h>
++#include <linux/intel-iommu.h>
+ 
+ #define VMWGFX_DRIVER_DESC "Linux drm driver for VMware graphics devices"
+ #define VMWGFX_CHIP_SVGAII 0
+diff --git a/drivers/misc/mic/scif/scif_rma.c b/drivers/misc/mic/scif/scif_rma.c
+index c824329f7012..b441f6b0c743 100644
+--- a/drivers/misc/mic/scif/scif_rma.c
++++ b/drivers/misc/mic/scif/scif_rma.c
+@@ -15,7 +15,7 @@
+  * Intel SCIF driver.
+  *
+  */
+-#include <linux/dma_remapping.h>
++#include <linux/intel-iommu.h>
+ #include <linux/pagemap.h>
+ #include <linux/sched/mm.h>
+ #include <linux/sched/signal.h>
+diff --git a/drivers/misc/mic/scif/scif_rma.h b/drivers/misc/mic/scif/scif_rma.h
+index fa6722279196..d90a06d4e93b 100644
+--- a/drivers/misc/mic/scif/scif_rma.h
++++ b/drivers/misc/mic/scif/scif_rma.h
+@@ -53,7 +53,7 @@
+ #ifndef SCIF_RMA_H
+ #define SCIF_RMA_H
+ 
+-#include <linux/dma_remapping.h>
++#include <linux/intel-iommu.h>
+ #include <linux/mmu_notifier.h>
+ 
+ #include "../bus/scif_bus.h"
+diff --git a/include/linux/dma_remapping.h b/include/linux/dma_remapping.h
+deleted file mode 100644
+index 21b3e7d33d68..000000000000
+--- a/include/linux/dma_remapping.h
++++ /dev/null
+@@ -1,58 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-#ifndef _DMA_REMAPPING_H
+-#define _DMA_REMAPPING_H
+-
+-/*
+- * VT-d hardware uses 4KiB page size regardless of host page size.
+- */
+-#define VTD_PAGE_SHIFT		(12)
+-#define VTD_PAGE_SIZE		(1UL << VTD_PAGE_SHIFT)
+-#define VTD_PAGE_MASK		(((u64)-1) << VTD_PAGE_SHIFT)
+-#define VTD_PAGE_ALIGN(addr)	(((addr) + VTD_PAGE_SIZE - 1) & VTD_PAGE_MASK)
+-
+-#define VTD_STRIDE_SHIFT        (9)
+-#define VTD_STRIDE_MASK         (((u64)-1) << VTD_STRIDE_SHIFT)
+-
+-#define DMA_PTE_READ (1)
+-#define DMA_PTE_WRITE (2)
+-#define DMA_PTE_LARGE_PAGE (1 << 7)
+-#define DMA_PTE_SNP (1 << 11)
+-
+-#define CONTEXT_TT_MULTI_LEVEL	0
+-#define CONTEXT_TT_DEV_IOTLB	1
+-#define CONTEXT_TT_PASS_THROUGH 2
+-/* Extended context entry types */
+-#define CONTEXT_TT_PT_PASID	4
+-#define CONTEXT_TT_PT_PASID_DEV_IOTLB 5
+-#define CONTEXT_TT_MASK (7ULL << 2)
+-
+-#define CONTEXT_DINVE		(1ULL << 8)
+-#define CONTEXT_PRS		(1ULL << 9)
+-#define CONTEXT_PASIDE		(1ULL << 11)
+-
+-struct intel_iommu;
+-struct dmar_domain;
+-struct root_entry;
+-
+-
+-#ifdef CONFIG_INTEL_IOMMU
+-extern int iommu_calculate_agaw(struct intel_iommu *iommu);
+-extern int iommu_calculate_max_sagaw(struct intel_iommu *iommu);
+-extern int dmar_disabled;
+-extern int intel_iommu_enabled;
+-extern int intel_iommu_tboot_noforce;
+-#else
+-static inline int iommu_calculate_agaw(struct intel_iommu *iommu)
+-{
+-	return 0;
+-}
+-static inline int iommu_calculate_max_sagaw(struct intel_iommu *iommu)
+-{
+-	return 0;
+-}
+-#define dmar_disabled	(1)
+-#define intel_iommu_enabled (0)
+-#endif
+-
+-
+-#endif
+diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
+index b0ae25837361..a58bc05d6798 100644
+--- a/include/linux/intel-iommu.h
++++ b/include/linux/intel-iommu.h
+@@ -26,7 +26,6 @@
+ #include <linux/iova.h>
+ #include <linux/io.h>
+ #include <linux/idr.h>
+-#include <linux/dma_remapping.h>
+ #include <linux/mmu_notifier.h>
+ #include <linux/list.h>
+ #include <linux/iommu.h>
+@@ -37,9 +36,36 @@
+ #include <asm/iommu.h>
+ 
+ /*
+- * Intel IOMMU register specification per version 1.0 public spec.
++ * VT-d hardware uses 4KiB page size regardless of host page size.
+  */
++#define VTD_PAGE_SHIFT		(12)
++#define VTD_PAGE_SIZE		(1UL << VTD_PAGE_SHIFT)
++#define VTD_PAGE_MASK		(((u64)-1) << VTD_PAGE_SHIFT)
++#define VTD_PAGE_ALIGN(addr)	(((addr) + VTD_PAGE_SIZE - 1) & VTD_PAGE_MASK)
++
++#define VTD_STRIDE_SHIFT        (9)
++#define VTD_STRIDE_MASK         (((u64)-1) << VTD_STRIDE_SHIFT)
++
++#define DMA_PTE_READ (1)
++#define DMA_PTE_WRITE (2)
++#define DMA_PTE_LARGE_PAGE (1 << 7)
++#define DMA_PTE_SNP (1 << 11)
++
++#define CONTEXT_TT_MULTI_LEVEL	0
++#define CONTEXT_TT_DEV_IOTLB	1
++#define CONTEXT_TT_PASS_THROUGH 2
++/* Extended context entry types */
++#define CONTEXT_TT_PT_PASID	4
++#define CONTEXT_TT_PT_PASID_DEV_IOTLB 5
++#define CONTEXT_TT_MASK (7ULL << 2)
++
++#define CONTEXT_DINVE		(1ULL << 8)
++#define CONTEXT_PRS		(1ULL << 9)
++#define CONTEXT_PASIDE		(1ULL << 11)
+ 
++/*
++ * Intel IOMMU register specification per version 1.0 public spec.
++ */
+ #define	DMAR_VER_REG	0x0	/* Arch version supported by this IOMMU */
+ #define	DMAR_CAP_REG	0x8	/* Hardware supported capabilities */
+ #define	DMAR_ECAP_REG	0x10	/* Extended capabilities supported */
+@@ -632,4 +658,23 @@ bool context_present(struct context_entry *context);
+ struct context_entry *iommu_context_addr(struct intel_iommu *iommu, u8 bus,
+ 					 u8 devfn, int alloc);
+ 
++#ifdef CONFIG_INTEL_IOMMU
++extern int iommu_calculate_agaw(struct intel_iommu *iommu);
++extern int iommu_calculate_max_sagaw(struct intel_iommu *iommu);
++extern int dmar_disabled;
++extern int intel_iommu_enabled;
++extern int intel_iommu_tboot_noforce;
++#else
++static inline int iommu_calculate_agaw(struct intel_iommu *iommu)
++{
++	return 0;
++}
++static inline int iommu_calculate_max_sagaw(struct intel_iommu *iommu)
++{
++	return 0;
++}
++#define dmar_disabled	(1)
++#define intel_iommu_enabled (0)
++#endif
++
+ #endif
+-- 
+2.17.1
 
-Unfortunately the sentinel seems to be cleared by said broken grub.
-
-
-Juergen
