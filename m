@@ -2,96 +2,97 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51911C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 16:59:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CEDBC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 17:03:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1328D20858
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 16:59:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1328D20858
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E1B2920892
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 17:03:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1B2920892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726644AbeKKCpV (ORCPT
+        id S1726590AbeKKCtU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 21:45:21 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44350 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726337AbeKKCpV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 21:45:21 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 95F3480D;
-        Sat, 10 Nov 2018 08:59:40 -0800 (PST)
-Received: from mbp (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 61F913F718;
-        Sat, 10 Nov 2018 08:59:40 -0800 (PST)
-Received: from cmarinas by mbp with local (Exim 4.89)
-        (envelope-from <catalin.marinas@arm.com>)
-        id 1gLWbi-00012c-Hc; Sat, 10 Nov 2018 16:59:38 +0000
-Date:   Sat, 10 Nov 2018 16:59:38 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Qian Cai <cai@gmx.us>
-Cc:     open list <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
-Subject: Re: kmemleak: Early log buffer exceeded (525980) during boot
-Message-ID: <20181110165938.lbt6dfamk2ljafcv@localhost>
-References: <1541712198.12945.12.camel@gmx.us>
- <D7C9EA14-C812-406F-9570-CFF36F4C3983@gmx.us>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D7C9EA14-C812-406F-9570-CFF36F4C3983@gmx.us>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Sat, 10 Nov 2018 21:49:20 -0500
+Received: from mout.kundenserver.de ([217.72.192.75]:55659 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726323AbeKKCtU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 21:49:20 -0500
+Received: from localhost.localdomain ([37.4.249.153]) by
+ mrelayeu.kundenserver.de (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis)
+ id 1MI5cP-1gFFFd0XB9-00FG90; Sat, 10 Nov 2018 18:02:50 +0100
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+To:     Eric Anholt <eric@anholt.net>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc:     linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Florian Kauer <florian.kauer@koalo.de>
+Subject: [PATCH 17/17] ASoc: bcm2835-i2s: Switch to SPDX identifier
+Date:   Sat, 10 Nov 2018 18:02:31 +0100
+Message-Id: <1541869351-8499-1-git-send-email-stefan.wahren@i2se.com>
+X-Mailer: git-send-email 2.7.4
+X-Provags-ID: V03:K1:xUHMgHoftkOpoPm7jwWzl5DQ2y5R5OQiSzxSWhtPprRL9CjeCpy
+ KqpwtATiejoTey6Y2GHAwPDar8Jr0UxYooKriam/PPcaW8qrIN42ceJGymOsOccqCHmD/yg
+ 6slKRsYASum7ArstQGao+WYd4gYmlRsKt+PL57RFcaXyZhA4SgnMLiV/0Losr17O1Jx7p48
+ 2Tkcpn3pP7kycHr7oPvnA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:ejy9c5cntHc=:tqNw/knjssWzje51M1PUgA
+ V7sVMbi2On4fbnWhaNA4576faGEXX2d78JUElj8AMSy0f5K+x1K/6pGA19lP90pD4Zrvu4RGJ
+ a+UdgEibF95WX9U2jh5IvUGWdtIcAilQCBcBz7QSQikBWkpVz/JMC9wXumNWtCcSkgNuRMlTh
+ zbPT0zajIh/8nCgFpEMj1eJpdVvq67aO7Nepi2zy1/kvvVTls3xOgbPCRKm1xL42Dzk1H0Xsy
+ RyiogHWmm3I9jr3zD4xStiQCcJWyWq9/CjZCMv5AS5OVfDkIoNzC6cJz/4RpUHp5FwbPYjbxy
+ 2QEzwTEe9vTQFMaCyKPfJHf3ZzRQbiuSzVlQ/rttOE89ZWW9EJEkvOVAzuohHaU9HiFTnOKyc
+ GE5OmEXG2mnBKuIjNlhSxS+/oXBiIuuHaBE/EHm/IdIgQ/apqUK7j3osJ+oLNZd7I7gLLpKYJ
+ +gbLRJz36yDLXT6IuJERdMSIyJIUtWCLUusOWP0ddmBePRWxaiFwwamrJR7K6KZkkAZY0G+Q6
+ 79p1zJhFP3QthKxkjgm752r4h7enBDZ30p1ziZvS5JkcIGPty7M1q5467ub9+UzWmvVf+LPSG
+ +awyZ6hCL131GHSrz3LLmn5IiT/9rG5+DY/AmtjY2fBcMqfc5N+lhP6uyVYbUcjc/VZMRF1oN
+ rucjxH3HpIszxP61TLRWDATlH7nO/vK7j6Q6XOQhs6YpGAaOl1SoORjna/CWtwiRo9coSoAIO
+ 9nvPso4PnRif4p5Q1TDtncm00GKpM2cJYZRv/6Cx0AuKtuotC5HNMg7RQkJMIwRth292C2u4E
+ Wt4sJ4gjI0TViCFmBaXiRTgHzzHeA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 10, 2018 at 10:08:10AM -0500, Qian Cai wrote:
-> On Nov 8, 2018, at 4:23 PM, Qian Cai <cai@gmx.us> wrote:
-> > The maximum value for DEBUG_KMEMLEAK_EARLY_LOG_SIZE is only 40000, so it
-> > disables kmemleak every time on this aarch64 server running the latest mainline
-> > (b00d209).
-> > 
-> > # echo scan > /sys/kernel/debug/kmemleak 
-> > -bash: echo: write error: Device or resource busy
-> > 
-> > Any idea on how to enable kmemleak there?
-> 
-> I have managed to hard-code DEBUG_KMEMLEAK_EARLY_LOG_SIZE to 600000,
+Adopt the SPDX license identifier headers to ease license compliance
+management.
 
-That's quite a high number, I wouldn't have thought it is needed.
-Basically the early log buffer is only used until the slub allocator
-gets initialised and kmemleak_init() is called from start_kernel(). I
-don't know what allocates that much memory so early.
+Cc: Florian Kauer <florian.kauer@koalo.de>
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+---
+ sound/soc/bcm/bcm2835-i2s.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
-What else is in your .config?
-
-> diff --git a/mm/kmemleak.c b/mm/kmemleak.c
-> index 877de4fa0720..c10119102c10 100644
-> --- a/mm/kmemleak.c
-> +++ b/mm/kmemleak.c
-> @@ -280,7 +280,7 @@ struct early_log {
->  
->  /* early logging buffer and current position */
->  static struct early_log
-> -       early_log[CONFIG_DEBUG_KMEMLEAK_EARLY_LOG_SIZE] __initdata;
-> +       early_log[600000] __initdata;
-
-You don't need to patch the kernel, the config variable is there to be
-changed.
-
-> Even though kmemleak is enabled, there are continuous soft-lockups and eventually
-> a kernel panic. Is it normal that kmemleak not going to work with large systems (this
-> aarch64 server has 64-CPU and 100G memory)?
-
-I only tried 4.20-rc1 with 64 CPUs in a guest under KVM and with only
-16GB of RAM (I can try on a ThunderX2 host in about 10 days as I'm away
-next week at Linux Plumbers). But it works fine for me, no soft lockups.
-Maybe something different in your .config or something else goes
-completely wrong (e.g. memory corruption) and kmemleak trips over it.
-
+diff --git a/sound/soc/bcm/bcm2835-i2s.c b/sound/soc/bcm/bcm2835-i2s.c
+index d5f73a8..0e4a0e9 100644
+--- a/sound/soc/bcm/bcm2835-i2s.c
++++ b/sound/soc/bcm/bcm2835-i2s.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * ALSA SoC I2S Audio Layer for Broadcom BCM2835 SoC
+  *
+@@ -20,15 +21,6 @@
+  *	Freescale SSI ALSA SoC Digital Audio Interface (DAI) driver
+  *	Author: Timur Tabi <timur@freescale.com>
+  *	Copyright 2007-2010 Freescale Semiconductor, Inc.
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License
+- * version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful, but
+- * WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+- * General Public License for more details.
+  */
+ 
+ #include <linux/bitops.h>
 -- 
-Catalin
+2.7.4
+
