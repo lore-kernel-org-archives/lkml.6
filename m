@@ -2,68 +2,94 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43FFCC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:44:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 470DCC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:45:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E815F20858
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:44:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E68D020858
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:45:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q0Rlwj28"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E815F20858
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZX020Zn0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E68D020858
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726914AbeKKEaI (ORCPT
+        id S1727277AbeKKEbU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 23:30:08 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:46115 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726323AbeKKEaH (ORCPT
+        Sat, 10 Nov 2018 23:31:20 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:35644 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727110AbeKKEbT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 23:30:07 -0500
-Received: by mail-qk1-f193.google.com with SMTP id q1so7230701qkf.13
-        for <linux-kernel@vger.kernel.org>; Sat, 10 Nov 2018 10:44:10 -0800 (PST)
+        Sat, 10 Nov 2018 23:31:19 -0500
+Received: by mail-ua1-f68.google.com with SMTP id d8so1769726ual.2
+        for <linux-kernel@vger.kernel.org>; Sat, 10 Nov 2018 10:45:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc
-         :content-transfer-encoding;
-        bh=6aaLuXeskcKUGwJpUCQdS6L58xxl9JJsyro7nWkWVpQ=;
-        b=Q0Rlwj28BWvsLIpVDLqBaTd3wWZun1jX+4WQssWK1LZIMkBytarDLXygfF9z3KXeCa
-         Mgi0vTw/lDcJUC2kdyY5P3IiWHZoAZAVEXLGixlgkz6dnEE5PCbwsrW2mql1+Tfg/Rfy
-         dPorTLQ3Cb5mNIjNZaXsToGDtv5lWCXrSfQj0rL4NkSIPsjyTAF+SGfCCWn53i6fBtkw
-         hzfITjlY+zcFSN75ejdzpUT4ZxJpA+HYgTyJFsTQZlpmnj2Vj6TIyupB42RiRe5xRFd1
-         H8Bty5cJbhXDPQhXjyj4ox4h6zQ6LTOPih1udAfE/1RuPlbK/vJkKGEy07S7aGf4xVeP
-         SCWQ==
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=8AMLtmmurCtRfJVdyZgA2kK00jaD0RApM2FvUpjayjg=;
+        b=ZX020Zn0rGW7bEwBPLkENmG2C45zBBZX19p5G+JHxFBjP3eUNpghpl76MhYEjLdSvZ
+         SvCEtM1yOvkThmHBtewMvEpwcubO8qNpEPP442PxSIhlzk46OmUPEAYgdZXSXbwPddcQ
+         pOljUksJIxbTzE+gV5NgH43vdDwylG9Fz7guKPnyx9FTiJaAs4wO7fPIclOMlRpdJMc8
+         NWIWbBHfASOQ77xEpUwMfEBR/1twh3kRjBUdxO2ecfnX2LoB8pYLavtXKT9BoKWxhLRg
+         fv/6qztMStIpjKxtbmt52X059hO/Y2IyiVD/XX6VekxHTHIFJeLpbgDH2XLUTyU0oUNX
+         PuIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
-         :content-transfer-encoding;
-        bh=6aaLuXeskcKUGwJpUCQdS6L58xxl9JJsyro7nWkWVpQ=;
-        b=ILEKwxA7XKcD7R32mltVCPjkS4UIFtD7q1omCInQIWxFVLxPkn57P/VW5X4evy82oC
-         kjV7AyyLsKKCZL+1AljoTZdMZ/fvXGfjFHCjn0FflmmJPVQ4V2pKg/QOHF9AwgRprY4V
-         S2lO1eQX9DYm8Bmz+FxvUP5vJzzJOf300bqPVS78IcyjkFheThije+fTFcok9vtqHMJV
-         H3BRy+Lze61XvEKpNuAC7kog7M6stbFlLpORGV7Wdg/UEj/hgnBBpMHj/89/BhLl93PQ
-         VGdNE72DyNQ1euQZ/n3/J45SR0i2Tdfj1h4QvsU+S9Ws8Gu9nug37Ot06xveq6BBuPL/
-         5GfQ==
-X-Gm-Message-State: AGRZ1gJ0O/gKr7BF+ErHIzoGIiw1OaXEysUDY85kmi2r4RqOag4rvShW
-        NIuEhQ8qhYgeidN9Hb4ZO6KlJYxlZ9zt5l2H1SeH0yZG
-X-Google-Smtp-Source: AJdET5fFdL18MGkgHhvBIn7OS/qm2WGXt/YhGyTkUD/9d/ZFgUAwzVVkKpemQdrQIPMcu2pGtyEIZrFdmZ+Idf3wuSw=
-X-Received: by 2002:ac8:51d4:: with SMTP id d20mr13374765qtn.365.1541875449556;
- Sat, 10 Nov 2018 10:44:09 -0800 (PST)
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=8AMLtmmurCtRfJVdyZgA2kK00jaD0RApM2FvUpjayjg=;
+        b=PU/tZLOCZP95FcM1borqoW4bjCYeKfOC4RfvcylPF5HiDGQl5PiCT6J9SaXH1gzSID
+         t5oklMmxOfiIlpfqAZ53g2pY/M6P8dMk+mpK7bNhmCllZtgXEwFM1aRitGX1fq17mvXb
+         whCy1CdiPspRka8vGXyvvCrWutgs2SDj1Q04q+m+7t3VY7n5PWByeqN5xK8kItRa0viA
+         Vn+zABvADvgpoo7DP/ppVD8wwE38CRsZLUO/vskJeFjR5f/bjzlvDX0Pqqqaym8B0rOk
+         JiK6jwHzRgRs+jVAhLTr26YusrXhjXRXUsukFnN9a3Bf6G0E1XawtoTnPpfOmo0cOEO+
+         rUKg==
+X-Gm-Message-State: AGRZ1gIf4gYtdv/x7ZK14+HIDEI01BYzjevJ/jtSU/WDlvY4qSFUJzE0
+        HS6Vr799NtW9Uz4IWvMev+hfRJvxdA2xXzsld5ktEQ==
+X-Google-Smtp-Source: AJdET5eO4tXb6GLsmvt1mMKh8qWHpfQl5PK+Vd+WP9U3tJh/WU1xAy0FFH5Hc2/wz/qznKF6EGq4F8VQChTvPJBZDoI=
+X-Received: by 2002:ab0:5648:: with SMTP id z8mr5851121uaa.126.1541875520806;
+ Sat, 10 Nov 2018 10:45:20 -0800 (PST)
 MIME-Version: 1.0
-From:   Dave Airlie <airlied@gmail.com>
-Date:   Sun, 11 Nov 2018 04:43:57 +1000
-Message-ID: <CAPM=9tzQBpaa7HcNvCHNxrPUDmF4o4orGy_kTJBA-8KBQO65Mw@mail.gmail.com>
-Subject: [git pull] drm fixes for 4.20-rc2
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
+Received: by 2002:a67:f48d:0:0:0:0:0 with HTTP; Sat, 10 Nov 2018 10:45:19
+ -0800 (PST)
+In-Reply-To: <20181110182405.GB242356@google.com>
+References: <20181108041537.39694-1-joel@joelfernandes.org>
+ <CAG48ez1h=v-JYnDw81HaYJzOfrNhwYksxmc2r=cJvdQVgYM+NA@mail.gmail.com>
+ <CAG48ez0kQ4d566bXTFOYANDgii-stL-Qj-oyaBzvfxdV=PU-7g@mail.gmail.com>
+ <20181110032005.GA22238@google.com> <69CE06CC-E47C-4992-848A-66EB23EE6C74@amacapital.net>
+ <20181110182405.GB242356@google.com>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Sat, 10 Nov 2018 10:45:19 -0800
+Message-ID: <CAKOZuesQXRtthJTEr86LByH3gPpAdT-PQM0d1jqr131=zZNRKw@mail.gmail.com>
+Subject: Re: [PATCH v3 resend 1/2] mm: Add an F_SEAL_FUTURE_WRITE seal to memfd
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Jann Horn <jannh@google.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        John Reck <jreck@google.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Todd Kjos <tkjos@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Bruce Fields <bfields@fieldses.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Khalid Aziz <khalid.aziz@oracle.com>, Lei.Yang@windriver.com,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>, marcandre.lureau@redhat.com,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        Hugh Dickins <hughd@google.com>,
+        Linux API <linux-api@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
@@ -71,188 +97,283 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Sat, Nov 10, 2018 at 10:24 AM, Joel Fernandes <joel@joelfernandes.org> w=
+rote:
+> Thanks Andy for your thoughts, my comments below:
+>
+> On Fri, Nov 09, 2018 at 10:05:14PM -0800, Andy Lutomirski wrote:
+>>
+>>
+>> > On Nov 9, 2018, at 7:20 PM, Joel Fernandes <joel@joelfernandes.org> wr=
+ote:
+>> >
+>> >> On Fri, Nov 09, 2018 at 10:19:03PM +0100, Jann Horn wrote:
+>> >>> On Fri, Nov 9, 2018 at 10:06 PM Jann Horn <jannh@google.com> wrote:
+>> >>> On Fri, Nov 9, 2018 at 9:46 PM Joel Fernandes (Google)
+>> >>> <joel@joelfernandes.org> wrote:
+>> >>>> Android uses ashmem for sharing memory regions. We are looking forw=
+ard
+>> >>>> to migrating all usecases of ashmem to memfd so that we can possibl=
+y
+>> >>>> remove the ashmem driver in the future from staging while also
+>> >>>> benefiting from using memfd and contributing to it. Note staging dr=
+ivers
+>> >>>> are also not ABI and generally can be removed at anytime.
+>> >>>>
+>> >>>> One of the main usecases Android has is the ability to create a reg=
+ion
+>> >>>> and mmap it as writeable, then add protection against making any
+>> >>>> "future" writes while keeping the existing already mmap'ed
+>> >>>> writeable-region active.  This allows us to implement a usecase whe=
+re
+>> >>>> receivers of the shared memory buffer can get a read-only view, whi=
+le
+>> >>>> the sender continues to write to the buffer.
+>> >>>> See CursorWindow documentation in Android for more details:
+>> >>>> https://developer.android.com/reference/android/database/CursorWind=
+ow
+>> >>>>
+>> >>>> This usecase cannot be implemented with the existing F_SEAL_WRITE s=
+eal.
+>> >>>> To support the usecase, this patch adds a new F_SEAL_FUTURE_WRITE s=
+eal
+>> >>>> which prevents any future mmap and write syscalls from succeeding w=
+hile
+>> >>>> keeping the existing mmap active.
+>> >>>
+>> >>> Please CC linux-api@ on patches like this. If you had done that, I
+>> >>> might have criticized your v1 patch instead of your v3 patch...
+>> >>>
+>> >>>> The following program shows the seal
+>> >>>> working in action:
+>> >>> [...]
+>> >>>> Cc: jreck@google.com
+>> >>>> Cc: john.stultz@linaro.org
+>> >>>> Cc: tkjos@google.com
+>> >>>> Cc: gregkh@linuxfoundation.org
+>> >>>> Cc: hch@infradead.org
+>> >>>> Reviewed-by: John Stultz <john.stultz@linaro.org>
+>> >>>> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+>> >>>> ---
+>> >>> [...]
+>> >>>> diff --git a/mm/memfd.c b/mm/memfd.c
+>> >>>> index 2bb5e257080e..5ba9804e9515 100644
+>> >>>> --- a/mm/memfd.c
+>> >>>> +++ b/mm/memfd.c
+>> >>> [...]
+>> >>>> @@ -219,6 +220,25 @@ static int memfd_add_seals(struct file *file, =
+unsigned int seals)
+>> >>>>                }
+>> >>>>        }
+>> >>>>
+>> >>>> +       if ((seals & F_SEAL_FUTURE_WRITE) &&
+>> >>>> +           !(*file_seals & F_SEAL_FUTURE_WRITE)) {
+>> >>>> +               /*
+>> >>>> +                * The FUTURE_WRITE seal also prevents growing and =
+shrinking
+>> >>>> +                * so we need them to be already set, or requested =
+now.
+>> >>>> +                */
+>> >>>> +               int test_seals =3D (seals | *file_seals) &
+>> >>>> +                                (F_SEAL_GROW | F_SEAL_SHRINK);
+>> >>>> +
+>> >>>> +               if (test_seals !=3D (F_SEAL_GROW | F_SEAL_SHRINK)) =
+{
+>> >>>> +                       error =3D -EINVAL;
+>> >>>> +                       goto unlock;
+>> >>>> +               }
+>> >>>> +
+>> >>>> +               spin_lock(&file->f_lock);
+>> >>>> +               file->f_mode &=3D ~(FMODE_WRITE | FMODE_PWRITE);
+>> >>>> +               spin_unlock(&file->f_lock);
+>> >>>> +       }
+>> >>>
+>> >>> So you're fiddling around with the file, but not the inode? How are
+>> >>> you preventing code like the following from re-opening the file as
+>> >>> writable?
+>> >>>
+>> >>> $ cat memfd.c
+>> >>> #define _GNU_SOURCE
+>> >>> #include <unistd.h>
+>> >>> #include <sys/syscall.h>
+>> >>> #include <printf.h>
+>> >>> #include <fcntl.h>
+>> >>> #include <err.h>
+>> >>> #include <stdio.h>
+>> >>>
+>> >>> int main(void) {
+>> >>>  int fd =3D syscall(__NR_memfd_create, "testfd", 0);
+>> >>>  if (fd =3D=3D -1) err(1, "memfd");
+>> >>>  char path[100];
+>> >>>  sprintf(path, "/proc/self/fd/%d", fd);
+>> >>>  int fd2 =3D open(path, O_RDWR);
+>> >>>  if (fd2 =3D=3D -1) err(1, "reopen");
+>> >>>  printf("reopen successful: %d\n", fd2);
+>> >>> }
+>> >>> $ gcc -o memfd memfd.c
+>> >>> $ ./memfd
+>> >>> reopen successful: 4
+>> >>> $
+>> >>>
+>> >>> That aside: I wonder whether a better API would be something that
+>> >>> allows you to create a new readonly file descriptor, instead of
+>> >>> fiddling with the writability of an existing fd.
+>> >>
+>> >> My favorite approach would be to forbid open() on memfds, hope that
+>> >> nobody notices the tiny API break, and then add an ioctl for "reopen
+>> >> this memfd with reduced permissions" - but that's just my personal
+>> >> opinion.
+>> >
+>> > I did something along these lines and it fixes the issue, but I forbid=
+ open
+>> > of memfd only when the F_SEAL_FUTURE_WRITE seal is in place. So then i=
+ts not
+>> > an ABI break because this is a brand new seal. That seems the least in=
+trusive
+>> > solution and it works. Do you mind testing it and I'll add your and Te=
+sted-by
+>> > to the new fix? The patch is based on top of this series.
+>> >
+>> > ---8<-----------
+>> > From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+>> > Subject: [PATCH] mm/memfd: Fix possible promotion to writeable of seal=
+ed memfd
+>> >
+>> > Jann Horn found that reopening an F_SEAL_FUTURE_WRITE sealed memfd
+>> > through /proc/self/fd/N symlink as writeable succeeds. The simplest fi=
+x
+>> > without causing ABI breakages and ugly VFS hacks is to simply deny all
+>> > opens on F_SEAL_FUTURE_WRITE sealed fds.
+>> >
+>> > Reported-by: Jann Horn <jannh@google.com>
+>> > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+>> > ---
+>> > mm/shmem.c | 18 ++++++++++++++++++
+>> > 1 file changed, 18 insertions(+)
+>> >
+>> > diff --git a/mm/shmem.c b/mm/shmem.c
+>> > index 446942677cd4..5b378c486b8f 100644
+>> > --- a/mm/shmem.c
+>> > +++ b/mm/shmem.c
+>> > @@ -3611,7 +3611,25 @@ static const struct address_space_operations sh=
+mem_aops =3D {
+>> >    .error_remove_page =3D generic_error_remove_page,
+>> > };
+>> >
+>> > +/* Could arrive here for memfds opened through /proc/ */
+>> > +int shmem_open(struct inode *inode, struct file *file)
+>> > +{
+>> > +    struct shmem_inode_info *info =3D SHMEM_I(inode);
+>> > +
+>> > +    /*
+>> > +     * memfds for which future writes have been prevented
+>> > +     * should not be reopened, say, through /proc/pid/fd/N
+>> > +     * symlinks otherwise it can cause a sealed memfd to be
+>> > +     * promoted to writable.
+>> > +     */
+>> > +    if (info->seals & F_SEAL_FUTURE_WRITE)
+>> > +        return -EACCES;
+>> > +
+>> > +    return 0;
+>> > +}
+>>
+>> The result of this series is very warty. We have a concept of seals, and=
+ they all work similarly, except the new future write seal. That one:
+>>
+>
+> I don't see it as warty, different seals will work differently. It works
+> quite well for our usecase, and since Linux is all about solving real
+> problems in the real work, it would be useful to have it.
+>
+>> - causes a probably-observable effect in the file mode in F_GETFL.
+>
+> Wouldn't that be the right thing to observe anyway?
+>
+>> - causes reopen to fail.
+>
+> So this concern isn't true anymore if we make reopen fail only for WRITE
+> opens as Daniel suggested. I will make this change so that the security f=
+ix
+> is a clean one.
+>
+>> - does *not* affect other struct files that may already exist on the sam=
+e inode.
+>
+> TBH if you really want to block all writes to the file, then you want
+> F_SEAL_WRITE, not this seal. The usecase we have is the fd is sent over I=
+PC
+> to another process and we want to prevent any new writes in the receiver
+> side. There is no way this other receiving process can have an existing f=
+d
+> unless it was already sent one without the seal applied.  The proposed se=
+al
+> could be renamed to F_SEAL_FD_WRITE if that is preferred.
+>
+>> - mysteriously malfunctions if you try to set it again on another struct
+>> file that already exists
+>>
+>
+> I didn't follow this, could you explain more?
+>
+>> - probably is insecure when used on hugetlbfs.
+>
+> The usecase is not expected to prevent all writes, indeed the usecase
+> requires existing mmaps to continue to be able to write into the memory m=
+ap.
+> So would you call that a security issue too? The use of the seal wants to
+> allow existing mmap regions to be continue to be written into (I mentione=
+d
+> more details in the cover letter).
+>
+>> I see two reasonable solutions:
+>>
+>> 1. Don=E2=80=99t fiddle with the struct file at all. Instead make the in=
+ode flag
+>> work by itself.
+>
+> Currently, the various VFS paths check only the struct file's f_mode to d=
+eny
+> writes of already opened files. This would mean more checking in all thos=
+e
+> paths (and modification of all those paths).
+>
+> Anyway going with that idea, we could
+> 1. call deny_write_access(file) from the memfd's seal path which decremen=
+ts
+> the inode::i_writecount.
+> 2. call get_write_access(inode) in the various VFS paths in addition to
+> checking for FMODE_*WRITE and deny the write (incase i_writecount is nega=
+tive)
+>
+> That will prevent both reopens, and writes from succeeding. However I wor=
+ry a
+> bit about 2 not being too familiar with VFS internals, about what the
+> consequences of doing that may be.
 
-Nothing too urgent in here, in case you want to leave until post
-holidays. I'm in Vancouver for the next week, but should get most
-stuff line up, though rc3 fixes might be late if I'm flying and
-sleeping.
+IMHO, modifying both the inode and the struct file separately is fine,
+since they mean different things. In regular filesystems, it's fine to
+have a read-write open file description for a file whose inode grants
+write permission to nobody. Speaking of which: is fchmod enough to
+prevent this attack?
 
-amdgpu has some display fixes, KFD ioctl fixes and a Vega20 bios
-interaction fix.
-sun4i has some NULL checks added
-i915 has a 32-bit system fix, LPE audio oops, and HDMI2.0 clock fixes.
-Exynos has a 3 regression fixes (one frame counter, fbdev missing,
-dsi->panel check)
-Etnaviv has a single fencing fix for GPU recovery.
+>> 2. Don=E2=80=99t call it a =E2=80=9Cseal=E2=80=9D.  Instead fix the /pro=
+c hole and add an API to
+>> drop write access on an existing struct file.
+>>
+>> I personally prefer #2.
+>
+> So I don't think proc has a hole looking at the code yesterday. As I was
+> saying in other thread, its just how symlinks work. If we were to apply t=
+his
+> API to files in general, and we had symlinks to files and we tried to reo=
+pen the
+> file, we would run into the same issue - that's why I believe it has noth=
+ing
+> to do with proc, and the fix has to be in the underlying inode being poin=
+ted
+> to. Does that make sense or did I miss something?
 
-Thanks,
-Dave.
-
-drm-fixes-2018-11-11:
-drm: i915, amdgpu, sun4i, exynos and etnaviv fixes
-The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a=
-:
-
-  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
-
-are available in the Git repository at:
-
-  git://anongit.freedesktop.org/drm/drm tags/drm-fixes-2018-11-11
-
-for you to fetch changes up to 73b6f96cbc0162787bcbdac5f538167084c8d605:
-
-  Merge branch 'drm-fixes-4.20' of
-git://people.freedesktop.org/~agd5f/linux into drm-fixes (2018-11-11
-04:23:02 +1000)
-
-----------------------------------------------------------------
-drm: i915, amdgpu, sun4i, exynos and etnaviv fixes
-
-----------------------------------------------------------------
-Alex Deucher (7):
-      Revert "drm/amd/display: set backlight level limit to 1"
-      drm/amdgpu/vega20: add CLK base offset
-      drm/amdgpu/display: check if fbc is available in
-set_static_screen_control (v2)
-      drm/amdgpu: add DC feature mask module parameter
-      drm/amdgpu/display/dc: add FBC to dc_config
-      drm/amdgpu/display/dm: handle FBC dc feature parameter
-      drm/amdgpu/display/dce11: only enable FBC when selected
-
-Andrzej Hajda (2):
-      drm/exynos/dsi: register connector if it is created after drm bind
-      drm/exynos/fbdev: do not skip fbdev init if there are no connectors
-
-Chris Wilson (3):
-      drm/i915: Mark up GTT sizes as u64
-      drm/i915: Compare user's 64b GTT offset even on 32b
-      drm/i915: Mark pin flags as u64
-
-Clint Taylor (1):
-      drm/i915/hdmi: Add HDMI 2.0 audio clock recovery N values
-
-Dan Carpenter (1):
-      drm/exynos: checking for NULL instead of IS_ERR()
-
-Dave Airlie (5):
-      Merge branch 'etnaviv/fixes' of
-https://git.pengutronix.de/git/lst/linux into drm-fixes
-      Merge tag 'exynos-drm-fixes-for-v4.20-rc2' of
-git://git.kernel.org/.../daeinki/drm-exynos into drm-fixes
-      Merge tag 'drm-intel-fixes-2018-11-08' of
-git://anongit.freedesktop.org/drm/drm-intel into drm-fixes
-      Merge tag 'drm-misc-fixes-2018-11-07' of
-git://anongit.freedesktop.org/drm/drm-misc into drm-fixes
-      Merge branch 'drm-fixes-4.20' of
-git://people.freedesktop.org/~agd5f/linux into drm-fixes
-
-Dhinakaran Pandiyan (1):
-      drm/i915: Fix VIDEO_DIP_CTL bit shifts
-
-Dmitry V. Levin (2):
-      uapi: fix linux/kfd_ioctl.h userspace compilation errors
-      uapi: fix more linux/kfd_ioctl.h userspace compilation errors
-
-Evan Quan (2):
-      drm/amd/powerplay: set a default fclk/gfxclk ratio
-      drm/amd/powerplay: always use fast UCLK switching when UCLK DPM enabl=
-ed
-
-Giulio Benetti (2):
-      drm/sun4i: tcon: fix check of tcon->panel null pointer
-      drm/sun4i: tcon: prevent tcon->panel dereference if NULL
-
-Hang Yuan (2):
-      drm/i915/gvt: invalidate old ggtt page when update ggtt entry
-      drm/i915/gvt: support inconsecutive partial gtt entry write
-
-Harry Wentland (1):
-      drm/amd/display: Stop leaking planes
-
-Inki Dae (1):
-      Revert "drm/exynos/decon5433: implement frame counter"
-
-Jerry (Fangzhi) Zuo (2):
-      drm/amd/display: Cleanup MST non-atomic code workaround
-      drm/amd/display: Drop reusing drm connector for MST
-
-Joonas Lahtinen (1):
-      Merge tag 'gvt-fixes-2018-11-07' of
-https://github.com/intel/gvt-linux into drm-intel-fixes
-
-Leo Li (1):
-      drm/amd: Update atom_smu_info_v3_3 structure
-
-Longhe Zheng (1):
-      drm/i915/gvt: Handle values of EDP_PSR_IMR and EDP_PSR_IIR
-
-Lucas Stach (1):
-      drm/etnaviv: fix bogus fence complete check in timeout handler
-
-Lyude Paul (1):
-      drm/amd/amdgpu/dm: Fix dm_dp_create_fake_mst_encoder()
-
-Manasi Navare (1):
-      drm/i915/icl: Fix the macros for DFLEXDPMLE register bits
-
-Rodrigo Vivi (1):
-      drm/i915/glk: Remove 99% limitation.
-
-Shaokun Zhang (1):
-      drm/amd/display: Fix misleading buffer information
-
-Ville Syrj=C3=A4l=C3=A4 (4):
-      drm/i915: Don't apply the 16Gb DIMM wm latency w/a to BXT/GLK
-      drm/i915: Fix error handling for the NV12 fb dimensions check
-      drm/i915: Don't oops during modeset shutdown after lpe audio deinit
-      drm/i915: Fix ilk+ watermarks when disabling pipes
-
-Xinyun Liu (1):
-      drm/i915/gvt: correct mask setting for CSFE_CHICKEN1
-
- drivers/gpu/drm/amd/amdgpu/amdgpu.h                |   1 +
- drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c            |  11 ++
- drivers/gpu/drm/amd/amdgpu/vega20_reg_init.c       |   1 +
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  |  27 ++---
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h  |   2 -
- .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.c    |  79 ++------------
- .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.h    |   1 -
- drivers/gpu/drm/amd/display/dc/core/dc_link.c      |   4 +-
- drivers/gpu/drm/amd/display/dc/dc.h                |   1 +
- .../amd/display/dc/dce110/dce110_hw_sequencer.c    |   7 +-
- .../drm/amd/display/dc/dce110/dce110_resource.c    |   3 +-
- drivers/gpu/drm/amd/include/amd_shared.h           |   4 +
- drivers/gpu/drm/amd/include/atomfirmware.h         |   7 +-
- drivers/gpu/drm/amd/powerplay/hwmgr/vega20_hwmgr.c |  53 ++++++----
- drivers/gpu/drm/amd/powerplay/hwmgr/vega20_hwmgr.h |   1 +
- drivers/gpu/drm/amd/powerplay/inc/vega20_ppsmc.h   |   3 +-
- drivers/gpu/drm/etnaviv/etnaviv_sched.c            |   2 +-
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c      |   9 --
- drivers/gpu/drm/exynos/exynos_drm_crtc.c           |  11 --
- drivers/gpu/drm/exynos/exynos_drm_drv.h            |   1 -
- drivers/gpu/drm/exynos/exynos_drm_dsi.c            |  14 ++-
- drivers/gpu/drm/exynos/exynos_drm_fbdev.c          |   2 +-
- drivers/gpu/drm/i915/gvt/gtt.c                     | 115 +++++++++++------=
-----
- drivers/gpu/drm/i915/gvt/gtt.h                     |  10 +-
- drivers/gpu/drm/i915/gvt/handlers.c                |   8 +-
- drivers/gpu/drm/i915/gvt/mmio_context.c            |   2 +-
- drivers/gpu/drm/i915/i915_drv.c                    |  15 +--
- drivers/gpu/drm/i915/i915_drv.h                    |   1 -
- drivers/gpu/drm/i915/i915_gem_execbuffer.c         |   2 +-
- drivers/gpu/drm/i915/i915_gem_gtt.c                |   2 +-
- drivers/gpu/drm/i915/i915_gem_gtt.h                |  36 ++++---
- drivers/gpu/drm/i915/i915_reg.h                    |  20 ++--
- drivers/gpu/drm/i915/intel_audio.c                 |  17 +++
- drivers/gpu/drm/i915/intel_cdclk.c                 |  18 +---
- drivers/gpu/drm/i915/intel_display.c               |  19 ++--
- drivers/gpu/drm/i915/intel_lpe_audio.c             |   4 +-
- drivers/gpu/drm/i915/intel_pm.c                    |   3 +-
- drivers/gpu/drm/i915/selftests/huge_pages.c        |   2 +-
- drivers/gpu/drm/i915/selftests/i915_gem_gtt.c      |   6 +-
- drivers/gpu/drm/sun4i/sun4i_lvds.c                 |   4 +-
- drivers/gpu/drm/sun4i/sun4i_rgb.c                  |   4 +-
- drivers/gpu/drm/sun4i/sun4i_tcon.c                 |   5 +-
- include/uapi/linux/kfd_ioctl.h                     |  18 ++--
- 43 files changed, 258 insertions(+), 297 deletions(-)
++1. Another point to consider is that even if we did somehow fix the
+"proc hole", any other means (perhaps in the future) of obtaining an
+inode reference would then be insecure, perhaps silently. For example
+--- is there a way to use open_by_handle_at(2) to open a memfd file?
