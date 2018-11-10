@@ -2,212 +2,178 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA587C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 14:27:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C17BC43610
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 14:34:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A424420817
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 14:27:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B59320817
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 14:34:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y3vdxS51"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A424420817
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="vG7QAuhz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B59320817
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727095AbeKKAMS (ORCPT
+        id S1726641AbeKKATb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 19:12:18 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:38099 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726661AbeKKAMS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 19:12:18 -0500
-Received: by mail-qk1-f195.google.com with SMTP id d19so6570328qkg.5;
-        Sat, 10 Nov 2018 06:27:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZwnaAjBjccKfpbBY/CzGYLGDwdjOpVj56hJgPGRXkyE=;
-        b=Y3vdxS51EXVS4/jFNRM5naJcS8lsrniXfqdRn+dfBv4nrl6fb0ePy02cIptckb6bYm
-         LSiIUg8fYoT4Gl9o+DkuSu4IzhW/UvjBqoqvFtXlQDH5ixMxvsokoeVshF5xfvn/9kv+
-         teYakiJnf8PtDYtasQHaO+9wI+Ysor7zTtX9e+42ZmlYv4xkV1ATPxIe6iTtRLBagnMt
-         6mlrPIHTls1iXJmnH6gP3od6H4Es3p3syPoRbhuC/LXgZNaKItbysZ3qldV8ptd7PFuD
-         2vYhReiuquc6Z78p93jSNFrmfxHi5zHW3G5UEHUg/LGNHNVyPVy/RZK+hBP3gj1CXdgF
-         9ZSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZwnaAjBjccKfpbBY/CzGYLGDwdjOpVj56hJgPGRXkyE=;
-        b=qpL8kqhzs7KbGmZM20/wh4TxIs12vin5z9rYzpHAwV5HIoVvEERZUXQPnSCBkh2xc2
-         VCylBri4HRevqesR1/Z+Jv5MtslDDOF1027iWxz5b91Cb2qaPlLWRLGsf7C6gcdYTnmO
-         I2QW4Ca+/j+WY6KSH3RK8cIudtbATusJeqOBMYdr0lMtgv0IDKcI4gNSnFebLwYwx9RR
-         8OE4L2EeOKVVdyJeavwLF3xeIWi1EMOb4vVOWdhtwrMLkMs0N18wY4DIkcIldHHz7cwp
-         2sVP/TOf/wROSC815NpnorRuHigrxcOQKvTdr/d9Q4Jgxoht4li5UVRJ3bVsJcXUgwYv
-         UxGw==
-X-Gm-Message-State: AGRZ1gJoe6W7yoaWBLQCdkE9aMNiJ1roYUF13ktX+5JJrD6DcNFZ+QTr
-        bkX91EHWWYvJcPEKFep/AR4mpdO+LlIHqz1RWbI=
-X-Google-Smtp-Source: AJdET5fJSHX3QkEytEBH5rJUV6Qxuklvg6fUPI017QrKSDL8NPksrgIXZUCr9530YwsdcArweoKbM+5g6J7bwqKM1Uk=
-X-Received: by 2002:a37:c3c3:: with SMTP id r64mr11974522qkl.70.1541860026355;
- Sat, 10 Nov 2018 06:27:06 -0800 (PST)
+        Sat, 10 Nov 2018 19:19:31 -0500
+Received: from mail-eopbgr70089.outbound.protection.outlook.com ([40.107.7.89]:32256
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726068AbeKKATb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 19:19:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=x+p0iybDrIX/MlCAcr0zLkjY3q/QfBkVV/26BY3QZLA=;
+ b=vG7QAuhzzVunuBJm3Bmn7BufwQcup05Yb5eMt0Aa7/ZykDzkCuk6HvtcSctgSyNRHvIfvZv0uNNiGjSouOq2lbQRC3SfmK5uniEER44tLbKOKwNw+qzxXB6ChtKml+boLNOtZINO8eKq9El/fhxRqcBaw9evzIUn/RuR2JYdjTE=
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
+ AM0PR04MB5011.eurprd04.prod.outlook.com (20.177.40.140) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.27; Sat, 10 Nov 2018 14:34:13 +0000
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::797a:f972:9281:6d10]) by AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::797a:f972:9281:6d10%2]) with mapi id 15.20.1294.039; Sat, 10 Nov 2018
+ 14:34:13 +0000
+From:   "A.s. Dong" <aisheng.dong@nxp.com>
+To:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Anson Huang <anson.huang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>, dl-linux-imx <linux-imx@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>
+Subject: [PATCH V5 0/9] clk: add imx7ulp clk support
+Thread-Topic: [PATCH V5 0/9] clk: add imx7ulp clk support
+Thread-Index: AQHUeQJzlY28dhnvHU2XqCzewNq+zg==
+Date:   Sat, 10 Nov 2018 14:34:13 +0000
+Message-ID: <1541860165-401-1-git-send-email-aisheng.dong@nxp.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK0P153CA0032.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:203:17::20) To AM0PR04MB4211.eurprd04.prod.outlook.com
+ (2603:10a6:208:66::21)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=aisheng.dong@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB5011;6:HY4aj/NizipDE/8k8Jbxs2FpI99fteKXQg6t5pOkbqV4gI4eekFaUvD1SfNX6WVdJqlDgHn5/1qi4J/bvgK27w11JQesCr84267E1GrxmKxS2Bv3ACXYltRIvxdLqQDrXDOh4IBX4TxjPRajiPGUP+G6dmosyG+DuOO2TbSaFTDEV5kPfQhMitdV44JGgchrYYRBpXbO24WGMzquqWp2lyyYqlAghuirXJHkRG+X5intvvNTUMPe6wxGmH5zYqBjwK0qu9KDuAdQCsZXc4EeMow9YWNO824eihXQVda8RgoXdoTHlOjFgjHPnA6jaF5KTFS9xfHX9y8YYpAcPOzgrdTWI7h/0XNfs9SUcN99UBuSOiPSzYX38lluWO0x49mmUpvBjLEEyz2f2gxggypxqYuHPT9tG3KjKN2elkkwhT6NS5L1Bw07DyCCdzIKciUTBB2DL2aXBdAXw9+LLf9WPQ==;5:nnvLZ6Rrp8227UsEkwkNgJVIC3bPjEFlet9JbQ/e4Zq0EMIzShZTWgMia545vaLWer/X2aun24T04/SXYuR5T8t0RbtFJRYKen9mAmCSD0nD0Cr1aEZlZynaCYnu5eSrt+ypz3MYvE+02AJl+3aIzIEXi5EkNWc4SSLt7C3WaxM=;7:SaZlLAOqFJjXE77E/tdUqCQGBg8skUCsxM4sOtUCbaBzxV3/kwMcV7QI9r73meNiw2rMG1Exgq5CNO6cp3s4qAX7Z8Z6uJQtCvKAlg6YW2+o4GmaV+xge+7Z1pF0CywnGE4+KiiJ0r3vVW5jGP2hmg==
+x-ms-office365-filtering-correlation-id: e10f5984-d0e2-4280-f4c0-08d6471995c9
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390040)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5011;
+x-ms-traffictypediagnostic: AM0PR04MB5011:
+x-microsoft-antispam-prvs: <AM0PR04MB50113F452D26267E24C3961C80C70@AM0PR04MB5011.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(269456686620040);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231382)(944501410)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB5011;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB5011;
+x-forefront-prvs: 0852EB6797
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(396003)(39850400004)(136003)(366004)(54534003)(189003)(199004)(50226002)(53936002)(81156014)(7736002)(476003)(6916009)(36756003)(6512007)(305945005)(14454004)(8676002)(2616005)(486006)(86362001)(478600001)(81166006)(26005)(8936002)(186003)(66066001)(14444005)(97736004)(256004)(2501003)(54906003)(68736007)(2900100001)(2906002)(2351001)(71190400001)(71200400001)(316002)(3846002)(6116002)(6506007)(102836004)(5640700003)(106356001)(105586002)(386003)(99286004)(5660300001)(25786009)(4326008)(52116002)(6486002)(6436002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5011;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: dpwHeXHOs2RVLSZ7DQw1Fk1gLWCcoJ8ryeTWQ7bA9Bb4x3yvMeIz9kNfxCcU1swmKeKbhZZrJsZho0qViw2rDYXTn30dvBvnTRLCaf4T5Krah5g1LZ+Cnrs3r53hEOUwsOW22AOmWcKdEC+IdKNEnfPH79jCyl765d7DjH4qxRkXxfjoILQW3zLlvJdVpB2p/6keBA/XZMMPF+0cl0A5EHf8+HIVbjhuXTiONdQaD8ja5DJdd3JqAfzTFM9ZFh1T4unT6xmYJuFYkbWo0PNzfPD6f3803dlkqprbboXLsOr940djWRYAWhmvudMB4f6UdvWcYDoaOSI33EUMEiK+h+UwTYPjURZpfL0nFF4689E=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20181109234526.4280-1-ayman.bagabas@gmail.com> <20181109234526.4280-4-ayman.bagabas@gmail.com>
-In-Reply-To: <20181109234526.4280-4-ayman.bagabas@gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Sat, 10 Nov 2018 16:26:55 +0200
-Message-ID: <CAHp75VcM4sDMX96GCJcBRG-hcdfTsKntR2e9A4sFmZi-4tRYWw@mail.gmail.com>
-Subject: Re: [PATCH v4 3/3] ALSA: hda: add support for Huawei WMI micmute LED
-To:     Ayman Bagabas <ayman.bagabas@gmail.com>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Kailang Yang <kailang@realtek.com>,
-        Hui Wang <hui.wang@canonical.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e10f5984-d0e2-4280-f4c0-08d6471995c9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Nov 2018 14:34:13.7532
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5011
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 10, 2018 at 1:46 AM Ayman Bagabas <ayman.bagabas@gmail.com> wrote:
->
-> Some of Huawei laptops come with a LED in the micmute key. This patch
-> enables and disable this LED accordingly.
-> This enables micmute LED for:
-> 1. Matebook X (19e5:3200), (19e5:3201)
-> 2. Matebook X Pro (19e5:3204)
->
-> Signed-off-by: Ayman Bagabas <ayman.bagabas@gmail.com>
-> ---
->  sound/pci/hda/huawei_wmi_helper.c | 47 +++++++++++++++++++++++++++++++
->  sound/pci/hda/patch_realtek.c     | 14 ++++++++-
->  2 files changed, 60 insertions(+), 1 deletion(-)
->  create mode 100644 sound/pci/hda/huawei_wmi_helper.c
->
-> diff --git a/sound/pci/hda/huawei_wmi_helper.c b/sound/pci/hda/huawei_wmi_helper.c
-> new file mode 100644
-> index 000000000000..7c91f914ffba
-> --- /dev/null
-> +++ b/sound/pci/hda/huawei_wmi_helper.c
-> @@ -0,0 +1,47 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/* Helper functions for Huawei WMI micmute LED;
-> + * to be included from codec driver
-> + */
-> +
+This patch series intends to add imx7ulp clk support.
 
-> +#if IS_ENABLED(CONFIG_HUAWEI_LAPTOP)
+i.MX7ULP Clock functions are under joint control of the System
+Clock Generation (SCG) modules, Peripheral Clock Control (PCC)
+modules, and Core Mode Controller (CMC)1 blocks
 
-ENABLED or REACHABLE?
+The clocking scheme provides clear separation between M4 domain
+and A7 domain. Except for a few clock sources shared between two
+domains, such as the System Oscillator clock, the Slow IRC (SIRC),
+and and the Fast IRC clock (FIRCLK), clock sources and clock
+management are separated and contained within each domain.
 
-> +#include <linux/platform_data/x86/huawei_wmi.h>
-> +
-> +static int (*huawei_wmi_micmute_led_set_func)(bool);
-> +
-> +static void update_huawei_wmi_micmute_led(struct hda_codec *codec)
-> +{
-> +       struct hda_gen_spec *spec = codec->spec;
-> +       huawei_wmi_micmute_led_set_func(spec->micmute_led.led_value);
-> +}
-> +
-> +static void alc_fixup_huawei_wmi(struct hda_codec *codec,
-> +                                  const struct hda_fixup *fix, int action)
-> +{
-> +       bool removefunc = false;
-> +
-> +       if (action == HDA_FIXUP_ACT_PROBE) {
-> +               if (!huawei_wmi_micmute_led_set_func)
-> +                       huawei_wmi_micmute_led_set_func = symbol_request(huawei_wmi_micmute_led_set);
-> +               if (!huawei_wmi_micmute_led_set_func) {
-> +                       codec_warn(codec, "Failed to find huawei_wmi symbol huawei_wmi_micmute_led_set\n");
-> +                       return;
-> +               }
-> +
-> +               removefunc = (huawei_wmi_micmute_led_set_func(false) < 0)
-> +                       || (snd_hda_gen_add_micmute_led(codec, update_huawei_wmi_micmute_led) < 0);
-> +       }
-> +
-> +       if (huawei_wmi_micmute_led_set_func && (action == HDA_FIXUP_ACT_FREE || removefunc)) {
-> +               symbol_put(huawei_wmi_micmute_led_set);
-> +               huawei_wmi_micmute_led_set_func = NULL;
-> +       }
-> +}
-> +
-> +#else
-> +
-> +static void alc_fixup_huawei_wmi(struct hda_codec *codec,
-> +                               const struct hda_fixup *fix, int action)
-> +{
-> +}
-> +
-> +#endif
-> diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-> index 135c0826859b..5431dee40f4f 100644
-> --- a/sound/pci/hda/patch_realtek.c
-> +++ b/sound/pci/hda/patch_realtek.c
-> @@ -5374,6 +5374,9 @@ static void alc_fixup_thinkpad_acpi(struct hda_codec *codec,
->  /* for alc295_fixup_hp_top_speakers */
->  #include "hp_x360_helper.c"
->
-> +/* for alc_fixup_huawei_micmute_led */
-> +#include "huawei_wmi_helper.c"
-> +
->  enum {
->         ALC269_FIXUP_SONY_VAIO,
->         ALC275_FIXUP_SONY_VAIO_GPIO2,
-> @@ -5494,6 +5497,7 @@ enum {
->         ALC255_FIXUP_DUMMY_LINEOUT_VERB,
->         ALC255_FIXUP_DELL_HEADSET_MIC,
->         ALC256_FIXUP_HUAWEI_MBXP_PINS,
-> +       ALC256_FIXUP_HUAWEI_WMI_MICMUTE_LED,
->         ALC295_FIXUP_HP_X360,
->         ALC221_FIXUP_HP_HEADSET_MIC,
->  };
-> @@ -5765,6 +5769,10 @@ static const struct hda_fixup alc269_fixups[] = {
->                 .chained = true,
->                 .chain_id = ALC269_FIXUP_HEADSET_MIC
->         },
-> +       [ALC256_FIXUP_HUAWEI_WMI_MICMUTE_LED] = {
-> +               .type = HDA_FIXUP_FUNC,
-> +               .v.func = alc_fixup_huawei_wmi
-> +       },
->         [ALC256_FIXUP_HUAWEI_MBXP_PINS] = {
->                 .type = HDA_FIXUP_PINS,
->                 .v.pins = (const struct hda_pintbl[]) {
-> @@ -5779,7 +5787,9 @@ static const struct hda_fixup alc269_fixups[] = {
->                         {0x1e, 0x411111f0},
->                         {0x21, 0x04211020},
->                         { }
-> -               }
-> +               },
-> +               .chained = true,
-> +               .chain_id = ALC256_FIXUP_HUAWEI_WMI_MICMUTE_LED
->         },
->         [ALC269_FIXUP_ASUS_X101_FUNC] = {
->                 .type = HDA_FIXUP_FUNC,
-> @@ -6611,6 +6621,8 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
->         SND_PCI_QUIRK(0x17aa, 0x511f, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
->         SND_PCI_QUIRK(0x17aa, 0x3bf8, "Quanta FL1", ALC269_FIXUP_PCM_44K),
->         SND_PCI_QUIRK(0x17aa, 0x9e54, "LENOVO NB", ALC269_FIXUP_LENOVO_EAPD),
-> +       SND_PCI_QUIRK(0x19e5, 0x3200, "Huawei MBX", ALC256_FIXUP_HUAWEI_WMI_MICMUTE_LED),
-> +       SND_PCI_QUIRK(0x19e5, 0x3201, "Huawei MBX", ALC256_FIXUP_HUAWEI_WMI_MICMUTE_LED),
->         SND_PCI_QUIRK(0x19e5, 0x3204, "Huawei MBXP", ALC256_FIXUP_HUAWEI_MBXP_PINS),
->         SND_PCI_QUIRK(0x1b7d, 0xa831, "Ordissimo EVE2 ", ALC269VB_FIXUP_ORDISSIMO_EVE2), /* Also known as Malata PC-B1303 */
->
-> --
-> 2.17.2
->
+M4 clock management consists of SCG0, PCC0, PCC1, and CMC0 modules.
+A7 clock management consists of SCG1, PCC2, PCC3, and CMC1 modules.
 
+Note: this series only adds A7 clock domain support as M4 clock
+domain will be handled by M4 seperately.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Change Log:
+v4->v5:
+ * rename to clk-composite-7ulp.c as we have another
+   clk-composite-8m.c, function name also changed accordingly
+ * binding doc updated with adding input clocks for PCC module
+v3->v4:
+ * update after changing scg and pcc into separete nodes according to
+   Rob's suggestion
+v2->v3:
+ * Patch 1 changed on: 1) split normal and gate ops 2) fix the possible rac=
+y
+   Others no changes.
+
+v1->v2:
+ * add enable/disable for the type of CLK_DIVIDER_ZERO_GATE dividers
+ * use clk_hw apis to register clocks
+ * use of_clk_add_hw_provider
+ * split the clocks register process into two parts: early part for possibl=
+e
+   timers clocks registered by CLK_OF_DECLARE_DRIVER and the later part for
+   the left normal peripheral clocks registered by a platform driver.
+
+Dong Aisheng (9):
+  clk: clk-divider: add CLK_DIVIDER_ZERO_GATE clk support
+  clk: fractional-divider: add CLK_FRAC_DIVIDER_ZERO_BASED flag support
+  clk: imx: add pllv4 support
+  clk: imx: add pfdv2 support
+  clk: imx: add imx7ulp composite clk support
+  dt-bindings: clock: add imx7ulp clock binding doc
+  clk: imx: make mux parent strings const
+  clk: imx: implement new clk_hw based APIs
+  clk: imx: add imx7ulp clk driver
+
+ .../devicetree/bindings/clock/imx7ulp-clock.txt    | 104 ++++++++++
+ drivers/clk/clk-divider.c                          | 152 +++++++++++++++
+ drivers/clk/clk-fractional-divider.c               |  10 +
+ drivers/clk/imx/Makefile                           |   6 +-
+ drivers/clk/imx/clk-busy.c                         |   2 +-
+ drivers/clk/imx/clk-composite-7ulp.c               |  85 +++++++++
+ drivers/clk/imx/clk-fixup-mux.c                    |   2 +-
+ drivers/clk/imx/clk-imx7ulp.c                      | 209 +++++++++++++++++=
+++++
+ drivers/clk/imx/clk-pfdv2.c                        | 201 +++++++++++++++++=
++++
+ drivers/clk/imx/clk-pllv4.c                        | 182 +++++++++++++++++=
++
+ drivers/clk/imx/clk.c                              |  22 +++
+ drivers/clk/imx/clk.h                              |  92 ++++++++-
+ include/dt-bindings/clock/imx7ulp-clock.h          | 109 +++++++++++
+ include/linux/clk-provider.h                       |  17 ++
+ 14 files changed, 1183 insertions(+), 10 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/imx7ulp-clock.t=
+xt
+ create mode 100644 drivers/clk/imx/clk-composite-7ulp.c
+ create mode 100644 drivers/clk/imx/clk-imx7ulp.c
+ create mode 100644 drivers/clk/imx/clk-pfdv2.c
+ create mode 100644 drivers/clk/imx/clk-pllv4.c
+ create mode 100644 include/dt-bindings/clock/imx7ulp-clock.h
+
+--=20
+2.7.4
+
