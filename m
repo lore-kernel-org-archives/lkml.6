@@ -1,193 +1,192 @@
-Return-Path: <SRS0=IvFc=NU=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7B6BC43441
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 23:58:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A191FC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 00:00:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B8282075C
-	for <linux-kernel@archiver.kernel.org>; Fri,  9 Nov 2018 23:58:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B8282075C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5A24C20855
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 00:00:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="bfhPAdsa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A24C20855
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=soleen.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728384AbeKJJli (ORCPT
+        id S1728454AbeKJJnH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 04:41:38 -0500
-Received: from mga07.intel.com ([134.134.136.100]:65099 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726688AbeKJJli (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 04:41:38 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Nov 2018 15:58:42 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,485,1534834800"; 
-   d="scan'208";a="90911917"
-Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
-  by orsmga008.jf.intel.com with ESMTP; 09 Nov 2018 15:58:42 -0800
-Message-ID: <d511ee6a18da13b9543557db783e6ff3327ca87b.camel@linux.intel.com>
-Subject: Re: [mm PATCH v5 3/7] mm: Implement new zone specific memblock
- iterator
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     Pavel Tatashin <pasha.tatashin@soleen.com>
-Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
-        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, davem@davemloft.net,
-        pavel.tatashin@microsoft.com, mhocko@suse.com, mingo@kernel.org,
-        kirill.shutemov@linux.intel.com, dan.j.williams@intel.com,
-        dave.jiang@intel.com, rppt@linux.vnet.ibm.com, willy@infradead.org,
-        vbabka@suse.cz, khalid.aziz@oracle.com, ldufour@linux.vnet.ibm.com,
+        Sat, 10 Nov 2018 04:43:07 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:43586 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728001AbeKJJnG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 04:43:06 -0500
+Received: by mail-qk1-f196.google.com with SMTP id r71so4729686qkr.10
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 16:00:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=om71kzqtfu8XegvZ2RcYXBdnXr8unvF4YPZDKXPDvx8=;
+        b=bfhPAdsano1CRNOGa2YRTAKU55F2NW/fk69HKIY9H8IlFmdkkRMvAfx/J04Duk/vOu
+         4P7XOZYzOnqL76/l6vTGuctRrv+RBGW85QxFs0oNSzKVoiSFA3D2FHUnI85jGwf/tdAN
+         BMmDnrfLnEXJqJ69BZFcBP95pZlC6OV72ujQVxPHci+1VuAhKhKoCHMDqmCWxKcMMrTb
+         RU5RbLnVbGaZ6QveLywF0bvDQ9viCOFs4P+9Htv9bcZPdWjeuhIxdjJybyWleFpTvLg1
+         quDbZCz03hzJH1JfTgKfI2goN2oQHJQtFYXMbqVZsJQmSg3sYJbL0jmfyoFDPBLgUzgr
+         8FbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=om71kzqtfu8XegvZ2RcYXBdnXr8unvF4YPZDKXPDvx8=;
+        b=eNwqZ95qMNfdsyhw+EHITv6qzLXGRYjnaXhFodkLH007uUYUzvvWttA/0vNVJolpbZ
+         4DedtG4/Nhb7wZx8xpzxBqai+mIz2FwrgGsBdiwckeu/Ab6vkw2UifEuihbwK7pq9Wue
+         75au3/xAAizhvsNbKiOKdpLTl0J9oxJuLbxn4uHH34L3ADcNoztW4CwKvMFT5jkQFCh7
+         GsMQHatDcpypQG0t1hq5Tl6f1EMpmfo2NA3yCStdUQwXFGugADQQbQlsOIMU6h6qmqd1
+         fCyzKlUpQZ3MBs0oiznRozPKvQq4WINTZ1SRkiGkWm/naakx2s3CRWPWwzcFuSB/FEkf
+         iuvQ==
+X-Gm-Message-State: AGRZ1gJLznu7atIsbTrAj7x2GowHmuKKkk4NCV1SaNd4/6v2Kv0bBuPQ
+        GmqMrFOhZ2L1ItlcnnniAckGEQ==
+X-Google-Smtp-Source: AJdET5ewUi5Bo4yPyigpFiQVP7skQmo9GQq57IeAExsmmzL5bms4V8pSjWLJqO4AxFxQBabGCEsc1A==
+X-Received: by 2002:a37:5cc6:: with SMTP id q189mr10474375qkb.235.1541808009308;
+        Fri, 09 Nov 2018 16:00:09 -0800 (PST)
+Received: from xakep.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
+        by smtp.gmail.com with ESMTPSA id e26sm4428579qtg.69.2018.11.09.16.00.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 09 Nov 2018 16:00:08 -0800 (PST)
+Date:   Fri, 9 Nov 2018 19:00:06 -0500
+From:   Pavel Tatashin <pasha.tatashin@soleen.com>
+To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        daniel.m.jordan@oracle.com
+Cc:     daniel.m.jordan@oracle.com, akpm@linux-foundation.org,
+        linux-mm@kvack.org, sparclinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        davem@davemloft.net, pavel.tatashin@microsoft.com, mhocko@suse.com,
+        mingo@kernel.org, kirill.shutemov@linux.intel.com,
+        dan.j.williams@intel.com, dave.jiang@intel.com,
+        rppt@linux.vnet.ibm.com, willy@infradead.org, vbabka@suse.cz,
+        khalid.aziz@oracle.com, ldufour@linux.vnet.ibm.com,
         mgorman@techsingularity.net, yi.z.zhang@linux.intel.com
-Date:   Fri, 09 Nov 2018 15:58:42 -0800
-In-Reply-To: <20181109232654.bi37bdkrqbogbdcx@xakep.localdomain>
-References: <154145268025.30046.11742652345962594283.stgit@ahduyck-desk1.jf.intel.com>
-         <154145278071.30046.9022571960145979137.stgit@ahduyck-desk1.jf.intel.com>
-         <20181109232654.bi37bdkrqbogbdcx@xakep.localdomain>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Subject: Re: [mm PATCH v5 0/7] Deferred page init improvements
+Message-ID: <20181110000006.tmcfnzynelaznn7u@xakep.localdomain>
+References: <20181109211521.5ospn33pp552k2xv@xakep.localdomain>
+ <18b6634b912af7b4ec01396a2b0f3b31737c9ea2.camel@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <18b6634b912af7b4ec01396a2b0f3b31737c9ea2.camel@linux.intel.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-11-09 at 18:26 -0500, Pavel Tatashin wrote:
-> > +/**
-> > + * for_each_free_mem_range_in_zone - iterate through zone specific free
-> > + * memblock areas
-> > + * @i: u64 used as loop variable
-> > + * @zone: zone in which all of the memory blocks reside
-> > + * @p_start: ptr to phys_addr_t for start address of the range, can be %NULL
-> > + * @p_end: ptr to phys_addr_t for end address of the range, can be %NULL
-> > + *
-> > + * Walks over free (memory && !reserved) areas of memblock in a specific
-> > + * zone. Available as soon as memblock is initialized.
-> > + */
-> > +#define for_each_free_mem_pfn_range_in_zone(i, zone, p_start, p_end)	\
-> > +	for (i = 0,							\
-> > +	     __next_mem_pfn_range_in_zone(&i, zone, p_start, p_end);	\
-> > +	     i != (u64)ULLONG_MAX;					\
-> > +	     __next_mem_pfn_range_in_zone(&i, zone, p_start, p_end))
-> > +#endif /* CONFIG_DEFERRED_STRUCT_PAGE_INIT */
+On 18-11-09 15:14:35, Alexander Duyck wrote:
+> On Fri, 2018-11-09 at 16:15 -0500, Pavel Tatashin wrote:
+> > On 18-11-05 13:19:25, Alexander Duyck wrote:
+> > > This patchset is essentially a refactor of the page initialization logic
+> > > that is meant to provide for better code reuse while providing a
+> > > significant improvement in deferred page initialization performance.
+> > > 
+> > > In my testing on an x86_64 system with 384GB of RAM and 3TB of persistent
+> > > memory per node I have seen the following. In the case of regular memory
+> > > initialization the deferred init time was decreased from 3.75s to 1.06s on
+> > > average. For the persistent memory the initialization time dropped from
+> > > 24.17s to 19.12s on average. This amounts to a 253% improvement for the
+> > > deferred memory initialization performance, and a 26% improvement in the
+> > > persistent memory initialization performance.
+> > 
+> > Hi Alex,
+> > 
+> > Please try to run your persistent memory init experiment with Daniel's
+> > patches:
+> > 
+> > https://lore.kernel.org/lkml/20181105165558.11698-1-daniel.m.jordan@oracle.com/
 > 
-> Use U64_MAX instead of ULLONG_MAX, and avoid u64 cast. I know other
-> places in this file use UULONG_MAX with cast, but I think U64_MAX is
-> better.
+> I've taken a quick look at it. It seems like a bit of a brute force way
+> to try and speed things up. I would be worried about it potentially
 
-Okay, maybe I will submit a follow up that just cleans all of these up.
+There is a limit to max number of threads that ktasks start. The memory
+throughput is *much* higher than what one CPU can maxout in a node, so
+there is no reason to leave the other CPUs sit idle during boot when
+they can help to initialize.
 
-> > +
-> >  /**
-> >   * for_each_free_mem_range - iterate through free memblock areas
-> >   * @i: u64 used as loop variable
-> > diff --git a/mm/memblock.c b/mm/memblock.c
-> > index 7df468c8ebc8..f1d1fbfd1ae7 100644
-> > --- a/mm/memblock.c
-> > +++ b/mm/memblock.c
-> > @@ -1239,6 +1239,69 @@ int __init_memblock memblock_set_node(phys_addr_t base, phys_addr_t size,
-> >  	return 0;
-> >  }
-> >  #endif /* CONFIG_HAVE_MEMBLOCK_NODE_MAP */
-> > +#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
-> > +/**
-> > + * __next_mem_pfn_range_in_zone - iterator for for_each_*_range_in_zone()
-> > + *
-> > + * @idx: pointer to u64 loop variable
-> > + * @zone: zone in which all of the memory blocks reside
-> > + * @out_start: ptr to ulong for start pfn of the range, can be %NULL
-> > + * @out_end: ptr to ulong for end pfn of the range, can be %NULL
-> > + *
-> > + * This function is meant to be a zone/pfn specific wrapper for the
-> > + * for_each_mem_range type iterators. Specifically they are used in the
-> > + * deferred memory init routines and as such we were duplicating much of
-> > + * this logic throughout the code. So instead of having it in multiple
-> > + * locations it seemed like it would make more sense to centralize this to
-> > + * one new iterator that does everything they need.
-> > + */
-> > +void __init_memblock
-> > +__next_mem_pfn_range_in_zone(u64 *idx, struct zone *zone,
-> > +			     unsigned long *out_spfn, unsigned long *out_epfn)
-> > +{
-> > +	int zone_nid = zone_to_nid(zone);
-> > +	phys_addr_t spa, epa;
-> > +	int nid;
-> > +
-> > +	__next_mem_range(idx, zone_nid, MEMBLOCK_NONE,
-> > +			 &memblock.memory, &memblock.reserved,
-> > +			 &spa, &epa, &nid);
-> > +
-> > +	while (*idx != ULLONG_MAX) {
+> introducing performance issues if the number of CPUs thrown at it end
+> up exceeding the maximum throughput of the memory.
 > 
-> Ditto, use U64_MAX
+> The data provided with patch 11 seems to point to issues such as that.
+> In the case of the E7-8895 example cited it is increasing the numbers
+> of CPUs used from memory initialization from 8 to 72, a 9x increase in
+> the number of CPUs but it is yeilding only a 3.88x speedup.
 
-Same here.
+Yes, but in both cases we are far from maxing out the memory throughput.
+The 3.88x is indeed low, and I do not know what slows it down.
 
-> > +		unsigned long epfn = PFN_DOWN(epa);
-> > +		unsigned long spfn = PFN_UP(spa);
-> > +
-> > +		/*
-> > +		 * Verify the end is at least past the start of the zone and
-> > +		 * that we have at least one PFN to initialize.
-> > +		 */
-> > +		if (zone->zone_start_pfn < epfn && spfn < epfn) {
-> > +			/* if we went too far just stop searching */
-> > +			if (zone_end_pfn(zone) <= spfn)
-> > +				break;
-> 
-> Set *idx = U64_MAX here, then break. This way after we are outside this
-> while loop idx is always equals to U64_MAX.
+Daniel,
 
-Actually I think what you are asking for is the logic that is outside
-of the while loop we are breaking out of. So if you check at the end of
-the function there is the bit of code with the comment "signal end of
-iteration" where I end up setting *idx to ULLONG_MAX, *out_spfn to
-ULONG_MAX, and *out_epfn to 0.
+Could you please check why multi-threading efficiency is so low here?
 
-The general idea I had with the function is that you could use either
-the index or spfn < epfn checks to determine if you keep going or not.
+I bet, there is some atomic operation introduces a contention within a
+node. It should be possible to resolve.
 
 > 
-> > +
-> > +			if (out_spfn)
-> > +				*out_spfn = max(zone->zone_start_pfn, spfn);
-> > +			if (out_epfn)
-> > +				*out_epfn = min(zone_end_pfn(zone), epfn);
+> > The performance should improve by much more than 26%.
 > 
-> Don't we need to verify after adjustment that out_spfn != out_epfn, so
-> there is at least one PFN to initialize?
+> The 26% improvement, or speedup of 1.26x using the ktask approach, was
+> for persistent memory, not deferred memory init. The ktask patch
+> doesn't do anything for persistent memory since it is takes the hot-
+> plug path and isn't handled via the deferred memory init.
 
-We have a few checks that I believe prevent that. Before we get to this
-point we have verified the following:
-	zone->zone_start < epfn
-	spfn < epfn
+Ah, I thought in your experiment persistent memory takes deferred init
+path. So, what exactly in your patches make this 1.26x speedup?
 
-The other check that should be helping to prevent that is the break
-statement above that is forcing us to exit if spfn is somehow already
-past the end of the zone, that essentially maps out:
-	spfn < zone_end_pfn(zone)
-
-So the only check we don't have is:
-	zone->zone_start < zone_end_pfn(zone)
-
-If I am not mistaken that is supposed to be a given is it not? I would
-assume we don't have any zones that are completely empty or inverted
-that would be called here do we?
-
-> The rest looks good. Once the above is fixed:
 > 
-> Reviewed-by: Pavel Tatashin <pasha.tatashin@soleen.com>
+> I had increased deferred memory init to about 3.53x the original speed
+> (3.75s to 1.06s) on the system which I was testing. I do agree the two
+> patches should be able to synergistically boost each other though as
+> this patch set was meant to make the init much more cache friendly so
+> as a result it should scale better as you add additional cores. I know
+> I had done some playing around with fake numa to split up a single node
+> into 8 logical nodes and I had seen a similar speedup of about 3.85x
+> with my test memory initializing in about 275ms.
 > 
-> Thank you,
-> Pasha
+> > Overall, your works looks good, but it needs to be considered how easy it will be
+> > to merge with ktask. I will try to complete the review today.
+> > 
+> > Thank you,
+> > Pasha
+> 
+> Looking over the patches they are still in the RFC stage and the data
+> is in need of updates since it is referencing 4.15-rc kernels as its
+> baseline. If anything I really think the ktask patch 11 would be easier
+> to rebase around my patch set then the other way around. Also, this
+> series is in Andrew's mmots as of a few days ago, so I think it will be
+> in the next mmotm that comes out.
 
-Thanks for the feedback.
+I do not disagree, I think these two patch series should complement each
+other. But, if your changes make it impossible for ktask, I would strongly argue
+against it, as the potential improvements with ktasks are much higher.
+But, so far I do not see anything, so I think they can work together. I
+am still reviewing your work.
 
-- Alex
+> 
+> The integration with the ktask code should be pretty straight forward.
+> If anything I think my code would probably make it easier since it gets
+> rid of the need to do all this in two passes. The only new limitation
+> it would add is that you would probably want to split up the work along
+> either max order or section aligned boundaries. What it would
 
+Which is totally OK, it should make ktasks scale even better.
+
+> essentially do is make things so that each of the ktask threads would
+> probably look more like deferred_grow_zone which after my patch set is
+> actually a fairly simple function.
+> 
+> Thanks.
+
+Thank you,
+Pasha
