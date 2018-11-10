@@ -2,80 +2,65 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C50CCC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 05:50:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 308E9C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 05:55:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 844E9206BA
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 05:50:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 844E9206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id D188720840
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 05:55:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D188720840
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729071AbeKJPdv (ORCPT
+        id S1728903AbeKJPjl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 10:33:51 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:14645 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728728AbeKJPdv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 10:33:51 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 5CAA6A990E0D0;
-        Sat, 10 Nov 2018 12:03:51 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.408.0; Sat, 10 Nov 2018 12:03:46 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     Christoph Hellwig <hch@infradead.org>,
-        David Howells <dhowells@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Al Viro <viro@zeniv.linux.org.uk>
-CC:     YueHaibing <yuehaibing@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] sysv: return 'err' instead of 0 in __sysv_write_inode
-Date:   Sat, 10 Nov 2018 04:13:24 +0000
-Message-ID: <1541823204-45068-1-git-send-email-yuehaibing@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
-Content-Type: text/plain; charset="ISO-8859-1"
+        Sat, 10 Nov 2018 10:39:41 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:37978 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728662AbeKJPjl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 10:39:41 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 8268A1420C12E;
+        Fri,  9 Nov 2018 20:36:51 -0800 (PST)
+Date:   Fri, 09 Nov 2018 20:36:50 -0800 (PST)
+Message-Id: <20181109.203650.2137044253712054807.davem@davemloft.net>
+To:     robh@kernel.org
+Cc:     frowand.list@gmail.com, linux-kernel@vger.kernel.org,
+        sparclinux@vger.kernel.org
+Subject: Re: [PATCH 2/8] of: Drop full path from Sparc PDT full_name
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <CAL_JsqLs7P81KiT3b3W5G=qt6JfU0tvM1TKdtJJ5Vq1HSzRW3w@mail.gmail.com>
+References: <20181107223151.14991-3-robh@kernel.org>
+        <20181108.191116.1317160901826988583.davem@davemloft.net>
+        <CAL_JsqLs7P81KiT3b3W5G=qt6JfU0tvM1TKdtJJ5Vq1HSzRW3w@mail.gmail.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 09 Nov 2018 20:36:51 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+From: Rob Herring <robh@kernel.org>
+Date: Fri, 9 Nov 2018 14:30:01 -0600
 
-fs/sysv/inode.c: In function '__sysv_write_inode':
-fs/sysv/inode.c:239:6: warning:
- variable 'err' set but not used [-Wunused-but-set-variable]
+> That is the intent. With this change we stop storing the full path for
+> every node. Everywhere that needs the full path, generates it with the
+> %pOF printf specifier. Other than users in arch/sparc converted in
+> this series all the users of full_name have been converted already or
+> use kbasename(full_name) so they work either way. BTW, I've found a
+> couple more, so I'll be sending you a v2.
+> 
+> And of_pdt_build_full_name for !SPARC does need to be converted too,
+> but I'll do that separately.
 
-__sysv_write_inode should return 'err' instead of 0
-
-Fixes: 05459ca81ac3 ("repair sysv_write_inode(), switch sysv to simple_fsync()")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- fs/sysv/inode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/sysv/inode.c b/fs/sysv/inode.c
-index 499a20a..273736f 100644
---- a/fs/sysv/inode.c
-+++ b/fs/sysv/inode.c
-@@ -275,7 +275,7 @@ static int __sysv_write_inode(struct inode *inode, int wait)
-                 }
-         }
- 	brelse(bh);
--	return 0;
-+	return err;
- }
- 
- int sysv_write_inode(struct inode *inode, struct writeback_control *wbc)
-
-
-
+I would think that, for correctness, you'd need to adjust both functions
+at the same time, no?
