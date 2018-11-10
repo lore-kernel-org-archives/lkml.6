@@ -2,83 +2,163 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AFACC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 07:16:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 036DDC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 07:20:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6B6B20840
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 07:16:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6B6B20840
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id BBDFA20840
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 07:20:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JE+nrg5r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBDFA20840
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728925AbeKJRAW (ORCPT
+        id S1728936AbeKJREt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 12:00:22 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:39115 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728682AbeKJRAW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 12:00:22 -0500
-Received: from carbon-x1.hos.anvin.org (c-24-5-245-234.hsd1.ca.comcast.net [24.5.245.234] (may be forged))
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id wAA7G78d2694758
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Fri, 9 Nov 2018 23:16:08 -0800
-Subject: Re: PLEASE REVERT URGENTLY: Re: [PATCH v5 2/3] x86/boot: add acpi
- rsdp address to setup_header
-To:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, x86@kernel.org,
-        linux-doc@vger.kernel.org
-Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, corbet@lwn.net,
-        boris.ostrovsky@oracle.com
-References: <20181010061456.22238-1-jgross@suse.com>
- <20181010061456.22238-3-jgross@suse.com>
- <f7c78ee7-b548-7f04-24da-7321b6c64c97@zytor.com>
- <bd2d17cd-072c-cad6-94ad-52373700a1c9@suse.com>
- <2934552c-d150-0afb-6fa9-9398cb94d86a@zytor.com>
- <5a2f5cb8-7332-f490-eabf-cfcbdcd1abc4@suse.com>
-From:   "H. Peter Anvin" <hpa@zytor.com>
-Message-ID: <59ca1053-9176-f1db-6e6c-96b47aaaa09d@zytor.com>
-Date:   Fri, 9 Nov 2018 23:16:02 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Sat, 10 Nov 2018 12:04:49 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:42535 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728659AbeKJREs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 12:04:48 -0500
+Received: by mail-pl1-f195.google.com with SMTP id t6-v6so1940745plo.9
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 23:20:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=w/nMg+wMmODTpWImT5aetcZhSijqT8B/aUSQKYa61tU=;
+        b=JE+nrg5rplIlAp+u9uG5M0kqqG4lBmbTTg6Du2sDfSxAQOtukV2H2X9syJJ5h2ZMCe
+         cBpQZ5fmjIVF7itBvGc/wA3akvF2CyHj6+vvPx1bW+OhpRMX00Jqg3EJKjnAl9W1bWlC
+         /tLn+vQN9+pV/K8XEjxPo6/l6dT4HryfIixkQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=w/nMg+wMmODTpWImT5aetcZhSijqT8B/aUSQKYa61tU=;
+        b=HtH/Mp4uAB+BP7u2S81j8vl0b0Ll8p3F1ODR8lxndVPap+nuz3vRhTsH9fI5z55HTG
+         549MHHY+8g2nN2pKLhNNov1Ek6CPZOs7CoN6e4bej42Z8am35lZNG8qFE+l4OOtQldao
+         N32aT5r0xped1+97UHUL9YWeOmshRsA7QKG91IsFKMJ1/zxjrwiwu+NZpA1EJ5eIrZjz
+         UmEdf5QSJUbp4CUV34cLnLoCrMUkwzWmG8oXTt1fuS+8fPnsCLaxaO2yBKu+J8A/1fLm
+         vq5LC0WwK/cCDsos/GaiMy46PISgBPrq1XgXIyIbB2xcp6dDqGy8nByQZOK9B5FcNLDQ
+         rS8g==
+X-Gm-Message-State: AGRZ1gL5aO4ITTSrdfezbd65AV4d0GzirJs4Ch+dSCciZZSm/hct8T3x
+        wd0/85X6zrt3uTrgMryWW2eYkA==
+X-Google-Smtp-Source: AJdET5dgUxCs6vY5DHv2u0FyRalPAH0BDRQKbv24xZDzc4mjSG+IkYqeZXJyNnYBvPeKLhIU2O8vsw==
+X-Received: by 2002:a17:902:6a87:: with SMTP id n7-v6mr8937547plk.86.1541834448608;
+        Fri, 09 Nov 2018 23:20:48 -0800 (PST)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id b18-v6sm8399144pgg.88.2018.11.09.23.20.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 09 Nov 2018 23:20:47 -0800 (PST)
+Date:   Fri, 9 Nov 2018 23:20:45 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Evan Green <evgreen@chromium.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] pinctrl: msm: Add sleep pinctrl state transitions
+Message-ID: <20181110072045.GB4373@minitux>
+References: <20181109222835.60607-1-evgreen@chromium.org>
 MIME-Version: 1.0
-In-Reply-To: <5a2f5cb8-7332-f490-eabf-cfcbdcd1abc4@suse.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181109222835.60607-1-evgreen@chromium.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/9/18 11:02 PM, Juergen Gross wrote:
->>
->> Yes. We know that and it is resolved by:
->>
->> a) the length field in setup_header;
->> b) the "sentinel" field which catches legacy non-compliant bootloaders.
+On Fri 09 Nov 14:28 PST 2018, Evan Green wrote:
+
+> Add PM suspend callbacks to the msm core driver that select the
+> sleep and default pinctrl states. Then wire those callbacks up
+> in the sdm845 driver, for those boards that may have GPIO hogs
+> that need to change state during suspend.
 > 
-> Doesn't help for boot loaders reading struct setup_header from the
-> kernel image and then writing e.g. 512 bytes back to the setup_header
-> location. The sentinel is cleared and the length field just isn't
-> taken into account. And this is what happened.
+> Signed-off-by: Evan Green <evgreen@chromium.org>
+> ---
 > 
+>  drivers/pinctrl/qcom/pinctrl-msm.c    | 16 ++++++++++++++++
+>  drivers/pinctrl/qcom/pinctrl-msm.h    |  2 ++
+>  drivers/pinctrl/qcom/pinctrl-sdm845.c |  4 ++++
+>  3 files changed, 22 insertions(+)
+> 
+> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+> index 7c7d083e2c0dc..d505d0a50f0a5 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+> @@ -1072,6 +1072,22 @@ static void msm_pinctrl_setup_pm_reset(struct msm_pinctrl *pctrl)
+>  		}
+>  }
+>  
+> +int msm_pinctrl_suspend(struct device *dev)
+> +{
+> +	struct msm_pinctrl *pctrl = dev_get_drvdata(dev);
+> +
+> +	return pinctrl_force_sleep(pctrl->pctrl);
+> +}
+> +EXPORT_SYMBOL(msm_pinctrl_suspend);
+> +
+> +int msm_pinctrl_resume(struct device *dev)
+> +{
+> +	struct msm_pinctrl *pctrl = dev_get_drvdata(dev);
+> +
+> +	return pinctrl_force_default(pctrl->pctrl);
+> +}
+> +EXPORT_SYMBOL(msm_pinctrl_resume);
+> +
+>  int msm_pinctrl_probe(struct platform_device *pdev,
+>  		      const struct msm_pinctrl_soc_data *soc_data)
+>  {
+> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.h b/drivers/pinctrl/qcom/pinctrl-msm.h
+> index 29172fdf5882c..e163ca600ecd3 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-msm.h
+> +++ b/drivers/pinctrl/qcom/pinctrl-msm.h
+> @@ -123,6 +123,8 @@ struct msm_pinctrl_soc_data {
+>  	unsigned int ntiles;
+>  };
+>  
+> +int msm_pinctrl_suspend(struct device *dev);
+> +int msm_pinctrl_resume(struct device *dev);
+>  int msm_pinctrl_probe(struct platform_device *pdev,
+>  		      const struct msm_pinctrl_soc_data *soc_data);
+>  int msm_pinctrl_remove(struct platform_device *pdev);
+> diff --git a/drivers/pinctrl/qcom/pinctrl-sdm845.c b/drivers/pinctrl/qcom/pinctrl-sdm845.c
+> index 2ab7a88857579..a3ac9cbeabad1 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-sdm845.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-sdm845.c
+> @@ -1287,6 +1287,9 @@ static const struct msm_pinctrl_soc_data sdm845_pinctrl = {
+>  	.ngpios = 150,
+>  };
+>  
+> +static SIMPLE_DEV_PM_OPS(sdm845_pinctrl_dev_pm_ops, msm_pinctrl_suspend,
+> +			 msm_pinctrl_resume);
 
-This is insane?! How do they manage to do this... it's not like  this isn't
-written out in plain English to follow. I am, once again, utterly and
-genuinely baffled about how many ways Grub can do things wrong.
+I don't expect this to differ between the various platforms, so how
+about moving it to pinctrl-msm?
 
-So we should probably add a terminal sentinel field at offset 0x281, which is
-one byte past the longest possible setup_header structure; in fact, we may
-just want to explicitly pad setup_header with zeroes to its final size, if
-nothing else to make it explicit how little space is actually left in there.
+Regards,
+Bjorn
 
-It would be enormously helpful if you could find out any more details about
-exactly what they are doing to break things.
-
-Many thanks,
-
-	-hpa
+> +
+>  static int sdm845_pinctrl_probe(struct platform_device *pdev)
+>  {
+>  	return msm_pinctrl_probe(pdev, &sdm845_pinctrl);
+> @@ -1300,6 +1303,7 @@ static const struct of_device_id sdm845_pinctrl_of_match[] = {
+>  static struct platform_driver sdm845_pinctrl_driver = {
+>  	.driver = {
+>  		.name = "sdm845-pinctrl",
+> +		.pm = &sdm845_pinctrl_dev_pm_ops,
+>  		.of_match_table = sdm845_pinctrl_of_match,
+>  	},
+>  	.probe = sdm845_pinctrl_probe,
+> -- 
+> 2.16.4
+> 
