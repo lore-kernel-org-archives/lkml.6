@@ -2,189 +2,95 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65541C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 13:22:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A5DAC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 13:23:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2149320818
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 13:22:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2149320818
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
+	by mail.kernel.org (Postfix) with ESMTP id 1128D20818
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 13:23:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TQJulcy8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1128D20818
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729072AbeKJXH4 (ORCPT
+        id S1729113AbeKJXIC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 18:07:56 -0500
-Received: from outbound-smtp08.blacknight.com ([46.22.139.13]:41495 "EHLO
-        outbound-smtp08.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728988AbeKJXH4 (ORCPT
+        Sat, 10 Nov 2018 18:08:02 -0500
+Received: from mail-oi1-f176.google.com ([209.85.167.176]:33939 "EHLO
+        mail-oi1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728988AbeKJXIC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 18:07:56 -0500
-Received: from mail.blacknight.com (pemlinmail05.blacknight.ie [81.17.254.26])
-        by outbound-smtp08.blacknight.com (Postfix) with ESMTPS id D6DED1C1CA1
-        for <linux-kernel@vger.kernel.org>; Sat, 10 Nov 2018 13:22:51 +0000 (GMT)
-Received: (qmail 1113 invoked from network); 10 Nov 2018 13:22:51 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.69])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 10 Nov 2018 13:22:51 -0000
-Date:   Sat, 10 Nov 2018 13:22:49 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Andrea Arcangeli <aarcange@redhat.com>
-Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Anthony Yznaga <anthony.yznaga@oracle.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, aneesh.kumar@linux.ibm.com,
-        akpm@linux-foundation.org, jglisse@redhat.com,
-        khandual@linux.vnet.ibm.com, kirill.shutemov@linux.intel.com,
-        mhocko@kernel.org, minchan@kernel.org, peterz@infradead.org,
-        rientjes@google.com, vbabka@suse.cz, willy@infradead.org,
-        ying.huang@intel.com, nitingupta910@gmail.com
-Subject: Re: [RFC PATCH] mm: thp: implement THP reservations for anonymous
- memory
-Message-ID: <20181110132249.GH23260@techsingularity.net>
-References: <1541746138-6706-1-git-send-email-anthony.yznaga@oracle.com>
- <20181109121318.3f3ou56ceegrqhcp@kshutemo-mobl1>
- <20181109195150.GA24747@redhat.com>
+        Sat, 10 Nov 2018 18:08:02 -0500
+Received: by mail-oi1-f176.google.com with SMTP id i138-v6so3783431oib.1;
+        Sat, 10 Nov 2018 05:23:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Xyv11LBZfnLnE6qlFZgsd4I4EIQbqUk0eUUVIrH9/E0=;
+        b=TQJulcy84V5JSqP+2EZsS2oWgphoA6aAkxyy9f4Qjc9V+gi/hfA5XZ6semAD3NvTix
+         UclLTObTaxYt52FSOgF3DNtM7ZQi5iPF3nJ37KRpymgsRBBWyV0H3+ky1Zba3iS9pZ3j
+         RKJd6JqLOiRpex39K+C+q2fssfDGH5suUcFNTDeTR2A5eHJRBT9Uf2UiRhDY3bwXicrE
+         Td/ujQso+dz4r40Z2me0TdJLoIGl/SFTLzR6bdaGuN7CD7fy5KU61qN+PL0f6539rE8f
+         ZXRueop5xNrGhxcgEjfEkBZloMscGvAQo/kIhbE+opjk6TyOGdyGFwEMqrodDPfsnjAv
+         E4fQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Xyv11LBZfnLnE6qlFZgsd4I4EIQbqUk0eUUVIrH9/E0=;
+        b=n6uyKgBNHQWgDm2j2X7cDj4eP2ALeKyGbA3DzNIa27Tl36HK4nBACyer334tOcWyp6
+         LgWg0554xPOStaz+NLxtwxqPYeFqV2VQkpkDJyQAr4QU6bGIaQ73HcR10xxGxvsBxNOy
+         wocTagQrsMYb2/T4aaS4Dm//7oLcZJn5xcUu9IYyCoFBMU4DWk3kw0Zen15aITnijOk4
+         PLCvPutKMlf+WtZN4iGwAveLNhbcrPc27Kp1Ff74bDBVn4WcyCGKXR9XZ9BQ6WY8sLn6
+         y4xkOBDfcxrlP2p9eL0CN70K/j6Wbrj/yKtTJxYG76C6msP3rK3CIjqCPj/2PztWX0fj
+         jpqQ==
+X-Gm-Message-State: AGRZ1gKqnzHARIZsVchlzXUz/CdHkWF4Kdu4f9WaV4pl9yHDdlEWTy1F
+        3tYYNx3tklwLVvJsdrH0Xsl7eiCbjiprO26ToyA=
+X-Google-Smtp-Source: AJdET5fpGfAuNW8W0PWrDHAlGGlv70ttNCzFvTA987ud8+m9Qu2s62HZkPe9TBbDWIr1ijq7tuI0OWp0S7a8Nr1EzWw=
+X-Received: by 2002:aca:4d14:: with SMTP id a20-v6mr6741780oib.43.1541856181568;
+ Sat, 10 Nov 2018 05:23:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20181109195150.GA24747@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181109220044.24843-1-matheus.bernardino@usp.br>
+ <20181109220044.24843-6-matheus.bernardino@usp.br> <CAOMZO5DVr7TBoNtB7Bwjv1rpaCdOyg8+iU=iCwBRjSD4iWeBUw@mail.gmail.com>
+ <CAHd-oW4wo7fShsNMf7a1udnCepUL+ok+Gk7jzVoEUEUjaPCXpw@mail.gmail.com>
+ <20181110002018.GA3938@kroah.com> <CAHd-oW4uWFco9qcVwMphetXE9LK4YJQmDAbBUPBEBCT3UHZSkA@mail.gmail.com>
+In-Reply-To: <CAHd-oW4uWFco9qcVwMphetXE9LK4YJQmDAbBUPBEBCT3UHZSkA@mail.gmail.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Sat, 10 Nov 2018 11:22:56 -0200
+Message-ID: <CAOMZO5Bx-aMEZ9Wn4+3E_Y6QukkkKO1W_67P4jd9kbOOQaWOvg@mail.gmail.com>
+Subject: Re: [PATCH 5/6] staging:iio:ad2s90: Add SPDX license identifier
+To:     Matheus Tavares Bernardino <matheus.bernardino@usp.br>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devel@driverdev.osuosl.org, Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-iio@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        kernel-usp@googlegroups.com, Rob Herring <robh+dt@kernel.org>,
+        Peter Meerwald <pmeerw@pmeerw.net>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        alexandru.ardelean@analog.com,
+        Victor Colombo <victorcolombo@gmail.com>,
+        Jonathan Cameron <jic23@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 09, 2018 at 02:51:50PM -0500, Andrea Arcangeli wrote:
-> On Fri, Nov 09, 2018 at 03:13:18PM +0300, Kirill A. Shutemov wrote:
-> > I haven't yet read the patch in details, but I'm skeptical about the
-> > approach in general for few reasons:
-> > 
-> > - PTE page table retracting to replace it with huge PMD entry requires
-> >   down_write(mmap_sem). It makes the approach not practical for many
-> >   multi-threaded workloads.
-> > 
-> >   I don't see a way to avoid exclusive lock here. I will be glad to
-> >   be proved otherwise.
-> > 
-> > - The promotion will also require TLB flush which might be prohibitively
-> >   slow on big machines.
-> > 
-> > - Short living processes will fail to benefit from THP with the policy,
-> >   even with plenty of free memory in the system: no time to promote to THP
-> >   or, with synchronous promotion, cost will overweight the benefit.
-> > 
-> > The goal to reduce memory overhead of THP is admirable, but we need to be
-> > careful not to kill THP benefit itself. The approach will reduce number of
-> > THP mapped in the system and/or shift their allocation to later stage of
-> > process lifetime.
-> > 
-> > The only way I see it can be useful is if it will be possible to apply the
-> > policy on per-VMA basis. It will be very useful for malloc()
-> > implementations, for instance. But as a global policy it's no-go to me.
-> 
-> I'm also skeptical about this: the current design is quite
-> intentional. It's not a bug but a feature that we're not doing the
-> promotion.
-> 
+Hi Matheus,
 
-Understood. I think with two people with extensive THP experience being
-skeptical about this, we should take a step back before Anthony spends
-too much more time on this. It would be a shame to work extensively on
-a series just to have it rejected.
+On Fri, Nov 9, 2018 at 10:27 PM Matheus Tavares Bernardino
+<matheus.bernardino@usp.br> wrote:
 
-> Part of the tradeoff with THP is to use more RAM to save CPU, when you
-> use less RAM you're inherently already wasting some CPU just for the
-> reservation management and you don't get the immediate TLB benefit
-> anymore either.
-> 
+> Got it, thanks for the explanation! I'll correct this in v2.
 
-This is true, there is a gap where there is no THP benefit. The big
-question is how many workloads, if any, suffer as a result of premature
-reclaim due to sparse references of the address space consuming too much
-memory. Anthony, do you have any benchmarks in mind? I don't because the
-HPC workloads I'm aware of are usually sized to fit in memory regardless
-of THP use.
-
-> And if you're in the camp that is concerned about the use of more RAM
-> or/and about the higher latency of COW faults, I'm afraid the
-> intermediate solution will be still slower than the already available
-> MADV_NOHUGEPAGE or enabled=madvise.
-> 
-
-Does that not prevent huge page usage? Maybe you can spell it out a bit
-better. What is the set of system calls an application should make to
-not use huge pages either for the address space or on a per-VMA basis
-and defer to kcompactd? I know that can be tuned globally but that's not
-quite the same thing given that multiple applications or containers can
-be running with different requirements.
-
-> Now about the implementation: the whole point of the reservation
-> complexity is to skip the khugepaged copy, so it can collapse in
-> place. Is skipping the copy worth it? Isn't the big cost the IPI
-> anyway to avoid leaving two simultaneous TLB mappings of different
-> granularity?
-> 
-
-Not necessarily. With THP anon in the simple case, it might be just a
-single thread and kcompact so that's one IPI (kcompactd flushes local and
-one IPI to the CPU the thread was running on assuming it's not migrating
-excessively). It would scale up with the number of threads but I suspect
-the main cost is the actual copying, page table manipulation and the
-locking required.
-
-> So if you are ok to copy the memory that you promote to THP, you'd
-> just need a global THP mode to avoid allocating THP even when they're
-> available during the page fault (while still allowing khugepaged to
-> collapse hugepages in the background), and then reduce max_ptes_none
-> to get the desired promotion ratio.
-> 
-
-As an aside, a universal benefit would be looking at reducing the time
-to allocate the necessary huge page as we know that can be excessive. It
-would be ortogonal to this series.
-
-> > <SNIP>
-> >
-> > Prove me wrong with performance data. :)
-> 
-> Same here.
-> 
-
-Could you and Kirill outline what sort of workloads you would consider
-acceptable for evaluating this series? One would assume it covers at
-least the following, potentially with a number of workloads.
-
-1. Evaluate the collapse and copying costs (probing the entire time
-   spent in collapse_huge_page might do it)
-2. Evaluate mmap_sem hold time during hugepage collapse
-3. Estimate excessive RAM use due to unnecessary THP usage
-4. Estimate the slowdown due to delayed THP usage 
-
-1 and 2 would indicate how much time is lost due to not using
-reservations. That potentially goes in the direction of simply making
-this faster -- fragmentation reduction (posted but unreviewed), faster
-compaction searches, better page isolation during compaction to
-avoid free pages being reused before an order-9 is free.
-
-3 should be straight-forward but 4 would be the hardest to evaluate
-because it would have to be determimed if 4 is offset by improvements to
-1-3. If 1-3 is improved enough, it might remove the motivation for the
-series entirely.
-
-In other words, if we agree on a workload in advance, it might bring
-this the right direction and not accidentally throw Anthony down a hole
-working on a series that never gets ack'd.
-
-I'm not necessarily the best person to answer because my natural inclination
-after the fragmentation series would be to keep using thpfiosacle
-(from the fragmentation avoidance series) and work on improving the THP
-allocation success rates and reduce latencies. I've tunnel vision on that
-for the moment.
-
-Thanks.
-
--- 
-Mel Gorman
-SUSE Labs
+One more suggestion: in v2 you could also consider to remove the legal
+text that says GPL v2, as you are adding the SPDX tag.
