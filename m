@@ -2,378 +2,120 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 470DCC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:45:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCE20C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:49:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E68D020858
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:45:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6945E20858
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:49:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZX020Zn0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E68D020858
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CwRFwIG7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6945E20858
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727277AbeKKEbU (ORCPT
+        id S1726896AbeKKEfW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 23:31:20 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:35644 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727110AbeKKEbT (ORCPT
+        Sat, 10 Nov 2018 23:35:22 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43511 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726323AbeKKEfW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 23:31:19 -0500
-Received: by mail-ua1-f68.google.com with SMTP id d8so1769726ual.2
-        for <linux-kernel@vger.kernel.org>; Sat, 10 Nov 2018 10:45:21 -0800 (PST)
+        Sat, 10 Nov 2018 23:35:22 -0500
+Received: by mail-wr1-f68.google.com with SMTP id y3-v6so5155312wrh.10
+        for <linux-kernel@vger.kernel.org>; Sat, 10 Nov 2018 10:49:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=8AMLtmmurCtRfJVdyZgA2kK00jaD0RApM2FvUpjayjg=;
-        b=ZX020Zn0rGW7bEwBPLkENmG2C45zBBZX19p5G+JHxFBjP3eUNpghpl76MhYEjLdSvZ
-         SvCEtM1yOvkThmHBtewMvEpwcubO8qNpEPP442PxSIhlzk46OmUPEAYgdZXSXbwPddcQ
-         pOljUksJIxbTzE+gV5NgH43vdDwylG9Fz7guKPnyx9FTiJaAs4wO7fPIclOMlRpdJMc8
-         NWIWbBHfASOQ77xEpUwMfEBR/1twh3kRjBUdxO2ecfnX2LoB8pYLavtXKT9BoKWxhLRg
-         fv/6qztMStIpjKxtbmt52X059hO/Y2IyiVD/XX6VekxHTHIFJeLpbgDH2XLUTyU0oUNX
-         PuIw==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=pWThVh5cfNbHfJo9lFRyeOiCX3rKajXV9sEu9P0Kadw=;
+        b=CwRFwIG7o27BkKBd7lHdBM8qmEU4uGRQ+FBTpMKI+bSOgy09ejk+/kHuYTyyWbYBzf
+         DDm2u9T3y+Ol/fbNQDL6dItwFn2sBss6l0N/jidZNzjEJUtGq/bVIcYx73ojfcgFluaq
+         EjS1f1i16Ykyy+B9s70iPtpf8ZSjKgCTjHW6av4sbg/LLFnpj2q/KglvQfv96KaxYreZ
+         2GcuolOGCBro2wAFXi4LeDV6RzmSzTdnCoLSmSeoVJrYU2hm5wJGbfx8Mr8U4WamZoLc
+         lksF6PalNbTJqkk6Ab6AZoLxOBIlFLy8ehhlAsZf+hjOMWrUIqZeFQTv70UKvKGlYyxZ
+         b5hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=8AMLtmmurCtRfJVdyZgA2kK00jaD0RApM2FvUpjayjg=;
-        b=PU/tZLOCZP95FcM1borqoW4bjCYeKfOC4RfvcylPF5HiDGQl5PiCT6J9SaXH1gzSID
-         t5oklMmxOfiIlpfqAZ53g2pY/M6P8dMk+mpK7bNhmCllZtgXEwFM1aRitGX1fq17mvXb
-         whCy1CdiPspRka8vGXyvvCrWutgs2SDj1Q04q+m+7t3VY7n5PWByeqN5xK8kItRa0viA
-         Vn+zABvADvgpoo7DP/ppVD8wwE38CRsZLUO/vskJeFjR5f/bjzlvDX0Pqqqaym8B0rOk
-         JiK6jwHzRgRs+jVAhLTr26YusrXhjXRXUsukFnN9a3Bf6G0E1XawtoTnPpfOmo0cOEO+
-         rUKg==
-X-Gm-Message-State: AGRZ1gIf4gYtdv/x7ZK14+HIDEI01BYzjevJ/jtSU/WDlvY4qSFUJzE0
-        HS6Vr799NtW9Uz4IWvMev+hfRJvxdA2xXzsld5ktEQ==
-X-Google-Smtp-Source: AJdET5eO4tXb6GLsmvt1mMKh8qWHpfQl5PK+Vd+WP9U3tJh/WU1xAy0FFH5Hc2/wz/qznKF6EGq4F8VQChTvPJBZDoI=
-X-Received: by 2002:ab0:5648:: with SMTP id z8mr5851121uaa.126.1541875520806;
- Sat, 10 Nov 2018 10:45:20 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=pWThVh5cfNbHfJo9lFRyeOiCX3rKajXV9sEu9P0Kadw=;
+        b=o0ner7N0fqc5MfsxUs08VL6leV3oiWW21dlXUG9pXu+PirSW3Vaqb5OxHzF5Rl43O5
+         6p9ybzBeQFQbE6YpOxTPKzv2JGiF/TsFgGAYXYddhZIyru1xLfRitZ+Zl7yXhkLMuePq
+         3xMChDEP95KXdJVylPLn5cAGt5/I8ficL6UONzPLW631GBiM73nRM6mtha/aWQu2ito6
+         FQWA5fN1uAflV60xG2jO/MuxwjMfTkfx3a3vd+Q8g3jNWjMCGHGq1rPRnwODXveRQVe7
+         VJEjq3UWefKOxZjlzpamaatVUBps0UDPVizj18FjYAiokcBjnfpCRtr92X2yR9heymuU
+         dYeQ==
+X-Gm-Message-State: AGRZ1gJEb1ob3MC5s/VXl9C4yFMpYTCPIRsmCFf+/2ll0KDWVRGkqOe9
+        F6K7PH1iuUKKlwaY0kYJEg==
+X-Google-Smtp-Source: AJdET5cCDDL9dVG80GhQEz5UE/IfrXFxPc4a5/rdaliClLkXkntVEBIwfhvJ9XM/DsysQpdr9ELofQ==
+X-Received: by 2002:a5d:64c2:: with SMTP id y2-v6mr12685130wrv.209.1541875762792;
+        Sat, 10 Nov 2018 10:49:22 -0800 (PST)
+Received: from avx2 (nat5-minsk-pool-46-53-217-92.telecom.by. [46.53.217.92])
+        by smtp.gmail.com with ESMTPSA id h4-v6sm10440780wrt.76.2018.11.10.10.49.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 10 Nov 2018 10:49:22 -0800 (PST)
+Date:   Sat, 10 Nov 2018 21:49:20 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     akpm@linux-foundation.org
+Cc:     rafael.tinoco@linaro.org, linux-kernel@vger.kernel.org,
+        gorcunov@gmail.com
+Subject: [PATCH] proc: fixup map_files test on arm
+Message-ID: <20181110184920.GA18252@avx2>
 MIME-Version: 1.0
-Received: by 2002:a67:f48d:0:0:0:0:0 with HTTP; Sat, 10 Nov 2018 10:45:19
- -0800 (PST)
-In-Reply-To: <20181110182405.GB242356@google.com>
-References: <20181108041537.39694-1-joel@joelfernandes.org>
- <CAG48ez1h=v-JYnDw81HaYJzOfrNhwYksxmc2r=cJvdQVgYM+NA@mail.gmail.com>
- <CAG48ez0kQ4d566bXTFOYANDgii-stL-Qj-oyaBzvfxdV=PU-7g@mail.gmail.com>
- <20181110032005.GA22238@google.com> <69CE06CC-E47C-4992-848A-66EB23EE6C74@amacapital.net>
- <20181110182405.GB242356@google.com>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Sat, 10 Nov 2018 10:45:19 -0800
-Message-ID: <CAKOZuesQXRtthJTEr86LByH3gPpAdT-PQM0d1jqr131=zZNRKw@mail.gmail.com>
-Subject: Re: [PATCH v3 resend 1/2] mm: Add an F_SEAL_FUTURE_WRITE seal to memfd
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Jann Horn <jannh@google.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        John Reck <jreck@google.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Todd Kjos <tkjos@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Bruce Fields <bfields@fieldses.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Khalid Aziz <khalid.aziz@oracle.com>, Lei.Yang@windriver.com,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>, marcandre.lureau@redhat.com,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        Hugh Dickins <hughd@google.com>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 10, 2018 at 10:24 AM, Joel Fernandes <joel@joelfernandes.org> w=
-rote:
-> Thanks Andy for your thoughts, my comments below:
->
-> On Fri, Nov 09, 2018 at 10:05:14PM -0800, Andy Lutomirski wrote:
->>
->>
->> > On Nov 9, 2018, at 7:20 PM, Joel Fernandes <joel@joelfernandes.org> wr=
-ote:
->> >
->> >> On Fri, Nov 09, 2018 at 10:19:03PM +0100, Jann Horn wrote:
->> >>> On Fri, Nov 9, 2018 at 10:06 PM Jann Horn <jannh@google.com> wrote:
->> >>> On Fri, Nov 9, 2018 at 9:46 PM Joel Fernandes (Google)
->> >>> <joel@joelfernandes.org> wrote:
->> >>>> Android uses ashmem for sharing memory regions. We are looking forw=
-ard
->> >>>> to migrating all usecases of ashmem to memfd so that we can possibl=
-y
->> >>>> remove the ashmem driver in the future from staging while also
->> >>>> benefiting from using memfd and contributing to it. Note staging dr=
-ivers
->> >>>> are also not ABI and generally can be removed at anytime.
->> >>>>
->> >>>> One of the main usecases Android has is the ability to create a reg=
-ion
->> >>>> and mmap it as writeable, then add protection against making any
->> >>>> "future" writes while keeping the existing already mmap'ed
->> >>>> writeable-region active.  This allows us to implement a usecase whe=
-re
->> >>>> receivers of the shared memory buffer can get a read-only view, whi=
-le
->> >>>> the sender continues to write to the buffer.
->> >>>> See CursorWindow documentation in Android for more details:
->> >>>> https://developer.android.com/reference/android/database/CursorWind=
-ow
->> >>>>
->> >>>> This usecase cannot be implemented with the existing F_SEAL_WRITE s=
-eal.
->> >>>> To support the usecase, this patch adds a new F_SEAL_FUTURE_WRITE s=
-eal
->> >>>> which prevents any future mmap and write syscalls from succeeding w=
-hile
->> >>>> keeping the existing mmap active.
->> >>>
->> >>> Please CC linux-api@ on patches like this. If you had done that, I
->> >>> might have criticized your v1 patch instead of your v3 patch...
->> >>>
->> >>>> The following program shows the seal
->> >>>> working in action:
->> >>> [...]
->> >>>> Cc: jreck@google.com
->> >>>> Cc: john.stultz@linaro.org
->> >>>> Cc: tkjos@google.com
->> >>>> Cc: gregkh@linuxfoundation.org
->> >>>> Cc: hch@infradead.org
->> >>>> Reviewed-by: John Stultz <john.stultz@linaro.org>
->> >>>> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
->> >>>> ---
->> >>> [...]
->> >>>> diff --git a/mm/memfd.c b/mm/memfd.c
->> >>>> index 2bb5e257080e..5ba9804e9515 100644
->> >>>> --- a/mm/memfd.c
->> >>>> +++ b/mm/memfd.c
->> >>> [...]
->> >>>> @@ -219,6 +220,25 @@ static int memfd_add_seals(struct file *file, =
-unsigned int seals)
->> >>>>                }
->> >>>>        }
->> >>>>
->> >>>> +       if ((seals & F_SEAL_FUTURE_WRITE) &&
->> >>>> +           !(*file_seals & F_SEAL_FUTURE_WRITE)) {
->> >>>> +               /*
->> >>>> +                * The FUTURE_WRITE seal also prevents growing and =
-shrinking
->> >>>> +                * so we need them to be already set, or requested =
-now.
->> >>>> +                */
->> >>>> +               int test_seals =3D (seals | *file_seals) &
->> >>>> +                                (F_SEAL_GROW | F_SEAL_SHRINK);
->> >>>> +
->> >>>> +               if (test_seals !=3D (F_SEAL_GROW | F_SEAL_SHRINK)) =
-{
->> >>>> +                       error =3D -EINVAL;
->> >>>> +                       goto unlock;
->> >>>> +               }
->> >>>> +
->> >>>> +               spin_lock(&file->f_lock);
->> >>>> +               file->f_mode &=3D ~(FMODE_WRITE | FMODE_PWRITE);
->> >>>> +               spin_unlock(&file->f_lock);
->> >>>> +       }
->> >>>
->> >>> So you're fiddling around with the file, but not the inode? How are
->> >>> you preventing code like the following from re-opening the file as
->> >>> writable?
->> >>>
->> >>> $ cat memfd.c
->> >>> #define _GNU_SOURCE
->> >>> #include <unistd.h>
->> >>> #include <sys/syscall.h>
->> >>> #include <printf.h>
->> >>> #include <fcntl.h>
->> >>> #include <err.h>
->> >>> #include <stdio.h>
->> >>>
->> >>> int main(void) {
->> >>>  int fd =3D syscall(__NR_memfd_create, "testfd", 0);
->> >>>  if (fd =3D=3D -1) err(1, "memfd");
->> >>>  char path[100];
->> >>>  sprintf(path, "/proc/self/fd/%d", fd);
->> >>>  int fd2 =3D open(path, O_RDWR);
->> >>>  if (fd2 =3D=3D -1) err(1, "reopen");
->> >>>  printf("reopen successful: %d\n", fd2);
->> >>> }
->> >>> $ gcc -o memfd memfd.c
->> >>> $ ./memfd
->> >>> reopen successful: 4
->> >>> $
->> >>>
->> >>> That aside: I wonder whether a better API would be something that
->> >>> allows you to create a new readonly file descriptor, instead of
->> >>> fiddling with the writability of an existing fd.
->> >>
->> >> My favorite approach would be to forbid open() on memfds, hope that
->> >> nobody notices the tiny API break, and then add an ioctl for "reopen
->> >> this memfd with reduced permissions" - but that's just my personal
->> >> opinion.
->> >
->> > I did something along these lines and it fixes the issue, but I forbid=
- open
->> > of memfd only when the F_SEAL_FUTURE_WRITE seal is in place. So then i=
-ts not
->> > an ABI break because this is a brand new seal. That seems the least in=
-trusive
->> > solution and it works. Do you mind testing it and I'll add your and Te=
-sted-by
->> > to the new fix? The patch is based on top of this series.
->> >
->> > ---8<-----------
->> > From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
->> > Subject: [PATCH] mm/memfd: Fix possible promotion to writeable of seal=
-ed memfd
->> >
->> > Jann Horn found that reopening an F_SEAL_FUTURE_WRITE sealed memfd
->> > through /proc/self/fd/N symlink as writeable succeeds. The simplest fi=
-x
->> > without causing ABI breakages and ugly VFS hacks is to simply deny all
->> > opens on F_SEAL_FUTURE_WRITE sealed fds.
->> >
->> > Reported-by: Jann Horn <jannh@google.com>
->> > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
->> > ---
->> > mm/shmem.c | 18 ++++++++++++++++++
->> > 1 file changed, 18 insertions(+)
->> >
->> > diff --git a/mm/shmem.c b/mm/shmem.c
->> > index 446942677cd4..5b378c486b8f 100644
->> > --- a/mm/shmem.c
->> > +++ b/mm/shmem.c
->> > @@ -3611,7 +3611,25 @@ static const struct address_space_operations sh=
-mem_aops =3D {
->> >    .error_remove_page =3D generic_error_remove_page,
->> > };
->> >
->> > +/* Could arrive here for memfds opened through /proc/ */
->> > +int shmem_open(struct inode *inode, struct file *file)
->> > +{
->> > +    struct shmem_inode_info *info =3D SHMEM_I(inode);
->> > +
->> > +    /*
->> > +     * memfds for which future writes have been prevented
->> > +     * should not be reopened, say, through /proc/pid/fd/N
->> > +     * symlinks otherwise it can cause a sealed memfd to be
->> > +     * promoted to writable.
->> > +     */
->> > +    if (info->seals & F_SEAL_FUTURE_WRITE)
->> > +        return -EACCES;
->> > +
->> > +    return 0;
->> > +}
->>
->> The result of this series is very warty. We have a concept of seals, and=
- they all work similarly, except the new future write seal. That one:
->>
->
-> I don't see it as warty, different seals will work differently. It works
-> quite well for our usecase, and since Linux is all about solving real
-> problems in the real work, it would be useful to have it.
->
->> - causes a probably-observable effect in the file mode in F_GETFL.
->
-> Wouldn't that be the right thing to observe anyway?
->
->> - causes reopen to fail.
->
-> So this concern isn't true anymore if we make reopen fail only for WRITE
-> opens as Daniel suggested. I will make this change so that the security f=
-ix
-> is a clean one.
->
->> - does *not* affect other struct files that may already exist on the sam=
-e inode.
->
-> TBH if you really want to block all writes to the file, then you want
-> F_SEAL_WRITE, not this seal. The usecase we have is the fd is sent over I=
-PC
-> to another process and we want to prevent any new writes in the receiver
-> side. There is no way this other receiving process can have an existing f=
-d
-> unless it was already sent one without the seal applied.  The proposed se=
-al
-> could be renamed to F_SEAL_FD_WRITE if that is preferred.
->
->> - mysteriously malfunctions if you try to set it again on another struct
->> file that already exists
->>
->
-> I didn't follow this, could you explain more?
->
->> - probably is insecure when used on hugetlbfs.
->
-> The usecase is not expected to prevent all writes, indeed the usecase
-> requires existing mmaps to continue to be able to write into the memory m=
-ap.
-> So would you call that a security issue too? The use of the seal wants to
-> allow existing mmap regions to be continue to be written into (I mentione=
-d
-> more details in the cover letter).
->
->> I see two reasonable solutions:
->>
->> 1. Don=E2=80=99t fiddle with the struct file at all. Instead make the in=
-ode flag
->> work by itself.
->
-> Currently, the various VFS paths check only the struct file's f_mode to d=
-eny
-> writes of already opened files. This would mean more checking in all thos=
-e
-> paths (and modification of all those paths).
->
-> Anyway going with that idea, we could
-> 1. call deny_write_access(file) from the memfd's seal path which decremen=
-ts
-> the inode::i_writecount.
-> 2. call get_write_access(inode) in the various VFS paths in addition to
-> checking for FMODE_*WRITE and deny the write (incase i_writecount is nega=
-tive)
->
-> That will prevent both reopens, and writes from succeeding. However I wor=
-ry a
-> bit about 2 not being too familiar with VFS internals, about what the
-> consequences of doing that may be.
+https://bugs.linaro.org/show_bug.cgi?id=3782
 
-IMHO, modifying both the inode and the struct file separately is fine,
-since they mean different things. In regular filesystems, it's fine to
-have a read-write open file description for a file whose inode grants
-write permission to nobody. Speaking of which: is fchmod enough to
-prevent this attack?
+Turns out arm doesn't allow to map address 0, so try minimum virtual
+address instead.
 
->> 2. Don=E2=80=99t call it a =E2=80=9Cseal=E2=80=9D.  Instead fix the /pro=
-c hole and add an API to
->> drop write access on an existing struct file.
->>
->> I personally prefer #2.
->
-> So I don't think proc has a hole looking at the code yesterday. As I was
-> saying in other thread, its just how symlinks work. If we were to apply t=
-his
-> API to files in general, and we had symlinks to files and we tried to reo=
-pen the
-> file, we would run into the same issue - that's why I believe it has noth=
-ing
-> to do with proc, and the fix has to be in the underlying inode being poin=
-ted
-> to. Does that make sense or did I miss something?
+Reported-by: Rafael David Tinoco <rafael.tinoco@linaro.org>
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+---
 
-+1. Another point to consider is that even if we did somehow fix the
-"proc hole", any other means (perhaps in the future) of obtaining an
-inode reference would then be insecure, perhaps silently. For example
---- is there a way to use open_by_handle_at(2) to open a memfd file?
+ tools/testing/selftests/proc/proc-self-map-files-002.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+--- a/tools/testing/selftests/proc/proc-self-map-files-002.c
++++ b/tools/testing/selftests/proc/proc-self-map-files-002.c
+@@ -13,7 +13,7 @@
+  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+  */
+-/* Test readlink /proc/self/map_files/... with address 0. */
++/* Test readlink /proc/self/map_files/... with minimum address. */
+ #include <errno.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
+@@ -47,6 +47,11 @@ static void fail(const char *fmt, unsigned long a, unsigned long b)
+ int main(void)
+ {
+ 	const unsigned int PAGE_SIZE = sysconf(_SC_PAGESIZE);
++#ifdef __arm__
++	unsigned long va = 2 * PAGE_SIZE;
++#else
++	unsigned long va = 0;
++#endif
+ 	void *p;
+ 	int fd;
+ 	unsigned long a, b;
+@@ -55,7 +60,7 @@ int main(void)
+ 	if (fd == -1)
+ 		return 1;
+ 
+-	p = mmap(NULL, PAGE_SIZE, PROT_NONE, MAP_PRIVATE|MAP_FILE|MAP_FIXED, fd, 0);
++	p = mmap(va, PAGE_SIZE, PROT_NONE, MAP_PRIVATE|MAP_FILE|MAP_FIXED, fd, 0);
+ 	if (p == MAP_FAILED) {
+ 		if (errno == EPERM)
+ 			return 2;
