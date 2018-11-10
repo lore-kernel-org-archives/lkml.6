@@ -2,174 +2,126 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 205B0C0044B
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 11:46:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F38C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 11:48:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB9A420883
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 11:46:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB9A420883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 5214420883
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 11:48:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WA+aNg/X"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5214420883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729087AbeKJVat (ORCPT
+        id S1729114AbeKJVdA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 16:30:49 -0500
-Received: from mail-it1-f199.google.com ([209.85.166.199]:54178 "EHLO
-        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729059AbeKJVat (ORCPT
+        Sat, 10 Nov 2018 16:33:00 -0500
+Received: from mail-it1-f178.google.com ([209.85.166.178]:37159 "EHLO
+        mail-it1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728959AbeKJVdA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 16:30:49 -0500
-Received: by mail-it1-f199.google.com with SMTP id l200-v6so6288267ita.3
-        for <linux-kernel@vger.kernel.org>; Sat, 10 Nov 2018 03:46:04 -0800 (PST)
+        Sat, 10 Nov 2018 16:33:00 -0500
+Received: by mail-it1-f178.google.com with SMTP id j79-v6so7184456itb.2
+        for <linux-kernel@vger.kernel.org>; Sat, 10 Nov 2018 03:48:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=+tpj66HpG2o9IYATyMo2Lc/MF5WLzzbPHe856Bqvi4M=;
+        b=WA+aNg/XrsnbGFMijKQzex8aHSl0E9fmofz4lGp63f6ZqUSWBvHmIvV/rKUkS+JkfH
+         69W20eNxPuYY4o7aW/HFUWf1IpAshDpLfZwhNLkd0wnZ8Ny8FFDxzZniGH9l07BYf4+3
+         nv2uxfv+NOfc8zUqWHJvSxsGOrzAax4hE3MkQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=xJX20HzMchDUufUCWMeLYaiQJSe/OL/ziT07LD85WJc=;
-        b=mbjslqWS88OGDe82ETEG2dw6/WhxQ+guVJfmkJa/mdBR4DvKoYoDVxf6MtajnCBpbl
-         MWaPXK4vLFQ1lKqMSIngDZXGngmBrwmaYti1AWfHui9qU0HFLVPvq/Jbg+L7agkRFPVe
-         0Zpr6/fwS6sY8dIC6rs234oqRkOkf03aOyHJB8m1NWx6W8jfPU2FK+MNVEpSyw5EmG0Y
-         J+8myI2GOIYNZwreycjUtGg6A47d7EyFESdkr0VZu3SU7soIXI2FHs9GNpBboJbNlN1d
-         Z+GwoJsCtieF6NVtTzVEOb1WHzLjyIcn/xPnt5krXWKzmhXMXcvQZ6rOkWT1Bb4K2P0I
-         ZBtg==
-X-Gm-Message-State: AGRZ1gIvjsP6Q0/t6jIk3CkR7UTXyPwoJL/xLKnnUwpwRPrmdENMLI3b
-        4FX8+1ouyJzHCdrKQspH1CX5r5S4WGSBPQhlvpNsdVflh1y3
-X-Google-Smtp-Source: AJdET5eDbN/KSW1CPqZAfRQfRLarFUeVxNtYxug+Jm0/WjirHWXjMGRpR2XCRqd+9OLp2HNNkUMrP9dzv3i6JXXsojshIv0GdtTv
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=+tpj66HpG2o9IYATyMo2Lc/MF5WLzzbPHe856Bqvi4M=;
+        b=RiwYgRfTiGNQObzu6UTFIO4Il2YDuoF7VctSn5P537wjjJwwBPnoQva/Yo3I7DxIch
+         JVV/01j+gRnNzczazKz+CRJGbj2YK7fUg17vIbQ99VSHbLa6ylNIUn1xrG1qJLeEkEid
+         4Le0eBQdLj7TEQt21+uej7UM4Hot48TjgTM9XVQrNmU+dIStzeTA/HqVC5O5CbPutFW+
+         vloInZWF1hUcjgN1NRtYhQjon0uMC7LXhO090BeO8qJUyitog6plIzktRE/tesS1F0uK
+         gmg6aLD9wKXiztoegfFpgeAqSN4gTg+ZONAuEprY0XOvPIC7B0PVTkXFgPdB5MXaJwnd
+         sbug==
+X-Gm-Message-State: AGRZ1gLWcUZTZHSxulLyoFNBlLIz1ZybC6cS3U06/uHPI5BIy5XUyUDC
+        b1GGw8mYo/uPR2myjBYzA+UvodvuU8yhnaXzAYm6jQ==
+X-Google-Smtp-Source: AJdET5eO+L5/9KBnsB7cwSByqqiuHCKmG46QD7Mo/PwKyI5wSU3GkqOxuzM0hgCut2zdH5+zL5Eyl2SDAEI+PJyWDXQ=
+X-Received: by 2002:a24:2190:: with SMTP id e138-v6mr5619739ita.71.1541850494452;
+ Sat, 10 Nov 2018 03:48:14 -0800 (PST)
 MIME-Version: 1.0
-X-Received: by 2002:a24:bdc7:: with SMTP id x190-v6mr4536120ite.21.1541850364386;
- Sat, 10 Nov 2018 03:46:04 -0800 (PST)
-Date:   Sat, 10 Nov 2018 03:46:04 -0800
-In-Reply-To: <0000000000004904df0578b7d3da@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000442753057a4e036d@google.com>
-Subject: Re: KASAN: use-after-free Read in task_is_descendant
-From:   syzbot <syzbot+a9ac39bf55329e206219@syzkaller.appspotmail.com>
-To:     jmorris@namei.org, keescook@chromium.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, oleg@redhat.com,
-        penguin-kernel@I-love.SAKURA.ne.jp,
-        penguin-kernel@i-love.sakura.ne.jp, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Received: by 2002:a6b:4f16:0:0:0:0:0 with HTTP; Sat, 10 Nov 2018 03:48:13
+ -0800 (PST)
+In-Reply-To: <AAACED12-1AAD-4C03-97EF-EF87F05A7056@gmx.us>
+References: <AAACED12-1AAD-4C03-97EF-EF87F05A7056@gmx.us>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Sat, 10 Nov 2018 12:48:13 +0100
+Message-ID: <CAKv+Gu8RKJUnsEqSPDnvUSckUootTp8Tq=AhUA9iEVb3zMqdCA@mail.gmail.com>
+Subject: Re: Object debugging warning from efivar
+To:     Qian Cai <cai@gmx.us>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Matthew Garrett <matthew.garrett@nebula.com>,
+        Jeremy Kerr <jk@ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+On 9 November 2018 at 23:19, Qian Cai <cai@gmx.us> wrote:
+> Booting this aarch64 server with the latest mainline (3541833fd1f2) get this warning
+> using object debugging. Any idea?
+>
 
-HEAD commit:    aa4330e15c26 Merge tag 'devicetree-fixes-for-4.20-2' of gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17abaa47400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8f559fee2fc3375a
-dashboard link: https://syzkaller.appspot.com/bug?extid=a9ac39bf55329e206219
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-userspace arch: i386
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=108ae6d5400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17bd86a3400000
+Thanks Qian
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+a9ac39bf55329e206219@syzkaller.appspotmail.com
+Fix is here
+https://lore.kernel.org/lkml/1540304307-2806-1-git-send-email-longman@redhat.com/
 
-==================================================================
-BUG: KASAN: use-after-free in __read_once_size include/linux/compiler.h:182  
-[inline]
-BUG: KASAN: use-after-free in task_is_descendant.part.3+0x610/0x670  
-security/yama/yama_lsm.c:295
-Read of size 8 at addr ffff8801ae718560 by task syz-executor198/4607
+and is queued in efi/urgent
 
-CPU: 1 PID: 4607 Comm: syz-executor198 Not tainted 4.20.0-rc1+ #232
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  __read_once_size include/linux/compiler.h:182 [inline]
-  task_is_descendant.part.3+0x610/0x670 security/yama/yama_lsm.c:295
-  task_is_descendant security/yama/yama_lsm.c:282 [inline]
-  yama_ptrace_access_check+0x215/0x10fc security/yama/yama_lsm.c:371
-  security_ptrace_access_check+0x54/0xb0 security/security.c:271
-  __ptrace_may_access+0x5c8/0x980 kernel/ptrace.c:336
-  ptrace_attach+0x1fa/0x640 kernel/ptrace.c:389
-  __do_compat_sys_ptrace kernel/ptrace.c:1284 [inline]
-  __se_compat_sys_ptrace kernel/ptrace.c:1266 [inline]
-  __ia32_compat_sys_ptrace+0x1d2/0x260 kernel/ptrace.c:1266
-  do_syscall_32_irqs_on arch/x86/entry/common.c:326 [inline]
-  do_fast_syscall_32+0x34d/0xfb2 arch/x86/entry/common.c:397
-  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
-RIP: 0023:0xf7feba29
-Code: 85 d2 74 02 89 0a 5b 5d c3 8b 04 24 c3 8b 14 24 c3 8b 3c 24 c3 90 90  
-90 90 90 90 90 90 90 90 90 90 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90  
-90 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 002b:00000000f7fe71ec EFLAGS: 00000296 ORIG_RAX: 000000000000001a
-RAX: ffffffffffffffda RBX: 0000000000004206 RCX: 00000000000014b5
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
 
-Allocated by task 5668:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
-  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
-  kmem_cache_alloc_node+0x144/0x730 mm/slab.c:3644
-  alloc_task_struct_node kernel/fork.c:158 [inline]
-  dup_task_struct kernel/fork.c:843 [inline]
-  copy_process+0x2026/0x87a0 kernel/fork.c:1751
-  _do_fork+0x1cb/0x11d0 kernel/fork.c:2216
-  __do_compat_sys_x86_clone arch/x86/ia32/sys_ia32.c:240 [inline]
-  __se_compat_sys_x86_clone arch/x86/ia32/sys_ia32.c:236 [inline]
-  __ia32_compat_sys_x86_clone+0xbc/0x140 arch/x86/ia32/sys_ia32.c:236
-  do_syscall_32_irqs_on arch/x86/entry/common.c:326 [inline]
-  do_fast_syscall_32+0x34d/0xfb2 arch/x86/entry/common.c:397
-  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
-
-Freed by task 16:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kmem_cache_free+0x83/0x290 mm/slab.c:3760
-  free_task_struct kernel/fork.c:163 [inline]
-  free_task+0x16e/0x1f0 kernel/fork.c:457
-  __put_task_struct+0x2e6/0x620 kernel/fork.c:730
-  put_task_struct include/linux/sched/task.h:96 [inline]
-  delayed_put_task_struct+0x2ff/0x4c0 kernel/exit.c:181
-  __rcu_reclaim kernel/rcu/rcu.h:240 [inline]
-  rcu_do_batch kernel/rcu/tree.c:2437 [inline]
-  invoke_rcu_callbacks kernel/rcu/tree.c:2716 [inline]
-  rcu_process_callbacks+0x100a/0x1ac0 kernel/rcu/tree.c:2697
-  __do_softirq+0x308/0xb7e kernel/softirq.c:292
-
-The buggy address belongs to the object at ffff8801ae718080
-  which belongs to the cache task_struct of size 6080
-The buggy address is located 1248 bytes inside of
-  6080-byte region [ffff8801ae718080, ffff8801ae719840)
-The buggy address belongs to the page:
-page:ffffea0006b9c600 count:1 mapcount:0 mapping:ffff8801da970180 index:0x0  
-compound_mapcount: 0
-flags: 0x2fffc0000010200(slab|head)
-raw: 02fffc0000010200 ffffea0006b99488 ffffea0006b9c688 ffff8801da970180
-raw: 0000000000000000 ffff8801ae718080 0000000100000001 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801ae718400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801ae718480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ffff8801ae718500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                        ^
-  ffff8801ae718580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801ae718600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
+> [   34.716558] ODEBUG: object (____ptrval____) is NOT on stack (____ptrval____), but annotated.
+> [   34.725266] WARNING: CPU: 0 PID: 1 at lib/debugobjects.c:369 __debug_object_init+0x910/0x918
+> [   34.733806] Modules linked in:
+> [   34.736903] CPU: 0 PID: 1 Comm: swapper/0 Tainted: G        W         4.20.0-rc1+ #1
+> [   34.744740] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.50 06/01/2018
+> [   34.752051] pstate: 20000085 (nzCv daIf -PAN -UAO)
+> [   34.756902] pc : __debug_object_init+0x910/0x918
+> [   34.761576] lr : __debug_object_init+0x594/0x918
+> [   34.766249] sp : ffff8096c1a0f420
+> [   34.769603] x29: ffff8096c1a0f420 x28: 1ffff012d8341ec6
+> [   34.774984] x27: ffff20000bc21000 x26: ffff20000bc34e40
+> [   34.780364] x25: ffff8096c411e8c8 x24: ffff8096c411e8d0
+> [   34.785743] x23: ffff20000c5654d0 x22: ffff20000bc21c40
+> [   34.791123] x21: ffff801ec1a00060 x20: ffff801ec1a00040
+> [   34.796502] x19: ffff801ec1a00040 x18: 000000000000003f
+> [   34.801881] x17: 0000000000000000 x16: 0000000000000000
+> [   34.807260] x15: 0000000000007fff x14: 6e6120747562202c
+> [   34.812640] x13: 295f5f5f5f6c6176 x12: ffff1012d8341ceb
+> [   34.818019] x11: 00000000f2f2f2f2 x10: dfff200000000000
+> [   34.823399] x9 : ffff20000a0e9848 x8 : ffff801ec1a00b70
+> [   34.828778] x7 : 00000000f2f2f204 x6 : 00000000f2f2f204
+> [   34.834157] x5 : 0000000041b58ab3 x4 : dfff200000000000
+> [   34.839537] x3 : dfff200000000000 x2 : 2b6ba53cf7873600
+> [   34.844916] x1 : 0000000000000000 x0 : 0000000000000050
+> [   34.850295] Call trace:
+> [   34.852772]  __debug_object_init+0x910/0x918
+> [   34.857095]  debug_object_init_on_stack+0x20/0x28
+> [   34.861859]  __init_work+0x34/0x50
+> [   34.865304]  virt_efi_get_next_variable+0xbc/0x190
+> [   34.870153]  efivar_init+0x144/0x4b0
+> [   34.873773]  efisubsys_init+0x1a8/0x428
+> [   34.877656]  do_one_initcall+0x160/0x6bc
+> [   34.881628]  kernel_init_freeable+0x74c/0x814
+> [   34.886040]  kernel_init+0x18/0x11c
+> [   34.889572]  ret_from_fork+0x10/0x1c
+> [   34.893189] irq event stamp: 882290
+> [   34.896723] hardirqs last  enabled at (882289): [<ffff200008fab538>] _raw_spin_unlock_irqrestore+0x80/0x88
+> [   34.906496] hardirqs last disabled at (882290): [<ffff200008fab264>] _raw_spin_lock_irqsave+0x34/0x98
+> [   34.915829] softirqs last  enabled at (881706): [<ffff200008082210>] __do_softirq+0x7c8/0x9c8
+> [   34.924460] softirqs last disabled at (881697): [<ffff20000812dbe4>] irq_exit+0x25c/0x2f0
+> [   34.932736] ---[ end trace f86eaf2ac70822cc ]---
