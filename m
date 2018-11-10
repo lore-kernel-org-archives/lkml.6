@@ -7,62 +7,47 @@ X-Spam-Status: No, score=-12.5 required=3.0
 	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 477ABC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 11:20:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92142C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 11:45:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1015C20858
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 11:20:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1015C20858
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id 52DCE20883
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 11:45:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52DCE20883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729080AbeKJVF0 (ORCPT
+        id S1729037AbeKJV3m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 16:05:26 -0500
-Received: from sauhun.de ([88.99.104.3]:52650 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728883AbeKJVF0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 16:05:26 -0500
-Received: from localhost (p4FC2913C.dip0.t-ipconnect.de [79.194.145.60])
-        by pokefinder.org (Postfix) with ESMTPSA id D8E7E3E4489;
-        Sat, 10 Nov 2018 12:20:43 +0100 (CET)
-Date:   Sat, 10 Nov 2018 12:20:41 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
+        Sat, 10 Nov 2018 16:29:42 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42240 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728951AbeKJV3m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 16:29:42 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 00B80EBD;
+        Sat, 10 Nov 2018 03:44:57 -0800 (PST)
+Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.197.53])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E3D913F718;
+        Sat, 10 Nov 2018 03:44:56 -0800 (PST)
+Date:   Sat, 10 Nov 2018 11:44:54 +0000
+From:   Catalin Marinas <catalin.marinas@arm.com>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Rosin <peda@axentia.se>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PULL REQUEST] i2c for 4.20
-Message-ID: <20181110112036.GA5905@kunai>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] arm64 fixes for 4.20-rc2
+Message-ID: <20181110114452.GA90619@arrakis.emea.arm.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="cNdxnHkX5QqsyA0e"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Linus,
 
---cNdxnHkX5QqsyA0e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Linus,
-
-I2C has one bugfix (qcom-geni driver), one arch enablement (i2c-omap driver, no
-code change), and a new driver (nvidia-gpu) this time.
-
-I hope the rc1 rule still applies for this new driver. It consists of the I2C
-master part and UCSI client part which has the needed ack from Heikki.
-
-Please pull.
-
-Thanks,
-
-   Wolfram
-
+Please pull the arm64 fixes below. Thanks.
 
 The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
 
@@ -70,77 +55,42 @@ The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-current
+  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux tags/arm64-fixes
 
-for you to fetch changes up to 247c554a14aa16ca08f4ed4d9eb39a2389f69d1d:
+for you to fetch changes up to 24cc61d8cb5a9232fadf21a830061853c1268fdd:
 
-  usb: typec: ucsi: add support for Cypress CCGx (2018-11-09 18:49:59 +0100)
+  arm64: memblock: don't permit memblock resizing until linear mapping is up (2018-11-08 17:54:03 +0000)
 
 ----------------------------------------------------------------
-Ajay Gupta (2):
-      i2c: add i2c bus driver for NVIDIA GPU
-      usb: typec: ucsi: add support for Cypress CCGx
+arm64 fixes:
 
-Stephen Boyd (1):
-      i2c: qcom-geni: Fix runtime PM mismatch with child devices
+- Fix occasional page fault during boot due to memblock resizing before
+  the linear map is up.
 
-Vignesh R (3):
-      dt-bindings: i2c: omap: Add new compatible for AM654 SoCs
-      i2c: omap: Enable for ARCH_K3
-      MAINTAINERS: Add entry for i2c-omap driver
+- Define NET_IP_ALIGN to 0 to improve the DMA performance on some
+  platforms.
 
-Wolfram Sang (1):
-      i2c: nvidia-gpu: make pm_ops static
+- lib/raid6 test build fix.
 
+- .mailmap update for Punit Agrawal
 
-with much appreciated quality assurance from
 ----------------------------------------------------------------
-Andy Shevchenko (1):
-      (Rev.) i2c: add i2c bus driver for NVIDIA GPU
+Ard Biesheuvel (2):
+      arm64: mm: define NET_IP_ALIGN to 0
+      arm64: memblock: don't permit memblock resizing until linear mapping is up
 
-Douglas Anderson (1):
-      (Rev.) i2c: qcom-geni: Fix runtime PM mismatch with child devices
+Jeremy Linton (1):
+      lib/raid6: Fix arm64 test build
 
-Grygorii Strashko (2):
-      (Rev.) i2c: omap: Enable for ARCH_K3
-      (Rev.) dt-bindings: i2c: omap: Add new compatible for AM654 SoCs
+Punit Agrawal (1):
+      mailmap: Update email for Punit Agrawal
 
-Rob Herring (1):
-      (Rev.) dt-bindings: i2c: omap: Add new compatible for AM654 SoCs
+ .mailmap                           | 1 +
+ arch/arm64/include/asm/processor.h | 8 ++++++++
+ arch/arm64/mm/init.c               | 2 --
+ arch/arm64/mm/mmu.c                | 2 ++
+ lib/raid6/test/Makefile            | 4 ++--
+ 5 files changed, 13 insertions(+), 4 deletions(-)
 
- Documentation/devicetree/bindings/i2c/i2c-omap.txt |   8 +-
- Documentation/i2c/busses/i2c-nvidia-gpu            |  18 +
- MAINTAINERS                                        |  15 +
- drivers/i2c/busses/Kconfig                         |  11 +-
- drivers/i2c/busses/Makefile                        |   1 +
- drivers/i2c/busses/i2c-nvidia-gpu.c                | 368 +++++++++++++++++++++
- drivers/i2c/busses/i2c-qcom-geni.c                 |  15 +-
- drivers/usb/typec/ucsi/Kconfig                     |  10 +
- drivers/usb/typec/ucsi/Makefile                    |   2 +
- drivers/usb/typec/ucsi/ucsi_ccg.c                  | 307 +++++++++++++++++
- 10 files changed, 745 insertions(+), 10 deletions(-)
- create mode 100644 Documentation/i2c/busses/i2c-nvidia-gpu
- create mode 100644 drivers/i2c/busses/i2c-nvidia-gpu.c
- create mode 100644 drivers/usb/typec/ucsi/ucsi_ccg.c
-
---cNdxnHkX5QqsyA0e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvmvwAACgkQFA3kzBSg
-KbYW1w/+OZKsNr3qmYdCHcyNTG4twwzimklzcqzZkdeYqvVtYUEBuxUpyU45eusT
-rCjhU56scbWK9nNj4uDYM+qMf652FhWwfQWFUBLlM66r9doAlU6RJJCkop2Lg/XN
-P/CgDcagYSoW2/OC7M3LbCHKOuka8sSl0ouoCCMskMRjnCSBf0w1G3v/X9HSFDUz
-Mem/j8OxZ72DXZa1dEaiXJgI3pMuhltGuqWjjeOIxtqohtBJAUycjiPnJslyJuMJ
-BZbp3SMfgI2ryClSlH9NS4q4M5Y7KhPzf+QJiTPn4MKuZirc0Jny0m2DSouu7PGu
-9fxB8zk7ptA7dn4G0VawQfT9aXWcw3v3rMq5S6GqhKRB4SZeE2QC+b50h2w1pGLN
-nitCNBCsruJ3LZ1M5LQOikWsqyfB+UF1QAorA0l+pst8PQyPx9O1LaGGC1BrYyO4
-UC4tyxhIZ5kDEIA1INm29FjknxhmYIVdjINYewfJwB/uTc4jasy8Jip1YThw3tTU
-StzBtxHNd7nK7K6qNLBaL5/0gqRR8/3KcHgXCKVjO3DSoTX4aLcIp3g4uaVbNuad
-DBtxYLZko19IN0MTJJfEaKiiwEf3nXXyuMY28fRy10/9ziaNT0P5gq7VjGNBV56m
-6JTD2/3n6ifYLi47tIuZH2qAetp1R4K25CuFknfLz4UhsuyCsjU=
-=vHqA
------END PGP SIGNATURE-----
-
---cNdxnHkX5QqsyA0e--
+-- 
+Catalin
