@@ -2,137 +2,113 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,PLING_QUERY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB2E7C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 21:42:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B038C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 21:43:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 855082089A
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 21:42:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F32AA214DB
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 21:43:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="lJdeJbSa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 855082089A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kl4XoSj8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F32AA214DB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726423AbeKKH2l (ORCPT
+        id S1726707AbeKKH3x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 02:28:41 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:53860 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725979AbeKKH2l (ORCPT
+        Sun, 11 Nov 2018 02:29:53 -0500
+Received: from mail-it1-f178.google.com ([209.85.166.178]:56244 "EHLO
+        mail-it1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725778AbeKKH3x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 02:28:41 -0500
-Received: by mail-it1-f195.google.com with SMTP id r12-v6so7800819ita.3
-        for <linux-kernel@vger.kernel.org>; Sat, 10 Nov 2018 13:42:16 -0800 (PST)
+        Sun, 11 Nov 2018 02:29:53 -0500
+Received: by mail-it1-f178.google.com with SMTP id b7-v6so7790383itd.5;
+        Sat, 10 Nov 2018 13:43:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=M4eP4vYgLS5hC5vjkIc8iX1J5rc7dQzi6sxXQY0Vfc4=;
-        b=lJdeJbSaVjJG36yeobFkrFjW5EgLOw/vQmOZqRaM2tLnwQ7NzpThW3xmgmlmv5WrKy
-         eesaHHjAxC7E8JrA/9Fgk7dpbjQ0kqHLpaIc5WscWL4yzANKzMjwtAdIakTYkJajHBPH
-         OEtAL+mZTsx5C9AD/wJTDs3WCtBUXmaLVKpob8/Vf2+OBhcnhRa2F2L3Na/y7rt1ZbYY
-         ZcQxGVpPhPnVnbsE5d+joOP4BVBVga+MYopbTUi3ySqXW2NwMs598igUf7nO8lo8v9yL
-         Tk20+ac/KmBjY+xatDW5pHHd5aRErUP2oXgaT3OaBbfrkOpBstR1XwX74zGdxFsddorv
-         9Y/g==
+         :cc;
+        bh=NQ3XTGqk7TT54dMiJFYwymU6ZgR614PmxrDqJ7DQkdE=;
+        b=Kl4XoSj8g3iDxLtbot+KHpwc2W5lvSLHPEQsTzaM3AHpYggVnZnvfiF/plNu+FZ6oh
+         SDrWh2ISu+4+bjQQHlC4PnyZmXScuXVcpmZkqqmHVlDEfCEatlcoR2TjvgLa1+Poi1+G
+         8LvGyWNzunYm9zhTsMFouYc2pTpS20uF34sDZou0RgWm4Mz/v/pJbesa5aHdpDEPfKO0
+         Xlx/oxmxH9op0pSfZzSbUmuQhRKBg4CowC7s7z110udLhsk8BOfLRIg7ez0lOPDNqAef
+         CNqDzXtRtQuZyo73OhRmObnCn8Qv3Gk/LaE5rSWzJ4mCPi/stqQU5m0es2vplr/bmls0
+         RjvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=M4eP4vYgLS5hC5vjkIc8iX1J5rc7dQzi6sxXQY0Vfc4=;
-        b=fVJSrWFjVxM5L+mzwmkq011MbcUIYEi+H4sGGthAoC9dceRY61u4Bsoi6KpQ2kwr51
-         2Ms24IQQhCKV0xNucbJNdS7vTAt9JKlvlfuer+36QRJUOiM2EDMUfzlSTSQwIom+adrz
-         1JwbcijdW/+vD1g0nbhQ+cAeMTyBowf1LiMCdNe0lifRCe6bRFdjeVNYye7LmQ63lUxN
-         1RlnNjkGN/7D4wmdxCbi9a7dYF6H+B4f/b6PyXVCZDvts0b9p4xa/8My0SZqBjyMr0jl
-         6Tk0dYneJmQvkxMZnVkOiwSwSbUVw/W20FlZXhzbdhFznVEJCUZsvETZGZc7sMurZSpu
-         vQWg==
-X-Gm-Message-State: AGRZ1gLQCYBm/cJK41uqXOZYAxEc7zue9VnBDV9/wnup2+Y4CPp2hWdN
-        xtNlcEKKom+N0W2f/6ponYcDjIsM0sy3jiQCOiib0A==
-X-Google-Smtp-Source: AJdET5ek9fAXOvvXlB8JYY/h9fuzKRqaq5JDFwmXIFcmtPxd+pvNX5o9RtNEIZ12mXVV02gGNprkmAIonq5p3Rmf+FI=
-X-Received: by 2002:a24:70ca:: with SMTP id f193-v6mr6630014itc.59.1541886135893;
- Sat, 10 Nov 2018 13:42:15 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=NQ3XTGqk7TT54dMiJFYwymU6ZgR614PmxrDqJ7DQkdE=;
+        b=N5piNB8lOpgeIptLlczUupvH8aIOT0+SiXTz7JYFfB/Lm41XZPPfhHu2ioSQjwY3h4
+         QHpZYvJbz5jOTuM5CbDjm9L8kzVdDM2uKZAKmny3CcGQ9juJmqUZWsh9BQ6n8atx+OTJ
+         tdRB4MEIQRSLS5Pv7fBNojZoD0nsjC6d+8vSk+GmXP+pcKPkIjZQ6Kzr1bf+P/v2XA99
+         i8GxJmAl7Dz9TTYRhxEEQov4IGzwlEcN6XwYGOz7ayUnOf5o8XY1oK4l78xKSIOn4OR0
+         6+KkVhgOHIeFRJqdv18anRfNAipFoq91dnCEfbwTaerk58Kbx5mAYsyFYxA0/LfFQBXR
+         GZOA==
+X-Gm-Message-State: AGRZ1gL1nkk5Lct7ZgCpi4RqvEXVfxWTTzeXFahFhyrIJBQyuMCM6Vcg
+        GAwQX7UFTeg9yTxMJzn7H/Jr97jvV4uCqBGEc5s=
+X-Google-Smtp-Source: AJdET5c1Hrtn+S1cIyBYYuK+agK5ZBzJnfTz9yyCAoDp4hzgMYvnLppS6y8waX8i8ZD4T6I4PYiuYwuURqXauhcUSdM=
+X-Received: by 2002:a24:5e93:: with SMTP id h141-v6mr7125373itb.103.1541886207073;
+ Sat, 10 Nov 2018 13:43:27 -0800 (PST)
 MIME-Version: 1.0
-References: <ff05bd36b338f4f914780176e9eba8138e1b254b.1536927765.git.christophe.leroy@c-s.fr>
- <20180916190610.vzqxwps7zqy2zc6o@holly.lan> <5f0e0241-b7ab-b5fa-de0e-01abdbc85770@linaro.org>
- <760ed3ff-43d9-75e5-b36c-aaa7871ffe50@c-s.fr> <877ej7urh3.fsf@concordia.ellerman.id.au>
- <7cf2d115-a58b-4585-37fc-7e58169a43a3@c-s.fr> <87zhw1srt4.fsf@concordia.ellerman.id.au>
- <ca845d92-674b-4ca2-3535-2621972bd13b@windriver.com>
-In-Reply-To: <ca845d92-674b-4ca2-3535-2621972bd13b@windriver.com>
-From:   Olof Johansson <olof@lixom.net>
-Date:   Sat, 10 Nov 2018 13:42:04 -0800
-Message-ID: <CAOesGMiv3Qh52GhqmTXJ4LDNEfsoOp2BO_C2H_T3wsY2A6k5zQ@mail.gmail.com>
-Subject: Re: [PATCH] kdb: use correct pointer when 'btc' calls 'btt'
-To:     Jason Wessel <jason.wessel@windriver.com>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>, christophe.leroy@c-s.fr,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        kgdb-bugreport@lists.sourceforge.net,
-        stable <stable@vger.kernel.org>, me@tobin.cc
+References: <2335309.gnWok9HYb4@agathebauer> <3227038.olIWmsCzzY@agathebauer>
+ <20181105205119.GC25674@krava> <3799078.YBnU1OB0PF@agathebauer> <20181106001037.GQ6218@tassilo.jf.intel.com>
+In-Reply-To: <20181106001037.GQ6218@tassilo.jf.intel.com>
+From:   Travis Downs <travis.downs@gmail.com>
+Date:   Sat, 10 Nov 2018 16:42:48 -0500
+Message-ID: <CAOBGo4za8hnGt1NUWy1Y1V12WycbxbYP0G0Sm=UT7T9dQ88vDg@mail.gmail.com>
+Subject: Re: PEBS level 2/3 breaks dwarf unwinding! [WAS: Re: Broken dwarf
+ unwinding - wrong stack pointer register value?]
+To:     ak@linux.intel.com
+Cc:     milian.wolff@kdab.com, jolsa@redhat.com,
+        linux-kernel@vger.kernel.org, jolsa@kernel.org,
+        namhyung@kernel.org, linux-perf-users@vger.kernel.org,
+        acme@kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jason,
-
-On Mon, Oct 1, 2018 at 12:52 PM Jason Wessel <jason.wessel@windriver.com> w=
-rote:
+On Mon, Nov 5, 2018 at 7:11 PM Andi Kleen <ak@linux.intel.com> wrote:
+> Milian is right.
 >
-> On 09/28/2018 07:57 AM, Michael Ellerman wrote:
-> > Christophe LEROY <christophe.leroy@c-s.fr> writes:
-> >> Le 27/09/2018 =C3=A0 13:09, Michael Ellerman a =C3=A9crit :
-> >>> Christophe LEROY <christophe.leroy@c-s.fr> writes:
-> >>>> Le 26/09/2018 =C3=A0 13:11, Daniel Thompson a =C3=A9crit :
-> >>>>
-> >>>> The Fixes: and now your Reviewed-by: appear automatically in patchwo=
-rk
-> >>>> (https://patchwork.ozlabs.org/project/linuxppc-dev/list/?series=3D65=
-715),
-> >>>> so I believe they'll be automatically included when Jason or someone
-> >>>> else takes the patch, no ?
-> >>>
-> >>> patchwork won't add the Fixes tag from the reply, it needs to be in t=
-he
-> >>> original mail.
-> >>>
-> >>> See:
-> >>>     https://github.com/getpatchwork/patchwork/issues/151
-> >>>
-> >>
-> >> Ok, so it accounts it and adds a '1' in the F column in the patches
-> >> list, but won't take it into account.
-> >
-> > Yes. The logic that populates the columns is separate from the logic
-> > that scrapes the tags, which is a bug :)
-> >
-> >> Then I'll send a v2 with revised commit text.
-> >
+> There is a execution window from PEBS capturing registers to actually triggering
+> the PMU, and if there is stack manipulation in that window
+> the PEBS state might be out of sync with the real stack.
+
+This explains some weird results I was always getting especially when
+functions were small, including
+failed unwindings when using dwarf unwinder.
+
+I guess this problem doesn't occur for LBR unwinding since the LBR
+records are captured at the same
+moment in time as the PEBS record, so reflect the correct branch
+sequence. Of course, LBR doesn't
+always let you unwind fully, right?
+
 >
+> The right RIP/RSP to use for the stack unwinding is always the data
+> in the PMI's exception frame on the stack.
 >
-> No need.  https://git.kernel.org/pub/scm/linux/kernel/git/jwessel/kgdb.gi=
-t/commit/?h=3Dkgdb-next
+> Probably would need to modify perf to report those too in addition
+> to the PEBS registers.
 >
-> Since it is a regression fix, we'll try and get it merged as soon as we c=
-an.
+> Of course it would still mean that the stack unwinding may not exactly
+> match the sample RIP, but at least it should be consistent.
 
-Looks like this didn't make it in yet, even with a merge window inbetween? =
-:(
+What would this fix mean for perf report when you use cycles:pp and
+cycles:ppp (or any PEBS based events)? The unwinding should generally
+work, but the IP at the top of that stack (from the PMI) will
+generally be different than that recorded by PEBS. The tree view and
+overhead calculations will be based on the captured stacks, I guess -
+but when I annotate, will the values I see correspond to the PEBS IPs
+or the PMI IPs?
 
-I know first-hand that time to do upstream work can sometimes be hard
-to find. I also know that Daniel has shown interest in helping out
-here, and is listed as a maintainer. May I suggest that he starts a
-tree to collect patches and submit pull requests for a while, until
-you find more time for it?
-
-Having a tag-team maintainer setup like we have had for arm-soc has
-been very useful especially when one of us get too busy for a while,
-etc.
-
-
--Olof
+If someone is using cycles:pp or :ppp they probably care about
+instruction-level accuracy, so it would be a shame to throw it away.
