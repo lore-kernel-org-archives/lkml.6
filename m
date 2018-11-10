@@ -2,144 +2,94 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC381C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 14:19:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4187C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 14:19:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E14C2081C
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 14:19:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FRCSltaz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E14C2081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 85EDA20825
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 14:19:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85EDA20825
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727082AbeKKAES (ORCPT
+        id S1727115AbeKKAE4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 19:04:18 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:43827 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726188AbeKKAES (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 19:04:18 -0500
-Received: by mail-qk1-f196.google.com with SMTP id r71so6543155qkr.10;
-        Sat, 10 Nov 2018 06:19:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KS2tKNqBu+LC859Gf5UxwSe78RxJXOIfqSVvT4fP/Zg=;
-        b=FRCSltazBCAw6z8psM54LqQg3S7bMwLa1CveA+KWdTxbApUMbwnqru4ryGsF0uEQmn
-         lJZVUsdfiCAMvusLV+tRv5lbFl+n3AswNfps1DqTx61QUF/6LLl+0ggjRaBMlQQb5UVQ
-         S/5KFDie8eeqOFgv/bBlH/86X9og04sbYlByTBPYhrq/CqF4qAGS9fP2Ghy6zwB6i2sG
-         lgVhn9lby5Rx/AQTsHwdPloIwnFgVUI2arY7TUOr7ffA+lF0ZcIf6kDOO3xNFrJ9H9G3
-         41mNKWvw3/tU9qX9HuU1Ijhw/GNISkbVx8VY39J1fgyXM+3r86WJRfwyWFdQUdFTver9
-         p/3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KS2tKNqBu+LC859Gf5UxwSe78RxJXOIfqSVvT4fP/Zg=;
-        b=BnkzqiIF9l5575xxRDhW8c3AEpIpyPvTtImba5o8MBtF2BIkijWIntmsQNIym+9TXj
-         8OHiC9o6TwYwhauynq+Tjc4/iBJcjn0UjttpcF6qmmBHHxXKZhALoOzUiQ+A8oxixn/c
-         SKxcLtD+4o8sBAc2Rqkq6ayMb1dyuYCF6EUaRhsbSV+s7sPWSQyz+XohwlfhgtZvPw62
-         1d0vb/bUJR64PRrr8Og0ubhfMzGS398+WRg4DRphZ91q67l+FeNfCYpenSv1r1QIpaiz
-         W/BJRFt7fNuT4WG3O/U4NqImLCGdlD3bdVvVT9SpgoamiLACQ1DE1yewJamTVCdG7in6
-         vaHw==
-X-Gm-Message-State: AGRZ1gIWf6pl/2Eue0f+Rm0e6Ur/Xpldr5VZ4dlfVUPjTWMbYbb+RjKC
-        /7xcqBw4Ud1e5VqXk6Sk56WUIaww8L753TglNiS0Xd/O
-X-Google-Smtp-Source: AJdET5em0paCGuugzN5aQmsScmXp972xzyANmNu61DV+KhdlC1xIlBbVGtS0L3/Cqs7pZ4tcC0Zhfr7hADixO9jXX5w=
-X-Received: by 2002:a37:7983:: with SMTP id u125-v6mr11451434qkc.219.1541859547767;
- Sat, 10 Nov 2018 06:19:07 -0800 (PST)
+        Sat, 10 Nov 2018 19:04:56 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:53860 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726188AbeKKAE4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 19:04:56 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 944D92D808;
+        Sat, 10 Nov 2018 14:19:46 +0000 (UTC)
+Received: from 117.195.187.81.in-addr.arpa (unknown [10.33.36.27])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6945C5D968;
+        Sat, 10 Nov 2018 14:19:45 +0000 (UTC)
+Subject: Re: [git pull] mount API series
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181031053355.GQ32577@ZenIV.linux.org.uk>
+ <87a7mut9cm.fsf@xmission.com>
+From:   Steven Whitehouse <swhiteho@redhat.com>
+Message-ID: <2f4a2d58-dc7b-3a8f-65aa-9db432ce0a1e@redhat.com>
+Date:   Sat, 10 Nov 2018 14:19:44 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-References: <20181109234526.4280-1-ayman.bagabas@gmail.com> <CAHp75VfcaacZvqUiKiP1XWAy4cNsXMajFgy6PbEz_QhxBtZGew@mail.gmail.com>
-In-Reply-To: <CAHp75VfcaacZvqUiKiP1XWAy4cNsXMajFgy6PbEz_QhxBtZGew@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Sat, 10 Nov 2018 16:18:56 +0200
-Message-ID: <CAHp75Vf7_=zLjUmRPWJPP4TMG0s177Dhw5zc6ewz20iZJkhf2A@mail.gmail.com>
-Subject: Re: [PATCH v4 0/3] Huawei laptops
-To:     Ayman Bagabas <ayman.bagabas@gmail.com>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <87a7mut9cm.fsf@xmission.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Sat, 10 Nov 2018 14:19:46 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 10, 2018 at 4:17 PM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
+Hi,
+
+
+On 31/10/18 15:38, Eric W. Biederman wrote:
+> Al Viro <viro@ZenIV.linux.org.uk> writes:
 >
-> On Sat, Nov 10, 2018 at 1:45 AM Ayman Bagabas <ayman.bagabas@gmail.com> wrote:
-> >
+>> 	mount API series from David Howells.  Last cycle's objections
+>> had been of the "I'd do it differently" variety and with no such
+>> differently done variants having ever materialized over several
+>> cycles...
+> Absolutely not.
 >
-> Thanks for an updated version.
+> My objections fundamentally is that I can find real problems when I look
+> at the code.  Further the changes have not been incremental changes that
+> have evolved the code from one state to another but complete
+> replacements of code that make code review very difficult and bisection
+> completely inapplicable.
 >
-> I have pushed this to my review and testing queue, however, I would
-> wait till Taskashi ACKs the last two patches in the series.
-
-
-> Meanwhile you may rename the files to follow the pattern (<VENDOR>-wmi.c etc).
-
-To clarify, I'm talking here of the files regarding to PDx86. Whatever
-scheme is used in ALSA I don't care.
-
-> > Changes from v3:
-> > * Code formatting
-> >
-> > Changes from v2:
-> > * Support for Huawei MBX
-> > * Style and formating issues
-> >
-> > [PATCH v3 1/3]
-> > The first patch adds support for missing hotkeys on some models.
-> >
-> > [PATCH v3 2/3]
-> > This one enables the front speakers on the Huawei Matebook X Pro (MBXP). This
-> > solves bug 200501 https://bugzilla.kernel.org/show_bug.cgi?id=200501
-> > It simply uses the pins configurations generated by hdajackretast using the
-> > settings posted on the bug page https://imgur.com/a/N1xsCVZ
-> >
-> > [PATCH v3 3/3]
-> > This enables the micmute LED on Huawei laptops with these IDs:
-> > 1. Matebook X (19e5:3200)
-> > 2. Matebook X (19e5:3201)
-> > 3. Matebook X Pro (19e5:3204)
-> >
-> >
-> > Ayman Bagabas (3):
-> >   x86: add support for Huawei WMI hotkeys.
-> >   ALSA: hda: fix front speakers on Huawei MBXP.
-> >   ALSA: hda: add support for Huawei WMI micmute LED
-> >
-> >  drivers/platform/x86/Kconfig                 |  10 +
-> >  drivers/platform/x86/Makefile                |   1 +
-> >  drivers/platform/x86/huawei_wmi.c            | 215 +++++++++++++++++++
-> >  include/linux/platform_data/x86/huawei_wmi.h |   9 +
-> >  sound/pci/hda/huawei_wmi_helper.c            |  47 ++++
-> >  sound/pci/hda/patch_realtek.c                |  30 +++
-> >  6 files changed, 312 insertions(+)
-> >  create mode 100644 drivers/platform/x86/huawei_wmi.c
-> >  create mode 100644 include/linux/platform_data/x86/huawei_wmi.h
-> >  create mode 100644 sound/pci/hda/huawei_wmi_helper.c
-> >
-> > --
-> > 2.17.2
-> >
+> I also object that this series completely fails to fix the worst but I
+> have ever seen in the mount API.  Whit no real intrest shown in working
+> to fix it.
+>
+> A couple of bugs that I can see quickly.  Several of which I have
+> previously reported:
+>
+> - There is an easily triggered NULL pointer deference with open_tree
+>    and mount propagation.
 >
 >
-> --
-> With Best Regards,
-> Andy Shevchenko
+Can you share some details of what this NULL dereference is? David and 
+Al have been working on the changes as requested by Linus later in this 
+thread, and they'd like to tidy up this issue too at the same time if 
+possible. We are not asking you to actually provide a fix, in case you 
+are too busy to do so, however it would be good to know what the issue 
+is so that we can make sure that it is resolved in the next round of 
+patches,
 
+Steve.
 
-
--- 
-With Best Regards,
-Andy Shevchenko
