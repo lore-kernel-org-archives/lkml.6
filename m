@@ -2,123 +2,162 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AF26C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 15:13:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B047C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 15:13:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECFAD20858
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 15:13:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="z/eIjTPV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECFAD20858
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id F093E20858
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 15:13:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F093E20858
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726611AbeKKA7B (ORCPT
+        id S1726689AbeKKA7E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 19:59:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55630 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726188AbeKKA7B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 19:59:01 -0500
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 02FCE20684;
-        Sat, 10 Nov 2018 15:13:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541862821;
-        bh=81qEAnYxUYmY4xkweT2ZaldeaIIY/0vm89kY3Iz6ryc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=z/eIjTPVo2Cfh0n4Bq1gMlYAf08kN9p8Qvp9h4lU1yFFV5qPWQHRSoT7SkC3W8GNj
-         bdnQGB1VQA9NaZUAOxrfq5m8S17dR3caKTBVUeqE8SZVScjcPgXTkeUOrASJGECBee
-         GJVJsvnY1XoG3DbWYfW6CugNrYknUsdhPjPjJeYE=
-Date:   Sun, 11 Nov 2018 00:13:36 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@aculab.com>,
-        Borislav Petkov <bp@alien8.de>
-Subject: Re: [PATCH RFC 0/3] Static calls
-Message-Id: <20181111001336.a08bcc27faf69cbcaec9b597@kernel.org>
-In-Reply-To: <979DB163-EFBD-41BB-8481-155AAF526E72@amacapital.net>
-References: <cover.1541711457.git.jpoimboe@redhat.com>
-        <20181109072811.GB86700@gmail.com>
-        <CALCETrU3tPPOiuTaLqUy-L4sPvZRU8BLYML-BgQH_LZhA4bzSQ@mail.gmail.com>
-        <20181109152139.zig45f6gp24btfbc@treble>
-        <20181109164137.5cngbfrkm4ihj4ra@treble>
-        <20181109134241.5f4ce3be@gandalf.local.home>
-        <979DB163-EFBD-41BB-8481-155AAF526E72@amacapital.net>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Sat, 10 Nov 2018 19:59:04 -0500
+Received: from mout.kundenserver.de ([217.72.192.74]:50281 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726188AbeKKA7D (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 19:59:03 -0500
+Received: from localhost.localdomain ([37.4.249.153]) by
+ mrelayeu.kundenserver.de (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis)
+ id 1MV6G0-1ftLSY1P4I-00S4p9; Sat, 10 Nov 2018 16:13:20 +0100
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+To:     Eric Anholt <eric@anholt.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Simon Arlott <simon@arlott.org>,
+        Stephen Warren <swarren@wwwdotorg.org>
+Subject: [PATCH 04/17] clk: bcm2835: Switch to SPDX identifier
+Date:   Sat, 10 Nov 2018 16:12:35 +0100
+Message-Id: <1541862755-7034-1-git-send-email-stefan.wahren@i2se.com>
+X-Mailer: git-send-email 2.7.4
+X-Provags-ID: V03:K1:n6Lte+v4ouhFUEzNQPszuaPGgc2izjdA7l8EdJPVlN9mvxlVM6w
+ LDgVLhKe2rO1zeMkZfF71op+9oOJ8K+NX8V6nzZ9W2whXA4flkL0bDlvhZNLk+zZUXl1C8A
+ S2Sm3jaRNx6fIoUiU8DCDcR1rgWfxJSwBO2jvAOHGu8x7/UyT7H5y0nXY4ycvLY9QTTqWOz
+ FOSPYHtHMW32bl+Wu3qSQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:9TnLD3EJqMQ=:q8P5mb9iMWFVn4WWssTrVL
+ 93bIt6TLh3B9C2tWnDziNsIntReC3US+XgDoDA1z8bmWKyhXRZyVgOuivfsba2qEyeeJi9NbG
+ Fo7zIHgE9MfK0Fk3IHEjkF/VC/mbRqwcol6wvo8BwfGLRbv+mGSb3qEkcqYZlapdsAsyeSiom
+ ZpPQXvq9NPp1k1uPGMPOdSn0H1kpg6Lu9H96TAqpkXLUucxcE+8kL2HPq3eAFcJbDgVj9zVYF
+ 2UqpzUCS78ra0eqaSOydiAcGrKELu0CZsqPGBc/8X5aa6aAsbnw5/4TtdPrIzi1+0Co2GbfOr
+ d5NblpvScsDPKmjiMZCgdu93aFKcvJAs/GNotRv8Bu7ywdBePtR6PIh771xiAx4wfDp1g94c3
+ B6ACObzpSE3PdllnsYAKhe7qAm5Mep9ALJ+8uafr6YadJdBQ5a580lgdzZaRdzmQd32d1Ez3D
+ iDTt1eHVnrhzso0RmoXDs6dGzOipAflevmDVcr6lCSWuvvR5RlzhkcoFgrNDnTEJvzfN9MfZz
+ uLFZSeHu/HeLpBCJoiev5oOILEmGMCe1No6TAIrW48NVbEWuNqkGkJI7KsyDQs+pVVatckM7Q
+ czfLu404pxegjz3i3AtZ+cRLNTvj1Ub2kS+HSK1Rv24aCcmtxlAF9EBtUCNz+QG3s+iULxi95
+ XgJNPtuMNx/O8NA3/Z67pugb9WnEP7zU0AHEWWZplRkvx57uysYSn0Pq/kDu8JMWyq9m0jrd4
+ oXPDtVa/lzkHw+OM1+fwLaveRZxyVQash2S/j7mPDGBqTGnTEWcnZLi9ZmRTuMNigVU15AzOQ
+ TLr8BSYKGAbMpVOcKyMDwCRKYby6A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 9 Nov 2018 11:05:51 -0800
-Andy Lutomirski <luto@amacapital.net> wrote:
+Adopt the SPDX license identifier headers to ease license compliance
+management.
 
-> 
-> 
-> > On Nov 9, 2018, at 10:42 AM, Steven Rostedt <rostedt@goodmis.org> wrote:
-> > 
-> > On Fri, 9 Nov 2018 10:41:37 -0600
-> > Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-> > 
-> >>> On Fri, Nov 09, 2018 at 09:21:39AM -0600, Josh Poimboeuf wrote:
-> >>>> On Fri, Nov 09, 2018 at 07:16:17AM -0800, Andy Lutomirski wrote:  
-> >>>>> On Thu, Nov 8, 2018 at 11:28 PM Ingo Molnar <mingo@kernel.org> wrote:  
-> >>>>> 
-> >>>>> 
-> >>>>> All other usecases are bonus, but it would certainly be interesting to
-> >>>>> investigate the impact of using these APIs for tracing: that too is a
-> >>>>> feature enabled everywhere but utilized only by a small fraction of Linux
-> >>>>> users - so literally every single cycle or instruction saved or hot-path
-> >>>>> shortened is a major win.  
-> >>>> 
-> >>>> For tracing, we'd want static_call_set_to_nop() or something like that, right?  
-> >>> 
-> >>> Are we talking about tracepoints?  Or ftrace?  
-> >> 
-> >> Since ftrace changes calls to nops, and vice versa, I assume you meant
-> >> ftrace.  I don't think ftrace is a good candidate for this, as it's
-> >> inherently more flexible than this API would reasonably allow.
-> >> 
-> > 
-> > Not sure what Andy was talking about, but I'm currently implementing
-> > tracepoints to use this, as tracepoints use indirect calls, and are a
-> > prime candidate for static calls, as I showed in my original RFC of
-> > this feature.
-> > 
-> > 
-> 
-> Indeed.
-> 
-> Although I had assumed that tracepoints already had appropriate jump label magic.
+Cc: Simon Arlott <simon@arlott.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+---
+ drivers/clk/bcm/clk-bcm2835-aux.c       | 11 +----------
+ drivers/clk/bcm/clk-bcm2835.c           | 12 +-----------
+ include/dt-bindings/clock/bcm2835-aux.h | 10 +---------
+ include/dt-bindings/clock/bcm2835.h     | 10 +---------
+ 4 files changed, 4 insertions(+), 39 deletions(-)
 
-As far as I know, the jump label magic is for reducing the overhead when the 
-tracepoint is OFF (because it can skip function parameter preparation), and this
-static call will be good when the tracepoint is ON (enabled) because of this can
-avoid retpoline performance degradation.
-
-Thank you,
-
-
+diff --git a/drivers/clk/bcm/clk-bcm2835-aux.c b/drivers/clk/bcm/clk-bcm2835-aux.c
+index e01d557..2a2c756 100644
+--- a/drivers/clk/bcm/clk-bcm2835-aux.c
++++ b/drivers/clk/bcm/clk-bcm2835-aux.c
+@@ -1,15 +1,6 @@
++// SPDX-License-Identifier: GPL-2.0+
+ /*
+  * Copyright (C) 2015 Broadcom
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
+ 
+ #include <linux/clk.h>
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 6b6d836..9fcae93 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1,17 +1,7 @@
++// SPDX-License-Identifier: GPL-2.0+
+ /*
+  * Copyright (C) 2010,2015 Broadcom
+  * Copyright (C) 2012 Stephen Warren
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+  */
+ 
+ /**
+diff --git a/include/dt-bindings/clock/bcm2835-aux.h b/include/dt-bindings/clock/bcm2835-aux.h
+index d91156e..6e608bf 100644
+--- a/include/dt-bindings/clock/bcm2835-aux.h
++++ b/include/dt-bindings/clock/bcm2835-aux.h
+@@ -1,14 +1,6 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright (C) 2015 Broadcom Corporation
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License as
+- * published by the Free Software Foundation version 2.
+- *
+- * This program is distributed "as is" WITHOUT ANY WARRANTY of any
+- * kind, whether express or implied; without even the implied warranty
+- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
+ 
+ #define BCM2835_AUX_CLOCK_UART		0
+diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clock/bcm2835.h
+index a0c812b..ca7efd1 100644
+--- a/include/dt-bindings/clock/bcm2835.h
++++ b/include/dt-bindings/clock/bcm2835.h
+@@ -1,14 +1,6 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright (C) 2015 Broadcom Corporation
+- *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License as
+- * published by the Free Software Foundation version 2.
+- *
+- * This program is distributed "as is" WITHOUT ANY WARRANTY of any
+- * kind, whether express or implied; without even the implied warranty
+- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
+ 
+ #define BCM2835_PLLA			0
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+2.7.4
+
