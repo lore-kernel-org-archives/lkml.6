@@ -2,99 +2,95 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B77CC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 17:42:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8B6CC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 17:47:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDA0820854
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 17:42:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDA0820854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.us
+	by mail.kernel.org (Postfix) with ESMTP id 8EB8E2089A
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 17:47:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AkGo+5f2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EB8E2089A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726758AbeKKD2C (ORCPT
+        id S1726790AbeKKDdU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 22:28:02 -0500
-Received: from mout.gmx.net ([212.227.17.22]:43545 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726244AbeKKD2B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 22:28:01 -0500
-Received: from [74.104.183.64] ([74.104.183.64]) by
- msvc-mesg-gmx021.server.lan (via HTTP); Sat, 10 Nov 2018 18:42:12 +0100
+        Sat, 10 Nov 2018 22:33:20 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:41705 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726244AbeKKDdU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 22:33:20 -0500
+Received: by mail-wr1-f68.google.com with SMTP id v18-v6so5076826wrt.8;
+        Sat, 10 Nov 2018 09:47:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=AmXqsA19dFr1cuIWeWhOpxlRLIpActaup0Ntu9ZTnkE=;
+        b=AkGo+5f2UlFEkAI5EzDFSRHE2P133CKTvyxFvKSMe2vqLYbLZK7SwJnXj8KoixucML
+         evtgoZtC8YsVZMgFimTG8zWGJnc2DSBc4CrOULclkRLFkaHRXs0YXBuDytRmzZJlgTGS
+         I+/Jb9AyhJXYJXvKtI90K3v+tMqTv+CIocB2l0/Sr0dVF95CejcCxjcLEI3hfIlgE5cP
+         em9acFjC56SFt7xxYBbKvmcd/6FLtbcWe52l3r2a9VHGnIv+nCUIVV5lw4bNm6o9ozsL
+         LU8yz/wBCU4hRfZKYzHUps8NxDZUR0i5TMvttKJhdyDlHLLeiAttGJWnb8uSsCaOh2G+
+         ZEbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=AmXqsA19dFr1cuIWeWhOpxlRLIpActaup0Ntu9ZTnkE=;
+        b=VPWIh0bd0VoFwp1mIMx6Ml8GgGplIYbXbh1PV3OTpLYGXMd9M/0TDzPSng2oD6GqlS
+         XQPuxEiTbf22Q5GxZBAsLv4hIlCC2t4teFJJXDpNQ9Vnw6hNFRqHO+Kz8QOBwN7HIS6f
+         fqcTSDQZuTspm60zHat3Ixdb8hfhTPidvJ3Z7PjUftGQs4LZK7OTIlM08Lx5sWNub33M
+         75nkB9vjI5fWj5sJnVfSG3xhnASiEgGGYq/jOBD6uIvfT6+GUHN6xpCOScfd9sfjWj+f
+         zXt9NWB44W1KlMiO4ljiVwXPXuSBrd1mX/9z0ARY1sNBL33dVFtL/i9X1t6RBVJ36zIn
+         83Jw==
+X-Gm-Message-State: AGRZ1gLLSHrTbeD900cK2RwbQE/SKNf00TZneNkaJRRAT2LP1BunD+ZB
+        C6Vf5lkPDLcWs+DugacFiTmMLkg=
+X-Google-Smtp-Source: AJdET5ce/QRn2sahl+8CTEIu7V9S9VK2vJ7bM96iyEfJWmP1Cere6tEOvk9PpsUwiC/6xZGt/zTNrQ==
+X-Received: by 2002:adf:f589:: with SMTP id f9-v6mr12398963wro.281.1541872050277;
+        Sat, 10 Nov 2018 09:47:30 -0800 (PST)
+Received: from avx2 (nat5-minsk-pool-46-53-217-92.telecom.by. [46.53.217.92])
+        by smtp.gmail.com with ESMTPSA id i7-v6sm8905622wrs.55.2018.11.10.09.47.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 10 Nov 2018 09:47:29 -0800 (PST)
+Date:   Sat, 10 Nov 2018 20:47:27 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     Rafael David Tinoco <rafael.tinoco@linaro.org>
+Cc:     gorcunov@gmail.com, akpm@linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, shuah@kernel.org
+Subject: Re: [PATCH] proc: fix and merge proc-self-map-file tests
+Message-ID: <20181110174727.GA26417@avx2>
+References: <20181108111105.GC13195@uranus.lan>
+ <20181109113036.21512-1-rafael.tinoco@linaro.org>
 MIME-Version: 1.0
-Message-ID: <trinity-cbe4d3e0-f780-48ea-af28-ed2813eafaf6-1541871732167@msvc-mesg-gmx021>
-From:   "Qian Cai" <cai@gmx.us>
-To:     "Catalin Marinas" <catalin.marinas@arm.com>
-Cc:     "open list" <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
-Subject: Re: kmemleak: Early log buffer exceeded (525980) during boot
-Content-Type: text/plain; charset=UTF-8
-Date:   Sat, 10 Nov 2018 18:42:12 +0100
-In-Reply-To: <20181110165938.lbt6dfamk2ljafcv@localhost>
-References: <1541712198.12945.12.camel@gmx.us>
- <D7C9EA14-C812-406F-9570-CFF36F4C3983@gmx.us>
- <20181110165938.lbt6dfamk2ljafcv@localhost>
-X-Provags-ID: V03:K1:a/ITToIz1siVpz6C4OHsosXAoElTdUiLnpegM2s5P90vJaNITEFZwfS7aKmvF1zPVpa7H
- KPozHNcebPBKgXo925fy5fuSD1yrlaqGBgZDUJVcZ0kdIgEpULIf0P0HNWbzrMI3ZrqdUjsVUC2G
- H6tUiu8kZgafpPx1/xJVzMErKNwZcI/bO4kONzm+9Ai9+WTDEUh/wKnDh4rdeceFgzmTjMwYWaHK
- 6/ExTJaTN92KCxCJzO+8xAPJMU/DZEjjMpL8PBo7FU710cGUitMeSuG2q7YZi0hqUggAUkHQRIX7
- y153rr/lXVeFiMuK0rsWZNF
-X-UI-Out-Filterresults: notjunk:1;V01:K0:RzBKsLZG3S8=:E2jnOtwI07SXi5reBwmCY+
- jfoMwuDsjpsPb3ZuTAWMRXXgaShKDisSAe5WyAnoPn6dd3hyrFH2iTrTA8/1iDOXEsRUakbCO
- xH0wcUd5hHzpsZJR6b31fuvHjcYqDznNPwud2B7v676gMijrQHYHVap+Lm/4FyojZUl4dpQgE
- uVjX8LdHPQnHuEFV1NhoAPUqZ2ynrtBe4lAyWEWDZJdC8w9ATTuoQztAQkN/f5/yoAElTf9Yl
- fp/fgMZTXKx1IzbH/jMuwQc8vY3Kz6ld2YwlCbC7dN9tT1yfUu7534i3W1VaMkpn2zlQS3Z9T
- LMbD7J9VPzUG6iHuObGKOudVgHzyv4sYtyEuJ+PK2nyOUf+kcXJVnyqyZc2GagT1yTXcCqcKy
- 6nkZLtlN6LmwUOuAbgpiFRiJCZeFqUTEuNXYnyHJBhKWhTVMGUwnjbSmK5MqEhsGExiCMOADo
- yeFsiNiDpSvMN3RJLK3rikZaTNVnWqMlDTOIUVJVYiClqxdJ9DcfvSwbMLqFMfXT03F7YkIWH
- 5FbhNUdysDzjOAc8xvOyZyMkZZL2TuZHJltoYSXNaXatrfcea82p/tUdC/qfnFO+2bFazfDco
- 3c9r/BXBW8gkOu3I+uSXQXiehHviJuqvhj
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181109113036.21512-1-rafael.tinoco@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 11/10/18 at 11:59 AM, Catalin Marinas wrote:
-
-> On Sat, Nov 10, 2018 at 10:08:10AM -0500, Qian Cai wrote:
-> > On Nov 8, 2018, at 4:23 PM, Qian Cai <cai@gmx.us> wrote:
-> > > The maximum value for DEBUG_KMEMLEAK_EARLY_LOG_SIZE is only 40000, so it
-> > > disables kmemleak every time on this aarch64 server running the latest mainline
-> > > (b00d209).
-> > > 
-> > > # echo scan > /sys/kernel/debug/kmemleak 
-> > > -bash: echo: write error: Device or resource busy
-> > > 
-> > > Any idea on how to enable kmemleak there?
-> > 
-> > I have managed to hard-code DEBUG_KMEMLEAK_EARLY_LOG_SIZE to 600000,
+On Fri, Nov 09, 2018 at 09:30:36AM -0200, Rafael David Tinoco wrote:
+> Merge proc-self-map-files tests into one since this test should focus in
+> testing readlink in /proc/self/map_files/* only, and not trying to test
+> mapping virtual address 0.
 > 
-> That's quite a high number, I wouldn't have thought it is needed.
-> Basically the early log buffer is only used until the slub allocator
-> gets initialised and kmemleak_init() is called from start_kernel(). I
-> don't know what allocates that much memory so early.
-> 
-> What else is in your .config?
-https://c.gmx.com/@642631272677512867/tqD5eulbQAC-1h-fkVe1Iw
+> Lowest virtual address for user space mapping in other architectures,
+> like arm, is *at least* *(PAGE_SIZE * 2) and NULL hint does not
+> guarantee that when MAP_FIXED flag, important to this test, is given.
+> This patch also fixes this issue in remaining test.
 
-Does the dmesg helps? 
-https://paste.ubuntu.com/p/BnhvXXhn7k/
-> 
-> > diff --git a/mm/kmemleak.c b/mm/kmemleak.c
-> > index 877de4fa0720..c10119102c10 100644
-> > --- a/mm/kmemleak.c
-> > +++ b/mm/kmemleak.c
-> > @@ -280,7 +280,7 @@ struct early_log {
-> >  
-> >  /* early logging buffer and current position */
-> >  static struct early_log
-> > -       early_log[CONFIG_DEBUG_KMEMLEAK_EARLY_LOG_SIZE] __initdata;
-> > +       early_log[600000] __initdata;
-> 
-> You don't need to patch the kernel, the config variable is there to be
-> changed.
-Right, but the maximum is only 40000 in kconfig, so anything bigger than that will be rejected.
+> -	p = mmap(NULL, PAGE_SIZE, PROT_NONE, MAP_PRIVATE|MAP_FILE, fd, 0);
+> +	p = mmap((void *) (2 * PAGE_SIZE), PAGE_SIZE, PROT_NONE,
 
+I don't know ARM. Is this 2 page limitation a limitation of hardware or
+kernel's?
