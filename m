@@ -2,142 +2,106 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64662C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 20:29:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56C6CC0044B
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 20:31:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31876208E3
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 20:29:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31876208E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 1A4FF2146E
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 20:31:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="as+EzBEV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A4FF2146E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726554AbeKKGPc (ORCPT
+        id S1726542AbeKKGRv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 01:15:32 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:40531 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725896AbeKKGPb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 01:15:31 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 4E526208EB; Sat, 10 Nov 2018 21:29:15 +0100 (CET)
-Received: from localhost (unknown [88.191.26.124])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 19DD2207B8;
-        Sat, 10 Nov 2018 21:29:05 +0100 (CET)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     linux-rtc@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 2/2] rtc: nvmem: remove nvmem from struct rtc_device
-Date:   Sat, 10 Nov 2018 21:29:03 +0100
-Message-Id: <20181110202903.18261-2-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181110202903.18261-1-alexandre.belloni@bootlin.com>
-References: <20181110202903.18261-1-alexandre.belloni@bootlin.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Sun, 11 Nov 2018 01:17:51 -0500
+Received: from mail.andi.de1.cc ([85.214.239.24]:55176 "EHLO
+        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725846AbeKKGRv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Nov 2018 01:17:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=References:In-Reply-To:Message-Id:Date:Subject:
+        Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=bkT6Tvgpqv1f+bqR/z7UZurhOG3dEwgC/MQ7DiTqGn0=; b=as+EzBEVbE5PEBH8tav8ZjqVh
+        OWO73h29oavst3j58voN17vUJlsDtdfWuwhc5M3QxZjXvU9ENM6XBoVAY3fnXQs19PNJrcYii+0ba
+        zAgQtYDGwPfYVeQhLrrlB9aLDS/3yhILf60GRIYIWRe9XNSQXWGOGAOjDZxYJpQIEWkcA=;
+Received: from p200300ccfbcefb001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:cc:fbce:fb00:1a3d:a2ff:febf:d33a] helo=aktux)
+        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1gLZul-0000Ay-UL; Sat, 10 Nov 2018 21:31:32 +0100
+Received: from andi by aktux with local (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1gLZul-0003Ts-L2; Sat, 10 Nov 2018 21:31:31 +0100
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     t-kristo@ti.com, mturquette@baylibre.com, sboyd@kernel.org,
+        linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bcousson@baylibre.com,
+        paul@pwsan.com, tony@atomide.com, letux-kernel@openphoenux.org
+Cc:     Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH v2 2/3] clk: ti: check clock type before doing autoidle ops
+Date:   Sat, 10 Nov 2018 21:31:14 +0100
+Message-Id: <20181110203115.13335-3-andreas@kemnade.info>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20181110203115.13335-1-andreas@kemnade.info>
+References: <20181110203115.13335-1-andreas@kemnade.info>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using devm_nvmem_register allows to avoid tracking the nvmem pointer in the
-rtc_device structure.
-This ultimately allows to register multiple nvmem devices from an RTC
-driver.
+Code might use autoidle api with clocks not being omap2 clocks,
+so check if clock type is not basic
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
 ---
- drivers/rtc/nvmem.c | 24 ++++++++++--------------
- include/linux/rtc.h |  1 -
- 2 files changed, 10 insertions(+), 15 deletions(-)
+New in v2
+---
+ drivers/clk/ti/autoidle.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/rtc/nvmem.c b/drivers/rtc/nvmem.c
-index 2a7220d8b02d..ebdfe8e3a1a0 100644
---- a/drivers/rtc/nvmem.c
-+++ b/drivers/rtc/nvmem.c
-@@ -25,11 +25,9 @@ rtc_nvram_read(struct file *filp, struct kobject *kobj,
- 	       struct bin_attribute *attr,
- 	       char *buf, loff_t off, size_t count)
+diff --git a/drivers/clk/ti/autoidle.c b/drivers/clk/ti/autoidle.c
+index 161f67850393..5bdae5552d38 100644
+--- a/drivers/clk/ti/autoidle.c
++++ b/drivers/clk/ti/autoidle.c
+@@ -54,8 +54,12 @@ static DEFINE_SPINLOCK(autoidle_spinlock);
+ int omap2_clk_deny_idle(struct clk *clk)
  {
--	struct rtc_device *rtc = attr->private;
--
- 	dev_warn_once(kobj_to_dev(kobj), nvram_warning);
+ 	struct clk_hw_omap *c;
++	struct clk_hw *hw = __clk_get_hw(clk);
  
--	return nvmem_device_read(rtc->nvmem, off, count, buf);
-+	return nvmem_device_read(attr->private, off, count, buf);
- }
+-	c = to_clk_hw_omap(__clk_get_hw(clk));
++	if (clk_hw_get_flags(hw) & CLK_IS_BASIC)
++		return -EINVAL;
++
++	c = to_clk_hw_omap(hw);
+ 	if (c->ops && c->ops->deny_idle) {
+ 		unsigned long irqflags;
  
- static ssize_t
-@@ -37,14 +35,13 @@ rtc_nvram_write(struct file *filp, struct kobject *kobj,
- 		struct bin_attribute *attr,
- 		char *buf, loff_t off, size_t count)
+@@ -77,8 +81,12 @@ int omap2_clk_deny_idle(struct clk *clk)
+ int omap2_clk_allow_idle(struct clk *clk)
  {
--	struct rtc_device *rtc = attr->private;
--
- 	dev_warn_once(kobj_to_dev(kobj), nvram_warning);
+ 	struct clk_hw_omap *c;
++	struct clk_hw *hw = __clk_get_hw(clk);
  
--	return nvmem_device_write(rtc->nvmem, off, count, buf);
-+	return nvmem_device_write(attr->private, off, count, buf);
- }
+-	c = to_clk_hw_omap(__clk_get_hw(clk));
++	if (clk_hw_get_flags(hw) & CLK_IS_BASIC)
++		return -EINVAL;
++
++	c = to_clk_hw_omap(hw);
+ 	if (c->ops && c->ops->allow_idle) {
+ 		unsigned long irqflags;
  
--static int rtc_nvram_register(struct rtc_device *rtc, size_t size)
-+static int rtc_nvram_register(struct rtc_device *rtc,
-+			      struct nvmem_device *nvmem, size_t size)
- {
- 	int err;
- 
-@@ -56,7 +53,7 @@ static int rtc_nvram_register(struct rtc_device *rtc, size_t size)
- 
- 	rtc->nvram->attr.name = "nvram";
- 	rtc->nvram->attr.mode = 0644;
--	rtc->nvram->private = rtc;
-+	rtc->nvram->private = nvmem;
- 
- 	sysfs_bin_attr_init(rtc->nvram);
- 
-@@ -85,21 +82,20 @@ static void rtc_nvram_unregister(struct rtc_device *rtc)
- int rtc_nvmem_register(struct rtc_device *rtc,
- 		       struct nvmem_config *nvmem_config)
- {
--	if (!IS_ERR_OR_NULL(rtc->nvmem))
--		return -EBUSY;
-+	struct nvmem_device *nvmem;
- 
- 	if (!nvmem_config)
- 		return -ENODEV;
- 
- 	nvmem_config->dev = rtc->dev.parent;
- 	nvmem_config->owner = rtc->owner;
--	rtc->nvmem = devm_nvmem_register(rtc->dev.parent, nvmem_config);
--	if (IS_ERR(rtc->nvmem))
--		return PTR_ERR(rtc->nvmem);
-+	nvmem = devm_nvmem_register(rtc->dev.parent, nvmem_config);
-+	if (IS_ERR(nvmem))
-+		return PTR_ERR(nvmem);
- 
- 	/* Register the old ABI */
- 	if (rtc->nvram_old_abi)
--		rtc_nvram_register(rtc, nvmem_config->size);
-+		rtc_nvram_register(rtc, nvmem, nvmem_config->size);
- 
- 	return 0;
- }
-diff --git a/include/linux/rtc.h b/include/linux/rtc.h
-index c8bb4a2b48c3..40ecdb5a369e 100644
---- a/include/linux/rtc.h
-+++ b/include/linux/rtc.h
-@@ -138,7 +138,6 @@ struct rtc_device {
- 
- 	bool registered;
- 
--	struct nvmem_device *nvmem;
- 	/* Old ABI support */
- 	bool nvram_old_abi;
- 	struct bin_attribute *nvram;
 -- 
-2.19.1
+2.11.0
 
