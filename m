@@ -7,28 +7,28 @@ X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BAE4C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 06:35:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E62EEC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 06:35:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6CC320872
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 06:35:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6CC320872
+	by mail.kernel.org (Postfix) with ESMTP id B569420872
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 06:35:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B569420872
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728101AbeKKQXZ (ORCPT
+        id S1727819AbeKKQXH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 11:23:25 -0500
+        Sun, 11 Nov 2018 11:23:07 -0500
 Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:35773 "EHLO
         EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727568AbeKKQXH (ORCPT
+        by vger.kernel.org with ESMTP id S1727307AbeKKQXG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 11:23:07 -0500
+        Sun, 11 Nov 2018 11:23:06 -0500
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
  EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
  15.0.1156.6; Sat, 10 Nov 2018 22:35:05 -0800
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 8706440456;
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 5246E4077D;
         Sat, 10 Nov 2018 22:35:24 -0800 (PST)
 From:   Nadav Amit <namit@vmware.com>
 To:     Ingo Molnar <mingo@redhat.com>
@@ -37,15 +37,14 @@ CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Borislav Petkov <bp@alien8.de>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        Nadav Amit <namit@vmware.com>,
         Andy Lutomirski <luto@kernel.org>,
         Kees Cook <keescook@chromium.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [PATCH v4 08/10] x86: avoid W^X being broken during modules loading
-Date:   Sat, 10 Nov 2018 15:17:30 -0800
-Message-ID: <20181110231732.15060-9-namit@vmware.com>
+        Nadav Amit <namit@vmware.com>
+Subject: [PATCH v4 03/10] x86/mm: temporary mm struct
+Date:   Sat, 10 Nov 2018 15:17:25 -0800
+Message-ID: <20181110231732.15060-4-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181110231732.15060-1-namit@vmware.com>
 References: <20181110231732.15060-1-namit@vmware.com>
@@ -58,133 +57,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When modules and BPF filters are loaded, there is a time window in
-which some memory is both writable and executable. An attacker that has
-already found another vulnerability (e.g., a dangling pointer) might be
-able to exploit this behavior to overwrite kernel code. This patch
-prevents having writable executable PTEs in this stage.
+From: Andy Lutomirski <luto@kernel.org>
 
-In addition, avoiding having R+X mappings can also slightly simplify the
-patching of modules code on initialization (e.g., by alternatives and
-static-key), as would be done in the next patch.
+Sometimes we want to set a temporary page-table entries (PTEs) in one of
+the cores, without allowing other cores to use - even speculatively -
+these mappings. There are two benefits for doing so:
 
-To avoid having W+X mappings, set them initially as RW (NX) and after
-they are set as RO set them as X as well. Setting them as executable is
-done as a separate step to avoid one core in which the old PTE is cached
-(hence writable), and another which sees the updated PTE (executable),
-which would break the W^X protection.
+(1) Security: if sensitive PTEs are set, temporary mm prevents their use
+in other cores. This hardens the security as it prevents exploding a
+dangling pointer to overwrite sensitive data using the sensitive PTE.
 
-Cc: Andy Lutomirski <luto@kernel.org>
+(2) Avoiding TLB shootdowns: the PTEs do not need to be flushed in
+remote page-tables.
+
+To do so a temporary mm_struct can be used. Mappings which are private
+for this mm can be set in the userspace part of the address-space.
+During the whole time in which the temporary mm is loaded, interrupts
+must be disabled.
+
+The first use-case for temporary PTEs, which will follow, is for poking
+the kernel text.
+
+[ Commit message was written by Nadav ]
+
 Cc: Kees Cook <keescook@chromium.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Suggested-by: Andy Lutomirski <luto@amacapital.net>
+Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/kernel/alternative.c | 28 +++++++++++++++++++++-------
- arch/x86/kernel/module.c      |  2 +-
- include/linux/filter.h        |  6 ++++++
- kernel/module.c               | 10 ++++++++++
- 4 files changed, 38 insertions(+), 8 deletions(-)
+ arch/x86/include/asm/mmu_context.h | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index 96607ef285c3..70827332da0f 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -667,15 +667,29 @@ void __init alternative_instructions(void)
-  * handlers seeing an inconsistent instruction while you patch.
-  */
- void *__init_or_module text_poke_early(void *addr, const void *opcode,
--					      size_t len)
-+				       size_t len)
- {
- 	unsigned long flags;
--	local_irq_save(flags);
--	memcpy(addr, opcode, len);
--	local_irq_restore(flags);
--	sync_core();
--	/* Could also do a CLFLUSH here to speed up CPU recovery; but
--	   that causes hangs on some VIA CPUs. */
-+
-+	if (static_cpu_has(X86_FEATURE_NX) &&
-+	    is_module_text_address((unsigned long)addr)) {
-+		/*
-+		 * Modules text is marked initially as non-executable, so the
-+		 * code cannot be running and speculative code-fetches are
-+		 * prevented. We can just change the code.
-+		 */
-+		memcpy(addr, opcode, len);
-+	} else {
-+		local_irq_save(flags);
-+		memcpy(addr, opcode, len);
-+		local_irq_restore(flags);
-+		sync_core();
-+
-+		/*
-+		 * Could also do a CLFLUSH here to speed up CPU recovery; but
-+		 * that causes hangs on some VIA CPUs.
-+		 */
-+	}
- 	return addr;
+diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
+index 0ca50611e8ce..7cc8e5c50bf6 100644
+--- a/arch/x86/include/asm/mmu_context.h
++++ b/arch/x86/include/asm/mmu_context.h
+@@ -338,4 +338,24 @@ static inline unsigned long __get_current_cr3_fast(void)
+ 	return cr3;
  }
  
-diff --git a/arch/x86/kernel/module.c b/arch/x86/kernel/module.c
-index b052e883dd8c..cfa3106faee4 100644
---- a/arch/x86/kernel/module.c
-+++ b/arch/x86/kernel/module.c
-@@ -87,7 +87,7 @@ void *module_alloc(unsigned long size)
- 	p = __vmalloc_node_range(size, MODULE_ALIGN,
- 				    MODULES_VADDR + get_module_load_offset(),
- 				    MODULES_END, GFP_KERNEL,
--				    PAGE_KERNEL_EXEC, 0, NUMA_NO_NODE,
-+				    PAGE_KERNEL, 0, NUMA_NO_NODE,
- 				    __builtin_return_address(0));
- 	if (p && (kasan_module_alloc(p, size) < 0)) {
- 		vfree(p);
-diff --git a/include/linux/filter.h b/include/linux/filter.h
-index de629b706d1d..ee9ae03c5f56 100644
---- a/include/linux/filter.h
-+++ b/include/linux/filter.h
-@@ -704,7 +704,13 @@ static inline void bpf_prog_unlock_ro(struct bpf_prog *fp)
- 
- static inline void bpf_jit_binary_lock_ro(struct bpf_binary_header *hdr)
- {
-+	/*
-+	 * Perform mapping changes in two stages to avoid opening a time-window
-+	 * in which a PTE is cached in any TLB as writable, but marked as
-+	 * executable in the memory-resident mappings (e.g., page-tables).
-+	 */
- 	set_memory_ro((unsigned long)hdr, hdr->pages);
-+	set_memory_x((unsigned long)hdr, hdr->pages);
- }
- 
- static inline void bpf_jit_binary_unlock_ro(struct bpf_binary_header *hdr)
-diff --git a/kernel/module.c b/kernel/module.c
-index 49a405891587..7cb207249437 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -1946,9 +1946,19 @@ void module_enable_ro(const struct module *mod, bool after_init)
- 	if (!rodata_enabled)
- 		return;
- 
-+	/*
-+	 * Perform mapping changes in two stages to avoid opening a time-window
-+	 * in which a PTE is cached in any TLB as writable, but marked as
-+	 * executable in the memory-resident mappings (e.g., page-tables).
-+	 */
- 	frob_text(&mod->core_layout, set_memory_ro);
-+	frob_text(&mod->core_layout, set_memory_x);
++typedef struct {
++	struct mm_struct *prev;
++} temporary_mm_state_t;
 +
- 	frob_rodata(&mod->core_layout, set_memory_ro);
++static inline temporary_mm_state_t use_temporary_mm(struct mm_struct *mm)
++{
++	temporary_mm_state_t state;
 +
- 	frob_text(&mod->init_layout, set_memory_ro);
-+	frob_text(&mod->init_layout, set_memory_x);
++	lockdep_assert_irqs_disabled();
++	state.prev = this_cpu_read(cpu_tlbstate.loaded_mm);
++	switch_mm_irqs_off(NULL, mm, current);
++	return state;
++}
 +
- 	frob_rodata(&mod->init_layout, set_memory_ro);
- 
- 	if (after_init)
++static inline void unuse_temporary_mm(temporary_mm_state_t prev)
++{
++	lockdep_assert_irqs_disabled();
++	switch_mm_irqs_off(NULL, prev.prev, current);
++}
++
+ #endif /* _ASM_X86_MMU_CONTEXT_H */
 -- 
 2.17.1
 
