@@ -2,144 +2,133 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 054F6C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 01:17:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBBF3C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 01:36:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B379820855
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 01:17:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 939972081C
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 01:36:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="FMUXn4cy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B379820855
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=soleen.com
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="whnQSpuR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 939972081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728375AbeKJLAG (ORCPT
+        id S1728514AbeKJLT1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 06:00:06 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:40061 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728082AbeKJLAG (ORCPT
+        Sat, 10 Nov 2018 06:19:27 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:33779 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728310AbeKJLT1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 06:00:06 -0500
-Received: by mail-qk1-f193.google.com with SMTP id y16so4923804qki.7
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 17:16:55 -0800 (PST)
+        Sat, 10 Nov 2018 06:19:27 -0500
+Received: by mail-pg1-f196.google.com with SMTP id q5-v6so1596688pgv.0
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 17:36:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google;
+        d=joelfernandes.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=j3HNAWMYoutagkGQSGAXBA/wFjM51PBrzQw2atvbdSU=;
-        b=FMUXn4cyWFv3EMbT0Jot7sprxClThucCoyrcCPYN4owZwxSsWuNXbpYFKhsZr+ZdpN
-         tfnWWMTZKuaPYiK3lDEt7xzBNADGxlFHQMHGoi2Nokrc4L1arzqNQ12kg3/dbfV9oitA
-         tTrJDcH7H5mEv6SOY6QCfUzcIQ7ifSwqDpfZMe+1LV4JDirKO5cDwG7hGf7Tck1LW9G6
-         PeD6jSZugqpWxE+Pm+2SlM5dX09sjoc8vAybJk4C1+74+qpOefyhkxd5lD15xFg7+mly
-         C1xeqHuPKsRdcRwdi9ZtpIcJSZZ5REQTBW1tyrkRkZHs9JoH0+/r76NhX2yaySgDmOee
-         ko4Q==
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=5rVRLwmeXXqGwuTVKtGHavaKEmH1dR+39dZJf49P+RA=;
+        b=whnQSpuRoDGpVcPscQFQUrRVXT36d3O2EB2Jpr+ouBGjfNlsmkDjIdOgNXjX5Qnsl6
+         2TWy/1npjunwC7EWizaUuDob5LG6EPTuYJ/3Ua2YfMtxOulrC906rXOnS9f2/hLrJ88v
+         p7/KFnwcrZgjeNEsHQ5tudtVWn0eDjsQ5LYuA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=j3HNAWMYoutagkGQSGAXBA/wFjM51PBrzQw2atvbdSU=;
-        b=N4+4Y9ak1+NmfSaZx7A6bXSVdTx+4vBSeLxQsrHTHJ4XQiYK1cK4THtsUs/hEZ4aWF
-         nDdrl8+6S9VXxdmrD/WCDlJOUGhVLQVgQQhmtKmIgFhekp9xHnSbf3CqyNnzJHLa/fLq
-         BZ+uvgRK0zAJJI9gf4ejX39shMWhIysYz/2KytnqRm4rsjvHvl9SnlCNA7ZNSEZ1GHOy
-         M/RBTN7CYoUjZjVvZ8AUjGMHPMJC84xAbRRnWaVoUJvOA/B0TQ6xKGmIIjkgOC/l8axC
-         uTXzPIuH0NibQ8wFsD/DZmro0jYNeW/yISUJ5sfiRn2hSKnEZKOurZMeLkztk28IBccp
-         frBA==
-X-Gm-Message-State: AGRZ1gJdvK6W3pPorYozAQWfTXltMs7vVLa4i4JY9DQUn3Wg9TwZja1p
-        Avk8GLlTY4pccqn+jUugFz2KVQ==
-X-Google-Smtp-Source: AJdET5d5BlfSlca7ISr3jlF+tBIhjeRc7bf5V08mZyQD+ad5l6EeA7GNKr11jLYp9VW3wZKs36QhMQ==
-X-Received: by 2002:ac8:fd4:: with SMTP id f20mr11281043qtk.63.1541812615094;
-        Fri, 09 Nov 2018 17:16:55 -0800 (PST)
-Received: from xakep.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id u199-v6sm4924855qka.47.2018.11.09.17.16.53
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=5rVRLwmeXXqGwuTVKtGHavaKEmH1dR+39dZJf49P+RA=;
+        b=WmXRWggKtXYl/eqO2A3hwTF6IetRjTe9tGiVuVWM+GUC4D7d4thlhoqlWOTp4zT0sj
+         fbdlDYYzu70ekXfeqhDLQNDcRjhGsBDBgI2qGSz1ps09TY6pyxIokhAbd9C1DbWKb3+s
+         pUAKmBmILWpFGg7r/vl3bNFCw2oYTX6zlz8ZcUcec1o+ZJqJN++hYDTfaFcIluFhfcfT
+         FAXJaFe9YJsvHmvaEwv8ppyvUAK7fZvrku8sVYuMiuuPa00M1IvlapectP933bIYnlqj
+         vD/wzKqkGaMW+hCFqdHLMo92xoxMITQRCoQDWZH77SUCT7yT5SN8g+tOyditdoYTRfEk
+         xCAw==
+X-Gm-Message-State: AGRZ1gIG5EVQp4e85Tnf07acH2ObmczBnevgjAKPVUw8FHBVDvUhBF5n
+        oh4wrmhW+8wwk7vlmUaYGCk5BatCAOk=
+X-Google-Smtp-Source: AJdET5ep6eflBnfolqJWFOwAAnFJpoqi6ZfWj1DAonSgLW/UKKu/mp2Q0xX10qiqwpUdkMTZBVD9OQ==
+X-Received: by 2002:a63:d949:: with SMTP id e9mr9611511pgj.24.1541813774059;
+        Fri, 09 Nov 2018 17:36:14 -0800 (PST)
+Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id w80-v6sm14841724pfk.11.2018.11.09.17.36.12
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 09 Nov 2018 17:16:54 -0800 (PST)
-Date:   Fri, 9 Nov 2018 20:16:52 -0500
-From:   Pavel Tatashin <pasha.tatashin@soleen.com>
-To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Cc:     daniel.m.jordan@oracle.com, akpm@linux-foundation.org,
-        linux-mm@kvack.org, sparclinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        davem@davemloft.net, pavel.tatashin@microsoft.com, mhocko@suse.com,
-        mingo@kernel.org, kirill.shutemov@linux.intel.com,
-        dan.j.williams@intel.com, dave.jiang@intel.com,
-        rppt@linux.vnet.ibm.com, willy@infradead.org, vbabka@suse.cz,
-        khalid.aziz@oracle.com, ldufour@linux.vnet.ibm.com,
-        mgorman@techsingularity.net, yi.z.zhang@linux.intel.com
-Subject: Re: [mm PATCH v5 0/7] Deferred page init improvements
-Message-ID: <20181110011652.2wozbvfimcnhogfj@xakep.localdomain>
-References: <20181109211521.5ospn33pp552k2xv@xakep.localdomain>
- <18b6634b912af7b4ec01396a2b0f3b31737c9ea2.camel@linux.intel.com>
- <20181110000006.tmcfnzynelaznn7u@xakep.localdomain>
- <0d8782742d016565870c578848138aaedf873a7c.camel@linux.intel.com>
+        Fri, 09 Nov 2018 17:36:12 -0800 (PST)
+Date:   Fri, 9 Nov 2018 17:36:11 -0800
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Daniel Colascione <dancol@google.com>,
+        Jann Horn <jannh@google.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        John Reck <jreck@google.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Todd Kjos <tkjos@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Bruce Fields <bfields@fieldses.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Khalid Aziz <khalid.aziz@oracle.com>, Lei.Yang@windriver.com,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>, marcandre.lureau@redhat.com,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Shuah Khan <shuah@kernel.org>, valdis.kletnieks@vt.edu,
+        Hugh Dickins <hughd@google.com>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH v3 resend 1/2] mm: Add an F_SEAL_FUTURE_WRITE seal to
+ memfd
+Message-ID: <20181110013611.GA199560@google.com>
+References: <20181108041537.39694-1-joel@joelfernandes.org>
+ <CAG48ez1h=v-JYnDw81HaYJzOfrNhwYksxmc2r=cJvdQVgYM+NA@mail.gmail.com>
+ <CAKOZuesw1wG-YynWL7bVb+4BWtYp0Ei62vweWF+mqF1Ln-_2Tg@mail.gmail.com>
+ <BB64C995-F374-49EB-8469-4820231D8152@amacapital.net>
+ <CAKOZuetZrL10zWwn4Jzzg0QL2nd3Fm0JxGtzC79SZAfOK525Ag@mail.gmail.com>
+ <F8A6A5DC-3BA0-43BD-B7EC-EDE199B33A02@amacapital.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <0d8782742d016565870c578848138aaedf873a7c.camel@linux.intel.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <F8A6A5DC-3BA0-43BD-B7EC-EDE199B33A02@amacapital.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18-11-09 16:46:02, Alexander Duyck wrote:
-> On Fri, 2018-11-09 at 19:00 -0500, Pavel Tatashin wrote:
-> > On 18-11-09 15:14:35, Alexander Duyck wrote:
-> > > On Fri, 2018-11-09 at 16:15 -0500, Pavel Tatashin wrote:
-> > > > On 18-11-05 13:19:25, Alexander Duyck wrote:
-> > > > > This patchset is essentially a refactor of the page initialization logic
-> > > > > that is meant to provide for better code reuse while providing a
-> > > > > significant improvement in deferred page initialization performance.
-> > > > > 
-> > > > > In my testing on an x86_64 system with 384GB of RAM and 3TB of persistent
-> > > > > memory per node I have seen the following. In the case of regular memory
-> > > > > initialization the deferred init time was decreased from 3.75s to 1.06s on
-> > > > > average. For the persistent memory the initialization time dropped from
-> > > > > 24.17s to 19.12s on average. This amounts to a 253% improvement for the
-> > > > > deferred memory initialization performance, and a 26% improvement in the
-> > > > > persistent memory initialization performance.
-> > > > 
-> > > > Hi Alex,
-> > > > 
-> > > > Please try to run your persistent memory init experiment with Daniel's
-> > > > patches:
-> > > > 
-> > > > https://lore.kernel.org/lkml/20181105165558.11698-1-daniel.m.jordan@oracle.com/
-> > > 
-> > > I've taken a quick look at it. It seems like a bit of a brute force way
-> > > to try and speed things up. I would be worried about it potentially
+On Fri, Nov 09, 2018 at 03:14:02PM -0800, Andy Lutomirski wrote:
+> >>>> That aside: I wonder whether a better API would be something that
+> >>>> allows you to create a new readonly file descriptor, instead of
+> >>>> fiddling with the writability of an existing fd.
+> >>> 
+> >>> That doesn't work, unfortunately. The ashmem API we're replacing with
+> >>> memfd requires file descriptor continuity. I also looked into opening
+> >>> a new FD and dup2(2)ing atop the old one, but this approach doesn't
+> >>> work in the case that the old FD has already leaked to some other
+> >>> context (e.g., another dup, SCM_RIGHTS). See
+> >>> https://developer.android.com/ndk/reference/group/memory. We can't
+> >>> break ASharedMemory_setProt.
+> >> 
+> >> 
+> >> Hmm.  If we fix the general reopen bug, a way to drop write access from
+> >> an existing struct file would do what Android needs, right?  I don’t
+> >> know if there are general VFS issues with that.
 > > 
-> > There is a limit to max number of threads that ktasks start. The memory
-> > throughput is *much* higher than what one CPU can maxout in a node, so
-> > there is no reason to leave the other CPUs sit idle during boot when
-> > they can help to initialize.
-> 
-> Right, but right now that limit can still be pretty big when it is
-> something like 25% of all the CPUs on a 288 CPU system.
 
-It is still OK. About 9 threads per node.
+I don't think there is a way to fix this in /proc/pid/fd. At the proc
+level, the /proc/pid/fd/N files are just soft symlinks that follow through to
+the actual file. The open is actually done on that inode/file. I think
+changing it the way being discussed here means changing the way symlinks work
+in Linux.
 
-That machine has 1T of memory, which means 8 nodes need to initialize 2G
-of memory each. With 46G/s throughout it should take 0.043s Which is 10
-times higher than what Daniel sees with 0.325s, so there is still room
-to saturate the memory throughput.
+I think the right way to fix this is at the memfd inode level. I am working
+on a follow up patch on top of this patch, and will send that out in a few
+days (along with the man page updates).
 
-Now, if the multi-threadding efficiency is good, it should take
-1.261s / 9 threads =  0.14s
+thanks!
 
-> 
-> One issue is the way the code was ends up essentially blowing out the
-> cache over and over again. Doing things in two passes made it really
-> expensive as you took one cache miss to initialize it, and another to
-> free it. I think getting rid of that is one of the biggest gains with
-> my patch set.
-
-I am not arguing that your patches make sense, all I am saying that
-ktasks improve time order of magnitude better on machines with large
-amount of memory.
-
-Pasha
+ - Joel
