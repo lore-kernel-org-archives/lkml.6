@@ -2,171 +2,79 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3798C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 08:52:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6EB6C0044B
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 08:57:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7773620892
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 08:52:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7773620892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 8E7CF20858
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 08:57:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="dj8481+B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E7CF20858
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729152AbeKJSge (ORCPT
+        id S1728949AbeKJSlS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 13:36:34 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:56369 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728791AbeKJSge (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 13:36:34 -0500
-Received: from fsav102.sakura.ne.jp (fsav102.sakura.ne.jp [27.133.134.229])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wAA8qJEb034966;
-        Sat, 10 Nov 2018 17:52:19 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav102.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp);
- Sat, 10 Nov 2018 17:52:19 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank060157065137.bbtec.net [60.157.65.137])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id wAA8qJtq034918
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Sat, 10 Nov 2018 17:52:19 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH 3/3] lockdep: Use line-buffered printk() for lockdep
- messages.
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Dmitriy Vyukov <dvyukov@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Alexander Potapenko <glider@google.com>,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>
-References: <1541165517-3557-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <1541165517-3557-3-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <20181107151900.gxmdvx42qeanpoah@pathway.suse.cz>
- <20181108044510.GC2343@jagdpanzerIV>
- <9648a384-853c-942e-6a8d-80432d943aae@i-love.sakura.ne.jp>
- <20181109061204.GC599@jagdpanzerIV>
- <07dcbcb8-c5a7-8188-b641-c110ade1c5da@i-love.sakura.ne.jp>
- <20181109154326.apqkbsojmbg26o3b@pathway.suse.cz>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <2d0d1f60-d8b6-41e0-6845-0eb62f211e40@i-love.sakura.ne.jp>
-Date:   Sat, 10 Nov 2018 17:52:17 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <20181109154326.apqkbsojmbg26o3b@pathway.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Sat, 10 Nov 2018 13:41:18 -0500
+Received: from m50-132.163.com ([123.125.50.132]:37662 "EHLO m50-132.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728766AbeKJSlS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 13:41:18 -0500
+X-Greylist: delayed 925 seconds by postgrey-1.27 at vger.kernel.org; Sat, 10 Nov 2018 13:41:17 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id; bh=VYMiLmPONxQsftIy7F
+        2iJGqQ57x5RPGI4vSw7FbMggE=; b=dj8481+BJKfaVwZI5TZrL71fRyLXC7taXQ
+        aa/yq4CPTvHcKp2tEcBf2Qz2buoILbGpDLu5ULMjZwQzn4Hlkcj8MR6UJvu9X4uT
+        9r7OkoAqYNJ5MYOGj6Xay9/1H+8TSw/X4pcByEmEKp6ZfiCTgiA1kAG4wKbpQDiK
+        F8/sj3H/U=
+Received: from localhost.localdomain (unknown [221.0.93.75])
+        by smtp2 (Coremail) with SMTP id DNGowAAX70KfmeZbl86zAA--.73S2;
+        Sat, 10 Nov 2018 16:41:17 +0800 (CST)
+From:   zoro <long17.cool@163.com>
+To:     a.zummo@towertech.it
+Cc:     alexandre.belloni@bootlin.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-rtc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        zoro <long17.cool@163.com>
+Subject: [PATCH 1/3] dt-bindings: define vendor prefix for whwave, Inc.
+Date:   Sat, 10 Nov 2018 16:40:59 +0800
+Message-Id: <1541839261-28765-1-git-send-email-long17.cool@163.com>
+X-Mailer: git-send-email 1.7.9.5
+X-CM-TRANSID: DNGowAAX70KfmeZbl86zAA--.73S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrtF15GryDWF1DJFWUKF45KFg_yoWxKFc_Za
+        1xJrWqvw45tF4Fgw4jyF47Gw1rJr1IkrW8u3WYq3Wvy3WfXFZxtayktay5ZF4xWF4xua45
+        Zr97GrZrXr17KjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUbRwZ3UUUUU==
+X-Originating-IP: [221.0.93.75]
+X-CM-SenderInfo: 5orqwi2xof00ro6rljoofrz/1tbizQ76F1c7DKJepAAAsW
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/11/10 0:43, Petr Mladek wrote:
-> On Fri 2018-11-09 18:55:26, Tetsuo Handa wrote:
->> How early_printk requirement affects line buffered printk() API?
->>
->> I don't think it is impossible to convert from
->>
->>      printk("Testing feature XYZ..");
->>      this_may_blow_up_because_of_hw_bugs();
->>      printk(KERN_CONT " ... ok\n");
->>
->> to
->>
->>      printk("Testing feature XYZ:\n");
->>      this_may_blow_up_because_of_hw_bugs();
->>      printk("Testing feature XYZ.. ... ok\n");
->>
->> in https://lore.kernel.org/lkml/CA+55aFwmwdY_mMqdEyFPpRhCKRyeqj=+aCqe5nN108v8ELFvPw@mail.gmail.com/ .
-> 
-> I just wonder how this pattern is common. I have tried but I failed
-> to find any instance.
-> 
-> This problem looks like a big argument against explicit buffers.
-> But I wonder if it is real.
+Introduce vendor prefix for whwave, Inc.
+for SD3078 rtc device.
 
-An example of boot up messages where buffering makes difference.
+Signed-off-by: zoro <long17.cool@163.com>
+---
+ .../devicetree/bindings/vendor-prefixes.txt        |    1 +
+ 1 file changed, 1 insertion(+)
 
-Vanilla:
-
-[    0.260459] smp: Bringing up secondary CPUs ...
-[    0.269595] x86: Booting SMP configuration:
-[    0.270461] .... node  #0, CPUs:      #1
-[    0.066578] Disabled fast string operations
-[    0.066578] mce: CPU supports 0 MCE banks
-[    0.066578] smpboot: CPU 1 Converting physical 2 to logical package 1
-[    0.342569]  #2
-[    0.066578] Disabled fast string operations
-[    0.066578] mce: CPU supports 0 MCE banks
-[    0.066578] smpboot: CPU 2 Converting physical 4 to logical package 2
-[    0.413442]  #3
-[    0.066578] Disabled fast string operations
-[    0.066578] mce: CPU supports 0 MCE banks
-[    0.066578] smpboot: CPU 3 Converting physical 6 to logical package 3
-[    0.476562] smp: Brought up 1 node, 4 CPUs
-[    0.477477] smpboot: Max logical packages: 8
-[    0.477514] smpboot: Total of 4 processors activated (22691.70 BogoMIPS)
-
-With try_buffered_printk() patch:
-
-[    0.279768] smp: Bringing up secondary CPUs ...
-[    0.288825] x86: Booting SMP configuration:
-[    0.066748] Disabled fast string operations
-[    0.066748] mce: CPU supports 0 MCE banks
-[    0.066748] smpboot: CPU 1 Converting physical 2 to logical package 1
-[    0.066748] Disabled fast string operations
-[    0.066748] mce: CPU supports 0 MCE banks
-[    0.066748] smpboot: CPU 2 Converting physical 4 to logical package 2
-[    0.066748] Disabled fast string operations
-[    0.066748] mce: CPU supports 0 MCE banks
-[    0.066748] smpboot: CPU 3 Converting physical 6 to logical package 3
-[    0.495862] .... node  #0, CPUs:      #1 #2 #36smp: Brought up 1 node, 4 CPUs
-[    0.496833] smpboot: Max logical packages: 8
-[    0.497609] smpboot: Total of 4 processors activated (22665.22 BogoMIPS)
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+index 4b1a2a8..3d59d6a 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -440,3 +440,4 @@ zidoo	Shenzhen Zidoo Technology Co., Ltd.
+ zii	Zodiac Inflight Innovations
+ zte	ZTE Corp.
+ zyxel	ZyXEL Communications Corp.
++whwave	Shenzhen whwave Electronics crop
+-- 
+1.7.9.5
 
 
-
-Hmm, arch/x86/kernel/smpboot.c is not emitting '\n' after #num
-
-        if (system_state < SYSTEM_RUNNING) {
-                if (node != current_node) {
-                        if (current_node > (-1))
-                                pr_cont("\n");
-                        current_node = node;
-
-                        printk(KERN_INFO ".... node %*s#%d, CPUs:  ",
-                               node_width - num_digits(node), " ", node);
-                }
-
-                /* Add padding for the BSP */
-                if (cpu == 1)
-                        pr_cont("%*s", width + 1, " ");
-
-                pr_cont("%*s#%d", width - num_digits(cpu), " ", cpu);
-
-        } else
-                pr_info("Booting Node %d Processor %d APIC 0x%x\n",
-                        node, cpu, apicid);
-
-and causing
-
-        pr_info("Brought up %d node%s, %d CPU%s\n",
-                num_nodes, (num_nodes > 1 ? "s" : ""),
-                num_cpus,  (num_cpus  > 1 ? "s" : ""));
-
-line to be concatenated to previous line.
-Maybe disable try_buffered_printk() if system_state != SYSTEM_RUNNING ?
