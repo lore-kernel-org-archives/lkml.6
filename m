@@ -2,100 +2,249 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E490C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 03:09:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9D4CC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 03:20:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3F7D20825
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 03:09:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3F7D20825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tencent.com
+	by mail.kernel.org (Postfix) with ESMTP id 5C06020825
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 03:20:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="xq7Vldvk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C06020825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728595AbeKJMxD (ORCPT
+        id S1728609AbeKJNDg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 07:53:03 -0500
-Received: from mail2.tencent.com ([163.177.67.195]:43598 "EHLO
-        mail2.tencent.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728130AbeKJMxD (ORCPT
+        Sat, 10 Nov 2018 08:03:36 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:37775 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728228AbeKJNDg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 07:53:03 -0500
-Received: from EXHUB-SZMail01.tencent.com (unknown [10.14.6.21])
-        by mail2.tencent.com (Postfix) with ESMTP id 97C9517B9C;
-        Sat, 10 Nov 2018 11:09:35 +0800 (CST)
-Received: from EXMBX-SZMAIL022.tencent.com ([fe80::dcc:e364:cd45:89d9]) by
- EXHUB-SZMail01.tencent.com ([::1]) with mapi id 14.03.0415.000; Sat, 10 Nov
- 2018 11:09:35 +0800
-From:   =?utf-8?B?Y2hvdXJ5emhvdSjlkajlqIEp?= <chouryzhou@tencent.com>
-To:     tkjos <tkjos@google.com>
-CC:     gregkh <gregkh@linuxfoundation.org>, arve <arve@android.com>,
-        tkjos <tkjos@android.com>, akpm <akpm@linux-foundation.org>,
-        dave <dave@stgolabs.net>, devel <devel@driverdev.osuosl.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        chouryzhou <chouryzhou@gmail.com>
-Subject: Re: Re: [PATCH V3] binder: ipc namespace support for android binder
-Thread-Topic: Re: [PATCH V3] binder: ipc namespace support for android binder
-Thread-Index: AQHUeKLO0YdSY8ul7U2/F7Lwer0RZw==
-Date:   Sat, 10 Nov 2018 03:09:34 +0000
-Message-ID: <5FBCBE569E134E4CA167B91C0A77FD610198F8A217@EXMBX-SZMAIL022.tencent.com>
-References: <5FBCBE569E134E4CA167B91C0A77FD610198F851AC@EXMBX-SZMAIL022.tencent.com>,
- <CAHRSSExukqyS5V=fgdBP1Jn_KXZEMsWR+wMLNtxBq8+G3wkgSQ@mail.gmail.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.32.195.149]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Sat, 10 Nov 2018 08:03:36 -0500
+Received: by mail-pg1-f195.google.com with SMTP id 80so1661982pge.4
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 19:20:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=SwhalELpmKQK1pwDtkb5pSRxXxFuUqJP43YJan5OutI=;
+        b=xq7VldvkCZEHJyxch+k3eLF912iD/rTIOqqL8Vfh+Lq4Ww72VftLxnx+hw2pG7ABiw
+         Yy8/mSK3jYPIXFpuAmw5rz23WIQxacyH7jJ2UzPAVfFOqogdBcXAIigrNbnFqihC9I4r
+         BwgRQPblyifTqihZlim7tpMEWRjiGJCUKvgwM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=SwhalELpmKQK1pwDtkb5pSRxXxFuUqJP43YJan5OutI=;
+        b=mf2qfj8w5d8JTW3CXr0/n/0C9ghT3d1Vter4+KtO+WEVKulhnMV7qJU0turTfsLApo
+         jyrLOcT4puKT2zLRSPG0LkeUv6c7M9irFJR9uV5Z9NYEHxStRxVrco7ZHXRg1/QZ7NVQ
+         vv6Qnj0mZVIhoH4o+z4Qmhc8cvQ/pir9mAQlOA8P2hJrS9VQFACHP2raj4+Ei2OP0gNH
+         oeO/9wnytLix5gwinRlq7smCItk3gkOnnUjcjNt7fH/rsujGnPHANr7rPOL4V1UVdf7f
+         M77t4LsMvg2k8No9gluW58pdSAuI6faV5kEWZOLXE8+om+7gT+EhjxybfJ7UuQJwesGE
+         mz7g==
+X-Gm-Message-State: AGRZ1gJPl6LkSw3YWc0oO8USX92LJlvV0H4gVdujMUstuwE9IqhsQ7Ix
+        pmH+MXyBsaK5umV9HRx1EL8wWg==
+X-Google-Smtp-Source: AJdET5cwQ092gw+g7OeOb8kqx9zN5Ka7lxMTFIisRhQLNJTFm0Z0lE4aroEyPPStP6ZB3ToGArDL3w==
+X-Received: by 2002:a62:682:: with SMTP id 124-v6mr11543056pfg.161.1541820007715;
+        Fri, 09 Nov 2018 19:20:07 -0800 (PST)
+Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id q1sm8566556pgs.14.2018.11.09.19.20.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 09 Nov 2018 19:20:06 -0800 (PST)
+Date:   Fri, 9 Nov 2018 19:20:05 -0800
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Jann Horn <jannh@google.com>
+Cc:     kernel list <linux-kernel@vger.kernel.org>, jreck@google.com,
+        John Stultz <john.stultz@linaro.org>,
+        Todd Kjos <tkjos@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Daniel Colascione <dancol@google.com>,
+        Bruce Fields <bfields@fieldses.org>, jlayton@kernel.org,
+        Khalid Aziz <khalid.aziz@oracle.com>, Lei.Yang@windriver.com,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>, marcandre.lureau@redhat.com,
+        Mike Kravetz <mike.kravetz@oracle.com>, minchan@kernel.org,
+        shuah@kernel.org, valdis.kletnieks@vt.edu,
+        Hugh Dickins <hughd@google.com>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH v3 resend 1/2] mm: Add an F_SEAL_FUTURE_WRITE seal to
+ memfd
+Message-ID: <20181110032005.GA22238@google.com>
+References: <20181108041537.39694-1-joel@joelfernandes.org>
+ <CAG48ez1h=v-JYnDw81HaYJzOfrNhwYksxmc2r=cJvdQVgYM+NA@mail.gmail.com>
+ <CAG48ez0kQ4d566bXTFOYANDgii-stL-Qj-oyaBzvfxdV=PU-7g@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG48ez0kQ4d566bXTFOYANDgii-stL-Qj-oyaBzvfxdV=PU-7g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PsKgCj4gSSBzdGlsbCBkb24ndCB1bmRlcnN0YW5kIHRoZSBkZXBlbmRlbmNpZXMgb24gU1lTVklQ
-QyBvciBQT1NJWF9NUVVFVUUuCj4gSXQgc2VlbXMgbGlrZSB0aGlzIG1lY2hhbmlzbSB3b3VsZCB3
-b3JrIGV2ZW4gaWYgYm90aCBhcmUgZGlzYWJsZWQgLS0KPiBhcyBsb25nIGFzIElQQ19OUyBpcyBl
-bmFibGVkLiBTZWVtcyBjbGVhbmVyIHRvIGNoYW5nZSBpbml0L0tjb25maWcgYW5kCj4gYWxsb3cg
-SVBDX05TIGlmIENPTkZJR19BTkRST0lEX0JJTkRFUl9JUEMgYW5kIGNoYW5nZSB0aGlzIGxpbmUg
-dG8KPiAiI2lmbmRlZiBDT05GSUdfSVBDX05TIgoKTGV0IG1lIGV4cGxhaW4gaXQgaW4gZGV0YWls
-LiBJZiBTWVNJUEMgYW5kIElQQ19OUyBhcmUgYm90aCBkZWZpbmVkLCDCoApjdXJyZW50LT5uc3By
-b3h5LT5pcGNfbnMgd2lsbCBzYXZlIHRoZSBpcGMgbmFtZXNwYWNlIHZhcmlhYmxlcy4gV2UganVz
-dCB1c2XCoAppdC4gSWYgU1lTSVBDIChvciBQT1NJWF9NUVVFVUUpIGlzIGRlZmluZWQgd2hpbGUg
-SVBDX05TIGlzIG5vdCBzZXQswqAKY3VycmVudC0+bnNwcm94eS0+aXBjX25zIHdpbGwgYWx3YXlz
-IHJlZmVyIHRvIGluaXRfaXBjX25zIGluIGlwYy9tc2d1dGlsLmMswqAKd2hpY2ggaXMgYWxzbyBm
-aW5lIHRvIHVzLiBCdXQgaWYgbmVpdGhlciBTWVNJUEMgbm9yIFBPU0lYX01RVUVVRSBpcyBzZXTC
-oAooSVBDX05TIGNhbid0IGJlIHNldCBpbiB0aGlzIHNpdHVhdGlvbiksIHRoZXJlIGlzIG5vIGN1
-cnJlbnQtPm5zcHJveHktPmlwY19ucy4KV2UgbWFrZSBhIGZhY2sgaW5pdF9pcGNfbnMgaGVyZSBh
-bmQgdXNlIGl0LgoKPiB3aHkgZWxpbWluYXRlIG5hbWU/IFRoZSBzdHJpbmcgbmFtZSBpcyB2ZXJ5
-IHVzZWZ1bCBmb3IgZGlmZmVyZW50aWF0aW5nCj4gbm9ybWFsICJmcmFtZXdvcmsiIGJpbmRlciB0
-cmFuc2FjdGlvbnMgdnMgImhhbCIgb3IgInZlbmRvciIKPiB0cmFuc2FjdGlvbnMuIElmIHdlIGp1
-c3QgaGF2ZSBhIGRldmljZSBudW1iZXIgaXQgd2lsbCBiZSBoYXJkIHRvIHRlbGwKPiBpbiB0aGUg
-bG9ncyBldmVuIHdoaWNoIG5hbWVzcGFjZSBpdCBiZWxvbmdzIHRvLiBXZSBuZWVkIHRvIGtlZXAg
-Ym90aAo+IHRoZSAibmFtZSIgKGZvciB3aGljaCB0aGVyZSBtaWdodCBiZSBtdWx0aXBsZSBpbiBl
-YWNoIG5zKSBhbmQgc29tZQo+IGluZGljYXRpb24gb2Ygd2hpY2ggbmFtZXNwYWNlIHRoaXMgaXMu
-IE1heWJlIHdlIGFzc2lnbiBzb21lIHNvcnQgb2YKPiBuYW1lc3BhY2UgSUQgZHVyaW5nIGJpbmRl
-cl9pbml0X25zKCkuCgrCoEkgd2lsbCByZW1haW4gdGhlIG5hbWUgb2YgZGV2aWNlLiBUaGUgwqBp
-bnVtIG9mIGlwY19ucyBjYW4gYmUgdHJlYXRlZCBhc8KgCm5hbWVzcGFjZSBJRCBpbiBpcGNfbnMu
-Cgo+IEFzIG1lbnRpb25lZCBhYm92ZSwgd2UgbmVlZCB0byByZXRhaW4gbmFtZSBhbmQgcHJvYmFi
-bHkgYWxzbyB3YW50IGEgbnMKPiBpZCBvZiBzb21lIHNvcnQuIFNvIGNvbnRleHQgbm93IGhhcyAz
-IGNvbXBvbmVudHMgaWYgSVBDX05TLCBzbyBtYXliZSBhCj4gaGVscGVyIGZ1bmN0aW9uIHRvIHBy
-aW50IGNvbnRleHQgbGlrZToKPsKgCj4gc3RhdGljIHZvaWQgYmluZGVyX3NlcV9wcmludF9jb250
-ZXh0KHN0cnVjdCBzZXFfZmlsZSAqbSwgc3RydWN0Cj4gYmluZGVyX2NvbnRleHQgKmNvbnRleHQp
-Cj4gewo+ICNpZmRlZiBDT05GSUdfSVBDX05TCj4gwqAgwqAgwqAgwqAgwqAgc2VxX3ByaW50Ziht
-LCAiJWQtJWQtJXMiLCBjb250ZXh0LT5uc19pZCwgY29udGV4dC0+ZGV2aWNlLAo+IGNvbnRleHQt
-Pm5hbWUpOwo+ICNlbHNlCj4gwqAgwqAgwqAgwqAgwqAgc2VxX3ByaW50ZihtLCAiJWQiLCBjb250
-ZXh0LT5uYW1lKTsKPiAjZW5kaWYKPiB9Cj7CoAo+IChzYW1lIGNvbW1lbnQgYmVsb3cgZXZlcnl3
-aGVyZSBjb250ZXh0IGlzIHByaW50ZWQpCj7CoAo+IFNob3VsZCB0aGVzZSBkZWJ1Z2ZzIG5vZGVz
-IHNob3VsZCBiZSBucyBhd2FyZSBhbmQgb25seSBwcmludCBkZWJ1Z2dpbmcKPiBpbmZvIGZvciB0
-aGUgY29udGV4dCBvZiB0aGUgdGhyZWFkIGFjY2Vzc2luZyB0aGUgbm9kZT8gSWYgc28sIHdlIHdv
-dWxkCj4gYWxzbyB3YW50IHRvIGJlIG5hbWVzcGFjZS1hd2FyZSB3aGVuIHByaW50aW5nIHBpZHMu
-CgpOb3dhZGF5cywgZGVidWdmcyBpcyBub3QgbmFtZXNwYWNlLWl6ZWQsIGFuZCBwaWQgbmFtZXNw
-YWNlIGlzIG5vdCBhc3NvY2lhdGVkwqAKd2l0aCBpcGMgbmFtZXNwYWNlLiDCoFdpbGwgaXQgYmUg
-bW9yZSBjb21wbGljYXRlZCB0byBkZWJ1ZyB0aGlzIGlmIHdlIGp1c3QgcHJpbnTCoAp0aGUgaW5m
-byBmb3IgY3VycmVudCB0aHJlYWQ/IEJlY2F1c2Ugd2Ugd2lsbCBoYXZlIHRvIGVudGVyIHRoZSBp
-cGMgbmFtZXNwYWNlwqAKZmlyc3RseS4gQnV0IGFkZCBpcGMgaW51bSBzaG91bGQgYmUgbm8gcHJv
-YmxlbS4KCi0gY2hvdXJ5IC0KCgo=
+On Fri, Nov 09, 2018 at 10:19:03PM +0100, Jann Horn wrote:
+> On Fri, Nov 9, 2018 at 10:06 PM Jann Horn <jannh@google.com> wrote:
+> > On Fri, Nov 9, 2018 at 9:46 PM Joel Fernandes (Google)
+> > <joel@joelfernandes.org> wrote:
+> > > Android uses ashmem for sharing memory regions. We are looking forward
+> > > to migrating all usecases of ashmem to memfd so that we can possibly
+> > > remove the ashmem driver in the future from staging while also
+> > > benefiting from using memfd and contributing to it. Note staging drivers
+> > > are also not ABI and generally can be removed at anytime.
+> > >
+> > > One of the main usecases Android has is the ability to create a region
+> > > and mmap it as writeable, then add protection against making any
+> > > "future" writes while keeping the existing already mmap'ed
+> > > writeable-region active.  This allows us to implement a usecase where
+> > > receivers of the shared memory buffer can get a read-only view, while
+> > > the sender continues to write to the buffer.
+> > > See CursorWindow documentation in Android for more details:
+> > > https://developer.android.com/reference/android/database/CursorWindow
+> > >
+> > > This usecase cannot be implemented with the existing F_SEAL_WRITE seal.
+> > > To support the usecase, this patch adds a new F_SEAL_FUTURE_WRITE seal
+> > > which prevents any future mmap and write syscalls from succeeding while
+> > > keeping the existing mmap active.
+> >
+> > Please CC linux-api@ on patches like this. If you had done that, I
+> > might have criticized your v1 patch instead of your v3 patch...
+> >
+> > > The following program shows the seal
+> > > working in action:
+> > [...]
+> > > Cc: jreck@google.com
+> > > Cc: john.stultz@linaro.org
+> > > Cc: tkjos@google.com
+> > > Cc: gregkh@linuxfoundation.org
+> > > Cc: hch@infradead.org
+> > > Reviewed-by: John Stultz <john.stultz@linaro.org>
+> > > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> > > ---
+> > [...]
+> > > diff --git a/mm/memfd.c b/mm/memfd.c
+> > > index 2bb5e257080e..5ba9804e9515 100644
+> > > --- a/mm/memfd.c
+> > > +++ b/mm/memfd.c
+> > [...]
+> > > @@ -219,6 +220,25 @@ static int memfd_add_seals(struct file *file, unsigned int seals)
+> > >                 }
+> > >         }
+> > >
+> > > +       if ((seals & F_SEAL_FUTURE_WRITE) &&
+> > > +           !(*file_seals & F_SEAL_FUTURE_WRITE)) {
+> > > +               /*
+> > > +                * The FUTURE_WRITE seal also prevents growing and shrinking
+> > > +                * so we need them to be already set, or requested now.
+> > > +                */
+> > > +               int test_seals = (seals | *file_seals) &
+> > > +                                (F_SEAL_GROW | F_SEAL_SHRINK);
+> > > +
+> > > +               if (test_seals != (F_SEAL_GROW | F_SEAL_SHRINK)) {
+> > > +                       error = -EINVAL;
+> > > +                       goto unlock;
+> > > +               }
+> > > +
+> > > +               spin_lock(&file->f_lock);
+> > > +               file->f_mode &= ~(FMODE_WRITE | FMODE_PWRITE);
+> > > +               spin_unlock(&file->f_lock);
+> > > +       }
+> >
+> > So you're fiddling around with the file, but not the inode? How are
+> > you preventing code like the following from re-opening the file as
+> > writable?
+> >
+> > $ cat memfd.c
+> > #define _GNU_SOURCE
+> > #include <unistd.h>
+> > #include <sys/syscall.h>
+> > #include <printf.h>
+> > #include <fcntl.h>
+> > #include <err.h>
+> > #include <stdio.h>
+> >
+> > int main(void) {
+> >   int fd = syscall(__NR_memfd_create, "testfd", 0);
+> >   if (fd == -1) err(1, "memfd");
+> >   char path[100];
+> >   sprintf(path, "/proc/self/fd/%d", fd);
+> >   int fd2 = open(path, O_RDWR);
+> >   if (fd2 == -1) err(1, "reopen");
+> >   printf("reopen successful: %d\n", fd2);
+> > }
+> > $ gcc -o memfd memfd.c
+> > $ ./memfd
+> > reopen successful: 4
+> > $
+> >
+> > That aside: I wonder whether a better API would be something that
+> > allows you to create a new readonly file descriptor, instead of
+> > fiddling with the writability of an existing fd.
+> 
+> My favorite approach would be to forbid open() on memfds, hope that
+> nobody notices the tiny API break, and then add an ioctl for "reopen
+> this memfd with reduced permissions" - but that's just my personal
+> opinion.
+
+I did something along these lines and it fixes the issue, but I forbid open
+of memfd only when the F_SEAL_FUTURE_WRITE seal is in place. So then its not
+an ABI break because this is a brand new seal. That seems the least intrusive
+solution and it works. Do you mind testing it and I'll add your and Tested-by
+to the new fix? The patch is based on top of this series.
+
+---8<-----------
+From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Subject: [PATCH] mm/memfd: Fix possible promotion to writeable of sealed memfd
+
+Jann Horn found that reopening an F_SEAL_FUTURE_WRITE sealed memfd
+through /proc/self/fd/N symlink as writeable succeeds. The simplest fix
+without causing ABI breakages and ugly VFS hacks is to simply deny all
+opens on F_SEAL_FUTURE_WRITE sealed fds.
+
+Reported-by: Jann Horn <jannh@google.com>
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+---
+ mm/shmem.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 446942677cd4..5b378c486b8f 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -3611,7 +3611,25 @@ static const struct address_space_operations shmem_aops = {
+ 	.error_remove_page = generic_error_remove_page,
+ };
+ 
++/* Could arrive here for memfds opened through /proc/ */
++int shmem_open(struct inode *inode, struct file *file)
++{
++	struct shmem_inode_info *info = SHMEM_I(inode);
++
++	/*
++	 * memfds for which future writes have been prevented
++	 * should not be reopened, say, through /proc/pid/fd/N
++	 * symlinks otherwise it can cause a sealed memfd to be
++	 * promoted to writable.
++	 */
++	if (info->seals & F_SEAL_FUTURE_WRITE)
++		return -EACCES;
++
++	return 0;
++}
++
+ static const struct file_operations shmem_file_operations = {
++	.open		= shmem_open,
+ 	.mmap		= shmem_mmap,
+ 	.get_unmapped_area = shmem_get_unmapped_area,
+ #ifdef CONFIG_TMPFS
+-- 
+2.19.1.930.g4563a0d9d0-goog
+
