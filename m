@@ -4,63 +4,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B143C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:39:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F587C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:40:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 116F020840
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:39:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D76AE20840
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:40:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qNc359eJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 116F020840
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rzzbjuZF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D76AE20840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726967AbeKKEZq (ORCPT
+        id S1727099AbeKKE0a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 23:25:46 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:41194 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726244AbeKKEZq (ORCPT
+        Sat, 10 Nov 2018 23:26:30 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:37091 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726244AbeKKE0a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 23:25:46 -0500
-Received: by mail-pl1-f196.google.com with SMTP id p16-v6so2385877plr.8;
-        Sat, 10 Nov 2018 10:39:49 -0800 (PST)
+        Sat, 10 Nov 2018 23:26:30 -0500
+Received: by mail-pf1-f194.google.com with SMTP id u13-v6so2390629pfm.4;
+        Sat, 10 Nov 2018 10:40:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:subject:to:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=B+4RL4aj72vyDIMyLQLtC/rs2rCJOjZohOT6coq0iA0=;
-        b=qNc359eJ9eroU8Ts4reeOBOy1AhRl7yaY3SwPYBE8p43QDsnwFbZRh69dY7b7f4E45
-         wF611YAUSyeURxDVjDLiNEZsUSIAVHd+KFWU1tivs9Vmf9JerVJfm1c6ejL3LqRscV6T
-         S6gIqRaoi9EePPLJwfNpEHT/dXau/uLoHw+KERmq9cyPJn5aQetszXk/OlHZuBIpvGoj
-         a0z2HLnjEdog+rAHtxtrMXCnQkWj9gF6XczpokK4O3U/M7sLcHOHT918FJWaj5lKdLxY
-         J1rNYsAOB0HH7kx/YWHE2+x2GOAC9btmg4wKHo6ODaJdmQFgIhcELCfWq5h2Fs3vnYlc
-         a1Tw==
+        bh=NqVkS3VJalGB/t0Ng95SkyTAUA42pM749sevTQoLmGw=;
+        b=rzzbjuZF+CflZ1tX8Lj11rshLLCqEdsGKF1Ftqzmbc4m76aZoDX2zOdLa6lA/3/cUf
+         Km4RsmDkD5YppFOWg7EE2VF7UNmUllgjVa8SC14oPexy0AgHaQRFOZj4doztSFlXH+sh
+         WNqZwVpsPLxCot2yf5NqOZexDJbqPGw6t+x8KlUeMSOQaqOyMuMnLXvpaVsCFRUAB/XD
+         2y1OQJdbRZvDgWWGuGNlcL7mEAVBvmFXVU5UAF63UOdva86bikgX5xcszzcJydAs6c+d
+         rdM7zo17k63cHs9j4LPEcG4orAnL2z68MLZA4qI0yPaVQ/a7KdqisRfivzZ9IAOIg1GO
+         BHlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:subject:to:references:from:message-id
          :date:user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=B+4RL4aj72vyDIMyLQLtC/rs2rCJOjZohOT6coq0iA0=;
-        b=ATKNl83l3Gmu08z/YxmUQJUBJY1R9P+hYvFYoYDAQqyIskATpHMQY75y8sDZgxWD38
-         1+SAB93Us/zTLMHAd5hIvKyEDYoCaVN1Q/dLSi/RKhvEMVB/rkKyafqYBlup5dlmkcga
-         +ap47pMEUn1gDm4orKC5RaIWBq+fRAvnlJgJOtXkZdGam8FzEAKOpJ/gQkwTtOuILxwk
-         +cnhzSCJn0kdJrgfAQhrgqTYg/gIwTvYnI6Jk9Uw2gJL78eisKpjzdRWPUe1OvE1usa5
-         m6DFhlA+hG5UFJNqUVpynKtJgTM/SI9Du/gV7d2ca+LvFo7O8mW2liMLVHPOpBGe8mfh
-         ORzw==
-X-Gm-Message-State: AGRZ1gIg4JL3EIAabH65gcASrxi2RtEHf6vLQ6TqXqlH8lSxhIEJFPYA
-        VbYpDRvXgxDWPo9kBOFTJ9s=
-X-Google-Smtp-Source: AJdET5eG+MoRTbb5MvtpAZ0hmeO2agCiIiVAQepAhO4B/LAJJby1F32obBs2cWnqtpTCzxbf8tVdLg==
-X-Received: by 2002:a17:902:be0e:: with SMTP id r14-v6mr5107461pls.23.1541875189087;
-        Sat, 10 Nov 2018 10:39:49 -0800 (PST)
+        bh=NqVkS3VJalGB/t0Ng95SkyTAUA42pM749sevTQoLmGw=;
+        b=lXVJ30mJkyS/kU6auiXrYJGw2CqI9L0+ofw34/rw/utC/K6EX2hoyuXAJ696K5ZIxo
+         aSVZseOy6fH9xjObjdicnHXDelhbgkZg6jHGG7IfAd+7s9FVFic/x4bRlU7gGBE/q0hB
+         WOAsoiDoakVdp7F7omdSETW33mTZbsFhVR9BM5BI+hBQQ7RjESWc9nYYmim+6tirrVXv
+         Tc9lszYhsxLIe1KJhRwu6SMnkjrLA7nIkGoErPNpekGsQ2zdgcLYklvL9YukZRR4NQLW
+         vZO3Us5LyQ683wLOQ9IR7KNKb6l8l6X9E5itUeuTB5hm6HeXcX7TM+O8hui0GRgEKMA6
+         QGFQ==
+X-Gm-Message-State: AGRZ1gLUT1ugI/TYLp51kDjpAjNgKQ94MVhVEe59KEuEefkoNO9L8cqE
+        5u4FkZfsSSHvz6RDcJpK4g0=
+X-Google-Smtp-Source: AJdET5fBhND557/ONA0LH62Fc4mClJ1phsYoAIBlB5NbdBZjQugQy8gV7c7jxAV2rJdRjTq0GQ/j3Q==
+X-Received: by 2002:a62:995c:: with SMTP id d89-v6mr13740794pfe.11.1541875233247;
+        Sat, 10 Nov 2018 10:40:33 -0800 (PST)
 Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id h7-v6sm16416016pfd.35.2018.11.10.10.39.46
+        by smtp.gmail.com with ESMTPSA id l6-v6sm894837pff.147.2018.11.10.10.40.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 10 Nov 2018 10:39:48 -0800 (PST)
-Subject: Re: [PATCH v1 2/5] extcon: Return -EPROBE_DEFER when extcon device is
- not found
+        Sat, 10 Nov 2018 10:40:32 -0800 (PST)
+Subject: Re: [PATCH v1 3/5] staging: typec: fusb302: Rename fcs,extcon-name to
+ linux,extcon-name
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         MyungJoo Ham <myungjoo.ham@samsung.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
@@ -75,14 +76,14 @@ To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
         Hans de Goede <hdegoede@redhat.com>
 References: <20181110181101.24557-1-andriy.shevchenko@linux.intel.com>
- <20181110181101.24557-2-andriy.shevchenko@linux.intel.com>
+ <20181110181101.24557-3-andriy.shevchenko@linux.intel.com>
 From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <45b05f7f-26e4-8137-febc-de12848d30b0@roeck-us.net>
-Date:   Sat, 10 Nov 2018 10:39:45 -0800
+Message-ID: <951e707e-4774-4c25-92d8-b4b60b772656@roeck-us.net>
+Date:   Sat, 10 Nov 2018 10:40:30 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181110181101.24557-2-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20181110181101.24557-3-andriy.shevchenko@linux.intel.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -92,115 +93,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 11/10/18 10:10 AM, Andy Shevchenko wrote:
-> All current users of extcon_get_extcon_dev() API considers
-> an extcon device a mandatory to appear. Thus, they all convert
-> NULL pointer to -EPROBE_DEFER error code.
+> Since we are going to use the same in Designware USB 3 driver,
+> rename the property to be consistent across the drivers.
 > 
-> There is one more caller anticipated with the same requirements.
+> No functional change intended.
 > 
-> To decrease a code duplication and a burden to the callers,
-> return -EPROBE_DEFER directly from extcon_get_extcon_dev().
-> 
+> Cc: Hans de Goede <hdegoede@redhat.com>
+> Cc: Guenter Roeck <linux@roeck-us.net>
 > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
 Acked-by: Guenter Roeck <linux@roeck-us.net>
 
 > ---
->   drivers/extcon/extcon-axp288.c        | 4 ++--
->   drivers/extcon/extcon.c               | 2 +-
->   drivers/power/supply/axp288_charger.c | 8 ++++----
->   drivers/usb/phy/phy-omap-otg.c        | 6 +++---
->   drivers/usb/typec/tcpm/fusb302.c      | 4 ++--
->   5 files changed, 12 insertions(+), 12 deletions(-)
+>   drivers/platform/x86/intel_cht_int33fe.c | 2 +-
+>   drivers/usb/typec/tcpm/fusb302.c         | 2 +-
+>   2 files changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/extcon/extcon-axp288.c b/drivers/extcon/extcon-axp288.c
-> index a983708b77a6..3472d3b756ed 100644
-> --- a/drivers/extcon/extcon-axp288.c
-> +++ b/drivers/extcon/extcon-axp288.c
-> @@ -360,8 +360,8 @@ static int axp288_extcon_probe(struct platform_device *pdev)
->   		name = acpi_dev_get_first_match_name("INT3496", NULL, -1);
->   		if (name) {
->   			info->id_extcon = extcon_get_extcon_dev(name);
-> -			if (!info->id_extcon)
-> -				return -EPROBE_DEFER;
-> +			if (IS_ERR(info->id_extcon))
-> +				return PTR_ERR(info->id_extcon);
+> diff --git a/drivers/platform/x86/intel_cht_int33fe.c b/drivers/platform/x86/intel_cht_int33fe.c
+> index 464fe93657b5..87cbf18d0305 100644
+> --- a/drivers/platform/x86/intel_cht_int33fe.c
+> +++ b/drivers/platform/x86/intel_cht_int33fe.c
+> @@ -79,7 +79,7 @@ static const struct property_entry max17047_props[] = {
+>   };
 >   
->   			dev_info(dev, "controlling USB role\n");
->   		} else {
-> diff --git a/drivers/extcon/extcon.c b/drivers/extcon/extcon.c
-> index 5ab0498be652..2bd0f2f33f05 100644
-> --- a/drivers/extcon/extcon.c
-> +++ b/drivers/extcon/extcon.c
-> @@ -884,7 +884,7 @@ struct extcon_dev *extcon_get_extcon_dev(const char *extcon_name)
->   		if (!strcmp(sd->name, extcon_name))
->   			goto out;
->   	}
-> -	sd = NULL;
-> +	sd = ERR_PTR(-EPROBE_DEFER);
->   out:
->   	mutex_unlock(&extcon_dev_list_lock);
->   	return sd;
-> diff --git a/drivers/power/supply/axp288_charger.c b/drivers/power/supply/axp288_charger.c
-> index 735658ee1c60..8558577fccf5 100644
-> --- a/drivers/power/supply/axp288_charger.c
-> +++ b/drivers/power/supply/axp288_charger.c
-> @@ -768,17 +768,17 @@ static int axp288_charger_probe(struct platform_device *pdev)
->   	info->regmap_irqc = axp20x->regmap_irqc;
->   
->   	info->cable.edev = extcon_get_extcon_dev(AXP288_EXTCON_DEV_NAME);
-> -	if (info->cable.edev == NULL) {
-> +	if (IS_ERR(info->cable.edev)) {
->   		dev_dbg(&pdev->dev, "%s is not ready, probe deferred\n",
->   			AXP288_EXTCON_DEV_NAME);
-> -		return -EPROBE_DEFER;
-> +		return PTR_ERR(info->cable.edev);
->   	}
->   
->   	if (acpi_dev_present(USB_HOST_EXTCON_HID, NULL, -1)) {
->   		info->otg.cable = extcon_get_extcon_dev(USB_HOST_EXTCON_NAME);
-> -		if (info->otg.cable == NULL) {
-> +		if (IS_ERR(info->otg.cable)) {
->   			dev_dbg(dev, "EXTCON_USB_HOST is not ready, probe deferred\n");
-> -			return -EPROBE_DEFER;
-> +			return PTR_ERR(info->otg.cable);
->   		}
->   		dev_info(&pdev->dev,
->   			 "Using " USB_HOST_EXTCON_HID " extcon for usb-id\n");
-> diff --git a/drivers/usb/phy/phy-omap-otg.c b/drivers/usb/phy/phy-omap-otg.c
-> index ee0863c6553e..605314ddcd3d 100644
-> --- a/drivers/usb/phy/phy-omap-otg.c
-> +++ b/drivers/usb/phy/phy-omap-otg.c
-> @@ -91,12 +91,12 @@ static int omap_otg_probe(struct platform_device *pdev)
->   	int ret;
->   	u32 rev;
->   
-> -	if (!config || !config->extcon)
-> +	if (!config)
->   		return -ENODEV;
->   
->   	extcon = extcon_get_extcon_dev(config->extcon);
-> -	if (!extcon)
-> -		return -EPROBE_DEFER;
-> +	if (IS_ERR(extcon))
-> +		return PTR_ERR(extcon);
->   
->   	otg_dev = devm_kzalloc(&pdev->dev, sizeof(*otg_dev), GFP_KERNEL);
->   	if (!otg_dev)
+>   static const struct property_entry fusb302_props[] = {
+> -	PROPERTY_ENTRY_STRING("fcs,extcon-name", "cht_wcove_pwrsrc"),
+> +	PROPERTY_ENTRY_STRING("linux,extcon-name", "cht_wcove_pwrsrc"),
+>   	PROPERTY_ENTRY_U32("fcs,max-sink-microvolt", 12000000),
+>   	PROPERTY_ENTRY_U32("fcs,max-sink-microamp",   3000000),
+>   	PROPERTY_ENTRY_U32("fcs,max-sink-microwatt", 36000000),
 > diff --git a/drivers/usb/typec/tcpm/fusb302.c b/drivers/usb/typec/tcpm/fusb302.c
-> index 43b64d9309d0..6d332066202b 100644
+> index 6d332066202b..62816ac571a0 100644
 > --- a/drivers/usb/typec/tcpm/fusb302.c
 > +++ b/drivers/usb/typec/tcpm/fusb302.c
-> @@ -1767,8 +1767,8 @@ static int fusb302_probe(struct i2c_client *client,
+> @@ -1765,7 +1765,7 @@ static int fusb302_probe(struct i2c_client *client,
+>   	 * to be set by the platform code which also registers the i2c client
+>   	 * for the fusb302.
 >   	 */
->   	if (device_property_read_string(dev, "fcs,extcon-name", &name) == 0) {
+> -	if (device_property_read_string(dev, "fcs,extcon-name", &name) == 0) {
+> +	if (device_property_read_string(dev, "linux,extcon-name", &name) == 0) {
 >   		chip->extcon = extcon_get_extcon_dev(name);
-> -		if (!chip->extcon)
-> -			return -EPROBE_DEFER;
-> +		if (IS_ERR(chip->extcon))
-> +			return PTR_ERR(chip->extcon);
->   	}
->   
->   	chip->vbus = devm_regulator_get(chip->dev, "vbus");
+>   		if (IS_ERR(chip->extcon))
+>   			return PTR_ERR(chip->extcon);
 > 
 
