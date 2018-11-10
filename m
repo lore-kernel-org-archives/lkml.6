@@ -2,213 +2,130 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85710C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 14:17:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A8E0C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 14:18:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A1F42081C
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 14:17:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A1F42081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 5C2832081C
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 14:18:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MD2pXWTC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C2832081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729143AbeKKACJ (ORCPT
+        id S1727028AbeKKADQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 19:02:09 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33748 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729022AbeKKACJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 19:02:09 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 36393AE41;
-        Sat, 10 Nov 2018 14:16:57 +0000 (UTC)
-Date:   Sat, 10 Nov 2018 15:16:48 +0100
-From:   Borislav Petkov <bp@suse.de>
-To:     hpa@zytor.com, tglx@linutronix.de, mingo@kernel.org,
-        wang.yi59@zte.com.cn, linux-kernel@vger.kernel.org, matz@suse.de
-Cc:     linux-tip-commits@vger.kernel.org
-Subject: Re: [tip:ras/core] x86/mce: Fix -Wmissing-prototypes warnings
-Message-ID: <20181110141647.GA20073@zn.tnic>
-References: <alpine.DEB.2.21.1811081633160.1549@nanos.tec.linutronix.de>
- <tip-d813dfb28641306f66cf1e2c3586f39ab4f84b27@git.kernel.org>
+        Sat, 10 Nov 2018 19:03:16 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:46128 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726188AbeKKADP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 19:03:15 -0500
+Received: by mail-qk1-f193.google.com with SMTP id q1so6547671qkf.13;
+        Sat, 10 Nov 2018 06:18:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eC9a3Xn6pHkzpSlpOo7urCeicD9+9lI9g/5Tn9ege/8=;
+        b=MD2pXWTC/9qVjeLPjz9dcB0wjpHy5DykynU/Y+L1N1UcsOJpEkuFypNdm2OUBjLsCD
+         CydsTLFcnmqiaV7e31KOft7m9T4WiGwwT8T09thCIwseUkpllQZN1LR+MMomJLF59qWL
+         4PRUBpLB/sQ+ra6jct1wGBgk5EXpqifQwhsdg7zbywODuZcyFdkNMlmAh48bINQFVhHE
+         7l+gfiFqpa1IW2MtnTHHh+XSqg8HX5F4Z8Mzr1649c2Eyj3tLOjNgRHVQAV2sCFztEwy
+         vMGNrDVq5hTgKzk6ioHQsbAnK0UmsS+qImCfhOn3a2PPyeoAU17MhII8djhZ1FZp2vVm
+         ir5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eC9a3Xn6pHkzpSlpOo7urCeicD9+9lI9g/5Tn9ege/8=;
+        b=ZWaRf4H58PvzpJNFsKGCy5U3jW5V5NYiPk1hxUPfagNHNPb56S+Gua8aYV14IknVs/
+         u3QGYEjKBm1d0PfptIgMWKjF4Cv1higB6HYhbSKoAtrJPNqyz5vJWV4mZDO0UrU3pP3U
+         oExyc+eOdzJd8Aj/OKadAOqE31NhM4yGca7Ot3yngOymH0TTfIdWy3GnJErc1XKKY/j2
+         B5gvY+bwQyTWUjE5mZpoS3Y5eapiFlHGP2Z0xlL4R+jLG6htCKMyr5xzym59jTSvF/FD
+         y/mN3AM6Y5Dvj8cJt28UKjxpHFi27qE4ClR0/VEf1VMLQGvS4cTwm8mZkAo6/S3fW2o5
+         HZkw==
+X-Gm-Message-State: AGRZ1gJ5CcDYWvShZAjQFu1sfaeZHm+81EVIFlnJ9uF62wMtaeDU2HzP
+        /inCsF3IXIW/3mQuXzmLG1YEks4ndjPTrnYb4ml5xsCN
+X-Google-Smtp-Source: AJdET5faRQKSpA0F6YSReNPXvXyTlOaJxll80U+d+VZJ7WEROQg7qci6QDmdr+d9fC4yAelhC/AIh6qYzTQ0W5MRUVg=
+X-Received: by 2002:a0c:f74c:: with SMTP id e12mr12734381qvo.26.1541859485468;
+ Sat, 10 Nov 2018 06:18:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <tip-d813dfb28641306f66cf1e2c3586f39ab4f84b27@git.kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181109234526.4280-1-ayman.bagabas@gmail.com>
+In-Reply-To: <20181109234526.4280-1-ayman.bagabas@gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Sat, 10 Nov 2018 16:17:53 +0200
+Message-ID: <CAHp75VfcaacZvqUiKiP1XWAy4cNsXMajFgy6PbEz_QhxBtZGew@mail.gmail.com>
+Subject: Re: [PATCH v4 0/3] Huawei laptops
+To:     Ayman Bagabas <ayman.bagabas@gmail.com>
+Cc:     Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 10, 2018 at 02:51:56AM -0800, tip-bot for Borislav Petkov wrote:
+On Sat, Nov 10, 2018 at 1:45 AM Ayman Bagabas <ayman.bagabas@gmail.com> wrote:
+>
 
-...
+Thanks for an updated version.
 
-> diff --git a/arch/x86/kernel/cpu/mcheck/therm_throt.c b/arch/x86/kernel/cpu/mcheck/therm_throt.c
-> index 2da67b70ba98..8a2a842d1a72 100644
-> --- a/arch/x86/kernel/cpu/mcheck/therm_throt.c
-> +++ b/arch/x86/kernel/cpu/mcheck/therm_throt.c
-> @@ -25,6 +25,7 @@
->  #include <linux/cpu.h>
->  
->  #include <asm/processor.h>
-> +#include <asm/traps.h>
->  #include <asm/apic.h>
->  #include <asm/mce.h>
->  #include <asm/msr.h>
-> @@ -390,7 +391,7 @@ static void unexpected_thermal_interrupt(void)
->  
->  static void (*smp_thermal_vector)(void) = unexpected_thermal_interrupt;
->  
-> -asmlinkage __visible void __irq_entry smp_thermal_interrupt(struct pt_regs *r)
-> +asmlinkage __visible void __irq_entry smp_thermal_interrupt(void)
+I have pushed this to my review and testing queue, however, I would
+wait till Taskashi ACKs the last two patches in the series.
+Meanwhile you may rename the files to follow the pattern (<VENDOR>-wmi.c etc).
 
-And looking at this more, *this* is actually the wrong fix. Goes to show
-how important that warning is...
+> Changes from v3:
+> * Code formatting
+>
+> Changes from v2:
+> * Support for Huawei MBX
+> * Style and formating issues
+>
+> [PATCH v3 1/3]
+> The first patch adds support for missing hotkeys on some models.
+>
+> [PATCH v3 2/3]
+> This one enables the front speakers on the Huawei Matebook X Pro (MBXP). This
+> solves bug 200501 https://bugzilla.kernel.org/show_bug.cgi?id=200501
+> It simply uses the pins configurations generated by hdajackretast using the
+> settings posted on the bug page https://imgur.com/a/N1xsCVZ
+>
+> [PATCH v3 3/3]
+> This enables the micmute LED on Huawei laptops with these IDs:
+> 1. Matebook X (19e5:3200)
+> 2. Matebook X (19e5:3201)
+> 3. Matebook X Pro (19e5:3204)
+>
+>
+> Ayman Bagabas (3):
+>   x86: add support for Huawei WMI hotkeys.
+>   ALSA: hda: fix front speakers on Huawei MBXP.
+>   ALSA: hda: add support for Huawei WMI micmute LED
+>
+>  drivers/platform/x86/Kconfig                 |  10 +
+>  drivers/platform/x86/Makefile                |   1 +
+>  drivers/platform/x86/huawei_wmi.c            | 215 +++++++++++++++++++
+>  include/linux/platform_data/x86/huawei_wmi.h |   9 +
+>  sound/pci/hda/huawei_wmi_helper.c            |  47 ++++
+>  sound/pci/hda/patch_realtek.c                |  30 +++
+>  6 files changed, 312 insertions(+)
+>  create mode 100644 drivers/platform/x86/huawei_wmi.c
+>  create mode 100644 include/linux/platform_data/x86/huawei_wmi.h
+>  create mode 100644 sound/pci/hda/huawei_wmi_helper.c
+>
+> --
+> 2.17.2
+>
 
-Anyway, all those interrupt handlers run with struct pt_regs * in %rdi,
-see the apic interrupt asm glue:
-
-.macro apicinterrupt3 num sym do_sym
-ENTRY(\sym)
-        UNWIND_HINT_IRET_REGS
-        pushq   $~(\num)
-.Lcommon_\sym:
-        call    interrupt_entry
-        UNWIND_HINT_REGS indirect=1
-        call    \do_sym /* rdi points to pt_regs */
-		^^^^^^^^^^
-
-so the real fix should be this.
-
-Even if the argument doesn't get used, its prototype should specify it
-as interrupt_entry() does all that preparation and puts a pt_regs ptr on
-stack.
-
----
-From: Borislav Petkov <bp@suse.de>
-Date: Fri, 9 Nov 2018 23:13:13 +0100
-Subject: [PATCH] x86/mce: Fix -Wmissing-prototypes warnings
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-Add the proper includes and make smca_get_name() static.
-
-Fix an actual bug too which the warning triggered:
-
-  arch/x86/kernel/cpu/mcheck/therm_throt.c:395:39: error: conflicting \
-  types for ‘smp_thermal_interrupt’
-   asmlinkage __visible void __irq_entry smp_thermal_interrupt(struct pt_regs *r)
-                                         ^~~~~~~~~~~~~~~~~~~~~
-  In file included from arch/x86/kernel/cpu/mcheck/therm_throt.c:29:
-  ./arch/x86/include/asm/traps.h:107:17: note: previous declaration of \
-	  ‘smp_thermal_interrupt’ was here
-   asmlinkage void smp_thermal_interrupt(void);
-
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Yi Wang <wang.yi59@zte.com.cn>
-Cc: Michael Matz <matz@suse.de>
-Cc: x86@kernel.org
-Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1811081633160.1549@nanos.tec.linutronix.de
----
- arch/x86/include/asm/traps.h             | 6 +++---
- arch/x86/kernel/cpu/mcheck/mce_amd.c     | 5 +++--
- arch/x86/kernel/cpu/mcheck/therm_throt.c | 1 +
- arch/x86/kernel/cpu/mcheck/threshold.c   | 3 ++-
- 4 files changed, 9 insertions(+), 6 deletions(-)
-
-diff --git a/arch/x86/include/asm/traps.h b/arch/x86/include/asm/traps.h
-index 3de69330e6c5..9ea54a764a8e 100644
---- a/arch/x86/include/asm/traps.h
-+++ b/arch/x86/include/asm/traps.h
-@@ -104,9 +104,9 @@ extern int panic_on_unrecovered_nmi;
- 
- void math_emulate(struct math_emu_info *);
- #ifndef CONFIG_X86_32
--asmlinkage void smp_thermal_interrupt(void);
--asmlinkage void smp_threshold_interrupt(void);
--asmlinkage void smp_deferred_error_interrupt(void);
-+asmlinkage void smp_thermal_interrupt(struct pt_regs *);
-+asmlinkage void smp_threshold_interrupt(struct pt_regs *);
-+asmlinkage void smp_deferred_error_interrupt(struct pt_regs *);
- #endif
- 
- extern void ist_enter(struct pt_regs *regs);
-diff --git a/arch/x86/kernel/cpu/mcheck/mce_amd.c b/arch/x86/kernel/cpu/mcheck/mce_amd.c
-index dd33c357548f..f6b8e62b286b 100644
---- a/arch/x86/kernel/cpu/mcheck/mce_amd.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce_amd.c
-@@ -23,6 +23,7 @@
- #include <linux/string.h>
- 
- #include <asm/amd_nb.h>
-+#include <asm/traps.h>
- #include <asm/apic.h>
- #include <asm/mce.h>
- #include <asm/msr.h>
-@@ -99,7 +100,7 @@ static u32 smca_bank_addrs[MAX_NR_BANKS][NR_BLOCKS] __ro_after_init =
- 	[0 ... MAX_NR_BANKS - 1] = { [0 ... NR_BLOCKS - 1] = -1 }
- };
- 
--const char *smca_get_name(enum smca_bank_types t)
-+static const char *smca_get_name(enum smca_bank_types t)
- {
- 	if (t >= N_SMCA_BANK_TYPES)
- 		return NULL;
-@@ -825,7 +826,7 @@ static void __log_error(unsigned int bank, u64 status, u64 addr, u64 misc)
- 	mce_log(&m);
- }
- 
--asmlinkage __visible void __irq_entry smp_deferred_error_interrupt(void)
-+asmlinkage __visible void __irq_entry smp_deferred_error_interrupt(struct pt_regs *r)
- {
- 	entering_irq();
- 	trace_deferred_error_apic_entry(DEFERRED_ERROR_VECTOR);
-diff --git a/arch/x86/kernel/cpu/mcheck/therm_throt.c b/arch/x86/kernel/cpu/mcheck/therm_throt.c
-index 2da67b70ba98..95a7cfa6de15 100644
---- a/arch/x86/kernel/cpu/mcheck/therm_throt.c
-+++ b/arch/x86/kernel/cpu/mcheck/therm_throt.c
-@@ -25,6 +25,7 @@
- #include <linux/cpu.h>
- 
- #include <asm/processor.h>
-+#include <asm/traps.h>
- #include <asm/apic.h>
- #include <asm/mce.h>
- #include <asm/msr.h>
-diff --git a/arch/x86/kernel/cpu/mcheck/threshold.c b/arch/x86/kernel/cpu/mcheck/threshold.c
-index 2b584b319eff..13bccbc8e9e6 100644
---- a/arch/x86/kernel/cpu/mcheck/threshold.c
-+++ b/arch/x86/kernel/cpu/mcheck/threshold.c
-@@ -6,6 +6,7 @@
- #include <linux/kernel.h>
- 
- #include <asm/irq_vectors.h>
-+#include <asm/traps.h>
- #include <asm/apic.h>
- #include <asm/mce.h>
- #include <asm/trace/irq_vectors.h>
-@@ -18,7 +19,7 @@ static void default_threshold_interrupt(void)
- 
- void (*mce_threshold_vector)(void) = default_threshold_interrupt;
- 
--asmlinkage __visible void __irq_entry smp_threshold_interrupt(void)
-+asmlinkage __visible void __irq_entry smp_threshold_interrupt(struct pt_regs *r)
- {
- 	entering_irq();
- 	trace_threshold_apic_entry(THRESHOLD_APIC_VECTOR);
--- 
-2.19.1
 
 -- 
-Regards/Gruss,
-    Boris.
-
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+With Best Regards,
+Andy Shevchenko
