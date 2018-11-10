@@ -2,105 +2,76 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53B27C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:50:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C17B5C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:52:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 198F92089A
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:50:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DAF92081C
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:52:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WjQ8sM4F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 198F92089A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mon6TVNM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DAF92081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727299AbeKKEgA (ORCPT
+        id S1727381AbeKKEiH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 23:36:00 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:42137 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727218AbeKKEf7 (ORCPT
+        Sat, 10 Nov 2018 23:38:07 -0500
+Received: from mail-ua1-f53.google.com ([209.85.222.53]:36385 "EHLO
+        mail-ua1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727253AbeKKEiH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 23:35:59 -0500
-Received: by mail-wr1-f65.google.com with SMTP id y15-v6so5175186wru.9;
-        Sat, 10 Nov 2018 10:50:01 -0800 (PST)
+        Sat, 10 Nov 2018 23:38:07 -0500
+Received: by mail-ua1-f53.google.com with SMTP id j3so1773108uap.3
+        for <linux-kernel@vger.kernel.org>; Sat, 10 Nov 2018 10:52:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=JUdZNl057h1ppg7CeFOZ/uN3JSVoi5GN7FTUDrPfd+Q=;
-        b=WjQ8sM4FH5jDGFhHV+VNi6a8WSFzTqAieUer8QoNu9eqvcN2L7p+USlkP65WfMKjqg
-         dm2GnPcLDpm3xem+fxXJFCYtw5CmNutE55HscK3J+ee8GQ06QYff1WehyV0nfmN+RkKG
-         g/gUN5a0qxCgf2uPHJBgH2/UdKIO3sNzVwUoKmiAC3AiZ5oiy/f98T1IxESEhO/9ahBO
-         JudB+4t3B5taX1xsZ8NvJ8gJ4938ZWNxHcoCaBWf/A7+mIhWUj7sfqFk9tOl/dOPlj0f
-         3aU+dsJhgb7KWc03NEIGFLRLk3l/tOlHQ/Lqws4zgUZ289R5lOPHnXOXZb2KFmdsXQeH
-         k3Iw==
+        d=google.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=ipA7cP/QRAn5BQtieYyFEI4rFzLtmBirdQQRvTDA9s8=;
+        b=mon6TVNMl3i0xl5uLJqLPi75pOuhNl6IKxPEejWCqtWGecnYi2vNZPszh0xtuPXc/U
+         SGWAnRitiMytmIws82Imoj8Y6UL7psffV6P2KxZVgRn50du/9040nknbpYcFeWnPDmNc
+         kkRSa/LxAz/X4xGGvNz0iOE4+b8jxK42eapw6HF4mb9pT/f26nVy3xacUmVkOAyTgcSo
+         dlGMjZbDeITCA9wY5HU43/VNifx0AGUhea/SxZ/VwTMKjx6uq5qq4n7uE2y6tN3Dmd0C
+         rPDqajJJYp+Q0RxFArOytEcKS23VnqJo8wU8rRWSW/HwcgOxKZK44aNRAhSY1iGkGk8i
+         8UtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JUdZNl057h1ppg7CeFOZ/uN3JSVoi5GN7FTUDrPfd+Q=;
-        b=fd9pX61c7yrLL/xKTu3LIb5VllAFWGf6t99xLSCGYI9KMbTZPWBwzksEWDl//x/myl
-         5Lm2sYZTu4ygWkCnfl0Q0Vq0RXHzhn1m2ij7QzDGIsajPnYZF6CLEurJJ0jlX9YVZcyx
-         07H7WTsml9R4x2QzXpxhvN6H57CcAK/6gp1i1NK4xNNE3iYUash4gxJCiQPUowXNlx8B
-         wvKT8GqpFWe0fLqs/b/smd1pKApw7Pp7GuNaxYvWEZFHE7weEE+7V0d1i0qk8jiGM2eh
-         I7IMqHu1XZKmU76Hql0gKEN26QDPR2BISJKKjxO5UzVBDEP0LW18rCwRyPknHA0VDuat
-         uCPg==
-X-Gm-Message-State: AGRZ1gIB5ayaGkCCP70KftSbw7FiOO1Ew7xneFYHqqemvw+k40DFjRvT
-        sN7+Z7reRJrHopGVeH5eQg==
-X-Google-Smtp-Source: AJdET5f8l7mHngcj1bw0jngY2C0+qQFnWUAbJPtZhzpcN9GicE7ZGyrhA1XYz9VPOdJfnP67pZW4Lw==
-X-Received: by 2002:adf:a512:: with SMTP id i18-v6mr13145325wrb.220.1541875800321;
-        Sat, 10 Nov 2018 10:50:00 -0800 (PST)
-Received: from avx2 (nat5-minsk-pool-46-53-217-92.telecom.by. [46.53.217.92])
-        by smtp.gmail.com with ESMTPSA id h5-v6sm17347541wrs.51.2018.11.10.10.49.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 10 Nov 2018 10:49:59 -0800 (PST)
-Date:   Sat, 10 Nov 2018 21:49:57 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     Rafael David Tinoco <rafael.tinoco@linaro.org>
-Cc:     gorcunov@gmail.com, akpm@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, shuah@kernel.org
-Subject: Re: [PATCH] proc: fix and merge proc-self-map-file tests
-Message-ID: <20181110184957.GB18252@avx2>
-References: <20181108111105.GC13195@uranus.lan>
- <20181109113036.21512-1-rafael.tinoco@linaro.org>
- <20181110174727.GA26417@avx2>
- <1541872563.3175498.1572453416.153B57C9@webmail.messagingengine.com>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=ipA7cP/QRAn5BQtieYyFEI4rFzLtmBirdQQRvTDA9s8=;
+        b=YYDcqBdwURvmrXQWwzYiOMjH0E4IzL1IEVdWLtQSCgKd9wr4skhmwzmhYvTyXMXf0c
+         z6AVsETvRbo5Xr0mba20fd+ML9LI01T4W9CfY8prWuE24QWl54Df2uFDzlfI2gahYjwL
+         I0Jp4lOCOqTD0pCuf+V34ltlyzuaR4g0vOfEISh95KhY5WyfYFTJM/oWad/j48k8Ur0g
+         jlj2/msJhLFW4q8Y0ODyJ+xItgJpODF3EtRl7Fo2VOeD4UHD1O2Fg6u57WHoegRRPEKl
+         20KG/B96rN/bIcEaEMkAswodR0XgCQbRaQglNXuJ9ltemSSVSdq3L4tbUkNVZwyBI8Ep
+         N43Q==
+X-Gm-Message-State: AGRZ1gKt24nMpj/jDdN+OfPpgJgPuRxVdg+OXOrvjjAGJI/KoLf+BmEf
+        ogJDeTM4jd8sqway1gTRoGvGwZAqEUhufw+79OpJetYc6Qs=
+X-Google-Smtp-Source: AJdET5dZCUn4mfRDL/6PsJLKWErhfFeJSMbtj9YCnXv0FT38cw4zoIP6Dle3vyyWFrqV5egupi41Zthw1zs8rv5epG8=
+X-Received: by 2002:ab0:648b:: with SMTP id p11mr6308395uam.128.1541875927525;
+ Sat, 10 Nov 2018 10:52:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1541872563.3175498.1572453416.153B57C9@webmail.messagingengine.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a67:f48d:0:0:0:0:0 with HTTP; Sat, 10 Nov 2018 10:52:06
+ -0800 (PST)
+From:   Daniel Colascione <dancol@google.com>
+Date:   Sat, 10 Nov 2018 10:52:06 -0800
+Message-ID: <CAKOZuesB4R=dCz4merWQN0FSCGrXmOgUUr4ienSbStBJguNv8g@mail.gmail.com>
+Subject: Official Linux system wrapper library?
+To:     linux-kernel <linux-kernel@vger.kernel.org>
+Cc:     Joel Fernandes <joelaf@google.com>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 10, 2018 at 03:56:03PM -0200, Rafael David Tinoco wrote:
-> On Sat, Nov 10, 2018, at 3:47 PM, Alexey Dobriyan wrote:
-> > On Fri, Nov 09, 2018 at 09:30:36AM -0200, Rafael David Tinoco wrote:
-> > > Merge proc-self-map-files tests into one since this test should focus in
-> > > testing readlink in /proc/self/map_files/* only, and not trying to test
-> > > mapping virtual address 0.
-> > > 
-> > > Lowest virtual address for user space mapping in other architectures,
-> > > like arm, is *at least* *(PAGE_SIZE * 2) and NULL hint does not
-> > > guarantee that when MAP_FIXED flag, important to this test, is given.
-> > > This patch also fixes this issue in remaining test.
-> > 
-> > > -	p = mmap(NULL, PAGE_SIZE, PROT_NONE, MAP_PRIVATE|MAP_FILE, fd, 0);
-> > > +	p = mmap((void *) (2 * PAGE_SIZE), PAGE_SIZE, PROT_NONE,
-> > 
-> > I don't know ARM. Is this 2 page limitation a limitation of hardware or
-> > kernel's?
-> 
-> Kernel:
-> https://bugs.linaro.org/show_bug.cgi?id=3782#c7
-
-Ahh. please test the path I've sent, I don't have arm install readily
-available.
+Now that glibc is basically not adding any new system call wrappers,
+how about publishing an "official" system call glue library as part of
+the kernel distribution, along with the uapi headers? I don't think
+it's reasonable to expect people to keep using syscall(__NR_XXX) for
+all new functionality, especially as the system grows increasingly
+sophisticated capabilities (like the new mount API, and hopefully the
+new process API) outside the strictures of the POSIX process.
