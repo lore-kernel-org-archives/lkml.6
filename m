@@ -2,114 +2,136 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A692AC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 08:58:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9321C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 09:03:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75AE520858
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 08:58:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75AE520858
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=genki.is
+	by mail.kernel.org (Postfix) with ESMTP id 9FCBD20858
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 09:03:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FCBD20858
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729003AbeKJSnM (ORCPT
+        id S1728950AbeKJSrk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 13:43:12 -0500
-Received: from genki.is ([104.200.25.21]:43314 "EHLO genki.is"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728766AbeKJSnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 13:43:12 -0500
-Received: by genki.is (OpenSMTPD) with ESMTP id 8c944eca;
-        Sat, 10 Nov 2018 08:58:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=genki.is; h=date
-        :message-id:mime-version:content-transfer-encoding:content-type
-        :from:subject:to:cc:in-reply-to:references; s=dkim; bh=+8yWhWqTt
-        2Z08lChR9XsGiW6wH0=; b=fa3aaJzLSmflf/SXPzUxiAbzOd7isrH2ZqxRznuJg
-        Rdv879PXeVXSR5He7T8fF3dBv8AuBn3tId84CR2HV+Z+xqKDoZUVUqO2uBCJ7pe5
-        rOVQ5xfgIECKYPV5IAW48XYr9/RlLAIjPfOn8J0myY8BvvYx2eg9f7U/p0xrIfNl
-        RucukGEPaQfG+3biIUH/Z9kzXtwQiXNo8UGXFNKUfzPSLUCtDxbeA7PQW04bBdTH
-        3Hu0xKRInMBHdReXBPKJdsCruKbRrQEGHALLvnxWgcytOg32/b7GBQvoSDwk3iZN
-        UnI2WF7vDEKMn8piNBUkoufFluPpkhk4tk4R6+TKXeZEg==
-Received: by genki.is (OpenSMTPD) with ESMTPSA id d1677770 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
-        Sat, 10 Nov 2018 08:58:56 +0000 (UTC)
-Date:   Sat, 10 Nov 2018 00:58:26 -0800
-Message-ID: <20181110.085826.230851261@genki.is>
+        Sat, 10 Nov 2018 13:47:40 -0500
+Received: from mx2.suse.de ([195.135.220.15]:47004 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728766AbeKJSrj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 13:47:39 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 07C53AD9C;
+        Sat, 10 Nov 2018 09:03:22 +0000 (UTC)
+Subject: Re: PLEASE REVERT URGENTLY: Re: [PATCH v5 2/3] x86/boot: add acpi
+ rsdp address to setup_header
+To:     "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xenproject.org, x86@kernel.org,
+        linux-doc@vger.kernel.org
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, corbet@lwn.net,
+        boris.ostrovsky@oracle.com
+References: <20181010061456.22238-1-jgross@suse.com>
+ <20181010061456.22238-3-jgross@suse.com>
+ <f7c78ee7-b548-7f04-24da-7321b6c64c97@zytor.com>
+ <bd2d17cd-072c-cad6-94ad-52373700a1c9@suse.com>
+ <2934552c-d150-0afb-6fa9-9398cb94d86a@zytor.com>
+ <5a2f5cb8-7332-f490-eabf-cfcbdcd1abc4@suse.com>
+ <59ca1053-9176-f1db-6e6c-96b47aaaa09d@zytor.com>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <f16c53a4-7a5c-de01-c3cc-095226f6ca40@suse.com>
+Date:   Sat, 10 Nov 2018 10:03:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-From:   Genki Sky <sky@genki.is>
-Subject: Re: [PATCH] scripts/setlocalversion: Improve -dirty check with
- git-status --no-optional-locks
-To:     Brian Norris <briannorris@chromium.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Douglas Anderson <dianders@chromium.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Christian Kujau <lists@nerdbynature.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-In-Reply-To: <20181109183436.GA45531@google.com>
-References: <20181107022156.GA254567@google.com>
-        <alpine.DEB.2.21.999.1811061845161.5308@trent.utfs.org>
-        <CA+ASDXPMMXCBN6PU8qzRm579sC9VBdwnxZdZwRdPY1cBUP8oGQ@mail.gmail.com>
-        <20181107184435.GA168339@google.com> <20181107.204358.257636196@genki.is>
-        <20181107205514.GB12273@roeck-us.net> <20181107.210731.330601031@genki.is>
-        <CAD=FV=Wcxf7p1DyJdVEqODbc6TdTtbPiLszWCAS1xC6=4kkLbw@mail.gmail.com>
-        <CA+ASDXN40pvbZKvsO3Cb8256AQJ3fyQh5TWdT+GDk_ncq11nMw@mail.gmail.com>
-        <CAK7LNAR5etb-oJDaxNZbH9-FmC3+hC3A_cwnbuWPQx0maHaDng@mail.gmail.com>
-        <20181109183436.GA45531@google.com>
+In-Reply-To: <59ca1053-9176-f1db-6e6c-96b47aaaa09d@zytor.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, thanks very much for doing this. But, this patch always prints
--dirty for me, even with no untracked changes in git. I think this is
-because:
+On 10/11/2018 08:16, H. Peter Anvin wrote:
+> On 11/9/18 11:02 PM, Juergen Gross wrote:
+>>>
+>>> Yes. We know that and it is resolved by:
+>>>
+>>> a) the length field in setup_header;
+>>> b) the "sentinel" field which catches legacy non-compliant bootloaders.
+>>
+>> Doesn't help for boot loaders reading struct setup_header from the
+>> kernel image and then writing e.g. 512 bytes back to the setup_header
+>> location. The sentinel is cleared and the length field just isn't
+>> taken into account. And this is what happened.
+>>
+> 
+> This is insane?! How do they manage to do this... it's not like  this isn't
+> written out in plain English to follow. I am, once again, utterly and
+> genuinely baffled about how many ways Grub can do things wrong.
+> 
+> So we should probably add a terminal sentinel field at offset 0x281, which is
+> one byte past the longest possible setup_header structure; in fact, we may
+> just want to explicitly pad setup_header with zeroes to its final size, if
+> nothing else to make it explicit how little space is actually left in there.
 
-On Fri, 9 Nov 2018 10:34:37 -0800, Brian Norris <briannorris@chromium.org> wrote:
-> diff --git a/scripts/setlocalversion b/scripts/setlocalversion
-> index 71f39410691b..eab1f90de50d 100755
-> --- a/scripts/setlocalversion
-> +++ b/scripts/setlocalversion
-> @@ -73,8 +73,19 @@ scm_version()
->  			printf -- '-svn%s' "`git svn find-rev $head`"
->  		fi
->
-> -		# Check for uncommitted changes
-> -		if git diff-index --name-only HEAD | grep -qv "^scripts/package"; then
-> +		# Check for uncommitted changes.
-> +		# First, with git-status, but --no-optional-locks is only
-> +		# supported in git >= 2.14, so fall back to git-diff-index if
-> +		# it fails. Note that git-diff-index does not refresh the
-> +		# index, so it may give misleading results. See
-> +		# git-update-index(1), git-diff-index(1), and git-status(1).
-> +		local git_status
-> +		git_status="$(git --no-optional-locks status -uno --porcelain 2>/dev/null)"
-> +		if [ $? -eq 0 ]; then
-> +			if echo "$git_status" | grep -qv '^.. scripts/package'; then
+How would that help? The garabge data written could have the correct
+terminal sentinel value by chance.
 
-Shouldn't this be:
+That's why I re-used an existing field in setup_header (the version) to
+let grub tell the kernel which part of setup_header was written by grub.
 
-	if printf '%s' "$git_status" | grep -qv '^.. scripts/package'; then
+That's the only way I could find to let the kernel distinguish between
+garbage and actual data.
+> It would be enormously helpful if you could find out any more details about
+> exactly what they are doing to break things.
 
-I.e., use printf not echo? Because of echo introducing a newline.
+That's easy:
 
-With echo:
-	$ x=$(printf ''); if echo "$x" | grep -qv 'ignore'; then echo dirty; fi
-	dirty
-	$ x=$(printf '\n'); if echo "$x" | grep -qv 'ignore'; then echo dirty; fi
-	dirty
-	$ x=$(printf 'ignore\n'); if echo "$x" | grep -qv 'ignore'; then echo dirty; fi
-	$ x=$(printf 'untracked\n'); if echo "$x" | grep -qv 'ignore'; then echo dirty; fi
-	dirty
+The memory layout is:
 
-With printf:
-	$ x=$(printf ''); if printf '%s' "$x" | grep -qv 'ignore'; then echo dirty; fi
-	$ x=$(printf '\n'); if printf '%s' "$x" | grep -qv 'ignore'; then echo dirty; fi
-	$ x=$(printf 'ignore\n'); if printf '%s' "$x" | grep -qv 'ignore'; then echo dirty; fi
-	$ x=$(printf 'untracked\n'); if printf '%s' "$x" | grep -qv 'ignore'; then echo dirty; fi
-	dirty
+0x1f1 bytes of data, including the sentinel, the setup_header, and then
+more data.
 
-(Hopefully I'm not missing something.)
+grub did read the kernel's setup_header in the correct size into its
+buffer (which contains random garbage before that), intializes the first
+0x1f1 including the sentinel byte, and then writes back the buffer, but
+using a too large length for that.
+
+
+Juergen
+
