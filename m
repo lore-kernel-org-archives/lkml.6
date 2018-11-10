@@ -3,47 +3,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C129FC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 13:55:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 060FDC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 13:59:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7ADCC20684
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 13:55:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7ADCC20684
+	by mail.kernel.org (Postfix) with ESMTP id C2E1420684
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 13:59:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2E1420684
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729117AbeKJXkJ (ORCPT
+        id S1729091AbeKJXoj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 18:40:09 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:50344 "EHLO mx1.redhat.com"
+        Sat, 10 Nov 2018 18:44:39 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60448 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729029AbeKJXkJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 18:40:09 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        id S1729013AbeKJXoj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 18:44:39 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 84C03C058CBA;
-        Sat, 10 Nov 2018 13:55:03 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3864285540;
+        Sat, 10 Nov 2018 13:59:33 +0000 (UTC)
 Received: from llong.remote.csb (ovpn-120-141.rdu2.redhat.com [10.10.120.141])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6AE4E5D968;
-        Sat, 10 Nov 2018 13:55:01 +0000 (UTC)
-Subject: Re: [PATCH v11 2/3] ipc: Conserve sequence numbers in ipcmni_extend
- mode
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Takashi Iwai <tiwai@suse.de>, Davidlohr Bueso <dbueso@suse.de>,
-        Manfred Spraul <manfred@colorfullife.com>
-References: <1541794292-19425-1-git-send-email-longman@redhat.com>
- <1541794292-19425-3-git-send-email-longman@redhat.com>
- <20181110074125.GB21824@bombadil.infradead.org>
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4F6BB5D6B3;
+        Sat, 10 Nov 2018 13:59:31 +0000 (UTC)
+Subject: Re: ODEBUG: Out of memory. ODEBUG disabled
+To:     Qian Cai <cai@gmx.us>
+Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Zhong Jiang <zhongjiang@huawei.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        open list <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <trinity-be6414fb-25ba-4881-acc6-abe3b375d0d0-1541814329304@msvc-mesg-gmx021>
 From:   Waiman Long <longman@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
@@ -90,41 +85,65 @@ Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
  wGA5uquIgb8p3/ENgYpDPrsZ72CxVC2NEJjJwwnRBStjJOGQX4lV1uhN1XsZjBbRHdKF2W9g
  weim8xU=
 Organization: Red Hat
-Message-ID: <f09342e2-e040-5d8d-e1c5-5ff60d913505@redhat.com>
-Date:   Sat, 10 Nov 2018 08:55:00 -0500
+Message-ID: <c7b58543-ffd2-44bb-1005-e9733782bad5@redhat.com>
+Date:   Sat, 10 Nov 2018 08:59:30 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181110074125.GB21824@bombadil.infradead.org>
+In-Reply-To: <trinity-be6414fb-25ba-4881-acc6-abe3b375d0d0-1541814329304@msvc-mesg-gmx021>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Sat, 10 Nov 2018 13:55:03 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Sat, 10 Nov 2018 13:59:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/10/2018 02:41 AM, Matthew Wilcox wrote:
-> On Fri, Nov 09, 2018 at 03:11:31PM -0500, Waiman Long wrote:
->> The mixing in of a sequence number into the IPC IDs is probably to
->> avoid ID reuse in userspace as much as possible. With ipcmni_extend
->> mode, the number of usable sequence numbers is greatly reduced leading
->> to higher chance of ID reuse.
+On 11/09/2018 08:45 PM, Qian Cai wrote:
+>> Sent: Friday, November 09, 2018 at 5:08 PM
+>> From: "Waiman Long" <longman@redhat.com>
+>> To: "Qian Cai" <cai@gmx.us>, "Yang Shi" <yang.shi@linux.alibaba.com>
+>> Cc: "open list" <linux-kernel@vger.kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>, "Arnd Bergmann" <arnd@arndb.de>, "Joel Fernandes (Google)" <joel@joelfernandes.org>, "Zhong Jiang" <zhongjiang@huawei.com>
+>> Subject: Re: ODEBUG: Out of memory. ODEBUG disabled
 >>
->> To address this issue, we need to conserve the sequence number space
->> as much as possible. Right now, the sequence number is incremented
->> for every new ID created. In reality, we only need to increment the
->> sequence number when one or more IDs have been removed previously to
->> make sure that those IDs will not be reused when a new one is built.
->> This is being done irrespective of the ipcmni mode.
-> That's not what I said.  Increment the sequence ID when the cursor wraps,
-> not when there's been a deletion.
+>> On 11/09/2018 04:51 PM, Qian Cai wrote:
+>>>> On Nov 9, 2018, at 4:42 PM, Yang Shi <yang.shi@linux.alibaba.com> wrote:
+>>>>
+>>>>
+>>>>
+>>>> On 11/9/18 1:36 PM, Qian Cai wrote:
+>>>>> It is a bit annoying on this aarch64 server with 64 CPUs that is
+>>>>> booting the latest mainline (3541833fd1f2) causes object debugging
+>>>>> always running out of memory.
+>>>> May you please paste the detail failure log?
+>>> I assume you mean dmesg.
+>>>
+>>> Here is the dmesg for 64 CPUs,
+>>> https://paste.ubuntu.com/p/BnhvXXhn7k/
+>>>>> I have to boot the kernel with only 16 CPUs instead (nr_cpus=16)
+>>>>> to make it work. Is it expected that object debugging is not going
+>>>>> to work with large machines?
+>>>> I don't think so. I'm supposed it works well with large CPU number on x86.
+>>> Here is the one with nr_cpus workaround,
+>>> https://paste.ubuntu.com/p/qMpd2CCPSV/
+>> The debugobjects code have a set of 1024 statically allocated debug
+>> objects that can be used in early boot before the slab memory allocator
+>> is initialized. Apparently, the system may have used up all the
+>> statically allocated objects. Try double ODEBUG_POOL_SIZE to see if it
+>> helps.
+> Great, you are right. Doubling the size makes it work. Does it make sense
+> to have a kconfig option instead?
 
-With non-cyclic idr allocation, the cursor will never wraps back to 0.
-It is to the lowest available integer. I can do that with cyclic idr
-allocation.
+First, I think you need to figure out what your system needed to use up
+so many debug objects in early boot. If there is a legitimate reason for
+this behavior, we can talk about having a kconfig option to increase that.
+
+>> There are also quite a number of warnings in your console log. So there
+>> is certainly something wrong with your kernel or config options.
+> Yes, I am working on all those warnings. This one is found by ODEBUG,
+> https://lkml.org/lkml/2018/11/10/136
 
 Cheers,
 Longman
