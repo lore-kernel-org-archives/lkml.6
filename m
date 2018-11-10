@@ -2,107 +2,80 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AED7C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 05:49:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C50CCC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 05:50:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AADC52081C
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 05:49:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AADC52081C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 844E9206BA
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 05:50:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 844E9206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728963AbeKJPdK (ORCPT
+        id S1729071AbeKJPdv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 10:33:10 -0500
-Received: from mga07.intel.com ([134.134.136.100]:4632 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728810AbeKJPdK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 10:33:10 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Nov 2018 21:49:24 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,486,1534834800"; 
-   d="scan'208";a="248591879"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga004.jf.intel.com with ESMTP; 09 Nov 2018 21:49:19 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1gLM90-000E3K-D4; Sat, 10 Nov 2018 13:49:18 +0800
-Date:   Sat, 10 Nov 2018 13:48:46 +0800
-From:   kbuild test robot <fengguang.wu@intel.com>
-To:     Al Cooper <alcooperx@gmail.com>
-Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
-        Al Cooper <alcooperx@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Alban Bedel <albeu@free.fr>, Alex Elder <elder@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        Sat, 10 Nov 2018 10:33:51 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:14645 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728728AbeKJPdv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 10:33:51 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 5CAA6A990E0D0;
+        Sat, 10 Nov 2018 12:03:51 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
+ 14.3.408.0; Sat, 10 Nov 2018 12:03:46 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     Christoph Hellwig <hch@infradead.org>,
+        David Howells <dhowells@redhat.com>,
         Arnd Bergmann <arnd@arndb.de>,
-        Avi Fishman <avifishman70@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        devicetree@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        James Hogan <jhogan@kernel.org>,
-        Johan Hovold <johan@kernel.org>,
-        Kees Cook <keescook@chromium.org>, linux-usb@vger.kernel.org,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Rishabh Bhatnagar <rishabhb@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>, Roger Quadros <rogerq@ti.com>
-Subject: [PATCH] usb: host: fix platform_no_drv_owner.cocci warnings
-Message-ID: <20181110054846.GA16550@lkp-hsx03>
-References: <1541772120-40394-6-git-send-email-alcooperx@gmail.com>
+        Al Viro <viro@zeniv.linux.org.uk>
+CC:     YueHaibing <yuehaibing@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] sysv: return 'err' instead of 0 in __sysv_write_inode
+Date:   Sat, 10 Nov 2018 04:13:24 +0000
+Message-ID: <1541823204-45068-1-git-send-email-yuehaibing@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1541772120-40394-6-git-send-email-alcooperx@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: kbuild test robot <fengguang.wu@intel.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-drivers/usb/host/ehci-brcm.c:258:3-8: No need to set .owner here. The core will do it.
+fs/sysv/inode.c: In function '__sysv_write_inode':
+fs/sysv/inode.c:239:6: warning:
+ variable 'err' set but not used [-Wunused-but-set-variable]
 
- Remove .owner field if calls are used which set it automatically
+__sysv_write_inode should return 'err' instead of 0
 
-Generated by: scripts/coccinelle/api/platform_no_drv_owner.cocci
-
-Fixes: 51b4c79a49f1 ("usb: host: Add ability to build new Broadcom STB USB drivers")
-CC: Al Cooper <alcooperx@gmail.com>
-Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
+Fixes: 05459ca81ac3 ("repair sysv_write_inode(), switch sysv to simple_fsync()")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
+ fs/sysv/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-url:    https://github.com/0day-ci/linux/commits/Al-Cooper/Add-XHCI-EHCI-and-OHCI-support-for-Broadcom-STB-SoS-s/20181110-065441
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+diff --git a/fs/sysv/inode.c b/fs/sysv/inode.c
+index 499a20a..273736f 100644
+--- a/fs/sysv/inode.c
++++ b/fs/sysv/inode.c
+@@ -275,7 +275,7 @@ static int __sysv_write_inode(struct inode *inode, int wait)
+                 }
+         }
+ 	brelse(bh);
+-	return 0;
++	return err;
+ }
+ 
+ int sysv_write_inode(struct inode *inode, struct writeback_control *wbc)
 
- ehci-brcm.c |    1 -
- 1 file changed, 1 deletion(-)
 
---- a/drivers/usb/host/ehci-brcm.c
-+++ b/drivers/usb/host/ehci-brcm.c
-@@ -255,7 +255,6 @@ static struct platform_driver ehci_brcm_
- 	.remove		= ehci_brcm_remove,
- 	.shutdown	= usb_hcd_platform_shutdown,
- 	.driver		= {
--		.owner	= THIS_MODULE,
- 		.name	= "ehci-brcm",
- 		.pm	= &ehci_brcm_pm_ops,
- 		.of_match_table = brcm_ehci_of_match,
+
