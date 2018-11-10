@@ -2,127 +2,89 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DA1AC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 00:02:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B7CCC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 00:03:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2DDD20818
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 00:02:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F36520855
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 00:03:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FGZHIRhj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2DDD20818
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="g5aRG1fE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F36520855
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728455AbeKJJpq (ORCPT
+        id S1728546AbeKJJp7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 04:45:46 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:37260 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726545AbeKJJpq (ORCPT
+        Sat, 10 Nov 2018 04:45:59 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:43181 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726545AbeKJJp7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 04:45:46 -0500
-Received: by mail-pl1-f196.google.com with SMTP id p6-v6so1634969pll.4
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 16:02:50 -0800 (PST)
+        Sat, 10 Nov 2018 04:45:59 -0500
+Received: by mail-pg1-f196.google.com with SMTP id n10-v6so1504980pgv.10
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Nov 2018 16:03:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
          :references:message-id:user-agent:subject:date;
-        bh=hV3hxxWdTSA6QFgyEk13J4mQ9Uf50eIGYj7l8gdbEY0=;
-        b=FGZHIRhjENxXl4JwosLathu5zGhLCXuSCSslfpv33kLozhDqzcTwKDfGQi9qyuJ3QC
-         vmiffl79YThPdjZfk5nlzYuLIHHu2ZtZH9obaBqo99dTqTJKDvPSHtw0HquQsJE47DQB
-         tsXIr3HqteEAH/Fd5bYEmX33nrg4EJLS16wbA=
+        bh=hy61I6bNOSvgGHwG1tOvJ/t+XVq58jSa5hwn4m3BR20=;
+        b=g5aRG1fEHkxuVO+uF78IRaKCO5op9tKxcaDOYtxRUf6D/0Jj6DiISEkeI4gOloz2sx
+         DxFzfsekUKO3C+egE34bYR/l1bDlRwJk2rQbXPjKNxCzgwXgONQfBB6Il1rfzq+tVhKv
+         A+huxjsfL2TEmv5g7/3pfqE1pe4lHr5Cb3yS0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
          :in-reply-to:cc:references:message-id:user-agent:subject:date;
-        bh=hV3hxxWdTSA6QFgyEk13J4mQ9Uf50eIGYj7l8gdbEY0=;
-        b=qAY0o1KP/Nda4Ih/IHbJ1P0TyDLrKEdoSQwT1AXz4z6HJP9Lkh0p2np2zxgUn8Xp0h
-         pIPThLOE2LCCuyzpZZyvp+aR5A4O1RnhYHMynoEg7YoJZIRX3aoNix5818jp9Zb1AmhS
-         +XCz8e8SP/cVVrPHjr/pDfNUObM0vu633/wn83eiWAhUW/IzPqMKbupsHPfKsd14rrGo
-         zjMGupbokOf56VYOAQEoYCOnolhBR2W0y+BXTQmvNDSTKTBOE+4aaZzJc9o8J3KcrUjN
-         u7mFy1jJe3+VthRURNgioU1p+bHm8PEVsGNp6kYRDSgEywu8PRHMW7VXV2IOZErjKG+E
-         BHnQ==
-X-Gm-Message-State: AGRZ1gI2j2+3A5QcDUVVZeunAIxtFdh876R2wrGK0PzIqPYXr6gpzYX3
-        SUIHDpSjB71IqM9o4NGuY0jYFQ==
-X-Google-Smtp-Source: AJdET5fgO2q/voh3EZxKPoMUvAyoPcqAJeAuBsHgywmFr/LjAZMExRPhjIZpTw9iLFBfJ2Rd6XfdZA==
-X-Received: by 2002:a17:902:7b91:: with SMTP id w17-v6mr10700303pll.289.1541808170078;
-        Fri, 09 Nov 2018 16:02:50 -0800 (PST)
+        bh=hy61I6bNOSvgGHwG1tOvJ/t+XVq58jSa5hwn4m3BR20=;
+        b=rqtHgrysRPmsjUlwDevUDpUFnbaGbuQDwtZxqze6+NfPNQcD4FS4omc4dq7t+OVQxI
+         zRoJ/joBtZqGfaTYm0rIFx3kAE9R1qbO5ujQDoPmYzLpjaUVALRjAmnp/foq/IUESi9d
+         fGE73NelkVVh/BeEqu8V1uovfuuOp9YkazurUQ3bpJhPgTcAe9tYKYlYWL15+10zZcvq
+         YPFnbjs2acpOfnZw9Vrn/GshJ9bKrhBntZVkeDdz6v3urg/6SoJJAxyxZX1ufBtlZUsN
+         XSSyvWcZ+Bwj4v33k5fEJ+gfl6mCZ2wNKKSLDTynkH9IZW5bHItywxdvTpa7oLQSbm8/
+         z1Hg==
+X-Gm-Message-State: AGRZ1gJyhuK2vOPIfIjrRKZh1Qui1PKFuafs5oKhs76L1hZxPZ6tk793
+        lkZed4Ejx+wQPPWfZFaMd0UeIA==
+X-Google-Smtp-Source: AJdET5cU0cBfKx23wU3qvfy19kOv6CvVGZHhn4y+flhSkyS+TheM3Sj335QSuriB1ZrFy72+ml64lQ==
+X-Received: by 2002:a63:e915:: with SMTP id i21mr9080089pgh.409.1541808183233;
+        Fri, 09 Nov 2018 16:03:03 -0800 (PST)
 Received: from localhost ([2620:15c:202:1:fed3:9637:a13a:6c15])
-        by smtp.gmail.com with ESMTPSA id u6sm7941280pgr.79.2018.11.09.16.02.49
+        by smtp.gmail.com with ESMTPSA id l2-v6sm6745460pgp.20.2018.11.09.16.03.02
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 09 Nov 2018 16:02:49 -0800 (PST)
+        Fri, 09 Nov 2018 16:03:02 -0800 (PST)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+To:     Andy Gross <andy.gross@linaro.org>,
         Evan Green <evgreen@chromium.org>,
-        Linus Walleij <linus.walleij@linaro.org>
+        Rob Herring <robh+dt@kernel.org>
 From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <20181109222835.60607-1-evgreen@chromium.org>
-Cc:     Evan Green <evgreen@chromium.org>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20181109222835.60607-1-evgreen@chromium.org>
-Message-ID: <154180816857.88331.11328422006723958300@swboyd.mtv.corp.google.com>
+In-Reply-To: <20181109235212.111169-1-evgreen@chromium.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Evan Green <evgreen@chromium.org>, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-soc@vger.kernel.org
+References: <20181109235212.111169-1-evgreen@chromium.org>
+Message-ID: <154180818197.88331.4465955446689131055@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH] pinctrl: msm: Add sleep pinctrl state transitions
-Date:   Fri, 09 Nov 2018 16:02:48 -0800
+Subject: Re: [PATCH] arm64: dts: qcom: sdm845: Add gpio-ranges to TLMM node
+Date:   Fri, 09 Nov 2018 16:03:01 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Evan Green (2018-11-09 14:28:35)
-> Add PM suspend callbacks to the msm core driver that select the
-> sleep and default pinctrl states. Then wire those callbacks up
-> in the sdm845 driver, for those boards that may have GPIO hogs
-> that need to change state during suspend.
+Quoting Evan Green (2018-11-09 15:52:12)
+> Add the gpio-ranges property to the TLMM node so that GPIO hogs work.
 > =
 
 > Signed-off-by: Evan Green <evgreen@chromium.org>
 > ---
 
 Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-
-> =
-
->  drivers/pinctrl/qcom/pinctrl-msm.c    | 16 ++++++++++++++++
->  drivers/pinctrl/qcom/pinctrl-msm.h    |  2 ++
->  drivers/pinctrl/qcom/pinctrl-sdm845.c |  4 ++++
->  3 files changed, 22 insertions(+)
-> =
-
-> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pi=
-nctrl-msm.c
-> index 7c7d083e2c0dc..d505d0a50f0a5 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-> @@ -1072,6 +1072,22 @@ static void msm_pinctrl_setup_pm_reset(struct msm_=
-pinctrl *pctrl)
->                 }
->  }
->  =
-
-> +int msm_pinctrl_suspend(struct device *dev)
-> +{
-> +       struct msm_pinctrl *pctrl =3D dev_get_drvdata(dev);
-> +
-> +       return pinctrl_force_sleep(pctrl->pctrl);
-> +}
-> +EXPORT_SYMBOL(msm_pinctrl_suspend);
-> +
-> +int msm_pinctrl_resume(struct device *dev)
-> +{
-> +       struct msm_pinctrl *pctrl =3D dev_get_drvdata(dev);
-> +
-> +       return pinctrl_force_default(pctrl->pctrl);
-> +}
-> +EXPORT_SYMBOL(msm_pinctrl_resume);
-
-It's too bad this can't be installed by default into the driver somehow
-so we don't have to repeat this for each device driver. O well!
 
