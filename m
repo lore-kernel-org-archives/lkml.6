@@ -2,78 +2,114 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0559C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 08:57:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A692AC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 08:58:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B127620858
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 08:57:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B127620858
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 75AE520858
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 08:58:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75AE520858
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=genki.is
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728995AbeKJSl7 (ORCPT
+        id S1729003AbeKJSnM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 13:41:59 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:42595 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728766AbeKJSl7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 13:41:59 -0500
-Received: by mail-qk1-f193.google.com with SMTP id m5so5822326qka.9
-        for <linux-kernel@vger.kernel.org>; Sat, 10 Nov 2018 00:57:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=q3JcteNtm8CRrmMLALckpB7fBfj1KsjvPyLifY2NrvM=;
-        b=qcsP26ZBMLA/ojU93ytseetWy7WZaSKNpOOBrV83SYphUllkD2I1ANXyJgzd70ZW+T
-         KB2tWV1gPMS1WueFJOqyZ5JzZxmGgEnmdJ9euIwv9XDWtwlZ7Osl3ZMTdI2DVDHVYnHg
-         9gmK8A2DjpfE9LGzdkpMrZvqwfHSvpyhyj/1pHp560mMyBB82HciFuQcsTBObGi/+uAc
-         RNonXnBER9d5MH5/aBBdyOcg1OrffBmpf0wWD84C2zbMIrmy8zZSxfQw1b2jk7r/5/Rr
-         cc/f22e9GQVxIDo8ltN61YaZ5co5vwA89M5ix3yQ0fPcTFEgYRTh2t+lWQPlrX1620Fv
-         87iQ==
-X-Gm-Message-State: AGRZ1gKTT6tYQ0qSHbXVkdVthapH3Gmrg/t50PHRvGYnKa46rscj4ib+
-        BF2QxxBJg51Lyrdy3J1BAEEItWZPTsa3tIJL2r8=
-X-Google-Smtp-Source: AJdET5crNcX/1uZSBGsAlD6fzgRvtX8zP21nh3d67BukXVnseqx+F1S2niABfAc+mi8M7stdLj9Q02fYov2cwoRiPR8=
-X-Received: by 2002:a05:6214:1087:: with SMTP id o7mr12095377qvr.115.1541840263911;
- Sat, 10 Nov 2018 00:57:43 -0800 (PST)
+        Sat, 10 Nov 2018 13:43:12 -0500
+Received: from genki.is ([104.200.25.21]:43314 "EHLO genki.is"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728766AbeKJSnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 13:43:12 -0500
+Received: by genki.is (OpenSMTPD) with ESMTP id 8c944eca;
+        Sat, 10 Nov 2018 08:58:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=genki.is; h=date
+        :message-id:mime-version:content-transfer-encoding:content-type
+        :from:subject:to:cc:in-reply-to:references; s=dkim; bh=+8yWhWqTt
+        2Z08lChR9XsGiW6wH0=; b=fa3aaJzLSmflf/SXPzUxiAbzOd7isrH2ZqxRznuJg
+        Rdv879PXeVXSR5He7T8fF3dBv8AuBn3tId84CR2HV+Z+xqKDoZUVUqO2uBCJ7pe5
+        rOVQ5xfgIECKYPV5IAW48XYr9/RlLAIjPfOn8J0myY8BvvYx2eg9f7U/p0xrIfNl
+        RucukGEPaQfG+3biIUH/Z9kzXtwQiXNo8UGXFNKUfzPSLUCtDxbeA7PQW04bBdTH
+        3Hu0xKRInMBHdReXBPKJdsCruKbRrQEGHALLvnxWgcytOg32/b7GBQvoSDwk3iZN
+        UnI2WF7vDEKMn8piNBUkoufFluPpkhk4tk4R6+TKXeZEg==
+Received: by genki.is (OpenSMTPD) with ESMTPSA id d1677770 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
+        Sat, 10 Nov 2018 08:58:56 +0000 (UTC)
+Date:   Sat, 10 Nov 2018 00:58:26 -0800
+Message-ID: <20181110.085826.230851261@genki.is>
 MIME-Version: 1.0
-References: <898e79a6-092c-d013-d2bb-f6260e761379@free.fr> <03f41ca8-68c6-f075-cb1e-c7f630a3b128@free.fr>
- <20181108093617.GB8433@e107155-lin>
-In-Reply-To: <20181108093617.GB8433@e107155-lin>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Sat, 10 Nov 2018 09:57:27 +0100
-Message-ID: <CAK8P3a1129B-u60sjHCvLuE8i6OCJRDSe-JFy3S-JJWFGbHCPQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/9] arm64: defconfig: Drop ARM_BIG_LITTLE_CPUFREQ
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     marc.w.gonzalez@free.fr, arm-soc <arm@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+From:   Genki Sky <sky@genki.is>
+Subject: Re: [PATCH] scripts/setlocalversion: Improve -dirty check with
+ git-status --no-optional-locks
+To:     Brian Norris <briannorris@chromium.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Douglas Anderson <dianders@chromium.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Christian Kujau <lists@nerdbynature.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+In-Reply-To: <20181109183436.GA45531@google.com>
+References: <20181107022156.GA254567@google.com>
+        <alpine.DEB.2.21.999.1811061845161.5308@trent.utfs.org>
+        <CA+ASDXPMMXCBN6PU8qzRm579sC9VBdwnxZdZwRdPY1cBUP8oGQ@mail.gmail.com>
+        <20181107184435.GA168339@google.com> <20181107.204358.257636196@genki.is>
+        <20181107205514.GB12273@roeck-us.net> <20181107.210731.330601031@genki.is>
+        <CAD=FV=Wcxf7p1DyJdVEqODbc6TdTtbPiLszWCAS1xC6=4kkLbw@mail.gmail.com>
+        <CA+ASDXN40pvbZKvsO3Cb8256AQJ3fyQh5TWdT+GDk_ncq11nMw@mail.gmail.com>
+        <CAK7LNAR5etb-oJDaxNZbH9-FmC3+hC3A_cwnbuWPQx0maHaDng@mail.gmail.com>
+        <20181109183436.GA45531@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 8, 2018 at 10:36 AM Sudeep Holla <sudeep.holla@arm.com> wrote:
->
-> On Wed, Nov 07, 2018 at 11:39:42PM +0100, Marc Gonzalez wrote:
-> > Commit a7314405d83c ("drop ARM_BIG_LITTLE_CPUFREQ support for ARM64")
-> > dropped ARM_BIG_LITTLE_CPUFREQ support for ARM64.
-> >
->
-> Looks good,
->
-> Acked-by: Sudeep Holla <sudeep.holla@arm.com>
->
-> But I left it intentionally to avoid churn assuming it will go away when
-> ARM SoC team runs savedefconfig and sync the defconfig.
+Hi, thanks very much for doing this. But, this patch always prints
+-dirty for me, even with no untracked changes in git. I think this is
+because:
 
-I would never do that, instead I want patches like the one that Marc sent
-in order to make sure we don't accidentally drop anything that is still
-required, e.g. when an option got renamed or gained a dependency.
+On Fri, 9 Nov 2018 10:34:37 -0800, Brian Norris <briannorris@chromium.org> wrote:
+> diff --git a/scripts/setlocalversion b/scripts/setlocalversion
+> index 71f39410691b..eab1f90de50d 100755
+> --- a/scripts/setlocalversion
+> +++ b/scripts/setlocalversion
+> @@ -73,8 +73,19 @@ scm_version()
+>  			printf -- '-svn%s' "`git svn find-rev $head`"
+>  		fi
+>
+> -		# Check for uncommitted changes
+> -		if git diff-index --name-only HEAD | grep -qv "^scripts/package"; then
+> +		# Check for uncommitted changes.
+> +		# First, with git-status, but --no-optional-locks is only
+> +		# supported in git >= 2.14, so fall back to git-diff-index if
+> +		# it fails. Note that git-diff-index does not refresh the
+> +		# index, so it may give misleading results. See
+> +		# git-update-index(1), git-diff-index(1), and git-status(1).
+> +		local git_status
+> +		git_status="$(git --no-optional-locks status -uno --porcelain 2>/dev/null)"
+> +		if [ $? -eq 0 ]; then
+> +			if echo "$git_status" | grep -qv '^.. scripts/package'; then
 
-       Arnd
+Shouldn't this be:
+
+	if printf '%s' "$git_status" | grep -qv '^.. scripts/package'; then
+
+I.e., use printf not echo? Because of echo introducing a newline.
+
+With echo:
+	$ x=$(printf ''); if echo "$x" | grep -qv 'ignore'; then echo dirty; fi
+	dirty
+	$ x=$(printf '\n'); if echo "$x" | grep -qv 'ignore'; then echo dirty; fi
+	dirty
+	$ x=$(printf 'ignore\n'); if echo "$x" | grep -qv 'ignore'; then echo dirty; fi
+	$ x=$(printf 'untracked\n'); if echo "$x" | grep -qv 'ignore'; then echo dirty; fi
+	dirty
+
+With printf:
+	$ x=$(printf ''); if printf '%s' "$x" | grep -qv 'ignore'; then echo dirty; fi
+	$ x=$(printf '\n'); if printf '%s' "$x" | grep -qv 'ignore'; then echo dirty; fi
+	$ x=$(printf 'ignore\n'); if printf '%s' "$x" | grep -qv 'ignore'; then echo dirty; fi
+	$ x=$(printf 'untracked\n'); if printf '%s' "$x" | grep -qv 'ignore'; then echo dirty; fi
+	dirty
+
+(Hopefully I'm not missing something.)
