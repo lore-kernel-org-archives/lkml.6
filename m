@@ -2,97 +2,110 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA1CAC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 21:47:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 574ABC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 21:47:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 850F12089A
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 21:47:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A8682089A
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 21:47:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="XUIPiZNX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 850F12089A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	dkim=pass (2048-bit key) header.d=telus.net header.i=@telus.net header.b="a2O1HD+o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A8682089A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=telus.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726279AbeKKHd2 (ORCPT
+        id S1726603AbeKKHeK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 02:33:28 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:33148 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725778AbeKKHd2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 02:33:28 -0500
-Received: by mail-pf1-f193.google.com with SMTP id v68-v6so2507593pfk.0
-        for <linux-kernel@vger.kernel.org>; Sat, 10 Nov 2018 13:47:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=fJLqSDdUI5XZiDtgqi8bBUJo6cj3b2+RjL67ExJB/xk=;
-        b=XUIPiZNXpQda6E1oRRs/6LTgk6Y7qfv+RjZIQ1gtExgl9eK/urmbObZI69KaR3Wvsg
-         bjPYS/Nw1G+z+VT1RST8bzmuX/aG+bN/N0pF5krP1Rxt8Wij0991wkvFAFDx/Do99ctV
-         bAeNkkLtazOh6j2JMz5CtCA09EfFY54JDv//Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=fJLqSDdUI5XZiDtgqi8bBUJo6cj3b2+RjL67ExJB/xk=;
-        b=CHIvv6e2wAAhvSZhKUSNxPgWJJux+2KaYRe8ONNgeww4uvibEFL6JyVRT3847jrjn0
-         35UkUz4RRF50D2yTfbDt0OOxxDvEAxMHRtuhPqPHQ63kc58pwT8Hi00NnPf8j4+9UBbC
-         dFzwFtBj80HCRa1dRRtM9bOLYm/Oqg3s00JtReRAa6NBa56MsmtbGLjvmD8iZ1vNzBO6
-         sbJBVDBprvH4kjcoAL7YSq7X9Yt8wam1fdcZ5HELp1aY0ffktv95tEYrqtETMyqajGLR
-         bfefl4XzSvcFRDJ7lnI0/8aYR9/SvyCXdOrEbDQlYlrHFx0FcIWZcgj0HXIZ933s7DGW
-         50mQ==
-X-Gm-Message-State: AGRZ1gJISRQDOrVeybRn14yY9gJ4sOyQNeuIMQ9WJBJvgcidZ0upXoAG
-        yHwMNSvaLFXCx3CCRdZXQJGejl87R9Q=
-X-Google-Smtp-Source: AJdET5fCmnkYYk+4ORtTCuPkVcIto9M0ZcVDnDyhCMuyICOCiYyx3lasktqUtCr3YMQq0Q+YdsVE/A==
-X-Received: by 2002:a62:6d83:: with SMTP id i125-v6mr14543106pfc.184.1541886421244;
-        Sat, 10 Nov 2018 13:47:01 -0800 (PST)
-Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
-        by smtp.gmail.com with ESMTPSA id f62sm10932310pgc.67.2018.11.10.13.47.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 10 Nov 2018 13:47:00 -0800 (PST)
-Date:   Sat, 10 Nov 2018 13:46:59 -0800
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     linux-kernel@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>, josh@joshtriplett.org,
-        rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
-        jiangshanlai@gmail.com
-Subject: dyntick-idle CPU and node's qsmask
-Message-ID: <20181110214659.GA96924@google.com>
+        Sun, 11 Nov 2018 02:34:10 -0500
+Received: from cmta17.telus.net ([209.171.16.90]:55483 "EHLO cmta17.telus.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725996AbeKKHeJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Nov 2018 02:34:09 -0500
+Received: from dougxps ([173.180.45.4])
+        by cmsmtp with SMTP
+        id Lb6MggLYXP96wLb6NgF0xl; Sat, 10 Nov 2018 14:47:42 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=telus.net; s=neo;
+        t=1541886462; bh=chq4lRCIFA9c9VB8arC2XcKcz7jKTZN+RdsIca7c3qg=;
+        h=From:To:Cc:References:In-Reply-To:Subject:Date;
+        b=a2O1HD+okVcuW+8rHx9AUMxEoUmdT8IkQLxM9yv3SQsFw3XMqJMRwETrh1CWh4qfJ
+         IQMZR5FdnpL82+lgNZlxBo781Qb6HOwiiF4GAL8/WtuOjSnO8rzvXT7B7VfP+4PyjB
+         QRlh1+u+GOvs7GP03ovUk/aPKjVeRm0BE52yC+XVOZuTiICtnFwDxz/5yO9PevtojG
+         6p5NKkoRPgeXMCmpPnwqQhXQDqbxQWXCJYxjacSjYHayKTIIN2Em9fStSej6mlL6hj
+         H6vsU70Yyk7fYbgLxH/3wVBRBJNMVsAzkeLVDeSnCvgH6hIOwdlpy8nTG7BK/lOGq3
+         fTH4pYMKjolCg==
+X-Authority-Analysis: v=2.3 cv=G5vN7Os5 c=1 sm=1 tr=0
+ a=zJWegnE7BH9C0Gl4FFgQyA==:117 a=zJWegnE7BH9C0Gl4FFgQyA==:17
+ a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=kj9zAlcOel0A:10 a=FGbulvE0AAAA:8
+ a=ugkoA4SMqsBuiJswprwA:9 a=PQ8TymTXbGEOm_cX:21 a=vxPhXtqwuZbslzO-:21
+ a=CjuIK1q_8ugA:10 a=5JIPC4SmUL4A:10 a=eM4ghy-HDjkA:10
+ a=svzTaB3SJmTkU8mK-ULk:22
+From:   "Doug Smythies" <dsmythies@telus.net>
+To:     "'Rafael J. Wysocki'" <rjw@rjwysocki.net>
+Cc:     "'Srinivas Pandruvada'" <srinivas.pandruvada@linux.intel.com>,
+        "'Peter Zijlstra'" <peterz@infradead.org>,
+        "'LKML'" <linux-kernel@vger.kernel.org>,
+        "'Frederic Weisbecker'" <frederic@kernel.org>,
+        "'Mel Gorman'" <mgorman@suse.de>,
+        "'Daniel Lezcano'" <daniel.lezcano@linaro.org>,
+        "'Linux PM'" <linux-pm@vger.kernel.org>,
+        "'Doug Smythies'" <dsmythies@telus.net>,
+        "'Giovanni Gherdovich'" <ggherdovich@suse.cz>
+References: JLIjge0NMDhAwJLIogChPj KR9ogVaVz6DhgKRFdgxgYz
+In-Reply-To: KR9ogVaVz6DhgKRFdgxgYz
+Subject: RE: [RFC/RFT][PATCH v3] cpuidle: New timer events oriented governor for tickless systems
+Date:   Sat, 10 Nov 2018 13:47:33 -0800
+Message-ID: <001001d4793f$020a7f90$061f7eb0$@net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain;
+        charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Office Outlook 12.0
+Thread-Index: AdR0W8vD4oREAbGoTFqO9uyL0vrNhgCWrS2wAJOvwLA=
+Content-Language: en-ca
+X-CMAE-Envelope: MS4wfLTmeI/HcROGLdO/H3saieYM74C4fFio9PF+M3tXeY82yU/gEAYmV9F4kbWJilKKMZjYkfCOiJJGuTozVXSG8dciGM8Yx7fNGATaAHLtxIyj94mjad3a
+ 8CXOlGUFs8I2lSJZmGtB4hmHjgCHnI1t/+BFB4uz6LRoWQjzagxalMWjZi8uESgsdVppZoQospr92LiEltAFtWSLkNklrpHa2f6Fj864hetdqYm/kJ0YV85V
+ jHyAoo9SEe5WhuMVxKLssKLgwUaxqeCXzJVMUqXDlr4Sao4Z/eOlcECztanXlMpIBaK6feguXJJGuUg7oCPAvaUfrdcMmIpe9uym3XHywn8mpBQClikKaJxa
+ FHUmjHEyAhlPg0FbD2hbQOLcTaoDqsGebXT4QFOuurI5wG86Zlo3Z13k6TVI71N+QF1FYCSnIdk8jp5qDC06V51Litv9MHxwIHvll2/ee+o3JF2/yVRrm+1H
+ 8v5RQ0XWEaljQIL6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul and everyone,
+On 2018.11.07 09:04 Doug Smythies wrote:
 
-I was tracing/studying the RCU code today in paul/dev branch and noticed that
-for dyntick-idle CPUs, the RCU GP thread is clearing the rnp->qsmask
-corresponding to the leaf node for the idle CPU, and reporting a QS on their
-behalf.
+> The Phoronix dbench test was run under the option to run all
+> the tests, instead of just one number of clients. This was done
+> with a reference/baseline kernel of 4.20-rc1, and also with this
+> TEO version 3 patch. The tests were also repeated with trace
+> enabled for 5000 seconds. Idle information and processor
+> package power were sampled once per minute in all test runs.
+>
+> The results are:
+> http://fast.smythies.com/linux-pm/k420/k420-dbench-teo3.htm
+> http://fast.smythies.com/linux-pm/k420/histo_compare.htm
 
-rcu_sched-10    [003]    40.008039: rcu_fqs:              rcu_sched 792 0 dti
-rcu_sched-10    [003]    40.008039: rcu_fqs:              rcu_sched 801 2 dti
-rcu_sched-10    [003]    40.008041: rcu_quiescent_state_report: rcu_sched 805 5>0 0 0 3 0
+Another observation from the data, and for the reference/
+baseline 4.20-rc1 kernel, idle state 0 histogram plots
+is that there are several (280) long idle durations.
 
-That's all good but I was wondering if we can do better for the idle CPUs if
-we can some how not set the qsmask of the node in the first place. Then no
-reporting would be needed of quiescent state is needed for idle CPUs right?
-And we would also not need to acquire the rnp lock I think.
+For unknown reasons, these are consistently dominated by
+CPU 5 on my system (264 of the 280, in this case).
 
-At least for a single node tree RCU system, it seems that would avoid needing
-to acquire the lock without complications. Anyway let me know your thoughts
-and happy to discuss this at the hallways of the LPC as well for folks
-attending :)
+No other test that I have tried shows this issue,
+But other tests also tend to set the need_resched
+flag whereas the dbench test doesn't.
 
-thanks,
+Older kernels also have the issue. I tried: 4.19, 4.18
+4.17, 4.16+"V9" idle re-work patch set of the time.
+There is no use going back further, because "V9" was
+to address excessively long durations in shallow idle states.
 
-- Joel
+I have not made progress towards determining the root issue.
+
+... Doug
+
+
