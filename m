@@ -2,119 +2,256 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F36AC0044C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 05:47:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA5A8C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 06:35:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDB15214C1
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 05:47:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="esOoI5ut"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDB15214C1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 6B80B20872
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 06:35:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B80B20872
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727482AbeKKPez (ORCPT
+        id S1727567AbeKKQXF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 10:34:55 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:43387 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727305AbeKKPez (ORCPT
+        Sun, 11 Nov 2018 11:23:05 -0500
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:25452 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727408AbeKKQXF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 10:34:55 -0500
-Received: by mail-pf1-f193.google.com with SMTP id g7-v6so2747061pfo.10;
-        Sat, 10 Nov 2018 21:47:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=o+PWUaNabVf4M0zRALBh+Q9wc1nFH7j6Um3v8Drq0XE=;
-        b=esOoI5uty7W6Z/hPQRM4k1RbM7mVB/RodnZqrKGCNP4JICkti7uzLu69rmzjH1ay/O
-         /gc1gvSGA+L4G+gQ45UeyUKGae7a295rJP7GDh1CLeCU+J4F+jMNSmreKoHfzfE2R0df
-         j9HZsuClpnrh34KSyoQR3f+gX+zRWe8sobAcJnFncqLTVllX+Iowlb1VNma8VSQsnq80
-         KOazAV7SkoXyDiZEyw1UC/9pH2ph03GwDhgjdj7ITmSgjgTpi1Py2kSM0sJ8cCg22R+9
-         7fQTuXBDASHgMT4XTFAVK065b2uBNWnZdN9qpsZL9WzcOlI0bdvFXqfRSmewDniDBwIO
-         uIvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=o+PWUaNabVf4M0zRALBh+Q9wc1nFH7j6Um3v8Drq0XE=;
-        b=mCnBea/iEs2RGdLsPlkT5zbQmrz9cc8u8qFzSBNwqMTJC/Dn+R/zbncZa1TGCKp+Gt
-         YMsBUyz7yLq16gdgVye5XM2vt4h4gvHiNLjI1JXAuDWhwLzkCX5/4tw76jqYbpVqOsx6
-         bCkq2dNaVLeJvHncgQsR1IXjWXpBOZENLMdYtuZaqhB1tnTNiqAO/ibuPqm90vQCY0FN
-         6xgQUR+a0Cem96FlBFynakGM76ejs4o1wfcDo6dlWVBmq0KGRbydA7Zv0HqKXy+CPOgH
-         FsTh/MXq1wRJswW3Vnnup4zdXjQOSJwYFbCH/ti/3RiyCL/Aj/UflrsGnGydC6aPgZx6
-         iw2Q==
-X-Gm-Message-State: AGRZ1gLxf+UmExs9CIYjClHUETJZB4EYlLwIBg/ezoTxlXMQNkHyow8H
-        ZvJJP9gCB4q3WE78bvT6BFL7bxVmrCE=
-X-Google-Smtp-Source: AJdET5eYCH+IzZjP3+aOViPLGyvsQYcwjR83XXNwVy+WRgLrxrd+Nt+OSLRYbhjShsSc3Q3VqKTi/Q==
-X-Received: by 2002:a63:e20a:: with SMTP id q10mr12953116pgh.206.1541915241175;
-        Sat, 10 Nov 2018 21:47:21 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id f18-v6sm34393244pfh.0.2018.11.10.21.47.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 10 Nov 2018 21:47:20 -0800 (PST)
-Date:   Sat, 10 Nov 2018 21:47:19 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Ben Hutchings <ben@decadent.org.uk>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org
-Subject: Re: [PATCH 3.16 000/410] 3.16.57-rc1 review
-Message-ID: <20181111054719.GA31398@roeck-us.net>
-References: <lsq.1528380320.647747352@decadent.org.uk>
- <20180608141426.GA5242@roeck-us.net>
- <945ce3bb1ecd9c70249e79d2cb5572f9475c9786.camel@decadent.org.uk>
- <bf66aa7e856d4c2c83dc78dca95eee76437a1513.camel@decadent.org.uk>
+        Sun, 11 Nov 2018 11:23:05 -0500
+Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
+ EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
+ 15.0.1156.6; Sat, 10 Nov 2018 22:35:01 -0800
+Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 34D5440479;
+        Sat, 10 Nov 2018 22:35:24 -0800 (PST)
+From:   Nadav Amit <namit@vmware.com>
+To:     Ingo Molnar <mingo@redhat.com>
+CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Nadav Amit <namit@vmware.com>, Jiri Kosina <jkosina@suse.cz>,
+        Andy Lutomirski <luto@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: [PATCH v4 01/10] Fix "x86/alternatives: Lockdep-enforce text_mutex in text_poke*()"
+Date:   Sat, 10 Nov 2018 15:17:23 -0800
+Message-ID: <20181110231732.15060-2-namit@vmware.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181110231732.15060-1-namit@vmware.com>
+References: <20181110231732.15060-1-namit@vmware.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bf66aa7e856d4c2c83dc78dca95eee76437a1513.camel@decadent.org.uk>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain
+Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
+ designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 11, 2018 at 12:09:03AM +0000, Ben Hutchings wrote:
-> On Sat, 2018-06-16 at 22:18 +0100, Ben Hutchings wrote:
-> > On Fri, 2018-06-08 at 07:14 -0700, Guenter Roeck wrote:
-> > > On Thu, Jun 07, 2018 at 03:05:20PM +0100, Ben Hutchings wrote:
-> > > > This is the start of the stable review cycle for the 3.16.57 release.
-> > > > There are 410 patches in this series, which will be posted as responses
-> > > > to this one.  If anyone has any issues with these being applied, please
-> > > > let me know.
-> > > > 
-> > > > Responses should be made by Thu Jun 14 18:00:00 UTC 2018.
-> > > > Anything received after that time might be too late.
-> > > > 
-> > > 
-> > > Build results:
-> > > 	total: 138 pass: 136 fail: 2
-> > > Failed builds: 
-> > > 	i386:tools/perf 
-> > > 	x86_64:tools/perf 
-> > > Qemu test results:
-> > > 	total: 116 pass: 116 fail: 0
-> > > 
-> > > tools/perf builds are new, so it is probably not entirely surprising
-> > > that they fail.
-> > > 
-> > > Deetails are available at http://kerneltests.org/builders/.
-> > 
-> > Thanks for testing.  I see you've now made the tools/perf builds work
-> > for 3.16, so thanks for that as well.
-> 
-> I looked again and for the current patch queue I see:
-> 
->     Building i386:tools/perf ... failed (script) - skipping
-> 
->     Building x86_64:tools/perf ... failed (script) - skipping
->
-perf builds are currently skipped in 3.16. Let me check if I can drop that.
+text_mutex is currently expected to be held before text_poke() is
+called, but we kgdb does not take the mutex, and instead *supposedly*
+ensures the lock is not taken and will not be acquired by any other core
+while text_poke() is running.
 
-Guenter
+The reason for the "supposedly" comment is that it is not entirely clear
+that this would be the case if gdb_do_roundup is zero.
+
+This patch creates two wrapper functions, text_poke() and
+text_poke_kgdb() which do or do not run the lockdep assertion
+respectively.
+
+While we are at it, change the return code of text_poke() to something
+meaningful. One day, callers might actually respect it and the existing
+BUG_ON() when patching fails could be removed. For kgdb, the return
+value can actually be used.
+
+Cc: Jiri Kosina <jkosina@suse.cz>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Fixes: 9222f606506c ("x86/alternatives: Lockdep-enforce text_mutex in text_poke*()")
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Nadav Amit <namit@vmware.com>
+---
+ arch/x86/include/asm/text-patching.h |  3 +-
+ arch/x86/kernel/alternative.c        | 72 +++++++++++++++++++++-------
+ arch/x86/kernel/kgdb.c               | 15 ++++--
+ 3 files changed, 66 insertions(+), 24 deletions(-)
+
+diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
+index e85ff65c43c3..5a2600370763 100644
+--- a/arch/x86/include/asm/text-patching.h
++++ b/arch/x86/include/asm/text-patching.h
+@@ -34,7 +34,8 @@ extern void *text_poke_early(void *addr, const void *opcode, size_t len);
+  * On the local CPU you need to be protected again NMI or MCE handlers seeing an
+  * inconsistent instruction while you patch.
+  */
+-extern void *text_poke(void *addr, const void *opcode, size_t len);
++extern int text_poke(void *addr, const void *opcode, size_t len);
++extern int text_poke_kgdb(void *addr, const void *opcode, size_t len);
+ extern int poke_int3_handler(struct pt_regs *regs);
+ extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
+ extern int after_bootmem;
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index ebeac487a20c..ebe9210dc92e 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -678,23 +678,12 @@ void *__init_or_module text_poke_early(void *addr, const void *opcode,
+ 	return addr;
+ }
+ 
+-/**
+- * text_poke - Update instructions on a live kernel
+- * @addr: address to modify
+- * @opcode: source of the copy
+- * @len: length to copy
+- *
+- * Only atomic text poke/set should be allowed when not doing early patching.
+- * It means the size must be writable atomically and the address must be aligned
+- * in a way that permits an atomic write. It also makes sure we fit on a single
+- * page.
+- */
+-void *text_poke(void *addr, const void *opcode, size_t len)
++static int __text_poke(void *addr, const void *opcode, size_t len)
+ {
+ 	unsigned long flags;
+ 	char *vaddr;
+ 	struct page *pages[2];
+-	int i;
++	int i, r = 0;
+ 
+ 	/*
+ 	 * While boot memory allocator is runnig we cannot use struct
+@@ -702,8 +691,6 @@ void *text_poke(void *addr, const void *opcode, size_t len)
+ 	 */
+ 	BUG_ON(!after_bootmem);
+ 
+-	lockdep_assert_held(&text_mutex);
+-
+ 	if (!core_kernel_text((unsigned long)addr)) {
+ 		pages[0] = vmalloc_to_page(addr);
+ 		pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
+@@ -712,7 +699,8 @@ void *text_poke(void *addr, const void *opcode, size_t len)
+ 		WARN_ON(!PageReserved(pages[0]));
+ 		pages[1] = virt_to_page(addr + PAGE_SIZE);
+ 	}
+-	BUG_ON(!pages[0]);
++	if (!pages[0])
++		return -EFAULT;
+ 	local_irq_save(flags);
+ 	set_fixmap(FIX_TEXT_POKE0, page_to_phys(pages[0]));
+ 	if (pages[1])
+@@ -727,9 +715,57 @@ void *text_poke(void *addr, const void *opcode, size_t len)
+ 	/* Could also do a CLFLUSH here to speed up CPU recovery; but
+ 	   that causes hangs on some VIA CPUs. */
+ 	for (i = 0; i < len; i++)
+-		BUG_ON(((char *)addr)[i] != ((char *)opcode)[i]);
++		if (((char *)addr)[i] != ((char *)opcode)[i])
++			r = -EFAULT;
+ 	local_irq_restore(flags);
+-	return addr;
++	return r;
++}
++
++/**
++ * text_poke - Update instructions on a live kernel
++ * @addr: address to modify
++ * @opcode: source of the copy
++ * @len: length to copy
++ *
++ * Only atomic text poke/set should be allowed when not doing early patching.
++ * It means the size must be writable atomically and the address must be aligned
++ * in a way that permits an atomic write. It also makes sure we fit on a single
++ * page.
++ */
++int text_poke(void *addr, const void *opcode, size_t len)
++{
++	int r;
++
++	lockdep_assert_held(&text_mutex);
++
++	r = __text_poke(addr, opcode, len);
++
++	/*
++	 * TODO: change the callers to consider the return value and remove this
++	 *       historical assertion.
++	 */
++	BUG_ON(r);
++
++	return r;
++}
++
++/**
++ * text_poke_kgdb - Update instructions on a live kernel by kgdb
++ * @addr: address to modify
++ * @opcode: source of the copy
++ * @len: length to copy
++ *
++ * Only atomic text poke/set should be allowed when not doing early patching.
++ * It means the size must be writable atomically and the address must be aligned
++ * in a way that permits an atomic write. It also makes sure we fit on a single
++ * page.
++ *
++ * Context: should only be used by kgdb, which ensures no other core is running,
++ *	    despite the fact it does not hold the text_mutex.
++ */
++int text_poke_kgdb(void *addr, const void *opcode, size_t len)
++{
++	return __text_poke(addr, opcode, len);
+ }
+ 
+ static void do_sync_core(void *info)
+diff --git a/arch/x86/kernel/kgdb.c b/arch/x86/kernel/kgdb.c
+index 8e36f249646e..8091b2e381d4 100644
+--- a/arch/x86/kernel/kgdb.c
++++ b/arch/x86/kernel/kgdb.c
+@@ -763,13 +763,15 @@ int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
+ 	if (!err)
+ 		return err;
+ 	/*
+-	 * It is safe to call text_poke() because normal kernel execution
++	 * It is safe to call text_poke_kgdb() because normal kernel execution
+ 	 * is stopped on all cores, so long as the text_mutex is not locked.
+ 	 */
+ 	if (mutex_is_locked(&text_mutex))
+ 		return -EBUSY;
+-	text_poke((void *)bpt->bpt_addr, arch_kgdb_ops.gdb_bpt_instr,
+-		  BREAK_INSTR_SIZE);
++	err = text_poke_kgdb((void *)bpt->bpt_addr, arch_kgdb_ops.gdb_bpt_instr,
++			     BREAK_INSTR_SIZE);
++	if (err)
++		return err;
+ 	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
+ 	if (err)
+ 		return err;
+@@ -788,12 +790,15 @@ int kgdb_arch_remove_breakpoint(struct kgdb_bkpt *bpt)
+ 	if (bpt->type != BP_POKE_BREAKPOINT)
+ 		goto knl_write;
+ 	/*
+-	 * It is safe to call text_poke() because normal kernel execution
++	 * It is safe to call text_poke_kgdb() because normal kernel execution
+ 	 * is stopped on all cores, so long as the text_mutex is not locked.
+ 	 */
+ 	if (mutex_is_locked(&text_mutex))
+ 		goto knl_write;
+-	text_poke((void *)bpt->bpt_addr, bpt->saved_instr, BREAK_INSTR_SIZE);
++	err = text_poke_kgdb((void *)bpt->bpt_addr, bpt->saved_instr,
++			     BREAK_INSTR_SIZE);
++	if (err)
++		return err;
+ 	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
+ 	if (err || memcmp(opc, bpt->saved_instr, BREAK_INSTR_SIZE))
+ 		goto knl_write;
+-- 
+2.17.1
+
