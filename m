@@ -3,49 +3,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E08BC0044B
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 19:35:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED45C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 19:35:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EE562146E
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 19:35:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EE562146E
+	by mail.kernel.org (Postfix) with ESMTP id CF6AA20892
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 19:35:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF6AA20892
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727141AbeKKFVG (ORCPT
+        id S1727258AbeKKFVG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Sun, 11 Nov 2018 00:21:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52280 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:52296 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726240AbeKKFVG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726812AbeKKFVG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 11 Nov 2018 00:21:06 -0500
-Subject: Re: [GIT PULL] clk fixes for v4.20-rc1
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEF4E2089A
+Subject: Re: [GIT PULL] namespace fixes for v4.20-rc2
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3587B208E3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=pr-tracker-bot@kernel.org
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20181110180423.208899-1-sboyd@kernel.org>
-References: <20181110180423.208899-1-sboyd@kernel.org>
-Message-Id: <20181110193501.26034.17257.pr-tracker-bot-a1aa42f1d8c00a0767afee28d17caafd2a4dd8ff@pdx-korg-gitolite-1.ci.codeaurora.org>
-Date:   Sat, 10 Nov 2018 19:35:01 +0000
-To:     Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <87pnvcls3n.fsf@xmission.com>
+References: <87pnvcls3n.fsf@xmission.com>
+Message-Id: <20181110193502.26034.39127.pr-tracker-bot-1de4f2ef216dade3b5bd5f5247c4c750a953f51c@pdx-korg-gitolite-1.ci.codeaurora.org>
+Date:   Sat, 10 Nov 2018 19:35:02 +0000
+To:     ebiederm@xmission.com (Eric W. Biederman)
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Jann Horn <jannh@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sat, 10 Nov 2018 10:04:23 -0800:
+The pull request you sent on Sat, 10 Nov 2018 12:12:12 -0600:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+> git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git for-linus
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/a1aa42f1d8c00a0767afee28d17caafd2a4dd8ff
+https://git.kernel.org/torvalds/c/1de4f2ef216dade3b5bd5f5247c4c750a953f51c
 
 Thank you!
 
