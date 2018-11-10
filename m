@@ -2,552 +2,156 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A74B0C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 01:36:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81679C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 01:41:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FD5E208E3
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 01:36:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FD5E208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3D89C20840
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 01:41:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="txcpDc6J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D89C20840
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728805AbeKJLTn (ORCPT
+        id S1728479AbeKJLYf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 06:19:43 -0500
-Received: from mga17.intel.com ([192.55.52.151]:50508 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728656AbeKJLTn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 06:19:43 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Nov 2018 17:36:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,485,1534834800"; 
-   d="scan'208";a="105025669"
-Received: from rpedgeco-desk5.jf.intel.com ([10.54.75.168])
-  by fmsmga004.fm.intel.com with ESMTP; 09 Nov 2018 17:36:28 -0800
-From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
-To:     akpm@linux-foundation.org, willy@infradead.org, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        kernel-hardening@lists.openwall.com, daniel@iogearbox.net,
-        jannh@google.com, keescook@chromium.org
-Cc:     kristen@linux.intel.com, dave.hansen@intel.com,
-        arjan@linux.intel.com, Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH v9 4/4] Kselftest for module text allocation benchmarking
-Date:   Fri,  9 Nov 2018 17:38:07 -0800
-Message-Id: <20181110013807.24903-5-rick.p.edgecombe@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181110013807.24903-1-rick.p.edgecombe@intel.com>
-References: <20181110013807.24903-1-rick.p.edgecombe@intel.com>
+        Sat, 10 Nov 2018 06:24:35 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:43968 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728082AbeKJLYf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 06:24:35 -0500
+Received: by mail-pf1-f195.google.com with SMTP id g7-v6so1700158pfo.10;
+        Fri, 09 Nov 2018 17:41:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=tCiRbQTJFVhrW8I8wn7J528t71wWAbQnh0V1vMaAjJU=;
+        b=txcpDc6JnzuzRGVzLByMFuDgOKqN5lhJ8beZ+7hKFdUGjrV0lerJGMD4jfJVlNOVS6
+         3YzQy3jusasQTcORhdGuZZhQi/DRncQxVPTlxFEBaVahlqBhDFi67Xgmi1rM8UM44oK4
+         CBaS/ytVMUqIJawTgHYFfNcTkMgCf7FXwp4YzKU7uwjiLu/GN1HZcVJAfodxgcOsk6wO
+         AaKQoD1eJyYtfw9BCLD+QAeBEf3K+Kh7m7q8wgOsVZQAK4ulDzfZDlFevWPnQxmOasTe
+         ip5T1t+7fYqW5JBlB3KFgN4VLbXxVhZrWBMCUeg904ZeuAIdfp7Ax6IqtFWry6Jik6pb
+         tM2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tCiRbQTJFVhrW8I8wn7J528t71wWAbQnh0V1vMaAjJU=;
+        b=J+ihnkwHJCjVJgIZOCEC0iNjwD/1AA16Qbk24YFg9WO1RJfLYKvi0R6mSv7WVSa9If
+         NqMwqay3fv/16SN0A4KSyaZ8rza8j+3RU79esVaAQ1RdzeBOOWV7V4SR08hldvQfvrbL
+         p0OLczx6O8DdcmxlxrdFMu/ff61jgofRcfS5VFx+V3rjGSK/shmjuzjPTJcrPaDwfLOA
+         uEyaEaQOiiRmiYrVePk9EuTV9WGGM96DywlpsIzlTQuhRwYbAQY/nhVMU/xPqj94x7kT
+         O5jER4VCM3gH5lLN8SNBGsYtvAMPBGLGHLjskzgUIDQKamGJ78eULJKeMvCnuwVtGR5+
+         dPTQ==
+X-Gm-Message-State: AGRZ1gK0Sh/2+t4Ds5TrSs3CUdp01ppGCv4PZ7itAmlvdBC+5tCsuYMZ
+        8+bmt4u7E0EU806j6JQWuCI=
+X-Google-Smtp-Source: AJdET5fFe/KBuwDnHlLavNXNQbTEW7RvSYjF35/pgurN2DSj73YcjJF1AMfFSJ19cflUkuNsw1PcsA==
+X-Received: by 2002:a63:441e:: with SMTP id r30mr9730217pga.128.1541814081439;
+        Fri, 09 Nov 2018 17:41:21 -0800 (PST)
+Received: from mail.google.com ([207.246.110.149])
+        by smtp.gmail.com with ESMTPSA id r12sm2450350pgv.83.2018.11.09.17.41.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 09 Nov 2018 17:41:20 -0800 (PST)
+Date:   Sat, 10 Nov 2018 09:41:12 +0800
+From:   Changbin Du <changbin.du@gmail.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Changbin Du <changbin.du@gmail.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        X86 ML <x86@kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-sparse@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH v3 1/4] x86/mm: declare check_la57_support() as inline
+Message-ID: <20181110010708.d3nayrzuy5d3lrkd@mail.google.com>
+References: <20181028130945.23581-1-changbin.du@gmail.com>
+ <20181028130945.23581-2-changbin.du@gmail.com>
+ <20181028140911.21d49629@vmware.local.home>
+ <CAK7LNATixykqHqdu5W3NpfXqBXMNsP0OLKjNdsFc_EzJ_diOxA@mail.gmail.com>
+ <20181102112728.GC14602@zn.tnic>
+ <CAK7LNAQcdpU+_LOYQ8X+4K4sxd3D-+Z7k6BuBjUOJ9LR0j+zfA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK7LNAQcdpU+_LOYQ8X+4K4sxd3D-+Z7k6BuBjUOJ9LR0j+zfA@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds a test module in lib/, and a script in kselftest that does
-benchmarking on the allocation of memory in the module space. Performance here
-would have some small impact on kernel module insertions, BPF JIT insertions
-and kprobes. In the case of KASLR features for the module space, this module
-can be used to measure the allocation performance of different configurations.
-This module needs to be compiled into the kernel because module_alloc is not
-exported.
+On Sat, Nov 10, 2018 at 01:27:29AM +0900, Masahiro Yamada wrote:
+> On Fri, Nov 2, 2018 at 8:28 PM Borislav Petkov <bp@alien8.de> wrote:
+> >
+> > On Mon, Oct 29, 2018 at 10:04:46PM +0900, Masahiro Yamada wrote:
+> > > On Mon, Oct 29, 2018 at 3:09 AM Steven Rostedt <rostedt@goodmis.org> wrote:
+> > > >
+> > > > On Sun, 28 Oct 2018 13:09:42 +0000
+> > > > Changbin Du <changbin.du@gmail.com> wrote:
+> > > >
+> > > > > The level4_kernel_pgt is only defined when X86_5LEVEL is enabled.
+> > > > > So declare check_la57_support() as inline to make sure the code
+> > > > > referring to level4_kernel_pgt is optimized out. This is a preparation
+> > > > > for CONFIG_CC_OPTIMIZE_FOR_DEBUGGING.
+> > > > >
+> > > > > Signed-off-by: Changbin Du <changbin.du@gmail.com>
+> > > >
+> > > > Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> > > >
+> > > > -- Steve
+> > > >
+> > >
+> > > Applied to linux-kbuild.
+> >
+> > Next time, before you route a patch through your tree, please get an x86
+> > maintainer's ACK first.
+> 
+> 
+> I changed my mind, and did not include this in my previous pull request
+> because this series is causing many warnings.
+>
+Most of the new warnings are false warnings. Since this series didn't change any
+code where the warnings happen. I'll make patches to make gcc happy.
 
-With some modification to the code, as explained in the comments, it can be
-enabled to measure TLB flushes as well.
+> Now, it is aiming for v5.0-rc1
+> 
+> So, it is not too late.
+> 
+> If x86 maintainers issue Acked-by,
+> I am happy to add it.
+> 
+> 
+> 
+> 
+> > Thx.
+> >
+> > --
+> > Regards/Gruss,
+> >     Boris.
+> >
+> > Good mailing practices for 400: avoid top-posting and trim the reply.
+> 
+> 
+> 
+> -- 
+> Best Regards
+> Masahiro Yamada
 
-There are two tests in the module. One allocates until failure in order to
-test module capacity and the other times allocating space in the module area.
-They both use module sizes that roughly approximate the distribution of in-tree
-X86_64 modules.
-
-You can control the number of modules used in the tests like this:
-echo m1000>/dev/mod_alloc_test
-
-Run the test for module capacity like:
-echo t1>/dev/mod_alloc_test
-
-The other test will measure the allocation time, and for CONFG_X86_64 and
-CONFIG_RANDOMIZE_BASE, also give data on how often the “backup area" is used.
-
-Run the test for allocation time and backup area usage like:
-echo t2>/dev/mod_alloc_test
-The output will be something like this:
-num		all(ns)		last(ns)
-1000		1083		1099
-Last module in backup count = 0
-Total modules in backup     = 0
->1 module in backup count   = 0
-
-To run a suite of allocation time tests for a collection of module numbers you can run:
-tools/testing/selftests/bpf/test_mod_alloc.sh
-
-Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
----
- lib/Kconfig.debug                             |   9 +
- lib/Makefile                                  |   1 +
- lib/test_mod_alloc.c                          | 375 ++++++++++++++++++
- tools/testing/selftests/bpf/test_mod_alloc.sh |  29 ++
- 4 files changed, 414 insertions(+)
- create mode 100644 lib/test_mod_alloc.c
- create mode 100755 tools/testing/selftests/bpf/test_mod_alloc.sh
-
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 1af29b8224fd..b590b2bb312f 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -1886,6 +1886,15 @@ config TEST_BPF
- 
- 	  If unsure, say N.
- 
-+config TEST_MOD_ALLOC
-+	bool "Tests for module allocator/vmalloc"
-+	help
-+	  This builds the "test_mod_alloc" module that performs performance
-+	  tests on the module text section allocator. The module uses X86_64
-+	  module text sizes for simulations.
-+
-+	  If unsure, say N.
-+
- config FIND_BIT_BENCHMARK
- 	tristate "Test find_bit functions"
- 	help
-diff --git a/lib/Makefile b/lib/Makefile
-index db06d1237898..c447e07931b0 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -60,6 +60,7 @@ UBSAN_SANITIZE_test_ubsan.o := y
- obj-$(CONFIG_TEST_KSTRTOX) += test-kstrtox.o
- obj-$(CONFIG_TEST_LIST_SORT) += test_list_sort.o
- obj-$(CONFIG_TEST_LKM) += test_module.o
-+obj-$(CONFIG_TEST_MOD_ALLOC) += test_mod_alloc.o
- obj-$(CONFIG_TEST_OVERFLOW) += test_overflow.o
- obj-$(CONFIG_TEST_RHASHTABLE) += test_rhashtable.o
- obj-$(CONFIG_TEST_SORT) += test_sort.o
-diff --git a/lib/test_mod_alloc.c b/lib/test_mod_alloc.c
-new file mode 100644
-index 000000000000..3a6fb7999df4
---- /dev/null
-+++ b/lib/test_mod_alloc.c
-@@ -0,0 +1,375 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * This module can be used to test allocation allocation time and randomness.
-+ *
-+ * To interact with this module, mount debugfs, for example:
-+ *      mount -t debugfs none /sys/kernel/debug/
-+ *
-+ * Then write to the file:
-+ *      /sys/kernel/debug/mod_alloc_test
-+ *
-+ * There are two tests:
-+ *  Test 1: Allocate until failure
-+ *  Test 2: Run 1000 iterations of a test the simulates loading modules with
-+ *          x86_64 module sizes.
-+ *
-+ * Configure the number (ex:1000) of modules to use per test in the tests:
-+ *      echo m1000 > /sys/kernel/debug/mod_alloc_test
-+ *
-+ * To run test (ex: Test 2):
-+ *      echo t2 > /sys/kernel/debug/mod_alloc_test
-+ *
-+ * For test 1 it will print the results of each test. For test 2 it will print
-+ * out statistics for example:
-+ * New module count: 1000
-+ * Starting 10000 iterations of 1000 modules
-+ * num		all(ns)		last(ns)
-+ * 1000		1984		2112
-+ * Last module in backup count = 0
-+ * Total modules in backup     = 188
-+ * >1 module in backup count   = 7
-+ */
-+
-+#include <linux/debugfs.h>
-+#include <linux/device.h>
-+#include <linux/fs.h>
-+#include <linux/kernel.h>
-+#include <linux/mm.h>
-+#include <linux/moduleloader.h>
-+#include <linux/random.h>
-+#include <linux/uaccess.h>
-+#include <linux/vmalloc.h>
-+
-+struct mod { int filesize; int coresize; int initsize; };
-+
-+/* ==== Begin optional logging ==== */
-+/*
-+ * Note: In order to get an accurate count for the tlb flushes triggered in
-+ * vmalloc, create a counter in vmalloc.c with this method signature and export
-+ * it. Then replace the below with:
-+ *
-+ * extern unsigned long get_tlb_flushes_vmalloc(void);
-+ */
-+static unsigned long get_tlb_flushes_vmalloc(void)
-+{
-+	return 0;
-+}
-+
-+/* ==== End optional logging ==== */
-+
-+
-+#define MAX_ALLOC_CNT 20000
-+#define ITERS 1000
-+
-+struct vm_alloc {
-+	void *core;
-+	unsigned long core_size;
-+	void *init;
-+};
-+
-+static struct vm_alloc *allocs_vm;
-+static long mod_cnt;
-+static DEFINE_MUTEX(test_mod_alloc_mutex);
-+
-+const static int core_hist[10] = {1, 5, 21, 46, 141, 245, 597, 2224, 1875, 0};
-+const static int init_hist[10] = {0, 0, 0, 0, 10, 19, 70, 914, 3906, 236};
-+const static int file_hist[10] = {6, 20, 55, 86, 286, 551, 918, 2024, 1028,
-+					181};
-+
-+const static int bins[10] = {5000000, 2000000, 1000000, 500000, 200000, 100000,
-+				50000, 20000, 10000, 5000};
-+/*
-+ * Rough approximation of the X86_64 module size distribution.
-+ */
-+static int get_mod_rand_size(const int *hist)
-+{
-+	int area_under = get_random_int() % 5155;
-+	int i;
-+	int last_bin = bins[0] + 1;
-+	int sum = 0;
-+
-+	for (i = 0; i <= 9; i++) {
-+		sum += hist[i];
-+		if (area_under <= sum)
-+			return bins[i]
-+				+ (get_random_int() % (last_bin - bins[i]));
-+		last_bin = bins[i];
-+	}
-+	return 4096;
-+}
-+
-+static struct mod get_rand_module(void)
-+{
-+	struct mod ret;
-+
-+	ret.coresize = get_mod_rand_size(core_hist);
-+	ret.initsize = get_mod_rand_size(init_hist);
-+	ret.filesize = get_mod_rand_size(file_hist);
-+	return ret;
-+}
-+
-+static void do_test_alloc_fail(void)
-+{
-+	struct vm_alloc *cur_alloc;
-+	struct mod cur_mod;
-+	void *file;
-+	int mod_n, free_mod_n;
-+	unsigned long fail = 0;
-+	int iter;
-+
-+	for (iter = 0; iter < ITERS; iter++) {
-+		pr_info("Running iteration: %d\n", iter);
-+		memset(allocs_vm, 0, mod_cnt * sizeof(struct vm_alloc));
-+		vm_unmap_aliases();
-+		for (mod_n = 0; mod_n < mod_cnt; mod_n++) {
-+			cur_mod = get_rand_module();
-+			cur_alloc = &allocs_vm[mod_n];
-+
-+			/* Allocate */
-+			file = vmalloc(cur_mod.filesize);
-+			cur_alloc->core = module_alloc(cur_mod.coresize);
-+			cur_alloc->init = module_alloc(cur_mod.initsize);
-+
-+			/* Clean up everything except core */
-+			if (!cur_alloc->core || !cur_alloc->init) {
-+				fail++;
-+				vfree(file);
-+				if (cur_alloc->init) {
-+					module_memfree(cur_alloc->init);
-+					vm_unmap_aliases();
-+				}
-+				break;
-+			}
-+			module_memfree(cur_alloc->init);
-+			vm_unmap_aliases();
-+			vfree(file);
-+		}
-+
-+		/* Clean up core sizes */
-+		for (free_mod_n = 0; free_mod_n < mod_n; free_mod_n++) {
-+			cur_alloc = &allocs_vm[free_mod_n];
-+			if (cur_alloc->core)
-+				module_memfree(cur_alloc->core);
-+		}
-+	}
-+	pr_info("Failures(%ld modules): %lu\n", mod_cnt, fail);
-+}
-+
-+#ifdef CONFIG_RANDOMIZE_FINE_MODULE
-+static int is_in_backup(void *addr)
-+{
-+	return (unsigned long)addr >= MODULES_VADDR + MODULES_RAND_LEN;
-+}
-+#else
-+static int is_in_backup(void *addr)
-+{
-+	return 0;
-+}
-+#endif
-+
-+static void do_test_last_perf(void)
-+{
-+	struct vm_alloc *cur_alloc;
-+	struct mod cur_mod;
-+	void *file;
-+	int mod_n, mon_n_free;
-+	unsigned long fail = 0;
-+	int iter;
-+	ktime_t start, diff;
-+	ktime_t total_last = 0;
-+	ktime_t total_all = 0;
-+
-+	/*
-+	 * The number of last core allocations for each iteration that were
-+	 * allocated in the backup area.
-+	 */
-+	int last_in_bk = 0;
-+
-+	/*
-+	 * The total number of core allocations that were in the backup area for
-+	 * all iterations.
-+	 */
-+	int total_in_bk = 0;
-+
-+	/* The number of iterations where the count was more than 1 */
-+	int cnt_more_than_1 = 0;
-+
-+	/*
-+	 * The number of core allocations that were in the backup area for the
-+	 * current iteration.
-+	 */
-+	int cur_in_bk = 0;
-+
-+	unsigned long before_tlbs;
-+	unsigned long tlb_cnt_total;
-+	unsigned long tlb_cur;
-+	unsigned long total_tlbs = 0;
-+
-+	pr_info("Starting %d iterations of %ld modules\n", ITERS, mod_cnt);
-+
-+	for (iter = 0; iter < ITERS; iter++) {
-+		vm_unmap_aliases();
-+		before_tlbs = get_tlb_flushes_vmalloc();
-+		memset(allocs_vm, 0, mod_cnt * sizeof(struct vm_alloc));
-+		tlb_cnt_total = 0;
-+		cur_in_bk = 0;
-+		for (mod_n = 0; mod_n < mod_cnt; mod_n++) {
-+			/* allocate how the module allocator allocates */
-+
-+			cur_mod = get_rand_module();
-+			cur_alloc = &allocs_vm[mod_n];
-+			file = vmalloc(cur_mod.filesize);
-+
-+			tlb_cur = get_tlb_flushes_vmalloc();
-+
-+			start = ktime_get();
-+			cur_alloc->core = module_alloc(cur_mod.coresize);
-+			diff = ktime_get() - start;
-+
-+			cur_alloc->init = module_alloc(cur_mod.initsize);
-+
-+			/* Collect metrics */
-+			if (is_in_backup(cur_alloc->core)) {
-+				cur_in_bk++;
-+				if (mod_n == mod_cnt - 1)
-+					last_in_bk++;
-+			}
-+			total_all += diff;
-+
-+			if (mod_n == mod_cnt - 1)
-+				total_last += diff;
-+
-+			tlb_cnt_total += get_tlb_flushes_vmalloc() - tlb_cur;
-+
-+			/* If there is a failure, quit. init/core freed later */
-+			if (!cur_alloc->core || !cur_alloc->init) {
-+				fail++;
-+				vfree(file);
-+				break;
-+			}
-+			/* Init sections do not last long so free here */
-+			module_memfree(cur_alloc->init);
-+			vm_unmap_aliases();
-+			cur_alloc->init = NULL;
-+			vfree(file);
-+		}
-+
-+		/* Collect per iteration metrics */
-+		total_in_bk += cur_in_bk;
-+		if (cur_in_bk > 1)
-+			cnt_more_than_1++;
-+		total_tlbs += get_tlb_flushes_vmalloc() - before_tlbs;
-+
-+		/* Collect per iteration metrics */
-+		for (mon_n_free = 0; mon_n_free < mod_cnt; mon_n_free++) {
-+			cur_alloc = &allocs_vm[mon_n_free];
-+			module_memfree(cur_alloc->init);
-+			module_memfree(cur_alloc->core);
-+		}
-+	}
-+
-+	if (fail)
-+		pr_info("There was an alloc failure, results invalid!\n");
-+
-+	pr_info("num\t\tall(ns)\t\tlast(ns)");
-+	pr_info("%ld\t\t%llu\t\t%llu\n", mod_cnt,
-+					div64_s64(total_all, ITERS * mod_cnt),
-+					div64_s64(total_last, ITERS));
-+
-+	if (IS_ENABLED(CONFIG_RANDOMIZE_FINE_MODULE)) {
-+		pr_info("Last module in backup count = %d\n", last_in_bk);
-+		pr_info("Total modules in backup     = %d\n", total_in_bk);
-+		pr_info(">1 module in backup count   = %d\n", cnt_more_than_1);
-+	}
-+	/*
-+	 * This will usually hide info when the instrumentation is not in place.
-+	 */
-+	if (tlb_cnt_total)
-+		pr_info("TLB Flushes: %lu\n", tlb_cnt_total);
-+}
-+
-+static void do_test(int test)
-+{
-+	switch (test) {
-+	case 1:
-+		do_test_alloc_fail();
-+		break;
-+	case 2:
-+		do_test_last_perf();
-+		break;
-+	default:
-+		pr_info("Unknown test\n");
-+	}
-+}
-+
-+static ssize_t device_file_write(struct file *filp, const char __user *user_buf,
-+				size_t count, loff_t *offp)
-+{
-+	char buf[100];
-+	long input_num;
-+
-+	if (count >= sizeof(buf) - 1) {
-+		pr_info("Command too long\n");
-+		return count;
-+	}
-+
-+	if (!mutex_trylock(&test_mod_alloc_mutex)) {
-+		pr_info("test_mod_alloc busy\n");
-+		return count;
-+	}
-+
-+	if (copy_from_user(buf, user_buf, count))
-+		goto error;
-+
-+	buf[count] = 0;
-+
-+	if (kstrtol(buf+1, 10, &input_num))
-+		goto error;
-+
-+	switch (buf[0]) {
-+	case 'm':
-+		if (input_num > 0 && input_num <= MAX_ALLOC_CNT) {
-+			pr_info("New module count: %ld\n", input_num);
-+			mod_cnt = input_num;
-+			if (allocs_vm)
-+				vfree(allocs_vm);
-+			allocs_vm = vmalloc(sizeof(struct vm_alloc) * mod_cnt);
-+		} else
-+			pr_info("more than %d not supported\n", MAX_ALLOC_CNT);
-+		break;
-+	case 't':
-+		if (!mod_cnt) {
-+			pr_info("Set module count first\n");
-+			break;
-+		}
-+
-+		do_test(input_num);
-+		break;
-+	default:
-+		pr_info("Unknown command\n");
-+	}
-+	goto done;
-+error:
-+	pr_info("Could not process input\n");
-+done:
-+	mutex_unlock(&test_mod_alloc_mutex);
-+	return count;
-+}
-+
-+static const char *dv_name = "mod_alloc_test";
-+const static struct file_operations test_mod_alloc_fops = {
-+	.owner	= THIS_MODULE,
-+	.write	= device_file_write,
-+};
-+
-+static int __init mod_alloc_test_init(void)
-+{
-+	debugfs_create_file(dv_name, 0400, NULL, NULL, &test_mod_alloc_fops);
-+
-+	return 0;
-+}
-+
-+MODULE_LICENSE("GPL");
-+
-+module_init(mod_alloc_test_init);
-diff --git a/tools/testing/selftests/bpf/test_mod_alloc.sh b/tools/testing/selftests/bpf/test_mod_alloc.sh
-new file mode 100755
-index 000000000000..e9aea570de78
---- /dev/null
-+++ b/tools/testing/selftests/bpf/test_mod_alloc.sh
-@@ -0,0 +1,29 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+UNMOUNT_DEBUG_FS=0
-+if ! mount | grep -q debugfs; then
-+	if mount -t debugfs none /sys/kernel/debug/; then
-+		UNMOUNT_DEBUG_FS=1
-+	else
-+		echo "Could not mount debug fs."
-+		exit 1
-+	fi
-+fi
-+
-+if [ ! -e /sys/kernel/debug/mod_alloc_test ]; then
-+	echo "Test module not found, did you build kernel with TEST_MOD_ALLOC?"
-+	exit 1
-+fi
-+
-+echo "Beginning module_alloc performance tests."
-+
-+for i in `seq 1000 1000 8000`; do
-+	echo m$i>/sys/kernel/debug/mod_alloc_test
-+	echo t2>/sys/kernel/debug/mod_alloc_test
-+done
-+
-+echo "Module_alloc performance tests ended."
-+
-+if [ $UNMOUNT_DEBUG_FS -eq 1 ]; then
-+	umount /sys/kernel/debug/
-+fi
 -- 
-2.17.1
-
+Thanks,
+Changbin Du
