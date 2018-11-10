@@ -2,240 +2,275 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEC86C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 17:11:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB3F1C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 17:19:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA27220840
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 17:11:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9836B20840
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 17:19:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="IcOr60Lc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA27220840
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D3mR4Bgh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9836B20840
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbeKKC4o (ORCPT
+        id S1726710AbeKKDE7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 21:56:44 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:44268 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726323AbeKKC4o (ORCPT
+        Sat, 10 Nov 2018 22:04:59 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:46708 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726244AbeKKDE7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 21:56:44 -0500
-Received: by mail-pf1-f196.google.com with SMTP id b81-v6so1835905pfe.11
-        for <linux-kernel@vger.kernel.org>; Sat, 10 Nov 2018 09:11:01 -0800 (PST)
+        Sat, 10 Nov 2018 22:04:59 -0500
+Received: by mail-lf1-f68.google.com with SMTP id f23so3460555lfc.13;
+        Sat, 10 Nov 2018 09:19:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=RAOSk752rvaDPZ/vfFvRhPrKNX9UBnZooEKSicvOERM=;
-        b=IcOr60LcicOWMcAp4EEaUfjsJ60DRVfrKdBRc5IK+p+UpWfV+hFZhdjTTxx1Z0wRou
-         5LtGsKA/Xh8ZbCucMU/56zhXQdmad+9yKgb5VZlDTb2G0er8927/G8Fat9bAa9ctLSFL
-         jZFtM/FYYO6mu+bmO2J3nN2REH9V3g96xRc5A=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=UBeIG5pLr0Dg+OdVPBZ2BFz/7EgoqBl5mh970C43Bfo=;
+        b=D3mR4BghpFJ1TpyjgpVNnl0wrz8FtDpfVRnmBeJKWZDP0ayzJDr1wIClIUc8zyk3tZ
+         qPqjDuD08vgRzPhlZ6yVnqPES2YSQjIXfCrP1M7TK4vTK6+/2PweyzIlsrKlk93l3eDK
+         BfsMmX5XrEo0JcIf2dOpzSgr21+wxbxKoW9x4wDsDpZgzqimghpGK5MpjL4nei7RTo3Z
+         ikSM9vABp4c0PE2Bu4tcgbSXQalWoh5im1CZUlWX/oFtWH4ndtgCDlSxlcOU0QMYxDAH
+         jonXCDzwXsH8bDiwGpKh/auPdK8A8Vnx3PHIaNpz50tciB0VDdLQVfzZMhyydka8qnvi
+         GuGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RAOSk752rvaDPZ/vfFvRhPrKNX9UBnZooEKSicvOERM=;
-        b=kvtBkmtrPgkF0RDvxPe+EZW461QglpVZPRYI/6hkZnOKa4Ey46piifXnLhwCMNkVjC
-         exm7CUKpBuVnz6knFiwYs82E26Ed8InGp1FMkkvho4YEzTVctyZj0GJCbVYGPG4swP9s
-         CkqD14tdT4bDHu8KZcOoVZf0xlINtRmpPO5+YKXvLK7eocRDYRWRx3KFl+p6cPrKNfaS
-         WtdYWVPRSK4/fwFR3f3QkoiZtysyoBhuHRE1+UniwK3LE74vzfrHfD648YP6atVDJqao
-         87UHl6O1iR1WampWE+O/sTEwzCJ6e+gPwQV3okxbJW6xfCyRe4YP1/dcQyz8w3GAgBP6
-         7PeQ==
-X-Gm-Message-State: AGRZ1gI9AHSb4VnG7Zvh4VXGKPlLLRCbzlLomQr5qMc7h1C2SPW6KvGq
-        mUPWSKdQOOEYCxyfnfUy/VeFaw==
-X-Google-Smtp-Source: AJdET5dzv8rKL5XgeMJoBDeq3zP3Ju3riuFS4UybM8hR/ZyzlCvwLqJaOZtFDPwAnhwkkEKt5mrfvA==
-X-Received: by 2002:a63:c0f:: with SMTP id b15mr11711275pgl.314.1541869860763;
-        Sat, 10 Nov 2018 09:11:00 -0800 (PST)
-Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
-        by smtp.gmail.com with ESMTPSA id 34sm10635910pgp.90.2018.11.10.09.10.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 10 Nov 2018 09:10:59 -0800 (PST)
-Date:   Sat, 10 Nov 2018 09:10:58 -0800
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Daniel Colascione <dancol@google.com>
-Cc:     Jann Horn <jannh@google.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        "jreck@google.com" <jreck@google.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Todd Kjos <tkjos@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Bruce Fields <bfields@fieldses.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        "Lei.Yang@windriver.com" <Lei.Yang@windriver.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        "marcandre.lureau@redhat.com" <marcandre.lureau@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        "minchan@kernel.org" <minchan@kernel.org>,
-        "shuah@kernel.org" <shuah@kernel.org>,
-        "valdis.kletnieks@vt.edu" <valdis.kletnieks@vt.edu>,
-        Hugh Dickins <hughd@google.com>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH v3 resend 1/2] mm: Add an F_SEAL_FUTURE_WRITE seal to
- memfd
-Message-ID: <20181110171058.GA242356@google.com>
-References: <20181108041537.39694-1-joel@joelfernandes.org>
- <CAG48ez1h=v-JYnDw81HaYJzOfrNhwYksxmc2r=cJvdQVgYM+NA@mail.gmail.com>
- <CAG48ez0kQ4d566bXTFOYANDgii-stL-Qj-oyaBzvfxdV=PU-7g@mail.gmail.com>
- <20181110032005.GA22238@google.com>
- <CAKOZuethC7+YrRyyGciUCfhSSa9cCcAFJ8g_qEw9uh3TBbyOcg@mail.gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=UBeIG5pLr0Dg+OdVPBZ2BFz/7EgoqBl5mh970C43Bfo=;
+        b=PX4g0UDw6B2x8sbfxA7X87sMn1EfXPn/Cpe4GRU+Ak/OXm2mDAKbBO2glvMdt24jGg
+         9JQcPUNu2XL6YpzAGS5OiVqSl+kUczPJAOscrpDDYEMK7YdOyYV1DtqXfwtqzBBFsZKC
+         R+kCoyTPqYMI49oHehXLXsLN657fGJ5JcZGI4ztk59McfvzMUEZG5ztiCuhTbGuyCDw8
+         0VegEK2s6vFTvrwbbjT2Q1JrYhZEi/Oio/zM3XCCmvPEsi7WeiaDFcwvKUL4/z7GBFEk
+         Lza3myaFexzvyTYyO39WlXUuSQH/Ndpzpn5yM9PPwHeYJK4/XLbEQoOQdUJ/3XErjQfP
+         AW3w==
+X-Gm-Message-State: AGRZ1gKoVcKzq26IRDumFoXgXf3SykiMxmFoEFWzLkTsJkRoQ3I27Iuc
+        Pq731uhj58u+LOpxP49FG3o=
+X-Google-Smtp-Source: AJdET5eegYj9N0yC0YrWW478fRK5ulr8IAIFQFCId1ZMLckR5hx8WlI1jjrSwXdwgwTvctwSYrazpQ==
+X-Received: by 2002:a19:1d0d:: with SMTP id d13mr7507807lfd.74.1541870352535;
+        Sat, 10 Nov 2018 09:19:12 -0800 (PST)
+Received: from ?IPv6:2001:14ba:8017:3300:58f8:2a29:cd37:bd01? (dtynxhyc4-y1cxxl33zyt-3.rev.dnainternet.fi. [2001:14ba:8017:3300:58f8:2a29:cd37:bd01])
+        by smtp.googlemail.com with ESMTPSA id h16-v6sm2263465lfc.0.2018.11.10.09.19.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 10 Nov 2018 09:19:11 -0800 (PST)
+Subject: Re: [PATCH 04/24] dt-bindings: leds: Add function and color
+ properties
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        linux-leds@vger.kernel.org
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        pavel@ucw.cz, robh@kernel.org,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Daniel Mack <daniel@zonque.org>, Dan Murphy <dmurphy@ti.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Oleh Kravchenko <oleg@kaa.org.ua>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Simon Shields <simon@lineageos.org>,
+        Xiaotong Lu <xiaotong.lu@spreadtrum.com>
+References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
+ <1541542052-10081-5-git-send-email-jacek.anaszewski@gmail.com>
+ <bdd18dc6-0dee-5957-81d4-39254c7ad74d@gmail.com>
+ <be4e75ed-746e-ed55-0bbe-0fd710bd4162@gmail.com>
+From:   =?UTF-8?B?VmVzYSBKw6TDpHNrZWzDpGluZW4=?= <dachaac@gmail.com>
+Message-ID: <12fb34ec-7175-1ac4-a96e-e1d5d424c9eb@gmail.com>
+Date:   Sat, 10 Nov 2018 19:19:10 +0200
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKOZuethC7+YrRyyGciUCfhSSa9cCcAFJ8g_qEw9uh3TBbyOcg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <be4e75ed-746e-ed55-0bbe-0fd710bd4162@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 10, 2018 at 04:26:46AM -0800, Daniel Colascione wrote:
-> On Friday, November 9, 2018, Joel Fernandes <joel@joelfernandes.org> wrote:
+Hi Jacek,
+
+On 09/11/2018 22.42, Jacek Anaszewski wrote:
+> Hi Vesa,
 > 
-> > On Fri, Nov 09, 2018 at 10:19:03PM +0100, Jann Horn wrote:
-> > > On Fri, Nov 9, 2018 at 10:06 PM Jann Horn <jannh@google.com> wrote:
-> > > > On Fri, Nov 9, 2018 at 9:46 PM Joel Fernandes (Google)
-> > > > <joel@joelfernandes.org> wrote:
-> > > > > Android uses ashmem for sharing memory regions. We are looking
-> > forward
-> > > > > to migrating all usecases of ashmem to memfd so that we can possibly
-> > > > > remove the ashmem driver in the future from staging while also
-> > > > > benefiting from using memfd and contributing to it. Note staging
-> > drivers
-> > > > > are also not ABI and generally can be removed at anytime.
-> > > > >
-> > > > > One of the main usecases Android has is the ability to create a
-> > region
-> > > > > and mmap it as writeable, then add protection against making any
-> > > > > "future" writes while keeping the existing already mmap'ed
-> > > > > writeable-region active.  This allows us to implement a usecase where
-> > > > > receivers of the shared memory buffer can get a read-only view, while
-> > > > > the sender continues to write to the buffer.
-> > > > > See CursorWindow documentation in Android for more details:
-> > > > > https://developer.android.com/reference/android/database/
-> > CursorWindow
-> > > > >
-> > > > > This usecase cannot be implemented with the existing F_SEAL_WRITE
-> > seal.
-> > > > > To support the usecase, this patch adds a new F_SEAL_FUTURE_WRITE
-> > seal
-> > > > > which prevents any future mmap and write syscalls from succeeding
-> > while
-> > > > > keeping the existing mmap active.
-> > > >
-> > > > Please CC linux-api@ on patches like this. If you had done that, I
-> > > > might have criticized your v1 patch instead of your v3 patch...
-> > > >
-> > > > > The following program shows the seal
-> > > > > working in action:
-> > > > [...]
-> > > > > Cc: jreck@google.com
-> > > > > Cc: john.stultz@linaro.org
-> > > > > Cc: tkjos@google.com
-> > > > > Cc: gregkh@linuxfoundation.org
-> > > > > Cc: hch@infradead.org
-> > > > > Reviewed-by: John Stultz <john.stultz@linaro.org>
-> > > > > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> > > > > ---
-> > > > [...]
-> > > > > diff --git a/mm/memfd.c b/mm/memfd.c
-> > > > > index 2bb5e257080e..5ba9804e9515 100644
-> > > > > --- a/mm/memfd.c
-> > > > > +++ b/mm/memfd.c
-> > > > [...]
-> > > > > @@ -219,6 +220,25 @@ static int memfd_add_seals(struct file *file,
-> > unsigned int seals)
-> > > > >                 }
-> > > > >         }
-> > > > >
-> > > > > +       if ((seals & F_SEAL_FUTURE_WRITE) &&
-> > > > > +           !(*file_seals & F_SEAL_FUTURE_WRITE)) {
-> > > > > +               /*
-> > > > > +                * The FUTURE_WRITE seal also prevents growing and
-> > shrinking
-> > > > > +                * so we need them to be already set, or requested
-> > now.
-> > > > > +                */
-> > > > > +               int test_seals = (seals | *file_seals) &
-> > > > > +                                (F_SEAL_GROW | F_SEAL_SHRINK);
-> > > > > +
-> > > > > +               if (test_seals != (F_SEAL_GROW | F_SEAL_SHRINK)) {
-> > > > > +                       error = -EINVAL;
-> > > > > +                       goto unlock;
-> > > > > +               }
-> > > > > +
-> > > > > +               spin_lock(&file->f_lock);
-> > > > > +               file->f_mode &= ~(FMODE_WRITE | FMODE_PWRITE);
-> > > > > +               spin_unlock(&file->f_lock);
-> > > > > +       }
-> > > >
-> > > > So you're fiddling around with the file, but not the inode? How are
-> > > > you preventing code like the following from re-opening the file as
-> > > > writable?
-> > > >
-> > > > $ cat memfd.c
-> > > > #define _GNU_SOURCE
-> > > > #include <unistd.h>
-> > > > #include <sys/syscall.h>
-> > > > #include <printf.h>
-> > > > #include <fcntl.h>
-> > > > #include <err.h>
-> > > > #include <stdio.h>
-> > > >
-> > > > int main(void) {
-> > > >   int fd = syscall(__NR_memfd_create, "testfd", 0);
-> > > >   if (fd == -1) err(1, "memfd");
-> > > >   char path[100];
-> > > >   sprintf(path, "/proc/self/fd/%d", fd);
-> > > >   int fd2 = open(path, O_RDWR);
-> > > >   if (fd2 == -1) err(1, "reopen");
-> > > >   printf("reopen successful: %d\n", fd2);
-> > > > }
-> > > > $ gcc -o memfd memfd.c
-> > > > $ ./memfd
-> > > > reopen successful: 4
-> > > > $
-> > > >
-> > > > That aside: I wonder whether a better API would be something that
-> > > > allows you to create a new readonly file descriptor, instead of
-> > > > fiddling with the writability of an existing fd.
-> > >
-> > > My favorite approach would be to forbid open() on memfds, hope that
-> > > nobody notices the tiny API break, and then add an ioctl for "reopen
-> > > this memfd with reduced permissions" - but that's just my personal
-> > > opinion.
-> >
-> > I did something along these lines and it fixes the issue, but I forbid open
-> > of memfd only when the F_SEAL_FUTURE_WRITE seal is in place. So then its
-> > not
-> > an ABI break because this is a brand new seal. That seems the least
-> > intrusive
-> > solution and it works. Do you mind testing it and I'll add your and
-> > Tested-by
-> > to the new fix? The patch is based on top of this series.
-> >
+> On 11/09/2018 09:32 AM, Vesa Jääskeläinen wrote:
+>> On 07/11/2018 0.07, Jacek Anaszewski wrote:
+>>> Introduce dedicated properties for conveying information about
+>>> LED function and color. Mark old "label" property as deprecated.
+>>>
+>>> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+>>> Cc: Baolin Wang <baolin.wang@linaro.org>
+>>> Cc: Daniel Mack <daniel@zonque.org>
+>>> Cc: Dan Murphy <dmurphy@ti.com>
+>>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>>> Cc: Oleh Kravchenko <oleg@kaa.org.ua>
+>>> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+>>> Cc: Simon Shields <simon@lineageos.org>
+>>> Cc: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
+>>> ---
+>>>    Documentation/devicetree/bindings/leds/common.txt | 52
+>>> +++++++++++++++++++----
+>>>    1 file changed, 44 insertions(+), 8 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/leds/common.txt
+>>> b/Documentation/devicetree/bindings/leds/common.txt
+>>> index aa13998..3efc826 100644
+>>> --- a/Documentation/devicetree/bindings/leds/common.txt
+>>> +++ b/Documentation/devicetree/bindings/leds/common.txt
+>>> @@ -10,14 +10,20 @@ can influence the way of the LED device
+>>> initialization, the LED components
+>>>    have to be tightly coupled with the LED device binding. They are
+>>> represented
+>>>    by child nodes of the parent LED device binding.
+>>>    +
+>>>    Optional properties for child nodes:
+>>>    - led-sources : List of device current outputs the LED is connected
+>>> to. The
+>>>            outputs are identified by the numbers that must be defined
+>>>            in the LED device binding documentation.
+>>> +- function: LED functon. Use one of the LED_FUNCTION_* prefixed
+>>> definitions
+>>> +        from the header include/dt-bindings/leds/functions.h.
+>>> +        If there is no matching LED_FUNCTION available, add a new one.
+>>> +- color : Color of the LED.
+>>
+>> We have had for years out-of-tree patch for multi color gpio led driver
+>> which extends this concept with multiple colors. Then in sysfs there has
+>> been possibility to control the color and otherwise use blinking or
+>> other features.
+>>
+>> Our need is multi color status led of the device which includes
+>> different kind of blinkings and colors on different situations.
+>>
+>> Current in-tree gpio led driver just wasn't atomic enough and a bit
+>> clumsy interface for handling this.
+>>
+>> Now that this is being looked at could we come up with solution that we
+>> could define multiple colors for one led in device tree and then we
+>> could work on getting the driver upstreamed?
+>>
+>> What we did was generally:
+>>
+>> leds-multi {
+>>      compatible = "gpio-multi-leds";
+>>
+>>      status {
+>>          gpios = <...>;
+>>          linux,default-trigger = "none";
+>>          deafult-state = "keep";
+>>
+>>          color-red {
+>>              pin-mask = <0x01>;
+>>          };
+>>
+>>          color-green {
+>>              pin-mask = <0x02>;
+>>          };
+>>
+>>          color-orange {
+>>              pin-mask = <0x03>;
+>>          };
+>>      };
+>> };
+>>
 > 
-> Please don't forbid reopens entirely. You're taking a feature that works
-> generally (reopens) and breaking it in one specific case (memfd write
-> sealed files). The open modes are available in .open in the struct file:
-> you can deny *only* opens for write instead of denying reopens generally.
+> Device Tree node implementation doesn't actually say too much
+> about the sysfs interface you came up with, which is most vital
+> in this case.
 
-Yes, as we discussed over chat already, I will implement it that way.
+In our case it is very simple. There is "color" named sysfs node under 
+gpio instance.
 
-Also lets continue to discuss Andy's concerns he raised on the other thread.
+It creates own led instance for each children in this case it is named 
+as "status" and then uses properties under it to define operation.
 
-thanks,
+Currently we do have fixed list of color names in driver to require 
+"standardized" names but that could be easily changed to be dynamic.
 
- - Joel
+Driver registers all GPIOs defined in "gpios" under the instance.
 
+So one can say:
+
+echo "orange" > color
+
+This setting goes to the driver, it figures out logical name "orange" 
+and the configure all listed GPIO's to its "pin-mask" state. Polarity of 
+the GPIO's is configured in GPIO definition so this is more or less turn 
+this particular pin to activate state.
+
+So in this case it changes led's color to orange and still lets one to 
+use standard led triggers. Eg. set periodic blinking or so.
+
+If one cat's "color" it lists all available colors for user and shows 
+which one is active.
+
+When brightness is configured as zero the all registered go to off state 
+and when non-zero then it goes to state what ever is configured with 
+"color" sysfs entry.
+
+> Support for RGB LEDs, or other variations of LED synchronization
+> have been approached several times, but without satisfying result
+> so far.
+> 
+> Generally the problem boils down to the issue of how triggers
+> should handle multiple synchronized LED class devices in a backwards
+> compatible way with monochrome LEDs.
+> 
+> At some point the HSV [0] approach was proposed, but there was a problem
+> with getting uniform colors across devices. Especially white.
+> Certainly a calibration mechanism would be required.
+> 
+> [0] https://lkml.org/lkml/2017/8/30/423
+
+We do not usually use PWM controlled leds so our calibration has been HW 
+engineer tuning the resistors for the leds to get acceptable color for 
+different colors variations.
+
+If one wants to have fixed colors for such device then one could use 
+this similar method to define them or/and free form interface to enter 
+RGB values there. Thou with PWM RGB leds you probably want to have more 
+animation there which probably would require some additional support code.
+
+One way to do atomic PWM RGB color change with sysfs could be:
+
+echo "21 223 242" > color
+
+or
+
+echo "21 223 242" > rgb
+
+or:
+
+echo "r:21 g:232 b:242" > color (or something similar)
+
+and if there is know registered name then just write it to "color" which 
+would pick registered color rgb values to led instances rgb value.
+
+Now for PWM RGB led one could use "brightness" and "rgb" value to 
+calculate actual color with some color space formula (like hsv in [0]).
+
+Doing white with RGB LED is a bit hard so usually you want to get RGBW 
+LED (or RGBAW LED) if "real" white is something that is needed. This 
+could then be "rgbw" entry and "color" to pick from fixed set.
+
+These presets in device tree for "color" could be considered one way of 
+doing calibration for particular hardware.
+
+So in device tree for RGB PWM led it could be like:
+
+color-orange {
+     rgb = <249 197 9>
+}
+
+color-warm-white {
+     rgb = <255 253 249>
+}
+
+How would that sound like?
+
+Thanks,
+Vesa Jääskeläinen
