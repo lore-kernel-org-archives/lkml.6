@@ -5,47 +5,48 @@ X-Spam-Level:
 X-Spam-Status: No, score=-6.0 required=3.0 tests=MAILING_LIST_MULTI,
 	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED45C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 19:35:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31E18C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 19:35:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF6AA20892
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 19:35:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF6AA20892
+	by mail.kernel.org (Postfix) with ESMTP id 0192E2089A
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 19:35:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0192E2089A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727258AbeKKFVG (ORCPT
+        id S1727404AbeKKFVI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 00:21:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52296 "EHLO mail.kernel.org"
+        Sun, 11 Nov 2018 00:21:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52326 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726812AbeKKFVG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 00:21:06 -0500
-Subject: Re: [GIT PULL] namespace fixes for v4.20-rc2
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3587B208E3
+        id S1726812AbeKKFVH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Nov 2018 00:21:07 -0500
+Subject: Re: [GIT PULL] TTY/Serial fixes for 4.20-rc2
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA6DA208A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=pr-tracker-bot@kernel.org
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <87pnvcls3n.fsf@xmission.com>
-References: <87pnvcls3n.fsf@xmission.com>
-Message-Id: <20181110193502.26034.39127.pr-tracker-bot-1de4f2ef216dade3b5bd5f5247c4c750a953f51c@pdx-korg-gitolite-1.ci.codeaurora.org>
+In-Reply-To: <20181110185708.GA13637@kroah.com>
+References: <20181110185708.GA13637@kroah.com>
+Message-Id: <20181110193502.26034.82701.pr-tracker-bot-e255aee5b66ce4af025e6f77122114c01303b861@pdx-korg-gitolite-1.ci.codeaurora.org>
 Date:   Sat, 10 Nov 2018 19:35:02 +0000
-To:     ebiederm@xmission.com (Eric W. Biederman)
+To:     Greg KH <gregkh@linuxfoundation.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Jann Horn <jannh@google.com>
+        Jiri Slaby <jslaby@suse.cz>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sat, 10 Nov 2018 12:12:12 -0600:
+The pull request you sent on Sat, 10 Nov 2018 10:57:08 -0800:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git for-linus
+> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/tty-4.20-rc2
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/1de4f2ef216dade3b5bd5f5247c4c750a953f51c
+https://git.kernel.org/torvalds/c/e255aee5b66ce4af025e6f77122114c01303b861
 
 Thank you!
 
