@@ -2,96 +2,73 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1CB6C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 12:35:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B8F7C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 12:39:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 741EF20883
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 12:35:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 741EF20883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id ACC7120858
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 12:39:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACC7120858
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729119AbeKJWOC (ORCPT
+        id S1729103AbeKJWX4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 17:14:02 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:38706 "EHLO mx1.redhat.com"
+        Sat, 10 Nov 2018 17:23:56 -0500
+Received: from smtp4-g21.free.fr ([212.27.42.4]:47392 "EHLO smtp4-g21.free.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729030AbeKJWOB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 17:14:01 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0559F30026C9;
-        Sat, 10 Nov 2018 12:29:10 +0000 (UTC)
-Received: from localhost (ovpn-8-17.pek2.redhat.com [10.72.8.17])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2F17960C44;
-        Sat, 10 Nov 2018 12:29:08 +0000 (UTC)
-Date:   Sat, 10 Nov 2018 20:29:05 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-        boris.ostrovsky@oracle.com, jgross@suse.com, willy@infradead.org,
-        x86@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv3 1/3] x86/mm: Move LDT remap out of KASLR region on
- 5-level paging
-Message-ID: <20181110122905.GA2653@MiWiFi-R3L-srv>
-References: <20181026122856.66224-1-kirill.shutemov@linux.intel.com>
- <20181026122856.66224-2-kirill.shutemov@linux.intel.com>
+        id S1728917AbeKJWX4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 10 Nov 2018 17:23:56 -0500
+Received: from [192.168.1.42] (unknown [77.207.133.132])
+        (Authenticated sender: marc.w.gonzalez)
+        by smtp4-g21.free.fr (Postfix) with ESMTPSA id 6701719F5BA;
+        Sat, 10 Nov 2018 13:38:48 +0100 (CET)
+Subject: Re: [PATCH v2 2/9] arm64: defconfig: Drop ARM_BIG_LITTLE_CPUFREQ
+To:     Arnd Bergmann <arnd@arndb.de>, Sudeep Holla <sudeep.holla@arm.com>
+Cc:     arm-soc <arm@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <898e79a6-092c-d013-d2bb-f6260e761379@free.fr>
+ <03f41ca8-68c6-f075-cb1e-c7f630a3b128@free.fr>
+ <20181108093617.GB8433@e107155-lin>
+ <CAK8P3a1129B-u60sjHCvLuE8i6OCJRDSe-JFy3S-JJWFGbHCPQ@mail.gmail.com>
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Message-ID: <3f5ff18e-a264-981d-505f-69636fcf4355@free.fr>
+Date:   Sat, 10 Nov 2018 13:38:43 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Firefox/52.0 SeaMonkey/2.49.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181026122856.66224-2-kirill.shutemov@linux.intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Sat, 10 Nov 2018 12:29:10 +0000 (UTC)
+In-Reply-To: <CAK8P3a1129B-u60sjHCvLuE8i6OCJRDSe-JFy3S-JJWFGbHCPQ@mail.gmail.com>
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/26/18 at 03:28pm, Kirill A. Shutemov wrote:
-> On 5-level paging LDT remap area is placed in the middle of
-> KASLR randomization region and it can overlap with direct mapping,
-> vmalloc or vmap area.
-             ~~~
-		We usually call it vmemmap.
+On 10/11/2018 09:57, Arnd Bergmann wrote:
+
+> On Thu, Nov 8, 2018 at 10:36 AM Sudeep Holla <sudeep.holla@arm.com> wrote:
+>>
+>> On Wed, Nov 07, 2018 at 11:39:42PM +0100, Marc Gonzalez wrote:
+>>> Commit a7314405d83c ("drop ARM_BIG_LITTLE_CPUFREQ support for ARM64")
+>>> dropped ARM_BIG_LITTLE_CPUFREQ support for ARM64.
+>>>
+>>
+>> Looks good,
+>>
+>> Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+>>
+>> But I left it intentionally to avoid churn assuming it will go away when
+>> ARM SoC team runs savedefconfig and sync the defconfig.
 > 
-> Let's move LDT just before direct mapping which makes it safe for KASLR.
-> This also allows us to unify layout between 4- and 5-level paging.
-...
+> I would never do that,
 
-> diff --git a/Documentation/x86/x86_64/mm.txt b/Documentation/x86/x86_64/mm.txt
-> index 702898633b00..75bff98928a8 100644
-> --- a/Documentation/x86/x86_64/mm.txt
-> +++ b/Documentation/x86/x86_64/mm.txt
-> @@ -34,23 +34,24 @@ __________________|____________|__________________|_________|___________________
->  ____________________________________________________________|___________________________________________________________
->                    |            |                  |         |
->   ffff800000000000 | -128    TB | ffff87ffffffffff |    8 TB | ... guard hole, also reserved for hypervisor
-> - ffff880000000000 | -120    TB | ffffc7ffffffffff |   64 TB | direct mapping of all physical memory (page_offset_base)
-> - ffffc80000000000 |  -56    TB | ffffc8ffffffffff |    1 TB | ... unused hole
-> + ffff880000000000 | -120    TB | ffff887fffffffff |  0.5 TB | LDT remap for PTI
-> + ffff888000000000 | -119.5  TB | ffffc87fffffffff |   64 TB | direct mapping of all physical memory (page_offset_base)
-> + ffffc88000000000 |  -55.5  TB | ffffc8ffffffffff |  0.5 TB | ... unused hole
+Isn't that what commit c432c0880596 did? :-p
 
-Hi Kirill,
-
-Thanks for this fix. One small concern is whether we can put LDT
-remap in other place, e.g shrink KASAN area and save one pgd size for
-it, Just from Redhat's enterprise relase point of view, we don't
-enable CONFIG_KASAN, and LDT is rarely used for server, now cutting one
-block from the direct mapping area and moving it up one pgd slot seems a
-little too abrupt. Does KASAN really cost 16 TB in 4-level and 8 PB in
-5-level? After all the direct mapping is the core mapping and has been
-there always, LDT remap is kind of not so core and important mapping.
-Just a very perceptual feeling.
-
-Other than this, this patch looks good to me.
-
-Thanks
-Baoquan
+$ git show --stat c432c0880596 
+ arch/arm64/configs/defconfig | 102 +++++++++++++++++++++++++++++++++++++++---------------------------------------------------------------
+ 1 file changed, 39 insertions(+), 63 deletions(-)
