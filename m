@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E6FBC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:11:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F2FBC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:11:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3A7321104
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:11:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3A7321104
+	by mail.kernel.org (Postfix) with ESMTP id C92F62081C
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 18:11:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C92F62081C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727310AbeKKD5I (ORCPT
+        id S1727217AbeKKD5B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 22:57:08 -0500
-Received: from mga17.intel.com ([192.55.52.151]:59727 "EHLO mga17.intel.com"
+        Sat, 10 Nov 2018 22:57:01 -0500
+Received: from mga12.intel.com ([192.55.52.136]:15025 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727072AbeKKD5B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727067AbeKKD5B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 10 Nov 2018 22:57:01 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Nov 2018 10:11:08 -0800
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Nov 2018 10:11:09 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,488,1534834800"; 
-   d="scan'208";a="91052701"
+   d="scan'208";a="90126921"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga008.jf.intel.com with ESMTP; 10 Nov 2018 10:11:03 -0800
+  by orsmga006.jf.intel.com with ESMTP; 10 Nov 2018 10:11:03 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id D6A3465; Sat, 10 Nov 2018 20:11:02 +0200 (EET)
+        id C77791AC; Sat, 10 Nov 2018 20:11:02 +0200 (EET)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     MyungJoo Ham <myungjoo.ham@samsung.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
@@ -47,13 +47,15 @@ To:     MyungJoo Ham <myungjoo.ham@samsung.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
         Hans de Goede <hdegoede@redhat.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 2/5] extcon: Return -EPROBE_DEFER when extcon device is not found
-Date:   Sat, 10 Nov 2018 20:10:58 +0200
-Message-Id: <20181110181101.24557-2-andriy.shevchenko@linux.intel.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Grant Likely <grant.likely@linaro.org>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Mark Brown <broonie@kernel.org>,
+        Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH v1 1/5] drivercore: Revert "deferral race condition fix"
+Date:   Sat, 10 Nov 2018 20:10:57 +0200
+Message-Id: <20181110181101.24557-1-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181110181101.24557-1-andriy.shevchenko@linux.intel.com>
-References: <20181110181101.24557-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -61,113 +63,134 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All current users of extcon_get_extcon_dev() API considers
-an extcon device a mandatory to appear. Thus, they all convert
-NULL pointer to -EPROBE_DEFER error code.
+Consider the following scenario.
 
-There is one more caller anticipated with the same requirements.
+There are two independent devices coupled together by functional dependencies:
+ - USB OTG (dwc3-pci)
+ - extcon (tested with extcon-intel-mrfld, not yet in upstream)
 
-To decrease a code duplication and a burden to the callers,
-return -EPROBE_DEFER directly from extcon_get_extcon_dev().
+Each of the driver services a corresponding device is built as a module. In the
+Buildroot environment the modules are probed by alphabetical ordering of their
+modaliases. The latter comes to the case when USB OTG driver will be probed
+first followed by extcon one.
 
+So, if the platform anticipates extcon device to be appeared, in the above case
+we will get deferred probe of USB OTG, because of ordering.
+
+Now, a cherry on top of the cake, the deferred probing list contains
+the only two modules, i.e. USB OTG and extcon. Due to above circumstances,
+values in the local_trigger_count and deferred_trigger_count are not the same,
+and thus provokes deferred probe triggering again and again.
+
+...
+[   20.678332] platform dwc3.0.auto: Retrying from deferred list
+[   20.694743] platform dwc3.0.auto: Driver dwc3 requests probe deferral
+[   20.701254] platform dwc3.0.auto: Added to deferred list
+[   20.706620] platform dwc3.0.auto: driver_deferred_probe_add_trigger 1 2
+[   20.713732] platform dwc3.0.auto: Retrying from deferred list
+[   20.730035] platform dwc3.0.auto: Driver dwc3 requests probe deferral
+[   20.736540] platform dwc3.0.auto: Added to deferred list
+[   20.741889] platform dwc3.0.auto: driver_deferred_probe_add_trigger 3 4
+[   20.748991] platform dwc3.0.auto: Retrying from deferred list
+[   20.765416] platform dwc3.0.auto: Driver dwc3 requests probe deferral
+[   20.771914] platform dwc3.0.auto: Added to deferred list
+[   20.777279] platform dwc3.0.auto: driver_deferred_probe_add_trigger 5 6
+...
+
+Deeper investigation shows the culprit commit 58b116bce136
+("drivercore: deferral race condition fix") which was dedicated to fix some
+other issue while bringing a regression.
+
+This reverts commit 58b116bce13612e5aa6fcd49ecbd4cf8bb59e835 for good until
+we will have better solution.
+
+Cc: Grant Likely <grant.likely@linaro.org>
+Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Felipe Balbi <balbi@kernel.org>
+Cc: Andrzej Hajda <a.hajda@samsung.com>
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/extcon/extcon-axp288.c        | 4 ++--
- drivers/extcon/extcon.c               | 2 +-
- drivers/power/supply/axp288_charger.c | 8 ++++----
- drivers/usb/phy/phy-omap-otg.c        | 6 +++---
- drivers/usb/typec/tcpm/fusb302.c      | 4 ++--
- 5 files changed, 12 insertions(+), 12 deletions(-)
+ drivers/base/dd.c | 27 ++-------------------------
+ 1 file changed, 2 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/extcon/extcon-axp288.c b/drivers/extcon/extcon-axp288.c
-index a983708b77a6..3472d3b756ed 100644
---- a/drivers/extcon/extcon-axp288.c
-+++ b/drivers/extcon/extcon-axp288.c
-@@ -360,8 +360,8 @@ static int axp288_extcon_probe(struct platform_device *pdev)
- 		name = acpi_dev_get_first_match_name("INT3496", NULL, -1);
- 		if (name) {
- 			info->id_extcon = extcon_get_extcon_dev(name);
--			if (!info->id_extcon)
--				return -EPROBE_DEFER;
-+			if (IS_ERR(info->id_extcon))
-+				return PTR_ERR(info->id_extcon);
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index 169412ee4ae8..9a966e45fda5 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -53,7 +53,6 @@
+ static DEFINE_MUTEX(deferred_probe_mutex);
+ static LIST_HEAD(deferred_probe_pending_list);
+ static LIST_HEAD(deferred_probe_active_list);
+-static atomic_t deferred_trigger_count = ATOMIC_INIT(0);
+ static struct dentry *deferred_devices;
+ static bool initcalls_done;
  
- 			dev_info(dev, "controlling USB role\n");
- 		} else {
-diff --git a/drivers/extcon/extcon.c b/drivers/extcon/extcon.c
-index 5ab0498be652..2bd0f2f33f05 100644
---- a/drivers/extcon/extcon.c
-+++ b/drivers/extcon/extcon.c
-@@ -884,7 +884,7 @@ struct extcon_dev *extcon_get_extcon_dev(const char *extcon_name)
- 		if (!strcmp(sd->name, extcon_name))
- 			goto out;
- 	}
--	sd = NULL;
-+	sd = ERR_PTR(-EPROBE_DEFER);
- out:
- 	mutex_unlock(&extcon_dev_list_lock);
- 	return sd;
-diff --git a/drivers/power/supply/axp288_charger.c b/drivers/power/supply/axp288_charger.c
-index 735658ee1c60..8558577fccf5 100644
---- a/drivers/power/supply/axp288_charger.c
-+++ b/drivers/power/supply/axp288_charger.c
-@@ -768,17 +768,17 @@ static int axp288_charger_probe(struct platform_device *pdev)
- 	info->regmap_irqc = axp20x->regmap_irqc;
- 
- 	info->cable.edev = extcon_get_extcon_dev(AXP288_EXTCON_DEV_NAME);
--	if (info->cable.edev == NULL) {
-+	if (IS_ERR(info->cable.edev)) {
- 		dev_dbg(&pdev->dev, "%s is not ready, probe deferred\n",
- 			AXP288_EXTCON_DEV_NAME);
--		return -EPROBE_DEFER;
-+		return PTR_ERR(info->cable.edev);
- 	}
- 
- 	if (acpi_dev_present(USB_HOST_EXTCON_HID, NULL, -1)) {
- 		info->otg.cable = extcon_get_extcon_dev(USB_HOST_EXTCON_NAME);
--		if (info->otg.cable == NULL) {
-+		if (IS_ERR(info->otg.cable)) {
- 			dev_dbg(dev, "EXTCON_USB_HOST is not ready, probe deferred\n");
--			return -EPROBE_DEFER;
-+			return PTR_ERR(info->otg.cable);
- 		}
- 		dev_info(&pdev->dev,
- 			 "Using " USB_HOST_EXTCON_HID " extcon for usb-id\n");
-diff --git a/drivers/usb/phy/phy-omap-otg.c b/drivers/usb/phy/phy-omap-otg.c
-index ee0863c6553e..605314ddcd3d 100644
---- a/drivers/usb/phy/phy-omap-otg.c
-+++ b/drivers/usb/phy/phy-omap-otg.c
-@@ -91,12 +91,12 @@ static int omap_otg_probe(struct platform_device *pdev)
- 	int ret;
- 	u32 rev;
- 
--	if (!config || !config->extcon)
-+	if (!config)
- 		return -ENODEV;
- 
- 	extcon = extcon_get_extcon_dev(config->extcon);
--	if (!extcon)
--		return -EPROBE_DEFER;
-+	if (IS_ERR(extcon))
-+		return PTR_ERR(extcon);
- 
- 	otg_dev = devm_kzalloc(&pdev->dev, sizeof(*otg_dev), GFP_KERNEL);
- 	if (!otg_dev)
-diff --git a/drivers/usb/typec/tcpm/fusb302.c b/drivers/usb/typec/tcpm/fusb302.c
-index 43b64d9309d0..6d332066202b 100644
---- a/drivers/usb/typec/tcpm/fusb302.c
-+++ b/drivers/usb/typec/tcpm/fusb302.c
-@@ -1767,8 +1767,8 @@ static int fusb302_probe(struct i2c_client *client,
+@@ -143,17 +142,6 @@ static bool driver_deferred_probe_enable = false;
+  * This functions moves all devices from the pending list to the active
+  * list and schedules the deferred probe workqueue to process them.  It
+  * should be called anytime a driver is successfully bound to a device.
+- *
+- * Note, there is a race condition in multi-threaded probe. In the case where
+- * more than one device is probing at the same time, it is possible for one
+- * probe to complete successfully while another is about to defer. If the second
+- * depends on the first, then it will get put on the pending list after the
+- * trigger event has already occurred and will be stuck there.
+- *
+- * The atomic 'deferred_trigger_count' is used to determine if a successful
+- * trigger has occurred in the midst of probing a driver. If the trigger count
+- * changes in the midst of a probe, then deferred processing should be triggered
+- * again.
+  */
+ static void driver_deferred_probe_trigger(void)
+ {
+@@ -166,7 +154,6 @@ static void driver_deferred_probe_trigger(void)
+ 	 * into the active list so they can be retried by the workqueue
  	 */
- 	if (device_property_read_string(dev, "fcs,extcon-name", &name) == 0) {
- 		chip->extcon = extcon_get_extcon_dev(name);
--		if (!chip->extcon)
--			return -EPROBE_DEFER;
-+		if (IS_ERR(chip->extcon))
-+			return PTR_ERR(chip->extcon);
- 	}
+ 	mutex_lock(&deferred_probe_mutex);
+-	atomic_inc(&deferred_trigger_count);
+ 	list_splice_tail_init(&deferred_probe_pending_list,
+ 			      &deferred_probe_active_list);
+ 	mutex_unlock(&deferred_probe_mutex);
+@@ -434,19 +421,9 @@ EXPORT_SYMBOL_GPL(device_bind_driver);
+ static atomic_t probe_count = ATOMIC_INIT(0);
+ static DECLARE_WAIT_QUEUE_HEAD(probe_waitqueue);
  
- 	chip->vbus = devm_regulator_get(chip->dev, "vbus");
+-static void driver_deferred_probe_add_trigger(struct device *dev,
+-					      int local_trigger_count)
+-{
+-	driver_deferred_probe_add(dev);
+-	/* Did a trigger occur while probing? Need to re-trigger if yes */
+-	if (local_trigger_count != atomic_read(&deferred_trigger_count))
+-		driver_deferred_probe_trigger();
+-}
+-
+ static int really_probe(struct device *dev, struct device_driver *drv)
+ {
+ 	int ret = -EPROBE_DEFER;
+-	int local_trigger_count = atomic_read(&deferred_trigger_count);
+ 	bool test_remove = IS_ENABLED(CONFIG_DEBUG_TEST_DRIVER_REMOVE) &&
+ 			   !drv->suppress_bind_attrs;
+ 
+@@ -463,7 +440,7 @@ static int really_probe(struct device *dev, struct device_driver *drv)
+ 
+ 	ret = device_links_check_suppliers(dev);
+ 	if (ret == -EPROBE_DEFER)
+-		driver_deferred_probe_add_trigger(dev, local_trigger_count);
++		driver_deferred_probe_add(dev);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -559,7 +536,7 @@ static int really_probe(struct device *dev, struct device_driver *drv)
+ 	case -EPROBE_DEFER:
+ 		/* Driver requested deferred probing */
+ 		dev_dbg(dev, "Driver %s requests probe deferral\n", drv->name);
+-		driver_deferred_probe_add_trigger(dev, local_trigger_count);
++		driver_deferred_probe_add(dev);
+ 		break;
+ 	case -ENODEV:
+ 	case -ENXIO:
 -- 
 2.19.1
 
