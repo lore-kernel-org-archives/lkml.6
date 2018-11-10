@@ -2,156 +2,145 @@ Return-Path: <SRS0=/3Wd=NV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81679C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 01:41:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CBEEC0044C
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 01:44:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D89C20840
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 01:41:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20A2F20825
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 01:44:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="txcpDc6J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D89C20840
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SzlY8swT";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VegODgPT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20A2F20825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728479AbeKJLYf (ORCPT
+        id S1728468AbeKJL1p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 06:24:35 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:43968 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728082AbeKJLYf (ORCPT
+        Sat, 10 Nov 2018 06:27:45 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:35536 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728032AbeKJL1p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 06:24:35 -0500
-Received: by mail-pf1-f195.google.com with SMTP id g7-v6so1700158pfo.10;
-        Fri, 09 Nov 2018 17:41:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=tCiRbQTJFVhrW8I8wn7J528t71wWAbQnh0V1vMaAjJU=;
-        b=txcpDc6JnzuzRGVzLByMFuDgOKqN5lhJ8beZ+7hKFdUGjrV0lerJGMD4jfJVlNOVS6
-         3YzQy3jusasQTcORhdGuZZhQi/DRncQxVPTlxFEBaVahlqBhDFi67Xgmi1rM8UM44oK4
-         CBaS/ytVMUqIJawTgHYFfNcTkMgCf7FXwp4YzKU7uwjiLu/GN1HZcVJAfodxgcOsk6wO
-         AaKQoD1eJyYtfw9BCLD+QAeBEf3K+Kh7m7q8wgOsVZQAK4ulDzfZDlFevWPnQxmOasTe
-         ip5T1t+7fYqW5JBlB3KFgN4VLbXxVhZrWBMCUeg904ZeuAIdfp7Ax6IqtFWry6Jik6pb
-         tM2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tCiRbQTJFVhrW8I8wn7J528t71wWAbQnh0V1vMaAjJU=;
-        b=J+ihnkwHJCjVJgIZOCEC0iNjwD/1AA16Qbk24YFg9WO1RJfLYKvi0R6mSv7WVSa9If
-         NqMwqay3fv/16SN0A4KSyaZ8rza8j+3RU79esVaAQ1RdzeBOOWV7V4SR08hldvQfvrbL
-         p0OLczx6O8DdcmxlxrdFMu/ff61jgofRcfS5VFx+V3rjGSK/shmjuzjPTJcrPaDwfLOA
-         uEyaEaQOiiRmiYrVePk9EuTV9WGGM96DywlpsIzlTQuhRwYbAQY/nhVMU/xPqj94x7kT
-         O5jER4VCM3gH5lLN8SNBGsYtvAMPBGLGHLjskzgUIDQKamGJ78eULJKeMvCnuwVtGR5+
-         dPTQ==
-X-Gm-Message-State: AGRZ1gK0Sh/2+t4Ds5TrSs3CUdp01ppGCv4PZ7itAmlvdBC+5tCsuYMZ
-        8+bmt4u7E0EU806j6JQWuCI=
-X-Google-Smtp-Source: AJdET5fFe/KBuwDnHlLavNXNQbTEW7RvSYjF35/pgurN2DSj73YcjJF1AMfFSJ19cflUkuNsw1PcsA==
-X-Received: by 2002:a63:441e:: with SMTP id r30mr9730217pga.128.1541814081439;
-        Fri, 09 Nov 2018 17:41:21 -0800 (PST)
-Received: from mail.google.com ([207.246.110.149])
-        by smtp.gmail.com with ESMTPSA id r12sm2450350pgv.83.2018.11.09.17.41.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 09 Nov 2018 17:41:20 -0800 (PST)
-Date:   Sat, 10 Nov 2018 09:41:12 +0800
-From:   Changbin Du <changbin.du@gmail.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Borislav Petkov <bp@alien8.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Changbin Du <changbin.du@gmail.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        X86 ML <x86@kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-sparse@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH v3 1/4] x86/mm: declare check_la57_support() as inline
-Message-ID: <20181110010708.d3nayrzuy5d3lrkd@mail.google.com>
-References: <20181028130945.23581-1-changbin.du@gmail.com>
- <20181028130945.23581-2-changbin.du@gmail.com>
- <20181028140911.21d49629@vmware.local.home>
- <CAK7LNATixykqHqdu5W3NpfXqBXMNsP0OLKjNdsFc_EzJ_diOxA@mail.gmail.com>
- <20181102112728.GC14602@zn.tnic>
- <CAK7LNAQcdpU+_LOYQ8X+4K4sxd3D-+Z7k6BuBjUOJ9LR0j+zfA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK7LNAQcdpU+_LOYQ8X+4K4sxd3D-+Z7k6BuBjUOJ9LR0j+zfA@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+        Sat, 10 Nov 2018 06:27:45 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id A8DAC60388; Sat, 10 Nov 2018 01:44:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541814270;
+        bh=2GEQYO7vi888aOfJJ8vzD5qCKXeSZxltz9qvGJY6mNY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=SzlY8swTUI4zHSzYC612o8dUmE5/slmTiEqsLOZWq6mFGlrgGYz4CkO0WTVmeKSCL
+         RL/e2O2gd+fKBOEs2r5S8o4rpGMF+oLN4hLEWQ0oJzC7DaVz7MgtpQ7ZL3bsNmYn2X
+         8NhKzROfrxyWfizk1oDGv7GNlgP/rblah7ljVS6Q=
+Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D6A8C601D1;
+        Sat, 10 Nov 2018 01:44:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541814269;
+        bh=2GEQYO7vi888aOfJJ8vzD5qCKXeSZxltz9qvGJY6mNY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=VegODgPTsPgZwf5p7zXXNkgNps+rwER5fZxwxgBpHVf7Uf9VNCzVm89eXL4Dyxins
+         ZqJl0a/xowJ1PzQMH0kZMTRDXnoQ//eb9Tbw9MfvP2B9CINm7t7CKAy8l55/McVQ9F
+         +w4Lpq8n/nbxywViP5tqHwcZt7IMxG6/bCv5sf0I=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D6A8C601D1
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v9 0/2] Add support for LPASS clock controller for SDM845
+Date:   Sat, 10 Nov 2018 07:14:14 +0530
+Message-Id: <1541814256-23254-1-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 10, 2018 at 01:27:29AM +0900, Masahiro Yamada wrote:
-> On Fri, Nov 2, 2018 at 8:28 PM Borislav Petkov <bp@alien8.de> wrote:
-> >
-> > On Mon, Oct 29, 2018 at 10:04:46PM +0900, Masahiro Yamada wrote:
-> > > On Mon, Oct 29, 2018 at 3:09 AM Steven Rostedt <rostedt@goodmis.org> wrote:
-> > > >
-> > > > On Sun, 28 Oct 2018 13:09:42 +0000
-> > > > Changbin Du <changbin.du@gmail.com> wrote:
-> > > >
-> > > > > The level4_kernel_pgt is only defined when X86_5LEVEL is enabled.
-> > > > > So declare check_la57_support() as inline to make sure the code
-> > > > > referring to level4_kernel_pgt is optimized out. This is a preparation
-> > > > > for CONFIG_CC_OPTIMIZE_FOR_DEBUGGING.
-> > > > >
-> > > > > Signed-off-by: Changbin Du <changbin.du@gmail.com>
-> > > >
-> > > > Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> > > >
-> > > > -- Steve
-> > > >
-> > >
-> > > Applied to linux-kbuild.
-> >
-> > Next time, before you route a patch through your tree, please get an x86
-> > maintainer's ACK first.
-> 
-> 
-> I changed my mind, and did not include this in my previous pull request
-> because this series is causing many warnings.
->
-Most of the new warnings are false warnings. Since this series didn't change any
-code where the warnings happen. I'll make patches to make gcc happy.
+ [v9]
+  * Update GCC documentation binding with the protected-clocks list.
+  * Update the GCC code to add the GCC lpass clocks.
+  * This depends on the acceptance of
+  https://lore.kernel.org/lkml/20181105194011.43770-1-swboyd@chromium.org/
 
-> Now, it is aiming for v5.0-rc1
-> 
-> So, it is not too late.
-> 
-> If x86 maintainers issue Acked-by,
-> I am happy to add it.
-> 
-> 
-> 
-> 
-> > Thx.
-> >
-> > --
-> > Regards/Gruss,
-> >     Boris.
-> >
-> > Good mailing practices for 400: avoid top-posting and trim the reply.
-> 
-> 
-> 
-> -- 
-> Best Regards
-> Masahiro Yamada
+ [v8]
+  * Add CLK_IS_CRITICAL for GCC lpass clocks for lpass clocks access to go
+  through always.
 
--- 
-Thanks,
-Changbin Du
+ [v7]
+  * Cleanup header file inclusions.
+  * Move the comments along with the flags.
+  * Update the commit with details for CLK_IGNORE_UNUSED.
+
+ [v6]
+  * Update the logic to register the lpass clocks when the device tree property
+   is not present.
+  * Add the CLK_IGNORE_UNUSED flag for the lpass clocks to not gate the clocks
+   at late_init.
+
+ [v5]
+  * Address the comments in device tree binding to update the reg-names,
+    update the unit address in lpass clock node example and also
+    add reg property for the gcc clock node.
+  * Update the lpass driver to take care of the reg-names.
+
+ [v4]
+  * Update the description in GCC Documentation binding for
+  'qcom,lpass-protected'.
+  * Remove 'qcom,lpass-protected' from LPASS Documentation binding.
+  * Update KConfig to use Low Power Audio Subsystem.
+  * Add module_exit() and also update return value for
+    devm_ioremap_resource failure.
+
+ [v3]
+  * Add a device tree property to identify lpass protected GCC clocks.
+  * Update the GCC driver code to register the lpass clocks when the flag is
+   defined.
+  * Add comment for clocks using the BRANCH_HALT_SKIP flag.
+  * Use platform APIs instead of of_address_to_resource.
+  * Replace devm_ioremap with devm_ioremap_resource.
+  * Use fixed index for 'lpass_cc' & 'lpass_qdsp6ss' in probe.
+
+ [v2]
+  * Make gcc_lpass_sway_clk static.
+  * Remove using child nodes and use reg-names to differentiate various
+    domains of LPASS CC.
+
+Add support for the lpass clock controller found on SDM845 based devices.
+This would allow lpass peripheral loader drivers to control the clocks to
+bring the subsystem out of reset.
+
+Taniya Das (2):
+  dt-bindings: clock: Introduce QCOM LPASS clock bindings
+  clk: qcom: Add lpass clock controller driver for SDM845
+
+ .../devicetree/bindings/clock/qcom,gcc.txt         |  16 ++
+ .../devicetree/bindings/clock/qcom,lpasscc.txt     |  26 +++
+ drivers/clk/qcom/Kconfig                           |   9 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/gcc-sdm845.c                      |  30 ++++
+ drivers/clk/qcom/lpasscc-sdm845.c                  | 192 +++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sdm845.h        |   2 +
+ include/dt-bindings/clock/qcom,lpass-sdm845.h      |  16 ++
+ 8 files changed, 292 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
+ create mode 100644 drivers/clk/qcom/lpasscc-sdm845.c
+ create mode 100644 include/dt-bindings/clock/qcom,lpass-sdm845.h
+
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
+
