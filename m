@@ -3,56 +3,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B62CC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 15:35:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9C2DC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 15:55:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6D3C21019
-	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 15:35:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6D3C21019
+	by mail.kernel.org (Postfix) with ESMTP id A090720854
+	for <linux-kernel@archiver.kernel.org>; Sat, 10 Nov 2018 15:55:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A090720854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726630AbeKKBUo (ORCPT
+        id S1726724AbeKKBka (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 10 Nov 2018 20:20:44 -0500
-Received: from mout.kundenserver.de ([217.72.192.73]:57513 "EHLO
+        Sat, 10 Nov 2018 20:40:30 -0500
+Received: from mout.kundenserver.de ([212.227.17.10]:59367 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726068AbeKKBUo (ORCPT
+        with ESMTP id S1726270AbeKKBka (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 10 Nov 2018 20:20:44 -0500
+        Sat, 10 Nov 2018 20:40:30 -0500
 Received: from localhost.localdomain ([37.4.249.153]) by
- mrelayeu.kundenserver.de (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis)
- id 1McHQA-1fnGOr0pa8-00cjCk; Sat, 10 Nov 2018 16:34:57 +0100
+ mrelayeu.kundenserver.de (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis)
+ id 1MMXcP-1g2STU3gRj-00JWa5; Sat, 10 Nov 2018 16:54:43 +0100
 From:   Stefan Wahren <stefan.wahren@i2se.com>
-To:     Eric Anholt <eric@anholt.net>, Vinod Koul <vkoul@kernel.org>
-Cc:     linux-rpi-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+To:     Eric Anholt <eric@anholt.net>, Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Cc:     linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Stefan Wahren <stefan.wahren@i2se.com>,
-        Florian Kauer <florian.kauer@koalo.de>
-Subject: [PATCH 06/17] dma: bcm2835: Switch to SPDX identifier
-Date:   Sat, 10 Nov 2018 16:34:40 +0100
-Message-Id: <1541864080-7320-1-git-send-email-stefan.wahren@i2se.com>
+        Simon Arlott <simon@arlott.org>
+Subject: [PATCH 09/17] irqchip: bcm283x: Switch to SPDX identifier
+Date:   Sat, 10 Nov 2018 16:54:23 +0100
+Message-Id: <1541865263-7571-1-git-send-email-stefan.wahren@i2se.com>
 X-Mailer: git-send-email 2.7.4
-X-Provags-ID: V03:K1:9VYSHHDq6ePopjdPZlKb+RS93ZFTzhF1QdXixEjIAgXnTuUJMgR
- J8pbJlZQALwb+Xw2aS+162jkYEWCAErqEEAK26rnODFfFosS5lytCWRQPGtz/bW0X66o7jf
- 3fT41EPS4kKLSlUBjka44NXR5ZLriVeKIjVVpEUzAawrDDyGuvIaWc/1koGGW8U4gwXjq4x
- 7BgrNox1Ffv/caen8XRJw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:+ZLEoVoU5fw=:DGGwVxMQGRktwIueI+SMpl
- NqNoLun9KxSqMOz0AT5gjsnPoA5soGqwBMEzv+pSHYkdm0elsohj4+Hr3XhOLUiTo59QWWeLc
- M0lu3epqCqcprlsbnT6M44OXeYS8O2OnCt3g7o9LAdUKYVeEP8snpLaOG9TZ+qKh407KeS18+
- ENmV/JhKbk3k+76eoP1hn/aTshclHDzAWU6aUD2xkkOzmTwJmO9Aa1Gtq0rKjBQov18SupWaV
- YFzKFf+g8djUhlAnnL6XmYI4Zf5W2ku5WI4Ai7HwcLnybF4cyl6klDyO7mmsytowNGgPKyJaZ
- MnV8wyO1vrM64xyY4owmcEUATxpsKTnNcnxdeJuyDMN8eeQHkaWjutiFJ1TlBUzTWyYKTVPtn
- mZ+Qsgq8tPEQVw4KCrcKUcRD2HxkAlqYk1Epmu+cLgvSbQx0uZOhAO8QM6pLR54YQx5TDAtHe
- +1drFDHHkbXlCs6u5Q0MDNonj9d29+G4t9hqJRlymR0G2NoXAOfW5w+knJ6Vg2hWDKgQbNdxB
- RdN4v4Yby507C4OIh9I6oK+H56iEeyQGIjb/gBjn2g6kR6H+ALwJy1+SmO3bYU0KMFLpIq/q3
- 0h2OA5Gh1wCsfbB6zNZ4k8HXWOtdzmtO8grJdO6vC4fTguPlSu51VlVH+9OOgN/Z97PAJgyP8
- haEzUc6eLGKcyyTx4L4JIP4jJd4r83aor37CYBb0PMR+i45Qw6iw05h39ZZXvD0jbUCkza14M
- aURj9MzoI0hk5j0d6UTUt8Mac07a2haq7dmY/zyPPIcElSYOCHf7yV/p5iPEozNjcWi/xFz5i
- UKsw8pvujTRjwr+FCHHXP/mJO6iFg==
+X-Provags-ID: V03:K1:j2zVgGWPeNsrV3MW07zCmv8+RnUWeNIPIF2FLbhL48r6WpWY++/
+ MX5+SsvUNOXlLY+4VoJj1fsMusFCveIs63c6jOgh75KQaVxjlJgUTNGH5Iu02Yy/ST6TThY
+ rYz/ckmrbhGTVMiMXKpPTHu9f2BjQd/5xEFbDCkr/XmsKLGAS0dmptFNLd3sRK1nGv6P6Xa
+ g2ADk2itA8YvlDzkkIXFA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:AdJNtho/TfM=:YGHMsxQ556jecZvKrSuh87
+ TYsCVXjzFAZQQxvOqbW/xOw1aKKB1kcWkkR2rrdfAJmo+a2oqKgMN8oa+PfFrf1ie6JZnKava
+ LsEZwdasT+vbgUlmZPI+6+LnOMi6MIJXsudKSqf/pmwVtG9I34Kh6vGkuHsgzf++YAll3/jyZ
+ VXa2KmnGgapdASiNcCuep8bUtKBna70l99l0Ns6j1BF9bl5VuGBLxlhJMRYhnRfdjRs78n/xI
+ wvXuqotFggKVEp3QwdQIIVzhThp9bOwGOYKU27GPQPRU5ysgSdwQ7pcj8HjUmEqKcTXESI6vu
+ wOBbFV3oXfXMI6PIt0BhJvB7iQQSqgSpnzPKDeZc//kw5fIp29hzRVPdi86ZWSU2Fpw7j8Oj3
+ c1n25Vuys2E06pDE/z1Ra2DireB7c0PuSUF4KSwHO/aCpkjOK9zba8sz82PUV541o0gnswes6
+ 1Tco02Yd3Yef7B7rkvJrB4xLArZYMCv3YPK615zrTimGIz+QQYX0gNsCDtEn0AVBDlJxaRPOS
+ MmSJrEYi+3Y8hNfi1ZYtj3huAhVfoUeJJrkok+T2aGXWBshgXpruz4yVx2iSlbp5prD4KVNDn
+ kmFbtt6sPCSpgk78wL0NVn10d+jE9wZz4AoKRK98PYgs2JQzsPoXrGpQaw/Ax2uwKp//J0wFS
+ QwExwIdxbES6kAbl4DDeqj+B8O0UG4ioFFjV+uSRiW581DeG607QXKhY6PtM30xUsUG73XdL/
+ U97av/m2032A061uZ9gTX9FLHmLDdHcWQdivI7pNwsNjYFtyvpRa+8xHmBwtZuOBgJ++TpEwQ
+ YV7U19954oABv4xKEqaQTnY/835xQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,25 +62,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Adopt the SPDX license identifier headers to ease license compliance
 management.
 
-Cc: Florian Kauer <florian.kauer@koalo.de>
+Cc: Simon Arlott <simon@arlott.org>
+Cc: Eric Anholt <eric@anholt.net>
 Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
 ---
- drivers/dma/bcm2835-dma.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
+ drivers/irqchip/irq-bcm2835.c | 11 +----------
+ drivers/irqchip/irq-bcm2836.c | 11 +----------
+ 2 files changed, 2 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/dma/bcm2835-dma.c b/drivers/dma/bcm2835-dma.c
-index ed871eb..1a44c80 100644
---- a/drivers/dma/bcm2835-dma.c
-+++ b/drivers/dma/bcm2835-dma.c
-@@ -1,3 +1,4 @@
+diff --git a/drivers/irqchip/irq-bcm2835.c b/drivers/irqchip/irq-bcm2835.c
+index d2da8a1..418245d 100644
+--- a/drivers/irqchip/irq-bcm2835.c
++++ b/drivers/irqchip/irq-bcm2835.c
+@@ -1,17 +1,8 @@
 +// SPDX-License-Identifier: GPL-2.0+
  /*
-  * BCM2835 DMA engine support
+  * Copyright 2010 Broadcom
+  * Copyright 2012 Simon Arlott, Chris Boot, Stephen Warren
   *
-@@ -18,16 +19,6 @@
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+  * Quirk 1: Shortcut interrupts don't set the bank 1/2 register pending bits
   *
-  *	MARVELL MMP Peripheral DMA Driver
-  *	Copyright 2012 Marvell International Ltd.
+  * If an interrupt fires on bank 1 that isn't in the shortcuts list, bit 8
+diff --git a/drivers/irqchip/irq-bcm2836.c b/drivers/irqchip/irq-bcm2836.c
+index dfe4a46..2038693 100644
+--- a/drivers/irqchip/irq-bcm2836.c
++++ b/drivers/irqchip/irq-bcm2836.c
+@@ -1,17 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0+
+ /*
+  * Root interrupt controller for the BCM2836 (Raspberry Pi 2).
+  *
+  * Copyright 2015 Broadcom
 - *
 - * This program is free software; you can redistribute it and/or modify
 - * it under the terms of the GNU General Public License as published by
@@ -91,8 +114,8 @@ index ed871eb..1a44c80 100644
 - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 - * GNU General Public License for more details.
   */
- #include <linux/dmaengine.h>
- #include <linux/dma-mapping.h>
+ 
+ #include <linux/cpu.h>
 -- 
 2.7.4
 
