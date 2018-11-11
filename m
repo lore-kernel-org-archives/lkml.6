@@ -2,107 +2,120 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C54D7C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 11:51:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48B27C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 11:54:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9277720866
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 11:51:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A65021104
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 11:54:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="meFH7HOE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9277720866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XeLCsnT9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A65021104
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727973AbeKKVjk (ORCPT
+        id S1727866AbeKKVnR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 16:39:40 -0500
-Received: from imap.thunk.org ([74.207.234.97]:38418 "EHLO imap.thunk.org"
+        Sun, 11 Nov 2018 16:43:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36646 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727492AbeKKVjk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 16:39:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:
-        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=yZ4QAUzvGTimvVyljzyKsHkwYjT1tSTJwLGp4/0lGUY=; b=meFH7HOEZjgTsE4/dYiHXJtiOa
-        Wefi7+FeKuqogd7Phc6gOBGRsWNG69GF+wbns3o8HRESbC0VL/nbE5jqeFwfZNWKllhDw8aGk81Nx
-        0BLlwnSE/k1KblLSKM8bMWV9gkDQhdBP0J1i0NRZlH/LSDf/boHTg5ODXhb5xFVZRrXo=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1gLoGr-0007oW-B3; Sun, 11 Nov 2018 11:51:17 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id F1CAD7A03EF; Sun, 11 Nov 2018 06:51:15 -0500 (EST)
-Date:   Sun, 11 Nov 2018 06:51:15 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org
-Subject: [GIT PULL] ext4 bug fixes for 4.20-rc2
-Message-ID: <20181111115115.GA3085@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-ext4@vger.kernel.org
+        id S1727492AbeKKVnQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Nov 2018 16:43:16 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0345320871;
+        Sun, 11 Nov 2018 11:54:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541937294;
+        bh=mRBA81kVA/IEwzF4599vYfonGTa0bjeKL/OfE7Hy/gw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=XeLCsnT9/MPQKEHd3QuiHAbcSV1qlfGMKbV2b3ngqBxymvwOUVq9hRNSQ6+8DBrmm
+         0v0X5V2oZ5ym5zLJAt7KURmnZTDrKrxLzyLVH49h0KgMJShH7gSkYJTwzMjV+hCYqP
+         by/5CnRlB87KSrBQQk3h21pFleXmHaghDio+wDjU=
+Date:   Sun, 11 Nov 2018 11:54:49 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Stefan Popa <stefan.popa@analog.com>
+Cc:     <robh+dt@kernel.org>, <mark.rutland@arm.com>, <knaack.h@gmx.de>,
+        <lars@metafoo.de>, <pmeerw@pmeerw.net>,
+        <Michael.Hennerich@analog.com>, <gregkh@linuxfoundation.org>,
+        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 2/4] dt-bindings: iio: adc: Add common ADCs
+ properties to a separate file
+Message-ID: <20181111115449.14c415cb@archlinux>
+In-Reply-To: <1541778055-7629-1-git-send-email-stefan.popa@analog.com>
+References: <1541778055-7629-1-git-send-email-stefan.popa@analog.com>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 33458eaba4dfe778a426df6a19b7aad2ff9f7eec:
+On Fri, 9 Nov 2018 17:40:55 +0200
+Stefan Popa <stefan.popa@analog.com> wrote:
 
-  ext4: fix use-after-free race in ext4_remount()'s error path (2018-10-12 09:28:09 -0400)
+> There are several ADC drivers that depend on the same device tree
+> bindings. Rather than continue to duplicate the properties, this patch
+> adds a common adc binding document that can be referenced. For beginning,
+> only two properties are documented.
+> 
+> Signed-off-by: Stefan Popa <stefan.popa@analog.com>
+Hi Stefan,
 
-are available in the Git repository at:
+Looks good to me.  Given the 'generic' nature of this one though I would
+like to leave some time for Rob and other devicetree specialists to sanity
+check it.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git tags/ext4_for_linus_stable
+Thanks,
 
-for you to fetch changes up to eb6984fa4ce2837dcb1f66720a600f31b0bb3739:
+Jonathan
 
-  ext4: missing !bh check in ext4_xattr_inode_write() (2018-11-09 11:34:40 -0500)
+> ---
+> Changes in v2, v3:
+> 	- N/A.
+> Changes in v4:
+> 	- Added this commit.
+> 
+>  Documentation/devicetree/bindings/iio/adc/adc.txt | 25 +++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/adc.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adc.txt b/Documentation/devicetree/bindings/iio/adc/adc.txt
+> new file mode 100644
+> index 0000000..1e3cc21
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/adc.txt
+> @@ -0,0 +1,25 @@
+> +Common ADCs properties
+> +
+> +This binding is a work-in-progress
+> +
+> +Optional properties for child nodes:
+> +- bipolar : Boolean, if set the channel is used in bipolar mode.
+> +- diff-channels : Differential channels muxed for this ADC. The first value
+> +		specifies the positive input pin, the second value the negative
+> +		input pin.
+> +
+> +Example:
+> +	adc@0 {
+> +		compatible = "some,adc";
+> +		...
+> +		channel@0 {
+> +			bipolar;
+> +			diff-channels = <0 1>;
+> +			...
+> +		};
+> +
+> +		channel@1 {
+> +			diff-channels = <2 3>;
+> +			...
+> +		};
+> +	};
 
-----------------------------------------------------------------
-A large number of ext4 bug fixes, mostly buffer and memory leaks on
-error return cleanup paths.
-
-----------------------------------------------------------------
-Theodore Ts'o (2):
-      ext4: avoid possible double brelse() in add_new_gdb() on error path
-      ext4: fix possible leak of sbi->s_group_desc_leak in error path
-
-Vasily Averin (16):
-      ext4: avoid potential extra brelse in setup_new_flex_group_blocks()
-      ext4: add missing brelse() in set_flexbg_block_bitmap()'s error path
-      ext4: add missing brelse() add_new_gdb_meta_bg()'s error path
-      ext4: add missing brelse() update_backups()'s error path
-      ext4: fix missing cleanup if ext4_alloc_flex_bg_array() fails while resizing
-      ext4: fix possible inode leak in the retry loop of ext4_resize_fs()
-      ext4: avoid buffer leak on shutdown in ext4_mark_iloc_dirty()
-      ext4: avoid buffer leak in ext4_orphan_add() after prior errors
-      ext4: remove unneeded brelse call in ext4_xattr_inode_update_ref()
-      ext4: fix possible leak of s_journal_flag_rwsem in error path
-      ext4: fix buffer leak in ext4_xattr_get_block() on error path
-      ext4: release bs.bh before re-using in ext4_xattr_block_find()
-      ext4: fix buffer leak in ext4_xattr_move_to_block() on error path
-      ext4: fix buffer leak in ext4_expand_extra_isize_ea() on error path
-      ext4: fix buffer leak in __ext4_read_dirblock() on error path
-      ext4: missing !bh check in ext4_xattr_inode_write()
-
- fs/ext4/inode.c  |  5 +++--
- fs/ext4/namei.c  |  5 ++++-
- fs/ext4/resize.c | 28 ++++++++++++++++------------
- fs/ext4/super.c  | 17 +++++++++--------
- fs/ext4/xattr.c  | 27 +++++++++++++++++++--------
- 5 files changed, 51 insertions(+), 31 deletions(-)
