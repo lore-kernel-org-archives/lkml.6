@@ -2,52 +2,110 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76CF0C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:10:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AA17C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:10:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49F7220817
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:10:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49F7220817
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E1A8C20817
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:10:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CPZEicaP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1A8C20817
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390379AbeKLJAV (ORCPT
+        id S2390248AbeKLJAg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:00:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50342 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:00:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728928AbeKLJAL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 04:00:11 -0500
-Subject: Re: [GIT PULL] Btrfs fixes for 4.20-rc1
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AD6620862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=pr-tracker-bot@kernel.org
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <cover.1541937408.git.dsterba@suse.com>
-References: <cover.1541937408.git.dsterba@suse.com>
-Message-Id: <20181111231003.12478.46983.pr-tracker-bot-63a42e1a5cb3d01eef2f370c11d8733a32f12f86@pdx-korg-gitolite-1.ci.codeaurora.org>
-Date:   Sun, 11 Nov 2018 23:10:03 +0000
-To:     David Sterba <dsterba@suse.com>
-Cc:     torvalds@linux-foundation.org, David Sterba <dsterba@suse.com>,
-        clm@fb.com, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+        id S2390159AbeKLIWA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:00 -0500
+Received: from localhost (unknown [206.108.79.134])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6228A21780;
+        Sun, 11 Nov 2018 22:32:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541975523;
+        bh=PozC+MAJHzWB+Hn2JYhU/RL2aUeRJ1GtYVmD3viK/Pc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=CPZEicaPhoh1VMf8BgXrbyJ7FmyJRmVuknpvm00GLyhSMI6Xy6R05sLKSjcvJdlJi
+         VKssIjbzCh7t8e34I9MjEwdXTsOC1lcOQ526p+I3O10dQ+yS++qlqdICFaThkoKwj4
+         RkBu7xI0AHwrU/8/yOqK04Cw67AC0r6lJG2WUfb4=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Alex Stanoev <alex@astanoev.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 018/222] ALSA: ca0106: Disable IZD on SB0570 DAC to fix audio pops
+Date:   Sun, 11 Nov 2018 14:21:55 -0800
+Message-Id: <20181111221649.755749173@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
+References: <20181111221647.665769131@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sun, 11 Nov 2018 13:10:56 +0100:
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-4.20-rc1-tag
+------------------
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/63a42e1a5cb3d01eef2f370c11d8733a32f12f86
+From: Alex Stanoev <alex@astanoev.com>
 
-Thank you!
+commit ac237c28d5ac1b241d58b1b7b4b9fa10efb22fb5 upstream.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+The Creative Audigy SE (SB0570) card currently exhibits an audible pop
+whenever playback is stopped or resumed, or during silent periods of an
+audio stream. Initialise the IZD bit to the 0 to eliminate these pops.
+
+The Infinite Zero Detection (IZD) feature on the DAC causes the output
+to be shunted to Vcap after 2048 samples of silence. This discharges the
+AC coupling capacitor through the output and causes the aforementioned
+pop/click noise.
+
+The behaviour of the IZD bit is described on page 15 of the WM8768GEDS
+datasheet: "With IZD=1, applying MUTE for 1024 consecutive input samples
+will cause all outputs to be connected directly to VCAP. This also
+happens if 2048 consecutive zero input samples are applied to all 6
+channels, and IZD=0. It will be removed as soon as any channel receives
+a non-zero input". I believe the second sentence might be referring to
+IZD=1 instead of IZD=0 given the observed behaviour of the card.
+
+This change should make the DAC initialisation consistent with
+Creative's Windows driver, as this popping persists when initialising
+the card in Linux and soft rebooting into Windows, but is not present on
+a cold boot to Windows.
+
+Signed-off-by: Alex Stanoev <alex@astanoev.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ sound/pci/ca0106/ca0106.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/sound/pci/ca0106/ca0106.h
++++ b/sound/pci/ca0106/ca0106.h
+@@ -582,7 +582,7 @@
+ #define SPI_PL_BIT_R_R		(2<<7)	/* right channel = right */
+ #define SPI_PL_BIT_R_C		(3<<7)	/* right channel = (L+R)/2 */
+ #define SPI_IZD_REG		2
+-#define SPI_IZD_BIT		(1<<4)	/* infinite zero detect */
++#define SPI_IZD_BIT		(0<<4)	/* infinite zero detect */
+ 
+ #define SPI_FMT_REG		3
+ #define SPI_FMT_BIT_RJ		(0<<0)	/* right justified mode */
+
+
