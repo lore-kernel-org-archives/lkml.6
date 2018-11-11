@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46A1CC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:50:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 175E0C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:50:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E785214E0
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:50:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4D8521508
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:50:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2MD6rw/z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E785214E0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UQwxxmrW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4D8521508
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390992AbeKLIkN (ORCPT
+        id S2391011AbeKLIkU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:40:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54620 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:40:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54672 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404247AbeKLIXL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2404246AbeKLIXL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:23:11 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 56D03224B3;
-        Sun, 11 Nov 2018 22:33:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E78902245E;
+        Sun, 11 Nov 2018 22:33:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975594;
-        bh=pVXAkM+zZjyqIDBXnILz50kWum4ytewBfNzekbPNoGM=;
+        bh=eTXCHD2S5FF4WkCPS8H5+n9UD7YSfgaI1NoOlx8et9k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2MD6rw/z1iT2FZ+hMTyaIEdaLWqtfiOnzActjbxIkon/XqypJFIVSsGhjhs6UPo0D
-         8KexB3q1wvk6UxGgQD8ceCwbA153riPFH3PrlGjnqT8z9XNwCnIuVQPn7gNh0WXaG9
-         MTK7Qo1EMiiYjMGfH6NrjoIIql54UN5dOdOjbf+0=
+        b=UQwxxmrWSyNut6W26DVNPz1NobUc8cNRZLJvPUio9+0jaDQ7UECSTo6J+nYzXEaZy
+         KnPcMvQD914f94ISb9maTbK1W48euHRzPYiTSgKVTNNUWw/sl0wtSVqb1ols2AJ1rw
+         j9Lg0sRW6QUSud+Os0EjBkn8H4iWYy2OPRvwklGQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Anatoly Trosinenko <anatoly.trosinenko@gmail.com>,
+        stable@vger.kernel.org, Liu Bo <bo.liu@linux.alibaba.com>,
         Filipe Manana <fdmanana@suse.com>,
         David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 212/222] Btrfs: fix assertion on fsync of regular file when using no-holes feature
-Date:   Sun, 11 Nov 2018 14:25:09 -0800
-Message-Id: <20181111221705.478284189@linuxfoundation.org>
+Subject: [PATCH 4.14 211/222] Btrfs: fix null pointer dereference on compressed write path error
+Date:   Sun, 11 Nov 2018 14:25:08 -0800
+Message-Id: <20181111221705.407853567@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -66,56 +65,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Filipe Manana <fdmanana@suse.com>
 
-commit 7ed586d0a8241e81d58c656c5b315f781fa6fc97 upstream.
+commit 3527a018c00e5dbada2f9d7ed5576437b6dd5cfb upstream.
 
-When using the NO_HOLES feature and logging a regular file, we were
-expecting that if we find an inline extent, that either its size in RAM
-(uncompressed and unenconded) matches the size of the file or if it does
-not, that it matches the sector size and it represents compressed data.
-This assertion does not cover a case where the length of the inline extent
-is smaller than the sector size and also smaller the file's size, such
-case is possible through fallocate. Example:
+At inode.c:compress_file_range(), under the "free_pages_out" label, we can
+end up dereferencing the "pages" pointer when it has a NULL value. This
+case happens when "start" has a value of 0 and we fail to allocate memory
+for the "pages" pointer. When that happens we jump to the "cont" label and
+then enter the "if (start == 0)" branch where we immediately call the
+cow_file_range_inline() function. If that function returns 0 (success
+creating an inline extent) or an error (like -ENOMEM for example) we jump
+to the "free_pages_out" label and then access "pages[i]" leading to a NULL
+pointer dereference, since "nr_pages" has a value greater than zero at
+that point.
 
-  $ mkfs.btrfs -f -O no-holes /dev/sdb
-  $ mount /dev/sdb /mnt
+Fix this by setting "nr_pages" to 0 when we fail to allocate memory for
+the "pages" pointer.
 
-  $ xfs_io -f -c "pwrite -S 0xb60 0 21" /mnt/foobar
-  $ xfs_io -c "falloc 40 40" /mnt/foobar
-  $ xfs_io -c "fsync" /mnt/foobar
-
-In the above example we trigger the assertion because the inline extent's
-length is 21 bytes while the file size is 80 bytes. The fallocate() call
-merely updated the file's size and did not touch the existing inline
-extent, as expected.
-
-So fix this by adjusting the assertion so that an inline extent length
-smaller than the file size is valid if the file size is smaller than the
-filesystem's sector size.
-
-A test case for fstests follows soon.
-
-Reported-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
-Fixes: a89ca6f24ffe ("Btrfs: fix fsync after truncate when no_holes feature is enabled")
-CC: stable@vger.kernel.org # 4.14+
-Link: https://lore.kernel.org/linux-btrfs/CAE5jQCfRSBC7n4pUTFJcmHh109=gwyT9mFkCOL+NKfzswmR=_Q@mail.gmail.com/
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=201119
+Fixes: 771ed689d2cd ("Btrfs: Optimize compressed writeback and reads")
+CC: stable@vger.kernel.org # 4.4+
+Reviewed-by: Liu Bo <bo.liu@linux.alibaba.com>
 Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/tree-log.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/btrfs/inode.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -4641,7 +4641,8 @@ static int btrfs_log_trailing_hole(struc
- 			ASSERT(len == i_size ||
- 			       (len == fs_info->sectorsize &&
- 				btrfs_file_extent_compression(leaf, extent) !=
--				BTRFS_COMPRESS_NONE));
-+				BTRFS_COMPRESS_NONE) ||
-+			       (len < i_size && i_size < fs_info->sectorsize));
- 			return 0;
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -524,6 +524,7 @@ again:
+ 		pages = kcalloc(nr_pages, sizeof(struct page *), GFP_NOFS);
+ 		if (!pages) {
+ 			/* just bail out to the uncompressed code */
++			nr_pages = 0;
+ 			goto cont;
  		}
  
 
