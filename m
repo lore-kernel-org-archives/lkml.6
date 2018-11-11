@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B862C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:58:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 390B2C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:58:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61CB020839
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:58:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0034520839
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:58:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rfs5mmJO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61CB020839
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vOZwI7z7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0034520839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732422AbeKLISG (ORCPT
+        id S1732409AbeKLISG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 12 Nov 2018 03:18:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34210 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:35400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732374AbeKLISD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:18:03 -0500
+        id S1732353AbeKLISE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:18:04 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 25087223CA;
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D38B2241B;
         Sun, 11 Nov 2018 22:28:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975288;
-        bh=T9r4Aju8Og9qwkhWGqQjQYemffWF2QsXI0mWlv+GQqg=;
+        bh=hZdGdkol4zf9/wZKDvv/XY+3bLA0/Feekn8+fc497zI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rfs5mmJOLnB/O/p0FnPTABdhil17J3CissxI0Dfa3/MRdOI6B7z3DtAxZpMwYWhBZ
-         0e80lkakK/7GwXRBYSmjXwjEivD8ugQ93uXhaXC3IDt0HXZpeEdAYjDYGzUpWBk/yU
-         HU4LPNoMiRds79f7FHAvGzO4OOTpqtgjnuLksJsI=
+        b=vOZwI7z7vPxyuaWQNWkK88+YHyQQ1L9tscC3LPYN+6y6LfZZIpL1FTB5b9F+kkwE1
+         +QPQrl0d9JCR3iMWa9b4DZKR6YufourkS9C3J9L5g66erUKJdw8oM2QjUKlMQ1A6mF
+         lE5STpXmuSXdyPTMxUbnUGEFkjpvuL+oGBfxWsqU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+7f4a27091759e2fe7453@syzkaller.appspotmail.com,
-        Lukas Czerner <lczerner@redhat.com>, Jan Kara <jack@suse.cz>,
-        Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 4.19 224/361] jbd2: fix use after free in jbd2_log_do_checkpoint()
-Date:   Sun, 11 Nov 2018 14:19:31 -0800
-Message-Id: <20181111221650.978478600@linuxfoundation.org>
+        syzbot+c54f8e94e6bba03b04e9@syzkaller.appspotmail.com,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 4.19 225/361] gfs2_meta: ->mount() can get NULL dev_name
+Date:   Sun, 11 Nov 2018 14:19:32 -0800
+Message-Id: <20181111221651.062395794@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -64,69 +63,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jan Kara <jack@suse.cz>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit ccd3c4373eacb044eb3832966299d13d2631f66f upstream.
+commit 3df629d873f8683af6f0d34dfc743f637966d483 upstream.
 
-The code cleaning transaction's lists of checkpoint buffers has a bug
-where it increases bh refcount only after releasing
-journal->j_list_lock. Thus the following race is possible:
+get in sync with mount_bdev() handling of the same
 
-CPU0					CPU1
-jbd2_log_do_checkpoint()
-					jbd2_journal_try_to_free_buffers()
-					  __journal_try_to_free_buffer(bh)
-  ...
-  while (transaction->t_checkpoint_io_list)
-  ...
-    if (buffer_locked(bh)) {
-
-<-- IO completes now, buffer gets unlocked -->
-
-      spin_unlock(&journal->j_list_lock);
-					    spin_lock(&journal->j_list_lock);
-					    __jbd2_journal_remove_checkpoint(jh);
-					    spin_unlock(&journal->j_list_lock);
-					  try_to_free_buffers(page);
-      get_bh(bh) <-- accesses freed bh
-
-Fix the problem by grabbing bh reference before unlocking
-journal->j_list_lock.
-
-Fixes: dc6e8d669cf5 ("jbd2: don't call get_bh() before calling __jbd2_journal_remove_checkpoint()")
-Fixes: be1158cc615f ("jbd2: fold __process_buffer() into jbd2_log_do_checkpoint()")
-Reported-by: syzbot+7f4a27091759e2fe7453@syzkaller.appspotmail.com
-CC: stable@vger.kernel.org
-Reviewed-by: Lukas Czerner <lczerner@redhat.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Reported-by: syzbot+c54f8e94e6bba03b04e9@syzkaller.appspotmail.com
+Cc: stable@vger.kernel.org
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/jbd2/checkpoint.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/gfs2/ops_fstype.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/fs/jbd2/checkpoint.c
-+++ b/fs/jbd2/checkpoint.c
-@@ -251,8 +251,8 @@ restart:
- 		bh = jh2bh(jh);
+--- a/fs/gfs2/ops_fstype.c
++++ b/fs/gfs2/ops_fstype.c
+@@ -1333,6 +1333,9 @@ static struct dentry *gfs2_mount_meta(st
+ 	struct path path;
+ 	int error;
  
- 		if (buffer_locked(bh)) {
--			spin_unlock(&journal->j_list_lock);
- 			get_bh(bh);
-+			spin_unlock(&journal->j_list_lock);
- 			wait_on_buffer(bh);
- 			/* the journal_head may have gone by now */
- 			BUFFER_TRACE(bh, "brelse");
-@@ -333,8 +333,8 @@ restart2:
- 		jh = transaction->t_checkpoint_io_list;
- 		bh = jh2bh(jh);
- 		if (buffer_locked(bh)) {
--			spin_unlock(&journal->j_list_lock);
- 			get_bh(bh);
-+			spin_unlock(&journal->j_list_lock);
- 			wait_on_buffer(bh);
- 			/* the journal_head may have gone by now */
- 			BUFFER_TRACE(bh, "brelse");
++	if (!dev_name || !*dev_name)
++		return ERR_PTR(-EINVAL);
++
+ 	error = kern_path(dev_name, LOOKUP_FOLLOW, &path);
+ 	if (error) {
+ 		pr_warn("path_lookup on %s returned error %d\n",
 
 
