@@ -4,47 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71B10C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:16:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D315C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:16:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B9982084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:16:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02E0621104
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:16:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JS6ZU7bR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B9982084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mSZ7bRt7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02E0621104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730184AbeKLIRG (ORCPT
+        id S1730161AbeKLIRG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 12 Nov 2018 03:17:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58420 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:59376 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730069AbeKLIRC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:17:02 -0500
+        id S1730094AbeKLIRD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:17:03 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BAD61216FD;
-        Sun, 11 Nov 2018 22:27:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 591E82175B;
+        Sun, 11 Nov 2018 22:27:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975226;
-        bh=9Lv6k26O8hNOwoaA/btY/FNGrcrSoU9S42Ah4/dWm1w=;
+        s=default; t=1541975227;
+        bh=YLe9JA+/ljFvaLAQeuNcG8/wdX8eJQYlO4FVySp4pww=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JS6ZU7bRVRVHgUOyfDZWa4EDrOfBEqXHFohvMNMpJEigmEDMkmnu1FDjleSRTp3k+
-         sXyFHffy6vIl/qDyynQ+G+ZYcW6yZ7t8UOXTAQ4l5Du8c66+9Q7Jc74bOfnQP/2MXP
-         8ujX/FBkuNS3/9b1Xjfl86cY+FiY38opscGwFmt4=
+        b=mSZ7bRt7ra3Cn6hgmgkTThDryw3LQ+SjhnHHujLH0sR85TgcKfzeAm5vBL94ffOEw
+         6XBTcd/7OOmhW0k2OFgphIZB2nRDz71Yr6qRXNcyrtUQrNvlFjteZKWOiIutVEWk36
+         tNevDd0fv0enLakQvyDtQbi4GxdZXrfUrcpSqEGA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.19 044/361] x86/kvm/nVMX: allow bare VMXON state migration
-Date:   Sun, 11 Nov 2018 14:16:31 -0800
-Message-Id: <20181111221626.079501205@linuxfoundation.org>
+        stable@vger.kernel.org, Dave Jiang <dave.jiang@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH 4.19 046/361] x86/numa_emulation: Fix uniform-split numa emulation
+Date:   Sun, 11 Nov 2018 14:16:33 -0800
+Message-Id: <20181111221626.445125200@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -62,53 +68,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
+From: Dave Jiang <dave.jiang@intel.com>
 
-commit a1b0c1c64dfef0cff8555bb708bfc5d7c66c6ca4 upstream.
+commit c6ee7a548e2c291398b4f32c1f741c66b9f98e1c upstream.
 
-It is perfectly valid for a guest to do VMXON and not do VMPTRLD. This
-state needs to be preserved on migration.
+The numa_emulation() routine in the 'uniform' case walks through all the
+physical 'memblk' instances and divides them into N emulated nodes with
+split_nodes_size_interleave_uniform(). As each physical node is consumed it
+is removed from the physical memblk array in the numa_remove_memblk_from()
+helper.
 
+Since split_nodes_size_interleave_uniform() handles advancing the array as
+the 'memblk' is consumed it is expected that the base of the array is
+always specified as the argument.
+
+Otherwise, on multi-socket (> 2) configurations the uniform-split
+capability can generate an invalid numa configuration leading to boot
+failures with signatures like the following:
+
+    rcu: INFO: rcu_sched detected stalls on CPUs/tasks:
+    Sending NMI from CPU 0 to CPUs 2:
+    NMI backtrace for cpu 2
+    CPU: 2 PID: 1332 Comm: pgdatinit0 Not tainted 4.19.0-rc8-next-20181019-baseline #59
+    RIP: 0010:__init_single_page.isra.74+0x81/0x90
+    [..]
+    Call Trace:
+     deferred_init_pages+0xaa/0xe3
+     deferred_init_memmap+0x18f/0x318
+     kthread+0xf8/0x130
+     ? deferred_free_pages.isra.105+0xc9/0xc9
+     ? kthread_stop+0x110/0x110
+     ret_from_fork+0x35/0x40
+
+Fixes: 1f6a2c6d9f121 ("x86/numa_emulation: Introduce uniform split capability")
+Signed-off-by: Dave Jiang <dave.jiang@intel.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: stable@vger.kernel.org
-Fixes: 8fcc4b5923af5de58b80b53a069453b135693304
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Link: https://lkml.kernel.org/r/154049911459.2685845.9210186007479774286.stgit@dwillia2-desk3.amr.corp.intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/vmx.c |   15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ arch/x86/mm/numa_emulation.c |   12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -14010,13 +14010,6 @@ static int vmx_set_nested_state(struct k
- 	if (!page_address_valid(vcpu, kvm_state->vmx.vmxon_pa))
- 		return -EINVAL;
- 
--	if (kvm_state->size < sizeof(kvm_state) + sizeof(*vmcs12))
--		return -EINVAL;
--
--	if (kvm_state->vmx.vmcs_pa == kvm_state->vmx.vmxon_pa ||
--	    !page_address_valid(vcpu, kvm_state->vmx.vmcs_pa))
--		return -EINVAL;
--
- 	if ((kvm_state->vmx.smm.flags & KVM_STATE_NESTED_SMM_GUEST_MODE) &&
- 	    (kvm_state->flags & KVM_STATE_NESTED_GUEST_MODE))
- 		return -EINVAL;
-@@ -14046,6 +14039,14 @@ static int vmx_set_nested_state(struct k
- 	if (ret)
- 		return ret;
- 
-+	/* Empty 'VMXON' state is permitted */
-+	if (kvm_state->size < sizeof(kvm_state) + sizeof(*vmcs12))
-+		return 0;
-+
-+	if (kvm_state->vmx.vmcs_pa == kvm_state->vmx.vmxon_pa ||
-+	    !page_address_valid(vcpu, kvm_state->vmx.vmcs_pa))
-+		return -EINVAL;
-+
- 	set_current_vmptr(vmx, kvm_state->vmx.vmcs_pa);
- 
- 	if (kvm_state->vmx.smm.flags & KVM_STATE_NESTED_SMM_VMXON) {
+--- a/arch/x86/mm/numa_emulation.c
++++ b/arch/x86/mm/numa_emulation.c
+@@ -400,9 +400,17 @@ void __init numa_emulation(struct numa_m
+ 		n = simple_strtoul(emu_cmdline, &emu_cmdline, 0);
+ 		ret = -1;
+ 		for_each_node_mask(i, physnode_mask) {
++			/*
++			 * The reason we pass in blk[0] is due to
++			 * numa_remove_memblk_from() called by
++			 * emu_setup_memblk() will delete entry 0
++			 * and then move everything else up in the pi.blk
++			 * array. Therefore we should always be looking
++			 * at blk[0].
++			 */
+ 			ret = split_nodes_size_interleave_uniform(&ei, &pi,
+-					pi.blk[i].start, pi.blk[i].end, 0,
+-					n, &pi.blk[i], nid);
++					pi.blk[0].start, pi.blk[0].end, 0,
++					n, &pi.blk[0], nid);
+ 			if (ret < 0)
+ 				break;
+ 			if (ret < n) {
 
 
