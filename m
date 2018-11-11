@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD7BDC04EB9
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9B0CC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85D67224E0
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61FA5224E0
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="D95Ftji7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85D67224E0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WTtesWSw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61FA5224E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389757AbeKLIVf (ORCPT
+        id S2389821AbeKLIVj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:21:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49106 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:21:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49272 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389723AbeKLIVe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:21:34 -0500
+        id S2389761AbeKLIVh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:37 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E971208A3;
-        Sun, 11 Nov 2018 22:31:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05431224B3;
+        Sun, 11 Nov 2018 22:31:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975497;
-        bh=72Aa9dooQctvQ518Nre3xmsnUS0exeXxwjIVwfehJn4=;
+        s=default; t=1541975500;
+        bh=1ICxfcL/TFd/yyMU1GG4B99XEkJVRPOTwet093rOpZs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D95Ftji7DpbQodDzRC+sicMEfl43y1JLxOq5zjPYI766op0wZYr2hauEooipsOxCE
-         sk5YERZQypNmXCFcePwZT8D5+9kyRd2Fp+AJKljPz6bHwim7Bx1FOAe4P38a947c3j
-         G80Q7rIz2td6dFbjQhc0jlxYLbKsMJ1jjbCHWCWA=
+        b=WTtesWSw6TqaN1U4ztuSkoCc5cWjGra7l4gafarnADjlxC4bj9HJj0Zku1ztapkOv
+         a+O+rJs2Q8680PpITILAWC+QZMfoo6OHyNSMeB/d/wmpx5HDmwf+mw40ZAOQkJdHVg
+         yEgiQWvWQ20fQGCpnIa5Ao92V/DZ+6NJOcOVFQao=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Maciej W. Rozycki" <macro@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>
-Subject: [PATCH 4.18 275/350] MIPS: memset: Fix CPU_DADDI_WORKAROUNDS `small_fixup regression
-Date:   Sun, 11 Nov 2018 14:22:19 -0800
-Message-Id: <20181111221719.538633340@linuxfoundation.org>
+        stable@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>,
+        Will Deacon <will.deacon@arm.com>, Tri Vo <trong@android.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: [PATCH 4.18 307/350] arm64: lse: remove -fcall-used-x0 flag
+Date:   Sun, 11 Nov 2018 14:22:51 -0800
+Message-Id: <20181111221720.920755607@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -63,69 +63,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Maciej W. Rozycki <macro@linux-mips.org>
+From: Tri Vo <trong@android.com>
 
-commit 2f7619ae90bf78cf576b5e72087aab0435266fdb upstream.
+commit 2a6c7c367de82951c98a290a21156770f6f82c84 upstream.
 
-Fix a commit 8a8158c85e1e ("MIPS: memset.S: EVA & fault support for
-small_memset") regression and remove assembly warnings:
+x0 is not callee-saved in the PCS. So there is no need to specify
+-fcall-used-x0.
 
-arch/mips/lib/memset.S: Assembler messages:
-arch/mips/lib/memset.S:243: Warning: Macro instruction expanded into multiple instructions in a branch delay slot
+Clang doesn't currently support -fcall-used flags. This patch will help
+building the kernel with clang.
 
-triggering with the CPU_DADDI_WORKAROUNDS option set and this code:
-
-	PTR_SUBU	a2, t1, a0
-	jr		ra
-	 PTR_ADDIU	a2, 1
-
-This is because with that option in place the DADDIU instruction, which
-the PTR_ADDIU CPP macro expands to, becomes a GAS macro, which in turn
-expands to an LI/DADDU (or actually ADDIU/DADDU) sequence:
-
- 13c:	01a4302f 	dsubu	a2,t1,a0
- 140:	03e00008 	jr	ra
- 144:	24010001 	li	at,1
- 148:	00c1302d 	daddu	a2,a2,at
-	...
-
-Correct this by switching off the `noreorder' assembly mode and letting
-GAS schedule this jump's delay slot, as there is nothing special about
-it that would require manual scheduling.  With this change in place
-correct code is produced:
-
- 13c:	01a4302f 	dsubu	a2,t1,a0
- 140:	24010001 	li	at,1
- 144:	03e00008 	jr	ra
- 148:	00c1302d 	daddu	a2,a2,at
-	...
-
-Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Fixes: 8a8158c85e1e ("MIPS: memset.S: EVA & fault support for small_memset")
-Patchwork: https://patchwork.linux-mips.org/patch/20833/
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: stable@vger.kernel.org # 4.17+
+Tested-by: Nick Desaulniers <ndesaulniers@google.com>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Tri Vo <trong@android.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/lib/memset.S |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/arm64/lib/Makefile |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/mips/lib/memset.S
-+++ b/arch/mips/lib/memset.S
-@@ -262,9 +262,11 @@
- 	 nop
- 
- .Lsmall_fixup\@:
-+	.set		reorder
- 	PTR_SUBU	a2, t1, a0
-+	PTR_ADDIU	a2, 1
- 	jr		ra
--	 PTR_ADDIU	a2, 1
-+	.set		noreorder
- 
- 	.endm
- 
+--- a/arch/arm64/lib/Makefile
++++ b/arch/arm64/lib/Makefile
+@@ -12,7 +12,7 @@ lib-y		:= bitops.o clear_user.o delay.o
+ # when supported by the CPU. Result and argument registers are handled
+ # correctly, based on the function prototype.
+ lib-$(CONFIG_ARM64_LSE_ATOMICS) += atomic_ll_sc.o
+-CFLAGS_atomic_ll_sc.o	:= -fcall-used-x0 -ffixed-x1 -ffixed-x2		\
++CFLAGS_atomic_ll_sc.o	:= -ffixed-x1 -ffixed-x2        		\
+ 		   -ffixed-x3 -ffixed-x4 -ffixed-x5 -ffixed-x6		\
+ 		   -ffixed-x7 -fcall-saved-x8 -fcall-saved-x9		\
+ 		   -fcall-saved-x10 -fcall-saved-x11 -fcall-saved-x12	\
 
 
