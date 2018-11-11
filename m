@@ -2,115 +2,123 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC014C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 16:59:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6917DC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 17:01:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7259C2148E
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 16:59:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7259C2148E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 0C9342148E
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 17:01:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="r7tCVcL5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C9342148E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729220AbeKLCsX (ORCPT
+        id S1729247AbeKLCuS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 21:48:23 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:50879 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728378AbeKLCsX (ORCPT
+        Sun, 11 Nov 2018 21:50:18 -0500
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:24133 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729222AbeKLCuS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 21:48:23 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gLt4w-0006ai-12; Sun, 11 Nov 2018 17:59:18 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gLt4v-0005TG-9I; Sun, 11 Nov 2018 17:59:17 +0100
-Date:   Sun, 11 Nov 2018 17:59:17 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Bamvor Jian Zhang <bamv2005@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/3] gpio: mockup: fix indicated direction
-Message-ID: <20181111165917.zrbg3xbhlitto7xs@pengutronix.de>
-References: <20181108203546.54rncnydgamud5z3@pengutronix.de>
- <CAMRc=Mev6RMvVox2Sx6s80+obLg4QWAL=_hwcf34m2iMXwEbOg@mail.gmail.com>
- <20181109115424.pe4w26nmt6xplzto@pengutronix.de>
- <CAMRc=Mdf1GHR0_7uQ4PFFCwL9p3NyKBDMSBkipR826BhTYpz=g@mail.gmail.com>
- <20181109131036.v6d645ojv6jr7v3y@pengutronix.de>
- <CAMRc=Mf18udrM=2=SZHMg3M2akcccPXb7Fr81vXODpNgjf+uJw@mail.gmail.com>
- <20181109143950.gy7swu6vgaqgg7dw@pengutronix.de>
- <CAMRc=McF482n+57e6Vz9H1dEQ5QS+4p88SYg6ZjNuUMYZx6t3Q@mail.gmail.com>
- <20181109170323.6b2nj5vvtwu3d5ee@pengutronix.de>
- <CAMRc=MfY7c21NOBNnVgXKimywXHFifwek5B76Y_3DgmM_hBbgw@mail.gmail.com>
+        Sun, 11 Nov 2018 21:50:18 -0500
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id wABH14p8002885;
+        Mon, 12 Nov 2018 02:01:04 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com wABH14p8002885
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1541955665;
+        bh=75ORlgavqN1w3O3MMWTjnP8BCuZ4aPvPbtpjuHVki0w=;
+        h=From:Date:Subject:To:Cc:From;
+        b=r7tCVcL5J5pSwcuLAKtImbo4FaaZnYgsoflIT0Wj4GLcAygq173Ms3NoI7YawSQL/
+         Ji30O7+CYa2+pmTdImxkjgSUJmBlwouXp4KEg/JzQwY5rg7pZb5zf1PWupd2dQJQ4E
+         NGf08VOYYLn20AepEfEgM4ESUAuLF9q7+czN+trIHDJgSg0YI5zQYAB9wCSW2DMPdj
+         arVqa9CRsI5JufBhOo7tzcVbNeq7bJWZ45Uq7PAZtwoMoLagmmblML68kw5NBJdSvi
+         lkGROwTNS3vcnI5EnTikFszyf3U+xvSWEUT0FPAvtEgiVBOXjnpdbxm8MQdxAgTp4P
+         PMHNrJq3DCe/g==
+X-Nifty-SrcIP: [209.85.217.52]
+Received: by mail-vs1-f52.google.com with SMTP id p74so3816265vsc.0;
+        Sun, 11 Nov 2018 09:01:04 -0800 (PST)
+X-Gm-Message-State: AGRZ1gJBz0yzSEK6yIqkfxspDVNye79/03lzM8C7ujgwX7s+PndJ9pMK
+        Os82Ff/LWSmDlafZtPZLz4paDVrUhsTBiJ0ft20=
+X-Google-Smtp-Source: AJdET5egBq3v+N/kfjtk4lblEyy+2+cpT9LmW+pAwjO0kTq8fAQgKrqDL0Pq7F2hkBHLhXp157CMzqva1xn3h3REI54=
+X-Received: by 2002:a67:5f03:: with SMTP id t3mr7130998vsb.155.1541955663409;
+ Sun, 11 Nov 2018 09:01:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MfY7c21NOBNnVgXKimywXHFifwek5B76Y_3DgmM_hBbgw@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Mon, 12 Nov 2018 02:00:27 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASb25Js1sDLmRsfKrEyimat7-fETn-MEDGJtfQ9EfgUbw@mail.gmail.com>
+Message-ID: <CAK7LNASb25Js1sDLmRsfKrEyimat7-fETn-MEDGJtfQ9EfgUbw@mail.gmail.com>
+Subject: [GIT PULL] Kbuild fixes for v4.20-rc2
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        masahiroy@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 09, 2018 at 06:23:01PM +0100, Bartosz Golaszewski wrote:
-> pt., 9 lis 2018 o 18:03 Uwe Kleine-König
-> <u.kleine-koenig@pengutronix.de> napisał(a):
-> >
-> > Hello Bartosz,
-> >
-> > On Fri, Nov 09, 2018 at 04:24:10PM +0100, Bartosz Golaszewski wrote:
-> > > pt., 9 lis 2018 o 15:39 Uwe Kleine-König
-> > > <u.kleine-koenig@pengutronix.de> napisał(a):
-> > > > On Fri, Nov 09, 2018 at 02:53:16PM +0100, Bartosz Golaszewski wrote:
-> > > > > pt., 9 lis 2018 o 14:10 Uwe Kleine-König
-> > > > > <u.kleine-koenig@pengutronix.de> napisał(a):
-> > > > > > Which test failed exactly?
-> > > > >
-> > > > > All gpioinfo tests that check the output of this command and expect to
-> > > > > see input as line direction.
-> > > >
-> > > > This wasn't the answer I expected. The background of my question was:
-> > > > This failing test seems to expect that a given GPIO is an input. If that
-> > > > expectation already exists after the gpio is only requested, then the
-> > > > test is broken and a fix is necessary there.
-> > >
-> > > The test is only expected to work with gpio-mockup which is a dummy
-> > > testing module. I believe its behavior should be as deterministic as
-> > > possible to the point where newly created chips always have the same
-> > > direction.
-> >
-> > Given that the initial direction of a GPIO isn't fixed in my eyes the
-> > test should be able to cope with both possibilities. I'd say it's a bug
-> > in the test if it doesn't.
-> >
-> 
-> As I said before: it is and should be fixed in this specific case.
-> This isn't real hardware.
+Hi Linus,
 
-Not sure if we agree here yet. What do you want to fix? The driver or
-the test?
+Please pull Kbuild fixes.
 
-In my eyes test driven development is great. But if something breaks
-because the test is wrong, please don't "fix" the system to repair the
-test, but modify the test to be able to handle reality.
+Thanks!
 
-Best regards
-Uwe
+
+
+
+The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+
+  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
+tags/kbuild-fixes-v4.20
+
+for you to fetch changes up to d5615e472d23e854e96192103b6ae7977e705f01:
+
+  builddeb: Fix inclusion of dtbs in debian package (2018-11-11 23:04:53 +0900)
+
+----------------------------------------------------------------
+Kbuild fixes for v4.20
+
+ - fix build errors in binrpm-pkg and bindeb-pkg targets
+
+ - fix false positive matches in merge_config.sh
+
+ - fix build version mismatch in deb-pkg target
+
+ - fix dtbs_install handling in (bin)deb-pkg target
+
+ - revert a commit that allows setlocalversion to write to source tree
+
+----------------------------------------------------------------
+Guenter Roeck (1):
+      Revert "scripts/setlocalversion: git: Make -dirty check more robust"
+
+Masahiro Yamada (4):
+      kbuild: rpm-pkg: fix binrpm-pkg breakage when O= is used
+      kbuild: deb-pkg: fix bindeb-pkg breakage when O= is used
+      kconfig: merge_config: avoid false positive matches from comment lines
+      kbuild: deb-pkg: fix too low build version number
+
+Rob Herring (1):
+      builddeb: Fix inclusion of dtbs in debian package
+
+ scripts/kconfig/merge_config.sh |  7 ++++---
+ scripts/package/builddeb        |  6 +++---
+ scripts/package/mkdebian        |  7 +++++--
+ scripts/package/mkspec          | 11 ++++++-----
+ scripts/setlocalversion         |  2 +-
+ 5 files changed, 19 insertions(+), 14 deletions(-)
+
 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Best Regards
+Masahiro Yamada
