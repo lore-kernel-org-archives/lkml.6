@@ -7,48 +7,51 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75849C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A64DAC43610
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37528223C8
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62899223DD
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hpwt0/nO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37528223C8
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jug9e1k5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62899223DD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388166AbeKLITy (ORCPT
+        id S2388180AbeKLITz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:19:54 -0500
+        Mon, 12 Nov 2018 03:19:55 -0500
 Received: from mail.kernel.org ([198.145.29.99]:42142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732189AbeKLITx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:19:53 -0500
+        id S2388152AbeKLITy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:19:54 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A96602154B;
-        Sun, 11 Nov 2018 22:29:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E986A223C6;
+        Sun, 11 Nov 2018 22:29:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975396;
-        bh=BEXbDUfrJmsKCk8J1/ydrSu1k396f5xbrQfuRbTQ0OU=;
+        s=default; t=1541975398;
+        bh=QOtVb+qJbzXovh4vrgB99uPFq/l7FmNEjhOWVHKqFu8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Hpwt0/nO4kjnNP2LAGiJaS+xsybZbt+I8w6PjWXxMyT1qQx/q9BWZcUXFK3eAAyml
-         y3QSfipp1yHaTAPUrWLzB7/V4GwWLPDHb6vBdxvhoB4eBvlYCStwk2zNuCQXlyb3Ir
-         cA4+Lh8lMj6MI9POkBgbMGHmWgjelW70+XBon6A4=
+        b=jug9e1k5U/mHt/2knSWw72xZF3digVbX1VPrms25upX2D7ZDh+2/oDQX8imTCV+mk
+         zxTsqQokofgyP5kpOT9IhDLBXpxS2dzCJYF2S3RpoXRklY76nsUNU7ae232s+cVPse
+         I3YDJjtU00fr7g0gCUFJi3WeCNO8vad1XqNeCQIk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Pieter Jansen van Vuuren 
-        <pieter.jansenvanvuuren@netronome.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Jarod Wilson <jarod@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Stephane Eranian <eranian@google.com>,
+        William Cohen <wcohen@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 052/350] nfp: flower: use offsets provided by pedit instead of index for ipv6
-Date:   Sun, 11 Nov 2018 14:18:36 -0800
-Message-Id: <20181111221709.328770006@linuxfoundation.org>
+Subject: [PATCH 4.18 055/350] perf tools: Fix use of alternatives to find JDIR
+Date:   Sun, 11 Nov 2018 14:18:39 -0800
+Message-Id: <20181111221709.459836026@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -66,79 +69,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pieter Jansen van Vuuren <pieter.jansenvanvuuren@netronome.com>
+From: Jarod Wilson <jarod@redhat.com>
 
-[ Upstream commit 140b6abac26d799f75d772ab5e969b34ad8d68f1 ]
+[ Upstream commit 36b8d4628d3cc8f5a748e508cce8673bc00fc63c ]
 
-Previously when populating the set ipv6 address action, we incorrectly
-made use of pedit's key index to determine which 32bit word should be
-set. We now calculate which word has been selected based on the offset
-provided by the pedit action.
+When a build is run from something like a cron job, the user's $PATH is
+rather minimal, of note, not including /usr/sbin in my own case. Because
+of that, an automated rpm package build ultimately fails to find
+libperf-jvmti.so, because somewhere within the build, this happens...
 
-Fixes: 354b82bb320e ("nfp: add set ipv6 source and destination address")
-Signed-off-by: Pieter Jansen van Vuuren <pieter.jansenvanvuuren@netronome.com>
-Reviewed-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+  /bin/sh: alternatives: command not found
+  /bin/sh: alternatives: command not found
+  Makefile.config:849: No openjdk development package found, please install
+  JDK package, e.g. openjdk-8-jdk, java-1.8.0-openjdk-devel
+
+...and while the build continues, libperf-jvmti.so isn't built, and
+things fall down when rpm tries to find all the %files specified. Exact
+same system builds everything just fine when the job is launched from a
+login shell instead of a cron job, since alternatives is in $PATH, so
+openjdk is actually found.
+
+The test required to get into this section of code actually specifies
+the full path, as does a block just above it, so let's do that here too.
+
+Signed-off-by: Jarod Wilson <jarod@redhat.com>
+Acked-by: Jiri Olsa <jolsa@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: William Cohen <wcohen@redhat.com>
+Fixes: d4dfdf00d43e ("perf jvmti: Plug compilation into perf build")
+Link: http://lkml.kernel.org/r/20180906221812.11167-1-jarod@redhat.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/netronome/nfp/flower/action.c |   26 ++++++++++++---------
- 1 file changed, 15 insertions(+), 11 deletions(-)
+ tools/perf/Makefile.config |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/netronome/nfp/flower/action.c
-+++ b/drivers/net/ethernet/netronome/nfp/flower/action.c
-@@ -335,12 +335,12 @@ nfp_fl_set_ip4(const struct tc_action *a
- }
- 
- static void
--nfp_fl_set_ip6_helper(int opcode_tag, int idx, __be32 exact, __be32 mask,
-+nfp_fl_set_ip6_helper(int opcode_tag, u8 word, __be32 exact, __be32 mask,
- 		      struct nfp_fl_set_ipv6_addr *ip6)
- {
--	ip6->ipv6[idx % 4].mask |= mask;
--	ip6->ipv6[idx % 4].exact &= ~mask;
--	ip6->ipv6[idx % 4].exact |= exact & mask;
-+	ip6->ipv6[word].mask |= mask;
-+	ip6->ipv6[word].exact &= ~mask;
-+	ip6->ipv6[word].exact |= exact & mask;
- 
- 	ip6->reserved = cpu_to_be16(0);
- 	ip6->head.jump_id = opcode_tag;
-@@ -353,6 +353,7 @@ nfp_fl_set_ip6(const struct tc_action *a
- 	       struct nfp_fl_set_ipv6_addr *ip_src)
- {
- 	__be32 exact, mask;
-+	u8 word;
- 
- 	/* We are expecting tcf_pedit to return a big endian value */
- 	mask = (__force __be32)~tcf_pedit_mask(action, idx);
-@@ -361,17 +362,20 @@ nfp_fl_set_ip6(const struct tc_action *a
- 	if (exact & ~mask)
- 		return -EOPNOTSUPP;
- 
--	if (off < offsetof(struct ipv6hdr, saddr))
-+	if (off < offsetof(struct ipv6hdr, saddr)) {
- 		return -EOPNOTSUPP;
--	else if (off < offsetof(struct ipv6hdr, daddr))
--		nfp_fl_set_ip6_helper(NFP_FL_ACTION_OPCODE_SET_IPV6_SRC, idx,
-+	} else if (off < offsetof(struct ipv6hdr, daddr)) {
-+		word = (off - offsetof(struct ipv6hdr, saddr)) / sizeof(exact);
-+		nfp_fl_set_ip6_helper(NFP_FL_ACTION_OPCODE_SET_IPV6_SRC, word,
- 				      exact, mask, ip_src);
--	else if (off < offsetof(struct ipv6hdr, daddr) +
--		       sizeof(struct in6_addr))
--		nfp_fl_set_ip6_helper(NFP_FL_ACTION_OPCODE_SET_IPV6_DST, idx,
-+	} else if (off < offsetof(struct ipv6hdr, daddr) +
-+		       sizeof(struct in6_addr)) {
-+		word = (off - offsetof(struct ipv6hdr, daddr)) / sizeof(exact);
-+		nfp_fl_set_ip6_helper(NFP_FL_ACTION_OPCODE_SET_IPV6_DST, word,
- 				      exact, mask, ip_dst);
--	else
-+	} else {
- 		return -EOPNOTSUPP;
-+	}
- 
- 	return 0;
- }
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -831,7 +831,7 @@ ifndef NO_JVMTI
+     JDIR=$(shell /usr/sbin/update-java-alternatives -l | head -1 | awk '{print $$3}')
+   else
+     ifneq (,$(wildcard /usr/sbin/alternatives))
+-      JDIR=$(shell alternatives --display java | tail -1 | cut -d' ' -f 5 | sed 's%/jre/bin/java.%%g')
++      JDIR=$(shell /usr/sbin/alternatives --display java | tail -1 | cut -d' ' -f 5 | sed 's%/jre/bin/java.%%g')
+     endif
+   endif
+   ifndef JDIR
 
 
