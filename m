@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3721DC43610
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:38:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A5EC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:38:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F4153214F1
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:38:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B992214F1
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:38:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SCtK/hZt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F4153214F1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="C19CDYEL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B992214F1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391463AbeKLI2f (ORCPT
+        id S2391342AbeKLI2f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 12 Nov 2018 03:28:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33180 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:33028 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404965AbeKLIZQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:25:16 -0500
+        id S2405044AbeKLIZR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:25:17 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D139F208A3;
-        Sun, 11 Nov 2018 22:35:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 263EF2154B;
+        Sun, 11 Nov 2018 22:35:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975717;
-        bh=0T4jaOTw/nPmRLQzLX69VjP5ud3pj2XrYS5vOXuswCg=;
+        s=default; t=1541975719;
+        bh=lOkhhCxdF4RfOPoZKTcknTVZrtglDOKP0YCJDz5HuHA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SCtK/hZtdMGSGOTbFnG3L4dxfF3QomyhfhxQiOagsgSHBgXO1XIBXOUh6f78bJC2H
-         l92LlCF9hEiyt2QVo1Mh6qx531Plv/FDih9LXvc8QmiFrV64adXo6Yel+XAqKL4WMq
-         RYFBqC9ZF1mEWr2sC+emjdHdzbEBs+fKFbYtSqpc=
+        b=C19CDYELtAr6AKZXn1Jkg28qy0PJpE4OMLLihtUUyYRRTqaby9Qk3STBAmWLuQy2F
+         13INtSu3b1CN5099ZhuEtDOBk4sKn/7gCEGFRcAaIAIuQf5OuMdLUIC7tfGXu4GPXC
+         OkmdmXNbXwR3105HMFZpfBH+NH3RObX1geGdp6FI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Maciej W. Rozycki" <macro@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>
-Subject: [PATCH 4.9 117/141] TC: Set DMA masks for devices
-Date:   Sun, 11 Nov 2018 14:26:16 -0800
-Message-Id: <20181111221644.057579859@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.9 121/141] media: em28xx: use a default format if TRY_FMT fails
+Date:   Sun, 11 Nov 2018 14:26:20 -0800
+Message-Id: <20181111221644.606751688@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
 References: <20181111221627.853046496@linuxfoundation.org>
@@ -63,107 +62,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Maciej W. Rozycki <macro@linux-mips.org>
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-commit 3f2aa244ee1a0d17ed5b6c86564d2c1b24d1c96b upstream.
+commit f823ce2a1202d47110a7ef86b65839f0be8adc38 upstream.
 
-Fix a TURBOchannel support regression with commit 205e1b7f51e4
-("dma-mapping: warn when there is no coherent_dma_mask") that caused
-coherent DMA allocations to produce a warning such as:
+Follow the V4L2 spec, as warned by v4l2-compliance:
 
-defxx: v1.11 2014/07/01  Lawrence V. Stefani and others
-tc1: DEFTA at MMIO addr = 0x1e900000, IRQ = 20, Hardware addr = 08-00-2b-a3-a3-29
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 1 at ./include/linux/dma-mapping.h:516 dfx_dev_register+0x670/0x678
-Modules linked in:
-CPU: 0 PID: 1 Comm: swapper Not tainted 4.19.0-rc6 #2
-Stack : ffffffff8009ffc0 fffffffffffffec0 0000000000000000 ffffffff80647650
-        0000000000000000 0000000000000000 ffffffff806f5f80 ffffffffffffffff
-        0000000000000000 0000000000000000 0000000000000001 ffffffff8065d4e8
-        98000000031b6300 ffffffff80563478 ffffffff805685b0 ffffffffffffffff
-        0000000000000000 ffffffff805d6720 0000000000000204 ffffffff80388df8
-        0000000000000000 0000000000000009 ffffffff8053efd0 ffffffff806657d0
-        0000000000000000 ffffffff803177f8 0000000000000000 ffffffff806d0000
-        9800000003078000 980000000307b9e0 000000001e900000 ffffffff80067940
-        0000000000000000 ffffffff805d6720 0000000000000204 ffffffff80388df8
-        ffffffff805176c0 ffffffff8004dc78 0000000000000000 ffffffff80067940
-        ...
-Call Trace:
-[<ffffffff8004dc78>] show_stack+0xa0/0x130
-[<ffffffff80067940>] __warn+0x128/0x170
----[ end trace b1d1e094f67f3bb2 ]---
+	warn: v4l2-test-formats.cpp(732): TRY_FMT cannot handle an invalid pixelformat.
+	warn: v4l2-test-formats.cpp(733): This may or may not be a problem. For more information see:
 
-This is because the TURBOchannel bus driver fails to set the coherent
-DMA mask for devices enumerated.
+warn: v4l2-test-formats.cpp(734): http://www.mail-archive.com/linux-media@vger.kernel.org/msg56550.html
 
-Set the regular and coherent DMA masks for TURBOchannel devices then,
-observing that the bus protocol supports a 34-bit (16GiB) DMA address
-space, by interpreting the value presented in the address cycle across
-the 32 `ad' lines as a 32-bit word rather than byte address[1].  The
-architectural size of the TURBOchannel DMA address space exceeds the
-maximum amount of RAM any actual TURBOchannel system in existence may
-have, hence both masks are the same.
-
-This removes the warning shown above.
-
-References:
-
-[1] "TURBOchannel Hardware Specification", EK-369AA-OD-007B, Digital
-    Equipment Corporation, January 1993, Section "DMA", pp. 1-15 -- 1-17
-
-Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Patchwork: https://patchwork.linux-mips.org/patch/20835/
-Fixes: 205e1b7f51e4 ("dma-mapping: warn when there is no coherent_dma_mask")
-Cc: stable@vger.kernel.org # 4.16+
-Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: stable@vger.kernel.org
+Fixes: bddcf63313c6 ("V4L/DVB (9927): em28xx: use a more standard way to specify video formats")
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tc/tc.c    |    8 +++++++-
- include/linux/tc.h |    1 +
- 2 files changed, 8 insertions(+), 1 deletion(-)
+ drivers/media/usb/em28xx/em28xx-video.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/tc/tc.c
-+++ b/drivers/tc/tc.c
-@@ -2,7 +2,7 @@
-  *	TURBOchannel bus services.
-  *
-  *	Copyright (c) Harald Koerfgen, 1998
-- *	Copyright (c) 2001, 2003, 2005, 2006  Maciej W. Rozycki
-+ *	Copyright (c) 2001, 2003, 2005, 2006, 2018  Maciej W. Rozycki
-  *	Copyright (c) 2005  James Simmons
-  *
-  *	This file is subject to the terms and conditions of the GNU
-@@ -10,6 +10,7 @@
-  *	directory of this archive for more details.
-  */
- #include <linux/compiler.h>
-+#include <linux/dma-mapping.h>
- #include <linux/errno.h>
- #include <linux/init.h>
- #include <linux/ioport.h>
-@@ -92,6 +93,11 @@ static void __init tc_bus_add_devices(st
- 		tdev->dev.bus = &tc_bus_type;
- 		tdev->slot = slot;
+--- a/drivers/media/usb/em28xx/em28xx-video.c
++++ b/drivers/media/usb/em28xx/em28xx-video.c
+@@ -1435,9 +1435,9 @@ static int vidioc_try_fmt_vid_cap(struct
  
-+		/* TURBOchannel has 34-bit DMA addressing (16GiB space). */
-+		tdev->dma_mask = DMA_BIT_MASK(34);
-+		tdev->dev.dma_mask = &tdev->dma_mask;
-+		tdev->dev.coherent_dma_mask = DMA_BIT_MASK(34);
-+
- 		for (i = 0; i < 8; i++) {
- 			tdev->firmware[i] =
- 				readb(module + offset + TC_FIRM_VER + 4 * i);
---- a/include/linux/tc.h
-+++ b/include/linux/tc.h
-@@ -84,6 +84,7 @@ struct tc_dev {
- 					   device. */
- 	struct device	dev;		/* Generic device interface. */
- 	struct resource	resource;	/* Address space of this device. */
-+	u64		dma_mask;	/* DMA addressable range. */
- 	char		vendor[9];
- 	char		name[9];
- 	char		firmware[9];
+ 	fmt = format_by_fourcc(f->fmt.pix.pixelformat);
+ 	if (!fmt) {
+-		em28xx_videodbg("Fourcc format (%08x) invalid.\n",
+-				f->fmt.pix.pixelformat);
+-		return -EINVAL;
++		fmt = &format[0];
++		em28xx_videodbg("Fourcc format (%08x) invalid. Using default (%08x).\n",
++				f->fmt.pix.pixelformat, fmt->fourcc);
+ 	}
+ 
+ 	if (dev->board.is_em2800) {
 
 
