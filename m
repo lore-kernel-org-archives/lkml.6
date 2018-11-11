@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 299FCC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:35:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FAFEC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:35:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5A6E224E3
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:35:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 478172241E
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:35:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Juq8bJjb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5A6E224E3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rwUUZBpq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 478172241E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405167AbeKLIZW (ORCPT
+        id S2405196AbeKLIZY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:25:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33028 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:25:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33048 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405156AbeKLIZV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:25:21 -0500
+        id S2404638AbeKLIZW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:25:22 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6FAC82241E;
-        Sun, 11 Nov 2018 22:35:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8628223D8;
+        Sun, 11 Nov 2018 22:35:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975723;
-        bh=zwrktwJ9uV8yXeZ3755sxyLSEw5COmQpT6mJSwonSrY=;
+        s=default; t=1541975724;
+        bh=BGzS+dyvAYMm3kBgUzlxZu2tGJCEhtrXZzGOC93BEgM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Juq8bJjbJ8w9MKxPGDRZslhp/29uvBbRapS1MEayculhwJBfuTGqiuHoGgJB2Crib
-         PDCyl4RRQUXfqgSYo6+Q+C52WTWjtBA6LsKCaSF0UPBJM1RAUKoh7gDHBPJNBKmZUp
-         dVVZk/idKarG+HEl7ByS2bjS6lBxc+ACffJjYqkw=
+        b=rwUUZBpqJ1OccKWw2hRFeN+hLvgf1i1vRZx6qNVRizLUflYquYTTqVKXBOFYpVEwJ
+         OJStCkkEiEHkdy4Fp6HvTg2068CGFu9dxQrrR3XmVY/5HITtl9JTBJQi5a+ka4nz8S
+         598kPVGuWG911Q+SHEiniANsCQvotftXn2VII8/s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeff Mahoney <jeffm@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.9 132/141] btrfs: fix error handling in free_log_tree
-Date:   Sun, 11 Nov 2018 14:26:31 -0800
-Message-Id: <20181111221646.031883375@linuxfoundation.org>
+        stable@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.9 102/141] iio: adc: imx25-gcq: Fix leak of device_node in mx25_gcq_setup_cfgs()
+Date:   Sun, 11 Nov 2018 14:26:01 -0800
+Message-Id: <20181111221642.215011993@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
 References: <20181111221627.853046496@linuxfoundation.org>
@@ -62,90 +63,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jeff Mahoney <jeffm@suse.com>
+From: Alexey Khoroshilov <khoroshilov@ispras.ru>
 
-commit 374b0e2d6ba5da7fd1cadb3247731ff27d011f6f upstream.
+commit d3fa21c73c391975488818b085b894c2980ea052 upstream.
 
-When we hit an I/O error in free_log_tree->walk_log_tree during file system
-shutdown we can crash due to there not being a valid transaction handle.
+Leaving for_each_child_of_node loop we should release child device node,
+if it is not stored for future use.
 
-Use btrfs_handle_fs_error when there's no transaction handle to use.
+Found by Linux Driver Verification project (linuxtesting.org).
 
-  BUG: unable to handle kernel NULL pointer dereference at 0000000000000060
-  IP: free_log_tree+0xd2/0x140 [btrfs]
-  PGD 0 P4D 0
-  Oops: 0000 [#1] SMP DEBUG_PAGEALLOC PTI
-  Modules linked in: <modules>
-  CPU: 2 PID: 23544 Comm: umount Tainted: G        W        4.12.14-kvmsmall #9 SLE15 (unreleased)
-  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
-  task: ffff96bfd3478880 task.stack: ffffa7cf40d78000
-  RIP: 0010:free_log_tree+0xd2/0x140 [btrfs]
-  RSP: 0018:ffffa7cf40d7bd10 EFLAGS: 00010282
-  RAX: 00000000fffffffb RBX: 00000000fffffffb RCX: 0000000000000002
-  RDX: 0000000000000000 RSI: ffff96c02f07d4c8 RDI: 0000000000000282
-  RBP: ffff96c013cf1000 R08: ffff96c02f07d4c8 R09: ffff96c02f07d4d0
-  R10: 0000000000000000 R11: 0000000000000002 R12: 0000000000000000
-  R13: ffff96c005e800c0 R14: ffffa7cf40d7bdb8 R15: 0000000000000000
-  FS:  00007f17856bcfc0(0000) GS:ffff96c03f600000(0000) knlGS:0000000000000000
-  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  CR2: 0000000000000060 CR3: 0000000045ed6002 CR4: 00000000003606e0
-  DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-  DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-  Call Trace:
-   ? wait_for_writer+0xb0/0xb0 [btrfs]
-   btrfs_free_log+0x17/0x30 [btrfs]
-   btrfs_drop_and_free_fs_root+0x9a/0xe0 [btrfs]
-   btrfs_free_fs_roots+0xc0/0x130 [btrfs]
-   ? wait_for_completion+0xf2/0x100
-   close_ctree+0xea/0x2e0 [btrfs]
-   ? kthread_stop+0x161/0x260
-   generic_shutdown_super+0x6c/0x120
-   kill_anon_super+0xe/0x20
-   btrfs_kill_super+0x13/0x100 [btrfs]
-   deactivate_locked_super+0x3f/0x70
-   cleanup_mnt+0x3b/0x70
-   task_work_run+0x78/0x90
-   exit_to_usermode_loop+0x77/0xa6
-   do_syscall_64+0x1c5/0x1e0
-   entry_SYSCALL_64_after_hwframe+0x42/0xb7
-  RIP: 0033:0x7f1784f90827
-  RSP: 002b:00007ffdeeb03118 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-  RAX: 0000000000000000 RBX: 0000556a60c62970 RCX: 00007f1784f90827
-  RDX: 0000000000000001 RSI: 0000000000000000 RDI: 0000556a60c62b50
-  RBP: 0000000000000000 R08: 0000000000000005 R09: 00000000ffffffff
-  R10: 0000556a60c63900 R11: 0000000000000246 R12: 0000556a60c62b50
-  R13: 00007f17854a81c4 R14: 0000000000000000 R15: 0000000000000000
-  RIP: free_log_tree+0xd2/0x140 [btrfs] RSP: ffffa7cf40d7bd10
-  CR2: 0000000000000060
+JC: I'm not sending this as a quick fix as it's been wrong for years,
+but good to pick up for stable after the merge window.
 
-Fixes: 681ae50917df9 ("Btrfs: cleanup reserved space when freeing tree log on error")
-CC: <stable@vger.kernel.org> # v3.13
-Signed-off-by: Jeff Mahoney <jeffm@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Fixes: 6df2e98c3ea56 ("iio: adc: Add imx25-gcq ADC driver")
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/tree-log.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/iio/adc/fsl-imx25-gcq.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -3016,9 +3016,12 @@ static void free_log_tree(struct btrfs_t
- 	};
+--- a/drivers/iio/adc/fsl-imx25-gcq.c
++++ b/drivers/iio/adc/fsl-imx25-gcq.c
+@@ -209,12 +209,14 @@ static int mx25_gcq_setup_cfgs(struct pl
+ 		ret = of_property_read_u32(child, "reg", &reg);
+ 		if (ret) {
+ 			dev_err(dev, "Failed to get reg property\n");
++			of_node_put(child);
+ 			return ret;
+ 		}
  
- 	ret = walk_log_tree(trans, log, &wc);
--	/* I don't think this can happen but just in case */
--	if (ret)
--		btrfs_abort_transaction(trans, ret);
-+	if (ret) {
-+		if (trans)
-+			btrfs_abort_transaction(trans, ret);
-+		else
-+			btrfs_handle_fs_error(log->fs_info, ret, NULL);
-+	}
+ 		if (reg >= MX25_NUM_CFGS) {
+ 			dev_err(dev,
+ 				"reg value is greater than the number of available configuration registers\n");
++			of_node_put(child);
+ 			return -EINVAL;
+ 		}
  
- 	while (1) {
- 		ret = find_first_extent_bit(&log->dirty_log_pages,
+@@ -228,6 +230,7 @@ static int mx25_gcq_setup_cfgs(struct pl
+ 			if (IS_ERR(priv->vref[refp])) {
+ 				dev_err(dev, "Error, trying to use external voltage reference without a vref-%s regulator.",
+ 					mx25_gcq_refp_names[refp]);
++				of_node_put(child);
+ 				return PTR_ERR(priv->vref[refp]);
+ 			}
+ 			priv->channel_vref_mv[reg] =
+@@ -240,6 +243,7 @@ static int mx25_gcq_setup_cfgs(struct pl
+ 			break;
+ 		default:
+ 			dev_err(dev, "Invalid positive reference %d\n", refp);
++			of_node_put(child);
+ 			return -EINVAL;
+ 		}
+ 
+@@ -254,10 +258,12 @@ static int mx25_gcq_setup_cfgs(struct pl
+ 
+ 		if ((refp & MX25_ADCQ_CFG_REFP_MASK) != refp) {
+ 			dev_err(dev, "Invalid fsl,adc-refp property value\n");
++			of_node_put(child);
+ 			return -EINVAL;
+ 		}
+ 		if ((refn & MX25_ADCQ_CFG_REFN_MASK) != refn) {
+ 			dev_err(dev, "Invalid fsl,adc-refn property value\n");
++			of_node_put(child);
+ 			return -EINVAL;
+ 		}
+ 
 
 
