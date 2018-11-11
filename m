@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12CD6C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:15:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0743AC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:15:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1D6B2080D
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:15:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1D6B2080D
+	by mail.kernel.org (Postfix) with ESMTP id C92DA2148E
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:15:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C92DA2148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731767AbeKLGFC (ORCPT
+        id S1731775AbeKLGFG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:05:02 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53016 "EHLO
+        Mon, 12 Nov 2018 01:05:06 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53024 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725905AbeKLGFA (ORCPT
+        by vger.kernel.org with ESMTP id S1725905AbeKLGFF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 01:05:00 -0500
+        Mon, 12 Nov 2018 01:05:05 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvt6-0000l5-OC; Sun, 11 Nov 2018 19:59:16 +0000
+        id 1gLvt8-0000lJ-KN; Sun, 11 Nov 2018 19:59:18 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsQ-0001TN-9U; Sun, 11 Nov 2018 19:58:34 +0000
+        id 1gLvsP-0001Rp-PW; Sun, 11 Nov 2018 19:58:33 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -38,13 +38,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org,
-        "Felipe Balbi" <felipe.balbi@linux.intel.com>,
-        "Yoshihiro Shimoda" <yoshihiro.shimoda.uh@renesas.com>
+        "Geert Uytterhoeven" <geert@linux-m68k.org>,
+        "Miquel Raynal" <miquel.raynal@bootlin.com>,
+        "Boris Brezillon" <boris.brezillon@bootlin.com>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.945098252@decadent.org.uk>
+Message-ID: <lsq.1541965745.249488773@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 085/366] usb: gadget: function: printer: avoid
- spinlock recursion
+Subject: [PATCH 3.16 072/366] m68k: Implement ndelay() as an inline
+ function to force type checking/casting
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,43 +59,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Boris Brezillon <boris.brezillon@bootlin.com>
 
-commit 9ada8c582088d32bd5c071c17213bc6edf37443a upstream.
+commit d8441ba80c55aad435e4b98fe0d7ad5d21e46bf9 upstream.
 
-If usb_gadget_giveback_request() is called in usb_ep_queue(),
-this printer_write() is possible to cause spinlock recursion. So,
-this patch adds spin_unlock() before calls usb_ep_queue() to avoid it.
+ndelay() is supposed to take an unsigned long, but if you define
+ndelay() as a macro and the caller pass an unsigned long long instead
+of an unsigned long, the unsigned long long to unsigned long cast is
+not done and we end up with an "undefined reference to `__udivdi3'"
+error at link time.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
-[bwh: Backported to 3.16: adjust filename]
+Fix that by making ndelay() an inline function and then defining dummy
+ndelay() macro that redirects to the ndelay() function (it's how most
+archs do to implement ndelay()).
+
+Fixes: c8ee038bd148 ("m68k: Implement ndelay() based on the existing udelay() logic")
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+[geert: Remove comment now it is no longer a macro]
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/gadget/printer.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ arch/m68k/include/asm/delay.h | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/drivers/usb/gadget/printer.c
-+++ b/drivers/usb/gadget/printer.c
-@@ -587,6 +587,7 @@ printer_write(struct file *fd, const cha
- 	size_t			size;	/* Amount of data in a TX request. */
- 	size_t			bytes_copied = 0;
- 	struct usb_request	*req;
-+	int			value;
+--- a/arch/m68k/include/asm/delay.h
++++ b/arch/m68k/include/asm/delay.h
+@@ -48,8 +48,6 @@ extern void __bad_udelay(void);
+  * The simpler m68k and ColdFire processors do not have a 32*32->64
+  * multiply instruction. So we need to handle them a little differently.
+  * We use a bit of shifting and a single 32*32->32 multiply to get close.
+- * This is a macro so that the const version can factor out the first
+- * multiply and shift.
+  */
+ #define	HZSCALE		(268435456 / (1000000 / HZ))
  
- 	DBG(dev, "printer_write trying to send %d bytes\n", (int)len);
+@@ -114,6 +112,13 @@ static inline void __udelay(unsigned lon
+  */
+ #define	HZSCALE		(268435456 / (1000000 / HZ))
  
-@@ -666,7 +667,11 @@ printer_write(struct file *fd, const cha
- 			return -EAGAIN;
- 		}
+-#define ndelay(n) __delay(DIV_ROUND_UP((n) * ((((HZSCALE) >> 11) * (loops_per_jiffy >> 11)) >> 6), 1000))
++static inline void ndelay(unsigned long nsec)
++{
++	__delay(DIV_ROUND_UP(nsec *
++			     ((((HZSCALE) >> 11) *
++			       (loops_per_jiffy >> 11)) >> 6),
++			     1000));
++}
++#define ndelay(n) ndelay(n)
  
--		if (usb_ep_queue(dev->in_ep, req, GFP_ATOMIC)) {
-+		/* here, we unlock, and only unlock, to avoid deadlock. */
-+		spin_unlock(&dev->lock);
-+		value = usb_ep_queue(dev->in_ep, req, GFP_ATOMIC);
-+		spin_lock(&dev->lock);
-+		if (value) {
- 			list_add(&req->list, &dev->tx_reqs);
- 			spin_unlock_irqrestore(&dev->lock, flags);
- 			mutex_unlock(&dev->lock_printer_io);
+ #endif /* defined(_M68K_DELAY_H) */
 
