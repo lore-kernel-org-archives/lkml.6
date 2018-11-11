@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C122C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:39:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D6DAC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:39:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46857214F1
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:39:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B49D21508
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:39:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="r1LaNpDW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46857214F1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SQDj/kmI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B49D21508
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391393AbeKLI25 (ORCPT
+        id S2405038AbeKLIZP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:28:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32982 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405022AbeKLIZP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:25:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33028 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404965AbeKLIZO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:25:14 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 87FCD224B3;
-        Sun, 11 Nov 2018 22:35:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E1AE02154B;
+        Sun, 11 Nov 2018 22:35:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975717;
-        bh=ucBViScH4sqlT3AFQA9WPDaxaH8oFZ1v0dbgItMO+s4=;
+        s=default; t=1541975716;
+        bh=ul/DpwEIWJgEfCmYXP3srCD+IxVp4qY4QtSYXrlr/J8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r1LaNpDWVI4/idx9P2lk6/9cT3VY3d6wNQRP5XJZWP8RYdRtGzSbN79MFY1od+uMS
-         JNUSgLdbcmWS7/LycuOT1y4n9bp/FlsljPgpUELTw3318SeeBOPQhpV9wv9Lq5PXuZ
-         J43lJEWDXQAOVoyso6ERcovmkvTX4/VamvtFeec0=
+        b=SQDj/kmIt7wkRogVXtgwR962YKZzCtNbgoy6PXDkIfAGz79/gyGLJKxBNYHtyx+Ea
+         GW9xE6M5j+DDbAu8nWXWMDpApe61085KqOXhAul9zcIDuBPwBQXShSfh1mYfSu6e/Y
+         xNyEI6CD4bVL1R5kPHrND6NqcYuIb4p/th0lw/BA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org
-Subject: [PATCH 4.9 116/141] MIPS: OCTEON: fix out of bounds array access on CN68XX
-Date:   Sun, 11 Nov 2018 14:26:15 -0800
-Message-Id: <20181111221643.956252172@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        "J. Bruce Fields" <bfields@redhat.com>
+Subject: [PATCH 4.9 112/141] nfsd: Fix an Oops in free_session()
+Date:   Sun, 11 Nov 2018 14:26:11 -0800
+Message-Id: <20181111221643.413087240@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
 References: <20181111221627.853046496@linuxfoundation.org>
@@ -63,39 +63,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Aaro Koskinen <aaro.koskinen@iki.fi>
+From: Trond Myklebust <trondmy@gmail.com>
 
-commit c0fae7e2452b90c31edd2d25eb3baf0c76b400ca upstream.
+commit bb6ad5572c0022e17e846b382d7413cdcf8055be upstream.
 
-The maximum number of interfaces is returned by
-cvmx_helper_get_number_of_interfaces(), and the value is used to access
-interface_port_count[]. When CN68XX support was added, we forgot
-to increase the array size. Fix that.
+In call_xpt_users(), we delete the entry from the list, but we
+do not reinitialise it. This triggers the list poisoning when
+we later call unregister_xpt_user() in nfsd4_del_conns().
 
-Fixes: 2c8c3f0201333 ("MIPS: Octeon: Support additional interfaces on CN68XX")
-Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Patchwork: https://patchwork.linux-mips.org/patch/20949/
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org # v4.3+
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/cavium-octeon/executive/cvmx-helper.c |    2 +-
+ net/sunrpc/svc_xprt.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/mips/cavium-octeon/executive/cvmx-helper.c
-+++ b/arch/mips/cavium-octeon/executive/cvmx-helper.c
-@@ -67,7 +67,7 @@ void (*cvmx_override_pko_queue_priority)
- void (*cvmx_override_ipd_port_setup) (int ipd_port);
- 
- /* Port count per interface */
--static int interface_port_count[5];
-+static int interface_port_count[9];
- 
- /* Port last configured link info index by IPD/PKO port */
- static cvmx_helper_link_info_t
+--- a/net/sunrpc/svc_xprt.c
++++ b/net/sunrpc/svc_xprt.c
+@@ -1038,7 +1038,7 @@ static void call_xpt_users(struct svc_xp
+ 	spin_lock(&xprt->xpt_lock);
+ 	while (!list_empty(&xprt->xpt_users)) {
+ 		u = list_first_entry(&xprt->xpt_users, struct svc_xpt_user, list);
+-		list_del(&u->list);
++		list_del_init(&u->list);
+ 		u->callback(u);
+ 	}
+ 	spin_unlock(&xprt->xpt_lock);
 
 
