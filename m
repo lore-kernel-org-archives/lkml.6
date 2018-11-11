@@ -6,45 +6,51 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0962CC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:37:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31370C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:37:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7DA220869
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:37:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7DA220869
+	by mail.kernel.org (Postfix) with ESMTP id E440B20869
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:37:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E440B20869
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731104AbeKLG1R (ORCPT
+        id S1730680AbeKLG1Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:27:17 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:49704 "EHLO
+        Mon, 12 Nov 2018 01:27:16 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:49718 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730065AbeKLFsK (ORCPT
+        by vger.kernel.org with ESMTP id S1730067AbeKLFsK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 00:48:10 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsW-0000oU-Cd; Sun, 11 Nov 2018 19:58:40 +0000
+        id 1gLvsT-0000oF-Aq; Sun, 11 Nov 2018 19:58:37 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsT-0001c6-Hj; Sun, 11 Nov 2018 19:58:37 +0000
+        id 1gLvsS-0001ZD-PE; Sun, 11 Nov 2018 19:58:36 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Joakim Tjernlund" <joakim.tjernlund@infinera.com>,
-        "Boris Brezillon" <boris.brezillon@bootlin.com>
+CC:     akpm@linux-foundation.org, linuxppc-dev@lists.ozlabs.org,
+        "Scott Wood" <swood@redhat.com>,
+        "Kumar Gala" <galak@kernel.crashing.org>,
+        "Benjamin Herrenschmidt" <benh@kernel.crashing.org>,
+        "Vakul Garg" <vakul.garg@nxp.com>,
+        "Michael Jeanson" <mjeanson@efficios.com>,
+        "Michael Ellerman" <mpe@ellerman.id.au>,
+        "Mathieu Desnoyers" <mathieu.desnoyers@efficios.com>,
+        "Paul Mackerras" <paulus@samba.org>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.688535801@decadent.org.uk>
+Message-ID: <lsq.1541965745.467550280@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 180/366] mtd: cfi_cmdset_0002: Avoid walking all
- chips when unlocking.
+Subject: [PATCH 3.16 153/366] powerpc/e500mc: Set assembler machine type
+ to e500mc
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,30 +64,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joakim Tjernlund <joakim.tjernlund@infinera.com>
+From: Michael Jeanson <mjeanson@efficios.com>
 
-commit f1ce87f6080b1dda7e7b1eda3da332add19d87b9 upstream.
+commit 69a8405999aa1c489de4b8d349468f0c2b83f093 upstream.
 
-cfi_ppb_unlock() walks all flash chips when unlocking sectors,
-avoid walking chips unaffected by the unlock operation.
+In binutils 2.26 a new opcode for the "wait" instruction was added for the
+POWER9 and has precedence over the one specific to the e500mc. Commit
+ebf714ff3756 ("powerpc/e500mc: Add support for the wait instruction in
+e500_idle") uses this instruction specifically on the e500mc to work around
+an erratum.
 
-Fixes: 1648eaaa1575 ("mtd: cfi_cmdset_0002: Support Persistent Protection Bits (PPB) locking")
-Signed-off-by: Joakim Tjernlund <joakim.tjernlund@infinera.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+This results in an invalid instruction in idle_e500 when we build for the
+e500mc on bintutils >= 2.26 with the default assembler machine type.
+
+Since multiplatform between e500 and non-e500 is not supported, set the
+assembler machine type globaly when CONFIG_PPC_E500MC=y.
+
+Signed-off-by: Michael Jeanson <mjeanson@efficios.com>
+Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+CC: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+CC: Paul Mackerras <paulus@samba.org>
+CC: Michael Ellerman <mpe@ellerman.id.au>
+CC: Kumar Gala <galak@kernel.crashing.org>
+CC: Vakul Garg <vakul.garg@nxp.com>
+CC: Scott Wood <swood@redhat.com>
+CC: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+CC: linuxppc-dev@lists.ozlabs.org
+CC: linux-kernel@vger.kernel.org
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/mtd/chips/cfi_cmdset_0002.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/powerpc/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/mtd/chips/cfi_cmdset_0002.c
-+++ b/drivers/mtd/chips/cfi_cmdset_0002.c
-@@ -2356,6 +2356,8 @@ static int __maybe_unused cfi_ppb_unlock
- 			i++;
+--- a/arch/powerpc/Makefile
++++ b/arch/powerpc/Makefile
+@@ -205,6 +205,7 @@ endif
+ cpu-as-$(CONFIG_4xx)		+= -Wa,-m405
+ cpu-as-$(CONFIG_ALTIVEC)	+= -Wa,-maltivec
+ cpu-as-$(CONFIG_E200)		+= -Wa,-me200
++cpu-as-$(CONFIG_PPC_E500MC)	+= $(call as-option,-Wa$(comma)-me500mc)
  
- 		if (adr >> cfi->chipshift) {
-+			if (offset >= (ofs + len))
-+				break;
- 			adr = 0;
- 			chipnum++;
- 
+ KBUILD_AFLAGS += $(cpu-as-y)
+ KBUILD_CFLAGS += $(cpu-as-y)
 
