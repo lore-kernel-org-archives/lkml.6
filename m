@@ -2,128 +2,877 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD73DC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 13:27:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C830C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 13:27:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74ED620866
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 13:27:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C2C621104
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 13:27:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C7AJ/Fm3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74ED620866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kyPjyY32"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C2C621104
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728096AbeKKXPf (ORCPT
+        id S1728128AbeKKXQV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 18:15:35 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40521 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727594AbeKKXPe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 18:15:34 -0500
-Received: by mail-wr1-f67.google.com with SMTP id w14-v6so1031021wrt.7;
-        Sun, 11 Nov 2018 05:26:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=EhCsaP7JHJY3ixUioPIMz9+bzITJ384+ymznfxWL05U=;
-        b=C7AJ/Fm3mFtQBgTlmdpPxaHIWtV9M9+tkRzDwsli9IewVlyMWNMZqrGeu7XTmJ7JT4
-         WiNIUQVEP6my+q3FJLvhjfSQ/rsNHMOmaaihOCE+VLo464W21l/euD4ZaPYiF4Dv5F4Z
-         LObDj0JGZXOavMIYeTi5prbYEa8qfG8EHMEThn6vy44xrj9Wnqr+oFV5GX5Yl4gg9g6o
-         +lcP8m/MmvjcAHaH55TVzi6gxlLn35yLp5JJ/YP5IOz13D5BaQrYPqyKJDclbUWKRB1s
-         bg9s34Uyy08OvLcGoGNCAvWmYRT9REAr3IHAgS/dIQ2VJz7zzbQulZSwG+jnhPMX2lkV
-         m1aA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=EhCsaP7JHJY3ixUioPIMz9+bzITJ384+ymznfxWL05U=;
-        b=X2xOPyGIj9ryq8EygkEX8L0EKI5VdsJdzu9UJdFltNZCG6nP+E/gP1Qxa4hcC8QvBI
-         ee1R2gzv/u5hFSdvR9ciYWBixuQzujzvfi/kUZXhlbWJFRAouXpcAk9JPpHo3imkhoJh
-         3qmWJmZgVmu+7CaWAUQlpclezLxoUP0Xtq9VRegQGVb1mt5XTidz6okQJdkF1TUeRbhD
-         vPDSGmgq06iBLzfcqymWbvSDMhW3mpQGA66aZmCDB5qEkMzwtGjGAewwBdZ0/0+X4rjl
-         VXncj96WJOAEJ+foqX2F41M8UAfiv2tKT/pZTo+/1PmH4OOud3Ojh/i4mKHFLQL4papi
-         QZyw==
-X-Gm-Message-State: AGRZ1gKj+ZVhKoaqWXw7aVsN6OQlEMpwoanCsnNXzF32jxNGym4g2uX0
-        6iX8tFEtRqXAYuNSud9gC7r7/a4i
-X-Google-Smtp-Source: AJdET5eGtfX0n3J65LEe8M7zH0twWgpU+fsZLK1L26CBHpKak8Ftuf/u6FL1/AjmM/gKVJDkN4AnNQ==
-X-Received: by 2002:adf:bbc5:: with SMTP id z5-v6mr13884604wrg.183.1541942818564;
-        Sun, 11 Nov 2018 05:26:58 -0800 (PST)
-Received: from [192.168.42.150] (cst-prg-2-96.cust.vodafone.cz. [46.135.2.96])
-        by smtp.gmail.com with ESMTPSA id p16-v6sm23838032wro.29.2018.11.11.05.26.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 11 Nov 2018 05:26:57 -0800 (PST)
-Subject: Re: [PATCH] mfd: bd9571mwv: add volatile register to make DVFS work
-To:     Wolfram Sang <wsa@the-dreams.de>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Lee Jones <lee.jones@linaro.org>,
-        Dien Pham <dien.pham.ry@renesas.com>
-References: <20181003135841.4984-1-wsa+renesas@sang-engineering.com>
- <20181109110413.GC1031@kunai>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <0250a104-dab0-b8cb-11e3-e061be103018@gmail.com>
-Date:   Sun, 11 Nov 2018 14:26:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Sun, 11 Nov 2018 18:16:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43472 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727594AbeKKXQV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Nov 2018 18:16:21 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C67EE20866;
+        Sun, 11 Nov 2018 13:27:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541942865;
+        bh=9WuQw/SfCGhBRxQkOfI+hufa1B90gfj9izhVjeMcRgM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=kyPjyY32ZzR9pw88C9PvFZ4w96j6QRmfPtdfsIkYZrtSWNvwGjJeR1hGkdexUOhqK
+         h+3xjBZD09dUGubSy5sCZVeMS00+LVelU4zKoiLgZyFskUYywK2fRzPK1kiV612vhv
+         GfIuKkMhSj64VCbtHYiVrTSXtI8kdOlV8Gk6DO7E=
+Date:   Sun, 11 Nov 2018 13:27:39 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Parthiban Nallathambi <pn@denx.de>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald <pmeerw@pmeerw.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-iio <linux-iio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Subject: Re: [PATCH v7 1/2] iio: light: Add support for vishay vcnl4035
+Message-ID: <20181111132739.47c8d456@archlinux>
+In-Reply-To: <CAHp75VdwzdX6kXwiRZjQ14UDjsdn6H=imtbNNuv4Z=2iicL5uA@mail.gmail.com>
+References: <20181107170821.1171886-1-pn@denx.de>
+        <CAHp75VdwzdX6kXwiRZjQ14UDjsdn6H=imtbNNuv4Z=2iicL5uA@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20181109110413.GC1031@kunai>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/09/2018 12:04 PM, Wolfram Sang wrote:
-> On Wed, Oct 03, 2018 at 03:58:41PM +0200, Wolfram Sang wrote:
->> From: Dien Pham <dien.pham.ry@renesas.com>
->>
->> Because BD9571MWV_DVFS_MONIVDAC is not defined in the volatile table,
->> the physical register value is not updated by regmap and DVFS doesn't
->> work as expected. Fix it!
->>
->> Signed-off-by: Dien Pham <dien.pham.ry@renesas.com>
->> [wsa: rebase, add 'Fixes', reword commit message]
->> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->> Fixes: d3ea21272094 ("mfd: Add ROHM BD9571MWV-M MFD PMIC driver")
->> ---
+On Wed, 7 Nov 2018 22:24:47 +0200
+Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
+
+> On Wed, Nov 7, 2018 at 7:08 PM Parthiban Nallathambi <pn@denx.de> wrote:
+> >
+> > Add support for VCNL4035, which is capable of Ambient light
+> > sensing (ALS) and proximity function. This patch adds support
+> > only for ALS function
+> >  
 > 
-> Any blockers for this one?
+A comment inline around scale vs integration time as the
+controlled variable.  For the majority of device types scale
+would be the preferred choice, but for light sensors the fact
+that this is unusual in that it is linear, means that integration
+time is probably the more common one to be controlled.
+
+So upshot, I think this is fine.
+
+
+> FWIW,
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Thanks - it is worth a lot Andy and your reviews are always
+appreciated.
+
+Applied to the togreg branch of iio.git and pushed out as
+testing for the autobuilders to play with it.
+
+Thanks,
+
+Jonathan
+
 > 
->>
->> Grabbed from the BSP and confirmed by the datasheet. The register is RO
->> and reflecting states depending on other registers.
->>
->>  drivers/mfd/bd9571mwv.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/mfd/bd9571mwv.c b/drivers/mfd/bd9571mwv.c
->> index 503979c81dae..fab3cdc27ed6 100644
->> --- a/drivers/mfd/bd9571mwv.c
->> +++ b/drivers/mfd/bd9571mwv.c
->> @@ -59,6 +59,7 @@ static const struct regmap_access_table bd9571mwv_writable_table = {
->>  };
->>  
->>  static const struct regmap_range bd9571mwv_volatile_yes_ranges[] = {
->> +	regmap_reg_range(BD9571MWV_DVFS_MONIVDAC, BD9571MWV_DVFS_MONIVDAC),
->>  	regmap_reg_range(BD9571MWV_GPIO_IN, BD9571MWV_GPIO_IN),
->>  	regmap_reg_range(BD9571MWV_GPIO_INT, BD9571MWV_GPIO_INT),
->>  	regmap_reg_range(BD9571MWV_INT_INTREQ, BD9571MWV_INT_INTREQ),
->> -- 
+> > Signed-off-by: Parthiban Nallathambi <pn@denx.de>
+> > ---
+> >
+> > Notes:
+> >     Changelog in v7:
+> >     - change probe and remove ordering
+> >     - remove noidle pm call
+> >
+> >     Changelog in v6:
+> >     - Usage of devm_ for trigger probing and cleanups
+> >     - pm_runtime re-order and exit patch corrections
+> >     - IIO_INTENSITY to IIO_LIGHT, lux/steps are fixed at IT cycle
+> >     lux can be calculated based on IT sensitivity
+> >     - _CLEAR to _BOTH although measurement is only WHITE spectrum
+> >     for traditional reasons
+> >
+> >     Changelog in v5:
+> >     - White spectrum is mesaured as "_CLEAR" intesity, so removed
+> >     white spectrum modifier
+> >     - Header re-ordering
+> >     - Trigger init and de-init into separate function
+> >     - Indentation correct and usage of dev_err in place of pr_err
+> >
+> >     Changelog in v4:
+> >     - New white light index is introduced for getting data from
+> >     white spectrum
+> >     - PM enable/disable is called from read_raw accordingly
+> >     - Probe exit handling re-ordered
+> >
+> >     Changelog in v3:
+> >     - Usage of lock is not needed, removed mutex locking
+> >     - ALS threshold and persistence configuration available
+> >     as events and threshold events are notified to userspace
+> >     - Usage of devm_ is re-ordered and exit handling updated
+> >     - Complexity in timestamp calculation is removed and used
+> >     iio_get_time_ns
+> >
+> >     Changelog in v2:
+> >     1. Fixed 0-day warning on le16_to_cpu usage
+> >     2. Persistence value is directly mapped to datasheet's value to
+> >     avoid confusions of usage from sysfs
+> >
+> >  drivers/iio/light/Kconfig    |  13 +
+> >  drivers/iio/light/Makefile   |   1 +
+> >  drivers/iio/light/vcnl4035.c | 676 +++++++++++++++++++++++++++++++++++
+> >  3 files changed, 690 insertions(+)
+> >  create mode 100644 drivers/iio/light/vcnl4035.c
+> >
+> > diff --git a/drivers/iio/light/Kconfig b/drivers/iio/light/Kconfig
+> > index d66ea754ffff..36f458433480 100644
+> > --- a/drivers/iio/light/Kconfig
+> > +++ b/drivers/iio/light/Kconfig
+> > @@ -460,6 +460,19 @@ config VCNL4000
+> >          To compile this driver as a module, choose M here: the
+> >          module will be called vcnl4000.
+> >
+> > +config VCNL4035
+> > +       tristate "VCNL4035 combined ALS and proximity sensor"
+> > +       select IIO_TRIGGERED_BUFFER
+> > +       select REGMAP_I2C
+> > +       depends on I2C
+> > +       help
+> > +        Say Y here if you want to build a driver for the Vishay VCNL4035,
+> > +        combined ambient light (ALS) and proximity sensor. Currently only ALS
+> > +        function is available.
+> > +
+> > +        To compile this driver as a module, choose M here: the
+> > +        module will be called vcnl4035.
+> > +
+> >  config VEML6070
+> >         tristate "VEML6070 UV A light sensor"
+> >         depends on I2C
+> > diff --git a/drivers/iio/light/Makefile b/drivers/iio/light/Makefile
+> > index 86337b114bc4..286bf3975372 100644
+> > --- a/drivers/iio/light/Makefile
+> > +++ b/drivers/iio/light/Makefile
+> > @@ -45,6 +45,7 @@ obj-$(CONFIG_TSL2772)         += tsl2772.o
+> >  obj-$(CONFIG_TSL4531)          += tsl4531.o
+> >  obj-$(CONFIG_US5182D)          += us5182d.o
+> >  obj-$(CONFIG_VCNL4000)         += vcnl4000.o
+> > +obj-$(CONFIG_VCNL4035)         += vcnl4035.o
+> >  obj-$(CONFIG_VEML6070)         += veml6070.o
+> >  obj-$(CONFIG_VL6180)           += vl6180.o
+> >  obj-$(CONFIG_ZOPT2201)         += zopt2201.o
+> > diff --git a/drivers/iio/light/vcnl4035.c b/drivers/iio/light/vcnl4035.c
+> > new file mode 100644
+> > index 000000000000..cca4db312bd3
+> > --- /dev/null
+> > +++ b/drivers/iio/light/vcnl4035.c
+> > @@ -0,0 +1,676 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * VCNL4035 Ambient Light and Proximity Sensor - 7-bit I2C slave address 0x60
+> > + *
+> > + * Copyright (c) 2018, DENX Software Engineering GmbH
+> > + * Author: Parthiban Nallathambi <pn@denx.de>
+> > + *
+> > + * TODO: Proximity
+> > + */
+> > +#include <linux/bitops.h>
+> > +#include <linux/i2c.h>
+> > +#include <linux/module.h>
+> > +#include <linux/pm_runtime.h>
+> > +#include <linux/regmap.h>
+> > +
+> > +#include <linux/iio/buffer.h>
+> > +#include <linux/iio/events.h>
+> > +#include <linux/iio/iio.h>
+> > +#include <linux/iio/sysfs.h>
+> > +#include <linux/iio/trigger.h>
+> > +#include <linux/iio/trigger_consumer.h>
+> > +#include <linux/iio/triggered_buffer.h>
+> > +
+> > +#define VCNL4035_DRV_NAME      "vcnl4035"
+> > +#define VCNL4035_IRQ_NAME      "vcnl4035_event"
+> > +#define VCNL4035_REGMAP_NAME   "vcnl4035_regmap"
+> > +
+> > +/* Device registers */
+> > +#define VCNL4035_ALS_CONF      0x00
+> > +#define VCNL4035_ALS_THDH      0x01
+> > +#define VCNL4035_ALS_THDL      0x02
+> > +#define VCNL4035_ALS_DATA      0x0B
+> > +#define VCNL4035_WHITE_DATA    0x0C
+> > +#define VCNL4035_INT_FLAG      0x0D
+> > +#define VCNL4035_DEV_ID                0x0E
+> > +
+> > +/* Register masks */
+> > +#define VCNL4035_MODE_ALS_MASK         BIT(0)
+> > +#define VCNL4035_MODE_ALS_WHITE_CHAN   BIT(8)
+> > +#define VCNL4035_MODE_ALS_INT_MASK     BIT(1)
+> > +#define VCNL4035_ALS_IT_MASK           GENMASK(7, 5)
+> > +#define VCNL4035_ALS_PERS_MASK         GENMASK(3, 2)
+> > +#define VCNL4035_INT_ALS_IF_H_MASK     BIT(12)
+> > +#define VCNL4035_INT_ALS_IF_L_MASK     BIT(13)
+> > +
+> > +/* Default values */
+> > +#define VCNL4035_MODE_ALS_ENABLE       BIT(0)
+> > +#define VCNL4035_MODE_ALS_DISABLE      0x00
+> > +#define VCNL4035_MODE_ALS_INT_ENABLE   BIT(1)
+> > +#define VCNL4035_MODE_ALS_INT_DISABLE  0
+> > +#define VCNL4035_DEV_ID_VAL            0x80
+> > +#define VCNL4035_ALS_IT_DEFAULT                0x01
+> > +#define VCNL4035_ALS_PERS_DEFAULT      0x00
+> > +#define VCNL4035_ALS_THDH_DEFAULT      5000
+> > +#define VCNL4035_ALS_THDL_DEFAULT      100
+> > +#define VCNL4035_SLEEP_DELAY_MS                2000
+> > +
+> > +struct vcnl4035_data {
+> > +       struct i2c_client *client;
+> > +       struct regmap *regmap;
+> > +       unsigned int als_it_val;
+> > +       unsigned int als_persistence;
+> > +       unsigned int als_thresh_low;
+> > +       unsigned int als_thresh_high;
+> > +       struct iio_trigger *drdy_trigger0;
+> > +};
+> > +
+> > +static inline bool vcnl4035_is_triggered(struct vcnl4035_data *data)
+> > +{
+> > +       int ret;
+> > +       int reg;
+> > +
+> > +       ret = regmap_read(data->regmap, VCNL4035_INT_FLAG, &reg);
+> > +       if (ret < 0)
+> > +               return false;
+> > +
+> > +       return !!(reg &
+> > +               (VCNL4035_INT_ALS_IF_H_MASK | VCNL4035_INT_ALS_IF_L_MASK));
+> > +}
+> > +
+> > +static irqreturn_t vcnl4035_drdy_irq_thread(int irq, void *private)
+> > +{
+> > +       struct iio_dev *indio_dev = private;
+> > +       struct vcnl4035_data *data = iio_priv(indio_dev);
+> > +
+> > +       if (vcnl4035_is_triggered(data)) {
+> > +               iio_push_event(indio_dev, IIO_UNMOD_EVENT_CODE(IIO_LIGHT,
+> > +                                                       0,
+> > +                                                       IIO_EV_TYPE_THRESH,
+> > +                                                       IIO_EV_DIR_EITHER),
+> > +                               iio_get_time_ns(indio_dev));
+> > +               iio_trigger_poll_chained(data->drdy_trigger0);
+> > +               return IRQ_HANDLED;
+> > +       }
+> > +
+> > +       return IRQ_NONE;
+> > +}
+> > +
+> > +/* Triggered buffer */
+> > +static irqreturn_t vcnl4035_trigger_consumer_handler(int irq, void *p)
+> > +{
+> > +       struct iio_poll_func *pf = p;
+> > +       struct iio_dev *indio_dev = pf->indio_dev;
+> > +       struct vcnl4035_data *data = iio_priv(indio_dev);
+> > +       u8 buffer[ALIGN(sizeof(u16), sizeof(s64)) + sizeof(s64)];
+> > +       int ret;
+> > +
+> > +       ret = regmap_read(data->regmap, VCNL4035_ALS_DATA, (int *)buffer);
+> > +       if (ret < 0) {
+> > +               dev_err(&data->client->dev,
+> > +                       "Trigger consumer can't read from sensor.\n");
+> > +               goto fail_read;
+> > +       }
+> > +       iio_push_to_buffers_with_timestamp(indio_dev, buffer,
+> > +                                       iio_get_time_ns(indio_dev));
+> > +
+> > +fail_read:
+> > +       iio_trigger_notify_done(indio_dev->trig);
+> > +
+> > +       return IRQ_HANDLED;
+> > +}
+> > +
+> > +static int vcnl4035_als_drdy_set_state(struct iio_trigger *trigger,
+> > +                                       bool enable_drdy)
+> > +{
+> > +       struct iio_dev *indio_dev = iio_trigger_get_drvdata(trigger);
+> > +       struct vcnl4035_data *data = iio_priv(indio_dev);
+> > +       int val = enable_drdy ? VCNL4035_MODE_ALS_INT_ENABLE :
+> > +                                       VCNL4035_MODE_ALS_INT_DISABLE;
+> > +
+> > +       return regmap_update_bits(data->regmap, VCNL4035_ALS_CONF,
+> > +                                VCNL4035_MODE_ALS_INT_MASK,
+> > +                                val);
+> > +}
+> > +
+> > +static const struct iio_trigger_ops vcnl4035_trigger_ops = {
+> > +       .validate_device = iio_trigger_validate_own_device,
+> > +       .set_trigger_state = vcnl4035_als_drdy_set_state,
+> > +};
+> > +
+> > +static int vcnl4035_set_pm_runtime_state(struct vcnl4035_data *data, bool on)
+> > +{
+> > +       int ret;
+> > +       struct device *dev = &data->client->dev;
+> > +
+> > +       if (on) {
+> > +               ret = pm_runtime_get_sync(dev);
+> > +               if (ret < 0)
+> > +                       pm_runtime_put_noidle(dev);
+> > +       } else {
+> > +               pm_runtime_mark_last_busy(dev);
+> > +               ret = pm_runtime_put_autosuspend(dev);
+> > +       }
+> > +
+> > +       return ret;
+> > +}
+> > +
+> > +/*
+> > + *     Device IT       INT Time (ms)   Scale (lux/step)
+> > + *     000             50              0.064
+> > + *     001             100             0.032
+> > + *     010             200             0.016
+> > + *     100             400             0.008
+> > + *     101 - 111       800             0.004
+> > + * Values are proportional, so ALS INT is selected for input due to
+> > + * simplicity reason. Integration time value and scaling is
+> > + * calculated based on device INT value
+Hmm. Normally I'd say that the default should be scale, but
+because most light sensors are no where near linear, we have
+quite a few where integration time is controlled (IIRC) because
+there isn't a choice.
 
-Makes sense,
+So I think we are fine with this...
 
-Reviewed-by: Marek Vasut <marek.vasut@gmail.com>
 
--- 
-Best regards,
-Marek Vasut
+
+> > + *
+> > + * Raw value needs to be scaled using ALS steps
+> > + */
+> > +static int vcnl4035_read_raw(struct iio_dev *indio_dev,
+> > +                           struct iio_chan_spec const *chan, int *val,
+> > +                           int *val2, long mask)
+> > +{
+> > +       struct vcnl4035_data *data = iio_priv(indio_dev);
+> > +       int ret;
+> > +       int raw_data;
+> > +       unsigned int reg;
+> > +
+> > +       switch (mask) {
+> > +       case IIO_CHAN_INFO_RAW:
+> > +               ret = vcnl4035_set_pm_runtime_state(data, true);
+> > +               if  (ret < 0)
+> > +                       return ret;
+> > +
+> > +               ret = iio_device_claim_direct_mode(indio_dev);
+> > +               if (!ret) {
+> > +                       if (chan->channel)
+> > +                               reg = VCNL4035_ALS_DATA;
+> > +                       else
+> > +                               reg = VCNL4035_WHITE_DATA;
+> > +                       ret = regmap_read(data->regmap, reg, &raw_data);
+> > +                       iio_device_release_direct_mode(indio_dev);
+> > +                       if (!ret) {
+> > +                               *val = raw_data;
+> > +                               ret = IIO_VAL_INT;
+> > +                       }
+> > +               }
+> > +               vcnl4035_set_pm_runtime_state(data, false);
+> > +               return ret;
+> > +       case IIO_CHAN_INFO_INT_TIME:
+> > +               *val = 50;
+> > +               if (data->als_it_val)
+> > +                       *val = data->als_it_val * 100;
+> > +               return IIO_VAL_INT;
+> > +       case IIO_CHAN_INFO_SCALE:
+> > +               *val = 64;
+> > +               if (!data->als_it_val)
+> > +                       *val2 = 1000;
+> > +               else
+> > +                       *val2 = data->als_it_val * 2 * 1000;
+> > +               return IIO_VAL_FRACTIONAL;
+> > +       default:
+> > +               return -EINVAL;
+> > +       }
+> > +}
+> > +
+> > +static int vcnl4035_write_raw(struct iio_dev *indio_dev,
+> > +                               struct iio_chan_spec const *chan,
+> > +                               int val, int val2, long mask)
+> > +{
+> > +       int ret;
+> > +       struct vcnl4035_data *data = iio_priv(indio_dev);
+> > +
+> > +       switch (mask) {
+> > +       case IIO_CHAN_INFO_INT_TIME:
+> > +               if (val <= 0 || val > 800)
+> > +                       return -EINVAL;
+> > +
+> > +               ret = vcnl4035_set_pm_runtime_state(data, true);
+> > +               if  (ret < 0)
+> > +                       return ret;
+> > +
+> > +               ret = regmap_update_bits(data->regmap, VCNL4035_ALS_CONF,
+> > +                                        VCNL4035_ALS_IT_MASK,
+> > +                                        val / 100);
+> > +               if (!ret)
+> > +                       data->als_it_val = val / 100;
+> > +
+> > +               vcnl4035_set_pm_runtime_state(data, false);
+> > +               return ret;
+> > +       default:
+> > +               return -EINVAL;
+> > +       }
+> > +}
+> > +
+> > +/* No direct ABI for persistence and threshold, so eventing */
+> > +static int vcnl4035_read_thresh(struct iio_dev *indio_dev,
+> > +               const struct iio_chan_spec *chan, enum iio_event_type type,
+> > +               enum iio_event_direction dir, enum iio_event_info info,
+> > +               int *val, int *val2)
+> > +{
+> > +       struct vcnl4035_data *data = iio_priv(indio_dev);
+> > +
+> > +       switch (info) {
+> > +       case IIO_EV_INFO_VALUE:
+> > +               switch (dir) {
+> > +               case IIO_EV_DIR_RISING:
+> > +                       *val = data->als_thresh_high;
+> > +                       return IIO_VAL_INT;
+> > +               case IIO_EV_DIR_FALLING:
+> > +                       *val = data->als_thresh_low;
+> > +                       return IIO_VAL_INT;
+> > +               default:
+> > +                       return -EINVAL;
+> > +               }
+> > +               break;
+> > +       case IIO_EV_INFO_PERIOD:
+> > +               *val = data->als_persistence;
+> > +               return IIO_VAL_INT;
+> > +       default:
+> > +               return -EINVAL;
+> > +       }
+> > +
+> > +}
+> > +
+> > +static int vcnl4035_write_thresh(struct iio_dev *indio_dev,
+> > +               const struct iio_chan_spec *chan, enum iio_event_type type,
+> > +               enum iio_event_direction dir, enum iio_event_info info, int val,
+> > +               int val2)
+> > +{
+> > +       struct vcnl4035_data *data = iio_priv(indio_dev);
+> > +       int ret;
+> > +
+> > +       switch (info) {
+> > +       case IIO_EV_INFO_VALUE:
+> > +               /* 16 bit threshold range 0 - 65535 */
+> > +               if (val < 0 || val > 65535)
+> > +                       return -EINVAL;
+> > +               if (dir == IIO_EV_DIR_RISING) {
+> > +                       if (val < data->als_thresh_low)
+> > +                               return -EINVAL;
+> > +                       ret = regmap_write(data->regmap, VCNL4035_ALS_THDH,
+> > +                                          val);
+> > +                       if (ret)
+> > +                               return ret;
+> > +                       data->als_thresh_high = val;
+> > +               } else {
+> > +                       if (val > data->als_thresh_high)
+> > +                               return -EINVAL;
+> > +                       ret = regmap_write(data->regmap, VCNL4035_ALS_THDL,
+> > +                                          val);
+> > +                       if (ret)
+> > +                               return ret;
+> > +                       data->als_thresh_low = val;
+> > +               }
+> > +               return ret;
+> > +       case IIO_EV_INFO_PERIOD:
+> > +               /* allow only 1 2 4 8 as persistence value */
+> > +               if (val < 0 || val > 8 || hweight8(val) != 1)
+> > +                       return -EINVAL;
+> > +               ret = regmap_update_bits(data->regmap, VCNL4035_ALS_CONF,
+> > +                                        VCNL4035_ALS_PERS_MASK, val);
+> > +               if (!ret)
+> > +                       data->als_persistence = val;
+> > +               return ret;
+> > +       default:
+> > +               return -EINVAL;
+> > +       }
+> > +}
+> > +
+> > +static IIO_CONST_ATTR_INT_TIME_AVAIL("50 100 200 400 800");
+> > +
+> > +static struct attribute *vcnl4035_attributes[] = {
+> > +       &iio_const_attr_integration_time_available.dev_attr.attr,
+> > +       NULL,
+> > +};
+> > +
+> > +static const struct attribute_group vcnl4035_attribute_group = {
+> > +       .attrs = vcnl4035_attributes,
+> > +};
+> > +
+> > +static const struct iio_info vcnl4035_info = {
+> > +       .read_raw               = vcnl4035_read_raw,
+> > +       .write_raw              = vcnl4035_write_raw,
+> > +       .read_event_value       = vcnl4035_read_thresh,
+> > +       .write_event_value      = vcnl4035_write_thresh,
+> > +       .attrs                  = &vcnl4035_attribute_group,
+> > +};
+> > +
+> > +static const struct iio_event_spec vcnl4035_event_spec[] = {
+> > +       {
+> > +               .type = IIO_EV_TYPE_THRESH,
+> > +               .dir = IIO_EV_DIR_RISING,
+> > +               .mask_separate = BIT(IIO_EV_INFO_VALUE),
+> > +       }, {
+> > +               .type = IIO_EV_TYPE_THRESH,
+> > +               .dir = IIO_EV_DIR_FALLING,
+> > +               .mask_separate = BIT(IIO_EV_INFO_VALUE),
+> > +       }, {
+> > +               .type = IIO_EV_TYPE_THRESH,
+> > +               .dir = IIO_EV_DIR_EITHER,
+> > +               .mask_separate = BIT(IIO_EV_INFO_PERIOD),
+> > +       },
+> > +};
+> > +
+> > +enum vcnl4035_scan_index_order {
+> > +       VCNL4035_CHAN_INDEX_LIGHT,
+> > +       VCNL4035_CHAN_INDEX_WHITE_LED,
+> > +};
+> > +
+> > +static const struct iio_buffer_setup_ops iio_triggered_buffer_setup_ops = {
+> > +       .validate_scan_mask = &iio_validate_scan_mask_onehot,
+> > +};
+> > +
+> > +static const struct iio_chan_spec vcnl4035_channels[] = {
+> > +       {
+> > +               .type = IIO_LIGHT,
+> > +               .channel = 0,
+> > +               .info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
+> > +                               BIT(IIO_CHAN_INFO_INT_TIME) |
+> > +                               BIT(IIO_CHAN_INFO_SCALE),
+> > +               .event_spec = vcnl4035_event_spec,
+> > +               .num_event_specs = ARRAY_SIZE(vcnl4035_event_spec),
+> > +               .scan_index = VCNL4035_CHAN_INDEX_LIGHT,
+> > +               .scan_type = {
+> > +                       .sign = 'u',
+> > +                       .realbits = 16,
+> > +                       .storagebits = 16,
+> > +                       .endianness = IIO_LE,
+> > +               },
+> > +       },
+> > +       {
+> > +               .type = IIO_INTENSITY,
+> > +               .channel = 1,
+> > +               .modified = 1,
+> > +               .channel2 = IIO_MOD_LIGHT_BOTH,
+> > +               .info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+> > +               .scan_index = VCNL4035_CHAN_INDEX_WHITE_LED,
+> > +               .scan_type = {
+> > +                       .sign = 'u',
+> > +                       .realbits = 16,
+> > +                       .storagebits = 16,
+> > +                       .endianness = IIO_LE,
+> > +               },
+> > +       },
+> > +};
+> > +
+> > +static int vcnl4035_set_als_power_state(struct vcnl4035_data *data, u8 status)
+> > +{
+> > +       return regmap_update_bits(data->regmap, VCNL4035_ALS_CONF,
+> > +                                       VCNL4035_MODE_ALS_MASK,
+> > +                                       status);
+> > +}
+> > +
+> > +static int vcnl4035_init(struct vcnl4035_data *data)
+> > +{
+> > +       int ret;
+> > +       int id;
+> > +
+> > +       ret = regmap_read(data->regmap, VCNL4035_DEV_ID, &id);
+> > +       if (ret < 0) {
+> > +               dev_err(&data->client->dev, "Failed to read DEV_ID register\n");
+> > +               return ret;
+> > +       }
+> > +
+> > +       if (id != VCNL4035_DEV_ID_VAL) {
+> > +               dev_err(&data->client->dev, "Wrong id, got %x, expected %x\n",
+> > +                       id, VCNL4035_DEV_ID_VAL);
+> > +               return -ENODEV;
+> > +       }
+> > +
+> > +       ret = vcnl4035_set_als_power_state(data, VCNL4035_MODE_ALS_ENABLE);
+> > +       if (ret < 0)
+> > +               return ret;
+> > +
+> > +       /* ALS white channel enable */
+> > +       ret = regmap_update_bits(data->regmap, VCNL4035_ALS_CONF,
+> > +                                VCNL4035_MODE_ALS_WHITE_CHAN,
+> > +                                1);
+> > +       if (ret) {
+> > +               dev_err(&data->client->dev, "set white channel enable %d\n",
+> > +                       ret);
+> > +               return ret;
+> > +       }
+> > +
+> > +       /* set default integration time - 100 ms for ALS */
+> > +       ret = regmap_update_bits(data->regmap, VCNL4035_ALS_CONF,
+> > +                                VCNL4035_ALS_IT_MASK,
+> > +                                VCNL4035_ALS_IT_DEFAULT);
+> > +       if (ret) {
+> > +               dev_err(&data->client->dev, "set default ALS IT returned %d\n",
+> > +                       ret);
+> > +               return ret;
+> > +       }
+> > +       data->als_it_val = VCNL4035_ALS_IT_DEFAULT;
+> > +
+> > +       /* set default persistence time - 1 for ALS */
+> > +       ret = regmap_update_bits(data->regmap, VCNL4035_ALS_CONF,
+> > +                                VCNL4035_ALS_PERS_MASK,
+> > +                                VCNL4035_ALS_PERS_DEFAULT);
+> > +       if (ret) {
+> > +               dev_err(&data->client->dev, "set default PERS returned %d\n",
+> > +                       ret);
+> > +               return ret;
+> > +       }
+> > +       data->als_persistence = VCNL4035_ALS_PERS_DEFAULT;
+> > +
+> > +       /* set default HIGH threshold for ALS */
+> > +       ret = regmap_write(data->regmap, VCNL4035_ALS_THDH,
+> > +                               VCNL4035_ALS_THDH_DEFAULT);
+> > +       if (ret) {
+> > +               dev_err(&data->client->dev, "set default THDH returned %d\n",
+> > +                       ret);
+> > +               return ret;
+> > +       }
+> > +       data->als_thresh_high = VCNL4035_ALS_THDH_DEFAULT;
+> > +
+> > +       /* set default LOW threshold for ALS */
+> > +       ret = regmap_write(data->regmap, VCNL4035_ALS_THDL,
+> > +                               VCNL4035_ALS_THDL_DEFAULT);
+> > +       if (ret) {
+> > +               dev_err(&data->client->dev, "set default THDL returned %d\n",
+> > +                       ret);
+> > +               return ret;
+> > +       }
+> > +       data->als_thresh_low = VCNL4035_ALS_THDL_DEFAULT;
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +static bool vcnl4035_is_volatile_reg(struct device *dev, unsigned int reg)
+> > +{
+> > +       switch (reg) {
+> > +       case VCNL4035_ALS_CONF:
+> > +       case VCNL4035_DEV_ID:
+> > +               return false;
+> > +       default:
+> > +               return true;
+> > +       }
+> > +}
+> > +
+> > +static const struct regmap_config vcnl4035_regmap_config = {
+> > +       .name           = VCNL4035_REGMAP_NAME,
+> > +       .reg_bits       = 8,
+> > +       .val_bits       = 16,
+> > +       .max_register   = VCNL4035_DEV_ID,
+> > +       .cache_type     = REGCACHE_RBTREE,
+> > +       .volatile_reg   = vcnl4035_is_volatile_reg,
+> > +       .val_format_endian = REGMAP_ENDIAN_LITTLE,
+> > +};
+> > +
+> > +static int vcnl4035_probe_trigger(struct iio_dev *indio_dev)
+> > +{
+> > +       int ret;
+> > +       struct vcnl4035_data *data = iio_priv(indio_dev);
+> > +
+> > +       data->drdy_trigger0 = devm_iio_trigger_alloc(
+> > +                       indio_dev->dev.parent,
+> > +                       "%s-dev%d", indio_dev->name, indio_dev->id);
+> > +       if (!data->drdy_trigger0)
+> > +               return -ENOMEM;
+> > +
+> > +       data->drdy_trigger0->dev.parent = indio_dev->dev.parent;
+> > +       data->drdy_trigger0->ops = &vcnl4035_trigger_ops;
+> > +       iio_trigger_set_drvdata(data->drdy_trigger0, indio_dev);
+> > +       ret = devm_iio_trigger_register(indio_dev->dev.parent,
+> > +                                       data->drdy_trigger0);
+> > +       if (ret) {
+> > +               dev_err(&data->client->dev, "iio trigger register failed\n");
+> > +               return ret;
+> > +       }
+> > +
+> > +       /* Trigger setup */
+> > +       ret = devm_iio_triggered_buffer_setup(indio_dev->dev.parent, indio_dev,
+> > +                                       NULL, vcnl4035_trigger_consumer_handler,
+> > +                                       &iio_triggered_buffer_setup_ops);
+> > +       if (ret < 0) {
+> > +               dev_err(&data->client->dev, "iio triggered buffer setup failed\n");
+> > +               return ret;
+> > +       }
+> > +
+> > +       /* IRQ to trigger mapping */
+> > +       ret = devm_request_threaded_irq(&data->client->dev, data->client->irq,
+> > +                       NULL, vcnl4035_drdy_irq_thread,
+> > +                       IRQF_TRIGGER_LOW | IRQF_ONESHOT,
+> > +                       VCNL4035_IRQ_NAME, indio_dev);
+> > +       if (ret < 0)
+> > +               dev_err(&data->client->dev, "request irq %d for trigger0 failed\n",
+> > +                               data->client->irq);
+> > +       return ret;
+> > +}
+> > +
+> > +static int vcnl4035_probe(struct i2c_client *client,
+> > +                               const struct i2c_device_id *id)
+> > +{
+> > +       struct vcnl4035_data *data;
+> > +       struct iio_dev *indio_dev;
+> > +       struct regmap *regmap;
+> > +       int ret;
+> > +
+> > +       indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*data));
+> > +       if (!indio_dev)
+> > +               return -ENOMEM;
+> > +
+> > +       regmap = devm_regmap_init_i2c(client, &vcnl4035_regmap_config);
+> > +       if (IS_ERR(regmap)) {
+> > +               dev_err(&client->dev, "regmap_init failed!\n");
+> > +               return PTR_ERR(regmap);
+> > +       }
+> > +
+> > +       data = iio_priv(indio_dev);
+> > +       i2c_set_clientdata(client, indio_dev);
+> > +       data->client = client;
+> > +       data->regmap = regmap;
+> > +
+> > +       indio_dev->dev.parent = &client->dev;
+> > +       indio_dev->info = &vcnl4035_info;
+> > +       indio_dev->name = VCNL4035_DRV_NAME;
+> > +       indio_dev->channels = vcnl4035_channels;
+> > +       indio_dev->num_channels = ARRAY_SIZE(vcnl4035_channels);
+> > +       indio_dev->modes = INDIO_DIRECT_MODE;
+> > +
+> > +       ret = vcnl4035_init(data);
+> > +       if (ret < 0) {
+> > +               dev_err(&client->dev, "vcnl4035 chip init failed\n");
+> > +               return ret;
+> > +       }
+> > +
+> > +       if (client->irq > 0) {
+> > +               ret = vcnl4035_probe_trigger(indio_dev);
+> > +               if (ret < 0) {
+> > +                       dev_err(&client->dev, "vcnl4035 unable init trigger\n");
+> > +                       goto fail_poweroff;
+> > +               }
+> > +       }
+> > +
+> > +       ret = pm_runtime_set_active(&client->dev);
+> > +       if (ret < 0)
+> > +               goto fail_poweroff;
+> > +
+> > +       ret = iio_device_register(indio_dev);
+> > +       if (ret < 0)
+> > +               goto fail_poweroff;
+> > +
+> > +       pm_runtime_enable(&client->dev);
+> > +       pm_runtime_set_autosuspend_delay(&client->dev, VCNL4035_SLEEP_DELAY_MS);
+> > +       pm_runtime_use_autosuspend(&client->dev);
+> > +
+> > +       return 0;
+> > +
+> > +fail_poweroff:
+> > +       vcnl4035_set_als_power_state(data, VCNL4035_MODE_ALS_DISABLE);
+> > +       return ret;
+> > +}
+> > +
+> > +static int vcnl4035_remove(struct i2c_client *client)
+> > +{
+> > +       struct iio_dev *indio_dev = i2c_get_clientdata(client);
+> > +
+> > +       pm_runtime_dont_use_autosuspend(&client->dev);
+> > +       pm_runtime_disable(&client->dev);
+> > +       iio_device_unregister(indio_dev);
+> > +       pm_runtime_set_suspended(&client->dev);
+> > +
+> > +       return vcnl4035_set_als_power_state(iio_priv(indio_dev),
+> > +                                       VCNL4035_MODE_ALS_DISABLE);
+> > +}
+> > +
+> > +static int __maybe_unused vcnl4035_runtime_suspend(struct device *dev)
+> > +{
+> > +       struct iio_dev *indio_dev = i2c_get_clientdata(to_i2c_client(dev));
+> > +       struct vcnl4035_data *data = iio_priv(indio_dev);
+> > +       int ret;
+> > +
+> > +       ret = vcnl4035_set_als_power_state(data, VCNL4035_MODE_ALS_DISABLE);
+> > +       regcache_mark_dirty(data->regmap);
+> > +
+> > +       return ret;
+> > +}
+> > +
+> > +static int __maybe_unused vcnl4035_runtime_resume(struct device *dev)
+> > +{
+> > +       struct iio_dev *indio_dev = i2c_get_clientdata(to_i2c_client(dev));
+> > +       struct vcnl4035_data *data = iio_priv(indio_dev);
+> > +       int ret;
+> > +
+> > +       regcache_sync(data->regmap);
+> > +       ret = vcnl4035_set_als_power_state(data, VCNL4035_MODE_ALS_ENABLE);
+> > +       if (ret < 0)
+> > +               return ret;
+> > +
+> > +       /* wait for 1 ALS integration cycle */
+> > +       msleep(data->als_it_val * 100);
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +static const struct dev_pm_ops vcnl4035_pm_ops = {
+> > +       SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+> > +                               pm_runtime_force_resume)
+> > +       SET_RUNTIME_PM_OPS(vcnl4035_runtime_suspend,
+> > +                          vcnl4035_runtime_resume, NULL)
+> > +};
+> > +
+> > +static const struct of_device_id vcnl4035_of_match[] = {
+> > +       { .compatible = "vishay,vcnl4035", },
+> > +       { }
+> > +};
+> > +MODULE_DEVICE_TABLE(of, vcnl4035_of_match);
+> > +
+> > +static struct i2c_driver vcnl4035_driver = {
+> > +       .driver = {
+> > +               .name   = VCNL4035_DRV_NAME,
+> > +               .pm     = &vcnl4035_pm_ops,
+> > +               .of_match_table = vcnl4035_of_match,
+> > +       },
+> > +       .probe  = vcnl4035_probe,
+> > +       .remove = vcnl4035_remove,
+> > +};
+> > +
+> > +module_i2c_driver(vcnl4035_driver);
+> > +
+> > +MODULE_AUTHOR("Parthiban Nallathambi <pn@denx.de>");
+> > +MODULE_DESCRIPTION("VCNL4035 Ambient Light Sensor driver");
+> > +MODULE_LICENSE("GPL v2");
+> > --
+> > 2.17.2
+> >  
+> 
+> 
+
