@@ -7,49 +7,43 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14ABBC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:15:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50EEAC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:15:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEAF02084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:15:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B00B2084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:15:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qz36RHop"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEAF02084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bs9rCOal"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B00B2084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730340AbeKLIRL (ORCPT
+        id S1731106AbeKLKFf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:17:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59392 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 05:05:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59904 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730145AbeKLIRG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:17:06 -0500
+        id S1730297AbeKLIRK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:17:10 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 616A5223AE;
-        Sun, 11 Nov 2018 22:27:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 03EA7208A3;
+        Sun, 11 Nov 2018 22:27:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975230;
-        bh=yzlqj2Om0U7aCTyA5fI/cE8aN15L8nlhcQT3OOKuHgU=;
+        s=default; t=1541975235;
+        bh=QSh9L7FegNLmRoPi6+Kyatn3fuSL/w8BnQ2A8cvU/js=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Qz36RHopOp0ll4uvCfR2sGVhBCztXQsOqrUlODbFOMA+pOcszE9RLGE/MdwGlmh/N
-         VlC0EuX9cSdFP7sp3RslDQNzUyfWuz8AXMoRf2JfZqgYNhGZ4wUABBGDcuuH6b4IKu
-         PMHsnaHfk6IBV4Qu5eBDdaEfg7s7pQkyh9p5TBO0=
+        b=bs9rCOaliG6UiELDVEFbwfCYtwnqvJynzUSmglghbEJliKhn1YXJG9LsK44r53/r1
+         DQn+HrRnW4aDABAZ6zZZw0JmuU04e7sef1abckVE8vpYcfHypwz5vMUds9qZysGj3P
+         vkzw8zfomKxMDbFXWRonWzY54aga1DNXK5EBK78U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Philip Elcan <pelcan@codeaurora.org>,
-        Shanker Donthineni <shankerd@codeaurora.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 054/361] arm64: cpufeature: ctr: Fix cpu capability check for late CPUs
-Date:   Sun, 11 Nov 2018 14:16:41 -0800
-Message-Id: <20181111221627.670246412@linuxfoundation.org>
+        stable@vger.kernel.org, Helge Deller <deller@gmx.de>
+Subject: [PATCH 4.19 032/361] parisc: Fix map_pages() to not overwrite existing pte entries
+Date:   Sun, 11 Nov 2018 14:16:19 -0800
+Message-Id: <20181111221624.144607062@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -67,71 +61,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
+From: Helge Deller <deller@gmx.de>
 
-[ Upstream commit 8ab66cbe63aeaf9e5970fb4aaef1c660fca59321 ]
+commit 3c229b3f2dd8133f61bb81d3cb018be92f4bba39 upstream.
 
-The matches() routine for a capability must honor the "scope"
-passed to it and return the proper results.
-i.e, when passed with SCOPE_LOCAL_CPU, it should check the
-status of the capability on the current CPU. This is used by
-verify_local_cpu_capabilities() on a late secondary CPU to make
-sure that it's compliant with the established system features.
-However, ARM64_HAS_CACHE_{IDC/DIC} always checks the system wide
-registers and this could mean that a late secondary CPU could return
-"true" (since the CPU hasn't updated the system wide registers yet)
-and thus lead the system in an inconsistent state, where
-the system assumes it has IDC/DIC feature, while the new CPU
-doesn't.
+Fix a long-existing small nasty bug in the map_pages() implementation which
+leads to overwriting already written pte entries with zero, *if* map_pages() is
+called a second time with an end address which isn't aligned on a pmd boundry.
+This happens for example if we want to remap only the text segment read/write
+in order to run alternative patching on the code. Exiting the loop when we
+reach the end address fixes this.
 
-Fixes: commit 6ae4b6e0578886eb36 ("arm64: Add support for new control bits CTR_EL0.DIC and CTR_EL0.IDC")
-Cc: Philip Elcan <pelcan@codeaurora.org>
-Cc: Shanker Donthineni <shankerd@codeaurora.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Helge Deller <deller@gmx.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm64/kernel/cpufeature.c |   22 ++++++++++++++++++----
- 1 file changed, 18 insertions(+), 4 deletions(-)
 
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -848,15 +848,29 @@ static bool has_no_fpsimd(const struct a
- }
+---
+ arch/parisc/mm/init.c |    8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+--- a/arch/parisc/mm/init.c
++++ b/arch/parisc/mm/init.c
+@@ -494,12 +494,8 @@ static void __init map_pages(unsigned lo
+ 						pte = pte_mkhuge(pte);
+ 				}
  
- static bool has_cache_idc(const struct arm64_cpu_capabilities *entry,
--			  int __unused)
-+			  int scope)
- {
--	return read_sanitised_ftr_reg(SYS_CTR_EL0) & BIT(CTR_IDC_SHIFT);
-+	u64 ctr;
-+
-+	if (scope == SCOPE_SYSTEM)
-+		ctr = arm64_ftr_reg_ctrel0.sys_val;
-+	else
-+		ctr = read_cpuid_cachetype();
-+
-+	return ctr & BIT(CTR_IDC_SHIFT);
- }
+-				if (address >= end_paddr) {
+-					if (force)
+-						break;
+-					else
+-						pte_val(pte) = 0;
+-				}
++				if (address >= end_paddr)
++					break;
  
- static bool has_cache_dic(const struct arm64_cpu_capabilities *entry,
--			  int __unused)
-+			  int scope)
- {
--	return read_sanitised_ftr_reg(SYS_CTR_EL0) & BIT(CTR_DIC_SHIFT);
-+	u64 ctr;
-+
-+	if (scope == SCOPE_SYSTEM)
-+		ctr = arm64_ftr_reg_ctrel0.sys_val;
-+	else
-+		ctr = read_cpuid_cachetype();
-+
-+	return ctr & BIT(CTR_DIC_SHIFT);
- }
+ 				set_pte(pg_table, pte);
  
- #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
 
 
