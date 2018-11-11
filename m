@@ -2,70 +2,64 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BC32C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 03:40:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8D23C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 04:01:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B79F820871
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 03:40:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67C5B20818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 04:01:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="0WLJUr6N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B79F820871
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="jihEKxGd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67C5B20818
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727410AbeKKN1b (ORCPT
+        id S1727402AbeKKNs1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 08:27:31 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33584 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727260AbeKKN1a (ORCPT
+        Sun, 11 Nov 2018 08:48:27 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:33504 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727288AbeKKNs1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 08:27:30 -0500
-Received: by mail-pf1-f196.google.com with SMTP id v68-v6so2699065pfk.0
-        for <linux-kernel@vger.kernel.org>; Sat, 10 Nov 2018 19:40:13 -0800 (PST)
+        Sun, 11 Nov 2018 08:48:27 -0500
+Received: by mail-pg1-f196.google.com with SMTP id q5-v6so2550784pgv.0
+        for <linux-kernel@vger.kernel.org>; Sat, 10 Nov 2018 20:01:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=sZ96Is/d5syZBZkdOpq6Hnx5+R2Fhp/VLiozhOlKGJk=;
-        b=0WLJUr6NbfhBLLjDB50qU+85f0kvf6oHa2CXNxh26aB71AMrjl23qovG8khpKopCwY
-         r74KJ8uDW8IKZx+Z6gSwOXgysAB48fFosHirTK+7hJSyste9m3hbs3dsPRMKau1PNJla
-         p6DhjcZYS/MmYYj5Oj9A+/Xj3/lzNswSE2uJkAKfQc3YIeaZczHHIivcIo1ygtv5w4Za
-         a1WSES4hVwG1zD1mWf01HSI0G7D2lxTgmDaSnhqvSvKO64y5eXwKCP65EBSWPavWrSFJ
-         5Up28m1xDQVEZRV+ePGtvu502J0hUZ7PWF5/kuUshZYCnk5xOtHNKQ2GyFYgTFe5KuBc
-         GzKw==
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=jCouWty5W5m/JfKkWvCdpihv/UNy/RA/BTWK1SBBAzw=;
+        b=jihEKxGdc8C/C5syDKlDOcVvP8HvgK6WKlf3RTTr2emAZcbAa5rYpSw8Heax7zOL8T
+         4/K+aU+MqL7HkdCVIfwh/LeVHAUUmkNFzMofWFZ7trTIPmYfWmd/Ksz5MdLwt/C3VptH
+         upDkeNJtQGcz7CC7iEFN8vF4sf1jvYAyTKg/g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=sZ96Is/d5syZBZkdOpq6Hnx5+R2Fhp/VLiozhOlKGJk=;
-        b=EVSZsXdgtRBeSrINyzx/PW4BAKiaFSgl2Q8yAg5NsINxE45ZRvNp24KdfC07lsURh/
-         wh/s6fb3Ng0IN0R+QvKy7YZ6AwZHweAwuxrLLMjDaUXECHsHgYrVKrGm5AFUo2+uAWoB
-         zzum8vOyHf+X+CsRYqgxNS6jZATVvRPlWBr7x8lyeuHVqvENzgLzV160Gx3TeHcG4FcR
-         4v7XlIMIlQWQ02VolBWu6gGNIjlPqDtRVfqYEpYAeaWWspk3G9LeLyrqG1fO8SWzdiVB
-         Ef5RQLnrCgnVz6cyODE/1RarJ7SnrZCVfNlRLdjIvl+NtQOJZ4AqRa9FO7QJVtipa1yv
-         41sg==
-X-Gm-Message-State: AGRZ1gK4oPKoAdTuxg11wLPRN3O6+0VtdvZBGBAxVkXOn0t4r2dL6jB+
-        OMu+WnJRFCD2hyg41MuP1ykFVg==
-X-Google-Smtp-Source: AJdET5fNhtC2jvlHquFRfWoZ4MnxZxpTbVuSh8pkt3Q66o/gVK0a16hxklgMHvZqV5EFANF13hjlqg==
-X-Received: by 2002:a63:790e:: with SMTP id u14mr12908007pgc.452.1541907612936;
-        Sat, 10 Nov 2018 19:40:12 -0800 (PST)
-Received: from ?IPv6:2600:1010:b026:ccca:748f:8cd2:cbf4:9038? ([2600:1010:b026:ccca:748f:8cd2:cbf4:9038])
-        by smtp.gmail.com with ESMTPSA id f6-v6sm15382058pfg.128.2018.11.10.19.40.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 10 Nov 2018 19:40:11 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v3 resend 1/2] mm: Add an F_SEAL_FUTURE_WRITE seal to memfd
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16A404)
-In-Reply-To: <20181111023808.GA174670@google.com>
-Date:   Sat, 10 Nov 2018 19:40:10 -0800
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=jCouWty5W5m/JfKkWvCdpihv/UNy/RA/BTWK1SBBAzw=;
+        b=qRCOInsIInMBhSwNOXMxtR9Dy0JD3Xp6Jo4O91Lfi5/F3ZcqS9HvUh+LYdLQrp6RNZ
+         fs7olDX0lkcrIupx2G55DtMC4Xw45DPLxfPhgpxv0ek/TzhAbmyKKLcPfB+fmQEqxYxg
+         5HY4qzCd4eql36j2c61rnxssYooXzMKiL32GGfZQmXVgRMJiHRH+D80YtomUZODdfjR4
+         QuUZjqASp7XbmU9LI5fia6SOTn1JFLSBlLIAdA5MqxB2Ia/MnUy8YuoWkVKavaIYxjh1
+         BRuycqkBnwnvhLfu4cS5Pvsh7LU12FI0XR7QnTIUzcqYPPUfyBQq034HFDPZK0jfdOas
+         6SSw==
+X-Gm-Message-State: AGRZ1gJXsxnjzLlLtlUVsHVQUNh2Ymm9X0Mc+KsYPN+zMuofaN1yWLuX
+        X0RxKD/qmqKkwNu932knEe17mQ==
+X-Google-Smtp-Source: AJdET5cuoQYdKB4Z+S7eOGRA6MHTbVUG6RCX441MlJpITDcQX/txg9jt0j1vKE8KaUga2IVqipSzng==
+X-Received: by 2002:a63:a35c:: with SMTP id v28mr12942825pgn.205.1541908865941;
+        Sat, 10 Nov 2018 20:01:05 -0800 (PST)
+Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id r12sm6041744pgv.83.2018.11.10.20.01.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 10 Nov 2018 20:01:04 -0800 (PST)
+Date:   Sat, 10 Nov 2018 20:01:02 -0800
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Andy Lutomirski <luto@amacapital.net>
 Cc:     Daniel Colascione <dancol@google.com>,
         Jann Horn <jannh@google.com>,
         kernel list <linux-kernel@vger.kernel.org>,
@@ -87,194 +81,179 @@ Cc:     Daniel Colascione <dancol@google.com>,
         Valdis Kletnieks <valdis.kletnieks@vt.edu>,
         Hugh Dickins <hughd@google.com>,
         Linux API <linux-api@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <543A5181-3A16-438E-B372-97BEC48A74F8@amacapital.net>
-References: <20181108041537.39694-1-joel@joelfernandes.org> <CAG48ez1h=v-JYnDw81HaYJzOfrNhwYksxmc2r=cJvdQVgYM+NA@mail.gmail.com> <CAG48ez0kQ4d566bXTFOYANDgii-stL-Qj-oyaBzvfxdV=PU-7g@mail.gmail.com> <20181110032005.GA22238@google.com> <69CE06CC-E47C-4992-848A-66EB23EE6C74@amacapital.net> <20181110182405.GB242356@google.com> <CAKOZuesQXRtthJTEr86LByH3gPpAdT-PQM0d1jqr131=zZNRKw@mail.gmail.com> <CAKOZueum8MtNvJ5P=W7_pRw62TdQdCgyjCwwbG1wezNboC1cxQ@mail.gmail.com> <20181110220933.GB96924@google.com> <907D942E-E321-4BD7-BED7-ACD1D96A3643@amacapital.net> <20181111023808.GA174670@google.com>
-To:     Joel Fernandes <joel@joelfernandes.org>
+Subject: Re: [PATCH v3 resend 1/2] mm: Add an F_SEAL_FUTURE_WRITE seal to
+ memfd
+Message-ID: <20181111040102.GA204245@google.com>
+References: <CAG48ez0kQ4d566bXTFOYANDgii-stL-Qj-oyaBzvfxdV=PU-7g@mail.gmail.com>
+ <20181110032005.GA22238@google.com>
+ <69CE06CC-E47C-4992-848A-66EB23EE6C74@amacapital.net>
+ <20181110182405.GB242356@google.com>
+ <CAKOZuesQXRtthJTEr86LByH3gPpAdT-PQM0d1jqr131=zZNRKw@mail.gmail.com>
+ <CAKOZueum8MtNvJ5P=W7_pRw62TdQdCgyjCwwbG1wezNboC1cxQ@mail.gmail.com>
+ <20181110220933.GB96924@google.com>
+ <907D942E-E321-4BD7-BED7-ACD1D96A3643@amacapital.net>
+ <20181111023808.GA174670@google.com>
+ <543A5181-3A16-438E-B372-97BEC48A74F8@amacapital.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <543A5181-3A16-438E-B372-97BEC48A74F8@amacapital.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Nov 10, 2018 at 07:40:10PM -0800, Andy Lutomirski wrote:
+> 
+> 
+> > On Nov 10, 2018, at 6:38 PM, Joel Fernandes <joel@joelfernandes.org> wrote:
+> > 
+> >> On Sat, Nov 10, 2018 at 02:18:23PM -0800, Andy Lutomirski wrote:
+> >> 
+> >>>> On Nov 10, 2018, at 2:09 PM, Joel Fernandes <joel@joelfernandes.org> wrote:
+> >>>> 
+> >>>>> On Sat, Nov 10, 2018 at 11:11:27AM -0800, Daniel Colascione wrote:
+> >>>>>> On Sat, Nov 10, 2018 at 10:45 AM, Daniel Colascione <dancol@google.com> wrote:
+> >>>>>> On Sat, Nov 10, 2018 at 10:24 AM, Joel Fernandes <joel@joelfernandes.org> wrote:
+> >>>>>> Thanks Andy for your thoughts, my comments below:
+> >>>> [snip]
+> >>>>>> I don't see it as warty, different seals will work differently. It works
+> >>>>>> quite well for our usecase, and since Linux is all about solving real
+> >>>>>> problems in the real work, it would be useful to have it.
+> >>>>>> 
+> >>>>>>> - causes a probably-observable effect in the file mode in F_GETFL.
+> >>>>>> 
+> >>>>>> Wouldn't that be the right thing to observe anyway?
+> >>>>>> 
+> >>>>>>> - causes reopen to fail.
+> >>>>>> 
+> >>>>>> So this concern isn't true anymore if we make reopen fail only for WRITE
+> >>>>>> opens as Daniel suggested. I will make this change so that the security fix
+> >>>>>> is a clean one.
+> >>>>>> 
+> >>>>>>> - does *not* affect other struct files that may already exist on the same inode.
+> >>>>>> 
+> >>>>>> TBH if you really want to block all writes to the file, then you want
+> >>>>>> F_SEAL_WRITE, not this seal. The usecase we have is the fd is sent over IPC
+> >>>>>> to another process and we want to prevent any new writes in the receiver
+> >>>>>> side. There is no way this other receiving process can have an existing fd
+> >>>>>> unless it was already sent one without the seal applied.  The proposed seal
+> >>>>>> could be renamed to F_SEAL_FD_WRITE if that is preferred.
+> >>>>>> 
+> >>>>>>> - mysteriously malfunctions if you try to set it again on another struct
+> >>>>>>> file that already exists
+> >>>>>>> 
+> >>>>>> 
+> >>>>>> I didn't follow this, could you explain more?
+> >>>>>> 
+> >>>>>>> - probably is insecure when used on hugetlbfs.
+> >>>>>> 
+> >>>>>> The usecase is not expected to prevent all writes, indeed the usecase
+> >>>>>> requires existing mmaps to continue to be able to write into the memory map.
+> >>>>>> So would you call that a security issue too? The use of the seal wants to
+> >>>>>> allow existing mmap regions to be continue to be written into (I mentioned
+> >>>>>> more details in the cover letter).
+> >>>>>> 
+> >>>>>>> I see two reasonable solutions:
+> >>>>>>> 
+> >>>>>>> 1. Don’t fiddle with the struct file at all. Instead make the inode flag
+> >>>>>>> work by itself.
+> >>>>>> 
+> >>>>>> Currently, the various VFS paths check only the struct file's f_mode to deny
+> >>>>>> writes of already opened files. This would mean more checking in all those
+> >>>>>> paths (and modification of all those paths).
+> >>>>>> 
+> >>>>>> Anyway going with that idea, we could
+> >>>>>> 1. call deny_write_access(file) from the memfd's seal path which decrements
+> >>>>>> the inode::i_writecount.
+> >>>>>> 2. call get_write_access(inode) in the various VFS paths in addition to
+> >>>>>> checking for FMODE_*WRITE and deny the write (incase i_writecount is negative)
+> >>>>>> 
+> >>>>>> That will prevent both reopens, and writes from succeeding. However I worry a
+> >>>>>> bit about 2 not being too familiar with VFS internals, about what the
+> >>>>>> consequences of doing that may be.
+> >>>>> 
+> >>>>> IMHO, modifying both the inode and the struct file separately is fine,
+> >>>>> since they mean different things. In regular filesystems, it's fine to
+> >>>>> have a read-write open file description for a file whose inode grants
+> >>>>> write permission to nobody. Speaking of which: is fchmod enough to
+> >>>>> prevent this attack?
+> >>>> 
+> >>>> Well, yes and no. fchmod does prevent reopening the file RW, but
+> >>>> anyone with permissions (owner, CAP_FOWNER) can just fchmod it back. A
+> >>>> seal is supposed to be irrevocable, so fchmod-as-inode-seal probably
+> >>>> isn't sufficient by itself. While it might be good enough for Android
+> >>>> (in the sense that it'll prevent RW-reopens from other security
+> >>>> contexts to which we send an open memfd file), it's still conceptually
+> >>>> ugly, IMHO. Let's go with the original approach of just tweaking the
+> >>>> inode so that open-for-write is permanently blocked.
+> >>> 
+> >>> Agreed with the idea of modifying both file and inode flags. I was thinking
+> >>> modifying i_mode may do the trick but as you pointed it probably could be
+> >>> reverted by chmod or some other attribute setting calls.
+> >>> 
+> >>> OTOH, I don't think deny_write_access(file) can be reverted from any
+> >>> user-facing path so we could do that from the seal to prevent the future
+> >>> opens in write mode. I'll double check and test that out tomorrow.
+> >>> 
+> >>> 
+> >> 
+> >> This seems considerably more complicated and more fragile than needed. Just
+> >> add a new F_SEAL_WRITE_FUTURE.  Grep for F_SEAL_WRITE and make the _FUTURE
+> >> variant work exactly like it with two exceptions:
+> >> 
+> >> - shmem_mmap and maybe its hugetlbfs equivalent should check for it and act
+> >> accordingly.
+> > 
+> > There's more to it than that, we also need to block future writes through
+> > write syscall, so we have to hook into the write path too once the seal is
+> > set, not just the mmap. That means we have to add code in mm/shmem.c to do
+> > that in all those handlers, to check for the seal (and hope we didn't miss a
+> > file_operations handler). Is that what you are proposing?
+> 
+> The existing code already does this. That’s why I suggested grepping :)
 
+Ahh sorry I see your point now. Ok let me try this approach. Thank you!
+Probably we can make this work this way and it is sufficient.
 
-> On Nov 10, 2018, at 6:38 PM, Joel Fernandes <joel@joelfernandes.org> wrote=
-:
->=20
->> On Sat, Nov 10, 2018 at 02:18:23PM -0800, Andy Lutomirski wrote:
->>=20
->>>> On Nov 10, 2018, at 2:09 PM, Joel Fernandes <joel@joelfernandes.org> wr=
-ote:
->>>>=20
->>>>> On Sat, Nov 10, 2018 at 11:11:27AM -0800, Daniel Colascione wrote:
->>>>>> On Sat, Nov 10, 2018 at 10:45 AM, Daniel Colascione <dancol@google.co=
-m> wrote:
->>>>>> On Sat, Nov 10, 2018 at 10:24 AM, Joel Fernandes <joel@joelfernandes.=
-org> wrote:
->>>>>> Thanks Andy for your thoughts, my comments below:
->>>> [snip]
->>>>>> I don't see it as warty, different seals will work differently. It wo=
-rks
->>>>>> quite well for our usecase, and since Linux is all about solving real=
+> > 
+> > Also, it means we have to keep CONFIG_TMPFS enabled so that the
+> > shmem_file_operations write handlers like write_iter are hooked up. Currently
+> > memfd works even with !CONFIG_TMPFS.
+> 
+> If so, that sounds like it may already be a bug.
 
->>>>>> problems in the real work, it would be useful to have it.
->>>>>>=20
->>>>>>> - causes a probably-observable effect in the file mode in F_GETFL.
->>>>>>=20
->>>>>> Wouldn't that be the right thing to observe anyway?
->>>>>>=20
->>>>>>> - causes reopen to fail.
->>>>>>=20
->>>>>> So this concern isn't true anymore if we make reopen fail only for WR=
-ITE
->>>>>> opens as Daniel suggested. I will make this change so that the securi=
-ty fix
->>>>>> is a clean one.
->>>>>>=20
->>>>>>> - does *not* affect other struct files that may already exist on the=
- same inode.
->>>>>>=20
->>>>>> TBH if you really want to block all writes to the file, then you want=
+Actually, its not a bug. If CONFIG_TMPFS is disabled, then IIRC write syscall
+will be prevented anyway and then the mmap is the only way. I'll double check
+that once I work on this idea.
 
->>>>>> F_SEAL_WRITE, not this seal. The usecase we have is the fd is sent ov=
-er IPC
->>>>>> to another process and we want to prevent any new writes in the recei=
-ver
->>>>>> side. There is no way this other receiving process can have an existi=
-ng fd
->>>>>> unless it was already sent one without the seal applied.  The propose=
-d seal
->>>>>> could be renamed to F_SEAL_FD_WRITE if that is preferred.
->>>>>>=20
->>>>>>> - mysteriously malfunctions if you try to set it again on another st=
-ruct
->>>>>>> file that already exists
->>>>>>>=20
->>>>>>=20
->>>>>> I didn't follow this, could you explain more?
->>>>>>=20
->>>>>>> - probably is insecure when used on hugetlbfs.
->>>>>>=20
->>>>>> The usecase is not expected to prevent all writes, indeed the usecase=
+> > 
+> >> - add_seals won’t need the wait_for_pins and mapping_deny_write logic.
+> >> 
+> >> That really should be all that’s needed.
+> > 
+> > It seems a fair idea what you're saying. But I don't see how its less
+> > complex.. IMO its far more simple to have VFS do the denial of the operations
+> > based on the flags of its datastructures.. and if it works (which I will test
+> > to be sure it will), then we should be good.
+> 
+> I agree it’s complicated, but the code is already written.  You should just
+> need to adjust some masks.
+> 
 
->>>>>> requires existing mmaps to continue to be able to write into the memo=
-ry map.
->>>>>> So would you call that a security issue too? The use of the seal want=
-s to
->>>>>> allow existing mmap regions to be continue to be written into (I ment=
-ioned
->>>>>> more details in the cover letter).
->>>>>>=20
->>>>>>> I see two reasonable solutions:
->>>>>>>=20
->>>>>>> 1. Don=E2=80=99t fiddle with the struct file at all. Instead make th=
-e inode flag
->>>>>>> work by itself.
->>>>>>=20
->>>>>> Currently, the various VFS paths check only the struct file's f_mode t=
-o deny
->>>>>> writes of already opened files. This would mean more checking in all t=
-hose
->>>>>> paths (and modification of all those paths).
->>>>>>=20
->>>>>> Anyway going with that idea, we could
->>>>>> 1. call deny_write_access(file) from the memfd's seal path which decr=
-ements
->>>>>> the inode::i_writecount.
->>>>>> 2. call get_write_access(inode) in the various VFS paths in addition t=
-o
->>>>>> checking for FMODE_*WRITE and deny the write (incase i_writecount is n=
-egative)
->>>>>>=20
->>>>>> That will prevent both reopens, and writes from succeeding. However I=
- worry a
->>>>>> bit about 2 not being too familiar with VFS internals, about what the=
+Right.
 
->>>>>> consequences of doing that may be.
->>>>>=20
->>>>> IMHO, modifying both the inode and the struct file separately is fine,=
+> > 
+> > Btw by any chance, are you also coming by LPC conference next week?
+> > 
+> 
+> No.  I’d like to, but I can’t make the trip this year.
 
->>>>> since they mean different things. In regular filesystems, it's fine to=
+Ok, no worries.
 
->>>>> have a read-write open file description for a file whose inode grants
->>>>> write permission to nobody. Speaking of which: is fchmod enough to
->>>>> prevent this attack?
->>>>=20
->>>> Well, yes and no. fchmod does prevent reopening the file RW, but
->>>> anyone with permissions (owner, CAP_FOWNER) can just fchmod it back. A
->>>> seal is supposed to be irrevocable, so fchmod-as-inode-seal probably
->>>> isn't sufficient by itself. While it might be good enough for Android
->>>> (in the sense that it'll prevent RW-reopens from other security
->>>> contexts to which we send an open memfd file), it's still conceptually
->>>> ugly, IMHO. Let's go with the original approach of just tweaking the
->>>> inode so that open-for-write is permanently blocked.
->>>=20
->>> Agreed with the idea of modifying both file and inode flags. I was think=
-ing
->>> modifying i_mode may do the trick but as you pointed it probably could b=
-e
->>> reverted by chmod or some other attribute setting calls.
->>>=20
->>> OTOH, I don't think deny_write_access(file) can be reverted from any
->>> user-facing path so we could do that from the seal to prevent the future=
+thanks,
 
->>> opens in write mode. I'll double check and test that out tomorrow.
->>>=20
->>>=20
->>=20
->> This seems considerably more complicated and more fragile than needed. Ju=
-st
->> add a new F_SEAL_WRITE_FUTURE.  Grep for F_SEAL_WRITE and make the _FUTUR=
-E
->> variant work exactly like it with two exceptions:
->>=20
->> - shmem_mmap and maybe its hugetlbfs equivalent should check for it and a=
-ct
->> accordingly.
->=20
-> There's more to it than that, we also need to block future writes through
-> write syscall, so we have to hook into the write path too once the seal is=
+- Joel
 
-> set, not just the mmap. That means we have to add code in mm/shmem.c to do=
-
-> that in all those handlers, to check for the seal (and hope we didn't miss=
- a
-> file_operations handler). Is that what you are proposing?
-
-The existing code already does this. That=E2=80=99s why I suggested grepping=
- :)
-
->=20
-> Also, it means we have to keep CONFIG_TMPFS enabled so that the
-> shmem_file_operations write handlers like write_iter are hooked up. Curren=
-tly
-> memfd works even with !CONFIG_TMPFS.
-
-If so, that sounds like it may already be a bug.
-
->=20
->> - add_seals won=E2=80=99t need the wait_for_pins and mapping_deny_write l=
-ogic.
->>=20
->> That really should be all that=E2=80=99s needed.
->=20
-> It seems a fair idea what you're saying. But I don't see how its less
-> complex.. IMO its far more simple to have VFS do the denial of the operati=
-ons
-> based on the flags of its datastructures.. and if it works (which I will t=
-est
-> to be sure it will), then we should be good.
-
-I agree it=E2=80=99s complicated, but the code is already written.  You shou=
-ld just need to adjust some masks.
-
->=20
-> Btw by any chance, are you also coming by LPC conference next week?
->=20
-
-No.  I=E2=80=99d like to, but I can=E2=80=99t make the trip this year.
-
-> thanks!
->=20
-> - Joel
->=20
