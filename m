@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A947C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF886C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:28:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C9F22084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:28:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 865682084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:28:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WrBfpDC6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C9F22084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EkLwdbt5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 865682084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389086AbeKLJSQ (ORCPT
+        id S2388848AbeKLIUe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:18:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45752 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731369AbeKLIUe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:20:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45656 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388834AbeKLIUd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:33 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F12272175B;
+        by mail.kernel.org (Postfix) with ESMTPSA id 0FBF4223CA;
         Sun, 11 Nov 2018 22:30:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975438;
-        bh=aPjb6saY+qicwsjpuz4owGB9Y8hRRVuSWCZJmfkVrZM=;
+        s=default; t=1541975437;
+        bh=GnR0KTixvcIvwbPHJ+gmga1blza7Q2d7N/d1SSi/n0g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WrBfpDC61AhEh7RhDpmh1pLMPKAYtyQJVW8tPGjCNDinUdxLt5glXWPYDlrRDRTsd
-         8RRTCa8qWsYuspxhG1DO7uzzUoiwJKlpMM/cGeNf4GS8DUvKtb+kESuWaWDMv+36jS
-         +bl6zmfTLO3cpJwD/re5KUD25OPuGuSjuti+VEFw=
+        b=EkLwdbt5M6o/NU9/+Vk+g2x7pkvt1JPq3eoVgDWuyKnrkG5jR9z8lorLh0pvwdvwN
+         J8jsrtsFK9ntCV5VA38fRQBfREcdUn84GgPaHrTABoJPRdHHFBAGFLMVNbybSZ7SlR
+         xCUbcLe0Yu404qJM5nLoWTokWUXcl7H+yOVa+3Jg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gioh Kim <gi-oh.kim@profitbricks.com>,
-        Guoqing Jiang <gqjiang@suse.com>, Shaohua Li <shli@fb.com>,
+        stable@vger.kernel.org, Prarit Bhargava <prarit@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Stafford Horne <shorne@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 163/350] MD: fix invalid stored role for a disk
-Date:   Sun, 11 Nov 2018 14:20:27 -0800
-Message-Id: <20181111221714.868767247@linuxfoundation.org>
+Subject: [PATCH 4.18 187/350] cpupower: Fix AMD Family 0x17 msr_pstate size
+Date:   Sun, 11 Nov 2018 14:20:51 -0800
+Message-Id: <20181111221715.855418147@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -63,43 +64,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shaohua Li <shli@fb.com>
+From: Prarit Bhargava <prarit@redhat.com>
 
-[ Upstream commit d595567dc4f0c1d90685ec1e2e296e2cad2643ac ]
+[ Upstream commit 8c22e2f695920ebd94f9a53bcf2a65eb36d4dba1 ]
 
-If we change the number of array's device after device is removed from array,
-then add the device back to array, we can see that device is added as active
-role instead of spare which we expected.
+The msr_pstate data is only 63 bits long and should be 64 bits.
 
-Please see the below link for details:
-https://marc.info/?l=linux-raid&m=153736982015076&w=2
+Add in the missing bit from res1 for AMD Family 0x17.
 
-This is caused by that we prefer to use device's previous role which is
-recorded by saved_raid_disk, but we should respect the new number of
-conf->raid_disks since it could be changed after device is removed.
+Reference: https://www.amd.com/system/files/TechDocs/54945_PPR_Family_17h_Models_00h-0Fh.pdf, page 138.
 
-Reported-by: Gioh Kim <gi-oh.kim@profitbricks.com>
-Tested-by: Gioh Kim <gi-oh.kim@profitbricks.com>
-Acked-by: Guoqing Jiang <gqjiang@suse.com>
-Signed-off-by: Shaohua Li <shli@fb.com>
+Signed-off-by: Prarit Bhargava <prarit@redhat.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Stafford Horne <shorne@gmail.com>
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/md.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ tools/power/cpupower/utils/helpers/amd.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -1779,6 +1779,10 @@ static int super_1_validate(struct mddev
- 			} else
- 				set_bit(In_sync, &rdev->flags);
- 			rdev->raid_disk = role;
-+			if (role >= mddev->raid_disks) {
-+				rdev->saved_raid_disk = -1;
-+				rdev->raid_disk = -1;
-+			}
- 			break;
- 		}
- 		if (sb->devflags & WriteMostly1)
+--- a/tools/power/cpupower/utils/helpers/amd.c
++++ b/tools/power/cpupower/utils/helpers/amd.c
+@@ -33,7 +33,7 @@ union msr_pstate {
+ 		unsigned vid:8;
+ 		unsigned iddval:8;
+ 		unsigned idddiv:2;
+-		unsigned res1:30;
++		unsigned res1:31;
+ 		unsigned en:1;
+ 	} fam17h_bits;
+ 	unsigned long long val;
 
 
