@@ -7,48 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F70CC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:01:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83EBDC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:02:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED14920866
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:01:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C96F208A3
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:02:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JYe9LIBO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED14920866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="emwPYA8Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C96F208A3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732480AbeKLJwL (ORCPT
+        id S1732192AbeKLIRy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:52:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34210 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:17:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34452 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732196AbeKLIR4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:17:56 -0500
+        id S1732069AbeKLIRx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:17:53 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64C1D22353;
-        Sun, 11 Nov 2018 22:28:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 21AB7223AE;
+        Sun, 11 Nov 2018 22:27:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975280;
-        bh=lbJtcTDz0lJd8i+fz1Fe4HGvZF+jbMCKM5ckmYytD1Y=;
+        s=default; t=1541975278;
+        bh=3XJDbhAmvqHWEBCq/+5EOnSyZtbH6rTGAmNY3ja0aTk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JYe9LIBO9ut8xgGOyIAyxosxRxsmrDK8ZHpZVKs8idp1264l+cSpEMJmQNlsFu0Gu
-         cp5inzcl2b9HkMqBzrjnZAg18ADxYG0g+bpZWcS14V1LVTFuuwVSs96iWLmzLCMeXv
-         em8duzLYYP+gwZYnokpDFfnqblEY6VYRiFS6Q0sU=
+        b=emwPYA8Z99UHmGIIqMPXFF5n5OE2Fj/y97gIDrXn+ATzrRuCJpjUocizV4r40A47W
+         6WhyGacWmXs/s+8poQr7Lqfvy6JhMw7MAOVKg0jsfzi8xAgQPTfg9BQqW3CiQ6YoU/
+         hfrsStqob4iFHOBlh64E4Z5rkJwsrW5Y15JSlAnk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joe Jin <joe.jin@oracle.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Christoph Helwig <hch@lst.de>,
-        Dongli Zhang <dongli.zhang@oracle.com>,
-        John Sobecki <john.sobecki@oracle.com>
-Subject: [PATCH 4.19 199/361] xen-swiotlb: use actually allocated size on check physical continuous
-Date:   Sun, 11 Nov 2018 14:19:06 -0800
-Message-Id: <20181111221648.307309340@linuxfoundation.org>
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH 4.19 192/361] Revert "f2fs: fix to clear PG_checked flag in set_page_dirty()"
+Date:   Sun, 11 Nov 2018 14:18:59 -0800
+Message-Id: <20181111221647.412384851@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -66,56 +62,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joe Jin <joe.jin@oracle.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 
-commit 7250f422da0480d8512b756640f131b9b893ccda upstream.
+commit 164a63fa6b384e30ceb96ed80bc7dc3379bc0960 upstream.
 
-xen_swiotlb_{alloc,free}_coherent() allocate/free memory based on the
-order of the pages and not size argument (bytes). This is inconsistent with
-range_straddles_page_boundary and memset which use the 'size' value,
-which may lead to not exchanging memory with Xen (range_straddles_page_boundary()
-returned true). And then the call to xen_swiotlb_free_coherent() would
-actually try to exchange the memory with Xen, leading to the kernel
-hitting an BUG (as the hypercall returned an error).
+This reverts commit 66110abc4c931f879d70e83e1281f891699364bf.
 
-This patch fixes it by making the 'size' variable be of the same size
-as the amount of memory allocated.
+If we clear the cold data flag out of the writeback flow, we can miscount
+-1 by end_io, which incurs a deadlock caused by all I/Os being blocked during
+heavy GC.
 
-CC: stable@vger.kernel.org
-Signed-off-by: Joe Jin <joe.jin@oracle.com>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Christoph Helwig <hch@lst.de>
-Cc: Dongli Zhang <dongli.zhang@oracle.com>
-Cc: John Sobecki <john.sobecki@oracle.com>
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Balancing F2FS Async:
+ - IO (CP:    1, Data:   -1, Flush: (   0    0    1), Discard: (   ...
+
+GC thread:                              IRQ
+- move_data_page()
+ - set_page_dirty()
+  - clear_cold_data()
+                                        - f2fs_write_end_io()
+                                         - type = WB_DATA_TYPE(page);
+                                           here, we get wrong type
+                                         - dec_page_count(sbi, type);
+ - f2fs_wait_on_page_writeback()
+
+Cc: <stable@vger.kernel.org>
+Reported-and-Tested-by: Park Ju Hyung <qkrwngud825@gmail.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/xen/swiotlb-xen.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ fs/f2fs/data.c |    4 ----
+ 1 file changed, 4 deletions(-)
 
---- a/drivers/xen/swiotlb-xen.c
-+++ b/drivers/xen/swiotlb-xen.c
-@@ -303,6 +303,9 @@ xen_swiotlb_alloc_coherent(struct device
- 	*/
- 	flags &= ~(__GFP_DMA | __GFP_HIGHMEM);
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -2590,10 +2590,6 @@ static int f2fs_set_data_page_dirty(stru
+ 	if (!PageUptodate(page))
+ 		SetPageUptodate(page);
  
-+	/* Convert the size to actually allocated. */
-+	size = 1UL << (order + XEN_PAGE_SHIFT);
-+
- 	/* On ARM this function returns an ioremap'ped virtual address for
- 	 * which virt_to_phys doesn't return the corresponding physical
- 	 * address. In fact on ARM virt_to_phys only works for kernel direct
-@@ -351,6 +354,9 @@ xen_swiotlb_free_coherent(struct device
- 	 * physical address */
- 	phys = xen_bus_to_phys(dev_addr);
- 
-+	/* Convert the size to actually allocated. */
-+	size = 1UL << (order + XEN_PAGE_SHIFT);
-+
- 	if (((dev_addr + size - 1 <= dma_mask)) ||
- 	    range_straddles_page_boundary(phys, size))
- 		xen_destroy_contiguous_region(phys, order);
+-	/* don't remain PG_checked flag which was set during GC */
+-	if (is_cold_data(page))
+-		clear_cold_data(page);
+-
+ 	if (f2fs_is_atomic_file(inode) && !f2fs_is_commit_atomic_write(inode)) {
+ 		if (!IS_ATOMIC_WRITTEN_PAGE(page)) {
+ 			f2fs_register_inmem_page(inode, page);
 
 
