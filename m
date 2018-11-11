@@ -2,179 +2,105 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4D28C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:31:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27DDBC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:32:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64FFD214DB
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:31:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64FFD214DB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id EA7D3214E0
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:32:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA7D3214E0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727092AbeKLFUm (ORCPT
+        id S1726964AbeKLFV1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 00:20:42 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:51065 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726044AbeKLFUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:20:41 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id CCBEB224CD; Sun, 11 Nov 2018 20:31:15 +0100 (CET)
-Received: from localhost (unknown [88.191.26.124])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 9EEFE206A7;
-        Sun, 11 Nov 2018 20:31:15 +0100 (CET)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Rob Herring <robh+dt@kernel.org>, linux-rtc@vger.kernel.org
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 2/2] dt-bindings: rtc: Move trivial RTCs to rtc.txt
-Date:   Sun, 11 Nov 2018 20:31:14 +0100
-Message-Id: <20181111193114.24307-2-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181111193114.24307-1-alexandre.belloni@bootlin.com>
-References: <20181111193114.24307-1-alexandre.belloni@bootlin.com>
+        Mon, 12 Nov 2018 00:21:27 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54668 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726044AbeKLFV1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 00:21:27 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wABJNwvk008251
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:32:02 -0500
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2npdn2gqf2-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:32:02 -0500
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Sun, 11 Nov 2018 19:32:02 -0000
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sun, 11 Nov 2018 19:31:56 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wABJVtGR39190530
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sun, 11 Nov 2018 19:31:55 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 49A36B2064;
+        Sun, 11 Nov 2018 19:31:55 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 26F1FB2066;
+        Sun, 11 Nov 2018 19:31:55 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.207.24])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Sun, 11 Nov 2018 19:31:55 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 577D216C5D59; Sun, 11 Nov 2018 11:31:56 -0800 (PST)
+Date:   Sun, 11 Nov 2018 11:31:56 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
+        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org
+Subject: [PATCH tip/core/rcu 0/4] Eliminate BUG_ON for v4.21/v5.0
+Reply-To: paulmck@linux.ibm.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18111119-0072-0000-0000-000003C6F320
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010028; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01116015; UDB=6.00577118; IPR=6.00896115;
+ MB=3.00024114; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-11 19:32:00
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18111119-0073-0000-0000-00004A13443C
+Message-Id: <20181111193156.GA3666@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-11_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=410 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811110185
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move trivial RTCs to the rtc generic binding documentation as they all also
-support at least 'start-year'.
+Hello!
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- Documentation/devicetree/bindings/rtc/rtc.txt | 34 +++++++++++++++++++
- .../devicetree/bindings/trivial-devices.txt   | 24 -------------
- 2 files changed, 34 insertions(+), 24 deletions(-)
+This series converts BUG_ON() and friends to WARN_ON() and friends,
+split out by file: (1) kernel/rcu/sync.c, (2) kernel/rcu/tree.c,
+(3) kernel/rcu/tree_plugin.h, and (4) kernel/rcu/update.c.
 
-diff --git a/Documentation/devicetree/bindings/rtc/rtc.txt b/Documentation/devicetree/bindings/rtc/rtc.txt
-index 221b7da50aca..7c8da6926095 100644
---- a/Documentation/devicetree/bindings/rtc/rtc.txt
-+++ b/Documentation/devicetree/bindings/rtc/rtc.txt
-@@ -28,3 +28,37 @@ below.
-                           disabled
- - wakeup-source :         Enables wake up of host system on alarm
- 
-+Trivial RTCs
-+------------
-+
-+This is a list of trivial RTC devices that have simple device tree
-+bindings, consisting only of a compatible field, an address and
-+possibly an interrupt line.
-+
-+
-+Compatible		Vendor / Chip
-+==========		=============
-+abracon,abb5zes3	AB-RTCMC-32.768kHz-B5ZE-S3: Real Time Clock/Calendar Module with I2C Interface
-+dallas,ds1374		I2C, 32-Bit Binary Counter Watchdog RTC with Trickle Charger and Reset Input/Output
-+dallas,ds1672		Dallas DS1672 Real-time Clock
-+dallas,ds3232		Extremely Accurate I²C RTC with Integrated Crystal and SRAM
-+epson,rx8010		I2C-BUS INTERFACE REAL TIME CLOCK MODULE
-+epson,rx8581		I2C-BUS INTERFACE REAL TIME CLOCK MODULE
-+emmicro,em3027		EM Microelectronic EM3027 Real-time Clock
-+isil,isl1208		Intersil ISL1208 Low Power RTC with Battery Backed SRAM
-+isil,isl1218		Intersil ISL1218 Low Power RTC with Battery Backed SRAM
-+isil,isl12022		Intersil ISL12022 Real-time Clock
-+microcrystal,rv3029	Real Time Clock Module with I2C-Bus
-+nxp,pcf2127		Real-time clock
-+nxp,pcf2129		Real-time clock
-+nxp,pcf8523		Real-time Clock
-+nxp,pcf8563		Real-time clock/calendar
-+nxp,pcf85063		Tiny Real-Time Clock
-+pericom,pt7c4338	Real-time Clock Module
-+ricoh,r2025sd		I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
-+ricoh,r2221tl		I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
-+ricoh,rs5c372a		I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
-+ricoh,rs5c372b		I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
-+ricoh,rv5c386		I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
-+ricoh,rv5c387a		I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
-+sii,s35390a		2-wire CMOS real-time clock
-diff --git a/Documentation/devicetree/bindings/trivial-devices.txt b/Documentation/devicetree/bindings/trivial-devices.txt
-index 6ab001fa1ed4..fda7a0f50c1e 100644
---- a/Documentation/devicetree/bindings/trivial-devices.txt
-+++ b/Documentation/devicetree/bindings/trivial-devices.txt
-@@ -9,7 +9,6 @@ document for it just like any other devices.
- 
- Compatible		Vendor / Chip
- ==========		=============
--abracon,abb5zes3		AB-RTCMC-32.768kHz-B5ZE-S3: Real Time Clock/Calendar Module with I2C Interface
- ad,ad7414		SMBus/I2C Digital Temperature Sensor in 6-Pin SOT with SMBus Alert and Over Temperature Pin
- ad,adm9240		ADM9240:  Complete System Hardware Monitor for uProcessor-Based Systems
- adi,adt7461		+/-1C TDM Extended Temp Range I.C
-@@ -25,12 +24,9 @@ at,24c08		i2c serial eeprom  (24cxx)
- atmel,at97sc3204t	i2c trusted platform module (TPM)
- capella,cm32181		CM32181: Ambient Light Sensor
- capella,cm3232		CM3232: Ambient Light Sensor
--dallas,ds1374		I2C, 32-Bit Binary Counter Watchdog RTC with Trickle Charger and Reset Input/Output
- dallas,ds1631		High-Precision Digital Thermometer
--dallas,ds1672		Dallas DS1672 Real-time Clock
- dallas,ds1682		Total-Elapsed-Time Recorder with Alarm
- dallas,ds1775		Tiny Digital Thermometer and Thermostat
--dallas,ds3232		Extremely Accurate I²C RTC with Integrated Crystal and SRAM
- dallas,ds4510		CPU Supervisor with Nonvolatile Memory and Programmable I/O
- dallas,ds75		Digital Thermometer and Thermostat
- devantech,srf02		Devantech SRF02 ultrasonic ranger in I2C mode
-@@ -40,9 +36,6 @@ dlg,da9053		DA9053: flexible system level PMIC with multicore support
- dlg,da9063		DA9063: system PMIC for quad-core application processors
- domintech,dmard09	DMARD09: 3-axis Accelerometer
- domintech,dmard10	DMARD10: 3-axis Accelerometer
--epson,rx8010		I2C-BUS INTERFACE REAL TIME CLOCK MODULE
--epson,rx8581		I2C-BUS INTERFACE REAL TIME CLOCK MODULE
--emmicro,em3027		EM Microelectronic EM3027 Real-time Clock
- fsl,mag3110		MAG3110: Xtrinsic High Accuracy, 3D Magnetometer
- fsl,mma7660		MMA7660FC: 3-Axis Orientation/Motion Detection Sensor
- fsl,mma8450		MMA8450Q: Xtrinsic Low-power, 3-axis Xtrinsic Accelerometer
-@@ -53,9 +46,6 @@ gmt,g751		G751: Digital Temperature Sensor and Thermal Watchdog with Two-Wire In
- infineon,slb9635tt	Infineon SLB9635 (Soft-) I2C TPM (old protocol, max 100khz)
- infineon,slb9645tt	Infineon SLB9645 I2C TPM (new protocol, max 400khz)
- infineon,tlv493d-a1b6	Infineon TLV493D-A1B6 I2C 3D Magnetic Sensor
--isil,isl1208		Intersil ISL1208 Low Power RTC with Battery Backed SRAM
--isil,isl1218		Intersil ISL1218 Low Power RTC with Battery Backed SRAM
--isil,isl12022		Intersil ISL12022 Real-time Clock
- isil,isl29028		Intersil ISL29028 Ambient Light and Proximity Sensor
- isil,isl29030		Intersil ISL29030 Ambient Light and Proximity Sensor
- maxim,ds1050		5 Bit Programmable, Pulse-Width Modulator
-@@ -142,7 +132,6 @@ microchip,mcp4662-503	Microchip 8-bit Dual I2C Digital Potentiometer with NV Mem
- microchip,mcp4662-104	Microchip 8-bit Dual I2C Digital Potentiometer with NV Memory (100k)
- microchip,tc654		PWM Fan Speed Controller With Fan Fault Detection
- microchip,tc655		PWM Fan Speed Controller With Fan Fault Detection
--microcrystal,rv3029	Real Time Clock Module with I2C-Bus
- miramems,da226		MiraMEMS DA226 2-axis 14-bit digital accelerometer
- miramems,da280		MiraMEMS DA280 3-axis 14-bit digital accelerometer
- miramems,da311		MiraMEMS DA311 3-axis 12-bit digital accelerometer
-@@ -156,25 +145,12 @@ nuvoton,npct601		i2c trusted platform module (TPM2)
- nuvoton,w83773g		Nuvoton Temperature Sensor
- nxp,pca9556		Octal SMBus and I2C registered interface
- nxp,pca9557		8-bit I2C-bus and SMBus I/O port with reset
--nxp,pcf2127		Real-time clock
--nxp,pcf2129		Real-time clock
--nxp,pcf8523		Real-time Clock
--nxp,pcf8563		Real-time clock/calendar
--nxp,pcf85063		Tiny Real-Time Clock
- oki,ml86v7667		OKI ML86V7667 video decoder
- ovti,ov5642		OV5642: Color CMOS QSXGA (5-megapixel) Image Sensor with OmniBSI and Embedded TrueFocus
--pericom,pt7c4338	Real-time Clock Module
- plx,pex8648		48-Lane, 12-Port PCI Express Gen 2 (5.0 GT/s) Switch
- pulsedlight,lidar-lite-v2	Pulsedlight LIDAR range-finding sensor
--ricoh,r2025sd		I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
--ricoh,r2221tl		I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
--ricoh,rs5c372a		I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
--ricoh,rs5c372b		I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
--ricoh,rv5c386		I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
--ricoh,rv5c387a		I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
- samsung,24ad0xd1	S524AD0XF1 (128K/256K-bit Serial EEPROM for Low Power)
- sgx,vz89x		SGX Sensortech VZ89X Sensors
--sii,s35390a		2-wire CMOS real-time clock
- silabs,si7020		Relative Humidity and Temperature Sensors
- skyworks,sky81452	Skyworks SKY81452: Six-Channel White LED Driver with Touch Panel Bias Supply
- st,24c256		i2c serial eeprom  (24cxx)
--- 
-2.19.1
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+ sync.c        |   13 ++++++-------
+ tree.c        |    5 +++--
+ tree_plugin.h |    9 ++++++---
+ update.c      |    3 ++-
+ 4 files changed, 17 insertions(+), 13 deletions(-)
 
