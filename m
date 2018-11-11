@@ -2,228 +2,122 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8FC4C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 02:38:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 716D5C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 02:47:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E0C5208E3
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 02:38:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="T2mcTrKi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E0C5208E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	by mail.kernel.org (Postfix) with ESMTP id 3C95F20989
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 02:47:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C95F20989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727414AbeKKMZT (ORCPT
+        id S1727377AbeKKMeG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 07:25:19 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:45886 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727371AbeKKMZS (ORCPT
+        Sun, 11 Nov 2018 07:34:06 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:48728 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726945AbeKKMeG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 07:25:18 -0500
-Received: by mail-pf1-f196.google.com with SMTP id p17-v6so2637242pfj.12
-        for <linux-kernel@vger.kernel.org>; Sat, 10 Nov 2018 18:38:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=TZaZWBIUTjVinJfb4hDxRhUezIBaF3z6M2UzY3FVcdI=;
-        b=T2mcTrKissSD5Z1qWZEzCdOZ7+VnEqZZ6oCNDtmYWMFgACJM0X99pWEPEWc4MdShPn
-         z3HUs423N04OufowvF2MeYnIkt/Y1O34D95+MaxgCHXiwj69PhxLL7iBxUeqTM8NHrER
-         1nEQsVMh1Kh2BERcBBQczgXAsLG6t+YJPFB/o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=TZaZWBIUTjVinJfb4hDxRhUezIBaF3z6M2UzY3FVcdI=;
-        b=F5ovgPee6JILOaILj8VpuNc95DYSs16Gt/ZFb3Nf8H6icZZtr+xvD1PI3cYfUjXUZp
-         KXxgPqWDn5lnLUfjamh86w/415ULZzF7H0iUJKU3anyDthWUN7RJM6oF0IPzXXl4a2hS
-         7ZnAxENV+znbTx6MJ/IIOS4d8qipfgnUNBFKIkAh268oEhYiIk8GICwL300Mk7+Zmq4u
-         liByi9pejr2E5BwLuw+paUY9MK59bQpMfyQYrJAH5W+UeqoQBRrOY3PI+LAEgBXcxJZz
-         hXtImFJAOiEU8au1fj3P13qrZPpLwP1l5GhTXk2O/9gpQFfgd2tb2WF3PgMg2RoqO1j4
-         PhRg==
-X-Gm-Message-State: AGRZ1gKGYdmQisAx0ppouIwXrtvNRPA1gU4uxzRfcMxNKF4JO4jGVGBV
-        dFmTG91nqPtANOfZamLl0CAsTQ==
-X-Google-Smtp-Source: AJdET5chcCltsuGx6+2NMFuv7yIny79dO7pfGNlyPx5t4tY4r7yPpOwDJ9x9T0H4REvA9wOmTFR45Q==
-X-Received: by 2002:a62:5343:: with SMTP id h64-v6mr14929897pfb.226.1541903890076;
-        Sat, 10 Nov 2018 18:38:10 -0800 (PST)
-Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
-        by smtp.gmail.com with ESMTPSA id 124-v6sm26341356pfb.132.2018.11.10.18.38.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 10 Nov 2018 18:38:09 -0800 (PST)
-Date:   Sat, 10 Nov 2018 18:38:08 -0800
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Daniel Colascione <dancol@google.com>,
-        Jann Horn <jannh@google.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        John Reck <jreck@google.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Todd Kjos <tkjos@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Bruce Fields <bfields@fieldses.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Khalid Aziz <khalid.aziz@oracle.com>, Lei.Yang@windriver.com,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>, marcandre.lureau@redhat.com,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        Hugh Dickins <hughd@google.com>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH v3 resend 1/2] mm: Add an F_SEAL_FUTURE_WRITE seal to
- memfd
-Message-ID: <20181111023808.GA174670@google.com>
-References: <20181108041537.39694-1-joel@joelfernandes.org>
- <CAG48ez1h=v-JYnDw81HaYJzOfrNhwYksxmc2r=cJvdQVgYM+NA@mail.gmail.com>
- <CAG48ez0kQ4d566bXTFOYANDgii-stL-Qj-oyaBzvfxdV=PU-7g@mail.gmail.com>
- <20181110032005.GA22238@google.com>
- <69CE06CC-E47C-4992-848A-66EB23EE6C74@amacapital.net>
- <20181110182405.GB242356@google.com>
- <CAKOZuesQXRtthJTEr86LByH3gPpAdT-PQM0d1jqr131=zZNRKw@mail.gmail.com>
- <CAKOZueum8MtNvJ5P=W7_pRw62TdQdCgyjCwwbG1wezNboC1cxQ@mail.gmail.com>
- <20181110220933.GB96924@google.com>
- <907D942E-E321-4BD7-BED7-ACD1D96A3643@amacapital.net>
+        Sun, 11 Nov 2018 07:34:06 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: sre)
+        with ESMTPSA id B3B0326406F
+Received: by earth.universe (Postfix, from userid 1000)
+        id 027EF3C08D6; Sun, 11 Nov 2018 03:46:48 +0100 (CET)
+Date:   Sun, 11 Nov 2018 03:46:48 +0100
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Andreas Kemnade <andreas@kemnade.info>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, letux-kernel@openphoenux.org
+Subject: Re: [PATCH RFC] bluetooth: add uart h4 devices via serdev/devicetree
+Message-ID: <20181111024648.7rt7rlhaqihtqecv@earth.universe>
+References: <20181110232034.17277-1-andreas@kemnade.info>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="k52q5scznxewnt47"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <907D942E-E321-4BD7-BED7-ACD1D96A3643@amacapital.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181110232034.17277-1-andreas@kemnade.info>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 10, 2018 at 02:18:23PM -0800, Andy Lutomirski wrote:
-> 
-> > On Nov 10, 2018, at 2:09 PM, Joel Fernandes <joel@joelfernandes.org> wrote:
-> > 
-> >> On Sat, Nov 10, 2018 at 11:11:27AM -0800, Daniel Colascione wrote:
-> >>> On Sat, Nov 10, 2018 at 10:45 AM, Daniel Colascione <dancol@google.com> wrote:
-> >>>> On Sat, Nov 10, 2018 at 10:24 AM, Joel Fernandes <joel@joelfernandes.org> wrote:
-> >>>> Thanks Andy for your thoughts, my comments below:
-> >> [snip]
-> >>>> I don't see it as warty, different seals will work differently. It works
-> >>>> quite well for our usecase, and since Linux is all about solving real
-> >>>> problems in the real work, it would be useful to have it.
-> >>>> 
-> >>>>> - causes a probably-observable effect in the file mode in F_GETFL.
-> >>>> 
-> >>>> Wouldn't that be the right thing to observe anyway?
-> >>>> 
-> >>>>> - causes reopen to fail.
-> >>>> 
-> >>>> So this concern isn't true anymore if we make reopen fail only for WRITE
-> >>>> opens as Daniel suggested. I will make this change so that the security fix
-> >>>> is a clean one.
-> >>>> 
-> >>>>> - does *not* affect other struct files that may already exist on the same inode.
-> >>>> 
-> >>>> TBH if you really want to block all writes to the file, then you want
-> >>>> F_SEAL_WRITE, not this seal. The usecase we have is the fd is sent over IPC
-> >>>> to another process and we want to prevent any new writes in the receiver
-> >>>> side. There is no way this other receiving process can have an existing fd
-> >>>> unless it was already sent one without the seal applied.  The proposed seal
-> >>>> could be renamed to F_SEAL_FD_WRITE if that is preferred.
-> >>>> 
-> >>>>> - mysteriously malfunctions if you try to set it again on another struct
-> >>>>> file that already exists
-> >>>>> 
-> >>>> 
-> >>>> I didn't follow this, could you explain more?
-> >>>> 
-> >>>>> - probably is insecure when used on hugetlbfs.
-> >>>> 
-> >>>> The usecase is not expected to prevent all writes, indeed the usecase
-> >>>> requires existing mmaps to continue to be able to write into the memory map.
-> >>>> So would you call that a security issue too? The use of the seal wants to
-> >>>> allow existing mmap regions to be continue to be written into (I mentioned
-> >>>> more details in the cover letter).
-> >>>> 
-> >>>>> I see two reasonable solutions:
-> >>>>> 
-> >>>>> 1. Don’t fiddle with the struct file at all. Instead make the inode flag
-> >>>>> work by itself.
-> >>>> 
-> >>>> Currently, the various VFS paths check only the struct file's f_mode to deny
-> >>>> writes of already opened files. This would mean more checking in all those
-> >>>> paths (and modification of all those paths).
-> >>>> 
-> >>>> Anyway going with that idea, we could
-> >>>> 1. call deny_write_access(file) from the memfd's seal path which decrements
-> >>>> the inode::i_writecount.
-> >>>> 2. call get_write_access(inode) in the various VFS paths in addition to
-> >>>> checking for FMODE_*WRITE and deny the write (incase i_writecount is negative)
-> >>>> 
-> >>>> That will prevent both reopens, and writes from succeeding. However I worry a
-> >>>> bit about 2 not being too familiar with VFS internals, about what the
-> >>>> consequences of doing that may be.
-> >>> 
-> >>> IMHO, modifying both the inode and the struct file separately is fine,
-> >>> since they mean different things. In regular filesystems, it's fine to
-> >>> have a read-write open file description for a file whose inode grants
-> >>> write permission to nobody. Speaking of which: is fchmod enough to
-> >>> prevent this attack?
-> >> 
-> >> Well, yes and no. fchmod does prevent reopening the file RW, but
-> >> anyone with permissions (owner, CAP_FOWNER) can just fchmod it back. A
-> >> seal is supposed to be irrevocable, so fchmod-as-inode-seal probably
-> >> isn't sufficient by itself. While it might be good enough for Android
-> >> (in the sense that it'll prevent RW-reopens from other security
-> >> contexts to which we send an open memfd file), it's still conceptually
-> >> ugly, IMHO. Let's go with the original approach of just tweaking the
-> >> inode so that open-for-write is permanently blocked.
-> > 
-> > Agreed with the idea of modifying both file and inode flags. I was thinking
-> > modifying i_mode may do the trick but as you pointed it probably could be
-> > reverted by chmod or some other attribute setting calls.
-> > 
-> > OTOH, I don't think deny_write_access(file) can be reverted from any
-> > user-facing path so we could do that from the seal to prevent the future
-> > opens in write mode. I'll double check and test that out tomorrow.
-> > 
-> > 
-> 
-> This seems considerably more complicated and more fragile than needed. Just
-> add a new F_SEAL_WRITE_FUTURE.  Grep for F_SEAL_WRITE and make the _FUTURE
-> variant work exactly like it with two exceptions:
-> 
-> - shmem_mmap and maybe its hugetlbfs equivalent should check for it and act
-> accordingly.
 
-There's more to it than that, we also need to block future writes through
-write syscall, so we have to hook into the write path too once the seal is
-set, not just the mmap. That means we have to add code in mm/shmem.c to do
-that in all those handlers, to check for the seal (and hope we didn't miss a
-file_operations handler). Is that what you are proposing?
+--k52q5scznxewnt47
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Also, it means we have to keep CONFIG_TMPFS enabled so that the
-shmem_file_operations write handlers like write_iter are hooked up. Currently
-memfd works even with !CONFIG_TMPFS.
+Hi,
 
-> - add_seals won’t need the wait_for_pins and mapping_deny_write logic.
-> 
-> That really should be all that’s needed.
+On Sun, Nov 11, 2018 at 12:20:34AM +0100, Andreas Kemnade wrote:
+> This is a first try to be able to use h4 devices specified in
+> the devicetree, so you do not need to call hciattach and
+> it can be automatically probed.
+>=20
+> Of course, proper devicetree bindings documentation is
+> missing. And also you would extend that by regulator/
+> enable gpio settings.
+>=20
+> But before proceeding further it should be checked if the
+> general way of doing things is right.
+>=20
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> ---
 
-It seems a fair idea what you're saying. But I don't see how its less
-complex.. IMO its far more simple to have VFS do the denial of the operations
-based on the flags of its datastructures.. and if it works (which I will test
-to be sure it will), then we should be good.
+Patch looks good to me, just one note
 
-Btw by any chance, are you also coming by LPC conference next week?
+>  drivers/bluetooth/hci_h4.c | 78 ++++++++++++++++++++++++++++++++++++++++=
+++++++
+>  1 file changed, 78 insertions(+)
+>=20
 
-thanks!
+[...]
 
- - Joel
+> +	return hci_uart_register_device(hu, &h4p);
+> +}
+> +
+> +static void hci_h4_remove(struct serdev_device *serdev)
+> +{
+> +	struct h4_device *h4dev =3D serdev_device_get_drvdata(serdev);
+> +
+> +	hci_uart_unregister_device(&h4dev->hu);
+> +}
 
+I suggest to add a patch introducing
+
+devm_hci_uart_register_device()
+
+All existing users of hci_uart_register_device() could use it
+(your driver, hci_bcm, hci_h5, hci_ll, hci_nokia and hci_qca)
+and all drivers but hci_qca can drop their remove function.
+
+-- Sebastian
+
+--k52q5scznxewnt47
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlvnmBUACgkQ2O7X88g7
++pqzMQ//VqC1GTpZhAWWF3ZfWkVRrzBBUvcFGws0Mjlvc56FUJVD//VCGWmBm9Q4
+H4jgogFIpjAtdxOQj3TnjqMcGO4XaWkj2hV+3X/NxkgBdAZYOR6Pz4nkcZQRL01R
+l1CR4gCF7K9zGd+yj2XTOM4Rs8HmUvkU37rlaALe7J4tzd2fPf6wafztAKSDTOmL
+1vw8c9/hT2jeadfrlK8QED0a2C+d3PE0fcWrpY0SU+lBI2CgT/fb7cEHk1xpJ9BC
+ALIYxXKWOLoBPe67FrNvghoQre4SPu4BUfoQJZJ4uC9st8B16RgaomoBk1Y2rUHr
+iTxxyBoFyX0lTB5lMTKPscHTNsawpAq1wf9ENkEjNztLn2d8hk4N68H5SGfTXpH6
+rgw2081hRP/dUe3oADItWIRJ6jFRSUuorE/KeLpZHPN+arJwFGK292hkCvPbQzn2
+ncTpxSfdSQDlHc5lhPH2v7ylhmrRhnkwmAdyRuwkIEYkKLyxwDH++GlkGxLKyVc7
+aOqQ8VVKDlos1u+vbXWew8OaMWfKS5PCLbAdTuSb8ntHSdouIacbv+ZeSarxgTl/
+HV0mLjr1haU8JPRJE7KNetQyANoR2mUEB4cw7pxwjaTA45Uf14wuhNYN81I/R7VF
+NZ29WLtHf8BHf7h/MgU6xF1/mv9jJD8rTojrlXzy4extkVmuvQ4=
+=WtdZ
+-----END PGP SIGNATURE-----
+
+--k52q5scznxewnt47--
