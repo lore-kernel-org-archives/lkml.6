@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A8A8C4161B
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19CC9C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D223F223D1
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAEE422353
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="i48DPhzt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D223F223D1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YDH+2HW/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAEE422353
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732019AbeKLIRp (ORCPT
+        id S1732067AbeKLIRs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:17:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34236 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:17:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34452 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731952AbeKLIRp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:17:45 -0500
+        id S1732005AbeKLIRq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:17:46 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E93D322360;
-        Sun, 11 Nov 2018 22:27:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45629208A3;
+        Sun, 11 Nov 2018 22:27:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975269;
-        bh=95fGqiKldneHCYHMU3tuNKyIYlEyrLgmvTNwnf1W7YY=;
+        s=default; t=1541975270;
+        bh=x+FNQHUsIZUt3lHb6Hyi05wqnu4tWjTP9DbKEX+Yx+Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i48DPhztyvq71iAxa+KqpllIMsAInTP/qSSvDsjRY9KvG3uLkg9rddBijo0M6EHkA
-         I09STETee2OpmEzmPHBjIEB8hrDFW/ZwveHLcZ2JlqfEgvDe4jA9ephdBCrGCUKKJI
-         sTGKBpYsFJbhgA0uM6mCDM3+Mn1TVhKBUsiBiI8c=
+        b=YDH+2HW/yr/qbrQrjoHVuraEPnF5H2wPRQ8JoHMCyGaopmMaiamtDbSTRzKyO+dGD
+         3X0LFta9+j9zLQa2jUsNRleYgI5BA8IE/kAR83xcxGoppqsaOiC0BwljyAsSU1bVj3
+         HtEFWBHcVix1tYT4SL6iX6l6tdN6XWBm2/ODjg8A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anshuman Gupta <anshuman.gupta@intel.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 165/361] xhci: Avoid USB autosuspend when resuming USB2 ports.
-Date:   Sun, 11 Nov 2018 14:18:32 -0800
-Message-Id: <20181111221643.549564876@linuxfoundation.org>
+Subject: [PATCH 4.19 167/361] f2fs: fix to recover inodes crtime during POR
+Date:   Sun, 11 Nov 2018 14:18:34 -0800
+Message-Id: <20181111221643.822421928@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -63,84 +63,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anshuman Gupta <anshuman.gupta@intel.com>
+From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit 330e2d61cdd58363eb5e66b2e72f76fe3c5492e0 ]
+[ Upstream commit 5cd1f387a13b5188b4edb4c834310302a85a6ea2 ]
 
-When USB bus host controller root hub resumes from autosuspend,
-it immediately tries to enter auto-suspend, but there can be a
-scenario when root hub is resuming its usb2 ports, in that particular
-case USB host controller auto suspend fails since it is busy
-to resuming its usb2 ports.
+Testcase to reproduce this bug:
+1. mkfs.f2fs -O extra_attr -O inode_crtime /dev/sdd
+2. mount -t f2fs /dev/sdd /mnt/f2fs
+3. touch /mnt/f2fs/file
+4. xfs_io -f /mnt/f2fs/file -c "fsync"
+5. godown /mnt/f2fs
+6. umount /mnt/f2fs
+7. mount -t f2fs /dev/sdd /mnt/f2fs
+8. xfs_io -f /mnt/f2fs/file -c "statx -r"
 
-This makes multiple failed cycles of auto-suspend until all usb2
-ports of host controller root hub do not resume.
+stat.btime.tv_sec = 0
+stat.btime.tv_nsec = 0
 
-This patch uses USB core framework usb_hcd_start_port_resume,
-usb_hcd_end_port_resume API's in order to  autoresume/autosuspend
-root hub properly.
+This patch fixes to recover inode creation time fields during
+mount.
 
-Signed-off-by: Anshuman Gupta <anshuman.gupta@intel.com>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/host/xhci-hub.c  |    5 +++++
- drivers/usb/host/xhci-ring.c |    1 +
- 2 files changed, 6 insertions(+)
+ fs/f2fs/node.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/usb/host/xhci-hub.c
-+++ b/drivers/usb/host/xhci-hub.c
-@@ -900,6 +900,7 @@ static u32 xhci_get_port_status(struct u
- 				set_bit(wIndex, &bus_state->resuming_ports);
- 				bus_state->resume_done[wIndex] = timeout;
- 				mod_timer(&hcd->rh_timer, timeout);
-+				usb_hcd_start_port_resume(&hcd->self, wIndex);
- 			}
- 		/* Has resume been signalled for USB_RESUME_TIME yet? */
- 		} else if (time_after_eq(jiffies,
-@@ -940,6 +941,7 @@ static u32 xhci_get_port_status(struct u
- 				clear_bit(wIndex, &bus_state->rexit_ports);
- 			}
- 
-+			usb_hcd_end_port_resume(&hcd->self, wIndex);
- 			bus_state->port_c_suspend |= 1 << wIndex;
- 			bus_state->suspended_ports &= ~(1 << wIndex);
- 		} else {
-@@ -962,6 +964,7 @@ static u32 xhci_get_port_status(struct u
- 	    (raw_port_status & PORT_PLS_MASK) != XDEV_RESUME) {
- 		bus_state->resume_done[wIndex] = 0;
- 		clear_bit(wIndex, &bus_state->resuming_ports);
-+		usb_hcd_end_port_resume(&hcd->self, wIndex);
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -2560,6 +2560,13 @@ retry:
+ 			F2FS_FITS_IN_INODE(src, le16_to_cpu(src->i_extra_isize),
+ 								i_projid))
+ 			dst->i_projid = src->i_projid;
++
++		if (f2fs_sb_has_inode_crtime(sbi->sb) &&
++			F2FS_FITS_IN_INODE(src, le16_to_cpu(src->i_extra_isize),
++							i_crtime_nsec)) {
++			dst->i_crtime = src->i_crtime;
++			dst->i_crtime_nsec = src->i_crtime_nsec;
++		}
  	}
  
- 
-@@ -1337,6 +1340,7 @@ int xhci_hub_control(struct usb_hcd *hcd
- 					goto error;
- 
- 				set_bit(wIndex, &bus_state->resuming_ports);
-+				usb_hcd_start_port_resume(&hcd->self, wIndex);
- 				xhci_set_link_state(xhci, ports[wIndex],
- 						    XDEV_RESUME);
- 				spin_unlock_irqrestore(&xhci->lock, flags);
-@@ -1345,6 +1349,7 @@ int xhci_hub_control(struct usb_hcd *hcd
- 				xhci_set_link_state(xhci, ports[wIndex],
- 							XDEV_U0);
- 				clear_bit(wIndex, &bus_state->resuming_ports);
-+				usb_hcd_end_port_resume(&hcd->self, wIndex);
- 			}
- 			bus_state->port_c_suspend |= 1 << wIndex;
- 
---- a/drivers/usb/host/xhci-ring.c
-+++ b/drivers/usb/host/xhci-ring.c
-@@ -1602,6 +1602,7 @@ static void handle_port_status(struct xh
- 			set_bit(HCD_FLAG_POLL_RH, &hcd->flags);
- 			mod_timer(&hcd->rh_timer,
- 				  bus_state->resume_done[hcd_portnum]);
-+			usb_hcd_start_port_resume(&hcd->self, hcd_portnum);
- 			bogus_port_status = true;
- 		}
- 	}
+ 	new_ni = old_ni;
 
 
