@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12DC4C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:50:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71507C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:50:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6885214E0
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:50:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 371BF214E0
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:50:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vcGPAO66"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6885214E0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="R7oPhkWn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 371BF214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390895AbeKLIki (ORCPT
+        id S2404218AbeKLIXJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:40:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54672 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404213AbeKLIXJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:23:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55530 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404187AbeKLIXI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:23:08 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 98ACB21707;
-        Sun, 11 Nov 2018 22:33:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB7C12245E;
+        Sun, 11 Nov 2018 22:33:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975592;
-        bh=1xn4qlqTwNjUyVxJb9o3ZcmM9/0isxahHsT29qc9Bqs=;
+        s=default; t=1541975591;
+        bh=Xu7K2yd4Epr0BeUPgy+u7Nq2bNI2nJVxAWgaAWjzouU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vcGPAO66mTJf5+CORLRfAw6osYx9ueszJ7C1vmDHfb4DqlVhCKDnd+E0EurjnoNqc
-         Yhn6XsPTWWguptnmgGo184tmOWl9OKCe/U9BZTxRGjFUTHCk71A6Sb2I9YAU/6rTTT
-         QCKtn3s36FrQdNbQCUjMZSbjdXJNY7jwb0/gbZAM=
+        b=R7oPhkWn/x04RsTfPznfMCFleEjXtdp5YBl5vicl693ch2DCsXaQWZexShHmHJrMn
+         gQ9r76z/+zbhvcQy9SwK1rNqCpcw6xAJ+cM4YPPuab+EMtbrQ6H7idLZqP4V1ywxWO
+         nq8/oSVo/znsoWuC3p7yWMqm+S24AAC72uCeAii4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
-        Liu Bo <bo.liu@linux.alibaba.com>,
-        Josef Bacik <josef@toxicpanda.com>,
+        stable@vger.kernel.org, Jeff Mahoney <jeffm@suse.com>,
         David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 207/222] btrfs: make sure we create all new block groups
-Date:   Sun, 11 Nov 2018 14:25:04 -0800
-Message-Id: <20181111221705.168613970@linuxfoundation.org>
+Subject: [PATCH 4.14 203/222] btrfs: dont attempt to trim devices that dont support it
+Date:   Sun, 11 Nov 2018 14:25:00 -0800
+Message-Id: <20181111221704.858304298@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -64,49 +62,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Josef Bacik <josef@toxicpanda.com>
+From: Jeff Mahoney <jeffm@suse.com>
 
-commit 545e3366db823dc3342ca9d7fea803f829c9062f upstream.
+commit 0be88e367fd8fbdb45257615d691f4675dda062f upstream.
 
-Allocating new chunks modifies both the extent and chunk tree, which can
-trigger new chunk allocations.  So instead of doing list_for_each_safe,
-just do while (!list_empty()) so we make sure we don't exit with other
-pending bg's still on our list.
+We check whether any device the file system is using supports discard in
+the ioctl call, but then we attempt to trim free extents on every device
+regardless of whether discard is supported.  Due to the way we mask off
+EOPNOTSUPP, we can end up issuing the trim operations on each free range
+on devices that don't support it, just wasting time.
 
+Fixes: 499f377f49f08 ("btrfs: iterate over unused chunk space in FITRIM")
 CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Omar Sandoval <osandov@fb.com>
-Reviewed-by: Liu Bo <bo.liu@linux.alibaba.com>
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
 Reviewed-by: David Sterba <dsterba@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/extent-tree.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ fs/btrfs/extent-tree.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
 --- a/fs/btrfs/extent-tree.c
 +++ b/fs/btrfs/extent-tree.c
-@@ -10270,7 +10270,7 @@ error:
- void btrfs_create_pending_block_groups(struct btrfs_trans_handle *trans,
- 				       struct btrfs_fs_info *fs_info)
- {
--	struct btrfs_block_group_cache *block_group, *tmp;
-+	struct btrfs_block_group_cache *block_group;
- 	struct btrfs_root *extent_root = fs_info->extent_root;
- 	struct btrfs_block_group_item item;
- 	struct btrfs_key key;
-@@ -10278,7 +10278,10 @@ void btrfs_create_pending_block_groups(s
- 	bool can_flush_pending_bgs = trans->can_flush_pending_bgs;
+@@ -10976,6 +10976,10 @@ static int btrfs_trim_free_extents(struc
  
- 	trans->can_flush_pending_bgs = false;
--	list_for_each_entry_safe(block_group, tmp, &trans->new_bgs, bg_list) {
-+	while (!list_empty(&trans->new_bgs)) {
-+		block_group = list_first_entry(&trans->new_bgs,
-+					       struct btrfs_block_group_cache,
-+					       bg_list);
- 		if (ret)
- 			goto next;
+ 	*trimmed = 0;
  
++	/* Discard not supported = nothing to do. */
++	if (!blk_queue_discard(bdev_get_queue(device->bdev)))
++		return 0;
++
+ 	/* Not writeable = nothing to do. */
+ 	if (!device->writeable)
+ 		return 0;
 
 
