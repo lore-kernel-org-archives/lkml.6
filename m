@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 504DAC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:54:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC59FC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:54:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1936120872
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:54:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F33A20872
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:54:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fLScX7sY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1936120872
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SxRUpfVL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F33A20872
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403971AbeKLIW4 (ORCPT
+        id S2390967AbeKLIox (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:22:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54742 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:44:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54642 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403950AbeKLIWz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2403957AbeKLIWz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:22:55 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 29284223CB;
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C01E2243E;
         Sun, 11 Nov 2018 22:32:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975578;
-        bh=h1rKWV2An88lwxYDddsedtgJS5nyKugmKu2mvBjgFzI=;
+        bh=jg4TiyXPc+avwJee7TaniUp+Ic+kZyR4qZ4TmcDV9UA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fLScX7sYLeG4j67YAQckVROudyNr1BxyldNP7OoweLYltFMpCsR2YzYPtBdkwUHQj
-         w4FLZ10X+yKrjuk/e29NWHBHLoJE9vsNKRv3Zm7sepK5pLqFjudfCKuYYTuYyW3UnG
-         ZItzNxtlXrygzQLzHgA3iLhZlNTOTQSOs5ty79lE=
+        b=SxRUpfVLuGvwNqkRHu6oc/Ht3XngnP+tuEZAtyqTpAqUF9VXuKrOCgSvN9z66Yy//
+         EzumS0JmomKgw6fOk20w9Khzi4nV58isdRnw9qiJDI3BmcC0BkZEv4ZKUIcW/RE+PQ
+         IGZnZhE7Udp3AfGdi/wspAqbSmLJpSqnKqd+IE6I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
-        Aurelien Aptel <aaptel@suse.com>
-Subject: [PATCH 4.14 164/222] smb3: allow stats which track session and share reconnects to be reset
-Date:   Sun, 11 Nov 2018 14:24:21 -0800
-Message-Id: <20181111221701.945323304@linuxfoundation.org>
+        Ronnie Sahlberg <lsahlber@redhat.com>
+Subject: [PATCH 4.14 165/222] smb3: do not attempt cifs operation in smb3 query info error path
+Date:   Sun, 11 Nov 2018 14:24:22 -0800
+Message-Id: <20181111221702.018404509@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -64,32 +64,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Steve French <stfrench@microsoft.com>
 
-commit 2c887635cd6ab3af619dc2be94e5bf8f2e172b78 upstream.
+commit 1e77a8c204c9d1b655c61751b8ad0fde22421dbb upstream.
 
-Currently, "echo 0 > /proc/fs/cifs/Stats" resets all of the stats
-except the session and share reconnect counts.  Fix it to
-reset those as well.
+If backupuid mount option is sent, we can incorrectly retry
+(on access denied on query info) with a cifs (FindFirst) operation
+on an smb3 mount which causes the server to force the session close.
 
-CC: Stable <stable@vger.kernel.org>
+We set backup intent on open so no need for this fallback.
+
+See kernel bugzilla 201435
+
 Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-by: Aurelien Aptel <aaptel@suse.com>
+CC: Stable <stable@vger.kernel.org>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/cifs_debug.c |    3 +++
- 1 file changed, 3 insertions(+)
+ fs/cifs/inode.c |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
---- a/fs/cifs/cifs_debug.c
-+++ b/fs/cifs/cifs_debug.c
-@@ -289,6 +289,9 @@ static ssize_t cifs_stats_proc_write(str
- 		atomic_set(&totBufAllocCount, 0);
- 		atomic_set(&totSmBufAllocCount, 0);
- #endif /* CONFIG_CIFS_STATS2 */
-+		atomic_set(&tcpSesReconnectCount, 0);
-+		atomic_set(&tconInfoReconnectCount, 0);
+--- a/fs/cifs/inode.c
++++ b/fs/cifs/inode.c
+@@ -776,7 +776,15 @@ cifs_get_inode_info(struct inode **inode
+ 	} else if (rc == -EREMOTE) {
+ 		cifs_create_dfs_fattr(&fattr, sb);
+ 		rc = 0;
+-	} else if (rc == -EACCES && backup_cred(cifs_sb)) {
++	} else if ((rc == -EACCES) && backup_cred(cifs_sb) &&
++		   (strcmp(server->vals->version_string, SMB1_VERSION_STRING)
++		      == 0)) {
++			/*
++			 * For SMB2 and later the backup intent flag is already
++			 * sent if needed on open and there is no path based
++			 * FindFirst operation to use to retry with
++			 */
 +
- 		spin_lock(&GlobalMid_Lock);
- 		GlobalMaxActiveXid = 0;
- 		GlobalCurrentXid = 0;
+ 			srchinf = kzalloc(sizeof(struct cifs_search_info),
+ 						GFP_KERNEL);
+ 			if (srchinf == NULL) {
 
 
