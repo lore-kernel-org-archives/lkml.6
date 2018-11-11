@@ -2,57 +2,58 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-14.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6B61C0044C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:29:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17D45C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:29:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8476521731
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:29:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8476521731
+	by mail.kernel.org (Postfix) with ESMTP id B73C9214DB
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:29:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B73C9214DB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727201AbeKLFS5 (ORCPT
+        id S1727365AbeKLFS6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 00:18:57 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51302 "EHLO
+        Mon, 12 Nov 2018 00:18:58 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39168 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726776AbeKLFSh (ORCPT
+        by vger.kernel.org with ESMTP id S1726640AbeKLFSh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 00:18:37 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wABJNxuB003631
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:29:13 -0500
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2npdvs89qh-1
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wABJNvEp122333
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:29:12 -0500
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2npdfdh3st-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:29:13 -0500
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:29:12 -0500
 Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
         Sun, 11 Nov 2018 19:29:12 -0000
 Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
         Sun, 11 Nov 2018 19:29:07 -0000
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wABJT6Ms45154534
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wABJT5fD45154528
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 11 Nov 2018 19:29:06 GMT
+        Sun, 11 Nov 2018 19:29:05 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E3354B2066;
+        by IMSVA (Postfix) with ESMTP id A4B37B2065;
         Sun, 11 Nov 2018 19:29:05 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C8F6DB205F;
+        by IMSVA (Postfix) with ESMTP id 458BBB2064;
         Sun, 11 Nov 2018 19:29:05 +0000 (GMT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.85.207.24])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
         Sun, 11 Nov 2018 19:29:05 +0000 (GMT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id A499E16C5DA3; Sun, 11 Nov 2018 11:29:06 -0800 (PST)
+        id 7187F16C5D5B; Sun, 11 Nov 2018 11:29:06 -0800 (PST)
 From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -60,21 +61,37 @@ Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH tip/core/rcu 11/14] rcu: Avoid signed integer overflow in rcu_preempt_deferred_qs()
-Date:   Sun, 11 Nov 2018 11:29:01 -0800
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Douglas Miller <dougmill@linux.ibm.com>,
+        Eddie James <eajames@linux.ibm.com>,
+        Frank Haverkamp <haver@linux.ibm.com>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
+        John Allen <jallen@linux.ibm.com>,
+        "Manoj N . Kumar" <manoj@linux.ibm.com>,
+        "Matthew R . Ochs" <mrochs@linux.ibm.com>,
+        Michael Cyr <mikecyr@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
+        Paulo Flabiano Smorigo <pfsmorigo@linux.ibm.com>,
+        Philip Kelleher <pjk1939@linux.ibm.com>,
+        Steven Royer <seroyer@linux.ibm.com>,
+        Thomas Falcon <tlfalcon@linux.ibm.com>,
+        Tyrel Datwyler <tyreld@linux.ibm.com>,
+        Uma Krishnan <ukrishn@linux.ibm.com>
+Subject: [PATCH tip/core/rcu 02/14] MAINTAINERS: Update from @linux.vnet.ibm.com to @linux.ibm.com
+Date:   Sun, 11 Nov 2018 11:28:52 -0800
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181111192839.GA32144@linux.ibm.com>
 References: <20181111192839.GA32144@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18111119-0040-0000-0000-00000490883C
+x-cbid: 18111119-0064-0000-0000-000003722DFD
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00010028; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01116014; UDB=6.00577119; IPR=6.00896114;
+ PH=3.00000004; SC=3.00000270; SDB=6.01116014; UDB=6.00577118; IPR=6.00896115;
  MB=3.00024114; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-11 19:29:10
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111119-0041-0000-0000-0000089990E9
-Message-Id: <20181111192904.3199-11-paulmck@linux.ibm.com>
+x-cbparentid: 18111119-0065-0000-0000-00003B4D3C26
+Message-Id: <20181111192904.3199-2-paulmck@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-11_13:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -87,86 +104,311 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Subtracting INT_MIN can be interpreted as unconditional signed integer
-overflow, which according to the C standard is undefined behavior.
-Therefore, kernel build arguments notwithstanding, it would be good to
-future-proof the code.  This commit therefore substitutes INT_MAX for
-INT_MIN in order to avoid undefined behavior.
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 
-While in the neighborhood, this commit also creates some meaningful names
-for INT_MAX and friends in order to improve readability, as suggested
-by Joel Fernandes.
+IBM's patch-friendly email infrastructure is changing domains from
+@linux.vnet.ibm.com to @linux.ibm.com, which if nothing else might
+save a bit of typing.  This commit therefore updates us stragglers'
+email addresses in the MAINTAINERS file.  The old addresses are
+expected to continue to work for a few more months.
 
-Reported-by: Ran Rozenstein <ranro@mellanox.com>
-Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+While in the neighborhood, remove some obsolete entries, which results
+in an orphaned subsystem: "JSM Neo PCI based serial card".
+
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Douglas Miller <dougmill@linux.ibm.com>
+Cc: Eddie James <eajames@linux.ibm.com>
+Cc: Frank Haverkamp <haver@linux.ibm.com>
+Cc: Frederic Barrat <fbarrat@linux.ibm.com>
+Cc: John Allen <jallen@linux.ibm.com>
+Cc: Manoj N. Kumar <manoj@linux.ibm.com>
+Cc: Matthew R. Ochs <mrochs@linux.ibm.com>
+Cc: Michael Cyr <mikecyr@linux.ibm.com>
+Cc: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Naveen N. Rao <naveen.n.rao@linux.ibm.com>
+Cc: Paulo Flabiano Smorigo <pfsmorigo@linux.ibm.com>
+Cc: Philip Kelleher <pjk1939@linux.ibm.com>
+Cc: Steven Royer <seroyer@linux.ibm.com>
+Cc: Thomas Falcon <tlfalcon@linux.ibm.com>
+Cc: Tyrel Datwyler <tyreld@linux.ibm.com>
+Cc: Uma Krishnan <ukrishn@linux.ibm.com>
+Acked-by: James Bottomley <jejb@linux.ibm.com>
 ---
- kernel/rcu/tree_plugin.h | 21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+ MAINTAINERS | 72 ++++++++++++++++++++++++-----------------------------
+ 1 file changed, 33 insertions(+), 39 deletions(-)
 
-diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index 0bb1c1593ca4..3ed43f8cb029 100644
---- a/kernel/rcu/tree_plugin.h
-+++ b/kernel/rcu/tree_plugin.h
-@@ -397,6 +397,11 @@ static int rcu_preempt_blocked_readers_cgp(struct rcu_node *rnp)
- 	return rnp->gp_tasks != NULL;
- }
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f4855974f325..1b80a021f542 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4033,7 +4033,7 @@ S:	Supported
+ F:	drivers/net/ethernet/chelsio/cxgb4vf/
  
-+/* Bias and limit values for ->rcu_read_lock_nesting. */
-+#define RCU_NEST_BIAS INT_MAX
-+#define RCU_NEST_NMAX (-INT_MAX / 2)
-+#define RCU_NEST_PMAX (INT_MAX / 2)
-+
- /*
-  * Preemptible RCU implementation for rcu_read_lock().
-  * Just increment ->rcu_read_lock_nesting, shared state will be updated
-@@ -405,6 +410,8 @@ static int rcu_preempt_blocked_readers_cgp(struct rcu_node *rnp)
- void __rcu_read_lock(void)
- {
- 	current->rcu_read_lock_nesting++;
-+	if (IS_ENABLED(CONFIG_PROVE_LOCKING))
-+		WARN_ON_ONCE(current->rcu_read_lock_nesting > RCU_NEST_PMAX);
- 	barrier();  /* critical section after entry code. */
- }
- EXPORT_SYMBOL_GPL(__rcu_read_lock);
-@@ -424,20 +431,18 @@ void __rcu_read_unlock(void)
- 		--t->rcu_read_lock_nesting;
- 	} else {
- 		barrier();  /* critical section before exit code. */
--		t->rcu_read_lock_nesting = INT_MIN;
-+		t->rcu_read_lock_nesting = -RCU_NEST_BIAS;
- 		barrier();  /* assign before ->rcu_read_unlock_special load */
- 		if (unlikely(READ_ONCE(t->rcu_read_unlock_special.s)))
- 			rcu_read_unlock_special(t);
- 		barrier();  /* ->rcu_read_unlock_special load before assign */
- 		t->rcu_read_lock_nesting = 0;
- 	}
--#ifdef CONFIG_PROVE_LOCKING
--	{
--		int rrln = READ_ONCE(t->rcu_read_lock_nesting);
-+	if (IS_ENABLED(CONFIG_PROVE_LOCKING)) {
-+		int rrln = t->rcu_read_lock_nesting;
+ CXL (IBM Coherent Accelerator Processor Interface CAPI) DRIVER
+-M:	Frederic Barrat <fbarrat@linux.vnet.ibm.com>
++M:	Frederic Barrat <fbarrat@linux.ibm.com>
+ M:	Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+ L:	linuxppc-dev@lists.ozlabs.org
+ S:	Supported
+@@ -4045,9 +4045,9 @@ F:	Documentation/powerpc/cxl.txt
+ F:	Documentation/ABI/testing/sysfs-class-cxl
  
--		WARN_ON_ONCE(rrln < 0 && rrln > INT_MIN / 2);
-+		WARN_ON_ONCE(rrln < 0 && rrln > RCU_NEST_NMAX);
- 	}
--#endif /* #ifdef CONFIG_PROVE_LOCKING */
- }
- EXPORT_SYMBOL_GPL(__rcu_read_unlock);
+ CXLFLASH (IBM Coherent Accelerator Processor Interface CAPI Flash) SCSI DRIVER
+-M:	Manoj N. Kumar <manoj@linux.vnet.ibm.com>
+-M:	Matthew R. Ochs <mrochs@linux.vnet.ibm.com>
+-M:	Uma Krishnan <ukrishn@linux.vnet.ibm.com>
++M:	Manoj N. Kumar <manoj@linux.ibm.com>
++M:	Matthew R. Ochs <mrochs@linux.ibm.com>
++M:	Uma Krishnan <ukrishn@linux.ibm.com>
+ L:	linux-scsi@vger.kernel.org
+ S:	Supported
+ F:	drivers/scsi/cxlflash/
+@@ -5428,7 +5428,7 @@ S:	Orphan
+ F:	fs/efs/
  
-@@ -617,11 +622,11 @@ static void rcu_preempt_deferred_qs(struct task_struct *t)
- 	if (!rcu_preempt_need_deferred_qs(t))
- 		return;
- 	if (couldrecurse)
--		t->rcu_read_lock_nesting -= INT_MIN;
-+		t->rcu_read_lock_nesting -= RCU_NEST_BIAS;
- 	local_irq_save(flags);
- 	rcu_preempt_deferred_qs_irqrestore(t, flags);
- 	if (couldrecurse)
--		t->rcu_read_lock_nesting += INT_MIN;
-+		t->rcu_read_lock_nesting += RCU_NEST_BIAS;
- }
+ EHEA (IBM pSeries eHEA 10Gb ethernet adapter) DRIVER
+-M:	Douglas Miller <dougmill@linux.vnet.ibm.com>
++M:	Douglas Miller <dougmill@linux.ibm.com>
+ L:	netdev@vger.kernel.org
+ S:	Maintained
+ F:	drivers/net/ethernet/ibm/ehea/
+@@ -5565,7 +5565,7 @@ F:	Documentation/filesystems/ext4/ext4.rst
+ F:	fs/ext4/
  
- /*
+ Extended Verification Module (EVM)
+-M:	Mimi Zohar <zohar@linux.vnet.ibm.com>
++M:	Mimi Zohar <zohar@linux.ibm.com>
+ L:	linux-integrity@vger.kernel.org
+ S:	Supported
+ F:	security/integrity/evm/
+@@ -5775,7 +5775,7 @@ F:	include/linux/firmware.h
+ 
+ FLASH ADAPTER DRIVER (IBM Flash Adapter 900GB Full Height PCI Flash Card)
+ M:	Joshua Morris <josh.h.morris@us.ibm.com>
+-M:	Philip Kelleher <pjk1939@linux.vnet.ibm.com>
++M:	Philip Kelleher <pjk1939@linux.ibm.com>
+ S:	Maintained
+ F:	drivers/block/rsxx/
+ 
+@@ -6042,7 +6042,7 @@ F:	include/linux/fscrypt*.h
+ F:	Documentation/filesystems/fscrypt.rst
+ 
+ FSI-ATTACHED I2C DRIVER
+-M:	Eddie James <eajames@linux.vnet.ibm.com>
++M:	Eddie James <eajames@linux.ibm.com>
+ L:	linux-i2c@vger.kernel.org
+ L:	openbmc@lists.ozlabs.org (moderated for non-subscribers)
+ S:	Maintained
+@@ -6218,8 +6218,7 @@ S:	Supported
+ F:	drivers/uio/uio_pci_generic.c
+ 
+ GENWQE (IBM Generic Workqueue Card)
+-M:	Frank Haverkamp <haver@linux.vnet.ibm.com>
+-M:	Guilherme G. Piccoli <gpiccoli@linux.vnet.ibm.com>
++M:	Frank Haverkamp <haver@linux.ibm.com>
+ S:	Supported
+ F:	drivers/misc/genwqe/
+ 
+@@ -7001,8 +7000,7 @@ F:	crypto/842.c
+ F:	lib/842/
+ 
+ IBM Power in-Nest Crypto Acceleration
+-M:	Leonidas S. Barbosa <leosilva@linux.vnet.ibm.com>
+-M:	Paulo Flabiano Smorigo <pfsmorigo@linux.vnet.ibm.com>
++M:	Paulo Flabiano Smorigo <pfsmorigo@linux.ibm.com>
+ L:	linux-crypto@vger.kernel.org
+ S:	Supported
+ F:	drivers/crypto/nx/Makefile
+@@ -7019,8 +7017,8 @@ S:	Supported
+ F:	drivers/scsi/ipr.*
+ 
+ IBM Power SRIOV Virtual NIC Device Driver
+-M:	Thomas Falcon <tlfalcon@linux.vnet.ibm.com>
+-M:	John Allen <jallen@linux.vnet.ibm.com>
++M:	Thomas Falcon <tlfalcon@linux.ibm.com>
++M:	John Allen <jallen@linux.ibm.com>
+ L:	netdev@vger.kernel.org
+ S:	Supported
+ F:	drivers/net/ethernet/ibm/ibmvnic.*
+@@ -7035,41 +7033,38 @@ F:	arch/powerpc/include/asm/vas.h
+ F:	arch/powerpc/include/uapi/asm/vas.h
+ 
+ IBM Power Virtual Ethernet Device Driver
+-M:	Thomas Falcon <tlfalcon@linux.vnet.ibm.com>
++M:	Thomas Falcon <tlfalcon@linux.ibm.com>
+ L:	netdev@vger.kernel.org
+ S:	Supported
+ F:	drivers/net/ethernet/ibm/ibmveth.*
+ 
+ IBM Power Virtual FC Device Drivers
+-M:	Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
++M:	Tyrel Datwyler <tyreld@linux.ibm.com>
+ L:	linux-scsi@vger.kernel.org
+ S:	Supported
+ F:	drivers/scsi/ibmvscsi/ibmvfc*
+ 
+ IBM Power Virtual Management Channel Driver
+-M:	Bryant G. Ly <bryantly@linux.vnet.ibm.com>
+-M:	Steven Royer <seroyer@linux.vnet.ibm.com>
++M:	Steven Royer <seroyer@linux.ibm.com>
+ S:	Supported
+ F:	drivers/misc/ibmvmc.*
+ 
+ IBM Power Virtual SCSI Device Drivers
+-M:	Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
++M:	Tyrel Datwyler <tyreld@linux.ibm.com>
+ L:	linux-scsi@vger.kernel.org
+ S:	Supported
+ F:	drivers/scsi/ibmvscsi/ibmvscsi*
+ F:	include/scsi/viosrp.h
+ 
+ IBM Power Virtual SCSI Device Target Driver
+-M:	Bryant G. Ly <bryantly@linux.vnet.ibm.com>
+-M:	Michael Cyr <mikecyr@linux.vnet.ibm.com>
++M:	Michael Cyr <mikecyr@linux.ibm.com>
+ L:	linux-scsi@vger.kernel.org
+ L:	target-devel@vger.kernel.org
+ S:	Supported
+ F:	drivers/scsi/ibmvscsi_tgt/
+ 
+ IBM Power VMX Cryptographic instructions
+-M:	Leonidas S. Barbosa <leosilva@linux.vnet.ibm.com>
+-M:	Paulo Flabiano Smorigo <pfsmorigo@linux.vnet.ibm.com>
++M:	Paulo Flabiano Smorigo <pfsmorigo@linux.ibm.com>
+ L:	linux-crypto@vger.kernel.org
+ S:	Supported
+ F:	drivers/crypto/vmx/Makefile
+@@ -7346,7 +7341,7 @@ S:	Maintained
+ L:	linux-crypto@vger.kernel.org
+ 
+ INTEGRITY MEASUREMENT ARCHITECTURE (IMA)
+-M:	Mimi Zohar <zohar@linux.vnet.ibm.com>
++M:	Mimi Zohar <zohar@linux.ibm.com>
+ M:	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+ L:	linux-integrity@vger.kernel.org
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git
+@@ -7938,9 +7933,8 @@ S:	Maintained
+ F:	drivers/media/platform/rcar_jpu.c
+ 
+ JSM Neo PCI based serial card
+-M:	Guilherme G. Piccoli <gpiccoli@linux.vnet.ibm.com>
+ L:	linux-serial@vger.kernel.org
+-S:	Maintained
++S:	Orphan
+ F:	drivers/tty/serial/jsm/
+ 
+ K10TEMP HARDWARE MONITORING DRIVER
+@@ -8170,7 +8164,7 @@ F:	include/uapi/linux/kexec.h
+ F:	kernel/kexec*
+ 
+ KEYS-ENCRYPTED
+-M:	Mimi Zohar <zohar@linux.vnet.ibm.com>
++M:	Mimi Zohar <zohar@linux.ibm.com>
+ L:	linux-integrity@vger.kernel.org
+ L:	keyrings@vger.kernel.org
+ S:	Supported
+@@ -8179,9 +8173,9 @@ F:	include/keys/encrypted-type.h
+ F:	security/keys/encrypted-keys/
+ 
+ KEYS-TRUSTED
+-M:	James Bottomley <jejb@linux.vnet.ibm.com>
++M:	James Bottomley <jejb@linux.ibm.com>
+ M:      Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+-M:	Mimi Zohar <zohar@linux.vnet.ibm.com>
++M:	Mimi Zohar <zohar@linuxibm.com>
+ L:	linux-integrity@vger.kernel.org
+ L:	keyrings@vger.kernel.org
+ S:	Supported
+@@ -8234,7 +8228,7 @@ F:	lib/test_kmod.c
+ F:	tools/testing/selftests/kmod/
+ 
+ KPROBES
+-M:	Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
++M:	Naveen N. Rao <naveen.n.rao@linux.ibm.com>
+ M:	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+ M:	"David S. Miller" <davem@davemloft.net>
+ M:	Masami Hiramatsu <mhiramat@kernel.org>
+@@ -8590,7 +8584,7 @@ M:	Nicholas Piggin <npiggin@gmail.com>
+ M:	David Howells <dhowells@redhat.com>
+ M:	Jade Alglave <j.alglave@ucl.ac.uk>
+ M:	Luc Maranget <luc.maranget@inria.fr>
+-M:	"Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
++M:	"Paul E. McKenney" <paulmck@linux.ibm.com>
+ R:	Akira Yokosawa <akiyks@gmail.com>
+ R:	Daniel Lustig <dlustig@nvidia.com>
+ L:	linux-kernel@vger.kernel.org
+@@ -9548,7 +9542,7 @@ F:	drivers/platform/x86/mlx-platform.c
+ 
+ MEMBARRIER SUPPORT
+ M:	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+-M:	"Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
++M:	"Paul E. McKenney" <paulmck@linux.ibm.com>
+ L:	linux-kernel@vger.kernel.org
+ S:	Supported
+ F:	kernel/sched/membarrier.c
+@@ -10686,7 +10680,7 @@ S:	Supported
+ F:	tools/objtool/
+ 
+ OCXL (Open Coherent Accelerator Processor Interface OpenCAPI) DRIVER
+-M:	Frederic Barrat <fbarrat@linux.vnet.ibm.com>
++M:	Frederic Barrat <fbarrat@linux.ibm.com>
+ M:	Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+ L:	linuxppc-dev@lists.ozlabs.org
+ S:	Supported
+@@ -12487,7 +12481,7 @@ S:	Orphan
+ F:	drivers/net/wireless/ray*
+ 
+ RCUTORTURE TEST FRAMEWORK
+-M:	"Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
++M:	"Paul E. McKenney" <paulmck@linux.ibm.com>
+ M:	Josh Triplett <josh@joshtriplett.org>
+ R:	Steven Rostedt <rostedt@goodmis.org>
+ R:	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+@@ -12534,7 +12528,7 @@ F:	arch/x86/include/asm/intel_rdt_sched.h
+ F:	Documentation/x86/intel_rdt*
+ 
+ READ-COPY UPDATE (RCU)
+-M:	"Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
++M:	"Paul E. McKenney" <paulmck@linux.ibm.com>
+ M:	Josh Triplett <josh@joshtriplett.org>
+ R:	Steven Rostedt <rostedt@goodmis.org>
+ R:	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+@@ -12674,7 +12668,7 @@ F:	include/linux/reset-controller.h
+ RESTARTABLE SEQUENCES SUPPORT
+ M:	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+ M:	Peter Zijlstra <peterz@infradead.org>
+-M:	"Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
++M:	"Paul E. McKenney" <paulmck@linux.ibm.com>
+ M:	Boqun Feng <boqun.feng@gmail.com>
+ L:	linux-kernel@vger.kernel.org
+ S:	Supported
+@@ -13199,7 +13193,7 @@ F:	drivers/scsi/sg.c
+ F:	include/scsi/sg.h
+ 
+ SCSI SUBSYSTEM
+-M:	"James E.J. Bottomley" <jejb@linux.vnet.ibm.com>
++M:	"James E.J. Bottomley" <jejb@linux.ibm.com>
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git
+ M:	"Martin K. Petersen" <martin.petersen@oracle.com>
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git
+@@ -13634,7 +13628,7 @@ F:	mm/sl?b*
+ 
+ SLEEPABLE READ-COPY UPDATE (SRCU)
+ M:	Lai Jiangshan <jiangshanlai@gmail.com>
+-M:	"Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
++M:	"Paul E. McKenney" <paulmck@linux.ibm.com>
+ M:	Josh Triplett <josh@joshtriplett.org>
+ R:	Steven Rostedt <rostedt@goodmis.org>
+ R:	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+@@ -15057,7 +15051,7 @@ F:	drivers/platform/x86/topstar-laptop.c
+ 
+ TORTURE-TEST MODULES
+ M:	Davidlohr Bueso <dave@stgolabs.net>
+-M:	"Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
++M:	"Paul E. McKenney" <paulmck@linux.ibm.com>
+ M:	Josh Triplett <josh@joshtriplett.org>
+ L:	linux-kernel@vger.kernel.org
+ S:	Supported
 -- 
 2.17.1
 
