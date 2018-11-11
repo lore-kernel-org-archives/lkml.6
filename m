@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BB94C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:48:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF85DC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:48:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFB70214E0
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:48:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EE69214E0
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:48:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="E0nPUmxf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFB70214E0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ipgrssHd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EE69214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391051AbeKLIir (ORCPT
+        id S2404419AbeKLIi5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:38:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56662 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:38:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404369AbeKLIXU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:23:20 -0500
+        id S2404337AbeKLIXT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:23:19 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B141722353;
-        Sun, 11 Nov 2018 22:33:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65C91223C7;
+        Sun, 11 Nov 2018 22:33:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975602;
-        bh=+hkaSOwKNjNd0W6KwOhKGDVPSeQGCUoVg1Pwl4pGjPo=;
+        s=default; t=1541975601;
+        bh=VXLUv8HCCkP/RXXe1Qze3KEaSQgXcCMPL46xnMMgUKA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E0nPUmxfmd3bthUyPVgVdhxJ6y0g73dv1W8ie8ZGVqneuUGZbHGRy0cRNq42skgQo
-         FYPwuPjX+rOS0XQ5NUHQso/ZezW3mF6H6I9FPV+9PpID9gqEYDo61vxUrlKKKLU8QB
-         KzlRk8lO74X9zGQScWMjTs7xXmVwiFA4IgXTcPNA=
+        b=ipgrssHdzXM0cp6x+19m6ag68BU2KMzgreHD1lWB6Z63DwcCk9mhdCOCXekuYAWpO
+         LpjAc5LF1XREjqaE8nITEXDTzeYeDEhkFrJGV7DmRbK/gPmiJvIzlbxH1AFZAERG/H
+         /IHW1AP3XU6hyUCLvzNB7fpU57E9ao2HWUW2WT/U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.14 220/222] Btrfs: fix fsync after hole punching when using no-holes feature
-Date:   Sun, 11 Nov 2018 14:25:17 -0800
-Message-Id: <20181111221705.925278597@linuxfoundation.org>
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.14 217/222] btrfs: move the dio_sem higher up the callchain
+Date:   Sun, 11 Nov 2018 14:25:14 -0800
+Message-Id: <20181111221705.746162018@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -63,97 +63,239 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Josef Bacik <josef@toxicpanda.com>
 
-commit 4ee3fad34a9cc2cf33303dfbd0cf554248651c86 upstream.
+commit c495144bc6962186feae31d687596d2472000e45 upstream.
 
-When we have the no-holes mode enabled and fsync a file after punching a
-hole in it, we can end up not logging the whole hole range in the log tree.
-This happens if the file has extent items that span more than one leaf and
-we punch a hole that covers a range that starts in a leaf but does not go
-beyond the offset of the first extent in the next leaf.
+We're getting a lockdep splat because we take the dio_sem under the
+log_mutex.  What we really need is to protect fsync() from logging an
+extent map for an extent we never waited on higher up, so just guard the
+whole thing with dio_sem.
 
-Example:
+======================================================
+WARNING: possible circular locking dependency detected
+4.18.0-rc4-xfstests-00025-g5de5edbaf1d4 #411 Not tainted
+------------------------------------------------------
+aio-dio-invalid/30928 is trying to acquire lock:
+0000000092621cfd (&mm->mmap_sem){++++}, at: get_user_pages_unlocked+0x5a/0x1e0
 
-  $ mkfs.btrfs -f -O no-holes -n 65536 /dev/sdb
-  $ mount /dev/sdb /mnt
-  $ for ((i = 0; i <= 831; i++)); do
-	offset=$((i * 2 * 256 * 1024))
-	xfs_io -f -c "pwrite -S 0xab -b 256K $offset 256K" \
-		/mnt/foobar >/dev/null
-    done
-  $ sync
+but task is already holding lock:
+00000000cefe6b35 (&ei->dio_sem){++++}, at: btrfs_direct_IO+0x3be/0x400
 
-  # We now have 2 leafs in our filesystem fs tree, the first leaf has an
-  # item corresponding the extent at file offset 216530944 and the second
-  # leaf has a first item corresponding to the extent at offset 217055232.
-  # Now we punch a hole that partially covers the range of the extent at
-  # offset 216530944 but does go beyond the offset 217055232.
+which lock already depends on the new lock.
 
-  $ xfs_io -c "fpunch $((216530944 + 128 * 1024 - 4000)) 256K" /mnt/foobar
-  $ xfs_io -c "fsync" /mnt/foobar
+the existing dependency chain (in reverse order) is:
 
-  <power fail>
+-> #5 (&ei->dio_sem){++++}:
+       lock_acquire+0xbd/0x220
+       down_write+0x51/0xb0
+       btrfs_log_changed_extents+0x80/0xa40
+       btrfs_log_inode+0xbaf/0x1000
+       btrfs_log_inode_parent+0x26f/0xa80
+       btrfs_log_dentry_safe+0x50/0x70
+       btrfs_sync_file+0x357/0x540
+       do_fsync+0x38/0x60
+       __ia32_sys_fdatasync+0x12/0x20
+       do_fast_syscall_32+0x9a/0x2f0
+       entry_SYSENTER_compat+0x84/0x96
 
-  # mount to replay the log
-  $ mount /dev/sdb /mnt
+-> #4 (&ei->log_mutex){+.+.}:
+       lock_acquire+0xbd/0x220
+       __mutex_lock+0x86/0xa10
+       btrfs_record_unlink_dir+0x2a/0xa0
+       btrfs_unlink+0x5a/0xc0
+       vfs_unlink+0xb1/0x1a0
+       do_unlinkat+0x264/0x2b0
+       do_fast_syscall_32+0x9a/0x2f0
+       entry_SYSENTER_compat+0x84/0x96
 
-  # Before this patch, only the subrange [216658016, 216662016[ (length of
-  # 4000 bytes) was logged, leaving an incorrect file layout after log
-  # replay.
+-> #3 (sb_internal#2){.+.+}:
+       lock_acquire+0xbd/0x220
+       __sb_start_write+0x14d/0x230
+       start_transaction+0x3e6/0x590
+       btrfs_evict_inode+0x475/0x640
+       evict+0xbf/0x1b0
+       btrfs_run_delayed_iputs+0x6c/0x90
+       cleaner_kthread+0x124/0x1a0
+       kthread+0x106/0x140
+       ret_from_fork+0x3a/0x50
 
-Fix this by checking if there is a hole between the last extent item that
-we processed and the first extent item in the next leaf, and if there is
-one, log an explicit hole extent item.
+-> #2 (&fs_info->cleaner_delayed_iput_mutex){+.+.}:
+       lock_acquire+0xbd/0x220
+       __mutex_lock+0x86/0xa10
+       btrfs_alloc_data_chunk_ondemand+0x197/0x530
+       btrfs_check_data_free_space+0x4c/0x90
+       btrfs_delalloc_reserve_space+0x20/0x60
+       btrfs_page_mkwrite+0x87/0x520
+       do_page_mkwrite+0x31/0xa0
+       __handle_mm_fault+0x799/0xb00
+       handle_mm_fault+0x7c/0xe0
+       __do_page_fault+0x1d3/0x4a0
+       async_page_fault+0x1e/0x30
 
-Fixes: 16e7549f045d ("Btrfs: incompatible format change to remove hole extents")
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
+-> #1 (sb_pagefaults){.+.+}:
+       lock_acquire+0xbd/0x220
+       __sb_start_write+0x14d/0x230
+       btrfs_page_mkwrite+0x6a/0x520
+       do_page_mkwrite+0x31/0xa0
+       __handle_mm_fault+0x799/0xb00
+       handle_mm_fault+0x7c/0xe0
+       __do_page_fault+0x1d3/0x4a0
+       async_page_fault+0x1e/0x30
+
+-> #0 (&mm->mmap_sem){++++}:
+       __lock_acquire+0x42e/0x7a0
+       lock_acquire+0xbd/0x220
+       down_read+0x48/0xb0
+       get_user_pages_unlocked+0x5a/0x1e0
+       get_user_pages_fast+0xa4/0x150
+       iov_iter_get_pages+0xc3/0x340
+       do_direct_IO+0xf93/0x1d70
+       __blockdev_direct_IO+0x32d/0x1c20
+       btrfs_direct_IO+0x227/0x400
+       generic_file_direct_write+0xcf/0x180
+       btrfs_file_write_iter+0x308/0x58c
+       aio_write+0xf8/0x1d0
+       io_submit_one+0x3a9/0x620
+       __ia32_compat_sys_io_submit+0xb2/0x270
+       do_int80_syscall_32+0x5b/0x1a0
+       entry_INT80_compat+0x88/0xa0
+
+other info that might help us debug this:
+
+Chain exists of:
+  &mm->mmap_sem --> &ei->log_mutex --> &ei->dio_sem
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&ei->dio_sem);
+                               lock(&ei->log_mutex);
+                               lock(&ei->dio_sem);
+  lock(&mm->mmap_sem);
+
+ *** DEADLOCK ***
+
+1 lock held by aio-dio-invalid/30928:
+ #0: 00000000cefe6b35 (&ei->dio_sem){++++}, at: btrfs_direct_IO+0x3be/0x400
+
+stack backtrace:
+CPU: 0 PID: 30928 Comm: aio-dio-invalid Not tainted 4.18.0-rc4-xfstests-00025-g5de5edbaf1d4 #411
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-2.el7 04/01/2014
+Call Trace:
+ dump_stack+0x7c/0xbb
+ print_circular_bug.isra.37+0x297/0x2a4
+ check_prev_add.constprop.45+0x781/0x7a0
+ ? __lock_acquire+0x42e/0x7a0
+ validate_chain.isra.41+0x7f0/0xb00
+ __lock_acquire+0x42e/0x7a0
+ lock_acquire+0xbd/0x220
+ ? get_user_pages_unlocked+0x5a/0x1e0
+ down_read+0x48/0xb0
+ ? get_user_pages_unlocked+0x5a/0x1e0
+ get_user_pages_unlocked+0x5a/0x1e0
+ get_user_pages_fast+0xa4/0x150
+ iov_iter_get_pages+0xc3/0x340
+ do_direct_IO+0xf93/0x1d70
+ ? __alloc_workqueue_key+0x358/0x490
+ ? __blockdev_direct_IO+0x14b/0x1c20
+ __blockdev_direct_IO+0x32d/0x1c20
+ ? btrfs_run_delalloc_work+0x40/0x40
+ ? can_nocow_extent+0x490/0x490
+ ? kvm_clock_read+0x1f/0x30
+ ? can_nocow_extent+0x490/0x490
+ ? btrfs_run_delalloc_work+0x40/0x40
+ btrfs_direct_IO+0x227/0x400
+ ? btrfs_run_delalloc_work+0x40/0x40
+ generic_file_direct_write+0xcf/0x180
+ btrfs_file_write_iter+0x308/0x58c
+ aio_write+0xf8/0x1d0
+ ? kvm_clock_read+0x1f/0x30
+ ? __might_fault+0x3e/0x90
+ io_submit_one+0x3a9/0x620
+ ? io_submit_one+0xe5/0x620
+ __ia32_compat_sys_io_submit+0xb2/0x270
+ do_int80_syscall_32+0x5b/0x1a0
+ entry_INT80_compat+0x88/0xa0
+
+CC: stable@vger.kernel.org # 4.14+
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/tree-log.c |   30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ fs/btrfs/file.c     |   12 ++++++++++++
+ fs/btrfs/tree-log.c |    2 --
+ 2 files changed, 12 insertions(+), 2 deletions(-)
 
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -3978,6 +3978,36 @@ fill_holes:
- 			break;
- 		*last_extent = extent_end;
- 	}
+--- a/fs/btrfs/file.c
++++ b/fs/btrfs/file.c
+@@ -2078,6 +2078,14 @@ int btrfs_sync_file(struct file *file, l
+ 		goto out;
+ 
+ 	inode_lock(inode);
 +
 +	/*
-+	 * Check if there is a hole between the last extent found in our leaf
-+	 * and the first extent in the next leaf. If there is one, we need to
-+	 * log an explicit hole so that at replay time we can punch the hole.
++	 * We take the dio_sem here because the tree log stuff can race with
++	 * lockless dio writes and get an extent map logged for an extent we
++	 * never waited on.  We need it this high up for lockdep reasons.
 +	 */
-+	if (ret == 0 &&
-+	    key.objectid == btrfs_ino(inode) &&
-+	    key.type == BTRFS_EXTENT_DATA_KEY &&
-+	    i == btrfs_header_nritems(src_path->nodes[0])) {
-+		ret = btrfs_next_leaf(inode->root, src_path);
-+		need_find_last_extent = true;
-+		if (ret > 0) {
-+			ret = 0;
-+		} else if (ret == 0) {
-+			btrfs_item_key_to_cpu(src_path->nodes[0], &key,
-+					      src_path->slots[0]);
-+			if (key.objectid == btrfs_ino(inode) &&
-+			    key.type == BTRFS_EXTENT_DATA_KEY &&
-+			    *last_extent < key.offset) {
-+				const u64 len = key.offset - *last_extent;
++	down_write(&BTRFS_I(inode)->dio_sem);
 +
-+				ret = btrfs_insert_file_extent(trans, log,
-+							       btrfs_ino(inode),
-+							       *last_extent, 0,
-+							       0, len, 0, len,
-+							       0, 0, 0);
-+			}
-+		}
-+	}
+ 	atomic_inc(&root->log_batch);
+ 	full_sync = test_bit(BTRFS_INODE_NEEDS_FULL_SYNC,
+ 			     &BTRFS_I(inode)->runtime_flags);
+@@ -2129,6 +2137,7 @@ int btrfs_sync_file(struct file *file, l
+ 		ret = start_ordered_ops(inode, start, end);
+ 	}
+ 	if (ret) {
++		up_write(&BTRFS_I(inode)->dio_sem);
+ 		inode_unlock(inode);
+ 		goto out;
+ 	}
+@@ -2184,6 +2193,7 @@ int btrfs_sync_file(struct file *file, l
+ 		 * checked called fsync.
+ 		 */
+ 		ret = filemap_check_wb_err(inode->i_mapping, file->f_wb_err);
++		up_write(&BTRFS_I(inode)->dio_sem);
+ 		inode_unlock(inode);
+ 		goto out;
+ 	}
+@@ -2208,6 +2218,7 @@ int btrfs_sync_file(struct file *file, l
+ 	trans = btrfs_start_transaction(root, 0);
+ 	if (IS_ERR(trans)) {
+ 		ret = PTR_ERR(trans);
++		up_write(&BTRFS_I(inode)->dio_sem);
+ 		inode_unlock(inode);
+ 		goto out;
+ 	}
+@@ -2229,6 +2240,7 @@ int btrfs_sync_file(struct file *file, l
+ 	 * file again, but that will end up using the synchronization
+ 	 * inside btrfs_sync_log to keep things safe.
+ 	 */
++	up_write(&BTRFS_I(inode)->dio_sem);
+ 	inode_unlock(inode);
+ 
  	/*
- 	 * Need to let the callers know we dropped the path so they should
- 	 * re-search.
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -4362,7 +4362,6 @@ static int btrfs_log_changed_extents(str
+ 
+ 	INIT_LIST_HEAD(&extents);
+ 
+-	down_write(&inode->dio_sem);
+ 	write_lock(&tree->lock);
+ 	test_gen = root->fs_info->last_trans_committed;
+ 	logged_start = start;
+@@ -4443,7 +4442,6 @@ process:
+ 	}
+ 	WARN_ON(!list_empty(&extents));
+ 	write_unlock(&tree->lock);
+-	up_write(&inode->dio_sem);
+ 
+ 	btrfs_release_path(path);
+ 	if (!ret)
 
 
