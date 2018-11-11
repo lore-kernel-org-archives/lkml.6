@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBDB1C43610
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 881BEC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 797A2215EA
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F0A82154B
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HsFKDOGd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 797A2215EA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EV8GwWyx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F0A82154B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387824AbeKLITe (ORCPT
+        id S2387872AbeKLITi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:19:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41282 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:19:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387789AbeKLITd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:19:33 -0500
+        id S2387826AbeKLITh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:19:37 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C69A215EA;
-        Sun, 11 Nov 2018 22:29:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4666F21582;
+        Sun, 11 Nov 2018 22:29:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975377;
-        bh=kvtG5gg2lQQpa/D5mXrWetmit3xNmIAe8xCVlzaNEFw=;
+        s=default; t=1541975380;
+        bh=ISG6d3Mdh2Jqvveu+lKvwTYnZRslXhSxubj+0uUJdCs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HsFKDOGdJ1vfnu9SIST6ba0N2+5MhahNXl3KUT9G7vMJfVMz9xutll9l7BYYiz8m3
-         euYJHSLYy6hvd9w1vE65thL/rKWHnvxUpzdkglCEXSx589Qx7YXlXYa3xAL/h/jOCw
-         slbzAGeCJQRE7KFsszEjqpHD5GuK6Oa1FszpjcXU=
+        b=EV8GwWyx5SQQ+7EwDaNUcBgWO3ICHe0gH4sLNJggTMwoqDQvI6xrIz8qG/ZwpczVw
+         oy3qMHEo+MUpSf3qb2/jQucVgnO5+2mejDMOlx55rNLEVoc+5hFCm3luTU5VrRNahg
+         ryr5Cz43wN9qkxQTNXRbSqcQAsJ/j9B6uaQkqEew=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 046/350] selftests: usbip: add wait after attach and before checking port status
-Date:   Sun, 11 Nov 2018 14:18:30 -0800
-Message-Id: <20181111221709.091051719@linuxfoundation.org>
+        Waldemar Rymarkiewicz <waldemarx.rymarkiewicz@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Subject: [PATCH 4.18 017/350] cpufreq: conservative: Take limits changes into account properly
+Date:   Sun, 11 Nov 2018 14:18:01 -0800
+Message-Id: <20181111221707.896364187@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -63,33 +64,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-[ Upstream commit 4b0aaacee51eb6592a03fdefd5ce97558518e291 ]
+commit da5e79bc70b84971d2b3a55fb252e34e51d81d48 upstream.
 
-Add sleep between attach and "usbip port" check to make sure status is
-updated. Running attach and query back shows incorrect status.
+If the policy limits change between invocations of cs_dbs_update(),
+the requested frequency value stored in dbs_info may not be updated
+and the function may use a stale value of it next time.  Moreover, if
+idle periods are takem into account by cs_dbs_update(), the requested
+frequency value stored in dbs_info may be below the min policy limit,
+which is incorrect.
 
-Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+To fix these problems, always update the requested frequency value
+in dbs_info along with the local copy of it when the previous
+requested frequency is beyond the policy limits and avoid decreasing
+the requested frequency below the min policy limit when taking
+idle periods into account.
+
+Fixes: abb6627910a1 (cpufreq: conservative: Fix next frequency selection)
+Fixes: 00bfe05889e9 (cpufreq: conservative: Decrease frequency faster for deferred updates)
+Reported-by: Waldemar Rymarkiewicz <waldemarx.rymarkiewicz@intel.com>
+Cc: All applicable <stable@vger.kernel.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Acked-by: Waldemar Rymarkiewicz <waldemarx.rymarkiewicz@intel.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- tools/testing/selftests/drivers/usb/usbip/usbip_test.sh |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/cpufreq/cpufreq_conservative.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/tools/testing/selftests/drivers/usb/usbip/usbip_test.sh
-+++ b/tools/testing/selftests/drivers/usb/usbip/usbip_test.sh
-@@ -143,6 +143,10 @@ echo "Import devices from localhost - sh
- src/usbip attach -r localhost -b $busid;
- echo "=============================================================="
+--- a/drivers/cpufreq/cpufreq_conservative.c
++++ b/drivers/cpufreq/cpufreq_conservative.c
+@@ -80,8 +80,10 @@ static unsigned int cs_dbs_update(struct
+ 	 * changed in the meantime, so fall back to current frequency in that
+ 	 * case.
+ 	 */
+-	if (requested_freq > policy->max || requested_freq < policy->min)
++	if (requested_freq > policy->max || requested_freq < policy->min) {
+ 		requested_freq = policy->cur;
++		dbs_info->requested_freq = requested_freq;
++	}
  
-+# Wait for sysfs file to be updated. Without this sleep, usbip port
-+# shows no imported devices.
-+sleep 3;
-+
- echo "List imported devices - expect to see imported devices";
- src/usbip port;
- echo "=============================================================="
+ 	freq_step = get_freq_step(cs_tuners, policy);
+ 
+@@ -92,7 +94,7 @@ static unsigned int cs_dbs_update(struct
+ 	if (policy_dbs->idle_periods < UINT_MAX) {
+ 		unsigned int freq_steps = policy_dbs->idle_periods * freq_step;
+ 
+-		if (requested_freq > freq_steps)
++		if (requested_freq > policy->min + freq_steps)
+ 			requested_freq -= freq_steps;
+ 		else
+ 			requested_freq = policy->min;
 
 
