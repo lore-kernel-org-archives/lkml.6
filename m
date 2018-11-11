@@ -4,46 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FD8DC43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:18:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3846AC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:19:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6E3D2084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:18:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED9F920871
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:18:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cbKxI7gx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6E3D2084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EiyXmSNc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED9F920871
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729966AbeKLIQ6 (ORCPT
+        id S1730400AbeKLKJ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:16:58 -0500
+        Mon, 12 Nov 2018 05:09:26 -0500
 Received: from mail.kernel.org ([198.145.29.99]:58446 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729918AbeKLIQ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729942AbeKLIQ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:16:57 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C201D21780;
-        Sun, 11 Nov 2018 22:27:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 88E8521731;
+        Sun, 11 Nov 2018 22:27:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975221;
-        bh=a60wFSQSYQOfn8SeFp4/acfEaW1iUxXiYPOGEE8y1yA=;
+        s=default; t=1541975222;
+        bh=BHNq+GDFzR0QRWd6NoJiSBBizD81GsGqZvbRTABu1n0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cbKxI7gx4jWNCDcmkZ7f6glt85aQ3qDaX2kA+QNQU0Z9Bt2vWPkeRgXrGiFMGn8Tb
-         gSn/RLSd85DPXte010bck91ZgGKLGG4y+Jsj+YtoVVgeLcCkcRx5lSDeZxx521593h
-         /akCZkfD19oQL/ed2cy5NhrZPD0sDNg5LMQIJ2Rw=
+        b=EiyXmSNcZSeUWXyVZXa6IzIet0Lka3gXAcwFWvrZmFZTwOmwOSgaJsQY+BJ8Egx/v
+         TySSIyU4/pW8nxCJ+Tbo3R2q6cSapmjjfWtB0T8RUScRb//jKy71IRkHimXHmR49hC
+         DVsaYix4mxiPhb7cgnBHUCPRW5vYwrQ7BDNL1+sI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Mack <daniel@zonque.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH 4.19 004/361] mtd: rawnand: marvell: fix the IRQ handler complete() condition
-Date:   Sun, 11 Nov 2018 14:15:51 -0800
-Message-Id: <20181111221620.722293890@linuxfoundation.org>
+        stable@vger.kernel.org, Liu Xiang <liu.xiang6@zte.com.cn>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: [PATCH 4.19 006/361] mtd: spi-nor: fsl-quadspi: fix read error for flash size larger than 16MB
+Date:   Sun, 11 Nov 2018 14:15:53 -0800
+Message-Id: <20181111221620.907362168@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -61,45 +62,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Miquel Raynal <miquel.raynal@bootlin.com>
+From: Liu Xiang <liu.xiang6@zte.com.cn>
 
-commit 53c83b59759c1ee213f5ffa194909daee8902a28 upstream.
+commit 41fe242979e463d6ad251077ded01b825a330b7e upstream.
 
-With the current implementation, the complete() in the IRQ handler is
-supposed to be called only if the register status has one or the other
-RDY bit set. Other events might trigger an interrupt as well if
-enabled, but should not end-up with a complete() call.
+If the size of spi-nor flash is larger than 16MB, the read_opcode
+is set to SPINOR_OP_READ_1_1_4_4B, and fsl_qspi_get_seqid() will
+return -EINVAL when cmd is SPINOR_OP_READ_1_1_4_4B. This can
+cause read operation fail.
 
-For this purpose, the code was checking if the other bits were set, in
-this case complete() was not called. This is wrong as two events might
-happen in a very tight time-frame and if the NDSR status read reports
-two bits set (eg. RDY(0) and RDDREQ) at the same time, complete() was
-not called.
-
-This logic would lead to timeouts in marvell_nfc_wait_op() and has
-been observed on PXA boards (NFCv1) in the Hamming write path.
-
-Fixes: 02f26ecf8c77 ("mtd: nand: add reworked Marvell NAND controller driver")
-Cc: stable@vger.kernel.org
-Reported-by: Daniel Mack <daniel@zonque.org>
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Tested-by: Daniel Mack <daniel@zonque.org>
+Fixes: e46ecda764dc ("mtd: spi-nor: Add Freescale QuadSPI driver")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Liu Xiang <liu.xiang6@zte.com.cn>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/nand/raw/marvell_nand.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mtd/spi-nor/fsl-quadspi.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/mtd/nand/raw/marvell_nand.c
-+++ b/drivers/mtd/nand/raw/marvell_nand.c
-@@ -686,7 +686,7 @@ static irqreturn_t marvell_nfc_isr(int i
- 
- 	marvell_nfc_disable_int(nfc, st & NDCR_ALL_INT);
- 
--	if (!(st & (NDSR_RDDREQ | NDSR_WRDREQ | NDSR_WRCMDREQ)))
-+	if (st & (NDSR_RDY(0) | NDSR_RDY(1)))
- 		complete(&nfc->complete);
- 
- 	return IRQ_HANDLED;
+--- a/drivers/mtd/spi-nor/fsl-quadspi.c
++++ b/drivers/mtd/spi-nor/fsl-quadspi.c
+@@ -478,6 +478,7 @@ static int fsl_qspi_get_seqid(struct fsl
+ {
+ 	switch (cmd) {
+ 	case SPINOR_OP_READ_1_1_4:
++	case SPINOR_OP_READ_1_1_4_4B:
+ 		return SEQID_READ;
+ 	case SPINOR_OP_WREN:
+ 		return SEQID_WREN;
 
 
