@@ -2,49 +2,48 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF75EC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:07:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FB6CC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:07:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A7852080D
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:07:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A7852080D
+	by mail.kernel.org (Postfix) with ESMTP id 4D78B2080D
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:07:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D78B2080D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731489AbeKLF47 (ORCPT
+        id S1731500AbeKLF5D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 00:56:59 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52140 "EHLO
+        Mon, 12 Nov 2018 00:57:03 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52150 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727208AbeKLF47 (ORCPT
+        by vger.kernel.org with ESMTP id S1730988AbeKLF5C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:56:59 -0500
+        Mon, 12 Nov 2018 00:57:02 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvtD-0000l9-L9; Sun, 11 Nov 2018 19:59:23 +0000
+        id 1gLvt4-0000tu-3j; Sun, 11 Nov 2018 19:59:14 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsO-0001Ol-Cg; Sun, 11 Nov 2018 19:58:32 +0000
+        id 1gLvsR-0001WG-B5; Sun, 11 Nov 2018 19:58:35 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Tobias Jordan" <Tobias.Jordan@elektrobit.com>,
-        "Mark Brown" <broonie@kernel.org>
+CC:     akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
+        "Sabrina Dubroca" <sd@queasysnail.net>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.493844590@decadent.org.uk>
+Message-ID: <lsq.1541965745.249028991@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 034/366] spi: pxa2xx: check clk_prepare_enable()
- return value
+Subject: [PATCH 3.16 117/366] ip6mr: only set ip6mr_table from setsockopt
+ when ip6mr_new_table succeeds
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,70 +57,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tobias Jordan <Tobias.Jordan@elektrobit.com>
+From: Sabrina Dubroca <sd@queasysnail.net>
 
-commit 62bbc864d1946c715063bd481bff3641fd1324e2 upstream.
+commit 848235edb5c93ed086700584c8ff64f6d7fc778d upstream.
 
-clk_prepare_enable() can fail, so its return value should be checked and
-acted upon.
+Currently, raw6_sk(sk)->ip6mr_table is set unconditionally during
+ip6_mroute_setsockopt(MRT6_TABLE). A subsequent attempt at the same
+setsockopt will fail with -ENOENT, since we haven't actually created
+that table.
 
-Found by Linux Driver Verification project (linuxtesting.org).
+A similar fix for ipv4 was included in commit 5e1859fbcc3c ("ipv4: ipmr:
+various fixes and cleanups").
 
-Fixes: 3343b7a6d2cd ("spi/pxa2xx: convert to the common clk framework")
-Signed-off-by: Tobias Jordan <Tobias.Jordan@elektrobit.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: d1db275dd3f6 ("ipv6: ip6mr: support multiple tables")
+Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/spi/spi-pxa2xx.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+ net/ipv6/ip6mr.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/spi/spi-pxa2xx.c
-+++ b/drivers/spi/spi-pxa2xx.c
-@@ -1182,7 +1182,9 @@ static int pxa2xx_spi_probe(struct platf
+--- a/net/ipv6/ip6mr.c
++++ b/net/ipv6/ip6mr.c
+@@ -1785,7 +1785,8 @@ int ip6_mroute_setsockopt(struct sock *s
+ 		ret = 0;
+ 		if (!ip6mr_new_table(net, v))
+ 			ret = -ENOMEM;
+-		raw6_sk(sk)->ip6mr_table = v;
++		else
++			raw6_sk(sk)->ip6mr_table = v;
+ 		rtnl_unlock();
+ 		return ret;
  	}
- 
- 	/* Enable SOC clock */
--	clk_prepare_enable(ssp->clk);
-+	status = clk_prepare_enable(ssp->clk);
-+	if (status)
-+		goto out_error_dma_irq_alloc;
- 
- 	drv_data->max_clk_rate = clk_get_rate(ssp->clk);
- 
-@@ -1221,6 +1223,8 @@ static int pxa2xx_spi_probe(struct platf
- 
- out_error_clock_enabled:
- 	clk_disable_unprepare(ssp->clk);
-+
-+out_error_dma_irq_alloc:
- 	pxa2xx_spi_dma_release(drv_data);
- 	free_irq(ssp->irq, drv_data);
- 
-@@ -1296,8 +1300,11 @@ static int pxa2xx_spi_resume(struct devi
- 	pxa2xx_spi_dma_resume(drv_data);
- 
- 	/* Enable the SSP clock */
--	if (!pm_runtime_suspended(dev))
--		clk_prepare_enable(ssp->clk);
-+	if (!pm_runtime_suspended(dev)) {
-+		status = clk_prepare_enable(ssp->clk);
-+		if (status)
-+			return status;
-+	}
- 
- 	/* Restore LPSS private register bits */
- 	lpss_ssp_setup(drv_data);
-@@ -1325,9 +1332,10 @@ static int pxa2xx_spi_runtime_suspend(st
- static int pxa2xx_spi_runtime_resume(struct device *dev)
- {
- 	struct driver_data *drv_data = dev_get_drvdata(dev);
-+	int status;
- 
--	clk_prepare_enable(drv_data->ssp->clk);
--	return 0;
-+	status = clk_prepare_enable(drv_data->ssp->clk);
-+	return status;
- }
- #endif
- 
 
