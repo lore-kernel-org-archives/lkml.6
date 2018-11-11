@@ -2,320 +2,123 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3438C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 21:27:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44880C43610
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 21:42:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CD65208A3
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 21:27:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CD65208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=synesis.ru
+	by mail.kernel.org (Postfix) with ESMTP id 0C7B821582
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 21:42:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C7B821582
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729471AbeKLHRG (ORCPT
+        id S1729563AbeKLHcn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 02:17:06 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:46447 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726678AbeKLHRG (ORCPT
+        Mon, 12 Nov 2018 02:32:43 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56830 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729476AbeKLHcn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 02:17:06 -0500
-Received: by mail-lj1-f194.google.com with SMTP id v15-v6so5841841ljh.13;
-        Sun, 11 Nov 2018 13:27:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Fu+D4CAD9piKj/DNPVzR9+0sRl+ZMtTo3qdmHS6fCrw=;
-        b=D+htY6wrRFgHZ76811VyCHSYlLZYhGY8JBv9oQgBph0ziyqa35PDr20m27oJMtxBxS
-         SiO+4Gs8WpjC1C+BRFIf0h/y01rvww1dJceG5wgPWOy3nofuZCdB7k4ZKgbzZxRM93OI
-         LmtJZdRnpGljOisOfEr0rhvFIj8IbbjeStqoxwjs4uOxkXXBUpHMQ2HybAOLGGqaGmdZ
-         qjJtX0bC1NVdeCBOHRCD6/kp8jQd4QPZAP3/dluwALzPntMsJiyRMygqBnqspEuymJ+V
-         tFdivagtI6kw+lhUwvMyf3sAbF/zaP8ycDze4m3PyJvenmx5+Iw2vVoUuDZZYuut33yP
-         vDYw==
-X-Gm-Message-State: AGRZ1gJMfdONDWwJQwXNasuAxSN39fHTxcxYjNbnXyfiCkJW1J+iz24m
-        KRR5uPWwo+L0/DJ8C+FJ81QrEZdX
-X-Google-Smtp-Source: AJdET5dN6BHaSo3YWH9lJ6IMaAqLBQd4dc/N2BDlncHJJuorPA0MpmMI4Jie8qn2PvzNh1A4Loeq5g==
-X-Received: by 2002:a2e:2281:: with SMTP id i123-v6mr8998786lji.154.1541971638468;
-        Sun, 11 Nov 2018 13:27:18 -0800 (PST)
-Received: from localhost.localdomain ([178.121.238.12])
-        by smtp.gmail.com with ESMTPSA id s14-v6sm2727176lfk.59.2018.11.11.13.27.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 11 Nov 2018 13:27:17 -0800 (PST)
-From:   Timofey Titovets <timofey.titovets@synesis.ru>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        Timofey Titovets <nefelim4ag@gmail.com>
-Subject: [PATCH v2] ksm: allow dedup all tasks memory
-Date:   Mon, 12 Nov 2018 00:26:10 +0300
-Message-Id: <20181111212610.25213-1-timofey.titovets@synesis.ru>
-X-Mailer: git-send-email 2.19.1
-MIME-Version: 1.0
+        Mon, 12 Nov 2018 02:32:43 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wABLXdZZ067384
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 16:42:54 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2npdhecpth-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 16:42:54 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Sun, 11 Nov 2018 21:42:52 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sun, 11 Nov 2018 21:42:49 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wABLgmEH9109902
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sun, 11 Nov 2018 21:42:48 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D2BEAA405C;
+        Sun, 11 Nov 2018 21:42:48 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BA5BDA4054;
+        Sun, 11 Nov 2018 21:42:47 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.88.36])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sun, 11 Nov 2018 21:42:47 +0000 (GMT)
+Subject: Re: [BUG] Nuvoton NCPT650 TPM 2.0 mode not working
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
+        arnd@arndb.de, linux-integrity@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Cc:     Nayna Jain <nayna@linux.ibm.com>
+Date:   Sun, 11 Nov 2018 16:42:36 -0500
+In-Reply-To: <660b0934bc16c8d195a2724f8be4ba8dfbe71134.camel@mniewoehner.de>
+References: <776f384a81466642472beb4a34b10f26f1de88e9.camel@mniewoehner.de>
+         <1541960689.3190.4.camel@HansenPartnership.com>
+         <e8eb56fdab618770917fbe5b174328dc1240f934.camel@mniewoehner.de>
+         <1541962653.3190.7.camel@HansenPartnership.com>
+         <7d8cc5ad4bb7548d283f363de6f24c90d5d0a2b2.camel@mniewoehner.de>
+         <1541968191.3190.12.camel@HansenPartnership.com>
+         <3243d0325b3ea5878d3f86b0ee4fec1498f21dc1.camel@mniewoehner.de>
+         <660b0934bc16c8d195a2724f8be4ba8dfbe71134.camel@mniewoehner.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18111121-0012-0000-0000-000002C8D918
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18111121-0013-0000-0000-000020FDDDC3
+Message-Id: <1541972556.3734.90.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-11_14:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811110205
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Timofey Titovets <nefelim4ag@gmail.com>
+> Very strange... When I pull the power cord, then replug and boot, I get these
+> dmesg messages:
+> [    0.000000] efi:  ACPI
+> 2.0=0x9ea78000  ACPI=0x9ea78000  SMBIOS=0x9f5e5000  SMBIOS
+> 3.0=0x9f5e4000  MPS=0xfca00  ESRT=0x9c06e918  MEMATTR=0x99cb9018  TPMEventLog=0x
+> 98d0c018 
+> [    0.001794] ACPI: TPM2 0x000000009EAB1F70 000034 (v03 LENOVO TC-
+> S06   00001260 AMI  00000000)
+> [    3.096587] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2)
+> [    3.105684] tpm tpm0: A TPM error (2314) occurred attempting the self test
+> 
+> After a reboot I get those "ima: ..." message again. Pulling the plug seems to
+> reset anything (the TPM).
+> 
+> The PTT TPM 2.0 shows exactly the same behaviour.
 
-ksm by default working only on memory that added by
-madvice().
+On a cold boot, it takes longer to initialize the TPM.  The TPM is
+returning TPM2_RC_TESTING (0x090A == 2314), meaning that it has not
+yet finished the initialization.
 
-And only way get that work on other applications:
- - Use LD_PRELOAD and libraries
- - Patch kernel
+Nayna's post a patch, which should address the TPM2_RC_TESTING error
+message.
 
-Lets use kernel task list in ksm_scan_thread and add logic to allow ksm
-import VMA from tasks.
-That behaviour controlled by new attribute: mode
-I try mimic hugepages attribute, so mode have two states:
- - normal       - old default behaviour
- - always [new] - allow ksm to get tasks vma and try working on that.
+https://lore.kernel.org/linux-integrity/20180515071712.9331-1-nayna@li
+nux.vnet.ibm.com/
 
-To reduce CPU load & tasklist locking time,
-ksm try import VMAs from one task per loop.
+thanks,
 
-So add new attribute "mode"
-Two passible values:
- - normal [default] - ksm use only madvice
- - always [new]     - ksm will search vma over all processes memory and
-                      add it to the dedup list
+Mimi
 
-v1 -> v2:
-  - Rebase on v4.19.1
 
-Signed-off-by: Timofey Titovets <nefelim4ag@gmail.com>
----
- Documentation/admin-guide/mm/ksm.rst |   7 ++
- mm/ksm.c                             | 149 ++++++++++++++++++++++-----
- 2 files changed, 128 insertions(+), 28 deletions(-)
 
-diff --git a/Documentation/admin-guide/mm/ksm.rst b/Documentation/admin-guide/mm/ksm.rst
-index 9303786632d1..253f94a09be8 100644
---- a/Documentation/admin-guide/mm/ksm.rst
-+++ b/Documentation/admin-guide/mm/ksm.rst
-@@ -116,6 +116,13 @@ run
-         Default: 0 (must be changed to 1 to activate KSM, except if
-         CONFIG_SYSFS is disabled)
- 
-+mode
-+        * set always to allow ksm deduplicate memory of every process
-+        * set normal to use only madviced memory
-+
-+        Default: normal (dedupulicate only madviced memory as in
-+        earlier releases)
-+
- use_zero_pages
-         specifies whether empty pages (i.e. allocated pages that only
-         contain zeroes) should be treated specially.  When set to 1,
-diff --git a/mm/ksm.c b/mm/ksm.c
-index 1a088306ef81..5097d710c466 100644
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -295,6 +295,10 @@ static int ksm_nr_node_ids = 1;
- static unsigned long ksm_run = KSM_RUN_STOP;
- static void wait_while_offlining(void);
- 
-+#define KSM_MODE_NORMAL 0
-+#define KSM_MODE_ALWAYS	1
-+static unsigned long ksm_mode = KSM_MODE_NORMAL;
-+
- static DECLARE_WAIT_QUEUE_HEAD(ksm_thread_wait);
- static DEFINE_MUTEX(ksm_thread_mutex);
- static DEFINE_SPINLOCK(ksm_mmlist_lock);
-@@ -303,6 +307,11 @@ static DEFINE_SPINLOCK(ksm_mmlist_lock);
- 		sizeof(struct __struct), __alignof__(struct __struct),\
- 		(__flags), NULL)
- 
-+static inline int ksm_mode_always(void)
-+{
-+	return (ksm_mode == KSM_MODE_ALWAYS);
-+}
-+
- static int __init ksm_slab_init(void)
- {
- 	rmap_item_cache = KSM_KMEM_CACHE(rmap_item, 0);
-@@ -2386,17 +2395,94 @@ static void ksm_do_scan(unsigned int scan_npages)
- 
- static int ksmd_should_run(void)
- {
--	return (ksm_run & KSM_RUN_MERGE) && !list_empty(&ksm_mm_head.mm_list);
-+	return (ksm_run & KSM_RUN_MERGE) &&
-+		(!list_empty(&ksm_mm_head.mm_list) || ksm_mode_always());
-+}
-+
-+
-+static int ksm_enter(struct mm_struct *mm, unsigned long *vm_flags)
-+{
-+	int err;
-+
-+	if (*vm_flags & (VM_MERGEABLE | VM_SHARED  | VM_MAYSHARE   |
-+			 VM_PFNMAP    | VM_IO      | VM_DONTEXPAND |
-+			 VM_HUGETLB | VM_MIXEDMAP))
-+		return 0;
-+
-+#ifdef VM_SAO
-+	if (*vm_flags & VM_SAO)
-+		return 0;
-+#endif
-+#ifdef VM_SPARC_ADI
-+	if (*vm_flags & VM_SPARC_ADI)
-+		return 0;
-+#endif
-+	if (!test_bit(MMF_VM_MERGEABLE, &mm->flags)) {
-+		err = __ksm_enter(mm);
-+		if (err)
-+			return err;
-+	}
-+
-+	*vm_flags |= VM_MERGEABLE;
-+
-+	return 0;
-+}
-+
-+/*
-+ * Register all vmas for all processes in the system with KSM.
-+ * Note that every call to ksm_madvise, for a given vma, after the first
-+ * does nothing but set flags.
-+ */
-+void ksm_import_task_vma(struct task_struct *task)
-+{
-+	struct vm_area_struct *vma;
-+	struct mm_struct *mm;
-+	int error;
-+
-+	mm = get_task_mm(task);
-+	if (!mm)
-+		return;
-+	down_write(&mm->mmap_sem);
-+	vma = mm->mmap;
-+	while (vma) {
-+		error = ksm_enter(vma->vm_mm, &vma->vm_flags);
-+		vma = vma->vm_next;
-+	}
-+	up_write(&mm->mmap_sem);
-+	mmput(mm);
-+	return;
- }
- 
- static int ksm_scan_thread(void *nothing)
- {
-+	pid_t last_pid = 1;
-+	pid_t curr_pid;
-+	struct task_struct *task;
-+
- 	set_freezable();
- 	set_user_nice(current, 5);
- 
- 	while (!kthread_should_stop()) {
- 		mutex_lock(&ksm_thread_mutex);
- 		wait_while_offlining();
-+		if (ksm_mode_always()) {
-+			/*
-+			 * import one task's vma per run
-+			 */
-+			read_lock(&tasklist_lock);
-+
-+			for_each_process(task) {
-+				curr_pid = task_pid_nr(task);
-+				if (curr_pid == last_pid)
-+					break;
-+			}
-+
-+			task = next_task(task);
-+			last_pid = task_pid_nr(task);
-+
-+			ksm_import_task_vma(task);
-+			read_unlock(&tasklist_lock);
-+		}
- 		if (ksmd_should_run())
- 			ksm_do_scan(ksm_thread_pages_to_scan);
- 		mutex_unlock(&ksm_thread_mutex);
-@@ -2422,33 +2508,9 @@ int ksm_madvise(struct vm_area_struct *vma, unsigned long start,
- 
- 	switch (advice) {
- 	case MADV_MERGEABLE:
--		/*
--		 * Be somewhat over-protective for now!
--		 */
--		if (*vm_flags & (VM_MERGEABLE | VM_SHARED  | VM_MAYSHARE   |
--				 VM_PFNMAP    | VM_IO      | VM_DONTEXPAND |
--				 VM_HUGETLB | VM_MIXEDMAP))
--			return 0;		/* just ignore the advice */
--
--		if (vma_is_dax(vma))
--			return 0;
--
--#ifdef VM_SAO
--		if (*vm_flags & VM_SAO)
--			return 0;
--#endif
--#ifdef VM_SPARC_ADI
--		if (*vm_flags & VM_SPARC_ADI)
--			return 0;
--#endif
--
--		if (!test_bit(MMF_VM_MERGEABLE, &mm->flags)) {
--			err = __ksm_enter(mm);
--			if (err)
--				return err;
--		}
--
--		*vm_flags |= VM_MERGEABLE;
-+		err = ksm_enter(mm, vm_flags);
-+		if (err)
-+			return err;
- 		break;
- 
- 	case MADV_UNMERGEABLE:
-@@ -2852,6 +2914,36 @@ static ssize_t pages_to_scan_store(struct kobject *kobj,
- }
- KSM_ATTR(pages_to_scan);
- 
-+static ssize_t mode_show(struct kobject *kobj, struct kobj_attribute *attr,
-+			char *buf)
-+{
-+	switch (ksm_mode) {
-+		case KSM_MODE_NORMAL:
-+			return sprintf(buf, "always [normal]\n");
-+			break;
-+		case KSM_MODE_ALWAYS:
-+			return sprintf(buf, "[always] normal\n");
-+			break;
-+	}
-+
-+	return sprintf(buf, "always [normal]\n");
-+}
-+
-+static ssize_t mode_store(struct kobject *kobj, struct kobj_attribute *attr,
-+			 const char *buf, size_t count)
-+{
-+	if (!memcmp("always", buf, min(sizeof("always")-1, count))) {
-+		ksm_mode = KSM_MODE_ALWAYS;
-+		wake_up_interruptible(&ksm_thread_wait);
-+	} else if (!memcmp("normal", buf, min(sizeof("normal")-1, count))) {
-+		ksm_mode = KSM_MODE_NORMAL;
-+	} else
-+		return -EINVAL;
-+
-+	return count;
-+}
-+KSM_ATTR(mode);
-+
- static ssize_t run_show(struct kobject *kobj, struct kobj_attribute *attr,
- 			char *buf)
- {
-@@ -3109,6 +3201,7 @@ KSM_ATTR_RO(full_scans);
- static struct attribute *ksm_attrs[] = {
- 	&sleep_millisecs_attr.attr,
- 	&pages_to_scan_attr.attr,
-+	&mode_attr.attr,
- 	&run_attr.attr,
- 	&pages_shared_attr.attr,
- 	&pages_sharing_attr.attr,
--- 
-2.19.1
