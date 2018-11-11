@@ -2,131 +2,164 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C75C7C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 11:42:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEA38C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 11:45:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DDBF21479
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 11:42:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hNWVufNh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DDBF21479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id A6F7B20866
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 11:45:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6F7B20866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727772AbeKKVav (ORCPT
+        id S1727944AbeKKVde (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 16:30:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53050 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727440AbeKKVav (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 16:30:51 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5C7020866;
-        Sun, 11 Nov 2018 11:42:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541936549;
-        bh=Qhi5lM0wWSdIxP9N22IY1lgCBSP3vxV8I0DYd+In9cU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=hNWVufNhNZI3dqyurHO589WIkZWRuX/oFAcVJeg0F55Y5830COOJToAvDUE7xfTeY
-         emzgBBOse0vpbNKgepu7YNx6OaGwoVpto04EVYbrA4amYIQIwzD0Fo/oD3D+b9l7UV
-         92xSE98sJ+QF/3DgueeZ3JLP8Tf17kXv6KU2O08Q=
-Date:   Sun, 11 Nov 2018 11:42:24 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Matheus Tavares <matheus.bernardino@usp.br>
-Cc:     Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-iio@vger.kernel.org,
-        devel@driverdev.osuosl.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        kernel-usp@googlegroups.com, victorcolombo@gmail.com,
-        Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 2/6] staging:iio:ad2s90: Remove spi setup that should be
- done via dt
-Message-ID: <20181111114224.1d8cfaec@archlinux>
-In-Reply-To: <20181109220044.24843-3-matheus.bernardino@usp.br>
-References: <20181109220044.24843-1-matheus.bernardino@usp.br>
-        <20181109220044.24843-3-matheus.bernardino@usp.br>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sun, 11 Nov 2018 16:33:34 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:39391 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727556AbeKKVde (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Nov 2018 16:33:34 -0500
+Received: by mail-ed1-f66.google.com with SMTP id b14so2618440edt.6
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 03:45:11 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=mQUjfeO5EvjMpSjaS21n/gQhWKHYdRmyWxPHMwgiUwk=;
+        b=tGBZzeqqvpNwTI9h8i9+GNHMdE22vc2VRilIlkY6UBfLIi3Y6zFJY3uiQZ62UIha1w
+         b1uL7e2vooVCoxgNTndFzqvqLa15QAtmg+VNQW83RrUqiq6cxteF3PkOjOB9qq4QunF8
+         fPM+zoDfgUE4tT0ftVos0IaikJGwuCq1MOdMR1tTuufnBxuV6PlpHQu0nVOZ0tZ2ca+g
+         CeQLgLCCgk46hYLZ1U7yzrNgJ4Muus01aEQbQM8bBEzh36aBJ7wlwnu1Mgi70NS7FK+L
+         YCkFiexPCD1bnNk+BF+rO8USBmRRpUQJzDDOy2XpNNEzNZgsRA0o+lUDMoywncda3YE4
+         DpSw==
+X-Gm-Message-State: AGRZ1gINiceT9PIOx0E9ZcxC075KkkujQJp+f+ZtyqWqfPI0JANga4Y/
+        tKO6SAngQbLaUE8lk7klLvmQow==
+X-Google-Smtp-Source: AJdET5ct0+I8PIPmVFm+s0kl0kjcIFv6ckS2Od61/NDGXgYLdD84Hp3ZFXJ/H9UHljCiP4J0a1N1Fw==
+X-Received: by 2002:a50:ad9a:: with SMTP id a26-v6mr9413962edd.60.1541936711198;
+        Sun, 11 Nov 2018 03:45:11 -0800 (PST)
+Received: from dhcp-45-79.space.revspace.nl ([2a01:4f8:1c0c:6c86:74cc:2527:1001:2c5e])
+        by smtp.gmail.com with ESMTPSA id q3-v6sm1907653ejz.30.2018.11.11.03.45.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 11 Nov 2018 03:45:10 -0800 (PST)
+Subject: Re: [PATCH v1 1/5] drivercore: Revert "deferral race condition fix"
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        linux-usb@vger.kernel.org, Felipe Balbi <balbi@kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Roger Quadros <rogerq@ti.com>, linux-pm@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>, linux-omap@vger.kernel.org,
+        Darren Hart <dvhart@infradead.org>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chen-Yu Tsai <wens@csie.org>,
+        Grant Likely <grant.likely@linaro.org>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Mark Brown <broonie@kernel.org>,
+        Andrzej Hajda <a.hajda@samsung.com>
+References: <20181110181101.24557-1-andriy.shevchenko@linux.intel.com>
+ <20181110182622.GA32657@kroah.com>
+ <20181110183629.GE10650@smile.fi.intel.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <dda29b24-035f-eb0b-fd07-dce6680e8912@redhat.com>
+Date:   Sun, 11 Nov 2018 12:45:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20181110183629.GE10650@smile.fi.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri,  9 Nov 2018 20:00:40 -0200
-Matheus Tavares <matheus.bernardino@usp.br> wrote:
+Hi,
 
-> The ad2s90 driver currently sets some spi settings (max_speed_hz and
-> mode) at ad2s90_probe. This should, instead, be handled via device tree.
-> This patch removes these configurations from the probe function.
+On 11/10/18 7:36 PM, Andy Shevchenko wrote:
+> On Sat, Nov 10, 2018 at 10:26:22AM -0800, Greg Kroah-Hartman wrote:
+>> On Sat, Nov 10, 2018 at 08:10:57PM +0200, Andy Shevchenko wrote:
+>>> Consider the following scenario.
+>>>
+>>> There are two independent devices coupled together by functional dependencies:
+>>>   - USB OTG (dwc3-pci)
+>>>   - extcon (tested with extcon-intel-mrfld, not yet in upstream)
+>>>
+>>> Each of the driver services a corresponding device is built as a module. In the
+>>> Buildroot environment the modules are probed by alphabetical ordering of their
+>>> modaliases. The latter comes to the case when USB OTG driver will be probed
+>>> first followed by extcon one.
+>>>
+>>> So, if the platform anticipates extcon device to be appeared, in the above case
+>>> we will get deferred probe of USB OTG, because of ordering.
+>>>
+>>> Now, a cherry on top of the cake, the deferred probing list contains
+>>> the only two modules, i.e. USB OTG and extcon. Due to above circumstances,
+>>> values in the local_trigger_count and deferred_trigger_count are not the same,
+>>> and thus provokes deferred probe triggering again and again.
+>>>
+>>> ...
+>>> [   20.678332] platform dwc3.0.auto: Retrying from deferred list
+>>> [   20.694743] platform dwc3.0.auto: Driver dwc3 requests probe deferral
+>>> [   20.701254] platform dwc3.0.auto: Added to deferred list
+>>> [   20.706620] platform dwc3.0.auto: driver_deferred_probe_add_trigger 1 2
+>>> [   20.713732] platform dwc3.0.auto: Retrying from deferred list
+>>> [   20.730035] platform dwc3.0.auto: Driver dwc3 requests probe deferral
+>>> [   20.736540] platform dwc3.0.auto: Added to deferred list
+>>> [   20.741889] platform dwc3.0.auto: driver_deferred_probe_add_trigger 3 4
+>>> [   20.748991] platform dwc3.0.auto: Retrying from deferred list
+>>> [   20.765416] platform dwc3.0.auto: Driver dwc3 requests probe deferral
+>>> [   20.771914] platform dwc3.0.auto: Added to deferred list
+>>> [   20.777279] platform dwc3.0.auto: driver_deferred_probe_add_trigger 5 6
+>>> ...
+>>>
+>>> Deeper investigation shows the culprit commit 58b116bce136
+>>> ("drivercore: deferral race condition fix") which was dedicated to fix some
+>>> other issue while bringing a regression.
+>>>
+>>> This reverts commit 58b116bce13612e5aa6fcd49ecbd4cf8bb59e835 for good until
+>>> we will have better solution.
+>>>
+>>> Cc: Grant Likely <grant.likely@linaro.org>
+>>> Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
+>>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>> Cc: Mark Brown <broonie@kernel.org>
+>>> Cc: Felipe Balbi <balbi@kernel.org>
+>>> Cc: Andrzej Hajda <a.hajda@samsung.com>
+>>> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>>> ---
+>>>   drivers/base/dd.c | 27 ++-------------------------
+>>>   1 file changed, 2 insertions(+), 25 deletions(-)
+>>
+>> Shouldn't there be a "Fixes:" line and cc: stable here?
 > 
-> Note: The way in which the mentioned spi settings need to be specified
-> on the ad2s90's node of a device tree will be documented in the future
-> patch "dt-bindings:iio:resolver: Add docs for ad2s90".
+> I'm not sure (yet). I would like to hear from people first, especially from
+> Grant (I spoke to him already for the matters at ELCE in Edinburg).
 > 
-> Signed-off-by: Matheus Tavares <matheus.bernardino@usp.br>
-I'd actually like to get Rob and Mark's views on this one.  Previously
-I would just have applied it without thinking on the basis these can
-be easily specified from devicetree.
+> Perhaps, Hans can have a chance to test this and comment on.
 
-Recent discussions with Rob have suggested that the settings in devicetree
-should perhaps be concerned with specifying constraints about the device
-that are not visible to the driver.  The driver itself should apply
-the device constraints, but there are others such as wiring that
-might reduce the maximum frequency for example...
+I'm currently hitting a regression in 4.20-rc1 which causes it to not
+boot on my Cherry Trail test devices (sdhci driver times out so it
+cannot find its root filesystem).
 
-So should a driver be clamping an over specified value from DT for
-example?  Or given that is optional in DT, should it be making sure
-that a controller max frequency isn't too high for the sensor?
+I'm currently debugging this (it looks like I need todo a full bisect to
+find the cause) once I've that working, if I hit something which look
+likes you've described I will give this patch a test. But currently I
+cannot reproduce the problem you describe.
 
-It seems to be unusual to do this, but to my mind it would make
-sense and might be worth pushing out into more drivers.
+As for patches 2-55, they look good to me:
 
-Jonathan
-> ---
->  drivers/staging/iio/resolver/ad2s90.c | 11 -----------
->  1 file changed, 11 deletions(-)
-> 
-> diff --git a/drivers/staging/iio/resolver/ad2s90.c b/drivers/staging/iio/resolver/ad2s90.c
-> index ff32ca76ca00..95c118c48400 100644
-> --- a/drivers/staging/iio/resolver/ad2s90.c
-> +++ b/drivers/staging/iio/resolver/ad2s90.c
-> @@ -77,7 +77,6 @@ static int ad2s90_probe(struct spi_device *spi)
->  {
->  	struct iio_dev *indio_dev;
->  	struct ad2s90_state *st;
-> -	int ret;
->  
->  	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
->  	if (!indio_dev)
-> @@ -94,16 +93,6 @@ static int ad2s90_probe(struct spi_device *spi)
->  	indio_dev->num_channels = 1;
->  	indio_dev->name = spi_get_device_id(spi)->name;
->  
-> -	/* need 600ns between CS and the first falling edge of SCLK */
-> -	spi->max_speed_hz = 830000;
-> -	spi->mode = SPI_MODE_3;
-> -	ret = spi_setup(spi);
-> -
-> -	if (ret < 0) {
-> -		dev_err(&spi->dev, "spi_setup failed!\n");
-> -		return ret;
-> -	}
-> -
->  	return devm_iio_device_register(indio_dev->dev.parent, indio_dev);
->  }
->  
+Ackeed-by: Hans de Goede <hdegoede@redhat.com>
+
+Regards,
+
+Hans
 
