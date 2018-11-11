@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 072F9C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:11:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B6A0C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:11:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C226E20817
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:11:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0109520817
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:11:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LxgW6kso"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C226E20817
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zzmv8McR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0109520817
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390209AbeKLJBz (ORCPT
+        id S2390097AbeKLIVz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:01:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50044 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390085AbeKLIVz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:21:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50474 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390077AbeKLIVy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:54 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B519A223CA;
-        Sun, 11 Nov 2018 22:31:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F5CE21707;
+        Sun, 11 Nov 2018 22:31:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975518;
-        bh=4aPfBkZXRjBiiryU7Y/4riQQH3CJlihadKwFrgE7bRo=;
+        s=default; t=1541975517;
+        bh=lI65R9/HTjqbxCv2IR+U3hHGgtGlVlmyIoBHRVbuXoA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LxgW6ksoL/yqNXAjmRDNMP01Ur1VNdyzH0mV3ontkwI3LJ8X0rZM/WSxD1LMkIbe3
-         fSI4kHj4s1pcxXZhnkzUrCCYDbb+4ymd/xzYa2PbHvc4+c8ABnjueWLAnjHanax86y
-         nLnRoIjs3d37al6ExYvV7Av9B6wTKbDannnjNXZM=
+        b=zzmv8McRGUMZtA0g/Un9vJKnwcdgsxTIaqZvyEhNb1/Nnpkvl9pBNDZrBL8offED3
+         whi6c+GvwRjD6mk8csYJx53Ks+8UZwnhU4jPUOHG7TAz3FI8Y7aany3i51rkuOZRth
+         sJUMMC94wGUHVePc1RYju1ol8EPpLFjfla4YStiQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: [PATCH 4.18 349/350] userns: also map extents in the reverse map to kernel IDs
-Date:   Sun, 11 Nov 2018 14:23:33 -0800
-Message-Id: <20181111221722.721113385@linuxfoundation.org>
+        stable@vger.kernel.org, Xu Wen <wen.xu@gatech.edu>,
+        Qu Wenruo <wqu@suse.com>, David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.18 318/350] btrfs: Handle owner mismatch gracefully when walking up tree
+Date:   Sun, 11 Nov 2018 14:23:02 -0800
+Message-Id: <20181111221721.362601986@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -62,65 +62,118 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Qu Wenruo <wqu@suse.com>
 
-commit d2f007dbe7e4c9583eea6eb04d60001e85c6f1bd upstream.
+commit 65c6e82becec33731f48786e5a30f98662c86b16 upstream.
 
-The current logic first clones the extent array and sorts both copies, then
-maps the lower IDs of the forward mapping into the lower namespace, but
-doesn't map the lower IDs of the reverse mapping.
+[BUG]
+When mounting certain crafted image, btrfs will trigger kernel BUG_ON()
+when trying to recover balance:
 
-This means that code in a nested user namespace with >5 extents will see
-incorrect IDs. It also breaks some access checks, like
-inode_owner_or_capable() and privileged_wrt_inode_uidgid(), so a process
-can incorrectly appear to be capable relative to an inode.
+  kernel BUG at fs/btrfs/extent-tree.c:8956!
+  invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
+  CPU: 1 PID: 662 Comm: mount Not tainted 4.18.0-rc1-custom+ #10
+  RIP: 0010:walk_up_proc+0x336/0x480 [btrfs]
+  RSP: 0018:ffffb53540c9b890 EFLAGS: 00010202
+  Call Trace:
+   walk_up_tree+0x172/0x1f0 [btrfs]
+   btrfs_drop_snapshot+0x3a4/0x830 [btrfs]
+   merge_reloc_roots+0xe1/0x1d0 [btrfs]
+   btrfs_recover_relocation+0x3ea/0x420 [btrfs]
+   open_ctree+0x1af3/0x1dd0 [btrfs]
+   btrfs_mount_root+0x66b/0x740 [btrfs]
+   mount_fs+0x3b/0x16a
+   vfs_kern_mount.part.9+0x54/0x140
+   btrfs_mount+0x16d/0x890 [btrfs]
+   mount_fs+0x3b/0x16a
+   vfs_kern_mount.part.9+0x54/0x140
+   do_mount+0x1fd/0xda0
+   ksys_mount+0xba/0xd0
+   __x64_sys_mount+0x21/0x30
+   do_syscall_64+0x60/0x210
+   entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-To fix it, we have to make sure that the "lower_first" members of extents
-in both arrays are translated; and we have to make sure that the reverse
-map is sorted *after* the translation (since otherwise the translation can
-break the sorting).
+[CAUSE]
+Extent tree corruption.  In this particular case, reloc tree root's
+owner is DATA_RELOC_TREE (should be TREE_RELOC), thus its backref is
+corrupted and we failed the owner check in walk_up_tree().
 
-This is CVE-2018-18955.
+[FIX]
+It's pretty hard to take care of every extent tree corruption, but at
+least we can remove such BUG_ON() and exit more gracefully.
 
-Fixes: 6397fac4915a ("userns: bump idmap limits to 340")
-Cc: stable@vger.kernel.org
-Signed-off-by: Jann Horn <jannh@google.com>
-Tested-by: Eric W. Biederman <ebiederm@xmission.com>
-Reviewed-by: Eric W. Biederman <ebiederm@xmission.com>
-Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
+And since in this particular image, DATA_RELOC_TREE and TREE_RELOC share
+the same root (which is obviously invalid), we needs to make
+__del_reloc_root() more robust to detect such invalid sharing to avoid
+possible NULL dereference as root->node can be NULL in this case.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=200411
+Reported-by: Xu Wen <wen.xu@gatech.edu>
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/user_namespace.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ fs/btrfs/extent-tree.c |   18 ++++++++++++------
+ fs/btrfs/relocation.c  |    2 +-
+ 2 files changed, 13 insertions(+), 7 deletions(-)
 
---- a/kernel/user_namespace.c
-+++ b/kernel/user_namespace.c
-@@ -974,10 +974,6 @@ static ssize_t map_write(struct file *fi
- 	if (!new_idmap_permitted(file, ns, cap_setid, &new_map))
- 		goto out;
- 
--	ret = sort_idmaps(&new_map);
--	if (ret < 0)
--		goto out;
--
- 	ret = -EPERM;
- 	/* Map the lower ids from the parent user namespace to the
- 	 * kernel global id space.
-@@ -1004,6 +1000,14 @@ static ssize_t map_write(struct file *fi
- 		e->lower_first = lower_first;
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -8938,15 +8938,14 @@ static noinline int walk_up_proc(struct
+ 	if (eb == root->node) {
+ 		if (wc->flags[level] & BTRFS_BLOCK_FLAG_FULL_BACKREF)
+ 			parent = eb->start;
+-		else
+-			BUG_ON(root->root_key.objectid !=
+-			       btrfs_header_owner(eb));
++		else if (root->root_key.objectid != btrfs_header_owner(eb))
++			goto owner_mismatch;
+ 	} else {
+ 		if (wc->flags[level + 1] & BTRFS_BLOCK_FLAG_FULL_BACKREF)
+ 			parent = path->nodes[level + 1]->start;
+-		else
+-			BUG_ON(root->root_key.objectid !=
+-			       btrfs_header_owner(path->nodes[level + 1]));
++		else if (root->root_key.objectid !=
++			 btrfs_header_owner(path->nodes[level + 1]))
++			goto owner_mismatch;
  	}
  
-+	/*
-+	 * If we want to use binary search for lookup, this clones the extent
-+	 * array and sorts both copies.
-+	 */
-+	ret = sort_idmaps(&new_map);
-+	if (ret < 0)
-+		goto out;
+ 	btrfs_free_tree_block(trans, root, eb, parent, wc->refs[level] == 1);
+@@ -8954,6 +8953,11 @@ out:
+ 	wc->refs[level] = 0;
+ 	wc->flags[level] = 0;
+ 	return 0;
 +
- 	/* Install the map */
- 	if (new_map.nr_extents <= UID_GID_MAP_MAX_BASE_EXTENTS) {
- 		memcpy(map->extent, new_map.extent,
++owner_mismatch:
++	btrfs_err_rl(fs_info, "unexpected tree owner, have %llu expect %llu",
++		     btrfs_header_owner(eb), root->root_key.objectid);
++	return -EUCLEAN;
+ }
+ 
+ static noinline int walk_down_tree(struct btrfs_trans_handle *trans,
+@@ -9007,6 +9011,8 @@ static noinline int walk_up_tree(struct
+ 			ret = walk_up_proc(trans, root, path, wc);
+ 			if (ret > 0)
+ 				return 0;
++			if (ret < 0)
++				return ret;
+ 
+ 			if (path->locks[level]) {
+ 				btrfs_tree_unlock_rw(path->nodes[level],
+--- a/fs/btrfs/relocation.c
++++ b/fs/btrfs/relocation.c
+@@ -1321,7 +1321,7 @@ static void __del_reloc_root(struct btrf
+ 	struct mapping_node *node = NULL;
+ 	struct reloc_control *rc = fs_info->reloc_ctl;
+ 
+-	if (rc) {
++	if (rc && root->node) {
+ 		spin_lock(&rc->reloc_root_tree.lock);
+ 		rb_node = tree_search(&rc->reloc_root_tree.rb_root,
+ 				      root->node->start);
 
 
