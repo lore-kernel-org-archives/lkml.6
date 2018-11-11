@@ -7,48 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2877AC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:43:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B48AC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:44:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E08BD21508
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:43:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E17D21508
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:44:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XH0XmfcW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E08BD21508
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y0d0etli"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E17D21508
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404552AbeKLIX6 (ORCPT
+        id S2404527AbeKLIX4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:23:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58730 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:23:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404539AbeKLIX5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:23:57 -0500
+        id S2390736AbeKLIXx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:23:53 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9392921582;
-        Sun, 11 Nov 2018 22:33:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D0ABF21707;
+        Sun, 11 Nov 2018 22:33:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975639;
-        bh=QMHvXwLpPRU+apmWThFls8Xr+fPG0Vtv9LcHkwM898c=;
+        s=default; t=1541975635;
+        bh=C2ijjXAzuiyxQrteDZqrOcMZP2T0+q0heoOZ3TOVaL0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XH0XmfcWXlgZNe9WlZVAOvoA+IC1fWc9KrF+eMekWhxVbrR86u93n03LQnGdf7/ML
-         LZ5zzL3RHsxMWTNszP8IC8MDbDHaKBY4OCgEhT3oVaLs2F5Ney7ifZHnmUNC4dvhSR
-         pUTy5fOLxB/OXpIQrZpHX0bqPPN5dMhQXHgNOhP8=
+        b=Y0d0etlioy7LzaTNnLYjPxhn4rvppWnQYoXq2RXwnRxfp3YFOWE+kZONX4OnRakzy
+         9gBeGmjCBxeE+JbA3WmY7bwf/IO/a3jDZE9sTBV5Sl8Y9HjajePxwTz9eMyX7OWWFg
+         k0LNnFX4t+Hap5Lbavqvanmb5npobXeWuIfRVAt8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Denis Drozdov <denisd@mellanox.com>,
-        Erez Shitrit <erezsh@mellanox.com>,
-        Feras Daoud <ferasda@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 056/141] IB/ipoib: Clear IPCB before icmp_send
-Date:   Sun, 11 Nov 2018 14:25:15 -0800
-Message-Id: <20181111221635.348831530@linuxfoundation.org>
+        stable@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
+        Tejun Heo <tj@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 052/141] cgroup, netclassid: add a preemption point to write_classid
+Date:   Sun, 11 Nov 2018 14:25:11 -0800
+Message-Id: <20181111221634.664174449@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
 References: <20181111221627.853046496@linuxfoundation.org>
@@ -66,103 +62,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Denis Drozdov <denisd@mellanox.com>
+From: Michal Hocko <mhocko@suse.com>
 
-[ Upstream commit 4d6e4d12da2c308f8f976d3955c45ee62539ac98 ]
+[ Upstream commit a90e90b7d55e789c71d85b946ffb5c1ab2f137ca ]
 
-IPCB should be cleared before icmp_send, since it may contain data from
-previous layers and the data could be misinterpreted as ip header options,
-which later caused the ihl to be set to an invalid value and resulted in
-the following stack corruption:
+We have seen a customer complaining about soft lockups on !PREEMPT
+kernel config with 4.4 based kernel
 
-[ 1083.031512] ib0: packet len 57824 (> 2048) too long to send, dropping
-[ 1083.031843] ib0: packet len 37904 (> 2048) too long to send, dropping
-[ 1083.032004] ib0: packet len 4040 (> 2048) too long to send, dropping
-[ 1083.032253] ib0: packet len 63800 (> 2048) too long to send, dropping
-[ 1083.032481] ib0: packet len 23960 (> 2048) too long to send, dropping
-[ 1083.033149] ib0: packet len 63800 (> 2048) too long to send, dropping
-[ 1083.033439] ib0: packet len 63800 (> 2048) too long to send, dropping
-[ 1083.033700] ib0: packet len 63800 (> 2048) too long to send, dropping
-[ 1083.034124] ib0: packet len 63800 (> 2048) too long to send, dropping
-[ 1083.034387] ==================================================================
-[ 1083.034602] BUG: KASAN: stack-out-of-bounds in __ip_options_echo+0xf08/0x1310
-[ 1083.034798] Write of size 4 at addr ffff880353457c5f by task kworker/u16:0/7
-[ 1083.034990]
-[ 1083.035104] CPU: 7 PID: 7 Comm: kworker/u16:0 Tainted: G           O      4.19.0-rc5+ #1
-[ 1083.035316] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu2 04/01/2014
-[ 1083.035573] Workqueue: ipoib_wq ipoib_cm_skb_reap [ib_ipoib]
-[ 1083.035750] Call Trace:
-[ 1083.035888]  dump_stack+0x9a/0xeb
-[ 1083.036031]  print_address_description+0xe3/0x2e0
-[ 1083.036213]  kasan_report+0x18a/0x2e0
-[ 1083.036356]  ? __ip_options_echo+0xf08/0x1310
-[ 1083.036522]  __ip_options_echo+0xf08/0x1310
-[ 1083.036688]  icmp_send+0x7b9/0x1cd0
-[ 1083.036843]  ? icmp_route_lookup.constprop.9+0x1070/0x1070
-[ 1083.037018]  ? netif_schedule_queue+0x5/0x200
-[ 1083.037180]  ? debug_show_all_locks+0x310/0x310
-[ 1083.037341]  ? rcu_dynticks_curr_cpu_in_eqs+0x85/0x120
-[ 1083.037519]  ? debug_locks_off+0x11/0x80
-[ 1083.037673]  ? debug_check_no_obj_freed+0x207/0x4c6
-[ 1083.037841]  ? check_flags.part.27+0x450/0x450
-[ 1083.037995]  ? debug_check_no_obj_freed+0xc3/0x4c6
-[ 1083.038169]  ? debug_locks_off+0x11/0x80
-[ 1083.038318]  ? skb_dequeue+0x10e/0x1a0
-[ 1083.038476]  ? ipoib_cm_skb_reap+0x2b5/0x650 [ib_ipoib]
-[ 1083.038642]  ? netif_schedule_queue+0xa8/0x200
-[ 1083.038820]  ? ipoib_cm_skb_reap+0x544/0x650 [ib_ipoib]
-[ 1083.038996]  ipoib_cm_skb_reap+0x544/0x650 [ib_ipoib]
-[ 1083.039174]  process_one_work+0x912/0x1830
-[ 1083.039336]  ? wq_pool_ids_show+0x310/0x310
-[ 1083.039491]  ? lock_acquire+0x145/0x3a0
-[ 1083.042312]  worker_thread+0x87/0xbb0
-[ 1083.045099]  ? process_one_work+0x1830/0x1830
-[ 1083.047865]  kthread+0x322/0x3e0
-[ 1083.050624]  ? kthread_create_worker_on_cpu+0xc0/0xc0
-[ 1083.053354]  ret_from_fork+0x3a/0x50
+[1072141.435366] NMI watchdog: BUG: soft lockup - CPU#21 stuck for 22s! [systemd:1]
+[1072141.444090] Modules linked in: mpt3sas raid_class binfmt_misc af_packet 8021q garp mrp stp llc xfs libcrc32c bonding iscsi_ibft iscsi_boot_sysfs msr ext4 crc16 jbd2 mbcache cdc_ether usbnet mii joydev hid_generic usbhid intel_rapl x86_pkg_temp_thermal intel_powerclamp coretemp crct10dif_pclmul crc32_pclmul ghash_clmulni_intel ipmi_ssif mgag200 i2c_algo_bit ttm ipmi_devintf drbg ixgbe drm_kms_helper vxlan ansi_cprng ip6_udp_tunnel drm aesni_intel udp_tunnel aes_x86_64 iTCO_wdt syscopyarea ptp xhci_pci lrw iTCO_vendor_support pps_core gf128mul ehci_pci glue_helper sysfillrect mdio pcspkr sb_edac ablk_helper cryptd ehci_hcd sysimgblt xhci_hcd fb_sys_fops edac_core mei_me lpc_ich ses usbcore enclosure dca mfd_core ipmi_si mei i2c_i801 scsi_transport_sas usb_common ipmi_msghandler shpchp fjes wmi processor button acpi_pad btrfs xor raid6_pq sd_mod crc32c_intel megaraid_sas sg dm_multipath dm_mod scsi_dh_rdac scsi_dh_emc scsi_dh_alua scsi_mod md_mod autofs4
+[1072141.444146] Supported: Yes
+[1072141.444149] CPU: 21 PID: 1 Comm: systemd Not tainted 4.4.121-92.80-default #1
+[1072141.444150] Hardware name: LENOVO Lenovo System x3650 M5 -[5462P4U]- -[5462P4U]-/01GR451, BIOS -[TCE136H-2.70]- 06/13/2018
+[1072141.444151] task: ffff880191bd0040 ti: ffff880191bd4000 task.ti: ffff880191bd4000
+[1072141.444153] RIP: 0010:[<ffffffff815229f9>]  [<ffffffff815229f9>] update_classid_sock+0x29/0x40
+[1072141.444157] RSP: 0018:ffff880191bd7d58  EFLAGS: 00000286
+[1072141.444158] RAX: ffff883b177cb7c0 RBX: 0000000000000000 RCX: 0000000000000000
+[1072141.444159] RDX: 00000000000009c7 RSI: ffff880191bd7d5c RDI: ffff8822e29bb200
+[1072141.444160] RBP: ffff883a72230980 R08: 0000000000000101 R09: 0000000000000000
+[1072141.444161] R10: 0000000000000008 R11: f000000000000000 R12: ffffffff815229d0
+[1072141.444162] R13: 0000000000000000 R14: ffff881fd0a47ac0 R15: ffff880191bd7f28
+[1072141.444163] FS:  00007f3e2f1eb8c0(0000) GS:ffff882000340000(0000) knlGS:0000000000000000
+[1072141.444164] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[1072141.444165] CR2: 00007f3e2f200000 CR3: 0000001ffea4e000 CR4: 00000000001606f0
+[1072141.444166] Stack:
+[1072141.444166]  ffffffa800000246 00000000000009c7 ffffffff8121d583 ffff8818312a05c0
+[1072141.444168]  ffff8818312a1100 ffff880197c3b280 ffff881861422858 ffffffffffffffea
+[1072141.444170]  ffffffff81522b1c ffffffff81d0ca20 ffff8817fa17b950 ffff883fdd8121e0
+[1072141.444171] Call Trace:
+[1072141.444179]  [<ffffffff8121d583>] iterate_fd+0x53/0x80
+[1072141.444182]  [<ffffffff81522b1c>] write_classid+0x4c/0x80
+[1072141.444187]  [<ffffffff8111328b>] cgroup_file_write+0x9b/0x100
+[1072141.444193]  [<ffffffff81278bcb>] kernfs_fop_write+0x11b/0x150
+[1072141.444198]  [<ffffffff81201566>] __vfs_write+0x26/0x100
+[1072141.444201]  [<ffffffff81201bed>] vfs_write+0x9d/0x190
+[1072141.444203]  [<ffffffff812028c2>] SyS_write+0x42/0xa0
+[1072141.444207]  [<ffffffff815f58c3>] entry_SYSCALL_64_fastpath+0x1e/0xca
+[1072141.445490] DWARF2 unwinder stuck at entry_SYSCALL_64_fastpath+0x1e/0xca
 
-For instance __ip_options_echo is failing to proceed with invalid srr and
-optlen passed from another layer via IPCB
+If a cgroup has many tasks with many open file descriptors then we would
+end up in a large loop without any rescheduling point throught the
+operation. Add cond_resched once per task.
 
-[  762.139568] IPv4: __ip_options_echo rr=0 ts=0 srr=43 cipso=0
-[  762.139720] IPv4: ip_options_build: IPCB 00000000f3cd969e opt 000000002ccb3533
-[  762.139838] IPv4: __ip_options_echo in srr: optlen 197 soffset 84
-[  762.139852] IPv4: ip_options_build srr=0 is_frag=0 rr_needaddr=0 ts_needaddr=0 ts_needtime=0 rr=0 ts=0
-[  762.140269] ==================================================================
-[  762.140713] IPv4: __ip_options_echo rr=0 ts=0 srr=0 cipso=0
-[  762.141078] BUG: KASAN: stack-out-of-bounds in __ip_options_echo+0x12ec/0x1680
-[  762.141087] Write of size 4 at addr ffff880353457c7f by task kworker/u16:0/7
-
-Signed-off-by: Denis Drozdov <denisd@mellanox.com>
-Reviewed-by: Erez Shitrit <erezsh@mellanox.com>
-Reviewed-by: Feras Daoud <ferasda@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/ulp/ipoib/ipoib_cm.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ net/core/netclassid_cgroup.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/infiniband/ulp/ipoib/ipoib_cm.c
-+++ b/drivers/infiniband/ulp/ipoib/ipoib_cm.c
-@@ -1422,11 +1422,15 @@ static void ipoib_cm_skb_reap(struct wor
- 		spin_unlock_irqrestore(&priv->lock, flags);
- 		netif_tx_unlock_bh(dev);
- 
--		if (skb->protocol == htons(ETH_P_IP))
-+		if (skb->protocol == htons(ETH_P_IP)) {
-+			memset(IPCB(skb), 0, sizeof(*IPCB(skb)));
- 			icmp_send(skb, ICMP_DEST_UNREACH, ICMP_FRAG_NEEDED, htonl(mtu));
-+		}
- #if IS_ENABLED(CONFIG_IPV6)
--		else if (skb->protocol == htons(ETH_P_IPV6))
-+		else if (skb->protocol == htons(ETH_P_IPV6)) {
-+			memset(IP6CB(skb), 0, sizeof(*IP6CB(skb)));
- 			icmpv6_send(skb, ICMPV6_PKT_TOOBIG, 0, mtu);
-+		}
- #endif
- 		dev_kfree_skb_any(skb);
+--- a/net/core/netclassid_cgroup.c
++++ b/net/core/netclassid_cgroup.c
+@@ -104,6 +104,7 @@ static int write_classid(struct cgroup_s
+ 		iterate_fd(p->files, 0, update_classid_sock,
+ 			   (void *)(unsigned long)cs->classid);
+ 		task_unlock(p);
++		cond_resched();
+ 	}
+ 	css_task_iter_end(&it);
  
 
 
