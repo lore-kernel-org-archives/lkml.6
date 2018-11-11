@@ -6,46 +6,44 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 072BFC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:37:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CA2CC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:37:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C693220818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:37:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C693220818
+	by mail.kernel.org (Postfix) with ESMTP id 3626D20818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:37:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3626D20818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730438AbeKLG0l (ORCPT
+        id S1730246AbeKLG0y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:26:41 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:49732 "EHLO
+        Mon, 12 Nov 2018 01:26:54 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:49692 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730072AbeKLFsK (ORCPT
+        by vger.kernel.org with ESMTP id S1730071AbeKLFsK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 00:48:10 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsW-0000l7-CV; Sun, 11 Nov 2018 19:58:40 +0000
+        id 1gLvsW-0000oN-BF; Sun, 11 Nov 2018 19:58:40 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsT-0001bc-Ck; Sun, 11 Nov 2018 19:58:37 +0000
+        id 1gLvsT-0001aj-0v; Sun, 11 Nov 2018 19:58:37 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Juergen Gross" <jgross@suse.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Ross Lagerwall" <ross.lagerwall@citrix.com>,
-        "Liam Shepherd" <liam@dancer.es>
+CC:     akpm@linux-foundation.org,
+        "David Vrabel" <david.vrabel@citrix.com>,
+        "David S. Miller" <davem@davemloft.net>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.77477400@decadent.org.uk>
+Message-ID: <lsq.1541965745.925781977@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 174/366] xen-netfront: Update features after
- registering netdev
+Subject: [PATCH 3.16 163/366] xen-netfront: fix locking in connect error path
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,48 +57,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ross Lagerwall <ross.lagerwall@citrix.com>
+From: David Vrabel <david.vrabel@citrix.com>
 
-commit 45c8184c1bed1ca8a7f02918552063a00b909bf5 upstream.
+commit db8c8ab61a28d7e3eb86d247b342a853263262c3 upstream.
 
-Update the features after calling register_netdev() otherwise the
-device features are not set up correctly and it not possible to change
-the MTU of the device. After this change, the features reported by
-ethtool match the device's features before the commit which introduced
-the issue and it is possible to change the device's MTU.
+If no queues could be created when connecting to the backend, one of the
+error paths would deadlock.
 
-Fixes: f599c64fdf7d ("xen-netfront: Fix race between device setup and open")
-Reported-by: Liam Shepherd <liam@dancer.es>
-Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: David Vrabel <david.vrabel@citrix.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/net/xen-netfront.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/xen-netfront.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 --- a/drivers/net/xen-netfront.c
 +++ b/drivers/net/xen-netfront.c
-@@ -2001,10 +2001,6 @@ static int xennet_connect(struct net_dev
- 	/* talk_to_netback() sets the correct number of queues */
- 	num_queues = dev->real_num_tx_queues;
- 
+@@ -2000,7 +2000,7 @@ abort_transaction_no_dev_fatal:
+ 	info->queues = NULL;
+ 	rtnl_lock();
+ 	netif_set_real_num_tx_queues(info->netdev, 0);
 -	rtnl_lock();
--	netdev_update_features(dev);
--	rtnl_unlock();
--
- 	if (dev->reg_state == NETREG_UNINITIALIZED) {
- 		err = register_netdev(dev);
- 		if (err) {
-@@ -2014,6 +2010,10 @@ static int xennet_connect(struct net_dev
- 		}
- 	}
- 
-+	rtnl_lock();
-+	netdev_update_features(dev);
 +	rtnl_unlock();
-+
- 	/*
- 	 * All public and private state should now be sane.  Get
- 	 * ready to start sending and receiving packets and give the driver
+  out:
+ 	return err;
+ }
 
