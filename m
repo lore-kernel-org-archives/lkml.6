@@ -2,123 +2,95 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27DB8C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:36:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F2DAC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:36:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0043208A3
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:36:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15109208A3
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:36:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sNgmU/ZJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0043208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Mrgd7zBn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15109208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391334AbeKLI00 (ORCPT
+        id S2391345AbeKLI0c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:26:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33048 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405173AbeKLIZX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:25:23 -0500
-Received: from localhost (unknown [206.108.79.134])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFA4621780;
-        Sun, 11 Nov 2018 22:35:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975725;
-        bh=LWzGUSEpeQaLnocFA3Ev818hxEBqcVW8KMo9t439ODo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sNgmU/ZJFWSeRlzru9NeO4AA1W0X2+VNZ4Mlpp3kt8F8aXG0gKpNWI0FygKNE2Bl8
-         lqNv0ZZzTn0IBAuNGeliaH0n3C0IJRqFJZ1rJeYFagLBV9sQXyKm/ri9xCxE53U6yI
-         gjwIaQYsizIg9NSgtDa4FSfh50M7CwqFwKgR5BiU=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH 4.9 105/141] w1: omap-hdq: fix missing bus unregister at removal
-Date:   Sun, 11 Nov 2018 14:26:04 -0800
-Message-Id: <20181111221642.608618754@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
-References: <20181111221627.853046496@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Mon, 12 Nov 2018 03:26:32 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:41784 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731259AbeKLI0b (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:26:31 -0500
+Received: by mail-lj1-f193.google.com with SMTP id z80-v6so5935434ljb.8
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:36:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=o37QHCT2bcmJcB1fPsCHs5bLPGlRQ1lGaYrsYwSVUGw=;
+        b=Mrgd7zBnXQ9k7Bn8IEn6Y3oxFqAhYimBeZx1a6PzsEn+nCD9hcLGo0VVOrQaY3Vl0K
+         AF2bTpw9PSnK3q+kDRUghDnkcj06ObrhjLVaUY1T81anoklWE6QVOH45rqQO6j6n8blr
+         XfudqaC0L9KJJR4IqxcAS/QSbo2rGgOk247MQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=o37QHCT2bcmJcB1fPsCHs5bLPGlRQ1lGaYrsYwSVUGw=;
+        b=UrZkw/rFzS8tFbB+vBjqArFqFphJalaF4ePCI8+W3UXboljueeFn/qDaxJ7xL4WJh6
+         vSHQrih4JQ2k5DwAddCHFWKYrBXvBLM/BlNXjjAATshIyMAFh2jz7pQJcU3RuZejZeHA
+         6kcxtwxuGAiM/yK/YlqwwBWC4nkgY7SUFC/ASjW8wlZ+ApYHkNHLD9qcTMJWyFUhc3Tg
+         892+iX8nY8RI65AsGOj/NGlwLtYAqUuSbKb7I5oPxV4pjHB7rrVsZm/MnjrgA5PRU3bP
+         pJtmsNjOGWCFwsH5lHf60jeyXcIxfBdbPlI9stw3qA9WnGM1v9UaqvaI04KBXf89oJh4
+         tVJQ==
+X-Gm-Message-State: AGRZ1gKJHiN9O/yGQqzmFGqPal9EWpDlxqnrm2Vc2Q3sPMe/BdDr4/75
+        +1ZzmHS3WKSWSWzMxqw7NMW0/nZcIWc=
+X-Google-Smtp-Source: AJdET5fzpdGEA+73Epg0PHeSgvn/ZupQ3j/hljd02TEtH8HQai1vyoM9wvUM6sWuiob+uxqo9HnIJw==
+X-Received: by 2002:a2e:b00a:: with SMTP id y10-v6mr10035378ljk.109.1541975791222;
+        Sun, 11 Nov 2018 14:36:31 -0800 (PST)
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
+        by smtp.gmail.com with ESMTPSA id m10-v6sm2664105ljj.34.2018.11.11.14.36.29
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 11 Nov 2018 14:36:30 -0800 (PST)
+Received: by mail-lf1-f41.google.com with SMTP id f23so4841057lfc.13
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:36:29 -0800 (PST)
+X-Received: by 2002:a19:6e0b:: with SMTP id j11mr10489051lfc.124.1541975789321;
+ Sun, 11 Nov 2018 14:36:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <154192381794.5458.5498732290895334242.tglx@nanos.tec.linutronix.de>
+ <154192381794.5458.16318183442023794568.tglx@nanos.tec.linutronix.de>
+In-Reply-To: <154192381794.5458.16318183442023794568.tglx@nanos.tec.linutronix.de>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 11 Nov 2018 16:36:13 -0600
+X-Gmail-Original-Message-ID: <CAHk-=wiv7ZKgcyAtpKGC8yYAWwtnD3f77_nMz72JQciDJ+JXsg@mail.gmail.com>
+Message-ID: <CAHk-=wiv7ZKgcyAtpKGC8yYAWwtnD3f77_nMz72JQciDJ+JXsg@mail.gmail.com>
+Subject: Re: [GIT pull] scheduler fixes for 4.20
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+On Sun, Nov 11, 2018 at 2:11 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+>    git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-urgent-for-linus
 
-------------------
+Hmm. I get
 
-From: Andreas Kemnade <andreas@kemnade.info>
+   Already up to date.
 
-commit a007734618fee1bf35556c04fa498d41d42c7301 upstream.
+with top commit being 993f0b0510da ("sched/topology: Fix off by one
+bug") that I already merged earlier.
 
-The bus master was not removed after unloading the module
-or unbinding the driver. That lead to oopses like this
+Did you forget to push out?
 
-[  127.842987] Unable to handle kernel paging request at virtual address bf01d04c
-[  127.850646] pgd = 70e3cd9a
-[  127.853698] [bf01d04c] *pgd=8f908811, *pte=00000000, *ppte=00000000
-[  127.860412] Internal error: Oops: 80000007 [#1] PREEMPT SMP ARM
-[  127.866668] Modules linked in: bq27xxx_battery overlay [last unloaded: omap_hdq]
-[  127.874542] CPU: 0 PID: 1022 Comm: w1_bus_master1 Not tainted 4.19.0-rc4-00001-g2d51da718324 #12
-[  127.883819] Hardware name: Generic OMAP36xx (Flattened Device Tree)
-[  127.890441] PC is at 0xbf01d04c
-[  127.893798] LR is at w1_search_process_cb+0x4c/0xfc
-[  127.898956] pc : [<bf01d04c>]    lr : [<c05f9580>]    psr: a0070013
-[  127.905609] sp : cf885f48  ip : bf01d04c  fp : ddf1e11c
-[  127.911132] r10: cf8fe040  r9 : c05f8d00  r8 : cf8fe040
-[  127.916656] r7 : 000000f0  r6 : cf8fe02c  r5 : cf8fe000  r4 : cf8fe01c
-[  127.923553] r3 : c05f8d00  r2 : 000000f0  r1 : cf8fe000  r0 : dde1ef10
-[  127.930450] Flags: NzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
-[  127.938018] Control: 10c5387d  Table: 8f8f0019  DAC: 00000051
-[  127.944091] Process w1_bus_master1 (pid: 1022, stack limit = 0x9135699f)
-[  127.951171] Stack: (0xcf885f48 to 0xcf886000)
-[  127.955810] 5f40:                   cf8fe000 00000000 cf884000 cf8fe090 000003e8 c05f8d00
-[  127.964477] 5f60: dde5fc34 c05f9700 ddf1e100 ddf1e540 cf884000 cf8fe000 c05f9694 00000000
-[  127.973114] 5f80: dde5fc34 c01499a4 00000000 ddf1e540 c0149874 00000000 00000000 00000000
-[  127.981781] 5fa0: 00000000 00000000 00000000 c01010e8 00000000 00000000 00000000 00000000
-[  127.990447] 5fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-[  127.999114] 5fe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
-[  128.007781] [<c05f9580>] (w1_search_process_cb) from [<c05f9700>] (w1_process+0x6c/0x118)
-[  128.016479] [<c05f9700>] (w1_process) from [<c01499a4>] (kthread+0x130/0x148)
-[  128.024047] [<c01499a4>] (kthread) from [<c01010e8>] (ret_from_fork+0x14/0x2c)
-[  128.031677] Exception stack(0xcf885fb0 to 0xcf885ff8)
-[  128.037017] 5fa0:                                     00000000 00000000 00000000 00000000
-[  128.045684] 5fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-[  128.054351] 5fe0: 00000000 00000000 00000000 00000000 00000013 00000000
-[  128.061340] Code: bad PC value
-[  128.064697] ---[ end trace af066e33c0e14119 ]---
+I did find the commits in the 'sched/urgent' branch, so I pulled that.
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/w1/masters/omap_hdq.c |    2 ++
- 1 file changed, 2 insertions(+)
-
---- a/drivers/w1/masters/omap_hdq.c
-+++ b/drivers/w1/masters/omap_hdq.c
-@@ -784,6 +784,8 @@ static int omap_hdq_remove(struct platfo
- 	/* remove module dependency */
- 	pm_runtime_disable(&pdev->dev);
- 
-+	w1_remove_master_device(&omap_w1_master);
-+
- 	return 0;
- }
- 
-
-
+                Linus
