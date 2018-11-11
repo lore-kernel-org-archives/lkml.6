@@ -2,150 +2,229 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7FC1C43610
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:05:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AC7BC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:05:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E06020818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:05:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CA0B20818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:05:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oKJwbvoh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E06020818
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NrEkLR0D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CA0B20818
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389301AbeKLIzP (ORCPT
+        id S2390610AbeKLIzW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:55:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51836 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390455AbeKLIWR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:17 -0500
-Received: from localhost (unknown [206.108.79.134])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A20E5224B3;
-        Sun, 11 Nov 2018 22:32:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975540;
-        bh=lE4HLpUbhkLMj/0G9CoX5TSre2PwysbyNVVjOthiDww=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oKJwbvohZjlWYoE1gLLTpdUGERSNsn5bUbrx53GziXXgYbrt5a+HkYTMYaym3Y5Di
-         tzcOkDgZVEUExU+Pwef6mZWjJ08ipiqGuEhW7ZQQnKlsk6U2Y/+y26C/XF1OzB1O8d
-         e3C+3LBxOs8IggHe+Ru5vuLPqFpgBLWsq8C6zLhQ=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 029/222] sparc: Fix single-pcr perf event counter management.
-Date:   Sun, 11 Nov 2018 14:22:06 -0800
-Message-Id: <20181111221650.861800715@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
-References: <20181111221647.665769131@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Mon, 12 Nov 2018 03:55:22 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:41103 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731378AbeKLIzV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:55:21 -0500
+Received: by mail-io1-f65.google.com with SMTP id r6-v6so2214630ioj.8;
+        Sun, 11 Nov 2018 15:05:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=0U9ceAnB4nAEnMcfQJhz58KUPoxlp94Luh91H/EYKkY=;
+        b=NrEkLR0DUbSE6ST3VED/lXRjY1F10bkMITeyWwrIA/ZxvIw/3uQqGedqQjSNd4nvET
+         ORoWvtamNnLuKSVmhqrk14g9StK9aPNNxSSag1xsT+u3A3rqTSzgZCAQyxhjUi3JI292
+         FT1BFUiS/PAv7oVZQeHSZJsyiaTRQCwSneW65yxvuWbY1Orevpp9QNhUABBINlfe9TsC
+         wxl2uz7DHSZfWvK9CHcZB9rc3nsM5JzudEz8php3M119FWLCdkqLZOl41cmV2MOYw+4Y
+         dyGpF3pwOyykeOPaov2Mwh9rPj2cwivA4Hwd5y12dnWJaTPM6u8YNYyFdENDJ4lkGlxv
+         1GrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=0U9ceAnB4nAEnMcfQJhz58KUPoxlp94Luh91H/EYKkY=;
+        b=nYNmpi5dpnGSiJwUnOtDTXaXAWZQhTITPC3QFJjlCeOjkRZMB0OztOxy5fX8a34TXj
+         +Vb1eLKDvxI3TWxhPmhOwQFiS2K0eUk9peuyuARyUY8/Wm+rm5NF/06MspPYRI/LPmBQ
+         9b3K2Lry1vkbI0MvicOEvqgPLWFRm/mf6XtZzuGmG8a2tz0Pl9U4VSIdKOEXDikLM8KR
+         qq84p9bOzeoqfkFNoiH7r6tNt1ii63T3ICp606Fk3EIBCxH06ErJiD4iB/xD6GyAr3nh
+         E94ELflMawwL6QmgUXWqXahG+cG38ZmsF2j2ZwgTlFOmVZbUf0/qHi2T6e4UR92XYGaL
+         kboQ==
+X-Gm-Message-State: AGRZ1gJtWuxuv7UW8ye4XwXnhS3bV8WhWUji0bxMOHgF4nTmSeKdg43d
+        XMvlrl9mgGdMW7wzyenZPXWgO98SyAO4xREyo10=
+X-Google-Smtp-Source: AJdET5d0EV+04IQdwDJYwRVNDY2JNQz2n1jRiCI6N7hfeF3MaAySAK2RC6vy2kui5ALsBbJOi/a+ssYfG4aDLNd0Mfo=
+X-Received: by 2002:a6b:4f14:: with SMTP id d20-v6mr14574428iob.68.1541977513600;
+ Sun, 11 Nov 2018 15:05:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20181105085820.6341-1-aaron.lu@intel.com> <CAKgT0UdvYVTA8OjgLhXo9tRUOGikrCi3zJXSrqM0ZmeHb5P2mA@mail.gmail.com>
+ <b8b1fbb7-9139-9455-69b8-8c1bed4f7c74@itcare.pl>
+In-Reply-To: <b8b1fbb7-9139-9455-69b8-8c1bed4f7c74@itcare.pl>
+From:   Alexander Duyck <alexander.duyck@gmail.com>
+Date:   Sun, 11 Nov 2018 15:05:01 -0800
+Message-ID: <CAKgT0UdhcXF-ohPHPbg8onRjFabEMnbpXGmLm-27skCNzGKOgw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mm/page_alloc: free order-0 pages through PCP in page_frag_free()
+To:     =?UTF-8?Q?Pawe=C5=82_Staszewski?= <pstaszewski@itcare.pl>
+Cc:     aaron.lu@intel.com, linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        ilias.apalodimas@linaro.org, yoel@kviknet.dk,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>, dave.hansen@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On Sat, Nov 10, 2018 at 3:54 PM Pawe=C5=82 Staszewski <pstaszewski@itcare.p=
+l> wrote:
+>
+>
+>
+> W dniu 05.11.2018 o 16:44, Alexander Duyck pisze:
+> > On Mon, Nov 5, 2018 at 12:58 AM Aaron Lu <aaron.lu@intel.com> wrote:
+> >> page_frag_free() calls __free_pages_ok() to free the page back to
+> >> Buddy. This is OK for high order page, but for order-0 pages, it
+> >> misses the optimization opportunity of using Per-Cpu-Pages and can
+> >> cause zone lock contention when called frequently.
+> >>
+> >> Pawe=C5=82 Staszewski recently shared his result of 'how Linux kernel
+> >> handles normal traffic'[1] and from perf data, Jesper Dangaard Brouer
+> >> found the lock contention comes from page allocator:
+> >>
+> >>    mlx5e_poll_tx_cq
+> >>    |
+> >>     --16.34%--napi_consume_skb
+> >>               |
+> >>               |--12.65%--__free_pages_ok
+> >>               |          |
+> >>               |           --11.86%--free_one_page
+> >>               |                     |
+> >>               |                     |--10.10%--queued_spin_lock_slowpa=
+th
+> >>               |                     |
+> >>               |                      --0.65%--_raw_spin_lock
+> >>               |
+> >>               |--1.55%--page_frag_free
+> >>               |
+> >>                --1.44%--skb_release_data
+> >>
+> >> Jesper explained how it happened: mlx5 driver RX-page recycle
+> >> mechanism is not effective in this workload and pages have to go
+> >> through the page allocator. The lock contention happens during
+> >> mlx5 DMA TX completion cycle. And the page allocator cannot keep
+> >> up at these speeds.[2]
+> >>
+> >> I thought that __free_pages_ok() are mostly freeing high order
+> >> pages and thought this is an lock contention for high order pages
+> >> but Jesper explained in detail that __free_pages_ok() here are
+> >> actually freeing order-0 pages because mlx5 is using order-0 pages
+> >> to satisfy its page pool allocation request.[3]
+> >>
+> >> The free path as pointed out by Jesper is:
+> >> skb_free_head()
+> >>    -> skb_free_frag()
+> >>      -> skb_free_frag()
+> >>        -> page_frag_free()
+> >> And the pages being freed on this path are order-0 pages.
+> >>
+> >> Fix this by doing similar things as in __page_frag_cache_drain() -
+> >> send the being freed page to PCP if it's an order-0 page, or
+> >> directly to Buddy if it is a high order page.
+> >>
+> >> With this change, Pawe=C5=82 hasn't noticed lock contention yet in
+> >> his workload and Jesper has noticed a 7% performance improvement
+> >> using a micro benchmark and lock contention is gone.
+> >>
+> >> [1]: https://www.spinics.net/lists/netdev/msg531362.html
+> >> [2]: https://www.spinics.net/lists/netdev/msg531421.html
+> >> [3]: https://www.spinics.net/lists/netdev/msg531556.html
+> >> Reported-by: Pawe=C5=82 Staszewski <pstaszewski@itcare.pl>
+> >> Analysed-by: Jesper Dangaard Brouer <brouer@redhat.com>
+> >> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+> >> ---
+> >>   mm/page_alloc.c | 10 ++++++++--
+> >>   1 file changed, 8 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> >> index ae31839874b8..91a9a6af41a2 100644
+> >> --- a/mm/page_alloc.c
+> >> +++ b/mm/page_alloc.c
+> >> @@ -4555,8 +4555,14 @@ void page_frag_free(void *addr)
+> >>   {
+> >>          struct page *page =3D virt_to_head_page(addr);
+> >>
+> >> -       if (unlikely(put_page_testzero(page)))
+> >> -               __free_pages_ok(page, compound_order(page));
+> >> +       if (unlikely(put_page_testzero(page))) {
+> >> +               unsigned int order =3D compound_order(page);
+> >> +
+> >> +               if (order =3D=3D 0)
+> >> +                       free_unref_page(page);
+> >> +               else
+> >> +                       __free_pages_ok(page, order);
+> >> +       }
+> >>   }
+> >>   EXPORT_SYMBOL(page_frag_free);
+> >>
+> > One thing I would suggest for Pawel to try would be to reduce the Tx
+> > qdisc size on his transmitting interfaces, Reduce the Tx ring size,
+> > and possibly increase the Tx interrupt rate. Ideally we shouldn't have
+> > too many packets in-flight and I suspect that is the issue that Pawel
+> > is seeing that is leading to the page pool allocator freeing up the
+> > memory. I know we like to try to batch things but the issue is
+> > processing too many Tx buffers in one batch leads to us eating up too
+> > much memory and causing evictions from the cache. Ideally the Rx and
+> > Tx rings and queues should be sized as small as possible while still
+> > allowing us to process up to our NAPI budget. Usually I run things
+> > with a 128 Rx / 128 Tx setup and then reduce the Tx queue length so we
+> > don't have more buffers stored there than we can place in the Tx ring.
+> > Then we can avoid the extra thrash of having to pull/push memory into
+> > and out of the freelists. Essentially the issue here ends up being
+> > another form of buffer bloat.
+> Thanks Aleksandar - yes it can be - but in my scenario setting RX buffer
+> <4096 producing more interface rx drops - and no_rx_buffer on network
+> controller that is receiving more packets
+> So i need to stick with 3000-4000 on RX - and yes i was trying to lower
+> the TX buff on connectx4 - but that changed nothing before Aaron patch
+>
+> After Aaron patch - decreasing TX buffer influencing total bandwidth
+> that can be handled by the router/server
+> Dono why before this patch there was no difference there no matter what
+> i set there there was always page_alloc/slowpath on top in perf
+>
+>
+> Currently testing RX4096/TX256 - this helps with bandwidth like +10%
+> more bandwidth with less interrupts...
 
-------------------
+The problem is if you are going for less interrupts you are setting
+yourself up for buffer bloat. Basically you are going to use much more
+cache and much more memory then you actually need and if things are
+properly configured NAPI should take care of the interrupts anyway
+since under maximum load you shouldn't stop polling normally.
 
-From: "David S. Miller" <davem@davemloft.net>
+One issue I have seen is people delay interrupts for as long as
+possible which isn't really a good thing since most network
+controllers will use NAPI which will disable the interrupts and leave
+them disabled whenever the system is under heavy stress so you should
+be able to get the maximum performance by configuring an adapter with
+small ring sizes and for high interrupt rates.
 
-[ Upstream commit cfdc3170d214046b9509183fe9b9544dc644d40b ]
+It is easiest to think of it this way. Your total packet rate is equal
+to your interrupt rate times the number of buffers you will store in
+the ring. So if you have some fixed rate "X" for packets and an
+interrupt rate of "i" then your optimal ring size should be "X/i". So
+if you lower the interrupt rate you end up hurting the throughput
+unless you increase the buffer size. However at a certain point the
+buffer size starts becoming an issue. For example with UDP flows I
+often see massive packet drops if you tune the interrupt rate too low
+and then put the system under heavy stress.
 
-It is important to clear the hw->state value for non-stopped events
-when they are added into the PMU.  Otherwise when the event is
-scheduled out, we won't read the counter because HES_UPTODATE is still
-set.  This breaks 'perf stat' and similar use cases, causing all the
-events to show zero.
-
-This worked for multi-pcr because we make explicit sparc_pmu_start()
-calls in calculate_multiple_pcrs().  calculate_single_pcr() doesn't do
-this because the idea there is to accumulate all of the counter
-settings into the single pcr value.  So we have to add explicit
-hw->state handling there.
-
-Like x86, we use the PERF_HES_ARCH bit to track truly stopped events
-so that we don't accidently start them on a reload.
-
-Related to all of this, sparc_pmu_start() is missing a userpage update
-so add it.
-
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/sparc/kernel/perf_event.c |   17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
-
---- a/arch/sparc/kernel/perf_event.c
-+++ b/arch/sparc/kernel/perf_event.c
-@@ -927,6 +927,8 @@ static void read_in_all_counters(struct
- 			sparc_perf_event_update(cp, &cp->hw,
- 						cpuc->current_idx[i]);
- 			cpuc->current_idx[i] = PIC_NO_INDEX;
-+			if (cp->hw.state & PERF_HES_STOPPED)
-+				cp->hw.state |= PERF_HES_ARCH;
- 		}
- 	}
- }
-@@ -959,10 +961,12 @@ static void calculate_single_pcr(struct
- 
- 		enc = perf_event_get_enc(cpuc->events[i]);
- 		cpuc->pcr[0] &= ~mask_for_index(idx);
--		if (hwc->state & PERF_HES_STOPPED)
-+		if (hwc->state & PERF_HES_ARCH) {
- 			cpuc->pcr[0] |= nop_for_index(idx);
--		else
-+		} else {
- 			cpuc->pcr[0] |= event_encoding(enc, idx);
-+			hwc->state = 0;
-+		}
- 	}
- out:
- 	cpuc->pcr[0] |= cpuc->event[0]->hw.config_base;
-@@ -988,6 +992,9 @@ static void calculate_multiple_pcrs(stru
- 
- 		cpuc->current_idx[i] = idx;
- 
-+		if (cp->hw.state & PERF_HES_ARCH)
-+			continue;
-+
- 		sparc_pmu_start(cp, PERF_EF_RELOAD);
- 	}
- out:
-@@ -1079,6 +1086,8 @@ static void sparc_pmu_start(struct perf_
- 	event->hw.state = 0;
- 
- 	sparc_pmu_enable_event(cpuc, &event->hw, idx);
-+
-+	perf_event_update_userpage(event);
- }
- 
- static void sparc_pmu_stop(struct perf_event *event, int flags)
-@@ -1371,9 +1380,9 @@ static int sparc_pmu_add(struct perf_eve
- 	cpuc->events[n0] = event->hw.event_base;
- 	cpuc->current_idx[n0] = PIC_NO_INDEX;
- 
--	event->hw.state = PERF_HES_UPTODATE;
-+	event->hw.state = PERF_HES_UPTODATE | PERF_HES_STOPPED;
- 	if (!(ef_flags & PERF_EF_START))
--		event->hw.state |= PERF_HES_STOPPED;
-+		event->hw.state |= PERF_HES_ARCH;
- 
- 	/*
- 	 * If group events scheduling transaction was started,
-
-
+- Alex
