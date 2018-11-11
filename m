@@ -2,127 +2,101 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_ADSP_ALL,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1C84C43610
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 18:50:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA91C04EB9
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 18:50:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0BB3214E0
+	by mail.kernel.org (Postfix) with ESMTP id DDA8A214F1
 	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 18:50:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0BB3214E0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDA8A214F1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mniewoehner.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729462AbeKLEjf (ORCPT
+        id S1729481AbeKLEjh convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 23:39:35 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:40747 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729413AbeKLEjf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 23:39:35 -0500
-Received: from carbon-x1.hos.anvin.org (c-24-5-245-234.hsd1.ca.comcast.net [24.5.245.234] (may be forged))
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id wABIniOV3349172
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Sun, 11 Nov 2018 10:49:45 -0800
-Subject: Re: PLEASE REVERT URGENTLY: Re: [PATCH v5 2/3] x86/boot: add acpi
- rsdp address to setup_header
-To:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, x86@kernel.org,
-        linux-doc@vger.kernel.org
-Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, corbet@lwn.net,
-        boris.ostrovsky@oracle.com
-References: <20181010061456.22238-1-jgross@suse.com>
- <20181010061456.22238-3-jgross@suse.com>
- <f7c78ee7-b548-7f04-24da-7321b6c64c97@zytor.com>
- <bd2d17cd-072c-cad6-94ad-52373700a1c9@suse.com>
- <2934552c-d150-0afb-6fa9-9398cb94d86a@zytor.com>
- <5a2f5cb8-7332-f490-eabf-cfcbdcd1abc4@suse.com>
- <59ca1053-9176-f1db-6e6c-96b47aaaa09d@zytor.com>
- <f16c53a4-7a5c-de01-c3cc-095226f6ca40@suse.com>
-From:   "H. Peter Anvin" <hpa@zytor.com>
-Message-ID: <3e773a2d-3f69-5ccd-7d8b-9878fba30d00@zytor.com>
-Date:   Sun, 11 Nov 2018 10:49:39 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <f16c53a4-7a5c-de01-c3cc-095226f6ca40@suse.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Sun, 11 Nov 2018 23:39:37 -0500
+Received: from sender-of-o53.zoho.com ([135.84.80.218]:21781 "EHLO
+        sender-of-o53.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729413AbeKLEjh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Nov 2018 23:39:37 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1541962208; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=YtyMnd0letGd52Ni0tD5x76/h0e7f8/H5wsp9Z/VwzwNfLZQuh4ZFNQgwNVYueThQ0b8a8Kkw2ZsQw4IBngqpOJAaBcfEyURTJ+QDRaCkxBidypzPoIWabnM6kO1meaXUygONkEef4ZY+58fAysdP+PR3SW9Vb+GLfJUA66OuoE=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1541962208; h=Content-Type:Content-Transfer-Encoding:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
+        bh=sAz7EJdTyRSsvQVPqXZuOgcvzMBL2HR4Upqo6kqrPAQ=; 
+        b=oWUsZTqRjFflTfceKrQCYKnINw4BT3kuFGVzLRE4pjf/KY1hYH/+bDUAJ2zL6u5vNQlKLfBwFmrFAI1U8VhJyknehKWK5skW+/0ATqFcx9y1ThgnRAhSbLq4RqeRHIAtPmFwGKLzGXK/9/leNupeyJnmJ7ZkjQhlV3Dz9o2kjwQ=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=mniewoehner.de;
+        spf=pass  smtp.mailfrom=linux@mniewoehner.de;
+        dmarc=pass header.from=<linux@mniewoehner.de> header.from=<linux@mniewoehner.de>
+Received: from z3r0 (31.187.91.78 [31.187.91.78]) by mx.zohomail.com
+        with SMTPS id 1541962206767736.60132244995; Sun, 11 Nov 2018 10:50:06 -0800 (PST)
+Message-ID: <e8eb56fdab618770917fbe5b174328dc1240f934.camel@mniewoehner.de>
+Subject: Re: [BUG] Nuvoton NCPT650 TPM 2.0 mode not working
+From:   Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
+        arnd@arndb.de, linux-integrity@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+In-Reply-To: <1541960689.3190.4.camel@HansenPartnership.com>
+References: <776f384a81466642472beb4a34b10f26f1de88e9.camel@mniewoehner.de>
+         <1541960689.3190.4.camel@HansenPartnership.com>
+Content-Type: text/plain; charset="UTF-8"
+Date:   Sun, 11 Nov 2018 19:50:03 +0100
+Mime-Version: 1.0
+X-Mailer: Evolution 3.28.5 
+Content-Transfer-Encoding: 8BIT
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/10/18 1:03 AM, Juergen Gross wrote:
+Hi James,
+
+On Sun, 2018-11-11 at 10:24 -0800, James Bottomley wrote:
+> On Sun, 2018-11-11 at 18:55 +0100, Michael Niewöhner wrote:
+> > Hi all,
+> > 
+> > Nuvoton NCPT650 does not work in TPM 2.0 mode with tpm_tis /
+> > tpm_i2c_nuvoton while it works in TPM 1.2 mode (I can reflash it via
+> > UEFI setup). Kernel version is 4.19.1
 > 
-> How would that help? The garabge data written could have the correct
-> terminal sentinel value by chance.
+> Not that this helps you, but mine definitely works.  I've got an older
+> Dell XPS-13 with a Nuvoton 650 which is software switchable between 1.2
+> and 2.0.  This is what mine says
 > 
-> That's why I re-used an existing field in setup_header (the version) to
-> let grub tell the kernel which part of setup_header was written by grub.
+> jejb@jarvis:~> dmesg|egrep -i tis\|tpm\|crb
+> [    0.000000] efi:  ACPI=0x79419000  ACPI
+> 2.0=0x79419000  SMBIOS=0xf0000  TPMEventLog=0x69db3018 
+> [    0.012797] ACPI: TPM2 0x0000000079446CC0 000034 (v03        Tpm2Tabl
+> 00000001 AMI  00000000)
+> [    2.035242] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2)
 > 
-> That's the only way I could find to let the kernel distinguish between
-> garbage and actual data.
-
-There is plenty of space *before* the setup_header part of struct boot_params
-too -- look a the various __pad fields, especially (in your case), __pad3[16]
-and __pad4[116] would suit the bill just fine.
-
->> It would be enormously helpful if you could find out any more details about
->> exactly what they are doing to break things.
+> However, this makes me wonder about yours:
 > 
-> That's easy:
+> > [    0.003517] ACPI: TPM2 0x000000009E490ED8 000034 (v03 LENOVO TC-
+> > S06   00001300 AMI  00000000)
 > 
-> The memory layout is:
+> I thought the Lenovo "upgrade to 2.0" in fact disabled the external TPM
+> in favour of the Intel PTT (software TPM in the management engine). 
+> Since you apparently have the tpm_crb driver that should find the PTT
+> TPM, this might be one of the attachment bugs in the CRB driver ...
+> from your ACPI output it looks to be not specifying the Tpm2Tabl.
+
+Well, there are at least two implementations I know of:
+For my Lenovo X260 I can choose between Infineon TPM 1.2 or Intel PTT TPM 2.0
+This here is my ThinkStation P320 which can choose between PTT 1.2, PTT 2.0,
+Nuvoton 1.2 and 2.0. When switchting between 1.2 and 2.0 the Nuvoton gets
+reflashed with the appropriate firmware.
+
 > 
-> 0x1f1 bytes of data, including the sentinel, the setup_header, and then
-> more data.
+> James
 > 
-> grub did read the kernel's setup_header in the correct size into its
-> buffer (which contains random garbage before that), intializes the first
-> 0x1f1 including the sentinel byte, and then writes back the buffer, but
-> using a too large length for that.
 
-Are you kidding me... it really overwrites it with completely random data, and
-not simply overspilling contents of the file?
 
-In that case it might not be possible (or desirable) to use those N bytes
-following the setup_heaader, or we need to a bigger sentinel than one byte
-(probability being what it is, 256^n gets to be a pretty big number for any n,
-very quickly drowning in the noise compared to other potential sources of boot
-failures, and most likely less fatal than most.)
-
-How big is this garbage dump?  I'm going to brave a guess it is 512 bytes.  In
-that case this is hardly a big deal: the E820 map begins at 0x290, and the
-setup_header maximum goes to 0x280, so it is only 15 bytes lost.  If it is
-worse than that, we would risk losing __pad8[48] and __pad9[276], and
-especially the latter would be painful. In those case perhaps we should use
-0x281..0x290 as a 15-byte sentinel; that is going to be virtually foolproof.
-
-I'm also thinking that it might be desirable to add a flags field (__pad2
-would be ideal) to struct boot_params; it would let us recycle some of the
-obsolete fields (hd0_info, hd1_info, sys_desc_table, olpc_ofw_header, ...) and
-perhaps be able to add some more robustness against these sort of things. This
-would be the right way to do what your version feedback mechanism would do.
-
-The reason why the feedback mechanism is fundamentally broken is that it only
-gives the boot loader a way to assert that it supports a certain version of
-the protocol, but it doesn't say *which* bootloader does such an assert -- and
-therefore it is still wide open to implementation error.
-
-We do, in fact, already have a feedback mechanism: the bootloader ID and
-bootloader version. One way we could deal with this problem is to bump the
-bootloader version reported by Grub, and add a quirk to the kernel that if the
-bootloader ID is Grub (7) and the version is less than a certain number, zero
-those fields. In fact, the more I think about it, this is what we should do.
-
-That being said, Grub really needs to be kept honest.  They keep making both
-severe design (like refusing to use the BIOS and UEFI entry points provided by
-the kernel by default) and implementation errors, apparently without
-meaningful oversight. I really ask that the people more closely involved with
-Grub try to keep a closer eye on their code as it applies to Linux.
-
-	-hpa
