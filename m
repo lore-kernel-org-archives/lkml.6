@@ -7,51 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78062C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:07:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0197C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:07:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C0C2214E0
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:07:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88BF1214E0
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:07:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ho4SYECV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C0C2214E0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KOxOi+Bs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88BF1214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390435AbeKLI5P (ORCPT
+        id S2390448AbeKLI5Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:57:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51232 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:57:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51332 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390307AbeKLIWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2390313AbeKLIWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:22:10 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A2A0D223CB;
+        by mail.kernel.org (Postfix) with ESMTPSA id F38032243E;
         Sun, 11 Nov 2018 22:32:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975532;
-        bh=SA5wglS37YMdRV0bkI4/WhytO1h/7NNmgQ3I7JM4W/I=;
+        s=default; t=1541975533;
+        bh=U0if6oX8CIqyrvmBsHluMmRg4mZ2z5vLlk0TCk2sbyA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ho4SYECV8L583Cw7+KSmRV1sAEnmf0y07eRDYZaZ0r95mPEfeM17FhnPuaROmc7XZ
-         +xnENwXrSq+4LER1ZA5TGotgpPBHOf1x+x58LPGsH+ht/exee0rhR66le6jErml23e
-         eNwR4aD0yZahv6suRYHu8pfPReh3EGVmILioskbc=
+        b=KOxOi+BsfL7qAtDeINC234AdxaIBW28apR+uGcAzzjG8GD1oD/7AtHtQiyCXIJ9m9
+         Rg/O8tY4IFBWKlkAj+JVeG8Ba0sD6J/NdD16q+MOYW9VzekMS0CABS5EnS7+aEozWp
+         AQ68xi03QuLFOx+3GwbZb6NBnJ2jGYevfzitNvTc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Petlan <mpetlan@redhat.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Janosch Frank <frankja@linux.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 026/222] Revert "perf tools: Fix PMU term format max value calculation"
-Date:   Sun, 11 Nov 2018 14:22:03 -0800
-Message-Id: <20181111221650.640645838@linuxfoundation.org>
+Subject: [PATCH 4.14 044/222] s390/sthyi: Fix machine name validity indication
+Date:   Sun, 11 Nov 2018 14:22:21 -0800
+Message-Id: <20181111221652.099965259@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -69,86 +63,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: Janosch Frank <frankja@linux.ibm.com>
 
-[ Upstream commit 1b9caa10b31dda0866f4028e4bfb923fb6e4072f ]
+[ Upstream commit b5130dc2224d1881f24224c0590c6d97f2168d6a ]
 
-This reverts commit ac0e2cd555373ae6f8f3a3ad3fbbf5b6d1e7aaaa.
+When running as a level 3 guest with no host provided sthyi support
+sclp_ocf_cpc_name_copy() will only return zeroes. Zeroes are not a
+valid group name, so let's not indicate that the group name field is
+valid.
 
-Michael reported an issue with oversized terms values assignment
-and I noticed there was actually a misunderstanding of the max
-value check in the past.
+Also the group name is not dependent on stsi, let's not return based
+on stsi before setting it.
 
-The above commit's changelog says:
-
-  If bit 21 is set, there is parsing issues as below.
-
-    $ perf stat -a -e uncore_qpi_0/event=0x200002,umask=0x8/
-    event syntax error: '..pi_0/event=0x200002,umask=0x8/'
-                                      \___ value too big for format, maximum is 511
-
-But there's no issue there, because the event value is distributed
-along the value defined by the format. Even if the format defines
-separated bit, the value is treated as a continual number, which
-should follow the format definition.
-
-In above case it's 9-bit value with last bit separated:
-  $ cat uncore_qpi_0/format/event
-  config:0-7,21
-
-Hence the value 0x200002 is correctly reported as format violation,
-because it exceeds 9 bits. It should have been 0x102 instead, which
-sets the 9th bit - the bit 21 of the format.
-
-  $ perf stat -vv -a -e uncore_qpi_0/event=0x102,umask=0x8/
-  Using CPUID GenuineIntel-6-2D
-  ...
-  ------------------------------------------------------------
-  perf_event_attr:
-    type                             10
-    size                             112
-    config                           0x200802
-    sample_type                      IDENTIFIER
-  ...
-
-Reported-by: Michael Petlan <mpetlan@redhat.com>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Fixes: ac0e2cd55537 ("perf tools: Fix PMU term format max value calculation")
-Link: http://lkml.kernel.org/r/20181003072046.29276-1-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: 95ca2cb57985 ("KVM: s390: Add sthyi emulation")
+Signed-off-by: Janosch Frank <frankja@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/util/pmu.c |   13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ arch/s390/kvm/sthyi.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -754,13 +754,14 @@ static void pmu_format_value(unsigned lo
- 
- static __u64 pmu_format_max_value(const unsigned long *format)
+--- a/arch/s390/kvm/sthyi.c
++++ b/arch/s390/kvm/sthyi.c
+@@ -174,17 +174,19 @@ static void fill_hdr(struct sthyi_sctns
+ static void fill_stsi_mac(struct sthyi_sctns *sctns,
+ 			  struct sysinfo_1_1_1 *sysinfo)
  {
--	__u64 w = 0;
--	int fbit;
-+	int w;
++	sclp_ocf_cpc_name_copy(sctns->mac.infmname);
++	if (*(u64 *)sctns->mac.infmname != 0)
++		sctns->mac.infmval1 |= MAC_NAME_VLD;
++
+ 	if (stsi(sysinfo, 1, 1, 1))
+ 		return;
  
--	for_each_set_bit(fbit, format, PERF_PMU_FORMAT_BITS)
--		w |= (1ULL << fbit);
+-	sclp_ocf_cpc_name_copy(sctns->mac.infmname);
 -
--	return w;
-+	w = bitmap_weight(format, PERF_PMU_FORMAT_BITS);
-+	if (!w)
-+		return 0;
-+	if (w < 64)
-+		return (1ULL << w) - 1;
-+	return -1;
+ 	memcpy(sctns->mac.infmtype, sysinfo->type, sizeof(sctns->mac.infmtype));
+ 	memcpy(sctns->mac.infmmanu, sysinfo->manufacturer, sizeof(sctns->mac.infmmanu));
+ 	memcpy(sctns->mac.infmpman, sysinfo->plant, sizeof(sctns->mac.infmpman));
+ 	memcpy(sctns->mac.infmseq, sysinfo->sequence, sizeof(sctns->mac.infmseq));
+ 
+-	sctns->mac.infmval1 |= MAC_ID_VLD | MAC_NAME_VLD;
++	sctns->mac.infmval1 |= MAC_ID_VLD;
  }
  
- /*
+ static void fill_stsi_par(struct sthyi_sctns *sctns,
 
 
