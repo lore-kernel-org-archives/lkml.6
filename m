@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93FF6C0044C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:03:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A226CC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:03:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A4CD20818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:03:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68D2620818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:03:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MHrvbBh5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A4CD20818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yvb4Ny1G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68D2620818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390642AbeKLIxt (ORCPT
+        id S2390690AbeKLIyB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:53:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51248 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:54:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52416 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390539AbeKLIWX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2387541AbeKLIWX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:22:23 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 473742245E;
-        Sun, 11 Nov 2018 22:32:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ECC7E2154B;
+        Sun, 11 Nov 2018 22:32:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975546;
-        bh=x/zG+zGuSf1eZ1lOzst+O7I7F33beXHVPK4UhnJHOqw=;
+        bh=3r+wAY4/wxcAhOGWQEaQyqJTT3wOUsfCv77kvNdZds8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MHrvbBh56+l27/7CTbq7CzMLYvMwLK63ZRCzg9DKcUkejTMHa3EkDUUx7+8WxtS38
-         1kYqDC7CziUeQHyIbzRUa/Lq3SeWIBg1j1Gv5QuwEm/L2gPccZ69bTTyaYpA8zrDNf
-         DMKc+wTzWvrSkcQZLYLwYZrjAlig38YdZ/yAG4xI=
+        b=yvb4Ny1GN8bahg4ujBwts9R0khpwwxVNB8cjZJ1Lbb2dqp6uWCHY7OEWzqvuk6BF+
+         D8e4Jo7Tbw7xgAGG6jQmoew5vuotddx6/El9/j0cAnaRV8mDGD6Q4h8rwORk88bDYw
+         rcRaJ3Q6tgTe4AZJulmE9TLCkpoiTWExqXnBolzA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jim Mattson <jmattson@google.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
+        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 079/222] KVM: nVMX: Clear reserved bits of #DB exit qualification
-Date:   Sun, 11 Nov 2018 14:22:56 -0800
-Message-Id: <20181111221655.133959342@linuxfoundation.org>
+Subject: [PATCH 4.14 078/222] UAPI: ndctl: Fix g++-unsupported initialisation in headers
+Date:   Sun, 11 Nov 2018 14:22:55 -0800
+Message-Id: <20181111221655.029036970@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -63,64 +63,113 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jim Mattson <jmattson@google.com>
+From: David Howells <dhowells@redhat.com>
 
-[ Upstream commit cfb634fe3052aefc4e1360fa322018c9a0b49755 ]
+[ Upstream commit 9607871f37dc3e717639694b8d0dc738f2a68efc ]
 
-According to volume 3 of the SDM, bits 63:15 and 12:4 of the exit
-qualification field for debug exceptions are reserved (cleared to
-0). However, the SDM is incorrect about bit 16 (corresponding to
-DR6.RTM). This bit should be set if a debug exception (#DB) or a
-breakpoint exception (#BP) occurred inside an RTM region while
-advanced debugging of RTM transactional regions was enabled. Note that
-this is the opposite of DR6.RTM, which "indicates (when clear) that a
-debug exception (#DB) or breakpoint exception (#BP) occurred inside an
-RTM region while advanced debugging of RTM transactional regions was
-enabled."
+The following code in the linux/ndctl header file:
 
-There is still an issue with stale DR6 bits potentially being
-misreported for the current debug exception.  DR6 should not have been
-modified before vectoring the #DB exception, and the "new DR6 bits"
-should be available somewhere, but it was and they aren't.
+	static inline const char *nvdimm_bus_cmd_name(unsigned cmd)
+	{
+		static const char * const names[] = {
+			[ND_CMD_ARS_CAP] = "ars_cap",
+			[ND_CMD_ARS_START] = "ars_start",
+			[ND_CMD_ARS_STATUS] = "ars_status",
+			[ND_CMD_CLEAR_ERROR] = "clear_error",
+			[ND_CMD_CALL] = "cmd_call",
+		};
 
-Fixes: b96fb439774e1 ("KVM: nVMX: fixes to nested virt interrupt injection")
-Signed-off-by: Jim Mattson <jmattson@google.com>
-Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+		if (cmd < ARRAY_SIZE(names) && names[cmd])
+			return names[cmd];
+		return "unknown";
+	}
+
+is broken in a number of ways:
+
+ (1) ARRAY_SIZE() is not generally defined.
+
+ (2) g++ does not support "non-trivial" array initialisers fully yet.
+
+ (3) Every file that calls this function will acquire a copy of names[].
+
+The same goes for nvdimm_cmd_name().
+
+Fix all three by converting to a switch statement where each case returns a
+string.  That way if cmd is a constant, the compiler can trivially reduce it
+and, if not, the compiler can use a shared lookup table if it thinks that is
+more efficient.
+
+A better way would be to remove these functions and their arrays from the
+header entirely.
+
+Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/kvm_host.h |    1 +
- arch/x86/kvm/vmx.c              |    7 +++++--
- 2 files changed, 6 insertions(+), 2 deletions(-)
+ include/uapi/linux/ndctl.h |   48 +++++++++++++++++++--------------------------
+ 1 file changed, 21 insertions(+), 27 deletions(-)
 
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -174,6 +174,7 @@ enum {
+--- a/include/uapi/linux/ndctl.h
++++ b/include/uapi/linux/ndctl.h
+@@ -176,37 +176,31 @@ enum {
  
- #define DR6_BD		(1 << 13)
- #define DR6_BS		(1 << 14)
-+#define DR6_BT		(1 << 15)
- #define DR6_RTM		(1 << 16)
- #define DR6_FIXED_1	0xfffe0ff0
- #define DR6_INIT	0xffff0ff0
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -2733,10 +2733,13 @@ static int nested_vmx_check_exception(st
- 		}
- 	} else {
- 		if (vmcs12->exception_bitmap & (1u << nr)) {
--			if (nr == DB_VECTOR)
-+			if (nr == DB_VECTOR) {
- 				*exit_qual = vcpu->arch.dr6;
--			else
-+				*exit_qual &= ~(DR6_FIXED_1 | DR6_BT);
-+				*exit_qual ^= DR6_RTM;
-+			} else {
- 				*exit_qual = 0;
-+			}
- 			return 1;
- 		}
- 	}
+ static inline const char *nvdimm_bus_cmd_name(unsigned cmd)
+ {
+-	static const char * const names[] = {
+-		[ND_CMD_ARS_CAP] = "ars_cap",
+-		[ND_CMD_ARS_START] = "ars_start",
+-		[ND_CMD_ARS_STATUS] = "ars_status",
+-		[ND_CMD_CLEAR_ERROR] = "clear_error",
+-		[ND_CMD_CALL] = "cmd_call",
+-	};
+-
+-	if (cmd < ARRAY_SIZE(names) && names[cmd])
+-		return names[cmd];
+-	return "unknown";
++	switch (cmd) {
++	case ND_CMD_ARS_CAP:		return "ars_cap";
++	case ND_CMD_ARS_START:		return "ars_start";
++	case ND_CMD_ARS_STATUS:		return "ars_status";
++	case ND_CMD_CLEAR_ERROR:	return "clear_error";
++	case ND_CMD_CALL:		return "cmd_call";
++	default:			return "unknown";
++	}
+ }
+ 
+ static inline const char *nvdimm_cmd_name(unsigned cmd)
+ {
+-	static const char * const names[] = {
+-		[ND_CMD_SMART] = "smart",
+-		[ND_CMD_SMART_THRESHOLD] = "smart_thresh",
+-		[ND_CMD_DIMM_FLAGS] = "flags",
+-		[ND_CMD_GET_CONFIG_SIZE] = "get_size",
+-		[ND_CMD_GET_CONFIG_DATA] = "get_data",
+-		[ND_CMD_SET_CONFIG_DATA] = "set_data",
+-		[ND_CMD_VENDOR_EFFECT_LOG_SIZE] = "effect_size",
+-		[ND_CMD_VENDOR_EFFECT_LOG] = "effect_log",
+-		[ND_CMD_VENDOR] = "vendor",
+-		[ND_CMD_CALL] = "cmd_call",
+-	};
+-
+-	if (cmd < ARRAY_SIZE(names) && names[cmd])
+-		return names[cmd];
+-	return "unknown";
++	switch (cmd) {
++	case ND_CMD_SMART:			return "smart";
++	case ND_CMD_SMART_THRESHOLD:		return "smart_thresh";
++	case ND_CMD_DIMM_FLAGS:			return "flags";
++	case ND_CMD_GET_CONFIG_SIZE:		return "get_size";
++	case ND_CMD_GET_CONFIG_DATA:		return "get_data";
++	case ND_CMD_SET_CONFIG_DATA:		return "set_data";
++	case ND_CMD_VENDOR_EFFECT_LOG_SIZE:	return "effect_size";
++	case ND_CMD_VENDOR_EFFECT_LOG:		return "effect_log";
++	case ND_CMD_VENDOR:			return "vendor";
++	case ND_CMD_CALL:			return "cmd_call";
++	default:				return "unknown";
++	}
+ }
+ 
+ #define ND_IOCTL 'N'
 
 
