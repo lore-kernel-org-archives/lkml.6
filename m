@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDC7AC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:54:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DCA4C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:55:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 948FE20866
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:54:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4ED5A20839
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:55:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="S9wsra+T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 948FE20866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AtRuODiB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4ED5A20839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732939AbeKLJpO (ORCPT
+        id S1732689AbeKLIST (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:45:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37256 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:18:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37162 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732652AbeKLISV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:18:21 -0500
+        id S1732672AbeKLIST (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:18:19 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 236CB21707;
-        Sun, 11 Nov 2018 22:28:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EBEFC21527;
+        Sun, 11 Nov 2018 22:28:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975305;
-        bh=WVomlRGZ+TpigkKJYugZPNTy5MIpt4fBy8nD3S4lY9Y=;
+        s=default; t=1541975303;
+        bh=HnnV8p3BYNFwNMMxW+odyZuFzPjj/y+ezEL0owagWtw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S9wsra+TKG1LRlhzzNZ0okFd93t0lRClrhMoH/08jJLhrlnzlY13/mKFFJnd+RdCd
-         o80wUNT/PCtakg4KqEORpI2OgDlguil2SX0o5VfSkpTQuBySXMOQG546lLu6KibCES
-         zkrSIjVdr6eS3w1XvB5ytY0nb/3J7U6n3LC5mXHg=
+        b=AtRuODiBsOpc3uvNeeuu6qwVWgvJuZOkY1AtqZ4mkHdeMSP89AOp0ase2ayDDNZGA
+         V3n9nnBuZucFIMzGnmvNy/0dxqrSbzU7QxpkYPVy4D1d/Q89rMlvBjloPseCJvh+5j
+         cKD0PS1VuiXFPSZvG7F8xlrhW+afyrukWNvfR4ew=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrew Elble <aweits@rit.edu>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 4.19 272/361] nfsd: correctly decrement odstate refcount in error path
-Date:   Sun, 11 Nov 2018 14:20:19 -0800
-Message-Id: <20181111221655.121747331@linuxfoundation.org>
+        stable@vger.kernel.org, rostedt@goodmis.org,
+        He Zhe <zhe.he@windriver.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Petr Mladek <pmladek@suse.com>
+Subject: [PATCH 4.19 266/361] printk: Fix panic caused by passing log_buf_len to command line
+Date:   Sun, 11 Nov 2018 14:20:13 -0800
+Message-Id: <20181111221654.643310304@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -63,43 +64,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andrew Elble <aweits@rit.edu>
+From: He Zhe <zhe.he@windriver.com>
 
-commit bd8d725078867cda250fe94b9c5a067b4a64ca74 upstream.
+commit 277fcdb2cfee38ccdbe07e705dbd4896ba0c9930 upstream.
 
-alloc_init_deleg() both allocates an nfs4_delegation, and
-bumps the refcount on odstate. So after this point, we need to
-put_clnt_odstate() and nfs4_put_stid() to not leave the odstate
-refcount inappropriately bumped.
+log_buf_len_setup does not check input argument before passing it to
+simple_strtoull. The argument would be a NULL pointer if "log_buf_len",
+without its value, is set in command line and thus causes the following
+panic.
 
-Signed-off-by: Andrew Elble <aweits@rit.edu>
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+PANIC: early exception 0xe3 IP 10:ffffffffaaeacd0d error 0 cr2 0x0
+[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc4-yocto-standard+ #1
+[    0.000000] RIP: 0010:_parse_integer_fixup_radix+0xd/0x70
+...
+[    0.000000] Call Trace:
+[    0.000000]  simple_strtoull+0x29/0x70
+[    0.000000]  memparse+0x26/0x90
+[    0.000000]  log_buf_len_setup+0x17/0x22
+[    0.000000]  do_early_param+0x57/0x8e
+[    0.000000]  parse_args+0x208/0x320
+[    0.000000]  ? rdinit_setup+0x30/0x30
+[    0.000000]  parse_early_options+0x29/0x2d
+[    0.000000]  ? rdinit_setup+0x30/0x30
+[    0.000000]  parse_early_param+0x36/0x4d
+[    0.000000]  setup_arch+0x336/0x99e
+[    0.000000]  start_kernel+0x6f/0x4ee
+[    0.000000]  x86_64_start_reservations+0x24/0x26
+[    0.000000]  x86_64_start_kernel+0x6f/0x72
+[    0.000000]  secondary_startup_64+0xa4/0xb0
+
+This patch adds a check to prevent the panic.
+
+Link: http://lkml.kernel.org/r/1538239553-81805-1-git-send-email-zhe.he@windriver.com
 Cc: stable@vger.kernel.org
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Cc: rostedt@goodmis.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: He Zhe <zhe.he@windriver.com>
+Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Signed-off-by: Petr Mladek <pmladek@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/nfsd/nfs4state.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ kernel/printk/printk.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -4364,7 +4364,7 @@ nfs4_set_delegation(struct nfs4_client *
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -1048,7 +1048,12 @@ static void __init log_buf_len_update(un
+ /* save requested log_buf_len since it's too early to process it */
+ static int __init log_buf_len_setup(char *str)
+ {
+-	unsigned size = memparse(str, &str);
++	unsigned int size;
++
++	if (!str)
++		return -EINVAL;
++
++	size = memparse(str, &str);
  
- 	fl = nfs4_alloc_init_lease(dp, NFS4_OPEN_DELEGATE_READ);
- 	if (!fl)
--		goto out_stid;
-+		goto out_clnt_odstate;
+ 	log_buf_len_update(size);
  
- 	status = vfs_setlease(fp->fi_deleg_file, fl->fl_type, &fl, NULL);
- 	if (fl)
-@@ -4389,7 +4389,6 @@ out_unlock:
- 	vfs_setlease(fp->fi_deleg_file, F_UNLCK, NULL, (void **)&dp);
- out_clnt_odstate:
- 	put_clnt_odstate(dp->dl_clnt_odstate);
--out_stid:
- 	nfs4_put_stid(&dp->dl_stid);
- out_delegees:
- 	put_deleg_file(fp);
 
 
