@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15759C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:32:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2443EC43610
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:32:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D73BB214E0
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:32:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D73BB214E0
+	by mail.kernel.org (Postfix) with ESMTP id E7165214DB
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:32:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7165214DB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727452AbeKLFVt (ORCPT
+        id S1727857AbeKLFVv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 00:21:49 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49068 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726152AbeKLFVs (ORCPT
+        Mon, 12 Nov 2018 00:21:51 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42990 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726044AbeKLFVt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:21:48 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wABJNv75090181
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:32:23 -0500
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2npdhe95r6-1
+        Mon, 12 Nov 2018 00:21:49 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wABJNue5047358
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:32:25 -0500
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2npd3s9ykr-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:32:23 -0500
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:32:24 -0500
 Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Sun, 11 Nov 2018 19:32:22 -0000
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Sun, 11 Nov 2018 19:32:23 -0000
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
         Sun, 11 Nov 2018 19:32:18 -0000
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wABJWHMx40632392
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wABJWHGh27000938
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
         Sun, 11 Nov 2018 19:32:17 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4437FB206B;
+        by IMSVA (Postfix) with ESMTP id 52D59B205F;
         Sun, 11 Nov 2018 19:32:17 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2189BB2064;
+        by IMSVA (Postfix) with ESMTP id 2D4EBB2067;
         Sun, 11 Nov 2018 19:32:17 +0000 (GMT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.85.207.24])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
         Sun, 11 Nov 2018 19:32:17 +0000 (GMT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 51B1916C5D5B; Sun, 11 Nov 2018 11:32:18 -0800 (PST)
+        id 5A91B16C5D6A; Sun, 11 Nov 2018 11:32:18 -0800 (PST)
 From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -61,20 +61,20 @@ Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH tip/core/rcu 2/4] rcu: Eliminate BUG_ON() for kernel/rcu/tree.c
-Date:   Sun, 11 Nov 2018 11:32:15 -0800
+Subject: [PATCH tip/core/rcu 4/4] rcu: Eliminate BUG_ON() for kernel/rcu/update.c
+Date:   Sun, 11 Nov 2018 11:32:17 -0800
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181111193156.GA3666@linux.ibm.com>
 References: <20181111193156.GA3666@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18111119-0040-0000-0000-000004908861
+x-cbid: 18111119-2213-0000-0000-00000315A76B
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00010028; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01116015; UDB=6.00577119; IPR=6.00896115;
- MB=3.00024114; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-11 19:32:22
+ PH=3.00000004; SC=3.00000270; SDB=6.01116015; UDB=6.00578730; IPR=6.00896115;
+ MB=3.00024114; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-11 19:32:21
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111119-0041-0000-0000-00000899910D
-Message-Id: <20181111193217.4010-2-paulmck@linux.ibm.com>
+x-cbparentid: 18111119-2214-0000-0000-00005C3867C3
+Message-Id: <20181111193217.4010-4-paulmck@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-11_13:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -87,7 +87,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The tree.c file has a number of calls to BUG_ON(), which panics the
+The update.c file has a number of calls to BUG_ON(), which panics the
 kernel, which is not a good strategy for devices (like embedded) that
 don't have a way to capture console output.  This commit therefore
 converts these BUG_ON() calls to WARN_ON_ONCE() and WARN_ONCE().
@@ -95,32 +95,23 @@ converts these BUG_ON() calls to WARN_ON_ONCE() and WARN_ONCE().
 Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
 ---
- kernel/rcu/tree.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ kernel/rcu/update.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 121f833acd04..bdb6659a8dbc 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -2826,7 +2826,7 @@ __call_rcu(struct rcu_head *head, rcu_callback_t func, int cpu, bool lazy)
- 		 * Very early boot, before rcu_init().  Initialize if needed
- 		 * and then drop through to queue the callback.
- 		 */
--		BUG_ON(cpu != -1);
-+		WARN_ON_ONCE(cpu != -1);
- 		WARN_ON_ONCE(!rcu_is_watching());
- 		if (rcu_segcblist_empty(&rdp->cblist))
- 			rcu_segcblist_init(&rdp->cblist);
-@@ -3485,7 +3485,8 @@ static int __init rcu_spawn_gp_kthread(void)
+diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
+index f203b94f6b5b..cb26de25658a 100644
+--- a/kernel/rcu/update.c
++++ b/kernel/rcu/update.c
+@@ -822,7 +822,8 @@ static int __init rcu_spawn_tasks_kthread(void)
+ 	struct task_struct *t;
  
- 	rcu_scheduler_fully_active = 1;
- 	t = kthread_create(rcu_gp_kthread, NULL, "%s", rcu_state.name);
+ 	t = kthread_run(rcu_tasks_kthread, NULL, "rcu_tasks_kthread");
 -	BUG_ON(IS_ERR(t));
-+	if (WARN_ONCE(IS_ERR(t), "%s: Could not start grace-period kthread, OOM is now expected behavior\n", __func__))
++	if (WARN_ONCE(IS_ERR(t), "%s: Could not start Tasks-RCU grace-period kthread, OOM is now expected behavior\n", __func__))
 +		return 0;
- 	rnp = rcu_get_root();
- 	raw_spin_lock_irqsave_rcu_node(rnp, flags);
- 	rcu_state.gp_kthread = t;
+ 	smp_mb(); /* Ensure others see full kthread. */
+ 	WRITE_ONCE(rcu_tasks_kthread_ptr, t);
+ 	return 0;
 -- 
 2.17.1
 
