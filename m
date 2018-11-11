@@ -6,44 +6,45 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90742C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:11:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96309C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:11:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 600762080D
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:11:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 600762080D
+	by mail.kernel.org (Postfix) with ESMTP id 63CDF2148E
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:11:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63CDF2148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731670AbeKLGAo (ORCPT
+        id S1731675AbeKLGAs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:00:44 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52460 "EHLO
+        Mon, 12 Nov 2018 01:00:48 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52468 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731019AbeKLGAn (ORCPT
+        by vger.kernel.org with ESMTP id S1730968AbeKLGAr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 01:00:43 -0500
+        Mon, 12 Nov 2018 01:00:47 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvt6-0000lJ-1L; Sun, 11 Nov 2018 19:59:16 +0000
+        id 1gLvtB-0000oN-P3; Sun, 11 Nov 2018 19:59:21 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsQ-0001Tz-EQ; Sun, 11 Nov 2018 19:58:34 +0000
+        id 1gLvsO-0001Pu-SA; Sun, 11 Nov 2018 19:58:32 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Josef Bacik" <jbacik@fb.com>,
-        "David Sterba" <dsterba@suse.com>, "Omar Sandoval" <osandov@fb.com>
+CC:     akpm@linux-foundation.org, "Evgeniy Polyakov" <zbr@ioremap.net>,
+        "Stefan Potyra" <Stefan.Potyra@elektrobit.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.814531006@decadent.org.uk>
+Message-ID: <lsq.1541965745.978285934@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 090/366] Btrfs: don't return ino to ino cache if
- inode item removal fails
+Subject: [PATCH 3.16 048/366] w1: mxc_w1: Enable clock before calling
+ clk_get_rate() on it
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,68 +58,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Omar Sandoval <osandov@fb.com>
+From: Stefan Potyra <Stefan.Potyra@elektrobit.com>
 
-commit c08db7d8d295a4f3a10faaca376de011afff7950 upstream.
+commit 955bc61328dc0a297fb3baccd84e9d3aee501ed8 upstream.
 
-In btrfs_evict_inode(), if btrfs_truncate_inode_items() fails, the inode
-item will still be in the tree but we still return the ino to the ino
-cache. That will blow up later when someone tries to allocate that ino,
-so don't return it to the cache.
+According to the API, you may only call clk_get_rate() after actually
+enabling it.
 
-Fixes: 581bb050941b ("Btrfs: Cache free inode numbers in memory")
-Reviewed-by: Josef Bacik <jbacik@fb.com>
-Signed-off-by: Omar Sandoval <osandov@fb.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-[bwh: Backported to 3.16:
- - Pass inode, not btrfs_inode, to btrfs_orphan_del()
- - Pass btrfs_root, not btrfs_fs_info, to btrfs_free_block_rsv()
- - Adjust context]
+Found by Linux Driver Verification project (linuxtesting.org).
+
+Fixes: a5fd9139f74c ("w1: add 1-wire master driver for i.MX27 / i.MX31")
+Signed-off-by: Stefan Potyra <Stefan.Potyra@elektrobit.com>
+Acked-by: Evgeniy Polyakov <zbr@ioremap.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/btrfs/inode.c | 25 +++++++++++++------------
- 1 file changed, 13 insertions(+), 12 deletions(-)
+ drivers/w1/masters/mxc_w1.c | 20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -4908,13 +4908,18 @@ void btrfs_evict_inode(struct inode *ino
- 		trans->block_rsv = rsv;
+--- a/drivers/w1/masters/mxc_w1.c
++++ b/drivers/w1/masters/mxc_w1.c
+@@ -111,6 +111,10 @@ static int mxc_w1_probe(struct platform_
+ 	if (IS_ERR(mdev->clk))
+ 		return PTR_ERR(mdev->clk);
  
- 		ret = btrfs_truncate_inode_items(trans, root, inode, 0, 0);
--		if (ret != -ENOSPC)
-+		if (ret) {
-+			trans->block_rsv = &root->fs_info->trans_block_rsv;
-+			btrfs_end_transaction(trans, root);
-+			btrfs_btree_balance_dirty(root);
-+			if (ret != -ENOSPC) {
-+				btrfs_orphan_del(NULL, inode);
-+				btrfs_free_block_rsv(root, rsv);
-+				goto no_delete;
-+			}
-+		} else {
- 			break;
++	err = clk_prepare_enable(mdev->clk);
++	if (err)
++		return err;
++
+ 	clkrate = clk_get_rate(mdev->clk);
+ 	if (clkrate < 10000000)
+ 		dev_warn(&pdev->dev,
+@@ -124,12 +128,10 @@ static int mxc_w1_probe(struct platform_
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	mdev->regs = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(mdev->regs))
+-		return PTR_ERR(mdev->regs);
 -
--		trans->block_rsv = &root->fs_info->trans_block_rsv;
--		btrfs_end_transaction(trans, root);
--		trans = NULL;
--		btrfs_btree_balance_dirty(root);
-+		}
- 	}
+-	err = clk_prepare_enable(mdev->clk);
+-	if (err)
+-		return err;
++	if (IS_ERR(mdev->regs)) {
++		err = PTR_ERR(mdev->regs);
++		goto out_disable_clk;
++	}
  
- 	btrfs_free_block_rsv(root, rsv);
-@@ -4923,12 +4928,8 @@ void btrfs_evict_inode(struct inode *ino
- 	 * Errors here aren't a big deal, it just means we leave orphan items
- 	 * in the tree.  They will be cleaned up on the next mount.
- 	 */
--	if (ret == 0) {
--		trans->block_rsv = root->orphan_block_rsv;
--		btrfs_orphan_del(trans, inode);
--	} else {
--		btrfs_orphan_del(NULL, inode);
--	}
-+	trans->block_rsv = root->orphan_block_rsv;
-+	btrfs_orphan_del(trans, inode);
+ 	writeb(clkdiv - 1, mdev->regs + MXC_W1_TIME_DIVIDER);
  
- 	trans->block_rsv = &root->fs_info->trans_block_rsv;
- 	if (!(root == root->fs_info->tree_root ||
+@@ -141,8 +143,12 @@ static int mxc_w1_probe(struct platform_
+ 
+ 	err = w1_add_master_device(&mdev->bus_master);
+ 	if (err)
+-		clk_disable_unprepare(mdev->clk);
++		goto out_disable_clk;
++
++	return 0;
+ 
++out_disable_clk:
++	clk_disable_unprepare(mdev->clk);
+ 	return err;
+ }
+ 
 
