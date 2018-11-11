@@ -2,93 +2,64 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93BF2C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 10:30:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A97A8C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 10:35:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 652E520871
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 10:30:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 652E520871
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 69E47208A3
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 10:35:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MqKdMTJk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69E47208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727775AbeKKUSp (ORCPT
+        id S1727539AbeKKUXN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 15:18:45 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:55204 "EHLO mx1.redhat.com"
+        Sun, 11 Nov 2018 15:23:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49892 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727344AbeKKUSp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 15:18:45 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727344AbeKKUXN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Nov 2018 15:23:13 -0500
+Received: from localhost (unknown [171.76.98.79])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 15C5431256A5;
-        Sun, 11 Nov 2018 10:30:35 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (ovpn-116-74.ams2.redhat.com [10.36.116.74])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D4F2C5D736;
-        Sun, 11 Nov 2018 10:30:30 +0000 (UTC)
-From:   Florian Weimer <fweimer@redhat.com>
-To:     Willy Tarreau <w@1wt.eu>
-Cc:     "Michael Kerrisk \(man-pages\)" <mtk.manpages@gmail.com>,
-        Daniel Colascione <dancol@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Joel Fernandes <joelaf@google.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Carlos O'Donell" <carlos@redhat.com>,
-        "libc-alpha\@sourceware.org" <libc-alpha@sourceware.org>
-Subject: Re: Official Linux system wrapper library?
-References: <CAKOZuesB4R=dCz4merWQN0FSCGrXmOgUUr4ienSbStBJguNv8g@mail.gmail.com>
-        <bbc12da5-830e-99a7-95e3-d9da42947dc9@gmail.com>
-        <20181111081725.GA30248@1wt.eu>
-Date:   Sun, 11 Nov 2018 11:30:25 +0100
-In-Reply-To: <20181111081725.GA30248@1wt.eu> (Willy Tarreau's message of "Sun,
-        11 Nov 2018 09:17:25 +0100")
-Message-ID: <87y39zx5xa.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A41120871;
+        Sun, 11 Nov 2018 10:35:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541932501;
+        bh=ciUZpi9tYqyW6YPHFyaiufbPhiJvoijUa2iPtM8HWZU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MqKdMTJkruPqfxQ57eh+aLDTWppDPB0MDTkcbXxSwp91iNZuyOmbdHb+GI/CYiSOP
+         sZttxlchrcv6/3jv36UlA3mGCEJbWYuYOAjQ1TSB/JJKbVP8+HsR6/Gd7YESmRLiPr
+         y7H/TOdWOk3aYdkmkaWN/GhHivsb3QZBECrcqtYE=
+Date:   Sun, 11 Nov 2018 16:04:53 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+Cc:     dan.j.williams@intel.com, michal.simek@xilinx.com,
+        appana.durga.rao@xilinx.com, dmaengine@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] dmaengine: xilinx_dma: Minor fix and refactoring
+Message-ID: <20181111103453.GH12092@vkoul-mobl>
+References: <1538241480-13844-1-git-send-email-radhey.shyam.pandey@xilinx.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Sun, 11 Nov 2018 10:30:35 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1538241480-13844-1-git-send-email-radhey.shyam.pandey@xilinx.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Willy Tarreau:
+On 29-09-18, 11:17, Radhey Shyam Pandey wrote:
+> This patchset fixes 64-bit simple CDMA transfer.
+> It also does some trivial code refactoring.
 
-> On Sun, Nov 11, 2018 at 07:55:30AM +0100, Michael Kerrisk (man-pages) wrote:
->> [1] https://sourceware.org/bugzilla/show_bug.cgi?id=6399 is a
->>     longstanding example.
->
-> This one was a sad read and shows that applications will continue to
-> suffer from glibc's prehistorical view on operating systems and will
-> continue to have to define their own syscall wrappers to exploit the
-> full potential of the modern operating systems they execute on.
+Applied except 2nd patch, thanks
 
-What's modern about a 15-bit thread identifier?
-
-I understand that using this interface is required in some cases (which
-includes some system calls for which glibc does provide wrappers), but I
-assumed that it was at least understood that these reusable IDs for
-tasks were an extremely poor interface.  Aren't the resulting bugs
-common knowledge?
-
-> This reminds me when one had to write their own spinlocks and atomics
-> many years ago. Seeing comments suggesting an application should open
-> /proc/$PID makes me really wonder if people actually want to use slow
-> and insecure applications designed this way.
-
-I don't understand.  If you want a non-reusable identifier, you have to
-go through the /proc interface anyway.  I think the recommendation is to
-use the PID/start time combination to get a unique process identifier or
-something like that.
-
-I wanted to add gettid to glibc this cycle, but your comments suggest to
-me that if we did this, we'd likely never get a proper non-reusable
-thread identifier from the kernel.  So I'm not sure what do anymore.
-
-Thanks,
-Florian
+-- 
+~Vinod
