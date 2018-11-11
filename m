@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68063C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:04:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5861EC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:04:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D6C120866
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:04:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2072D20866
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:04:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IH7Zsgjy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D6C120866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HUMu9TgX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2072D20866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732364AbeKLJzL (ORCPT
+        id S1732378AbeKLJzT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:55:11 -0500
+        Mon, 12 Nov 2018 04:55:19 -0500
 Received: from mail.kernel.org ([198.145.29.99]:34210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732020AbeKLIRq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:17:46 -0500
+        id S1731979AbeKLIRp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:17:45 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 400E02154B;
-        Sun, 11 Nov 2018 22:27:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3FFF22154B;
+        Sun, 11 Nov 2018 22:27:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975271;
-        bh=8DveBt9ltGW1Eua9YGpjUiOOXJHA80J49rsh/mtW5dQ=;
+        s=default; t=1541975269;
+        bh=r0kg3B0Uo8ZaOAL44hVNNqDQxtzHqZwomQafmFLwY18=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IH7ZsgjyxFmROifbz2X+drYKY7uZG66MSXNNXDzP+UTrp5cWWj3EZP9fqkfNRq3Fo
-         uGjBEI3AyZDpwWDXhguPM28Bgp2WmMUVadVyt/Zc6zQ5wNg7edz9m6+bPHfcM9Aeyq
-         8K7/XdZMt6XwCIJ5JlhES7anT6TZc6DqshNd6eNA=
+        b=HUMu9TgXzvgFemcw8kTtjhtbw5J5NICeO8OJwlR6VwLb/twAl3GdQyIiKtDckaQsh
+         kYb3+U+Re87huVrUSsW4Zf4dKHQq95vW1+z4oEjvGR5XNodEz5GoF8ufmRK78MzOAB
+         7LukR0k7+QSNfxrs3tWcmWFosSKhEpnBQEFIO4Rw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 170/361] coresight: etb10: Fix handling of perf mode
-Date:   Sun, 11 Nov 2018 14:18:37 -0800
-Message-Id: <20181111221644.176289613@linuxfoundation.org>
+Subject: [PATCH 4.19 139/361] UAPI: ndctl: Fix g++-unsupported initialisation in headers
+Date:   Sun, 11 Nov 2018 14:18:06 -0800
+Message-Id: <20181111221639.987942550@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -64,36 +63,113 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
+From: David Howells <dhowells@redhat.com>
 
-[ Upstream commit 987d1e8dcd370d96029a3d76a0031b043c4a69ae ]
+[ Upstream commit 9607871f37dc3e717639694b8d0dc738f2a68efc ]
 
-If the ETB is already enabled in sysfs mode, the ETB reports
-success even if a perf mode is requested. Fix this by checking
-the requested mode.
+The following code in the linux/ndctl header file:
 
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+	static inline const char *nvdimm_bus_cmd_name(unsigned cmd)
+	{
+		static const char * const names[] = {
+			[ND_CMD_ARS_CAP] = "ars_cap",
+			[ND_CMD_ARS_START] = "ars_start",
+			[ND_CMD_ARS_STATUS] = "ars_status",
+			[ND_CMD_CLEAR_ERROR] = "clear_error",
+			[ND_CMD_CALL] = "cmd_call",
+		};
+
+		if (cmd < ARRAY_SIZE(names) && names[cmd])
+			return names[cmd];
+		return "unknown";
+	}
+
+is broken in a number of ways:
+
+ (1) ARRAY_SIZE() is not generally defined.
+
+ (2) g++ does not support "non-trivial" array initialisers fully yet.
+
+ (3) Every file that calls this function will acquire a copy of names[].
+
+The same goes for nvdimm_cmd_name().
+
+Fix all three by converting to a switch statement where each case returns a
+string.  That way if cmd is a constant, the compiler can trivially reduce it
+and, if not, the compiler can use a shared lookup table if it thinks that is
+more efficient.
+
+A better way would be to remove these functions and their arrays from the
+header entirely.
+
+Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hwtracing/coresight/coresight-etb10.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ include/uapi/linux/ndctl.h |   48 +++++++++++++++++++--------------------------
+ 1 file changed, 21 insertions(+), 27 deletions(-)
 
---- a/drivers/hwtracing/coresight/coresight-etb10.c
-+++ b/drivers/hwtracing/coresight/coresight-etb10.c
-@@ -147,6 +147,10 @@ static int etb_enable(struct coresight_d
- 	if (val == CS_MODE_PERF)
- 		return -EBUSY;
+--- a/include/uapi/linux/ndctl.h
++++ b/include/uapi/linux/ndctl.h
+@@ -128,37 +128,31 @@ enum {
  
-+	/* Don't let perf disturb sysFS sessions */
-+	if (val == CS_MODE_SYSFS && mode == CS_MODE_PERF)
-+		return -EBUSY;
-+
- 	/* Nothing to do, the tracer is already enabled. */
- 	if (val == CS_MODE_SYSFS)
- 		goto out;
+ static inline const char *nvdimm_bus_cmd_name(unsigned cmd)
+ {
+-	static const char * const names[] = {
+-		[ND_CMD_ARS_CAP] = "ars_cap",
+-		[ND_CMD_ARS_START] = "ars_start",
+-		[ND_CMD_ARS_STATUS] = "ars_status",
+-		[ND_CMD_CLEAR_ERROR] = "clear_error",
+-		[ND_CMD_CALL] = "cmd_call",
+-	};
+-
+-	if (cmd < ARRAY_SIZE(names) && names[cmd])
+-		return names[cmd];
+-	return "unknown";
++	switch (cmd) {
++	case ND_CMD_ARS_CAP:		return "ars_cap";
++	case ND_CMD_ARS_START:		return "ars_start";
++	case ND_CMD_ARS_STATUS:		return "ars_status";
++	case ND_CMD_CLEAR_ERROR:	return "clear_error";
++	case ND_CMD_CALL:		return "cmd_call";
++	default:			return "unknown";
++	}
+ }
+ 
+ static inline const char *nvdimm_cmd_name(unsigned cmd)
+ {
+-	static const char * const names[] = {
+-		[ND_CMD_SMART] = "smart",
+-		[ND_CMD_SMART_THRESHOLD] = "smart_thresh",
+-		[ND_CMD_DIMM_FLAGS] = "flags",
+-		[ND_CMD_GET_CONFIG_SIZE] = "get_size",
+-		[ND_CMD_GET_CONFIG_DATA] = "get_data",
+-		[ND_CMD_SET_CONFIG_DATA] = "set_data",
+-		[ND_CMD_VENDOR_EFFECT_LOG_SIZE] = "effect_size",
+-		[ND_CMD_VENDOR_EFFECT_LOG] = "effect_log",
+-		[ND_CMD_VENDOR] = "vendor",
+-		[ND_CMD_CALL] = "cmd_call",
+-	};
+-
+-	if (cmd < ARRAY_SIZE(names) && names[cmd])
+-		return names[cmd];
+-	return "unknown";
++	switch (cmd) {
++	case ND_CMD_SMART:			return "smart";
++	case ND_CMD_SMART_THRESHOLD:		return "smart_thresh";
++	case ND_CMD_DIMM_FLAGS:			return "flags";
++	case ND_CMD_GET_CONFIG_SIZE:		return "get_size";
++	case ND_CMD_GET_CONFIG_DATA:		return "get_data";
++	case ND_CMD_SET_CONFIG_DATA:		return "set_data";
++	case ND_CMD_VENDOR_EFFECT_LOG_SIZE:	return "effect_size";
++	case ND_CMD_VENDOR_EFFECT_LOG:		return "effect_log";
++	case ND_CMD_VENDOR:			return "vendor";
++	case ND_CMD_CALL:			return "cmd_call";
++	default:				return "unknown";
++	}
+ }
+ 
+ #define ND_IOCTL 'N'
 
 
