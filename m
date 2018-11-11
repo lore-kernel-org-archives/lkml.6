@@ -6,43 +6,45 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF4AC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:34:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ADABC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:34:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1C8D20818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:34:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1C8D20818
+	by mail.kernel.org (Postfix) with ESMTP id 5DF4820818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:34:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DF4820818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730488AbeKLGXt (ORCPT
+        id S1730238AbeKLFsO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:23:49 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50028 "EHLO
+        Mon, 12 Nov 2018 00:48:14 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:49906 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729500AbeKLFsP (ORCPT
+        by vger.kernel.org with ESMTP id S1730184AbeKLFsN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:48:15 -0500
+        Mon, 12 Nov 2018 00:48:13 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsZ-0000l9-7v; Sun, 11 Nov 2018 19:58:43 +0000
+        id 1gLvsZ-0000l8-91; Sun, 11 Nov 2018 19:58:43 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsW-0001iZ-5u; Sun, 11 Nov 2018 19:58:40 +0000
+        id 1gLvsW-0001ie-6T; Sun, 11 Nov 2018 19:58:40 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Vineet Gupta" <vgupta@synopsys.com>
+CC:     akpm@linux-foundation.org, "Leon Romanovsky" <leonro@mellanox.com>,
+        "Jason Gunthorpe" <jgg@mellanox.com>,
+        "Kamal Heib" <kamalheib1@gmail.com>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.371512755@decadent.org.uk>
+Message-ID: <lsq.1541965745.696685279@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 245/366] ARC: mm: allow mprotect to make stack
- mappings executable
+Subject: [PATCH 3.16 246/366] RDMA/mlx5: Fix memory leak in
+ mlx5_ib_create_srq() error path
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,41 +58,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vineet Gupta <vgupta@synopsys.com>
+From: Kamal Heib <kamalheib1@gmail.com>
 
-commit 93312b6da4df31e4102ce5420e6217135a16c7ea upstream.
+commit d63c46734c545ad0488761059004a65c46efdde3 upstream.
 
-mprotect(EXEC) was failing for stack mappings as default vm flags was
-missing MAYEXEC.
+Fix memory leak in the error path of mlx5_ib_create_srq() by making sure
+to free the allocated srq.
 
-This was triggered by glibc test suite nptl/tst-execstack testcase
-
-What is surprising is that despite running LTP for years on, we didn't
-catch this issue as it lacks a directed test case.
-
-gcc dejagnu tests with nested functions also requiring exec stack work
-fine though because they rely on the GNU_STACK segment spit out by
-compiler and handled in kernel elf loader.
-
-This glibc case is different as the stack is non exec to begin with and
-a dlopen of shared lib with GNU_STACK segment triggers the exec stack
-proceedings using a mprotect(PROT_EXEC) which was broken.
-
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+Fixes: c2b37f76485f ("IB/mlx5: Fix integer overflows in mlx5_ib_create_srq")
+Signed-off-by: Kamal Heib <kamalheib1@gmail.com>
+Acked-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/arc/include/asm/page.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/hw/mlx5/srq.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
---- a/arch/arc/include/asm/page.h
-+++ b/arch/arc/include/asm/page.h
-@@ -97,7 +97,7 @@ typedef unsigned long pgtable_t;
- #define virt_addr_valid(kaddr)  pfn_valid(__pa(kaddr) >> PAGE_SHIFT)
+--- a/drivers/infiniband/hw/mlx5/srq.c
++++ b/drivers/infiniband/hw/mlx5/srq.c
+@@ -261,18 +261,24 @@ struct ib_srq *mlx5_ib_create_srq(struct
  
- /* Default Permissions for stack/heaps pages (Non Executable) */
--#define VM_DATA_DEFAULT_FLAGS   (VM_READ | VM_WRITE | VM_MAYREAD | VM_MAYWRITE)
-+#define VM_DATA_DEFAULT_FLAGS   (VM_READ | VM_WRITE | VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC)
+ 	desc_size = sizeof(struct mlx5_wqe_srq_next_seg) +
+ 		    srq->msrq.max_gs * sizeof(struct mlx5_wqe_data_seg);
+-	if (desc_size == 0 || srq->msrq.max_gs > desc_size)
+-		return ERR_PTR(-EINVAL);
++	if (desc_size == 0 || srq->msrq.max_gs > desc_size) {
++		err = -EINVAL;
++		goto err_srq;
++	}
+ 	desc_size = roundup_pow_of_two(desc_size);
+ 	desc_size = max_t(size_t, 32, desc_size);
+-	if (desc_size < sizeof(struct mlx5_wqe_srq_next_seg))
+-		return ERR_PTR(-EINVAL);
++	if (desc_size < sizeof(struct mlx5_wqe_srq_next_seg)) {
++		err = -EINVAL;
++		goto err_srq;
++	}
+ 	srq->msrq.max_avail_gather = (desc_size - sizeof(struct mlx5_wqe_srq_next_seg)) /
+ 		sizeof(struct mlx5_wqe_data_seg);
+ 	srq->msrq.wqe_shift = ilog2(desc_size);
+ 	buf_size = srq->msrq.max * desc_size;
+-	if (buf_size < desc_size)
+-		return ERR_PTR(-EINVAL);
++	if (buf_size < desc_size) {
++		err = -EINVAL;
++		goto err_srq;
++	}
  
- #define WANT_PAGE_VIRTUAL   1
- 
+ 	if (pd->uobject)
+ 		err = create_srq_user(pd, srq, &in, udata, buf_size, &inlen);
 
