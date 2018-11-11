@@ -7,52 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32F7DC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:18:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E73BAC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:18:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC1C220871
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:18:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF68A2084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:18:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FAQb/oYX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC1C220871
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="INSN20MK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF68A2084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730285AbeKLKIu (ORCPT
+        id S1729984AbeKLIQ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 05:08:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58420 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:16:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58720 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729859AbeKLIQ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:16:59 -0500
+        id S1729840AbeKLIQ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:16:56 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 303FC21527;
-        Sun, 11 Nov 2018 22:27:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 805352154B;
+        Sun, 11 Nov 2018 22:27:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975224;
-        bh=k9kZusohsPCHrHUwSv6B8dzgjSm86eEbcNlvuEWWaDk=;
+        s=default; t=1541975220;
+        bh=kR/Q53iGENTfqcSkL8Kf8DGLzpHwms52L5sT2h5jeFM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FAQb/oYX2KDYRnCNHT6o4EXIPAwHDCYlNZ9zarPNOOuIQxP+VnhvAAB4bCpKi3vGN
-         65DsKS2yu+fPFgp/GVDcZ7e5Q2cDSkJTkFBBunC8rt4LcS1K3SFfZgULVtPbulMBKg
-         UmEUfP15EUxQkjOQn8Rcop/BT61bB5LpCbuUp/X4=
+        b=INSN20MKcnoz7Au8CS82KimiN3pAHrNem2h/gW5ZQ8f9Z0mgfN20B/NYL2pcJWUzk
+         7cI+GBT2i7ljGiGALEei4vo4xT3+Wcwv9IS4cBWQrbjaImwVrqUhDThA5Mfqdk0ybN
+         KUn4XWrcFctQXq35XQoIQSIIEw5ibLn87CeoV3As=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nadav Amit <namit@vmware.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, dwmw@amazon.co.uk,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.19 028/361] kprobes/x86: Use preempt_enable() in optimized_callback()
-Date:   Sun, 11 Nov 2018 14:16:15 -0800
-Message-Id: <20181111221623.591191775@linuxfoundation.org>
+        stable@vger.kernel.org, Fengguang Wu <fengguang.wu@intel.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.19 024/361] ACPI / OSL: Use jiffies as the time bassis for acpi_os_get_timer()
+Date:   Sun, 11 Nov 2018 14:16:11 -0800
+Message-Id: <20181111221623.058842637@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -70,52 +63,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Bart Van Assche <bvanassche@acm.org>
 
-commit 2e62024c265aa69315ed02835623740030435380 upstream.
+commit 83b2348e2755db48fa8f40fdb791f366fabc0ba0 upstream.
 
-The following commit:
+Since acpi_os_get_timer() may be called after the timer subsystem has
+been suspended, use the jiffies counter instead of ktime_get(). This
+patch avoids that the following warning is reported during hibernation:
 
-  a19b2e3d7839 ("kprobes/x86: Remove IRQ disabling from ftrace-based/optimized kprobes”)
+WARNING: CPU: 0 PID: 612 at kernel/time/timekeeping.c:751 ktime_get+0x116/0x120
+RIP: 0010:ktime_get+0x116/0x120
+Call Trace:
+ acpi_os_get_timer+0xe/0x30
+ acpi_ds_exec_begin_control_op+0x175/0x1de
+ acpi_ds_exec_begin_op+0x2c7/0x39a
+ acpi_ps_create_op+0x573/0x5e4
+ acpi_ps_parse_loop+0x349/0x1220
+ acpi_ps_parse_aml+0x25b/0x6da
+ acpi_ps_execute_method+0x327/0x41b
+ acpi_ns_evaluate+0x4e9/0x6f5
+ acpi_ut_evaluate_object+0xd9/0x2f2
+ acpi_rs_get_method_data+0x8f/0x114
+ acpi_walk_resources+0x122/0x1b6
+ acpi_pci_link_get_current.isra.2+0x157/0x280
+ acpi_pci_link_set+0x32f/0x4a0
+ irqrouter_resume+0x58/0x80
+ syscore_resume+0x84/0x380
+ hibernation_snapshot+0x20c/0x4f0
+ hibernate+0x22d/0x3a6
+ state_store+0x99/0xa0
+ kobj_attr_store+0x37/0x50
+ sysfs_kf_write+0x87/0xa0
+ kernfs_fop_write+0x1a5/0x240
+ __vfs_write+0xd2/0x410
+ vfs_write+0x101/0x250
+ ksys_write+0xab/0x120
+ __x64_sys_write+0x43/0x50
+ do_syscall_64+0x71/0x220
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-removed local_irq_save/restore() from optimized_callback(), the handler
-might be interrupted by the rescheduling interrupt and might be
-rescheduled - so we must not use the preempt_enable_no_resched() macro.
-
-Use preempt_enable() instead, to not lose preemption events.
-
-[ mingo: Improved the changelog. ]
-
-Reported-by: Nadav Amit <namit@vmware.com>
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: <stable@vger.kernel.org>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: dwmw@amazon.co.uk
-Fixes: a19b2e3d7839 ("kprobes/x86: Remove IRQ disabling from ftrace-based/optimized kprobes”)
-Link: http://lkml.kernel.org/r/154002887331.7627.10194920925792947001.stgit@devbox
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: 164a08cee135 (ACPICA: Dispatcher: Introduce timeout mechanism for infinite loop detection)
+Reported-by: Fengguang Wu <fengguang.wu@intel.com>
+References: https://lists.01.org/pipermail/lkp/2018-April/008406.html
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Cc: 4.16+ <stable@vger.kernel.org> # 4.16+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/kprobes/opt.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/acpi/osl.c |   15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
---- a/arch/x86/kernel/kprobes/opt.c
-+++ b/arch/x86/kernel/kprobes/opt.c
-@@ -179,7 +179,7 @@ optimized_callback(struct optimized_kpro
- 		opt_pre_handler(&op->kp, regs);
- 		__this_cpu_write(current_kprobe, NULL);
- 	}
--	preempt_enable_no_resched();
-+	preempt_enable();
+--- a/drivers/acpi/osl.c
++++ b/drivers/acpi/osl.c
+@@ -617,15 +617,18 @@ void acpi_os_stall(u32 us)
  }
- NOKPROBE_SYMBOL(optimized_callback);
  
+ /*
+- * Support ACPI 3.0 AML Timer operand
+- * Returns 64-bit free-running, monotonically increasing timer
+- * with 100ns granularity
++ * Support ACPI 3.0 AML Timer operand. Returns a 64-bit free-running,
++ * monotonically increasing timer with 100ns granularity. Do not use
++ * ktime_get() to implement this function because this function may get
++ * called after timekeeping has been suspended. Note: calling this function
++ * after timekeeping has been suspended may lead to unexpected results
++ * because when timekeeping is suspended the jiffies counter is not
++ * incremented. See also timekeeping_suspend().
+  */
+ u64 acpi_os_get_timer(void)
+ {
+-	u64 time_ns = ktime_to_ns(ktime_get());
+-	do_div(time_ns, 100);
+-	return time_ns;
++	return (get_jiffies_64() - INITIAL_JIFFIES) *
++		(ACPI_100NSEC_PER_SEC / HZ);
+ }
+ 
+ acpi_status acpi_os_read_port(acpi_io_address port, u32 * value, u32 width)
 
 
