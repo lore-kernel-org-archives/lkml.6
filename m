@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C49AAC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:08:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DFA5C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:09:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CCF820871
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:08:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46F5B214DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:09:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ApBbgU/l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CCF820871
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ijDaN1Ea"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46F5B214DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731264AbeKLIRb (ORCPT
+        id S1731206AbeKLIRa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:17:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60706 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:17:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59904 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731012AbeKLIRa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1731157AbeKLIRa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:17:30 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 833FF21582;
+        by mail.kernel.org (Postfix) with ESMTPSA id D486B208A3;
         Sun, 11 Nov 2018 22:27:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975254;
-        bh=OtL1vIwBQ7+pfGowdws6SVXiXQKmkUKP4EPSEYTjtF4=;
+        bh=wOaiJHEvrUJwEzCUhE64Jed5shBzeU3/R6vGhBDm81E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ApBbgU/lH4Vo9XbMRLiOc4udMzAJ50zPFtnRgO00zHENxPrvhFxUS7o2NJywwisTN
-         zu3hT2MNGTcp+CcoNL2BSq3zhdc/dgY1cV4/Ecm4MIFG0nJ4VhxZzOIodc/FRPcNhX
-         7aJ3J2L180DaW0rHfM2P+y+LuNeIdegVcMWk57gg=
+        b=ijDaN1EaM6x6OVOvcHc3+g3IJyI7zKeWmIR5JtBPSv3vA+Y12qX39Kq6eZUANX1gS
+         106sh53Md/ey5Vq54u9/PAk1uKT0UPACrUyrLZH0Bogd9fpn9818c4Kn/yafRTphYT
+         FWkPbaIzzzFn9I6S/cSocvjUF6H6o5AC4911cmuY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maya Erez <merez@codeaurora.org>,
+        stable@vger.kernel.org, Martin Willi <martin@strongswan.org>,
         Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 125/361] wil6210: fix RX buffers release and unmap
-Date:   Sun, 11 Nov 2018 14:17:52 -0800
-Message-Id: <20181111221637.671021663@linuxfoundation.org>
+Subject: [PATCH 4.19 126/361] ath10k: schedule hardware restart if WMI command times out
+Date:   Sun, 11 Nov 2018 14:17:53 -0800
+Message-Id: <20181111221637.861291747@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -63,65 +63,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Maya Erez <merez@codeaurora.org>
+From: Martin Willi <martin@strongswan.org>
 
-[ Upstream commit 84f16fbb62384fb209cd35741d94eb00b5ca2746 ]
+[ Upstream commit a9911937e7d332761e8c4fcbc7ba0426bdc3956f ]
 
-RX SKBs are released in both wil6210 rmmod and RX handle.
-As there is no lock to protect the buffers DMA unmap,
-the SKB pointer in buff_arr is used to check if the buffer
-memory was already released.
-Setting wil->rx_buff_mgmt.buff_arr[buff_id].skb to NULL before the DMA
-memory unmap will prevent duplicate unmapping of the same memory.
-Move the buffer ID to the free list also in case the SKB is NULL.
+When running in AP mode, ath10k sometimes suffers from TX credit
+starvation. The issue is hard to reproduce and shows up once in a
+few days, but has been repeatedly seen with QCA9882 and a large
+range of firmwares, including 10.2.4.70.67.
 
-Signed-off-by: Maya Erez <merez@codeaurora.org>
+Once the module is in this state, TX credits are never replenished,
+which results in "SWBA overrun" errors, as no beacons can be sent.
+Even worse, WMI commands run in a timeout while holding the conf
+mutex for three seconds each, making any further operations slow
+and the whole system unresponsive.
+
+The firmware/driver never recovers from that state automatically,
+and triggering TX flush or warm restarts won't work over WMI. So
+issue a hardware restart if a WMI command times out due to missing
+TX credits. This implies a connectivity outage of about 1.4s in AP
+mode, but brings back the interface and the whole system to a usable
+state. WMI command timeouts have not been seen in absent of this
+specific issue, so taking such drastic actions seems legitimate.
+
+Signed-off-by: Martin Willi <martin@strongswan.org>
 Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ath/wil6210/txrx_edma.c |   15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ drivers/net/wireless/ath/ath10k/wmi.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/net/wireless/ath/wil6210/txrx_edma.c
-+++ b/drivers/net/wireless/ath/wil6210/txrx_edma.c
-@@ -279,9 +279,6 @@ static void wil_move_all_rx_buff_to_free
- 		u16 buff_id;
+--- a/drivers/net/wireless/ath/ath10k/wmi.c
++++ b/drivers/net/wireless/ath/ath10k/wmi.c
+@@ -1869,6 +1869,12 @@ int ath10k_wmi_cmd_send(struct ath10k *a
+ 	if (ret)
+ 		dev_kfree_skb_any(skb);
  
- 		*d = *_d;
--		pa = wil_rx_desc_get_addr_edma(&d->dma);
--		dmalen = le16_to_cpu(d->dma.length);
--		dma_unmap_single(dev, pa, dmalen, DMA_FROM_DEVICE);
- 
- 		/* Extract the SKB from the rx_buff management array */
- 		buff_id = __le16_to_cpu(d->mac.buff_id);
-@@ -291,10 +288,15 @@ static void wil_move_all_rx_buff_to_free
- 		}
- 		skb = wil->rx_buff_mgmt.buff_arr[buff_id].skb;
- 		wil->rx_buff_mgmt.buff_arr[buff_id].skb = NULL;
--		if (unlikely(!skb))
-+		if (unlikely(!skb)) {
- 			wil_err(wil, "No Rx skb at buff_id %d\n", buff_id);
--		else
-+		} else {
-+			pa = wil_rx_desc_get_addr_edma(&d->dma);
-+			dmalen = le16_to_cpu(d->dma.length);
-+			dma_unmap_single(dev, pa, dmalen, DMA_FROM_DEVICE);
++	if (ret == -EAGAIN) {
++		ath10k_warn(ar, "wmi command %d timeout, restarting hardware\n",
++			    cmd_id);
++		queue_work(ar->workqueue, &ar->restart_work);
++	}
 +
- 			kfree_skb(skb);
-+		}
- 
- 		/* Move the buffer from the active to the free list */
- 		list_move(&wil->rx_buff_mgmt.buff_arr[buff_id].list,
-@@ -906,6 +908,9 @@ again:
- 	wil->rx_buff_mgmt.buff_arr[buff_id].skb = NULL;
- 	if (!skb) {
- 		wil_err(wil, "No Rx skb at buff_id %d\n", buff_id);
-+		/* Move the buffer from the active list to the free list */
-+		list_move(&wil->rx_buff_mgmt.buff_arr[buff_id].list,
-+			  &wil->rx_buff_mgmt.free);
- 		goto again;
- 	}
+ 	return ret;
+ }
  
 
 
