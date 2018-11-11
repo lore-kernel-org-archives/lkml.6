@@ -2,51 +2,49 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A451C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:06:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 001B8C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:06:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 532AB20866
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:06:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD28920866
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:06:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NsLF2NwN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 532AB20866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1+e9nkXo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD28920866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731841AbeKLIRj (ORCPT
+        id S1732171AbeKLJ47 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:17:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60706 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:56:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33910 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731800AbeKLIRi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:17:38 -0500
+        id S1731821AbeKLIRj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:17:39 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C9B7921707;
-        Sun, 11 Nov 2018 22:27:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 87E0B2154B;
+        Sun, 11 Nov 2018 22:27:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975262;
-        bh=Fm3KG6YbiNcpA/X3oEb4WPEJhZvWPUP+Qzv1ofDXmhA=;
+        s=default; t=1541975263;
+        bh=bNCYzD3wkwJztPA6+xq4EeLp8QaA1qkrjH4vNfiCeBU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NsLF2NwNQIdVz2B2HqrT5sBxNKY/i0DqFRzfGd9i6/E2lkhamYi0UGeWhBG/25COe
-         KwRUKrYaiAaeuavWYUbw2ZnXrriEcMkOGdA8KTcJ6rRZEuT/4aUp1xPX/akucfu4HI
-         4qyOoHWyNjwVWYDRznwabOn/ayDEC1NYvhTeMN5I=
+        b=1+e9nkXoP9ys4z545fAnfe9JD6pfeBLFChf5YN6c7UWSlrjmVljM64OF5qMGK12Fg
+         9euBwJsLKA/ZQWuhxR35Sv6Gpch84rVnrC8JAZ44zC3gvrcM07nJ3NePo/u9QnJ2OD
+         lsjrOKdfqLoWQMGNobngbmtnkJo9P/uNU6t0dQxM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
-        Guenter Roeck <linux@roeck-us.net>,
+        stable@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 150/361] usb: typec: tcpm: Report back negotiated PPS voltage and current
-Date:   Sun, 11 Nov 2018 14:18:17 -0800
-Message-Id: <20181111221641.420051557@linuxfoundation.org>
+Subject: [PATCH 4.19 152/361] f2fs: clear PageError on the read path
+Date:   Sun, 11 Nov 2018 14:18:19 -0800
+Message-Id: <20181111221641.692725018@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -64,57 +62,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 
-[ Upstream commit 554fab6dbf20ee7298ed2d4e8398b85e6058abb7 ]
+[ Upstream commit fb7d70db305a1446864227abf711b756568f8242 ]
 
-Currently when requesting a specific voltage or current through
-the psy interface, for PPS, when reading back from that interface
-the values will always be the same as previously given, if the
-request was successful. However PPS only allows for 20mV voltage
-steps and 50mA current steps, and the psy class expects microvolt
-and micro amp requests, so inbetween values can be provided through
-this interface. Really when reading back the true values negotiated
-should be given, and not the ones originally asked for.
+When running fault injection test, I hit somewhat wrong behavior in f2fs_gc ->
+gc_data_segment():
 
-To report the actual values negotiated with the Source, the values
-stored are now rounded down to the relevant step units prior to
-building the PPS request, so that those values are later correctly
-reported through the psy interface. In addition this improves the
-adjustments made to meet the operating power requirements of the
-platform, which previously could have been slightly out due to not
-using valid PPS units of voltage and current.
+0. fault injection generated some PageError'ed pages
 
-Signed-off-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+1. gc_data_segment
+ -> f2fs_get_read_data_page(REQ_RAHEAD)
+
+2. move_data_page
+ -> f2fs_get_lock_data_page()
+  -> f2f_get_read_data_page()
+   -> f2fs_submit_page_read()
+    -> submit_bio(READ)
+  -> return EIO due to PageError
+  -> fail to move data
+
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/typec/tcpm.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ fs/f2fs/data.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/typec/tcpm.c
-+++ b/drivers/usb/typec/tcpm.c
-@@ -4116,6 +4116,9 @@ static int tcpm_pps_set_op_curr(struct t
- 		goto port_unlock;
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -80,7 +80,8 @@ static void __read_end_io(struct bio *bi
+ 		/* PG_error was set if any post_read step failed */
+ 		if (bio->bi_status || PageError(page)) {
+ 			ClearPageUptodate(page);
+-			SetPageError(page);
++			/* will re-read again later */
++			ClearPageError(page);
+ 		} else {
+ 			SetPageUptodate(page);
+ 		}
+@@ -590,6 +591,7 @@ static int f2fs_submit_page_read(struct
+ 		bio_put(bio);
+ 		return -EFAULT;
  	}
++	ClearPageError(page);
+ 	__submit_bio(F2FS_I_SB(inode), bio, DATA);
+ 	return 0;
+ }
+@@ -1565,6 +1567,7 @@ submit_and_realloc:
+ 		if (bio_add_page(bio, page, blocksize, 0) < blocksize)
+ 			goto submit_and_realloc;
  
-+	/* Round down operating current to align with PPS valid steps */
-+	op_curr = op_curr - (op_curr % RDO_PROG_CURR_MA_STEP);
-+
- 	reinit_completion(&port->pps_complete);
- 	port->pps_data.op_curr = op_curr;
- 	port->pps_status = 0;
-@@ -4169,6 +4172,9 @@ static int tcpm_pps_set_out_volt(struct
- 		goto port_unlock;
- 	}
- 
-+	/* Round down output voltage to align with PPS valid steps */
-+	out_volt = out_volt - (out_volt % RDO_PROG_VOLT_MV_STEP);
-+
- 	reinit_completion(&port->pps_complete);
- 	port->pps_data.out_volt = out_volt;
- 	port->pps_status = 0;
++		ClearPageError(page);
+ 		last_block_in_bio = block_nr;
+ 		goto next_page;
+ set_error_page:
 
 
