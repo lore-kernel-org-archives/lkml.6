@@ -7,44 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2548FC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6844BC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E131E2154B
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E42A21707
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LspKnwSu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E131E2154B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="T010WRzx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E42A21707
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391234AbeKLIYa (ORCPT
+        id S2391247AbeKLIYe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:24:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59958 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:24:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60040 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731242AbeKLIYa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:24:30 -0500
+        id S1731242AbeKLIYe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:24:34 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B9A422154B;
-        Sun, 11 Nov 2018 22:34:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B9C24208A3;
+        Sun, 11 Nov 2018 22:34:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975672;
-        bh=DSc/qJS1Prtj4+DOKSUNmjPrXr+8+h3lxzAPkT4QBfE=;
+        s=default; t=1541975676;
+        bh=nD5mw1FQQY9gKDT4uDWUoffx+v6gZDDbOntvpGvIj5Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LspKnwSuHdkLz92tskBu/IWxrcj7aImKJ+Yo9XXjvbWt/m1KQjJcdbkza3M2MxVSn
-         v6k1jSFSXFdhn4kG2YnGAPhEJxxyyBKKyWCw0wTi5XBLqy4UFYBblA67KHJFqui1RO
-         ukcMb+aCXioyCqkzGHjwEvDglJPkhNyiTFjcU7aY=
+        b=T010WRzxH8Nzzs+4MChSlv5SVwsRhVONuZTq2O/EkCaALtzYIQqMz9kiiOPADhawn
+         d1f6Lnab/rinLHjEVGbEz4FdVu81J69PoojKZz/V4/IyYc3kb2+9mAvf6dEcAHcehb
+         nrZLO/nhnQhGsThyL88Ev7EeC79HjX2uegEMDNro=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.9 086/141] ASoC: intel: skylake: Add missing break in skl_tplg_get_token()
-Date:   Sun, 11 Nov 2018 14:25:45 -0800
-Message-Id: <20181111221640.122728282@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+7f4a27091759e2fe7453@syzkaller.appspotmail.com,
+        Lukas Czerner <lczerner@redhat.com>, Jan Kara <jack@suse.cz>,
+        Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.9 087/141] jbd2: fix use after free in jbd2_log_do_checkpoint()
+Date:   Sun, 11 Nov 2018 14:25:46 -0800
+Message-Id: <20181111221640.243157423@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
 References: <20181111221627.853046496@linuxfoundation.org>
@@ -62,33 +64,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Jan Kara <jack@suse.cz>
 
-commit 9c80c5a8831471e0a3e139aad1b0d4c0fdc50b2f upstream.
+commit ccd3c4373eacb044eb3832966299d13d2631f66f upstream.
 
-skl_tplg_get_token() misses a break in the big switch() block for
-SKL_TKN_U8_CORE_ID entry.
-Spotted nicely by -Wimplicit-fallthrough compiler option.
+The code cleaning transaction's lists of checkpoint buffers has a bug
+where it increases bh refcount only after releasing
+journal->j_list_lock. Thus the following race is possible:
 
-Fixes: 6277e83292a2 ("ASoC: Intel: Skylake: Parse vendor tokens to build module data")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+CPU0					CPU1
+jbd2_log_do_checkpoint()
+					jbd2_journal_try_to_free_buffers()
+					  __journal_try_to_free_buffer(bh)
+  ...
+  while (transaction->t_checkpoint_io_list)
+  ...
+    if (buffer_locked(bh)) {
+
+<-- IO completes now, buffer gets unlocked -->
+
+      spin_unlock(&journal->j_list_lock);
+					    spin_lock(&journal->j_list_lock);
+					    __jbd2_journal_remove_checkpoint(jh);
+					    spin_unlock(&journal->j_list_lock);
+					  try_to_free_buffers(page);
+      get_bh(bh) <-- accesses freed bh
+
+Fix the problem by grabbing bh reference before unlocking
+journal->j_list_lock.
+
+Fixes: dc6e8d669cf5 ("jbd2: don't call get_bh() before calling __jbd2_journal_remove_checkpoint()")
+Fixes: be1158cc615f ("jbd2: fold __process_buffer() into jbd2_log_do_checkpoint()")
+Reported-by: syzbot+7f4a27091759e2fe7453@syzkaller.appspotmail.com
+CC: stable@vger.kernel.org
+Reviewed-by: Lukas Czerner <lczerner@redhat.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/intel/skylake/skl-topology.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/jbd2/checkpoint.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/sound/soc/intel/skylake/skl-topology.c
-+++ b/sound/soc/intel/skylake/skl-topology.c
-@@ -1780,6 +1780,7 @@ static int skl_tplg_get_token(struct dev
+--- a/fs/jbd2/checkpoint.c
++++ b/fs/jbd2/checkpoint.c
+@@ -254,8 +254,8 @@ restart:
+ 		bh = jh2bh(jh);
  
- 	case SKL_TKN_U8_CORE_ID:
- 		mconfig->core_id = tkn_elem->value;
-+		break;
- 
- 	case SKL_TKN_U8_MOD_TYPE:
- 		mconfig->m_type = tkn_elem->value;
+ 		if (buffer_locked(bh)) {
+-			spin_unlock(&journal->j_list_lock);
+ 			get_bh(bh);
++			spin_unlock(&journal->j_list_lock);
+ 			wait_on_buffer(bh);
+ 			/* the journal_head may have gone by now */
+ 			BUFFER_TRACE(bh, "brelse");
+@@ -336,8 +336,8 @@ restart2:
+ 		jh = transaction->t_checkpoint_io_list;
+ 		bh = jh2bh(jh);
+ 		if (buffer_locked(bh)) {
+-			spin_unlock(&journal->j_list_lock);
+ 			get_bh(bh);
++			spin_unlock(&journal->j_list_lock);
+ 			wait_on_buffer(bh);
+ 			/* the journal_head may have gone by now */
+ 			BUFFER_TRACE(bh, "brelse");
 
 
