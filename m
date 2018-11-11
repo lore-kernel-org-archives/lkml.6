@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E44C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:35:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9AF8C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:35:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C1852084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:35:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C0A22084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:35:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RpiBgvCS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C1852084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hjJl2Cll"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C0A22084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388611AbeKLJZc (ORCPT
+        id S2388343AbeKLIUE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:25:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42802 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388331AbeKLIUE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:20:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42836 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388233AbeKLIUD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:03 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3AA7E21508;
-        Sun, 11 Nov 2018 22:30:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 33BF22243B;
+        Sun, 11 Nov 2018 22:30:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975408;
-        bh=pM33+j71zi9Tyqr45Q+VgMvJfU8K8TEJPOz573Y/vbU=;
+        s=default; t=1541975407;
+        bh=ynZ55oLv51KH+WrFkLQ0zDYmgnrdeCQtRP3BA7VKZDo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RpiBgvCSLQWyz+3ZWgvUfhdV4APm+Thm3yo5pzXZbMJK2xmRhF8sQwn69dXfms4lG
-         Tz0oSr+EgY7HD1is56DKdx8HrJekRWYY/I8wr+IIvqNiwk+1nhDreMDVqeDanUgxJJ
-         ShrKXCPWca7oq3TAe5Te1eVfXinBfw2kGxg1jkTw=
+        b=hjJl2Cll5Ok9v6INyEPP42RwkUjLwhFK2kTj+Ojw/nadv+2PeVIMOFUFgfs33kIfQ
+         iOlxQ3vz7Nw3SF8c7jFH1Xl8dsEXxUKGklsZJ7wHqjxcFSBxa3hiXpz5ZXb5mU1gcM
+         eAMrunTpSoloYZfVLCM7EW/ple3KHuUjk4x6t0nc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 115/350] ACPI / LPSS: Add alternative ACPI HIDs for Cherry Trail DMA controllers
-Date:   Sun, 11 Nov 2018 14:19:39 -0800
-Message-Id: <20181111221711.908233543@linuxfoundation.org>
+Subject: [PATCH 4.18 112/350] arm64: entry: Allow handling of undefined instructions from EL1
+Date:   Sun, 11 Nov 2018 14:19:36 -0800
+Message-Id: <20181111221711.784284953@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -64,47 +63,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Will Deacon <will.deacon@arm.com>
 
-[ Upstream commit 240714061c58e6b1abfb3322398a7634151c06cb ]
+[ Upstream commit 0bf0f444b2c49241b2b39aa3cf210d7c95ef6c34 ]
 
-Bay and Cherry Trail DSTDs represent a different set of devices depending
-on which OS the device think it is booting. One set of decices for Windows
-and another set of devices for Android which targets the Android-x86 Linux
-kernel fork (which e.g. used to have its own display driver instead of
-using the i915 driver).
+Rather than panic() when taking an undefined instruction exception from
+EL1, allow a hook to be registered in case we want to emulate the
+instruction, like we will for the SSBS PSTATE manipulation instructions.
 
-Which set of devices we are actually going to get is out of our control,
-this is controlled by the ACPI OSID variable, which gets either set through
-an EFI setup option, or sometimes is autodetected. So we need to support
-both.
-
-This commit adds support for the 80862286 and 808622C0 ACPI HIDs which we
-get for the first resp. second DMA controller on Cherry Trail devices when
-OSID is set to Android.
-
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/acpi/acpi_lpss.c |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/kernel/entry.S |    2 +-
+ arch/arm64/kernel/traps.c |   11 +++++++----
+ 2 files changed, 8 insertions(+), 5 deletions(-)
 
---- a/drivers/acpi/acpi_lpss.c
-+++ b/drivers/acpi/acpi_lpss.c
-@@ -327,9 +327,11 @@ static const struct acpi_device_id acpi_
- 	{ "INT33FC", },
+--- a/arch/arm64/kernel/entry.S
++++ b/arch/arm64/kernel/entry.S
+@@ -599,7 +599,7 @@ el1_undef:
+ 	inherit_daif	pstate=x23, tmp=x2
+ 	mov	x0, sp
+ 	bl	do_undefinstr
+-	ASM_BUG()
++	kernel_exit 1
+ el1_dbg:
+ 	/*
+ 	 * Debug exception handling
+--- a/arch/arm64/kernel/traps.c
++++ b/arch/arm64/kernel/traps.c
+@@ -310,10 +310,12 @@ static int call_undef_hook(struct pt_reg
+ 	int (*fn)(struct pt_regs *regs, u32 instr) = NULL;
+ 	void __user *pc = (void __user *)instruction_pointer(regs);
  
- 	/* Braswell LPSS devices */
-+	{ "80862286", LPSS_ADDR(lpss_dma_desc) },
- 	{ "80862288", LPSS_ADDR(bsw_pwm_dev_desc) },
- 	{ "8086228A", LPSS_ADDR(bsw_uart_dev_desc) },
- 	{ "8086228E", LPSS_ADDR(bsw_spi_dev_desc) },
-+	{ "808622C0", LPSS_ADDR(lpss_dma_desc) },
- 	{ "808622C1", LPSS_ADDR(bsw_i2c_dev_desc) },
+-	if (!user_mode(regs))
+-		return 1;
+-
+-	if (compat_thumb_mode(regs)) {
++	if (!user_mode(regs)) {
++		__le32 instr_le;
++		if (probe_kernel_address((__force __le32 *)pc, instr_le))
++			goto exit;
++		instr = le32_to_cpu(instr_le);
++	} else if (compat_thumb_mode(regs)) {
+ 		/* 16-bit Thumb instruction */
+ 		__le16 instr_le;
+ 		if (get_user(instr_le, (__le16 __user *)pc))
+@@ -407,6 +409,7 @@ asmlinkage void __exception do_undefinst
+ 		return;
  
- 	/* Broadwell LPSS devices */
+ 	force_signal_inject(SIGILL, ILL_ILLOPC, regs->pc);
++	BUG_ON(!user_mode(regs));
+ }
+ 
+ void cpu_enable_cache_maint_trap(const struct arm64_cpu_capabilities *__unused)
 
 
