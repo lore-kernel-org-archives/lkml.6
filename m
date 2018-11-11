@@ -2,52 +2,49 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9CDFC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:29:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7556BC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:29:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82B3720818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:29:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82B3720818
+	by mail.kernel.org (Postfix) with ESMTP id 392362148E
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:29:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 392362148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730504AbeKLFsW (ORCPT
+        id S1730588AbeKLGS5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 00:48:22 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50332 "EHLO
+        Mon, 12 Nov 2018 01:18:57 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50554 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730392AbeKLFsT (ORCPT
+        by vger.kernel.org with ESMTP id S1730474AbeKLFsW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:48:19 -0500
+        Mon, 12 Nov 2018 00:48:22 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsf-0000lJ-9w; Sun, 11 Nov 2018 19:58:49 +0000
+        id 1gLvsi-0000lF-55; Sun, 11 Nov 2018 19:58:52 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsa-0001t6-OI; Sun, 11 Nov 2018 19:58:44 +0000
+        id 1gLvsa-0001rI-5D; Sun, 11 Nov 2018 19:58:44 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Wang Nan" <wangnan0@huawei.com>,
-        "Adrian Hunter" <adrian.hunter@intel.com>,
-        "David Ahern" <dsahern@gmail.com>,
-        "Arnaldo Carvalho de Melo" <acme@redhat.com>,
-        "Jiri Olsa" <jolsa@kernel.org>,
-        "Namhyung Kim" <namhyung@kernel.org>
+CC:     akpm@linux-foundation.org, "Arnd Bergmann" <arnd@arndb.de>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Martin Liska" <mliska@suse.cz>,
+        "Peter Oberparleiter" <oberpar@linux.vnet.ibm.com>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.318669247@decadent.org.uk>
+Message-ID: <lsq.1541965745.824137743@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 355/366] perf thread_map: Use readdir() instead of
- deprecated readdir_r()
+Subject: [PATCH 3.16 338/366] gcov: support GCC 7.1
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -61,66 +58,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Martin Liska <mliska@suse.cz>
 
-commit 3354cf71104de49326d19d2f9bdb1f66eea52ef4 upstream.
+commit 05384213436ab690c46d9dfec706b80ef8d671ab upstream.
 
-The readdir() function is thread safe as long as just one thread uses a
-DIR, which is the case in thread_map, so, to avoid breaking the build
-with glibc-2.23.90 (upcoming 2.24), use it instead of readdir_r().
+Starting from GCC 7.1, __gcov_exit is a new symbol expected to be
+implemented in a profiling runtime.
 
-See: http://man7.org/linux/man-pages/man3/readdir.3.html
-
-"However, in modern implementations (including the glibc implementation),
-concurrent calls to readdir() that specify different directory streams
-are thread-safe.  In cases where multiple threads must read from the
-same directory stream, using readdir() with external synchronization is
-still preferable to the use of the deprecated readdir_r(3) function."
-
-Noticed while building on a Fedora Rawhide docker container.
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: http://lkml.kernel.org/n/tip-del8h2a0f40z75j4r42l96l0@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-[bwh: Backported to 3.16: adjust context]
+[akpm@linux-foundation.org: coding-style fixes]
+[mliska@suse.cz: v2]
+  Link: http://lkml.kernel.org/r/e63a3c59-0149-c97e-4084-20ca8f146b26@suse.cz
+Link: http://lkml.kernel.org/r/8c4084fa-3885-29fe-5fc4-0d4ca199c785@suse.cz
+Signed-off-by: Martin Liska <mliska@suse.cz>
+Acked-by: Peter Oberparleiter <oberpar@linux.vnet.ibm.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- tools/perf/util/thread_map.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ kernel/gcov/base.c    | 6 ++++++
+ kernel/gcov/gcc_4_7.c | 4 +++-
+ 2 files changed, 9 insertions(+), 1 deletion(-)
 
---- a/tools/perf/util/thread_map.c
-+++ b/tools/perf/util/thread_map.c
-@@ -64,7 +64,7 @@ struct thread_map *thread_map__new_by_ui
- 	DIR *proc;
- 	int max_threads = 32, items, i;
- 	char path[256];
--	struct dirent dirent, *next, **namelist = NULL;
-+	struct dirent *dirent, **namelist = NULL;
- 	struct thread_map *threads = malloc(sizeof(*threads) +
- 					    max_threads * sizeof(pid_t));
- 	if (threads == NULL)
-@@ -76,16 +76,16 @@ struct thread_map *thread_map__new_by_ui
+--- a/kernel/gcov/base.c
++++ b/kernel/gcov/base.c
+@@ -97,6 +97,12 @@ void __gcov_merge_icall_topn(gcov_type *
+ }
+ EXPORT_SYMBOL(__gcov_merge_icall_topn);
  
- 	threads->nr = 0;
++void __gcov_exit(void)
++{
++	/* Unused. */
++}
++EXPORT_SYMBOL(__gcov_exit);
++
+ /**
+  * gcov_enable_events - enable event reporting through gcov_event()
+  *
+--- a/kernel/gcov/gcc_4_7.c
++++ b/kernel/gcov/gcc_4_7.c
+@@ -18,7 +18,9 @@
+ #include <linux/vmalloc.h>
+ #include "gcov.h"
  
--	while (!readdir_r(proc, &dirent, &next) && next) {
-+	while ((dirent = readdir(proc)) != NULL) {
- 		char *end;
- 		bool grow = false;
- 		struct stat st;
--		pid_t pid = strtol(dirent.d_name, &end, 10);
-+		pid_t pid = strtol(dirent->d_name, &end, 10);
- 
- 		if (*end) /* only interested in proper numerical dirents */
- 			continue;
- 
--		snprintf(path, sizeof(path), "/proc/%s", dirent.d_name);
-+		snprintf(path, sizeof(path), "/proc/%s", dirent->d_name);
- 
- 		if (stat(path, &st) != 0)
- 			continue;
+-#if (__GNUC__ > 5) || (__GNUC__ == 5 && __GNUC_MINOR__ >= 1)
++#if (__GNUC__ >= 7)
++#define GCOV_COUNTERS			9
++#elif (__GNUC__ > 5) || (__GNUC__ == 5 && __GNUC_MINOR__ >= 1)
+ #define GCOV_COUNTERS			10
+ #elif __GNUC__ == 4 && __GNUC_MINOR__ >= 9
+ #define GCOV_COUNTERS			9
 
