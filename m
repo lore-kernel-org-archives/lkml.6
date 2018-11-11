@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F340C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:32:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A85EEC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:32:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2874A20866
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:32:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F7982084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:32:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pOttQ4kd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2874A20866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eZgvIGfN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F7982084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388511AbeKLIUQ (ORCPT
+        id S2388497AbeKLIUQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 12 Nov 2018 03:20:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44298 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:43918 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388477AbeKLIUO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2388478AbeKLIUO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:20:14 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1D71223AE;
-        Sun, 11 Nov 2018 22:30:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8712821780;
+        Sun, 11 Nov 2018 22:30:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975417;
-        bh=M4A2Jndk0xcokaZ8+h8WQL3c6YDDKeKBIL8nmlQtpHc=;
+        s=default; t=1541975418;
+        bh=detmSURP2f0XauHsu1at70pcmTRmZK5CR3emWB0tjOg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pOttQ4kdccbnorDX+SRmEjOoaz9eMQDVXumZ/yJOgQnjq8omxJdhfkLjZSh7w5zZX
-         Tz0xKACUBWSoSueMVw47fH0yHMA3P8e/qFCjLjyJsaIrO3k8D8w9IQN1YnHvKkVn2g
-         zKq6wZg4R8F5n0NCYFGZrBqJgDIOjxoKVYmOumUI=
+        b=eZgvIGfNPPZGWfhRuhu/5IkwimV9kyCIaDYM1T3S/x8XQaHV+vD9LsZMeEdaPAeHE
+         BS6wCFZF26SCBMPHJzHM+yPrv2v7wdb4XisCGzMWbfSkHRVwnKQ/dTEBgh2twuGjUa
+         A3C2RVWTaak1jeW6JCcUXfnahuHU0nCjUxpRpWjA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stan Johnson <userm57@yahoo.com>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 140/350] scsi: esp_scsi: Track residual for PIO transfers
-Date:   Sun, 11 Nov 2018 14:20:04 -0800
-Message-Id: <20181111221713.904774424@linuxfoundation.org>
+Subject: [PATCH 4.18 142/350] UAPI: ndctl: Fix g++-unsupported initialisation in headers
+Date:   Sun, 11 Nov 2018 14:20:06 -0800
+Message-Id: <20181111221713.994129464@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -65,68 +63,113 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Finn Thain <fthain@telegraphics.com.au>
+From: David Howells <dhowells@redhat.com>
 
-[ Upstream commit fd47d919d0c336e7c22862b51ee94927ffea227a ]
+[ Upstream commit 9607871f37dc3e717639694b8d0dc738f2a68efc ]
 
-If a target disconnects during a PIO data transfer the command may fail
-when the target reconnects:
+The following code in the linux/ndctl header file:
 
-scsi host1: DMA length is zero!
-scsi host1: cur adr[04380000] len[00000000]
+	static inline const char *nvdimm_bus_cmd_name(unsigned cmd)
+	{
+		static const char * const names[] = {
+			[ND_CMD_ARS_CAP] = "ars_cap",
+			[ND_CMD_ARS_START] = "ars_start",
+			[ND_CMD_ARS_STATUS] = "ars_status",
+			[ND_CMD_CLEAR_ERROR] = "clear_error",
+			[ND_CMD_CALL] = "cmd_call",
+		};
 
-The scsi bus is then reset. This happens because the residual reached
-zero before the transfer was completed.
+		if (cmd < ARRAY_SIZE(names) && names[cmd])
+			return names[cmd];
+		return "unknown";
+	}
 
-The usual residual calculation relies on the Transfer Count registers.
-That works for DMA transfers but not for PIO transfers. Fix the problem
-by storing the PIO transfer residual and using that to correctly
-calculate bytes_sent.
+is broken in a number of ways:
 
-Fixes: 6fe07aaffbf0 ("[SCSI] m68k: new mac_esp scsi driver")
-Tested-by: Stan Johnson <userm57@yahoo.com>
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Tested-by: Michael Schmitz <schmitzmic@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+ (1) ARRAY_SIZE() is not generally defined.
+
+ (2) g++ does not support "non-trivial" array initialisers fully yet.
+
+ (3) Every file that calls this function will acquire a copy of names[].
+
+The same goes for nvdimm_cmd_name().
+
+Fix all three by converting to a switch statement where each case returns a
+string.  That way if cmd is a constant, the compiler can trivially reduce it
+and, if not, the compiler can use a shared lookup table if it thinks that is
+more efficient.
+
+A better way would be to remove these functions and their arrays from the
+header entirely.
+
+Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/esp_scsi.c |    1 +
- drivers/scsi/esp_scsi.h |    2 ++
- drivers/scsi/mac_esp.c  |    2 ++
- 3 files changed, 5 insertions(+)
+ include/uapi/linux/ndctl.h |   48 +++++++++++++++++++--------------------------
+ 1 file changed, 21 insertions(+), 27 deletions(-)
 
---- a/drivers/scsi/esp_scsi.c
-+++ b/drivers/scsi/esp_scsi.c
-@@ -1338,6 +1338,7 @@ static int esp_data_bytes_sent(struct es
+--- a/include/uapi/linux/ndctl.h
++++ b/include/uapi/linux/ndctl.h
+@@ -128,37 +128,31 @@ enum {
  
- 	bytes_sent = esp->data_dma_len;
- 	bytes_sent -= ecount;
-+	bytes_sent -= esp->send_cmd_residual;
- 
- 	/*
- 	 * The am53c974 has a DMA 'pecularity'. The doc states:
---- a/drivers/scsi/esp_scsi.h
-+++ b/drivers/scsi/esp_scsi.h
-@@ -540,6 +540,8 @@ struct esp {
- 
- 	void			*dma;
- 	int			dmarev;
-+
-+	u32			send_cmd_residual;
- };
- 
- /* A front-end driver for the ESP chip should do the following in
---- a/drivers/scsi/mac_esp.c
-+++ b/drivers/scsi/mac_esp.c
-@@ -427,6 +427,8 @@ static void mac_esp_send_pio_cmd(struct
- 			scsi_esp_cmd(esp, ESP_CMD_TI);
- 		}
- 	}
-+
-+	esp->send_cmd_residual = esp_count;
+ static inline const char *nvdimm_bus_cmd_name(unsigned cmd)
+ {
+-	static const char * const names[] = {
+-		[ND_CMD_ARS_CAP] = "ars_cap",
+-		[ND_CMD_ARS_START] = "ars_start",
+-		[ND_CMD_ARS_STATUS] = "ars_status",
+-		[ND_CMD_CLEAR_ERROR] = "clear_error",
+-		[ND_CMD_CALL] = "cmd_call",
+-	};
+-
+-	if (cmd < ARRAY_SIZE(names) && names[cmd])
+-		return names[cmd];
+-	return "unknown";
++	switch (cmd) {
++	case ND_CMD_ARS_CAP:		return "ars_cap";
++	case ND_CMD_ARS_START:		return "ars_start";
++	case ND_CMD_ARS_STATUS:		return "ars_status";
++	case ND_CMD_CLEAR_ERROR:	return "clear_error";
++	case ND_CMD_CALL:		return "cmd_call";
++	default:			return "unknown";
++	}
  }
  
- static int mac_esp_irq_pending(struct esp *esp)
+ static inline const char *nvdimm_cmd_name(unsigned cmd)
+ {
+-	static const char * const names[] = {
+-		[ND_CMD_SMART] = "smart",
+-		[ND_CMD_SMART_THRESHOLD] = "smart_thresh",
+-		[ND_CMD_DIMM_FLAGS] = "flags",
+-		[ND_CMD_GET_CONFIG_SIZE] = "get_size",
+-		[ND_CMD_GET_CONFIG_DATA] = "get_data",
+-		[ND_CMD_SET_CONFIG_DATA] = "set_data",
+-		[ND_CMD_VENDOR_EFFECT_LOG_SIZE] = "effect_size",
+-		[ND_CMD_VENDOR_EFFECT_LOG] = "effect_log",
+-		[ND_CMD_VENDOR] = "vendor",
+-		[ND_CMD_CALL] = "cmd_call",
+-	};
+-
+-	if (cmd < ARRAY_SIZE(names) && names[cmd])
+-		return names[cmd];
+-	return "unknown";
++	switch (cmd) {
++	case ND_CMD_SMART:			return "smart";
++	case ND_CMD_SMART_THRESHOLD:		return "smart_thresh";
++	case ND_CMD_DIMM_FLAGS:			return "flags";
++	case ND_CMD_GET_CONFIG_SIZE:		return "get_size";
++	case ND_CMD_GET_CONFIG_DATA:		return "get_data";
++	case ND_CMD_SET_CONFIG_DATA:		return "set_data";
++	case ND_CMD_VENDOR_EFFECT_LOG_SIZE:	return "effect_size";
++	case ND_CMD_VENDOR_EFFECT_LOG:		return "effect_log";
++	case ND_CMD_VENDOR:			return "vendor";
++	case ND_CMD_CALL:			return "cmd_call";
++	default:				return "unknown";
++	}
+ }
+ 
+ #define ND_IOCTL 'N'
 
 
