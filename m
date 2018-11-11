@@ -4,48 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23735C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:00:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B43C7C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:01:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5ADF20872
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:00:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70FCC20818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:01:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BU9j8IUn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5ADF20872
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="u6VkEmUE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70FCC20818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390798AbeKLIu6 (ORCPT
+        id S2390807AbeKLIvI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:50:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52752 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:51:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390697AbeKLIWc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2390666AbeKLIWc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:22:32 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B10E721780;
+        by mail.kernel.org (Postfix) with ESMTPSA id 575B92154B;
         Sun, 11 Nov 2018 22:32:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975555;
-        bh=j1SUgGqPxOgON1rIfYz7lrCj+F3XOR0RGKfhXacjvnI=;
+        bh=lA9o59XAIbiRPSSTwTeCFIoKQb0yJfPpQr2uKMRt/DY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BU9j8IUnynnVb85xwzJFg2Id8Do9u1a4t5wwsEVEagcsE8G4y3UVWZdDFB+NbFxX2
-         Z9J7KttyTiOeR2mDVertw9gtR0BSxX515OohDNjj2qkZ7KfmQDwX/nrLBnPPfI/Xf9
-         G0x4fuOGjzZ2awXF0kAjATY1ZU47KrvI2hwH+r4c=
+        b=u6VkEmUE0LQ3pAntoUmJ7Nhjy9i79YXqwGt1dbA+YSQ2o1X1/98PnDKdknQsRWyJI
+         IieBKtfIP2tT2c4TaRi5s1JVFQrAb74akAeloQXvjcxp+D8d7EVnJ3+OQSVpiRpXOL
+         VodG1KMoV1MCB/QiGV4FPgRPvO7Yk1SO1ZNR+1OU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 062/222] pinctrl: qcom: spmi-mpp: Fix err handling of pmic_mpp_set_mux
-Date:   Sun, 11 Nov 2018 14:22:39 -0800
-Message-Id: <20181111221653.532445482@linuxfoundation.org>
+Subject: [PATCH 4.14 071/222] net: dsa: mv88e6xxx: Fix writing to a PHY page.
+Date:   Sun, 11 Nov 2018 14:22:48 -0800
+Message-Id: <20181111221654.491589444@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -63,31 +62,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Andrew Lunn <andrew@lunn.ch>
 
-[ Upstream commit 69f8455f6cc78fa6cdf80d0105d7a748106271dc ]
+[ Upstream commit c309b158090d788e96ee597444965cb79b040484 ]
 
-'ret' should be returned while pmic_mpp_write_mode_ctl fails.
+After changing to the needed page, actually write the value to the
+register!
 
-Fixes: 0e948042c420 ("pinctrl: qcom: spmi-mpp: Implement support for sink mode")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Fixes: 09cb7dfd3f14 ("net: dsa: mv88e6xxx: describe PHY page and SerDes")
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pinctrl/qcom/pinctrl-spmi-mpp.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/dsa/mv88e6xxx/phy.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-+++ b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-@@ -319,6 +319,8 @@ static int pmic_mpp_set_mux(struct pinct
- 	pad->function = function;
- 
- 	ret = pmic_mpp_write_mode_ctl(state, pad);
-+	if (ret < 0)
-+		return ret;
- 
- 	val = pad->is_enabled << PMIC_MPP_REG_MASTER_EN_SHIFT;
+--- a/drivers/net/dsa/mv88e6xxx/phy.c
++++ b/drivers/net/dsa/mv88e6xxx/phy.c
+@@ -110,6 +110,9 @@ int mv88e6xxx_phy_page_write(struct mv88
+ 	err = mv88e6xxx_phy_page_get(chip, phy, page);
+ 	if (!err) {
+ 		err = mv88e6xxx_phy_write(chip, phy, MV88E6XXX_PHY_PAGE, page);
++		if (!err)
++			err = mv88e6xxx_phy_write(chip, phy, reg, val);
++
+ 		mv88e6xxx_phy_page_put(chip, phy);
+ 	}
  
 
 
