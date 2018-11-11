@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1D00C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30C61C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88E4F223D8
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E266D223DD
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bfbqQL+S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88E4F223D8
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XFV/4jKw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E266D223DD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390862AbeKLIWu (ORCPT
+        id S2403865AbeKLIWu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 12 Nov 2018 03:22:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54422 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:54556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390827AbeKLIWs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:48 -0500
+        id S2390859AbeKLIWu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:50 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DEDC8223C7;
-        Sun, 11 Nov 2018 22:32:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 07B3D21582;
+        Sun, 11 Nov 2018 22:32:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975570;
-        bh=cH0TopqVXj04UAaaNCmdJhevkLcyWmSQmXmYFge4upY=;
+        s=default; t=1541975573;
+        bh=F0JZicURmuAXopggUdOW2X23I5Ov6rVNLoidYsapcP8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bfbqQL+SVTGAWlKPlfsf/mHNpmChRvA6z1AQqChLlkfoX3a1CixZDHF6MwldSLtpW
-         5Eu3dHy6UzapADEyR9mWyvIh2tn1N1fTby3jFOjq6cYcaTnLB9xYG0gyVXHWJ+kSOP
-         wSg7+S59814VnLmkAQDkbAgzblbYn/b9XCg7We/M=
+        b=XFV/4jKwyzgCIl7ODQyw0c8q3DcaVeiN0esM7nRCeZvnRhetv0rOtEhy7AlsS8Cus
+         l8G9alA8z5BQgRT7/25SxO6HyIZkfF/z0ROy35509kd+k11vZAUiSLJ/uVyVSEsA28
+         /aV58zCmW5j4cgYYmsxXgDbNx625RtqLe8hbGszo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Waiman Long <longman@redhat.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 099/222] driver/dma/ioat: Call del_timer_sync() without holding prep_lock
-Date:   Sun, 11 Nov 2018 14:23:16 -0800
-Message-Id: <20181111221656.806799464@linuxfoundation.org>
+        stable@vger.kernel.org, Keith Busch <keith.busch@intel.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        "Jon Derrick:" <jonathan.derrick@intel.com>,
+        "Heitke, Kenneth" <kenneth.heitke@intel.com>
+Subject: [PATCH 4.14 148/222] PCI: vmd: White list for fast interrupt handlers
+Date:   Sun, 11 Nov 2018 14:24:05 -0800
+Message-Id: <20181111221700.645578642@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -63,87 +64,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Waiman Long <longman@redhat.com>
+From: Keith Busch <keith.busch@intel.com>
 
-[ Upstream commit cfb03be6c7e8a1591285849c361d67b09f5149f7 ]
+commit a7f58b9ecfd3c0f63703ec10f4a592cc38dbd1b8 upstream.
 
-The following lockdep splat was observed:
+Devices with slow interrupt handlers are significantly harming
+performance when their interrupt vector is shared with a fast device.
 
-[ 1222.241750] ======================================================
-[ 1222.271301] WARNING: possible circular locking dependency detected
-[ 1222.301060] 4.16.0-10.el8+5.x86_64+debug #1 Not tainted
-[ 1222.326659] ------------------------------------------------------
-[ 1222.356565] systemd-shutdow/1 is trying to acquire lock:
-[ 1222.382660]  ((&ioat_chan->timer)){+.-.}, at: [<00000000f71e1a28>] del_timer_sync+0x5/0xf0
-[ 1222.422928]
-[ 1222.422928] but task is already holding lock:
-[ 1222.451743]  (&(&ioat_chan->prep_lock)->rlock){+.-.}, at: [<000000008ea98b12>] ioat_shutdown+0x86/0x100 [ioatdma]
-   :
-[ 1223.524987] Chain exists of:
-[ 1223.524987]   (&ioat_chan->timer) --> &(&ioat_chan->cleanup_lock)->rlock --> &(&ioat_chan->prep_lock)->rlock
-[ 1223.524987]
-[ 1223.594082]  Possible unsafe locking scenario:
-[ 1223.594082]
-[ 1223.622630]        CPU0                    CPU1
-[ 1223.645080]        ----                    ----
-[ 1223.667404]   lock(&(&ioat_chan->prep_lock)->rlock);
-[ 1223.691535]                                lock(&(&ioat_chan->cleanup_lock)->rlock);
-[ 1223.728657]                                lock(&(&ioat_chan->prep_lock)->rlock);
-[ 1223.765122]   lock((&ioat_chan->timer));
-[ 1223.784095]
-[ 1223.784095]  *** DEADLOCK ***
-[ 1223.784095]
-[ 1223.813492] 4 locks held by systemd-shutdow/1:
-[ 1223.834677]  #0:  (reboot_mutex){+.+.}, at: [<0000000056d33456>] SYSC_reboot+0x10f/0x300
-[ 1223.873310]  #1:  (&dev->mutex){....}, at: [<00000000258dfdd7>] device_shutdown+0x1c8/0x660
-[ 1223.913604]  #2:  (&dev->mutex){....}, at: [<0000000068331147>] device_shutdown+0x1d6/0x660
-[ 1223.954000]  #3:  (&(&ioat_chan->prep_lock)->rlock){+.-.}, at: [<000000008ea98b12>] ioat_shutdown+0x86/0x100 [ioatdma]
+Create a class code white list for devices with known fast interrupt
+handlers and let all other devices share a single vector so that they
+don't interfere with performance.
 
-In the ioat_shutdown() function:
+At the moment, only the NVM Express class code is on the list, but more
+may be added if VMD users desire to use other low-latency devices in
+these domains.
 
-	spin_lock_bh(&ioat_chan->prep_lock);
-	set_bit(IOAT_CHAN_DOWN, &ioat_chan->state);
-	del_timer_sync(&ioat_chan->timer);
-	spin_unlock_bh(&ioat_chan->prep_lock);
-
-According to the synchronization rule for the del_timer_sync() function,
-the caller must not hold locks which would prevent completion of the
-timer's handler.
-
-The timer structure has its own lock that manages its synchronization.
-Setting the IOAT_CHAN_DOWN bit should prevent other CPUs from
-trying to use that device anyway, there is probably no need to call
-del_timer_sync() while holding the prep_lock. So the del_timer_sync()
-call is now moved outside of the prep_lock critical section to prevent
-the circular lock dependency.
-
-Signed-off-by: Waiman Long <longman@redhat.com>
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Keith Busch <keith.busch@intel.com>
+[lorenzo.pieralisi@arm.com: changelog]
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Acked-by: Jon Derrick: <jonathan.derrick@intel.com>
+Cc: "Heitke, Kenneth" <kenneth.heitke@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/dma/ioat/init.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/drivers/dma/ioat/init.c
-+++ b/drivers/dma/ioat/init.c
-@@ -1205,8 +1205,15 @@ static void ioat_shutdown(struct pci_dev
+---
+ drivers/pci/host/vmd.c |   13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+--- a/drivers/pci/host/vmd.c
++++ b/drivers/pci/host/vmd.c
+@@ -183,9 +183,20 @@ static struct vmd_irq_list *vmd_next_irq
+ 	int i, best = 1;
+ 	unsigned long flags;
  
- 		spin_lock_bh(&ioat_chan->prep_lock);
- 		set_bit(IOAT_CHAN_DOWN, &ioat_chan->state);
--		del_timer_sync(&ioat_chan->timer);
- 		spin_unlock_bh(&ioat_chan->prep_lock);
-+		/*
-+		 * Synchronization rule for del_timer_sync():
-+		 *  - The caller must not hold locks which would prevent
-+		 *    completion of the timer's handler.
-+		 * So prep_lock cannot be held before calling it.
-+		 */
-+		del_timer_sync(&ioat_chan->timer);
+-	if (pci_is_bridge(msi_desc_to_pci_dev(desc)) || vmd->msix_count == 1)
++	if (vmd->msix_count == 1)
+ 		return &vmd->irqs[0];
+ 
++	/*
++	 * White list for fast-interrupt handlers. All others will share the
++	 * "slow" interrupt vector.
++	 */
++	switch (msi_desc_to_pci_dev(desc)->class) {
++	case PCI_CLASS_STORAGE_EXPRESS:
++		break;
++	default:
++		return &vmd->irqs[0];
++	}
 +
- 		/* this should quiesce then reset */
- 		ioat_reset_hw(ioat_chan);
- 	}
+ 	raw_spin_lock_irqsave(&list_lock, flags);
+ 	for (i = 1; i < vmd->msix_count; i++)
+ 		if (vmd->irqs[i].count < vmd->irqs[best].count)
 
 
