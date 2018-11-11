@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79F94C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB006C43610
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3921522360
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 634DF216FD
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kh7FbaxD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3921522360
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wa6E7IUJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 634DF216FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387680AbeKLITU (ORCPT
+        id S2387694AbeKLITU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 12 Nov 2018 03:19:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40672 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:40752 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387627AbeKLITS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:19:18 -0500
+        id S2387649AbeKLITT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:19:19 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D9F97223AE;
-        Sun, 11 Nov 2018 22:29:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1328208A3;
+        Sun, 11 Nov 2018 22:29:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975361;
-        bh=W5bXBFqxXs2kBmDGhgIWKIJlajX/w4QIPSL7xqFp8C8=;
+        s=default; t=1541975363;
+        bh=Vgup4Uh1wKbbiOGU3MvI/nOVD61ANsWXgoVN9wlE4RY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Kh7FbaxD2zdRUbwkQ57Rys3EJy6p0vhTH7eeFyd72aMqc8QzTWIpqquaV4g/C+uY8
-         tDVCwg4zsoWol01niEIx5B3jZcmEUUyX9eMbFTSpDcRgsegc89riOQDwokGZ8vcrDz
-         lYxjdBWuXFRT5Cd69RY5c6Lxbt1ivll8/p+QHgqk=
+        b=Wa6E7IUJkNfvZf2m9EF3jGRfr/YeBPmoehT+/4CZ54wmBWRctO7RuqyqlWr6f1qPy
+         cUVhSksU0uIE9z0oW5NXkN85FjoJyNThpyX+ienn+tUtRGgsD6pRld5JQHJSX3IE2i
+         0Vsorw2fsP/p+btT5PNP18bwq+ImnNYOz8K3H+Tg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?H=C3=A5vard?= <hovardslill@gmail.com>,
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
         Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.18 031/350] ALSA: hda - Fix headphone pin config for ASUS G751
-Date:   Sun, 11 Nov 2018 14:18:15 -0800
-Message-Id: <20181111221708.490462205@linuxfoundation.org>
+Subject: [PATCH 4.18 034/350] ALSA: hda: Add 2 more models to the power_save blacklist
+Date:   Sun, 11 Nov 2018 14:18:18 -0800
+Message-Id: <20181111221708.608748328@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -63,57 +62,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 5b7c5e1f4c36b99d0f694f38b9ad910f520cb7ef upstream.
+commit 5cb6b5fc013ee711d19bfc4e9deb8d6ae80741db upstream.
 
-BIOS on ASUS G751 doesn't seem to map the headphone pin (NID 0x16)
-correctly.  Add a quirk to address it, as well as chaining to the
-previous fix for the microphone.
+Power-saving is causing plops on audio start/stop on Dell Precision T3600
+laptops and Intel DZ77BH boards, add these to the power_save blacklist.
 
-Reported-by: Håvard <hovardslill@gmail.com>
+BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1525104
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |   12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ sound/pci/hda/hda_intel.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -7690,6 +7690,7 @@ enum {
- 	ALC662_FIXUP_ASUS_Nx50,
- 	ALC668_FIXUP_ASUS_Nx51_HEADSET_MODE,
- 	ALC668_FIXUP_ASUS_Nx51,
-+	ALC668_FIXUP_MIC_COEF,
- 	ALC668_FIXUP_ASUS_G751,
- 	ALC891_FIXUP_HEADSET_MODE,
- 	ALC891_FIXUP_DELL_MIC_NO_PRESENCE,
-@@ -7960,7 +7961,7 @@ static const struct hda_fixup alc662_fix
- 		.chained = true,
- 		.chain_id = ALC668_FIXUP_ASUS_Nx51_HEADSET_MODE,
- 	},
--	[ALC668_FIXUP_ASUS_G751] = {
-+	[ALC668_FIXUP_MIC_COEF] = {
- 		.type = HDA_FIXUP_VERBS,
- 		.v.verbs = (const struct hda_verb[]) {
- 			{ 0x20, AC_VERB_SET_COEF_INDEX, 0xc3 },
-@@ -7968,6 +7969,15 @@ static const struct hda_fixup alc662_fix
- 			{}
- 		},
- 	},
-+	[ALC668_FIXUP_ASUS_G751] = {
-+		.type = HDA_FIXUP_PINS,
-+		.v.pins = (const struct hda_pintbl[]) {
-+			{ 0x16, 0x0421101f }, /* HP */
-+			{}
-+		},
-+		.chained = true,
-+		.chain_id = ALC668_FIXUP_MIC_COEF
-+	},
- 	[ALC891_FIXUP_HEADSET_MODE] = {
- 		.type = HDA_FIXUP_FUNC,
- 		.v.func = alc_fixup_headset_mode,
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -2215,8 +2215,12 @@ static struct snd_pci_quirk power_save_b
+ 	/* https://bugzilla.redhat.com/show_bug.cgi?id=1581607 */
+ 	SND_PCI_QUIRK(0x1558, 0x3501, "Clevo W35xSS_370SS", 0),
+ 	/* https://bugzilla.redhat.com/show_bug.cgi?id=1525104 */
++	SND_PCI_QUIRK(0x1028, 0x0497, "Dell Precision T3600", 0),
++	/* https://bugzilla.redhat.com/show_bug.cgi?id=1525104 */
+ 	/* Note the P55A-UD3 and Z87-D3HP share the subsys id for the HDA dev */
+ 	SND_PCI_QUIRK(0x1458, 0xa002, "Gigabyte P55A-UD3 / Z87-D3HP", 0),
++	/* https://bugzilla.redhat.com/show_bug.cgi?id=1525104 */
++	SND_PCI_QUIRK(0x8086, 0x2040, "Intel DZ77BH-55K", 0),
+ 	/* https://bugzilla.kernel.org/show_bug.cgi?id=199607 */
+ 	SND_PCI_QUIRK(0x8086, 0x2057, "Intel NUC5i7RYB", 0),
+ 	/* https://bugzilla.redhat.com/show_bug.cgi?id=1520902 */
 
 
