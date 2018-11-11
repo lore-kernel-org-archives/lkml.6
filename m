@@ -7,52 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56DEBC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:56:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 896FAC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:57:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CF6F206BA
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:56:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5151A206BA
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:57:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="X9hrJml9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CF6F206BA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dV1Xoi1Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5151A206BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391089AbeKLIqz (ORCPT
+        id S2389721AbeKLIWt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:46:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54576 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:22:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54450 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390827AbeKLIWu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:50 -0500
+        id S1730604AbeKLIWs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:48 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4F6DA21707;
-        Sun, 11 Nov 2018 22:32:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E422221707;
+        Sun, 11 Nov 2018 22:32:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975573;
-        bh=WhLqCyvdAq0yMaAwwOAiL3CEtvYQxymWxNMU0pdYSo8=;
+        s=default; t=1541975571;
+        bh=DGk8MpVHuVTKonMg+F94KNZTpiHUh8yBPCzrJRFFBJU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X9hrJml9htP0W7KbjkeLxPABXEQ7kNu4CdQzInmxEMioT8Us9OSRDLtfo2ncS+iBD
-         vpHujfT+BaMpbOZpCpLZSIJPRvoevszYpI2P2od7qofVzwpWbO0h/MiQFXZoAlo6zJ
-         gNkh/uTBEdqEUc/VyMSOqy6iGHtaX5gsPOgNuxBA=
+        b=dV1Xoi1ZrR2Dk+LDshhxUYX621hBx/5gGMxjfCBxw1O0psVblu9w3j7EpNfUL/YK9
+         2fJZEF8NVGp6qfPZ4byQFzVvqN9n7aKKsOHRLWQZhd0S0vvEvaAv+57Fom5dkzV5AD
+         r8WyE2O1Wet3dPWrMz7ClzpOHvkUjGxKWKHv4jlk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Frank Haverkamp <haver@linux.vnet.ibm.com>,
-        Joerg-Stephan Vogt <jsvogt@de.ibm.com>,
-        Michael Jung <mijung@gmx.net>,
-        Michael Ruettger <michael@ibmra.de>,
-        Kleber Sacilotto de Souza <klebers@linux.vnet.ibm.com>,
-        Sebastian Ott <sebott@linux.vnet.ibm.com>,
-        "Eberhard S. Amann" <esa@linux.vnet.ibm.com>,
-        Gabriel Krisman Bertazi <krisman@linux.vnet.ibm.com>,
-        "Guilherme G. Piccoli" <gpiccoli@linux.vnet.ibm.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: [PATCH 4.14 149/222] signal/GenWQE: Fix sending of SIGKILL
-Date:   Sun, 11 Nov 2018 14:24:06 -0800
-Message-Id: <20181111221700.733404598@linuxfoundation.org>
+        stable@vger.kernel.org, Wang Shilong <wshilong@ddn.com>,
+        Theodore Tso <tytso@mit.edu>,
+        Andreas Dilger <adilger@dilger.ca>, stable@kernel.org
+Subject: [PATCH 4.14 138/222] ext4: fix setattr project check in fssetxattr ioctl
+Date:   Sun, 11 Nov 2018 14:23:55 -0800
+Message-Id: <20181111221659.882764894@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -70,112 +63,156 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric W. Biederman <ebiederm@xmission.com>
+From: Wang Shilong <wangshilong1991@gmail.com>
 
-commit 0ab93e9c99f8208c0a1a7b7170c827936268c996 upstream.
+commit dc7ac6c4cae3b58724c2f1e21a7c05ce19ecd5a8 upstream.
 
-The genweq_add_file and genwqe_del_file by caching current without
-using reference counting embed the assumption that a file descriptor
-will never be passed from one process to another.  It even embeds the
-assumption that the the thread that opened the file will be in
-existence when the process terminates.   Neither of which are
-guaranteed to be true.
+Currently, project quota could be changed by fssetxattr
+ioctl, and existed permission check inode_owner_or_capable()
+is obviously not enough, just think that common users could
+change project id of file, that could make users to
+break project quota easily.
 
-Therefore replace caching the task_struct of the opener with
-pid of the openers thread group id.  All the knowledge of the
-opener is used for is as the target of SIGKILL and a SIGKILL
-will kill the entire process group.
+This patch try to follow same regular of xfs project
+quota:
 
-Rename genwqe_force_sig to genwqe_terminate, remove it's unncessary
-signal argument, update it's ownly caller, and use kill_pid
-instead of force_sig.
+"Project Quota ID state is only allowed to change from
+within the init namespace. Enforce that restriction only
+if we are trying to change the quota ID state.
+Everything else is allowed in user namespaces."
 
-The work force_sig does in changing signal handling state is not
-relevant to SIGKILL sent as SEND_SIG_PRIV.  The exact same processess
-will be killed just with less work, and less confusion.  The work done
-by force_sig is really only needed for handling syncrhonous
-exceptions.
+Besides that, check and set project id'state should
+be an atomic operation, protect whole operation with
+inode lock, ext4_ioctl_setproject() is only used for
+ioctl EXT4_IOC_FSSETXATTR, we have held mnt_want_write_file()
+before ext4_ioctl_setflags(), and ext4_ioctl_setproject()
+is called after ext4_ioctl_setflags(), we could share
+codes, so remove it inside ext4_ioctl_setproject().
 
-It will still be possible to cause genwqe_device_remove to wait
-8 seconds by passing a file descriptor to another process but
-the possible user after free is fixed.
-
-Fixes: eaf4722d4645 ("GenWQE Character device and DDCB queue")
-Cc: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Frank Haverkamp <haver@linux.vnet.ibm.com>
-Cc: Joerg-Stephan Vogt <jsvogt@de.ibm.com>
-Cc: Michael Jung <mijung@gmx.net>
-Cc: Michael Ruettger <michael@ibmra.de>
-Cc: Kleber Sacilotto de Souza <klebers@linux.vnet.ibm.com>
-Cc: Sebastian Ott <sebott@linux.vnet.ibm.com>
-Cc: Eberhard S. Amann <esa@linux.vnet.ibm.com>
-Cc: Gabriel Krisman Bertazi <krisman@linux.vnet.ibm.com>
-Cc: Guilherme G. Piccoli <gpiccoli@linux.vnet.ibm.com>
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Signed-off-by: Wang Shilong <wshilong@ddn.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Reviewed-by: Andreas Dilger <adilger@dilger.ca>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/genwqe/card_base.h |    2 +-
- drivers/misc/genwqe/card_dev.c  |    9 +++++----
- 2 files changed, 6 insertions(+), 5 deletions(-)
+ fs/ext4/ioctl.c |   60 ++++++++++++++++++++++++++++++++++----------------------
+ 1 file changed, 37 insertions(+), 23 deletions(-)
 
---- a/drivers/misc/genwqe/card_base.h
-+++ b/drivers/misc/genwqe/card_base.h
-@@ -403,7 +403,7 @@ struct genwqe_file {
- 	struct file *filp;
+--- a/fs/ext4/ioctl.c
++++ b/fs/ext4/ioctl.c
+@@ -344,19 +344,14 @@ static int ext4_ioctl_setproject(struct
+ 	if (projid_eq(kprojid, EXT4_I(inode)->i_projid))
+ 		return 0;
  
- 	struct fasync_struct *async_queue;
--	struct task_struct *owner;
-+	struct pid *opener;
- 	struct list_head list;		/* entry in list of open files */
+-	err = mnt_want_write_file(filp);
+-	if (err)
+-		return err;
+-
+ 	err = -EPERM;
+-	inode_lock(inode);
+ 	/* Is it quota file? Do not allow user to mess with it */
+ 	if (ext4_is_quota_file(inode))
+-		goto out_unlock;
++		return err;
  
- 	spinlock_t map_lock;		/* lock for dma_mappings */
---- a/drivers/misc/genwqe/card_dev.c
-+++ b/drivers/misc/genwqe/card_dev.c
-@@ -52,7 +52,7 @@ static void genwqe_add_file(struct genwq
- {
- 	unsigned long flags;
+ 	err = ext4_get_inode_loc(inode, &iloc);
+ 	if (err)
+-		goto out_unlock;
++		return err;
  
--	cfile->owner = current;
-+	cfile->opener = get_pid(task_tgid(current));
- 	spin_lock_irqsave(&cd->file_lock, flags);
- 	list_add(&cfile->list, &cd->file_list);
- 	spin_unlock_irqrestore(&cd->file_lock, flags);
-@@ -65,6 +65,7 @@ static int genwqe_del_file(struct genwqe
- 	spin_lock_irqsave(&cd->file_lock, flags);
- 	list_del(&cfile->list);
- 	spin_unlock_irqrestore(&cd->file_lock, flags);
-+	put_pid(cfile->opener);
+ 	raw_inode = ext4_raw_inode(&iloc);
+ 	if (!EXT4_FITS_IN_INODE(raw_inode, ei, i_projid)) {
+@@ -364,7 +359,7 @@ static int ext4_ioctl_setproject(struct
+ 					      EXT4_SB(sb)->s_want_extra_isize,
+ 					      &iloc);
+ 		if (err)
+-			goto out_unlock;
++			return err;
+ 	} else {
+ 		brelse(iloc.bh);
+ 	}
+@@ -374,10 +369,8 @@ static int ext4_ioctl_setproject(struct
+ 	handle = ext4_journal_start(inode, EXT4_HT_QUOTA,
+ 		EXT4_QUOTA_INIT_BLOCKS(sb) +
+ 		EXT4_QUOTA_DEL_BLOCKS(sb) + 3);
+-	if (IS_ERR(handle)) {
+-		err = PTR_ERR(handle);
+-		goto out_unlock;
+-	}
++	if (IS_ERR(handle))
++		return PTR_ERR(handle);
  
+ 	err = ext4_reserve_inode_write(handle, inode, &iloc);
+ 	if (err)
+@@ -405,9 +398,6 @@ out_dirty:
+ 		err = rc;
+ out_stop:
+ 	ext4_journal_stop(handle);
+-out_unlock:
+-	inode_unlock(inode);
+-	mnt_drop_write_file(filp);
+ 	return err;
+ }
+ #else
+@@ -592,6 +582,30 @@ static int ext4_ioc_getfsmap(struct supe
  	return 0;
  }
-@@ -275,7 +276,7 @@ static int genwqe_kill_fasync(struct gen
- 	return files;
- }
  
--static int genwqe_force_sig(struct genwqe_dev *cd, int sig)
-+static int genwqe_terminate(struct genwqe_dev *cd)
++static int ext4_ioctl_check_project(struct inode *inode, struct fsxattr *fa)
++{
++	/*
++	 * Project Quota ID state is only allowed to change from within the init
++	 * namespace. Enforce that restriction only if we are trying to change
++	 * the quota ID state. Everything else is allowed in user namespaces.
++	 */
++	if (current_user_ns() == &init_user_ns)
++		return 0;
++
++	if (__kprojid_val(EXT4_I(inode)->i_projid) != fa->fsx_projid)
++		return -EINVAL;
++
++	if (ext4_test_inode_flag(inode, EXT4_INODE_PROJINHERIT)) {
++		if (!(fa->fsx_xflags & FS_XFLAG_PROJINHERIT))
++			return -EINVAL;
++	} else {
++		if (fa->fsx_xflags & FS_XFLAG_PROJINHERIT)
++			return -EINVAL;
++	}
++
++	return 0;
++}
++
+ long ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
  {
- 	unsigned int files = 0;
- 	unsigned long flags;
-@@ -283,7 +284,7 @@ static int genwqe_force_sig(struct genwq
+ 	struct inode *inode = file_inode(filp);
+@@ -1029,19 +1043,19 @@ resizefs_out:
+ 			return err;
  
- 	spin_lock_irqsave(&cd->file_lock, flags);
- 	list_for_each_entry(cfile, &cd->file_list, list) {
--		force_sig(sig, cfile->owner);
-+		kill_pid(cfile->opener, SIGKILL, 1);
- 		files++;
+ 		inode_lock(inode);
++		err = ext4_ioctl_check_project(inode, &fa);
++		if (err)
++			goto out;
+ 		flags = (ei->i_flags & ~EXT4_FL_XFLAG_VISIBLE) |
+ 			 (flags & EXT4_FL_XFLAG_VISIBLE);
+ 		err = ext4_ioctl_setflags(inode, flags);
+-		inode_unlock(inode);
+-		mnt_drop_write_file(filp);
+ 		if (err)
+-			return err;
+-
++			goto out;
+ 		err = ext4_ioctl_setproject(filp, fa.fsx_projid);
+-		if (err)
+-			return err;
+-
+-		return 0;
++out:
++		inode_unlock(inode);
++		mnt_drop_write_file(filp);
++		return err;
  	}
- 	spin_unlock_irqrestore(&cd->file_lock, flags);
-@@ -1356,7 +1357,7 @@ static int genwqe_inform_and_stop_proces
- 		dev_warn(&pci_dev->dev,
- 			 "[%s] send SIGKILL and wait ...\n", __func__);
- 
--		rc = genwqe_force_sig(cd, SIGKILL); /* force terminate */
-+		rc = genwqe_terminate(cd);
- 		if (rc) {
- 			/* Give kill_timout more seconds to end processes */
- 			for (i = 0; (i < genwqe_kill_timeout) &&
+ 	case EXT4_IOC_SHUTDOWN:
+ 		return ext4_shutdown(sb, arg);
 
 
