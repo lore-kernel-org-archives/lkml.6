@@ -2,80 +2,153 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E82E8C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:07:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78062C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:07:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7537E214E0
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:07:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7537E214E0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id 3C0C2214E0
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:07:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ho4SYECV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C0C2214E0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390350AbeKLIWK (ORCPT
+        id S2390435AbeKLI5P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:22:10 -0500
-Received: from sauhun.de ([88.99.104.3]:35674 "EHLO pokefinder.org"
+        Mon, 12 Nov 2018 03:57:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51232 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390257AbeKLIWH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:07 -0500
-Received: from localhost (p54B33AC0.dip0.t-ipconnect.de [84.179.58.192])
-        by pokefinder.org (Postfix) with ESMTPSA id 837F03E4486;
-        Sun, 11 Nov 2018 23:32:07 +0100 (CET)
-Date:   Sun, 11 Nov 2018 23:32:06 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-i2c@vger.kernel.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        peda@axentia.se, brgl@bgdev.pl
-Subject: Re: [PULL REQUEST] i2c for 4.20
-Message-ID: <20181111223206.GA1439@kunai>
-References: <20181110112036.GA5905@kunai>
- <CAHk-=wgAJXs32MZNWNO9HjMmgtV9kWmDvjQS7zcFg0PVgJyHog@mail.gmail.com>
+        id S2390307AbeKLIWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:10 -0500
+Received: from localhost (unknown [206.108.79.134])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A2A0D223CB;
+        Sun, 11 Nov 2018 22:32:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541975532;
+        bh=SA5wglS37YMdRV0bkI4/WhytO1h/7NNmgQ3I7JM4W/I=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Ho4SYECV8L583Cw7+KSmRV1sAEnmf0y07eRDYZaZ0r95mPEfeM17FhnPuaROmc7XZ
+         +xnENwXrSq+4LER1ZA5TGotgpPBHOf1x+x58LPGsH+ht/exee0rhR66le6jErml23e
+         eNwR4aD0yZahv6suRYHu8pfPReh3EGVmILioskbc=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Michael Petlan <mpetlan@redhat.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 026/222] Revert "perf tools: Fix PMU term format max value calculation"
+Date:   Sun, 11 Nov 2018 14:22:03 -0800
+Message-Id: <20181111221650.640645838@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
+References: <20181111221647.665769131@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="PNTmBPCT7hxwcZjr"
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgAJXs32MZNWNO9HjMmgtV9kWmDvjQS7zcFg0PVgJyHog@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
---PNTmBPCT7hxwcZjr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+------------------
+
+From: Jiri Olsa <jolsa@kernel.org>
+
+[ Upstream commit 1b9caa10b31dda0866f4028e4bfb923fb6e4072f ]
+
+This reverts commit ac0e2cd555373ae6f8f3a3ad3fbbf5b6d1e7aaaa.
+
+Michael reported an issue with oversized terms values assignment
+and I noticed there was actually a misunderstanding of the max
+value check in the past.
+
+The above commit's changelog says:
+
+  If bit 21 is set, there is parsing issues as below.
+
+    $ perf stat -a -e uncore_qpi_0/event=0x200002,umask=0x8/
+    event syntax error: '..pi_0/event=0x200002,umask=0x8/'
+                                      \___ value too big for format, maximum is 511
+
+But there's no issue there, because the event value is distributed
+along the value defined by the format. Even if the format defines
+separated bit, the value is treated as a continual number, which
+should follow the format definition.
+
+In above case it's 9-bit value with last bit separated:
+  $ cat uncore_qpi_0/format/event
+  config:0-7,21
+
+Hence the value 0x200002 is correctly reported as format violation,
+because it exceeds 9 bits. It should have been 0x102 instead, which
+sets the 9th bit - the bit 21 of the format.
+
+  $ perf stat -vv -a -e uncore_qpi_0/event=0x102,umask=0x8/
+  Using CPUID GenuineIntel-6-2D
+  ...
+  ------------------------------------------------------------
+  perf_event_attr:
+    type                             10
+    size                             112
+    config                           0x200802
+    sample_type                      IDENTIFIER
+  ...
+
+Reported-by: Michael Petlan <mpetlan@redhat.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Fixes: ac0e2cd55537 ("perf tools: Fix PMU term format max value calculation")
+Link: http://lkml.kernel.org/r/20181003072046.29276-1-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ tools/perf/util/pmu.c |   13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+--- a/tools/perf/util/pmu.c
++++ b/tools/perf/util/pmu.c
+@@ -754,13 +754,14 @@ static void pmu_format_value(unsigned lo
+ 
+ static __u64 pmu_format_max_value(const unsigned long *format)
+ {
+-	__u64 w = 0;
+-	int fbit;
++	int w;
+ 
+-	for_each_set_bit(fbit, format, PERF_PMU_FORMAT_BITS)
+-		w |= (1ULL << fbit);
+-
+-	return w;
++	w = bitmap_weight(format, PERF_PMU_FORMAT_BITS);
++	if (!w)
++		return 0;
++	if (w < 64)
++		return (1ULL << w) - 1;
++	return -1;
+ }
+ 
+ /*
 
 
-> people able to use a machine at all. So in practice, the "new driver"
-> rule has become a "new ID or quirk" rule.
-
-Got it. Will keep it in mind. Thanks!
-
-
---PNTmBPCT7hxwcZjr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvoreIACgkQFA3kzBSg
-Kba3NBAApr+gYMeyvRr8MYMXNQZjCzlGeIG4xI6VWk5qEvQhlY/PRbwmAXCPBzj1
-jDstNUW9H5oludOjnUn/7GUZczAxuupVTsocBR35AVz7IpMtnSXjmcH13ZMY62cC
-hEQu79xy39oOfBbVt5bvIzRqWzbALN3RW+DsbXMd6BFwYrZCbLhili4zNHEzGIE5
-A7WO64Y6M0VGoqQGeYOv6H25L0xarB0LJJbIyRazqukVCtj67YVPJ24sJKzVFJ96
-vAh6McBleOVbOgx6+70PJgx6fe8mF0GHiIhdMAEkayml8YB/xbk//VPnoO6Qo9z6
-NrvKUUV9zApcuLowqNdNrjXyKVq0EOBz400tYr+bUzcBIRbalBHz0Afnnk6BCBS4
-xcuKRsZz6q5egsyamLDuRxYFE3+gu10BHawrsWvL39iizRSpqizhe6tz3RKHH8ZV
-pJ9OMzyC422G3GpvhVU391QjH7lTr4cnmR3FG/pW6J+KPf5Boqu8y4d/zp4hI154
-0o7zGr2AXzQ70zikAXYvxvBs6tPCq8Eu6HUw7FZSNpyWYQoABPDaab0Si2gILMHd
-5qD6CIBnUw0yyUbqx8ZlZttpMLN4wAFW1Eox/zaQCDT8xOprnpYGHO8l2oaZdkvr
-bJRDrKakQXzlNuKpftMZAEhm65YvvyUkCKt8rHAdOsVmiBTt+YY=
-=JNJ9
------END PGP SIGNATURE-----
-
---PNTmBPCT7hxwcZjr--
