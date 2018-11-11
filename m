@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F3C0C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:47:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83946C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:47:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4681B20818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:47:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A61020818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:47:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XPyZuymc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4681B20818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dqz0zJ3O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A61020818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387446AbeKLJhN (ORCPT
+        id S2387538AbeKLJh3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:37:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39252 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:37:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39292 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733152AbeKLISt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1733176AbeKLISt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:18:49 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 40CF721780;
+        by mail.kernel.org (Postfix) with ESMTPSA id 9AE0D21582;
         Sun, 11 Nov 2018 22:28:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975333;
-        bh=S1bAJpaki20h3/eBcELrLZhQibXZZ2XNGshSeqkgn6Y=;
+        bh=l+4G7udtpBLJaaPhSe2a2226TUYcXdtPjyVzy44caCk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XPyZuymcmVxwbwa+l+awtgeqN+76Sm58reyuS32BGNdF2DOxJeYc+dCLCkYCYztPS
-         FMvV9MbYmGzTddwtst7hAZ9XCWY8IKi1QabQtUo5Fb+TejaJTTOoloTnxkTYYlSyO9
-         D/RbfGMdW/Uj4ty00KjufLJVncdTbBBavNRE02aY=
+        b=Dqz0zJ3OiYHPID+hIKM6KliPUWM5voOQ1/yhXS2dSBIpPaCMMP07ksXdoM+i4wj2J
+         zr31DZErhoLDpOIOpBrHZJEcmkgwRoSa5tdMhXHc/TQznTNMbuWXhtdZkWmIt6hn51
+         toWWnqEFaasFLJNW3wNqnUxJzN8cgLSE1CM7yp6U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josef Bacik <jbacik@fb.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.19 349/361] btrfs: set max_extent_size properly
-Date:   Sun, 11 Nov 2018 14:21:36 -0800
-Message-Id: <20181111221701.383076771@linuxfoundation.org>
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.19 350/361] btrfs: dont use ctl->free_space for max_extent_size
+Date:   Sun, 11 Nov 2018 14:21:37 -0800
+Message-Id: <20181111221701.463651122@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -63,95 +63,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Josef Bacik <jbacik@fb.com>
 
-commit ad22cf6ea47fa20fbe11ac324a0a15c0a9a4a2a9 upstream.
+commit fb5c39d7a887108087de6ff93d3f326b01b4ef41 upstream.
 
-We can't use entry->bytes if our entry is a bitmap entry, we need to use
-entry->max_extent_size in that case.  Fix up all the logic to make this
-consistent.
+max_extent_size is supposed to be the largest contiguous range for the
+space info, and ctl->free_space is the total free space in the block
+group.  We need to keep track of these separately and _only_ use the
+max_free_space if we don't have a max_extent_size, as that means our
+original request was too large to search any of the block groups for and
+therefore wouldn't have a max_extent_size set.
 
-CC: stable@vger.kernel.org # 4.4+
+CC: stable@vger.kernel.org # 4.14+
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
 Signed-off-by: Josef Bacik <jbacik@fb.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/free-space-cache.c |   30 ++++++++++++++++++++----------
- 1 file changed, 20 insertions(+), 10 deletions(-)
+ fs/btrfs/extent-tree.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/fs/btrfs/free-space-cache.c
-+++ b/fs/btrfs/free-space-cache.c
-@@ -1772,6 +1772,13 @@ static int search_bitmap(struct btrfs_fr
- 	return -1;
- }
- 
-+static inline u64 get_max_extent_size(struct btrfs_free_space *entry)
-+{
-+	if (entry->bitmap)
-+		return entry->max_extent_size;
-+	return entry->bytes;
-+}
-+
- /* Cache the size of the max extent in bytes */
- static struct btrfs_free_space *
- find_free_space(struct btrfs_free_space_ctl *ctl, u64 *offset, u64 *bytes,
-@@ -1793,8 +1800,8 @@ find_free_space(struct btrfs_free_space_
- 	for (node = &entry->offset_index; node; node = rb_next(node)) {
- 		entry = rb_entry(node, struct btrfs_free_space, offset_index);
- 		if (entry->bytes < *bytes) {
--			if (entry->bytes > *max_extent_size)
--				*max_extent_size = entry->bytes;
-+			*max_extent_size = max(get_max_extent_size(entry),
-+					       *max_extent_size);
- 			continue;
- 		}
- 
-@@ -1812,8 +1819,8 @@ find_free_space(struct btrfs_free_space_
- 		}
- 
- 		if (entry->bytes < *bytes + align_off) {
--			if (entry->bytes > *max_extent_size)
--				*max_extent_size = entry->bytes;
-+			*max_extent_size = max(get_max_extent_size(entry),
-+					       *max_extent_size);
- 			continue;
- 		}
- 
-@@ -1825,8 +1832,10 @@ find_free_space(struct btrfs_free_space_
- 				*offset = tmp;
- 				*bytes = size;
- 				return entry;
--			} else if (size > *max_extent_size) {
--				*max_extent_size = size;
-+			} else {
-+				*max_extent_size =
-+					max(get_max_extent_size(entry),
-+					    *max_extent_size);
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -7230,6 +7230,7 @@ static noinline int find_free_extent(str
+ 	struct btrfs_block_group_cache *block_group = NULL;
+ 	u64 search_start = 0;
+ 	u64 max_extent_size = 0;
++	u64 max_free_space = 0;
+ 	u64 empty_cluster = 0;
+ 	struct btrfs_space_info *space_info;
+ 	int loop = 0;
+@@ -7525,8 +7526,8 @@ unclustered_alloc:
+ 			spin_lock(&ctl->tree_lock);
+ 			if (ctl->free_space <
+ 			    num_bytes + empty_cluster + empty_size) {
+-				if (ctl->free_space > max_extent_size)
+-					max_extent_size = ctl->free_space;
++				max_free_space = max(max_free_space,
++						     ctl->free_space);
+ 				spin_unlock(&ctl->tree_lock);
+ 				goto loop;
  			}
- 			continue;
- 		}
-@@ -2686,8 +2695,8 @@ static u64 btrfs_alloc_from_bitmap(struc
- 
- 	err = search_bitmap(ctl, entry, &search_start, &search_bytes, true);
- 	if (err) {
--		if (search_bytes > *max_extent_size)
--			*max_extent_size = search_bytes;
-+		*max_extent_size = max(get_max_extent_size(entry),
-+				       *max_extent_size);
- 		return 0;
+@@ -7693,6 +7694,8 @@ loop:
  	}
- 
-@@ -2724,8 +2733,9 @@ u64 btrfs_alloc_from_cluster(struct btrf
- 
- 	entry = rb_entry(node, struct btrfs_free_space, offset_index);
- 	while (1) {
--		if (entry->bytes < bytes && entry->bytes > *max_extent_size)
--			*max_extent_size = entry->bytes;
-+		if (entry->bytes < bytes)
-+			*max_extent_size = max(get_max_extent_size(entry),
-+					       *max_extent_size);
- 
- 		if (entry->bytes < bytes ||
- 		    (!entry->bitmap && entry->offset < min_start)) {
+ out:
+ 	if (ret == -ENOSPC) {
++		if (!max_extent_size)
++			max_extent_size = max_free_space;
+ 		spin_lock(&space_info->lock);
+ 		space_info->max_extent_size = max_extent_size;
+ 		spin_unlock(&space_info->lock);
 
 
