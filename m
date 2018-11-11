@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78705C0044C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98679C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EC83216FD
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5331E21527
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tx1kw0W6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EC83216FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Slsq0ozy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5331E21527
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387745AbeKLITX (ORCPT
+        id S2387756AbeKLITa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:19:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40642 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:19:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41116 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387716AbeKLITW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:19:22 -0500
+        id S1731073AbeKLITa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:19:30 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F48321104;
-        Sun, 11 Nov 2018 22:29:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E6590208A3;
+        Sun, 11 Nov 2018 22:29:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975366;
-        bh=xAaC0PX3DpXt1VbrktvX3gWRg9i5jqNAw5Ooi3sASUw=;
+        s=default; t=1541975373;
+        bh=wQG1J89tqrODFSz69yh4gZZGo1BXGJlTTSz+oeyGD2M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tx1kw0W6zKCIlKAZ6o2pk/8rCqaitJorqvUMkcwkak9y4Ti7ZhFxiXdrrRA3yoQC5
-         NcbCaDWC3bpBcdmImQcf72Ut3tBHUCRzLxf8VHj2Jb8hWu9xvscL99BluEMtEOLVSM
-         o/u6aC4zWjOWyfR9o6DPs2qmOaBM987S05aL/v/U=
+        b=Slsq0ozyUTz1fEX85VcmB0U+MuA0/H2CcsiBxRAZGtRK/Lr27bcn9nzmbrVh/BF1K
+         IqRzZKqSgXwH4zUjldBJxHRbtSxziiyBliA6tfWC5XYihuq9eJ9UsohRmvxJEshJmn
+         i32VhZCQNeDnujnws5u1p2z72C7L2P0q9DwOQF3I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ming Lin <ming.l@ssi.samsung.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Christoph Hellwig <hch@lst.de>, Xiao Ni <xni@redhat.com>,
-        Mariusz Dabrowski <mariusz.dabrowski@intel.com>,
-        Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.18 014/350] block: dont deal with discard limit in blkdev_issue_discard()
-Date:   Sun, 11 Nov 2018 14:17:58 -0800
-Message-Id: <20181111221707.768683952@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 4.18 041/350] ARM: dts: exynos: Disable pull control for MAX8997 interrupts on Origen
+Date:   Sun, 11 Nov 2018 14:18:25 -0800
+Message-Id: <20181111221708.894367573@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -65,85 +63,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-commit 744889b7cbb56a64f957e65ade7cb65fe3f35714 upstream.
+commit f5e758b8358f6c27e8a351ddf0b441a64cdabb94 upstream.
 
-blk_queue_split() does respect this limit via bio splitting, so no
-need to do that in blkdev_issue_discard(), then we can align to
-normal bio submit(bio_add_page() & submit_bio()).
+PMIC_IRQB and PMIC_KEYINB lines on Exynos4210-based Origen board have
+external pull-up resistors, so disable any pull control for those lines
+in respective pin controller node. This fixes support for MAX8997
+interrupts and enables operation of wakeup from MAX8997 RTC alarm.
 
-More importantly, this patch fixes one issue introduced in a22c4d7e34402cc
-("block: re-add discard_granularity and alignment checks"), in which
-zero discard bio may be generated in case of zero alignment.
-
-Fixes: a22c4d7e34402ccdf3 ("block: re-add discard_granularity and alignment checks")
-Cc: stable@vger.kernel.org
-Cc: Ming Lin <ming.l@ssi.samsung.com>
-Cc: Mike Snitzer <snitzer@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Xiao Ni <xni@redhat.com>
-Tested-by: Mariusz Dabrowski <mariusz.dabrowski@intel.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Fixes: 17419726aaa1 ("ARM: dts: add max8997 device node for exynos4210-origen board")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- block/blk-lib.c |   28 ++--------------------------
- 1 file changed, 2 insertions(+), 26 deletions(-)
+ arch/arm/boot/dts/exynos4210-origen.dts |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/block/blk-lib.c
-+++ b/block/blk-lib.c
-@@ -29,9 +29,7 @@ int __blkdev_issue_discard(struct block_
- {
- 	struct request_queue *q = bdev_get_queue(bdev);
- 	struct bio *bio = *biop;
--	unsigned int granularity;
- 	unsigned int op;
--	int alignment;
- 	sector_t bs_mask;
+--- a/arch/arm/boot/dts/exynos4210-origen.dts
++++ b/arch/arm/boot/dts/exynos4210-origen.dts
+@@ -151,6 +151,8 @@
+ 		reg = <0x66>;
+ 		interrupt-parent = <&gpx0>;
+ 		interrupts = <4 IRQ_TYPE_NONE>, <3 IRQ_TYPE_NONE>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&max8997_irq>;
  
- 	if (!q)
-@@ -54,38 +52,16 @@ int __blkdev_issue_discard(struct block_
- 	if ((sector | nr_sects) & bs_mask)
- 		return -EINVAL;
+ 		max8997,pmic-buck1-dvs-voltage = <1350000>;
+ 		max8997,pmic-buck2-dvs-voltage = <1100000>;
+@@ -288,6 +290,13 @@
+ 	};
+ };
  
--	/* Zero-sector (unknown) and one-sector granularities are the same.  */
--	granularity = max(q->limits.discard_granularity >> 9, 1U);
--	alignment = (bdev_discard_alignment(bdev) >> 9) % granularity;
--
- 	while (nr_sects) {
--		unsigned int req_sects;
--		sector_t end_sect, tmp;
-+		unsigned int req_sects = nr_sects;
-+		sector_t end_sect;
- 
--		/*
--		 * Issue in chunks of the user defined max discard setting,
--		 * ensuring that bi_size doesn't overflow
--		 */
--		req_sects = min_t(sector_t, nr_sects,
--					q->limits.max_discard_sectors);
- 		if (!req_sects)
- 			goto fail;
- 		if (req_sects > UINT_MAX >> 9)
- 			req_sects = UINT_MAX >> 9;
- 
--		/*
--		 * If splitting a request, and the next starting sector would be
--		 * misaligned, stop the discard at the previous aligned sector.
--		 */
- 		end_sect = sector + req_sects;
--		tmp = end_sect;
--		if (req_sects < nr_sects &&
--		    sector_div(tmp, granularity) != alignment) {
--			end_sect = end_sect - alignment;
--			sector_div(end_sect, granularity);
--			end_sect = end_sect * granularity + alignment;
--			req_sects = end_sect - sector;
--		}
- 
- 		bio = next_bio(bio, 0, gfp_mask);
- 		bio->bi_iter.bi_sector = sector;
++&pinctrl_1 {
++	max8997_irq: max8997-irq {
++		samsung,pins = "gpx0-3", "gpx0-4";
++		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
++	};
++};
++
+ &sdhci_0 {
+ 	bus-width = <4>;
+ 	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_cd>;
 
 
