@@ -6,44 +6,46 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60330C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:59:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B009C43610
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:00:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28569214E0
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:59:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28569214E0
+	by mail.kernel.org (Postfix) with ESMTP id 682C1214E0
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:00:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 682C1214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729678AbeKLFtY (ORCPT
+        id S1730978AbeKLFte (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 00:49:24 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51324 "EHLO
+        Mon, 12 Nov 2018 00:49:34 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51302 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730845AbeKLFsf (ORCPT
+        by vger.kernel.org with ESMTP id S1730690AbeKLFse (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:48:35 -0500
+        Mon, 12 Nov 2018 00:48:34 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsw-0000tu-DS; Sun, 11 Nov 2018 19:59:06 +0000
+        id 1gLvsv-0000oO-5i; Sun, 11 Nov 2018 19:59:05 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsU-0001do-Hg; Sun, 11 Nov 2018 19:58:38 +0000
+        id 1gLvsV-0001el-08; Sun, 11 Nov 2018 19:58:39 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "J. Bruce Fields" <bfields@redhat.com>,
-        "Jeff Layton" <jlayton@primarydata.com>
+CC:     akpm@linux-foundation.org,
+        syzbot+17a8efdf800000@syzkaller.appspotmail.com,
+        "Alexander Potapenko" <glider@google.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.655951405@decadent.org.uk>
+Message-ID: <lsq.1541965745.239435396@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 201/366] nfsd: silence sparse warning about accessing
- credentials
+Subject: [PATCH 3.16 213/366] vt: prevent leaking uninitialized data to
+ userspace via /dev/vcs*
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,56 +59,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jeff Layton <jlayton@primarydata.com>
+From: Alexander Potapenko <glider@google.com>
 
-commit ae4b884fc6316b3190be19448cea24b020c1cad6 upstream.
+commit 21eff69aaaa0e766ca0ce445b477698dc6a9f55a upstream.
 
-sparse says:
+KMSAN reported an infoleak when reading from /dev/vcs*:
 
-    fs/nfsd/auth.c:31:38: warning: incorrect type in argument 1 (different address spaces)
-    fs/nfsd/auth.c:31:38:    expected struct cred const *cred
-    fs/nfsd/auth.c:31:38:    got struct cred const [noderef] <asn:4>*real_cred
+  BUG: KMSAN: kernel-infoleak in vcs_read+0x18ba/0x1cc0
+  Call Trace:
+  ...
+   kmsan_copy_to_user+0x7a/0x160 mm/kmsan/kmsan.c:1253
+   copy_to_user ./include/linux/uaccess.h:184
+   vcs_read+0x18ba/0x1cc0 drivers/tty/vt/vc_screen.c:352
+   __vfs_read+0x1b2/0x9d0 fs/read_write.c:416
+   vfs_read+0x36c/0x6b0 fs/read_write.c:452
+  ...
+  Uninit was created at:
+   kmsan_save_stack_with_flags mm/kmsan/kmsan.c:279
+   kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:189
+   kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:315
+   __kmalloc+0x13a/0x350 mm/slub.c:3818
+   kmalloc ./include/linux/slab.h:517
+   vc_allocate+0x438/0x800 drivers/tty/vt/vt.c:787
+   con_install+0x8c/0x640 drivers/tty/vt/vt.c:2880
+   tty_driver_install_tty drivers/tty/tty_io.c:1224
+   tty_init_dev+0x1b5/0x1020 drivers/tty/tty_io.c:1324
+   tty_open_by_driver drivers/tty/tty_io.c:1959
+   tty_open+0x17b4/0x2ed0 drivers/tty/tty_io.c:2007
+   chrdev_open+0xc25/0xd90 fs/char_dev.c:417
+   do_dentry_open+0xccc/0x1440 fs/open.c:794
+   vfs_open+0x1b6/0x2f0 fs/open.c:908
+  ...
+  Bytes 0-79 of 240 are uninitialized
 
-Add a new accessor for the ->real_cred and use that to fetch the
-pointer. Accessing current->real_cred directly is actually quite safe
-since we know that they can't go away so this is mostly a cosmetic fixup
-to silence sparse.
+Consistently allocating |vc_screenbuf| with kzalloc() fixes the problem
 
-Signed-off-by: Jeff Layton <jlayton@primarydata.com>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Reported-by: syzbot+17a8efdf800000@syzkaller.appspotmail.com
+Signed-off-by: Alexander Potapenko <glider@google.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/nfsd/auth.c       | 2 +-
- include/linux/cred.h | 9 +++++++++
- 2 files changed, 10 insertions(+), 1 deletion(-)
+ drivers/tty/vt/vt.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/fs/nfsd/auth.c
-+++ b/fs/nfsd/auth.c
-@@ -28,7 +28,7 @@ int nfsd_setuser(struct svc_rqst *rqstp,
- 	validate_process_creds();
+--- a/drivers/tty/vt/vt.c
++++ b/drivers/tty/vt/vt.c
+@@ -782,7 +782,7 @@ int vc_allocate(unsigned int currcons)	/
+ 	if (!*vc->vc_uni_pagedir_loc)
+ 		con_set_default_unimap(vc);
  
- 	/* discard any old override before preparing the new set */
--	revert_creds(get_cred(current->real_cred));
-+	revert_creds(get_cred(current_real_cred()));
- 	new = prepare_creds();
- 	if (!new)
+-	vc->vc_screenbuf = kmalloc(vc->vc_screenbuf_size, GFP_KERNEL);
++	vc->vc_screenbuf = kzalloc(vc->vc_screenbuf_size, GFP_KERNEL);
+ 	if (!vc->vc_screenbuf)
+ 		goto err_free;
+ 
+@@ -869,7 +869,7 @@ static int vc_do_resize(struct tty_struc
+ 
+ 	if (new_screen_size > (4 << 20))
+ 		return -EINVAL;
+-	newscreen = kmalloc(new_screen_size, GFP_USER);
++	newscreen = kzalloc(new_screen_size, GFP_USER);
+ 	if (!newscreen)
  		return -ENOMEM;
---- a/include/linux/cred.h
-+++ b/include/linux/cred.h
-@@ -261,6 +261,15 @@ static inline void put_cred(const struct
- 	rcu_dereference_protected(current->cred, 1)
  
- /**
-+ * current_real_cred - Access the current task's objective credentials
-+ *
-+ * Access the objective credentials of the current task.  RCU-safe,
-+ * since nobody else can modify it.
-+ */
-+#define current_real_cred() \
-+	rcu_dereference_protected(current->real_cred, 1)
-+
-+/**
-  * __task_cred - Access a task's objective credentials
-  * @task: The task to query
-  *
 
