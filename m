@@ -6,52 +6,48 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A41CC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:05:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3949C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:05:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB22E20869
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:05:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB22E20869
+	by mail.kernel.org (Postfix) with ESMTP id 6A0582080D
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:05:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A0582080D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730781AbeKLFyo (ORCPT
+        id S1731256AbeKLFyt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 00:54:44 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51750 "EHLO
+        Mon, 12 Nov 2018 00:54:49 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51788 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731170AbeKLFyY (ORCPT
+        by vger.kernel.org with ESMTP id S1727354AbeKLFyt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:54:24 -0500
+        Mon, 12 Nov 2018 00:54:49 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvt6-0000oG-Nb; Sun, 11 Nov 2018 19:59:16 +0000
+        id 1gLvtC-0000lF-LL; Sun, 11 Nov 2018 19:59:22 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsQ-0001Th-By; Sun, 11 Nov 2018 19:58:34 +0000
+        id 1gLvsO-0001PK-JH; Sun, 11 Nov 2018 19:58:32 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Ingo Molnar" <mingo@kernel.org>,
-        "Song Liu" <songliubraving@fb.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Alexander Shishkin" <alexander.shishkin@linux.intel.com>,
-        "" <kernel-team@fb.com>, "Jiri Olsa" <jolsa@redhat.com>,
-        "Arnaldo Carvalho de Melo" <acme@redhat.com>,
+CC:     akpm@linux-foundation.org,
+        "Andrew Donnellan" <andrew.donnellan@au1.ibm.com>,
+        "Kees Cook" <keescook@chromium.org>,
+        "Daniel Axtens" <dja@axtens.net>,
         "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        "Vince Weaver" <vincent.weaver@maine.edu>,
-        "Stephane Eranian" <eranian@google.com>
+        "Michael Ellerman" <mpe@ellerman.id.au>,
+        "Daniel Micay" <danielmicay@gmail.com>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.386572546@decadent.org.uk>
+Message-ID: <lsq.1541965745.328288053@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 087/366] perf/core: Fix group scheduling with mixed
- hw and sw events
+Subject: [PATCH 3.16 041/366] powerpc: make feature-fixup tests fortify-safe
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -65,106 +61,333 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Song Liu <songliubraving@fb.com>
+From: Daniel Axtens <dja@axtens.net>
 
-commit a1150c202207cc8501bebc45b63c264f91959260 upstream.
+commit c69a48cdb301a18697bc8c9935baf4f32861cf9e upstream.
 
-When hw and sw events are mixed in the same group, they are all attached
-to the hw perf_event_context. This sometimes requires moving group of
-perf_event to a different context.
+Testing the fortified string functions[1] would cause a kernel panic on
+boot in test_feature_fixups() due to a buffer overflow in memcmp.
 
-We found a bug in how the kernel handles this, for example if we do:
+This boils down to things like this:
 
-   perf stat -e '{faults,ref-cycles,faults}'  -I 1000
+  extern unsigned int ftr_fixup_test1;
+  extern unsigned int ftr_fixup_test1_orig;
 
-     1.005591180              1,297      faults
-     1.005591180        457,476,576      ref-cycles
-     1.005591180    <not supported>      faults
+  check(memcmp(&ftr_fixup_test1, &ftr_fixup_test1_orig, size) == 0);
 
-First, sw event "faults" is attached to the sw context, and becomes the
-group leader. Then, hw event "ref-cycles" is attached, so both events
-are moved to the hw context. Last, another sw "faults" tries to attach,
-but it fails because of mismatch between the new target ctx (from sw
-pmu) and the group_leader's ctx (hw context, same as ref-cycles).
+We know that these are asm labels so it is safe to read up to 'size'
+bytes at those addresses.
 
-The broken condition is:
-   group_leader is sw event;
-   group_leader is on hw context;
-   add a sw event to the group.
+However, because we have passed the address of a single unsigned int to
+memcmp, the compiler believes the underlying object is in fact a single
+unsigned int.  So if size > sizeof(unsigned int), there will be a panic
+at runtime.
 
-Fix this scenario by checking group_leader's context (instead of just
-event type). If group_leader is on hw context, use the ->pmu of this
-context to look up context for the new event.
+We can fix this by changing the types: instead of calling the asm labels
+unsigned ints, call them unsigned int[]s.  Therefore the size isn't
+incorrectly determined at compile time and we get a regular unsafe
+memcmp and no panic.
 
-Signed-off-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: <kernel-team@fb.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Fixes: b04243ef7006 ("perf: Complete software pmu grouping")
-Link: http://lkml.kernel.org/r/20180503194716.162815-1-songliubraving@fb.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-[bwh: Backported to 3.16: adjust context]
+[1] http://openwall.com/lists/kernel-hardening/2017/05/09/2
+
+Link: http://lkml.kernel.org/r/1497903987-21002-7-git-send-email-keescook@chromium.org
+Signed-off-by: Daniel Axtens <dja@axtens.net>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Suggested-by: Michael Ellerman <mpe@ellerman.id.au>
+Tested-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+Reviewed-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Daniel Micay <danielmicay@gmail.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- include/linux/perf_event.h |  8 ++++++++
- kernel/events/core.c       | 21 +++++++++++----------
- 2 files changed, 19 insertions(+), 10 deletions(-)
+ arch/powerpc/lib/feature-fixups.c | 180 +++++++++++++++---------------
+ 1 file changed, 90 insertions(+), 90 deletions(-)
 
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -640,6 +640,14 @@ static inline int is_software_event(stru
- 	return event->pmu->task_ctx_nr == perf_sw_context;
+--- a/arch/powerpc/lib/feature-fixups.c
++++ b/arch/powerpc/lib/feature-fixups.c
+@@ -166,192 +166,192 @@ static long calc_offset(struct fixup_ent
+ 
+ void test_basic_patching(void)
+ {
+-	extern unsigned int ftr_fixup_test1;
+-	extern unsigned int end_ftr_fixup_test1;
+-	extern unsigned int ftr_fixup_test1_orig;
+-	extern unsigned int ftr_fixup_test1_expected;
+-	int size = &end_ftr_fixup_test1 - &ftr_fixup_test1;
++	extern unsigned int ftr_fixup_test1[];
++	extern unsigned int end_ftr_fixup_test1[];
++	extern unsigned int ftr_fixup_test1_orig[];
++	extern unsigned int ftr_fixup_test1_expected[];
++	int size = end_ftr_fixup_test1 - ftr_fixup_test1;
+ 
+ 	fixup.value = fixup.mask = 8;
+-	fixup.start_off = calc_offset(&fixup, &ftr_fixup_test1 + 1);
+-	fixup.end_off = calc_offset(&fixup, &ftr_fixup_test1 + 2);
++	fixup.start_off = calc_offset(&fixup, ftr_fixup_test1 + 1);
++	fixup.end_off = calc_offset(&fixup, ftr_fixup_test1 + 2);
+ 	fixup.alt_start_off = fixup.alt_end_off = 0;
+ 
+ 	/* Sanity check */
+-	check(memcmp(&ftr_fixup_test1, &ftr_fixup_test1_orig, size) == 0);
++	check(memcmp(ftr_fixup_test1, ftr_fixup_test1_orig, size) == 0);
+ 
+ 	/* Check we don't patch if the value matches */
+ 	patch_feature_section(8, &fixup);
+-	check(memcmp(&ftr_fixup_test1, &ftr_fixup_test1_orig, size) == 0);
++	check(memcmp(ftr_fixup_test1, ftr_fixup_test1_orig, size) == 0);
+ 
+ 	/* Check we do patch if the value doesn't match */
+ 	patch_feature_section(0, &fixup);
+-	check(memcmp(&ftr_fixup_test1, &ftr_fixup_test1_expected, size) == 0);
++	check(memcmp(ftr_fixup_test1, ftr_fixup_test1_expected, size) == 0);
+ 
+ 	/* Check we do patch if the mask doesn't match */
+-	memcpy(&ftr_fixup_test1, &ftr_fixup_test1_orig, size);
+-	check(memcmp(&ftr_fixup_test1, &ftr_fixup_test1_orig, size) == 0);
++	memcpy(ftr_fixup_test1, ftr_fixup_test1_orig, size);
++	check(memcmp(ftr_fixup_test1, ftr_fixup_test1_orig, size) == 0);
+ 	patch_feature_section(~8, &fixup);
+-	check(memcmp(&ftr_fixup_test1, &ftr_fixup_test1_expected, size) == 0);
++	check(memcmp(ftr_fixup_test1, ftr_fixup_test1_expected, size) == 0);
  }
  
-+/*
-+ * Return 1 for event in sw context, 0 for event in hw context
-+ */
-+static inline int in_software_context(struct perf_event *event)
-+{
-+	return event->ctx->pmu->task_ctx_nr == perf_sw_context;
-+}
-+
- extern struct static_key perf_swevent_enabled[PERF_COUNT_SW_MAX];
+ static void test_alternative_patching(void)
+ {
+-	extern unsigned int ftr_fixup_test2;
+-	extern unsigned int end_ftr_fixup_test2;
+-	extern unsigned int ftr_fixup_test2_orig;
+-	extern unsigned int ftr_fixup_test2_alt;
+-	extern unsigned int ftr_fixup_test2_expected;
+-	int size = &end_ftr_fixup_test2 - &ftr_fixup_test2;
++	extern unsigned int ftr_fixup_test2[];
++	extern unsigned int end_ftr_fixup_test2[];
++	extern unsigned int ftr_fixup_test2_orig[];
++	extern unsigned int ftr_fixup_test2_alt[];
++	extern unsigned int ftr_fixup_test2_expected[];
++	int size = end_ftr_fixup_test2 - ftr_fixup_test2;
  
- extern void ___perf_sw_event(u32, u64, struct pt_regs *, u64);
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -7502,19 +7502,20 @@ SYSCALL_DEFINE5(perf_event_open,
- 	 */
- 	pmu = event->pmu;
+ 	fixup.value = fixup.mask = 0xF;
+-	fixup.start_off = calc_offset(&fixup, &ftr_fixup_test2 + 1);
+-	fixup.end_off = calc_offset(&fixup, &ftr_fixup_test2 + 2);
+-	fixup.alt_start_off = calc_offset(&fixup, &ftr_fixup_test2_alt);
+-	fixup.alt_end_off = calc_offset(&fixup, &ftr_fixup_test2_alt + 1);
++	fixup.start_off = calc_offset(&fixup, ftr_fixup_test2 + 1);
++	fixup.end_off = calc_offset(&fixup, ftr_fixup_test2 + 2);
++	fixup.alt_start_off = calc_offset(&fixup, ftr_fixup_test2_alt);
++	fixup.alt_end_off = calc_offset(&fixup, ftr_fixup_test2_alt + 1);
  
--	if (group_leader &&
--	    (is_software_event(event) != is_software_event(group_leader))) {
--		if (is_software_event(event)) {
-+	if (group_leader) {
-+		if (is_software_event(event) &&
-+		    !in_software_context(group_leader)) {
- 			/*
--			 * If event and group_leader are not both a software
--			 * event, and event is, then group leader is not.
-+			 * If the event is a sw event, but the group_leader
-+			 * is on hw context.
- 			 *
--			 * Allow the addition of software events to !software
--			 * groups, this is safe because software events never
--			 * fail to schedule.
-+			 * Allow the addition of software events to hw
-+			 * groups, this is safe because software events
-+			 * never fail to schedule.
- 			 */
--			pmu = group_leader->pmu;
--		} else if (is_software_event(group_leader) &&
-+			pmu = group_leader->ctx->pmu;
-+		} else if (!is_software_event(event) &&
-+			   is_software_event(group_leader) &&
- 			   (group_leader->group_flags & PERF_GROUP_SOFTWARE)) {
- 			/*
- 			 * In case the group is a pure software group, and we
+ 	/* Sanity check */
+-	check(memcmp(&ftr_fixup_test2, &ftr_fixup_test2_orig, size) == 0);
++	check(memcmp(ftr_fixup_test2, ftr_fixup_test2_orig, size) == 0);
+ 
+ 	/* Check we don't patch if the value matches */
+ 	patch_feature_section(0xF, &fixup);
+-	check(memcmp(&ftr_fixup_test2, &ftr_fixup_test2_orig, size) == 0);
++	check(memcmp(ftr_fixup_test2, ftr_fixup_test2_orig, size) == 0);
+ 
+ 	/* Check we do patch if the value doesn't match */
+ 	patch_feature_section(0, &fixup);
+-	check(memcmp(&ftr_fixup_test2, &ftr_fixup_test2_expected, size) == 0);
++	check(memcmp(ftr_fixup_test2, ftr_fixup_test2_expected, size) == 0);
+ 
+ 	/* Check we do patch if the mask doesn't match */
+-	memcpy(&ftr_fixup_test2, &ftr_fixup_test2_orig, size);
+-	check(memcmp(&ftr_fixup_test2, &ftr_fixup_test2_orig, size) == 0);
++	memcpy(ftr_fixup_test2, ftr_fixup_test2_orig, size);
++	check(memcmp(ftr_fixup_test2, ftr_fixup_test2_orig, size) == 0);
+ 	patch_feature_section(~0xF, &fixup);
+-	check(memcmp(&ftr_fixup_test2, &ftr_fixup_test2_expected, size) == 0);
++	check(memcmp(ftr_fixup_test2, ftr_fixup_test2_expected, size) == 0);
+ }
+ 
+ static void test_alternative_case_too_big(void)
+ {
+-	extern unsigned int ftr_fixup_test3;
+-	extern unsigned int end_ftr_fixup_test3;
+-	extern unsigned int ftr_fixup_test3_orig;
+-	extern unsigned int ftr_fixup_test3_alt;
+-	int size = &end_ftr_fixup_test3 - &ftr_fixup_test3;
++	extern unsigned int ftr_fixup_test3[];
++	extern unsigned int end_ftr_fixup_test3[];
++	extern unsigned int ftr_fixup_test3_orig[];
++	extern unsigned int ftr_fixup_test3_alt[];
++	int size = end_ftr_fixup_test3 - ftr_fixup_test3;
+ 
+ 	fixup.value = fixup.mask = 0xC;
+-	fixup.start_off = calc_offset(&fixup, &ftr_fixup_test3 + 1);
+-	fixup.end_off = calc_offset(&fixup, &ftr_fixup_test3 + 2);
+-	fixup.alt_start_off = calc_offset(&fixup, &ftr_fixup_test3_alt);
+-	fixup.alt_end_off = calc_offset(&fixup, &ftr_fixup_test3_alt + 2);
++	fixup.start_off = calc_offset(&fixup, ftr_fixup_test3 + 1);
++	fixup.end_off = calc_offset(&fixup, ftr_fixup_test3 + 2);
++	fixup.alt_start_off = calc_offset(&fixup, ftr_fixup_test3_alt);
++	fixup.alt_end_off = calc_offset(&fixup, ftr_fixup_test3_alt + 2);
+ 
+ 	/* Sanity check */
+-	check(memcmp(&ftr_fixup_test3, &ftr_fixup_test3_orig, size) == 0);
++	check(memcmp(ftr_fixup_test3, ftr_fixup_test3_orig, size) == 0);
+ 
+ 	/* Expect nothing to be patched, and the error returned to us */
+ 	check(patch_feature_section(0xF, &fixup) == 1);
+-	check(memcmp(&ftr_fixup_test3, &ftr_fixup_test3_orig, size) == 0);
++	check(memcmp(ftr_fixup_test3, ftr_fixup_test3_orig, size) == 0);
+ 	check(patch_feature_section(0, &fixup) == 1);
+-	check(memcmp(&ftr_fixup_test3, &ftr_fixup_test3_orig, size) == 0);
++	check(memcmp(ftr_fixup_test3, ftr_fixup_test3_orig, size) == 0);
+ 	check(patch_feature_section(~0xF, &fixup) == 1);
+-	check(memcmp(&ftr_fixup_test3, &ftr_fixup_test3_orig, size) == 0);
++	check(memcmp(ftr_fixup_test3, ftr_fixup_test3_orig, size) == 0);
+ }
+ 
+ static void test_alternative_case_too_small(void)
+ {
+-	extern unsigned int ftr_fixup_test4;
+-	extern unsigned int end_ftr_fixup_test4;
+-	extern unsigned int ftr_fixup_test4_orig;
+-	extern unsigned int ftr_fixup_test4_alt;
+-	extern unsigned int ftr_fixup_test4_expected;
+-	int size = &end_ftr_fixup_test4 - &ftr_fixup_test4;
++	extern unsigned int ftr_fixup_test4[];
++	extern unsigned int end_ftr_fixup_test4[];
++	extern unsigned int ftr_fixup_test4_orig[];
++	extern unsigned int ftr_fixup_test4_alt[];
++	extern unsigned int ftr_fixup_test4_expected[];
++	int size = end_ftr_fixup_test4 - ftr_fixup_test4;
+ 	unsigned long flag;
+ 
+ 	/* Check a high-bit flag */
+ 	flag = 1UL << ((sizeof(unsigned long) - 1) * 8);
+ 	fixup.value = fixup.mask = flag;
+-	fixup.start_off = calc_offset(&fixup, &ftr_fixup_test4 + 1);
+-	fixup.end_off = calc_offset(&fixup, &ftr_fixup_test4 + 5);
+-	fixup.alt_start_off = calc_offset(&fixup, &ftr_fixup_test4_alt);
+-	fixup.alt_end_off = calc_offset(&fixup, &ftr_fixup_test4_alt + 2);
++	fixup.start_off = calc_offset(&fixup, ftr_fixup_test4 + 1);
++	fixup.end_off = calc_offset(&fixup, ftr_fixup_test4 + 5);
++	fixup.alt_start_off = calc_offset(&fixup, ftr_fixup_test4_alt);
++	fixup.alt_end_off = calc_offset(&fixup, ftr_fixup_test4_alt + 2);
+ 
+ 	/* Sanity check */
+-	check(memcmp(&ftr_fixup_test4, &ftr_fixup_test4_orig, size) == 0);
++	check(memcmp(ftr_fixup_test4, ftr_fixup_test4_orig, size) == 0);
+ 
+ 	/* Check we don't patch if the value matches */
+ 	patch_feature_section(flag, &fixup);
+-	check(memcmp(&ftr_fixup_test4, &ftr_fixup_test4_orig, size) == 0);
++	check(memcmp(ftr_fixup_test4, ftr_fixup_test4_orig, size) == 0);
+ 
+ 	/* Check we do patch if the value doesn't match */
+ 	patch_feature_section(0, &fixup);
+-	check(memcmp(&ftr_fixup_test4, &ftr_fixup_test4_expected, size) == 0);
++	check(memcmp(ftr_fixup_test4, ftr_fixup_test4_expected, size) == 0);
+ 
+ 	/* Check we do patch if the mask doesn't match */
+-	memcpy(&ftr_fixup_test4, &ftr_fixup_test4_orig, size);
+-	check(memcmp(&ftr_fixup_test4, &ftr_fixup_test4_orig, size) == 0);
++	memcpy(ftr_fixup_test4, ftr_fixup_test4_orig, size);
++	check(memcmp(ftr_fixup_test4, ftr_fixup_test4_orig, size) == 0);
+ 	patch_feature_section(~flag, &fixup);
+-	check(memcmp(&ftr_fixup_test4, &ftr_fixup_test4_expected, size) == 0);
++	check(memcmp(ftr_fixup_test4, ftr_fixup_test4_expected, size) == 0);
+ }
+ 
+ static void test_alternative_case_with_branch(void)
+ {
+-	extern unsigned int ftr_fixup_test5;
+-	extern unsigned int end_ftr_fixup_test5;
+-	extern unsigned int ftr_fixup_test5_expected;
+-	int size = &end_ftr_fixup_test5 - &ftr_fixup_test5;
++	extern unsigned int ftr_fixup_test5[];
++	extern unsigned int end_ftr_fixup_test5[];
++	extern unsigned int ftr_fixup_test5_expected[];
++	int size = end_ftr_fixup_test5 - ftr_fixup_test5;
+ 
+-	check(memcmp(&ftr_fixup_test5, &ftr_fixup_test5_expected, size) == 0);
++	check(memcmp(ftr_fixup_test5, ftr_fixup_test5_expected, size) == 0);
+ }
+ 
+ static void test_alternative_case_with_external_branch(void)
+ {
+-	extern unsigned int ftr_fixup_test6;
+-	extern unsigned int end_ftr_fixup_test6;
+-	extern unsigned int ftr_fixup_test6_expected;
+-	int size = &end_ftr_fixup_test6 - &ftr_fixup_test6;
++	extern unsigned int ftr_fixup_test6[];
++	extern unsigned int end_ftr_fixup_test6[];
++	extern unsigned int ftr_fixup_test6_expected[];
++	int size = end_ftr_fixup_test6 - ftr_fixup_test6;
+ 
+-	check(memcmp(&ftr_fixup_test6, &ftr_fixup_test6_expected, size) == 0);
++	check(memcmp(ftr_fixup_test6, ftr_fixup_test6_expected, size) == 0);
+ }
+ 
+ static void test_cpu_macros(void)
+ {
+-	extern u8 ftr_fixup_test_FTR_macros;
+-	extern u8 ftr_fixup_test_FTR_macros_expected;
+-	unsigned long size = &ftr_fixup_test_FTR_macros_expected -
+-			     &ftr_fixup_test_FTR_macros;
++	extern u8 ftr_fixup_test_FTR_macros[];
++	extern u8 ftr_fixup_test_FTR_macros_expected[];
++	unsigned long size = ftr_fixup_test_FTR_macros_expected -
++			     ftr_fixup_test_FTR_macros;
+ 
+ 	/* The fixups have already been done for us during boot */
+-	check(memcmp(&ftr_fixup_test_FTR_macros,
+-		     &ftr_fixup_test_FTR_macros_expected, size) == 0);
++	check(memcmp(ftr_fixup_test_FTR_macros,
++		     ftr_fixup_test_FTR_macros_expected, size) == 0);
+ }
+ 
+ static void test_fw_macros(void)
+ {
+ #ifdef CONFIG_PPC64
+-	extern u8 ftr_fixup_test_FW_FTR_macros;
+-	extern u8 ftr_fixup_test_FW_FTR_macros_expected;
+-	unsigned long size = &ftr_fixup_test_FW_FTR_macros_expected -
+-			     &ftr_fixup_test_FW_FTR_macros;
++	extern u8 ftr_fixup_test_FW_FTR_macros[];
++	extern u8 ftr_fixup_test_FW_FTR_macros_expected[];
++	unsigned long size = ftr_fixup_test_FW_FTR_macros_expected -
++			     ftr_fixup_test_FW_FTR_macros;
+ 
+ 	/* The fixups have already been done for us during boot */
+-	check(memcmp(&ftr_fixup_test_FW_FTR_macros,
+-		     &ftr_fixup_test_FW_FTR_macros_expected, size) == 0);
++	check(memcmp(ftr_fixup_test_FW_FTR_macros,
++		     ftr_fixup_test_FW_FTR_macros_expected, size) == 0);
+ #endif
+ }
+ 
+ static void test_lwsync_macros(void)
+ {
+-	extern u8 lwsync_fixup_test;
+-	extern u8 end_lwsync_fixup_test;
+-	extern u8 lwsync_fixup_test_expected_LWSYNC;
+-	extern u8 lwsync_fixup_test_expected_SYNC;
+-	unsigned long size = &end_lwsync_fixup_test -
+-			     &lwsync_fixup_test;
++	extern u8 lwsync_fixup_test[];
++	extern u8 end_lwsync_fixup_test[];
++	extern u8 lwsync_fixup_test_expected_LWSYNC[];
++	extern u8 lwsync_fixup_test_expected_SYNC[];
++	unsigned long size = end_lwsync_fixup_test -
++			     lwsync_fixup_test;
+ 
+ 	/* The fixups have already been done for us during boot */
+ 	if (cur_cpu_spec->cpu_features & CPU_FTR_LWSYNC) {
+-		check(memcmp(&lwsync_fixup_test,
+-			     &lwsync_fixup_test_expected_LWSYNC, size) == 0);
++		check(memcmp(lwsync_fixup_test,
++			     lwsync_fixup_test_expected_LWSYNC, size) == 0);
+ 	} else {
+-		check(memcmp(&lwsync_fixup_test,
+-			     &lwsync_fixup_test_expected_SYNC, size) == 0);
++		check(memcmp(lwsync_fixup_test,
++			     lwsync_fixup_test_expected_SYNC, size) == 0);
+ 	}
+ }
+ 
 
