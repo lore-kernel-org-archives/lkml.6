@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6164BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:00:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F145BC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:00:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29F63208A3
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:00:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B729E20866
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:00:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FrFJKjyh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29F63208A3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="m2jWFKrz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B729E20866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732598AbeKLJul (ORCPT
+        id S1732584AbeKLJuw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:50:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35400 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:50:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732315AbeKLISB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1732294AbeKLISB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:18:01 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9CF71208A3;
+        by mail.kernel.org (Postfix) with ESMTPSA id 437B621104;
         Sun, 11 Nov 2018 22:28:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975285;
-        bh=lN8xakzGI/oMQ5zpPfchV8COeM65dkVRE4NcNt47e24=;
+        bh=+EIKGvAnG5QKeiPYBhjjHx71fi6FCIYR5HOFic0gd1I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FrFJKjyhmqmWMPfLHWa1atNLMbX+CYmWTYr9Xcg0tYYwXiAfJ0G1oe3McRZDByWgy
-         vtwo2fHgrPHszvtaaUS1TVLQY12P9byvDoQXMa/biGt8vBGy9++DXOwhKBTDJ+evRA
-         AO7FtxSnGxCQvg7aEekQYiIee5yVrGT2Gf8X/QZE=
+        b=m2jWFKrznoxcJr5KTM2HtPjVtJ2Vl47fnnFXlgWF4V5wg8c73zAAFZtBr7Hw6Dfct
+         183fPRGsWDXx9b8lybOYHCLkCQ3Ffj7qCBaorYqQS8XYzplR5L7i+AU6nl9ExwG5GL
+         B2K1PRgqh/3feQ/BrS9dCGKpedppGQgA9lOkxcrg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
+        James Smart <james.smart@broadcom.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 172/361] crypto: caam - fix implicit casts in endianness helpers
-Date:   Sun, 11 Nov 2018 14:18:39 -0800
-Message-Id: <20181111221644.428946301@linuxfoundation.org>
+Subject: [PATCH 4.19 181/361] scsi: lpfc: Correct soft lockup when running mds diagnostics
+Date:   Sun, 11 Nov 2018 14:18:48 -0800
+Message-Id: <20181111221645.629308111@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -63,70 +63,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Horia Geantă" <horia.geanta@nxp.com>
+From: James Smart <jsmart2021@gmail.com>
 
-[ Upstream commit aae733a3f46f5ef338fbdde26e14cbb205a23de0 ]
+[ Upstream commit 0ef01a2d95fd62bb4f536e7ce4d5e8e74b97a244 ]
 
-Fix the following sparse endianness warnings:
+When running an mds diagnostic that passes frames with the switch, soft
+lockups are detected. The driver is in a CQE processing loop and has
+sufficient amount of traffic that it never exits the ring processing routine,
+thus the "lockup".
 
-drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __le32unsigned int @@
-drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-drivers/crypto/caam/regs.h:95:1:    got restricted __le32 [usertype] <noident>
-drivers/crypto/caam/regs.h:95:1: sparse: incorrect type in return expression (different base types) @@    expected unsigned int @@    got restricted __be32unsigned int @@
-drivers/crypto/caam/regs.h:95:1:    expected unsigned int
-drivers/crypto/caam/regs.h:95:1:    got restricted __be32 [usertype] <noident>
+Cap the number of elements in the work processing routine to 64 elements. This
+ensures that the cpu will be given up and the handler reschedule to process
+additional items.
 
-drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __le32
-drivers/crypto/caam/regs.h:92:1: sparse: cast to restricted __be32
-
-Fixes: 261ea058f016 ("crypto: caam - handle core endianness != caam endianness")
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
+Signed-off-by: James Smart <james.smart@broadcom.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/crypto/caam/regs.h |   28 ++++++++++++++--------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+ drivers/scsi/lpfc/lpfc_sli.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/crypto/caam/regs.h
-+++ b/drivers/crypto/caam/regs.h
-@@ -70,22 +70,22 @@
- extern bool caam_little_end;
- extern bool caam_imx;
+--- a/drivers/scsi/lpfc/lpfc_sli.c
++++ b/drivers/scsi/lpfc/lpfc_sli.c
+@@ -3797,6 +3797,7 @@ lpfc_sli_handle_slow_ring_event_s4(struc
+ 	struct hbq_dmabuf *dmabuf;
+ 	struct lpfc_cq_event *cq_event;
+ 	unsigned long iflag;
++	int count = 0;
  
--#define caam_to_cpu(len)				\
--static inline u##len caam##len ## _to_cpu(u##len val)	\
--{							\
--	if (caam_little_end)				\
--		return le##len ## _to_cpu(val);		\
--	else						\
--		return be##len ## _to_cpu(val);		\
-+#define caam_to_cpu(len)						\
-+static inline u##len caam##len ## _to_cpu(u##len val)			\
-+{									\
-+	if (caam_little_end)						\
-+		return le##len ## _to_cpu((__force __le##len)val);	\
-+	else								\
-+		return be##len ## _to_cpu((__force __be##len)val);	\
+ 	spin_lock_irqsave(&phba->hbalock, iflag);
+ 	phba->hba_flag &= ~HBA_SP_QUEUE_EVT;
+@@ -3818,16 +3819,22 @@ lpfc_sli_handle_slow_ring_event_s4(struc
+ 			if (irspiocbq)
+ 				lpfc_sli_sp_handle_rspiocb(phba, pring,
+ 							   irspiocbq);
++			count++;
+ 			break;
+ 		case CQE_CODE_RECEIVE:
+ 		case CQE_CODE_RECEIVE_V1:
+ 			dmabuf = container_of(cq_event, struct hbq_dmabuf,
+ 					      cq_event);
+ 			lpfc_sli4_handle_received_buffer(phba, dmabuf);
++			count++;
+ 			break;
+ 		default:
+ 			break;
+ 		}
++
++		/* Limit the number of events to 64 to avoid soft lockups */
++		if (count == 64)
++			break;
+ 	}
  }
  
--#define cpu_to_caam(len)				\
--static inline u##len cpu_to_caam##len(u##len val)	\
--{							\
--	if (caam_little_end)				\
--		return cpu_to_le##len(val);		\
--	else						\
--		return cpu_to_be##len(val);		\
-+#define cpu_to_caam(len)					\
-+static inline u##len cpu_to_caam##len(u##len val)		\
-+{								\
-+	if (caam_little_end)					\
-+		return (__force u##len)cpu_to_le##len(val);	\
-+	else							\
-+		return (__force u##len)cpu_to_be##len(val);	\
- }
- 
- caam_to_cpu(16)
 
 
