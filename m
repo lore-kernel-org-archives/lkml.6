@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23B22C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:18:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39117C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:18:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE54520817
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:18:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E746C20817
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:18:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qgKNiAhb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE54520817
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="m8SMFe9h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E746C20817
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389831AbeKLJIs (ORCPT
+        id S2389814AbeKLJI6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:08:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48520 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:08:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47942 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389619AbeKLIV1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:21:27 -0500
+        id S2387819AbeKLIV0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:26 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E5D8223D8;
-        Sun, 11 Nov 2018 22:31:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F7BB21707;
+        Sun, 11 Nov 2018 22:31:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975490;
-        bh=TTEKMR3Xi3LBbTcToLfqZSQD+E4u0SIRlny3fhYXfXc=;
+        s=default; t=1541975489;
+        bh=9h1eQ9ps8d4A0S+Ju4kdZSjIjBeIxsgt9iIz2Uum7K8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qgKNiAhbX30i4yu/VU+Vs3gqnjWFlob/08gfgJP6tj+u8Oba8B7LN9X4w+bI1xTL1
-         iK1lYmUiQK0pOE7tqUuMVgYoxEy7BmeOv1VJyEberVUatO/mHg+vS3slMxenuwu98S
-         pxdbjR3Z5OU7JwjT/672NG2gdFVSXQ3xadD83r9Y=
+        b=m8SMFe9hxrHmCJuWnZuIQEvcmanZqaoP/RwvMzuswY7ugN+cDzG5korEb2ta2pgh4
+         dSDZrQSDSJpldRHSI6po78YoIiN8Gaa/epRRTgRrcjKFJOkv2h7s8340jdAxht8Im9
+         axwNrqsl3e/eV1RTRFvcFFaxAB+QkznMURamUv6Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sander Eikelenboom <linux@eikelenboom.it>,
-        Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Subject: [PATCH 4.18 290/350] xen: fix xen_qlock_wait()
-Date:   Sun, 11 Nov 2018 14:22:34 -0800
-Message-Id: <20181111221720.197316164@linuxfoundation.org>
+        stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.18 288/350] media: cec: make cec_get_edid_spa_location() an inline function
+Date:   Sun, 11 Nov 2018 14:22:32 -0800
+Message-Id: <20181111221720.116265824@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -63,82 +62,174 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Juergen Gross <jgross@suse.com>
+From: Hans Verkuil <hans.verkuil@cisco.com>
 
-commit d3132b3860f6cf35ff7609a76bbcdbb814bd027c upstream.
+commit b915bf575d5b7774d0f22d57d6c143e07dcaade2 upstream.
 
-Commit a856531951dc80 ("xen: make xen_qlock_wait() nestable")
-introduced a regression for Xen guests running fully virtualized
-(HVM or PVH mode). The Xen hypervisor wouldn't return from the poll
-hypercall with interrupts disabled in case of an interrupt (for PV
-guests it does).
+This function is needed by both V4L2 and CEC, so move this to
+cec.h as a static inline since there are no obvious shared
+modules between the two subsystems.
 
-So instead of disabling interrupts in xen_qlock_wait() use a nesting
-counter to avoid calling xen_clear_irq_pending() in case
-xen_qlock_wait() is nested.
+This patch, together with the following ones, fixes a
+dependency bug: if CEC_CORE is disabled, then building adv7604
+(and other HDMI receivers) will fail because an essential
+function is now stubbed out.
 
-Fixes: a856531951dc80 ("xen: make xen_qlock_wait() nestable")
-Cc: stable@vger.kernel.org
-Reported-by: Sander Eikelenboom <linux@eikelenboom.it>
-Signed-off-by: Juergen Gross <jgross@suse.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Tested-by: Sander Eikelenboom <linux@eikelenboom.it>
-Signed-off-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Cc: <stable@vger.kernel.org>      # for v4.17 and up
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/xen/spinlock.c |   14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/media/cec/cec-edid.c |   60 ------------------------------------
+ include/media/cec.h          |   70 +++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 70 insertions(+), 60 deletions(-)
 
---- a/arch/x86/xen/spinlock.c
-+++ b/arch/x86/xen/spinlock.c
-@@ -9,6 +9,7 @@
- #include <linux/log2.h>
- #include <linux/gfp.h>
- #include <linux/slab.h>
-+#include <linux/atomic.h>
+--- a/drivers/media/cec/cec-edid.c
++++ b/drivers/media/cec/cec-edid.c
+@@ -10,66 +10,6 @@
+ #include <linux/types.h>
+ #include <media/cec.h>
  
- #include <asm/paravirt.h>
- #include <asm/qspinlock.h>
-@@ -21,6 +22,7 @@
- 
- static DEFINE_PER_CPU(int, lock_kicker_irq) = -1;
- static DEFINE_PER_CPU(char *, irq_name);
-+static DEFINE_PER_CPU(atomic_t, xen_qlock_wait_nest);
- static bool xen_pvspin = true;
- 
- static void xen_qlock_kick(int cpu)
-@@ -39,25 +41,25 @@ static void xen_qlock_kick(int cpu)
-  */
- static void xen_qlock_wait(u8 *byte, u8 val)
+-/*
+- * This EDID is expected to be a CEA-861 compliant, which means that there are
+- * at least two blocks and one or more of the extensions blocks are CEA-861
+- * blocks.
+- *
+- * The returned location is guaranteed to be < size - 1.
+- */
+-static unsigned int cec_get_edid_spa_location(const u8 *edid, unsigned int size)
+-{
+-	unsigned int blocks = size / 128;
+-	unsigned int block;
+-	u8 d;
+-
+-	/* Sanity check: at least 2 blocks and a multiple of the block size */
+-	if (blocks < 2 || size % 128)
+-		return 0;
+-
+-	/*
+-	 * If there are fewer extension blocks than the size, then update
+-	 * 'blocks'. It is allowed to have more extension blocks than the size,
+-	 * since some hardware can only read e.g. 256 bytes of the EDID, even
+-	 * though more blocks are present. The first CEA-861 extension block
+-	 * should normally be in block 1 anyway.
+-	 */
+-	if (edid[0x7e] + 1 < blocks)
+-		blocks = edid[0x7e] + 1;
+-
+-	for (block = 1; block < blocks; block++) {
+-		unsigned int offset = block * 128;
+-
+-		/* Skip any non-CEA-861 extension blocks */
+-		if (edid[offset] != 0x02 || edid[offset + 1] != 0x03)
+-			continue;
+-
+-		/* search Vendor Specific Data Block (tag 3) */
+-		d = edid[offset + 2] & 0x7f;
+-		/* Check if there are Data Blocks */
+-		if (d <= 4)
+-			continue;
+-		if (d > 4) {
+-			unsigned int i = offset + 4;
+-			unsigned int end = offset + d;
+-
+-			/* Note: 'end' is always < 'size' */
+-			do {
+-				u8 tag = edid[i] >> 5;
+-				u8 len = edid[i] & 0x1f;
+-
+-				if (tag == 3 && len >= 5 && i + len <= end &&
+-				    edid[i + 1] == 0x03 &&
+-				    edid[i + 2] == 0x0c &&
+-				    edid[i + 3] == 0x00)
+-					return i + 4;
+-				i += len + 1;
+-			} while (i < end);
+-		}
+-	}
+-	return 0;
+-}
+-
+ u16 cec_get_edid_phys_addr(const u8 *edid, unsigned int size,
+ 			   unsigned int *offset)
  {
--	unsigned long flags;
- 	int irq = __this_cpu_read(lock_kicker_irq);
-+	atomic_t *nest_cnt = this_cpu_ptr(&xen_qlock_wait_nest);
- 
- 	/* If kicker interrupts not initialized yet, just spin */
- 	if (irq == -1 || in_nmi())
- 		return;
- 
--	/* Guard against reentry. */
--	local_irq_save(flags);
-+	/* Detect reentry. */
-+	atomic_inc(nest_cnt);
- 
--	/* If irq pending already clear it. */
--	if (xen_test_irq_pending(irq)) {
-+	/* If irq pending already and no nested call clear it. */
-+	if (atomic_read(nest_cnt) == 1 && xen_test_irq_pending(irq)) {
- 		xen_clear_irq_pending(irq);
- 	} else if (READ_ONCE(*byte) == val) {
- 		/* Block until irq becomes pending (or a spurious wakeup) */
- 		xen_poll_irq(irq);
- 	}
- 
--	local_irq_restore(flags);
-+	atomic_dec(nest_cnt);
+--- a/include/media/cec.h
++++ b/include/media/cec.h
+@@ -451,4 +451,74 @@ static inline void cec_phys_addr_invalid
+ 	cec_s_phys_addr(adap, CEC_PHYS_ADDR_INVALID, false);
  }
  
- static irqreturn_t dummy_handler(int irq, void *dev_id)
++/**
++ * cec_get_edid_spa_location() - find location of the Source Physical Address
++ *
++ * @edid: the EDID
++ * @size: the size of the EDID
++ *
++ * This EDID is expected to be a CEA-861 compliant, which means that there are
++ * at least two blocks and one or more of the extensions blocks are CEA-861
++ * blocks.
++ *
++ * The returned location is guaranteed to be <= size-2.
++ *
++ * This is an inline function since it is used by both CEC and V4L2.
++ * Ideally this would go in a module shared by both, but it is overkill to do
++ * that for just a single function.
++ */
++static inline unsigned int cec_get_edid_spa_location(const u8 *edid,
++						     unsigned int size)
++{
++	unsigned int blocks = size / 128;
++	unsigned int block;
++	u8 d;
++
++	/* Sanity check: at least 2 blocks and a multiple of the block size */
++	if (blocks < 2 || size % 128)
++		return 0;
++
++	/*
++	 * If there are fewer extension blocks than the size, then update
++	 * 'blocks'. It is allowed to have more extension blocks than the size,
++	 * since some hardware can only read e.g. 256 bytes of the EDID, even
++	 * though more blocks are present. The first CEA-861 extension block
++	 * should normally be in block 1 anyway.
++	 */
++	if (edid[0x7e] + 1 < blocks)
++		blocks = edid[0x7e] + 1;
++
++	for (block = 1; block < blocks; block++) {
++		unsigned int offset = block * 128;
++
++		/* Skip any non-CEA-861 extension blocks */
++		if (edid[offset] != 0x02 || edid[offset + 1] != 0x03)
++			continue;
++
++		/* search Vendor Specific Data Block (tag 3) */
++		d = edid[offset + 2] & 0x7f;
++		/* Check if there are Data Blocks */
++		if (d <= 4)
++			continue;
++		if (d > 4) {
++			unsigned int i = offset + 4;
++			unsigned int end = offset + d;
++
++			/* Note: 'end' is always < 'size' */
++			do {
++				u8 tag = edid[i] >> 5;
++				u8 len = edid[i] & 0x1f;
++
++				if (tag == 3 && len >= 5 && i + len <= end &&
++				    edid[i + 1] == 0x03 &&
++				    edid[i + 2] == 0x0c &&
++				    edid[i + 3] == 0x00)
++					return i + 4;
++				i += len + 1;
++			} while (i < end);
++		}
++	}
++	return 0;
++}
++
+ #endif /* _MEDIA_CEC_H */
 
 
