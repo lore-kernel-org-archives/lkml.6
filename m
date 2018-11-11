@@ -7,45 +7,43 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F20CC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E870C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0539B223C6
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04FC922443
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="b1PfYFJE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0539B223C6
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eX8ODuIt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04FC922443
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403956AbeKLIWz (ORCPT
+        id S2403985AbeKLIW4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:22:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54742 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:22:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54672 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387733AbeKLIWy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:54 -0500
+        id S2403884AbeKLIWz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:55 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E24B62241B;
-        Sun, 11 Nov 2018 22:32:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D9F06223C8;
+        Sun, 11 Nov 2018 22:32:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975576;
-        bh=YmkwQjGsLEpwILbltIrmJB4ZjAUbZmQ6SwP5nWvl8o0=;
+        s=default; t=1541975577;
+        bh=XbBAKkW/4AGdEcXy76GihFmiW//Ys44FuLBWRBgaJIs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b1PfYFJEhlfEAzJKMAGrts9pPP14Lm1ldZIwnXtPzR9YSa7aNbWZI78yFypvT/Ni5
-         bC9uSPivcYj0yUhiksaNl4ZJ++Bm+OX3G+ewenpVhxakg/+0iX8FI+zpnzCw8uNpJV
-         KjbVVOfdhJyAemx5oUq+tGuJoZFRtGo0UnX2/GbY=
+        b=eX8ODuItjJ/wp1o+lgUalHCxYi10Znj/dPhqeU5EYrfLPZvV4x8mxbyz4Z0ZXkKoR
+         5kWvgR4BebeiaJGQ16G4nX8nNQ2/bFnfXrsucQldfaURwGLVe/OOqJBtb0A5/fNR43
+         craCSCol4tj1hifEJukyYkUPMfxqdxdzzr3FB0zk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.14 160/222] iio: adc: imx25-gcq: Fix leak of device_node in mx25_gcq_setup_cfgs()
-Date:   Sun, 11 Nov 2018 14:24:17 -0800
-Message-Id: <20181111221701.608463047@linuxfoundation.org>
+        stable@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH 4.14 163/222] w1: omap-hdq: fix missing bus unregister at removal
+Date:   Sun, 11 Nov 2018 14:24:20 -0800
+Message-Id: <20181111221701.871838307@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -63,73 +61,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexey Khoroshilov <khoroshilov@ispras.ru>
+From: Andreas Kemnade <andreas@kemnade.info>
 
-commit d3fa21c73c391975488818b085b894c2980ea052 upstream.
+commit a007734618fee1bf35556c04fa498d41d42c7301 upstream.
 
-Leaving for_each_child_of_node loop we should release child device node,
-if it is not stored for future use.
+The bus master was not removed after unloading the module
+or unbinding the driver. That lead to oopses like this
 
-Found by Linux Driver Verification project (linuxtesting.org).
+[  127.842987] Unable to handle kernel paging request at virtual address bf01d04c
+[  127.850646] pgd = 70e3cd9a
+[  127.853698] [bf01d04c] *pgd=8f908811, *pte=00000000, *ppte=00000000
+[  127.860412] Internal error: Oops: 80000007 [#1] PREEMPT SMP ARM
+[  127.866668] Modules linked in: bq27xxx_battery overlay [last unloaded: omap_hdq]
+[  127.874542] CPU: 0 PID: 1022 Comm: w1_bus_master1 Not tainted 4.19.0-rc4-00001-g2d51da718324 #12
+[  127.883819] Hardware name: Generic OMAP36xx (Flattened Device Tree)
+[  127.890441] PC is at 0xbf01d04c
+[  127.893798] LR is at w1_search_process_cb+0x4c/0xfc
+[  127.898956] pc : [<bf01d04c>]    lr : [<c05f9580>]    psr: a0070013
+[  127.905609] sp : cf885f48  ip : bf01d04c  fp : ddf1e11c
+[  127.911132] r10: cf8fe040  r9 : c05f8d00  r8 : cf8fe040
+[  127.916656] r7 : 000000f0  r6 : cf8fe02c  r5 : cf8fe000  r4 : cf8fe01c
+[  127.923553] r3 : c05f8d00  r2 : 000000f0  r1 : cf8fe000  r0 : dde1ef10
+[  127.930450] Flags: NzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+[  127.938018] Control: 10c5387d  Table: 8f8f0019  DAC: 00000051
+[  127.944091] Process w1_bus_master1 (pid: 1022, stack limit = 0x9135699f)
+[  127.951171] Stack: (0xcf885f48 to 0xcf886000)
+[  127.955810] 5f40:                   cf8fe000 00000000 cf884000 cf8fe090 000003e8 c05f8d00
+[  127.964477] 5f60: dde5fc34 c05f9700 ddf1e100 ddf1e540 cf884000 cf8fe000 c05f9694 00000000
+[  127.973114] 5f80: dde5fc34 c01499a4 00000000 ddf1e540 c0149874 00000000 00000000 00000000
+[  127.981781] 5fa0: 00000000 00000000 00000000 c01010e8 00000000 00000000 00000000 00000000
+[  127.990447] 5fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[  127.999114] 5fe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
+[  128.007781] [<c05f9580>] (w1_search_process_cb) from [<c05f9700>] (w1_process+0x6c/0x118)
+[  128.016479] [<c05f9700>] (w1_process) from [<c01499a4>] (kthread+0x130/0x148)
+[  128.024047] [<c01499a4>] (kthread) from [<c01010e8>] (ret_from_fork+0x14/0x2c)
+[  128.031677] Exception stack(0xcf885fb0 to 0xcf885ff8)
+[  128.037017] 5fa0:                                     00000000 00000000 00000000 00000000
+[  128.045684] 5fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[  128.054351] 5fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+[  128.061340] Code: bad PC value
+[  128.064697] ---[ end trace af066e33c0e14119 ]---
 
-JC: I'm not sending this as a quick fix as it's been wrong for years,
-but good to pick up for stable after the merge window.
-
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Fixes: 6df2e98c3ea56 ("iio: adc: Add imx25-gcq ADC driver")
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/adc/fsl-imx25-gcq.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/w1/masters/omap_hdq.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/iio/adc/fsl-imx25-gcq.c
-+++ b/drivers/iio/adc/fsl-imx25-gcq.c
-@@ -209,12 +209,14 @@ static int mx25_gcq_setup_cfgs(struct pl
- 		ret = of_property_read_u32(child, "reg", &reg);
- 		if (ret) {
- 			dev_err(dev, "Failed to get reg property\n");
-+			of_node_put(child);
- 			return ret;
- 		}
+--- a/drivers/w1/masters/omap_hdq.c
++++ b/drivers/w1/masters/omap_hdq.c
+@@ -763,6 +763,8 @@ static int omap_hdq_remove(struct platfo
+ 	/* remove module dependency */
+ 	pm_runtime_disable(&pdev->dev);
  
- 		if (reg >= MX25_NUM_CFGS) {
- 			dev_err(dev,
- 				"reg value is greater than the number of available configuration registers\n");
-+			of_node_put(child);
- 			return -EINVAL;
- 		}
- 
-@@ -228,6 +230,7 @@ static int mx25_gcq_setup_cfgs(struct pl
- 			if (IS_ERR(priv->vref[refp])) {
- 				dev_err(dev, "Error, trying to use external voltage reference without a vref-%s regulator.",
- 					mx25_gcq_refp_names[refp]);
-+				of_node_put(child);
- 				return PTR_ERR(priv->vref[refp]);
- 			}
- 			priv->channel_vref_mv[reg] =
-@@ -240,6 +243,7 @@ static int mx25_gcq_setup_cfgs(struct pl
- 			break;
- 		default:
- 			dev_err(dev, "Invalid positive reference %d\n", refp);
-+			of_node_put(child);
- 			return -EINVAL;
- 		}
- 
-@@ -254,10 +258,12 @@ static int mx25_gcq_setup_cfgs(struct pl
- 
- 		if ((refp & MX25_ADCQ_CFG_REFP_MASK) != refp) {
- 			dev_err(dev, "Invalid fsl,adc-refp property value\n");
-+			of_node_put(child);
- 			return -EINVAL;
- 		}
- 		if ((refn & MX25_ADCQ_CFG_REFN_MASK) != refn) {
- 			dev_err(dev, "Invalid fsl,adc-refn property value\n");
-+			of_node_put(child);
- 			return -EINVAL;
- 		}
++	w1_remove_master_device(&omap_w1_master);
++
+ 	return 0;
+ }
  
 
 
