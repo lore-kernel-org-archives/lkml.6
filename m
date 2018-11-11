@@ -2,89 +2,145 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33AACC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 01:30:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2767C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 01:33:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF62F208A3
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 01:30:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JznFdFVx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF62F208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 679E62146E
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 01:33:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 679E62146E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727382AbeKKLRU (ORCPT
+        id S1727273AbeKKLUx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 06:17:20 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:38980 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726946AbeKKLRU (ORCPT
+        Sun, 11 Nov 2018 06:20:53 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:42884 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726648AbeKKLUx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 06:17:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=llNjy+cfCYVvm8F8o8jFCmXqWk9GrLmU9yludmjnSxg=; b=JznFdFVx23u4+Is87BDbfixh2
-        32KvvcRWFQNmFjK7djAoGeaX45HCGcPE5HUYMVtIAbtwSDzM0Wt31quttpwg4hjtjcL4rouY6Ps3W
-        ECv7lC44GRfL1GC2/ts1OrIac4afhlUVrCuL6mrr6qc+/qMjy+4MgvNKjMoiuDQksKk8N5mr0xTTE
-        p10H108V2v3/fOkFnkHq4Acc7GkZ6421/6MVtEp38AsRxAKLBifBF731Hz0iZX0Y99H917vZ/Pwho
-        7qyentQPb6rivHqSkKfH92/S3LclR6FWAkEwAPkvXiq6hJkXL9IfG37l0a+CSgtm3qq9SBi9BYeTh
-        AUvkwNLcA==;
-Received: from [64.114.255.114] (helo=worktop)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gLeZu-0000h8-21; Sun, 11 Nov 2018 01:30:18 +0000
-Received: by worktop (Postfix, from userid 1000)
-        id 71AC76E07D5; Sun, 11 Nov 2018 02:30:17 +0100 (CET)
-Date:   Sun, 11 Nov 2018 02:30:17 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-        linux-mm@kvack.org, Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Tejun Heo <tj@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [RFC PATCH 07/12] locking/lockdep: Add support for nested
- terminal locks
-Message-ID: <20181111013017.GC12766@worktop.psav.com>
-References: <1541709268-3766-1-git-send-email-longman@redhat.com>
- <1541709268-3766-8-git-send-email-longman@redhat.com>
- <20181110142023.GG3339@worktop.programming.kicks-ass.net>
- <f3fc6819-175b-6452-4705-942a82d7e06f@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f3fc6819-175b-6452-4705-942a82d7e06f@redhat.com>
-User-Agent: Mutt/1.5.22.1 (2013-10-16)
+        Sun, 11 Nov 2018 06:20:53 -0500
+Received: from [192.168.4.242] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1gLedB-0001Rn-E5; Sun, 11 Nov 2018 01:33:41 +0000
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1gLedB-00042V-5i; Sun, 11 Nov 2018 01:33:41 +0000
+Message-ID: <fdd2eb6f62663b936077b5705d3ea1504d0a7d97.camel@decadent.org.uk>
+Subject: Re: [PATCH 3.16] staging: usbip stub_rx fix static checker warning
+ on unnecessary checks
+From:   Ben Hutchings <ben@decadent.org.uk>
+To:     Shuah Khan <shuahkh@osg.samsung.com>, valentina.manea.m@gmail.com,
+        shuah@kernel.org, gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        bwh@kernel.org, dan.carpenter@oracle.com
+Date:   Sun, 11 Nov 2018 01:33:40 +0000
+In-Reply-To: <20180226211241.19335-1-shuahkh@osg.samsung.com>
+References: <20180226211241.19335-1-shuahkh@osg.samsung.com>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-H7xMBZSXf9dND3GmbY2P"
+User-Agent: Evolution 3.30.1-1 
+Mime-Version: 1.0
+X-SA-Exim-Connect-IP: 192.168.4.242
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 10, 2018 at 07:30:54PM -0500, Waiman Long wrote:
-> On 11/10/2018 09:20 AM, Peter Zijlstra wrote:
-> > On Thu, Nov 08, 2018 at 03:34:23PM -0500, Waiman Long wrote:
-> >> There are use cases where we want to allow 2-level nesting of one
-> >> terminal lock underneath another one. So the terminal lock type is now
-> >> extended to support a new nested terminal lock where it can allow the
-> >> acquisition of another regular terminal lock underneath it.
-> > You're stretching things here... If you're allowing things under it, it
-> > is no longer a terminal lock.
-> >
-> > Why would you want to do such a thing?
-> 
-> A majority of the gain in debugobjects is to make the hash lock a kind
-> of terminal lock. Yes, I may be stretching it a bit here. I will take
-> back the nesting patch and consider doing that in a future patch.
 
-Maybe try and write a better changelog? I'm not following, but that
-could also be because I've been awake for almost 20 hours :/
+--=-H7xMBZSXf9dND3GmbY2P
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, 2018-02-26 at 14:12 -0700, Shuah Khan wrote:
+> Upstream commit 10c901209306
+> ("usbip: stub_rx: fix static checker warning on unnecessary checks")
+>=20
+> Back-port fix for static checker warning on unnecessary checks
+>=20
+> smatch warnings:
+> drivers/staging/usbip/stub_rx.c:360 get_pipe() warn: impossible
+> condition '(pdu->u.cmd_submit.transfer_buffer_length > ((~0 >> 1))) =3D>
+> (s32min-s32max > s32max)'
+> drivers/staging/usbip/stub_rx.c:501 stub_recv_cmd_submit() warn: always
+> true condition '(pdu->u.cmd_submit.transfer_buffer_length <=3D ((~0 >>
+> 1))) =3D> (s32min-s32max <=3D s32max)'
+
+I've finally queued this up, thanks.
+
+Ben.
+
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Shuah Khan <shuahkh@osg.samsung.com>
+> ---
+>  drivers/staging/usbip/stub_rx.c | 11 +----------
+>  1 file changed, 1 insertion(+), 10 deletions(-)
+>=20
+> diff --git a/drivers/staging/usbip/stub_rx.c b/drivers/staging/usbip/stub=
+_rx.c
+> index 35f59747122a..d8544ab9577b 100644
+> --- a/drivers/staging/usbip/stub_rx.c
+> +++ b/drivers/staging/usbip/stub_rx.c
+> @@ -356,14 +356,6 @@ static int get_pipe(struct stub_device *sdev, struct=
+ usbip_header *pdu)
+> =20
+>  	epd =3D &ep->desc;
+> =20
+> -	/* validate transfer_buffer_length */
+> -	if (pdu->u.cmd_submit.transfer_buffer_length > INT_MAX) {
+> -		dev_err(&sdev->udev->dev,
+> -			"CMD_SUBMIT: -EMSGSIZE transfer_buffer_length %d\n",
+> -			pdu->u.cmd_submit.transfer_buffer_length);
+> -		return -1;
+> -	}
+> -
+>  	if (usb_endpoint_xfer_control(epd)) {
+>  		if (dir =3D=3D USBIP_DIR_OUT)
+>  			return usb_sndctrlpipe(udev, epnum);
+> @@ -497,8 +489,7 @@ static void stub_recv_cmd_submit(struct stub_device *=
+sdev,
+>  	}
+> =20
+>  	/* allocate urb transfer buffer, if needed */
+> -	if (pdu->u.cmd_submit.transfer_buffer_length > 0 &&
+> -	    pdu->u.cmd_submit.transfer_buffer_length <=3D INT_MAX) {
+> +	if (pdu->u.cmd_submit.transfer_buffer_length > 0) {
+>  		priv->urb->transfer_buffer =3D
+>  			kzalloc(pdu->u.cmd_submit.transfer_buffer_length,
+>  				GFP_KERNEL);
+--=20
+Ben Hutchings
+Reality is just a crutch for people who can't handle science fiction.
+
+
+
+--=-H7xMBZSXf9dND3GmbY2P
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAlvnhvQACgkQ57/I7JWG
+EQm+Vg/9GP1OCB9jSRsg30KsTTaPU14ZjdUfFdgpmRBF+vraruTA0PEj6N5uIXn+
+1PHYqx4keMY0SEF7j1JUiDk9Pow0YnwmoUt9etHSbS92sbMscluzFZ9b6uTEaRL3
+MVClv5V46xnduSTgMNYEOh2+HiJI5ViEe0thtqM+bgUv8g/p/AUm5tYOd9aKT8o1
+f2aVvi1Kk3ZOXI32Hk5/CS5fjowcCezL5/232UlyMz9MOvlz2UbwxELBB4qtJsYR
+v1/MyiC19JpbFEQSWteeFUj8ArYlWzPe0k8KlMpBiMfhk7giHL3QDJcLG6iF+GYy
+Yd8bVSAfdPc7GIW989tW37dsNZf6ud8CrVeRHEBJIooSI0jfjTR8Du29a5zYRh1y
+rYSaVzLanUv/C4L9FI3UClUE04aa7LE14m1WUNs1c0MNRPAi/ei/kQ0QqZtTlTXR
+Tpc58paPkio3RvQISg60mP6H9ePq/zapssQ61TDqNqeYlVu/ENJBpyUhY8tCJvbS
+f1jvesIsypv9duWA8UZaqH5tZfftaEiVq7G2Jb4cz6Yb6sW56FOf/peDsw8m2I9z
+w3Xjo22FAbOdHOp1/qxeNA1SSpW1V85N1WXj5Kirt7rY43uFcJxP3nLEOts3eihi
+QWgeBuFft9oDQB38971g6dMcHlMRZfdUXiOX6T6cieQXtrYa4xM=
+=hIb7
+-----END PGP SIGNATURE-----
+
+--=-H7xMBZSXf9dND3GmbY2P--
