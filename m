@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98679C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AF60C0044C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5331E21527
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E6BB2154B
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Slsq0ozy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5331E21527
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KfRytO3u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E6BB2154B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387756AbeKLITa (ORCPT
+        id S2387770AbeKLITb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:19:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41116 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:19:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41146 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731073AbeKLITa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:19:30 -0500
+        id S1731689AbeKLITb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:19:31 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E6590208A3;
-        Sun, 11 Nov 2018 22:29:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4DED421104;
+        Sun, 11 Nov 2018 22:29:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975373;
-        bh=wQG1J89tqrODFSz69yh4gZZGo1BXGJlTTSz+oeyGD2M=;
+        s=default; t=1541975374;
+        bh=9zJp/WXrQd7dq7306Rec/89AJIIiZcWOFqpNC/J8M9E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Slsq0ozyUTz1fEX85VcmB0U+MuA0/H2CcsiBxRAZGtRK/Lr27bcn9nzmbrVh/BF1K
-         IqRzZKqSgXwH4zUjldBJxHRbtSxziiyBliA6tfWC5XYihuq9eJ9UsohRmvxJEshJmn
-         i32VhZCQNeDnujnws5u1p2z72C7L2P0q9DwOQF3I=
+        b=KfRytO3up6SKrNOZlSciM/w2xKhXTmTJc8QShDmegwbkNqFy++jpfVnzvdfQtNxaI
+         f5HTo30TbXhJ2I9qLlDePfdbnqrXffVuu8OJtfa2CTCcfDZzT/khRTxRb+WK+CSOTw
+         Qsgjh3E83TKfbC6+o2O/o57VLg+xMZ31W65zMeNQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 4.18 041/350] ARM: dts: exynos: Disable pull control for MAX8997 interrupts on Origen
-Date:   Sun, 11 Nov 2018 14:18:25 -0800
-Message-Id: <20181111221708.894367573@linuxfoundation.org>
+        stable@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.18 042/350] drm: fix use of freed memory in drm_mode_setcrtc
+Date:   Sun, 11 Nov 2018 14:18:26 -0800
+Message-Id: <20181111221708.931717357@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -63,49 +65,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
 
-commit f5e758b8358f6c27e8a351ddf0b441a64cdabb94 upstream.
+[ Upstream commit 064253c1c0625efd0362a0b7ecdbe8bee2a2904d ]
 
-PMIC_IRQB and PMIC_KEYINB lines on Exynos4210-based Origen board have
-external pull-up resistors, so disable any pull control for those lines
-in respective pin controller node. This fixes support for MAX8997
-interrupts and enables operation of wakeup from MAX8997 RTC alarm.
+drm_mode_setcrtc() retries modesetting in case one of the functions it
+calls returns -EDEADLK. connector_set, mode and fb are freed before
+retrying, but they are not set to NULL. This can cause
+drm_mode_setcrtc() to use those variables.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Fixes: 17419726aaa1 ("ARM: dts: add max8997 device node for exynos4210-origen board")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+For example: On the first try __drm_mode_set_config_internal() returns
+-EDEADLK. connector_set, mode and fb are freed. Next retry starts, and
+drm_modeset_lock_all_ctx() returns -EDEADLK, and we jump to 'out'. The
+code will happily try to release all three again.
+
+This leads to crashes of different kinds, depending on the sequence the
+EDEADLKs happen.
+
+Fix this by setting the three variables to NULL at the start of the
+retry loop.
+
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180917110054.4053-1-tomi.valkeinen@ti.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/arm/boot/dts/exynos4210-origen.dts |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/gpu/drm/drm_crtc.c |   10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
---- a/arch/arm/boot/dts/exynos4210-origen.dts
-+++ b/arch/arm/boot/dts/exynos4210-origen.dts
-@@ -151,6 +151,8 @@
- 		reg = <0x66>;
- 		interrupt-parent = <&gpx0>;
- 		interrupts = <4 IRQ_TYPE_NONE>, <3 IRQ_TYPE_NONE>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&max8997_irq>;
- 
- 		max8997,pmic-buck1-dvs-voltage = <1350000>;
- 		max8997,pmic-buck2-dvs-voltage = <1100000>;
-@@ -288,6 +290,13 @@
- 	};
- };
- 
-+&pinctrl_1 {
-+	max8997_irq: max8997-irq {
-+		samsung,pins = "gpx0-3", "gpx0-4";
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+	};
-+};
+--- a/drivers/gpu/drm/drm_crtc.c
++++ b/drivers/gpu/drm/drm_crtc.c
+@@ -560,9 +560,9 @@ int drm_mode_setcrtc(struct drm_device *
+ 	struct drm_mode_crtc *crtc_req = data;
+ 	struct drm_crtc *crtc;
+ 	struct drm_plane *plane;
+-	struct drm_connector **connector_set = NULL, *connector;
+-	struct drm_framebuffer *fb = NULL;
+-	struct drm_display_mode *mode = NULL;
++	struct drm_connector **connector_set, *connector;
++	struct drm_framebuffer *fb;
++	struct drm_display_mode *mode;
+ 	struct drm_mode_set set;
+ 	uint32_t __user *set_connectors_ptr;
+ 	struct drm_modeset_acquire_ctx ctx;
+@@ -591,6 +591,10 @@ int drm_mode_setcrtc(struct drm_device *
+ 	mutex_lock(&crtc->dev->mode_config.mutex);
+ 	drm_modeset_acquire_init(&ctx, DRM_MODESET_ACQUIRE_INTERRUPTIBLE);
+ retry:
++	connector_set = NULL;
++	fb = NULL;
++	mode = NULL;
 +
- &sdhci_0 {
- 	bus-width = <4>;
- 	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_cd>;
+ 	ret = drm_modeset_lock_all_ctx(crtc->dev, &ctx);
+ 	if (ret)
+ 		goto out;
 
 
