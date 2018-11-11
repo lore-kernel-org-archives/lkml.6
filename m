@@ -2,127 +2,118 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_ADSP_ALL,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B69AC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:09:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE2F9C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:09:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD0062080D
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:09:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD0062080D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id A05852080D
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:09:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A05852080D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mniewoehner.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731635AbeKLF6g (ORCPT
+        id S1731293AbeKLF7M convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 00:58:36 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54772 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731354AbeKLF6f (ORCPT
+        Mon, 12 Nov 2018 00:59:12 -0500
+Received: from sender-of-o53.zoho.com ([135.84.80.218]:21795 "EHLO
+        sender-of-o53.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726912AbeKLF7L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:58:35 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wABK8bfJ090462
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 15:09:05 -0500
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2npdbntjbs-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 15:09:05 -0500
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Sun, 11 Nov 2018 20:09:05 -0000
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 11 Nov 2018 20:08:58 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wABK8vhD28704774
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 11 Nov 2018 20:08:58 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CFB74B206A;
-        Sun, 11 Nov 2018 20:08:57 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id ACC9EB205F;
-        Sun, 11 Nov 2018 20:08:57 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.207.24])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Sun, 11 Nov 2018 20:08:57 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id E3A9C16C5D38; Sun, 11 Nov 2018 12:08:58 -0800 (PST)
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tip/core/rcu 1/4] srcu: Fix kernel-doc missing notation
-Date:   Sun, 11 Nov 2018 12:08:54 -0800
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181111200834.GA10983@linux.ibm.com>
-References: <20181111200834.GA10983@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18111120-0064-0000-0000-00000372302D
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010028; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01116027; UDB=6.00577118; IPR=6.00896127;
- MB=3.00024115; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-11 20:09:03
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111120-0065-0000-0000-00003B4D4B6A
-Message-Id: <20181111200857.11711-1-paulmck@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-11_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811110192
+        Mon, 12 Nov 2018 00:59:11 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1541966965; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=ZMQc1Gp4fycFKPWTuDWaRv5OaGKnY1ylMtHb+hdySvWOUewNorBmULBd6j64coiaQJki8PnIx9rlypGdUqdhG7zoBlfwD5kO4EZOMZEnIhLMO4lGaamh0PMsOjKdQW4c9jr7oFX3K5HwL9oNjMWBlnepsPbtlpXwSQYoDj0vbMI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1541966965; h=Content-Type:Content-Transfer-Encoding:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
+        bh=YR3WVKfpIS6z1Qj4SMgJBZ1aePS5t8lU9Y+Foo7GYNk=; 
+        b=fJdQfQ9ZeVh0hu+bJbcXKW1LVTT29nSIGLPRumsxdvWUBpVPqa2uvxyr2cXezV1Qs++IvCneWBi89nvvtZurQTo5Tc5DAV59EbTobdILQ0FUysAU+q+Pdfg3mJSGRQts8lWRJuoMWmg31VM4FJAetmF7E5OmLnRNVZFptJ6MNSU=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=mniewoehner.de;
+        spf=pass  smtp.mailfrom=linux@mniewoehner.de;
+        dmarc=pass header.from=<linux@mniewoehner.de> header.from=<linux@mniewoehner.de>
+Received: from z3r0 (31.187.91.78 [31.187.91.78]) by mx.zohomail.com
+        with SMTPS id 1541966962917302.1454457460799; Sun, 11 Nov 2018 12:09:22 -0800 (PST)
+Message-ID: <7d8cc5ad4bb7548d283f363de6f24c90d5d0a2b2.camel@mniewoehner.de>
+Subject: Re: [BUG] Nuvoton NCPT650 TPM 2.0 mode not working
+From:   Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
+        arnd@arndb.de, linux-integrity@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+In-Reply-To: <1541962653.3190.7.camel@HansenPartnership.com>
+References: <776f384a81466642472beb4a34b10f26f1de88e9.camel@mniewoehner.de>
+         <1541960689.3190.4.camel@HansenPartnership.com>
+         <e8eb56fdab618770917fbe5b174328dc1240f934.camel@mniewoehner.de>
+         <1541962653.3190.7.camel@HansenPartnership.com>
+Content-Type: text/plain; charset="UTF-8"
+Date:   Sun, 11 Nov 2018 21:09:19 +0100
+Mime-Version: 1.0
+X-Mailer: Evolution 3.28.5 
+Content-Transfer-Encoding: 8BIT
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
 
-Fix kernel-doc warnings for missing parameter descriptions:
+On Sun, 2018-11-11 at 10:57 -0800, James Bottomley wrote:
+> On Sun, 2018-11-11 at 19:50 +0100, Michael Niewöhner wrote:
+> [...]
+> > > However, this makes me wonder about yours:
+> > > 
+> > > > [    0.003517] ACPI: TPM2 0x000000009E490ED8 000034 (v03 LENOVO
+> > > > TC-
+> > > > S06   00001300 AMI  00000000)
+> > > 
+> > > I thought the Lenovo "upgrade to 2.0" in fact disabled the external
+> > > TPM in favour of the Intel PTT (software TPM in the management
+> > > engine).  Since you apparently have the tpm_crb driver that should
+> > > find the PTT TPM, this might be one of the attachment bugs in the
+> > > CRB driver ... from your ACPI output it looks to be not specifying
+> > > the Tpm2Tabl.
+> > 
+> > Well, there are at least two implementations I know of:
+> > For my Lenovo X260 I can choose between Infineon TPM 1.2 or Intel PTT
+> > TPM 2.0 This here is my ThinkStation P320 which can choose between
+> > PTT 1.2, PTT 2.0,
+> > Nuvoton 1.2 and 2.0. When switchting between 1.2 and 2.0 the Nuvoton
+> > gets
+> > reflashed with the appropriate firmware.
+> 
+> Well, I still think the ACPI setup is incorrect.  What's in
+> /sys/class/platform (should be directories of ACPI devices)?  The TPM
+> is supposed to show up as MSFT0101.  If it doesn't is there any other
+> device string in there that might be a TPM?
 
-../include/linux/srcu.h:175: warning: Function parameter or member 'p' not described in 'srcu_dereference_notrace'
-../include/linux/srcu.h:175: warning: Function parameter or member 'sp' not described in 'srcu_dereference_notrace'
+Nope. I'm not sure if it should show up in ACPI... isn't TPM 2.0 I2C?
 
-Fixes: 0b764a6e4e19d ("srcu: Add notrace variant of srcu_dereference")
+$ find /sys | grep -i tpm
+/sys/class/tpmrm
+/sys/class/tpm
+/sys/bus/platform/drivers/tpm_tis
+/sys/bus/platform/drivers/tpm_tis/uevent
+/sys/bus/platform/drivers/tpm_tis/bind
+/sys/bus/platform/drivers/tpm_tis/unbind
+/sys/bus/pnp/drivers/tpm_tis
+/sys/bus/pnp/drivers/tpm_tis/uevent
+/sys/bus/pnp/drivers/tpm_tis/bind
+/sys/bus/pnp/drivers/tpm_tis/unbind
+/sys/bus/acpi/drivers/tpm_crb
+/sys/bus/acpi/drivers/tpm_crb/uevent
+/sys/bus/acpi/drivers/tpm_crb/bind
+/sys/bus/acpi/drivers/tpm_crb/unbind
+/sys/bus/i2c/drivers/tpm_i2c_nuvoton
+/sys/bus/i2c/drivers/tpm_i2c_nuvoton/uevent
+/sys/bus/i2c/drivers/tpm_i2c_nuvoton/bind
+/sys/bus/i2c/drivers/tpm_i2c_nuvoton/unbind
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Josh Triplett <josh@joshtriplett.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Joel Fernandes (Google) <joel@joelfernandes.org>
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
----
- include/linux/srcu.h | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/include/linux/srcu.h b/include/linux/srcu.h
-index 67135d4a8a30..ebd5f1511690 100644
---- a/include/linux/srcu.h
-+++ b/include/linux/srcu.h
-@@ -171,6 +171,9 @@ static inline int srcu_read_lock_held(const struct srcu_struct *sp)
- 
- /**
-  * srcu_dereference_notrace - no tracing and no lockdep calls from here
-+ * @p: the pointer to fetch and protect for later dereferencing
-+ * @sp: pointer to the srcu_struct, which is used to check that we
-+ *	really are in an SRCU read-side critical section.
-  */
- #define srcu_dereference_notrace(p, sp) srcu_dereference_check((p), (sp), 1)
- 
--- 
-2.17.1
+> 
+> James
+> 
+
 
