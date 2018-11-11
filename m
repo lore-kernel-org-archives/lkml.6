@@ -6,45 +6,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC9A0C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:53:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C203C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:54:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 797F720839
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:53:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E755B20839
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:54:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oLieONoO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 797F720839
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jLt781Y4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E755B20839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733002AbeKLJoR (ORCPT
+        id S1732764AbeKLISY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:44:17 -0500
+        Mon, 12 Nov 2018 03:18:24 -0500
 Received: from mail.kernel.org ([198.145.29.99]:37302 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732756AbeKLISY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:18:24 -0500
+        id S1732735AbeKLISX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:18:23 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F5EE21527;
-        Sun, 11 Nov 2018 22:28:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D0430223AE;
+        Sun, 11 Nov 2018 22:28:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975308;
-        bh=ecwUhoW/3eORpou8QEtFXAE4/OQjKY4PaNI9YRLouFE=;
+        s=default; t=1541975306;
+        bh=VCyPFE6V4oJWG0fjsQ5uPXl+zEAg8jp6eVIdW3xJ/r4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oLieONoOQxGDG44wzh4nJbQ3+yEhffWCRnwuGX3rb+55C5HQ0n6NcNYDlYWZ9ZFP6
-         xQGf41KWoHSd3r8kiFp+m72Rb6hGHnsA/Xk7HetafSKGX64ADf8Zsurics93HnNFvm
-         zll9kHyqm+rhM9ldyDrQS0rlpzcTADSDcUIxJlQ4=
+        b=jLt781Y4aEJYSMcZFYlIHHYLxHJWlIvN4xF1x+hHdLdkUbd2S/kaq/FyZkpAmxgs3
+         H+Yhwi38mIg8JMz1lccFSnktyzqzLpIr6Uoc1M6uwfj5aaCpKs6kD0LpgEXa3KoBsk
+         YM8mGCr7qnqCyeRsiipIshBibAHAU5BBz/YnXANg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.19 280/361] powerpc64/module elfv1: Set opd addresses after module relocation
-Date:   Sun, 11 Nov 2018 14:20:27 -0800
-Message-Id: <20181111221655.792925529@linuxfoundation.org>
+        stable@vger.kernel.org, Damien Le Moal <damien.lemoal@wdc.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.19 276/361] dm zoned: fix metadata block ref counting
+Date:   Sun, 11 Nov 2018 14:20:23 -0800
+Message-Id: <20181111221655.434696265@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -62,56 +61,102 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+From: Damien Le Moal <damien.lemoal@wdc.com>
 
-commit 59fe7eaf3598a89cbcd72e645b1d08afd76f7b29 upstream.
+commit 33c2865f8d011a2ca9f67124ddab9dc89382e9f1 upstream.
 
-module_frob_arch_sections() is called before the module is moved to its
-final location. The function descriptor section addresses we are setting
-here are thus invalid. Fix this by processing opd section during
-module_finalize()
+Since the ref field of struct dmz_mblock is always used with the
+spinlock of struct dmz_metadata locked, there is no need to use an
+atomic_t type. Change the type of the ref field to an unsigne
+integer.
 
-Fixes: 5633e85b2c313 ("powerpc64: Add .opd based function descriptor dereference")
-Cc: stable@vger.kernel.org # v4.16
-Signed-off-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: 3b1a94c88b79 ("dm zoned: drive-managed zoned block device target")
+Cc: stable@vger.kernel.org
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kernel/module.c    |    8 ++++++++
- arch/powerpc/kernel/module_64.c |    5 -----
- 2 files changed, 8 insertions(+), 5 deletions(-)
+ drivers/md/dm-zoned-metadata.c |   20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
---- a/arch/powerpc/kernel/module.c
-+++ b/arch/powerpc/kernel/module.c
-@@ -74,6 +74,14 @@ int module_finalize(const Elf_Ehdr *hdr,
- 				  (void *)sect->sh_addr + sect->sh_size);
- #endif /* CONFIG_PPC64 */
+--- a/drivers/md/dm-zoned-metadata.c
++++ b/drivers/md/dm-zoned-metadata.c
+@@ -99,7 +99,7 @@ struct dmz_mblock {
+ 	struct rb_node		node;
+ 	struct list_head	link;
+ 	sector_t		no;
+-	atomic_t		ref;
++	unsigned int		ref;
+ 	unsigned long		state;
+ 	struct page		*page;
+ 	void			*data;
+@@ -296,7 +296,7 @@ static struct dmz_mblock *dmz_alloc_mblo
  
-+#ifdef PPC64_ELF_ABI_v1
-+	sect = find_section(hdr, sechdrs, ".opd");
-+	if (sect != NULL) {
-+		me->arch.start_opd = sect->sh_addr;
-+		me->arch.end_opd = sect->sh_addr + sect->sh_size;
-+	}
-+#endif /* PPC64_ELF_ABI_v1 */
-+
- #ifdef CONFIG_PPC_BARRIER_NOSPEC
- 	sect = find_section(hdr, sechdrs, "__spec_barrier_fixup");
- 	if (sect != NULL)
---- a/arch/powerpc/kernel/module_64.c
-+++ b/arch/powerpc/kernel/module_64.c
-@@ -360,11 +360,6 @@ int module_frob_arch_sections(Elf64_Ehdr
- 		else if (strcmp(secstrings+sechdrs[i].sh_name,"__versions")==0)
- 			dedotify_versions((void *)hdr + sechdrs[i].sh_offset,
- 					  sechdrs[i].sh_size);
--		else if (!strcmp(secstrings + sechdrs[i].sh_name, ".opd")) {
--			me->arch.start_opd = sechdrs[i].sh_addr;
--			me->arch.end_opd = sechdrs[i].sh_addr +
--					   sechdrs[i].sh_size;
--		}
+ 	RB_CLEAR_NODE(&mblk->node);
+ 	INIT_LIST_HEAD(&mblk->link);
+-	atomic_set(&mblk->ref, 0);
++	mblk->ref = 0;
+ 	mblk->state = 0;
+ 	mblk->no = mblk_no;
+ 	mblk->data = page_address(mblk->page);
+@@ -397,7 +397,7 @@ static struct dmz_mblock *dmz_fetch_mblo
+ 		return NULL;
  
- 		/* We don't handle .init for the moment: rename to _init */
- 		while ((p = strstr(secstrings + sechdrs[i].sh_name, ".init")))
+ 	spin_lock(&zmd->mblk_lock);
+-	atomic_inc(&mblk->ref);
++	mblk->ref++;
+ 	set_bit(DMZ_META_READING, &mblk->state);
+ 	dmz_insert_mblock(zmd, mblk);
+ 	spin_unlock(&zmd->mblk_lock);
+@@ -484,7 +484,8 @@ static void dmz_release_mblock(struct dm
+ 
+ 	spin_lock(&zmd->mblk_lock);
+ 
+-	if (atomic_dec_and_test(&mblk->ref)) {
++	mblk->ref--;
++	if (mblk->ref == 0) {
+ 		if (test_bit(DMZ_META_ERROR, &mblk->state)) {
+ 			rb_erase(&mblk->node, &zmd->mblk_rbtree);
+ 			dmz_free_mblock(zmd, mblk);
+@@ -511,7 +512,8 @@ static struct dmz_mblock *dmz_get_mblock
+ 	mblk = dmz_lookup_mblock(zmd, mblk_no);
+ 	if (mblk) {
+ 		/* Cache hit: remove block from LRU list */
+-		if (atomic_inc_return(&mblk->ref) == 1 &&
++		mblk->ref++;
++		if (mblk->ref == 1 &&
+ 		    !test_bit(DMZ_META_DIRTY, &mblk->state))
+ 			list_del_init(&mblk->link);
+ 	}
+@@ -753,7 +755,7 @@ int dmz_flush_metadata(struct dmz_metada
+ 
+ 		spin_lock(&zmd->mblk_lock);
+ 		clear_bit(DMZ_META_DIRTY, &mblk->state);
+-		if (atomic_read(&mblk->ref) == 0)
++		if (mblk->ref == 0)
+ 			list_add_tail(&mblk->link, &zmd->mblk_lru_list);
+ 		spin_unlock(&zmd->mblk_lock);
+ 	}
+@@ -2308,7 +2310,7 @@ static void dmz_cleanup_metadata(struct
+ 		mblk = list_first_entry(&zmd->mblk_dirty_list,
+ 					struct dmz_mblock, link);
+ 		dmz_dev_warn(zmd->dev, "mblock %llu still in dirty list (ref %u)",
+-			     (u64)mblk->no, atomic_read(&mblk->ref));
++			     (u64)mblk->no, mblk->ref);
+ 		list_del_init(&mblk->link);
+ 		rb_erase(&mblk->node, &zmd->mblk_rbtree);
+ 		dmz_free_mblock(zmd, mblk);
+@@ -2326,8 +2328,8 @@ static void dmz_cleanup_metadata(struct
+ 	root = &zmd->mblk_rbtree;
+ 	rbtree_postorder_for_each_entry_safe(mblk, next, root, node) {
+ 		dmz_dev_warn(zmd->dev, "mblock %llu ref %u still in rbtree",
+-			     (u64)mblk->no, atomic_read(&mblk->ref));
+-		atomic_set(&mblk->ref, 0);
++			     (u64)mblk->no, mblk->ref);
++		mblk->ref = 0;
+ 		dmz_free_mblock(zmd, mblk);
+ 	}
+ 
 
 
