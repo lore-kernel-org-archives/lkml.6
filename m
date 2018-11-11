@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C708C43441
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3551C43610
 	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:08:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40A03214DB
+	by mail.kernel.org (Postfix) with ESMTP id 7B60020871
 	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:08:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="O6T4j2IZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40A03214DB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MhiWJr34"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B60020871
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731459AbeKLIRc (ORCPT
+        id S1732086AbeKLJ6k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:17:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59904 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:58:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731346AbeKLIRc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1731375AbeKLIRc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:17:32 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 54D5521582;
-        Sun, 11 Nov 2018 22:27:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 06D4B22353;
+        Sun, 11 Nov 2018 22:27:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975256;
-        bh=LkjJpHgTvDCfd0UDe8qV77EyY+UyJiKrBEBdJEhZ+Sc=;
+        s=default; t=1541975257;
+        bh=Bg9CvmJmM8wPC5BNn0d2BXZy6/2TlFry+XafXGHchs8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O6T4j2IZN2p6QSe4Zys1hXI82te6I4/y1rN3RYECFVRgX3g0+npxJBar1c/7/6iWm
-         zjDSCpaIAgvXQk3ZiyMP6sSt0X54u8MNtVsiUMPTaX6I7SutwVHDteTpbbWXXudL85
-         j6gQQYtmcOgRhIJlfkrEBh+pEF0Xdl+V0k/IvdtQ=
+        b=MhiWJr34p7fa+dvMDgwzwbWP4QTvNEYut/EuL7p1sytwQy+SeFxze49UVtqPSEiE/
+         nDc4IlL4ReD9xhNWhmmCla/+yk2N5GPo7D43yhybDI2R3EWVfQqYKXd7ew8cMDd0XW
+         xfo4CDQ9VP4kGdK4GEAAUnf4KlfEpPRyf7tvmWLk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Valente <paolo.valente@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 103/361] block, bfq: correctly charge and reset entity service in all cases
-Date:   Sun, 11 Nov 2018 14:17:30 -0800
-Message-Id: <20181111221634.096490080@linuxfoundation.org>
+        stable@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
+        Tejun Heo <tj@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 131/361] cgroup, netclassid: add a preemption point to write_classid
+Date:   Sun, 11 Nov 2018 14:17:58 -0800
+Message-Id: <20181111221638.657612508@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -61,71 +61,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paolo Valente <paolo.valente@linaro.org>
+From: Michal Hocko <mhocko@suse.com>
 
-[ Upstream commit cbeb869a3d1110450186b738199963c5e68c2a71 ]
+[ Upstream commit a90e90b7d55e789c71d85b946ffb5c1ab2f137ca ]
 
-BFQ schedules entities (which represent either per-process queues or
-groups of queues) as a function of their timestamps. In particular, as
-a function of their (virtual) finish times. The finish time of an
-entity is computed as a function of the budget assigned to the entity,
-assuming, tentatively, that the entity, once in service, will receive
-an amount of service equal to its budget. Then, when the entity is
-expired because it finishes to be served, this finish time is updated
-as a function of the actual service received by the entity. This
-allows the entity to be correctly charged with only the service
-received, and then to be correctly re-scheduled.
+We have seen a customer complaining about soft lockups on !PREEMPT
+kernel config with 4.4 based kernel
 
-Yet an entity may receive service also while not being the entity in
-service (in the scheduling environment of its parent entity), for
-several reasons. If the entity remains with no backlog while receiving
-this 'unofficial' service, then it is expired. Also on such an
-expiration, the finish time of the entity should be updated to account
-for only the service actually received by the entity. Unfortunately,
-such an update is not performed for an entity expiring without being
-the entity in service.
+[1072141.435366] NMI watchdog: BUG: soft lockup - CPU#21 stuck for 22s! [systemd:1]
+[1072141.444090] Modules linked in: mpt3sas raid_class binfmt_misc af_packet 8021q garp mrp stp llc xfs libcrc32c bonding iscsi_ibft iscsi_boot_sysfs msr ext4 crc16 jbd2 mbcache cdc_ether usbnet mii joydev hid_generic usbhid intel_rapl x86_pkg_temp_thermal intel_powerclamp coretemp crct10dif_pclmul crc32_pclmul ghash_clmulni_intel ipmi_ssif mgag200 i2c_algo_bit ttm ipmi_devintf drbg ixgbe drm_kms_helper vxlan ansi_cprng ip6_udp_tunnel drm aesni_intel udp_tunnel aes_x86_64 iTCO_wdt syscopyarea ptp xhci_pci lrw iTCO_vendor_support pps_core gf128mul ehci_pci glue_helper sysfillrect mdio pcspkr sb_edac ablk_helper cryptd ehci_hcd sysimgblt xhci_hcd fb_sys_fops edac_core mei_me lpc_ich ses usbcore enclosure dca mfd_core ipmi_si mei i2c_i801 scsi_transport_sas usb_common ipmi_msghandler shpchp fjes wmi processor button acpi_pad btrfs xor raid6_pq sd_mod crc32c_intel megaraid_sas sg dm_multipath dm_mod scsi_dh_rdac scsi_dh_emc scsi_dh_alua scsi_mod md_mod autofs4
+[1072141.444146] Supported: Yes
+[1072141.444149] CPU: 21 PID: 1 Comm: systemd Not tainted 4.4.121-92.80-default #1
+[1072141.444150] Hardware name: LENOVO Lenovo System x3650 M5 -[5462P4U]- -[5462P4U]-/01GR451, BIOS -[TCE136H-2.70]- 06/13/2018
+[1072141.444151] task: ffff880191bd0040 ti: ffff880191bd4000 task.ti: ffff880191bd4000
+[1072141.444153] RIP: 0010:[<ffffffff815229f9>]  [<ffffffff815229f9>] update_classid_sock+0x29/0x40
+[1072141.444157] RSP: 0018:ffff880191bd7d58  EFLAGS: 00000286
+[1072141.444158] RAX: ffff883b177cb7c0 RBX: 0000000000000000 RCX: 0000000000000000
+[1072141.444159] RDX: 00000000000009c7 RSI: ffff880191bd7d5c RDI: ffff8822e29bb200
+[1072141.444160] RBP: ffff883a72230980 R08: 0000000000000101 R09: 0000000000000000
+[1072141.444161] R10: 0000000000000008 R11: f000000000000000 R12: ffffffff815229d0
+[1072141.444162] R13: 0000000000000000 R14: ffff881fd0a47ac0 R15: ffff880191bd7f28
+[1072141.444163] FS:  00007f3e2f1eb8c0(0000) GS:ffff882000340000(0000) knlGS:0000000000000000
+[1072141.444164] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[1072141.444165] CR2: 00007f3e2f200000 CR3: 0000001ffea4e000 CR4: 00000000001606f0
+[1072141.444166] Stack:
+[1072141.444166]  ffffffa800000246 00000000000009c7 ffffffff8121d583 ffff8818312a05c0
+[1072141.444168]  ffff8818312a1100 ffff880197c3b280 ffff881861422858 ffffffffffffffea
+[1072141.444170]  ffffffff81522b1c ffffffff81d0ca20 ffff8817fa17b950 ffff883fdd8121e0
+[1072141.444171] Call Trace:
+[1072141.444179]  [<ffffffff8121d583>] iterate_fd+0x53/0x80
+[1072141.444182]  [<ffffffff81522b1c>] write_classid+0x4c/0x80
+[1072141.444187]  [<ffffffff8111328b>] cgroup_file_write+0x9b/0x100
+[1072141.444193]  [<ffffffff81278bcb>] kernfs_fop_write+0x11b/0x150
+[1072141.444198]  [<ffffffff81201566>] __vfs_write+0x26/0x100
+[1072141.444201]  [<ffffffff81201bed>] vfs_write+0x9d/0x190
+[1072141.444203]  [<ffffffff812028c2>] SyS_write+0x42/0xa0
+[1072141.444207]  [<ffffffff815f58c3>] entry_SYSCALL_64_fastpath+0x1e/0xca
+[1072141.445490] DWARF2 unwinder stuck at entry_SYSCALL_64_fastpath+0x1e/0xca
 
-In a similar vein, the service counter of the entity in service is
-reset when the entity is expired, to be ready to be used for next
-service cycle. This reset too should be performed also in case an
-entity is expired because it remains empty after receiving service
-while not being the entity in service. But in this case the reset is
-not performed.
+If a cgroup has many tasks with many open file descriptors then we would
+end up in a large loop without any rescheduling point throught the
+operation. Add cond_resched once per task.
 
-This commit performs the above update of the finish time and reset of
-the service received, also for an entity expiring while not being the
-entity in service.
-
-Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- block/bfq-wf2q.c |   13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ net/core/netclassid_cgroup.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/block/bfq-wf2q.c
-+++ b/block/bfq-wf2q.c
-@@ -1181,10 +1181,17 @@ bool __bfq_deactivate_entity(struct bfq_
- 	st = bfq_entity_service_tree(entity);
- 	is_in_service = entity == sd->in_service_entity;
+--- a/net/core/netclassid_cgroup.c
++++ b/net/core/netclassid_cgroup.c
+@@ -106,6 +106,7 @@ static int write_classid(struct cgroup_s
+ 		iterate_fd(p->files, 0, update_classid_sock,
+ 			   (void *)(unsigned long)cs->classid);
+ 		task_unlock(p);
++		cond_resched();
+ 	}
+ 	css_task_iter_end(&it);
  
--	if (is_in_service) {
--		bfq_calc_finish(entity, entity->service);
-+	bfq_calc_finish(entity, entity->service);
-+
-+	if (is_in_service)
- 		sd->in_service_entity = NULL;
--	}
-+	else
-+		/*
-+		 * Non in-service entity: nobody will take care of
-+		 * resetting its service counter on expiration. Do it
-+		 * now.
-+		 */
-+		entity->service = 0;
- 
- 	if (entity->tree == &st->active)
- 		bfq_active_extract(st, entity);
 
 
