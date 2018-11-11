@@ -6,47 +6,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51985C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:01:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A2E4C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:01:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1431220866
+	by mail.kernel.org (Postfix) with ESMTP id D61A320866
 	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:01:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tVHnEJFo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1431220866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YrlkOyYN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D61A320866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732242AbeKLIR5 (ORCPT
+        id S1732509AbeKLJvz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:17:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35336 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:51:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732213AbeKLIR4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:17:56 -0500
+        id S1732225AbeKLIR5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:17:57 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 09CDA2154B;
+        by mail.kernel.org (Postfix) with ESMTPSA id AE27521104;
         Sun, 11 Nov 2018 22:28:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975281;
-        bh=v+8ILTYm08TldAlgfqxomvxdLa6oPXwSQ5DSPu8e0fc=;
+        bh=vNa8hbAlRQCaqQa8Lg2MDvg9oBZog1Wkhtx8icx9nYg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tVHnEJFoleUXsNvCi5N47XOkXFBLIiAxx78+TJGZu0cqYNLpVke2XdY4VgHJFnaWi
-         PogtR0nDlCWcq6J0c0+RcOXYODuC30Fh3gqCXJvdxwY/EdrD8nyxDzqZtcHVBDWjOe
-         YpvcZHYwoyvvf2EU0fE9gRZlYKg6MMLY1gL9PAIU=
+        b=YrlkOyYNhKNMWX41sXIL5KsZpzWAIxbR1Z2eMyK+DaPCul9Rxu+470fMQx4TBCJy0
+         xsR+CTXP6rS/77fgU/WkKw5QJzGDcDkI7KYScnSXIdQOqqfe8QSKqT/EbrMaYuK/56
+         A455+qnuk6AJFF0bf6kk36ktk1nn6mYDBURjQq6s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Vasilis Liaskovitis <vliaskovitis@suse.com>,
-        =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.19 201/361] xen/blkfront: avoid NULL blkfront_info dereference on device removal
-Date:   Sun, 11 Nov 2018 14:19:08 -0800
-Message-Id: <20181111221648.571738035@linuxfoundation.org>
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>
+Subject: [PATCH 4.19 202/361] xen/balloon: Support xend-based toolstack
+Date:   Sun, 11 Nov 2018 14:19:09 -0800
+Message-Id: <20181111221648.682442311@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -64,55 +62,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vasilis Liaskovitis <vliaskovitis@suse.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 
-commit f92898e7f32e3533bfd95be174044bc349d416ca upstream.
+commit 3aa6c19d2f38be9c6e9a8ad5fa8e3c9d29ee3c35 upstream.
 
-If a block device is hot-added when we are out of grants,
-gnttab_grant_foreign_access fails with -ENOSPC (log message "28
-granting access to ring page") in this code path:
+Xend-based toolstacks don't have static-max entry in xenstore. The
+equivalent node for those toolstacks is memory_static_max.
 
-  talk_to_blkback ->
-	setup_blkring ->
-		xenbus_grant_ring ->
-			gnttab_grant_foreign_access
-
-and the failing path in talk_to_blkback sets the driver_data to NULL:
-
- destroy_blkring:
-        blkif_free(info, 0);
-
-        mutex_lock(&blkfront_mutex);
-        free_info(info);
-        mutex_unlock(&blkfront_mutex);
-
-        dev_set_drvdata(&dev->dev, NULL);
-
-This results in a NULL pointer BUG when blkfront_remove and blkif_free
-try to access the failing device's NULL struct blkfront_info.
-
-Cc: stable@vger.kernel.org # 4.5 and later
-Signed-off-by: Vasilis Liaskovitis <vliaskovitis@suse.com>
-Reviewed-by: Roger Pau Monné <roger.pau@citrix.com>
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: 5266b8e4445c (xen: fix booting ballooned down hvm guest)
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: <stable@vger.kernel.org> # 4.13
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/block/xen-blkfront.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/xen/xen-balloon.c |   13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
---- a/drivers/block/xen-blkfront.c
-+++ b/drivers/block/xen-blkfront.c
-@@ -2493,6 +2493,9 @@ static int blkfront_remove(struct xenbus
+--- a/drivers/xen/xen-balloon.c
++++ b/drivers/xen/xen-balloon.c
+@@ -76,12 +76,15 @@ static void watch_target(struct xenbus_w
  
- 	dev_dbg(&xbdev->dev, "%s removed", xbdev->nodename);
- 
-+	if (!info)
-+		return 0;
+ 	if (!watch_fired) {
+ 		watch_fired = true;
+-		err = xenbus_scanf(XBT_NIL, "memory", "static-max", "%llu",
+-				   &static_max);
+-		if (err != 1)
+-			static_max = new_target;
+-		else
 +
- 	blkif_free(info, 0);
- 
- 	mutex_lock(&info->mutex);
++		if ((xenbus_scanf(XBT_NIL, "memory", "static-max",
++				  "%llu", &static_max) == 1) ||
++		    (xenbus_scanf(XBT_NIL, "memory", "memory_static_max",
++				  "%llu", &static_max) == 1))
+ 			static_max >>= PAGE_SHIFT - 10;
++		else
++			static_max = new_target;
++
+ 		target_diff = (xen_pv_domain() || xen_initial_domain()) ? 0
+ 				: static_max - balloon_stats.target_pages;
+ 	}
 
 
