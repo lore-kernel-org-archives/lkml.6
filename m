@@ -2,50 +2,51 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF1A8C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:31:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E0B9C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:31:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A05402084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:31:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C75BA20869
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:31:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YgAyqd/6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A05402084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WSeRtW6P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C75BA20869
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388810AbeKLJVs (ORCPT
+        id S2388788AbeKLJVy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:21:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43864 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:21:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44684 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388586AbeKLIUT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2388585AbeKLIUT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:20:19 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 824A521780;
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C43322353;
         Sun, 11 Nov 2018 22:30:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975423;
-        bh=pZXVA8YwBK41JoQZJ8h+QYaKmH5TEQBgX7tGyFwAlHI=;
+        bh=LvW/ZQC0QU58LSSLNhsqKcZNV/bIJbOSL71yR3qXHP8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YgAyqd/693aFLUVTw2Iv37pfHzUXxLP62Co2eD/3s2sOjOjhBlDmgaChBHcPQHE3k
-         tZ2UMH28f64ZqQoBBXGSYrEfTz1koWn1SZ867a6vN5LRp/29d4ZOBh8X0bzEYHpF62
-         aK3AqIbpM8mRPYKUHqKqZWWVEqm31ZL8f0C/KKqs=
+        b=WSeRtW6PMhOVCyuEqSIw6LUkoqL3koSsB7+fn2lzGMom6vsTOOkBqGgY1w0hNAAof
+         OALZVxNaYH5WxMggvWC0IIuhgVSOH8BaqmJ5/ql7RE5LMFH6NORS3i6AJumAi5HfO9
+         uoRP8DoX068bGyt5yc+KcRw5ZDYBSXwdSmZHh/hY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
+        Guenter Roeck <linux@roeck-us.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 126/350] rsi: fix memory alignment issue in ARM32 platforms
-Date:   Sun, 11 Nov 2018 14:19:50 -0800
-Message-Id: <20181111221712.810897626@linuxfoundation.org>
+Subject: [PATCH 4.18 152/350] usb: typec: tcpm: Report back negotiated PPS voltage and current
+Date:   Sun, 11 Nov 2018 14:20:16 -0800
+Message-Id: <20181111221714.416683336@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -63,100 +64,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>
+From: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
 
-[ Upstream commit baa8caf4ab7af2d9e84b566b99fe919a4e9e7562 ]
+[ Upstream commit 554fab6dbf20ee7298ed2d4e8398b85e6058abb7 ]
 
-During testing in ARM32 platforms, observed below kernel panic, as driver
-accessing data beyond the allocated memory while submitting URB to USB.
+Currently when requesting a specific voltage or current through
+the psy interface, for PPS, when reading back from that interface
+the values will always be the same as previously given, if the
+request was successful. However PPS only allows for 20mV voltage
+steps and 50mA current steps, and the psy class expects microvolt
+and micro amp requests, so inbetween values can be provided through
+this interface. Really when reading back the true values negotiated
+should be given, and not the ones originally asked for.
 
-Fix: Resolved this by specifying correct length by considering 64 bit
-alignment. so that, USB bus driver will access only allocated memory.
+To report the actual values negotiated with the Source, the values
+stored are now rounded down to the relevant step units prior to
+building the PPS request, so that those values are later correctly
+reported through the psy interface. In addition this improves the
+adjustments made to meet the operating power requirements of the
+platform, which previously could have been slightly out due to not
+using valid PPS units of voltage and current.
 
-Unit-test: Tested and confirm that driver bring up and scanning,
-connection and data transfer works fine with this fix.
-
-...skipping...
-[   25.389450] Unable to handle kernel paging request at virtual
-	       address 5aa11422
-[   25.403078] Internal error: Oops: 5 [#1] SMP ARM
-[   25.407703] Modules linked in: rsi_usb
-[   25.411473] CPU: 1 PID: 317 Comm: RX-Thread Not tainted 4.18.0-rc7 #1
-[   25.419221] Hardware name: Freescale i.MX6 Quad/DualLite (Device Tree)
-[   25.425764] PC is at skb_release_data+0x90/0x168
-[   25.430393] LR is at skb_release_all+0x28/0x2c
-[   25.434842] pc : [<807435b0>] lr : [<80742ba0>] psr: 200e0013 5aa1141e
-[   25.464633] Flags: nzCv  IRQs on  FIQs on  Mode SVC_32 ISA ARM Segment none
-[   25.477524] Process RX-Thread (pid: 317, stack limit = 0x(ptrval))
-[   25.483709] Stack: (0xedf69ed8 to 0xedf6a000)
-[   25.569907] Backtrace:
-[   25.572368] [<80743520>] (skb_release_data) from [<80742ba0>]
-	       (skb_release_all+0x28/0x2c)
-[   25.580555] r9:7f00258c r8:00000001 r7:ee355000 r6:eddab0d0
-	       r5:eddab000 r4:eddbb840
-[   25.588308] [<80742b78>] (skb_release_all) from [<807432cc>]
-	       (consume_skb+0x30/0x50)
-[   25.596055] r5:eddab000 r4:eddbb840
-[   25.599648] [<8074329c>] (consume_skb) from [<7f00117c>]
-	       (rsi_usb_rx_thread+0x64/0x12c [rsi_usb])
-[   25.608524] r5:eddab000 r4:eddbb840
-[   25.612116] [<7f001118>] (rsi_usb_rx_thread [rsi_usb]) from
-	       [<80142750>] (kthread+0x11c/0x15c)
-[   25.620735] r10:ee9ff9e0 r9:edcde3b8 r8:ee355000 r7:edf68000
-	       r6:edd3a780 r5:00000000
-[   25.628567] r4:edcde380
-[   25.631110] [<80142634>] (kthread) from [<801010e8>]
-	       (ret_from_fork+0x14/0x2c)
-[   25.638336] Exception stack(0xedf69fb0 to 0xedf69ff8)
-[   25.682929] ---[ end trace 8236a5496f5b5d3b ]---
-
-Signed-off-by: Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/rsi/rsi_91x_usb.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/usb/typec/tcpm.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/net/wireless/rsi/rsi_91x_usb.c
-+++ b/drivers/net/wireless/rsi/rsi_91x_usb.c
-@@ -266,15 +266,17 @@ static void rsi_rx_done_handler(struct u
- 	if (urb->status)
- 		goto out;
- 
--	if (urb->actual_length <= 0) {
--		rsi_dbg(INFO_ZONE, "%s: Zero length packet\n", __func__);
-+	if (urb->actual_length <= 0 ||
-+	    urb->actual_length > rx_cb->rx_skb->len) {
-+		rsi_dbg(INFO_ZONE, "%s: Invalid packet length = %d\n",
-+			__func__, urb->actual_length);
- 		goto out;
+--- a/drivers/usb/typec/tcpm.c
++++ b/drivers/usb/typec/tcpm.c
+@@ -4018,6 +4018,9 @@ static int tcpm_pps_set_op_curr(struct t
+ 		goto port_unlock;
  	}
- 	if (skb_queue_len(&dev->rx_q) >= RSI_MAX_RX_PKTS) {
- 		rsi_dbg(INFO_ZONE, "Max RX packets reached\n");
- 		goto out;
+ 
++	/* Round down operating current to align with PPS valid steps */
++	op_curr = op_curr - (op_curr % RDO_PROG_CURR_MA_STEP);
++
+ 	reinit_completion(&port->pps_complete);
+ 	port->pps_data.op_curr = op_curr;
+ 	port->pps_status = 0;
+@@ -4071,6 +4074,9 @@ static int tcpm_pps_set_out_volt(struct
+ 		goto port_unlock;
  	}
--	skb_put(rx_cb->rx_skb, urb->actual_length);
-+	skb_trim(rx_cb->rx_skb, urb->actual_length);
- 	skb_queue_tail(&dev->rx_q, rx_cb->rx_skb);
  
- 	rsi_set_event(&dev->rx_thread.event);
-@@ -308,6 +310,7 @@ static int rsi_rx_urb_submit(struct rsi_
- 	if (!skb)
- 		return -ENOMEM;
- 	skb_reserve(skb, MAX_DWORD_ALIGN_BYTES);
-+	skb_put(skb, RSI_MAX_RX_USB_PKT_SIZE - MAX_DWORD_ALIGN_BYTES);
- 	dword_align_bytes = (unsigned long)skb->data & 0x3f;
- 	if (dword_align_bytes > 0)
- 		skb_push(skb, dword_align_bytes);
-@@ -319,7 +322,7 @@ static int rsi_rx_urb_submit(struct rsi_
- 			  usb_rcvbulkpipe(dev->usbdev,
- 			  dev->bulkin_endpoint_addr[ep_num - 1]),
- 			  urb->transfer_buffer,
--			  RSI_MAX_RX_USB_PKT_SIZE,
-+			  skb->len,
- 			  rsi_rx_done_handler,
- 			  rx_cb);
- 
++	/* Round down output voltage to align with PPS valid steps */
++	out_volt = out_volt - (out_volt % RDO_PROG_VOLT_MV_STEP);
++
+ 	reinit_completion(&port->pps_complete);
+ 	port->pps_data.out_volt = out_volt;
+ 	port->pps_status = 0;
 
 
