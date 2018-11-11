@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE6E2C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:47:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8955DC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:47:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79FDB2148E
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:47:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79FDB2148E
+	by mail.kernel.org (Postfix) with ESMTP id 56C272148E
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:47:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56C272148E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727089AbeKLFgi (ORCPT
+        id S1729779AbeKLFgr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 00:36:38 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33756 "EHLO
+        Mon, 12 Nov 2018 00:36:47 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55290 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727077AbeKLFdr (ORCPT
+        by vger.kernel.org with ESMTP id S1727073AbeKLFdr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 00:33:47 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wABJiA2k052548
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:44:21 -0500
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2npdjvhcsg-1
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wABJiFkM121778
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:44:20 -0500
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2npdcu1j04-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
         for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:44:20 -0500
 Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
         Sun, 11 Nov 2018 19:44:19 -0000
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
         Sun, 11 Nov 2018 19:44:13 -0000
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wABJiCYI25297002
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wABJiCZI33357944
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
         Sun, 11 Nov 2018 19:44:12 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 71DE1B2065;
+        by IMSVA (Postfix) with ESMTP id 61C55B206C;
         Sun, 11 Nov 2018 19:44:12 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 559ADB206A;
+        by IMSVA (Postfix) with ESMTP id 3EB4DB2065;
         Sun, 11 Nov 2018 19:44:12 +0000 (GMT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.85.207.24])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
         Sun, 11 Nov 2018 19:44:12 +0000 (GMT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 1EA7516C5DB0; Sun, 11 Nov 2018 11:44:13 -0800 (PST)
+        id E51B516C5DAD; Sun, 11 Nov 2018 11:44:12 -0800 (PST)
 From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -60,56 +60,60 @@ Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH tip/core/rcu 29/41] mm: Replace call_rcu_sched() with call_rcu()
-Date:   Sun, 11 Nov 2018 11:43:58 -0800
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH tip/core/rcu 21/41] lockdep: Replace synchronize_sched() with synchronize_rcu()
+Date:   Sun, 11 Nov 2018 11:43:50 -0800
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181111194104.GA4787@linux.ibm.com>
 References: <20181111194104.GA4787@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18111119-0072-0000-0000-000003C6F39C
+x-cbid: 18111119-0052-0000-0000-00000354224A
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00010028; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01116019; UDB=6.00577118; IPR=6.00896119;
- MB=3.00024114; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-11 19:44:17
+ PH=3.00000004; SC=3.00000270; SDB=6.01116019; UDB=6.00578733; IPR=6.00896119;
+ MB=3.00024114; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-11 19:44:18
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111119-0073-0000-0000-00004A13483D
-Message-Id: <20181111194410.6368-29-paulmck@linux.ibm.com>
+x-cbparentid: 18111119-0053-0000-0000-00005EBB2199
+Message-Id: <20181111194410.6368-21-paulmck@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-11_13:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=973 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=996 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1807170000 definitions=main-1811110188
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that call_rcu()'s callback is not invoked until after all
-preempt-disable regions of code have completed (in addition to explicitly
-marked RCU read-side critical sections), call_rcu() can be used in place
-of call_rcu_sched().  This commit therefore makes that change.
+Now that synchronize_rcu() waits for preempt-disable regions of code
+as well as RCU read-side critical sections, synchronize_sched() can be
+replaced by synchronize_rcu().  This commit therefore makes this change.
 
 Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Will Deacon <will.deacon@arm.com>
 ---
- mm/mmu_gather.c | 2 +-
+ kernel/locking/lockdep.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/mmu_gather.c b/mm/mmu_gather.c
-index 2a9fbc4a37d5..f2f03c655807 100644
---- a/mm/mmu_gather.c
-+++ b/mm/mmu_gather.c
-@@ -199,7 +199,7 @@ void tlb_table_flush(struct mmu_gather *tlb)
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index 1efada2dd9dd..ef27f98714c0 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -4195,7 +4195,7 @@ void lockdep_free_key_range(void *start, unsigned long size)
+ 	 *
+ 	 * sync_sched() is sufficient because the read-side is IRQ disable.
+ 	 */
+-	synchronize_sched();
++	synchronize_rcu();
  
- 	if (*batch) {
- 		tlb_table_invalidate(tlb);
--		call_rcu_sched(&(*batch)->rcu, tlb_remove_table_rcu);
-+		call_rcu(&(*batch)->rcu, tlb_remove_table_rcu);
- 		*batch = NULL;
- 	}
- }
+ 	/*
+ 	 * XXX at this point we could return the resources to the pool;
 -- 
 2.17.1
 
