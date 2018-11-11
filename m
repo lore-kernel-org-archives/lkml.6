@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AA59C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78705C0044C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02B24216FD
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3EC83216FD
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SkWV4/YN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02B24216FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tx1kw0W6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EC83216FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387731AbeKLITW (ORCPT
+        id S2387745AbeKLITX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:19:22 -0500
+        Mon, 12 Nov 2018 03:19:23 -0500
 Received: from mail.kernel.org ([198.145.29.99]:40642 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387677AbeKLITU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:19:20 -0500
+        id S2387716AbeKLITW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:19:22 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E4902154B;
-        Sun, 11 Nov 2018 22:29:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F48321104;
+        Sun, 11 Nov 2018 22:29:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975364;
-        bh=UOSaTlkMcGHaX5CZKKjQAOwM975qKcKanCm1Xm/WmVA=;
+        s=default; t=1541975366;
+        bh=xAaC0PX3DpXt1VbrktvX3gWRg9i5jqNAw5Ooi3sASUw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SkWV4/YNgrwDOyUJIvVrw+Yz1ie7/ZDg0WgvPelyXTXAoYsueAtak0VvIGYxEP/hr
-         Nf3FkDdk6vVrHZpZw5OCaENL2jQX9xKzYL+IZjexe9I6/yRTkwxH4wVC5tBkVuvm/b
-         Zhc3GcX4+Unh3atqUX+TMlZFSyu2uRyFIMzY7HrQ=
+        b=tx1kw0W6zKCIlKAZ6o2pk/8rCqaitJorqvUMkcwkak9y4Ti7ZhFxiXdrrRA3yoQC5
+         NcbCaDWC3bpBcdmImQcf72Ut3tBHUCRzLxf8VHj2Jb8hWu9xvscL99BluEMtEOLVSM
+         o/u6aC4zWjOWyfR9o6DPs2qmOaBM987S05aL/v/U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Juergen Gross <jgross@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        boris.ostrovsky@oracle.com, bp@alien8.de, corbet@lwn.net,
-        linux-doc@vger.kernel.org, xen-devel@lists.xenproject.org,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.18 037/350] x86/xen: Fix boot loader version reported for PVH guests
-Date:   Sun, 11 Nov 2018 14:18:21 -0800
-Message-Id: <20181111221708.732023332@linuxfoundation.org>
+        stable@vger.kernel.org, Ming Lin <ming.l@ssi.samsung.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Christoph Hellwig <hch@lst.de>, Xiao Ni <xni@redhat.com>,
+        Mariusz Dabrowski <mariusz.dabrowski@intel.com>,
+        Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.18 014/350] block: dont deal with discard limit in blkdev_issue_discard()
+Date:   Sun, 11 Nov 2018 14:17:58 -0800
+Message-Id: <20181111221707.768683952@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -67,45 +65,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Juergen Gross <jgross@suse.com>
+From: Ming Lei <ming.lei@redhat.com>
 
-commit 357d291ce035d1b757568058f3c9898c60d125b1 upstream.
+commit 744889b7cbb56a64f957e65ade7cb65fe3f35714 upstream.
 
-The boot loader version reported via sysfs is wrong in case of the
-kernel being booted via the Xen PVH boot entry. it should be 2.12
-(0x020c), but it is reported to be 2.18 (0x0212).
+blk_queue_split() does respect this limit via bio splitting, so no
+need to do that in blkdev_issue_discard(), then we can align to
+normal bio submit(bio_add_page() & submit_bio()).
 
-As the current way to set the version is error prone use the more
-readable variant (2 << 8) | 12.
+More importantly, this patch fixes one issue introduced in a22c4d7e34402cc
+("block: re-add discard_granularity and alignment checks"), in which
+zero discard bio may be generated in case of zero alignment.
 
-Signed-off-by: Juergen Gross <jgross@suse.com>
-Cc: <stable@vger.kernel.org> # 4.12
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: boris.ostrovsky@oracle.com
-Cc: bp@alien8.de
-Cc: corbet@lwn.net
-Cc: linux-doc@vger.kernel.org
-Cc: xen-devel@lists.xenproject.org
-Link: http://lkml.kernel.org/r/20181010061456.22238-2-jgross@suse.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: a22c4d7e34402ccdf3 ("block: re-add discard_granularity and alignment checks")
+Cc: stable@vger.kernel.org
+Cc: Ming Lin <ming.l@ssi.samsung.com>
+Cc: Mike Snitzer <snitzer@redhat.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Xiao Ni <xni@redhat.com>
+Tested-by: Mariusz Dabrowski <mariusz.dabrowski@intel.com>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/xen/enlighten_pvh.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ block/blk-lib.c |   28 ++--------------------------
+ 1 file changed, 2 insertions(+), 26 deletions(-)
 
---- a/arch/x86/xen/enlighten_pvh.c
-+++ b/arch/x86/xen/enlighten_pvh.c
-@@ -75,7 +75,7 @@ static void __init init_pvh_bootparams(v
- 	 * Version 2.12 supports Xen entry point but we will use default x86/PC
- 	 * environment (i.e. hardware_subarch 0).
- 	 */
--	pvh_bootparams.hdr.version = 0x212;
-+	pvh_bootparams.hdr.version = (2 << 8) | 12;
- 	pvh_bootparams.hdr.type_of_loader = (9 << 4) | 0; /* Xen loader */
+--- a/block/blk-lib.c
++++ b/block/blk-lib.c
+@@ -29,9 +29,7 @@ int __blkdev_issue_discard(struct block_
+ {
+ 	struct request_queue *q = bdev_get_queue(bdev);
+ 	struct bio *bio = *biop;
+-	unsigned int granularity;
+ 	unsigned int op;
+-	int alignment;
+ 	sector_t bs_mask;
  
- 	x86_init.acpi.get_root_pointer = pvh_get_root_pointer;
+ 	if (!q)
+@@ -54,38 +52,16 @@ int __blkdev_issue_discard(struct block_
+ 	if ((sector | nr_sects) & bs_mask)
+ 		return -EINVAL;
+ 
+-	/* Zero-sector (unknown) and one-sector granularities are the same.  */
+-	granularity = max(q->limits.discard_granularity >> 9, 1U);
+-	alignment = (bdev_discard_alignment(bdev) >> 9) % granularity;
+-
+ 	while (nr_sects) {
+-		unsigned int req_sects;
+-		sector_t end_sect, tmp;
++		unsigned int req_sects = nr_sects;
++		sector_t end_sect;
+ 
+-		/*
+-		 * Issue in chunks of the user defined max discard setting,
+-		 * ensuring that bi_size doesn't overflow
+-		 */
+-		req_sects = min_t(sector_t, nr_sects,
+-					q->limits.max_discard_sectors);
+ 		if (!req_sects)
+ 			goto fail;
+ 		if (req_sects > UINT_MAX >> 9)
+ 			req_sects = UINT_MAX >> 9;
+ 
+-		/*
+-		 * If splitting a request, and the next starting sector would be
+-		 * misaligned, stop the discard at the previous aligned sector.
+-		 */
+ 		end_sect = sector + req_sects;
+-		tmp = end_sect;
+-		if (req_sects < nr_sects &&
+-		    sector_div(tmp, granularity) != alignment) {
+-			end_sect = end_sect - alignment;
+-			sector_div(end_sect, granularity);
+-			end_sect = end_sect * granularity + alignment;
+-			req_sects = end_sect - sector;
+-		}
+ 
+ 		bio = next_bio(bio, 0, gfp_mask);
+ 		bio->bi_iter.bi_sector = sector;
 
 
