@@ -7,45 +7,49 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 467E0C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:16:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F015C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:16:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06E85215EA
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:16:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16D162084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:16:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="W1VD0fKH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06E85215EA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VmgsC0jV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16D162084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730581AbeKLKHF (ORCPT
+        id S1730123AbeKLIRE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 05:07:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58420 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:17:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59348 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730126AbeKLIRF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:17:05 -0500
+        id S1729990AbeKLIRD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:17:03 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 55251214DB;
-        Sun, 11 Nov 2018 22:27:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 107EF214E0;
+        Sun, 11 Nov 2018 22:27:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975229;
-        bh=BgEVqoD1PpYSlDeOV20LX1ri4tyfnkVBrcquTzol/hc=;
+        s=default; t=1541975227;
+        bh=laXd0JNih4gYPcSJrvAKOJMRH3762lpO0HvGwVh6y4Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W1VD0fKHJmRrqwCRBF/NO0HJSvu1gXqnbAlJEDPU65k0H4FMWW75hSDi+SPNZbeyY
-         jkePef7Ot2cqAHw2JLd7Wp77l+1u/dnpUDEivTQJ2e7VKKkYtyJ2AXMfUJnK7Jidkv
-         Dh3cFxrOR0to6A7uN15CoMAmKlwQtHr0krRSHyXs=
+        b=VmgsC0jVNYsN9JrICgYCu+CD3E+UsnRPFLzxcDN9xBoaGayyX+G6U2rRAunZlxLDO
+         5hVAQ61T0HAvmvGhRU/FgqHmEHAwXDP3rguQje9HC5ggsY3uelKm5jAOCW3O4uM829
+         eOp898D4OLpdgZsJ79J6LI01gKQPr2uyuBKGWyHg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 051/361] netfilter: xt_nat: fix DNAT target for shifted portmap ranges
-Date:   Sun, 11 Nov 2018 14:16:38 -0800
-Message-Id: <20181111221627.200856079@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>
+Subject: [PATCH 4.19 045/361] x86/mm/pat: Disable preemption around __flush_tlb_all()
+Date:   Sun, 11 Nov 2018 14:16:32 -0800
+Message-Id: <20181111221626.229054655@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -63,37 +67,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paolo Abeni <pabeni@redhat.com>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-[ Upstream commit cb20f2d2c0507d60d94ef896991e95708f051dd1 ]
+commit f77084d96355f5fba8e2c1fb3a51a393b1570de7 upstream.
 
-The commit 2eb0f624b709 ("netfilter: add NAT support for shifted
-portmap ranges") did not set the checkentry/destroy callbacks for
-the newly added DNAT target. As a result, rulesets using only
-such nat targets are not effective, as the relevant conntrack hooks
-are not enabled.
-The above affect also nft_compat rulesets.
-Fix the issue adding the missing initializers.
+The WARN_ON_ONCE(__read_cr3() != build_cr3()) in switch_mm_irqs_off()
+triggers every once in a while during a snapshotted system upgrade.
 
-Fixes: 2eb0f624b709 ("netfilter: add NAT support for shifted portmap ranges")
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+The warning triggers since commit decab0888e6e ("x86/mm: Remove
+preempt_disable/enable() from __native_flush_tlb()"). The callchain is:
+
+  get_page_from_freelist() -> post_alloc_hook() -> __kernel_map_pages()
+
+with CONFIG_DEBUG_PAGEALLOC enabled.
+
+Disable preemption during CR3 reset / __flush_tlb_all() and add a comment
+why preemption has to be disabled so it won't be removed accidentaly.
+
+Add another preemptible() check in __flush_tlb_all() to catch callers with
+enabled preemption when PGE is enabled, because PGE enabled does not
+trigger the warning in __native_flush_tlb(). Suggested by Andy Lutomirski.
+
+Fixes: decab0888e6e ("x86/mm: Remove preempt_disable/enable() from __native_flush_tlb()")
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20181017103432.zgv46nlu3hc7k4rq@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/netfilter/xt_nat.c |    2 ++
- 1 file changed, 2 insertions(+)
 
---- a/net/netfilter/xt_nat.c
-+++ b/net/netfilter/xt_nat.c
-@@ -216,6 +216,8 @@ static struct xt_target xt_nat_target_re
- 	{
- 		.name		= "DNAT",
- 		.revision	= 2,
-+		.checkentry	= xt_nat_checkentry,
-+		.destroy	= xt_nat_destroy,
- 		.target		= xt_dnat_target_v2,
- 		.targetsize	= sizeof(struct nf_nat_range2),
- 		.table		= "nat",
+---
+ arch/x86/include/asm/tlbflush.h |    6 ++++++
+ arch/x86/mm/pageattr.c          |    6 +++++-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
+
+--- a/arch/x86/include/asm/tlbflush.h
++++ b/arch/x86/include/asm/tlbflush.h
+@@ -469,6 +469,12 @@ static inline void __native_flush_tlb_on
+  */
+ static inline void __flush_tlb_all(void)
+ {
++	/*
++	 * This is to catch users with enabled preemption and the PGE feature
++	 * and don't trigger the warning in __native_flush_tlb().
++	 */
++	VM_WARN_ON_ONCE(preemptible());
++
+ 	if (boot_cpu_has(X86_FEATURE_PGE)) {
+ 		__flush_tlb_global();
+ 	} else {
+--- a/arch/x86/mm/pageattr.c
++++ b/arch/x86/mm/pageattr.c
+@@ -2086,9 +2086,13 @@ void __kernel_map_pages(struct page *pag
+ 
+ 	/*
+ 	 * We should perform an IPI and flush all tlbs,
+-	 * but that can deadlock->flush only current cpu:
++	 * but that can deadlock->flush only current cpu.
++	 * Preemption needs to be disabled around __flush_tlb_all() due to
++	 * CR3 reload in __native_flush_tlb().
+ 	 */
++	preempt_disable();
+ 	__flush_tlb_all();
++	preempt_enable();
+ 
+ 	arch_flush_lazy_mmu_mode();
+ }
 
 
