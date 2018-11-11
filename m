@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F1EC0044C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C21DBC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58C892241E
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B617223CA
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GHqv/tnZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58C892241E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xhuTCyph"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B617223CA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389546AbeKLIVV (ORCPT
+        id S2389560AbeKLIVX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:21:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47942 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:21:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48276 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389524AbeKLIVU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:21:20 -0500
+        id S2389513AbeKLIVV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:21 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71642208A3;
+        by mail.kernel.org (Postfix) with ESMTPSA id BA3802154B;
         Sun, 11 Nov 2018 22:31:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975483;
-        bh=Pl0jMYmkrn46MsBRNZmplOcn+T3TBSnIAY09ToMtJvA=;
+        bh=HW1XmXkoPZp98AWrspWub6VBsDG3jcTXsCBm9QSErDQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GHqv/tnZbftYmIEl3qylaKjVEWjYR2vXpfvyDe02AmF8aKf7nC/e8JR9VIyRkFdaF
-         FxltpHcvn36MVOtM5jq32ODnAeTFIatEzo8fA6dJAvHplv4j6Q0GxxJ838VecokTPp
-         VZ9MAJ0mwlNMT4bGDMYixCjuwYByD8HcO1Hcn+qA=
+        b=xhuTCyph1XD9VdsaQ+kkn//SuSgQgDuy/tISgL2OjwawnOYIgfif/r7vtEc7BP/yy
+         huel6a3pextN3xtu6GdH8N9Sl2xyjwXp3zkypIRoNqnfVKiHe9Y7V9AYRu6gLiLaCb
+         HJkKMLq9BMwbl8SbEX2skBEmpd1HrvPiQTHNCx+I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ondrej Mosnacek <omosnace@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
         Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.18 240/350] crypto: morus/generic - fix for big endian systems
-Date:   Sun, 11 Nov 2018 14:21:44 -0800
-Message-Id: <20181111221718.077908316@linuxfoundation.org>
+Subject: [PATCH 4.18 241/350] crypto: aegis/generic - fix for big endian systems
+Date:   Sun, 11 Nov 2018 14:21:45 -0800
+Message-Id: <20181111221718.121461731@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -65,80 +65,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-commit 5a8dedfa3276e88c5865f265195d63d72aec3e72 upstream.
+commit 4a34e3c2f2f48f47213702a84a123af0fe21ad60 upstream.
 
-Omit the endian swabbing when folding the lengths of the assoc and
-crypt input buffers into the state to finalize the tag. This is not
-necessary given that the memory representation of the state is in
-machine native endianness already.
+Use the correct __le32 annotation and accessors to perform the
+single round of AES encryption performed inside the AEGIS transform.
+Otherwise, tcrypt reports:
 
-This fixes an error reported by tcrypt running on a big endian system:
+  alg: aead: Test 1 failed on encryption for aegis128-generic
+  00000000: 6c 25 25 4a 3c 10 1d 27 2b c1 d4 84 9a ef 7f 6e
+  alg: aead: Test 1 failed on encryption for aegis128l-generic
+  00000000: cd c6 e3 b8 a0 70 9d 8e c2 4f 6f fe 71 42 df 28
+  alg: aead: Test 1 failed on encryption for aegis256-generic
+  00000000: aa ed 07 b1 96 1d e9 e6 f2 ed b5 8e 1c 5f dc 1c
 
-  alg: aead: Test 2 failed on encryption for morus640-generic
-  00000000: a8 30 ef fb e6 26 eb 23 b0 87 dd 98 57 f3 e1 4b
-  00000010: 21
-  alg: aead: Test 2 failed on encryption for morus1280-generic
-  00000000: 88 19 1b fb 1c 29 49 0e ee 82 2f cb 97 a6 a5 ee
-  00000010: 5f
-
-Fixes: 396be41f16fd ("crypto: morus - Add generic MORUS AEAD implementations")
+Fixes: f606a88e5823 ("crypto: aegis - Add generic AEGIS AEAD implementations")
 Cc: <stable@vger.kernel.org> # v4.18+
-Reviewed-by: Ondrej Mosnacek <omosnace@redhat.com>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Reviewed-by: Ondrej Mosnacek <omosnace@redhat.com>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/morus1280.c |    7 ++-----
- crypto/morus640.c  |   16 ++++------------
- 2 files changed, 6 insertions(+), 17 deletions(-)
+ crypto/aegis.h |   22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
 
---- a/crypto/morus1280.c
-+++ b/crypto/morus1280.c
-@@ -385,14 +385,11 @@ static void crypto_morus1280_final(struc
- 				   struct morus1280_block *tag_xor,
- 				   u64 assoclen, u64 cryptlen)
+--- a/crypto/aegis.h
++++ b/crypto/aegis.h
+@@ -21,7 +21,7 @@
+ 
+ union aegis_block {
+ 	__le64 words64[AEGIS_BLOCK_SIZE / sizeof(__le64)];
+-	u32 words32[AEGIS_BLOCK_SIZE / sizeof(u32)];
++	__le32 words32[AEGIS_BLOCK_SIZE / sizeof(__le32)];
+ 	u8 bytes[AEGIS_BLOCK_SIZE];
+ };
+ 
+@@ -57,24 +57,22 @@ static void crypto_aegis_aesenc(union ae
+ 				const union aegis_block *src,
+ 				const union aegis_block *key)
  {
--	u64 assocbits = assoclen * 8;
--	u64 cryptbits = cryptlen * 8;
+-	u32 *d = dst->words32;
+ 	const u8  *s  = src->bytes;
+-	const u32 *k  = key->words32;
+ 	const u32 *t0 = crypto_ft_tab[0];
+ 	const u32 *t1 = crypto_ft_tab[1];
+ 	const u32 *t2 = crypto_ft_tab[2];
+ 	const u32 *t3 = crypto_ft_tab[3];
+ 	u32 d0, d1, d2, d3;
+ 
+-	d0 = t0[s[ 0]] ^ t1[s[ 5]] ^ t2[s[10]] ^ t3[s[15]] ^ k[0];
+-	d1 = t0[s[ 4]] ^ t1[s[ 9]] ^ t2[s[14]] ^ t3[s[ 3]] ^ k[1];
+-	d2 = t0[s[ 8]] ^ t1[s[13]] ^ t2[s[ 2]] ^ t3[s[ 7]] ^ k[2];
+-	d3 = t0[s[12]] ^ t1[s[ 1]] ^ t2[s[ 6]] ^ t3[s[11]] ^ k[3];
 -
- 	struct morus1280_block tmp;
- 	unsigned int i;
+-	d[0] = d0;
+-	d[1] = d1;
+-	d[2] = d2;
+-	d[3] = d3;
++	d0 = t0[s[ 0]] ^ t1[s[ 5]] ^ t2[s[10]] ^ t3[s[15]];
++	d1 = t0[s[ 4]] ^ t1[s[ 9]] ^ t2[s[14]] ^ t3[s[ 3]];
++	d2 = t0[s[ 8]] ^ t1[s[13]] ^ t2[s[ 2]] ^ t3[s[ 7]];
++	d3 = t0[s[12]] ^ t1[s[ 1]] ^ t2[s[ 6]] ^ t3[s[11]];
++
++	dst->words32[0] = cpu_to_le32(d0) ^ key->words32[0];
++	dst->words32[1] = cpu_to_le32(d1) ^ key->words32[1];
++	dst->words32[2] = cpu_to_le32(d2) ^ key->words32[2];
++	dst->words32[3] = cpu_to_le32(d3) ^ key->words32[3];
+ }
  
--	tmp.words[0] = cpu_to_le64(assocbits);
--	tmp.words[1] = cpu_to_le64(cryptbits);
-+	tmp.words[0] = assoclen * 8;
-+	tmp.words[1] = cryptlen * 8;
- 	tmp.words[2] = 0;
- 	tmp.words[3] = 0;
- 
---- a/crypto/morus640.c
-+++ b/crypto/morus640.c
-@@ -384,21 +384,13 @@ static void crypto_morus640_final(struct
- 				  struct morus640_block *tag_xor,
- 				  u64 assoclen, u64 cryptlen)
- {
--	u64 assocbits = assoclen * 8;
--	u64 cryptbits = cryptlen * 8;
--
--	u32 assocbits_lo = (u32)assocbits;
--	u32 assocbits_hi = (u32)(assocbits >> 32);
--	u32 cryptbits_lo = (u32)cryptbits;
--	u32 cryptbits_hi = (u32)(cryptbits >> 32);
--
- 	struct morus640_block tmp;
- 	unsigned int i;
- 
--	tmp.words[0] = cpu_to_le32(assocbits_lo);
--	tmp.words[1] = cpu_to_le32(assocbits_hi);
--	tmp.words[2] = cpu_to_le32(cryptbits_lo);
--	tmp.words[3] = cpu_to_le32(cryptbits_hi);
-+	tmp.words[0] = lower_32_bits(assoclen * 8);
-+	tmp.words[1] = upper_32_bits(assoclen * 8);
-+	tmp.words[2] = lower_32_bits(cryptlen * 8);
-+	tmp.words[3] = upper_32_bits(cryptlen * 8);
- 
- 	for (i = 0; i < MORUS_BLOCK_WORDS; i++)
- 		state->s[4].words[i] ^= state->s[0].words[i];
+ #endif /* _CRYPTO_AEGIS_H */
 
 
