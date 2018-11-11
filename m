@@ -4,49 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E47ADC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:53:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA0C0C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:53:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98F0820839
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:53:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AABD20866
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:53:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="G/IaSuFI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98F0820839
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cqPtF02K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AABD20866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733267AbeKLJn5 (ORCPT
+        id S1733062AbeKLJn5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 12 Nov 2018 04:43:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37584 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:37238 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732772AbeKLISZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1732735AbeKLISZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:18:25 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 93C91223C8;
+        by mail.kernel.org (Postfix) with ESMTPSA id E8320223AE;
         Sun, 11 Nov 2018 22:28:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975308;
-        bh=QvcDQzhI8A2/jmo+CR28PtPOoxprpg8HPU7GlMGA430=;
+        s=default; t=1541975309;
+        bh=f7nAIc5YxZVXJ7ePblpSCgs21C84Iv8kyHsL5sm/OpA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G/IaSuFIhavH15RPbvmXXQQTY8Lv9hwA/v2gJtP3/R+4jEE7by15VGPWPk4CZ6HJZ
-         5sbQAoKHJjd3tE+9clf7bnpNHj+moOR2mfRA9F2OV4gAv6cq5/x2yADW01gS7k6PFu
-         b0tDpXgQl+9iKTRS70W9lT8lGgONZX5qraSj2WDc=
+        b=cqPtF02K1lvKCwgc/dCuV22+Ljos+2WVk9lHdUfMTPxlhN8K2o9CRqDttK8O11opE
+         XuuOJx35nPymuzzBd9MQwTkOU0xwOSwCG9oFJojOf4oZ3eBLsrIBIEy7TfHQWW8o4T
+         rFKf68pYoKrx6sFO0ieXVrQoYOXtDN3f3GmWyUyQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 249/361] userfaultfd: disable irqs when taking the waitqueue lock
-Date:   Sun, 11 Nov 2018 14:19:56 -0800
-Message-Id: <20181111221653.034748085@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+        Mimi Zohar <zohar@linux.ibm.com>
+Subject: [PATCH 4.19 250/361] ima: fix showing large violations or runtime_measurements_count
+Date:   Sun, 11 Nov 2018 14:19:57 -0800
+Message-Id: <20181111221653.115074660@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -64,56 +61,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christoph Hellwig <hch@lst.de>
+From: Eric Biggers <ebiggers@google.com>
 
-commit ae62c16e105a869524afcf8a07ee85c5ae5d0479 upstream.
+commit 1e4c8dafbb6bf72fb5eca035b861e39c5896c2b7 upstream.
 
-userfaultfd contains howe-grown locking of the waitqueue lock, and does
-not disable interrupts.  This relies on the fact that no one else takes it
-from interrupt context and violates an invariat of the normal waitqueue
-locking scheme.  With aio poll it is easy to trigger other locks that
-disable interrupts (or are called from interrupt context).
+The 12 character temporary buffer is not necessarily long enough to hold
+a 'long' value.  Increase it.
 
-Link: http://lkml.kernel.org/r/20181018154101.18750-1-hch@lst.de
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Andrea Arcangeli <aarcange@redhat.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: <stable@vger.kernel.org>	[4.19.x]
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/userfaultfd.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ security/integrity/ima/ima_fs.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -1026,7 +1026,7 @@ static ssize_t userfaultfd_ctx_read(stru
- 	struct userfaultfd_ctx *fork_nctx = NULL;
+--- a/security/integrity/ima/ima_fs.c
++++ b/security/integrity/ima/ima_fs.c
+@@ -42,14 +42,14 @@ static int __init default_canonical_fmt_
+ __setup("ima_canonical_fmt", default_canonical_fmt_setup);
  
- 	/* always take the fd_wqh lock before the fault_pending_wqh lock */
--	spin_lock(&ctx->fd_wqh.lock);
-+	spin_lock_irq(&ctx->fd_wqh.lock);
- 	__add_wait_queue(&ctx->fd_wqh, &wait);
- 	for (;;) {
- 		set_current_state(TASK_INTERRUPTIBLE);
-@@ -1112,13 +1112,13 @@ static ssize_t userfaultfd_ctx_read(stru
- 			ret = -EAGAIN;
- 			break;
- 		}
--		spin_unlock(&ctx->fd_wqh.lock);
-+		spin_unlock_irq(&ctx->fd_wqh.lock);
- 		schedule();
--		spin_lock(&ctx->fd_wqh.lock);
-+		spin_lock_irq(&ctx->fd_wqh.lock);
- 	}
- 	__remove_wait_queue(&ctx->fd_wqh, &wait);
- 	__set_current_state(TASK_RUNNING);
--	spin_unlock(&ctx->fd_wqh.lock);
-+	spin_unlock_irq(&ctx->fd_wqh.lock);
+ static int valid_policy = 1;
+-#define TMPBUFLEN 12
++
+ static ssize_t ima_show_htable_value(char __user *buf, size_t count,
+ 				     loff_t *ppos, atomic_long_t *val)
+ {
+-	char tmpbuf[TMPBUFLEN];
++	char tmpbuf[32];	/* greater than largest 'long' string value */
+ 	ssize_t len;
  
- 	if (!ret && msg->event == UFFD_EVENT_FORK) {
- 		ret = resolve_userfault_fork(ctx, fork_nctx, msg);
+-	len = scnprintf(tmpbuf, TMPBUFLEN, "%li\n", atomic_long_read(val));
++	len = scnprintf(tmpbuf, sizeof(tmpbuf), "%li\n", atomic_long_read(val));
+ 	return simple_read_from_buffer(buf, count, ppos, tmpbuf, len);
+ }
+ 
 
 
