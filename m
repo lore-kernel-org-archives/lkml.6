@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D945EC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:49:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 794D8C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:49:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9410E21508
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:49:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 312B9214E0
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:49:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1bjjvWY1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9410E21508
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QbM08AhC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 312B9214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390911AbeKLIjJ (ORCPT
+        id S2404351AbeKLIXT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:39:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56662 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404346AbeKLIXT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:23:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56552 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404304AbeKLIXR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:23:17 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC29421707;
-        Sun, 11 Nov 2018 22:33:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB07821707;
+        Sun, 11 Nov 2018 22:33:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975601;
-        bh=hlZRh9cDKVNkcgo4IMS/BtCtzR+lOCdxsZrvb8bgKZA=;
+        s=default; t=1541975600;
+        bh=mtWVRQPGVeP5JRpaGV8jrUODTLymADEDhXLVpvwB6FI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1bjjvWY1BeQu9WDM7ISSgtgQO56K8lkbHhVDmXTBlYL1VwqKZWGL7v/h2Dlxn6cJF
-         I3vQuxGXHv56rETte6QhB4DLSTAWLxLqZ7aE1mw7V4z6DlVPqdncf69NmZsPyUQaJl
-         kBS94RyjJMDuNOKtSa0TylcdidbW4LVMkmsJ2Ytw=
+        b=QbM08AhCY5uY0upjgN6rWDzZKE8L41oojboxISqDl4t6M5oES3KFDl699TZTgN/ZW
+         ccIF5M0xoOZCWW7xS15xgwS/5SdLFWe0D0gdiuxU4lcnSG+66beAn4HcdmzJ6nPOdo
+         DFlJhjEVWZKFrAhYN8EZNpk8Zp11WXPIHm7bBcDQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qu Wenruo <wqu@suse.com>,
-        Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 218/222] Btrfs: fix use-after-free during inode eviction
-Date:   Sun, 11 Nov 2018 14:25:15 -0800
-Message-Id: <20181111221705.807946462@linuxfoundation.org>
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.14 214/222] btrfs: dont use ctl->free_space for max_extent_size
+Date:   Sun, 11 Nov 2018 14:25:11 -0800
+Message-Id: <20181111221705.581648200@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -63,61 +62,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Josef Bacik <jbacik@fb.com>
 
-commit 421f0922a2cfb0c75acd9746454aaa576c711a65 upstream.
+commit fb5c39d7a887108087de6ff93d3f326b01b4ef41 upstream.
 
-At inode.c:evict_inode_truncate_pages(), when we iterate over the
-inode's extent states, we access an extent state record's "state" field
-after we unlocked the inode's io tree lock. This can lead to a
-use-after-free issue because after we unlock the io tree that extent
-state record might have been freed due to being merged into another
-adjacent extent state record (a previous inflight bio for a read
-operation finished in the meanwhile which unlocked a range in the io
-tree and cause a merge of extent state records, as explained in the
-comment before the while loop added in commit 6ca0709756710 ("Btrfs: fix
-hang during inode eviction due to concurrent readahead")).
+max_extent_size is supposed to be the largest contiguous range for the
+space info, and ctl->free_space is the total free space in the block
+group.  We need to keep track of these separately and _only_ use the
+max_free_space if we don't have a max_extent_size, as that means our
+original request was too large to search any of the block groups for and
+therefore wouldn't have a max_extent_size set.
 
-Fix this by keeping a copy of the extent state's flags in a local
-variable and using it after unlocking the io tree.
-
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=201189
-Fixes: b9d0b38928e2 ("btrfs: Add handler for invalidate page")
-CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Qu Wenruo <wqu@suse.com>
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
+CC: stable@vger.kernel.org # 4.14+
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: Josef Bacik <jbacik@fb.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/inode.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/btrfs/extent-tree.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -5335,11 +5335,13 @@ static void evict_inode_truncate_pages(s
- 		struct extent_state *cached_state = NULL;
- 		u64 start;
- 		u64 end;
-+		unsigned state_flags;
- 
- 		node = rb_first(&io_tree->state);
- 		state = rb_entry(node, struct extent_state, rb_node);
- 		start = state->start;
- 		end = state->end;
-+		state_flags = state->state;
- 		spin_unlock(&io_tree->lock);
- 
- 		lock_extent_bits(io_tree, start, end, &cached_state);
-@@ -5352,7 +5354,7 @@ static void evict_inode_truncate_pages(s
- 		 *
- 		 * Note, end is the bytenr of last byte, so we need + 1 here.
- 		 */
--		if (state->state & EXTENT_DELALLOC)
-+		if (state_flags & EXTENT_DELALLOC)
- 			btrfs_qgroup_free_data(inode, NULL, start, end - start + 1);
- 
- 		clear_extent_bit(io_tree, start, end,
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -7573,6 +7573,7 @@ static noinline int find_free_extent(str
+ 	struct btrfs_block_group_cache *block_group = NULL;
+ 	u64 search_start = 0;
+ 	u64 max_extent_size = 0;
++	u64 max_free_space = 0;
+ 	u64 empty_cluster = 0;
+ 	struct btrfs_space_info *space_info;
+ 	int loop = 0;
+@@ -7867,8 +7868,8 @@ unclustered_alloc:
+ 			spin_lock(&ctl->tree_lock);
+ 			if (ctl->free_space <
+ 			    num_bytes + empty_cluster + empty_size) {
+-				if (ctl->free_space > max_extent_size)
+-					max_extent_size = ctl->free_space;
++				max_free_space = max(max_free_space,
++						     ctl->free_space);
+ 				spin_unlock(&ctl->tree_lock);
+ 				goto loop;
+ 			}
+@@ -8037,6 +8038,8 @@ loop:
+ 	}
+ out:
+ 	if (ret == -ENOSPC) {
++		if (!max_extent_size)
++			max_extent_size = max_free_space;
+ 		spin_lock(&space_info->lock);
+ 		space_info->max_extent_size = max_extent_size;
+ 		spin_unlock(&space_info->lock);
 
 
