@@ -6,47 +6,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E1B8C04EB9
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23E6BC0044C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DB88216FD
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D435A223CA
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bt0TWfJ8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DB88216FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="G+dWqXI8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D435A223CA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729596AbeKLISS (ORCPT
+        id S1732703AbeKLISU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:18:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35336 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:18:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732619AbeKLISQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:18:16 -0500
+        id S1732652AbeKLISS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:18:18 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 86ECC215EA;
-        Sun, 11 Nov 2018 22:28:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8B294223C8;
+        Sun, 11 Nov 2018 22:28:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975300;
-        bh=chTzuy/f7i7DYFgpSy4OggNZY3QoTKVd4ELorRSuSzk=;
+        s=default; t=1541975302;
+        bh=e2bnWh4ODIALsdGhsfWu2OKP8AyLhUvgLfLdFbJip2I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bt0TWfJ8LFpUePb4QZNfKoutRhJQTlZusNgomAaZxb/fByMJgCYh2ykK/BwnsueG9
-         JYTZVqFjQimSs1TnfhGEWewjaXEKbcxW1GOdwPqZdNOLBJgeLbr58txHdcKvtScoFI
-         JYr3amBZyO+LvilUGKtD7JEsiFQr8V1UVdnvBmmw=
+        b=G+dWqXI8upzzuADxOsCdGKlTXJuJ1GEHvbcoD1WzU5ITxFGeZ55zwHNqAVx6hwkqW
+         UMJo865RSS6BH9z1gFUX87/Bs9anneqd9lnv07dwPHXnmDakvSwFsHKXo/dqWLGpxP
+         fLusydYPyri75LoeRHD1azbEm54VoOpAdLquWG/U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maxime Ripard <maxime.ripard@bootlin.com>,
-        Eugen Hristev <eugen.hristev@microchip.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.19 261/361] iio: adc: at91: fix wrong channel number in triggered buffer mode
-Date:   Sun, 11 Nov 2018 14:20:08 -0800
-Message-Id: <20181111221653.991756690@linuxfoundation.org>
+        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>
+Subject: [PATCH 4.19 265/361] smb3: on kerberos mount if server doesnt specify auth type use krb5
+Date:   Sun, 11 Nov 2018 14:20:12 -0800
+Message-Id: <20181111221654.582655743@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -64,49 +61,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eugen Hristev <eugen.hristev@microchip.com>
+From: Steve French <stfrench@microsoft.com>
 
-commit aea835f2dc8a682942b859179c49ad1841a6c8b9 upstream.
+commit 926674de6705f0f1dbf29a62fd758d0977f535d6 upstream.
 
-When channels are registered, the hardware channel number is not the
-actual iio channel number.
-This is because the driver is probed with a certain number of accessible
-channels. Some pins are routed and some not, depending on the description of
-the board in the DT.
-Because of that, channels 0,1,2,3 can correspond to hardware channels
-2,3,4,5 for example.
-In the buffered triggered case, we need to do the translation accordingly.
-Fixed the channel number to stop reading the wrong channel.
+Some servers (e.g. Azure) do not include a spnego blob in the SMB3
+negotiate protocol response, so on kerberos mounts ("sec=krb5")
+we can fail, as we expected the server to list its supported
+auth types (OIDs in the spnego blob in the negprot response).
+Change this so that on krb5 mounts we default to trying krb5 if the
+server doesn't list its supported protocol mechanisms.
 
-Fixes: 0e589d5fb ("ARM: AT91: IIO: Add AT91 ADC driver.")
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+CC: Stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/adc/at91_adc.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/cifs/cifs_spnego.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/iio/adc/at91_adc.c
-+++ b/drivers/iio/adc/at91_adc.c
-@@ -248,12 +248,14 @@ static irqreturn_t at91_adc_trigger_hand
- 	struct iio_poll_func *pf = p;
- 	struct iio_dev *idev = pf->indio_dev;
- 	struct at91_adc_state *st = iio_priv(idev);
-+	struct iio_chan_spec const *chan;
- 	int i, j = 0;
+--- a/fs/cifs/cifs_spnego.c
++++ b/fs/cifs/cifs_spnego.c
+@@ -147,8 +147,10 @@ cifs_get_spnego_key(struct cifs_ses *ses
+ 		sprintf(dp, ";sec=krb5");
+ 	else if (server->sec_mskerberos)
+ 		sprintf(dp, ";sec=mskrb5");
+-	else
+-		goto out;
++	else {
++		cifs_dbg(VFS, "unknown or missing server auth type, use krb5\n");
++		sprintf(dp, ";sec=krb5");
++	}
  
- 	for (i = 0; i < idev->masklength; i++) {
- 		if (!test_bit(i, idev->active_scan_mask))
- 			continue;
--		st->buffer[j] = at91_adc_readl(st, AT91_ADC_CHAN(st, i));
-+		chan = idev->channels + i;
-+		st->buffer[j] = at91_adc_readl(st, AT91_ADC_CHAN(st, chan->channel));
- 		j++;
- 	}
- 
+ 	dp = description + strlen(description);
+ 	sprintf(dp, ";uid=0x%x",
 
 
