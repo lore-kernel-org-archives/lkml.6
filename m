@@ -7,47 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D1EBC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8284CC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27DD52154B
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D577223CB
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="M+vOa7Lh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27DD52154B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hXU9v8Wo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D577223CB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389402AbeKLIVL (ORCPT
+        id S2389440AbeKLIVN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:21:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47520 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:21:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387732AbeKLIVI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:21:08 -0500
+        id S2389368AbeKLIVK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:10 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5452321780;
-        Sun, 11 Nov 2018 22:31:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2856C223CA;
+        Sun, 11 Nov 2018 22:31:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975472;
-        bh=nYvvgJt+94Z2G9UsR28TtegBJlcsk0BGcftxJclh6W4=;
+        s=default; t=1541975474;
+        bh=69GZvkxe8ZyYAgIogC8uAx0oJGFghvtoQwR2L9Luybk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M+vOa7LhE1xynzWUaxZwRPIht1vQmoW3W6KH5k1xiF0QumiTndhVQY0xTEQtl43mY
-         rdMO3vtHqidclrFjXE7KyWae39VX+GmHz8hSa4+5FmcNn7xwkAt26IXAtkytipEgMu
-         iTALK730MzPKIAfDXSM18fesQqE61YphtkyvnuYI=
+        b=hXU9v8WoS8sQKk6tYDaT/FUiDeOd9TMqtcQe6KhXZC5lOjFwXesWT68/bleOsC5he
+         67Lfh6HpmJ3cpcQy0eyXZwJ+Slz1lS2wZZLgusuzDsSPf7rT5Uc3EseuuK/SBfn5At
+         rIlinZIU+Wg6k6hJZXB+3ENmRnvZMyrP4M8vzBB8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maxime Ripard <maxime.ripard@bootlin.com>,
-        Eugen Hristev <eugen.hristev@microchip.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.18 254/350] iio: adc: at91: fix wrong channel number in triggered buffer mode
-Date:   Sun, 11 Nov 2018 14:21:58 -0800
-Message-Id: <20181111221718.656962738@linuxfoundation.org>
+        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
+        Aurelien Aptel <aaptel@suse.com>
+Subject: [PATCH 4.18 256/350] smb3: allow stats which track session and share reconnects to be reset
+Date:   Sun, 11 Nov 2018 14:22:00 -0800
+Message-Id: <20181111221718.734678366@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -65,49 +62,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eugen Hristev <eugen.hristev@microchip.com>
+From: Steve French <stfrench@microsoft.com>
 
-commit aea835f2dc8a682942b859179c49ad1841a6c8b9 upstream.
+commit 2c887635cd6ab3af619dc2be94e5bf8f2e172b78 upstream.
 
-When channels are registered, the hardware channel number is not the
-actual iio channel number.
-This is because the driver is probed with a certain number of accessible
-channels. Some pins are routed and some not, depending on the description of
-the board in the DT.
-Because of that, channels 0,1,2,3 can correspond to hardware channels
-2,3,4,5 for example.
-In the buffered triggered case, we need to do the translation accordingly.
-Fixed the channel number to stop reading the wrong channel.
+Currently, "echo 0 > /proc/fs/cifs/Stats" resets all of the stats
+except the session and share reconnect counts.  Fix it to
+reset those as well.
 
-Fixes: 0e589d5fb ("ARM: AT91: IIO: Add AT91 ADC driver.")
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+CC: Stable <stable@vger.kernel.org>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Aurelien Aptel <aaptel@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/adc/at91_adc.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/cifs/cifs_debug.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/iio/adc/at91_adc.c
-+++ b/drivers/iio/adc/at91_adc.c
-@@ -248,12 +248,14 @@ static irqreturn_t at91_adc_trigger_hand
- 	struct iio_poll_func *pf = p;
- 	struct iio_dev *idev = pf->indio_dev;
- 	struct at91_adc_state *st = iio_priv(idev);
-+	struct iio_chan_spec const *chan;
- 	int i, j = 0;
- 
- 	for (i = 0; i < idev->masklength; i++) {
- 		if (!test_bit(i, idev->active_scan_mask))
- 			continue;
--		st->buffer[j] = at91_adc_readl(st, AT91_ADC_CHAN(st, i));
-+		chan = idev->channels + i;
-+		st->buffer[j] = at91_adc_readl(st, AT91_ADC_CHAN(st, chan->channel));
- 		j++;
- 	}
- 
+--- a/fs/cifs/cifs_debug.c
++++ b/fs/cifs/cifs_debug.c
+@@ -383,6 +383,9 @@ static ssize_t cifs_stats_proc_write(str
+ 		atomic_set(&totBufAllocCount, 0);
+ 		atomic_set(&totSmBufAllocCount, 0);
+ #endif /* CONFIG_CIFS_STATS2 */
++		atomic_set(&tcpSesReconnectCount, 0);
++		atomic_set(&tconInfoReconnectCount, 0);
++
+ 		spin_lock(&GlobalMid_Lock);
+ 		GlobalMaxActiveXid = 0;
+ 		GlobalCurrentXid = 0;
 
 
