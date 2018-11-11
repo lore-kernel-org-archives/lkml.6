@@ -5,32 +5,31 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DA63C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 00:26:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A14F8C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 00:28:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 457F9208A3
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 00:26:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 457F9208A3
+	by mail.kernel.org (Postfix) with ESMTP id 7202321104
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 00:28:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7202321104
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727110AbeKKKNn convert rfc822-to-8bit (ORCPT
+        id S1727215AbeKKKOx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 05:13:43 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:34606 "EHLO mx1.redhat.com"
+        Sun, 11 Nov 2018 05:14:53 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:36060 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726292AbeKKKNm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 05:13:42 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        id S1726292AbeKKKOx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Nov 2018 05:14:53 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DBB5E58E38;
-        Sun, 11 Nov 2018 00:26:53 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id C464A30832C2;
+        Sun, 11 Nov 2018 00:28:03 +0000 (UTC)
 Received: from llong.remote.csb (ovpn-120-141.rdu2.redhat.com [10.10.120.141])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 238B8100195E;
-        Sun, 11 Nov 2018 00:26:52 +0000 (UTC)
-Subject: Re: [RFC PATCH 01/12] locking/lockdep: Rework
- lockdep_set_novalidate_class()
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B66A5608DA;
+        Sun, 11 Nov 2018 00:28:01 +0000 (UTC)
+Subject: Re: [RFC PATCH 02/12] locking/lockdep: Add a new terminal lock type
 To:     Peter Zijlstra <peterz@infradead.org>
 Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -41,8 +40,8 @@ Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
         Tejun Heo <tj@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>
 References: <1541709268-3766-1-git-send-email-longman@redhat.com>
- <1541709268-3766-2-git-send-email-longman@redhat.com>
- <20181110141458.GE3339@worktop.programming.kicks-ass.net>
+ <1541709268-3766-3-git-send-email-longman@redhat.com>
+ <20181110141734.GF3339@worktop.programming.kicks-ass.net>
 From:   Waiman Long <longman@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
@@ -89,72 +88,42 @@ Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
  wGA5uquIgb8p3/ENgYpDPrsZ72CxVC2NEJjJwwnRBStjJOGQX4lV1uhN1XsZjBbRHdKF2W9g
  weim8xU=
 Organization: Red Hat
-Message-ID: <bc8ef8ae-c673-f4ae-fab1-3fe1bc884087@redhat.com>
-Date:   Sat, 10 Nov 2018 19:26:51 -0500
+Message-ID: <7294253b-a928-4bf6-8bf5-73d532ca0a7e@redhat.com>
+Date:   Sat, 10 Nov 2018 19:28:01 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181110141458.GE3339@worktop.programming.kicks-ass.net>
+In-Reply-To: <20181110141734.GF3339@worktop.programming.kicks-ass.net>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Sun, 11 Nov 2018 00:26:54 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Sun, 11 Nov 2018 00:28:04 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/10/2018 09:14 AM, Peter Zijlstra wrote:
-> On Thu, Nov 08, 2018 at 03:34:17PM -0500, Waiman Long wrote:
->> The current lockdep_set_novalidate_class() implementation is like
->> a hack. It assigns a special class key for that lock and calls
->> lockdep_init_map() twice.
-> Ideally it would go away.. it is not thing that should be used.
-
-Yes, I agree. Right now, lockdep_set_novalidate_class() is used in
-
-drivers/base/core.c:    lockdep_set_novalidate_class(&dev->mutex);
-drivers/md/bcache/btree.c:      lockdep_set_novalidate_class(&b->lock);
-drivers/md/bcache/btree.c:     
-lockdep_set_novalidate_class(&b->write_lock);
-
-Do you know the history behind making them novalidate?
-
->
->> This patch changes the implementation to make it more general so that
->> it can be used by other special lock class types. A new "type" field
->> is added to both the lockdep_map and lock_class structures.
+On 11/10/2018 09:17 AM, Peter Zijlstra wrote:
+> On Thu, Nov 08, 2018 at 03:34:18PM -0500, Waiman Long wrote:
+>> A terminal lock is a lock where further locking or unlocking on another
+>> lock is not allowed. IOW, no forward dependency is permitted.
 >>
->> The new field can now be used to designate a lock and a class object
->> as novalidate. The lockdep_set_novalidate_class() call, however, should
->> be called before lock initialization which calls lockdep_init_map().
-> I don't really feel like this is something that should be made easier or
-> better.
+>> With such a restriction in place, we don't really need to do a full
+>> validation of the lock chain involving a terminal lock.  Instead,
+>> we just check if there is any further locking or unlocking on another
+>> lock when a terminal lock is being held.
+>> @@ -263,6 +270,7 @@ struct held_lock {
+>>  	unsigned int hardirqs_off:1;
+>>  	unsigned int references:12;					/* 32 bits */
+>>  	unsigned int pin_count;
+>> +	unsigned int flags;
+>>  };
+> I'm thinking we can easily steal some bits off of the pin_count field if
+> we have to.
 
-I am not saying that this patch make lockdep_set_novalidate_class()
-easier to use. It is that terminal locks will share similar code path
-and so I rework it so that they can checked together in one test instead
-of 2 separate tests.
-
->> @@ -102,6 +100,8 @@ struct lock_class {
->>  	int				name_version;
->>  	const char			*name;
->>  
->> +	unsigned int			flags;
->> +
->>  #ifdef CONFIG_LOCK_STAT
->>  	unsigned long			contention_point[LOCKSTAT_POINTS];
->>  	unsigned long			contending_point[LOCKSTAT_POINTS];
-> Esp. not at the cost of growing the data structures.
->
->
-
-I did reduce the size by 16 bytes for 64-bit architecture in my previous
-lockdep patch. Now I claw back 8 bytes for this new functionality.
+OK, I will take a look at that.
 
 Cheers,
 Longman
-
-
 
