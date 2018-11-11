@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 380D2C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:17:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 201AFC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:17:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB37220862
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:17:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCAC220817
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:17:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GXVX8LSj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB37220862
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kweWtCqE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCAC220817
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389852AbeKLJHq (ORCPT
+        id S2389889AbeKLJH5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:07:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49052 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:07:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49028 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389704AbeKLIVe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:21:34 -0500
+        id S1731129AbeKLIVd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:33 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F02D42154B;
+        by mail.kernel.org (Postfix) with ESMTPSA id 8B9FA223CA;
         Sun, 11 Nov 2018 22:31:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975497;
-        bh=rnnYkUCXa2sOIMFSzP+6ovJZgX7ygr9SXkMuHTj/Z0o=;
+        s=default; t=1541975496;
+        bh=DU6yid1jx++xWgSK3fxgnhogMyKtX09MGPoYx0vrzos=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GXVX8LSjN3AiGrDgbdxPyESpe2Ovk0tPva2o37vYbvtiH9m3iQSEMhN2jaG6ais5Y
-         7V1ZXR85yXlC8ZrS0sftZvQJorCrRAoO2VqqHJWUAKmbAWcSUOpSRI9VPH4g4zwCht
-         96gRnGwVlaHh6/N08vymHUiflBdKOe+0bV+cAMTs=
+        b=kweWtCqEA786jJ/Mly7P5fZd0tuNOKbT+dcK8LqwAQj+BXeUuUmdk2CDxCiPBWIbg
+         XZYog61ijq5WQs1ZaUAOxmJWNIzrZ2ifwxnZbW8PTkFOafKLs0+pna6j9n/pKZQ/aU
+         Oq9gdh7UQsMrXjLDXmn6VlyaH1/PQmfTQyAiiNNs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
+        stable@vger.kernel.org,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.18 301/350] media: adv7604: when the EDID is cleared, unconfigure CEC as well
-Date:   Sun, 11 Nov 2018 14:22:45 -0800
-Message-Id: <20181111221720.674467750@linuxfoundation.org>
+Subject: [PATCH 4.18 300/350] media: em28xx: fix handler for vidioc_s_input()
+Date:   Sun, 11 Nov 2018 14:22:44 -0800
+Message-Id: <20181111221720.636224036@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -62,35 +62,253 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hans Verkuil <hans.verkuil@cisco.com>
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-commit e7da89926f6dc6cf855f5ffdf79ef99a1b115ca7 upstream.
+commit 258c430456ba5f0005043762e14fc3be35983aaf upstream.
 
-When there is no EDID the CEC adapter should be unconfigured as
-well. So call cec_phys_addr_invalidate() when this happens.
+The a->index is not the name of the internal amux entry,
+but, instead a value from zero to the maximum number
+of audio inputs.
 
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Cc: <stable@vger.kernel.org>      # for v4.18 and up
+As the actual available inputs depend on each board, build
+it dynamically.
+
+This is broken for a really long time. On a quick check,
+since at least commit 195a4ef627e1 ("V4L/DVB (6585): Convert
+em28xx to video_ioctl2") this was not implemented right.
+
+Fixes: 195a4ef627e1 ("V4L/DVB (6585): Convert em28xx to video_ioctl2")
+
+Cc: stable@vger.kernel.org
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/i2c/adv7604.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/media/usb/em28xx/em28xx-cards.c |   29 ++++++++++
+ drivers/media/usb/em28xx/em28xx-video.c |   86 ++++++++++++++++++++++++++++----
+ drivers/media/usb/em28xx/em28xx.h       |    8 ++
+ 3 files changed, 113 insertions(+), 10 deletions(-)
 
---- a/drivers/media/i2c/adv7604.c
-+++ b/drivers/media/i2c/adv7604.c
-@@ -2284,8 +2284,10 @@ static int adv76xx_set_edid(struct v4l2_
- 		state->aspect_ratio.numerator = 16;
- 		state->aspect_ratio.denominator = 9;
+--- a/drivers/media/usb/em28xx/em28xx-cards.c
++++ b/drivers/media/usb/em28xx/em28xx-cards.c
+@@ -3041,6 +3041,9 @@ static int em28xx_hint_board(struct em28
  
--		if (!state->edid.present)
-+		if (!state->edid.present) {
- 			state->edid.blocks = 0;
-+			cec_phys_addr_invalidate(state->cec_adap);
+ static void em28xx_card_setup(struct em28xx *dev)
+ {
++	int i, j, idx;
++	bool duplicate_entry;
++
+ 	/*
+ 	 * If the device can be a webcam, seek for a sensor.
+ 	 * If sensor is not found, then it isn't a webcam.
+@@ -3197,6 +3200,32 @@ static void em28xx_card_setup(struct em2
+ 	/* Allow override tuner type by a module parameter */
+ 	if (tuner >= 0)
+ 		dev->tuner_type = tuner;
++
++	/*
++	 * Dynamically generate a list of valid audio inputs for this
++	 * specific board, mapping them via enum em28xx_amux.
++	 */
++
++	idx = 0;
++	for (i = 0; i < MAX_EM28XX_INPUT; i++) {
++		if (!INPUT(i)->type)
++			continue;
++
++		/* Skip already mapped audio inputs */
++		duplicate_entry = false;
++		for (j = 0; j < idx; j++) {
++			if (INPUT(i)->amux == dev->amux_map[j]) {
++				duplicate_entry = true;
++				break;
++			}
 +		}
++		if (duplicate_entry)
++			continue;
++
++		dev->amux_map[idx++] = INPUT(i)->amux;
++	}
++	for (; idx < MAX_EM28XX_INPUT; idx++)
++		dev->amux_map[idx] = EM28XX_AMUX_UNUSED;
+ }
  
- 		v4l2_dbg(2, debug, sd, "%s: clear EDID pad %d, edid.present = 0x%x\n",
- 				__func__, edid->pad, state->edid.present);
+ void em28xx_setup_xc3028(struct em28xx *dev, struct xc2028_ctrl *ctl)
+--- a/drivers/media/usb/em28xx/em28xx-video.c
++++ b/drivers/media/usb/em28xx/em28xx-video.c
+@@ -1668,6 +1668,7 @@ static int vidioc_enum_input(struct file
+ {
+ 	struct em28xx *dev = video_drvdata(file);
+ 	unsigned int       n;
++	int j;
+ 
+ 	n = i->index;
+ 	if (n >= MAX_EM28XX_INPUT)
+@@ -1687,6 +1688,12 @@ static int vidioc_enum_input(struct file
+ 	if (dev->is_webcam)
+ 		i->capabilities = 0;
+ 
++	/* Dynamically generates an audioset bitmask */
++	i->audioset = 0;
++	for (j = 0; j < MAX_EM28XX_INPUT; j++)
++		if (dev->amux_map[j] != EM28XX_AMUX_UNUSED)
++			i->audioset |= 1 << j;
++
+ 	return 0;
+ }
+ 
+@@ -1712,11 +1719,24 @@ static int vidioc_s_input(struct file *f
+ 	return 0;
+ }
+ 
+-static int vidioc_g_audio(struct file *file, void *priv, struct v4l2_audio *a)
+-{
+-	struct em28xx *dev = video_drvdata(file);
++static int em28xx_fill_audio_input(struct em28xx *dev,
++				   const char *s,
++				   struct v4l2_audio *a,
++				   unsigned int index)
++{
++	unsigned int idx = dev->amux_map[index];
++
++	/*
++	 * With msp3400, almost all mappings use the default (amux = 0).
++	 * The only one may use a different value is WinTV USB2, where it
++	 * can also be SCART1 input.
++	 * As it is very doubtful that we would see new boards with msp3400,
++	 * let's just reuse the existing switch.
++	 */
++	if (dev->has_msp34xx && idx != EM28XX_AMUX_UNUSED)
++		idx = EM28XX_AMUX_LINE_IN;
+ 
+-	switch (a->index) {
++	switch (idx) {
+ 	case EM28XX_AMUX_VIDEO:
+ 		strcpy(a->name, "Television");
+ 		break;
+@@ -1741,32 +1761,79 @@ static int vidioc_g_audio(struct file *f
+ 	case EM28XX_AMUX_PCM_OUT:
+ 		strcpy(a->name, "PCM");
+ 		break;
++	case EM28XX_AMUX_UNUSED:
+ 	default:
+ 		return -EINVAL;
+ 	}
+-
+-	a->index = dev->ctl_ainput;
++	a->index = index;
+ 	a->capability = V4L2_AUDCAP_STEREO;
+ 
++	em28xx_videodbg("%s: audio input index %d is '%s'\n",
++			s, a->index, a->name);
++
+ 	return 0;
+ }
+ 
++static int vidioc_enumaudio(struct file *file, void *fh, struct v4l2_audio *a)
++{
++	struct em28xx *dev = video_drvdata(file);
++
++	if (a->index >= MAX_EM28XX_INPUT)
++		return -EINVAL;
++
++	return em28xx_fill_audio_input(dev, __func__, a, a->index);
++}
++
++static int vidioc_g_audio(struct file *file, void *priv, struct v4l2_audio *a)
++{
++	struct em28xx *dev = video_drvdata(file);
++	int i;
++
++	for (i = 0; i < MAX_EM28XX_INPUT; i++)
++		if (dev->ctl_ainput == dev->amux_map[i])
++			return em28xx_fill_audio_input(dev, __func__, a, i);
++
++	/* Should never happen! */
++	return -EINVAL;
++}
++
+ static int vidioc_s_audio(struct file *file, void *priv,
+ 			  const struct v4l2_audio *a)
+ {
+ 	struct em28xx *dev = video_drvdata(file);
++	int idx, i;
+ 
+ 	if (a->index >= MAX_EM28XX_INPUT)
+ 		return -EINVAL;
+-	if (!INPUT(a->index)->type)
++
++	idx = dev->amux_map[a->index];
++
++	if (idx == EM28XX_AMUX_UNUSED)
++		return -EINVAL;
++
++	dev->ctl_ainput = idx;
++
++	/*
++	 * FIXME: This is wrong, as different inputs at em28xx_cards
++	 * may have different audio outputs. So, the right thing
++	 * to do is to implement VIDIOC_G_AUDOUT/VIDIOC_S_AUDOUT.
++	 * With the current board definitions, this would work fine,
++	 * as, currently, all boards fit.
++	 */
++	for (i = 0; i < MAX_EM28XX_INPUT; i++)
++		if (idx == dev->amux_map[i])
++			break;
++	if (i == MAX_EM28XX_INPUT)
+ 		return -EINVAL;
+ 
+-	dev->ctl_ainput = INPUT(a->index)->amux;
+-	dev->ctl_aoutput = INPUT(a->index)->aout;
++	dev->ctl_aoutput = INPUT(i)->aout;
+ 
+ 	if (!dev->ctl_aoutput)
+ 		dev->ctl_aoutput = EM28XX_AOUT_MASTER;
+ 
++	em28xx_videodbg("%s: set audio input to %d\n", __func__,
++			dev->ctl_ainput);
++
+ 	return 0;
+ }
+ 
+@@ -2304,6 +2371,7 @@ static const struct v4l2_ioctl_ops video
+ 	.vidioc_try_fmt_vbi_cap     = vidioc_g_fmt_vbi_cap,
+ 	.vidioc_s_fmt_vbi_cap       = vidioc_g_fmt_vbi_cap,
+ 	.vidioc_enum_framesizes     = vidioc_enum_framesizes,
++	.vidioc_enumaudio           = vidioc_enumaudio,
+ 	.vidioc_g_audio             = vidioc_g_audio,
+ 	.vidioc_s_audio             = vidioc_s_audio,
+ 
+--- a/drivers/media/usb/em28xx/em28xx.h
++++ b/drivers/media/usb/em28xx/em28xx.h
+@@ -335,6 +335,9 @@ enum em28xx_usb_audio_type {
+ /**
+  * em28xx_amux - describes the type of audio input used by em28xx
+  *
++ * @EM28XX_AMUX_UNUSED:
++ *	Used only on em28xx dev->map field, in order to mark an entry
++ *	as unused.
+  * @EM28XX_AMUX_VIDEO:
+  *	On devices without AC97, this is the only value that it is currently
+  *	allowed.
+@@ -369,7 +372,8 @@ enum em28xx_usb_audio_type {
+  * same time, via the alsa mux.
+  */
+ enum em28xx_amux {
+-	EM28XX_AMUX_VIDEO,
++	EM28XX_AMUX_UNUSED = -1,
++	EM28XX_AMUX_VIDEO = 0,
+ 	EM28XX_AMUX_LINE_IN,
+ 
+ 	/* Some less-common mixer setups */
+@@ -692,6 +696,8 @@ struct em28xx {
+ 	unsigned int ctl_input;	// selected input
+ 	unsigned int ctl_ainput;// selected audio input
+ 	unsigned int ctl_aoutput;// selected audio output
++	enum em28xx_amux amux_map[MAX_EM28XX_INPUT];
++
+ 	int mute;
+ 	int volume;
+ 
 
 
