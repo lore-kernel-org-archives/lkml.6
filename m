@@ -6,45 +6,44 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F1CBC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:07:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D9DFC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:07:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38B912080D
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:07:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38B912080D
+	by mail.kernel.org (Postfix) with ESMTP id CEFB52080D
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:07:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEFB52080D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731456AbeKLF4q (ORCPT
+        id S1731463AbeKLF4u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 00:56:46 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52102 "EHLO
+        Mon, 12 Nov 2018 00:56:50 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52112 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727208AbeKLF4q (ORCPT
+        by vger.kernel.org with ESMTP id S1727208AbeKLF4t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:56:46 -0500
+        Mon, 12 Nov 2018 00:56:49 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvtB-0000tu-RD; Sun, 11 Nov 2018 19:59:21 +0000
+        id 1gLvt0-0000lJ-Ng; Sun, 11 Nov 2018 19:59:10 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsO-0001Pi-PJ; Sun, 11 Nov 2018 19:58:32 +0000
+        id 1gLvsS-0001Yk-Im; Sun, 11 Nov 2018 19:58:36 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Jan Kara" <jack@suse.cz>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        "Amir Goldstein" <amir73il@gmail.com>
+CC:     akpm@linux-foundation.org, "Johan Hovold" <johan@kernel.org>,
+        "Karoly Pados" <pados@pados.hu>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.871694187@decadent.org.uk>
+Message-ID: <lsq.1541965745.269561213@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 046/366] ext4: do not update s_last_mounted of a
- frozen fs
+Subject: [PATCH 3.16 147/366] USB: serial: cp210x: add Silicon Labs IDs
+ for Windows Update
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,81 +57,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Amir Goldstein <amir73il@gmail.com>
+From: Karoly Pados <pados@pados.hu>
 
-commit db6516a5e7ddb6dc72d167b920f2f272596ea22d upstream.
+commit 2f839823382748664b643daa73f41ee0cc01ced6 upstream.
 
-If fs is frozen after mount and before the first file open, the
-update of s_last_mounted bypasses freeze protection and prints out
-a WARNING splat:
+Silicon Labs defines alternative VID/PID pairs for some chips that when
+used will automatically install drivers for Windows users without manual
+intervention. Unfortunately, these IDs are not recognized by the Linux
+module, so using these IDs improves user experience on one platform but
+degrades it on Linux. This patch addresses this problem.
 
-$ mount /vdf
-$ fsfreeze -f /vdf
-$ cat /vdf/foo
-
-[   31.578555] WARNING: CPU: 1 PID: 1415 at
-fs/ext4/ext4_jbd2.c:53 ext4_journal_check_start+0x48/0x82
-
-[   31.614016] Call Trace:
-[   31.614997]  __ext4_journal_start_sb+0xe4/0x1a4
-[   31.616771]  ? ext4_file_open+0xb6/0x189
-[   31.618094]  ext4_file_open+0xb6/0x189
-
-If fs is frozen, skip s_last_mounted update.
-
-[backport hint: to apply to stable tree, need to apply also patches
- vfs: add the sb_start_intwrite_trylock() helper
- ext4: factor out helper ext4_sample_last_mounted()]
-
-Fixes: bc0b0d6d69ee ("ext4: update the s_last_mounted field in the superblock")
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reviewed-by: Jan Kara <jack@suse.cz>
-[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Karoly Pados <pados@pados.hu>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/ext4/file.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ drivers/usb/serial/cp210x.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/fs/ext4/file.c
-+++ b/fs/ext4/file.c
-@@ -220,7 +220,7 @@ static int ext4_sample_last_mounted(stru
- 	if (likely(sbi->s_mount_flags & EXT4_MF_MNTDIR_SAMPLED))
- 		return 0;
- 
--	if (sb->s_flags & MS_RDONLY)
-+	if (sb->s_flags & MS_RDONLY || !sb_start_intwrite_trylock(sb))
- 		return 0;
- 
- 	sbi->s_mount_flags |= EXT4_MF_MNTDIR_SAMPLED;
-@@ -234,21 +234,25 @@ static int ext4_sample_last_mounted(stru
- 	path.mnt = mnt;
- 	path.dentry = mnt->mnt_root;
- 	cp = d_path(&path, buf, sizeof(buf));
-+	err = 0;
- 	if (IS_ERR(cp))
--		return 0;
-+		goto out;
- 
- 	handle = ext4_journal_start_sb(sb, EXT4_HT_MISC, 1);
-+	err = PTR_ERR(handle);
- 	if (IS_ERR(handle))
--		return PTR_ERR(handle);
-+		goto out;
- 	BUFFER_TRACE(sbi->s_sbh, "get_write_access");
- 	err = ext4_journal_get_write_access(handle, sbi->s_sbh);
- 	if (err)
--		goto out;
-+		goto out_journal;
- 	strlcpy(sbi->s_es->s_last_mounted, cp,
- 		sizeof(sbi->s_es->s_last_mounted));
- 	ext4_handle_dirty_super(handle, sb);
--out:
-+out_journal:
- 	ext4_journal_stop(handle);
-+out:
-+	sb_end_intwrite(sb);
- 	return err;
- }
- 
+--- a/drivers/usb/serial/cp210x.c
++++ b/drivers/usb/serial/cp210x.c
+@@ -139,8 +139,11 @@ static const struct usb_device_id id_tab
+ 	{ USB_DEVICE(0x10C4, 0x8B34) }, /* Qivicon ZigBee USB Radio Stick */
+ 	{ USB_DEVICE(0x10C4, 0xEA60) }, /* Silicon Labs factory default */
+ 	{ USB_DEVICE(0x10C4, 0xEA61) }, /* Silicon Labs factory default */
++	{ USB_DEVICE(0x10C4, 0xEA63) }, /* Silicon Labs Windows Update (CP2101-4/CP2102N) */
+ 	{ USB_DEVICE(0x10C4, 0xEA70) }, /* Silicon Labs factory default */
+ 	{ USB_DEVICE(0x10C4, 0xEA71) }, /* Infinity GPS-MIC-1 Radio Monophone */
++	{ USB_DEVICE(0x10C4, 0xEA7A) }, /* Silicon Labs Windows Update (CP2105) */
++	{ USB_DEVICE(0x10C4, 0xEA7B) }, /* Silicon Labs Windows Update (CP2108) */
+ 	{ USB_DEVICE(0x10C4, 0xF001) }, /* Elan Digital Systems USBscope50 */
+ 	{ USB_DEVICE(0x10C4, 0xF002) }, /* Elan Digital Systems USBwave12 */
+ 	{ USB_DEVICE(0x10C4, 0xF003) }, /* Elan Digital Systems USBpulse100 */
 
