@@ -4,47 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D00D3C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D274C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AA23223C8
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C956E21707
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="a0bNF6TT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AA23223C8
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AK1xnGg4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C956E21707
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404708AbeKLIYL (ORCPT
+        id S2404735AbeKLIYN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:24:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59252 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:24:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403873AbeKLIYJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:24:09 -0500
+        id S2404694AbeKLIYM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:24:12 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5B2B22353;
-        Sun, 11 Nov 2018 22:34:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D25D8223D8;
+        Sun, 11 Nov 2018 22:34:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975652;
-        bh=QzP/5JSkylfFkuA4G9EL1Sx+zn4l8KGHPUE9wkoAHh8=;
+        s=default; t=1541975653;
+        bh=fZT81epAtuUkjyk7qt7tT3uuFmSHXryIqK2UWaAOobY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a0bNF6TTUk24O2K/nwyGiwdbs1Hl0EFco3Zi3Ts740+8rowFqT2mwswL50MVsnAmI
-         7oA1bBdzBwnTwo1CFtC0A8EnqOOD1CO1s3rwLdmUDbdykWXG4962MG6iayaWss7B98
-         wobhEVkJ8W5gTRAMCAPxNnlyWTKSubejkzNdqBuE=
+        b=AK1xnGg4mk1mnc3xtcpj6aejJpcKxZ/HTW9jGRKj+s4RpNy+KxgNaDS+TqIUe/D3P
+         yQO+Rp1nufc1eaJeFtIWhJ/rnn3APGyBcvWTCvaIlNyHy38/OCGshRvEa6txfq7fOU
+         8XLGr4Ijuv9uliJVq12dQ7KyCu2kNK0QWa5EaNGM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
-        Mathieu Malaterre <malat@debian.org>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 070/141] dmaengine: dma-jz4780: Return error if not probed from DT
-Date:   Sun, 11 Nov 2018 14:25:29 -0800
-Message-Id: <20181111221637.641763835@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 4.9 074/141] ARM: dts: exynos: Convert exynos5250.dtsi to opp-v2 bindings
+Date:   Sun, 11 Nov 2018 14:25:33 -0800
+Message-Id: <20181111221638.255695078@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
 References: <20181111221627.853046496@linuxfoundation.org>
@@ -62,36 +65,178 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paul Cercueil <paul@crapouillou.net>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-[ Upstream commit 54f919a04cf221bc1601d1193682d4379dacacbd ]
+commit eb9e16d8573e243f8175647f851eb5085dbe97a4 upstream.
 
-The driver calls clk_get() with the clock name set to NULL, which means
-that the driver could only work when probed from devicetree. From now
-on, we explicitly require the driver to be probed from devicetree.
+Convert Exynos5250 to OPP-v2 bindings. This is a preparation to add proper
+support for suspend operation point, which cannot be marked in opp-v1.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Tested-by: Mathieu Malaterre <malat@debian.org>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: <stable@vger.kernel.org> # 4.3.x: cd6f55457eb4: ARM: dts: exynos: Remove "cooling-{min|max}-level" for CPU nodes
+Cc: <stable@vger.kernel.org> # 4.3.x: 672f33198bee: arm: dts: exynos: Add missing cooling device properties for CPUs
+Cc: <stable@vger.kernel.org> # 4.3.x
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/dma/dma-jz4780.c |    5 +++++
- 1 file changed, 5 insertions(+)
 
---- a/drivers/dma/dma-jz4780.c
-+++ b/drivers/dma/dma-jz4780.c
-@@ -754,6 +754,11 @@ static int jz4780_dma_probe(struct platf
- 	struct resource *res;
- 	int i, ret;
+---
+ arch/arm/boot/dts/exynos5250.dtsi |  130 +++++++++++++++++++++++++-------------
+ 1 file changed, 88 insertions(+), 42 deletions(-)
+
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -57,62 +57,108 @@
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a15";
+ 			reg = <0>;
+-			clock-frequency = <1700000000>;
+ 			clocks = <&clock CLK_ARM_CLK>;
+ 			clock-names = "cpu";
+-			clock-latency = <140000>;
+-
+-			operating-points = <
+-				1700000 1300000
+-				1600000 1250000
+-				1500000 1225000
+-				1400000 1200000
+-				1300000 1150000
+-				1200000 1125000
+-				1100000 1100000
+-				1000000 1075000
+-				 900000 1050000
+-				 800000 1025000
+-				 700000 1012500
+-				 600000 1000000
+-				 500000  975000
+-				 400000  950000
+-				 300000  937500
+-				 200000  925000
+-			>;
++			operating-points-v2 = <&cpu0_opp_table>;
+ 			#cooling-cells = <2>; /* min followed by max */
+ 		};
+ 		cpu@1 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a15";
+ 			reg = <1>;
+-			clock-frequency = <1700000000>;
+ 			clocks = <&clock CLK_ARM_CLK>;
+ 			clock-names = "cpu";
+-			clock-latency = <140000>;
+-
+-			operating-points = <
+-				1700000 1300000
+-				1600000 1250000
+-				1500000 1225000
+-				1400000 1200000
+-				1300000 1150000
+-				1200000 1125000
+-				1100000 1100000
+-				1000000 1075000
+-				 900000 1050000
+-				 800000 1025000
+-				 700000 1012500
+-				 600000 1000000
+-				 500000  975000
+-				 400000  950000
+-				 300000  937500
+-				 200000  925000
+-			>;
++			operating-points-v2 = <&cpu0_opp_table>;
+ 			#cooling-cells = <2>; /* min followed by max */
+ 		};
+ 	};
  
-+	if (!dev->of_node) {
-+		dev_err(dev, "This driver must be probed from devicetree\n");
-+		return -EINVAL;
-+	}
++	cpu0_opp_table: opp_table0 {
++		compatible = "operating-points-v2";
++		opp-shared;
 +
- 	jzdma = devm_kzalloc(dev, sizeof(*jzdma), GFP_KERNEL);
- 	if (!jzdma)
- 		return -ENOMEM;
++		opp-200000000 {
++			opp-hz = /bits/ 64 <200000000>;
++			opp-microvolt = <925000>;
++			clock-latency-ns = <140000>;
++		};
++		opp-300000000 {
++			opp-hz = /bits/ 64 <300000000>;
++			opp-microvolt = <937500>;
++			clock-latency-ns = <140000>;
++		};
++		opp-400000000 {
++			opp-hz = /bits/ 64 <400000000>;
++			opp-microvolt = <950000>;
++			clock-latency-ns = <140000>;
++		};
++		opp-500000000 {
++			opp-hz = /bits/ 64 <500000000>;
++			opp-microvolt = <975000>;
++			clock-latency-ns = <140000>;
++		};
++		opp-600000000 {
++			opp-hz = /bits/ 64 <600000000>;
++			opp-microvolt = <1000000>;
++			clock-latency-ns = <140000>;
++		};
++		opp-700000000 {
++			opp-hz = /bits/ 64 <700000000>;
++			opp-microvolt = <1012500>;
++			clock-latency-ns = <140000>;
++		};
++		opp-800000000 {
++			opp-hz = /bits/ 64 <800000000>;
++			opp-microvolt = <1025000>;
++			clock-latency-ns = <140000>;
++		};
++		opp-900000000 {
++			opp-hz = /bits/ 64 <900000000>;
++			opp-microvolt = <1050000>;
++			clock-latency-ns = <140000>;
++		};
++		opp-1000000000 {
++			opp-hz = /bits/ 64 <1000000000>;
++			opp-microvolt = <1075000>;
++			clock-latency-ns = <140000>;
++		};
++		opp-1100000000 {
++			opp-hz = /bits/ 64 <1100000000>;
++			opp-microvolt = <1100000>;
++			clock-latency-ns = <140000>;
++		};
++		opp-1200000000 {
++			opp-hz = /bits/ 64 <1200000000>;
++			opp-microvolt = <1125000>;
++			clock-latency-ns = <140000>;
++		};
++		opp-1300000000 {
++			opp-hz = /bits/ 64 <1300000000>;
++			opp-microvolt = <1150000>;
++			clock-latency-ns = <140000>;
++		};
++		opp-1400000000 {
++			opp-hz = /bits/ 64 <1400000000>;
++			opp-microvolt = <1200000>;
++			clock-latency-ns = <140000>;
++		};
++		opp-1500000000 {
++			opp-hz = /bits/ 64 <1500000000>;
++			opp-microvolt = <1225000>;
++			clock-latency-ns = <140000>;
++		};
++		opp-1600000000 {
++			opp-hz = /bits/ 64 <1600000000>;
++			opp-microvolt = <1250000>;
++			clock-latency-ns = <140000>;
++		};
++		opp-1700000000 {
++			opp-hz = /bits/ 64 <1700000000>;
++			opp-microvolt = <1300000>;
++			clock-latency-ns = <140000>;
++		};
++	};
++
+ 	soc: soc {
+ 		sysram@02020000 {
+ 			compatible = "mmio-sram";
 
 
