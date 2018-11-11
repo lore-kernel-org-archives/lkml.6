@@ -6,47 +6,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2192C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:01:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A11E6C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:01:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 942D920818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:01:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57C7020818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:01:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HHzLZMRt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 942D920818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oHdiQBtu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57C7020818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390840AbeKLIvP (ORCPT
+        id S2390953AbeKLIvY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:51:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51248 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:51:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52752 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390690AbeKLIWc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:32 -0500
+        id S2390669AbeKLIWb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:31 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 003D822443;
-        Sun, 11 Nov 2018 22:32:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E4F112241B;
+        Sun, 11 Nov 2018 22:32:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975555;
-        bh=QdEHpqWdNLv4O2e7iWhxdrseszvCW9hdLH0wk6h6MTA=;
+        s=default; t=1541975554;
+        bh=fbwTREHeaR4JjaQHbg0lPJCPIlQaqBN9ySgUBolpQTI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HHzLZMRtuGnpzyA8zVFkPFhjgB3WxAeYnhNMvcwkBDgp6sTOwgYM6FPvgsyAasKu8
-         2CHqkldNLyZpSA82ZTMsuQVri/g4C27tH+zY1hQyH5yvZKdHdGBbrM8SoUWNS0rI0Y
-         5SmtcyWQ9BPEumTcGJ3ECocMV/FQ7Z/jsvMUlKXI=
+        b=oHdiQBtutnQpOYiPsjPBbfsbomiuNp5uvoZ6uQnHqnGgK1tj/Ea0Tu7Atk5OH1vB/
+         Oi06fNf2N424L09REvgwSbnzJhwq+GF9LFKbGw4GcPeixP5W98fe6QCIhnVOO4qgGe
+         H5VjqQwgHvP+u0S8ONuDNXMefu7zP0AwaDafqknY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 070/222] pinctrl: ssbi-gpio: Fix pm8xxx_pin_config_get() to be compliant
-Date:   Sun, 11 Nov 2018 14:22:47 -0800
-Message-Id: <20181111221654.343988265@linuxfoundation.org>
+Subject: [PATCH 4.14 067/222] ACPI / LPSS: Add alternative ACPI HIDs for Cherry Trail DMA controllers
+Date:   Sun, 11 Nov 2018 14:22:44 -0800
+Message-Id: <20181111221653.928930048@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -64,86 +63,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Douglas Anderson <dianders@chromium.org>
+From: Hans de Goede <hdegoede@redhat.com>
 
-[ Upstream commit b432414b996d32a1bd9afe2bd595bd5729c1477f ]
+[ Upstream commit 240714061c58e6b1abfb3322398a7634151c06cb ]
 
-If you look at "pinconf-groups" in debugfs for ssbi-gpio you'll notice
-it looks like nonsense.
+Bay and Cherry Trail DSTDs represent a different set of devices depending
+on which OS the device think it is booting. One set of decices for Windows
+and another set of devices for Android which targets the Android-x86 Linux
+kernel fork (which e.g. used to have its own display driver instead of
+using the i915 driver).
 
-The problem is fairly well described in commit 1cf86bc21257 ("pinctrl:
-qcom: spmi-gpio: Fix pmic_gpio_config_get() to be compliant") and
-commit 05e0c828955c ("pinctrl: msm: Fix msm_config_group_get() to be
-compliant"), but it was pointed out that ssbi-gpio has the same
-problem.  Let's fix it there too.
+Which set of devices we are actually going to get is out of our control,
+this is controlled by the ACPI OSID variable, which gets either set through
+an EFI setup option, or sometimes is autodetected. So we need to support
+both.
 
-Fixes: b4c45fe974bc ("pinctrl: qcom: ssbi: Family A gpio & mpp drivers")
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+This commit adds support for the 80862286 and 808622C0 ACPI HIDs which we
+get for the first resp. second DMA controller on Cherry Trail devices when
+OSID is set to Android.
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c |   28 +++++++++++++++++++++-------
- 1 file changed, 21 insertions(+), 7 deletions(-)
+ drivers/acpi/acpi_lpss.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-+++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-@@ -260,22 +260,32 @@ static int pm8xxx_pin_config_get(struct
+--- a/drivers/acpi/acpi_lpss.c
++++ b/drivers/acpi/acpi_lpss.c
+@@ -326,9 +326,11 @@ static const struct acpi_device_id acpi_
+ 	{ "INT33FC", },
  
- 	switch (param) {
- 	case PIN_CONFIG_BIAS_DISABLE:
--		arg = pin->bias == PM8XXX_GPIO_BIAS_NP;
-+		if (pin->bias != PM8XXX_GPIO_BIAS_NP)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_BIAS_PULL_DOWN:
--		arg = pin->bias == PM8XXX_GPIO_BIAS_PD;
-+		if (pin->bias != PM8XXX_GPIO_BIAS_PD)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_BIAS_PULL_UP:
--		arg = pin->bias <= PM8XXX_GPIO_BIAS_PU_1P5_30;
-+		if (pin->bias > PM8XXX_GPIO_BIAS_PU_1P5_30)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PM8XXX_QCOM_PULL_UP_STRENGTH:
- 		arg = pin->pull_up_strength;
- 		break;
- 	case PIN_CONFIG_BIAS_HIGH_IMPEDANCE:
--		arg = pin->disable;
-+		if (!pin->disable)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_INPUT_ENABLE:
--		arg = pin->mode == PM8XXX_GPIO_MODE_INPUT;
-+		if (pin->mode != PM8XXX_GPIO_MODE_INPUT)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_OUTPUT:
- 		if (pin->mode & PM8XXX_GPIO_MODE_OUTPUT)
-@@ -290,10 +300,14 @@ static int pm8xxx_pin_config_get(struct
- 		arg = pin->output_strength;
- 		break;
- 	case PIN_CONFIG_DRIVE_PUSH_PULL:
--		arg = !pin->open_drain;
-+		if (pin->open_drain)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
--		arg = pin->open_drain;
-+		if (!pin->open_drain)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	default:
- 		return -EINVAL;
+ 	/* Braswell LPSS devices */
++	{ "80862286", LPSS_ADDR(lpss_dma_desc) },
+ 	{ "80862288", LPSS_ADDR(bsw_pwm_dev_desc) },
+ 	{ "8086228A", LPSS_ADDR(bsw_uart_dev_desc) },
+ 	{ "8086228E", LPSS_ADDR(bsw_spi_dev_desc) },
++	{ "808622C0", LPSS_ADDR(lpss_dma_desc) },
+ 	{ "808622C1", LPSS_ADDR(bsw_i2c_dev_desc) },
+ 
+ 	/* Broadwell LPSS devices */
 
 
