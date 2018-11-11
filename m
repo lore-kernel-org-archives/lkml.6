@@ -7,45 +7,54 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CA15C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04C5AC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B97021508
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB47C223D8
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ueINUH2d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B97021508
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="i2/m0V0y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB47C223D8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389306AbeKLIVA (ORCPT
+        id S2389317AbeKLIVG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:21:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47296 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:21:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47418 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389217AbeKLIU7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:20:59 -0500
+        id S2387735AbeKLIVF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:05 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9BD0E216FD;
-        Sun, 11 Nov 2018 22:31:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 78C4F208A3;
+        Sun, 11 Nov 2018 22:31:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975462;
-        bh=BZbms7L+hSVOGpOUf+F9NlDuA4zVTEK7XMhs1gTb1SE=;
+        s=default; t=1541975468;
+        bh=+i2Uc0FBjuffGQ08qp1srgsA1th1m4J0Jh/dzJCG4hw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ueINUH2dGy1eEFEFLJfirX/xaca8gA57ek/ApArL+x3j2zvujrVoW/Imx+HnyexGU
-         UNdj7yLFWUGS8X25Rl5awLCWSeqrZbRoZWkJdUztFoE5cAjrIRVmclbelU/n9qe8qf
-         PhV3LTJc/lb14FarSWhHiNaKNW1ynKR8dl8t7m18=
+        b=i2/m0V0yxqerFWTFMp1X2eApsISjnJaMraVxLYzhyaGy0riRXuv+2TpSdiBsCgSFy
+         B2ukao9KUbPUDZw16G9auNdRp5pkNA5aW/CGo/HtbahXu+HvTXEV1QF3BUCsYi2xSG
+         r9iYA8zoq7BrFLGCaLam1hdejN7yLJW1WZGvR/4c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>
-Subject: [PATCH 4.18 198/350] xen/balloon: Support xend-based toolstack
-Date:   Sun, 11 Nov 2018 14:21:02 -0800
-Message-Id: <20181111221716.316635896@linuxfoundation.org>
+        stable@vger.kernel.org, Mike Kravetz <mike.kravetz@oracle.com>,
+        Mihcla Hocko <mhocko@suse.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Hugh Dickins <hughd@google.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.18 245/350] hugetlbfs: dirty pages as they are added to pagecache
+Date:   Sun, 11 Nov 2018 14:21:49 -0800
+Message-Id: <20181111221718.288938752@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -63,46 +72,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+From: Mike Kravetz <mike.kravetz@oracle.com>
 
-commit 3aa6c19d2f38be9c6e9a8ad5fa8e3c9d29ee3c35 upstream.
+commit 22146c3ce98962436e401f7b7016a6f664c9ffb5 upstream.
 
-Xend-based toolstacks don't have static-max entry in xenstore. The
-equivalent node for those toolstacks is memory_static_max.
+Some test systems were experiencing negative huge page reserve counts and
+incorrect file block counts.  This was traced to /proc/sys/vm/drop_caches
+removing clean pages from hugetlbfs file pagecaches.  When non-hugetlbfs
+explicit code removes the pages, the appropriate accounting is not
+performed.
 
-Fixes: 5266b8e4445c (xen: fix booting ballooned down hvm guest)
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: <stable@vger.kernel.org> # 4.13
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Signed-off-by: Juergen Gross <jgross@suse.com>
+This can be recreated as follows:
+ fallocate -l 2M /dev/hugepages/foo
+ echo 1 > /proc/sys/vm/drop_caches
+ fallocate -l 2M /dev/hugepages/foo
+ grep -i huge /proc/meminfo
+   AnonHugePages:         0 kB
+   ShmemHugePages:        0 kB
+   HugePages_Total:    2048
+   HugePages_Free:     2047
+   HugePages_Rsvd:    18446744073709551615
+   HugePages_Surp:        0
+   Hugepagesize:       2048 kB
+   Hugetlb:         4194304 kB
+ ls -lsh /dev/hugepages/foo
+   4.0M -rw-r--r--. 1 root root 2.0M Oct 17 20:05 /dev/hugepages/foo
+
+To address this issue, dirty pages as they are added to pagecache.  This
+can easily be reproduced with fallocate as shown above.  Read faulted
+pages will eventually end up being marked dirty.  But there is a window
+where they are clean and could be impacted by code such as drop_caches.
+So, just dirty them all as they are added to the pagecache.
+
+Link: http://lkml.kernel.org/r/b5be45b8-5afe-56cd-9482-28384699a049@oracle.com
+Fixes: 6bda666a03f0 ("hugepages: fold find_or_alloc_pages into huge_no_page()")
+Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+Acked-by: Mihcla Hocko <mhocko@suse.com>
+Reviewed-by: Khalid Aziz <khalid.aziz@oracle.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc: "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/xen/xen-balloon.c |   13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ mm/hugetlb.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/xen/xen-balloon.c
-+++ b/drivers/xen/xen-balloon.c
-@@ -75,12 +75,15 @@ static void watch_target(struct xenbus_w
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -3678,6 +3678,12 @@ int huge_add_to_page_cache(struct page *
+ 		return err;
+ 	ClearPagePrivate(page);
  
- 	if (!watch_fired) {
- 		watch_fired = true;
--		err = xenbus_scanf(XBT_NIL, "memory", "static-max", "%llu",
--				   &static_max);
--		if (err != 1)
--			static_max = new_target;
--		else
++	/*
++	 * set page dirty so that it will not be removed from cache/file
++	 * by non-hugetlbfs specific code paths.
++	 */
++	set_page_dirty(page);
 +
-+		if ((xenbus_scanf(XBT_NIL, "memory", "static-max",
-+				  "%llu", &static_max) == 1) ||
-+		    (xenbus_scanf(XBT_NIL, "memory", "memory_static_max",
-+				  "%llu", &static_max) == 1))
- 			static_max >>= PAGE_SHIFT - 10;
-+		else
-+			static_max = new_target;
-+
- 		target_diff = (xen_pv_domain() || xen_initial_domain()) ? 0
- 				: static_max - balloon_stats.target_pages;
- 	}
+ 	spin_lock(&inode->i_lock);
+ 	inode->i_blocks += blocks_per_huge_page(h);
+ 	spin_unlock(&inode->i_lock);
 
 
