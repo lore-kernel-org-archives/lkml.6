@@ -7,48 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DB9EC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:04:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6D69C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:04:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED62D20866
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:04:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DAA120866
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:04:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cQAluPxh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED62D20866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XU8dc14v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DAA120866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732348AbeKLJyc (ORCPT
+        id S1732054AbeKLIRs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:54:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34210 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732053AbeKLIRs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:17:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34412 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729476AbeKLIRq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:17:46 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A3AC5223CE;
-        Sun, 11 Nov 2018 22:27:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E30EB21582;
+        Sun, 11 Nov 2018 22:27:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975272;
-        bh=PD2bNtkcOiQjKDEUzOd1byEm/0WblSAVXZIz8P/CgaM=;
+        s=default; t=1541975270;
+        bh=d/6UFrNa09IIUn5ynQKof5md+F5RdpuDUc9YeHs9y+4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cQAluPxhzsHyzU4tuxooP1qInNgRu8fcKjKDvneHRnZeddn4pen/5ySIBnHH01yid
-         EX/ZWfsmM+2OLdwpY2Z09UZIpHtMzOmAEtG1HHNO0/HlvC7GcmqwY4bA48PxAz7uX9
-         6ZGbdZ4WCSAS2Hqx9gq3SzxXcNciwTmdYszk+Wwo=
+        b=XU8dc14vBTPHJOtIlg/hDEXxvW3FIevpmaBxPtl+JhhRvxxMwcgPz0W7hWgDSgH7g
+         wHQeN9r7aFtXCFCBcxf3A1Ik9A8NQSEjTuNdOjl25MZWZL6jjeyCgAI617PxVt8u9K
+         l2P3o7WbOKp8hqTHwnC785Naugfq8N7lRJfdi9KI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Holger=20Hoffst=C3=A4tte?= 
-        <holger@applied-asynchrony.com>, Parav Pandit <parav@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>,
+        stable@vger.kernel.org, Tonghao Zhang <xiangxia.m.yue@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 142/361] RDMA/core: Do not expose unsupported counters
-Date:   Sun, 11 Nov 2018 14:18:09 -0800
-Message-Id: <20181111221640.418091820@linuxfoundation.org>
+Subject: [PATCH 4.19 169/361] PCI/MSI: Warn and return error if driver enables MSI/MSI-X twice
+Date:   Sun, 11 Nov 2018 14:18:36 -0800
+Message-Id: <20181111221644.054759569@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -66,75 +63,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Parav Pandit <parav@mellanox.com>
+From: Tonghao Zhang <xiangxia.m.yue@gmail.com>
 
-[ Upstream commit 0f6ef65d1c6ec8deb5d0f11f86631ec4cfe8f22e ]
+[ Upstream commit 4c1ef72e9b71a19fb405ebfcd37c0a5e16fa44ca ]
 
-If the provider driver (such as rdma_rxe) doesn't support pma counters,
-avoid exposing its directory similar to optional hw_counters directory.
-If core fails to read the PMA counter, return an error so that user can
-retry later if needed.
+It is a serious driver defect to enable MSI or MSI-X more than once.  Doing
+so may panic the kernel as in the stack trace below:
 
-Fixes: 35c4cbb17811 ("IB/core: Create get_perf_mad function in sysfs.c")
-Reported-by: Holger Hoffstätte <holger@applied-asynchrony.com>
-Tested-by: Holger Hoffstätte <holger@applied-asynchrony.com>
-Signed-off-by: Parav Pandit <parav@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+  Call Trace:
+    sysfs_add_one+0xa5/0xd0
+    create_dir+0x7c/0xe0
+    sysfs_create_subdir+0x1c/0x20
+    internal_create_group+0x6d/0x290
+    sysfs_create_groups+0x4a/0xa0
+    populate_msi_sysfs+0x1cd/0x210
+    pci_enable_msix+0x31c/0x3e0
+    igbuio_pci_open+0x72/0x300 [igb_uio]
+    uio_open+0xcc/0x120 [uio]
+    chrdev_open+0xa1/0x1e0
+    [...]
+    do_sys_open+0xf3/0x1f0
+    SyS_open+0x1e/0x20
+    system_call_fastpath+0x16/0x1b
+    ---[ end trace 11042e2848880209 ]---
+    Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in: ffffffffa056b4fa
+
+We want to keep the WARN_ON() and stack trace so the driver can be fixed,
+but we can avoid the kernel panic by returning an error.  We may still get
+warnings like this:
+
+  Call Trace:
+    pci_enable_msix+0x3c9/0x3e0
+    igbuio_pci_open+0x72/0x300 [igb_uio]
+    uio_open+0xcc/0x120 [uio]
+    chrdev_open+0xa1/0x1e0
+    [...]
+    do_sys_open+0xf3/0x1f0
+    SyS_open+0x1e/0x20
+    system_call_fastpath+0x16/0x1b
+    ------------[ cut here ]------------
+    WARNING: at fs/sysfs/dir.c:526 sysfs_add_one+0xa5/0xd0()
+    sysfs: cannot create duplicate filename '/devices/pci0000:00/0000:00:03.0/0000:01:00.1/msi_irqs'
+
+Signed-off-by: Tonghao Zhang <xiangxia.m.yue@gmail.com>
+[bhelgaas: changelog, fix patch whitespace, remove !!]
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/core/sysfs.c |   19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
+ drivers/pci/msi.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/drivers/infiniband/core/sysfs.c
-+++ b/drivers/infiniband/core/sysfs.c
-@@ -512,7 +512,7 @@ static ssize_t show_pma_counter(struct i
- 	ret = get_perf_mad(p->ibdev, p->port_num, tab_attr->attr_id, &data,
- 			40 + offset / 8, sizeof(data));
- 	if (ret < 0)
--		return sprintf(buf, "N/A (no PMA)\n");
-+		return ret;
- 
- 	switch (width) {
- 	case 4:
-@@ -1057,10 +1057,12 @@ static int add_port(struct ib_device *de
- 		goto err_put;
- 	}
- 
--	p->pma_table = get_counter_table(device, port_num);
--	ret = sysfs_create_group(&p->kobj, p->pma_table);
--	if (ret)
--		goto err_put_gid_attrs;
-+	if (device->process_mad) {
-+		p->pma_table = get_counter_table(device, port_num);
-+		ret = sysfs_create_group(&p->kobj, p->pma_table);
-+		if (ret)
-+			goto err_put_gid_attrs;
-+	}
- 
- 	p->gid_group.name  = "gids";
- 	p->gid_group.attrs = alloc_group_attrs(show_port_gid, attr.gid_tbl_len);
-@@ -1173,7 +1175,8 @@ err_free_gid:
- 	p->gid_group.attrs = NULL;
- 
- err_remove_pma:
--	sysfs_remove_group(&p->kobj, p->pma_table);
-+	if (p->pma_table)
-+		sysfs_remove_group(&p->kobj, p->pma_table);
- 
- err_put_gid_attrs:
- 	kobject_put(&p->gid_attr_group->kobj);
-@@ -1285,7 +1288,9 @@ static void free_port_list_attributes(st
- 			kfree(port->hw_stats);
- 			free_hsag(&port->kobj, port->hw_stats_ag);
+--- a/drivers/pci/msi.c
++++ b/drivers/pci/msi.c
+@@ -958,7 +958,6 @@ static int __pci_enable_msix(struct pci_
+ 			}
  		}
--		sysfs_remove_group(p, port->pma_table);
+ 	}
+-	WARN_ON(!!dev->msix_enabled);
+ 
+ 	/* Check whether driver already requested for MSI irq */
+ 	if (dev->msi_enabled) {
+@@ -1028,8 +1027,6 @@ static int __pci_enable_msi_range(struct
+ 	if (!pci_msi_supported(dev, minvec))
+ 		return -EINVAL;
+ 
+-	WARN_ON(!!dev->msi_enabled);
+-
+ 	/* Check whether driver already requested MSI-X irqs */
+ 	if (dev->msix_enabled) {
+ 		pci_info(dev, "can't enable MSI (MSI-X already enabled)\n");
+@@ -1039,6 +1036,9 @@ static int __pci_enable_msi_range(struct
+ 	if (maxvec < minvec)
+ 		return -ERANGE;
+ 
++	if (WARN_ON_ONCE(dev->msi_enabled))
++		return -EINVAL;
 +
-+		if (port->pma_table)
-+			sysfs_remove_group(p, port->pma_table);
- 		sysfs_remove_group(p, &port->pkey_group);
- 		sysfs_remove_group(p, &port->gid_group);
- 		sysfs_remove_group(&port->gid_attr_group->kobj,
+ 	nvec = pci_msi_vec_count(dev);
+ 	if (nvec < 0)
+ 		return nvec;
+@@ -1087,6 +1087,9 @@ static int __pci_enable_msix_range(struc
+ 	if (maxvec < minvec)
+ 		return -ERANGE;
+ 
++	if (WARN_ON_ONCE(dev->msix_enabled))
++		return -EINVAL;
++
+ 	for (;;) {
+ 		if (affd) {
+ 			nvec = irq_calc_affinity_vectors(minvec, nvec, affd);
 
 
