@@ -2,144 +2,139 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75CA3C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 06:48:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B633C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 06:55:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D98BD20892
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 06:48:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B11F720871
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 06:55:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="j8Rho5hE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D98BD20892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KzVti6EG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B11F720871
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727554AbeKKQgg (ORCPT
+        id S1727569AbeKKQnS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 11:36:36 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:42520 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727408AbeKKQgg (ORCPT
+        Sun, 11 Nov 2018 11:43:18 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:37403 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727307AbeKKQnS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 11:36:36 -0500
-Received: by mail-pl1-f194.google.com with SMTP id x21-v6so74006pln.9
-        for <linux-kernel@vger.kernel.org>; Sat, 10 Nov 2018 22:48:54 -0800 (PST)
+        Sun, 11 Nov 2018 11:43:18 -0500
+Received: by mail-wm1-f65.google.com with SMTP id p2-v6so5295079wmc.2;
+        Sat, 10 Nov 2018 22:55:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=z0Ur9NkCKNnPgwVVxDuIzKPrf87Hta+OxVgfUKJDsQk=;
-        b=j8Rho5hEuQcRWTNPx0gSzXNkjA52cC0OEKrnA9YlfRZ2c3KmCn/HPKo02p608HALCQ
-         pyEL/bd8nLsB1tT05hwUQYKZJyWpomHhozCIt7BqOKk/J+jw69Q35SesAsPdKJFZV/k+
-         qU/9+OPT2F22rb0jKXDQzQi9tW/yQK8AQH3/k=
+        d=gmail.com; s=20161025;
+        h=cc:subject:to:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=HrxQm/tbSt1VIjLVODSUfW567jjThOILFv/yt2/HmBc=;
+        b=KzVti6EGn5LCEglCVQoS/baNUy/ni0Co3kFhnaQrgBMqUscIKiWEd44kg1AovZ/jqy
+         DDvUW9dBk5hKTmbFm/Xo/jJIIhl7jMBmUuzGWcEP75Apte6c/R5DklMpLdCv0jn3P67m
+         MexRGlMKmy765VsfTAVHlOc1j8QnXKjbLM3q3ZgzO87CbJCN1RmrD/MicxX+TLIHXe/i
+         f/tzVipRMZLBkuEwYPSG26rlcoiyWn047iNZLl7X+Xttrh6JUdb77Zr80RSH3VlOKhth
+         x+Vat4BqxlilMgzU53A6x4k5Uu5NvApF2emqxAcELQ7+q+MYU2fU13KVPdqQX8unTPBG
+         mXXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=z0Ur9NkCKNnPgwVVxDuIzKPrf87Hta+OxVgfUKJDsQk=;
-        b=MJXKLsrvER98MC/Xr7ahC8eSncFu0TWH8v/BgCeTlmy/RWTnok3Zv1Q3IFs90LKTWf
-         PB+4KtgGLgH/q6IG6j+vnSrjiKnOy/f6FkBWBBMQvtKVySRZi7MFkYKUssCX8/w6tWju
-         YY9oOeiqph/mkazmhQ/dL1dE4B+rE4v9lGQNGpb6JJ363g24iBTDBMTsY6YWdr3rrisd
-         6lAAadX60rTH8ffFpmILOMsogCtpWF3gGLUeBvNU6RAeSvyGJojAUkXydVumzvuFSzl9
-         jDtHTKLoVXagO1RwyvTdaB2iNHBYzfbJITZirZQTbOe188XL4jNVIq+UzL4dfhF9DLS+
-         wj1g==
-X-Gm-Message-State: AGRZ1gLxaBSXnrT4JuB12Q8y8gzcS/wLGf3ZS2oAO1F6CGFXdGqWLkuq
-        Z6CF2pRcMB3WJBXB9BWypEtTr1FvaxU=
-X-Google-Smtp-Source: AJdET5e7vvyNQ0lAkEMypAJ8DWUn6ThLyg4d0ZC7f+vC/G/OVuPNQV6H9s5YI5iYWgJLoo4tLoWsjA==
-X-Received: by 2002:a17:902:7784:: with SMTP id o4-v6mr15086924pll.292.1541918933589;
-        Sat, 10 Nov 2018 22:48:53 -0800 (PST)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id l63-v6sm9626098pfb.75.2018.11.10.22.48.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 10 Nov 2018 22:48:52 -0800 (PST)
-Date:   Sat, 10 Nov 2018 22:48:50 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Brian Masney <masneyb@onstation.org>
-Cc:     linus.walleij@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pinctrl: qcom: ssbi-gpio: fix gpio-hog related boot
- issues
-Message-ID: <20181111064850.GA10088@minitux>
-References: <20181111013411.14153-1-masneyb@onstation.org>
+        h=x-gm-message-state:cc:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=HrxQm/tbSt1VIjLVODSUfW567jjThOILFv/yt2/HmBc=;
+        b=UlMtpHPUw5bkGX8OAUVpiQHS5axC6WE5ensL+CU4wawdAuJl6qpEnB6gRO1DKSPj2D
+         ZrElX3NPhoyibE51EpduTTqkTsROkfyb9uZH/d2dzAHJ9OcN6zrkn/vbucVEQbhJ6Omk
+         HjciHStt7sCKCnlsgXiSygPqNbtLPbKLCHMDjAo/NnVTSeq/x079WuK02OIiFdN53l3y
+         SGN9hVinlrvRtQDPIWgMhVnEZwBQGVIwyfXJdKkN9JBGNu8x1srwWtp/nsXJ0IAmp/QZ
+         +HDzgFFQMVtrcYvHb9Y0I12dsPzShLbWaim1r+hF7nFZFjRhyuXxCtchoP94Ewf2GWu+
+         KluQ==
+X-Gm-Message-State: AGRZ1gIXd89nXAGTAqdeNbqS/YGyhnszyVpycj64vkecktxAhwVCbORq
+        dGzqcr2M7iKS1RWP7tYDdPLSssx/
+X-Google-Smtp-Source: AJdET5eOGS80HelRxLCPBBF8WdVCAjPjA1XLXOa2hZBfMHBnY/bioC3xav7HYEBByDCEIepuDHL6Pw==
+X-Received: by 2002:a7b:c84f:: with SMTP id c15-v6mr3423622wml.79.1541919333930;
+        Sat, 10 Nov 2018 22:55:33 -0800 (PST)
+Received: from ?IPv6:2001:a61:245e:bd00:7c53:ba1a:108c:14a2? ([2001:a61:245e:bd00:7c53:ba1a:108c:14a2])
+        by smtp.gmail.com with ESMTPSA id 137-v6sm8773312wmo.43.2018.11.10.22.55.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 10 Nov 2018 22:55:32 -0800 (PST)
+Cc:     mtk.manpages@gmail.com, Joel Fernandes <joelaf@google.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Willy Tarreau <w@1wt.eu>, Vlastimil Babka <vbabka@suse.cz>,
+        Florian Weimer <fweimer@redhat.com>,
+        Carlos O'Donell <carlos@redhat.com>,
+        "libc-alpha@sourceware.org" <libc-alpha@sourceware.org>
+Subject: Re: Official Linux system wrapper library?
+To:     Daniel Colascione <dancol@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <CAKOZuesB4R=dCz4merWQN0FSCGrXmOgUUr4ienSbStBJguNv8g@mail.gmail.com>
+From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Message-ID: <bbc12da5-830e-99a7-95e3-d9da42947dc9@gmail.com>
+Date:   Sun, 11 Nov 2018 07:55:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181111013411.14153-1-masneyb@onstation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAKOZuesB4R=dCz4merWQN0FSCGrXmOgUUr4ienSbStBJguNv8g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat 10 Nov 17:34 PST 2018, Brian Masney wrote:
+[adding in glibc folk for comment]
 
-> When attempting to setup up a gpio hog, device probing will repeatedly
-> fail with -EPROBE_DEFERED errors. It is caused by a circular dependency
-> between the gpio and pinctrl frameworks. If the gpio-ranges property is
-> present in device tree, then the gpio framework will handle the gpio pin
-> registration and eliminate the circular dependency.
-> 
-> See Christian Lamparter's commit a86caa9ba5d7 ("pinctrl: msm: fix
-> gpio-hog related boot issues") for a detailed commit message that
-> explains the issue in much more detail. The code comment in this commit
-> came from Christian's commit.
-> 
-> I did not test this change against any hardware supported by this
-> particular driver, however I was able to validate this same fix works
-> for pinctrl-spmi-gpio.c using a LG Nexus 5 (hammerhead) phone.
-> 
-> Signed-off-by: Brian Masney <masneyb@onstation.org>
+On 11/10/18 7:52 PM, Daniel Colascione wrote:
+> Now that glibc is basically not adding any new system call wrappers,
+> how about publishing an "official" system call glue library as part of
+> the kernel distribution, along with the uapi headers? I don't think
+> it's reasonable to expect people to keep using syscall(__NR_XXX) for
+> all new functionality, especially as the system grows increasingly
+> sophisticated capabilities (like the new mount API, and hopefully the
+> new process API) outside the strictures of the POSIX process.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+As a quick glance at the glibc NEWS file shows, the above is not
+quite true:
 
-Regards,
-Bjorn
+[[
+Version 2.28
+* The renameat2 function has been added...
+* The statx function has been added...
 
-> ---
-> For the patch and discussion regarding pinctrl-spmi-gpio.c, see
-> https://lore.kernel.org/lkml/20181101001149.13453-6-masneyb@onstation.org/
-> 
->  drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c | 23 +++++++++++++++++------
->  1 file changed, 17 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-> index 6b30bef829ab..ded7d765af2e 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-> @@ -762,12 +762,23 @@ static int pm8xxx_gpio_probe(struct platform_device *pdev)
->  		return ret;
->  	}
->  
-> -	ret = gpiochip_add_pin_range(&pctrl->chip,
-> -				     dev_name(pctrl->dev),
-> -				     0, 0, pctrl->chip.ngpio);
-> -	if (ret) {
-> -		dev_err(pctrl->dev, "failed to add pin range\n");
-> -		goto unregister_gpiochip;
-> +	/*
-> +	 * For DeviceTree-supported systems, the gpio core checks the
-> +	 * pinctrl's device node for the "gpio-ranges" property.
-> +	 * If it is present, it takes care of adding the pin ranges
-> +	 * for the driver. In this case the driver can skip ahead.
-> +	 *
-> +	 * In order to remain compatible with older, existing DeviceTree
-> +	 * files which don't set the "gpio-ranges" property or systems that
-> +	 * utilize ACPI the driver has to call gpiochip_add_pin_range().
-> +	 */
-> +	if (!of_property_read_bool(pctrl->dev->of_node, "gpio-ranges")) {
-> +		ret = gpiochip_add_pin_range(&pctrl->chip, dev_name(pctrl->dev),
-> +					     0, 0, pctrl->chip.ngpio);
-> +		if (ret) {
-> +			dev_err(pctrl->dev, "failed to add pin range\n");
-> +			goto unregister_gpiochip;
-> +		}
->  	}
->  
->  	platform_set_drvdata(pdev, pctrl);
-> -- 
-> 2.17.2
-> 
+Version 2.27
+* Support for memory protection keys was added.  The <sys/mman.h> header now
+  declares the functions pkey_alloc, pkey_free, pkey_mprotect...
+* The copy_file_range function was added.
+
+Version 2.26
+* New wrappers for the Linux-specific system calls preadv2 and pwritev2.
+
+Version 2.25
+* The getrandom [function] have been added.
+]]
+
+I make that 11 system call wrappers added in the last 2 years.
+
+That said, of course, there are many system calls that lack wrappers [1],
+and the use of syscall() is undesirable.
+
+The glibc folk do have their reasons for being conservative around
+adding system calls (https://lwn.net/Articles/655028/). However, at
+this point, I think one of the limiting factors is developer time
+on the glibc project. Quite possibly, they just need some help to
+add more (properly designed) wrappers faster.
+
+Cheers,
+
+Michael
+
+[1] https://sourceware.org/bugzilla/show_bug.cgi?id=6399 is a
+    longstanding example.
+
+-- 
+Michael Kerrisk
+Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+Linux/UNIX System Programming Training: http://man7.org/training/
