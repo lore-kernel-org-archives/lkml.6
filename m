@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1110AC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D719C0044C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA6CD21780
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35AAA223D8
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iMuJqQVx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA6CD21780
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YoVAyyb0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35AAA223D8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404152AbeKLIXF (ORCPT
+        id S2404183AbeKLIXH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:23:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54620 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:23:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389887AbeKLIXB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:23:01 -0500
+        id S2404153AbeKLIXF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:23:05 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1AA32250E;
-        Sun, 11 Nov 2018 22:33:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8191E208A3;
+        Sun, 11 Nov 2018 22:33:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975583;
-        bh=/rd+IKbkarMCXF+v81Us0V9+IeEe3k1zRTnvT+49ekw=;
+        s=default; t=1541975588;
+        bh=F4rcGtzEOS5rsMXwrFUqao8PrR5cHR3Fc8u7/15AQRo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iMuJqQVxSCL1XYxPSaJ3ZzAH1EWU736d9L8qodbu/HgXwkHHLNTn/T1InplnGrgQr
-         oTLW6IKAcBJow1xbWWYcl7xWIj1oNqOSQtxr6K3v14kSq4uYD0TBbhXJ5yl8s5++Q4
-         SYqC2EEyh5SRx5jxDcPt9lMYiYXUC7U/XcFO942o=
+        b=YoVAyyb0UhlYp8vovEAWXs3ROo7tDWrqZxnw8vrZv4nN0t5D92kvOGP7tdy3VX8aq
+         eRGkTLlurfC/A8S7dj5hingTYa6YJ53Dl4zhWesWqQlguBAhHuJSg/cCsMwYqsSFj5
+         0cNn217jYjIPdpOC3KYM3ZGjTSye1Jw20bhRagBs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Shaohua Li <shaohua.li@intel.com>
-Subject: [PATCH 4.14 146/222] PCI/ASPM: Fix link_state teardown on device removal
-Date:   Sun, 11 Nov 2018 14:24:03 -0800
-Message-Id: <20181111221700.497369160@linuxfoundation.org>
+        stable@vger.kernel.org, Chris Murphy <lists@colorremedies.com>,
+        Qu Wenruo <wqu@suse.com>, David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.14 196/222] btrfs: qgroup: Avoid calling qgroup functions if qgroup is not enabled
+Date:   Sun, 11 Nov 2018 14:24:53 -0800
+Message-Id: <20181111221704.332583813@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -63,75 +62,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lukas Wunner <lukas@wunner.de>
+From: Qu Wenruo <wqu@suse.com>
 
-commit aeae4f3e5c38d47bdaef50446dc0ec857307df68 upstream.
+commit 3628b4ca64f24a4ec55055597d0cb1c814729f8b upstream.
 
-Upon removal of the last device on a bus, the link_state of the bridge
-leading to that bus is sought to be torn down by having pci_stop_dev()
-call pcie_aspm_exit_link_state().
+Some qgroup trace events like btrfs_qgroup_release_data() and
+btrfs_qgroup_free_delayed_ref() can still be triggered even if qgroup is
+not enabled.
 
-When ASPM was originally introduced by commit 7d715a6c1ae5 ("PCI: add
-PCI Express ASPM support"), it determined whether the device being
-removed is the last one by calling list_empty() on the bridge's
-subordinate devices list.  That didn't work because the device is only
-removed from the list slightly later in pci_destroy_dev().
+This is caused by the lack of qgroup status check before calling some
+qgroup functions.  Thankfully the functions can handle quota disabled
+case well and just do nothing for qgroup disabled case.
 
-Commit 3419c75e15f8 ("PCI: properly clean up ASPM link state on device
-remove") attempted to fix it by calling list_is_last(), but that's not
-correct either because it checks whether the device is at the *end* of
-the list, not whether it's the last one *left* in the list.  If the user
-removes the device which happens to be at the end of the list via sysfs
-but other devices are preceding the device in the list, the link_state
-is torn down prematurely.
+This patch will do earlier check before triggering related trace events.
 
-The real fix is to move the invocation of pcie_aspm_exit_link_state() to
-pci_destroy_dev() and reinstate the call to list_empty().  Remove a
-duplicate check for dev->bus->self because pcie_aspm_exit_link_state()
-already contains an identical check.
+And for enabled <-> disabled race case:
 
-Fixes: 7d715a6c1ae5 ("PCI: add PCI Express ASPM support")
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Shaohua Li <shaohua.li@intel.com>
-Cc: stable@vger.kernel.org # v2.6.26
+1) For enabled->disabled case
+   Disable will wipe out all qgroups data including reservation and
+   excl/rfer. Even if we leak some reservation or numbers, it will
+   still be cleared, so nothing will go wrong.
+
+2) For disabled -> enabled case
+   Current btrfs_qgroup_release_data() will use extent_io tree to ensure
+   we won't underflow reservation. And for delayed_ref we use
+   head->qgroup_reserved to record the reserved space, so in that case
+   head->qgroup_reserved should be 0 and we won't underflow.
+
+CC: stable@vger.kernel.org # 4.14+
+Reported-by: Chris Murphy <lists@colorremedies.com>
+Link: https://lore.kernel.org/linux-btrfs/CAJCQCtQau7DtuUUeycCkZ36qjbKuxNzsgqJ7+sJ6W0dK_NLE3w@mail.gmail.com/
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/pcie/aspm.c |    2 +-
- drivers/pci/remove.c    |    4 +---
- 2 files changed, 2 insertions(+), 4 deletions(-)
+ fs/btrfs/qgroup.c |    4 ++++
+ fs/btrfs/qgroup.h |    2 ++
+ 2 files changed, 6 insertions(+)
 
---- a/drivers/pci/pcie/aspm.c
-+++ b/drivers/pci/pcie/aspm.c
-@@ -937,7 +937,7 @@ void pcie_aspm_exit_link_state(struct pc
- 	 * All PCIe functions are in one slot, remove one function will remove
- 	 * the whole slot, so just wait until we are the last function left.
- 	 */
--	if (!list_is_last(&pdev->bus_list, &parent->subordinate->devices))
-+	if (!list_empty(&parent->subordinate->devices))
- 		goto out;
+--- a/fs/btrfs/qgroup.c
++++ b/fs/btrfs/qgroup.c
+@@ -2972,6 +2972,10 @@ static int __btrfs_qgroup_release_data(s
+ 	int trace_op = QGROUP_RELEASE;
+ 	int ret;
  
- 	link = parent->link_state;
---- a/drivers/pci/remove.c
-+++ b/drivers/pci/remove.c
-@@ -24,9 +24,6 @@ static void pci_stop_dev(struct pci_dev
- 		pci_remove_sysfs_dev_files(dev);
- 		dev->is_added = 0;
- 	}
--
--	if (dev->bus->self)
--		pcie_aspm_exit_link_state(dev);
++	if (!test_bit(BTRFS_FS_QUOTA_ENABLED,
++		      &BTRFS_I(inode)->root->fs_info->flags))
++		return 0;
++
+ 	/* In release case, we shouldn't have @reserved */
+ 	WARN_ON(!free && reserved);
+ 	if (free && reserved)
+--- a/fs/btrfs/qgroup.h
++++ b/fs/btrfs/qgroup.h
+@@ -232,6 +232,8 @@ void btrfs_qgroup_free_refroot(struct bt
+ static inline void btrfs_qgroup_free_delayed_ref(struct btrfs_fs_info *fs_info,
+ 						 u64 ref_root, u64 num_bytes)
+ {
++	if (!test_bit(BTRFS_FS_QUOTA_ENABLED, &fs_info->flags))
++		return;
+ 	trace_btrfs_qgroup_free_delayed_ref(fs_info, ref_root, num_bytes);
+ 	btrfs_qgroup_free_refroot(fs_info, ref_root, num_bytes);
  }
- 
- static void pci_destroy_dev(struct pci_dev *dev)
-@@ -40,6 +37,7 @@ static void pci_destroy_dev(struct pci_d
- 	list_del(&dev->bus_list);
- 	up_write(&pci_bus_sem);
- 
-+	pcie_aspm_exit_link_state(dev);
- 	pci_bridge_d3_update(dev);
- 	pci_free_resources(dev);
- 	put_device(&dev->dev);
 
 
