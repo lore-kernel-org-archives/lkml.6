@@ -2,96 +2,117 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 838E2C0044C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 13:43:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70792C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 13:46:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45490208A3
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 13:43:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AB0C2148E
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 13:46:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="dqbmcLEu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45490208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HEwCP08/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AB0C2148E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728136AbeKKXbf (ORCPT
+        id S1728112AbeKKXel (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 18:31:35 -0500
-Received: from imap.thunk.org ([74.207.234.97]:38936 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727594AbeKKXbf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 18:31:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=04dekhnTbmwiCS+1qUlx//1gYJMD4lDBJ9KNb65T4vM=; b=dqbmcLEuWBUUJGo/aYOfZqDG7Y
-        CR8qUD2PeIa1DThY8oynxlBuVRGE1SaWeFllbFehIFSw5bkAJa3Eb9ze+F+TXcQLUvtQQKfw5wBVm
-        F8WnGkh86DYpPXvsVBbUHg+a7mFdeGor1+doeXSzcDTdp1dfqZ5LRPpJz1Zk59l/FNsQ=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1gLq0i-0000F2-GE; Sun, 11 Nov 2018 13:42:44 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 1F2697A0471; Sun, 11 Nov 2018 08:42:42 -0500 (EST)
-Date:   Sun, 11 Nov 2018 08:42:42 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>
-Subject: Re: [PATCH 0/3] SG_IO command filtering via sysfs
-Message-ID: <20181111134241.GA2447@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Christoph Hellwig <hch@infradead.org>,
-        Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>
-References: <1541867733-7836-1-git-send-email-pbonzini@redhat.com>
- <20181111131445.GB25441@infradead.org>
+        Sun, 11 Nov 2018 18:34:41 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:46507 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727594AbeKKXel (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Nov 2018 18:34:41 -0500
+Received: by mail-qk1-f193.google.com with SMTP id q1so9244462qkf.13;
+        Sun, 11 Nov 2018 05:46:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=74m9KJK6j44RUE8YyIAqbjJD1bEM3SxJxzuzyOkCbOA=;
+        b=HEwCP08/xzOWqBjvDUkwaxaiay5ZTJq2fmV6csv0zKD9RddjmblKE+3XKcKCpuYHSc
+         1sHVQ35kYhJFPhNtA3gK1GvfpRD2poKWrVYG9Lgk5KlPs9nCc7qP+xSTQeKU+aLqf3Sj
+         xQ2YKpf46CSNEnMw40twLRxAsJR8UxGYVBSqR/aQ392Pm72il8JsXiBs83mXE8sZ/zMm
+         DLAECZXNAHQJsOOIO9m3wH9lHaSA+gVVA8gVL1cDkKxaHkk7ZT8uSWUrGbbzPjU1/lLO
+         dSyibk9V0F4zocXPRepJOBqP9U+XVT6fyKcFoMsVxheFgSB97U4ymW7ALJAVzNBokvHl
+         rZ5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=74m9KJK6j44RUE8YyIAqbjJD1bEM3SxJxzuzyOkCbOA=;
+        b=O2IHUIvOydB40JlhosNEbx7rsfWSpI8q0MCp71U/pbBPTK7cIQakzighg4eOMGDVap
+         OVethmI2u5D3Zy6zRUOkUgyF0uEoy0+cDjd7XYZkAvj6a+S+7BqoIuGzmmChcGM24oRa
+         ty5GolJ5IpUR2r15LQHvQ+JO1nK8bOJhihsBYB5cmJSZIKQmajZPjE/NnpkXMUDZZYfH
+         PQmbETyKza0mER0dss7eYjoYkyCwXND82W64RVK+k64HSHZdvu8x/3kftpRJqPrdn0V8
+         MVdbg5xxktGnuG+9j2okW6/ZSfmbmp7L4/0kfxLhNkzWU8i04GUqrY70VwGBdW6ejgRZ
+         lu0w==
+X-Gm-Message-State: AGRZ1gIUeHiam1KjqvMA8WXoeRmSQI72a0pXHWtzQ5vWbMxX2MSWPCsa
+        8LMLKkt0qW4ao5YhpsZIng==
+X-Google-Smtp-Source: AJdET5dar/SNivGtFSAIhxmzVeHjmUjetjobBacshblzzj6VXckAGBCvXrE/CR5JUDGDzsDKZs77ig==
+X-Received: by 2002:ac8:7598:: with SMTP id s24mr15907680qtq.6.1541943962671;
+        Sun, 11 Nov 2018 05:46:02 -0800 (PST)
+Received: from gabell ([2601:18f:600:d880:e05a:2ef5:9c12:1533])
+        by smtp.gmail.com with ESMTPSA id y46-v6sm9449077qty.42.2018.11.11.05.46.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 11 Nov 2018 05:46:02 -0800 (PST)
+Date:   Sun, 11 Nov 2018 08:45:57 -0500
+From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     "H. Peter Anvin" <hpa@zytor.com>, Baoquan He <bhe@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Chao Fan <fanc.fnst@cn.fujitsu.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-efi@vger.kernel.org, linux-acpi@vger.kernel.org,
+        mingo@redhat.com, keescook@chromium.org, rjw@rjwysocki.net,
+        lenb@kernel.org, ard.biesheuvel@linaro.org,
+        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com
+Subject: Re: [PATCH v8 0/3] x86/boot/KASLR: Parse ACPI table and limit kaslr
+ in immovable memory
+Message-ID: <20181111134556.qxv2v4g7dl5irzo7@gabell>
+References: <20181016195902.GK5212@zn.tnic>
+ <20181022154204.kagmdb55jtoez4ca@gabell>
+ <20181025103345.GF14020@nazgul.tnic>
+ <20181025134050.ggiir77ehntikbwg@gabell>
+ <20181106184519.GA16391@zn.tnic>
+ <20181106193636.svyjwuwrlgnpuyyf@gabell>
+ <20181106204511.GO13712@zn.tnic>
+ <20181106222133.lb7674yzszivzihd@gabell>
+ <20181108105129.GA7543@zn.tnic>
+ <20181110105422.GA20023@zn.tnic>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181111131445.GB25441@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+In-Reply-To: <20181110105422.GA20023@zn.tnic>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 11, 2018 at 05:14:45AM -0800, Christoph Hellwig wrote:
-> I think this goes in the wrong way.  There isn't really any point
-> in filtering at all if we have access to the whole device by the
-> file persmissions, and we generally should not allow any access for
-> partitions.
+On Sat, Nov 10, 2018 at 11:54:22AM +0100, Borislav Petkov wrote:
+> On Thu, Nov 08, 2018 at 11:51:29AM +0100, Borislav Petkov wrote:
+> > A global definition which doesn't need allocation?
+> > 
+> > Maybe hpa would have another, better idea...
+> 
+> ...and he has: just put that address in a new field in struct
+> boot_params by converting one of the padding arrays there.
+> 
+> Don't forget to document it in Documentation/x86/zero-page.txt
+> 
+> This way you don't need any of the allocation fun or to use setup_data
+> at all.
 
-It really depends on the security model being used on a particular
-system.  I can easily imagine scenarios where userspace is allowed
-full access to the device with respect to read/write/open, but the
-security model doesn't want to allow access to various SCSI commands
-such as firmware upload commands, TCG commads, the
-soon-to-be-standardized Zone Activation Commands (which allow dynamic
-conversion of HDD recording modes between CMR and SMR), etc.
+Thanks!
+I have the prototype patch to use boot_params [1].
+I will try to brush up it.
 
-And this is before we get to crazy container / namespace scenarios.
-And *no*, let's not have a SG_IO namespace!  :-)
+[1] https://lore.kernel.org/lkml/20181016151353.punyk7exekut2543@gabell
 
-> I think we need to simplify the selection, not add crazy amounts of
-> special case code.
-
-I have the opposite opinions in terms of wanting more complex
-filtering rules, but I also agree that special case C code is not the
-answer --- and why I suggested that eBPF filtering rules is the right
-way to go.
-
-					- Ted
+Thanks,
+Masa
