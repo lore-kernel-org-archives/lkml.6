@@ -2,64 +2,52 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83AD0C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDC6EC43610
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47CBB214E0
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95A5521527
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="u7ozMbTp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47CBB214E0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gWW02bWE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95A5521527
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730949AbeKLIR0 (ORCPT
+        id S1731041AbeKLIR1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:17:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60196 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:17:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730816AbeKLIRZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:17:25 -0500
+        id S1730892AbeKLIR0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:17:26 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76F8C223C6;
-        Sun, 11 Nov 2018 22:27:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D934221527;
+        Sun, 11 Nov 2018 22:27:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975249;
-        bh=zHHPzHciXOAn7uW91KDI7UVDt9Qy+tLzvxWeN9LRn50=;
+        s=default; t=1541975250;
+        bh=9qz0LvUe0X/osrTLJbERt8jzYPEST5f8Ib7x69dAKxU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u7ozMbTpZU+w7Edyx2D279JAB1zHIK9MxxWG5g4tqeHEd6jaOggXsZYJi3tdT710O
-         tP4OSwf3AZt1hrwGhBDWpaZsJfP69XOQ6LXiqSglF+WqOMvzc1mU+rFiuRFj8FYxN8
-         27FKTyftoYLbFi3+WXJdW0VqSBVheIm8C0Mn3oto=
+        b=gWW02bWE1CvqgwcPaO6rnCh0u+Z7QjFKT3pInJw2GQ4WoOgoDKzcaZfxd5qDLD/9h
+         CnDasHu2jFTuHK4Bw62pvE6MZlv5xTUd4LcxCp5/yP+/hxZ3/ICREerb1rEbuHeAKn
+         kQOq+xS5mS6dwXTemVukGPm9g6Hq7X4gn3frJ21Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        David Ahern <dsahern@gmail.com>,
-        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Kim Phillips <kim.phillips@arm.com>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Sandipan Das <sandipan@linux.vnet.ibm.com>,
-        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
-        Thomas Richter <tmricht@linux.vnet.ibm.com>,
-        Wang Nan <wangnan0@huawei.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Yunsheng Lin <linyunsheng@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 111/361] perf tests: Fix record+probe_libc_inet_pton.sh without pings debuginfo
-Date:   Sun, 11 Nov 2018 14:17:38 -0800
-Message-Id: <20181111221635.305783879@linuxfoundation.org>
+Subject: [PATCH 4.19 115/361] net: hns3: Fix ping exited problem when doing lp selftest
+Date:   Sun, 11 Nov 2018 14:17:42 -0800
+Message-Id: <20181111221635.988377602@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -77,61 +65,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Yunsheng Lin <linyunsheng@huawei.com>
 
-[ Upstream commit 1632936480a53d85ef3012cd9f290e247251cbb9 ]
+[ Upstream commit 3f8601f0f5716c4e63a9f215bbc581df42859d61 ]
 
-When we don't have the iputils-debuginfo package installed, i.e. when we
-don't have the DWARF information needed to resolve ping's samples, we
-end up failing this 'perf test' entry:
+When ping is runnig and user executes the loopback selftest, the
+ping cmd will stop and exit.
 
-  # perf test ping
-  62: probe libc's inet_pton & backtrace it with ping       : Ok
-  # rpm -e iputils-debuginfo
-  # perf test ping
-  62: probe libc's inet_pton & backtrace it with ping       : FAILED!
-  #
+This patch fixes it by using the hns3_nic_net_open/stop to offline
+the netdev when doing loopback selftest.
 
-Fix it to accept "[unknown]" where the symbol + offset, when resolved,
-is expected.
-
-I think this will fail in the other arches as well, but since I can't
-test now, I'm leaving s390x and ppc cases as-is.
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kim Phillips <kim.phillips@arm.com>
-Cc: Michael Petlan <mpetlan@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc: Sandipan Das <sandipan@linux.vnet.ibm.com>
-Cc: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
-Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
-Cc: Wang Nan <wangnan0@huawei.com>
-Fixes: 7903a7086723 ("perf script: Show symbol offsets by default")
-Link: https://lkml.kernel.org/n/tip-hnizqwqrs03vcq1b74yao0f6@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: c39c4d98dc65 ("net: hns3: Add mac loopback selftest support in hns3 driver")
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/tests/shell/record+probe_libc_inet_pton.sh |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-+++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
-@@ -48,7 +48,7 @@ trace_libc_inet_pton_backtrace() {
- 	*)
- 		eventattr='max-stack=3'
- 		echo "getaddrinfo\+0x[[:xdigit:]]+[[:space:]]\($libc\)$" >> $expected
--		echo ".*\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$" >> $expected
-+		echo ".*(\+0x[[:xdigit:]]+|\[unknown\])[[:space:]]\(.*/bin/ping.*\)$" >> $expected
- 		;;
- 	esac
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
+@@ -309,7 +309,7 @@ static void hns3_self_test(struct net_de
+ 			h->flags & HNAE3_SUPPORT_SERDES_LOOPBACK;
  
+ 	if (if_running)
+-		dev_close(ndev);
++		ndev->netdev_ops->ndo_stop(ndev);
+ 
+ #if IS_ENABLED(CONFIG_VLAN_8021Q)
+ 	/* Disable the vlan filter for selftest does not support it */
+@@ -347,7 +347,7 @@ static void hns3_self_test(struct net_de
+ #endif
+ 
+ 	if (if_running)
+-		dev_open(ndev);
++		ndev->netdev_ops->ndo_open(ndev);
+ }
+ 
+ static int hns3_get_sset_count(struct net_device *netdev, int stringset)
 
 
