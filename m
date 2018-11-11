@@ -2,149 +2,143 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2765CC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:53:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FF2BC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:53:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D904C20839
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:53:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC3D920839
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:53:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P+95XI51"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D904C20839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ugfP0x3W"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC3D920839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733093AbeKLJng (ORCPT
+        id S1733155AbeKLJnn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:43:36 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:44871 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732794AbeKLJng (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 04:43:36 -0500
-Received: by mail-qk1-f193.google.com with SMTP id n12so10614351qkh.11
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 15:53:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aWdii/qb7BbkZTajBj1HFhh81B1/sytT4jLGty0/AQ4=;
-        b=P+95XI51NTK0orYCAypZgCjmq8DZwcVvzEgmVhQPV9do2Vvr6T0yvo9rCgyml8a8VN
-         dvgFV7OhVZKKpbRwluJR/fWpjpcVwoc5ooo25CBTqssNitrWHazNWmKFTLLRosdnXOKZ
-         7JCdePW4zYcd5IK3N+zbQrUCXdQcpVYvcvRGd5eszm7zBm1AZsgd58TU1fj038ERAP7B
-         hzK9IOIf6qA7Mu1hNjig2JVtoTu0NCKsjgUM+jdh6XtG1YT9VptzgKxVpzyjzBMTXE2F
-         jl+iSqor6DYVSKfLTxK9JTvvjBl/hmt4sJiYKAY4hFFAHj/P49GPGTtZpyqlLsYE+K4F
-         B6fA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aWdii/qb7BbkZTajBj1HFhh81B1/sytT4jLGty0/AQ4=;
-        b=kHnIk2V64QlD85HcUXLDpeEkd4cT6ORQjZ1x/AmVjfb6ECMRnu7nR6GY7CMd5f8eSa
-         7TCaDoS0XLQATc4iNn8RtFKkY3PT+fPJ04DELYbaOe14wkPjZN2EY5FGweC/GHHN0w66
-         PkU6mTPxfxSgvgJDUrNy4H227+JdFu1ftG3AXVJ2u9BCzhwaAKi5BAMDqnKkUedU4OwK
-         sYm1BZfe9detZf6ldQ2Io56wthAErHHgkq58MsFQJy7UrqqnRtEx0CeR4eqMwuPV/ziH
-         5qMVxtEwCbprWQJxfc7CHh4RixyCyk3toV5Zj/3Iw3wFwXzkOeoXRY0xy+DfRXJZXbBq
-         Y07w==
-X-Gm-Message-State: AGRZ1gKUHNqEKltsNGj3kITAQRPmI9jH8xGunNzetXxWkOAX5JbcvVub
-        P+402pp6N31fpSYi3i+JnbCvdbBJRdEWWoJ781c=
-X-Google-Smtp-Source: AJdET5cc8EDP0wOBrGWBg0k1GTZ0DGyeldbep/wwWw7adxtdr+ABi8u5dSnVaLxiWZIfv4/wizy5jQLk4J64GCkqKBM=
-X-Received: by 2002:a0c:d268:: with SMTP id o37mr17450613qvh.136.1541980393742;
- Sun, 11 Nov 2018 15:53:13 -0800 (PST)
+        Mon, 12 Nov 2018 04:43:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37238 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732795AbeKLIS0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:18:26 -0500
+Received: from localhost (unknown [206.108.79.134])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9FAED22353;
+        Sun, 11 Nov 2018 22:28:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541975310;
+        bh=H/NGUGH/XNAqBI8nf5ULOnJ8oW7o5j16uaCqYagc0ng=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ugfP0x3WokPZslchXJvT4aOonmiGkykF8I0ryXbdE55AcyfQ3WWeMSBoRasDXXb2G
+         KdwKTmwktzFMYJvm31WooWYJI3RtE+7XcDsOeEkaEgVz4k19G5smM0499azlXIMxdG
+         Lw8tS3UhptyNlBUTZtonM/nJ/izbky0sllRo/ovc=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Ondrej Mosnacek <omosnace@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.19 245/361] crypto: morus/generic - fix for big endian systems
+Date:   Sun, 11 Nov 2018 14:19:52 -0800
+Message-Id: <20181111221652.681034206@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
+References: <20181111221619.915519183@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-References: <20181110181101.24557-1-andriy.shevchenko@linux.intel.com>
- <CAHp75VfwKbzLNrxWRhoGW3aLN1PLWhx7sXWMgyFw2kS+4KZcuQ@mail.gmail.com> <CABGGisw-eid3Cq0HRu_Bw720JVy56jDCiSNyOY2s-JU6X5wRWg@mail.gmail.com>
-In-Reply-To: <CABGGisw-eid3Cq0HRu_Bw720JVy56jDCiSNyOY2s-JU6X5wRWg@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 12 Nov 2018 01:53:02 +0200
-Message-ID: <CAHp75VeKqijzEiP5Kf0+Xoem_3QByZL3aF9c4bbzF68_E=1uWA@mail.gmail.com>
-Subject: Re: [PATCH v1 1/5] drivercore: Revert "deferral race condition fix"
-To:     Rob Herring <robh@kernel.org>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Andrzej Hajda <a.hajda@samsung.com>, grant.likely@arm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 11, 2018 at 9:26 PM Rob Herring <robh@kernel.org> wrote:
-> On Sun, Nov 11, 2018 at 7:04 AM Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-> > I seems Grant's mail delivery bounces messages. I delibirately reduced
-> > the Cc list for sake of ping Grant in case it would pass.
->
-> That would be because he is not at Linaro anymore. Added his ARM account.
+------------------
 
-Thanks!
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-> > On Sat, Nov 10, 2018 at 8:12 PM Andy Shevchenko
-> > <andriy.shevchenko@linux.intel.com> wrote:
-> > >
-> > > Consider the following scenario.
-> > >
-> > > There are two independent devices coupled together by functional dependencies:
-> > >  - USB OTG (dwc3-pci)
-> > >  - extcon (tested with extcon-intel-mrfld, not yet in upstream)
-> > >
-> > > Each of the driver services a corresponding device is built as a module. In the
-> > > Buildroot environment the modules are probed by alphabetical ordering of their
-> > > modaliases. The latter comes to the case when USB OTG driver will be probed
-> > > first followed by extcon one.
-> > >
-> > > So, if the platform anticipates extcon device to be appeared, in the above case
-> > > we will get deferred probe of USB OTG, because of ordering.
-> > >
-> > > Now, a cherry on top of the cake, the deferred probing list contains
-> > > the only two modules, i.e. USB OTG and extcon. Due to above circumstances,
-> > > values in the local_trigger_count and deferred_trigger_count are not the same,
-> > > and thus provokes deferred probe triggering again and again.
-> > >
-> > > ...
-> > > [   20.678332] platform dwc3.0.auto: Retrying from deferred list
-> > > [   20.694743] platform dwc3.0.auto: Driver dwc3 requests probe deferral
-> > > [   20.701254] platform dwc3.0.auto: Added to deferred list
-> > > [   20.706620] platform dwc3.0.auto: driver_deferred_probe_add_trigger 1 2
-> > > [   20.713732] platform dwc3.0.auto: Retrying from deferred list
-> > > [   20.730035] platform dwc3.0.auto: Driver dwc3 requests probe deferral
-> > > [   20.736540] platform dwc3.0.auto: Added to deferred list
-> > > [   20.741889] platform dwc3.0.auto: driver_deferred_probe_add_trigger 3 4
-> > > [   20.748991] platform dwc3.0.auto: Retrying from deferred list
-> > > [   20.765416] platform dwc3.0.auto: Driver dwc3 requests probe deferral
-> > > [   20.771914] platform dwc3.0.auto: Added to deferred list
-> > > [   20.777279] platform dwc3.0.auto: driver_deferred_probe_add_trigger 5 6
-> > > ...
-> > >
-> > > Deeper investigation shows the culprit commit 58b116bce136
-> > > ("drivercore: deferral race condition fix") which was dedicated to fix some
-> > > other issue while bringing a regression.
-> > >
-> > > This reverts commit 58b116bce13612e5aa6fcd49ecbd4cf8bb59e835 for good until
-> > > we will have better solution.
->
-> How is behavior that's been there for 4.5 years a regression? Aren't
-> we going to break Davinci that this commit was supposed to fix? What
-> else could be relying on current behavior?
+commit 5a8dedfa3276e88c5865f265195d63d72aec3e72 upstream.
 
-I guess we are purerly on a side of luck. I don't remember people
-build usb and extcon as modules
-and using Buildroot, or anything that probes modules let's say,in
-"arbitrary" way.
-(That is one of the reason why I didn't dare to put Fixes tag there).
-Nevertheless, I have actual issue. I'm all ears to know about another
-possibility
-how to fix the issue on my side.
+Omit the endian swabbing when folding the lengths of the assoc and
+crypt input buffers into the state to finalize the tag. This is not
+necessary given that the memory representation of the state is in
+machine native endianness already.
 
--- 
-With Best Regards,
-Andy Shevchenko
+This fixes an error reported by tcrypt running on a big endian system:
+
+  alg: aead: Test 2 failed on encryption for morus640-generic
+  00000000: a8 30 ef fb e6 26 eb 23 b0 87 dd 98 57 f3 e1 4b
+  00000010: 21
+  alg: aead: Test 2 failed on encryption for morus1280-generic
+  00000000: 88 19 1b fb 1c 29 49 0e ee 82 2f cb 97 a6 a5 ee
+  00000010: 5f
+
+Fixes: 396be41f16fd ("crypto: morus - Add generic MORUS AEAD implementations")
+Cc: <stable@vger.kernel.org> # v4.18+
+Reviewed-by: Ondrej Mosnacek <omosnace@redhat.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ crypto/morus1280.c |    7 ++-----
+ crypto/morus640.c  |   16 ++++------------
+ 2 files changed, 6 insertions(+), 17 deletions(-)
+
+--- a/crypto/morus1280.c
++++ b/crypto/morus1280.c
+@@ -385,14 +385,11 @@ static void crypto_morus1280_final(struc
+ 				   struct morus1280_block *tag_xor,
+ 				   u64 assoclen, u64 cryptlen)
+ {
+-	u64 assocbits = assoclen * 8;
+-	u64 cryptbits = cryptlen * 8;
+-
+ 	struct morus1280_block tmp;
+ 	unsigned int i;
+ 
+-	tmp.words[0] = cpu_to_le64(assocbits);
+-	tmp.words[1] = cpu_to_le64(cryptbits);
++	tmp.words[0] = assoclen * 8;
++	tmp.words[1] = cryptlen * 8;
+ 	tmp.words[2] = 0;
+ 	tmp.words[3] = 0;
+ 
+--- a/crypto/morus640.c
++++ b/crypto/morus640.c
+@@ -384,21 +384,13 @@ static void crypto_morus640_final(struct
+ 				  struct morus640_block *tag_xor,
+ 				  u64 assoclen, u64 cryptlen)
+ {
+-	u64 assocbits = assoclen * 8;
+-	u64 cryptbits = cryptlen * 8;
+-
+-	u32 assocbits_lo = (u32)assocbits;
+-	u32 assocbits_hi = (u32)(assocbits >> 32);
+-	u32 cryptbits_lo = (u32)cryptbits;
+-	u32 cryptbits_hi = (u32)(cryptbits >> 32);
+-
+ 	struct morus640_block tmp;
+ 	unsigned int i;
+ 
+-	tmp.words[0] = cpu_to_le32(assocbits_lo);
+-	tmp.words[1] = cpu_to_le32(assocbits_hi);
+-	tmp.words[2] = cpu_to_le32(cryptbits_lo);
+-	tmp.words[3] = cpu_to_le32(cryptbits_hi);
++	tmp.words[0] = lower_32_bits(assoclen * 8);
++	tmp.words[1] = upper_32_bits(assoclen * 8);
++	tmp.words[2] = lower_32_bits(cryptlen * 8);
++	tmp.words[3] = upper_32_bits(cryptlen * 8);
+ 
+ 	for (i = 0; i < MORUS_BLOCK_WORDS; i++)
+ 		state->s[4].words[i] ^= state->s[0].words[i];
+
+
