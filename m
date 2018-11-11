@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02B12C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:43:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DC4AC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:43:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEA7220871
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:43:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEA7220871
+	by mail.kernel.org (Postfix) with ESMTP id 5810420869
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:43:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5810420869
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730215AbeKLGcq (ORCPT
+        id S1730153AbeKLGcp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:32:46 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:49302 "EHLO
+        Mon, 12 Nov 2018 01:32:45 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:49306 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729749AbeKLFsB (ORCPT
+        by vger.kernel.org with ESMTP id S1729750AbeKLFsB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 00:48:01 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsN-0000l5-Jg; Sun, 11 Nov 2018 19:58:31 +0000
+        id 1gLvsO-0000lL-2x; Sun, 11 Nov 2018 19:58:32 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsN-0001M6-Ed; Sun, 11 Nov 2018 19:58:31 +0000
+        id 1gLvsN-0001NO-Rb; Sun, 11 Nov 2018 19:58:31 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -38,13 +38,12 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org,
-        "Andre Przywara" <andre.przywara@arm.com>,
-        "Will Deacon" <will.deacon@arm.com>
+        "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>,
+        "Mauro Carvalho Chehab" <mchehab@s-opensource.com>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.408140341@decadent.org.uk>
+Message-ID: <lsq.1541965745.377308543@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 001/366] arm64: add missing data types in
- smp_load_acquire/smp_store_release
+Subject: [PATCH 3.16 017/366] media: omap3isp/isp: remove an unused static var
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,58 +57,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andre Przywara <andre.przywara@arm.com>
+From: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
-commit 878a84d5a8a18a4ab241d40cebb791d6aedf5605 upstream.
+commit 3f4836beb2ebeb0211d9911d878a267d687e0e6e upstream.
 
-Commit 8053871d0f7f ("smp: Fix smp_call_function_single_async()
-locking") introduced a call to smp_load_acquire() with a u16 argument,
-but we only cared about u32 and u64 types in that function so far.
-This resulted in a compiler warning fortunately, pointing at an
-uninitialized use. Due to the implementation structure the compiler
-misses that bug in the smp_store_release(), though.
-Add the u16 and u8 variants using ldarh/stlrh and ldarb/stlrb,
-respectively. Together with the compiletime_assert_atomic_type() check
-this should cover all cases now.
+The isp_xclk_init_data const data isn't used anywere.
 
-Acked-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+drivers/media/platform/omap3isp/isp.c:294:35: warning: ‘isp_xclk_init_data’ defined but not used [-Wunused-const-variable=]
+ static const struct clk_init_data isp_xclk_init_data = {
+                                   ^~~~~~~~~~~~~~~~~~
+
+Fixes: 9b28ee3c9122 ("[media] omap3isp: Use the common clock framework")
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/arm64/include/asm/barrier.h | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/media/platform/omap3isp/isp.c | 7 -------
+ 1 file changed, 7 deletions(-)
 
---- a/arch/arm64/include/asm/barrier.h
-+++ b/arch/arm64/include/asm/barrier.h
-@@ -64,6 +64,14 @@ do {									\
- 		{ .__val = (__force typeof(*p)) (v) }; 			\
- 	compiletime_assert_atomic_type(*p);				\
- 	switch (sizeof(*p)) {						\
-+	case 1:								\
-+		asm volatile ("stlrb %w1, %0"				\
-+				: "=Q" (*p) : "r" (v) : "memory");	\
-+		break;							\
-+	case 2:								\
-+		asm volatile ("stlrh %w1, %0"				\
-+				: "=Q" (*p) : "r" (v) : "memory");	\
-+		break;							\
- 	case 4:								\
- 		asm volatile ("stlr %w1, %0"				\
- 				: "=Q" (*p)				\
-@@ -84,6 +92,14 @@ do {									\
- 	typeof(*p) ___p1;						\
- 	compiletime_assert_atomic_type(*p);				\
- 	switch (sizeof(*p)) {						\
-+	case 1:								\
-+		asm volatile ("ldarb %w0, %1"				\
-+			: "=r" (___p1) : "Q" (*p) : "memory");		\
-+		break;							\
-+	case 2:								\
-+		asm volatile ("ldarh %w0, %1"				\
-+			: "=r" (___p1) : "Q" (*p) : "memory");		\
-+		break;							\
- 	case 4:								\
- 		asm volatile ("ldar %w0, %1"				\
- 			: "=r" (___p1) : "Q" (*p) : "memory");		\
+--- a/drivers/media/platform/omap3isp/isp.c
++++ b/drivers/media/platform/omap3isp/isp.c
+@@ -279,13 +279,6 @@ static const struct clk_ops isp_xclk_ops
+ 
+ static const char *isp_xclk_parent_name = "cam_mclk";
+ 
+-static const struct clk_init_data isp_xclk_init_data = {
+-	.name = "cam_xclk",
+-	.ops = &isp_xclk_ops,
+-	.parent_names = &isp_xclk_parent_name,
+-	.num_parents = 1,
+-};
+-
+ static int isp_xclk_init(struct isp_device *isp)
+ {
+ 	struct isp_platform_data *pdata = isp->pdata;
 
