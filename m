@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 335D5C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F7FCC43610
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE6012175B
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D86F32175B
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mriCmGJG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE6012175B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="e/Mbpyz5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D86F32175B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388656AbeKLIUX (ORCPT
+        id S2388673AbeKLIUY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:20:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43864 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:20:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388608AbeKLIUV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:20:21 -0500
+        id S2388642AbeKLIUX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:23 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E413223D8;
-        Sun, 11 Nov 2018 22:30:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0AB1F21582;
+        Sun, 11 Nov 2018 22:30:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975425;
-        bh=COLl5J+OImek4e+EgNhWIDvx/f9jezt5+thDeUpuWoY=;
+        s=default; t=1541975427;
+        bh=UGFvd7ojE1Fzw7DNcCZFzJZ1fuxn4oAUHIUcf1hgX8c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mriCmGJGlbfmHQPG2HrpVGBf7QQCZ4uOQZRANunOBBVCwsEj0AZ4pVbmull65jzMC
-         47yaZbNlSfUhjtUndKACcNVrb3iM0iY+fG8tn97WvDQdIXqL5RRIO9XQrgC3FkCJDD
-         1zXL1F6B47lvN1Cg0Uq8C5aahHYmIoIQfrjGsHFY=
+        b=e/Mbpyz52q8skIAPjDiuT1WW9fbMo4EVMf+ZREUkbjqQZRO5UjaZ+V2JicOz/XpRv
+         fUbDey+GSz5gEgVPePNuTN+OCimGPxMMnIrjWvbgMS9yFHue3MIL2498uuH0BnQRVJ
+         HTzDolwe3+2KbHmVhWXfKHhV/AMAuQqW0zhRWwoE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hangbin Liu <liuhangbin@gmail.com>,
-        Adit Ranadive <aditr@vmware.com>,
-        Vishnu Dasa <vdasa@vmware.com>,
-        Jorgen Hansen <jhansen@vmware.com>,
+        stable@vger.kernel.org, Justin Chen <justinpopo6@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 156/350] VMCI: Resource wildcard match fixed
-Date:   Sun, 11 Nov 2018 14:20:20 -0800
-Message-Id: <20181111221714.587682648@linuxfoundation.org>
+Subject: [PATCH 4.18 128/350] gpio: brcmstb: allow 0 width GPIO banks
+Date:   Sun, 11 Nov 2018 14:19:52 -0800
+Message-Id: <20181111221713.068281294@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -65,53 +64,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jorgen Hansen <jhansen@vmware.com>
+From: Justin Chen <justinpopo6@gmail.com>
 
-[ Upstream commit 11924ba5e671d6caef1516923e2bd8c72929a3fe ]
+[ Upstream commit bfba223dcc4548632d8f3bfd15690a86d4c68504 ]
 
-When adding a VMCI resource, the check for an existing entry
-would ignore that the new entry could be a wildcard. This could
-result in multiple resource entries that would match a given
-handle. One disastrous outcome of this is that the
-refcounting used to ensure that delayed callbacks for VMCI
-datagrams have run before the datagram is destroyed can be
-wrong, since the refcount could be increased on the duplicate
-entry. This in turn leads to a use after free bug. This issue
-was discovered by Hangbin Liu using KASAN and syzkaller.
+Sometimes we have empty banks within the GPIO block. This commit allows
+proper handling of 0 width GPIO banks. We handle 0 width GPIO banks by
+incrementing the bank and number of GPIOs, but not initializing them.
+This will mean a call into the non-existent GPIOs will return an error.
 
-Fixes: bc63dedb7d46 ("VMCI: resource object implementation")
-Reported-by: Hangbin Liu <liuhangbin@gmail.com>
-Reviewed-by: Adit Ranadive <aditr@vmware.com>
-Reviewed-by: Vishnu Dasa <vdasa@vmware.com>
-Signed-off-by: Jorgen Hansen <jhansen@vmware.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Also remove "GPIO registered" dev print. This information is misleading
+since the incremented banks and gpio_base do not reflect the actual GPIOs
+that get initialized. We leave this information out since it is already
+printed with dev_dbg.
+
+Signed-off-by: Justin Chen <justinpopo6@gmail.com>
+Acked-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/misc/vmw_vmci/vmci_driver.c   |    2 +-
- drivers/misc/vmw_vmci/vmci_resource.c |    3 ++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-brcmstb.c |   15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
---- a/drivers/misc/vmw_vmci/vmci_driver.c
-+++ b/drivers/misc/vmw_vmci/vmci_driver.c
-@@ -113,5 +113,5 @@ module_exit(vmci_drv_exit);
+--- a/drivers/gpio/gpio-brcmstb.c
++++ b/drivers/gpio/gpio-brcmstb.c
+@@ -664,6 +664,18 @@ static int brcmstb_gpio_probe(struct pla
+ 		struct brcmstb_gpio_bank *bank;
+ 		struct gpio_chip *gc;
  
- MODULE_AUTHOR("VMware, Inc.");
- MODULE_DESCRIPTION("VMware Virtual Machine Communication Interface.");
--MODULE_VERSION("1.1.5.0-k");
-+MODULE_VERSION("1.1.6.0-k");
- MODULE_LICENSE("GPL v2");
---- a/drivers/misc/vmw_vmci/vmci_resource.c
-+++ b/drivers/misc/vmw_vmci/vmci_resource.c
-@@ -57,7 +57,8 @@ static struct vmci_resource *vmci_resour
++		/*
++		 * If bank_width is 0, then there is an empty bank in the
++		 * register block. Special handling for this case.
++		 */
++		if (bank_width == 0) {
++			dev_dbg(dev, "Width 0 found: Empty bank @ %d\n",
++				num_banks);
++			num_banks++;
++			gpio_base += MAX_GPIO_PER_BANK;
++			continue;
++		}
++
+ 		bank = devm_kzalloc(dev, sizeof(*bank), GFP_KERNEL);
+ 		if (!bank) {
+ 			err = -ENOMEM;
+@@ -740,9 +752,6 @@ static int brcmstb_gpio_probe(struct pla
+ 			goto fail;
+ 	}
  
- 		if (r->type == type &&
- 		    rid == handle.resource &&
--		    (cid == handle.context || cid == VMCI_INVALID_ID)) {
-+		    (cid == handle.context || cid == VMCI_INVALID_ID ||
-+		     handle.context == VMCI_INVALID_ID)) {
- 			resource = r;
- 			break;
- 		}
+-	dev_info(dev, "Registered %d banks (GPIO(s): %d-%d)\n",
+-			num_banks, priv->gpio_base, gpio_base - 1);
+-
+ 	if (priv->parent_wake_irq && need_wakeup_event)
+ 		pm_wakeup_event(dev, 0);
+ 
 
 
