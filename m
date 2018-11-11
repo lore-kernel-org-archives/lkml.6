@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61C2CC43610
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5646C0044C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22371223C8
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 814762243E
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IfmCuYJd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22371223C8
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="utTwX1J5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 814762243E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732342AbeKLISB (ORCPT
+        id S1732373AbeKLISD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:18:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35336 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:18:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732312AbeKLISA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:18:00 -0500
+        id S1732353AbeKLISC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:18:02 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE2D7216FD;
-        Sun, 11 Nov 2018 22:28:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 317B9223DD;
+        Sun, 11 Nov 2018 22:28:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975285;
-        bh=LjEI2AEX8MurREg1m68x3mmVRAdZbzIsPfrN7LPL7rM=;
+        s=default; t=1541975287;
+        bh=asuu4RVyajOtDsMtgsA+5dzdXpFMx0bxnOXmczRBWSo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IfmCuYJdGmQtA1g0YnOIk/X08zQXqdidMlBwgzi8oaQMMbfutdmSujhyzfioJEUQh
-         A9CfYUHBO72dFbrHvyZG9Mjx+SFrcwt4pQe88Ehn0s69FUb0aZ9BUJnV4Voype6bO0
-         PT9csV1+mdR+TgqfF8600Frdkyo/CzL6sCP2Ue38=
+        b=utTwX1J574n7vRAc+sC7LaJotEO2CLOyODgxt04LcLz3FjqPA564tZXEddm88giRv
+         jgl0OsNUK+6JRLsUzcAJ/mcG2Jba0PRVLQwI86wHRYgRxEfsE9fgTfE3aBY2u4xRqe
+         G0EOHWZFuBpaNUVvPDf+ROC2nmOAI+5z8iHbk3jc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 180/361] uio: ensure class is registered before devices
-Date:   Sun, 11 Nov 2018 14:18:47 -0800
-Message-Id: <20181111221645.428114674@linuxfoundation.org>
+        stable@vger.kernel.org, Daniel Mack <daniel@zonque.org>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.19 221/361] ASoC: sta32x: set ->component pointer in private struct
+Date:   Sun, 11 Nov 2018 14:19:28 -0800
+Message-Id: <20181111221650.742823324@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -63,85 +62,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+From: Daniel Mack <daniel@zonque.org>
 
-[ Upstream commit ae61cf5b9913027c6953a79ed3894da4f47061bd ]
+commit 747df19747bc9752cd40b9cce761e17a033aa5c2 upstream.
 
-When both uio and the uio drivers are built in the kernel, it is possible
-for a driver to register devices before the uio class is registered.
+The ESD watchdog code in sta32x_watchdog() dereferences the pointer
+which is never assigned.
 
-This may result in a NULL pointer dereference later on in
-get_device_parent() when accessing the class glue_dirs spinlock.
+This is a regression from a1be4cead9b950 ("ASoC: sta32x: Convert to direct
+regmap API usage.") which went unnoticed since nobody seems to use that ESD
+workaround.
 
-The trace looks like that:
-
-Unable to handle kernel NULL pointer dereference at virtual address 00000140
-[...]
-[<ffff0000089cc234>] _raw_spin_lock+0x14/0x48
-[<ffff0000084f56bc>] device_add+0x154/0x6a0
-[<ffff0000084f5e48>] device_create_groups_vargs+0x120/0x128
-[<ffff0000084f5edc>] device_create+0x54/0x60
-[<ffff0000086e72c0>] __uio_register_device+0x120/0x4a8
-[<ffff000008528b7c>] jaguar2_pci_probe+0x2d4/0x558
-[<ffff0000083fc18c>] local_pci_probe+0x3c/0xb8
-[<ffff0000083fd81c>] pci_device_probe+0x11c/0x180
-[<ffff0000084f88bc>] driver_probe_device+0x22c/0x2d8
-[<ffff0000084f8a24>] __driver_attach+0xbc/0xc0
-[<ffff0000084f69fc>] bus_for_each_dev+0x4c/0x98
-[<ffff0000084f81b8>] driver_attach+0x20/0x28
-[<ffff0000084f7d08>] bus_add_driver+0x1b8/0x228
-[<ffff0000084f93c0>] driver_register+0x60/0xf8
-[<ffff0000083fb918>] __pci_register_driver+0x40/0x48
-
-Return EPROBE_DEFER in that case so the driver can register the device
-later.
-
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Fixes: a1be4cead9b950 ("ASoC: sta32x: Convert to direct regmap API usage.")
+Signed-off-by: Daniel Mack <daniel@zonque.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/uio/uio.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ sound/soc/codecs/sta32x.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/uio/uio.c
-+++ b/drivers/uio/uio.c
-@@ -274,6 +274,8 @@ static struct class uio_class = {
- 	.dev_groups = uio_groups,
- };
- 
-+bool uio_class_registered;
+--- a/sound/soc/codecs/sta32x.c
++++ b/sound/soc/codecs/sta32x.c
+@@ -879,6 +879,9 @@ static int sta32x_probe(struct snd_soc_c
+ 	struct sta32x_priv *sta32x = snd_soc_component_get_drvdata(component);
+ 	struct sta32x_platform_data *pdata = sta32x->pdata;
+ 	int i, ret = 0, thermal = 0;
 +
- /*
-  * device functions
-  */
-@@ -876,6 +878,9 @@ static int init_uio_class(void)
- 		printk(KERN_ERR "class_register failed for uio\n");
- 		goto err_class_register;
- 	}
++	sta32x->component = component;
 +
-+	uio_class_registered = true;
-+
- 	return 0;
- 
- err_class_register:
-@@ -886,6 +891,7 @@ exit:
- 
- static void release_uio_class(void)
- {
-+	uio_class_registered = false;
- 	class_unregister(&uio_class);
- 	uio_major_cleanup();
- }
-@@ -912,6 +918,9 @@ int __uio_register_device(struct module
- 	struct uio_device *idev;
- 	int ret = 0;
- 
-+	if (!uio_class_registered)
-+		return -EPROBE_DEFER;
-+
- 	if (!parent || !info || !info->name || !info->version)
- 		return -EINVAL;
- 
+ 	ret = regulator_bulk_enable(ARRAY_SIZE(sta32x->supplies),
+ 				    sta32x->supplies);
+ 	if (ret != 0) {
 
 
