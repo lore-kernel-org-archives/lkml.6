@@ -4,46 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3B56C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:17:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F81BC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:17:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9881E20817
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:17:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9C8520862
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:17:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uR3F+c0u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9881E20817
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="j2yORttC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9C8520862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389958AbeKLJH2 (ORCPT
+        id S2389731AbeKLIVe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:07:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49052 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389637AbeKLIVe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:21:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49012 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732161AbeKLIVd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:33 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B4E2223C8;
-        Sun, 11 Nov 2018 22:31:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1A0892154B;
+        Sun, 11 Nov 2018 22:31:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975498;
-        bh=B73PruPPRjQzmrerKRblW+hH+Fs3dttOkAxrBcDImtw=;
+        s=default; t=1541975496;
+        bh=gWvlH4Vm9Cntkk8zCMFCbffWacmUZGuqXoeFVvVK+YA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uR3F+c0uOMdWKBhxDhXWnJyx6OKKlfxQ3zBRdANmUekItKSyIvC8vleQIdnN4bn2m
-         knw98XCNa/2VCNwml7HkMvFYT/LkTvQwOQgUR8OGSzZYOqJqg7A1HvzkmCRgLXS/xX
-         1g3cdZYFqiqw+hT1m3FrmX7NetSGvfxZFJGktPgI=
+        b=j2yORttCiMQvuNP5NQuYD+rACnR8exp5PdNBGGZrLJkxQJ+GyGT8EIFbWZIbJLSMu
+         xd0Zu+ks+U9jXsND8rM7CG2b+Sr5ha+ES49bpL96wZLija1bD8tVlK0sHmWC4StuSp
+         H+vZoLLiRZLkJpZcbfudZdOOaRuPV52uqZsSZBBs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
+        stable@vger.kernel.org,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.18 302/350] media: adv7842: when the EDID is cleared, unconfigure CEC as well
-Date:   Sun, 11 Nov 2018 14:22:46 -0800
-Message-Id: <20181111221720.712318462@linuxfoundation.org>
+Subject: [PATCH 4.18 299/350] media: em28xx: make v4l2-compliance happier by starting sequence on zero
+Date:   Sun, 11 Nov 2018 14:22:43 -0800
+Message-Id: <20181111221720.597699470@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -61,35 +62,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hans Verkuil <hans.verkuil@cisco.com>
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-commit ab83203e181015b099720aff43ffabc1812e0fb3 upstream.
+commit afeaade90db4c5dab93f326d9582be1d5954a198 upstream.
 
-When there is no EDID the CEC adapter should be unconfigured as
-well. So call cec_phys_addr_invalidate() when this happens.
+The v4l2-compliance tool complains if a video doesn't start
+with a zero sequence number.
 
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Cc: <stable@vger.kernel.org>      # for v4.18 and up
+While this shouldn't cause any real problem for apps, let's
+make it happier, in order to better check the v4l2-compliance
+differences before and after patchsets.
+
+This is actually an old issue. It is there since at least its
+videobuf2 conversion, e. g. changeset 3829fadc461 ("[media]
+em28xx: convert to videobuf2"), if VB1 wouldn't suffer from
+the same issue.
+
+Cc: stable@vger.kernel.org
+Fixes: d3829fadc461 ("[media] em28xx: convert to videobuf2")
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/i2c/adv7842.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/media/usb/em28xx/em28xx-video.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/media/i2c/adv7842.c
-+++ b/drivers/media/i2c/adv7842.c
-@@ -786,8 +786,10 @@ static int edid_write_hdmi_segment(struc
- 	/* Disable I2C access to internal EDID ram from HDMI DDC ports */
- 	rep_write_and_or(sd, 0x77, 0xf3, 0x00);
+--- a/drivers/media/usb/em28xx/em28xx-video.c
++++ b/drivers/media/usb/em28xx/em28xx-video.c
+@@ -1093,6 +1093,8 @@ int em28xx_start_analog_streaming(struct
  
--	if (!state->hdmi_edid.present)
-+	if (!state->hdmi_edid.present) {
-+		cec_phys_addr_invalidate(state->cec_adap);
- 		return 0;
-+	}
+ 	em28xx_videodbg("%s\n", __func__);
  
- 	pa = cec_get_edid_phys_addr(edid, 256, &spa_loc);
- 	err = cec_phys_addr_validate(pa, &pa, NULL);
++	dev->v4l2->field_count = 0;
++
+ 	/*
+ 	 * Make sure streaming is not already in progress for this type
+ 	 * of filehandle (e.g. video, vbi)
 
 
