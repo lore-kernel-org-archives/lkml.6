@@ -6,44 +6,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47ED0C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:23:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A182C43610
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:23:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D2A22084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:23:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0120F2084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:23:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vtHhWFCf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D2A22084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HT2bQWSI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0120F2084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389202AbeKLIU4 (ORCPT
+        id S2389469AbeKLJN6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:20:56 -0500
+        Mon, 12 Nov 2018 04:13:58 -0500
 Received: from mail.kernel.org ([198.145.29.99]:46824 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389155AbeKLIUy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:20:54 -0500
+        id S2389187AbeKLIU4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:56 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A7052154B;
-        Sun, 11 Nov 2018 22:30:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 64765216FD;
+        Sun, 11 Nov 2018 22:30:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975458;
-        bh=AIS15SpHUlNb/NzfrNrWLyoWb7ZHFC4UnUjniUsCFR4=;
+        s=default; t=1541975459;
+        bh=9h7M42/pgQdq6K4FIgrkuatacWY7fz5/4/HfVmn4DIQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vtHhWFCfYwImE81KTjVjdxI7HyvnEEGnW999NC9CdA2C+AW+E39waZYUF5YUv5jAy
-         3vXxvWjnSplpgVvv6Qxia2zvxVR9LaFz7gJawbxaKMvFjIKuyZbQq9dJaNu//hoLvQ
-         JCjn7nKYFLTh6y7SteqeI5WQqYTPKqBizpGmIGDs=
+        b=HT2bQWSIJfFwl7jUO1YRylEigR0WAuGSZD4MCLkIk52I9H3St3iEaZOgC8zJ8oIBE
+         6yutjRO9nCNIV6akVqDSQdZQ8mI9axtSHU6N7dP9vNgRckd+VKfmkJdtn7s9j0YheH
+         u+ocXIM1JrA0QAWPenX7w5WNeF1fxXnu23ezodi0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vignesh R <vigneshr@ti.com>,
-        Tony Lindgren <tony@atomide.com>
-Subject: [PATCH 4.18 231/350] ARM: dts: dra7: Fix up unaligned access setting for PCIe EP
-Date:   Sun, 11 Nov 2018 14:21:35 -0800
-Message-Id: <20181111221717.697321368@linuxfoundation.org>
+        stable@vger.kernel.org, Keith Busch <keith.busch@intel.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        "Jon Derrick:" <jonathan.derrick@intel.com>,
+        "Heitke, Kenneth" <kenneth.heitke@intel.com>
+Subject: [PATCH 4.18 234/350] PCI: vmd: White list for fast interrupt handlers
+Date:   Sun, 11 Nov 2018 14:21:38 -0800
+Message-Id: <20181111221717.824435165@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -61,35 +63,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vignesh R <vigneshr@ti.com>
+From: Keith Busch <keith.busch@intel.com>
 
-commit 6d0af44a82be87c13f2320821e9fbb8b8cf5a56f upstream.
+commit a7f58b9ecfd3c0f63703ec10f4a592cc38dbd1b8 upstream.
 
-Bit positions of PCIE_SS1_AXI2OCP_LEGACY_MODE_ENABLE and
-PCIE_SS1_AXI2OCP_LEGACY_MODE_ENABLE in CTRL_CORE_SMA_SW_7 are
-incorrectly documented in the TRM. In fact, the bit positions are
-swapped. Update the DT bindings for PCIe EP to reflect the same.
+Devices with slow interrupt handlers are significantly harming
+performance when their interrupt vector is shared with a fast device.
 
-Fixes: d23f3839fe97 ("ARM: dts: DRA7: Add pcie1 dt node for EP mode")
-Cc: stable@vger.kernel.org
-Signed-off-by: Vignesh R <vigneshr@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Create a class code white list for devices with known fast interrupt
+handlers and let all other devices share a single vector so that they
+don't interfere with performance.
+
+At the moment, only the NVM Express class code is on the list, but more
+may be added if VMD users desire to use other low-latency devices in
+these domains.
+
+Signed-off-by: Keith Busch <keith.busch@intel.com>
+[lorenzo.pieralisi@arm.com: changelog]
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Acked-by: Jon Derrick: <jonathan.derrick@intel.com>
+Cc: "Heitke, Kenneth" <kenneth.heitke@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/dra7.dtsi |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pci/controller/vmd.c |   13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/dra7.dtsi
-+++ b/arch/arm/boot/dts/dra7.dtsi
-@@ -354,7 +354,7 @@
- 				ti,hwmods = "pcie1";
- 				phys = <&pcie1_phy>;
- 				phy-names = "pcie-phy0";
--				ti,syscon-unaligned-access = <&scm_conf1 0x14 2>;
-+				ti,syscon-unaligned-access = <&scm_conf1 0x14 1>;
- 				status = "disabled";
- 			};
- 		};
+--- a/drivers/pci/controller/vmd.c
++++ b/drivers/pci/controller/vmd.c
+@@ -197,9 +197,20 @@ static struct vmd_irq_list *vmd_next_irq
+ 	int i, best = 1;
+ 	unsigned long flags;
+ 
+-	if (pci_is_bridge(msi_desc_to_pci_dev(desc)) || vmd->msix_count == 1)
++	if (vmd->msix_count == 1)
+ 		return &vmd->irqs[0];
+ 
++	/*
++	 * White list for fast-interrupt handlers. All others will share the
++	 * "slow" interrupt vector.
++	 */
++	switch (msi_desc_to_pci_dev(desc)->class) {
++	case PCI_CLASS_STORAGE_EXPRESS:
++		break;
++	default:
++		return &vmd->irqs[0];
++	}
++
+ 	raw_spin_lock_irqsave(&list_lock, flags);
+ 	for (i = 1; i < vmd->msix_count; i++)
+ 		if (vmd->irqs[i].count < vmd->irqs[best].count)
 
 
