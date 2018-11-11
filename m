@@ -6,44 +6,45 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD5D1C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:07:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F987C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:07:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88E422080D
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:07:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88E422080D
+	by mail.kernel.org (Postfix) with ESMTP id 5CEF92080D
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:07:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CEF92080D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731573AbeKLF5P (ORCPT
+        id S1731579AbeKLF5T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 00:57:15 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52200 "EHLO
+        Mon, 12 Nov 2018 00:57:19 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52206 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731209AbeKLF5O (ORCPT
+        by vger.kernel.org with ESMTP id S1730920AbeKLF5S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:57:14 -0500
+        Mon, 12 Nov 2018 00:57:18 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvt9-0000lM-7N; Sun, 11 Nov 2018 19:59:19 +0000
+        id 1gLvsy-0000l7-77; Sun, 11 Nov 2018 19:59:08 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsP-0001Ra-Lr; Sun, 11 Nov 2018 19:58:33 +0000
+        id 1gLvsU-0001dE-6u; Sun, 11 Nov 2018 19:58:38 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Michael Ellerman" <mpe@ellerman.id.au>,
-        "Michael Neuling" <mikey@neuling.org>
+CC:     akpm@linux-foundation.org, "Oliver Neukum" <oneukum@suse.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Houston Yaroschoff" <hstn@4ever3.net>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.690048409@decadent.org.uk>
+Message-ID: <lsq.1541965745.935188229@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 069/366] powerpc/ptrace: Fix enforcement of DAWR
- constraints
+Subject: [PATCH 3.16 194/366] usb: cdc_acm: Add quirk for Uniden UBC125
+ scanner
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,38 +58,124 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Neuling <mikey@neuling.org>
+From: Houston Yaroschoff <hstn@4ever3.net>
 
-commit cd6ef7eebf171bfcba7dc2df719c2a4958775040 upstream.
+commit 4a762569a2722b8a48066c7bacf0e1dc67d17fa1 upstream.
 
-Back when we first introduced the DAWR, in commit 4ae7ebe9522a
-("powerpc: Change hardware breakpoint to allow longer ranges"), we
-screwed up the constraint making it a 1024 byte boundary rather than a
-512. This makes the check overly permissive. Fortunately GDB is the
-only real user and it always did they right thing, so we never
-noticed.
+Uniden UBC125 radio scanner has USB interface which fails to work
+with cdc_acm driver:
+  usb 1-1.5: new full-speed USB device number 4 using xhci_hcd
+  cdc_acm 1-1.5:1.0: Zero length descriptor references
+  cdc_acm: probe of 1-1.5:1.0 failed with error -22
 
-This fixes the constraint to 512 bytes.
+Adding the NO_UNION_NORMAL quirk for the device fixes the issue:
+  usb 1-4: new full-speed USB device number 15 using xhci_hcd
+  usb 1-4: New USB device found, idVendor=1965, idProduct=0018
+  usb 1-4: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+  usb 1-4: Product: UBC125XLT
+  usb 1-4: Manufacturer: Uniden Corp.
+  usb 1-4: SerialNumber: 0001
+  cdc_acm 1-4:1.0: ttyACM0: USB ACM device
 
-Fixes: 4ae7ebe9522a ("powerpc: Change hardware breakpoint to allow longer ranges")
-Signed-off-by: Michael Neuling <mikey@neuling.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+`lsusb -v` of the device:
+
+  Bus 001 Device 015: ID 1965:0018 Uniden Corporation
+  Device Descriptor:
+    bLength                18
+    bDescriptorType         1
+    bcdUSB               2.00
+    bDeviceClass            2 Communications
+    bDeviceSubClass         0
+    bDeviceProtocol         0
+    bMaxPacketSize0        64
+    idVendor           0x1965 Uniden Corporation
+    idProduct          0x0018
+    bcdDevice            0.01
+    iManufacturer           1 Uniden Corp.
+    iProduct                2 UBC125XLT
+    iSerial                 3 0001
+    bNumConfigurations      1
+    Configuration Descriptor:
+      bLength                 9
+      bDescriptorType         2
+      wTotalLength           48
+      bNumInterfaces          2
+      bConfigurationValue     1
+      iConfiguration          0
+      bmAttributes         0x80
+        (Bus Powered)
+      MaxPower              500mA
+      Interface Descriptor:
+        bLength                 9
+        bDescriptorType         4
+        bInterfaceNumber        0
+        bAlternateSetting       0
+        bNumEndpoints           1
+        bInterfaceClass         2 Communications
+        bInterfaceSubClass      2 Abstract (modem)
+        bInterfaceProtocol      0 None
+        iInterface              0
+        Endpoint Descriptor:
+          bLength                 7
+          bDescriptorType         5
+          bEndpointAddress     0x87  EP 7 IN
+          bmAttributes            3
+            Transfer Type            Interrupt
+            Synch Type               None
+            Usage Type               Data
+          wMaxPacketSize     0x0008  1x 8 bytes
+          bInterval              10
+      Interface Descriptor:
+        bLength                 9
+        bDescriptorType         4
+        bInterfaceNumber        1
+        bAlternateSetting       0
+        bNumEndpoints           2
+        bInterfaceClass        10 CDC Data
+        bInterfaceSubClass      0 Unused
+        bInterfaceProtocol      0
+        iInterface              0
+        Endpoint Descriptor:
+          bLength                 7
+          bDescriptorType         5
+          bEndpointAddress     0x81  EP 1 IN
+          bmAttributes            2
+            Transfer Type            Bulk
+            Synch Type               None
+            Usage Type               Data
+          wMaxPacketSize     0x0040  1x 64 bytes
+          bInterval               0
+        Endpoint Descriptor:
+          bLength                 7
+          bDescriptorType         5
+          bEndpointAddress     0x02  EP 2 OUT
+          bmAttributes            2
+            Transfer Type            Bulk
+            Synch Type               None
+            Usage Type               Data
+          wMaxPacketSize     0x0040  1x 64 bytes
+          bInterval               0
+  Device Status:     0x0000
+    (Bus Powered)
+
+Signed-off-by: Houston Yaroschoff <hstn@4ever3.net>
+Acked-by: Oliver Neukum <oneukum@suse.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/powerpc/kernel/hw_breakpoint.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/class/cdc-acm.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/powerpc/kernel/hw_breakpoint.c
-+++ b/arch/powerpc/kernel/hw_breakpoint.c
-@@ -174,8 +174,8 @@ int arch_validate_hwbkpt_settings(struct
- 	if (cpu_has_feature(CPU_FTR_DAWR)) {
- 		length_max = 512 ; /* 64 doublewords */
- 		/* DAWR region can't cross 512 boundary */
--		if ((bp->attr.bp_addr >> 10) != 
--		    ((bp->attr.bp_addr + bp->attr.bp_len - 1) >> 10))
-+		if ((bp->attr.bp_addr >> 9) !=
-+		    ((bp->attr.bp_addr + bp->attr.bp_len - 1) >> 9))
- 			return -EINVAL;
- 	}
- 	if (info->len >
+--- a/drivers/usb/class/cdc-acm.c
++++ b/drivers/usb/class/cdc-acm.c
+@@ -1711,6 +1711,9 @@ static const struct usb_device_id acm_id
+ 	{ USB_DEVICE(0x11ca, 0x0201), /* VeriFone Mx870 Gadget Serial */
+ 	.driver_info = SINGLE_RX_URB,
+ 	},
++	{ USB_DEVICE(0x1965, 0x0018), /* Uniden UBC125XLT */
++	.driver_info = NO_UNION_NORMAL, /* has no union descriptor */
++	},
+ 	{ USB_DEVICE(0x22b8, 0x7000), /* Motorola Q Phone */
+ 	.driver_info = NO_UNION_NORMAL, /* has no union descriptor */
+ 	},
 
