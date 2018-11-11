@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92396C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6EF9C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F4D32154B
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B016223CA
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eJtM4em1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F4D32154B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qjpnk0BB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B016223CA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388984AbeKLIUm (ORCPT
+        id S2389011AbeKLIUn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:20:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45956 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:20:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46000 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733238AbeKLIUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:20:41 -0500
+        id S1733238AbeKLIUm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:42 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD59D2154B;
-        Sun, 11 Nov 2018 22:30:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5BD48223D8;
+        Sun, 11 Nov 2018 22:30:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975444;
-        bh=fxQ802jgkdL5JAxDrTbRmPBI/xwoWq14k8q6KU4zz0A=;
+        s=default; t=1541975446;
+        bh=17bCuUhlEB2hKKwXd3gJ5cPxGO/pq5VCWdllBQ2NzDc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eJtM4em1RH1HbW3qpUJYyImRKIpMiFLXVD6ckjBOEoYirygZVychNnI/9Ib7EQd1e
-         EW3K0u8Y8b/QwMwVGz9LrJIU6fdgcv16DIpxNfOMJqfFmnxRwChQorb58iVg7HaY2K
-         bDqPkBUPx8bC7eNU6tFYEk/fUKEIK33TxSG/iS2I=
+        b=qjpnk0BBkzXc0jJtm2Bghu51RsyxhblhUAcSTI+M4mCWZ1FUnCmjUweBkS1SW/bNT
+         1uzKnop+qMQxfpdipaLKz6CwaTTlLMcseUaKHDRxNfI0P0htHQ0S0YS20SxVIZ8PPD
+         pSiOqQeBMmx59cKNnRerpV1cfqR31L+k3PP0iRJQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 169/350] coresight: etb10: Fix handling of perf mode
-Date:   Sun, 11 Nov 2018 14:20:33 -0800
-Message-Id: <20181111221715.110456337@linuxfoundation.org>
+        stable@vger.kernel.org, Stefan Nuernberger <snu@amazon.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Simon Veith <sveith@amazon.de>,
+        Paul Moore <paul@paul-moore.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.18 209/350] net/ipv4: defensive cipso option parsing
+Date:   Sun, 11 Nov 2018 14:21:13 -0800
+Message-Id: <20181111221716.774666650@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -64,36 +65,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
+From: Stefan Nuernberger <snu@amazon.com>
 
-[ Upstream commit 987d1e8dcd370d96029a3d76a0031b043c4a69ae ]
+commit 076ed3da0c9b2f88d9157dbe7044a45641ae369e upstream.
 
-If the ETB is already enabled in sysfs mode, the ETB reports
-success even if a perf mode is requested. Fix this by checking
-the requested mode.
+commit 40413955ee26 ("Cipso: cipso_v4_optptr enter infinite loop") fixed
+a possible infinite loop in the IP option parsing of CIPSO. The fix
+assumes that ip_options_compile filtered out all zero length options and
+that no other one-byte options beside IPOPT_END and IPOPT_NOOP exist.
+While this assumption currently holds true, add explicit checks for zero
+length and invalid length options to be safe for the future. Even though
+ip_options_compile should have validated the options, the introduction of
+new one-byte options can still confuse this code without the additional
+checks.
 
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Stefan Nuernberger <snu@amazon.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Simon Veith <sveith@amazon.de>
+Cc: stable@vger.kernel.org
+Acked-by: Paul Moore <paul@paul-moore.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/hwtracing/coresight/coresight-etb10.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ net/ipv4/cipso_ipv4.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
---- a/drivers/hwtracing/coresight/coresight-etb10.c
-+++ b/drivers/hwtracing/coresight/coresight-etb10.c
-@@ -147,6 +147,10 @@ static int etb_enable(struct coresight_d
- 	if (val == CS_MODE_PERF)
- 		return -EBUSY;
+--- a/net/ipv4/cipso_ipv4.c
++++ b/net/ipv4/cipso_ipv4.c
+@@ -1512,7 +1512,7 @@ static int cipso_v4_parsetag_loc(const s
+  *
+  * Description:
+  * Parse the packet's IP header looking for a CIPSO option.  Returns a pointer
+- * to the start of the CIPSO option on success, NULL if one if not found.
++ * to the start of the CIPSO option on success, NULL if one is not found.
+  *
+  */
+ unsigned char *cipso_v4_optptr(const struct sk_buff *skb)
+@@ -1522,10 +1522,8 @@ unsigned char *cipso_v4_optptr(const str
+ 	int optlen;
+ 	int taglen;
  
-+	/* Don't let perf disturb sysFS sessions */
-+	if (val == CS_MODE_SYSFS && mode == CS_MODE_PERF)
-+		return -EBUSY;
+-	for (optlen = iph->ihl*4 - sizeof(struct iphdr); optlen > 0; ) {
++	for (optlen = iph->ihl*4 - sizeof(struct iphdr); optlen > 1; ) {
+ 		switch (optptr[0]) {
+-		case IPOPT_CIPSO:
+-			return optptr;
+ 		case IPOPT_END:
+ 			return NULL;
+ 		case IPOPT_NOOP:
+@@ -1534,6 +1532,11 @@ unsigned char *cipso_v4_optptr(const str
+ 		default:
+ 			taglen = optptr[1];
+ 		}
++		if (!taglen || taglen > optlen)
++			return NULL;
++		if (optptr[0] == IPOPT_CIPSO)
++			return optptr;
 +
- 	/* Nothing to do, the tracer is already enabled. */
- 	if (val == CS_MODE_SYSFS)
- 		goto out;
+ 		optlen -= taglen;
+ 		optptr += taglen;
+ 	}
 
 
