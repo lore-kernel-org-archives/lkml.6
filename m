@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD1C8C0044C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8086C43610
 	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 666C021707
+	by mail.kernel.org (Postfix) with ESMTP id AC80621780
 	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="C2QEMtvn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 666C021707
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XWWfvwz9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC80621780
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389167AbeKLIUx (ORCPT
+        id S2389181AbeKLIUy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:20:53 -0500
+        Mon, 12 Nov 2018 03:20:54 -0500
 Received: from mail.kernel.org ([198.145.29.99]:46824 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731111AbeKLIUv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:20:51 -0500
+        id S2389155AbeKLIUx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:53 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1BEAA22353;
-        Sun, 11 Nov 2018 22:30:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D6475223D8;
+        Sun, 11 Nov 2018 22:30:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975455;
-        bh=zlTuo1S6zRCyu+My73vf2Puf7OBSpcBgjNZiEv+8Mq0=;
+        s=default; t=1541975456;
+        bh=wnTmmDMfGzC56gJcqEFDjrkFFq5CxdMunqQ2MCPuiW8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C2QEMtvn749ypbs2KMjkQJe8e91srV2T9LbtSZrbM1XYk4FHSPKMYxZZ5cj2At/3J
-         JUcoisxJsmW6YCU/1cAlgMFDMuP551fCIV4gXVWnNgMGpYbrVMPL0Ais/ct4nb2LLO
-         qqu6r8hh8lLq6Ytg7gqDlJaDv6f5jlzh8wEDTjFA=
+        b=XWWfvwz90zZUmjThLAMYwknnxsG+pftK/upqycvdiLUDgD2ln4BjjjS1SBL+Hvi8a
+         S52C4L43xu9c0+WEJj7DxjcjX7EVOhqM2R9sFhnLeNaWEYFJhYucseVy8AAsiYuIDk
+         //p/2vFbl9jnRqZU7WgTy0Z/voFQSkpNBDOp/CaI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
-        Waiman Long <longman@redhat.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Paul Moore <paul@paul-moore.com>
-Subject: [PATCH 4.18 225/350] selinux: fix mounting of cgroup2 under older policies
-Date:   Sun, 11 Nov 2018 14:21:29 -0800
-Message-Id: <20181111221717.428896782@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Jin <mikhail.jin@gmail.com>,
+        Yazen Ghannam <Yazen.Ghannam@amd.com>,
+        Borislav Petkov <bp@suse.de>
+Subject: [PATCH 4.18 228/350] EDAC, amd64: Add Family 17h, models 10h-2fh support
+Date:   Sun, 11 Nov 2018 14:21:32 -0800
+Message-Id: <20181111221717.573579732@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -64,50 +63,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stephen Smalley <sds@tycho.nsa.gov>
+From: Michael Jin <mikhail.jin@gmail.com>
 
-commit 7bb185edb0306bb90029a5fa6b9cff900ffdbf4b upstream.
+commit 8960de4a5ca7980ed1e19e7ca5a774d3b7a55c38 upstream.
 
-commit 901ef845fa2469c ("selinux: allow per-file labeling for cgroupfs")
-broke mounting of cgroup2 under older SELinux policies which lacked
-a genfscon rule for cgroup2.  This prevents mounting of cgroup2 even
-when SELinux is permissive.
+Add new device IDs for family 17h, models 10h-2fh.
 
-Change the handling when there is no genfscon rule in policy to
-just mark the inode unlabeled and not return an error to the caller.
-This permits mounting and access if allowed by policy, e.g. to
-unconfined domains.
+This is required by amd64_edac_mod in order to properly detect PCI
+device functions 0 and 6.
 
-I also considered changing the behavior of security_genfs_sid() to
-never return -ENOENT, but the current behavior is relied upon by
-other callers to perform caller-specific handling.
-
-Fixes: 901ef845fa2469c ("selinux: allow per-file labeling for cgroupfs")
-CC: <stable@vger.kernel.org>
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Reported-by: Waiman Long <longman@redhat.com>
-Signed-off-by: Stephen Smalley <sds@tycho.nsa.gov>
-Tested-by: Waiman Long <longman@redhat.com>
-Signed-off-by: Paul Moore <paul@paul-moore.com>
+Signed-off-by: Michael Jin <mikhail.jin@gmail.com>
+Reviewed-by: Yazen Ghannam <Yazen.Ghannam@amd.com>
+Cc: <stable@vger.kernel.org>
+Link: http://lkml.kernel.org/r/20180816192840.31166-1-mikhail.jin@gmail.com
+Signed-off-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- security/selinux/hooks.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/edac/amd64_edac.c |   14 ++++++++++++++
+ drivers/edac/amd64_edac.h |    3 +++
+ 2 files changed, 17 insertions(+)
 
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -1509,6 +1509,11 @@ static int selinux_genfs_get_sid(struct
+--- a/drivers/edac/amd64_edac.c
++++ b/drivers/edac/amd64_edac.c
+@@ -2200,6 +2200,15 @@ static struct amd64_family_type family_t
+ 			.dbam_to_cs		= f17_base_addr_to_cs_size,
  		}
- 		rc = security_genfs_sid(&selinux_state, sb->s_type->name,
- 					path, tclass, sid);
-+		if (rc == -ENOENT) {
-+			/* No match in policy, mark as unlabeled. */
-+			*sid = SECINITSID_UNLABELED;
-+			rc = 0;
+ 	},
++	[F17_M10H_CPUS] = {
++		.ctl_name = "F17h_M10h",
++		.f0_id = PCI_DEVICE_ID_AMD_17H_M10H_DF_F0,
++		.f6_id = PCI_DEVICE_ID_AMD_17H_M10H_DF_F6,
++		.ops = {
++			.early_channel_count	= f17_early_channel_count,
++			.dbam_to_cs		= f17_base_addr_to_cs_size,
 +		}
- 	}
- 	free_page((unsigned long)buffer);
- 	return rc;
++	},
+ };
+ 
+ /*
+@@ -3188,6 +3197,11 @@ static struct amd64_family_type *per_fam
+ 		break;
+ 
+ 	case 0x17:
++		if (pvt->model >= 0x10 && pvt->model <= 0x2f) {
++			fam_type = &family_types[F17_M10H_CPUS];
++			pvt->ops = &family_types[F17_M10H_CPUS].ops;
++			break;
++		}
+ 		fam_type	= &family_types[F17_CPUS];
+ 		pvt->ops	= &family_types[F17_CPUS].ops;
+ 		break;
+--- a/drivers/edac/amd64_edac.h
++++ b/drivers/edac/amd64_edac.h
+@@ -115,6 +115,8 @@
+ #define PCI_DEVICE_ID_AMD_16H_M30H_NB_F2 0x1582
+ #define PCI_DEVICE_ID_AMD_17H_DF_F0	0x1460
+ #define PCI_DEVICE_ID_AMD_17H_DF_F6	0x1466
++#define PCI_DEVICE_ID_AMD_17H_M10H_DF_F0 0x15e8
++#define PCI_DEVICE_ID_AMD_17H_M10H_DF_F6 0x15ee
+ 
+ /*
+  * Function 1 - Address Map
+@@ -281,6 +283,7 @@ enum amd_families {
+ 	F16_CPUS,
+ 	F16_M30H_CPUS,
+ 	F17_CPUS,
++	F17_M10H_CPUS,
+ 	NUM_FAMILIES,
+ };
+ 
 
 
