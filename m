@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C425AC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:42:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21BBBC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:42:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EFB721508
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:42:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2D95214F1
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:42:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CVvkWCIg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EFB721508
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="w5hItdRw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2D95214F1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404723AbeKLIYN (ORCPT
+        id S2391384AbeKLIcX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:24:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59350 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:32:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59420 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404705AbeKLIYM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:24:12 -0500
+        id S2403873AbeKLIYN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:24:13 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 44A7A223CB;
-        Sun, 11 Nov 2018 22:34:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 23F6F21707;
+        Sun, 11 Nov 2018 22:34:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975654;
-        bh=Ntl2kNLNzQzwEErc5ATb+0ddYePr/uiMSbvH52/droo=;
+        s=default; t=1541975655;
+        bh=FBsvGuOjT71GxftyrBD/iJULTGjs/s4HUEs92sd0PH0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CVvkWCIgIbdtMrhlHDgEe3LweZlwlIL1JEU4r0wS7we8ldk+2qs0ujYwvcisIV8FG
-         F/0Fug35HEKd2QOjZY9t0J9keFxwgtVm+I/IbMuT17Katmf2gNeXaOTIJ9juDVCk3V
-         rnAINI8GW43tjbsLVeHZp1vnrpfLMnP3aSujzQ68=
+        b=w5hItdRwOScQqLkqKLOBsneZMkQXBCzc0uLzEQIjQzoXXTegfoZDVIic6hAQT8zj/
+         biCivyBNF/H3jDLKQ2hmVu11KWSHkcU5EF5rEC9Xy1QEccnr9lVWT7K62kr6W3Rt2S
+         toTmiGyZWs35EMaMyCLOeewdiFWpu0IfKZ6dCA6A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 4.9 075/141] ARM: dts: exynos: Mark 1 GHz CPU OPP as suspend OPP on Exynos5250
-Date:   Sun, 11 Nov 2018 14:25:34 -0800
-Message-Id: <20181111221638.390179251@linuxfoundation.org>
+        stable@vger.kernel.org, Joe Jin <joe.jin@oracle.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Christoph Helwig <hch@lst.de>,
+        Dongli Zhang <dongli.zhang@oracle.com>,
+        John Sobecki <john.sobecki@oracle.com>
+Subject: [PATCH 4.9 076/141] xen-swiotlb: use actually allocated size on check physical continuous
+Date:   Sun, 11 Nov 2018 14:25:35 -0800
+Message-Id: <20181111221638.524184302@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
 References: <20181111221627.853046496@linuxfoundation.org>
@@ -65,37 +66,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Joe Jin <joe.jin@oracle.com>
 
-commit 645b23da6f8b47f295fa87051335d41d139717a5 upstream.
+commit 7250f422da0480d8512b756640f131b9b893ccda upstream.
 
-1 GHz CPU OPP is the default boot value for the Exynos5250 SOC, so mark it
-as suspend OPP. This fixes suspend/resume on Samsung Exynos5250 Snow
-Chomebook, which was broken since switching to generic cpufreq-dt driver
-in v4.3.
+xen_swiotlb_{alloc,free}_coherent() allocate/free memory based on the
+order of the pages and not size argument (bytes). This is inconsistent with
+range_straddles_page_boundary and memset which use the 'size' value,
+which may lead to not exchanging memory with Xen (range_straddles_page_boundary()
+returned true). And then the call to xen_swiotlb_free_coherent() would
+actually try to exchange the memory with Xen, leading to the kernel
+hitting an BUG (as the hypercall returned an error).
 
-Cc: <stable@vger.kernel.org> # 4.3.x: cd6f55457eb4: ARM: dts: exynos: Remove "cooling-{min|max}-level" for CPU nodes
-Cc: <stable@vger.kernel.org> # 4.3.x: 672f33198bee: arm: dts: exynos: Add missing cooling device properties for CPUs
-Cc: <stable@vger.kernel.org> # 4.3.x
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+This patch fixes it by making the 'size' variable be of the same size
+as the amount of memory allocated.
+
+CC: stable@vger.kernel.org
+Signed-off-by: Joe Jin <joe.jin@oracle.com>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Christoph Helwig <hch@lst.de>
+Cc: Dongli Zhang <dongli.zhang@oracle.com>
+Cc: John Sobecki <john.sobecki@oracle.com>
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/exynos5250.dtsi |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/xen/swiotlb-xen.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -121,6 +121,7 @@
- 			opp-hz = /bits/ 64 <1000000000>;
- 			opp-microvolt = <1075000>;
- 			clock-latency-ns = <140000>;
-+			opp-suspend;
- 		};
- 		opp-1100000000 {
- 			opp-hz = /bits/ 64 <1100000000>;
+--- a/drivers/xen/swiotlb-xen.c
++++ b/drivers/xen/swiotlb-xen.c
+@@ -310,6 +310,9 @@ xen_swiotlb_alloc_coherent(struct device
+ 	*/
+ 	flags &= ~(__GFP_DMA | __GFP_HIGHMEM);
+ 
++	/* Convert the size to actually allocated. */
++	size = 1UL << (order + XEN_PAGE_SHIFT);
++
+ 	/* On ARM this function returns an ioremap'ped virtual address for
+ 	 * which virt_to_phys doesn't return the corresponding physical
+ 	 * address. In fact on ARM virt_to_phys only works for kernel direct
+@@ -359,6 +362,9 @@ xen_swiotlb_free_coherent(struct device
+ 	 * physical address */
+ 	phys = xen_bus_to_phys(dev_addr);
+ 
++	/* Convert the size to actually allocated. */
++	size = 1UL << (order + XEN_PAGE_SHIFT);
++
+ 	if (((dev_addr + size - 1 <= dma_mask)) ||
+ 	    range_straddles_page_boundary(phys, size))
+ 		xen_destroy_contiguous_region(phys, order);
 
 
