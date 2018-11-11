@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84AB5C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:13:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E847EC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:13:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43E3420871
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:13:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADEB42084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:13:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CwHdJlk+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43E3420871
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rHNypKnE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADEB42084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731561AbeKLKEH (ORCPT
+        id S1731731AbeKLKER (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 05:04:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60278 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 05:04:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59904 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730430AbeKLIRP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730449AbeKLIRP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:17:15 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E25E4208A3;
-        Sun, 11 Nov 2018 22:27:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F612216FD;
+        Sun, 11 Nov 2018 22:27:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975238;
-        bh=3lpF9rYrDb2PCUuFszCuUwnu5YUAMVEZpareZSVjUlc=;
+        s=default; t=1541975239;
+        bh=MKNlVbY8SbYzelYhnr+S7P9TwXFdWZNdRq/vH1W5Ass=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CwHdJlk+y3iD8A4UdAjcm3C7mv1ZxrTc9jd42t0Yxw7EbAUMH6lBtDc5OID5shYWm
-         W+k+hvKluW6SrjoTRTY7j2wmQTU23sZXPf7hHCfeYH+RZNyKFWhzv4jMqq2Q7SrPyJ
-         HWqucIkKlk4uQT2+T4eEG587xEkAhhwthtbCzB3E=
+        b=rHNypKnE3Np1t0KY989cwQcyEi4QIJ7xp8LtmoiENVHwUSSZdsBzhjfOE+uc3nLpM
+         dGmap+RebJ5jEZx5zlIXEaqUBLe1b7rb7BzTE0XkbOiqkQZUVNzxtd+SCwVv/1DZau
+         mV4Qak98J6V6xin8TNWG2b7vYLEuEvgLOcbQas/Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vijaya Kumar K <vkilari@codeaurora.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
+        stable@vger.kernel.org,
+        Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>,
         "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 079/361] ACPI/PPTT: Handle architecturally unknown cache types
-Date:   Sun, 11 Nov 2018 14:17:06 -0800
-Message-Id: <20181111221631.009539705@linuxfoundation.org>
+Subject: [PATCH 4.19 080/361] ACPI / PM: LPIT: Register sysfs attributes based on FADT
+Date:   Sun, 11 Nov 2018 14:17:07 -0800
+Message-Id: <20181111221631.153788673@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -64,92 +64,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jeffrey Hugo <jhugo@codeaurora.org>
+From: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
 
-[ Upstream commit 59bbff3775c0951300f7b41345a54b999438f8d0 ]
+[ Upstream commit 1cdda9486f5103fb133f88e662e48c504adbb779 ]
 
-The type of a cache might not be specified by architectural mechanisms (ie
-system registers), but its type might be specified in the PPTT.  In this
-case, we should populate the type of the cache, rather than leave it
-undefined.
+ACPI Low Power S0 Idle capabilities are announced via FADT table and can
+be used to inform the kernel about the presence of one or more Low Power
+Idle (LPI) entries as descried in LPIT table. LPIT table can exist
+independently even if the FADT S0 Idle flag is not set and thus it could
+confuse user since the following cpuidle attributes are created.
 
-This fixes the issue where the cacheinfo driver will not populate sysfs
-for such caches, resulting in the information missing from utilities like
-lstopo and lscpu, thus degrading the user experience.
+/sys/devices/system/cpu/cpuidle/low_power_idle_cpu_residency_us
+/sys/devices/system/cpu/cpuidle/low_power_idle_system_residency_us
 
-Fixes: 2bd00bcd73e5 (ACPI/PPTT: Add Processor Properties Topology Table parsing)
-Reported-by: Vijaya Kumar K <vkilari@codeaurora.org>
-Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
-Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+Presence or absence of above attributes could mean that the given
+platform supports S0ix state or not.
+
+This change allows to create the above cpuidle attributes only if
+FADT table supports Low Power S0 Idle.
+
+Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
 Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/acpi/pptt.c |   33 +++++++++++++--------------------
- 1 file changed, 13 insertions(+), 20 deletions(-)
+ drivers/acpi/acpi_lpit.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/acpi/pptt.c
-+++ b/drivers/acpi/pptt.c
-@@ -338,9 +338,6 @@ static struct acpi_pptt_cache *acpi_find
- 	return found;
- }
+--- a/drivers/acpi/acpi_lpit.c
++++ b/drivers/acpi/acpi_lpit.c
+@@ -117,11 +117,17 @@ static void lpit_update_residency(struct
+ 		if (!info->iomem_addr)
+ 			return;
  
--/* total number of attributes checked by the properties code */
--#define PPTT_CHECKED_ATTRIBUTES 4
--
- /**
-  * update_cache_properties() - Update cacheinfo for the given processor
-  * @this_leaf: Kernel cache info structure being updated
-@@ -357,25 +354,15 @@ static void update_cache_properties(stru
- 				    struct acpi_pptt_cache *found_cache,
- 				    struct acpi_pptt_processor *cpu_node)
- {
--	int valid_flags = 0;
--
- 	this_leaf->fw_token = cpu_node;
--	if (found_cache->flags & ACPI_PPTT_SIZE_PROPERTY_VALID) {
-+	if (found_cache->flags & ACPI_PPTT_SIZE_PROPERTY_VALID)
- 		this_leaf->size = found_cache->size;
--		valid_flags++;
--	}
--	if (found_cache->flags & ACPI_PPTT_LINE_SIZE_VALID) {
-+	if (found_cache->flags & ACPI_PPTT_LINE_SIZE_VALID)
- 		this_leaf->coherency_line_size = found_cache->line_size;
--		valid_flags++;
--	}
--	if (found_cache->flags & ACPI_PPTT_NUMBER_OF_SETS_VALID) {
-+	if (found_cache->flags & ACPI_PPTT_NUMBER_OF_SETS_VALID)
- 		this_leaf->number_of_sets = found_cache->number_of_sets;
--		valid_flags++;
--	}
--	if (found_cache->flags & ACPI_PPTT_ASSOCIATIVITY_VALID) {
-+	if (found_cache->flags & ACPI_PPTT_ASSOCIATIVITY_VALID)
- 		this_leaf->ways_of_associativity = found_cache->associativity;
--		valid_flags++;
--	}
- 	if (found_cache->flags & ACPI_PPTT_WRITE_POLICY_VALID) {
- 		switch (found_cache->attributes & ACPI_PPTT_MASK_WRITE_POLICY) {
- 		case ACPI_PPTT_CACHE_POLICY_WT:
-@@ -402,11 +389,17 @@ static void update_cache_properties(stru
- 		}
- 	}
- 	/*
--	 * If the above flags are valid, and the cache type is NOCACHE
--	 * update the cache type as well.
-+	 * If cache type is NOCACHE, then the cache hasn't been specified
-+	 * via other mechanisms.  Update the type if a cache type has been
-+	 * provided.
-+	 *
-+	 * Note, we assume such caches are unified based on conventional system
-+	 * design and known examples.  Significant work is required elsewhere to
-+	 * fully support data/instruction only type caches which are only
-+	 * specified in PPTT.
- 	 */
- 	if (this_leaf->type == CACHE_TYPE_NOCACHE &&
--	    valid_flags == PPTT_CHECKED_ATTRIBUTES)
-+	    found_cache->flags & ACPI_PPTT_CACHE_TYPE_VALID)
- 		this_leaf->type = CACHE_TYPE_UNIFIED;
- }
- 
++		if (!(acpi_gbl_FADT.flags & ACPI_FADT_LOW_POWER_S0))
++			return;
++
+ 		/* Silently fail, if cpuidle attribute group is not present */
+ 		sysfs_add_file_to_group(&cpu_subsys.dev_root->kobj,
+ 					&dev_attr_low_power_idle_system_residency_us.attr,
+ 					"cpuidle");
+ 	} else if (info->gaddr.space_id == ACPI_ADR_SPACE_FIXED_HARDWARE) {
++		if (!(acpi_gbl_FADT.flags & ACPI_FADT_LOW_POWER_S0))
++			return;
++
+ 		/* Silently fail, if cpuidle attribute group is not present */
+ 		sysfs_add_file_to_group(&cpu_subsys.dev_root->kobj,
+ 					&dev_attr_low_power_idle_cpu_residency_us.attr,
 
 
