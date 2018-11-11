@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19F00C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:03:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ECE3C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:03:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D770220866
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:03:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0F5820866
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:03:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KRkX5MBj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D770220866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hKrT6wK/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0F5820866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732297AbeKLJxq (ORCPT
+        id S1732361AbeKLJx4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:53:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34236 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:53:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34412 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732056AbeKLIRv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:17:51 -0500
+        id S1732111AbeKLIRu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:17:50 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ECE64208A3;
-        Sun, 11 Nov 2018 22:27:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E2F5521582;
+        Sun, 11 Nov 2018 22:27:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975276;
-        bh=LuWY5mnsjjbrnPDrM1TA4pDx7qMA7iESnHRKBJ1Of/0=;
+        s=default; t=1541975275;
+        bh=0J4nQWZBrbR5OmzmhprR1agYY+RRhgo2aXXPwQRua2Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KRkX5MBjTddCO6q7qU7zKBObDwuY5VgShwXbMpYDCDD7ZDsR1pkO8DvHzh0yCcsXv
-         0ymyF4Se1WrYN7oVeBpixC/g+NiVYNno4tyt8H2YE4IMOBGSsIUdzuQtwweuCySD8G
-         4Pg7udCO+6eUZ2BumXGN5YrvLs4syKwJm+shTpWE=
+        b=hKrT6wK/i4kw75sHbfVaNeaTMmsmsRXNQS7SlOCq34hOHMoFXhpQAUorRsbeyJc5b
+         5+j8lf7ICoS3W/WozKAm+BIBA2Ex8HKZYtYUdG+GkguEWix0MThD7ercTADlU8g/1j
+         3veB8AUekBxLKJmjcJpxJaAelxvqtjNtEjAsV72c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, Zhikang Zhang <zhangzhikang1@huawei.com>,
+        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 186/361] f2fs: fix to flush all dirty inodes recovered in readonly fs
-Date:   Sun, 11 Nov 2018 14:18:53 -0800
-Message-Id: <20181111221646.475215199@linuxfoundation.org>
+Subject: [PATCH 4.19 183/361] f2fs: avoid sleeping under spin_lock
+Date:   Sun, 11 Nov 2018 14:18:50 -0800
+Message-Id: <20181111221645.948775322@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -63,143 +63,245 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Zhikang Zhang <zhangzhikang1@huawei.com>
 
-[ Upstream commit 1378752b9921e60749eaf18ec6c47b33f9001abb ]
+[ Upstream commit b430f7263673eab1dc40e662ae3441a9619d16b8 ]
 
-generic/417 reported as blow:
+In the call trace below, we might sleep in function dput().
 
-------------[ cut here ]------------
-kernel BUG at /home/yuchao/git/devf2fs/inode.c:695!
-invalid opcode: 0000 [#1] PREEMPT SMP
-CPU: 1 PID: 21697 Comm: umount Tainted: G        W  O      4.18.0-rc2+ #39
-Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
-EIP: f2fs_evict_inode+0x556/0x580 [f2fs]
-Call Trace:
- ? _raw_spin_unlock+0x2c/0x50
- evict+0xa8/0x170
- dispose_list+0x34/0x40
- evict_inodes+0x118/0x120
- generic_shutdown_super+0x41/0x100
- ? rcu_read_lock_sched_held+0x97/0xa0
- kill_block_super+0x22/0x50
- kill_f2fs_super+0x6f/0x80 [f2fs]
- deactivate_locked_super+0x3d/0x70
- deactivate_super+0x40/0x60
- cleanup_mnt+0x39/0x70
- __cleanup_mnt+0x10/0x20
- task_work_run+0x81/0xa0
- exit_to_usermode_loop+0x59/0xa7
- do_fast_syscall_32+0x1f5/0x22c
- entry_SYSENTER_32+0x53/0x86
-EIP: f2fs_evict_inode+0x556/0x580 [f2fs]
+So in order to avoid sleeping under spin_lock, we remove f2fs_mark_inode_dirty_sync
+from __try_update_largest_extent && __drop_largest_extent.
 
-It can simply reproduced with scripts:
+BUG: sleeping function called from invalid context at fs/dcache.c:796
+Call trace:
+	dump_backtrace+0x0/0x3f4
+	show_stack+0x24/0x30
+	dump_stack+0xe0/0x138
+	___might_sleep+0x2a8/0x2c8
+	__might_sleep+0x78/0x10c
+	dput+0x7c/0x750
+	block_dump___mark_inode_dirty+0x120/0x17c
+	__mark_inode_dirty+0x344/0x11f0
+	f2fs_mark_inode_dirty_sync+0x40/0x50
+	__insert_extent_tree+0x2e0/0x2f4
+	f2fs_update_extent_tree_range+0xcf4/0xde8
+	f2fs_update_extent_cache+0x114/0x12c
+	f2fs_update_data_blkaddr+0x40/0x50
+	write_data_page+0x150/0x314
+	do_write_data_page+0x648/0x2318
+	__write_data_page+0xdb4/0x1640
+	f2fs_write_cache_pages+0x768/0xafc
+	__f2fs_write_data_pages+0x590/0x1218
+	f2fs_write_data_pages+0x64/0x74
+	do_writepages+0x74/0xe4
+	__writeback_single_inode+0xdc/0x15f0
+	writeback_sb_inodes+0x574/0xc98
+	__writeback_inodes_wb+0x190/0x204
+	wb_writeback+0x730/0xf14
+	wb_check_old_data_flush+0x1bc/0x1c8
+	wb_workfn+0x554/0xf74
+	process_one_work+0x440/0x118c
+	worker_thread+0xac/0x974
+	kthread+0x1a0/0x1c8
+	ret_from_fork+0x10/0x1c
 
-Enable quota feature during mkfs.
-
-Testcase1:
-1. mkfs.f2fs /dev/zram0
-2. mount -t f2fs /dev/zram0 /mnt/f2fs
-3. xfs_io -f /mnt/f2fs/file -c "pwrite 0 4k" -c "fsync"
-4. godown /mnt/f2fs
-5. umount /mnt/f2fs
-6. mount -t f2fs -o ro /dev/zram0 /mnt/f2fs
-7. umount /mnt/f2fs
-
-Testcase2:
-1. mkfs.f2fs /dev/zram0
-2. mount -t f2fs /dev/zram0 /mnt/f2fs
-3. touch /mnt/f2fs/file
-4. create process[pid = x] do:
-	a) open /mnt/f2fs/file;
-	b) unlink /mnt/f2fs/file
-5. godown -f /mnt/f2fs
-6. kill process[pid = x]
-7. umount /mnt/f2fs
-8. mount -t f2fs -o ro /dev/zram0 /mnt/f2fs
-9. umount /mnt/f2fs
-
-The reason is: during recovery, i_{c,m}time of inode will be updated, then
-the inode can be set dirty w/o being tracked in sbi->inode_list[DIRTY_META]
-global list, so later write_checkpoint will not flush such dirty inode into
-node page.
-
-Once umount is called, sync_filesystem() in generic_shutdown_super() will
-skip syncng dirty inodes due to sb_rdonly check, leaving dirty inodes
-there.
-
-To solve this issue, during umount, add remove SB_RDONLY flag in
-sb->s_flags, to make sure sync_filesystem() will not be skipped.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-
+Signed-off-by: Zhikang Zhang <zhangzhikang1@huawei.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/checkpoint.c |    2 ++
- fs/f2fs/f2fs.h       |    1 +
- fs/f2fs/recovery.c   |   14 +++++++++-----
- fs/f2fs/super.c      |    3 +++
- 4 files changed, 15 insertions(+), 5 deletions(-)
+ fs/f2fs/extent_cache.c |   51 ++++++++++++++++++++++++++++++-------------------
+ fs/f2fs/f2fs.h         |    7 +++---
+ 2 files changed, 36 insertions(+), 22 deletions(-)
 
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -696,6 +696,8 @@ int f2fs_recover_orphan_inodes(struct f2
- 	/* clear Orphan Flag */
- 	clear_ckpt_flags(sbi, CP_ORPHAN_PRESENT_FLAG);
- out:
-+	set_sbi_flag(sbi, SBI_IS_RECOVERED);
+--- a/fs/f2fs/extent_cache.c
++++ b/fs/f2fs/extent_cache.c
+@@ -308,14 +308,13 @@ static unsigned int __free_extent_tree(s
+ 	return count - atomic_read(&et->node_cnt);
+ }
+ 
+-static void __drop_largest_extent(struct inode *inode,
++static void __drop_largest_extent(struct extent_tree *et,
+ 					pgoff_t fofs, unsigned int len)
+ {
+-	struct extent_info *largest = &F2FS_I(inode)->extent_tree->largest;
+-
+-	if (fofs < largest->fofs + largest->len && fofs + len > largest->fofs) {
+-		largest->len = 0;
+-		f2fs_mark_inode_dirty_sync(inode, true);
++	if (fofs < et->largest.fofs + et->largest.len &&
++			fofs + len > et->largest.fofs) {
++		et->largest.len = 0;
++		et->largest_updated = true;
+ 	}
+ }
+ 
+@@ -416,12 +415,11 @@ out:
+ 	return ret;
+ }
+ 
+-static struct extent_node *__try_merge_extent_node(struct inode *inode,
++static struct extent_node *__try_merge_extent_node(struct f2fs_sb_info *sbi,
+ 				struct extent_tree *et, struct extent_info *ei,
+ 				struct extent_node *prev_ex,
+ 				struct extent_node *next_ex)
+ {
+-	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct extent_node *en = NULL;
+ 
+ 	if (prev_ex && __is_back_mergeable(ei, &prev_ex->ei)) {
+@@ -443,7 +441,7 @@ static struct extent_node *__try_merge_e
+ 	if (!en)
+ 		return NULL;
+ 
+-	__try_update_largest_extent(inode, et, en);
++	__try_update_largest_extent(et, en);
+ 
+ 	spin_lock(&sbi->extent_lock);
+ 	if (!list_empty(&en->list)) {
+@@ -454,12 +452,11 @@ static struct extent_node *__try_merge_e
+ 	return en;
+ }
+ 
+-static struct extent_node *__insert_extent_tree(struct inode *inode,
++static struct extent_node *__insert_extent_tree(struct f2fs_sb_info *sbi,
+ 				struct extent_tree *et, struct extent_info *ei,
+ 				struct rb_node **insert_p,
+ 				struct rb_node *insert_parent)
+ {
+-	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct rb_node **p;
+ 	struct rb_node *parent = NULL;
+ 	struct extent_node *en = NULL;
+@@ -476,7 +473,7 @@ do_insert:
+ 	if (!en)
+ 		return NULL;
+ 
+-	__try_update_largest_extent(inode, et, en);
++	__try_update_largest_extent(et, en);
+ 
+ 	/* update in global extent list */
+ 	spin_lock(&sbi->extent_lock);
+@@ -497,6 +494,7 @@ static void f2fs_update_extent_tree_rang
+ 	struct rb_node **insert_p = NULL, *insert_parent = NULL;
+ 	unsigned int end = fofs + len;
+ 	unsigned int pos = (unsigned int)fofs;
++	bool updated = false;
+ 
+ 	if (!et)
+ 		return;
+@@ -517,7 +515,7 @@ static void f2fs_update_extent_tree_rang
+ 	 * drop largest extent before lookup, in case it's already
+ 	 * been shrunk from extent tree
+ 	 */
+-	__drop_largest_extent(inode, fofs, len);
++	__drop_largest_extent(et, fofs, len);
+ 
+ 	/* 1. lookup first extent node in range [fofs, fofs + len - 1] */
+ 	en = (struct extent_node *)f2fs_lookup_rb_tree_ret(&et->root,
+@@ -550,7 +548,7 @@ static void f2fs_update_extent_tree_rang
+ 				set_extent_info(&ei, end,
+ 						end - dei.fofs + dei.blk,
+ 						org_end - end);
+-				en1 = __insert_extent_tree(inode, et, &ei,
++				en1 = __insert_extent_tree(sbi, et, &ei,
+ 							NULL, NULL);
+ 				next_en = en1;
+ 			} else {
+@@ -570,7 +568,7 @@ static void f2fs_update_extent_tree_rang
+ 		}
+ 
+ 		if (parts)
+-			__try_update_largest_extent(inode, et, en);
++			__try_update_largest_extent(et, en);
+ 		else
+ 			__release_extent_node(sbi, et, en);
+ 
+@@ -590,15 +588,16 @@ static void f2fs_update_extent_tree_rang
+ 	if (blkaddr) {
+ 
+ 		set_extent_info(&ei, fofs, blkaddr, len);
+-		if (!__try_merge_extent_node(inode, et, &ei, prev_en, next_en))
+-			__insert_extent_tree(inode, et, &ei,
++		if (!__try_merge_extent_node(sbi, et, &ei, prev_en, next_en))
++			__insert_extent_tree(sbi, et, &ei,
+ 						insert_p, insert_parent);
+ 
+ 		/* give up extent_cache, if split and small updates happen */
+ 		if (dei.len >= 1 &&
+ 				prev.len < F2FS_MIN_EXTENT_LEN &&
+ 				et->largest.len < F2FS_MIN_EXTENT_LEN) {
+-			__drop_largest_extent(inode, 0, UINT_MAX);
++			et->largest.len = 0;
++			et->largest_updated = true;
+ 			set_inode_flag(inode, FI_NO_EXTENT);
+ 		}
+ 	}
+@@ -606,7 +605,15 @@ static void f2fs_update_extent_tree_rang
+ 	if (is_inode_flag_set(inode, FI_NO_EXTENT))
+ 		__free_extent_tree(sbi, et);
+ 
++	if (et->largest_updated) {
++		et->largest_updated = false;
++		updated = true;
++	}
 +
- #ifdef CONFIG_QUOTA
- 	/* Turn quotas off */
- 	if (quota_enabled)
+ 	write_unlock(&et->lock);
++
++	if (updated)
++		f2fs_mark_inode_dirty_sync(inode, true);
+ }
+ 
+ unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink)
+@@ -705,6 +712,7 @@ void f2fs_drop_extent_tree(struct inode
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct extent_tree *et = F2FS_I(inode)->extent_tree;
++	bool updated = false;
+ 
+ 	if (!f2fs_may_extent_tree(inode))
+ 		return;
+@@ -713,8 +721,13 @@ void f2fs_drop_extent_tree(struct inode
+ 
+ 	write_lock(&et->lock);
+ 	__free_extent_tree(sbi, et);
+-	__drop_largest_extent(inode, 0, UINT_MAX);
++	if (et->largest.len) {
++		et->largest.len = 0;
++		updated = true;
++	}
+ 	write_unlock(&et->lock);
++	if (updated)
++		f2fs_mark_inode_dirty_sync(inode, true);
+ }
+ 
+ void f2fs_destroy_extent_tree(struct inode *inode)
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -1089,6 +1089,7 @@ enum {
- 	SBI_NEED_SB_WRITE,			/* need to recover superblock */
- 	SBI_NEED_CP,				/* need to checkpoint */
- 	SBI_IS_SHUTDOWN,			/* shutdown by ioctl */
-+	SBI_IS_RECOVERED,			/* recovered orphan/data */
+@@ -572,6 +572,7 @@ struct extent_tree {
+ 	struct list_head list;		/* to be used by sbi->zombie_list */
+ 	rwlock_t lock;			/* protect extent info rb-tree */
+ 	atomic_t node_cnt;		/* # of extent node in rb-tree*/
++	bool largest_updated;		/* largest extent updated */
  };
  
- enum {
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -698,11 +698,15 @@ skip:
- 	/* let's drop all the directory inodes for clean checkpoint */
- 	destroy_fsync_dnodes(&dir_list);
- 
--	if (!err && need_writecp) {
--		struct cp_control cpc = {
--			.reason = CP_RECOVERY,
--		};
--		err = f2fs_write_checkpoint(sbi, &cpc);
-+	if (need_writecp) {
-+		set_sbi_flag(sbi, SBI_IS_RECOVERED);
-+
-+		if (!err) {
-+			struct cp_control cpc = {
-+				.reason = CP_RECOVERY,
-+			};
-+			err = f2fs_write_checkpoint(sbi, &cpc);
-+		}
- 	}
- 
- 	kmem_cache_destroy(fsync_entry_slab);
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -3188,6 +3188,9 @@ static void kill_f2fs_super(struct super
- 			};
- 			f2fs_write_checkpoint(sbi, &cpc);
- 		}
-+
-+		if (is_sbi_flag_set(sbi, SBI_IS_RECOVERED) && f2fs_readonly(sb))
-+			sb->s_flags &= ~SB_RDONLY;
- 	}
- 	kill_block_super(sb);
+ /*
+@@ -754,12 +755,12 @@ static inline bool __is_front_mergeable(
  }
+ 
+ extern void f2fs_mark_inode_dirty_sync(struct inode *inode, bool sync);
+-static inline void __try_update_largest_extent(struct inode *inode,
+-			struct extent_tree *et, struct extent_node *en)
++static inline void __try_update_largest_extent(struct extent_tree *et,
++						struct extent_node *en)
+ {
+ 	if (en->ei.len > et->largest.len) {
+ 		et->largest = en->ei;
+-		f2fs_mark_inode_dirty_sync(inode, true);
++		et->largest_updated = true;
+ 	}
+ }
+ 
 
 
