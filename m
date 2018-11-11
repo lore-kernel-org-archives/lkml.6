@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C693C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:51:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7805C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:51:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E905214E0
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:51:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C7B1214E0
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:51:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NOFom1Bw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E905214E0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bg3hw7Ta"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C7B1214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404325AbeKLIlR (ORCPT
+        id S2390962AbeKLIl1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:41:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54620 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:41:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404153AbeKLIXH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:23:07 -0500
+        id S2404166AbeKLIXG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:23:06 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C7C4223DD;
-        Sun, 11 Nov 2018 22:33:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A9102241E;
+        Sun, 11 Nov 2018 22:33:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975590;
-        bh=rALukCeLIVZw1uw0Znpe+Yh1D9hnFLzK0iw83v0xUPo=;
+        s=default; t=1541975589;
+        bh=uT8HnChjzD45mmQ3CuP7H2Uu2ezs+lcQH6HRHQr0BYo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NOFom1Bw6Cdl6wPso6nG4hIoiPLea9UxsyUjMVsal79NNyWCEBvAtZ6HjYyZZe/9A
-         DLjwIyRM3YZp4X151Zj/h+TmkteQwNLppp/4cwK2jLN6FH4mqxke8eCPuVMZVCW0G2
-         eLD5Sy2d8vQjgiqzruptHG5F8LyM3zuqSc1+T9b8=
+        b=Bg3hw7Ta26rLJMz/vePmiRMonqp6nAm/6Wrmm3tNaBWgud/hUUn/ZhLQyHi4MhCJp
+         OBOO3nrrL3ZqORC1B5WWRIa9+Gc5nt7DyzfwxVaZ4n9Gm9r/uInsELwQnIc1TltF7B
+         PzCcrV5WauYxtrD/SV1yn7cf+cbutPOtShdC1pcs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Murphy <lists@colorremedies.com>,
-        Qu Wenruo <wqu@suse.com>, Nikolay Borisov <nborisov@suse.com>,
+        stable@vger.kernel.org, Jeff Mahoney <jeffm@suse.com>,
         David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 201/222] btrfs: Ensure btrfs_trim_fs can trim the whole filesystem
-Date:   Sun, 11 Nov 2018 14:24:58 -0800
-Message-Id: <20181111221704.710887970@linuxfoundation.org>
+Subject: [PATCH 4.14 199/222] btrfs: fix error handling in free_log_tree
+Date:   Sun, 11 Nov 2018 14:24:56 -0800
+Message-Id: <20181111221704.568593186@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -63,100 +62,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Qu Wenruo <wqu@suse.com>
+From: Jeff Mahoney <jeffm@suse.com>
 
-commit 6ba9fc8e628becf0e3ec94083450d089b0dec5f5 upstream.
+commit 374b0e2d6ba5da7fd1cadb3247731ff27d011f6f upstream.
 
-[BUG]
-fstrim on some btrfs only trims the unallocated space, not trimming any
-space in existing block groups.
+When we hit an I/O error in free_log_tree->walk_log_tree during file system
+shutdown we can crash due to there not being a valid transaction handle.
 
-[CAUSE]
-Before fstrim_range passed to btrfs_trim_fs(), it gets truncated to
-range [0, super->total_bytes).  So later btrfs_trim_fs() will only be
-able to trim block groups in range [0, super->total_bytes).
+Use btrfs_handle_fs_error when there's no transaction handle to use.
 
-While for btrfs, any bytenr aligned to sectorsize is valid, since btrfs
-uses its logical address space, there is nothing limiting the location
-where we put block groups.
+  BUG: unable to handle kernel NULL pointer dereference at 0000000000000060
+  IP: free_log_tree+0xd2/0x140 [btrfs]
+  PGD 0 P4D 0
+  Oops: 0000 [#1] SMP DEBUG_PAGEALLOC PTI
+  Modules linked in: <modules>
+  CPU: 2 PID: 23544 Comm: umount Tainted: G        W        4.12.14-kvmsmall #9 SLE15 (unreleased)
+  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
+  task: ffff96bfd3478880 task.stack: ffffa7cf40d78000
+  RIP: 0010:free_log_tree+0xd2/0x140 [btrfs]
+  RSP: 0018:ffffa7cf40d7bd10 EFLAGS: 00010282
+  RAX: 00000000fffffffb RBX: 00000000fffffffb RCX: 0000000000000002
+  RDX: 0000000000000000 RSI: ffff96c02f07d4c8 RDI: 0000000000000282
+  RBP: ffff96c013cf1000 R08: ffff96c02f07d4c8 R09: ffff96c02f07d4d0
+  R10: 0000000000000000 R11: 0000000000000002 R12: 0000000000000000
+  R13: ffff96c005e800c0 R14: ffffa7cf40d7bdb8 R15: 0000000000000000
+  FS:  00007f17856bcfc0(0000) GS:ffff96c03f600000(0000) knlGS:0000000000000000
+  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  CR2: 0000000000000060 CR3: 0000000045ed6002 CR4: 00000000003606e0
+  DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+  DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+  Call Trace:
+   ? wait_for_writer+0xb0/0xb0 [btrfs]
+   btrfs_free_log+0x17/0x30 [btrfs]
+   btrfs_drop_and_free_fs_root+0x9a/0xe0 [btrfs]
+   btrfs_free_fs_roots+0xc0/0x130 [btrfs]
+   ? wait_for_completion+0xf2/0x100
+   close_ctree+0xea/0x2e0 [btrfs]
+   ? kthread_stop+0x161/0x260
+   generic_shutdown_super+0x6c/0x120
+   kill_anon_super+0xe/0x20
+   btrfs_kill_super+0x13/0x100 [btrfs]
+   deactivate_locked_super+0x3f/0x70
+   cleanup_mnt+0x3b/0x70
+   task_work_run+0x78/0x90
+   exit_to_usermode_loop+0x77/0xa6
+   do_syscall_64+0x1c5/0x1e0
+   entry_SYSCALL_64_after_hwframe+0x42/0xb7
+  RIP: 0033:0x7f1784f90827
+  RSP: 002b:00007ffdeeb03118 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+  RAX: 0000000000000000 RBX: 0000556a60c62970 RCX: 00007f1784f90827
+  RDX: 0000000000000001 RSI: 0000000000000000 RDI: 0000556a60c62b50
+  RBP: 0000000000000000 R08: 0000000000000005 R09: 00000000ffffffff
+  R10: 0000556a60c63900 R11: 0000000000000246 R12: 0000556a60c62b50
+  R13: 00007f17854a81c4 R14: 0000000000000000 R15: 0000000000000000
+  RIP: free_log_tree+0xd2/0x140 [btrfs] RSP: ffffa7cf40d7bd10
+  CR2: 0000000000000060
 
-For filesystem with frequent balance, it's quite easy to relocate all
-block groups and bytenr of block groups will start beyond
-super->total_bytes.
-
-In that case, btrfs will not trim existing block groups.
-
-[FIX]
-Just remove the truncation in btrfs_ioctl_fitrim(), so btrfs_trim_fs()
-can get the unmodified range, which is normally set to [0, U64_MAX].
-
-Reported-by: Chris Murphy <lists@colorremedies.com>
-Fixes: f4c697e6406d ("btrfs: return EINVAL if start > total_bytes in fitrim ioctl")
-CC: <stable@vger.kernel.org> # v4.4+
-Signed-off-by: Qu Wenruo <wqu@suse.com>
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Fixes: 681ae50917df9 ("Btrfs: cleanup reserved space when freeing tree log on error")
+CC: <stable@vger.kernel.org> # v3.13
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
 Reviewed-by: David Sterba <dsterba@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/extent-tree.c |   10 +---------
- fs/btrfs/ioctl.c       |   11 +++++++----
- 2 files changed, 8 insertions(+), 13 deletions(-)
+ fs/btrfs/tree-log.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/fs/btrfs/extent-tree.c
-+++ b/fs/btrfs/extent-tree.c
-@@ -11055,21 +11055,13 @@ int btrfs_trim_fs(struct btrfs_fs_info *
- 	u64 start;
- 	u64 end;
- 	u64 trimmed = 0;
--	u64 total_bytes = btrfs_super_total_bytes(fs_info->super_copy);
- 	u64 bg_failed = 0;
- 	u64 dev_failed = 0;
- 	int bg_ret = 0;
- 	int dev_ret = 0;
- 	int ret = 0;
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -3078,9 +3078,12 @@ static void free_log_tree(struct btrfs_t
+ 	};
  
--	/*
--	 * try to trim all FS space, our block group may start from non-zero.
--	 */
--	if (range->len == total_bytes)
--		cache = btrfs_lookup_first_block_group(fs_info, range->start);
--	else
--		cache = btrfs_lookup_block_group(fs_info, range->start);
--
-+	cache = btrfs_lookup_first_block_group(fs_info, range->start);
- 	for (; cache; cache = next_block_group(fs_info, cache)) {
- 		if (cache->key.objectid >= (range->start + range->len)) {
- 			btrfs_put_block_group(cache);
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -352,7 +352,6 @@ static noinline int btrfs_ioctl_fitrim(s
- 	struct fstrim_range range;
- 	u64 minlen = ULLONG_MAX;
- 	u64 num_devices = 0;
--	u64 total_bytes = btrfs_super_total_bytes(fs_info->super_copy);
- 	int ret;
+ 	ret = walk_log_tree(trans, log, &wc);
+-	/* I don't think this can happen but just in case */
+-	if (ret)
+-		btrfs_abort_transaction(trans, ret);
++	if (ret) {
++		if (trans)
++			btrfs_abort_transaction(trans, ret);
++		else
++			btrfs_handle_fs_error(log->fs_info, ret, NULL);
++	}
  
- 	if (!capable(CAP_SYS_ADMIN))
-@@ -376,11 +375,15 @@ static noinline int btrfs_ioctl_fitrim(s
- 		return -EOPNOTSUPP;
- 	if (copy_from_user(&range, arg, sizeof(range)))
- 		return -EFAULT;
--	if (range.start > total_bytes ||
--	    range.len < fs_info->sb->s_blocksize)
-+
-+	/*
-+	 * NOTE: Don't truncate the range using super->total_bytes.  Bytenr of
-+	 * block group is in the logical address space, which can be any
-+	 * sectorsize aligned bytenr in  the range [0, U64_MAX].
-+	 */
-+	if (range.len < fs_info->sb->s_blocksize)
- 		return -EINVAL;
- 
--	range.len = min(range.len, total_bytes - range.start);
- 	range.minlen = max(range.minlen, minlen);
- 	ret = btrfs_trim_fs(fs_info, &range);
- 	if (ret < 0)
+ 	while (1) {
+ 		ret = find_first_extent_bit(&log->dirty_log_pages,
 
 
