@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F733C0044C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B2A9C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DCFB223C8
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EE5921104
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zu6+RXCP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DCFB223C8
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cYNZYELe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EE5921104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730596AbeKLIRR (ORCPT
+        id S1730693AbeKLIRV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:17:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60196 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:17:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730501AbeKLIRQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:17:16 -0500
+        id S1730601AbeKLIRU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:17:20 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E06D223AE;
-        Sun, 11 Nov 2018 22:27:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9081D21582;
+        Sun, 11 Nov 2018 22:27:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975240;
-        bh=fx5CcTpc9pdoqj2vpjKBHaVUZSkvea3kdBUvnWHYIhA=;
+        s=default; t=1541975244;
+        bh=ilCo/euLNic/OVhVdK9d1TS4JCBiabVSwo2Wzg50YE4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zu6+RXCPK6BBisP/SBjkZPmgj8IQ0eUNygFBPAdCpmb/+HlmKf5kt62C6ij+Bo2n8
-         S9jb8esX1CY7rY8X1x3iU0n3VvVQL36VOk+zDTARnNss9evl+irtLcmRK5BpDGCaQd
-         7kQu/VODlmCQAe1zUmGCbLEXTYt/pfLAc8iHhcks=
+        b=cYNZYELehdPdBt/Ge7ys/1pAOS5o/yxQ0gGKB+cm7e0YRR5A21XUB22MhUY1u1u69
+         VHVmzOHHNgr5SMXDHZqLE20o5SG7TWDdSRxrMeu1Uhk0GSzSJxRKJiBihB/55MaIJ4
+         11wbfQOppD+LTiOEodsw0vJMzj2LJaLbcatfudnM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sanskriti Sharma <sansharm@redhat.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Ben Hutchings <ben@decadent.org.uk>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 065/361] perf tools: Cleanup trace-event-info tdata leak
-Date:   Sun, 11 Nov 2018 14:16:52 -0800
-Message-Id: <20181111221629.078342055@linuxfoundation.org>
+Subject: [PATCH 4.19 094/361] x86: boot: Fix EFI stub alignment
+Date:   Sun, 11 Nov 2018 14:17:21 -0800
+Message-Id: <20181111221632.942122619@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -65,44 +63,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sanskriti Sharma <sansharm@redhat.com>
+From: Ben Hutchings <ben@decadent.org.uk>
 
-[ Upstream commit faedbf3fd19f2511a39397f76359e4cc6ee93072 ]
+[ Upstream commit 9c1442a9d039a1a3302fa93e9a11001c5f23b624 ]
 
-Free tracing_data structure in tracing_data_get() error paths.
+We currently align the end of the compressed image to a multiple of
+16.  However, the PE-COFF header included in the EFI stub says that
+the file alignment is 32 bytes, and when adding an EFI signature to
+the file it must first be padded to this alignment.
 
-Fixes the following coverity complaint:
+sbsigntool commands warn about this:
 
-  Error: RESOURCE_LEAK (CWE-772):
-  leaked_storage: Variable "tdata" going out of scope leaks the storage
+  warning: file-aligned section .text extends beyond end of file
+  warning: checksum areas are greater than image size. Invalid section table?
 
-Signed-off-by: Sanskriti Sharma <sansharm@redhat.com>
-Reviewed-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Joe Lawrence <joe.lawrence@redhat.com>
-Link: http://lkml.kernel.org/r/1538490554-8161-3-git-send-email-sansharm@redhat.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Worse, pesign -at least when creating a detached signature- uses the
+hash of the unpadded file, resulting in an invalid signature if
+padding is required.
+
+Avoid both these problems by increasing alignment to 32 bytes when
+CONFIG_EFI_STUB is enabled.
+
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/util/trace-event-info.c |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/x86/boot/tools/build.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/tools/perf/util/trace-event-info.c
-+++ b/tools/perf/util/trace-event-info.c
-@@ -531,12 +531,14 @@ struct tracing_data *tracing_data_get(st
- 			 "/tmp/perf-XXXXXX");
- 		if (!mkstemp(tdata->temp_file)) {
- 			pr_debug("Can't make temp file");
-+			free(tdata);
- 			return NULL;
- 		}
+--- a/arch/x86/boot/tools/build.c
++++ b/arch/x86/boot/tools/build.c
+@@ -391,6 +391,13 @@ int main(int argc, char ** argv)
+ 		die("Unable to mmap '%s': %m", argv[2]);
+ 	/* Number of 16-byte paragraphs, including space for a 4-byte CRC */
+ 	sys_size = (sz + 15 + 4) / 16;
++#ifdef CONFIG_EFI_STUB
++	/*
++	 * COFF requires minimum 32-byte alignment of sections, and
++	 * adding a signature is problematic without that alignment.
++	 */
++	sys_size = (sys_size + 1) & ~1;
++#endif
  
- 		temp_fd = open(tdata->temp_file, O_RDWR);
- 		if (temp_fd < 0) {
- 			pr_debug("Can't read '%s'", tdata->temp_file);
-+			free(tdata);
- 			return NULL;
- 		}
- 
+ 	/* Patch the setup code with the appropriate size parameters */
+ 	buf[0x1f1] = setup_sectors-1;
 
 
