@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57AA3C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:21:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CDD8C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:21:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FA6920817
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:21:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 440D420817
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:21:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="juASX4jE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FA6920817
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LCopc0xj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 440D420817
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389786AbeKLJLX (ORCPT
+        id S2389697AbeKLJLW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:11:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47942 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:11:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47920 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389442AbeKLIVO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2389443AbeKLIVO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:21:14 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5220B21780;
+        by mail.kernel.org (Postfix) with ESMTPSA id B1973223CA;
         Sun, 11 Nov 2018 22:31:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975477;
-        bh=MOgxXKWm7IuNh443CxFKEQRQwbm6qQ1rSVlJDpdmBmI=;
+        bh=LNZmu1B3EOdf62y7gYQcdY60gmDQE/6vfC2KlMqJUMw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=juASX4jEuELspjesyv6lKf0z3uOJFNyT3Ldeh9JnpDqkai1/CRU69HCSrv0TShQL4
-         oZmyWEMphUMswtmQIndU8AF2TQFw/BOhYGTseQjYiovcpc7qQe4J7KclqiVuQHak7B
-         g8df2vj9/xFd3gtmM1BU3VC6cn/RXDoDJ3OeF83g=
+        b=LCopc0xj7uCxSptl93WSY2z1ZY1/AH7xDB1KBZF+MXrKio8GEMEJ2WjA6t7LuaiG7
+         qDEm8nGjEU4fyBWUgn2Z8otKzWOa+yyrevpjgJLNSkuLbOK2zROMrqchLxD0fJQBUg
+         T50Cod5yx7C0fZ8JPFp1fSwIaqlZwS+r/iqyVRVg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
+        stable@vger.kernel.org, Benjamin Coddington <bcodding@redhat.com>,
         Trond Myklebust <trond.myklebust@hammerspace.com>
-Subject: [PATCH 4.18 262/350] NFSv4.1: Fix the r/wsize checking
-Date:   Sun, 11 Nov 2018 14:22:06 -0800
-Message-Id: <20181111221718.972929127@linuxfoundation.org>
+Subject: [PATCH 4.18 263/350] nfs: Fix a missed page unlock after pg_doio()
+Date:   Sun, 11 Nov 2018 14:22:07 -0800
+Message-Id: <20181111221719.017624861@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -62,76 +62,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Trond Myklebust <trond.myklebust@hammerspace.com>
+From: Benjamin Coddington <bcodding@redhat.com>
 
-commit 943cff67b842839f4f35364ba2db5c2d3f025d94 upstream.
+commit fdbd1a2e4a71adcb1ae219fcfd964930d77a7f84 upstream.
 
-The intention of nfs4_session_set_rwsize() was to cap the r/wsize to the
-buffer sizes negotiated by the CREATE_SESSION. The initial code had a
-bug whereby we would not check the values negotiated by nfs_probe_fsinfo()
-(the assumption being that CREATE_SESSION will always negotiate buffer values
-that are sane w.r.t. the server's preferred r/wsizes) but would only check
-values set by the user in the 'mount' command.
+We must check pg_error and call error_cleanup after any call to pg_doio.
+Currently, we are skipping the unlock of a page if we encounter an error in
+nfs_pageio_complete() before handing off the work to the RPC layer.
 
-The code was changed in 4.11 to _always_ set the r/wsize, meaning that we
-now never use the server preferred r/wsizes. This is the regression that
-this patch fixes.
-Also rename the function to nfs4_session_limit_rwsize() in order to avoid
-future confusion.
-
-Fixes: 033853325fe3 (NFSv4.1 respect server's max size in CREATE_SESSION")
-Cc: stable@vger.kernel.org # v4.11+
+Signed-off-by: Benjamin Coddington <bcodding@redhat.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/nfs/nfs4client.c |   16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ fs/nfs/pagelist.c |   40 +++++++++++++++++++++-------------------
+ 1 file changed, 21 insertions(+), 19 deletions(-)
 
---- a/fs/nfs/nfs4client.c
-+++ b/fs/nfs/nfs4client.c
-@@ -935,10 +935,10 @@ EXPORT_SYMBOL_GPL(nfs4_set_ds_client);
- 
- /*
-  * Session has been established, and the client marked ready.
-- * Set the mount rsize and wsize with negotiated fore channel
-- * attributes which will be bound checked in nfs_server_set_fsinfo.
-+ * Limit the mount rsize, wsize and dtsize using negotiated fore
-+ * channel attributes.
-  */
--static void nfs4_session_set_rwsize(struct nfs_server *server)
-+static void nfs4_session_limit_rwsize(struct nfs_server *server)
- {
- #ifdef CONFIG_NFS_V4_1
- 	struct nfs4_session *sess;
-@@ -951,9 +951,11 @@ static void nfs4_session_set_rwsize(stru
- 	server_resp_sz = sess->fc_attrs.max_resp_sz - nfs41_maxread_overhead;
- 	server_rqst_sz = sess->fc_attrs.max_rqst_sz - nfs41_maxwrite_overhead;
- 
--	if (!server->rsize || server->rsize > server_resp_sz)
-+	if (server->dtsize > server_resp_sz)
-+		server->dtsize = server_resp_sz;
-+	if (server->rsize > server_resp_sz)
- 		server->rsize = server_resp_sz;
--	if (!server->wsize || server->wsize > server_rqst_sz)
-+	if (server->wsize > server_rqst_sz)
- 		server->wsize = server_rqst_sz;
- #endif /* CONFIG_NFS_V4_1 */
+--- a/fs/nfs/pagelist.c
++++ b/fs/nfs/pagelist.c
+@@ -1110,6 +1110,20 @@ static int nfs_pageio_add_request_mirror
+ 	return ret;
  }
-@@ -1000,12 +1002,12 @@ static int nfs4_server_common_setup(stru
- 			(unsigned long long) server->fsid.minor);
- 	nfs_display_fhandle(mntfh, "Pseudo-fs root FH");
  
--	nfs4_session_set_rwsize(server);
--
- 	error = nfs_probe_fsinfo(server, mntfh, fattr);
- 	if (error < 0)
- 		goto out;
- 
-+	nfs4_session_limit_rwsize(server);
++static void nfs_pageio_error_cleanup(struct nfs_pageio_descriptor *desc)
++{
++	u32 midx;
++	struct nfs_pgio_mirror *mirror;
 +
- 	if (server->namelen == 0 || server->namelen > NFS4_MAXNAMLEN)
- 		server->namelen = NFS4_MAXNAMLEN;
++	if (!desc->pg_error)
++		return;
++
++	for (midx = 0; midx < desc->pg_mirror_count; midx++) {
++		mirror = &desc->pg_mirrors[midx];
++		desc->pg_completion_ops->error_cleanup(&mirror->pg_list);
++	}
++}
++
+ int nfs_pageio_add_request(struct nfs_pageio_descriptor *desc,
+ 			   struct nfs_page *req)
+ {
+@@ -1160,25 +1174,11 @@ int nfs_pageio_add_request(struct nfs_pa
+ 	return 1;
  
+ out_failed:
+-	/*
+-	 * We might have failed before sending any reqs over wire.
+-	 * Clean up rest of the reqs in mirror pg_list.
+-	 */
+-	if (desc->pg_error) {
+-		struct nfs_pgio_mirror *mirror;
+-		void (*func)(struct list_head *);
+-
+-		/* remember fatal errors */
+-		if (nfs_error_is_fatal(desc->pg_error))
+-			nfs_context_set_write_error(req->wb_context,
+-						    desc->pg_error);
+-
+-		func = desc->pg_completion_ops->error_cleanup;
+-		for (midx = 0; midx < desc->pg_mirror_count; midx++) {
+-			mirror = &desc->pg_mirrors[midx];
+-			func(&mirror->pg_list);
+-		}
+-	}
++	/* remember fatal errors */
++	if (nfs_error_is_fatal(desc->pg_error))
++		nfs_context_set_write_error(req->wb_context,
++						desc->pg_error);
++	nfs_pageio_error_cleanup(desc);
+ 	return 0;
+ }
+ 
+@@ -1250,6 +1250,8 @@ void nfs_pageio_complete(struct nfs_page
+ 	for (midx = 0; midx < desc->pg_mirror_count; midx++)
+ 		nfs_pageio_complete_mirror(desc, midx);
+ 
++	if (desc->pg_error < 0)
++		nfs_pageio_error_cleanup(desc);
+ 	if (desc->pg_ops->pg_cleanup)
+ 		desc->pg_ops->pg_cleanup(desc);
+ 	nfs_pageio_cleanup_mirroring(desc);
 
 
