@@ -6,44 +6,47 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AE51C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:14:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 481CEC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:15:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BB302080D
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:14:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BB302080D
+	by mail.kernel.org (Postfix) with ESMTP id 144D32080D
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:15:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 144D32080D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731743AbeKLGEZ (ORCPT
+        id S1731750AbeKLGE3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:04:25 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52922 "EHLO
+        Mon, 12 Nov 2018 01:04:29 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52930 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729602AbeKLGEY (ORCPT
+        by vger.kernel.org with ESMTP id S1729602AbeKLGE2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 01:04:24 -0500
+        Mon, 12 Nov 2018 01:04:28 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsz-0000oM-0Z; Sun, 11 Nov 2018 19:59:09 +0000
+        id 1gLvt9-0000l5-7F; Sun, 11 Nov 2018 19:59:19 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsT-0001cV-PQ; Sun, 11 Nov 2018 19:58:37 +0000
+        id 1gLvsP-0001RV-Kd; Sun, 11 Nov 2018 19:58:33 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
-        "Hangbin Liu" <liuhangbin@gmail.com>
+CC:     akpm@linux-foundation.org, "David Rivshin" <DRivshin@allworx.com>,
+        "Rabin Vincent" <rabin@rab.in>,
+        "David Rivshin" <drivshin@allworx.com>,
+        "Daniel Thompson" <daniel.thompson@linaro.org>,
+        "Russell King" <rmk+kernel@armlinux.org.uk>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.868160472@decadent.org.uk>
+Message-ID: <lsq.1541965745.7447554@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 185/366] ipv6: mcast: fix unsolicited report interval
- after receiving querys
+Subject: [PATCH 3.16 068/366] ARM: 8764/1: kgdb: fix NUMREGBYTES so that
+ gdb_regs[] is the correct size
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,56 +60,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hangbin Liu <liuhangbin@gmail.com>
+From: David Rivshin <DRivshin@allworx.com>
 
-commit 6c6da92808442908287fae8ebb0ca041a52469f4 upstream.
+commit 76ed0b803a2ab793a1b27d1dfe0de7955282cd34 upstream.
 
-After recieving MLD querys, we update idev->mc_maxdelay with max_delay
-from query header. This make the later unsolicited reports have the same
-interval with mc_maxdelay, which means we may send unsolicited reports with
-long interval time instead of default configured interval time.
+NUMREGBYTES (which is used as the size for gdb_regs[]) is incorrectly
+based on DBG_MAX_REG_NUM instead of GDB_MAX_REGS. DBG_MAX_REG_NUM
+is the number of total registers, while GDB_MAX_REGS is the number
+of 'unsigned longs' it takes to serialize those registers. Since
+FP registers require 3 'unsigned longs' each, DBG_MAX_REG_NUM is
+smaller than GDB_MAX_REGS.
 
-Also as we will not call ipv6_mc_reset() after device up. This issue will
-be there even after leave the group and join other groups.
+This causes GDB 8.0 give the following error on connect:
+"Truncated register 19 in remote 'g' packet"
 
-Fixes: fc4eba58b4c14 ("ipv6: make unsolicited report intervals configurable for mld")
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This also causes the register serialization/deserialization logic
+to overflow gdb_regs[], overwriting whatever follows.
+
+Fixes: 834b2964b7ab ("kgdb,arm: fix register dump")
+Signed-off-by: David Rivshin <drivshin@allworx.com>
+Acked-by: Rabin Vincent <rabin@rab.in>
+Tested-by: Daniel Thompson <daniel.thompson@linaro.org>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/ipv6/mcast.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ arch/arm/include/asm/kgdb.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv6/mcast.c
-+++ b/net/ipv6/mcast.c
-@@ -2058,7 +2058,8 @@ void ipv6_mc_dad_complete(struct inet6_d
- 		mld_send_initial_cr(idev);
- 		idev->mc_dad_count--;
- 		if (idev->mc_dad_count)
--			mld_dad_start_timer(idev, idev->mc_maxdelay);
-+			mld_dad_start_timer(idev,
-+					    unsolicited_report_interval(idev));
- 	}
- }
+--- a/arch/arm/include/asm/kgdb.h
++++ b/arch/arm/include/asm/kgdb.h
+@@ -76,7 +76,7 @@ extern int kgdb_fault_expected;
  
-@@ -2070,7 +2071,8 @@ static void mld_dad_timer_expire(unsigne
- 	if (idev->mc_dad_count) {
- 		idev->mc_dad_count--;
- 		if (idev->mc_dad_count)
--			mld_dad_start_timer(idev, idev->mc_maxdelay);
-+			mld_dad_start_timer(idev,
-+					    unsolicited_report_interval(idev));
- 	}
- 	in6_dev_put(idev);
- }
-@@ -2428,7 +2430,8 @@ static void mld_ifc_timer_expire(unsigne
- 	if (idev->mc_ifc_count) {
- 		idev->mc_ifc_count--;
- 		if (idev->mc_ifc_count)
--			mld_ifc_start_timer(idev, idev->mc_maxdelay);
-+			mld_ifc_start_timer(idev,
-+					    unsolicited_report_interval(idev));
- 	}
- 	in6_dev_put(idev);
- }
+ #define KGDB_MAX_NO_CPUS	1
+ #define BUFMAX			400
+-#define NUMREGBYTES		(DBG_MAX_REG_NUM << 2)
++#define NUMREGBYTES		(GDB_MAX_REGS << 2)
+ #define NUMCRITREGBYTES		(32 << 2)
+ 
+ #define _R0			0
 
