@@ -2,126 +2,105 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_ADSP_ALL,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0758C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 18:10:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55090C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 18:10:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1B262148E
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 18:10:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1B262148E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 1BF0D2148E
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 18:10:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BF0D2148E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mniewoehner.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729377AbeKLD7e (ORCPT
+        id S1729399AbeKLEAG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 22:59:34 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:50438 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726283AbeKLD7e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 22:59:34 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id A63F9207B8; Sun, 11 Nov 2018 19:10:18 +0100 (CET)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id D1635206A7;
-        Sun, 11 Nov 2018 19:10:17 +0100 (CET)
-Date:   Sun, 11 Nov 2018 19:10:17 +0100
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        linux-gpio@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
-        Przemyslaw Gaj <pgaj@cadence.com>,
-        Peter Rosin <peda@axentia.se>,
-        Mike Shettel <mshettel@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH v10 0/9] Add the I3C subsystem
-Message-ID: <20181111191017.7b2efdf1@bbrezillon>
-In-Reply-To: <20181111173932.GA12254@kroah.com>
-References: <20181026144333.12276-1-boris.brezillon@bootlin.com>
-        <20181111173932.GA12254@kroah.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Sun, 11 Nov 2018 23:00:06 -0500
+Received: from sender-of-o53.zoho.com ([135.84.80.218]:21745 "EHLO
+        sender-of-o53.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726283AbeKLEAG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Nov 2018 23:00:06 -0500
+X-Greylist: delayed 905 seconds by postgrey-1.27 at vger.kernel.org; Sun, 11 Nov 2018 23:00:05 EST
+ARC-Seal: i=1; a=rsa-sha256; t=1541958941; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=hy5JlQGxJWJskPr1V1UYQYsHkTANSDnfoMQwKIfoUzlbxsTmr6XOvk59k9DXtqtlZZa98AA7gQAc9MWZuPQXP5rkoZLLZgqYQwqB2c9dMa7Jyglyew7qkcsSDcmzo4HlUPZcTH9Ewrqb7pyez0ggwe2CQnk0Xe656b8+S5cYb1w=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1541958941; h=Content-Type:Content-Transfer-Encoding:Date:From:MIME-Version:Message-ID:Subject:To:ARC-Authentication-Results; 
+        bh=Gosx38Ns29Vh9yVIMh7/LRoo+EyczdD5dnchWF9zP6A=; 
+        b=eTQWlHT3u8NDKdumivcUo6O6ErkodGjy64NrLn3k9+4FH8brQDKYS/cOmX57mOlF2cIk6N2UVH8iTARAC1I0NoriQw7Vf71VlxTQbU6cfeK0PkN/MEqNjQUfaRFl57JtAwjoQVsJ5ladq8VxyTj0OXQAOlbY992RDB6cY5s2JBY=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=mniewoehner.de;
+        spf=pass  smtp.mailfrom=linux@mniewoehner.de;
+        dmarc=pass header.from=<linux@mniewoehner.de> header.from=<linux@mniewoehner.de>
+Received: from z3r0 (31.187.91.78 [31.187.91.78]) by mx.zohomail.com
+        with SMTPS id 1541958939093130.72691079638196; Sun, 11 Nov 2018 09:55:39 -0800 (PST)
+Message-ID: <776f384a81466642472beb4a34b10f26f1de88e9.camel@mniewoehner.de>
+Subject: [BUG] Nuvoton NCPT650 TPM 2.0 mode not working
+From:   Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
+To:     peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
+        arnd@arndb.de, linux-integrity@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Date:   Sun, 11 Nov 2018 18:55:36 +0100
+Mime-Version: 1.0
+X-Mailer: Evolution 3.28.5 
 Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+Hi all,
 
-On Sun, 11 Nov 2018 09:39:32 -0800
-Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+Nuvoton NCPT650 does not work in TPM 2.0 mode with tpm_tis / tpm_i2c_nuvoton
+while it works in TPM 1.2 mode (I can reflash it via UEFI setup).
+Kernel version is 4.19.1
 
-> On Fri, Oct 26, 2018 at 04:43:24PM +0200, Boris Brezillon wrote:
-> > Hi Greg,
-> > 
-> > I think we've reached a point where we can eventually consider the I3C
-> > framework for inclusion in 4.20 (5.0?). A few more issues were reported
-> > on v9 and fixed in v10. I can't guarantee that the implementation is
-> > free of bugs but I still think it's worth merging it in v4.20: it's a
-> > new subsystem, so we don't risk regressions, and the only way we can
-> > detect other issues is by having other people experiment with this
-> > implementation.
-> > 
-> > The only remaining concern raised by Arnd is the fact that both hosts
-> > and slaves share the same bus type and are differentiated thanks to
-> > their device_type, which IMHO is fine since this is what other
-> > subsystems do (plus I don't see other solutions to have both I3C
-> > devices and I3C buses represented under /sys/bus/i3c/).  
-> 
-> Yeah, it's not the nicest, but it will work, we did it also for USB and
-> greybus and it solves the issue.
-> 
-> This all looks good to me, so I've queued it up.  Let's see if
-> linux-next has any problems with it.
+Kernel config:
 
-I recently asked Stephen to add the linux-i3c tree to linux-next, so
-I'm expecting conflicts :-/. Sorry, I didn't know you were planning to
-take these patches through your tree.
+$ cat .config | egrep 'TCG|TPM|CRB|_TIS'
+CONFIG_TCG_TPM=y
+CONFIG_HW_RANDOM_TPM=y
+CONFIG_TCG_TIS_CORE=y
+CONFIG_TCG_TIS=y
+CONFIG_TCG_TIS_SPI=y
+# CONFIG_TCG_TIS_I2C_ATMEL is not set
+# CONFIG_TCG_TIS_I2C_INFINEON is not set
+CONFIG_TCG_TIS_I2C_NUVOTON=y
+# CONFIG_TCG_NSC is not set
+# CONFIG_TCG_ATMEL is not set
+# CONFIG_TCG_INFINEON is not set
+CONFIG_TCG_CRB=y
+# CONFIG_TCG_VTPM_PROXY is not set
+# CONFIG_TCG_TIS_ST33ZP24_I2C is not set
+# CONFIG_TCG_TIS_ST33ZP24_SPI is not set
 
-BTW, I also fixed a couple of things when rebasing on top of 4.20-rc1:
 
-- KernelVersion in the sysfs ABI doc has been updated to 5.0
-- Fixed i3c_master_getmxds_locked() (bug reported/fixed by Colin here
-  https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1799850.html)
-- Removed a blank line at the end of master-driver-api.rst
+TPM 1.2 mode dmesg:
 
-For the record, the i3c/next branch pulled by Stephen is available here
-[1].
+$ dmesg | egrep -i tis\|tpm\|crb
+[    3.210040] tpm_tis 00:0a: 1.2 TPM (device-id 0xFE, rev-id 2)
 
-> Thanks for sticking with it, nice work!
 
-Thanks for reviewing it! Greg, Stephen, let me know if you want me to
-reset i3c/next to v4.20-rc1 to avoid conflicts in linux-next.
+TPM 2.0 mode dmesg:
 
-Regards,
+$ dmesg | egrep -i tis\|tpm\|crb
+[    0.000000] efi:  ACPI
+2.0=0x9e457000  ACPI=0x9e457000  SMBIOS=0x9ec44000  SMBIOS
+3.0=0x9ec43000  TPMEventLog=0x9711f018 
+[    0.003517] ACPI: TPM2 0x000000009E490ED8 000034 (v03 LENOVO TC-
+S06   00001300 AMI  00000000)
+[    4.071550] ima: No TPM chip found, activating TPM-bypass!
 
-Boris
 
-[1]https://git.kernel.org/pub/scm/linux/kernel/git/i3c/linux.git/log/?h=i3c/next
+Any ideas?
+
+
+Best regards
+Michael
+
+
