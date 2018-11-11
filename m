@@ -6,44 +6,52 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFA54C0044C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 260E3C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1FFE21582
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD39C22353
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="V7JHB40z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1FFE21582
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pgu55ALb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD39C22353
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404834AbeKLIYu (ORCPT
+        id S2404849AbeKLIYx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:24:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60472 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:24:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404820AbeKLIYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:24:50 -0500
+        id S2404835AbeKLIYx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:24:53 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59B7221780;
-        Sun, 11 Nov 2018 22:34:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 68920208A3;
+        Sun, 11 Nov 2018 22:34:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975691;
-        bh=iBfGEGQXJErhGcDTjq/xP9T8jc6bDZ5AcCHawY5PArM=;
+        s=default; t=1541975695;
+        bh=ignp0R8UH9FCvLmO6eAkRlOVoFw6zA0wpXNmh2g3qwQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V7JHB40zFQUfaL9cwqH9+XYgVKFO8Jv1nqn+AeYS7A0xS1ph2r6QL/kPMPCztR42P
-         yxSU+z3kybjKn7zwGQJnbHjh7Yqh6k/PsqIUlfXuZB9xALOvSJBZIoA3n8j2JlJgOI
-         rA830oXgRRgKy383aA6yeTlDpnRNtYq5yE6lS9os=
+        b=Pgu55ALbLCHUwV8xZ9Ypr0M8nYWybSR8JBgxDrZuLKLbOQDu5DzLVeKmxuWgSHqIw
+         LlEgquJ0wgUup3ydlqJK/AQ8SOlqCpf/k3bXgcl9MmLiJMYjRD+ijZTU857feCBFUG
+         t2bnEt0cc3yjo4ypyseoZ7iAu+WSZNlXhrQsMpkI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bin Meng <bmeng.cn@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 4.9 094/141] PCI: Add Device IDs for Intel GPU "spurious interrupt" quirk
-Date:   Sun, 11 Nov 2018 14:25:53 -0800
-Message-Id: <20181111221641.087629841@linuxfoundation.org>
+        stable@vger.kernel.org, Frank Haverkamp <haver@linux.vnet.ibm.com>,
+        Joerg-Stephan Vogt <jsvogt@de.ibm.com>,
+        Michael Jung <mijung@gmx.net>,
+        Michael Ruettger <michael@ibmra.de>,
+        Kleber Sacilotto de Souza <klebers@linux.vnet.ibm.com>,
+        Sebastian Ott <sebott@linux.vnet.ibm.com>,
+        "Eberhard S. Amann" <esa@linux.vnet.ibm.com>,
+        Gabriel Krisman Bertazi <krisman@linux.vnet.ibm.com>,
+        "Guilherme G. Piccoli" <gpiccoli@linux.vnet.ibm.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Subject: [PATCH 4.9 095/141] signal/GenWQE: Fix sending of SIGKILL
+Date:   Sun, 11 Nov 2018 14:25:54 -0800
+Message-Id: <20181111221641.176242881@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
 References: <20181111221627.853046496@linuxfoundation.org>
@@ -61,51 +69,112 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bin Meng <bmeng.cn@gmail.com>
+From: Eric W. Biederman <ebiederm@xmission.com>
 
-commit d0c9606b31a21028fb5b753c8ad79626292accfd upstream.
+commit 0ab93e9c99f8208c0a1a7b7170c827936268c996 upstream.
 
-Add Device IDs to the Intel GPU "spurious interrupt" quirk table.
+The genweq_add_file and genwqe_del_file by caching current without
+using reference counting embed the assumption that a file descriptor
+will never be passed from one process to another.  It even embeds the
+assumption that the the thread that opened the file will be in
+existence when the process terminates.   Neither of which are
+guaranteed to be true.
 
-For these devices, unplugging the VGA cable and plugging it in again causes
-spurious interrupts from the IGD.  Linux eventually disables the interrupt,
-but of course that disables any other devices sharing the interrupt.
+Therefore replace caching the task_struct of the opener with
+pid of the openers thread group id.  All the knowledge of the
+opener is used for is as the target of SIGKILL and a SIGKILL
+will kill the entire process group.
 
-The theory is that this is a VGA BIOS defect: it should have disabled the
-IGD interrupt but failed to do so.
+Rename genwqe_force_sig to genwqe_terminate, remove it's unncessary
+signal argument, update it's ownly caller, and use kill_pid
+instead of force_sig.
 
-See f67fd55fa96f ("PCI: Add quirk for still enabled interrupts on Intel
-Sandy Bridge GPUs") and 7c82126a94e6 ("PCI: Add new ID for Intel GPU
-"spurious interrupt" quirk") for some history.
+The work force_sig does in changing signal handling state is not
+relevant to SIGKILL sent as SEND_SIG_PRIV.  The exact same processess
+will be killed just with less work, and less confusion.  The work done
+by force_sig is really only needed for handling syncrhonous
+exceptions.
 
-[bhelgaas: See link below for discussion about how to fix this more
-generically instead of adding device IDs for every new Intel GPU.  I hope
-this is the last patch to add device IDs.]
+It will still be possible to cause genwqe_device_remove to wait
+8 seconds by passing a file descriptor to another process but
+the possible user after free is fixed.
 
-Link: https://lore.kernel.org/linux-pci/1537974841-29928-1-git-send-email-bmeng.cn@gmail.com
-Signed-off-by: Bin Meng <bmeng.cn@gmail.com>
-[bhelgaas: changelog]
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Cc: stable@vger.kernel.org	# v3.4+
+Fixes: eaf4722d4645 ("GenWQE Character device and DDCB queue")
+Cc: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Frank Haverkamp <haver@linux.vnet.ibm.com>
+Cc: Joerg-Stephan Vogt <jsvogt@de.ibm.com>
+Cc: Michael Jung <mijung@gmx.net>
+Cc: Michael Ruettger <michael@ibmra.de>
+Cc: Kleber Sacilotto de Souza <klebers@linux.vnet.ibm.com>
+Cc: Sebastian Ott <sebott@linux.vnet.ibm.com>
+Cc: Eberhard S. Amann <esa@linux.vnet.ibm.com>
+Cc: Gabriel Krisman Bertazi <krisman@linux.vnet.ibm.com>
+Cc: Guilherme G. Piccoli <gpiccoli@linux.vnet.ibm.com>
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/quirks.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/misc/genwqe/card_base.h |    2 +-
+ drivers/misc/genwqe/card_dev.c  |    9 +++++----
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -3124,7 +3124,11 @@ static void disable_igfx_irq(struct pci_
+--- a/drivers/misc/genwqe/card_base.h
++++ b/drivers/misc/genwqe/card_base.h
+@@ -404,7 +404,7 @@ struct genwqe_file {
+ 	struct file *filp;
  
- 	pci_iounmap(dev, regs);
+ 	struct fasync_struct *async_queue;
+-	struct task_struct *owner;
++	struct pid *opener;
+ 	struct list_head list;		/* entry in list of open files */
+ 
+ 	spinlock_t map_lock;		/* lock for dma_mappings */
+--- a/drivers/misc/genwqe/card_dev.c
++++ b/drivers/misc/genwqe/card_dev.c
+@@ -52,7 +52,7 @@ static void genwqe_add_file(struct genwq
+ {
+ 	unsigned long flags;
+ 
+-	cfile->owner = current;
++	cfile->opener = get_pid(task_tgid(current));
+ 	spin_lock_irqsave(&cd->file_lock, flags);
+ 	list_add(&cfile->list, &cd->file_list);
+ 	spin_unlock_irqrestore(&cd->file_lock, flags);
+@@ -65,6 +65,7 @@ static int genwqe_del_file(struct genwqe
+ 	spin_lock_irqsave(&cd->file_lock, flags);
+ 	list_del(&cfile->list);
+ 	spin_unlock_irqrestore(&cd->file_lock, flags);
++	put_pid(cfile->opener);
+ 
+ 	return 0;
  }
-+DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0042, disable_igfx_irq);
-+DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0046, disable_igfx_irq);
-+DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x004a, disable_igfx_irq);
- DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0102, disable_igfx_irq);
-+DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0106, disable_igfx_irq);
- DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x010a, disable_igfx_irq);
- DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0152, disable_igfx_irq);
+@@ -275,7 +276,7 @@ static int genwqe_kill_fasync(struct gen
+ 	return files;
+ }
  
+-static int genwqe_force_sig(struct genwqe_dev *cd, int sig)
++static int genwqe_terminate(struct genwqe_dev *cd)
+ {
+ 	unsigned int files = 0;
+ 	unsigned long flags;
+@@ -283,7 +284,7 @@ static int genwqe_force_sig(struct genwq
+ 
+ 	spin_lock_irqsave(&cd->file_lock, flags);
+ 	list_for_each_entry(cfile, &cd->file_list, list) {
+-		force_sig(sig, cfile->owner);
++		kill_pid(cfile->opener, SIGKILL, 1);
+ 		files++;
+ 	}
+ 	spin_unlock_irqrestore(&cd->file_lock, flags);
+@@ -1356,7 +1357,7 @@ static int genwqe_inform_and_stop_proces
+ 		dev_warn(&pci_dev->dev,
+ 			 "[%s] send SIGKILL and wait ...\n", __func__);
+ 
+-		rc = genwqe_force_sig(cd, SIGKILL); /* force terminate */
++		rc = genwqe_terminate(cd);
+ 		if (rc) {
+ 			/* Give kill_timout more seconds to end processes */
+ 			for (i = 0; (i < genwqe_kill_timeout) &&
 
 
