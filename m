@@ -7,51 +7,48 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17364C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:17:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B48FAC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:17:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C62FD2084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:17:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D0EA20871
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:17:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GMLTP0DL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C62FD2084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bUFUOaCj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D0EA20871
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730799AbeKLKHw (ORCPT
+        id S1730712AbeKLKHv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 05:07:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59220 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 05:07:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58446 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729979AbeKLIRB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730051AbeKLIRB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:17:01 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BCFEB2154B;
-        Sun, 11 Nov 2018 22:27:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 665AC21722;
+        Sun, 11 Nov 2018 22:27:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975225;
-        bh=oEebybGSCJdPGETPwPQIp6485PJzutsiMktWpCtesxk=;
+        s=default; t=1541975226;
+        bh=AWoKtXgq2F0xyQuGfArYTz8zLzpIyrRzLBpXUdqVbeo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GMLTP0DLRl0tVNw90tuXLABDaGYH/14AawoVI/0KeKdG5J/1HPglXw7S4Z6+5oCTl
-         HyisywT6j0/e4Y54cNLi+iDa2PfkwaPsKSQXYty5IhLWu0Cn3ngcRgLHbvQol2kunc
-         rQi/0GllSEorW+iQO5qjWkUlBp/28SxnE7JjJlGs=
+        b=bUFUOaCj1xpB6B3Jq4rKAAt2lXXRnShtNdk127hceFDN7WC2ol48LD0Qwhi9oTpyz
+         MeqtL9rvSGoGsskwiXB1YbDFf393s7R91l935r196VzG+8EN0qaI/u4xcMi81mJZje
+         xyzsW4CnsoXSUbddu20+ILwpF1MhczKQNOXLCHQw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        stable@vger.kernel.org, He Zhe <zhe.he@windriver.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "WoodhouseDavid" <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "SchauflerCasey" <casey.schaufler@intel.com>
-Subject: [PATCH 4.19 041/361] x86/speculation: Enable cross-hyperthread spectre v2 STIBP mitigation
-Date:   Sun, 11 Nov 2018 14:16:28 -0800
-Message-Id: <20181111221625.598298393@linuxfoundation.org>
+        Thomas Gleixner <tglx@linutronix.de>,
+        kstewart@linuxfoundation.org, pombredanne@nexb.com,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.19 043/361] x86/corruption-check: Fix panic in memory_corruption_check() when boot option without value is provided
+Date:   Sun, 11 Nov 2018 14:16:30 -0800
+Message-Id: <20181111221625.902374393@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -69,180 +66,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jiri Kosina <jkosina@suse.cz>
+From: He Zhe <zhe.he@windriver.com>
 
-commit 53c613fe6349994f023245519265999eed75957f upstream.
+commit ccde460b9ae5c2bd5e4742af0a7f623c2daad566 upstream.
 
-STIBP is a feature provided by certain Intel ucodes / CPUs. This feature
-(once enabled) prevents cross-hyperthread control of decisions made by
-indirect branch predictors.
+memory_corruption_check[{_period|_size}]()'s handlers do not check input
+argument before passing it to kstrtoul() or simple_strtoull(). The argument
+would be a NULL pointer if each of the kernel parameters, without its
+value, is set in command line and thus cause the following panic.
 
-Enable this feature if
+PANIC: early exception 0xe3 IP 10:ffffffff73587c22 error 0 cr2 0x0
+[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.18-rc8+ #2
+[    0.000000] RIP: 0010:kstrtoull+0x2/0x10
+...
+[    0.000000] Call Trace
+[    0.000000]  ? set_corruption_check+0x21/0x49
+[    0.000000]  ? do_early_param+0x4d/0x82
+[    0.000000]  ? parse_args+0x212/0x330
+[    0.000000]  ? rdinit_setup+0x26/0x26
+[    0.000000]  ? parse_early_options+0x20/0x23
+[    0.000000]  ? rdinit_setup+0x26/0x26
+[    0.000000]  ? parse_early_param+0x2d/0x39
+[    0.000000]  ? setup_arch+0x2f7/0xbf4
+[    0.000000]  ? start_kernel+0x5e/0x4c2
+[    0.000000]  ? load_ucode_bsp+0x113/0x12f
+[    0.000000]  ? secondary_startup_64+0xa5/0xb0
 
-- the CPU is vulnerable to spectre v2
-- the CPU supports SMT and has SMT siblings online
-- spectre_v2 mitigation autoselection is enabled (default)
+This patch adds checks to prevent the panic.
 
-After some previous discussion, this leaves STIBP on all the time, as wrmsr
-on crossing kernel boundary is a no-no. This could perhaps later be a bit
-more optimized (like disabling it in NOHZ, experiment with disabling it in
-idle, etc) if needed.
-
-Note that the synchronization of the mask manipulation via newly added
-spec_ctrl_mutex is currently not strictly needed, as the only updater is
-already being serialized by cpu_add_remove_lock, but let's make this a
-little bit more future-proof.
-
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: He Zhe <zhe.he@windriver.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc:  "WoodhouseDavid" <dwmw@amazon.co.uk>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc:  "SchauflerCasey" <casey.schaufler@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: gregkh@linuxfoundation.org
+Cc: kstewart@linuxfoundation.org
+Cc: pombredanne@nexb.com
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/nycvar.YFH.7.76.1809251438240.15880@cbobk.fhfr.pm
+Link: http://lkml.kernel.org/r/1534260823-87917-1-git-send-email-zhe.he@windriver.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/bugs.c |   57 ++++++++++++++++++++++++++++++++++++++++-----
- kernel/cpu.c               |   11 +++++++-
- 2 files changed, 61 insertions(+), 7 deletions(-)
+ arch/x86/kernel/check.c |   15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -35,12 +35,10 @@ static void __init spectre_v2_select_mit
- static void __init ssb_select_mitigation(void);
- static void __init l1tf_select_mitigation(void);
+--- a/arch/x86/kernel/check.c
++++ b/arch/x86/kernel/check.c
+@@ -31,6 +31,11 @@ static __init int set_corruption_check(c
+ 	ssize_t ret;
+ 	unsigned long val;
  
--/*
-- * Our boot-time value of the SPEC_CTRL MSR. We read it once so that any
-- * writes to SPEC_CTRL contain whatever reserved bits have been set.
-- */
--u64 __ro_after_init x86_spec_ctrl_base;
-+/* The base value of the SPEC_CTRL MSR that always has to be preserved. */
-+u64 x86_spec_ctrl_base;
- EXPORT_SYMBOL_GPL(x86_spec_ctrl_base);
-+static DEFINE_MUTEX(spec_ctrl_mutex);
- 
- /*
-  * The vendor and possibly platform specific bits which can be modified in
-@@ -325,6 +323,46 @@ static enum spectre_v2_mitigation_cmd __
- 	return cmd;
- }
- 
-+static bool stibp_needed(void)
-+{
-+	if (spectre_v2_enabled == SPECTRE_V2_NONE)
-+		return false;
-+
-+	if (!boot_cpu_has(X86_FEATURE_STIBP))
-+		return false;
-+
-+	return true;
-+}
-+
-+static void update_stibp_msr(void *info)
-+{
-+	wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
-+}
-+
-+void arch_smt_update(void)
-+{
-+	u64 mask;
-+
-+	if (!stibp_needed())
-+		return;
-+
-+	mutex_lock(&spec_ctrl_mutex);
-+	mask = x86_spec_ctrl_base;
-+	if (cpu_smt_control == CPU_SMT_ENABLED)
-+		mask |= SPEC_CTRL_STIBP;
-+	else
-+		mask &= ~SPEC_CTRL_STIBP;
-+
-+	if (mask != x86_spec_ctrl_base) {
-+		pr_info("Spectre v2 cross-process SMT mitigation: %s STIBP\n",
-+				cpu_smt_control == CPU_SMT_ENABLED ?
-+				"Enabling" : "Disabling");
-+		x86_spec_ctrl_base = mask;
-+		on_each_cpu(update_stibp_msr, NULL, 1);
++	if (!arg) {
++		pr_err("memory_corruption_check config string not provided\n");
++		return -EINVAL;
 +	}
-+	mutex_unlock(&spec_ctrl_mutex);
-+}
 +
- static void __init spectre_v2_select_mitigation(void)
- {
- 	enum spectre_v2_mitigation_cmd cmd = spectre_v2_parse_cmdline();
-@@ -424,6 +462,9 @@ specv2_set_mode:
- 		setup_force_cpu_cap(X86_FEATURE_USE_IBRS_FW);
- 		pr_info("Enabling Restricted Speculation for firmware calls\n");
- 	}
-+
-+	/* Enable STIBP if appropriate */
-+	arch_smt_update();
- }
+ 	ret = kstrtoul(arg, 10, &val);
+ 	if (ret)
+ 		return ret;
+@@ -45,6 +50,11 @@ static __init int set_corruption_check_p
+ 	ssize_t ret;
+ 	unsigned long val;
  
- #undef pr_fmt
-@@ -814,6 +855,8 @@ static ssize_t l1tf_show_state(char *buf
- static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
- 			       char *buf, unsigned int bug)
- {
-+	int ret;
-+
- 	if (!boot_cpu_has_bug(bug))
- 		return sprintf(buf, "Not affected\n");
- 
-@@ -831,10 +874,12 @@ static ssize_t cpu_show_common(struct de
- 		return sprintf(buf, "Mitigation: __user pointer sanitization\n");
- 
- 	case X86_BUG_SPECTRE_V2:
--		return sprintf(buf, "%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
-+		ret = sprintf(buf, "%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
- 			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
- 			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
-+			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
- 			       spectre_v2_module_string());
-+		return ret;
- 
- 	case X86_BUG_SPEC_STORE_BYPASS:
- 		return sprintf(buf, "%s\n", ssb_strings[ssb_mode]);
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -2026,6 +2026,12 @@ static void cpuhp_online_cpu_device(unsi
- 	kobject_uevent(&dev->kobj, KOBJ_ONLINE);
- }
- 
-+/*
-+ * Architectures that need SMT-specific errata handling during SMT hotplug
-+ * should override this.
-+ */
-+void __weak arch_smt_update(void) { };
-+
- static int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval)
- {
- 	int cpu, ret = 0;
-@@ -2052,8 +2058,10 @@ static int cpuhp_smt_disable(enum cpuhp_
- 		 */
- 		cpuhp_offline_cpu_device(cpu);
- 	}
--	if (!ret)
-+	if (!ret) {
- 		cpu_smt_control = ctrlval;
-+		arch_smt_update();
++	if (!arg) {
++		pr_err("memory_corruption_check_period config string not provided\n");
++		return -EINVAL;
 +	}
- 	cpu_maps_update_done();
- 	return ret;
- }
-@@ -2064,6 +2072,7 @@ static int cpuhp_smt_enable(void)
++
+ 	ret = kstrtoul(arg, 10, &val);
+ 	if (ret)
+ 		return ret;
+@@ -59,6 +69,11 @@ static __init int set_corruption_check_s
+ 	char *end;
+ 	unsigned size;
  
- 	cpu_maps_update_begin();
- 	cpu_smt_control = CPU_SMT_ENABLED;
-+	arch_smt_update();
- 	for_each_present_cpu(cpu) {
- 		/* Skip online CPUs and CPUs on offline nodes */
- 		if (cpu_online(cpu) || !node_online(cpu_to_node(cpu)))
++	if (!arg) {
++		pr_err("memory_corruption_check_size config string not provided\n");
++		return -EINVAL;
++	}
++
+ 	size = memparse(arg, &end);
+ 
+ 	if (*end == '\0')
 
 
