@@ -2,68 +2,128 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B955EC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:43:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E888C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:43:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B98821508
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:43:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B98821508
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E880C21508
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:43:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JU2eq6PA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E880C21508
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404651AbeKLIdk (ORCPT
+        id S2404766AbeKLIdq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:33:40 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41088 "EHLO mx1.redhat.com"
+        Mon, 12 Nov 2018 03:33:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731396AbeKLIdj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:33:39 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S2389629AbeKLIX6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:23:58 -0500
+Received: from localhost (unknown [206.108.79.134])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4A2A5308624F;
-        Sun, 11 Nov 2018 22:43:39 +0000 (UTC)
-Received: from krava (ovpn-204-16.brq.redhat.com [10.40.204.16])
-        by smtp.corp.redhat.com (Postfix) with SMTP id B816819745;
-        Sun, 11 Nov 2018 22:43:37 +0000 (UTC)
-Date:   Sun, 11 Nov 2018 23:43:36 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     David Miller <davem@davemloft.net>
-Cc:     acme@kernel.org, linux-kernel@vger.kernel.org, namhyung@kernel.org,
-        jolsa@kernel.org
-Subject: Re: [PATCH RFC] hist lookups
-Message-ID: <20181111224336.GA30042@krava>
-References: <20181108071303.GB29732@krava>
- <20181108.170721.825832647693654935.davem@davemloft.net>
- <20181111194132.GA3769@krava>
- <20181111.143208.353362314504370863.davem@davemloft.net>
+        by mail.kernel.org (Postfix) with ESMTPSA id 5EEC421707;
+        Sun, 11 Nov 2018 22:34:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541975640;
+        bh=C6yDNx9B9UbRoEHXygEOGawSqribcafCEGJ6qFxCYck=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=JU2eq6PAE6Hf/QinzoUfOwgU+byz7t/5SQkzWXuIcHFpydBck5YGTRi3BjTw2kYHQ
+         XBYxfSBqwuHXw2rV2XbZqWU8tU9iYt2nIKMfWHeX1lAWraKMLN7OGO5bArukHd3Lvd
+         +J0lbHLq/NMcobDmg/U3c+RCoQ9rj4GygUmnTJ3o=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Javier Martinez Canillas <javierm@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 057/141] tpm: suppress transmit cmd error logs when TPM 1.2 is disabled/deactivated
+Date:   Sun, 11 Nov 2018 14:25:16 -0800
+Message-Id: <20181111221635.522699909@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
+References: <20181111221627.853046496@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181111.143208.353362314504370863.davem@davemloft.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Sun, 11 Nov 2018 22:43:39 +0000 (UTC)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 11, 2018 at 02:32:08PM -0800, David Miller wrote:
-> From: Jiri Olsa <jolsa@redhat.com>
-> Date: Sun, 11 Nov 2018 20:41:32 +0100
-> 
-> > I added the dropping logic, it's simple so far..
-> 
-> How do you maintain your perf/fixes branch?  Do you rebase? :-/
-> 
-> I just pulled after a previous pull and got nothing but conflicts on
-> every single file.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-yep, I rebase.. it's my devel branch, I dont keep it sane, sry ;-)
+------------------
 
-jirka
+From: Javier Martinez Canillas <javierm@redhat.com>
+
+[ Upstream commit 0d6d0d62d9505a9816716aa484ebd0b04c795063 ]
+
+For TPM 1.2 chips the system setup utility allows to set the TPM device in
+one of the following states:
+
+  * Active: Security chip is functional
+  * Inactive: Security chip is visible, but is not functional
+  * Disabled: Security chip is hidden and is not functional
+
+When choosing the "Inactive" state, the TPM 1.2 device is enumerated and
+registered, but sending TPM commands fail with either TPM_DEACTIVATED or
+TPM_DISABLED depending if the firmware deactivated or disabled the TPM.
+
+Since these TPM 1.2 error codes don't have special treatment, inactivating
+the TPM leads to a very noisy kernel log buffer that shows messages like
+the following:
+
+  tpm_tis 00:05: 1.2 TPM (device-id 0x0, rev-id 78)
+  tpm tpm0: A TPM error (6) occurred attempting to read a pcr value
+  tpm tpm0: TPM is disabled/deactivated (0x6)
+  tpm tpm0: A TPM error (6) occurred attempting get random
+  tpm tpm0: A TPM error (6) occurred attempting to read a pcr value
+  ima: No TPM chip found, activating TPM-bypass! (rc=6)
+  tpm tpm0: A TPM error (6) occurred attempting get random
+  tpm tpm0: A TPM error (6) occurred attempting get random
+  tpm tpm0: A TPM error (6) occurred attempting get random
+  tpm tpm0: A TPM error (6) occurred attempting get random
+
+Let's just suppress error log messages for the TPM_{DEACTIVATED,DISABLED}
+return codes, since this is expected when the TPM 1.2 is set to Inactive.
+
+In that case the kernel log is cleaner and less confusing for users, i.e:
+
+  tpm_tis 00:05: 1.2 TPM (device-id 0x0, rev-id 78)
+  tpm tpm0: TPM is disabled/deactivated (0x6)
+  ima: No TPM chip found, activating TPM-bypass! (rc=6)
+
+Reported-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/char/tpm/tpm-interface.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -420,7 +420,8 @@ ssize_t tpm_transmit_cmd(struct tpm_chip
+ 	header = cmd;
+ 
+ 	err = be32_to_cpu(header->return_code);
+-	if (err != 0 && desc)
++	if (err != 0 && err != TPM_ERR_DISABLED && err != TPM_ERR_DEACTIVATED
++	    && desc)
+ 		dev_err(&chip->dev, "A TPM error (%d) occurred %s\n", err,
+ 			desc);
+ 
+
+
