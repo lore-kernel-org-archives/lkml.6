@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2249AC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:45:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 885F4C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:45:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBC6821508
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:45:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 475BB21508
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:45:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="u0HfA7GS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBC6821508
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QkYSQ6hQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 475BB21508
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391209AbeKLIfa (ORCPT
+        id S2391213AbeKLIfn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:35:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57816 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:35:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391087AbeKLIXj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:23:39 -0500
+        id S2391059AbeKLIXh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:23:37 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07F6D21707;
-        Sun, 11 Nov 2018 22:33:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8B39022353;
+        Sun, 11 Nov 2018 22:33:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975621;
-        bh=NoKa0dlbyDUsVQfeMfRzGqxVeH6AlRTG31iuC4i50Ok=;
+        s=default; t=1541975619;
+        bh=oQkobmtNzNc2WKcjk/+jlPuDlJ2BYBjE/yHHHohogp0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u0HfA7GS806BGGi6/ZICD+/0be6C3Ja15hxPFjuEP2AhUbRngjQUJ40Y5pqycoT7C
-         rtqic3osjxNaVzXo0g3LP2I44D8YsZwH9yAu7zXWeoS4LZUtahcKCfg8zRU0wQNt5e
-         O+U18PULnQGPrP0YEYFOc+c25bROjW9nriMQHqkU=
+        b=QkYSQ6hQzzLwGBcSuWDKKcBrVaIe3Eryo/mrGZT+pL5hzRCKEFx95AQKyY8XlOvOl
+         rvtsY9snSNNS4KPDQpkTNFBCxzGQiz0it1Snsr1yBSgTZ6VYRccoGyI0ZrwYQgkpGd
+         M7SaTNE9AHND+1+WplswiAFR5HLSiLmBdsS9i3M0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
+        stable@vger.kernel.org, Yu Zhao <yuzhao@google.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 040/141] cpufreq: dt: Try freeing static OPPs only if we have added them
-Date:   Sun, 11 Nov 2018 14:24:59 -0800
-Message-Id: <20181111221633.021051433@linuxfoundation.org>
+Subject: [PATCH 4.9 037/141] mmc: sdhci-pci-o2micro: Add quirk for O2 Micro dev 0x8620 rev 0x01
+Date:   Sun, 11 Nov 2018 14:24:56 -0800
+Message-Id: <20181111221632.614073417@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
 References: <20181111221627.853046496@linuxfoundation.org>
@@ -63,111 +63,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Viresh Kumar <viresh.kumar@linaro.org>
+From: Yu Zhao <yuzhao@google.com>
 
-[ Upstream commit 51c99dd2c06b234575661fa1e0a1dea6c3ef566f ]
+[ Upstream commit 5169894982bb67486d93cc1e10151712bb86bcb6 ]
 
-We can not call dev_pm_opp_of_cpumask_remove_table() freely anymore
-since the latest OPP core updates as that uses reference counting to
-free resources. There are cases where no static OPPs are added (using
-DT) for a platform and trying to remove the OPP table may end up
-decrementing refcount which is already zero and hence generating
-warnings.
+This device reports SDHCI_CLOCK_INT_STABLE even though it's not
+ready to take SDHCI_CLOCK_CARD_EN. The symptom is that reading
+SDHCI_CLOCK_CONTROL after enabling the clock shows absence of the
+bit from the register (e.g. expecting 0x0000fa07 = 0x0000fa03 |
+SDHCI_CLOCK_CARD_EN but only observed the first operand).
 
-Lets track if we were able to add static OPPs or not and then only
-remove the table based on that. Some reshuffling of code is also done to
-do that.
+mmc1: Timeout waiting for hardware cmd interrupt.
+mmc1: sdhci: ============ SDHCI REGISTER DUMP ===========
+mmc1: sdhci: Sys addr:  0x00000000 | Version:  0x00000603
+mmc1: sdhci: Blk size:  0x00000000 | Blk cnt:  0x00000000
+mmc1: sdhci: Argument:  0x00000000 | Trn mode: 0x00000000
+mmc1: sdhci: Present:   0x01ff0001 | Host ctl: 0x00000001
+mmc1: sdhci: Power:     0x0000000f | Blk gap:  0x00000000
+mmc1: sdhci: Wake-up:   0x00000000 | Clock:    0x0000fa03
+mmc1: sdhci: Timeout:   0x00000000 | Int stat: 0x00000000
+mmc1: sdhci: Int enab:  0x00ff0083 | Sig enab: 0x00ff0083
+mmc1: sdhci: AC12 err:  0x00000000 | Slot int: 0x00000000
+mmc1: sdhci: Caps:      0x25fcc8bf | Caps_1:   0x00002077
+mmc1: sdhci: Cmd:       0x00000000 | Max curr: 0x005800c8
+mmc1: sdhci: Resp[0]:   0x00000000 | Resp[1]:  0x00000000
+mmc1: sdhci: Resp[2]:   0x00000000 | Resp[3]:  0x00000000
+mmc1: sdhci: Host ctl2: 0x00000008
+mmc1: sdhci: ADMA Err:  0x00000000 | ADMA Ptr: 0x00000000
+mmc1: sdhci: ============================================
 
-Reported-by: Niklas Cassel <niklas.cassel@linaro.org>
-Tested-by: Niklas Cassel <niklas.cassel@linaro.org>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+The problem happens during wakeup from S3. Adding a delay quirk
+after power up reliably fixes the problem.
+
+Signed-off-by: Yu Zhao <yuzhao@google.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/cpufreq/cpufreq-dt.c |   34 +++++++++++++++++++---------------
- 1 file changed, 19 insertions(+), 15 deletions(-)
+ drivers/mmc/host/sdhci-pci-o2micro.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/cpufreq/cpufreq-dt.c
-+++ b/drivers/cpufreq/cpufreq-dt.c
-@@ -32,6 +32,7 @@ struct private_data {
- 	struct device *cpu_dev;
- 	struct thermal_cooling_device *cdev;
- 	const char *reg_name;
-+	bool have_static_opps;
- };
- 
- static struct freq_attr *cpufreq_dt_attr[] = {
-@@ -197,6 +198,15 @@ static int cpufreq_init(struct cpufreq_p
- 		}
- 	}
- 
-+	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
-+	if (!priv) {
-+		ret = -ENOMEM;
-+		goto out_put_regulator;
-+	}
-+
-+	priv->reg_name = name;
-+	priv->opp_table = opp_table;
-+
- 	/*
- 	 * Initialize OPP tables for all policy->cpus. They will be shared by
- 	 * all CPUs which have marked their CPUs shared with OPP bindings.
-@@ -207,7 +217,8 @@ static int cpufreq_init(struct cpufreq_p
- 	 *
- 	 * OPPs might be populated at runtime, don't check for error here
- 	 */
--	dev_pm_opp_of_cpumask_add_table(policy->cpus);
-+	if (!dev_pm_opp_of_cpumask_add_table(policy->cpus))
-+		priv->have_static_opps = true;
- 
- 	/*
- 	 * But we need OPP table to function so if it is not there let's
-@@ -233,19 +244,10 @@ static int cpufreq_init(struct cpufreq_p
- 				__func__, ret);
- 	}
- 
--	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
--	if (!priv) {
--		ret = -ENOMEM;
--		goto out_free_opp;
--	}
--
--	priv->reg_name = name;
--	priv->opp_table = opp_table;
--
- 	ret = dev_pm_opp_init_cpufreq_table(cpu_dev, &freq_table);
- 	if (ret) {
- 		dev_err(cpu_dev, "failed to init cpufreq table: %d\n", ret);
--		goto out_free_priv;
-+		goto out_free_opp;
- 	}
- 
- 	priv->cpu_dev = cpu_dev;
-@@ -284,10 +286,11 @@ static int cpufreq_init(struct cpufreq_p
- 
- out_free_cpufreq_table:
- 	dev_pm_opp_free_cpufreq_table(cpu_dev, &freq_table);
--out_free_priv:
--	kfree(priv);
- out_free_opp:
--	dev_pm_opp_of_cpumask_remove_table(policy->cpus);
-+	if (priv->have_static_opps)
-+		dev_pm_opp_of_cpumask_remove_table(policy->cpus);
-+	kfree(priv);
-+out_put_regulator:
- 	if (name)
- 		dev_pm_opp_put_regulator(opp_table);
- out_put_clk:
-@@ -302,7 +305,8 @@ static int cpufreq_exit(struct cpufreq_p
- 
- 	cpufreq_cooling_unregister(priv->cdev);
- 	dev_pm_opp_free_cpufreq_table(priv->cpu_dev, &policy->freq_table);
--	dev_pm_opp_of_cpumask_remove_table(policy->related_cpus);
-+	if (priv->have_static_opps)
-+		dev_pm_opp_of_cpumask_remove_table(policy->related_cpus);
- 	if (priv->reg_name)
- 		dev_pm_opp_put_regulator(priv->opp_table);
- 
+--- a/drivers/mmc/host/sdhci-pci-o2micro.c
++++ b/drivers/mmc/host/sdhci-pci-o2micro.c
+@@ -334,6 +334,9 @@ int sdhci_pci_o2_probe(struct sdhci_pci_
+ 		pci_write_config_byte(chip->pdev, O2_SD_LOCK_WP, scratch);
+ 		break;
+ 	case PCI_DEVICE_ID_O2_SEABIRD0:
++		if (chip->pdev->revision == 0x01)
++			chip->quirks |= SDHCI_QUIRK_DELAY_AFTER_POWER;
++		/* fall through */
+ 	case PCI_DEVICE_ID_O2_SEABIRD1:
+ 		/* UnLock WP */
+ 		ret = pci_read_config_byte(chip->pdev,
 
 
