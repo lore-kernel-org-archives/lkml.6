@@ -2,105 +2,96 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5EE8C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 13:42:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 838E2C0044C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 13:43:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 462E2208A3
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 13:42:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45490208A3
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 13:43:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hKQqJeBj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 462E2208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="dqbmcLEu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45490208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728020AbeKKXbe (ORCPT
+        id S1728136AbeKKXbf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 18:31:34 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:38087 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727594AbeKKXbe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 18:31:34 -0500
-Received: by mail-it1-f195.google.com with SMTP id k141-v6so9700367itk.3
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 05:42:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=RGzub7tlXzS5z3FKnQAN8eNP9GXfEpc7NOMdYjc4d9M=;
-        b=hKQqJeBj9vAGuPU8siQHkEi+PVhIKOVtgHrgzEf06C1RaYgrPQExJmPyPMZIKyPU56
-         3GZi7qTY6cin1UXxLvBjDkag7VikHdMK3EjmgNEkTSGMLB/rDdAdJ9zxuD/t9Hvo+nOL
-         N6/JN9ynoUD3uU3BxQ9qXDKk24ezrfsYTby/o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=RGzub7tlXzS5z3FKnQAN8eNP9GXfEpc7NOMdYjc4d9M=;
-        b=JUU5Yas695mGZYH8O3pAeTUC9qjr4p3ucKDREfLLDo9dqSjeVFo8wBCP1p9wXgfTUg
-         9kGi4GaFusIslOr+tmEpwydxT3Di5KdJYXqtliyZ026/OhuEhuFMhC3goWocmQG1Pcyv
-         cflP8HaHhH6UyK/UBgvi8qzgZX4SXcpWtsicoxbKWHso7G5+tzO68EKYrLueoTiTf+Xa
-         k+VmaofogxoLtvnfztt2ec0A5A9xNboYdi62Xq7YA2olqmrXDIVmqQUtylGRh7TPuyEH
-         8IiJgBC1kYkFViVVUDjWh9NNhWg/0zrwdUNqERqBlR2G7zGNYicAsf6SczYxoiIOhvPq
-         nvBg==
-X-Gm-Message-State: AGRZ1gJik/DaQka0mQOICr8MCCimrqbapAzz/FWPUiGV5o6kWdDfDhHY
-        NvousCjatntTYZT+hcCJVrL4fkQytl9E4Y1MHcyKhw==
-X-Google-Smtp-Source: AJdET5fPaj8GcBhBEAvggK7Z0ywJRnQBGb1DrLNRNc6y5pikhMGKa+OawUb4rV7ybyoPORC6D+AmOVzMn93nL+QUaA8=
-X-Received: by 2002:a24:8347:: with SMTP id d68-v6mr9362265ite.158.1541943776312;
- Sun, 11 Nov 2018 05:42:56 -0800 (PST)
+        Sun, 11 Nov 2018 18:31:35 -0500
+Received: from imap.thunk.org ([74.207.234.97]:38936 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727594AbeKKXbf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Nov 2018 18:31:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=04dekhnTbmwiCS+1qUlx//1gYJMD4lDBJ9KNb65T4vM=; b=dqbmcLEuWBUUJGo/aYOfZqDG7Y
+        CR8qUD2PeIa1DThY8oynxlBuVRGE1SaWeFllbFehIFSw5bkAJa3Eb9ze+F+TXcQLUvtQQKfw5wBVm
+        F8WnGkh86DYpPXvsVBbUHg+a7mFdeGor1+doeXSzcDTdp1dfqZ5LRPpJz1Zk59l/FNsQ=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1gLq0i-0000F2-GE; Sun, 11 Nov 2018 13:42:44 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 1F2697A0471; Sun, 11 Nov 2018 08:42:42 -0500 (EST)
+Date:   Sun, 11 Nov 2018 08:42:42 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>
+Subject: Re: [PATCH 0/3] SG_IO command filtering via sysfs
+Message-ID: <20181111134241.GA2447@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Christoph Hellwig <hch@infradead.org>,
+        Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>
+References: <1541867733-7836-1-git-send-email-pbonzini@redhat.com>
+ <20181111131445.GB25441@infradead.org>
 MIME-Version: 1.0
-Received: by 2002:a6b:4f16:0:0:0:0:0 with HTTP; Sun, 11 Nov 2018 05:42:55
- -0800 (PST)
-In-Reply-To: <20181110232059.GA12766@worktop.psav.com>
-References: <cover.1541711457.git.jpoimboe@redhat.com> <20181109072811.GB86700@gmail.com>
- <CAKv+Gu-3OfrgGafO3OY3hAir723tD6shEaWTLJ5Ec4YcW4yZyQ@mail.gmail.com> <20181110232059.GA12766@worktop.psav.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Sun, 11 Nov 2018 14:42:55 +0100
-Message-ID: <CAKv+Gu_y2vH3eu7rMt7d7Hzum_MvYy7=30sNe1fhnB2QLe5i5A@mail.gmail.com>
-Subject: Re: [PATCH RFC 0/3] Static calls
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@aculab.com>,
-        Borislav Petkov <bp@alien8.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181111131445.GB25441@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11 November 2018 at 00:20, Peter Zijlstra <peterz@infradead.org> wrote:
-> On Fri, Nov 09, 2018 at 02:50:27PM +0100, Ard Biesheuvel wrote:
->> On 9 November 2018 at 08:28, Ingo Molnar <mingo@kernel.org> wrote:
->> >> - I'm not sure about the objtool approach.  Objtool is (currently)
->> >>   x86-64 only, which means we have to use the "unoptimized" version
->> >>   everywhere else.  I may experiment with a GCC plugin instead.
->> >
->> > I'd prefer the objtool approach. It's a pretty reliable first-principles
->> > approach while GCC plugin would have to be replicated for Clang and any
->> > other compilers, etc.
->> >
->>
->> I implemented the GCC plugin approach here for arm64
->
-> I'm confused; I though we only needed objtool for variable instruction
-> length architectures, because we can't reliably decode our instruction
-> stream. Otherwise we can fairly trivially use the DWARF relocation data,
-> no?
+On Sun, Nov 11, 2018 at 05:14:45AM -0800, Christoph Hellwig wrote:
+> I think this goes in the wrong way.  There isn't really any point
+> in filtering at all if we have access to the whole device by the
+> file persmissions, and we generally should not allow any access for
+> partitions.
 
-How would that work? We could build vmlinux with --emit-relocs, filter
-out the static jump/call relocations and resolve the symbol names to
-filter the ones associated with calls to trampolines. But then, we
-have to build the static_call_sites section and reinject it back into
-the image in some way, which is essentially objtool, no?
+It really depends on the security model being used on a particular
+system.  I can easily imagine scenarios where userspace is allowed
+full access to the device with respect to read/write/open, but the
+security model doesn't want to allow access to various SCSI commands
+such as firmware upload commands, TCG commads, the
+soon-to-be-standardized Zone Activation Commands (which allow dynamic
+conversion of HDD recording modes between CMR and SMR), etc.
+
+And this is before we get to crazy container / namespace scenarios.
+And *no*, let's not have a SG_IO namespace!  :-)
+
+> I think we need to simplify the selection, not add crazy amounts of
+> special case code.
+
+I have the opposite opinions in terms of wanting more complex
+filtering rules, but I also agree that special case C code is not the
+answer --- and why I suggested that eBPF filtering rules is the right
+way to go.
+
+					- Ted
