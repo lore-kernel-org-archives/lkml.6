@@ -6,43 +6,44 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80814C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:04:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56AA7C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:04:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C4ED2080D
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:04:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C4ED2080D
+	by mail.kernel.org (Postfix) with ESMTP id 23D9920869
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:04:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23D9920869
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731096AbeKLFxw (ORCPT
+        id S1731101AbeKLFx4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 00:53:52 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51662 "EHLO
+        Mon, 12 Nov 2018 00:53:56 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51668 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726508AbeKLFxv (ORCPT
+        by vger.kernel.org with ESMTP id S1726508AbeKLFxz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:53:51 -0500
+        Mon, 12 Nov 2018 00:53:55 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvt0-0000l7-Lz; Sun, 11 Nov 2018 19:59:10 +0000
+        id 1gLvt0-0000l4-Lt; Sun, 11 Nov 2018 19:59:10 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsS-0001Ye-HQ; Sun, 11 Nov 2018 19:58:36 +0000
+        id 1gLvsS-0001YP-DN; Sun, 11 Nov 2018 19:58:36 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Theodore Ts'o" <tytso@mit.edu>
+CC:     akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
+        "Guillaume Nault" <g.nault@alphalink.fr>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.860383263@decadent.org.uk>
+Message-ID: <lsq.1541965745.367561099@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 146/366] ext4: add more mount time checks of the
- superblock
+Subject: [PATCH 3.16 143/366] l2tp: reject creation of non-PPP sessions on
+ L2TPv2 tunnels
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,96 +57,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Guillaume Nault <g.nault@alphalink.fr>
 
-commit bfe0a5f47ada40d7984de67e59a7d3390b9b9ecc upstream.
+commit de9bada5d389903f4faf33980e6a95a2911c7e6d upstream.
 
-The kernel's ext4 mount-time checks were more permissive than
-e2fsprogs's libext2fs checks when opening a file system.  The
-superblock is considered too insane for debugfs or e2fsck to operate
-on it, the kernel has no business trying to mount it.
+The /proc/net/pppol2tp handlers (pppol2tp_seq_*()) iterate over all
+L2TPv2 tunnels, and rightfully expect that only PPP sessions can be
+found there. However, l2tp_netlink accepts creating Ethernet sessions
+regardless of the underlying tunnel version.
 
-This will make file system fuzzing tools work harder, but the failure
-cases that they find will be more useful and be easier to evaluate.
+This confuses pppol2tp_seq_session_show(), which expects that
+l2tp_session_priv() returns a pppol2tp_session structure. When the
+session is an Ethernet pseudo-wire, a struct l2tp_eth_sess is returned
+instead. This leads to invalid memory access when
+pppol2tp_session_get_sock() later tries to dereference ps->sk.
 
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Fixes: d9e31d17ceba ("l2tp: Add L2TP ethernet pseudowire support")
+Signed-off-by: Guillaume Nault <g.nault@alphalink.fr>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/ext4/super.c | 37 ++++++++++++++++++++++++++-----------
- 1 file changed, 26 insertions(+), 11 deletions(-)
+ net/l2tp/l2tp_netlink.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -3725,6 +3725,13 @@ static int ext4_fill_super(struct super_
- 			 le32_to_cpu(es->s_log_block_size));
- 		goto failed_mount;
+--- a/net/l2tp/l2tp_netlink.c
++++ b/net/l2tp/l2tp_netlink.c
+@@ -460,6 +460,12 @@ static int l2tp_nl_cmd_session_create(st
+ 		goto out_tunnel;
  	}
-+	if (le32_to_cpu(es->s_log_cluster_size) >
-+	    (EXT4_MAX_CLUSTER_LOG_SIZE - EXT4_MIN_BLOCK_LOG_SIZE)) {
-+		ext4_msg(sb, KERN_ERR,
-+			 "Invalid log cluster size: %u",
-+			 le32_to_cpu(es->s_log_cluster_size));
-+		goto failed_mount;
-+	}
  
- 	if (le16_to_cpu(sbi->s_es->s_reserved_gdt_blocks) > (blocksize / 4)) {
- 		ext4_msg(sb, KERN_ERR,
-@@ -3853,13 +3860,6 @@ static int ext4_fill_super(struct super_
- 				 "block size (%d)", clustersize, blocksize);
- 			goto failed_mount;
- 		}
--		if (le32_to_cpu(es->s_log_cluster_size) >
--		    (EXT4_MAX_CLUSTER_LOG_SIZE - EXT4_MIN_BLOCK_LOG_SIZE)) {
--			ext4_msg(sb, KERN_ERR,
--				 "Invalid log cluster size: %u",
--				 le32_to_cpu(es->s_log_cluster_size));
--			goto failed_mount;
--		}
- 		sbi->s_cluster_bits = le32_to_cpu(es->s_log_cluster_size) -
- 			le32_to_cpu(es->s_log_block_size);
- 		sbi->s_clusters_per_group =
-@@ -3880,10 +3880,10 @@ static int ext4_fill_super(struct super_
- 		}
- 	} else {
- 		if (clustersize != blocksize) {
--			ext4_warning(sb, "fragment/cluster size (%d) != "
--				     "block size (%d)", clustersize,
--				     blocksize);
--			clustersize = blocksize;
-+			ext4_msg(sb, KERN_ERR,
-+				 "fragment/cluster size (%d) != "
-+				 "block size (%d)", clustersize, blocksize);
-+			goto failed_mount;
- 		}
- 		if (sbi->s_blocks_per_group > blocksize * 8) {
- 			ext4_msg(sb, KERN_ERR,
-@@ -3937,6 +3937,13 @@ static int ext4_fill_super(struct super_
- 			 ext4_blocks_count(es));
- 		goto failed_mount;
- 	}
-+	if ((es->s_first_data_block == 0) && (es->s_log_block_size == 0) &&
-+	    (sbi->s_cluster_ratio == 1)) {
-+		ext4_msg(sb, KERN_WARNING, "bad geometry: first data "
-+			 "block is 0 with a 1k block and cluster size");
-+		goto failed_mount;
++	/* L2TPv2 only accepts PPP pseudo-wires */
++	if (tunnel->version == 2 && cfg.pw_type != L2TP_PWTYPE_PPP) {
++		ret = -EPROTONOSUPPORT;
++		goto out_tunnel;
 +	}
 +
- 	blocks_count = (ext4_blocks_count(es) -
- 			le32_to_cpu(es->s_first_data_block) +
- 			EXT4_BLOCKS_PER_GROUP(sb) - 1);
-@@ -3972,6 +3979,14 @@ static int ext4_fill_super(struct super_
- 		ret = -ENOMEM;
- 		goto failed_mount;
- 	}
-+	if (((u64)sbi->s_groups_count * sbi->s_inodes_per_group) !=
-+	    le32_to_cpu(es->s_inodes_count)) {
-+		ext4_msg(sb, KERN_ERR, "inodes count not valid: %u vs %llu",
-+			 le32_to_cpu(es->s_inodes_count),
-+			 ((u64)sbi->s_groups_count * sbi->s_inodes_per_group));
-+		ret = -EINVAL;
-+		goto failed_mount;
-+	}
- 
- 	if (ext4_proc_root)
- 		sbi->s_proc = proc_mkdir(sb->s_id, ext4_proc_root);
+ 	if (tunnel->version > 2) {
+ 		if (info->attrs[L2TP_ATTR_OFFSET])
+ 			cfg.offset = nla_get_u16(info->attrs[L2TP_ATTR_OFFSET]);
 
