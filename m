@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73EE9C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:56:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E22C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:56:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AB9C20839
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:56:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEF1F20839
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:56:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jHY/doyK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AB9C20839
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IfdiU+2D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEF1F20839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732898AbeKLJqh (ORCPT
+        id S1732590AbeKLISP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:46:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34210 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732575AbeKLISP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:18:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35336 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732500AbeKLISO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:18:14 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C92521707;
-        Sun, 11 Nov 2018 22:28:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A97B2154B;
+        Sun, 11 Nov 2018 22:28:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975299;
-        bh=hTWr3X24XRC0Op1U8qGvydHrXA2AlBb6kRtUWB6u5dA=;
+        s=default; t=1541975298;
+        bh=h7KTtak/Qzq2PAW+79XirJLRO6wq8aZBds/9KFE+jdM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jHY/doyK9FU9vWK0FYsR//7lkB0msy0Qw/gb61WogKAjUuRKaBziz/aMc9Dt2EDAU
-         f6ljeF4/Sf/6YVuSJka+ID9aASbtk36k0L8caCVVvacvhohZ7hdPLnglVdAQWHyPEr
-         vxzAHfA7xTzK/0XtY+eqo8VVTBkeAT79uGUV0rrQ=
+        b=IfdiU+2D+EqAAKxEmJSp7gupaoX83ecyQQ4ahIKKMGyff4siKOYvkPz5buMO62sAU
+         001K/6cLSM2LlAlVFa8BFGtRZVcKCe87rYLm53jQWB858x0hqVpoSx7kYK8FGJPcoJ
+         FC/lngJu1BwfrYsJUsuTvcTIOJCP3rSlhQx/u7jo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 257/361] kbuild: fix kernel/bounds.c W=1 warning
-Date:   Sun, 11 Nov 2018 14:20:04 -0800
-Message-Id: <20181111221653.657445058@linuxfoundation.org>
+        stable@vger.kernel.org, Punit Agrawal <punit.agrawal@arm.com>,
+        Suzuki Poulose <suzuki.poulose@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Subject: [PATCH 4.19 255/361] KVM: arm/arm64: Ensure only THP is candidate for adjustment
+Date:   Sun, 11 Nov 2018 14:20:02 -0800
+Message-Id: <20181111221653.516206078@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -66,54 +64,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Punit Agrawal <punit.agrawal@arm.com>
 
-commit 6a32c2469c3fbfee8f25bcd20af647326650a6cf upstream.
+commit fd2ef358282c849c193aa36dadbf4f07f7dcd29b upstream.
 
-Building any configuration with 'make W=1' produces a warning:
+PageTransCompoundMap() returns true for hugetlbfs and THP
+hugepages. This behaviour incorrectly leads to stage 2 faults for
+unsupported hugepage sizes (e.g., 64K hugepage with 4K pages) to be
+treated as THP faults.
 
-kernel/bounds.c:16:6: warning: no previous prototype for 'foo' [-Wmissing-prototypes]
+Tighten the check to filter out hugetlbfs pages. This also leads to
+consistently mapping all unsupported hugepage sizes as PTE level
+entries at stage 2.
 
-When also passing -Werror, this prevents us from building any other files.
-Nobody ever calls the function, but we can't make it 'static' either
-since we want the compiler output.
-
-Calling it 'main' instead however avoids the warning, because gcc
-does not insist on having a declaration for main.
-
-Link: http://lkml.kernel.org/r/20181005083313.2088252-1-arnd@arndb.de
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Reported-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: David Laight <David.Laight@ACULAB.COM>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+Reviewed-by: Suzuki Poulose <suzuki.poulose@arm.com>
+Cc: Christoffer Dall <christoffer.dall@arm.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: stable@vger.kernel.org # v4.13+
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/bounds.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ virt/kvm/arm/mmu.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/kernel/bounds.c
-+++ b/kernel/bounds.c
-@@ -13,7 +13,7 @@
- #include <linux/log2.h>
- #include <linux/spinlock_types.h>
- 
--void foo(void)
-+int main(void)
+--- a/virt/kvm/arm/mmu.c
++++ b/virt/kvm/arm/mmu.c
+@@ -1230,8 +1230,14 @@ static bool transparent_hugepage_adjust(
  {
- 	/* The enum constants to put into include/generated/bounds.h */
- 	DEFINE(NR_PAGEFLAGS, __NR_PAGEFLAGS);
-@@ -23,4 +23,6 @@ void foo(void)
- #endif
- 	DEFINE(SPINLOCK_SIZE, sizeof(spinlock_t));
- 	/* End of constants */
-+
-+	return 0;
- }
+ 	kvm_pfn_t pfn = *pfnp;
+ 	gfn_t gfn = *ipap >> PAGE_SHIFT;
++	struct page *page = pfn_to_page(pfn);
+ 
+-	if (PageTransCompoundMap(pfn_to_page(pfn))) {
++	/*
++	 * PageTransCompoungMap() returns true for THP and
++	 * hugetlbfs. Make sure the adjustment is done only for THP
++	 * pages.
++	 */
++	if (!PageHuge(page) && PageTransCompoundMap(page)) {
+ 		unsigned long mask;
+ 		/*
+ 		 * The address we faulted on is backed by a transparent huge
 
 
