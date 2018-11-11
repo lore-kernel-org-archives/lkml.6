@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5DE4C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F7E1C43610
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91DD8223DD
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 344C522353
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FHot/xTW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91DD8223DD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GNfa69sE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 344C522353
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729877AbeKLIQy (ORCPT
+        id S1729913AbeKLIQz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:16:54 -0500
+        Mon, 12 Nov 2018 03:16:55 -0500
 Received: from mail.kernel.org ([198.145.29.99]:58446 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726816AbeKLIQx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:16:53 -0500
+        id S1729859AbeKLIQy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:16:54 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5370216FD;
-        Sun, 11 Nov 2018 22:26:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8469C21104;
+        Sun, 11 Nov 2018 22:26:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975217;
-        bh=89N7itqN3eeg1ox3ffVrvLyO8vJA8jQC4S0KYRkCqwQ=;
+        s=default; t=1541975219;
+        bh=Dm+7vvDHL6yDavxr/GtmeoMgqkahksZQbaEboyzqNlU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FHot/xTW191lhEloryxnHhEfX9bKnIxgU8IVJgCRheh37St8FS4fGAaATUMMLxvHS
-         K5CLg9lsKhWbq8ePuLx2DZ37xth7mnORWxRfTWfAGTrFr94buSxo6anr3huLXX3wzy
-         3NCkHPxo3P5uKqksoPvM+IKZC4mGACncp/cuDrgc=
+        b=GNfa69sEjrootOowRlU8BHrUEEkrBZ3gx5CSsnZWdSMYu+XRzpFqmyJK4YVaUslfD
+         ijs1Hb4KYPWxiTHE2ZbxYt5oq8J82U9gng1CM3qsNVasckk+C3Hep7DYdXZOUJcse/
+         602ItzeeYr/62sHXAArWbOaTqBCr/Prp4UcnJy6E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, stable@kernel.org,
-        Hou Tao <houtao1@huawei.com>,
-        Richard Weinberger <richard@nod.at>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH 4.19 017/361] jffs2: free jffs2_sb_info through jffs2_kill_sb()
-Date:   Sun, 11 Nov 2018 14:16:04 -0800
-Message-Id: <20181111221622.204526777@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Waldemar Rymarkiewicz <waldemarx.rymarkiewicz@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Subject: [PATCH 4.19 021/361] cpufreq: conservative: Take limits changes into account properly
+Date:   Sun, 11 Nov 2018 14:16:08 -0800
+Message-Id: <20181111221622.648784556@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -64,41 +64,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hou Tao <houtao1@huawei.com>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-commit 92e2921f7eee63450a5f953f4b15dc6210219430 upstream.
+commit da5e79bc70b84971d2b3a55fb252e34e51d81d48 upstream.
 
-When an invalid mount option is passed to jffs2, jffs2_parse_options()
-will fail and jffs2_sb_info will be freed, but then jffs2_sb_info will
-be used (use-after-free) and freeed (double-free) in jffs2_kill_sb().
+If the policy limits change between invocations of cs_dbs_update(),
+the requested frequency value stored in dbs_info may not be updated
+and the function may use a stale value of it next time.  Moreover, if
+idle periods are takem into account by cs_dbs_update(), the requested
+frequency value stored in dbs_info may be below the min policy limit,
+which is incorrect.
 
-Fix it by removing the buggy invocation of kfree() when getting invalid
-mount options.
+To fix these problems, always update the requested frequency value
+in dbs_info along with the local copy of it when the previous
+requested frequency is beyond the policy limits and avoid decreasing
+the requested frequency below the min policy limit when taking
+idle periods into account.
 
-Fixes: 92abc475d8de ("jffs2: implement mount option parsing and compression overriding")
-Cc: stable@kernel.org
-Signed-off-by: Hou Tao <houtao1@huawei.com>
-Reviewed-by: Richard Weinberger <richard@nod.at>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Fixes: abb6627910a1 (cpufreq: conservative: Fix next frequency selection)
+Fixes: 00bfe05889e9 (cpufreq: conservative: Decrease frequency faster for deferred updates)
+Reported-by: Waldemar Rymarkiewicz <waldemarx.rymarkiewicz@intel.com>
+Cc: All applicable <stable@vger.kernel.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Acked-by: Waldemar Rymarkiewicz <waldemarx.rymarkiewicz@intel.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/jffs2/super.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/cpufreq/cpufreq_conservative.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/fs/jffs2/super.c
-+++ b/fs/jffs2/super.c
-@@ -285,10 +285,8 @@ static int jffs2_fill_super(struct super
- 	sb->s_fs_info = c;
+--- a/drivers/cpufreq/cpufreq_conservative.c
++++ b/drivers/cpufreq/cpufreq_conservative.c
+@@ -80,8 +80,10 @@ static unsigned int cs_dbs_update(struct
+ 	 * changed in the meantime, so fall back to current frequency in that
+ 	 * case.
+ 	 */
+-	if (requested_freq > policy->max || requested_freq < policy->min)
++	if (requested_freq > policy->max || requested_freq < policy->min) {
+ 		requested_freq = policy->cur;
++		dbs_info->requested_freq = requested_freq;
++	}
  
- 	ret = jffs2_parse_options(c, data);
--	if (ret) {
--		kfree(c);
-+	if (ret)
- 		return -EINVAL;
--	}
+ 	freq_step = get_freq_step(cs_tuners, policy);
  
- 	/* Initialize JFFS2 superblock locks, the further initialization will
- 	 * be done later */
+@@ -92,7 +94,7 @@ static unsigned int cs_dbs_update(struct
+ 	if (policy_dbs->idle_periods < UINT_MAX) {
+ 		unsigned int freq_steps = policy_dbs->idle_periods * freq_step;
+ 
+-		if (requested_freq > freq_steps)
++		if (requested_freq > policy->min + freq_steps)
+ 			requested_freq -= freq_steps;
+ 		else
+ 			requested_freq = policy->min;
 
 
