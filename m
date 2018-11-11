@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 794D8C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:49:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD91FC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:49:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 312B9214E0
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:49:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4F6F214E0
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:49:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QbM08AhC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 312B9214E0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NPWHFk8e"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4F6F214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404351AbeKLIXT (ORCPT
+        id S2389445AbeKLIjV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:23:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56552 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:39:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56592 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404304AbeKLIXR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:23:17 -0500
+        id S2404336AbeKLIXS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:23:18 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB07821707;
-        Sun, 11 Nov 2018 22:33:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0559F21582;
+        Sun, 11 Nov 2018 22:33:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975600;
-        bh=mtWVRQPGVeP5JRpaGV8jrUODTLymADEDhXLVpvwB6FI=;
+        s=default; t=1541975601;
+        bh=KSeLQHAnSfOy6LeboWhKm0EnyMJZgIh/XPON6JKrl0M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QbM08AhCY5uY0upjgN6rWDzZKE8L41oojboxISqDl4t6M5oES3KFDl699TZTgN/ZW
-         ccIF5M0xoOZCWW7xS15xgwS/5SdLFWe0D0gdiuxU4lcnSG+66beAn4HcdmzJ6nPOdo
-         DFlJhjEVWZKFrAhYN8EZNpk8Zp11WXPIHm7bBcDQ=
+        b=NPWHFk8eTenycLG4cJrpDPF1KGOGrEGJztSeU2QHlaGBn3Umspakntc2UF4ccgEAg
+         E7+MjJhXzdfSanRESFlp2hWqe4mlrbBLaaUmTdYK7PSSyzMwh+DAZ/6q9sOtiuLHiz
+         okjr4SQdgkMS3bYLwZlxhBJB5uT41MxGwpBwr1Mw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 214/222] btrfs: dont use ctl->free_space for max_extent_size
-Date:   Sun, 11 Nov 2018 14:25:11 -0800
-Message-Id: <20181111221705.581648200@linuxfoundation.org>
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.14 216/222] btrfs: dont run delayed_iputs in commit
+Date:   Sun, 11 Nov 2018 14:25:13 -0800
+Message-Id: <20181111221705.695071899@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -62,56 +63,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Josef Bacik <jbacik@fb.com>
+From: Josef Bacik <josef@toxicpanda.com>
 
-commit fb5c39d7a887108087de6ff93d3f326b01b4ef41 upstream.
+commit 30928e9baac238a7330085a1c5747f0b5df444b4 upstream.
 
-max_extent_size is supposed to be the largest contiguous range for the
-space info, and ctl->free_space is the total free space in the block
-group.  We need to keep track of these separately and _only_ use the
-max_free_space if we don't have a max_extent_size, as that means our
-original request was too large to search any of the block groups for and
-therefore wouldn't have a max_extent_size set.
+This could result in a really bad case where we do something like
 
-CC: stable@vger.kernel.org # 4.14+
+evict
+  evict_refill_and_join
+    btrfs_commit_transaction
+      btrfs_run_delayed_iputs
+        evict
+          evict_refill_and_join
+            btrfs_commit_transaction
+... forever
+
+We have plenty of other places where we run delayed iputs that are much
+safer, let those do the work.
+
+CC: stable@vger.kernel.org # 4.4+
 Reviewed-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: Josef Bacik <jbacik@fb.com>
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/extent-tree.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ fs/btrfs/transaction.c |    9 ---------
+ 1 file changed, 9 deletions(-)
 
---- a/fs/btrfs/extent-tree.c
-+++ b/fs/btrfs/extent-tree.c
-@@ -7573,6 +7573,7 @@ static noinline int find_free_extent(str
- 	struct btrfs_block_group_cache *block_group = NULL;
- 	u64 search_start = 0;
- 	u64 max_extent_size = 0;
-+	u64 max_free_space = 0;
- 	u64 empty_cluster = 0;
- 	struct btrfs_space_info *space_info;
- 	int loop = 0;
-@@ -7867,8 +7868,8 @@ unclustered_alloc:
- 			spin_lock(&ctl->tree_lock);
- 			if (ctl->free_space <
- 			    num_bytes + empty_cluster + empty_size) {
--				if (ctl->free_space > max_extent_size)
--					max_extent_size = ctl->free_space;
-+				max_free_space = max(max_free_space,
-+						     ctl->free_space);
- 				spin_unlock(&ctl->tree_lock);
- 				goto loop;
- 			}
-@@ -8037,6 +8038,8 @@ loop:
- 	}
- out:
- 	if (ret == -ENOSPC) {
-+		if (!max_extent_size)
-+			max_extent_size = max_free_space;
- 		spin_lock(&space_info->lock);
- 		space_info->max_extent_size = max_extent_size;
- 		spin_unlock(&space_info->lock);
+--- a/fs/btrfs/transaction.c
++++ b/fs/btrfs/transaction.c
+@@ -2307,15 +2307,6 @@ int btrfs_commit_transaction(struct btrf
+ 
+ 	kmem_cache_free(btrfs_trans_handle_cachep, trans);
+ 
+-	/*
+-	 * If fs has been frozen, we can not handle delayed iputs, otherwise
+-	 * it'll result in deadlock about SB_FREEZE_FS.
+-	 */
+-	if (current != fs_info->transaction_kthread &&
+-	    current != fs_info->cleaner_kthread &&
+-	    !test_bit(BTRFS_FS_FROZEN, &fs_info->flags))
+-		btrfs_run_delayed_iputs(fs_info);
+-
+ 	return ret;
+ 
+ scrub_continue:
 
 
