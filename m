@@ -7,47 +7,50 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A2EFC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AC28C43610
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3C8F223C7
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22D94223D8
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pdVUdp1M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3C8F223C7
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NzlS04p1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22D94223D8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390676AbeKLIWa (ORCPT
+        id S2390692AbeKLIWc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:22:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52752 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:22:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390602AbeKLIW1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:27 -0500
+        id S2390666AbeKLIWb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:31 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 058DA216FD;
-        Sun, 11 Nov 2018 22:32:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 974842245E;
+        Sun, 11 Nov 2018 22:32:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975550;
-        bh=2cDvisvv1VGwbE2wLIcWn4H7923H5aFlB9pUeJrViXg=;
+        s=default; t=1541975553;
+        bh=HnB4iA+mtS2j/i+pMHRMn6Ln8siEqpV/j/Aq80X4yls=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pdVUdp1MLJTv+Y/1t2x+iSepneM9a/C2zTihMHvwjyqI/TgwPJVc9bWJaLjEk/4dc
-         ijbsCGrWke1kNveq3if8trGzFAPSS/ZJD0xNZnvACXWqmYBnS/jV8emaCIJGAo2/2G
-         gFkvT5vCr8JmRO0/6gwxTEKYOTr74rArmdiRS/3o=
+        b=NzlS04p17+PsmvZEBM05rDmz1O8VK5Jki5rLBgry0+uGcrLG+wj7r6zPWwkZGu10V
+         GfeaNZ5705hJ3fEZ2UwJonp0xrDin7QOlmSrij0vn20gNrH2bsKzky43G8cnTACsZK
+         gFrT2be7Gsvp1Qgk48ONoDHkgSho43kRrK3dZRd8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 089/222] PCI / ACPI: Enable wake automatically for power managed bridges
-Date:   Sun, 11 Nov 2018 14:23:06 -0800
-Message-Id: <20181111221655.948613554@linuxfoundation.org>
+        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 066/222] kprobes: Return error if we fail to reuse kprobe instead of BUG_ON()
+Date:   Sun, 11 Nov 2018 14:22:43 -0800
+Message-Id: <20181111221653.865026982@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -65,74 +68,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-[ Upstream commit 6299cf9ec3985cac70bede8a855b5087b81a6640 ]
+[ Upstream commit 819319fc93461c07b9cdb3064f154bd8cfd48172 ]
 
-We enable power management automatically for bridges where
-pci_bridge_d3_possible() returns true. However, these bridges may have
-ACPI methods such as _DSW that need to be called before D3 entry. For
-example in Lenovo Thinkpad X1 Carbon 6th _DSW method is used to prepare
-D3cold for the PCIe root port hosting Thunderbolt chain. Because wake is
-not enabled _DSW method is never called and the port does not enter
-D3cold properly consuming more power than necessary.
+Make reuse_unused_kprobe() to return error code if
+it fails to reuse unused kprobe for optprobe instead
+of calling BUG_ON().
 
-Users can work this around by writing "enabled" to "wakeup" sysfs file
-under the device in question but that is not something an ordinary user
-is expected to do.
-
-Since we already automatically enable power management for PCIe ports
-with ->bridge_d3 set extend that to enable wake for them as well,
-assuming the port has any ACPI wakeup related objects implemented in the
-namespace (adev->wakeup.flags.valid is true). This ensures the necessary
-ACPI methods get called at appropriate times and allows the root port in
-Thinkpad X1 Carbon 6th to go into D3cold.
-
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+Cc: David S . Miller <davem@davemloft.net>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Naveen N . Rao <naveen.n.rao@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/153666124040.21306.14150398706331307654.stgit@devbox
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pci/pci-acpi.c |   16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+ kernel/kprobes.c |   27 ++++++++++++++++++++-------
+ 1 file changed, 20 insertions(+), 7 deletions(-)
 
---- a/drivers/pci/pci-acpi.c
-+++ b/drivers/pci/pci-acpi.c
-@@ -738,19 +738,33 @@ static void pci_acpi_setup(struct device
- 		return;
- 
- 	device_set_wakeup_capable(dev, true);
-+	/*
-+	 * For bridges that can do D3 we enable wake automatically (as
-+	 * we do for the power management itself in that case). The
-+	 * reason is that the bridge may have additional methods such as
-+	 * _DSW that need to be called.
-+	 */
-+	if (pci_dev->bridge_d3)
-+		device_wakeup_enable(dev);
-+
- 	acpi_pci_wakeup(pci_dev, false);
+--- a/kernel/kprobes.c
++++ b/kernel/kprobes.c
+@@ -700,9 +700,10 @@ static void unoptimize_kprobe(struct kpr
  }
  
- static void pci_acpi_cleanup(struct device *dev)
+ /* Cancel unoptimizing for reusing */
+-static void reuse_unused_kprobe(struct kprobe *ap)
++static int reuse_unused_kprobe(struct kprobe *ap)
  {
- 	struct acpi_device *adev = ACPI_COMPANION(dev);
-+	struct pci_dev *pci_dev = to_pci_dev(dev);
+ 	struct optimized_kprobe *op;
++	int ret;
  
- 	if (!adev)
- 		return;
- 
- 	pci_acpi_remove_pm_notifier(adev);
--	if (adev->wakeup.flags.valid)
-+	if (adev->wakeup.flags.valid) {
-+		if (pci_dev->bridge_d3)
-+			device_wakeup_disable(dev);
+ 	BUG_ON(!kprobe_unused(ap));
+ 	/*
+@@ -716,8 +717,12 @@ static void reuse_unused_kprobe(struct k
+ 	/* Enable the probe again */
+ 	ap->flags &= ~KPROBE_FLAG_DISABLED;
+ 	/* Optimize it again (remove from op->list) */
+-	BUG_ON(!kprobe_optready(ap));
++	ret = kprobe_optready(ap);
++	if (ret)
++		return ret;
 +
- 		device_set_wakeup_capable(dev, false);
-+	}
+ 	optimize_kprobe(ap);
++	return 0;
  }
  
- static bool pci_acpi_bus_match(struct device *dev)
+ /* Remove optimized instructions */
+@@ -942,11 +947,16 @@ static void __disarm_kprobe(struct kprob
+ #define kprobe_disarmed(p)			kprobe_disabled(p)
+ #define wait_for_kprobe_optimizer()		do {} while (0)
+ 
+-/* There should be no unused kprobes can be reused without optimization */
+-static void reuse_unused_kprobe(struct kprobe *ap)
++static int reuse_unused_kprobe(struct kprobe *ap)
+ {
++	/*
++	 * If the optimized kprobe is NOT supported, the aggr kprobe is
++	 * released at the same time that the last aggregated kprobe is
++	 * unregistered.
++	 * Thus there should be no chance to reuse unused kprobe.
++	 */
+ 	printk(KERN_ERR "Error: There should be no unused kprobe here.\n");
+-	BUG_ON(kprobe_unused(ap));
++	return -EINVAL;
+ }
+ 
+ static void free_aggr_kprobe(struct kprobe *p)
+@@ -1320,9 +1330,12 @@ static int register_aggr_kprobe(struct k
+ 			goto out;
+ 		}
+ 		init_aggr_kprobe(ap, orig_p);
+-	} else if (kprobe_unused(ap))
++	} else if (kprobe_unused(ap)) {
+ 		/* This probe is going to die. Rescue it */
+-		reuse_unused_kprobe(ap);
++		ret = reuse_unused_kprobe(ap);
++		if (ret)
++			goto out;
++	}
+ 
+ 	if (kprobe_gone(ap)) {
+ 		/*
 
 
