@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89634C43610
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FFC5C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47392223CB
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1E1321780
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1nGSrI8r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47392223CB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SWorq885"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1E1321780
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387964AbeKLITm (ORCPT
+        id S2388010AbeKLITp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:19:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41488 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:19:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41820 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387843AbeKLITk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:19:40 -0500
+        id S2387967AbeKLITo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:19:44 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E3A722353;
-        Sun, 11 Nov 2018 22:29:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1800E2154B;
+        Sun, 11 Nov 2018 22:29:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975383;
-        bh=Qnt5Wm0BWKnuaFmcbdvhhRCt28gXk3Y4eHwo5wxttow=;
+        s=default; t=1541975387;
+        bh=vdGWIuFwHXcz0YIWGcP99/e6CVYAMeSkw/KlZne41NA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1nGSrI8raoEL/Id1zXrIyxiCuGTJgBIaMb33E/Fpb02Tvqy+ecQalTCaJmyuaCckL
-         Nyek8Xu79+L98cC+D1dfoV0MfhVrpCIjG/3EQvzt2AuZCnyO1jrNxzV1U4X8i+6LHi
-         YUi5Igqg01VGRqnmb6ip/Dbtb0VdDBGhYVIKqQzA=
+        b=SWorq885IS+FoNPA1wLH6UOt+/y7Gd9VSBGJbw/hB02zWeZoeP9JR3A8zfx01/6BI
+         4x9o3lz23zk5p7rxb7LSOjJbWHIGwPgJUCM3gxlGe/pmIiKd5RtqVaK9ylNCLQEvyo
+         uwmzxe52ec45NvjmPEeg1ChzSXFVH011384g1Tkc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Petlan <mpetlan@redhat.com>,
-        Jiri Olsa <jolsa@kernel.org>, Andi Kleen <ak@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
+        stable@vger.kernel.org, Waiman Long <longman@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 049/350] perf vendor events intel: Fix wrong filter_band* values for uncore events
-Date:   Sun, 11 Nov 2018 14:18:33 -0800
-Message-Id: <20181111221709.207666390@linuxfoundation.org>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.18 065/350] locking/lockdep: Fix debug_locks off performance problem
+Date:   Sun, 11 Nov 2018 14:18:49 -0800
+Message-Id: <20181111221709.867541314@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -68,213 +68,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jiri Olsa <jolsa@redhat.com>
+From: Waiman Long <longman@redhat.com>
 
-[ Upstream commit 94aafb74cee0002e2f2eb6dc5376f54d5951ab4d ]
+[ Upstream commit 9506a7425b094d2f1d9c877ed5a78f416669269b ]
 
-Michael reported that he could not stat following event:
+It was found that when debug_locks was turned off because of a problem
+found by the lockdep code, the system performance could drop quite
+significantly when the lock_stat code was also configured into the
+kernel. For instance, parallel kernel build time on a 4-socket x86-64
+server nearly doubled.
 
-  $ perf stat -e unc_p_freq_ge_1200mhz_cycles -a -- ls
-  event syntax error: '..e_1200mhz_cycles'
-                                    \___ value too big for format, maximum is 255
-  Run 'perf list' for a list of valid events
+Further analysis into the cause of the slowdown traced back to the
+frequent call to debug_locks_off() from the __lock_acquired() function
+probably due to some inconsistent lockdep states with debug_locks
+off. The debug_locks_off() function did an unconditional atomic xchg
+to write a 0 value into debug_locks which had already been set to 0.
+This led to severe cacheline contention in the cacheline that held
+debug_locks.  As debug_locks is being referenced in quite a few different
+places in the kernel, this greatly slow down the system performance.
 
-The event is unwrapped into:
+To prevent that trashing of debug_locks cacheline, lock_acquired()
+and lock_contended() now checks the state of debug_locks before
+proceeding. The debug_locks_off() function is also modified to check
+debug_locks before calling __debug_locks_off().
 
-  uncore_pcu/event=0xb,filter_band0=1200/
-
-where filter_band0 format says it's one byte only:
-
-  # cat uncore_pcu/format/filter_band0
-  config1:0-7
-
-while JSON files specifies bigger number:
-
-  "Filter": "filter_band0=1200",
-
-all the filter_band* formats show 1 byte width:
-
-  # cat uncore_pcu/format/filter_band1
-  config1:8-15
-  # cat uncore_pcu/format/filter_band2
-  config1:16-23
-  # cat uncore_pcu/format/filter_band3
-  config1:24-31
-
-The reason of the issue is that filter_band* values are supposed to be
-in 100Mhz units.. it's stated in the JSON help for the events, like:
-
-  filter_band3=XXX, with XXX in 100Mhz units
-
-This patch divides the filter_band* values by 100, plus there's couple
-of changes that actually change the number completely, like:
-
-  -        "Filter": "edge=1,filter_band2=4000",
-  +        "Filter": "edge=1,filter_band2=30",
-
-Reported-by: Michael Petlan <mpetlan@redhat.com>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Acked-by: Andi Kleen <ak@linux.intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
+Signed-off-by: Waiman Long <longman@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20181010080339.GB15790@krava
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Link: http://lkml.kernel.org/r/1539913518-15598-1-git-send-email-longman@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/pmu-events/arch/x86/ivytown/uncore-power.json  |   16 +++++++-------
- tools/perf/pmu-events/arch/x86/jaketown/uncore-power.json |   16 +++++++-------
- 2 files changed, 16 insertions(+), 16 deletions(-)
+ kernel/locking/lockdep.c |    4 ++--
+ lib/debug_locks.c        |    2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
---- a/tools/perf/pmu-events/arch/x86/ivytown/uncore-power.json
-+++ b/tools/perf/pmu-events/arch/x86/ivytown/uncore-power.json
-@@ -188,7 +188,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xb",
-         "EventName": "UNC_P_FREQ_GE_1200MHZ_CYCLES",
--        "Filter": "filter_band0=1200",
-+        "Filter": "filter_band0=12",
-         "MetricExpr": "(UNC_P_FREQ_GE_1200MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_1200mhz_cycles %",
-         "PerPkg": "1",
-@@ -199,7 +199,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xc",
-         "EventName": "UNC_P_FREQ_GE_2000MHZ_CYCLES",
--        "Filter": "filter_band1=2000",
-+        "Filter": "filter_band1=20",
-         "MetricExpr": "(UNC_P_FREQ_GE_2000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_2000mhz_cycles %",
-         "PerPkg": "1",
-@@ -210,7 +210,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xd",
-         "EventName": "UNC_P_FREQ_GE_3000MHZ_CYCLES",
--        "Filter": "filter_band2=3000",
-+        "Filter": "filter_band2=30",
-         "MetricExpr": "(UNC_P_FREQ_GE_3000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_3000mhz_cycles %",
-         "PerPkg": "1",
-@@ -221,7 +221,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xe",
-         "EventName": "UNC_P_FREQ_GE_4000MHZ_CYCLES",
--        "Filter": "filter_band3=4000",
-+        "Filter": "filter_band3=40",
-         "MetricExpr": "(UNC_P_FREQ_GE_4000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_4000mhz_cycles %",
-         "PerPkg": "1",
-@@ -232,7 +232,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xb",
-         "EventName": "UNC_P_FREQ_GE_1200MHZ_TRANSITIONS",
--        "Filter": "edge=1,filter_band0=1200",
-+        "Filter": "edge=1,filter_band0=12",
-         "MetricExpr": "(UNC_P_FREQ_GE_1200MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_1200mhz_cycles %",
-         "PerPkg": "1",
-@@ -243,7 +243,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xc",
-         "EventName": "UNC_P_FREQ_GE_2000MHZ_TRANSITIONS",
--        "Filter": "edge=1,filter_band1=2000",
-+        "Filter": "edge=1,filter_band1=20",
-         "MetricExpr": "(UNC_P_FREQ_GE_2000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_2000mhz_cycles %",
-         "PerPkg": "1",
-@@ -254,7 +254,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xd",
-         "EventName": "UNC_P_FREQ_GE_3000MHZ_TRANSITIONS",
--        "Filter": "edge=1,filter_band2=4000",
-+        "Filter": "edge=1,filter_band2=30",
-         "MetricExpr": "(UNC_P_FREQ_GE_3000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_3000mhz_cycles %",
-         "PerPkg": "1",
-@@ -265,7 +265,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xe",
-         "EventName": "UNC_P_FREQ_GE_4000MHZ_TRANSITIONS",
--        "Filter": "edge=1,filter_band3=4000",
-+        "Filter": "edge=1,filter_band3=40",
-         "MetricExpr": "(UNC_P_FREQ_GE_4000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_4000mhz_cycles %",
-         "PerPkg": "1",
---- a/tools/perf/pmu-events/arch/x86/jaketown/uncore-power.json
-+++ b/tools/perf/pmu-events/arch/x86/jaketown/uncore-power.json
-@@ -187,7 +187,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xb",
-         "EventName": "UNC_P_FREQ_GE_1200MHZ_CYCLES",
--        "Filter": "filter_band0=1200",
-+        "Filter": "filter_band0=12",
-         "MetricExpr": "(UNC_P_FREQ_GE_1200MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_1200mhz_cycles %",
-         "PerPkg": "1",
-@@ -198,7 +198,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xc",
-         "EventName": "UNC_P_FREQ_GE_2000MHZ_CYCLES",
--        "Filter": "filter_band1=2000",
-+        "Filter": "filter_band1=20",
-         "MetricExpr": "(UNC_P_FREQ_GE_2000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_2000mhz_cycles %",
-         "PerPkg": "1",
-@@ -209,7 +209,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xd",
-         "EventName": "UNC_P_FREQ_GE_3000MHZ_CYCLES",
--        "Filter": "filter_band2=3000",
-+        "Filter": "filter_band2=30",
-         "MetricExpr": "(UNC_P_FREQ_GE_3000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_3000mhz_cycles %",
-         "PerPkg": "1",
-@@ -220,7 +220,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xe",
-         "EventName": "UNC_P_FREQ_GE_4000MHZ_CYCLES",
--        "Filter": "filter_band3=4000",
-+        "Filter": "filter_band3=40",
-         "MetricExpr": "(UNC_P_FREQ_GE_4000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_4000mhz_cycles %",
-         "PerPkg": "1",
-@@ -231,7 +231,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xb",
-         "EventName": "UNC_P_FREQ_GE_1200MHZ_TRANSITIONS",
--        "Filter": "edge=1,filter_band0=1200",
-+        "Filter": "edge=1,filter_band0=12",
-         "MetricExpr": "(UNC_P_FREQ_GE_1200MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_1200mhz_cycles %",
-         "PerPkg": "1",
-@@ -242,7 +242,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xc",
-         "EventName": "UNC_P_FREQ_GE_2000MHZ_TRANSITIONS",
--        "Filter": "edge=1,filter_band1=2000",
-+        "Filter": "edge=1,filter_band1=20",
-         "MetricExpr": "(UNC_P_FREQ_GE_2000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_2000mhz_cycles %",
-         "PerPkg": "1",
-@@ -253,7 +253,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xd",
-         "EventName": "UNC_P_FREQ_GE_3000MHZ_TRANSITIONS",
--        "Filter": "edge=1,filter_band2=4000",
-+        "Filter": "edge=1,filter_band2=30",
-         "MetricExpr": "(UNC_P_FREQ_GE_3000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_3000mhz_cycles %",
-         "PerPkg": "1",
-@@ -264,7 +264,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xe",
-         "EventName": "UNC_P_FREQ_GE_4000MHZ_TRANSITIONS",
--        "Filter": "edge=1,filter_band3=4000",
-+        "Filter": "edge=1,filter_band3=40",
-         "MetricExpr": "(UNC_P_FREQ_GE_4000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_4000mhz_cycles %",
-         "PerPkg": "1",
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -4148,7 +4148,7 @@ void lock_contended(struct lockdep_map *
+ {
+ 	unsigned long flags;
+ 
+-	if (unlikely(!lock_stat))
++	if (unlikely(!lock_stat || !debug_locks))
+ 		return;
+ 
+ 	if (unlikely(current->lockdep_recursion))
+@@ -4168,7 +4168,7 @@ void lock_acquired(struct lockdep_map *l
+ {
+ 	unsigned long flags;
+ 
+-	if (unlikely(!lock_stat))
++	if (unlikely(!lock_stat || !debug_locks))
+ 		return;
+ 
+ 	if (unlikely(current->lockdep_recursion))
+--- a/lib/debug_locks.c
++++ b/lib/debug_locks.c
+@@ -37,7 +37,7 @@ EXPORT_SYMBOL_GPL(debug_locks_silent);
+  */
+ int debug_locks_off(void)
+ {
+-	if (__debug_locks_off()) {
++	if (debug_locks && __debug_locks_off()) {
+ 		if (!debug_locks_silent) {
+ 			console_verbose();
+ 			return 1;
 
 
