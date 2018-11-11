@@ -2,329 +2,157 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 978C3C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 10:19:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7932C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 10:19:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DA7920866
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 10:19:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="by+3WWcA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DA7920866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6DD9D208A3
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 10:19:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DD9D208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727630AbeKKUHb (ORCPT
+        id S1727771AbeKKUH7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 15:07:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48112 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727386AbeKKUHb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 15:07:31 -0500
-Received: from localhost (unknown [171.76.98.79])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6248B20854;
-        Sun, 11 Nov 2018 10:19:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541931561;
-        bh=xanH/3xb73yfGEAKKPh9m0yuJTyqDG0bHFkgUMG3QRI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=by+3WWcAYLfdFXPAF/nPWkFqEHX7UaAplmYx2oI2xiYYomzkP6dXad54BDIIWpmZo
-         AwzXUofvgQQcH5jfQ/DX/O4Hp/db0es1WgzxaTpc6Bk6KkWDBMACA1E+WkqtH506WH
-         Qp951w73BbiyNVD1RtPYV+mzuT6aJukHgBid9zUU=
-Date:   Sun, 11 Nov 2018 15:49:11 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     shun-chih.yu@mediatek.com
-Cc:     Sean Wang <sean.wang@mediatek.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sun, 11 Nov 2018 15:07:59 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:43890 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727344AbeKKUH7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Nov 2018 15:07:59 -0500
+Received: by mail-lf1-f65.google.com with SMTP id u18so4182091lff.10
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 02:19:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:reply-to:subject:to:cc:references:from:openpgp
+         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=vhIeG+rB5J2ElgCYfXhu54eGsJAqyihA7hO57wOFfZ8=;
+        b=I1ERa9hrWwQtVxfxWVR9KHbnI655lDJBxGSb+6HidLKayn8lyiaMcWtne2Zb+LvS2o
+         waUBmdCizUaGtkWRd82ik1Ur4Pnvi8eyDYgBBxF3GqQKAZvMGwT22A+/mQB8vEY3broJ
+         f69hR3VEDq+fGKq/eDulzfifcbygDB5q1q1JMU1XFnVavbw2Raq//RV4yTAJLaZQgBSM
+         kUX6wNb1o1dbeySCXCwUvl6SnNbcG+V5RFwtge11GMnAtZMnoR3DbZp959lsv5AnJJVx
+         3hHBZoN4k9Co1HVCvdfbkzgkVAF6GVnMpye645mqdbAl15zk2M0cLpMF9ayTpaQk+T8K
+         NTOQ==
+X-Gm-Message-State: AGRZ1gLua9gs76DXkYGpIx4Bf5prpvn9xbv0AGMjIxurhh+K4OYjZQVR
+        QDM/nExrinnoz0CI9qgRQXwfEeUP
+X-Google-Smtp-Source: AJdET5cbAtSoPuOWNsrXVCZCPgqfC93RxQrDFRDLP0ExEnQvPpmtbo8z2VQTOsXuUvSRRb86Ofsvlw==
+X-Received: by 2002:a19:d445:: with SMTP id l66mr9469415lfg.26.1541931587870;
+        Sun, 11 Nov 2018 02:19:47 -0800 (PST)
+Received: from [192.168.1.183] (128-68-186-150.broadband.corbina.ru. [128.68.186.150])
+        by smtp.gmail.com with ESMTPSA id o5-v6sm2429841ljh.75.2018.11.11.02.19.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 11 Nov 2018 02:19:47 -0800 (PST)
+Reply-To: alex.popov@linux.com
+Subject: Re: [PATCH 1/1] stackleak: Disable ftrace for stackleak.c
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     kernel-hardening@lists.openwall.com,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Ingo Molnar <mingo@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Joerg Roedel <joro@8bytes.org>, Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Jan Kara <jack@suse.cz>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
         Dan Williams <dan.j.williams@intel.com>,
-        dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, srv_wsdupstream@mediatek.com
-Subject: Re: [PATCH 2/2] dmaengine: mediatek: Add MediaTek Command-Queue DMA
- controller for MT6765 SoC
-Message-ID: <20181111101911.GF12092@vkoul-mobl>
-References: <1539848951-14798-1-git-send-email-shun-chih.yu@mediatek.com>
- <1539848951-14798-3-git-send-email-shun-chih.yu@mediatek.com>
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1541887530-16610-1-git-send-email-alex.popov@linux.com>
+ <20181110183011.2290fc20@gandalf.local.home>
+From:   Alexander Popov <alex.popov@linux.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=alex.popov@linux.com; prefer-encrypt=mutual; keydata=
+ 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
+ jXz/74kjFsyRgZA+d6a1pGtOwITEBxtxxg==
+Message-ID: <eeb7f5ee-1e2e-d37b-cca2-e0a29826e8eb@linux.com>
+Date:   Sun, 11 Nov 2018 13:19:45 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1539848951-14798-3-git-send-email-shun-chih.yu@mediatek.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20181110183011.2290fc20@gandalf.local.home>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18-10-18, 15:49, shun-chih.yu@mediatek.com wrote:
-> From: Shun-Chih Yu <shun-chih.yu@mediatek.com>
+On 11.11.2018 2:30, Steven Rostedt wrote:
+> On Sun, 11 Nov 2018 01:05:30 +0300
+> Alexander Popov <alex.popov@linux.com> wrote:
 > 
-> MediaTek Command-Queue DMA controller (CQDMA) on MT6765 SoC is dedicated
-> to memory-to-memory transfer through queue based descriptor management.
+>> The stackleak_erase() function is called on the trampoline stack at the
+>> end of syscall. This stack is not big enough for ftrace operations,
+>> e.g. it can be overflowed if we enable kprobe_events for stackleak_erase().
 > 
-> There are only 3 physical channels inside CQDMA, while the driver is
-> extended to support 32 virtual channels for multiple dma users to issue
-> dma requests onto the CQDMA simultaneously.
+> Is the issue with kprobes or with function tracing? Because this stops
+> function tracing which I only want disabled if function tracing itself
+> is an issue, not for other things that may use the function tracing
+> infrastructure.
 
-I see some warns in the driver when I compile with C=1 please do fix
-those in next rev
+Hello Steven,
 
-> +struct mtk_cqdma_vdesc {
-> +	struct virt_dma_desc vd;
-> +	size_t len;
-> +	size_t residue;
+I believe that stackleak erasing is not compatible with function tracing itself.
+That's what the kernel testing robot has hit:
+https://www.openwall.com/lists/kernel-hardening/2018/11/09/1
 
-why should you store residue in descriptor, it will get stale very soon!
+I used kprobe_events just to reproduce the problem:
+https://www.openwall.com/lists/kernel-hardening/2018/11/09/4
 
-> +	dma_addr_t dest;
-> +	dma_addr_t src;
-> +	struct dma_chan *ch;
-> +
-> +	struct list_head node;
-
-why do you need your own list, vd has a list for descriptors!
-
-> +struct mtk_cqdma_pchan {
-> +	struct list_head queue;
-> +	void __iomem *base;
-> +	u32 irq;
-> +
-> +	refcount_t refcnt;
-
-Can you submit more than one descriptor at any point of time?
-
-> +struct mtk_cqdma_vchan {
-> +	struct virt_dma_chan vc;
-> +	struct mtk_cqdma_pchan *pc;
-> +	struct completion issue_completion;
-> +	bool issue_synchronize;
-
-what lock protects this?
-
-> +static void mtk_cqdma_start(struct mtk_cqdma_pchan *pc,
-> +			    struct mtk_cqdma_vdesc *cvd)
-> +{
-> +	/* wait for the previous transaction done */
-> +	if (mtk_cqdma_poll_engine_done(pc, true) < 0)
-> +		dev_err(cqdma2dev(to_cqdma_dev(cvd->ch)), "cqdma wait transaction timeout\n");
-
-Please split this to 2 lines to adhere to 80 chars limit
-
-Also no bailout of error?
-
-> +static struct mtk_cqdma_vdesc
-> +*mtk_cqdma_consume_work_queue(struct mtk_cqdma_pchan *pc)
-> +{
-> +	struct mtk_cqdma_vchan *cvc;
-> +	struct mtk_cqdma_vdesc *cvd, *ret = NULL;
-
-ret initialization seems superfluous
-
-> +static void mtk_cqdma_tasklet_cb(unsigned long data)
-> +{
-> +	struct mtk_cqdma_pchan *pc = (struct mtk_cqdma_pchan *)data;
-> +	struct mtk_cqdma_vdesc *cvd = NULL;
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&pc->lock, flags);
-> +	/* consume the queue */
-> +	cvd = mtk_cqdma_consume_work_queue(pc);
-
-why not do this from ISR, DMA should be submitted as fast as possible!
-
-> +static int mtk_cqdma_alloc_chan_resources(struct dma_chan *c)
-> +{
-> +	struct mtk_cqdma_device *cqdma = to_cqdma_dev(c);
-> +	struct mtk_cqdma_vchan *vc = to_cqdma_vchan(c);
-> +	struct mtk_cqdma_pchan *pc = NULL;
-> +	u32 i, min_refcnt = U32_MAX, refcnt;
-> +	unsigned long flags;
-> +
-> +	/* allocate PC with the minimun refcount */
-                                ^^^^^^^
-typo 
-
-> +static int mtk_cqdma_probe(struct platform_device *pdev)
-> +{
-> +	struct mtk_cqdma_device *cqdma;
-> +	struct mtk_cqdma_vchan *vc;
-> +	struct dma_device *dd;
-> +	struct resource *res;
-> +	int err;
-> +	u32 i;
-> +
-> +	cqdma = devm_kzalloc(&pdev->dev, sizeof(*cqdma), GFP_KERNEL);
-> +	if (!cqdma)
-> +		return -ENOMEM;
-> +
-> +	dd = &cqdma->ddev;
-> +
-> +	cqdma->clk = devm_clk_get(&pdev->dev, "cqdma");
-> +	if (IS_ERR(cqdma->clk)) {
-> +		dev_err(&pdev->dev, "No clock for %s\n",
-> +			dev_name(&pdev->dev));
-> +		return PTR_ERR(cqdma->clk);
-> +	}
-> +
-> +	dma_cap_set(DMA_MEMCPY, dd->cap_mask);
-> +
-> +	dd->copy_align = MTK_CQDMA_ALIGN_SIZE;
-> +	dd->device_alloc_chan_resources = mtk_cqdma_alloc_chan_resources;
-> +	dd->device_free_chan_resources = mtk_cqdma_free_chan_resources;
-> +	dd->device_tx_status = mtk_cqdma_tx_status;
-> +	dd->device_issue_pending = mtk_cqdma_issue_pending;
-> +	dd->device_prep_dma_memcpy = mtk_cqdma_prep_dma_memcpy;
-> +	dd->device_terminate_all = mtk_cqdma_terminate_all;
-> +	dd->src_addr_widths = MTK_CQDMA_DMA_BUSWIDTHS;
-> +	dd->dst_addr_widths = MTK_CQDMA_DMA_BUSWIDTHS;
-> +	dd->directions = BIT(DMA_MEM_TO_MEM);
-> +	dd->residue_granularity = DMA_RESIDUE_GRANULARITY_SEGMENT;
-> +	dd->dev = &pdev->dev;
-> +	INIT_LIST_HEAD(&dd->channels);
-> +
-> +	if (pdev->dev.of_node && of_property_read_u32(pdev->dev.of_node,
-> +						      "dma-requests",
-> +						      &cqdma->dma_requests)) {
-> +		dev_info(&pdev->dev,
-> +			 "Using %u as missing dma-requests property\n",
-> +			 MTK_CQDMA_NR_VCHANS);
-> +
-> +		cqdma->dma_requests = MTK_CQDMA_NR_VCHANS;
-> +	}
-> +
-> +	if (pdev->dev.of_node && of_property_read_u32(pdev->dev.of_node,
-> +						      "dma-channels",
-> +						      &cqdma->dma_channels)) {
-> +		dev_info(&pdev->dev,
-> +			 "Using %u as missing dma-channels property\n",
-> +			 MTK_CQDMA_NR_PCHANS);
-> +
-> +		cqdma->dma_channels = MTK_CQDMA_NR_PCHANS;
-> +	}
-> +
-> +	cqdma->pc = devm_kcalloc(&pdev->dev, cqdma->dma_channels,
-> +				 sizeof(*cqdma->pc), GFP_KERNEL);
-> +	if (!cqdma->pc)
-> +		return -ENOMEM;
-> +
-> +	/* initialization for PCs */
-> +	for (i = 0; i < cqdma->dma_channels; ++i) {
-> +		cqdma->pc[i] = devm_kcalloc(&pdev->dev, 1,
-> +					    sizeof(**cqdma->pc), GFP_KERNEL);
-> +		if (!cqdma->pc[i])
-> +			return -ENOMEM;
-> +
-> +		INIT_LIST_HEAD(&cqdma->pc[i]->queue);
-> +		spin_lock_init(&cqdma->pc[i]->lock);
-> +		refcount_set(&cqdma->pc[i]->refcnt, 0);
-> +
-> +		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
-> +		if (!res) {
-> +			dev_err(&pdev->dev, "No mem resource for %s\n",
-> +				dev_name(&pdev->dev));
-> +			return -EINVAL;
-> +		}
-> +
-> +		cqdma->pc[i]->base = devm_ioremap_resource(&pdev->dev, res);
-> +		if (IS_ERR(cqdma->pc[i]->base))
-> +			return PTR_ERR(cqdma->pc[i]->base);
-> +
-> +		/* allocate IRQ resource */
-> +		res = platform_get_resource(pdev, IORESOURCE_IRQ, i);
-> +		if (!res) {
-> +			dev_err(&pdev->dev, "No irq resource for %s\n",
-> +				dev_name(&pdev->dev));
-> +			return -EINVAL;
-> +		}
-> +		cqdma->pc[i]->irq = res->start;
-> +
-> +		err = devm_request_irq(&pdev->dev, cqdma->pc[i]->irq,
-> +				       mtk_cqdma_irq, 0, dev_name(&pdev->dev),
-> +				       cqdma);
-> +		if (err) {
-> +			dev_err(&pdev->dev,
-> +				"request_irq failed with err %d\n", err);
-> +			return -EINVAL;
-> +		}
-> +	}
-> +
-> +	/* allocate resource for VCs */
-> +	cqdma->vc = devm_kcalloc(&pdev->dev, cqdma->dma_requests,
-> +				 sizeof(*cqdma->vc), GFP_KERNEL);
-> +	if (!cqdma->vc)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < cqdma->dma_requests; i++) {
-> +		vc = &cqdma->vc[i];
-> +		vc->vc.desc_free = mtk_cqdma_vdesc_free;
-> +		vchan_init(&vc->vc, dd);
-> +		init_completion(&vc->issue_completion);
-> +	}
-> +
-> +	err = dma_async_device_register(dd);
-> +	if (err)
-> +		return err;
-> +
-> +	err = of_dma_controller_register(pdev->dev.of_node,
-> +					 of_dma_xlate_by_chan_id, cqdma);
-> +	if (err) {
-> +		dev_err(&pdev->dev,
-> +			"MediaTek CQDMA OF registration failed %d\n", err);
-> +		goto err_unregister;
-> +	}
-> +
-> +	err = mtk_cqdma_hw_init(cqdma);
-> +	if (err) {
-> +		dev_err(&pdev->dev,
-> +			"MediaTek CQDMA HW initialization failed %d\n", err);
-> +		goto err_unregister;
-> +	}
-> +
-> +	platform_set_drvdata(pdev, cqdma);
-> +
-> +	/* initialize tasklet for each PC */
-> +	for (i = 0; i < cqdma->dma_channels; ++i)
-> +		tasklet_init(&cqdma->pc[i]->tasklet, mtk_cqdma_tasklet_cb,
-> +			     (unsigned long)cqdma->pc[i]);
-> +
-> +	dev_info(&pdev->dev, "MediaTek CQDMA driver registered\n");
-
-debug log please
-
-> +static int mtk_cqdma_remove(struct platform_device *pdev)
-> +{
-> +	struct mtk_cqdma_device *cqdma = platform_get_drvdata(pdev);
-> +	struct mtk_cqdma_vchan *vc;
-> +	unsigned long flags;
-> +	int i;
-> +
-> +	/* kill VC task */
-> +	for (i = 0; i < cqdma->dma_requests; i++) {
-> +		vc = &cqdma->vc[i];
-> +
-> +		list_del(&vc->vc.chan.device_node);
-> +		tasklet_kill(&vc->vc.task);
-> +	}
-> +
-> +	/* disable interrupt */
-> +	for (i = 0; i < cqdma->dma_channels; i++) {
-> +		spin_lock_irqsave(&cqdma->pc[i]->lock, flags);
-> +		mtk_dma_clr(cqdma->pc[i], MTK_CQDMA_INT_EN,
-> +			    MTK_CQDMA_INT_EN_BIT);
-> +		spin_unlock_irqrestore(&cqdma->pc[i]->lock, flags);
-> +
-> +		/* Waits for any pending IRQ handlers to complete */
-> +		synchronize_irq(cqdma->pc[i]->irq);
-> +
-> +		tasklet_kill(&cqdma->pc[i]->tasklet);
-> +	}
-
-please kill VC tasks after this, they can still be fired while you are
-disabling interrupt, so interrupt first and then tasklets
--- 
-~Vinod
+Best regards,
+Alexander
