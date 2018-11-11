@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C095C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:50:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BA15C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:51:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBE9420871
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:50:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8BDD20872
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:50:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="c3Wlennt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBE9420871
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yhqi11tY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8BDD20872
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733212AbeKLJlM (ORCPT
+        id S1733132AbeKLJlM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 12 Nov 2018 04:41:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37584 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:38130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732919AbeKLISe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1732918AbeKLISe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:18:34 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C1089215EA;
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C4C2223AE;
         Sun, 11 Nov 2018 22:28:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975318;
-        bh=genZTSXQYFMbUeKEyBIJISKdIrL4rnxp3OxXsOtbyHg=;
+        bh=KeildM0kEgZ7B9i7QCvDBBQuJU/0E5QYWJeRTPd8RKE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c3Wlenntmb6mGmH6VG+J3xEU8zOosrNjBGEhOdFdOnLsATdgCIAoeChUmKyAa14Ic
-         KMgb7muvbCxjf94CPiC78IjKi0o/UySVXeLgBEdPfJXUhVr/2HKQhoZiMnsl/jXUly
-         0xpQGWYxfZPHRD/so3xz9U4vNLabSxfHSQEJRhs0=
+        b=Yhqi11tYArVbN7Sjxy0MXf7WfGt4XhfVW75FqkE/oQpWGY1XVb5WUt11nyG8OwXuq
+         /2HibBUs+Xab4PEqP0LyUGpnWAE/3L3a+npZVtsdc7qt1lZMRf5/T0fxztzw1foLe7
+         9D3NEGHw3LdMpjiS3nBdwZgnjyCowo09C0R3aMug=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.19 311/361] media: adv7842: when the EDID is cleared, unconfigure CEC as well
-Date:   Sun, 11 Nov 2018 14:20:58 -0800
-Message-Id: <20181111221658.294183683@linuxfoundation.org>
+        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org
+Subject: [PATCH 4.19 284/361] MIPS: OCTEON: fix out of bounds array access on CN68XX
+Date:   Sun, 11 Nov 2018 14:20:31 -0800
+Message-Id: <20181111221656.139132239@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -62,35 +63,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hans Verkuil <hans.verkuil@cisco.com>
+From: Aaro Koskinen <aaro.koskinen@iki.fi>
 
-commit ab83203e181015b099720aff43ffabc1812e0fb3 upstream.
+commit c0fae7e2452b90c31edd2d25eb3baf0c76b400ca upstream.
 
-When there is no EDID the CEC adapter should be unconfigured as
-well. So call cec_phys_addr_invalidate() when this happens.
+The maximum number of interfaces is returned by
+cvmx_helper_get_number_of_interfaces(), and the value is used to access
+interface_port_count[]. When CN68XX support was added, we forgot
+to increase the array size. Fix that.
 
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Cc: <stable@vger.kernel.org>      # for v4.18 and up
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: 2c8c3f0201333 ("MIPS: Octeon: Support additional interfaces on CN68XX")
+Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/20949/
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Cc: linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org # v4.3+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/i2c/adv7842.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/mips/cavium-octeon/executive/cvmx-helper.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/media/i2c/adv7842.c
-+++ b/drivers/media/i2c/adv7842.c
-@@ -786,8 +786,10 @@ static int edid_write_hdmi_segment(struc
- 	/* Disable I2C access to internal EDID ram from HDMI DDC ports */
- 	rep_write_and_or(sd, 0x77, 0xf3, 0x00);
+--- a/arch/mips/cavium-octeon/executive/cvmx-helper.c
++++ b/arch/mips/cavium-octeon/executive/cvmx-helper.c
+@@ -67,7 +67,7 @@ void (*cvmx_override_pko_queue_priority)
+ void (*cvmx_override_ipd_port_setup) (int ipd_port);
  
--	if (!state->hdmi_edid.present)
-+	if (!state->hdmi_edid.present) {
-+		cec_phys_addr_invalidate(state->cec_adap);
- 		return 0;
-+	}
+ /* Port count per interface */
+-static int interface_port_count[5];
++static int interface_port_count[9];
  
- 	pa = cec_get_edid_phys_addr(edid, 256, &spa_loc);
- 	err = cec_phys_addr_validate(pa, &pa, NULL);
+ /**
+  * Return the number of interfaces the chip has. Each interface
 
 
