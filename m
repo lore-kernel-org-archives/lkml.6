@@ -7,47 +7,49 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86436C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:37:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30DB5C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:37:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4956920818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:37:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3D9020818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:37:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HbIqzh8b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4956920818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rf7GAQpS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3D9020818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388449AbeKLJ1Q (ORCPT
+        id S2388549AbeKLJ13 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:27:16 -0500
+        Mon, 12 Nov 2018 04:27:29 -0500
 Received: from mail.kernel.org ([198.145.29.99]:41934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388198AbeKLIT6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:19:58 -0500
+        id S2388167AbeKLITz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:19:55 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 993C621582;
-        Sun, 11 Nov 2018 22:30:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DCF26223D0;
+        Sun, 11 Nov 2018 22:29:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975401;
-        bh=7HrP8tcR0Y8S/ZYuWvZLiu8k5vY9WgvXBqONwmyIz4I=;
+        s=default; t=1541975398;
+        bh=stqA4lZtUDvNdDoJgj2g+NQSO1l9dJfxUP+Zr2g5SgY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HbIqzh8bph8vRjUkKMWmViuszT6uFT6KVaOU3kKf6ZVhBgJ9Z3tTm/IhdzoS3V58s
-         /ewJ4aNvCCixxaqfftTucxSyXRKt6Vp376FKMeulfjaxBb+cbcUQr/HxQg9biK5OL0
-         E/Oo69rFD7EimClREoLmoxkAacfsuf5xXK5gmjT0=
+        b=Rf7GAQpSnJZetp4gNpCQjhiYqBhYOkBQ6X63ip2TEtbkmOd+3vAn3CPtODXDfp65M
+         tprWSFy7cINQkYFGuMQt7psgOK4zcOh33453KPA2CHhtZ311N+qFqPCEiflWNVSLaQ
+         NdHTaY8+On8LjEV+0aRK7TqJPfaG7tmqRA3cN7LI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jacob Keller <jacob.e.keller@intel.com>,
-        Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Hadrien Grasland <grasland@lal.in2p3.fr>,
+        Milian Wolff <milian.wolff@kdab.com>,
+        Jin Yao <yao.jin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 099/350] ice: update fw version check logic
-Date:   Sun, 11 Nov 2018 14:19:23 -0800
-Message-Id: <20181111221711.243179003@linuxfoundation.org>
+Subject: [PATCH 4.18 057/350] perf report: Dont crash on invalid inline debug information
+Date:   Sun, 11 Nov 2018 14:18:41 -0800
+Message-Id: <20181111221709.546928968@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -65,115 +67,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jacob Keller <jacob.e.keller@intel.com>
+From: Milian Wolff <milian.wolff@kdab.com>
 
-[ Upstream commit 396fbf9cab5dc07f8f87773062a8d35f54b40a05 ]
+[ Upstream commit d4046e8e17b9f378cb861982ef71c63911b5dff3 ]
 
-We have MAX_FW_API_VER_BRANCH, MAX_FW_API_VER_MAJOR, and
-MAX_FW_API_VER_MINOR that we use in ice_controlq.h to test when a
-firmware version is newer than expected. This is currently tested by
-comparing each field separately. Thus, we compare the branch field
-against the MAX_FW_API_VER_BRANCH, and so forth.
+When the function name for an inline frame is invalid, we must not try
+to demangle this symbol, otherwise we crash with:
 
-This means that currently, if we suppose that the max firmware version
-is defined as 0.2.1, i.e.
+  #0  0x0000555555895c01 in bfd_demangle ()
+  #1  0x0000555555823262 in demangle_sym (dso=0x555555d92b90, elf_name=0x0, kmodule=0) at util/symbol-elf.c:215
+  #2  dso__demangle_sym (dso=dso@entry=0x555555d92b90, kmodule=<optimized out>, kmodule@entry=0, elf_name=elf_name@entry=0x0) at util/symbol-elf.c:400
+  #3  0x00005555557fef4b in new_inline_sym (funcname=0x0, base_sym=0x555555d92b90, dso=0x555555d92b90) at util/srcline.c:89
+  #4  inline_list__append_dso_a2l (dso=dso@entry=0x555555c7bb00, node=node@entry=0x555555e31810, sym=sym@entry=0x555555d92b90) at util/srcline.c:264
+  #5  0x00005555557ff27f in addr2line (dso_name=dso_name@entry=0x555555d92430 "/home/milian/.debug/.build-id/f7/186d14bb94f3c6161c010926da66033d24fce5/elf", addr=addr@entry=2888, file=file@entry=0x0,
+      line=line@entry=0x0, dso=dso@entry=0x555555c7bb00, unwind_inlines=unwind_inlines@entry=true, node=0x555555e31810, sym=0x555555d92b90) at util/srcline.c:313
+  #6  0x00005555557ffe7c in addr2inlines (sym=0x555555d92b90, dso=0x555555c7bb00, addr=2888, dso_name=0x555555d92430 "/home/milian/.debug/.build-id/f7/186d14bb94f3c6161c010926da66033d24fce5/elf")
+      at util/srcline.c:358
 
-Then firmware 0.1.3 will fail to load. This is because the minor version
-3 is greater than the max minor version 1.
+So instead handle the case where we get invalid function names for
+inlined frames and use a fallback '??' function name instead.
 
-This is not intuitive, because of the notion that increasing the major
-firmware version to 2 should mean any firmware version with a major
-version is less than 2 should be considered older than 2...
+While this crash was originally reported by Hadrien for rust code, I can
+now also reproduce it with trivial C++ code. Indeed, it seems like
+libbfd fails to interpret the debug information for the inline frame
+symbol name:
 
-In order to allow both 0.2.1 and 0.1.3 to load, you would have to define
-the "max" firmware version as 0.2.3.. It is possible that such
-a firmware version doesn't even exist yet!
+  $ addr2line -e /home/milian/.debug/.build-id/f7/186d14bb94f3c6161c010926da66033d24fce5/elf -if b48
+  main
+  /usr/include/c++/8.2.1/complex:610
+  ??
+  /usr/include/c++/8.2.1/complex:618
+  ??
+  /usr/include/c++/8.2.1/complex:675
+  ??
+  /usr/include/c++/8.2.1/complex:685
+  main
+  /home/milian/projects/kdab/rnd/hotspot/tests/test-clients/cpp-inlining/main.cpp:39
 
-Fix this by replacing the current logic with an updated check that
-behaves as follows:
+I've reported this bug upstream and also attached a patch there which
+should fix this issue:
 
-First, we check the major version. If it is greater than the expected
-version, then we prevent driver load. Additionally, a warning message is
-logged to indicate to the system administrator that they need to update
-their driver. This is now the only case where the driver will refuse to
-load.
+https://sourceware.org/bugzilla/show_bug.cgi?id=23715
 
-Second, if the major version is less than the expected version, we log
-an information message indicating the NVM should be updated.
-
-Third, if the major version is exact, we'll then check the minor
-version. If the minor version is more than two versions less than
-expected, we log an information message indicating the NVM should be
-updated. If it is more than two versions greater than the expected
-version, we log an information message that the driver should be
-updated.
-
-To support this, the ice_aq_ver_check function needs its signature
-updated to pass the HW structure. Since we now pass this structure,
-there is no need to pass the firmware API versions separately.
-
-Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
-Signed-off-by: Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Reported-by: Hadrien Grasland <grasland@lal.in2p3.fr>
+Signed-off-by: Milian Wolff <milian.wolff@kdab.com>
+Cc: Jin Yao <yao.jin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Fixes: a64489c56c30 ("perf report: Find the inline stack for a given address")
+[ The above 'Fixes:' cset is where originally the problem was
+  introduced, i.e.  using a2l->funcname without checking if it is NULL,
+  but this current patch fixes the current codebase, i.e. multiple csets
+  were applied after a64489c56c30 before the problem was reported by Hadrien ]
+Link: http://lkml.kernel.org/r/20180926135207.30263-3-milian.wolff@kdab.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/intel/ice/ice_controlq.c |   30 ++++++++++++++++----------
- 1 file changed, 19 insertions(+), 11 deletions(-)
+ tools/perf/util/srcline.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/net/ethernet/intel/ice/ice_controlq.c
-+++ b/drivers/net/ethernet/intel/ice/ice_controlq.c
-@@ -518,22 +518,31 @@ shutdown_sq_out:
+--- a/tools/perf/util/srcline.c
++++ b/tools/perf/util/srcline.c
+@@ -85,6 +85,9 @@ static struct symbol *new_inline_sym(str
+ 	struct symbol *inline_sym;
+ 	char *demangled = NULL;
  
- /**
-  * ice_aq_ver_check - Check the reported AQ API version.
-- * @fw_branch: The "branch" of FW, typically describes the device type
-- * @fw_major: The major version of the FW API
-- * @fw_minor: The minor version increment of the FW API
-+ * @hw: pointer to the hardware structure
-  *
-  * Checks if the driver should load on a given AQ API version.
-  *
-  * Return: 'true' iff the driver should attempt to load. 'false' otherwise.
-  */
--static bool ice_aq_ver_check(u8 fw_branch, u8 fw_major, u8 fw_minor)
-+static bool ice_aq_ver_check(struct ice_hw *hw)
- {
--	if (fw_branch != EXP_FW_API_VER_BRANCH)
--		return false;
--	if (fw_major != EXP_FW_API_VER_MAJOR)
--		return false;
--	if (fw_minor != EXP_FW_API_VER_MINOR)
-+	if (hw->api_maj_ver > EXP_FW_API_VER_MAJOR) {
-+		/* Major API version is newer than expected, don't load */
-+		dev_warn(ice_hw_to_dev(hw),
-+			 "The driver for the device stopped because the NVM image is newer than expected. You must install the most recent version of the network driver.\n");
- 		return false;
-+	} else if (hw->api_maj_ver == EXP_FW_API_VER_MAJOR) {
-+		if (hw->api_min_ver > (EXP_FW_API_VER_MINOR + 2))
-+			dev_info(ice_hw_to_dev(hw),
-+				 "The driver for the device detected a newer version of the NVM image than expected. Please install the most recent version of the network driver.\n");
-+		else if ((hw->api_min_ver + 2) < EXP_FW_API_VER_MINOR)
-+			dev_info(ice_hw_to_dev(hw),
-+				 "The driver for the device detected an older version of the NVM image than expected. Please update the NVM image.\n");
-+	} else {
-+		/* Major API version is older than expected, log a warning */
-+		dev_info(ice_hw_to_dev(hw),
-+			 "The driver for the device detected an older version of the NVM image than expected. Please update the NVM image.\n");
-+	}
- 	return true;
- }
- 
-@@ -588,8 +597,7 @@ static enum ice_status ice_init_check_ad
- 	if (status)
- 		goto init_ctrlq_free_rq;
- 
--	if (!ice_aq_ver_check(hw->api_branch, hw->api_maj_ver,
--			      hw->api_min_ver)) {
-+	if (!ice_aq_ver_check(hw)) {
- 		status = ICE_ERR_FW_API_VER;
- 		goto init_ctrlq_free_rq;
- 	}
++	if (!funcname)
++		funcname = "??";
++
+ 	if (dso) {
+ 		demangled = dso__demangle_sym(dso, 0, funcname);
+ 		if (demangled)
 
 
