@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 164F8C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:42:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 579D0C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:42:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD74F20818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:42:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 176AB20818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:42:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0H6IhjuM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD74F20818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vOnhVXK1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 176AB20818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387929AbeKLJck (ORCPT
+        id S2387717AbeKLITV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:32:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40616 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:19:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40710 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387695AbeKLITW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:19:22 -0500
+        id S2387681AbeKLITV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:19:21 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 78F2C2175B;
-        Sun, 11 Nov 2018 22:29:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 739E2223AE;
+        Sun, 11 Nov 2018 22:29:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975365;
-        bh=6XT9Kv43ZqdHTQo3VSVjeB7g4YDO98oVLzmhx8MgdVc=;
+        s=default; t=1541975364;
+        bh=DyTAkaUPOUwwUbFn589NOZnR5ZeGpE7A1ROwy+A9VzI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0H6IhjuM4pOM8FRKBypqF5ZaIuw5tzt3k30pEmiNs26rzi77/liqeXAwelrUNC47V
-         sZqE16copKTQGK0V7Uv4ftLIRBKPzdphWXnVF6mDkQO0IFWadLIhb/03677IZV9Fm2
-         RJNWh/UYfmrkDta0wROb53Ni5bW6Z4uX5w7d36vI=
+        b=vOnhVXK1m0nrYHoks1IQKcxx1eCTzPFoebCRppabOl7swNPZ1h9nyWg4dbdxyEXQW
+         abC3DEHTiWV4CZm/XS1KCRsBa7OqMrT9jD2cKd1dasAig8C07c2omHGd8cG1hQ9iwP
+         Jqgtf1O9xTy2jEJVTcazG0ZY6paPdu5MrA7xb+fg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        stable@vger.kernel.org, He Zhe <zhe.he@windriver.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Tim C Chen <tim.c.chen@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Ravi Shankar <ravi.v.shankar@intel.com>
-Subject: [PATCH 4.18 040/350] x86/speculation: Support Enhanced IBRS on future CPUs
-Date:   Sun, 11 Nov 2018 14:18:24 -0800
-Message-Id: <20181111221708.853664203@linuxfoundation.org>
+        kstewart@linuxfoundation.org, pombredanne@nexb.com,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.18 038/350] x86/corruption-check: Fix panic in memory_corruption_check() when boot option without value is provided
+Date:   Sun, 11 Nov 2018 14:18:22 -0800
+Message-Id: <20181111221708.771229919@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -66,152 +66,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
+From: He Zhe <zhe.he@windriver.com>
 
-commit 706d51681d636a0c4a5ef53395ec3b803e45ed4d upstream.
+commit ccde460b9ae5c2bd5e4742af0a7f623c2daad566 upstream.
 
-Future Intel processors will support "Enhanced IBRS" which is an "always
-on" mode i.e. IBRS bit in SPEC_CTRL MSR is enabled once and never
-disabled.
+memory_corruption_check[{_period|_size}]()'s handlers do not check input
+argument before passing it to kstrtoul() or simple_strtoull(). The argument
+would be a NULL pointer if each of the kernel parameters, without its
+value, is set in command line and thus cause the following panic.
 
->From the specification [1]:
+PANIC: early exception 0xe3 IP 10:ffffffff73587c22 error 0 cr2 0x0
+[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.18-rc8+ #2
+[    0.000000] RIP: 0010:kstrtoull+0x2/0x10
+...
+[    0.000000] Call Trace
+[    0.000000]  ? set_corruption_check+0x21/0x49
+[    0.000000]  ? do_early_param+0x4d/0x82
+[    0.000000]  ? parse_args+0x212/0x330
+[    0.000000]  ? rdinit_setup+0x26/0x26
+[    0.000000]  ? parse_early_options+0x20/0x23
+[    0.000000]  ? rdinit_setup+0x26/0x26
+[    0.000000]  ? parse_early_param+0x2d/0x39
+[    0.000000]  ? setup_arch+0x2f7/0xbf4
+[    0.000000]  ? start_kernel+0x5e/0x4c2
+[    0.000000]  ? load_ucode_bsp+0x113/0x12f
+[    0.000000]  ? secondary_startup_64+0xa5/0xb0
 
- "With enhanced IBRS, the predicted targets of indirect branches
-  executed cannot be controlled by software that was executed in a less
-  privileged predictor mode or on another logical processor. As a
-  result, software operating on a processor with enhanced IBRS need not
-  use WRMSR to set IA32_SPEC_CTRL.IBRS after every transition to a more
-  privileged predictor mode. Software can isolate predictor modes
-  effectively simply by setting the bit once. Software need not disable
-  enhanced IBRS prior to entering a sleep state such as MWAIT or HLT."
+This patch adds checks to prevent the panic.
 
-If Enhanced IBRS is supported by the processor then use it as the
-preferred spectre v2 mitigation mechanism instead of Retpoline. Intel's
-Retpoline white paper [2] states:
-
- "Retpoline is known to be an effective branch target injection (Spectre
-  variant 2) mitigation on Intel processors belonging to family 6
-  (enumerated by the CPUID instruction) that do not have support for
-  enhanced IBRS. On processors that support enhanced IBRS, it should be
-  used for mitigation instead of retpoline."
-
-The reason why Enhanced IBRS is the recommended mitigation on processors
-which support it is that these processors also support CET which
-provides a defense against ROP attacks. Retpoline is very similar to ROP
-techniques and might trigger false positives in the CET defense.
-
-If Enhanced IBRS is selected as the mitigation technique for spectre v2,
-the IBRS bit in SPEC_CTRL MSR is set once at boot time and never
-cleared. Kernel also has to make sure that IBRS bit remains set after
-VMEXIT because the guest might have cleared the bit. This is already
-covered by the existing x86_spec_ctrl_set_guest() and
-x86_spec_ctrl_restore_host() speculation control functions.
-
-Enhanced IBRS still requires IBPB for full mitigation.
-
-[1] Speculative-Execution-Side-Channel-Mitigations.pdf
-[2] Retpoline-A-Branch-Target-Injection-Mitigation.pdf
-Both documents are available at:
-https://bugzilla.kernel.org/show_bug.cgi?id=199511
-
-Originally-by: David Woodhouse <dwmw@amazon.co.uk>
-Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tim C Chen <tim.c.chen@intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Ravi Shankar <ravi.v.shankar@intel.com>
-Link: https://lkml.kernel.org/r/1533148945-24095-1-git-send-email-sai.praneeth.prakhya@intel.com
+Signed-off-by: He Zhe <zhe.he@windriver.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: gregkh@linuxfoundation.org
+Cc: kstewart@linuxfoundation.org
+Cc: pombredanne@nexb.com
+Cc: stable@vger.kernel.org
+Link: http://lkml.kernel.org/r/1534260823-87917-1-git-send-email-zhe.he@windriver.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/cpufeatures.h   |    1 +
- arch/x86/include/asm/nospec-branch.h |    1 +
- arch/x86/kernel/cpu/bugs.c           |   20 ++++++++++++++++++--
- arch/x86/kernel/cpu/common.c         |    3 +++
- 4 files changed, 23 insertions(+), 2 deletions(-)
+ arch/x86/kernel/check.c |   15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -220,6 +220,7 @@
- #define X86_FEATURE_STIBP		( 7*32+27) /* Single Thread Indirect Branch Predictors */
- #define X86_FEATURE_ZEN			( 7*32+28) /* "" CPU is AMD family 0x17 (Zen) */
- #define X86_FEATURE_L1TF_PTEINV		( 7*32+29) /* "" L1TF workaround PTE inversion */
-+#define X86_FEATURE_IBRS_ENHANCED	( 7*32+30) /* Enhanced IBRS */
+--- a/arch/x86/kernel/check.c
++++ b/arch/x86/kernel/check.c
+@@ -31,6 +31,11 @@ static __init int set_corruption_check(c
+ 	ssize_t ret;
+ 	unsigned long val;
  
- /* Virtualization flags: Linux defined, word 8 */
- #define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -215,6 +215,7 @@ enum spectre_v2_mitigation {
- 	SPECTRE_V2_RETPOLINE_GENERIC,
- 	SPECTRE_V2_RETPOLINE_AMD,
- 	SPECTRE_V2_IBRS,
-+	SPECTRE_V2_IBRS_ENHANCED,
- };
- 
- /* The Speculative Store Bypass disable variants */
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -139,6 +139,7 @@ static const char *spectre_v2_strings[]
- 	[SPECTRE_V2_RETPOLINE_MINIMAL_AMD]	= "Vulnerable: Minimal AMD ASM retpoline",
- 	[SPECTRE_V2_RETPOLINE_GENERIC]		= "Mitigation: Full generic retpoline",
- 	[SPECTRE_V2_RETPOLINE_AMD]		= "Mitigation: Full AMD retpoline",
-+	[SPECTRE_V2_IBRS_ENHANCED]		= "Mitigation: Enhanced IBRS",
- };
- 
- #undef pr_fmt
-@@ -381,6 +382,13 @@ static void __init spectre_v2_select_mit
- 
- 	case SPECTRE_V2_CMD_FORCE:
- 	case SPECTRE_V2_CMD_AUTO:
-+		if (boot_cpu_has(X86_FEATURE_IBRS_ENHANCED)) {
-+			mode = SPECTRE_V2_IBRS_ENHANCED;
-+			/* Force it so VMEXIT will restore correctly */
-+			x86_spec_ctrl_base |= SPEC_CTRL_IBRS;
-+			wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
-+			goto specv2_set_mode;
-+		}
- 		if (IS_ENABLED(CONFIG_RETPOLINE))
- 			goto retpoline_auto;
- 		break;
-@@ -418,6 +426,7 @@ retpoline_auto:
- 		setup_force_cpu_cap(X86_FEATURE_RETPOLINE);
- 	}
- 
-+specv2_set_mode:
- 	spectre_v2_enabled = mode;
- 	pr_info("%s\n", spectre_v2_strings[mode]);
- 
-@@ -440,9 +449,16 @@ retpoline_auto:
- 
- 	/*
- 	 * Retpoline means the kernel is safe because it has no indirect
--	 * branches. But firmware isn't, so use IBRS to protect that.
-+	 * branches. Enhanced IBRS protects firmware too, so, enable restricted
-+	 * speculation around firmware calls only when Enhanced IBRS isn't
-+	 * supported.
-+	 *
-+	 * Use "mode" to check Enhanced IBRS instead of boot_cpu_has(), because
-+	 * the user might select retpoline on the kernel command line and if
-+	 * the CPU supports Enhanced IBRS, kernel might un-intentionally not
-+	 * enable IBRS around firmware calls.
- 	 */
--	if (boot_cpu_has(X86_FEATURE_IBRS)) {
-+	if (boot_cpu_has(X86_FEATURE_IBRS) && mode != SPECTRE_V2_IBRS_ENHANCED) {
- 		setup_force_cpu_cap(X86_FEATURE_USE_IBRS_FW);
- 		pr_info("Enabling Restricted Speculation for firmware calls\n");
- 	}
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1015,6 +1015,9 @@ static void __init cpu_set_bug_bits(stru
- 	   !cpu_has(c, X86_FEATURE_AMD_SSB_NO))
- 		setup_force_cpu_bug(X86_BUG_SPEC_STORE_BYPASS);
- 
-+	if (ia32_cap & ARCH_CAP_IBRS_ALL)
-+		setup_force_cpu_cap(X86_FEATURE_IBRS_ENHANCED);
++	if (!arg) {
++		pr_err("memory_corruption_check config string not provided\n");
++		return -EINVAL;
++	}
 +
- 	if (x86_match_cpu(cpu_no_meltdown))
- 		return;
+ 	ret = kstrtoul(arg, 10, &val);
+ 	if (ret)
+ 		return ret;
+@@ -45,6 +50,11 @@ static __init int set_corruption_check_p
+ 	ssize_t ret;
+ 	unsigned long val;
  
++	if (!arg) {
++		pr_err("memory_corruption_check_period config string not provided\n");
++		return -EINVAL;
++	}
++
+ 	ret = kstrtoul(arg, 10, &val);
+ 	if (ret)
+ 		return ret;
+@@ -59,6 +69,11 @@ static __init int set_corruption_check_s
+ 	char *end;
+ 	unsigned size;
+ 
++	if (!arg) {
++		pr_err("memory_corruption_check_size config string not provided\n");
++		return -EINVAL;
++	}
++
+ 	size = memparse(arg, &end);
+ 
+ 	if (*end == '\0')
 
 
