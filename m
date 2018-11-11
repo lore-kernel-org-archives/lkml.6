@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD2ADC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:33:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17445C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:33:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 968722084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:33:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D526D20866
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:33:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="utkAM3nN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 968722084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1hVViw27"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D526D20866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388700AbeKLJXP (ORCPT
+        id S2388614AbeKLJXP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 12 Nov 2018 04:23:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43864 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:44334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388479AbeKLIUP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730020AbeKLIUP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:20:15 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 086CF2154B;
-        Sun, 11 Nov 2018 22:30:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 294E1223CA;
+        Sun, 11 Nov 2018 22:30:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975419;
-        bh=1Rfrc6z5ysWJRuCSbBgBmQtuCZ03CkUGqDVqoSUKlzk=;
+        s=default; t=1541975418;
+        bh=XvitunNtyaubImQqxduNF5dCu+fqo7U3YX/lK6/QR9U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=utkAM3nN4jqT2+ZSP4GwmTUg3G9/oEbkw+4tV8stnvI3pmqJXOPFTrB1ucseH3TMt
-         bC3+pv2BDZxUfPfySXeGEQ88hA7XD2ZLmlynkrWXNlzN6g+pf2BgCBNnEOMcrovENC
-         aFo1C9OMMx/WXDvou+cDY8ZNaU7xsG0KlX+tDKqc=
+        b=1hVViw27o6jfOxtIf6SG/dkudRYTiqdqcCsWYGLd4aYmVAoCaH9XZg8dYbaw7uJdT
+         QHd4i3BsZfHtg0V1p5los08QhJS8vpMmwy59E01wWB/u4kx07riHpfMM1hHXj5cHar
+         bizzIwr9tyUcVPVpBYHzgjOqzQH3OICUQ9d4Ndtc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Evan Green <evgreen@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 125/350] net: dsa: mv88e6xxx: Fix writing to a PHY page.
-Date:   Sun, 11 Nov 2018 14:19:49 -0800
-Message-Id: <20181111221712.696034718@linuxfoundation.org>
+Subject: [PATCH 4.18 141/350] scsi: ufs: Schedule clk gating work on correct queue
+Date:   Sun, 11 Nov 2018 14:20:05 -0800
+Message-Id: <20181111221713.950432894@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -63,33 +65,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andrew Lunn <andrew@lunn.ch>
+From: Evan Green <evgreen@chromium.org>
 
-[ Upstream commit c309b158090d788e96ee597444965cb79b040484 ]
+[ Upstream commit f4bb7704699beee9edfbee875daa9089c86cf724 ]
 
-After changing to the needed page, actually write the value to the
-register!
+With commit 10e5e37581fc ("scsi: ufs: Add clock ungating to a separate
+workqueue"), clock gating work was moved to a separate work queue with
+WQ_MEM_RECLAIM set, since clock gating could occur from a memory reclaim
+context. Unfortunately, clk_gating.gate_work was left queued via
+schedule_delayed_work, which is a system workqueue that does not have
+WQ_MEM_RECLAIM set.  Because ufshcd_ungate_work attempts to cancel
+gate_work, the following warning appears:
 
-Fixes: 09cb7dfd3f14 ("net: dsa: mv88e6xxx: describe PHY page and SerDes")
-Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+[   14.174170] workqueue: WQ_MEM_RECLAIM ufs_clk_gating_0:ufshcd_ungate_work is flushing !WQ_MEM_RECLAIM events:ufshcd_gate_work
+[   14.174179] WARNING: CPU: 4 PID: 173 at kernel/workqueue.c:2440 check_flush_dependency+0x110/0x118
+[   14.205725] CPU: 4 PID: 173 Comm: kworker/u16:3 Not tainted 4.14.68 #1
+[   14.212437] Hardware name: Google Cheza (rev1) (DT)
+[   14.217459] Workqueue: ufs_clk_gating_0 ufshcd_ungate_work
+[   14.223107] task: ffffffc0f6a40080 task.stack: ffffff800a490000
+[   14.229195] PC is at check_flush_dependency+0x110/0x118
+[   14.234569] LR is at check_flush_dependency+0x110/0x118
+[   14.239944] pc : [<ffffff80080cad14>] lr : [<ffffff80080cad14>] pstate: 60c001c9
+[   14.333050] Call trace:
+[   14.427767] [<ffffff80080cad14>] check_flush_dependency+0x110/0x118
+[   14.434219] [<ffffff80080cafec>] start_flush_work+0xac/0x1fc
+[   14.440046] [<ffffff80080caeec>] flush_work+0x40/0x94
+[   14.445246] [<ffffff80080cb288>] __cancel_work_timer+0x11c/0x1b8
+[   14.451433] [<ffffff80080cb4b8>] cancel_delayed_work_sync+0x20/0x30
+[   14.457886] [<ffffff80085b9294>] ufshcd_ungate_work+0x24/0xd0
+[   14.463800] [<ffffff80080cfb04>] process_one_work+0x32c/0x690
+[   14.469713] [<ffffff80080d0154>] worker_thread+0x218/0x338
+[   14.475361] [<ffffff80080d527c>] kthread+0x120/0x130
+[   14.480470] [<ffffff8008084814>] ret_from_fork+0x10/0x18
+
+The simple solution is to put the gate_work on the same WQ_MEM_RECLAIM
+work queue as the ungate_work.
+
+Fixes: 10e5e37581fc ("scsi: ufs: Add clock ungating to a separate workqueue")
+Signed-off-by: Evan Green <evgreen@chromium.org>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/dsa/mv88e6xxx/phy.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/scsi/ufs/ufshcd.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/net/dsa/mv88e6xxx/phy.c
-+++ b/drivers/net/dsa/mv88e6xxx/phy.c
-@@ -110,6 +110,9 @@ int mv88e6xxx_phy_page_write(struct mv88
- 	err = mv88e6xxx_phy_page_get(chip, phy, page);
- 	if (!err) {
- 		err = mv88e6xxx_phy_write(chip, phy, MV88E6XXX_PHY_PAGE, page);
-+		if (!err)
-+			err = mv88e6xxx_phy_write(chip, phy, reg, val);
-+
- 		mv88e6xxx_phy_page_put(chip, phy);
- 	}
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -1677,8 +1677,9 @@ static void __ufshcd_release(struct ufs_
  
+ 	hba->clk_gating.state = REQ_CLKS_OFF;
+ 	trace_ufshcd_clk_gating(dev_name(hba->dev), hba->clk_gating.state);
+-	schedule_delayed_work(&hba->clk_gating.gate_work,
+-			msecs_to_jiffies(hba->clk_gating.delay_ms));
++	queue_delayed_work(hba->clk_gating.clk_gating_workq,
++			   &hba->clk_gating.gate_work,
++			   msecs_to_jiffies(hba->clk_gating.delay_ms));
+ }
+ 
+ void ufshcd_release(struct ufs_hba *hba)
 
 
