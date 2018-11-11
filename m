@@ -7,52 +7,49 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F956C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56A9EC0044C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0F362154B
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15CFE223CA
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kqE4zpmT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0F362154B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="04JlDluz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15CFE223CA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732573AbeKLISN (ORCPT
+        id S1732618AbeKLISP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:18:13 -0500
+        Mon, 12 Nov 2018 03:18:15 -0500
 Received: from mail.kernel.org ([198.145.29.99]:35400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732500AbeKLISM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:18:12 -0500
+        id S1732574AbeKLISO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:18:14 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05AAE22419;
-        Sun, 11 Nov 2018 22:28:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F13AD216FD;
+        Sun, 11 Nov 2018 22:28:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975297;
-        bh=74JmcqTBfH/o9uNtqdzb91UOrlidlCTDzDsWPsKAICM=;
+        s=default; t=1541975299;
+        bh=7MaIqrFauHoI0ru1/fdyd2YAe9K8qB2TUb0i8H7c3Pw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kqE4zpmTHTqK8LRgXBscWz8ltIZ9KeIO2ZxRpS1/EnptAtu2nSve8uOrDK5W6xr+f
-         GChhB8MkL5UYM4HcjTlEZ42GHq3mJ9OYZM4M4o1zkFUUO7TbVJWyiKsVKZtlFPMRB+
-         Wumpc9L2k7kmtZWI7jwWWQMb1n8BYAFMccEhDL78=
+        b=04JlDluzSKcDcqZXaMt3HSzDTFlxyGkVBTyXQpfwL7xLiD6BSDTUnawcUcHjzlUZz
+         p/Bk6cwHTpHStGfNh29A0LBq8427q/4Vs7ElsUTsdpnpxhwjZBF/ThTdBdasVmOp+u
+         C69WJhsJ6m1cX6EnH9f1BWUci5EZrI9EY7qgKDhc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
-        Mike Christie <mchristi@redhat.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        "Bryant G. Ly" <bryantly@linux.vnet.ibm.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Nicholas Bellinger <nab@linux-iscsi.org>,
-        "Bryant G. Ly" <bly@catalogicsoftware.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.19 215/361] scsi: sched/wait: Add wait_event_lock_irq_timeout for TASK_UNINTERRUPTIBLE usage
-Date:   Sun, 11 Nov 2018 14:19:22 -0800
-Message-Id: <20181111221650.055492978@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Christopher Dall <christoffer.dall@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Subject: [PATCH 4.19 256/361] KVM: arm64: Fix caching of host MDCR_EL2 value
+Date:   Sun, 11 Nov 2018 14:20:03 -0800
+Message-Id: <20181111221653.591319262@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -70,82 +67,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicholas Bellinger <nab@linux-iscsi.org>
+From: Mark Rutland <mark.rutland@arm.com>
 
-commit 25ab0bc334b43bbbe4eabc255006ce42a9424da2 upstream.
+commit da5a3ce66b8bb51b0ea8a89f42aac153903f90fb upstream.
 
-Short of reverting commit 00d909a10710 ("scsi: target: Make the session
-shutdown code also wait for commands that are being aborted") for v4.19,
-target-core needs a wait_event_t macro can be executed using
-TASK_UNINTERRUPTIBLE to function correctly with existing fabric drivers that
-expect to run with signals pending during session shutdown and active se_cmd
-I/O quiesce.
+At boot time, KVM stashes the host MDCR_EL2 value, but only does this
+when the kernel is not running in hyp mode (i.e. is non-VHE). In these
+cases, the stashed value of MDCR_EL2.HPMN happens to be zero, which can
+lead to CONSTRAINED UNPREDICTABLE behaviour.
 
-The most notable is iscsi-target/iser-target, while ibmvscsi_tgt invokes
-session shutdown logic from userspace via configfs attribute that could also
-potentially have signals pending.
+Since we use this value to derive the MDCR_EL2 value when switching
+to/from a guest, after a guest have been run, the performance counters
+do not behave as expected. This has been observed to result in accesses
+via PMXEVTYPER_EL0 and PMXEVCNTR_EL0 not affecting the relevant
+counters, resulting in events not being counted. In these cases, only
+the fixed-purpose cycle counter appears to work as expected.
 
-So go ahead and introduce wait_event_lock_irq_timeout() to achieve this, and
-update + rename __wait_event_lock_irq_timeout() to make it accept 'state' as a
-parameter.
+Fix this by always stashing the host MDCR_EL2 value, regardless of VHE.
 
-Fixes: 00d909a10710 ("scsi: target: Make the session shutdown code also wait for commands that are being aborted")
-Cc: <stable@vger.kernel.org> # v4.19+
-Cc: Bart Van Assche <bvanassche@acm.org>
-Cc: Mike Christie <mchristi@redhat.com>
-Cc: Hannes Reinecke <hare@suse.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Sagi Grimberg <sagi@grimberg.me>
-Cc: Bryant G. Ly <bryantly@linux.vnet.ibm.com>
-Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
-Tested-by: Nicholas Bellinger <nab@linux-iscsi.org>
-Signed-off-by: Nicholas Bellinger <nab@linux-iscsi.org>
-Reviewed-by: Bryant G. Ly <bly@catalogicsoftware.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Cc: Christopher Dall <christoffer.dall@arm.com>
+Cc: James Morse <james.morse@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: stable@vger.kernel.org
+Fixes: 1e947bad0b63b351 ("arm64: KVM: Skip HYP setup when already running in HYP")
+Tested-by: Robin Murphy <robin.murphy@arm.com>
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/wait.h |   20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
+ virt/kvm/arm/arm.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/include/linux/wait.h
-+++ b/include/linux/wait.h
-@@ -1052,10 +1052,9 @@ do {										\
- 	__ret;									\
- })
+--- a/virt/kvm/arm/arm.c
++++ b/virt/kvm/arm/arm.c
+@@ -1295,8 +1295,6 @@ static void cpu_init_hyp_mode(void *dumm
  
--#define __wait_event_interruptible_lock_irq_timeout(wq_head, condition,		\
--						    lock, timeout)		\
-+#define __wait_event_lock_irq_timeout(wq_head, condition, lock, timeout, state)	\
- 	___wait_event(wq_head, ___wait_cond_timeout(condition),			\
--		      TASK_INTERRUPTIBLE, 0, timeout,				\
-+		      state, 0, timeout,					\
- 		      spin_unlock_irq(&lock);					\
- 		      __ret = schedule_timeout(__ret);				\
- 		      spin_lock_irq(&lock));
-@@ -1089,8 +1088,19 @@ do {										\
- ({										\
- 	long __ret = timeout;							\
- 	if (!___wait_cond_timeout(condition))					\
--		__ret = __wait_event_interruptible_lock_irq_timeout(		\
--					wq_head, condition, lock, timeout);	\
-+		__ret = __wait_event_lock_irq_timeout(				\
-+					wq_head, condition, lock, timeout,	\
-+					TASK_INTERRUPTIBLE);			\
-+	__ret;									\
-+})
+ 	__cpu_init_hyp_mode(pgd_ptr, hyp_stack_ptr, vector_ptr);
+ 	__cpu_init_stage2();
+-
+-	kvm_arm_init_debug();
+ }
+ 
+ static void cpu_hyp_reset(void)
+@@ -1320,6 +1318,8 @@ static void cpu_hyp_reinit(void)
+ 		cpu_init_hyp_mode(NULL);
+ 	}
+ 
++	kvm_arm_init_debug();
 +
-+#define wait_event_lock_irq_timeout(wq_head, condition, lock, timeout)		\
-+({										\
-+	long __ret = timeout;							\
-+	if (!___wait_cond_timeout(condition))					\
-+		__ret = __wait_event_lock_irq_timeout(				\
-+					wq_head, condition, lock, timeout,	\
-+					TASK_UNINTERRUPTIBLE);			\
- 	__ret;									\
- })
- 
+ 	if (vgic_present)
+ 		kvm_vgic_init_cpu_hardware();
+ }
 
 
