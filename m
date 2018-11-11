@@ -4,48 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E80BC0044C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:29:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E04C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:29:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 179012084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:29:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EE8820869
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:29:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oEtrttrL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 179012084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q5+IX7A6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EE8820869
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389007AbeKLJTO (ORCPT
+        id S2388780AbeKLIUa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:19:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45304 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:20:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388767AbeKLIUb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:20:31 -0500
+        id S2388682AbeKLIU2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:28 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 879BE2175B;
-        Sun, 11 Nov 2018 22:30:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7E3B22154B;
+        Sun, 11 Nov 2018 22:30:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975434;
-        bh=3BwtYcUF9mjaA1HBbGUUt/sel3lbnkxqNaBjuVnySTw=;
+        s=default; t=1541975431;
+        bh=X/iA2CQsHe3Ozn0L562u+KsDroMfXgfLPZtG6fParrQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oEtrttrL9Y1LdsUZVAocbe0vyHLhyn9dKjQBAyMU5l3m+BUtcuKWwGK6WdVULSyHC
-         3R6wnGHA0MlpsNQVVmeyWktYi69kbrpMrWZDN85C2AQVo+IPr2/2dHfImWVy+yAfIE
-         mikK4bdxhbgFI5S3fR66Rf0szT/m6zh/5wNMoQQ0=
+        b=Q5+IX7A6bnQE/FCIrLDCJEdLevu78khqPNOnfY8sX7WP9cfD7HxmX+Af+vB7arBJc
+         2VjD/S0tg1TBwdUYNu/ZY+37duZeB8JQuel8pKLAgteavFMuEXFDLGhhpqdO+y3PLX
+         90YyMg9X2pRLB4gELBYfhXroY2RvZv3PXFtYUdNs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yunlei He <heyunlei@huawei.com>,
-        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 181/350] f2fs: report error if quota off error during umount
-Date:   Sun, 11 Nov 2018 14:20:45 -0800
-Message-Id: <20181111221715.609401862@linuxfoundation.org>
+        stable@vger.kernel.org, Waiman Long <longman@redhat.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.18 174/350] driver/dma/ioat: Call del_timer_sync() without holding prep_lock
+Date:   Sun, 11 Nov 2018 14:20:38 -0800
+Message-Id: <20181111221715.312380045@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -63,83 +62,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yunlei He <heyunlei@huawei.com>
+From: Waiman Long <longman@redhat.com>
 
-[ Upstream commit cda9cc595f0bb6ffa51a4efc4b6533dfa4039b4c ]
+[ Upstream commit cfb03be6c7e8a1591285849c361d67b09f5149f7 ]
 
-Now, we depend on fsck to ensure quota file data is ok,
-so we scan whole partition if checkpoint without umount
-flag. It's same for quota off error case, which may make
-quota file data inconsistent.
+The following lockdep splat was observed:
 
-generic/019 reports below error:
+[ 1222.241750] ======================================================
+[ 1222.271301] WARNING: possible circular locking dependency detected
+[ 1222.301060] 4.16.0-10.el8+5.x86_64+debug #1 Not tainted
+[ 1222.326659] ------------------------------------------------------
+[ 1222.356565] systemd-shutdow/1 is trying to acquire lock:
+[ 1222.382660]  ((&ioat_chan->timer)){+.-.}, at: [<00000000f71e1a28>] del_timer_sync+0x5/0xf0
+[ 1222.422928]
+[ 1222.422928] but task is already holding lock:
+[ 1222.451743]  (&(&ioat_chan->prep_lock)->rlock){+.-.}, at: [<000000008ea98b12>] ioat_shutdown+0x86/0x100 [ioatdma]
+   :
+[ 1223.524987] Chain exists of:
+[ 1223.524987]   (&ioat_chan->timer) --> &(&ioat_chan->cleanup_lock)->rlock --> &(&ioat_chan->prep_lock)->rlock
+[ 1223.524987]
+[ 1223.594082]  Possible unsafe locking scenario:
+[ 1223.594082]
+[ 1223.622630]        CPU0                    CPU1
+[ 1223.645080]        ----                    ----
+[ 1223.667404]   lock(&(&ioat_chan->prep_lock)->rlock);
+[ 1223.691535]                                lock(&(&ioat_chan->cleanup_lock)->rlock);
+[ 1223.728657]                                lock(&(&ioat_chan->prep_lock)->rlock);
+[ 1223.765122]   lock((&ioat_chan->timer));
+[ 1223.784095]
+[ 1223.784095]  *** DEADLOCK ***
+[ 1223.784095]
+[ 1223.813492] 4 locks held by systemd-shutdow/1:
+[ 1223.834677]  #0:  (reboot_mutex){+.+.}, at: [<0000000056d33456>] SYSC_reboot+0x10f/0x300
+[ 1223.873310]  #1:  (&dev->mutex){....}, at: [<00000000258dfdd7>] device_shutdown+0x1c8/0x660
+[ 1223.913604]  #2:  (&dev->mutex){....}, at: [<0000000068331147>] device_shutdown+0x1d6/0x660
+[ 1223.954000]  #3:  (&(&ioat_chan->prep_lock)->rlock){+.-.}, at: [<000000008ea98b12>] ioat_shutdown+0x86/0x100 [ioatdma]
 
- __quota_error: 1160 callbacks suppressed
- Quota error (device zram1): write_blk: dquota write failed
- Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
- Quota error (device zram1): write_blk: dquota write failed
- Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
- Quota error (device zram1): write_blk: dquota write failed
- Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
- Quota error (device zram1): write_blk: dquota write failed
- Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
- Quota error (device zram1): write_blk: dquota write failed
- Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
- VFS: Busy inodes after unmount of zram1. Self-destruct in 5 seconds.  Have a nice day...
+In the ioat_shutdown() function:
 
-If we failed in below path due to fail to write dquot block, we will miss
-to release quota inode, fix it.
+	spin_lock_bh(&ioat_chan->prep_lock);
+	set_bit(IOAT_CHAN_DOWN, &ioat_chan->state);
+	del_timer_sync(&ioat_chan->timer);
+	spin_unlock_bh(&ioat_chan->prep_lock);
 
-- f2fs_put_super
- - f2fs_quota_off_umount
-  - f2fs_quota_off
-   - f2fs_quota_sync   <-- failed
-   - dquot_quota_off   <-- missed to call
+According to the synchronization rule for the del_timer_sync() function,
+the caller must not hold locks which would prevent completion of the
+timer's handler.
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+The timer structure has its own lock that manages its synchronization.
+Setting the IOAT_CHAN_DOWN bit should prevent other CPUs from
+trying to use that device anyway, there is probably no need to call
+del_timer_sync() while holding the prep_lock. So the del_timer_sync()
+call is now moved outside of the prep_lock critical section to prevent
+the circular lock dependency.
+
+Signed-off-by: Waiman Long <longman@redhat.com>
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/super.c |   19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
+ drivers/dma/ioat/init.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1820,7 +1820,9 @@ static int f2fs_quota_off(struct super_b
- 	if (!inode || !igrab(inode))
- 		return dquot_quota_off(sb, type);
+--- a/drivers/dma/ioat/init.c
++++ b/drivers/dma/ioat/init.c
+@@ -1205,8 +1205,15 @@ static void ioat_shutdown(struct pci_dev
  
--	f2fs_quota_sync(sb, type);
-+	err = f2fs_quota_sync(sb, type);
-+	if (err)
-+		goto out_put;
- 
- 	err = dquot_quota_off(sb, type);
- 	if (err || f2fs_sb_has_quota_ino(sb))
-@@ -1839,9 +1841,20 @@ out_put:
- void f2fs_quota_off_umount(struct super_block *sb)
- {
- 	int type;
-+	int err;
- 
--	for (type = 0; type < MAXQUOTAS; type++)
--		f2fs_quota_off(sb, type);
-+	for (type = 0; type < MAXQUOTAS; type++) {
-+		err = f2fs_quota_off(sb, type);
-+		if (err) {
-+			int ret = dquot_quota_off(sb, type);
+ 		spin_lock_bh(&ioat_chan->prep_lock);
+ 		set_bit(IOAT_CHAN_DOWN, &ioat_chan->state);
+-		del_timer_sync(&ioat_chan->timer);
+ 		spin_unlock_bh(&ioat_chan->prep_lock);
++		/*
++		 * Synchronization rule for del_timer_sync():
++		 *  - The caller must not hold locks which would prevent
++		 *    completion of the timer's handler.
++		 * So prep_lock cannot be held before calling it.
++		 */
++		del_timer_sync(&ioat_chan->timer);
 +
-+			f2fs_msg(sb, KERN_ERR,
-+				"Fail to turn off disk quota "
-+				"(type: %d, err: %d, ret:%d), Please "
-+				"run fsck to fix it.", type, err, ret);
-+			set_sbi_flag(F2FS_SB(sb), SBI_NEED_FSCK);
-+		}
-+	}
- }
- 
- static int f2fs_get_projid(struct inode *inode, kprojid_t *projid)
+ 		/* this should quiesce then reset */
+ 		ioat_reset_hw(ioat_chan);
+ 	}
 
 
