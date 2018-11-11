@@ -2,229 +2,279 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AC7BC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:05:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52711C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:05:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CA0B20818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:05:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 038C920818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:05:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NrEkLR0D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CA0B20818
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ihk7izHS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 038C920818
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390610AbeKLIzW (ORCPT
+        id S2390608AbeKLIzc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:55:22 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:41103 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731378AbeKLIzV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:55:21 -0500
-Received: by mail-io1-f65.google.com with SMTP id r6-v6so2214630ioj.8;
-        Sun, 11 Nov 2018 15:05:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=0U9ceAnB4nAEnMcfQJhz58KUPoxlp94Luh91H/EYKkY=;
-        b=NrEkLR0DUbSE6ST3VED/lXRjY1F10bkMITeyWwrIA/ZxvIw/3uQqGedqQjSNd4nvET
-         ORoWvtamNnLuKSVmhqrk14g9StK9aPNNxSSag1xsT+u3A3rqTSzgZCAQyxhjUi3JI292
-         FT1BFUiS/PAv7oVZQeHSZJsyiaTRQCwSneW65yxvuWbY1Orevpp9QNhUABBINlfe9TsC
-         wxl2uz7DHSZfWvK9CHcZB9rc3nsM5JzudEz8php3M119FWLCdkqLZOl41cmV2MOYw+4Y
-         dyGpF3pwOyykeOPaov2Mwh9rPj2cwivA4Hwd5y12dnWJaTPM6u8YNYyFdENDJ4lkGlxv
-         1GrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=0U9ceAnB4nAEnMcfQJhz58KUPoxlp94Luh91H/EYKkY=;
-        b=nYNmpi5dpnGSiJwUnOtDTXaXAWZQhTITPC3QFJjlCeOjkRZMB0OztOxy5fX8a34TXj
-         +Vb1eLKDvxI3TWxhPmhOwQFiS2K0eUk9peuyuARyUY8/Wm+rm5NF/06MspPYRI/LPmBQ
-         9b3K2Lry1vkbI0MvicOEvqgPLWFRm/mf6XtZzuGmG8a2tz0Pl9U4VSIdKOEXDikLM8KR
-         qq84p9bOzeoqfkFNoiH7r6tNt1ii63T3ICp606Fk3EIBCxH06ErJiD4iB/xD6GyAr3nh
-         E94ELflMawwL6QmgUXWqXahG+cG38ZmsF2j2ZwgTlFOmVZbUf0/qHi2T6e4UR92XYGaL
-         kboQ==
-X-Gm-Message-State: AGRZ1gJtWuxuv7UW8ye4XwXnhS3bV8WhWUji0bxMOHgF4nTmSeKdg43d
-        XMvlrl9mgGdMW7wzyenZPXWgO98SyAO4xREyo10=
-X-Google-Smtp-Source: AJdET5d0EV+04IQdwDJYwRVNDY2JNQz2n1jRiCI6N7hfeF3MaAySAK2RC6vy2kui5ALsBbJOi/a+ssYfG4aDLNd0Mfo=
-X-Received: by 2002:a6b:4f14:: with SMTP id d20-v6mr14574428iob.68.1541977513600;
- Sun, 11 Nov 2018 15:05:13 -0800 (PST)
+        Mon, 12 Nov 2018 03:55:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51200 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389300AbeKLIWR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:17 -0500
+Received: from localhost (unknown [206.108.79.134])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1BC3D223CB;
+        Sun, 11 Nov 2018 22:32:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541975540;
+        bh=OKPH2AO7tlzdoa7tnCFOaFLqO3PLHRUYXhkS3MOXUKU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ihk7izHSfUG+sOZ2rqTq7W5yukFp2d0vA21pFq0pjlDGjrUJKHD7foz3i/JXWF1My
+         Psz+Eh9BGQtELS54LWxG8xX07yw4ys/Au6A7PCKprC+ZpQYXFvA0hRlAnP/rH6eXTL
+         KMEyYddAbGjuJXN34+ZP7hf+yG6lEMW3ZKjL9UhE=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Michael Petlan <mpetlan@redhat.com>,
+        Jiri Olsa <jolsa@kernel.org>, Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 028/222] perf vendor events intel: Fix wrong filter_band* values for uncore events
+Date:   Sun, 11 Nov 2018 14:22:05 -0800
+Message-Id: <20181111221650.778227990@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
+References: <20181111221647.665769131@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-References: <20181105085820.6341-1-aaron.lu@intel.com> <CAKgT0UdvYVTA8OjgLhXo9tRUOGikrCi3zJXSrqM0ZmeHb5P2mA@mail.gmail.com>
- <b8b1fbb7-9139-9455-69b8-8c1bed4f7c74@itcare.pl>
-In-Reply-To: <b8b1fbb7-9139-9455-69b8-8c1bed4f7c74@itcare.pl>
-From:   Alexander Duyck <alexander.duyck@gmail.com>
-Date:   Sun, 11 Nov 2018 15:05:01 -0800
-Message-ID: <CAKgT0UdhcXF-ohPHPbg8onRjFabEMnbpXGmLm-27skCNzGKOgw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] mm/page_alloc: free order-0 pages through PCP in page_frag_free()
-To:     =?UTF-8?Q?Pawe=C5=82_Staszewski?= <pstaszewski@itcare.pl>
-Cc:     aaron.lu@intel.com, linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        ilias.apalodimas@linaro.org, yoel@kviknet.dk,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>, dave.hansen@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 10, 2018 at 3:54 PM Pawe=C5=82 Staszewski <pstaszewski@itcare.p=
-l> wrote:
->
->
->
-> W dniu 05.11.2018 o 16:44, Alexander Duyck pisze:
-> > On Mon, Nov 5, 2018 at 12:58 AM Aaron Lu <aaron.lu@intel.com> wrote:
-> >> page_frag_free() calls __free_pages_ok() to free the page back to
-> >> Buddy. This is OK for high order page, but for order-0 pages, it
-> >> misses the optimization opportunity of using Per-Cpu-Pages and can
-> >> cause zone lock contention when called frequently.
-> >>
-> >> Pawe=C5=82 Staszewski recently shared his result of 'how Linux kernel
-> >> handles normal traffic'[1] and from perf data, Jesper Dangaard Brouer
-> >> found the lock contention comes from page allocator:
-> >>
-> >>    mlx5e_poll_tx_cq
-> >>    |
-> >>     --16.34%--napi_consume_skb
-> >>               |
-> >>               |--12.65%--__free_pages_ok
-> >>               |          |
-> >>               |           --11.86%--free_one_page
-> >>               |                     |
-> >>               |                     |--10.10%--queued_spin_lock_slowpa=
-th
-> >>               |                     |
-> >>               |                      --0.65%--_raw_spin_lock
-> >>               |
-> >>               |--1.55%--page_frag_free
-> >>               |
-> >>                --1.44%--skb_release_data
-> >>
-> >> Jesper explained how it happened: mlx5 driver RX-page recycle
-> >> mechanism is not effective in this workload and pages have to go
-> >> through the page allocator. The lock contention happens during
-> >> mlx5 DMA TX completion cycle. And the page allocator cannot keep
-> >> up at these speeds.[2]
-> >>
-> >> I thought that __free_pages_ok() are mostly freeing high order
-> >> pages and thought this is an lock contention for high order pages
-> >> but Jesper explained in detail that __free_pages_ok() here are
-> >> actually freeing order-0 pages because mlx5 is using order-0 pages
-> >> to satisfy its page pool allocation request.[3]
-> >>
-> >> The free path as pointed out by Jesper is:
-> >> skb_free_head()
-> >>    -> skb_free_frag()
-> >>      -> skb_free_frag()
-> >>        -> page_frag_free()
-> >> And the pages being freed on this path are order-0 pages.
-> >>
-> >> Fix this by doing similar things as in __page_frag_cache_drain() -
-> >> send the being freed page to PCP if it's an order-0 page, or
-> >> directly to Buddy if it is a high order page.
-> >>
-> >> With this change, Pawe=C5=82 hasn't noticed lock contention yet in
-> >> his workload and Jesper has noticed a 7% performance improvement
-> >> using a micro benchmark and lock contention is gone.
-> >>
-> >> [1]: https://www.spinics.net/lists/netdev/msg531362.html
-> >> [2]: https://www.spinics.net/lists/netdev/msg531421.html
-> >> [3]: https://www.spinics.net/lists/netdev/msg531556.html
-> >> Reported-by: Pawe=C5=82 Staszewski <pstaszewski@itcare.pl>
-> >> Analysed-by: Jesper Dangaard Brouer <brouer@redhat.com>
-> >> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
-> >> ---
-> >>   mm/page_alloc.c | 10 ++++++++--
-> >>   1 file changed, 8 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> >> index ae31839874b8..91a9a6af41a2 100644
-> >> --- a/mm/page_alloc.c
-> >> +++ b/mm/page_alloc.c
-> >> @@ -4555,8 +4555,14 @@ void page_frag_free(void *addr)
-> >>   {
-> >>          struct page *page =3D virt_to_head_page(addr);
-> >>
-> >> -       if (unlikely(put_page_testzero(page)))
-> >> -               __free_pages_ok(page, compound_order(page));
-> >> +       if (unlikely(put_page_testzero(page))) {
-> >> +               unsigned int order =3D compound_order(page);
-> >> +
-> >> +               if (order =3D=3D 0)
-> >> +                       free_unref_page(page);
-> >> +               else
-> >> +                       __free_pages_ok(page, order);
-> >> +       }
-> >>   }
-> >>   EXPORT_SYMBOL(page_frag_free);
-> >>
-> > One thing I would suggest for Pawel to try would be to reduce the Tx
-> > qdisc size on his transmitting interfaces, Reduce the Tx ring size,
-> > and possibly increase the Tx interrupt rate. Ideally we shouldn't have
-> > too many packets in-flight and I suspect that is the issue that Pawel
-> > is seeing that is leading to the page pool allocator freeing up the
-> > memory. I know we like to try to batch things but the issue is
-> > processing too many Tx buffers in one batch leads to us eating up too
-> > much memory and causing evictions from the cache. Ideally the Rx and
-> > Tx rings and queues should be sized as small as possible while still
-> > allowing us to process up to our NAPI budget. Usually I run things
-> > with a 128 Rx / 128 Tx setup and then reduce the Tx queue length so we
-> > don't have more buffers stored there than we can place in the Tx ring.
-> > Then we can avoid the extra thrash of having to pull/push memory into
-> > and out of the freelists. Essentially the issue here ends up being
-> > another form of buffer bloat.
-> Thanks Aleksandar - yes it can be - but in my scenario setting RX buffer
-> <4096 producing more interface rx drops - and no_rx_buffer on network
-> controller that is receiving more packets
-> So i need to stick with 3000-4000 on RX - and yes i was trying to lower
-> the TX buff on connectx4 - but that changed nothing before Aaron patch
->
-> After Aaron patch - decreasing TX buffer influencing total bandwidth
-> that can be handled by the router/server
-> Dono why before this patch there was no difference there no matter what
-> i set there there was always page_alloc/slowpath on top in perf
->
->
-> Currently testing RX4096/TX256 - this helps with bandwidth like +10%
-> more bandwidth with less interrupts...
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-The problem is if you are going for less interrupts you are setting
-yourself up for buffer bloat. Basically you are going to use much more
-cache and much more memory then you actually need and if things are
-properly configured NAPI should take care of the interrupts anyway
-since under maximum load you shouldn't stop polling normally.
+------------------
 
-One issue I have seen is people delay interrupts for as long as
-possible which isn't really a good thing since most network
-controllers will use NAPI which will disable the interrupts and leave
-them disabled whenever the system is under heavy stress so you should
-be able to get the maximum performance by configuring an adapter with
-small ring sizes and for high interrupt rates.
+From: Jiri Olsa <jolsa@redhat.com>
 
-It is easiest to think of it this way. Your total packet rate is equal
-to your interrupt rate times the number of buffers you will store in
-the ring. So if you have some fixed rate "X" for packets and an
-interrupt rate of "i" then your optimal ring size should be "X/i". So
-if you lower the interrupt rate you end up hurting the throughput
-unless you increase the buffer size. However at a certain point the
-buffer size starts becoming an issue. For example with UDP flows I
-often see massive packet drops if you tune the interrupt rate too low
-and then put the system under heavy stress.
+[ Upstream commit 94aafb74cee0002e2f2eb6dc5376f54d5951ab4d ]
 
-- Alex
+Michael reported that he could not stat following event:
+
+  $ perf stat -e unc_p_freq_ge_1200mhz_cycles -a -- ls
+  event syntax error: '..e_1200mhz_cycles'
+                                    \___ value too big for format, maximum is 255
+  Run 'perf list' for a list of valid events
+
+The event is unwrapped into:
+
+  uncore_pcu/event=0xb,filter_band0=1200/
+
+where filter_band0 format says it's one byte only:
+
+  # cat uncore_pcu/format/filter_band0
+  config1:0-7
+
+while JSON files specifies bigger number:
+
+  "Filter": "filter_band0=1200",
+
+all the filter_band* formats show 1 byte width:
+
+  # cat uncore_pcu/format/filter_band1
+  config1:8-15
+  # cat uncore_pcu/format/filter_band2
+  config1:16-23
+  # cat uncore_pcu/format/filter_band3
+  config1:24-31
+
+The reason of the issue is that filter_band* values are supposed to be
+in 100Mhz units.. it's stated in the JSON help for the events, like:
+
+  filter_band3=XXX, with XXX in 100Mhz units
+
+This patch divides the filter_band* values by 100, plus there's couple
+of changes that actually change the number completely, like:
+
+  -        "Filter": "edge=1,filter_band2=4000",
+  +        "Filter": "edge=1,filter_band2=30",
+
+Reported-by: Michael Petlan <mpetlan@redhat.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Acked-by: Andi Kleen <ak@linux.intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20181010080339.GB15790@krava
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ tools/perf/pmu-events/arch/x86/ivytown/uncore-power.json  |   16 +++++++-------
+ tools/perf/pmu-events/arch/x86/jaketown/uncore-power.json |   16 +++++++-------
+ 2 files changed, 16 insertions(+), 16 deletions(-)
+
+--- a/tools/perf/pmu-events/arch/x86/ivytown/uncore-power.json
++++ b/tools/perf/pmu-events/arch/x86/ivytown/uncore-power.json
+@@ -188,7 +188,7 @@
+         "Counter": "0,1,2,3",
+         "EventCode": "0xb",
+         "EventName": "UNC_P_FREQ_GE_1200MHZ_CYCLES",
+-        "Filter": "filter_band0=1200",
++        "Filter": "filter_band0=12",
+         "MetricExpr": "(UNC_P_FREQ_GE_1200MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
+         "MetricName": "freq_ge_1200mhz_cycles %",
+         "PerPkg": "1",
+@@ -199,7 +199,7 @@
+         "Counter": "0,1,2,3",
+         "EventCode": "0xc",
+         "EventName": "UNC_P_FREQ_GE_2000MHZ_CYCLES",
+-        "Filter": "filter_band1=2000",
++        "Filter": "filter_band1=20",
+         "MetricExpr": "(UNC_P_FREQ_GE_2000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
+         "MetricName": "freq_ge_2000mhz_cycles %",
+         "PerPkg": "1",
+@@ -210,7 +210,7 @@
+         "Counter": "0,1,2,3",
+         "EventCode": "0xd",
+         "EventName": "UNC_P_FREQ_GE_3000MHZ_CYCLES",
+-        "Filter": "filter_band2=3000",
++        "Filter": "filter_band2=30",
+         "MetricExpr": "(UNC_P_FREQ_GE_3000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
+         "MetricName": "freq_ge_3000mhz_cycles %",
+         "PerPkg": "1",
+@@ -221,7 +221,7 @@
+         "Counter": "0,1,2,3",
+         "EventCode": "0xe",
+         "EventName": "UNC_P_FREQ_GE_4000MHZ_CYCLES",
+-        "Filter": "filter_band3=4000",
++        "Filter": "filter_band3=40",
+         "MetricExpr": "(UNC_P_FREQ_GE_4000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
+         "MetricName": "freq_ge_4000mhz_cycles %",
+         "PerPkg": "1",
+@@ -232,7 +232,7 @@
+         "Counter": "0,1,2,3",
+         "EventCode": "0xb",
+         "EventName": "UNC_P_FREQ_GE_1200MHZ_TRANSITIONS",
+-        "Filter": "edge=1,filter_band0=1200",
++        "Filter": "edge=1,filter_band0=12",
+         "MetricExpr": "(UNC_P_FREQ_GE_1200MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
+         "MetricName": "freq_ge_1200mhz_cycles %",
+         "PerPkg": "1",
+@@ -243,7 +243,7 @@
+         "Counter": "0,1,2,3",
+         "EventCode": "0xc",
+         "EventName": "UNC_P_FREQ_GE_2000MHZ_TRANSITIONS",
+-        "Filter": "edge=1,filter_band1=2000",
++        "Filter": "edge=1,filter_band1=20",
+         "MetricExpr": "(UNC_P_FREQ_GE_2000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
+         "MetricName": "freq_ge_2000mhz_cycles %",
+         "PerPkg": "1",
+@@ -254,7 +254,7 @@
+         "Counter": "0,1,2,3",
+         "EventCode": "0xd",
+         "EventName": "UNC_P_FREQ_GE_3000MHZ_TRANSITIONS",
+-        "Filter": "edge=1,filter_band2=4000",
++        "Filter": "edge=1,filter_band2=30",
+         "MetricExpr": "(UNC_P_FREQ_GE_3000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
+         "MetricName": "freq_ge_3000mhz_cycles %",
+         "PerPkg": "1",
+@@ -265,7 +265,7 @@
+         "Counter": "0,1,2,3",
+         "EventCode": "0xe",
+         "EventName": "UNC_P_FREQ_GE_4000MHZ_TRANSITIONS",
+-        "Filter": "edge=1,filter_band3=4000",
++        "Filter": "edge=1,filter_band3=40",
+         "MetricExpr": "(UNC_P_FREQ_GE_4000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
+         "MetricName": "freq_ge_4000mhz_cycles %",
+         "PerPkg": "1",
+--- a/tools/perf/pmu-events/arch/x86/jaketown/uncore-power.json
++++ b/tools/perf/pmu-events/arch/x86/jaketown/uncore-power.json
+@@ -187,7 +187,7 @@
+         "Counter": "0,1,2,3",
+         "EventCode": "0xb",
+         "EventName": "UNC_P_FREQ_GE_1200MHZ_CYCLES",
+-        "Filter": "filter_band0=1200",
++        "Filter": "filter_band0=12",
+         "MetricExpr": "(UNC_P_FREQ_GE_1200MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
+         "MetricName": "freq_ge_1200mhz_cycles %",
+         "PerPkg": "1",
+@@ -198,7 +198,7 @@
+         "Counter": "0,1,2,3",
+         "EventCode": "0xc",
+         "EventName": "UNC_P_FREQ_GE_2000MHZ_CYCLES",
+-        "Filter": "filter_band1=2000",
++        "Filter": "filter_band1=20",
+         "MetricExpr": "(UNC_P_FREQ_GE_2000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
+         "MetricName": "freq_ge_2000mhz_cycles %",
+         "PerPkg": "1",
+@@ -209,7 +209,7 @@
+         "Counter": "0,1,2,3",
+         "EventCode": "0xd",
+         "EventName": "UNC_P_FREQ_GE_3000MHZ_CYCLES",
+-        "Filter": "filter_band2=3000",
++        "Filter": "filter_band2=30",
+         "MetricExpr": "(UNC_P_FREQ_GE_3000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
+         "MetricName": "freq_ge_3000mhz_cycles %",
+         "PerPkg": "1",
+@@ -220,7 +220,7 @@
+         "Counter": "0,1,2,3",
+         "EventCode": "0xe",
+         "EventName": "UNC_P_FREQ_GE_4000MHZ_CYCLES",
+-        "Filter": "filter_band3=4000",
++        "Filter": "filter_band3=40",
+         "MetricExpr": "(UNC_P_FREQ_GE_4000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
+         "MetricName": "freq_ge_4000mhz_cycles %",
+         "PerPkg": "1",
+@@ -231,7 +231,7 @@
+         "Counter": "0,1,2,3",
+         "EventCode": "0xb",
+         "EventName": "UNC_P_FREQ_GE_1200MHZ_TRANSITIONS",
+-        "Filter": "edge=1,filter_band0=1200",
++        "Filter": "edge=1,filter_band0=12",
+         "MetricExpr": "(UNC_P_FREQ_GE_1200MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
+         "MetricName": "freq_ge_1200mhz_cycles %",
+         "PerPkg": "1",
+@@ -242,7 +242,7 @@
+         "Counter": "0,1,2,3",
+         "EventCode": "0xc",
+         "EventName": "UNC_P_FREQ_GE_2000MHZ_TRANSITIONS",
+-        "Filter": "edge=1,filter_band1=2000",
++        "Filter": "edge=1,filter_band1=20",
+         "MetricExpr": "(UNC_P_FREQ_GE_2000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
+         "MetricName": "freq_ge_2000mhz_cycles %",
+         "PerPkg": "1",
+@@ -253,7 +253,7 @@
+         "Counter": "0,1,2,3",
+         "EventCode": "0xd",
+         "EventName": "UNC_P_FREQ_GE_3000MHZ_TRANSITIONS",
+-        "Filter": "edge=1,filter_band2=4000",
++        "Filter": "edge=1,filter_band2=30",
+         "MetricExpr": "(UNC_P_FREQ_GE_3000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
+         "MetricName": "freq_ge_3000mhz_cycles %",
+         "PerPkg": "1",
+@@ -264,7 +264,7 @@
+         "Counter": "0,1,2,3",
+         "EventCode": "0xe",
+         "EventName": "UNC_P_FREQ_GE_4000MHZ_TRANSITIONS",
+-        "Filter": "edge=1,filter_band3=4000",
++        "Filter": "edge=1,filter_band3=40",
+         "MetricExpr": "(UNC_P_FREQ_GE_4000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
+         "MetricName": "freq_ge_4000mhz_cycles %",
+         "PerPkg": "1",
+
+
