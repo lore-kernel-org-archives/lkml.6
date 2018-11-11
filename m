@@ -7,49 +7,48 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FAC6C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:11:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24329C43610
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:11:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D57F120817
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:11:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD37F20817
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:11:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aH848Gzu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D57F120817
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QRi4SgNT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD37F20817
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733240AbeKLIV4 (ORCPT
+        id S2390215AbeKLJBU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:21:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50448 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:01:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390060AbeKLIVx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:21:53 -0500
+        id S2388942AbeKLIV4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:56 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8168D21582;
-        Sun, 11 Nov 2018 22:31:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E8FD5216FD;
+        Sun, 11 Nov 2018 22:31:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975516;
-        bh=+GRVuxeSl0ZviM+8+03UBIDdqkFlxDsgtxW0yhtaq48=;
+        s=default; t=1541975520;
+        bh=cM3vlKh4x4M9txWl4aUxOrmkel21s8wQIaFGmspHUkA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aH848Gzudm4TE8zSZJzTIxwsvAhEnWNEKhEWWUJRtQs+muXU2LANO/bu9O2wdWoCf
-         B0qTm4DxyDNuodzX1qOHBxYGxqjUzmNaNx0j9J9Zhd0m1grVBKxiXasyjSEgK2JqEg
-         b2OaOP0SSNvXETu+/vSaUZxMwdCSbx/MyrMxUaLg=
+        b=QRi4SgNTeQxhLBU19fSS8IcoOeWE8HDxTZXhHGGfOJ/gWqETK8rWvrbGARERsUl74
+         Upw7g0iHuTOqKopxYIUoAv+uRkFLt5x1R2MUhWOBDaahnYLbpPPo9Ds5OlSmmU+k1R
+         JnBI30MERJ9Lh4AnAZlCYKAyUugj7VAHWiUelQZk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Murphy <lists@colorremedies.com>,
-        Qu Wenruo <wqu@suse.com>, David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.18 317/350] btrfs: qgroup: Avoid calling qgroup functions if qgroup is not enabled
-Date:   Sun, 11 Nov 2018 14:23:01 -0800
-Message-Id: <20181111221721.322495037@linuxfoundation.org>
+        stable@vger.kernel.org, Liu Xiang <liu.xiang6@zte.com.cn>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: [PATCH 4.14 001/222] mtd: spi-nor: fsl-quadspi: fix read error for flash size larger than 16MB
+Date:   Sun, 11 Nov 2018 14:21:38 -0800
+Message-Id: <20181111221647.838344774@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
-References: <20181111221707.043394111@linuxfoundation.org>
+In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
+References: <20181111221647.665769131@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -58,73 +57,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.18-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Qu Wenruo <wqu@suse.com>
+From: Liu Xiang <liu.xiang6@zte.com.cn>
 
-commit 3628b4ca64f24a4ec55055597d0cb1c814729f8b upstream.
+commit 41fe242979e463d6ad251077ded01b825a330b7e upstream.
 
-Some qgroup trace events like btrfs_qgroup_release_data() and
-btrfs_qgroup_free_delayed_ref() can still be triggered even if qgroup is
-not enabled.
+If the size of spi-nor flash is larger than 16MB, the read_opcode
+is set to SPINOR_OP_READ_1_1_4_4B, and fsl_qspi_get_seqid() will
+return -EINVAL when cmd is SPINOR_OP_READ_1_1_4_4B. This can
+cause read operation fail.
 
-This is caused by the lack of qgroup status check before calling some
-qgroup functions.  Thankfully the functions can handle quota disabled
-case well and just do nothing for qgroup disabled case.
-
-This patch will do earlier check before triggering related trace events.
-
-And for enabled <-> disabled race case:
-
-1) For enabled->disabled case
-   Disable will wipe out all qgroups data including reservation and
-   excl/rfer. Even if we leak some reservation or numbers, it will
-   still be cleared, so nothing will go wrong.
-
-2) For disabled -> enabled case
-   Current btrfs_qgroup_release_data() will use extent_io tree to ensure
-   we won't underflow reservation. And for delayed_ref we use
-   head->qgroup_reserved to record the reserved space, so in that case
-   head->qgroup_reserved should be 0 and we won't underflow.
-
-CC: stable@vger.kernel.org # 4.14+
-Reported-by: Chris Murphy <lists@colorremedies.com>
-Link: https://lore.kernel.org/linux-btrfs/CAJCQCtQau7DtuUUeycCkZ36qjbKuxNzsgqJ7+sJ6W0dK_NLE3w@mail.gmail.com/
-Signed-off-by: Qu Wenruo <wqu@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: e46ecda764dc ("mtd: spi-nor: Add Freescale QuadSPI driver")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Liu Xiang <liu.xiang6@zte.com.cn>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/qgroup.c |    4 ++++
- fs/btrfs/qgroup.h |    2 ++
- 2 files changed, 6 insertions(+)
+ drivers/mtd/spi-nor/fsl-quadspi.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/btrfs/qgroup.c
-+++ b/fs/btrfs/qgroup.c
-@@ -3065,6 +3065,10 @@ static int __btrfs_qgroup_release_data(s
- 	int trace_op = QGROUP_RELEASE;
- 	int ret;
- 
-+	if (!test_bit(BTRFS_FS_QUOTA_ENABLED,
-+		      &BTRFS_I(inode)->root->fs_info->flags))
-+		return 0;
-+
- 	/* In release case, we shouldn't have @reserved */
- 	WARN_ON(!free && reserved);
- 	if (free && reserved)
---- a/fs/btrfs/qgroup.h
-+++ b/fs/btrfs/qgroup.h
-@@ -261,6 +261,8 @@ void btrfs_qgroup_free_refroot(struct bt
- static inline void btrfs_qgroup_free_delayed_ref(struct btrfs_fs_info *fs_info,
- 						 u64 ref_root, u64 num_bytes)
+--- a/drivers/mtd/spi-nor/fsl-quadspi.c
++++ b/drivers/mtd/spi-nor/fsl-quadspi.c
+@@ -468,6 +468,7 @@ static int fsl_qspi_get_seqid(struct fsl
  {
-+	if (!test_bit(BTRFS_FS_QUOTA_ENABLED, &fs_info->flags))
-+		return;
- 	trace_btrfs_qgroup_free_delayed_ref(fs_info, ref_root, num_bytes);
- 	btrfs_qgroup_free_refroot(fs_info, ref_root, num_bytes,
- 				  BTRFS_QGROUP_RSV_DATA);
+ 	switch (cmd) {
+ 	case SPINOR_OP_READ_1_1_4:
++	case SPINOR_OP_READ_1_1_4_4B:
+ 		return SEQID_READ;
+ 	case SPINOR_OP_WREN:
+ 		return SEQID_WREN;
 
 
