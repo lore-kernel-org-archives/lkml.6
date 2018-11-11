@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AF21C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:15:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12CD6C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:15:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37C612148E
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:15:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37C612148E
+	by mail.kernel.org (Postfix) with ESMTP id D1D6B2080D
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:15:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1D6B2080D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731764AbeKLGE7 (ORCPT
+        id S1731767AbeKLGFC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:04:59 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53006 "EHLO
+        Mon, 12 Nov 2018 01:05:02 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53016 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729567AbeKLGE6 (ORCPT
+        by vger.kernel.org with ESMTP id S1725905AbeKLGFA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 01:04:58 -0500
+        Mon, 12 Nov 2018 01:05:00 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsz-0000oP-OM; Sun, 11 Nov 2018 19:59:09 +0000
+        id 1gLvt6-0000l5-OC; Sun, 11 Nov 2018 19:59:16 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsS-0001Z8-OO; Sun, 11 Nov 2018 19:58:36 +0000
+        id 1gLvsQ-0001TN-9U; Sun, 11 Nov 2018 19:58:34 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -38,15 +38,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org,
-        "Boris Brezillon" <boris.brezillon@bootlin.com>,
-        "Martin Kaiser" <martin@kaiser.cx>,
-        "Sascha Hauer" <s.hauer@pengutronix.de>,
-        "Miquel Raynal" <miquel.raynal@bootlin.com>
+        "Felipe Balbi" <felipe.balbi@linux.intel.com>,
+        "Yoshihiro Shimoda" <yoshihiro.shimoda.uh@renesas.com>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.105346208@decadent.org.uk>
+Message-ID: <lsq.1541965745.945098252@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 152/366] mtd: rawnand: mxc: set spare area size
- register explicitly
+Subject: [PATCH 3.16 085/366] usb: gadget: function: printer: avoid
+ spinlock recursion
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -60,62 +58,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Martin Kaiser <martin@kaiser.cx>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-commit 3f77f244d8ec28e3a0a81240ffac7d626390060c upstream.
+commit 9ada8c582088d32bd5c071c17213bc6edf37443a upstream.
 
-The v21 version of the NAND flash controller contains a Spare Area Size
-Register (SPAS) at offset 0x10. Its setting defaults to the maximum
-spare area size of 218 bytes. The size that is set in this register is
-used by the controller when it calculates the ECC bytes internally in
-hardware.
+If usb_gadget_giveback_request() is called in usb_ep_queue(),
+this printer_write() is possible to cause spinlock recursion. So,
+this patch adds spin_unlock() before calls usb_ep_queue() to avoid it.
 
-Usually, this register is updated from settings in the IIM fuses when
-the system is booting from NAND flash. For other boot media, however,
-the SPAS register remains at the default setting, which may not work for
-the particular flash chip on the board. The same goes for flash chips
-whose configuration cannot be set in the IIM fuses (e.g. chips with 2k
-sector size and 128 bytes spare area size can't be configured in the IIM
-fuses on imx25 systems).
-
-Set the SPAS register explicitly during the preset operation. Derive the
-register value from mtd->oobsize that was detected during probe by
-decoding the flash chip's ID bytes.
-
-While at it, rename the define for the spare area register's offset to
-NFC_V21_RSLTSPARE_AREA. The register at offset 0x10 on v1 controllers is
-different from the register on v21 controllers.
-
-Fixes: d484018 ("mtd: mxc_nand: set NFC registers after reset")
-Signed-off-by: Martin Kaiser <martin@kaiser.cx>
-Reviewed-by: Sascha Hauer <s.hauer@pengutronix.de>
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 [bwh: Backported to 3.16: adjust filename]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/mtd/nand/mxc_nand.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/usb/gadget/printer.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/mtd/nand/mxc_nand.c
-+++ b/drivers/mtd/nand/mxc_nand.c
-@@ -49,7 +49,7 @@
- #define NFC_V1_V2_CONFIG		(host->regs + 0x0a)
- #define NFC_V1_V2_ECC_STATUS_RESULT	(host->regs + 0x0c)
- #define NFC_V1_V2_RSLTMAIN_AREA		(host->regs + 0x0e)
--#define NFC_V1_V2_RSLTSPARE_AREA	(host->regs + 0x10)
-+#define NFC_V21_RSLTSPARE_AREA		(host->regs + 0x10)
- #define NFC_V1_V2_WRPROT		(host->regs + 0x12)
- #define NFC_V1_UNLOCKSTART_BLKADDR	(host->regs + 0x14)
- #define NFC_V1_UNLOCKEND_BLKADDR	(host->regs + 0x16)
-@@ -958,6 +958,9 @@ static void preset_v2(struct mtd_info *m
- 	writew(config1, NFC_V1_V2_CONFIG1);
- 	/* preset operation */
+--- a/drivers/usb/gadget/printer.c
++++ b/drivers/usb/gadget/printer.c
+@@ -587,6 +587,7 @@ printer_write(struct file *fd, const cha
+ 	size_t			size;	/* Amount of data in a TX request. */
+ 	size_t			bytes_copied = 0;
+ 	struct usb_request	*req;
++	int			value;
  
-+	/* spare area size in 16-bit half-words */
-+	writew(mtd->oobsize / 2, NFC_V21_RSLTSPARE_AREA);
-+
- 	/* Unlock the internal RAM Buffer */
- 	writew(0x2, NFC_V1_V2_CONFIG);
+ 	DBG(dev, "printer_write trying to send %d bytes\n", (int)len);
  
+@@ -666,7 +667,11 @@ printer_write(struct file *fd, const cha
+ 			return -EAGAIN;
+ 		}
+ 
+-		if (usb_ep_queue(dev->in_ep, req, GFP_ATOMIC)) {
++		/* here, we unlock, and only unlock, to avoid deadlock. */
++		spin_unlock(&dev->lock);
++		value = usb_ep_queue(dev->in_ep, req, GFP_ATOMIC);
++		spin_lock(&dev->lock);
++		if (value) {
+ 			list_add(&req->list, &dev->tx_reqs);
+ 			spin_unlock_irqrestore(&dev->lock, flags);
+ 			mutex_unlock(&dev->lock_printer_io);
 
