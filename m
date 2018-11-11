@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82F9BC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:51:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42ED7C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:51:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4650D20872
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:51:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0679A20872
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:51:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lMvMY2a+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4650D20872
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aBgphLud"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0679A20872
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733091AbeKLJl3 (ORCPT
+        id S1732903AbeKLISc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:41:29 -0500
+        Mon, 12 Nov 2018 03:18:32 -0500
 Received: from mail.kernel.org ([198.145.29.99]:37584 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732890AbeKLISc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:18:32 -0500
+        id S1732848AbeKLISa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:18:30 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA083223C6;
-        Sun, 11 Nov 2018 22:28:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A34C2175B;
+        Sun, 11 Nov 2018 22:28:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975316;
-        bh=eqhnX2AQ+hthrk+gSXJHDMeSRfpWzVDVnc2P9Qxqdhg=;
+        s=default; t=1541975314;
+        bh=sK96i5YP9udCKP0ERLW/GwVrs+XGEA94k1LI65yRJx4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lMvMY2a+pN9/D6zb2VYytKcQq8yDpxyAt1qQT3Txo6ngIJvkAtApurL1LlkiUawYL
-         Ttgfq/f4Xx59ZbQXPIyAiXUua/IcB/4R0r/FwHt51yItOrMTYVKyPEDNg1Vk6Hu/gl
-         FAf0MVEXU+px5OaxUIDJnA6p1MENfD7+h6hE0jsg=
+        b=aBgphLud0ufD6W6H1tJAd/jZJakx1vogddbJFpqSURLubA5BAb1sOizhJFGD/eKoy
+         vUFrwe4OzcKZu/Ysz2K4+ijlrSiFiKdTghTfsjQIb6gPb13AGdhBcGsulBRAZ4gx+d
+         mgaKI6eLpHpD2VfqCsQq2Du42aWa1tVZ5H9XCcfw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.19 306/361] media: tvp5150: avoid going past array on v4l2_querymenu()
-Date:   Sun, 11 Nov 2018 14:20:53 -0800
-Message-Id: <20181111221657.911745091@linuxfoundation.org>
+        stable@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.19 283/361] powerpc/64s/hash: Do not use PPC_INVALIDATE_ERAT on CPUs before POWER9
+Date:   Sun, 11 Nov 2018 14:20:30 -0800
+Message-Id: <20181111221656.049774374@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -62,80 +62,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+From: Nicholas Piggin <npiggin@gmail.com>
 
-commit 5c4c4505b716cb782ad7263091edc466c4d1fbd4 upstream.
+commit bc276ecba132caccb1fda5863a652c15def2b8c6 upstream.
 
-The parameters of v4l2_ctrl_new_std_menu_items() are tricky: instead of
-the number of possible values, it requires the number of the maximum
-value. In other words, the ARRAY_SIZE() value should be decremented,
-otherwise it will go past the array bounds, as warned by KASAN:
+PPC_INVALIDATE_ERAT is slbia IH=7 which is a new variant introduced
+with POWER9, and the result is undefined on earlier CPUs.
 
-[  279.839688] BUG: KASAN: global-out-of-bounds in v4l2_querymenu+0x10d/0x180 [videodev]
-[  279.839709] Read of size 8 at addr ffffffffc10a4cb0 by task v4l2-compliance/16676
+Commits 7b9f71f974 ("powerpc/64s: POWER9 machine check handler") and
+d4748276ae ("powerpc/64s: Improve local TLB flush for boot and MCE on
+POWER9") caused POWER7/8 code to use this instruction. Remove it. An
+ERAT flush can be made by invalidatig the SLB, but before POWER9 that
+requires a flush and rebolt.
 
-[  279.839736] CPU: 1 PID: 16676 Comm: v4l2-compliance Not tainted 4.18.0-rc2+ #120
-[  279.839741] Hardware name:  /NUC5i7RYB, BIOS RYBDWi35.86A.0364.2017.0511.0949 05/11/2017
-[  279.839743] Call Trace:
-[  279.839758]  dump_stack+0x71/0xab
-[  279.839807]  ? v4l2_querymenu+0x10d/0x180 [videodev]
-[  279.839817]  print_address_description+0x1c9/0x270
-[  279.839863]  ? v4l2_querymenu+0x10d/0x180 [videodev]
-[  279.839871]  kasan_report+0x237/0x360
-[  279.839918]  v4l2_querymenu+0x10d/0x180 [videodev]
-[  279.839964]  __video_do_ioctl+0x2c8/0x590 [videodev]
-[  279.840011]  ? copy_overflow+0x20/0x20 [videodev]
-[  279.840020]  ? avc_ss_reset+0xa0/0xa0
-[  279.840028]  ? check_stack_object+0x21/0x60
-[  279.840036]  ? __check_object_size+0xe7/0x240
-[  279.840080]  video_usercopy+0xed/0x730 [videodev]
-[  279.840123]  ? copy_overflow+0x20/0x20 [videodev]
-[  279.840167]  ? v4l_enumstd+0x40/0x40 [videodev]
-[  279.840177]  ? __handle_mm_fault+0x9f9/0x1ba0
-[  279.840186]  ? __pmd_alloc+0x2c0/0x2c0
-[  279.840193]  ? __vfs_write+0xb6/0x350
-[  279.840200]  ? kernel_read+0xa0/0xa0
-[  279.840244]  ? video_usercopy+0x730/0x730 [videodev]
-[  279.840284]  v4l2_ioctl+0xa1/0xb0 [videodev]
-[  279.840295]  do_vfs_ioctl+0x117/0x8a0
-[  279.840303]  ? selinux_file_ioctl+0x211/0x2f0
-[  279.840313]  ? ioctl_preallocate+0x120/0x120
-[  279.840319]  ? selinux_capable+0x20/0x20
-[  279.840332]  ksys_ioctl+0x70/0x80
-[  279.840342]  __x64_sys_ioctl+0x3d/0x50
-[  279.840351]  do_syscall_64+0x6d/0x1c0
-[  279.840361]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[  279.840367] RIP: 0033:0x7fdfb46275d7
-[  279.840369] Code: b3 66 90 48 8b 05 b1 48 2d 00 64 c7 00 26 00 00 00 48 c7 c0 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 b8 10 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 81 48 2d 00 f7 d8 64 89 01 48
-[  279.840474] RSP: 002b:00007ffee1179038 EFLAGS: 00000202 ORIG_RAX: 0000000000000010
-[  279.840483] RAX: ffffffffffffffda RBX: 00007ffee1179180 RCX: 00007fdfb46275d7
-[  279.840488] RDX: 00007ffee11790c0 RSI: 00000000c02c5625 RDI: 0000000000000003
-[  279.840493] RBP: 0000000000000002 R08: 0000000000000020 R09: 00000000009f0902
-[  279.840497] R10: 0000000000000000 R11: 0000000000000202 R12: 00007ffee117a5a0
-[  279.840501] R13: 00007ffee11790c0 R14: 0000000000000002 R15: 0000000000000000
-
-[  279.840515] The buggy address belongs to the variable:
-[  279.840535]  tvp5150_test_patterns+0x10/0xffffffffffffe360 [tvp5150]
-
-Fixes: c43875f66140 ("[media] tvp5150: replace MEDIA_ENT_F_CONN_TEST by a control")
-Cc: stable@vger.kernel.org
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: 7b9f71f974 ("powerpc/64s: POWER9 machine check handler")
+Fixes: d4748276ae ("powerpc/64s: Improve local TLB flush for boot and MCE on POWER9")
+Cc: stable@vger.kernel.org # v4.11+
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/i2c/tvp5150.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/kernel/mce_power.c  |    7 +++++++
+ arch/powerpc/mm/hash_native_64.c |    4 ++--
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
---- a/drivers/media/i2c/tvp5150.c
-+++ b/drivers/media/i2c/tvp5150.c
-@@ -1534,7 +1534,7 @@ static int tvp5150_probe(struct i2c_clie
- 			27000000, 1, 27000000);
- 	v4l2_ctrl_new_std_menu_items(&core->hdl, &tvp5150_ctrl_ops,
- 				     V4L2_CID_TEST_PATTERN,
--				     ARRAY_SIZE(tvp5150_test_patterns),
-+				     ARRAY_SIZE(tvp5150_test_patterns) - 1,
- 				     0, 0, tvp5150_test_patterns);
- 	sd->ctrl_handler = &core->hdl;
- 	if (core->hdl.error) {
+--- a/arch/powerpc/kernel/mce_power.c
++++ b/arch/powerpc/kernel/mce_power.c
+@@ -89,6 +89,13 @@ static void flush_and_reload_slb(void)
+ 
+ static void flush_erat(void)
+ {
++#ifdef CONFIG_PPC_BOOK3S_64
++	if (!early_cpu_has_feature(CPU_FTR_ARCH_300)) {
++		flush_and_reload_slb();
++		return;
++	}
++#endif
++	/* PPC_INVALIDATE_ERAT can only be used on ISA v3 and newer */
+ 	asm volatile(PPC_INVALIDATE_ERAT : : :"memory");
+ }
+ 
+--- a/arch/powerpc/mm/hash_native_64.c
++++ b/arch/powerpc/mm/hash_native_64.c
+@@ -115,6 +115,8 @@ static void tlbiel_all_isa300(unsigned i
+ 	tlbiel_hash_set_isa300(0, is, 0, 2, 1);
+ 
+ 	asm volatile("ptesync": : :"memory");
++
++	asm volatile(PPC_INVALIDATE_ERAT "; isync" : : :"memory");
+ }
+ 
+ void hash__tlbiel_all(unsigned int action)
+@@ -140,8 +142,6 @@ void hash__tlbiel_all(unsigned int actio
+ 		tlbiel_all_isa206(POWER7_TLB_SETS, is);
+ 	else
+ 		WARN(1, "%s called on pre-POWER7 CPU\n", __func__);
+-
+-	asm volatile(PPC_INVALIDATE_ERAT "; isync" : : :"memory");
+ }
+ 
+ static inline unsigned long  ___tlbie(unsigned long vpn, int psize,
 
 
