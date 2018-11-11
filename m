@@ -6,44 +6,48 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 420F4C0044C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:15:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C12C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:15:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EC7C2148E
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:15:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EC7C2148E
+	by mail.kernel.org (Postfix) with ESMTP id 1C75D214DB
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:15:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C75D214DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731829AbeKLGFS (ORCPT
+        id S1731839AbeKLGFV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:05:18 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53068 "EHLO
+        Mon, 12 Nov 2018 01:05:21 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53076 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731042AbeKLGFR (ORCPT
+        by vger.kernel.org with ESMTP id S1731042AbeKLGFU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 01:05:17 -0500
+        Mon, 12 Nov 2018 01:05:20 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvt0-0000lF-2h; Sun, 11 Nov 2018 19:59:10 +0000
+        id 1gLvt3-0000l9-DZ; Sun, 11 Nov 2018 19:59:13 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsS-0001Yy-N5; Sun, 11 Nov 2018 19:58:36 +0000
+        id 1gLvsR-0001X2-Mx; Sun, 11 Nov 2018 19:58:35 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Eric Dumazet" <edumazet@google.com>,
-        "Pablo Neira Ayuso" <pablo@netfilter.org>
+CC:     akpm@linux-foundation.org, "Vlastimil Babka" <vbabka@suse.cz>,
+        "Michal Hocko" <mhocko@kernel.org>,
+        "Mel Gorman" <mgorman@techsingularity.net>,
+        "Joonsoo Kim" <iamjoonsoo.kim@lge.com>,
+        "David Rientjes" <rientjes@google.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.780526574@decadent.org.uk>
+Message-ID: <lsq.1541965745.30264303@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 150/366] netfilter: ipv6: nf_defrag: reduce struct
- net memory waste
+Subject: [PATCH 3.16 126/366] mm, page_alloc: do not break __GFP_THISNODE
+ by zonelist reset
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,70 +61,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Vlastimil Babka <vbabka@suse.cz>
 
-commit 9ce7bc036ae4cfe3393232c86e9e1fea2153c237 upstream.
+commit 7810e6781e0fcbca78b91cf65053f895bf59e85f upstream.
 
-It is a waste of memory to use a full "struct netns_sysctl_ipv6"
-while only one pointer is really used, considering netns_sysctl_ipv6
-keeps growing.
+In __alloc_pages_slowpath() we reset zonelist and preferred_zoneref for
+allocations that can ignore memory policies.  The zonelist is obtained
+from current CPU's node.  This is a problem for __GFP_THISNODE
+allocations that want to allocate on a different node, e.g.  because the
+allocating thread has been migrated to a different CPU.
 
-Also, since "struct netns_frags" has cache line alignment,
-it is better to move the frags_hdr pointer outside, otherwise
-we spend a full cache line for this pointer.
+This has been observed to break SLAB in our 4.4-based kernel, because
+there it relies on __GFP_THISNODE working as intended.  If a slab page
+is put on wrong node's list, then further list manipulations may corrupt
+the list because page_to_nid() is used to determine which node's
+list_lock should be locked and thus we may take a wrong lock and race.
 
-This saves 192 bytes of memory per netns.
+Current SLAB implementation seems to be immune by luck thanks to commit
+511e3a058812 ("mm/slab: make cache_grow() handle the page allocated on
+arbitrary node") but there may be others assuming that __GFP_THISNODE
+works as promised.
 
-Fixes: c038a767cd69 ("ipv6: add a new namespace for nf_conntrack_reasm")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+We can fix it by simply removing the zonelist reset completely.  There
+is actually no reason to reset it, because memory policies and cpusets
+don't affect the zonelist choice in the first place.  This was different
+when commit 183f6371aac2 ("mm: ignore mempolicies when using
+ALLOC_NO_WATERMARK") introduced the code, as mempolicies provided their
+own restricted zonelists.
+
+We might consider this for 4.17 although I don't know if there's
+anything currently broken.
+
+SLAB is currently not affected, but in kernels older than 4.7 that don't
+yet have 511e3a058812 ("mm/slab: make cache_grow() handle the page
+allocated on arbitrary node") it is.  That's at least 4.4 LTS.  Older
+ones I'll have to check.
+
+So stable backports should be more important, but will have to be
+reviewed carefully, as the code went through many changes.  BTW I think
+that also the ac->preferred_zoneref reset is currently useless if we
+don't also reset ac->nodemask from a mempolicy to NULL first (which we
+probably should for the OOM victims etc?), but I would leave that for a
+separate patch.
+
+Link: http://lkml.kernel.org/r/20180525130853.13915-1-vbabka@suse.cz
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+Fixes: 183f6371aac2 ("mm: ignore mempolicies when using ALLOC_NO_WATERMARK")
+Acked-by: Mel Gorman <mgorman@techsingularity.net>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+[bwh: Backported to 3.16: Resetting the zonelist may still be useful here,
+ so keep doing it if __GFP_THISNODE is not used.]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- include/net/net_namespace.h             | 1 +
- include/net/netns/ipv6.h                | 1 -
- net/ipv6/netfilter/nf_conntrack_reasm.c | 6 +++---
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ mm/page_alloc.c | 1 -
+ 1 file changed, 1 deletion(-)
 
---- a/include/net/net_namespace.h
-+++ b/include/net/net_namespace.h
-@@ -112,6 +112,7 @@ struct net {
- #endif
- #if IS_ENABLED(CONFIG_NF_DEFRAG_IPV6)
- 	struct netns_nf_frag	nf_frag;
-+	struct ctl_table_header *nf_frag_frags_hdr;
- #endif
- 	struct sock		*nfnl;
- 	struct sock		*nfnl_stash;
---- a/include/net/netns/ipv6.h
-+++ b/include/net/netns/ipv6.h
-@@ -80,7 +80,6 @@ struct netns_ipv6 {
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -2594,7 +2594,8 @@ rebalance:
+ 		 * the allocation is high priority and these type of
+ 		 * allocations are system rather than user orientated
+ 		 */
+-		zonelist = node_zonelist(numa_node_id(), gfp_mask);
++		if (!(gfp_mask & __GFP_THISNODE))
++			zonelist = node_zonelist(numa_node_id(), gfp_mask);
  
- #if IS_ENABLED(CONFIG_NF_DEFRAG_IPV6)
- struct netns_nf_frag {
--	struct netns_sysctl_ipv6 sysctl;
- 	struct netns_frags	frags;
- };
- #endif
---- a/net/ipv6/netfilter/nf_conntrack_reasm.c
-+++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
-@@ -109,7 +109,7 @@ static int nf_ct_frag6_sysctl_register(s
- 	if (hdr == NULL)
- 		goto err_reg;
- 
--	net->nf_frag.sysctl.frags_hdr = hdr;
-+	net->nf_frag_frags_hdr = hdr;
- 	return 0;
- 
- err_reg:
-@@ -123,8 +123,8 @@ static void __net_exit nf_ct_frags6_sysc
- {
- 	struct ctl_table *table;
- 
--	table = net->nf_frag.sysctl.frags_hdr->ctl_table_arg;
--	unregister_net_sysctl_table(net->nf_frag.sysctl.frags_hdr);
-+	table = net->nf_frag_frags_hdr->ctl_table_arg;
-+	unregister_net_sysctl_table(net->nf_frag_frags_hdr);
- 	if (!net_eq(net, &init_net))
- 		kfree(table);
- }
+ 		page = __alloc_pages_high_priority(gfp_mask, order,
+ 				zonelist, high_zoneidx, nodemask,
 
