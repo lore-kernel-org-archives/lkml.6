@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5670C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:57:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D96BC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:57:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D007206BA
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:57:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB7D920818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:57:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bRdI4m1N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D007206BA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wbUpezQz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB7D920818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403827AbeKLIWp (ORCPT
+        id S2390890AbeKLIrh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:22:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54092 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:47:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390677AbeKLIWl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:41 -0500
+        id S2403813AbeKLIWp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:45 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B58B223C8;
-        Sun, 11 Nov 2018 22:32:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E0DA421707;
+        Sun, 11 Nov 2018 22:32:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975564;
-        bh=iYS39zyXV/xZ8hLQUWEvOmRMnsaBOmzs3HxmWRQYxcI=;
+        s=default; t=1541975568;
+        bh=2xgasrsPX0FixoXl03c7sQwu5amsGtDkDYhvsp/6HvU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bRdI4m1NJsmJ3ZnF5s1bsBENIUxUnVcq+bsz/1SHE4JVBJKqVEIRvskrDBzhvV5N1
-         MZEwg8WdTs0NdSgl/TQ9x0Wod2EUFfxIJQuRbXMcxRQqB62/haIXuCuiu1cbB2VKbL
-         Gvlfe06x59avLsV9FfWnLdBzvLk67WikfYA4WznM=
+        b=wbUpezQzuSQEc52n73oAP4LEDo3rIqS91udc0alnaOQhhin3jUI0+v29J2/tlI8Pt
+         QtkpNPhdAg6/CgvK44NKBdY9oZlxCmEfOgtKmamAooCa9UU/BLCxN826LNjO6UKlXn
+         PT+JMb+2sGOZss1FbRJBp92aAqKMSPZOQiBPx0W8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Thumshirn <jthumshirn@suse.de>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH 4.14 132/222] libnvdimm, region: Fail badblocks listing for inactive regions
-Date:   Sun, 11 Nov 2018 14:23:49 -0800
-Message-Id: <20181111221659.405897588@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
+        Mathieu Malaterre <malat@debian.org>,
+        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 106/222] dmaengine: dma-jz4780: Return error if not probed from DT
+Date:   Sun, 11 Nov 2018 14:23:23 -0800
+Message-Id: <20181111221657.341611475@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -63,69 +63,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Paul Cercueil <paul@crapouillou.net>
 
-commit 5d394eee2c102453278d81d9a7cf94c80253486a upstream.
+[ Upstream commit 54f919a04cf221bc1601d1193682d4379dacacbd ]
 
-While experimenting with region driver loading the following backtrace
-was triggered:
+The driver calls clk_get() with the clock name set to NULL, which means
+that the driver could only work when probed from devicetree. From now
+on, we explicitly require the driver to be probed from devicetree.
 
- INFO: trying to register non-static key.
- the code is fine but needs lockdep annotation.
- turning off the locking correctness validator.
- [..]
- Call Trace:
-  dump_stack+0x85/0xcb
-  register_lock_class+0x571/0x580
-  ? __lock_acquire+0x2ba/0x1310
-  ? kernfs_seq_start+0x2a/0x80
-  __lock_acquire+0xd4/0x1310
-  ? dev_attr_show+0x1c/0x50
-  ? __lock_acquire+0x2ba/0x1310
-  ? kernfs_seq_start+0x2a/0x80
-  ? lock_acquire+0x9e/0x1a0
-  lock_acquire+0x9e/0x1a0
-  ? dev_attr_show+0x1c/0x50
-  badblocks_show+0x70/0x190
-  ? dev_attr_show+0x1c/0x50
-  dev_attr_show+0x1c/0x50
-
-This results from a missing successful call to devm_init_badblocks()
-from nd_region_probe(). Block attempts to show badblocks while the
-region is not enabled.
-
-Fixes: 6a6bef90425e ("libnvdimm: add mechanism to publish badblocks...")
-Cc: <stable@vger.kernel.org>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Tested-by: Mathieu Malaterre <malat@debian.org>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/nvdimm/region_devs.c |   11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/dma/dma-jz4780.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/drivers/nvdimm/region_devs.c
-+++ b/drivers/nvdimm/region_devs.c
-@@ -513,10 +513,17 @@ static ssize_t region_badblocks_show(str
- 		struct device_attribute *attr, char *buf)
- {
- 	struct nd_region *nd_region = to_nd_region(dev);
-+	ssize_t rc;
+--- a/drivers/dma/dma-jz4780.c
++++ b/drivers/dma/dma-jz4780.c
+@@ -754,6 +754,11 @@ static int jz4780_dma_probe(struct platf
+ 	struct resource *res;
+ 	int i, ret;
  
--	return badblocks_show(&nd_region->bb, buf, 0);
--}
-+	device_lock(dev);
-+	if (dev->driver)
-+		rc = badblocks_show(&nd_region->bb, buf, 0);
-+	else
-+		rc = -ENXIO;
-+	device_unlock(dev);
- 
-+	return rc;
-+}
- static DEVICE_ATTR(badblocks, 0444, region_badblocks_show, NULL);
- 
- static ssize_t resource_show(struct device *dev,
++	if (!dev->of_node) {
++		dev_err(dev, "This driver must be probed from devicetree\n");
++		return -EINVAL;
++	}
++
+ 	jzdma = devm_kzalloc(dev, sizeof(*jzdma), GFP_KERNEL);
+ 	if (!jzdma)
+ 		return -ENOMEM;
 
 
