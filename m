@@ -6,48 +6,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A482C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:06:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E6B3C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:06:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E88C520818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:06:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5461F20818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:06:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mvQKCxlO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E88C520818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cy7AEPX4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5461F20818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390384AbeKLIWN (ORCPT
+        id S2390559AbeKLI4m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:22:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51332 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:56:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51200 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390359AbeKLIWM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2390368AbeKLIWM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:22:12 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 10B86223DD;
-        Sun, 11 Nov 2018 22:32:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CFDA521707;
+        Sun, 11 Nov 2018 22:32:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975534;
-        bh=XPk3r1mAtxr6ohMxSkGd3Z3fxH+DB3gcI81PaX3hA7M=;
+        s=default; t=1541975535;
+        bh=ynGVD8sSfULFcPvSBokfvW8OWHJ3sogPsaMi+fbwMVA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mvQKCxlOyueqbhOw/Z04tppK/LwbG8BGloTmQ/UowJMERjnzX0rXU13lEPIj5Q7hT
-         N20NafKEBc0vn3HxvkZ4LiVBwK0JUEWrCPBMIRabR8/e/t0zdTQTSWwp+Bkt4SdgVT
-         8sVttp4ok65bL/4tAt9ECHlvZMs1JMpRRWqM62Uk=
+        b=Cy7AEPX4z6U4XjzOCrf1W7xrGETuM2W+PdNWGk5U2shkNdI9IT9BCvqB3/85xVGcp
+         /F6AhD2Pktk3/ucia68V5/GSXUaHWgg0emGibLTaM+P2ifaTvo2wgVOvy/z1A/vZfM
+         XAdZqZnmalNpVricnk40eLnKPo0AiHIU7t9ZUWTY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Yu Zhao <yuzhao@google.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 047/222] spi: spi-ep93xx: Use dma_data_direction for ep93xx_spi_dma_{finish,prepare}
-Date:   Sun, 11 Nov 2018 14:22:24 -0800
-Message-Id: <20181111221652.319219443@linuxfoundation.org>
+Subject: [PATCH 4.14 052/222] mmc: sdhci-pci-o2micro: Add quirk for O2 Micro dev 0x8620 rev 0x01
+Date:   Sun, 11 Nov 2018 14:22:29 -0800
+Message-Id: <20181111221652.742978106@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -65,160 +62,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Yu Zhao <yuzhao@google.com>
 
-[ Upstream commit a1108c7b2efb892350ba6a0e932dfd45622f4e2b ]
+[ Upstream commit 5169894982bb67486d93cc1e10151712bb86bcb6 ]
 
-Clang warns when one enumerated type is implicitly converted to another.
+This device reports SDHCI_CLOCK_INT_STABLE even though it's not
+ready to take SDHCI_CLOCK_CARD_EN. The symptom is that reading
+SDHCI_CLOCK_CONTROL after enabling the clock shows absence of the
+bit from the register (e.g. expecting 0x0000fa07 = 0x0000fa03 |
+SDHCI_CLOCK_CARD_EN but only observed the first operand).
 
-drivers/spi/spi-ep93xx.c:342:62: warning: implicit conversion from
-enumeration type 'enum dma_transfer_direction' to different enumeration
-type 'enum dma_data_direction' [-Wenum-conversion]
-        nents = dma_map_sg(chan->device->dev, sgt->sgl, sgt->nents, dir);
-                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
-./include/linux/dma-mapping.h:428:58: note: expanded from macro
-'dma_map_sg'
-#define dma_map_sg(d, s, n, r) dma_map_sg_attrs(d, s, n, r, 0)
-                               ~~~~~~~~~~~~~~~~          ^
-drivers/spi/spi-ep93xx.c:348:57: warning: implicit conversion from
-enumeration type 'enum dma_transfer_direction' to different enumeration
-type 'enum dma_data_direction' [-Wenum-conversion]
-                dma_unmap_sg(chan->device->dev, sgt->sgl, sgt->nents, dir);
-                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
-./include/linux/dma-mapping.h:429:62: note: expanded from macro
-'dma_unmap_sg'
-#define dma_unmap_sg(d, s, n, r) dma_unmap_sg_attrs(d, s, n, r, 0)
-                                 ~~~~~~~~~~~~~~~~~~          ^
-drivers/spi/spi-ep93xx.c:377:56: warning: implicit conversion from
-enumeration type 'enum dma_transfer_direction' to different enumeration
-type 'enum dma_data_direction' [-Wenum-conversion]
-        dma_unmap_sg(chan->device->dev, sgt->sgl, sgt->nents, dir);
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
-./include/linux/dma-mapping.h:429:62: note: expanded from macro
-'dma_unmap_sg'
-#define dma_unmap_sg(d, s, n, r) dma_unmap_sg_attrs(d, s, n, r, 0)
-                                 ~~~~~~~~~~~~~~~~~~          ^
-3 warnings generated.
+mmc1: Timeout waiting for hardware cmd interrupt.
+mmc1: sdhci: ============ SDHCI REGISTER DUMP ===========
+mmc1: sdhci: Sys addr:  0x00000000 | Version:  0x00000603
+mmc1: sdhci: Blk size:  0x00000000 | Blk cnt:  0x00000000
+mmc1: sdhci: Argument:  0x00000000 | Trn mode: 0x00000000
+mmc1: sdhci: Present:   0x01ff0001 | Host ctl: 0x00000001
+mmc1: sdhci: Power:     0x0000000f | Blk gap:  0x00000000
+mmc1: sdhci: Wake-up:   0x00000000 | Clock:    0x0000fa03
+mmc1: sdhci: Timeout:   0x00000000 | Int stat: 0x00000000
+mmc1: sdhci: Int enab:  0x00ff0083 | Sig enab: 0x00ff0083
+mmc1: sdhci: AC12 err:  0x00000000 | Slot int: 0x00000000
+mmc1: sdhci: Caps:      0x25fcc8bf | Caps_1:   0x00002077
+mmc1: sdhci: Cmd:       0x00000000 | Max curr: 0x005800c8
+mmc1: sdhci: Resp[0]:   0x00000000 | Resp[1]:  0x00000000
+mmc1: sdhci: Resp[2]:   0x00000000 | Resp[3]:  0x00000000
+mmc1: sdhci: Host ctl2: 0x00000008
+mmc1: sdhci: ADMA Err:  0x00000000 | ADMA Ptr: 0x00000000
+mmc1: sdhci: ============================================
 
-dma_{,un}map_sg expect an enum of type dma_data_direction but this
-driver uses dma_transfer_direction for everything. Convert the driver to
-use dma_data_direction for these two functions.
+The problem happens during wakeup from S3. Adding a delay quirk
+after power up reliably fixes the problem.
 
-There are two places that strictly require an enum of type
-dma_transfer_direction: the direction member in struct dma_slave_config
-and the direction parameter in dmaengine_prep_slave_sg. To avoid using
-an explicit cast, add a simple function, ep93xx_dma_data_to_trans_dir,
-to safely map between the two types because they are not 1 to 1 in
-meaning.
-
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Yu Zhao <yuzhao@google.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/spi/spi-ep93xx.c |   36 +++++++++++++++++++++++++-----------
- 1 file changed, 25 insertions(+), 11 deletions(-)
+ drivers/mmc/host/sdhci-pci-o2micro.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/spi/spi-ep93xx.c
-+++ b/drivers/spi/spi-ep93xx.c
-@@ -246,6 +246,19 @@ static int ep93xx_spi_read_write(struct
- 	return -EINPROGRESS;
- }
- 
-+static enum dma_transfer_direction
-+ep93xx_dma_data_to_trans_dir(enum dma_data_direction dir)
-+{
-+	switch (dir) {
-+	case DMA_TO_DEVICE:
-+		return DMA_MEM_TO_DEV;
-+	case DMA_FROM_DEVICE:
-+		return DMA_DEV_TO_MEM;
-+	default:
-+		return DMA_TRANS_NONE;
-+	}
-+}
-+
- /**
-  * ep93xx_spi_dma_prepare() - prepares a DMA transfer
-  * @master: SPI master
-@@ -257,7 +270,7 @@ static int ep93xx_spi_read_write(struct
-  */
- static struct dma_async_tx_descriptor *
- ep93xx_spi_dma_prepare(struct spi_master *master,
--		       enum dma_transfer_direction dir)
-+		       enum dma_data_direction dir)
- {
- 	struct ep93xx_spi *espi = spi_master_get_devdata(master);
- 	struct spi_transfer *xfer = master->cur_msg->state;
-@@ -277,9 +290,9 @@ ep93xx_spi_dma_prepare(struct spi_master
- 		buswidth = DMA_SLAVE_BUSWIDTH_1_BYTE;
- 
- 	memset(&conf, 0, sizeof(conf));
--	conf.direction = dir;
-+	conf.direction = ep93xx_dma_data_to_trans_dir(dir);
- 
--	if (dir == DMA_DEV_TO_MEM) {
-+	if (dir == DMA_FROM_DEVICE) {
- 		chan = espi->dma_rx;
- 		buf = xfer->rx_buf;
- 		sgt = &espi->rx_sgt;
-@@ -343,7 +356,8 @@ ep93xx_spi_dma_prepare(struct spi_master
- 	if (!nents)
- 		return ERR_PTR(-ENOMEM);
- 
--	txd = dmaengine_prep_slave_sg(chan, sgt->sgl, nents, dir, DMA_CTRL_ACK);
-+	txd = dmaengine_prep_slave_sg(chan, sgt->sgl, nents, conf.direction,
-+				      DMA_CTRL_ACK);
- 	if (!txd) {
- 		dma_unmap_sg(chan->device->dev, sgt->sgl, sgt->nents, dir);
- 		return ERR_PTR(-ENOMEM);
-@@ -360,13 +374,13 @@ ep93xx_spi_dma_prepare(struct spi_master
-  * unmapped.
-  */
- static void ep93xx_spi_dma_finish(struct spi_master *master,
--				  enum dma_transfer_direction dir)
-+				  enum dma_data_direction dir)
- {
- 	struct ep93xx_spi *espi = spi_master_get_devdata(master);
- 	struct dma_chan *chan;
- 	struct sg_table *sgt;
- 
--	if (dir == DMA_DEV_TO_MEM) {
-+	if (dir == DMA_FROM_DEVICE) {
- 		chan = espi->dma_rx;
- 		sgt = &espi->rx_sgt;
- 	} else {
-@@ -381,8 +395,8 @@ static void ep93xx_spi_dma_callback(void
- {
- 	struct spi_master *master = callback_param;
- 
--	ep93xx_spi_dma_finish(master, DMA_MEM_TO_DEV);
--	ep93xx_spi_dma_finish(master, DMA_DEV_TO_MEM);
-+	ep93xx_spi_dma_finish(master, DMA_TO_DEVICE);
-+	ep93xx_spi_dma_finish(master, DMA_FROM_DEVICE);
- 
- 	spi_finalize_current_transfer(master);
- }
-@@ -392,15 +406,15 @@ static int ep93xx_spi_dma_transfer(struc
- 	struct ep93xx_spi *espi = spi_master_get_devdata(master);
- 	struct dma_async_tx_descriptor *rxd, *txd;
- 
--	rxd = ep93xx_spi_dma_prepare(master, DMA_DEV_TO_MEM);
-+	rxd = ep93xx_spi_dma_prepare(master, DMA_FROM_DEVICE);
- 	if (IS_ERR(rxd)) {
- 		dev_err(&master->dev, "DMA RX failed: %ld\n", PTR_ERR(rxd));
- 		return PTR_ERR(rxd);
- 	}
- 
--	txd = ep93xx_spi_dma_prepare(master, DMA_MEM_TO_DEV);
-+	txd = ep93xx_spi_dma_prepare(master, DMA_TO_DEVICE);
- 	if (IS_ERR(txd)) {
--		ep93xx_spi_dma_finish(master, DMA_DEV_TO_MEM);
-+		ep93xx_spi_dma_finish(master, DMA_FROM_DEVICE);
- 		dev_err(&master->dev, "DMA TX failed: %ld\n", PTR_ERR(txd));
- 		return PTR_ERR(txd);
- 	}
+--- a/drivers/mmc/host/sdhci-pci-o2micro.c
++++ b/drivers/mmc/host/sdhci-pci-o2micro.c
+@@ -334,6 +334,9 @@ int sdhci_pci_o2_probe(struct sdhci_pci_
+ 		pci_write_config_byte(chip->pdev, O2_SD_LOCK_WP, scratch);
+ 		break;
+ 	case PCI_DEVICE_ID_O2_SEABIRD0:
++		if (chip->pdev->revision == 0x01)
++			chip->quirks |= SDHCI_QUIRK_DELAY_AFTER_POWER;
++		/* fall through */
+ 	case PCI_DEVICE_ID_O2_SEABIRD1:
+ 		/* UnLock WP */
+ 		ret = pci_read_config_byte(chip->pdev,
 
 
