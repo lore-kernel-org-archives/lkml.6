@@ -7,54 +7,48 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04C5AC43441
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD3F7C0044C
 	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB47C223D8
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3F3D22353
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="i2/m0V0y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB47C223D8
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iFm0a7Gm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3F3D22353
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389317AbeKLIVG (ORCPT
+        id S2389349AbeKLIVH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:21:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47418 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:21:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387735AbeKLIVF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:21:05 -0500
+        id S2389315AbeKLIVG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:06 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 78C4F208A3;
-        Sun, 11 Nov 2018 22:31:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F6F6216FD;
+        Sun, 11 Nov 2018 22:31:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975468;
-        bh=+i2Uc0FBjuffGQ08qp1srgsA1th1m4J0Jh/dzJCG4hw=;
+        s=default; t=1541975469;
+        bh=Av0YWlbPlCz3piSQHFW6B4H+DjJRC2vOoyrTfGSmtCs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i2/m0V0yxqerFWTFMp1X2eApsISjnJaMraVxLYzhyaGy0riRXuv+2TpSdiBsCgSFy
-         B2ukao9KUbPUDZw16G9auNdRp5pkNA5aW/CGo/HtbahXu+HvTXEV1QF3BUCsYi2xSG
-         r9iYA8zoq7BrFLGCaLam1hdejN7yLJW1WZGvR/4c=
+        b=iFm0a7GmT4x7NwRxUAY+DEKL539PkJraDczZh9LuXOwEvUhOPQ/LSwKcb2uJXKKer
+         cjJSACkP8URy2oWoBzKYwESpDd7TmxRZuGtKj/5qkfQx5FrgeKcR0TXFSXvYZQiJ0C
+         T7PxHw+zVAeByVbY47y6/m09u9Rw7QircmLLatm0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mike Kravetz <mike.kravetz@oracle.com>,
-        Mihcla Hocko <mhocko@suse.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Hugh Dickins <hughd@google.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        stable@vger.kernel.org, Ralph Campbell <rcampbell@nvidia.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Balbir Singh <bsingharora@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.18 245/350] hugetlbfs: dirty pages as they are added to pagecache
-Date:   Sun, 11 Nov 2018 14:21:49 -0800
-Message-Id: <20181111221718.288938752@linuxfoundation.org>
+Subject: [PATCH 4.18 247/350] mm/hmm: fix race between hmm_mirror_unregister() and mmu_notifier callback
+Date:   Sun, 11 Nov 2018 14:21:51 -0800
+Message-Id: <20181111221718.367355250@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -72,73 +66,99 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mike Kravetz <mike.kravetz@oracle.com>
+From: Ralph Campbell <rcampbell@nvidia.com>
 
-commit 22146c3ce98962436e401f7b7016a6f664c9ffb5 upstream.
+commit 86a2d59841ab0b147ffc1b7b3041af87927cf312 upstream.
 
-Some test systems were experiencing negative huge page reserve counts and
-incorrect file block counts.  This was traced to /proc/sys/vm/drop_caches
-removing clean pages from hugetlbfs file pagecaches.  When non-hugetlbfs
-explicit code removes the pages, the appropriate accounting is not
-performed.
+In hmm_mirror_unregister(), mm->hmm is set to NULL and then
+mmu_notifier_unregister_no_release() is called.  That creates a small
+window where mmu_notifier can call mmu_notifier_ops with mm->hmm equal to
+NULL.  Fix this by first unregistering mmu notifier callbacks and then
+setting mm->hmm to NULL.
 
-This can be recreated as follows:
- fallocate -l 2M /dev/hugepages/foo
- echo 1 > /proc/sys/vm/drop_caches
- fallocate -l 2M /dev/hugepages/foo
- grep -i huge /proc/meminfo
-   AnonHugePages:         0 kB
-   ShmemHugePages:        0 kB
-   HugePages_Total:    2048
-   HugePages_Free:     2047
-   HugePages_Rsvd:    18446744073709551615
-   HugePages_Surp:        0
-   Hugepagesize:       2048 kB
-   Hugetlb:         4194304 kB
- ls -lsh /dev/hugepages/foo
-   4.0M -rw-r--r--. 1 root root 2.0M Oct 17 20:05 /dev/hugepages/foo
+Similarly in hmm_register(), set mm->hmm before registering mmu_notifier
+callbacks so callback functions always see mm->hmm set.
 
-To address this issue, dirty pages as they are added to pagecache.  This
-can easily be reproduced with fallocate as shown above.  Read faulted
-pages will eventually end up being marked dirty.  But there is a window
-where they are clean and could be impacted by code such as drop_caches.
-So, just dirty them all as they are added to the pagecache.
-
-Link: http://lkml.kernel.org/r/b5be45b8-5afe-56cd-9482-28384699a049@oracle.com
-Fixes: 6bda666a03f0 ("hugepages: fold find_or_alloc_pages into huge_no_page()")
-Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
-Acked-by: Mihcla Hocko <mhocko@suse.com>
-Reviewed-by: Khalid Aziz <khalid.aziz@oracle.com>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc: "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Link: http://lkml.kernel.org/r/20181019160442.18723-4-jglisse@redhat.com
+Signed-off-by: Ralph Campbell <rcampbell@nvidia.com>
+Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
+Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
+Reviewed-by: Balbir Singh <bsingharora@gmail.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/hugetlb.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ mm/hmm.c |   36 +++++++++++++++++++++---------------
+ 1 file changed, 21 insertions(+), 15 deletions(-)
 
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -3678,6 +3678,12 @@ int huge_add_to_page_cache(struct page *
- 		return err;
- 	ClearPagePrivate(page);
+--- a/mm/hmm.c
++++ b/mm/hmm.c
+@@ -91,16 +91,6 @@ static struct hmm *hmm_register(struct m
+ 	spin_lock_init(&hmm->lock);
+ 	hmm->mm = mm;
  
-+	/*
-+	 * set page dirty so that it will not be removed from cache/file
-+	 * by non-hugetlbfs specific code paths.
-+	 */
-+	set_page_dirty(page);
+-	/*
+-	 * We should only get here if hold the mmap_sem in write mode ie on
+-	 * registration of first mirror through hmm_mirror_register()
+-	 */
+-	hmm->mmu_notifier.ops = &hmm_mmu_notifier_ops;
+-	if (__mmu_notifier_register(&hmm->mmu_notifier, mm)) {
+-		kfree(hmm);
+-		return NULL;
+-	}
+-
+ 	spin_lock(&mm->page_table_lock);
+ 	if (!mm->hmm)
+ 		mm->hmm = hmm;
+@@ -108,12 +98,27 @@ static struct hmm *hmm_register(struct m
+ 		cleanup = true;
+ 	spin_unlock(&mm->page_table_lock);
+ 
+-	if (cleanup) {
+-		mmu_notifier_unregister(&hmm->mmu_notifier, mm);
+-		kfree(hmm);
+-	}
++	if (cleanup)
++		goto error;
 +
- 	spin_lock(&inode->i_lock);
- 	inode->i_blocks += blocks_per_huge_page(h);
- 	spin_unlock(&inode->i_lock);
++	/*
++	 * We should only get here if hold the mmap_sem in write mode ie on
++	 * registration of first mirror through hmm_mirror_register()
++	 */
++	hmm->mmu_notifier.ops = &hmm_mmu_notifier_ops;
++	if (__mmu_notifier_register(&hmm->mmu_notifier, mm))
++		goto error_mm;
+ 
+ 	return mm->hmm;
++
++error_mm:
++	spin_lock(&mm->page_table_lock);
++	if (mm->hmm == hmm)
++		mm->hmm = NULL;
++	spin_unlock(&mm->page_table_lock);
++error:
++	kfree(hmm);
++	return NULL;
+ }
+ 
+ void hmm_mm_destroy(struct mm_struct *mm)
+@@ -275,12 +280,13 @@ void hmm_mirror_unregister(struct hmm_mi
+ 	if (!should_unregister || mm == NULL)
+ 		return;
+ 
++	mmu_notifier_unregister_no_release(&hmm->mmu_notifier, mm);
++
+ 	spin_lock(&mm->page_table_lock);
+ 	if (mm->hmm == hmm)
+ 		mm->hmm = NULL;
+ 	spin_unlock(&mm->page_table_lock);
+ 
+-	mmu_notifier_unregister_no_release(&hmm->mmu_notifier, mm);
+ 	kfree(hmm);
+ }
+ EXPORT_SYMBOL(hmm_mirror_unregister);
 
 
