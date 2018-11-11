@@ -2,51 +2,51 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB653C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:40:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3CC4C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:40:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B00420818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:40:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A5FA20818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:40:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XwbIdcGv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B00420818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hxnPI6aq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A5FA20818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388131AbeKLJbB (ORCPT
+        id S2387919AbeKLITl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:31:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41548 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387904AbeKLITl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:19:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41652 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387902AbeKLITk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:19:40 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1FB292154B;
-        Sun, 11 Nov 2018 22:29:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 56BAB2154B;
+        Sun, 11 Nov 2018 22:29:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975385;
-        bh=aB+UJ66iSgjK+b8I4lwRWcrg/IApkOR3Hff6KCjuZL8=;
+        s=default; t=1541975384;
+        bh=rKGsd03JwVuKOVPiq75qBNEiUcrcXu+acLOGwh4kxH4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XwbIdcGvUJhaLNz+tcJ6rwDCat28WV8aLwAdZxmmluU3HdV8oe3GvpoNS/Ed3+0YB
-         DUiyLeIOUvtbCUBxt0Kh7KiHNhyVLZ5RIJYJLEzm7zx83xXruhTo0BAZHZ2HYvITE2
-         Ckj9amqHZjmdHDYIccOvZkPz82QXoKspCsnVkjec=
+        b=hxnPI6aqVS4vTNP6TMJIP1MRFHNiENKbh8vTSFr3lHl/RES5rpEyUpoyBXNjKtdgy
+         Pz2z33QHRtbqGaTgeBYrPjE0nKceeCjZFychfoaGWyN36hprxy9EjbUUGiQCSzJkWx
+         df5Ds01QdC2VuIJxVX41uYZOlmfrU27bE2Lu2KLg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leo Li <sunpeng.li@amd.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Harry Wentland <harry.wentland@amd.com>,
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 061/350] drm: Get ref on CRTC commit object when waiting for flip_done
-Date:   Sun, 11 Nov 2018 14:18:45 -0800
-Message-Id: <20181111221709.703299916@linuxfoundation.org>
+Subject: [PATCH 4.18 059/350] net: qla3xxx: Remove overflowing shift statement
+Date:   Sun, 11 Nov 2018 14:18:43 -0800
+Message-Id: <20181111221709.625904202@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -64,152 +64,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Leo Li <sunpeng.li@amd.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 4364bcb2cd21d042bde4776448417ddffbc54045 ]
+[ Upstream commit 8c3bf9b62b667456a57aefcf1689e826df146159 ]
 
-This fixes a general protection fault, caused by accessing the contents
-of a flip_done completion object that has already been freed. It occurs
-due to the preemption of a non-blocking commit worker thread W by
-another commit thread X. X continues to clear its atomic state at the
-end, destroying the CRTC commit object that W still needs. Switching
-back to W and accessing the commit objects then leads to bad results.
+Clang currently warns:
 
-Worker W becomes preemptable when waiting for flip_done to complete. At
-this point, a frequently occurring commit thread X can take over. Here's
-an example where W is a worker thread that flips on both CRTCs, and X
-does a legacy cursor update on both CRTCs:
+drivers/net/ethernet/qlogic/qla3xxx.c:384:24: warning: signed shift
+result (0xF00000000) requires 37 bits to represent, but 'int' only has
+32 bits [-Wshift-overflow]
+                    ((ISP_NVRAM_MASK << 16) | qdev->eeprom_cmd_data));
+                      ~~~~~~~~~~~~~~ ^  ~~
+1 warning generated.
 
-        ...
-     1. W does flip work
-     2. W runs commit_hw_done()
-     3. W waits for flip_done on CRTC 1
-     4. > flip_done for CRTC 1 completes
-     5. W finishes waiting for CRTC 1
-     6. W waits for flip_done on CRTC 2
+The warning is certainly accurate since ISP_NVRAM_MASK is defined as
+(0x000F << 16) which is then shifted by 16, resulting in 64424509440,
+well above UINT_MAX.
 
-     7. > Preempted by X
-     8. > flip_done for CRTC 2 completes
-     9. X atomic_check: hw_done and flip_done are complete on all CRTCs
-    10. X updates cursor on both CRTCs
-    11. X destroys atomic state
-    12. X done
+Given that this is the only location in this driver where ISP_NVRAM_MASK
+is shifted again, it seems likely that ISP_NVRAM_MASK was originally
+defined without a shift and during the move of the shift to the
+definition, this statement wasn't properly removed (since ISP_NVRAM_MASK
+is used in the statenent right above this). Only the maintainers can
+confirm this since this statment has been here since the driver was
+first added to the kernel.
 
-    13. > Switch back to W
-    14. W waits for flip_done on CRTC 2
-    15. W raises general protection fault
-
-The error looks like so:
-
-    general protection fault: 0000 [#1] PREEMPT SMP PTI
-    **snip**
-    Call Trace:
-     lock_acquire+0xa2/0x1b0
-     _raw_spin_lock_irq+0x39/0x70
-     wait_for_completion_timeout+0x31/0x130
-     drm_atomic_helper_wait_for_flip_done+0x64/0x90 [drm_kms_helper]
-     amdgpu_dm_atomic_commit_tail+0xcae/0xdd0 [amdgpu]
-     commit_tail+0x3d/0x70 [drm_kms_helper]
-     process_one_work+0x212/0x650
-     worker_thread+0x49/0x420
-     kthread+0xfb/0x130
-     ret_from_fork+0x3a/0x50
-    Modules linked in: x86_pkg_temp_thermal amdgpu(O) chash(O)
-    gpu_sched(O) drm_kms_helper(O) syscopyarea sysfillrect sysimgblt
-    fb_sys_fops ttm(O) drm(O)
-
-Note that i915 has this issue masked, since hw_done is signaled after
-waiting for flip_done. Doing so will block the cursor update from
-happening until hw_done is signaled, preventing the cursor commit from
-destroying the state.
-
-v2: The reference on the commit object needs to be obtained before
-    hw_done() is signaled, since that's the point where another commit
-    is allowed to modify the state. Assuming that the
-    new_crtc_state->commit object still exists within flip_done() is
-    incorrect.
-
-    Fix by getting a reference in setup_commit(), and releasing it
-    during default_clear().
-
-Signed-off-by: Leo Li <sunpeng.li@amd.com>
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Signed-off-by: Harry Wentland <harry.wentland@amd.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/1539611200-6184-1-git-send-email-sunpeng.li@amd.com
+Link: https://github.com/ClangBuiltLinux/linux/issues/127
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/drm_atomic.c        |    5 +++++
- drivers/gpu/drm/drm_atomic_helper.c |   12 ++++++++----
- include/drm/drm_atomic.h            |   11 +++++++++++
- 3 files changed, 24 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/qlogic/qla3xxx.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/drivers/gpu/drm/drm_atomic.c
-+++ b/drivers/gpu/drm/drm_atomic.c
-@@ -173,6 +173,11 @@ void drm_atomic_state_default_clear(stru
- 		state->crtcs[i].state = NULL;
- 		state->crtcs[i].old_state = NULL;
- 		state->crtcs[i].new_state = NULL;
-+
-+		if (state->crtcs[i].commit) {
-+			drm_crtc_commit_put(state->crtcs[i].commit);
-+			state->crtcs[i].commit = NULL;
-+		}
- 	}
+--- a/drivers/net/ethernet/qlogic/qla3xxx.c
++++ b/drivers/net/ethernet/qlogic/qla3xxx.c
+@@ -380,8 +380,6 @@ static void fm93c56a_select(struct ql3_a
  
- 	for (i = 0; i < config->num_total_plane; i++) {
---- a/drivers/gpu/drm/drm_atomic_helper.c
-+++ b/drivers/gpu/drm/drm_atomic_helper.c
-@@ -1384,15 +1384,16 @@ EXPORT_SYMBOL(drm_atomic_helper_wait_for
- void drm_atomic_helper_wait_for_flip_done(struct drm_device *dev,
- 					  struct drm_atomic_state *old_state)
- {
--	struct drm_crtc_state *new_crtc_state;
- 	struct drm_crtc *crtc;
- 	int i;
+ 	qdev->eeprom_cmd_data = AUBURN_EEPROM_CS_1;
+ 	ql_write_nvram_reg(qdev, spir, ISP_NVRAM_MASK | qdev->eeprom_cmd_data);
+-	ql_write_nvram_reg(qdev, spir,
+-			   ((ISP_NVRAM_MASK << 16) | qdev->eeprom_cmd_data));
+ }
  
--	for_each_new_crtc_in_state(old_state, crtc, new_crtc_state, i) {
--		struct drm_crtc_commit *commit = new_crtc_state->commit;
-+	for (i = 0; i < dev->mode_config.num_crtc; i++) {
-+		struct drm_crtc_commit *commit = old_state->crtcs[i].commit;
- 		int ret;
- 
--		if (!commit)
-+		crtc = old_state->crtcs[i].ptr;
-+
-+		if (!crtc || !commit)
- 			continue;
- 
- 		ret = wait_for_completion_timeout(&commit->flip_done, 10 * HZ);
-@@ -1906,6 +1907,9 @@ int drm_atomic_helper_setup_commit(struc
- 		drm_crtc_commit_get(commit);
- 
- 		commit->abort_completion = true;
-+
-+		state->crtcs[i].commit = commit;
-+		drm_crtc_commit_get(commit);
- 	}
- 
- 	for_each_oldnew_connector_in_state(state, conn, old_conn_state, new_conn_state, i) {
---- a/include/drm/drm_atomic.h
-+++ b/include/drm/drm_atomic.h
-@@ -153,6 +153,17 @@ struct __drm_planes_state {
- struct __drm_crtcs_state {
- 	struct drm_crtc *ptr;
- 	struct drm_crtc_state *state, *old_state, *new_state;
-+
-+	/**
-+	 * @commit:
-+	 *
-+	 * A reference to the CRTC commit object that is kept for use by
-+	 * drm_atomic_helper_wait_for_flip_done() after
-+	 * drm_atomic_helper_commit_hw_done() is called. This ensures that a
-+	 * concurrent commit won't free a commit object that is still in use.
-+	 */
-+	struct drm_crtc_commit *commit;
-+
- 	s32 __user *out_fence_ptr;
- 	u64 last_vblank_count;
- };
+ /*
 
 
