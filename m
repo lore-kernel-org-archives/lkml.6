@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1831BC43441
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA173C0044C
 	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:57:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD7EE20871
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:57:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD7EE20871
+	by mail.kernel.org (Postfix) with ESMTP id ABC4C20871
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:57:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABC4C20871
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729478AbeKLFqW (ORCPT
+        id S1729618AbeKLFqr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 00:46:22 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46686 "EHLO
+        Mon, 12 Nov 2018 00:46:47 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52714 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726838AbeKLFqV (ORCPT
+        by vger.kernel.org with ESMTP id S1727540AbeKLFqW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:46:21 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wABJs34h140122
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:56:53 -0500
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2npdcu1xpc-1
+        Mon, 12 Nov 2018 00:46:22 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wABJs4Z1134115
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:56:54 -0500
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2npdbght3f-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:56:52 -0500
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:56:54 -0500
 Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Sun, 11 Nov 2018 19:56:51 -0000
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Sun, 11 Nov 2018 19:56:53 -0000
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 11 Nov 2018 19:56:47 -0000
+        Sun, 11 Nov 2018 19:56:48 -0000
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wABJukUW29229284
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wABJulVk36962430
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 11 Nov 2018 19:56:46 GMT
+        Sun, 11 Nov 2018 19:56:47 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7540FB205F;
-        Sun, 11 Nov 2018 19:56:46 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id B61FCB2064;
+        Sun, 11 Nov 2018 19:56:47 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 47969B2064;
-        Sun, 11 Nov 2018 19:56:46 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 7F3B4B205F;
+        Sun, 11 Nov 2018 19:56:47 +0000 (GMT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.85.207.24])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Sun, 11 Nov 2018 19:56:46 +0000 (GMT)
+        Sun, 11 Nov 2018 19:56:47 +0000 (GMT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 2C43416C5DA6; Sun, 11 Nov 2018 11:56:47 -0800 (PST)
+        id 3AC9316C5DA9; Sun, 11 Nov 2018 11:56:47 -0800 (PST)
 From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -61,24 +61,24 @@ Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E . McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH tip/core/rcu 13/20] doc: rcu: Remove obsolete checklist item about synchronize_rcu usage
-Date:   Sun, 11 Nov 2018 11:56:38 -0800
+Subject: [PATCH tip/core/rcu 16/20] doc: Remove obsolete (non-)requirement about disabling preemption
+Date:   Sun, 11 Nov 2018 11:56:41 -0800
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181111195619.GA6958@linux.ibm.com>
 References: <20181111195619.GA6958@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18111119-0064-0000-0000-000003722F17
+x-cbid: 18111119-0052-0000-0000-0000035422DD
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00010028; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01116023; UDB=6.00577118; IPR=6.00896123;
- MB=3.00024114; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-11 19:56:50
+ PH=3.00000004; SC=3.00000270; SDB=6.01116023; UDB=6.00578735; IPR=6.00896124;
+ MB=3.00024114; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-11 19:56:52
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111119-0065-0000-0000-00003B4D44E4
-Message-Id: <20181111195645.9205-13-paulmck@linux.ibm.com>
+x-cbparentid: 18111119-0053-0000-0000-00005EBB257C
+Message-Id: <20181111195645.9205-16-paulmck@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-11_13:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1807170000 definitions=main-1811110190
@@ -89,103 +89,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
 
-Since the RCU mechanisms have been consolidated, the checklist item
-warning that synchronize_rcu() waits only for RCU readers is obsolete.
-This commit therefore removes this checklist item.
+The Requirements.html document says "Disabling Preemption Does
+Not Block Grace Periods".  However this is no longer true with
+the RCU consolidation.  This commit therefore removes the obsolete
+(non-)requirement entirely.
 
 Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
 ---
- Documentation/RCU/checklist.txt | 37 +++++++--------------------------
- 1 file changed, 7 insertions(+), 30 deletions(-)
+ .../RCU/Design/Requirements/Requirements.html | 50 -------------------
+ 1 file changed, 50 deletions(-)
 
-diff --git a/Documentation/RCU/checklist.txt b/Documentation/RCU/checklist.txt
-index cc22ce49618d..b90ad1b0665a 100644
---- a/Documentation/RCU/checklist.txt
-+++ b/Documentation/RCU/checklist.txt
-@@ -320,37 +320,14 @@ over a rather long period of time, but improvements are always welcome!
- 	will break Alpha, cause aggressive compilers to generate bad code,
- 	and confuse people trying to read your code.
+diff --git a/Documentation/RCU/Design/Requirements/Requirements.html b/Documentation/RCU/Design/Requirements/Requirements.html
+index 7efc1c1da7af..4fae55056c1d 100644
+--- a/Documentation/RCU/Design/Requirements/Requirements.html
++++ b/Documentation/RCU/Design/Requirements/Requirements.html
+@@ -900,8 +900,6 @@ Except where otherwise noted, these non-guarantees were premeditated.
+ 	Grace Periods Don't Partition Read-Side Critical Sections</a>
+ <li>	<a href="#Read-Side Critical Sections Don't Partition Grace Periods">
+ 	Read-Side Critical Sections Don't Partition Grace Periods</a>
+-<li>	<a href="#Disabling Preemption Does Not Block Grace Periods">
+-	Disabling Preemption Does Not Block Grace Periods</a>
+ </ol>
  
--11.	Note that synchronize_rcu() -only- guarantees to wait until
--	all currently executing rcu_read_lock()-protected RCU read-side
--	critical sections complete.  It does -not- necessarily guarantee
--	that all currently running interrupts, NMIs, preempt_disable()
--	code, or idle loops will complete.  Therefore, if your
--	read-side critical sections are protected by something other
--	than rcu_read_lock(), do -not- use synchronize_rcu().
+ <h3><a name="Readers Impose Minimal Ordering">Readers Impose Minimal Ordering</a></h3>
+@@ -1259,54 +1257,6 @@ of RCU grace periods.
+ <tr><td>&nbsp;</td></tr>
+ </table>
+ 
+-<h3><a name="Disabling Preemption Does Not Block Grace Periods">
+-Disabling Preemption Does Not Block Grace Periods</a></h3>
 -
--	Similarly, disabling preemption is not an acceptable substitute
--	for rcu_read_lock().  Code that attempts to use preemption
--	disabling where it should be using rcu_read_lock() will break
--	in CONFIG_PREEMPT=y kernel builds.
+-<p>
+-There was a time when disabling preemption on any given CPU would block
+-subsequent grace periods.
+-However, this was an accident of implementation and is not a requirement.
+-And in the current Linux-kernel implementation, disabling preemption
+-on a given CPU in fact does not block grace periods, as Oleg Nesterov
+-<a href="https://lkml.kernel.org/g/20150614193825.GA19582@redhat.com">demonstrated</a>.
 -
--	If you want to wait for interrupt handlers, NMI handlers, and
--	code under the influence of preempt_disable(), you instead
--	need to use synchronize_irq() or synchronize_sched().
+-<p>
+-If you need a preempt-disable region to block grace periods, you need to add
+-<tt>rcu_read_lock()</tt> and <tt>rcu_read_unlock()</tt>, for example
+-as follows:
 -
--	This same limitation also applies to synchronize_rcu_bh()
--	and synchronize_srcu(), as well as to the asynchronous and
--	expedited forms of the three primitives, namely call_rcu(),
--	call_rcu_bh(), call_srcu(), synchronize_rcu_expedited(),
--	synchronize_rcu_bh_expedited(), and synchronize_srcu_expedited().
+-<blockquote>
+-<pre>
+- 1 preempt_disable();
+- 2 rcu_read_lock();
+- 3 do_something();
+- 4 rcu_read_unlock();
+- 5 preempt_enable();
+- 6
+- 7 /* Spinlocks implicitly disable preemption. */
+- 8 spin_lock(&amp;mylock);
+- 9 rcu_read_lock();
+-10 do_something();
+-11 rcu_read_unlock();
+-12 spin_unlock(&amp;mylock);
+-</pre>
+-</blockquote>
 -
--12.	Any lock acquired by an RCU callback must be acquired elsewhere
-+11.	Any lock acquired by an RCU callback must be acquired elsewhere
- 	with softirq disabled, e.g., via spin_lock_irqsave(),
- 	spin_lock_bh(), etc.  Failing to disable irq on a given
- 	acquisition of that lock will result in deadlock as soon as
- 	the RCU softirq handler happens to run your RCU callback while
- 	interrupting that acquisition's critical section.
+-<p>
+-In theory, you could enter the RCU read-side critical section first,
+-but it is more efficient to keep the entire RCU read-side critical
+-section contained in the preempt-disable region as shown above.
+-Of course, RCU read-side critical sections that extend outside of
+-preempt-disable regions will work correctly, but such critical sections
+-can be preempted, which forces <tt>rcu_read_unlock()</tt> to do
+-more work.
+-And no, this is <i>not</i> an invitation to enclose all of your RCU
+-read-side critical sections within preempt-disable regions, because
+-doing so would degrade real-time response.
+-
+-<p>
+-This non-requirement appeared with preemptible RCU.
+-
+ <h2><a name="Parallelism Facts of Life">Parallelism Facts of Life</a></h2>
  
--13.	RCU callbacks can be and are executed in parallel.  In many cases,
-+12.	RCU callbacks can be and are executed in parallel.  In many cases,
- 	the callback code simply wrappers around kfree(), so that this
- 	is not an issue (or, more accurately, to the extent that it is
- 	an issue, the memory-allocator locking handles it).  However,
-@@ -366,7 +343,7 @@ over a rather long period of time, but improvements are always welcome!
- 	not the case, a self-spawning RCU callback would prevent the
- 	victim CPU from ever going offline.)
- 
--14.	Unlike other forms of RCU, it -is- permissible to block in an
-+13.	Unlike other forms of RCU, it -is- permissible to block in an
- 	SRCU read-side critical section (demarked by srcu_read_lock()
- 	and srcu_read_unlock()), hence the "SRCU": "sleepable RCU".
- 	Please note that if you don't need to sleep in read-side critical
-@@ -410,7 +387,7 @@ over a rather long period of time, but improvements are always welcome!
- 	Note that rcu_dereference() and rcu_assign_pointer() relate to
- 	SRCU just as they do to other forms of RCU.
- 
--15.	The whole point of call_rcu(), synchronize_rcu(), and friends
-+14.	The whole point of call_rcu(), synchronize_rcu(), and friends
- 	is to wait until all pre-existing readers have finished before
- 	carrying out some otherwise-destructive operation.  It is
- 	therefore critically important to -first- remove any path
-@@ -422,13 +399,13 @@ over a rather long period of time, but improvements are always welcome!
- 	is the caller's responsibility to guarantee that any subsequent
- 	readers will execute safely.
- 
--16.	The various RCU read-side primitives do -not- necessarily contain
-+15.	The various RCU read-side primitives do -not- necessarily contain
- 	memory barriers.  You should therefore plan for the CPU
- 	and the compiler to freely reorder code into and out of RCU
- 	read-side critical sections.  It is the responsibility of the
- 	RCU update-side primitives to deal with this.
- 
--17.	Use CONFIG_PROVE_LOCKING, CONFIG_DEBUG_OBJECTS_RCU_HEAD, and the
-+16.	Use CONFIG_PROVE_LOCKING, CONFIG_DEBUG_OBJECTS_RCU_HEAD, and the
- 	__rcu sparse checks to validate your RCU code.	These can help
- 	find problems as follows:
- 
-@@ -451,7 +428,7 @@ over a rather long period of time, but improvements are always welcome!
- 	These debugging aids can help you find problems that are
- 	otherwise extremely difficult to spot.
- 
--18.	If you register a callback using call_rcu(), call_rcu_bh(),
-+17.	If you register a callback using call_rcu(), call_rcu_bh(),
- 	call_rcu_sched(), or call_srcu(), and pass in a function defined
- 	within a loadable module, then it in necessary to wait for
- 	all pending callbacks to be invoked after the last invocation
+ <p>
 -- 
 2.17.1
 
