@@ -4,48 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C48C0044C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E58B2C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 721CF223D8
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A53982243B
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ntSHw5Yg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 721CF223D8
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GhPduF/M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A53982243B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390221AbeKLIWB (ORCPT
+        id S2390252AbeKLIWE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:22:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50552 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:22:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50044 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390163AbeKLIWB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:01 -0500
+        id S2390163AbeKLIWC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:02 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 13D69224B3;
-        Sun, 11 Nov 2018 22:32:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2723A21780;
+        Sun, 11 Nov 2018 22:32:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975524;
-        bh=TCP94yQQWovgmiDxT8EHbrVs4urTMV4n0MswR9l+IhA=;
+        s=default; t=1541975525;
+        bh=NGnSLJ8RbFtDbfZlKfoRY1cq9X92ZKJbVMuuCFGd3y4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ntSHw5YgAEPAgfTn1EfA0LWQr+ev1hLh2koCVZSS4gcN9T6B85wlaTVfz4DRYBq2G
-         XwSJqZPF13bsUUFAmHdTVr9UhQH8jlmjzU724txil1oBvECFCa5BIZNuzj/aQm6Xyh
-         SbwzzAaVs4gThcUygC667W0/3DUcBU2DFLrfHA/0=
+        b=GhPduF/MoXzdlEQE6mvyvBlQvi6QllzHBd4NbM85rQ0IZ6aPeoHTEGCdbKVb22OLL
+         +z/cDC7SqBRqG+jaSbpmU6WpWEMtwQm8nZ7dOCWYRIuXZqVMZEgNFRZG8hbA0IkCq9
+         izapsFPkyT9IiCmlOxxJ0O+DJFCiMnkl0hZUw8rc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.14 002/222] spi: bcm-qspi: switch back to reading flash using smaller chunks
-Date:   Sun, 11 Nov 2018 14:21:39 -0800
-Message-Id: <20181111221647.987120977@linuxfoundation.org>
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>
+Subject: [PATCH 4.14 022/222] x86/mm/pat: Disable preemption around __flush_tlb_all()
+Date:   Sun, 11 Nov 2018 14:21:59 -0800
+Message-Id: <20181111221650.152810263@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -63,46 +66,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rafał Miłecki <rafal@milecki.pl>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-commit 940ec770c295682993d1cccce3081fd7c74fece8 upstream.
+commit f77084d96355f5fba8e2c1fb3a51a393b1570de7 upstream.
 
-Fixing/optimizing bcm_qspi_bspi_read() performance introduced two
-changes:
-1) It added a loop to read all requested data using multiple BSPI ops.
-2) It bumped max size of a single BSPI block request from 256 to 512 B.
+The WARN_ON_ONCE(__read_cr3() != build_cr3()) in switch_mm_irqs_off()
+triggers every once in a while during a snapshotted system upgrade.
 
-The later change resulted in occasional BSPI timeouts causing a
-regression.
+The warning triggers since commit decab0888e6e ("x86/mm: Remove
+preempt_disable/enable() from __native_flush_tlb()"). The callchain is:
 
-For some unknown reason hardware doesn't always handle reads as expected
-when using 512 B chunks. In such cases it may happen that BSPI returns
-amount of requested bytes without the last 1-3 ones. It provides the
-remaining bytes later but doesn't raise an interrupt until another LR
-start.
+  get_page_from_freelist() -> post_alloc_hook() -> __kernel_map_pages()
 
-Switching back to 256 B reads fixes that problem and regression.
+with CONFIG_DEBUG_PAGEALLOC enabled.
 
-Fixes: 345309fa7c0c ("spi: bcm-qspi: Fix bcm_qspi_bspi_read() performance")
-Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Disable preemption during CR3 reset / __flush_tlb_all() and add a comment
+why preemption has to be disabled so it won't be removed accidentaly.
+
+Add another preemptible() check in __flush_tlb_all() to catch callers with
+enabled preemption when PGE is enabled, because PGE enabled does not
+trigger the warning in __native_flush_tlb(). Suggested by Andy Lutomirski.
+
+Fixes: decab0888e6e ("x86/mm: Remove preempt_disable/enable() from __native_flush_tlb()")
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Borislav Petkov <bp@alien8.de>
 Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20181017103432.zgv46nlu3hc7k4rq@linutronix.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/spi/spi-bcm-qspi.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/include/asm/tlbflush.h |    6 ++++++
+ arch/x86/mm/pageattr.c          |    6 +++++-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
---- a/drivers/spi/spi-bcm-qspi.c
-+++ b/drivers/spi/spi-bcm-qspi.c
-@@ -88,7 +88,7 @@
- #define BSPI_BPP_MODE_SELECT_MASK		BIT(8)
- #define BSPI_BPP_ADDR_SELECT_MASK		BIT(16)
+--- a/arch/x86/include/asm/tlbflush.h
++++ b/arch/x86/include/asm/tlbflush.h
+@@ -466,6 +466,12 @@ static inline void __native_flush_tlb_on
+  */
+ static inline void __flush_tlb_all(void)
+ {
++	/*
++	 * This is to catch users with enabled preemption and the PGE feature
++	 * and don't trigger the warning in __native_flush_tlb().
++	 */
++	VM_WARN_ON_ONCE(preemptible());
++
+ 	if (boot_cpu_has(X86_FEATURE_PGE)) {
+ 		__flush_tlb_global();
+ 	} else {
+--- a/arch/x86/mm/pageattr.c
++++ b/arch/x86/mm/pageattr.c
+@@ -2037,9 +2037,13 @@ void __kernel_map_pages(struct page *pag
  
--#define BSPI_READ_LENGTH			512
-+#define BSPI_READ_LENGTH			256
+ 	/*
+ 	 * We should perform an IPI and flush all tlbs,
+-	 * but that can deadlock->flush only current cpu:
++	 * but that can deadlock->flush only current cpu.
++	 * Preemption needs to be disabled around __flush_tlb_all() due to
++	 * CR3 reload in __native_flush_tlb().
+ 	 */
++	preempt_disable();
+ 	__flush_tlb_all();
++	preempt_enable();
  
- /* MSPI register offsets */
- #define MSPI_SPCR0_LSB				0x000
+ 	arch_flush_lazy_mmu_mode();
+ }
 
 
