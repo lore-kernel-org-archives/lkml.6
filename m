@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 810BFC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:02:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9B46C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:02:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4979320818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:02:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 700F020818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:02:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zJ0LHqRT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4979320818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CzZDherA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 700F020818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390650AbeKLIW3 (ORCPT
+        id S2389362AbeKLIwT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:22:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51200 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:52:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390595AbeKLIW2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:28 -0500
+        id S2390632AbeKLIW3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:29 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 04D9922419;
+        by mail.kernel.org (Postfix) with ESMTPSA id E79FF223C8;
         Sun, 11 Nov 2018 22:32:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975551;
-        bh=JVPw5LTutQpE5g9YE1u+oFsOuK0mD1Kyz3c0OjIIbGA=;
+        s=default; t=1541975552;
+        bh=TdUL3f4ZnQXiBnUF/vYXUnasufPZnLV+dDvdw1oYLAM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zJ0LHqRTM0nl0VD6nRZWPnbEmYUfWVK+rJu1sYqLKEREcxmQgX+HIAtshcXxHe2cf
-         BwgsW3nWXSmjmAKIJgKbJLWl419aa1Yz59nGCWXB/EtGTdIPBEMIN8yZIl8o21MMAK
-         bLMMDD8x4CiZ4K9LPGiIkQTZxU8EDflBMHt+oN3U=
+        b=CzZDherAdBl55PlEcG8KMcnlGxVLEu7TG36QiMZmdrt09Hnhz7WNCtahdWME+uzcg
+         gjnRI1jg3sYlQlsMevcGKMlMhDIb9VJCGenXSLKzVqNkgFUHtx0gb5TsCVZMh925xT
+         7EcNqo2l7fSnG12vndEqyrGWlC53119mxE2Q3fb0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Valente <paolo.valente@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 065/222] block, bfq: correctly charge and reset entity service in all cases
-Date:   Sun, 11 Nov 2018 14:22:42 -0800
-Message-Id: <20181111221653.772759356@linuxfoundation.org>
+        stable@vger.kernel.org, Tonghao Zhang <xiangxia.m.yue@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 094/222] PCI/MSI: Warn and return error if driver enables MSI/MSI-X twice
+Date:   Sun, 11 Nov 2018 14:23:11 -0800
+Message-Id: <20181111221656.357476112@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -62,71 +63,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paolo Valente <paolo.valente@linaro.org>
+From: Tonghao Zhang <xiangxia.m.yue@gmail.com>
 
-[ Upstream commit cbeb869a3d1110450186b738199963c5e68c2a71 ]
+[ Upstream commit 4c1ef72e9b71a19fb405ebfcd37c0a5e16fa44ca ]
 
-BFQ schedules entities (which represent either per-process queues or
-groups of queues) as a function of their timestamps. In particular, as
-a function of their (virtual) finish times. The finish time of an
-entity is computed as a function of the budget assigned to the entity,
-assuming, tentatively, that the entity, once in service, will receive
-an amount of service equal to its budget. Then, when the entity is
-expired because it finishes to be served, this finish time is updated
-as a function of the actual service received by the entity. This
-allows the entity to be correctly charged with only the service
-received, and then to be correctly re-scheduled.
+It is a serious driver defect to enable MSI or MSI-X more than once.  Doing
+so may panic the kernel as in the stack trace below:
 
-Yet an entity may receive service also while not being the entity in
-service (in the scheduling environment of its parent entity), for
-several reasons. If the entity remains with no backlog while receiving
-this 'unofficial' service, then it is expired. Also on such an
-expiration, the finish time of the entity should be updated to account
-for only the service actually received by the entity. Unfortunately,
-such an update is not performed for an entity expiring without being
-the entity in service.
+  Call Trace:
+    sysfs_add_one+0xa5/0xd0
+    create_dir+0x7c/0xe0
+    sysfs_create_subdir+0x1c/0x20
+    internal_create_group+0x6d/0x290
+    sysfs_create_groups+0x4a/0xa0
+    populate_msi_sysfs+0x1cd/0x210
+    pci_enable_msix+0x31c/0x3e0
+    igbuio_pci_open+0x72/0x300 [igb_uio]
+    uio_open+0xcc/0x120 [uio]
+    chrdev_open+0xa1/0x1e0
+    [...]
+    do_sys_open+0xf3/0x1f0
+    SyS_open+0x1e/0x20
+    system_call_fastpath+0x16/0x1b
+    ---[ end trace 11042e2848880209 ]---
+    Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in: ffffffffa056b4fa
 
-In a similar vein, the service counter of the entity in service is
-reset when the entity is expired, to be ready to be used for next
-service cycle. This reset too should be performed also in case an
-entity is expired because it remains empty after receiving service
-while not being the entity in service. But in this case the reset is
-not performed.
+We want to keep the WARN_ON() and stack trace so the driver can be fixed,
+but we can avoid the kernel panic by returning an error.  We may still get
+warnings like this:
 
-This commit performs the above update of the finish time and reset of
-the service received, also for an entity expiring while not being the
-entity in service.
+  Call Trace:
+    pci_enable_msix+0x3c9/0x3e0
+    igbuio_pci_open+0x72/0x300 [igb_uio]
+    uio_open+0xcc/0x120 [uio]
+    chrdev_open+0xa1/0x1e0
+    [...]
+    do_sys_open+0xf3/0x1f0
+    SyS_open+0x1e/0x20
+    system_call_fastpath+0x16/0x1b
+    ------------[ cut here ]------------
+    WARNING: at fs/sysfs/dir.c:526 sysfs_add_one+0xa5/0xd0()
+    sysfs: cannot create duplicate filename '/devices/pci0000:00/0000:00:03.0/0000:01:00.1/msi_irqs'
 
-Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Tonghao Zhang <xiangxia.m.yue@gmail.com>
+[bhelgaas: changelog, fix patch whitespace, remove !!]
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- block/bfq-wf2q.c |   13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ drivers/pci/msi.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/block/bfq-wf2q.c
-+++ b/block/bfq-wf2q.c
-@@ -1172,10 +1172,17 @@ bool __bfq_deactivate_entity(struct bfq_
- 	st = bfq_entity_service_tree(entity);
- 	is_in_service = entity == sd->in_service_entity;
+--- a/drivers/pci/msi.c
++++ b/drivers/pci/msi.c
+@@ -958,7 +958,6 @@ static int __pci_enable_msix(struct pci_
+ 			}
+ 		}
+ 	}
+-	WARN_ON(!!dev->msix_enabled);
  
--	if (is_in_service) {
--		bfq_calc_finish(entity, entity->service);
-+	bfq_calc_finish(entity, entity->service);
+ 	/* Check whether driver already requested for MSI irq */
+ 	if (dev->msi_enabled) {
+@@ -1028,8 +1027,6 @@ static int __pci_enable_msi_range(struct
+ 	if (!pci_msi_supported(dev, minvec))
+ 		return -EINVAL;
+ 
+-	WARN_ON(!!dev->msi_enabled);
+-
+ 	/* Check whether driver already requested MSI-X irqs */
+ 	if (dev->msix_enabled) {
+ 		dev_info(&dev->dev,
+@@ -1040,6 +1037,9 @@ static int __pci_enable_msi_range(struct
+ 	if (maxvec < minvec)
+ 		return -ERANGE;
+ 
++	if (WARN_ON_ONCE(dev->msi_enabled))
++		return -EINVAL;
 +
-+	if (is_in_service)
- 		sd->in_service_entity = NULL;
--	}
-+	else
-+		/*
-+		 * Non in-service entity: nobody will take care of
-+		 * resetting its service counter on expiration. Do it
-+		 * now.
-+		 */
-+		entity->service = 0;
+ 	nvec = pci_msi_vec_count(dev);
+ 	if (nvec < 0)
+ 		return nvec;
+@@ -1088,6 +1088,9 @@ static int __pci_enable_msix_range(struc
+ 	if (maxvec < minvec)
+ 		return -ERANGE;
  
- 	if (entity->tree == &st->active)
- 		bfq_active_extract(st, entity);
++	if (WARN_ON_ONCE(dev->msix_enabled))
++		return -EINVAL;
++
+ 	for (;;) {
+ 		if (affd) {
+ 			nvec = irq_calc_affinity_vectors(minvec, nvec, affd);
 
 
