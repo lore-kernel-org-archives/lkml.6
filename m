@@ -6,45 +6,46 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1D55C43610
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:25:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62041C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:26:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B09FC20871
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:25:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B09FC20871
+	by mail.kernel.org (Postfix) with ESMTP id 2631720818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:26:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2631720818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731412AbeKLGPS (ORCPT
+        id S1730863AbeKLGPS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 12 Nov 2018 01:15:18 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50910 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50920 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730638AbeKLFs2 (ORCPT
+        by vger.kernel.org with ESMTP id S1730649AbeKLFs2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 00:48:28 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsl-0000l9-SL; Sun, 11 Nov 2018 19:58:56 +0000
+        id 1gLvsn-0000oG-6M; Sun, 11 Nov 2018 19:58:57 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsY-0001m1-1n; Sun, 11 Nov 2018 19:58:42 +0000
+        id 1gLvsY-0001lw-0e; Sun, 11 Nov 2018 19:58:42 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
-        "Tariq Toukan" <tariqt@mellanox.com>,
-        "Jack Morgenstein" <jackm@dev.mellanox.co.il>
+CC:     akpm@linux-foundation.org,
+        "Marc Kleine-Budde" <mkl@pengutronix.de>,
+        "Michal Simek" <michal.simek@xilinx.com>,
+        "Anssi Hannula" <anssi.hannula@bitwise.fi>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.781475147@decadent.org.uk>
+Message-ID: <lsq.1541965745.668064216@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 287/366] net/mlx4_core: Save the qpn from the input
- modifier in RST2INIT wrapper
+Subject: [PATCH 3.16 286/366] can: xilinx_can: fix incorrect clear of
+ non-processed interrupts
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,40 +59,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jack Morgenstein <jackm@dev.mellanox.co.il>
+From: Anssi Hannula <anssi.hannula@bitwise.fi>
 
-commit 958c696f5a7274d9447a458ad7aa70719b29a50a upstream.
+commit 2f4f0f338cf453bfcdbcf089e177c16f35f023c8 upstream.
 
-Function mlx4_RST2INIT_QP_wrapper saved the qp number passed in the qp
-context, rather than the one passed in the input modifier.
+xcan_interrupt() clears ERROR|RXOFLV|BSOFF|ARBLST interrupts if any of
+them is asserted. This does not take into account that some of them
+could have been asserted between interrupt status read and interrupt
+clear, therefore clearing them without handling them.
 
-However, the qp number in the qp context is not defined as a
-required parameter by the FW. Therefore, drivers may choose to not
-specify the qp number in the qp context for the reset-to-init transition.
+Fix the code to only clear those interrupts that it knows are asserted
+and therefore going to be processed in xcan_err_interrupt().
 
-Thus, we must save the qp number passed in the command input modifier --
-which is always present. (This saved qp number is used as the input
-modifier for command 2RST_QP when a slave's qp's are destroyed).
-
-Fixes: c82e9aa0a8bc ("mlx4_core: resource tracking for HCA resources used by guests")
-Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
-Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[bwh: Backported to 3.16: adjust context]
+Fixes: b1201e44f50b ("can: xilinx CAN controller support")
+Signed-off-by: Anssi Hannula <anssi.hannula@bitwise.fi>
+Cc: Michal Simek <michal.simek@xilinx.com>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/net/ethernet/mellanox/mlx4/resource_tracker.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/can/xilinx_can.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx4/resource_tracker.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/resource_tracker.c
-@@ -2673,7 +2673,7 @@ int mlx4_RST2INIT_QP_wrapper(struct mlx4
- 	u32 srqn = qp_get_srqn(qpc) & 0xffffff;
- 	int use_srq = (qp_get_srqn(qpc) >> 24) & 1;
- 	struct res_srq *srq;
--	int local_qpn = be32_to_cpu(qpc->local_qpn) & 0xffffff;
-+	int local_qpn = vhcr->in_modifier & 0xffffff;
+--- a/drivers/net/can/xilinx_can.c
++++ b/drivers/net/can/xilinx_can.c
+@@ -939,6 +939,7 @@ static irqreturn_t xcan_interrupt(int ir
+ 	struct net_device *ndev = (struct net_device *)dev_id;
+ 	struct xcan_priv *priv = netdev_priv(ndev);
+ 	u32 isr, ier;
++	u32 isr_errors;
  
- 	err = qp_res_start_move_to(dev, slave, qpn, RES_QP_HW, &qp, 0);
- 	if (err)
+ 	/* Get the interrupt status from Xilinx CAN */
+ 	isr = priv->read_reg(priv, XCAN_ISR_OFFSET);
+@@ -957,11 +958,10 @@ static irqreturn_t xcan_interrupt(int ir
+ 		xcan_tx_interrupt(ndev, isr);
+ 
+ 	/* Check for the type of error interrupt and Processing it */
+-	if (isr & (XCAN_IXR_ERROR_MASK | XCAN_IXR_RXOFLW_MASK |
+-			XCAN_IXR_BSOFF_MASK | XCAN_IXR_ARBLST_MASK)) {
+-		priv->write_reg(priv, XCAN_ICR_OFFSET, (XCAN_IXR_ERROR_MASK |
+-				XCAN_IXR_RXOFLW_MASK | XCAN_IXR_BSOFF_MASK |
+-				XCAN_IXR_ARBLST_MASK));
++	isr_errors = isr & (XCAN_IXR_ERROR_MASK | XCAN_IXR_RXOFLW_MASK |
++			    XCAN_IXR_BSOFF_MASK | XCAN_IXR_ARBLST_MASK);
++	if (isr_errors) {
++		priv->write_reg(priv, XCAN_ICR_OFFSET, isr_errors);
+ 		xcan_err_interrupt(ndev, isr);
+ 	}
+ 
 
