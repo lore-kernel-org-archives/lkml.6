@@ -6,44 +6,43 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39484C43610
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:04:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80814C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:04:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEEF52080D
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:04:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEEF52080D
+	by mail.kernel.org (Postfix) with ESMTP id 4C4ED2080D
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:04:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C4ED2080D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731088AbeKLFxt (ORCPT
+        id S1731096AbeKLFxw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 00:53:49 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51654 "EHLO
+        Mon, 12 Nov 2018 00:53:52 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51662 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726508AbeKLFxs (ORCPT
+        by vger.kernel.org with ESMTP id S1726508AbeKLFxv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:53:48 -0500
+        Mon, 12 Nov 2018 00:53:51 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvt3-0000l6-Bm; Sun, 11 Nov 2018 19:59:13 +0000
+        id 1gLvt0-0000l7-Lz; Sun, 11 Nov 2018 19:59:10 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsR-0001XC-Pq; Sun, 11 Nov 2018 19:58:35 +0000
+        id 1gLvsS-0001Ye-HQ; Sun, 11 Nov 2018 19:58:36 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Arnd Bergmann" <arnd@arndb.de>,
-        "Bartlomiej Zolnierkiewicz" <b.zolnierkie@samsung.com>,
-        "Imre Deak" <imre.deak@intel.com>
+CC:     akpm@linux-foundation.org, "Theodore Ts'o" <tytso@mit.edu>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.722255284@decadent.org.uk>
+Message-ID: <lsq.1541965745.860383263@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 128/366] video/omap: add module license tags
+Subject: [PATCH 3.16 146/366] ext4: add more mount time checks of the
+ superblock
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,130 +56,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit 1bde9f2cf142b726412fa5b0e3cb557ff46952b0 upstream.
+commit bfe0a5f47ada40d7984de67e59a7d3390b9b9ecc upstream.
 
-I got a bunch of warnings in a randconfig build:
+The kernel's ext4 mount-time checks were more permissive than
+e2fsprogs's libext2fs checks when opening a file system.  The
+superblock is considered too insane for debugfs or e2fsck to operate
+on it, the kernel has no business trying to mount it.
 
-WARNING: modpost: missing MODULE_LICENSE() in drivers/video/fbdev/omap/lcd_ams_delta.o
-WARNING: modpost: missing MODULE_LICENSE() in drivers/video/fbdev/omap/lcd_inn1510.o
-WARNING: modpost: missing MODULE_LICENSE() in drivers/video/fbdev/omap/lcd_palmte.o
-WARNING: modpost: missing MODULE_LICENSE() in drivers/video/fbdev/omap/lcd_palmtt.o
+This will make file system fuzzing tools work harder, but the failure
+cases that they find will be more useful and be easier to evaluate.
 
-These come from an earlier patch of mine that turned all display drivers
-into separate modules. The fix is to add a MODULE_LICENSE tag. Since I'm
-doing that, adding a description and author field also makes sense. I
-went by the authors listed in the comment at the top of each file, but
-removed Imre's Nokia email address that I assume is not valid any more,
-since Imre is working at Intel these days.
-
-Fixes: 81c44c2b2ce3 ("video/omap: fix modular build")
-Cc: Imre Deak <imre.deak@intel.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-[b.zolnierkie: minor fixups]
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/video/fbdev/omap/lcd_ams_delta.c | 4 ++++
- drivers/video/fbdev/omap/lcd_h3.c        | 4 ++++
- drivers/video/fbdev/omap/lcd_htcherald.c | 4 ++++
- drivers/video/fbdev/omap/lcd_inn1510.c   | 4 ++++
- drivers/video/fbdev/omap/lcd_inn1610.c   | 4 ++++
- drivers/video/fbdev/omap/lcd_osk.c       | 4 ++++
- drivers/video/fbdev/omap/lcd_palmte.c    | 4 ++++
- drivers/video/fbdev/omap/lcd_palmtt.c    | 4 ++++
- drivers/video/fbdev/omap/lcd_palmz71.c   | 4 ++++
- 9 files changed, 36 insertions(+)
+ fs/ext4/super.c | 37 ++++++++++++++++++++++++++-----------
+ 1 file changed, 26 insertions(+), 11 deletions(-)
 
---- a/drivers/video/fbdev/omap/lcd_ams_delta.c
-+++ b/drivers/video/fbdev/omap/lcd_ams_delta.c
-@@ -223,3 +223,7 @@ static struct platform_driver ams_delta_
- };
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -3725,6 +3725,13 @@ static int ext4_fill_super(struct super_
+ 			 le32_to_cpu(es->s_log_block_size));
+ 		goto failed_mount;
+ 	}
++	if (le32_to_cpu(es->s_log_cluster_size) >
++	    (EXT4_MAX_CLUSTER_LOG_SIZE - EXT4_MIN_BLOCK_LOG_SIZE)) {
++		ext4_msg(sb, KERN_ERR,
++			 "Invalid log cluster size: %u",
++			 le32_to_cpu(es->s_log_cluster_size));
++		goto failed_mount;
++	}
  
- module_platform_driver(ams_delta_panel_driver);
+ 	if (le16_to_cpu(sbi->s_es->s_reserved_gdt_blocks) > (blocksize / 4)) {
+ 		ext4_msg(sb, KERN_ERR,
+@@ -3853,13 +3860,6 @@ static int ext4_fill_super(struct super_
+ 				 "block size (%d)", clustersize, blocksize);
+ 			goto failed_mount;
+ 		}
+-		if (le32_to_cpu(es->s_log_cluster_size) >
+-		    (EXT4_MAX_CLUSTER_LOG_SIZE - EXT4_MIN_BLOCK_LOG_SIZE)) {
+-			ext4_msg(sb, KERN_ERR,
+-				 "Invalid log cluster size: %u",
+-				 le32_to_cpu(es->s_log_cluster_size));
+-			goto failed_mount;
+-		}
+ 		sbi->s_cluster_bits = le32_to_cpu(es->s_log_cluster_size) -
+ 			le32_to_cpu(es->s_log_block_size);
+ 		sbi->s_clusters_per_group =
+@@ -3880,10 +3880,10 @@ static int ext4_fill_super(struct super_
+ 		}
+ 	} else {
+ 		if (clustersize != blocksize) {
+-			ext4_warning(sb, "fragment/cluster size (%d) != "
+-				     "block size (%d)", clustersize,
+-				     blocksize);
+-			clustersize = blocksize;
++			ext4_msg(sb, KERN_ERR,
++				 "fragment/cluster size (%d) != "
++				 "block size (%d)", clustersize, blocksize);
++			goto failed_mount;
+ 		}
+ 		if (sbi->s_blocks_per_group > blocksize * 8) {
+ 			ext4_msg(sb, KERN_ERR,
+@@ -3937,6 +3937,13 @@ static int ext4_fill_super(struct super_
+ 			 ext4_blocks_count(es));
+ 		goto failed_mount;
+ 	}
++	if ((es->s_first_data_block == 0) && (es->s_log_block_size == 0) &&
++	    (sbi->s_cluster_ratio == 1)) {
++		ext4_msg(sb, KERN_WARNING, "bad geometry: first data "
++			 "block is 0 with a 1k block and cluster size");
++		goto failed_mount;
++	}
 +
-+MODULE_AUTHOR("Jonathan McDowell <noodles@earth.li>");
-+MODULE_DESCRIPTION("LCD panel support for the Amstrad E3 (Delta) videophone");
-+MODULE_LICENSE("GPL");
---- a/drivers/video/fbdev/omap/lcd_h3.c
-+++ b/drivers/video/fbdev/omap/lcd_h3.c
-@@ -125,3 +125,7 @@ static struct platform_driver h3_panel_d
- };
+ 	blocks_count = (ext4_blocks_count(es) -
+ 			le32_to_cpu(es->s_first_data_block) +
+ 			EXT4_BLOCKS_PER_GROUP(sb) - 1);
+@@ -3972,6 +3979,14 @@ static int ext4_fill_super(struct super_
+ 		ret = -ENOMEM;
+ 		goto failed_mount;
+ 	}
++	if (((u64)sbi->s_groups_count * sbi->s_inodes_per_group) !=
++	    le32_to_cpu(es->s_inodes_count)) {
++		ext4_msg(sb, KERN_ERR, "inodes count not valid: %u vs %llu",
++			 le32_to_cpu(es->s_inodes_count),
++			 ((u64)sbi->s_groups_count * sbi->s_inodes_per_group));
++		ret = -EINVAL;
++		goto failed_mount;
++	}
  
- module_platform_driver(h3_panel_driver);
-+
-+MODULE_AUTHOR("Imre Deak");
-+MODULE_DESCRIPTION("LCD panel support for the TI OMAP H3 board");
-+MODULE_LICENSE("GPL");
---- a/drivers/video/fbdev/omap/lcd_htcherald.c
-+++ b/drivers/video/fbdev/omap/lcd_htcherald.c
-@@ -116,3 +116,7 @@ static struct platform_driver htcherald_
- };
- 
- module_platform_driver(htcherald_panel_driver);
-+
-+MODULE_AUTHOR("Cory Maccarrone");
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("LCD panel support for the HTC Herald");
---- a/drivers/video/fbdev/omap/lcd_inn1510.c
-+++ b/drivers/video/fbdev/omap/lcd_inn1510.c
-@@ -111,3 +111,7 @@ static struct platform_driver innovator1
- };
- 
- module_platform_driver(innovator1510_panel_driver);
-+
-+MODULE_AUTHOR("Imre Deak");
-+MODULE_DESCRIPTION("LCD panel support for the TI OMAP1510 Innovator board");
-+MODULE_LICENSE("GPL");
---- a/drivers/video/fbdev/omap/lcd_inn1610.c
-+++ b/drivers/video/fbdev/omap/lcd_inn1610.c
-@@ -132,3 +132,7 @@ static struct platform_driver innovator1
- };
- 
- module_platform_driver(innovator1610_panel_driver);
-+
-+MODULE_AUTHOR("Imre Deak");
-+MODULE_DESCRIPTION("LCD panel support for the TI OMAP1610 Innovator board");
-+MODULE_LICENSE("GPL");
---- a/drivers/video/fbdev/omap/lcd_osk.c
-+++ b/drivers/video/fbdev/omap/lcd_osk.c
-@@ -131,3 +131,7 @@ static struct platform_driver osk_panel_
- };
- 
- module_platform_driver(osk_panel_driver);
-+
-+MODULE_AUTHOR("Imre Deak");
-+MODULE_DESCRIPTION("LCD panel support for the TI OMAP OSK board");
-+MODULE_LICENSE("GPL");
---- a/drivers/video/fbdev/omap/lcd_palmte.c
-+++ b/drivers/video/fbdev/omap/lcd_palmte.c
-@@ -108,3 +108,7 @@ static struct platform_driver palmte_pan
- };
- 
- module_platform_driver(palmte_panel_driver);
-+
-+MODULE_AUTHOR("Romain Goyet <r.goyet@gmail.com>, Laurent Gonzalez <palmte.linux@free.fr>");
-+MODULE_DESCRIPTION("LCD panel support for the Palm Tungsten E");
-+MODULE_LICENSE("GPL");
---- a/drivers/video/fbdev/omap/lcd_palmtt.c
-+++ b/drivers/video/fbdev/omap/lcd_palmtt.c
-@@ -114,3 +114,7 @@ static struct platform_driver palmtt_pan
- };
- 
- module_platform_driver(palmtt_panel_driver);
-+
-+MODULE_AUTHOR("Marek Vasut <marek.vasut@gmail.com>");
-+MODULE_DESCRIPTION("LCD panel support for Palm Tungsten|T");
-+MODULE_LICENSE("GPL");
---- a/drivers/video/fbdev/omap/lcd_palmz71.c
-+++ b/drivers/video/fbdev/omap/lcd_palmz71.c
-@@ -110,3 +110,7 @@ static struct platform_driver palmz71_pa
- };
- 
- module_platform_driver(palmz71_panel_driver);
-+
-+MODULE_AUTHOR("Romain Goyet, Laurent Gonzalez, Marek Vasut");
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("LCD panel support for the Palm Zire71");
+ 	if (ext4_proc_root)
+ 		sbi->s_proc = proc_mkdir(sb->s_id, ext4_proc_root);
 
