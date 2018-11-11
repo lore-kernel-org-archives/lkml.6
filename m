@@ -2,149 +2,127 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD832C43441
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1C84C43610
 	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 18:50:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6892C214DB
+	by mail.kernel.org (Postfix) with ESMTP id B0BB3214E0
 	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 18:50:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6892C214DB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0BB3214E0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729450AbeKLEfC (ORCPT
+        id S1729462AbeKLEjf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 23:35:02 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:48816 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729404AbeKLEfB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 23:35:01 -0500
-Received: from ben by shadbolt.decadent.org.uk with local (Exim 4.89)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1gLujc-0005Xq-Gc; Sun, 11 Nov 2018 18:45:26 +0000
-Date:   Sun, 11 Nov 2018 18:45:24 +0000
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org
-Message-ID: <20181111184524.fux4taownc6ndbx6@decadent.org.uk>
+        Sun, 11 Nov 2018 23:39:35 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:40747 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729413AbeKLEjf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Nov 2018 23:39:35 -0500
+Received: from carbon-x1.hos.anvin.org (c-24-5-245-234.hsd1.ca.comcast.net [24.5.245.234] (may be forged))
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id wABIniOV3349172
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Sun, 11 Nov 2018 10:49:45 -0800
+Subject: Re: PLEASE REVERT URGENTLY: Re: [PATCH v5 2/3] x86/boot: add acpi
+ rsdp address to setup_header
+To:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xenproject.org, x86@kernel.org,
+        linux-doc@vger.kernel.org
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, corbet@lwn.net,
+        boris.ostrovsky@oracle.com
+References: <20181010061456.22238-1-jgross@suse.com>
+ <20181010061456.22238-3-jgross@suse.com>
+ <f7c78ee7-b548-7f04-24da-7321b6c64c97@zytor.com>
+ <bd2d17cd-072c-cad6-94ad-52373700a1c9@suse.com>
+ <2934552c-d150-0afb-6fa9-9398cb94d86a@zytor.com>
+ <5a2f5cb8-7332-f490-eabf-cfcbdcd1abc4@suse.com>
+ <59ca1053-9176-f1db-6e6c-96b47aaaa09d@zytor.com>
+ <f16c53a4-7a5c-de01-c3cc-095226f6ca40@suse.com>
+From:   "H. Peter Anvin" <hpa@zytor.com>
+Message-ID: <3e773a2d-3f69-5ccd-7d8b-9878fba30d00@zytor.com>
+Date:   Sun, 11 Nov 2018 10:49:39 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="yox42ydsmjky7enj"
-Content-Disposition: inline
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-Subject: [PATCH] perf tools: Suppress potential format-truncation warning in
- util/pmu.c
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on shadbolt.decadent.org.uk)
+In-Reply-To: <f16c53a4-7a5c-de01-c3cc-095226f6ca40@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 11/10/18 1:03 AM, Juergen Gross wrote:
+> 
+> How would that help? The garabge data written could have the correct
+> terminal sentinel value by chance.
+> 
+> That's why I re-used an existing field in setup_header (the version) to
+> let grub tell the kernel which part of setup_header was written by grub.
+> 
+> That's the only way I could find to let the kernel distinguish between
+> garbage and actual data.
 
---yox42ydsmjky7enj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+There is plenty of space *before* the setup_header part of struct boot_params
+too -- look a the various __pad fields, especially (in your case), __pad3[16]
+and __pad4[116] would suit the bill just fine.
 
-Depending on which functions are inlined in util/pmu.c, the
-snprintf() calls in perf_pmu__parse_{scale,unit,per_pkg,snapshot}()
-might trigger a warning:
+>> It would be enormously helpful if you could find out any more details about
+>> exactly what they are doing to break things.
+> 
+> That's easy:
+> 
+> The memory layout is:
+> 
+> 0x1f1 bytes of data, including the sentinel, the setup_header, and then
+> more data.
+> 
+> grub did read the kernel's setup_header in the correct size into its
+> buffer (which contains random garbage before that), intializes the first
+> 0x1f1 including the sentinel byte, and then writes back the buffer, but
+> using a too large length for that.
 
-util/pmu.c: In function 'pmu_aliases':
-util/pmu.c:178:31: error: '%s' directive output may be truncated writing up=
- to 255 bytes into a region of size between 0 and 4095 [-Werror=3Dformat-tr=
-uncation=3D]
-  snprintf(path, PATH_MAX, "%s/%s.unit", dir, name);
-                               ^~
+Are you kidding me... it really overwrites it with completely random data, and
+not simply overspilling contents of the file?
 
-I found this when trying to build perf from Linux 3.16 with gcc 8.
-However I can reproduce the problem in mainline if I force
-__perf_pmu__new_alias() to be inlined.
+In that case it might not be possible (or desirable) to use those N bytes
+following the setup_heaader, or we need to a bigger sentinel than one byte
+(probability being what it is, 256^n gets to be a pretty big number for any n,
+very quickly drowning in the noise compared to other potential sources of boot
+failures, and most likely less fatal than most.)
 
-Suppress this by using scnprintf() as has been done elsewhere in
-perf.
+How big is this garbage dump?  I'm going to brave a guess it is 512 bytes.  In
+that case this is hardly a big deal: the E820 map begins at 0x290, and the
+setup_header maximum goes to 0x280, so it is only 15 bytes lost.  If it is
+worse than that, we would risk losing __pad8[48] and __pad9[276], and
+especially the latter would be painful. In those case perhaps we should use
+0x281..0x290 as a 15-byte sentinel; that is going to be virtually foolproof.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- tools/perf/util/pmu.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+I'm also thinking that it might be desirable to add a flags field (__pad2
+would be ideal) to struct boot_params; it would let us recycle some of the
+obsolete fields (hd0_info, hd1_info, sys_desc_table, olpc_ofw_header, ...) and
+perhaps be able to add some more robustness against these sort of things. This
+would be the right way to do what your version feedback mechanism would do.
 
-diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index 7799788f662f..25c7d2a4e91b 100644
---- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -145,7 +145,7 @@ static int perf_pmu__parse_scale(struct perf_pmu_alias =
-*alias, char *dir, char *
- 	int fd, ret =3D -1;
- 	char path[PATH_MAX];
-=20
--	snprintf(path, PATH_MAX, "%s/%s.scale", dir, name);
-+	scnprintf(path, PATH_MAX, "%s/%s.scale", dir, name);
-=20
- 	fd =3D open(path, O_RDONLY);
- 	if (fd =3D=3D -1)
-@@ -175,7 +175,7 @@ static int perf_pmu__parse_unit(struct perf_pmu_alias *=
-alias, char *dir, char *n
- 	ssize_t sret;
- 	int fd;
-=20
--	snprintf(path, PATH_MAX, "%s/%s.unit", dir, name);
-+	scnprintf(path, PATH_MAX, "%s/%s.unit", dir, name);
-=20
- 	fd =3D open(path, O_RDONLY);
- 	if (fd =3D=3D -1)
-@@ -205,7 +205,7 @@ perf_pmu__parse_per_pkg(struct perf_pmu_alias *alias, c=
-har *dir, char *name)
- 	char path[PATH_MAX];
- 	int fd;
-=20
--	snprintf(path, PATH_MAX, "%s/%s.per-pkg", dir, name);
-+	scnprintf(path, PATH_MAX, "%s/%s.per-pkg", dir, name);
-=20
- 	fd =3D open(path, O_RDONLY);
- 	if (fd =3D=3D -1)
-@@ -223,7 +223,7 @@ static int perf_pmu__parse_snapshot(struct perf_pmu_ali=
-as *alias,
- 	char path[PATH_MAX];
- 	int fd;
-=20
--	snprintf(path, PATH_MAX, "%s/%s.snapshot", dir, name);
-+	scnprintf(path, PATH_MAX, "%s/%s.snapshot", dir, name);
-=20
- 	fd =3D open(path, O_RDONLY);
- 	if (fd =3D=3D -1)
+The reason why the feedback mechanism is fundamentally broken is that it only
+gives the boot loader a way to assert that it supports a certain version of
+the protocol, but it doesn't say *which* bootloader does such an assert -- and
+therefore it is still wide open to implementation error.
 
---yox42ydsmjky7enj
-Content-Type: application/pgp-signature; name="signature.asc"
+We do, in fact, already have a feedback mechanism: the bootloader ID and
+bootloader version. One way we could deal with this problem is to bump the
+bootloader version reported by Grub, and add a quirk to the kernel that if the
+bootloader ID is Grub (7) and the version is less than a certain number, zero
+those fields. In fact, the more I think about it, this is what we should do.
 
------BEGIN PGP SIGNATURE-----
+That being said, Grub really needs to be kept honest.  They keep making both
+severe design (like refusing to use the BIOS and UEFI entry points provided by
+the kernel by default) and implementation errors, apparently without
+meaningful oversight. I really ask that the people more closely involved with
+Grub try to keep a closer eye on their code as it applies to Linux.
 
-iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAlvoeL8ACgkQ57/I7JWG
-EQmKAg/+LakjIvwrKOfXk6giksH7EN0IN+VK+WL5/yn7yBL9ds3CnizU9ek5jmAt
-vKLu8FnsHuTJFKgV5KtaOe3fuzQX05YUUggC0A7K2CDeHV9sijexsoO+jEiMEPjs
-80cvdi4WqoLcx3nC7gXbiEBu8wEyeUPheSCY68a/9O9Nv20S5X1HwFdcNQwiVPhh
-rtg4dVj2OzVdtZJ1vNQUDjWt+pbhdNhZ8/MHnxew5wRv83LifiM7zDAQb/1zCkIk
-RY+bjLElVL4e/kuuT00OofUplUFhJWQB37ij5ieuMu07mCrK7XzX1p2/yk11kS6u
-qeYiXf0IogqWKfinpQ4BtadWhsCliyXYMD4TOm0Fa0db+tdrFw2S8QAi/9Vw2VKT
-ayILOxk/Pod8cd1FcxB3AnpxcpxzWojGB9vbDoWphYnfYpYNv1XGEy3WVwVQnMrZ
-KpWJ/FPF1gAoq+ZvSRtEXo8aT7u2GFlpNjolhLxf4Mi2QQXCjIX7zKS+rA+cXNJ8
-giSUKptFAOMKJ36A/Q9H4Hp8kC+nVQlhWYkTIFWIZn8H2m/l5fL3kmoHPigPB0/9
-cLcewNyrXDwmaJSP1xGA2zyi8+SDMAGzWZ0ZPQcbq7tN7fIXnP1ALV5T66pYFWxg
-nCxhqakTychWXP3cd8eHTuswmdCIMgUG1RzHuKc0pnxE8nu13Kg=
-=oPvQ
------END PGP SIGNATURE-----
-
---yox42ydsmjky7enj--
+	-hpa
