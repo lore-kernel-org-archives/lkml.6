@@ -4,46 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23E6BC0044C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B41A9C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D435A223CA
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B81C2175B
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="G+dWqXI8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D435A223CA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="t0JJj2xh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B81C2175B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732703AbeKLISU (ORCPT
+        id S1732731AbeKLISV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:18:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37142 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:18:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37238 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732652AbeKLISS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:18:18 -0500
+        id S1732672AbeKLISU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:18:20 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8B294223C8;
-        Sun, 11 Nov 2018 22:28:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7FEEE223AE;
+        Sun, 11 Nov 2018 22:28:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975302;
-        bh=e2bnWh4ODIALsdGhsfWu2OKP8AyLhUvgLfLdFbJip2I=;
+        s=default; t=1541975304;
+        bh=t9Hkzoxv9AcOUBg6Ord0Vmazez+MLsKk6m+RydG3LEA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G+dWqXI8upzzuADxOsCdGKlTXJuJ1GEHvbcoD1WzU5ITxFGeZ55zwHNqAVx6hwkqW
-         UMJo865RSS6BH9z1gFUX87/Bs9anneqd9lnv07dwPHXnmDakvSwFsHKXo/dqWLGpxP
-         fLusydYPyri75LoeRHD1azbEm54VoOpAdLquWG/U=
+        b=t0JJj2xhmstbAFnjnzkFdQXIlUHgatxiTmwqZFYmVRIHLZIMC5axb5t9LsZuUxAXm
+         UbnNEVR6v87yvfacm6WTmcGB7ms/rNEnrEdyDchHZqebWDA8O7F5ymuWzNJTlOeUBX
+         XAbpHnWkpr8gLsWZYayYoS6n1IRIIcqKqQJVxG70=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>
-Subject: [PATCH 4.19 265/361] smb3: on kerberos mount if server doesnt specify auth type use krb5
-Date:   Sun, 11 Nov 2018 14:20:12 -0800
-Message-Id: <20181111221654.582655743@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>
+Subject: [PATCH 4.19 270/361] NFSv4.1: Fix the r/wsize checking
+Date:   Sun, 11 Nov 2018 14:20:17 -0800
+Message-Id: <20181111221654.962505667@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -61,40 +62,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steve French <stfrench@microsoft.com>
+From: Trond Myklebust <trond.myklebust@hammerspace.com>
 
-commit 926674de6705f0f1dbf29a62fd758d0977f535d6 upstream.
+commit 943cff67b842839f4f35364ba2db5c2d3f025d94 upstream.
 
-Some servers (e.g. Azure) do not include a spnego blob in the SMB3
-negotiate protocol response, so on kerberos mounts ("sec=krb5")
-we can fail, as we expected the server to list its supported
-auth types (OIDs in the spnego blob in the negprot response).
-Change this so that on krb5 mounts we default to trying krb5 if the
-server doesn't list its supported protocol mechanisms.
+The intention of nfs4_session_set_rwsize() was to cap the r/wsize to the
+buffer sizes negotiated by the CREATE_SESSION. The initial code had a
+bug whereby we would not check the values negotiated by nfs_probe_fsinfo()
+(the assumption being that CREATE_SESSION will always negotiate buffer values
+that are sane w.r.t. the server's preferred r/wsizes) but would only check
+values set by the user in the 'mount' command.
 
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
-CC: Stable <stable@vger.kernel.org>
+The code was changed in 4.11 to _always_ set the r/wsize, meaning that we
+now never use the server preferred r/wsizes. This is the regression that
+this patch fixes.
+Also rename the function to nfs4_session_limit_rwsize() in order to avoid
+future confusion.
+
+Fixes: 033853325fe3 (NFSv4.1 respect server's max size in CREATE_SESSION")
+Cc: stable@vger.kernel.org # v4.11+
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/cifs_spnego.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ fs/nfs/nfs4client.c |   16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
---- a/fs/cifs/cifs_spnego.c
-+++ b/fs/cifs/cifs_spnego.c
-@@ -147,8 +147,10 @@ cifs_get_spnego_key(struct cifs_ses *ses
- 		sprintf(dp, ";sec=krb5");
- 	else if (server->sec_mskerberos)
- 		sprintf(dp, ";sec=mskrb5");
--	else
--		goto out;
-+	else {
-+		cifs_dbg(VFS, "unknown or missing server auth type, use krb5\n");
-+		sprintf(dp, ";sec=krb5");
-+	}
+--- a/fs/nfs/nfs4client.c
++++ b/fs/nfs/nfs4client.c
+@@ -950,10 +950,10 @@ EXPORT_SYMBOL_GPL(nfs4_set_ds_client);
  
- 	dp = description + strlen(description);
- 	sprintf(dp, ";uid=0x%x",
+ /*
+  * Session has been established, and the client marked ready.
+- * Set the mount rsize and wsize with negotiated fore channel
+- * attributes which will be bound checked in nfs_server_set_fsinfo.
++ * Limit the mount rsize, wsize and dtsize using negotiated fore
++ * channel attributes.
+  */
+-static void nfs4_session_set_rwsize(struct nfs_server *server)
++static void nfs4_session_limit_rwsize(struct nfs_server *server)
+ {
+ #ifdef CONFIG_NFS_V4_1
+ 	struct nfs4_session *sess;
+@@ -966,9 +966,11 @@ static void nfs4_session_set_rwsize(stru
+ 	server_resp_sz = sess->fc_attrs.max_resp_sz - nfs41_maxread_overhead;
+ 	server_rqst_sz = sess->fc_attrs.max_rqst_sz - nfs41_maxwrite_overhead;
+ 
+-	if (!server->rsize || server->rsize > server_resp_sz)
++	if (server->dtsize > server_resp_sz)
++		server->dtsize = server_resp_sz;
++	if (server->rsize > server_resp_sz)
+ 		server->rsize = server_resp_sz;
+-	if (!server->wsize || server->wsize > server_rqst_sz)
++	if (server->wsize > server_rqst_sz)
+ 		server->wsize = server_rqst_sz;
+ #endif /* CONFIG_NFS_V4_1 */
+ }
+@@ -1015,12 +1017,12 @@ static int nfs4_server_common_setup(stru
+ 			(unsigned long long) server->fsid.minor);
+ 	nfs_display_fhandle(mntfh, "Pseudo-fs root FH");
+ 
+-	nfs4_session_set_rwsize(server);
+-
+ 	error = nfs_probe_fsinfo(server, mntfh, fattr);
+ 	if (error < 0)
+ 		goto out;
+ 
++	nfs4_session_limit_rwsize(server);
++
+ 	if (server->namelen == 0 || server->namelen > NFS4_MAXNAMLEN)
+ 		server->namelen = NFS4_MAXNAMLEN;
+ 
 
 
