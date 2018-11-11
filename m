@@ -6,49 +6,45 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9741C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:36:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF51EC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:36:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D31320866
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:36:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85E072084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:36:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1sCrXbxe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D31320866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TXDABBnB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85E072084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388429AbeKLJ0R (ORCPT
+        id S2388266AbeKLIUB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:26:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42802 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388267AbeKLIUB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:20:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42214 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388186AbeKLIT7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:19:59 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4DE4D21582;
-        Sun, 11 Nov 2018 22:30:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E754721582;
+        Sun, 11 Nov 2018 22:30:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975405;
-        bh=i4BWbKy64hY6vUMxxAcUGgvqaTSVtV11WZh9p2303fw=;
+        s=default; t=1541975403;
+        bh=4/bkYs3K0R9X3wABPBEAMKY2LM84EH3p+SCEuY5FPyE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1sCrXbxeZgmjgRAPROYfxXWVExrsfFAHbl5Elf+j2mOuPP5Y9KCcqYt62Z7ihM+d9
-         u5lauj7QBAye96pq7oLp/MjM7GZ3D8hliNJXi+b65gn6x4rvnJqR6gZLcD5kSumYoH
-         mvpU19Ex/NCP2x7fXjLSt3BowpTyEG9OUFAlqQak=
+        b=TXDABBnBvmeWb6LPqOUryvBAgSKed8JEEbs7s2ps7KtNinyKnOB2/di457ZMB+q/+
+         /d75mxt5usNWmirghI8Tbx4PqA+KGEsKPQXBz0HecOr+whHgUTACCNqnLqDyFKceE1
+         /oQxZlvje5gDB02mQYjTJQ67/45/H3AdikbH+eSw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Ben Hutchings <ben@decadent.org.uk>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 107/350] brcmfmac: fix for proper support of 160MHz bandwidth
-Date:   Sun, 11 Nov 2018 14:19:31 -0800
-Message-Id: <20181111221711.568229864@linuxfoundation.org>
+Subject: [PATCH 4.18 102/350] x86: boot: Fix EFI stub alignment
+Date:   Sun, 11 Nov 2018 14:19:26 -0800
+Message-Id: <20181111221711.366567460@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -66,125 +62,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
+From: Ben Hutchings <ben@decadent.org.uk>
 
-[ Upstream commit 330994e8e8ec5d0b269a5265e6032b37e29aa336 ]
+[ Upstream commit 9c1442a9d039a1a3302fa93e9a11001c5f23b624 ]
 
-Decoding of firmware channel information was not complete for 160MHz
-support. This resulted in the following warning:
+We currently align the end of the compressed image to a multiple of
+16.  However, the PE-COFF header included in the EFI stub says that
+the file alignment is 32 bytes, and when adding an EFI signature to
+the file it must first be padded to this alignment.
 
-  WARNING: CPU: 2 PID: 2222 at .../broadcom/brcm80211/brcmutil/d11.c:196
-	brcmu_d11ac_decchspec+0x2e/0x100 [brcmutil]
-  Modules linked in: brcmfmac(O) brcmutil(O) sha256_generic cfg80211 ...
-  CPU: 2 PID: 2222 Comm: kworker/2:0 Tainted: G           O
-  4.17.0-wt-testing-x64-00002-gf1bed50 #1
-  Hardware name: Dell Inc. Latitude E6410/07XJP9, BIOS A07 02/15/2011
-  Workqueue: events request_firmware_work_func
-  RIP: 0010:brcmu_d11ac_decchspec+0x2e/0x100 [brcmutil]
-  RSP: 0018:ffffc90000047bd0 EFLAGS: 00010206
-  RAX: 000000000000e832 RBX: ffff8801146fe910 RCX: ffff8801146fd3c0
-  RDX: 0000000000002800 RSI: 0000000000000070 RDI: ffffc90000047c30
-  RBP: ffffc90000047bd0 R08: 0000000000000000 R09: ffffffffa0798c80
-  R10: ffff88012bca55e0 R11: ffff880110a4ea00 R12: ffff8801146f8000
-  R13: ffffc90000047c30 R14: ffff8801146fe930 R15: ffff8801138e02e0
-  FS:  0000000000000000(0000) GS:ffff88012bc80000(0000) knlGS:0000000000000000
-  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  CR2: 00007f18ce8b8070 CR3: 000000000200a003 CR4: 00000000000206e0
-  Call Trace:
-   brcmf_setup_wiphybands+0x212/0x780 [brcmfmac]
-   brcmf_cfg80211_attach+0xae2/0x11a0 [brcmfmac]
-   brcmf_attach+0x1fc/0x4b0 [brcmfmac]
-   ? __kmalloc+0x13c/0x1c0
-   brcmf_pcie_setup+0x99b/0xe00 [brcmfmac]
-   brcmf_fw_request_done+0x16a/0x1f0 [brcmfmac]
-   request_firmware_work_func+0x36/0x60
-   process_one_work+0x146/0x350
-   worker_thread+0x4a/0x3b0
-   kthread+0x102/0x140
-   ? process_one_work+0x350/0x350
-   ? kthread_bind+0x20/0x20
-   ret_from_fork+0x35/0x40
-  Code: 66 90 0f b7 07 55 48 89 e5 89 c2 88 47 02 88 47 03 66 81 e2 00 38
-	66 81 fa 00 18 74 6e 66 81 fa 00 20 74 39 66 81 fa 00 10 74 14 <0f>
-	0b 66 25 00 c0 74 20 66 3d 00 c0 75 20 c6 47 04 01 5d c3 66
-  ---[ end trace 550c46682415b26d ]---
-  brcmfmac: brcmf_construct_chaninfo: Ignoring unexpected firmware channel 50
+sbsigntool commands warn about this:
 
-This patch adds the missing stuff to properly handle this.
+  warning: file-aligned section .text extends beyond end of file
+  warning: checksum areas are greater than image size. Invalid section table?
 
-Reviewed-by: Hante Meuleman <hante.meuleman@broadcom.com>
-Reviewed-by: Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>
-Reviewed-by: Franky Lin <franky.lin@broadcom.com>
-Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Worse, pesign -at least when creating a detached signature- uses the
+hash of the unpadded file, resulting in an invalid signature if
+padding is required.
+
+Avoid both these problems by increasing alignment to 32 bytes when
+CONFIG_EFI_STUB is enabled.
+
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/broadcom/brcm80211/brcmutil/d11.c       |   34 ++++++++++-
- drivers/net/wireless/broadcom/brcm80211/include/brcmu_wifi.h |    2 
- 2 files changed, 35 insertions(+), 1 deletion(-)
+ arch/x86/boot/tools/build.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/net/wireless/broadcom/brcm80211/brcmutil/d11.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmutil/d11.c
-@@ -77,6 +77,8 @@ static u16 d11ac_bw(enum brcmu_chan_bw b
- 		return BRCMU_CHSPEC_D11AC_BW_40;
- 	case BRCMU_CHAN_BW_80:
- 		return BRCMU_CHSPEC_D11AC_BW_80;
-+	case BRCMU_CHAN_BW_160:
-+		return BRCMU_CHSPEC_D11AC_BW_160;
- 	default:
- 		WARN_ON(1);
- 	}
-@@ -190,8 +192,38 @@ static void brcmu_d11ac_decchspec(struct
- 			break;
- 		}
- 		break;
--	case BRCMU_CHSPEC_D11AC_BW_8080:
- 	case BRCMU_CHSPEC_D11AC_BW_160:
-+		switch (ch->sb) {
-+		case BRCMU_CHAN_SB_LLL:
-+			ch->control_ch_num -= CH_70MHZ_APART;
-+			break;
-+		case BRCMU_CHAN_SB_LLU:
-+			ch->control_ch_num -= CH_50MHZ_APART;
-+			break;
-+		case BRCMU_CHAN_SB_LUL:
-+			ch->control_ch_num -= CH_30MHZ_APART;
-+			break;
-+		case BRCMU_CHAN_SB_LUU:
-+			ch->control_ch_num -= CH_10MHZ_APART;
-+			break;
-+		case BRCMU_CHAN_SB_ULL:
-+			ch->control_ch_num += CH_10MHZ_APART;
-+			break;
-+		case BRCMU_CHAN_SB_ULU:
-+			ch->control_ch_num += CH_30MHZ_APART;
-+			break;
-+		case BRCMU_CHAN_SB_UUL:
-+			ch->control_ch_num += CH_50MHZ_APART;
-+			break;
-+		case BRCMU_CHAN_SB_UUU:
-+			ch->control_ch_num += CH_70MHZ_APART;
-+			break;
-+		default:
-+			WARN_ON_ONCE(1);
-+			break;
-+		}
-+		break;
-+	case BRCMU_CHSPEC_D11AC_BW_8080:
- 	default:
- 		WARN_ON_ONCE(1);
- 		break;
---- a/drivers/net/wireless/broadcom/brcm80211/include/brcmu_wifi.h
-+++ b/drivers/net/wireless/broadcom/brcm80211/include/brcmu_wifi.h
-@@ -29,6 +29,8 @@
- #define CH_UPPER_SB			0x01
- #define CH_LOWER_SB			0x02
- #define CH_EWA_VALID			0x04
-+#define CH_70MHZ_APART			14
-+#define CH_50MHZ_APART			10
- #define CH_30MHZ_APART			6
- #define CH_20MHZ_APART			4
- #define CH_10MHZ_APART			2
+--- a/arch/x86/boot/tools/build.c
++++ b/arch/x86/boot/tools/build.c
+@@ -391,6 +391,13 @@ int main(int argc, char ** argv)
+ 		die("Unable to mmap '%s': %m", argv[2]);
+ 	/* Number of 16-byte paragraphs, including space for a 4-byte CRC */
+ 	sys_size = (sz + 15 + 4) / 16;
++#ifdef CONFIG_EFI_STUB
++	/*
++	 * COFF requires minimum 32-byte alignment of sections, and
++	 * adding a signature is problematic without that alignment.
++	 */
++	sys_size = (sys_size + 1) & ~1;
++#endif
+ 
+ 	/* Patch the setup code with the appropriate size parameters */
+ 	buf[0x1f1] = setup_sectors-1;
 
 
