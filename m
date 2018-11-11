@@ -4,48 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AC58C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:52:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 523E6C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:52:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C84F120866
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:52:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A57320866
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:52:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GXb0gJGc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C84F120866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WkG6W9fD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A57320866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733058AbeKLJmU (ORCPT
+        id S1732952AbeKLJmU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 12 Nov 2018 04:42:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37518 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:37302 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732819AbeKLIS3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1732830AbeKLIS3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:18:29 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0112D22353;
+        by mail.kernel.org (Postfix) with ESMTPSA id A2F1421527;
         Sun, 11 Nov 2018 22:28:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975314;
-        bh=olR7zK+EoOQ0zjNDrS72SGG4gJ/leF+c9/EZG2CGxEw=;
+        s=default; t=1541975313;
+        bh=HsCTycn7vNpwmWFPtxqiTUZjcl3N2nqyOReAXBP/kns=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GXb0gJGcN95Lq1SS0PYj+wzt8OPIzdFTD760nqgI60s75HG4OaojdvSPs7wsS7M3h
-         jWSulBBsN7BcmD436KCCuGJWEh/37U6WJ3D5fkNIlAAnh3Hme8BERx66AHzrdGJrVc
-         SAtbYiXtlnmmbYgkvVUAvKdg8mesSXcgm8NJpyTQ=
+        b=WkG6W9fD35qTPf8dYNFmV9ZV+hS2mgInAoz6xS7LL7Eoz/7ZfTkxiAD8xuPPgqriU
+         P3rdFZ+gFTqwHu1OXBFEPBl8hDWmflumqgJFa3ULmexXkaZpfTmqCveed4Gn7DaRPv
+         b25zMtGK6gZsmsfSvNIqpkCB1GURoDZOyWwZ6wZU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sander Eikelenboom <linux@eikelenboom.it>,
-        Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Subject: [PATCH 4.19 299/361] xen: fix xen_qlock_wait()
-Date:   Sun, 11 Nov 2018 14:20:46 -0800
-Message-Id: <20181111221657.349117875@linuxfoundation.org>
+        stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.19 298/361] media: cec: integrate cec_validate_phys_addr() in cec-api.c
+Date:   Sun, 11 Nov 2018 14:20:45 -0800
+Message-Id: <20181111221657.263533278@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -63,82 +61,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Juergen Gross <jgross@suse.com>
+From: Hans Verkuil <hans.verkuil@cisco.com>
 
-commit d3132b3860f6cf35ff7609a76bbcdbb814bd027c upstream.
+commit e81bff39489a06384822bb38ce7a59f9e365bbe9 upstream.
 
-Commit a856531951dc80 ("xen: make xen_qlock_wait() nestable")
-introduced a regression for Xen guests running fully virtualized
-(HVM or PVH mode). The Xen hypervisor wouldn't return from the poll
-hypercall with interrupts disabled in case of an interrupt (for PV
-guests it does).
+The cec_phys_addr_validate() function will be moved to V4L2,
+so use a simplified variant of that function in cec-api.c.
+cec now no longer calls cec_phys_addr_validate() and it can
+be safely moved to V4L2.
 
-So instead of disabling interrupts in xen_qlock_wait() use a nesting
-counter to avoid calling xen_clear_irq_pending() in case
-xen_qlock_wait() is nested.
-
-Fixes: a856531951dc80 ("xen: make xen_qlock_wait() nestable")
-Cc: stable@vger.kernel.org
-Reported-by: Sander Eikelenboom <linux@eikelenboom.it>
-Signed-off-by: Juergen Gross <jgross@suse.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Tested-by: Sander Eikelenboom <linux@eikelenboom.it>
-Signed-off-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Cc: <stable@vger.kernel.org>      # for v4.17 and up
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/xen/spinlock.c |   14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/media/cec/cec-api.c |   19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
---- a/arch/x86/xen/spinlock.c
-+++ b/arch/x86/xen/spinlock.c
-@@ -9,6 +9,7 @@
- #include <linux/log2.h>
- #include <linux/gfp.h>
- #include <linux/slab.h>
-+#include <linux/atomic.h>
- 
- #include <asm/paravirt.h>
- #include <asm/qspinlock.h>
-@@ -21,6 +22,7 @@
- 
- static DEFINE_PER_CPU(int, lock_kicker_irq) = -1;
- static DEFINE_PER_CPU(char *, irq_name);
-+static DEFINE_PER_CPU(atomic_t, xen_qlock_wait_nest);
- static bool xen_pvspin = true;
- 
- static void xen_qlock_kick(int cpu)
-@@ -39,25 +41,25 @@ static void xen_qlock_kick(int cpu)
-  */
- static void xen_qlock_wait(u8 *byte, u8 val)
- {
--	unsigned long flags;
- 	int irq = __this_cpu_read(lock_kicker_irq);
-+	atomic_t *nest_cnt = this_cpu_ptr(&xen_qlock_wait_nest);
- 
- 	/* If kicker interrupts not initialized yet, just spin */
- 	if (irq == -1 || in_nmi())
- 		return;
- 
--	/* Guard against reentry. */
--	local_irq_save(flags);
-+	/* Detect reentry. */
-+	atomic_inc(nest_cnt);
- 
--	/* If irq pending already clear it. */
--	if (xen_test_irq_pending(irq)) {
-+	/* If irq pending already and no nested call clear it. */
-+	if (atomic_read(nest_cnt) == 1 && xen_test_irq_pending(irq)) {
- 		xen_clear_irq_pending(irq);
- 	} else if (READ_ONCE(*byte) == val) {
- 		/* Block until irq becomes pending (or a spurious wakeup) */
- 		xen_poll_irq(irq);
- 	}
- 
--	local_irq_restore(flags);
-+	atomic_dec(nest_cnt);
+--- a/drivers/media/cec/cec-api.c
++++ b/drivers/media/cec/cec-api.c
+@@ -101,6 +101,23 @@ static long cec_adap_g_phys_addr(struct
+ 	return 0;
  }
  
- static irqreturn_t dummy_handler(int irq, void *dev_id)
++static int cec_validate_phys_addr(u16 phys_addr)
++{
++	int i;
++
++	if (phys_addr == CEC_PHYS_ADDR_INVALID)
++		return 0;
++	for (i = 0; i < 16; i += 4)
++		if (phys_addr & (0xf << i))
++			break;
++	if (i == 16)
++		return 0;
++	for (i += 4; i < 16; i += 4)
++		if ((phys_addr & (0xf << i)) == 0)
++			return -EINVAL;
++	return 0;
++}
++
+ static long cec_adap_s_phys_addr(struct cec_adapter *adap, struct cec_fh *fh,
+ 				 bool block, __u16 __user *parg)
+ {
+@@ -112,7 +129,7 @@ static long cec_adap_s_phys_addr(struct
+ 	if (copy_from_user(&phys_addr, parg, sizeof(phys_addr)))
+ 		return -EFAULT;
+ 
+-	err = cec_phys_addr_validate(phys_addr, NULL, NULL);
++	err = cec_validate_phys_addr(phys_addr);
+ 	if (err)
+ 		return err;
+ 	mutex_lock(&adap->lock);
 
 
