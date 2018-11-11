@@ -2,165 +2,115 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91EBBC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:08:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D9F9C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:08:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5932F2080D
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:08:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5932F2080D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id DA5AF2148E
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:08:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA5AF2148E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731453AbeKLF6D (ORCPT
+        id S1731633AbeKLF6J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 00:58:03 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:52027 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726471AbeKLF6C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:58:02 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id A4C6C224E9; Sun, 11 Nov 2018 21:08:31 +0100 (CET)
-Received: from bbrezillon (unknown [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id CEDD3224CD;
-        Sun, 11 Nov 2018 21:08:20 +0100 (CET)
-Date:   Sun, 11 Nov 2018 21:08:18 +0100
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        linux-gpio@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
-        Przemyslaw Gaj <pgaj@cadence.com>,
-        Peter Rosin <peda@axentia.se>,
-        Mike Shettel <mshettel@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH v10 0/9] Add the I3C subsystem
-Message-ID: <20181111210818.08af6731@bbrezillon>
-In-Reply-To: <20181111191020.GA21003@kroah.com>
-References: <20181026144333.12276-1-boris.brezillon@bootlin.com>
-        <20181111173932.GA12254@kroah.com>
-        <20181111191017.7b2efdf1@bbrezillon>
-        <20181111191020.GA21003@kroah.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 12 Nov 2018 00:58:09 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50242 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726471AbeKLF6J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 00:58:09 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wABK8ajj039404
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 15:08:40 -0500
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2npd762n7c-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 15:08:40 -0500
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Sun, 11 Nov 2018 20:08:38 -0000
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sun, 11 Nov 2018 20:08:34 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wABK8X1Y28704952
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sun, 11 Nov 2018 20:08:33 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A282FB2064;
+        Sun, 11 Nov 2018 20:08:33 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7F932B205F;
+        Sun, 11 Nov 2018 20:08:33 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.207.24])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Sun, 11 Nov 2018 20:08:33 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id AF43C16C5D38; Sun, 11 Nov 2018 12:08:34 -0800 (PST)
+Date:   Sun, 11 Nov 2018 12:08:34 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
+        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org
+Subject: [PATCH tip/core/rcu 0/4] SRCU updates for v4.21/v5.0
+Reply-To: paulmck@linux.ibm.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18111120-0040-0000-0000-000004908A61
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010028; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01116027; UDB=6.00577119; IPR=6.00896128;
+ MB=3.00024115; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-11 20:08:37
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18111120-0041-0000-0000-000008999310
+Message-Id: <20181111200834.GA10983@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-11_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=731 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811110192
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 11 Nov 2018 11:10:20 -0800
-Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+Hello!
 
-> On Sun, Nov 11, 2018 at 07:10:17PM +0100, Boris Brezillon wrote:
-> > Hi Greg,
-> > 
-> > On Sun, 11 Nov 2018 09:39:32 -0800
-> > Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> >   
-> > > On Fri, Oct 26, 2018 at 04:43:24PM +0200, Boris Brezillon wrote:  
-> > > > Hi Greg,
-> > > > 
-> > > > I think we've reached a point where we can eventually consider the I3C
-> > > > framework for inclusion in 4.20 (5.0?). A few more issues were reported
-> > > > on v9 and fixed in v10. I can't guarantee that the implementation is
-> > > > free of bugs but I still think it's worth merging it in v4.20: it's a
-> > > > new subsystem, so we don't risk regressions, and the only way we can
-> > > > detect other issues is by having other people experiment with this
-> > > > implementation.
-> > > > 
-> > > > The only remaining concern raised by Arnd is the fact that both hosts
-> > > > and slaves share the same bus type and are differentiated thanks to
-> > > > their device_type, which IMHO is fine since this is what other
-> > > > subsystems do (plus I don't see other solutions to have both I3C
-> > > > devices and I3C buses represented under /sys/bus/i3c/).    
-> > > 
-> > > Yeah, it's not the nicest, but it will work, we did it also for USB and
-> > > greybus and it solves the issue.
-> > > 
-> > > This all looks good to me, so I've queued it up.  Let's see if
-> > > linux-next has any problems with it.  
-> > 
-> > I recently asked Stephen to add the linux-i3c tree to linux-next, so
-> > I'm expecting conflicts :-/. Sorry, I didn't know you were planning to
-> > take these patches through your tree.
-> > 
-> > BTW, I also fixed a couple of things when rebasing on top of 4.20-rc1:
-> > 
-> > - KernelVersion in the sysfs ABI doc has been updated to 5.0  
-> 
-> There is no 5.0 yet :)
+This series contains SRCU updates:
 
-Actually I had a hard time choosing between 4.21 and 5.0, and then I
-saw Linus' email announcing 4.20-rc1 ;-). But I can change it back to
-4.21 if you prefer.
+1.	Fix kernel-doc missing notation, courtesy of Randy Dunlap.
 
-> 
-> > - Fixed i3c_master_getmxds_locked() (bug reported/fixed by Colin here
-> >   https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1799850.html)
-> > - Removed a blank line at the end of master-driver-api.rst
+2.	Prevent __call_srcu() counter wrap with read-side critical section.
 
-One extra thing I didn't mention (and didn't fix yet) is the I3C
-mailing list. I asked Dave Miller if he'd be okay to create the
-linux-i3c ML on vger.kernel.org, and he suggested that we use the
-linux-i2c ML instead which I know Wolfram is not fond of. I might
-decide to just put linux-kernel@vger.kernel.org as the ML to Cc for
-I3C patches until we settle on something. 
+3.	Lock srcu_data structure in srcu_gp_start(), fixing a an extremely
+	rare but also extremely embarrassing concurrency bug, courtesy
+	of Dennis Krein.
 
-> > 
-> > For the record, the i3c/next branch pulled by Stephen is available here
-> > [1].
-> >   
-> > > Thanks for sticking with it, nice work!  
-> > 
-> > Thanks for reviewing it! Greg, Stephen, let me know if you want me to
-> > reset i3c/next to v4.20-rc1 to avoid conflicts in linux-next.  
-> 
-> So do you want me to just drop these patches from my tree?  If so, I
-> can, but i have no problem sending these to Linus for the next -rc1
-> merge window through my tree if that is easier.
-> 
-> It's up to you.
+4.	Use "ssp" instead of "sp" for srcu_struct pointer, in the hope
+	that this prevents confusion about which lock is held.
 
-I think that's easier for me and for you if I take them in the i3c tree
-and then send a PR to Linus myself. This way I won't bother you if
-fixes are needed or if I decide to apply patches adding support for
-other I3C controllers (I see you commented on the Synopsys driver
-already, and I might indeed decide to queue this patchset for this
-release).
+							Thanx, Paul
 
-Doing that also allows me to get everything in place since I'll anyway
-have to send PRs to Linus at some point.
+------------------------------------------------------------------------
 
-Regards,
+ include/linux/srcu.h     |   81 ++++---
+ include/linux/srcutiny.h |   24 +-
+ include/linux/srcutree.h |    8 
+ kernel/rcu/srcutiny.c    |  120 +++++------
+ kernel/rcu/srcutree.c    |  493 +++++++++++++++++++++++------------------------
+ 5 files changed, 367 insertions(+), 359 deletions(-)
 
-Boris
-
-PS: If you're fine with me taking the I3C patches, I'll need your
-Acked-by.
