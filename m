@@ -6,48 +6,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B1AC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:31:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C2C7C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:31:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9C4320818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:31:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9C4320818
+	by mail.kernel.org (Postfix) with ESMTP id C1DB52148E
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:31:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1DB52148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730545AbeKLGUa (ORCPT
+        id S1731510AbeKLGU3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:20:30 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50354 "EHLO
+        Mon, 12 Nov 2018 01:20:29 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50376 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730400AbeKLFsT (ORCPT
+        by vger.kernel.org with ESMTP id S1730405AbeKLFsU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:48:19 -0500
+        Mon, 12 Nov 2018 00:48:20 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsf-0000oO-8L; Sun, 11 Nov 2018 19:58:49 +0000
+        id 1gLvsf-0000oP-DG; Sun, 11 Nov 2018 19:58:49 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsa-0001tG-R4; Sun, 11 Nov 2018 19:58:44 +0000
+        id 1gLvsa-0001t1-Ms; Sun, 11 Nov 2018 19:58:44 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Adrian Hunter" <adrian.hunter@intel.com>,
-        "Wang Nan" <wangnan0@huawei.com>,
-        "Namhyung Kim" <namhyung@kernel.org>,
-        "David Ahern" <dsahern@gmail.com>,
+CC:     akpm@linux-foundation.org, "David Ahern" <dsahern@gmail.com>,
         "Arnaldo Carvalho de Melo" <acme@redhat.com>,
-        "Jiri Olsa" <jolsa@kernel.org>
+        "Jiri Olsa" <jolsa@kernel.org>,
+        "Namhyung Kim" <namhyung@kernel.org>,
+        "Wang Nan" <wangnan0@huawei.com>,
+        "Adrian Hunter" <adrian.hunter@intel.com>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.263705088@decadent.org.uk>
+Message-ID: <lsq.1541965745.79557172@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 357/366] perf tools: Use readdir() instead of
+Subject: [PATCH 3.16 354/366] perf script: Use readdir() instead of
  deprecated readdir_r()
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
@@ -64,12 +63,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-commit bfc279f3d233150ff260e9e93012e14f86810648 upstream.
+commit a5e8e825bd1704c488bf6a46936aaf3b9f203d6a upstream.
 
 The readdir() function is thread safe as long as just one thread uses a
-DIR, which is the case when parsing tracepoint event definitions, to
-avoid breaking the build with glibc-2.23.90 (upcoming 2.24), use it
-instead of readdir_r().
+DIR, which is the case in 'perf script', so, to avoid breaking the build
+with glibc-2.23.90 (upcoming 2.24), use it instead of readdir_r().
 
 See: http://man7.org/linux/man-pages/man3/readdir.3.html
 
@@ -86,171 +84,162 @@ Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: http://lkml.kernel.org/n/tip-wddn49r6bz6wq4ee3dxbl7lo@git.kernel.org
+Link: http://lkml.kernel.org/n/tip-mt3xz7n2hl49ni2vx7kuq74g@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- tools/perf/util/parse-events.c | 60 +++++++++++++++++-----------------
- 1 file changed, 30 insertions(+), 30 deletions(-)
+ tools/perf/builtin-script.c | 70 ++++++++++++++++++-------------------
+ 1 file changed, 34 insertions(+), 36 deletions(-)
 
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -123,11 +123,11 @@ static struct event_symbol event_symbols
- #define PERF_EVENT_TYPE(config)		__PERF_EVENT_FIELD(config, TYPE)
- #define PERF_EVENT_ID(config)		__PERF_EVENT_FIELD(config, EVENT)
- 
--#define for_each_subsystem(sys_dir, sys_dirent, sys_next)	       \
--	while (!readdir_r(sys_dir, &sys_dirent, &sys_next) && sys_next)	       \
--	if (sys_dirent.d_type == DT_DIR &&				       \
--	   (strcmp(sys_dirent.d_name, ".")) &&				       \
--	   (strcmp(sys_dirent.d_name, "..")))
-+#define for_each_subsystem(sys_dir, sys_dirent)			\
-+	while ((sys_dirent = readdir(sys_dir)) != NULL)		\
-+		if (sys_dirent->d_type == DT_DIR &&		\
-+		    (strcmp(sys_dirent->d_name, ".")) &&	\
-+		    (strcmp(sys_dirent->d_name, "..")))
- 
- static int tp_event_has_id(struct dirent *sys_dir, struct dirent *evt_dir)
- {
-@@ -144,12 +144,12 @@ static int tp_event_has_id(struct dirent
- 	return 0;
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -1061,21 +1061,19 @@ static int is_directory(const char *base
+ 	return S_ISDIR(st.st_mode);
  }
  
--#define for_each_event(sys_dirent, evt_dir, evt_dirent, evt_next)	       \
--	while (!readdir_r(evt_dir, &evt_dirent, &evt_next) && evt_next)        \
--	if (evt_dirent.d_type == DT_DIR &&				       \
--	   (strcmp(evt_dirent.d_name, ".")) &&				       \
--	   (strcmp(evt_dirent.d_name, "..")) &&				       \
--	   (!tp_event_has_id(&sys_dirent, &evt_dirent)))
-+#define for_each_event(sys_dirent, evt_dir, evt_dirent)		\
-+	while ((evt_dirent = readdir(evt_dir)) != NULL)		\
-+		if (evt_dirent->d_type == DT_DIR &&		\
-+		    (strcmp(evt_dirent->d_name, ".")) &&	\
-+		    (strcmp(evt_dirent->d_name, "..")) &&	\
-+		    (!tp_event_has_id(sys_dirent, evt_dirent)))
+-#define for_each_lang(scripts_path, scripts_dir, lang_dirent, lang_next)\
+-	while (!readdir_r(scripts_dir, &lang_dirent, &lang_next) &&	\
+-	       lang_next)						\
+-		if ((lang_dirent.d_type == DT_DIR ||			\
+-		     (lang_dirent.d_type == DT_UNKNOWN &&		\
+-		      is_directory(scripts_path, &lang_dirent))) &&	\
+-		    (strcmp(lang_dirent.d_name, ".")) &&		\
+-		    (strcmp(lang_dirent.d_name, "..")))
+-
+-#define for_each_script(lang_path, lang_dir, script_dirent, script_next)\
+-	while (!readdir_r(lang_dir, &script_dirent, &script_next) &&	\
+-	       script_next)						\
+-		if (script_dirent.d_type != DT_DIR &&			\
+-		    (script_dirent.d_type != DT_UNKNOWN ||		\
+-		     !is_directory(lang_path, &script_dirent)))
++#define for_each_lang(scripts_path, scripts_dir, lang_dirent)		\
++	while ((lang_dirent = readdir(scripts_dir)) != NULL)		\
++		if ((lang_dirent->d_type == DT_DIR ||			\
++		     (lang_dirent->d_type == DT_UNKNOWN &&		\
++		      is_directory(scripts_path, lang_dirent))) &&	\
++		    (strcmp(lang_dirent->d_name, ".")) &&		\
++		    (strcmp(lang_dirent->d_name, "..")))
++
++#define for_each_script(lang_path, lang_dir, script_dirent)		\
++	while ((script_dirent = readdir(lang_dir)) != NULL)		\
++		if (script_dirent->d_type != DT_DIR &&			\
++		    (script_dirent->d_type != DT_UNKNOWN ||		\
++		     !is_directory(lang_path, script_dirent)))
  
- #define MAX_EVENT_LENGTH 512
  
-@@ -158,7 +158,7 @@ struct tracepoint_path *tracepoint_id_to
+ #define RECORD_SUFFIX			"-record"
+@@ -1221,7 +1219,7 @@ static int list_available_scripts(const
+ 				  const char *s __maybe_unused,
+ 				  int unset __maybe_unused)
  {
- 	struct tracepoint_path *path = NULL;
- 	DIR *sys_dir, *evt_dir;
--	struct dirent *sys_next, *evt_next, sys_dirent, evt_dirent;
-+	struct dirent *sys_dirent, *evt_dirent;
- 	char id_buf[24];
- 	int fd;
- 	u64 id;
-@@ -172,18 +172,18 @@ struct tracepoint_path *tracepoint_id_to
- 	if (!sys_dir)
+-	struct dirent *script_next, *lang_next, script_dirent, lang_dirent;
++	struct dirent *script_dirent, *lang_dirent;
+ 	char scripts_path[MAXPATHLEN];
+ 	DIR *scripts_dir, *lang_dir;
+ 	char script_path[MAXPATHLEN];
+@@ -1236,19 +1234,19 @@ static int list_available_scripts(const
+ 	if (!scripts_dir)
+ 		return -1;
+ 
+-	for_each_lang(scripts_path, scripts_dir, lang_dirent, lang_next) {
++	for_each_lang(scripts_path, scripts_dir, lang_dirent) {
+ 		snprintf(lang_path, MAXPATHLEN, "%s/%s/bin", scripts_path,
+-			 lang_dirent.d_name);
++			 lang_dirent->d_name);
+ 		lang_dir = opendir(lang_path);
+ 		if (!lang_dir)
+ 			continue;
+ 
+-		for_each_script(lang_path, lang_dir, script_dirent, script_next) {
+-			script_root = get_script_root(&script_dirent, REPORT_SUFFIX);
++		for_each_script(lang_path, lang_dir, script_dirent) {
++			script_root = get_script_root(script_dirent, REPORT_SUFFIX);
+ 			if (script_root) {
+ 				desc = script_desc__findnew(script_root);
+ 				snprintf(script_path, MAXPATHLEN, "%s/%s",
+-					 lang_path, script_dirent.d_name);
++					 lang_path, script_dirent->d_name);
+ 				read_script_info(desc, script_path);
+ 				free(script_root);
+ 			}
+@@ -1336,7 +1334,7 @@ static int check_ev_match(char *dir_name
+  */
+ int find_scripts(char **scripts_array, char **scripts_path_array)
+ {
+-	struct dirent *script_next, *lang_next, script_dirent, lang_dirent;
++	struct dirent *script_dirent, *lang_dirent;
+ 	char scripts_path[MAXPATHLEN], lang_path[MAXPATHLEN];
+ 	DIR *scripts_dir, *lang_dir;
+ 	struct perf_session *session;
+@@ -1359,9 +1357,9 @@ int find_scripts(char **scripts_array, c
+ 		return -1;
+ 	}
+ 
+-	for_each_lang(scripts_path, scripts_dir, lang_dirent, lang_next) {
++	for_each_lang(scripts_path, scripts_dir, lang_dirent) {
+ 		snprintf(lang_path, MAXPATHLEN, "%s/%s", scripts_path,
+-			 lang_dirent.d_name);
++			 lang_dirent->d_name);
+ #ifdef NO_LIBPERL
+ 		if (strstr(lang_path, "perl"))
+ 			continue;
+@@ -1375,16 +1373,16 @@ int find_scripts(char **scripts_array, c
+ 		if (!lang_dir)
+ 			continue;
+ 
+-		for_each_script(lang_path, lang_dir, script_dirent, script_next) {
++		for_each_script(lang_path, lang_dir, script_dirent) {
+ 			/* Skip those real time scripts: xxxtop.p[yl] */
+-			if (strstr(script_dirent.d_name, "top."))
++			if (strstr(script_dirent->d_name, "top."))
+ 				continue;
+ 			sprintf(scripts_path_array[i], "%s/%s", lang_path,
+-				script_dirent.d_name);
+-			temp = strchr(script_dirent.d_name, '.');
++				script_dirent->d_name);
++			temp = strchr(script_dirent->d_name, '.');
+ 			snprintf(scripts_array[i],
+-				(temp - script_dirent.d_name) + 1,
+-				"%s", script_dirent.d_name);
++				(temp - script_dirent->d_name) + 1,
++				"%s", script_dirent->d_name);
+ 
+ 			if (check_ev_match(lang_path,
+ 					scripts_array[i], session))
+@@ -1402,7 +1400,7 @@ int find_scripts(char **scripts_array, c
+ 
+ static char *get_script_path(const char *script_root, const char *suffix)
+ {
+-	struct dirent *script_next, *lang_next, script_dirent, lang_dirent;
++	struct dirent *script_dirent, *lang_dirent;
+ 	char scripts_path[MAXPATHLEN];
+ 	char script_path[MAXPATHLEN];
+ 	DIR *scripts_dir, *lang_dir;
+@@ -1415,21 +1413,21 @@ static char *get_script_path(const char
+ 	if (!scripts_dir)
  		return NULL;
  
--	for_each_subsystem(sys_dir, sys_dirent, sys_next) {
-+	for_each_subsystem(sys_dir, sys_dirent) {
- 
- 		snprintf(dir_path, MAXPATHLEN, "%s/%s", tracing_events_path,
--			 sys_dirent.d_name);
-+			 sys_dirent->d_name);
- 		evt_dir = opendir(dir_path);
- 		if (!evt_dir)
+-	for_each_lang(scripts_path, scripts_dir, lang_dirent, lang_next) {
++	for_each_lang(scripts_path, scripts_dir, lang_dirent) {
+ 		snprintf(lang_path, MAXPATHLEN, "%s/%s/bin", scripts_path,
+-			 lang_dirent.d_name);
++			 lang_dirent->d_name);
+ 		lang_dir = opendir(lang_path);
+ 		if (!lang_dir)
  			continue;
  
--		for_each_event(sys_dirent, evt_dir, evt_dirent, evt_next) {
-+		for_each_event(sys_dirent, evt_dir, evt_dirent) {
- 
- 			snprintf(evt_path, MAXPATHLEN, "%s/%s/id", dir_path,
--				 evt_dirent.d_name);
-+				 evt_dirent->d_name);
- 			fd = open(evt_path, O_RDONLY);
- 			if (fd < 0)
- 				continue;
-@@ -208,9 +208,9 @@ struct tracepoint_path *tracepoint_id_to
- 					free(path);
- 					return NULL;
- 				}
--				strncpy(path->system, sys_dirent.d_name,
-+				strncpy(path->system, sys_dirent->d_name,
- 					MAX_EVENT_LENGTH);
--				strncpy(path->name, evt_dirent.d_name,
-+				strncpy(path->name, evt_dirent->d_name,
- 					MAX_EVENT_LENGTH);
- 				return path;
+-		for_each_script(lang_path, lang_dir, script_dirent, script_next) {
+-			__script_root = get_script_root(&script_dirent, suffix);
++		for_each_script(lang_path, lang_dir, script_dirent) {
++			__script_root = get_script_root(script_dirent, suffix);
+ 			if (__script_root && !strcmp(script_root, __script_root)) {
+ 				free(__script_root);
+ 				closedir(lang_dir);
+ 				closedir(scripts_dir);
+ 				snprintf(script_path, MAXPATHLEN, "%s/%s",
+-					 lang_path, script_dirent.d_name);
++					 lang_path, script_dirent->d_name);
+ 				return strdup(script_path);
  			}
-@@ -1003,7 +1003,7 @@ void print_tracepoint_events(const char
- 			     bool name_only)
- {
- 	DIR *sys_dir, *evt_dir;
--	struct dirent *sys_next, *evt_next, sys_dirent, evt_dirent;
-+	struct dirent *sys_dirent, *evt_dirent;
- 	char evt_path[MAXPATHLEN];
- 	char dir_path[MAXPATHLEN];
- 
-@@ -1016,29 +1016,29 @@ void print_tracepoint_events(const char
- 	if (!sys_dir)
- 		return;
- 
--	for_each_subsystem(sys_dir, sys_dirent, sys_next) {
-+	for_each_subsystem(sys_dir, sys_dirent) {
- 		if (subsys_glob != NULL && 
--		    !strglobmatch(sys_dirent.d_name, subsys_glob))
-+		    !strglobmatch(sys_dirent->d_name, subsys_glob))
- 			continue;
- 
- 		snprintf(dir_path, MAXPATHLEN, "%s/%s", tracing_events_path,
--			 sys_dirent.d_name);
-+			 sys_dirent->d_name);
- 		evt_dir = opendir(dir_path);
- 		if (!evt_dir)
- 			continue;
- 
--		for_each_event(sys_dirent, evt_dir, evt_dirent, evt_next) {
-+		for_each_event(sys_dirent, evt_dir, evt_dirent) {
- 			if (event_glob != NULL && 
--			    !strglobmatch(evt_dirent.d_name, event_glob))
-+			    !strglobmatch(evt_dirent->d_name, event_glob))
- 				continue;
- 
- 			if (name_only) {
--				printf("%s:%s ", sys_dirent.d_name, evt_dirent.d_name);
-+				printf("%s:%s ", sys_dirent->d_name, evt_dirent->d_name);
- 				continue;
- 			}
- 
- 			snprintf(evt_path, MAXPATHLEN, "%s:%s",
--				 sys_dirent.d_name, evt_dirent.d_name);
-+				 sys_dirent->d_name, evt_dirent->d_name);
- 			printf("  %-50s [%s]\n", evt_path,
- 				event_type_descriptors[PERF_TYPE_TRACEPOINT]);
- 		}
-@@ -1054,7 +1054,7 @@ void print_tracepoint_events(const char
- int is_valid_tracepoint(const char *event_string)
- {
- 	DIR *sys_dir, *evt_dir;
--	struct dirent *sys_next, *evt_next, sys_dirent, evt_dirent;
-+	struct dirent *sys_dirent, *evt_dirent;
- 	char evt_path[MAXPATHLEN];
- 	char dir_path[MAXPATHLEN];
- 
-@@ -1065,17 +1065,17 @@ int is_valid_tracepoint(const char *even
- 	if (!sys_dir)
- 		return 0;
- 
--	for_each_subsystem(sys_dir, sys_dirent, sys_next) {
-+	for_each_subsystem(sys_dir, sys_dirent) {
- 
- 		snprintf(dir_path, MAXPATHLEN, "%s/%s", tracing_events_path,
--			 sys_dirent.d_name);
-+			 sys_dirent->d_name);
- 		evt_dir = opendir(dir_path);
- 		if (!evt_dir)
- 			continue;
- 
--		for_each_event(sys_dirent, evt_dir, evt_dirent, evt_next) {
-+		for_each_event(sys_dirent, evt_dir, evt_dirent) {
- 			snprintf(evt_path, MAXPATHLEN, "%s:%s",
--				 sys_dirent.d_name, evt_dirent.d_name);
-+				 sys_dirent->d_name, evt_dirent->d_name);
- 			if (!strcmp(evt_path, event_string)) {
- 				closedir(evt_dir);
- 				closedir(sys_dir);
+ 			free(__script_root);
 
