@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9062C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:04:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AE55C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:04:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 625AF21104
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:04:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8D7D20866
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:04:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pgYvIUnC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 625AF21104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="si6n2FaL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8D7D20866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732370AbeKLJyn (ORCPT
+        id S1732040AbeKLIRr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:54:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34412 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:17:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34236 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731952AbeKLIRs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:17:48 -0500
+        id S1731952AbeKLIRq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:17:46 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D7872175B;
-        Sun, 11 Nov 2018 22:27:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 951C121508;
+        Sun, 11 Nov 2018 22:27:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975272;
-        bh=GFB9fz2oQabVNNyaLVo5sv5BzFh/uMaHCbTL9OjGJpg=;
+        s=default; t=1541975270;
+        bh=oYnvL0Ggg3BLILL11W8IH8YtSajmxbMSO5mIwFpDyBg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pgYvIUnC9+gPeVGnmwLk7OU3fHNkRGKxBwOfwlqLEPEeoDoaGAm32r+ngYMUMBPF8
-         qj1iZnoRRQ/jMEIYD0HqAP+txdxpY8ZZkE/C3ZP76abav5iYeE3GF2UNfH4i3G6k7X
-         JZZq4XBHJaVmXSPgo5g5HewmbMLyJb+HopKyxibE=
+        b=si6n2FaL0j9UwPZuVhW0lT/X3Y1QReeXGXZRnDz2UAjEmkU7654LwHJMis8DGt7hD
+         o683nkr2eT/N0RFaIAUpKf9O5gVH/TCI+Pp3EtkIPS65cI+g7wDTZpNJHw7rTu8ssf
+         AscARD0t6csYWfk6e7HbFT4hwfHgoo+bi2xg1RfU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
-        Sumit Saxena <sumit.saxena@broadcom.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 141/361] scsi: megaraid_sas: fix a missing-check bug
-Date:   Sun, 11 Nov 2018 14:18:08 -0800
-Message-Id: <20181111221640.265943528@linuxfoundation.org>
+Subject: [PATCH 4.19 168/361] f2fs: fix to recover inodes i_flags during POR
+Date:   Sun, 11 Nov 2018 14:18:35 -0800
+Message-Id: <20181111221643.921901096@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -64,52 +63,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wenwen Wang <wang6495@umn.edu>
+From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit 47db7873136a9c57c45390a53b57019cf73c8259 ]
+[ Upstream commit 19c73a691ccf6fb2f12d4e9cf9830023966cec88 ]
 
-In megasas_mgmt_compat_ioctl_fw(), to handle the structure
-compat_megasas_iocpacket 'cioc', a user-space structure megasas_iocpacket
-'ioc' is allocated before megasas_mgmt_ioctl_fw() is invoked to handle
-the packet. Since the two data structures have different fields, the data
-is copied from 'cioc' to 'ioc' field by field. In the copy process,
-'sense_ptr' is prepared if the field 'sense_len' is not null, because it
-will be used in megasas_mgmt_ioctl_fw(). To prepare 'sense_ptr', the
-user-space data 'ioc->sense_off' and 'cioc->sense_off' are copied and
-saved to kernel-space variables 'local_sense_off' and 'user_sense_off'
-respectively. Given that 'ioc->sense_off' is also copied from
-'cioc->sense_off', 'local_sense_off' and 'user_sense_off' should have the
-same value. However, 'cioc' is in the user space and a malicious user can
-race to change the value of 'cioc->sense_off' after it is copied to
-'ioc->sense_off' but before it is copied to 'user_sense_off'. By doing
-so, the attacker can inject different values into 'local_sense_off' and
-'user_sense_off'. This can cause undefined behavior in the following
-execution, because the two variables are supposed to be same.
+Testcase to reproduce this bug:
+1. mkfs.f2fs /dev/sdd
+2. mount -t f2fs /dev/sdd /mnt/f2fs
+3. touch /mnt/f2fs/file
+4. sync
+5. chattr +A /mnt/f2fs/file
+6. xfs_io -f /mnt/f2fs/file -c "fsync"
+7. godown /mnt/f2fs
+8. umount /mnt/f2fs
+9. mount -t f2fs /dev/sdd /mnt/f2fs
+10. lsattr /mnt/f2fs/file
 
-This patch enforces a check on the two kernel variables 'local_sense_off'
-and 'user_sense_off' to make sure they are the same after the copy. In
-case they are not, an error code EINVAL will be returned.
+-----------------N- /mnt/f2fs/file
 
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
-Acked-by: Sumit Saxena <sumit.saxena@broadcom.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+But actually, we expect the corrct result is:
+
+-------A---------N- /mnt/f2fs/file
+
+The reason is we didn't recover inode.i_flags field during mount,
+fix it.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/megaraid/megaraid_sas_base.c |    3 +++
- 1 file changed, 3 insertions(+)
+ fs/f2fs/recovery.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/scsi/megaraid/megaraid_sas_base.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_base.c
-@@ -7523,6 +7523,9 @@ static int megasas_mgmt_compat_ioctl_fw(
- 		get_user(user_sense_off, &cioc->sense_off))
- 		return -EFAULT;
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -221,6 +221,7 @@ static void recover_inode(struct inode *
+ 	inode->i_mtime.tv_nsec = le32_to_cpu(raw->i_mtime_nsec);
  
-+	if (local_sense_off != user_sense_off)
-+		return -EINVAL;
-+
- 	if (local_sense_len) {
- 		void __user **sense_ioc_ptr =
- 			(void __user **)((u8 *)((unsigned long)&ioc->frame.raw) + local_sense_off);
+ 	F2FS_I(inode)->i_advise = raw->i_advise;
++	F2FS_I(inode)->i_flags = le32_to_cpu(raw->i_flags);
+ 
+ 	recover_inline_flags(inode, raw);
+ 
 
 
