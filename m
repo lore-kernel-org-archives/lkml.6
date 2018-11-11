@@ -2,197 +2,139 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E0FEC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 13:33:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49D97C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 13:36:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30E6C21104
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 13:33:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ANQWbZyV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30E6C21104
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 126E020866
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 13:36:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 126E020866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.us
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728481AbeKKXWP (ORCPT
+        id S1728106AbeKKXY5 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 18:22:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45672 "EHLO mail.kernel.org"
+        Sun, 11 Nov 2018 18:24:57 -0500
+Received: from mout.gmx.net ([212.227.15.15]:57637 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727597AbeKKXWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 18:22:15 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 155A820866;
-        Sun, 11 Nov 2018 13:33:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541943218;
-        bh=NzzZi8SdPmsSTkKJ6jYWV0yDi4Aoybvce/TxWf1Ev7A=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ANQWbZyVnUgKzD57k33ruizC+1DXglP9UUpRXNztYO35mhPoKULYv3azSBUBtdBAd
-         JZiGLnozhPOdcInD8tc1J5YUm98K7zQzNaAXZbnQHEvrn6I81nSohJyHXFjCBFgNv7
-         N5vHP2ROVYovKPBK3bxFRpPICpaCVJ+ffZPVOEH0=
-Date:   Sun, 11 Nov 2018 13:33:33 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Heiko Stuebner <heiko@sntech.de>
-Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Heiko Stuebner <heiko.stuebner@bq.com>,
-        Denis Ciocca <denis.ciocca@st.com>
-Subject: Re: [PATCH] iio: st-accel: add support for lis3de
-Message-ID: <20181111133333.0d292c80@archlinux>
-In-Reply-To: <20181107154521.32761-1-heiko@sntech.de>
-References: <20181107154521.32761-1-heiko@sntech.de>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1727594AbeKKXY5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Nov 2018 18:24:57 -0500
+Received: from [192.168.1.153] ([74.104.183.64]) by mail.gmx.com (mrgmx003
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 0MYg42-1g0PHy24Ys-00VOo1; Sun, 11
+ Nov 2018 14:36:12 +0100
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
+Subject: Re: crashkernel=512M is no longer working on this aarch64 server
+From:   Qian Cai <cai@gmx.us>
+In-Reply-To: <20181111123553.3a35a15c@mschwideX1>
+Date:   Sun, 11 Nov 2018 08:36:09 -0500
+Cc:     linux kernel <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <77E3BE32-F509-43B3-8C5F-252416C04B7C@gmx.us>
+References: <1A7E2E89-34DB-41A0-BBA2-323073A7E298@gmx.us>
+ <20181111123553.3a35a15c@mschwideX1>
+To:     Martin Schwidefsky <schwidefsky@de.ibm.com>
+X-Mailer: Apple Mail (2.3445.100.39)
+X-Provags-ID: V03:K1:wHzD+jcGGx4cz+LdvtO3mX3LRe5RR7+FuHSJ2ZOodndobH+M//f
+ fs4eTCWNQiP8xDBldBBIpXk06mvExyxyeB69CZ0vim99g8NPkxaqY5x7FyS2zAjUhoPSP91
+ d3Yp4uaHaE330VMFzO/9CroXJIBkF0w4lPs8zglDkGiJlONJfWEZuNE9h4lhPRSF8iiYdGQ
+ y0EhOHTx/1mofN9tY2K4A==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:FZmwPqAQ5cc=:e8plgWwOeo3o3mhW2F5SDG
+ x04KFjCNmPcUGP4vg8kuMWD4MUvinMZlhgM66JEMr7Km8dTXDHiEgIEWhW57VeIxei5LrNTlr
+ eRkWMU/KTvrnQv7i6qkIhmmSjqXmENLjmbFOK0LdMPoOM+3yNC54yD6OIAJahgpGuYYPPg3xS
+ 5dyJIE83URi+v4Q89cjbbX6MAEpL+ah4UEDEKnKBEhyOpyq1Jy3CeUJxLMfCUqkffj8ZxPCtv
+ suW1NtDH4Ny7IG9TXU/w48c3nXfZj0tjkd7n08ycgirmTyxrpm94HTaNuqw5JhwpEDt0yehym
+ jUoSVHdmpHfm51LLVuu2mExFm0cwXgq7GYHcY22J9gs1xIOMVRaHS1fGJ8a8/cxUvPV/mfHK9
+ rgmyuZmlOECVRzRADPISGZiAGiAgXD6NKY2vSbsp6bveoehyfCdAKUhYDHkN3asadHO9oq32m
+ UqAQm3YANbVlEFpbY6JANredzmNGbNnOVjYs81Z7Pr1QcQd0EuNoVn8e+1jN/4t4JIw/NgKlU
+ xBAAJUVwfu0y1y/NIuVdiohBtVIAk3Ikr5XeH1TovwG0NFNEssU21A0/bTHpXOgwO6ORHsw9X
+ +woMINZzgcNphCZu05TNDQaNHFvbF2x5nz2YtAQVA212/G50sHAdmKV0c4CVLlRIaHcDHiNzl
+ tPlk9UoP1hs2uIpFE15C61E1xad88vqagAYSMWHSoys8zBuZJ6ImAIRcZG58+3AQCIet/zuwK
+ 57AwMQyOSotVIKTDbEj2u1fchvaEQUu68Ce1v+pN5N0Y+/SSrf7hVf00lPEV1iQFVdP8OiYCx
+ KQQUm3LSmGJnYav60dT0W8vFNSleu6/QyXIfaLn/9yKfG7GCJmPaPcw5vx+Ibeg8MkCeDfowl
+ anx4DfaEVcXbjFNRRBHC1v0zukpeFhETXn6obcc+nPsoBlNQtCIeO8JSd5l9aH
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed,  7 Nov 2018 16:45:21 +0100
-Heiko Stuebner <heiko@sntech.de> wrote:
 
-> From: Heiko Stuebner <heiko.stuebner@bq.com>
+
+> On Nov 11, 2018, at 6:35 AM, Martin Schwidefsky <schwidefsky@de.ibm.com> wrote:
 > 
-> This commit add support for STMicroelectronics lis3de accelerometer.
-> Datasheet for this device can be found here:
+> On Sat, 10 Nov 2018 23:41:34 -0500
+> Qian Cai <cai@gmx.us> wrote:
 > 
-> https://www.st.com/resource/en/datasheet/lis3de.pdf
+>> It was broken somewhere between b00d209241ff and 3541833fd1f2.
+>> 
+>> [    0.000000] cannot allocate crashkernel (size:0x20000000)
+>> 
+>> Where a good one looks like this,
+>> 
+>> [    0.000000] crashkernel reserved: 0x0000000008600000 - 0x0000000028600000 (512 MB)
+>> 
+>> Some commits look more suspicious than others.
+>> 
+>>      mm: add mm_pxd_folded checks to pgtable_bytes accounting functions
+>>      mm: introduce mm_[p4d|pud|pmd]_folded
+>>      mm: make the __PAGETABLE_PxD_FOLDED defines non-empty
 > 
-> Signed-off-by: Heiko Stuebner <heiko.stuebner@bq.com>
-
-Applied to the togreg branch of iio.git and pushed out as testing
-for the autobuilders to play with it.
-
-Thanks,
-
-Jonathan
-
-> ---
->  Documentation/devicetree/bindings/iio/st-sensors.txt | 1 +
->  drivers/iio/accel/Kconfig                            | 2 +-
->  drivers/iio/accel/st_accel.h                         | 1 +
->  drivers/iio/accel/st_accel_core.c                    | 1 +
->  drivers/iio/accel/st_accel_i2c.c                     | 5 +++++
->  drivers/iio/accel/st_accel_spi.c                     | 5 +++++
->  include/linux/iio/common/st_sensors.h                | 2 +-
->  7 files changed, 15 insertions(+), 2 deletions(-)
+> The intent of these three patches is to add extra checks to the
+> pgtable_bytes accounting function. If applied incorrectly the expected
+> result would be warnings like this:
+>  BUG: non-zero pgtables_bytes on freeing mm: 16384
 > 
-> diff --git a/Documentation/devicetree/bindings/iio/st-sensors.txt b/Documentation/devicetree/bindings/iio/st-sensors.txt
-> index 6f626f73417e..01c986b84bd4 100644
-> --- a/Documentation/devicetree/bindings/iio/st-sensors.txt
-> +++ b/Documentation/devicetree/bindings/iio/st-sensors.txt
-> @@ -48,6 +48,7 @@ Accelerometers:
->  - st,lis3l02dq
->  - st,lis2dw12
->  - st,lis3dhh
-> +- st,lis3de
->  
->  Gyroscopes:
->  - st,l3g4200d-gyro
-> diff --git a/drivers/iio/accel/Kconfig b/drivers/iio/accel/Kconfig
-> index 7993a67bd351..898839ca164a 100644
-> --- a/drivers/iio/accel/Kconfig
-> +++ b/drivers/iio/accel/Kconfig
-> @@ -223,7 +223,7 @@ config IIO_ST_ACCEL_3AXIS
->  	  Say yes here to build support for STMicroelectronics accelerometers:
->  	  LSM303DLH, LSM303DLHC, LIS3DH, LSM330D, LSM330DL, LSM330DLC,
->  	  LIS331DLH, LSM303DL, LSM303DLM, LSM330, LIS2DH12, H3LIS331DL,
-> -	  LNG2DM
-> +	  LNG2DM, LIS3DE
->  
->  	  This driver can also be built as a module. If so, these modules
->  	  will be created:
-> diff --git a/drivers/iio/accel/st_accel.h b/drivers/iio/accel/st_accel.h
-> index 2f931e4837e5..fd53258656ca 100644
-> --- a/drivers/iio/accel/st_accel.h
-> +++ b/drivers/iio/accel/st_accel.h
-> @@ -56,6 +56,7 @@ enum st_accel_type {
->  #define LNG2DM_ACCEL_DEV_NAME		"lng2dm"
->  #define LIS2DW12_ACCEL_DEV_NAME		"lis2dw12"
->  #define LIS3DHH_ACCEL_DEV_NAME		"lis3dhh"
-> +#define LIS3DE_ACCEL_DEV_NAME		"lis3de"
->  
->  /**
->  * struct st_sensors_platform_data - default accel platform data
-> diff --git a/drivers/iio/accel/st_accel_core.c b/drivers/iio/accel/st_accel_core.c
-> index 3e6fd5a8ac5b..f7b471121508 100644
-> --- a/drivers/iio/accel/st_accel_core.c
-> +++ b/drivers/iio/accel/st_accel_core.c
-> @@ -103,6 +103,7 @@ static const struct st_sensor_settings st_accel_sensors_settings[] = {
->  			[4] = LSM330DLC_ACCEL_DEV_NAME,
->  			[5] = LSM303AGR_ACCEL_DEV_NAME,
->  			[6] = LIS2DH12_ACCEL_DEV_NAME,
-> +			[7] = LIS3DE_ACCEL_DEV_NAME,
->  		},
->  		.ch = (struct iio_chan_spec *)st_accel_12bit_channels,
->  		.odr = {
-> diff --git a/drivers/iio/accel/st_accel_i2c.c b/drivers/iio/accel/st_accel_i2c.c
-> index 2ca5d1f6ade0..de8ae4327094 100644
-> --- a/drivers/iio/accel/st_accel_i2c.c
-> +++ b/drivers/iio/accel/st_accel_i2c.c
-> @@ -98,6 +98,10 @@ static const struct of_device_id st_accel_of_match[] = {
->  		.compatible = "st,lis2dw12",
->  		.data = LIS2DW12_ACCEL_DEV_NAME,
->  	},
-> +	{
-> +		.compatible = "st,lis3de",
-> +		.data = LIS3DE_ACCEL_DEV_NAME,
-> +	},
->  	{},
->  };
->  MODULE_DEVICE_TABLE(of, st_accel_of_match);
-> @@ -135,6 +139,7 @@ static const struct i2c_device_id st_accel_id_table[] = {
->  	{ LIS331DL_ACCEL_DEV_NAME },
->  	{ LIS3LV02DL_ACCEL_DEV_NAME },
->  	{ LIS2DW12_ACCEL_DEV_NAME },
-> +	{ LIS3DE_ACCEL_DEV_NAME },
->  	{},
->  };
->  MODULE_DEVICE_TABLE(i2c, st_accel_id_table);
-> diff --git a/drivers/iio/accel/st_accel_spi.c b/drivers/iio/accel/st_accel_spi.c
-> index dcc9bd243a52..73bfb5d04e2b 100644
-> --- a/drivers/iio/accel/st_accel_spi.c
-> +++ b/drivers/iio/accel/st_accel_spi.c
-> @@ -90,6 +90,10 @@ static const struct of_device_id st_accel_of_match[] = {
->  		.compatible = "st,lis3dhh",
->  		.data = LIS3DHH_ACCEL_DEV_NAME,
->  	},
-> +	{
-> +		.compatible = "st,lis3de",
-> +		.data = LIS3DE_ACCEL_DEV_NAME,
-> +	},
->  	{}
->  };
->  MODULE_DEVICE_TABLE(of, st_accel_of_match);
-> @@ -143,6 +147,7 @@ static const struct spi_device_id st_accel_id_table[] = {
->  	{ LIS3LV02DL_ACCEL_DEV_NAME },
->  	{ LIS2DW12_ACCEL_DEV_NAME },
->  	{ LIS3DHH_ACCEL_DEV_NAME },
-> +	{ LIS3DE_ACCEL_DEV_NAME },
->  	{},
->  };
->  MODULE_DEVICE_TABLE(spi, st_accel_id_table);
-> diff --git a/include/linux/iio/common/st_sensors.h b/include/linux/iio/common/st_sensors.h
-> index f9bd6e8ab138..8092b8e7f37e 100644
-> --- a/include/linux/iio/common/st_sensors.h
-> +++ b/include/linux/iio/common/st_sensors.h
-> @@ -40,7 +40,7 @@
->  #define ST_SENSORS_DEFAULT_STAT_ADDR		0x27
->  
->  #define ST_SENSORS_MAX_NAME			17
-> -#define ST_SENSORS_MAX_4WAI			7
-> +#define ST_SENSORS_MAX_4WAI			8
->  
->  #define ST_SENSORS_LSM_CHANNELS(device_type, mask, index, mod, \
->  					ch2, s, endian, rbits, sbits, addr) \
+> The change Linus worried about affects the __PAGETABLE_PxD_FOLDED defines.
+> These defines are used with #ifdef, #ifndef, and __is_defined() for the
+> new mm_p?d_folded() macros. I can not see how this would make a difference
+> for your iomem setup.
+> 
+>> # diff -u ../iomem.good.txt ../iomem.bad.txt 
+>> --- ../iomem.good.txt	2018-11-10 22:28:20.092614398 -0500
+>> +++ ../iomem.bad.txt	2018-11-10 20:39:54.930294479 -0500
+>> @@ -1,9 +1,8 @@
+>> 00000000-3965ffff : System RAM
+>>   00080000-018cffff : Kernel code
+>> -  018d0000-020affff : reserved
+>> -  020b0000-045affff : Kernel data
+>> -  08600000-285fffff : Crash kernel
+>> -  28730000-2d5affff : reserved
+>> +  018d0000-0762ffff : reserved
+>> +  07630000-09b2ffff : Kernel data
+>> +  231b0000-2802ffff : reserved
+>>   30ec0000-30ecffff : reserved
+>>   35660000-3965ffff : reserved
+>> 39660000-396fffff : reserved
+>> @@ -127,7 +126,7 @@
+>>   7c5200000-7c520ffff : 0004:48:00.0
+>> 1040000000-17fbffffff : System RAM
+>>   13fbfd0000-13fdfdffff : reserved
+>> -  16fba80000-17fbfdffff : reserved
+>> +  16fafd0000-17fbfdffff : reserved
+>>   17fbfe0000-17fbffffff : reserved
+>> 1800000000-1ffbffffff : System RAM
+>>   1bfbff0000-1bfdfeffff : reserved
+> 
+> The easiest way to verify if the three commits have something to do with your
+> problem is to revert them and run your test. Can you do that please ?
+Yes, you are right. Those commits have nothing to do with the problem. I should
+realized it earlier as those are virtual memory vs physical memory. Sorry for the
+nosie.
 
+It turned out I made a wrong assumption that if kmemleak is disabled by default,
+there should be no memory reserved for kmemleak at all which is not the case.
+
+CONFIG_DEBUG_KMEMLEAK_EARLY_LOG_SIZE=600000
+CONFIG_DEBUG_KMEMLEAK_DEFAULT_OFF=y
+
+Even without kmemleak=on in the kernel cmdline, it still reserve early log memory
+which causes not enough memory for crashkernel.
+
+Since there seems no way to turn kmemleak on later after boot, is there any
+reasons for the current behavior? 
