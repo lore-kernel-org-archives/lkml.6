@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42CC4C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:14:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53FA2C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:14:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B5A72084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:14:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D53E20871
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:14:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NTcaZNoL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B5A72084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="h7D6KKAm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D53E20871
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730925AbeKLKEa (ORCPT
+        id S1730425AbeKLIRN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 05:04:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60196 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:17:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59922 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730397AbeKLIRO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:17:14 -0500
+        id S1730203AbeKLIRM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:17:12 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 560AE215EA;
-        Sun, 11 Nov 2018 22:27:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F390223CB;
+        Sun, 11 Nov 2018 22:27:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975238;
-        bh=IlcIFchbqj0e5+EjQVQ68duHljTyg53ea/P0LbuuaJY=;
+        s=default; t=1541975237;
+        bh=x6QAcJOEGBa61Bd+4mtno+kSNyRpjWJKCdKf+wMZhsY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NTcaZNoLIQkpwzdbcdUBW+d8TkbeSjn7KeKgYVd6TWevvDrMUKaBSTloN4SkwMwMy
-         3epG9Wc4mF31nw3sRp/2ebGPx32MKbD0k5OqV1issXV7KOKHGXkansW5VBuH3hAxwA
-         xGp9Irk5cyCn7uFYdrHwE7ve2pVYzGnNlZQh3U6E=
+        b=h7D6KKAmjT/eHcjw/a6TGWVT9c0gtUvJM8j4K5huZR0KmcWT9juYBhk0yYyXPjy4y
+         7ELtpBGaUBYM0vKYiGwIMsR8TcxSQAcRScJuXi/uFfre5ZYk+Z3beckRisboIpF3O8
+         a6o7BW714oUikoVcE5aN3UiNkk/SxrZXhiotZXH8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eyal Reizer <eyalr@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Shaul Triebitz <shaul.triebitz@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 077/361] wlcore: Fix BUG with clear completion on timeout
-Date:   Sun, 11 Nov 2018 14:17:04 -0800
-Message-Id: <20181111221630.803995370@linuxfoundation.org>
+Subject: [PATCH 4.19 073/361] iwlwifi: pcie: avoid empty free RB queue
+Date:   Sun, 11 Nov 2018 14:17:00 -0800
+Message-Id: <20181111221630.228724642@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -64,99 +63,108 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tony Lindgren <tony@atomide.com>
+From: Shaul Triebitz <shaul.triebitz@intel.com>
 
-[ Upstream commit 4e651bad848955d88b29a568bfbfb4b831270e16 ]
+[ Upstream commit 868a1e863f95183f00809363fefba6d4f5bcd116 ]
 
-We do not currently clear wl->elp_compl on ELP timeout and we have bogus
-lingering pointer that wlcore_irq then will try to access after recovery
-is done:
+If all free RB queues are empty, the driver will never restock the
+free RB queue.  That's because the restocking happens in the Rx flow,
+and if the free queue is empty there will be no Rx.
 
-BUG: spinlock bad magic on CPU#1, irq/255-wl12xx/580
-...
-(spin_dump) from [<c01b9344>] (do_raw_spin_lock+0xc8/0x124)
-(do_raw_spin_lock) from [<c09b3970>] (_raw_spin_lock_irqsave+0x68/0x74)
-(_raw_spin_lock_irqsave) from [<c01a02f0>] (complete+0x24/0x58)
-(complete) from [<bf572610>] (wlcore_irq+0x48/0x17c [wlcore])
-(wlcore_irq [wlcore]) from [<c01c5efc>] (irq_thread_fn+0x2c/0x64)
-(irq_thread_fn) from [<c01c623c>] (irq_thread+0x148/0x290)
-(irq_thread) from [<c016b4b0>] (kthread+0x160/0x17c)
-(kthread) from [<c01010b4>] (ret_from_fork+0x14/0x20)
-...
+Although there's a background worker (a.k.a. allocator) allocating
+memory for RBs so that the Rx handler can restock them, the worker may
+run only after the free queue has become empty (and then it is too
+late for restocking as explained above).
 
-After that the system will hang. Let's fix this by adding a flag for
-recovery and moving the recovery work call to to the error handling
-section.
+There is a solution for that called 'emergency': If the number of used
+RB's reaches half the amount of all RB's, the Rx handler will not wait
+for the allocator but immediately allocate memory for the used RB's
+and restock the free queue.
 
-And we want to set WL1271_FLAG_INTENDED_FW_RECOVERY and actually clear
-it too in wl1271_recovery_work() and just downgrade the error to a
-warning to prevent overly verbose output.
+But, since the used RB's is per queue, it may happen that the used
+RB's are spread between the queues such that the emergency check will
+fail for each of the queues
+(and still run out of RBs, causing the above symptom).
 
-Cc: Eyal Reizer <eyalr@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+To fix it, move to emergency mode if the sum of *all* used RBs (for
+all Rx queues) reaches half the amount of all RB's
+
+Signed-off-by: Shaul Triebitz <shaul.triebitz@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/ti/wlcore/main.c |   18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/pcie/rx.c |   32 +++++++++++++++++----------
+ 1 file changed, 21 insertions(+), 11 deletions(-)
 
---- a/drivers/net/wireless/ti/wlcore/main.c
-+++ b/drivers/net/wireless/ti/wlcore/main.c
-@@ -957,6 +957,8 @@ static void wl1271_recovery_work(struct
- 	BUG_ON(wl->conf.recovery.bug_on_recovery &&
- 	       !test_bit(WL1271_FLAG_INTENDED_FW_RECOVERY, &wl->flags));
- 
-+	clear_bit(WL1271_FLAG_INTENDED_FW_RECOVERY, &wl->flags);
-+
- 	if (wl->conf.recovery.no_recovery) {
- 		wl1271_info("No recovery (chosen on module load). Fw will remain stuck.");
- 		goto out_unlock;
-@@ -6710,6 +6712,7 @@ static int __maybe_unused wlcore_runtime
- 	int ret;
- 	unsigned long start_time = jiffies;
- 	bool pending = false;
-+	bool recovery = false;
- 
- 	/* Nothing to do if no ELP mode requested */
- 	if (!test_bit(WL1271_FLAG_IN_ELP, &wl->flags))
-@@ -6726,7 +6729,7 @@ static int __maybe_unused wlcore_runtime
- 
- 	ret = wlcore_raw_write32(wl, HW_ACCESS_ELP_CTRL_REG, ELPCTRL_WAKE_UP);
- 	if (ret < 0) {
--		wl12xx_queue_recovery_work(wl);
-+		recovery = true;
- 		goto err;
- 	}
- 
-@@ -6734,11 +6737,12 @@ static int __maybe_unused wlcore_runtime
- 		ret = wait_for_completion_timeout(&compl,
- 			msecs_to_jiffies(WL1271_WAKEUP_TIMEOUT));
- 		if (ret == 0) {
--			wl1271_error("ELP wakeup timeout!");
--			wl12xx_queue_recovery_work(wl);
-+			wl1271_warning("ELP wakeup timeout!");
- 
- 			/* Return no error for runtime PM for recovery */
--			return 0;
-+			ret = 0;
-+			recovery = true;
-+			goto err;
- 		}
- 	}
- 
-@@ -6753,6 +6757,12 @@ err:
- 	spin_lock_irqsave(&wl->wl_lock, flags);
- 	wl->elp_compl = NULL;
- 	spin_unlock_irqrestore(&wl->wl_lock, flags);
-+
-+	if (recovery) {
-+		set_bit(WL1271_FLAG_INTENDED_FW_RECOVERY, &wl->flags);
-+		wl12xx_queue_recovery_work(wl);
-+	}
-+
- 	return ret;
+--- a/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
++++ b/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
+@@ -1144,6 +1144,14 @@ void iwl_pcie_rx_free(struct iwl_trans *
+ 	kfree(trans_pcie->rxq);
  }
  
++static void iwl_pcie_rx_move_to_allocator(struct iwl_rxq *rxq,
++					  struct iwl_rb_allocator *rba)
++{
++	spin_lock(&rba->lock);
++	list_splice_tail_init(&rxq->rx_used, &rba->rbd_empty);
++	spin_unlock(&rba->lock);
++}
++
+ /*
+  * iwl_pcie_rx_reuse_rbd - Recycle used RBDs
+  *
+@@ -1175,9 +1183,7 @@ static void iwl_pcie_rx_reuse_rbd(struct
+ 	if ((rxq->used_count % RX_CLAIM_REQ_ALLOC) == RX_POST_REQ_ALLOC) {
+ 		/* Move the 2 RBDs to the allocator ownership.
+ 		 Allocator has another 6 from pool for the request completion*/
+-		spin_lock(&rba->lock);
+-		list_splice_tail_init(&rxq->rx_used, &rba->rbd_empty);
+-		spin_unlock(&rba->lock);
++		iwl_pcie_rx_move_to_allocator(rxq, rba);
+ 
+ 		atomic_inc(&rba->req_pending);
+ 		queue_work(rba->alloc_wq, &rba->rx_alloc);
+@@ -1396,10 +1402,18 @@ restart:
+ 		IWL_DEBUG_RX(trans, "Q %d: HW = SW = %d\n", rxq->id, r);
+ 
+ 	while (i != r) {
++		struct iwl_rb_allocator *rba = &trans_pcie->rba;
+ 		struct iwl_rx_mem_buffer *rxb;
+-
+-		if (unlikely(rxq->used_count == rxq->queue_size / 2))
++		/* number of RBDs still waiting for page allocation */
++		u32 rb_pending_alloc =
++			atomic_read(&trans_pcie->rba.req_pending) *
++			RX_CLAIM_REQ_ALLOC;
++
++		if (unlikely(rb_pending_alloc >= rxq->queue_size / 2 &&
++			     !emergency)) {
++			iwl_pcie_rx_move_to_allocator(rxq, rba);
+ 			emergency = true;
++		}
+ 
+ 		rxb = iwl_pcie_get_rxb(trans, rxq, i);
+ 		if (!rxb)
+@@ -1421,17 +1435,13 @@ restart:
+ 			iwl_pcie_rx_allocator_get(trans, rxq);
+ 
+ 		if (rxq->used_count % RX_CLAIM_REQ_ALLOC == 0 && !emergency) {
+-			struct iwl_rb_allocator *rba = &trans_pcie->rba;
+-
+ 			/* Add the remaining empty RBDs for allocator use */
+-			spin_lock(&rba->lock);
+-			list_splice_tail_init(&rxq->rx_used, &rba->rbd_empty);
+-			spin_unlock(&rba->lock);
++			iwl_pcie_rx_move_to_allocator(rxq, rba);
+ 		} else if (emergency) {
+ 			count++;
+ 			if (count == 8) {
+ 				count = 0;
+-				if (rxq->used_count < rxq->queue_size / 3)
++				if (rb_pending_alloc < rxq->queue_size / 3)
+ 					emergency = false;
+ 
+ 				rxq->read = i;
 
 
