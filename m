@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9F5BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:10:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71150C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:10:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3967214DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:10:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38E4B20871
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:10:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ImaQUKdq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3967214DB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pSOK5h0L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38E4B20871
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731596AbeKLKAs (ORCPT
+        id S1731730AbeKLKAz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 05:00:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59904 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 05:00:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60706 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730862AbeKLIR0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730696AbeKLIR0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:17:26 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76F8221707;
+        by mail.kernel.org (Postfix) with ESMTPSA id 23440214DB;
         Sun, 11 Nov 2018 22:27:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975250;
-        bh=lzyuuNse1K8o7r7gtEj929DT3ByU9ywx9uh8c4sBQ9o=;
+        bh=LVTJGNhh3gcRh5yCZG6FkzkgNWSNasVvSQDnUjJoJAU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ImaQUKdqJCxTfMl0X7MO0zEtbLPJS3kNcePitdJ4qV95B7+bFKvu+s2Guhk4veEjJ
-         maHFihc5gXGpBN5ZLb9SL5chtiWViT5wqZ3M/O4yaz+Wzuhpije0Ctjiji8e+Nx0WN
-         UXj7WHMV6JhwU4rMr3NxzA8o+wl5YbM8WnaWnCww=
+        b=pSOK5h0LkF6CtrTF/kO+p1c+LuzWg+uiigVfdLTw1QEB2kK8QRIReliejRzlU3p7C
+         EBPA8teH0p5/ONADKxkAg0tELmi2zEuJq9YBxvY+2dNEeKiLXz/zlYqEtEAO42XtvO
+         jMBTcF7G7sqbVAU8Z/Q3SCr4yCL+w+0ErS39/zcc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yunsheng Lin <linyunsheng@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 114/361] net: hns3: Preserve vlan 0 in hardware table
-Date:   Sun, 11 Nov 2018 14:17:41 -0800
-Message-Id: <20181111221635.801198247@linuxfoundation.org>
+Subject: [PATCH 4.19 113/361] pinctrl: ssbi-gpio: Fix pm8xxx_pin_config_get() to be compliant
+Date:   Sun, 11 Nov 2018 14:17:40 -0800
+Message-Id: <20181111221635.671740227@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -65,40 +64,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yunsheng Lin <linyunsheng@huawei.com>
+From: Douglas Anderson <dianders@chromium.org>
 
-[ Upstream commit daaa8521760ee4d4e65f309c4c37b3a1e58c9d4e ]
+[ Upstream commit b432414b996d32a1bd9afe2bd595bd5729c1477f ]
 
-When netdev is down, the stack will delete the vlan from
-hardware including vlan0, which will cause problem when
-doing loopback selftest when netdev is down.
+If you look at "pinconf-groups" in debugfs for ssbi-gpio you'll notice
+it looks like nonsense.
 
-This patch fixes it by always preserving vlan 0 in hardware,
-because vlan 0 is defalut vlan, which should always be in
-hardware.
+The problem is fairly well described in commit 1cf86bc21257 ("pinctrl:
+qcom: spmi-gpio: Fix pmic_gpio_config_get() to be compliant") and
+commit 05e0c828955c ("pinctrl: msm: Fix msm_config_group_get() to be
+compliant"), but it was pointed out that ssbi-gpio has the same
+problem.  Let's fix it there too.
 
-Fixes: c39c4d98dc65 ("net: hns3: Add mac loopback selftest support in hns3 driver")
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: b4c45fe974bc ("pinctrl: qcom: ssbi: Family A gpio & mpp drivers")
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c |   28 +++++++++++++++++++++-------
+ 1 file changed, 21 insertions(+), 7 deletions(-)
 
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -4739,6 +4739,9 @@ static int hclge_set_vlan_filter_hw(stru
- 	u16 vport_idx, vport_num = 0;
- 	int ret;
+--- a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
++++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
+@@ -260,22 +260,32 @@ static int pm8xxx_pin_config_get(struct
  
-+	if (is_kill && !vlan_id)
-+		return 0;
-+
- 	ret = hclge_set_vf_vlan_common(hdev, vport_id, is_kill, vlan_id,
- 				       0, proto);
- 	if (ret) {
+ 	switch (param) {
+ 	case PIN_CONFIG_BIAS_DISABLE:
+-		arg = pin->bias == PM8XXX_GPIO_BIAS_NP;
++		if (pin->bias != PM8XXX_GPIO_BIAS_NP)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_BIAS_PULL_DOWN:
+-		arg = pin->bias == PM8XXX_GPIO_BIAS_PD;
++		if (pin->bias != PM8XXX_GPIO_BIAS_PD)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_BIAS_PULL_UP:
+-		arg = pin->bias <= PM8XXX_GPIO_BIAS_PU_1P5_30;
++		if (pin->bias > PM8XXX_GPIO_BIAS_PU_1P5_30)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PM8XXX_QCOM_PULL_UP_STRENGTH:
+ 		arg = pin->pull_up_strength;
+ 		break;
+ 	case PIN_CONFIG_BIAS_HIGH_IMPEDANCE:
+-		arg = pin->disable;
++		if (!pin->disable)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_INPUT_ENABLE:
+-		arg = pin->mode == PM8XXX_GPIO_MODE_INPUT;
++		if (pin->mode != PM8XXX_GPIO_MODE_INPUT)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_OUTPUT:
+ 		if (pin->mode & PM8XXX_GPIO_MODE_OUTPUT)
+@@ -290,10 +300,14 @@ static int pm8xxx_pin_config_get(struct
+ 		arg = pin->output_strength;
+ 		break;
+ 	case PIN_CONFIG_DRIVE_PUSH_PULL:
+-		arg = !pin->open_drain;
++		if (pin->open_drain)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
+-		arg = pin->open_drain;
++		if (!pin->open_drain)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	default:
+ 		return -EINVAL;
 
 
