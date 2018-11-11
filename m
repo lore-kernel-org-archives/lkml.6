@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C873DC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:10:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5085FC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:10:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95FF62080D
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:10:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95FF62080D
+	by mail.kernel.org (Postfix) with ESMTP id 0D5B62080D
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:10:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D5B62080D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731582AbeKLGAL (ORCPT
+        id S1731486AbeKLGAT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:00:11 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52386 "EHLO
+        Mon, 12 Nov 2018 01:00:19 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52396 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727357AbeKLGAK (ORCPT
+        by vger.kernel.org with ESMTP id S1726471AbeKLGAS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 01:00:10 -0500
+        Mon, 12 Nov 2018 01:00:18 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsy-0000l6-67; Sun, 11 Nov 2018 19:59:08 +0000
+        id 1gLvsv-0000lJ-By; Sun, 11 Nov 2018 19:59:05 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsT-0001cp-VP; Sun, 11 Nov 2018 19:58:37 +0000
+        id 1gLvsU-0001eN-SI; Sun, 11 Nov 2018 19:58:38 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Sven Eckelmann" <sven@narfation.org>,
-        "=?UTF-8?q?Linus=20L=C3=BCssing?=" <linus.luessing@c0d3.blue>,
-        "Simon Wunderlich" <sw@simonwunderlich.de>
+CC:     akpm@linux-foundation.org,
+        "Dan Carpenter" <dan.carpenter@oracle.com>,
+        "Vinod Koul" <vkoul@kernel.org>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.278974903@decadent.org.uk>
+Message-ID: <lsq.1541965745.642088273@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 189/366] batman-adv: Avoid storing non-TT-sync flags
- on singular entries too
+Subject: [PATCH 3.16 208/366] dmaengine: k3dma: Off by one in
+ k3_of_dma_simple_xlate()
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,39 +58,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Linus Lüssing <linus.luessing@c0d3.blue>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 4a519b83da16927fb98fd32b0f598e639d1f1859 upstream.
+commit c4c2b7644cc9a41f17a8cc8904efe3f66ae4c7ed upstream.
 
-Since commit 54e22f265e87 ("batman-adv: fix TT sync flag inconsistencies")
-TT sync flags and TT non-sync'd flags are supposed to be stored
-separately.
+The d->chans[] array has d->dma_requests elements so the > should be
+>= here.
 
-The previous patch missed to apply this separation on a TT entry with
-only a single TT orig entry.
-
-This is a minor fix because with only a single TT orig entry the DDoS
-issue the former patch solves does not apply.
-
-Fixes: 54e22f265e87 ("batman-adv: fix TT sync flag inconsistencies")
-Signed-off-by: Linus Lüssing <linus.luessing@c0d3.blue>
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
+Fixes: 8e6152bc660e ("dmaengine: Add hisilicon k3 DMA engine driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/batman-adv/translation-table.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/dma/k3dma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/batman-adv/translation-table.c
-+++ b/net/batman-adv/translation-table.c
-@@ -1378,7 +1378,8 @@ static bool batadv_tt_global_add(struct
- 		ether_addr_copy(common->addr, tt_addr);
- 		common->vid = vid;
+--- a/drivers/dma/k3dma.c
++++ b/drivers/dma/k3dma.c
+@@ -652,7 +652,7 @@ static struct dma_chan *k3_of_dma_simple
+ 	struct k3_dma_dev *d = ofdma->of_dma_data;
+ 	unsigned int request = dma_spec->args[0];
  
--		common->flags = flags;
-+		common->flags = flags & (~BATADV_TT_SYNC_MASK);
-+
- 		tt_global_entry->roam_at = 0;
- 		/* node must store current time in case of roaming. This is
- 		 * needed to purge this entry out on timeout (if nobody claims
+-	if (request > d->dma_requests)
++	if (request >= d->dma_requests)
+ 		return NULL;
+ 
+ 	return dma_get_slave_channel(&(d->chans[request].vc.chan));
 
