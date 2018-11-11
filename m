@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47578C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:12:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5849DC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:12:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C0C7214DB
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:12:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CA4A20817
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:12:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="g+MBgSwU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C0C7214DB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ke+NdYOT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CA4A20817
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390066AbeKLIVx (ORCPT
+        id S2390038AbeKLIVv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:21:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50368 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:21:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50100 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390005AbeKLIVw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:21:52 -0500
+        id S2390015AbeKLIVu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:50 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 420D621508;
-        Sun, 11 Nov 2018 22:31:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4FE9E21508;
+        Sun, 11 Nov 2018 22:31:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975515;
-        bh=kdtPWHgw2uB/CYJnV80rntGuznOFotSKtHEDOM44k3Q=;
+        s=default; t=1541975513;
+        bh=V6lguodGjsPnTcIwi5jsjrQo7NeWUbimWeIM//14tMg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g+MBgSwUbJ/uf5WxIt+iQMeWcgJJtCHBsSG48J5LJ4spD+KyUnapT+LSuYvSNjR9V
-         rGBnN+KZuR1UBs/k1+NFZiy15GKEpQ2okrMDrRu0x0Abt9gKRADkxp4dNrg3ILfY/Z
-         Q2jVFgumEilIRwh1AQlmjcU5DaX8RGy/G1lyTJQU=
+        b=ke+NdYOTb/hYEbXtGJtVjevkXA48tNry5/4Sv7G54yArJVe7SQubJhCQ4D4nqh/Oy
+         x5w1dVkn/J8x2nO8A/0MCm+44b8nI99DQTCwBu7ptID8/6CvydbjyC2X2TLVZZlylK
+         s9q6qS4k0bZf68hVVl+ZuJTZtmbuYr0/HDDKpGoc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Breno Leitao <leitao@debian.org>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.18 315/350] selftests/powerpc: Fix ptrace tm failure
-Date:   Sun, 11 Nov 2018 14:22:59 -0800
-Message-Id: <20181111221721.244031157@linuxfoundation.org>
+        stable@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
+        Filipe Manana <fdmanana@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.18 342/350] btrfs: only free reserved extent if we didnt insert it
+Date:   Sun, 11 Nov 2018 14:23:26 -0800
+Message-Id: <20181111221722.419618119@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -63,60 +64,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Breno Leitao <leitao@debian.org>
+From: Josef Bacik <josef@toxicpanda.com>
 
-commit 48dc0ef19044bfb69193302fbe3a834e3331b7ae upstream.
+commit 49940bdd57779c78462da7aa5a8650b2fea8c2ff upstream.
 
-Test ptrace-tm-spd-gpr fails on current kernel (4.19) due to a segmentation
-fault that happens on the child process prior to setting cptr[2] = 1. This
-causes the parent process to wait forever at 'while (!pptr[2])' and the test to
-be killed by the test harness framework by timeout, thus, failing.
+When we insert the file extent once the ordered extent completes we free
+the reserved extent reservation as it'll have been migrated to the
+bytes_used counter.  However if we error out after this step we'll still
+clear the reserved extent reservation, resulting in a negative
+accounting of the reserved bytes for the block group and space info.
+Fix this by only doing the free if we didn't successfully insert a file
+extent for this extent.
 
-The segmentation fault happens because of a inline assembly being
-generated as:
-
-	0x10000355c <tm_spd_gpr+492>    lfs    f0, 0(0)
-
-This is reading memory position 0x0 and causing the segmentation fault.
-
-This code is being generated by ASM_LOAD_FPR_SINGLE_PRECISION(flt_4), where
-flt_4 is passed to the inline assembly block as:
-
-	[flt_4] "r" (&d)
-
-Since the inline assembly 'r' constraint means any GPR, gpr0 is being
-chosen, thus causing this issue when issuing a Load Floating-Point Single
-instruction.
-
-This patch simply changes the constraint to 'b', which specify that this
-register will be used as base, and r0 is not allowed to be used, avoiding
-this issue.
-
-Other than that, removing flt_2 register from the input operands, since it
-is not used by the inline assembly code at all.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Acked-by: Segher Boessenkool <segher@kernel.crashing.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+CC: stable@vger.kernel.org # 4.14+
+Reviewed-by: Omar Sandoval <osandov@fb.com>
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/testing/selftests/powerpc/ptrace/ptrace-tm-spd-gpr.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/btrfs/inode.c |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
---- a/tools/testing/selftests/powerpc/ptrace/ptrace-tm-spd-gpr.c
-+++ b/tools/testing/selftests/powerpc/ptrace/ptrace-tm-spd-gpr.c
-@@ -67,8 +67,8 @@ trans:
- 		"3: ;"
- 		: [res] "=r" (result), [texasr] "=r" (texasr)
- 		: [gpr_1]"i"(GPR_1), [gpr_2]"i"(GPR_2), [gpr_4]"i"(GPR_4),
--		[sprn_texasr] "i" (SPRN_TEXASR), [flt_1] "r" (&a),
--		[flt_2] "r" (&b), [flt_4] "r" (&d)
-+		[sprn_texasr] "i" (SPRN_TEXASR), [flt_1] "b" (&a),
-+		[flt_4] "b" (&d)
- 		: "memory", "r5", "r6", "r7",
- 		"r8", "r9", "r10", "r11", "r12", "r13", "r14", "r15",
- 		"r16", "r17", "r18", "r19", "r20", "r21", "r22", "r23",
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -2951,6 +2951,7 @@ static int btrfs_finish_ordered_io(struc
+ 	bool truncated = false;
+ 	bool range_locked = false;
+ 	bool clear_new_delalloc_bytes = false;
++	bool clear_reserved_extent = true;
+ 
+ 	if (!test_bit(BTRFS_ORDERED_NOCOW, &ordered_extent->flags) &&
+ 	    !test_bit(BTRFS_ORDERED_PREALLOC, &ordered_extent->flags) &&
+@@ -3054,10 +3055,12 @@ static int btrfs_finish_ordered_io(struc
+ 						logical_len, logical_len,
+ 						compress_type, 0, 0,
+ 						BTRFS_FILE_EXTENT_REG);
+-		if (!ret)
++		if (!ret) {
++			clear_reserved_extent = false;
+ 			btrfs_release_delalloc_bytes(fs_info,
+ 						     ordered_extent->start,
+ 						     ordered_extent->disk_len);
++		}
+ 	}
+ 	unpin_extent_cache(&BTRFS_I(inode)->extent_tree,
+ 			   ordered_extent->file_offset, ordered_extent->len,
+@@ -3118,8 +3121,13 @@ out:
+ 		 * wrong we need to return the space for this ordered extent
+ 		 * back to the allocator.  We only free the extent in the
+ 		 * truncated case if we didn't write out the extent at all.
++		 *
++		 * If we made it past insert_reserved_file_extent before we
++		 * errored out then we don't need to do this as the accounting
++		 * has already been done.
+ 		 */
+ 		if ((ret || !logical_len) &&
++		    clear_reserved_extent &&
+ 		    !test_bit(BTRFS_ORDERED_NOCOW, &ordered_extent->flags) &&
+ 		    !test_bit(BTRFS_ORDERED_PREALLOC, &ordered_extent->flags))
+ 			btrfs_free_reserved_extent(fs_info,
 
 
