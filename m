@@ -2,92 +2,78 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,PLING_QUERY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E28FC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 01:07:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 193EFC43610
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 01:21:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDEE4208A3
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 01:07:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDEE4208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D72D7208A3
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 01:21:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D72D7208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727249AbeKKKx5 (ORCPT
+        id S1727239AbeKKLIt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 05:53:57 -0500
-Received: from mga17.intel.com ([192.55.52.151]:40441 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727037AbeKKKx5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 05:53:57 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Nov 2018 17:07:02 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,489,1534834800"; 
-   d="scan'208";a="99271532"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
-  by orsmga003.jf.intel.com with ESMTP; 10 Nov 2018 17:07:01 -0800
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 9075D30235B; Sat, 10 Nov 2018 17:07:02 -0800 (PST)
-Date:   Sat, 10 Nov 2018 17:07:02 -0800
-From:   Andi Kleen <ak@linux.intel.com>
-To:     Travis Downs <travis.downs@gmail.com>
-Cc:     milian.wolff@kdab.com, jolsa@redhat.com,
-        linux-kernel@vger.kernel.org, jolsa@kernel.org,
-        namhyung@kernel.org, linux-perf-users@vger.kernel.org,
-        acme@kernel.org
-Subject: Re: PEBS level 2/3 breaks dwarf unwinding! [WAS: Re: Broken dwarf
- unwinding - wrong stack pointer register value?]
-Message-ID: <20181111010702.GC6218@tassilo.jf.intel.com>
-References: <2335309.gnWok9HYb4@agathebauer>
- <3227038.olIWmsCzzY@agathebauer>
- <20181105205119.GC25674@krava>
- <3799078.YBnU1OB0PF@agathebauer>
- <20181106001037.GQ6218@tassilo.jf.intel.com>
- <CAOBGo4za8hnGt1NUWy1Y1V12WycbxbYP0G0Sm=UT7T9dQ88vDg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOBGo4za8hnGt1NUWy1Y1V12WycbxbYP0G0Sm=UT7T9dQ88vDg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Sun, 11 Nov 2018 06:08:49 -0500
+Received: from smtprelay0183.hostedemail.com ([216.40.44.183]:49434 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726478AbeKKLIt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Nov 2018 06:08:49 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 394C6180A8CBF;
+        Sun, 11 Nov 2018 01:21:52 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: roll88_2d43c84fc043d
+X-Filterd-Recvd-Size: 1509
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf17.hostedemail.com (Postfix) with ESMTPA;
+        Sun, 11 Nov 2018 01:21:50 +0000 (UTC)
+Message-ID: <7302f4a13c1cbf62b07f636878ce25fcca84b6c4.camel@perches.com>
+Subject: [PATCH] xfs: Remove noinline from #define STATIC
+From:   Joe Perches <joe@perches.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@lst.de>
+Cc:     linux-xfs@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Date:   Sat, 10 Nov 2018 17:21:49 -0800
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 10, 2018 at 04:42:48PM -0500, Travis Downs wrote:
-> I guess this problem doesn't occur for LBR unwinding since the LBR
-> records are captured at the same
-> moment in time as the PEBS record, so reflect the correct branch
-> sequence.
+Reduce total object size quite a bit (~32KB) and presumably
+improve performance at the same time.
 
-Actually it happens with LBRs too, but it always gives the backtrace
-consistently at the PMI trigger point.
+Total object size old vs new (x86-64 defconfig with xfs)
+
+    text	   data	    bss	    dec	    hex	filename
+- 959351	 165573	    632	1125556	 112cb4	(TOTALS) (old)
++ 924683	 165669	    632	1090984	 10a5a8	(TOTALS) (new)
+
+Signed-off-by: Joe Perches <joe@perches.com>
+---
+ fs/xfs/xfs_linux.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/xfs/xfs_linux.h b/fs/xfs/xfs_linux.h
+index edbd5a210df2..f33c8b626bca 100644
+--- a/fs/xfs/xfs_linux.h
++++ b/fs/xfs/xfs_linux.h
+@@ -242,7 +242,7 @@ static inline uint64_t howmany_64(uint64_t x, uint32_t y)
+ #endif /* XFS_WARN */
+ #endif /* DEBUG */
  
-> What would this fix mean for perf report when you use cycles:pp and
-> cycles:ppp (or any PEBS based events)? The unwinding should generally
-> work, but the IP at the top of that stack (from the PMI) will
-> generally be different than that recorded by PEBS. The tree view and
-> overhead calculations will be based on the captured stacks, I guess -
-> but when I annotate, will the values I see correspond to the PEBS IPs
-> or the PMI IPs?
+-#define STATIC static noinline
++#define STATIC static
+ 
+ #ifdef CONFIG_XFS_RT
+ 
 
-Based on PEBS IPs.
-
-It would be a good idea to add a check to perf report
-that the two IPs are different, and if they differ
-add some indicator to the sample. This could be a new sort key,
-although that would waste some space on the screen, or something
-else.
-
-It wouldn't be cover all cases, for example if you have recursion
-on the same function it might report the same IP even though
-it's a different instance, but I presume that should be rare
-enough to not be a problem.
-
--Andi
