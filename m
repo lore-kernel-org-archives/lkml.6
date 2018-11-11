@@ -6,43 +6,46 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A286C43441
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95BBFC43610
 	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:28:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17A2420818
+	by mail.kernel.org (Postfix) with ESMTP id 59A3220818
 	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:28:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17A2420818
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59A3220818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730520AbeKLFsX (ORCPT
+        id S1731188AbeKLGSQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 00:48:23 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50368 "EHLO
+        Mon, 12 Nov 2018 01:18:16 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50594 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730403AbeKLFsT (ORCPT
+        by vger.kernel.org with ESMTP id S1729629AbeKLFsX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:48:19 -0500
+        Mon, 12 Nov 2018 00:48:23 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsf-0000l7-El; Sun, 11 Nov 2018 19:58:49 +0000
+        id 1gLvsi-0000l8-MK; Sun, 11 Nov 2018 19:58:52 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsa-0001sX-FI; Sun, 11 Nov 2018 19:58:44 +0000
+        id 1gLvsZ-0001qP-PT; Sun, 11 Nov 2018 19:58:43 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org
+CC:     akpm@linux-foundation.org, "Sage Weil" <sage@redhat.com>,
+        "Jeff Layton" <jlayton@redhat.com>,
+        "Bryan Henderson" <bryanh@giraffe-data.com>,
+        "Ilya Dryomov" <idryomov@gmail.com>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.220739964@decadent.org.uk>
+Message-ID: <lsq.1541965745.29486707@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 349/366] x86/apic: Fix build failure with X86_IO_APIC
- disabled
+Subject: [PATCH 3.16 327/366] ceph: fix endianness of getattr mask in
+ ceph_d_revalidate
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,40 +59,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ben Hutchings <ben@decadent.org.uk>
+From: Jeff Layton <jlayton@redhat.com>
 
-My backport of commit 2e63ad4bd5dd "x86/apic: Do not init irq
-remapping if ioapic is disabled" added an unconditional use of
-skip_ioapic_setup.  Enabling X86_LOCAL_APIC but not X86_IO_APIC
-results in a build failure.
+commit 1097680d759918ce4a8705381c0ab2ed7bd60cf1 upstream.
 
-This configuration was made impossible by commit b1da1e715d4f
-"x86/Kconfig: Simplify X86_IO_APIC dependencies", but that seems to
-depend on additional changes that aren't suitable for stable.
+sparse says:
 
-The function that was changed, enable_IR_x2apic(), is only used in
-64-bit configurations where CONFIG_X86_IO_APIC is always enabled.  So
-extend the #ifdef CONFIG_X86_64 section to include this function.
+    fs/ceph/dir.c:1248:50: warning: incorrect type in assignment (different base types)
+    fs/ceph/dir.c:1248:50:    expected restricted __le32 [usertype] mask
+    fs/ceph/dir.c:1248:50:    got int [signed] [assigned] mask
 
+Fixes: 200fd27c8fa2 ("ceph: use lookup request to revalidate dentry")
+Signed-off-by: Jeff Layton <jlayton@redhat.com>
+Reviewed-by: Sage Weil <sage@redhat.com>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Cc: Bryan Henderson <bryanh@giraffe-data.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/arch/x86/kernel/apic/apic.c
-+++ b/arch/x86/kernel/apic/apic.c
-@@ -1609,6 +1609,8 @@ int __init enable_IR(void)
- 	return -1;
- }
+ fs/ceph/dir.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+--- a/fs/ceph/dir.c
++++ b/fs/ceph/dir.c
+@@ -1068,7 +1068,8 @@ static int ceph_d_revalidate(struct dent
+ 		struct ceph_mds_client *mdsc =
+ 			ceph_sb_to_client(dir->i_sb)->mdsc;
+ 		struct ceph_mds_request *req;
+-		int op, mask, err;
++		int op, err;
++		u32 mask;
  
-+#ifdef CONFIG_X86_64
-+
- void __init enable_IR_x2apic(void)
- {
- 	unsigned long flags;
-@@ -1683,7 +1685,6 @@ skip_x2apic:
- 	local_irq_restore(flags);
- }
+ 		op = ceph_snap(dir) == CEPH_SNAPDIR ?
+ 			CEPH_MDS_OP_LOOKUPSNAP : CEPH_MDS_OP_GETATTR;
+@@ -1080,7 +1081,7 @@ static int ceph_d_revalidate(struct dent
+ 			mask = CEPH_STAT_CAP_INODE | CEPH_CAP_AUTH_SHARED;
+ 			if (ceph_security_xattr_wanted(dir))
+ 				mask |= CEPH_CAP_XATTR_SHARED;
+-			req->r_args.getattr.mask = mask;
++			req->r_args.getattr.mask = cpu_to_le32(mask);
  
--#ifdef CONFIG_X86_64
- /*
-  * Detect and enable local APICs on non-SMP boards.
-  * Original code written by Keir Fraser.
+ 			err = ceph_mdsc_do_request(mdsc, NULL, req);
+ 			switch (err) {
 
