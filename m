@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60781C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D26BC0044C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2585B223C7
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1970521780
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NT8j69UX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2585B223C7
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KZS186eo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1970521780
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391157AbeKLIXv (ORCPT
+        id S2404499AbeKLIXw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:23:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58346 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:23:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58408 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391134AbeKLIXu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:23:50 -0500
+        id S2391153AbeKLIXv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:23:51 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2FD9D21707;
-        Sun, 11 Nov 2018 22:33:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D225321707;
+        Sun, 11 Nov 2018 22:33:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975632;
-        bh=ZZfsbxS12/De968meXCV8Pp/KEbjp9RS5hp5JORKqnA=;
+        s=default; t=1541975634;
+        bh=iGPnA6pxcK/b1SyVKQVv9UKIW1XKokgMAQKlwSzJyYs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NT8j69UXVO+KGpLGwfBshs0YLcyzlX7jLyWCNeW5pcoESl8kiM/Zz6gIpFL0RfTO/
-         yCUS6FK5ewHENBB/q4ajlJZJCxhf/DcQMdHm7szCpntYdM1i6IP1ttBr3NaStgCd/x
-         jO52H235ZBblERbT1v51LxrfsyQ4SihMaXTFYWmM=
+        b=KZS186eol0EVvsFQQLMk3wEFF+K4LFeaLnHTf6tsiN9wN5SckDN+wzeWPL1QhVlZE
+         LUVsQ2KR0Cj8m65hk4Z9naVxqlMe/LNtvn2wSMkk9kqYYYTv03qSuJfDdnpENQi9TM
+         UzVCLK4wrKuUvxqbcYprIyvVqHFl4uWgGDJJEh1A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org,
+        Sebastian Basierski <sebastianx.basierski@intel.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 049/141] pinctrl: ssbi-gpio: Fix pm8xxx_pin_config_get() to be compliant
-Date:   Sun, 11 Nov 2018 14:25:08 -0800
-Message-Id: <20181111221634.181538423@linuxfoundation.org>
+Subject: [PATCH 4.9 050/141] ixgbevf: VF2VF TCP RSS
+Date:   Sun, 11 Nov 2018 14:25:09 -0800
+Message-Id: <20181111221634.300816970@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
 References: <20181111221627.853046496@linuxfoundation.org>
@@ -64,86 +64,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Douglas Anderson <dianders@chromium.org>
+From: Sebastian Basierski <sebastianx.basierski@intel.com>
 
-[ Upstream commit b432414b996d32a1bd9afe2bd595bd5729c1477f ]
+[ Upstream commit 7fb94bd58dd6650a0158e68d414e185077d8b57a ]
 
-If you look at "pinconf-groups" in debugfs for ssbi-gpio you'll notice
-it looks like nonsense.
+While VF2VF with RSS communication, RSS Type were wrongly recognized
+and RSS hash was not calculated as it should be. Packets was
+distributed on various queues by accident.
+This commit fixes that behaviour and causes proper RSS Type recognition.
 
-The problem is fairly well described in commit 1cf86bc21257 ("pinctrl:
-qcom: spmi-gpio: Fix pmic_gpio_config_get() to be compliant") and
-commit 05e0c828955c ("pinctrl: msm: Fix msm_config_group_get() to be
-compliant"), but it was pointed out that ssbi-gpio has the same
-problem.  Let's fix it there too.
-
-Fixes: b4c45fe974bc ("pinctrl: qcom: ssbi: Family A gpio & mpp drivers")
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sebastian Basierski <sebastianx.basierski@intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c |   28 +++++++++++++++++++++-------
- 1 file changed, 21 insertions(+), 7 deletions(-)
+ drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-+++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-@@ -260,22 +260,32 @@ static int pm8xxx_pin_config_get(struct
- 
- 	switch (param) {
- 	case PIN_CONFIG_BIAS_DISABLE:
--		arg = pin->bias == PM8XXX_GPIO_BIAS_NP;
-+		if (pin->bias != PM8XXX_GPIO_BIAS_NP)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_BIAS_PULL_DOWN:
--		arg = pin->bias == PM8XXX_GPIO_BIAS_PD;
-+		if (pin->bias != PM8XXX_GPIO_BIAS_PD)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_BIAS_PULL_UP:
--		arg = pin->bias <= PM8XXX_GPIO_BIAS_PU_1P5_30;
-+		if (pin->bias > PM8XXX_GPIO_BIAS_PU_1P5_30)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PM8XXX_QCOM_PULL_UP_STRENGTH:
- 		arg = pin->pull_up_strength;
- 		break;
- 	case PIN_CONFIG_BIAS_HIGH_IMPEDANCE:
--		arg = pin->disable;
-+		if (!pin->disable)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_INPUT_ENABLE:
--		arg = pin->mode == PM8XXX_GPIO_MODE_INPUT;
-+		if (pin->mode != PM8XXX_GPIO_MODE_INPUT)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_OUTPUT:
- 		if (pin->mode & PM8XXX_GPIO_MODE_OUTPUT)
-@@ -290,10 +300,14 @@ static int pm8xxx_pin_config_get(struct
- 		arg = pin->output_strength;
- 		break;
- 	case PIN_CONFIG_DRIVE_PUSH_PULL:
--		arg = !pin->open_drain;
-+		if (pin->open_drain)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
--		arg = pin->open_drain;
-+		if (!pin->open_drain)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	default:
- 		return -EINVAL;
+--- a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
++++ b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
+@@ -3419,6 +3419,10 @@ static void ixgbevf_tx_csum(struct ixgbe
+ 		skb_checksum_help(skb);
+ 		goto no_csum;
+ 	}
++
++	if (first->protocol == htons(ETH_P_IP))
++		type_tucmd |= IXGBE_ADVTXD_TUCMD_IPV4;
++
+ 	/* update TX checksum flag */
+ 	first->tx_flags |= IXGBE_TX_FLAGS_CSUM;
+ 	vlan_macip_lens = skb_checksum_start_offset(skb) -
 
 
