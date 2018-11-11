@@ -7,44 +7,48 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A72AC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:04:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78E58C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:04:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C04520818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:04:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BD9720872
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:04:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jaTocbD+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C04520818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LpknnTnV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BD9720872
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403757AbeKLIyv (ORCPT
+        id S2390828AbeKLIyv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 12 Nov 2018 03:54:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51200 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:51836 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390481AbeKLIWS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2390484AbeKLIWS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:22:18 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6ED3C21508;
+        by mail.kernel.org (Postfix) with ESMTPSA id C75C1223D8;
         Sun, 11 Nov 2018 22:32:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975541;
-        bh=1DYQzYOoL+7MHKqAfqothTKRMIBoXDAinC+a5UBPc44=;
+        bh=ROK0ZB1evdQEzrj4L8vKTxF9myhq2z5goZLG2+CBi6A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jaTocbD+rUj4kTLZ0FQHu8Psp8TR42CftX3nVHaTSvdIc/V7GP6lNH6RTwp+7eYpw
-         +5PXSM6BfpesidVhArY1g6nmMcmJ+oIz39xYfzrRgk+zNr+EFDmfOPr2dHFPrAJA7T
-         6m1vGL6k09XUiCAyazy6VhbIIj26cw6pZw37k3sE=
+        b=LpknnTnVx+CYtLIeDN+IBGNT9kHkbPbx4dk2yKdk4wawWjrm1s4F74XCZFhZgQ47t
+         77zj3Dct+bz+ePQkef95lBourAu54gcJAFjlgTGlwcRdYcbHyOJLz3cN2ln/3bgEMO
+         DRKcNpV4vWZjPt0Po9XB2q5M3QTmfAK4xUmCqG9M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 031/222] sparc64: Make proc_id signed.
-Date:   Sun, 11 Nov 2018 14:22:08 -0800
-Message-Id: <20181111221651.013014265@linuxfoundation.org>
+        stable@vger.kernel.org, Song Muchun <smuchun@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mike Galbraith <efault@gmx.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 032/222] sched/fair: Fix the min_vruntime update logic in dequeue_entity()
+Date:   Sun, 11 Nov 2018 14:22:09 -0800
+Message-Id: <20181111221651.097022958@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -62,30 +66,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "David S. Miller" <davem@davemloft.net>
+From: Song Muchun <smuchun@gmail.com>
 
-[ Upstream commit b3e1eb8e7ac9aaa283989496651d99267c4cad6c ]
+[ Upstream commit 9845c49cc9bbb317a0bc9e9cf78d8e09d54c9af0 ]
 
-So that when it is unset, ie. '-1', userspace can see it
-properly.
+The comment and the code around the update_min_vruntime() call in
+dequeue_entity() are not in agreement.
 
-Signed-off-by: David S. Miller <davem@davemloft.net>
+>From commit:
+
+  b60205c7c558 ("sched/fair: Fix min_vruntime tracking")
+
+I think that we want to update min_vruntime when a task is sleeping/migrating.
+So, the check is inverted there - fix it.
+
+Signed-off-by: Song Muchun <smuchun@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mike Galbraith <efault@gmx.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: b60205c7c558 ("sched/fair: Fix min_vruntime tracking")
+Link: http://lkml.kernel.org/r/20181014112612.2614-1-smuchun@gmail.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/sparc/include/asm/cpudata_64.h |    2 +-
+ kernel/sched/fair.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/sparc/include/asm/cpudata_64.h
-+++ b/arch/sparc/include/asm/cpudata_64.h
-@@ -28,7 +28,7 @@ typedef struct {
- 	unsigned short	sock_id;	/* physical package */
- 	unsigned short	core_id;
- 	unsigned short  max_cache_id;	/* groupings of highest shared cache */
--	unsigned short	proc_id;	/* strand (aka HW thread) id */
-+	signed short	proc_id;	/* strand (aka HW thread) id */
- } cpuinfo_sparc;
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -3825,7 +3825,7 @@ dequeue_entity(struct cfs_rq *cfs_rq, st
+ 	 * put back on, and if we advance min_vruntime, we'll be placed back
+ 	 * further than we started -- ie. we'll be penalized.
+ 	 */
+-	if ((flags & (DEQUEUE_SAVE | DEQUEUE_MOVE)) == DEQUEUE_SAVE)
++	if ((flags & (DEQUEUE_SAVE | DEQUEUE_MOVE)) != DEQUEUE_SAVE)
+ 		update_min_vruntime(cfs_rq);
+ }
  
- DECLARE_PER_CPU(cpuinfo_sparc, __cpu_data);
 
 
