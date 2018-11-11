@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9CFCC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:00:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71545C0044C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:00:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1D8820818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:00:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D6D220818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:00:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="r+9vMhCY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1D8820818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wB8x+wrq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D6D220818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390727AbeKLIWe (ORCPT
+        id S2388480AbeKLIug (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:22:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52394 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:50:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51200 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390707AbeKLIWd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:33 -0500
+        id S2390716AbeKLIWe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:34 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 62C9E223C7;
-        Sun, 11 Nov 2018 22:32:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 63A9D223C8;
+        Sun, 11 Nov 2018 22:32:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975556;
-        bh=xUTbXpOdEJ1Ptcx9HL1jSClFvqqClXl9x8RKWSqSDwo=;
+        s=default; t=1541975557;
+        bh=2ADCds6qfVboEURMrkIITdavTm6wfJ0GE+8TuSa9mFo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r+9vMhCYz6qyulnC33HvuRlMcD+707ZMFaL5OxqQw3+DggASKTR65w0NkM6G8f+tQ
-         EfcjcH1Lg4kYobCRqMJe/tV00Lz2evp3C+xUkPTR898SSJAeJsKw/un9osFWnGHM08
-         eX1mRbymDSDeNMy8jLvZ85bwHp1K+RlSbquzb2OI=
+        b=wB8x+wrqhf44cCzY2eDiFL8eDq3IZ9GpvSKwqPzO1yncc0AtG61gg3CwOo75LaspJ
+         lmXxAutgL9UQjE0+uLNCbXMifKo2og4YWxrlyYBjGQBXkv1lxRJdENn71ajs9CJPEa
+         yEUNMWlUrmA83sFHJIhPpDhSZUZwQBQl7sbco5WU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Prarit Bhargava <prarit@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Stafford Horne <shorne@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 109/222] cpupower: Fix AMD Family 0x17 msr_pstate size
-Date:   Sun, 11 Nov 2018 14:23:26 -0800
-Message-Id: <20181111221657.567048289@linuxfoundation.org>
+        stable@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 4.14 112/222] ARM: dts: exynos: Remove "cooling-{min|max}-level" for CPU nodes
+Date:   Sun, 11 Nov 2018 14:23:29 -0800
+Message-Id: <20181111221657.808638635@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -64,36 +62,208 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Prarit Bhargava <prarit@redhat.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
 
-[ Upstream commit 8c22e2f695920ebd94f9a53bcf2a65eb36d4dba1 ]
+commit cd6f55457eb449a388e793abd676e3a5b73510bc upstream.
 
-The msr_pstate data is only 63 bits long and should be 64 bits.
+The "cooling-min-level" and "cooling-max-level" properties are not
+parsed by any part of the kernel currently and the max cooling state of
+a CPU cooling device is found by referring to the cpufreq table instead.
 
-Add in the missing bit from res1 for AMD Family 0x17.
+Remove the unused properties from the CPU nodes.
 
-Reference: https://www.amd.com/system/files/TechDocs/54945_PPR_Family_17h_Models_00h-0Fh.pdf, page 138.
-
-Signed-off-by: Prarit Bhargava <prarit@redhat.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Stafford Horne <shorne@gmail.com>
-Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- tools/power/cpupower/utils/helpers/amd.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/power/cpupower/utils/helpers/amd.c
-+++ b/tools/power/cpupower/utils/helpers/amd.c
-@@ -33,7 +33,7 @@ union msr_pstate {
- 		unsigned vid:8;
- 		unsigned iddval:8;
- 		unsigned idddiv:2;
--		unsigned res1:30;
-+		unsigned res1:31;
- 		unsigned en:1;
- 	} fam17h_bits;
- 	unsigned long long val;
+---
+ arch/arm/boot/dts/exynos4210.dtsi      |    2 --
+ arch/arm/boot/dts/exynos4412.dtsi      |    2 --
+ arch/arm/boot/dts/exynos5250.dtsi      |    2 --
+ arch/arm/boot/dts/exynos5420-cpus.dtsi |   16 ----------------
+ arch/arm/boot/dts/exynos5422-cpus.dtsi |   16 ----------------
+ 5 files changed, 38 deletions(-)
+
+--- a/arch/arm/boot/dts/exynos4210.dtsi
++++ b/arch/arm/boot/dts/exynos4210.dtsi
+@@ -52,8 +52,6 @@
+ 				400000	975000
+ 				200000	950000
+ 			>;
+-			cooling-min-level = <4>;
+-			cooling-max-level = <2>;
+ 			#cooling-cells = <2>; /* min followed by max */
+ 		};
+ 
+--- a/arch/arm/boot/dts/exynos4412.dtsi
++++ b/arch/arm/boot/dts/exynos4412.dtsi
+@@ -45,8 +45,6 @@
+ 			clocks = <&clock CLK_ARM_CLK>;
+ 			clock-names = "cpu";
+ 			operating-points-v2 = <&cpu0_opp_table>;
+-			cooling-min-level = <13>;
+-			cooling-max-level = <7>;
+ 			#cooling-cells = <2>; /* min followed by max */
+ 		};
+ 
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -80,8 +80,6 @@
+ 				 300000  937500
+ 				 200000  925000
+ 			>;
+-			cooling-min-level = <15>;
+-			cooling-max-level = <9>;
+ 			#cooling-cells = <2>; /* min followed by max */
+ 		};
+ 		cpu@1 {
+--- a/arch/arm/boot/dts/exynos5420-cpus.dtsi
++++ b/arch/arm/boot/dts/exynos5420-cpus.dtsi
+@@ -33,8 +33,6 @@
+ 			clock-frequency = <1800000000>;
+ 			cci-control-port = <&cci_control1>;
+ 			operating-points-v2 = <&cluster_a15_opp_table>;
+-			cooling-min-level = <0>;
+-			cooling-max-level = <11>;
+ 			#cooling-cells = <2>; /* min followed by max */
+ 		};
+ 
+@@ -45,8 +43,6 @@
+ 			clock-frequency = <1800000000>;
+ 			cci-control-port = <&cci_control1>;
+ 			operating-points-v2 = <&cluster_a15_opp_table>;
+-			cooling-min-level = <0>;
+-			cooling-max-level = <11>;
+ 			#cooling-cells = <2>; /* min followed by max */
+ 		};
+ 
+@@ -57,8 +53,6 @@
+ 			clock-frequency = <1800000000>;
+ 			cci-control-port = <&cci_control1>;
+ 			operating-points-v2 = <&cluster_a15_opp_table>;
+-			cooling-min-level = <0>;
+-			cooling-max-level = <11>;
+ 			#cooling-cells = <2>; /* min followed by max */
+ 		};
+ 
+@@ -69,8 +63,6 @@
+ 			clock-frequency = <1800000000>;
+ 			cci-control-port = <&cci_control1>;
+ 			operating-points-v2 = <&cluster_a15_opp_table>;
+-			cooling-min-level = <0>;
+-			cooling-max-level = <11>;
+ 			#cooling-cells = <2>; /* min followed by max */
+ 		};
+ 
+@@ -82,8 +74,6 @@
+ 			clock-frequency = <1000000000>;
+ 			cci-control-port = <&cci_control0>;
+ 			operating-points-v2 = <&cluster_a7_opp_table>;
+-			cooling-min-level = <0>;
+-			cooling-max-level = <7>;
+ 			#cooling-cells = <2>; /* min followed by max */
+ 		};
+ 
+@@ -94,8 +84,6 @@
+ 			clock-frequency = <1000000000>;
+ 			cci-control-port = <&cci_control0>;
+ 			operating-points-v2 = <&cluster_a7_opp_table>;
+-			cooling-min-level = <0>;
+-			cooling-max-level = <7>;
+ 			#cooling-cells = <2>; /* min followed by max */
+ 		};
+ 
+@@ -106,8 +94,6 @@
+ 			clock-frequency = <1000000000>;
+ 			cci-control-port = <&cci_control0>;
+ 			operating-points-v2 = <&cluster_a7_opp_table>;
+-			cooling-min-level = <0>;
+-			cooling-max-level = <7>;
+ 			#cooling-cells = <2>; /* min followed by max */
+ 		};
+ 
+@@ -118,8 +104,6 @@
+ 			clock-frequency = <1000000000>;
+ 			cci-control-port = <&cci_control0>;
+ 			operating-points-v2 = <&cluster_a7_opp_table>;
+-			cooling-min-level = <0>;
+-			cooling-max-level = <7>;
+ 			#cooling-cells = <2>; /* min followed by max */
+ 		};
+ 	};
+--- a/arch/arm/boot/dts/exynos5422-cpus.dtsi
++++ b/arch/arm/boot/dts/exynos5422-cpus.dtsi
+@@ -32,8 +32,6 @@
+ 			clock-frequency = <1000000000>;
+ 			cci-control-port = <&cci_control0>;
+ 			operating-points-v2 = <&cluster_a7_opp_table>;
+-			cooling-min-level = <0>;
+-			cooling-max-level = <11>;
+ 			#cooling-cells = <2>; /* min followed by max */
+ 		};
+ 
+@@ -44,8 +42,6 @@
+ 			clock-frequency = <1000000000>;
+ 			cci-control-port = <&cci_control0>;
+ 			operating-points-v2 = <&cluster_a7_opp_table>;
+-			cooling-min-level = <0>;
+-			cooling-max-level = <11>;
+ 			#cooling-cells = <2>; /* min followed by max */
+ 		};
+ 
+@@ -56,8 +52,6 @@
+ 			clock-frequency = <1000000000>;
+ 			cci-control-port = <&cci_control0>;
+ 			operating-points-v2 = <&cluster_a7_opp_table>;
+-			cooling-min-level = <0>;
+-			cooling-max-level = <11>;
+ 			#cooling-cells = <2>; /* min followed by max */
+ 		};
+ 
+@@ -68,8 +62,6 @@
+ 			clock-frequency = <1000000000>;
+ 			cci-control-port = <&cci_control0>;
+ 			operating-points-v2 = <&cluster_a7_opp_table>;
+-			cooling-min-level = <0>;
+-			cooling-max-level = <11>;
+ 			#cooling-cells = <2>; /* min followed by max */
+ 		};
+ 
+@@ -81,8 +73,6 @@
+ 			clock-frequency = <1800000000>;
+ 			cci-control-port = <&cci_control1>;
+ 			operating-points-v2 = <&cluster_a15_opp_table>;
+-			cooling-min-level = <0>;
+-			cooling-max-level = <15>;
+ 			#cooling-cells = <2>; /* min followed by max */
+ 		};
+ 
+@@ -93,8 +83,6 @@
+ 			clock-frequency = <1800000000>;
+ 			cci-control-port = <&cci_control1>;
+ 			operating-points-v2 = <&cluster_a15_opp_table>;
+-			cooling-min-level = <0>;
+-			cooling-max-level = <15>;
+ 			#cooling-cells = <2>; /* min followed by max */
+ 		};
+ 
+@@ -105,8 +93,6 @@
+ 			clock-frequency = <1800000000>;
+ 			cci-control-port = <&cci_control1>;
+ 			operating-points-v2 = <&cluster_a15_opp_table>;
+-			cooling-min-level = <0>;
+-			cooling-max-level = <15>;
+ 			#cooling-cells = <2>; /* min followed by max */
+ 		};
+ 
+@@ -117,8 +103,6 @@
+ 			clock-frequency = <1800000000>;
+ 			cci-control-port = <&cci_control1>;
+ 			operating-points-v2 = <&cluster_a15_opp_table>;
+-			cooling-min-level = <0>;
+-			cooling-max-level = <15>;
+ 			#cooling-cells = <2>; /* min followed by max */
+ 		};
+ 	};
 
 
