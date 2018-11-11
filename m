@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E3CBC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:41:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF3AAC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:42:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23061214F1
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:41:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D456214F1
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:42:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YqdnOR3L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23061214F1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EfhlUri7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D456214F1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391331AbeKLIb5 (ORCPT
+        id S2391351AbeKLIcH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:31:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59578 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:32:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59508 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391181AbeKLIYP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:24:15 -0500
+        id S2390832AbeKLIYO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:24:14 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 11F0821707;
-        Sun, 11 Nov 2018 22:34:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AAE74223CB;
+        Sun, 11 Nov 2018 22:34:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975658;
-        bh=qeq5bQYwlfECKmIVfJkzbcUUvqFqlWpi7uVe8NRL98g=;
+        s=default; t=1541975656;
+        bh=7NzvkDYU2EN/N2lh+eM7Zxbqpx6BHN5+RE12lAfmZfc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YqdnOR3L+epHUI5p4H+J9mBCiRCwiEB//0qJAtyX+i45AwuLP4B7LVhIwv53u7D75
-         t8/G5vgjOFrYTzudkjKaaGb8fR3tdpYGXBaQHJcjRqsmOH286GBJ0eBPrUhFFoXp6h
-         VgH7fRoRh5dGyPXTmwWpXnCYkeRlIERuZA5rau9Y=
+        b=EfhlUri7J23lgKth8ZJvcwmGeyIWbYXDIoTzMpFO/Aep/vJZ5L8dQhRGLBVuMwxrj
+         D+Tw1MFHIsxBjrOBifdM7CXOmrpsTk0kUbFPC7efH1kMDJrhmLOoBGIjOBM8YSYV3h
+         PJiwKPhkNvCgARYwXfb3PN588FCIB7+Eb8+nZs+4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Waiman.Long@hp.com, peterz@infradead.org,
-        Juergen Gross <jgross@suse.com>,
-        Jan Beulich <jbeulich@suse.com>
-Subject: [PATCH 4.9 079/141] xen: fix race in xen_qlock_wait()
-Date:   Sun, 11 Nov 2018 14:25:38 -0800
-Message-Id: <20181111221638.970620188@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Vasilis Liaskovitis <vliaskovitis@suse.com>,
+        =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.9 078/141] xen/blkfront: avoid NULL blkfront_info dereference on device removal
+Date:   Sun, 11 Nov 2018 14:25:37 -0800
+Message-Id: <20181111221638.811805265@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
 References: <20181111221627.853046496@linuxfoundation.org>
@@ -63,71 +65,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Juergen Gross <jgross@suse.com>
+From: Vasilis Liaskovitis <vliaskovitis@suse.com>
 
-commit 2ac2a7d4d9ff4e01e36f9c3d116582f6f655ab47 upstream.
+commit f92898e7f32e3533bfd95be174044bc349d416ca upstream.
 
-In the following situation a vcpu waiting for a lock might not be
-woken up from xen_poll_irq():
+If a block device is hot-added when we are out of grants,
+gnttab_grant_foreign_access fails with -ENOSPC (log message "28
+granting access to ring page") in this code path:
 
-CPU 1:                CPU 2:                      CPU 3:
-takes a spinlock
-                      tries to get lock
-                      -> xen_qlock_wait()
-frees the lock
--> xen_qlock_kick(cpu2)
-                        -> xen_clear_irq_pending()
+  talk_to_blkback ->
+	setup_blkring ->
+		xenbus_grant_ring ->
+			gnttab_grant_foreign_access
 
-takes lock again
-                                                  tries to get lock
-                                                  -> *lock = _Q_SLOW_VAL
-                        -> *lock == _Q_SLOW_VAL ?
-                        -> xen_poll_irq()
-frees the lock
--> xen_qlock_kick(cpu3)
+and the failing path in talk_to_blkback sets the driver_data to NULL:
 
-And cpu 2 will sleep forever.
+ destroy_blkring:
+        blkif_free(info, 0);
 
-This can be avoided easily by modifying xen_qlock_wait() to call
-xen_poll_irq() only if the related irq was not pending and to call
-xen_clear_irq_pending() only if it was pending.
+        mutex_lock(&blkfront_mutex);
+        free_info(info);
+        mutex_unlock(&blkfront_mutex);
 
-Cc: stable@vger.kernel.org
-Cc: Waiman.Long@hp.com
-Cc: peterz@infradead.org
-Signed-off-by: Juergen Gross <jgross@suse.com>
-Reviewed-by: Jan Beulich <jbeulich@suse.com>
-Signed-off-by: Juergen Gross <jgross@suse.com>
+        dev_set_drvdata(&dev->dev, NULL);
+
+This results in a NULL pointer BUG when blkfront_remove and blkif_free
+try to access the failing device's NULL struct blkfront_info.
+
+Cc: stable@vger.kernel.org # 4.5 and later
+Signed-off-by: Vasilis Liaskovitis <vliaskovitis@suse.com>
+Reviewed-by: Roger Pau Monné <roger.pau@citrix.com>
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/xen/spinlock.c |   15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
+ drivers/block/xen-blkfront.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/arch/x86/xen/spinlock.c
-+++ b/arch/x86/xen/spinlock.c
-@@ -45,17 +45,12 @@ static void xen_qlock_wait(u8 *byte, u8
- 	if (irq == -1)
- 		return;
+--- a/drivers/block/xen-blkfront.c
++++ b/drivers/block/xen-blkfront.c
+@@ -2524,6 +2524,9 @@ static int blkfront_remove(struct xenbus
  
--	/* clear pending */
--	xen_clear_irq_pending(irq);
--	barrier();
-+	/* If irq pending already clear it and return. */
-+	if (xen_test_irq_pending(irq)) {
-+		xen_clear_irq_pending(irq);
-+		return;
-+	}
+ 	dev_dbg(&xbdev->dev, "%s removed", xbdev->nodename);
  
--	/*
--	 * We check the byte value after clearing pending IRQ to make sure
--	 * that we won't miss a wakeup event because of the clearing.
--	 *
--	 * The sync_clear_bit() call in xen_clear_irq_pending() is atomic.
--	 * So it is effectively a memory barrier for x86.
--	 */
- 	if (READ_ONCE(*byte) != val)
- 		return;
++	if (!info)
++		return 0;
++
+ 	blkif_free(info, 0);
  
+ 	mutex_lock(&info->mutex);
 
 
