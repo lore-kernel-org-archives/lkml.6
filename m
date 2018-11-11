@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A80AC04EB9
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34474C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D13DE2243E
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFE5A223D8
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ycWvke5R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D13DE2243E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JquOaq8Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFE5A223D8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732358AbeKLISC (ORCPT
+        id S1732436AbeKLISH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:18:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34210 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:18:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732334AbeKLISC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:18:02 -0500
+        id S1732359AbeKLISD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:18:03 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F1F7223D0;
-        Sun, 11 Nov 2018 22:28:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D161C21707;
+        Sun, 11 Nov 2018 22:28:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975286;
-        bh=mfhoa4b5MPctdjhirw58OiOvdVTQ6sx43aKsk1fgrBg=;
+        s=default; t=1541975287;
+        bh=wBceG6ebtHTZDdroTWjRZodJU2SLFAnSTMrudbnOQzU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ycWvke5Rrm/d0MCIBrcVYEMfWw+MPEwDzotJB04nK2uS/sdLeiIODTOYJ/P5LX/cK
-         PltJJG9nla51+yziDvlgCz0fib1hQum5sc8PK2fTlLRHBU9xnUJVVMLjgHMDoJfobV
-         UHSwhOIoWFXD3UopFFnkxC6lmd62YVzfHXwNkMAg=
+        b=JquOaq8YQ9Vu8jm+9KvhCaihf69JP/PIxh8twizlLe98Kd/JSs5DrFVyJN1dOJUKV
+         m3DDmZoYKUQ7MY8zP/thNbvH1Qd43iyOELI2FVuGIFA+ECTVPRLOvZSFnHWgKxYZJv
+         OY2pleqBSgbxOJYPFBFaMKBVaHJOwed9vPdRW1KU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Thumshirn <jthumshirn@suse.de>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH 4.19 218/361] libnvdimm, region: Fail badblocks listing for inactive regions
-Date:   Sun, 11 Nov 2018 14:19:25 -0800
-Message-Id: <20181111221650.401857603@linuxfoundation.org>
+        stable@vger.kernel.org, Seth Howell <seth.howell@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.19 223/361] IB/rxe: Revise the ib_wr_opcode enum
+Date:   Sun, 11 Nov 2018 14:19:30 -0800
+Message-Id: <20181111221650.895302485@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -63,69 +62,123 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Jason Gunthorpe <jgg@mellanox.com>
 
-commit 5d394eee2c102453278d81d9a7cf94c80253486a upstream.
+commit 9a59739bd01f77db6fbe2955a4fce165f0f43568 upstream.
 
-While experimenting with region driver loading the following backtrace
-was triggered:
+This enum has become part of the uABI, as both RXE and the
+ib_uverbs_post_send() command expect userspace to supply values from this
+enum. So it should be properly placed in include/uapi/rdma.
 
- INFO: trying to register non-static key.
- the code is fine but needs lockdep annotation.
- turning off the locking correctness validator.
- [..]
- Call Trace:
-  dump_stack+0x85/0xcb
-  register_lock_class+0x571/0x580
-  ? __lock_acquire+0x2ba/0x1310
-  ? kernfs_seq_start+0x2a/0x80
-  __lock_acquire+0xd4/0x1310
-  ? dev_attr_show+0x1c/0x50
-  ? __lock_acquire+0x2ba/0x1310
-  ? kernfs_seq_start+0x2a/0x80
-  ? lock_acquire+0x9e/0x1a0
-  lock_acquire+0x9e/0x1a0
-  ? dev_attr_show+0x1c/0x50
-  badblocks_show+0x70/0x190
-  ? dev_attr_show+0x1c/0x50
-  dev_attr_show+0x1c/0x50
+In userspace this enum is called 'enum ibv_wr_opcode' as part of
+libibverbs.h. That enum defines different values for IB_WR_LOCAL_INV,
+IB_WR_SEND_WITH_INV, and IB_WR_LSO. These were introduced (incorrectly, it
+turns out) into libiberbs in 2015.
 
-This results from a missing successful call to devm_init_badblocks()
-from nd_region_probe(). Block attempts to show badblocks while the
-region is not enabled.
+The kernel has changed its mind on the numbering for several of the IB_WC
+values over the years, but has remained stable on IB_WR_LOCAL_INV and
+below.
 
-Fixes: 6a6bef90425e ("libnvdimm: add mechanism to publish badblocks...")
+Based on this we can conclude that there is no real user space user of the
+values beyond IB_WR_ATOMIC_FETCH_AND_ADD, as they have never worked via
+rdma-core. This is confirmed by inspection, only rxe uses the kernel enum
+and implements the latter operations. rxe has clearly never worked with
+these attributes from userspace. Other drivers that support these opcodes
+implement the functionality without calling out to the kernel.
+
+To make IB_WR_SEND_WITH_INV and related work for RXE in userspace we
+choose to renumber the IB_WR enum in the kernel to match the uABI that
+userspace has bee using since before Soft RoCE was merged. This is an
+overall simpler configuration for the whole software stack, and obviously
+can't break anything existing.
+
+Reported-by: Seth Howell <seth.howell@intel.com>
+Tested-by: Seth Howell <seth.howell@intel.com>
+Fixes: 8700e3e7c485 ("Soft RoCE driver")
 Cc: <stable@vger.kernel.org>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/nvdimm/region_devs.c |   11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ include/rdma/ib_verbs.h           |   34 ++++++++++++++++++++--------------
+ include/uapi/rdma/ib_user_verbs.h |   20 +++++++++++++++++++-
+ 2 files changed, 39 insertions(+), 15 deletions(-)
 
---- a/drivers/nvdimm/region_devs.c
-+++ b/drivers/nvdimm/region_devs.c
-@@ -560,10 +560,17 @@ static ssize_t region_badblocks_show(str
- 		struct device_attribute *attr, char *buf)
- {
- 	struct nd_region *nd_region = to_nd_region(dev);
-+	ssize_t rc;
+--- a/include/rdma/ib_verbs.h
++++ b/include/rdma/ib_verbs.h
+@@ -1278,21 +1278,27 @@ struct ib_qp_attr {
+ };
  
--	return badblocks_show(&nd_region->bb, buf, 0);
--}
-+	device_lock(dev);
-+	if (dev->driver)
-+		rc = badblocks_show(&nd_region->bb, buf, 0);
-+	else
-+		rc = -ENXIO;
-+	device_unlock(dev);
+ enum ib_wr_opcode {
+-	IB_WR_RDMA_WRITE,
+-	IB_WR_RDMA_WRITE_WITH_IMM,
+-	IB_WR_SEND,
+-	IB_WR_SEND_WITH_IMM,
+-	IB_WR_RDMA_READ,
+-	IB_WR_ATOMIC_CMP_AND_SWP,
+-	IB_WR_ATOMIC_FETCH_AND_ADD,
+-	IB_WR_LSO,
+-	IB_WR_SEND_WITH_INV,
+-	IB_WR_RDMA_READ_WITH_INV,
+-	IB_WR_LOCAL_INV,
+-	IB_WR_REG_MR,
+-	IB_WR_MASKED_ATOMIC_CMP_AND_SWP,
+-	IB_WR_MASKED_ATOMIC_FETCH_AND_ADD,
++	/* These are shared with userspace */
++	IB_WR_RDMA_WRITE = IB_UVERBS_WR_RDMA_WRITE,
++	IB_WR_RDMA_WRITE_WITH_IMM = IB_UVERBS_WR_RDMA_WRITE_WITH_IMM,
++	IB_WR_SEND = IB_UVERBS_WR_SEND,
++	IB_WR_SEND_WITH_IMM = IB_UVERBS_WR_SEND_WITH_IMM,
++	IB_WR_RDMA_READ = IB_UVERBS_WR_RDMA_READ,
++	IB_WR_ATOMIC_CMP_AND_SWP = IB_UVERBS_WR_ATOMIC_CMP_AND_SWP,
++	IB_WR_ATOMIC_FETCH_AND_ADD = IB_UVERBS_WR_ATOMIC_FETCH_AND_ADD,
++	IB_WR_LSO = IB_UVERBS_WR_TSO,
++	IB_WR_SEND_WITH_INV = IB_UVERBS_WR_SEND_WITH_INV,
++	IB_WR_RDMA_READ_WITH_INV = IB_UVERBS_WR_RDMA_READ_WITH_INV,
++	IB_WR_LOCAL_INV = IB_UVERBS_WR_LOCAL_INV,
++	IB_WR_MASKED_ATOMIC_CMP_AND_SWP =
++		IB_UVERBS_WR_MASKED_ATOMIC_CMP_AND_SWP,
++	IB_WR_MASKED_ATOMIC_FETCH_AND_ADD =
++		IB_UVERBS_WR_MASKED_ATOMIC_FETCH_AND_ADD,
++
++	/* These are kernel only and can not be issued by userspace */
++	IB_WR_REG_MR = 0x20,
+ 	IB_WR_REG_SIG_MR,
++
+ 	/* reserve values for low level drivers' internal use.
+ 	 * These values will not be used at all in the ib core layer.
+ 	 */
+--- a/include/uapi/rdma/ib_user_verbs.h
++++ b/include/uapi/rdma/ib_user_verbs.h
+@@ -763,10 +763,28 @@ struct ib_uverbs_sge {
+ 	__u32 lkey;
+ };
  
-+	return rc;
-+}
- static DEVICE_ATTR(badblocks, 0444, region_badblocks_show, NULL);
- 
- static ssize_t resource_show(struct device *dev,
++enum ib_uverbs_wr_opcode {
++	IB_UVERBS_WR_RDMA_WRITE = 0,
++	IB_UVERBS_WR_RDMA_WRITE_WITH_IMM = 1,
++	IB_UVERBS_WR_SEND = 2,
++	IB_UVERBS_WR_SEND_WITH_IMM = 3,
++	IB_UVERBS_WR_RDMA_READ = 4,
++	IB_UVERBS_WR_ATOMIC_CMP_AND_SWP = 5,
++	IB_UVERBS_WR_ATOMIC_FETCH_AND_ADD = 6,
++	IB_UVERBS_WR_LOCAL_INV = 7,
++	IB_UVERBS_WR_BIND_MW = 8,
++	IB_UVERBS_WR_SEND_WITH_INV = 9,
++	IB_UVERBS_WR_TSO = 10,
++	IB_UVERBS_WR_RDMA_READ_WITH_INV = 11,
++	IB_UVERBS_WR_MASKED_ATOMIC_CMP_AND_SWP = 12,
++	IB_UVERBS_WR_MASKED_ATOMIC_FETCH_AND_ADD = 13,
++	/* Review enum ib_wr_opcode before modifying this */
++};
++
+ struct ib_uverbs_send_wr {
+ 	__aligned_u64 wr_id;
+ 	__u32 num_sge;
+-	__u32 opcode;
++	__u32 opcode;		/* see enum ib_uverbs_wr_opcode */
+ 	__u32 send_flags;
+ 	union {
+ 		__be32 imm_data;
 
 
