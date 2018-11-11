@@ -2,149 +2,141 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.3 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92299C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:13:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35B9CC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:20:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8A04214E0
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:13:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE95D20871
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:20:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b="nlwuJtSz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8A04214E0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=natalenko.name
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="cAv9ybLw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE95D20871
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726297AbeKLFDF (ORCPT
+        id S1726238AbeKLFKK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 00:03:05 -0500
-Received: from vulcan.natalenko.name ([104.207.131.136]:55672 "EHLO
-        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725725AbeKLFDF (ORCPT
+        Mon, 12 Nov 2018 00:10:10 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:38274 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725725AbeKLFKJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:03:05 -0500
-Received: from mail.natalenko.name (vulcan.natalenko.name [IPv6:fe80::5400:ff:fe0c:dfa0])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by vulcan.natalenko.name (Postfix) with ESMTPSA id 091A3467C68;
-        Sun, 11 Nov 2018 20:13:41 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=dkim-20170712; t=1541963621;
-        h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:in-reply-to:
-         references; bh=nxlSlnJD5j1rBOgHZfHr/8GOcBOOd/GOdaRvF5SN8OI=;
-        b=nlwuJtSzadKGNWYYN0pfag/D4tW9doLeJkkyHXoITVpSHkc4+oyNZdTf5yIkQkUTjiaE9y
-        FVLtmp8Yj5fP8Lwwh7chA00f8RO5x2hBKhRRWjC8dRDMy55wwDYWtlIoj7XW3bvJ2SzfMi
-        eAeJnAGsPdRG9Z8CNhbXtjICVSfC270=
+        Mon, 12 Nov 2018 00:10:09 -0500
+Received: by mail-oi1-f194.google.com with SMTP id v83-v6so5498989oia.5
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 11:20:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3rRMoyHTQKQ6FulqB4CpUi7FQ/aPUDkmNpVsQxd3Uyc=;
+        b=cAv9ybLw1115nCrneA/GN1e8yDuYWKm0ZGsO8eiNS35b6tA2Q/suLOMPND/g9OOOzt
+         SogV2vIVQ+w+IKXG2nHg7Ej2GwZNDt+11Andv8yXC+PtQkTQYTO1sWfMRUHdiVdv96uO
+         jU/2PHKcIxPbmmthZMrVdqGMWSyMe0aKmkw3RmjsvU8T4Ky1GpErhuU1XxlZlfPEoAMi
+         kv7e/wVKAYe8YiheE9U0XGnVrwgUOJ/LixMRJnk32vcb85qas6PMEahImTdua+pIl6io
+         i4d/DH/ka6YidXA+ar1IFBa+PBERKt0mBJ9+IfgCqT1ilRFMTs1WDIIJJdT7pW+3doPi
+         CfLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3rRMoyHTQKQ6FulqB4CpUi7FQ/aPUDkmNpVsQxd3Uyc=;
+        b=sjNVnUGSWeUri2EAX43OHhv/sLwYYjQOpbLuQrP/1DF6tnj4s4DaLtVMf42ODTXIgw
+         wqTVFUFr3sA+defuXeektsmlZLBCCPswsoLjQ0ehGvSLCAxGOJYpaADibGr2oTw4Ljry
+         U7Iqnc/T6n3CEkx1T9ux475VOD4PJvEcqq31n0ytBLrcXTqPydGPt3W1NVzMXfo+HUl7
+         9h9P27Tt0czG3IT0wOhjrZaRmQmfuOhwAPfqlgERocvx1E2PEgTA/wMpqje6f1YMq4zH
+         hU7gDNhac5e7d/5xVVwqiHIalbuJ4fKFG1Z4+F6fa3s9R++ZNxuvclkIEqb7j2NoDIe5
+         kgVQ==
+X-Gm-Message-State: AGRZ1gKublZ99+Y9/VRveT5t/DZpgE8qVOZu+NvV6NoksNX2wjJ4Ohka
+        87SybWIHeZ7xCa0qjww2UF1gyLJkQnL3mqyiO2Eqhg==
+X-Google-Smtp-Source: AJdET5f7URhl/SBrIJmv6JjODOrKvirVPyQ043y4vZlm/xDvdhA1dl1iCqkFa/a3gAEo/BaJSJCJO3j+xPqG27gWy0k=
+X-Received: by 2002:aca:e691:: with SMTP id d139-v6mr9049451oih.232.1541964046479;
+ Sun, 11 Nov 2018 11:20:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Sun, 11 Nov 2018 20:13:40 +0100
-From:   Oleksandr Natalenko <oleksandr@natalenko.name>
-To:     "David S. Miller" <davem@davemloft.net>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Eric Dumazet <edumazet@google.com>,
-        Dave Jones <davej@codemonkey.org.uk>, netdev@vger.kernel.org,
-        linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: WARN_ON() in netconsole with PREEMPT_RT
-Message-ID: <f9111ab09dbc264c8ff8b3b79e9f4c06@natalenko.name>
-X-Sender: oleksandr@natalenko.name
-User-Agent: Roundcube Webmail/1.3.8
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=arc-20170712; t=1541963621;
-        h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:in-reply-to:
-         references; bh=nxlSlnJD5j1rBOgHZfHr/8GOcBOOd/GOdaRvF5SN8OI=;
-        b=YiLV0/eYD4YGo6/ZMKR1gogTZwPUp1+qVDD4nPWr9/sbPzAjk1g61HMnK3CYY356ZIeHfk
-        ZBgm6UetY4TxAVYsUSDmtHjM4ci04vL1motmh+qQ6Wa8EvF5FjO0NhsPYHZSHC2WNtz2Sq
-        Zhi5QS8r1cFRzgPCDyPAWTntj99xGYU=
-ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1541963621; a=rsa-sha256;
-        cv=none;
-        b=l2tyNUyYi1K+fWcjpnkb93qQGX6aKi7IRP0d98xqyJdNTpMEnoq3AK3mT4twgfb43M7s5QrJDmSNFUmiwj+n1KQyecNb30gkL0eJSykombKBvHVi9gxBOnI3Z6Yb1I1jGt7ivGu3G2d5Vn77D5cQocBJq1h+Eqegno3KiB9b5/g=
-ARC-Authentication-Results: i=1;
-        vulcan.natalenko.name;
-        auth=pass smtp.auth=oleksandr@natalenko.name smtp.mailfrom=oleksandr@natalenko.name
+References: <154180093865.70506.6858789591063128903.stgit@djiang5-desk3.ch.intel.com>
+ <154180163666.70506.8805433934495072699.stgit@djiang5-desk3.ch.intel.com> <1541957268.3734.53.camel@linux.ibm.com>
+In-Reply-To: <1541957268.3734.53.camel@linux.ibm.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Sun, 11 Nov 2018 11:20:34 -0800
+Message-ID: <CAPcyv4jMPDap8L6jTo9NGnrJGCjUY_BvSBuPge8NL4QS2Ku0CQ@mail.gmail.com>
+Subject: Re: [PATCH 02/11] libnvdimm/security: change clear text nvdimm keys
+ to encrypted keys
+To:     zohar@linux.ibm.com
+Cc:     Dave Jiang <dave.jiang@intel.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        keyrings@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi.
+[ add keyrings and lkml ]
 
-I was just curious about PREEMPT_RT and decided to give it a (small) 
-shot on my laptop. As a safety measure, I've enabled netconsole to catch 
-all the weird stuff that can pop up, and immediately it indeed did… in 
-the netconsole code itself (irony):
+On Sun, Nov 11, 2018 at 9:28 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
+>
+> On Fri, 2018-11-09 at 15:13 -0700, Dave Jiang wrote:
+> > In order to make nvdimm more secure, encrypted keys will be used instead of
+> > clear text keys. A master key will be created to seal encrypted nvdimm
+> > keys. The master key can be a trusted key generated from TPM 2.0 or a less
+> > secure user key.
+>
+> Trusted keys also work for TPM 1.2.  Are you intentionally limiting
+> the master key to TPM 2.0?
 
-===
-[   64.018949] WARNING: CPU: 0 PID: 1204 at net/core/netpoll.c:372 
-netpoll_send_udp+0x3e8/0x3ef
-…
-[   64.019057] CPU: 0 PID: 1204 Comm: bash Not tainted 4.19.0-ig1 #1
-[   64.019058] Hardware name: Dell Inc.          Vostro 3360/0F5DWF, 
-BIOS A18 09/25/2013
-[   64.019063] RIP: 0010:netpoll_send_udp+0x3e8/0x3ef                    
-                                                              [   
-64.019066] Code: dd ff ff 41 ba 86 dd ff ff 49 2b 96 d0 00 00 00 66 41 
-89 96 c6 00 00 00 66 44 89 48 0c 66 45 89 96 c0 00 00 00 e9
-  93 fe ff ff <0f> 0b e9 40 fc ff ff 0f 1f 44 00 00 53 0f b7 57 42 48 89 
-fb 48 8b
-[   64.019068] RSP: 0018:ffffaa6743f87c98 EFLAGS: 00010202
-[   64.019070] RAX: 0000000000000292 RBX: 0000000000000014 RCX: 
-0000000000000028
-[   64.019072] RDX: 0000000000000014 RSI: ffffffffb1e6a300 RDI: 
-ffff95973d905668
-[   64.019073] RBP: ffffaa6743f87cd8 R08: ffffffffc11f6ba0 R09: 
-0000000000000000
-[   64.019075] R10: 0000000000000008 R11: 0000000000000000 R12: 
-00000000000003e8
-[   64.019076] R13: ffff95973d905668 R14: 0000000000000014 R15: 
-ffff95973d905668
-[   64.019079] FS:  00007f2f8b809b80(0000) GS:ffff95976f000000(0000) 
-knlGS:0000000000000000
-[   64.019081] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   64.019083] CR2: 000055b8e126fbc8 CR3: 0000000415440006 CR4: 
-00000000001606f0
-[   64.019084] Call Trace:
-[   64.019098]  write_msg+0xd1/0xe0 [netconsole]
-[   64.019107]  console_unlock.part.6+0x55b/0x5a0
-[   64.019115]  ? _raw_spin_unlock_irqrestore+0x20/0x60
-[   64.019120]  vprintk_emit+0x16a/0x1a0
-[   64.019125]  printk_emit+0x44/0x5b
-[   64.019130]  ? _raw_spin_trylock+0x13/0x80
-[   64.019134]  devkmsg_write.cold.16+0x21/0x4e
-[   64.019140]  __vfs_write+0x136/0x1a0
-[   64.019145]  vfs_write+0xa9/0x1a0
-[   64.019149]  ksys_write+0x52/0xc0
-[   64.019156]  do_syscall_64+0x5b/0x170
-[   64.019160]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-…
-===
+TPM 1.2 is supported from a software perspective, however the
+intersection of hardware platforms deploying security enabled NVDIMMs
+and TPM 1.2 might be a null set.
 
-This is a v4.19.1-rt3-based kernel.
+> Traditionally there is a single master key for the system, which would
+> be sealed to a set of boot time PCR values.  After decrypting all of
+> the encrypted keys, the master key would be removed from the keyring
+> and a PCR extended.  Extending a PCR would prevent the master key from
+> being unsealed again and used to decrypt encrypted keys, without
+> rebooting the system.  Normally this would be done before pivoting
+> root.
+>
+> If you're not referring to the system master key and are intentionally
+> limiting usage to TPM 2.0, more details on the master key security
+> requirements should be included.
 
-The WARN_ON() is:
+Oh, interesting point. I think we had been assuming a local +
+unsealed-at-runtime nvdimm master key rather than a system-wide master
+key. Yes, we need to rethink this in terms of supporting a sealed
+system-key. This would seem to limit security actions, outside of
+unlock, to always requiring a reboot. I.e. the nominal case is that we
+boot up and unlock the DIMMs, but any subsequent security operation
+like erase, or change-passphrase would require rebooting into an
+environment where the system-master key is unsealed. I do think
+re-provisioning keys and erasing DIMM contents are sufficiently
+exceptional events that a reboot requirement is tolerable.
 
-362 void netpoll_send_udp(struct netpoll *np, const char *msg, int len)
-363 {
-…
-372     WARN_ON_ONCE(!irqs_disabled());
-…
+Is there already existing tooling around this to be able to schedule
+master-key related actions to be deferred to an initrd environment?
 
-If that matters, I have "threadirqs" passed to the kernel.
+> Using trusted keys that are encrypted/decrypted using a user key
+> should really be limited to testing environments.
 
-Netconsole seems to work even after this warning. Is this OK/expected?
+Makes sense.
 
-Thanks.
+> >
+> > In the process of this conversion, the kernel cached key will be removed
+> > in order to simplify the verification process. The hardware will be used to
+> > verify the decrypted user payload directly.
+>
+> Making this sort of change implies there is no concern in breaking
+> existing userspace.  Either the code hasn't yet been upstreamed or
+> there are not any users. If the code hasn't been upstreamed, it would
+> make more sense to squash the git history:
+>
+> - making code review easier
+> - making the git history bisect safe
 
--- 
-   Oleksandr Natalenko (post-factum)
+Yes, the old scheme is not upstream. I'll do the squash once we've
+finalized the key-management details.
+
+Thanks for the help Mimi.
