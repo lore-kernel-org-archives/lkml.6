@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AE67C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:08:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 331CBC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:08:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 219DA20817
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:08:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E674220817
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:08:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IXbWU0Ay"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 219DA20817
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="d3j+KItx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E674220817
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390829AbeKLI60 (ORCPT
+        id S2390779AbeKLI60 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 12 Nov 2018 03:58:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51200 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:51248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390163AbeKLIWE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:04 -0500
+        id S2390254AbeKLIWF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:05 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 967CC2241B;
-        Sun, 11 Nov 2018 22:32:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 41428223C8;
+        Sun, 11 Nov 2018 22:32:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975527;
-        bh=0GvoLWeBF7BhuYJ0kGeqZyLu+qji5apaBmK+OWK+uuo=;
+        s=default; t=1541975528;
+        bh=NYp1DzYpV5d8Vrb7WM0yui5oYqRlKwdjGfS+5+ORag8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IXbWU0Ayww0zcSQZuvYd2TryDsWUh8JhJCdPn2m/vRCGjZZI+ooIkG4TVzl7MOE0E
-         EdLUEgytOwUocaBiLeQs+W7F2AOJCXiGC1plPDouB+fYXwSs5JLDhWg+dwOfulcejf
-         j7UvYk7Gxew7lD+EJy+eJp9ST9NE7axFQbs0uoWo=
+        b=d3j+KItxxVuk1yXjrigCOlgJAeiRh60q2QmZC/ykBMErLE50V8Q5pjTXVbAXJACIx
+         qh1JLWROwhUmKTYYgSXBop175StDaNQznzojBzrK8Lur3/1OwvjxOfCQH38UVYgbXN
+         1N2kKmgqIWUfqllET0zeXogy5yXQj36A9MJhvznc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Waldemar Rymarkiewicz <waldemarx.rymarkiewicz@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Subject: [PATCH 4.14 007/222] cpufreq: conservative: Take limits changes into account properly
-Date:   Sun, 11 Nov 2018 14:21:44 -0800
-Message-Id: <20181111221648.560775246@linuxfoundation.org>
+        stable@vger.kernel.org, Jean-Marc Lenoir <archlinux@jihemel.com>,
+        Erik Schmauss <erik.schmauss@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.14 009/222] ACPICA: AML interpreter: add region addresses in global list during initialization
+Date:   Sun, 11 Nov 2018 14:21:46 -0800
+Message-Id: <20181111221648.772697504@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -64,58 +63,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+From: Erik Schmauss <erik.schmauss@intel.com>
 
-commit da5e79bc70b84971d2b3a55fb252e34e51d81d48 upstream.
+commit 4abb951b73ff0a8a979113ef185651aa3c8da19b upstream.
 
-If the policy limits change between invocations of cs_dbs_update(),
-the requested frequency value stored in dbs_info may not be updated
-and the function may use a stale value of it next time.  Moreover, if
-idle periods are takem into account by cs_dbs_update(), the requested
-frequency value stored in dbs_info may be below the min policy limit,
-which is incorrect.
+The table load process omitted adding the operation region address
+range to the global list. This omission is problematic because the OS
+queries the global list to check for address range conflicts before
+deciding which drivers to load. This commit may result in warning
+messages that look like the following:
 
-To fix these problems, always update the requested frequency value
-in dbs_info along with the local copy of it when the previous
-requested frequency is beyond the policy limits and avoid decreasing
-the requested frequency below the min policy limit when taking
-idle periods into account.
+[    7.871761] ACPI Warning: system_IO range 0x00000428-0x0000042F conflicts with op_region 0x00000400-0x0000047F (\PMIO) (20180531/utaddress-213)
+[    7.871769] ACPI: If an ACPI driver is available for this device, you should use it instead of the native driver
 
-Fixes: abb6627910a1 (cpufreq: conservative: Fix next frequency selection)
-Fixes: 00bfe05889e9 (cpufreq: conservative: Decrease frequency faster for deferred updates)
-Reported-by: Waldemar Rymarkiewicz <waldemarx.rymarkiewicz@intel.com>
+However, these messages do not signify regressions. It is a result of
+properly adding address ranges within the global address list.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=200011
+Tested-by: Jean-Marc Lenoir <archlinux@jihemel.com>
+Signed-off-by: Erik Schmauss <erik.schmauss@intel.com>
 Cc: All applicable <stable@vger.kernel.org>
 Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Acked-by: Waldemar Rymarkiewicz <waldemarx.rymarkiewicz@intel.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/cpufreq/cpufreq_conservative.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/acpi/acpica/dsopcode.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/cpufreq/cpufreq_conservative.c
-+++ b/drivers/cpufreq/cpufreq_conservative.c
-@@ -80,8 +80,10 @@ static unsigned int cs_dbs_update(struct
- 	 * changed in the meantime, so fall back to current frequency in that
- 	 * case.
- 	 */
--	if (requested_freq > policy->max || requested_freq < policy->min)
-+	if (requested_freq > policy->max || requested_freq < policy->min) {
- 		requested_freq = policy->cur;
-+		dbs_info->requested_freq = requested_freq;
-+	}
+--- a/drivers/acpi/acpica/dsopcode.c
++++ b/drivers/acpi/acpica/dsopcode.c
+@@ -451,6 +451,10 @@ acpi_ds_eval_region_operands(struct acpi
+ 			  ACPI_FORMAT_UINT64(obj_desc->region.address),
+ 			  obj_desc->region.length));
  
- 	freq_step = get_freq_step(cs_tuners, policy);
++	status = acpi_ut_add_address_range(obj_desc->region.space_id,
++					   obj_desc->region.address,
++					   obj_desc->region.length, node);
++
+ 	/* Now the address and length are valid for this opregion */
  
-@@ -92,7 +94,7 @@ static unsigned int cs_dbs_update(struct
- 	if (policy_dbs->idle_periods < UINT_MAX) {
- 		unsigned int freq_steps = policy_dbs->idle_periods * freq_step;
- 
--		if (requested_freq > freq_steps)
-+		if (requested_freq > policy->min + freq_steps)
- 			requested_freq -= freq_steps;
- 		else
- 			requested_freq = policy->min;
+ 	obj_desc->region.flags |= AOPOBJ_DATA_VALID;
 
 
