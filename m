@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1371CC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24C07C04EB9
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE8912154B
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFF0221731
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="c91MjRuh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE8912154B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UETqvei/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFF0221731
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731862AbeKLIRk (ORCPT
+        id S1731881AbeKLIRl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:17:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33864 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:17:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34122 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731593AbeKLIRi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:17:38 -0500
+        id S1731856AbeKLIRk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:17:40 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6DB1322353;
-        Sun, 11 Nov 2018 22:27:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B949D21731;
+        Sun, 11 Nov 2018 22:27:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975262;
-        bh=ovIeQ0ivphsRrw6UemqLB4LhpgupPPY/KkdZIHRoGRQ=;
+        s=default; t=1541975264;
+        bh=ioUZbtrZcHVcTIWotmmlH8/j9mqS9gOXubVSJC3xjwk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c91MjRuhynWACeurRdi7LE5Ve36KmG0Ygm6/QEauHA6ix7uEioIYVz8Hhnyf43hSQ
-         F4svjxOjggpX6IZehBFiPLt5heZdd/iali14TVsio3s0dtuRqhjGEjSjR4RBvrFETR
-         zTcCIZ1XvORKvkojXYyg5eK3n3ExJ6N1rXAdl0Zc=
+        b=UETqvei/YmKtT55I4A+UnKVjW47Mm35QoIAbWUEtuH5YkwqUpXHhFNGFFrV2PsCFm
+         0bhPlIvjFvy5HkW9e6nBxG4NSvGa2TyJwdj5JAJ8GMgcBUDwcOYKCe/wCZB0YvQOp8
+         Nb17qv7Q4hGjfFg24N+S/p43HD28B6O/WDGfrDzg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Douglas <adouglas@cadence.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        stable@vger.kernel.org,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 149/361] PCI: cadence: Use AXI region 0 to signal interrupts from EP
-Date:   Sun, 11 Nov 2018 14:18:16 -0800
-Message-Id: <20181111221641.262030976@linuxfoundation.org>
+Subject: [PATCH 4.19 155/361] PCI / ACPI: Enable wake automatically for power managed bridges
+Date:   Sun, 11 Nov 2018 14:18:22 -0800
+Message-Id: <20181111221642.219621814@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -63,67 +65,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alan Douglas <adouglas@cadence.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-[ Upstream commit 0652d4b6b56f73c81abbdbc7e26f772cb2dfe370 ]
+[ Upstream commit 6299cf9ec3985cac70bede8a855b5087b81a6640 ]
 
-The IRQ physical address is allocated from region 0, rather than
-the highest region. Update the driver to reserve this region in
-the bitmap and to use region 0 for all types of interrupt.
+We enable power management automatically for bridges where
+pci_bridge_d3_possible() returns true. However, these bridges may have
+ACPI methods such as _DSW that need to be called before D3 entry. For
+example in Lenovo Thinkpad X1 Carbon 6th _DSW method is used to prepare
+D3cold for the PCIe root port hosting Thunderbolt chain. Because wake is
+not enabled _DSW method is never called and the port does not enter
+D3cold properly consuming more power than necessary.
 
-This corrects a problem which prevents the interrupt being
-signalled correctly if using the first address in the AXI region,
-since an offset of zero will always be mapped to region 0.
+Users can work this around by writing "enabled" to "wakeup" sysfs file
+under the device in question but that is not something an ordinary user
+is expected to do.
 
-Fixes: 37dddf14f1ae ("PCI: cadence: Add EndPoint Controller driver for Cadence PCIe controller")
-Signed-off-by: Alan Douglas <adouglas@cadence.com>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Since we already automatically enable power management for PCIe ports
+with ->bridge_d3 set extend that to enable wake for them as well,
+assuming the port has any ACPI wakeup related objects implemented in the
+namespace (adev->wakeup.flags.valid is true). This ensures the necessary
+ACPI methods get called at appropriate times and allows the root port in
+Thinkpad X1 Carbon 6th to go into D3cold.
+
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pci/controller/pcie-cadence-ep.c |   11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/pci/pci-acpi.c |   16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
---- a/drivers/pci/controller/pcie-cadence-ep.c
-+++ b/drivers/pci/controller/pcie-cadence-ep.c
-@@ -258,7 +258,6 @@ static void cdns_pcie_ep_assert_intx(str
- 				     u8 intx, bool is_asserted)
+--- a/drivers/pci/pci-acpi.c
++++ b/drivers/pci/pci-acpi.c
+@@ -762,19 +762,33 @@ static void pci_acpi_setup(struct device
+ 		return;
+ 
+ 	device_set_wakeup_capable(dev, true);
++	/*
++	 * For bridges that can do D3 we enable wake automatically (as
++	 * we do for the power management itself in that case). The
++	 * reason is that the bridge may have additional methods such as
++	 * _DSW that need to be called.
++	 */
++	if (pci_dev->bridge_d3)
++		device_wakeup_enable(dev);
++
+ 	acpi_pci_wakeup(pci_dev, false);
+ }
+ 
+ static void pci_acpi_cleanup(struct device *dev)
  {
- 	struct cdns_pcie *pcie = &ep->pcie;
--	u32 r = ep->max_regions - 1;
- 	u32 offset;
- 	u16 status;
- 	u8 msg_code;
-@@ -268,8 +267,8 @@ static void cdns_pcie_ep_assert_intx(str
- 	/* Set the outbound region if needed. */
- 	if (unlikely(ep->irq_pci_addr != CDNS_PCIE_EP_IRQ_PCI_ADDR_LEGACY ||
- 		     ep->irq_pci_fn != fn)) {
--		/* Last region was reserved for IRQ writes. */
--		cdns_pcie_set_outbound_region_for_normal_msg(pcie, fn, r,
-+		/* First region was reserved for IRQ writes. */
-+		cdns_pcie_set_outbound_region_for_normal_msg(pcie, fn, 0,
- 							     ep->irq_phys_addr);
- 		ep->irq_pci_addr = CDNS_PCIE_EP_IRQ_PCI_ADDR_LEGACY;
- 		ep->irq_pci_fn = fn;
-@@ -347,8 +346,8 @@ static int cdns_pcie_ep_send_msi_irq(str
- 	/* Set the outbound region if needed. */
- 	if (unlikely(ep->irq_pci_addr != (pci_addr & ~pci_addr_mask) ||
- 		     ep->irq_pci_fn != fn)) {
--		/* Last region was reserved for IRQ writes. */
--		cdns_pcie_set_outbound_region(pcie, fn, ep->max_regions - 1,
-+		/* First region was reserved for IRQ writes. */
-+		cdns_pcie_set_outbound_region(pcie, fn, 0,
- 					      false,
- 					      ep->irq_phys_addr,
- 					      pci_addr & ~pci_addr_mask,
-@@ -517,6 +516,8 @@ static int cdns_pcie_ep_probe(struct pla
- 		goto free_epc_mem;
- 	}
- 	ep->irq_pci_addr = CDNS_PCIE_EP_IRQ_PCI_ADDR_NONE;
-+	/* Reserve region 0 for IRQs */
-+	set_bit(0, &ep->ob_region_map);
+ 	struct acpi_device *adev = ACPI_COMPANION(dev);
++	struct pci_dev *pci_dev = to_pci_dev(dev);
  
- 	return 0;
+ 	if (!adev)
+ 		return;
  
+ 	pci_acpi_remove_pm_notifier(adev);
+-	if (adev->wakeup.flags.valid)
++	if (adev->wakeup.flags.valid) {
++		if (pci_dev->bridge_d3)
++			device_wakeup_disable(dev);
++
+ 		device_set_wakeup_capable(dev, false);
++	}
+ }
+ 
+ static bool pci_acpi_bus_match(struct device *dev)
 
 
