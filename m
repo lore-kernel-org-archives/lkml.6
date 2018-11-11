@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2820C0044C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:27:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A638CC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:27:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72610214E0
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:27:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72610214E0
+	by mail.kernel.org (Postfix) with ESMTP id 6AA5620818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:27:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AA5620818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731522AbeKLGQa (ORCPT
+        id S1731627AbeKLGQl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:16:30 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50836 "EHLO
+        Mon, 12 Nov 2018 01:16:41 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50812 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730609AbeKLFs0 (ORCPT
+        by vger.kernel.org with ESMTP id S1730598AbeKLFs0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 00:48:26 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsl-0000lG-MD; Sun, 11 Nov 2018 19:58:55 +0000
+        id 1gLvsl-0000lK-Cf; Sun, 11 Nov 2018 19:58:55 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsY-0001mL-7A; Sun, 11 Nov 2018 19:58:42 +0000
+        id 1gLvsY-0001mf-Ce; Sun, 11 Nov 2018 19:58:42 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -38,13 +38,16 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org,
-        "Kiran Kumar Modukuri" <kiran.modukuri@gmail.com>,
-        "David Howells" <dhowells@redhat.com>
+        "Masami Hiramatsu" <mhiramat@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        "Artem Savkov" <asavkov@redhat.com>,
+        "Ingo Molnar" <mingo@redhat.com>,
+        "Josh Poimboeuf" <jpoimboe@redhat.com>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.31400808@decadent.org.uk>
+Message-ID: <lsq.1541965745.138562304@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 291/366] cachefiles: Fix missing clear of the
- CACHEFILES_OBJECT_ACTIVE flag
+Subject: [PATCH 3.16 295/366] tracing/kprobes: Fix trace_probe flags on
+ enable_trace_kprobe() failure
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,72 +61,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kiran Kumar Modukuri <kiran.modukuri@gmail.com>
+From: Artem Savkov <asavkov@redhat.com>
 
-commit 5ce83d4bb7d8e11e8c1c687d09f4b5ae67ef3ce3 upstream.
+commit 57ea2a34adf40f3a6e88409aafcf803b8945619a upstream.
 
-In cachefiles_mark_object_active(), the new object is marked active and
-then we try to add it to the active object tree.  If a conflicting object
-is already present, we want to wait for that to go away.  After the wait,
-we go round again and try to re-mark the object as being active - but it's
-already marked active from the first time we went through and a BUG is
-issued.
+If enable_trace_kprobe fails to enable the probe in enable_k(ret)probe
+it returns an error, but does not unset the tp flags it set previously.
+This results in a probe being considered enabled and failures like being
+unable to remove the probe through kprobe_events file since probes_open()
+expects every probe to be disabled.
 
-Fix this by clearing the CACHEFILES_OBJECT_ACTIVE flag before we try again.
+Link: http://lkml.kernel.org/r/20180725102826.8300-1-asavkov@redhat.com
+Link: http://lkml.kernel.org/r/20180725142038.4765-1-asavkov@redhat.com
 
-Analysis from Kiran Kumar Modukuri:
-
-[Impact]
-Oops during heavy NFS + FSCache + Cachefiles
-
-CacheFiles: Error: Overlong wait for old active object to go away.
-
-BUG: unable to handle kernel NULL pointer dereference at 0000000000000002
-
-CacheFiles: Error: Object already active kernel BUG at
-fs/cachefiles/namei.c:163!
-
-[Cause]
-In a heavily loaded system with big files being read and truncated, an
-fscache object for a cookie is being dropped and a new object being
-looked. The new object being looked for has to wait for the old object
-to go away before the new object is moved to active state.
-
-[Fix]
-Clear the flag 'CACHEFILES_OBJECT_ACTIVE' for the new object when
-retrying the object lookup.
-
-[Testcase]
-Have run ~100 hours of NFS stress tests and have not seen this bug recur.
-
-[Regression Potential]
- - Limited to fscache/cachefiles.
-
-Fixes: 9ae326a69004 ("CacheFiles: A cache that backs onto a mounted filesystem")
-Signed-off-by: Kiran Kumar Modukuri <kiran.modukuri@gmail.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-[bwh: Backported to 3.16: adjust context]
+Cc: Ingo Molnar <mingo@redhat.com>
+Fixes: 41a7dd420c57 ("tracing/kprobes: Support ftrace_event_file base multibuffer")
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Artem Savkov <asavkov@redhat.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/cachefiles/namei.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/trace/trace_kprobe.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
---- a/fs/cachefiles/namei.c
-+++ b/fs/cachefiles/namei.c
-@@ -189,6 +189,7 @@ try_again:
- 	/* an old object from a previous incarnation is hogging the slot - we
- 	 * need to wait for it to be destroyed */
- wait_for_old_object:
-+	clear_bit(CACHEFILES_OBJECT_ACTIVE, &object->flags);
- 	if (fscache_object_is_live(&object->fscache)) {
- 		pr_err("\n");
- 		pr_err("Error: Unexpected object collision\n");
-@@ -250,7 +251,6 @@ wait_for_old_object:
- 	goto try_again;
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -361,11 +361,10 @@ static struct trace_kprobe *find_trace_k
+ static int
+ enable_trace_kprobe(struct trace_kprobe *tk, struct ftrace_event_file *file)
+ {
++	struct event_file_link *link;
+ 	int ret = 0;
  
- requeue:
--	clear_bit(CACHEFILES_OBJECT_ACTIVE, &object->flags);
- 	cache->cache.ops->put_object(&xobject->fscache);
- 	_leave(" = -ETIMEDOUT");
- 	return -ETIMEDOUT;
+ 	if (file) {
+-		struct event_file_link *link;
+-
+ 		link = kmalloc(sizeof(*link), GFP_KERNEL);
+ 		if (!link) {
+ 			ret = -ENOMEM;
+@@ -385,6 +384,16 @@ enable_trace_kprobe(struct trace_kprobe
+ 		else
+ 			ret = enable_kprobe(&tk->rp.kp);
+ 	}
++
++	if (ret) {
++		if (file) {
++			list_del_rcu(&link->list);
++			kfree(link);
++			tk->tp.flags &= ~TP_FLAG_TRACE;
++		} else {
++			tk->tp.flags &= ~TP_FLAG_PROFILE;
++		}
++	}
+  out:
+ 	return ret;
+ }
 
