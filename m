@@ -2,51 +2,51 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E0B9C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:31:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0986EC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:31:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C75BA20869
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:31:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3A472084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:31:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WSeRtW6P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C75BA20869
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="h6AzLMZe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3A472084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388788AbeKLJVy (ORCPT
+        id S2388570AbeKLIUS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:21:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44684 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:20:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388585AbeKLIUT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:20:19 -0500
+        id S2388474AbeKLIUS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:18 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C43322353;
-        Sun, 11 Nov 2018 22:30:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC681223CA;
+        Sun, 11 Nov 2018 22:30:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975423;
-        bh=LvW/ZQC0QU58LSSLNhsqKcZNV/bIJbOSL71yR3qXHP8=;
+        s=default; t=1541975421;
+        bh=MWRYuqhr34bWs/aKNWlzRCiqwW4Ui7/AD7x+x8dzO0Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WSeRtW6PMhOVCyuEqSIw6LUkoqL3koSsB7+fn2lzGMom6vsTOOkBqGgY1w0hNAAof
-         OALZVxNaYH5WxMggvWC0IIuhgVSOH8BaqmJ5/ql7RE5LMFH6NORS3i6AJumAi5HfO9
-         uoRP8DoX068bGyt5yc+KcRw5ZDYBSXwdSmZHh/hY=
+        b=h6AzLMZeEYMFPOoZeH0WCDKuJEGqW7fogFuVTo11YD0z1kfEeQZ+fDGCvp8j4F/Gr
+         xCiLzYmem5271m+9KF5oWz11mftMiKRTZ0OxgfLqILpoaqoA32S0x/UIMrg+cS0ed/
+         2k+pOcZvB7h/5SDAyi2Vd/CksWXwGTev1DbzAVUw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
-        Guenter Roeck <linux@roeck-us.net>,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 152/350] usb: typec: tcpm: Report back negotiated PPS voltage and current
-Date:   Sun, 11 Nov 2018 14:20:16 -0800
-Message-Id: <20181111221714.416683336@linuxfoundation.org>
+Subject: [PATCH 4.18 149/350] usb: host: ohci-at91: fix request of irq for optional gpio
+Date:   Sun, 11 Nov 2018 14:20:13 -0800
+Message-Id: <20181111221714.293589241@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -64,57 +64,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+From: "Tudor.Ambarus@microchip.com" <Tudor.Ambarus@microchip.com>
 
-[ Upstream commit 554fab6dbf20ee7298ed2d4e8398b85e6058abb7 ]
+[ Upstream commit 325b9313ec3be56c8e2fe03f977fee19cec75820 ]
 
-Currently when requesting a specific voltage or current through
-the psy interface, for PPS, when reading back from that interface
-the values will always be the same as previously given, if the
-request was successful. However PPS only allows for 20mV voltage
-steps and 50mA current steps, and the psy class expects microvolt
-and micro amp requests, so inbetween values can be provided through
-this interface. Really when reading back the true values negotiated
-should be given, and not the ones originally asked for.
+atmel,oc-gpio is optional. Request its irq only when atmel,oc is set
+in device tree.
 
-To report the actual values negotiated with the Source, the values
-stored are now rounded down to the relevant step units prior to
-building the PPS request, so that those values are later correctly
-reported through the psy interface. In addition this improves the
-adjustments made to meet the operating power requirements of the
-platform, which previously could have been slightly out due to not
-using valid PPS units of voltage and current.
+devm_gpiod_get_index_optional returns NULL if -ENOENT. Check its
+return value for NULL before error, because it is more probable that
+atmel,oc is not set.
 
-Signed-off-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+This fixes the following errors on boards where atmel,oc is not set in
+device tree:
+[    0.960000] at91_ohci 500000.ohci: failed to request gpio "overcurrent" IRQ
+[    0.960000] at91_ohci 500000.ohci: failed to request gpio "overcurrent" IRQ
+[    0.970000] at91_ohci 500000.ohci: failed to request gpio "overcurrent" IRQ
+
+Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/typec/tcpm.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/usb/host/ohci-at91.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/usb/typec/tcpm.c
-+++ b/drivers/usb/typec/tcpm.c
-@@ -4018,6 +4018,9 @@ static int tcpm_pps_set_op_curr(struct t
- 		goto port_unlock;
- 	}
- 
-+	/* Round down operating current to align with PPS valid steps */
-+	op_curr = op_curr - (op_curr % RDO_PROG_CURR_MA_STEP);
-+
- 	reinit_completion(&port->pps_complete);
- 	port->pps_data.op_curr = op_curr;
- 	port->pps_status = 0;
-@@ -4071,6 +4074,9 @@ static int tcpm_pps_set_out_volt(struct
- 		goto port_unlock;
- 	}
- 
-+	/* Round down output voltage to align with PPS valid steps */
-+	out_volt = out_volt - (out_volt % RDO_PROG_VOLT_MV_STEP);
-+
- 	reinit_completion(&port->pps_complete);
- 	port->pps_data.out_volt = out_volt;
- 	port->pps_status = 0;
+--- a/drivers/usb/host/ohci-at91.c
++++ b/drivers/usb/host/ohci-at91.c
+@@ -551,6 +551,8 @@ static int ohci_hcd_at91_drv_probe(struc
+ 		pdata->overcurrent_pin[i] =
+ 			devm_gpiod_get_index_optional(&pdev->dev, "atmel,oc",
+ 						      i, GPIOD_IN);
++		if (!pdata->overcurrent_pin[i])
++			continue;
+ 		if (IS_ERR(pdata->overcurrent_pin[i])) {
+ 			err = PTR_ERR(pdata->overcurrent_pin[i]);
+ 			dev_err(&pdev->dev, "unable to claim gpio \"overcurrent\": %d\n", err);
 
 
