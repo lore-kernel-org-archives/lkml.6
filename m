@@ -3,46 +3,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	LOTS_OF_MONEY,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8BFEC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:15:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FF47C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:15:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90EE12080D
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:15:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90EE12080D
+	by mail.kernel.org (Postfix) with ESMTP id D029C2080D
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:15:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D029C2080D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731435AbeKLGEk (ORCPT
+        id S1731752AbeKLGEo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:04:40 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52956 "EHLO
+        Mon, 12 Nov 2018 01:04:44 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52968 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729602AbeKLGEk (ORCPT
+        by vger.kernel.org with ESMTP id S1729602AbeKLGEn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 01:04:40 -0500
+        Mon, 12 Nov 2018 01:04:43 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvt0-0000l9-Ng; Sun, 11 Nov 2018 19:59:10 +0000
+        id 1gLvt6-0000l8-0z; Sun, 11 Nov 2018 19:59:16 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsS-0001Yp-KD; Sun, 11 Nov 2018 19:58:36 +0000
+        id 1gLvsQ-0001V3-QL; Sun, 11 Nov 2018 19:58:34 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Johan Hovold" <johan@kernel.org>,
-        "Carlos Barcala Lara" <cabl@cesinel.com>
+CC:     akpm@linux-foundation.org,
+        "Trond Myklebust" <trond.myklebust@hammerspace.com>,
+        "Stephen Johnston" <sjohnsto@redhat.com>,
+        "Dave Wysochanski" <dwysocha@redhat.com>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.603416003@decadent.org.uk>
+Message-ID: <lsq.1541965745.554007570@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 148/366] USB: serial: cp210x: add CESINEL device ids
+Subject: [PATCH 3.16 103/366] NFSv4: Fix possible 1-byte stack overflow in
+ nfs_idmap_read_and_verify_message
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,63 +59,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Dave Wysochanski <dwysocha@redhat.com>
 
-commit 24160628a34af962ac99f2f58e547ac3c4cbd26f upstream.
+commit d68894800ec5712d7ddf042356f11e36f87d7f78 upstream.
 
-Add device ids for CESINEL products.
+In nfs_idmap_read_and_verify_message there is an incorrect sprintf '%d'
+that converts the __u32 'im_id' from struct idmap_msg to 'id_str', which
+is a stack char array variable of length NFS_UINT_MAXLEN == 11.
+If a uid or gid value is > 2147483647 = 0x7fffffff, the conversion
+overflows into a negative value, for example:
+crash> p (unsigned) (0x80000000)
+$1 = 2147483648
+crash> p (signed) (0x80000000)
+$2 = -2147483648
+The '-' sign is written to the buffer and this causes a 1 byte overflow
+when the NULL byte is written, which corrupts kernel stack memory.  If
+CONFIG_CC_STACKPROTECTOR_STRONG is set we see a stack-protector panic:
 
-Reported-by: Carlos Barcala Lara <cabl@cesinel.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+[11558053.616565] Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in: ffffffffa05b8a8c
+[11558053.639063] CPU: 6 PID: 9423 Comm: rpc.idmapd Tainted: G        W      ------------ T 3.10.0-514.el7.x86_64 #1
+[11558053.641990] Hardware name: Red Hat OpenStack Compute, BIOS 1.10.2-3.el7_4.1 04/01/2014
+[11558053.644462]  ffffffff818c7bc0 00000000b1f3aec1 ffff880de0f9bd48 ffffffff81685eac
+[11558053.646430]  ffff880de0f9bdc8 ffffffff8167f2b3 ffffffff00000010 ffff880de0f9bdd8
+[11558053.648313]  ffff880de0f9bd78 00000000b1f3aec1 ffffffff811dcb03 ffffffffa05b8a8c
+[11558053.650107] Call Trace:
+[11558053.651347]  [<ffffffff81685eac>] dump_stack+0x19/0x1b
+[11558053.653013]  [<ffffffff8167f2b3>] panic+0xe3/0x1f2
+[11558053.666240]  [<ffffffff811dcb03>] ? kfree+0x103/0x140
+[11558053.682589]  [<ffffffffa05b8a8c>] ? idmap_pipe_downcall+0x1cc/0x1e0 [nfsv4]
+[11558053.689710]  [<ffffffff810855db>] __stack_chk_fail+0x1b/0x30
+[11558053.691619]  [<ffffffffa05b8a8c>] idmap_pipe_downcall+0x1cc/0x1e0 [nfsv4]
+[11558053.693867]  [<ffffffffa00209d6>] rpc_pipe_write+0x56/0x70 [sunrpc]
+[11558053.695763]  [<ffffffff811fe12d>] vfs_write+0xbd/0x1e0
+[11558053.702236]  [<ffffffff810acccc>] ? task_work_run+0xac/0xe0
+[11558053.704215]  [<ffffffff811fec4f>] SyS_write+0x7f/0xe0
+[11558053.709674]  [<ffffffff816964c9>] system_call_fastpath+0x16/0x1b
+
+Fix this by calling the internally defined nfs_map_numeric_to_string()
+function which properly uses '%u' to convert this __u32.  For consistency,
+also replace the one other place where snprintf is called.
+
+Signed-off-by: Dave Wysochanski <dwysocha@redhat.com>
+Reported-by: Stephen Johnston <sjohnsto@redhat.com>
+Fixes: cf4ab538f1516 ("NFSv4: Fix the string length returned by the idmapper")
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+[bwh: Backported to 3.16: adjust filename]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/serial/cp210x.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ fs/nfs/idmap.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/serial/cp210x.c
-+++ b/drivers/usb/serial/cp210x.c
-@@ -91,6 +91,9 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(0x10C4, 0x8156) }, /* B&G H3000 link cable */
- 	{ USB_DEVICE(0x10C4, 0x815E) }, /* Helicomm IP-Link 1220-DVM */
- 	{ USB_DEVICE(0x10C4, 0x815F) }, /* Timewave HamLinkUSB */
-+	{ USB_DEVICE(0x10C4, 0x817C) }, /* CESINEL MEDCAL N Power Quality Monitor */
-+	{ USB_DEVICE(0x10C4, 0x817D) }, /* CESINEL MEDCAL NT Power Quality Monitor */
-+	{ USB_DEVICE(0x10C4, 0x817E) }, /* CESINEL MEDCAL S Power Quality Monitor */
- 	{ USB_DEVICE(0x10C4, 0x818B) }, /* AVIT Research USB to TTL */
- 	{ USB_DEVICE(0x10C4, 0x819F) }, /* MJS USB Toslink Switcher */
- 	{ USB_DEVICE(0x10C4, 0x81A6) }, /* ThinkOptics WavIt */
-@@ -108,6 +111,9 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(0x10C4, 0x826B) }, /* Cygnal Integrated Products, Inc., Fasttrax GPS demonstration module */
- 	{ USB_DEVICE(0x10C4, 0x8281) }, /* Nanotec Plug & Drive */
- 	{ USB_DEVICE(0x10C4, 0x8293) }, /* Telegesis ETRX2USB */
-+	{ USB_DEVICE(0x10C4, 0x82EF) }, /* CESINEL FALCO 6105 AC Power Supply */
-+	{ USB_DEVICE(0x10C4, 0x82F1) }, /* CESINEL MEDCAL EFD Earth Fault Detector */
-+	{ USB_DEVICE(0x10C4, 0x82F2) }, /* CESINEL MEDCAL ST Network Analyzer */
- 	{ USB_DEVICE(0x10C4, 0x82F4) }, /* Starizona MicroTouch */
- 	{ USB_DEVICE(0x10C4, 0x82F9) }, /* Procyon AVS */
- 	{ USB_DEVICE(0x10C4, 0x8341) }, /* Siemens MC35PU GPRS Modem */
-@@ -120,7 +126,9 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(0x10C4, 0x8470) }, /* Juniper Networks BX Series System Console */
- 	{ USB_DEVICE(0x10C4, 0x8477) }, /* Balluff RFID */
- 	{ USB_DEVICE(0x10C4, 0x84B6) }, /* Starizona Hyperion */
-+	{ USB_DEVICE(0x10C4, 0x851E) }, /* CESINEL MEDCAL PT Network Analyzer */
- 	{ USB_DEVICE(0x10C4, 0x85A7) }, /* LifeScan OneTouch Verio IQ */
-+	{ USB_DEVICE(0x10C4, 0x85B8) }, /* CESINEL ReCon T Energy Logger */
- 	{ USB_DEVICE(0x10C4, 0x85EA) }, /* AC-Services IBUS-IF */
- 	{ USB_DEVICE(0x10C4, 0x85EB) }, /* AC-Services CIS-IBUS */
- 	{ USB_DEVICE(0x10C4, 0x85F8) }, /* Virtenio Preon32 */
-@@ -130,10 +138,13 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(0x10C4, 0x8857) },	/* CEL EM357 ZigBee USB Stick */
- 	{ USB_DEVICE(0x10C4, 0x88A4) }, /* MMB Networks ZigBee USB Device */
- 	{ USB_DEVICE(0x10C4, 0x88A5) }, /* Planet Innovation Ingeni ZigBee USB Device */
-+	{ USB_DEVICE(0x10C4, 0x88FB) }, /* CESINEL MEDCAL STII Network Analyzer */
-+	{ USB_DEVICE(0x10C4, 0x8938) }, /* CESINEL MEDCAL S II Network Analyzer */
- 	{ USB_DEVICE(0x10C4, 0x8946) }, /* Ketra N1 Wireless Interface */
- 	{ USB_DEVICE(0x10C4, 0x8962) }, /* Brim Brothers charging dock */
- 	{ USB_DEVICE(0x10C4, 0x8977) },	/* CEL MeshWorks DevKit Device */
- 	{ USB_DEVICE(0x10C4, 0x8998) }, /* KCF Technologies PRN */
-+	{ USB_DEVICE(0x10C4, 0x89A4) }, /* CESINEL FTBC Flexible Thyristor Bridge Controller */
- 	{ USB_DEVICE(0x10C4, 0x8A2A) }, /* HubZ dual ZigBee and Z-Wave dongle */
- 	{ USB_DEVICE(0x10C4, 0x8A5E) }, /* CEL EM3588 ZigBee USB Stick Long Range */
- 	{ USB_DEVICE(0x10C4, 0x8B34) }, /* Qivicon ZigBee USB Radio Stick */
+--- a/fs/nfs/idmap.c
++++ b/fs/nfs/idmap.c
+@@ -339,7 +339,7 @@ static ssize_t nfs_idmap_lookup_name(__u
+ 	int id_len;
+ 	ssize_t ret;
+ 
+-	id_len = snprintf(id_str, sizeof(id_str), "%u", id);
++	id_len = nfs_map_numeric_to_string(id, id_str, sizeof(id_str));
+ 	ret = nfs_idmap_get_key(id_str, id_len, type, buf, buflen, idmap);
+ 	if (ret < 0)
+ 		return -EINVAL;
+@@ -636,7 +636,8 @@ static int nfs_idmap_read_and_verify_mes
+ 		if (strcmp(upcall->im_name, im->im_name) != 0)
+ 			break;
+ 		/* Note: here we store the NUL terminator too */
+-		len = sprintf(id_str, "%d", im->im_id) + 1;
++		len = 1 + nfs_map_numeric_to_string(im->im_id, id_str,
++						    sizeof(id_str));
+ 		ret = nfs_idmap_instantiate(key, authkey, id_str, len);
+ 		break;
+ 	case IDMAP_CONV_IDTONAME:
 
