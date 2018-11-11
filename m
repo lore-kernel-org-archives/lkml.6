@@ -7,45 +7,52 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C21DBC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59804C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B617223CA
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2128E2154B
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xhuTCyph"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B617223CA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="l6qO5f2M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2128E2154B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389560AbeKLIVX (ORCPT
+        id S2389593AbeKLIVZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:21:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48276 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:21:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48422 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389513AbeKLIVV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:21:21 -0500
+        id S2387819AbeKLIVX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:23 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA3802154B;
-        Sun, 11 Nov 2018 22:31:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 966CF22353;
+        Sun, 11 Nov 2018 22:31:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975483;
-        bh=HW1XmXkoPZp98AWrspWub6VBsDG3jcTXsCBm9QSErDQ=;
+        s=default; t=1541975485;
+        bh=ZZUnPclX9UIf+YvmVRO7v7gKJ8NJ9WgU4ce0HJrO+ew=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xhuTCyph1XD9VdsaQ+kkn//SuSgQgDuy/tISgL2OjwawnOYIgfif/r7vtEc7BP/yy
-         huel6a3pextN3xtu6GdH8N9Sl2xyjwXp3zkypIRoNqnfVKiHe9Y7V9AYRu6gLiLaCb
-         HJkKMLq9BMwbl8SbEX2skBEmpd1HrvPiQTHNCx+I=
+        b=l6qO5f2MECnDZ2pRshROKuLHQ3ozTkbzPd6QZ1blgawaEOTaGwKbtM3gRBvAzGBLN
+         WLYZQq0NGQ4enIEkF/ZXTMSb7t6q4GDfDKrm3/v4tILl4oG/Mhh0aMTHr5cRmDH9Ft
+         rQh1ysX+2L1vcO2aZO8Z9TJRG/Y8xRYne8fjJLUE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.18 241/350] crypto: aegis/generic - fix for big endian systems
-Date:   Sun, 11 Nov 2018 14:21:45 -0800
-Message-Id: <20181111221718.121461731@linuxfoundation.org>
+        stable@vger.kernel.org, Frank Haverkamp <haver@linux.vnet.ibm.com>,
+        Joerg-Stephan Vogt <jsvogt@de.ibm.com>,
+        Michael Jung <mijung@gmx.net>,
+        Michael Ruettger <michael@ibmra.de>,
+        Kleber Sacilotto de Souza <klebers@linux.vnet.ibm.com>,
+        Sebastian Ott <sebott@linux.vnet.ibm.com>,
+        "Eberhard S. Amann" <esa@linux.vnet.ibm.com>,
+        Gabriel Krisman Bertazi <krisman@linux.vnet.ibm.com>,
+        "Guilherme G. Piccoli" <gpiccoli@linux.vnet.ibm.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Subject: [PATCH 4.18 235/350] signal/GenWQE: Fix sending of SIGKILL
+Date:   Sun, 11 Nov 2018 14:21:39 -0800
+Message-Id: <20181111221717.869399035@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -63,76 +70,112 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Eric W. Biederman <ebiederm@xmission.com>
 
-commit 4a34e3c2f2f48f47213702a84a123af0fe21ad60 upstream.
+commit 0ab93e9c99f8208c0a1a7b7170c827936268c996 upstream.
 
-Use the correct __le32 annotation and accessors to perform the
-single round of AES encryption performed inside the AEGIS transform.
-Otherwise, tcrypt reports:
+The genweq_add_file and genwqe_del_file by caching current without
+using reference counting embed the assumption that a file descriptor
+will never be passed from one process to another.  It even embeds the
+assumption that the the thread that opened the file will be in
+existence when the process terminates.   Neither of which are
+guaranteed to be true.
 
-  alg: aead: Test 1 failed on encryption for aegis128-generic
-  00000000: 6c 25 25 4a 3c 10 1d 27 2b c1 d4 84 9a ef 7f 6e
-  alg: aead: Test 1 failed on encryption for aegis128l-generic
-  00000000: cd c6 e3 b8 a0 70 9d 8e c2 4f 6f fe 71 42 df 28
-  alg: aead: Test 1 failed on encryption for aegis256-generic
-  00000000: aa ed 07 b1 96 1d e9 e6 f2 ed b5 8e 1c 5f dc 1c
+Therefore replace caching the task_struct of the opener with
+pid of the openers thread group id.  All the knowledge of the
+opener is used for is as the target of SIGKILL and a SIGKILL
+will kill the entire process group.
 
-Fixes: f606a88e5823 ("crypto: aegis - Add generic AEGIS AEAD implementations")
-Cc: <stable@vger.kernel.org> # v4.18+
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Reviewed-by: Ondrej Mosnacek <omosnace@redhat.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Rename genwqe_force_sig to genwqe_terminate, remove it's unncessary
+signal argument, update it's ownly caller, and use kill_pid
+instead of force_sig.
+
+The work force_sig does in changing signal handling state is not
+relevant to SIGKILL sent as SEND_SIG_PRIV.  The exact same processess
+will be killed just with less work, and less confusion.  The work done
+by force_sig is really only needed for handling syncrhonous
+exceptions.
+
+It will still be possible to cause genwqe_device_remove to wait
+8 seconds by passing a file descriptor to another process but
+the possible user after free is fixed.
+
+Fixes: eaf4722d4645 ("GenWQE Character device and DDCB queue")
+Cc: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Frank Haverkamp <haver@linux.vnet.ibm.com>
+Cc: Joerg-Stephan Vogt <jsvogt@de.ibm.com>
+Cc: Michael Jung <mijung@gmx.net>
+Cc: Michael Ruettger <michael@ibmra.de>
+Cc: Kleber Sacilotto de Souza <klebers@linux.vnet.ibm.com>
+Cc: Sebastian Ott <sebott@linux.vnet.ibm.com>
+Cc: Eberhard S. Amann <esa@linux.vnet.ibm.com>
+Cc: Gabriel Krisman Bertazi <krisman@linux.vnet.ibm.com>
+Cc: Guilherme G. Piccoli <gpiccoli@linux.vnet.ibm.com>
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/aegis.h |   22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
+ drivers/misc/genwqe/card_base.h |    2 +-
+ drivers/misc/genwqe/card_dev.c  |    9 +++++----
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
---- a/crypto/aegis.h
-+++ b/crypto/aegis.h
-@@ -21,7 +21,7 @@
+--- a/drivers/misc/genwqe/card_base.h
++++ b/drivers/misc/genwqe/card_base.h
+@@ -408,7 +408,7 @@ struct genwqe_file {
+ 	struct file *filp;
  
- union aegis_block {
- 	__le64 words64[AEGIS_BLOCK_SIZE / sizeof(__le64)];
--	u32 words32[AEGIS_BLOCK_SIZE / sizeof(u32)];
-+	__le32 words32[AEGIS_BLOCK_SIZE / sizeof(__le32)];
- 	u8 bytes[AEGIS_BLOCK_SIZE];
- };
+ 	struct fasync_struct *async_queue;
+-	struct task_struct *owner;
++	struct pid *opener;
+ 	struct list_head list;		/* entry in list of open files */
  
-@@ -57,24 +57,22 @@ static void crypto_aegis_aesenc(union ae
- 				const union aegis_block *src,
- 				const union aegis_block *key)
+ 	spinlock_t map_lock;		/* lock for dma_mappings */
+--- a/drivers/misc/genwqe/card_dev.c
++++ b/drivers/misc/genwqe/card_dev.c
+@@ -52,7 +52,7 @@ static void genwqe_add_file(struct genwq
  {
--	u32 *d = dst->words32;
- 	const u8  *s  = src->bytes;
--	const u32 *k  = key->words32;
- 	const u32 *t0 = crypto_ft_tab[0];
- 	const u32 *t1 = crypto_ft_tab[1];
- 	const u32 *t2 = crypto_ft_tab[2];
- 	const u32 *t3 = crypto_ft_tab[3];
- 	u32 d0, d1, d2, d3;
+ 	unsigned long flags;
  
--	d0 = t0[s[ 0]] ^ t1[s[ 5]] ^ t2[s[10]] ^ t3[s[15]] ^ k[0];
--	d1 = t0[s[ 4]] ^ t1[s[ 9]] ^ t2[s[14]] ^ t3[s[ 3]] ^ k[1];
--	d2 = t0[s[ 8]] ^ t1[s[13]] ^ t2[s[ 2]] ^ t3[s[ 7]] ^ k[2];
--	d3 = t0[s[12]] ^ t1[s[ 1]] ^ t2[s[ 6]] ^ t3[s[11]] ^ k[3];
--
--	d[0] = d0;
--	d[1] = d1;
--	d[2] = d2;
--	d[3] = d3;
-+	d0 = t0[s[ 0]] ^ t1[s[ 5]] ^ t2[s[10]] ^ t3[s[15]];
-+	d1 = t0[s[ 4]] ^ t1[s[ 9]] ^ t2[s[14]] ^ t3[s[ 3]];
-+	d2 = t0[s[ 8]] ^ t1[s[13]] ^ t2[s[ 2]] ^ t3[s[ 7]];
-+	d3 = t0[s[12]] ^ t1[s[ 1]] ^ t2[s[ 6]] ^ t3[s[11]];
-+
-+	dst->words32[0] = cpu_to_le32(d0) ^ key->words32[0];
-+	dst->words32[1] = cpu_to_le32(d1) ^ key->words32[1];
-+	dst->words32[2] = cpu_to_le32(d2) ^ key->words32[2];
-+	dst->words32[3] = cpu_to_le32(d3) ^ key->words32[3];
+-	cfile->owner = current;
++	cfile->opener = get_pid(task_tgid(current));
+ 	spin_lock_irqsave(&cd->file_lock, flags);
+ 	list_add(&cfile->list, &cd->file_list);
+ 	spin_unlock_irqrestore(&cd->file_lock, flags);
+@@ -65,6 +65,7 @@ static int genwqe_del_file(struct genwqe
+ 	spin_lock_irqsave(&cd->file_lock, flags);
+ 	list_del(&cfile->list);
+ 	spin_unlock_irqrestore(&cd->file_lock, flags);
++	put_pid(cfile->opener);
+ 
+ 	return 0;
+ }
+@@ -275,7 +276,7 @@ static int genwqe_kill_fasync(struct gen
+ 	return files;
  }
  
- #endif /* _CRYPTO_AEGIS_H */
+-static int genwqe_force_sig(struct genwqe_dev *cd, int sig)
++static int genwqe_terminate(struct genwqe_dev *cd)
+ {
+ 	unsigned int files = 0;
+ 	unsigned long flags;
+@@ -283,7 +284,7 @@ static int genwqe_force_sig(struct genwq
+ 
+ 	spin_lock_irqsave(&cd->file_lock, flags);
+ 	list_for_each_entry(cfile, &cd->file_list, list) {
+-		force_sig(sig, cfile->owner);
++		kill_pid(cfile->opener, SIGKILL, 1);
+ 		files++;
+ 	}
+ 	spin_unlock_irqrestore(&cd->file_lock, flags);
+@@ -1357,7 +1358,7 @@ static int genwqe_inform_and_stop_proces
+ 		dev_warn(&pci_dev->dev,
+ 			 "[%s] send SIGKILL and wait ...\n", __func__);
+ 
+-		rc = genwqe_force_sig(cd, SIGKILL); /* force terminate */
++		rc = genwqe_terminate(cd);
+ 		if (rc) {
+ 			/* Give kill_timout more seconds to end processes */
+ 			for (i = 0; (i < GENWQE_KILL_TIMEOUT) &&
 
 
