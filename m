@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10F07C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:16:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24B56C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:16:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDC3520817
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:16:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E312220862
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:16:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RnmDy3yu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDC3520817
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iJQPGo/B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E312220862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389779AbeKLIVi (ORCPT
+        id S2389953AbeKLJHA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:21:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49154 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:07:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389723AbeKLIVf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:21:35 -0500
+        id S2389767AbeKLIVi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:38 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A50CF2154B;
-        Sun, 11 Nov 2018 22:31:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 50058223DD;
+        Sun, 11 Nov 2018 22:31:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975498;
-        bh=iBMBrBeK+ucY5fsx3KD8udwEdbRdCoqRppMt4mcDQes=;
+        s=default; t=1541975501;
+        bh=NdRptz1YxUF9mlS1fiwKFrbL340XfU1/0DXPCaxGfCk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RnmDy3yuG3eX2M6RIGMUe7/9kYRrxpuQitVsi5pf7EzffbN/ra/MT2pft2evWh3TX
-         bI6OHmJrmKUO0xxamLOoPIUBlzvg1TUa06kPbH/pPVFeuhXojxRVDyHvTgZ9tshjHa
-         f2f9rWgszF4vgaltN0LNaQFtdWWLcQnKW1wcb4V4=
+        b=iJQPGo/B2hSNCwjBb4+aEmEQkkHT9m4827K5qEGmUqSIK0blLD+uHvAKlvjAlPxFD
+         JpWbFxddvymXW9fDJFKOwe70ZTbhetZKl/LJrU2KMs4CdJ7iDjHbsxODbXiDgPNAx9
+         SQnrgyVxzK8AahnLQ4ErL9W4ZcKWzvKNZI2SwwvI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Junzhi Zhao <junzhi.zhao@mediatek.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        CK Hu <ck.hu@mediatek.com>, David Airlie <airlied@linux.ie>,
-        Johan Hovold <johan@kernel.org>, Rob Herring <robh@kernel.org>
-Subject: [PATCH 4.18 303/350] drm/mediatek: fix OF sibling-node lookup
-Date:   Sun, 11 Nov 2018 14:22:47 -0800
-Message-Id: <20181111221720.754785871@linuxfoundation.org>
+        stable@vger.kernel.org, Soeren Moch <smoch@web.de>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 4.18 277/350] rtc: ds1307: fix ds1339 wakealarm support
+Date:   Sun, 11 Nov 2018 14:22:21 -0800
+Message-Id: <20181111221719.627958672@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -64,57 +62,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Soeren Moch <smoch@web.de>
 
-commit ceff2f4dcd44abf35864d9a99f85ac619e89a01d upstream.
+commit 7dceef78f310f5351735060d78a1777c69606016 upstream.
 
-Use the new of_get_compatible_child() helper to lookup the sibling
-instead of using of_find_compatible_node(), which searches the entire
-tree from a given start node and thus can return an unrelated (i.e.
-non-sibling) node.
+Commit 51ed73eb998a1c79a2b0e9bed68f75a8a2c93b9b ("rtc: ds1340: Add support
+for trickle charger.") breaks ds1339 wakealarm support by limiting
+accessible registers. Fix this.
 
-This also addresses a potential use-after-free (e.g. after probe
-deferral) as the tree-wide helper drops a reference to its first
-argument (i.e. the parent device node).
-
-While at it, also fix the related cec-node reference leak.
-
-Fixes: 8f83f26891e1 ("drm/mediatek: Add HDMI support")
-Cc: stable <stable@vger.kernel.org>     # 4.8
-Cc: Junzhi Zhao <junzhi.zhao@mediatek.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: CK Hu <ck.hu@mediatek.com>
-Cc: David Airlie <airlied@linux.ie>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Rob Herring <robh@kernel.org>
+Fixes: 51ed73eb998a ("rtc: ds1340: Add support for trickle charger.")
+Cc: stable@vger.kernel.org
+Signed-off-by: Soeren Moch <smoch@web.de>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/mediatek/mtk_hdmi.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/rtc/rtc-ds1307.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/gpu/drm/mediatek/mtk_hdmi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_hdmi.c
-@@ -1446,8 +1446,7 @@ static int mtk_hdmi_dt_parse_pdata(struc
- 	}
+--- a/drivers/rtc/rtc-ds1307.c
++++ b/drivers/rtc/rtc-ds1307.c
+@@ -1372,7 +1372,6 @@ static void ds1307_clks_register(struct
+ static const struct regmap_config regmap_config = {
+ 	.reg_bits = 8,
+ 	.val_bits = 8,
+-	.max_register = 0x9,
+ };
  
- 	/* The CEC module handles HDMI hotplug detection */
--	cec_np = of_find_compatible_node(np->parent, NULL,
--					 "mediatek,mt8173-cec");
-+	cec_np = of_get_compatible_child(np->parent, "mediatek,mt8173-cec");
- 	if (!cec_np) {
- 		dev_err(dev, "Failed to find CEC node\n");
- 		return -EINVAL;
-@@ -1457,8 +1456,10 @@ static int mtk_hdmi_dt_parse_pdata(struc
- 	if (!cec_pdev) {
- 		dev_err(hdmi->dev, "Waiting for CEC device %pOF\n",
- 			cec_np);
-+		of_node_put(cec_np);
- 		return -EPROBE_DEFER;
- 	}
-+	of_node_put(cec_np);
- 	hdmi->cec_dev = &cec_pdev->dev;
- 
- 	/*
+ static int ds1307_probe(struct i2c_client *client,
 
 
