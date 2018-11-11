@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47610C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:02:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CE5FC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:02:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CFCA20818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:02:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6340020872
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:02:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2RJ1Z238"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CFCA20818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="L5Ox4l3T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6340020872
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390617AbeKLIW1 (ORCPT
+        id S2390780AbeKLIw7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:22:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51836 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:52:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52416 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390563AbeKLIW0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2390547AbeKLIW0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:22:26 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AFE7322353;
+        by mail.kernel.org (Postfix) with ESMTPSA id 17A8F224E3;
         Sun, 11 Nov 2018 22:32:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975549;
-        bh=J5Gz00pdrc0fgT6ZYhF9o1tRWguOwyOvRnnUvvX09tI=;
+        bh=sh8S/lQ+MrXUHkEDCQXcxVvrb2zPzeTjWV+g1IC7IrE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2RJ1Z238IkQffhDoOPa6QgocwL42/JQt8xeIxAcXcM5JFlFXa5GNVfQz47bbYI9jA
-         tarmD7ClY4T2S9MitxL8xR0NTeRYi/3ZWQCf87QcVSAG3lX2bjlYYX9EMxijtoRrYg
-         yh+g892udyuB6sG8twGD89AHdYhXK2MjSTrOuNlw=
+        b=L5Ox4l3T/jJBI7xFSNGlg7CXjFBmK4xdC9W5Z3aqhhczyRw7UGPDBnf9lkYE0tkvI
+         yAcMw/FksrzlUIlDxTdRmcppTn9Dalqht3LSMRfy6ddL0ioZoCD1+782ngNbz57HX7
+         mlZVwzTOeyFAF5kQ04BRY3ieQ8PWUkYE6R2PvzfA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hangbin Liu <liuhangbin@gmail.com>,
-        Adit Ranadive <aditr@vmware.com>,
-        Vishnu Dasa <vdasa@vmware.com>,
-        Jorgen Hansen <jhansen@vmware.com>,
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Javier Martinez Canillas <javierm@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 088/222] VMCI: Resource wildcard match fixed
-Date:   Sun, 11 Nov 2018 14:23:05 -0800
-Message-Id: <20181111221655.885257479@linuxfoundation.org>
+Subject: [PATCH 4.14 086/222] tpm: suppress transmit cmd error logs when TPM 1.2 is disabled/deactivated
+Date:   Sun, 11 Nov 2018 14:23:03 -0800
+Message-Id: <20181111221655.712279230@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -65,53 +64,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jorgen Hansen <jhansen@vmware.com>
+From: Javier Martinez Canillas <javierm@redhat.com>
 
-[ Upstream commit 11924ba5e671d6caef1516923e2bd8c72929a3fe ]
+[ Upstream commit 0d6d0d62d9505a9816716aa484ebd0b04c795063 ]
 
-When adding a VMCI resource, the check for an existing entry
-would ignore that the new entry could be a wildcard. This could
-result in multiple resource entries that would match a given
-handle. One disastrous outcome of this is that the
-refcounting used to ensure that delayed callbacks for VMCI
-datagrams have run before the datagram is destroyed can be
-wrong, since the refcount could be increased on the duplicate
-entry. This in turn leads to a use after free bug. This issue
-was discovered by Hangbin Liu using KASAN and syzkaller.
+For TPM 1.2 chips the system setup utility allows to set the TPM device in
+one of the following states:
 
-Fixes: bc63dedb7d46 ("VMCI: resource object implementation")
-Reported-by: Hangbin Liu <liuhangbin@gmail.com>
-Reviewed-by: Adit Ranadive <aditr@vmware.com>
-Reviewed-by: Vishnu Dasa <vdasa@vmware.com>
-Signed-off-by: Jorgen Hansen <jhansen@vmware.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+  * Active: Security chip is functional
+  * Inactive: Security chip is visible, but is not functional
+  * Disabled: Security chip is hidden and is not functional
+
+When choosing the "Inactive" state, the TPM 1.2 device is enumerated and
+registered, but sending TPM commands fail with either TPM_DEACTIVATED or
+TPM_DISABLED depending if the firmware deactivated or disabled the TPM.
+
+Since these TPM 1.2 error codes don't have special treatment, inactivating
+the TPM leads to a very noisy kernel log buffer that shows messages like
+the following:
+
+  tpm_tis 00:05: 1.2 TPM (device-id 0x0, rev-id 78)
+  tpm tpm0: A TPM error (6) occurred attempting to read a pcr value
+  tpm tpm0: TPM is disabled/deactivated (0x6)
+  tpm tpm0: A TPM error (6) occurred attempting get random
+  tpm tpm0: A TPM error (6) occurred attempting to read a pcr value
+  ima: No TPM chip found, activating TPM-bypass! (rc=6)
+  tpm tpm0: A TPM error (6) occurred attempting get random
+  tpm tpm0: A TPM error (6) occurred attempting get random
+  tpm tpm0: A TPM error (6) occurred attempting get random
+  tpm tpm0: A TPM error (6) occurred attempting get random
+
+Let's just suppress error log messages for the TPM_{DEACTIVATED,DISABLED}
+return codes, since this is expected when the TPM 1.2 is set to Inactive.
+
+In that case the kernel log is cleaner and less confusing for users, i.e:
+
+  tpm_tis 00:05: 1.2 TPM (device-id 0x0, rev-id 78)
+  tpm tpm0: TPM is disabled/deactivated (0x6)
+  ima: No TPM chip found, activating TPM-bypass! (rc=6)
+
+Reported-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/misc/vmw_vmci/vmci_driver.c   |    2 +-
- drivers/misc/vmw_vmci/vmci_resource.c |    3 ++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ drivers/char/tpm/tpm-interface.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/misc/vmw_vmci/vmci_driver.c
-+++ b/drivers/misc/vmw_vmci/vmci_driver.c
-@@ -113,5 +113,5 @@ module_exit(vmci_drv_exit);
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -653,7 +653,8 @@ ssize_t tpm_transmit_cmd(struct tpm_chip
+ 		return len;
  
- MODULE_AUTHOR("VMware, Inc.");
- MODULE_DESCRIPTION("VMware Virtual Machine Communication Interface.");
--MODULE_VERSION("1.1.5.0-k");
-+MODULE_VERSION("1.1.6.0-k");
- MODULE_LICENSE("GPL v2");
---- a/drivers/misc/vmw_vmci/vmci_resource.c
-+++ b/drivers/misc/vmw_vmci/vmci_resource.c
-@@ -57,7 +57,8 @@ static struct vmci_resource *vmci_resour
- 
- 		if (r->type == type &&
- 		    rid == handle.resource &&
--		    (cid == handle.context || cid == VMCI_INVALID_ID)) {
-+		    (cid == handle.context || cid == VMCI_INVALID_ID ||
-+		     handle.context == VMCI_INVALID_ID)) {
- 			resource = r;
- 			break;
- 		}
+ 	err = be32_to_cpu(header->return_code);
+-	if (err != 0 && desc)
++	if (err != 0 && err != TPM_ERR_DISABLED && err != TPM_ERR_DEACTIVATED
++	    && desc)
+ 		dev_err(&chip->dev, "A TPM error (%d) occurred %s\n", err,
+ 			desc);
+ 	if (err)
 
 
