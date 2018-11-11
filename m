@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60C91C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:34:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB91C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:34:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25EFE2084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:34:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54F4D20866
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:34:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="t/ZhJaZ3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25EFE2084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z46OEtFp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54F4D20866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388684AbeKLJYl (ORCPT
+        id S2388772AbeKLJYr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:24:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43864 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:24:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388397AbeKLIUJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:20:09 -0500
+        id S2388386AbeKLIUI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:08 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 41725223D1;
-        Sun, 11 Nov 2018 22:30:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 767EF223AE;
+        Sun, 11 Nov 2018 22:30:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975412;
-        bh=4QfPqnCb8CbkUg26p6A85Y45uF1qmGMA5bOa49/H1cU=;
+        s=default; t=1541975411;
+        bh=hJR686or2oD4n8VpPVb1fnuGNA68jJH+QIm+jWL9Os8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t/ZhJaZ30EVZFF23RCqCQnRuNEuONNpjDqTI3jhP5RWbDyXcA4/gXajaWq33aVLRx
-         t3HGZV2lCSgA4/MFYdCjmuOBQkn96xoDJ28pO2LPhCpNa4DWTz9fb5nlOBh/95sDA2
-         8+G5q0CbZVkDA+LVlPwKdn2N6RheU/1lOPqsk2XE=
+        b=Z46OEtFpPu3PPpypEMC438otfKQbQaLq6Ve3c9RPfup6gtGN9pA7F33k4p8hjcuhq
+         vQbAw0TscYCMUtGMr7sqsuPfOF0jtdAax24ieueUqWPuih+04hmJTvLV2ZQQrmdKT4
+         xIG4RmknTtcjEsPp9KofgWxHbnsNpZH293gxbGgM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vijaya Kumar K <vkilari@codeaurora.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, Yunsheng Lin <linyunsheng@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 091/350] ACPI/PPTT: Handle architecturally unknown cache types
-Date:   Sun, 11 Nov 2018 14:19:15 -0800
-Message-Id: <20181111221710.918280380@linuxfoundation.org>
+Subject: [PATCH 4.18 122/350] net: hns3: Preserve vlan 0 in hardware table
+Date:   Sun, 11 Nov 2018 14:19:46 -0800
+Message-Id: <20181111221712.311762580@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -65,92 +65,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jeffrey Hugo <jhugo@codeaurora.org>
+From: Yunsheng Lin <linyunsheng@huawei.com>
 
-[ Upstream commit 59bbff3775c0951300f7b41345a54b999438f8d0 ]
+[ Upstream commit daaa8521760ee4d4e65f309c4c37b3a1e58c9d4e ]
 
-The type of a cache might not be specified by architectural mechanisms (ie
-system registers), but its type might be specified in the PPTT.  In this
-case, we should populate the type of the cache, rather than leave it
-undefined.
+When netdev is down, the stack will delete the vlan from
+hardware including vlan0, which will cause problem when
+doing loopback selftest when netdev is down.
 
-This fixes the issue where the cacheinfo driver will not populate sysfs
-for such caches, resulting in the information missing from utilities like
-lstopo and lscpu, thus degrading the user experience.
+This patch fixes it by always preserving vlan 0 in hardware,
+because vlan 0 is defalut vlan, which should always be in
+hardware.
 
-Fixes: 2bd00bcd73e5 (ACPI/PPTT: Add Processor Properties Topology Table parsing)
-Reported-by: Vijaya Kumar K <vkilari@codeaurora.org>
-Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
-Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Fixes: c39c4d98dc65 ("net: hns3: Add mac loopback selftest support in hns3 driver")
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/acpi/pptt.c |   33 +++++++++++++--------------------
- 1 file changed, 13 insertions(+), 20 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/acpi/pptt.c
-+++ b/drivers/acpi/pptt.c
-@@ -338,9 +338,6 @@ static struct acpi_pptt_cache *acpi_find
- 	return found;
- }
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -4732,6 +4732,9 @@ static int hclge_set_vlan_filter_hw(stru
+ 	u16 vport_idx, vport_num = 0;
+ 	int ret;
  
--/* total number of attributes checked by the properties code */
--#define PPTT_CHECKED_ATTRIBUTES 4
--
- /**
-  * update_cache_properties() - Update cacheinfo for the given processor
-  * @this_leaf: Kernel cache info structure being updated
-@@ -357,25 +354,15 @@ static void update_cache_properties(stru
- 				    struct acpi_pptt_cache *found_cache,
- 				    struct acpi_pptt_processor *cpu_node)
- {
--	int valid_flags = 0;
--
- 	this_leaf->fw_token = cpu_node;
--	if (found_cache->flags & ACPI_PPTT_SIZE_PROPERTY_VALID) {
-+	if (found_cache->flags & ACPI_PPTT_SIZE_PROPERTY_VALID)
- 		this_leaf->size = found_cache->size;
--		valid_flags++;
--	}
--	if (found_cache->flags & ACPI_PPTT_LINE_SIZE_VALID) {
-+	if (found_cache->flags & ACPI_PPTT_LINE_SIZE_VALID)
- 		this_leaf->coherency_line_size = found_cache->line_size;
--		valid_flags++;
--	}
--	if (found_cache->flags & ACPI_PPTT_NUMBER_OF_SETS_VALID) {
-+	if (found_cache->flags & ACPI_PPTT_NUMBER_OF_SETS_VALID)
- 		this_leaf->number_of_sets = found_cache->number_of_sets;
--		valid_flags++;
--	}
--	if (found_cache->flags & ACPI_PPTT_ASSOCIATIVITY_VALID) {
-+	if (found_cache->flags & ACPI_PPTT_ASSOCIATIVITY_VALID)
- 		this_leaf->ways_of_associativity = found_cache->associativity;
--		valid_flags++;
--	}
- 	if (found_cache->flags & ACPI_PPTT_WRITE_POLICY_VALID) {
- 		switch (found_cache->attributes & ACPI_PPTT_MASK_WRITE_POLICY) {
- 		case ACPI_PPTT_CACHE_POLICY_WT:
-@@ -402,11 +389,17 @@ static void update_cache_properties(stru
- 		}
- 	}
- 	/*
--	 * If the above flags are valid, and the cache type is NOCACHE
--	 * update the cache type as well.
-+	 * If cache type is NOCACHE, then the cache hasn't been specified
-+	 * via other mechanisms.  Update the type if a cache type has been
-+	 * provided.
-+	 *
-+	 * Note, we assume such caches are unified based on conventional system
-+	 * design and known examples.  Significant work is required elsewhere to
-+	 * fully support data/instruction only type caches which are only
-+	 * specified in PPTT.
- 	 */
- 	if (this_leaf->type == CACHE_TYPE_NOCACHE &&
--	    valid_flags == PPTT_CHECKED_ATTRIBUTES)
-+	    found_cache->flags & ACPI_PPTT_CACHE_TYPE_VALID)
- 		this_leaf->type = CACHE_TYPE_UNIFIED;
- }
- 
++	if (is_kill && !vlan_id)
++		return 0;
++
+ 	ret = hclge_set_vf_vlan_common(hdev, vport_id, is_kill, vlan_id,
+ 				       0, proto);
+ 	if (ret) {
 
 
