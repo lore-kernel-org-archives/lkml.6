@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CA63C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41AABC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45740223CA
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0108A223C6
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CyB/LK3t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45740223CA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CqB1rayV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0108A223C6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389456AbeKLIVO (ORCPT
+        id S2389501AbeKLIVS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:21:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47920 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:21:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47988 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389368AbeKLIVN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:21:13 -0500
+        id S2389368AbeKLIVP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:15 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA79E216FD;
-        Sun, 11 Nov 2018 22:31:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 41A2B223DD;
+        Sun, 11 Nov 2018 22:31:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975477;
-        bh=uJCScdRugag0QvZ+5A/X5cN6vxyyWjwZ186emDFL0fY=;
+        s=default; t=1541975478;
+        bh=kIPgvJ0ynb3bnC2+UOQ/UoOjc2lJd0JgnDpf1EZCAsI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CyB/LK3t/HBEqkjH+ZQ4ho7NLsjba6Rd2K1dp5CTDTl0UeicEaf8lw3AESwGapLS/
-         cG1A3RKQfkc5+vMfZP/4b7nqnpb6LCVh+sz+6sUHXeBfK/alAnXeVcOp4Al5DN7lcm
-         453BW/sXbnVV92ooEX/9kA/YOvVaD6aJw1psFTWY=
+        b=CqB1rayVhMr/DSBcSeGxcMKxJPEGmocmln60buwtICJ8sI08WHrKtnEaag614unAi
+         bYev0GMSCsnj3zdKjUbUVcb4kJmidKEzd3B1ihwKyBIWLTT65m2VfK4rObnv7PsO96
+         R65p0Kyy2hH9bnspcEkn8r+apkNnRGz05ND6UvVY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vincent Cuissard <cuissard@marvell.com>,
-        Samuel Ortiz <sameo@linux.intel.com>,
-        Johan Hovold <johan@kernel.org>, Rob Herring <robh@kernel.org>
-Subject: [PATCH 4.18 261/350] NFC: nfcmrvl_uart: fix OF child-node lookup
-Date:   Sun, 11 Nov 2018 14:22:05 -0800
-Message-Id: <20181111221718.930101928@linuxfoundation.org>
+        stable@vger.kernel.org, Andrew Elble <aweits@rit.edu>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@redhat.com>
+Subject: [PATCH 4.18 264/350] nfsd: correctly decrement odstate refcount in error path
+Date:   Sun, 11 Nov 2018 14:22:08 -0800
+Message-Id: <20181111221719.059375020@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -63,46 +63,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Andrew Elble <aweits@rit.edu>
 
-commit 5bf59773aaf36dd62117dc83d50e1bbf9ef432da upstream.
+commit bd8d725078867cda250fe94b9c5a067b4a64ca74 upstream.
 
-Use the new of_get_compatible_child() helper to lookup the nfc child
-node instead of using of_find_compatible_node(), which searches the
-entire tree from a given start node and thus can return an unrelated
-(i.e. non-child) node.
+alloc_init_deleg() both allocates an nfs4_delegation, and
+bumps the refcount on odstate. So after this point, we need to
+put_clnt_odstate() and nfs4_put_stid() to not leave the odstate
+refcount inappropriately bumped.
 
-This also addresses a potential use-after-free (e.g. after probe
-deferral) as the tree-wide helper drops a reference to its first
-argument (i.e. the parent node).
-
-Fixes: e097dc624f78 ("NFC: nfcmrvl: add UART driver")
-Fixes: d8e018c0b321 ("NFC: nfcmrvl: update device tree bindings for Marvell NFC")
-Cc: stable <stable@vger.kernel.org>     # 4.2
-Cc: Vincent Cuissard <cuissard@marvell.com>
-Cc: Samuel Ortiz <sameo@linux.intel.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Andrew Elble <aweits@rit.edu>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/nfc/nfcmrvl/uart.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ fs/nfsd/nfs4state.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/nfc/nfcmrvl/uart.c
-+++ b/drivers/nfc/nfcmrvl/uart.c
-@@ -73,10 +73,9 @@ static int nfcmrvl_uart_parse_dt(struct
- 	struct device_node *matched_node;
- 	int ret;
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -4361,7 +4361,7 @@ nfs4_set_delegation(struct nfs4_client *
  
--	matched_node = of_find_compatible_node(node, NULL, "marvell,nfc-uart");
-+	matched_node = of_get_compatible_child(node, "marvell,nfc-uart");
- 	if (!matched_node) {
--		matched_node = of_find_compatible_node(node, NULL,
--						       "mrvl,nfc-uart");
-+		matched_node = of_get_compatible_child(node, "mrvl,nfc-uart");
- 		if (!matched_node)
- 			return -ENODEV;
- 	}
+ 	fl = nfs4_alloc_init_lease(dp, NFS4_OPEN_DELEGATE_READ);
+ 	if (!fl)
+-		goto out_stid;
++		goto out_clnt_odstate;
+ 
+ 	status = vfs_setlease(fp->fi_deleg_file, fl->fl_type, &fl, NULL);
+ 	if (fl)
+@@ -4386,7 +4386,6 @@ out_unlock:
+ 	vfs_setlease(fp->fi_deleg_file, F_UNLCK, NULL, (void **)&dp);
+ out_clnt_odstate:
+ 	put_clnt_odstate(dp->dl_clnt_odstate);
+-out_stid:
+ 	nfs4_put_stid(&dp->dl_stid);
+ out_delegees:
+ 	put_deleg_file(fp);
 
 
