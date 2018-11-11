@@ -7,45 +7,48 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5861EC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:04:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3CF0C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:05:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2072D20866
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:04:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B34720866
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:05:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HUMu9TgX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2072D20866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mtyU0mEN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B34720866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732378AbeKLJzT (ORCPT
+        id S1732285AbeKLJz1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:55:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34210 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:55:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34412 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731979AbeKLIRp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1731884AbeKLIRp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:17:45 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3FFF22154B;
+        by mail.kernel.org (Postfix) with ESMTPSA id F1D522175B;
         Sun, 11 Nov 2018 22:27:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975269;
-        bh=r0kg3B0Uo8ZaOAL44hVNNqDQxtzHqZwomQafmFLwY18=;
+        s=default; t=1541975270;
+        bh=l7LeWHwSHtuK6+gaMjrgewWjeWqjfyTMB+p6n7g5ifc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HUMu9TgXzvgFemcw8kTtjhtbw5J5NICeO8OJwlR6VwLb/twAl3GdQyIiKtDckaQsh
-         kYb3+U+Re87huVrUSsW4Zf4dKHQq95vW1+z4oEjvGR5XNodEz5GoF8ufmRK78MzOAB
-         7LukR0k7+QSNfxrs3tWcmWFosSKhEpnBQEFIO4Rw=
+        b=mtyU0mENEcXivGczra8FDzZZFXwCAdjiq1It6nAemiQS/7pxps+W39mLO1lBf6hum
+         ZprIKTnH0nKMBpdI+pjbFm1XZ0sqZiog2p0RRfSjYaIKyhsSskM5B+Nu7Sk8wUVPwu
+         tHFPvHR5kaA1mwKZqoU1Erm9S82bu7Iu6tKdL63Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
+        stable@vger.kernel.org, stable@ger.kernel.org,
+        Quinn Tran <quinn.tran@cavium.com>,
+        "Ewan D. Milne" <emilne@redhat.com>,
+        Himanshu Madhani <himanshu.madhani@cavium.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 139/361] UAPI: ndctl: Fix g++-unsupported initialisation in headers
-Date:   Sun, 11 Nov 2018 14:18:06 -0800
-Message-Id: <20181111221639.987942550@linuxfoundation.org>
+Subject: [PATCH 4.19 166/361] scsi: qla2xxx: Fix recursive mailbox timeout
+Date:   Sun, 11 Nov 2018 14:18:33 -0800
+Message-Id: <20181111221643.682095382@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -63,113 +66,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Howells <dhowells@redhat.com>
+From: Quinn Tran <quinn.tran@cavium.com>
 
-[ Upstream commit 9607871f37dc3e717639694b8d0dc738f2a68efc ]
+[ Upstream commit 710bc78f829d014eca95ed7ccc4052bc064b1320 ]
 
-The following code in the linux/ndctl header file:
+This patch prevents user space mailbox request from doing chip reset if the
+mailbox timed out. The chip reset is only reserved for the DPC thread to
+ensure all mailbox requests are flushed properly. The DPC thread is
+responsible for the flushing all MBs and chip reset.
 
-	static inline const char *nvdimm_bus_cmd_name(unsigned cmd)
-	{
-		static const char * const names[] = {
-			[ND_CMD_ARS_CAP] = "ars_cap",
-			[ND_CMD_ARS_START] = "ars_start",
-			[ND_CMD_ARS_STATUS] = "ars_status",
-			[ND_CMD_CLEAR_ERROR] = "clear_error",
-			[ND_CMD_CALL] = "cmd_call",
-		};
-
-		if (cmd < ARRAY_SIZE(names) && names[cmd])
-			return names[cmd];
-		return "unknown";
-	}
-
-is broken in a number of ways:
-
- (1) ARRAY_SIZE() is not generally defined.
-
- (2) g++ does not support "non-trivial" array initialisers fully yet.
-
- (3) Every file that calls this function will acquire a copy of names[].
-
-The same goes for nvdimm_cmd_name().
-
-Fix all three by converting to a switch statement where each case returns a
-string.  That way if cmd is a constant, the compiler can trivially reduce it
-and, if not, the compiler can use a shared lookup table if it thinks that is
-more efficient.
-
-A better way would be to remove these functions and their arrays from the
-header entirely.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Fixes: b2000805a975 ("scsi: qla2xxx: Flush mailbox commands on chip reset")
+Cc: <stable@ger.kernel.org>
+Signed-off-by: Quinn Tran <quinn.tran@cavium.com>
+Reviewed-by: Ewan D. Milne <emilne@redhat.com>
+Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/uapi/linux/ndctl.h |   48 +++++++++++++++++++--------------------------
- 1 file changed, 21 insertions(+), 27 deletions(-)
+ drivers/scsi/qla2xxx/qla_mbx.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/include/uapi/linux/ndctl.h
-+++ b/include/uapi/linux/ndctl.h
-@@ -128,37 +128,31 @@ enum {
- 
- static inline const char *nvdimm_bus_cmd_name(unsigned cmd)
- {
--	static const char * const names[] = {
--		[ND_CMD_ARS_CAP] = "ars_cap",
--		[ND_CMD_ARS_START] = "ars_start",
--		[ND_CMD_ARS_STATUS] = "ars_status",
--		[ND_CMD_CLEAR_ERROR] = "clear_error",
--		[ND_CMD_CALL] = "cmd_call",
--	};
--
--	if (cmd < ARRAY_SIZE(names) && names[cmd])
--		return names[cmd];
--	return "unknown";
-+	switch (cmd) {
-+	case ND_CMD_ARS_CAP:		return "ars_cap";
-+	case ND_CMD_ARS_START:		return "ars_start";
-+	case ND_CMD_ARS_STATUS:		return "ars_status";
-+	case ND_CMD_CLEAR_ERROR:	return "clear_error";
-+	case ND_CMD_CALL:		return "cmd_call";
-+	default:			return "unknown";
-+	}
- }
- 
- static inline const char *nvdimm_cmd_name(unsigned cmd)
- {
--	static const char * const names[] = {
--		[ND_CMD_SMART] = "smart",
--		[ND_CMD_SMART_THRESHOLD] = "smart_thresh",
--		[ND_CMD_DIMM_FLAGS] = "flags",
--		[ND_CMD_GET_CONFIG_SIZE] = "get_size",
--		[ND_CMD_GET_CONFIG_DATA] = "get_data",
--		[ND_CMD_SET_CONFIG_DATA] = "set_data",
--		[ND_CMD_VENDOR_EFFECT_LOG_SIZE] = "effect_size",
--		[ND_CMD_VENDOR_EFFECT_LOG] = "effect_log",
--		[ND_CMD_VENDOR] = "vendor",
--		[ND_CMD_CALL] = "cmd_call",
--	};
--
--	if (cmd < ARRAY_SIZE(names) && names[cmd])
--		return names[cmd];
--	return "unknown";
-+	switch (cmd) {
-+	case ND_CMD_SMART:			return "smart";
-+	case ND_CMD_SMART_THRESHOLD:		return "smart_thresh";
-+	case ND_CMD_DIMM_FLAGS:			return "flags";
-+	case ND_CMD_GET_CONFIG_SIZE:		return "get_size";
-+	case ND_CMD_GET_CONFIG_DATA:		return "get_data";
-+	case ND_CMD_SET_CONFIG_DATA:		return "set_data";
-+	case ND_CMD_VENDOR_EFFECT_LOG_SIZE:	return "effect_size";
-+	case ND_CMD_VENDOR_EFFECT_LOG:		return "effect_log";
-+	case ND_CMD_VENDOR:			return "vendor";
-+	case ND_CMD_CALL:			return "cmd_call";
-+	default:				return "unknown";
-+	}
- }
- 
- #define ND_IOCTL 'N'
+--- a/drivers/scsi/qla2xxx/qla_mbx.c
++++ b/drivers/scsi/qla2xxx/qla_mbx.c
+@@ -493,7 +493,7 @@ qla2x00_mailbox_command(scsi_qla_host_t
+ 				set_bit(ISP_ABORT_NEEDED, &vha->dpc_flags);
+ 				qla2xxx_wake_dpc(vha);
+ 			}
+-		} else if (!abort_active) {
++		} else if (current == ha->dpc_thread) {
+ 			/* call abort directly since we are in the DPC thread */
+ 			ql_dbg(ql_dbg_mbx, vha, 0x101d,
+ 			    "Timeout, calling abort_isp.\n");
 
 
