@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59809C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:05:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E94DC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:05:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22454208A3
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:05:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 084E520866
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:05:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1mEX1hwh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22454208A3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gNJfIbBz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 084E520866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731906AbeKLIRn (ORCPT
+        id S1732145AbeKLJ4L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:17:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34210 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:56:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34236 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731882AbeKLIRm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1731883AbeKLIRm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:17:42 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F3BF21527;
+        by mail.kernel.org (Postfix) with ESMTPSA id EE21B2175B;
         Sun, 11 Nov 2018 22:27:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975266;
-        bh=JPUjt8Vzw/0Uv/wS2amLyYG2FuCufSl+FzUiYb8G3RI=;
+        s=default; t=1541975267;
+        bh=jnB/hu/SX8v56LNH2lEMbXwYxzsLGyeM1rIQ8X7KxDg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1mEX1hwhkXhlaJuASMQ1xYEteOXbNmxxBgSmWjOg9l+pmHsuZ2jo9DMleYkJQXfA5
-         b4lac/JfR8KLEeOubwHLXgiu560H0H8ioJ4UV1WsFrLR5C5zK7NNSghP8gtz2xFnOu
-         uIGfq5h5xMh9FH86EmpSvWqh/6CQ66uI7V7TxSoE=
+        b=gNJfIbBzBCsrJ4cOHJFge2hxWkH1ZSaDA402irIGIuoY+Sg3Geouu8uli5oUAjZ0d
+         ZpCp1aon2A3QRgLzhcwNX4qTLukn+IZgyp+kzHyTNP46PUrJzZEO9zR8ApA3d+zQFq
+         g9o6b9ItA/1CWQgmYdZ1/CBLL6Q4taVSgOVW9DAk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -46,9 +46,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Amelie Delaunay <amelie.delaunay@st.com>,
         Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 158/361] usb: dwc2: fix call to vbus supply exit routine, call it unlocked
-Date:   Sun, 11 Nov 2018 14:18:25 -0800
-Message-Id: <20181111221642.688798207@linuxfoundation.org>
+Subject: [PATCH 4.19 159/361] usb: dwc2: fix a race with external vbus supply
+Date:   Sun, 11 Nov 2018 14:18:26 -0800
+Message-Id: <20181111221642.798047180@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -68,11 +68,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Fabrice Gasnier <fabrice.gasnier@st.com>
 
-[ Upstream commit 5aa678c7fd5371769efde30763fb43a43a118cd0 ]
+[ Upstream commit 41ee1ea21052583eaf5487dfa0d0c907c9667548 ]
 
-dwc2_vbus_supply_exit() may call regulator_disable(). It shouldn't be
-called with interrupts disabled as it might sleep.
-This is seen with DEBUG_ATOMIC_SLEEP=y.
+There's a race with root hub resume, when using external vbus supply.
+Root hub gets resumed, but runtime pm autosuspend runs as external vbus
+supply isn't enabled. So, host never exit from power down properly.
+Initialize vbus external supply before, rater that after hub resume.
 
 Fixes: 531ef5ebea96 ("usb: dwc2: add support for host mode external
 vbus supply")
@@ -85,20 +86,41 @@ Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/dwc2/hcd.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/usb/dwc2/hcd.c |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
 --- a/drivers/usb/dwc2/hcd.c
 +++ b/drivers/usb/dwc2/hcd.c
-@@ -4482,7 +4482,9 @@ static int _dwc2_hcd_suspend(struct usb_
- 		hprt0 |= HPRT0_SUSP;
- 		hprt0 &= ~HPRT0_PWR;
- 		dwc2_writel(hsotg, hprt0, HPRT0);
-+		spin_unlock_irqrestore(&hsotg->lock, flags);
- 		dwc2_vbus_supply_exit(hsotg);
-+		spin_lock_irqsave(&hsotg->lock, flags);
- 	}
+@@ -4393,6 +4393,7 @@ static int _dwc2_hcd_start(struct usb_hc
+ 	struct dwc2_hsotg *hsotg = dwc2_hcd_to_hsotg(hcd);
+ 	struct usb_bus *bus = hcd_to_bus(hcd);
+ 	unsigned long flags;
++	int ret;
  
- 	/* Enter partial_power_down */
+ 	dev_dbg(hsotg->dev, "DWC OTG HCD START\n");
+ 
+@@ -4408,6 +4409,13 @@ static int _dwc2_hcd_start(struct usb_hc
+ 
+ 	dwc2_hcd_reinit(hsotg);
+ 
++	/* enable external vbus supply before resuming root hub */
++	spin_unlock_irqrestore(&hsotg->lock, flags);
++	ret = dwc2_vbus_supply_init(hsotg);
++	if (ret)
++		return ret;
++	spin_lock_irqsave(&hsotg->lock, flags);
++
+ 	/* Initialize and connect root hub if one is not already attached */
+ 	if (bus->root_hub) {
+ 		dev_dbg(hsotg->dev, "DWC OTG HCD Has Root Hub\n");
+@@ -4417,7 +4425,7 @@ static int _dwc2_hcd_start(struct usb_hc
+ 
+ 	spin_unlock_irqrestore(&hsotg->lock, flags);
+ 
+-	return dwc2_vbus_supply_init(hsotg);
++	return 0;
+ }
+ 
+ /*
 
 
