@@ -7,47 +7,52 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 104A1C43610
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F956C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C290421582
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0F362154B
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tZKwM22L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C290421582
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kqE4zpmT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0F362154B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732543AbeKLISM (ORCPT
+        id S1732573AbeKLISN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:18:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34210 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:18:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732500AbeKLISL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:18:11 -0500
+        id S1732500AbeKLISM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:18:12 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7166D21582;
-        Sun, 11 Nov 2018 22:28:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05AAE22419;
+        Sun, 11 Nov 2018 22:28:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975295;
-        bh=QCJ9GlWYOEwzSTcREEH5YRbCdfaFSweyMUEOjV0Y/u0=;
+        s=default; t=1541975297;
+        bh=74JmcqTBfH/o9uNtqdzb91UOrlidlCTDzDsWPsKAICM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tZKwM22Lyn9hEG28T55X/cY9GkT4dR5gvdPyPXXYmfnWNDCIdoLt7Wn29TvniYsR1
-         w8Tt+qUcFaouOmTN5EPxyya2vNa8m0DRUL71YcauEYMiGq3oAbD0s+4i1rEP4TY9Ri
-         wsBnohqyAz2MvHCWk2AjAd8EcdDm82+M7D+94aLM=
+        b=kqE4zpmTHTqK8LRgXBscWz8ltIZ9KeIO2ZxRpS1/EnptAtu2nSve8uOrDK5W6xr+f
+         GChhB8MkL5UYM4HcjTlEZ42GHq3mJ9OYZM4M4o1zkFUUO7TbVJWyiKsVKZtlFPMRB+
+         Wumpc9L2k7kmtZWI7jwWWQMb1n8BYAFMccEhDL78=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Franck Lenormand <franck.lenormand@nxp.com>,
-        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.19 243/361] crypto: tcrypt - fix ghash-generic speed test
-Date:   Sun, 11 Nov 2018 14:19:50 -0800
-Message-Id: <20181111221652.529673742@linuxfoundation.org>
+        stable@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
+        Mike Christie <mchristi@redhat.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        "Bryant G. Ly" <bryantly@linux.vnet.ibm.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Nicholas Bellinger <nab@linux-iscsi.org>,
+        "Bryant G. Ly" <bly@catalogicsoftware.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.19 215/361] scsi: sched/wait: Add wait_event_lock_irq_timeout for TASK_UNINTERRUPTIBLE usage
+Date:   Sun, 11 Nov 2018 14:19:22 -0800
+Message-Id: <20181111221650.055492978@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -65,40 +70,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Horia Geantă <horia.geanta@nxp.com>
+From: Nicholas Bellinger <nab@linux-iscsi.org>
 
-commit 331351f89c36bf7d03561a28b6f64fa10a9f6f3a upstream.
+commit 25ab0bc334b43bbbe4eabc255006ce42a9424da2 upstream.
 
-ghash is a keyed hash algorithm, thus setkey needs to be called.
-Otherwise the following error occurs:
-$ modprobe tcrypt mode=318 sec=1
-testing speed of async ghash-generic (ghash-generic)
-tcrypt: test  0 (   16 byte blocks,   16 bytes per update,   1 updates):
-tcrypt: hashing failed ret=-126
+Short of reverting commit 00d909a10710 ("scsi: target: Make the session
+shutdown code also wait for commands that are being aborted") for v4.19,
+target-core needs a wait_event_t macro can be executed using
+TASK_UNINTERRUPTIBLE to function correctly with existing fabric drivers that
+expect to run with signals pending during session shutdown and active se_cmd
+I/O quiesce.
 
-Cc: <stable@vger.kernel.org> # 4.6+
-Fixes: 0660511c0bee ("crypto: tcrypt - Use ahash")
-Tested-by: Franck Lenormand <franck.lenormand@nxp.com>
-Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+The most notable is iscsi-target/iser-target, while ibmvscsi_tgt invokes
+session shutdown logic from userspace via configfs attribute that could also
+potentially have signals pending.
+
+So go ahead and introduce wait_event_lock_irq_timeout() to achieve this, and
+update + rename __wait_event_lock_irq_timeout() to make it accept 'state' as a
+parameter.
+
+Fixes: 00d909a10710 ("scsi: target: Make the session shutdown code also wait for commands that are being aborted")
+Cc: <stable@vger.kernel.org> # v4.19+
+Cc: Bart Van Assche <bvanassche@acm.org>
+Cc: Mike Christie <mchristi@redhat.com>
+Cc: Hannes Reinecke <hare@suse.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Sagi Grimberg <sagi@grimberg.me>
+Cc: Bryant G. Ly <bryantly@linux.vnet.ibm.com>
+Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
+Tested-by: Nicholas Bellinger <nab@linux-iscsi.org>
+Signed-off-by: Nicholas Bellinger <nab@linux-iscsi.org>
+Reviewed-by: Bryant G. Ly <bly@catalogicsoftware.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/tcrypt.c |    3 +++
- 1 file changed, 3 insertions(+)
+ include/linux/wait.h |   20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
---- a/crypto/tcrypt.c
-+++ b/crypto/tcrypt.c
-@@ -1103,6 +1103,9 @@ static void test_ahash_speed_common(cons
- 			break;
- 		}
+--- a/include/linux/wait.h
++++ b/include/linux/wait.h
+@@ -1052,10 +1052,9 @@ do {										\
+ 	__ret;									\
+ })
  
-+		if (speed[i].klen)
-+			crypto_ahash_setkey(tfm, tvmem[0], speed[i].klen);
+-#define __wait_event_interruptible_lock_irq_timeout(wq_head, condition,		\
+-						    lock, timeout)		\
++#define __wait_event_lock_irq_timeout(wq_head, condition, lock, timeout, state)	\
+ 	___wait_event(wq_head, ___wait_cond_timeout(condition),			\
+-		      TASK_INTERRUPTIBLE, 0, timeout,				\
++		      state, 0, timeout,					\
+ 		      spin_unlock_irq(&lock);					\
+ 		      __ret = schedule_timeout(__ret);				\
+ 		      spin_lock_irq(&lock));
+@@ -1089,8 +1088,19 @@ do {										\
+ ({										\
+ 	long __ret = timeout;							\
+ 	if (!___wait_cond_timeout(condition))					\
+-		__ret = __wait_event_interruptible_lock_irq_timeout(		\
+-					wq_head, condition, lock, timeout);	\
++		__ret = __wait_event_lock_irq_timeout(				\
++					wq_head, condition, lock, timeout,	\
++					TASK_INTERRUPTIBLE);			\
++	__ret;									\
++})
 +
- 		pr_info("test%3u "
- 			"(%5u byte blocks,%5u bytes per update,%4u updates): ",
- 			i, speed[i].blen, speed[i].plen, speed[i].blen / speed[i].plen);
++#define wait_event_lock_irq_timeout(wq_head, condition, lock, timeout)		\
++({										\
++	long __ret = timeout;							\
++	if (!___wait_cond_timeout(condition))					\
++		__ret = __wait_event_lock_irq_timeout(				\
++					wq_head, condition, lock, timeout,	\
++					TASK_UNINTERRUPTIBLE);			\
+ 	__ret;									\
+ })
+ 
 
 
