@@ -6,47 +6,48 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C30F3C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:13:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3893CC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:13:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A18E2080D
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:13:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A18E2080D
+	by mail.kernel.org (Postfix) with ESMTP id 06A332080D
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:13:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06A332080D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731644AbeKLGDT (ORCPT
+        id S1731605AbeKLGDZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:03:19 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52768 "EHLO
+        Mon, 12 Nov 2018 01:03:25 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52782 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731286AbeKLGDS (ORCPT
+        by vger.kernel.org with ESMTP id S1727144AbeKLGDY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 01:03:18 -0500
+        Mon, 12 Nov 2018 01:03:24 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvss-0000l9-6P; Sun, 11 Nov 2018 19:59:02 +0000
+        id 1gLvtD-0000oO-Kr; Sun, 11 Nov 2018 19:59:23 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsV-0001gH-If; Sun, 11 Nov 2018 19:58:39 +0000
+        id 1gLvsO-0001Ob-Ai; Sun, 11 Nov 2018 19:58:32 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Ronnie Sahlberg" <lsahlber@redhat.com>,
-        "Paulo Alcantara" <palcantara@suse.de>,
-        "Lars Persson" <lars.persson@axis.com>,
-        "Steve French" <stfrench@microsoft.com>,
-        "Lars Persson" <larper@axis.com>,
-        "Pavel Shilovsky" <pshilov@microsoft.com>
+CC:     akpm@linux-foundation.org, "Joerg Roedel" <jroedel@suse.de>,
+        "Lu Baolu" <baolu.lu@linux.intel.com>,
+        "Joerg Roedel" <joro@8bytes.org>,
+        "Dmitry Safonov" <dima@arista.com>,
+        "David Woodhouse" <dwmw2@infradead.org>,
+        "Ingo Molnar" <mingo@kernel.org>, iommu@lists.linux-foundation.org,
+        "Alex Williamson" <alex.williamson@redhat.com>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.523759728@decadent.org.uk>
+Message-ID: <lsq.1541965745.163594241@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 231/366] cifs: Fix use after free of a mid_q_entry
+Subject: [PATCH 3.16 032/366] iommu/vt-d: Ratelimit each dmar fault printing
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -60,172 +61,102 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lars Persson <lars.persson@axis.com>
+From: Dmitry Safonov <dima@arista.com>
 
-commit 696e420bb2a6624478105651d5368d45b502b324 upstream.
+commit 6c50d79f66382d78918a768374839d6d1b606d3f upstream.
 
-With protocol version 2.0 mounts we have seen crashes with corrupt mid
-entries. Either the server->pending_mid_q list becomes corrupt with a
-cyclic reference in one element or a mid object fetched by the
-demultiplexer thread becomes overwritten during use.
+There is a ratelimit for printing, but it's incremented each time the
+cpu recives dmar fault interrupt. While one interrupt may signal about
+*many* faults.
+So, measuring the impact it turns out that reading/clearing one fault
+takes < 1 usec, and printing info about the fault takes ~170 msec.
 
-Code review identified a race between the demultiplexer thread and the
-request issuing thread. The demultiplexer thread seems to be written
-with the assumption that it is the sole user of the mid object until
-it calls the mid callback which either wakes the issuer task or
-deletes the mid.
+Having in mind that maximum number of fault recording registers per
+remapping hardware unit is 256.. IRQ handler may run for (170*256) msec.
+And as fault-serving loop runs without a time limit, during servicing
+new faults may occur..
 
-This assumption is not true because the issuer task can be woken up
-earlier by a signal. If the demultiplexer thread has proceeded as far
-as setting the mid_state to MID_RESPONSE_RECEIVED then the issuer
-thread will happily end up calling cifs_delete_mid while the
-demultiplexer thread still is using the mid object.
+Ratelimit each fault printing rather than each irq printing.
 
-Inserting a delay in the cifs demultiplexer thread widens the race
-window and makes reproduction of the race very easy:
+Fixes: commit c43fce4eebae ("iommu/vt-d: Ratelimit fault handler")
 
-		if (server->large_buf)
-			buf = server->bigbuf;
+BUG: spinlock lockup suspected on CPU#0, CliShell/9903
+ lock: 0xffffffff81a47440, .magic: dead4ead, .owner: kworker/u16:2/8915, .owner_cpu: 6
+CPU: 0 PID: 9903 Comm: CliShell
+Call Trace:$\n'
+[..] dump_stack+0x65/0x83$\n'
+[..] spin_dump+0x8f/0x94$\n'
+[..] do_raw_spin_lock+0x123/0x170$\n'
+[..] _raw_spin_lock_irqsave+0x32/0x3a$\n'
+[..] uart_chars_in_buffer+0x20/0x4d$\n'
+[..] tty_chars_in_buffer+0x18/0x1d$\n'
+[..] n_tty_poll+0x1cb/0x1f2$\n'
+[..] tty_poll+0x5e/0x76$\n'
+[..] do_select+0x363/0x629$\n'
+[..] compat_core_sys_select+0x19e/0x239$\n'
+[..] compat_SyS_select+0x98/0xc0$\n'
+[..] sysenter_dispatch+0x7/0x25$\n'
+[..]
+NMI backtrace for cpu 6
+CPU: 6 PID: 8915 Comm: kworker/u16:2
+Workqueue: dmar_fault dmar_fault_work
+Call Trace:$\n'
+[..] wait_for_xmitr+0x26/0x8f$\n'
+[..] serial8250_console_putchar+0x1c/0x2c$\n'
+[..] uart_console_write+0x40/0x4b$\n'
+[..] serial8250_console_write+0xe6/0x13f$\n'
+[..] call_console_drivers.constprop.13+0xce/0x103$\n'
+[..] console_unlock+0x1f8/0x39b$\n'
+[..] vprintk_emit+0x39e/0x3e6$\n'
+[..] printk+0x4d/0x4f$\n'
+[..] dmar_fault+0x1a8/0x1fc$\n'
+[..] dmar_fault_work+0x15/0x17$\n'
+[..] process_one_work+0x1e8/0x3a9$\n'
+[..] worker_thread+0x25d/0x345$\n'
+[..] kthread+0xea/0xf2$\n'
+[..] ret_from_fork+0x58/0x90$\n'
 
-+		usleep_range(500, 4000);
-
-		server->lstrp = jiffies;
-
-To resolve this I think the proper solution involves putting a
-reference count on the mid object. This patch makes sure that the
-demultiplexer thread holds a reference until it has finished
-processing the transaction.
-
-Signed-off-by: Lars Persson <larper@axis.com>
-Acked-by: Paulo Alcantara <palcantara@suse.de>
-Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-[bwh: Backported to 3.16: Drop redundant assignment to mid_entry]
+Cc: Alex Williamson <alex.williamson@redhat.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Joerg Roedel <joro@8bytes.org>
+Cc: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: iommu@lists.linux-foundation.org
+Signed-off-by: Dmitry Safonov <dima@arista.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/cifs/cifsglob.h      |  1 +
- fs/cifs/cifsproto.h     |  1 +
- fs/cifs/connect.c       |  8 +++++++-
- fs/cifs/smb1ops.c       |  1 +
- fs/cifs/smb2ops.c       |  1 +
- fs/cifs/smb2transport.c |  1 +
- fs/cifs/transport.c     | 18 +++++++++++++++++-
- 7 files changed, 29 insertions(+), 2 deletions(-)
+ drivers/iommu/dmar.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
---- a/fs/cifs/cifsglob.h
-+++ b/fs/cifs/cifsglob.h
-@@ -1232,6 +1232,7 @@ typedef void (mid_callback_t)(struct mid
- /* one of these for every pending CIFS request to the server */
- struct mid_q_entry {
- 	struct list_head qhead;	/* mids waiting on reply from this server */
-+	struct kref refcount;
- 	struct TCP_Server_Info *server;	/* server corresponding to this mid */
- 	__u64 mid;		/* multiplex id */
- 	__u32 pid;		/* process id */
---- a/fs/cifs/cifsproto.h
-+++ b/fs/cifs/cifsproto.h
-@@ -74,6 +74,7 @@ extern struct mid_q_entry *AllocMidQEntr
- 					struct TCP_Server_Info *server);
- extern void DeleteMidQEntry(struct mid_q_entry *midEntry);
- extern void cifs_delete_mid(struct mid_q_entry *mid);
-+extern void cifs_mid_q_entry_release(struct mid_q_entry *midEntry);
- extern void cifs_wake_up_task(struct mid_q_entry *mid);
- extern int cifs_call_async(struct TCP_Server_Info *server,
- 			struct smb_rqst *rqst,
---- a/fs/cifs/connect.c
-+++ b/fs/cifs/connect.c
-@@ -903,8 +903,11 @@ cifs_demultiplex_thread(void *p)
- 		else
- 			length = mid_entry->receive(server, mid_entry);
+--- a/drivers/iommu/dmar.c
++++ b/drivers/iommu/dmar.c
+@@ -1483,17 +1483,13 @@ irqreturn_t dmar_fault(int irq, void *de
+ 	int reg, fault_index;
+ 	u32 fault_status;
+ 	unsigned long flag;
+-	bool ratelimited;
+ 	static DEFINE_RATELIMIT_STATE(rs,
+ 				      DEFAULT_RATELIMIT_INTERVAL,
+ 				      DEFAULT_RATELIMIT_BURST);
  
--		if (length < 0)
-+		if (length < 0) {
-+			if (mid_entry)
-+				cifs_mid_q_entry_release(mid_entry);
- 			continue;
-+		}
+-	/* Disable printing, simply clear the fault when ratelimited */
+-	ratelimited = !__ratelimit(&rs);
+-
+ 	raw_spin_lock_irqsave(&iommu->register_lock, flag);
+ 	fault_status = readl(iommu->reg + DMAR_FSTS_REG);
+-	if (fault_status && !ratelimited)
++	if (fault_status && __ratelimit(&rs))
+ 		pr_err("DRHD: handling fault status reg %x\n", fault_status);
  
- 		if (server->large_buf)
- 			buf = server->bigbuf;
-@@ -920,6 +923,8 @@ cifs_demultiplex_thread(void *p)
- 
- 			if (!mid_entry->multiRsp || mid_entry->multiEnd)
- 				mid_entry->callback(mid_entry);
-+
-+			cifs_mid_q_entry_release(mid_entry);
- 		} else if (server->ops->is_oplock_break &&
- 			   server->ops->is_oplock_break(buf, server)) {
- 			cifs_dbg(FYI, "Received oplock break\n");
---- a/fs/cifs/smb1ops.c
-+++ b/fs/cifs/smb1ops.c
-@@ -104,6 +104,7 @@ cifs_find_mid(struct TCP_Server_Info *se
- 		if (compare_mid(mid->mid, buf) &&
- 		    mid->mid_state == MID_REQUEST_SUBMITTED &&
- 		    le16_to_cpu(mid->command) == buf->Command) {
-+			kref_get(&mid->refcount);
- 			spin_unlock(&GlobalMid_Lock);
- 			return mid;
- 		}
---- a/fs/cifs/smb2ops.c
-+++ b/fs/cifs/smb2ops.c
-@@ -138,6 +138,7 @@ smb2_find_mid(struct TCP_Server_Info *se
- 		if ((mid->mid == hdr->MessageId) &&
- 		    (mid->mid_state == MID_REQUEST_SUBMITTED) &&
- 		    (mid->command == hdr->Command)) {
-+			kref_get(&mid->refcount);
- 			spin_unlock(&GlobalMid_Lock);
- 			return mid;
- 		}
---- a/fs/cifs/smb2transport.c
-+++ b/fs/cifs/smb2transport.c
-@@ -531,6 +531,7 @@ smb2_mid_entry_alloc(const struct smb2_h
- 		return temp;
- 	else {
- 		memset(temp, 0, sizeof(struct mid_q_entry));
-+		kref_init(&temp->refcount);
- 		temp->mid = smb_buffer->MessageId;	/* always LE */
- 		temp->pid = current->pid;
- 		temp->command = smb_buffer->Command;	/* Always LE */
---- a/fs/cifs/transport.c
-+++ b/fs/cifs/transport.c
-@@ -58,6 +58,7 @@ AllocMidQEntry(const struct smb_hdr *smb
- 		return temp;
- 	else {
- 		memset(temp, 0, sizeof(struct mid_q_entry));
-+		kref_init(&temp->refcount);
- 		temp->mid = get_mid(smb_buffer);
- 		temp->pid = current->pid;
- 		temp->command = cpu_to_le16(smb_buffer->Command);
-@@ -80,6 +81,21 @@ AllocMidQEntry(const struct smb_hdr *smb
- 	return temp;
- }
- 
-+static void _cifs_mid_q_entry_release(struct kref *refcount)
-+{
-+	struct mid_q_entry *mid = container_of(refcount, struct mid_q_entry,
-+					       refcount);
-+
-+	mempool_free(mid, cifs_mid_poolp);
-+}
-+
-+void cifs_mid_q_entry_release(struct mid_q_entry *midEntry)
-+{
-+	spin_lock(&GlobalMid_Lock);
-+	kref_put(&midEntry->refcount, _cifs_mid_q_entry_release);
-+	spin_unlock(&GlobalMid_Lock);
-+}
-+
- void
- DeleteMidQEntry(struct mid_q_entry *midEntry)
- {
-@@ -108,7 +124,7 @@ DeleteMidQEntry(struct mid_q_entry *midE
- 		}
- 	}
- #endif
--	mempool_free(midEntry, cifs_mid_poolp);
-+	cifs_mid_q_entry_release(midEntry);
- }
- 
- void
+ 	/* TBD: ignore advanced fault log currently */
+@@ -1503,6 +1499,8 @@ irqreturn_t dmar_fault(int irq, void *de
+ 	fault_index = dma_fsts_fault_record_index(fault_status);
+ 	reg = cap_fault_reg_offset(iommu->cap);
+ 	while (1) {
++		/* Disable printing, simply clear the fault when ratelimited */
++		bool ratelimited = !__ratelimit(&rs);
+ 		u8 fault_reason;
+ 		u16 source_id;
+ 		u64 guest_addr;
 
