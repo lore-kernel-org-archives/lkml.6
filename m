@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9F55C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC05AC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7BA6223D8
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6943A21707
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MG7QnWa5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7BA6223D8
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pkO/lRW0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6943A21707
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388476AbeKLIUN (ORCPT
+        id S2388554AbeKLIUS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:20:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43840 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:20:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388413AbeKLIUL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:20:11 -0500
+        id S2388464AbeKLIUN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:13 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71CC021780;
-        Sun, 11 Nov 2018 22:30:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9EC0D22419;
+        Sun, 11 Nov 2018 22:30:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975415;
-        bh=dHemJprAOqXoQM2yrHmwjPYu6caS1GcnNs8zLlxdxbY=;
+        s=default; t=1541975416;
+        bh=LKoW/IriWs7o7A9WZj7Ad2UxL5c9UL7Q1uRcYoRrPW8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MG7QnWa57bbKGS4SJbnI6AZHBe1mKh5jyToFXIE8eHpPpo5Z+yLBSa9hlvmKcgdiq
-         IWaDItBEbaNcB3SfMHH3bzFT2lw6QVcPZ3uR8fVes23Z3GQpgiMSM/u3xiYriSsJVS
-         e2T+UoDz/GpcEsGEQ9NrxUt/brHpUIJjFdFuj9nI=
+        b=pkO/lRW0Uz1Y5BD4X7wUK2MTPKKvNULNg7UQo+tap8oYJe1FsjosPnya0F6K5fD3c
+         2vR8uAkrPsePCqlqG7R89lZZ2oHcJ6ohjhyMuCilCSgYgt1qJBbvvz+yVl5SLFshND
+         p5GYMdldCUFaJf8wWpqC7x5Hf+DCEfwC6pePcj00=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 134/350] thermal: da9062/61: Prevent hardware access during system suspend
-Date:   Sun, 11 Nov 2018 14:19:58 -0800
-Message-Id: <20181111221713.590171847@linuxfoundation.org>
+Subject: [PATCH 4.18 137/350] f2fs: fix to account IO correctly for cgroup writeback
+Date:   Sun, 11 Nov 2018 14:20:01 -0800
+Message-Id: <20181111221713.770057413@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -65,44 +63,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit 760eea43f8c6d48684f1f34b8a02fddc1456e849 ]
+[ Upstream commit 78efac537de33faab9a4302cc05a70bb4a8b3b63 ]
 
-The workqueue used for monitoring the hardware may run while the device
-is already suspended.  Fix this by using the freezable system workqueue
-instead, cfr. commit 51e20d0e3a60cf46 ("thermal: Prevent polling from
-happening during system suspend").
+Now, we have supported cgroup writeback, it depends on correctly IO
+account of specified filesystem.
 
-Fixes: 608567aac3206ae8 ("thermal: da9062/61: Thermal junction temperature monitoring driver")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Steve Twiss <stwiss.opensource@diasemi.com>
-Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+But in commit d1b3e72d5490 ("f2fs: submit bio of in-place-update pages"),
+we split write paths from f2fs_submit_page_mbio() to two:
+- f2fs_submit_page_bio() for IPU path
+- f2fs_submit_page_bio() for OPU path
+
+But still we account write IO only in f2fs_submit_page_mbio(), result in
+incorrect IO account, fix it by adding missing IO account in IPU path.
+
+Fixes: d1b3e72d5490 ("f2fs: submit bio of in-place-update pages")
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/thermal/da9062-thermal.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/f2fs/data.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/thermal/da9062-thermal.c
-+++ b/drivers/thermal/da9062-thermal.c
-@@ -106,7 +106,7 @@ static void da9062_thermal_poll_on(struc
- 					   THERMAL_EVENT_UNSPECIFIED);
- 
- 		delay = msecs_to_jiffies(thermal->zone->passive_delay);
--		schedule_delayed_work(&thermal->work, delay);
-+		queue_delayed_work(system_freezable_wq, &thermal->work, delay);
- 		return;
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -453,6 +453,10 @@ int f2fs_submit_page_bio(struct f2fs_io_
+ 		bio_put(bio);
+ 		return -EFAULT;
  	}
++
++	if (fio->io_wbc && !is_read_io(fio->op))
++		wbc_account_io(fio->io_wbc, page, PAGE_SIZE);
++
+ 	bio_set_op_attrs(bio, fio->op, fio->op_flags);
  
-@@ -125,7 +125,7 @@ static irqreturn_t da9062_thermal_irq_ha
- 	struct da9062_thermal *thermal = data;
- 
- 	disable_irq_nosync(thermal->irq);
--	schedule_delayed_work(&thermal->work, 0);
-+	queue_delayed_work(system_freezable_wq, &thermal->work, 0);
- 
- 	return IRQ_HANDLED;
- }
+ 	__submit_bio(fio->sbi, bio, fio->type);
 
 
