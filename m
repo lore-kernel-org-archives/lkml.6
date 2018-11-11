@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24F50C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:11:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90742C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:11:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E16BF2080D
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:11:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E16BF2080D
+	by mail.kernel.org (Postfix) with ESMTP id 600762080D
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:11:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 600762080D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731663AbeKLGAj (ORCPT
+        id S1731670AbeKLGAo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:00:39 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52450 "EHLO
+        Mon, 12 Nov 2018 01:00:44 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52460 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731019AbeKLGAi (ORCPT
+        by vger.kernel.org with ESMTP id S1731019AbeKLGAn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 01:00:38 -0500
+        Mon, 12 Nov 2018 01:00:43 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvt6-0000lM-Mi; Sun, 11 Nov 2018 19:59:16 +0000
+        id 1gLvt6-0000lJ-1L; Sun, 11 Nov 2018 19:59:16 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsQ-0001Tv-D7; Sun, 11 Nov 2018 19:58:34 +0000
+        id 1gLvsQ-0001Tz-EQ; Sun, 11 Nov 2018 19:58:34 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Omar Sandoval" <osandov@fb.com>,
-        "David Sterba" <dsterba@suse.com>,
-        "Nikolay Borisov" <nborisov@suse.com>
+CC:     akpm@linux-foundation.org, "Josef Bacik" <jbacik@fb.com>,
+        "David Sterba" <dsterba@suse.com>, "Omar Sandoval" <osandov@fb.com>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.610711467@decadent.org.uk>
+Message-ID: <lsq.1541965745.814531006@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 089/366] Btrfs: don't BUG_ON() in btrfs_truncate_inode_items()
+Subject: [PATCH 3.16 090/366] Btrfs: don't return ino to ino cache if
+ inode item removal fails
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,36 +59,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Omar Sandoval <osandov@fb.com>
 
-commit 0552210997badb6a60740a26ff9d976a416510f0 upstream.
+commit c08db7d8d295a4f3a10faaca376de011afff7950 upstream.
 
-btrfs_free_extent() can fail because of ENOMEM. There's no reason to
-panic here, we can just abort the transaction.
+In btrfs_evict_inode(), if btrfs_truncate_inode_items() fails, the inode
+item will still be in the tree but we still return the ino to the ino
+cache. That will blow up later when someone tries to allocate that ino,
+so don't return it to the cache.
 
-Fixes: f4b9aa8d3b87 ("btrfs_truncate")
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Fixes: 581bb050941b ("Btrfs: Cache free inode numbers in memory")
+Reviewed-by: Josef Bacik <jbacik@fb.com>
 Signed-off-by: Omar Sandoval <osandov@fb.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 [bwh: Backported to 3.16:
- - Also pass root to btrfs_abort_transaction()
+ - Pass inode, not btrfs_inode, to btrfs_orphan_del()
+ - Pass btrfs_root, not btrfs_fs_info, to btrfs_free_block_rsv()
  - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/btrfs/inode.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ fs/btrfs/inode.c | 25 +++++++++++++------------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
 
 --- a/fs/btrfs/inode.c
 +++ b/fs/btrfs/inode.c
-@@ -4313,7 +4313,10 @@ delete:
- 						extent_num_bytes, 0,
- 						btrfs_header_owner(leaf),
- 						ino, extent_offset, 0);
--			BUG_ON(ret);
-+			if (ret) {
-+				btrfs_abort_transaction(trans, root, ret);
-+				break;
-+			}
- 		}
+@@ -4908,13 +4908,18 @@ void btrfs_evict_inode(struct inode *ino
+ 		trans->block_rsv = rsv;
  
- 		if (found_type == BTRFS_INODE_ITEM_KEY)
+ 		ret = btrfs_truncate_inode_items(trans, root, inode, 0, 0);
+-		if (ret != -ENOSPC)
++		if (ret) {
++			trans->block_rsv = &root->fs_info->trans_block_rsv;
++			btrfs_end_transaction(trans, root);
++			btrfs_btree_balance_dirty(root);
++			if (ret != -ENOSPC) {
++				btrfs_orphan_del(NULL, inode);
++				btrfs_free_block_rsv(root, rsv);
++				goto no_delete;
++			}
++		} else {
+ 			break;
+-
+-		trans->block_rsv = &root->fs_info->trans_block_rsv;
+-		btrfs_end_transaction(trans, root);
+-		trans = NULL;
+-		btrfs_btree_balance_dirty(root);
++		}
+ 	}
+ 
+ 	btrfs_free_block_rsv(root, rsv);
+@@ -4923,12 +4928,8 @@ void btrfs_evict_inode(struct inode *ino
+ 	 * Errors here aren't a big deal, it just means we leave orphan items
+ 	 * in the tree.  They will be cleaned up on the next mount.
+ 	 */
+-	if (ret == 0) {
+-		trans->block_rsv = root->orphan_block_rsv;
+-		btrfs_orphan_del(trans, inode);
+-	} else {
+-		btrfs_orphan_del(NULL, inode);
+-	}
++	trans->block_rsv = root->orphan_block_rsv;
++	btrfs_orphan_del(trans, inode);
+ 
+ 	trans->block_rsv = &root->fs_info->trans_block_rsv;
+ 	if (!(root == root->fs_info->tree_root ||
 
