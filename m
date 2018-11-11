@@ -7,47 +7,53 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8C4FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:12:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1180AC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:12:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56F9D2084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:12:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC8CA2084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:12:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wfp5rDQI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56F9D2084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ElbIAPSj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC8CA2084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730566AbeKLIRR (ORCPT
+        id S1730919AbeKLKDR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:17:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60238 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 05:03:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60196 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730385AbeKLIRQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:17:16 -0500
+        id S1730559AbeKLIRR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:17:17 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9606822360;
-        Sun, 11 Nov 2018 22:27:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF0DA214F1;
+        Sun, 11 Nov 2018 22:27:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975240;
-        bh=+oE2HIHglIGbz7M2O2my4f2jsuvplK7WhzlCj+JsY2E=;
+        s=default; t=1541975241;
+        bh=0OhGz4qhAHAYNCMzQHEX8+88VazVbE9X0UUFJHK76gQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Wfp5rDQIFtP8rcLA+eufkU3U8/w/6Qhj16kKCXMtpuWL77bnNscnFuoI3Si/OkTVh
-         d4xu4C7GLtxDtYQauQCdysbfSpGq+t4IcWn8Jo8DgkgBrf2lDU0wui1hHMamxpi1T3
-         MuvPUQ/Q2gSsA6mB97SHycTCwEqIXVwF3RBTnSE0=
+        b=ElbIAPSjcIxoTsZz5WYnEFJuNQChvFNE+OoxqdecNi7KgJFGp8IyRO+3X4N989saM
+         FIx9gHVyLj3bd4Nz43I2hbc/Ne47emrhga59WPEPSETlKzQjJwCYyYOXvo7tSntJnN
+         zch2wCzoTrTZL9q+3w3LuHoIG0get/UDuQyVhrr8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xiaochen Shen <xiaochen.shen@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H Peter Anvin" <hpa@zytor.com>, "Tony Luck" <tony.luck@intel.com>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Steve McIntyre <steve.mcintyre@arm.com>,
+        Steve McIntyre <93sam@debian.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 083/361] x86/intel_rdt: Show missing resctrl mount options
-Date:   Sun, 11 Nov 2018 14:17:10 -0800
-Message-Id: <20181111221631.571894877@linuxfoundation.org>
+Subject: [PATCH 4.19 087/361] signal: Introduce COMPAT_SIGMINSTKSZ for use in compat_sys_sigaltstack
+Date:   Sun, 11 Nov 2018 14:17:14 -0800
+Message-Id: <20181111221632.025807083@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -65,55 +71,103 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xiaochen Shen <xiaochen.shen@intel.com>
+From: Will Deacon <will.deacon@arm.com>
 
-[ Upstream commit 2cc81c6992248ea37d0241bc325977bab310bc3b ]
+[ Upstream commit 22839869f21ab3850fbbac9b425ccc4c0023926f ]
 
-In resctrl filesystem, mount options exist to enable L3/L2 CDP and MBA
-Software Controller features if the platform supports them:
+The sigaltstack(2) system call fails with -ENOMEM if the new alternative
+signal stack is found to be smaller than SIGMINSTKSZ. On architectures
+such as arm64, where the native value for SIGMINSTKSZ is larger than
+the compat value, this can result in an unexpected error being reported
+to a compat task. See, for example:
 
- mount -t resctrl resctrl [-o cdp[,cdpl2][,mba_MBps]] /sys/fs/resctrl
+  https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=904385
 
-But currently only "cdp" option is displayed in /proc/mounts. "cdpl2" and
-"mba_MBps" options are not shown even when they are active.
+This patch fixes the problem by extending do_sigaltstack to take the
+minimum signal stack size as an additional parameter, allowing the
+native and compat system call entry code to pass in their respective
+values. COMPAT_SIGMINSTKSZ is just defined as SIGMINSTKSZ if it has not
+been defined by the architecture.
 
-Before:
- # mount -t resctrl resctrl -o cdp,mba_MBps /sys/fs/resctrl
- # grep resctrl /proc/mounts
- /sys/fs/resctrl /sys/fs/resctrl resctrl rw,relatime,cdp 0 0
-
-After:
- # mount -t resctrl resctrl -o cdp,mba_MBps /sys/fs/resctrl
- # grep resctrl /proc/mounts
- /sys/fs/resctrl /sys/fs/resctrl resctrl rw,relatime,cdp,mba_MBps 0 0
-
-Signed-off-by: Xiaochen Shen <xiaochen.shen@intel.com>
-Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: "H Peter Anvin" <hpa@zytor.com>
-Cc: "Tony Luck" <tony.luck@intel.com>
-Link: https://lkml.kernel.org/r/1536796118-60135-1-git-send-email-fenghua.yu@intel.com
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Reported-by: Steve McIntyre <steve.mcintyre@arm.com>
+Tested-by: Steve McIntyre <93sam@debian.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ include/linux/compat.h |    3 +++
+ kernel/signal.c        |   14 +++++++++-----
+ 2 files changed, 12 insertions(+), 5 deletions(-)
 
---- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -2805,6 +2805,13 @@ static int rdtgroup_show_options(struct
- {
- 	if (rdt_resources_all[RDT_RESOURCE_L3DATA].alloc_enabled)
- 		seq_puts(seq, ",cdp");
-+
-+	if (rdt_resources_all[RDT_RESOURCE_L2DATA].alloc_enabled)
-+		seq_puts(seq, ",cdpl2");
-+
-+	if (is_mba_sc(&rdt_resources_all[RDT_RESOURCE_MBA]))
-+		seq_puts(seq, ",mba_MBps");
-+
- 	return 0;
+--- a/include/linux/compat.h
++++ b/include/linux/compat.h
+@@ -103,6 +103,9 @@ typedef struct compat_sigaltstack {
+ 	compat_size_t			ss_size;
+ } compat_stack_t;
+ #endif
++#ifndef COMPAT_MINSIGSTKSZ
++#define COMPAT_MINSIGSTKSZ	MINSIGSTKSZ
++#endif
+ 
+ #define compat_jiffies_to_clock_t(x)	\
+ 		(((unsigned long)(x) * COMPAT_USER_HZ) / HZ)
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -3460,7 +3460,8 @@ int do_sigaction(int sig, struct k_sigac
  }
  
+ static int
+-do_sigaltstack (const stack_t *ss, stack_t *oss, unsigned long sp)
++do_sigaltstack (const stack_t *ss, stack_t *oss, unsigned long sp,
++		size_t min_ss_size)
+ {
+ 	struct task_struct *t = current;
+ 
+@@ -3490,7 +3491,7 @@ do_sigaltstack (const stack_t *ss, stack
+ 			ss_size = 0;
+ 			ss_sp = NULL;
+ 		} else {
+-			if (unlikely(ss_size < MINSIGSTKSZ))
++			if (unlikely(ss_size < min_ss_size))
+ 				return -ENOMEM;
+ 		}
+ 
+@@ -3508,7 +3509,8 @@ SYSCALL_DEFINE2(sigaltstack,const stack_
+ 	if (uss && copy_from_user(&new, uss, sizeof(stack_t)))
+ 		return -EFAULT;
+ 	err = do_sigaltstack(uss ? &new : NULL, uoss ? &old : NULL,
+-			      current_user_stack_pointer());
++			      current_user_stack_pointer(),
++			      MINSIGSTKSZ);
+ 	if (!err && uoss && copy_to_user(uoss, &old, sizeof(stack_t)))
+ 		err = -EFAULT;
+ 	return err;
+@@ -3519,7 +3521,8 @@ int restore_altstack(const stack_t __use
+ 	stack_t new;
+ 	if (copy_from_user(&new, uss, sizeof(stack_t)))
+ 		return -EFAULT;
+-	(void)do_sigaltstack(&new, NULL, current_user_stack_pointer());
++	(void)do_sigaltstack(&new, NULL, current_user_stack_pointer(),
++			     MINSIGSTKSZ);
+ 	/* squash all but EFAULT for now */
+ 	return 0;
+ }
+@@ -3553,7 +3556,8 @@ static int do_compat_sigaltstack(const c
+ 		uss.ss_size = uss32.ss_size;
+ 	}
+ 	ret = do_sigaltstack(uss_ptr ? &uss : NULL, &uoss,
+-			     compat_user_stack_pointer());
++			     compat_user_stack_pointer(),
++			     COMPAT_MINSIGSTKSZ);
+ 	if (ret >= 0 && uoss_ptr)  {
+ 		compat_stack_t old;
+ 		memset(&old, 0, sizeof(old));
 
 
