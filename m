@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 446F7C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2D27C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2AC921780
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EA232175B
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FOtEQWR9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2AC921780
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PbGo015s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EA232175B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388726AbeKLIU1 (ORCPT
+        id S2388819AbeKLIUc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:20:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43864 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:20:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388682AbeKLIUZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:20:25 -0500
+        id S2388749AbeKLIUa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:30 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A5EA21780;
-        Sun, 11 Nov 2018 22:30:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA82321582;
+        Sun, 11 Nov 2018 22:30:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975429;
-        bh=gyZA23JYNI5LSmpJkxsSYSrVVlRRbJzvAukXwGGz+Z8=;
+        s=default; t=1541975433;
+        bh=oll36W6yg08SNvAf9mvXNc5+p1HmpwB2KskM4ZSVdQk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FOtEQWR9dMDagObKybxUkicZ14Kjato44PXESxMQFKeMpcj69OCZpone/mgpFiOND
-         EDe2zE69sfyAd+ALb1PQkOGKXpuK+8kxvygeEHNhjexEzTHYcYzlRRr1RffLqxkdZ3
-         gfiF05odIgw+YFsbZKHx5l9Tb7/tG4TINs73j3dE=
+        b=PbGo015sLYpiZNYtdYw4Jx4xuOOvKvibeXOh9uSzO/B2ULlwuyeUR8eHbt7bM6WTE
+         0QP+JYMx38yGY+65+KAs22Tt+iPZdUVrFncjgAOLiG4aAfUg88vC2upA7H6lPJlYXQ
+         oL7BDIKlaNaHdHP1/E/UhJ7qw2lS6oArTHWVhlEs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yunsheng Lin <linyunsheng@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        syzbot+c61979f6f2cba5cb3c06@syzkaller.appspotmail.com,
+        Theodore Tso <tytso@mit.edu>, stable@kernel.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 123/350] net: hns3: Fix ping exited problem when doing lp selftest
-Date:   Sun, 11 Nov 2018 14:19:47 -0800
-Message-Id: <20181111221712.401651659@linuxfoundation.org>
+Subject: [PATCH 4.18 162/350] ext4: fix argument checking in EXT4_IOC_MOVE_EXT
+Date:   Sun, 11 Nov 2018 14:20:26 -0800
+Message-Id: <20181111221714.825189705@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -65,46 +64,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yunsheng Lin <linyunsheng@huawei.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-[ Upstream commit 3f8601f0f5716c4e63a9f215bbc581df42859d61 ]
+[ Upstream commit f18b2b83a727a3db208308057d2c7945f368e625 ]
 
-When ping is runnig and user executes the loopback selftest, the
-ping cmd will stop and exit.
+If the starting block number of either the source or destination file
+exceeds the EOF, EXT4_IOC_MOVE_EXT should return EINVAL.
 
-This patch fixes it by using the hns3_nic_net_open/stop to offline
-the netdev when doing loopback selftest.
+Also fixed the helper function mext_check_coverage() so that if the
+logical block is beyond EOF, make it return immediately, instead of
+looping until the block number wraps all the away around.  This takes
+long enough that if there are multiple threads trying to do pound on
+an the same inode doing non-sensical things, it can end up triggering
+the kernel's soft lockup detector.
 
-Fixes: c39c4d98dc65 ("net: hns3: Add mac loopback selftest support in hns3 driver")
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: syzbot+c61979f6f2cba5cb3c06@syzkaller.appspotmail.com
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/ext4/move_extent.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-@@ -310,7 +310,7 @@ static void hns3_self_test(struct net_de
- 			h->flags & HNAE3_SUPPORT_MAC_LOOPBACK;
- 
- 	if (if_running)
--		dev_close(ndev);
-+		ndev->netdev_ops->ndo_stop(ndev);
- 
- #if IS_ENABLED(CONFIG_VLAN_8021Q)
- 	/* Disable the vlan filter for selftest does not support it */
-@@ -348,7 +348,7 @@ static void hns3_self_test(struct net_de
- #endif
- 
- 	if (if_running)
--		dev_open(ndev);
-+		ndev->netdev_ops->ndo_open(ndev);
- }
- 
- static int hns3_get_sset_count(struct net_device *netdev, int stringset)
+--- a/fs/ext4/move_extent.c
++++ b/fs/ext4/move_extent.c
+@@ -518,9 +518,13 @@ mext_check_arguments(struct inode *orig_
+ 			orig_inode->i_ino, donor_inode->i_ino);
+ 		return -EINVAL;
+ 	}
+-	if (orig_eof < orig_start + *len - 1)
++	if (orig_eof <= orig_start)
++		*len = 0;
++	else if (orig_eof < orig_start + *len - 1)
+ 		*len = orig_eof - orig_start;
+-	if (donor_eof < donor_start + *len - 1)
++	if (donor_eof <= donor_start)
++		*len = 0;
++	else if (donor_eof < donor_start + *len - 1)
+ 		*len = donor_eof - donor_start;
+ 	if (!*len) {
+ 		ext4_debug("ext4 move extent: len should not be 0 "
 
 
