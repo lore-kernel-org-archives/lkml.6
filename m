@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4A1BC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68017C43610
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8135B21707
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2EDAE223CA
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AMMi7DHF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8135B21707
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="z7BSiSLc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EDAE223CA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404287AbeKLIXM (ORCPT
+        id S2404303AbeKLIXO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:23:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54620 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:23:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56312 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404230AbeKLIXK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:23:10 -0500
+        id S2404230AbeKLIXO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:23:14 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF1D9223D8;
-        Sun, 11 Nov 2018 22:33:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0500C208A3;
+        Sun, 11 Nov 2018 22:33:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975593;
-        bh=PniwJ99JRYGaZ0taWKok7ig7BOkLZkzDCxkkktr3A8M=;
+        s=default; t=1541975596;
+        bh=mKAhBxfqbgZ9LMeDkIjyaz05jHNPnXwhsGB6atKafoE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AMMi7DHF0l+BN5JfsJxefT6yJLdBZUUipskTNFEoMsTOVRfNQiVnh8e/XHlJ/pCim
-         d7EOdlwzUIchYwpKPJNumwshwr9ezGIHwrdqYBcm9ZhPgqh0jqX58xzbrljJzrkpF2
-         zIlx9ACGMnUxi9nez5iy6Ki5aYvZfTSAlFSDYd1c=
+        b=z7BSiSLc6OMP5tvBlLB/ms4uPPCFU28/iE+dHxrawNaf6+lnJ5ZBFR8xgkIxn1FB5
+         B+eEIWWPbBeLhLvjJfEUqWtPlKOD8Xc3e1dNFS1NlYMl6PLp3RuIck9zyPAs6ucSOH
+         uzVkFMilxQIciIfk+VauewN3ivuYZIpuuMeyn24g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin Steigerwald <martin@lichtvoll.de>,
-        Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 208/222] Btrfs: fix warning when replaying log after fsync of a tmpfile
-Date:   Sun, 11 Nov 2018 14:25:05 -0800
-Message-Id: <20181111221705.245056193@linuxfoundation.org>
+        stable@vger.kernel.org, "Maciej W. Rozycki" <macro@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>
+Subject: [PATCH 4.14 179/222] TC: Set DMA masks for devices
+Date:   Sun, 11 Nov 2018 14:24:36 -0800
+Message-Id: <20181111221703.059025445@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -63,177 +63,107 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Maciej W. Rozycki <macro@linux-mips.org>
 
-commit f2d72f42d5fa3bf33761d9e47201745f624fcff5 upstream.
+commit 3f2aa244ee1a0d17ed5b6c86564d2c1b24d1c96b upstream.
 
-When replaying a log which contains a tmpfile (which necessarily has a
-link count of 0) we end up calling inc_nlink(), at
-fs/btrfs/tree-log.c:replay_one_buffer(), which produces a warning like
-the following:
+Fix a TURBOchannel support regression with commit 205e1b7f51e4
+("dma-mapping: warn when there is no coherent_dma_mask") that caused
+coherent DMA allocations to produce a warning such as:
 
-  [195191.943673] WARNING: CPU: 0 PID: 6924 at fs/inode.c:342 inc_nlink+0x33/0x40
-  [195191.943723] CPU: 0 PID: 6924 Comm: mount Not tainted 4.19.0-rc6-btrfs-next-38 #1
-  [195191.943724] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.2-0-gf9626ccb91-prebuilt.qemu-project.org 04/01/2014
-  [195191.943726] RIP: 0010:inc_nlink+0x33/0x40
-  [195191.943728] RSP: 0018:ffffb96e425e3870 EFLAGS: 00010246
-  [195191.943730] RAX: 0000000000000000 RBX: ffff8c0d1e6af4f0 RCX: 0000000000000006
-  [195191.943731] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8c0d1e6af4f0
-  [195191.943731] RBP: 0000000000000097 R08: 0000000000000001 R09: 0000000000000000
-  [195191.943732] R10: 0000000000000000 R11: 0000000000000000 R12: ffffb96e425e3a60
-  [195191.943733] R13: ffff8c0d10cff0c8 R14: ffff8c0d0d515348 R15: ffff8c0d78a1b3f8
-  [195191.943735] FS:  00007f570ee24480(0000) GS:ffff8c0dfb200000(0000) knlGS:0000000000000000
-  [195191.943736] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  [195191.943737] CR2: 00005593286277c8 CR3: 00000000bb8f2006 CR4: 00000000003606f0
-  [195191.943739] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-  [195191.943740] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-  [195191.943741] Call Trace:
-  [195191.943778]  replay_one_buffer+0x797/0x7d0 [btrfs]
-  [195191.943802]  walk_up_log_tree+0x1c1/0x250 [btrfs]
-  [195191.943809]  ? rcu_read_lock_sched_held+0x3f/0x70
-  [195191.943825]  walk_log_tree+0xae/0x1d0 [btrfs]
-  [195191.943840]  btrfs_recover_log_trees+0x1d7/0x4d0 [btrfs]
-  [195191.943856]  ? replay_dir_deletes+0x280/0x280 [btrfs]
-  [195191.943870]  open_ctree+0x1c3b/0x22a0 [btrfs]
-  [195191.943887]  btrfs_mount_root+0x6b4/0x800 [btrfs]
-  [195191.943894]  ? rcu_read_lock_sched_held+0x3f/0x70
-  [195191.943899]  ? pcpu_alloc+0x55b/0x7c0
-  [195191.943906]  ? mount_fs+0x3b/0x140
-  [195191.943908]  mount_fs+0x3b/0x140
-  [195191.943912]  ? __init_waitqueue_head+0x36/0x50
-  [195191.943916]  vfs_kern_mount+0x62/0x160
-  [195191.943927]  btrfs_mount+0x134/0x890 [btrfs]
-  [195191.943936]  ? rcu_read_lock_sched_held+0x3f/0x70
-  [195191.943938]  ? pcpu_alloc+0x55b/0x7c0
-  [195191.943943]  ? mount_fs+0x3b/0x140
-  [195191.943952]  ? btrfs_remount+0x570/0x570 [btrfs]
-  [195191.943954]  mount_fs+0x3b/0x140
-  [195191.943956]  ? __init_waitqueue_head+0x36/0x50
-  [195191.943960]  vfs_kern_mount+0x62/0x160
-  [195191.943963]  do_mount+0x1f9/0xd40
-  [195191.943967]  ? memdup_user+0x4b/0x70
-  [195191.943971]  ksys_mount+0x7e/0xd0
-  [195191.943974]  __x64_sys_mount+0x21/0x30
-  [195191.943977]  do_syscall_64+0x60/0x1b0
-  [195191.943980]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-  [195191.943983] RIP: 0033:0x7f570e4e524a
-  [195191.943986] RSP: 002b:00007ffd83589478 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
-  [195191.943989] RAX: ffffffffffffffda RBX: 0000563f335b2060 RCX: 00007f570e4e524a
-  [195191.943990] RDX: 0000563f335b2240 RSI: 0000563f335b2280 RDI: 0000563f335b2260
-  [195191.943992] RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000020
-  [195191.943993] R10: 00000000c0ed0000 R11: 0000000000000206 R12: 0000563f335b2260
-  [195191.943994] R13: 0000563f335b2240 R14: 0000000000000000 R15: 00000000ffffffff
-  [195191.944002] irq event stamp: 8688
-  [195191.944010] hardirqs last  enabled at (8687): [<ffffffff9cb004c3>] console_unlock+0x503/0x640
-  [195191.944012] hardirqs last disabled at (8688): [<ffffffff9ca037dd>] trace_hardirqs_off_thunk+0x1a/0x1c
-  [195191.944018] softirqs last  enabled at (8638): [<ffffffff9cc0a5d1>] __set_page_dirty_nobuffers+0x101/0x150
-  [195191.944020] softirqs last disabled at (8634): [<ffffffff9cc26bbe>] wb_wakeup_delayed+0x2e/0x60
-  [195191.944022] ---[ end trace 5d6e873a9a0b811a ]---
+defxx: v1.11 2014/07/01  Lawrence V. Stefani and others
+tc1: DEFTA at MMIO addr = 0x1e900000, IRQ = 20, Hardware addr = 08-00-2b-a3-a3-29
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 1 at ./include/linux/dma-mapping.h:516 dfx_dev_register+0x670/0x678
+Modules linked in:
+CPU: 0 PID: 1 Comm: swapper Not tainted 4.19.0-rc6 #2
+Stack : ffffffff8009ffc0 fffffffffffffec0 0000000000000000 ffffffff80647650
+        0000000000000000 0000000000000000 ffffffff806f5f80 ffffffffffffffff
+        0000000000000000 0000000000000000 0000000000000001 ffffffff8065d4e8
+        98000000031b6300 ffffffff80563478 ffffffff805685b0 ffffffffffffffff
+        0000000000000000 ffffffff805d6720 0000000000000204 ffffffff80388df8
+        0000000000000000 0000000000000009 ffffffff8053efd0 ffffffff806657d0
+        0000000000000000 ffffffff803177f8 0000000000000000 ffffffff806d0000
+        9800000003078000 980000000307b9e0 000000001e900000 ffffffff80067940
+        0000000000000000 ffffffff805d6720 0000000000000204 ffffffff80388df8
+        ffffffff805176c0 ffffffff8004dc78 0000000000000000 ffffffff80067940
+        ...
+Call Trace:
+[<ffffffff8004dc78>] show_stack+0xa0/0x130
+[<ffffffff80067940>] __warn+0x128/0x170
+---[ end trace b1d1e094f67f3bb2 ]---
 
-This happens because the inode does not have the flag I_LINKABLE set,
-which is a runtime only flag, not meant to be persisted, set when the
-inode is created through open(2) if the flag O_EXCL is not passed to it.
-Except for the warning, there are no other consequences (like corruptions
-or metadata inconsistencies).
+This is because the TURBOchannel bus driver fails to set the coherent
+DMA mask for devices enumerated.
 
-Since it's pointless to replay a tmpfile as it would be deleted in a
-later phase of the log replay procedure (it has a link count of 0), fix
-this by not logging tmpfiles and if a tmpfile is found in a log (created
-by a kernel without this change), skip the replay of the inode.
+Set the regular and coherent DMA masks for TURBOchannel devices then,
+observing that the bus protocol supports a 34-bit (16GiB) DMA address
+space, by interpreting the value presented in the address cycle across
+the 32 `ad' lines as a 32-bit word rather than byte address[1].  The
+architectural size of the TURBOchannel DMA address space exceeds the
+maximum amount of RAM any actual TURBOchannel system in existence may
+have, hence both masks are the same.
 
-A test case for fstests follows soon.
+This removes the warning shown above.
 
-Fixes: 471d557afed1 ("Btrfs: fix loss of prealloc extents past i_size after fsync log replay")
-CC: stable@vger.kernel.org # 4.18+
-Reported-by: Martin Steigerwald <martin@lichtvoll.de>
-Link: https://lore.kernel.org/linux-btrfs/3666619.NTnn27ZJZE@merkaba/
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+References:
+
+[1] "TURBOchannel Hardware Specification", EK-369AA-OD-007B, Digital
+    Equipment Corporation, January 1993, Section "DMA", pp. 1-15 -- 1-17
+
+Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/20835/
+Fixes: 205e1b7f51e4 ("dma-mapping: warn when there is no coherent_dma_mask")
+Cc: stable@vger.kernel.org # 4.16+
+Cc: Ralf Baechle <ralf@linux-mips.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/tree-log.c |   42 ++++++++++++++++++++++++++++++++----------
- 1 file changed, 32 insertions(+), 10 deletions(-)
+ drivers/tc/tc.c    |    8 +++++++-
+ include/linux/tc.h |    1 +
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -273,6 +273,13 @@ struct walk_control {
- 	/* what stage of the replay code we're currently in */
- 	int stage;
+--- a/drivers/tc/tc.c
++++ b/drivers/tc/tc.c
+@@ -2,7 +2,7 @@
+  *	TURBOchannel bus services.
+  *
+  *	Copyright (c) Harald Koerfgen, 1998
+- *	Copyright (c) 2001, 2003, 2005, 2006  Maciej W. Rozycki
++ *	Copyright (c) 2001, 2003, 2005, 2006, 2018  Maciej W. Rozycki
+  *	Copyright (c) 2005  James Simmons
+  *
+  *	This file is subject to the terms and conditions of the GNU
+@@ -10,6 +10,7 @@
+  *	directory of this archive for more details.
+  */
+ #include <linux/compiler.h>
++#include <linux/dma-mapping.h>
+ #include <linux/errno.h>
+ #include <linux/init.h>
+ #include <linux/ioport.h>
+@@ -92,6 +93,11 @@ static void __init tc_bus_add_devices(st
+ 		tdev->dev.bus = &tc_bus_type;
+ 		tdev->slot = slot;
  
-+	/*
-+	 * Ignore any items from the inode currently being processed. Needs
-+	 * to be set every time we find a BTRFS_INODE_ITEM_KEY and we are in
-+	 * the LOG_WALK_REPLAY_INODES stage.
-+	 */
-+	bool ignore_cur_inode;
++		/* TURBOchannel has 34-bit DMA addressing (16GiB space). */
++		tdev->dma_mask = DMA_BIT_MASK(34);
++		tdev->dev.dma_mask = &tdev->dma_mask;
++		tdev->dev.coherent_dma_mask = DMA_BIT_MASK(34);
 +
- 	/* the root we are currently replaying */
- 	struct btrfs_root *replay_dest;
- 
-@@ -2363,6 +2370,20 @@ static int replay_one_buffer(struct btrf
- 
- 			inode_item = btrfs_item_ptr(eb, i,
- 					    struct btrfs_inode_item);
-+			/*
-+			 * If we have a tmpfile (O_TMPFILE) that got fsync'ed
-+			 * and never got linked before the fsync, skip it, as
-+			 * replaying it is pointless since it would be deleted
-+			 * later. We skip logging tmpfiles, but it's always
-+			 * possible we are replaying a log created with a kernel
-+			 * that used to log tmpfiles.
-+			 */
-+			if (btrfs_inode_nlink(eb, inode_item) == 0) {
-+				wc->ignore_cur_inode = true;
-+				continue;
-+			} else {
-+				wc->ignore_cur_inode = false;
-+			}
- 			ret = replay_xattr_deletes(wc->trans, root, log,
- 						   path, key.objectid);
- 			if (ret)
-@@ -2400,16 +2421,8 @@ static int replay_one_buffer(struct btrf
- 					     root->fs_info->sectorsize);
- 				ret = btrfs_drop_extents(wc->trans, root, inode,
- 							 from, (u64)-1, 1);
--				/*
--				 * If the nlink count is zero here, the iput
--				 * will free the inode.  We bump it to make
--				 * sure it doesn't get freed until the link
--				 * count fixup is done.
--				 */
- 				if (!ret) {
--					if (inode->i_nlink == 0)
--						inc_nlink(inode);
--					/* Update link count and nbytes. */
-+					/* Update the inode's nbytes. */
- 					ret = btrfs_update_inode(wc->trans,
- 								 root, inode);
- 				}
-@@ -2424,6 +2437,9 @@ static int replay_one_buffer(struct btrf
- 				break;
- 		}
- 
-+		if (wc->ignore_cur_inode)
-+			continue;
-+
- 		if (key.type == BTRFS_DIR_INDEX_KEY &&
- 		    wc->stage == LOG_WALK_REPLAY_DIR_INDEX) {
- 			ret = replay_one_dir_item(wc->trans, root, path,
-@@ -5644,7 +5660,13 @@ static int btrfs_log_inode_parent(struct
- 	if (ret)
- 		goto end_no_trans;
- 
--	if (btrfs_inode_in_log(inode, trans->transid)) {
-+	/*
-+	 * Skip already logged inodes or inodes corresponding to tmpfiles
-+	 * (since logging them is pointless, a link count of 0 means they
-+	 * will never be accessible).
-+	 */
-+	if (btrfs_inode_in_log(inode, trans->transid) ||
-+	    inode->vfs_inode.i_nlink == 0) {
- 		ret = BTRFS_NO_LOG_SYNC;
- 		goto end_no_trans;
- 	}
+ 		for (i = 0; i < 8; i++) {
+ 			tdev->firmware[i] =
+ 				readb(module + offset + TC_FIRM_VER + 4 * i);
+--- a/include/linux/tc.h
++++ b/include/linux/tc.h
+@@ -84,6 +84,7 @@ struct tc_dev {
+ 					   device. */
+ 	struct device	dev;		/* Generic device interface. */
+ 	struct resource	resource;	/* Address space of this device. */
++	u64		dma_mask;	/* DMA addressable range. */
+ 	char		vendor[9];
+ 	char		name[9];
+ 	char		firmware[9];
 
 
