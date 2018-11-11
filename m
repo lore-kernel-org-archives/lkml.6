@@ -7,44 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4810FC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:14:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51D21C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:14:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D8FD20817
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:14:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04AF820862
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:14:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="G7qrEUgP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D8FD20817
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TJJ7ddSz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04AF820862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389913AbeKLIVq (ORCPT
+        id S2389796AbeKLJEi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:21:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49742 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:04:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49368 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733215AbeKLIVo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:21:44 -0500
+        id S2389899AbeKLIVq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:46 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D95A5223DD;
-        Sun, 11 Nov 2018 22:31:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 291C6216FD;
+        Sun, 11 Nov 2018 22:31:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975506;
-        bh=ZpiOGYZ0BNV2Ea2iaTIDVlFo/bosrhOJAbJNprqjxQ4=;
+        s=default; t=1541975509;
+        bh=CGMCDznV8MwGpS4UFNmPu1JQu5Alh3To1bS4U5P5Wfo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G7qrEUgPWp5WleBoiLRHEpTBneHU0/1+UdB/lEtxIPy3Ru85MwjY1a5I5gf+V0Aao
-         eFsQKjhDEsaeYGyEFErdDjflaPTdpjeiPH4a+96hT7Qd/iYJcXxl/idDmKR7eJnqP+
-         JtZ8eR+21wo/YQpXF/2HQ9BRv1tl+nuXOUVOyD0g=
+        b=TJJ7ddSz0cOf4hLeyCHo3wFUrjF3PZxK47ivhJvi519muLoSo02/wu91BuTqm+et6
+         BUbOoqVDf1a6hLgexJFoMCG0WHBcwSrm5+edEQQZAyesbrJRWnxIwdfuvlhFs8/y1+
+         4ZOvKm0nA8B5CdmN+iASBa7JRJ28cTSukBcdKQmo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Mason <clm@fb.com>,
+        stable@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
+        Liu Bo <bo.liu@linux.alibaba.com>,
+        Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.18 328/350] Btrfs: dont clean dirty pages during buffered writes
-Date:   Sun, 11 Nov 2018 14:23:12 -0800
-Message-Id: <20181111221721.805342954@linuxfoundation.org>
+Subject: [PATCH 4.18 332/350] btrfs: make sure we create all new block groups
+Date:   Sun, 11 Nov 2018 14:23:16 -0800
+Message-Id: <20181111221721.982414772@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -62,101 +64,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chris Mason <clm@fb.com>
+From: Josef Bacik <josef@toxicpanda.com>
 
-commit 7703bdd8d23e6ef057af3253958a793ec6066b28 upstream.
+commit 545e3366db823dc3342ca9d7fea803f829c9062f upstream.
 
-During buffered writes, we follow this basic series of steps:
+Allocating new chunks modifies both the extent and chunk tree, which can
+trigger new chunk allocations.  So instead of doing list_for_each_safe,
+just do while (!list_empty()) so we make sure we don't exit with other
+pending bg's still on our list.
 
-again:
-	lock all the pages
-	wait for writeback on all the pages
-	Take the extent range lock
-	wait for ordered extents on the whole range
-	clean all the pages
-
-	if (copy_from_user_in_atomic() hits a fault) {
-		drop our locks
-		goto again;
-	}
-
-	dirty all the pages
-	release all the locks
-
-The extra waiting, cleaning and locking are there to make sure we don't
-modify pages in flight to the drive, after they've been crc'd.
-
-If some of the pages in the range were already dirty when the write
-began, and we need to goto again, we create a window where a dirty page
-has been cleaned and unlocked.  It may be reclaimed before we're able to
-lock it again, which means we'll read the old contents off the drive and
-lose any modifications that had been pending writeback.
-
-We don't actually need to clean the pages.  All of the other locking in
-place makes sure we don't start IO on the pages, so we can just leave
-them dirty for the duration of the write.
-
-Fixes: 73d59314e6ed (the original btrfs merge)
-CC: stable@vger.kernel.org # v4.4+
-Signed-off-by: Chris Mason <clm@fb.com>
+CC: stable@vger.kernel.org # 4.4+
+Reviewed-by: Omar Sandoval <osandov@fb.com>
+Reviewed-by: Liu Bo <bo.liu@linux.alibaba.com>
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 Reviewed-by: David Sterba <dsterba@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/file.c |   29 +++++++++++++++++++++++------
- 1 file changed, 23 insertions(+), 6 deletions(-)
+ fs/btrfs/extent-tree.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/fs/btrfs/file.c
-+++ b/fs/btrfs/file.c
-@@ -534,6 +534,14 @@ int btrfs_dirty_pages(struct inode *inod
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -10204,7 +10204,7 @@ error:
+ void btrfs_create_pending_block_groups(struct btrfs_trans_handle *trans)
+ {
+ 	struct btrfs_fs_info *fs_info = trans->fs_info;
+-	struct btrfs_block_group_cache *block_group, *tmp;
++	struct btrfs_block_group_cache *block_group;
+ 	struct btrfs_root *extent_root = fs_info->extent_root;
+ 	struct btrfs_block_group_item item;
+ 	struct btrfs_key key;
+@@ -10212,7 +10212,10 @@ void btrfs_create_pending_block_groups(s
+ 	bool can_flush_pending_bgs = trans->can_flush_pending_bgs;
  
- 	end_of_last_block = start_pos + num_bytes - 1;
+ 	trans->can_flush_pending_bgs = false;
+-	list_for_each_entry_safe(block_group, tmp, &trans->new_bgs, bg_list) {
++	while (!list_empty(&trans->new_bgs)) {
++		block_group = list_first_entry(&trans->new_bgs,
++					       struct btrfs_block_group_cache,
++					       bg_list);
+ 		if (ret)
+ 			goto next;
  
-+	/*
-+	 * The pages may have already been dirty, clear out old accounting so
-+	 * we can set things up properly
-+	 */
-+	clear_extent_bit(&BTRFS_I(inode)->io_tree, start_pos, end_of_last_block,
-+			 EXTENT_DIRTY | EXTENT_DELALLOC |
-+			 EXTENT_DO_ACCOUNTING | EXTENT_DEFRAG, 0, 0, cached);
-+
- 	if (!btrfs_is_free_space_inode(BTRFS_I(inode))) {
- 		if (start_pos >= isize &&
- 		    !(BTRFS_I(inode)->flags & BTRFS_INODE_PREALLOC)) {
-@@ -1504,18 +1512,27 @@ lock_and_cleanup_extent_if_need(struct b
- 		}
- 		if (ordered)
- 			btrfs_put_ordered_extent(ordered);
--		clear_extent_bit(&inode->io_tree, start_pos, last_pos,
--				 EXTENT_DIRTY | EXTENT_DELALLOC |
--				 EXTENT_DO_ACCOUNTING | EXTENT_DEFRAG,
--				 0, 0, cached_state);
-+
- 		*lockstart = start_pos;
- 		*lockend = last_pos;
- 		ret = 1;
- 	}
- 
-+	/*
-+	 * It's possible the pages are dirty right now, but we don't want
-+	 * to clean them yet because copy_from_user may catch a page fault
-+	 * and we might have to fall back to one page at a time.  If that
-+	 * happens, we'll unlock these pages and we'd have a window where
-+	 * reclaim could sneak in and drop the once-dirty page on the floor
-+	 * without writing it.
-+	 *
-+	 * We have the pages locked and the extent range locked, so there's
-+	 * no way someone can start IO on any dirty pages in this range.
-+	 *
-+	 * We'll call btrfs_dirty_pages() later on, and that will flip around
-+	 * delalloc bits and dirty the pages as required.
-+	 */
- 	for (i = 0; i < num_pages; i++) {
--		if (clear_page_dirty_for_io(pages[i]))
--			account_page_redirty(pages[i]);
- 		set_page_extent_mapped(pages[i]);
- 		WARN_ON(!PageLocked(pages[i]));
- 	}
 
 
