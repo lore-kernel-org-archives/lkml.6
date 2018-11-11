@@ -7,48 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AE80C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:09:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEAFFC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:09:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0806D20817
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:09:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82ADC20817
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:09:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VxZsFsT2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0806D20817
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QYpmWmsG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82ADC20817
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390238AbeKLIWD (ORCPT
+        id S2390320AbeKLI7e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:22:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50552 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:59:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51070 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390209AbeKLIWC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:02 -0500
+        id S2390228AbeKLIWD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:03 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C37BC216FD;
-        Sun, 11 Nov 2018 22:32:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 22515223C8;
+        Sun, 11 Nov 2018 22:32:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975524;
-        bh=ZdiSeLTcVp6LaBHuG0ag2bnhohYR6it1GsfyFte7lDc=;
+        s=default; t=1541975526;
+        bh=wqxXKzaUJi3VzdDqZLdolrZsfs5QOnqNukBxT1v2KTI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VxZsFsT28km1536P249TOa5i52Trcev/WDW23uItKbBd4HNLTRDkogIleVzCA+vsz
-         8glAqufcqkdAOGrunbGyEfW7H53flgOjghy6gYxloptqNC85YXn7UU15a6ju5g1QSN
-         DN+KS5v3EUk/s9hMkfQcxSw+3HygqL2EkNQGvrU8=
+        b=QYpmWmsGrYxwm/aohOxw4zruLqnSxqR6SjsT4T9TiUc0+wqBfxzFO/vj0Dhz0dTA+
+         wXHy18azvK4FWawk59UyoEDTif2+vwcdaYZov3GmjhjzxAmNq0+RIphQDUA4GY+nI0
+         KsAw12k8Im5gbHESa57iHkGdFcb/aEMKU0NX7qx4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, He Zhe <zhe.he@windriver.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        kstewart@linuxfoundation.org, pombredanne@nexb.com,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 021/222] x86/corruption-check: Fix panic in memory_corruption_check() when boot option without value is provided
-Date:   Sun, 11 Nov 2018 14:21:58 -0800
-Message-Id: <20181111221650.037086179@linuxfoundation.org>
+        stable@vger.kernel.org, Tang Junhui <tang.junhui.linux@gmail.com>,
+        Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.14 003/222] bcache: trace missed reading by cache_missed
+Date:   Sun, 11 Nov 2018 14:21:40 -0800
+Message-Id: <20181111221648.108037012@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -66,87 +62,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: He Zhe <zhe.he@windriver.com>
+From: Tang Junhui <tang.junhui.linux@gmail.com>
 
-commit ccde460b9ae5c2bd5e4742af0a7f623c2daad566 upstream.
+commit 502b291568fc7faf1ebdb2c2590f12851db0ff76 upstream.
 
-memory_corruption_check[{_period|_size}]()'s handlers do not check input
-argument before passing it to kstrtoul() or simple_strtoull(). The argument
-would be a NULL pointer if each of the kernel parameters, without its
-value, is set in command line and thus cause the following panic.
+Missed reading IOs are identified by s->cache_missed, not the
+s->cache_miss, so in trace_bcache_read() using trace_bcache_read
+to identify whether the IO is missed or not.
 
-PANIC: early exception 0xe3 IP 10:ffffffff73587c22 error 0 cr2 0x0
-[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.18-rc8+ #2
-[    0.000000] RIP: 0010:kstrtoull+0x2/0x10
-...
-[    0.000000] Call Trace
-[    0.000000]  ? set_corruption_check+0x21/0x49
-[    0.000000]  ? do_early_param+0x4d/0x82
-[    0.000000]  ? parse_args+0x212/0x330
-[    0.000000]  ? rdinit_setup+0x26/0x26
-[    0.000000]  ? parse_early_options+0x20/0x23
-[    0.000000]  ? rdinit_setup+0x26/0x26
-[    0.000000]  ? parse_early_param+0x2d/0x39
-[    0.000000]  ? setup_arch+0x2f7/0xbf4
-[    0.000000]  ? start_kernel+0x5e/0x4c2
-[    0.000000]  ? load_ucode_bsp+0x113/0x12f
-[    0.000000]  ? secondary_startup_64+0xa5/0xb0
-
-This patch adds checks to prevent the panic.
-
-Signed-off-by: He Zhe <zhe.he@windriver.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: gregkh@linuxfoundation.org
-Cc: kstewart@linuxfoundation.org
-Cc: pombredanne@nexb.com
+Signed-off-by: Tang Junhui <tang.junhui.linux@gmail.com>
 Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/1534260823-87917-1-git-send-email-zhe.he@windriver.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Coly Li <colyli@suse.de>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/check.c |   15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ drivers/md/bcache/request.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kernel/check.c
-+++ b/arch/x86/kernel/check.c
-@@ -31,6 +31,11 @@ static __init int set_corruption_check(c
- 	ssize_t ret;
- 	unsigned long val;
+--- a/drivers/md/bcache/request.c
++++ b/drivers/md/bcache/request.c
+@@ -792,7 +792,7 @@ static void cached_dev_read_done_bh(stru
  
-+	if (!arg) {
-+		pr_err("memory_corruption_check config string not provided\n");
-+		return -EINVAL;
-+	}
-+
- 	ret = kstrtoul(arg, 10, &val);
- 	if (ret)
- 		return ret;
-@@ -45,6 +50,11 @@ static __init int set_corruption_check_p
- 	ssize_t ret;
- 	unsigned long val;
+ 	bch_mark_cache_accounting(s->iop.c, s->d,
+ 				  !s->cache_missed, s->iop.bypass);
+-	trace_bcache_read(s->orig_bio, !s->cache_miss, s->iop.bypass);
++	trace_bcache_read(s->orig_bio, !s->cache_missed, s->iop.bypass);
  
-+	if (!arg) {
-+		pr_err("memory_corruption_check_period config string not provided\n");
-+		return -EINVAL;
-+	}
-+
- 	ret = kstrtoul(arg, 10, &val);
- 	if (ret)
- 		return ret;
-@@ -59,6 +69,11 @@ static __init int set_corruption_check_s
- 	char *end;
- 	unsigned size;
- 
-+	if (!arg) {
-+		pr_err("memory_corruption_check_size config string not provided\n");
-+		return -EINVAL;
-+	}
-+
- 	size = memparse(arg, &end);
- 
- 	if (*end == '\0')
+ 	if (s->iop.status)
+ 		continue_at_nobarrier(cl, cached_dev_read_error, bcache_wq);
 
 
