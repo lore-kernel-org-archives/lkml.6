@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB7D7C0044C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 965A3C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1AFA223C8
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C8322245E
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OUGPXI4n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1AFA223C8
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gXL9Hckn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C8322245E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404014AbeKLIW6 (ORCPT
+        id S2404029AbeKLIW7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:22:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54620 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:22:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54642 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403989AbeKLIW5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:57 -0500
+        id S2404008AbeKLIW6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:58 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8085C223CB;
-        Sun, 11 Nov 2018 22:33:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7B4902243E;
+        Sun, 11 Nov 2018 22:33:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975580;
-        bh=t85+HlUql18Uf9kVo9t7xmiKkBdo7wkP7OwgfsMTlDs=;
+        s=default; t=1541975581;
+        bh=Dbw/oRHaI+fCeZsmO6YXTswIlDt3QSJkVImqKbFZOVM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OUGPXI4n9Y4C2GH7v3LzEWmezkwNK9yEbk7SX1YEorGpBeuBbqAStrihi2nwI9CjH
-         Ri0Syf9EfzYn6/7+mb3N99Zv4GN0DKP01SBqgCEo1d1BAm3x0DUvr6fa1aaSTrgvHI
-         NOtPi9KjSFo0lW5U5LCRa3yyDwgt09d2KKfPlopw=
+        b=gXL9HcknYwZx3qwhFQR2ulNCWIa9mOggk4SVXtRs7cjEOlEcL/libtFl+nbT3e+Ym
+         h6q8CATYKmJEa9GOAyXps54J7/0ZGiSrfqI8VcdCV7wGX/m/6qJAm6LycbXGEpfUMs
+         Eti/TdGYY3+J8K9fkJ6RrepmQRZF9YzDJtpmK/2g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Benjamin Coddington <bcodding@redhat.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>
-Subject: [PATCH 4.14 170/222] nfs: Fix a missed page unlock after pg_doio()
-Date:   Sun, 11 Nov 2018 14:24:27 -0800
-Message-Id: <20181111221702.412408857@linuxfoundation.org>
+        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.14 173/222] dm ioctl: harden copy_params()s copy_from_user() from malicious users
+Date:   Sun, 11 Nov 2018 14:24:30 -0800
+Message-Id: <20181111221702.631595334@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -62,85 +62,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Benjamin Coddington <bcodding@redhat.com>
+From: Wenwen Wang <wang6495@umn.edu>
 
-commit fdbd1a2e4a71adcb1ae219fcfd964930d77a7f84 upstream.
+commit 800a7340ab7dd667edf95e74d8e4f23a17e87076 upstream.
 
-We must check pg_error and call error_cleanup after any call to pg_doio.
-Currently, we are skipping the unlock of a page if we encounter an error in
-nfs_pageio_complete() before handing off the work to the RPC layer.
+In copy_params(), the struct 'dm_ioctl' is first copied from the user
+space buffer 'user' to 'param_kernel' and the field 'data_size' is
+checked against 'minimum_data_size' (size of 'struct dm_ioctl' payload
+up to its 'data' member).  If the check fails, an error code EINVAL will be
+returned.  Otherwise, param_kernel->data_size is used to do a second copy,
+which copies from the same user-space buffer to 'dmi'.  After the second
+copy, only 'dmi->data_size' is checked against 'param_kernel->data_size'.
+Given that the buffer 'user' resides in the user space, a malicious
+user-space process can race to change the content in the buffer between
+the two copies.  This way, the attacker can inject inconsistent data
+into 'dmi' (versus previously validated 'param_kernel').
 
-Signed-off-by: Benjamin Coddington <bcodding@redhat.com>
+Fix redundant copying of 'minimum_data_size' from user-space buffer by
+using the first copy stored in 'param_kernel'.  Also remove the
+'data_size' check after the second copy because it is now unnecessary.
+
 Cc: stable@vger.kernel.org
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/nfs/pagelist.c |   40 +++++++++++++++++++++-------------------
- 1 file changed, 21 insertions(+), 19 deletions(-)
+ drivers/md/dm-ioctl.c |   18 ++++++------------
+ 1 file changed, 6 insertions(+), 12 deletions(-)
 
---- a/fs/nfs/pagelist.c
-+++ b/fs/nfs/pagelist.c
-@@ -1110,6 +1110,20 @@ static int nfs_pageio_add_request_mirror
- 	return ret;
+--- a/drivers/md/dm-ioctl.c
++++ b/drivers/md/dm-ioctl.c
+@@ -1719,8 +1719,7 @@ static void free_params(struct dm_ioctl
  }
  
-+static void nfs_pageio_error_cleanup(struct nfs_pageio_descriptor *desc)
-+{
-+	u32 midx;
-+	struct nfs_pgio_mirror *mirror;
-+
-+	if (!desc->pg_error)
-+		return;
-+
-+	for (midx = 0; midx < desc->pg_mirror_count; midx++) {
-+		mirror = &desc->pg_mirrors[midx];
-+		desc->pg_completion_ops->error_cleanup(&mirror->pg_list);
-+	}
-+}
-+
- int nfs_pageio_add_request(struct nfs_pageio_descriptor *desc,
- 			   struct nfs_page *req)
+ static int copy_params(struct dm_ioctl __user *user, struct dm_ioctl *param_kernel,
+-		       int ioctl_flags,
+-		       struct dm_ioctl **param, int *param_flags)
++		       int ioctl_flags, struct dm_ioctl **param, int *param_flags)
  {
-@@ -1160,25 +1174,11 @@ int nfs_pageio_add_request(struct nfs_pa
- 	return 1;
+ 	struct dm_ioctl *dmi;
+ 	int secure_data;
+@@ -1761,18 +1760,13 @@ static int copy_params(struct dm_ioctl _
  
- out_failed:
+ 	*param_flags |= DM_PARAMS_MALLOC;
+ 
+-	if (copy_from_user(dmi, user, param_kernel->data_size))
+-		goto bad;
++	/* Copy from param_kernel (which was already copied from user) */
++	memcpy(dmi, param_kernel, minimum_data_size);
+ 
+-data_copied:
 -	/*
--	 * We might have failed before sending any reqs over wire.
--	 * Clean up rest of the reqs in mirror pg_list.
+-	 * Abort if something changed the ioctl data while it was being copied.
 -	 */
--	if (desc->pg_error) {
--		struct nfs_pgio_mirror *mirror;
--		void (*func)(struct list_head *);
--
--		/* remember fatal errors */
--		if (nfs_error_is_fatal(desc->pg_error))
--			nfs_context_set_write_error(req->wb_context,
--						    desc->pg_error);
--
--		func = desc->pg_completion_ops->error_cleanup;
--		for (midx = 0; midx < desc->pg_mirror_count; midx++) {
--			mirror = &desc->pg_mirrors[midx];
--			func(&mirror->pg_list);
--		}
+-	if (dmi->data_size != param_kernel->data_size) {
+-		DMERR("rejecting ioctl: data size modified while processing parameters");
++	if (copy_from_user(&dmi->data, (char __user *)user + minimum_data_size,
++			   param_kernel->data_size - minimum_data_size))
+ 		goto bad;
 -	}
-+	/* remember fatal errors */
-+	if (nfs_error_is_fatal(desc->pg_error))
-+		nfs_context_set_write_error(req->wb_context,
-+						desc->pg_error);
-+	nfs_pageio_error_cleanup(desc);
- 	return 0;
- }
- 
-@@ -1250,6 +1250,8 @@ void nfs_pageio_complete(struct nfs_page
- 	for (midx = 0; midx < desc->pg_mirror_count; midx++)
- 		nfs_pageio_complete_mirror(desc, midx);
- 
-+	if (desc->pg_error < 0)
-+		nfs_pageio_error_cleanup(desc);
- 	if (desc->pg_ops->pg_cleanup)
- 		desc->pg_ops->pg_cleanup(desc);
- 	nfs_pageio_cleanup_mirroring(desc);
+-
++data_copied:
+ 	/* Wipe the user buffer so we do not return it to userspace */
+ 	if (secure_data && clear_user(user, param_kernel->data_size))
+ 		goto bad;
 
 
