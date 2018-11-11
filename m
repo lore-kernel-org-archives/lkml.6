@@ -4,48 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37FFDC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:37:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5273CC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:38:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4CBA214E0
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:37:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DB9D21527
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:38:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aUxj5bFN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4CBA214E0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ohuRYmJj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DB9D21527
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391426AbeKLI1q (ORCPT
+        id S2405111AbeKLIZS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:27:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33450 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:25:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405067AbeKLIZU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:25:20 -0500
+        id S2405084AbeKLIZS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:25:18 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 836B0223C8;
-        Sun, 11 Nov 2018 22:35:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 21C5D2241B;
+        Sun, 11 Nov 2018 22:35:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975721;
-        bh=AMK15Vm1+PhGs1BSTqcHgsTj1pjTvrsBUkZ0fvSzXy8=;
+        s=default; t=1541975720;
+        bh=bWfmoNjiDLnKIkt5fOmOICCe1KPPsj2+QaBySfhT7IM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aUxj5bFNMh3rZ6eSMlVFTrsaR/hGHUuKrBYesiMF6AoJJj4AJrC6hLwR9A2k4Knnc
-         nyqLWmrfj0PdVL3PImoROPDnS917BwMxlsAMK85v0im3krqCf3AOQXxrJPlMf6Hjpz
-         sjE8X4ByMEhLEGdCKIGJPZXBVjk9+Hf/F6Df1Wb8=
+        b=ohuRYmJjj7JR+IE3f6AXV8o45ca6Vl7nCgZkkFCUWVgHStJJMO/UmJa/NaWNQf2Xc
+         siA5IExmtVWAf3RMQXVZsGikkpbXK0GF+BymKRIf6CEuyExUxyKAI+M3OmjhoQqUFg
+         B1kbk8ndz0fqmv2crhbVmxc2gVuOQctBqTpeoE9I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Anatoly Trosinenko <anatoly.trosinenko@gmail.com>,
-        Nicolas Pitre <nico@linaro.org>
-Subject: [PATCH 4.9 127/141] Cramfs: fix abad comparison when wrap-arounds occur
-Date:   Sun, 11 Nov 2018 14:26:26 -0800
-Message-Id: <20181111221645.289256260@linuxfoundation.org>
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.9 124/141] media: em28xx: make v4l2-compliance happier by starting sequence on zero
+Date:   Sun, 11 Nov 2018 14:26:23 -0800
+Message-Id: <20181111221644.956534368@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
 References: <20181111221627.853046496@linuxfoundation.org>
@@ -63,34 +61,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-commit 672ca9dd13f1aca0c17516f76fc5b0e8344b3e46 upstream.
+commit afeaade90db4c5dab93f326d9582be1d5954a198 upstream.
 
-It is possible for corrupted filesystem images to produce very large
-block offsets that may wrap when a length is added, and wrongly pass
-the buffer size test.
+The v4l2-compliance tool complains if a video doesn't start
+with a zero sequence number.
 
-Reported-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
-Signed-off-by: Nicolas Pitre <nico@linaro.org>
+While this shouldn't cause any real problem for apps, let's
+make it happier, in order to better check the v4l2-compliance
+differences before and after patchsets.
+
+This is actually an old issue. It is there since at least its
+videobuf2 conversion, e. g. changeset 3829fadc461 ("[media]
+em28xx: convert to videobuf2"), if VB1 wouldn't suffer from
+the same issue.
+
 Cc: stable@vger.kernel.org
+Fixes: d3829fadc461 ("[media] em28xx: convert to videobuf2")
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cramfs/inode.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/media/usb/em28xx/em28xx-video.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/fs/cramfs/inode.c
-+++ b/fs/cramfs/inode.c
-@@ -186,7 +186,8 @@ static void *cramfs_read(struct super_bl
- 			continue;
- 		blk_offset = (blocknr - buffer_blocknr[i]) << PAGE_SHIFT;
- 		blk_offset += offset;
--		if (blk_offset + len > BUFFER_SIZE)
-+		if (blk_offset > BUFFER_SIZE ||
-+		    blk_offset + len > BUFFER_SIZE)
- 			continue;
- 		return read_buffers[i] + blk_offset;
- 	}
+--- a/drivers/media/usb/em28xx/em28xx-video.c
++++ b/drivers/media/usb/em28xx/em28xx-video.c
+@@ -1290,6 +1290,8 @@ static void em28xx_ctrl_notify(struct v4
+ {
+ 	struct em28xx *dev = priv;
+ 
++	dev->v4l2->field_count = 0;
++
+ 	/*
+ 	 * In the case of non-AC97 volume controls, we still need
+ 	 * to do some setups at em28xx, in order to mute/unmute
 
 
