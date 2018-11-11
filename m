@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59578C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:47:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47254C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:47:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C555214DB
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:47:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C555214DB
+	by mail.kernel.org (Postfix) with ESMTP id 154FB20872
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:47:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 154FB20872
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729767AbeKLFgr (ORCPT
+        id S1727206AbeKLFdr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 00:36:47 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55280 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727143AbeKLFdr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 00:33:47 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wABJi9C3121680
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:44:20 -0500
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2npdcu1j01-1
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44650 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726344AbeKLFdp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 00:33:45 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wABJi8Y4036559
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:44:19 -0500
+Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2npdbnsp5t-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:44:20 -0500
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:44:18 -0500
 Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Sun, 11 Nov 2018 19:44:19 -0000
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Sun, 11 Nov 2018 19:44:17 -0000
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
         Sun, 11 Nov 2018 19:44:13 -0000
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wABJiCWv36569178
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wABJiBVK36044844
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
         Sun, 11 Nov 2018 19:44:12 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8FEE0B205F;
-        Sun, 11 Nov 2018 19:44:12 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id DCF7EB2071;
+        Sun, 11 Nov 2018 19:44:11 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6264CB206E;
-        Sun, 11 Nov 2018 19:44:12 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id BAA3BB205F;
+        Sun, 11 Nov 2018 19:44:11 +0000 (GMT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.85.207.24])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Sun, 11 Nov 2018 19:44:12 +0000 (GMT)
+        Sun, 11 Nov 2018 19:44:11 +0000 (GMT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 3A27516C5DB4; Sun, 11 Nov 2018 11:44:13 -0800 (PST)
+        id 8FBB116C5D7F; Sun, 11 Nov 2018 11:44:12 -0800 (PST)
 From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -61,129 +61,62 @@ Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Roopa Prabhu <roopa@cumulusnetworks.com>,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
+        Robert Richter <rric@kernel.org>,
         "David S. Miller" <davem@davemloft.net>,
-        bridge@lists.linux-foundation.org, netdev@vger.kernel.org
-Subject: [PATCH tip/core/rcu 33/41] net/bridge: Replace call_rcu_bh() and rcu_barrier_bh()
-Date:   Sun, 11 Nov 2018 11:44:02 -0800
+        oprofile-list@lists.sf.net, sparclinux@vger.kernel.org
+Subject: [PATCH tip/core/rcu 06/41] sparc/oprofile: Convert timer_stop() to use synchronize_rcu()
+Date:   Sun, 11 Nov 2018 11:43:35 -0800
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181111194104.GA4787@linux.ibm.com>
 References: <20181111194104.GA4787@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18111119-2213-0000-0000-00000315A7E8
+x-cbid: 18111119-0068-0000-0000-0000035E482B
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00010028; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01116019; UDB=6.00578733; IPR=6.00896120;
- MB=3.00024114; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-11 19:44:18
+ PH=3.00000004; SC=3.00000270; SDB=6.01116019; UDB=6.00578732; IPR=6.00896120;
+ MB=3.00024114; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-11 19:44:17
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111119-2214-0000-0000-00005C386BB9
-Message-Id: <20181111194410.6368-33-paulmck@linux.ibm.com>
+x-cbparentid: 18111119-0069-0000-0000-000046644C66
+Message-Id: <20181111194410.6368-6-paulmck@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-11_13:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=859 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1807170000 definitions=main-1811110188
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that call_rcu()'s callback is not invoked until after all bh-disable
-regions of code have completed (in addition to explicitly marked
-RCU read-side critical sections), call_rcu() can be used in place
-of call_rcu_bh().  Similarly, rcu_barrier() can be used in place of
-rcu_barrier_bh().  This commit therefore makes these changes.
+Now that synchronize_rcu() waits for preempt-disable regions of code
+in addition to explicitly marked RCU read-side critical sections,
+synchronize_rcu() can be used in place of synchronize_sched().  This
+commit therefore makes that change.
 
 Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
-Cc: Roopa Prabhu <roopa@cumulusnetworks.com>
-Cc: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Cc: Robert Richter <rric@kernel.org>
 Cc: "David S. Miller" <davem@davemloft.net>
-Cc: <bridge@lists.linux-foundation.org>
-Cc: <netdev@vger.kernel.org>
+Cc: <oprofile-list@lists.sf.net>
+Cc: <sparclinux@vger.kernel.org>
 ---
- net/bridge/br_mdb.c       |  2 +-
- net/bridge/br_multicast.c | 14 +++++++-------
- 2 files changed, 8 insertions(+), 8 deletions(-)
+ arch/sparc/oprofile/init.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/bridge/br_mdb.c b/net/bridge/br_mdb.c
-index a7ea2d431714..596ec6e7df11 100644
---- a/net/bridge/br_mdb.c
-+++ b/net/bridge/br_mdb.c
-@@ -728,7 +728,7 @@ static int __br_mdb_del(struct net_bridge *br, struct br_mdb_entry *entry)
- 		rcu_assign_pointer(*pp, p->next);
- 		hlist_del_init(&p->mglist);
- 		del_timer(&p->timer);
--		call_rcu_bh(&p->rcu, br_multicast_free_pg);
-+		call_rcu(&p->rcu, br_multicast_free_pg);
- 		err = 0;
+diff --git a/arch/sparc/oprofile/init.c b/arch/sparc/oprofile/init.c
+index f9024bccff16..43730c9b1c86 100644
+--- a/arch/sparc/oprofile/init.c
++++ b/arch/sparc/oprofile/init.c
+@@ -53,7 +53,7 @@ static void timer_stop(void)
+ {
+ 	nmi_adjust_hz(1);
+ 	unregister_die_notifier(&profile_timer_exceptions_nb);
+-	synchronize_sched();  /* Allow already-started NMIs to complete. */
++	synchronize_rcu();  /* Allow already-started NMIs to complete. */
+ }
  
- 		if (!mp->ports && !mp->host_joined &&
-diff --git a/net/bridge/br_multicast.c b/net/bridge/br_multicast.c
-index 6bac0d6b7b94..0255223f2001 100644
---- a/net/bridge/br_multicast.c
-+++ b/net/bridge/br_multicast.c
-@@ -260,7 +260,7 @@ static void br_multicast_group_expired(struct timer_list *t)
- 	hlist_del_rcu(&mp->hlist[mdb->ver]);
- 	mdb->size--;
- 
--	call_rcu_bh(&mp->rcu, br_multicast_free_group);
-+	call_rcu(&mp->rcu, br_multicast_free_group);
- 
- out:
- 	spin_unlock(&br->multicast_lock);
-@@ -291,7 +291,7 @@ static void br_multicast_del_pg(struct net_bridge *br,
- 		del_timer(&p->timer);
- 		br_mdb_notify(br->dev, p->port, &pg->addr, RTM_DELMDB,
- 			      p->flags);
--		call_rcu_bh(&p->rcu, br_multicast_free_pg);
-+		call_rcu(&p->rcu, br_multicast_free_pg);
- 
- 		if (!mp->ports && !mp->host_joined &&
- 		    netif_running(br->dev))
-@@ -358,7 +358,7 @@ static int br_mdb_rehash(struct net_bridge_mdb_htable __rcu **mdbp, int max,
- 	}
- 
- 	br_mdb_rehash_seq++;
--	call_rcu_bh(&mdb->rcu, br_mdb_free);
-+	call_rcu(&mdb->rcu, br_mdb_free);
- 
- out:
- 	rcu_assign_pointer(*mdbp, mdb);
-@@ -1629,7 +1629,7 @@ br_multicast_leave_group(struct net_bridge *br,
- 			rcu_assign_pointer(*pp, p->next);
- 			hlist_del_init(&p->mglist);
- 			del_timer(&p->timer);
--			call_rcu_bh(&p->rcu, br_multicast_free_pg);
-+			call_rcu(&p->rcu, br_multicast_free_pg);
- 			br_mdb_notify(br->dev, port, group, RTM_DELMDB,
- 				      p->flags);
- 
-@@ -2051,19 +2051,19 @@ void br_multicast_dev_del(struct net_bridge *br)
- 		hlist_for_each_entry_safe(mp, n, &mdb->mhash[i],
- 					  hlist[ver]) {
- 			del_timer(&mp->timer);
--			call_rcu_bh(&mp->rcu, br_multicast_free_group);
-+			call_rcu(&mp->rcu, br_multicast_free_group);
- 		}
- 	}
- 
- 	if (mdb->old) {
- 		spin_unlock_bh(&br->multicast_lock);
--		rcu_barrier_bh();
-+		rcu_barrier();
- 		spin_lock_bh(&br->multicast_lock);
- 		WARN_ON(mdb->old);
- 	}
- 
- 	mdb->old = mdb;
--	call_rcu_bh(&mdb->rcu, br_mdb_free);
-+	call_rcu(&mdb->rcu, br_mdb_free);
- 
- out:
- 	spin_unlock_bh(&br->multicast_lock);
+ static int op_nmi_timer_init(struct oprofile_operations *ops)
 -- 
 2.17.1
 
