@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C58E6C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:21:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98D5CC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:21:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 879D020869
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:21:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F4FE20817
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:21:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XA39mrdg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 879D020869
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SfaTCe3l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F4FE20817
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389751AbeKLJLf (ORCPT
+        id S2389740AbeKLJLo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:11:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47890 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:11:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389441AbeKLIVO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:21:14 -0500
+        id S2387734AbeKLIVM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:12 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 729AD2154B;
-        Sun, 11 Nov 2018 22:31:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E5E6021582;
+        Sun, 11 Nov 2018 22:31:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975476;
-        bh=NQ/7Yx61gej25bFU3J4iukZNm8fxgwrW+I6VR9X8GKE=;
+        bh=lEQ5dsggRPNhLsjZcYyrpoA3fLO70nHjpHEkvmSxDDY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XA39mrdgICPCW4hxDRVdYdtuTuLpdHoQ29uGFlWGx9eTDmNAI0vUE21mZYotbIQkE
-         JCsg6GJtY/2qruHJPZJpl3KpaViuJiCeWc/Lqyi5BOIbP899WWq32bRggkH7QEtmem
-         6N6MooMVvwZun85GIwEJkNeNch1UrhYT+RsKdAwo=
+        b=SfaTCe3l2EIIHRAyPqsSDHRL0q1Lqe8lCvuU9deNJwu5Tlflz698ozYyUkAja7h/k
+         VrsiaYLKZ8616cwH14PDa7bPkXvI8iwCpFV3JiIlZDlVV/3MrAwSheLJ6A+pWQupaW
+         fbSqdsVsre1mJZ+XqZRiWDwdOPQPUX1gKBHv2yLg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mathias Duckeck <m.duckeck@kunbus.de>,
-        Akshay Bhat <akshay.bhat@timesys.com>,
-        Casey Fitzpatrick <casey.fitzpatrick@timesys.com>
-Subject: [PATCH 4.18 260/350] genirq: Fix race on spurious interrupt detection
-Date:   Sun, 11 Nov 2018 14:22:04 -0800
-Message-Id: <20181111221718.890768988@linuxfoundation.org>
+        stable@vger.kernel.org, rostedt@goodmis.org,
+        He Zhe <zhe.he@windriver.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Petr Mladek <pmladek@suse.com>
+Subject: [PATCH 4.18 259/350] printk: Fix panic caused by passing log_buf_len to command line
+Date:   Sun, 11 Nov 2018 14:22:03 -0800
+Message-Id: <20181111221718.850590318@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -65,96 +64,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lukas Wunner <lukas@wunner.de>
+From: He Zhe <zhe.he@windriver.com>
 
-commit 746a923b863a1065ef77324e1e43f19b1a3eab5c upstream.
+commit 277fcdb2cfee38ccdbe07e705dbd4896ba0c9930 upstream.
 
-Commit 1e77d0a1ed74 ("genirq: Sanitize spurious interrupt detection of
-threaded irqs") made detection of spurious interrupts work for threaded
-handlers by:
+log_buf_len_setup does not check input argument before passing it to
+simple_strtoull. The argument would be a NULL pointer if "log_buf_len",
+without its value, is set in command line and thus causes the following
+panic.
 
-a) incrementing a counter every time the thread returns IRQ_HANDLED, and
-b) checking whether that counter has increased every time the thread is
-   woken.
+PANIC: early exception 0xe3 IP 10:ffffffffaaeacd0d error 0 cr2 0x0
+[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc4-yocto-standard+ #1
+[    0.000000] RIP: 0010:_parse_integer_fixup_radix+0xd/0x70
+...
+[    0.000000] Call Trace:
+[    0.000000]  simple_strtoull+0x29/0x70
+[    0.000000]  memparse+0x26/0x90
+[    0.000000]  log_buf_len_setup+0x17/0x22
+[    0.000000]  do_early_param+0x57/0x8e
+[    0.000000]  parse_args+0x208/0x320
+[    0.000000]  ? rdinit_setup+0x30/0x30
+[    0.000000]  parse_early_options+0x29/0x2d
+[    0.000000]  ? rdinit_setup+0x30/0x30
+[    0.000000]  parse_early_param+0x36/0x4d
+[    0.000000]  setup_arch+0x336/0x99e
+[    0.000000]  start_kernel+0x6f/0x4ee
+[    0.000000]  x86_64_start_reservations+0x24/0x26
+[    0.000000]  x86_64_start_kernel+0x6f/0x72
+[    0.000000]  secondary_startup_64+0xa4/0xb0
 
-However for oneshot interrupts, the commit unmasks the interrupt before
-incrementing the counter.  If another interrupt occurs right after
-unmasking but before the counter is incremented, that interrupt is
-incorrectly considered spurious:
+This patch adds a check to prevent the panic.
 
-time
- |  irq_thread()
- |    irq_thread_fn()
- |      action->thread_fn()
- |      irq_finalize_oneshot()
- |        unmask_threaded_irq()            /* interrupt is unmasked */
- |
- |                  /* interrupt fires, incorrectly deemed spurious */
- |
- |    atomic_inc(&desc->threads_handled); /* counter is incremented */
- v
-
-This is observed with a hi3110 CAN controller receiving data at high volume
-(from a separate machine sending with "cangen -g 0 -i -x"): The controller
-signals a huge number of interrupts (hundreds of millions per day) and
-every second there are about a dozen which are deemed spurious.
-
-In theory with high CPU load and the presence of higher priority tasks, the
-number of incorrectly detected spurious interrupts might increase beyond
-the 99,900 threshold and cause disablement of the interrupt.
-
-In practice it just increments the spurious interrupt count. But that can
-cause people to waste time investigating it over and over.
-
-Fix it by moving the accounting before the invocation of
-irq_finalize_oneshot().
-
-[ tglx: Folded change log update ]
-
-Fixes: 1e77d0a1ed74 ("genirq: Sanitize spurious interrupt detection of threaded irqs")
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Mathias Duckeck <m.duckeck@kunbus.de>
-Cc: Akshay Bhat <akshay.bhat@timesys.com>
-Cc: Casey Fitzpatrick <casey.fitzpatrick@timesys.com>
-Cc: stable@vger.kernel.org # v3.16+
-Link: https://lkml.kernel.org/r/1dfd8bbd16163940648045495e3e9698e63b50ad.1539867047.git.lukas@wunner.de
+Link: http://lkml.kernel.org/r/1538239553-81805-1-git-send-email-zhe.he@windriver.com
+Cc: stable@vger.kernel.org
+Cc: rostedt@goodmis.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: He Zhe <zhe.he@windriver.com>
+Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Signed-off-by: Petr Mladek <pmladek@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/irq/manage.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ kernel/printk/printk.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -920,6 +920,9 @@ irq_forced_thread_fn(struct irq_desc *de
- 
- 	local_bh_disable();
- 	ret = action->thread_fn(action->irq, action->dev_id);
-+	if (ret == IRQ_HANDLED)
-+		atomic_inc(&desc->threads_handled);
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -1047,7 +1047,12 @@ static void __init log_buf_len_update(un
+ /* save requested log_buf_len since it's too early to process it */
+ static int __init log_buf_len_setup(char *str)
+ {
+-	unsigned size = memparse(str, &str);
++	unsigned int size;
 +
- 	irq_finalize_oneshot(desc, action);
- 	local_bh_enable();
- 	return ret;
-@@ -936,6 +939,9 @@ static irqreturn_t irq_thread_fn(struct
- 	irqreturn_t ret;
- 
- 	ret = action->thread_fn(action->irq, action->dev_id);
-+	if (ret == IRQ_HANDLED)
-+		atomic_inc(&desc->threads_handled);
++	if (!str)
++		return -EINVAL;
 +
- 	irq_finalize_oneshot(desc, action);
- 	return ret;
- }
-@@ -1013,8 +1019,6 @@ static int irq_thread(void *data)
- 		irq_thread_check_affinity(desc, action);
++	size = memparse(str, &str);
  
- 		action_ret = handler_fn(desc, action);
--		if (action_ret == IRQ_HANDLED)
--			atomic_inc(&desc->threads_handled);
- 		if (action_ret == IRQ_WAKE_THREAD)
- 			irq_wake_secondary(desc, action);
+ 	log_buf_len_update(size);
  
 
 
