@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B925C0044C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:15:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB4E2C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:16:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5281D20817
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:15:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83DE720817
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:16:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HUe79TIV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5281D20817
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0v+AjgqZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83DE720817
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389965AbeKLJGD (ORCPT
+        id S2389919AbeKLJGD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 12 Nov 2018 04:06:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49358 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:49368 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389805AbeKLIVj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2389795AbeKLIVj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:21:39 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 85C9421508;
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F7FE224E0;
         Sun, 11 Nov 2018 22:31:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975502;
-        bh=YMKIStaQhy9Gn0ZMng426efkQakJREPzwKy+6xa3Bes=;
+        bh=EI6jJY2Ht2oGvQzh2VxmkgBCNzaNeQ2lTsLmFAnR4O0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HUe79TIV3rWJIBzN7LcpFk4j3LmZvc/24GE1DDVtsozd08dddy/mN0WFwSJiWpw5S
-         AieZjiU1bXWm69Z4MfMUVyDC+B+1NStDpyxegggE2XZ8AyFalLf8jnRVzWYHnfoocN
-         RR95MJJA5FMXAQyQZvQZsAvZReNTmpqzs7ME+m+E=
+        b=0v+AjgqZnGWIdkuJW1iKn+3Sca49hqpEh7XKIgOIqlK9PEjz2K7Bc7sTquO2NqYE9
+         luQ6zxHbnaVNqo4/8XT/OTNE7nHqQA+OiYoldHOXEiXWoU4VOIiaI7MpHwca6lHBD/
+         ul2mPMQp7cx51O5Ohkkq2vUghXjt+4yedbVRskN0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christophe Lombard <clombard@linux.vnet.ibm.com>,
-        Frederic Barrat <fbarrat@linux.vnet.ibm.com>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.18 281/350] ocxl: Fix access to the AFU Descriptor Data
-Date:   Sun, 11 Nov 2018 14:22:25 -0800
-Message-Id: <20181111221719.805278026@linuxfoundation.org>
+        stable@vger.kernel.org, NeilBrown <neilb@suse.de>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Johan Hovold <johan@kernel.org>, Rob Herring <robh@kernel.org>
+Subject: [PATCH 4.18 280/350] power: supply: twl4030-charger: fix OF sibling-node lookup
+Date:   Sun, 11 Nov 2018 14:22:24 -0800
+Message-Id: <20181111221719.758385059@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -65,50 +64,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christophe Lombard <clombard@linux.vnet.ibm.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 6f8e45f7eb1bee5efdbe4a9cfe4a45627403c5fb upstream.
+commit 9844fb2e351311210e6660a9a1c62d17424a6145 upstream.
 
-The AFU Information DVSEC capability is a means to extract common,
-general information about all of the AFUs associated with a Function
-independent of the specific functionality that each AFU provides.
-Write in the AFU Index field allows to access to the descriptor data
-for each AFU.
+Use the new of_get_compatible_child() helper to lookup the usb sibling
+node instead of using of_find_compatible_node(), which searches the
+entire tree from a given start node and thus can return an unrelated
+(non-sibling) node.
 
-With the current code, we are not able to access to these specific data
-when the index >= 1 because we are writing to the wrong location.
-All requests to the data of each AFU are pointing to those of the AFU 0,
-which could have impacts when using a card with more than one AFU per
-function.
+This also addresses a potential use-after-free (e.g. after probe
+deferral) as the tree-wide helper drops a reference to its first
+argument (i.e. the parent device node).
 
-This patch fixes the access to the AFU Descriptor Data indexed by the
-AFU Info Index field.
+While at it, also fix the related phy-node reference leak.
 
-Fixes: 5ef3166e8a32 ("ocxl: Driver code for 'generic' opencapi devices")
-Cc: stable <stable@vger.kernel.org>     # 4.16
-Signed-off-by: Christophe Lombard <clombard@linux.vnet.ibm.com>
+Fixes: f5e4edb8c888 ("power: twl4030_charger: find associated phy by more reliable means.")
+Cc: stable <stable@vger.kernel.org>     # 4.2
+Cc: NeilBrown <neilb@suse.de>
+Cc: Felipe Balbi <felipe.balbi@linux.intel.com>
+Cc: Sebastian Reichel <sre@kernel.org>
+Reviewed-by: Sebastian Reichel <sre@kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Acked-by: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
-Acked-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-
 ---
- drivers/misc/ocxl/config.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/power/supply/twl4030_charger.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/misc/ocxl/config.c
-+++ b/drivers/misc/ocxl/config.c
-@@ -280,7 +280,9 @@ int ocxl_config_check_afu_index(struct p
- 	u32 val;
- 	int rc, templ_major, templ_minor, len;
+--- a/drivers/power/supply/twl4030_charger.c
++++ b/drivers/power/supply/twl4030_charger.c
+@@ -996,12 +996,13 @@ static int twl4030_bci_probe(struct plat
+ 	if (bci->dev->of_node) {
+ 		struct device_node *phynode;
  
--	pci_write_config_word(dev, fn->dvsec_afu_info_pos, afu_idx);
-+	pci_write_config_byte(dev,
-+			fn->dvsec_afu_info_pos + OCXL_DVSEC_AFU_INFO_AFU_IDX,
-+			afu_idx);
- 	rc = read_afu_info(dev, fn, OCXL_DVSEC_TEMPL_VERSION, &val);
- 	if (rc)
- 		return rc;
+-		phynode = of_find_compatible_node(bci->dev->of_node->parent,
+-						  NULL, "ti,twl4030-usb");
++		phynode = of_get_compatible_child(bci->dev->of_node->parent,
++						  "ti,twl4030-usb");
+ 		if (phynode) {
+ 			bci->usb_nb.notifier_call = twl4030_bci_usb_ncb;
+ 			bci->transceiver = devm_usb_get_phy_by_node(
+ 				bci->dev, phynode, &bci->usb_nb);
++			of_node_put(phynode);
+ 			if (IS_ERR(bci->transceiver)) {
+ 				ret = PTR_ERR(bci->transceiver);
+ 				if (ret == -EPROBE_DEFER)
 
 
