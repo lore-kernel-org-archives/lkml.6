@@ -4,46 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AA17C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:10:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9412BC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:10:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1A8C20817
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:10:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 510D120817
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:10:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CPZEicaP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1A8C20817
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qNtKXfwQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 510D120817
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390248AbeKLJAg (ORCPT
+        id S2390177AbeKLIV7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:00:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50552 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:21:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50044 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390159AbeKLIWA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:00 -0500
+        id S2390159AbeKLIV6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:58 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6228A21780;
-        Sun, 11 Nov 2018 22:32:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD3AD21508;
+        Sun, 11 Nov 2018 22:32:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975523;
-        bh=PozC+MAJHzWB+Hn2JYhU/RL2aUeRJ1GtYVmD3viK/Pc=;
+        s=default; t=1541975521;
+        bh=jazk8uFbJyiXdDD7GiTr28MI+1FZBoCx3p6v8GaEjTI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CPZEicaPhoh1VMf8BgXrbyJ7FmyJRmVuknpvm00GLyhSMI6Xy6R05sLKSjcvJdlJi
-         VKssIjbzCh7t8e34I9MjEwdXTsOC1lcOQ526p+I3O10dQ+yS++qlqdICFaThkoKwj4
-         RkBu7xI0AHwrU/8/yOqK04Cw67AC0r6lJG2WUfb4=
+        b=qNtKXfwQ+Hxqi/I1X+/gxHq5nmxxkXKpR0UdGPWxtnaLGvCCjJ6RCWmLz9IiLw6R3
+         afxnZt23wUAk/RsvzcaOGVDufj3aYHwoJv084syk7Kb+YDSV9dFCf0SjUte8JuNl9B
+         t5pC9DkaNOHz+bHyNrFu4tPLAyTGQYPQFaWQS18o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alex Stanoev <alex@astanoev.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 018/222] ALSA: ca0106: Disable IZD on SB0570 DAC to fix audio pops
-Date:   Sun, 11 Nov 2018 14:21:55 -0800
-Message-Id: <20181111221649.755749173@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 014/222] ALSA: hda - Add quirk for ASUS G751 laptop
+Date:   Sun, 11 Nov 2018 14:21:51 -0800
+Message-Id: <20181111221649.377450200@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -61,51 +61,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alex Stanoev <alex@astanoev.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit ac237c28d5ac1b241d58b1b7b4b9fa10efb22fb5 upstream.
+commit 11ba6111160290ccd35562f4e05cec08942a6c4c upstream.
 
-The Creative Audigy SE (SB0570) card currently exhibits an audible pop
-whenever playback is stopped or resumed, or during silent periods of an
-audio stream. Initialise the IZD bit to the 0 to eliminate these pops.
+ASUS G751 requires the extra COEF initialization to make it microphone
+working properly.
 
-The Infinite Zero Detection (IZD) feature on the DAC causes the output
-to be shunted to Vcap after 2048 samples of silence. This discharges the
-AC coupling capacitor through the output and causes the aforementioned
-pop/click noise.
-
-The behaviour of the IZD bit is described on page 15 of the WM8768GEDS
-datasheet: "With IZD=1, applying MUTE for 1024 consecutive input samples
-will cause all outputs to be connected directly to VCAP. This also
-happens if 2048 consecutive zero input samples are applied to all 6
-channels, and IZD=0. It will be removed as soon as any channel receives
-a non-zero input". I believe the second sentence might be referring to
-IZD=1 instead of IZD=0 given the observed behaviour of the card.
-
-This change should make the DAC initialisation consistent with
-Creative's Windows driver, as this popping persists when initialising
-the card in Linux and soft rebooting into Windows, but is not present on
-a cold boot to Windows.
-
-Signed-off-by: Alex Stanoev <alex@astanoev.com>
+Reported-and-tested-by: Håvard <hovardslill@gmail.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/ca0106/ca0106.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/pci/hda/patch_realtek.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/sound/pci/ca0106/ca0106.h
-+++ b/sound/pci/ca0106/ca0106.h
-@@ -582,7 +582,7 @@
- #define SPI_PL_BIT_R_R		(2<<7)	/* right channel = right */
- #define SPI_PL_BIT_R_C		(3<<7)	/* right channel = (L+R)/2 */
- #define SPI_IZD_REG		2
--#define SPI_IZD_BIT		(1<<4)	/* infinite zero detect */
-+#define SPI_IZD_BIT		(0<<4)	/* infinite zero detect */
- 
- #define SPI_FMT_REG		3
- #define SPI_FMT_BIT_RJ		(0<<0)	/* right justified mode */
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -7515,6 +7515,7 @@ enum {
+ 	ALC662_FIXUP_ASUS_Nx50,
+ 	ALC668_FIXUP_ASUS_Nx51_HEADSET_MODE,
+ 	ALC668_FIXUP_ASUS_Nx51,
++	ALC668_FIXUP_ASUS_G751,
+ 	ALC891_FIXUP_HEADSET_MODE,
+ 	ALC891_FIXUP_DELL_MIC_NO_PRESENCE,
+ 	ALC662_FIXUP_ACER_VERITON,
+@@ -7784,6 +7785,14 @@ static const struct hda_fixup alc662_fix
+ 		.chained = true,
+ 		.chain_id = ALC668_FIXUP_ASUS_Nx51_HEADSET_MODE,
+ 	},
++	[ALC668_FIXUP_ASUS_G751] = {
++		.type = HDA_FIXUP_VERBS,
++		.v.verbs = (const struct hda_verb[]) {
++			{ 0x20, AC_VERB_SET_COEF_INDEX, 0xc3 },
++			{ 0x20, AC_VERB_SET_PROC_COEF, 0x4000 },
++			{}
++		},
++	},
+ 	[ALC891_FIXUP_HEADSET_MODE] = {
+ 		.type = HDA_FIXUP_FUNC,
+ 		.v.func = alc_fixup_headset_mode,
+@@ -7857,6 +7866,7 @@ static const struct snd_pci_quirk alc662
+ 	SND_PCI_QUIRK(0x1043, 0x11cd, "Asus N550", ALC662_FIXUP_ASUS_Nx50),
+ 	SND_PCI_QUIRK(0x1043, 0x13df, "Asus N550JX", ALC662_FIXUP_BASS_1A),
+ 	SND_PCI_QUIRK(0x1043, 0x129d, "Asus N750", ALC662_FIXUP_ASUS_Nx50),
++	SND_PCI_QUIRK(0x1043, 0x12ff, "ASUS G751", ALC668_FIXUP_ASUS_G751),
+ 	SND_PCI_QUIRK(0x1043, 0x1477, "ASUS N56VZ", ALC662_FIXUP_BASS_MODE4_CHMAP),
+ 	SND_PCI_QUIRK(0x1043, 0x15a7, "ASUS UX51VZH", ALC662_FIXUP_BASS_16),
+ 	SND_PCI_QUIRK(0x1043, 0x177d, "ASUS N551", ALC668_FIXUP_ASUS_Nx51),
 
 
