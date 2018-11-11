@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4022C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:51:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C693C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:51:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B23C214E0
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:51:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E905214E0
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:51:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pLyKzJ6a"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B23C214E0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NOFom1Bw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E905214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404299AbeKLIlK (ORCPT
+        id S2404325AbeKLIlR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:41:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54772 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:41:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54620 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404185AbeKLIXH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2404153AbeKLIXH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:23:07 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A0240208A3;
+        by mail.kernel.org (Postfix) with ESMTPSA id 3C7C4223DD;
         Sun, 11 Nov 2018 22:33:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975590;
-        bh=XHXCuyRArfCsWOYZHBugDMC+gn+Xo0b0Mh98SBSJUVw=;
+        bh=rALukCeLIVZw1uw0Znpe+Yh1D9hnFLzK0iw83v0xUPo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pLyKzJ6a2xu4rJKKwydebVfU2XFGWPHWcrISeTcTAZpviIPIQGR2D7rEtaQxionyx
-         lr/37S1bjuxZp7uah9HogW3tC8OHyyYxxHle/hQOafjD9+6cDaDOR2MM6WKCiO5mb0
-         +JUkc2UOXnGNdZaF09aUBBeovCClaiGaj3Z4c62E=
+        b=NOFom1Bw6Cdl6wPso6nG4hIoiPLea9UxsyUjMVsal79NNyWCEBvAtZ6HjYyZZe/9A
+         DLjwIyRM3YZp4X151Zj/h+TmkteQwNLppp/4cwK2jLN6FH4mqxke8eCPuVMZVCW0G2
+         eLD5Sy2d8vQjgiqzruptHG5F8LyM3zuqSc1+T9b8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeff Mahoney <jeffm@suse.com>,
+        stable@vger.kernel.org, Chris Murphy <lists@colorremedies.com>,
+        Qu Wenruo <wqu@suse.com>, Nikolay Borisov <nborisov@suse.com>,
         David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 202/222] btrfs: iterate all devices during trim, instead of fs_devices::alloc_list
-Date:   Sun, 11 Nov 2018 14:24:59 -0800
-Message-Id: <20181111221704.785792567@linuxfoundation.org>
+Subject: [PATCH 4.14 201/222] btrfs: Ensure btrfs_trim_fs can trim the whole filesystem
+Date:   Sun, 11 Nov 2018 14:24:58 -0800
+Message-Id: <20181111221704.710887970@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -62,42 +63,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jeff Mahoney <jeffm@suse.com>
+From: Qu Wenruo <wqu@suse.com>
 
-commit d4e329de5e5e21594df2e0dd59da9acee71f133b upstream.
+commit 6ba9fc8e628becf0e3ec94083450d089b0dec5f5 upstream.
 
-btrfs_trim_fs iterates over the fs_devices->alloc_list while holding the
-device_list_mutex.  The problem is that ->alloc_list is protected by the
-chunk mutex.  We don't want to hold the chunk mutex over the trim of the
-entire file system.  Fortunately, the ->dev_list list is protected by
-the dev_list mutex and while it will give us all devices, including
-read-only devices, we already just skip the read-only devices.  Then we
-can continue to take and release the chunk mutex while scanning each
-device.
+[BUG]
+fstrim on some btrfs only trims the unallocated space, not trimming any
+space in existing block groups.
 
-Fixes: 499f377f49f ("btrfs: iterate over unused chunk space in FITRIM")
-CC: stable@vger.kernel.org # 4.4+
-Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+[CAUSE]
+Before fstrim_range passed to btrfs_trim_fs(), it gets truncated to
+range [0, super->total_bytes).  So later btrfs_trim_fs() will only be
+able to trim block groups in range [0, super->total_bytes).
+
+While for btrfs, any bytenr aligned to sectorsize is valid, since btrfs
+uses its logical address space, there is nothing limiting the location
+where we put block groups.
+
+For filesystem with frequent balance, it's quite easy to relocate all
+block groups and bytenr of block groups will start beyond
+super->total_bytes.
+
+In that case, btrfs will not trim existing block groups.
+
+[FIX]
+Just remove the truncation in btrfs_ioctl_fitrim(), so btrfs_trim_fs()
+can get the unmodified range, which is normally set to [0, U64_MAX].
+
+Reported-by: Chris Murphy <lists@colorremedies.com>
+Fixes: f4c697e6406d ("btrfs: return EINVAL if start > total_bytes in fitrim ioctl")
+CC: <stable@vger.kernel.org> # v4.4+
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
 Reviewed-by: David Sterba <dsterba@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/extent-tree.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/btrfs/extent-tree.c |   10 +---------
+ fs/btrfs/ioctl.c       |   11 +++++++----
+ 2 files changed, 8 insertions(+), 13 deletions(-)
 
 --- a/fs/btrfs/extent-tree.c
 +++ b/fs/btrfs/extent-tree.c
-@@ -11107,8 +11107,8 @@ int btrfs_trim_fs(struct btrfs_fs_info *
- 			"failed to trim %llu block group(s), last error %d",
- 			bg_failed, bg_ret);
- 	mutex_lock(&fs_info->fs_devices->device_list_mutex);
--	devices = &fs_info->fs_devices->alloc_list;
--	list_for_each_entry(device, devices, dev_alloc_list) {
-+	devices = &fs_info->fs_devices->devices;
-+	list_for_each_entry(device, devices, dev_list) {
- 		ret = btrfs_trim_free_extents(device, range->minlen,
- 					      &group_trimmed);
- 		if (ret) {
+@@ -11055,21 +11055,13 @@ int btrfs_trim_fs(struct btrfs_fs_info *
+ 	u64 start;
+ 	u64 end;
+ 	u64 trimmed = 0;
+-	u64 total_bytes = btrfs_super_total_bytes(fs_info->super_copy);
+ 	u64 bg_failed = 0;
+ 	u64 dev_failed = 0;
+ 	int bg_ret = 0;
+ 	int dev_ret = 0;
+ 	int ret = 0;
+ 
+-	/*
+-	 * try to trim all FS space, our block group may start from non-zero.
+-	 */
+-	if (range->len == total_bytes)
+-		cache = btrfs_lookup_first_block_group(fs_info, range->start);
+-	else
+-		cache = btrfs_lookup_block_group(fs_info, range->start);
+-
++	cache = btrfs_lookup_first_block_group(fs_info, range->start);
+ 	for (; cache; cache = next_block_group(fs_info, cache)) {
+ 		if (cache->key.objectid >= (range->start + range->len)) {
+ 			btrfs_put_block_group(cache);
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -352,7 +352,6 @@ static noinline int btrfs_ioctl_fitrim(s
+ 	struct fstrim_range range;
+ 	u64 minlen = ULLONG_MAX;
+ 	u64 num_devices = 0;
+-	u64 total_bytes = btrfs_super_total_bytes(fs_info->super_copy);
+ 	int ret;
+ 
+ 	if (!capable(CAP_SYS_ADMIN))
+@@ -376,11 +375,15 @@ static noinline int btrfs_ioctl_fitrim(s
+ 		return -EOPNOTSUPP;
+ 	if (copy_from_user(&range, arg, sizeof(range)))
+ 		return -EFAULT;
+-	if (range.start > total_bytes ||
+-	    range.len < fs_info->sb->s_blocksize)
++
++	/*
++	 * NOTE: Don't truncate the range using super->total_bytes.  Bytenr of
++	 * block group is in the logical address space, which can be any
++	 * sectorsize aligned bytenr in  the range [0, U64_MAX].
++	 */
++	if (range.len < fs_info->sb->s_blocksize)
+ 		return -EINVAL;
+ 
+-	range.len = min(range.len, total_bytes - range.start);
+ 	range.minlen = max(range.minlen, minlen);
+ 	ret = btrfs_trim_fs(fs_info, &range);
+ 	if (ret < 0)
 
 
