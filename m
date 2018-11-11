@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 316B9C0044C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55FD1C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEC7A208A3
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1258822353
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iCLkfw0M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEC7A208A3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QjH7Q9gy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1258822353
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731932AbeKLIRn (ORCPT
+        id S1731977AbeKLIRo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:17:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34236 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:17:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34354 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731856AbeKLIRl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:17:41 -0500
+        id S1731882AbeKLIRn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:17:43 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5072921508;
-        Sun, 11 Nov 2018 22:27:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9685A21582;
+        Sun, 11 Nov 2018 22:27:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975266;
-        bh=u0dtmCwtqTh6aExnUVqTXTdsDRvzGKEWaGODn41TVyE=;
+        s=default; t=1541975267;
+        bh=+52YmOB4GomOOjwFtoFDM9iQ3rqdS5dmuf5BlI7LCz4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iCLkfw0McFynI7jwYvolWuG4/NEGiVvv83zEMPcZ/GeKGvAJ8v6B6XhnhBegEgDOM
-         NzQNbNhteQXbsVGZGPnghmAuhuZbx+dMpDYSb1xmPeANoDSzAQG011V6JoguxQyDj5
-         VH/O7Wq5hDvIfvspB1n8cahmZo0jUhvhLx96qUmQ=
+        b=QjH7Q9gyZxeFMGnzGx+W3Vc833F1sgSKhSG6DbpUWr7dbYQ06MviL7AK5vvCh7EXp
+         TDDyiAmHSEazR7OWhH0sntWvv8zO988Hb3RHztBB1/nrXi68h80KR1Y1N/5lWflv4E
+         050f2CJExvOKl2/u2hw5IPHZCFrQF+vzkL8AOmnQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Evan Green <evgreen@chromium.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
+        stable@vger.kernel.org,
+        syzbot+c61979f6f2cba5cb3c06@syzkaller.appspotmail.com,
+        Theodore Tso <tytso@mit.edu>, stable@kernel.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 157/361] irqchip/pdc: Setup all edge interrupts as rising edge at GIC
-Date:   Sun, 11 Nov 2018 14:18:24 -0800
-Message-Id: <20181111221642.568880628@linuxfoundation.org>
+Subject: [PATCH 4.19 161/361] ext4: fix argument checking in EXT4_IOC_MOVE_EXT
+Date:   Sun, 11 Nov 2018 14:18:28 -0800
+Message-Id: <20181111221643.041052989@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -64,35 +64,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lina Iyer <ilina@codeaurora.org>
+From: Theodore Ts'o <tytso@mit.edu>
 
-[ Upstream commit 7bae48b22c8d38c5cd50f52b6e15d134e2bb3935 ]
+[ Upstream commit f18b2b83a727a3db208308057d2c7945f368e625 ]
 
-The PDC irqchp can convert a falling edge or level low interrupt to a
-rising edge or level high interrupt at the GIC. We just need to setup
-the GIC correctly. Set up the interrupt type for the IRQ_TYPE_EDGE_BOTH
-as IRQ_TYPE_EDGE_RISING at the GIC.
+If the starting block number of either the source or destination file
+exceeds the EOF, EXT4_IOC_MOVE_EXT should return EINVAL.
 
-Fixes: f55c73aef890 ("irqchip/pdc: Add PDC interrupt controller for QCOM SoCs")
-Reported-by: Evan Green <evgreen@chromium.org>
-Reviewed-by: Evan Green <evgreen@chromium.org>
-Signed-off-by: Lina Iyer <ilina@codeaurora.org>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Also fixed the helper function mext_check_coverage() so that if the
+logical block is beyond EOF, make it return immediately, instead of
+looping until the block number wraps all the away around.  This takes
+long enough that if there are multiple threads trying to do pound on
+an the same inode doing non-sensical things, it can end up triggering
+the kernel's soft lockup detector.
+
+Reported-by: syzbot+c61979f6f2cba5cb3c06@syzkaller.appspotmail.com
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/irqchip/qcom-pdc.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/ext4/move_extent.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/irqchip/qcom-pdc.c
-+++ b/drivers/irqchip/qcom-pdc.c
-@@ -124,6 +124,7 @@ static int qcom_pdc_gic_set_type(struct
- 		break;
- 	case IRQ_TYPE_EDGE_BOTH:
- 		pdc_type = PDC_EDGE_DUAL;
-+		type = IRQ_TYPE_EDGE_RISING;
- 		break;
- 	case IRQ_TYPE_LEVEL_HIGH:
- 		pdc_type = PDC_LEVEL_HIGH;
+--- a/fs/ext4/move_extent.c
++++ b/fs/ext4/move_extent.c
+@@ -516,9 +516,13 @@ mext_check_arguments(struct inode *orig_
+ 			orig_inode->i_ino, donor_inode->i_ino);
+ 		return -EINVAL;
+ 	}
+-	if (orig_eof < orig_start + *len - 1)
++	if (orig_eof <= orig_start)
++		*len = 0;
++	else if (orig_eof < orig_start + *len - 1)
+ 		*len = orig_eof - orig_start;
+-	if (donor_eof < donor_start + *len - 1)
++	if (donor_eof <= donor_start)
++		*len = 0;
++	else if (donor_eof < donor_start + *len - 1)
+ 		*len = donor_eof - donor_start;
+ 	if (!*len) {
+ 		ext4_debug("ext4 move extent: len should not be 0 "
 
 
