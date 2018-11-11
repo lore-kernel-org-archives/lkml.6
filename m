@@ -7,44 +7,49 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8693C0044C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08339C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA17621707
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2589223CB
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="m6YWnIYy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA17621707
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yooGSNcE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2589223CB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390051AbeKLIVv (ORCPT
+        id S2390079AbeKLIVx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:21:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50024 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:21:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50340 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390005AbeKLIVu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:21:50 -0500
+        id S2390048AbeKLIVw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:52 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED740208A3;
-        Sun, 11 Nov 2018 22:31:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E09032175B;
+        Sun, 11 Nov 2018 22:31:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975513;
-        bh=fBOqDJSBVN1vmgmlPwpwKgei5MDC51HRi0ZAtI9kpFU=;
+        s=default; t=1541975515;
+        bh=W7V8eqRMUXLN6KFQgKJcbNEL8drZENfaLqDnd5jUPf4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m6YWnIYygiilKYc7WGhHNtB+upP1haXa9sfsZaInpRRIYPBsHJyK8mtgbdG4M3/0e
-         tIvU8Bz9fGF8K022qarwvF3jdpRIWdMtmehhepPX2VjHYG5FYN669vgjjruqeSVO7h
-         XtUoKt0Vgxe/GSg3Eb69tEPCJt+91NzMr0bkKjuU=
+        b=yooGSNcE+bloV0vASaQ/aF1CIl2H10N1EPs5mpttPG8zaNfXgCWdGGnm5C0sGUPP5
+         sMy6ZPpvObgrpL6UgxYp3gxmLH5Ygjun84vDNJRsccVQumMgfBunyyHUHuwLI4f1id
+         ODPBnA7sjdKa9Rxg2Thx94jMz80FrxMsJDBX4vy0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.18 341/350] btrfs: dont use ctl->free_space for max_extent_size
-Date:   Sun, 11 Nov 2018 14:23:25 -0800
-Message-Id: <20181111221722.375776976@linuxfoundation.org>
+        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+        Tom Zanussi <zanussi@linux.intel.com>,
+        Tom Zanussi <zanussi@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Rajvi Jingar <rajvi.jingar@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.18 314/350] selftests/ftrace: Fix synthetic event test to delete event correctly
+Date:   Sun, 11 Nov 2018 14:22:58 -0800
+Message-Id: <20181111221721.197704601@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -62,56 +67,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Josef Bacik <jbacik@fb.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-commit fb5c39d7a887108087de6ff93d3f326b01b4ef41 upstream.
+commit 0d0352d8b3d6d7ca9a710b40e194cbbaeb841c88 upstream.
 
-max_extent_size is supposed to be the largest contiguous range for the
-space info, and ctl->free_space is the total free space in the block
-group.  We need to keep track of these separately and _only_ use the
-max_free_space if we don't have a max_extent_size, as that means our
-original request was too large to search any of the block groups for and
-therefore wouldn't have a max_extent_size set.
+Fix the synthetic event test case to remove event correctly.
+If redirecting command to synthetic_event file without append
+mode, it cleans up all existing events and execute (parse) the
+command. This means "delete event" always fails to find the
+target event.
 
-CC: stable@vger.kernel.org # 4.14+
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: Josef Bacik <jbacik@fb.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Since previous synthetic event has a bug which doesn't return
+-ENOENT even if it fails to find the deleting event, this test
+passed. But fixing that bug, this test fails because this test
+itself has a bug.
+
+This fixes that bug by trying to delete event right after
+adding an event, and use append mode redirection ('>>') instead
+of normal redirection ('>').
+
+Link: http://lkml.kernel.org/r/154013452832.25576.2305459545429386517.stgit@devbox
+
+Acked-by: Shuah Khan <shuah@kernel.org>
+Acked-by: Tom Zanussi <zanussi@linux.intel.com>
+Tested-by: Tom Zanussi <zanussi@linux.intel.com>
+Cc: Tom Zanussi <zanussi@kernel.org>
+Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
+Cc: Rajvi Jingar <rajvi.jingar@intel.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: stable@vger.kernel.org
+Fixes: f06eec4d0f2c ('selftests: ftrace: Add inter-event hist triggers testcases')
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/extent-tree.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-createremove.tc |   12 +++++-----
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
---- a/fs/btrfs/extent-tree.c
-+++ b/fs/btrfs/extent-tree.c
-@@ -7409,6 +7409,7 @@ static noinline int find_free_extent(str
- 	struct btrfs_block_group_cache *block_group = NULL;
- 	u64 search_start = 0;
- 	u64 max_extent_size = 0;
-+	u64 max_free_space = 0;
- 	u64 empty_cluster = 0;
- 	struct btrfs_space_info *space_info;
- 	int loop = 0;
-@@ -7704,8 +7705,8 @@ unclustered_alloc:
- 			spin_lock(&ctl->tree_lock);
- 			if (ctl->free_space <
- 			    num_bytes + empty_cluster + empty_size) {
--				if (ctl->free_space > max_extent_size)
--					max_extent_size = ctl->free_space;
-+				max_free_space = max(max_free_space,
-+						     ctl->free_space);
- 				spin_unlock(&ctl->tree_lock);
- 				goto loop;
- 			}
-@@ -7874,6 +7875,8 @@ loop:
- 	}
- out:
- 	if (ret == -ENOSPC) {
-+		if (!max_extent_size)
-+			max_extent_size = max_free_space;
- 		spin_lock(&space_info->lock);
- 		space_info->max_extent_size = max_extent_size;
- 		spin_unlock(&space_info->lock);
+--- a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-createremove.tc
++++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-createremove.tc
+@@ -35,18 +35,18 @@ fi
+ 
+ reset_trigger
+ 
+-echo "Test create synthetic event with an error"
+-echo 'wakeup_latency  u64 lat pid_t pid char' > synthetic_events > /dev/null
++echo "Test remove synthetic event"
++echo '!wakeup_latency  u64 lat pid_t pid char comm[16]' >> synthetic_events
+ if [ -d events/synthetic/wakeup_latency ]; then
+-    fail "Created wakeup_latency synthetic event with an invalid format"
++    fail "Failed to delete wakeup_latency synthetic event"
+ fi
+ 
+ reset_trigger
+ 
+-echo "Test remove synthetic event"
+-echo '!wakeup_latency  u64 lat pid_t pid char comm[16]' > synthetic_events
++echo "Test create synthetic event with an error"
++echo 'wakeup_latency  u64 lat pid_t pid char' > synthetic_events > /dev/null
+ if [ -d events/synthetic/wakeup_latency ]; then
+-    fail "Failed to delete wakeup_latency synthetic event"
++    fail "Created wakeup_latency synthetic event with an invalid format"
+ fi
+ 
+ do_reset
 
 
