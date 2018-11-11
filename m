@@ -2,396 +2,389 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2756EC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 05:11:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D65D5C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 05:47:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C26B220862
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 05:11:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8273F20989
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 05:47:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gbl26GSr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C26B220862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iykUcICm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8273F20989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727520AbeKKO4G (ORCPT
+        id S1727413AbeKKPcB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 09:56:06 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:35189 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727184AbeKKO4G (ORCPT
+        Sun, 11 Nov 2018 10:32:01 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:35064 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727305AbeKKPcB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 09:56:06 -0500
-Received: by mail-wm1-f68.google.com with SMTP id t15-v6so5242232wmt.0
-        for <linux-kernel@vger.kernel.org>; Sat, 10 Nov 2018 21:08:36 -0800 (PST)
+        Sun, 11 Nov 2018 10:32:01 -0500
+Received: by mail-pg1-f196.google.com with SMTP id 32-v6so2601852pgu.2
+        for <linux-kernel@vger.kernel.org>; Sat, 10 Nov 2018 21:44:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=IpysccI4tiar+JnEcil+VyAiAvlJ0KJWiSPDxFKq5/g=;
-        b=gbl26GSr86Ktyv4GnLNigzAgCGBmDDL1Sg4aOP6qg+7Pjs+qFvdMYabXyelK5wGTW3
-         Z8SQh21XkpOTqQz9kIste4Pcy+CEuaVyRxqOo2rGSUZxgg26E0qb/zLpBv27/BmdAqTE
-         LxrcsRLQ2erCdqGMMwHn3NBLvcMKxfN04oruE=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=TBOctfYOpPlIzLqNi4gt6PqmTVhT/HwRQN+0tcQEQKI=;
+        b=iykUcICm/lx65ZYz3eMGViQxdbaEpDYzApoll0qYtTB7vOXO7RyCNMwto8VCBXDGDj
+         TciqJjnCcVGgmneXT3rslxxx0AaMXZWeiz9aLCiqCeSR6FeRMmknJIl+0r34mY5ONrlx
+         GpqGKDPcY8ywHuZFWeupXq5/nglN4ZcZmgMSz66NUrAjnhNpXz+6wpmAftW6YSfSfTGY
+         e2gVMCk9Idr+MdBIor7E84c9liePYxUluZ/m3F86X92BHeYYCGrUEFUJGbAGlXeuZ9kS
+         KYpgjpJIGXxKHqMnpB+MNkHtoLQi8zE8mRYN+iLy5kc+lJuiKYns6pPMDCXtUzgdwsvE
+         QqzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=IpysccI4tiar+JnEcil+VyAiAvlJ0KJWiSPDxFKq5/g=;
-        b=TGDu3GkJ4l5WD2x0CHUvKF/5suWulGMdg/T8LNTPtvcBQHHyh3sdET/M+xMq5DSQGH
-         hGQ9JKi8hthLrkV8eTnLrVLex1xLCgievcdmGRIsS6MUMQcX2Qyeji/GGXDGLuaWf+kX
-         Q0Q3julN+Pz9VDduKRnO3UKuqDJDZQ0LQX+sMiM3GhPoIwrN7K6iACBwEKw7VuEQiuLc
-         pfxWP+heWraW6EsnaDamWoG9L4NclRkc7W/AFSf9GdOBnQQo47T34S1PooeMwf1tux2X
-         mh7H/wSpu6rTgo2FOp5QaJ6CGXv11x8j4r82LDq9GIxo3bg7cGIDSSouWYVtcmRJYH8U
-         0ACg==
-X-Gm-Message-State: AGRZ1gKBYL7zjwC0O2mGrkViYYulhu+TD/IoLw1Q8wbZgkxIrDZlmcCp
-        LD3jF0TtQpnuwA9aw7E0YXBH9nITfmhrPQ==
-X-Google-Smtp-Source: AJdET5cumI1agh7WIfSHxhkWg1vnqYOqDsjHQV5w98Radnbzo+2TC5C/AzxQd2r/nIradUjXpvdUjw==
-X-Received: by 2002:a1c:3c83:: with SMTP id j125-v6mr3785373wma.65.1541912915586;
-        Sat, 10 Nov 2018 21:08:35 -0800 (PST)
-Received: from localhost.localdomain ([209.250.228.18])
-        by smtp.gmail.com with ESMTPSA id b66-v6sm4471045wmb.21.2018.11.10.21.08.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 10 Nov 2018 21:08:34 -0800 (PST)
-From:   Leo Yan <leo.yan@linaro.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mike Leach <mike.leach@linaro.org>,
-        Robert Walker <robert.walker@arm.com>,
-        Al Grant <Al.Grant@arm.com>,
-        Coresight ML <coresight@lists.linaro.org>
-Cc:     Leo Yan <leo.yan@linaro.org>, Andi Kleen <andi@firstfloor.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH v2 1/2] perf cs-etm: Set branch instruction flags in packet
-Date:   Sun, 11 Nov 2018 13:07:55 +0800
-Message-Id: <1541912876-20967-2-git-send-email-leo.yan@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1541912876-20967-1-git-send-email-leo.yan@linaro.org>
-References: <1541912876-20967-1-git-send-email-leo.yan@linaro.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=TBOctfYOpPlIzLqNi4gt6PqmTVhT/HwRQN+0tcQEQKI=;
+        b=ov52wvuHEqIW4yt+mJj8kjBh/qNN50mrsU+ISQttZBZsCFaJvu/vn0F659ubhch0Yu
+         mYl+s2sET9oJMGbMLrX81cHOfc3mcsb9k4NqYZFtZhQEfGueZ+Ky9rMS0OSaa8ZGXDK6
+         wghnWizHYChrfgnkhCsTSfgOyvsksf8aW6eqEIa8GnzuPGYSDQBqYERJirBz3uyRNpNv
+         oMo9yJ62r8tbIPAUTPl4qcfZmmLT4TWVGseFR9EUh+9EIkqzFCELbYVnAxNYMNnR7hNI
+         cB3TL986pZ3S8Bv5ecX4zVerBsFG4N98GeWZqCGWmTWHnhrhONhyrePV6dnQZox1LN81
+         GqNg==
+X-Gm-Message-State: AGRZ1gLUKn7osrOKpvYfoojan7mcqZuXm1vsR2BkgK7pIXBQdewRfZP8
+        mF8QhhuIsovKlDRfVdh8fuo=
+X-Google-Smtp-Source: AJdET5eS4j5SejoIcuJJmDDny/aZP1czd9iCfaworikZD7CT2G41I99WgpiPTbhtoEVbZDBTyYk/6w==
+X-Received: by 2002:a63:d34a:: with SMTP id u10mr13528547pgi.301.1541915067350;
+        Sat, 10 Nov 2018 21:44:27 -0800 (PST)
+Received: from nishad ([106.193.161.4])
+        by smtp.gmail.com with ESMTPSA id s184sm13941023pgc.38.2018.11.10.21.44.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 10 Nov 2018 21:44:26 -0800 (PST)
+Date:   Sun, 11 Nov 2018 11:14:14 +0530
+From:   Nishad Kamdar <nishadkamdar@gmail.com>
+To:     Vaibhav Hiremath <hvaibhav.linux@gmail.com>,
+        Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: greybus: arche-apb-ctrl.c: Switch to the gpio
+ descriptor interface
+Message-ID: <20181111054405.GA32548@nishad>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The perf sample data contains flags to indicate the hardware trace data
-is belonging to which type branch instruction, thus this can be used to
-print out the human readable string.  Arm CoreSight ETM sample data is
-missed to set flags and it is always set to zeros, this results in perf
-tool skips to print string for instruction types.
+Use the gpiod interface instead of the deprecated old non-descriptor
+interface.
 
-Arm CoreSight ETM supports different kinds instruction of A64, A32 and
-T32; this patch is to set branch instruction flags in packet for these
-ISAs.
-
-The brief idea for patch implementation is describe as below:
-
-- For element with OCSD_GEN_TRC_ELEM_TRACE_ON type, it is taken as trace
-  beginning packet; for element with OCSD_GEN_TRC_ELEM_NO_SYNC or
-  OCSD_GEN_TRC_ELEM_EO_TRACE, these two kinds elements are used to set
-  for trace end;
-
-  As Mike suggested the packet stream might have more than one two
-  TRACE_ON packets, the first one TRACE_ON packet indicates trace end
-  and the second one is taken as trace restarting.  We will handle this
-  special case in the upper layer with packet queue handling, which has
-  more context so it's more suitable fix up for it.  This will be
-  accomplished in the sequential patch.
-
-- For instruction range packet, mainly base on three factors to decide
-  the branch instruction types:
-
-  elem->last_i_type
-  elem->last_i_subtype
-  elem->last_instr_cond
-
-  If the instruction is immediate branch but without link and return
-  flag, we consider it as function internal branch;  in fact the
-  immediate branch also can be used to invoke the function entry,
-  usually this is only used in assembly code to directly call a symbol
-  and don't expect to return back; after reviewing kernel normal
-  functions and user space programs, both of them are very seldom to use
-  immediate branch for function call.  On the other hand, if we want to
-  decide the immediate branch is for function branch jumping or for
-  function calling, we need to rely on the start address of next packet
-  and check the symbol offset for the start address,  this will
-  introduce much complexity in the implementation.  So for this version
-  we simply consider immediate branch as function internal branch.
-  Moreover, we rely on 'elem->last_instr_cond' to decide if the branch
-  instruction is a conditional branch or not.
-
-  If the instruction is immediate branch with link, it's instruction
-  'BL' and which is used for function call.
-
-  If the instruction is indirect branch and with subtype
-  OCSD_S_INSTR_V7_IMPLIED_RET, the decoders gives the hint the function
-  return for below cases related with A32/T32 instruction; set this
-  branch flag as function return (Thanks for Al's suggestion).
-
-    BX R14
-    MOV PC, LR
-    POP {…, PC}
-    LDR PC, [SP], #offset
-
-  If the instruction is indirect branch without link, this is
-  corresponding to instruction 'BR', this instruction usually is used
-  for dynamic link lib with below usage; so we think it's a return
-  instruction.
-
-    0000000000000680 <.plt>:
-     680:   a9bf7bf0        stp     x16, x30, [sp, #-16]!
-     684:   90000090        adrp    x16, 10000 <__FRAME_END__+0xf630>
-     688:   f947fe11        ldr     x17, [x16, #4088]
-     68c:   913fe210        add     x16, x16, #0xff8
-     690:   d61f0220        br      x17
-
-  If the instruction is indirect branch with link, e.g BLR, we think
-  it's a function call.
-
-  For function return, ARMv8 introduces a dedicated instruction 'ret',
-  which has flag of OCSD_S_INSTR_V8_RET.
-
-- For exception packets, this patch divides into three types:
-
-  The first type of exception is caused by external logics like bus,
-  interrupt controller, debug module or PE reset or halt; this is
-  corresponding to flags "bcyi" which defined in doc perf-script.txt;
-
-  The second type is for system call, this is set as "bcs" by following
-  definition in the doc;
-
-  The third type is for CPU trap, data and instruction prefetch abort,
-  alignment abort; usually these exceptions are synchronous for CPU, so
-  set them as "bci" type.
-
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Mike Leach <mike.leach@linaro.org>
-Cc: Robert Walker <robert.walker@arm.com>
-Cc: Al Grant <Al.Grant@arm.com>
-Cc: Andi Kleen <andi@firstfloor.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
+Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
 ---
- tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 168 ++++++++++++++++++++++++
- tools/perf/util/cs-etm-decoder/cs-etm-decoder.h |   1 +
- 2 files changed, 169 insertions(+)
+ drivers/staging/greybus/arche-apb-ctrl.c | 158 ++++++++++-------------
+ 1 file changed, 65 insertions(+), 93 deletions(-)
 
-diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-index d1a6cbc..0e50c52 100644
---- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-+++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-@@ -303,6 +303,7 @@ cs_etm_decoder__buffer_packet(struct cs_etm_decoder *decoder,
- 	decoder->packet_buffer[et].instr_count = 0;
- 	decoder->packet_buffer[et].last_instr_taken_branch = false;
- 	decoder->packet_buffer[et].last_instr_size = 0;
-+	decoder->packet_buffer[et].flags = 0;
+diff --git a/drivers/staging/greybus/arche-apb-ctrl.c b/drivers/staging/greybus/arche-apb-ctrl.c
+index cc8d6fc831b4..fd19e2394c9c 100644
+--- a/drivers/staging/greybus/arche-apb-ctrl.c
++++ b/drivers/staging/greybus/arche-apb-ctrl.c
+@@ -8,9 +8,8 @@
  
- 	if (decoder->packet_count == MAX_BUFFER - 1)
- 		return OCSD_RESP_WAIT;
-@@ -437,6 +438,171 @@ cs_etm_decoder__buffer_exception_ret(struct cs_etm_decoder *decoder,
- 					     CS_ETM_EXCEPTION_RET);
- }
+ #include <linux/clk.h>
+ #include <linux/delay.h>
+-#include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/interrupt.h>
+-#include <linux/of_gpio.h>
+ #include <linux/of_irq.h>
+ #include <linux/module.h>
+ #include <linux/pinctrl/consumer.h>
+@@ -20,17 +19,16 @@
+ #include <linux/spinlock.h>
+ #include "arche_platform.h"
  
-+static void cs_etm_decoder__set_sample_flags(
-+				const void *context,
-+				const ocsd_generic_trace_elem *elem)
-+{
-+	struct cs_etm_decoder *decoder = (struct cs_etm_decoder *) context;
-+	struct cs_etm_packet *packet;
-+	u32 exc_num;
-+
-+	packet = &decoder->packet_buffer[decoder->tail];
-+
-+	switch (elem->elem_type) {
-+	case OCSD_GEN_TRC_ELEM_TRACE_ON:
-+		packet->flags = PERF_IP_FLAG_BRANCH |
-+				PERF_IP_FLAG_TRACE_BEGIN;
-+		break;
-+
-+	case OCSD_GEN_TRC_ELEM_NO_SYNC:
-+	case OCSD_GEN_TRC_ELEM_EO_TRACE:
-+		packet->flags = PERF_IP_FLAG_BRANCH |
-+				PERF_IP_FLAG_TRACE_END;
-+		break;
-+
-+	case OCSD_GEN_TRC_ELEM_INSTR_RANGE:
-+		/*
-+		 * Immediate branch instruction without neither link nor
-+		 * return flag, it's normal branch instruction within
-+		 * the function.
-+		 */
-+		if (elem->last_i_type == OCSD_INSTR_BR &&
-+		    elem->last_i_subtype == OCSD_S_INSTR_NONE) {
-+			packet->flags = PERF_IP_FLAG_BRANCH;
-+
-+			if (elem->last_instr_cond)
-+				packet->flags |= PERF_IP_FLAG_CONDITIONAL;
-+		}
-+
-+		/*
-+		 * Immediate branch instruction with link (e.g. BL), this is
-+		 * branch instruction for function call.
-+		 */
-+		if (elem->last_i_type == OCSD_INSTR_BR &&
-+		    elem->last_i_subtype == OCSD_S_INSTR_BR_LINK)
-+			packet->flags = PERF_IP_FLAG_BRANCH |
-+					PERF_IP_FLAG_CALL;
-+
-+		/*
-+		 * Indirect branch instruction with subtype of
-+		 * OCSD_S_INSTR_V7_IMPLIED_RET, this is explicit hint for
-+		 * function return for A32/T32.
-+		 */
-+		if (elem->last_i_type == OCSD_INSTR_BR_INDIRECT &&
-+		    elem->last_i_subtype == OCSD_S_INSTR_V7_IMPLIED_RET)
-+			packet->flags = PERF_IP_FLAG_BRANCH |
-+					PERF_IP_FLAG_RETURN;
-+
-+		/*
-+		 * Indirect branch instruction without link (e.g. BR), usually
-+		 * this is used for function return, especially for functions
-+		 * within dynamic link lib.
-+		 */
-+		if (elem->last_i_type == OCSD_INSTR_BR_INDIRECT &&
-+		    elem->last_i_subtype == OCSD_S_INSTR_NONE)
-+			packet->flags = PERF_IP_FLAG_BRANCH |
-+					PERF_IP_FLAG_RETURN;
-+
-+		/*
-+		 * Indirect branch instruction with link (e.g. BLR), this is
-+		 * branch instruction for function call.
-+		 */
-+		if (elem->last_i_type == OCSD_INSTR_BR_INDIRECT &&
-+		    elem->last_i_subtype == OCSD_S_INSTR_BR_LINK)
-+			packet->flags = PERF_IP_FLAG_BRANCH |
-+					PERF_IP_FLAG_CALL;
-+
-+		/* Return instruction for function return. */
-+		if (elem->last_i_type == OCSD_INSTR_BR_INDIRECT &&
-+		    elem->last_i_subtype == OCSD_S_INSTR_V8_RET)
-+			packet->flags = PERF_IP_FLAG_BRANCH |
-+					PERF_IP_FLAG_RETURN;
-+
-+		break;
-+
-+	case OCSD_GEN_TRC_ELEM_EXCEPTION:
-+
-+#define OCSD_EXC_RESET			0
-+#define OCSD_EXC_DEBUG_HALT		1
-+#define OCSD_EXC_CALL			2
-+#define OCSD_EXC_TRAP			3
-+#define OCSD_EXC_SYSTEM_ERROR		4
-+#define OCSD_EXC_INST_DEBUG		6
-+#define OCSD_EXC_DATA_DEBUG		7
-+#define OCSD_EXC_ALIGNMENT		10
-+#define OCSD_EXC_INST_FAULT		11
-+#define OCSD_EXC_DATA_FAULT		12
-+#define OCSD_EXC_IRQ			14
-+#define OCSD_EXC_FIQ			15
-+
-+		exc_num = decoder->exc_num[packet->cpu];
-+
-+		/*
-+		 * The exceptions are triggered by external signals
-+		 * from bus, interrupt controller, debug module,
-+		 * PE reset or halt.
-+		 */
-+		if (exc_num == OCSD_EXC_RESET ||
-+		    exc_num == OCSD_EXC_DEBUG_HALT ||
-+		    exc_num == OCSD_EXC_SYSTEM_ERROR ||
-+		    exc_num == OCSD_EXC_INST_DEBUG ||
-+		    exc_num == OCSD_EXC_DATA_DEBUG ||
-+		    exc_num == OCSD_EXC_IRQ ||
-+		    exc_num == OCSD_EXC_FIQ)
-+			packet->flags = PERF_IP_FLAG_BRANCH |
-+					PERF_IP_FLAG_CALL |
-+					PERF_IP_FLAG_ASYNC |
-+					PERF_IP_FLAG_INTERRUPT;
-+
-+		/* The exception is for system call. */
-+		if (exc_num == OCSD_EXC_CALL)
-+			packet->flags = PERF_IP_FLAG_BRANCH |
-+					PERF_IP_FLAG_CALL |
-+					PERF_IP_FLAG_SYSCALLRET;
-+
-+		/*
-+		 * The exception is introduced by trap, instruction &
-+		 * data fault or alignment errors.
-+		 */
-+		if (exc_num == OCSD_EXC_TRAP ||
-+		    exc_num == OCSD_EXC_ALIGNMENT ||
-+		    exc_num == OCSD_EXC_INST_FAULT ||
-+		    exc_num == OCSD_EXC_DATA_FAULT)
-+			packet->flags = PERF_IP_FLAG_BRANCH |
-+					PERF_IP_FLAG_CALL |
-+					PERF_IP_FLAG_INTERRUPT;
-+
-+		break;
-+
-+	case OCSD_GEN_TRC_ELEM_EXCEPTION_RET:
-+
-+		exc_num = decoder->exc_num[packet->cpu];
-+
-+		if (exc_num == OCSD_EXC_CALL)
-+			packet->flags = PERF_IP_FLAG_BRANCH |
-+					PERF_IP_FLAG_RETURN |
-+					PERF_IP_FLAG_SYSCALLRET;
-+		else
-+			packet->flags = PERF_IP_FLAG_BRANCH |
-+					PERF_IP_FLAG_RETURN |
-+					PERF_IP_FLAG_INTERRUPT;
-+
-+		break;
-+
-+	case OCSD_GEN_TRC_ELEM_UNKNOWN:
-+	case OCSD_GEN_TRC_ELEM_PE_CONTEXT:
-+	case OCSD_GEN_TRC_ELEM_ADDR_NACC:
-+	case OCSD_GEN_TRC_ELEM_TIMESTAMP:
-+	case OCSD_GEN_TRC_ELEM_CYCLE_COUNT:
-+	case OCSD_GEN_TRC_ELEM_ADDR_UNKNOWN:
-+	case OCSD_GEN_TRC_ELEM_EVENT:
-+	case OCSD_GEN_TRC_ELEM_SWTRACE:
-+	case OCSD_GEN_TRC_ELEM_CUSTOM:
-+	default:
-+		break;
-+	}
-+}
-+
- static ocsd_datapath_resp_t cs_etm_decoder__gen_trace_elem_printer(
- 				const void *context,
- 				const ocsd_trc_index_t indx __maybe_unused,
-@@ -484,6 +650,8 @@ static ocsd_datapath_resp_t cs_etm_decoder__gen_trace_elem_printer(
- 		break;
- 	}
+-
+ static void apb_bootret_deassert(struct device *dev);
  
-+	cs_etm_decoder__set_sample_flags(context, elem);
-+
- 	return resp;
- }
+ struct arche_apb_ctrl_drvdata {
+ 	/* Control GPIO signals to and from AP <=> AP Bridges */
+-	int resetn_gpio;
+-	int boot_ret_gpio;
+-	int pwroff_gpio;
+-	int wake_in_gpio;
+-	int wake_out_gpio;
+-	int pwrdn_gpio;
++	struct gpio_desc *resetn;
++	struct gpio_desc *boot_ret;
++	struct gpio_desc *pwroff;
++	struct gpio_desc *wake_in;
++	struct gpio_desc *wake_out;
++	struct gpio_desc *pwrdn;
  
-diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
-index 0d1c18d..71df908 100644
---- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
-+++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
-@@ -47,6 +47,7 @@ struct cs_etm_packet {
- 	u8 last_instr_taken_branch;
- 	u8 last_instr_size;
- 	int cpu;
-+	u32 flags;
+ 	enum arche_platform_state state;
+ 	bool init_disabled;
+@@ -38,28 +36,28 @@ struct arche_apb_ctrl_drvdata {
+ 	struct regulator *vcore;
+ 	struct regulator *vio;
+ 
+-	int clk_en_gpio;
++	struct gpio_desc *clk_en;
+ 	struct clk *clk;
+ 
+ 	struct pinctrl *pinctrl;
+ 	struct pinctrl_state *pin_default;
+ 
+ 	/* V2: SPI Bus control  */
+-	int spi_en_gpio;
++	struct gpio_desc *spi_en;
+ 	bool spi_en_polarity_high;
  };
  
- struct cs_etm_queue;
+ /*
+  * Note that these low level api's are active high
+  */
+-static inline void deassert_reset(unsigned int gpio)
++static inline void deassert_reset(struct gpio_desc *gpio)
+ {
+-	gpio_set_value(gpio, 1);
++	gpiod_set_value(gpio, 1);
+ }
+ 
+-static inline void assert_reset(unsigned int gpio)
++static inline void assert_reset(struct gpio_desc *gpio)
+ {
+-	gpio_set_value(gpio, 0);
++	gpiod_set_value(gpio, 0);
+ }
+ 
+ /*
+@@ -76,11 +74,11 @@ static int coldboot_seq(struct platform_device *pdev)
+ 		return 0;
+ 
+ 	/* Hold APB in reset state */
+-	assert_reset(apb->resetn_gpio);
++	assert_reset(apb->resetn);
+ 
+ 	if (apb->state == ARCHE_PLATFORM_STATE_FW_FLASHING &&
+-	    gpio_is_valid(apb->spi_en_gpio))
+-		devm_gpio_free(dev, apb->spi_en_gpio);
++	    apb->spi_en)
++		devm_gpiod_put(dev, apb->spi_en);
+ 
+ 	/* Enable power to APB */
+ 	if (!IS_ERR(apb->vcore)) {
+@@ -102,13 +100,13 @@ static int coldboot_seq(struct platform_device *pdev)
+ 	apb_bootret_deassert(dev);
+ 
+ 	/* On DB3 clock was not mandatory */
+-	if (gpio_is_valid(apb->clk_en_gpio))
+-		gpio_set_value(apb->clk_en_gpio, 1);
++	if (apb->clk_en)
++		gpiod_set_value(apb->clk_en, 1);
+ 
+ 	usleep_range(100, 200);
+ 
+ 	/* deassert reset to APB : Active-low signal */
+-	deassert_reset(apb->resetn_gpio);
++	deassert_reset(apb->resetn);
+ 
+ 	apb->state = ARCHE_PLATFORM_STATE_ACTIVE;
+ 
+@@ -120,6 +118,7 @@ static int fw_flashing_seq(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct arche_apb_ctrl_drvdata *apb = platform_get_drvdata(pdev);
+ 	int ret;
++	unsigned long flags;
+ 
+ 	if (apb->init_disabled ||
+ 	    apb->state == ARCHE_PLATFORM_STATE_FW_FLASHING)
+@@ -137,25 +136,20 @@ static int fw_flashing_seq(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	if (gpio_is_valid(apb->spi_en_gpio)) {
+-		unsigned long flags;
+-
+-		if (apb->spi_en_polarity_high)
+-			flags = GPIOF_OUT_INIT_HIGH;
+-		else
+-			flags = GPIOF_OUT_INIT_LOW;
++	if (apb->spi_en_polarity_high)
++		flags = GPIOD_OUT_HIGH;
++	else
++		flags = GPIOD_OUT_LOW;
+ 
+-		ret = devm_gpio_request_one(dev, apb->spi_en_gpio,
+-					    flags, "apb_spi_en");
+-		if (ret) {
+-			dev_err(dev, "Failed requesting SPI bus en gpio %d\n",
+-				apb->spi_en_gpio);
+-			return ret;
+-		}
++	apb->spi_en = devm_gpiod_get(dev, "gb,apb_spi_en", flags);
++	if (IS_ERR(apb->spi_en)) {
++		ret = PTR_ERR(apb->spi_en);
++		dev_err(dev, "Failed requesting SPI bus en GPIO: %d\n", ret);
++		return ret;
+ 	}
+ 
+ 	/* for flashing device should be in reset state */
+-	assert_reset(apb->resetn_gpio);
++	assert_reset(apb->resetn);
+ 	apb->state = ARCHE_PLATFORM_STATE_FW_FLASHING;
+ 
+ 	return 0;
+@@ -178,8 +172,8 @@ static int standby_boot_seq(struct platform_device *pdev)
+ 		return 0;
+ 
+ 	if (apb->state == ARCHE_PLATFORM_STATE_FW_FLASHING &&
+-	    gpio_is_valid(apb->spi_en_gpio))
+-		devm_gpio_free(dev, apb->spi_en_gpio);
++	    apb->spi_en)
++		devm_gpiod_put(dev, apb->spi_en);
+ 
+ 	/*
+ 	 * As per WDM spec, do nothing
+@@ -203,12 +197,12 @@ static void poweroff_seq(struct platform_device *pdev)
+ 		return;
+ 
+ 	if (apb->state == ARCHE_PLATFORM_STATE_FW_FLASHING &&
+-	    gpio_is_valid(apb->spi_en_gpio))
+-		devm_gpio_free(dev, apb->spi_en_gpio);
++	    apb->spi_en)
++		devm_gpiod_put(dev, apb->spi_en);
+ 
+ 	/* disable the clock */
+-	if (gpio_is_valid(apb->clk_en_gpio))
+-		gpio_set_value(apb->clk_en_gpio, 0);
++	if (apb->clk_en)
++		gpiod_set_value(apb->clk_en, 0);
+ 
+ 	if (!IS_ERR(apb->vcore) && regulator_is_enabled(apb->vcore) > 0)
+ 		regulator_disable(apb->vcore);
+@@ -217,7 +211,7 @@ static void poweroff_seq(struct platform_device *pdev)
+ 		regulator_disable(apb->vio);
+ 
+ 	/* As part of exit, put APB back in reset state */
+-	assert_reset(apb->resetn_gpio);
++	assert_reset(apb->resetn);
+ 	apb->state = ARCHE_PLATFORM_STATE_OFF;
+ 
+ 	/* TODO: May have to send an event to SVC about this exit */
+@@ -227,7 +221,7 @@ static void apb_bootret_deassert(struct device *dev)
+ {
+ 	struct arche_apb_ctrl_drvdata *apb = dev_get_drvdata(dev);
+ 
+-	gpio_set_value(apb->boot_ret_gpio, 0);
++	gpiod_set_value(apb->boot_ret, 0);
+ }
+ 
+ int apb_ctrl_coldboot(struct device *dev)
+@@ -326,63 +320,44 @@ static int apb_ctrl_get_devtree_data(struct platform_device *pdev,
+ 	struct device_node *np = dev->of_node;
+ 	int ret;
+ 
+-	apb->resetn_gpio = of_get_named_gpio(np, "reset-gpios", 0);
+-	if (apb->resetn_gpio < 0) {
+-		dev_err(dev, "failed to get reset gpio\n");
+-		return apb->resetn_gpio;
+-	}
+-	ret = devm_gpio_request_one(dev, apb->resetn_gpio,
+-				    GPIOF_OUT_INIT_LOW, "apb-reset");
+-	if (ret) {
+-		dev_err(dev, "Failed requesting reset gpio %d\n",
+-			apb->resetn_gpio);
++	apb->resetn = devm_gpiod_get(dev, "gb,reset-gpios", GPIOD_OUT_LOW);
++	if (IS_ERR(apb->resetn)) {
++		ret = PTR_ERR(apb->resetn);
++		dev_err(dev, "Failed requesting reset GPIO: %d\n", ret);
+ 		return ret;
+ 	}
+ 
+-	apb->boot_ret_gpio = of_get_named_gpio(np, "boot-ret-gpios", 0);
+-	if (apb->boot_ret_gpio < 0) {
+-		dev_err(dev, "failed to get boot retention gpio\n");
+-		return apb->boot_ret_gpio;
+-	}
+-	ret = devm_gpio_request_one(dev, apb->boot_ret_gpio,
+-				    GPIOF_OUT_INIT_LOW, "boot retention");
+-	if (ret) {
+-		dev_err(dev, "Failed requesting bootret gpio %d\n",
+-			apb->boot_ret_gpio);
++	apb->boot_ret = devm_gpiod_get(dev, "gb,boot-ret-gpios", GPIOD_OUT_LOW);
++	if (IS_ERR(apb->boot_ret)) {
++		ret = PTR_ERR(apb->boot_ret);
++		dev_err(dev, "Failed requesting bootret GPIO: %d\n", ret);
+ 		return ret;
+ 	}
+ 
+ 	/* It's not mandatory to support power management interface */
+-	apb->pwroff_gpio = of_get_named_gpio(np, "pwr-off-gpios", 0);
+-	if (apb->pwroff_gpio < 0) {
+-		dev_err(dev, "failed to get power off gpio\n");
+-		return apb->pwroff_gpio;
+-	}
+-	ret = devm_gpio_request_one(dev, apb->pwroff_gpio,
+-				    GPIOF_IN, "pwroff_n");
+-	if (ret) {
+-		dev_err(dev, "Failed requesting pwroff_n gpio %d\n",
+-			apb->pwroff_gpio);
++	apb->pwroff = devm_gpiod_get_optional(dev, "gb,pwr-off-gpios",
++					      GPIOD_IN);
++	if (IS_ERR(apb->pwroff)) {
++		ret = PTR_ERR(apb->pwroff);
++		dev_err(dev, "Failed requesting pwroff_n GPIO: %d\n", ret);
+ 		return ret;
+ 	}
+ 
+ 	/* Do not make clock mandatory as of now (for DB3) */
+-	apb->clk_en_gpio = of_get_named_gpio(np, "clock-en-gpio", 0);
+-	if (apb->clk_en_gpio < 0) {
+-		dev_warn(dev, "failed to get clock en gpio\n");
+-	} else if (gpio_is_valid(apb->clk_en_gpio)) {
+-		ret = devm_gpio_request_one(dev, apb->clk_en_gpio,
+-					    GPIOF_OUT_INIT_LOW, "apb_clk_en");
+-		if (ret) {
+-			dev_warn(dev, "Failed requesting APB clock en gpio %d\n",
+-				 apb->clk_en_gpio);
+-			return ret;
+-		}
++	apb->clk_en = devm_gpiod_get_optional(dev, "gb,clock-en-gpio",
++					      GPIOD_OUT_LOW);
++	if (IS_ERR(apb->clk_en)) {
++		ret = PTR_ERR(apb->clk_en);
++		dev_err(dev, "Failed requesting APB clock en GPIO: %d\n", ret);
++		return ret;
+ 	}
+ 
+-	apb->pwrdn_gpio = of_get_named_gpio(np, "pwr-down-gpios", 0);
+-	if (apb->pwrdn_gpio < 0)
+-		dev_warn(dev, "failed to get power down gpio\n");
++	apb->pwrdn = devm_gpiod_get(dev, "gb,pwr-down-gpios", GPIOD_OUT_LOW);
++	if (IF_ERR(apb->pwrdn)) {
++		ret = PTR_ERR(apb->pwrdn);
++		dev_warn(dev, "Failed requesting power down GPIO: %d\n", ret);
++		return ret;
++	}
+ 
+ 	/* Regulators are optional, as we may have fixed supply coming in */
+ 	apb->vcore = devm_regulator_get(dev, "vcore");
+@@ -405,11 +380,8 @@ static int apb_ctrl_get_devtree_data(struct platform_device *pdev,
+ 	}
+ 
+ 	/* Only applicable for platform >= V2 */
+-	apb->spi_en_gpio = of_get_named_gpio(np, "spi-en-gpio", 0);
+-	if (apb->spi_en_gpio >= 0) {
+-		if (of_property_read_bool(pdev->dev.of_node,
+-					  "spi-en-active-high"))
+-			apb->spi_en_polarity_high = true;
++	if (of_property_read_bool(pdev->dev.of_node, "gb,spi-en-active-high"))
++		apb->spi_en_polarity_high = true;
+ 	}
+ 
+ 	return 0;
 -- 
-2.7.4
+2.17.1
 
