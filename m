@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24E44C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92396C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1AB3223CB
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F4D32154B
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xe+2eX2B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1AB3223CB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eJtM4em1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F4D32154B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388967AbeKLIUl (ORCPT
+        id S2388984AbeKLIUm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:20:41 -0500
+        Mon, 12 Nov 2018 03:20:42 -0500
 Received: from mail.kernel.org ([198.145.29.99]:45956 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388913AbeKLIUk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:20:40 -0500
+        id S1733238AbeKLIUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:41 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF267223CA;
-        Sun, 11 Nov 2018 22:30:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD59D2154B;
+        Sun, 11 Nov 2018 22:30:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975443;
-        bh=uGwjPXNFTySbpaLLm23pHdxx0sPGJov2Ecxf1eKa6kw=;
+        s=default; t=1541975444;
+        bh=fxQ802jgkdL5JAxDrTbRmPBI/xwoWq14k8q6KU4zz0A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xe+2eX2B9KTmIqzq3dMLRXK2jSnDgvTRheEbUWslMu8UG0D42jzCiOSsaBu0uZFnY
-         JAxC4ZZuVDRXuNXS82NVVCyH7gbjesQCp7Pn+8Evzwwcvm7CX1MFIi5Fyg5fTh29sp
-         sbXMpPqiyMBwLNNI8e39J9AaVh0REH02vI6ZNZs4=
+        b=eJtM4em1RH1HbW3qpUJYyImRKIpMiFLXVD6ckjBOEoYirygZVychNnI/9Ib7EQd1e
+         EW3K0u8Y8b/QwMwVGz9LrJIU6fdgcv16DIpxNfOMJqfFmnxRwChQorb58iVg7HaY2K
+         bDqPkBUPx8bC7eNU6tFYEk/fUKEIK33TxSG/iS2I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anshuman Gupta <anshuman.gupta@intel.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        stable@vger.kernel.org,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 165/350] xhci: Avoid USB autosuspend when resuming USB2 ports.
-Date:   Sun, 11 Nov 2018 14:20:29 -0800
-Message-Id: <20181111221714.945396506@linuxfoundation.org>
+Subject: [PATCH 4.18 169/350] coresight: etb10: Fix handling of perf mode
+Date:   Sun, 11 Nov 2018 14:20:33 -0800
+Message-Id: <20181111221715.110456337@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -63,84 +64,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Anshuman Gupta <anshuman.gupta@intel.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-[ Upstream commit 330e2d61cdd58363eb5e66b2e72f76fe3c5492e0 ]
+[ Upstream commit 987d1e8dcd370d96029a3d76a0031b043c4a69ae ]
 
-When USB bus host controller root hub resumes from autosuspend,
-it immediately tries to enter auto-suspend, but there can be a
-scenario when root hub is resuming its usb2 ports, in that particular
-case USB host controller auto suspend fails since it is busy
-to resuming its usb2 ports.
+If the ETB is already enabled in sysfs mode, the ETB reports
+success even if a perf mode is requested. Fix this by checking
+the requested mode.
 
-This makes multiple failed cycles of auto-suspend until all usb2
-ports of host controller root hub do not resume.
-
-This patch uses USB core framework usb_hcd_start_port_resume,
-usb_hcd_end_port_resume API's in order to  autoresume/autosuspend
-root hub properly.
-
-Signed-off-by: Anshuman Gupta <anshuman.gupta@intel.com>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/host/xhci-hub.c  |    5 +++++
- drivers/usb/host/xhci-ring.c |    1 +
- 2 files changed, 6 insertions(+)
+ drivers/hwtracing/coresight/coresight-etb10.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/usb/host/xhci-hub.c
-+++ b/drivers/usb/host/xhci-hub.c
-@@ -900,6 +900,7 @@ static u32 xhci_get_port_status(struct u
- 				set_bit(wIndex, &bus_state->resuming_ports);
- 				bus_state->resume_done[wIndex] = timeout;
- 				mod_timer(&hcd->rh_timer, timeout);
-+				usb_hcd_start_port_resume(&hcd->self, wIndex);
- 			}
- 		/* Has resume been signalled for USB_RESUME_TIME yet? */
- 		} else if (time_after_eq(jiffies,
-@@ -940,6 +941,7 @@ static u32 xhci_get_port_status(struct u
- 				clear_bit(wIndex, &bus_state->rexit_ports);
- 			}
+--- a/drivers/hwtracing/coresight/coresight-etb10.c
++++ b/drivers/hwtracing/coresight/coresight-etb10.c
+@@ -147,6 +147,10 @@ static int etb_enable(struct coresight_d
+ 	if (val == CS_MODE_PERF)
+ 		return -EBUSY;
  
-+			usb_hcd_end_port_resume(&hcd->self, wIndex);
- 			bus_state->port_c_suspend |= 1 << wIndex;
- 			bus_state->suspended_ports &= ~(1 << wIndex);
- 		} else {
-@@ -962,6 +964,7 @@ static u32 xhci_get_port_status(struct u
- 	    (raw_port_status & PORT_PLS_MASK) != XDEV_RESUME) {
- 		bus_state->resume_done[wIndex] = 0;
- 		clear_bit(wIndex, &bus_state->resuming_ports);
-+		usb_hcd_end_port_resume(&hcd->self, wIndex);
- 	}
- 
- 
-@@ -1337,6 +1340,7 @@ int xhci_hub_control(struct usb_hcd *hcd
- 					goto error;
- 
- 				set_bit(wIndex, &bus_state->resuming_ports);
-+				usb_hcd_start_port_resume(&hcd->self, wIndex);
- 				xhci_set_link_state(xhci, ports[wIndex],
- 						    XDEV_RESUME);
- 				spin_unlock_irqrestore(&xhci->lock, flags);
-@@ -1345,6 +1349,7 @@ int xhci_hub_control(struct usb_hcd *hcd
- 				xhci_set_link_state(xhci, ports[wIndex],
- 							XDEV_U0);
- 				clear_bit(wIndex, &bus_state->resuming_ports);
-+				usb_hcd_end_port_resume(&hcd->self, wIndex);
- 			}
- 			bus_state->port_c_suspend |= 1 << wIndex;
- 
---- a/drivers/usb/host/xhci-ring.c
-+++ b/drivers/usb/host/xhci-ring.c
-@@ -1602,6 +1602,7 @@ static void handle_port_status(struct xh
- 			set_bit(HCD_FLAG_POLL_RH, &hcd->flags);
- 			mod_timer(&hcd->rh_timer,
- 				  bus_state->resume_done[hcd_portnum]);
-+			usb_hcd_start_port_resume(&hcd->self, hcd_portnum);
- 			bogus_port_status = true;
- 		}
- 	}
++	/* Don't let perf disturb sysFS sessions */
++	if (val == CS_MODE_SYSFS && mode == CS_MODE_PERF)
++		return -EBUSY;
++
+ 	/* Nothing to do, the tracer is already enabled. */
+ 	if (val == CS_MODE_SYSFS)
+ 		goto out;
 
 
