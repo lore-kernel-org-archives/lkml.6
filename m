@@ -6,45 +6,46 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EF5BC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:12:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FC18C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:12:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC2D52080D
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:12:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC2D52080D
+	by mail.kernel.org (Postfix) with ESMTP id 531C52080D
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:12:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 531C52080D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730997AbeKLGCP (ORCPT
+        id S1731258AbeKLGCW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:02:15 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52630 "EHLO
+        Mon, 12 Nov 2018 01:02:22 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52640 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726709AbeKLGCP (ORCPT
+        by vger.kernel.org with ESMTP id S1726709AbeKLGCV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 01:02:15 -0500
+        Mon, 12 Nov 2018 01:02:21 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvss-0000lJ-6Q; Sun, 11 Nov 2018 19:59:02 +0000
+        id 1gLvtA-0000lK-6Y; Sun, 11 Nov 2018 19:59:20 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsV-0001ge-LF; Sun, 11 Nov 2018 19:58:39 +0000
+        id 1gLvsP-0001Qr-Aj; Sun, 11 Nov 2018 19:58:33 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Steve French" <stfrench@microsoft.com>,
-        "Stefano Brivio" <sbrivio@redhat.com>,
-        "=?UTF-8?Q?Aur=C3=A9lien=20?=Aptel" <aaptel@suse.com>
+CC:     akpm@linux-foundation.org, "Benjamin Block" <bblock@linux.ibm.com>,
+        "Steffen Maier" <maier@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "Jens Remus" <jremus@linux.ibm.com>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.698034192@decadent.org.uk>
+Message-ID: <lsq.1541965745.439407987@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 234/366] cifs: Fix stack out-of-bounds in
- smb{2,3}_create_lease_buf()
+Subject: [PATCH 3.16 060/366] scsi: zfcp: fix missing SCSI trace for
+ result of eh_host_reset_handler
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,212 +59,132 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefano Brivio <sbrivio@redhat.com>
+From: Steffen Maier <maier@linux.ibm.com>
 
-commit 729c0c9dd55204f0c9a823ac8a7bfa83d36c7e78 upstream.
+commit df30781699f53e4fd4c494c6f7dd16e3d5c21d30 upstream.
 
-smb{2,3}_create_lease_buf() store a lease key in the lease
-context for later usage on a lease break.
+For problem determination we need to see whether and why we were successful
+or not. This allows deduction of scsi_eh escalation.
 
-In most paths, the key is currently sourced from data that
-happens to be on the stack near local variables for oplock in
-SMB2_open() callers, e.g. from open_shroot(), whereas
-smb2_open_file() properly allocates space on its stack for it.
+Example trace record formatted with zfcpdbf from s390-tools:
 
-The address of those local variables holding the oplock is then
-passed to create_lease_buf handlers via SMB2_open(), and 16
-bytes near oplock are used. This causes a stack out-of-bounds
-access as reported by KASAN on SMB2.1 and SMB3 mounts (first
-out-of-bounds access is shown here):
+Timestamp      : ...
+Area           : SCSI
+Subarea        : 00
+Level          : 1
+Exception      : -
+CPU ID         : ..
+Caller         : 0x...
+Record ID      : 1
+Tag            : schrh_r        SCSI host reset handler result
+Request ID     : 0x0000000000000000                     none (invalid)
+SCSI ID        : 0xffffffff                             none (invalid)
+SCSI LUN       : 0xffffffff                             none (invalid)
+SCSI LUN high  : 0xffffffff                             none (invalid)
+SCSI result    : 0x00002002     field re-used for midlayer value: SUCCESS
+                                or in other cases: 0x2009 == FAST_IO_FAIL
+SCSI retries   : 0xff                                   none (invalid)
+SCSI allowed   : 0xff                                   none (invalid)
+SCSI scribble  : 0xffffffffffffffff                     none (invalid)
+SCSI opcode    : ffffffff ffffffff ffffffff ffffffff    none (invalid)
+FCP rsp inf cod: 0xff                                   none (invalid)
+FCP rsp IU     : 00000000 00000000 00000000 00000000    none (invalid)
+                 00000000 00000000
 
-[  111.528823] BUG: KASAN: stack-out-of-bounds in smb3_create_lease_buf+0x399/0x3b0 [cifs]
-[  111.530815] Read of size 8 at addr ffff88010829f249 by task mount.cifs/985
-[  111.532838] CPU: 3 PID: 985 Comm: mount.cifs Not tainted 4.18.0-rc3+ #91
-[  111.534656] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-[  111.536838] Call Trace:
-[  111.537528]  dump_stack+0xc2/0x16b
-[  111.540890]  print_address_description+0x6a/0x270
-[  111.542185]  kasan_report+0x258/0x380
-[  111.544701]  smb3_create_lease_buf+0x399/0x3b0 [cifs]
-[  111.546134]  SMB2_open+0x1ef8/0x4b70 [cifs]
-[  111.575883]  open_shroot+0x339/0x550 [cifs]
-[  111.591969]  smb3_qfs_tcon+0x32c/0x1e60 [cifs]
-[  111.617405]  cifs_mount+0x4f3/0x2fc0 [cifs]
-[  111.674332]  cifs_smb3_do_mount+0x263/0xf10 [cifs]
-[  111.677915]  mount_fs+0x55/0x2b0
-[  111.679504]  vfs_kern_mount.part.22+0xaa/0x430
-[  111.684511]  do_mount+0xc40/0x2660
-[  111.698301]  ksys_mount+0x80/0xd0
-[  111.701541]  do_syscall_64+0x14e/0x4b0
-[  111.711807]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[  111.713665] RIP: 0033:0x7f372385b5fa
-[  111.715311] Code: 48 8b 0d 99 78 2c 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 66 78 2c 00 f7 d8 64 89 01 48
-[  111.720330] RSP: 002b:00007ffff27049d8 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
-[  111.722601] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f372385b5fa
-[  111.724842] RDX: 000055c2ecdc73b2 RSI: 000055c2ecdc73f9 RDI: 00007ffff270580f
-[  111.727083] RBP: 00007ffff2705804 R08: 000055c2ee976060 R09: 0000000000001000
-[  111.729319] R10: 0000000000000000 R11: 0000000000000206 R12: 00007f3723f4d000
-[  111.731615] R13: 000055c2ee976060 R14: 00007f3723f4f90f R15: 0000000000000000
+v2.6.35 commit a1dbfddd02d2 ("[SCSI] zfcp: Pass return code from
+fc_block_scsi_eh to scsi eh") introduced the first return with something
+other than the previously hardcoded single SUCCESS return path.
 
-[  111.735448] The buggy address belongs to the page:
-[  111.737420] page:ffffea000420a7c0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
-[  111.739890] flags: 0x17ffffc0000000()
-[  111.741750] raw: 0017ffffc0000000 0000000000000000 dead000000000200 0000000000000000
-[  111.744216] raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
-[  111.746679] page dumped because: kasan: bad access detected
-
-[  111.750482] Memory state around the buggy address:
-[  111.752562]  ffff88010829f100: 00 f2 f2 f2 f2 f2 f2 f2 00 00 00 00 00 00 00 00
-[  111.754991]  ffff88010829f180: 00 00 f2 f2 00 00 00 00 00 00 00 00 00 00 00 00
-[  111.757401] >ffff88010829f200: 00 00 00 00 00 f1 f1 f1 f1 01 f2 f2 f2 f2 f2 f2
-[  111.759801]                                               ^
-[  111.762034]  ffff88010829f280: f2 02 f2 f2 f2 f2 f2 f2 f2 00 00 00 00 00 00 00
-[  111.764486]  ffff88010829f300: f2 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[  111.766913] ==================================================================
-
-Lease keys are however already generated and stored in fid data
-on open and create paths: pass them down to the lease context
-creation handlers and use them.
-
-Suggested-by: Aurélien Aptel <aaptel@suse.com>
-Reviewed-by: Aurelien Aptel <aaptel@suse.com>
-Fixes: b8c32dbb0deb ("CIFS: Request SMB2.1 leases")
-Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Steffen Maier <maier@linux.ibm.com>
+Fixes: a1dbfddd02d2 ("[SCSI] zfcp: Pass return code from fc_block_scsi_eh to scsi eh")
+Reviewed-by: Jens Remus <jremus@linux.ibm.com>
+Reviewed-by: Benjamin Block <bblock@linux.ibm.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+[bwh: Backported to 3.16: Drop assignment to zfcp_dbf_scsi::scsi_lun_64_hi
+ which doesn't exist here]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/cifs/cifsglob.h |  2 +-
- fs/cifs/smb2file.c | 11 ++++-------
- fs/cifs/smb2ops.c  |  9 +++------
- fs/cifs/smb2pdu.c  |  7 ++++---
- fs/cifs/smb2pdu.h  |  6 ++----
- 5 files changed, 14 insertions(+), 21 deletions(-)
-
---- a/fs/cifs/cifsglob.h
-+++ b/fs/cifs/cifsglob.h
-@@ -381,7 +381,7 @@ struct smb_version_operations {
- 	void (*set_oplock_level)(struct cifsInodeInfo *, __u32, unsigned int,
- 				 bool *);
- 	/* create lease context buffer for CREATE request */
--	char * (*create_lease_buf)(u8 *, u8);
-+	char * (*create_lease_buf)(u8 *lease_key, u8 oplock);
- 	/* parse lease context buffer and return oplock/epoch info */
- 	__u8 (*parse_lease_buf)(void *buf, unsigned int *epoch, char *lkey);
- 	int (*clone_range)(const unsigned int, struct cifsFileInfo *src_file,
---- a/fs/cifs/smb2file.c
-+++ b/fs/cifs/smb2file.c
-@@ -41,7 +41,7 @@ smb2_open_file(const unsigned int xid, s
- 	int rc;
- 	__le16 *smb2_path;
- 	struct smb2_file_all_info *smb2_data = NULL;
--	__u8 smb2_oplock[17];
-+	__u8 smb2_oplock;
- 	struct cifs_fid *fid = oparms->fid;
- 
- 	smb2_path = cifs_convert_path_to_utf16(oparms->path, oparms->cifs_sb);
-@@ -58,12 +58,9 @@ smb2_open_file(const unsigned int xid, s
- 	}
- 
- 	oparms->desired_access |= FILE_READ_ATTRIBUTES;
--	*smb2_oplock = SMB2_OPLOCK_LEVEL_BATCH;
-+	smb2_oplock = SMB2_OPLOCK_LEVEL_BATCH;
- 
--	if (oparms->tcon->ses->server->capabilities & SMB2_GLOBAL_CAP_LEASING)
--		memcpy(smb2_oplock + 1, fid->lease_key, SMB2_LEASE_KEY_SIZE);
--
--	rc = SMB2_open(xid, oparms, smb2_path, smb2_oplock, smb2_data, NULL);
-+	rc = SMB2_open(xid, oparms, smb2_path, &smb2_oplock, smb2_data, NULL);
- 	if (rc)
- 		goto out;
- 
-@@ -80,7 +77,7 @@ smb2_open_file(const unsigned int xid, s
- 		move_smb2_info_to_cifs(buf, smb2_data);
- 	}
- 
--	*oplock = *smb2_oplock;
-+	*oplock = smb2_oplock;
- out:
- 	kfree(smb2_data);
- 	kfree(smb2_path);
---- a/fs/cifs/smb2ops.c
-+++ b/fs/cifs/smb2ops.c
-@@ -1072,8 +1072,7 @@ smb2_create_lease_buf(u8 *lease_key, u8
- 	if (!buf)
- 		return NULL;
- 
--	buf->lcontext.LeaseKeyLow = cpu_to_le64(*((u64 *)lease_key));
--	buf->lcontext.LeaseKeyHigh = cpu_to_le64(*((u64 *)(lease_key + 8)));
-+	memcpy(&buf->lcontext.LeaseKey, lease_key, SMB2_LEASE_KEY_SIZE);
- 	buf->lcontext.LeaseState = map_oplock_to_lease(oplock);
- 
- 	buf->ccontext.DataOffset = cpu_to_le16(offsetof
-@@ -1099,8 +1098,7 @@ smb3_create_lease_buf(u8 *lease_key, u8
- 	if (!buf)
- 		return NULL;
- 
--	buf->lcontext.LeaseKeyLow = cpu_to_le64(*((u64 *)lease_key));
--	buf->lcontext.LeaseKeyHigh = cpu_to_le64(*((u64 *)(lease_key + 8)));
-+	memcpy(&buf->lcontext.LeaseKey, lease_key, SMB2_LEASE_KEY_SIZE);
- 	buf->lcontext.LeaseState = map_oplock_to_lease(oplock);
- 
- 	buf->ccontext.DataOffset = cpu_to_le16(offsetof
-@@ -1137,8 +1135,7 @@ smb3_parse_lease_buf(void *buf, unsigned
- 	if (lc->lcontext.LeaseFlags & SMB2_LEASE_FLAG_BREAK_IN_PROGRESS)
- 		return SMB2_OPLOCK_LEVEL_NOCHANGE;
- 	if (lease_key)
--		memcpy(lease_key, &lc->lcontext.LeaseKeyLow,
--		       SMB2_LEASE_KEY_SIZE);
-+		memcpy(lease_key, &lc->lcontext.LeaseKey, SMB2_LEASE_KEY_SIZE);
- 	return le32_to_cpu(lc->lcontext.LeaseState);
+--- a/drivers/s390/scsi/zfcp_dbf.c
++++ b/drivers/s390/scsi/zfcp_dbf.c
+@@ -624,6 +624,45 @@ void zfcp_dbf_scsi(char *tag, int level,
+ 	spin_unlock_irqrestore(&dbf->scsi_lock, flags);
  }
  
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -1084,12 +1084,12 @@ parse_lease_state(struct TCP_Server_Info
- 
- static int
- add_lease_context(struct TCP_Server_Info *server, struct kvec *iov,
--		  unsigned int *num_iovec, __u8 *oplock)
-+		  unsigned int *num_iovec, u8 *lease_key, __u8 *oplock)
++/**
++ * zfcp_dbf_scsi_eh() - Trace event for special cases of scsi_eh callbacks.
++ * @tag: Identifier for event.
++ * @adapter: Pointer to zfcp adapter as context for this event.
++ * @scsi_id: SCSI ID/target to indicate scope of task management function (TMF).
++ * @ret: Return value of calling function.
++ *
++ * This SCSI trace variant does not depend on any of:
++ * scsi_cmnd, zfcp_fsf_req, scsi_device.
++ */
++void zfcp_dbf_scsi_eh(char *tag, struct zfcp_adapter *adapter,
++		      unsigned int scsi_id, int ret)
++{
++	struct zfcp_dbf *dbf = adapter->dbf;
++	struct zfcp_dbf_scsi *rec = &dbf->scsi_buf;
++	unsigned long flags;
++	static int const level = 1;
++
++	if (unlikely(!debug_level_enabled(adapter->dbf->scsi, level)))
++		return;
++
++	spin_lock_irqsave(&dbf->scsi_lock, flags);
++	memset(rec, 0, sizeof(*rec));
++
++	memcpy(rec->tag, tag, ZFCP_DBF_TAG_LEN);
++	rec->id = ZFCP_DBF_SCSI_CMND;
++	rec->scsi_result = ret; /* re-use field, int is 4 bytes and fits */
++	rec->scsi_retries = ~0;
++	rec->scsi_allowed = ~0;
++	rec->fcp_rsp_info = ~0;
++	rec->scsi_id = scsi_id;
++	rec->scsi_lun = (u32)ZFCP_DBF_INVALID_LUN;
++	rec->host_scribble = ~0;
++	memset(rec->scsi_opcode, 0xff, ZFCP_DBF_SCSI_OPCODE);
++
++	debug_event(dbf->scsi, level, rec, sizeof(*rec));
++	spin_unlock_irqrestore(&dbf->scsi_lock, flags);
++}
++
+ static debug_info_t *zfcp_dbf_reg(const char *name, int size, int rec_size)
  {
- 	struct smb2_create_req *req = iov[0].iov_base;
- 	unsigned int num = *num_iovec;
+ 	struct debug_info *d;
+--- a/drivers/s390/scsi/zfcp_ext.h
++++ b/drivers/s390/scsi/zfcp_ext.h
+@@ -52,6 +52,8 @@ extern void zfcp_dbf_san_res(char *, str
+ extern void zfcp_dbf_san_in_els(char *, struct zfcp_fsf_req *);
+ extern void zfcp_dbf_scsi(char *, int, struct scsi_cmnd *,
+ 			  struct zfcp_fsf_req *);
++extern void zfcp_dbf_scsi_eh(char *tag, struct zfcp_adapter *adapter,
++			     unsigned int scsi_id, int ret);
  
--	iov[num].iov_base = server->ops->create_lease_buf(oplock+1, *oplock);
-+	iov[num].iov_base = server->ops->create_lease_buf(lease_key, *oplock);
- 	if (iov[num].iov_base == NULL)
- 		return -ENOMEM;
- 	iov[num].iov_len = server->vals->create_lease_size;
-@@ -1212,7 +1212,8 @@ SMB2_open(const unsigned int xid, struct
- 	    *oplock == SMB2_OPLOCK_LEVEL_NONE)
- 		req->RequestedOplockLevel = *oplock;
- 	else {
--		rc = add_lease_context(server, iov, &num_iovecs, oplock);
-+		rc = add_lease_context(server, iov, &num_iovecs,
-+				       oparms->fid->lease_key, oplock);
- 		if (rc) {
- 			cifs_small_buf_release(req);
- 			kfree(copy_path);
---- a/fs/cifs/smb2pdu.h
-+++ b/fs/cifs/smb2pdu.h
-@@ -510,16 +510,14 @@ struct create_context {
- #define SMB2_LEASE_KEY_SIZE 16
+ /* zfcp_erp.c */
+ extern void zfcp_erp_set_adapter_status(struct zfcp_adapter *, u32);
+--- a/drivers/s390/scsi/zfcp_scsi.c
++++ b/drivers/s390/scsi/zfcp_scsi.c
+@@ -343,15 +343,16 @@ static int zfcp_scsi_eh_host_reset_handl
+ {
+ 	struct zfcp_scsi_dev *zfcp_sdev = sdev_to_zfcp(scpnt->device);
+ 	struct zfcp_adapter *adapter = zfcp_sdev->port->adapter;
+-	int ret;
++	int ret = SUCCESS, fc_ret;
  
- struct lease_context {
--	__le64 LeaseKeyLow;
--	__le64 LeaseKeyHigh;
-+	u8 LeaseKey[SMB2_LEASE_KEY_SIZE];
- 	__le32 LeaseState;
- 	__le32 LeaseFlags;
- 	__le64 LeaseDuration;
- } __packed;
+ 	zfcp_erp_adapter_reopen(adapter, 0, "schrh_1");
+ 	zfcp_erp_wait(adapter);
+-	ret = fc_block_scsi_eh(scpnt);
+-	if (ret)
+-		return ret;
++	fc_ret = fc_block_scsi_eh(scpnt);
++	if (fc_ret)
++		ret = fc_ret;
  
- struct lease_context_v2 {
--	__le64 LeaseKeyLow;
--	__le64 LeaseKeyHigh;
-+	u8 LeaseKey[SMB2_LEASE_KEY_SIZE];
- 	__le32 LeaseState;
- 	__le32 LeaseFlags;
- 	__le64 LeaseDuration;
+-	return SUCCESS;
++	zfcp_dbf_scsi_eh("schrh_r", adapter, ~0, ret);
++	return ret;
+ }
+ 
+ struct scsi_transport_template *zfcp_scsi_transport_template;
 
