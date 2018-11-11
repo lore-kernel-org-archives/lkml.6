@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 662C7C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:48:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2097AC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:48:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 320D820872
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:48:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC63420871
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:48:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eVfFldpX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 320D820872
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AALeqw8P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC63420871
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387423AbeKLJit (ORCPT
+        id S1731054AbeKLISn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:38:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38896 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733073AbeKLISn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:18:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38130 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733070AbeKLISm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:18:42 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0655921582;
-        Sun, 11 Nov 2018 22:28:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A07921508;
+        Sun, 11 Nov 2018 22:28:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975327;
-        bh=zuwDMMBiaKJ+nIOjehGjTSrpcotekcLCqWkcV2adCHw=;
+        s=default; t=1541975326;
+        bh=cN0wSZxstLfEOKx1EFausJa3RJkM0U+vew/d2orEHEg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eVfFldpXXZ/Pd1MsqCzozZ86GyICmy3Y/Xt4gucXUbfhg6ZuU9Y1n5dG/y56Dsd1i
-         f9HciSucjL8h+yrJoARQ/IFwoT0BA0+oFYVOIqPgKn/oKsDQryO+A0H53pzS4YllJI
-         CySp4KdLo65IdTEkzn0orD/J6lo3ku8i0jeJBkV8=
+        b=AALeqw8PCKaxFEHOtQPf8rjZN4Xxh8oGRff53GGNOZWPQ2bdMvHLFnCvtevdg/5+E
+         8aFFKcEkQG3p+V8qnxV/KVI4wi4jHq94Ua4we7szO0U4UCJRbabyAO09LPxDQWSB5e
+         HJOYWf+m+6hmZFEaZCQc1/wmhtP9gD28bAfRpKeY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Mason <clm@fb.com>,
+        stable@vger.kernel.org, Jeff Mahoney <jeffm@suse.com>,
         David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.19 337/361] Btrfs: dont clean dirty pages during buffered writes
-Date:   Sun, 11 Nov 2018 14:21:24 -0800
-Message-Id: <20181111221700.394979909@linuxfoundation.org>
+Subject: [PATCH 4.19 335/361] btrfs: keep trim from interfering with transaction commits
+Date:   Sun, 11 Nov 2018 14:21:22 -0800
+Message-Id: <20181111221700.234209394@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -62,101 +62,113 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chris Mason <clm@fb.com>
+From: Jeff Mahoney <jeffm@suse.com>
 
-commit 7703bdd8d23e6ef057af3253958a793ec6066b28 upstream.
+commit fee7acc361314df6561208c2d3c0882d663dd537 upstream.
 
-During buffered writes, we follow this basic series of steps:
+Commit 499f377f49f08 (btrfs: iterate over unused chunk space in FITRIM)
+fixed free space trimming, but introduced latency when it was running.
+This is due to it pinning the transaction using both a incremented
+refcount and holding the commit root sem for the duration of a single
+trim operation.
 
-again:
-	lock all the pages
-	wait for writeback on all the pages
-	Take the extent range lock
-	wait for ordered extents on the whole range
-	clean all the pages
+This was to ensure safety but it's unnecessary.  We already hold the the
+chunk mutex so we know that the chunk we're using can't be allocated
+while we're trimming it.
 
-	if (copy_from_user_in_atomic() hits a fault) {
-		drop our locks
-		goto again;
-	}
+In order to check against chunks allocated already in this transaction,
+we need to check the pending chunks list.  To to that safely without
+joining the transaction (or attaching than then having to commit it) we
+need to ensure that the dev root's commit root doesn't change underneath
+us and the pending chunk lists stays around until we're done with it.
 
-	dirty all the pages
-	release all the locks
+We can ensure the former by holding the commit root sem and the latter
+by pinning the transaction.  We do this now, but the critical section
+covers the trim operation itself and we don't need to do that.
 
-The extra waiting, cleaning and locking are there to make sure we don't
-modify pages in flight to the drive, after they've been crc'd.
+This patch moves the pinning and unpinning logic into helpers and unpins
+the transaction after performing the search and check for pending
+chunks.
 
-If some of the pages in the range were already dirty when the write
-began, and we need to goto again, we create a window where a dirty page
-has been cleaned and unlocked.  It may be reclaimed before we're able to
-lock it again, which means we'll read the old contents off the drive and
-lose any modifications that had been pending writeback.
+Limiting the critical section of the transaction pinning improves the
+latency substantially on slower storage (e.g. image files over NFS).
 
-We don't actually need to clean the pages.  All of the other locking in
-place makes sure we don't start IO on the pages, so we can just leave
-them dirty for the duration of the write.
-
-Fixes: 73d59314e6ed (the original btrfs merge)
-CC: stable@vger.kernel.org # v4.4+
-Signed-off-by: Chris Mason <clm@fb.com>
+Fixes: 499f377f49f08 ("btrfs: iterate over unused chunk space in FITRIM")
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
 Reviewed-by: David Sterba <dsterba@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/file.c |   29 +++++++++++++++++++++++------
- 1 file changed, 23 insertions(+), 6 deletions(-)
+ fs/btrfs/extent-tree.c |   25 +++++++++++++++++--------
+ 1 file changed, 17 insertions(+), 8 deletions(-)
 
---- a/fs/btrfs/file.c
-+++ b/fs/btrfs/file.c
-@@ -531,6 +531,14 @@ int btrfs_dirty_pages(struct inode *inod
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -10772,14 +10772,16 @@ int btrfs_error_unpin_extent_range(struc
+  * We don't want a transaction for this since the discard may take a
+  * substantial amount of time.  We don't require that a transaction be
+  * running, but we do need to take a running transaction into account
+- * to ensure that we're not discarding chunks that were released in
+- * the current transaction.
++ * to ensure that we're not discarding chunks that were released or
++ * allocated in the current transaction.
+  *
+  * Holding the chunks lock will prevent other threads from allocating
+  * or releasing chunks, but it won't prevent a running transaction
+  * from committing and releasing the memory that the pending chunks
+  * list head uses.  For that, we need to take a reference to the
+- * transaction.
++ * transaction and hold the commit root sem.  We only need to hold
++ * it while performing the free space search since we have already
++ * held back allocations.
+  */
+ static int btrfs_trim_free_extents(struct btrfs_device *device,
+ 				   u64 minlen, u64 *trimmed)
+@@ -10810,9 +10812,13 @@ static int btrfs_trim_free_extents(struc
  
- 	end_of_last_block = start_pos + num_bytes - 1;
+ 		ret = mutex_lock_interruptible(&fs_info->chunk_mutex);
+ 		if (ret)
+-			return ret;
++			break;
  
-+	/*
-+	 * The pages may have already been dirty, clear out old accounting so
-+	 * we can set things up properly
-+	 */
-+	clear_extent_bit(&BTRFS_I(inode)->io_tree, start_pos, end_of_last_block,
-+			 EXTENT_DIRTY | EXTENT_DELALLOC |
-+			 EXTENT_DO_ACCOUNTING | EXTENT_DEFRAG, 0, 0, cached);
+-		down_read(&fs_info->commit_root_sem);
++		ret = down_read_killable(&fs_info->commit_root_sem);
++		if (ret) {
++			mutex_unlock(&fs_info->chunk_mutex);
++			break;
++		}
+ 
+ 		spin_lock(&fs_info->trans_lock);
+ 		trans = fs_info->running_transaction;
+@@ -10820,13 +10826,17 @@ static int btrfs_trim_free_extents(struc
+ 			refcount_inc(&trans->use_count);
+ 		spin_unlock(&fs_info->trans_lock);
+ 
++		if (!trans)
++			up_read(&fs_info->commit_root_sem);
 +
- 	if (!btrfs_is_free_space_inode(BTRFS_I(inode))) {
- 		if (start_pos >= isize &&
- 		    !(BTRFS_I(inode)->flags & BTRFS_INODE_PREALLOC)) {
-@@ -1500,18 +1508,27 @@ lock_and_cleanup_extent_if_need(struct b
+ 		ret = find_free_dev_extent_start(trans, device, minlen, start,
+ 						 &start, &len);
+-		if (trans)
++		if (trans) {
++			up_read(&fs_info->commit_root_sem);
+ 			btrfs_put_transaction(trans);
++		}
+ 
+ 		if (ret) {
+-			up_read(&fs_info->commit_root_sem);
+ 			mutex_unlock(&fs_info->chunk_mutex);
+ 			if (ret == -ENOSPC)
+ 				ret = 0;
+@@ -10834,7 +10844,6 @@ static int btrfs_trim_free_extents(struc
  		}
- 		if (ordered)
- 			btrfs_put_ordered_extent(ordered);
--		clear_extent_bit(&inode->io_tree, start_pos, last_pos,
--				 EXTENT_DIRTY | EXTENT_DELALLOC |
--				 EXTENT_DO_ACCOUNTING | EXTENT_DEFRAG,
--				 0, 0, cached_state);
-+
- 		*lockstart = start_pos;
- 		*lockend = last_pos;
- 		ret = 1;
- 	}
  
-+	/*
-+	 * It's possible the pages are dirty right now, but we don't want
-+	 * to clean them yet because copy_from_user may catch a page fault
-+	 * and we might have to fall back to one page at a time.  If that
-+	 * happens, we'll unlock these pages and we'd have a window where
-+	 * reclaim could sneak in and drop the once-dirty page on the floor
-+	 * without writing it.
-+	 *
-+	 * We have the pages locked and the extent range locked, so there's
-+	 * no way someone can start IO on any dirty pages in this range.
-+	 *
-+	 * We'll call btrfs_dirty_pages() later on, and that will flip around
-+	 * delalloc bits and dirty the pages as required.
-+	 */
- 	for (i = 0; i < num_pages; i++) {
--		if (clear_page_dirty_for_io(pages[i]))
--			account_page_redirty(pages[i]);
- 		set_page_extent_mapped(pages[i]);
- 		WARN_ON(!PageLocked(pages[i]));
- 	}
+ 		ret = btrfs_issue_discard(device->bdev, start, len, &bytes);
+-		up_read(&fs_info->commit_root_sem);
+ 		mutex_unlock(&fs_info->chunk_mutex);
+ 
+ 		if (ret)
 
 
