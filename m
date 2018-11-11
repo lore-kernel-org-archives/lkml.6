@@ -7,43 +7,49 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F6E9C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:15:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14ABBC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:15:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7E0620871
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:14:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEAF02084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:15:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="y4st63D+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7E0620871
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qz36RHop"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEAF02084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730868AbeKLKFZ (ORCPT
+        id S1730340AbeKLIRL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 05:05:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59948 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730341AbeKLIRL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:17:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59392 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730145AbeKLIRG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:17:06 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F16021508;
-        Sun, 11 Nov 2018 22:27:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 616A5223AE;
+        Sun, 11 Nov 2018 22:27:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975235;
-        bh=KSonLcHyhOooC5ozSCxhIoRsROtKUfTWXXSPM7aOkTc=;
+        s=default; t=1541975230;
+        bh=yzlqj2Om0U7aCTyA5fI/cE8aN15L8nlhcQT3OOKuHgU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y4st63D+5WCMuJRrlQMG+us1WnfeNp4JwTTxely3zhiNkTJXv7n1tjmnQglrKTndb
-         Y/K1neOObiqRv66eWryVaJP2MzIHtNkIafJOAf/Ll28v3WNtlxI/pN5T9iTGZBLppb
-         gr8Nw9ATJaaaicV4iVyh/emN4V3TikrncLkJf7e4=
+        b=Qz36RHopOp0ll4uvCfR2sGVhBCztXQsOqrUlODbFOMA+pOcszE9RLGE/MdwGlmh/N
+         VlC0EuX9cSdFP7sp3RslDQNzUyfWuz8AXMoRf2JfZqgYNhGZ4wUABBGDcuuH6b4IKu
+         PMHsnaHfk6IBV4Qu5eBDdaEfg7s7pQkyh9p5TBO0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.19 034/361] ALSA: hda - Add quirk for ASUS G751 laptop
-Date:   Sun, 11 Nov 2018 14:16:21 -0800
-Message-Id: <20181111221624.512053339@linuxfoundation.org>
+        stable@vger.kernel.org, Philip Elcan <pelcan@codeaurora.org>,
+        Shanker Donthineni <shankerd@codeaurora.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 054/361] arm64: cpufeature: ctr: Fix cpu capability check for late CPUs
+Date:   Sun, 11 Nov 2018 14:16:41 -0800
+Message-Id: <20181111221627.670246412@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -61,54 +67,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-commit 11ba6111160290ccd35562f4e05cec08942a6c4c upstream.
+[ Upstream commit 8ab66cbe63aeaf9e5970fb4aaef1c660fca59321 ]
 
-ASUS G751 requires the extra COEF initialization to make it microphone
-working properly.
+The matches() routine for a capability must honor the "scope"
+passed to it and return the proper results.
+i.e, when passed with SCOPE_LOCAL_CPU, it should check the
+status of the capability on the current CPU. This is used by
+verify_local_cpu_capabilities() on a late secondary CPU to make
+sure that it's compliant with the established system features.
+However, ARM64_HAS_CACHE_{IDC/DIC} always checks the system wide
+registers and this could mean that a late secondary CPU could return
+"true" (since the CPU hasn't updated the system wide registers yet)
+and thus lead the system in an inconsistent state, where
+the system assumes it has IDC/DIC feature, while the new CPU
+doesn't.
 
-Reported-and-tested-by: Håvard <hovardslill@gmail.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: commit 6ae4b6e0578886eb36 ("arm64: Add support for new control bits CTR_EL0.DIC and CTR_EL0.IDC")
+Cc: Philip Elcan <pelcan@codeaurora.org>
+Cc: Shanker Donthineni <shankerd@codeaurora.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- sound/pci/hda/patch_realtek.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm64/kernel/cpufeature.c |   22 ++++++++++++++++++----
+ 1 file changed, 18 insertions(+), 4 deletions(-)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -7738,6 +7738,7 @@ enum {
- 	ALC662_FIXUP_ASUS_Nx50,
- 	ALC668_FIXUP_ASUS_Nx51_HEADSET_MODE,
- 	ALC668_FIXUP_ASUS_Nx51,
-+	ALC668_FIXUP_ASUS_G751,
- 	ALC891_FIXUP_HEADSET_MODE,
- 	ALC891_FIXUP_DELL_MIC_NO_PRESENCE,
- 	ALC662_FIXUP_ACER_VERITON,
-@@ -8007,6 +8008,14 @@ static const struct hda_fixup alc662_fix
- 		.chained = true,
- 		.chain_id = ALC668_FIXUP_ASUS_Nx51_HEADSET_MODE,
- 	},
-+	[ALC668_FIXUP_ASUS_G751] = {
-+		.type = HDA_FIXUP_VERBS,
-+		.v.verbs = (const struct hda_verb[]) {
-+			{ 0x20, AC_VERB_SET_COEF_INDEX, 0xc3 },
-+			{ 0x20, AC_VERB_SET_PROC_COEF, 0x4000 },
-+			{}
-+		},
-+	},
- 	[ALC891_FIXUP_HEADSET_MODE] = {
- 		.type = HDA_FIXUP_FUNC,
- 		.v.func = alc_fixup_headset_mode,
-@@ -8080,6 +8089,7 @@ static const struct snd_pci_quirk alc662
- 	SND_PCI_QUIRK(0x1043, 0x11cd, "Asus N550", ALC662_FIXUP_ASUS_Nx50),
- 	SND_PCI_QUIRK(0x1043, 0x13df, "Asus N550JX", ALC662_FIXUP_BASS_1A),
- 	SND_PCI_QUIRK(0x1043, 0x129d, "Asus N750", ALC662_FIXUP_ASUS_Nx50),
-+	SND_PCI_QUIRK(0x1043, 0x12ff, "ASUS G751", ALC668_FIXUP_ASUS_G751),
- 	SND_PCI_QUIRK(0x1043, 0x1477, "ASUS N56VZ", ALC662_FIXUP_BASS_MODE4_CHMAP),
- 	SND_PCI_QUIRK(0x1043, 0x15a7, "ASUS UX51VZH", ALC662_FIXUP_BASS_16),
- 	SND_PCI_QUIRK(0x1043, 0x177d, "ASUS N551", ALC668_FIXUP_ASUS_Nx51),
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -848,15 +848,29 @@ static bool has_no_fpsimd(const struct a
+ }
+ 
+ static bool has_cache_idc(const struct arm64_cpu_capabilities *entry,
+-			  int __unused)
++			  int scope)
+ {
+-	return read_sanitised_ftr_reg(SYS_CTR_EL0) & BIT(CTR_IDC_SHIFT);
++	u64 ctr;
++
++	if (scope == SCOPE_SYSTEM)
++		ctr = arm64_ftr_reg_ctrel0.sys_val;
++	else
++		ctr = read_cpuid_cachetype();
++
++	return ctr & BIT(CTR_IDC_SHIFT);
+ }
+ 
+ static bool has_cache_dic(const struct arm64_cpu_capabilities *entry,
+-			  int __unused)
++			  int scope)
+ {
+-	return read_sanitised_ftr_reg(SYS_CTR_EL0) & BIT(CTR_DIC_SHIFT);
++	u64 ctr;
++
++	if (scope == SCOPE_SYSTEM)
++		ctr = arm64_ftr_reg_ctrel0.sys_val;
++	else
++		ctr = read_cpuid_cachetype();
++
++	return ctr & BIT(CTR_DIC_SHIFT);
+ }
+ 
+ #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
 
 
