@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6EF9C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4052C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B016223CA
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A692223DD
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qjpnk0BB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B016223CA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XuxytLXN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A692223DD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389011AbeKLIUn (ORCPT
+        id S2389049AbeKLIUq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:20:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46000 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:20:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46396 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733238AbeKLIUm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:20:42 -0500
+        id S1733238AbeKLIUp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:45 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5BD48223D8;
-        Sun, 11 Nov 2018 22:30:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 17544216FD;
+        Sun, 11 Nov 2018 22:30:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975446;
-        bh=17bCuUhlEB2hKKwXd3gJ5cPxGO/pq5VCWdllBQ2NzDc=;
+        s=default; t=1541975448;
+        bh=xvUiA9EYrSKo8balsPWp2mkdwCkCpkjvuDhd0Izv8mc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qjpnk0BBkzXc0jJtm2Bghu51RsyxhblhUAcSTI+M4mCWZ1FUnCmjUweBkS1SW/bNT
-         1uzKnop+qMQxfpdipaLKz6CwaTTlLMcseUaKHDRxNfI0P0htHQ0S0YS20SxVIZ8PPD
-         pSiOqQeBMmx59cKNnRerpV1cfqR31L+k3PP0iRJQ=
+        b=XuxytLXNyzLZOsA9WhZop4ideScjRFHlrNxaXZBJp67MX1g5Qlz5SjL0DE9CDf9bi
+         aeeQmBOdkHrOKmpQTsP6S6RrijCtkGzjzPn7uf2KzErJxWyDYMpgUjSSFggt7sY6qV
+         d5WAS4YpDEJP4bjlAZ0VO+5OB9K5Yupag9eAzJsw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Nuernberger <snu@amazon.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Simon Veith <sveith@amazon.de>,
-        Paul Moore <paul@paul-moore.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.18 209/350] net/ipv4: defensive cipso option parsing
-Date:   Sun, 11 Nov 2018 14:21:13 -0800
-Message-Id: <20181111221716.774666650@linuxfoundation.org>
+        stable@vger.kernel.org, Johannes Thumshirn <jthumshirn@suse.de>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: [PATCH 4.18 212/350] libnvdimm, region: Fail badblocks listing for inactive regions
+Date:   Sun, 11 Nov 2018 14:21:16 -0800
+Message-Id: <20181111221716.902039762@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -65,66 +63,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefan Nuernberger <snu@amazon.com>
+From: Dan Williams <dan.j.williams@intel.com>
 
-commit 076ed3da0c9b2f88d9157dbe7044a45641ae369e upstream.
+commit 5d394eee2c102453278d81d9a7cf94c80253486a upstream.
 
-commit 40413955ee26 ("Cipso: cipso_v4_optptr enter infinite loop") fixed
-a possible infinite loop in the IP option parsing of CIPSO. The fix
-assumes that ip_options_compile filtered out all zero length options and
-that no other one-byte options beside IPOPT_END and IPOPT_NOOP exist.
-While this assumption currently holds true, add explicit checks for zero
-length and invalid length options to be safe for the future. Even though
-ip_options_compile should have validated the options, the introduction of
-new one-byte options can still confuse this code without the additional
-checks.
+While experimenting with region driver loading the following backtrace
+was triggered:
 
-Signed-off-by: Stefan Nuernberger <snu@amazon.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Simon Veith <sveith@amazon.de>
-Cc: stable@vger.kernel.org
-Acked-by: Paul Moore <paul@paul-moore.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+ INFO: trying to register non-static key.
+ the code is fine but needs lockdep annotation.
+ turning off the locking correctness validator.
+ [..]
+ Call Trace:
+  dump_stack+0x85/0xcb
+  register_lock_class+0x571/0x580
+  ? __lock_acquire+0x2ba/0x1310
+  ? kernfs_seq_start+0x2a/0x80
+  __lock_acquire+0xd4/0x1310
+  ? dev_attr_show+0x1c/0x50
+  ? __lock_acquire+0x2ba/0x1310
+  ? kernfs_seq_start+0x2a/0x80
+  ? lock_acquire+0x9e/0x1a0
+  lock_acquire+0x9e/0x1a0
+  ? dev_attr_show+0x1c/0x50
+  badblocks_show+0x70/0x190
+  ? dev_attr_show+0x1c/0x50
+  dev_attr_show+0x1c/0x50
+
+This results from a missing successful call to devm_init_badblocks()
+from nd_region_probe(). Block attempts to show badblocks while the
+region is not enabled.
+
+Fixes: 6a6bef90425e ("libnvdimm: add mechanism to publish badblocks...")
+Cc: <stable@vger.kernel.org>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/ipv4/cipso_ipv4.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/nvdimm/region_devs.c |   11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
---- a/net/ipv4/cipso_ipv4.c
-+++ b/net/ipv4/cipso_ipv4.c
-@@ -1512,7 +1512,7 @@ static int cipso_v4_parsetag_loc(const s
-  *
-  * Description:
-  * Parse the packet's IP header looking for a CIPSO option.  Returns a pointer
-- * to the start of the CIPSO option on success, NULL if one if not found.
-+ * to the start of the CIPSO option on success, NULL if one is not found.
-  *
-  */
- unsigned char *cipso_v4_optptr(const struct sk_buff *skb)
-@@ -1522,10 +1522,8 @@ unsigned char *cipso_v4_optptr(const str
- 	int optlen;
- 	int taglen;
+--- a/drivers/nvdimm/region_devs.c
++++ b/drivers/nvdimm/region_devs.c
+@@ -545,10 +545,17 @@ static ssize_t region_badblocks_show(str
+ 		struct device_attribute *attr, char *buf)
+ {
+ 	struct nd_region *nd_region = to_nd_region(dev);
++	ssize_t rc;
  
--	for (optlen = iph->ihl*4 - sizeof(struct iphdr); optlen > 0; ) {
-+	for (optlen = iph->ihl*4 - sizeof(struct iphdr); optlen > 1; ) {
- 		switch (optptr[0]) {
--		case IPOPT_CIPSO:
--			return optptr;
- 		case IPOPT_END:
- 			return NULL;
- 		case IPOPT_NOOP:
-@@ -1534,6 +1532,11 @@ unsigned char *cipso_v4_optptr(const str
- 		default:
- 			taglen = optptr[1];
- 		}
-+		if (!taglen || taglen > optlen)
-+			return NULL;
-+		if (optptr[0] == IPOPT_CIPSO)
-+			return optptr;
-+
- 		optlen -= taglen;
- 		optptr += taglen;
- 	}
+-	return badblocks_show(&nd_region->bb, buf, 0);
+-}
++	device_lock(dev);
++	if (dev->driver)
++		rc = badblocks_show(&nd_region->bb, buf, 0);
++	else
++		rc = -ENXIO;
++	device_unlock(dev);
+ 
++	return rc;
++}
+ static DEVICE_ATTR(badblocks, 0444, region_badblocks_show, NULL);
+ 
+ static ssize_t resource_show(struct device *dev,
 
 
