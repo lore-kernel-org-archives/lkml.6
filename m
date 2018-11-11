@@ -2,143 +2,100 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7038EC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:20:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 595F7C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:20:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BF7720854
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:20:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BF7720854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1DF7D20854
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:20:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DF7D20854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731447AbeKLGJc (ORCPT
+        id S1731547AbeKLGJi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:09:32 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59304 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726652AbeKLGJc (ORCPT
+        Mon, 12 Nov 2018 01:09:38 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53440 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726652AbeKLGJh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 01:09:32 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wABKJ9B9124287
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 15:20:01 -0500
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2npd3uufsp-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 15:20:01 -0500
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Sun, 11 Nov 2018 20:20:01 -0000
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 11 Nov 2018 20:19:56 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wABKJtAZ46137356
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 11 Nov 2018 20:19:55 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 958A6B2064;
-        Sun, 11 Nov 2018 20:19:55 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7315EB205F;
-        Sun, 11 Nov 2018 20:19:55 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.207.24])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Sun, 11 Nov 2018 20:19:55 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id A4FB316C5D38; Sun, 11 Nov 2018 12:19:56 -0800 (PST)
-Date:   Sun, 11 Nov 2018 12:19:56 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org
-Subject: [PATCH tip/core/rcu 0/17] Torture-test updates for v4.21/v5.0
-Reply-To: paulmck@linux.ibm.com
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        Mon, 12 Nov 2018 01:09:37 -0500
+Received: from [192.168.4.242] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1gLvt1-0000oF-Ic; Sun, 11 Nov 2018 19:59:11 +0000
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1gLvsS-0001YA-9Y; Sun, 11 Nov 2018 19:58:36 +0000
+Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18111120-2213-0000-0000-00000315AA46
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010028; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01116031; UDB=6.00578740; IPR=6.00896131;
- MB=3.00024115; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-11 20:20:00
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111120-2214-0000-0000-00005C387AA9
-Message-Id: <20181111201956.GA11935@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-11_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811110194
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From:   Ben Hutchings <ben@decadent.org.uk>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC:     akpm@linux-foundation.org,
+        "Guillaume Nault" <g.nault@alphalink.fr>,
+        "David S. Miller" <davem@davemloft.net>
+Date:   Sun, 11 Nov 2018 19:49:05 +0000
+Message-ID: <lsq.1541965745.242794684@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 140/366] l2tp: prevent pppol2tp_connect() from
+ creating kernel sockets
+In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
+X-SA-Exim-Connect-IP: 192.168.4.242
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
+3.16.61-rc1 review patch.  If anyone has any objections, please let me know.
 
-This series contains torture-test updates:
+------------------
 
-1.	Add call_rcu() flooding forward-progress tests.  If people
-	are going to be seeing forward-progress issues with RCU, then
-	rcutorture needs to up its game.
+From: Guillaume Nault <g.nault@alphalink.fr>
 
-2.	Bring any extra CPUs online during kernel startup.
+commit 3e1bc8bf974e2d4e7beb842a4c801c2542eff3bd upstream.
 
-3.	Remove cbflood facility due to its being obsoleted by flooding
-	forward-progress tests.
+If 'fd' is negative, l2tp_tunnel_create() creates a tunnel socket using
+the configuration passed in 'tcfg'. Currently, pppol2tp_connect() sets
+the relevant fields to zero, tricking l2tp_tunnel_create() into setting
+up an unusable kernel socket.
 
-4.	Break up too-long rcu_torture_fwd_prog() function.
+We can't set 'tcfg' with the required fields because there's no way to
+get them from the current connect() parameters. So let's restrict
+kernel sockets creation to the netlink API, which is the original use
+case.
 
-5.	Affinity forward-progress test to avoid housekeeping CPUs.
+Fixes: 789a4a2c61d8 ("l2tp: Add support for static unmanaged L2TPv3 tunnels")
+Signed-off-by: Guillaume Nault <g.nault@alphalink.fr>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ net/l2tp/l2tp_ppp.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-6.	Remove unnecessary "ret" variables, courtesy of Pierce Griffiths.
-
-7.	Prepare for asynchronous access to rcu_fwd_startat.
-
-8.	Dump grace-period diagnostics upon forward-progress OOM.
-
-9.	Account for nocb-CPU callback counts in RCU CPU stall warnings.
-
-10.	Print per-CPU callback counts for forward-progress failures.
-
-11.	Print GP age upon forward-progress failure.
-
-12.	Print histogram of CB invocation at OOM time.
-
-13.	Print time since GP end upon forward-progress failure.
-
-14.	Print forward-progress test age upon failure.
-
-15.	Recover from OOM during forward-progress tests.
-
-16.	Use 100ms buckets for forward-progress callback histograms.
-
-17.	Don't do forward-progress testing of known-bad "RCU" variants.
-
-							Thanx, Paul
-
-------------------------------------------------------------------------
-
- Documentation/admin-guide/kernel-parameters.txt |   18 
- kernel/rcu/rcu.h                                |    4 
- kernel/rcu/rcutorture.c                         |  603 ++++++++++++++----------
- kernel/rcu/tree.c                               |   64 ++
- kernel/rcu/tree.h                               |    3 
- kernel/rcu/tree_plugin.h                        |   35 +
- kernel/torture.c                                |   34 -
- 7 files changed, 484 insertions(+), 277 deletions(-)
+--- a/net/l2tp/l2tp_ppp.c
++++ b/net/l2tp/l2tp_ppp.c
+@@ -723,6 +723,15 @@ static int pppol2tp_connect(struct socke
+ 				.encap = L2TP_ENCAPTYPE_UDP,
+ 				.debug = 0,
+ 			};
++
++			/* Prevent l2tp_tunnel_register() from trying to set up
++			 * a kernel socket.
++			 */
++			if (fd < 0) {
++				error = -EBADF;
++				goto end;
++			}
++
+ 			error = l2tp_tunnel_create(sock_net(sk), fd, ver, tunnel_id, peer_tunnel_id, &tcfg, &tunnel);
+ 			if (error < 0)
+ 				goto end;
 
