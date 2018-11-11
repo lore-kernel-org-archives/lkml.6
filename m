@@ -7,44 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0027C43610
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C711AC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F38F21508
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C323223AE
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="n7zssYli"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F38F21508
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vKQ0NOq4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C323223AE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732110AbeKLIRu (ORCPT
+        id S1732126AbeKLIRv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:17:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34210 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:17:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34236 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732069AbeKLIRt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:17:49 -0500
+        id S1732056AbeKLIRu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:17:50 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E830C223C8;
-        Sun, 11 Nov 2018 22:27:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8EA6C215EA;
+        Sun, 11 Nov 2018 22:27:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975274;
-        bh=966Nmbpjf3r2N3XJyIY2vFvvHtTrhjsn5jiFb+pj15k=;
+        bh=2dDIH2CKpijO4x5/ZhBNKUvGgWRJTqRerRuZqiQCXck=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n7zssYli+sw3kFSN0BvqihYeUxpbZhoM+dYlmMfp+6/8FyJUWLzS8AbL4xpIzH7sg
-         v0ADhLk+kxC8YLe02sKTmPCrxUnGdlgC3Rn/BRYLIVekIoFIgIMxrztM67YYiQGJOV
-         QKjfSoVQR9i30uynNG54kwa9BEfxnSxVOFFCI9wY=
+        b=vKQ0NOq4Np6medBykwhxXvMecHgPJr/QbW2YtjGQ+Qdg0H9gZyD6M8H4n+45/xVts
+         Hs0fBldZMLmmcAoLOii2PhwEbsDuQ9/2yO8rz4yaewe95jPXV+C+1/yY71lJ9ipd5P
+         4ON6INSQCav1EOQ9HHFI6PWwPB3CUR7/Rc+eejXM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rob Herring <robh@kernel.org>,
+        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
+        James Smart <james.smart@broadcom.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 136/361] of: Add missing exports of node name compare functions
-Date:   Sun, 11 Nov 2018 14:18:03 -0800
-Message-Id: <20181111221639.528358770@linuxfoundation.org>
+Subject: [PATCH 4.19 182/361] scsi: lpfc: Correct race with abort on completion path
+Date:   Sun, 11 Nov 2018 14:18:49 -0800
+Message-Id: <20181111221645.812862248@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -62,39 +64,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rob Herring <robh@kernel.org>
+From: James Smart <jsmart2021@gmail.com>
 
-[ Upstream commit 173ee3962959a1985a109f81539a403b5cd07ae7 ]
+[ Upstream commit ca7fb76e091f889cfda1287c07a9358f73832b39 ]
 
-Commit f42b0e18f2e5 ("of: add node name compare helper functions")
-failed to add the module exports to of_node_name_eq() and
-of_node_name_prefix(). Add them now.
+On io completion, the driver is taking an adapter wide lock and nulling the
+scsi command back pointer.  The nulling of the back pointer is to signify the
+io was completed and the scsi_done() routine was called.  However, the routine
+makes no check to see if the abort routine had done the same thing and
+possibly nulled the pointer. Thus it may doubly-complete the io.
 
-Fixes: f42b0e18f2e5 ("of: add node name compare helper functions")
-Signed-off-by: Rob Herring <robh@kernel.org>
+Make the following mods:
+
+- Check to make sure forward progress (call scsi_done()) only happens if the
+  command pointer was non-null.
+
+- As the taking of the lock, which is adapter wide, is very costly on a system
+  under load, null the pointer using an xchg operation rather than under lock.
+
+Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
+Signed-off-by: James Smart <james.smart@broadcom.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/of/base.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/scsi/lpfc/lpfc_scsi.c |   14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -67,6 +67,7 @@ bool of_node_name_eq(const struct device
+--- a/drivers/scsi/lpfc/lpfc_scsi.c
++++ b/drivers/scsi/lpfc/lpfc_scsi.c
+@@ -4158,9 +4158,17 @@ lpfc_scsi_cmd_iocb_cmpl(struct lpfc_hba
+ 	}
+ 	lpfc_scsi_unprep_dma_buf(phba, lpfc_cmd);
  
- 	return (strlen(name) == len) && (strncmp(node_name, name, len) == 0);
- }
-+EXPORT_SYMBOL(of_node_name_eq);
+-	spin_lock_irqsave(&phba->hbalock, flags);
+-	lpfc_cmd->pCmd = NULL;
+-	spin_unlock_irqrestore(&phba->hbalock, flags);
++	/* If pCmd was set to NULL from abort path, do not call scsi_done */
++	if (xchg(&lpfc_cmd->pCmd, NULL) == NULL) {
++		lpfc_printf_vlog(vport, KERN_INFO, LOG_FCP,
++				 "0711 FCP cmd already NULL, sid: 0x%06x, "
++				 "did: 0x%06x, oxid: 0x%04x\n",
++				 vport->fc_myDID,
++				 (pnode) ? pnode->nlp_DID : 0,
++				 phba->sli_rev == LPFC_SLI_REV4 ?
++				 lpfc_cmd->cur_iocbq.sli4_xritag : 0xffff);
++		return;
++	}
  
- bool of_node_name_prefix(const struct device_node *np, const char *prefix)
- {
-@@ -75,6 +76,7 @@ bool of_node_name_prefix(const struct de
- 
- 	return strncmp(kbasename(np->full_name), prefix, strlen(prefix)) == 0;
- }
-+EXPORT_SYMBOL(of_node_name_prefix);
- 
- int of_n_addr_cells(struct device_node *np)
- {
+ 	/* The sdev is not guaranteed to be valid post scsi_done upcall. */
+ 	cmd->scsi_done(cmd);
 
 
