@@ -6,45 +6,49 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E7D9C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:39:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B94CC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:39:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8DFB20818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:39:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD52D20818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:39:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dwBDXPWi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8DFB20818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nFyTheiK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD52D20818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388227AbeKLJ3r (ORCPT
+        id S2388194AbeKLJaC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:29:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42074 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:30:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731086AbeKLITq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:19:46 -0500
+        id S2387993AbeKLITp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:19:45 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F072208A3;
-        Sun, 11 Nov 2018 22:29:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 03A16215EA;
+        Sun, 11 Nov 2018 22:29:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975390;
-        bh=CMOVyLoGn0vZDn6jo77gbhVZ1mcRxdNCNX4St7mD+Ng=;
+        s=default; t=1541975389;
+        bh=TDH477Tyq0YJqIgJeHqg23PEG6feRLaCzKWsdanqKe8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dwBDXPWiXC4DEVMkwseHwBJSe+ry5BIAyp2exf1uYp7j9REra6nAVPKwqbG8Egu/T
-         cqk6RSQ76TeQM5aF7uMflQgjGAz6Ng2yXmJIoHqDpVJMaWH+kG8yF0p4b0/eq9N+yn
-         vcs1I3ZLLXaY0uPKTCxyE4C/4a9T0y74LH42wtmM=
+        b=nFyTheiKL0Lv1ENSX2iwsvzr3VNrjtdHzmBcV1DEO4DRqsK6KvF8OjIIMtN/wWpiY
+         36mXlU3d/6R4CL3iHF4p9ikkyDJjJ+3SNM6n1ndv5/zM8Qc/sNRm3uZTvcN4XIEsfZ
+         Cae6+Ml9sc+QhVADDdhLK8CvCKT/0vx+y14SEt2g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Janosch Frank <frankja@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        stable@vger.kernel.org, Philip Elcan <pelcan@codeaurora.org>,
+        Shanker Donthineni <shankerd@codeaurora.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 072/350] s390/sthyi: Fix machine name validity indication
-Date:   Sun, 11 Nov 2018 14:18:56 -0800
-Message-Id: <20181111221710.145781870@linuxfoundation.org>
+Subject: [PATCH 4.18 069/350] arm64: cpufeature: ctr: Fix cpu capability check for late CPUs
+Date:   Sun, 11 Nov 2018 14:18:53 -0800
+Message-Id: <20181111221710.030635098@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -62,51 +66,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Janosch Frank <frankja@linux.ibm.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-[ Upstream commit b5130dc2224d1881f24224c0590c6d97f2168d6a ]
+[ Upstream commit 8ab66cbe63aeaf9e5970fb4aaef1c660fca59321 ]
 
-When running as a level 3 guest with no host provided sthyi support
-sclp_ocf_cpc_name_copy() will only return zeroes. Zeroes are not a
-valid group name, so let's not indicate that the group name field is
-valid.
+The matches() routine for a capability must honor the "scope"
+passed to it and return the proper results.
+i.e, when passed with SCOPE_LOCAL_CPU, it should check the
+status of the capability on the current CPU. This is used by
+verify_local_cpu_capabilities() on a late secondary CPU to make
+sure that it's compliant with the established system features.
+However, ARM64_HAS_CACHE_{IDC/DIC} always checks the system wide
+registers and this could mean that a late secondary CPU could return
+"true" (since the CPU hasn't updated the system wide registers yet)
+and thus lead the system in an inconsistent state, where
+the system assumes it has IDC/DIC feature, while the new CPU
+doesn't.
 
-Also the group name is not dependent on stsi, let's not return based
-on stsi before setting it.
-
-Fixes: 95ca2cb57985 ("KVM: s390: Add sthyi emulation")
-Signed-off-by: Janosch Frank <frankja@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Fixes: commit 6ae4b6e0578886eb36 ("arm64: Add support for new control bits CTR_EL0.DIC and CTR_EL0.IDC")
+Cc: Philip Elcan <pelcan@codeaurora.org>
+Cc: Shanker Donthineni <shankerd@codeaurora.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/kernel/sthyi.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ arch/arm64/kernel/cpufeature.c |   22 ++++++++++++++++++----
+ 1 file changed, 18 insertions(+), 4 deletions(-)
 
---- a/arch/s390/kernel/sthyi.c
-+++ b/arch/s390/kernel/sthyi.c
-@@ -183,17 +183,19 @@ static void fill_hdr(struct sthyi_sctns
- static void fill_stsi_mac(struct sthyi_sctns *sctns,
- 			  struct sysinfo_1_1_1 *sysinfo)
- {
-+	sclp_ocf_cpc_name_copy(sctns->mac.infmname);
-+	if (*(u64 *)sctns->mac.infmname != 0)
-+		sctns->mac.infmval1 |= MAC_NAME_VLD;
-+
- 	if (stsi(sysinfo, 1, 1, 1))
- 		return;
- 
--	sclp_ocf_cpc_name_copy(sctns->mac.infmname);
--
- 	memcpy(sctns->mac.infmtype, sysinfo->type, sizeof(sctns->mac.infmtype));
- 	memcpy(sctns->mac.infmmanu, sysinfo->manufacturer, sizeof(sctns->mac.infmmanu));
- 	memcpy(sctns->mac.infmpman, sysinfo->plant, sizeof(sctns->mac.infmpman));
- 	memcpy(sctns->mac.infmseq, sysinfo->sequence, sizeof(sctns->mac.infmseq));
- 
--	sctns->mac.infmval1 |= MAC_ID_VLD | MAC_NAME_VLD;
-+	sctns->mac.infmval1 |= MAC_ID_VLD;
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -847,15 +847,29 @@ static bool has_no_fpsimd(const struct a
  }
  
- static void fill_stsi_par(struct sthyi_sctns *sctns,
+ static bool has_cache_idc(const struct arm64_cpu_capabilities *entry,
+-			  int __unused)
++			  int scope)
+ {
+-	return read_sanitised_ftr_reg(SYS_CTR_EL0) & BIT(CTR_IDC_SHIFT);
++	u64 ctr;
++
++	if (scope == SCOPE_SYSTEM)
++		ctr = arm64_ftr_reg_ctrel0.sys_val;
++	else
++		ctr = read_cpuid_cachetype();
++
++	return ctr & BIT(CTR_IDC_SHIFT);
+ }
+ 
+ static bool has_cache_dic(const struct arm64_cpu_capabilities *entry,
+-			  int __unused)
++			  int scope)
+ {
+-	return read_sanitised_ftr_reg(SYS_CTR_EL0) & BIT(CTR_DIC_SHIFT);
++	u64 ctr;
++
++	if (scope == SCOPE_SYSTEM)
++		ctr = arm64_ftr_reg_ctrel0.sys_val;
++	else
++		ctr = read_cpuid_cachetype();
++
++	return ctr & BIT(CTR_DIC_SHIFT);
+ }
+ 
+ #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
 
 
