@@ -7,45 +7,48 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 841C7C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:03:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03A2DC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:03:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CB1620872
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:03:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB0BF20872
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:03:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KQFA/92r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CB1620872
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TYVNfJO6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB0BF20872
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390793AbeKLIxX (ORCPT
+        id S2390826AbeKLIxd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:53:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52752 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:53:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52416 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390570AbeKLIWZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:25 -0500
+        id S2387727AbeKLIWY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:24 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 26E5F22419;
-        Sun, 11 Nov 2018 22:32:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C11C42154B;
+        Sun, 11 Nov 2018 22:32:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975548;
-        bh=c22Rcw9VWLydZugZyGmjnSlhQdfVHDDHA4lN8gtir5g=;
+        s=default; t=1541975547;
+        bh=gPGhJOzS7891S0f7fvjpSIE0LoCSJfwK8GeeUrOQYXM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KQFA/92rtzfi3STc+zKf94shMZ4oM3O3V74oErVpAXG44V5g5aYzdgTImxKBk/x4e
-         d5opKj59z0uP7/mn1rDm6vBOdYb02lpZvfajdFUucfhOUgF8uVdulJOtpuDW3YDL+S
-         AZnzRBreHe81ztNm27vRpXe1OCrHaVAUia9a8l6E=
+        b=TYVNfJO6jssPMmM9oKHXwWff1qo8HoH6FPvGDn5n2IkdabiEImAQ+S/wEjxTdGrs1
+         gz0KBBK+BCgoDugijHyhbggJqJ1U6dAirSxpvM8XyaHhCLQBTn0lmAJQ21wS6bSPNX
+         kAfRlgiM1qyiUoPJQQY2a5E/D/sr4g6oWv/BreTM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Selvin Xavier <selvin.xavier@broadcom.com>,
+        stable@vger.kernel.org, Denis Drozdov <denisd@mellanox.com>,
+        Erez Shitrit <erezsh@mellanox.com>,
+        Feras Daoud <ferasda@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
         Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 083/222] RDMA/bnxt_re: Fix recursive lock warning in debug kernel
-Date:   Sun, 11 Nov 2018 14:23:00 -0800
-Message-Id: <20181111221655.440985608@linuxfoundation.org>
+Subject: [PATCH 4.14 082/222] IB/ipoib: Clear IPCB before icmp_send
+Date:   Sun, 11 Nov 2018 14:22:59 -0800
+Message-Id: <20181111221655.372513704@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -63,90 +66,103 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Selvin Xavier <selvin.xavier@broadcom.com>
+From: Denis Drozdov <denisd@mellanox.com>
 
-[ Upstream commit d455f29f6d76a5f94881ca1289aaa1e90617ff5d ]
+[ Upstream commit 4d6e4d12da2c308f8f976d3955c45ee62539ac98 ]
 
-Fix possible recursive lock warning. Its a false warning as the locks are
-part of two differnt HW Queue data structure - cmdq and creq. Debug kernel
-is throwing the following warning and stack trace.
+IPCB should be cleared before icmp_send, since it may contain data from
+previous layers and the data could be misinterpreted as ip header options,
+which later caused the ihl to be set to an invalid value and resulted in
+the following stack corruption:
 
-[  783.914967] ============================================
-[  783.914970] WARNING: possible recursive locking detected
-[  783.914973] 4.19.0-rc2+ #33 Not tainted
-[  783.914976] --------------------------------------------
-[  783.914979] swapper/2/0 is trying to acquire lock:
-[  783.914982] 000000002aa3949d (&(&hwq->lock)->rlock){..-.}, at: bnxt_qplib_service_creq+0x232/0x350 [bnxt_re]
-[  783.914999]
-but task is already holding lock:
-[  783.915002] 00000000be73920d (&(&hwq->lock)->rlock){..-.}, at: bnxt_qplib_service_creq+0x2a/0x350 [bnxt_re]
-[  783.915013]
-other info that might help us debug this:
-[  783.915016]  Possible unsafe locking scenario:
+[ 1083.031512] ib0: packet len 57824 (> 2048) too long to send, dropping
+[ 1083.031843] ib0: packet len 37904 (> 2048) too long to send, dropping
+[ 1083.032004] ib0: packet len 4040 (> 2048) too long to send, dropping
+[ 1083.032253] ib0: packet len 63800 (> 2048) too long to send, dropping
+[ 1083.032481] ib0: packet len 23960 (> 2048) too long to send, dropping
+[ 1083.033149] ib0: packet len 63800 (> 2048) too long to send, dropping
+[ 1083.033439] ib0: packet len 63800 (> 2048) too long to send, dropping
+[ 1083.033700] ib0: packet len 63800 (> 2048) too long to send, dropping
+[ 1083.034124] ib0: packet len 63800 (> 2048) too long to send, dropping
+[ 1083.034387] ==================================================================
+[ 1083.034602] BUG: KASAN: stack-out-of-bounds in __ip_options_echo+0xf08/0x1310
+[ 1083.034798] Write of size 4 at addr ffff880353457c5f by task kworker/u16:0/7
+[ 1083.034990]
+[ 1083.035104] CPU: 7 PID: 7 Comm: kworker/u16:0 Tainted: G           O      4.19.0-rc5+ #1
+[ 1083.035316] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu2 04/01/2014
+[ 1083.035573] Workqueue: ipoib_wq ipoib_cm_skb_reap [ib_ipoib]
+[ 1083.035750] Call Trace:
+[ 1083.035888]  dump_stack+0x9a/0xeb
+[ 1083.036031]  print_address_description+0xe3/0x2e0
+[ 1083.036213]  kasan_report+0x18a/0x2e0
+[ 1083.036356]  ? __ip_options_echo+0xf08/0x1310
+[ 1083.036522]  __ip_options_echo+0xf08/0x1310
+[ 1083.036688]  icmp_send+0x7b9/0x1cd0
+[ 1083.036843]  ? icmp_route_lookup.constprop.9+0x1070/0x1070
+[ 1083.037018]  ? netif_schedule_queue+0x5/0x200
+[ 1083.037180]  ? debug_show_all_locks+0x310/0x310
+[ 1083.037341]  ? rcu_dynticks_curr_cpu_in_eqs+0x85/0x120
+[ 1083.037519]  ? debug_locks_off+0x11/0x80
+[ 1083.037673]  ? debug_check_no_obj_freed+0x207/0x4c6
+[ 1083.037841]  ? check_flags.part.27+0x450/0x450
+[ 1083.037995]  ? debug_check_no_obj_freed+0xc3/0x4c6
+[ 1083.038169]  ? debug_locks_off+0x11/0x80
+[ 1083.038318]  ? skb_dequeue+0x10e/0x1a0
+[ 1083.038476]  ? ipoib_cm_skb_reap+0x2b5/0x650 [ib_ipoib]
+[ 1083.038642]  ? netif_schedule_queue+0xa8/0x200
+[ 1083.038820]  ? ipoib_cm_skb_reap+0x544/0x650 [ib_ipoib]
+[ 1083.038996]  ipoib_cm_skb_reap+0x544/0x650 [ib_ipoib]
+[ 1083.039174]  process_one_work+0x912/0x1830
+[ 1083.039336]  ? wq_pool_ids_show+0x310/0x310
+[ 1083.039491]  ? lock_acquire+0x145/0x3a0
+[ 1083.042312]  worker_thread+0x87/0xbb0
+[ 1083.045099]  ? process_one_work+0x1830/0x1830
+[ 1083.047865]  kthread+0x322/0x3e0
+[ 1083.050624]  ? kthread_create_worker_on_cpu+0xc0/0xc0
+[ 1083.053354]  ret_from_fork+0x3a/0x50
 
-[  783.915019]        CPU0
-[  783.915021]        ----
-[  783.915034]   lock(&(&hwq->lock)->rlock);
-[  783.915035]   lock(&(&hwq->lock)->rlock);
-[  783.915037]
- *** DEADLOCK ***
+For instance __ip_options_echo is failing to proceed with invalid srr and
+optlen passed from another layer via IPCB
 
-[  783.915038]  May be due to missing lock nesting notation
+[  762.139568] IPv4: __ip_options_echo rr=0 ts=0 srr=43 cipso=0
+[  762.139720] IPv4: ip_options_build: IPCB 00000000f3cd969e opt 000000002ccb3533
+[  762.139838] IPv4: __ip_options_echo in srr: optlen 197 soffset 84
+[  762.139852] IPv4: ip_options_build srr=0 is_frag=0 rr_needaddr=0 ts_needaddr=0 ts_needtime=0 rr=0 ts=0
+[  762.140269] ==================================================================
+[  762.140713] IPv4: __ip_options_echo rr=0 ts=0 srr=0 cipso=0
+[  762.141078] BUG: KASAN: stack-out-of-bounds in __ip_options_echo+0x12ec/0x1680
+[  762.141087] Write of size 4 at addr ffff880353457c7f by task kworker/u16:0/7
 
-[  783.915039] 1 lock held by swapper/2/0:
-[  783.915040]  #0: 00000000be73920d (&(&hwq->lock)->rlock){..-.}, at: bnxt_qplib_service_creq+0x2a/0x350 [bnxt_re]
-[  783.915044]
-stack backtrace:
-[  783.915046] CPU: 2 PID: 0 Comm: swapper/2 Not tainted 4.19.0-rc2+ #33
-[  783.915047] Hardware name: Dell Inc. PowerEdge R730/0599V5, BIOS 1.0.4 08/28/2014
-[  783.915048] Call Trace:
-[  783.915049]  <IRQ>
-[  783.915054]  dump_stack+0x90/0xe3
-[  783.915058]  __lock_acquire+0x106c/0x1080
-[  783.915061]  ? sched_clock+0x5/0x10
-[  783.915063]  lock_acquire+0xbd/0x1a0
-[  783.915065]  ? bnxt_qplib_service_creq+0x232/0x350 [bnxt_re]
-[  783.915069]  _raw_spin_lock_irqsave+0x4a/0x90
-[  783.915071]  ? bnxt_qplib_service_creq+0x232/0x350 [bnxt_re]
-[  783.915073]  bnxt_qplib_service_creq+0x232/0x350 [bnxt_re]
-[  783.915078]  tasklet_action_common.isra.17+0x197/0x1b0
-[  783.915081]  __do_softirq+0xcb/0x3a6
-[  783.915084]  irq_exit+0xe9/0x100
-[  783.915085]  do_IRQ+0x6a/0x120
-[  783.915087]  common_interrupt+0xf/0xf
-[  783.915088]  </IRQ>
-
-Use nested notation for the spin_lock to avoid this warning.
-
-Signed-off-by: Selvin Xavier <selvin.xavier@broadcom.com>
+Signed-off-by: Denis Drozdov <denisd@mellanox.com>
+Reviewed-by: Erez Shitrit <erezsh@mellanox.com>
+Reviewed-by: Feras Daoud <ferasda@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
 Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/bnxt_re/qplib_rcfw.c |   13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ drivers/infiniband/ulp/ipoib/ipoib_cm.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
-+++ b/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
-@@ -311,8 +311,17 @@ static int bnxt_qplib_process_qp_event(s
- 		bnxt_qplib_release_cq_locks(qp, &flags);
- 		break;
- 	default:
--		/* Command Response */
--		spin_lock_irqsave(&cmdq->lock, flags);
-+		/*
-+		 * Command Response
-+		 * cmdq->lock needs to be acquired to synchronie
-+		 * the command send and completion reaping. This function
-+		 * is always called with creq->lock held. Using
-+		 * the nested variant of spin_lock.
-+		 *
-+		 */
-+
-+		spin_lock_irqsave_nested(&cmdq->lock, flags,
-+					 SINGLE_DEPTH_NESTING);
- 		cookie = le16_to_cpu(qp_event->cookie);
- 		mcookie = qp_event->cookie;
- 		blocked = cookie & RCFW_CMD_IS_BLOCKING;
+--- a/drivers/infiniband/ulp/ipoib/ipoib_cm.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_cm.c
+@@ -1427,11 +1427,15 @@ static void ipoib_cm_skb_reap(struct wor
+ 		spin_unlock_irqrestore(&priv->lock, flags);
+ 		netif_tx_unlock_bh(dev);
+ 
+-		if (skb->protocol == htons(ETH_P_IP))
++		if (skb->protocol == htons(ETH_P_IP)) {
++			memset(IPCB(skb), 0, sizeof(*IPCB(skb)));
+ 			icmp_send(skb, ICMP_DEST_UNREACH, ICMP_FRAG_NEEDED, htonl(mtu));
++		}
+ #if IS_ENABLED(CONFIG_IPV6)
+-		else if (skb->protocol == htons(ETH_P_IPV6))
++		else if (skb->protocol == htons(ETH_P_IPV6)) {
++			memset(IP6CB(skb), 0, sizeof(*IP6CB(skb)));
+ 			icmpv6_send(skb, ICMPV6_PKT_TOOBIG, 0, mtu);
++		}
+ #endif
+ 		dev_kfree_skb_any(skb);
+ 
 
 
