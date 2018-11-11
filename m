@@ -7,51 +7,48 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0165C43610
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28619C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5B1521780
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB69322353
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kqMfn5h7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5B1521780
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PYJKdSUB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB69322353
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404407AbeKLIXW (ORCPT
+        id S2404418AbeKLIXX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:23:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56754 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:23:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56592 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404353AbeKLIXV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:23:21 -0500
+        id S2404394AbeKLIXW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:23:22 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB86521707;
-        Sun, 11 Nov 2018 22:33:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 99888208A3;
+        Sun, 11 Nov 2018 22:33:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975603;
-        bh=QlReAoMnNWSoPLWOHobPqrPbnbtIQWaNSXUWeyV7UlI=;
+        s=default; t=1541975604;
+        bh=LBEHm4p93YI9RjaUukkfKi7fa+eJW0Kok0dcolunwwc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kqMfn5h77cUntAeHxbjD+pMr8r1kOP8ED+L4hegXCObsa4tqNUFVN4JW3R0eOHu/I
-         GJ3GfHK0dU5dbyOv+iGvxr2zcFtl7xxVbCmNmZTu/u8IrUqANRALLS8UfmTp01yRHH
-         xXWRIs/uqvNpbK5cempxcO/4wkdoCPa1Gyi2/q1k=
+        b=PYJKdSUB9z0uD/riB4+ZADiWlEisa1E4wREyA4aXELwIZQUTEYJbNXUlAn/FlM2OF
+         TOKBMZ44BpOLrDAO+aGNbNoDx/YtPZdAK8J4k7zUzNoC2HKqRgBPF6WJxYS0ezeOij
+         Cek37EYDd4lerL6v6qCflEvkEEHxvgdZv1+jBddw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Colascione <dancol@google.com>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Chenbo Feng <fengc@google.com>
-Subject: [PATCH 4.14 222/222] bpf: wait for running BPF programs when updating map-in-map
-Date:   Sun, 11 Nov 2018 14:25:19 -0800
-Message-Id: <20181111221706.032923266@linuxfoundation.org>
+        stable@vger.kernel.org, Tang Junhui <tang.junhui.linux@gmail.com>,
+        Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.9 001/141] bcache: fix miss key refill->end in writeback
+Date:   Sun, 11 Nov 2018 14:24:20 -0800
+Message-Id: <20181111221627.975172180@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
-References: <20181111221647.665769131@linuxfoundation.org>
+In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
+References: <20181111221627.853046496@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -60,70 +57,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Daniel Colascione <dancol@google.com>
+From: Tang Junhui <tang.junhui.linux@gmail.com>
 
-commit 1ae80cf31938c8f77c37a29bbe29e7f1cd492be8 upstream.
+commit 2d6cb6edd2c7fb4f40998895bda45006281b1ac5 upstream.
 
-The map-in-map frequently serves as a mechanism for atomic
-snapshotting of state that a BPF program might record.  The current
-implementation is dangerous to use in this way, however, since
-userspace has no way of knowing when all programs that might have
-retrieved the "old" value of the map may have completed.
+refill->end record the last key of writeback, for example, at the first
+time, keys (1,128K) to (1,1024K) are flush to the backend device, but
+the end key (1,1024K) is not included, since the bellow code:
+	if (bkey_cmp(k, refill->end) >= 0) {
+		ret = MAP_DONE;
+		goto out;
+	}
+And in the next time when we refill writeback keybuf again, we searched
+key start from (1,1024K), and got a key bigger than it, so the key
+(1,1024K) missed.
+This patch modify the above code, and let the end key to be included to
+the writeback key buffer.
 
-This change ensures that map update operations on map-in-map map types
-always wait for all references to the old map to drop before returning
-to userspace.
-
-Signed-off-by: Daniel Colascione <dancol@google.com>
-Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-[fengc@google.com: 4.14 backport: adjust context]
-Signed-off-by: Chenbo Feng <fengc@google.com>
+Signed-off-by: Tang Junhui <tang.junhui.linux@gmail.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Coly Li <colyli@suse.de>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/bpf/syscall.c |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/md/bcache/btree.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -519,6 +519,17 @@ err_put:
- 	return err;
- }
+--- a/drivers/md/bcache/btree.c
++++ b/drivers/md/bcache/btree.c
+@@ -2367,7 +2367,7 @@ static int refill_keybuf_fn(struct btree
+ 	struct keybuf *buf = refill->buf;
+ 	int ret = MAP_CONTINUE;
  
-+static void maybe_wait_bpf_programs(struct bpf_map *map)
-+{
-+	/* Wait for any running BPF programs to complete so that
-+	 * userspace, when we return to it, knows that all programs
-+	 * that could be running use the new map value.
-+	 */
-+	if (map->map_type == BPF_MAP_TYPE_HASH_OF_MAPS ||
-+	    map->map_type == BPF_MAP_TYPE_ARRAY_OF_MAPS)
-+		synchronize_rcu();
-+}
-+
- #define BPF_MAP_UPDATE_ELEM_LAST_FIELD flags
- 
- static int map_update_elem(union bpf_attr *attr)
-@@ -592,6 +603,7 @@ static int map_update_elem(union bpf_att
+-	if (bkey_cmp(k, refill->end) >= 0) {
++	if (bkey_cmp(k, refill->end) > 0) {
+ 		ret = MAP_DONE;
+ 		goto out;
  	}
- 	__this_cpu_dec(bpf_prog_active);
- 	preempt_enable();
-+	maybe_wait_bpf_programs(map);
- 
- 	if (!err)
- 		trace_bpf_map_update_elem(map, ufd, key, value);
-@@ -636,6 +648,7 @@ static int map_delete_elem(union bpf_att
- 	rcu_read_unlock();
- 	__this_cpu_dec(bpf_prog_active);
- 	preempt_enable();
-+	maybe_wait_bpf_programs(map);
- 
- 	if (!err)
- 		trace_bpf_map_delete_elem(map, ufd, key);
 
 
