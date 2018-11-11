@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 175E0C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:50:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8907C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:50:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4D8521508
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:50:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9004B214E0
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:50:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UQwxxmrW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4D8521508
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UzRjbQvx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9004B214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391011AbeKLIkU (ORCPT
+        id S2404232AbeKLIXK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:40:20 -0500
+        Mon, 12 Nov 2018 03:23:10 -0500
 Received: from mail.kernel.org ([198.145.29.99]:54672 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404246AbeKLIXL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:23:11 -0500
+        id S2404173AbeKLIXI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:23:08 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E78902245E;
-        Sun, 11 Nov 2018 22:33:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4155C2243E;
+        Sun, 11 Nov 2018 22:33:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975594;
-        bh=eTXCHD2S5FF4WkCPS8H5+n9UD7YSfgaI1NoOlx8et9k=;
+        s=default; t=1541975591;
+        bh=5TdJhso0Pj+H2OvguW4+zXuarGsGqe5Kd8mx5jH77P4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UQwxxmrWSyNut6W26DVNPz1NobUc8cNRZLJvPUio9+0jaDQ7UECSTo6J+nYzXEaZy
-         KnPcMvQD914f94ISb9maTbK1W48euHRzPYiTSgKVTNNUWw/sl0wtSVqb1ols2AJ1rw
-         j9Lg0sRW6QUSud+Os0EjBkn8H4iWYy2OPRvwklGQ=
+        b=UzRjbQvx5cdM97AWMRFMIChMN26RVXzBvRsJRBjSpM7XZyUDfpcGPdHoETb+OGN8i
+         pYXs3l6XkMS41YJrbOqGLzrV+vbGLbjSQPnC2ree427YyHh5iECM+q4fHqUIZc+bwK
+         CBRBRMT4WzP1yO713zM0jobBl632Y5Q0VMSzKFlE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liu Bo <bo.liu@linux.alibaba.com>,
-        Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 211/222] Btrfs: fix null pointer dereference on compressed write path error
-Date:   Sun, 11 Nov 2018 14:25:08 -0800
-Message-Id: <20181111221705.407853567@linuxfoundation.org>
+        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
+        Omar Sandoval <osandov@fb.com>, David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.14 204/222] btrfs: wait on caching when putting the bg cache
+Date:   Sun, 11 Nov 2018 14:25:01 -0800
+Message-Id: <20181111221704.938395094@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -63,46 +62,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Josef Bacik <josef@toxicpanda.com>
 
-commit 3527a018c00e5dbada2f9d7ed5576437b6dd5cfb upstream.
+commit 3aa7c7a31c26321696b92841d5103461c6f3f517 upstream.
 
-At inode.c:compress_file_range(), under the "free_pages_out" label, we can
-end up dereferencing the "pages" pointer when it has a NULL value. This
-case happens when "start" has a value of 0 and we fail to allocate memory
-for the "pages" pointer. When that happens we jump to the "cont" label and
-then enter the "if (start == 0)" branch where we immediately call the
-cow_file_range_inline() function. If that function returns 0 (success
-creating an inline extent) or an error (like -ENOMEM for example) we jump
-to the "free_pages_out" label and then access "pages[i]" leading to a NULL
-pointer dereference, since "nr_pages" has a value greater than zero at
-that point.
+While testing my backport I noticed there was a panic if I ran
+generic/416 generic/417 generic/418 all in a row.  This just happened to
+uncover a race where we had outstanding IO after we destroy all of our
+workqueues, and then we'd go to queue the endio work on those free'd
+workqueues.
 
-Fix this by setting "nr_pages" to 0 when we fail to allocate memory for
-the "pages" pointer.
+This is because we aren't waiting for the caching threads to be done
+before freeing everything up, so to fix this make sure we wait on any
+outstanding caching that's being done before we free up the block group,
+so we're sure to be done with all IO by the time we get to
+btrfs_stop_all_workers().  This fixes the panic I was seeing
+consistently in testing.
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=201119
-Fixes: 771ed689d2cd ("Btrfs: Optimize compressed writeback and reads")
+------------[ cut here ]------------
+kernel BUG at fs/btrfs/volumes.c:6112!
+SMP PTI
+Modules linked in:
+CPU: 1 PID: 27165 Comm: kworker/u4:7 Not tainted 4.16.0-02155-g3553e54a578d-dirty #875
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-2.el7 04/01/2014
+Workqueue: btrfs-cache btrfs_cache_helper
+RIP: 0010:btrfs_map_bio+0x346/0x370
+RSP: 0000:ffffc900061e79d0 EFLAGS: 00010202
+RAX: 0000000000000000 RBX: ffff880071542e00 RCX: 0000000000533000
+RDX: ffff88006bb74380 RSI: 0000000000000008 RDI: ffff880078160000
+RBP: 0000000000000001 R08: ffff8800781cd200 R09: 0000000000503000
+R10: ffff88006cd21200 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: ffff8800781cd200 R15: ffff880071542e00
+FS:  0000000000000000(0000) GS:ffff88007fd00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000817ffc4 CR3: 0000000078314000 CR4: 00000000000006e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ btree_submit_bio_hook+0x8a/0xd0
+ submit_one_bio+0x5d/0x80
+ read_extent_buffer_pages+0x18a/0x320
+ btree_read_extent_buffer_pages+0xbc/0x200
+ ? alloc_extent_buffer+0x359/0x3e0
+ read_tree_block+0x3d/0x60
+ read_block_for_search.isra.30+0x1a5/0x360
+ btrfs_search_slot+0x41b/0xa10
+ btrfs_next_old_leaf+0x212/0x470
+ caching_thread+0x323/0x490
+ normal_work_helper+0xc5/0x310
+ process_one_work+0x141/0x340
+ worker_thread+0x44/0x3c0
+ kthread+0xf8/0x130
+ ? process_one_work+0x340/0x340
+ ? kthread_bind+0x10/0x10
+ ret_from_fork+0x35/0x40
+RIP: btrfs_map_bio+0x346/0x370 RSP: ffffc900061e79d0
+---[ end trace 827eb13e50846033 ]---
+Kernel panic - not syncing: Fatal exception
+Kernel Offset: disabled
+---[ end Kernel panic - not syncing: Fatal exception
+
 CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Liu Bo <bo.liu@linux.alibaba.com>
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+Reviewed-by: Omar Sandoval <osandov@fb.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/inode.c |    1 +
+ fs/btrfs/extent-tree.c |    1 +
  1 file changed, 1 insertion(+)
 
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -524,6 +524,7 @@ again:
- 		pages = kcalloc(nr_pages, sizeof(struct page *), GFP_NOFS);
- 		if (!pages) {
- 			/* just bail out to the uncompressed code */
-+			nr_pages = 0;
- 			goto cont;
- 		}
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -9881,6 +9881,7 @@ void btrfs_put_block_group_cache(struct
  
+ 		block_group = btrfs_lookup_first_block_group(info, last);
+ 		while (block_group) {
++			wait_block_group_cache_done(block_group);
+ 			spin_lock(&block_group->lock);
+ 			if (block_group->iref)
+ 				break;
 
 
