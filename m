@@ -2,49 +2,51 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7556BC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:29:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74AD6C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:29:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 392362148E
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:29:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 392362148E
+	by mail.kernel.org (Postfix) with ESMTP id 3525420818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:29:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3525420818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730588AbeKLGS5 (ORCPT
+        id S1730487AbeKLFsW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:18:57 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50554 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730474AbeKLFsW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 00:48:22 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50326 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730391AbeKLFsT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 00:48:19 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsi-0000lF-55; Sun, 11 Nov 2018 19:58:52 +0000
+        id 1gLvsf-0000l6-3r; Sun, 11 Nov 2018 19:58:49 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsa-0001rI-5D; Sun, 11 Nov 2018 19:58:44 +0000
+        id 1gLvsa-0001tQ-T8; Sun, 11 Nov 2018 19:58:44 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Arnd Bergmann" <arnd@arndb.de>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Martin Liska" <mliska@suse.cz>,
-        "Peter Oberparleiter" <oberpar@linux.vnet.ibm.com>
+CC:     akpm@linux-foundation.org, "Jiri Olsa" <jolsa@kernel.org>,
+        "David Ahern" <dsahern@gmail.com>,
+        "Arnaldo Carvalho de Melo" <acme@redhat.com>,
+        "Namhyung Kim" <namhyung@kernel.org>,
+        "Wang Nan" <wangnan0@huawei.com>,
+        "Adrian Hunter" <adrian.hunter@intel.com>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.824137743@decadent.org.uk>
+Message-ID: <lsq.1541965745.306584254@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 338/366] gcov: support GCC 7.1
+Subject: [PATCH 3.16 359/366] perf top: Use __fallthrough
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,54 +60,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Martin Liska <mliska@suse.cz>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-commit 05384213436ab690c46d9dfec706b80ef8d671ab upstream.
+commit 7b0214b702ad8e124e039a317beeebb3f020d125 upstream.
 
-Starting from GCC 7.1, __gcov_exit is a new symbol expected to be
-implemented in a profiling runtime.
+The implicit fall through case label here is intended, so let us inform
+that to gcc >= 7:
 
-[akpm@linux-foundation.org: coding-style fixes]
-[mliska@suse.cz: v2]
-  Link: http://lkml.kernel.org/r/e63a3c59-0149-c97e-4084-20ca8f146b26@suse.cz
-Link: http://lkml.kernel.org/r/8c4084fa-3885-29fe-5fc4-0d4ca199c785@suse.cz
-Signed-off-by: Martin Liska <mliska@suse.cz>
-Acked-by: Peter Oberparleiter <oberpar@linux.vnet.ibm.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
+    CC       /tmp/build/perf/builtin-top.o
+  builtin-top.c: In function 'display_thread':
+  builtin-top.c:644:7: error: this statement may fall through [-Werror=implicit-fallthrough=]
+      if (errno == EINTR)
+         ^
+  builtin-top.c:647:3: note: here
+     default:
+   ^~~~~~~
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: http://lkml.kernel.org/n/tip-lmcfnnyx9ic0m6j0aud98p4e@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- kernel/gcov/base.c    | 6 ++++++
- kernel/gcov/gcc_4_7.c | 4 +++-
- 2 files changed, 9 insertions(+), 1 deletion(-)
+ tools/perf/builtin-top.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/gcov/base.c
-+++ b/kernel/gcov/base.c
-@@ -97,6 +97,12 @@ void __gcov_merge_icall_topn(gcov_type *
- }
- EXPORT_SYMBOL(__gcov_merge_icall_topn);
- 
-+void __gcov_exit(void)
-+{
-+	/* Unused. */
-+}
-+EXPORT_SYMBOL(__gcov_exit);
-+
- /**
-  * gcov_enable_events - enable event reporting through gcov_event()
-  *
---- a/kernel/gcov/gcc_4_7.c
-+++ b/kernel/gcov/gcc_4_7.c
-@@ -18,7 +18,9 @@
- #include <linux/vmalloc.h>
- #include "gcov.h"
- 
--#if (__GNUC__ > 5) || (__GNUC__ == 5 && __GNUC_MINOR__ >= 1)
-+#if (__GNUC__ >= 7)
-+#define GCOV_COUNTERS			9
-+#elif (__GNUC__ > 5) || (__GNUC__ == 5 && __GNUC_MINOR__ >= 1)
- #define GCOV_COUNTERS			10
- #elif __GNUC__ == 4 && __GNUC_MINOR__ >= 9
- #define GCOV_COUNTERS			9
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -609,7 +609,7 @@ repeat:
+ 		case -1:
+ 			if (errno == EINTR)
+ 				continue;
+-			/* Fall trhu */
++			__fallthrough;
+ 		default:
+ 			c = getc(stdin);
+ 			tcsetattr(0, TCSAFLUSH, &save);
 
