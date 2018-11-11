@@ -7,48 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73283C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:20:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 719ECC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:20:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32BA120817
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:20:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34DBB20869
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:20:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sEgIiPqF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32BA120817
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XZeq/lfX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34DBB20869
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389746AbeKLJKE (ORCPT
+        id S2389688AbeKLJK0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:10:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48352 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:10:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48232 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387820AbeKLIVW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:21:22 -0500
+        id S2389457AbeKLIVU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:20 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 935FA223CB;
-        Sun, 11 Nov 2018 22:31:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 261C621707;
+        Sun, 11 Nov 2018 22:31:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975484;
-        bh=ajxLGnihCYvDEENFzujjgcAteJb5stbG7mGgkm9Or+U=;
+        s=default; t=1541975483;
+        bh=PEknBVHXre1//zsGvrq6VtVHO1zrF3bW9Fylndhglbg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sEgIiPqF5fTPmo27wvKsaBlNsJB1eHlE5QaLtrrByB4SpqFnEa6auyRJ/MUsssLdB
-         3Bz7lpMacWcMZCTTfMgevdYFzKjdKqUV35S2NGvZ0Hi/u2EFYxsW81uH+DtqkykAeb
-         nF/Z06cIWfbY7+dHcxAYP3JlOPHJOy2MMWnm+Cz0=
+        b=XZeq/lfXULOSzc4NziQvVg1U/rg14bLihaPvtSijCCdAvjTugE/wsFmqQFdQWM3+b
+         ob5QIAEDPwDboeao1iLKceDixSIvtKlRMSNJzEnA1tOlkcZ0UN1NrcvQgX6yMDOtPX
+         0oSLZubDg443i/a73qQyNw788zwIKO6TCdufNXds=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
-        =?UTF-8?q?Leonardo=20Soares=20M=C3=BCller?= 
-        <leozinho29_eu@hotmail.com>, Daniel Colascione <dancol@google.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.18 243/350] mm: /proc/pid/smaps_rollup: fix NULL pointer deref in smaps_pte_range()
-Date:   Sun, 11 Nov 2018 14:21:47 -0800
-Message-Id: <20181111221718.205212723@linuxfoundation.org>
+        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.18 239/350] crypto: aesni - dont use GFP_ATOMIC allocation if the request doesnt cross a page in gcm
+Date:   Sun, 11 Nov 2018 14:21:43 -0800
+Message-Id: <20181111221718.035446001@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -66,108 +62,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vlastimil Babka <vbabka@suse.cz>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-commit fa76da461bb0be13c8339d984dcf179151167c8f upstream.
+commit a788848116454d753b13a4888e0e31ada3c4d393 upstream.
 
-Leonardo reports an apparent regression in 4.19-rc7:
+This patch fixes gcmaes_crypt_by_sg so that it won't use memory
+allocation if the data doesn't cross a page boundary.
 
- BUG: unable to handle kernel NULL pointer dereference at 00000000000000f0
- PGD 0 P4D 0
- Oops: 0000 [#1] PREEMPT SMP PTI
- CPU: 3 PID: 6032 Comm: python Not tainted 4.19.0-041900rc7-lowlatency #201810071631
- Hardware name: LENOVO 80UG/Toronto 4A2, BIOS 0XCN45WW 08/09/2018
- RIP: 0010:smaps_pte_range+0x32d/0x540
- Code: 80 00 00 00 00 74 a9 48 89 de 41 f6 40 52 40 0f 85 04 02 00 00 49 2b 30 48 c1 ee 0c 49 03 b0 98 00 00 00 49 8b 80 a0 00 00 00 <48> 8b b8 f0 00 00 00 e8 b7 ef ec ff 48 85 c0 0f 84 71 ff ff ff a8
- RSP: 0018:ffffb0cbc484fb88 EFLAGS: 00010202
- RAX: 0000000000000000 RBX: 0000560ddb9e9000 RCX: 0000000000000000
- RDX: 0000000000000000 RSI: 0000000560ddb9e9 RDI: 0000000000000001
- RBP: ffffb0cbc484fbc0 R08: ffff94a5a227a578 R09: ffff94a5a227a578
- R10: 0000000000000000 R11: 0000560ddbbe7000 R12: ffffe903098ba728
- R13: ffffb0cbc484fc78 R14: ffffb0cbc484fcf8 R15: ffff94a5a2e9cf48
- FS:  00007f6dfb683740(0000) GS:ffff94a5aaf80000(0000) knlGS:0000000000000000
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 00000000000000f0 CR3: 000000011c118001 CR4: 00000000003606e0
- DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
- DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
- Call Trace:
-  __walk_page_range+0x3c2/0x6f0
-  walk_page_vma+0x42/0x60
-  smap_gather_stats+0x79/0xe0
-  ? gather_pte_stats+0x320/0x320
-  ? gather_hugetlb_stats+0x70/0x70
-  show_smaps_rollup+0xcd/0x1c0
-  seq_read+0x157/0x400
-  __vfs_read+0x3a/0x180
-  ? security_file_permission+0x93/0xc0
-  ? security_file_permission+0x93/0xc0
-  vfs_read+0x8f/0x140
-  ksys_read+0x55/0xc0
-  __x64_sys_read+0x1a/0x20
-  do_syscall_64+0x5a/0x110
-  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+Authenticated encryption may be used by dm-crypt. If the encryption or
+decryption fails, it would result in I/O error and filesystem corruption.
+The function gcmaes_crypt_by_sg is using GFP_ATOMIC allocation that can
+fail anytime. This patch fixes the logic so that it won't attempt the
+failing allocation if the data doesn't cross a page boundary.
 
-Decoded code matched to local compilation+disassembly points to
-smaps_pte_entry():
-
-        } else if (unlikely(IS_ENABLED(CONFIG_SHMEM) && mss->check_shmem_swap
-                                                        && pte_none(*pte))) {
-                page = find_get_entry(vma->vm_file->f_mapping,
-                                                linear_page_index(vma, addr));
-
-Here, vma->vm_file is NULL.  mss->check_shmem_swap should be false in that
-case, however for smaps_rollup, smap_gather_stats() can set the flag true
-for one vma and leave it true for subsequent vma's where it should be
-false.
-
-To fix, reset the check_shmem_swap flag to false.  There's also related
-bug which sets mss->swap to shmem_swapped, which in the context of
-smaps_rollup overwrites any value accumulated from previous vma's.  Fix
-that as well.
-
-Note that the report suggests a regression between 4.17.19 and 4.19-rc7,
-which makes the 4.19 series ending with commit 258f669e7e88 ("mm:
-/proc/pid/smaps_rollup: convert to single value seq_file") suspicious.
-But the mss was reused for rollup since 493b0e9d945f ("mm: add
-/proc/pid/smaps_rollup") so let's play it safe with the stable backport.
-
-Link: http://lkml.kernel.org/r/555fbd1f-4ac9-0b58-dcd4-5dc4380ff7ca@suse.cz
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=201377
-Fixes: 493b0e9d945f ("mm: add /proc/pid/smaps_rollup")
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-Reported-by: Leonardo Soares Müller <leozinho29_eu@hotmail.com>
-Tested-by: Leonardo Soares Müller <leozinho29_eu@hotmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Daniel Colascione <dancol@google.com>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/proc/task_mmu.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/x86/crypto/aesni-intel_glue.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -767,6 +767,8 @@ static int show_smap(struct seq_file *m,
- 	smaps_walk.private = mss;
- 
- #ifdef CONFIG_SHMEM
-+	/* In case of smaps_rollup, reset the value from previous vma */
-+	mss->check_shmem_swap = false;
- 	if (vma->vm_file && shmem_mapping(vma->vm_file->f_mapping)) {
- 		/*
- 		 * For shared or readonly shmem mappings we know that all
-@@ -782,7 +784,7 @@ static int show_smap(struct seq_file *m,
- 
- 		if (!shmem_swapped || (vma->vm_flags & VM_SHARED) ||
- 					!(vma->vm_flags & VM_WRITE)) {
--			mss->swap = shmem_swapped;
-+			mss->swap += shmem_swapped;
- 		} else {
- 			mss->check_shmem_swap = true;
- 			smaps_walk.pte_hole = smaps_pte_hole;
+--- a/arch/x86/crypto/aesni-intel_glue.c
++++ b/arch/x86/crypto/aesni-intel_glue.c
+@@ -817,7 +817,7 @@ static int gcmaes_crypt_by_sg(bool enc,
+ 	/* Linearize assoc, if not already linear */
+ 	if (req->src->length >= assoclen && req->src->length &&
+ 		(!PageHighMem(sg_page(req->src)) ||
+-			req->src->offset + req->src->length < PAGE_SIZE)) {
++			req->src->offset + req->src->length <= PAGE_SIZE)) {
+ 		scatterwalk_start(&assoc_sg_walk, req->src);
+ 		assoc = scatterwalk_map(&assoc_sg_walk);
+ 	} else {
 
 
