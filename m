@@ -2,137 +2,123 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A285AC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:02:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F2B9C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:03:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68EEA2148E
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:02:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68EEA2148E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 443592148E
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:03:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gdu1JNHr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 443592148E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729486AbeKLEvy (ORCPT
+        id S1729506AbeKLEwa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 23:51:54 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:52644 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729405AbeKLEvy (ORCPT
+        Sun, 11 Nov 2018 23:52:30 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:37443 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729405AbeKLEwa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 23:51:54 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 1B173806D6; Sun, 11 Nov 2018 20:02:29 +0100 (CET)
-Date:   Sun, 11 Nov 2018 20:02:30 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Borislav Petkov <bp@alien8.de>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Subject: Re: [PATCH v5 04/27] x86/fpu/xstate: Add XSAVES system states for
- shadow stack
-Message-ID: <20181111190230.GA2681@amd>
-References: <20181011151523.27101-1-yu-cheng.yu@intel.com>
- <20181011151523.27101-5-yu-cheng.yu@intel.com>
- <20181108184038.GJ7543@zn.tnic>
- <20181111113103.GG27666@amd>
- <4E917DA9-5192-48E2-8857-08C3ABE08AFE@amacapital.net>
+        Sun, 11 Nov 2018 23:52:30 -0500
+Received: by mail-vs1-f68.google.com with SMTP id h18so3893023vsj.4;
+        Sun, 11 Nov 2018 11:03:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8rtLQG3Al6bnqY371T+ajOdxkZ7A5QooXq5anoX8tic=;
+        b=Gdu1JNHri66pbspYPqDaIwtDTAhVOVnB/Qr9UwiIrVTvQIXO2jAsyIkUBM9Tsc23+i
+         BpHzVfVufVtMWDRSCrBqHt4g5gGa+uOcExaztqHXyoaluKk/xXkKET8OyzAdwNl9irpx
+         RJGZOikYf/2aVYnr6UJpRlQw8ZsvY7v8ZtFue45rF16yvl5+/GyRS6+ZQayeZkPSg3KB
+         dFJ8kDpYOm8HGVewnLtTPW/zfVDefKzlLtDtXfWxiGWv78Ff5PBleUdEOC7glVPK14fD
+         wdHUkDunFngoYR6kPJz02EzB83iZUJwDWqRdC70si+foyltKUhvbSIB3WigdCJYKrDqk
+         pTDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8rtLQG3Al6bnqY371T+ajOdxkZ7A5QooXq5anoX8tic=;
+        b=LgVAx4W9S4hNqXQifJ8ix44LHMylxrQLMpX/edfNFY2/CEUwYNgJ5oYRP/o6I121T6
+         A8aKqDcMCNJOGyDSOwpBEBITs1cN7qSv3AHZ9OU8s2NY7BCoFytvMjS++gf8FwD8Y9Jf
+         uLF3+wkr7V/Nblbg28rpiCaM53tORJOhKfYMRGplczvBKJS6umIVaLS2/HIs0ATB2JpU
+         aISoe6/bo+ZDn8DpgRQKKd4/2a2VDGZdshpOyZV/YoFJBKqGIyupYEyfNrdQPYcNHur5
+         BEPhgA3Eh5pOcQ0kTaEe1dlNtwumvFicGhDNoSoY5B97TsG90fYCh82hLNeSXxKqcl8l
+         iRWw==
+X-Gm-Message-State: AGRZ1gK6onJoE1lAEShFKgdrgAdDQcj55tf8VVjJn8SbBiNzU8+wVzj4
+        9Gcd/VBGknvw0vxE33fBrw==
+X-Google-Smtp-Source: AJdET5fpF/K0oD1rs2jcTw7vUpY1qW6nwCrweer6zRZB1nZD853VsjBpRgPnowHWl7Nv5lTxnIXMFA==
+X-Received: by 2002:a67:7a49:: with SMTP id v70mr7054705vsc.165.1541962988971;
+        Sun, 11 Nov 2018 11:03:08 -0800 (PST)
+Received: from localhost.localdomain (c-71-226-66-69.hsd1.ga.comcast.net. [71.226.66.69])
+        by smtp.gmail.com with ESMTPSA id o8sm4048168vkf.4.2018.11.11.11.03.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 11 Nov 2018 11:03:08 -0800 (PST)
+From:   Ayman Bagabas <ayman.bagabas@gmail.com>
+To:     Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Ayman Bagabas <ayman.bagabas@gmail.com>,
+        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
+Subject: [PATCH v5 0/3] Huawei laptops
+Date:   Sun, 11 Nov 2018 14:02:42 -0500
+Message-Id: <20181111190250.6055-1-ayman.bagabas@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="azLHFNyN32YCQGCU"
-Content-Disposition: inline
-In-Reply-To: <4E917DA9-5192-48E2-8857-08C3ABE08AFE@amacapital.net>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Changes from v4:
+* Consistency in file names
+* How module would be enabled (Kconfig)
+* Match license in SPDX and MODULE_LICENSE 
 
---azLHFNyN32YCQGCU
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Changes from v3:
+* Code formatting
 
-On Sun 2018-11-11 06:59:24, Andy Lutomirski wrote:
->=20
->=20
-> > On Nov 11, 2018, at 3:31 AM, Pavel Machek <pavel@ucw.cz> wrote:
-> >=20
-> > Hi!
-> >=20
-> >>> +/*
-> >>> + * State component 12 is Control flow Enforcement kernel states
-> >>> + */
-> >>> +struct cet_kernel_state {
-> >>> +    u64 kernel_ssp;    /* kernel shadow stack */
-> >>> +    u64 pl1_ssp;    /* ring-1 shadow stack */
-> >>> +    u64 pl2_ssp;    /* ring-2 shadow stack */
-> >>=20
-> >> Just write "privilege level" everywhere - not "ring".
-> >=20
-> > Please just use word "ring". It is well estabilished terminology.
-> >=20
-> > Which ring is priviledge level 1, given that we have SMM and
-> > virtualization support?
->=20
-> To the contrary: CPL, DPL, and RPL are very well defined terms in the arc=
-hitecture manuals. =E2=80=9CPL=E2=80=9D is privilege level. PL 1 is very we=
-ll defined.
->=20
+Changes from v2:
+* Support for Huawei MBX
+* Style and formatting issues
 
-"Priviledge level" is generic term. "CPL" I may recognize as
-Intel-specific. "priviledge level" I would not. So I'd really use
-"ring" there. "CPL 1 shadow stack" would be okay, too I guess.
+[PATCH 1/3] 
+The first patch adds support for missing hotkeys on some models.
 
-> SMM is SMM, full stop (unless dual mode or whatever it=E2=80=99s called i=
-s on, but AFAIK no one uses it).  VMX non-root CPL 1 is *still* privilege l=
-evel 1.
->=20
-> In contrast, the security community likes to call SMM =E2=80=9Cring -1=E2=
-=80=9D, which is cute, but wrong from a systems programmer view. For exampl=
-e, SMM=E2=80=99s CPL can still range from 0-3.
->=20
+[PATCH 2/3]
+This one enables the front speakers on the Huawei Matebook X Pro (MBXP). This
+solves bug 200501 https://bugzilla.kernel.org/show_bug.cgi?id=200501
+It simply uses the pins configurations generated by hdajackretast using the
+settings posted on the bug page https://imgur.com/a/N1xsCVZ
 
-Regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+[PATCH 3/3]
+This enables the micmute LED on Huawei laptops with these IDs:
+1. Matebook X (19e5:3200)
+2. Matebook X (19e5:3201)
+3. Matebook X Pro (19e5:3204)
 
---azLHFNyN32YCQGCU
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Ayman Bagabas (3):
+  x86: add support for Huawei WMI hotkeys.
+  ALSA: hda: fix front speakers on Huawei MBXP.
+  ALSA: hda: add support for Huawei WMI micmute LED
 
-iEYEARECAAYFAlvofMYACgkQMOfwapXb+vI9WgCfSA5mLeg0dMNk4A/6IbLq/9Ih
-RVoAnA4XuVV1d1EoMJO4lhfDC+rwf0qd
-=xaDH
------END PGP SIGNATURE-----
+ drivers/platform/x86/Kconfig                 |  10 +
+ drivers/platform/x86/Makefile                |   1 +
+ drivers/platform/x86/huawei-wmi.c            | 215 +++++++++++++++++++
+ include/linux/platform_data/x86/huawei-wmi.h |   9 +
+ sound/pci/hda/huawei_wmi_helper.c            |  47 ++++
+ sound/pci/hda/patch_realtek.c                |  30 +++
+ 6 files changed, 312 insertions(+)
+ create mode 100644 drivers/platform/x86/huawei-wmi.c
+ create mode 100644 include/linux/platform_data/x86/huawei-wmi.h
+ create mode 100644 sound/pci/hda/huawei_wmi_helper.c
 
---azLHFNyN32YCQGCU--
+-- 
+2.17.2
+
