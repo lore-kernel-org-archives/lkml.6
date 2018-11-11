@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F959C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:47:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E23FC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:48:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26D7620872
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:47:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C888C20872
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:48:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RBmknTM1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26D7620872
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SxQ7y8k6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C888C20872
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387478AbeKLJiF (ORCPT
+        id S1733130AbeKLISo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:38:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39206 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:18:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38824 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733143AbeKLISr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:18:47 -0500
+        id S1733012AbeKLISl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:18:41 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 73AA2208A3;
-        Sun, 11 Nov 2018 22:28:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1338822503;
+        Sun, 11 Nov 2018 22:28:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975330;
-        bh=B2lQeC+BDcHBd7ESW8oer4LvAwJcLgLc08Mns2hplHg=;
+        s=default; t=1541975325;
+        bh=C0KyuaJgMyhpzjYj+YDAXJo1RjuYgY+UfGcFSU6zrzc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RBmknTM1nIvSzXFi7lDUvKYPc213g6p8mydSSCroiHYcgtxjVnLSpGuvR/mzeJJE6
-         hIPedkOwWXbSB+QIYCuldJpz/aD/exbamx3HrdgfNXSIFhMM782q6Bf1FVcocCZ9qm
-         cCRWAHrZieqkV1xUVlSwgtjEMsl9g0GTrIiqmIwU=
+        b=SxQ7y8k6C/j7hi+p+oHOm/WDrDXPTXoPLznH/F3zqywz0DVh9IBRyhwMo5zvMBJW0
+         4iWi57rYQzJ7BcjrhaeqJfoNusiauZDaJD6F18uOzVZFQ/btMhU7fTQ+YKU+foyp/W
+         2gjD9c81+NcxgLQr288ldmvt9UqOLSr+PoT2vt4U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.19 343/361] Btrfs: fix wrong dentries after fsync of file that got its parent replaced
-Date:   Sun, 11 Nov 2018 14:21:30 -0800
-Message-Id: <20181111221700.891983575@linuxfoundation.org>
+        stable@vger.kernel.org, Chris Murphy <lists@colorremedies.com>,
+        Qu Wenruo <wqu@suse.com>, David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.19 331/361] btrfs: Enhance btrfs_trim_fs function to handle error better
+Date:   Sun, 11 Nov 2018 14:21:18 -0800
+Message-Id: <20181111221659.901768008@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -62,86 +62,149 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Qu Wenruo <wqu@suse.com>
 
-commit 0f375eed92b5a407657532637ed9652611a682f5 upstream.
+commit 93bba24d4b5ad1e5cd8b43f64e66ff9d6355dd20 upstream.
 
-In a scenario like the following:
+Function btrfs_trim_fs() doesn't handle errors in a consistent way. If
+error happens when trimming existing block groups, it will skip the
+remaining blocks and continue to trim unallocated space for each device.
 
-  mkdir /mnt/A               # inode 258
-  mkdir /mnt/B               # inode 259
-  touch /mnt/B/bar           # inode 260
+The return value will only reflect the final error from device trimming.
 
-  sync
+This patch will fix such behavior by:
 
-  mv /mnt/B/bar /mnt/A/bar
-  mv -T /mnt/A /mnt/B
-  fsync /mnt/B/bar
+1) Recording the last error from block group or device trimming
+   The return value will also reflect the last error during trimming.
+   Make developer more aware of the problem.
 
-  <power fail>
+2) Continuing trimming if possible
+   If we failed to trim one block group or device, we could still try
+   the next block group or device.
 
-After replaying the log we end up with file bar having 2 hard links, both
-with the name 'bar' and one in the directory with inode number 258 and the
-other in the directory with inode number 259. Also, we end up with the
-directory inode 259 still existing and with the directory inode 258 still
-named as 'A', instead of 'B'. In this scenario, file 'bar' should only
-have one hard link, located at directory inode 258, the directory inode
-259 should not exist anymore and the name for directory inode 258 should
-be 'B'.
+3) Report number of failures during block group and device trimming
+   It would be less noisy, but still gives user a brief summary of
+   what's going wrong.
 
-This incorrect behaviour happens because when attempting to log the old
-parents of an inode, we skip any parents that no longer exist. Fix this
-by forcing a full commit if an old parent no longer exists.
+Such behavior can avoid confusion for cases like failure to trim the
+first block group and then only unallocated space is trimmed.
 
-A test case for fstests follows soon.
-
+Reported-by: Chris Murphy <lists@colorremedies.com>
 CC: stable@vger.kernel.org # 4.4+
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+[ add bg_ret and dev_ret to the messages ]
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/tree-log.c |   30 +++++++++++++++++++++++++++---
- 1 file changed, 27 insertions(+), 3 deletions(-)
+ fs/btrfs/extent-tree.c |   49 ++++++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 38 insertions(+), 11 deletions(-)
 
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -5583,9 +5583,33 @@ static int btrfs_log_all_parents(struct
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -10850,6 +10850,15 @@ static int btrfs_trim_free_extents(struc
+ 	return ret;
+ }
  
- 			dir_inode = btrfs_iget(fs_info->sb, &inode_key,
- 					       root, NULL);
--			/* If parent inode was deleted, skip it. */
--			if (IS_ERR(dir_inode))
--				continue;
-+			/*
-+			 * If the parent inode was deleted, return an error to
-+			 * fallback to a transaction commit. This is to prevent
-+			 * getting an inode that was moved from one parent A to
-+			 * a parent B, got its former parent A deleted and then
-+			 * it got fsync'ed, from existing at both parents after
-+			 * a log replay (and the old parent still existing).
-+			 * Example:
-+			 *
-+			 * mkdir /mnt/A
-+			 * mkdir /mnt/B
-+			 * touch /mnt/B/bar
-+			 * sync
-+			 * mv /mnt/B/bar /mnt/A/bar
-+			 * mv -T /mnt/A /mnt/B
-+			 * fsync /mnt/B/bar
-+			 * <power fail>
-+			 *
-+			 * If we ignore the old parent B which got deleted,
-+			 * after a log replay we would have file bar linked
-+			 * at both parents and the old parent B would still
-+			 * exist.
-+			 */
-+			if (IS_ERR(dir_inode)) {
-+				ret = PTR_ERR(dir_inode);
-+				goto out;
-+			}
++/*
++ * Trim the whole filesystem by:
++ * 1) trimming the free space in each block group
++ * 2) trimming the unallocated space on each device
++ *
++ * This will also continue trimming even if a block group or device encounters
++ * an error.  The return value will be the last error, or 0 if nothing bad
++ * happens.
++ */
+ int btrfs_trim_fs(struct btrfs_fs_info *fs_info, struct fstrim_range *range)
+ {
+ 	struct btrfs_block_group_cache *cache = NULL;
+@@ -10860,6 +10869,10 @@ int btrfs_trim_fs(struct btrfs_fs_info *
+ 	u64 end;
+ 	u64 trimmed = 0;
+ 	u64 total_bytes = btrfs_super_total_bytes(fs_info->super_copy);
++	u64 bg_failed = 0;
++	u64 dev_failed = 0;
++	int bg_ret = 0;
++	int dev_ret = 0;
+ 	int ret = 0;
  
- 			if (ctx)
- 				ctx->log_new_dentries = false;
+ 	/*
+@@ -10870,7 +10883,7 @@ int btrfs_trim_fs(struct btrfs_fs_info *
+ 	else
+ 		cache = btrfs_lookup_block_group(fs_info, range->start);
+ 
+-	while (cache) {
++	for (; cache; cache = next_block_group(fs_info, cache)) {
+ 		if (cache->key.objectid >= (range->start + range->len)) {
+ 			btrfs_put_block_group(cache);
+ 			break;
+@@ -10884,13 +10897,15 @@ int btrfs_trim_fs(struct btrfs_fs_info *
+ 			if (!block_group_cache_done(cache)) {
+ 				ret = cache_block_group(cache, 0);
+ 				if (ret) {
+-					btrfs_put_block_group(cache);
+-					break;
++					bg_failed++;
++					bg_ret = ret;
++					continue;
+ 				}
+ 				ret = wait_block_group_cache_done(cache);
+ 				if (ret) {
+-					btrfs_put_block_group(cache);
+-					break;
++					bg_failed++;
++					bg_ret = ret;
++					continue;
+ 				}
+ 			}
+ 			ret = btrfs_trim_block_group(cache,
+@@ -10901,28 +10916,40 @@ int btrfs_trim_fs(struct btrfs_fs_info *
+ 
+ 			trimmed += group_trimmed;
+ 			if (ret) {
+-				btrfs_put_block_group(cache);
+-				break;
++				bg_failed++;
++				bg_ret = ret;
++				continue;
+ 			}
+ 		}
+-
+-		cache = next_block_group(fs_info, cache);
+ 	}
+ 
++	if (bg_failed)
++		btrfs_warn(fs_info,
++			"failed to trim %llu block group(s), last error %d",
++			bg_failed, bg_ret);
+ 	mutex_lock(&fs_info->fs_devices->device_list_mutex);
+ 	devices = &fs_info->fs_devices->alloc_list;
+ 	list_for_each_entry(device, devices, dev_alloc_list) {
+ 		ret = btrfs_trim_free_extents(device, range->minlen,
+ 					      &group_trimmed);
+-		if (ret)
++		if (ret) {
++			dev_failed++;
++			dev_ret = ret;
+ 			break;
++		}
+ 
+ 		trimmed += group_trimmed;
+ 	}
+ 	mutex_unlock(&fs_info->fs_devices->device_list_mutex);
+ 
++	if (dev_failed)
++		btrfs_warn(fs_info,
++			"failed to trim %llu device(s), last error %d",
++			dev_failed, dev_ret);
+ 	range->len = trimmed;
+-	return ret;
++	if (bg_ret)
++		return bg_ret;
++	return dev_ret;
+ }
+ 
+ /*
 
 
