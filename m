@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDD25C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:58:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAD13C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:59:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACBE720839
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:58:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3C3720866
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:59:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="d0WqrngO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACBE720839
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wXsZ8tZh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3C3720866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732643AbeKLJtU (ORCPT
+        id S1732708AbeKLJt2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:49:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35400 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:49:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732397AbeKLISG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:18:06 -0500
+        id S1732375AbeKLISF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:18:05 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 716E1216FD;
+        by mail.kernel.org (Postfix) with ESMTPSA id 2472821104;
         Sun, 11 Nov 2018 22:28:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975290;
-        bh=T+8ioRQuQ04my2MRPl8T41sOie4zcrf7CpHx5MNYTM4=;
+        bh=WrXwgyGaQu0br4HKh5FZuDS5bTI1MXNvJ8G0kBsxeqE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d0WqrngOluO+0sh6iqowWh/rsQ+0stgfFLdhyQeGyIKGuah43T1Wnwx8ctaTkfU16
-         eo1N38TRrwUR6WS4JCTMmUFtMrV8SqpxGc9UC4XVNxf5u3/Lc6CCFilNys+2gBZPbS
-         z2XIah7qgvkA+KgQ/qFKcxV/WjNUBpwN7yh3Ff60=
+        b=wXsZ8tZhGJSMSD4srOUwMrglV9UG0An6YPzscZOVuvrhlGqdYTK4TCcHgW5xZYfg7
+         K+WBr0oX97lTeYcmCn3UamqgRSDpjCrd/GgPjz5gv6QSFe8vAkcHsHXanoMiKSblov
+         XDK7F0yqsTwbjzxA5kiTuXhc5A1iAP6+4D5ZDS6M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+a2872d6feea6918008a9@syzkaller.appspotmail.com,
+        stable@vger.kernel.org, Wang Shilong <wshilong@ddn.com>,
         Theodore Tso <tytso@mit.edu>, stable@kernel.org
-Subject: [PATCH 4.19 230/361] ext4: fix use-after-free race in ext4_remount()s error path
-Date:   Sun, 11 Nov 2018 14:19:37 -0800
-Message-Id: <20181111221651.433083538@linuxfoundation.org>
+Subject: [PATCH 4.19 229/361] ext4: propagate error from dquot_initialize() in EXT4_IOC_FSSETXATTR
+Date:   Sun, 11 Nov 2018 14:19:36 -0800
+Message-Id: <20181111221651.371861043@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -63,219 +62,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Wang Shilong <wshilong@ddn.com>
 
-commit 33458eaba4dfe778a426df6a19b7aad2ff9f7eec upstream.
+commit 182a79e0c17147d2c2d3990a9a7b6b58a1561c7a upstream.
 
-It's possible for ext4_show_quota_options() to try reading
-s_qf_names[i] while it is being modified by ext4_remount() --- most
-notably, in ext4_remount's error path when the original values of the
-quota file name gets restored.
+We return most failure of dquota_initialize() except
+inode evict, this could make a bit sense, for example
+we allow file removal even quota files are broken?
 
-Reported-by: syzbot+a2872d6feea6918008a9@syzkaller.appspotmail.com
+But it dosen't make sense to allow setting project
+if quota files etc are broken.
+
+Signed-off-by: Wang Shilong <wshilong@ddn.com>
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org # 3.2+
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/ext4.h  |    3 +-
- fs/ext4/super.c |   73 ++++++++++++++++++++++++++++++++++++--------------------
- 2 files changed, 50 insertions(+), 26 deletions(-)
+ fs/ext4/ioctl.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -1401,7 +1401,8 @@ struct ext4_sb_info {
- 	u32 s_min_batch_time;
- 	struct block_device *journal_bdev;
- #ifdef CONFIG_QUOTA
--	char *s_qf_names[EXT4_MAXQUOTAS];	/* Names of quota files with journalled quota */
-+	/* Names of quota files with journalled quota */
-+	char __rcu *s_qf_names[EXT4_MAXQUOTAS];
- 	int s_jquota_fmt;			/* Format of quota to use */
- #endif
- 	unsigned int s_want_extra_isize; /* New inodes should reserve # bytes */
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -914,6 +914,18 @@ static inline void ext4_quota_off_umount
- 	for (type = 0; type < EXT4_MAXQUOTAS; type++)
- 		ext4_quota_off(sb, type);
- }
-+
-+/*
-+ * This is a helper function which is used in the mount/remount
-+ * codepaths (which holds s_umount) to fetch the quota file name.
-+ */
-+static inline char *get_qf_name(struct super_block *sb,
-+				struct ext4_sb_info *sbi,
-+				int type)
-+{
-+	return rcu_dereference_protected(sbi->s_qf_names[type],
-+					 lockdep_is_held(&sb->s_umount));
-+}
- #else
- static inline void ext4_quota_off_umount(struct super_block *sb)
- {
-@@ -965,7 +977,7 @@ static void ext4_put_super(struct super_
- 	percpu_free_rwsem(&sbi->s_journal_flag_rwsem);
- #ifdef CONFIG_QUOTA
- 	for (i = 0; i < EXT4_MAXQUOTAS; i++)
--		kfree(sbi->s_qf_names[i]);
-+		kfree(get_qf_name(sb, sbi, i));
- #endif
- 
- 	/* Debugging code just in case the in-memory inode orphan list
-@@ -1530,11 +1542,10 @@ static const char deprecated_msg[] =
- static int set_qf_name(struct super_block *sb, int qtype, substring_t *args)
- {
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
--	char *qname;
-+	char *qname, *old_qname = get_qf_name(sb, sbi, qtype);
- 	int ret = -1;
- 
--	if (sb_any_quota_loaded(sb) &&
--		!sbi->s_qf_names[qtype]) {
-+	if (sb_any_quota_loaded(sb) && !old_qname) {
- 		ext4_msg(sb, KERN_ERR,
- 			"Cannot change journaled "
- 			"quota options when quota turned on");
-@@ -1551,8 +1562,8 @@ static int set_qf_name(struct super_bloc
- 			"Not enough memory for storing quotafile name");
- 		return -1;
- 	}
--	if (sbi->s_qf_names[qtype]) {
--		if (strcmp(sbi->s_qf_names[qtype], qname) == 0)
-+	if (old_qname) {
-+		if (strcmp(old_qname, qname) == 0)
- 			ret = 1;
- 		else
- 			ext4_msg(sb, KERN_ERR,
-@@ -1565,7 +1576,7 @@ static int set_qf_name(struct super_bloc
- 			"quotafile must be on filesystem root");
- 		goto errout;
- 	}
--	sbi->s_qf_names[qtype] = qname;
-+	rcu_assign_pointer(sbi->s_qf_names[qtype], qname);
- 	set_opt(sb, QUOTA);
- 	return 1;
- errout:
-@@ -1577,15 +1588,16 @@ static int clear_qf_name(struct super_bl
- {
- 
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
-+	char *old_qname = get_qf_name(sb, sbi, qtype);
- 
--	if (sb_any_quota_loaded(sb) &&
--		sbi->s_qf_names[qtype]) {
-+	if (sb_any_quota_loaded(sb) && old_qname) {
- 		ext4_msg(sb, KERN_ERR, "Cannot change journaled quota options"
- 			" when quota turned on");
- 		return -1;
- 	}
--	kfree(sbi->s_qf_names[qtype]);
--	sbi->s_qf_names[qtype] = NULL;
-+	rcu_assign_pointer(sbi->s_qf_names[qtype], NULL);
-+	synchronize_rcu();
-+	kfree(old_qname);
- 	return 1;
- }
- #endif
-@@ -1960,7 +1972,7 @@ static int parse_options(char *options,
- 			 int is_remount)
- {
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
--	char *p;
-+	char *p, __maybe_unused *usr_qf_name, __maybe_unused *grp_qf_name;
- 	substring_t args[MAX_OPT_ARGS];
- 	int token;
- 
-@@ -1991,11 +2003,13 @@ static int parse_options(char *options,
- 			 "Cannot enable project quota enforcement.");
- 		return 0;
- 	}
--	if (sbi->s_qf_names[USRQUOTA] || sbi->s_qf_names[GRPQUOTA]) {
--		if (test_opt(sb, USRQUOTA) && sbi->s_qf_names[USRQUOTA])
-+	usr_qf_name = get_qf_name(sb, sbi, USRQUOTA);
-+	grp_qf_name = get_qf_name(sb, sbi, GRPQUOTA);
-+	if (usr_qf_name || grp_qf_name) {
-+		if (test_opt(sb, USRQUOTA) && usr_qf_name)
- 			clear_opt(sb, USRQUOTA);
- 
--		if (test_opt(sb, GRPQUOTA) && sbi->s_qf_names[GRPQUOTA])
-+		if (test_opt(sb, GRPQUOTA) && grp_qf_name)
- 			clear_opt(sb, GRPQUOTA);
- 
- 		if (test_opt(sb, GRPQUOTA) || test_opt(sb, USRQUOTA)) {
-@@ -2029,6 +2043,7 @@ static inline void ext4_show_quota_optio
- {
- #if defined(CONFIG_QUOTA)
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
-+	char *usr_qf_name, *grp_qf_name;
- 
- 	if (sbi->s_jquota_fmt) {
- 		char *fmtname = "";
-@@ -2047,11 +2062,14 @@ static inline void ext4_show_quota_optio
- 		seq_printf(seq, ",jqfmt=%s", fmtname);
+--- a/fs/ext4/ioctl.c
++++ b/fs/ext4/ioctl.c
+@@ -380,7 +380,9 @@ static int ext4_ioctl_setproject(struct
+ 		brelse(iloc.bh);
  	}
  
--	if (sbi->s_qf_names[USRQUOTA])
--		seq_show_option(seq, "usrjquota", sbi->s_qf_names[USRQUOTA]);
--
--	if (sbi->s_qf_names[GRPQUOTA])
--		seq_show_option(seq, "grpjquota", sbi->s_qf_names[GRPQUOTA]);
-+	rcu_read_lock();
-+	usr_qf_name = rcu_dereference(sbi->s_qf_names[USRQUOTA]);
-+	grp_qf_name = rcu_dereference(sbi->s_qf_names[GRPQUOTA]);
-+	if (usr_qf_name)
-+		seq_show_option(seq, "usrjquota", usr_qf_name);
-+	if (grp_qf_name)
-+		seq_show_option(seq, "grpjquota", grp_qf_name);
-+	rcu_read_unlock();
- #endif
- }
+-	dquot_initialize(inode);
++	err = dquot_initialize(inode);
++	if (err)
++		return err;
  
-@@ -5103,6 +5121,7 @@ static int ext4_remount(struct super_blo
- 	int err = 0;
- #ifdef CONFIG_QUOTA
- 	int i, j;
-+	char *to_free[EXT4_MAXQUOTAS];
- #endif
- 	char *orig_data = kstrdup(data, GFP_KERNEL);
- 
-@@ -5122,8 +5141,9 @@ static int ext4_remount(struct super_blo
- 	old_opts.s_jquota_fmt = sbi->s_jquota_fmt;
- 	for (i = 0; i < EXT4_MAXQUOTAS; i++)
- 		if (sbi->s_qf_names[i]) {
--			old_opts.s_qf_names[i] = kstrdup(sbi->s_qf_names[i],
--							 GFP_KERNEL);
-+			char *qf_name = get_qf_name(sb, sbi, i);
-+
-+			old_opts.s_qf_names[i] = kstrdup(qf_name, GFP_KERNEL);
- 			if (!old_opts.s_qf_names[i]) {
- 				for (j = 0; j < i; j++)
- 					kfree(old_opts.s_qf_names[j]);
-@@ -5352,9 +5372,12 @@ restore_opts:
- #ifdef CONFIG_QUOTA
- 	sbi->s_jquota_fmt = old_opts.s_jquota_fmt;
- 	for (i = 0; i < EXT4_MAXQUOTAS; i++) {
--		kfree(sbi->s_qf_names[i]);
--		sbi->s_qf_names[i] = old_opts.s_qf_names[i];
-+		to_free[i] = get_qf_name(sb, sbi, i);
-+		rcu_assign_pointer(sbi->s_qf_names[i], old_opts.s_qf_names[i]);
- 	}
-+	synchronize_rcu();
-+	for (i = 0; i < EXT4_MAXQUOTAS; i++)
-+		kfree(to_free[i]);
- #endif
- 	kfree(orig_data);
- 	return err;
-@@ -5545,7 +5568,7 @@ static int ext4_write_info(struct super_
-  */
- static int ext4_quota_on_mount(struct super_block *sb, int type)
- {
--	return dquot_quota_on_mount(sb, EXT4_SB(sb)->s_qf_names[type],
-+	return dquot_quota_on_mount(sb, get_qf_name(sb, EXT4_SB(sb), type),
- 					EXT4_SB(sb)->s_jquota_fmt, type);
- }
- 
+ 	handle = ext4_journal_start(inode, EXT4_HT_QUOTA,
+ 		EXT4_QUOTA_INIT_BLOCKS(sb) +
 
 
