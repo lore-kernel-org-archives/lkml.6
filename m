@@ -7,45 +7,43 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CE4FC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93333C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEA0B2175B
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51E8021104
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rMITRQUY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEA0B2175B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="T4ub4y0z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51E8021104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387598AbeKLITP (ORCPT
+        id S2387648AbeKLITS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:19:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40408 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:19:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40598 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387540AbeKLITO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:19:14 -0500
+        id S2387600AbeKLITQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:19:16 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3FE0421104;
-        Sun, 11 Nov 2018 22:29:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8952A21582;
+        Sun, 11 Nov 2018 22:29:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975358;
-        bh=Xdf2SShCXnmpJQeLTkPGSjKGdXV9G36dV0Gc9quASYY=;
+        s=default; t=1541975360;
+        bh=yQqCvnVeGSL3D3iYu1VcV9I42Y4xFF46IVOzc1X15Xs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rMITRQUYVcCgx4cC0c0ylQ6fxoj7sMHglF4W33c0YlAgr4FEYqNmJbXn8d/8FH0KD
-         3DPTEXO3tZG4MXaMQpPVBdY+fF+YdiAVfeBZM9t95i7sZrrK2Mhcb4TjB9ofYRwBj1
-         I1kucPnmGj8NTeKRgp+JpyGsasiJ6SRxRvP0PJWs=
+        b=T4ub4y0z8i0VQYp88stS6Zt8WeYXr0EY8wtwDHRZDG5NCWKQKriAQeiXud9pW2F2B
+         eeJN+za2zPbSzwoq6muIOrGeZhqpkUdOHGICFJjyHKY3QdW5ZRCWHpIQj/1s7HgxSz
+         XVg3K9T40FmthzIwFOXoQl2WUvki6Hoht68d/Mds=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Arcari <darcari@redhat.com>,
-        Al Stone <ahs3@redhat.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.18 025/350] mailbox: PCC: handle parse error
-Date:   Sun, 11 Nov 2018 14:18:09 -0800
-Message-Id: <20181111221708.227024338@linuxfoundation.org>
+        stable@vger.kernel.org, Helge Deller <deller@gmx.de>
+Subject: [PATCH 4.18 029/350] parisc: Fix exported address of os_hpmc handler
+Date:   Sun, 11 Nov 2018 14:18:13 -0800
+Message-Id: <20181111221708.395643065@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -63,43 +61,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Arcari <darcari@redhat.com>
+From: Helge Deller <deller@gmx.de>
 
-commit afd0b1fb22269f48d68fdf269891c653818c8047 upstream.
+commit 99a3ae51d557d8e38a7aece65678a31f9db215ee upstream.
 
-acpi_pcc_probe() calls acpi_table_parse_entries_array() but fails
-to check for an error return.  This in turn can result in calling
-kcalloc() with a negative count as well as emitting the following
-misleading erorr message:
+In the C-code we need to put the physical address of the hpmc handler in
+the interrupt vector table (IVA) in order to get HPMCs working.  Since
+on parisc64 function pointers are indirect (in fact they are function
+descriptors) we instead export the address as variable and not as
+function.
 
-[    2.642015] Could not allocate space for PCC mbox channels
+This reverts a small part of commit f39cce654f9a ("parisc: Add
+cfi_startproc and cfi_endproc to assembly code").
 
-Fixes: 8f8027c5f935 (mailbox: PCC: erroneous error message when parsing ACPI PCCT)
-Signed-off-by: David Arcari <darcari@redhat.com>
-Reviewed-by: Al Stone <ahs3@redhat.com>
-Cc: 4.18+ <stable@vger.kernel.org> # 4.18+
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Helge Deller <deller@gmx.de>
+Cc: <stable@vger.kernel.org>    [4.9+]
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mailbox/pcc.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ arch/parisc/kernel/hpmc.S |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/mailbox/pcc.c
-+++ b/drivers/mailbox/pcc.c
-@@ -461,8 +461,11 @@ static int __init acpi_pcc_probe(void)
- 	count = acpi_table_parse_entries_array(ACPI_SIG_PCCT,
- 			sizeof(struct acpi_table_pcct), proc,
- 			ACPI_PCCT_TYPE_RESERVED, MAX_PCC_SUBSPACES);
--	if (count == 0 || count > MAX_PCC_SUBSPACES) {
--		pr_warn("Invalid PCCT: %d PCC subspaces\n", count);
-+	if (count <= 0 || count > MAX_PCC_SUBSPACES) {
-+		if (count < 0)
-+			pr_warn("Error parsing PCC subspaces from PCCT\n");
-+		else
-+			pr_warn("Invalid PCCT: %d PCC subspaces\n", count);
- 		return -EINVAL;
- 	}
+--- a/arch/parisc/kernel/hpmc.S
++++ b/arch/parisc/kernel/hpmc.S
+@@ -85,7 +85,7 @@ END(hpmc_pim_data)
+ 
+ 	.import intr_save, code
+ 	.align 16
+-ENTRY_CFI(os_hpmc)
++ENTRY(os_hpmc)
+ .os_hpmc:
+ 
+ 	/*
+@@ -302,7 +302,6 @@ os_hpmc_6:
+ 	b .
+ 	nop
+ 	.align 16	/* make function length multiple of 16 bytes */
+-ENDPROC_CFI(os_hpmc)
+ .os_hpmc_end:
+ 
  
 
 
