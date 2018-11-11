@@ -6,45 +6,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B483C43610
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:47:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A0A3C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:47:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33D6820818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:47:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E67E20818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:47:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZX1RDayp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33D6820818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gNyU5QcC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E67E20818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387545AbeKLJhh (ORCPT
+        id S2387551AbeKLJht (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:37:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39252 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:37:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39292 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733161AbeKLISs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1733160AbeKLISs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:18:48 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9192C21780;
-        Sun, 11 Nov 2018 22:28:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C4AED21582;
+        Sun, 11 Nov 2018 22:28:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975332;
-        bh=QMRfcFLPkojpwkaj+58X/PIDME6X3u4urRE5qTdJWWs=;
+        s=default; t=1541975331;
+        bh=CDkNUAtlhT6VF4u168mUcWyUPJIPGhijKtHBfnTLbts=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZX1RDayp/DI2divOktMw5ZZXexAoWkpkIJ6Cuq9NQikFJZp/KSOXxlgp+yLEZJ2yU
-         whXpOV4iCjER7S4EBhvUMzkzN6nrbM1mxhyxZHkHleyespu62tz+wBhMTMc24vOErG
-         zrkB48X2Z773ATnD6+4VTUkqYltKarKpuDy1NkE0=
+        b=gNyU5QcCmAO86aPFsk2tfA3rV6MS0xYEIi5T+vSfDTYN1g6rKnibnybTyc0eg+sdP
+         rAAccU4hMqoiNPvGUfyAsA/oKwR9LRU9rSVGAFulbtF/f6rw+tUz7ZCKLxWyesN6oe
+         Bz+h6TPi1/06+vgVpH7WDRd4VxKgCD6W9tgrGCgM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>
-Subject: [PATCH 4.19 321/361] soc: qcom: rmtfs-mem: Validate that scm is available
-Date:   Sun, 11 Nov 2018 14:21:08 -0800
-Message-Id: <20181111221659.103707839@linuxfoundation.org>
+        Anatoly Trosinenko <anatoly.trosinenko@gmail.com>,
+        Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.19 346/361] Btrfs: fix assertion on fsync of regular file when using no-holes feature
+Date:   Sun, 11 Nov 2018 14:21:33 -0800
+Message-Id: <20181111221701.130926155@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -62,37 +63,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+From: Filipe Manana <fdmanana@suse.com>
 
-commit 137dc5843faeacabf48fc22a8dc58c4e0b4f0927 upstream.
+commit 7ed586d0a8241e81d58c656c5b315f781fa6fc97 upstream.
 
-The scm device must be present in order for the rmtfs driver to
-configure memory permissions for the rmtfs memory region, so check that
-it is probed before continuing.
+When using the NO_HOLES feature and logging a regular file, we were
+expecting that if we find an inline extent, that either its size in RAM
+(uncompressed and unenconded) matches the size of the file or if it does
+not, that it matches the sector size and it represents compressed data.
+This assertion does not cover a case where the length of the inline extent
+is smaller than the sector size and also smaller the file's size, such
+case is possible through fallocate. Example:
 
-Cc: stable@vger.kernel.org
-Fixes: fa65f8045137 ("soc: qcom: rmtfs-mem: Add support for assigning memory to remote")
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Andy Gross <andy.gross@linaro.org>
+  $ mkfs.btrfs -f -O no-holes /dev/sdb
+  $ mount /dev/sdb /mnt
+
+  $ xfs_io -f -c "pwrite -S 0xb60 0 21" /mnt/foobar
+  $ xfs_io -c "falloc 40 40" /mnt/foobar
+  $ xfs_io -c "fsync" /mnt/foobar
+
+In the above example we trigger the assertion because the inline extent's
+length is 21 bytes while the file size is 80 bytes. The fallocate() call
+merely updated the file's size and did not touch the existing inline
+extent, as expected.
+
+So fix this by adjusting the assertion so that an inline extent length
+smaller than the file size is valid if the file size is smaller than the
+filesystem's sector size.
+
+A test case for fstests follows soon.
+
+Reported-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
+Fixes: a89ca6f24ffe ("Btrfs: fix fsync after truncate when no_holes feature is enabled")
+CC: stable@vger.kernel.org # 4.14+
+Link: https://lore.kernel.org/linux-btrfs/CAE5jQCfRSBC7n4pUTFJcmHh109=gwyT9mFkCOL+NKfzswmR=_Q@mail.gmail.com/
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/soc/qcom/rmtfs_mem.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ fs/btrfs/tree-log.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/soc/qcom/rmtfs_mem.c
-+++ b/drivers/soc/qcom/rmtfs_mem.c
-@@ -212,6 +212,11 @@ static int qcom_rmtfs_mem_probe(struct p
- 		dev_err(&pdev->dev, "failed to parse qcom,vmid\n");
- 		goto remove_cdev;
- 	} else if (!ret) {
-+		if (!qcom_scm_is_available()) {
-+			ret = -EPROBE_DEFER;
-+			goto remove_cdev;
-+		}
-+
- 		perms[0].vmid = QCOM_SCM_VMID_HLOS;
- 		perms[0].perm = QCOM_SCM_PERM_RW;
- 		perms[1].vmid = vmid;
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -4655,7 +4655,8 @@ static int btrfs_log_trailing_hole(struc
+ 			ASSERT(len == i_size ||
+ 			       (len == fs_info->sectorsize &&
+ 				btrfs_file_extent_compression(leaf, extent) !=
+-				BTRFS_COMPRESS_NONE));
++				BTRFS_COMPRESS_NONE) ||
++			       (len < i_size && i_size < fs_info->sectorsize));
+ 			return 0;
+ 		}
+ 
 
 
