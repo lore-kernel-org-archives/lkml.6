@@ -7,43 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42A01C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F1EC0044C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A0932241E
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58C892241E
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xYSVoozu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A0932241E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GHqv/tnZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58C892241E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389531AbeKLIVU (ORCPT
+        id S2389546AbeKLIVV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:21:20 -0500
+        Mon, 12 Nov 2018 03:21:21 -0500
 Received: from mail.kernel.org ([198.145.29.99]:47942 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389513AbeKLIVT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:21:19 -0500
+        id S2389524AbeKLIVU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:20 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FC1222353;
-        Sun, 11 Nov 2018 22:31:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 71642208A3;
+        Sun, 11 Nov 2018 22:31:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975482;
-        bh=4Kd6h17hphUdYhZc18/Bkq4iT1qRqXtk+WmiTyRN7Oc=;
+        s=default; t=1541975483;
+        bh=Pl0jMYmkrn46MsBRNZmplOcn+T3TBSnIAY09ToMtJvA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xYSVoozu9ViRZhF9zOwnH8147wpy+l63Wqkcf0vxNq/o0uk/tsquxW4Lc5rD9XDNm
-         m848Cl/1131ee5GED0wZKWQPRIyO8l+JV0umb/yJOWnqU/dnwYWeUL12VKAb1aztuB
-         3Bxbqd34tPBLUEln4d1mFIAX8bJW2ZSlhHMtRcV0=
+        b=GHqv/tnZbftYmIEl3qylaKjVEWjYR2vXpfvyDe02AmF8aKf7nC/e8JR9VIyRkFdaF
+         FxltpHcvn36MVOtM5jq32ODnAeTFIatEzo8fA6dJAvHplv4j6Q0GxxJ838VecokTPp
+         VZ9MAJ0mwlNMT4bGDMYixCjuwYByD8HcO1Hcn+qA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Kara <jack@suse.cz>
-Subject: [PATCH 4.18 271/350] fsnotify: Fix busy inodes during unmount
-Date:   Sun, 11 Nov 2018 14:22:15 -0800
-Message-Id: <20181111221719.354949124@linuxfoundation.org>
+        stable@vger.kernel.org, Ondrej Mosnacek <omosnace@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.18 240/350] crypto: morus/generic - fix for big endian systems
+Date:   Sun, 11 Nov 2018 14:21:44 -0800
+Message-Id: <20181111221718.077908316@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -61,176 +63,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jan Kara <jack@suse.cz>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-commit 721fb6fbfd2132164c2e8777cc837f9b2c1794dc upstream.
+commit 5a8dedfa3276e88c5865f265195d63d72aec3e72 upstream.
 
-Detaching of mark connector from fsnotify_put_mark() can race with
-unmounting of the filesystem like:
+Omit the endian swabbing when folding the lengths of the assoc and
+crypt input buffers into the state to finalize the tag. This is not
+necessary given that the memory representation of the state is in
+machine native endianness already.
 
-  CPU1				CPU2
-fsnotify_put_mark()
-  spin_lock(&conn->lock);
-  ...
-  inode = fsnotify_detach_connector_from_object(conn)
-  spin_unlock(&conn->lock);
-				generic_shutdown_super()
-				  fsnotify_unmount_inodes()
-				    sees connector detached for inode
-				      -> nothing to do
-				  evict_inode()
-				    barfs on pending inode reference
-  iput(inode);
+This fixes an error reported by tcrypt running on a big endian system:
 
-Resulting in "Busy inodes after unmount" message and possible kernel
-oops. Make fsnotify_unmount_inodes() properly wait for outstanding inode
-references from detached connectors.
+  alg: aead: Test 2 failed on encryption for morus640-generic
+  00000000: a8 30 ef fb e6 26 eb 23 b0 87 dd 98 57 f3 e1 4b
+  00000010: 21
+  alg: aead: Test 2 failed on encryption for morus1280-generic
+  00000000: 88 19 1b fb 1c 29 49 0e ee 82 2f cb 97 a6 a5 ee
+  00000010: 5f
 
-Note that the accounting of outstanding inode references in the
-superblock can cause some cacheline contention on the counter. OTOH it
-happens only during deletion of the last notification mark from an inode
-(or during unlinking of watched inode) and that is not too bad. I have
-measured time to create & delete inotify watch 100000 times from 64
-processes in parallel (each process having its own inotify group and its
-own file on a shared superblock) on a 64 CPU machine. Average and
-standard deviation of 15 runs look like:
-
-	Avg		Stddev
-Vanilla	9.817400	0.276165
-Fixed	9.710467	0.228294
-
-So there's no statistically significant difference.
-
-Fixes: 6b3f05d24d35 ("fsnotify: Detach mark from object list when last reference is dropped")
-CC: stable@vger.kernel.org
-Signed-off-by: Jan Kara <jack@suse.cz>
+Fixes: 396be41f16fd ("crypto: morus - Add generic MORUS AEAD implementations")
+Cc: <stable@vger.kernel.org> # v4.18+
+Reviewed-by: Ondrej Mosnacek <omosnace@redhat.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/notify/fsnotify.c |    3 +++
- fs/notify/mark.c     |   39 +++++++++++++++++++++++++++++++--------
- include/linux/fs.h   |    3 +++
- 3 files changed, 37 insertions(+), 8 deletions(-)
+ crypto/morus1280.c |    7 ++-----
+ crypto/morus640.c  |   16 ++++------------
+ 2 files changed, 6 insertions(+), 17 deletions(-)
 
---- a/fs/notify/fsnotify.c
-+++ b/fs/notify/fsnotify.c
-@@ -96,6 +96,9 @@ void fsnotify_unmount_inodes(struct supe
- 
- 	if (iput_inode)
- 		iput(iput_inode);
-+	/* Wait for outstanding inode references from connectors */
-+	wait_var_event(&sb->s_fsnotify_inode_refs,
-+		       !atomic_long_read(&sb->s_fsnotify_inode_refs));
- }
- 
- /*
---- a/fs/notify/mark.c
-+++ b/fs/notify/mark.c
-@@ -161,15 +161,18 @@ static void fsnotify_connector_destroy_w
- 	}
- }
- 
--static struct inode *fsnotify_detach_connector_from_object(
--					struct fsnotify_mark_connector *conn)
-+static void *fsnotify_detach_connector_from_object(
-+					struct fsnotify_mark_connector *conn,
-+					unsigned int *type)
+--- a/crypto/morus1280.c
++++ b/crypto/morus1280.c
+@@ -385,14 +385,11 @@ static void crypto_morus1280_final(struc
+ 				   struct morus1280_block *tag_xor,
+ 				   u64 assoclen, u64 cryptlen)
  {
- 	struct inode *inode = NULL;
+-	u64 assocbits = assoclen * 8;
+-	u64 cryptbits = cryptlen * 8;
+-
+ 	struct morus1280_block tmp;
+ 	unsigned int i;
  
-+	*type = conn->type;
- 	if (conn->type == FSNOTIFY_OBJ_TYPE_INODE) {
- 		inode = conn->inode;
- 		rcu_assign_pointer(inode->i_fsnotify_marks, NULL);
- 		inode->i_fsnotify_mask = 0;
-+		atomic_long_inc(&inode->i_sb->s_fsnotify_inode_refs);
- 		conn->inode = NULL;
- 		conn->type = FSNOTIFY_OBJ_TYPE_DETACHED;
- 	} else if (conn->type == FSNOTIFY_OBJ_TYPE_VFSMOUNT) {
-@@ -193,10 +196,29 @@ static void fsnotify_final_mark_destroy(
- 	fsnotify_put_group(group);
- }
+-	tmp.words[0] = cpu_to_le64(assocbits);
+-	tmp.words[1] = cpu_to_le64(cryptbits);
++	tmp.words[0] = assoclen * 8;
++	tmp.words[1] = cryptlen * 8;
+ 	tmp.words[2] = 0;
+ 	tmp.words[3] = 0;
  
-+/* Drop object reference originally held by a connector */
-+static void fsnotify_drop_object(unsigned int type, void *objp)
-+{
-+	struct inode *inode;
-+	struct super_block *sb;
-+
-+	if (!objp)
-+		return;
-+	/* Currently only inode references are passed to be dropped */
-+	if (WARN_ON_ONCE(type != FSNOTIFY_OBJ_TYPE_INODE))
-+		return;
-+	inode = objp;
-+	sb = inode->i_sb;
-+	iput(inode);
-+	if (atomic_long_dec_and_test(&sb->s_fsnotify_inode_refs))
-+		wake_up_var(&sb->s_fsnotify_inode_refs);
-+}
-+
- void fsnotify_put_mark(struct fsnotify_mark *mark)
+--- a/crypto/morus640.c
++++ b/crypto/morus640.c
+@@ -384,21 +384,13 @@ static void crypto_morus640_final(struct
+ 				  struct morus640_block *tag_xor,
+ 				  u64 assoclen, u64 cryptlen)
  {
- 	struct fsnotify_mark_connector *conn;
--	struct inode *inode = NULL;
-+	void *objp = NULL;
-+	unsigned int type = FSNOTIFY_OBJ_TYPE_DETACHED;
- 	bool free_conn = false;
+-	u64 assocbits = assoclen * 8;
+-	u64 cryptbits = cryptlen * 8;
+-
+-	u32 assocbits_lo = (u32)assocbits;
+-	u32 assocbits_hi = (u32)(assocbits >> 32);
+-	u32 cryptbits_lo = (u32)cryptbits;
+-	u32 cryptbits_hi = (u32)(cryptbits >> 32);
+-
+ 	struct morus640_block tmp;
+ 	unsigned int i;
  
- 	/* Catch marks that were actually never attached to object */
-@@ -216,7 +238,7 @@ void fsnotify_put_mark(struct fsnotify_m
- 	conn = mark->connector;
- 	hlist_del_init_rcu(&mark->obj_list);
- 	if (hlist_empty(&conn->list)) {
--		inode = fsnotify_detach_connector_from_object(conn);
-+		objp = fsnotify_detach_connector_from_object(conn, &type);
- 		free_conn = true;
- 	} else {
- 		__fsnotify_recalc_mask(conn);
-@@ -224,7 +246,7 @@ void fsnotify_put_mark(struct fsnotify_m
- 	mark->connector = NULL;
- 	spin_unlock(&conn->lock);
+-	tmp.words[0] = cpu_to_le32(assocbits_lo);
+-	tmp.words[1] = cpu_to_le32(assocbits_hi);
+-	tmp.words[2] = cpu_to_le32(cryptbits_lo);
+-	tmp.words[3] = cpu_to_le32(cryptbits_hi);
++	tmp.words[0] = lower_32_bits(assoclen * 8);
++	tmp.words[1] = upper_32_bits(assoclen * 8);
++	tmp.words[2] = lower_32_bits(cryptlen * 8);
++	tmp.words[3] = upper_32_bits(cryptlen * 8);
  
--	iput(inode);
-+	fsnotify_drop_object(type, objp);
- 
- 	if (free_conn) {
- 		spin_lock(&destroy_lock);
-@@ -702,7 +724,8 @@ void fsnotify_destroy_marks(struct fsnot
- {
- 	struct fsnotify_mark_connector *conn;
- 	struct fsnotify_mark *mark, *old_mark = NULL;
--	struct inode *inode;
-+	void *objp;
-+	unsigned int type;
- 
- 	conn = fsnotify_grab_connector(connp);
- 	if (!conn)
-@@ -728,11 +751,11 @@ void fsnotify_destroy_marks(struct fsnot
- 	 * mark references get dropped. It would lead to strange results such
- 	 * as delaying inode deletion or blocking unmount.
- 	 */
--	inode = fsnotify_detach_connector_from_object(conn);
-+	objp = fsnotify_detach_connector_from_object(conn, &type);
- 	spin_unlock(&conn->lock);
- 	if (old_mark)
- 		fsnotify_put_mark(old_mark);
--	iput(inode);
-+	fsnotify_drop_object(type, objp);
- }
- 
- /*
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1416,6 +1416,9 @@ struct super_block {
- 	/* Number of inodes with nlink == 0 but still referenced */
- 	atomic_long_t s_remove_count;
- 
-+	/* Pending fsnotify inode refs */
-+	atomic_long_t s_fsnotify_inode_refs;
-+
- 	/* Being remounted read-only */
- 	int s_readonly_remount;
- 
+ 	for (i = 0; i < MORUS_BLOCK_WORDS; i++)
+ 		state->s[4].words[i] ^= state->s[0].words[i];
 
 
