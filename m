@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A5EC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:38:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C122C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:39:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B992214F1
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:38:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46857214F1
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:39:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="C19CDYEL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B992214F1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="r1LaNpDW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46857214F1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391342AbeKLI2f (ORCPT
+        id S2391393AbeKLI25 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:28:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33028 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:28:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405044AbeKLIZR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:25:17 -0500
+        id S2405022AbeKLIZP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:25:15 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 263EF2154B;
-        Sun, 11 Nov 2018 22:35:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 87FCD224B3;
+        Sun, 11 Nov 2018 22:35:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975719;
-        bh=lOkhhCxdF4RfOPoZKTcknTVZrtglDOKP0YCJDz5HuHA=;
+        s=default; t=1541975717;
+        bh=ucBViScH4sqlT3AFQA9WPDaxaH8oFZ1v0dbgItMO+s4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C19CDYELtAr6AKZXn1Jkg28qy0PJpE4OMLLihtUUyYRRTqaby9Qk3STBAmWLuQy2F
-         13INtSu3b1CN5099ZhuEtDOBk4sKn/7gCEGFRcAaIAIuQf5OuMdLUIC7tfGXu4GPXC
-         OkmdmXNbXwR3105HMFZpfBH+NH3RObX1geGdp6FI=
+        b=r1LaNpDWVI4/idx9P2lk6/9cT3VY3d6wNQRP5XJZWP8RYdRtGzSbN79MFY1od+uMS
+         JNUSgLdbcmWS7/LycuOT1y4n9bp/FlsljPgpUELTw3318SeeBOPQhpV9wv9Lq5PXuZ
+         J43lJEWDXQAOVoyso6ERcovmkvTX4/VamvtFeec0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.9 121/141] media: em28xx: use a default format if TRY_FMT fails
-Date:   Sun, 11 Nov 2018 14:26:20 -0800
-Message-Id: <20181111221644.606751688@linuxfoundation.org>
+        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org
+Subject: [PATCH 4.9 116/141] MIPS: OCTEON: fix out of bounds array access on CN68XX
+Date:   Sun, 11 Nov 2018 14:26:15 -0800
+Message-Id: <20181111221643.956252172@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
 References: <20181111221627.853046496@linuxfoundation.org>
@@ -62,40 +63,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+From: Aaro Koskinen <aaro.koskinen@iki.fi>
 
-commit f823ce2a1202d47110a7ef86b65839f0be8adc38 upstream.
+commit c0fae7e2452b90c31edd2d25eb3baf0c76b400ca upstream.
 
-Follow the V4L2 spec, as warned by v4l2-compliance:
+The maximum number of interfaces is returned by
+cvmx_helper_get_number_of_interfaces(), and the value is used to access
+interface_port_count[]. When CN68XX support was added, we forgot
+to increase the array size. Fix that.
 
-	warn: v4l2-test-formats.cpp(732): TRY_FMT cannot handle an invalid pixelformat.
-	warn: v4l2-test-formats.cpp(733): This may or may not be a problem. For more information see:
-
-warn: v4l2-test-formats.cpp(734): http://www.mail-archive.com/linux-media@vger.kernel.org/msg56550.html
-
-Cc: stable@vger.kernel.org
-Fixes: bddcf63313c6 ("V4L/DVB (9927): em28xx: use a more standard way to specify video formats")
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: 2c8c3f0201333 ("MIPS: Octeon: Support additional interfaces on CN68XX")
+Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/20949/
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Cc: linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org # v4.3+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/usb/em28xx/em28xx-video.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/mips/cavium-octeon/executive/cvmx-helper.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/media/usb/em28xx/em28xx-video.c
-+++ b/drivers/media/usb/em28xx/em28xx-video.c
-@@ -1435,9 +1435,9 @@ static int vidioc_try_fmt_vid_cap(struct
+--- a/arch/mips/cavium-octeon/executive/cvmx-helper.c
++++ b/arch/mips/cavium-octeon/executive/cvmx-helper.c
+@@ -67,7 +67,7 @@ void (*cvmx_override_pko_queue_priority)
+ void (*cvmx_override_ipd_port_setup) (int ipd_port);
  
- 	fmt = format_by_fourcc(f->fmt.pix.pixelformat);
- 	if (!fmt) {
--		em28xx_videodbg("Fourcc format (%08x) invalid.\n",
--				f->fmt.pix.pixelformat);
--		return -EINVAL;
-+		fmt = &format[0];
-+		em28xx_videodbg("Fourcc format (%08x) invalid. Using default (%08x).\n",
-+				f->fmt.pix.pixelformat, fmt->fourcc);
- 	}
+ /* Port count per interface */
+-static int interface_port_count[5];
++static int interface_port_count[9];
  
- 	if (dev->board.is_em2800) {
+ /* Port last configured link info index by IPD/PKO port */
+ static cvmx_helper_link_info_t
 
 
