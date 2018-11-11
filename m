@@ -6,45 +6,47 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAC0FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:01:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51985C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:01:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B374820866
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:01:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1431220866
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:01:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NoQtaDnw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B374820866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tVHnEJFo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1431220866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732254AbeKLIR5 (ORCPT
+        id S1732242AbeKLIR5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 12 Nov 2018 03:17:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35400 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:35336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732193AbeKLIR4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1732213AbeKLIR4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:17:56 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B3BDA215EA;
-        Sun, 11 Nov 2018 22:28:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 09CDA2154B;
+        Sun, 11 Nov 2018 22:28:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975280;
-        bh=cXv+kdoIzE5qQ0NQYtApMCDFTFQEfuvvUuUjUmEnz2E=;
+        s=default; t=1541975281;
+        bh=v+8ILTYm08TldAlgfqxomvxdLa6oPXwSQ5DSPu8e0fc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NoQtaDnwIEsFfKtAW3In1cdtaP/mLehjh5NrglnBVibBOJTOecrXWB5SFi2w7WIXg
-         tNQV/zKoG4bgareevA34eQvByE88XBji0Eegw76/+SFL6lnxG7E29GAHUkiVzPjQ+d
-         GWp+C9BJeumKMUZvVx7ahIuye3yp8XBbA4b5AkqY=
+        b=tVHnEJFoleUXsNvCi5N47XOkXFBLIiAxx78+TJGZu0cqYNLpVke2XdY4VgHJFnaWi
+         PogtR0nDlCWcq6J0c0+RcOXYODuC30Fh3gqCXJvdxwY/EdrD8nyxDzqZtcHVBDWjOe
+         YpvcZHYwoyvvf2EU0fE9gRZlYKg6MMLY1gL9PAIU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Dr. Greg Wettstein" <greg@enjellic.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH 4.19 200/361] tpm: Restore functionality to xen vtpm driver.
-Date:   Sun, 11 Nov 2018 14:19:07 -0800
-Message-Id: <20181111221648.483124926@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Vasilis Liaskovitis <vliaskovitis@suse.com>,
+        =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.19 201/361] xen/blkfront: avoid NULL blkfront_info dereference on device removal
+Date:   Sun, 11 Nov 2018 14:19:08 -0800
+Message-Id: <20181111221648.571738035@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -62,59 +64,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dr. Greg Wettstein <greg@wind.enjellic.com>
+From: Vasilis Liaskovitis <vliaskovitis@suse.com>
 
-commit e487a0f52301293152a6f8c4e217f2a11dd808e3 upstream.
+commit f92898e7f32e3533bfd95be174044bc349d416ca upstream.
 
-Functionality of the xen-tpmfront driver was lost secondary to
-the introduction of xenbus multi-page support in commit ccc9d90a9a8b
-("xenbus_client: Extend interface to support multi-page ring").
+If a block device is hot-added when we are out of grants,
+gnttab_grant_foreign_access fails with -ENOSPC (log message "28
+granting access to ring page") in this code path:
 
-In this commit pointer to location of where the shared page address
-is stored was being passed to the xenbus_grant_ring() function rather
-then the address of the shared page itself. This resulted in a situation
-where the driver would attach to the vtpm-stubdom but any attempt
-to send a command to the stub domain would timeout.
+  talk_to_blkback ->
+	setup_blkring ->
+		xenbus_grant_ring ->
+			gnttab_grant_foreign_access
 
-A diagnostic finding for this regression is the following error
-message being generated when the xen-tpmfront driver probes for a
-device:
+and the failing path in talk_to_blkback sets the driver_data to NULL:
 
-<3>vtpm vtpm-0: tpm_transmit: tpm_send: error -62
+ destroy_blkring:
+        blkif_free(info, 0);
 
-<3>vtpm vtpm-0: A TPM error (-62) occurred attempting to determine
-the timeouts
+        mutex_lock(&blkfront_mutex);
+        free_info(info);
+        mutex_unlock(&blkfront_mutex);
 
-This fix is relevant to all kernels from 4.1 forward which is the
-release in which multi-page xenbus support was introduced.
+        dev_set_drvdata(&dev->dev, NULL);
 
-Daniel De Graaf formulated the fix by code inspection after the
-regression point was located.
+This results in a NULL pointer BUG when blkfront_remove and blkif_free
+try to access the failing device's NULL struct blkfront_info.
 
-Fixes: ccc9d90a9a8b ("xenbus_client: Extend interface to support multi-page ring")
-Signed-off-by: Dr. Greg Wettstein <greg@enjellic.com>
+Cc: stable@vger.kernel.org # 4.5 and later
+Signed-off-by: Vasilis Liaskovitis <vliaskovitis@suse.com>
+Reviewed-by: Roger Pau Monné <roger.pau@citrix.com>
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-[boris: Updated commit message, added Fixes tag]
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: stable@vger.kernel.org # v4.1+
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-
 ---
- drivers/char/tpm/xen-tpmfront.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/block/xen-blkfront.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/char/tpm/xen-tpmfront.c
-+++ b/drivers/char/tpm/xen-tpmfront.c
-@@ -264,7 +264,7 @@ static int setup_ring(struct xenbus_devi
- 		return -ENOMEM;
- 	}
+--- a/drivers/block/xen-blkfront.c
++++ b/drivers/block/xen-blkfront.c
+@@ -2493,6 +2493,9 @@ static int blkfront_remove(struct xenbus
  
--	rv = xenbus_grant_ring(dev, &priv->shr, 1, &gref);
-+	rv = xenbus_grant_ring(dev, priv->shr, 1, &gref);
- 	if (rv < 0)
- 		return rv;
+ 	dev_dbg(&xbdev->dev, "%s removed", xbdev->nodename);
  
++	if (!info)
++		return 0;
++
+ 	blkif_free(info, 0);
+ 
+ 	mutex_lock(&info->mutex);
 
 
