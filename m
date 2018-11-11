@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F7FCC43610
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1748C43441
 	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D86F32175B
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B12E32245E
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="e/Mbpyz5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D86F32175B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gOMWjbEi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B12E32245E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388673AbeKLIUY (ORCPT
+        id S2388691AbeKLIUZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:20:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44750 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:20:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44860 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388642AbeKLIUX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:20:23 -0500
+        id S2388658AbeKLIUY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:24 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0AB1F21582;
+        by mail.kernel.org (Postfix) with ESMTPSA id B48FD223C8;
         Sun, 11 Nov 2018 22:30:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975427;
-        bh=UGFvd7ojE1Fzw7DNcCZFzJZ1fuxn4oAUHIUcf1hgX8c=;
+        bh=oS6F5NSRWMjLwIZ3XAwmRFhazrN4LdZlxCvidTdJ1ks=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e/Mbpyz52q8skIAPjDiuT1WW9fbMo4EVMf+ZREUkbjqQZRO5UjaZ+V2JicOz/XpRv
-         fUbDey+GSz5gEgVPePNuTN+OCimGPxMMnIrjWvbgMS9yFHue3MIL2498uuH0BnQRVJ
-         HTzDolwe3+2KbHmVhWXfKHhV/AMAuQqW0zhRWwoE=
+        b=gOMWjbEiVgnnyv6vx89hXowqDMG6lejaHQiHIhH9o1fO3QErIFGY4QmZfO20KI5jX
+         uHqIxZa/jnN8PbZiUGXV8wHRUltlk6B7bZF/KBvlByPRbwSoXpCcTo7GlYZ2O+0wvW
+         UUdN0dn7EaLgNwbwRs3b0cDYDH671pPOuXA/wxnY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Justin Chen <justinpopo6@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org,
+        Sebastian Basierski <sebastianx.basierski@intel.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 128/350] gpio: brcmstb: allow 0 width GPIO banks
-Date:   Sun, 11 Nov 2018 14:19:52 -0800
-Message-Id: <20181111221713.068281294@linuxfoundation.org>
+Subject: [PATCH 4.18 130/350] ixgbevf: VF2VF TCP RSS
+Date:   Sun, 11 Nov 2018 14:19:54 -0800
+Message-Id: <20181111221713.260548821@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -64,59 +65,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Justin Chen <justinpopo6@gmail.com>
+From: Sebastian Basierski <sebastianx.basierski@intel.com>
 
-[ Upstream commit bfba223dcc4548632d8f3bfd15690a86d4c68504 ]
+[ Upstream commit 7fb94bd58dd6650a0158e68d414e185077d8b57a ]
 
-Sometimes we have empty banks within the GPIO block. This commit allows
-proper handling of 0 width GPIO banks. We handle 0 width GPIO banks by
-incrementing the bank and number of GPIOs, but not initializing them.
-This will mean a call into the non-existent GPIOs will return an error.
+While VF2VF with RSS communication, RSS Type were wrongly recognized
+and RSS hash was not calculated as it should be. Packets was
+distributed on various queues by accident.
+This commit fixes that behaviour and causes proper RSS Type recognition.
 
-Also remove "GPIO registered" dev print. This information is misleading
-since the incremented banks and gpio_base do not reflect the actual GPIOs
-that get initialized. We leave this information out since it is already
-printed with dev_dbg.
-
-Signed-off-by: Justin Chen <justinpopo6@gmail.com>
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sebastian Basierski <sebastianx.basierski@intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpio/gpio-brcmstb.c |   15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/gpio/gpio-brcmstb.c
-+++ b/drivers/gpio/gpio-brcmstb.c
-@@ -664,6 +664,18 @@ static int brcmstb_gpio_probe(struct pla
- 		struct brcmstb_gpio_bank *bank;
- 		struct gpio_chip *gc;
- 
-+		/*
-+		 * If bank_width is 0, then there is an empty bank in the
-+		 * register block. Special handling for this case.
-+		 */
-+		if (bank_width == 0) {
-+			dev_dbg(dev, "Width 0 found: Empty bank @ %d\n",
-+				num_banks);
-+			num_banks++;
-+			gpio_base += MAX_GPIO_PER_BANK;
-+			continue;
-+		}
-+
- 		bank = devm_kzalloc(dev, sizeof(*bank), GFP_KERNEL);
- 		if (!bank) {
- 			err = -ENOMEM;
-@@ -740,9 +752,6 @@ static int brcmstb_gpio_probe(struct pla
- 			goto fail;
+--- a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
++++ b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
+@@ -3849,6 +3849,10 @@ static void ixgbevf_tx_csum(struct ixgbe
+ 		skb_checksum_help(skb);
+ 		goto no_csum;
  	}
- 
--	dev_info(dev, "Registered %d banks (GPIO(s): %d-%d)\n",
--			num_banks, priv->gpio_base, gpio_base - 1);
--
- 	if (priv->parent_wake_irq && need_wakeup_event)
- 		pm_wakeup_event(dev, 0);
- 
++
++	if (first->protocol == htons(ETH_P_IP))
++		type_tucmd |= IXGBE_ADVTXD_TUCMD_IPV4;
++
+ 	/* update TX checksum flag */
+ 	first->tx_flags |= IXGBE_TX_FLAGS_CSUM;
+ 	vlan_macip_lens = skb_checksum_start_offset(skb) -
 
 
