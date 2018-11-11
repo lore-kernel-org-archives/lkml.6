@@ -6,49 +6,45 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E27C9C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:06:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29974C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:06:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A75E420869
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:06:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A75E420869
+	by mail.kernel.org (Postfix) with ESMTP id E99A820869
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:06:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E99A820869
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731358AbeKLFzh (ORCPT
+        id S1731060AbeKLFzu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 00:55:37 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51910 "EHLO
+        Mon, 12 Nov 2018 00:55:50 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51954 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730720AbeKLFzf (ORCPT
+        by vger.kernel.org with ESMTP id S1725905AbeKLFzu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:55:35 -0500
+        Mon, 12 Nov 2018 00:55:50 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsu-0000lK-Kx; Sun, 11 Nov 2018 19:59:04 +0000
+        id 1gLvt3-0000lG-DC; Sun, 11 Nov 2018 19:59:13 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsV-0001fA-8Q; Sun, 11 Nov 2018 19:58:39 +0000
+        id 1gLvsR-0001Wa-Ga; Sun, 11 Nov 2018 19:58:35 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Xunlei Pang" <xlpang@linux.alibaba.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        "Ben Segall" <bsegall@google.com>,
-        "Ingo Molnar" <mingo@kernel.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>
+CC:     akpm@linux-foundation.org, "Hans de Goede" <hdegoede@redhat.com>,
+        "Thierry Reding" <thierry.reding@gmail.com>,
+        "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.946269930@decadent.org.uk>
+Message-ID: <lsq.1541965745.124930955@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 218/366] sched/fair: Fix bandwidth timer clock drift
- condition
+Subject: [PATCH 3.16 121/366] pwm: lpss: platform: Save/restore the ctrl
+ register over a suspend/resume
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -62,129 +58,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xunlei Pang <xlpang@linux.alibaba.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 512ac999d2755d2b7109e996a76b6fb8b888631d upstream.
+commit 1d375b58c12f08d8570b30b865def4734517f04f upstream.
 
-I noticed that cgroup task groups constantly get throttled even
-if they have low CPU usage, this causes some jitters on the response
-time to some of our business containers when enabling CPU quotas.
+On some devices the contents of the ctrl register get lost over a
+suspend/resume and the PWM comes back up disabled after the resume.
 
-It's very simple to reproduce:
+This is seen on some Bay Trail devices with the PWM in ACPI enumerated
+mode, so it shows up as a platform device instead of a PCI device.
 
-  mkdir /sys/fs/cgroup/cpu/test
-  cd /sys/fs/cgroup/cpu/test
-  echo 100000 > cpu.cfs_quota_us
-  echo $$ > tasks
+If we still think it is enabled and then try to change the duty-cycle
+after this, we end up with a "PWM_SW_UPDATE was not cleared" error and
+the PWM is stuck in that state from then on.
 
-then repeat:
+This commit adds suspend and resume pm callbacks to the pwm-lpss-platform
+code, which save/restore the ctrl register over a suspend/resume, fixing
+this.
 
-  cat cpu.stat | grep nr_throttled  # nr_throttled will increase steadily
+Note that:
 
-After some analysis, we found that cfs_rq::runtime_remaining will
-be cleared by expire_cfs_rq_runtime() due to two equal but stale
-"cfs_{b|q}->runtime_expires" after period timer is re-armed.
+1) There is no need to do this over a runtime suspend, since we
+only runtime suspend when disabled and then we properly set the enable
+bit and reprogram the timings when we re-enable the PWM.
 
-The current condition to judge clock drift in expire_cfs_rq_runtime()
-is wrong, the two runtime_expires are actually the same when clock
-drift happens, so this condtion can never hit. The orginal design was
-correctly done by this commit:
+2) This may be happening on more systems then we realize, but has been
+covered up sofar by a bug in the acpi-lpss.c code which was save/restoring
+the regular device registers instead of the lpss private registers due to
+lpss_device_desc.prv_offset not being set. This is fixed by a later patch
+in this series.
 
-  a9cf55b28610 ("sched: Expire invalid runtime")
-
-... but was changed to be the current implementation due to its locking bug.
-
-This patch introduces another way, it adds a new field in both structures
-cfs_rq and cfs_bandwidth to record the expiration update sequence, and
-uses them to figure out if clock drift happens (true if they are equal).
-
-Signed-off-by: Xunlei Pang <xlpang@linux.alibaba.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Ben Segall <bsegall@google.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: 51f2176d74ac ("sched/fair: Fix unlocked reads of some cfs_b->quota/period")
-Link: http://lkml.kernel.org/r/20180620101834.24455-1-xlpang@linux.alibaba.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
 [bwh: Backported to 3.16:
- - Drop changes to other member types in struct cfs_bandwidth
- - Adjust context]
+ - pwm-lpss is a single module, so make the new functions static
+ - Only one PWM per chip is supported; remove the npwm assertion and loops
+ - Adjust filenames, context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- kernel/sched/fair.c  | 14 ++++++++------
- kernel/sched/sched.h |  6 ++++--
- 2 files changed, 12 insertions(+), 8 deletions(-)
-
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -3143,6 +3143,7 @@ void __refill_cfs_bandwidth_runtime(stru
- 	now = sched_clock_cpu(smp_processor_id());
- 	cfs_b->runtime = cfs_b->quota;
- 	cfs_b->runtime_expires = now + ktime_to_ns(cfs_b->period);
-+	cfs_b->expires_seq++;
+--- a/drivers/pwm/pwm-lpss.c
++++ b/drivers/pwm/pwm-lpss.c
+@@ -39,6 +39,7 @@ struct pwm_lpss_chip {
+ 	void __iomem *regs;
+ 	struct clk *clk;
+ 	unsigned long clk_rate;
++	u32 saved_ctrl;
+ };
+ 
+ struct pwm_lpss_boardinfo {
+@@ -177,6 +178,24 @@ static int pwm_lpss_remove(struct pwm_lp
+ 	return pwmchip_remove(&lpwm->chip);
  }
  
- static inline struct cfs_bandwidth *tg_cfs_bandwidth(struct task_group *tg)
-@@ -3165,6 +3166,7 @@ static int assign_cfs_rq_runtime(struct
- 	struct task_group *tg = cfs_rq->tg;
- 	struct cfs_bandwidth *cfs_b = tg_cfs_bandwidth(tg);
- 	u64 amount = 0, min_amount, expires;
-+	int expires_seq;
- 
- 	/* note: this is a positive sum as runtime_remaining <= 0 */
- 	min_amount = sched_cfs_bandwidth_slice() - cfs_rq->runtime_remaining;
-@@ -3190,6 +3192,7 @@ static int assign_cfs_rq_runtime(struct
- 			cfs_b->idle = 0;
- 		}
- 	}
-+	expires_seq = cfs_b->expires_seq;
- 	expires = cfs_b->runtime_expires;
- 	raw_spin_unlock(&cfs_b->lock);
- 
-@@ -3199,8 +3202,10 @@ static int assign_cfs_rq_runtime(struct
- 	 * spread between our sched_clock and the one on which runtime was
- 	 * issued.
- 	 */
--	if ((s64)(expires - cfs_rq->runtime_expires) > 0)
-+	if (cfs_rq->expires_seq != expires_seq) {
-+		cfs_rq->expires_seq = expires_seq;
- 		cfs_rq->runtime_expires = expires;
-+	}
- 
- 	return cfs_rq->runtime_remaining > 0;
++static int pwm_lpss_suspend(struct device *dev)
++{
++	struct pwm_lpss_chip *lpwm = dev_get_drvdata(dev);
++
++	lpwm->saved_ctrl = readl(lpwm->regs + PWM);
++
++	return 0;
++}
++
++static int pwm_lpss_resume(struct device *dev)
++{
++	struct pwm_lpss_chip *lpwm = dev_get_drvdata(dev);
++
++	writel(lpwm->saved_ctrl, lpwm->regs + PWM);
++
++	return 0;
++}
++
+ static int pwm_lpss_probe_pci(struct pci_dev *pdev,
+ 			      const struct pci_device_id *id)
+ {
+@@ -241,6 +260,10 @@ static int pwm_lpss_remove_platform(stru
+ 	return pwm_lpss_remove(lpwm);
  }
-@@ -3226,12 +3231,9 @@ static void expire_cfs_rq_runtime(struct
- 	 * has not truly expired.
- 	 *
- 	 * Fortunately we can check determine whether this the case by checking
--	 * whether the global deadline has advanced. It is valid to compare
--	 * cfs_b->runtime_expires without any locks since we only care about
--	 * exact equality, so a partial write will still work.
-+	 * whether the global deadline(cfs_b->expires_seq) has advanced.
- 	 */
--
--	if (cfs_rq->runtime_expires != cfs_b->runtime_expires) {
-+	if (cfs_rq->expires_seq == cfs_b->expires_seq) {
- 		/* extend local deadline, drift is bounded above by 2 ticks */
- 		cfs_rq->runtime_expires += TICK_NSEC;
- 	} else {
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -186,6 +186,7 @@ struct cfs_bandwidth {
- 	u64 quota, runtime;
- 	s64 hierarchal_quota;
- 	u64 runtime_expires;
-+	int expires_seq;
  
- 	int idle, timer_active;
- 	struct hrtimer period_timer, slack_timer;
-@@ -375,6 +376,7 @@ struct cfs_rq {
- 
- #ifdef CONFIG_CFS_BANDWIDTH
- 	int runtime_enabled;
-+	int expires_seq;
- 	u64 runtime_expires;
- 	s64 runtime_remaining;
- 
++static SIMPLE_DEV_PM_OPS(pwm_lpss_platform_pm_ops,
++			 pwm_lpss_suspend,
++			 pwm_lpss_resume);
++
+ static const struct acpi_device_id pwm_lpss_acpi_match[] = {
+ 	{ "80860F09", 0 },
+ 	{ },
+@@ -251,6 +274,7 @@ static struct platform_driver pwm_lpss_d
+ 	.driver = {
+ 		.name = "pwm-lpss",
+ 		.acpi_match_table = pwm_lpss_acpi_match,
++		.pm = &pwm_lpss_platform_pm_ops,
+ 	},
+ 	.probe = pwm_lpss_probe_platform,
+ 	.remove = pwm_lpss_remove_platform,
 
