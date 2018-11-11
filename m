@@ -2,51 +2,50 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3CC4C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:40:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8560AC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:41:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A5FA20818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:40:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D8D420818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:41:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hxnPI6aq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A5FA20818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FoD4CZSf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D8D420818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387919AbeKLITl (ORCPT
+        id S2387887AbeKLITj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:19:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41652 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:19:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41510 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387902AbeKLITk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:19:40 -0500
+        id S2387843AbeKLITi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:19:38 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 56BAB2154B;
-        Sun, 11 Nov 2018 22:29:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D407215EA;
+        Sun, 11 Nov 2018 22:29:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975384;
-        bh=rKGsd03JwVuKOVPiq75qBNEiUcrcXu+acLOGwh4kxH4=;
+        s=default; t=1541975381;
+        bh=WihzOxQZHXJJRzyZpZexDExkp9SnhnaJEoI2+qsVLjE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hxnPI6aqVS4vTNP6TMJIP1MRFHNiENKbh8vTSFr3lHl/RES5rpEyUpoyBXNjKtdgy
-         Pz2z33QHRtbqGaTgeBYrPjE0nKceeCjZFychfoaGWyN36hprxy9EjbUUGiQCSzJkWx
-         df5Ds01QdC2VuIJxVX41uYZOlmfrU27bE2Lu2KLg=
+        b=FoD4CZSfwuJCdqFU/2a3nEgIZaAWBxqTK/Y+F/toYuRHzFOhcYB5gdOHsZO2cQM2W
+         lU0mnkQBJSSMrGigEJELyKFz+maHDofKx3NeM1XZt0SiEeWL5H64d39NaMLZX1B6Hu
+         Ovzjly6an8JE2qFk4/zEOvzzxrF1CuvrkhPYaR7I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 059/350] net: qla3xxx: Remove overflowing shift statement
-Date:   Sun, 11 Nov 2018 14:18:43 -0800
-Message-Id: <20181111221709.625904202@linuxfoundation.org>
+        "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
+        Dominik Brodowski <linux@dominikbrodowski.net>
+Subject: [PATCH 4.18 019/350] pcmcia: Implement CLKRUN protocol disabling for Ricoh bridges
+Date:   Sun, 11 Nov 2018 14:18:03 -0800
+Message-Id: <20181111221707.979818694@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -64,50 +63,108 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
 
-[ Upstream commit 8c3bf9b62b667456a57aefcf1689e826df146159 ]
+commit 95691e3eddc41da2d1cd3cca51fecdfb46bd85bc upstream.
 
-Clang currently warns:
+Currently, "disable_clkrun" yenta_socket module parameter is only
+implemented for TI CardBus bridges.
+Add also an implementation for Ricoh bridges that have the necessary
+setting documented in publicly available datasheets.
 
-drivers/net/ethernet/qlogic/qla3xxx.c:384:24: warning: signed shift
-result (0xF00000000) requires 37 bits to represent, but 'int' only has
-32 bits [-Wshift-overflow]
-                    ((ISP_NVRAM_MASK << 16) | qdev->eeprom_cmd_data));
-                      ~~~~~~~~~~~~~~ ^  ~~
-1 warning generated.
+Tested on a RL5C476II with a Sunrich C-160 CardBus NIC that doesn't work
+correctly unless the CLKRUN protocol is disabled.
 
-The warning is certainly accurate since ISP_NVRAM_MASK is defined as
-(0x000F << 16) which is then shifted by 16, resulting in 64424509440,
-well above UINT_MAX.
+Let's also make it clear in its description that the "disable_clkrun"
+module parameter only works on these two previously mentioned brands of
+CardBus bridges.
 
-Given that this is the only location in this driver where ISP_NVRAM_MASK
-is shifted again, it seems likely that ISP_NVRAM_MASK was originally
-defined without a shift and during the move of the shift to the
-definition, this statement wasn't properly removed (since ISP_NVRAM_MASK
-is used in the statenent right above this). Only the maintainers can
-confirm this since this statment has been here since the driver was
-first added to the kernel.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/127
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/qlogic/qla3xxx.c |    2 --
- 1 file changed, 2 deletions(-)
 
---- a/drivers/net/ethernet/qlogic/qla3xxx.c
-+++ b/drivers/net/ethernet/qlogic/qla3xxx.c
-@@ -380,8 +380,6 @@ static void fm93c56a_select(struct ql3_a
+---
+ drivers/pcmcia/ricoh.h        |   35 +++++++++++++++++++++++++++++++++++
+ drivers/pcmcia/yenta_socket.c |    3 ++-
+ 2 files changed, 37 insertions(+), 1 deletion(-)
+
+--- a/drivers/pcmcia/ricoh.h
++++ b/drivers/pcmcia/ricoh.h
+@@ -119,6 +119,10 @@
+ #define  RL5C4XX_MISC_CONTROL           0x2F /* 8 bit */
+ #define  RL5C4XX_ZV_ENABLE              0x08
  
- 	qdev->eeprom_cmd_data = AUBURN_EEPROM_CS_1;
- 	ql_write_nvram_reg(qdev, spir, ISP_NVRAM_MASK | qdev->eeprom_cmd_data);
--	ql_write_nvram_reg(qdev, spir,
--			   ((ISP_NVRAM_MASK << 16) | qdev->eeprom_cmd_data));
++/* Misc Control 3 Register */
++#define RL5C4XX_MISC3			0x00A2 /* 16 bit */
++#define  RL5C47X_MISC3_CB_CLKRUN_DIS	BIT(1)
++
+ #ifdef __YENTA_H
+ 
+ #define rl_misc(socket)		((socket)->private[0])
+@@ -156,6 +160,35 @@ static void ricoh_set_zv(struct yenta_so
+         }
  }
  
- /*
++static void ricoh_set_clkrun(struct yenta_socket *socket, bool quiet)
++{
++	u16 misc3;
++
++	/*
++	 * RL5C475II likely has this setting, too, however no datasheet
++	 * is publicly available for this chip
++	 */
++	if (socket->dev->device != PCI_DEVICE_ID_RICOH_RL5C476 &&
++	    socket->dev->device != PCI_DEVICE_ID_RICOH_RL5C478)
++		return;
++
++	if (socket->dev->revision < 0x80)
++		return;
++
++	misc3 = config_readw(socket, RL5C4XX_MISC3);
++	if (misc3 & RL5C47X_MISC3_CB_CLKRUN_DIS) {
++		if (!quiet)
++			dev_dbg(&socket->dev->dev,
++				"CLKRUN feature already disabled\n");
++	} else if (disable_clkrun) {
++		if (!quiet)
++			dev_info(&socket->dev->dev,
++				 "Disabling CLKRUN feature\n");
++		misc3 |= RL5C47X_MISC3_CB_CLKRUN_DIS;
++		config_writew(socket, RL5C4XX_MISC3, misc3);
++	}
++}
++
+ static void ricoh_save_state(struct yenta_socket *socket)
+ {
+ 	rl_misc(socket) = config_readw(socket, RL5C4XX_MISC);
+@@ -172,6 +205,7 @@ static void ricoh_restore_state(struct y
+ 	config_writew(socket, RL5C4XX_16BIT_IO_0, rl_io(socket));
+ 	config_writew(socket, RL5C4XX_16BIT_MEM_0, rl_mem(socket));
+ 	config_writew(socket, RL5C4XX_CONFIG, rl_config(socket));
++	ricoh_set_clkrun(socket, true);
+ }
+ 
+ 
+@@ -197,6 +231,7 @@ static int ricoh_override(struct yenta_s
+ 	config_writew(socket, RL5C4XX_CONFIG, config);
+ 
+ 	ricoh_set_zv(socket);
++	ricoh_set_clkrun(socket, false);
+ 
+ 	return 0;
+ }
+--- a/drivers/pcmcia/yenta_socket.c
++++ b/drivers/pcmcia/yenta_socket.c
+@@ -26,7 +26,8 @@
+ 
+ static bool disable_clkrun;
+ module_param(disable_clkrun, bool, 0444);
+-MODULE_PARM_DESC(disable_clkrun, "If PC card doesn't function properly, please try this option");
++MODULE_PARM_DESC(disable_clkrun,
++		 "If PC card doesn't function properly, please try this option (TI and Ricoh bridges only)");
+ 
+ static bool isa_probe = 1;
+ module_param(isa_probe, bool, 0444);
 
 
