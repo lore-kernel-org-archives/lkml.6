@@ -7,48 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB1ECC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:29:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F2CC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:29:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE9CA2084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:29:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D95662084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:29:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="x0DahykE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE9CA2084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="G0VTEMBB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D95662084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388746AbeKLIU3 (ORCPT
+        id S2388913AbeKLJUC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:20:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44954 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:20:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388727AbeKLIU2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:20:28 -0500
+        id S2388729AbeKLIU3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:29 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E713B21707;
-        Sun, 11 Nov 2018 22:30:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C69BC2175B;
+        Sun, 11 Nov 2018 22:30:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975432;
-        bh=NiAhzOHqXLlB74m1aEJONICXsKnJ02HOh2N5kiURdO0=;
+        bh=K1/56SurJFacMgH/sFqyYM6Y3bKdoOYS9g5636rm55Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x0DahykEI1rl33gpaYp3nlJ/QZK1rLoEA4KoDqCk1J8+EnnDoY6LU4qIw1ZeFJKnK
-         sYt9bUNAnAWMwjc88P0adFWfnAHbtBMr2kKnSH7XQzmJOfDbCmYEKTN9ZH9SMihQmN
-         qFauk3xtpPyyr3X1DHEfhqQwo1Op+sqgGp0N+EEM=
+        b=G0VTEMBBT2ZD78FxqYfxASmP7IRnLtTD+V5/iW+mnXOnGdOQoRSb5H/mz+w1ShFyl
+         tfCo8lyPXTn8aBSyZXxSc/qZG/f3TQNfziAXhcr32MWhnARE4SMh4hJo2jSBkcuwTL
+         vE1FBR24/QmipkG8NeU4tk8AltEwIxNx519a33wQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wei-Ning Huang <wnhuang@chromium.org>,
-        Julius Werner <jwerner@chromium.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Stephen Boyd <swboyd@chromium.org>,
+        stable@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 175/350] firmware: coreboot: Unmap ioregion after device population
-Date:   Sun, 11 Nov 2018 14:20:39 -0800
-Message-Id: <20181111221715.350825684@linuxfoundation.org>
+Subject: [PATCH 4.18 177/350] uio: ensure class is registered before devices
+Date:   Sun, 11 Nov 2018 14:20:41 -0800
+Message-Id: <20181111221715.444476238@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -66,60 +63,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stephen Boyd <swboyd@chromium.org>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-[ Upstream commit 20edec388277b62ddfddb8b2b376a937a2cd6d1b ]
+[ Upstream commit ae61cf5b9913027c6953a79ed3894da4f47061bd ]
 
-Both callers of coreboot_table_init() ioremap the pointer that comes in
-but they don't unmap the memory on failure. Both of them also fail probe
-immediately with the return value of coreboot_table_init(), leaking a
-mapping when it fails. The mapping isn't necessary at all after devices
-are populated either, so we can just drop the mapping here when we exit
-the function. Let's do that to simplify the code a bit and plug the leak.
+When both uio and the uio drivers are built in the kernel, it is possible
+for a driver to register devices before the uio class is registered.
 
-Cc: Wei-Ning Huang <wnhuang@chromium.org>
-Cc: Julius Werner <jwerner@chromium.org>
-Cc: Brian Norris <briannorris@chromium.org>
-Cc: Samuel Holland <samuel@sholland.org>
-Fixes: 570d30c2823f ("firmware: coreboot: Expose the coreboot table as a bus")
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-Reviewed-by: Julius Werner <jwerner@chromium.org>
+This may result in a NULL pointer dereference later on in
+get_device_parent() when accessing the class glue_dirs spinlock.
+
+The trace looks like that:
+
+Unable to handle kernel NULL pointer dereference at virtual address 00000140
+[...]
+[<ffff0000089cc234>] _raw_spin_lock+0x14/0x48
+[<ffff0000084f56bc>] device_add+0x154/0x6a0
+[<ffff0000084f5e48>] device_create_groups_vargs+0x120/0x128
+[<ffff0000084f5edc>] device_create+0x54/0x60
+[<ffff0000086e72c0>] __uio_register_device+0x120/0x4a8
+[<ffff000008528b7c>] jaguar2_pci_probe+0x2d4/0x558
+[<ffff0000083fc18c>] local_pci_probe+0x3c/0xb8
+[<ffff0000083fd81c>] pci_device_probe+0x11c/0x180
+[<ffff0000084f88bc>] driver_probe_device+0x22c/0x2d8
+[<ffff0000084f8a24>] __driver_attach+0xbc/0xc0
+[<ffff0000084f69fc>] bus_for_each_dev+0x4c/0x98
+[<ffff0000084f81b8>] driver_attach+0x20/0x28
+[<ffff0000084f7d08>] bus_add_driver+0x1b8/0x228
+[<ffff0000084f93c0>] driver_register+0x60/0xf8
+[<ffff0000083fb918>] __pci_register_driver+0x40/0x48
+
+Return EPROBE_DEFER in that case so the driver can register the device
+later.
+
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/firmware/google/coreboot_table.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/uio/uio.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/drivers/firmware/google/coreboot_table.c
-+++ b/drivers/firmware/google/coreboot_table.c
-@@ -110,7 +110,8 @@ int coreboot_table_init(struct device *d
+--- a/drivers/uio/uio.c
++++ b/drivers/uio/uio.c
+@@ -275,6 +275,8 @@ static struct class uio_class = {
+ 	.dev_groups = uio_groups,
+ };
  
- 	if (strncmp(header.signature, "LBIO", sizeof(header.signature))) {
- 		pr_warn("coreboot_table: coreboot table missing or corrupt!\n");
--		return -ENODEV;
-+		ret = -ENODEV;
-+		goto out;
++bool uio_class_registered;
++
+ /*
+  * device functions
+  */
+@@ -877,6 +879,9 @@ static int init_uio_class(void)
+ 		printk(KERN_ERR "class_register failed for uio\n");
+ 		goto err_class_register;
  	}
++
++	uio_class_registered = true;
++
+ 	return 0;
  
- 	ptr_entry = (void *)ptr_header + header.header_bytes;
-@@ -137,7 +138,8 @@ int coreboot_table_init(struct device *d
+ err_class_register:
+@@ -887,6 +892,7 @@ exit:
  
- 		ptr_entry += entry.size;
- 	}
--
-+out:
-+	iounmap(ptr);
- 	return ret;
- }
- EXPORT_SYMBOL(coreboot_table_init);
-@@ -146,7 +148,6 @@ int coreboot_table_exit(void)
+ static void release_uio_class(void)
  {
- 	if (ptr_header) {
- 		bus_unregister(&coreboot_bus_type);
--		iounmap(ptr_header);
- 		ptr_header = NULL;
- 	}
++	uio_class_registered = false;
+ 	class_unregister(&uio_class);
+ 	uio_major_cleanup();
+ }
+@@ -913,6 +919,9 @@ int __uio_register_device(struct module
+ 	struct uio_device *idev;
+ 	int ret = 0;
+ 
++	if (!uio_class_registered)
++		return -EPROBE_DEFER;
++
+ 	if (!parent || !info || !info->name || !info->version)
+ 		return -EINVAL;
  
 
 
