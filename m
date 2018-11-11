@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDA66C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:22:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2AC3C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:23:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB5C820818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:22:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB5C820818
+	by mail.kernel.org (Postfix) with ESMTP id ADB6A20818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:23:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADB6A20818
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731417AbeKLGME (ORCPT
+        id S1731200AbeKLFyX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:12:04 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36122 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731149AbeKLGKE (ORCPT
+        Mon, 12 Nov 2018 00:54:23 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33744 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731186AbeKLFyV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 01:10:04 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wABKJA9h110711
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 15:20:33 -0500
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2npdbntw2n-1
+        Mon, 12 Nov 2018 00:54:21 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wABJwtoa038010
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 15:04:53 -0500
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2npde82js3-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 15:20:33 -0500
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 15:04:52 -0500
 Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Sun, 11 Nov 2018 20:20:33 -0000
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Sun, 11 Nov 2018 20:04:51 -0000
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 11 Nov 2018 20:20:29 -0000
+        Sun, 11 Nov 2018 20:04:45 -0000
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wABKKSTm4981018
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wABK4iFY19988696
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 11 Nov 2018 20:20:28 GMT
+        Sun, 11 Nov 2018 20:04:44 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 20D0EB2067;
-        Sun, 11 Nov 2018 20:20:28 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 38F4AB2065;
+        Sun, 11 Nov 2018 20:04:44 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F2FDBB2065;
-        Sun, 11 Nov 2018 20:20:27 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id EDD03B2064;
+        Sun, 11 Nov 2018 20:04:43 +0000 (GMT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.85.207.24])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Sun, 11 Nov 2018 20:20:27 +0000 (GMT)
+        Sun, 11 Nov 2018 20:04:43 +0000 (GMT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id D0A7B16C5DA4; Sun, 11 Nov 2018 12:20:28 -0800 (PST)
+        id BE66C16C5DA0; Sun, 11 Nov 2018 12:04:44 -0800 (PST)
 From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -60,51 +60,113 @@ Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH tip/core/rcu 11/17] rcutorture: Print GP age upon forward-progress failure
-Date:   Sun, 11 Nov 2018 12:20:21 -0800
+        Lance Roy <ldr709@gmail.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Eric Auger <eric.auger@redhat.com>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>
+Subject: [PATCH tip/core/rcu 7/7] KVM: arm/arm64: vgic: Replace spin_is_locked() with lockdep
+Date:   Sun, 11 Nov 2018 12:04:43 -0800
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181111201956.GA11935@linux.ibm.com>
-References: <20181111201956.GA11935@linux.ibm.com>
+In-Reply-To: <20181111200421.GA10551@linux.ibm.com>
+References: <20181111200421.GA10551@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18111120-2213-0000-0000-00000315AA55
+x-cbid: 18111120-0064-0000-0000-000003722FF3
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00010028; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01116031; UDB=6.00578740; IPR=6.00896132;
- MB=3.00024115; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-11 20:20:32
+ PH=3.00000004; SC=3.00000270; SDB=6.01116026; UDB=6.00577118; IPR=6.00896126;
+ MB=3.00024114; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-11 20:04:50
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111120-2214-0000-0000-00005C387AF2
-Message-Id: <20181111202027.13585-11-paulmck@linux.ibm.com>
+x-cbparentid: 18111120-0065-0000-0000-00003B4D493C
+Message-Id: <20181111200443.10772-7-paulmck@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-11_13:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=958 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811110194
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811110191
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
----
- kernel/rcu/tree.c | 2 ++
- 1 file changed, 2 insertions(+)
+From: Lance Roy <ldr709@gmail.com>
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index cef7d9867508..95a3825b1b19 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -2679,6 +2679,8 @@ void rcu_fwd_progress_check(unsigned long j)
- 	struct rcu_data *rdp;
+lockdep_assert_held() is better suited to checking locking requirements,
+since it only checks if the current thread holds the lock regardless of
+whether someone else does. This is also a step towards possibly removing
+spin_is_locked().
+
+Signed-off-by: Lance Roy <ldr709@gmail.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Eric Auger <eric.auger@redhat.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: <kvmarm@lists.cs.columbia.edu>
+Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+Acked-by: Christoffer Dall <christoffer.dall@arm.com>
+---
+ virt/kvm/arm/vgic/vgic.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/virt/kvm/arm/vgic/vgic.c b/virt/kvm/arm/vgic/vgic.c
+index 7cfdfbc910e0..50e25438fb3c 100644
+--- a/virt/kvm/arm/vgic/vgic.c
++++ b/virt/kvm/arm/vgic/vgic.c
+@@ -196,7 +196,7 @@ void vgic_irq_set_phys_active(struct vgic_irq *irq, bool active)
+  */
+ static struct kvm_vcpu *vgic_target_oracle(struct vgic_irq *irq)
+ {
+-	DEBUG_SPINLOCK_BUG_ON(!spin_is_locked(&irq->irq_lock));
++	lockdep_assert_held(&irq->irq_lock);
  
- 	if (rcu_gp_in_progress()) {
-+		pr_info("%s: GP age %lu jiffies\n",
-+			__func__, jiffies - rcu_state.gp_start);
- 		show_rcu_gp_kthreads();
- 	} else {
- 		preempt_disable();
+ 	/* If the interrupt is active, it must stay on the current vcpu */
+ 	if (irq->active)
+@@ -273,7 +273,7 @@ static void vgic_sort_ap_list(struct kvm_vcpu *vcpu)
+ {
+ 	struct vgic_cpu *vgic_cpu = &vcpu->arch.vgic_cpu;
+ 
+-	DEBUG_SPINLOCK_BUG_ON(!spin_is_locked(&vgic_cpu->ap_list_lock));
++	lockdep_assert_held(&vgic_cpu->ap_list_lock);
+ 
+ 	list_sort(NULL, &vgic_cpu->ap_list_head, vgic_irq_cmp);
+ }
+@@ -311,7 +311,7 @@ bool vgic_queue_irq_unlock(struct kvm *kvm, struct vgic_irq *irq,
+ {
+ 	struct kvm_vcpu *vcpu;
+ 
+-	DEBUG_SPINLOCK_BUG_ON(!spin_is_locked(&irq->irq_lock));
++	lockdep_assert_held(&irq->irq_lock);
+ 
+ retry:
+ 	vcpu = vgic_target_oracle(irq);
+@@ -702,7 +702,7 @@ static inline void vgic_fold_lr_state(struct kvm_vcpu *vcpu)
+ static inline void vgic_populate_lr(struct kvm_vcpu *vcpu,
+ 				    struct vgic_irq *irq, int lr)
+ {
+-	DEBUG_SPINLOCK_BUG_ON(!spin_is_locked(&irq->irq_lock));
++	lockdep_assert_held(&irq->irq_lock);
+ 
+ 	if (kvm_vgic_global_state.type == VGIC_V2)
+ 		vgic_v2_populate_lr(vcpu, irq, lr);
+@@ -736,7 +736,7 @@ static int compute_ap_list_depth(struct kvm_vcpu *vcpu,
+ 
+ 	*multi_sgi = false;
+ 
+-	DEBUG_SPINLOCK_BUG_ON(!spin_is_locked(&vgic_cpu->ap_list_lock));
++	lockdep_assert_held(&vgic_cpu->ap_list_lock);
+ 
+ 	list_for_each_entry(irq, &vgic_cpu->ap_list_head, ap_list) {
+ 		int w;
+@@ -761,7 +761,7 @@ static void vgic_flush_lr_state(struct kvm_vcpu *vcpu)
+ 	bool multi_sgi;
+ 	u8 prio = 0xff;
+ 
+-	DEBUG_SPINLOCK_BUG_ON(!spin_is_locked(&vgic_cpu->ap_list_lock));
++	lockdep_assert_held(&vgic_cpu->ap_list_lock);
+ 
+ 	count = compute_ap_list_depth(vcpu, &multi_sgi);
+ 	if (count > kvm_vgic_global_state.nr_lr || multi_sgi)
 -- 
 2.17.1
 
