@@ -2,103 +2,165 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99E26C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:08:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91EBBC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:08:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67AE82080D
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:08:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67AE82080D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 5932F2080D
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:08:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5932F2080D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731630AbeKLF5m (ORCPT
+        id S1731453AbeKLF6D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 00:57:42 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52260 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730868AbeKLF5l (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:57:41 -0500
-Received: from [192.168.4.242] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1gLvt0-0000l8-Nm; Sun, 11 Nov 2018 19:59:10 +0000
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsS-0001YK-C4; Sun, 11 Nov 2018 19:58:36 +0000
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Mon, 12 Nov 2018 00:58:03 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:52027 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726471AbeKLF6C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 00:58:02 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id A4C6C224E9; Sun, 11 Nov 2018 21:08:31 +0100 (CET)
+Received: from bbrezillon (unknown [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id CEDD3224CD;
+        Sun, 11 Nov 2018 21:08:20 +0100 (CET)
+Date:   Sun, 11 Nov 2018 21:08:18 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Przemyslaw Sroka <psroka@cadence.com>,
+        Arkadiusz Golec <agolec@cadence.com>,
+        Alan Douglas <adouglas@cadence.com>,
+        Bartosz Folta <bfolta@cadence.com>,
+        Damian Kos <dkos@cadence.com>,
+        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
+        Cyprian Wronka <cwronka@cadence.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Vitor Soares <Vitor.Soares@synopsys.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiang Lin <Xiang.Lin@synaptics.com>,
+        linux-gpio@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
+        Przemyslaw Gaj <pgaj@cadence.com>,
+        Peter Rosin <peda@axentia.se>,
+        Mike Shettel <mshettel@codeaurora.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH v10 0/9] Add the I3C subsystem
+Message-ID: <20181111210818.08af6731@bbrezillon>
+In-Reply-To: <20181111191020.GA21003@kroah.com>
+References: <20181026144333.12276-1-boris.brezillon@bootlin.com>
+        <20181111173932.GA12254@kroah.com>
+        <20181111191017.7b2efdf1@bbrezillon>
+        <20181111191020.GA21003@kroah.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, b.a.t.m.a.n@lists.open-mesh.org,
-        "Sven Eckelmann" <sven@narfation.org>,
-        "Marcel Schmidt" <ff.z-casparistrasse@mailbox.org>,
-        "Johannes Berg" <johannes@sipsolutions.net>,
-        "Thomas Lauer" <holminateur@gmail.com>
-Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.539889814@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 142/366] cfg80211: initialize sinfo in
- cfg80211_get_station
-In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
-X-SA-Exim-Connect-IP: 192.168.4.242
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.61-rc1 review patch.  If anyone has any objections, please let me know.
+On Sun, 11 Nov 2018 11:10:20 -0800
+Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
 
-------------------
+> On Sun, Nov 11, 2018 at 07:10:17PM +0100, Boris Brezillon wrote:
+> > Hi Greg,
+> > 
+> > On Sun, 11 Nov 2018 09:39:32 -0800
+> > Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> >   
+> > > On Fri, Oct 26, 2018 at 04:43:24PM +0200, Boris Brezillon wrote:  
+> > > > Hi Greg,
+> > > > 
+> > > > I think we've reached a point where we can eventually consider the I3C
+> > > > framework for inclusion in 4.20 (5.0?). A few more issues were reported
+> > > > on v9 and fixed in v10. I can't guarantee that the implementation is
+> > > > free of bugs but I still think it's worth merging it in v4.20: it's a
+> > > > new subsystem, so we don't risk regressions, and the only way we can
+> > > > detect other issues is by having other people experiment with this
+> > > > implementation.
+> > > > 
+> > > > The only remaining concern raised by Arnd is the fact that both hosts
+> > > > and slaves share the same bus type and are differentiated thanks to
+> > > > their device_type, which IMHO is fine since this is what other
+> > > > subsystems do (plus I don't see other solutions to have both I3C
+> > > > devices and I3C buses represented under /sys/bus/i3c/).    
+> > > 
+> > > Yeah, it's not the nicest, but it will work, we did it also for USB and
+> > > greybus and it solves the issue.
+> > > 
+> > > This all looks good to me, so I've queued it up.  Let's see if
+> > > linux-next has any problems with it.  
+> > 
+> > I recently asked Stephen to add the linux-i3c tree to linux-next, so
+> > I'm expecting conflicts :-/. Sorry, I didn't know you were planning to
+> > take these patches through your tree.
+> > 
+> > BTW, I also fixed a couple of things when rebasing on top of 4.20-rc1:
+> > 
+> > - KernelVersion in the sysfs ABI doc has been updated to 5.0  
+> 
+> There is no 5.0 yet :)
 
-From: Sven Eckelmann <sven@narfation.org>
+Actually I had a hard time choosing between 4.21 and 5.0, and then I
+saw Linus' email announcing 4.20-rc1 ;-). But I can change it back to
+4.21 if you prefer.
 
-commit 3c12d0486856b9eb89c2a9ac336713cba90813e3 upstream.
+> 
+> > - Fixed i3c_master_getmxds_locked() (bug reported/fixed by Colin here
+> >   https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1799850.html)
+> > - Removed a blank line at the end of master-driver-api.rst
 
-Most of the implementations behind cfg80211_get_station will not initialize
-sinfo to zero before manipulating it. For example, the member "filled",
-which indicates the filled in parts of this struct, is often only modified
-by enabling certain bits in the bitfield while keeping the remaining bits
-in their original state. A caller without a preinitialized sinfo.filled can
-then no longer decide which parts of sinfo were filled in by
-cfg80211_get_station (or actually the underlying implementations).
+One extra thing I didn't mention (and didn't fix yet) is the I3C
+mailing list. I asked Dave Miller if he'd be okay to create the
+linux-i3c ML on vger.kernel.org, and he suggested that we use the
+linux-i2c ML instead which I know Wolfram is not fond of. I might
+decide to just put linux-kernel@vger.kernel.org as the ML to Cc for
+I3C patches until we settle on something. 
 
-cfg80211_get_station must therefore take care that sinfo is initialized to
-zero. Otherwise, the caller may tries to read information which was not
-filled in and which must therefore also be considered uninitialized. In
-batadv_v_elp_get_throughput's case, an invalid "random" expected throughput
-may be stored for this neighbor and thus the B.A.T.M.A.N V algorithm may
-switch to non-optimal neighbors for certain destinations.
+> > 
+> > For the record, the i3c/next branch pulled by Stephen is available here
+> > [1].
+> >   
+> > > Thanks for sticking with it, nice work!  
+> > 
+> > Thanks for reviewing it! Greg, Stephen, let me know if you want me to
+> > reset i3c/next to v4.20-rc1 to avoid conflicts in linux-next.  
+> 
+> So do you want me to just drop these patches from my tree?  If so, I
+> can, but i have no problem sending these to Linus for the next -rc1
+> merge window through my tree if that is easier.
+> 
+> It's up to you.
 
-Fixes: 7406353d43c8 ("cfg80211: implement cfg80211_get_station cfg80211 API")
-Reported-by: Thomas Lauer <holminateur@gmail.com>
-Reported-by: Marcel Schmidt <ff.z-casparistrasse@mailbox.org>
-Cc: b.a.t.m.a.n@lists.open-mesh.org
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Johannes Berg <johannes@sipsolutions.net>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- net/wireless/util.c | 2 ++
- 1 file changed, 2 insertions(+)
+I think that's easier for me and for you if I take them in the i3c tree
+and then send a PR to Linus myself. This way I won't bother you if
+fixes are needed or if I decide to apply patches adding support for
+other I3C controllers (I see you commented on the Synopsys driver
+already, and I might indeed decide to queue this patchset for this
+release).
 
---- a/net/wireless/util.c
-+++ b/net/wireless/util.c
-@@ -1566,6 +1566,8 @@ int cfg80211_get_station(struct net_devi
- 	if (!rdev->ops->get_station)
- 		return -EOPNOTSUPP;
- 
-+	memset(sinfo, 0, sizeof(*sinfo));
-+
- 	return rdev_get_station(rdev, dev, mac_addr, sinfo);
- }
- EXPORT_SYMBOL(cfg80211_get_station);
+Doing that also allows me to get everything in place since I'll anyway
+have to send PRs to Linus at some point.
 
+Regards,
+
+Boris
+
+PS: If you're fine with me taking the I3C patches, I'll need your
+Acked-by.
