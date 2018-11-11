@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6DB6C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:14:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1315C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:14:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 832BA2080D
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:14:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 832BA2080D
+	by mail.kernel.org (Postfix) with ESMTP id 7F1282080D
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:14:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F1282080D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731387AbeKLGDt (ORCPT
+        id S1731491AbeKLGDw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:03:49 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52834 "EHLO
+        Mon, 12 Nov 2018 01:03:52 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52840 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726816AbeKLGDt (ORCPT
+        by vger.kernel.org with ESMTP id S1726816AbeKLGDv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 01:03:49 -0500
+        Mon, 12 Nov 2018 01:03:51 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsv-0000l6-Bi; Sun, 11 Nov 2018 19:59:05 +0000
+        id 1gLvt0-0000l6-Lt; Sun, 11 Nov 2018 19:59:10 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsU-0001eg-Ve; Sun, 11 Nov 2018 19:58:38 +0000
+        id 1gLvsS-0001YU-Ee; Sun, 11 Nov 2018 19:58:36 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -38,12 +38,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Jiri Slaby" <jslaby@suse.cz>
+        "Guillaume Nault" <g.nault@alphalink.fr>,
+        "David S. Miller" <davem@davemloft.net>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.556386560@decadent.org.uk>
+Message-ID: <lsq.1541965745.633960984@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 212/366] tty: vt, get rid of weird source code flow
+Subject: [PATCH 3.16 144/366] l2tp: filter out non-PPP sessions in
+ pppol2tp_tunnel_ioctl()
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,114 +58,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jiri Slaby <jslaby@suse.cz>
+From: Guillaume Nault <g.nault@alphalink.fr>
 
-commit 34902b7f2754e6d890feb0cee34187f1bc75c930 upstream.
+commit ecd012e45ab5fd76ed57546865897ce35920f56b upstream.
 
-Some code in vc_allocate is indented by 4 spaces. It is inside a
-condition. Invert the condition and move the code to the first
-indentation level (using \tab). And insert some empty lines to have
-logical code blocks separated.
+pppol2tp_tunnel_ioctl() can act on an L2TPv3 tunnel, in which case
+'session' may be an Ethernet pseudo-wire.
 
-Then, instead of freeing in an 'if' false branch, use goto-error
-label as fail path.
+However, pppol2tp_session_ioctl() expects a PPP pseudo-wire, as it
+assumes l2tp_session_priv() points to a pppol2tp_session structure. For
+an Ethernet pseudo-wire l2tp_session_priv() points to an l2tp_eth_sess
+structure instead, making pppol2tp_session_ioctl() access invalid
+memory.
 
-Maybe better to look at this patch with diff -w -b.
-
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: d9e31d17ceba ("l2tp: Add L2TP ethernet pseudowire support")
+Signed-off-by: Guillaume Nault <g.nault@alphalink.fr>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/tty/vt/vt.c | 70 +++++++++++++++++++++++++--------------------
- 1 file changed, 39 insertions(+), 31 deletions(-)
+ net/l2tp/l2tp_ppp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/tty/vt/vt.c
-+++ b/drivers/tty/vt/vt.c
-@@ -752,46 +752,54 @@ static void visual_init(struct vc_data *
+--- a/net/l2tp/l2tp_ppp.c
++++ b/net/l2tp/l2tp_ppp.c
+@@ -1231,7 +1231,7 @@ static int pppol2tp_tunnel_ioctl(struct
+ 				l2tp_session_get(sock_net(sk), tunnel,
+ 						 stats.session_id, true);
  
- int vc_allocate(unsigned int currcons)	/* return 0 on success */
- {
-+	struct vt_notifier_param param;
-+	struct vc_data *vc;
-+
- 	WARN_CONSOLE_UNLOCKED();
- 
- 	if (currcons >= MAX_NR_CONSOLES)
- 		return -ENXIO;
--	if (!vc_cons[currcons].d) {
--	    struct vc_data *vc;
--	    struct vt_notifier_param param;
--
--	    /* due to the granularity of kmalloc, we waste some memory here */
--	    /* the alloc is done in two steps, to optimize the common situation
--	       of a 25x80 console (structsize=216, screenbuf_size=4000) */
--	    /* although the numbers above are not valid since long ago, the
--	       point is still up-to-date and the comment still has its value
--	       even if only as a historical artifact.  --mj, July 1998 */
--	    param.vc = vc = kzalloc(sizeof(struct vc_data), GFP_KERNEL);
--	    if (!vc)
-+
-+	if (vc_cons[currcons].d)
-+		return 0;
-+
-+	/* due to the granularity of kmalloc, we waste some memory here */
-+	/* the alloc is done in two steps, to optimize the common situation
-+	   of a 25x80 console (structsize=216, screenbuf_size=4000) */
-+	/* although the numbers above are not valid since long ago, the
-+	   point is still up-to-date and the comment still has its value
-+	   even if only as a historical artifact.  --mj, July 1998 */
-+	param.vc = vc = kzalloc(sizeof(struct vc_data), GFP_KERNEL);
-+	if (!vc)
- 		return -ENOMEM;
--	    vc_cons[currcons].d = vc;
--	    tty_port_init(&vc->port);
--	    INIT_WORK(&vc_cons[currcons].SAK_work, vc_SAK);
--	    visual_init(vc, currcons, 1);
--	    if (!*vc->vc_uni_pagedir_loc)
-+
-+	vc_cons[currcons].d = vc;
-+	tty_port_init(&vc->port);
-+	INIT_WORK(&vc_cons[currcons].SAK_work, vc_SAK);
-+
-+	visual_init(vc, currcons, 1);
-+
-+	if (!*vc->vc_uni_pagedir_loc)
- 		con_set_default_unimap(vc);
--	    vc->vc_screenbuf = kmalloc(vc->vc_screenbuf_size, GFP_KERNEL);
--	    if (!vc->vc_screenbuf) {
--		kfree(vc);
--		vc_cons[currcons].d = NULL;
--		return -ENOMEM;
--	    }
- 
--	    /* If no drivers have overridden us and the user didn't pass a
--	       boot option, default to displaying the cursor */
--	    if (global_cursor_default == -1)
--		    global_cursor_default = 1;
--
--	    vc_init(vc, vc->vc_rows, vc->vc_cols, 1);
--	    vcs_make_sysfs(currcons);
--	    atomic_notifier_call_chain(&vt_notifier_list, VT_ALLOCATE, &param);
--	}
-+	vc->vc_screenbuf = kmalloc(vc->vc_screenbuf_size, GFP_KERNEL);
-+	if (!vc->vc_screenbuf)
-+		goto err_free;
-+
-+	/* If no drivers have overridden us and the user didn't pass a
-+	   boot option, default to displaying the cursor */
-+	if (global_cursor_default == -1)
-+		global_cursor_default = 1;
-+
-+	vc_init(vc, vc->vc_rows, vc->vc_cols, 1);
-+	vcs_make_sysfs(currcons);
-+	atomic_notifier_call_chain(&vt_notifier_list, VT_ALLOCATE, &param);
-+
- 	return 0;
-+err_free:
-+	kfree(vc);
-+	vc_cons[currcons].d = NULL;
-+	return -ENOMEM;
- }
- 
- static inline int resize_screen(struct vc_data *vc, int width, int height,
+-			if (session) {
++			if (session && session->pwtype == L2TP_PWTYPE_PPP) {
+ 				err = pppol2tp_session_ioctl(session, cmd,
+ 							     arg);
+ 				if (session->deref)
 
