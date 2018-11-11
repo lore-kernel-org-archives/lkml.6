@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19CC9C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0027C43610
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAEE422353
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F38F21508
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YDH+2HW/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAEE422353
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="n7zssYli"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F38F21508
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732067AbeKLIRs (ORCPT
+        id S1732110AbeKLIRu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:17:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34452 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:17:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732005AbeKLIRq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:17:46 -0500
+        id S1732069AbeKLIRt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:17:49 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45629208A3;
-        Sun, 11 Nov 2018 22:27:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E830C223C8;
+        Sun, 11 Nov 2018 22:27:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975270;
-        bh=x+FNQHUsIZUt3lHb6Hyi05wqnu4tWjTP9DbKEX+Yx+Y=;
+        s=default; t=1541975274;
+        bh=966Nmbpjf3r2N3XJyIY2vFvvHtTrhjsn5jiFb+pj15k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YDH+2HW/yr/qbrQrjoHVuraEPnF5H2wPRQ8JoHMCyGaopmMaiamtDbSTRzKyO+dGD
-         3X0LFta9+j9zLQa2jUsNRleYgI5BA8IE/kAR83xcxGoppqsaOiC0BwljyAsSU1bVj3
-         HtEFWBHcVix1tYT4SL6iX6l6tdN6XWBm2/ODjg8A=
+        b=n7zssYli+sw3kFSN0BvqihYeUxpbZhoM+dYlmMfp+6/8FyJUWLzS8AbL4xpIzH7sg
+         v0ADhLk+kxC8YLe02sKTmPCrxUnGdlgC3Rn/BRYLIVekIoFIgIMxrztM67YYiQGJOV
+         QKjfSoVQR9i30uynNG54kwa9BEfxnSxVOFFCI9wY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, Rob Herring <robh@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 167/361] f2fs: fix to recover inodes crtime during POR
-Date:   Sun, 11 Nov 2018 14:18:34 -0800
-Message-Id: <20181111221643.822421928@linuxfoundation.org>
+Subject: [PATCH 4.19 136/361] of: Add missing exports of node name compare functions
+Date:   Sun, 11 Nov 2018 14:18:03 -0800
+Message-Id: <20181111221639.528358770@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -63,49 +62,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Rob Herring <robh@kernel.org>
 
-[ Upstream commit 5cd1f387a13b5188b4edb4c834310302a85a6ea2 ]
+[ Upstream commit 173ee3962959a1985a109f81539a403b5cd07ae7 ]
 
-Testcase to reproduce this bug:
-1. mkfs.f2fs -O extra_attr -O inode_crtime /dev/sdd
-2. mount -t f2fs /dev/sdd /mnt/f2fs
-3. touch /mnt/f2fs/file
-4. xfs_io -f /mnt/f2fs/file -c "fsync"
-5. godown /mnt/f2fs
-6. umount /mnt/f2fs
-7. mount -t f2fs /dev/sdd /mnt/f2fs
-8. xfs_io -f /mnt/f2fs/file -c "statx -r"
+Commit f42b0e18f2e5 ("of: add node name compare helper functions")
+failed to add the module exports to of_node_name_eq() and
+of_node_name_prefix(). Add them now.
 
-stat.btime.tv_sec = 0
-stat.btime.tv_nsec = 0
-
-This patch fixes to recover inode creation time fields during
-mount.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Fixes: f42b0e18f2e5 ("of: add node name compare helper functions")
+Signed-off-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/node.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/of/base.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -2560,6 +2560,13 @@ retry:
- 			F2FS_FITS_IN_INODE(src, le16_to_cpu(src->i_extra_isize),
- 								i_projid))
- 			dst->i_projid = src->i_projid;
-+
-+		if (f2fs_sb_has_inode_crtime(sbi->sb) &&
-+			F2FS_FITS_IN_INODE(src, le16_to_cpu(src->i_extra_isize),
-+							i_crtime_nsec)) {
-+			dst->i_crtime = src->i_crtime;
-+			dst->i_crtime_nsec = src->i_crtime_nsec;
-+		}
- 	}
+--- a/drivers/of/base.c
++++ b/drivers/of/base.c
+@@ -67,6 +67,7 @@ bool of_node_name_eq(const struct device
  
- 	new_ni = old_ni;
+ 	return (strlen(name) == len) && (strncmp(node_name, name, len) == 0);
+ }
++EXPORT_SYMBOL(of_node_name_eq);
+ 
+ bool of_node_name_prefix(const struct device_node *np, const char *prefix)
+ {
+@@ -75,6 +76,7 @@ bool of_node_name_prefix(const struct de
+ 
+ 	return strncmp(kbasename(np->full_name), prefix, strlen(prefix)) == 0;
+ }
++EXPORT_SYMBOL(of_node_name_prefix);
+ 
+ int of_n_addr_cells(struct device_node *np)
+ {
 
 
