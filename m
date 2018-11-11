@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84754C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2548FC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BC05208A3
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E131E2154B
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iq0yr2eh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BC05208A3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LspKnwSu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E131E2154B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404753AbeKLIY2 (ORCPT
+        id S2391234AbeKLIYa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:24:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59916 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:24:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59958 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731242AbeKLIY1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:24:27 -0500
+        id S1731242AbeKLIYa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:24:30 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 719E521780;
-        Sun, 11 Nov 2018 22:34:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B9A422154B;
+        Sun, 11 Nov 2018 22:34:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975669;
-        bh=ADHqq+76uOyOAJGOlCr0XNIAr6EB6redxsgMHHsQjBk=;
+        s=default; t=1541975672;
+        bh=DSc/qJS1Prtj4+DOKSUNmjPrXr+8+h3lxzAPkT4QBfE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iq0yr2ehYkWuQZc+iXwnyhme4PUAj61VwDRD2BC1qGo6iTaL0klGio62jX1pPEQlM
-         v1976Seee5jHfDiwWGjTqJ9JfNTJNrZ+HA0zEYEVc5YflpgLPGBwliADZMWrGpuYUW
-         m0iDtWXBu1noJOutY/wc0JK2MlbJCpkRHW/8lA9E=
+        b=LspKnwSuHdkLz92tskBu/IWxrcj7aImKJ+Yo9XXjvbWt/m1KQjJcdbkza3M2MxVSn
+         v6k1jSFSXFdhn4kG2YnGAPhEJxxyyBKKyWCw0wTi5XBLqy4UFYBblA67KHJFqui1RO
+         ukcMb+aCXioyCqkzGHjwEvDglJPkhNyiTFjcU7aY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH 4.9 085/141] libnvdimm: Hold reference on parent while scheduling async init
-Date:   Sun, 11 Nov 2018 14:25:44 -0800
-Message-Id: <20181111221640.005067950@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.9 086/141] ASoC: intel: skylake: Add missing break in skl_tplg_get_token()
+Date:   Sun, 11 Nov 2018 14:25:45 -0800
+Message-Id: <20181111221640.122728282@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
 References: <20181111221627.853046496@linuxfoundation.org>
@@ -63,46 +62,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit b6eae0f61db27748606cc00dafcfd1e2c032f0a5 upstream.
+commit 9c80c5a8831471e0a3e139aad1b0d4c0fdc50b2f upstream.
 
-Unlike asynchronous initialization in the core we have not yet associated
-the device with the parent, and as such the device doesn't hold a reference
-to the parent.
+skl_tplg_get_token() misses a break in the big switch() block for
+SKL_TKN_U8_CORE_ID entry.
+Spotted nicely by -Wimplicit-fallthrough compiler option.
 
-In order to resolve that we should be holding a reference on the parent
-until the asynchronous initialization has completed.
-
+Fixes: 6277e83292a2 ("ASoC: Intel: Skylake: Parse vendor tokens to build module data")
 Cc: <stable@vger.kernel.org>
-Fixes: 4d88a97aa9e8 ("libnvdimm: ...base ... infrastructure")
-Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/nvdimm/bus.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ sound/soc/intel/skylake/skl-topology.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/nvdimm/bus.c
-+++ b/drivers/nvdimm/bus.c
-@@ -424,6 +424,8 @@ static void nd_async_device_register(voi
- 		put_device(dev);
- 	}
- 	put_device(dev);
-+	if (dev->parent)
-+		put_device(dev->parent);
- }
+--- a/sound/soc/intel/skylake/skl-topology.c
++++ b/sound/soc/intel/skylake/skl-topology.c
+@@ -1780,6 +1780,7 @@ static int skl_tplg_get_token(struct dev
  
- static void nd_async_device_unregister(void *d, async_cookie_t cookie)
-@@ -443,6 +445,8 @@ void __nd_device_register(struct device
- 	if (!dev)
- 		return;
- 	dev->bus = &nvdimm_bus_type;
-+	if (dev->parent)
-+		get_device(dev->parent);
- 	get_device(dev);
- 	async_schedule_domain(nd_async_device_register, dev,
- 			&nd_async_domain);
+ 	case SKL_TKN_U8_CORE_ID:
+ 		mconfig->core_id = tkn_elem->value;
++		break;
+ 
+ 	case SKL_TKN_U8_MOD_TYPE:
+ 		mconfig->m_type = tkn_elem->value;
 
 
