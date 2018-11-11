@@ -7,49 +7,48 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C80BC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:42:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 164F8C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:42:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F30C720871
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:42:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD74F20818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:42:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DiMcmVcU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F30C720871
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0H6IhjuM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD74F20818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388045AbeKLJck (ORCPT
+        id S2387929AbeKLJck (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 12 Nov 2018 04:32:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40774 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:40616 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387649AbeKLITW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2387695AbeKLITW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:19:22 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B0D821582;
-        Sun, 11 Nov 2018 22:29:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 78F2C2175B;
+        Sun, 11 Nov 2018 22:29:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975365;
-        bh=b/QhoeLORn2Ms4k8bVL+WmUeRBMSG0s8L9neuEWm7Pk=;
+        bh=6XT9Kv43ZqdHTQo3VSVjeB7g4YDO98oVLzmhx8MgdVc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DiMcmVcUeYdH1Gy0yVRentnlTyRFqDWapIhIIxOvHikygQiNyI5Oo3cznX9vUewY1
-         rEQHCXrT05nXWAoCHQnLmZ/4pofeAB52japMIS+BmGweaI22TL9NWSXOUwyVIwXmMh
-         GIGoPSaQblkVXJU0sXeclUJ0kcQC5ivB3MtuVIak=
+        b=0H6IhjuM4pOM8FRKBypqF5ZaIuw5tzt3k30pEmiNs26rzi77/liqeXAwelrUNC47V
+         sZqE16copKTQGK0V7Uv4ftLIRBKPzdphWXnVF6mDkQO0IFWadLIhb/03677IZV9Fm2
+         RJNWh/UYfmrkDta0wROb53Ni5bW6Z4uX5w7d36vI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>
-Subject: [PATCH 4.18 039/350] x86/mm/pat: Disable preemption around __flush_tlb_all()
-Date:   Sun, 11 Nov 2018 14:18:23 -0800
-Message-Id: <20181111221708.813843679@linuxfoundation.org>
+        Tim C Chen <tim.c.chen@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Ravi Shankar <ravi.v.shankar@intel.com>
+Subject: [PATCH 4.18 040/350] x86/speculation: Support Enhanced IBRS on future CPUs
+Date:   Sun, 11 Nov 2018 14:18:24 -0800
+Message-Id: <20181111221708.853664203@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -67,74 +66,152 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
 
-commit f77084d96355f5fba8e2c1fb3a51a393b1570de7 upstream.
+commit 706d51681d636a0c4a5ef53395ec3b803e45ed4d upstream.
 
-The WARN_ON_ONCE(__read_cr3() != build_cr3()) in switch_mm_irqs_off()
-triggers every once in a while during a snapshotted system upgrade.
+Future Intel processors will support "Enhanced IBRS" which is an "always
+on" mode i.e. IBRS bit in SPEC_CTRL MSR is enabled once and never
+disabled.
 
-The warning triggers since commit decab0888e6e ("x86/mm: Remove
-preempt_disable/enable() from __native_flush_tlb()"). The callchain is:
+>From the specification [1]:
 
-  get_page_from_freelist() -> post_alloc_hook() -> __kernel_map_pages()
+ "With enhanced IBRS, the predicted targets of indirect branches
+  executed cannot be controlled by software that was executed in a less
+  privileged predictor mode or on another logical processor. As a
+  result, software operating on a processor with enhanced IBRS need not
+  use WRMSR to set IA32_SPEC_CTRL.IBRS after every transition to a more
+  privileged predictor mode. Software can isolate predictor modes
+  effectively simply by setting the bit once. Software need not disable
+  enhanced IBRS prior to entering a sleep state such as MWAIT or HLT."
 
-with CONFIG_DEBUG_PAGEALLOC enabled.
+If Enhanced IBRS is supported by the processor then use it as the
+preferred spectre v2 mitigation mechanism instead of Retpoline. Intel's
+Retpoline white paper [2] states:
 
-Disable preemption during CR3 reset / __flush_tlb_all() and add a comment
-why preemption has to be disabled so it won't be removed accidentaly.
+ "Retpoline is known to be an effective branch target injection (Spectre
+  variant 2) mitigation on Intel processors belonging to family 6
+  (enumerated by the CPUID instruction) that do not have support for
+  enhanced IBRS. On processors that support enhanced IBRS, it should be
+  used for mitigation instead of retpoline."
 
-Add another preemptible() check in __flush_tlb_all() to catch callers with
-enabled preemption when PGE is enabled, because PGE enabled does not
-trigger the warning in __native_flush_tlb(). Suggested by Andy Lutomirski.
+The reason why Enhanced IBRS is the recommended mitigation on processors
+which support it is that these processors also support CET which
+provides a defense against ROP attacks. Retpoline is very similar to ROP
+techniques and might trigger false positives in the CET defense.
 
-Fixes: decab0888e6e ("x86/mm: Remove preempt_disable/enable() from __native_flush_tlb()")
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+If Enhanced IBRS is selected as the mitigation technique for spectre v2,
+the IBRS bit in SPEC_CTRL MSR is set once at boot time and never
+cleared. Kernel also has to make sure that IBRS bit remains set after
+VMEXIT because the guest might have cleared the bit. This is already
+covered by the existing x86_spec_ctrl_set_guest() and
+x86_spec_ctrl_restore_host() speculation control functions.
+
+Enhanced IBRS still requires IBPB for full mitigation.
+
+[1] Speculative-Execution-Side-Channel-Mitigations.pdf
+[2] Retpoline-A-Branch-Target-Injection-Mitigation.pdf
+Both documents are available at:
+https://bugzilla.kernel.org/show_bug.cgi?id=199511
+
+Originally-by: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20181017103432.zgv46nlu3hc7k4rq@linutronix.de
+Cc: Tim C Chen <tim.c.chen@intel.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Ravi Shankar <ravi.v.shankar@intel.com>
+Link: https://lkml.kernel.org/r/1533148945-24095-1-git-send-email-sai.praneeth.prakhya@intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/tlbflush.h |    6 ++++++
- arch/x86/mm/pageattr.c          |    6 +++++-
- 2 files changed, 11 insertions(+), 1 deletion(-)
+ arch/x86/include/asm/cpufeatures.h   |    1 +
+ arch/x86/include/asm/nospec-branch.h |    1 +
+ arch/x86/kernel/cpu/bugs.c           |   20 ++++++++++++++++++--
+ arch/x86/kernel/cpu/common.c         |    3 +++
+ 4 files changed, 23 insertions(+), 2 deletions(-)
 
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -469,6 +469,12 @@ static inline void __native_flush_tlb_on
-  */
- static inline void __flush_tlb_all(void)
- {
-+	/*
-+	 * This is to catch users with enabled preemption and the PGE feature
-+	 * and don't trigger the warning in __native_flush_tlb().
-+	 */
-+	VM_WARN_ON_ONCE(preemptible());
-+
- 	if (boot_cpu_has(X86_FEATURE_PGE)) {
- 		__flush_tlb_global();
- 	} else {
---- a/arch/x86/mm/pageattr.c
-+++ b/arch/x86/mm/pageattr.c
-@@ -2063,9 +2063,13 @@ void __kernel_map_pages(struct page *pag
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -220,6 +220,7 @@
+ #define X86_FEATURE_STIBP		( 7*32+27) /* Single Thread Indirect Branch Predictors */
+ #define X86_FEATURE_ZEN			( 7*32+28) /* "" CPU is AMD family 0x17 (Zen) */
+ #define X86_FEATURE_L1TF_PTEINV		( 7*32+29) /* "" L1TF workaround PTE inversion */
++#define X86_FEATURE_IBRS_ENHANCED	( 7*32+30) /* Enhanced IBRS */
+ 
+ /* Virtualization flags: Linux defined, word 8 */
+ #define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -215,6 +215,7 @@ enum spectre_v2_mitigation {
+ 	SPECTRE_V2_RETPOLINE_GENERIC,
+ 	SPECTRE_V2_RETPOLINE_AMD,
+ 	SPECTRE_V2_IBRS,
++	SPECTRE_V2_IBRS_ENHANCED,
+ };
+ 
+ /* The Speculative Store Bypass disable variants */
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -139,6 +139,7 @@ static const char *spectre_v2_strings[]
+ 	[SPECTRE_V2_RETPOLINE_MINIMAL_AMD]	= "Vulnerable: Minimal AMD ASM retpoline",
+ 	[SPECTRE_V2_RETPOLINE_GENERIC]		= "Mitigation: Full generic retpoline",
+ 	[SPECTRE_V2_RETPOLINE_AMD]		= "Mitigation: Full AMD retpoline",
++	[SPECTRE_V2_IBRS_ENHANCED]		= "Mitigation: Enhanced IBRS",
+ };
+ 
+ #undef pr_fmt
+@@ -381,6 +382,13 @@ static void __init spectre_v2_select_mit
+ 
+ 	case SPECTRE_V2_CMD_FORCE:
+ 	case SPECTRE_V2_CMD_AUTO:
++		if (boot_cpu_has(X86_FEATURE_IBRS_ENHANCED)) {
++			mode = SPECTRE_V2_IBRS_ENHANCED;
++			/* Force it so VMEXIT will restore correctly */
++			x86_spec_ctrl_base |= SPEC_CTRL_IBRS;
++			wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
++			goto specv2_set_mode;
++		}
+ 		if (IS_ENABLED(CONFIG_RETPOLINE))
+ 			goto retpoline_auto;
+ 		break;
+@@ -418,6 +426,7 @@ retpoline_auto:
+ 		setup_force_cpu_cap(X86_FEATURE_RETPOLINE);
+ 	}
+ 
++specv2_set_mode:
+ 	spectre_v2_enabled = mode;
+ 	pr_info("%s\n", spectre_v2_strings[mode]);
+ 
+@@ -440,9 +449,16 @@ retpoline_auto:
  
  	/*
- 	 * We should perform an IPI and flush all tlbs,
--	 * but that can deadlock->flush only current cpu:
-+	 * but that can deadlock->flush only current cpu.
-+	 * Preemption needs to be disabled around __flush_tlb_all() due to
-+	 * CR3 reload in __native_flush_tlb().
+ 	 * Retpoline means the kernel is safe because it has no indirect
+-	 * branches. But firmware isn't, so use IBRS to protect that.
++	 * branches. Enhanced IBRS protects firmware too, so, enable restricted
++	 * speculation around firmware calls only when Enhanced IBRS isn't
++	 * supported.
++	 *
++	 * Use "mode" to check Enhanced IBRS instead of boot_cpu_has(), because
++	 * the user might select retpoline on the kernel command line and if
++	 * the CPU supports Enhanced IBRS, kernel might un-intentionally not
++	 * enable IBRS around firmware calls.
  	 */
-+	preempt_disable();
- 	__flush_tlb_all();
-+	preempt_enable();
+-	if (boot_cpu_has(X86_FEATURE_IBRS)) {
++	if (boot_cpu_has(X86_FEATURE_IBRS) && mode != SPECTRE_V2_IBRS_ENHANCED) {
+ 		setup_force_cpu_cap(X86_FEATURE_USE_IBRS_FW);
+ 		pr_info("Enabling Restricted Speculation for firmware calls\n");
+ 	}
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1015,6 +1015,9 @@ static void __init cpu_set_bug_bits(stru
+ 	   !cpu_has(c, X86_FEATURE_AMD_SSB_NO))
+ 		setup_force_cpu_bug(X86_BUG_SPEC_STORE_BYPASS);
  
- 	arch_flush_lazy_mmu_mode();
- }
++	if (ia32_cap & ARCH_CAP_IBRS_ALL)
++		setup_force_cpu_cap(X86_FEATURE_IBRS_ENHANCED);
++
+ 	if (x86_match_cpu(cpu_no_meltdown))
+ 		return;
+ 
 
 
