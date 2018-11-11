@@ -4,47 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09A4DC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:45:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33403C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:46:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C612D20818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:45:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEA5E20818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:46:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pH67PZhH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C612D20818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="waJBk+bD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEA5E20818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387663AbeKLJgQ (ORCPT
+        id S1733302AbeKLITD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:36:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39838 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:19:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39756 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387398AbeKLITF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:19:05 -0500
+        id S1730141AbeKLITC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:19:02 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D961B21707;
-        Sun, 11 Nov 2018 22:29:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD7B7208A3;
+        Sun, 11 Nov 2018 22:29:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975349;
-        bh=mlaQI9CFS8NN7nIDYVHfW2nqwPLVZWfN7f6GrLztkHE=;
+        s=default; t=1541975346;
+        bh=9pngn7uTd3zj3cjUMGLIXko+aNUXNOrkM50kiDFXR40=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pH67PZhHiK801jjGCm+3IsQiviwnAeUDum8d3GDKNcHGu5s0UKuQKTPE07LiADa4o
-         gerLif/LXReuMVJ1G2GztUuQgb/1Yx1H+7gwLHULl5cf61jFXL2ptAZ7CnDVGunYmn
-         UykexVRw6T02HrUoB3Ezadvb3PE3IQiZq8DOB+R0=
+        b=waJBk+bD71hfia9aBdYOEVvFGZRVdcsWnfjsA2LHPSpd/mzx0kQlB+FwkyYxw3SQg
+         iL5S98otnP3wue5y0dLN0qSvxVUNLIZNIb6Han8vClwiHsYFCk11zSPJRUFgiSgSUu
+         uNvyJbPOxg6vv0joho2HqLYLfkeQLM4AIOqkD1Fk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: [PATCH 4.19 359/361] userns: also map extents in the reverse map to kernel IDs
-Date:   Sun, 11 Nov 2018 14:21:46 -0800
-Message-Id: <20181111221702.182204786@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Anatoly Trosinenko <anatoly.trosinenko@gmail.com>,
+        Nicolas Pitre <nico@linaro.org>
+Subject: [PATCH 4.19 318/361] Cramfs: fix abad comparison when wrap-arounds occur
+Date:   Sun, 11 Nov 2018 14:21:05 -0800
+Message-Id: <20181111221658.861472266@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -62,65 +62,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
 
-commit d2f007dbe7e4c9583eea6eb04d60001e85c6f1bd upstream.
+commit 672ca9dd13f1aca0c17516f76fc5b0e8344b3e46 upstream.
 
-The current logic first clones the extent array and sorts both copies, then
-maps the lower IDs of the forward mapping into the lower namespace, but
-doesn't map the lower IDs of the reverse mapping.
+It is possible for corrupted filesystem images to produce very large
+block offsets that may wrap when a length is added, and wrongly pass
+the buffer size test.
 
-This means that code in a nested user namespace with >5 extents will see
-incorrect IDs. It also breaks some access checks, like
-inode_owner_or_capable() and privileged_wrt_inode_uidgid(), so a process
-can incorrectly appear to be capable relative to an inode.
-
-To fix it, we have to make sure that the "lower_first" members of extents
-in both arrays are translated; and we have to make sure that the reverse
-map is sorted *after* the translation (since otherwise the translation can
-break the sorting).
-
-This is CVE-2018-18955.
-
-Fixes: 6397fac4915a ("userns: bump idmap limits to 340")
+Reported-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
+Signed-off-by: Nicolas Pitre <nico@linaro.org>
 Cc: stable@vger.kernel.org
-Signed-off-by: Jann Horn <jannh@google.com>
-Tested-by: Eric W. Biederman <ebiederm@xmission.com>
-Reviewed-by: Eric W. Biederman <ebiederm@xmission.com>
-Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/user_namespace.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ fs/cramfs/inode.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/kernel/user_namespace.c
-+++ b/kernel/user_namespace.c
-@@ -974,10 +974,6 @@ static ssize_t map_write(struct file *fi
- 	if (!new_idmap_permitted(file, ns, cap_setid, &new_map))
- 		goto out;
- 
--	ret = sort_idmaps(&new_map);
--	if (ret < 0)
--		goto out;
--
- 	ret = -EPERM;
- 	/* Map the lower ids from the parent user namespace to the
- 	 * kernel global id space.
-@@ -1004,6 +1000,14 @@ static ssize_t map_write(struct file *fi
- 		e->lower_first = lower_first;
+--- a/fs/cramfs/inode.c
++++ b/fs/cramfs/inode.c
+@@ -202,7 +202,8 @@ static void *cramfs_blkdev_read(struct s
+ 			continue;
+ 		blk_offset = (blocknr - buffer_blocknr[i]) << PAGE_SHIFT;
+ 		blk_offset += offset;
+-		if (blk_offset + len > BUFFER_SIZE)
++		if (blk_offset > BUFFER_SIZE ||
++		    blk_offset + len > BUFFER_SIZE)
+ 			continue;
+ 		return read_buffers[i] + blk_offset;
  	}
- 
-+	/*
-+	 * If we want to use binary search for lookup, this clones the extent
-+	 * array and sorts both copies.
-+	 */
-+	ret = sort_idmaps(&new_map);
-+	if (ret < 0)
-+		goto out;
-+
- 	/* Install the map */
- 	if (new_map.nr_extents <= UID_GID_MAP_MAX_BASE_EXTENTS) {
- 		memcpy(map->extent, new_map.extent,
 
 
