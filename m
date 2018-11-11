@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81E6AC0044C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:26:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 698B1C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:26:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45B142084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:26:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 338C82084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:26:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mJzPg9Yt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45B142084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZUQcH5b2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 338C82084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389150AbeKLJQQ (ORCPT
+        id S2389268AbeKLJQb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:16:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45926 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:16:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46000 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733241AbeKLIUn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:20:43 -0500
+        id S2388968AbeKLIUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:41 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B3A11223CA;
-        Sun, 11 Nov 2018 22:30:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 800BE21508;
+        Sun, 11 Nov 2018 22:30:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975446;
-        bh=zyCmGhty2ejer+6i87Lo+KlC54I5Z8ZvqMspIGy9pLE=;
+        s=default; t=1541975445;
+        bh=X6XbVsbKKZBAvFNXBHuMhobf9mM4rPskeWrOcbv/iyc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mJzPg9YtTthZ32oMuOOfGQXOSd8UEM/7uFke/M6vgVzduzTU5KhGtN+H4FOzdNkpy
-         iI3OatgBAgAmva8Sw8SuYhF6YIOxPXEF4FoAUvzZr6SKgdnS5FIYhBpDoho+D4cnY2
-         2JGTg8cyJ6GPGgzNY1quQ9vNSwwC/iZMT62POu08=
+        b=ZUQcH5b2FQM/Uu1EwOTuw3sVZ/2skX+s+w15xgThsj190irT3DGOn3is9yAnQ1wuZ
+         BmW64psyQS5eNnHi4//Av3bsH8Bdf+6jlfxB5/69MCMYeuQes7v5jslnK3fcAuev+c
+         bj3+Wd3e26DupJKjEpsbaD+cQLKmQ7g2oSYZOO94=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christian Lamparter <chunkeey@gmail.com>,
-        Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH 4.18 210/350] dmaengine: ppc4xx: fix off-by-one build failure
-Date:   Sun, 11 Nov 2018 14:21:14 -0800
-Message-Id: <20181111221716.815379269@linuxfoundation.org>
+        stable@vger.kernel.org, Waiman.Long@hp.com, peterz@infradead.org,
+        Juergen Gross <jgross@suse.com>,
+        Jan Beulich <jbeulich@suse.com>
+Subject: [PATCH 4.18 199/350] xen: fix race in xen_qlock_wait()
+Date:   Sun, 11 Nov 2018 14:21:03 -0800
+Message-Id: <20181111221716.359712031@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -62,39 +63,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christian Lamparter <chunkeey@gmail.com>
+From: Juergen Gross <jgross@suse.com>
 
-commit 27d8d2d7a9b7eb05c4484b74b749eaee7b50b845 upstream.
+commit 2ac2a7d4d9ff4e01e36f9c3d116582f6f655ab47 upstream.
 
-There are two poly_store, but one should have been poly_show.
+In the following situation a vcpu waiting for a lock might not be
+woken up from xen_poll_irq():
 
-|adma.c:4382:16: error: conflicting types for 'poly_store'
-| static ssize_t poly_store(struct device_driver *dev, const char *buf,
-|                ^~~~~~~~~~
-|adma.c:4363:16: note: previous definition of 'poly_store' was here
-| static ssize_t poly_store(struct device_driver *dev, char *buf)
-|                ^~~~~~~~~~
+CPU 1:                CPU 2:                      CPU 3:
+takes a spinlock
+                      tries to get lock
+                      -> xen_qlock_wait()
+frees the lock
+-> xen_qlock_kick(cpu2)
+                        -> xen_clear_irq_pending()
 
-CC: stable@vger.kernel.org
-Fixes: 13efe1a05384 ("dmaengine: ppc4xx: remove DRIVER_ATTR() usage")
-Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+takes lock again
+                                                  tries to get lock
+                                                  -> *lock = _Q_SLOW_VAL
+                        -> *lock == _Q_SLOW_VAL ?
+                        -> xen_poll_irq()
+frees the lock
+-> xen_qlock_kick(cpu3)
+
+And cpu 2 will sleep forever.
+
+This can be avoided easily by modifying xen_qlock_wait() to call
+xen_poll_irq() only if the related irq was not pending and to call
+xen_clear_irq_pending() only if it was pending.
+
+Cc: stable@vger.kernel.org
+Cc: Waiman.Long@hp.com
+Cc: peterz@infradead.org
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Reviewed-by: Jan Beulich <jbeulich@suse.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/dma/ppc4xx/adma.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/xen/spinlock.c |   15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
---- a/drivers/dma/ppc4xx/adma.c
-+++ b/drivers/dma/ppc4xx/adma.c
-@@ -4360,7 +4360,7 @@ static ssize_t enable_store(struct devic
- }
- static DRIVER_ATTR_RW(enable);
+--- a/arch/x86/xen/spinlock.c
++++ b/arch/x86/xen/spinlock.c
+@@ -45,17 +45,12 @@ static void xen_qlock_wait(u8 *byte, u8
+ 	if (irq == -1)
+ 		return;
  
--static ssize_t poly_store(struct device_driver *dev, char *buf)
-+static ssize_t poly_show(struct device_driver *dev, char *buf)
- {
- 	ssize_t size = 0;
- 	u32 reg;
+-	/* clear pending */
+-	xen_clear_irq_pending(irq);
+-	barrier();
++	/* If irq pending already clear it and return. */
++	if (xen_test_irq_pending(irq)) {
++		xen_clear_irq_pending(irq);
++		return;
++	}
+ 
+-	/*
+-	 * We check the byte value after clearing pending IRQ to make sure
+-	 * that we won't miss a wakeup event because of the clearing.
+-	 *
+-	 * The sync_clear_bit() call in xen_clear_irq_pending() is atomic.
+-	 * So it is effectively a memory barrier for x86.
+-	 */
+ 	if (READ_ONCE(*byte) != val)
+ 		return;
+ 
 
 
