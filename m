@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3FF5C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:46:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D586C0044C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:46:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8152020871
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:46:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C74420818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:46:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zSqDBWB2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8152020871
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nj2jVj/x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C74420818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733260AbeKLITB (ORCPT
+        id S2387576AbeKLJgq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:19:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39636 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:36:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39684 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730141AbeKLITA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:19:00 -0500
+        id S1730330AbeKLITB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:19:01 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE5B221104;
-        Sun, 11 Nov 2018 22:29:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E670208A3;
+        Sun, 11 Nov 2018 22:29:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975344;
-        bh=1yN4KlMFrxDcpE7I0OTQy/0svzIK/NFZB2v2LZgbJnE=;
+        s=default; t=1541975345;
+        bh=FU6rwPi4QsYhX3tal/NH5BXn1uyR2hn3xZ2FyPqtRgs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zSqDBWB2OTvKW4He3kcGX8HG21+yylg1XCGGTQCayO2BZKOXNdIYvu3sTNJACQEEs
-         36/OiDfDXgtQ6cOzr1bH4b1nUBHZA+qnkLT+DtJDfoLhL7ylpIBGYXcBiqqdUKVnKg
-         8MydkfBt11UW7tpKnS2MYZdgFibkAppDTgfdlB/o=
+        b=Nj2jVj/x5g7jOiIKqHiubHKClQ1gCQfXOnkaDGIRExKWhmJOgcYkjK5Sn4x4oHgrd
+         ynTbzfhT84CgroCKd76GPGVvatWa0RbQkUtgvdgfhGDpzoxCjaTGog7R9BB2l25t07
+         oFvJvFTFzqJ69qoN8ciCO8LLt1C3eIs0+cnDj0q0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
-        Tom Zanussi <zanussi@linux.intel.com>,
-        Tom Zanussi <zanussi@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        stable@vger.kernel.org, Tom Zanussi <zanussi@linux.intel.com>,
+        Shuah Khan <shuah@kernel.org>,
         Rajvi Jingar <rajvi.jingar@intel.com>,
         Masami Hiramatsu <mhiramat@kernel.org>,
         "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.19 323/361] selftests/ftrace: Fix synthetic event test to delete event correctly
-Date:   Sun, 11 Nov 2018 14:21:10 -0800
-Message-Id: <20181111221659.241545882@linuxfoundation.org>
+Subject: [PATCH 4.19 325/361] tracing: Return -ENOENT if there is no target synthetic event
+Date:   Sun, 11 Nov 2018 14:21:12 -0800
+Message-Id: <20181111221659.409469592@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -69,68 +67,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Masami Hiramatsu <mhiramat@kernel.org>
 
-commit 0d0352d8b3d6d7ca9a710b40e194cbbaeb841c88 upstream.
+commit 18858511fd8a877303cc34c06efa461b26a0e070 upstream.
 
-Fix the synthetic event test case to remove event correctly.
-If redirecting command to synthetic_event file without append
-mode, it cleans up all existing events and execute (parse) the
-command. This means "delete event" always fails to find the
-target event.
+Return -ENOENT error if there is no target synthetic event.
+This notices an operation failure to user as below;
 
-Since previous synthetic event has a bug which doesn't return
--ENOENT even if it fails to find the deleting event, this test
-passed. But fixing that bug, this test fails because this test
-itself has a bug.
+  # echo 'wakeup_latency u64 lat; pid_t pid;' > synthetic_events
+  # echo '!wakeup' >> synthetic_events
+  sh: write error: No such file or directory
 
-This fixes that bug by trying to delete event right after
-adding an event, and use append mode redirection ('>>') instead
-of normal redirection ('>').
+Link: http://lkml.kernel.org/r/154013449986.25576.9487131386597290172.stgit@devbox
 
-Link: http://lkml.kernel.org/r/154013452832.25576.2305459545429386517.stgit@devbox
-
-Acked-by: Shuah Khan <shuah@kernel.org>
 Acked-by: Tom Zanussi <zanussi@linux.intel.com>
 Tested-by: Tom Zanussi <zanussi@linux.intel.com>
-Cc: Tom Zanussi <zanussi@kernel.org>
-Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
-Cc: Rajvi Jingar <rajvi.jingar@intel.com>
 Cc: Shuah Khan <shuah@kernel.org>
+Cc: Rajvi Jingar <rajvi.jingar@intel.com>
 Cc: stable@vger.kernel.org
-Fixes: f06eec4d0f2c ('selftests: ftrace: Add inter-event hist triggers testcases')
+Fixes: 4b147936fa50 ('tracing: Add support for 'synthetic' events')
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-createremove.tc |   12 +++++-----
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ kernel/trace/trace_events_hist.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-createremove.tc
-+++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-createremove.tc
-@@ -35,18 +35,18 @@ fi
+--- a/kernel/trace/trace_events_hist.c
++++ b/kernel/trace/trace_events_hist.c
+@@ -1063,8 +1063,10 @@ static int create_synth_event(int argc,
+ 		event = NULL;
+ 		ret = -EEXIST;
+ 		goto out;
+-	} else if (delete_event)
++	} else if (delete_event) {
++		ret = -ENOENT;
+ 		goto out;
++	}
  
- reset_trigger
- 
--echo "Test create synthetic event with an error"
--echo 'wakeup_latency  u64 lat pid_t pid char' > synthetic_events > /dev/null
-+echo "Test remove synthetic event"
-+echo '!wakeup_latency  u64 lat pid_t pid char comm[16]' >> synthetic_events
- if [ -d events/synthetic/wakeup_latency ]; then
--    fail "Created wakeup_latency synthetic event with an invalid format"
-+    fail "Failed to delete wakeup_latency synthetic event"
- fi
- 
- reset_trigger
- 
--echo "Test remove synthetic event"
--echo '!wakeup_latency  u64 lat pid_t pid char comm[16]' > synthetic_events
-+echo "Test create synthetic event with an error"
-+echo 'wakeup_latency  u64 lat pid_t pid char' > synthetic_events > /dev/null
- if [ -d events/synthetic/wakeup_latency ]; then
--    fail "Failed to delete wakeup_latency synthetic event"
-+    fail "Created wakeup_latency synthetic event with an invalid format"
- fi
- 
- do_reset
+ 	if (argc < 2) {
+ 		ret = -EINVAL;
 
 
