@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F04EFC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C50FDC0044C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B74ED2154B
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82CCE223D8
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IeTwoNJw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B74ED2154B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iYhzNmV8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82CCE223D8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389122AbeKLIUu (ORCPT
+        id S2389137AbeKLIUv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:20:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46552 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:20:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46784 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389043AbeKLIUr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:20:47 -0500
+        id S2389043AbeKLIUu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:50 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 897882154B;
-        Sun, 11 Nov 2018 22:30:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F2D06223D8;
+        Sun, 11 Nov 2018 22:30:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975450;
-        bh=iy6JLT84TsbzmHDdI6WL34hl1/1f+umHycMUZQTVsio=;
+        s=default; t=1541975454;
+        bh=FH9zs4KlTmbRpJ8cLtgOHtQ5arFb63bgw6jQtO6SRgY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IeTwoNJwrj4eG0N07T1nwqUgIbodGjeXTizPiFsbcSpxSNNg7CMRPsrQsXS9JIJHq
-         XcfgQlsUbF4vDQOpzL8K9K61Ms4HlcT2+57u78Qyp5OQ5hRUOPOfRw7Zeg+NsgUBd4
-         1bKVJaipWBSgFxYIPIjBjQCoEgBKNWneJsyHp6kY=
+        b=iYhzNmV8PwDFty9rTl4Rtgc/04tCfSX8AMMHBnkotcDb5xkE13QAG4Vez820/Wjwx
+         A/bXd8OuFwFirN6JuMeOtsg3hAHdZkZ6i902bXzCKs09N53/WW4ul1c3kpDHT0E6JP
+         4ahDmyxfA1kQgc5qGkYCjvFDPphZl/wDAtBWufsk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Seth Howell <seth.howell@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.18 217/350] IB/rxe: Revise the ib_wr_opcode enum
-Date:   Sun, 11 Nov 2018 14:21:21 -0800
-Message-Id: <20181111221717.104731925@linuxfoundation.org>
+        stable@vger.kernel.org, Wang Shilong <wshilong@ddn.com>,
+        Theodore Tso <tytso@mit.edu>, stable@kernel.org
+Subject: [PATCH 4.18 223/350] ext4: propagate error from dquot_initialize() in EXT4_IOC_FSSETXATTR
+Date:   Sun, 11 Nov 2018 14:21:27 -0800
+Message-Id: <20181111221717.346576943@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -62,123 +62,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jason Gunthorpe <jgg@mellanox.com>
+From: Wang Shilong <wshilong@ddn.com>
 
-commit 9a59739bd01f77db6fbe2955a4fce165f0f43568 upstream.
+commit 182a79e0c17147d2c2d3990a9a7b6b58a1561c7a upstream.
 
-This enum has become part of the uABI, as both RXE and the
-ib_uverbs_post_send() command expect userspace to supply values from this
-enum. So it should be properly placed in include/uapi/rdma.
+We return most failure of dquota_initialize() except
+inode evict, this could make a bit sense, for example
+we allow file removal even quota files are broken?
 
-In userspace this enum is called 'enum ibv_wr_opcode' as part of
-libibverbs.h. That enum defines different values for IB_WR_LOCAL_INV,
-IB_WR_SEND_WITH_INV, and IB_WR_LSO. These were introduced (incorrectly, it
-turns out) into libiberbs in 2015.
+But it dosen't make sense to allow setting project
+if quota files etc are broken.
 
-The kernel has changed its mind on the numbering for several of the IB_WC
-values over the years, but has remained stable on IB_WR_LOCAL_INV and
-below.
-
-Based on this we can conclude that there is no real user space user of the
-values beyond IB_WR_ATOMIC_FETCH_AND_ADD, as they have never worked via
-rdma-core. This is confirmed by inspection, only rxe uses the kernel enum
-and implements the latter operations. rxe has clearly never worked with
-these attributes from userspace. Other drivers that support these opcodes
-implement the functionality without calling out to the kernel.
-
-To make IB_WR_SEND_WITH_INV and related work for RXE in userspace we
-choose to renumber the IB_WR enum in the kernel to match the uABI that
-userspace has bee using since before Soft RoCE was merged. This is an
-overall simpler configuration for the whole software stack, and obviously
-can't break anything existing.
-
-Reported-by: Seth Howell <seth.howell@intel.com>
-Tested-by: Seth Howell <seth.howell@intel.com>
-Fixes: 8700e3e7c485 ("Soft RoCE driver")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Wang Shilong <wshilong@ddn.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/rdma/ib_verbs.h           |   34 ++++++++++++++++++++--------------
- include/uapi/rdma/ib_user_verbs.h |   20 +++++++++++++++++++-
- 2 files changed, 39 insertions(+), 15 deletions(-)
+ fs/ext4/ioctl.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/include/rdma/ib_verbs.h
-+++ b/include/rdma/ib_verbs.h
-@@ -1296,21 +1296,27 @@ struct ib_qp_attr {
- };
+--- a/fs/ext4/ioctl.c
++++ b/fs/ext4/ioctl.c
+@@ -380,7 +380,9 @@ static int ext4_ioctl_setproject(struct
+ 		brelse(iloc.bh);
+ 	}
  
- enum ib_wr_opcode {
--	IB_WR_RDMA_WRITE,
--	IB_WR_RDMA_WRITE_WITH_IMM,
--	IB_WR_SEND,
--	IB_WR_SEND_WITH_IMM,
--	IB_WR_RDMA_READ,
--	IB_WR_ATOMIC_CMP_AND_SWP,
--	IB_WR_ATOMIC_FETCH_AND_ADD,
--	IB_WR_LSO,
--	IB_WR_SEND_WITH_INV,
--	IB_WR_RDMA_READ_WITH_INV,
--	IB_WR_LOCAL_INV,
--	IB_WR_REG_MR,
--	IB_WR_MASKED_ATOMIC_CMP_AND_SWP,
--	IB_WR_MASKED_ATOMIC_FETCH_AND_ADD,
-+	/* These are shared with userspace */
-+	IB_WR_RDMA_WRITE = IB_UVERBS_WR_RDMA_WRITE,
-+	IB_WR_RDMA_WRITE_WITH_IMM = IB_UVERBS_WR_RDMA_WRITE_WITH_IMM,
-+	IB_WR_SEND = IB_UVERBS_WR_SEND,
-+	IB_WR_SEND_WITH_IMM = IB_UVERBS_WR_SEND_WITH_IMM,
-+	IB_WR_RDMA_READ = IB_UVERBS_WR_RDMA_READ,
-+	IB_WR_ATOMIC_CMP_AND_SWP = IB_UVERBS_WR_ATOMIC_CMP_AND_SWP,
-+	IB_WR_ATOMIC_FETCH_AND_ADD = IB_UVERBS_WR_ATOMIC_FETCH_AND_ADD,
-+	IB_WR_LSO = IB_UVERBS_WR_TSO,
-+	IB_WR_SEND_WITH_INV = IB_UVERBS_WR_SEND_WITH_INV,
-+	IB_WR_RDMA_READ_WITH_INV = IB_UVERBS_WR_RDMA_READ_WITH_INV,
-+	IB_WR_LOCAL_INV = IB_UVERBS_WR_LOCAL_INV,
-+	IB_WR_MASKED_ATOMIC_CMP_AND_SWP =
-+		IB_UVERBS_WR_MASKED_ATOMIC_CMP_AND_SWP,
-+	IB_WR_MASKED_ATOMIC_FETCH_AND_ADD =
-+		IB_UVERBS_WR_MASKED_ATOMIC_FETCH_AND_ADD,
-+
-+	/* These are kernel only and can not be issued by userspace */
-+	IB_WR_REG_MR = 0x20,
- 	IB_WR_REG_SIG_MR,
-+
- 	/* reserve values for low level drivers' internal use.
- 	 * These values will not be used at all in the ib core layer.
- 	 */
---- a/include/uapi/rdma/ib_user_verbs.h
-+++ b/include/uapi/rdma/ib_user_verbs.h
-@@ -762,10 +762,28 @@ struct ib_uverbs_sge {
- 	__u32 lkey;
- };
+-	dquot_initialize(inode);
++	err = dquot_initialize(inode);
++	if (err)
++		return err;
  
-+enum ib_uverbs_wr_opcode {
-+	IB_UVERBS_WR_RDMA_WRITE = 0,
-+	IB_UVERBS_WR_RDMA_WRITE_WITH_IMM = 1,
-+	IB_UVERBS_WR_SEND = 2,
-+	IB_UVERBS_WR_SEND_WITH_IMM = 3,
-+	IB_UVERBS_WR_RDMA_READ = 4,
-+	IB_UVERBS_WR_ATOMIC_CMP_AND_SWP = 5,
-+	IB_UVERBS_WR_ATOMIC_FETCH_AND_ADD = 6,
-+	IB_UVERBS_WR_LOCAL_INV = 7,
-+	IB_UVERBS_WR_BIND_MW = 8,
-+	IB_UVERBS_WR_SEND_WITH_INV = 9,
-+	IB_UVERBS_WR_TSO = 10,
-+	IB_UVERBS_WR_RDMA_READ_WITH_INV = 11,
-+	IB_UVERBS_WR_MASKED_ATOMIC_CMP_AND_SWP = 12,
-+	IB_UVERBS_WR_MASKED_ATOMIC_FETCH_AND_ADD = 13,
-+	/* Review enum ib_wr_opcode before modifying this */
-+};
-+
- struct ib_uverbs_send_wr {
- 	__aligned_u64 wr_id;
- 	__u32 num_sge;
--	__u32 opcode;
-+	__u32 opcode;		/* see enum ib_uverbs_wr_opcode */
- 	__u32 send_flags;
- 	union {
- 		__be32 imm_data;
+ 	handle = ext4_journal_start(inode, EXT4_HT_QUOTA,
+ 		EXT4_QUOTA_INIT_BLOCKS(sb) +
 
 
