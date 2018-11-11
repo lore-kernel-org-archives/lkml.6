@@ -6,44 +6,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D0E8C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E9FAC0044C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5239C2241B
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60E6D223C8
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MXf9r2g7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5239C2241B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PcEg7Txc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60E6D223C8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390742AbeKLIWf (ORCPT
+        id S2390755AbeKLIWg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:22:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51248 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:22:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51200 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390708AbeKLIWd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2390677AbeKLIWd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:22:33 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B6A9621582;
+        by mail.kernel.org (Postfix) with ESMTPSA id 161C1223C6;
         Sun, 11 Nov 2018 22:32:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975556;
-        bh=nMyRhnBXjiM8ECHLM0FxmeP0AiJuGw2SrKqUlDJZukw=;
+        bh=IavFq8beVnODPHKxhCQZwLjcUHr797kB4c4B92Evg3Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MXf9r2g7WZFZdEchbnDuyATLf3wfFRFypEmooZG3lZhpzcPyCVt7mNV4nD35upnuD
-         mf1u5iEAIneQIAaKQ3wJtiqDN/sZYV7FcCXH4j0xv3vqL1jg65nDUIKnLHNxw1fbJa
-         VyAv0d9tOWcCbnCaUnC7YJlFXnnhq2kBr1KJ+hKs=
+        b=PcEg7TxcWv28YmDTcTI1zV1zFDTdWu5nZPlO5OODp6ycUidpuP8Rv+Mg2ZKVQTE52
+         sI/OYMnwgGjaOGxFoNxcFDMZbYlkZN23XWN+sTXpnERlVkhtUFKgaoIM8ODKsSsMM/
+         bL9+S5WNstRisxbycir4KSJs6TSuFoqCW7yVPi6w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 4.14 110/222] Revert "f2fs: fix to clear PG_checked flag in set_page_dirty()"
-Date:   Sun, 11 Nov 2018 14:23:27 -0800
-Message-Id: <20181111221657.650884964@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 100/222] uio: ensure class is registered before devices
+Date:   Sun, 11 Nov 2018 14:23:17 -0800
+Message-Id: <20181111221656.883182326@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -61,51 +62,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-commit 164a63fa6b384e30ceb96ed80bc7dc3379bc0960 upstream.
+[ Upstream commit ae61cf5b9913027c6953a79ed3894da4f47061bd ]
 
-This reverts commit 66110abc4c931f879d70e83e1281f891699364bf.
+When both uio and the uio drivers are built in the kernel, it is possible
+for a driver to register devices before the uio class is registered.
 
-If we clear the cold data flag out of the writeback flow, we can miscount
--1 by end_io, which incurs a deadlock caused by all I/Os being blocked during
-heavy GC.
+This may result in a NULL pointer dereference later on in
+get_device_parent() when accessing the class glue_dirs spinlock.
 
-Balancing F2FS Async:
- - IO (CP:    1, Data:   -1, Flush: (   0    0    1), Discard: (   ...
+The trace looks like that:
 
-GC thread:                              IRQ
-- move_data_page()
- - set_page_dirty()
-  - clear_cold_data()
-                                        - f2fs_write_end_io()
-                                         - type = WB_DATA_TYPE(page);
-                                           here, we get wrong type
-                                         - dec_page_count(sbi, type);
- - f2fs_wait_on_page_writeback()
+Unable to handle kernel NULL pointer dereference at virtual address 00000140
+[...]
+[<ffff0000089cc234>] _raw_spin_lock+0x14/0x48
+[<ffff0000084f56bc>] device_add+0x154/0x6a0
+[<ffff0000084f5e48>] device_create_groups_vargs+0x120/0x128
+[<ffff0000084f5edc>] device_create+0x54/0x60
+[<ffff0000086e72c0>] __uio_register_device+0x120/0x4a8
+[<ffff000008528b7c>] jaguar2_pci_probe+0x2d4/0x558
+[<ffff0000083fc18c>] local_pci_probe+0x3c/0xb8
+[<ffff0000083fd81c>] pci_device_probe+0x11c/0x180
+[<ffff0000084f88bc>] driver_probe_device+0x22c/0x2d8
+[<ffff0000084f8a24>] __driver_attach+0xbc/0xc0
+[<ffff0000084f69fc>] bus_for_each_dev+0x4c/0x98
+[<ffff0000084f81b8>] driver_attach+0x20/0x28
+[<ffff0000084f7d08>] bus_add_driver+0x1b8/0x228
+[<ffff0000084f93c0>] driver_register+0x60/0xf8
+[<ffff0000083fb918>] __pci_register_driver+0x40/0x48
 
-Cc: <stable@vger.kernel.org>
-Reported-and-Tested-by: Park Ju Hyung <qkrwngud825@gmail.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Return EPROBE_DEFER in that case so the driver can register the device
+later.
+
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/data.c |    4 ----
- 1 file changed, 4 deletions(-)
+ drivers/uio/uio.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2190,10 +2190,6 @@ static int f2fs_set_data_page_dirty(stru
- 	if (!PageUptodate(page))
- 		SetPageUptodate(page);
+--- a/drivers/uio/uio.c
++++ b/drivers/uio/uio.c
+@@ -249,6 +249,8 @@ static struct class uio_class = {
+ 	.dev_groups = uio_groups,
+ };
  
--	/* don't remain PG_checked flag which was set during GC */
--	if (is_cold_data(page))
--		clear_cold_data(page);
--
- 	if (f2fs_is_atomic_file(inode) && !f2fs_is_commit_atomic_write(inode)) {
- 		if (!IS_ATOMIC_WRITTEN_PAGE(page)) {
- 			register_inmem_page(inode, page);
++bool uio_class_registered;
++
+ /*
+  * device functions
+  */
+@@ -780,6 +782,9 @@ static int init_uio_class(void)
+ 		printk(KERN_ERR "class_register failed for uio\n");
+ 		goto err_class_register;
+ 	}
++
++	uio_class_registered = true;
++
+ 	return 0;
+ 
+ err_class_register:
+@@ -790,6 +795,7 @@ exit:
+ 
+ static void release_uio_class(void)
+ {
++	uio_class_registered = false;
+ 	class_unregister(&uio_class);
+ 	uio_major_cleanup();
+ }
+@@ -809,6 +815,9 @@ int __uio_register_device(struct module
+ 	struct uio_device *idev;
+ 	int ret = 0;
+ 
++	if (!uio_class_registered)
++		return -EPROBE_DEFER;
++
+ 	if (!parent || !info || !info->name || !info->version)
+ 		return -EINVAL;
+ 
 
 
