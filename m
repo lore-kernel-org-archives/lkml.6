@@ -6,46 +6,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A182C43610
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:23:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 802ECC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:23:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0120F2084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:23:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45BE32084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:23:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HT2bQWSI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0120F2084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nlH9WMRA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45BE32084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389469AbeKLJN6 (ORCPT
+        id S2389448AbeKLJOJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:13:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46824 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:14:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46846 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389187AbeKLIU4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:20:56 -0500
+        id S2389183AbeKLIUz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:55 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64765216FD;
-        Sun, 11 Nov 2018 22:30:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 00A1C21508;
+        Sun, 11 Nov 2018 22:30:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975459;
-        bh=9h7M42/pgQdq6K4FIgrkuatacWY7fz5/4/HfVmn4DIQ=;
+        bh=+NwJFPE0c1ImRB4Zbxoek1nwy7RhSCDi1n90nKwHjPE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HT2bQWSIJfFwl7jUO1YRylEigR0WAuGSZD4MCLkIk52I9H3St3iEaZOgC8zJ8oIBE
-         6yutjRO9nCNIV6akVqDSQdZQ8mI9axtSHU6N7dP9vNgRckd+VKfmkJdtn7s9j0YheH
-         u+ocXIM1JrA0QAWPenX7w5WNeF1fxXnu23ezodi0=
+        b=nlH9WMRA8xOOm7ptvjnXfcKLtATgzMj0+oq9+Ft6wOqX29leGuTah6/xr4Cy7zFDz
+         RE4CPIO3oAHlxrtbj7OFfbDRX3Qv0yQ1jEJfYRkqC/pJyfn5xmaPtP8x2N5l5feIT3
+         wSmBDW0iNw6JuoVnHF+S6fcLtekw+/zA6QPZb3rc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Keith Busch <keith.busch@intel.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        "Jon Derrick:" <jonathan.derrick@intel.com>,
-        "Heitke, Kenneth" <kenneth.heitke@intel.com>
-Subject: [PATCH 4.18 234/350] PCI: vmd: White list for fast interrupt handlers
-Date:   Sun, 11 Nov 2018 14:21:38 -0800
-Message-Id: <20181111221717.824435165@linuxfoundation.org>
+        stable@vger.kernel.org, Bin Meng <bmeng.cn@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH 4.18 233/350] PCI: Add Device IDs for Intel GPU "spurious interrupt" quirk
+Date:   Sun, 11 Nov 2018 14:21:37 -0800
+Message-Id: <20181111221717.777499391@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -63,55 +61,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Keith Busch <keith.busch@intel.com>
+From: Bin Meng <bmeng.cn@gmail.com>
 
-commit a7f58b9ecfd3c0f63703ec10f4a592cc38dbd1b8 upstream.
+commit d0c9606b31a21028fb5b753c8ad79626292accfd upstream.
 
-Devices with slow interrupt handlers are significantly harming
-performance when their interrupt vector is shared with a fast device.
+Add Device IDs to the Intel GPU "spurious interrupt" quirk table.
 
-Create a class code white list for devices with known fast interrupt
-handlers and let all other devices share a single vector so that they
-don't interfere with performance.
+For these devices, unplugging the VGA cable and plugging it in again causes
+spurious interrupts from the IGD.  Linux eventually disables the interrupt,
+but of course that disables any other devices sharing the interrupt.
 
-At the moment, only the NVM Express class code is on the list, but more
-may be added if VMD users desire to use other low-latency devices in
-these domains.
+The theory is that this is a VGA BIOS defect: it should have disabled the
+IGD interrupt but failed to do so.
 
-Signed-off-by: Keith Busch <keith.busch@intel.com>
-[lorenzo.pieralisi@arm.com: changelog]
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Acked-by: Jon Derrick: <jonathan.derrick@intel.com>
-Cc: "Heitke, Kenneth" <kenneth.heitke@intel.com>
+See f67fd55fa96f ("PCI: Add quirk for still enabled interrupts on Intel
+Sandy Bridge GPUs") and 7c82126a94e6 ("PCI: Add new ID for Intel GPU
+"spurious interrupt" quirk") for some history.
+
+[bhelgaas: See link below for discussion about how to fix this more
+generically instead of adding device IDs for every new Intel GPU.  I hope
+this is the last patch to add device IDs.]
+
+Link: https://lore.kernel.org/linux-pci/1537974841-29928-1-git-send-email-bmeng.cn@gmail.com
+Signed-off-by: Bin Meng <bmeng.cn@gmail.com>
+[bhelgaas: changelog]
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Cc: stable@vger.kernel.org	# v3.4+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/controller/vmd.c |   13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ drivers/pci/quirks.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/pci/controller/vmd.c
-+++ b/drivers/pci/controller/vmd.c
-@@ -197,9 +197,20 @@ static struct vmd_irq_list *vmd_next_irq
- 	int i, best = 1;
- 	unsigned long flags;
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -3177,7 +3177,11 @@ static void disable_igfx_irq(struct pci_
  
--	if (pci_is_bridge(msi_desc_to_pci_dev(desc)) || vmd->msix_count == 1)
-+	if (vmd->msix_count == 1)
- 		return &vmd->irqs[0];
+ 	pci_iounmap(dev, regs);
+ }
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0042, disable_igfx_irq);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0046, disable_igfx_irq);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x004a, disable_igfx_irq);
+ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0102, disable_igfx_irq);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0106, disable_igfx_irq);
+ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x010a, disable_igfx_irq);
+ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0152, disable_igfx_irq);
  
-+	/*
-+	 * White list for fast-interrupt handlers. All others will share the
-+	 * "slow" interrupt vector.
-+	 */
-+	switch (msi_desc_to_pci_dev(desc)->class) {
-+	case PCI_CLASS_STORAGE_EXPRESS:
-+		break;
-+	default:
-+		return &vmd->irqs[0];
-+	}
-+
- 	raw_spin_lock_irqsave(&list_lock, flags);
- 	for (i = 1; i < vmd->msix_count; i++)
- 		if (vmd->irqs[i].count < vmd->irqs[best].count)
 
 
