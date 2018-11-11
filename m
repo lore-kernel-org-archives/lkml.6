@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CE5FC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:02:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83B15C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:03:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6340020872
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:02:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4803B20818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:03:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="L5Ox4l3T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6340020872
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="v8E0XGRc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4803B20818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390780AbeKLIw7 (ORCPT
+        id S2390587AbeKLIWZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:52:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52416 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:22:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52394 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390547AbeKLIW0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:26 -0500
+        id S2390547AbeKLIWY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:24 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 17A8F224E3;
-        Sun, 11 Nov 2018 22:32:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A8C31223CA;
+        Sun, 11 Nov 2018 22:32:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975549;
-        bh=sh8S/lQ+MrXUHkEDCQXcxVvrb2zPzeTjWV+g1IC7IrE=;
+        s=default; t=1541975546;
+        bh=ovGl/xg1nKWPsdWIouxWYeidCRE2VpQi84ZDNvCtmrg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L5Ox4l3T/jJBI7xFSNGlg7CXjFBmK4xdC9W5Z3aqhhczyRw7UGPDBnf9lkYE0tkvI
-         yAcMw/FksrzlUIlDxTdRmcppTn9Dalqht3LSMRfy6ddL0ioZoCD1+782ngNbz57HX7
-         mlZVwzTOeyFAF5kQ04BRY3ieQ8PWUkYE6R2PvzfA=
+        b=v8E0XGRc/RL8+cKxya3rcJNtFS1ByDMWh3sQMEbCU2DfSwPSowmQXKqw5A3u+OJnH
+         BS4tTyjg+Ycp8Cx2f9hCj1rX6OXOa4QEsnHdopdxTW6mHwhpCDO5q8kiIzRV7Lvkkt
+         SUd0dqNC5eSI2+P2YrI53vRphqReo45Lg83GuyeI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
+        Sumit Saxena <sumit.saxena@broadcom.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 086/222] tpm: suppress transmit cmd error logs when TPM 1.2 is disabled/deactivated
-Date:   Sun, 11 Nov 2018 14:23:03 -0800
-Message-Id: <20181111221655.712279230@linuxfoundation.org>
+Subject: [PATCH 4.14 080/222] scsi: megaraid_sas: fix a missing-check bug
+Date:   Sun, 11 Nov 2018 14:22:57 -0800
+Message-Id: <20181111221655.208748808@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -64,66 +64,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Javier Martinez Canillas <javierm@redhat.com>
+From: Wenwen Wang <wang6495@umn.edu>
 
-[ Upstream commit 0d6d0d62d9505a9816716aa484ebd0b04c795063 ]
+[ Upstream commit 47db7873136a9c57c45390a53b57019cf73c8259 ]
 
-For TPM 1.2 chips the system setup utility allows to set the TPM device in
-one of the following states:
+In megasas_mgmt_compat_ioctl_fw(), to handle the structure
+compat_megasas_iocpacket 'cioc', a user-space structure megasas_iocpacket
+'ioc' is allocated before megasas_mgmt_ioctl_fw() is invoked to handle
+the packet. Since the two data structures have different fields, the data
+is copied from 'cioc' to 'ioc' field by field. In the copy process,
+'sense_ptr' is prepared if the field 'sense_len' is not null, because it
+will be used in megasas_mgmt_ioctl_fw(). To prepare 'sense_ptr', the
+user-space data 'ioc->sense_off' and 'cioc->sense_off' are copied and
+saved to kernel-space variables 'local_sense_off' and 'user_sense_off'
+respectively. Given that 'ioc->sense_off' is also copied from
+'cioc->sense_off', 'local_sense_off' and 'user_sense_off' should have the
+same value. However, 'cioc' is in the user space and a malicious user can
+race to change the value of 'cioc->sense_off' after it is copied to
+'ioc->sense_off' but before it is copied to 'user_sense_off'. By doing
+so, the attacker can inject different values into 'local_sense_off' and
+'user_sense_off'. This can cause undefined behavior in the following
+execution, because the two variables are supposed to be same.
 
-  * Active: Security chip is functional
-  * Inactive: Security chip is visible, but is not functional
-  * Disabled: Security chip is hidden and is not functional
+This patch enforces a check on the two kernel variables 'local_sense_off'
+and 'user_sense_off' to make sure they are the same after the copy. In
+case they are not, an error code EINVAL will be returned.
 
-When choosing the "Inactive" state, the TPM 1.2 device is enumerated and
-registered, but sending TPM commands fail with either TPM_DEACTIVATED or
-TPM_DISABLED depending if the firmware deactivated or disabled the TPM.
-
-Since these TPM 1.2 error codes don't have special treatment, inactivating
-the TPM leads to a very noisy kernel log buffer that shows messages like
-the following:
-
-  tpm_tis 00:05: 1.2 TPM (device-id 0x0, rev-id 78)
-  tpm tpm0: A TPM error (6) occurred attempting to read a pcr value
-  tpm tpm0: TPM is disabled/deactivated (0x6)
-  tpm tpm0: A TPM error (6) occurred attempting get random
-  tpm tpm0: A TPM error (6) occurred attempting to read a pcr value
-  ima: No TPM chip found, activating TPM-bypass! (rc=6)
-  tpm tpm0: A TPM error (6) occurred attempting get random
-  tpm tpm0: A TPM error (6) occurred attempting get random
-  tpm tpm0: A TPM error (6) occurred attempting get random
-  tpm tpm0: A TPM error (6) occurred attempting get random
-
-Let's just suppress error log messages for the TPM_{DEACTIVATED,DISABLED}
-return codes, since this is expected when the TPM 1.2 is set to Inactive.
-
-In that case the kernel log is cleaner and less confusing for users, i.e:
-
-  tpm_tis 00:05: 1.2 TPM (device-id 0x0, rev-id 78)
-  tpm tpm0: TPM is disabled/deactivated (0x6)
-  ima: No TPM chip found, activating TPM-bypass! (rc=6)
-
-Reported-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+Acked-by: Sumit Saxena <sumit.saxena@broadcom.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/char/tpm/tpm-interface.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/scsi/megaraid/megaraid_sas_base.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -653,7 +653,8 @@ ssize_t tpm_transmit_cmd(struct tpm_chip
- 		return len;
+--- a/drivers/scsi/megaraid/megaraid_sas_base.c
++++ b/drivers/scsi/megaraid/megaraid_sas_base.c
+@@ -7361,6 +7361,9 @@ static int megasas_mgmt_compat_ioctl_fw(
+ 		get_user(user_sense_off, &cioc->sense_off))
+ 		return -EFAULT;
  
- 	err = be32_to_cpu(header->return_code);
--	if (err != 0 && desc)
-+	if (err != 0 && err != TPM_ERR_DISABLED && err != TPM_ERR_DEACTIVATED
-+	    && desc)
- 		dev_err(&chip->dev, "A TPM error (%d) occurred %s\n", err,
- 			desc);
- 	if (err)
++	if (local_sense_off != user_sense_off)
++		return -EINVAL;
++
+ 	if (local_sense_len) {
+ 		void __user **sense_ioc_ptr =
+ 			(void __user **)((u8 *)((unsigned long)&ioc->frame.raw) + local_sense_off);
 
 
