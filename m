@@ -7,48 +7,49 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD8BC43610
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:22:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0FC7C0044C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:22:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B383420817
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:22:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 883FB20811
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:22:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="igT9R67s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B383420817
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="We2ix3FM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 883FB20811
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389335AbeKLIVG (ORCPT
+        id S2389603AbeKLJMw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:21:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47452 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:12:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387732AbeKLIVG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2389318AbeKLIVG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:21:06 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1ABF421508;
-        Sun, 11 Nov 2018 22:31:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 41DFD22353;
+        Sun, 11 Nov 2018 22:31:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975469;
-        bh=RVDlWR5Y0xBwojke47IATrTgz59Y3IVAos5gXLKvoK0=;
+        s=default; t=1541975470;
+        bh=YbDCfVPnFsKl3u4Wq2W5SEhzFbMVIG0Mr1x0stIN0kw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=igT9R67s6nq+/VUBmJKPLT2yFTtpXgp8LJiaOvhSWp9vvMogk+3KKxtc5pVtyqvCl
-         nPBGGNKxz4SVyB1ztIeAlgh1kuGho/DRRNAsOxJsazSsT450SeDRk5xvWA1Dhco3xv
-         Coh2ea5EuN7EhET0KccX+z6OzbGPARu8RPEjhHbI=
+        b=We2ix3FMhvofdVXzwrcJZodimtjxtIB1MQ3fGuS2SjlXl6As20HEtz3OLp7salXzZ
+         cwwrfcMPPvON2eWZxbRCmbyaHwfGd0cYCE2yA+TaKQAJgudhTSVnd5LvFZjBuh6fIk
+         ndAqpKA75jc+RMVX9qVgOOitzFJ0hJfv1SJreEYs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ralph Campbell <rcampbell@nvidia.com>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.18 246/350] mm/rmap: map_pte() was not handling private ZONE_DEVICE page properly
-Date:   Sun, 11 Nov 2018 14:21:50 -0800
-Message-Id: <20181111221718.328757832@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Christopher Dall <christoffer.dall@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Subject: [PATCH 4.18 249/350] KVM: arm64: Fix caching of host MDCR_EL2 value
+Date:   Sun, 11 Nov 2018 14:21:53 -0800
+Message-Id: <20181111221718.455496816@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -66,66 +67,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ralph Campbell <rcampbell@nvidia.com>
+From: Mark Rutland <mark.rutland@arm.com>
 
-commit aab8d0520e6e7c2a61f71195e6ce7007a4843afb upstream.
+commit da5a3ce66b8bb51b0ea8a89f42aac153903f90fb upstream.
 
-Private ZONE_DEVICE pages use a special pte entry and thus are not
-present.  Properly handle this case in map_pte(), it is already handled in
-check_pte(), the map_pte() part was lost in some rebase most probably.
+At boot time, KVM stashes the host MDCR_EL2 value, but only does this
+when the kernel is not running in hyp mode (i.e. is non-VHE). In these
+cases, the stashed value of MDCR_EL2.HPMN happens to be zero, which can
+lead to CONSTRAINED UNPREDICTABLE behaviour.
 
-Without this patch the slow migration path can not migrate back to any
-private ZONE_DEVICE memory to regular memory.  This was found after stress
-testing migration back to system memory.  This ultimatly can lead to the
-CPU constantly page fault looping on the special swap entry.
+Since we use this value to derive the MDCR_EL2 value when switching
+to/from a guest, after a guest have been run, the performance counters
+do not behave as expected. This has been observed to result in accesses
+via PMXEVTYPER_EL0 and PMXEVCNTR_EL0 not affecting the relevant
+counters, resulting in events not being counted. In these cases, only
+the fixed-purpose cycle counter appears to work as expected.
 
-Link: http://lkml.kernel.org/r/20181019160442.18723-3-jglisse@redhat.com
-Signed-off-by: Ralph Campbell <rcampbell@nvidia.com>
-Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
-Reviewed-by: Balbir Singh <bsingharora@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fix this by always stashing the host MDCR_EL2 value, regardless of VHE.
+
+Cc: Christopher Dall <christoffer.dall@arm.com>
+Cc: James Morse <james.morse@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: stable@vger.kernel.org
+Fixes: 1e947bad0b63b351 ("arm64: KVM: Skip HYP setup when already running in HYP")
+Tested-by: Robin Murphy <robin.murphy@arm.com>
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/page_vma_mapped.c |   24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
+ virt/kvm/arm/arm.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/mm/page_vma_mapped.c
-+++ b/mm/page_vma_mapped.c
-@@ -21,7 +21,29 @@ static bool map_pte(struct page_vma_mapp
- 			if (!is_swap_pte(*pvmw->pte))
- 				return false;
- 		} else {
--			if (!pte_present(*pvmw->pte))
-+			/*
-+			 * We get here when we are trying to unmap a private
-+			 * device page from the process address space. Such
-+			 * page is not CPU accessible and thus is mapped as
-+			 * a special swap entry, nonetheless it still does
-+			 * count as a valid regular mapping for the page (and
-+			 * is accounted as such in page maps count).
-+			 *
-+			 * So handle this special case as if it was a normal
-+			 * page mapping ie lock CPU page table and returns
-+			 * true.
-+			 *
-+			 * For more details on device private memory see HMM
-+			 * (include/linux/hmm.h or mm/hmm.c).
-+			 */
-+			if (is_swap_pte(*pvmw->pte)) {
-+				swp_entry_t entry;
-+
-+				/* Handle un-addressable ZONE_DEVICE memory */
-+				entry = pte_to_swp_entry(*pvmw->pte);
-+				if (!is_device_private_entry(entry))
-+					return false;
-+			} else if (!pte_present(*pvmw->pte))
- 				return false;
- 		}
+--- a/virt/kvm/arm/arm.c
++++ b/virt/kvm/arm/arm.c
+@@ -1244,8 +1244,6 @@ static void cpu_init_hyp_mode(void *dumm
+ 
+ 	__cpu_init_hyp_mode(pgd_ptr, hyp_stack_ptr, vector_ptr);
+ 	__cpu_init_stage2();
+-
+-	kvm_arm_init_debug();
+ }
+ 
+ static void cpu_hyp_reset(void)
+@@ -1269,6 +1267,8 @@ static void cpu_hyp_reinit(void)
+ 		cpu_init_hyp_mode(NULL);
  	}
+ 
++	kvm_arm_init_debug();
++
+ 	if (vgic_present)
+ 		kvm_vgic_init_cpu_hardware();
+ }
 
 
