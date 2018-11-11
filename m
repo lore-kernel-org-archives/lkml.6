@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AE55C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:04:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C55DC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:04:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8D7D20866
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:04:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 228AD208A3
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:04:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="si6n2FaL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8D7D20866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xtQWbypl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 228AD208A3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732040AbeKLIRr (ORCPT
+        id S1732261AbeKLJyx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:17:47 -0500
+        Mon, 12 Nov 2018 04:54:53 -0500
 Received: from mail.kernel.org ([198.145.29.99]:34236 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731952AbeKLIRq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:17:46 -0500
+        id S1732038AbeKLIRr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:17:47 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 951C121508;
-        Sun, 11 Nov 2018 22:27:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD20021731;
+        Sun, 11 Nov 2018 22:27:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975270;
-        bh=oYnvL0Ggg3BLILL11W8IH8YtSajmxbMSO5mIwFpDyBg=;
+        s=default; t=1541975271;
+        bh=1GdtEblomlALCS11+/Y1GL/pmPJvfYU1toSYcqq/2E4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=si6n2FaL0j9UwPZuVhW0lT/X3Y1QReeXGXZRnDz2UAjEmkU7654LwHJMis8DGt7hD
-         o683nkr2eT/N0RFaIAUpKf9O5gVH/TCI+Pp3EtkIPS65cI+g7wDTZpNJHw7rTu8ssf
-         AscARD0t6csYWfk6e7HbFT4hwfHgoo+bi2xg1RfU=
+        b=xtQWbyplm6qSXrszBN9X3xXmXlobHzaY/Vl0nKC43lD+96NIJChWWNo8LzY/2PJEo
+         sLTbpUnsYaudHMxNlE76I7mcUM9lkH92xOTn0gLQrFFu6+74LhsIwDXYVuDfMjeNRQ
+         t+qMlupPl2xiBaAeJt/Ub+iRHKYhn/NstJ/bVOdE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, Jim Mattson <jmattson@google.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 168/361] f2fs: fix to recover inodes i_flags during POR
-Date:   Sun, 11 Nov 2018 14:18:35 -0800
-Message-Id: <20181111221643.921901096@linuxfoundation.org>
+Subject: [PATCH 4.19 140/361] KVM: nVMX: Clear reserved bits of #DB exit qualification
+Date:   Sun, 11 Nov 2018 14:18:07 -0800
+Message-Id: <20181111221640.171330536@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -63,49 +64,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chao Yu <yuchao0@huawei.com>
+From: Jim Mattson <jmattson@google.com>
 
-[ Upstream commit 19c73a691ccf6fb2f12d4e9cf9830023966cec88 ]
+[ Upstream commit cfb634fe3052aefc4e1360fa322018c9a0b49755 ]
 
-Testcase to reproduce this bug:
-1. mkfs.f2fs /dev/sdd
-2. mount -t f2fs /dev/sdd /mnt/f2fs
-3. touch /mnt/f2fs/file
-4. sync
-5. chattr +A /mnt/f2fs/file
-6. xfs_io -f /mnt/f2fs/file -c "fsync"
-7. godown /mnt/f2fs
-8. umount /mnt/f2fs
-9. mount -t f2fs /dev/sdd /mnt/f2fs
-10. lsattr /mnt/f2fs/file
+According to volume 3 of the SDM, bits 63:15 and 12:4 of the exit
+qualification field for debug exceptions are reserved (cleared to
+0). However, the SDM is incorrect about bit 16 (corresponding to
+DR6.RTM). This bit should be set if a debug exception (#DB) or a
+breakpoint exception (#BP) occurred inside an RTM region while
+advanced debugging of RTM transactional regions was enabled. Note that
+this is the opposite of DR6.RTM, which "indicates (when clear) that a
+debug exception (#DB) or breakpoint exception (#BP) occurred inside an
+RTM region while advanced debugging of RTM transactional regions was
+enabled."
 
------------------N- /mnt/f2fs/file
+There is still an issue with stale DR6 bits potentially being
+misreported for the current debug exception.  DR6 should not have been
+modified before vectoring the #DB exception, and the "new DR6 bits"
+should be available somewhere, but it was and they aren't.
 
-But actually, we expect the corrct result is:
-
--------A---------N- /mnt/f2fs/file
-
-The reason is we didn't recover inode.i_flags field during mount,
-fix it.
-
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-
+Fixes: b96fb439774e1 ("KVM: nVMX: fixes to nested virt interrupt injection")
+Signed-off-by: Jim Mattson <jmattson@google.com>
+Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/recovery.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/include/asm/kvm_host.h |    1 +
+ arch/x86/kvm/vmx.c              |    7 +++++--
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -221,6 +221,7 @@ static void recover_inode(struct inode *
- 	inode->i_mtime.tv_nsec = le32_to_cpu(raw->i_mtime_nsec);
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -177,6 +177,7 @@ enum {
  
- 	F2FS_I(inode)->i_advise = raw->i_advise;
-+	F2FS_I(inode)->i_flags = le32_to_cpu(raw->i_flags);
- 
- 	recover_inline_flags(inode, raw);
- 
+ #define DR6_BD		(1 << 13)
+ #define DR6_BS		(1 << 14)
++#define DR6_BT		(1 << 15)
+ #define DR6_RTM		(1 << 16)
+ #define DR6_FIXED_1	0xfffe0ff0
+ #define DR6_INIT	0xffff0ff0
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -3294,10 +3294,13 @@ static int nested_vmx_check_exception(st
+ 		}
+ 	} else {
+ 		if (vmcs12->exception_bitmap & (1u << nr)) {
+-			if (nr == DB_VECTOR)
++			if (nr == DB_VECTOR) {
+ 				*exit_qual = vcpu->arch.dr6;
+-			else
++				*exit_qual &= ~(DR6_FIXED_1 | DR6_BT);
++				*exit_qual ^= DR6_RTM;
++			} else {
+ 				*exit_qual = 0;
++			}
+ 			return 1;
+ 		}
+ 	}
 
 
