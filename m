@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A558C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:38:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B63D9C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:38:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBF8120871
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:37:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78B2520818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:38:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kJUudAQQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBF8120871
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="W29Ao9M2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78B2520818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388364AbeKLJ2P (ORCPT
+        id S2388373AbeKLJ2W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:28:15 -0500
+        Mon, 12 Nov 2018 04:28:22 -0500
 Received: from mail.kernel.org ([198.145.29.99]:42214 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388135AbeKLITx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:19:53 -0500
+        id S1729612AbeKLITw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:19:52 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1581321780;
-        Sun, 11 Nov 2018 22:29:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA03E223AE;
+        Sun, 11 Nov 2018 22:29:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975397;
-        bh=O1BJwBHGjh8R4RsOd+qI5sAVd+EaBt/Mn005PgfOC14=;
+        s=default; t=1541975395;
+        bh=XOyOj4CyfGld2zh9c8I2iU8qv7YAUYi6fmTuVDbR/so=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kJUudAQQvDyNjZLJUHDw//toCNWRTfnnoswK2aJZ12tgsTaIThPS1kmoKhLWpmBcj
-         wnjE99I0MOV02rZnPiG70ANrZK5EQT0Z/f7X2J/u8HjY0H8DXYVSe9nXaTacYcOsrH
-         oajyHqVjeXV767tTQuqbaMahwipydz2ax2Xgo3Ec=
+        b=W29Ao9M2+j2X6d6IZgt4jNrMOoYR86jlTSqyiwiU4kZOpouRy7GDfrxMKdgFFgBPk
+         6TS2JuwG9bY8KZO8NhkAd0k7/uJFHbP6x7YArUOXkAo6aw3Kd6aCXJ4Q4XtTTTfPHk
+         0x6TqsXxbIjCQ48OcQM1NXgntlLYCHAL1o/9uP+U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Song Muchun <smuchun@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mike Galbraith <efault@gmx.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 053/350] sched/fair: Fix the min_vruntime update logic in dequeue_entity()
-Date:   Sun, 11 Nov 2018 14:18:37 -0800
-Message-Id: <20181111221709.370965976@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Wang Dongsheng <dongsheng.wang@hxt-semitech.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.18 084/350] sdhci: acpi: add free_slot callback
+Date:   Sun, 11 Nov 2018 14:19:08 -0800
+Message-Id: <20181111221710.639198907@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -66,44 +65,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Song Muchun <smuchun@gmail.com>
+From: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
 
-[ Upstream commit 9845c49cc9bbb317a0bc9e9cf78d8e09d54c9af0 ]
+[ Upstream commit c7eabbee3de99347105faa7fd925a500ccf43baf ]
 
-The comment and the code around the update_min_vruntime() call in
-dequeue_entity() are not in agreement.
+The device specific resource can be free in free_slot after
+removing host controller.
 
->From commit:
-
-  b60205c7c558 ("sched/fair: Fix min_vruntime tracking")
-
-I think that we want to update min_vruntime when a task is sleeping/migrating.
-So, the check is inverted there - fix it.
-
-Signed-off-by: Song Muchun <smuchun@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mike Galbraith <efault@gmx.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: b60205c7c558 ("sched/fair: Fix min_vruntime tracking")
-Link: http://lkml.kernel.org/r/20181014112612.2614-1-smuchun@gmail.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/sched/fair.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mmc/host/sdhci-acpi.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -4321,7 +4321,7 @@ dequeue_entity(struct cfs_rq *cfs_rq, st
- 	 * put back on, and if we advance min_vruntime, we'll be placed back
- 	 * further than we started -- ie. we'll be penalized.
- 	 */
--	if ((flags & (DEQUEUE_SAVE | DEQUEUE_MOVE)) == DEQUEUE_SAVE)
-+	if ((flags & (DEQUEUE_SAVE | DEQUEUE_MOVE)) != DEQUEUE_SAVE)
- 		update_min_vruntime(cfs_rq);
- }
+--- a/drivers/mmc/host/sdhci-acpi.c
++++ b/drivers/mmc/host/sdhci-acpi.c
+@@ -76,6 +76,7 @@ struct sdhci_acpi_slot {
+ 	size_t		priv_size;
+ 	int (*probe_slot)(struct platform_device *, const char *, const char *);
+ 	int (*remove_slot)(struct platform_device *);
++	int (*free_slot)(struct platform_device *pdev);
+ 	int (*setup_host)(struct platform_device *pdev);
+ };
  
+@@ -756,6 +757,9 @@ static int sdhci_acpi_probe(struct platf
+ err_cleanup:
+ 	sdhci_cleanup_host(c->host);
+ err_free:
++	if (c->slot && c->slot->free_slot)
++		c->slot->free_slot(pdev);
++
+ 	sdhci_free_host(c->host);
+ 	return err;
+ }
+@@ -777,6 +781,10 @@ static int sdhci_acpi_remove(struct plat
+ 
+ 	dead = (sdhci_readl(c->host, SDHCI_INT_STATUS) == ~0);
+ 	sdhci_remove_host(c->host, dead);
++
++	if (c->slot && c->slot->free_slot)
++		c->slot->free_slot(pdev);
++
+ 	sdhci_free_host(c->host);
+ 
+ 	return 0;
 
 
