@@ -7,48 +7,51 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5151C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3FB7C43610
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72F04223C8
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC7F62241B
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="y9nwBN6t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72F04223C8
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dw8hEBt/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC7F62241B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390928AbeKLIX1 (ORCPT
+        id S2390957AbeKLIX2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:23:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57044 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:23:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56992 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390887AbeKLIX0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:23:26 -0500
+        id S2390901AbeKLIX1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:23:27 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1890121780;
-        Sun, 11 Nov 2018 22:33:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 582552154B;
+        Sun, 11 Nov 2018 22:33:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975608;
-        bh=66RfflJNdiJFoj4qPOnxaxPjdeM63AgaIfQVy52/CVc=;
+        s=default; t=1541975609;
+        bh=BUzHnzJnTqHcnTVxmHM/Z1xLyC46Ol1iXFXBYn7yjas=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y9nwBN6tGyqIljsZpA+p0HUw0DJvl7xbVJ60F78SUjo45kwkIherinTvOq9GTFN4T
-         7/URZqixSG6TlzAYd3Z4NiKTA8prUcJU8L+ZcIza2fkNjX2J9Abuc4FnPa2wyXDZnQ
-         iIv1t+szyl3V4oR3oyObtBi0NGIVOc5ef6+X2Tu8=
+        b=Dw8hEBt/BdFdGBK4cb5W2DTLCovbxWUFWNddSpoMhVbDyCQ2vmdz9u98G0jzbDn/u
+         svOZQdmt+gS+zo4JEAITSp/rujjuKXXzibo+zr+yZTU0dnFTTi3Qj/hvAtBvBeNxKv
+         vcf0M5QDkkB0IifnVVqpxbw0LZO6WscKqENxAP/4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tim C Chen <tim.c.chen@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Ravi Shankar <ravi.v.shankar@intel.com>
-Subject: [PATCH 4.9 015/141] x86/speculation: Support Enhanced IBRS on future CPUs
-Date:   Sun, 11 Nov 2018 14:24:34 -0800
-Message-Id: <20181111221629.864328139@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Petlan <mpetlan@redhat.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 017/141] Revert "perf tools: Fix PMU term format max value calculation"
+Date:   Sun, 11 Nov 2018 14:24:36 -0800
+Message-Id: <20181111221630.126405657@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
 References: <20181111221627.853046496@linuxfoundation.org>
@@ -66,152 +69,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
+From: Jiri Olsa <jolsa@kernel.org>
 
-commit 706d51681d636a0c4a5ef53395ec3b803e45ed4d upstream.
+[ Upstream commit 1b9caa10b31dda0866f4028e4bfb923fb6e4072f ]
 
-Future Intel processors will support "Enhanced IBRS" which is an "always
-on" mode i.e. IBRS bit in SPEC_CTRL MSR is enabled once and never
-disabled.
+This reverts commit ac0e2cd555373ae6f8f3a3ad3fbbf5b6d1e7aaaa.
 
->From the specification [1]:
+Michael reported an issue with oversized terms values assignment
+and I noticed there was actually a misunderstanding of the max
+value check in the past.
 
- "With enhanced IBRS, the predicted targets of indirect branches
-  executed cannot be controlled by software that was executed in a less
-  privileged predictor mode or on another logical processor. As a
-  result, software operating on a processor with enhanced IBRS need not
-  use WRMSR to set IA32_SPEC_CTRL.IBRS after every transition to a more
-  privileged predictor mode. Software can isolate predictor modes
-  effectively simply by setting the bit once. Software need not disable
-  enhanced IBRS prior to entering a sleep state such as MWAIT or HLT."
+The above commit's changelog says:
 
-If Enhanced IBRS is supported by the processor then use it as the
-preferred spectre v2 mitigation mechanism instead of Retpoline. Intel's
-Retpoline white paper [2] states:
+  If bit 21 is set, there is parsing issues as below.
 
- "Retpoline is known to be an effective branch target injection (Spectre
-  variant 2) mitigation on Intel processors belonging to family 6
-  (enumerated by the CPUID instruction) that do not have support for
-  enhanced IBRS. On processors that support enhanced IBRS, it should be
-  used for mitigation instead of retpoline."
+    $ perf stat -a -e uncore_qpi_0/event=0x200002,umask=0x8/
+    event syntax error: '..pi_0/event=0x200002,umask=0x8/'
+                                      \___ value too big for format, maximum is 511
 
-The reason why Enhanced IBRS is the recommended mitigation on processors
-which support it is that these processors also support CET which
-provides a defense against ROP attacks. Retpoline is very similar to ROP
-techniques and might trigger false positives in the CET defense.
+But there's no issue there, because the event value is distributed
+along the value defined by the format. Even if the format defines
+separated bit, the value is treated as a continual number, which
+should follow the format definition.
 
-If Enhanced IBRS is selected as the mitigation technique for spectre v2,
-the IBRS bit in SPEC_CTRL MSR is set once at boot time and never
-cleared. Kernel also has to make sure that IBRS bit remains set after
-VMEXIT because the guest might have cleared the bit. This is already
-covered by the existing x86_spec_ctrl_set_guest() and
-x86_spec_ctrl_restore_host() speculation control functions.
+In above case it's 9-bit value with last bit separated:
+  $ cat uncore_qpi_0/format/event
+  config:0-7,21
 
-Enhanced IBRS still requires IBPB for full mitigation.
+Hence the value 0x200002 is correctly reported as format violation,
+because it exceeds 9 bits. It should have been 0x102 instead, which
+sets the 9th bit - the bit 21 of the format.
 
-[1] Speculative-Execution-Side-Channel-Mitigations.pdf
-[2] Retpoline-A-Branch-Target-Injection-Mitigation.pdf
-Both documents are available at:
-https://bugzilla.kernel.org/show_bug.cgi?id=199511
+  $ perf stat -vv -a -e uncore_qpi_0/event=0x102,umask=0x8/
+  Using CPUID GenuineIntel-6-2D
+  ...
+  ------------------------------------------------------------
+  perf_event_attr:
+    type                             10
+    size                             112
+    config                           0x200802
+    sample_type                      IDENTIFIER
+  ...
 
-Originally-by: David Woodhouse <dwmw@amazon.co.uk>
-Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tim C Chen <tim.c.chen@intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Ravi Shankar <ravi.v.shankar@intel.com>
-Link: https://lkml.kernel.org/r/1533148945-24095-1-git-send-email-sai.praneeth.prakhya@intel.com
+Reported-by: Michael Petlan <mpetlan@redhat.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Fixes: ac0e2cd55537 ("perf tools: Fix PMU term format max value calculation")
+Link: http://lkml.kernel.org/r/20181003072046.29276-1-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/include/asm/cpufeatures.h   |    1 +
- arch/x86/include/asm/nospec-branch.h |    1 +
- arch/x86/kernel/cpu/bugs.c           |   20 ++++++++++++++++++--
- arch/x86/kernel/cpu/common.c         |    3 +++
- 4 files changed, 23 insertions(+), 2 deletions(-)
+ tools/perf/util/pmu.c |   13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -213,6 +213,7 @@
- #define X86_FEATURE_STIBP	( 7*32+27) /* Single Thread Indirect Branch Predictors */
- #define X86_FEATURE_ZEN		( 7*32+28) /* "" CPU is AMD family 0x17 (Zen) */
- #define X86_FEATURE_L1TF_PTEINV	( 7*32+29) /* "" L1TF workaround PTE inversion */
-+#define X86_FEATURE_IBRS_ENHANCED	( 7*32+30) /* Enhanced IBRS */
+--- a/tools/perf/util/pmu.c
++++ b/tools/perf/util/pmu.c
+@@ -685,13 +685,14 @@ static void pmu_format_value(unsigned lo
  
- /* Virtualization flags: Linux defined, word 8 */
- #define X86_FEATURE_TPR_SHADOW  ( 8*32+ 0) /* Intel TPR Shadow */
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -215,6 +215,7 @@ enum spectre_v2_mitigation {
- 	SPECTRE_V2_RETPOLINE_GENERIC,
- 	SPECTRE_V2_RETPOLINE_AMD,
- 	SPECTRE_V2_IBRS,
-+	SPECTRE_V2_IBRS_ENHANCED,
- };
+ static __u64 pmu_format_max_value(const unsigned long *format)
+ {
+-	__u64 w = 0;
+-	int fbit;
++	int w;
  
- /* The Speculative Store Bypass disable variants */
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -137,6 +137,7 @@ static const char *spectre_v2_strings[]
- 	[SPECTRE_V2_RETPOLINE_MINIMAL_AMD]	= "Vulnerable: Minimal AMD ASM retpoline",
- 	[SPECTRE_V2_RETPOLINE_GENERIC]		= "Mitigation: Full generic retpoline",
- 	[SPECTRE_V2_RETPOLINE_AMD]		= "Mitigation: Full AMD retpoline",
-+	[SPECTRE_V2_IBRS_ENHANCED]		= "Mitigation: Enhanced IBRS",
- };
+-	for_each_set_bit(fbit, format, PERF_PMU_FORMAT_BITS)
+-		w |= (1ULL << fbit);
+-
+-	return w;
++	w = bitmap_weight(format, PERF_PMU_FORMAT_BITS);
++	if (!w)
++		return 0;
++	if (w < 64)
++		return (1ULL << w) - 1;
++	return -1;
+ }
  
- #undef pr_fmt
-@@ -378,6 +379,13 @@ static void __init spectre_v2_select_mit
- 
- 	case SPECTRE_V2_CMD_FORCE:
- 	case SPECTRE_V2_CMD_AUTO:
-+		if (boot_cpu_has(X86_FEATURE_IBRS_ENHANCED)) {
-+			mode = SPECTRE_V2_IBRS_ENHANCED;
-+			/* Force it so VMEXIT will restore correctly */
-+			x86_spec_ctrl_base |= SPEC_CTRL_IBRS;
-+			wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
-+			goto specv2_set_mode;
-+		}
- 		if (IS_ENABLED(CONFIG_RETPOLINE))
- 			goto retpoline_auto;
- 		break;
-@@ -415,6 +423,7 @@ retpoline_auto:
- 		setup_force_cpu_cap(X86_FEATURE_RETPOLINE);
- 	}
- 
-+specv2_set_mode:
- 	spectre_v2_enabled = mode;
- 	pr_info("%s\n", spectre_v2_strings[mode]);
- 
-@@ -437,9 +446,16 @@ retpoline_auto:
- 
- 	/*
- 	 * Retpoline means the kernel is safe because it has no indirect
--	 * branches. But firmware isn't, so use IBRS to protect that.
-+	 * branches. Enhanced IBRS protects firmware too, so, enable restricted
-+	 * speculation around firmware calls only when Enhanced IBRS isn't
-+	 * supported.
-+	 *
-+	 * Use "mode" to check Enhanced IBRS instead of boot_cpu_has(), because
-+	 * the user might select retpoline on the kernel command line and if
-+	 * the CPU supports Enhanced IBRS, kernel might un-intentionally not
-+	 * enable IBRS around firmware calls.
- 	 */
--	if (boot_cpu_has(X86_FEATURE_IBRS)) {
-+	if (boot_cpu_has(X86_FEATURE_IBRS) && mode != SPECTRE_V2_IBRS_ENHANCED) {
- 		setup_force_cpu_cap(X86_FEATURE_USE_IBRS_FW);
- 		pr_info("Enabling Restricted Speculation for firmware calls\n");
- 	}
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -959,6 +959,9 @@ static void __init cpu_set_bug_bits(stru
- 	setup_force_cpu_bug(X86_BUG_SPECTRE_V1);
- 	setup_force_cpu_bug(X86_BUG_SPECTRE_V2);
- 
-+	if (ia32_cap & ARCH_CAP_IBRS_ALL)
-+		setup_force_cpu_cap(X86_FEATURE_IBRS_ENHANCED);
-+
- 	if (x86_match_cpu(cpu_no_meltdown))
- 		return;
- 
+ /*
 
 
