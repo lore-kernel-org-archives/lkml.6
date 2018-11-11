@@ -4,46 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75E8CC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:21:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13377C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:22:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3358C20869
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:21:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD72D20869
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:22:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WlzyP5mo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3358C20869
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hyb7McWF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD72D20869
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389622AbeKLJMF (ORCPT
+        id S2389706AbeKLJMO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:12:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47478 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:12:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389395AbeKLIVL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2389365AbeKLIVL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:21:11 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C8DB0216FD;
-        Sun, 11 Nov 2018 22:31:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D98A21582;
+        Sun, 11 Nov 2018 22:31:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975474;
-        bh=3LTUn03lbdYemBfgbB6ym7Takw030dV3NlnSC0l+PKI=;
+        s=default; t=1541975473;
+        bh=UOLWWiv59H6Iqvf0MJsicsIpWCXZbFY6fCsrFoFnc7Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WlzyP5moRLZ86lWXA/s+b3fcqMM8EjYlG6R1RcLBXoNFEP5eyqLOwQhOAWTpTv6bP
-         uFt/2vk0rYkAOShfodX1B/KJLolneVB/XZA8MnpA/2ox8W4nrJ6aUXfEhG14PzCbMQ
-         WZn+FhApgUDgX3ywmFeHV6JSwyhfy9Hej0028nwI=
+        b=Hyb7McWFousBTFuyXN4vEZoI6EN/TiPTpr7izQ/LGa0Nn++XiaXNhofZ/FB22Uacq
+         41aBtN1+e53dmKTKV7PEaEon5JLlg/mqF0FeUg5LGAWtY3NV7FimDPvc7oIGUmTjLP
+         e0GzMy8Iu92b1nBhhzI7LtgteiPHTnMEbK7CycNo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>
-Subject: [PATCH 4.18 257/350] smb3: do not attempt cifs operation in smb3 query info error path
-Date:   Sun, 11 Nov 2018 14:22:01 -0800
-Message-Id: <20181111221718.772475863@linuxfoundation.org>
+        stable@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH 4.18 255/350] w1: omap-hdq: fix missing bus unregister at removal
+Date:   Sun, 11 Nov 2018 14:21:59 -0800
+Message-Id: <20181111221718.695053887@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -61,45 +61,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steve French <stfrench@microsoft.com>
+From: Andreas Kemnade <andreas@kemnade.info>
 
-commit 1e77a8c204c9d1b655c61751b8ad0fde22421dbb upstream.
+commit a007734618fee1bf35556c04fa498d41d42c7301 upstream.
 
-If backupuid mount option is sent, we can incorrectly retry
-(on access denied on query info) with a cifs (FindFirst) operation
-on an smb3 mount which causes the server to force the session close.
+The bus master was not removed after unloading the module
+or unbinding the driver. That lead to oopses like this
 
-We set backup intent on open so no need for this fallback.
+[  127.842987] Unable to handle kernel paging request at virtual address bf01d04c
+[  127.850646] pgd = 70e3cd9a
+[  127.853698] [bf01d04c] *pgd=8f908811, *pte=00000000, *ppte=00000000
+[  127.860412] Internal error: Oops: 80000007 [#1] PREEMPT SMP ARM
+[  127.866668] Modules linked in: bq27xxx_battery overlay [last unloaded: omap_hdq]
+[  127.874542] CPU: 0 PID: 1022 Comm: w1_bus_master1 Not tainted 4.19.0-rc4-00001-g2d51da718324 #12
+[  127.883819] Hardware name: Generic OMAP36xx (Flattened Device Tree)
+[  127.890441] PC is at 0xbf01d04c
+[  127.893798] LR is at w1_search_process_cb+0x4c/0xfc
+[  127.898956] pc : [<bf01d04c>]    lr : [<c05f9580>]    psr: a0070013
+[  127.905609] sp : cf885f48  ip : bf01d04c  fp : ddf1e11c
+[  127.911132] r10: cf8fe040  r9 : c05f8d00  r8 : cf8fe040
+[  127.916656] r7 : 000000f0  r6 : cf8fe02c  r5 : cf8fe000  r4 : cf8fe01c
+[  127.923553] r3 : c05f8d00  r2 : 000000f0  r1 : cf8fe000  r0 : dde1ef10
+[  127.930450] Flags: NzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+[  127.938018] Control: 10c5387d  Table: 8f8f0019  DAC: 00000051
+[  127.944091] Process w1_bus_master1 (pid: 1022, stack limit = 0x9135699f)
+[  127.951171] Stack: (0xcf885f48 to 0xcf886000)
+[  127.955810] 5f40:                   cf8fe000 00000000 cf884000 cf8fe090 000003e8 c05f8d00
+[  127.964477] 5f60: dde5fc34 c05f9700 ddf1e100 ddf1e540 cf884000 cf8fe000 c05f9694 00000000
+[  127.973114] 5f80: dde5fc34 c01499a4 00000000 ddf1e540 c0149874 00000000 00000000 00000000
+[  127.981781] 5fa0: 00000000 00000000 00000000 c01010e8 00000000 00000000 00000000 00000000
+[  127.990447] 5fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[  127.999114] 5fe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
+[  128.007781] [<c05f9580>] (w1_search_process_cb) from [<c05f9700>] (w1_process+0x6c/0x118)
+[  128.016479] [<c05f9700>] (w1_process) from [<c01499a4>] (kthread+0x130/0x148)
+[  128.024047] [<c01499a4>] (kthread) from [<c01010e8>] (ret_from_fork+0x14/0x2c)
+[  128.031677] Exception stack(0xcf885fb0 to 0xcf885ff8)
+[  128.037017] 5fa0:                                     00000000 00000000 00000000 00000000
+[  128.045684] 5fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[  128.054351] 5fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+[  128.061340] Code: bad PC value
+[  128.064697] ---[ end trace af066e33c0e14119 ]---
 
-See kernel bugzilla 201435
-
-Signed-off-by: Steve French <stfrench@microsoft.com>
-CC: Stable <stable@vger.kernel.org>
-Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/inode.c |   10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ drivers/w1/masters/omap_hdq.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/fs/cifs/inode.c
-+++ b/fs/cifs/inode.c
-@@ -779,7 +779,15 @@ cifs_get_inode_info(struct inode **inode
- 	} else if (rc == -EREMOTE) {
- 		cifs_create_dfs_fattr(&fattr, sb);
- 		rc = 0;
--	} else if (rc == -EACCES && backup_cred(cifs_sb)) {
-+	} else if ((rc == -EACCES) && backup_cred(cifs_sb) &&
-+		   (strcmp(server->vals->version_string, SMB1_VERSION_STRING)
-+		      == 0)) {
-+			/*
-+			 * For SMB2 and later the backup intent flag is already
-+			 * sent if needed on open and there is no path based
-+			 * FindFirst operation to use to retry with
-+			 */
+--- a/drivers/w1/masters/omap_hdq.c
++++ b/drivers/w1/masters/omap_hdq.c
+@@ -763,6 +763,8 @@ static int omap_hdq_remove(struct platfo
+ 	/* remove module dependency */
+ 	pm_runtime_disable(&pdev->dev);
+ 
++	w1_remove_master_device(&omap_w1_master);
 +
- 			srchinf = kzalloc(sizeof(struct cifs_search_info),
- 						GFP_KERNEL);
- 			if (srchinf == NULL) {
+ 	return 0;
+ }
+ 
 
 
