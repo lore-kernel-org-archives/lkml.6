@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0A85C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B321CC0044C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61E3522353
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C2B5208A3
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="luo/PMPn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61E3522353
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="keP7DaD3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C2B5208A3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404579AbeKLIX7 (ORCPT
+        id S2404606AbeKLIYB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:23:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58794 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:24:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404539AbeKLIX7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:23:59 -0500
+        id S2404500AbeKLIYA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:24:00 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 00A4921780;
-        Sun, 11 Nov 2018 22:34:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 835DB223CA;
+        Sun, 11 Nov 2018 22:34:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975641;
-        bh=mIOP5PZlE3Fz2sPbNhM0j8cTLQqfCf+91Rzp980WrX8=;
+        bh=k5ssaXy80Bb75mKUPupa2OCe3JoIOpJzcHnFembJHK4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=luo/PMPnkVPJXkZipfoFDaaAbxSkQUc+qUVf1yHmT7PNCR0trSlWcxDMwGe+cWOwG
-         M79ogZrjO7VkviS0FFMYDOzjQIJTX1rrs1A46x6gZBOASluu5KAGLTlkyoQJPWmQ8D
-         9aEObwx/n0nSdqD+CfhvGHZ3KRMU+9pteQL0Ybsg=
+        b=keP7DaD3B3aWVL5xSCvc7L3rnuzalYXRH44mdtIDQTbQ41++takv3QRJ4alk+B6Yh
+         b+eOinBKK7jWiNgX2PHR4d0sXATNIARZarQNpKKAkYpX2F+jcLIEijCEGrxKZ8d+2W
+         dWwxh1RUKdH0d2Zu0t/E0hIQcrRKLeghJi7lt40E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hangbin Liu <liuhangbin@gmail.com>,
-        Adit Ranadive <aditr@vmware.com>,
-        Vishnu Dasa <vdasa@vmware.com>,
-        Jorgen Hansen <jhansen@vmware.com>,
+        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 058/141] VMCI: Resource wildcard match fixed
-Date:   Sun, 11 Nov 2018 14:25:17 -0800
-Message-Id: <20181111221635.658426443@linuxfoundation.org>
+Subject: [PATCH 4.9 025/141] selftests: ftrace: Add synthetic event syntax testcase
+Date:   Sun, 11 Nov 2018 14:24:44 -0800
+Message-Id: <20181111221631.204970012@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
 References: <20181111221627.853046496@linuxfoundation.org>
@@ -65,53 +64,107 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jorgen Hansen <jhansen@vmware.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-[ Upstream commit 11924ba5e671d6caef1516923e2bd8c72929a3fe ]
+[ Upstream commit ba0e41ca81b935b958006c7120466e2217357827 ]
 
-When adding a VMCI resource, the check for an existing entry
-would ignore that the new entry could be a wildcard. This could
-result in multiple resource entries that would match a given
-handle. One disastrous outcome of this is that the
-refcounting used to ensure that delayed callbacks for VMCI
-datagrams have run before the datagram is destroyed can be
-wrong, since the refcount could be increased on the duplicate
-entry. This in turn leads to a use after free bug. This issue
-was discovered by Hangbin Liu using KASAN and syzkaller.
+Add a testcase to check the syntax and field types for
+synthetic_events interface.
 
-Fixes: bc63dedb7d46 ("VMCI: resource object implementation")
-Reported-by: Hangbin Liu <liuhangbin@gmail.com>
-Reviewed-by: Adit Ranadive <aditr@vmware.com>
-Reviewed-by: Vishnu Dasa <vdasa@vmware.com>
-Signed-off-by: Jorgen Hansen <jhansen@vmware.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Link: http://lkml.kernel.org/r/153986838264.18251.16627517536956299922.stgit@devbox
+
+Acked-by: Shuah Khan <shuah@kernel.org>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/misc/vmw_vmci/vmci_driver.c   |    2 +-
- drivers/misc/vmw_vmci/vmci_resource.c |    3 ++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-syntax.tc |   80 ++++++++++
+ 1 file changed, 80 insertions(+)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-syntax.tc
 
---- a/drivers/misc/vmw_vmci/vmci_driver.c
-+++ b/drivers/misc/vmw_vmci/vmci_driver.c
-@@ -113,5 +113,5 @@ module_exit(vmci_drv_exit);
- 
- MODULE_AUTHOR("VMware, Inc.");
- MODULE_DESCRIPTION("VMware Virtual Machine Communication Interface.");
--MODULE_VERSION("1.1.5.0-k");
-+MODULE_VERSION("1.1.6.0-k");
- MODULE_LICENSE("GPL v2");
---- a/drivers/misc/vmw_vmci/vmci_resource.c
-+++ b/drivers/misc/vmw_vmci/vmci_resource.c
-@@ -56,7 +56,8 @@ static struct vmci_resource *vmci_resour
- 
- 		if (r->type == type &&
- 		    rid == handle.resource &&
--		    (cid == handle.context || cid == VMCI_INVALID_ID)) {
-+		    (cid == handle.context || cid == VMCI_INVALID_ID ||
-+		     handle.context == VMCI_INVALID_ID)) {
- 			resource = r;
- 			break;
- 		}
+--- /dev/null
++++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-syntax.tc
+@@ -0,0 +1,80 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++# description: event trigger - test synthetic_events syntax parser
++
++do_reset() {
++    reset_trigger
++    echo > set_event
++    clear_trace
++}
++
++fail() { #msg
++    do_reset
++    echo $1
++    exit_fail
++}
++
++if [ ! -f set_event ]; then
++    echo "event tracing is not supported"
++    exit_unsupported
++fi
++
++if [ ! -f synthetic_events ]; then
++    echo "synthetic event is not supported"
++    exit_unsupported
++fi
++
++reset_tracer
++do_reset
++
++echo "Test synthetic_events syntax parser"
++
++echo > synthetic_events
++
++# synthetic event must have a field
++! echo "myevent" >> synthetic_events
++echo "myevent u64 var1" >> synthetic_events
++
++# synthetic event must be found in synthetic_events
++grep "myevent[[:space:]]u64 var1" synthetic_events
++
++# it is not possible to add same name event
++! echo "myevent u64 var2" >> synthetic_events
++
++# Non-append open will cleanup all events and add new one
++echo "myevent u64 var2" > synthetic_events
++
++# multiple fields with different spaces
++echo "myevent u64 var1; u64 var2;" > synthetic_events
++grep "myevent[[:space:]]u64 var1; u64 var2" synthetic_events
++echo "myevent u64 var1 ; u64 var2 ;" > synthetic_events
++grep "myevent[[:space:]]u64 var1; u64 var2" synthetic_events
++echo "myevent u64 var1 ;u64 var2" > synthetic_events
++grep "myevent[[:space:]]u64 var1; u64 var2" synthetic_events
++
++# test field types
++echo "myevent u32 var" > synthetic_events
++echo "myevent u16 var" > synthetic_events
++echo "myevent u8 var" > synthetic_events
++echo "myevent s64 var" > synthetic_events
++echo "myevent s32 var" > synthetic_events
++echo "myevent s16 var" > synthetic_events
++echo "myevent s8 var" > synthetic_events
++
++echo "myevent char var" > synthetic_events
++echo "myevent int var" > synthetic_events
++echo "myevent long var" > synthetic_events
++echo "myevent pid_t var" > synthetic_events
++
++echo "myevent unsigned char var" > synthetic_events
++echo "myevent unsigned int var" > synthetic_events
++echo "myevent unsigned long var" > synthetic_events
++grep "myevent[[:space:]]unsigned long var" synthetic_events
++
++# test string type
++echo "myevent char var[10]" > synthetic_events
++grep "myevent[[:space:]]char\[10\] var" synthetic_events
++
++do_reset
++
++exit 0
 
 
