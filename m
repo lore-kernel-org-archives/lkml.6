@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4052C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF353C0044C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A692223DD
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D817223D8
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XuxytLXN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A692223DD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0M1yk+O/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D817223D8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389049AbeKLIUq (ORCPT
+        id S2389063AbeKLIUq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 12 Nov 2018 03:20:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46396 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:46508 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733238AbeKLIUp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:20:45 -0500
+        id S2389043AbeKLIUq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:46 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 17544216FD;
-        Sun, 11 Nov 2018 22:30:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F885223CB;
+        Sun, 11 Nov 2018 22:30:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975448;
-        bh=xvUiA9EYrSKo8balsPWp2mkdwCkCpkjvuDhd0Izv8mc=;
+        s=default; t=1541975449;
+        bh=JA8F1TlIIUFpXPJsNWTpyG66Cn+sB5+rnW0jKZNvkug=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XuxytLXNyzLZOsA9WhZop4ideScjRFHlrNxaXZBJp67MX1g5Qlz5SjL0DE9CDf9bi
-         aeeQmBOdkHrOKmpQTsP6S6RrijCtkGzjzPn7uf2KzErJxWyDYMpgUjSSFggt7sY6qV
-         d5WAS4YpDEJP4bjlAZ0VO+5OB9K5Yupag9eAzJsw=
+        b=0M1yk+O/9L9ALwo306dvFddxSLBsl+QI9+5epfIRMRvixQi2X9OjUgZrUSoPgyOQk
+         qVPCMlmBNgtOm1DmxUrNmUZ6XSlgd9I1LorgZT7me06RXfhXLeLNfNcAHnzVYhLxkj
+         BCXRmRtzFDiUYr9Vk8+dBKkCHBxUK+YEHuOLMqZA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Thumshirn <jthumshirn@suse.de>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH 4.18 212/350] libnvdimm, region: Fail badblocks listing for inactive regions
-Date:   Sun, 11 Nov 2018 14:21:16 -0800
-Message-Id: <20181111221716.902039762@linuxfoundation.org>
+        stable@vger.kernel.org, Daniel Mack <daniel@zonque.org>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.18 215/350] ASoC: sta32x: set ->component pointer in private struct
+Date:   Sun, 11 Nov 2018 14:21:19 -0800
+Message-Id: <20181111221717.021494592@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -63,69 +62,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Daniel Mack <daniel@zonque.org>
 
-commit 5d394eee2c102453278d81d9a7cf94c80253486a upstream.
+commit 747df19747bc9752cd40b9cce761e17a033aa5c2 upstream.
 
-While experimenting with region driver loading the following backtrace
-was triggered:
+The ESD watchdog code in sta32x_watchdog() dereferences the pointer
+which is never assigned.
 
- INFO: trying to register non-static key.
- the code is fine but needs lockdep annotation.
- turning off the locking correctness validator.
- [..]
- Call Trace:
-  dump_stack+0x85/0xcb
-  register_lock_class+0x571/0x580
-  ? __lock_acquire+0x2ba/0x1310
-  ? kernfs_seq_start+0x2a/0x80
-  __lock_acquire+0xd4/0x1310
-  ? dev_attr_show+0x1c/0x50
-  ? __lock_acquire+0x2ba/0x1310
-  ? kernfs_seq_start+0x2a/0x80
-  ? lock_acquire+0x9e/0x1a0
-  lock_acquire+0x9e/0x1a0
-  ? dev_attr_show+0x1c/0x50
-  badblocks_show+0x70/0x190
-  ? dev_attr_show+0x1c/0x50
-  dev_attr_show+0x1c/0x50
+This is a regression from a1be4cead9b950 ("ASoC: sta32x: Convert to direct
+regmap API usage.") which went unnoticed since nobody seems to use that ESD
+workaround.
 
-This results from a missing successful call to devm_init_badblocks()
-from nd_region_probe(). Block attempts to show badblocks while the
-region is not enabled.
-
-Fixes: 6a6bef90425e ("libnvdimm: add mechanism to publish badblocks...")
-Cc: <stable@vger.kernel.org>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Fixes: a1be4cead9b950 ("ASoC: sta32x: Convert to direct regmap API usage.")
+Signed-off-by: Daniel Mack <daniel@zonque.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/nvdimm/region_devs.c |   11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ sound/soc/codecs/sta32x.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/nvdimm/region_devs.c
-+++ b/drivers/nvdimm/region_devs.c
-@@ -545,10 +545,17 @@ static ssize_t region_badblocks_show(str
- 		struct device_attribute *attr, char *buf)
- {
- 	struct nd_region *nd_region = to_nd_region(dev);
-+	ssize_t rc;
- 
--	return badblocks_show(&nd_region->bb, buf, 0);
--}
-+	device_lock(dev);
-+	if (dev->driver)
-+		rc = badblocks_show(&nd_region->bb, buf, 0);
-+	else
-+		rc = -ENXIO;
-+	device_unlock(dev);
- 
-+	return rc;
-+}
- static DEVICE_ATTR(badblocks, 0444, region_badblocks_show, NULL);
- 
- static ssize_t resource_show(struct device *dev,
+--- a/sound/soc/codecs/sta32x.c
++++ b/sound/soc/codecs/sta32x.c
+@@ -879,6 +879,9 @@ static int sta32x_probe(struct snd_soc_c
+ 	struct sta32x_priv *sta32x = snd_soc_component_get_drvdata(component);
+ 	struct sta32x_platform_data *pdata = sta32x->pdata;
+ 	int i, ret = 0, thermal = 0;
++
++	sta32x->component = component;
++
+ 	ret = regulator_bulk_enable(ARRAY_SIZE(sta32x->supplies),
+ 				    sta32x->supplies);
+ 	if (ret != 0) {
 
 
