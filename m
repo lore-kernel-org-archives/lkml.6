@@ -2,106 +2,124 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDB8AC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 17:39:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43AA0C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 17:40:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 628F7214F1
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 17:39:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DKKduUpN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 628F7214F1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 0F4A221104
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 17:40:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F4A221104
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729320AbeKLD25 (ORCPT
+        id S1729350AbeKLD3T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 22:28:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47286 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729222AbeKLD25 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 22:28:57 -0500
-Received: from localhost (unknown [206.108.79.134])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76A0721104;
-        Sun, 11 Nov 2018 17:39:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541957988;
-        bh=SbCxWrWtDSsFxUUFiK54Rnkt0Qi9alaKYz+Mq6GrGgc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DKKduUpNZKW5/EnXVQBsljuc7+PZ70JRpSr8MYEsKxWK+7+KkRtRQJz7GRhCCgJtt
-         4AR2HJaH+jMFPGbcoCWQ3GeJL5DjZEzq8M7cKbgVzcXz4y4mxSk+I0uwka0U8MWLm1
-         jhpLRVJD19ur67/Qn42luQoGSOMGbU38hJFZavrc=
-Date:   Sun, 11 Nov 2018 09:39:32 -0800
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        linux-gpio@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
-        Przemyslaw Gaj <pgaj@cadence.com>,
-        Peter Rosin <peda@axentia.se>,
-        Mike Shettel <mshettel@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>
-Subject: Re: [PATCH v10 0/9] Add the I3C subsystem
-Message-ID: <20181111173932.GA12254@kroah.com>
-References: <20181026144333.12276-1-boris.brezillon@bootlin.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181026144333.12276-1-boris.brezillon@bootlin.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Sun, 11 Nov 2018 22:29:19 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:42866 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729222AbeKLD3T (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Nov 2018 22:29:19 -0500
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 1310672CA65;
+        Sun, 11 Nov 2018 20:40:07 +0300 (MSK)
+Received: from beacon.altlinux.org (unknown [185.6.174.98])
+        by imap.altlinux.org (Postfix) with ESMTPSA id D62A94A4AF1;
+        Sun, 11 Nov 2018 20:40:06 +0300 (MSK)
+From:   Vitaly Chikunov <vt@altlinux.org>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Vitaly Chikunov <vt@altlinux.org>,
+        kernel-hardening@lists.openwall.com
+Subject: [PATCH v2] crypto: ecc - regularize scalar for scalar multiplication
+Date:   Sun, 11 Nov 2018 20:40:02 +0300
+Message-Id: <20181111174002.30929-1-vt@altlinux.org>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 26, 2018 at 04:43:24PM +0200, Boris Brezillon wrote:
-> Hi Greg,
-> 
-> I think we've reached a point where we can eventually consider the I3C
-> framework for inclusion in 4.20 (5.0?). A few more issues were reported
-> on v9 and fixed in v10. I can't guarantee that the implementation is
-> free of bugs but I still think it's worth merging it in v4.20: it's a
-> new subsystem, so we don't risk regressions, and the only way we can
-> detect other issues is by having other people experiment with this
-> implementation.
-> 
-> The only remaining concern raised by Arnd is the fact that both hosts
-> and slaves share the same bus type and are differentiated thanks to
-> their device_type, which IMHO is fine since this is what other
-> subsystems do (plus I don't see other solutions to have both I3C
-> devices and I3C buses represented under /sys/bus/i3c/).
+ecc_point_mult is supposed to be used with a regularized scalar,
+otherwise, it's possible to deduce the position of the top bit of the
+scalar with timing attack. This is important when the scalar is a
+private key.
 
-Yeah, it's not the nicest, but it will work, we did it also for USB and
-greybus and it solves the issue.
+ecc_point_mult is already using a regular algorithm (i.e. having an
+operation flow independent of the input scalar) but regularization step
+is not implemented.
 
-This all looks good to me, so I've queued it up.  Let's see if
-linux-next has any problems with it.  Thanks for sticking with it, nice
-work!
+Arrange scalar to always have fixed top bit by adding a multiple of the
+curve order (n).
 
-greg k-h
+References:
+The constant time regularization step is based on micro-ecc by Kenneth
+MacKay and also referenced in the literature (Bernstein, D. J., & Lange,
+T. (2017). Montgomery curves and the Montgomery ladder. (Cryptology
+ePrint Archive; Vol. 2017/293). s.l.: IACR. Chapter 4.6.2.)
+
+Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
+Cc: kernel-hardening@lists.openwall.com
+---
+
+Changes from v1:
+- No code changes, only description updates to be more informative.
+
+ crypto/ecc.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
+
+diff --git a/crypto/ecc.c b/crypto/ecc.c
+index 8facafd67802..adcce310f646 100644
+--- a/crypto/ecc.c
++++ b/crypto/ecc.c
+@@ -842,15 +842,23 @@ static void xycz_add_c(u64 *x1, u64 *y1, u64 *x2, u64 *y2, u64 *curve_prime,
+ 
+ static void ecc_point_mult(struct ecc_point *result,
+ 			   const struct ecc_point *point, const u64 *scalar,
+-			   u64 *initial_z, u64 *curve_prime,
++			   u64 *initial_z, const struct ecc_curve *curve,
+ 			   unsigned int ndigits)
+ {
+ 	/* R0 and R1 */
+ 	u64 rx[2][ECC_MAX_DIGITS];
+ 	u64 ry[2][ECC_MAX_DIGITS];
+ 	u64 z[ECC_MAX_DIGITS];
++	u64 sk[2][ECC_MAX_DIGITS];
++	u64 *curve_prime = curve->p;
+ 	int i, nb;
+-	int num_bits = vli_num_bits(scalar, ndigits);
++	int num_bits;
++	int carry;
++
++	carry = vli_add(sk[0], scalar, curve->n, ndigits);
++	vli_add(sk[1], sk[0], curve->n, ndigits);
++	scalar = sk[!carry];
++	num_bits = sizeof(u64) * ndigits * 8 + 1;
+ 
+ 	vli_set(rx[1], point->x, ndigits);
+ 	vli_set(ry[1], point->y, ndigits);
+@@ -1004,7 +1012,7 @@ int ecc_make_pub_key(unsigned int curve_id, unsigned int ndigits,
+ 		goto out;
+ 	}
+ 
+-	ecc_point_mult(pk, &curve->g, priv, NULL, curve->p, ndigits);
++	ecc_point_mult(pk, &curve->g, priv, NULL, curve, ndigits);
+ 	if (ecc_point_is_zero(pk)) {
+ 		ret = -EAGAIN;
+ 		goto err_free_point;
+@@ -1090,7 +1098,7 @@ int crypto_ecdh_shared_secret(unsigned int curve_id, unsigned int ndigits,
+ 		goto err_alloc_product;
+ 	}
+ 
+-	ecc_point_mult(product, pk, priv, rand_z, curve->p, ndigits);
++	ecc_point_mult(product, pk, priv, rand_z, curve, ndigits);
+ 
+ 	ecc_swap_digits(product->x, secret, ndigits);
+ 
+-- 
+2.11.0
+
