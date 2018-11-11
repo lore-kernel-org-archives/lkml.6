@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 896FAC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:57:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A9C8C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:57:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5151A206BA
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:57:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13874206BA
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:57:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dV1Xoi1Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5151A206BA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XYFUdh58"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13874206BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389721AbeKLIWt (ORCPT
+        id S2391116AbeKLIrI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:22:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54450 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:47:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54510 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730604AbeKLIWs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:48 -0500
+        id S2390837AbeKLIWt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:49 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E422221707;
-        Sun, 11 Nov 2018 22:32:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 70D2E21780;
+        Sun, 11 Nov 2018 22:32:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975571;
-        bh=DGk8MpVHuVTKonMg+F94KNZTpiHUh8yBPCzrJRFFBJU=;
+        s=default; t=1541975572;
+        bh=rrjUaeXKfR2PkZOHQvQQ+sGAU4EUU/L6hbixO2V+kbQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dV1Xoi1ZrR2Dk+LDshhxUYX621hBx/5gGMxjfCBxw1O0psVblu9w3j7EpNfUL/YK9
-         2fJZEF8NVGp6qfPZ4byQFzVvqN9n7aKKsOHRLWQZhd0S0vvEvaAv+57Fom5dkzV5AD
-         r8WyE2O1Wet3dPWrMz7ClzpOHvkUjGxKWKHv4jlk=
+        b=XYFUdh58MzbNhm0VShndNELuWcowqt2nm+hXjrlaGuXGPnpV3E3Vvk+X+wo21ANvw
+         dejt3inFp/PhQIbbwyyl5Euuq+gq9J/WuWZ+yo5eN7czUa4UjVBOWBNdmzQR5yu0oO
+         gLwMvcLD+iGbWT3LO9iYmf/wFETGDIfbeDS9QZRY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wang Shilong <wshilong@ddn.com>,
-        Theodore Tso <tytso@mit.edu>,
-        Andreas Dilger <adilger@dilger.ca>, stable@kernel.org
-Subject: [PATCH 4.14 138/222] ext4: fix setattr project check in fssetxattr ioctl
-Date:   Sun, 11 Nov 2018 14:23:55 -0800
-Message-Id: <20181111221659.882764894@linuxfoundation.org>
+        stable@vger.kernel.org, Bin Meng <bmeng.cn@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH 4.14 147/222] PCI: Add Device IDs for Intel GPU "spurious interrupt" quirk
+Date:   Sun, 11 Nov 2018 14:24:04 -0800
+Message-Id: <20181111221700.583838437@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -63,156 +62,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wang Shilong <wangshilong1991@gmail.com>
+From: Bin Meng <bmeng.cn@gmail.com>
 
-commit dc7ac6c4cae3b58724c2f1e21a7c05ce19ecd5a8 upstream.
+commit d0c9606b31a21028fb5b753c8ad79626292accfd upstream.
 
-Currently, project quota could be changed by fssetxattr
-ioctl, and existed permission check inode_owner_or_capable()
-is obviously not enough, just think that common users could
-change project id of file, that could make users to
-break project quota easily.
+Add Device IDs to the Intel GPU "spurious interrupt" quirk table.
 
-This patch try to follow same regular of xfs project
-quota:
+For these devices, unplugging the VGA cable and plugging it in again causes
+spurious interrupts from the IGD.  Linux eventually disables the interrupt,
+but of course that disables any other devices sharing the interrupt.
 
-"Project Quota ID state is only allowed to change from
-within the init namespace. Enforce that restriction only
-if we are trying to change the quota ID state.
-Everything else is allowed in user namespaces."
+The theory is that this is a VGA BIOS defect: it should have disabled the
+IGD interrupt but failed to do so.
 
-Besides that, check and set project id'state should
-be an atomic operation, protect whole operation with
-inode lock, ext4_ioctl_setproject() is only used for
-ioctl EXT4_IOC_FSSETXATTR, we have held mnt_want_write_file()
-before ext4_ioctl_setflags(), and ext4_ioctl_setproject()
-is called after ext4_ioctl_setflags(), we could share
-codes, so remove it inside ext4_ioctl_setproject().
+See f67fd55fa96f ("PCI: Add quirk for still enabled interrupts on Intel
+Sandy Bridge GPUs") and 7c82126a94e6 ("PCI: Add new ID for Intel GPU
+"spurious interrupt" quirk") for some history.
 
-Signed-off-by: Wang Shilong <wshilong@ddn.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reviewed-by: Andreas Dilger <adilger@dilger.ca>
-Cc: stable@kernel.org
+[bhelgaas: See link below for discussion about how to fix this more
+generically instead of adding device IDs for every new Intel GPU.  I hope
+this is the last patch to add device IDs.]
+
+Link: https://lore.kernel.org/linux-pci/1537974841-29928-1-git-send-email-bmeng.cn@gmail.com
+Signed-off-by: Bin Meng <bmeng.cn@gmail.com>
+[bhelgaas: changelog]
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Cc: stable@vger.kernel.org	# v3.4+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/ioctl.c |   60 ++++++++++++++++++++++++++++++++++----------------------
- 1 file changed, 37 insertions(+), 23 deletions(-)
+ drivers/pci/quirks.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/fs/ext4/ioctl.c
-+++ b/fs/ext4/ioctl.c
-@@ -344,19 +344,14 @@ static int ext4_ioctl_setproject(struct
- 	if (projid_eq(kprojid, EXT4_I(inode)->i_projid))
- 		return 0;
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -3163,7 +3163,11 @@ static void disable_igfx_irq(struct pci_
  
--	err = mnt_want_write_file(filp);
--	if (err)
--		return err;
--
- 	err = -EPERM;
--	inode_lock(inode);
- 	/* Is it quota file? Do not allow user to mess with it */
- 	if (ext4_is_quota_file(inode))
--		goto out_unlock;
-+		return err;
- 
- 	err = ext4_get_inode_loc(inode, &iloc);
- 	if (err)
--		goto out_unlock;
-+		return err;
- 
- 	raw_inode = ext4_raw_inode(&iloc);
- 	if (!EXT4_FITS_IN_INODE(raw_inode, ei, i_projid)) {
-@@ -364,7 +359,7 @@ static int ext4_ioctl_setproject(struct
- 					      EXT4_SB(sb)->s_want_extra_isize,
- 					      &iloc);
- 		if (err)
--			goto out_unlock;
-+			return err;
- 	} else {
- 		brelse(iloc.bh);
- 	}
-@@ -374,10 +369,8 @@ static int ext4_ioctl_setproject(struct
- 	handle = ext4_journal_start(inode, EXT4_HT_QUOTA,
- 		EXT4_QUOTA_INIT_BLOCKS(sb) +
- 		EXT4_QUOTA_DEL_BLOCKS(sb) + 3);
--	if (IS_ERR(handle)) {
--		err = PTR_ERR(handle);
--		goto out_unlock;
--	}
-+	if (IS_ERR(handle))
-+		return PTR_ERR(handle);
- 
- 	err = ext4_reserve_inode_write(handle, inode, &iloc);
- 	if (err)
-@@ -405,9 +398,6 @@ out_dirty:
- 		err = rc;
- out_stop:
- 	ext4_journal_stop(handle);
--out_unlock:
--	inode_unlock(inode);
--	mnt_drop_write_file(filp);
- 	return err;
+ 	pci_iounmap(dev, regs);
  }
- #else
-@@ -592,6 +582,30 @@ static int ext4_ioc_getfsmap(struct supe
- 	return 0;
- }
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0042, disable_igfx_irq);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0046, disable_igfx_irq);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x004a, disable_igfx_irq);
+ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0102, disable_igfx_irq);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0106, disable_igfx_irq);
+ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x010a, disable_igfx_irq);
+ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0152, disable_igfx_irq);
  
-+static int ext4_ioctl_check_project(struct inode *inode, struct fsxattr *fa)
-+{
-+	/*
-+	 * Project Quota ID state is only allowed to change from within the init
-+	 * namespace. Enforce that restriction only if we are trying to change
-+	 * the quota ID state. Everything else is allowed in user namespaces.
-+	 */
-+	if (current_user_ns() == &init_user_ns)
-+		return 0;
-+
-+	if (__kprojid_val(EXT4_I(inode)->i_projid) != fa->fsx_projid)
-+		return -EINVAL;
-+
-+	if (ext4_test_inode_flag(inode, EXT4_INODE_PROJINHERIT)) {
-+		if (!(fa->fsx_xflags & FS_XFLAG_PROJINHERIT))
-+			return -EINVAL;
-+	} else {
-+		if (fa->fsx_xflags & FS_XFLAG_PROJINHERIT)
-+			return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
- long ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- {
- 	struct inode *inode = file_inode(filp);
-@@ -1029,19 +1043,19 @@ resizefs_out:
- 			return err;
- 
- 		inode_lock(inode);
-+		err = ext4_ioctl_check_project(inode, &fa);
-+		if (err)
-+			goto out;
- 		flags = (ei->i_flags & ~EXT4_FL_XFLAG_VISIBLE) |
- 			 (flags & EXT4_FL_XFLAG_VISIBLE);
- 		err = ext4_ioctl_setflags(inode, flags);
--		inode_unlock(inode);
--		mnt_drop_write_file(filp);
- 		if (err)
--			return err;
--
-+			goto out;
- 		err = ext4_ioctl_setproject(filp, fa.fsx_projid);
--		if (err)
--			return err;
--
--		return 0;
-+out:
-+		inode_unlock(inode);
-+		mnt_drop_write_file(filp);
-+		return err;
- 	}
- 	case EXT4_IOC_SHUTDOWN:
- 		return ext4_shutdown(sb, arg);
 
 
