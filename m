@@ -6,44 +6,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA0C0C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:53:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC9A0C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:53:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AABD20866
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:53:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 797F720839
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:53:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cqPtF02K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AABD20866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oLieONoO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 797F720839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733062AbeKLJn5 (ORCPT
+        id S1733002AbeKLJoR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:43:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37238 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:44:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37302 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732735AbeKLISZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:18:25 -0500
+        id S1732756AbeKLISY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:18:24 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8320223AE;
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F5EE21527;
         Sun, 11 Nov 2018 22:28:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975309;
-        bh=f7nAIc5YxZVXJ7ePblpSCgs21C84Iv8kyHsL5sm/OpA=;
+        s=default; t=1541975308;
+        bh=ecwUhoW/3eORpou8QEtFXAE4/OQjKY4PaNI9YRLouFE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cqPtF02K1lvKCwgc/dCuV22+Ljos+2WVk9lHdUfMTPxlhN8K2o9CRqDttK8O11opE
-         XuuOJx35nPymuzzBd9MQwTkOU0xwOSwCG9oFJojOf4oZ3eBLsrIBIEy7TfHQWW8o4T
-         rFKf68pYoKrx6sFO0ieXVrQoYOXtDN3f3GmWyUyQ=
+        b=oLieONoOQxGDG44wzh4nJbQ3+yEhffWCRnwuGX3rb+55C5HQ0n6NcNYDlYWZ9ZFP6
+         xQGf41KWoHSd3r8kiFp+m72Rb6hGHnsA/Xk7HetafSKGX64ADf8Zsurics93HnNFvm
+         zll9kHyqm+rhM9ldyDrQS0rlpzcTADSDcUIxJlQ4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Subject: [PATCH 4.19 250/361] ima: fix showing large violations or runtime_measurements_count
-Date:   Sun, 11 Nov 2018 14:19:57 -0800
-Message-Id: <20181111221653.115074660@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.19 280/361] powerpc64/module elfv1: Set opd addresses after module relocation
+Date:   Sun, 11 Nov 2018 14:20:27 -0800
+Message-Id: <20181111221655.792925529@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -61,41 +62,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
 
-commit 1e4c8dafbb6bf72fb5eca035b861e39c5896c2b7 upstream.
+commit 59fe7eaf3598a89cbcd72e645b1d08afd76f7b29 upstream.
 
-The 12 character temporary buffer is not necessarily long enough to hold
-a 'long' value.  Increase it.
+module_frob_arch_sections() is called before the module is moved to its
+final location. The function descriptor section addresses we are setting
+here are thus invalid. Fix this by processing opd section during
+module_finalize()
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+Fixes: 5633e85b2c313 ("powerpc64: Add .opd based function descriptor dereference")
+Cc: stable@vger.kernel.org # v4.16
+Signed-off-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- security/integrity/ima/ima_fs.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/powerpc/kernel/module.c    |    8 ++++++++
+ arch/powerpc/kernel/module_64.c |    5 -----
+ 2 files changed, 8 insertions(+), 5 deletions(-)
 
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -42,14 +42,14 @@ static int __init default_canonical_fmt_
- __setup("ima_canonical_fmt", default_canonical_fmt_setup);
+--- a/arch/powerpc/kernel/module.c
++++ b/arch/powerpc/kernel/module.c
+@@ -74,6 +74,14 @@ int module_finalize(const Elf_Ehdr *hdr,
+ 				  (void *)sect->sh_addr + sect->sh_size);
+ #endif /* CONFIG_PPC64 */
  
- static int valid_policy = 1;
--#define TMPBUFLEN 12
++#ifdef PPC64_ELF_ABI_v1
++	sect = find_section(hdr, sechdrs, ".opd");
++	if (sect != NULL) {
++		me->arch.start_opd = sect->sh_addr;
++		me->arch.end_opd = sect->sh_addr + sect->sh_size;
++	}
++#endif /* PPC64_ELF_ABI_v1 */
 +
- static ssize_t ima_show_htable_value(char __user *buf, size_t count,
- 				     loff_t *ppos, atomic_long_t *val)
- {
--	char tmpbuf[TMPBUFLEN];
-+	char tmpbuf[32];	/* greater than largest 'long' string value */
- 	ssize_t len;
+ #ifdef CONFIG_PPC_BARRIER_NOSPEC
+ 	sect = find_section(hdr, sechdrs, "__spec_barrier_fixup");
+ 	if (sect != NULL)
+--- a/arch/powerpc/kernel/module_64.c
++++ b/arch/powerpc/kernel/module_64.c
+@@ -360,11 +360,6 @@ int module_frob_arch_sections(Elf64_Ehdr
+ 		else if (strcmp(secstrings+sechdrs[i].sh_name,"__versions")==0)
+ 			dedotify_versions((void *)hdr + sechdrs[i].sh_offset,
+ 					  sechdrs[i].sh_size);
+-		else if (!strcmp(secstrings + sechdrs[i].sh_name, ".opd")) {
+-			me->arch.start_opd = sechdrs[i].sh_addr;
+-			me->arch.end_opd = sechdrs[i].sh_addr +
+-					   sechdrs[i].sh_size;
+-		}
  
--	len = scnprintf(tmpbuf, TMPBUFLEN, "%li\n", atomic_long_read(val));
-+	len = scnprintf(tmpbuf, sizeof(tmpbuf), "%li\n", atomic_long_read(val));
- 	return simple_read_from_buffer(buf, count, ppos, tmpbuf, len);
- }
- 
+ 		/* We don't handle .init for the moment: rename to _init */
+ 		while ((p = strstr(secstrings + sechdrs[i].sh_name, ".init")))
 
 
