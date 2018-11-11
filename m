@@ -4,47 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21EE0C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:28:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBFADC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:28:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF11820869
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:28:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5AA02084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:28:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rbl0s2gY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF11820869
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ymt1k9jf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5AA02084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388988AbeKLJSv (ORCPT
+        id S2388806AbeKLIUb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:18:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45304 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:20:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388749AbeKLIUc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:20:32 -0500
+        id S2388712AbeKLIU1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:27 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F08462154B;
-        Sun, 11 Nov 2018 22:30:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 85C422175B;
+        Sun, 11 Nov 2018 22:30:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975436;
-        bh=DrNGBq4L0yUyP1zSJB2uWHPh6m2mAdZtOjwjq51NWNc=;
+        s=default; t=1541975430;
+        bh=F6TsBR9WP2s9Zx1r4LXY/R1vUIWTJHk7GCF4YW2ek8Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Rbl0s2gYkVWUbdqQB0arvbvwrsPWDfSKxkiyhq/NOdbx4wdHDdrMOpSc+1Y2KcRf5
-         FHY8V0Eb2Zmngn23ZJe6PY8qHlwtxCLIDnbWCpmmZ30mzZ2u9TxvxwOu0uT8ui9Nkl
-         /ES6SH4MBVIhfEjP0G9c3Wp+JkPoCyFRz0aENWOw=
+        b=Ymt1k9jftqN7D0kVBZvyFTe1o0qQQamnVPCg+NJaU2pvafENmz4w6vhGkT6WPb1Vi
+         guwcPuMxF3YB+sQiEEfSVD0NnvN7nFDokyyrqsgVtsSH4/GiXCdMwPvI9QtcUOoke6
+         6ib8bmjz/i3djU8ibU2+mjathmBVE7xUbZtMFzCc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
-        Mathieu Malaterre <malat@debian.org>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 184/350] dmaengine: dma-jz4780: Return error if not probed from DT
-Date:   Sun, 11 Nov 2018 14:20:48 -0800
-Message-Id: <20181111221715.728680625@linuxfoundation.org>
+        stable@vger.kernel.org, Loic Poulain <loic.poulain@linaro.org>,
+        Peter Chen <peter.chen@nxp.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.18 172/350] usb: chipidea: Prevent unbalanced IRQ disable
+Date:   Sun, 11 Nov 2018 14:20:36 -0800
+Message-Id: <20181111221715.231609412@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -62,36 +63,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paul Cercueil <paul@crapouillou.net>
+From: Loic Poulain <loic.poulain@linaro.org>
 
-[ Upstream commit 54f919a04cf221bc1601d1193682d4379dacacbd ]
+[ Upstream commit 8b97d73c4d72a2abf58f8e49062a7ee1e5f1334e ]
 
-The driver calls clk_get() with the clock name set to NULL, which means
-that the driver could only work when probed from devicetree. From now
-on, we explicitly require the driver to be probed from devicetree.
+The ChipIdea IRQ is disabled before scheduling the otg work and
+re-enabled on otg work completion. However if the job is already
+scheduled we have to undo the effect of disable_irq int order to
+balance the IRQ disable-depth value.
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Tested-by: Mathieu Malaterre <malat@debian.org>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Fixes: be6b0c1bd0be ("usb: chipidea: using one inline function to cover queue work operations")
+Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
+Signed-off-by: Peter Chen <peter.chen@nxp.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/dma/dma-jz4780.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/usb/chipidea/otg.h |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/dma/dma-jz4780.c
-+++ b/drivers/dma/dma-jz4780.c
-@@ -761,6 +761,11 @@ static int jz4780_dma_probe(struct platf
- 	struct resource *res;
- 	int i, ret;
+--- a/drivers/usb/chipidea/otg.h
++++ b/drivers/usb/chipidea/otg.h
+@@ -17,7 +17,8 @@ void ci_handle_vbus_change(struct ci_hdr
+ static inline void ci_otg_queue_work(struct ci_hdrc *ci)
+ {
+ 	disable_irq_nosync(ci->irq);
+-	queue_work(ci->wq, &ci->work);
++	if (queue_work(ci->wq, &ci->work) == false)
++		enable_irq(ci->irq);
+ }
  
-+	if (!dev->of_node) {
-+		dev_err(dev, "This driver must be probed from devicetree\n");
-+		return -EINVAL;
-+	}
-+
- 	jzdma = devm_kzalloc(dev, sizeof(*jzdma), GFP_KERNEL);
- 	if (!jzdma)
- 		return -ENOMEM;
+ #endif /* __DRIVERS_USB_CHIPIDEA_OTG_H */
 
 
