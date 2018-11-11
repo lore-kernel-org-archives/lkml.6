@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A4D4C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:52:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96504C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:52:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3480220872
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:52:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50E1120872
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:52:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fUEgX5WH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3480220872
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YdGzHIlo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50E1120872
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404085AbeKLIXE (ORCPT
+        id S2391110AbeKLImz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:23:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55548 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:42:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389838AbeKLIXC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:23:02 -0500
+        id S2389875AbeKLIXD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:23:03 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE7712241B;
-        Sun, 11 Nov 2018 22:33:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 47D3F21780;
+        Sun, 11 Nov 2018 22:33:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975585;
-        bh=aPv9tsFmxPjvHI3uccIfA8+NsyDsdnUim0S1WqQnFkU=;
+        s=default; t=1541975586;
+        bh=Th8ZLcHp3w+rgtSGuK5nqQZtKv7Vt5eKaaVhPUokeRc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fUEgX5WHsB8axRHM3wep+X7C+6vuAX2KAsZT3MyiqLO6z8n2PDcIwmDjyY/tTiDtF
-         q1cyeyjkYY1nNPOTDov35PPU2NkaXJRuNdkVDQvMjBcE8W+OWzCtvQL6DrXji/Xzo7
-         h+FPscKY1EbMeiTuFCna4wIlcEujUfpUBUq+/9tU=
+        b=YdGzHIloscvYdH38KMT7hF2tmQDR5ZKs0OaYfZx4sXqrLawMNyELZBeK0tzF/obmw
+         xM97vZnDlfk/wZwY/pjoCg8Cq+SRyHb95qbpNl6mYRmGggTw8nCEWi6slIfi9G9XvI
+         RXxDsxGdcxlsxnwfnntPcdQ4MBQEangjlpxnFREc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.14 186/222] media: em28xx: fix input name for Terratec AV 350
-Date:   Sun, 11 Nov 2018 14:24:43 -0800
-Message-Id: <20181111221703.605409179@linuxfoundation.org>
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH 4.14 190/222] rpmsg: smd: fix memory leak on channel create
+Date:   Sun, 11 Nov 2018 14:24:47 -0800
+Message-Id: <20181111221703.929570948@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -61,39 +61,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+From: Colin Ian King <colin.king@canonical.com>
 
-commit 15644bfa195bd166d0a5ed76ae2d587f719c3dac upstream.
+commit 940c620d6af8fca7d115de40f19870fba415efac upstream.
 
-Instead of using a register value, use an AMUX name, as otherwise
-VIDIOC_G_AUDIO would fail.
+Currently a failed allocation of channel->name leads to an
+immediate return without freeing channel. Fix this by setting
+ret to -ENOMEM and jumping to an exit path that kfree's channel.
 
+Detected by CoverityScan, CID#1473692 ("Resource Leak")
+
+Fixes: 53e2822e56c7 ("rpmsg: Introduce Qualcomm SMD backend")
 Cc: stable@vger.kernel.org
-Fixes: 766ed64de554 ("V4L/DVB (11827): Add support for Terratec Grabster AV350")
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/usb/em28xx/em28xx-cards.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/rpmsg/qcom_smd.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/media/usb/em28xx/em28xx-cards.c
-+++ b/drivers/media/usb/em28xx/em28xx-cards.c
-@@ -2112,13 +2112,13 @@ struct em28xx_board em28xx_boards[] = {
- 		.input           = { {
- 			.type     = EM28XX_VMUX_COMPOSITE,
- 			.vmux     = TVP5150_COMPOSITE1,
--			.amux     = EM28XX_AUDIO_SRC_LINE,
-+			.amux     = EM28XX_AMUX_LINE_IN,
- 			.gpio     = terratec_av350_unmute_gpio,
+--- a/drivers/rpmsg/qcom_smd.c
++++ b/drivers/rpmsg/qcom_smd.c
+@@ -1049,8 +1049,10 @@ static struct qcom_smd_channel *qcom_smd
  
- 		}, {
- 			.type     = EM28XX_VMUX_SVIDEO,
- 			.vmux     = TVP5150_SVIDEO,
--			.amux     = EM28XX_AUDIO_SRC_LINE,
-+			.amux     = EM28XX_AMUX_LINE_IN,
- 			.gpio     = terratec_av350_unmute_gpio,
- 		} },
- 	},
+ 	channel->edge = edge;
+ 	channel->name = kstrdup(name, GFP_KERNEL);
+-	if (!channel->name)
+-		return ERR_PTR(-ENOMEM);
++	if (!channel->name) {
++		ret = -ENOMEM;
++		goto free_channel;
++	}
+ 
+ 	mutex_init(&channel->tx_lock);
+ 	spin_lock_init(&channel->recv_lock);
+@@ -1099,6 +1101,7 @@ static struct qcom_smd_channel *qcom_smd
+ 
+ free_name_and_channel:
+ 	kfree(channel->name);
++free_channel:
+ 	kfree(channel);
+ 
+ 	return ERR_PTR(ret);
 
 
