@@ -2,103 +2,133 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19D9EC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 12:02:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C97BC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 12:03:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF98C20871
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 12:02:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF98C20871
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
+	by mail.kernel.org (Postfix) with ESMTP id 6F4FC20871
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 12:03:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F4FC20871
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727803AbeKKVum (ORCPT
+        id S1727963AbeKKVvc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 16:50:42 -0500
-Received: from mout.kundenserver.de ([212.227.17.13]:56911 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727492AbeKKVum (ORCPT
+        Sun, 11 Nov 2018 16:51:32 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:44784 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727492AbeKKVvc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 16:50:42 -0500
-Received: from localhost.localdomain ([37.4.249.153]) by
- mrelayeu.kundenserver.de (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis)
- id 1N5W0q-1fPBCS2EFm-016xot; Sun, 11 Nov 2018 13:01:38 +0100
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-To:     Eric Anholt <eric@anholt.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-rpi-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH] hwmon: rpi: Fix initial notify
-Date:   Sun, 11 Nov 2018 13:01:11 +0100
-Message-Id: <1541937671-26385-1-git-send-email-stefan.wahren@i2se.com>
-X-Mailer: git-send-email 2.7.4
+        Sun, 11 Nov 2018 16:51:32 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id E2D6E806CF; Sun, 11 Nov 2018 13:03:03 +0100 (CET)
+Date:   Sun, 11 Nov 2018 13:02:34 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, robh@kernel.org,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Daniel Mack <daniel@zonque.org>, Dan Murphy <dmurphy@ti.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Oleh Kravchenko <oleg@kaa.org.ua>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Simon Shields <simon@lineageos.org>,
+        Xiaotong Lu <xiaotong.lu@spreadtrum.com>
+Subject: Re: [PATCH 02/24] leds: core: Add support for composing LED class
+ device names
+Message-ID: <20181111120234.GA28794@amd>
+References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
+ <1541542052-10081-3-git-send-email-jacek.anaszewski@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:HEVIdEl0kizgBdNf0M5wstvyz7s6HdToU1mddQPsbGgHjkiBWSZ
- SKazwNvgO6cbViYoUW17vGwM+wtH3UvfMleX6l3XXOJUwGoJIZP7C9iMFyqzOhl1AlaWRQ+
- nGjpMnsO6ZoiSjYhxMPB911ALciozsvmmLqnauqOofp2A/Y1/Tcfzfrv2IhQJICMhDSNaco
- akAN1etmFdi29Cdupykhw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:tzezqudV+18=:I+avf+CPQCA+RPEHvwv55R
- iJN07WrrHGCkxDyTa1k+J8anYCg6oDlByPsB4O51GNXOi1XH2wPejZd6QJflDwV0IjWsd1mfU
- xmQwbUh5YsPt6czgCadtNhv89tCiiHGxGyLiNjZpXICCRYxcY9szc+T27wAi6tAeQsahSk7Zc
- P7+RqK/K3qtckuZiInGDWLzDvbMkItVWmxB/86m6NH4QbXCqJo/m0F6yZWCq1t/ocW/NmK9nH
- 3sFSBLGNA+DGHqRLq1Tp+a+Xf1XuQlWwVYusgY3z9tNBdbTG9fQhBwac+oBJ+ZnF8S5WtdcSk
- T31iv44dd2DkPTXqRuzSBWKnMQIZbabtWOYI9paJgywle7kdbJJlWx/kHONkEeKdjM7+MCUVn
- 9iAWGJiu9tZ+i+FxYqUlLGOlZZW/sJiXzizD+WQYXdDiNh9lU2926j9Ydc+vF5fF1DzwaLsTf
- 7cvqwTu8gBFVOffZhsHT5+loV6D5WvJjY3JUPmhraz4ioeagBG6+s34gN3LtPYnUYNJO/Cd3Z
- CLnkDRAoKUNCeqhqsifSzcy49XV5h8YPrkSBWWBek7gAzU/DVI1mXLgcESMoe77NdlLeCqLUm
- 0W+phul1X1/9/WPqPkr6j9E7MjgIbo7XcPtmy+treFmpnZWz5766NVHRJ+RPCN9RVFocCcILy
- +n2ryGG9Llo5cGCbUU+eSWsigfVGTGmQzvatSRpt262UKg3EyZrqtedY+GLnKMMvAqra/GKvs
- 0SObqg+2lnFLxgOSq/dM7hz7QuKk2JFmfuuXu0T+aMTpc9ZZx90sE6kMjBz8cF+hBFutqehUk
- 10cHzngQFaS21pN/PQ2gpU1ZlGFfqQ3gEjQz8zF7KGhTS5FiYY=
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="x+6KMIRAuhnl3hBn"
+Content-Disposition: inline
+In-Reply-To: <1541542052-10081-3-git-send-email-jacek.anaszewski@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In case an under-voltage happens before probing the driver wont
-write the critical warning into the kernel log. So don't init
-of last_throttled during probe and fix this issue.
 
-Fixes: 74d1e007915f ("hwmon: Add support for RPi voltage sensor")
-Reported-by: "Noralf Trønnes" <noralf@tronnes.org>
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
----
- drivers/hwmon/raspberrypi-hwmon.c | 6 ------
- 1 file changed, 6 deletions(-)
+--x+6KMIRAuhnl3hBn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/hwmon/raspberrypi-hwmon.c b/drivers/hwmon/raspberrypi-hwmon.c
-index be5ba46..0d04572 100644
---- a/drivers/hwmon/raspberrypi-hwmon.c
-+++ b/drivers/hwmon/raspberrypi-hwmon.c
-@@ -115,7 +115,6 @@ static int rpi_hwmon_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct rpi_hwmon_data *data;
--	int ret;
- 
- 	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
- 	if (!data)
-@@ -124,11 +123,6 @@ static int rpi_hwmon_probe(struct platform_device *pdev)
- 	/* Parent driver assure that firmware is correct */
- 	data->fw = dev_get_drvdata(dev->parent);
- 
--	/* Init throttled */
--	ret = rpi_firmware_property(data->fw, RPI_FIRMWARE_GET_THROTTLED,
--				    &data->last_throttled,
--				    sizeof(data->last_throttled));
--
- 	data->hwmon_dev = devm_hwmon_device_register_with_info(dev, "rpi_volt",
- 							       data,
- 							       &rpi_chip_info,
--- 
-2.7.4
+Hi!
 
+> Add public led_compose_name() API for composing LED class device
+> name basing on fwnode_handle data. The function composes device name
+> according to either a new <color:function> pattern or the legacy
+> <devicename:color:function> pattern. The decision on using the
+> particular pattern is made basing on whether fwnode contains new
+> "function" and "color" properties, or the legacy "label" proeprty.
+>=20
+> Backwards compatibility with in-driver hard-coded LED class device
+> names is assured thanks to the default_desc argument.
+>=20
+> In case none of the aformentioned properties was found, then, for OF
+> nodes, the node name is adopted for LED class device name.
+>=20
+
+> diff --git a/Documentation/leds/leds-class.txt b/Documentation/leds/leds-=
+class.txt
+> index 836cb16..e9009c4 100644
+> --- a/Documentation/leds/leds-class.txt
+> +++ b/Documentation/leds/leds-class.txt
+> @@ -43,7 +43,7 @@ LED Device Naming
+> =20
+>  Is currently of the form:
+> =20
+> -"devicename:colour:function"
+> +"colour:function"
+> =20
+
+I don't think we want to do it in all cases.
+
+So, on my cellphone seeing lp5523:green:led is indeed not useful.
+
+But on notebook with usb keyboard attached, you need to keep the
+devicename to be able to distinguish capslock on internal keyboard and
+capslock on first USB keyboard and capslock on second USB keyboard.
+
+Taking look at the list of functions, here's stuff like "hdd" and
+"hdderr". I assume the first means hdd activity... If we can do it, it
+would be nicest to have "sda:green:activity" and maybe
+"sda:red:error". For a raid array with 8 drives...
+
+For example I have a router running linux. It has 4 lan ports, with
+correspondings LED, and an wan led.
+
+Having "green:lan1" to "green:lan4" and "green:wan" plus
+"red:wanerror" would work, but I'd really preffer
+"eth0:green:link"... "adsl0:green:link", "adsl0:red:error".
+
+There are now phones with flashes on both main and selfie
+cameras. Again, knowing which device is which is important. As is
+knowing which display is controlled by particular backlight.
+
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--x+6KMIRAuhnl3hBn
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlvoGlkACgkQMOfwapXb+vICOQCdFvVBqzp2X/0dVIEOHUK+NFmw
+4BkAoK5b2Pmc8pjkO8kfELLQLjeuythv
+=t3w5
+-----END PGP SIGNATURE-----
+
+--x+6KMIRAuhnl3hBn--
