@@ -4,48 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD451C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:59:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D779C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:59:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4CBD20839
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:59:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 253A020839
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:59:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MNuVL8yU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4CBD20839
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lrb2+SjI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 253A020839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732759AbeKLJtg (ORCPT
+        id S1732393AbeKLISF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:49:36 -0500
+        Mon, 12 Nov 2018 03:18:05 -0500
 Received: from mail.kernel.org ([198.145.29.99]:35336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732386AbeKLISF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:18:05 -0500
+        id S1732375AbeKLISE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:18:04 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C4C8422506;
-        Sun, 11 Nov 2018 22:28:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B60F1223D0;
+        Sun, 11 Nov 2018 22:28:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975289;
-        bh=9z/cI48I7hIqSuPyEVpd3EsR9sU+oFpDUlsrz6BMzvw=;
+        s=default; t=1541975288;
+        bh=vXVjGoar1jJGjJ5wVEmOd00Dqxu2arR3UStjlA9+UHQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MNuVL8yUW+NQhqSuMMzEwqUQsjWHAKq0fI8lo8slYvlUaRGTEdtDOHbPAkN7eey2E
-         DQ8Q7ZjQ+YFGf3IMJbxBpeUGwDIxQBR/04vt/owJCpKm95gsAaPNd4pfWVEuEnMg+L
-         kcJaa5U0XxYirJoYxtaZ2odN7CCfkezPh6zi31bk=
+        b=lrb2+SjIiT9/KaFOWBFNOuA15Kj97Y0dhc4K7ohfMk23O4vqHb/zUTui0IY5Yv+Kf
+         v4AEI08qkrZrdtNzXilU0mEbMCm7ur/VyPdTuvhH8ev0XOevzu/UkuO/ZEPd95gPl3
+         82LZz7MuwijfroBKGHmKqLJ4cfpGr4RC5xBPtj+4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wang Shilong <wshilong@ddn.com>,
-        Theodore Tso <tytso@mit.edu>,
-        Andreas Dilger <adilger@dilger.ca>, stable@kernel.org
-Subject: [PATCH 4.19 228/361] ext4: fix setattr project check in fssetxattr ioctl
-Date:   Sun, 11 Nov 2018 14:19:35 -0800
-Message-Id: <20181111221651.272819251@linuxfoundation.org>
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
+        stable@kernel.org,
+        syzbot+e81ccd4744c6c4f71354@syzkaller.appspotmail.com
+Subject: [PATCH 4.19 226/361] ext4: fix EXT4_IOC_SWAP_BOOT
+Date:   Sun, 11 Nov 2018 14:19:33 -0800
+Message-Id: <20181111221651.118847765@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -63,156 +62,126 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wang Shilong <wangshilong1991@gmail.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit dc7ac6c4cae3b58724c2f1e21a7c05ce19ecd5a8 upstream.
+commit 18aded17492088962ef43f00825179598b3e8c58 upstream.
 
-Currently, project quota could be changed by fssetxattr
-ioctl, and existed permission check inode_owner_or_capable()
-is obviously not enough, just think that common users could
-change project id of file, that could make users to
-break project quota easily.
+The code EXT4_IOC_SWAP_BOOT ioctl hasn't been updated in a while, and
+it's a bit broken with respect to more modern ext4 kernels, especially
+metadata checksums.
 
-This patch try to follow same regular of xfs project
-quota:
+Other problems fixed with this commit:
 
-"Project Quota ID state is only allowed to change from
-within the init namespace. Enforce that restriction only
-if we are trying to change the quota ID state.
-Everything else is allowed in user namespaces."
+* Don't allow installing a DAX, swap file, or an encrypted file as a
+  boot loader.
 
-Besides that, check and set project id'state should
-be an atomic operation, protect whole operation with
-inode lock, ext4_ioctl_setproject() is only used for
-ioctl EXT4_IOC_FSSETXATTR, we have held mnt_want_write_file()
-before ext4_ioctl_setflags(), and ext4_ioctl_setproject()
-is called after ext4_ioctl_setflags(), we could share
-codes, so remove it inside ext4_ioctl_setproject().
+* Respect the immutable and append-only flags.
 
-Signed-off-by: Wang Shilong <wshilong@ddn.com>
+* Wait until any DIO operations are finished *before* calling
+  truncate_inode_pages().
+
+* Don't swap inode->i_flags, since these flags have nothing to do with
+  the inode blocks --- and it will give the IMA/audit code heartburn
+  when the inode is evicted.
+
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reviewed-by: Andreas Dilger <adilger@dilger.ca>
 Cc: stable@kernel.org
+Reported-by: syzbot+e81ccd4744c6c4f71354@syzkaller.appspotmail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/ioctl.c |   60 ++++++++++++++++++++++++++++++++++----------------------
- 1 file changed, 37 insertions(+), 23 deletions(-)
+ fs/ext4/ioctl.c |   33 +++++++++++++++++++++++++++------
+ 1 file changed, 27 insertions(+), 6 deletions(-)
 
 --- a/fs/ext4/ioctl.c
 +++ b/fs/ext4/ioctl.c
-@@ -360,19 +360,14 @@ static int ext4_ioctl_setproject(struct
- 	if (projid_eq(kprojid, EXT4_I(inode)->i_projid))
- 		return 0;
+@@ -67,7 +67,6 @@ static void swap_inode_data(struct inode
+ 	ei1 = EXT4_I(inode1);
+ 	ei2 = EXT4_I(inode2);
  
--	err = mnt_want_write_file(filp);
--	if (err)
--		return err;
--
- 	err = -EPERM;
--	inode_lock(inode);
- 	/* Is it quota file? Do not allow user to mess with it */
- 	if (ext4_is_quota_file(inode))
--		goto out_unlock;
-+		return err;
- 
- 	err = ext4_get_inode_loc(inode, &iloc);
- 	if (err)
--		goto out_unlock;
-+		return err;
- 
- 	raw_inode = ext4_raw_inode(&iloc);
- 	if (!EXT4_FITS_IN_INODE(raw_inode, ei, i_projid)) {
-@@ -380,7 +375,7 @@ static int ext4_ioctl_setproject(struct
- 					      EXT4_SB(sb)->s_want_extra_isize,
- 					      &iloc);
- 		if (err)
--			goto out_unlock;
-+			return err;
- 	} else {
- 		brelse(iloc.bh);
- 	}
-@@ -390,10 +385,8 @@ static int ext4_ioctl_setproject(struct
- 	handle = ext4_journal_start(inode, EXT4_HT_QUOTA,
- 		EXT4_QUOTA_INIT_BLOCKS(sb) +
- 		EXT4_QUOTA_DEL_BLOCKS(sb) + 3);
--	if (IS_ERR(handle)) {
--		err = PTR_ERR(handle);
--		goto out_unlock;
--	}
-+	if (IS_ERR(handle))
-+		return PTR_ERR(handle);
- 
- 	err = ext4_reserve_inode_write(handle, inode, &iloc);
- 	if (err)
-@@ -421,9 +414,6 @@ out_dirty:
- 		err = rc;
- out_stop:
- 	ext4_journal_stop(handle);
--out_unlock:
--	inode_unlock(inode);
--	mnt_drop_write_file(filp);
- 	return err;
- }
- #else
-@@ -647,6 +637,30 @@ group_add_out:
- 	return err;
+-	swap(inode1->i_flags, inode2->i_flags);
+ 	swap(inode1->i_version, inode2->i_version);
+ 	swap(inode1->i_blocks, inode2->i_blocks);
+ 	swap(inode1->i_bytes, inode2->i_bytes);
+@@ -85,6 +84,21 @@ static void swap_inode_data(struct inode
+ 	i_size_write(inode2, isize);
  }
  
-+static int ext4_ioctl_check_project(struct inode *inode, struct fsxattr *fa)
++static void reset_inode_seed(struct inode *inode)
 +{
-+	/*
-+	 * Project Quota ID state is only allowed to change from within the init
-+	 * namespace. Enforce that restriction only if we are trying to change
-+	 * the quota ID state. Everything else is allowed in user namespaces.
-+	 */
-+	if (current_user_ns() == &init_user_ns)
-+		return 0;
++	struct ext4_inode_info *ei = EXT4_I(inode);
++	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
++	__le32 inum = cpu_to_le32(inode->i_ino);
++	__le32 gen = cpu_to_le32(inode->i_generation);
++	__u32 csum;
 +
-+	if (__kprojid_val(EXT4_I(inode)->i_projid) != fa->fsx_projid)
-+		return -EINVAL;
++	if (!ext4_has_metadata_csum(inode->i_sb))
++		return;
 +
-+	if (ext4_test_inode_flag(inode, EXT4_INODE_PROJINHERIT)) {
-+		if (!(fa->fsx_xflags & FS_XFLAG_PROJINHERIT))
-+			return -EINVAL;
-+	} else {
-+		if (fa->fsx_xflags & FS_XFLAG_PROJINHERIT)
-+			return -EINVAL;
-+	}
-+
-+	return 0;
++	csum = ext4_chksum(sbi, sbi->s_csum_seed, (__u8 *)&inum, sizeof(inum));
++	ei->i_csum_seed = ext4_chksum(sbi, csum, (__u8 *)&gen, sizeof(gen));
 +}
 +
- long ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- {
- 	struct inode *inode = file_inode(filp);
-@@ -1046,19 +1060,19 @@ resizefs_out:
- 			return err;
+ /**
+  * Swap the information from the given @inode and the inode
+  * EXT4_BOOT_LOADER_INO. It will basically swap i_data and all other
+@@ -102,10 +116,13 @@ static long swap_inode_boot_loader(struc
+ 	struct inode *inode_bl;
+ 	struct ext4_inode_info *ei_bl;
  
- 		inode_lock(inode);
-+		err = ext4_ioctl_check_project(inode, &fa);
-+		if (err)
-+			goto out;
- 		flags = (ei->i_flags & ~EXT4_FL_XFLAG_VISIBLE) |
- 			 (flags & EXT4_FL_XFLAG_VISIBLE);
- 		err = ext4_ioctl_setflags(inode, flags);
--		inode_unlock(inode);
--		mnt_drop_write_file(filp);
- 		if (err)
--			return err;
+-	if (inode->i_nlink != 1 || !S_ISREG(inode->i_mode))
++	if (inode->i_nlink != 1 || !S_ISREG(inode->i_mode) ||
++	    IS_SWAPFILE(inode) || IS_ENCRYPTED(inode) ||
++	    ext4_has_inline_data(inode))
+ 		return -EINVAL;
+ 
+-	if (!inode_owner_or_capable(inode) || !capable(CAP_SYS_ADMIN))
++	if (IS_RDONLY(inode) || IS_APPEND(inode) || IS_IMMUTABLE(inode) ||
++	    !inode_owner_or_capable(inode) || !capable(CAP_SYS_ADMIN))
+ 		return -EPERM;
+ 
+ 	inode_bl = ext4_iget(sb, EXT4_BOOT_LOADER_INO);
+@@ -120,13 +137,13 @@ static long swap_inode_boot_loader(struc
+ 	 * that only 1 swap_inode_boot_loader is running. */
+ 	lock_two_nondirectories(inode, inode_bl);
+ 
+-	truncate_inode_pages(&inode->i_data, 0);
+-	truncate_inode_pages(&inode_bl->i_data, 0);
 -
-+			goto out;
- 		err = ext4_ioctl_setproject(filp, fa.fsx_projid);
--		if (err)
--			return err;
--
--		return 0;
-+out:
-+		inode_unlock(inode);
-+		mnt_drop_write_file(filp);
-+		return err;
+ 	/* Wait for all existing dio workers */
+ 	inode_dio_wait(inode);
+ 	inode_dio_wait(inode_bl);
+ 
++	truncate_inode_pages(&inode->i_data, 0);
++	truncate_inode_pages(&inode_bl->i_data, 0);
++
+ 	handle = ext4_journal_start(inode_bl, EXT4_HT_MOVE_EXTENTS, 2);
+ 	if (IS_ERR(handle)) {
+ 		err = -EINVAL;
+@@ -159,6 +176,8 @@ static long swap_inode_boot_loader(struc
+ 
+ 	inode->i_generation = prandom_u32();
+ 	inode_bl->i_generation = prandom_u32();
++	reset_inode_seed(inode);
++	reset_inode_seed(inode_bl);
+ 
+ 	ext4_discard_preallocations(inode);
+ 
+@@ -169,6 +188,7 @@ static long swap_inode_boot_loader(struc
+ 			inode->i_ino, err);
+ 		/* Revert all changes: */
+ 		swap_inode_data(inode, inode_bl);
++		ext4_mark_inode_dirty(handle, inode);
+ 	} else {
+ 		err = ext4_mark_inode_dirty(handle, inode_bl);
+ 		if (err < 0) {
+@@ -178,6 +198,7 @@ static long swap_inode_boot_loader(struc
+ 			/* Revert all changes: */
+ 			swap_inode_data(inode, inode_bl);
+ 			ext4_mark_inode_dirty(handle, inode);
++			ext4_mark_inode_dirty(handle, inode_bl);
+ 		}
  	}
- 	case EXT4_IOC_SHUTDOWN:
- 		return ext4_shutdown(sb, arg);
+ 	ext4_journal_stop(handle);
 
 
