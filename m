@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77CFFC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:27:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95AF0C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:27:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FF612084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:27:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F3BA20869
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:27:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NN8WMist"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FF612084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oV7gv3lZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F3BA20869
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389028AbeKLJRb (ORCPT
+        id S2389125AbeKLJRj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:17:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45926 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:17:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388895AbeKLIUi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2388885AbeKLIUi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:20:38 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 267BF21582;
-        Sun, 11 Nov 2018 22:30:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D85521707;
+        Sun, 11 Nov 2018 22:30:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975441;
-        bh=ZCMCq0ouSksf9FcAEvt7HuaSPEUZDdRANM4y2xTMUow=;
+        s=default; t=1541975440;
+        bh=8TIHLaJIR8kL9rT9RsNbi3Kreb+nZVmkx/anw6ZZ/G8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NN8WMist7FS5nMuXBlRbA/AXbnxa0/mvaz4i3190pTNvaXhrYlugON2Kc8DCt0S1c
-         iKN+yJwkpNO6uJQuzUvlLq6Qw+24nNW7AzdtuBH9c99KHVJcNP+BIQNu/hff05zMnj
-         B2FM6AOR9QFXI3TuA/TS4VoSGdMTVysLeGd9SiZ8=
+        b=oV7gv3lZKHojtki04leChMq7OCZ4CBN5FjQtPi5rt3w4Qp2Eq+QXrscmiRuhN54N5
+         RhXe47Jc4EocRNXhp3YWjwNaoFE4/uimPmZ8IDFaqgdeoW7mbtjQflvkKvRsL7+w7r
+         OBTjkzwAUPk1EqcL/voz5aFX0JIKwC8Usb2ckOb4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joe Jin <joe.jin@oracle.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Christoph Helwig <hch@lst.de>,
-        Dongli Zhang <dongli.zhang@oracle.com>,
-        John Sobecki <john.sobecki@oracle.com>
-Subject: [PATCH 4.18 195/350] xen-swiotlb: use actually allocated size on check physical continuous
-Date:   Sun, 11 Nov 2018 14:20:59 -0800
-Message-Id: <20181111221716.181695265@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 4.18 193/350] ARM: dts: exynos: Convert exynos5250.dtsi to opp-v2 bindings
+Date:   Sun, 11 Nov 2018 14:20:57 -0800
+Message-Id: <20181111221716.099706750@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -66,56 +65,178 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joe Jin <joe.jin@oracle.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-commit 7250f422da0480d8512b756640f131b9b893ccda upstream.
+commit eb9e16d8573e243f8175647f851eb5085dbe97a4 upstream.
 
-xen_swiotlb_{alloc,free}_coherent() allocate/free memory based on the
-order of the pages and not size argument (bytes). This is inconsistent with
-range_straddles_page_boundary and memset which use the 'size' value,
-which may lead to not exchanging memory with Xen (range_straddles_page_boundary()
-returned true). And then the call to xen_swiotlb_free_coherent() would
-actually try to exchange the memory with Xen, leading to the kernel
-hitting an BUG (as the hypercall returned an error).
+Convert Exynos5250 to OPP-v2 bindings. This is a preparation to add proper
+support for suspend operation point, which cannot be marked in opp-v1.
 
-This patch fixes it by making the 'size' variable be of the same size
-as the amount of memory allocated.
-
-CC: stable@vger.kernel.org
-Signed-off-by: Joe Jin <joe.jin@oracle.com>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Christoph Helwig <hch@lst.de>
-Cc: Dongli Zhang <dongli.zhang@oracle.com>
-Cc: John Sobecki <john.sobecki@oracle.com>
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: <stable@vger.kernel.org> # 4.3.x: cd6f55457eb4: ARM: dts: exynos: Remove "cooling-{min|max}-level" for CPU nodes
+Cc: <stable@vger.kernel.org> # 4.3.x: 672f33198bee: arm: dts: exynos: Add missing cooling device properties for CPUs
+Cc: <stable@vger.kernel.org> # 4.3.x
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/xen/swiotlb-xen.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm/boot/dts/exynos5250.dtsi |  130 +++++++++++++++++++++++++-------------
+ 1 file changed, 88 insertions(+), 42 deletions(-)
 
---- a/drivers/xen/swiotlb-xen.c
-+++ b/drivers/xen/swiotlb-xen.c
-@@ -303,6 +303,9 @@ xen_swiotlb_alloc_coherent(struct device
- 	*/
- 	flags &= ~(__GFP_DMA | __GFP_HIGHMEM);
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -54,62 +54,108 @@
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a15";
+ 			reg = <0>;
+-			clock-frequency = <1700000000>;
+ 			clocks = <&clock CLK_ARM_CLK>;
+ 			clock-names = "cpu";
+-			clock-latency = <140000>;
+-
+-			operating-points = <
+-				1700000 1300000
+-				1600000 1250000
+-				1500000 1225000
+-				1400000 1200000
+-				1300000 1150000
+-				1200000 1125000
+-				1100000 1100000
+-				1000000 1075000
+-				 900000 1050000
+-				 800000 1025000
+-				 700000 1012500
+-				 600000 1000000
+-				 500000  975000
+-				 400000  950000
+-				 300000  937500
+-				 200000  925000
+-			>;
++			operating-points-v2 = <&cpu0_opp_table>;
+ 			#cooling-cells = <2>; /* min followed by max */
+ 		};
+ 		cpu@1 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a15";
+ 			reg = <1>;
+-			clock-frequency = <1700000000>;
+ 			clocks = <&clock CLK_ARM_CLK>;
+ 			clock-names = "cpu";
+-			clock-latency = <140000>;
+-
+-			operating-points = <
+-				1700000 1300000
+-				1600000 1250000
+-				1500000 1225000
+-				1400000 1200000
+-				1300000 1150000
+-				1200000 1125000
+-				1100000 1100000
+-				1000000 1075000
+-				 900000 1050000
+-				 800000 1025000
+-				 700000 1012500
+-				 600000 1000000
+-				 500000  975000
+-				 400000  950000
+-				 300000  937500
+-				 200000  925000
+-			>;
++			operating-points-v2 = <&cpu0_opp_table>;
+ 			#cooling-cells = <2>; /* min followed by max */
+ 		};
+ 	};
  
-+	/* Convert the size to actually allocated. */
-+	size = 1UL << (order + XEN_PAGE_SHIFT);
++	cpu0_opp_table: opp_table0 {
++		compatible = "operating-points-v2";
++		opp-shared;
 +
- 	/* On ARM this function returns an ioremap'ped virtual address for
- 	 * which virt_to_phys doesn't return the corresponding physical
- 	 * address. In fact on ARM virt_to_phys only works for kernel direct
-@@ -351,6 +354,9 @@ xen_swiotlb_free_coherent(struct device
- 	 * physical address */
- 	phys = xen_bus_to_phys(dev_addr);
- 
-+	/* Convert the size to actually allocated. */
-+	size = 1UL << (order + XEN_PAGE_SHIFT);
++		opp-200000000 {
++			opp-hz = /bits/ 64 <200000000>;
++			opp-microvolt = <925000>;
++			clock-latency-ns = <140000>;
++		};
++		opp-300000000 {
++			opp-hz = /bits/ 64 <300000000>;
++			opp-microvolt = <937500>;
++			clock-latency-ns = <140000>;
++		};
++		opp-400000000 {
++			opp-hz = /bits/ 64 <400000000>;
++			opp-microvolt = <950000>;
++			clock-latency-ns = <140000>;
++		};
++		opp-500000000 {
++			opp-hz = /bits/ 64 <500000000>;
++			opp-microvolt = <975000>;
++			clock-latency-ns = <140000>;
++		};
++		opp-600000000 {
++			opp-hz = /bits/ 64 <600000000>;
++			opp-microvolt = <1000000>;
++			clock-latency-ns = <140000>;
++		};
++		opp-700000000 {
++			opp-hz = /bits/ 64 <700000000>;
++			opp-microvolt = <1012500>;
++			clock-latency-ns = <140000>;
++		};
++		opp-800000000 {
++			opp-hz = /bits/ 64 <800000000>;
++			opp-microvolt = <1025000>;
++			clock-latency-ns = <140000>;
++		};
++		opp-900000000 {
++			opp-hz = /bits/ 64 <900000000>;
++			opp-microvolt = <1050000>;
++			clock-latency-ns = <140000>;
++		};
++		opp-1000000000 {
++			opp-hz = /bits/ 64 <1000000000>;
++			opp-microvolt = <1075000>;
++			clock-latency-ns = <140000>;
++		};
++		opp-1100000000 {
++			opp-hz = /bits/ 64 <1100000000>;
++			opp-microvolt = <1100000>;
++			clock-latency-ns = <140000>;
++		};
++		opp-1200000000 {
++			opp-hz = /bits/ 64 <1200000000>;
++			opp-microvolt = <1125000>;
++			clock-latency-ns = <140000>;
++		};
++		opp-1300000000 {
++			opp-hz = /bits/ 64 <1300000000>;
++			opp-microvolt = <1150000>;
++			clock-latency-ns = <140000>;
++		};
++		opp-1400000000 {
++			opp-hz = /bits/ 64 <1400000000>;
++			opp-microvolt = <1200000>;
++			clock-latency-ns = <140000>;
++		};
++		opp-1500000000 {
++			opp-hz = /bits/ 64 <1500000000>;
++			opp-microvolt = <1225000>;
++			clock-latency-ns = <140000>;
++		};
++		opp-1600000000 {
++			opp-hz = /bits/ 64 <1600000000>;
++			opp-microvolt = <1250000>;
++			clock-latency-ns = <140000>;
++		};
++		opp-1700000000 {
++			opp-hz = /bits/ 64 <1700000000>;
++			opp-microvolt = <1300000>;
++			clock-latency-ns = <140000>;
++		};
++	};
 +
- 	if (((dev_addr + size - 1 <= dma_mask)) ||
- 	    range_straddles_page_boundary(phys, size))
- 		xen_destroy_contiguous_region(phys, order);
+ 	soc: soc {
+ 		sysram@2020000 {
+ 			compatible = "mmio-sram";
 
 
