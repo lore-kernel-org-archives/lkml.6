@@ -2,100 +2,112 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF730C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 14:34:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65F6BC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 14:43:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD650208A3
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 14:34:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F2AC214DB
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 14:43:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SHelIyTE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD650208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FqzUe5cu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F2AC214DB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728402AbeKLAW4 (ORCPT
+        id S1728483AbeKLAcT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 19:22:56 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:39203 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728186AbeKLAW4 (ORCPT
+        Sun, 11 Nov 2018 19:32:19 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:33038 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728316AbeKLAcT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 19:22:56 -0500
-Received: by mail-pg1-f195.google.com with SMTP id r9-v6so2873010pgv.6;
-        Sun, 11 Nov 2018 06:34:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=VeD3un/q4zgsizWU4ltBR+n7y7PYhqkaZE3ZLZKw1IM=;
-        b=SHelIyTEEdjzt+kmXdyAnBzwGNUOFJ3h4EdMIS43Rlz4TGFeMzNDLOu9CaKR5V3J4f
-         3+/VcbVYtaN/KuWb+ttafMqU6zHsYocFzPXpbV3mZ5tSmY+Bq1ivd86id6l3XMF2P4hj
-         HsPKo9by4jbBgjGZOF0oBNwlsE9MaYNB78SnmvURZ0KYm7KSMob0+259mjrZGYUae1ZH
-         bd5t6XFWoBeFFAtN2DhgkS7DBt8sbzbCuUUufW1j7Nd7SPxIgxRDuvKbX+T2xY9FZPU6
-         I08Gnl3ElZMl+phYojHoalkZMNM2ZRknwUADj0RNoBLwgN0YbfOiIAUqg4abn5Hi69y1
-         0KuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=VeD3un/q4zgsizWU4ltBR+n7y7PYhqkaZE3ZLZKw1IM=;
-        b=I+97L6CB+QCOjWVzbEB9C78aDI5n54WEQVY84r2hm2NF9jI1QcVUugmAc8j5qnzU+B
-         h5/P70E1qJcHUF8VBIqTmptu0EaT8rprK2h4w01IdAmY+aAWEkHe3tbsZ6TGC/MXIlg6
-         WNtdqwb1NouxQ87xB5tuw11lzMY9tVXdABIyZ3AHGtCFqpea06kqTqMHhiyVMnJ7t0Pa
-         5gSP64gKOyNmCqT3vNBMs8X7BvGf5pF/hWKg/YFaeHolW1sM4vY1kdiC+jaA67U5SlAO
-         15OVNhujojcfa93T3ZyMJf585A4sew/ARf4Ogy6utafN4eWOEaWmdi15QS8O2/3YEfl/
-         AUAw==
-X-Gm-Message-State: AGRZ1gKYINj+AuYFXnqbWGuzpHxyTsdjgy8w734gqhTXKgi4hU1V29aE
-        irn7HQSAOIjCkQbEtx0HYHg=
-X-Google-Smtp-Source: AJdET5c9Fh7oKqdSFCTBUahrbwfUkcONwoqqf8N66Suzo7fBWlRebDQlrbvJbJCSkj+Q8iwzkCr8Pg==
-X-Received: by 2002:a62:c5c6:: with SMTP id j189-v6mr16957604pfg.194.1541946852217;
-        Sun, 11 Nov 2018 06:34:12 -0800 (PST)
-Received: from [192.168.86.235] (c-67-180-167-114.hsd1.ca.comcast.net. [67.180.167.114])
-        by smtp.gmail.com with ESMTPSA id y29sm4210574pga.59.2018.11.11.06.34.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 11 Nov 2018 06:34:11 -0800 (PST)
-Subject: Re: [PATCH net-next v2] tcp: minor optimization in tcp ack fast path
- processing
-To:     Yafang Shao <laoar.shao@gmail.com>, davem@davemloft.net,
-        edumazet@google.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Joe Perches <joe@perches.com>
-References: <1541938210-11797-1-git-send-email-laoar.shao@gmail.com>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <678e757d-7df1-4c5d-7acb-dd6b0f94a859@gmail.com>
-Date:   Sun, 11 Nov 2018 06:34:09 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sun, 11 Nov 2018 19:32:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=gj1P1RQgOjTgsugLOE7R7BUL5Ok02AgJYAV8aEcJDho=; b=FqzUe5cuDuN+McQZasYLlldtQ
+        ZXz2tGKzxU0G20iMQfYMUux+e2xeSpCfnyKrRvNsIkHGNToNb+Fbty7tV8M+JVkNXqlN70FRehEke
+        BaXqfAPysBQCQ1jvZ/qQTym+6mmPPdf5J+IbfsArq/NfdN49lGWzAupu1mpACievYQWjEaBAPh80o
+        FtOgTusv9lADFDIZcJfycJ2A0GQe7xCzLIKasqfSo3ibwhXDPUqgzsGSWkal5XnouzomxTVeGI5mx
+        N88Gf9CRr2aENQX8bEBdmlstyVbh1/wA19QtjLA7iM097hviH/R2jlvHBZp4Pk9zB19ReZtzLFifl
+        NxWd1qPPA==;
+Received: from [64.114.255.114] (helo=worktop)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gLqxT-00058A-9y; Sun, 11 Nov 2018 14:43:27 +0000
+Received: by worktop (Postfix, from userid 1000)
+        id 18C826E07F4; Sun, 11 Nov 2018 15:43:27 +0100 (CET)
+Date:   Sun, 11 Nov 2018 15:43:27 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Nadav Amit <namit@vmware.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH v4 05/10] x86/alternative: initializing temporary mm for
+ patching
+Message-ID: <20181111144327.GG12766@worktop.psav.com>
+References: <20181110231732.15060-1-namit@vmware.com>
+ <20181110231732.15060-6-namit@vmware.com>
 MIME-Version: 1.0
-In-Reply-To: <1541938210-11797-1-git-send-email-laoar.shao@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181110231732.15060-6-namit@vmware.com>
+User-Agent: Mutt/1.5.22.1 (2013-10-16)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+I don't seem to have gotten patches 0-2,7 for some reason; I'll try and
+dig them out of the LKML folder.
 
-On 11/11/2018 04:10 AM, Yafang Shao wrote:
-> Bitwise operation is a little faster.
-> So I replace after() with using the flag FLAG_SND_UNA_ADVANCED as it is
-> already set before.
-> 
-> In addtion, there's another similar improvement in tcp_cwnd_reduction().
-> 
-> Cc: Joe Perches <joe@perches.com>
-> Suggested-by: Eric Dumazet <edumazet@google.com>
-> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+On Sat, Nov 10, 2018 at 03:17:27PM -0800, Nadav Amit wrote:
+> +void __init poking_init(void)
+> +{
+> +	spinlock_t *ptl;
+> +	pte_t *ptep;
+> +
+> +	poking_mm = copy_init_mm();
+> +	if (!poking_mm) {
+> +		pr_err("x86/mm: error setting a separate poking address space");
+> +		return;
+> +	}
+> +
+> +	/*
+> +	 * Randomize the poking address, but make sure that the following page
+> +	 * will be mapped at the same PMD. We need 2 pages, so find space for 3,
+> +	 * and adjust the address if the PMD ends after the first one.
+> +	 */
+> +	poking_addr = TASK_UNMAPPED_BASE +
+> +		(kaslr_get_random_long("Poking") & PAGE_MASK) %
+> +		(TASK_SIZE - TASK_UNMAPPED_BASE - 3 * PAGE_SIZE);
+> +
+> +	if (((poking_addr + PAGE_SIZE) & ~PMD_MASK) == 0)
+> +		poking_addr += PAGE_SIZE;
+> +
+> +	/*
+> +	 * We need to trigger the allocation of the page-tables that will be
+> +	 * needed for poking now. Later, poking may be performed in an atomic
+> +	 * section, which might cause allocation to fail.
+> +	 */
+> +	ptep = get_locked_pte(poking_mm, poking_addr, &ptl);
+> +	if (!WARN_ON(!ptep))
+> +		pte_unmap_unlock(ptep, ptl);
+> +}
 
-Signed-off-by: Eric Dumazet <edumazet@google.com>
+The difference in how we deal with -ENOMEM here is weird. I think we
+have a _lot_ of code that simply hard assumes we don't fail memory alloc
+on init.
 
-Thanks.
-
+I for instance would not mind to simply remove both branches and let the
+kernel crash and burn if we ever fail here.
