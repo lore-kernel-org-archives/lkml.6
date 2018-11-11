@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DAA7C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:06:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E9F3C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:06:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15EFB20872
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:06:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38F3120818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:06:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="knm/x9p1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15EFB20872
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MC5BHG5A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38F3120818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390413AbeKLIWO (ORCPT
+        id S2390606AbeKLI4L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:22:14 -0500
+        Mon, 12 Nov 2018 03:56:11 -0500
 Received: from mail.kernel.org ([198.145.29.99]:51232 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390365AbeKLIWL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:11 -0500
+        id S2390366AbeKLIWO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:14 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C2C56223D8;
-        Sun, 11 Nov 2018 22:32:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D225223DD;
+        Sun, 11 Nov 2018 22:32:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975534;
-        bh=8eo0BwhRhJzevfHRkRTo4LEzwJwguEtxV4rQyrORgJg=;
+        s=default; t=1541975537;
+        bh=mWG9hM93qRF8aK2BLXI/blEZinTIShYehTwYpLGa8CY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=knm/x9p1FEjQANcZcwshNIAB/YPUQlPaqUBCAsmVeXI3X7lFeMOx2jhA5LDOpd0EC
-         bCJInnHjtjX9+rF2HAsvV3QiKvJIQdg64XhrQztJQiWNnhnG3naS3/hS3bQXLPsrLt
-         ytu40LwliynClzutBjFmWXT3huQICgMoZHJL+mvw=
+        b=MC5BHG5ArMt754gkKXGdWCevj9615YYg0NmooWFTPX/W3HNtnlp8kAdwkbj4Fx/Fn
+         7Z8Y4nBKpI9UhQ8wkzrwtuKEX5lsw93fWZsKsKr2AvaGkb6yHPXhilfKdqFL3VuvUq
+         8uYgY0m9nuYsBSH8xTu2wWKhI9/HQa0iaIGfXLew=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sanskriti Sharma <sansharm@redhat.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 049/222] perf tools: Cleanup trace-event-info tdata leak
-Date:   Sun, 11 Nov 2018 14:22:26 -0800
-Message-Id: <20181111221652.492394695@linuxfoundation.org>
+        stable@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
+        Borislav Petkov <bp@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        x86-ml <x86@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 055/222] x86/olpc: Indicate that legacy PC XO-1 platform should not register RTC
+Date:   Sun, 11 Nov 2018 14:22:32 -0800
+Message-Id: <20181111221652.983927073@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -65,44 +65,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sanskriti Sharma <sansharm@redhat.com>
+From: Lubomir Rintel <lkundrak@v3.sk>
 
-[ Upstream commit faedbf3fd19f2511a39397f76359e4cc6ee93072 ]
+[ Upstream commit d92116b800fb79a72ad26121f5011f6aa3ad94c2 ]
 
-Free tracing_data structure in tracing_data_get() error paths.
+On OLPC XO-1, the RTC is discovered via device tree from the arch
+initcall. Don't let the PC platform register another one from its device
+initcall, it's not going to work:
 
-Fixes the following coverity complaint:
+  sysfs: cannot create duplicate filename '/devices/platform/rtc_cmos'
+  CPU: 0 PID: 1 Comm: swapper Not tainted 4.19.0-rc6 #12
+  Hardware name: OLPC XO/XO, BIOS OLPC Ver 1.00.01 06/11/2014
+  Call Trace:
+   dump_stack+0x16/0x18
+   sysfs_warn_dup+0x46/0x58
+   sysfs_create_dir_ns+0x76/0x9b
+   kobject_add_internal+0xed/0x209
+   ? __schedule+0x3fa/0x447
+   kobject_add+0x5b/0x66
+   device_add+0x298/0x535
+   ? insert_resource_conflict+0x2a/0x3e
+   platform_device_add+0x14d/0x192
+   ? io_delay_init+0x19/0x19
+   platform_device_register+0x1c/0x1f
+   add_rtc_cmos+0x16/0x31
+   do_one_initcall+0x78/0x14a
+   ? do_early_param+0x75/0x75
+   kernel_init_freeable+0x152/0x1e0
+   ? rest_init+0xa2/0xa2
+   kernel_init+0x8/0xd5
+   ret_from_fork+0x2e/0x38
+  kobject_add_internal failed for rtc_cmos with -EEXIST, don't try to
+    register things with the same name in the same directory.
+  platform rtc_cmos: registered platform RTC device (no PNP device found)
 
-  Error: RESOURCE_LEAK (CWE-772):
-  leaked_storage: Variable "tdata" going out of scope leaks the storage
-
-Signed-off-by: Sanskriti Sharma <sansharm@redhat.com>
-Reviewed-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Joe Lawrence <joe.lawrence@redhat.com>
-Link: http://lkml.kernel.org/r/1538490554-8161-3-git-send-email-sansharm@redhat.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+CC: "H. Peter Anvin" <hpa@zytor.com>
+CC: Ingo Molnar <mingo@redhat.com>
+CC: x86-ml <x86@kernel.org>
+Link: http://lkml.kernel.org/r/20181004160808.307738-1-lkundrak@v3.sk
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/util/trace-event-info.c |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/x86/platform/olpc/olpc-xo1-rtc.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/tools/perf/util/trace-event-info.c
-+++ b/tools/perf/util/trace-event-info.c
-@@ -533,12 +533,14 @@ struct tracing_data *tracing_data_get(st
- 			 "/tmp/perf-XXXXXX");
- 		if (!mkstemp(tdata->temp_file)) {
- 			pr_debug("Can't make temp file");
-+			free(tdata);
- 			return NULL;
- 		}
+--- a/arch/x86/platform/olpc/olpc-xo1-rtc.c
++++ b/arch/x86/platform/olpc/olpc-xo1-rtc.c
+@@ -16,6 +16,7 @@
  
- 		temp_fd = open(tdata->temp_file, O_RDWR);
- 		if (temp_fd < 0) {
- 			pr_debug("Can't read '%s'", tdata->temp_file);
-+			free(tdata);
- 			return NULL;
- 		}
+ #include <asm/msr.h>
+ #include <asm/olpc.h>
++#include <asm/x86_init.h>
  
+ static void rtc_wake_on(struct device *dev)
+ {
+@@ -75,6 +76,8 @@ static int __init xo1_rtc_init(void)
+ 	if (r)
+ 		return r;
+ 
++	x86_platform.legacy.rtc = 0;
++
+ 	device_init_wakeup(&xo1_rtc_device.dev, 1);
+ 	return 0;
+ }
 
 
