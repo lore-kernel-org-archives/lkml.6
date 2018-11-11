@@ -2,49 +2,53 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5484C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:09:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AE80C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:09:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8400320862
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:09:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0806D20817
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:09:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bO0KhHod"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8400320862
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VxZsFsT2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0806D20817
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388182AbeKLI7Q (ORCPT
+        id S2390238AbeKLIWD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:59:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50044 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390209AbeKLIWD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:22:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50552 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390209AbeKLIWC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:02 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D544822353;
-        Sun, 11 Nov 2018 22:32:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C37BC216FD;
+        Sun, 11 Nov 2018 22:32:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975526;
-        bh=TEfD6+5dup8DumQYr9j7LRx7F8pDE17zjFDUrocR7ZU=;
+        s=default; t=1541975524;
+        bh=ZdiSeLTcVp6LaBHuG0ag2bnhohYR6it1GsfyFte7lDc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bO0KhHodtI6jcUG8VY7fWD0jhMbEE9Fc4GP5rOplAuutBd7ooNBjZA+FgPvPHWPDN
-         dO8ba1xWTIj4QjkujPzd1ndcJePx9c7S24Ca9rBjlG4c5ED3WO+cgmNU/f+4AztVpW
-         TSyHzaUIT3onRPl0qXuuBcJKIgK/X4Xco2zGW/Ps=
+        b=VxZsFsT28km1536P249TOa5i52Trcev/WDW23uItKbBd4HNLTRDkogIleVzCA+vsz
+         8glAqufcqkdAOGrunbGyEfW7H53flgOjghy6gYxloptqNC85YXn7UU15a6ju5g1QSN
+         DN+KS5v3EUk/s9hMkfQcxSw+3HygqL2EkNQGvrU8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Bazhenov <bazhenov.dn@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.14 005/222] hwmon: (pmbus) Fix page count auto-detection.
-Date:   Sun, 11 Nov 2018 14:21:42 -0800
-Message-Id: <20181111221648.339509495@linuxfoundation.org>
+        stable@vger.kernel.org, He Zhe <zhe.he@windriver.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        kstewart@linuxfoundation.org, pombredanne@nexb.com,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.14 021/222] x86/corruption-check: Fix panic in memory_corruption_check() when boot option without value is provided
+Date:   Sun, 11 Nov 2018 14:21:58 -0800
+Message-Id: <20181111221650.037086179@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -62,54 +66,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry Bazhenov <bazhenov.dn@gmail.com>
+From: He Zhe <zhe.he@windriver.com>
 
-commit e7c6a55606b5c46b449d76588968b4d8caae903f upstream.
+commit ccde460b9ae5c2bd5e4742af0a7f623c2daad566 upstream.
 
-Devices with compatible="pmbus" field have zero initial page count,
-and pmbus_clear_faults() being called before the page count auto-
-detection does not actually clear faults because it depends on the
-page count. Non-cleared faults in its turn may fail the subsequent
-page count auto-detection.
+memory_corruption_check[{_period|_size}]()'s handlers do not check input
+argument before passing it to kstrtoul() or simple_strtoull(). The argument
+would be a NULL pointer if each of the kernel parameters, without its
+value, is set in command line and thus cause the following panic.
 
-This patch fixes this problem by calling pmbus_clear_fault_page()
-for currently set page and calling pmbus_clear_faults() after the
-page count was detected.
+PANIC: early exception 0xe3 IP 10:ffffffff73587c22 error 0 cr2 0x0
+[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.18-rc8+ #2
+[    0.000000] RIP: 0010:kstrtoull+0x2/0x10
+...
+[    0.000000] Call Trace
+[    0.000000]  ? set_corruption_check+0x21/0x49
+[    0.000000]  ? do_early_param+0x4d/0x82
+[    0.000000]  ? parse_args+0x212/0x330
+[    0.000000]  ? rdinit_setup+0x26/0x26
+[    0.000000]  ? parse_early_options+0x20/0x23
+[    0.000000]  ? rdinit_setup+0x26/0x26
+[    0.000000]  ? parse_early_param+0x2d/0x39
+[    0.000000]  ? setup_arch+0x2f7/0xbf4
+[    0.000000]  ? start_kernel+0x5e/0x4c2
+[    0.000000]  ? load_ucode_bsp+0x113/0x12f
+[    0.000000]  ? secondary_startup_64+0xa5/0xb0
 
+This patch adds checks to prevent the panic.
+
+Signed-off-by: He Zhe <zhe.he@windriver.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: gregkh@linuxfoundation.org
+Cc: kstewart@linuxfoundation.org
+Cc: pombredanne@nexb.com
 Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Bazhenov <bazhenov.dn@gmail.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Link: http://lkml.kernel.org/r/1534260823-87917-1-git-send-email-zhe.he@windriver.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hwmon/pmbus/pmbus.c      |    2 ++
- drivers/hwmon/pmbus/pmbus_core.c |    5 ++++-
- 2 files changed, 6 insertions(+), 1 deletion(-)
+ arch/x86/kernel/check.c |   15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
---- a/drivers/hwmon/pmbus/pmbus.c
-+++ b/drivers/hwmon/pmbus/pmbus.c
-@@ -118,6 +118,8 @@ static int pmbus_identify(struct i2c_cli
- 		} else {
- 			info->pages = 1;
- 		}
+--- a/arch/x86/kernel/check.c
++++ b/arch/x86/kernel/check.c
+@@ -31,6 +31,11 @@ static __init int set_corruption_check(c
+ 	ssize_t ret;
+ 	unsigned long val;
+ 
++	if (!arg) {
++		pr_err("memory_corruption_check config string not provided\n");
++		return -EINVAL;
++	}
 +
-+		pmbus_clear_faults(client);
- 	}
+ 	ret = kstrtoul(arg, 10, &val);
+ 	if (ret)
+ 		return ret;
+@@ -45,6 +50,11 @@ static __init int set_corruption_check_p
+ 	ssize_t ret;
+ 	unsigned long val;
  
- 	if (pmbus_check_byte_register(client, 0, PMBUS_VOUT_MODE)) {
---- a/drivers/hwmon/pmbus/pmbus_core.c
-+++ b/drivers/hwmon/pmbus/pmbus_core.c
-@@ -1802,7 +1802,10 @@ static int pmbus_init_common(struct i2c_
- 	if (ret >= 0 && (ret & PB_CAPABILITY_ERROR_CHECK))
- 		client->flags |= I2C_CLIENT_PEC;
++	if (!arg) {
++		pr_err("memory_corruption_check_period config string not provided\n");
++		return -EINVAL;
++	}
++
+ 	ret = kstrtoul(arg, 10, &val);
+ 	if (ret)
+ 		return ret;
+@@ -59,6 +69,11 @@ static __init int set_corruption_check_s
+ 	char *end;
+ 	unsigned size;
  
--	pmbus_clear_faults(client);
-+	if (data->info->pages)
-+		pmbus_clear_faults(client);
-+	else
-+		pmbus_clear_fault_page(client, -1);
++	if (!arg) {
++		pr_err("memory_corruption_check_size config string not provided\n");
++		return -EINVAL;
++	}
++
+ 	size = memparse(arg, &end);
  
- 	if (info->identify) {
- 		ret = (*info->identify)(client, info);
+ 	if (*end == '\0')
 
 
