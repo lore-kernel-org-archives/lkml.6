@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C42D0C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:06:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06F0DC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:06:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77AA1214E0
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:06:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFBC8214E0
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:06:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oql09N20"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77AA1214E0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uhh74hDV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFBC8214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390637AbeKLI4y (ORCPT
+        id S2390575AbeKLI4x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:56:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51200 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:56:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390343AbeKLIWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:10 -0500
+        id S2390325AbeKLIWL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:11 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A3A6221707;
-        Sun, 11 Nov 2018 22:32:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7099E2243E;
+        Sun, 11 Nov 2018 22:32:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975533;
-        bh=P9ptb1EQj8fXnBmuRJobKYHyZUu4Qa37klPsY+eb9lk=;
+        s=default; t=1541975534;
+        bh=R+IyGCFzj7hf+02l2LR5nw4DkAm4ruD42J91Uw88rNs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oql09N20hcpldUX9+JcI3uOSGVm8SAkf5MdA5kDep/1F51ZK8Z3Lllb7btncgYptm
-         DVkaRReIh57nlwpk9bwxreDV+f1NfCnH2xoRIDAjaZ/OiZBNO8yEAsQfvUdQUonhIj
-         geVSDTMu97EWRznn8aIlMFGM+Z1v4z2Go7sVFKAs=
+        b=Uhh74hDV0RBbtGKWKok3t4So0POWT9fDMJRLRtw95nK5NebYaB17dHfoSfKDT9NQK
+         LtoTegXvDcuhsWDtG9NV3HCFDSj8V37FQOPww2L96J7+jL8ZL7xxyT4TD0Sq12IToi
+         SX/eOCkJJpnhR6ZlPtUMZeEGVnWedxUC2zIpsRUI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
-        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>,
-        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 046/222] lightnvm: pblk: fix two sleep-in-atomic-context bugs
-Date:   Sun, 11 Nov 2018 14:22:23 -0800
-Message-Id: <20181111221652.244966822@linuxfoundation.org>
+        stable@vger.kernel.org, Sanskriti Sharma <sansharm@redhat.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 048/222] perf tools: Free temporary sys string in read_event_files()
+Date:   Sun, 11 Nov 2018 14:22:25 -0800
+Message-Id: <20181111221652.408366596@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -63,80 +65,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
+From: Sanskriti Sharma <sansharm@redhat.com>
 
-[ Upstream commit 7325b4bbe5952e3e939f15de812f2ee0c0d33ca9 ]
+[ Upstream commit 1e44224fb0528b4c0cc176bde2bb31e9127eb14b ]
 
-The driver may sleep with holding a spinlock.
+For each system in a given pevent, read_event_files() reads in a
+temporary 'sys' string.  Be sure to free this string before moving onto
+to the next system and/or leaving read_event_files().
 
-The function call paths (from bottom to top) in Linux-4.16 are:
+Fixes the following coverity complaints:
 
-[FUNC] nvm_dev_dma_alloc(GFP_KERNEL)
-drivers/lightnvm/pblk-core.c, 754:
-	nvm_dev_dma_alloc in pblk_line_submit_smeta_io
-drivers/lightnvm/pblk-core.c, 1048:
-	pblk_line_submit_smeta_io in pblk_line_init_bb
-drivers/lightnvm/pblk-core.c, 1434:
-	pblk_line_init_bb in pblk_line_replace_data
-drivers/lightnvm/pblk-recovery.c, 980:
-	pblk_line_replace_data in pblk_recov_l2p
-drivers/lightnvm/pblk-recovery.c, 976:
-	spin_lock in pblk_recov_l2p
+  Error: RESOURCE_LEAK (CWE-772):
 
-[FUNC] bio_map_kern(GFP_KERNEL)
-drivers/lightnvm/pblk-core.c, 762:
-	bio_map_kern in pblk_line_submit_smeta_io
-drivers/lightnvm/pblk-core.c, 1048:
-	pblk_line_submit_smeta_io in pblk_line_init_bb
-drivers/lightnvm/pblk-core.c, 1434:
-	pblk_line_init_bb in pblk_line_replace_data
-drivers/lightnvm/pblk-recovery.c, 980:
-	pblk_line_replace_data in pblk_recov_l2p
-drivers/lightnvm/pblk-recovery.c, 976:
-	spin_lock in pblk_recov_l2p
+  tools/perf/util/trace-event-read.c:343: overwrite_var: Overwriting
+  "sys" in "sys = read_string()" leaks the storage that "sys" points to.
 
-To fix these bugs, the call to pblk_line_replace_data()
-is moved out of the spinlock protection.
+  tools/perf/util/trace-event-read.c:353: leaked_storage: Variable "sys"
+  going out of scope leaks the storage it points to.
 
-These bugs are found by my static analysis tool DSAC.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Reviewed-by: Javier González <javier@cnexlabs.com>
-Signed-off-by: Matias Bjørling <mb@lightnvm.io>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sanskriti Sharma <sansharm@redhat.com>
+Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Joe Lawrence <joe.lawrence@redhat.com>
+Link: http://lkml.kernel.org/r/1538490554-8161-6-git-send-email-sansharm@redhat.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/lightnvm/pblk-recovery.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ tools/perf/util/trace-event-read.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/lightnvm/pblk-recovery.c
-+++ b/drivers/lightnvm/pblk-recovery.c
-@@ -1001,12 +1001,14 @@ next:
+--- a/tools/perf/util/trace-event-read.c
++++ b/tools/perf/util/trace-event-read.c
+@@ -350,9 +350,12 @@ static int read_event_files(struct peven
+ 		for (x=0; x < count; x++) {
+ 			size = read8(pevent);
+ 			ret = read_event_file(pevent, sys, size);
+-			if (ret)
++			if (ret) {
++				free(sys);
+ 				return ret;
++			}
  		}
++		free(sys);
  	}
- 
--	spin_lock(&l_mg->free_lock);
- 	if (!open_lines) {
-+		spin_lock(&l_mg->free_lock);
- 		WARN_ON_ONCE(!test_and_clear_bit(meta_line,
- 							&l_mg->meta_bitmap));
-+		spin_unlock(&l_mg->free_lock);
- 		pblk_line_replace_data(pblk);
- 	} else {
-+		spin_lock(&l_mg->free_lock);
- 		/* Allocate next line for preparation */
- 		l_mg->data_next = pblk_line_get(pblk);
- 		if (l_mg->data_next) {
-@@ -1014,8 +1016,8 @@ next:
- 			l_mg->data_next->type = PBLK_LINETYPE_DATA;
- 			is_next = 1;
- 		}
-+		spin_unlock(&l_mg->free_lock);
- 	}
--	spin_unlock(&l_mg->free_lock);
- 
- 	if (is_next) {
- 		pblk_line_erase(pblk, l_mg->data_next);
+ 	return 0;
+ }
 
 
