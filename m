@@ -3,56 +3,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C6D2C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:48:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D966DC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:48:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59ACB2148E
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:48:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59ACB2148E
+	by mail.kernel.org (Postfix) with ESMTP id A45012148E
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:48:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A45012148E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729801AbeKLFhe (ORCPT
+        id S1726698AbeKLFdo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 00:37:34 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53774 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726800AbeKLFdp (ORCPT
+        Mon, 12 Nov 2018 00:33:44 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44544 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726344AbeKLFdo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:33:45 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wABJiB8K010129
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:44:19 -0500
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2npde81u7d-1
+        Mon, 12 Nov 2018 00:33:44 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wABJiCi8036899
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:44:17 -0500
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2npdbnsp58-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:44:18 -0500
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:44:17 -0500
 Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Sun, 11 Nov 2018 19:44:17 -0000
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Sun, 11 Nov 2018 19:44:16 -0000
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
         Sun, 11 Nov 2018 19:44:12 -0000
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wABJiBDV22544534
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wABJiBXD34078962
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
         Sun, 11 Nov 2018 19:44:11 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 69CEEB2068;
+        by IMSVA (Postfix) with ESMTP id 6A7F3B206A;
         Sun, 11 Nov 2018 19:44:11 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 465A1B205F;
+        by IMSVA (Postfix) with ESMTP id 46600B2064;
         Sun, 11 Nov 2018 19:44:11 +0000 (GMT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.85.207.24])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
         Sun, 11 Nov 2018 19:44:11 +0000 (GMT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 7675516C5D4F; Sun, 11 Nov 2018 11:44:12 -0800 (PST)
+        id 7270216C5D59; Sun, 11 Nov 2018 11:44:12 -0800 (PST)
 From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -62,20 +62,20 @@ Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         kernel-team@android.com,
         "Paul E . McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH tip/core/rcu 02/41] rcu: Fix rcu_{node,data} comments about gp_seq_needed
-Date:   Sun, 11 Nov 2018 11:43:31 -0800
+Subject: [PATCH tip/core/rcu 01/41] rcu: Remove unused rcu_state externs
+Date:   Sun, 11 Nov 2018 11:43:30 -0800
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181111194104.GA4787@linux.ibm.com>
 References: <20181111194104.GA4787@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18111119-0040-0000-0000-0000049088D1
+x-cbid: 18111119-2213-0000-0000-00000315A7E0
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00010028; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01116019; UDB=6.00577119; IPR=6.00896119;
+ PH=3.00000004; SC=3.00000270; SDB=6.01116019; UDB=6.00578733; IPR=6.00896120;
  MB=3.00024114; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-11 19:44:16
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111119-0041-0000-0000-000008999180
-Message-Id: <20181111194410.6368-2-paulmck@linux.ibm.com>
+x-cbparentid: 18111119-2214-0000-0000-00005C386BB0
+Message-Id: <20181111194410.6368-1-paulmck@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-11_13:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -90,40 +90,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
 
-Recent changes have removed the old ->gp_seq_needed field from the
-rcu_state structure, which in turn obsoleted a couple of comments in
-the rcu_node and rcu_data structures.  This commit therefore updates
-these comments accordingly.
+The rcu_bh_state and rcu_sched_state variables were removed during the
+RCU flavor consolidations, but external declarations remain in tree.h.
+This commit therefore removes these obsolete declarations.
 
 Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 Cc: <kernel-team@android.com>
 Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
 ---
- kernel/rcu/tree.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/rcu/tree.h | 11 -----------
+ 1 file changed, 11 deletions(-)
 
 diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
-index 57a937ac51c2..c3e2807a834a 100644
+index 703e19ff532d..57a937ac51c2 100644
 --- a/kernel/rcu/tree.h
 +++ b/kernel/rcu/tree.h
-@@ -57,7 +57,7 @@ struct rcu_node {
- 					/*  some rcu_state fields as well as */
- 					/*  following. */
- 	unsigned long gp_seq;	/* Track rsp->rcu_gp_seq. */
--	unsigned long gp_seq_needed; /* Track rsp->rcu_gp_seq_needed. */
-+	unsigned long gp_seq_needed; /* Track furthest future GP request. */
- 	unsigned long completedqs; /* All QSes done for this node. */
- 	unsigned long qsmask;	/* CPUs or groups that need to switch in */
- 				/*  order for current grace period to proceed.*/
-@@ -163,7 +163,7 @@ union rcu_noqs {
- struct rcu_data {
- 	/* 1) quiescent-state and grace-period handling : */
- 	unsigned long	gp_seq;		/* Track rsp->rcu_gp_seq counter. */
--	unsigned long	gp_seq_needed;	/* Track rsp->rcu_gp_seq_needed ctr. */
-+	unsigned long	gp_seq_needed;	/* Track furthest future GP request. */
- 	union rcu_noqs	cpu_no_qs;	/* No QSes yet for this CPU. */
- 	bool		core_needs_qs;	/* Core waits for quiesc state. */
- 	bool		beenonline;	/* CPU online at least once. */
+@@ -398,17 +398,6 @@ static const char *tp_rcu_varname __used __tracepoint_string = rcu_name;
+ #define RCU_NAME rcu_name
+ #endif /* #else #ifdef CONFIG_TRACING */
+ 
+-/*
+- * RCU implementation internal declarations:
+- */
+-extern struct rcu_state rcu_sched_state;
+-
+-extern struct rcu_state rcu_bh_state;
+-
+-#ifdef CONFIG_PREEMPT_RCU
+-extern struct rcu_state rcu_preempt_state;
+-#endif /* #ifdef CONFIG_PREEMPT_RCU */
+-
+ int rcu_dynticks_snap(struct rcu_data *rdp);
+ 
+ #ifdef CONFIG_RCU_BOOST
 -- 
 2.17.1
 
