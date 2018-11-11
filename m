@@ -2,81 +2,120 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E05EDC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:08:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AE67C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:08:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B32AE20817
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:08:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B32AE20817
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 219DA20817
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:08:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IXbWU0Ay"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 219DA20817
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390490AbeKLI6K (ORCPT
+        id S2390829AbeKLI60 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:58:10 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:41954 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731498AbeKLI6K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:58:10 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 1739F14937B01;
-        Sun, 11 Nov 2018 15:08:02 -0800 (PST)
-Date:   Sun, 11 Nov 2018 15:08:01 -0800 (PST)
-Message-Id: <20181111.150801.1421291572221954626.davem@davemloft.net>
-To:     jolsa@redhat.com
-Cc:     acme@kernel.org, linux-kernel@vger.kernel.org, namhyung@kernel.org,
-        jolsa@kernel.org
-Subject: Re: [PATCH RFC] hist lookups
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20181111194132.GA3769@krava>
-References: <20181108071303.GB29732@krava>
-        <20181108.170721.825832647693654935.davem@davemloft.net>
-        <20181111194132.GA3769@krava>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 11 Nov 2018 15:08:02 -0800 (PST)
+        Mon, 12 Nov 2018 03:58:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51200 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390163AbeKLIWE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:04 -0500
+Received: from localhost (unknown [206.108.79.134])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 967CC2241B;
+        Sun, 11 Nov 2018 22:32:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541975527;
+        bh=0GvoLWeBF7BhuYJ0kGeqZyLu+qji5apaBmK+OWK+uuo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=IXbWU0Ayww0zcSQZuvYd2TryDsWUh8JhJCdPn2m/vRCGjZZI+ooIkG4TVzl7MOE0E
+         EdLUEgytOwUocaBiLeQs+W7F2AOJCXiGC1plPDouB+fYXwSs5JLDhWg+dwOfulcejf
+         j7UvYk7Gxew7lD+EJy+eJp9ST9NE7axFQbs0uoWo=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Waldemar Rymarkiewicz <waldemarx.rymarkiewicz@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Subject: [PATCH 4.14 007/222] cpufreq: conservative: Take limits changes into account properly
+Date:   Sun, 11 Nov 2018 14:21:44 -0800
+Message-Id: <20181111221648.560775246@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
+References: <20181111221647.665769131@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Olsa <jolsa@redhat.com>
-Date: Sun, 11 Nov 2018 20:41:32 +0100
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-> On Thu, Nov 08, 2018 at 05:07:21PM -0800, David Miller wrote:
->> From: Jiri Olsa <jolsa@redhat.com>
->> Date: Thu, 8 Nov 2018 08:13:03 +0100
->> 
->> > we could separated fork/mmaps to separate dummy event map, or just
->> > parse them out in the read thread and create special queue for them
->> > and drop just samples in case we are behind
->> 
->> What you say at the end here is basically what I am proposing.
->> 
->> Perf dequeues events from mmap ring as fast as possible.
->> 
->> Perf has two internal queues, high priority and low priority.
->> 
->> High priority events are never dropped.
->> 
->> Low priority events are dropped on overload, oldest first.
-> 
-> I added the dropping logic, it's simple so far..
+------------------
 
-So for me perf top gets into a state where the samples counter stops
-incrementing, but the event counter does keep moving (which is the
-histogram code decaying histogram entries from the display thread).
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Which means the event processing has basically stopped.
+commit da5e79bc70b84971d2b3a55fb252e34e51d81d48 upstream.
 
-The event threads are not stuck in a loop, because they respond to
-the "q" keypress and we can exit.
+If the policy limits change between invocations of cs_dbs_update(),
+the requested frequency value stored in dbs_info may not be updated
+and the function may use a stale value of it next time.  Moreover, if
+idle periods are takem into account by cs_dbs_update(), the requested
+frequency value stored in dbs_info may be below the min policy limit,
+which is incorrect.
+
+To fix these problems, always update the requested frequency value
+in dbs_info along with the local copy of it when the previous
+requested frequency is beyond the policy limits and avoid decreasing
+the requested frequency below the min policy limit when taking
+idle periods into account.
+
+Fixes: abb6627910a1 (cpufreq: conservative: Fix next frequency selection)
+Fixes: 00bfe05889e9 (cpufreq: conservative: Decrease frequency faster for deferred updates)
+Reported-by: Waldemar Rymarkiewicz <waldemarx.rymarkiewicz@intel.com>
+Cc: All applicable <stable@vger.kernel.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Acked-by: Waldemar Rymarkiewicz <waldemarx.rymarkiewicz@intel.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/cpufreq/cpufreq_conservative.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+--- a/drivers/cpufreq/cpufreq_conservative.c
++++ b/drivers/cpufreq/cpufreq_conservative.c
+@@ -80,8 +80,10 @@ static unsigned int cs_dbs_update(struct
+ 	 * changed in the meantime, so fall back to current frequency in that
+ 	 * case.
+ 	 */
+-	if (requested_freq > policy->max || requested_freq < policy->min)
++	if (requested_freq > policy->max || requested_freq < policy->min) {
+ 		requested_freq = policy->cur;
++		dbs_info->requested_freq = requested_freq;
++	}
+ 
+ 	freq_step = get_freq_step(cs_tuners, policy);
+ 
+@@ -92,7 +94,7 @@ static unsigned int cs_dbs_update(struct
+ 	if (policy_dbs->idle_periods < UINT_MAX) {
+ 		unsigned int freq_steps = policy_dbs->idle_periods * freq_step;
+ 
+-		if (requested_freq > freq_steps)
++		if (requested_freq > policy->min + freq_steps)
+ 			requested_freq -= freq_steps;
+ 		else
+ 			requested_freq = policy->min;
+
+
