@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43AA4C0044C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:43:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 228FEC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:43:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0212320871
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:43:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCE0320818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:43:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jQEol6lB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0212320871
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="r+pdTLGi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCE0320818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387797AbeKLJdp (ORCPT
+        id S2387617AbeKLITR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:33:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40616 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387601AbeKLITR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:19:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40534 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387540AbeKLITQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:19:16 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E236221527;
-        Sun, 11 Nov 2018 22:29:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA34E2154B;
+        Sun, 11 Nov 2018 22:29:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975361;
-        bh=TeMYlugb65WIapj3r1DVfcOgNUQdQZ7L5ZSt7LPoaec=;
+        s=default; t=1541975359;
+        bh=IraXXn56SenPqG9tOVe4tB9j5uZ9nafzRj6dal3zbfs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jQEol6lBfBUAep77U7AvQT+bsj7k78L4oSa2dfm//XifqqN37b+6YEdkg3HQTYp/4
-         anCyIVMgf/HBvLY6LIPVMA8f3JVOB8fMqzuiMhFqF3D4EbEuAAQEj1Gtv/Ls3WL5xk
-         Y8NMZ+SmrO0dwvIevHuH1WJ43F/XuKwP4+ZOKzJo=
+        b=r+pdTLGi3z07jLHUrc+t9+QqzrtinSQTsyx6CeAH7EFol6qpCqd2uxd8CUAm9UWvu
+         57/qrzIMeVn/iV6qf0LwzfDKq6RvnpL4I1LMKyAUfWpqdsux/CE5TwEqwAOgu6s8Sg
+         WyKl326y+k2RLjEw70ZcRaoyLJ4TdTRHe3i42T4c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.18 030/350] ALSA: hda - Add quirk for ASUS G751 laptop
-Date:   Sun, 11 Nov 2018 14:18:14 -0800
-Message-Id: <20181111221708.446006863@linuxfoundation.org>
+        stable@vger.kernel.org, John David Anglin <dave.anglin@bell.net>,
+        Helge Deller <deller@gmx.de>
+Subject: [PATCH 4.18 027/350] parisc: Fix address in HPMC IVA
+Date:   Sun, 11 Nov 2018 14:18:11 -0800
+Message-Id: <20181111221708.313340372@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -61,54 +62,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: John David Anglin <dave.anglin@bell.net>
 
-commit 11ba6111160290ccd35562f4e05cec08942a6c4c upstream.
+commit 1138b6718ff74d2a934459643e3754423d23b5e2 upstream.
 
-ASUS G751 requires the extra COEF initialization to make it microphone
-working properly.
+Helge noticed that the address of the os_hpmc handler was not being
+correctly calculated in the hpmc macro.  As a result, PDCE_CHECK would
+fail to call os_hpmc:
 
-Reported-and-tested-by: Håvard <hovardslill@gmail.com>
+<Cpu2> e800009802e00000  0000000000000000  CC_ERR_CHECK_HPMC
+<Cpu2> 37000f7302e00000  8040004000000000  CC_ERR_CPU_CHECK_SUMMARY
+<Cpu2> f600105e02e00000  fffffff0f0c00000  CC_MC_HPMC_MONARCH_SELECTED
+<Cpu2> 140003b202e00000  000000000000000b  CC_ERR_HPMC_STATE_ENTRY
+<Cpu2> 5600100b02e00000  00000000000001a0  CC_MC_OS_HPMC_LEN_ERR
+<Cpu2> 5600106402e00000  fffffff0f0438e70  CC_MC_BR_TO_OS_HPMC_FAILED
+<Cpu2> e800009802e00000  0000000000000000  CC_ERR_CHECK_HPMC
+<Cpu2> 37000f7302e00000  8040004000000000  CC_ERR_CPU_CHECK_SUMMARY
+<Cpu2> 4000109f02e00000  0000000000000000  CC_MC_HPMC_INITIATED
+<Cpu2> 4000101902e00000  0000000000000000  CC_MC_MULTIPLE_HPMCS
+<Cpu2> 030010d502e00000  0000000000000000  CC_CPU_STOP
+
+The address problem can be seen by dumping the fault vector:
+
+0000000040159000 <fault_vector_20>:
+    40159000:   63 6f 77 73     stb r15,-2447(dp)
+    40159004:   20 63 61 6e     ldil L%b747000,r3
+    40159008:   20 66 6c 79     ldil L%-1c3b3000,r3
+        ...
+    40159020:   08 00 02 40     nop
+    40159024:   20 6e 60 02     ldil L%15d000,r3
+    40159028:   34 63 00 00     ldo 0(r3),r3
+    4015902c:   e8 60 c0 02     bv,n r0(r3)
+    40159030:   08 00 02 40     nop
+    40159034:   00 00 00 00     break 0,0
+    40159038:   c0 00 70 00     bb,*< r0,sar,40159840 <fault_vector_20+0x840>
+    4015903c:   00 00 00 00     break 0,0
+
+Location 40159038 should contain the physical address of os_hpmc:
+
+000000004015d000 <os_hpmc>:
+    4015d000:   08 1a 02 43     copy r26,r3
+    4015d004:   01 c0 08 a4     mfctl iva,r4
+    4015d008:   48 85 00 68     ldw 34(r4),r5
+
+This patch moves the address setup into initialize_ivt to resolve the
+above problem.  I tested the change by dumping the HPMC entry after setup:
+
+0000000040209020:  8000240
+0000000040209024: 206a2004
+0000000040209028: 34630ac0
+000000004020902c: e860c002
+0000000040209030:  8000240
+0000000040209034: 1bdddce6
+0000000040209038:   15d000
+000000004020903c:      1a0
+
+Signed-off-by: John David Anglin <dave.anglin@bell.net>
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Helge Deller <deller@gmx.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/parisc/kernel/entry.S |    2 +-
+ arch/parisc/kernel/traps.c |    3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -7690,6 +7690,7 @@ enum {
- 	ALC662_FIXUP_ASUS_Nx50,
- 	ALC668_FIXUP_ASUS_Nx51_HEADSET_MODE,
- 	ALC668_FIXUP_ASUS_Nx51,
-+	ALC668_FIXUP_ASUS_G751,
- 	ALC891_FIXUP_HEADSET_MODE,
- 	ALC891_FIXUP_DELL_MIC_NO_PRESENCE,
- 	ALC662_FIXUP_ACER_VERITON,
-@@ -7959,6 +7960,14 @@ static const struct hda_fixup alc662_fix
- 		.chained = true,
- 		.chain_id = ALC668_FIXUP_ASUS_Nx51_HEADSET_MODE,
- 	},
-+	[ALC668_FIXUP_ASUS_G751] = {
-+		.type = HDA_FIXUP_VERBS,
-+		.v.verbs = (const struct hda_verb[]) {
-+			{ 0x20, AC_VERB_SET_COEF_INDEX, 0xc3 },
-+			{ 0x20, AC_VERB_SET_PROC_COEF, 0x4000 },
-+			{}
-+		},
-+	},
- 	[ALC891_FIXUP_HEADSET_MODE] = {
- 		.type = HDA_FIXUP_FUNC,
- 		.v.func = alc_fixup_headset_mode,
-@@ -8032,6 +8041,7 @@ static const struct snd_pci_quirk alc662
- 	SND_PCI_QUIRK(0x1043, 0x11cd, "Asus N550", ALC662_FIXUP_ASUS_Nx50),
- 	SND_PCI_QUIRK(0x1043, 0x13df, "Asus N550JX", ALC662_FIXUP_BASS_1A),
- 	SND_PCI_QUIRK(0x1043, 0x129d, "Asus N750", ALC662_FIXUP_ASUS_Nx50),
-+	SND_PCI_QUIRK(0x1043, 0x12ff, "ASUS G751", ALC668_FIXUP_ASUS_G751),
- 	SND_PCI_QUIRK(0x1043, 0x1477, "ASUS N56VZ", ALC662_FIXUP_BASS_MODE4_CHMAP),
- 	SND_PCI_QUIRK(0x1043, 0x15a7, "ASUS UX51VZH", ALC662_FIXUP_BASS_16),
- 	SND_PCI_QUIRK(0x1043, 0x177d, "ASUS N551", ALC668_FIXUP_ASUS_Nx51),
+--- a/arch/parisc/kernel/entry.S
++++ b/arch/parisc/kernel/entry.S
+@@ -185,7 +185,7 @@
+ 	bv,n	0(%r3)
+ 	nop
+ 	.word	0		/* checksum (will be patched) */
+-	.word	PA(os_hpmc)	/* address of handler */
++	.word	0		/* address of handler */
+ 	.word	0		/* length of handler */
+ 	.endm
+ 
+--- a/arch/parisc/kernel/traps.c
++++ b/arch/parisc/kernel/traps.c
+@@ -827,7 +827,8 @@ void __init initialize_ivt(const void *i
+ 	 *    the Length/4 words starting at Address is zero.
+ 	 */
+ 
+-	/* Compute Checksum for HPMC handler */
++	/* Setup IVA and compute checksum for HPMC handler */
++	ivap[6] = (u32)__pa(os_hpmc);
+ 	length = os_hpmc_size;
+ 	ivap[7] = length;
+ 
 
 
