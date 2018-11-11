@@ -6,45 +6,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B10DC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:06:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 071E7C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:07:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0ED2020866
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:06:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0C042084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:07:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="u2Ds8Ijo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ED2020866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="L957PIeK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0C042084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732168AbeKLJ5S (ORCPT
+        id S1732092AbeKLJ53 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:57:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33910 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:57:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60706 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731741AbeKLIRh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1731746AbeKLIRh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:17:37 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B956223C8;
+        by mail.kernel.org (Postfix) with ESMTPSA id C714221582;
         Sun, 11 Nov 2018 22:27:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975261;
-        bh=nwyNGhuzpkIfhdQFZ66TduVOrS7LUGgVhaTN9Gs7md0=;
+        bh=OCE2gfoVX0OPHrlJw8Zwl3HmIOIo0l8PDPSm4Nx/Xnw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u2Ds8IjoDV800rGX+zd0HTPoeWh7ljzJiCazM5avEJqw3GliSpIxY7gt2+QLySf1i
-         g8RbW9m5Qv+sMM70xSxwWW185+K446Eyvq24PuI5fn3iW3cNSJYZNni/egYVdjhF/z
-         VY+eDrdsuK3r4St+G3iNz7X5Fyp0bJdUmZEKU1Y4=
+        b=L957PIeK0j9CQz47tD1w9qkE/aaNZErnyHbhIDy6XZTZaCQ1JN8uGkCJhBG2DM+m4
+         sKbLlNS3PR6xQ2ByXc9CS/wogQ01qEbyNcVoQpp9MfvzQpkKtoFGyn9LhJRt/R/3XV
+         yfpZBYOJiyCSPa2+WXkBnOV9T2//HrwouyyG3Ing=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Selvin Xavier <selvin.xavier@broadcom.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org,
+        Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 146/361] RDMA/bnxt_re: Fix recursive lock warning in debug kernel
-Date:   Sun, 11 Nov 2018 14:18:13 -0800
-Message-Id: <20181111221640.920706860@linuxfoundation.org>
+Subject: [PATCH 4.19 147/361] usb: host: ohci-at91: fix request of irq for optional gpio
+Date:   Sun, 11 Nov 2018 14:18:14 -0800
+Message-Id: <20181111221641.054322017@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -62,90 +63,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Selvin Xavier <selvin.xavier@broadcom.com>
+From: "Tudor.Ambarus@microchip.com" <Tudor.Ambarus@microchip.com>
 
-[ Upstream commit d455f29f6d76a5f94881ca1289aaa1e90617ff5d ]
+[ Upstream commit 325b9313ec3be56c8e2fe03f977fee19cec75820 ]
 
-Fix possible recursive lock warning. Its a false warning as the locks are
-part of two differnt HW Queue data structure - cmdq and creq. Debug kernel
-is throwing the following warning and stack trace.
+atmel,oc-gpio is optional. Request its irq only when atmel,oc is set
+in device tree.
 
-[  783.914967] ============================================
-[  783.914970] WARNING: possible recursive locking detected
-[  783.914973] 4.19.0-rc2+ #33 Not tainted
-[  783.914976] --------------------------------------------
-[  783.914979] swapper/2/0 is trying to acquire lock:
-[  783.914982] 000000002aa3949d (&(&hwq->lock)->rlock){..-.}, at: bnxt_qplib_service_creq+0x232/0x350 [bnxt_re]
-[  783.914999]
-but task is already holding lock:
-[  783.915002] 00000000be73920d (&(&hwq->lock)->rlock){..-.}, at: bnxt_qplib_service_creq+0x2a/0x350 [bnxt_re]
-[  783.915013]
-other info that might help us debug this:
-[  783.915016]  Possible unsafe locking scenario:
+devm_gpiod_get_index_optional returns NULL if -ENOENT. Check its
+return value for NULL before error, because it is more probable that
+atmel,oc is not set.
 
-[  783.915019]        CPU0
-[  783.915021]        ----
-[  783.915034]   lock(&(&hwq->lock)->rlock);
-[  783.915035]   lock(&(&hwq->lock)->rlock);
-[  783.915037]
- *** DEADLOCK ***
+This fixes the following errors on boards where atmel,oc is not set in
+device tree:
+[    0.960000] at91_ohci 500000.ohci: failed to request gpio "overcurrent" IRQ
+[    0.960000] at91_ohci 500000.ohci: failed to request gpio "overcurrent" IRQ
+[    0.970000] at91_ohci 500000.ohci: failed to request gpio "overcurrent" IRQ
 
-[  783.915038]  May be due to missing lock nesting notation
-
-[  783.915039] 1 lock held by swapper/2/0:
-[  783.915040]  #0: 00000000be73920d (&(&hwq->lock)->rlock){..-.}, at: bnxt_qplib_service_creq+0x2a/0x350 [bnxt_re]
-[  783.915044]
-stack backtrace:
-[  783.915046] CPU: 2 PID: 0 Comm: swapper/2 Not tainted 4.19.0-rc2+ #33
-[  783.915047] Hardware name: Dell Inc. PowerEdge R730/0599V5, BIOS 1.0.4 08/28/2014
-[  783.915048] Call Trace:
-[  783.915049]  <IRQ>
-[  783.915054]  dump_stack+0x90/0xe3
-[  783.915058]  __lock_acquire+0x106c/0x1080
-[  783.915061]  ? sched_clock+0x5/0x10
-[  783.915063]  lock_acquire+0xbd/0x1a0
-[  783.915065]  ? bnxt_qplib_service_creq+0x232/0x350 [bnxt_re]
-[  783.915069]  _raw_spin_lock_irqsave+0x4a/0x90
-[  783.915071]  ? bnxt_qplib_service_creq+0x232/0x350 [bnxt_re]
-[  783.915073]  bnxt_qplib_service_creq+0x232/0x350 [bnxt_re]
-[  783.915078]  tasklet_action_common.isra.17+0x197/0x1b0
-[  783.915081]  __do_softirq+0xcb/0x3a6
-[  783.915084]  irq_exit+0xe9/0x100
-[  783.915085]  do_IRQ+0x6a/0x120
-[  783.915087]  common_interrupt+0xf/0xf
-[  783.915088]  </IRQ>
-
-Use nested notation for the spin_lock to avoid this warning.
-
-Signed-off-by: Selvin Xavier <selvin.xavier@broadcom.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/bnxt_re/qplib_rcfw.c |   13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ drivers/usb/host/ohci-at91.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
-+++ b/drivers/infiniband/hw/bnxt_re/qplib_rcfw.c
-@@ -309,8 +309,17 @@ static int bnxt_qplib_process_qp_event(s
- 		rcfw->aeq_handler(rcfw, qp_event, qp);
- 		break;
- 	default:
--		/* Command Response */
--		spin_lock_irqsave(&cmdq->lock, flags);
-+		/*
-+		 * Command Response
-+		 * cmdq->lock needs to be acquired to synchronie
-+		 * the command send and completion reaping. This function
-+		 * is always called with creq->lock held. Using
-+		 * the nested variant of spin_lock.
-+		 *
-+		 */
-+
-+		spin_lock_irqsave_nested(&cmdq->lock, flags,
-+					 SINGLE_DEPTH_NESTING);
- 		cookie = le16_to_cpu(qp_event->cookie);
- 		mcookie = qp_event->cookie;
- 		blocked = cookie & RCFW_CMD_IS_BLOCKING;
+--- a/drivers/usb/host/ohci-at91.c
++++ b/drivers/usb/host/ohci-at91.c
+@@ -551,6 +551,8 @@ static int ohci_hcd_at91_drv_probe(struc
+ 		pdata->overcurrent_pin[i] =
+ 			devm_gpiod_get_index_optional(&pdev->dev, "atmel,oc",
+ 						      i, GPIOD_IN);
++		if (!pdata->overcurrent_pin[i])
++			continue;
+ 		if (IS_ERR(pdata->overcurrent_pin[i])) {
+ 			err = PTR_ERR(pdata->overcurrent_pin[i]);
+ 			dev_err(&pdev->dev, "unable to claim gpio \"overcurrent\": %d\n", err);
 
 
