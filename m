@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B398C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56426C0044C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EB2221780
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 205BB21582
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gm9hsxHQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EB2221780
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nSB2nFCZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 205BB21582
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403854AbeKLIWq (ORCPT
+        id S2390835AbeKLIWr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:22:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51248 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:22:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403775AbeKLIWk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:40 -0500
+        id S2403841AbeKLIWq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:46 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B9D91223D8;
-        Sun, 11 Nov 2018 22:32:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A4E1022353;
+        Sun, 11 Nov 2018 22:32:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975563;
-        bh=iruh8JKe+2QWe2ox8e371IVGqv5Bx/Zm9Njie6QZhrs=;
+        s=default; t=1541975568;
+        bh=6w4aKS/s/TBeLRIrE+1322nL9/ny+ZOt3sEU/d16VaU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gm9hsxHQKGBAqwRmXamaIm3DlzUOvtkTj8tAPIAyPBsLxPjngqxzAWBSu3+rTfYBy
-         iSKLPpcmOSG6nVT76NJjgfIJo+K3tlpVpHzGAFseSEUZ7wW+nTUT5o8WZWbOmSz1LG
-         RT+JV2fF85TmMuymv926M1Bqy/xXcoCZwFvS1xUE=
+        b=nSB2nFCZ8IzdSGaLIHF8VbmBlKLluA5qhF78RkGZI/z5iatfBsSISzBVZmpsLymLZ
+         zMRNWoMK444kc2pgbG32X/hyQSiSjF4lTm3hpzbupO+3oTw5KXPbhppaLPk/Ml1IDh
+         rVQ5jCRTSiUYVLg0YkJgqHT+T0rYfnRcjIlz7OW0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
-        Hugues Fruchet <hugues.fruchet@st.com>,
-        Vinod Koul <vinod.koul@intel.com>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Subject: [PATCH 4.14 130/222] dmaengine: stm32-dma: fix incomplete configuration in cyclic mode
-Date:   Sun, 11 Nov 2018 14:23:47 -0800
-Message-Id: <20181111221659.229602970@linuxfoundation.org>
+        stable@vger.kernel.org, Vijay Immanuel <vijayi@attalasystems.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 107/222] IB/rxe: fix for duplicate request processing and ack psns
+Date:   Sun, 11 Nov 2018 14:23:24 -0800
+Message-Id: <20181111221657.411739735@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -65,54 +63,109 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pierre Yves MORDRET <pierre-yves.mordret@st.com>
+From: Vijay Immanuel <vijayi@attalasystems.com>
 
-commit e57cb3b3f10d005410f09d4598cc6d62b833f2b0 upstream.
+[ Upstream commit b97db58557f4aa6d9903f8e1deea6b3d1ed0ba43 ]
 
-When in cyclic mode, the configuration is updated after having started the
-DMA hardware (STM32_DMA_SCR_EN) leading to incomplete configuration of
-SMxAR registers.
+Don't reset the resp opcode for a replayed read response.
+The resp opcode could be in the middle of a write or send
+sequence, when the duplicate read request was received.
+An example sequence is as follows:
+- Receive read request for 12KB PSN 20. Transmit read response
+  first, middle and last with PSNs 20,21,22.
+- Receive write first PSN 23.
+  At this point the resp psn is 24 and resp opcode is write first.
+- The sender notices that PSN 20 is dropped and retransmits.
+  Receive read request for 12KB PSN 20. Transmit read response
+  first, middle and last with PSNs 20,21,22. The resp opcode is
+  set to -1, the resp psn remains 24.
+- Receive write first PSN 23. This is processed by duplicate_request().
+  The resp opcode remains -1 and resp psn remains 24.
+- Receive write middle PSN 24. check_op_seq() reports a missing
+  first error since the resp opcode is -1.
 
-Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-Signed-off-by: Hugues Fruchet <hugues.fruchet@st.com>
-Signed-off-by: Vinod Koul <vinod.koul@intel.com>
-Cc: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+When sending an ack for a duplicate send or write request,
+use the psn of the previous ack sent. Do not use the psn
+of a read response for the ack.
+An example sequence is as follows:
+- Receive write PSN 30. Transmit ACK for PSN 30.
+- Receive read request 4KB PSN 31. Transmit read response with
+  PSN 31. The resp psn is now 32.
+- The sender notices that PSN 30 is dropped and retransmits.
+  Receive write PSN 30. duplicate_request() sends an ACK with
+  PSN 31. That is incorrect since PSN 31 was a read request.
+
+Signed-off-by: Vijay Immanuel <vijayi@attalasystems.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/dma/stm32-dma.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/infiniband/sw/rxe/rxe_resp.c  |    8 ++++++--
+ drivers/infiniband/sw/rxe/rxe_verbs.h |    2 ++
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
---- a/drivers/dma/stm32-dma.c
-+++ b/drivers/dma/stm32-dma.c
-@@ -429,6 +429,8 @@ static void stm32_dma_dump_reg(struct st
- 	dev_dbg(chan2dev(chan), "SFCR:  0x%08x\n", sfcr);
- }
+--- a/drivers/infiniband/sw/rxe/rxe_resp.c
++++ b/drivers/infiniband/sw/rxe/rxe_resp.c
+@@ -683,6 +683,7 @@ static enum resp_states read_reply(struc
+ 		rxe_advance_resp_resource(qp);
  
-+static void stm32_dma_configure_next_sg(struct stm32_dma_chan *chan);
-+
- static void stm32_dma_start_transfer(struct stm32_dma_chan *chan)
+ 		res->type		= RXE_READ_MASK;
++		res->replay		= 0;
+ 
+ 		res->read.va		= qp->resp.va;
+ 		res->read.va_org	= qp->resp.va;
+@@ -753,7 +754,8 @@ static enum resp_states read_reply(struc
+ 		state = RESPST_DONE;
+ 	} else {
+ 		qp->resp.res = NULL;
+-		qp->resp.opcode = -1;
++		if (!res->replay)
++			qp->resp.opcode = -1;
+ 		if (psn_compare(res->cur_psn, qp->resp.psn) >= 0)
+ 			qp->resp.psn = res->cur_psn;
+ 		state = RESPST_CLEANUP;
+@@ -815,6 +817,7 @@ static enum resp_states execute(struct r
+ 
+ 	/* next expected psn, read handles this separately */
+ 	qp->resp.psn = (pkt->psn + 1) & BTH_PSN_MASK;
++	qp->resp.ack_psn = qp->resp.psn;
+ 
+ 	qp->resp.opcode = pkt->opcode;
+ 	qp->resp.status = IB_WC_SUCCESS;
+@@ -1071,7 +1074,7 @@ static enum resp_states duplicate_reques
+ 					  struct rxe_pkt_info *pkt)
  {
- 	struct stm32_dma_device *dmadev = stm32_dma_get_dev(chan);
-@@ -471,6 +473,9 @@ static void stm32_dma_start_transfer(str
- 	if (status)
- 		stm32_dma_irq_clear(chan, status);
+ 	enum resp_states rc;
+-	u32 prev_psn = (qp->resp.psn - 1) & BTH_PSN_MASK;
++	u32 prev_psn = (qp->resp.ack_psn - 1) & BTH_PSN_MASK;
  
-+	if (chan->desc->cyclic)
-+		stm32_dma_configure_next_sg(chan);
-+
- 	stm32_dma_dump_reg(chan);
+ 	if (pkt->mask & RXE_SEND_MASK ||
+ 	    pkt->mask & RXE_WRITE_MASK) {
+@@ -1114,6 +1117,7 @@ static enum resp_states duplicate_reques
+ 			res->state = (pkt->psn == res->first_psn) ?
+ 					rdatm_res_state_new :
+ 					rdatm_res_state_replay;
++			res->replay = 1;
  
- 	/* Start DMA */
-@@ -564,8 +569,7 @@ static void stm32_dma_issue_pending(stru
- 	if (vchan_issue_pending(&chan->vchan) && !chan->desc && !chan->busy) {
- 		dev_dbg(chan2dev(chan), "vchan %p: issued\n", &chan->vchan);
- 		stm32_dma_start_transfer(chan);
--		if (chan->desc->cyclic)
--			stm32_dma_configure_next_sg(chan);
-+
- 	}
- 	spin_unlock_irqrestore(&chan->vchan.lock, flags);
- }
+ 			/* Reset the resource, except length. */
+ 			res->read.va_org = iova;
+--- a/drivers/infiniband/sw/rxe/rxe_verbs.h
++++ b/drivers/infiniband/sw/rxe/rxe_verbs.h
+@@ -173,6 +173,7 @@ enum rdatm_res_state {
+ 
+ struct resp_res {
+ 	int			type;
++	int			replay;
+ 	u32			first_psn;
+ 	u32			last_psn;
+ 	u32			cur_psn;
+@@ -197,6 +198,7 @@ struct rxe_resp_info {
+ 	enum rxe_qp_state	state;
+ 	u32			msn;
+ 	u32			psn;
++	u32			ack_psn;
+ 	int			opcode;
+ 	int			drop_msg;
+ 	int			goto_error;
 
 
