@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5462C43610
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:26:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92CECC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:26:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64FA421707
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:26:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64FA421707
+	by mail.kernel.org (Postfix) with ESMTP id 5476921508
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:26:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5476921508
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731068AbeKLGQK (ORCPT
+        id S1731469AbeKLGQJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:16:10 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50870 "EHLO
+        Mon, 12 Nov 2018 01:16:09 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50882 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730392AbeKLFs1 (ORCPT
+        by vger.kernel.org with ESMTP id S1730636AbeKLFs1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 00:48:27 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsl-0000oP-HE; Sun, 11 Nov 2018 19:58:55 +0000
+        id 1gLvsl-0000l7-Pv; Sun, 11 Nov 2018 19:58:56 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsY-0001mp-Fp; Sun, 11 Nov 2018 19:58:42 +0000
+        id 1gLvsY-0001m6-36; Sun, 11 Nov 2018 19:58:42 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -38,13 +38,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        "kbuild test robot" <lkp@intel.com>
+        "Kiran Kumar Modukuri" <kiran.modukuri@gmail.com>,
+        "David Howells" <dhowells@redhat.com>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.968655180@decadent.org.uk>
+Message-ID: <lsq.1541965745.901763988@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 297/366] tracing: Quiet gcc warning about maybe
- unused link variable
+Subject: [PATCH 3.16 288/366] fscache: Allow cancelled operations to be
+ enqueued
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,50 +58,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+From: Kiran Kumar Modukuri <kiran.modukuri@gmail.com>
 
-commit 2519c1bbe38d7acacc9aacba303ca6f97482ed53 upstream.
+commit d0eb06afe712b7b103b6361f40a9a0c638524669 upstream.
 
-Commit 57ea2a34adf4 ("tracing/kprobes: Fix trace_probe flags on
-enable_trace_kprobe() failure") added an if statement that depends on another
-if statement that gcc doesn't see will initialize the "link" variable and
-gives the warning:
+Alter the state-check assertion in fscache_enqueue_operation() to allow
+cancelled operations to be given processing time so they can be cleaned up.
 
- "warning: 'link' may be used uninitialized in this function"
+Also fix a debugging statement that was requiring such operations to have
+an object assigned.
 
-It is really a false positive, but to quiet the warning, and also to make
-sure that it never actually is used uninitialized, initialize the "link"
-variable to NULL and add an if (!WARN_ON_ONCE(!link)) where the compiler
-thinks it could be used uninitialized.
-
-Fixes: 57ea2a34adf4 ("tracing/kprobes: Fix trace_probe flags on enable_trace_kprobe() failure")
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Fixes: 9ae326a69004 ("CacheFiles: A cache that backs onto a mounted filesystem")
+Reported-by: Kiran Kumar Modukuri <kiran.modukuri@gmail.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- kernel/trace/trace_kprobe.c | 6 ++++--
+ fs/fscache/operation.c | 6 ++++--
  1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/kernel/trace/trace_kprobe.c
-+++ b/kernel/trace/trace_kprobe.c
-@@ -361,7 +361,7 @@ static struct trace_kprobe *find_trace_k
- static int
- enable_trace_kprobe(struct trace_kprobe *tk, struct ftrace_event_file *file)
- {
--	struct event_file_link *link;
-+	struct event_file_link *link = NULL;
- 	int ret = 0;
+--- a/fs/fscache/operation.c
++++ b/fs/fscache/operation.c
+@@ -37,7 +37,8 @@ void fscache_enqueue_operation(struct fs
+ 	ASSERT(op->processor != NULL);
+ 	ASSERT(fscache_object_is_available(op->object));
+ 	ASSERTCMP(atomic_read(&op->usage), >, 0);
+-	ASSERTCMP(op->state, ==, FSCACHE_OP_ST_IN_PROGRESS);
++	ASSERTIFCMP(op->state != FSCACHE_OP_ST_IN_PROGRESS,
++		    op->state, ==,  FSCACHE_OP_ST_CANCELLED);
  
- 	if (file) {
-@@ -387,7 +387,9 @@ enable_trace_kprobe(struct trace_kprobe
+ 	fscache_stat(&fscache_n_op_enqueue);
+ 	switch (op->flags & FSCACHE_OP_TYPE) {
+@@ -401,7 +402,8 @@ void fscache_put_operation(struct fscach
+ 	struct fscache_cache *cache;
  
- 	if (ret) {
- 		if (file) {
--			list_del_rcu(&link->list);
-+			/* Notice the if is true on not WARN() */
-+			if (!WARN_ON_ONCE(!link))
-+				list_del_rcu(&link->list);
- 			kfree(link);
- 			tk->tp.flags &= ~TP_FLAG_TRACE;
- 		} else {
+ 	_enter("{OBJ%x OP%x,%d}",
+-	       op->object->debug_id, op->debug_id, atomic_read(&op->usage));
++	       op->object ? op->object->debug_id : 0,
++	       op->debug_id, atomic_read(&op->usage));
+ 
+ 	ASSERTCMP(atomic_read(&op->usage), >, 0);
+ 
 
