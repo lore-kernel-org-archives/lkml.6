@@ -2,107 +2,111 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08CEBC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 14:25:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67795C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 14:29:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4DF6208A3
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 14:25:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="n/7jkpnQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4DF6208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 2B816208A3
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 14:29:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B816208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728403AbeKLAO1 (ORCPT
+        id S1728363AbeKLASe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 19:14:27 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:56070 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727817AbeKLAO1 (ORCPT
+        Sun, 11 Nov 2018 19:18:34 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:47475 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727805AbeKLASd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 19:14:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=r3lHk6f2BDCJJvvriINBPNWtXObjWl3i/lfDmFpFcN8=; b=n/7jkpnQofBZghCSP/CgNlBsq
-        NTy86ayMb+66/hY9vTYDzQhsDbtKh+U2JxEPhkEtVRBFGxvW2j5qoHmIFmBZV7o3+/LHmn1O9DZSY
-        HQjvJS/6moiTn3BETLG7c8oKJEDEf4UlHhrk7hyZcM9jX5M/eHbStyjx34YxMlB4l6cJSCfgJrLjP
-        wWG3oomlRbPy8KXZGqsFxadObfY/jxN6j7/JpbVl4fGEsN1BaWqgAH7OMT/6Dd1H/Lt7D/WO/tUPV
-        948ct6YSE86l/FwgQG5/7nH/YacImZknwxgZQrYcoPFn/cIypcg8bYM50zBpjErlO5FrSX+NvBJMk
-        DBvX1/DIA==;
-Received: from [64.114.255.114] (helo=worktop)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gLqg2-0008Ai-5x; Sun, 11 Nov 2018 14:25:26 +0000
-Received: by worktop (Postfix, from userid 1000)
-        id A6C5B6E07F4; Sun, 11 Nov 2018 15:25:25 +0100 (CET)
-Date:   Sun, 11 Nov 2018 15:25:25 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@aculab.com>,
-        Borislav Petkov <bp@alien8.de>
-Subject: Re: [PATCH RFC 0/3] Static calls
-Message-ID: <20181111142525.GF12766@worktop.psav.com>
-References: <cover.1541711457.git.jpoimboe@redhat.com>
- <20181109072811.GB86700@gmail.com>
- <CAKv+Gu-3OfrgGafO3OY3hAir723tD6shEaWTLJ5Ec4YcW4yZyQ@mail.gmail.com>
- <20181110232059.GA12766@worktop.psav.com>
- <CAKv+Gu_y2vH3eu7rMt7d7Hzum_MvYy7=30sNe1fhnB2QLe5i5A@mail.gmail.com>
+        Sun, 11 Nov 2018 19:18:33 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id A03E4806D1; Sun, 11 Nov 2018 15:29:46 +0100 (CET)
+Date:   Sun, 11 Nov 2018 15:29:41 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, robh@kernel.org,
+        Xiaotong Lu <xiaotong.lu@spreadtrum.com>,
+        Baolin Wang <baolin.wang@linaro.org>
+Subject: Re: [PATCH 05/24] dt-bindings: sc27xx-blt: Add function and color
+ properties
+Message-ID: <20181111142941.GA5215@amd>
+References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
+ <1541542052-10081-6-git-send-email-jacek.anaszewski@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="C7zPtVaVf+AK4Oqc"
 Content-Disposition: inline
-In-Reply-To: <CAKv+Gu_y2vH3eu7rMt7d7Hzum_MvYy7=30sNe1fhnB2QLe5i5A@mail.gmail.com>
-User-Agent: Mutt/1.5.22.1 (2013-10-16)
+In-Reply-To: <1541542052-10081-6-git-send-email-jacek.anaszewski@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 11, 2018 at 02:42:55PM +0100, Ard Biesheuvel wrote:
-> On 11 November 2018 at 00:20, Peter Zijlstra <peterz@infradead.org> wrote:
-> > On Fri, Nov 09, 2018 at 02:50:27PM +0100, Ard Biesheuvel wrote:
-> >> On 9 November 2018 at 08:28, Ingo Molnar <mingo@kernel.org> wrote:
-> >> >> - I'm not sure about the objtool approach.  Objtool is (currently)
-> >> >>   x86-64 only, which means we have to use the "unoptimized" version
-> >> >>   everywhere else.  I may experiment with a GCC plugin instead.
-> >> >
-> >> > I'd prefer the objtool approach. It's a pretty reliable first-principles
-> >> > approach while GCC plugin would have to be replicated for Clang and any
-> >> > other compilers, etc.
-> >> >
-> >>
-> >> I implemented the GCC plugin approach here for arm64
-> >
-> > I'm confused; I though we only needed objtool for variable instruction
-> > length architectures, because we can't reliably decode our instruction
-> > stream. Otherwise we can fairly trivially use the DWARF relocation data,
-> > no?
-> 
-> How would that work? We could build vmlinux with --emit-relocs, filter
-> out the static jump/call relocations and resolve the symbol names to
-> filter the ones associated with calls to trampolines. But then, we
-> have to build the static_call_sites section and reinject it back into
-> the image in some way, which is essentially objtool, no?
 
-It's a _much_ simpler tool than objtool, but yes, we need a tool that
-reads the relocation stuff and (re)injects it in a new section -- we
-don't need it on a vmlinux level, it can be done per TU.
+--C7zPtVaVf+AK4Oqc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Anyway, a GCC plugin (I still have to have a peek at your thing) sounds
-like it should work just fine too.
+On Tue 2018-11-06 23:07:13, Jacek Anaszewski wrote:
+> Refer to new "function" and "color" properties and mark "label"
+> as deprecated.
+>=20
+> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> Cc: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
+> Cc: Baolin Wang <baolin.wang@linaro.org>
+
+Don't you want to keep both color and label? New dts on old kernel
+should still work...?
+
+Ok, I see these are only examples....
+
+								Pavel
+
+
+> @@ -25,17 +27,17 @@ led-controller@200 {
+>  	reg =3D <0x200>;
+> =20
+>  	led@0 {
+> -		label =3D "red";
+> +		color =3D "red";
+>  		reg =3D <0x0>;
+>  	};
+> =20
+>  	led@1 {
+> -		label =3D "green";
+> +		color =3D "green";
+>  		reg =3D <0x1>;
+>  	};
+> =20
+>  	led@2 {
+> -		label =3D "blue";
+> +		color =3D "blue";
+>  		reg =3D <0x2>;
+>  	};
+>  };
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--C7zPtVaVf+AK4Oqc
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlvoPNUACgkQMOfwapXb+vKuwQCfb+wupIpbOy21flY+y3H9dWuV
+Sl0AoLchTRSfoLQGrDsanAPqL1g176X4
+=jS8d
+-----END PGP SIGNATURE-----
+
+--C7zPtVaVf+AK4Oqc--
