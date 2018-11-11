@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 375A2C0044C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:33:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1B71C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:33:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F36A521707
+	by mail.kernel.org (Postfix) with ESMTP id A3EF12084C
 	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:33:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="f5Tf6J1x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F36A521707
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jFOQ2ndd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3EF12084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388445AbeKLIUL (ORCPT
+        id S2388633AbeKLJYC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:20:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43886 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:24:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388413AbeKLIUJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:20:09 -0500
+        id S1729899AbeKLIUL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:11 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A5EB721508;
-        Sun, 11 Nov 2018 22:30:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E5492154B;
+        Sun, 11 Nov 2018 22:30:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975412;
-        bh=9skpa6SKvAMvt4zCK56l/vIO/ZNnsLDFWoh2wGo5Xio=;
+        s=default; t=1541975415;
+        bh=Y0bJsiahIvHwoVRrwu45oqFFJ2IlMtPhqeoj54bN6Gg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f5Tf6J1xXySA7WtpX/+U21RGHixRdSQu9ryDTsBMlZVj3mLaFdp+sKe3O/AKiOlIM
-         TiA8f03NoIE6keE08MFok15GYJeq8A7zx5KWo6EljhHwoTcLZmeREvh1yUe70KQPM8
-         Ivk+8/ec6vhPYsrygznxSQneODd0TvN+R21VAA9A=
+        b=jFOQ2nddJkp3IC5jotnkvY+tlgVAHho7fJSVj+JaUKQvlPeK4h0HZPpsfrJErizHD
+         bhmxJjcBbo4s1B2pZu7d4j7mis0r6tIKAhQBwk0b+XgabS+vi7cRSctw9x2BdyZ+Vn
+         UFlVewUYRopeL+d9/9v1NsKO8w+jgZYb5vP5bjOM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Eduardo Valentin <edubezval@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 092/350] ACPI / PM: LPIT: Register sysfs attributes based on FADT
-Date:   Sun, 11 Nov 2018 14:19:16 -0800
-Message-Id: <20181111221710.958903677@linuxfoundation.org>
+Subject: [PATCH 4.18 133/350] thermal: rcar_thermal: Prevent doing work after unbind
+Date:   Sun, 11 Nov 2018 14:19:57 -0800
+Message-Id: <20181111221713.515703461@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -64,52 +66,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 1cdda9486f5103fb133f88e662e48c504adbb779 ]
+[ Upstream commit 697ee786f15d7b65c7f3045d45fe3a05d28e0911 ]
 
-ACPI Low Power S0 Idle capabilities are announced via FADT table and can
-be used to inform the kernel about the presence of one or more Low Power
-Idle (LPI) entries as descried in LPIT table. LPIT table can exist
-independently even if the FADT S0 Idle flag is not set and thus it could
-confuse user since the following cpuidle attributes are created.
+When testing bind/unbind on r8a7791/koelsch:
 
-/sys/devices/system/cpu/cpuidle/low_power_idle_cpu_residency_us
-/sys/devices/system/cpu/cpuidle/low_power_idle_system_residency_us
+    WARNING: CPU: 1 PID: 697 at lib/debugobjects.c:329 debug_print_object+0x8c/0xb4
+    ODEBUG: free active (active state 0) object type: timer_list hint: delayed_work_timer_fn+0x0/0x10
 
-Presence or absence of above attributes could mean that the given
-platform supports S0ix state or not.
+This happens if the workqueue runs after the device has been unbound.
+Fix this by cancelling any queued work during remove.
 
-This change allows to create the above cpuidle attributes only if
-FADT table supports Low Power S0 Idle.
-
-Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Fixes: e0a5172e9eec7f0d ("thermal: rcar: add interrupt support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/acpi/acpi_lpit.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/thermal/rcar_thermal.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/acpi/acpi_lpit.c
-+++ b/drivers/acpi/acpi_lpit.c
-@@ -117,11 +117,17 @@ static void lpit_update_residency(struct
- 		if (!info->iomem_addr)
- 			return;
+--- a/drivers/thermal/rcar_thermal.c
++++ b/drivers/thermal/rcar_thermal.c
+@@ -465,6 +465,7 @@ static int rcar_thermal_remove(struct pl
  
-+		if (!(acpi_gbl_FADT.flags & ACPI_FADT_LOW_POWER_S0))
-+			return;
-+
- 		/* Silently fail, if cpuidle attribute group is not present */
- 		sysfs_add_file_to_group(&cpu_subsys.dev_root->kobj,
- 					&dev_attr_low_power_idle_system_residency_us.attr,
- 					"cpuidle");
- 	} else if (info->gaddr.space_id == ACPI_ADR_SPACE_FIXED_HARDWARE) {
-+		if (!(acpi_gbl_FADT.flags & ACPI_FADT_LOW_POWER_S0))
-+			return;
-+
- 		/* Silently fail, if cpuidle attribute group is not present */
- 		sysfs_add_file_to_group(&cpu_subsys.dev_root->kobj,
- 					&dev_attr_low_power_idle_cpu_residency_us.attr,
+ 	rcar_thermal_for_each_priv(priv, common) {
+ 		rcar_thermal_irq_disable(priv);
++		cancel_delayed_work_sync(&priv->work);
+ 		if (priv->chip->use_of_thermal)
+ 			thermal_remove_hwmon_sysfs(priv->zone);
+ 		else
 
 
