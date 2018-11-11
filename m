@@ -6,46 +6,42 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D984C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:41:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61161C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:41:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24F7E20869
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:41:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24F7E20869
+	by mail.kernel.org (Postfix) with ESMTP id 26CFD20871
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:41:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26CFD20871
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730017AbeKLGa2 (ORCPT
+        id S1729892AbeKLFsD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:30:28 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:49444 "EHLO
+        Mon, 12 Nov 2018 00:48:03 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:49272 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729893AbeKLFsE (ORCPT
+        by vger.kernel.org with ESMTP id S1729548AbeKLFsB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:48:04 -0500
+        Mon, 12 Nov 2018 00:48:01 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsQ-0000lG-FR; Sun, 11 Nov 2018 19:58:34 +0000
+        id 1gLvsN-0000l9-NG; Sun, 11 Nov 2018 19:58:31 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsO-0001OC-4w; Sun, 11 Nov 2018 19:58:32 +0000
+        id 1gLvsN-0001MP-Hx; Sun, 11 Nov 2018 19:58:31 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, linux-xtensa@linux-xtensa.org,
-        "Max Filippov" <jcmvbkbc@gmail.com>,
-        "Chris Zankel" <chris@zankel.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
+CC:     akpm@linux-foundation.org
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.981903578@decadent.org.uk>
+Message-ID: <lsq.1541965745.928075477@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 027/366] signal/xtensa: Consistenly use SIGBUS in
- do_unaligned_user
+Subject: [PATCH 3.16 005/366] staging: rtl8192ee: Fix misleading indentation
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,36 +55,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Eric W. Biederman" <ebiederm@xmission.com>
+From: Ben Hutchings <ben@decadent.org.uk>
 
-commit 7de712ccc096b81d23cc0a941cd9b8cb3956605d upstream.
+Fix the compiler warnings:
 
-While working on changing this code to use force_sig_fault I
-discovered that do_unaliged_user is sets si_signo to SIGBUS and passes
-SIGSEGV to force_sig_info.  Which is just b0rked.
+drivers/staging/rtl8192ee/rtl8192ee/hw.c:524:4: warning: this 'if' clause does not guard...
+drivers/staging/rtl8192ee/rtl8192ee/hw.c:529:5: warning: this 'if' clause does not guard...
+drivers/staging/rtl8192ee/btcoexist/halbtc8821a2ant.c:2338:2: warning: this 'else' clause does not guard...
 
-The code is reporting a SIGBUS error so replace the SIGSEGV with SIGBUS.
+by changing the indentation of these statements to match the upstream
+code in drivers/net/wireless/realtek/rtlwifi/rtl8192ee/hw.c and
+drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtc8821a2ant.c.
 
-Cc: Chris Zankel <chris@zankel.net>
-Cc: Max Filippov <jcmvbkbc@gmail.com>
-Cc: linux-xtensa@linux-xtensa.org
-Acked-by: Max Filippov <jcmvbkbc@gmail.com>
-Fixes: 5a0015d62668 ("[PATCH] xtensa: Architecture support for Tensilica Xtensa Part 3")
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+These were fixed upstream when the driver was removed from staging and
+re-added with some clean-ups.
+
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/xtensa/kernel/traps.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/arch/xtensa/kernel/traps.c
-+++ b/arch/xtensa/kernel/traps.c
-@@ -282,7 +282,7 @@ do_unaligned_user (struct pt_regs *regs)
- 	info.si_errno = 0;
- 	info.si_code = BUS_ADRALN;
- 	info.si_addr = (void *) regs->excvaddr;
--	force_sig_info(SIGSEGV, &info, current);
-+	force_sig_info(SIGBUS, &info, current);
+--- a/drivers/staging/rtl8192ee/rtl8192ee/hw.c
++++ b/drivers/staging/rtl8192ee/rtl8192ee/hw.c
+@@ -523,17 +523,17 @@ void rtl92ee_set_hw_reg(struct ieee80211
+ 			fac = (1 << (fac + 2));
+ 			if (fac > 0xf)
+ 				fac = 0xf;
+-				for (i = 0; i < 4; i++) {
++			for (i = 0; i < 4; i++) {
+ 				if ((reg[i] & 0xf0) > (fac << 4))
+ 					reg[i] = (reg[i] & 0x0f) | (fac << 4);
+ 				if ((reg[i] & 0x0f) > fac)
+ 					reg[i] = (reg[i] & 0xf0) | fac;
+-					rtl_write_byte(rtlpriv,
+-						       (REG_AGGLEN_LMT + i),
+-						       reg[i]);
+-				}
+-				RT_TRACE(COMP_MLME, DBG_LOUD,
+-					("Set HW_VAR_AMPDU_FACTOR:%#x\n", fac));
++				rtl_write_byte(rtlpriv,
++					       (REG_AGGLEN_LMT + i),
++					       reg[i]);
++			}
++			RT_TRACE(COMP_MLME, DBG_LOUD,
++				 ("Set HW_VAR_AMPDU_FACTOR:%#x\n", fac));
+ 		}
+ 		break; }
+ 	case HW_VAR_AC_PARAM:{
+--- a/drivers/staging/rtl8192ee/btcoexist/halbtc8821a2ant.c
++++ b/drivers/staging/rtl8192ee/btcoexist/halbtc8821a2ant.c
+@@ -2339,8 +2339,8 @@ static void halbtc8821a2ant_action_pan_e
+ 		halbtc8821a2ant_coex_table(btcoexist, NORMAL_EXEC, 0x55ff55ff,
+ 					   0x5aff5aff, 0xffff, 0x3);
  
- }
- #endif
+-		if (BTC_WIFI_BW_HT40 == wifi_bw) {
+-			/*  fw mechanism */
++	if (BTC_WIFI_BW_HT40 == wifi_bw) {
++		/*  fw mechanism */
+ 		if ((bt_rssi_state == BTC_RSSI_STATE_HIGH) ||
+ 		    (bt_rssi_state == BTC_RSSI_STATE_STAY_HIGH))
+ 			ps21a_tdma(btcoexist, NORMAL_EXEC, true, 1);
 
