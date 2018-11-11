@@ -2,44 +2,49 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCAD4C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 14:31:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E73E6C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 14:32:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A34D3208A3
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 14:31:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A34D3208A3
+	by mail.kernel.org (Postfix) with ESMTP id B8E21208A3
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 14:32:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8E21208A3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728573AbeKLAUj (ORCPT
+        id S1728622AbeKLAUq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 19:20:39 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:47546 "EHLO
+        Sun, 11 Nov 2018 19:20:46 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:47550 "EHLO
         atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728541AbeKLAUi (ORCPT
+        with ESMTP id S1727817AbeKLAUp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 19:20:38 -0500
+        Sun, 11 Nov 2018 19:20:45 -0500
 Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 8F342806D3; Sun, 11 Nov 2018 15:31:51 +0100 (CET)
-Date:   Sun, 11 Nov 2018 15:31:52 +0100
+        id 9B8F1806D1; Sun, 11 Nov 2018 15:31:58 +0100 (CET)
+Date:   Sun, 11 Nov 2018 15:31:59 +0100
 From:   Pavel Machek <pavel@ucw.cz>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, robh@kernel.org,
-        Dan Murphy <dmurphy@ti.com>
-Subject: Re: [PATCH 12/24] leds: lm3692x: Use led_compose_name()
-Message-ID: <20181111143152.GC5215@amd>
-References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
- <1541542052-10081-13-git-send-email-jacek.anaszewski@gmail.com>
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+        linux-nvdimm@lists.01.org, tj@kernel.org,
+        akpm@linux-foundation.org, linux-pm@vger.kernel.org,
+        jiangshanlai@gmail.com, rafael@kernel.org, len.brown@intel.com,
+        zwisler@kernel.org, dan.j.williams@intel.com, dave.jiang@intel.com
+Subject: Re: [driver-core PATCH v5 5/9] driver core: Establish clear order of
+ operations for deferred probe and remove
+Message-ID: <20181111143159.GD5215@amd>
+References: <154145223352.29224.8912797012647157172.stgit@ahduyck-desk1.jf.intel.com>
+ <154145232484.29224.1635232599636954462.stgit@ahduyck-desk1.jf.intel.com>
+ <1541548114.196084.195.camel@acm.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="Qbvjkv9qwOGw/5Fx"
+        protocol="application/pgp-signature"; boundary="P+33d92oIH25kiaB"
 Content-Disposition: inline
-In-Reply-To: <1541542052-10081-13-git-send-email-jacek.anaszewski@gmail.com>
+In-Reply-To: <1541548114.196084.195.camel@acm.org>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -47,35 +52,49 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---Qbvjkv9qwOGw/5Fx
+--P+33d92oIH25kiaB
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue 2018-11-06 23:07:20, Jacek Anaszewski wrote:
-> Switch to using generic LED support for composing LED class
-> device name.
+Hi!
+
+> > One change I made in addition is I replaced the use of "bool X:1" to de=
+fine
+> > the bitfield to a "u8 X:1" setup in order to resolve some checkpatch
+> > warnings.
 >=20
-> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> Cc: Dan Murphy <dmurphy@ti.com>
+> Please use "bool X:1" instead of "u8 X:1". I think it was a bad idea to m=
+ake
+> checkpatch complain about "bool X:1" since "bool X:1" should only be avoi=
+ded
+> in structures for which alignment must be architecture-independent. For s=
+truct
+> device it is fine if member alignment differs per architecture. Additiona=
+lly,
+> changing "bool X:1" into "u8 X:1" will reduce performance on architecture=
+s that
+> cannot do byte addressing.
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
-
+Should we introduce typedef bit boolean "bbool" and set it
+appropriately, so that architecture sets it "right" and people just
+use it?
+									Pavel
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---Qbvjkv9qwOGw/5Fx
+--P+33d92oIH25kiaB
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlvoPVgACgkQMOfwapXb+vI3CQCffUm9z8/lspP43YnrcQLXFV+e
-tykAn0y2982tEuO1goAhfZEVVjqRf+mO
-=2K9x
+iEYEARECAAYFAlvoPV8ACgkQMOfwapXb+vKjbwCcC2HroQ2q5IEFmvjSgMUcgKe9
+ER8An24GZBL1gBzqPvaJrEdnCuOL5Ixz
+=5axe
 -----END PGP SIGNATURE-----
 
---Qbvjkv9qwOGw/5Fx--
+--P+33d92oIH25kiaB--
