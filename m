@@ -3,47 +3,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FB6CC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:07:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFB15C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:07:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D78B2080D
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:07:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D78B2080D
+	by mail.kernel.org (Postfix) with ESMTP id A8FE72080D
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:07:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8FE72080D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731500AbeKLF5D (ORCPT
+        id S1731507AbeKLF5F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 00:57:03 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52150 "EHLO
+        Mon, 12 Nov 2018 00:57:05 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52156 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730988AbeKLF5C (ORCPT
+        by vger.kernel.org with ESMTP id S1730988AbeKLF5E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:57:02 -0500
+        Mon, 12 Nov 2018 00:57:04 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvt4-0000tu-3j; Sun, 11 Nov 2018 19:59:14 +0000
+        id 1gLvtD-0000lJ-Kr; Sun, 11 Nov 2018 19:59:23 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsR-0001WG-B5; Sun, 11 Nov 2018 19:58:35 +0000
+        id 1gLvsO-0001Oq-DZ; Sun, 11 Nov 2018 19:58:32 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
-        "Sabrina Dubroca" <sd@queasysnail.net>
+CC:     akpm@linux-foundation.org, "Scott Mayhew" <smayhew@redhat.com>,
+        "J. Bruce Fields" <bfields@redhat.com>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.249028991@decadent.org.uk>
+Message-ID: <lsq.1541965745.79942609@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 117/366] ip6mr: only set ip6mr_table from setsockopt
- when ip6mr_new_table succeeds
+Subject: [PATCH 3.16 035/366] nfsd: restrict rd_maxcount to
+ svc_max_payload in nfsd_encode_readdir
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,36 +57,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sabrina Dubroca <sd@queasysnail.net>
+From: Scott Mayhew <smayhew@redhat.com>
 
-commit 848235edb5c93ed086700584c8ff64f6d7fc778d upstream.
+commit 9c2ece6ef67e9d376f32823086169b489c422ed0 upstream.
 
-Currently, raw6_sk(sk)->ip6mr_table is set unconditionally during
-ip6_mroute_setsockopt(MRT6_TABLE). A subsequent attempt at the same
-setsockopt will fail with -ENOENT, since we haven't actually created
-that table.
+nfsd4_readdir_rsize restricts rd_maxcount to svc_max_payload when
+estimating the size of the readdir reply, but nfsd_encode_readdir
+restricts it to INT_MAX when encoding the reply.  This can result in log
+messages like "kernel: RPC request reserved 32896 but used 1049444".
 
-A similar fix for ipv4 was included in commit 5e1859fbcc3c ("ipv4: ipmr:
-various fixes and cleanups").
+Restrict rd_dircount similarly (no reason it should be larger than
+svc_max_payload).
 
-Fixes: d1db275dd3f6 ("ipv6: ip6mr: support multiple tables")
-Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Scott Mayhew <smayhew@redhat.com>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/ipv6/ip6mr.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/nfsd/nfs4xdr.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/net/ipv6/ip6mr.c
-+++ b/net/ipv6/ip6mr.c
-@@ -1785,7 +1785,8 @@ int ip6_mroute_setsockopt(struct sock *s
- 		ret = 0;
- 		if (!ip6mr_new_table(net, v))
- 			ret = -ENOMEM;
--		raw6_sk(sk)->ip6mr_table = v;
-+		else
-+			raw6_sk(sk)->ip6mr_table = v;
- 		rtnl_unlock();
- 		return ret;
+--- a/fs/nfsd/nfs4xdr.c
++++ b/fs/nfsd/nfs4xdr.c
+@@ -3343,7 +3343,8 @@ nfsd4_encode_readdir(struct nfsd4_compou
+ 		nfserr = nfserr_resource;
+ 		goto err_no_verf;
  	}
+-	maxcount = min_t(u32, readdir->rd_maxcount, INT_MAX);
++	maxcount = svc_max_payload(resp->rqstp);
++	maxcount = min_t(u32, readdir->rd_maxcount, maxcount);
+ 	/*
+ 	 * Note the rfc defines rd_maxcount as the size of the
+ 	 * READDIR4resok structure, which includes the verifier above
+@@ -3357,7 +3358,7 @@ nfsd4_encode_readdir(struct nfsd4_compou
+ 
+ 	/* RFC 3530 14.2.24 allows us to ignore dircount when it's 0: */
+ 	if (!readdir->rd_dircount)
+-		readdir->rd_dircount = INT_MAX;
++		readdir->rd_dircount = svc_max_payload(resp->rqstp);
+ 
+ 	readdir->xdr = xdr;
+ 	readdir->rd_maxcount = maxcount;
 
