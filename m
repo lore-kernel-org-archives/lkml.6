@@ -7,45 +7,51 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBCF0C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:41:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42F4AC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:41:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B498320818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:41:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C05F20818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:41:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="j80vX34B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B498320818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DYuGh2Fo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C05F20818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387994AbeKLJbu (ORCPT
+        id S2387813AbeKLITe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:31:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41488 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:19:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387827AbeKLITh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:19:37 -0500
+        id S1732025AbeKLITd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:19:33 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EFE4D2175B;
-        Sun, 11 Nov 2018 22:29:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D537208A3;
+        Sun, 11 Nov 2018 22:29:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975381;
-        bh=xMAHAq2jWOq6enrtxtIcnb3i4VLKDyycHq0Zw2EGwvs=;
+        s=default; t=1541975376;
+        bh=cxj/H8EwN363qELR+a1UIhPJpP1dzO/tRTGAwyW40zg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j80vX34B6X4YTR/j8Pct4V7D2/cnV/yzFjdpjJhralxEp62b3NOjqMZySjzsowbkG
-         9oA9V8auBO6qty2OJbGFmuyE7iRSD26E2CWYw5k5wKP/frBKFg92AXJ2VoJ++NtKbm
-         EWvKq8McBf7gGW9P81LTp9qF3seX/5ReEH+N99l4=
+        b=DYuGh2FoocI9WFibT4LmjfQ+0NHG4hBl5oXK8T3OH5TE+ejuL15XMrr5FAriTUtZr
+         w5lHSb6wrnLNW8Hi2npZ/9OoezH2On5EndJ2PvIzo7d5ZJ0oGjhOsXLzpSYCgFjBZR
+         ys8FEqZaINS/Xp8oqGMhOd0hgkZPsc9UR8RTKARg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, He Zhe <zhe.he@windriver.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH 4.18 018/350] dma-mapping: fix panic caused by passing empty cma command line argument
-Date:   Sun, 11 Nov 2018 14:18:02 -0800
-Message-Id: <20181111221707.936732004@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Petlan <mpetlan@redhat.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.18 045/350] Revert "perf tools: Fix PMU term format max value calculation"
+Date:   Sun, 11 Nov 2018 14:18:29 -0800
+Message-Id: <20181111221709.052014555@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -63,60 +69,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: He Zhe <zhe.he@windriver.com>
+From: Jiri Olsa <jolsa@kernel.org>
 
-commit a3ceed87b07769fb80ce9dc6b604e515dba14c4b upstream.
+[ Upstream commit 1b9caa10b31dda0866f4028e4bfb923fb6e4072f ]
 
-early_cma does not check input argument before passing it to
-simple_strtoull. The argument would be a NULL pointer if "cma", without
-its value, is set in command line and thus causes the following panic.
+This reverts commit ac0e2cd555373ae6f8f3a3ad3fbbf5b6d1e7aaaa.
 
-PANIC: early exception 0xe3 IP 10:ffffffffa3e9db8d error 0 cr2 0x0
-[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc3-yocto-standard+ #7
-[    0.000000] RIP: 0010:_parse_integer_fixup_radix+0xd/0x70
-...
-[    0.000000] Call Trace:
-[    0.000000]  simple_strtoull+0x29/0x70
-[    0.000000]  memparse+0x26/0x90
-[    0.000000]  early_cma+0x17/0x6a
-[    0.000000]  do_early_param+0x57/0x8e
-[    0.000000]  parse_args+0x208/0x320
-[    0.000000]  ? rdinit_setup+0x30/0x30
-[    0.000000]  parse_early_options+0x29/0x2d
-[    0.000000]  ? rdinit_setup+0x30/0x30
-[    0.000000]  parse_early_param+0x36/0x4d
-[    0.000000]  setup_arch+0x336/0x99e
-[    0.000000]  start_kernel+0x6f/0x4e6
-[    0.000000]  x86_64_start_reservations+0x24/0x26
-[    0.000000]  x86_64_start_kernel+0x6f/0x72
-[    0.000000]  secondary_startup_64+0xa4/0xb0
+Michael reported an issue with oversized terms values assignment
+and I noticed there was actually a misunderstanding of the max
+value check in the past.
 
-This patch adds a check to prevent the panic.
+The above commit's changelog says:
 
-Signed-off-by: He Zhe <zhe.he@windriver.com>
-Reviewed-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+  If bit 21 is set, there is parsing issues as below.
+
+    $ perf stat -a -e uncore_qpi_0/event=0x200002,umask=0x8/
+    event syntax error: '..pi_0/event=0x200002,umask=0x8/'
+                                      \___ value too big for format, maximum is 511
+
+But there's no issue there, because the event value is distributed
+along the value defined by the format. Even if the format defines
+separated bit, the value is treated as a continual number, which
+should follow the format definition.
+
+In above case it's 9-bit value with last bit separated:
+  $ cat uncore_qpi_0/format/event
+  config:0-7,21
+
+Hence the value 0x200002 is correctly reported as format violation,
+because it exceeds 9 bits. It should have been 0x102 instead, which
+sets the 9th bit - the bit 21 of the format.
+
+  $ perf stat -vv -a -e uncore_qpi_0/event=0x102,umask=0x8/
+  Using CPUID GenuineIntel-6-2D
+  ...
+  ------------------------------------------------------------
+  perf_event_attr:
+    type                             10
+    size                             112
+    config                           0x200802
+    sample_type                      IDENTIFIER
+  ...
+
+Reported-by: Michael Petlan <mpetlan@redhat.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Fixes: ac0e2cd55537 ("perf tools: Fix PMU term format max value calculation")
+Link: http://lkml.kernel.org/r/20181003072046.29276-1-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- kernel/dma/contiguous.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ tools/perf/util/pmu.c |   13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
---- a/kernel/dma/contiguous.c
-+++ b/kernel/dma/contiguous.c
-@@ -49,7 +49,11 @@ static phys_addr_t limit_cmdline;
+--- a/tools/perf/util/pmu.c
++++ b/tools/perf/util/pmu.c
+@@ -936,13 +936,14 @@ static void pmu_format_value(unsigned lo
  
- static int __init early_cma(char *p)
+ static __u64 pmu_format_max_value(const unsigned long *format)
  {
--	pr_debug("%s(%s)\n", __func__, p);
-+	if (!p) {
-+		pr_err("Config string not provided\n");
-+		return -EINVAL;
-+	}
-+
- 	size_cmdline = memparse(p, &p);
- 	if (*p != '@')
- 		return 0;
+-	__u64 w = 0;
+-	int fbit;
++	int w;
+ 
+-	for_each_set_bit(fbit, format, PERF_PMU_FORMAT_BITS)
+-		w |= (1ULL << fbit);
+-
+-	return w;
++	w = bitmap_weight(format, PERF_PMU_FORMAT_BITS);
++	if (!w)
++		return 0;
++	if (w < 64)
++		return (1ULL << w) - 1;
++	return -1;
+ }
+ 
+ /*
 
 
