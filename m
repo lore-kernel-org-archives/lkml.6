@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E98C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:11:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3030AC43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:11:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EC8A214DB
+	by mail.kernel.org (Postfix) with ESMTP id ED21D20871
 	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:11:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UQbNoYNQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EC8A214DB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="i6m2Cdvj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED21D20871
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730639AbeKLIRU (ORCPT
+        id S1731611AbeKLKCW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:17:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60706 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 05:02:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730600AbeKLIRU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730603AbeKLIRU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:17:20 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 449F4223CE;
+        by mail.kernel.org (Postfix) with ESMTPSA id E35F3223C8;
         Sun, 11 Nov 2018 22:27:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975244;
-        bh=O007p9wAdW6a2EdWkF4orv5RUQiNYImQKy8HUvAGcAg=;
+        s=default; t=1541975245;
+        bh=gbahwvlC6Z9JRuSwHHAmVdMQYuKoKmswGfbwX0WezSw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UQbNoYNQvFKPEqlCC0p8Kmq9OwE9bOyqrpkkkhhRfFWgb3DAkiidqNmNz4UHvWJPf
-         3MDG11uvYQXETnFEI83TOp4pDgD/jBBteBunyiib/Ve4xyhIVn+WmJNeji0fXlO4P/
-         4Lx9QozC+Jb3YdEC/S64GvrM0uirRJxWOh2cIPao=
+        b=i6m2Cdvj0OVu/8l4XcSPITBGD3rSwTt6QfyffAQyWK3d3TbnfEfUBbkGjOCwvs3O4
+         k6pVpG4BdwLqdzr+EYCjMnlr7KgWK4HyeMvpEA0VhWhV4tCBfLZFUuKWDdTKhWhNFD
+         GVLUKoVEaScEUfXoCt7S121565iHXYSSjYb8UGvw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Robinson <pbrobinson@redhat.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        stable@vger.kernel.org, Jian Shen <shenjian15@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 093/361] efi/x86: Call efi_parse_options() from efi_main()
-Date:   Sun, 11 Nov 2018 14:17:20 -0800
-Message-Id: <20181111221632.759756914@linuxfoundation.org>
+Subject: [PATCH 4.19 095/361] net: hns3: Add nic state check before calling netif_tx_wake_queue
+Date:   Sun, 11 Nov 2018 14:17:22 -0800
+Message-Id: <20181111221633.073077947@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -64,59 +65,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Jian Shen <shenjian15@huawei.com>
 
-[ Upstream commit c33ce984435bb6142792802d75513a71e55d1969 ]
+[ Upstream commit 7a8101109dd37837f587cd56f3111d4fc17a07f5 ]
 
-Before this commit we were only calling efi_parse_options() from
-make_boot_params(), but make_boot_params() only gets called if the
-kernel gets booted directly as an EFI executable. So when booted through
-e.g. grub we ended up not parsing the commandline in the boot code.
+When nic down, it firstly calls netif_tx_stop_all_queues(), then calls
+napi_disable(). But napi_disable() will wait current napi_poll finish,
+it may call netif_tx_wake_queue(). This patch fixes it by add nic state
+checking.
 
-This makes the drivers/firmware/efi/libstub code ignore the "quiet"
-commandline argument resulting in the following message being printed:
-"EFI stub: UEFI Secure Boot is enabled."
-
-Despite the quiet request. This commits adds an extra call to
-efi_parse_options() to efi_main() to make sure that the options are
-always processed. This fixes quiet not working.
-
-This also fixes the libstub code ignoring nokaslr and efi=nochunk.
-
-Reported-by: Peter Robinson <pbrobinson@redhat.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Fixes: 424eb834a9be ("net: hns3: Unified HNS3 {VF|PF} Ethernet Driver for hip08 SoC")
+Signed-off-by: Jian Shen <shenjian15@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/boot/compressed/eboot.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/arch/x86/boot/compressed/eboot.c
-+++ b/arch/x86/boot/compressed/eboot.c
-@@ -738,6 +738,7 @@ efi_main(struct efi_config *c, struct bo
- 	struct desc_struct *desc;
- 	void *handle;
- 	efi_system_table_t *_table;
-+	unsigned long cmdline_paddr;
- 
- 	efi_early = c;
- 
-@@ -756,6 +757,15 @@ efi_main(struct efi_config *c, struct bo
- 		setup_boot_services32(efi_early);
- 
- 	/*
-+	 * make_boot_params() may have been called before efi_main(), in which
-+	 * case this is the second time we parse the cmdline. This is ok,
-+	 * parsing the cmdline multiple times does not have side-effects.
-+	 */
-+	cmdline_paddr = ((u64)hdr->cmd_line_ptr |
-+			 ((u64)boot_params->ext_cmd_line_ptr << 32));
-+	efi_parse_options((char *)cmdline_paddr);
-+
-+	/*
- 	 * If the boot loader gave us a value for secure_boot then we use that,
- 	 * otherwise we ask the BIOS.
- 	 */
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -1915,6 +1915,7 @@ static int is_valid_clean_head(struct hn
+ bool hns3_clean_tx_ring(struct hns3_enet_ring *ring, int budget)
+ {
+ 	struct net_device *netdev = ring->tqp->handle->kinfo.netdev;
++	struct hns3_nic_priv *priv = netdev_priv(netdev);
+ 	struct netdev_queue *dev_queue;
+ 	int bytes, pkts;
+ 	int head;
+@@ -1961,7 +1962,8 @@ bool hns3_clean_tx_ring(struct hns3_enet
+ 		 * sees the new next_to_clean.
+ 		 */
+ 		smp_mb();
+-		if (netif_tx_queue_stopped(dev_queue)) {
++		if (netif_tx_queue_stopped(dev_queue) &&
++		    !test_bit(HNS3_NIC_STATE_DOWN, &priv->state)) {
+ 			netif_tx_wake_queue(dev_queue);
+ 			ring->stats.restart_queue++;
+ 		}
 
 
