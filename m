@@ -2,52 +2,53 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C2C7C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:31:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37D08C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:31:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1DB52148E
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:31:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1DB52148E
+	by mail.kernel.org (Postfix) with ESMTP id 042FF20818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:31:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 042FF20818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731510AbeKLGU3 (ORCPT
+        id S1731194AbeKLGU3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 12 Nov 2018 01:20:29 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50376 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50380 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730405AbeKLFsU (ORCPT
+        by vger.kernel.org with ESMTP id S1730407AbeKLFsU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 00:48:20 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsf-0000oP-DG; Sun, 11 Nov 2018 19:58:49 +0000
+        id 1gLvsf-0000l4-G4; Sun, 11 Nov 2018 19:58:49 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsa-0001t1-Ms; Sun, 11 Nov 2018 19:58:44 +0000
+        id 1gLvsa-0001sJ-Cx; Sun, 11 Nov 2018 19:58:44 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "David Ahern" <dsahern@gmail.com>,
-        "Arnaldo Carvalho de Melo" <acme@redhat.com>,
-        "Jiri Olsa" <jolsa@kernel.org>,
-        "Namhyung Kim" <namhyung@kernel.org>,
-        "Wang Nan" <wangnan0@huawei.com>,
-        "Adrian Hunter" <adrian.hunter@intel.com>
+CC:     akpm@linux-foundation.org, "Arnd Bergmann" <arnd@arndb.de>,
+        "Benjamin Herrenschmidt" <benh@kernel.crashing.org>,
+        "Paul Bolle" <pebolle@tiscali.nl>,
+        "Geoff Levand" <geoff@infradead.org>,
+        "Maximilian Attems" <max@stro.at>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Vivek Goyal" <vgoyal@redhat.com>, "Michal Marek" <mmarek@suse.cz>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.79557172@decadent.org.uk>
+Message-ID: <lsq.1541965745.998008189@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 354/366] perf script: Use readdir() instead of
- deprecated readdir_r()
+Subject: [PATCH 3.16 346/366] kexec: Fix make headers_check
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -61,185 +62,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Geoff Levand <geoff@infradead.org>
 
-commit a5e8e825bd1704c488bf6a46936aaf3b9f203d6a upstream.
+commit 9dc5c05f45ca8101025046cda7f8aca8835204f2 upstream.
 
-The readdir() function is thread safe as long as just one thread uses a
-DIR, which is the case in 'perf script', so, to avoid breaking the build
-with glibc-2.23.90 (upcoming 2.24), use it instead of readdir_r().
+Remove the unneded declaration for a kexec_load() routine.
 
-See: http://man7.org/linux/man-pages/man3/readdir.3.html
+Fixes errors like these when running 'make headers_check':
 
-"However, in modern implementations (including the glibc implementation),
-concurrent calls to readdir() that specify different directory streams
-are thread-safe.  In cases where multiple threads must read from the
-same directory stream, using readdir() with external synchronization is
-still preferable to the use of the deprecated readdir_r(3) function."
+include/uapi/linux/kexec.h: userspace cannot reference function or variable defined in the kernel
 
-Noticed while building on a Fedora Rawhide docker container.
+Paul said:
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: http://lkml.kernel.org/n/tip-mt3xz7n2hl49ni2vx7kuq74g@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+: The kexec_load declaration isn't very useful for userspace, see the patch
+: I submitted in http://lkml.kernel.org/r/1389791824.17407.9.camel@x220 .
+: And After my attempt the export of that declaration has also been
+: discussed in
+: http://lkml.kernel.org/r/115373b6ac68ee7a305975896e1c4971e8e51d4c.1408731991.git.geoff@infradead.org
+:
+: In that last discussion no one has been able to point to an actual user of
+: it.  So, as far as I can tell, no one actually uses it.  Which makes
+: sense, because including this header by itself doesn't give one access to
+: a useful definition of kexec_load.  So why bother with the declaration?
+
+Signed-off-by: Geoff Levand <geoff@infradead.org>
+Acked-by: Paul Bolle <pebolle@tiscali.nl>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Vivek Goyal <vgoyal@redhat.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Maximilian Attems <max@stro.at>
+Cc: Michal Marek <mmarek@suse.cz>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- tools/perf/builtin-script.c | 70 ++++++++++++++++++-------------------
- 1 file changed, 34 insertions(+), 36 deletions(-)
+ include/uapi/linux/kexec.h | 6 ------
+ 1 file changed, 6 deletions(-)
 
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -1061,21 +1061,19 @@ static int is_directory(const char *base
- 	return S_ISDIR(st.st_mode);
- }
+--- a/include/uapi/linux/kexec.h
++++ b/include/uapi/linux/kexec.h
+@@ -44,12 +44,6 @@ struct kexec_segment {
+ 	size_t memsz;
+ };
  
--#define for_each_lang(scripts_path, scripts_dir, lang_dirent, lang_next)\
--	while (!readdir_r(scripts_dir, &lang_dirent, &lang_next) &&	\
--	       lang_next)						\
--		if ((lang_dirent.d_type == DT_DIR ||			\
--		     (lang_dirent.d_type == DT_UNKNOWN &&		\
--		      is_directory(scripts_path, &lang_dirent))) &&	\
--		    (strcmp(lang_dirent.d_name, ".")) &&		\
--		    (strcmp(lang_dirent.d_name, "..")))
--
--#define for_each_script(lang_path, lang_dir, script_dirent, script_next)\
--	while (!readdir_r(lang_dir, &script_dirent, &script_next) &&	\
--	       script_next)						\
--		if (script_dirent.d_type != DT_DIR &&			\
--		    (script_dirent.d_type != DT_UNKNOWN ||		\
--		     !is_directory(lang_path, &script_dirent)))
-+#define for_each_lang(scripts_path, scripts_dir, lang_dirent)		\
-+	while ((lang_dirent = readdir(scripts_dir)) != NULL)		\
-+		if ((lang_dirent->d_type == DT_DIR ||			\
-+		     (lang_dirent->d_type == DT_UNKNOWN &&		\
-+		      is_directory(scripts_path, lang_dirent))) &&	\
-+		    (strcmp(lang_dirent->d_name, ".")) &&		\
-+		    (strcmp(lang_dirent->d_name, "..")))
-+
-+#define for_each_script(lang_path, lang_dir, script_dirent)		\
-+	while ((script_dirent = readdir(lang_dir)) != NULL)		\
-+		if (script_dirent->d_type != DT_DIR &&			\
-+		    (script_dirent->d_type != DT_UNKNOWN ||		\
-+		     !is_directory(lang_path, script_dirent)))
+-/* Load a new kernel image as described by the kexec_segment array
+- * consisting of passed number of segments at the entry-point address.
+- * The flags allow different useage types.
+- */
+-extern int kexec_load(void *, size_t, struct kexec_segment *,
+-		unsigned long int);
+ #endif /* __KERNEL__ */
  
- 
- #define RECORD_SUFFIX			"-record"
-@@ -1221,7 +1219,7 @@ static int list_available_scripts(const
- 				  const char *s __maybe_unused,
- 				  int unset __maybe_unused)
- {
--	struct dirent *script_next, *lang_next, script_dirent, lang_dirent;
-+	struct dirent *script_dirent, *lang_dirent;
- 	char scripts_path[MAXPATHLEN];
- 	DIR *scripts_dir, *lang_dir;
- 	char script_path[MAXPATHLEN];
-@@ -1236,19 +1234,19 @@ static int list_available_scripts(const
- 	if (!scripts_dir)
- 		return -1;
- 
--	for_each_lang(scripts_path, scripts_dir, lang_dirent, lang_next) {
-+	for_each_lang(scripts_path, scripts_dir, lang_dirent) {
- 		snprintf(lang_path, MAXPATHLEN, "%s/%s/bin", scripts_path,
--			 lang_dirent.d_name);
-+			 lang_dirent->d_name);
- 		lang_dir = opendir(lang_path);
- 		if (!lang_dir)
- 			continue;
- 
--		for_each_script(lang_path, lang_dir, script_dirent, script_next) {
--			script_root = get_script_root(&script_dirent, REPORT_SUFFIX);
-+		for_each_script(lang_path, lang_dir, script_dirent) {
-+			script_root = get_script_root(script_dirent, REPORT_SUFFIX);
- 			if (script_root) {
- 				desc = script_desc__findnew(script_root);
- 				snprintf(script_path, MAXPATHLEN, "%s/%s",
--					 lang_path, script_dirent.d_name);
-+					 lang_path, script_dirent->d_name);
- 				read_script_info(desc, script_path);
- 				free(script_root);
- 			}
-@@ -1336,7 +1334,7 @@ static int check_ev_match(char *dir_name
-  */
- int find_scripts(char **scripts_array, char **scripts_path_array)
- {
--	struct dirent *script_next, *lang_next, script_dirent, lang_dirent;
-+	struct dirent *script_dirent, *lang_dirent;
- 	char scripts_path[MAXPATHLEN], lang_path[MAXPATHLEN];
- 	DIR *scripts_dir, *lang_dir;
- 	struct perf_session *session;
-@@ -1359,9 +1357,9 @@ int find_scripts(char **scripts_array, c
- 		return -1;
- 	}
- 
--	for_each_lang(scripts_path, scripts_dir, lang_dirent, lang_next) {
-+	for_each_lang(scripts_path, scripts_dir, lang_dirent) {
- 		snprintf(lang_path, MAXPATHLEN, "%s/%s", scripts_path,
--			 lang_dirent.d_name);
-+			 lang_dirent->d_name);
- #ifdef NO_LIBPERL
- 		if (strstr(lang_path, "perl"))
- 			continue;
-@@ -1375,16 +1373,16 @@ int find_scripts(char **scripts_array, c
- 		if (!lang_dir)
- 			continue;
- 
--		for_each_script(lang_path, lang_dir, script_dirent, script_next) {
-+		for_each_script(lang_path, lang_dir, script_dirent) {
- 			/* Skip those real time scripts: xxxtop.p[yl] */
--			if (strstr(script_dirent.d_name, "top."))
-+			if (strstr(script_dirent->d_name, "top."))
- 				continue;
- 			sprintf(scripts_path_array[i], "%s/%s", lang_path,
--				script_dirent.d_name);
--			temp = strchr(script_dirent.d_name, '.');
-+				script_dirent->d_name);
-+			temp = strchr(script_dirent->d_name, '.');
- 			snprintf(scripts_array[i],
--				(temp - script_dirent.d_name) + 1,
--				"%s", script_dirent.d_name);
-+				(temp - script_dirent->d_name) + 1,
-+				"%s", script_dirent->d_name);
- 
- 			if (check_ev_match(lang_path,
- 					scripts_array[i], session))
-@@ -1402,7 +1400,7 @@ int find_scripts(char **scripts_array, c
- 
- static char *get_script_path(const char *script_root, const char *suffix)
- {
--	struct dirent *script_next, *lang_next, script_dirent, lang_dirent;
-+	struct dirent *script_dirent, *lang_dirent;
- 	char scripts_path[MAXPATHLEN];
- 	char script_path[MAXPATHLEN];
- 	DIR *scripts_dir, *lang_dir;
-@@ -1415,21 +1413,21 @@ static char *get_script_path(const char
- 	if (!scripts_dir)
- 		return NULL;
- 
--	for_each_lang(scripts_path, scripts_dir, lang_dirent, lang_next) {
-+	for_each_lang(scripts_path, scripts_dir, lang_dirent) {
- 		snprintf(lang_path, MAXPATHLEN, "%s/%s/bin", scripts_path,
--			 lang_dirent.d_name);
-+			 lang_dirent->d_name);
- 		lang_dir = opendir(lang_path);
- 		if (!lang_dir)
- 			continue;
- 
--		for_each_script(lang_path, lang_dir, script_dirent, script_next) {
--			__script_root = get_script_root(&script_dirent, suffix);
-+		for_each_script(lang_path, lang_dir, script_dirent) {
-+			__script_root = get_script_root(script_dirent, suffix);
- 			if (__script_root && !strcmp(script_root, __script_root)) {
- 				free(__script_root);
- 				closedir(lang_dir);
- 				closedir(scripts_dir);
- 				snprintf(script_path, MAXPATHLEN, "%s/%s",
--					 lang_path, script_dirent.d_name);
-+					 lang_path, script_dirent->d_name);
- 				return strdup(script_path);
- 			}
- 			free(__script_root);
+ #endif /* _UAPILINUX_KEXEC_H */
 
