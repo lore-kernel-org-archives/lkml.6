@@ -6,47 +6,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95157C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:41:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5316AC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:41:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BB0C214F1
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:41:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19A98214F1
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:41:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bBD1uSa8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BB0C214F1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vt/8/dS7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19A98214F1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390572AbeKLIb1 (ORCPT
+        id S2391261AbeKLIbf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:31:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59848 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:31:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59738 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391204AbeKLIYX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:24:23 -0500
+        id S2388182AbeKLIYU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:24:20 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E3F821780;
-        Sun, 11 Nov 2018 22:34:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F52522353;
+        Sun, 11 Nov 2018 22:34:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975665;
-        bh=xtYHkaLCQ4S/kw9QUF9hGgoO905vukSCK+2c6JH71rw=;
+        s=default; t=1541975662;
+        bh=YxcN+6NO2L6wTR9oK5bUCixlqA2JIgBHRoxVPLrADBw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bBD1uSa8WPVshdV/Lf/PRz8XZ6MabKTl5HlKvrkb9zKzz0UfLgiz4jwskPMT5z8JC
-         +rVgfHFmxZPFzP7P4XRtdr3QilOEkQeuVHGjvSfBG4m6b7L7cVCQGS0w22JFih625z
-         DgYuqFbY9QEKSPV04teoLI1NCpu8ZiCWnOcmcsH4=
+        b=Vt/8/dS7GqYanHHplVOQEtYwCaKulmclJP3AR45sATaqQ1TkNtsF/HxoF7wpVR4Rw
+         cH4QwIuuMUmXFHruhSxJxiOFD0BWIpd5F6VRD6WAUzVon62RfpJB0MvTm46OTi2nJG
+         qjL4/OvWD1PRuS2sXJmyTv7YsDJk8cQFR4ybVHV4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Nuernberger <snu@amazon.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Simon Veith <sveith@amazon.de>,
-        Paul Moore <paul@paul-moore.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 084/141] net/ipv4: defensive cipso option parsing
-Date:   Sun, 11 Nov 2018 14:25:43 -0800
-Message-Id: <20181111221639.791994980@linuxfoundation.org>
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
+Subject: [PATCH 4.9 082/141] usbip:vudc: BUG kmalloc-2048 (Not tainted): Poison overwritten
+Date:   Sun, 11 Nov 2018 14:25:41 -0800
+Message-Id: <20181111221639.492183907@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
 References: <20181111221627.853046496@linuxfoundation.org>
@@ -64,66 +61,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefan Nuernberger <snu@amazon.com>
+From: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 
-commit 076ed3da0c9b2f88d9157dbe7044a45641ae369e upstream.
+commit e28fd56ad5273be67d0fae5bedc7e1680e729952 upstream.
 
-commit 40413955ee26 ("Cipso: cipso_v4_optptr enter infinite loop") fixed
-a possible infinite loop in the IP option parsing of CIPSO. The fix
-assumes that ip_options_compile filtered out all zero length options and
-that no other one-byte options beside IPOPT_END and IPOPT_NOOP exist.
-While this assumption currently holds true, add explicit checks for zero
-length and invalid length options to be safe for the future. Even though
-ip_options_compile should have validated the options, the introduction of
-new one-byte options can still confuse this code without the additional
-checks.
+In rmmod path, usbip_vudc does platform_device_put() twice once from
+platform_device_unregister() and then from put_vudc_device().
 
-Signed-off-by: Stefan Nuernberger <snu@amazon.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Simon Veith <sveith@amazon.de>
-Cc: stable@vger.kernel.org
-Acked-by: Paul Moore <paul@paul-moore.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+The second put results in:
+
+BUG kmalloc-2048 (Not tainted): Poison overwritten error or
+BUG: KASAN: use-after-free in kobject_put+0x1e/0x230 if KASAN is
+enabled.
+
+[  169.042156] calling  init+0x0/0x1000 [usbip_vudc] @ 1697
+[  169.042396] =============================================================================
+[  169.043678] probe of usbip-vudc.0 returned 1 after 350 usecs
+[  169.044508] BUG kmalloc-2048 (Not tainted): Poison overwritten
+[  169.044509] -----------------------------------------------------------------------------
+...
+[  169.057849] INFO: Freed in device_release+0x2b/0x80 age=4223 cpu=3 pid=1693
+[  169.057852] 	kobject_put+0x86/0x1b0
+[  169.057853] 	0xffffffffc0c30a96
+[  169.057855] 	__x64_sys_delete_module+0x157/0x240
+
+Fix it to call platform_device_del() instead and let put_vudc_device() do
+the platform_device_put().
+
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/ipv4/cipso_ipv4.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/usb/usbip/vudc_main.c |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
---- a/net/ipv4/cipso_ipv4.c
-+++ b/net/ipv4/cipso_ipv4.c
-@@ -1512,7 +1512,7 @@ static int cipso_v4_parsetag_loc(const s
-  *
-  * Description:
-  * Parse the packet's IP header looking for a CIPSO option.  Returns a pointer
-- * to the start of the CIPSO option on success, NULL if one if not found.
-+ * to the start of the CIPSO option on success, NULL if one is not found.
-  *
-  */
- unsigned char *cipso_v4_optptr(const struct sk_buff *skb)
-@@ -1522,10 +1522,8 @@ unsigned char *cipso_v4_optptr(const str
- 	int optlen;
- 	int taglen;
- 
--	for (optlen = iph->ihl*4 - sizeof(struct iphdr); optlen > 0; ) {
-+	for (optlen = iph->ihl*4 - sizeof(struct iphdr); optlen > 1; ) {
- 		switch (optptr[0]) {
--		case IPOPT_CIPSO:
--			return optptr;
- 		case IPOPT_END:
- 			return NULL;
- 		case IPOPT_NOOP:
-@@ -1534,6 +1532,11 @@ unsigned char *cipso_v4_optptr(const str
- 		default:
- 			taglen = optptr[1];
- 		}
-+		if (!taglen || taglen > optlen)
-+			return NULL;
-+		if (optptr[0] == IPOPT_CIPSO)
-+			return optptr;
-+
- 		optlen -= taglen;
- 		optptr += taglen;
+--- a/drivers/usb/usbip/vudc_main.c
++++ b/drivers/usb/usbip/vudc_main.c
+@@ -85,6 +85,10 @@ static int __init init(void)
+ cleanup:
+ 	list_for_each_entry_safe(udc_dev, udc_dev2, &vudc_devices, dev_entry) {
+ 		list_del(&udc_dev->dev_entry);
++		/*
++		 * Just do platform_device_del() here, put_vudc_device()
++		 * calls the platform_device_put()
++		 */
+ 		platform_device_del(udc_dev->pdev);
+ 		put_vudc_device(udc_dev);
  	}
+@@ -101,7 +105,11 @@ static void __exit cleanup(void)
+ 
+ 	list_for_each_entry_safe(udc_dev, udc_dev2, &vudc_devices, dev_entry) {
+ 		list_del(&udc_dev->dev_entry);
+-		platform_device_unregister(udc_dev->pdev);
++		/*
++		 * Just do platform_device_del() here, put_vudc_device()
++		 * calls the platform_device_put()
++		 */
++		platform_device_del(udc_dev->pdev);
+ 		put_vudc_device(udc_dev);
+ 	}
+ 	platform_driver_unregister(&vudc_driver);
 
 
