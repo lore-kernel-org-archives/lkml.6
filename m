@@ -7,47 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53B02C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE05DC43610
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FBDE216FD
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96350223CA
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rlWkhyp+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FBDE216FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cCtycK2M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96350223CA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733054AbeKLISk (ORCPT
+        id S1733069AbeKLISl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:18:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38130 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:18:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733012AbeKLISj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:18:39 -0500
+        id S1733025AbeKLISk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:18:40 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A4AA21780;
-        Sun, 11 Nov 2018 22:28:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1D3CD2241B;
+        Sun, 11 Nov 2018 22:28:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975323;
-        bh=NwAUMyYhCtr4jqBIcGaxnqHkfdtXuG7XVG7Hu70S4Yg=;
+        s=default; t=1541975324;
+        bh=IUZgjDT3n+JyAg7YLAG/pYidiVe2/f9dsTW2w9ufLAg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rlWkhyp+e6HYKxt/kdF2fJ5MwGG98bXCPKlzs7FUjwow/vntzCsFeaJWjJhdp4rET
-         YpZO2g3Lb8Bmf6visnPzXF79/5rbh3Pj4at2kBbkzsHdfsKg73ioLg8zHiZvOXo+CE
-         0HKPDthBGJX6pqkuiu/NeqLqsdLzIxVB5fJ9A50A=
+        b=cCtycK2MCoYGjxbiBnZYpOpA7gmLkJaeK0n2vTga7fWKODBK7u3F+xNZVGtohnB3u
+         bYXYfpQJHsFIfWUUKHCL7MTsIe2zB1jU08uISRX9SUTrVz9UCx5c/YeEZjBMx+XjER
+         /LHgTDc5DHt8VQ2uWKF08+tnGgqJuyo0xliLJOlY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia Hongtao <hongtao.jia@freescale.com>,
-        Scott Wood <scottwood@freescale.com>,
-        Radu Rendec <radu.rendec@gmail.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.19 281/361] powerpc/msi: Fix compile error on mpc83xx
-Date:   Sun, 11 Nov 2018 14:20:28 -0800
-Message-Id: <20181111221655.901780771@linuxfoundation.org>
+        stable@vger.kernel.org, Xu Wen <wen.xu@gatech.edu>,
+        Qu Wenruo <wqu@suse.com>, David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.19 328/361] btrfs: locking: Add extra check in btrfs_init_new_buffer() to avoid deadlock
+Date:   Sun, 11 Nov 2018 14:21:15 -0800
+Message-Id: <20181111221659.624922237@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -65,45 +62,130 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Qu Wenruo <wqu@suse.com>
 
-commit 0f99153def98134403c9149128e59d3e1786cf04 upstream.
+commit b72c3aba09a53fc7c1824250d71180ca154517a7 upstream.
 
-mpic_get_primary_version() is not defined when not using MPIC.
-The compile error log like:
+[BUG]
+For certain crafted image, whose csum root leaf has missing backref, if
+we try to trigger write with data csum, it could cause deadlock with the
+following kernel WARN_ON():
 
-arch/powerpc/sysdev/built-in.o: In function `fsl_of_msi_probe':
-fsl_msi.c:(.text+0x150c): undefined reference to `fsl_mpic_primary_get_version'
+  WARNING: CPU: 1 PID: 41 at fs/btrfs/locking.c:230 btrfs_tree_lock+0x3e2/0x400
+  CPU: 1 PID: 41 Comm: kworker/u4:1 Not tainted 4.18.0-rc1+ #8
+  Workqueue: btrfs-endio-write btrfs_endio_write_helper
+  RIP: 0010:btrfs_tree_lock+0x3e2/0x400
+  Call Trace:
+   btrfs_alloc_tree_block+0x39f/0x770
+   __btrfs_cow_block+0x285/0x9e0
+   btrfs_cow_block+0x191/0x2e0
+   btrfs_search_slot+0x492/0x1160
+   btrfs_lookup_csum+0xec/0x280
+   btrfs_csum_file_blocks+0x2be/0xa60
+   add_pending_csums+0xaf/0xf0
+   btrfs_finish_ordered_io+0x74b/0xc90
+   finish_ordered_fn+0x15/0x20
+   normal_work_helper+0xf6/0x500
+   btrfs_endio_write_helper+0x12/0x20
+   process_one_work+0x302/0x770
+   worker_thread+0x81/0x6d0
+   kthread+0x180/0x1d0
+   ret_from_fork+0x35/0x40
 
-Signed-off-by: Jia Hongtao <hongtao.jia@freescale.com>
-Signed-off-by: Scott Wood <scottwood@freescale.com>
-Reported-by: Radu Rendec <radu.rendec@gmail.com>
-Fixes: 807d38b73b6 ("powerpc/mpic: Add get_version API both for internal and external use")
-Cc: stable@vger.kernel.org
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+[CAUSE]
+That crafted image has missing backref for csum tree root leaf.  And
+when we try to allocate new tree block, since there is no
+EXTENT/METADATA_ITEM for csum tree root, btrfs consider it's free slot
+and use it.
+
+The extent tree of the image looks like:
+
+  Normal image                      |       This fuzzed image
+  ----------------------------------+--------------------------------
+  BG 29360128                       | BG 29360128
+   One empty slot                   |  One empty slot
+  29364224: backref to UUID tree    | 29364224: backref to UUID tree
+   Two empty slots                  |  Two empty slots
+  29376512: backref to CSUM tree    |  One empty slot (bad type) <<<
+  29380608: backref to D_RELOC tree | 29380608: backref to D_RELOC tree
+  ...                               | ...
+
+Since bytenr 29376512 has no METADATA/EXTENT_ITEM, when btrfs try to
+alloc tree block, it's an valid slot for btrfs.
+
+And for finish_ordered_write, when we need to insert csum, we try to CoW
+csum tree root.
+
+By accident, empty slots at bytenr BG_OFFSET, BG_OFFSET + 8K,
+BG_OFFSET + 12K is already used by tree block COW for other trees, the
+next empty slot is BG_OFFSET + 16K, which should be the backref for CSUM
+tree.
+
+But due to the bad type, btrfs can recognize it and still consider it as
+an empty slot, and will try to use it for csum tree CoW.
+
+Then in the following call trace, we will try to lock the new tree
+block, which turns out to be the old csum tree root which is already
+locked:
+
+btrfs_search_slot() called on csum tree root, which is at 29376512
+|- btrfs_cow_block()
+   |- btrfs_set_lock_block()
+   |  |- Now locks tree block 29376512 (old csum tree root)
+   |- __btrfs_cow_block()
+      |- btrfs_alloc_tree_block()
+         |- btrfs_reserve_extent()
+            | Now it returns tree block 29376512, which extent tree
+            | shows its empty slot, but it's already hold by csum tree
+            |- btrfs_init_new_buffer()
+               |- btrfs_tree_lock()
+                  | Triggers WARN_ON(eb->lock_owner == current->pid)
+                  |- wait_event()
+                     Wait lock owner to release the lock, but it's
+                     locked by ourself, so it will deadlock
+
+[FIX]
+This patch will do the lock_owner and current->pid check at
+btrfs_init_new_buffer().
+So above deadlock can be avoided.
+
+Since such problem can only happen in crafted image, we will still
+trigger kernel warning for later aborted transaction, but with a little
+more meaningful warning message.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=200405
+Reported-by: Xu Wen <wen.xu@gatech.edu>
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/include/asm/mpic.h |    7 +++++++
- 1 file changed, 7 insertions(+)
+ fs/btrfs/extent-tree.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
---- a/arch/powerpc/include/asm/mpic.h
-+++ b/arch/powerpc/include/asm/mpic.h
-@@ -393,7 +393,14 @@ extern struct bus_type mpic_subsys;
- #define	MPIC_REGSET_TSI108		MPIC_REGSET(1)	/* Tsi108/109 PIC */
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -8119,6 +8119,19 @@ btrfs_init_new_buffer(struct btrfs_trans
+ 	if (IS_ERR(buf))
+ 		return buf;
  
- /* Get the version of primary MPIC */
-+#ifdef CONFIG_MPIC
- extern u32 fsl_mpic_primary_get_version(void);
-+#else
-+static inline u32 fsl_mpic_primary_get_version(void)
-+{
-+	return 0;
-+}
-+#endif
- 
- /* Allocate the controller structure and setup the linux irq descs
-  * for the range if interrupts passed in. No HW initialization is
++	/*
++	 * Extra safety check in case the extent tree is corrupted and extent
++	 * allocator chooses to use a tree block which is already used and
++	 * locked.
++	 */
++	if (buf->lock_owner == current->pid) {
++		btrfs_err_rl(fs_info,
++"tree block %llu owner %llu already locked by pid=%d, extent tree corruption detected",
++			buf->start, btrfs_header_owner(buf), current->pid);
++		free_extent_buffer(buf);
++		return ERR_PTR(-EUCLEAN);
++	}
++
+ 	btrfs_set_buffer_lockdep_class(root->root_key.objectid, buf, level);
+ 	btrfs_tree_lock(buf);
+ 	clean_tree_block(fs_info, buf);
 
 
