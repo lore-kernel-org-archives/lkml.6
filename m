@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C424C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:51:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C47CC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:51:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08265214E0
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:51:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FE6C214E0
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:51:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dTr9dRUt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08265214E0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PMkdNe7J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FE6C214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404169AbeKLIXG (ORCPT
+        id S2404240AbeKLIlp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:23:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54672 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:41:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54620 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404047AbeKLIXF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:23:05 -0500
+        id S2404154AbeKLIXG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:23:06 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 357B521582;
+        by mail.kernel.org (Postfix) with ESMTPSA id D9C1421780;
         Sun, 11 Nov 2018 22:33:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975588;
-        bh=/EPWfoYsszQ8SpP8mmrSf7ynesryXKHQ+feuK5bbDPs=;
+        bh=FLdygPX7ypcFDLD/kL5uVnIyR/0wwsGBK7MEy+6ca/g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dTr9dRUt6+rzMryizj/g0orjyR9xWIUpv8Lj5y+keB9EBx+OqOqgePgskrZ0aiTb5
-         y21suPfEr2KVPdHV1s4FGmYvW2fyC65DUkBjSdZ+Tw+SbcuH88vrUwM6bZAv5t2lkV
-         WkNeVZGguBBF0vT5zx0r1dgrFF451g8q8oQVH24Q=
+        b=PMkdNe7J35mQwITs4FEtyY1p20wGh+GeuI0rs51jTn9h16SrGiO2CDiIjTB2LytDm
+         jsyocxfnzGfGlIlCD2Mv9EkYWfGm5ZgckcQrIgrFHstBghxojKA6V1QRdwRD5n5aMy
+         laWQ8nugEtnYooqgeCAx4wsyHMOvE8xmIcr2zckY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Breno Leitao <leitao@debian.org>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.14 195/222] selftests/powerpc: Fix ptrace tm failure
-Date:   Sun, 11 Nov 2018 14:24:52 -0800
-Message-Id: <20181111221704.257267154@linuxfoundation.org>
+        stable@vger.kernel.org, Xu Wen <wen.xu@gatech.edu>,
+        Qu Wenruo <wqu@suse.com>, David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.14 197/222] btrfs: Handle owner mismatch gracefully when walking up tree
+Date:   Sun, 11 Nov 2018 14:24:54 -0800
+Message-Id: <20181111221704.415752862@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -63,60 +62,118 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Breno Leitao <leitao@debian.org>
+From: Qu Wenruo <wqu@suse.com>
 
-commit 48dc0ef19044bfb69193302fbe3a834e3331b7ae upstream.
+commit 65c6e82becec33731f48786e5a30f98662c86b16 upstream.
 
-Test ptrace-tm-spd-gpr fails on current kernel (4.19) due to a segmentation
-fault that happens on the child process prior to setting cptr[2] = 1. This
-causes the parent process to wait forever at 'while (!pptr[2])' and the test to
-be killed by the test harness framework by timeout, thus, failing.
+[BUG]
+When mounting certain crafted image, btrfs will trigger kernel BUG_ON()
+when trying to recover balance:
 
-The segmentation fault happens because of a inline assembly being
-generated as:
+  kernel BUG at fs/btrfs/extent-tree.c:8956!
+  invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
+  CPU: 1 PID: 662 Comm: mount Not tainted 4.18.0-rc1-custom+ #10
+  RIP: 0010:walk_up_proc+0x336/0x480 [btrfs]
+  RSP: 0018:ffffb53540c9b890 EFLAGS: 00010202
+  Call Trace:
+   walk_up_tree+0x172/0x1f0 [btrfs]
+   btrfs_drop_snapshot+0x3a4/0x830 [btrfs]
+   merge_reloc_roots+0xe1/0x1d0 [btrfs]
+   btrfs_recover_relocation+0x3ea/0x420 [btrfs]
+   open_ctree+0x1af3/0x1dd0 [btrfs]
+   btrfs_mount_root+0x66b/0x740 [btrfs]
+   mount_fs+0x3b/0x16a
+   vfs_kern_mount.part.9+0x54/0x140
+   btrfs_mount+0x16d/0x890 [btrfs]
+   mount_fs+0x3b/0x16a
+   vfs_kern_mount.part.9+0x54/0x140
+   do_mount+0x1fd/0xda0
+   ksys_mount+0xba/0xd0
+   __x64_sys_mount+0x21/0x30
+   do_syscall_64+0x60/0x210
+   entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-	0x10000355c <tm_spd_gpr+492>    lfs    f0, 0(0)
+[CAUSE]
+Extent tree corruption.  In this particular case, reloc tree root's
+owner is DATA_RELOC_TREE (should be TREE_RELOC), thus its backref is
+corrupted and we failed the owner check in walk_up_tree().
 
-This is reading memory position 0x0 and causing the segmentation fault.
+[FIX]
+It's pretty hard to take care of every extent tree corruption, but at
+least we can remove such BUG_ON() and exit more gracefully.
 
-This code is being generated by ASM_LOAD_FPR_SINGLE_PRECISION(flt_4), where
-flt_4 is passed to the inline assembly block as:
+And since in this particular image, DATA_RELOC_TREE and TREE_RELOC share
+the same root (which is obviously invalid), we needs to make
+__del_reloc_root() more robust to detect such invalid sharing to avoid
+possible NULL dereference as root->node can be NULL in this case.
 
-	[flt_4] "r" (&d)
-
-Since the inline assembly 'r' constraint means any GPR, gpr0 is being
-chosen, thus causing this issue when issuing a Load Floating-Point Single
-instruction.
-
-This patch simply changes the constraint to 'b', which specify that this
-register will be used as base, and r0 is not allowed to be used, avoiding
-this issue.
-
-Other than that, removing flt_2 register from the input operands, since it
-is not used by the inline assembly code at all.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Acked-by: Segher Boessenkool <segher@kernel.crashing.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=200411
+Reported-by: Xu Wen <wen.xu@gatech.edu>
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/testing/selftests/powerpc/ptrace/ptrace-tm-spd-gpr.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/btrfs/extent-tree.c |   18 ++++++++++++------
+ fs/btrfs/relocation.c  |    2 +-
+ 2 files changed, 13 insertions(+), 7 deletions(-)
 
---- a/tools/testing/selftests/powerpc/ptrace/ptrace-tm-spd-gpr.c
-+++ b/tools/testing/selftests/powerpc/ptrace/ptrace-tm-spd-gpr.c
-@@ -67,8 +67,8 @@ trans:
- 		"3: ;"
- 		: [res] "=r" (result), [texasr] "=r" (texasr)
- 		: [gpr_1]"i"(GPR_1), [gpr_2]"i"(GPR_2), [gpr_4]"i"(GPR_4),
--		[sprn_texasr] "i" (SPRN_TEXASR), [flt_1] "r" (&a),
--		[flt_2] "r" (&b), [flt_4] "r" (&d)
-+		[sprn_texasr] "i" (SPRN_TEXASR), [flt_1] "b" (&a),
-+		[flt_4] "b" (&d)
- 		: "memory", "r5", "r6", "r7",
- 		"r8", "r9", "r10", "r11", "r12", "r13", "r14", "r15",
- 		"r16", "r17", "r18", "r19", "r20", "r21", "r22", "r23",
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -9028,15 +9028,14 @@ static noinline int walk_up_proc(struct
+ 	if (eb == root->node) {
+ 		if (wc->flags[level] & BTRFS_BLOCK_FLAG_FULL_BACKREF)
+ 			parent = eb->start;
+-		else
+-			BUG_ON(root->root_key.objectid !=
+-			       btrfs_header_owner(eb));
++		else if (root->root_key.objectid != btrfs_header_owner(eb))
++			goto owner_mismatch;
+ 	} else {
+ 		if (wc->flags[level + 1] & BTRFS_BLOCK_FLAG_FULL_BACKREF)
+ 			parent = path->nodes[level + 1]->start;
+-		else
+-			BUG_ON(root->root_key.objectid !=
+-			       btrfs_header_owner(path->nodes[level + 1]));
++		else if (root->root_key.objectid !=
++			 btrfs_header_owner(path->nodes[level + 1]))
++			goto owner_mismatch;
+ 	}
+ 
+ 	btrfs_free_tree_block(trans, root, eb, parent, wc->refs[level] == 1);
+@@ -9044,6 +9043,11 @@ out:
+ 	wc->refs[level] = 0;
+ 	wc->flags[level] = 0;
+ 	return 0;
++
++owner_mismatch:
++	btrfs_err_rl(fs_info, "unexpected tree owner, have %llu expect %llu",
++		     btrfs_header_owner(eb), root->root_key.objectid);
++	return -EUCLEAN;
+ }
+ 
+ static noinline int walk_down_tree(struct btrfs_trans_handle *trans,
+@@ -9097,6 +9101,8 @@ static noinline int walk_up_tree(struct
+ 			ret = walk_up_proc(trans, root, path, wc);
+ 			if (ret > 0)
+ 				return 0;
++			if (ret < 0)
++				return ret;
+ 
+ 			if (path->locks[level]) {
+ 				btrfs_tree_unlock_rw(path->nodes[level],
+--- a/fs/btrfs/relocation.c
++++ b/fs/btrfs/relocation.c
+@@ -1334,7 +1334,7 @@ static void __del_reloc_root(struct btrf
+ 	struct mapping_node *node = NULL;
+ 	struct reloc_control *rc = fs_info->reloc_ctl;
+ 
+-	if (rc) {
++	if (rc && root->node) {
+ 		spin_lock(&rc->reloc_root_tree.lock);
+ 		rb_node = tree_search(&rc->reloc_root_tree.rb_root,
+ 				      root->node->start);
 
 
