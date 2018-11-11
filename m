@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30AF4C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:46:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0195DC43610
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:46:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D405520818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:46:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFC3120818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:46:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aoNw9Xjy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D405520818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="i6hTBlx4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFC3120818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733193AbeKLISt (ORCPT
+        id S2387498AbeKLJhN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:18:49 -0500
+        Mon, 12 Nov 2018 04:37:13 -0500
 Received: from mail.kernel.org ([198.145.29.99]:39224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733142AbeKLISs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:18:48 -0500
+        id S1733185AbeKLISt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:18:49 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 31207223CA;
-        Sun, 11 Nov 2018 22:28:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF3C121508;
+        Sun, 11 Nov 2018 22:28:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975332;
-        bh=0p3bhKtVEbu9297MlJM4K9CtoKn+pKpgbLCAa+fYHYU=;
+        s=default; t=1541975334;
+        bh=VMSLAbxNIKm52+gk1IeiZVYz5C0fT0/EZ4DU255KdvU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aoNw9XjySwrX3le+N50EmQfhDeV0ogcWsHEg0f7ddgnqocQrlaIglSoxYgCnF6YlP
-         chAkZq9Ve20UNvjplkKaRLNJJeLPSv49UU+booKellVVoudqw/BxhVxJAdekiSQ4f4
-         zcL5eIid0iPTJRLSIWMk+6xLZ7vHKldXMJMzLb5M=
+        b=i6hTBlx4Frv83ay1sIJA62nVKQJONObfIZkJEdUnRbSxClggjyTJllRZRBZYg2MoC
+         3A9pInlB+1KHOkfD1NZBRmzP7Es6THGwiflz+XBZtJ3Tz2R4hkZJ8orlz34Insn3ix
+         pUM6VMJb8seGDTqldFP3r7LBfzLFfR/zO7bhBnro=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, E V <eliventer@gmail.com>,
-        Josef Bacik <josef@toxicpanda.com>,
+        stable@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
         Filipe Manana <fdmanana@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.19 347/361] Btrfs: fix deadlock when writing out free space caches
-Date:   Sun, 11 Nov 2018 14:21:34 -0800
-Message-Id: <20181111221701.225374399@linuxfoundation.org>
+Subject: [PATCH 4.19 351/361] btrfs: only free reserved extent if we didnt insert it
+Date:   Sun, 11 Nov 2018 14:21:38 -0800
+Message-Id: <20181111221701.563870763@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -64,185 +64,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Josef Bacik <josef@toxicpanda.com>
 
-commit 5ce555578e0919237fa4bda92b4670e2dd176f85 upstream.
+commit 49940bdd57779c78462da7aa5a8650b2fea8c2ff upstream.
 
-When writing out a block group free space cache we can end deadlocking
-with ourselves on an extent buffer lock resulting in a warning like the
-following:
+When we insert the file extent once the ordered extent completes we free
+the reserved extent reservation as it'll have been migrated to the
+bytes_used counter.  However if we error out after this step we'll still
+clear the reserved extent reservation, resulting in a negative
+accounting of the reserved bytes for the block group and space info.
+Fix this by only doing the free if we didn't successfully insert a file
+extent for this extent.
 
-  [245043.379979] WARNING: CPU: 4 PID: 2608 at fs/btrfs/locking.c:251 btrfs_tree_lock+0x1be/0x1d0 [btrfs]
-  [245043.392792] CPU: 4 PID: 2608 Comm: btrfs-transacti Tainted: G
-    W I      4.16.8 #1
-  [245043.395489] RIP: 0010:btrfs_tree_lock+0x1be/0x1d0 [btrfs]
-  [245043.396791] RSP: 0018:ffffc9000424b840 EFLAGS: 00010246
-  [245043.398093] RAX: 0000000000000a30 RBX: ffff8807e20a3d20 RCX: 0000000000000001
-  [245043.399414] RDX: 0000000000000001 RSI: 0000000000000002 RDI: ffff8807e20a3d20
-  [245043.400732] RBP: 0000000000000001 R08: ffff88041f39a700 R09: ffff880000000000
-  [245043.402021] R10: 0000000000000040 R11: ffff8807e20a3d20 R12: ffff8807cb220630
-  [245043.403296] R13: 0000000000000001 R14: ffff8807cb220628 R15: ffff88041fbdf000
-  [245043.404780] FS:  0000000000000000(0000) GS:ffff88082fc80000(0000) knlGS:0000000000000000
-  [245043.406050] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  [245043.407321] CR2: 00007fffdbdb9f10 CR3: 0000000001c09005 CR4: 00000000000206e0
-  [245043.408670] Call Trace:
-  [245043.409977]  btrfs_search_slot+0x761/0xa60 [btrfs]
-  [245043.411278]  btrfs_insert_empty_items+0x62/0xb0 [btrfs]
-  [245043.412572]  btrfs_insert_item+0x5b/0xc0 [btrfs]
-  [245043.413922]  btrfs_create_pending_block_groups+0xfb/0x1e0 [btrfs]
-  [245043.415216]  do_chunk_alloc+0x1e5/0x2a0 [btrfs]
-  [245043.416487]  find_free_extent+0xcd0/0xf60 [btrfs]
-  [245043.417813]  btrfs_reserve_extent+0x96/0x1e0 [btrfs]
-  [245043.419105]  btrfs_alloc_tree_block+0xfb/0x4a0 [btrfs]
-  [245043.420378]  __btrfs_cow_block+0x127/0x550 [btrfs]
-  [245043.421652]  btrfs_cow_block+0xee/0x190 [btrfs]
-  [245043.422979]  btrfs_search_slot+0x227/0xa60 [btrfs]
-  [245043.424279]  ? btrfs_update_inode_item+0x59/0x100 [btrfs]
-  [245043.425538]  ? iput+0x72/0x1e0
-  [245043.426798]  write_one_cache_group.isra.49+0x20/0x90 [btrfs]
-  [245043.428131]  btrfs_start_dirty_block_groups+0x102/0x420 [btrfs]
-  [245043.429419]  btrfs_commit_transaction+0x11b/0x880 [btrfs]
-  [245043.430712]  ? start_transaction+0x8e/0x410 [btrfs]
-  [245043.432006]  transaction_kthread+0x184/0x1a0 [btrfs]
-  [245043.433341]  kthread+0xf0/0x130
-  [245043.434628]  ? btrfs_cleanup_transaction+0x4e0/0x4e0 [btrfs]
-  [245043.435928]  ? kthread_create_worker_on_cpu+0x40/0x40
-  [245043.437236]  ret_from_fork+0x1f/0x30
-  [245043.441054] ---[ end trace 15abaa2aaf36827f ]---
-
-This is because at write_one_cache_group() when we are COWing a leaf from
-the extent tree we end up allocating a new block group (chunk) and,
-because we have hit a threshold on the number of bytes reserved for system
-chunks, we attempt to finalize the creation of new block groups from the
-current transaction, by calling btrfs_create_pending_block_groups().
-However here we also need to modify the extent tree in order to insert
-a block group item, and if the location for this new block group item
-happens to be in the same leaf that we were COWing earlier, we deadlock
-since btrfs_search_slot() tries to write lock the extent buffer that we
-locked before at write_one_cache_group().
-
-We have already hit similar cases in the past and commit d9a0540a79f8
-("Btrfs: fix deadlock when finalizing block group creation") fixed some
-of those cases by delaying the creation of pending block groups at the
-known specific spots that could lead to a deadlock. This change reworks
-that commit to be more generic so that we don't have to add similar logic
-to every possible path that can lead to a deadlock. This is done by
-making __btrfs_cow_block() disallowing the creation of new block groups
-(setting the transaction's can_flush_pending_bgs to false) before it
-attempts to allocate a new extent buffer for either the extent, chunk or
-device trees, since those are the trees that pending block creation
-modifies. Once the new extent buffer is allocated, it allows creation of
-pending block groups to happen again.
-
-This change depends on a recent patch from Josef which is not yet in
-Linus' tree, named "btrfs: make sure we create all new block groups" in
-order to avoid occasional warnings at btrfs_trans_release_chunk_metadata().
-
-Fixes: d9a0540a79f8 ("Btrfs: fix deadlock when finalizing block group creation")
-CC: stable@vger.kernel.org # 4.4+
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=199753
-Link: https://lore.kernel.org/linux-btrfs/CAJtFHUTHna09ST-_EEiyWmDH6gAqS6wa=zMNMBsifj8ABu99cw@mail.gmail.com/
-Reported-by: E V <eliventer@gmail.com>
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
+CC: stable@vger.kernel.org # 4.14+
+Reviewed-by: Omar Sandoval <osandov@fb.com>
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/ctree.c       |   17 +++++++++++++++++
- fs/btrfs/extent-tree.c |   16 ++++++----------
- 2 files changed, 23 insertions(+), 10 deletions(-)
+ fs/btrfs/inode.c |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
---- a/fs/btrfs/ctree.c
-+++ b/fs/btrfs/ctree.c
-@@ -1050,9 +1050,26 @@ static noinline int __btrfs_cow_block(st
- 	if ((root->root_key.objectid == BTRFS_TREE_RELOC_OBJECTID) && parent)
- 		parent_start = parent->start;
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -2945,6 +2945,7 @@ static int btrfs_finish_ordered_io(struc
+ 	bool truncated = false;
+ 	bool range_locked = false;
+ 	bool clear_new_delalloc_bytes = false;
++	bool clear_reserved_extent = true;
  
-+	/*
-+	 * If we are COWing a node/leaf from the extent, chunk or device trees,
-+	 * make sure that we do not finish block group creation of pending block
-+	 * groups. We do this to avoid a deadlock.
-+	 * COWing can result in allocation of a new chunk, and flushing pending
-+	 * block groups (btrfs_create_pending_block_groups()) can be triggered
-+	 * when finishing allocation of a new chunk. Creation of a pending block
-+	 * group modifies the extent, chunk and device trees, therefore we could
-+	 * deadlock with ourselves since we are holding a lock on an extent
-+	 * buffer that btrfs_create_pending_block_groups() may try to COW later.
-+	 */
-+	if (root == fs_info->extent_root ||
-+	    root == fs_info->chunk_root ||
-+	    root == fs_info->dev_root)
-+		trans->can_flush_pending_bgs = false;
-+
- 	cow = btrfs_alloc_tree_block(trans, root, parent_start,
- 			root->root_key.objectid, &disk_key, level,
- 			search_start, empty_size);
-+	trans->can_flush_pending_bgs = true;
- 	if (IS_ERR(cow))
- 		return PTR_ERR(cow);
- 
---- a/fs/btrfs/extent-tree.c
-+++ b/fs/btrfs/extent-tree.c
-@@ -2911,7 +2911,6 @@ int btrfs_run_delayed_refs(struct btrfs_
- 	struct btrfs_delayed_ref_head *head;
- 	int ret;
- 	int run_all = count == (unsigned long)-1;
--	bool can_flush_pending_bgs = trans->can_flush_pending_bgs;
- 
- 	/* We'll clean this up in btrfs_cleanup_transaction */
- 	if (trans->aborted)
-@@ -2928,7 +2927,6 @@ again:
- #ifdef SCRAMBLE_DELAYED_REFS
- 	delayed_refs->run_delayed_start = find_middle(&delayed_refs->root);
- #endif
--	trans->can_flush_pending_bgs = false;
- 	ret = __btrfs_run_delayed_refs(trans, count);
- 	if (ret < 0) {
- 		btrfs_abort_transaction(trans, ret);
-@@ -2959,7 +2957,6 @@ again:
- 		goto again;
+ 	if (!test_bit(BTRFS_ORDERED_NOCOW, &ordered_extent->flags) &&
+ 	    !test_bit(BTRFS_ORDERED_PREALLOC, &ordered_extent->flags) &&
+@@ -3048,10 +3049,12 @@ static int btrfs_finish_ordered_io(struc
+ 						logical_len, logical_len,
+ 						compress_type, 0, 0,
+ 						BTRFS_FILE_EXTENT_REG);
+-		if (!ret)
++		if (!ret) {
++			clear_reserved_extent = false;
+ 			btrfs_release_delalloc_bytes(fs_info,
+ 						     ordered_extent->start,
+ 						     ordered_extent->disk_len);
++		}
  	}
- out:
--	trans->can_flush_pending_bgs = can_flush_pending_bgs;
- 	return 0;
- }
- 
-@@ -4554,11 +4551,9 @@ out:
- 	 * the block groups that were made dirty during the lifetime of the
- 	 * transaction.
- 	 */
--	if (trans->can_flush_pending_bgs &&
--	    trans->chunk_bytes_reserved >= (u64)SZ_2M) {
-+	if (trans->chunk_bytes_reserved >= (u64)SZ_2M)
- 		btrfs_create_pending_block_groups(trans);
--		btrfs_trans_release_chunk_metadata(trans);
--	}
-+
- 	return ret;
- }
- 
-@@ -10099,9 +10094,10 @@ void btrfs_create_pending_block_groups(s
- 	struct btrfs_block_group_item item;
- 	struct btrfs_key key;
- 	int ret = 0;
--	bool can_flush_pending_bgs = trans->can_flush_pending_bgs;
- 
--	trans->can_flush_pending_bgs = false;
-+	if (!trans->can_flush_pending_bgs)
-+		return;
-+
- 	while (!list_empty(&trans->new_bgs)) {
- 		block_group = list_first_entry(&trans->new_bgs,
- 					       struct btrfs_block_group_cache,
-@@ -10126,7 +10122,7 @@ void btrfs_create_pending_block_groups(s
- next:
- 		list_del_init(&block_group->bg_list);
- 	}
--	trans->can_flush_pending_bgs = can_flush_pending_bgs;
-+	btrfs_trans_release_chunk_metadata(trans);
- }
- 
- int btrfs_make_block_group(struct btrfs_trans_handle *trans, u64 bytes_used,
+ 	unpin_extent_cache(&BTRFS_I(inode)->extent_tree,
+ 			   ordered_extent->file_offset, ordered_extent->len,
+@@ -3112,8 +3115,13 @@ out:
+ 		 * wrong we need to return the space for this ordered extent
+ 		 * back to the allocator.  We only free the extent in the
+ 		 * truncated case if we didn't write out the extent at all.
++		 *
++		 * If we made it past insert_reserved_file_extent before we
++		 * errored out then we don't need to do this as the accounting
++		 * has already been done.
+ 		 */
+ 		if ((ret || !logical_len) &&
++		    clear_reserved_extent &&
+ 		    !test_bit(BTRFS_ORDERED_NOCOW, &ordered_extent->flags) &&
+ 		    !test_bit(BTRFS_ORDERED_PREALLOC, &ordered_extent->flags))
+ 			btrfs_free_reserved_extent(fs_info,
 
 
