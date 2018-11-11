@@ -4,47 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45943C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:42:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EB1EC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:42:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04169214F1
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:42:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AC5A21508
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:42:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hH4lisaE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04169214F1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ltQaiRQ5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AC5A21508
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404807AbeKLIcm (ORCPT
+        id S2404665AbeKLIYI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:32:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59310 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:24:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59168 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404678AbeKLIYL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:24:11 -0500
+        id S2404603AbeKLIYH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:24:07 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 010F7223CB;
-        Sun, 11 Nov 2018 22:34:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D794922353;
+        Sun, 11 Nov 2018 22:34:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975653;
-        bh=LAy21Z3aV7YZa4cxpAlCx03UjB0RtTaFJ6XZUeL+ZzA=;
+        s=default; t=1541975649;
+        bh=TUarS9oz9RM+7s5vdrMS5xc0QYHZdwL6q7/F5JoMIXI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hH4lisaEmYbhfsAY/NCgvVGxeBArjmRhlbOKF9jk7RVu307V6w4N0n9bLbKHbs7FA
-         3SxReW0n8GgCt796s8Jb1Po7/YVzfXGfKaBCVZZCd9bpr+vECUUGfJVsuyvZvU3CFE
-         g9mi96YnK4tOzNvoB5nwN4nAFimFNACu/JzkhqwQ=
+        b=ltQaiRQ5uC8O5vrxFWGKuckBs0914nwedzckudXspzr5dk9iYcNgI2dCIO9H1hnY6
+         bfTDhHEDcKEiXS7nUxc2lZ+T/anI8rLCsYHbo+HFN2KpiJNjIS/3BcPXc3bR99/9ou
+         BC7+nkPdtNiE9xoOcieOyOFqvRl1S+EO+EMSa+v0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 4.9 072/141] ARM: dts: exynos: Remove "cooling-{min|max}-level" for CPU nodes
-Date:   Sun, 11 Nov 2018 14:25:31 -0800
-Message-Id: <20181111221637.961507602@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+c61979f6f2cba5cb3c06@syzkaller.appspotmail.com,
+        Theodore Tso <tytso@mit.edu>, stable@kernel.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 060/141] ext4: fix argument checking in EXT4_IOC_MOVE_EXT
+Date:   Sun, 11 Nov 2018 14:25:19 -0800
+Message-Id: <20181111221635.998377591@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
 References: <20181111221627.853046496@linuxfoundation.org>
@@ -62,208 +63,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Viresh Kumar <viresh.kumar@linaro.org>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit cd6f55457eb449a388e793abd676e3a5b73510bc upstream.
+[ Upstream commit f18b2b83a727a3db208308057d2c7945f368e625 ]
 
-The "cooling-min-level" and "cooling-max-level" properties are not
-parsed by any part of the kernel currently and the max cooling state of
-a CPU cooling device is found by referring to the cpufreq table instead.
+If the starting block number of either the source or destination file
+exceeds the EOF, EXT4_IOC_MOVE_EXT should return EINVAL.
 
-Remove the unused properties from the CPU nodes.
+Also fixed the helper function mext_check_coverage() so that if the
+logical block is beyond EOF, make it return immediately, instead of
+looping until the block number wraps all the away around.  This takes
+long enough that if there are multiple threads trying to do pound on
+an the same inode doing non-sensical things, it can end up triggering
+the kernel's soft lockup detector.
 
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reported-by: syzbot+c61979f6f2cba5cb3c06@syzkaller.appspotmail.com
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/arm/boot/dts/exynos4210.dtsi      |    2 --
- arch/arm/boot/dts/exynos4412.dtsi      |    2 --
- arch/arm/boot/dts/exynos5250.dtsi      |    2 --
- arch/arm/boot/dts/exynos5420-cpus.dtsi |   16 ----------------
- arch/arm/boot/dts/exynos5422-cpus.dtsi |   16 ----------------
- 5 files changed, 38 deletions(-)
+ fs/ext4/move_extent.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/arch/arm/boot/dts/exynos4210.dtsi
-+++ b/arch/arm/boot/dts/exynos4210.dtsi
-@@ -52,8 +52,6 @@
- 				400000	975000
- 				200000	950000
- 			>;
--			cooling-min-level = <4>;
--			cooling-max-level = <2>;
- 			#cooling-cells = <2>; /* min followed by max */
- 		};
- 
---- a/arch/arm/boot/dts/exynos4412.dtsi
-+++ b/arch/arm/boot/dts/exynos4412.dtsi
-@@ -33,8 +33,6 @@
- 			clocks = <&clock CLK_ARM_CLK>;
- 			clock-names = "cpu";
- 			operating-points-v2 = <&cpu0_opp_table>;
--			cooling-min-level = <13>;
--			cooling-max-level = <7>;
- 			#cooling-cells = <2>; /* min followed by max */
- 		};
- 
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -80,8 +80,6 @@
- 				 300000  937500
- 				 200000  925000
- 			>;
--			cooling-min-level = <15>;
--			cooling-max-level = <9>;
- 			#cooling-cells = <2>; /* min followed by max */
- 		};
- 		cpu@1 {
---- a/arch/arm/boot/dts/exynos5420-cpus.dtsi
-+++ b/arch/arm/boot/dts/exynos5420-cpus.dtsi
-@@ -33,8 +33,6 @@
- 			clock-frequency = <1800000000>;
- 			cci-control-port = <&cci_control1>;
- 			operating-points-v2 = <&cluster_a15_opp_table>;
--			cooling-min-level = <0>;
--			cooling-max-level = <11>;
- 			#cooling-cells = <2>; /* min followed by max */
- 		};
- 
-@@ -45,8 +43,6 @@
- 			clock-frequency = <1800000000>;
- 			cci-control-port = <&cci_control1>;
- 			operating-points-v2 = <&cluster_a15_opp_table>;
--			cooling-min-level = <0>;
--			cooling-max-level = <11>;
- 			#cooling-cells = <2>; /* min followed by max */
- 		};
- 
-@@ -57,8 +53,6 @@
- 			clock-frequency = <1800000000>;
- 			cci-control-port = <&cci_control1>;
- 			operating-points-v2 = <&cluster_a15_opp_table>;
--			cooling-min-level = <0>;
--			cooling-max-level = <11>;
- 			#cooling-cells = <2>; /* min followed by max */
- 		};
- 
-@@ -69,8 +63,6 @@
- 			clock-frequency = <1800000000>;
- 			cci-control-port = <&cci_control1>;
- 			operating-points-v2 = <&cluster_a15_opp_table>;
--			cooling-min-level = <0>;
--			cooling-max-level = <11>;
- 			#cooling-cells = <2>; /* min followed by max */
- 		};
- 
-@@ -82,8 +74,6 @@
- 			clock-frequency = <1000000000>;
- 			cci-control-port = <&cci_control0>;
- 			operating-points-v2 = <&cluster_a7_opp_table>;
--			cooling-min-level = <0>;
--			cooling-max-level = <7>;
- 			#cooling-cells = <2>; /* min followed by max */
- 		};
- 
-@@ -94,8 +84,6 @@
- 			clock-frequency = <1000000000>;
- 			cci-control-port = <&cci_control0>;
- 			operating-points-v2 = <&cluster_a7_opp_table>;
--			cooling-min-level = <0>;
--			cooling-max-level = <7>;
- 			#cooling-cells = <2>; /* min followed by max */
- 		};
- 
-@@ -106,8 +94,6 @@
- 			clock-frequency = <1000000000>;
- 			cci-control-port = <&cci_control0>;
- 			operating-points-v2 = <&cluster_a7_opp_table>;
--			cooling-min-level = <0>;
--			cooling-max-level = <7>;
- 			#cooling-cells = <2>; /* min followed by max */
- 		};
- 
-@@ -118,8 +104,6 @@
- 			clock-frequency = <1000000000>;
- 			cci-control-port = <&cci_control0>;
- 			operating-points-v2 = <&cluster_a7_opp_table>;
--			cooling-min-level = <0>;
--			cooling-max-level = <7>;
- 			#cooling-cells = <2>; /* min followed by max */
- 		};
- 	};
---- a/arch/arm/boot/dts/exynos5422-cpus.dtsi
-+++ b/arch/arm/boot/dts/exynos5422-cpus.dtsi
-@@ -32,8 +32,6 @@
- 			clock-frequency = <1000000000>;
- 			cci-control-port = <&cci_control0>;
- 			operating-points-v2 = <&cluster_a7_opp_table>;
--			cooling-min-level = <0>;
--			cooling-max-level = <11>;
- 			#cooling-cells = <2>; /* min followed by max */
- 		};
- 
-@@ -44,8 +42,6 @@
- 			clock-frequency = <1000000000>;
- 			cci-control-port = <&cci_control0>;
- 			operating-points-v2 = <&cluster_a7_opp_table>;
--			cooling-min-level = <0>;
--			cooling-max-level = <11>;
- 			#cooling-cells = <2>; /* min followed by max */
- 		};
- 
-@@ -56,8 +52,6 @@
- 			clock-frequency = <1000000000>;
- 			cci-control-port = <&cci_control0>;
- 			operating-points-v2 = <&cluster_a7_opp_table>;
--			cooling-min-level = <0>;
--			cooling-max-level = <11>;
- 			#cooling-cells = <2>; /* min followed by max */
- 		};
- 
-@@ -68,8 +62,6 @@
- 			clock-frequency = <1000000000>;
- 			cci-control-port = <&cci_control0>;
- 			operating-points-v2 = <&cluster_a7_opp_table>;
--			cooling-min-level = <0>;
--			cooling-max-level = <11>;
- 			#cooling-cells = <2>; /* min followed by max */
- 		};
- 
-@@ -81,8 +73,6 @@
- 			clock-frequency = <1800000000>;
- 			cci-control-port = <&cci_control1>;
- 			operating-points-v2 = <&cluster_a15_opp_table>;
--			cooling-min-level = <0>;
--			cooling-max-level = <15>;
- 			#cooling-cells = <2>; /* min followed by max */
- 		};
- 
-@@ -93,8 +83,6 @@
- 			clock-frequency = <1800000000>;
- 			cci-control-port = <&cci_control1>;
- 			operating-points-v2 = <&cluster_a15_opp_table>;
--			cooling-min-level = <0>;
--			cooling-max-level = <15>;
- 			#cooling-cells = <2>; /* min followed by max */
- 		};
- 
-@@ -105,8 +93,6 @@
- 			clock-frequency = <1800000000>;
- 			cci-control-port = <&cci_control1>;
- 			operating-points-v2 = <&cluster_a15_opp_table>;
--			cooling-min-level = <0>;
--			cooling-max-level = <15>;
- 			#cooling-cells = <2>; /* min followed by max */
- 		};
- 
-@@ -117,8 +103,6 @@
- 			clock-frequency = <1800000000>;
- 			cci-control-port = <&cci_control1>;
- 			operating-points-v2 = <&cluster_a15_opp_table>;
--			cooling-min-level = <0>;
--			cooling-max-level = <15>;
- 			#cooling-cells = <2>; /* min followed by max */
- 		};
- 	};
+--- a/fs/ext4/move_extent.c
++++ b/fs/ext4/move_extent.c
+@@ -526,9 +526,13 @@ mext_check_arguments(struct inode *orig_
+ 			orig_inode->i_ino, donor_inode->i_ino);
+ 		return -EINVAL;
+ 	}
+-	if (orig_eof < orig_start + *len - 1)
++	if (orig_eof <= orig_start)
++		*len = 0;
++	else if (orig_eof < orig_start + *len - 1)
+ 		*len = orig_eof - orig_start;
+-	if (donor_eof < donor_start + *len - 1)
++	if (donor_eof <= donor_start)
++		*len = 0;
++	else if (donor_eof < donor_start + *len - 1)
+ 		*len = donor_eof - donor_start;
+ 	if (!*len) {
+ 		ext4_debug("ext4 move extent: len should not be 0 "
 
 
