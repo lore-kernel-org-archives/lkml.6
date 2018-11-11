@@ -2,185 +2,226 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6750DC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 00:02:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 707ACC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 00:06:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3019E20684
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 00:02:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3019E20684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=itcare.pl
+	by mail.kernel.org (Postfix) with ESMTP id 277A221104
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 00:06:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="s1iSJ9GH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 277A221104
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727001AbeKKJtW (ORCPT
+        id S1727068AbeKKJxe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 04:49:22 -0500
-Received: from smtp7.iq.pl ([86.111.240.244]:59680 "EHLO smtp7.iq.pl"
+        Sun, 11 Nov 2018 04:53:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725896AbeKKJtW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 04:49:22 -0500
-X-Greylist: delayed 487 seconds by postgrey-1.27 at vger.kernel.org; Sun, 11 Nov 2018 04:49:19 EST
-Received: from [192.168.2.200] (unknown [185.78.72.18])
-        (Authenticated sender: pstaszewski@itcare.pl)
-        by smtp.iq.pl (Postfix) with ESMTPSA id 42sv4w5wcNz3wfg;
-        Sun, 11 Nov 2018 00:54:24 +0100 (CET)
-Subject: Re: [PATCH 1/2] mm/page_alloc: free order-0 pages through PCP in
- page_frag_free()
-To:     Alexander Duyck <alexander.duyck@gmail.com>, aaron.lu@intel.com
-Cc:     linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        ilias.apalodimas@linaro.org, yoel@kviknet.dk,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>, dave.hansen@linux.intel.com
-References: <20181105085820.6341-1-aaron.lu@intel.com>
- <CAKgT0UdvYVTA8OjgLhXo9tRUOGikrCi3zJXSrqM0ZmeHb5P2mA@mail.gmail.com>
-From:   =?UTF-8?Q?Pawe=c5=82_Staszewski?= <pstaszewski@itcare.pl>
-Message-ID: <b8b1fbb7-9139-9455-69b8-8c1bed4f7c74@itcare.pl>
-Date:   Sun, 11 Nov 2018 00:54:27 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1725896AbeKKJxe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Nov 2018 04:53:34 -0500
+Received: from earth.universe (unknown [185.216.33.115])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9EF2E20989;
+        Sun, 11 Nov 2018 00:06:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541894807;
+        bh=7aT2AkviqGkrVHtPAtCIvGEXDzMhM42yxQk5m7uUi8k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=s1iSJ9GHWpbTZMe62bzGanOQKZ98e/ZqKZ0toki5yrE0ZQ5cBcRNWW8yacJ0e8iZb
+         Med1qxOhXHoJasPUrvf/vq7c+3jHTr0HeX8u1LBVegEYDeVCElAWVNGF04vQjEKcFq
+         dnP1R0qDT+8SLmCjBXHcm/INj1Ngk7AR8yOHgagA=
+Received: by earth.universe (Postfix, from userid 1000)
+        id A01213C08D6; Sun, 11 Nov 2018 01:06:43 +0100 (CET)
+Date:   Sun, 11 Nov 2018 01:06:43 +0100
+From:   Sebastian Reichel <sre@kernel.org>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        linux-usb@vger.kernel.org, Felipe Balbi <balbi@kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Roger Quadros <rogerq@ti.com>, linux-pm@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        linux-omap@vger.kernel.org, Darren Hart <dvhart@infradead.org>,
+        platform-driver-x86@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+        Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCH v1 2/5] extcon: Return -EPROBE_DEFER when extcon device
+ is not found
+Message-ID: <20181111000643.rjtdi3htgoeibswi@earth.universe>
+References: <20181110181101.24557-1-andriy.shevchenko@linux.intel.com>
+ <20181110181101.24557-2-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <CAKgT0UdvYVTA8OjgLhXo9tRUOGikrCi3zJXSrqM0ZmeHb5P2mA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: pl
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="xlew7iglpbbgajfk"
+Content-Disposition: inline
+In-Reply-To: <20181110181101.24557-2-andriy.shevchenko@linux.intel.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--xlew7iglpbbgajfk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-W dniu 05.11.2018 o 16:44, Alexander Duyck pisze:
-> On Mon, Nov 5, 2018 at 12:58 AM Aaron Lu <aaron.lu@intel.com> wrote:
->> page_frag_free() calls __free_pages_ok() to free the page back to
->> Buddy. This is OK for high order page, but for order-0 pages, it
->> misses the optimization opportunity of using Per-Cpu-Pages and can
->> cause zone lock contention when called frequently.
->>
->> Paweł Staszewski recently shared his result of 'how Linux kernel
->> handles normal traffic'[1] and from perf data, Jesper Dangaard Brouer
->> found the lock contention comes from page allocator:
->>
->>    mlx5e_poll_tx_cq
->>    |
->>     --16.34%--napi_consume_skb
->>               |
->>               |--12.65%--__free_pages_ok
->>               |          |
->>               |           --11.86%--free_one_page
->>               |                     |
->>               |                     |--10.10%--queued_spin_lock_slowpath
->>               |                     |
->>               |                      --0.65%--_raw_spin_lock
->>               |
->>               |--1.55%--page_frag_free
->>               |
->>                --1.44%--skb_release_data
->>
->> Jesper explained how it happened: mlx5 driver RX-page recycle
->> mechanism is not effective in this workload and pages have to go
->> through the page allocator. The lock contention happens during
->> mlx5 DMA TX completion cycle. And the page allocator cannot keep
->> up at these speeds.[2]
->>
->> I thought that __free_pages_ok() are mostly freeing high order
->> pages and thought this is an lock contention for high order pages
->> but Jesper explained in detail that __free_pages_ok() here are
->> actually freeing order-0 pages because mlx5 is using order-0 pages
->> to satisfy its page pool allocation request.[3]
->>
->> The free path as pointed out by Jesper is:
->> skb_free_head()
->>    -> skb_free_frag()
->>      -> skb_free_frag()
->>        -> page_frag_free()
->> And the pages being freed on this path are order-0 pages.
->>
->> Fix this by doing similar things as in __page_frag_cache_drain() -
->> send the being freed page to PCP if it's an order-0 page, or
->> directly to Buddy if it is a high order page.
->>
->> With this change, Paweł hasn't noticed lock contention yet in
->> his workload and Jesper has noticed a 7% performance improvement
->> using a micro benchmark and lock contention is gone.
->>
->> [1]: https://www.spinics.net/lists/netdev/msg531362.html
->> [2]: https://www.spinics.net/lists/netdev/msg531421.html
->> [3]: https://www.spinics.net/lists/netdev/msg531556.html
->> Reported-by: Paweł Staszewski <pstaszewski@itcare.pl>
->> Analysed-by: Jesper Dangaard Brouer <brouer@redhat.com>
->> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
->> ---
->>   mm/page_alloc.c | 10 ++++++++--
->>   1 file changed, 8 insertions(+), 2 deletions(-)
->>
->> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
->> index ae31839874b8..91a9a6af41a2 100644
->> --- a/mm/page_alloc.c
->> +++ b/mm/page_alloc.c
->> @@ -4555,8 +4555,14 @@ void page_frag_free(void *addr)
->>   {
->>          struct page *page = virt_to_head_page(addr);
->>
->> -       if (unlikely(put_page_testzero(page)))
->> -               __free_pages_ok(page, compound_order(page));
->> +       if (unlikely(put_page_testzero(page))) {
->> +               unsigned int order = compound_order(page);
->> +
->> +               if (order == 0)
->> +                       free_unref_page(page);
->> +               else
->> +                       __free_pages_ok(page, order);
->> +       }
->>   }
->>   EXPORT_SYMBOL(page_frag_free);
->>
-> One thing I would suggest for Pawel to try would be to reduce the Tx
-> qdisc size on his transmitting interfaces, Reduce the Tx ring size,
-> and possibly increase the Tx interrupt rate. Ideally we shouldn't have
-> too many packets in-flight and I suspect that is the issue that Pawel
-> is seeing that is leading to the page pool allocator freeing up the
-> memory. I know we like to try to batch things but the issue is
-> processing too many Tx buffers in one batch leads to us eating up too
-> much memory and causing evictions from the cache. Ideally the Rx and
-> Tx rings and queues should be sized as small as possible while still
-> allowing us to process up to our NAPI budget. Usually I run things
-> with a 128 Rx / 128 Tx setup and then reduce the Tx queue length so we
-> don't have more buffers stored there than we can place in the Tx ring.
-> Then we can avoid the extra thrash of having to pull/push memory into
-> and out of the freelists. Essentially the issue here ends up being
-> another form of buffer bloat.
-Thanks Aleksandar - yes it can be - but in my scenario setting RX buffer 
-<4096 producing more interface rx drops - and no_rx_buffer on network 
-controller that is receiving more packets
-So i need to stick with 3000-4000 on RX - and yes i was trying to lower 
-the TX buff on connectx4 - but that changed nothing before Aaron patch
+Hi,
 
-After Aaron patch - decreasing TX buffer influencing total bandwidth 
-that can be handled by the router/server
-Dono why before this patch there was no difference there no matter what 
-i set there there was always page_alloc/slowpath on top in perf
+On Sat, Nov 10, 2018 at 08:10:58PM +0200, Andy Shevchenko wrote:
+> All current users of extcon_get_extcon_dev() API considers
+> an extcon device a mandatory to appear. Thus, they all convert
+> NULL pointer to -EPROBE_DEFER error code.
+>=20
+> There is one more caller anticipated with the same requirements.
+>=20
+> To decrease a code duplication and a burden to the callers,
+> return -EPROBE_DEFER directly from extcon_get_extcon_dev().
+>=20
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
 
+Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 
-Currently testing RX4096/TX256 - this helps with bandwidth like +10% 
-more bandwidth with less interrupts...
+-- Sebastian
 
+>  drivers/extcon/extcon-axp288.c        | 4 ++--
+>  drivers/extcon/extcon.c               | 2 +-
+>  drivers/power/supply/axp288_charger.c | 8 ++++----
+>  drivers/usb/phy/phy-omap-otg.c        | 6 +++---
+>  drivers/usb/typec/tcpm/fusb302.c      | 4 ++--
+>  5 files changed, 12 insertions(+), 12 deletions(-)
+>=20
+> diff --git a/drivers/extcon/extcon-axp288.c b/drivers/extcon/extcon-axp28=
+8.c
+> index a983708b77a6..3472d3b756ed 100644
+> --- a/drivers/extcon/extcon-axp288.c
+> +++ b/drivers/extcon/extcon-axp288.c
+> @@ -360,8 +360,8 @@ static int axp288_extcon_probe(struct platform_device=
+ *pdev)
+>  		name =3D acpi_dev_get_first_match_name("INT3496", NULL, -1);
+>  		if (name) {
+>  			info->id_extcon =3D extcon_get_extcon_dev(name);
+> -			if (!info->id_extcon)
+> -				return -EPROBE_DEFER;
+> +			if (IS_ERR(info->id_extcon))
+> +				return PTR_ERR(info->id_extcon);
+> =20
+>  			dev_info(dev, "controlling USB role\n");
+>  		} else {
+> diff --git a/drivers/extcon/extcon.c b/drivers/extcon/extcon.c
+> index 5ab0498be652..2bd0f2f33f05 100644
+> --- a/drivers/extcon/extcon.c
+> +++ b/drivers/extcon/extcon.c
+> @@ -884,7 +884,7 @@ struct extcon_dev *extcon_get_extcon_dev(const char *=
+extcon_name)
+>  		if (!strcmp(sd->name, extcon_name))
+>  			goto out;
+>  	}
+> -	sd =3D NULL;
+> +	sd =3D ERR_PTR(-EPROBE_DEFER);
+>  out:
+>  	mutex_unlock(&extcon_dev_list_lock);
+>  	return sd;
+> diff --git a/drivers/power/supply/axp288_charger.c b/drivers/power/supply=
+/axp288_charger.c
+> index 735658ee1c60..8558577fccf5 100644
+> --- a/drivers/power/supply/axp288_charger.c
+> +++ b/drivers/power/supply/axp288_charger.c
+> @@ -768,17 +768,17 @@ static int axp288_charger_probe(struct platform_dev=
+ice *pdev)
+>  	info->regmap_irqc =3D axp20x->regmap_irqc;
+> =20
+>  	info->cable.edev =3D extcon_get_extcon_dev(AXP288_EXTCON_DEV_NAME);
+> -	if (info->cable.edev =3D=3D NULL) {
+> +	if (IS_ERR(info->cable.edev)) {
+>  		dev_dbg(&pdev->dev, "%s is not ready, probe deferred\n",
+>  			AXP288_EXTCON_DEV_NAME);
+> -		return -EPROBE_DEFER;
+> +		return PTR_ERR(info->cable.edev);
+>  	}
+> =20
+>  	if (acpi_dev_present(USB_HOST_EXTCON_HID, NULL, -1)) {
+>  		info->otg.cable =3D extcon_get_extcon_dev(USB_HOST_EXTCON_NAME);
+> -		if (info->otg.cable =3D=3D NULL) {
+> +		if (IS_ERR(info->otg.cable)) {
+>  			dev_dbg(dev, "EXTCON_USB_HOST is not ready, probe deferred\n");
+> -			return -EPROBE_DEFER;
+> +			return PTR_ERR(info->otg.cable);
+>  		}
+>  		dev_info(&pdev->dev,
+>  			 "Using " USB_HOST_EXTCON_HID " extcon for usb-id\n");
+> diff --git a/drivers/usb/phy/phy-omap-otg.c b/drivers/usb/phy/phy-omap-ot=
+g.c
+> index ee0863c6553e..605314ddcd3d 100644
+> --- a/drivers/usb/phy/phy-omap-otg.c
+> +++ b/drivers/usb/phy/phy-omap-otg.c
+> @@ -91,12 +91,12 @@ static int omap_otg_probe(struct platform_device *pde=
+v)
+>  	int ret;
+>  	u32 rev;
+> =20
+> -	if (!config || !config->extcon)
+> +	if (!config)
+>  		return -ENODEV;
+> =20
+>  	extcon =3D extcon_get_extcon_dev(config->extcon);
+> -	if (!extcon)
+> -		return -EPROBE_DEFER;
+> +	if (IS_ERR(extcon))
+> +		return PTR_ERR(extcon);
+> =20
+>  	otg_dev =3D devm_kzalloc(&pdev->dev, sizeof(*otg_dev), GFP_KERNEL);
+>  	if (!otg_dev)
+> diff --git a/drivers/usb/typec/tcpm/fusb302.c b/drivers/usb/typec/tcpm/fu=
+sb302.c
+> index 43b64d9309d0..6d332066202b 100644
+> --- a/drivers/usb/typec/tcpm/fusb302.c
+> +++ b/drivers/usb/typec/tcpm/fusb302.c
+> @@ -1767,8 +1767,8 @@ static int fusb302_probe(struct i2c_client *client,
+>  	 */
+>  	if (device_property_read_string(dev, "fcs,extcon-name", &name) =3D=3D 0=
+) {
+>  		chip->extcon =3D extcon_get_extcon_dev(name);
+> -		if (!chip->extcon)
+> -			return -EPROBE_DEFER;
+> +		if (IS_ERR(chip->extcon))
+> +			return PTR_ERR(chip->extcon);
+>  	}
+> =20
+>  	chip->vbus =3D devm_regulator_get(chip->dev, "vbus");
+> --=20
+> 2.19.1
+>=20
 
->
-> With that said this change should be mostly harmless and does address
-> the fact that we can have both regular order 0 pages and page frags
-> used for skb->head.
->
-> Acked-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
->
+--xlew7iglpbbgajfk
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlvncpAACgkQ2O7X88g7
++pq4oQ//VIu95qNb3TGyNQskz3SvpYJBfrRG9WEfjzEXJUy+y+mrwNnbJNtWAR/X
+pQH9If/WwcV5Hbeb8kaWPbZYaHUbo+0z1HJOQ0c9peJa8TUB8RfOLilXBuoLn56T
+B0DaJM8KmFOrv5xCMjeo/l98O5/GTRpBXA5zJigaF6ZZfFHHlH2o4dBLHQnaIibT
+zJFlaV0puJAlhU9sdPEEa7T9+yhQ5skg17NTgQg151QkkKaz/6p3m+1NGgvopHoD
+/GeEP8kR54lIIVYpoq5RHidQYc2mbygts1a7aPZYdEpWKsB036eL/cm1+ZCV58iP
+MH3Iqw3Ye2YBMQcKn9PR1yStcSW5jnZ7jAyRgrqzVtWZA2atcaT+BCz9JDGrEXgs
+Fj7Kxguo7Kez3aEWRBsDHMB8Gzb/cd4ZI4BjH1x2dcPWaWa3RNhBcZUDcMC25a/+
+wTwulM6q1Fi6nWD5cG7rJ1y60FKWfALraqWnXhCwyWfiaTcdmAQhTiOFa6HPrJSZ
+oEn7jASxBLSC/LdQz5Y1eoXU30Un1iaDnJY94VYYO1LHDu2lXEMKEev+NRWPml4j
+RbukgCrx325rwOJdlpB9BSnxLTt8qKxN+c19H1Qq4FQ9lHPFeEz+r2XbCzLibpUL
+P3LxET/y/SWgXFLoQAML7sAxDPfhOwUJTuM+VjE+JrItU2oBhTU=
+=QVr3
+-----END PGP SIGNATURE-----
+
+--xlew7iglpbbgajfk--
