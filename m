@@ -4,50 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E9F3C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:06:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA0F4C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:06:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38F3120818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:06:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8285C20872
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:06:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MC5BHG5A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38F3120818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lRS2l+oJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8285C20872
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390606AbeKLI4L (ORCPT
+        id S2390513AbeKLI4Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:56:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51232 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:56:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51836 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390366AbeKLIWO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2390385AbeKLIWO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:22:14 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D225223DD;
-        Sun, 11 Nov 2018 22:32:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB00321508;
+        Sun, 11 Nov 2018 22:32:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975537;
-        bh=mWG9hM93qRF8aK2BLXI/blEZinTIShYehTwYpLGa8CY=;
+        s=default; t=1541975536;
+        bh=x4EHR8y2vJqS11HH9AFI1KGJGL4WFupkj4T2B0fOGPM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MC5BHG5ArMt754gkKXGdWCevj9615YYg0NmooWFTPX/W3HNtnlp8kAdwkbj4Fx/Fn
-         7Z8Y4nBKpI9UhQ8wkzrwtuKEX5lsw93fWZsKsKr2AvaGkb6yHPXhilfKdqFL3VuvUq
-         8uYgY0m9nuYsBSH8xTu2wWKhI9/HQa0iaIGfXLew=
+        b=lRS2l+oJjqLaQJzqPeRGKmywr4HmqVXW8/M6m+DsgBaMj4AXzcKO9VT0s9/i9wbqI
+         KsU2+O9UBS4vvoGGrV5g7NupCwv9qCN++BnNUAdJZUAjbAECbNF/1UpGokFYjJ1kC/
+         AOHAfjM0GxofD8sZFKsgH8twNt60ZsukzFb6K6sc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
-        Borislav Petkov <bp@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        x86-ml <x86@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 055/222] x86/olpc: Indicate that legacy PC XO-1 platform should not register RTC
-Date:   Sun, 11 Nov 2018 14:22:32 -0800
-Message-Id: <20181111221652.983927073@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 054/222] iwlwifi: mvm: clear HW_RESTART_REQUESTED when stopping the interface
+Date:   Sun, 11 Nov 2018 14:22:31 -0800
+Message-Id: <20181111221652.904999247@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -65,71 +63,116 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lubomir Rintel <lkundrak@v3.sk>
+From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
-[ Upstream commit d92116b800fb79a72ad26121f5011f6aa3ad94c2 ]
+[ Upstream commit 155f7e0441cd121b1e673d465a35e99f4b9b2f0b ]
 
-On OLPC XO-1, the RTC is discovered via device tree from the arch
-initcall. Don't let the PC platform register another one from its device
-initcall, it's not going to work:
+Fix a bug that happens in the following scenario:
+1) suspend without WoWLAN
+2) mac80211 calls drv_stop because of the suspend
+3) __iwl_mvm_mac_stop deallocates the aux station
+4) during drv_stop the firmware crashes
+5) iwlmvm:
+	* sets IWL_MVM_STATUS_HW_RESTART_REQUESTED
+	* asks mac80211 to kick the restart flow
+6) mac80211 puts the restart worker into a freezable
+   queue which means that the worker will not run for now
+   since the workqueue is already frozen
+7) ...
+8) resume
+9) mac80211 runs ieee80211_reconfig as part of the resume
+10) mac80211 detects that a restart flow has been requested
+    and that we are now resuming from suspend and cancels
+    the restart worker
+11) mac80211 calls drv_start()
+12) __iwl_mvm_mac_start checks that IWL_MVM_STATUS_HW_RESTART_REQUESTED
+    clears it, sets IWL_MVM_STATUS_IN_HW_RESTART and calls
+    iwl_mvm_restart_cleanup()
+13) iwl_fw_error_dump gets called and accesses the device
+    to get debug data
+14) iwl_mvm_up adds the aux station
+15) iwl_mvm_add_aux_sta() allocates an internal station for
+    the aux station
+16) iwl_mvm_allocate_int_sta() tests IWL_MVM_STATUS_IN_HW_RESTART
+    and doesn't really allocate a station ID for the aux
+    station
+17) a new queue is added for the aux station
 
-  sysfs: cannot create duplicate filename '/devices/platform/rtc_cmos'
-  CPU: 0 PID: 1 Comm: swapper Not tainted 4.19.0-rc6 #12
-  Hardware name: OLPC XO/XO, BIOS OLPC Ver 1.00.01 06/11/2014
-  Call Trace:
-   dump_stack+0x16/0x18
-   sysfs_warn_dup+0x46/0x58
-   sysfs_create_dir_ns+0x76/0x9b
-   kobject_add_internal+0xed/0x209
-   ? __schedule+0x3fa/0x447
-   kobject_add+0x5b/0x66
-   device_add+0x298/0x535
-   ? insert_resource_conflict+0x2a/0x3e
-   platform_device_add+0x14d/0x192
-   ? io_delay_init+0x19/0x19
-   platform_device_register+0x1c/0x1f
-   add_rtc_cmos+0x16/0x31
-   do_one_initcall+0x78/0x14a
-   ? do_early_param+0x75/0x75
-   kernel_init_freeable+0x152/0x1e0
-   ? rest_init+0xa2/0xa2
-   kernel_init+0x8/0xd5
-   ret_from_fork+0x2e/0x38
-  kobject_add_internal failed for rtc_cmos with -EEXIST, don't try to
-    register things with the same name in the same directory.
-  platform rtc_cmos: registered platform RTC device (no PNP device found)
+Note that steps from 5 to 9 aren't really part of the
+problem but were described for the sake of completeness.
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-CC: "H. Peter Anvin" <hpa@zytor.com>
-CC: Ingo Molnar <mingo@redhat.com>
-CC: x86-ml <x86@kernel.org>
-Link: http://lkml.kernel.org/r/20181004160808.307738-1-lkundrak@v3.sk
+Once the iwl_mvm_mac_stop() is called, the device is not
+accessible, meaning that step 12) can't succeed and we'll
+see the following:
+
+drivers/net/wireless/intel/iwlwifi/pcie/trans.c:2122 iwl_trans_pcie_grab_nic_access+0xc0/0x1d6 [iwlwifi]()
+Timeout waiting for hardware access (CSR_GP_CNTRL 0x080403d8)
+Call Trace:
+[<ffffffffc03e6ad3>] iwl_trans_pcie_grab_nic_access+0xc0/0x1d6 [iwlwifi]
+[<ffffffffc03e6a13>] iwl_trans_pcie_dump_regs+0x3fd/0x3fd [iwlwifi]
+[<ffffffffc03dad42>] iwl_fw_error_dump+0x4f5/0xe8b [iwlwifi]
+[<ffffffffc04bd43e>] __iwl_mvm_mac_start+0x5a/0x21a [iwlmvm]
+[<ffffffffc04bd6d2>] iwl_mvm_mac_start+0xd4/0x103 [iwlmvm]
+[<ffffffffc042d378>] drv_start+0xa1/0xc5 [iwl7000_mac80211]
+[<ffffffffc045a339>] ieee80211_reconfig+0x145/0xf50 [mac80211]
+[<ffffffffc044788b>] ieee80211_resume+0x62/0x66 [mac80211]
+[<ffffffffc0366c5b>] wiphy_resume+0xa9/0xc6 [cfg80211]
+
+The station id of the aux station is set to 0xff in step 3
+and because we don't really allocate a new station id for
+the auxliary station (as explained in 16), we end up sending
+a command to the firmware asking to connect the queue
+to station id 0xff. This makes the firmware crash with the
+following information:
+
+0x00002093 | ADVANCED_SYSASSERT
+0x000002F0 | trm_hw_status0
+0x00000000 | trm_hw_status1
+0x00000B38 | branchlink2
+0x0001978C | interruptlink1
+0x00000000 | interruptlink2
+0xFF080501 | data1
+0xDEADBEEF | data2
+0xDEADBEEF | data3
+Firmware error during reconfiguration - reprobe!
+FW error in SYNC CMD SCD_QUEUE_CFG
+
+Fix this by clearing IWL_MVM_STATUS_HW_RESTART_REQUESTED
+in iwl_mvm_mac_stop(). We won't be able to collect debug
+data anyway and when we will brought up again, we will
+have a clean state from the firmware perspective.
+Since we won't have IWL_MVM_STATUS_IN_HW_RESTART set in
+step 12) we won't get to the 2093 ASSERT either.
+
+Fixes: bf8b286f86fc ("iwlwifi: mvm: defer setting IWL_MVM_STATUS_IN_HW_RESTART")
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/platform/olpc/olpc-xo1-rtc.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/arch/x86/platform/olpc/olpc-xo1-rtc.c
-+++ b/arch/x86/platform/olpc/olpc-xo1-rtc.c
-@@ -16,6 +16,7 @@
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
+@@ -1225,12 +1225,15 @@ void __iwl_mvm_mac_stop(struct iwl_mvm *
+ 	iwl_mvm_del_aux_sta(mvm);
  
- #include <asm/msr.h>
- #include <asm/olpc.h>
-+#include <asm/x86_init.h>
+ 	/*
+-	 * Clear IN_HW_RESTART flag when stopping the hw (as restart_complete()
+-	 * won't be called in this case).
++	 * Clear IN_HW_RESTART and HW_RESTART_REQUESTED flag when stopping the
++	 * hw (as restart_complete() won't be called in this case) and mac80211
++	 * won't execute the restart.
+ 	 * But make sure to cleanup interfaces that have gone down before/during
+ 	 * HW restart was requested.
+ 	 */
+-	if (test_and_clear_bit(IWL_MVM_STATUS_IN_HW_RESTART, &mvm->status))
++	if (test_and_clear_bit(IWL_MVM_STATUS_IN_HW_RESTART, &mvm->status) ||
++	    test_and_clear_bit(IWL_MVM_STATUS_HW_RESTART_REQUESTED,
++			       &mvm->status))
+ 		ieee80211_iterate_interfaces(mvm->hw, 0,
+ 					     iwl_mvm_cleanup_iterator, mvm);
  
- static void rtc_wake_on(struct device *dev)
- {
-@@ -75,6 +76,8 @@ static int __init xo1_rtc_init(void)
- 	if (r)
- 		return r;
- 
-+	x86_platform.legacy.rtc = 0;
-+
- 	device_init_wakeup(&xo1_rtc_device.dev, 1);
- 	return 0;
- }
 
 
