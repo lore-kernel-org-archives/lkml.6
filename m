@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 347DBC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:02:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3622C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:02:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F095020872
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:02:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B52A820818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:02:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OOCTyflJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F095020872
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WVkgmfqc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B52A820818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390783AbeKLIw2 (ORCPT
+        id S2390712AbeKLIw2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 12 Nov 2018 03:52:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51248 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:52394 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390612AbeKLIW1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:27 -0500
+        id S2389403AbeKLIW2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:28 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A43052245E;
-        Sun, 11 Nov 2018 22:32:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 99A35224E3;
+        Sun, 11 Nov 2018 22:32:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975550;
-        bh=JoPM/m0Q08md6bvnOz6XMde0lJOsWNqfkO8CvzrpEgA=;
+        s=default; t=1541975551;
+        bh=G7omjYAKFF+bTEhHApHteOZyeMnY1nwPex4/QGCA+vg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OOCTyflJ7b9B+mRcfWHah7/n3ZKYeUV45o1YecD2BDPKFRtMJqxCVpvEt6l06/Yjf
-         sXoWQzq+9tpT4q/EzBcChn/PEM9UCe4JB0uJIKQMvX23LnnPsxZZF6AarZPicylIyL
-         QlKwJDrSjMV9RJIMfb9PpiR/1y7Cw/lKg+8ubfnM=
+        b=WVkgmfqcHmMe+6JvRwkIq07Z9kCKkvNrGZB4Hy/teUCl2KJnAIs6dag3/1WbX1gFc
+         rBAWLZyT883Wnex5o4Yza/ENruTY1BxbYr/G9TpqXnH8Z8cmJesEV47joAoiL8jkMO
+         WAEC66jKX6y27RBZpaQD1cx7UPKKaTHPvt2C3XzE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+c61979f6f2cba5cb3c06@syzkaller.appspotmail.com,
-        Theodore Tso <tytso@mit.edu>, stable@kernel.org,
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 091/222] ext4: fix argument checking in EXT4_IOC_MOVE_EXT
-Date:   Sun, 11 Nov 2018 14:23:08 -0800
-Message-Id: <20181111221656.107700843@linuxfoundation.org>
+Subject: [PATCH 4.14 093/222] f2fs: fix to recover inodes i_flags during POR
+Date:   Sun, 11 Nov 2018 14:23:10 -0800
+Message-Id: <20181111221656.282701351@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -64,46 +63,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit f18b2b83a727a3db208308057d2c7945f368e625 ]
+[ Upstream commit 19c73a691ccf6fb2f12d4e9cf9830023966cec88 ]
 
-If the starting block number of either the source or destination file
-exceeds the EOF, EXT4_IOC_MOVE_EXT should return EINVAL.
+Testcase to reproduce this bug:
+1. mkfs.f2fs /dev/sdd
+2. mount -t f2fs /dev/sdd /mnt/f2fs
+3. touch /mnt/f2fs/file
+4. sync
+5. chattr +A /mnt/f2fs/file
+6. xfs_io -f /mnt/f2fs/file -c "fsync"
+7. godown /mnt/f2fs
+8. umount /mnt/f2fs
+9. mount -t f2fs /dev/sdd /mnt/f2fs
+10. lsattr /mnt/f2fs/file
 
-Also fixed the helper function mext_check_coverage() so that if the
-logical block is beyond EOF, make it return immediately, instead of
-looping until the block number wraps all the away around.  This takes
-long enough that if there are multiple threads trying to do pound on
-an the same inode doing non-sensical things, it can end up triggering
-the kernel's soft lockup detector.
+-----------------N- /mnt/f2fs/file
 
-Reported-by: syzbot+c61979f6f2cba5cb3c06@syzkaller.appspotmail.com
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org
+But actually, we expect the corrct result is:
+
+-------A---------N- /mnt/f2fs/file
+
+The reason is we didn't recover inode.i_flags field during mount,
+fix it.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/ext4/move_extent.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ fs/f2fs/recovery.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/ext4/move_extent.c
-+++ b/fs/ext4/move_extent.c
-@@ -526,9 +526,13 @@ mext_check_arguments(struct inode *orig_
- 			orig_inode->i_ino, donor_inode->i_ino);
- 		return -EINVAL;
- 	}
--	if (orig_eof < orig_start + *len - 1)
-+	if (orig_eof <= orig_start)
-+		*len = 0;
-+	else if (orig_eof < orig_start + *len - 1)
- 		*len = orig_eof - orig_start;
--	if (donor_eof < donor_start + *len - 1)
-+	if (donor_eof <= donor_start)
-+		*len = 0;
-+	else if (donor_eof < donor_start + *len - 1)
- 		*len = donor_eof - donor_start;
- 	if (!*len) {
- 		ext4_debug("ext4 move extent: len should not be 0 "
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -210,6 +210,7 @@ static void recover_inode(struct inode *
+ 	inode->i_mtime.tv_nsec = le32_to_cpu(raw->i_mtime_nsec);
+ 
+ 	F2FS_I(inode)->i_advise = raw->i_advise;
++	F2FS_I(inode)->i_flags = le32_to_cpu(raw->i_flags);
+ 
+ 	if (file_enc_name(inode))
+ 		name = "<encrypted>";
 
 
