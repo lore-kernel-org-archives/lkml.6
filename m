@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8284CC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CA63C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D577223CB
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45740223CA
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hXU9v8Wo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D577223CB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CyB/LK3t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45740223CA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389440AbeKLIVN (ORCPT
+        id S2389456AbeKLIVO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:21:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47504 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:21:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47920 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389368AbeKLIVK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:21:10 -0500
+        id S2389368AbeKLIVN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:13 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2856C223CA;
-        Sun, 11 Nov 2018 22:31:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA79E216FD;
+        Sun, 11 Nov 2018 22:31:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975474;
-        bh=69GZvkxe8ZyYAgIogC8uAx0oJGFghvtoQwR2L9Luybk=;
+        s=default; t=1541975477;
+        bh=uJCScdRugag0QvZ+5A/X5cN6vxyyWjwZ186emDFL0fY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hXU9v8WoS8sQKk6tYDaT/FUiDeOd9TMqtcQe6KhXZC5lOjFwXesWT68/bleOsC5he
-         67Lfh6HpmJ3cpcQy0eyXZwJ+Slz1lS2wZZLgusuzDsSPf7rT5Uc3EseuuK/SBfn5At
-         rIlinZIU+Wg6k6hJZXB+3ENmRnvZMyrP4M8vzBB8=
+        b=CyB/LK3t/HBEqkjH+ZQ4ho7NLsjba6Rd2K1dp5CTDTl0UeicEaf8lw3AESwGapLS/
+         cG1A3RKQfkc5+vMfZP/4b7nqnpb6LCVh+sz+6sUHXeBfK/alAnXeVcOp4Al5DN7lcm
+         453BW/sXbnVV92ooEX/9kA/YOvVaD6aJw1psFTWY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
-        Aurelien Aptel <aaptel@suse.com>
-Subject: [PATCH 4.18 256/350] smb3: allow stats which track session and share reconnects to be reset
-Date:   Sun, 11 Nov 2018 14:22:00 -0800
-Message-Id: <20181111221718.734678366@linuxfoundation.org>
+        stable@vger.kernel.org, Vincent Cuissard <cuissard@marvell.com>,
+        Samuel Ortiz <sameo@linux.intel.com>,
+        Johan Hovold <johan@kernel.org>, Rob Herring <robh@kernel.org>
+Subject: [PATCH 4.18 261/350] NFC: nfcmrvl_uart: fix OF child-node lookup
+Date:   Sun, 11 Nov 2018 14:22:05 -0800
+Message-Id: <20181111221718.930101928@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -62,34 +63,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steve French <stfrench@microsoft.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 2c887635cd6ab3af619dc2be94e5bf8f2e172b78 upstream.
+commit 5bf59773aaf36dd62117dc83d50e1bbf9ef432da upstream.
 
-Currently, "echo 0 > /proc/fs/cifs/Stats" resets all of the stats
-except the session and share reconnect counts.  Fix it to
-reset those as well.
+Use the new of_get_compatible_child() helper to lookup the nfc child
+node instead of using of_find_compatible_node(), which searches the
+entire tree from a given start node and thus can return an unrelated
+(i.e. non-child) node.
 
-CC: Stable <stable@vger.kernel.org>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-by: Aurelien Aptel <aaptel@suse.com>
+This also addresses a potential use-after-free (e.g. after probe
+deferral) as the tree-wide helper drops a reference to its first
+argument (i.e. the parent node).
+
+Fixes: e097dc624f78 ("NFC: nfcmrvl: add UART driver")
+Fixes: d8e018c0b321 ("NFC: nfcmrvl: update device tree bindings for Marvell NFC")
+Cc: stable <stable@vger.kernel.org>     # 4.2
+Cc: Vincent Cuissard <cuissard@marvell.com>
+Cc: Samuel Ortiz <sameo@linux.intel.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/cifs_debug.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/nfc/nfcmrvl/uart.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/fs/cifs/cifs_debug.c
-+++ b/fs/cifs/cifs_debug.c
-@@ -383,6 +383,9 @@ static ssize_t cifs_stats_proc_write(str
- 		atomic_set(&totBufAllocCount, 0);
- 		atomic_set(&totSmBufAllocCount, 0);
- #endif /* CONFIG_CIFS_STATS2 */
-+		atomic_set(&tcpSesReconnectCount, 0);
-+		atomic_set(&tconInfoReconnectCount, 0);
-+
- 		spin_lock(&GlobalMid_Lock);
- 		GlobalMaxActiveXid = 0;
- 		GlobalCurrentXid = 0;
+--- a/drivers/nfc/nfcmrvl/uart.c
++++ b/drivers/nfc/nfcmrvl/uart.c
+@@ -73,10 +73,9 @@ static int nfcmrvl_uart_parse_dt(struct
+ 	struct device_node *matched_node;
+ 	int ret;
+ 
+-	matched_node = of_find_compatible_node(node, NULL, "marvell,nfc-uart");
++	matched_node = of_get_compatible_child(node, "marvell,nfc-uart");
+ 	if (!matched_node) {
+-		matched_node = of_find_compatible_node(node, NULL,
+-						       "mrvl,nfc-uart");
++		matched_node = of_get_compatible_child(node, "mrvl,nfc-uart");
+ 		if (!matched_node)
+ 			return -ENODEV;
+ 	}
 
 
