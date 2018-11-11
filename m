@@ -6,46 +6,47 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FED9C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:13:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90365C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:13:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E5602080D
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:13:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E5602080D
+	by mail.kernel.org (Postfix) with ESMTP id 5F6872080D
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:13:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F6872080D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731224AbeKLGDI (ORCPT
+        id S1731383AbeKLGDO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:03:08 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52726 "EHLO
+        Mon, 12 Nov 2018 01:03:14 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52754 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726809AbeKLGDI (ORCPT
+        by vger.kernel.org with ESMTP id S1726809AbeKLGDN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 01:03:08 -0500
+        Mon, 12 Nov 2018 01:03:13 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvt7-0000oP-M0; Sun, 11 Nov 2018 19:59:17 +0000
+        id 1gLvsz-0000l5-0O; Sun, 11 Nov 2018 19:59:09 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsQ-0001SZ-4t; Sun, 11 Nov 2018 19:58:34 +0000
+        id 1gLvsT-0001cL-MU; Sun, 11 Nov 2018 19:58:37 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Bjorn Helgaas" <bhelgaas@google.com>,
-        "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
-        "Mika Westerberg" <mika.westerberg@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+CC:     akpm@linux-foundation.org, "Arnd Bergmann" <arnd@arndb.de>,
+        "Geert Uytterhoeven" <geert@linux-m68k.org>,
+        linux-mips@linux-mips.org, "Thomas Gleixner" <tglx@linutronix.de>,
+        "Stephen Boyd" <sboyd@kernel.org>,
+        "John Stultz" <john.stultz@linaro.org>, linux-alpha@vger.kernel.org
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.54125903@decadent.org.uk>
+Message-ID: <lsq.1541965745.992465034@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 081/366] PCI: pciehp: Clear Presence Detect and Data
- Link Layer Status Changed on resume
+Subject: [PATCH 3.16 183/366] time: Make sure jiffies_to_msecs() preserves
+ non-zero time periods
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,80 +60,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
 
-commit 13c65840feab8109194f9490c9870587173cb29d upstream.
+commit abcbcb80cd09cd40f2089d912764e315459b71f7 upstream.
 
-After a suspend/resume cycle the Presence Detect or Data Link Layer Status
-Changed bits might be set.  If we don't clear them those events will not
-fire anymore and nothing happens for instance when a device is now
-hot-unplugged.
+For the common cases where 1000 is a multiple of HZ, or HZ is a multiple of
+1000, jiffies_to_msecs() never returns zero when passed a non-zero time
+period.
 
-Fix this by clearing those bits in a newly introduced function
-pcie_reenable_notification().  This should be fine because immediately
-after, we check if the adapter is still present by reading directly from
-the status register.
+However, if HZ > 1000 and not an integer multiple of 1000 (e.g. 1024 or
+1200, as used on alpha and DECstation), jiffies_to_msecs() may return zero
+for small non-zero time periods.  This may break code that relies on
+receiving back a non-zero value.
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+jiffies_to_usecs() does not need such a fix: one jiffy can only be less
+than one µs if HZ > 1000000, and such large values of HZ are already
+rejected at build time, twice:
+
+  - include/linux/jiffies.h does #error if HZ >= 12288,
+  - kernel/time/time.c has BUILD_BUG_ON(HZ > USEC_PER_SEC).
+
+Broken since forever.
+
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-alpha@vger.kernel.org
+Cc: linux-mips@linux-mips.org
+Link: https://lkml.kernel.org/r/20180622143357.7495-1-geert@linux-m68k.org
+[bwh: Backported to 3.16: adjust filename]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/pci/hotplug/pciehp.h      |  2 +-
- drivers/pci/hotplug/pciehp_core.c |  2 +-
- drivers/pci/hotplug/pciehp_hpc.c  | 13 ++++++++++++-
- 3 files changed, 14 insertions(+), 3 deletions(-)
+ kernel/time.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/pci/hotplug/pciehp.h
-+++ b/drivers/pci/hotplug/pciehp.h
-@@ -143,7 +143,7 @@ struct controller *pcie_init(struct pcie
- int pcie_init_notification(struct controller *ctrl);
- int pciehp_enable_slot(struct slot *p_slot);
- int pciehp_disable_slot(struct slot *p_slot);
--void pcie_enable_notification(struct controller *ctrl);
-+void pcie_reenable_notification(struct controller *ctrl);
- int pciehp_power_on_slot(struct slot *slot);
- void pciehp_power_off_slot(struct slot *slot);
- void pciehp_get_power_status(struct slot *slot, u8 *status);
---- a/drivers/pci/hotplug/pciehp_core.c
-+++ b/drivers/pci/hotplug/pciehp_core.c
-@@ -332,7 +332,7 @@ static int pciehp_resume(struct pcie_dev
- 	ctrl = get_service_data(dev);
+--- a/kernel/time.c
++++ b/kernel/time.c
+@@ -28,6 +28,7 @@
+  */
  
- 	/* reinitialize the chipset's event detection logic */
--	pcie_enable_notification(ctrl);
-+	pcie_reenable_notification(ctrl);
- 
- 	slot = ctrl->slot;
- 
---- a/drivers/pci/hotplug/pciehp_hpc.c
-+++ b/drivers/pci/hotplug/pciehp_hpc.c
-@@ -580,7 +580,7 @@ static irqreturn_t pcie_isr(int irq, voi
- 	return IRQ_HANDLED;
+ #include <linux/export.h>
++#include <linux/kernel.h>
+ #include <linux/timex.h>
+ #include <linux/capability.h>
+ #include <linux/timekeeper_internal.h>
+@@ -253,9 +254,10 @@ unsigned int jiffies_to_msecs(const unsi
+ 	return (j + (HZ / MSEC_PER_SEC) - 1)/(HZ / MSEC_PER_SEC);
+ #else
+ # if BITS_PER_LONG == 32
+-	return (HZ_TO_MSEC_MUL32 * j) >> HZ_TO_MSEC_SHR32;
++	return (HZ_TO_MSEC_MUL32 * j + (1ULL << HZ_TO_MSEC_SHR32) - 1) >>
++	       HZ_TO_MSEC_SHR32;
+ # else
+-	return (j * HZ_TO_MSEC_NUM) / HZ_TO_MSEC_DEN;
++	return DIV_ROUND_UP(j * HZ_TO_MSEC_NUM, HZ_TO_MSEC_DEN);
+ # endif
+ #endif
  }
- 
--void pcie_enable_notification(struct controller *ctrl)
-+static void pcie_enable_notification(struct controller *ctrl)
- {
- 	u16 cmd, mask;
- 
-@@ -618,6 +618,17 @@ void pcie_enable_notification(struct con
- 	pcie_write_cmd(ctrl, cmd, mask);
- }
- 
-+void pcie_reenable_notification(struct controller *ctrl)
-+{
-+	/*
-+	 * Clear both Presence and Data Link Layer Changed to make sure
-+	 * those events still fire after we have re-enabled them.
-+	 */
-+	pcie_capability_write_word(ctrl->pcie->port, PCI_EXP_SLTSTA,
-+				   PCI_EXP_SLTSTA_PDC | PCI_EXP_SLTSTA_DLLSC);
-+	pcie_enable_notification(ctrl);
-+}
-+
- static void pcie_disable_notification(struct controller *ctrl)
- {
- 	u16 mask;
 
