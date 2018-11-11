@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C50F8C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:39:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BF86C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:39:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 870F720818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:39:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5240220871
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:39:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TT3rqKIf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 870F720818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TrNT7I5o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5240220871
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388367AbeKLJ3V (ORCPT
+        id S2388402AbeKLJ32 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:29:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41934 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:29:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387967AbeKLITr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2388046AbeKLITr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:19:47 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A2B8B215EA;
+        by mail.kernel.org (Postfix) with ESMTPSA id 1D79D22360;
         Sun, 11 Nov 2018 22:29:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975391;
-        bh=g5CmZotGtZ4+KoKJm/KIuWj8SD5QG/xjangQJwTk/iY=;
+        bh=kqDDduOozg8xf2c2lrMLghnlmZdOxZfKXJuZGfEgR50=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TT3rqKIfdTxkUmT/wBugWSHg8XIVhR/uuc+++TfHHFm9MpHJ4H7e4P6ZfZGUGA6NE
-         XjDNR7RVFTCs3oyitYFqVtkwkbigML9hkTbd+A2HmAU/WLyZVQ79DkSqWg1HeMshwt
-         UwRvLIx8j9Ru5o3FcelBKbYV0yWRvm+V4Ep6vf/I=
+        b=TrNT7I5oU490uxnxV/NcvSkeJo71ocX+mCv1rgFRxAIsWOV/cvjj5wCnpNGmKW3E1
+         5mu4TfHinU0YKTYXBMKOPdTTiSt3C1yBZbRxzrRXGCu1Si2eAkTFpfuVj9FpQqeUSi
+         0hpoQSPhy4+MZfTtSb9onqdoMRYlOf1KvAD+lnYI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        stable@vger.kernel.org,
         =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>,
         Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 075/350] lightnvm: pblk: fix two sleep-in-atomic-context bugs
-Date:   Sun, 11 Nov 2018 14:18:59 -0800
-Message-Id: <20181111221710.264836728@linuxfoundation.org>
+Subject: [PATCH 4.18 074/350] lightnvm: pblk: fix race on sysfs line state
+Date:   Sun, 11 Nov 2018 14:18:58 -0800
+Message-Id: <20181111221710.227367992@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -64,80 +64,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
+From: Javier González <javier@cnexlabs.com>
 
-[ Upstream commit 7325b4bbe5952e3e939f15de812f2ee0c0d33ca9 ]
+[ Upstream commit 44cdbdc657b23f75736eca3e88b781f009104363 ]
 
-The driver may sleep with holding a spinlock.
+pblk exposes a sysfs interface that represents its internal state. Part
+of this state is the map bitmap for the current open line, which should
+be protected by the line lock to avoid a race when freeing the line
+metadata. Currently, it is not.
 
-The function call paths (from bottom to top) in Linux-4.16 are:
+This patch makes sure that the line state is consistent and NULL
+bitmap pointers are not dereferenced.
 
-[FUNC] nvm_dev_dma_alloc(GFP_KERNEL)
-drivers/lightnvm/pblk-core.c, 754:
-	nvm_dev_dma_alloc in pblk_line_submit_smeta_io
-drivers/lightnvm/pblk-core.c, 1048:
-	pblk_line_submit_smeta_io in pblk_line_init_bb
-drivers/lightnvm/pblk-core.c, 1434:
-	pblk_line_init_bb in pblk_line_replace_data
-drivers/lightnvm/pblk-recovery.c, 980:
-	pblk_line_replace_data in pblk_recov_l2p
-drivers/lightnvm/pblk-recovery.c, 976:
-	spin_lock in pblk_recov_l2p
-
-[FUNC] bio_map_kern(GFP_KERNEL)
-drivers/lightnvm/pblk-core.c, 762:
-	bio_map_kern in pblk_line_submit_smeta_io
-drivers/lightnvm/pblk-core.c, 1048:
-	pblk_line_submit_smeta_io in pblk_line_init_bb
-drivers/lightnvm/pblk-core.c, 1434:
-	pblk_line_init_bb in pblk_line_replace_data
-drivers/lightnvm/pblk-recovery.c, 980:
-	pblk_line_replace_data in pblk_recov_l2p
-drivers/lightnvm/pblk-recovery.c, 976:
-	spin_lock in pblk_recov_l2p
-
-To fix these bugs, the call to pblk_line_replace_data()
-is moved out of the spinlock protection.
-
-These bugs are found by my static analysis tool DSAC.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Reviewed-by: Javier González <javier@cnexlabs.com>
+Signed-off-by: Javier González <javier@cnexlabs.com>
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/lightnvm/pblk-recovery.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/lightnvm/pblk-core.c  |    5 +++--
+ drivers/lightnvm/pblk-sysfs.c |    8 +++++++-
+ 2 files changed, 10 insertions(+), 3 deletions(-)
 
---- a/drivers/lightnvm/pblk-recovery.c
-+++ b/drivers/lightnvm/pblk-recovery.c
-@@ -956,12 +956,14 @@ next:
- 		}
- 	}
+--- a/drivers/lightnvm/pblk-core.c
++++ b/drivers/lightnvm/pblk-core.c
+@@ -1538,13 +1538,14 @@ struct pblk_line *pblk_line_replace_data
+ 	struct pblk_line *cur, *new = NULL;
+ 	unsigned int left_seblks;
  
--	spin_lock(&l_mg->free_lock);
- 	if (!open_lines) {
-+		spin_lock(&l_mg->free_lock);
- 		WARN_ON_ONCE(!test_and_clear_bit(meta_line,
- 							&l_mg->meta_bitmap));
-+		spin_unlock(&l_mg->free_lock);
- 		pblk_line_replace_data(pblk);
- 	} else {
-+		spin_lock(&l_mg->free_lock);
- 		/* Allocate next line for preparation */
- 		l_mg->data_next = pblk_line_get(pblk);
- 		if (l_mg->data_next) {
-@@ -969,8 +971,8 @@ next:
- 			l_mg->data_next->type = PBLK_LINETYPE_DATA;
- 			is_next = 1;
- 		}
-+		spin_unlock(&l_mg->free_lock);
- 	}
--	spin_unlock(&l_mg->free_lock);
+-	cur = l_mg->data_line;
+ 	new = l_mg->data_next;
+ 	if (!new)
+ 		goto out;
+-	l_mg->data_line = new;
  
- 	if (is_next)
- 		pblk_line_erase(pblk, l_mg->data_next);
+ 	spin_lock(&l_mg->free_lock);
++	cur = l_mg->data_line;
++	l_mg->data_line = new;
++
+ 	pblk_line_setup_metadata(new, l_mg, &pblk->lm);
+ 	spin_unlock(&l_mg->free_lock);
+ 
+--- a/drivers/lightnvm/pblk-sysfs.c
++++ b/drivers/lightnvm/pblk-sysfs.c
+@@ -262,8 +262,14 @@ static ssize_t pblk_sysfs_lines(struct p
+ 		sec_in_line = l_mg->data_line->sec_in_line;
+ 		meta_weight = bitmap_weight(&l_mg->meta_bitmap,
+ 							PBLK_DATA_LINES);
+-		map_weight = bitmap_weight(l_mg->data_line->map_bitmap,
++
++		spin_lock(&l_mg->data_line->lock);
++		if (l_mg->data_line->map_bitmap)
++			map_weight = bitmap_weight(l_mg->data_line->map_bitmap,
+ 							lm->sec_per_line);
++		else
++			map_weight = 0;
++		spin_unlock(&l_mg->data_line->lock);
+ 	}
+ 	spin_unlock(&l_mg->free_lock);
+ 
 
 
