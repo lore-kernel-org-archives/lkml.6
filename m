@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58BE0C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:58:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F5CEC43610
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:58:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 204AF20818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:58:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1711820818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:58:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fZfjpYF2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 204AF20818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MpTyprmV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1711820818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403789AbeKLIWn (ORCPT
+        id S2403866AbeKLIsL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:22:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54174 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:48:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54242 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390806AbeKLIWm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:42 -0500
+        id S2389111AbeKLIWn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:43 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 51D8322502;
-        Sun, 11 Nov 2018 22:32:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 10F33223C7;
+        Sun, 11 Nov 2018 22:32:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975565;
-        bh=OlQuWsBZoLHAiuvwcRODMF393XlYXgTxUfg9VQLBNr4=;
+        s=default; t=1541975566;
+        bh=9m73BFX4HTHYT0TsU8uhweOq+krgDXq36pV7CMKocVc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fZfjpYF2UASxARmzuZP9K9ANl+6xjgU+4jRCXgj6M/Ya1aH8U+pNsToWZTw57JlYo
-         5vUHpKvcp3gFQV0LGReXr2RoWFi57xYRahUpNnubtNKF6Ins5oyB4N/c9NF/N5kPEk
-         i6TKMXmev9KJp+JpP1QY4Zpan8EqNNGH91cjn4Rc=
+        b=MpTyprmVz8rQfub2y46ipSoWFt/s6kj74TllHEe5Lda6YM6tIxACE5/Lumf3bvVsK
+         cPa/s6018wHrTq1AKmmySR7U41FLgxkl1mLfi8sarX20AdrHScRme5XitBX1TRZMwZ
+         D+NTBuCAzCeoz8A3Ec7d2MY5336Lj2tRhJx/+o/M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+7f4a27091759e2fe7453@syzkaller.appspotmail.com,
-        Lukas Czerner <lczerner@redhat.com>, Jan Kara <jack@suse.cz>,
-        Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 4.14 135/222] jbd2: fix use after free in jbd2_log_do_checkpoint()
-Date:   Sun, 11 Nov 2018 14:23:52 -0800
-Message-Id: <20181111221659.625062178@linuxfoundation.org>
+        stable@vger.kernel.org, Yunlei He <heyunlei@huawei.com>,
+        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 103/222] f2fs: report error if quota off error during umount
+Date:   Sun, 11 Nov 2018 14:23:20 -0800
+Message-Id: <20181111221657.114212839@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -64,69 +63,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jan Kara <jack@suse.cz>
+From: Yunlei He <heyunlei@huawei.com>
 
-commit ccd3c4373eacb044eb3832966299d13d2631f66f upstream.
+[ Upstream commit cda9cc595f0bb6ffa51a4efc4b6533dfa4039b4c ]
 
-The code cleaning transaction's lists of checkpoint buffers has a bug
-where it increases bh refcount only after releasing
-journal->j_list_lock. Thus the following race is possible:
+Now, we depend on fsck to ensure quota file data is ok,
+so we scan whole partition if checkpoint without umount
+flag. It's same for quota off error case, which may make
+quota file data inconsistent.
 
-CPU0					CPU1
-jbd2_log_do_checkpoint()
-					jbd2_journal_try_to_free_buffers()
-					  __journal_try_to_free_buffer(bh)
-  ...
-  while (transaction->t_checkpoint_io_list)
-  ...
-    if (buffer_locked(bh)) {
+generic/019 reports below error:
 
-<-- IO completes now, buffer gets unlocked -->
+ __quota_error: 1160 callbacks suppressed
+ Quota error (device zram1): write_blk: dquota write failed
+ Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+ Quota error (device zram1): write_blk: dquota write failed
+ Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+ Quota error (device zram1): write_blk: dquota write failed
+ Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+ Quota error (device zram1): write_blk: dquota write failed
+ Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+ Quota error (device zram1): write_blk: dquota write failed
+ Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+ VFS: Busy inodes after unmount of zram1. Self-destruct in 5 seconds.  Have a nice day...
 
-      spin_unlock(&journal->j_list_lock);
-					    spin_lock(&journal->j_list_lock);
-					    __jbd2_journal_remove_checkpoint(jh);
-					    spin_unlock(&journal->j_list_lock);
-					  try_to_free_buffers(page);
-      get_bh(bh) <-- accesses freed bh
+If we failed in below path due to fail to write dquot block, we will miss
+to release quota inode, fix it.
 
-Fix the problem by grabbing bh reference before unlocking
-journal->j_list_lock.
+- f2fs_put_super
+ - f2fs_quota_off_umount
+  - f2fs_quota_off
+   - f2fs_quota_sync   <-- failed
+   - dquot_quota_off   <-- missed to call
 
-Fixes: dc6e8d669cf5 ("jbd2: don't call get_bh() before calling __jbd2_journal_remove_checkpoint()")
-Fixes: be1158cc615f ("jbd2: fold __process_buffer() into jbd2_log_do_checkpoint()")
-Reported-by: syzbot+7f4a27091759e2fe7453@syzkaller.appspotmail.com
-CC: stable@vger.kernel.org
-Reviewed-by: Lukas Czerner <lczerner@redhat.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/jbd2/checkpoint.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/f2fs/super.c |   19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
---- a/fs/jbd2/checkpoint.c
-+++ b/fs/jbd2/checkpoint.c
-@@ -254,8 +254,8 @@ restart:
- 		bh = jh2bh(jh);
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1488,7 +1488,9 @@ static int f2fs_quota_off(struct super_b
+ 	if (!inode || !igrab(inode))
+ 		return dquot_quota_off(sb, type);
  
- 		if (buffer_locked(bh)) {
--			spin_unlock(&journal->j_list_lock);
- 			get_bh(bh);
-+			spin_unlock(&journal->j_list_lock);
- 			wait_on_buffer(bh);
- 			/* the journal_head may have gone by now */
- 			BUFFER_TRACE(bh, "brelse");
-@@ -336,8 +336,8 @@ restart2:
- 		jh = transaction->t_checkpoint_io_list;
- 		bh = jh2bh(jh);
- 		if (buffer_locked(bh)) {
--			spin_unlock(&journal->j_list_lock);
- 			get_bh(bh);
-+			spin_unlock(&journal->j_list_lock);
- 			wait_on_buffer(bh);
- 			/* the journal_head may have gone by now */
- 			BUFFER_TRACE(bh, "brelse");
+-	f2fs_quota_sync(sb, type);
++	err = f2fs_quota_sync(sb, type);
++	if (err)
++		goto out_put;
+ 
+ 	err = dquot_quota_off(sb, type);
+ 	if (err)
+@@ -1507,9 +1509,20 @@ out_put:
+ void f2fs_quota_off_umount(struct super_block *sb)
+ {
+ 	int type;
++	int err;
+ 
+-	for (type = 0; type < MAXQUOTAS; type++)
+-		f2fs_quota_off(sb, type);
++	for (type = 0; type < MAXQUOTAS; type++) {
++		err = f2fs_quota_off(sb, type);
++		if (err) {
++			int ret = dquot_quota_off(sb, type);
++
++			f2fs_msg(sb, KERN_ERR,
++				"Fail to turn off disk quota "
++				"(type: %d, err: %d, ret:%d), Please "
++				"run fsck to fix it.", type, err, ret);
++			set_sbi_flag(F2FS_SB(sb), SBI_NEED_FSCK);
++		}
++	}
+ }
+ 
+ int f2fs_get_projid(struct inode *inode, kprojid_t *projid)
 
 
