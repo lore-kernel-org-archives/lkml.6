@@ -7,44 +7,48 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 965A3C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC8D9C43610
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C8322245E
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7325D223CB
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gXL9Hckn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C8322245E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RW9sMLgO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7325D223CB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404029AbeKLIW7 (ORCPT
+        id S2404059AbeKLIXB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:22:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54642 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:23:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54672 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404008AbeKLIW6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:58 -0500
+        id S2404025AbeKLIXA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:23:00 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B4902243E;
-        Sun, 11 Nov 2018 22:33:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C27C221780;
+        Sun, 11 Nov 2018 22:33:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975581;
-        bh=Dbw/oRHaI+fCeZsmO6YXTswIlDt3QSJkVImqKbFZOVM=;
+        s=default; t=1541975582;
+        bh=e/tnfNPI4oZPf/VfwGTJ/A6T8avdAFuA3qAxpOszOQo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gXL9HcknYwZx3qwhFQR2ulNCWIa9mOggk4SVXtRs7cjEOlEcL/libtFl+nbT3e+Ym
-         h6q8CATYKmJEa9GOAyXps54J7/0ZGiSrfqI8VcdCV7wGX/m/6qJAm6LycbXGEpfUMs
-         Eti/TdGYY3+J8K9fkJ6RrepmQRZF9YzDJtpmK/2g=
+        b=RW9sMLgO+1Xqr7nSQoGaElMfQm86jMJ6m/RcizLqvhC0svgNXELPZZNx4ozWWi53l
+         +77R6ZDR/n33vvnigLXNNZo9SZhHXe2pdBRUNGHznBlCY/Wz3c5lr5Z2l4gfQ7DxW9
+         f3uLgfelSFh/fVAKHRcWi22BLTnkPDqqPWlU1qXw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 4.14 173/222] dm ioctl: harden copy_params()s copy_from_user() from malicious users
-Date:   Sun, 11 Nov 2018 14:24:30 -0800
-Message-Id: <20181111221702.631595334@linuxfoundation.org>
+        stable@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
+        Borislav Petkov <bp@suse.de>,
+        Aristeu Rozanski <aris@redhat.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+        linux-edac <linux-edac@vger.kernel.org>
+Subject: [PATCH 4.14 143/222] EDAC, {i7core,sb,skx}_edac: Fix uncorrected error counting
+Date:   Sun, 11 Nov 2018 14:24:00 -0800
+Message-Id: <20181111221700.280195206@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -62,70 +66,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wenwen Wang <wang6495@umn.edu>
+From: Tony Luck <tony.luck@intel.com>
 
-commit 800a7340ab7dd667edf95e74d8e4f23a17e87076 upstream.
+commit 432de7fd7630c84ad24f1c2acd1e3bb4ce3741ca upstream.
 
-In copy_params(), the struct 'dm_ioctl' is first copied from the user
-space buffer 'user' to 'param_kernel' and the field 'data_size' is
-checked against 'minimum_data_size' (size of 'struct dm_ioctl' payload
-up to its 'data' member).  If the check fails, an error code EINVAL will be
-returned.  Otherwise, param_kernel->data_size is used to do a second copy,
-which copies from the same user-space buffer to 'dmi'.  After the second
-copy, only 'dmi->data_size' is checked against 'param_kernel->data_size'.
-Given that the buffer 'user' resides in the user space, a malicious
-user-space process can race to change the content in the buffer between
-the two copies.  This way, the attacker can inject inconsistent data
-into 'dmi' (versus previously validated 'param_kernel').
+The count of errors is picked up from bits 52:38 of the machine check
+bank status register. But this is the count of *corrected* errors. If an
+uncorrected error is being logged, the h/w sets this field to 0. Which
+means that when edac_mc_handle_error() is called, the EDAC core will
+carefully add zero to the appropriate uncorrected error counts.
 
-Fix redundant copying of 'minimum_data_size' from user-space buffer by
-using the first copy stored in 'param_kernel'.  Also remove the
-'data_size' check after the second copy because it is now unnecessary.
-
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+[ Massage commit message. ]
+Signed-off-by: Borislav Petkov <bp@suse.de>
 Cc: stable@vger.kernel.org
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Cc: Aristeu Rozanski <aris@redhat.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Link: http://lkml.kernel.org/r/20180928213934.19890-1-tony.luck@intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-ioctl.c |   18 ++++++------------
- 1 file changed, 6 insertions(+), 12 deletions(-)
+ drivers/edac/i7core_edac.c |    1 +
+ drivers/edac/sb_edac.c     |    1 +
+ drivers/edac/skx_edac.c    |    1 +
+ 3 files changed, 3 insertions(+)
 
---- a/drivers/md/dm-ioctl.c
-+++ b/drivers/md/dm-ioctl.c
-@@ -1719,8 +1719,7 @@ static void free_params(struct dm_ioctl
- }
+--- a/drivers/edac/i7core_edac.c
++++ b/drivers/edac/i7core_edac.c
+@@ -1711,6 +1711,7 @@ static void i7core_mce_output_error(stru
+ 	u32 errnum = find_first_bit(&error, 32);
  
- static int copy_params(struct dm_ioctl __user *user, struct dm_ioctl *param_kernel,
--		       int ioctl_flags,
--		       struct dm_ioctl **param, int *param_flags)
-+		       int ioctl_flags, struct dm_ioctl **param, int *param_flags)
- {
- 	struct dm_ioctl *dmi;
- 	int secure_data;
-@@ -1761,18 +1760,13 @@ static int copy_params(struct dm_ioctl _
+ 	if (uncorrected_error) {
++		core_err_cnt = 1;
+ 		if (ripv)
+ 			tp_event = HW_EVENT_ERR_FATAL;
+ 		else
+--- a/drivers/edac/sb_edac.c
++++ b/drivers/edac/sb_edac.c
+@@ -2891,6 +2891,7 @@ static void sbridge_mce_output_error(str
+ 		recoverable = GET_BITFIELD(m->status, 56, 56);
  
- 	*param_flags |= DM_PARAMS_MALLOC;
+ 	if (uncorrected_error) {
++		core_err_cnt = 1;
+ 		if (ripv) {
+ 			type = "FATAL";
+ 			tp_event = HW_EVENT_ERR_FATAL;
+--- a/drivers/edac/skx_edac.c
++++ b/drivers/edac/skx_edac.c
+@@ -895,6 +895,7 @@ static void skx_mce_output_error(struct
+ 	recoverable = GET_BITFIELD(m->status, 56, 56);
  
--	if (copy_from_user(dmi, user, param_kernel->data_size))
--		goto bad;
-+	/* Copy from param_kernel (which was already copied from user) */
-+	memcpy(dmi, param_kernel, minimum_data_size);
- 
--data_copied:
--	/*
--	 * Abort if something changed the ioctl data while it was being copied.
--	 */
--	if (dmi->data_size != param_kernel->data_size) {
--		DMERR("rejecting ioctl: data size modified while processing parameters");
-+	if (copy_from_user(&dmi->data, (char __user *)user + minimum_data_size,
-+			   param_kernel->data_size - minimum_data_size))
- 		goto bad;
--	}
--
-+data_copied:
- 	/* Wipe the user buffer so we do not return it to userspace */
- 	if (secure_data && clear_user(user, param_kernel->data_size))
- 		goto bad;
+ 	if (uncorrected_error) {
++		core_err_cnt = 1;
+ 		if (ripv) {
+ 			type = "FATAL";
+ 			tp_event = HW_EVENT_ERR_FATAL;
 
 
