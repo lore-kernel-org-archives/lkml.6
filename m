@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32520C0044C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:04:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 796C1C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:04:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4F6E20818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:04:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41BAC20818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:04:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZXkYqaeT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4F6E20818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qRpzy+kO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41BAC20818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390695AbeKLIyL (ORCPT
+        id S2390733AbeKLIyS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:54:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52394 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:54:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390519AbeKLIWW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:22 -0500
+        id S2390517AbeKLIWV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:21 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D028E21508;
+        by mail.kernel.org (Postfix) with ESMTPSA id 71A1B224B3;
         Sun, 11 Nov 2018 22:32:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975544;
-        bh=epNk5eUg/AJNRk97uV+Ygp3WVBsBilnOUGzjhDdXRYU=;
+        bh=Pt/9MyPLgs8KjtZnuN8CdxJD4RMusvhOug90nUfkT2o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZXkYqaeTTWb8HxJdSEFA1uZV63TOWl1TZABilN/8hhv9FW+H+lWnjtGRmind3t21+
-         ZBGLVRu+LKIW5XS5JhDH2/4i+R6jiK+p5rpbfFqet1sEUfgXdsy8jvieUmus/HGaY/
-         eRxr8W28JCSoisdZ7iv0vy/tSI57P9e6p16mCkr8=
+        b=qRpzy+kOITx7VcXB0BpBVOdg1uLuKATMkSsqF4MG/WuYmmcrc+SQj5qgayOwJF1r1
+         WkxZRQL4/fyy8U76EfvmZfL6ixf1aKcvaGi3BlhRPCBXYk2bJRD5aUZAJfvTY8wIQF
+         zomyKG0OEm63hQAkEdinXjyj7HunVmlHExmu957o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Steve Twiss <stwiss.opensource@diasemi.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
+        stable@vger.kernel.org, Martin Willi <martin@strongswan.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 075/222] thermal: da9062/61: Prevent hardware access during system suspend
-Date:   Sun, 11 Nov 2018 14:22:52 -0800
-Message-Id: <20181111221654.795995745@linuxfoundation.org>
+Subject: [PATCH 4.14 074/222] ath10k: schedule hardware restart if WMI command times out
+Date:   Sun, 11 Nov 2018 14:22:51 -0800
+Message-Id: <20181111221654.732894668@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -65,44 +63,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Martin Willi <martin@strongswan.org>
 
-[ Upstream commit 760eea43f8c6d48684f1f34b8a02fddc1456e849 ]
+[ Upstream commit a9911937e7d332761e8c4fcbc7ba0426bdc3956f ]
 
-The workqueue used for monitoring the hardware may run while the device
-is already suspended.  Fix this by using the freezable system workqueue
-instead, cfr. commit 51e20d0e3a60cf46 ("thermal: Prevent polling from
-happening during system suspend").
+When running in AP mode, ath10k sometimes suffers from TX credit
+starvation. The issue is hard to reproduce and shows up once in a
+few days, but has been repeatedly seen with QCA9882 and a large
+range of firmwares, including 10.2.4.70.67.
 
-Fixes: 608567aac3206ae8 ("thermal: da9062/61: Thermal junction temperature monitoring driver")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Steve Twiss <stwiss.opensource@diasemi.com>
-Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+Once the module is in this state, TX credits are never replenished,
+which results in "SWBA overrun" errors, as no beacons can be sent.
+Even worse, WMI commands run in a timeout while holding the conf
+mutex for three seconds each, making any further operations slow
+and the whole system unresponsive.
+
+The firmware/driver never recovers from that state automatically,
+and triggering TX flush or warm restarts won't work over WMI. So
+issue a hardware restart if a WMI command times out due to missing
+TX credits. This implies a connectivity outage of about 1.4s in AP
+mode, but brings back the interface and the whole system to a usable
+state. WMI command timeouts have not been seen in absent of this
+specific issue, so taking such drastic actions seems legitimate.
+
+Signed-off-by: Martin Willi <martin@strongswan.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/thermal/da9062-thermal.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/wireless/ath/ath10k/wmi.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/thermal/da9062-thermal.c
-+++ b/drivers/thermal/da9062-thermal.c
-@@ -106,7 +106,7 @@ static void da9062_thermal_poll_on(struc
- 					   THERMAL_EVENT_UNSPECIFIED);
+--- a/drivers/net/wireless/ath/ath10k/wmi.c
++++ b/drivers/net/wireless/ath/ath10k/wmi.c
+@@ -1852,6 +1852,12 @@ int ath10k_wmi_cmd_send(struct ath10k *a
+ 	if (ret)
+ 		dev_kfree_skb_any(skb);
  
- 		delay = msecs_to_jiffies(thermal->zone->passive_delay);
--		schedule_delayed_work(&thermal->work, delay);
-+		queue_delayed_work(system_freezable_wq, &thermal->work, delay);
- 		return;
- 	}
- 
-@@ -125,7 +125,7 @@ static irqreturn_t da9062_thermal_irq_ha
- 	struct da9062_thermal *thermal = data;
- 
- 	disable_irq_nosync(thermal->irq);
--	schedule_delayed_work(&thermal->work, 0);
-+	queue_delayed_work(system_freezable_wq, &thermal->work, 0);
- 
- 	return IRQ_HANDLED;
++	if (ret == -EAGAIN) {
++		ath10k_warn(ar, "wmi command %d timeout, restarting hardware\n",
++			    cmd_id);
++		queue_work(ar->workqueue, &ar->restart_work);
++	}
++
+ 	return ret;
  }
+ 
 
 
