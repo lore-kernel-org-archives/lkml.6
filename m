@@ -4,50 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E9ABC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:58:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB9DC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:58:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C20420839
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:58:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57C7A20839
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:58:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="i7Xm1nHd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C20420839
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eMl/RPaw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57C7A20839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732682AbeKLJsm (ORCPT
+        id S1732641AbeKLJst (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:48:42 -0500
+        Mon, 12 Nov 2018 04:48:49 -0500
 Received: from mail.kernel.org ([198.145.29.99]:34210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732437AbeKLISH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:18:07 -0500
+        id S1732353AbeKLISG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:18:06 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 295A4216FD;
-        Sun, 11 Nov 2018 22:28:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A3A4215EA;
+        Sun, 11 Nov 2018 22:28:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975292;
-        bh=sIy8gjCPF6YmSKbYkaiwbfRfa2iM6HTEW6uGA/bVnBs=;
+        s=default; t=1541975291;
+        bh=AOz+cb/9ahYPTbIGc2KJT+9nZ7iddcKF4Rq0rmw2FqM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i7Xm1nHdinCn4u1DPHCZQw/44E1/ASDNG8btEUEHR12DZagrlMJi0eDtP9/6nSo2M
-         9z/HqpHKVf5Tvq6tQ8X2/wQ7aHfGgRPPGds3+ADNYD8zt9RccpdLjw8Bfh9kvZF2Mf
-         oH8dQGD9BlrZxDxiflTjW9m2Q/LUr7kQYQ0KBcU8=
+        b=eMl/RPawAHuOKh9sEqY5/xH0+xxEUbLDag+tp2B/IcqpBoD/dSRWvDt9E+sGA7zWh
+         rhHDSY+3bornd3+E8sKwDyqb09FvxqAb+dOIKFxUD7Kp4H2oZi5h6N3wDjGZB9o9vn
+         FtX2dVNpwjePo+ZNuM2UM7sFux8MIZJm4S/dg4OI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
-        Borislav Petkov <bp@suse.de>,
-        Aristeu Rozanski <aris@redhat.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-        linux-edac <linux-edac@vger.kernel.org>
-Subject: [PATCH 4.19 235/361] EDAC, {i7core,sb,skx}_edac: Fix uncorrected error counting
-Date:   Sun, 11 Nov 2018 14:19:42 -0800
-Message-Id: <20181111221651.850222854@linuxfoundation.org>
+        stable@vger.kernel.org, Jason Gerecke <jason.gerecke@wacom.com>,
+        Jiri Kosina <jkosina@suse.cz>
+Subject: [PATCH 4.19 232/361] HID: wacom: Work around HID descriptor bug in DTK-2451 and DTH-2452
+Date:   Sun, 11 Nov 2018 14:19:39 -0800
+Message-Id: <20181111221651.616099405@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -65,62 +62,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tony Luck <tony.luck@intel.com>
+From: Jason Gerecke <killertofu@gmail.com>
 
-commit 432de7fd7630c84ad24f1c2acd1e3bb4ce3741ca upstream.
+commit 11db8173dbab7a94cf5ba5225fcedbfc0f3b7e54 upstream.
 
-The count of errors is picked up from bits 52:38 of the machine check
-bank status register. But this is the count of *corrected* errors. If an
-uncorrected error is being logged, the h/w sets this field to 0. Which
-means that when edac_mc_handle_error() is called, the EDAC core will
-carefully add zero to the appropriate uncorrected error counts.
+The DTK-2451 and DTH-2452 have a buggy HID descriptor which incorrectly
+contains a Cintiq-like report, complete with pen tilt, rotation, twist, serial
+number, etc. The hardware doesn't actually support this data but our driver
+duitifully sets up the device as though it does. To ensure userspace has a
+correct view of devices without updated firmware, we clean up this incorrect
+data in wacom_setup_device_quirks.
 
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-[ Massage commit message. ]
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: stable@vger.kernel.org
-Cc: Aristeu Rozanski <aris@redhat.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Link: http://lkml.kernel.org/r/20180928213934.19890-1-tony.luck@intel.com
+We're also careful to clear the WACOM_QUIRK_TOOLSERIAL flag since its presence
+causes the driver to wait for serial number information (via
+wacom_wac_pen_serial_enforce) that never comes, resulting in
+the pen being non-responsive.
+
+Signed-off-by: Jason Gerecke <jason.gerecke@wacom.com>
+Fixes: 8341720642 ("HID: wacom: Queue events with missing type/serial data for later processing")
+Cc: stable@vger.kernel.org # v4.16+
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/edac/i7core_edac.c |    1 +
- drivers/edac/sb_edac.c     |    1 +
- drivers/edac/skx_edac.c    |    1 +
- 3 files changed, 3 insertions(+)
+ drivers/hid/wacom_wac.c |   19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
---- a/drivers/edac/i7core_edac.c
-+++ b/drivers/edac/i7core_edac.c
-@@ -1711,6 +1711,7 @@ static void i7core_mce_output_error(stru
- 	u32 errnum = find_first_bit(&error, 32);
+--- a/drivers/hid/wacom_wac.c
++++ b/drivers/hid/wacom_wac.c
+@@ -3335,6 +3335,7 @@ static void wacom_setup_intuos(struct wa
  
- 	if (uncorrected_error) {
-+		core_err_cnt = 1;
- 		if (ripv)
- 			tp_event = HW_EVENT_ERR_FATAL;
- 		else
---- a/drivers/edac/sb_edac.c
-+++ b/drivers/edac/sb_edac.c
-@@ -2888,6 +2888,7 @@ static void sbridge_mce_output_error(str
- 		recoverable = GET_BITFIELD(m->status, 56, 56);
+ void wacom_setup_device_quirks(struct wacom *wacom)
+ {
++	struct wacom_wac *wacom_wac = &wacom->wacom_wac;
+ 	struct wacom_features *features = &wacom->wacom_wac.features;
  
- 	if (uncorrected_error) {
-+		core_err_cnt = 1;
- 		if (ripv) {
- 			type = "FATAL";
- 			tp_event = HW_EVENT_ERR_FATAL;
---- a/drivers/edac/skx_edac.c
-+++ b/drivers/edac/skx_edac.c
-@@ -959,6 +959,7 @@ static void skx_mce_output_error(struct
- 	recoverable = GET_BITFIELD(m->status, 56, 56);
+ 	/* The pen and pad share the same interface on most devices */
+@@ -3464,6 +3465,24 @@ void wacom_setup_device_quirks(struct wa
  
- 	if (uncorrected_error) {
-+		core_err_cnt = 1;
- 		if (ripv) {
- 			type = "FATAL";
- 			tp_event = HW_EVENT_ERR_FATAL;
+ 	if (features->type == REMOTE)
+ 		features->device_type |= WACOM_DEVICETYPE_WL_MONITOR;
++
++	/* HID descriptor for DTK-2451 / DTH-2452 claims to report lots
++	 * of things it shouldn't. Lets fix up the damage...
++	 */
++	if (wacom->hdev->product == 0x382 || wacom->hdev->product == 0x37d) {
++		features->quirks &= ~WACOM_QUIRK_TOOLSERIAL;
++		__clear_bit(BTN_TOOL_BRUSH, wacom_wac->pen_input->keybit);
++		__clear_bit(BTN_TOOL_PENCIL, wacom_wac->pen_input->keybit);
++		__clear_bit(BTN_TOOL_AIRBRUSH, wacom_wac->pen_input->keybit);
++		__clear_bit(ABS_Z, wacom_wac->pen_input->absbit);
++		__clear_bit(ABS_DISTANCE, wacom_wac->pen_input->absbit);
++		__clear_bit(ABS_TILT_X, wacom_wac->pen_input->absbit);
++		__clear_bit(ABS_TILT_Y, wacom_wac->pen_input->absbit);
++		__clear_bit(ABS_WHEEL, wacom_wac->pen_input->absbit);
++		__clear_bit(ABS_MISC, wacom_wac->pen_input->absbit);
++		__clear_bit(MSC_SERIAL, wacom_wac->pen_input->mscbit);
++		__clear_bit(EV_MSC, wacom_wac->pen_input->evbit);
++	}
+ }
+ 
+ int wacom_setup_pen_input_capabilities(struct input_dev *input_dev,
 
 
