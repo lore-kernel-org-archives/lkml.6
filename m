@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBD1FC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:22:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A14EFC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:22:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FF0E20817
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:22:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6600D20817
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:22:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xytxoj8o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FF0E20817
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fIjHemFm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6600D20817
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389490AbeKLJMg (ORCPT
+        id S2389567AbeKLJMr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:12:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47520 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:12:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389315AbeKLIVI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:21:08 -0500
+        id S2387735AbeKLIVH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:07 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 114BA223C8;
-        Sun, 11 Nov 2018 22:31:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D451B21780;
+        Sun, 11 Nov 2018 22:31:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975471;
-        bh=pcANw/WJ2R/UNjnJor8/QiDdCKiP/MLqI1MMYkkkdUA=;
+        s=default; t=1541975469;
+        bh=paYMam38b+Z6kWUpw9SV0DOEJuMY1ebZtnRUcrOE3VA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xytxoj8oQyxCigZZFqFDVOHMVCz8+qXBhtaO1zPkFCb6pHfS255MDh8z1aBGXJ7Oz
-         rZI9B1jBuy6eN5piIxudXy6rb6PbLKyx8Td6yw/VASiB62+ym420IpJ9O0vexSqyHY
-         qUSXBACwApgKrRbBFsRiaG72+wPjUvxyoq+Mo3i0=
+        b=fIjHemFm20UazL4wOb4F/Faj/oz2bJNEMGw5ifif8Ka04lCQXH9Dvq1Z1Tf4KFn8i
+         7HoQ2bR797gwglftXQ/bkB2qGM/Uex2fNG1bWQcw2qKEABGWMhj3PqxoP7/7Mws3Hb
+         QzLeJ03Uppq53rsFAawV7tGGQxlvwRWpKsPkZ7KA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>,
-        Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.18 251/350] iio: ad5064: Fix regulator handling
-Date:   Sun, 11 Nov 2018 14:21:55 -0800
-Message-Id: <20181111221718.543318640@linuxfoundation.org>
+        stable@vger.kernel.org, Punit Agrawal <punit.agrawal@arm.com>,
+        Suzuki Poulose <suzuki.poulose@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Subject: [PATCH 4.18 248/350] KVM: arm/arm64: Ensure only THP is candidate for adjustment
+Date:   Sun, 11 Nov 2018 14:21:52 -0800
+Message-Id: <20181111221718.409304483@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -63,96 +64,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lars-Peter Clausen <lars@metafoo.de>
+From: Punit Agrawal <punit.agrawal@arm.com>
 
-commit 8911a43bc198877fad9f4b0246a866b26bb547ab upstream.
+commit fd2ef358282c849c193aa36dadbf4f07f7dcd29b upstream.
 
-The correct way to handle errors returned by regualtor_get() and friends is
-to propagate the error since that means that an regulator was specified,
-but something went wrong when requesting it.
+PageTransCompoundMap() returns true for hugetlbfs and THP
+hugepages. This behaviour incorrectly leads to stage 2 faults for
+unsupported hugepage sizes (e.g., 64K hugepage with 4K pages) to be
+treated as THP faults.
 
-For handling optional regulators, e.g. when the device has an internal
-vref, regulator_get_optional() should be used to avoid getting the dummy
-regulator that the regulator core otherwise provides.
+Tighten the check to filter out hugetlbfs pages. This also leads to
+consistently mapping all unsupported hugepage sizes as PTE level
+entries at stage 2.
 
-Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+Reviewed-by: Suzuki Poulose <suzuki.poulose@arm.com>
+Cc: Christoffer Dall <christoffer.dall@arm.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: stable@vger.kernel.org # v4.13+
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/dac/ad5064.c |   53 +++++++++++++++++++++++++++++++++--------------
- 1 file changed, 38 insertions(+), 15 deletions(-)
+ virt/kvm/arm/mmu.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/iio/dac/ad5064.c
-+++ b/drivers/iio/dac/ad5064.c
-@@ -808,6 +808,40 @@ static int ad5064_set_config(struct ad50
- 	return ad5064_write(st, cmd, 0, val, 0);
- }
- 
-+static int ad5064_request_vref(struct ad5064_state *st, struct device *dev)
-+{
-+	unsigned int i;
-+	int ret;
-+
-+	for (i = 0; i < ad5064_num_vref(st); ++i)
-+		st->vref_reg[i].supply = ad5064_vref_name(st, i);
-+
-+	if (!st->chip_info->internal_vref)
-+		return devm_regulator_bulk_get(dev, ad5064_num_vref(st),
-+					       st->vref_reg);
-+
-+	/*
-+	 * This assumes that when the regulator has an internal VREF
-+	 * there is only one external VREF connection, which is
-+	 * currently the case for all supported devices.
-+	 */
-+	st->vref_reg[0].consumer = devm_regulator_get_optional(dev, "vref");
-+	if (!IS_ERR(st->vref_reg[0].consumer))
-+		return 0;
-+
-+	ret = PTR_ERR(st->vref_reg[0].consumer);
-+	if (ret != -ENODEV)
-+		return ret;
-+
-+	/* If no external regulator was supplied use the internal VREF */
-+	st->use_internal_vref = true;
-+	ret = ad5064_set_config(st, AD5064_CONFIG_INT_VREF_ENABLE);
-+	if (ret)
-+		dev_err(dev, "Failed to enable internal vref: %d\n", ret);
-+
-+	return ret;
-+}
-+
- static int ad5064_probe(struct device *dev, enum ad5064_type type,
- 			const char *name, ad5064_write_func write)
+--- a/virt/kvm/arm/mmu.c
++++ b/virt/kvm/arm/mmu.c
+@@ -1201,8 +1201,14 @@ static bool transparent_hugepage_adjust(
  {
-@@ -828,22 +862,11 @@ static int ad5064_probe(struct device *d
- 	st->dev = dev;
- 	st->write = write;
+ 	kvm_pfn_t pfn = *pfnp;
+ 	gfn_t gfn = *ipap >> PAGE_SHIFT;
++	struct page *page = pfn_to_page(pfn);
  
--	for (i = 0; i < ad5064_num_vref(st); ++i)
--		st->vref_reg[i].supply = ad5064_vref_name(st, i);
-+	ret = ad5064_request_vref(st, dev);
-+	if (ret)
-+		return ret;
- 
--	ret = devm_regulator_bulk_get(dev, ad5064_num_vref(st),
--		st->vref_reg);
--	if (ret) {
--		if (!st->chip_info->internal_vref)
--			return ret;
--		st->use_internal_vref = true;
--		ret = ad5064_set_config(st, AD5064_CONFIG_INT_VREF_ENABLE);
--		if (ret) {
--			dev_err(dev, "Failed to enable internal vref: %d\n",
--				ret);
--			return ret;
--		}
--	} else {
-+	if (!st->use_internal_vref) {
- 		ret = regulator_bulk_enable(ad5064_num_vref(st), st->vref_reg);
- 		if (ret)
- 			return ret;
+-	if (PageTransCompoundMap(pfn_to_page(pfn))) {
++	/*
++	 * PageTransCompoungMap() returns true for THP and
++	 * hugetlbfs. Make sure the adjustment is done only for THP
++	 * pages.
++	 */
++	if (!PageHuge(page) && PageTransCompoundMap(page)) {
+ 		unsigned long mask;
+ 		/*
+ 		 * The address we faulted on is backed by a transparent huge
 
 
