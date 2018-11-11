@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EAC7C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:12:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01361C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:12:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30FAF20817
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:12:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B002320817
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:12:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LHV+vGkx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30FAF20817
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fhybSUIA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B002320817
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390152AbeKLJCb (ORCPT
+        id S2390127AbeKLJCt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:02:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50044 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:02:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390034AbeKLIVv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2390021AbeKLIVv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:21:51 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 90AA521582;
-        Sun, 11 Nov 2018 22:31:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F0F4E216FD;
+        Sun, 11 Nov 2018 22:31:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975514;
-        bh=vihltm+yDpYQgCdwgbzVE7RIbX3j9YKtPSmB92IsJ9I=;
+        bh=WoamnULKa+uDgxxeX9fkOr4HDXH5pUb2iba2uzOUy9E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LHV+vGkxEn99BasoT0Ejl4kI6PXn87K+lMgG+xO0AjWzwIB4oFvv7DazIWz0pPToq
-         FtKd/RZeun92+gdgcWeEGdJmNcLAXBKqs6AnlakMxGew+ApvS3CAxom/sXD201UHUl
-         nLb3Tu7Kx18TyXEZvNHN0n72GGUaulkcdDg7s8dc=
+        b=fhybSUIAwNsYHI0fVuair2MzR6n6pV18Zgch/Y6uUAnfoKTADIR+UC5JHoN4JbySK
+         nbPS4ixmD2binPumLlX9xkGWIa45Wi5FK1wZ3OUm0uBs4uQF9rtzqmg7AYcKEEgRAE
+         jVxZTi7rWgjR7PuhCaqSZIpI0/6HayyrtmdzFcG8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qu Wenruo <wqu@suse.com>,
-        Filipe Manana <fdmanana@suse.com>,
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.18 346/350] Btrfs: fix use-after-free during inode eviction
-Date:   Sun, 11 Nov 2018 14:23:30 -0800
-Message-Id: <20181111221722.593400140@linuxfoundation.org>
+Subject: [PATCH 4.18 344/350] btrfs: dont run delayed_iputs in commit
+Date:   Sun, 11 Nov 2018 14:23:28 -0800
+Message-Id: <20181111221722.507520659@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -62,61 +62,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Josef Bacik <josef@toxicpanda.com>
 
-commit 421f0922a2cfb0c75acd9746454aaa576c711a65 upstream.
+commit 30928e9baac238a7330085a1c5747f0b5df444b4 upstream.
 
-At inode.c:evict_inode_truncate_pages(), when we iterate over the
-inode's extent states, we access an extent state record's "state" field
-after we unlocked the inode's io tree lock. This can lead to a
-use-after-free issue because after we unlock the io tree that extent
-state record might have been freed due to being merged into another
-adjacent extent state record (a previous inflight bio for a read
-operation finished in the meanwhile which unlocked a range in the io
-tree and cause a merge of extent state records, as explained in the
-comment before the while loop added in commit 6ca0709756710 ("Btrfs: fix
-hang during inode eviction due to concurrent readahead")).
+This could result in a really bad case where we do something like
 
-Fix this by keeping a copy of the extent state's flags in a local
-variable and using it after unlocking the io tree.
+evict
+  evict_refill_and_join
+    btrfs_commit_transaction
+      btrfs_run_delayed_iputs
+        evict
+          evict_refill_and_join
+            btrfs_commit_transaction
+... forever
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=201189
-Fixes: b9d0b38928e2 ("btrfs: Add handler for invalidate page")
+We have plenty of other places where we run delayed iputs that are much
+safer, let those do the work.
+
 CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Qu Wenruo <wqu@suse.com>
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 Reviewed-by: David Sterba <dsterba@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/inode.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/btrfs/transaction.c |    9 ---------
+ 1 file changed, 9 deletions(-)
 
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -5302,11 +5302,13 @@ static void evict_inode_truncate_pages(s
- 		struct extent_state *cached_state = NULL;
- 		u64 start;
- 		u64 end;
-+		unsigned state_flags;
+--- a/fs/btrfs/transaction.c
++++ b/fs/btrfs/transaction.c
+@@ -2281,15 +2281,6 @@ int btrfs_commit_transaction(struct btrf
  
- 		node = rb_first(&io_tree->state);
- 		state = rb_entry(node, struct extent_state, rb_node);
- 		start = state->start;
- 		end = state->end;
-+		state_flags = state->state;
- 		spin_unlock(&io_tree->lock);
+ 	kmem_cache_free(btrfs_trans_handle_cachep, trans);
  
- 		lock_extent_bits(io_tree, start, end, &cached_state);
-@@ -5319,7 +5321,7 @@ static void evict_inode_truncate_pages(s
- 		 *
- 		 * Note, end is the bytenr of last byte, so we need + 1 here.
- 		 */
--		if (state->state & EXTENT_DELALLOC)
-+		if (state_flags & EXTENT_DELALLOC)
- 			btrfs_qgroup_free_data(inode, NULL, start, end - start + 1);
+-	/*
+-	 * If fs has been frozen, we can not handle delayed iputs, otherwise
+-	 * it'll result in deadlock about SB_FREEZE_FS.
+-	 */
+-	if (current != fs_info->transaction_kthread &&
+-	    current != fs_info->cleaner_kthread &&
+-	    !test_bit(BTRFS_FS_FROZEN, &fs_info->flags))
+-		btrfs_run_delayed_iputs(fs_info);
+-
+ 	return ret;
  
- 		clear_extent_bit(io_tree, start, end,
+ scrub_continue:
 
 
