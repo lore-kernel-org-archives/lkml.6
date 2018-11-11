@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EE46C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:10:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01E30C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:10:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A4822080D
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:10:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A4822080D
+	by mail.kernel.org (Postfix) with ESMTP id B44B22080D
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:10:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B44B22080D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731353AbeKLF77 (ORCPT
+        id S1731444AbeKLGAF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 00:59:59 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52348 "EHLO
+        Mon, 12 Nov 2018 01:00:05 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52368 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727357AbeKLF77 (ORCPT
+        by vger.kernel.org with ESMTP id S1727357AbeKLGAF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:59:59 -0500
+        Mon, 12 Nov 2018 01:00:05 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsv-0000l7-BH; Sun, 11 Nov 2018 19:59:05 +0000
+        id 1gLvsq-0000lM-JL; Sun, 11 Nov 2018 19:59:00 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsU-0001eR-TA; Sun, 11 Nov 2018 19:58:38 +0000
+        id 1gLvsX-0001kB-2v; Sun, 11 Nov 2018 19:58:41 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -38,14 +38,16 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org,
-        "Peter Hurley" <peter@hurleysoftware.com>,
-        "Tetsuo Handa" <penguin-kernel@I-love.SAKURA.ne.jp>,
-        "syzbot" <syzbot+18df353d7540aa6b5467@syzkaller.appspotmail.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+        "Dewet Thibaut" <thibaut.dewet@nokia.com>,
+        "Tony Luck" <tony.luck@intel.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "linux-edac" <linux-edac@vger.kernel.org>,
+        "Alexander Sverdlin" <alexander.sverdlin@nokia.com>,
+        "Borislav Petkov" <bp@suse.de>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.992181520@decadent.org.uk>
+Message-ID: <lsq.1541965745.4861012@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 209/366] n_tty: Fix stall at n_tty_receive_char_special().
+Subject: [PATCH 3.16 265/366] x86/MCE: Remove min interval polling limitation
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,81 +61,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Dewet Thibaut <thibaut.dewet@nokia.com>
 
-commit 3d63b7e4ae0dc5e02d28ddd2fa1f945defc68d81 upstream.
+commit fbdb328c6bae0a7c78d75734a738b66b86dffc96 upstream.
 
-syzbot is reporting stalls at n_tty_receive_char_special() [1]. This is
-because comparison is not working as expected since ldata->read_head can
-change at any moment. Mitigate this by explicitly masking with buffer size
-when checking condition for "while" loops.
+commit b3b7c4795c ("x86/MCE: Serialize sysfs changes") introduced a min
+interval limitation when setting the check interval for polled MCEs.
+However, the logic is that 0 disables polling for corrected MCEs, see
+Documentation/x86/x86_64/machinecheck. The limitation prevents disabling.
 
-[1] https://syzkaller.appspot.com/bug?id=3d7481a346958d9469bebbeb0537d5f056bdd6e8
+Remove this limitation and allow the value 0 to disable polling again.
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzbot+18df353d7540aa6b5467@syzkaller.appspotmail.com>
-Fixes: bc5a5e3f45d04784 ("n_tty: Don't wrap input buffer indices at buffer size")
-Cc: Peter Hurley <peter@hurleysoftware.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: b3b7c4795c ("x86/MCE: Serialize sysfs changes")
+Signed-off-by: Dewet Thibaut <thibaut.dewet@nokia.com>
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+[ Massage commit message. ]
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Link: http://lkml.kernel.org/r/20180716084927.24869-1-alexander.sverdlin@nokia.com
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/tty/n_tty.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ arch/x86/kernel/cpu/mcheck/mce.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
---- a/drivers/tty/n_tty.c
-+++ b/drivers/tty/n_tty.c
-@@ -127,6 +127,8 @@ struct n_tty_data {
- 	struct mutex output_lock;
- };
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -2260,9 +2260,6 @@ static ssize_t store_int_with_restart(st
+ 	if (check_interval == old_check_interval)
+ 		return ret;
  
-+#define MASK(x) ((x) & (N_TTY_BUF_SIZE - 1))
-+
- static inline size_t read_cnt(struct n_tty_data *ldata)
- {
- 	return ldata->read_head - ldata->read_tail;
-@@ -1032,14 +1034,15 @@ static void eraser(unsigned char c, stru
- 	}
- 
- 	seen_alnums = 0;
--	while (ldata->read_head != ldata->canon_head) {
-+	while (MASK(ldata->read_head) != MASK(ldata->canon_head)) {
- 		head = ldata->read_head;
- 
- 		/* erase a single possibly multibyte character */
- 		do {
- 			head--;
- 			c = read_buf(ldata, head);
--		} while (is_continuation(c, tty) && head != ldata->canon_head);
-+		} while (is_continuation(c, tty) &&
-+			 MASK(head) != MASK(ldata->canon_head));
- 
- 		/* do not partially erase */
- 		if (is_continuation(c, tty))
-@@ -1081,7 +1084,7 @@ static void eraser(unsigned char c, stru
- 				 * This info is used to go back the correct
- 				 * number of columns.
- 				 */
--				while (tail != ldata->canon_head) {
-+				while (MASK(tail) != MASK(ldata->canon_head)) {
- 					tail--;
- 					c = read_buf(ldata, tail);
- 					if (c == '\t') {
-@@ -1341,7 +1344,7 @@ n_tty_receive_char_special(struct tty_st
- 			finish_erasing(ldata);
- 			echo_char(c, tty);
- 			echo_char_raw('\n', ldata);
--			while (tail != ldata->read_head) {
-+			while (MASK(tail) != MASK(ldata->read_head)) {
- 				echo_char(read_buf(ldata, tail), tty);
- 				tail++;
- 			}
-@@ -2506,7 +2509,7 @@ static unsigned long inq_canon(struct n_
- 	tail = ldata->read_tail;
- 	nr = head - tail;
- 	/* Skip EOF-chars.. */
--	while (head != tail) {
-+	while (MASK(head) != MASK(tail)) {
- 		if (test_bit(tail & (N_TTY_BUF_SIZE - 1), ldata->read_flags) &&
- 		    read_buf(ldata, tail) == __DISABLED_CHAR)
- 			nr--;
+-	if (check_interval < 1)
+-		check_interval = 1;
+-
+ 	mutex_lock(&mce_sysfs_mutex);
+ 	mce_restart();
+ 	mutex_unlock(&mce_sysfs_mutex);
 
