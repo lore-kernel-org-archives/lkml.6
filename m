@@ -6,45 +6,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E6B3C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:06:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A3F5C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:06:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5461F20818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:06:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2015320872
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:06:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cy7AEPX4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5461F20818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rnbS0vnb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2015320872
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390559AbeKLI4m (ORCPT
+        id S2390476AbeKLI4l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:56:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51200 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:56:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390368AbeKLIWM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2390367AbeKLIWM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:22:12 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CFDA521707;
+        by mail.kernel.org (Postfix) with ESMTPSA id 817B5224E3;
         Sun, 11 Nov 2018 22:32:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975535;
-        bh=ynGVD8sSfULFcPvSBokfvW8OWHJ3sogPsaMi+fbwMVA=;
+        bh=VR14KrgA/pXoj1lndDLRAWU/IGWB3L9nw/htZMPuC5E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Cy7AEPX4z6U4XjzOCrf1W7xrGETuM2W+PdNWGk5U2shkNdI9IT9BCvqB3/85xVGcp
-         /F6AhD2Pktk3/ucia68V5/GSXUaHWgg0emGibLTaM+P2ifaTvo2wgVOvy/z1A/vZfM
-         XAdZqZnmalNpVricnk40eLnKPo0AiHIU7t9ZUWTY=
+        b=rnbS0vnbo0SU05N2hUIHd5mgb/tqVzZysrH8gWoqugAy4LJqbKWDsMjMUzz4YKfnD
+         i0kfuKkl50rNzsqzATJKBcJzz763gZJic+Z3IJrV5j4XRGm1oC+zKG29oTQ/9blu4L
+         l/mvEs/ZYo7ew2wacp76j0I7KraqdpG4jLSJs+Zw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yu Zhao <yuzhao@google.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+        stable@vger.kernel.org, Prarit Bhargava <prarit@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Stafford Horne <shorne@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 052/222] mmc: sdhci-pci-o2micro: Add quirk for O2 Micro dev 0x8620 rev 0x01
-Date:   Sun, 11 Nov 2018 14:22:29 -0800
-Message-Id: <20181111221652.742978106@linuxfoundation.org>
+Subject: [PATCH 4.14 051/222] cpupower: Fix coredump on VMWare
+Date:   Sun, 11 Nov 2018 14:22:28 -0800
+Message-Id: <20181111221652.663159594@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -62,57 +63,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yu Zhao <yuzhao@google.com>
+From: Prarit Bhargava <prarit@redhat.com>
 
-[ Upstream commit 5169894982bb67486d93cc1e10151712bb86bcb6 ]
+[ Upstream commit f69ffc5d3db8f1f03fd6d1df5930f9a1fbd787b6 ]
 
-This device reports SDHCI_CLOCK_INT_STABLE even though it's not
-ready to take SDHCI_CLOCK_CARD_EN. The symptom is that reading
-SDHCI_CLOCK_CONTROL after enabling the clock shows absence of the
-bit from the register (e.g. expecting 0x0000fa07 = 0x0000fa03 |
-SDHCI_CLOCK_CARD_EN but only observed the first operand).
+cpupower crashes on VMWare guests.  The guests have the AMD PStateDef MSR
+(0xC0010064 + state number) set to zero.  As a result fid and did are zero
+and the crash occurs because of a divide by zero (cof = fid/did).  This
+can be prevented by checking the enable bit in the PStateDef MSR before
+calculating cof.  By doing this the value of pstate[i] remains zero and
+the value can be tested before displaying the active Pstates.
 
-mmc1: Timeout waiting for hardware cmd interrupt.
-mmc1: sdhci: ============ SDHCI REGISTER DUMP ===========
-mmc1: sdhci: Sys addr:  0x00000000 | Version:  0x00000603
-mmc1: sdhci: Blk size:  0x00000000 | Blk cnt:  0x00000000
-mmc1: sdhci: Argument:  0x00000000 | Trn mode: 0x00000000
-mmc1: sdhci: Present:   0x01ff0001 | Host ctl: 0x00000001
-mmc1: sdhci: Power:     0x0000000f | Blk gap:  0x00000000
-mmc1: sdhci: Wake-up:   0x00000000 | Clock:    0x0000fa03
-mmc1: sdhci: Timeout:   0x00000000 | Int stat: 0x00000000
-mmc1: sdhci: Int enab:  0x00ff0083 | Sig enab: 0x00ff0083
-mmc1: sdhci: AC12 err:  0x00000000 | Slot int: 0x00000000
-mmc1: sdhci: Caps:      0x25fcc8bf | Caps_1:   0x00002077
-mmc1: sdhci: Cmd:       0x00000000 | Max curr: 0x005800c8
-mmc1: sdhci: Resp[0]:   0x00000000 | Resp[1]:  0x00000000
-mmc1: sdhci: Resp[2]:   0x00000000 | Resp[3]:  0x00000000
-mmc1: sdhci: Host ctl2: 0x00000008
-mmc1: sdhci: ADMA Err:  0x00000000 | ADMA Ptr: 0x00000000
-mmc1: sdhci: ============================================
+Check the enable bit in the PstateDef register for all supported families
+and only print out enabled Pstates.
 
-The problem happens during wakeup from S3. Adding a delay quirk
-after power up reliably fixes the problem.
-
-Signed-off-by: Yu Zhao <yuzhao@google.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Prarit Bhargava <prarit@redhat.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Stafford Horne <shorne@gmail.com>
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mmc/host/sdhci-pci-o2micro.c |    3 +++
- 1 file changed, 3 insertions(+)
+ tools/power/cpupower/utils/cpufreq-info.c |    2 ++
+ tools/power/cpupower/utils/helpers/amd.c  |    5 +++++
+ 2 files changed, 7 insertions(+)
 
---- a/drivers/mmc/host/sdhci-pci-o2micro.c
-+++ b/drivers/mmc/host/sdhci-pci-o2micro.c
-@@ -334,6 +334,9 @@ int sdhci_pci_o2_probe(struct sdhci_pci_
- 		pci_write_config_byte(chip->pdev, O2_SD_LOCK_WP, scratch);
- 		break;
- 	case PCI_DEVICE_ID_O2_SEABIRD0:
-+		if (chip->pdev->revision == 0x01)
-+			chip->quirks |= SDHCI_QUIRK_DELAY_AFTER_POWER;
-+		/* fall through */
- 	case PCI_DEVICE_ID_O2_SEABIRD1:
- 		/* UnLock WP */
- 		ret = pci_read_config_byte(chip->pdev,
+--- a/tools/power/cpupower/utils/cpufreq-info.c
++++ b/tools/power/cpupower/utils/cpufreq-info.c
+@@ -202,6 +202,8 @@ static int get_boost_mode(unsigned int c
+ 		printf(_("    Boost States: %d\n"), b_states);
+ 		printf(_("    Total States: %d\n"), pstate_no);
+ 		for (i = 0; i < pstate_no; i++) {
++			if (!pstates[i])
++				continue;
+ 			if (i < b_states)
+ 				printf(_("    Pstate-Pb%d: %luMHz (boost state)"
+ 					 "\n"), i, pstates[i]);
+--- a/tools/power/cpupower/utils/helpers/amd.c
++++ b/tools/power/cpupower/utils/helpers/amd.c
+@@ -119,6 +119,11 @@ int decode_pstates(unsigned int cpu, uns
+ 		}
+ 		if (read_msr(cpu, MSR_AMD_PSTATE + i, &pstate.val))
+ 			return -1;
++		if ((cpu_family == 0x17) && (!pstate.fam17h_bits.en))
++			continue;
++		else if (!pstate.bits.en)
++			continue;
++
+ 		pstates[i] = get_cof(cpu_family, pstate);
+ 	}
+ 	*no = i;
 
 
