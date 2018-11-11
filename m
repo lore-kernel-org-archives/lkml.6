@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07C7EC0044C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AB81C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4ABA224E3
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5005223C6
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ztghxqOA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4ABA224E3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BqcEHHbQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5005223C6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390801AbeKLIWi (ORCPT
+        id S2403756AbeKLIWj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:22:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53628 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:22:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390740AbeKLIWg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2390677AbeKLIWg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:22:36 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B02F122443;
-        Sun, 11 Nov 2018 22:32:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A246621582;
+        Sun, 11 Nov 2018 22:32:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975558;
-        bh=J6n5/AJjTX3FW39fn/fdNcuZ498ivOZKzgtqdukDYZY=;
+        s=default; t=1541975559;
+        bh=1erSnG0ArysKG85B7X8OlLYTO5vShg6oH5af2ZZki9I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ztghxqOAINDqLip0u+mZcO2mkIx1YgI0EHM8OCE1ARNCqSSG/ZKd+Jpk/dP8F6iWq
-         iu5N33HqeVqDIB9zzR4yw2EQ1ZSyJQ9HYAdAB3lEXNgUME8kkUd8hEU/TeSxEDTiQ/
-         bPXQitwqw/tonQpyLZ2yWrn5aoQTa5ashTmL9mi0=
+        b=BqcEHHbQc733o9ePnCs4J4iTATjdvIxvQRp6smzGXjTkeyShWCgUwTa4oyV69S30Q
+         8iwWdt25SditIvQswmASITdxM+v6al+Y9Bf8D1RpvNEi+sN6HjUPdAD2Z30UbyaFV6
+         zuy7HrmM6qSZTbSxLI+3K0s7vYZfmtzPG3vkijJo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joe Jin <joe.jin@oracle.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Christoph Helwig <hch@lst.de>,
-        Dongli Zhang <dongli.zhang@oracle.com>,
-        John Sobecki <john.sobecki@oracle.com>
-Subject: [PATCH 4.14 116/222] xen-swiotlb: use actually allocated size on check physical continuous
-Date:   Sun, 11 Nov 2018 14:23:33 -0800
-Message-Id: <20181111221658.135131620@linuxfoundation.org>
+        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
+        James Smart <james.smart@broadcom.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 101/222] scsi: lpfc: Correct soft lockup when running mds diagnostics
+Date:   Sun, 11 Nov 2018 14:23:18 -0800
+Message-Id: <20181111221656.965098029@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -66,56 +64,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joe Jin <joe.jin@oracle.com>
+From: James Smart <jsmart2021@gmail.com>
 
-commit 7250f422da0480d8512b756640f131b9b893ccda upstream.
+[ Upstream commit 0ef01a2d95fd62bb4f536e7ce4d5e8e74b97a244 ]
 
-xen_swiotlb_{alloc,free}_coherent() allocate/free memory based on the
-order of the pages and not size argument (bytes). This is inconsistent with
-range_straddles_page_boundary and memset which use the 'size' value,
-which may lead to not exchanging memory with Xen (range_straddles_page_boundary()
-returned true). And then the call to xen_swiotlb_free_coherent() would
-actually try to exchange the memory with Xen, leading to the kernel
-hitting an BUG (as the hypercall returned an error).
+When running an mds diagnostic that passes frames with the switch, soft
+lockups are detected. The driver is in a CQE processing loop and has
+sufficient amount of traffic that it never exits the ring processing routine,
+thus the "lockup".
 
-This patch fixes it by making the 'size' variable be of the same size
-as the amount of memory allocated.
+Cap the number of elements in the work processing routine to 64 elements. This
+ensures that the cpu will be given up and the handler reschedule to process
+additional items.
 
-CC: stable@vger.kernel.org
-Signed-off-by: Joe Jin <joe.jin@oracle.com>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Christoph Helwig <hch@lst.de>
-Cc: Dongli Zhang <dongli.zhang@oracle.com>
-Cc: John Sobecki <john.sobecki@oracle.com>
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
+Signed-off-by: James Smart <james.smart@broadcom.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/xen/swiotlb-xen.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/scsi/lpfc/lpfc_sli.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/xen/swiotlb-xen.c
-+++ b/drivers/xen/swiotlb-xen.c
-@@ -317,6 +317,9 @@ xen_swiotlb_alloc_coherent(struct device
- 	*/
- 	flags &= ~(__GFP_DMA | __GFP_HIGHMEM);
+--- a/drivers/scsi/lpfc/lpfc_sli.c
++++ b/drivers/scsi/lpfc/lpfc_sli.c
+@@ -3585,6 +3585,7 @@ lpfc_sli_handle_slow_ring_event_s4(struc
+ 	struct hbq_dmabuf *dmabuf;
+ 	struct lpfc_cq_event *cq_event;
+ 	unsigned long iflag;
++	int count = 0;
  
-+	/* Convert the size to actually allocated. */
-+	size = 1UL << (order + XEN_PAGE_SHIFT);
+ 	spin_lock_irqsave(&phba->hbalock, iflag);
+ 	phba->hba_flag &= ~HBA_SP_QUEUE_EVT;
+@@ -3606,16 +3607,22 @@ lpfc_sli_handle_slow_ring_event_s4(struc
+ 			if (irspiocbq)
+ 				lpfc_sli_sp_handle_rspiocb(phba, pring,
+ 							   irspiocbq);
++			count++;
+ 			break;
+ 		case CQE_CODE_RECEIVE:
+ 		case CQE_CODE_RECEIVE_V1:
+ 			dmabuf = container_of(cq_event, struct hbq_dmabuf,
+ 					      cq_event);
+ 			lpfc_sli4_handle_received_buffer(phba, dmabuf);
++			count++;
+ 			break;
+ 		default:
+ 			break;
+ 		}
 +
- 	/* On ARM this function returns an ioremap'ped virtual address for
- 	 * which virt_to_phys doesn't return the corresponding physical
- 	 * address. In fact on ARM virt_to_phys only works for kernel direct
-@@ -365,6 +368,9 @@ xen_swiotlb_free_coherent(struct device
- 	 * physical address */
- 	phys = xen_bus_to_phys(dev_addr);
++		/* Limit the number of events to 64 to avoid soft lockups */
++		if (count == 64)
++			break;
+ 	}
+ }
  
-+	/* Convert the size to actually allocated. */
-+	size = 1UL << (order + XEN_PAGE_SHIFT);
-+
- 	if (((dev_addr + size - 1 <= dma_mask)) ||
- 	    range_straddles_page_boundary(phys, size))
- 		xen_destroy_contiguous_region(phys, order);
 
 
