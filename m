@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70870C0044C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:11:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E41F2C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:11:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21F3320817
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:11:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D33020817
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:11:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TPgaRWtu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21F3320817
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VpFG75T5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D33020817
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390417AbeKLJBb (ORCPT
+        id S2388555AbeKLIV4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:01:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50448 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390111AbeKLIV4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:21:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50512 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731135AbeKLIVy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:54 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 85A30208A3;
-        Sun, 11 Nov 2018 22:31:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 94B36208A3;
+        Sun, 11 Nov 2018 22:31:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975519;
-        bh=E0b9IxhBROuE9TW2Aw8FPl7ZyTuJbdQ3HoFnL7GYMQs=;
+        s=default; t=1541975517;
+        bh=EO4Ux2qOCSF5DjOnjuJl87J5/waIfxJ+GPowNTqPgHQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TPgaRWtuk49rTShDSQ4KwW+iHkR0uLs/NufEBWV/pb5mI/pTXwnVF8mqzrmVgWywG
-         gMJlydJ5YbxWtUsjKouSYRRNTp3ZcVFzGMRZFN621KWcAwvWbpDhnO8JJjY1bS7om3
-         g7wlM/2ozoIRzbxrqDbF2sdQW14wxfYJm32pOosg=
+        b=VpFG75T5lHvgIaLBsliJ+lENpsNGNfxgYJXrgaJimRBAMdsli38+LgwcuyWdLN61v
+         2roqIiZaW7xoKpNo4oaPMMasjd7COFAQqwj1UT5bqKDH1d3yHwAC1vkj2APCM5NLt1
+         qkuTN2MmJxwY58gLJppY5brDQukAdpeETaDWq6M4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.18 347/350] Btrfs: fix use-after-free when dumping free space
-Date:   Sun, 11 Nov 2018 14:23:31 -0800
-Message-Id: <20181111221722.636693549@linuxfoundation.org>
+        stable@vger.kernel.org, Xu Wen <wen.xu@gatech.edu>,
+        Qu Wenruo <wqu@suse.com>, David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.18 319/350] btrfs: locking: Add extra check in btrfs_init_new_buffer() to avoid deadlock
+Date:   Sun, 11 Nov 2018 14:23:03 -0800
+Message-Id: <20181111221721.405430769@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -64,221 +62,130 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Qu Wenruo <wqu@suse.com>
 
-commit 9084cb6a24bf5838a665af92ded1af8363f9e563 upstream.
+commit b72c3aba09a53fc7c1824250d71180ca154517a7 upstream.
 
-We were iterating a block group's free space cache rbtree without locking
-first the lock that protects it (the free_space_ctl->free_space_offset
-rbtree is protected by the free_space_ctl->tree_lock spinlock).
+[BUG]
+For certain crafted image, whose csum root leaf has missing backref, if
+we try to trigger write with data csum, it could cause deadlock with the
+following kernel WARN_ON():
 
-KASAN reported an use-after-free problem when iterating such a rbtree due
-to a concurrent rbtree delete:
+  WARNING: CPU: 1 PID: 41 at fs/btrfs/locking.c:230 btrfs_tree_lock+0x3e2/0x400
+  CPU: 1 PID: 41 Comm: kworker/u4:1 Not tainted 4.18.0-rc1+ #8
+  Workqueue: btrfs-endio-write btrfs_endio_write_helper
+  RIP: 0010:btrfs_tree_lock+0x3e2/0x400
+  Call Trace:
+   btrfs_alloc_tree_block+0x39f/0x770
+   __btrfs_cow_block+0x285/0x9e0
+   btrfs_cow_block+0x191/0x2e0
+   btrfs_search_slot+0x492/0x1160
+   btrfs_lookup_csum+0xec/0x280
+   btrfs_csum_file_blocks+0x2be/0xa60
+   add_pending_csums+0xaf/0xf0
+   btrfs_finish_ordered_io+0x74b/0xc90
+   finish_ordered_fn+0x15/0x20
+   normal_work_helper+0xf6/0x500
+   btrfs_endio_write_helper+0x12/0x20
+   process_one_work+0x302/0x770
+   worker_thread+0x81/0x6d0
+   kthread+0x180/0x1d0
+   ret_from_fork+0x35/0x40
 
-[ 9520.359168] ==================================================================
-[ 9520.359656] BUG: KASAN: use-after-free in rb_next+0x13/0x90
-[ 9520.359949] Read of size 8 at addr ffff8800b7ada500 by task btrfs-transacti/1721
-[ 9520.360357]
-[ 9520.360530] CPU: 4 PID: 1721 Comm: btrfs-transacti Tainted: G             L    4.19.0-rc8-nbor #555
-[ 9520.360990] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
-[ 9520.362682] Call Trace:
-[ 9520.362887]  dump_stack+0xa4/0xf5
-[ 9520.363146]  print_address_description+0x78/0x280
-[ 9520.363412]  kasan_report+0x263/0x390
-[ 9520.363650]  ? rb_next+0x13/0x90
-[ 9520.363873]  __asan_load8+0x54/0x90
-[ 9520.364102]  rb_next+0x13/0x90
-[ 9520.364380]  btrfs_dump_free_space+0x146/0x160 [btrfs]
-[ 9520.364697]  dump_space_info+0x2cd/0x310 [btrfs]
-[ 9520.364997]  btrfs_reserve_extent+0x1ee/0x1f0 [btrfs]
-[ 9520.365310]  __btrfs_prealloc_file_range+0x1cc/0x620 [btrfs]
-[ 9520.365646]  ? btrfs_update_time+0x180/0x180 [btrfs]
-[ 9520.365923]  ? _raw_spin_unlock+0x27/0x40
-[ 9520.366204]  ? btrfs_alloc_data_chunk_ondemand+0x2c0/0x5c0 [btrfs]
-[ 9520.366549]  btrfs_prealloc_file_range_trans+0x23/0x30 [btrfs]
-[ 9520.366880]  cache_save_setup+0x42e/0x580 [btrfs]
-[ 9520.367220]  ? btrfs_check_data_free_space+0xd0/0xd0 [btrfs]
-[ 9520.367518]  ? lock_downgrade+0x2f0/0x2f0
-[ 9520.367799]  ? btrfs_write_dirty_block_groups+0x11f/0x6e0 [btrfs]
-[ 9520.368104]  ? kasan_check_read+0x11/0x20
-[ 9520.368349]  ? do_raw_spin_unlock+0xa8/0x140
-[ 9520.368638]  btrfs_write_dirty_block_groups+0x2af/0x6e0 [btrfs]
-[ 9520.368978]  ? btrfs_start_dirty_block_groups+0x870/0x870 [btrfs]
-[ 9520.369282]  ? do_raw_spin_unlock+0xa8/0x140
-[ 9520.369534]  ? _raw_spin_unlock+0x27/0x40
-[ 9520.369811]  ? btrfs_run_delayed_refs+0x1b8/0x230 [btrfs]
-[ 9520.370137]  commit_cowonly_roots+0x4b9/0x610 [btrfs]
-[ 9520.370560]  ? commit_fs_roots+0x350/0x350 [btrfs]
-[ 9520.370926]  ? btrfs_run_delayed_refs+0x1b8/0x230 [btrfs]
-[ 9520.371285]  btrfs_commit_transaction+0x5e5/0x10e0 [btrfs]
-[ 9520.371612]  ? btrfs_apply_pending_changes+0x90/0x90 [btrfs]
-[ 9520.371943]  ? start_transaction+0x168/0x6c0 [btrfs]
-[ 9520.372257]  transaction_kthread+0x21c/0x240 [btrfs]
-[ 9520.372537]  kthread+0x1d2/0x1f0
-[ 9520.372793]  ? btrfs_cleanup_transaction+0xb50/0xb50 [btrfs]
-[ 9520.373090]  ? kthread_park+0xb0/0xb0
-[ 9520.373329]  ret_from_fork+0x3a/0x50
-[ 9520.373567]
-[ 9520.373738] Allocated by task 1804:
-[ 9520.373974]  kasan_kmalloc+0xff/0x180
-[ 9520.374208]  kasan_slab_alloc+0x11/0x20
-[ 9520.374447]  kmem_cache_alloc+0xfc/0x2d0
-[ 9520.374731]  __btrfs_add_free_space+0x40/0x580 [btrfs]
-[ 9520.375044]  unpin_extent_range+0x4f7/0x7a0 [btrfs]
-[ 9520.375383]  btrfs_finish_extent_commit+0x15f/0x4d0 [btrfs]
-[ 9520.375707]  btrfs_commit_transaction+0xb06/0x10e0 [btrfs]
-[ 9520.376027]  btrfs_alloc_data_chunk_ondemand+0x237/0x5c0 [btrfs]
-[ 9520.376365]  btrfs_check_data_free_space+0x81/0xd0 [btrfs]
-[ 9520.376689]  btrfs_delalloc_reserve_space+0x25/0x80 [btrfs]
-[ 9520.377018]  btrfs_direct_IO+0x42e/0x6d0 [btrfs]
-[ 9520.377284]  generic_file_direct_write+0x11e/0x220
-[ 9520.377587]  btrfs_file_write_iter+0x472/0xac0 [btrfs]
-[ 9520.377875]  aio_write+0x25c/0x360
-[ 9520.378106]  io_submit_one+0xaa0/0xdc0
-[ 9520.378343]  __se_sys_io_submit+0xfa/0x2f0
-[ 9520.378589]  __x64_sys_io_submit+0x43/0x50
-[ 9520.378840]  do_syscall_64+0x7d/0x240
-[ 9520.379081]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[ 9520.379387]
-[ 9520.379557] Freed by task 1802:
-[ 9520.379782]  __kasan_slab_free+0x173/0x260
-[ 9520.380028]  kasan_slab_free+0xe/0x10
-[ 9520.380262]  kmem_cache_free+0xc1/0x2c0
-[ 9520.380544]  btrfs_find_space_for_alloc+0x4cd/0x4e0 [btrfs]
-[ 9520.380866]  find_free_extent+0xa99/0x17e0 [btrfs]
-[ 9520.381166]  btrfs_reserve_extent+0xd5/0x1f0 [btrfs]
-[ 9520.381474]  btrfs_get_blocks_direct+0x60b/0xbd0 [btrfs]
-[ 9520.381761]  __blockdev_direct_IO+0x10ee/0x58a1
-[ 9520.382059]  btrfs_direct_IO+0x25a/0x6d0 [btrfs]
-[ 9520.382321]  generic_file_direct_write+0x11e/0x220
-[ 9520.382623]  btrfs_file_write_iter+0x472/0xac0 [btrfs]
-[ 9520.382904]  aio_write+0x25c/0x360
-[ 9520.383172]  io_submit_one+0xaa0/0xdc0
-[ 9520.383416]  __se_sys_io_submit+0xfa/0x2f0
-[ 9520.383678]  __x64_sys_io_submit+0x43/0x50
-[ 9520.383927]  do_syscall_64+0x7d/0x240
-[ 9520.384165]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[ 9520.384439]
-[ 9520.384610] The buggy address belongs to the object at ffff8800b7ada500
-                which belongs to the cache btrfs_free_space of size 72
-[ 9520.385175] The buggy address is located 0 bytes inside of
-                72-byte region [ffff8800b7ada500, ffff8800b7ada548)
-[ 9520.385691] The buggy address belongs to the page:
-[ 9520.385957] page:ffffea0002deb680 count:1 mapcount:0 mapping:ffff880108a1d700 index:0x0 compound_mapcount: 0
-[ 9520.388030] flags: 0x8100(slab|head)
-[ 9520.388281] raw: 0000000000008100 ffffea0002deb608 ffffea0002728808 ffff880108a1d700
-[ 9520.388722] raw: 0000000000000000 0000000000130013 00000001ffffffff 0000000000000000
-[ 9520.389169] page dumped because: kasan: bad access detected
-[ 9520.389473]
-[ 9520.389658] Memory state around the buggy address:
-[ 9520.389943]  ffff8800b7ada400: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-[ 9520.390368]  ffff8800b7ada480: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-[ 9520.390796] >ffff8800b7ada500: fb fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc
-[ 9520.391223]                    ^
-[ 9520.391461]  ffff8800b7ada580: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-[ 9520.391885]  ffff8800b7ada600: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-[ 9520.392313] ==================================================================
-[ 9520.392772] BTRFS critical (device vdc): entry offset 2258497536, bytes 131072, bitmap no
-[ 9520.393247] BUG: unable to handle kernel NULL pointer dereference at 0000000000000011
-[ 9520.393705] PGD 800000010dbab067 P4D 800000010dbab067 PUD 107551067 PMD 0
-[ 9520.394059] Oops: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN PTI
-[ 9520.394378] CPU: 4 PID: 1721 Comm: btrfs-transacti Tainted: G    B        L    4.19.0-rc8-nbor #555
-[ 9520.394858] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
-[ 9520.395350] RIP: 0010:rb_next+0x3c/0x90
-[ 9520.396461] RSP: 0018:ffff8801074ff780 EFLAGS: 00010292
-[ 9520.396762] RAX: 0000000000000000 RBX: 0000000000000001 RCX: ffffffff81b5ac4c
-[ 9520.397115] RDX: 0000000000000000 RSI: 0000000000000008 RDI: 0000000000000011
-[ 9520.397468] RBP: ffff8801074ff7a0 R08: ffffed0021d64ccc R09: ffffed0021d64ccc
-[ 9520.397821] R10: 0000000000000001 R11: ffffed0021d64ccb R12: ffff8800b91e0000
-[ 9520.398188] R13: ffff8800a3ceba48 R14: ffff8800b627bf80 R15: 0000000000020000
-[ 9520.398555] FS:  0000000000000000(0000) GS:ffff88010eb00000(0000) knlGS:0000000000000000
-[ 9520.399007] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 9520.399335] CR2: 0000000000000011 CR3: 0000000106b52000 CR4: 00000000000006a0
-[ 9520.399679] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[ 9520.400023] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[ 9520.400400] Call Trace:
-[ 9520.400648]  btrfs_dump_free_space+0x146/0x160 [btrfs]
-[ 9520.400974]  dump_space_info+0x2cd/0x310 [btrfs]
-[ 9520.401287]  btrfs_reserve_extent+0x1ee/0x1f0 [btrfs]
-[ 9520.401609]  __btrfs_prealloc_file_range+0x1cc/0x620 [btrfs]
-[ 9520.401952]  ? btrfs_update_time+0x180/0x180 [btrfs]
-[ 9520.402232]  ? _raw_spin_unlock+0x27/0x40
-[ 9520.402522]  ? btrfs_alloc_data_chunk_ondemand+0x2c0/0x5c0 [btrfs]
-[ 9520.402882]  btrfs_prealloc_file_range_trans+0x23/0x30 [btrfs]
-[ 9520.403261]  cache_save_setup+0x42e/0x580 [btrfs]
-[ 9520.403570]  ? btrfs_check_data_free_space+0xd0/0xd0 [btrfs]
-[ 9520.403871]  ? lock_downgrade+0x2f0/0x2f0
-[ 9520.404161]  ? btrfs_write_dirty_block_groups+0x11f/0x6e0 [btrfs]
-[ 9520.404481]  ? kasan_check_read+0x11/0x20
-[ 9520.404732]  ? do_raw_spin_unlock+0xa8/0x140
-[ 9520.405026]  btrfs_write_dirty_block_groups+0x2af/0x6e0 [btrfs]
-[ 9520.405375]  ? btrfs_start_dirty_block_groups+0x870/0x870 [btrfs]
-[ 9520.405694]  ? do_raw_spin_unlock+0xa8/0x140
-[ 9520.405958]  ? _raw_spin_unlock+0x27/0x40
-[ 9520.406243]  ? btrfs_run_delayed_refs+0x1b8/0x230 [btrfs]
-[ 9520.406574]  commit_cowonly_roots+0x4b9/0x610 [btrfs]
-[ 9520.406899]  ? commit_fs_roots+0x350/0x350 [btrfs]
-[ 9520.407253]  ? btrfs_run_delayed_refs+0x1b8/0x230 [btrfs]
-[ 9520.407589]  btrfs_commit_transaction+0x5e5/0x10e0 [btrfs]
-[ 9520.407925]  ? btrfs_apply_pending_changes+0x90/0x90 [btrfs]
-[ 9520.408262]  ? start_transaction+0x168/0x6c0 [btrfs]
-[ 9520.408582]  transaction_kthread+0x21c/0x240 [btrfs]
-[ 9520.408870]  kthread+0x1d2/0x1f0
-[ 9520.409138]  ? btrfs_cleanup_transaction+0xb50/0xb50 [btrfs]
-[ 9520.409440]  ? kthread_park+0xb0/0xb0
-[ 9520.409682]  ret_from_fork+0x3a/0x50
-[ 9520.410508] Dumping ftrace buffer:
-[ 9520.410764]    (ftrace buffer empty)
-[ 9520.411007] CR2: 0000000000000011
-[ 9520.411297] ---[ end trace 01a0863445cf360a ]---
-[ 9520.411568] RIP: 0010:rb_next+0x3c/0x90
-[ 9520.412644] RSP: 0018:ffff8801074ff780 EFLAGS: 00010292
-[ 9520.412932] RAX: 0000000000000000 RBX: 0000000000000001 RCX: ffffffff81b5ac4c
-[ 9520.413274] RDX: 0000000000000000 RSI: 0000000000000008 RDI: 0000000000000011
-[ 9520.413616] RBP: ffff8801074ff7a0 R08: ffffed0021d64ccc R09: ffffed0021d64ccc
-[ 9520.414007] R10: 0000000000000001 R11: ffffed0021d64ccb R12: ffff8800b91e0000
-[ 9520.414349] R13: ffff8800a3ceba48 R14: ffff8800b627bf80 R15: 0000000000020000
-[ 9520.416074] FS:  0000000000000000(0000) GS:ffff88010eb00000(0000) knlGS:0000000000000000
-[ 9520.416536] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 9520.416848] CR2: 0000000000000011 CR3: 0000000106b52000 CR4: 00000000000006a0
-[ 9520.418477] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[ 9520.418846] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[ 9520.419204] Kernel panic - not syncing: Fatal exception
-[ 9520.419666] Dumping ftrace buffer:
-[ 9520.419930]    (ftrace buffer empty)
-[ 9520.420168] Kernel Offset: disabled
-[ 9520.420406] ---[ end Kernel panic - not syncing: Fatal exception ]---
+[CAUSE]
+That crafted image has missing backref for csum tree root leaf.  And
+when we try to allocate new tree block, since there is no
+EXTENT/METADATA_ITEM for csum tree root, btrfs consider it's free slot
+and use it.
 
-Fix this by acquiring the respective lock before iterating the rbtree.
+The extent tree of the image looks like:
 
-Reported-by: Nikolay Borisov <nborisov@suse.com>
+  Normal image                      |       This fuzzed image
+  ----------------------------------+--------------------------------
+  BG 29360128                       | BG 29360128
+   One empty slot                   |  One empty slot
+  29364224: backref to UUID tree    | 29364224: backref to UUID tree
+   Two empty slots                  |  Two empty slots
+  29376512: backref to CSUM tree    |  One empty slot (bad type) <<<
+  29380608: backref to D_RELOC tree | 29380608: backref to D_RELOC tree
+  ...                               | ...
+
+Since bytenr 29376512 has no METADATA/EXTENT_ITEM, when btrfs try to
+alloc tree block, it's an valid slot for btrfs.
+
+And for finish_ordered_write, when we need to insert csum, we try to CoW
+csum tree root.
+
+By accident, empty slots at bytenr BG_OFFSET, BG_OFFSET + 8K,
+BG_OFFSET + 12K is already used by tree block COW for other trees, the
+next empty slot is BG_OFFSET + 16K, which should be the backref for CSUM
+tree.
+
+But due to the bad type, btrfs can recognize it and still consider it as
+an empty slot, and will try to use it for csum tree CoW.
+
+Then in the following call trace, we will try to lock the new tree
+block, which turns out to be the old csum tree root which is already
+locked:
+
+btrfs_search_slot() called on csum tree root, which is at 29376512
+|- btrfs_cow_block()
+   |- btrfs_set_lock_block()
+   |  |- Now locks tree block 29376512 (old csum tree root)
+   |- __btrfs_cow_block()
+      |- btrfs_alloc_tree_block()
+         |- btrfs_reserve_extent()
+            | Now it returns tree block 29376512, which extent tree
+            | shows its empty slot, but it's already hold by csum tree
+            |- btrfs_init_new_buffer()
+               |- btrfs_tree_lock()
+                  | Triggers WARN_ON(eb->lock_owner == current->pid)
+                  |- wait_event()
+                     Wait lock owner to release the lock, but it's
+                     locked by ourself, so it will deadlock
+
+[FIX]
+This patch will do the lock_owner and current->pid check at
+btrfs_init_new_buffer().
+So above deadlock can be avoided.
+
+Since such problem can only happen in crafted image, we will still
+trigger kernel warning for later aborted transaction, but with a little
+more meaningful warning message.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=200405
+Reported-by: Xu Wen <wen.xu@gatech.edu>
 CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/free-space-cache.c |    2 ++
- 1 file changed, 2 insertions(+)
+ fs/btrfs/extent-tree.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
---- a/fs/btrfs/free-space-cache.c
-+++ b/fs/btrfs/free-space-cache.c
-@@ -2466,6 +2466,7 @@ void btrfs_dump_free_space(struct btrfs_
- 	struct rb_node *n;
- 	int count = 0;
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -8301,6 +8301,19 @@ btrfs_init_new_buffer(struct btrfs_trans
+ 	if (IS_ERR(buf))
+ 		return buf;
  
-+	spin_lock(&ctl->tree_lock);
- 	for (n = rb_first(&ctl->free_space_offset); n; n = rb_next(n)) {
- 		info = rb_entry(n, struct btrfs_free_space, offset_index);
- 		if (info->bytes >= bytes && !block_group->ro)
-@@ -2474,6 +2475,7 @@ void btrfs_dump_free_space(struct btrfs_
- 			   info->offset, info->bytes,
- 		       (info->bitmap) ? "yes" : "no");
- 	}
-+	spin_unlock(&ctl->tree_lock);
- 	btrfs_info(fs_info, "block group has cluster?: %s",
- 	       list_empty(&block_group->cluster_list) ? "no" : "yes");
- 	btrfs_info(fs_info,
++	/*
++	 * Extra safety check in case the extent tree is corrupted and extent
++	 * allocator chooses to use a tree block which is already used and
++	 * locked.
++	 */
++	if (buf->lock_owner == current->pid) {
++		btrfs_err_rl(fs_info,
++"tree block %llu owner %llu already locked by pid=%d, extent tree corruption detected",
++			buf->start, btrfs_header_owner(buf), current->pid);
++		free_extent_buffer(buf);
++		return ERR_PTR(-EUCLEAN);
++	}
++
+ 	btrfs_set_header_generation(buf, trans->transid);
+ 	btrfs_set_buffer_lockdep_class(root->root_key.objectid, buf, level);
+ 	btrfs_tree_lock(buf);
 
 
