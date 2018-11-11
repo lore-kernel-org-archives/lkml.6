@@ -7,44 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93DC7C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:20:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D605BC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:20:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D4C02084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:20:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E7562084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:20:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WEq4jCC4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D4C02084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zt1/NqmB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E7562084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730187AbeKLKKu (ORCPT
+        id S1730066AbeKLKLD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 05:10:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58420 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 05:11:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729725AbeKLIQw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:16:52 -0500
+        id S1729645AbeKLIQv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:16:51 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2D452154B;
-        Sun, 11 Nov 2018 22:26:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE193214DB;
+        Sun, 11 Nov 2018 22:26:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975217;
-        bh=nz5G85LT7ybNW8fl/OgmXS5iUcHjudQtnqLlEhgF8kg=;
+        s=default; t=1541975215;
+        bh=tQw1cr1bTY8AbC+jWkZyZ9AlZJErzp8KTznYOri2n+s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WEq4jCC4hgmvi9UoZR16IU/McEsfUhxtUNjlbPDxLTYHoQiK4gMYeJgUeYaDw1u5t
-         mT1NcH2sRrSJVFPxxXEJqPnxPLyisE7yjEbCGQ5U1GNoWBzjcS0U8j/PABDvvzW8GF
-         3SF+8Q1eEyy+U9/I+bTMF/Ocs+hw1zD4TT6bxjV0=
+        b=zt1/NqmBLFE8y3Wf35LrH5GsyNcKtt9UZ0L4nK5+gYi86M87QSPVt3HcESp+4+vvQ
+         p4jwyD5rlaR+i4F+cVwPoRk4/ugz0QaLea02YgmyCv/3fjZgerLEgvSYG8Kaf7yWSg
+         OaWaq1Zd0sH9SpPdqWvGCHm+N9eCdgYgddMUgkIA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tang Junhui <tang.junhui.linux@gmail.com>,
-        Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.19 014/361] bcache: correct dirty data statistics
-Date:   Sun, 11 Nov 2018 14:16:01 -0800
-Message-Id: <20181111221621.931479446@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.19 011/361] spi: bcm-qspi: fix calculation of address length
+Date:   Sun, 11 Nov 2018 14:15:58 -0800
+Message-Id: <20181111221621.515068616@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -62,40 +64,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tang Junhui <tang.junhui.linux@gmail.com>
+From: Rafał Miłecki <rafal@milecki.pl>
 
-commit 2e17a262a2371d38d2ec03614a2675a32cef9912 upstream.
+commit 0976eda7915507fe94e07870c19d717c9994b57a upstream.
 
-When bcache device is clean, dirty keys may still exist after
-journal replay, so we need to count these dirty keys even
-device in clean status, otherwise after writeback, the amount
-of dirty data would be incorrect.
+During implementation of the new API bcm_qspi_bspi_set_flex_mode() has
+been modified breaking calculation of address length. An unnecessary
+multiplication was added breaking flash reads.
 
-Signed-off-by: Tang Junhui <tang.junhui.linux@gmail.com>
+Fixes: 5f195ee7d830 ("spi: bcm-qspi: Implement the spi_mem interface")
+Signed-off-by: Rafał Miłecki <rafal@milecki.pl>
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Cc: stable@vger.kernel.org
-Signed-off-by: Coly Li <colyli@suse.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/bcache/super.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/spi/spi-bcm-qspi.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -1148,11 +1148,12 @@ int bch_cached_dev_attach(struct cached_
- 	}
+--- a/drivers/spi/spi-bcm-qspi.c
++++ b/drivers/spi/spi-bcm-qspi.c
+@@ -355,7 +355,7 @@ static int bcm_qspi_bspi_set_flex_mode(s
+ 	int bpc = 0, bpp = 0;
+ 	u8 command = op->cmd.opcode;
+ 	int width  = op->cmd.buswidth ? op->cmd.buswidth : SPI_NBITS_SINGLE;
+-	int addrlen = op->addr.nbytes * 8;
++	int addrlen = op->addr.nbytes;
+ 	int flex_mode = 1;
  
- 	if (BDEV_STATE(&dc->sb) == BDEV_STATE_DIRTY) {
--		bch_sectors_dirty_init(&dc->disk);
- 		atomic_set(&dc->has_dirty, 1);
- 		bch_writeback_queue(dc);
- 	}
- 
-+	bch_sectors_dirty_init(&dc->disk);
-+
- 	bch_cached_dev_run(dc);
- 	bcache_device_link(&dc->disk, c, "bdev");
- 	atomic_inc(&c->attached_dev_nr);
+ 	dev_dbg(&qspi->pdev->dev, "set flex mode w %x addrlen %x hp %d\n",
 
 
