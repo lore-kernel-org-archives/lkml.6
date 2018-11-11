@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83EBDC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:02:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 277E6C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:02:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C96F208A3
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:02:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D13B7208A3
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:02:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="emwPYA8Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C96F208A3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nH24c+1N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D13B7208A3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732192AbeKLIRy (ORCPT
+        id S1732399AbeKLJw3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:17:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34452 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:52:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732069AbeKLIRx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:17:53 -0500
+        id S1732159AbeKLIRy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:17:54 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 21AB7223AE;
-        Sun, 11 Nov 2018 22:27:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2789C21104;
+        Sun, 11 Nov 2018 22:27:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975278;
-        bh=3XJDbhAmvqHWEBCq/+5EOnSyZtbH6rTGAmNY3ja0aTk=;
+        s=default; t=1541975279;
+        bh=4zW2bKzTn7Rp+duCPgx8uFFfY4kVczZkJre7t5PiL0o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=emwPYA8Z99UHmGIIqMPXFF5n5OE2Fj/y97gIDrXn+ATzrRuCJpjUocizV4r40A47W
-         6WhyGacWmXs/s+8poQr7Lqfvy6JhMw7MAOVKg0jsfzi8xAgQPTfg9BQqW3CiQ6YoU/
-         hfrsStqob4iFHOBlh64E4Z5rkJwsrW5Y15JSlAnk=
+        b=nH24c+1NCIYUkLj+56++aMAbunKNdQ771g1RhSpdi9ADWCxPJqW6/0dnqIOO3Wkiq
+         ERKqUZs5Tr5pQ3j9sznI0cFi6+UvIfogGy8GpQazMBiDTUojhqng0RtiCcrOHilvdW
+         AaejngOKtg37g6pxxpXlqQyI17Tk/bE1ckG2tkB8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
         Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 4.19 192/361] Revert "f2fs: fix to clear PG_checked flag in set_page_dirty()"
-Date:   Sun, 11 Nov 2018 14:18:59 -0800
-Message-Id: <20181111221647.412384851@linuxfoundation.org>
+Subject: [PATCH 4.19 195/361] f2fs: fix to account IO correctly
+Date:   Sun, 11 Nov 2018 14:19:02 -0800
+Message-Id: <20181111221647.825819091@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -62,51 +62,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Chao Yu <yuchao0@huawei.com>
 
-commit 164a63fa6b384e30ceb96ed80bc7dc3379bc0960 upstream.
+commit 4c58ed076875f36dae0f240da1e25e99e5d4afb8 upstream.
 
-This reverts commit 66110abc4c931f879d70e83e1281f891699364bf.
+Below race can cause reversed reference on dirty count, fix it by
+relocating __submit_bio() and inc_page_count().
 
-If we clear the cold data flag out of the writeback flow, we can miscount
--1 by end_io, which incurs a deadlock caused by all I/Os being blocked during
-heavy GC.
-
-Balancing F2FS Async:
- - IO (CP:    1, Data:   -1, Flush: (   0    0    1), Discard: (   ...
-
-GC thread:                              IRQ
-- move_data_page()
- - set_page_dirty()
-  - clear_cold_data()
-                                        - f2fs_write_end_io()
-                                         - type = WB_DATA_TYPE(page);
-                                           here, we get wrong type
-                                         - dec_page_count(sbi, type);
- - f2fs_wait_on_page_writeback()
+Thread A				Thread B
+- f2fs_inplace_write_data
+ - f2fs_submit_page_bio
+  - __submit_bio
+					- f2fs_write_end_io
+					 - dec_page_count
+  - inc_page_count
 
 Cc: <stable@vger.kernel.org>
-Reported-and-Tested-by: Park Ju Hyung <qkrwngud825@gmail.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Fixes: d1b3e72d5490 ("f2fs: submit bio of in-place-update pages")
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/f2fs/data.c |    4 ----
- 1 file changed, 4 deletions(-)
+ fs/f2fs/data.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -2590,10 +2590,6 @@ static int f2fs_set_data_page_dirty(stru
- 	if (!PageUptodate(page))
- 		SetPageUptodate(page);
+@@ -463,10 +463,10 @@ int f2fs_submit_page_bio(struct f2fs_io_
  
--	/* don't remain PG_checked flag which was set during GC */
--	if (is_cold_data(page))
--		clear_cold_data(page);
+ 	bio_set_op_attrs(bio, fio->op, fio->op_flags);
+ 
+-	__submit_bio(fio->sbi, bio, fio->type);
 -
- 	if (f2fs_is_atomic_file(inode) && !f2fs_is_commit_atomic_write(inode)) {
- 		if (!IS_ATOMIC_WRITTEN_PAGE(page)) {
- 			f2fs_register_inmem_page(inode, page);
+ 	if (!is_read_io(fio->op))
+ 		inc_page_count(fio->sbi, WB_DATA_TYPE(fio->page));
++
++	__submit_bio(fio->sbi, bio, fio->type);
+ 	return 0;
+ }
+ 
 
 
