@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B63EDC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:32:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F340C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:32:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DB182084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:32:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2874A20866
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:32:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qavSkk3B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DB182084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pOttQ4kd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2874A20866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388742AbeKLJWv (ORCPT
+        id S2388511AbeKLIUQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:22:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43918 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388486AbeKLIUQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:20:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44298 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388477AbeKLIUO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:14 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1711216FD;
-        Sun, 11 Nov 2018 22:30:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B1D71223AE;
+        Sun, 11 Nov 2018 22:30:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975420;
-        bh=9gF3W3iycWaasKXurK0EqB/Dh0JrSNRV695fYN5822g=;
+        s=default; t=1541975417;
+        bh=M4A2Jndk0xcokaZ8+h8WQL3c6YDDKeKBIL8nmlQtpHc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qavSkk3B+7uoKrHBExc0rM24aZAzhyVj2Wohs4qJLhFByyU0XP1ZC554P3mkH068r
-         rTxIhDWaoKxG8DqNjlteJwdkLXtwuuEUyvUlcodBqTvScI8PBN7jtGok4L0qcCjRlb
-         GDkR7kmbU/xu/gz4lTP50vLNdGSV2RR/xku067UE=
+        b=pOttQ4kdccbnorDX+SRmEjOoaz9eMQDVXumZ/yJOgQnjq8omxJdhfkLjZSh7w5zZX
+         Tz0xKACUBWSoSueMVw47fH0yHMA3P8e/qFCjLjyJsaIrO3k8D8w9IQN1YnHvKkVn2g
+         zKq6wZg4R8F5n0NCYFGZrBqJgDIOjxoKVYmOumUI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
-        Sumit Saxena <sumit.saxena@broadcom.com>,
+        stable@vger.kernel.org, Stan Johnson <userm57@yahoo.com>,
+        Finn Thain <fthain@telegraphics.com.au>,
+        Michael Schmitz <schmitzmic@gmail.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 144/350] scsi: megaraid_sas: fix a missing-check bug
-Date:   Sun, 11 Nov 2018 14:20:08 -0800
-Message-Id: <20181111221714.085444981@linuxfoundation.org>
+Subject: [PATCH 4.18 140/350] scsi: esp_scsi: Track residual for PIO transfers
+Date:   Sun, 11 Nov 2018 14:20:04 -0800
+Message-Id: <20181111221713.904774424@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -63,52 +65,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wenwen Wang <wang6495@umn.edu>
+From: Finn Thain <fthain@telegraphics.com.au>
 
-[ Upstream commit 47db7873136a9c57c45390a53b57019cf73c8259 ]
+[ Upstream commit fd47d919d0c336e7c22862b51ee94927ffea227a ]
 
-In megasas_mgmt_compat_ioctl_fw(), to handle the structure
-compat_megasas_iocpacket 'cioc', a user-space structure megasas_iocpacket
-'ioc' is allocated before megasas_mgmt_ioctl_fw() is invoked to handle
-the packet. Since the two data structures have different fields, the data
-is copied from 'cioc' to 'ioc' field by field. In the copy process,
-'sense_ptr' is prepared if the field 'sense_len' is not null, because it
-will be used in megasas_mgmt_ioctl_fw(). To prepare 'sense_ptr', the
-user-space data 'ioc->sense_off' and 'cioc->sense_off' are copied and
-saved to kernel-space variables 'local_sense_off' and 'user_sense_off'
-respectively. Given that 'ioc->sense_off' is also copied from
-'cioc->sense_off', 'local_sense_off' and 'user_sense_off' should have the
-same value. However, 'cioc' is in the user space and a malicious user can
-race to change the value of 'cioc->sense_off' after it is copied to
-'ioc->sense_off' but before it is copied to 'user_sense_off'. By doing
-so, the attacker can inject different values into 'local_sense_off' and
-'user_sense_off'. This can cause undefined behavior in the following
-execution, because the two variables are supposed to be same.
+If a target disconnects during a PIO data transfer the command may fail
+when the target reconnects:
 
-This patch enforces a check on the two kernel variables 'local_sense_off'
-and 'user_sense_off' to make sure they are the same after the copy. In
-case they are not, an error code EINVAL will be returned.
+scsi host1: DMA length is zero!
+scsi host1: cur adr[04380000] len[00000000]
 
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
-Acked-by: Sumit Saxena <sumit.saxena@broadcom.com>
+The scsi bus is then reset. This happens because the residual reached
+zero before the transfer was completed.
+
+The usual residual calculation relies on the Transfer Count registers.
+That works for DMA transfers but not for PIO transfers. Fix the problem
+by storing the PIO transfer residual and using that to correctly
+calculate bytes_sent.
+
+Fixes: 6fe07aaffbf0 ("[SCSI] m68k: new mac_esp scsi driver")
+Tested-by: Stan Johnson <userm57@yahoo.com>
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+Tested-by: Michael Schmitz <schmitzmic@gmail.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/megaraid/megaraid_sas_base.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/scsi/esp_scsi.c |    1 +
+ drivers/scsi/esp_scsi.h |    2 ++
+ drivers/scsi/mac_esp.c  |    2 ++
+ 3 files changed, 5 insertions(+)
 
---- a/drivers/scsi/megaraid/megaraid_sas_base.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_base.c
-@@ -7499,6 +7499,9 @@ static int megasas_mgmt_compat_ioctl_fw(
- 		get_user(user_sense_off, &cioc->sense_off))
- 		return -EFAULT;
+--- a/drivers/scsi/esp_scsi.c
++++ b/drivers/scsi/esp_scsi.c
+@@ -1338,6 +1338,7 @@ static int esp_data_bytes_sent(struct es
  
-+	if (local_sense_off != user_sense_off)
-+		return -EINVAL;
+ 	bytes_sent = esp->data_dma_len;
+ 	bytes_sent -= ecount;
++	bytes_sent -= esp->send_cmd_residual;
+ 
+ 	/*
+ 	 * The am53c974 has a DMA 'pecularity'. The doc states:
+--- a/drivers/scsi/esp_scsi.h
++++ b/drivers/scsi/esp_scsi.h
+@@ -540,6 +540,8 @@ struct esp {
+ 
+ 	void			*dma;
+ 	int			dmarev;
 +
- 	if (local_sense_len) {
- 		void __user **sense_ioc_ptr =
- 			(void __user **)((u8 *)((unsigned long)&ioc->frame.raw) + local_sense_off);
++	u32			send_cmd_residual;
+ };
+ 
+ /* A front-end driver for the ESP chip should do the following in
+--- a/drivers/scsi/mac_esp.c
++++ b/drivers/scsi/mac_esp.c
+@@ -427,6 +427,8 @@ static void mac_esp_send_pio_cmd(struct
+ 			scsi_esp_cmd(esp, ESP_CMD_TI);
+ 		}
+ 	}
++
++	esp->send_cmd_residual = esp_count;
+ }
+ 
+ static int mac_esp_irq_pending(struct esp *esp)
 
 
