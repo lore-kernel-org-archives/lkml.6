@@ -6,45 +6,44 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB713C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:14:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6DB6C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:14:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A2F02080D
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:14:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A2F02080D
+	by mail.kernel.org (Postfix) with ESMTP id 832BA2080D
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:14:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 832BA2080D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731093AbeKLGDq (ORCPT
+        id S1731387AbeKLGDt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:03:46 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52822 "EHLO
+        Mon, 12 Nov 2018 01:03:49 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52834 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726816AbeKLGDq (ORCPT
+        by vger.kernel.org with ESMTP id S1726816AbeKLGDt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 01:03:46 -0500
+        Mon, 12 Nov 2018 01:03:49 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvtD-0000l8-Ks; Sun, 11 Nov 2018 19:59:23 +0000
+        id 1gLvsv-0000l6-Bi; Sun, 11 Nov 2018 19:59:05 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsO-0001OW-9Q; Sun, 11 Nov 2018 19:58:32 +0000
+        id 1gLvsU-0001eg-Ve; Sun, 11 Nov 2018 19:58:38 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Takashi Iwai" <tiwai@suse.de>,
-        "Takashi Sakamoto" <o-takashi@sakamocchi.jp>,
-        "Connor McAdams" <conmanx360@gmail.com>
+CC:     akpm@linux-foundation.org,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Jiri Slaby" <jslaby@suse.cz>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.911898147@decadent.org.uk>
+Message-ID: <lsq.1541965745.556386560@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 031/366] ALSA: hda/ca0132: fix build failure when a
- local macro is defined
+Subject: [PATCH 3.16 212/366] tty: vt, get rid of weird source code flow
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,49 +57,114 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+From: Jiri Slaby <jslaby@suse.cz>
 
-commit 8e142e9e628975b0dddd05cf1b095331dff6e2de upstream.
+commit 34902b7f2754e6d890feb0cee34187f1bc75c930 upstream.
 
-DECLARE_TLV_DB_SCALE (alias of SNDRV_CTL_TLVD_DECLARE_DB_SCALE) is used but
-tlv.h is not included. This causes build failure when local macro is
-defined by comment-out.
+Some code in vc_allocate is indented by 4 spaces. It is inside a
+condition. Invert the condition and move the code to the first
+indentation level (using \tab). And insert some empty lines to have
+logical code blocks separated.
 
-This commit fixes the bug. At the same time, the alias macro is replaced
-with a destination macro added at a commit 46e860f76804 ("ALSA: rename
-TLV-related macros so that they're friendly to user applications")
+Then, instead of freeing in an 'if' false branch, use goto-error
+label as fail path.
 
-Reported-by: Connor McAdams <conmanx360@gmail.com>
-Fixes: 44f0c9782cc6 ('ALSA: hda/ca0132: Add tuning controls')
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Maybe better to look at this patch with diff -w -b.
+
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/pci/hda/patch_ca0132.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/tty/vt/vt.c | 70 +++++++++++++++++++++++++--------------------
+ 1 file changed, 39 insertions(+), 31 deletions(-)
 
---- a/sound/pci/hda/patch_ca0132.c
-+++ b/sound/pci/hda/patch_ca0132.c
-@@ -38,6 +38,10 @@
- /* Enable this to see controls for tuning purpose. */
- /*#define ENABLE_TUNING_CONTROLS*/
+--- a/drivers/tty/vt/vt.c
++++ b/drivers/tty/vt/vt.c
+@@ -752,46 +752,54 @@ static void visual_init(struct vc_data *
  
-+#ifdef ENABLE_TUNING_CONTROLS
-+#include <sound/tlv.h>
-+#endif
+ int vc_allocate(unsigned int currcons)	/* return 0 on success */
+ {
++	struct vt_notifier_param param;
++	struct vc_data *vc;
 +
- #define FLOAT_ZERO	0x00000000
- #define FLOAT_ONE	0x3f800000
- #define FLOAT_TWO	0x40000000
-@@ -3037,8 +3041,8 @@ static int equalizer_ctl_put(struct snd_
- 	return 1;
+ 	WARN_CONSOLE_UNLOCKED();
+ 
+ 	if (currcons >= MAX_NR_CONSOLES)
+ 		return -ENXIO;
+-	if (!vc_cons[currcons].d) {
+-	    struct vc_data *vc;
+-	    struct vt_notifier_param param;
+-
+-	    /* due to the granularity of kmalloc, we waste some memory here */
+-	    /* the alloc is done in two steps, to optimize the common situation
+-	       of a 25x80 console (structsize=216, screenbuf_size=4000) */
+-	    /* although the numbers above are not valid since long ago, the
+-	       point is still up-to-date and the comment still has its value
+-	       even if only as a historical artifact.  --mj, July 1998 */
+-	    param.vc = vc = kzalloc(sizeof(struct vc_data), GFP_KERNEL);
+-	    if (!vc)
++
++	if (vc_cons[currcons].d)
++		return 0;
++
++	/* due to the granularity of kmalloc, we waste some memory here */
++	/* the alloc is done in two steps, to optimize the common situation
++	   of a 25x80 console (structsize=216, screenbuf_size=4000) */
++	/* although the numbers above are not valid since long ago, the
++	   point is still up-to-date and the comment still has its value
++	   even if only as a historical artifact.  --mj, July 1998 */
++	param.vc = vc = kzalloc(sizeof(struct vc_data), GFP_KERNEL);
++	if (!vc)
+ 		return -ENOMEM;
+-	    vc_cons[currcons].d = vc;
+-	    tty_port_init(&vc->port);
+-	    INIT_WORK(&vc_cons[currcons].SAK_work, vc_SAK);
+-	    visual_init(vc, currcons, 1);
+-	    if (!*vc->vc_uni_pagedir_loc)
++
++	vc_cons[currcons].d = vc;
++	tty_port_init(&vc->port);
++	INIT_WORK(&vc_cons[currcons].SAK_work, vc_SAK);
++
++	visual_init(vc, currcons, 1);
++
++	if (!*vc->vc_uni_pagedir_loc)
+ 		con_set_default_unimap(vc);
+-	    vc->vc_screenbuf = kmalloc(vc->vc_screenbuf_size, GFP_KERNEL);
+-	    if (!vc->vc_screenbuf) {
+-		kfree(vc);
+-		vc_cons[currcons].d = NULL;
+-		return -ENOMEM;
+-	    }
+ 
+-	    /* If no drivers have overridden us and the user didn't pass a
+-	       boot option, default to displaying the cursor */
+-	    if (global_cursor_default == -1)
+-		    global_cursor_default = 1;
+-
+-	    vc_init(vc, vc->vc_rows, vc->vc_cols, 1);
+-	    vcs_make_sysfs(currcons);
+-	    atomic_notifier_call_chain(&vt_notifier_list, VT_ALLOCATE, &param);
+-	}
++	vc->vc_screenbuf = kmalloc(vc->vc_screenbuf_size, GFP_KERNEL);
++	if (!vc->vc_screenbuf)
++		goto err_free;
++
++	/* If no drivers have overridden us and the user didn't pass a
++	   boot option, default to displaying the cursor */
++	if (global_cursor_default == -1)
++		global_cursor_default = 1;
++
++	vc_init(vc, vc->vc_rows, vc->vc_cols, 1);
++	vcs_make_sysfs(currcons);
++	atomic_notifier_call_chain(&vt_notifier_list, VT_ALLOCATE, &param);
++
+ 	return 0;
++err_free:
++	kfree(vc);
++	vc_cons[currcons].d = NULL;
++	return -ENOMEM;
  }
  
--static const DECLARE_TLV_DB_SCALE(voice_focus_db_scale, 2000, 100, 0);
--static const DECLARE_TLV_DB_SCALE(eq_db_scale, -2400, 100, 0);
-+static const SNDRV_CTL_TLVD_DECLARE_DB_SCALE(voice_focus_db_scale, 2000, 100, 0);
-+static const SNDRV_CTL_TLVD_DECLARE_DB_SCALE(eq_db_scale, -2400, 100, 0);
- 
- static int add_tuning_control(struct hda_codec *codec,
- 				hda_nid_t pnid, hda_nid_t nid,
+ static inline int resize_screen(struct vc_data *vc, int width, int height,
 
