@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59634C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:07:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 283D5C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:07:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E22D214DB
+	by mail.kernel.org (Postfix) with ESMTP id E5ABE20871
 	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:07:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bYhuIqK7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E22D214DB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jX98FMCE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5ABE20871
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731723AbeKLIRg (ORCPT
+        id S1732212AbeKLJ5s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:17:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60706 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:57:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33814 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731664AbeKLIRf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:17:35 -0500
+        id S1731665AbeKLIRg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:17:36 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3766C223CA;
+        by mail.kernel.org (Postfix) with ESMTPSA id 842A12175B;
         Sun, 11 Nov 2018 22:27:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975260;
-        bh=d5wDYx3KGTwazceVHcPUobCsF2EbcqOeNS6N+qM5f54=;
+        bh=eLlZ4WROeozm16NMhAdWZkMEJxIu6O+oQzLb95wZP4A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bYhuIqK7c4lhE0sCOlOZWfHjIdjs5qk1nFRG1LMD8Fd/PVYl1RXHxLBBCLcwEb/cd
-         RL/l625oTvv9FOSSJLD4iLK2g/zD5bf7SLEyymbEJVcI2xHuTlyqTKt0KJIiuOHhxK
-         S2xjr0BtE6vv2efzcTyEcHlwciGY19H/lGwSyuwE=
+        b=jX98FMCEOo2GK+Gxrm5mfzWC25HxzD4YE4+P7BiRhtCbXkHS3v3p20zlIRhbdqpdd
+         8Szn47/UoiYqI4ApOmXvYJvFIxN3i0SXaItaMh1wMOrF7uoUST1QXonSBNAsBV1GTb
+         xItRahFNJDqIDcto9d+NADey4piGrtcLHLQIVD4I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Doug Anderson <dianders@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Edward Cree <ecree@solarflare.com>,
+        Alexei Starovoitov <ast@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 108/361] pinctrl: qcom: spmi-mpp: Fix drive strength setting
-Date:   Sun, 11 Nov 2018 14:17:35 -0800
-Message-Id: <20181111221634.785958449@linuxfoundation.org>
+Subject: [PATCH 4.19 109/361] bpf/verifier: fix verifier instability
+Date:   Sun, 11 Nov 2018 14:17:36 -0800
+Message-Id: <20181111221634.933690728@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -65,47 +63,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stephen Boyd <swboyd@chromium.org>
+From: Alexei Starovoitov <ast@kernel.org>
 
-[ Upstream commit 89c68b102f13f123aaef22b292526d6b92501334 ]
+[ Upstream commit a9c676bc8fc58d00eea9836fb14ee43c0346416a ]
 
-It looks like we parse the drive strength setting here, but never
-actually write it into the hardware to update it. Parse the setting and
-then write it at the end of the pinconf setting function so that it
-actually sticks in the hardware.
+Edward Cree says:
+In check_mem_access(), for the PTR_TO_CTX case, after check_ctx_access()
+has supplied a reg_type, the other members of the register state are set
+appropriately.  Previously reg.range was set to 0, but as it is in a
+union with reg.map_ptr, which is larger, upper bytes of the latter were
+left in place.  This then caused the memcmp() in regsafe() to fail,
+preventing some branches from being pruned (and occasionally causing the
+same program to take a varying number of processed insns on repeated
+verifier runs).
 
-Fixes: 0e948042c420 ("pinctrl: qcom: spmi-mpp: Implement support for sink mode")
-Cc: Doug Anderson <dianders@chromium.org>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Fix the instability by clearing bpf_reg_state in __mark_reg_[un]known()
+
+Fixes: f1174f77b50c ("bpf/verifier: rework value tracking")
+Debugged-by: Edward Cree <ecree@solarflare.com>
+Acked-by: Edward Cree <ecree@solarflare.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pinctrl/qcom/pinctrl-spmi-mpp.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ kernel/bpf/verifier.c |   16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
---- a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-+++ b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-@@ -457,7 +457,7 @@ static int pmic_mpp_config_set(struct pi
- 			pad->dtest = arg;
- 			break;
- 		case PIN_CONFIG_DRIVE_STRENGTH:
--			arg = pad->drive_strength;
-+			pad->drive_strength = arg;
- 			break;
- 		case PMIC_MPP_CONF_AMUX_ROUTE:
- 			if (arg >= PMIC_MPP_AMUX_ROUTE_ABUS4)
-@@ -504,6 +504,10 @@ static int pmic_mpp_config_set(struct pi
- 	if (ret < 0)
- 		return ret;
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -553,7 +553,9 @@ static void __mark_reg_not_init(struct b
+  */
+ static void __mark_reg_known(struct bpf_reg_state *reg, u64 imm)
+ {
+-	reg->id = 0;
++	/* Clear id, off, and union(map_ptr, range) */
++	memset(((u8 *)reg) + sizeof(reg->type), 0,
++	       offsetof(struct bpf_reg_state, var_off) - sizeof(reg->type));
+ 	reg->var_off = tnum_const(imm);
+ 	reg->smin_value = (s64)imm;
+ 	reg->smax_value = (s64)imm;
+@@ -572,7 +574,6 @@ static void __mark_reg_known_zero(struct
+ static void __mark_reg_const_zero(struct bpf_reg_state *reg)
+ {
+ 	__mark_reg_known(reg, 0);
+-	reg->off = 0;
+ 	reg->type = SCALAR_VALUE;
+ }
  
-+	ret = pmic_mpp_write(state, pad, PMIC_MPP_REG_SINK_CTL, pad->drive_strength);
-+	if (ret < 0)
-+		return ret;
-+
- 	val = pad->is_enabled << PMIC_MPP_REG_MASTER_EN_SHIFT;
+@@ -683,9 +684,12 @@ static void __mark_reg_unbounded(struct
+ /* Mark a register as having a completely unknown (scalar) value. */
+ static void __mark_reg_unknown(struct bpf_reg_state *reg)
+ {
++	/*
++	 * Clear type, id, off, and union(map_ptr, range) and
++	 * padding between 'type' and union
++	 */
++	memset(reg, 0, offsetof(struct bpf_reg_state, var_off));
+ 	reg->type = SCALAR_VALUE;
+-	reg->id = 0;
+-	reg->off = 0;
+ 	reg->var_off = tnum_unknown;
+ 	reg->frameno = 0;
+ 	__mark_reg_unbounded(reg);
+@@ -1727,9 +1731,6 @@ static int check_mem_access(struct bpf_v
+ 			else
+ 				mark_reg_known_zero(env, regs,
+ 						    value_regno);
+-			regs[value_regno].id = 0;
+-			regs[value_regno].off = 0;
+-			regs[value_regno].range = 0;
+ 			regs[value_regno].type = reg_type;
+ 		}
  
- 	return pmic_mpp_write(state, pad, PMIC_MPP_REG_EN_CTL, val);
+@@ -2580,7 +2581,6 @@ static int check_helper_call(struct bpf_
+ 			regs[BPF_REG_0].type = PTR_TO_MAP_VALUE_OR_NULL;
+ 		/* There is no offset yet applied, variable or fixed */
+ 		mark_reg_known_zero(env, regs, BPF_REG_0);
+-		regs[BPF_REG_0].off = 0;
+ 		/* remember map_ptr, so that check_map_access()
+ 		 * can check 'value_size' boundary of memory access
+ 		 * to map element returned from bpf_map_lookup_elem()
 
 
