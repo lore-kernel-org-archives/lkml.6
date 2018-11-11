@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F810C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:27:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77CFFC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:27:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15A852084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:27:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FF612084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:27:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LO6iDl1l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15A852084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NN8WMist"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FF612084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388927AbeKLIUj (ORCPT
+        id S2389028AbeKLJRb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:20:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46000 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:17:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388908AbeKLIUi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2388895AbeKLIUi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:20:38 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9B03216FD;
+        by mail.kernel.org (Postfix) with ESMTPSA id 267BF21582;
         Sun, 11 Nov 2018 22:30:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975442;
-        bh=U/HvLTYcnxTwdYfIMJWB/7u6vPBy6ivBmyMZYSI3GlM=;
+        s=default; t=1541975441;
+        bh=ZCMCq0ouSksf9FcAEvt7HuaSPEUZDdRANM4y2xTMUow=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LO6iDl1ln7y4KxpXOVTib+Q1hFIIhOMI75cU1Y3CGWKzq3hx7jdAlqSMdFPq/AUAx
-         gaUD1E+jwafWBqrGEe3STAvLkkxLYWeCPt5AzCIoHZYV4yFTDDa+yXeBunub32l//j
-         ixUo7dBOLDVHkLFO0kfUxh31B0bodRikU9lWxlo0=
+        b=NN8WMist7FS5nMuXBlRbA/AXbnxa0/mvaz4i3190pTNvaXhrYlugON2Kc8DCt0S1c
+         iKN+yJwkpNO6uJQuzUvlLq6Qw+24nNW7AzdtuBH9c99KHVJcNP+BIQNu/hff05zMnj
+         B2FM6AOR9QFXI3TuA/TS4VoSGdMTVysLeGd9SiZ8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Vasilis Liaskovitis <vliaskovitis@suse.com>,
-        =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>,
+        stable@vger.kernel.org, Joe Jin <joe.jin@oracle.com>,
         Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.18 197/350] xen/blkfront: avoid NULL blkfront_info dereference on device removal
-Date:   Sun, 11 Nov 2018 14:21:01 -0800
-Message-Id: <20181111221716.275567451@linuxfoundation.org>
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Christoph Helwig <hch@lst.de>,
+        Dongli Zhang <dongli.zhang@oracle.com>,
+        John Sobecki <john.sobecki@oracle.com>
+Subject: [PATCH 4.18 195/350] xen-swiotlb: use actually allocated size on check physical continuous
+Date:   Sun, 11 Nov 2018 14:20:59 -0800
+Message-Id: <20181111221716.181695265@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -65,55 +66,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vasilis Liaskovitis <vliaskovitis@suse.com>
+From: Joe Jin <joe.jin@oracle.com>
 
-commit f92898e7f32e3533bfd95be174044bc349d416ca upstream.
+commit 7250f422da0480d8512b756640f131b9b893ccda upstream.
 
-If a block device is hot-added when we are out of grants,
-gnttab_grant_foreign_access fails with -ENOSPC (log message "28
-granting access to ring page") in this code path:
+xen_swiotlb_{alloc,free}_coherent() allocate/free memory based on the
+order of the pages and not size argument (bytes). This is inconsistent with
+range_straddles_page_boundary and memset which use the 'size' value,
+which may lead to not exchanging memory with Xen (range_straddles_page_boundary()
+returned true). And then the call to xen_swiotlb_free_coherent() would
+actually try to exchange the memory with Xen, leading to the kernel
+hitting an BUG (as the hypercall returned an error).
 
-  talk_to_blkback ->
-	setup_blkring ->
-		xenbus_grant_ring ->
-			gnttab_grant_foreign_access
+This patch fixes it by making the 'size' variable be of the same size
+as the amount of memory allocated.
 
-and the failing path in talk_to_blkback sets the driver_data to NULL:
-
- destroy_blkring:
-        blkif_free(info, 0);
-
-        mutex_lock(&blkfront_mutex);
-        free_info(info);
-        mutex_unlock(&blkfront_mutex);
-
-        dev_set_drvdata(&dev->dev, NULL);
-
-This results in a NULL pointer BUG when blkfront_remove and blkif_free
-try to access the failing device's NULL struct blkfront_info.
-
-Cc: stable@vger.kernel.org # 4.5 and later
-Signed-off-by: Vasilis Liaskovitis <vliaskovitis@suse.com>
-Reviewed-by: Roger Pau Monné <roger.pau@citrix.com>
+CC: stable@vger.kernel.org
+Signed-off-by: Joe Jin <joe.jin@oracle.com>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Christoph Helwig <hch@lst.de>
+Cc: Dongli Zhang <dongli.zhang@oracle.com>
+Cc: John Sobecki <john.sobecki@oracle.com>
 Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/block/xen-blkfront.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/xen/swiotlb-xen.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/block/xen-blkfront.c
-+++ b/drivers/block/xen-blkfront.c
-@@ -2475,6 +2475,9 @@ static int blkfront_remove(struct xenbus
+--- a/drivers/xen/swiotlb-xen.c
++++ b/drivers/xen/swiotlb-xen.c
+@@ -303,6 +303,9 @@ xen_swiotlb_alloc_coherent(struct device
+ 	*/
+ 	flags &= ~(__GFP_DMA | __GFP_HIGHMEM);
  
- 	dev_dbg(&xbdev->dev, "%s removed", xbdev->nodename);
- 
-+	if (!info)
-+		return 0;
++	/* Convert the size to actually allocated. */
++	size = 1UL << (order + XEN_PAGE_SHIFT);
 +
- 	blkif_free(info, 0);
+ 	/* On ARM this function returns an ioremap'ped virtual address for
+ 	 * which virt_to_phys doesn't return the corresponding physical
+ 	 * address. In fact on ARM virt_to_phys only works for kernel direct
+@@ -351,6 +354,9 @@ xen_swiotlb_free_coherent(struct device
+ 	 * physical address */
+ 	phys = xen_bus_to_phys(dev_addr);
  
- 	mutex_lock(&info->mutex);
++	/* Convert the size to actually allocated. */
++	size = 1UL << (order + XEN_PAGE_SHIFT);
++
+ 	if (((dev_addr + size - 1 <= dma_mask)) ||
+ 	    range_straddles_page_boundary(phys, size))
+ 		xen_destroy_contiguous_region(phys, order);
 
 
