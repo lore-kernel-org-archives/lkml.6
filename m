@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A550C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:20:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C72E3C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:20:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23EB420854
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:20:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23EB420854
+	by mail.kernel.org (Postfix) with ESMTP id 9161F214DB
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:20:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9161F214DB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731941AbeKLGKH (ORCPT
+        id S1731981AbeKLGKI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:10:07 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33928 "EHLO
+        Mon, 12 Nov 2018 01:10:08 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33618 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731249AbeKLGKE (ORCPT
+        by vger.kernel.org with ESMTP id S1731819AbeKLGKE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 01:10:04 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wABKJAT0064947
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 15:20:34 -0500
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2npdhearwy-1
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wABKJGGi124513
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 15:20:35 -0500
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2npd3uugcb-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
         for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 15:20:34 -0500
 Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Sun, 11 Nov 2018 20:20:33 -0000
+        Sun, 11 Nov 2018 20:20:34 -0000
 Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
         Sun, 11 Nov 2018 20:20:29 -0000
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wABKKSvo46071862
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wABKKSKT46071860
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
         Sun, 11 Nov 2018 20:20:28 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 21EDCB2071;
+        by IMSVA (Postfix) with ESMTP id 05CBCB206C;
         Sun, 11 Nov 2018 20:20:28 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F3EA5B206A;
+        by IMSVA (Postfix) with ESMTP id D8409B2066;
         Sun, 11 Nov 2018 20:20:27 +0000 (GMT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.85.207.24])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
         Sun, 11 Nov 2018 20:20:27 +0000 (GMT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id D591616C5DA5; Sun, 11 Nov 2018 12:20:28 -0800 (PST)
+        id B49F716C5D9C; Sun, 11 Nov 2018 12:20:28 -0800 (PST)
 From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -60,21 +60,22 @@ Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH tip/core/rcu 12/17] rcutorture: Print histogram of CB invocation at OOM time
-Date:   Sun, 11 Nov 2018 12:20:22 -0800
+        Pierce Griffiths <pierceagriffiths@gmail.com>,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>
+Subject: [PATCH tip/core/rcu 06/17] torture: Remove unnecessary "ret" variables
+Date:   Sun, 11 Nov 2018 12:20:16 -0800
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181111201956.GA11935@linux.ibm.com>
 References: <20181111201956.GA11935@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18111120-0052-0000-0000-00000354249F
+x-cbid: 18111120-0040-0000-0000-000004908B18
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00010028; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01116031; UDB=6.00578740; IPR=6.00896132;
- MB=3.00024115; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-11 20:20:32
+ PH=3.00000004; SC=3.00000270; SDB=6.01116031; UDB=6.00577119; IPR=6.00896131;
+ MB=3.00024115; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-11 20:20:33
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111120-0053-0000-0000-00005EBB30F0
-Message-Id: <20181111202027.13585-12-paulmck@linux.ibm.com>
+x-cbparentid: 18111120-0041-0000-0000-0000089993CA
+Message-Id: <20181111202027.13585-6-paulmck@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-11_13:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -87,71 +88,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One reason why a forward-progress test might fail would be if something
-prevented or delayed callback invocation.  This commit therefore adds a
-callback-invocation histogram printout when OOM is reported to rcutorture.
+From: Pierce Griffiths <pierceagriffiths@gmail.com>
 
+Remove return variables (declared as "ret") in cases where,
+depending on whether a condition evaluates as true, the result of a
+function call can be immediately returned instead of storing the result in
+the return variable. When the condition evaluates as false, the constant
+initially stored in the return variable at declaration is returned instead.
+
+Signed-off-by: Pierce Griffiths <pierceagriffiths@gmail.com>
 Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
 ---
- kernel/rcu/rcutorture.c | 24 ++++++++++++++++--------
- 1 file changed, 16 insertions(+), 8 deletions(-)
+ kernel/torture.c | 22 ++++++++--------------
+ 1 file changed, 8 insertions(+), 14 deletions(-)
 
-diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index f28b88ecb47a..329f4fb13125 100644
---- a/kernel/rcu/rcutorture.c
-+++ b/kernel/rcu/rcutorture.c
-@@ -1631,6 +1631,20 @@ static bool rcu_fwd_emergency_stop;
- #define MIN_FWD_CBS_LAUNDERED	100	/* Number of counted CBs. */
- static long n_launders_hist[2 * MAX_FWD_CB_JIFFIES / HZ];
- 
-+static void rcu_torture_fwd_cb_hist(void)
-+{
-+	int i;
-+	int j;
-+
-+	for (i = ARRAY_SIZE(n_launders_hist) - 1; i > 0; i--)
-+		if (n_launders_hist[i] > 0)
-+			break;
-+	pr_alert("%s: Callback-invocation histogram:", __func__);
-+	for (j = 0; j <= i; j++)
-+		pr_cont(" %ds: %ld", j + 1, n_launders_hist[j]);
-+	pr_cont("\n");
-+}
-+
- /* Callback function for continuous-flood RCU callbacks. */
- static void rcu_torture_fwd_cb_cr(struct rcu_head *rhp)
+diff --git a/kernel/torture.c b/kernel/torture.c
+index 9410d1bf84d6..bbf6d473e50c 100644
+--- a/kernel/torture.c
++++ b/kernel/torture.c
+@@ -245,16 +245,15 @@ torture_onoff(void *arg)
+  */
+ int torture_onoff_init(long ooholdoff, long oointerval)
  {
-@@ -1718,7 +1732,6 @@ static void rcu_torture_fwd_prog_cr(void)
- 	unsigned long cver;
- 	unsigned long gps;
- 	int i;
--	int j;
- 	long n_launders;
- 	long n_launders_cb_snap;
- 	long n_launders_sa;
-@@ -1791,13 +1804,7 @@ static void rcu_torture_fwd_prog_cr(void)
- 			 n_launders + n_max_cbs - n_launders_cb_snap,
- 			 n_launders, n_launders_sa,
- 			 n_max_gps, n_max_cbs, cver, gps);
--		for (i = ARRAY_SIZE(n_launders_hist) - 1; i > 0; i--)
--			if (n_launders_hist[i] > 0)
--				break;
--		pr_alert("Callback-invocation histogram:");
--		for (j = 0; j <= i; j++)
--			pr_cont(" %ds: %ld", j + 1, n_launders_hist[j]);
--		pr_cont("\n");
-+		rcu_torture_fwd_cb_hist();
- 	}
+-	int ret = 0;
+-
+ #ifdef CONFIG_HOTPLUG_CPU
+ 	onoff_holdoff = ooholdoff;
+ 	onoff_interval = oointerval;
+ 	if (onoff_interval <= 0)
+ 		return 0;
+-	ret = torture_create_kthread(torture_onoff, NULL, onoff_task);
+-#endif /* #ifdef CONFIG_HOTPLUG_CPU */
+-	return ret;
++	return torture_create_kthread(torture_onoff, NULL, onoff_task);
++#else /* #ifdef CONFIG_HOTPLUG_CPU */
++	return 0;
++#endif /* #else #ifdef CONFIG_HOTPLUG_CPU */
  }
+ EXPORT_SYMBOL_GPL(torture_onoff_init);
  
-@@ -1809,6 +1816,7 @@ static void rcu_torture_fwd_prog_cr(void)
- static int rcutorture_oom_notify(struct notifier_block *self,
- 				 unsigned long notused, void *nfreed)
+@@ -525,15 +524,13 @@ static int torture_shutdown(void *arg)
+  */
+ int torture_shutdown_init(int ssecs, void (*cleanup)(void))
  {
-+	rcu_torture_fwd_cb_hist();
- 	rcu_fwd_progress_check(1 + (jiffies - READ_ONCE(rcu_fwd_startat) / 2));
- 	WRITE_ONCE(rcu_fwd_emergency_stop, true);
- 	return NOTIFY_OK;
+-	int ret = 0;
+-
+ 	torture_shutdown_hook = cleanup;
+ 	if (ssecs > 0) {
+ 		shutdown_time = ktime_add(ktime_get(), ktime_set(ssecs, 0));
+-		ret = torture_create_kthread(torture_shutdown, NULL,
++		return torture_create_kthread(torture_shutdown, NULL,
+ 					     shutdown_task);
+ 	}
+-	return ret;
++	return 0;
+ }
+ EXPORT_SYMBOL_GPL(torture_shutdown_init);
+ 
+@@ -632,13 +629,10 @@ static int torture_stutter(void *arg)
+ /*
+  * Initialize and kick off the torture_stutter kthread.
+  */
+-int torture_stutter_init(int s)
++int torture_stutter_init(const int s)
+ {
+-	int ret;
+-
+ 	stutter = s;
+-	ret = torture_create_kthread(torture_stutter, NULL, stutter_task);
+-	return ret;
++	return torture_create_kthread(torture_stutter, NULL, stutter_task);
+ }
+ EXPORT_SYMBOL_GPL(torture_stutter_init);
+ 
 -- 
 2.17.1
 
