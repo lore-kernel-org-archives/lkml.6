@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C5DEC43610
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8748C0044C
 	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:29:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C40E214E0
+	by mail.kernel.org (Postfix) with ESMTP id A2A1A214DB
 	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:29:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C40E214E0
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2A1A214DB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727113AbeKLFSi (ORCPT
+        id S1727140AbeKLFSk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 00:18:38 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38356 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726577AbeKLFSh (ORCPT
+        Mon, 12 Nov 2018 00:18:40 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55772 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726577AbeKLFSi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:18:37 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wABJONGf114502
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:29:13 -0500
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2npdfwh348-1
+        Mon, 12 Nov 2018 00:18:38 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wABJNvsu002071
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:29:14 -0500
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2npdjvgxbb-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:29:13 -0500
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:29:14 -0500
 Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Sun, 11 Nov 2018 19:29:12 -0000
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Sun, 11 Nov 2018 19:29:13 -0000
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 11 Nov 2018 19:29:06 -0000
+        Sun, 11 Nov 2018 19:29:08 -0000
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wABJT6UX23592970
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wABJT7u437159076
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 11 Nov 2018 19:29:06 GMT
+        Sun, 11 Nov 2018 19:29:07 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EEF0AB2068;
-        Sun, 11 Nov 2018 19:29:05 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id EFD69B2064;
+        Sun, 11 Nov 2018 19:29:06 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CCEC3B206C;
-        Sun, 11 Nov 2018 19:29:05 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id CDB37B205F;
+        Sun, 11 Nov 2018 19:29:06 +0000 (GMT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.85.207.24])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Sun, 11 Nov 2018 19:29:05 +0000 (GMT)
+        Sun, 11 Nov 2018 19:29:06 +0000 (GMT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id A9A2416C5DA4; Sun, 11 Nov 2018 11:29:06 -0800 (PST)
+        id AEC3B16C5DA5; Sun, 11 Nov 2018 11:29:06 -0800 (PST)
 From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -60,21 +60,23 @@ Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH tip/core/rcu 12/14] MAINTAINERS:  Add Joel Fernandes as RCU reviewer
-Date:   Sun, 11 Nov 2018 11:29:02 -0800
+        Joe Perches <joe@perches.com>,
+        Andy Whitcroft <apw@canonical.com>,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>
+Subject: [PATCH tip/core/rcu 13/14] checkpatch: Create table of obsolete APIs and apply to RCU
+Date:   Sun, 11 Nov 2018 11:29:03 -0800
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181111192839.GA32144@linux.ibm.com>
 References: <20181111192839.GA32144@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18111119-2213-0000-0000-00000315A745
+x-cbid: 18111119-0052-0000-0000-0000035421B5
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00010028; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01116014; UDB=6.00578729; IPR=6.00896114;
- MB=3.00024114; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-11 19:29:10
+ PH=3.00000004; SC=3.00000270; SDB=6.01116014; UDB=6.00578730; IPR=6.00896114;
+ MB=3.00024114; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-11 19:29:11
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111119-2214-0000-0000-00005C3866AD
-Message-Id: <20181111192904.3199-12-paulmck@linux.ibm.com>
+x-cbparentid: 18111119-0053-0000-0000-00005EBB1CAF
+Message-Id: <20181111192904.3199-13-paulmck@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-11_13:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -87,24 +89,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
-Reviewed-by: Joel Fernandes <joel@joelfernandes.org>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+From: Joe Perches <joe@perches.com>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1b80a021f542..188809580d5e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12533,6 +12533,7 @@ M:	Josh Triplett <josh@joshtriplett.org>
- R:	Steven Rostedt <rostedt@goodmis.org>
- R:	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
- R:	Lai Jiangshan <jiangshanlai@gmail.com>
-+R:	Joel Fernandes <joel@joelfernandes.org>
- L:	linux-kernel@vger.kernel.org
- W:	http://www.rdrop.com/users/paulmck/RCU/
- S:	Supported
+This patch creates a deprecated_apis map, which allows such APIs to
+be flagged with suggested replacements more compactly and straightforwardly.
+It also uses this map to flag the old flavorful RCU APIs as deprecated,
+suggesting their vanilla-RCU counterparts as replacements.
+
+Signed-off-by: Joe Perches <joe@perches.com>
+Cc: Andy Whitcroft <apw@canonical.com>
+Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+[ paulmck: Merged with earlier less-deft approach. ]
+---
+ scripts/checkpatch.pl | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index c883ec55654f..dd29e3c28166 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -573,6 +573,27 @@ foreach my $entry (@mode_permission_funcs) {
+ }
+ $mode_perms_search = "(?:${mode_perms_search})";
+ 
++our %deprecated_apis = (
++	"synchronize_rcu_bh"			=> "synchronize_rcu",
++	"synchronize_rcu_bh_expedited"		=> "synchronize_rcu_expedited",
++	"call_rcu_bh"				=> "call_rcu",
++	"rcu_barrier_bh"			=> "rcu_barrier",
++	"synchronize_sched"			=> "synchronize_rcu",
++	"synchronize_sched_expedited"		=> "synchronize_rcu_expedited",
++	"call_rcu_sched"			=> "call_rcu",
++	"rcu_barrier_sched"			=> "rcu_barrier",
++	"get_state_synchronize_sched"		=> "get_state_synchronize_rcu",
++	"cond_synchronize_sched"		=> "cond_synchronize_rcu",
++);
++
++#Create a search pattern for all these strings to speed up a loop below
++our $deprecated_apis_search = "";
++foreach my $entry (keys %deprecated_apis) {
++	$deprecated_apis_search .= '|' if ($deprecated_apis_search ne "");
++	$deprecated_apis_search .= $entry;
++}
++$deprecated_apis_search = "(?:${deprecated_apis_search})";
++
+ our $mode_perms_world_writable = qr{
+ 	S_IWUGO		|
+ 	S_IWOTH		|
+@@ -6368,6 +6389,14 @@ sub process {
+ 			     "please use device_initcall() or more appropriate function instead of __initcall() (see include/linux/init.h)\n" . $herecurr);
+ 		}
+ 
++# check for deprecated apis
++		if ($line =~ /\b($deprecated_apis_search)\b\s*\(/) {
++			my $deprecated_api = $1;
++			my $new_api = $deprecated_apis{$deprecated_api};
++			WARN("DEPRECATED_API",
++			     "Deprecated use of '$deprecated_api', prefer '$new_api' instead\n" . $herecurr);
++		}
++
+ # check for various structs that are normally const (ops, kgdb, device_tree)
+ # and avoid what seem like struct definitions 'struct foo {'
+ 		if ($line !~ /\bconst\b/ &&
 -- 
 2.17.1
 
