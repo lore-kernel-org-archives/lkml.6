@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3E91C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:55:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF2C0C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:55:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB42C206BA
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:55:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A8E7206BA
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:55:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UXskVdR5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB42C206BA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZyWL68OT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A8E7206BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403943AbeKLIWy (ORCPT
+        id S2404004AbeKLIpp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:22:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54772 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:45:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54620 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403884AbeKLIWx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:53 -0500
+        id S2403928AbeKLIWy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:54 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 56AC821780;
-        Sun, 11 Nov 2018 22:32:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 434CE223C6;
+        Sun, 11 Nov 2018 22:32:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975575;
-        bh=LxgBcRxwhHpzal2vTqrnvmBavYSkW7mvkOC9o3G3nFo=;
+        s=default; t=1541975577;
+        bh=/b0wKblQwdoPzxYIm0U7dOyrKvcnqKfLHzOfT6sfox4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UXskVdR5O+gjVtpeO4b4wInCVlrGj9hkAr79CGeifJ3DVb8CSs8RJCk8Od2G7vHon
-         gIa/U/jDqpYt9YdsRnkxkFkvyI6Tx1G5NkIKKYSX22Dg7Q6ikXkiQtyemy1VxLwEzd
-         AxlDd37TfN8zq1EyOCcRicWX3H1lhu58PV+PFT6s=
+        b=ZyWL68OTtY+qlVVUyT2QX8ifvVuhMj/PnlXfTLXzApsmgXaCiXirIwlrlfw4SZ87Z
+         q3uhrNYXnDbVF27jyoeec2t+tgg5IDQIbK9+zup7LysUMS2+m2nE67Ptutggj/S9jK
+         EtnbORD17v1YVancNw/HGmFEGFojLdoUun/sOgvI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ralph Campbell <rcampbell@nvidia.com>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 156/222] mm/rmap: map_pte() was not handling private ZONE_DEVICE page properly
-Date:   Sun, 11 Nov 2018 14:24:13 -0800
-Message-Id: <20181111221701.287312428@linuxfoundation.org>
+        stable@vger.kernel.org, Maxime Ripard <maxime.ripard@bootlin.com>,
+        Eugen Hristev <eugen.hristev@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.14 161/222] iio: adc: at91: fix acking DRDY irq on simple conversions
+Date:   Sun, 11 Nov 2018 14:24:18 -0800
+Message-Id: <20181111221701.694468576@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -66,66 +65,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ralph Campbell <rcampbell@nvidia.com>
+From: Eugen Hristev <eugen.hristev@microchip.com>
 
-commit aab8d0520e6e7c2a61f71195e6ce7007a4843afb upstream.
+commit bc1b45326223e7e890053cf6266357adfa61942d upstream.
 
-Private ZONE_DEVICE pages use a special pte entry and thus are not
-present.  Properly handle this case in map_pte(), it is already handled in
-check_pte(), the map_pte() part was lost in some rebase most probably.
+When doing simple conversions, the driver did not acknowledge the DRDY irq.
+If this irq status is not acked, it will be left pending, and as soon as a
+trigger is enabled, the irq handler will be called, it doesn't know why
+this status has occurred because no channel is pending, and then it will go
+int a irq loop and board will hang.
+To avoid this situation, read the LCDR after a raw conversion is done.
 
-Without this patch the slow migration path can not migrate back to any
-private ZONE_DEVICE memory to regular memory.  This was found after stress
-testing migration back to system memory.  This ultimatly can lead to the
-CPU constantly page fault looping on the special swap entry.
-
-Link: http://lkml.kernel.org/r/20181019160442.18723-3-jglisse@redhat.com
-Signed-off-by: Ralph Campbell <rcampbell@nvidia.com>
-Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
-Reviewed-by: Balbir Singh <bsingharora@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 0e589d5fb ("ARM: AT91: IIO: Add AT91 ADC driver.")
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/page_vma_mapped.c |   24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
+ drivers/iio/adc/at91_adc.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/mm/page_vma_mapped.c
-+++ b/mm/page_vma_mapped.c
-@@ -21,7 +21,29 @@ static bool map_pte(struct page_vma_mapp
- 			if (!is_swap_pte(*pvmw->pte))
- 				return false;
- 		} else {
--			if (!pte_present(*pvmw->pte))
-+			/*
-+			 * We get here when we are trying to unmap a private
-+			 * device page from the process address space. Such
-+			 * page is not CPU accessible and thus is mapped as
-+			 * a special swap entry, nonetheless it still does
-+			 * count as a valid regular mapping for the page (and
-+			 * is accounted as such in page maps count).
-+			 *
-+			 * So handle this special case as if it was a normal
-+			 * page mapping ie lock CPU page table and returns
-+			 * true.
-+			 *
-+			 * For more details on device private memory see HMM
-+			 * (include/linux/hmm.h or mm/hmm.c).
-+			 */
-+			if (is_swap_pte(*pvmw->pte)) {
-+				swp_entry_t entry;
-+
-+				/* Handle un-addressable ZONE_DEVICE memory */
-+				entry = pte_to_swp_entry(*pvmw->pte);
-+				if (!is_device_private_entry(entry))
-+					return false;
-+			} else if (!pte_present(*pvmw->pte))
- 				return false;
- 		}
+--- a/drivers/iio/adc/at91_adc.c
++++ b/drivers/iio/adc/at91_adc.c
+@@ -279,6 +279,8 @@ static void handle_adc_eoc_trigger(int i
+ 		iio_trigger_poll(idev->trig);
+ 	} else {
+ 		st->last_value = at91_adc_readl(st, AT91_ADC_CHAN(st, st->chnb));
++		/* Needed to ACK the DRDY interruption */
++		at91_adc_readl(st, AT91_ADC_LCDR);
+ 		st->done = true;
+ 		wake_up_interruptible(&st->wq_data_avail);
  	}
 
 
