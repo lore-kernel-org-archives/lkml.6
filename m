@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B689C43610
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EFCFC0044C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C65C721527
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0129422353
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uJuQ4NtY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C65C721527
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="idnWWZFh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0129422353
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732842AbeKLIS3 (ORCPT
+        id S1732858AbeKLISa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:18:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37302 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:18:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37584 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732819AbeKLIS2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:18:28 -0500
+        id S1732829AbeKLIS3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:18:29 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F848216FD;
-        Sun, 11 Nov 2018 22:28:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A96E223C6;
+        Sun, 11 Nov 2018 22:28:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975312;
-        bh=TXottl/zsKW6hI7fEC2zsRchQQHof+lmZx5td19/3Qc=;
+        s=default; t=1541975313;
+        bh=dJWBRphxZntlzYvmDmOy3G+5oNn7fbhqbgpbiAdKWuE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uJuQ4NtYhSWQUM2+FRsA8j50ZYyM5rw2I56zVqRBwrYyS2q8wh670/REUlIErwpGG
-         QPdgd4jCBUhcbv5aeJn27pjuqrcXgP5eCFRgqzqQTE4E1r2mtiep6zrrbwESLGTbiB
-         /C9OTUR5lesXiYGi82mqHRfkCvLN0SzY9oEK6yBU=
+        b=idnWWZFhou/JL9OBK7TX4KjfNDAaP8ZXfWGeQYV0Gk325m3mQ228eOFl29rxXZ4pu
+         OZS3Z0r2GGDns180z+hUmRH4wuJAUIYTKPfY6lPdlwgYTCVmyoZbaYWtOgFVdYOQrg
+         I8EUD64oBgz4eyhSeG6f1jMjERUl8+5xIsT+1Wds=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
+        stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.19 294/361] Revert "media: dvbsky: use just one mutex for serializing device R/W ops"
-Date:   Sun, 11 Nov 2018 14:20:41 -0800
-Message-Id: <20181111221656.930514575@linuxfoundation.org>
+Subject: [PATCH 4.19 297/361] media: cec: make cec_get_edid_spa_location() an inline function
+Date:   Sun, 11 Nov 2018 14:20:44 -0800
+Message-Id: <20181111221657.178750719@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -62,71 +62,174 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+From: Hans Verkuil <hans.verkuil@cisco.com>
 
-commit 9afc82194de9a1ce298f0d77d7d779d585bf962c upstream.
+commit b915bf575d5b7774d0f22d57d6c143e07dcaade2 upstream.
 
-As pointed at:
-	https://bugzilla.kernel.org/show_bug.cgi?id=199323
+This function is needed by both V4L2 and CEC, so move this to
+cec.h as a static inline since there are no obvious shared
+modules between the two subsystems.
 
-This patch causes a bad effect on RPi. I suspect that the root
-cause is at the USB out of tree RPi driver, with uses high priority
-interrupts instead of normal ones. Anyway, as this patch
-is mostly a cleanup, better to revert it.
+This patch, together with the following ones, fixes a
+dependency bug: if CEC_CORE is disabled, then building adv7604
+(and other HDMI receivers) will fail because an essential
+function is now stubbed out.
 
-This reverts commit 7d95fb746c4eece67308f1642a666ea1ebdbd2cc.
-
-Cc: stable@vger.kernel.org # For Kernel 4.18
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Cc: <stable@vger.kernel.org>      # for v4.17 and up
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/usb/dvb-usb-v2/dvbsky.c |   16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+ drivers/media/cec/cec-edid.c |   60 ------------------------------------
+ include/media/cec.h          |   70 +++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 70 insertions(+), 60 deletions(-)
 
---- a/drivers/media/usb/dvb-usb-v2/dvbsky.c
-+++ b/drivers/media/usb/dvb-usb-v2/dvbsky.c
-@@ -31,6 +31,7 @@ MODULE_PARM_DESC(disable_rc, "Disable in
- DVB_DEFINE_MOD_OPT_ADAPTER_NR(adapter_nr);
+--- a/drivers/media/cec/cec-edid.c
++++ b/drivers/media/cec/cec-edid.c
+@@ -10,66 +10,6 @@
+ #include <linux/types.h>
+ #include <media/cec.h>
  
- struct dvbsky_state {
-+	struct mutex stream_mutex;
- 	u8 ibuf[DVBSKY_BUF_LEN];
- 	u8 obuf[DVBSKY_BUF_LEN];
- 	u8 last_lock;
-@@ -67,17 +68,18 @@ static int dvbsky_usb_generic_rw(struct
- 
- static int dvbsky_stream_ctrl(struct dvb_usb_device *d, u8 onoff)
+-/*
+- * This EDID is expected to be a CEA-861 compliant, which means that there are
+- * at least two blocks and one or more of the extensions blocks are CEA-861
+- * blocks.
+- *
+- * The returned location is guaranteed to be < size - 1.
+- */
+-static unsigned int cec_get_edid_spa_location(const u8 *edid, unsigned int size)
+-{
+-	unsigned int blocks = size / 128;
+-	unsigned int block;
+-	u8 d;
+-
+-	/* Sanity check: at least 2 blocks and a multiple of the block size */
+-	if (blocks < 2 || size % 128)
+-		return 0;
+-
+-	/*
+-	 * If there are fewer extension blocks than the size, then update
+-	 * 'blocks'. It is allowed to have more extension blocks than the size,
+-	 * since some hardware can only read e.g. 256 bytes of the EDID, even
+-	 * though more blocks are present. The first CEA-861 extension block
+-	 * should normally be in block 1 anyway.
+-	 */
+-	if (edid[0x7e] + 1 < blocks)
+-		blocks = edid[0x7e] + 1;
+-
+-	for (block = 1; block < blocks; block++) {
+-		unsigned int offset = block * 128;
+-
+-		/* Skip any non-CEA-861 extension blocks */
+-		if (edid[offset] != 0x02 || edid[offset + 1] != 0x03)
+-			continue;
+-
+-		/* search Vendor Specific Data Block (tag 3) */
+-		d = edid[offset + 2] & 0x7f;
+-		/* Check if there are Data Blocks */
+-		if (d <= 4)
+-			continue;
+-		if (d > 4) {
+-			unsigned int i = offset + 4;
+-			unsigned int end = offset + d;
+-
+-			/* Note: 'end' is always < 'size' */
+-			do {
+-				u8 tag = edid[i] >> 5;
+-				u8 len = edid[i] & 0x1f;
+-
+-				if (tag == 3 && len >= 5 && i + len <= end &&
+-				    edid[i + 1] == 0x03 &&
+-				    edid[i + 2] == 0x0c &&
+-				    edid[i + 3] == 0x00)
+-					return i + 4;
+-				i += len + 1;
+-			} while (i < end);
+-		}
+-	}
+-	return 0;
+-}
+-
+ u16 cec_get_edid_phys_addr(const u8 *edid, unsigned int size,
+ 			   unsigned int *offset)
  {
-+	struct dvbsky_state *state = d_to_priv(d);
- 	int ret;
--	static u8 obuf_pre[3] = { 0x37, 0, 0 };
--	static u8 obuf_post[3] = { 0x36, 3, 0 };
-+	u8 obuf_pre[3] = { 0x37, 0, 0 };
-+	u8 obuf_post[3] = { 0x36, 3, 0 };
- 
--	mutex_lock(&d->usb_mutex);
--	ret = dvb_usbv2_generic_rw_locked(d, obuf_pre, 3, NULL, 0);
-+	mutex_lock(&state->stream_mutex);
-+	ret = dvbsky_usb_generic_rw(d, obuf_pre, 3, NULL, 0);
- 	if (!ret && onoff) {
- 		msleep(20);
--		ret = dvb_usbv2_generic_rw_locked(d, obuf_post, 3, NULL, 0);
-+		ret = dvbsky_usb_generic_rw(d, obuf_post, 3, NULL, 0);
- 	}
--	mutex_unlock(&d->usb_mutex);
-+	mutex_unlock(&state->stream_mutex);
- 	return ret;
+--- a/include/media/cec.h
++++ b/include/media/cec.h
+@@ -461,4 +461,74 @@ static inline void cec_phys_addr_invalid
+ 	cec_s_phys_addr(adap, CEC_PHYS_ADDR_INVALID, false);
  }
  
-@@ -606,6 +608,8 @@ static int dvbsky_init(struct dvb_usb_de
- 	if (ret)
- 		return ret;
- 	*/
-+	mutex_init(&state->stream_mutex);
++/**
++ * cec_get_edid_spa_location() - find location of the Source Physical Address
++ *
++ * @edid: the EDID
++ * @size: the size of the EDID
++ *
++ * This EDID is expected to be a CEA-861 compliant, which means that there are
++ * at least two blocks and one or more of the extensions blocks are CEA-861
++ * blocks.
++ *
++ * The returned location is guaranteed to be <= size-2.
++ *
++ * This is an inline function since it is used by both CEC and V4L2.
++ * Ideally this would go in a module shared by both, but it is overkill to do
++ * that for just a single function.
++ */
++static inline unsigned int cec_get_edid_spa_location(const u8 *edid,
++						     unsigned int size)
++{
++	unsigned int blocks = size / 128;
++	unsigned int block;
++	u8 d;
 +
- 	state->last_lock = 0;
- 
- 	return 0;
++	/* Sanity check: at least 2 blocks and a multiple of the block size */
++	if (blocks < 2 || size % 128)
++		return 0;
++
++	/*
++	 * If there are fewer extension blocks than the size, then update
++	 * 'blocks'. It is allowed to have more extension blocks than the size,
++	 * since some hardware can only read e.g. 256 bytes of the EDID, even
++	 * though more blocks are present. The first CEA-861 extension block
++	 * should normally be in block 1 anyway.
++	 */
++	if (edid[0x7e] + 1 < blocks)
++		blocks = edid[0x7e] + 1;
++
++	for (block = 1; block < blocks; block++) {
++		unsigned int offset = block * 128;
++
++		/* Skip any non-CEA-861 extension blocks */
++		if (edid[offset] != 0x02 || edid[offset + 1] != 0x03)
++			continue;
++
++		/* search Vendor Specific Data Block (tag 3) */
++		d = edid[offset + 2] & 0x7f;
++		/* Check if there are Data Blocks */
++		if (d <= 4)
++			continue;
++		if (d > 4) {
++			unsigned int i = offset + 4;
++			unsigned int end = offset + d;
++
++			/* Note: 'end' is always < 'size' */
++			do {
++				u8 tag = edid[i] >> 5;
++				u8 len = edid[i] & 0x1f;
++
++				if (tag == 3 && len >= 5 && i + len <= end &&
++				    edid[i + 1] == 0x03 &&
++				    edid[i + 2] == 0x0c &&
++				    edid[i + 3] == 0x00)
++					return i + 4;
++				i += len + 1;
++			} while (i < end);
++		}
++	}
++	return 0;
++}
++
+ #endif /* _MEDIA_CEC_H */
 
 
