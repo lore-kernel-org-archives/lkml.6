@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31725C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F205C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E26A92241B
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7669216FD
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MDLowsIj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E26A92241B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dsylR3f6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7669216FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390538AbeKLIWW (ORCPT
+        id S2390569AbeKLIWY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:22:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52394 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:22:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51200 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389302AbeKLIWU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:20 -0500
+        id S2387727AbeKLIWW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:22 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D8567223CA;
-        Sun, 11 Nov 2018 22:32:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2FD8B2241E;
+        Sun, 11 Nov 2018 22:32:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975542;
-        bh=iCNvr2g36cKBJpD73YpTFrp1KEDtms4FeFyPRDcJxmc=;
+        s=default; t=1541975545;
+        bh=UJfBsZV0kT0VY2Em2Gk1CylxAllrwSMDaTA76cpMzBo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MDLowsIjyD5lpzZ5XGKzDgedK/80hBA9p7pH8ApRHvVLI9R1Ha+frltxaiUuAiIZU
-         AFfZQAY6PNm7frBFTfKTXTsRQ4kqF3QRM7RHm2KPoKbdaWBK9/s4RGDImkXd0kXCJs
-         /08cw8C+pugLBox9Aw70NyIZeeI067oji1ongefo=
+        b=dsylR3f6o6Ae/mpPMIPkS9zgbLzkSAEOC5c3kOd2y68kjcgs0TCWOBtGMVIY4ceel
+         2vx2z/ZXPcnAZA0xx/EjLQCxIGVwvrtRcfJMAKduMeCA3PtHpgJljv2Po/kcLOsSdD
+         gqJXjI/ZtVwKgl/KOKkGPxyrCKolokHq1w16IEV8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 4.14 024/222] ARM: dts: exynos: Disable pull control for MAX8997 interrupts on Origen
-Date:   Sun, 11 Nov 2018 14:22:01 -0800
-Message-Id: <20181111221650.380267425@linuxfoundation.org>
+        stable@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
+        Tejun Heo <tj@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 076/222] cgroup, netclassid: add a preemption point to write_classid
+Date:   Sun, 11 Nov 2018 14:22:53 -0800
+Message-Id: <20181111221654.880193377@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -63,49 +62,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Michal Hocko <mhocko@suse.com>
 
-commit f5e758b8358f6c27e8a351ddf0b441a64cdabb94 upstream.
+[ Upstream commit a90e90b7d55e789c71d85b946ffb5c1ab2f137ca ]
 
-PMIC_IRQB and PMIC_KEYINB lines on Exynos4210-based Origen board have
-external pull-up resistors, so disable any pull control for those lines
-in respective pin controller node. This fixes support for MAX8997
-interrupts and enables operation of wakeup from MAX8997 RTC alarm.
+We have seen a customer complaining about soft lockups on !PREEMPT
+kernel config with 4.4 based kernel
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Fixes: 17419726aaa1 ("ARM: dts: add max8997 device node for exynos4210-origen board")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+[1072141.435366] NMI watchdog: BUG: soft lockup - CPU#21 stuck for 22s! [systemd:1]
+[1072141.444090] Modules linked in: mpt3sas raid_class binfmt_misc af_packet 8021q garp mrp stp llc xfs libcrc32c bonding iscsi_ibft iscsi_boot_sysfs msr ext4 crc16 jbd2 mbcache cdc_ether usbnet mii joydev hid_generic usbhid intel_rapl x86_pkg_temp_thermal intel_powerclamp coretemp crct10dif_pclmul crc32_pclmul ghash_clmulni_intel ipmi_ssif mgag200 i2c_algo_bit ttm ipmi_devintf drbg ixgbe drm_kms_helper vxlan ansi_cprng ip6_udp_tunnel drm aesni_intel udp_tunnel aes_x86_64 iTCO_wdt syscopyarea ptp xhci_pci lrw iTCO_vendor_support pps_core gf128mul ehci_pci glue_helper sysfillrect mdio pcspkr sb_edac ablk_helper cryptd ehci_hcd sysimgblt xhci_hcd fb_sys_fops edac_core mei_me lpc_ich ses usbcore enclosure dca mfd_core ipmi_si mei i2c_i801 scsi_transport_sas usb_common ipmi_msghandler shpchp fjes wmi processor button acpi_pad btrfs xor raid6_pq sd_mod crc32c_intel megaraid_sas sg dm_multipath dm_mod scsi_dh_rdac scsi_dh_emc scsi_dh_alua scsi_mod md_mod autofs4
+[1072141.444146] Supported: Yes
+[1072141.444149] CPU: 21 PID: 1 Comm: systemd Not tainted 4.4.121-92.80-default #1
+[1072141.444150] Hardware name: LENOVO Lenovo System x3650 M5 -[5462P4U]- -[5462P4U]-/01GR451, BIOS -[TCE136H-2.70]- 06/13/2018
+[1072141.444151] task: ffff880191bd0040 ti: ffff880191bd4000 task.ti: ffff880191bd4000
+[1072141.444153] RIP: 0010:[<ffffffff815229f9>]  [<ffffffff815229f9>] update_classid_sock+0x29/0x40
+[1072141.444157] RSP: 0018:ffff880191bd7d58  EFLAGS: 00000286
+[1072141.444158] RAX: ffff883b177cb7c0 RBX: 0000000000000000 RCX: 0000000000000000
+[1072141.444159] RDX: 00000000000009c7 RSI: ffff880191bd7d5c RDI: ffff8822e29bb200
+[1072141.444160] RBP: ffff883a72230980 R08: 0000000000000101 R09: 0000000000000000
+[1072141.444161] R10: 0000000000000008 R11: f000000000000000 R12: ffffffff815229d0
+[1072141.444162] R13: 0000000000000000 R14: ffff881fd0a47ac0 R15: ffff880191bd7f28
+[1072141.444163] FS:  00007f3e2f1eb8c0(0000) GS:ffff882000340000(0000) knlGS:0000000000000000
+[1072141.444164] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[1072141.444165] CR2: 00007f3e2f200000 CR3: 0000001ffea4e000 CR4: 00000000001606f0
+[1072141.444166] Stack:
+[1072141.444166]  ffffffa800000246 00000000000009c7 ffffffff8121d583 ffff8818312a05c0
+[1072141.444168]  ffff8818312a1100 ffff880197c3b280 ffff881861422858 ffffffffffffffea
+[1072141.444170]  ffffffff81522b1c ffffffff81d0ca20 ffff8817fa17b950 ffff883fdd8121e0
+[1072141.444171] Call Trace:
+[1072141.444179]  [<ffffffff8121d583>] iterate_fd+0x53/0x80
+[1072141.444182]  [<ffffffff81522b1c>] write_classid+0x4c/0x80
+[1072141.444187]  [<ffffffff8111328b>] cgroup_file_write+0x9b/0x100
+[1072141.444193]  [<ffffffff81278bcb>] kernfs_fop_write+0x11b/0x150
+[1072141.444198]  [<ffffffff81201566>] __vfs_write+0x26/0x100
+[1072141.444201]  [<ffffffff81201bed>] vfs_write+0x9d/0x190
+[1072141.444203]  [<ffffffff812028c2>] SyS_write+0x42/0xa0
+[1072141.444207]  [<ffffffff815f58c3>] entry_SYSCALL_64_fastpath+0x1e/0xca
+[1072141.445490] DWARF2 unwinder stuck at entry_SYSCALL_64_fastpath+0x1e/0xca
+
+If a cgroup has many tasks with many open file descriptors then we would
+end up in a large loop without any rescheduling point throught the
+operation. Add cond_resched once per task.
+
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/arm/boot/dts/exynos4210-origen.dts |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ net/core/netclassid_cgroup.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/arm/boot/dts/exynos4210-origen.dts
-+++ b/arch/arm/boot/dts/exynos4210-origen.dts
-@@ -152,6 +152,8 @@
- 		reg = <0x66>;
- 		interrupt-parent = <&gpx0>;
- 		interrupts = <4 IRQ_TYPE_NONE>, <3 IRQ_TYPE_NONE>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&max8997_irq>;
+--- a/net/core/netclassid_cgroup.c
++++ b/net/core/netclassid_cgroup.c
+@@ -106,6 +106,7 @@ static int write_classid(struct cgroup_s
+ 		iterate_fd(p->files, 0, update_classid_sock,
+ 			   (void *)(unsigned long)cs->classid);
+ 		task_unlock(p);
++		cond_resched();
+ 	}
+ 	css_task_iter_end(&it);
  
- 		max8997,pmic-buck1-dvs-voltage = <1350000>;
- 		max8997,pmic-buck2-dvs-voltage = <1100000>;
-@@ -289,6 +291,13 @@
- 	};
- };
- 
-+&pinctrl_1 {
-+	max8997_irq: max8997-irq {
-+		samsung,pins = "gpx0-3", "gpx0-4";
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+	};
-+};
-+
- &sdhci_0 {
- 	bus-width = <4>;
- 	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_cd>;
 
 
