@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FF2BC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:53:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B47C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:53:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC3D920839
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:53:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C0BE20839
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:53:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ugfP0x3W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC3D920839
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JT3EHcW7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C0BE20839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733155AbeKLJnn (ORCPT
+        id S1733120AbeKLJnu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:43:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37238 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:43:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37256 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732795AbeKLIS0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:18:26 -0500
+        id S1732732AbeKLISZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:18:25 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9FAED22353;
-        Sun, 11 Nov 2018 22:28:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E5E12175B;
+        Sun, 11 Nov 2018 22:28:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975310;
-        bh=H/NGUGH/XNAqBI8nf5ULOnJ8oW7o5j16uaCqYagc0ng=;
+        s=default; t=1541975309;
+        bh=LlWkG9DejTpnQRhD7uPOrAOcGoPFwQEGrP2nZtk3CNA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ugfP0x3WokPZslchXJvT4aOonmiGkykF8I0ryXbdE55AcyfQ3WWeMSBoRasDXXb2G
-         KdwKTmwktzFMYJvm31WooWYJI3RtE+7XcDsOeEkaEgVz4k19G5smM0499azlXIMxdG
-         Lw8tS3UhptyNlBUTZtonM/nJ/izbky0sllRo/ovc=
+        b=JT3EHcW7i2NNiw9iheleOUax8WSks7VyGo2xRdDmL0DUAsfFRV/imlgj+IUrSGXDq
+         MlLkM/1BOeAhbkkTSz/HPxkKILvIRWOtQkr6ZS48ZHYlArgWvZ7pvqzjGmNEu9nv3Q
+         TAOQi4NYDAQ+HxAZVbUpaiR4mUW4RUlIs0H3Jtxk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ondrej Mosnacek <omosnace@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.19 245/361] crypto: morus/generic - fix for big endian systems
-Date:   Sun, 11 Nov 2018 14:19:52 -0800
-Message-Id: <20181111221652.681034206@linuxfoundation.org>
+        stable@vger.kernel.org, Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Mimi Zohar <zohar@linux.ibm.com>
+Subject: [PATCH 4.19 251/361] ima: open a new file instance if no read permissions
+Date:   Sun, 11 Nov 2018 14:19:58 -0800
+Message-Id: <20181111221653.190707609@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -63,82 +62,142 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Goldwyn Rodrigues <rgoldwyn@suse.de>
 
-commit 5a8dedfa3276e88c5865f265195d63d72aec3e72 upstream.
+commit a408e4a86b36bf98ad15b9ada531cf0e5118ac67 upstream.
 
-Omit the endian swabbing when folding the lengths of the assoc and
-crypt input buffers into the state to finalize the tag. This is not
-necessary given that the memory representation of the state is in
-machine native endianness already.
+Open a new file instance as opposed to changing file->f_mode when
+the file is not readable.  This is done to accomodate overlayfs
+stacked file operations change.  The real struct file is hidden
+behind the overlays struct file.  So, any file->f_mode manipulations are
+not reflected on the real struct file.  Open the file again in read mode
+if original file cannot be read, read and calculate the hash.
 
-This fixes an error reported by tcrypt running on a big endian system:
-
-  alg: aead: Test 2 failed on encryption for morus640-generic
-  00000000: a8 30 ef fb e6 26 eb 23 b0 87 dd 98 57 f3 e1 4b
-  00000010: 21
-  alg: aead: Test 2 failed on encryption for morus1280-generic
-  00000000: 88 19 1b fb 1c 29 49 0e ee 82 2f cb 97 a6 a5 ee
-  00000010: 5f
-
-Fixes: 396be41f16fd ("crypto: morus - Add generic MORUS AEAD implementations")
-Cc: <stable@vger.kernel.org> # v4.18+
-Reviewed-by: Ondrej Mosnacek <omosnace@redhat.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+Cc: stable@vger.kernel.org (linux-4.19)
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/morus1280.c |    7 ++-----
- crypto/morus640.c  |   16 ++++------------
- 2 files changed, 6 insertions(+), 17 deletions(-)
+ security/integrity/ima/ima_crypto.c |   54 ++++++++++++++++++++++--------------
+ 1 file changed, 34 insertions(+), 20 deletions(-)
 
---- a/crypto/morus1280.c
-+++ b/crypto/morus1280.c
-@@ -385,14 +385,11 @@ static void crypto_morus1280_final(struc
- 				   struct morus1280_block *tag_xor,
- 				   u64 assoclen, u64 cryptlen)
+--- a/security/integrity/ima/ima_crypto.c
++++ b/security/integrity/ima/ima_crypto.c
+@@ -210,7 +210,7 @@ static int ima_calc_file_hash_atfm(struc
  {
--	u64 assocbits = assoclen * 8;
--	u64 cryptbits = cryptlen * 8;
+ 	loff_t i_size, offset;
+ 	char *rbuf[2] = { NULL, };
+-	int rc, read = 0, rbuf_len, active = 0, ahash_rc = 0;
++	int rc, rbuf_len, active = 0, ahash_rc = 0;
+ 	struct ahash_request *req;
+ 	struct scatterlist sg[1];
+ 	struct crypto_wait wait;
+@@ -257,11 +257,6 @@ static int ima_calc_file_hash_atfm(struc
+ 					  &rbuf_size[1], 0);
+ 	}
+ 
+-	if (!(file->f_mode & FMODE_READ)) {
+-		file->f_mode |= FMODE_READ;
+-		read = 1;
+-	}
 -
- 	struct morus1280_block tmp;
- 	unsigned int i;
- 
--	tmp.words[0] = cpu_to_le64(assocbits);
--	tmp.words[1] = cpu_to_le64(cryptbits);
-+	tmp.words[0] = assoclen * 8;
-+	tmp.words[1] = cryptlen * 8;
- 	tmp.words[2] = 0;
- 	tmp.words[3] = 0;
- 
---- a/crypto/morus640.c
-+++ b/crypto/morus640.c
-@@ -384,21 +384,13 @@ static void crypto_morus640_final(struct
- 				  struct morus640_block *tag_xor,
- 				  u64 assoclen, u64 cryptlen)
+ 	for (offset = 0; offset < i_size; offset += rbuf_len) {
+ 		if (!rbuf[1] && offset) {
+ 			/* Not using two buffers, and it is not the first
+@@ -300,8 +295,6 @@ static int ima_calc_file_hash_atfm(struc
+ 	/* wait for the last update request to complete */
+ 	rc = ahash_wait(ahash_rc, &wait);
+ out3:
+-	if (read)
+-		file->f_mode &= ~FMODE_READ;
+ 	ima_free_pages(rbuf[0], rbuf_size[0]);
+ 	ima_free_pages(rbuf[1], rbuf_size[1]);
+ out2:
+@@ -336,7 +329,7 @@ static int ima_calc_file_hash_tfm(struct
  {
--	u64 assocbits = assoclen * 8;
--	u64 cryptbits = cryptlen * 8;
--
--	u32 assocbits_lo = (u32)assocbits;
--	u32 assocbits_hi = (u32)(assocbits >> 32);
--	u32 cryptbits_lo = (u32)cryptbits;
--	u32 cryptbits_hi = (u32)(cryptbits >> 32);
--
- 	struct morus640_block tmp;
- 	unsigned int i;
+ 	loff_t i_size, offset = 0;
+ 	char *rbuf;
+-	int rc, read = 0;
++	int rc;
+ 	SHASH_DESC_ON_STACK(shash, tfm);
  
--	tmp.words[0] = cpu_to_le32(assocbits_lo);
--	tmp.words[1] = cpu_to_le32(assocbits_hi);
--	tmp.words[2] = cpu_to_le32(cryptbits_lo);
--	tmp.words[3] = cpu_to_le32(cryptbits_hi);
-+	tmp.words[0] = lower_32_bits(assoclen * 8);
-+	tmp.words[1] = upper_32_bits(assoclen * 8);
-+	tmp.words[2] = lower_32_bits(cryptlen * 8);
-+	tmp.words[3] = upper_32_bits(cryptlen * 8);
+ 	shash->tfm = tfm;
+@@ -357,11 +350,6 @@ static int ima_calc_file_hash_tfm(struct
+ 	if (!rbuf)
+ 		return -ENOMEM;
  
- 	for (i = 0; i < MORUS_BLOCK_WORDS; i++)
- 		state->s[4].words[i] ^= state->s[0].words[i];
+-	if (!(file->f_mode & FMODE_READ)) {
+-		file->f_mode |= FMODE_READ;
+-		read = 1;
+-	}
+-
+ 	while (offset < i_size) {
+ 		int rbuf_len;
+ 
+@@ -378,8 +366,6 @@ static int ima_calc_file_hash_tfm(struct
+ 		if (rc)
+ 			break;
+ 	}
+-	if (read)
+-		file->f_mode &= ~FMODE_READ;
+ 	kfree(rbuf);
+ out:
+ 	if (!rc)
+@@ -420,6 +406,8 @@ int ima_calc_file_hash(struct file *file
+ {
+ 	loff_t i_size;
+ 	int rc;
++	struct file *f = file;
++	bool new_file_instance = false, modified_flags = false;
+ 
+ 	/*
+ 	 * For consistency, fail file's opened with the O_DIRECT flag on
+@@ -431,15 +419,41 @@ int ima_calc_file_hash(struct file *file
+ 		return -EINVAL;
+ 	}
+ 
+-	i_size = i_size_read(file_inode(file));
++	/* Open a new file instance in O_RDONLY if we cannot read */
++	if (!(file->f_mode & FMODE_READ)) {
++		int flags = file->f_flags & ~(O_WRONLY | O_APPEND |
++				O_TRUNC | O_CREAT | O_NOCTTY | O_EXCL);
++		flags |= O_RDONLY;
++		f = dentry_open(&file->f_path, flags, file->f_cred);
++		if (IS_ERR(f)) {
++			/*
++			 * Cannot open the file again, lets modify f_flags
++			 * of original and continue
++			 */
++			pr_info_ratelimited("Unable to reopen file for reading.\n");
++			f = file;
++			f->f_flags |= FMODE_READ;
++			modified_flags = true;
++		} else {
++			new_file_instance = true;
++		}
++	}
++
++	i_size = i_size_read(file_inode(f));
+ 
+ 	if (ima_ahash_minsize && i_size >= ima_ahash_minsize) {
+-		rc = ima_calc_file_ahash(file, hash);
++		rc = ima_calc_file_ahash(f, hash);
+ 		if (!rc)
+-			return 0;
++			goto out;
+ 	}
+ 
+-	return ima_calc_file_shash(file, hash);
++	rc = ima_calc_file_shash(f, hash);
++out:
++	if (new_file_instance)
++		fput(f);
++	else if (modified_flags)
++		f->f_flags &= ~FMODE_READ;
++	return rc;
+ }
+ 
+ /*
 
 
