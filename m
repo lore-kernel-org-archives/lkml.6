@@ -2,122 +2,79 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3558EC0044C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:40:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0519C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:40:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFD7A214F1
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:40:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DRmpAC61"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFD7A214F1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 843DD214F1
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:40:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 843DD214F1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391276AbeKLIZF (ORCPT
+        id S2389775AbeKLIa4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:25:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60876 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732975AbeKLIZF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:25:05 -0500
-Received: from localhost (unknown [206.108.79.134])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 43A2E22353;
-        Sun, 11 Nov 2018 22:35:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975707;
-        bh=MKL/hQfEcxJO7D0brslkPawghN7VTOd8BoyTqTm4GCU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DRmpAC61yZXfzPhXvjWg8JMD0NHSvkjpBGVjJIgQqsk6lak1mX6sIQIiD9tOE2tJ4
-         X6fwcuyz77dj4VvO0CttZrOjNa9cKbmX82NRnrQxf/kg0fZqFovsl90co6K2KBwisY
-         MBTE29yow87NSRR8hbN4flYIreDevvdku6CG+Mrk=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
-        James Smart <james.smart@broadcom.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 068/141] scsi: lpfc: Correct soft lockup when running mds diagnostics
-Date:   Sun, 11 Nov 2018 14:25:27 -0800
-Message-Id: <20181111221637.315170802@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
-References: <20181111221627.853046496@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Mon, 12 Nov 2018 03:30:56 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:43622 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730788AbeKLIa4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:30:56 -0500
+Received: by mail-oi1-f195.google.com with SMTP id j202-v6so5707724oih.10;
+        Sun, 11 Nov 2018 14:40:56 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FaC2JHKbVRWWV9iOtczP1FDmiDQ/g7GqBStnKvhxKws=;
+        b=P2V4ZHB4oa7jZh+KFaOhYRtUVWYcY0NrG4sK4yyRS8KKGJXr1aCUzyYqzktJ0w3An2
+         Xlz0bxFntIL3CAPMkQzyReZyiIylPza9unDqMHlXY/2IUqyTIDU6KZ13Fo88Vz7nmVkQ
+         cOHGNx4uLMITHiUqXYUyaUv3NECpX0Nlpk3Q3I2HgCnI/4P2mlVFpFCaVkmRVe1XngUi
+         Xd6VdehIrxza+GnF45sqadG86EhFYohM23/6LAekQTN2ZD0O3xgzLgaZ/FFfjWUJJ8s4
+         C+SM82hY59crc4utekG4IhmhQYonFjBBpJsWiCkF0d+OH6N5U+FruoOy0h9mYea7/pc+
+         nJvw==
+X-Gm-Message-State: AGRZ1gKUlpw4q8RXiUhlZLLSHwPpVT/kqsyzeP5yVwV0MjJqZXZWrqw7
+        IcjXn6kFkwT/fUs0kDovlXN7rYo=
+X-Google-Smtp-Source: AJdET5fVOhA/TnINJmApX5bgktbsh+fxciqJpUcX3u3KT8E+XNDAABrHfl9NyIQVVqSILdVjNo7Ybg==
+X-Received: by 2002:aca:32c6:: with SMTP id y189-v6mr4789538oiy.153.1541976056103;
+        Sun, 11 Nov 2018 14:40:56 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id d7sm6156358otj.21.2018.11.11.14.40.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 11 Nov 2018 14:40:55 -0800 (PST)
+Date:   Sun, 11 Nov 2018 16:40:54 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     He Yangxuan <yangxuan8282@gmail.com>
+Cc:     linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, carlo@caione.org, khilman@baylibre.com,
+        narmstrong@baylibre.com, He Yangxuan <yangxuan8282@gmail.com>
+Subject: Re: [PATCH v5 2/3] dt-bindings: Add vendor prefix for PHICOMM Co.,
+ Ltd.
+Message-ID: <20181111224054.GA3950@bogus>
+References: <20181110033904.4207-1-yangxuan8282@gmail.com>
+ <20181110033904.4207-3-yangxuan8282@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181110033904.4207-3-yangxuan8282@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+On Sat, 10 Nov 2018 11:39:03 +0800, He Yangxuan wrote:
+> PHICOMM Co., Ltd. is a hardware provider headquartered in Shanghai, it's
+> product includes router and smart devices.
+> 
+> Signed-off-by: He Yangxuan <yangxuan8282@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-------------------
-
-From: James Smart <jsmart2021@gmail.com>
-
-[ Upstream commit 0ef01a2d95fd62bb4f536e7ce4d5e8e74b97a244 ]
-
-When running an mds diagnostic that passes frames with the switch, soft
-lockups are detected. The driver is in a CQE processing loop and has
-sufficient amount of traffic that it never exits the ring processing routine,
-thus the "lockup".
-
-Cap the number of elements in the work processing routine to 64 elements. This
-ensures that the cpu will be given up and the handler reschedule to process
-additional items.
-
-Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
-Signed-off-by: James Smart <james.smart@broadcom.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/scsi/lpfc/lpfc_sli.c |    7 +++++++
- 1 file changed, 7 insertions(+)
-
---- a/drivers/scsi/lpfc/lpfc_sli.c
-+++ b/drivers/scsi/lpfc/lpfc_sli.c
-@@ -3512,6 +3512,7 @@ lpfc_sli_handle_slow_ring_event_s4(struc
- 	struct hbq_dmabuf *dmabuf;
- 	struct lpfc_cq_event *cq_event;
- 	unsigned long iflag;
-+	int count = 0;
- 
- 	spin_lock_irqsave(&phba->hbalock, iflag);
- 	phba->hba_flag &= ~HBA_SP_QUEUE_EVT;
-@@ -3533,16 +3534,22 @@ lpfc_sli_handle_slow_ring_event_s4(struc
- 			if (irspiocbq)
- 				lpfc_sli_sp_handle_rspiocb(phba, pring,
- 							   irspiocbq);
-+			count++;
- 			break;
- 		case CQE_CODE_RECEIVE:
- 		case CQE_CODE_RECEIVE_V1:
- 			dmabuf = container_of(cq_event, struct hbq_dmabuf,
- 					      cq_event);
- 			lpfc_sli4_handle_received_buffer(phba, dmabuf);
-+			count++;
- 			break;
- 		default:
- 			break;
- 		}
-+
-+		/* Limit the number of events to 64 to avoid soft lockups */
-+		if (count == 64)
-+			break;
- 	}
- }
- 
-
-
+Reviewed-by: Rob Herring <robh@kernel.org>
