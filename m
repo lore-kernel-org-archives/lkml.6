@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5AFAC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:48:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D15C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:48:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E21120872
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:48:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16A4920871
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:48:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="y1jRTAvo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E21120872
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vslPSAMX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16A4920871
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733251AbeKLJiV (ORCPT
+        id S2387442AbeKLJia (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:38:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38896 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:38:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733122AbeKLISo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1733105AbeKLISo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:18:44 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6470221508;
+        by mail.kernel.org (Postfix) with ESMTPSA id 0DE60223AE;
         Sun, 11 Nov 2018 22:28:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975328;
-        bh=l8HE12dSsseiIKhwQROVPCggsv4fU0s/Pz9RBW4liGk=;
+        bh=d9u/X+kOl+R8X3EMYLLZb+nupN2pzRBZhD8DA/veUsk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y1jRTAvov2c6DqPrVFJ1j+qo77o3SGp95Um0bQk6+Ct4nWd2jEBaMUBPVVU1aDQQP
-         NneVaLkH9RmVJdYTRgB4rIwGSOQ3Cpq44g4nqJaaiAuEValWcVDX8UFe0eJQ5Vyv9x
-         N2NBHxmFFGFLsCePJwUJmxtHQEjMcjCaXTg5DfEw=
+        b=vslPSAMXWSMlLQtOMZR2mELD/jh3Fcqr/qbWhkYEc4RUc4sVuG8RHw2RmTqt1+y9p
+         BLI+MbdeM4alvRkFsoLWjcuEulwFd2U55/gmRNTSvJkgjVbRUc8FeKv7QtTfXmJU0i
+         Kcz6+SkVMCxDcjlP2gXNhY8tdojGodKDnx+YWEZ4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liu Bo <bo.liu@linux.alibaba.com>,
-        Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.19 340/361] btrfs: reset max_extent_size on clear in a bitmap
-Date:   Sun, 11 Nov 2018 14:21:27 -0800
-Message-Id: <20181111221700.653081713@linuxfoundation.org>
+        stable@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.19 339/361] btrfs: protect space cache inode alloc with GFP_NOFS
+Date:   Sun, 11 Nov 2018 14:21:26 -0800
+Message-Id: <20181111221700.567181738@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -62,34 +63,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Josef Bacik <jbacik@fb.com>
+From: Josef Bacik <josef@toxicpanda.com>
 
-commit 553cceb49681d60975d00892877d4c871bf220f9 upstream.
+commit 84de76a2fb217dc1b6bc2965cc397d1648aa1404 upstream.
 
-We need to clear the max_extent_size when we clear bits from a bitmap
-since it could have been from the range that contains the
-max_extent_size.
+If we're allocating a new space cache inode it's likely going to be
+under a transaction handle, so we need to use memalloc_nofs_save() in
+order to avoid deadlocks, and more importantly lockdep messages that
+make xfstests fail.
 
 CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Liu Bo <bo.liu@linux.alibaba.com>
-Signed-off-by: Josef Bacik <jbacik@fb.com>
+Reviewed-by: Omar Sandoval <osandov@fb.com>
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/free-space-cache.c |    2 ++
- 1 file changed, 2 insertions(+)
+ fs/btrfs/free-space-cache.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 --- a/fs/btrfs/free-space-cache.c
 +++ b/fs/btrfs/free-space-cache.c
-@@ -1687,6 +1687,8 @@ static inline void __bitmap_clear_bits(s
- 	bitmap_clear(info->bitmap, start, count);
+@@ -10,6 +10,7 @@
+ #include <linux/math64.h>
+ #include <linux/ratelimit.h>
+ #include <linux/error-injection.h>
++#include <linux/sched/mm.h>
+ #include "ctree.h"
+ #include "free-space-cache.h"
+ #include "transaction.h"
+@@ -47,6 +48,7 @@ static struct inode *__lookup_free_space
+ 	struct btrfs_free_space_header *header;
+ 	struct extent_buffer *leaf;
+ 	struct inode *inode = NULL;
++	unsigned nofs_flag;
+ 	int ret;
  
- 	info->bytes -= bytes;
-+	if (info->max_extent_size > ctl->unit)
-+		info->max_extent_size = 0;
- }
+ 	key.objectid = BTRFS_FREE_SPACE_OBJECTID;
+@@ -68,7 +70,13 @@ static struct inode *__lookup_free_space
+ 	btrfs_disk_key_to_cpu(&location, &disk_key);
+ 	btrfs_release_path(path);
  
- static void bitmap_clear_bits(struct btrfs_free_space_ctl *ctl,
++	/*
++	 * We are often under a trans handle at this point, so we need to make
++	 * sure NOFS is set to keep us from deadlocking.
++	 */
++	nofs_flag = memalloc_nofs_save();
+ 	inode = btrfs_iget(fs_info->sb, &location, root, NULL);
++	memalloc_nofs_restore(nofs_flag);
+ 	if (IS_ERR(inode))
+ 		return inode;
+ 
 
 
