@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8748C0044C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:29:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 595B7C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:29:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2A1A214DB
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:29:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2A1A214DB
+	by mail.kernel.org (Postfix) with ESMTP id 2600D214E0
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:29:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2600D214E0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727140AbeKLFSk (ORCPT
+        id S1727159AbeKLFSu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 00:18:40 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55772 "EHLO
+        Mon, 12 Nov 2018 00:18:50 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57416 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726577AbeKLFSi (ORCPT
+        by vger.kernel.org with ESMTP id S1726785AbeKLFSh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:18:38 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wABJNvsu002071
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:29:14 -0500
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2npdjvgxbb-1
+        Mon, 12 Nov 2018 00:18:37 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wABJNwqb075970
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:29:13 -0500
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2npdcu1482-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:29:14 -0500
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:29:13 -0500
 Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Sun, 11 Nov 2018 19:29:13 -0000
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Sun, 11 Nov 2018 19:29:12 -0000
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 11 Nov 2018 19:29:08 -0000
+        Sun, 11 Nov 2018 19:29:06 -0000
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wABJT7u437159076
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wABJT5p245154532
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 11 Nov 2018 19:29:07 GMT
+        Sun, 11 Nov 2018 19:29:05 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EFD69B2064;
-        Sun, 11 Nov 2018 19:29:06 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id D2AA2B206E;
+        Sun, 11 Nov 2018 19:29:05 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CDB37B205F;
-        Sun, 11 Nov 2018 19:29:06 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id B24EBB2066;
+        Sun, 11 Nov 2018 19:29:05 +0000 (GMT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.85.207.24])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Sun, 11 Nov 2018 19:29:06 +0000 (GMT)
+        Sun, 11 Nov 2018 19:29:05 +0000 (GMT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id AEC3B16C5DA5; Sun, 11 Nov 2018 11:29:06 -0800 (PST)
+        id 8937616C5D7F; Sun, 11 Nov 2018 11:29:06 -0800 (PST)
 From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -60,23 +60,21 @@ Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        Joe Perches <joe@perches.com>,
-        Andy Whitcroft <apw@canonical.com>,
-        "Paul E . McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH tip/core/rcu 13/14] checkpatch: Create table of obsolete APIs and apply to RCU
-Date:   Sun, 11 Nov 2018 11:29:03 -0800
+        "Paul E. McKenney" <paulmck@linux.ibm.com>
+Subject: [PATCH tip/core/rcu 06/14] rcu: Add jiffies-since-GP-activity to show_rcu_gp_kthreads()
+Date:   Sun, 11 Nov 2018 11:28:56 -0800
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181111192839.GA32144@linux.ibm.com>
 References: <20181111192839.GA32144@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18111119-0052-0000-0000-0000035421B5
+x-cbid: 18111119-0064-0000-0000-000003722DFC
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00010028; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01116014; UDB=6.00578730; IPR=6.00896114;
- MB=3.00024114; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-11 19:29:11
+ PH=3.00000004; SC=3.00000270; SDB=6.01116014; UDB=6.00577118; IPR=6.00896115;
+ MB=3.00024114; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-11 19:29:10
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111119-0053-0000-0000-00005EBB1CAF
-Message-Id: <20181111192904.3199-13-paulmck@linux.ibm.com>
+x-cbparentid: 18111119-0065-0000-0000-00003B4D3C23
+Message-Id: <20181111192904.3199-6-paulmck@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-11_13:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -89,68 +87,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joe Perches <joe@perches.com>
+This commit adds a printout of the number of jiffies since the last time
+that the RCU grace-period kthread did any processing.  This can be useful
+when tracking down forward-progress issues.
 
-This patch creates a deprecated_apis map, which allows such APIs to
-be flagged with suggested replacements more compactly and straightforwardly.
-It also uses this map to flag the old flavorful RCU APIs as deprecated,
-suggesting their vanilla-RCU counterparts as replacements.
-
-Signed-off-by: Joe Perches <joe@perches.com>
-Cc: Andy Whitcroft <apw@canonical.com>
 Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
-[ paulmck: Merged with earlier less-deft approach. ]
 ---
- scripts/checkpatch.pl | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+ kernel/rcu/tree.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index c883ec55654f..dd29e3c28166 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -573,6 +573,27 @@ foreach my $entry (@mode_permission_funcs) {
- }
- $mode_perms_search = "(?:${mode_perms_search})";
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index ea78532183ac..e7c9848d1e1b 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -515,12 +515,14 @@ static const char *gp_state_getname(short gs)
+ void show_rcu_gp_kthreads(void)
+ {
+ 	int cpu;
++	unsigned long j;
+ 	struct rcu_data *rdp;
+ 	struct rcu_node *rnp;
  
-+our %deprecated_apis = (
-+	"synchronize_rcu_bh"			=> "synchronize_rcu",
-+	"synchronize_rcu_bh_expedited"		=> "synchronize_rcu_expedited",
-+	"call_rcu_bh"				=> "call_rcu",
-+	"rcu_barrier_bh"			=> "rcu_barrier",
-+	"synchronize_sched"			=> "synchronize_rcu",
-+	"synchronize_sched_expedited"		=> "synchronize_rcu_expedited",
-+	"call_rcu_sched"			=> "call_rcu",
-+	"rcu_barrier_sched"			=> "rcu_barrier",
-+	"get_state_synchronize_sched"		=> "get_state_synchronize_rcu",
-+	"cond_synchronize_sched"		=> "cond_synchronize_rcu",
-+);
-+
-+#Create a search pattern for all these strings to speed up a loop below
-+our $deprecated_apis_search = "";
-+foreach my $entry (keys %deprecated_apis) {
-+	$deprecated_apis_search .= '|' if ($deprecated_apis_search ne "");
-+	$deprecated_apis_search .= $entry;
-+}
-+$deprecated_apis_search = "(?:${deprecated_apis_search})";
-+
- our $mode_perms_world_writable = qr{
- 	S_IWUGO		|
- 	S_IWOTH		|
-@@ -6368,6 +6389,14 @@ sub process {
- 			     "please use device_initcall() or more appropriate function instead of __initcall() (see include/linux/init.h)\n" . $herecurr);
- 		}
- 
-+# check for deprecated apis
-+		if ($line =~ /\b($deprecated_apis_search)\b\s*\(/) {
-+			my $deprecated_api = $1;
-+			my $new_api = $deprecated_apis{$deprecated_api};
-+			WARN("DEPRECATED_API",
-+			     "Deprecated use of '$deprecated_api', prefer '$new_api' instead\n" . $herecurr);
-+		}
-+
- # check for various structs that are normally const (ops, kgdb, device_tree)
- # and avoid what seem like struct definitions 'struct foo {'
- 		if ($line !~ /\bconst\b/ &&
+-	pr_info("%s: wait state: %s(%d) ->state: %#lx\n", rcu_state.name,
+-		gp_state_getname(rcu_state.gp_state), rcu_state.gp_state,
+-		rcu_state.gp_kthread->state);
++	j = jiffies - READ_ONCE(rcu_state.gp_activity);
++	pr_info("%s: wait state: %s(%d) ->state: %#lx delta ->gp_activity %ld\n",
++		rcu_state.name, gp_state_getname(rcu_state.gp_state),
++		rcu_state.gp_state, rcu_state.gp_kthread->state, j);
+ 	rcu_for_each_node_breadth_first(rnp) {
+ 		if (ULONG_CMP_GE(rcu_state.gp_seq, rnp->gp_seq_needed))
+ 			continue;
 -- 
 2.17.1
 
