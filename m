@@ -7,44 +7,49 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB006C43610
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AA59C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 634DF216FD
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02B24216FD
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wa6E7IUJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 634DF216FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SkWV4/YN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02B24216FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387694AbeKLITU (ORCPT
+        id S2387731AbeKLITW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:19:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40752 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:19:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40642 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387649AbeKLITT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:19:19 -0500
+        id S2387677AbeKLITU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:19:20 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1328208A3;
-        Sun, 11 Nov 2018 22:29:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E4902154B;
+        Sun, 11 Nov 2018 22:29:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975363;
-        bh=Vgup4Uh1wKbbiOGU3MvI/nOVD61ANsWXgoVN9wlE4RY=;
+        s=default; t=1541975364;
+        bh=UOSaTlkMcGHaX5CZKKjQAOwM975qKcKanCm1Xm/WmVA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Wa6E7IUJkNfvZf2m9EF3jGRfr/YeBPmoehT+/4CZ54wmBWRctO7RuqyqlWr6f1qPy
-         cUVhSksU0uIE9z0oW5NXkN85FjoJyNThpyX+ienn+tUtRGgsD6pRld5JQHJSX3IE2i
-         0Vsorw2fsP/p+btT5PNP18bwq+ImnNYOz8K3H+Tg=
+        b=SkWV4/YNgrwDOyUJIvVrw+Yz1ie7/ZDg0WgvPelyXTXAoYsueAtak0VvIGYxEP/hr
+         Nf3FkDdk6vVrHZpZw5OCaENL2jQX9xKzYL+IZjexe9I6/yRTkwxH4wVC5tBkVuvm/b
+         Zhc3GcX4+Unh3atqUX+TMlZFSyu2uRyFIMzY7HrQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.18 034/350] ALSA: hda: Add 2 more models to the power_save blacklist
-Date:   Sun, 11 Nov 2018 14:18:18 -0800
-Message-Id: <20181111221708.608748328@linuxfoundation.org>
+        stable@vger.kernel.org, Juergen Gross <jgross@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        boris.ostrovsky@oracle.com, bp@alien8.de, corbet@lwn.net,
+        linux-doc@vger.kernel.org, xen-devel@lists.xenproject.org,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.18 037/350] x86/xen: Fix boot loader version reported for PVH guests
+Date:   Sun, 11 Nov 2018 14:18:21 -0800
+Message-Id: <20181111221708.732023332@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -62,37 +67,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Juergen Gross <jgross@suse.com>
 
-commit 5cb6b5fc013ee711d19bfc4e9deb8d6ae80741db upstream.
+commit 357d291ce035d1b757568058f3c9898c60d125b1 upstream.
 
-Power-saving is causing plops on audio start/stop on Dell Precision T3600
-laptops and Intel DZ77BH boards, add these to the power_save blacklist.
+The boot loader version reported via sysfs is wrong in case of the
+kernel being booted via the Xen PVH boot entry. it should be 2.12
+(0x020c), but it is reported to be 2.18 (0x0212).
 
-BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1525104
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+As the current way to set the version is error prone use the more
+readable variant (2 << 8) | 12.
+
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Cc: <stable@vger.kernel.org> # 4.12
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: boris.ostrovsky@oracle.com
+Cc: bp@alien8.de
+Cc: corbet@lwn.net
+Cc: linux-doc@vger.kernel.org
+Cc: xen-devel@lists.xenproject.org
+Link: http://lkml.kernel.org/r/20181010061456.22238-2-jgross@suse.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/hda_intel.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ arch/x86/xen/enlighten_pvh.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/pci/hda/hda_intel.c
-+++ b/sound/pci/hda/hda_intel.c
-@@ -2215,8 +2215,12 @@ static struct snd_pci_quirk power_save_b
- 	/* https://bugzilla.redhat.com/show_bug.cgi?id=1581607 */
- 	SND_PCI_QUIRK(0x1558, 0x3501, "Clevo W35xSS_370SS", 0),
- 	/* https://bugzilla.redhat.com/show_bug.cgi?id=1525104 */
-+	SND_PCI_QUIRK(0x1028, 0x0497, "Dell Precision T3600", 0),
-+	/* https://bugzilla.redhat.com/show_bug.cgi?id=1525104 */
- 	/* Note the P55A-UD3 and Z87-D3HP share the subsys id for the HDA dev */
- 	SND_PCI_QUIRK(0x1458, 0xa002, "Gigabyte P55A-UD3 / Z87-D3HP", 0),
-+	/* https://bugzilla.redhat.com/show_bug.cgi?id=1525104 */
-+	SND_PCI_QUIRK(0x8086, 0x2040, "Intel DZ77BH-55K", 0),
- 	/* https://bugzilla.kernel.org/show_bug.cgi?id=199607 */
- 	SND_PCI_QUIRK(0x8086, 0x2057, "Intel NUC5i7RYB", 0),
- 	/* https://bugzilla.redhat.com/show_bug.cgi?id=1520902 */
+--- a/arch/x86/xen/enlighten_pvh.c
++++ b/arch/x86/xen/enlighten_pvh.c
+@@ -75,7 +75,7 @@ static void __init init_pvh_bootparams(v
+ 	 * Version 2.12 supports Xen entry point but we will use default x86/PC
+ 	 * environment (i.e. hardware_subarch 0).
+ 	 */
+-	pvh_bootparams.hdr.version = 0x212;
++	pvh_bootparams.hdr.version = (2 << 8) | 12;
+ 	pvh_bootparams.hdr.type_of_loader = (9 << 4) | 0; /* Xen loader */
+ 
+ 	x86_init.acpi.get_root_pointer = pvh_get_root_pointer;
 
 
