@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7805C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:51:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93817C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:51:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C7B1214E0
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:51:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50EDB214E0
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:51:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bg3hw7Ta"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C7B1214E0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="L+LZMWgC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50EDB214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390962AbeKLIl1 (ORCPT
+        id S2391038AbeKLIld (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:41:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55530 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:41:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404166AbeKLIXG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2404155AbeKLIXG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:23:06 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A9102241E;
+        by mail.kernel.org (Postfix) with ESMTPSA id 389012154B;
         Sun, 11 Nov 2018 22:33:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975589;
-        bh=uT8HnChjzD45mmQ3CuP7H2Uu2ezs+lcQH6HRHQr0BYo=;
+        bh=JwIiKnLRpEx4aGZGAR5RlAekbppAhgbr+9rG0Ui5cFU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Bg3hw7Ta26rLJMz/vePmiRMonqp6nAm/6Wrmm3tNaBWgud/hUUn/ZhLQyHi4MhCJp
-         OBOO3nrrL3ZqORC1B5WWRIa9+Gc5nt7DyzfwxVaZ4n9Gm9r/uInsELwQnIc1TltF7B
-         PzCcrV5WauYxtrD/SV1yn7cf+cbutPOtShdC1pcs=
+        b=L+LZMWgCJ3w5qxTi2pZGdIAk/Bno7QvQ7QSowjqh32ABiSc0BelkOxXvTr6Z0Li42
+         /Qw5t9/9SeMOpgZLtHbjNgfb574W92H5rCCVJsxN/2SDaiX43qsZFtlm8ULMtM6/r8
+         Idtq5CoinrInve80AtANxIPdvLoLTg+ux46ecRTQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeff Mahoney <jeffm@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 199/222] btrfs: fix error handling in free_log_tree
-Date:   Sun, 11 Nov 2018 14:24:56 -0800
-Message-Id: <20181111221704.568593186@linuxfoundation.org>
+        stable@vger.kernel.org, Xu Wen <wen.xu@gatech.edu>,
+        Qu Wenruo <wqu@suse.com>, David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.14 198/222] btrfs: locking: Add extra check in btrfs_init_new_buffer() to avoid deadlock
+Date:   Sun, 11 Nov 2018 14:24:55 -0800
+Message-Id: <20181111221704.495904534@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -62,90 +62,130 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jeff Mahoney <jeffm@suse.com>
+From: Qu Wenruo <wqu@suse.com>
 
-commit 374b0e2d6ba5da7fd1cadb3247731ff27d011f6f upstream.
+commit b72c3aba09a53fc7c1824250d71180ca154517a7 upstream.
 
-When we hit an I/O error in free_log_tree->walk_log_tree during file system
-shutdown we can crash due to there not being a valid transaction handle.
+[BUG]
+For certain crafted image, whose csum root leaf has missing backref, if
+we try to trigger write with data csum, it could cause deadlock with the
+following kernel WARN_ON():
 
-Use btrfs_handle_fs_error when there's no transaction handle to use.
-
-  BUG: unable to handle kernel NULL pointer dereference at 0000000000000060
-  IP: free_log_tree+0xd2/0x140 [btrfs]
-  PGD 0 P4D 0
-  Oops: 0000 [#1] SMP DEBUG_PAGEALLOC PTI
-  Modules linked in: <modules>
-  CPU: 2 PID: 23544 Comm: umount Tainted: G        W        4.12.14-kvmsmall #9 SLE15 (unreleased)
-  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
-  task: ffff96bfd3478880 task.stack: ffffa7cf40d78000
-  RIP: 0010:free_log_tree+0xd2/0x140 [btrfs]
-  RSP: 0018:ffffa7cf40d7bd10 EFLAGS: 00010282
-  RAX: 00000000fffffffb RBX: 00000000fffffffb RCX: 0000000000000002
-  RDX: 0000000000000000 RSI: ffff96c02f07d4c8 RDI: 0000000000000282
-  RBP: ffff96c013cf1000 R08: ffff96c02f07d4c8 R09: ffff96c02f07d4d0
-  R10: 0000000000000000 R11: 0000000000000002 R12: 0000000000000000
-  R13: ffff96c005e800c0 R14: ffffa7cf40d7bdb8 R15: 0000000000000000
-  FS:  00007f17856bcfc0(0000) GS:ffff96c03f600000(0000) knlGS:0000000000000000
-  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  CR2: 0000000000000060 CR3: 0000000045ed6002 CR4: 00000000003606e0
-  DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-  DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+  WARNING: CPU: 1 PID: 41 at fs/btrfs/locking.c:230 btrfs_tree_lock+0x3e2/0x400
+  CPU: 1 PID: 41 Comm: kworker/u4:1 Not tainted 4.18.0-rc1+ #8
+  Workqueue: btrfs-endio-write btrfs_endio_write_helper
+  RIP: 0010:btrfs_tree_lock+0x3e2/0x400
   Call Trace:
-   ? wait_for_writer+0xb0/0xb0 [btrfs]
-   btrfs_free_log+0x17/0x30 [btrfs]
-   btrfs_drop_and_free_fs_root+0x9a/0xe0 [btrfs]
-   btrfs_free_fs_roots+0xc0/0x130 [btrfs]
-   ? wait_for_completion+0xf2/0x100
-   close_ctree+0xea/0x2e0 [btrfs]
-   ? kthread_stop+0x161/0x260
-   generic_shutdown_super+0x6c/0x120
-   kill_anon_super+0xe/0x20
-   btrfs_kill_super+0x13/0x100 [btrfs]
-   deactivate_locked_super+0x3f/0x70
-   cleanup_mnt+0x3b/0x70
-   task_work_run+0x78/0x90
-   exit_to_usermode_loop+0x77/0xa6
-   do_syscall_64+0x1c5/0x1e0
-   entry_SYSCALL_64_after_hwframe+0x42/0xb7
-  RIP: 0033:0x7f1784f90827
-  RSP: 002b:00007ffdeeb03118 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-  RAX: 0000000000000000 RBX: 0000556a60c62970 RCX: 00007f1784f90827
-  RDX: 0000000000000001 RSI: 0000000000000000 RDI: 0000556a60c62b50
-  RBP: 0000000000000000 R08: 0000000000000005 R09: 00000000ffffffff
-  R10: 0000556a60c63900 R11: 0000000000000246 R12: 0000556a60c62b50
-  R13: 00007f17854a81c4 R14: 0000000000000000 R15: 0000000000000000
-  RIP: free_log_tree+0xd2/0x140 [btrfs] RSP: ffffa7cf40d7bd10
-  CR2: 0000000000000060
+   btrfs_alloc_tree_block+0x39f/0x770
+   __btrfs_cow_block+0x285/0x9e0
+   btrfs_cow_block+0x191/0x2e0
+   btrfs_search_slot+0x492/0x1160
+   btrfs_lookup_csum+0xec/0x280
+   btrfs_csum_file_blocks+0x2be/0xa60
+   add_pending_csums+0xaf/0xf0
+   btrfs_finish_ordered_io+0x74b/0xc90
+   finish_ordered_fn+0x15/0x20
+   normal_work_helper+0xf6/0x500
+   btrfs_endio_write_helper+0x12/0x20
+   process_one_work+0x302/0x770
+   worker_thread+0x81/0x6d0
+   kthread+0x180/0x1d0
+   ret_from_fork+0x35/0x40
 
-Fixes: 681ae50917df9 ("Btrfs: cleanup reserved space when freeing tree log on error")
-CC: <stable@vger.kernel.org> # v3.13
-Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+[CAUSE]
+That crafted image has missing backref for csum tree root leaf.  And
+when we try to allocate new tree block, since there is no
+EXTENT/METADATA_ITEM for csum tree root, btrfs consider it's free slot
+and use it.
+
+The extent tree of the image looks like:
+
+  Normal image                      |       This fuzzed image
+  ----------------------------------+--------------------------------
+  BG 29360128                       | BG 29360128
+   One empty slot                   |  One empty slot
+  29364224: backref to UUID tree    | 29364224: backref to UUID tree
+   Two empty slots                  |  Two empty slots
+  29376512: backref to CSUM tree    |  One empty slot (bad type) <<<
+  29380608: backref to D_RELOC tree | 29380608: backref to D_RELOC tree
+  ...                               | ...
+
+Since bytenr 29376512 has no METADATA/EXTENT_ITEM, when btrfs try to
+alloc tree block, it's an valid slot for btrfs.
+
+And for finish_ordered_write, when we need to insert csum, we try to CoW
+csum tree root.
+
+By accident, empty slots at bytenr BG_OFFSET, BG_OFFSET + 8K,
+BG_OFFSET + 12K is already used by tree block COW for other trees, the
+next empty slot is BG_OFFSET + 16K, which should be the backref for CSUM
+tree.
+
+But due to the bad type, btrfs can recognize it and still consider it as
+an empty slot, and will try to use it for csum tree CoW.
+
+Then in the following call trace, we will try to lock the new tree
+block, which turns out to be the old csum tree root which is already
+locked:
+
+btrfs_search_slot() called on csum tree root, which is at 29376512
+|- btrfs_cow_block()
+   |- btrfs_set_lock_block()
+   |  |- Now locks tree block 29376512 (old csum tree root)
+   |- __btrfs_cow_block()
+      |- btrfs_alloc_tree_block()
+         |- btrfs_reserve_extent()
+            | Now it returns tree block 29376512, which extent tree
+            | shows its empty slot, but it's already hold by csum tree
+            |- btrfs_init_new_buffer()
+               |- btrfs_tree_lock()
+                  | Triggers WARN_ON(eb->lock_owner == current->pid)
+                  |- wait_event()
+                     Wait lock owner to release the lock, but it's
+                     locked by ourself, so it will deadlock
+
+[FIX]
+This patch will do the lock_owner and current->pid check at
+btrfs_init_new_buffer().
+So above deadlock can be avoided.
+
+Since such problem can only happen in crafted image, we will still
+trigger kernel warning for later aborted transaction, but with a little
+more meaningful warning message.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=200405
+Reported-by: Xu Wen <wen.xu@gatech.edu>
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Qu Wenruo <wqu@suse.com>
 Reviewed-by: David Sterba <dsterba@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/tree-log.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ fs/btrfs/extent-tree.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -3078,9 +3078,12 @@ static void free_log_tree(struct btrfs_t
- 	};
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -8398,6 +8398,19 @@ btrfs_init_new_buffer(struct btrfs_trans
+ 	if (IS_ERR(buf))
+ 		return buf;
  
- 	ret = walk_log_tree(trans, log, &wc);
--	/* I don't think this can happen but just in case */
--	if (ret)
--		btrfs_abort_transaction(trans, ret);
-+	if (ret) {
-+		if (trans)
-+			btrfs_abort_transaction(trans, ret);
-+		else
-+			btrfs_handle_fs_error(log->fs_info, ret, NULL);
++	/*
++	 * Extra safety check in case the extent tree is corrupted and extent
++	 * allocator chooses to use a tree block which is already used and
++	 * locked.
++	 */
++	if (buf->lock_owner == current->pid) {
++		btrfs_err_rl(fs_info,
++"tree block %llu owner %llu already locked by pid=%d, extent tree corruption detected",
++			buf->start, btrfs_header_owner(buf), current->pid);
++		free_extent_buffer(buf);
++		return ERR_PTR(-EUCLEAN);
 +	}
- 
- 	while (1) {
- 		ret = find_first_extent_bit(&log->dirty_log_pages,
++
+ 	btrfs_set_header_generation(buf, trans->transid);
+ 	btrfs_set_buffer_lockdep_class(root->root_key.objectid, buf, level);
+ 	btrfs_tree_lock(buf);
 
 
