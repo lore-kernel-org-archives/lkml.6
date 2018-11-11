@@ -6,46 +6,45 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DB18C0044C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:29:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A933FC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:29:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6571820818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:29:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6571820818
+	by mail.kernel.org (Postfix) with ESMTP id 6BCE820818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:29:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BCE820818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731565AbeKLGTE (ORCPT
+        id S1731478AbeKLGTD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:19:04 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50522 "EHLO
+        Mon, 12 Nov 2018 01:19:03 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50456 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730449AbeKLFsW (ORCPT
+        by vger.kernel.org with ESMTP id S1730418AbeKLFsW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 00:48:22 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsh-0000lM-5p; Sun, 11 Nov 2018 19:58:51 +0000
+        id 1gLvsg-0000oG-Pe; Sun, 11 Nov 2018 19:58:51 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsa-0001s4-Ai; Sun, 11 Nov 2018 19:58:44 +0000
+        id 1gLvsa-0001sE-CD; Sun, 11 Nov 2018 19:58:44 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Rasmus Villemoes" <linux@rasmusvillemoes.dk>,
-        "John W. Linville" <linville@tuxdriver.com>,
-        "Arend van Spriel" <arend@broadcom.com>
+CC:     akpm@linux-foundation.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, "Jiri Slaby" <jslaby@suse.cz>,
+        "Kalle Valo" <kvalo@codeaurora.org>,
+        "Christian Lamparter" <chunkeey@googlemail.com>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.84094825@decadent.org.uk>
+Message-ID: <lsq.1541965745.746755451@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 343/366] net/wireless/brcm80211/brcmfmac: Make return
- type and name reflect actual semantics
+Subject: [PATCH 3.16 345/366] p54: memset(0) whole array
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,70 +58,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+From: Jiri Slaby <jslaby@suse.cz>
 
-commit e843bb199ba58ce5d1364d4c82fcf6975f08eec2 upstream.
+commit 6f17581788206444cbbcdbc107498f85e9765e3d upstream.
 
-Applying ++ to a bool is equivalent to setting it true, regardless of
-its initial value (bools are not uint1_t). Hence the function
-wl_get_vif_state_all can only ever return true/false. The only in-tree
-caller uses its return value as a boolean. So update its return type,
-and since the list traversal and bit testing have no side effects,
-just return true immediately. Its return value tells if any vif is in
-the specified state, so also rename it to brcmf_get_vif_state_any.
+gcc 7 complains:
+drivers/net/wireless/intersil/p54/fwio.c: In function 'p54_scan':
+drivers/net/wireless/intersil/p54/fwio.c:491:4: warning: 'memset' used with length equal to number of elements without multiplication by element size [-Wmemset-elt-size]
 
-Reviewed-by: Arend van Spriel<arend@broadcom.com>
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Signed-off-by: John W. Linville <linville@tuxdriver.com>
+Fix that by passing the correct size to memset.
+
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+Cc: Christian Lamparter <chunkeey@googlemail.com>
+Cc: Kalle Valo <kvalo@codeaurora.org>
+Cc: linux-wireless@vger.kernel.org
+Cc: netdev@vger.kernel.org
+Acked-by: Christian Lamparter <chunkeey@googlemail.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+[bwh: Backported to 3.16: adjust filename]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/net/wireless/brcm80211/brcmfmac/p2p.c         | 2 +-
- drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c | 7 +++----
- drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.h | 2 +-
- 3 files changed, 5 insertions(+), 6 deletions(-)
+ drivers/net/wireless/p54/fwio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/wireless/brcm80211/brcmfmac/p2p.c
-+++ b/drivers/net/wireless/brcm80211/brcmfmac/p2p.c
-@@ -706,7 +706,7 @@ static s32 brcmf_p2p_escan(struct brcmf_
- 		active = P2PAPI_SCAN_SOCIAL_DWELL_TIME_MS;
- 	else if (num_chans == AF_PEER_SEARCH_CNT)
- 		active = P2PAPI_SCAN_AF_SEARCH_DWELL_TIME_MS;
--	else if (wl_get_vif_state_all(p2p->cfg, BRCMF_VIF_STATUS_CONNECTED))
-+	else if (brcmf_get_vif_state_any(p2p->cfg, BRCMF_VIF_STATUS_CONNECTED))
- 		active = -1;
- 	else
- 		active = P2PAPI_SCAN_DWELL_TIME_MS;
---- a/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c
-+++ b/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.c
-@@ -5647,16 +5647,15 @@ enum nl80211_iftype brcmf_cfg80211_get_i
- 	return wdev->iftype;
- }
+--- a/drivers/net/wireless/p54/fwio.c
++++ b/drivers/net/wireless/p54/fwio.c
+@@ -486,7 +486,7 @@ int p54_scan(struct p54_common *priv, u1
  
--u32 wl_get_vif_state_all(struct brcmf_cfg80211_info *cfg, unsigned long state)
-+bool brcmf_get_vif_state_any(struct brcmf_cfg80211_info *cfg, unsigned long state)
- {
- 	struct brcmf_cfg80211_vif *vif;
--	bool result = 0;
- 
- 	list_for_each_entry(vif, &cfg->vif_list, list) {
- 		if (test_bit(state, &vif->sme_state))
--			result++;
-+			return true;
- 	}
--	return result;
-+	return false;
- }
- 
- static inline bool vif_event_equals(struct brcmf_cfg80211_vif_event *event,
---- a/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.h
-+++ b/drivers/net/wireless/brcm80211/brcmfmac/wl_cfg80211.h
-@@ -477,7 +477,7 @@ const struct brcmf_tlv *
- brcmf_parse_tlvs(const void *buf, int buflen, uint key);
- u16 channel_to_chanspec(struct brcmu_d11inf *d11inf,
- 			struct ieee80211_channel *ch);
--u32 wl_get_vif_state_all(struct brcmf_cfg80211_info *cfg, unsigned long state);
-+bool brcmf_get_vif_state_any(struct brcmf_cfg80211_info *cfg, unsigned long state);
- void brcmf_cfg80211_arm_vif_event(struct brcmf_cfg80211_info *cfg,
- 				  struct brcmf_cfg80211_vif *vif);
- bool brcmf_cfg80211_vif_event_armed(struct brcmf_cfg80211_info *cfg);
+ 			entry += sizeof(__le16);
+ 			chan->pa_points_per_curve = 8;
+-			memset(chan->curve_data, 0, sizeof(*chan->curve_data));
++			memset(chan->curve_data, 0, sizeof(chan->curve_data));
+ 			memcpy(chan->curve_data, entry,
+ 			       sizeof(struct p54_pa_curve_data_sample) *
+ 			       min((u8)8, curve_data->points_per_channel));
 
