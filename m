@@ -2,140 +2,172 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_SBL,URIBL_SBL_A,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEB78C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 17:49:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DB3AC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 18:08:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97B4820871
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 17:49:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97B4820871
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id E7F142148E
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 18:08:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7F142148E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=eircom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729332AbeKLDiG (ORCPT
+        id S1729336AbeKLD5y convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 22:38:06 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:48384 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729222AbeKLDiF (ORCPT
+        Sun, 11 Nov 2018 22:57:54 -0500
+Received: from vie01a-dmta-pe08-1.mx.upcmail.net ([84.116.36.20]:19461 "EHLO
+        vie01a-dmta-pe08-1.mx.upcmail.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729274AbeKLD5y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 22:38:05 -0500
-Received: from ben by shadbolt.decadent.org.uk with local (Exim 4.89)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1gLtqw-0002SZ-8E; Sun, 11 Nov 2018 17:48:54 +0000
-Date:   Sun, 11 Nov 2018 17:48:54 +0000
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org
-Message-ID: <20181111174853.l2ixlz7rmh7lsfye@decadent.org.uk>
-References: <lsq.1528380320.647747352@decadent.org.uk>
- <20180608141426.GA5242@roeck-us.net>
- <945ce3bb1ecd9c70249e79d2cb5572f9475c9786.camel@decadent.org.uk>
- <bf66aa7e856d4c2c83dc78dca95eee76437a1513.camel@decadent.org.uk>
- <20181111162343.GA15513@roeck-us.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="gz6xazovl3mfmkua"
-Content-Disposition: inline
-In-Reply-To: <20181111162343.GA15513@roeck-us.net>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-Subject: Re: [PATCH 3.16 000/410] 3.16.57-rc1 review
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on shadbolt.decadent.org.uk)
+        Sun, 11 Nov 2018 22:57:54 -0500
+Received: from [172.31.216.235] (helo=vie01a-pemc-psmtp-pe12.mail.upcmail.net)
+        by vie01a-dmta-pe08.mx.upcmail.net with esmtp (Exim 4.88)
+        (envelope-from <mikebrady@eircom.net>)
+        id 1gLuA3-000560-0q
+        for linux-kernel@vger.kernel.org; Sun, 11 Nov 2018 19:08:39 +0100
+Received: from helix.aillwee.com ([37.228.204.209])
+        by vie01a-pemc-psmtp-pe12.mail.upcmail.net with ESMTP
+        id Lu9ugW3DGkosQLuA0gnFqW; Sun, 11 Nov 2018 19:08:38 +0100
+X-Env-Mailfrom: mikebrady@eircom.net
+X-Env-Rcptto: linux-kernel@vger.kernel.org
+X-SourceIP: 37.228.204.209
+X-CNFS-Analysis: v=2.3 cv=NNQEBHyg c=1 sm=1 tr=0
+ a=/+iDkf0alGTUGXENEoGzTg==:117 a=/+iDkf0alGTUGXENEoGzTg==:17
+ a=IkcTkHD0fZMA:10 a=JHtHm7312UAA:10 a=qbuszIz_fLx8hrSXDfwA:9 a=QEXdDO2ut3YA:10
+Received: from [192.168.50.181] (apu.aillwee.com [192.168.50.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by helix.aillwee.com (Postfix) with ESMTPSA id E19C34E607;
+        Sun, 11 Nov 2018 18:08:29 +0000 (GMT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.1 \(3445.101.1\))
+Subject: Re: [alsa-devel] [PATCH v2] staging: bcm2835-audio: interpolate audio
+ delay
+From:   Mike Brady <mikebrady@eircom.net>
+In-Reply-To: <s5hsh0dx59n.wl-tiwai@suse.de>
+Date:   Sun, 11 Nov 2018 18:08:29 +0000
+Cc:     Stefan Wahren <stefan.wahren@i2se.com>, devel@driverdev.osuosl.org,
+        alsa-devel@alsa-project.org, f.fainelli@gmail.com,
+        julia.lawall@lip6.fr,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, Eric Anholt <eric@anholt.net>,
+        linux-rpi-kernel@lists.infradead.org,
+        nishka.dasgupta_ug18@ashoka.edu.in,
+        Kirill Marinushkin <k.marinushkin@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <B1CDD261-AB22-43CE-AF46-DFB5460B5D50@eircom.net>
+References: <20181022191708.GA4659@ubuntu>
+ <a703f8a2-e85a-bc5b-750a-cc43ef252ba5@gmail.com>
+ <EA85FEC9-B1C7-4548-88F5-F0E7BC12158E@eircom.net>
+ <046aea96-e0d3-60f4-c61a-c26bb1b5c193@gmail.com>
+ <B9A84822-3780-4E01-96AD-FD3B42C44B45@eircom.net>
+ <9884c4f5-2343-e3a4-8d8b-dd2db404ef27@gmail.com>
+ <s5hftwuo4t0.wl-tiwai@suse.de>
+ <126FA055-050B-4AAC-9392-CA8CCA821768@eircom.net>
+ <C35AD288-063F-4197-A758-450CBB3B1184@eircom.net>
+ <s5hsh0f1p30.wl-tiwai@suse.de>
+ <6AF69E32-029E-478F-9BFA-6262316364A9@eircom.net>
+ <s5hsh0dx59n.wl-tiwai@suse.de>
+To:     Takashi Iwai <tiwai@suse.de>
+X-Mailer: Apple Mail (2.3445.101.1)
+X-CMAE-Envelope: MS4wfD0XS3u5tIjktnqG3YDorYrOEvLygECwo38eIkrthi+mBFVqH6ZFEwXkMLL1ZRghBJsBiAnOrTxyYjv0HsWDbXtFav9Vzg3iJn33qjds+HyutOYp8I0y
+ 5SuxjrGdgSsIRQeCxAOk46g8hJOemjrzkXx98g6G3UxDdfFUJ0H+oQg6jk7isIJ7VKcj3ngsxsg6SAPcI6nGVi/vv+tLwNzpCUs/7glBInMSslV9jgABhy45
+ TyZv4o3wMMSb7NwDll2E0rf4EY6u2pyaWkF4+CE2QpyUhPTvJhoOeNVRkTRxFfZT5eXyz0JUh1IHIUsMpS0eybrdyQSlIjpzg8kiAD3IAQIqAWqW21mu3+b6
+ HEPyLMAiRSLMOcxswCL3mr6XfJ5tlutCIUnbZl2YvHT4AmBwMv4ZLXW97r/eJ+p0ne5f6MfvfhYBajJXCgn9QrdNvPg22cm+WiOeF3oQvPciwzJr+49CUGu+
+ Yh8C+2/aIO/weZo9b2J9MJ51xZQfZu/i2EOmYaaEJbjmDsXm+DfdgXvRDiM8oZRf5YPQU3CfsbMUZERxlGXgzjPcXt7l8FLTQnmfBZhsEi4m9AFLHW6c4f72
+ SzJXVK/LXJcTYtjQCcQ/9HCwUqbcjP1r+NtLe4kVtOd7iLh/K3MglrVP6Yu7l5x1o20=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---gz6xazovl3mfmkua
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Sun, Nov 11, 2018 at 08:23:43AM -0800, Guenter Roeck wrote:
-> On Sun, Nov 11, 2018 at 12:09:03AM +0000, Ben Hutchings wrote:
-> > On Sat, 2018-06-16 at 22:18 +0100, Ben Hutchings wrote:
-> > > On Fri, 2018-06-08 at 07:14 -0700, Guenter Roeck wrote:
-> > > > On Thu, Jun 07, 2018 at 03:05:20PM +0100, Ben Hutchings wrote:
-> > > > > This is the start of the stable review cycle for the 3.16.57 rele=
-ase.
-> > > > > There are 410 patches in this series, which will be posted as res=
-ponses
-> > > > > to this one.  If anyone has any issues with these being applied, =
-please
-> > > > > let me know.
-> > > > >=20
-> > > > > Responses should be made by Thu Jun 14 18:00:00 UTC 2018.
-> > > > > Anything received after that time might be too late.
-> > > > >=20
-> > > >=20
-> > > > Build results:
-> > > > 	total: 138 pass: 136 fail: 2
-> > > > Failed builds:=20
-> > > > 	i386:tools/perf=20
-> > > > 	x86_64:tools/perf=20
-> > > > Qemu test results:
-> > > > 	total: 116 pass: 116 fail: 0
-> > > >=20
-> > > > tools/perf builds are new, so it is probably not entirely surprising
-> > > > that they fail.
-> > > >=20
-> > > > Deetails are available at http://kerneltests.org/builders/.
-> > >=20
-> > > Thanks for testing.  I see you've now made the tools/perf builds work
-> > > for 3.16, so thanks for that as well.
-> >=20
-> > I looked again and for the current patch queue I see:
-> >=20
-> >     Building i386:tools/perf ... failed (script) - skipping
-> >=20
-> >     Building x86_64:tools/perf ... failed (script) - skipping
-> >=20
-> > I can still build it here in a Debian jessie environment though.
-> >=20
-> I re-enabled it, but now it fails. Let me know if you want to try to fix
-> it. Probably something with out-of-tree build - I didn't try to find
-> the reason.
+> On 6 Nov 2018, at 21:31, Takashi Iwai <tiwai@suse.de> wrote:
+> 
+> On Tue, 06 Nov 2018 22:05:11 +0100,
+> Mike Brady wrote:
+>> 
+>> 
+>>> On 5 Nov 2018, at 16:11, Takashi Iwai <tiwai@suse.de> wrote:
+>>> 
+>>> On Mon, 05 Nov 2018 16:57:07 +0100,
+>>> Mike Brady wrote:
+>>>> 
+>>>>> One another thing I'd like to point out is that the value given in the
+>>>>> patch is nothing but an estimated position, optimistically calculated
+>>>>> via the system timer.  Mike and I had already discussion in another
+>>>>> thread, and another possible option would be to provide the proper
+>>>>> timestamp-vs-hwptr pair, instead of updating the timestamp always at
+>>>>> the status read.
+>>>> 
+>>>> Agreed — that would give the caller the information needed to do the
+>>>> interpolation for themselves if desired.
+>>> 
+>>> And now I wonder whether the problem is still present with the latest
+>>> code.  There was a (kind of) regression in this regard when we
+>>> introduced the fine-grained hardware timestamping, but it should have
+>>> been addressed by the commit 20e3f985bb875fea4f86b04eba4b6cc29bfd6b71
+>>>   ALSA: pcm: update tstamp only if audio_tstamp changed
+>>> 
+>>> Could you double-check whether the tstamp field gets still updated
+>>> even if no hwptr (and delay) is changed?
+>> 
+>> Yes, this could be a bit problematic. The function update_audio_tstamp in pcm_lib.c could include the interpolated delay in the calculation of audio_tstamp, and hence
+>> could trigger the update of tstamp.
+> 
+> Well, my question is about the current driver as-is.
+> It has no runtime->delay, so far, hence audio_tstamp is calculated
+> only from the hwptr position.  As the corresponding tstamp gets
+> updated only when the audio_tstamp (i.e. hwptr) is updated, the driver
+> should provide the consistent pair of audio_tstamp (i.e. hwptr) vs
+> tstamp.
 
-Thanks.  I can reproduce the failure when building in Debian unstable,
-and am working through fixing the problems.
+Fair enough — I had been thinking about the situation with the patch in place.
 
-Ben.
+>> Another issue, as I see it, is that the the audio_tstamp value would depend on whether, and when, a snd_pcm_delay() call (which recalculates the interpolation and puts it into the delay field) was made immediately prior to it. By zeroing the delay when a GPU interrupt occurs, you could be certain that the interpolated delay would be less than or equal to the true delay, but this doesn’t seem very satisfactory — you have neither the timestamp of the last update nor the correctly interpolated timestamp. 
+> 
+> No, audio_stamp field is updated at snd_pcm_period_elapsed() call as
+> well as tstamp field.
 
-> Please ignore the arm qemu failures - I restructured the tests, and need
-> to make some fixes.
->=20
-> Guenter
+That's great.
 
---=20
-Ben Hutchings
-Humans are not rational beings; they are rationalising beings.
+> Basically the driver provides three things: hwptr, tstamp and
+> audio_tstamp.  For the default configuration (like bcm audio does),
+> audio_tstamp is calculated from hwptr, so it can be seen as the hwptr
+> represented in timespec.  OTOH, tstamp is the actual system time that
+> is updated only when audio_tstamp changes -- which means tstamp gets
+> updated *only* at snd_pcm_period_elapsed() call on bcm audio.
+> 
+> And, my point is that you should be able to interpolate the actual
+> position in user-space side based on these information; it doesn't
+> have to be done in the kernel at all.
 
---gz6xazovl3mfmkua
-Content-Type: application/pgp-signature; name="signature.asc"
+That is true, of course. The problem is that the snd_pcm_delay() call is so inaccurate though.
 
------BEGIN PGP SIGNATURE-----
+>> Sadly, therefore, I’m now of the view that this approach to interpolating the delay between GPU interrupts is not really viable. Would that be your view?
 
-iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAlvoa4UACgkQ57/I7JWG
-EQkigBAAoGGQ1uR+4QS9Ac82AztY8kyDMTjgQdxJpjhZUJVUcKsR7/rIKG/e28sL
-7FuCZvpsiZSMYvsD8y3dr+vocJCDkMUVgbRWsLO7zDgm2AG8LPsl6YZJstD4B0/U
-pG+qtMjjftmf3kj0NZA5T8sGiq1Sbo5861Upn6nhzi14cmlUvAYYnUYvVe+ZN+kx
-zLm9H8W/6Ni7VwibwGsMATUMLn7SkK7tCHAyB/n0g6bvlKXH7+vJ6dJSY955WnVG
-rlE8OYFxOUrIU7XXB3N0naW3Ahinm2oQx6JYw0JhKHJplOkNcP/BPII+iHWfkW5u
-uQjFIgQGy4pQ0fQxKJs7J5WzZVLyqiB/YHACySk8Iv767LzgCSXrNmnRQk9GpBjy
-yIaboYB4HWK9yPChPnKQuM37f7spBJL/W80UTSaqloxl+f5ymqZWxjFEQy8HtodC
-JE9CDhfFH6OfkA6+dezbt1/Uoc9QnK0s3VVsG64WFBqmZvaYdiOmpvrxAF+O8NJS
-TS9TERlVinrR380anhdLNgF/S4QMJbOXabtKAHUJ6OXrW8ALSSRVPgakDN4SBQvi
-h/+rNfy93DdePoc2GP4woGaiYWyjoavOJqndRHqQ9sAfb5FDJ0dK7Wqw3Q3QHPZg
-+yWR+BCe7N4kRnjcQGAW2Jr9TonI9xYs6FV1w3b0UJtJo6EkOCM=
-=SccA
------END PGP SIGNATURE-----
+> Actually there were some bugs in the past that the tstamp was updated
+> at each snd_pcm_status(), but it should have been fixed in the recent
+> kernels.  That's why I asked to re-check the current status.
 
---gz6xazovl3mfmkua--
+Yes, as far as I can see, that's fixed. 
+
+In further testing, however, I noticed that the audio_frames calculation in update_audio_tstamp() in pcm_lib.c didn't include the delay,
+so now it does if the delay field is negative, which it is "naturally" in this case. With that change, the delay reported by snd_pcm_delay() and
+calculated as you referred to above are consistent.
+
+So, overall, I am happier that this approach is at least viable. But two issues remain, in my view:
+First, is it "a good idea"?
+Second, the delay field is now being used as a delay if its positive and an interpolation if it's negative. It works, but would it be better to have an extra "interpolation" field?
+
+I'll post the updated patch shortly.
+
+Thanks,
+Mike
+
