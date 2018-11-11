@@ -6,45 +6,43 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00F72C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:01:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23F7FC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:01:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BED5C20871
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:01:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BED5C20871
+	by mail.kernel.org (Postfix) with ESMTP id E88F3214E0
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:01:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E88F3214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730763AbeKLFsc (ORCPT
+        id S1729693AbeKLFvQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 00:48:32 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51022 "EHLO
+        Mon, 12 Nov 2018 00:51:16 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51198 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730688AbeKLFs3 (ORCPT
+        by vger.kernel.org with ESMTP id S1730731AbeKLFsc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:48:29 -0500
+        Mon, 12 Nov 2018 00:48:32 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsp-0000lG-0O; Sun, 11 Nov 2018 19:58:59 +0000
+        id 1gLvss-0000oO-6Q; Sun, 11 Nov 2018 19:59:02 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsX-0001kk-DW; Sun, 11 Nov 2018 19:58:41 +0000
+        id 1gLvsV-0001hS-Pi; Sun, 11 Nov 2018 19:58:39 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Jamie Heilman" <jamie@audible.transient.net>,
-        "Herbert Xu" <herbert@gondor.apana.org.au>
+CC:     akpm@linux-foundation.org, "Johan Hovold" <johan@kernel.org>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.151489609@decadent.org.uk>
+Message-ID: <lsq.1541965745.391268388@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 272/366] crypto: padlock-aes - Fix Nano workaround
- data corruption
+Subject: [PATCH 3.16 236/366] USB: serial: mos7840: fix status-register
+ error handling
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,68 +56,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Herbert Xu <herbert@gondor.apana.org.au>
+From: Johan Hovold <johan@kernel.org>
 
-commit 46d8c4b28652d35dc6cfb5adf7f54e102fc04384 upstream.
+commit 794744abfffef8b1f3c0c8a4896177d6d13d653d upstream.
 
-This was detected by the self-test thanks to Ard's chunking patch.
+Add missing transfer-length sanity check to the status-register
+completion handler to avoid leaking bits of uninitialised slab data to
+user space.
 
-I finally got around to testing this out on my ancient Via box.  It
-turns out that the workaround got the assembly wrong and we end up
-doing count + initial cycles of the loop instead of just count.
-
-This obviously causes corruption, either by overwriting the source
-that is yet to be processed, or writing over the end of the buffer.
-
-On CPUs that don't require the workaround only ECB is affected.
-On Nano CPUs both ECB and CBC are affected.
-
-This patch fixes it by doing the subtraction prior to the assembly.
-
-Fixes: a76c1c23d0c3 ("crypto: padlock-aes - work around Nano CPU...")
-Reported-by: Jamie Heilman <jamie@audible.transient.net>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: 3f5429746d91 ("USB: Moschip 7840 USB-Serial Driver")
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/crypto/padlock-aes.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/usb/serial/mos7840.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/crypto/padlock-aes.c
-+++ b/drivers/crypto/padlock-aes.c
-@@ -266,6 +266,8 @@ static inline void padlock_xcrypt_ecb(co
- 		return;
+--- a/drivers/usb/serial/mos7840.c
++++ b/drivers/usb/serial/mos7840.c
+@@ -471,6 +471,9 @@ static void mos7840_control_callback(str
  	}
  
-+	count -= initial;
+ 	dev_dbg(dev, "%s urb buffer size is %d\n", __func__, urb->actual_length);
++	if (urb->actual_length < 1)
++		goto out;
 +
- 	if (initial)
- 		asm volatile (".byte 0xf3,0x0f,0xa7,0xc8"	/* rep xcryptecb */
- 			      : "+S"(input), "+D"(output)
-@@ -273,7 +275,7 @@ static inline void padlock_xcrypt_ecb(co
- 
- 	asm volatile (".byte 0xf3,0x0f,0xa7,0xc8"	/* rep xcryptecb */
- 		      : "+S"(input), "+D"(output)
--		      : "d"(control_word), "b"(key), "c"(count - initial));
-+		      : "d"(control_word), "b"(key), "c"(count));
- }
- 
- static inline u8 *padlock_xcrypt_cbc(const u8 *input, u8 *output, void *key,
-@@ -284,6 +286,8 @@ static inline u8 *padlock_xcrypt_cbc(con
- 	if (count < cbc_fetch_blocks)
- 		return cbc_crypt(input, output, key, iv, control_word, count);
- 
-+	count -= initial;
-+
- 	if (initial)
- 		asm volatile (".byte 0xf3,0x0f,0xa7,0xd0"	/* rep xcryptcbc */
- 			      : "+S" (input), "+D" (output), "+a" (iv)
-@@ -291,7 +295,7 @@ static inline u8 *padlock_xcrypt_cbc(con
- 
- 	asm volatile (".byte 0xf3,0x0f,0xa7,0xd0"	/* rep xcryptcbc */
- 		      : "+S" (input), "+D" (output), "+a" (iv)
--		      : "d" (control_word), "b" (key), "c" (count-initial));
-+		      : "d" (control_word), "b" (key), "c" (count));
- 	return iv;
- }
- 
+ 	dev_dbg(dev, "%s mos7840_port->MsrLsr is %d port %d\n", __func__,
+ 		mos7840_port->MsrLsr, mos7840_port->port_num);
+ 	data = urb->transfer_buffer;
 
