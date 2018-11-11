@@ -7,44 +7,51 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65F11C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:47:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 706A9C43610
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:47:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C4E521508
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:47:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D5DE214E0
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:47:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jZPoiwNc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C4E521508
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tn+hs9SR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D5DE214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390886AbeKLIXZ (ORCPT
+        id S2390989AbeKLIh5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:23:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56930 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:37:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56954 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404394AbeKLIXY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:23:24 -0500
+        id S2390182AbeKLIXZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:23:25 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E99B208A3;
-        Sun, 11 Nov 2018 22:33:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 27DD221707;
+        Sun, 11 Nov 2018 22:33:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975606;
-        bh=cF6DcKHj98Oq/JwGoPmHA5zg6YBzP6TD/rDcGtM4cSg=;
+        s=default; t=1541975607;
+        bh=xpUnxL4Le4nkFS74P3/m1jh7g4E7gW31uTcw5+eUA1I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jZPoiwNc3ayzLiH4xQgZlhmAQviatDtbD5BuRgmdWzPQwgcEdeE1+Xz4LUk8RJrqu
-         jBGSD62yvRUFj4snnFGuF8ikEeae/MkFYh/6sBdSic3kpXh6htJ8UZ/rvAfMsctw5z
-         SuHOuOl6C/sRLRFgVEu34ygWKczN1Wf9N65l9JSo=
+        b=tn+hs9SRo3qj+YsVk5uPO5J70L8VX+Bv8/hdry+UKdufY1cfi3W395A9jEp4nw+Ha
+         Q/e6x/jCYwmODLFJmblRyXuogXwzR5vGdD2jt+2lgy9DwE/jEhegcJUIY9nhRQPUk9
+         JVL6wJV0iqhYGIFCgHD0XOXCq0E7kGhaqgHsQE5A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alex Stanoev <alex@astanoev.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 012/141] ALSA: ca0106: Disable IZD on SB0570 DAC to fix audio pops
-Date:   Sun, 11 Nov 2018 14:24:31 -0800
-Message-Id: <20181111221629.453488314@linuxfoundation.org>
+        stable@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "WoodhouseDavid" <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "SchauflerCasey" <casey.schaufler@intel.com>
+Subject: [PATCH 4.9 013/141] x86/speculation: Enable cross-hyperthread spectre v2 STIBP mitigation
+Date:   Sun, 11 Nov 2018 14:24:32 -0800
+Message-Id: <20181111221629.598479852@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
 References: <20181111221627.853046496@linuxfoundation.org>
@@ -62,51 +69,180 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alex Stanoev <alex@astanoev.com>
+From: Jiri Kosina <jkosina@suse.cz>
 
-commit ac237c28d5ac1b241d58b1b7b4b9fa10efb22fb5 upstream.
+commit 53c613fe6349994f023245519265999eed75957f upstream.
 
-The Creative Audigy SE (SB0570) card currently exhibits an audible pop
-whenever playback is stopped or resumed, or during silent periods of an
-audio stream. Initialise the IZD bit to the 0 to eliminate these pops.
+STIBP is a feature provided by certain Intel ucodes / CPUs. This feature
+(once enabled) prevents cross-hyperthread control of decisions made by
+indirect branch predictors.
 
-The Infinite Zero Detection (IZD) feature on the DAC causes the output
-to be shunted to Vcap after 2048 samples of silence. This discharges the
-AC coupling capacitor through the output and causes the aforementioned
-pop/click noise.
+Enable this feature if
 
-The behaviour of the IZD bit is described on page 15 of the WM8768GEDS
-datasheet: "With IZD=1, applying MUTE for 1024 consecutive input samples
-will cause all outputs to be connected directly to VCAP. This also
-happens if 2048 consecutive zero input samples are applied to all 6
-channels, and IZD=0. It will be removed as soon as any channel receives
-a non-zero input". I believe the second sentence might be referring to
-IZD=1 instead of IZD=0 given the observed behaviour of the card.
+- the CPU is vulnerable to spectre v2
+- the CPU supports SMT and has SMT siblings online
+- spectre_v2 mitigation autoselection is enabled (default)
 
-This change should make the DAC initialisation consistent with
-Creative's Windows driver, as this popping persists when initialising
-the card in Linux and soft rebooting into Windows, but is not present on
-a cold boot to Windows.
+After some previous discussion, this leaves STIBP on all the time, as wrmsr
+on crossing kernel boundary is a no-no. This could perhaps later be a bit
+more optimized (like disabling it in NOHZ, experiment with disabling it in
+idle, etc) if needed.
 
-Signed-off-by: Alex Stanoev <alex@astanoev.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Note that the synchronization of the mask manipulation via newly added
+spec_ctrl_mutex is currently not strictly needed, as the only updater is
+already being serialized by cpu_add_remove_lock, but let's make this a
+little bit more future-proof.
+
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc:  "WoodhouseDavid" <dwmw@amazon.co.uk>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc:  "SchauflerCasey" <casey.schaufler@intel.com>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/nycvar.YFH.7.76.1809251438240.15880@cbobk.fhfr.pm
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/ca0106/ca0106.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/cpu/bugs.c |   57 ++++++++++++++++++++++++++++++++++++++++-----
+ kernel/cpu.c               |   11 +++++++-
+ 2 files changed, 61 insertions(+), 7 deletions(-)
 
---- a/sound/pci/ca0106/ca0106.h
-+++ b/sound/pci/ca0106/ca0106.h
-@@ -582,7 +582,7 @@
- #define SPI_PL_BIT_R_R		(2<<7)	/* right channel = right */
- #define SPI_PL_BIT_R_C		(3<<7)	/* right channel = (L+R)/2 */
- #define SPI_IZD_REG		2
--#define SPI_IZD_BIT		(1<<4)	/* infinite zero detect */
-+#define SPI_IZD_BIT		(0<<4)	/* infinite zero detect */
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -33,12 +33,10 @@ static void __init spectre_v2_select_mit
+ static void __init ssb_select_mitigation(void);
+ static void __init l1tf_select_mitigation(void);
  
- #define SPI_FMT_REG		3
- #define SPI_FMT_BIT_RJ		(0<<0)	/* right justified mode */
+-/*
+- * Our boot-time value of the SPEC_CTRL MSR. We read it once so that any
+- * writes to SPEC_CTRL contain whatever reserved bits have been set.
+- */
+-u64 __ro_after_init x86_spec_ctrl_base;
++/* The base value of the SPEC_CTRL MSR that always has to be preserved. */
++u64 x86_spec_ctrl_base;
+ EXPORT_SYMBOL_GPL(x86_spec_ctrl_base);
++static DEFINE_MUTEX(spec_ctrl_mutex);
+ 
+ /*
+  * The vendor and possibly platform specific bits which can be modified in
+@@ -321,6 +319,46 @@ static enum spectre_v2_mitigation_cmd __
+ 	return cmd;
+ }
+ 
++static bool stibp_needed(void)
++{
++	if (spectre_v2_enabled == SPECTRE_V2_NONE)
++		return false;
++
++	if (!boot_cpu_has(X86_FEATURE_STIBP))
++		return false;
++
++	return true;
++}
++
++static void update_stibp_msr(void *info)
++{
++	wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
++}
++
++void arch_smt_update(void)
++{
++	u64 mask;
++
++	if (!stibp_needed())
++		return;
++
++	mutex_lock(&spec_ctrl_mutex);
++	mask = x86_spec_ctrl_base;
++	if (cpu_smt_control == CPU_SMT_ENABLED)
++		mask |= SPEC_CTRL_STIBP;
++	else
++		mask &= ~SPEC_CTRL_STIBP;
++
++	if (mask != x86_spec_ctrl_base) {
++		pr_info("Spectre v2 cross-process SMT mitigation: %s STIBP\n",
++				cpu_smt_control == CPU_SMT_ENABLED ?
++				"Enabling" : "Disabling");
++		x86_spec_ctrl_base = mask;
++		on_each_cpu(update_stibp_msr, NULL, 1);
++	}
++	mutex_unlock(&spec_ctrl_mutex);
++}
++
+ static void __init spectre_v2_select_mitigation(void)
+ {
+ 	enum spectre_v2_mitigation_cmd cmd = spectre_v2_parse_cmdline();
+@@ -405,6 +443,9 @@ retpoline_auto:
+ 		setup_force_cpu_cap(X86_FEATURE_USE_IBRS_FW);
+ 		pr_info("Enabling Restricted Speculation for firmware calls\n");
+ 	}
++
++	/* Enable STIBP if appropriate */
++	arch_smt_update();
+ }
+ 
+ #undef pr_fmt
+@@ -797,6 +838,8 @@ static ssize_t l1tf_show_state(char *buf
+ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
+ 			       char *buf, unsigned int bug)
+ {
++	int ret;
++
+ 	if (!boot_cpu_has_bug(bug))
+ 		return sprintf(buf, "Not affected\n");
+ 
+@@ -811,10 +854,12 @@ static ssize_t cpu_show_common(struct de
+ 		return sprintf(buf, "Mitigation: __user pointer sanitization\n");
+ 
+ 	case X86_BUG_SPECTRE_V2:
+-		return sprintf(buf, "%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
++		ret = sprintf(buf, "%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
+ 			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
+ 			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
++			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
+ 			       spectre_v2_module_string());
++		return ret;
+ 
+ 	case X86_BUG_SPEC_STORE_BYPASS:
+ 		return sprintf(buf, "%s\n", ssb_strings[ssb_mode]);
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -1970,6 +1970,12 @@ static void cpuhp_online_cpu_device(unsi
+ 	kobject_uevent(&dev->kobj, KOBJ_ONLINE);
+ }
+ 
++/*
++ * Architectures that need SMT-specific errata handling during SMT hotplug
++ * should override this.
++ */
++void __weak arch_smt_update(void) { };
++
+ static int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval)
+ {
+ 	int cpu, ret = 0;
+@@ -1996,8 +2002,10 @@ static int cpuhp_smt_disable(enum cpuhp_
+ 		 */
+ 		cpuhp_offline_cpu_device(cpu);
+ 	}
+-	if (!ret)
++	if (!ret) {
+ 		cpu_smt_control = ctrlval;
++		arch_smt_update();
++	}
+ 	cpu_maps_update_done();
+ 	return ret;
+ }
+@@ -2008,6 +2016,7 @@ static int cpuhp_smt_enable(void)
+ 
+ 	cpu_maps_update_begin();
+ 	cpu_smt_control = CPU_SMT_ENABLED;
++	arch_smt_update();
+ 	for_each_present_cpu(cpu) {
+ 		/* Skip online CPUs and CPUs on offline nodes */
+ 		if (cpu_online(cpu) || !node_online(cpu_to_node(cpu)))
 
 
