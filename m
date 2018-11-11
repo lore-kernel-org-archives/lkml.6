@@ -2,143 +2,131 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 869CCC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 11:36:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C75C7C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 11:42:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03144208A3
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 11:36:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03144208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8DDBF21479
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 11:42:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hNWVufNh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DDBF21479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727874AbeKKVYX (ORCPT
+        id S1727772AbeKKVav (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 16:24:23 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44964 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727440AbeKKVYW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 16:24:22 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wABBSods105059
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 06:36:03 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2npdv7awww-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 06:36:02 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <schwidefsky@de.ibm.com>;
-        Sun, 11 Nov 2018 11:36:00 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 11 Nov 2018 11:35:56 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wABBZt5Q65601670
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 11 Nov 2018 11:35:56 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D4E864C044;
-        Sun, 11 Nov 2018 11:35:55 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 97F334C040;
-        Sun, 11 Nov 2018 11:35:55 +0000 (GMT)
-Received: from mschwideX1 (unknown [9.145.75.196])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sun, 11 Nov 2018 11:35:55 +0000 (GMT)
-Date:   Sun, 11 Nov 2018 12:35:53 +0100
-From:   Martin Schwidefsky <schwidefsky@de.ibm.com>
-To:     Qian Cai <cai@gmx.us>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: crashkernel=512M is no longer working on this aarch64 server
-In-Reply-To: <1A7E2E89-34DB-41A0-BBA2-323073A7E298@gmx.us>
-References: <1A7E2E89-34DB-41A0-BBA2-323073A7E298@gmx.us>
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        Sun, 11 Nov 2018 16:30:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53050 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727440AbeKKVav (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Nov 2018 16:30:51 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E5C7020866;
+        Sun, 11 Nov 2018 11:42:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541936549;
+        bh=Qhi5lM0wWSdIxP9N22IY1lgCBSP3vxV8I0DYd+In9cU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=hNWVufNhNZI3dqyurHO589WIkZWRuX/oFAcVJeg0F55Y5830COOJToAvDUE7xfTeY
+         emzgBBOse0vpbNKgepu7YNx6OaGwoVpto04EVYbrA4amYIQIwzD0Fo/oD3D+b9l7UV
+         92xSE98sJ+QF/3DgueeZ3JLP8Tf17kXv6KU2O08Q=
+Date:   Sun, 11 Nov 2018 11:42:24 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Matheus Tavares <matheus.bernardino@usp.br>
+Cc:     Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-iio@vger.kernel.org,
+        devel@driverdev.osuosl.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        kernel-usp@googlegroups.com, victorcolombo@gmail.com,
+        Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 2/6] staging:iio:ad2s90: Remove spi setup that should be
+ done via dt
+Message-ID: <20181111114224.1d8cfaec@archlinux>
+In-Reply-To: <20181109220044.24843-3-matheus.bernardino@usp.br>
+References: <20181109220044.24843-1-matheus.bernardino@usp.br>
+        <20181109220044.24843-3-matheus.bernardino@usp.br>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-x-cbid: 18111111-0020-0000-0000-000002E63B2C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111111-0021-0000-0000-000021353CB0
-Message-Id: <20181111123553.3a35a15c@mschwideX1>
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-11_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=783 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811110111
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 10 Nov 2018 23:41:34 -0500
-Qian Cai <cai@gmx.us> wrote:
+On Fri,  9 Nov 2018 20:00:40 -0200
+Matheus Tavares <matheus.bernardino@usp.br> wrote:
 
-> It was broken somewhere between b00d209241ff and 3541833fd1f2.
+> The ad2s90 driver currently sets some spi settings (max_speed_hz and
+> mode) at ad2s90_probe. This should, instead, be handled via device tree.
+> This patch removes these configurations from the probe function.
 > 
-> [    0.000000] cannot allocate crashkernel (size:0x20000000)
+> Note: The way in which the mentioned spi settings need to be specified
+> on the ad2s90's node of a device tree will be documented in the future
+> patch "dt-bindings:iio:resolver: Add docs for ad2s90".
 > 
-> Where a good one looks like this,
+> Signed-off-by: Matheus Tavares <matheus.bernardino@usp.br>
+I'd actually like to get Rob and Mark's views on this one.  Previously
+I would just have applied it without thinking on the basis these can
+be easily specified from devicetree.
+
+Recent discussions with Rob have suggested that the settings in devicetree
+should perhaps be concerned with specifying constraints about the device
+that are not visible to the driver.  The driver itself should apply
+the device constraints, but there are others such as wiring that
+might reduce the maximum frequency for example...
+
+So should a driver be clamping an over specified value from DT for
+example?  Or given that is optional in DT, should it be making sure
+that a controller max frequency isn't too high for the sensor?
+
+It seems to be unusual to do this, but to my mind it would make
+sense and might be worth pushing out into more drivers.
+
+Jonathan
+> ---
+>  drivers/staging/iio/resolver/ad2s90.c | 11 -----------
+>  1 file changed, 11 deletions(-)
 > 
-> [    0.000000] crashkernel reserved: 0x0000000008600000 - 0x0000000028600000 (512 MB)
-> 
-> Some commits look more suspicious than others.
-> 
->       mm: add mm_pxd_folded checks to pgtable_bytes accounting functions
->       mm: introduce mm_[p4d|pud|pmd]_folded
->       mm: make the __PAGETABLE_PxD_FOLDED defines non-empty
-
-The intent of these three patches is to add extra checks to the
-pgtable_bytes accounting function. If applied incorrectly the expected
-result would be warnings like this:
-  BUG: non-zero pgtables_bytes on freeing mm: 16384
-
-The change Linus worried about affects the __PAGETABLE_PxD_FOLDED defines.
-These defines are used with #ifdef, #ifndef, and __is_defined() for the
-new mm_p?d_folded() macros. I can not see how this would make a difference
-for your iomem setup.
-
-> # diff -u ../iomem.good.txt ../iomem.bad.txt 
-> --- ../iomem.good.txt	2018-11-10 22:28:20.092614398 -0500
-> +++ ../iomem.bad.txt	2018-11-10 20:39:54.930294479 -0500
-> @@ -1,9 +1,8 @@
->  00000000-3965ffff : System RAM
->    00080000-018cffff : Kernel code
-> -  018d0000-020affff : reserved
-> -  020b0000-045affff : Kernel data
-> -  08600000-285fffff : Crash kernel
-> -  28730000-2d5affff : reserved
-> +  018d0000-0762ffff : reserved
-> +  07630000-09b2ffff : Kernel data
-> +  231b0000-2802ffff : reserved
->    30ec0000-30ecffff : reserved
->    35660000-3965ffff : reserved
->  39660000-396fffff : reserved
-> @@ -127,7 +126,7 @@
->    7c5200000-7c520ffff : 0004:48:00.0
->  1040000000-17fbffffff : System RAM
->    13fbfd0000-13fdfdffff : reserved
-> -  16fba80000-17fbfdffff : reserved
-> +  16fafd0000-17fbfdffff : reserved
->    17fbfe0000-17fbffffff : reserved
->  1800000000-1ffbffffff : System RAM
->    1bfbff0000-1bfdfeffff : reserved
-
-The easiest way to verify if the three commits have something to do with your
-problem is to revert them and run your test. Can you do that please ?
-
--- 
-blue skies,
-   Martin.
-
-"Reality continues to ruin my life." - Calvin.
+> diff --git a/drivers/staging/iio/resolver/ad2s90.c b/drivers/staging/iio/resolver/ad2s90.c
+> index ff32ca76ca00..95c118c48400 100644
+> --- a/drivers/staging/iio/resolver/ad2s90.c
+> +++ b/drivers/staging/iio/resolver/ad2s90.c
+> @@ -77,7 +77,6 @@ static int ad2s90_probe(struct spi_device *spi)
+>  {
+>  	struct iio_dev *indio_dev;
+>  	struct ad2s90_state *st;
+> -	int ret;
+>  
+>  	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
+>  	if (!indio_dev)
+> @@ -94,16 +93,6 @@ static int ad2s90_probe(struct spi_device *spi)
+>  	indio_dev->num_channels = 1;
+>  	indio_dev->name = spi_get_device_id(spi)->name;
+>  
+> -	/* need 600ns between CS and the first falling edge of SCLK */
+> -	spi->max_speed_hz = 830000;
+> -	spi->mode = SPI_MODE_3;
+> -	ret = spi_setup(spi);
+> -
+> -	if (ret < 0) {
+> -		dev_err(&spi->dev, "spi_setup failed!\n");
+> -		return ret;
+> -	}
+> -
+>  	return devm_iio_device_register(indio_dev->dev.parent, indio_dev);
+>  }
+>  
 
