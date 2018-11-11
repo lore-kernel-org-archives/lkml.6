@@ -4,46 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7EADC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:18:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23B22C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:18:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63A5820869
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:18:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE54520817
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:18:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lGF1m78D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63A5820869
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qgKNiAhb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE54520817
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389816AbeKLJIj (ORCPT
+        id S2389831AbeKLJIs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:08:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48648 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:08:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389532AbeKLIV2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:21:28 -0500
+        id S2389619AbeKLIV1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:27 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C7EF223C6;
-        Sun, 11 Nov 2018 22:31:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E5D8223D8;
+        Sun, 11 Nov 2018 22:31:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975491;
-        bh=S0zJxH7t1OR29rKQ0rrJdltYSVzZnwkrj+vqlTpJpCo=;
+        s=default; t=1541975490;
+        bh=TTEKMR3Xi3LBbTcToLfqZSQD+E4u0SIRlny3fhYXfXc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lGF1m78Dq71nBUw6wTpRE16082GqJcmoneJU4xuBsQCQ5WQxhcJLkgowwA732zuva
-         HDTGT7MwhEJg8vZJ5mWkuLP5SLuDGICeOV1pZcteKgRSYSessdCEHtu9p2a9g56KdU
-         oA1KU27Hrg+ZQ31SOaGy+RM8OEw/TpxooKy5qrTs=
+        b=qgKNiAhbX30i4yu/VU+Vs3gqnjWFlob/08gfgJP6tj+u8Oba8B7LN9X4w+bI1xTL1
+         iK1lYmUiQK0pOE7tqUuMVgYoxEy7BmeOv1VJyEberVUatO/mHg+vS3slMxenuwu98S
+         pxdbjR3Z5OU7JwjT/672NG2gdFVSXQ3xadD83r9Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.18 274/350] powerpc/64s/hash: Do not use PPC_INVALIDATE_ERAT on CPUs before POWER9
-Date:   Sun, 11 Nov 2018 14:22:18 -0800
-Message-Id: <20181111221719.493833381@linuxfoundation.org>
+        stable@vger.kernel.org, Sander Eikelenboom <linux@eikelenboom.it>,
+        Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Subject: [PATCH 4.18 290/350] xen: fix xen_qlock_wait()
+Date:   Sun, 11 Nov 2018 14:22:34 -0800
+Message-Id: <20181111221720.197316164@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -61,66 +63,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicholas Piggin <npiggin@gmail.com>
+From: Juergen Gross <jgross@suse.com>
 
-commit bc276ecba132caccb1fda5863a652c15def2b8c6 upstream.
+commit d3132b3860f6cf35ff7609a76bbcdbb814bd027c upstream.
 
-PPC_INVALIDATE_ERAT is slbia IH=7 which is a new variant introduced
-with POWER9, and the result is undefined on earlier CPUs.
+Commit a856531951dc80 ("xen: make xen_qlock_wait() nestable")
+introduced a regression for Xen guests running fully virtualized
+(HVM or PVH mode). The Xen hypervisor wouldn't return from the poll
+hypercall with interrupts disabled in case of an interrupt (for PV
+guests it does).
 
-Commits 7b9f71f974 ("powerpc/64s: POWER9 machine check handler") and
-d4748276ae ("powerpc/64s: Improve local TLB flush for boot and MCE on
-POWER9") caused POWER7/8 code to use this instruction. Remove it. An
-ERAT flush can be made by invalidatig the SLB, but before POWER9 that
-requires a flush and rebolt.
+So instead of disabling interrupts in xen_qlock_wait() use a nesting
+counter to avoid calling xen_clear_irq_pending() in case
+xen_qlock_wait() is nested.
 
-Fixes: 7b9f71f974 ("powerpc/64s: POWER9 machine check handler")
-Fixes: d4748276ae ("powerpc/64s: Improve local TLB flush for boot and MCE on POWER9")
-Cc: stable@vger.kernel.org # v4.11+
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: a856531951dc80 ("xen: make xen_qlock_wait() nestable")
+Cc: stable@vger.kernel.org
+Reported-by: Sander Eikelenboom <linux@eikelenboom.it>
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Tested-by: Sander Eikelenboom <linux@eikelenboom.it>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kernel/mce_power.c  |    7 +++++++
- arch/powerpc/mm/hash_native_64.c |    4 ++--
- 2 files changed, 9 insertions(+), 2 deletions(-)
+ arch/x86/xen/spinlock.c |   14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
---- a/arch/powerpc/kernel/mce_power.c
-+++ b/arch/powerpc/kernel/mce_power.c
-@@ -97,6 +97,13 @@ static void flush_and_reload_slb(void)
+--- a/arch/x86/xen/spinlock.c
++++ b/arch/x86/xen/spinlock.c
+@@ -9,6 +9,7 @@
+ #include <linux/log2.h>
+ #include <linux/gfp.h>
+ #include <linux/slab.h>
++#include <linux/atomic.h>
  
- static void flush_erat(void)
+ #include <asm/paravirt.h>
+ #include <asm/qspinlock.h>
+@@ -21,6 +22,7 @@
+ 
+ static DEFINE_PER_CPU(int, lock_kicker_irq) = -1;
+ static DEFINE_PER_CPU(char *, irq_name);
++static DEFINE_PER_CPU(atomic_t, xen_qlock_wait_nest);
+ static bool xen_pvspin = true;
+ 
+ static void xen_qlock_kick(int cpu)
+@@ -39,25 +41,25 @@ static void xen_qlock_kick(int cpu)
+  */
+ static void xen_qlock_wait(u8 *byte, u8 val)
  {
-+#ifdef CONFIG_PPC_BOOK3S_64
-+	if (!early_cpu_has_feature(CPU_FTR_ARCH_300)) {
-+		flush_and_reload_slb();
-+		return;
-+	}
-+#endif
-+	/* PPC_INVALIDATE_ERAT can only be used on ISA v3 and newer */
- 	asm volatile(PPC_INVALIDATE_ERAT : : :"memory");
+-	unsigned long flags;
+ 	int irq = __this_cpu_read(lock_kicker_irq);
++	atomic_t *nest_cnt = this_cpu_ptr(&xen_qlock_wait_nest);
+ 
+ 	/* If kicker interrupts not initialized yet, just spin */
+ 	if (irq == -1 || in_nmi())
+ 		return;
+ 
+-	/* Guard against reentry. */
+-	local_irq_save(flags);
++	/* Detect reentry. */
++	atomic_inc(nest_cnt);
+ 
+-	/* If irq pending already clear it. */
+-	if (xen_test_irq_pending(irq)) {
++	/* If irq pending already and no nested call clear it. */
++	if (atomic_read(nest_cnt) == 1 && xen_test_irq_pending(irq)) {
+ 		xen_clear_irq_pending(irq);
+ 	} else if (READ_ONCE(*byte) == val) {
+ 		/* Block until irq becomes pending (or a spurious wakeup) */
+ 		xen_poll_irq(irq);
+ 	}
+ 
+-	local_irq_restore(flags);
++	atomic_dec(nest_cnt);
  }
  
---- a/arch/powerpc/mm/hash_native_64.c
-+++ b/arch/powerpc/mm/hash_native_64.c
-@@ -115,6 +115,8 @@ static void tlbiel_all_isa300(unsigned i
- 	tlbiel_hash_set_isa300(0, is, 0, 2, 1);
- 
- 	asm volatile("ptesync": : :"memory");
-+
-+	asm volatile(PPC_INVALIDATE_ERAT "; isync" : : :"memory");
- }
- 
- void hash__tlbiel_all(unsigned int action)
-@@ -140,8 +142,6 @@ void hash__tlbiel_all(unsigned int actio
- 		tlbiel_all_isa206(POWER7_TLB_SETS, is);
- 	else
- 		WARN(1, "%s called on pre-POWER7 CPU\n", __func__);
--
--	asm volatile(PPC_INVALIDATE_ERAT "; isync" : : :"memory");
- }
- 
- static inline unsigned long  ___tlbie(unsigned long vpn, int psize,
+ static irqreturn_t dummy_handler(int irq, void *dev_id)
 
 
