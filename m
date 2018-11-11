@@ -2,122 +2,92 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.5 required=3.0 tests=BITCOIN_SPAM_07,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3020C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:43:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 503B2C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:48:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77DE420871
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:43:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77DE420871
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 191FC20869
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:48:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 191FC20869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vger.kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727129AbeKLFqU (ORCPT
+        id S1727026AbeKLGib (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 00:46:20 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52438 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726374AbeKLFqU (ORCPT
+        Mon, 12 Nov 2018 01:38:31 -0500
+Received: from 78-11-192-48.static.ip.netia.com.pl ([78.11.192.48]:40365 "EHLO
+        78-11-192-48.static.ip.netia.com.pl" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726019AbeKLGib (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:46:20 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wABJs4Rg134130
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:56:52 -0500
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2npdbght28-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 14:56:51 -0500
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Sun, 11 Nov 2018 19:56:50 -0000
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 11 Nov 2018 19:56:46 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wABJujUB27853036
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 11 Nov 2018 19:56:45 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D3017B206A;
-        Sun, 11 Nov 2018 19:56:45 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B03E0B2067;
-        Sun, 11 Nov 2018 19:56:45 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.207.24])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Sun, 11 Nov 2018 19:56:45 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id E5BE316C5D5F; Sun, 11 Nov 2018 11:56:46 -0800 (PST)
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        kernel-team@android.com,
-        "Paul E . McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH tip/core/rcu 03/20] doc: Remove rcu_preempt_state reference in stallwarn
-Date:   Sun, 11 Nov 2018 11:56:28 -0800
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181111195619.GA6958@linux.ibm.com>
-References: <20181111195619.GA6958@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18111119-0040-0000-0000-000004908949
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010028; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01116023; UDB=6.00577119; IPR=6.00896124;
- MB=3.00024114; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-11 19:56:50
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111119-0041-0000-0000-0000089991F8
-Message-Id: <20181111195645.9205-3-paulmck@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-11_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811110190
+        Mon, 12 Nov 2018 01:38:31 -0500
+X-Greylist: delayed 341 seconds by postgrey-1.27 at vger.kernel.org; Mon, 12 Nov 2018 01:38:22 EST
+From:   <linux-kernel@vger.kernel.org>
+To:     "qwerty" <linux-kernel@vger.kernel.org>
+Subject: Hacking Alert! You account was hacked (your password:qwerty)
+Date:   11 Nov 2018 21:10:28 +0000
+Message-ID: <004901d47a08$011e99a8$3781d6a6$@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain;
+        charset="cp-850"
+Content-Transfer-Encoding: 8bit
+X-Mailer: Microsoft Outlook 14.0
+Thread-Index: Ac7a3259vqd0vp217a3259vqd0vp21==
+Content-Language: en
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Dear user of vger.kernel.org!
 
-Consolidation of RCU-bh, RCU-preempt, and RCU-sched into one RCU flavor
-to rule them all resulted in the removal of rcu_preempt_state.  However,
-stallwarn.txt still mentions rcu_preempt_state.  This commit therefore
-Updates stallwarn documentation accordingly.
+I am a spyware software developer.
+Your account has been hacked by me in the summer of 2018.
 
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-Cc: <kernel-team@android.com>
-Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
----
- Documentation/RCU/stallwarn.txt | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+I understand that it is hard to believe, but here is my evidence:
+- I sent you this email from your account.
+- Password from account linux-kernel@vger.kernel.org: qwerty (on moment of hack).
 
-diff --git a/Documentation/RCU/stallwarn.txt b/Documentation/RCU/stallwarn.txt
-index 491043fd976f..b01bcafc64aa 100644
---- a/Documentation/RCU/stallwarn.txt
-+++ b/Documentation/RCU/stallwarn.txt
-@@ -176,9 +176,8 @@ causing stalls, and that the stall was affecting RCU-sched.  This message
- will normally be followed by stack dumps for each CPU.  Please note that
- PREEMPT_RCU builds can be stalled by tasks as well as by CPUs, and that
- the tasks will be indicated by PID, for example, "P3421".  It is even
--possible for a rcu_preempt_state stall to be caused by both CPUs -and-
--tasks, in which case the offending CPUs and tasks will all be called
--out in the list.
-+possible for an rcu_state stall to be caused by both CPUs -and- tasks,
-+in which case the offending CPUs and tasks will all be called out in the list.
- 
- CPU 2's "(3 GPs behind)" indicates that this CPU has not interacted with
- the RCU core for the past three grace periods.  In contrast, CPU 16's "(0
--- 
-2.17.1
+The hacking was carried out using a hardware vulnerability through which you went online (Cisco router, vulnerability CVE-2018-0296).
+
+I went around the security system in the router, installed an exploit there.
+When you went online, my exploit downloaded my malicious code (rootkit) to your device.
+This is driver software, I constantly updated it, so your antivirus is silent all time.
+
+Since then I have been following you (I can connect to your device via the VNC protocol).
+That is, I can see absolutely everything that you do, view and download your files and any data to yourself.
+I also have access to the camera on your device, and I periodically take photos and videos with you.
+
+At the moment, I have harvested a solid dirt... on you...
+I saved all your email and chats from your messangers. I also saved the entire history of the sites you visit.
+
+I note that it is useless to change the passwords. My malware update passwords from your accounts every times.
+
+I know what you like hard funs (adult sites).
+Oh, yes .. I'm know your secret life, which you are hiding from everyone.
+Oh my God, what are your like... I saw THIS ... Oh, you dirty naughty person ... :)
+
+I took photos and videos of your most passionate funs with adult content, and synchronized them in real time with the image of your camera.
+Believe it turned out very high quality!
+
+So, to the business!
+I'm sure you don't want to show these files and visiting history to all your contacts.
+
+Transfer $868 to my Bitcoin cryptocurrency wallet: 1Bt4psBJmjfVTcW6eYiJZ6HEbpFgKkBSX4
+Just copy and paste the wallet number when transferring.
+If you do not know how to do this - ask Google.
+
+My system automatically recognizes the translation.
+As soon as the specified amount is received, all your data will be destroyed from my server, and the rootkit will be automatically removed from your system.
+Do not worry, I really will delete everything, since I am &#8220;working&#8221; with many people who have fallen into your position.
+You will only have to inform your provider about the vulnerabilities in the router so that other hackers will not use it.
+
+Since opening this letter you have 48 hours.
+If funds not will be received, after the specified time has elapsed, the disk of your device will be formatted,
+and from my server will automatically send email and sms to all your contacts with compromising material.
+
+I advise you to remain prudent and not engage in nonsense (all files on my server).
+
+Good luck!
 
