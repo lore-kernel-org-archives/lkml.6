@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A010C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47930C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EEDD214DB
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 027FD214F1
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="a61HkQYl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EEDD214DB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dis9WULR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 027FD214F1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729999AbeKLIQ7 (ORCPT
+        id S1730037AbeKLIRA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:16:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58420 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:17:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59016 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729859AbeKLIQ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:16:56 -0500
+        id S1729979AbeKLIQ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:16:59 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C36D621104;
-        Sun, 11 Nov 2018 22:27:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 722522241B;
+        Sun, 11 Nov 2018 22:27:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975220;
-        bh=14SxNp3RE/JoCBF68Ag8Td7E1xGpZqqOcRW8KqdXWJs=;
+        s=default; t=1541975223;
+        bh=Y9gSM/GIdjWjKb1O2fvgchbi3U8eW7o536VtklrlOtg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a61HkQYlXzo/ljeDE/boO0ipw80xMQNAQ/Wh1T2z5/qxdwTeg1pXEpDNd2jrLe5nh
-         x5/X2FDEubAcpw0eZJiFo/K3qU/2FsRfw88BY3LxLlXAYYE/mqOBaE91nLJSSK+T3P
-         BD/VqgdNEMC+b2IwMs6+TC7ZmRdnNClfLt6zWNGY=
+        b=dis9WULR0sKrjbj7LlyhuBwyJZxyJ+/aalIVFYU59yfnrl6FPbJMxvQ5PnSrtswKL
+         OMVovShU8tU611VjKc3CXe+b/D5oxEYEvwM2JFQlpg/Hf2Sh24mir0D0Rc1dq8xdhD
+         t0Lz3y1Tk1t3+7Oc9MxMe8U+AySk9ZF1q6lAVgcc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jean-Marc Lenoir <archlinux@jihemel.com>,
-        Erik Schmauss <erik.schmauss@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.19 025/361] ACPICA: AML interpreter: add region addresses in global list during initialization
-Date:   Sun, 11 Nov 2018 14:16:12 -0800
-Message-Id: <20181111221623.163909820@linuxfoundation.org>
+        stable@vger.kernel.org, Chuanhua Han <chuanhua.han@nxp.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.19 009/361] spi: spi-mem: Adjust op len based on message/transfer size limitations
+Date:   Sun, 11 Nov 2018 14:15:56 -0800
+Message-Id: <20181111221621.232433284@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -63,45 +63,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Erik Schmauss <erik.schmauss@intel.com>
+From: Chuanhua Han <chuanhua.han@nxp.com>
 
-commit 4abb951b73ff0a8a979113ef185651aa3c8da19b upstream.
+commit e757996cafbeb6b71234a17130674bcd8f44c59e upstream.
 
-The table load process omitted adding the operation region address
-range to the global list. This omission is problematic because the OS
-queries the global list to check for address range conflicts before
-deciding which drivers to load. This commit may result in warning
-messages that look like the following:
+We need that to adjust the len of the 2nd transfer (called data in
+spi-mem) if it's too long to fit in a SPI message or SPI transfer.
 
-[    7.871761] ACPI Warning: system_IO range 0x00000428-0x0000042F conflicts with op_region 0x00000400-0x0000047F (\PMIO) (20180531/utaddress-213)
-[    7.871769] ACPI: If an ACPI driver is available for this device, you should use it instead of the native driver
-
-However, these messages do not signify regressions. It is a result of
-properly adding address ranges within the global address list.
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=200011
-Tested-by: Jean-Marc Lenoir <archlinux@jihemel.com>
-Signed-off-by: Erik Schmauss <erik.schmauss@intel.com>
-Cc: All applicable <stable@vger.kernel.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Fixes: c36ff266dc82 ("spi: Extend the core to ease integration of SPI memory controllers")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Chuanhua Han <chuanhua.han@nxp.com>
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/acpi/acpica/dsopcode.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/spi/spi-mem.c |   15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
---- a/drivers/acpi/acpica/dsopcode.c
-+++ b/drivers/acpi/acpica/dsopcode.c
-@@ -417,6 +417,10 @@ acpi_ds_eval_region_operands(struct acpi
- 			  ACPI_FORMAT_UINT64(obj_desc->region.address),
- 			  obj_desc->region.length));
- 
-+	status = acpi_ut_add_address_range(obj_desc->region.space_id,
-+					   obj_desc->region.address,
-+					   obj_desc->region.length, node);
+--- a/drivers/spi/spi-mem.c
++++ b/drivers/spi/spi-mem.c
+@@ -346,10 +346,25 @@ EXPORT_SYMBOL_GPL(spi_mem_get_name);
+ int spi_mem_adjust_op_size(struct spi_mem *mem, struct spi_mem_op *op)
+ {
+ 	struct spi_controller *ctlr = mem->spi->controller;
++	size_t len;
 +
- 	/* Now the address and length are valid for this opregion */
++	len = sizeof(op->cmd.opcode) + op->addr.nbytes + op->dummy.nbytes;
  
- 	obj_desc->region.flags |= AOPOBJ_DATA_VALID;
+ 	if (ctlr->mem_ops && ctlr->mem_ops->adjust_op_size)
+ 		return ctlr->mem_ops->adjust_op_size(mem, op);
+ 
++	if (!ctlr->mem_ops || !ctlr->mem_ops->exec_op) {
++		if (len > spi_max_transfer_size(mem->spi))
++			return -EINVAL;
++
++		op->data.nbytes = min3((size_t)op->data.nbytes,
++				       spi_max_transfer_size(mem->spi),
++				       spi_max_message_size(mem->spi) -
++				       len);
++		if (!op->data.nbytes)
++			return -EINVAL;
++	}
++
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(spi_mem_adjust_op_size);
 
 
