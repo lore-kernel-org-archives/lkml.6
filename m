@@ -2,219 +2,293 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75A03C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:11:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AED4DC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:11:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 381762080D
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:11:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 381762080D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 5809E2080D
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:11:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="iAxhA6B7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5809E2080D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=icloud.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731696AbeKLGBA (ORCPT
+        id S1730894AbeKLGB0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:01:00 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52494 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730739AbeKLGA7 (ORCPT
+        Mon, 12 Nov 2018 01:01:26 -0500
+Received: from st13p15im-asmtp003.me.com ([17.164.72.57]:59045 "EHLO
+        st13p15im-asmtp003.me.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727204AbeKLGBY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 01:00:59 -0500
-Received: from [192.168.4.242] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1gLvt1-0000oM-Ls; Sun, 11 Nov 2018 19:59:11 +0000
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsS-0001Xq-46; Sun, 11 Nov 2018 19:58:36 +0000
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Suzuki K Poulose" <Suzuki.Poulose@arm.com>,
-        "Andrea Arcangeli" <aarcange@redhat.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Mike Rapoport" <rppt@linux.vnet.ibm.com>,
-        "Arvind Yadav" <arvind.yadav.cs@gmail.com>,
-        "Jia He" <jia.he@hxt-semitech.com>,
-        "Claudio Imbrenda" <imbrenda@linux.vnet.ibm.com>,
-        "Minchan Kim" <minchan@kernel.org>, "Jia He" <hejianet@gmail.com>
-Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.122173032@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 136/366] mm/ksm.c: ignore STABLE_FLAG of
- rmap_item->address in rmap_walk_ksm()
-In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
-X-SA-Exim-Connect-IP: 192.168.4.242
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        Mon, 12 Nov 2018 01:01:24 -0500
+X-Greylist: delayed 3614 seconds by postgrey-1.27 at vger.kernel.org; Mon, 12 Nov 2018 01:01:23 EST
+Received: from process-dkim-sign-daemon.st13p15im-asmtp003.me.com by
+ st13p15im-asmtp003.me.com
+ (Oracle Communications Messaging Server 8.0.2.2.20180531 64bit (built May 31
+ 2018)) id <0PI100Z00MGVL800@st13p15im-asmtp003.me.com> for
+ linux-kernel@vger.kernel.org; Sun, 11 Nov 2018 19:11:48 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;     s=04042017;
+ t=1541963508;  bh=H7Frku9R4zv02TfxEkiIiYpj1gRppdQqsK+dvbjpF5I=;
+        h=Date:From:To:Subject:Message-id:MIME-version:Content-type;
+        b=iAxhA6B7+HphQqfNQ5U0TqVWsfyKYyulCJuGx2uNcP7GG7wDIiIpHHsuqQET/qXZW
+ CNq12kQ8uRwcVJ8KHKqyD+OAJ3VHz0/3p7FtfoBz4lkvTjTlP08bJRjbLXInYTxePj
+ /P2H/B8bZX4Os8DqLqIiqByITRbAnVyRVfEfkcNPv1Ha+LGn2raYhPxgbbBTKH1r1E
+ jJaN22nAWIECptelY1frItLTLQ4cfRywrPLKjMLB2e9U0YuVYo1DWJXiSAYEsIIZt5
+ J1yqSOl+pnw3OhODyLSBK7REb7JVVoW2GIIbyS9jdQLT8qbBw9yVuRKJiBHJHyN+YC
+ kysks/0+ZYx6w==
+Received: from icloud.com ([127.0.0.1]) by st13p15im-asmtp003.me.com
+ (Oracle Communications Messaging Server 8.0.2.2.20180531 64bit (built May 31
+ 2018)) with ESMTPSA id <0PI10109XMNIAK00@st13p15im-asmtp003.me.com>; Sun,
+ 11 Nov 2018 19:11:47 +0000 (GMT)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0
+ malwarescore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011 mlxscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1811110183
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,,
+ definitions=2018-11-11_13:,, signatures=0
+Date:   Sun, 11 Nov 2018 20:11:42 +0100
+From:   Damian Tometzki <linux_dti@icloud.com>
+To:     Nadav Amit <namit@vmware.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH v4 06/10] x86/alternative: use temporary mm for text poking
+Message-id: <20181111191141.GA1996@Ubuntu-DTI>
+Mail-followup-to: Nadav Amit <namit@vmware.com>,
+ Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Andy Lutomirski <luto@kernel.org>, Kees Cook <keescook@chromium.org>,
+ Peter Zijlstra <peterz@infradead.org>, Dave Hansen <dave.hansen@intel.com>,
+ Masami Hiramatsu <mhiramat@kernel.org>
+References: <20181110231732.15060-1-namit@vmware.com>
+ <20181110231732.15060-7-namit@vmware.com>
+MIME-version: 1.0
+Content-type: text/plain; charset=iso-8859-1
+Content-disposition: inline
+Content-transfer-encoding: 8bit
+In-reply-to: <20181110231732.15060-7-namit@vmware.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.61-rc1 review patch.  If anyone has any objections, please let me know.
+On Sa, 10. Nov 15:17, Nadav Amit wrote:
+> text_poke() can potentially compromise the security as it sets temporary
+> PTEs in the fixmap. These PTEs might be used to rewrite the kernel code
+> from other cores accidentally or maliciously, if an attacker gains the
+> ability to write onto kernel memory.
+> 
+> Moreover, since remote TLBs are not flushed after the temporary PTEs are
+> removed, the time-window in which the code is writable is not limited if
+> the fixmap PTEs - maliciously or accidentally - are cached in the TLB.
+> To address these potential security hazards, we use a temporary mm for
+> patching the code.
+> 
+> Finally, text_poke() is also not conservative enough when mapping pages,
+> as it always tries to map 2 pages, even when a single one is sufficient.
+> So try to be more conservative, and do not map more than needed.
+> 
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Dave Hansen <dave.hansen@intel.com>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Signed-off-by: Nadav Amit <namit@vmware.com>
+> ---
+>  arch/x86/include/asm/fixmap.h |   2 -
+>  arch/x86/kernel/alternative.c | 112 +++++++++++++++++++++++++++-------
+>  2 files changed, 89 insertions(+), 25 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/fixmap.h b/arch/x86/include/asm/fixmap.h
+> index 50ba74a34a37..9da8cccdf3fb 100644
+> --- a/arch/x86/include/asm/fixmap.h
+> +++ b/arch/x86/include/asm/fixmap.h
+> @@ -103,8 +103,6 @@ enum fixed_addresses {
+>  #ifdef CONFIG_PARAVIRT
+>  	FIX_PARAVIRT_BOOTMAP,
+>  #endif
 
-------------------
+Hello Nadav,
 
-From: Jia He <jia.he@hxt-semitech.com>
+with the remove of FIX_TEXT_POKE1 and FIX_TEXT_POKE0 i get the following
+build error:
 
-commit 1105a2fc022f3c7482e32faf516e8bc44095f778 upstream.
+/home/damian/kernel/linux/arch/x86/xen/mmu_pv.c:2321:7: Fehler: »FIX_TEXT_POKE0« nicht deklariert (erstmalige Verwendung in dieser Funktion); meinten Sie »FIX_TBOOT_BASE«?
+  case FIX_TEXT_POKE0:
+       ^~~~~~~~~~~~~~
+       FIX_TBOOT_BASE
+/home/damian/kernel/linux/arch/x86/xen/mmu_pv.c:2321:7: Anmerkung: jeder nicht deklarierte Bezeichner wird nur einmal für jede Funktion, in der er vorkommt, gemeldet
+/home/damian/kernel/linux/arch/x86/xen/mmu_pv.c:2322:7: Fehler: »FIX_TEXT_POKE1« nicht deklariert (erstmalige Verwendung in dieser Funktion); meinten Sie »FIX_TBOOT_BASE«?
+  case FIX_TEXT_POKE1:
+       ^~~~~~~~~~~~~~
+       FIX_TBOOT_BASE
 
-In our armv8a server(QDF2400), I noticed lots of WARN_ON caused by
-PAGE_SIZE unaligned for rmap_item->address under memory pressure
-tests(start 20 guests and run memhog in the host).
+Best regards
+Damian
 
-  WARNING: CPU: 4 PID: 4641 at virt/kvm/arm/mmu.c:1826 kvm_age_hva_handler+0xc0/0xc8
-  CPU: 4 PID: 4641 Comm: memhog Tainted: G        W 4.17.0-rc3+ #8
-  Call trace:
-   kvm_age_hva_handler+0xc0/0xc8
-   handle_hva_to_gpa+0xa8/0xe0
-   kvm_age_hva+0x4c/0xe8
-   kvm_mmu_notifier_clear_flush_young+0x54/0x98
-   __mmu_notifier_clear_flush_young+0x6c/0xa0
-   page_referenced_one+0x154/0x1d8
-   rmap_walk_ksm+0x12c/0x1d0
-   rmap_walk+0x94/0xa0
-   page_referenced+0x194/0x1b0
-   shrink_page_list+0x674/0xc28
-   shrink_inactive_list+0x26c/0x5b8
-   shrink_node_memcg+0x35c/0x620
-   shrink_node+0x100/0x430
-   do_try_to_free_pages+0xe0/0x3a8
-   try_to_free_pages+0xe4/0x230
-   __alloc_pages_nodemask+0x564/0xdc0
-   alloc_pages_vma+0x90/0x228
-   do_anonymous_page+0xc8/0x4d0
-   __handle_mm_fault+0x4a0/0x508
-   handle_mm_fault+0xf8/0x1b0
-   do_page_fault+0x218/0x4b8
-   do_translation_fault+0x90/0xa0
-   do_mem_abort+0x68/0xf0
-   el0_da+0x24/0x28
-
-In rmap_walk_ksm, the rmap_item->address might still have the
-STABLE_FLAG, then the start and end in handle_hva_to_gpa might not be
-PAGE_SIZE aligned.  Thus it will cause exceptions in handle_hva_to_gpa
-on arm64.
-
-This patch fixes it by ignoring (not removing) the low bits of address
-when doing rmap_walk_ksm.
-
-IMO, it should be backported to stable tree.  the storm of WARN_ONs is
-very easy for me to reproduce.  More than that, I watched a panic (not
-reproducible) as follows:
-
-  page:ffff7fe003742d80 count:-4871 mapcount:-2126053375 mapping: (null) index:0x0
-  flags: 0x1fffc00000000000()
-  raw: 1fffc00000000000 0000000000000000 0000000000000000 ffffecf981470000
-  raw: dead000000000100 dead000000000200 ffff8017c001c000 0000000000000000
-  page dumped because: nonzero _refcount
-  CPU: 29 PID: 18323 Comm: qemu-kvm Tainted: G W 4.14.15-5.hxt.aarch64 #1
-  Hardware name: <snip for confidential issues>
-  Call trace:
-    dump_backtrace+0x0/0x22c
-    show_stack+0x24/0x2c
-    dump_stack+0x8c/0xb0
-    bad_page+0xf4/0x154
-    free_pages_check_bad+0x90/0x9c
-    free_pcppages_bulk+0x464/0x518
-    free_hot_cold_page+0x22c/0x300
-    __put_page+0x54/0x60
-    unmap_stage2_range+0x170/0x2b4
-    kvm_unmap_hva_handler+0x30/0x40
-    handle_hva_to_gpa+0xb0/0xec
-    kvm_unmap_hva_range+0x5c/0xd0
-
-I even injected a fault on purpose in kvm_unmap_hva_range by seting
-size=size-0x200, the call trace is similar as above.  So I thought the
-panic is similarly caused by the root cause of WARN_ON.
-
-Andrea said:
-
-: It looks a straightforward safe fix, on x86 hva_to_gfn_memslot would
-: zap those bits and hide the misalignment caused by the low metadata
-: bits being erroneously left set in the address, but the arm code
-: notices when that's the last page in the memslot and the hva_end is
-: getting aligned and the size is below one page.
-:
-: I think the problem triggers in the addr += PAGE_SIZE of
-: unmap_stage2_ptes that never matches end because end is aligned but
-: addr is not.
-:
-: 	} while (pte++, addr += PAGE_SIZE, addr != end);
-:
-: x86 again only works on hva_start/hva_end after converting it to
-: gfn_start/end and that being in pfn units the bits are zapped before
-: they risk to cause trouble.
-
-Jia He said:
-
-: I've tested by myself in arm64 server (QDF2400,46 cpus,96G mem) Without
-: this patch, the WARN_ON is very easy for reproducing.  After this patch, I
-: have run the same benchmarch for a whole day without any WARN_ONs
-
-Link: http://lkml.kernel.org/r/1525403506-6750-1-git-send-email-hejianet@gmail.com
-Signed-off-by: Jia He <jia.he@hxt-semitech.com>
-Reviewed-by: Andrea Arcangeli <aarcange@redhat.com>
-Tested-by: Jia He <hejianet@gmail.com>
-Cc: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>
-Cc: Arvind Yadav <arvind.yadav.cs@gmail.com>
-Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-[bwh: Backported to 3.16: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- mm/ksm.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
-
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -181,6 +181,8 @@ struct rmap_item {
- #define SEQNR_MASK	0x0ff	/* low bits of unstable tree seqnr */
- #define UNSTABLE_FLAG	0x100	/* is a node of the unstable tree */
- #define STABLE_FLAG	0x200	/* is listed from the stable tree */
-+#define KSM_FLAG_MASK	(SEQNR_MASK|UNSTABLE_FLAG|STABLE_FLAG)
-+				/* to mask all the flags */
- 
- /* The stable and unstable tree heads */
- static struct rb_root one_stable_tree[1] = { RB_ROOT };
-@@ -1919,10 +1921,15 @@ again:
- 		anon_vma_lock_read(anon_vma);
- 		anon_vma_interval_tree_foreach(vmac, &anon_vma->rb_root,
- 					       0, ULONG_MAX) {
-+			unsigned long addr;
-+
- 			cond_resched();
- 			vma = vmac->vma;
--			if (rmap_item->address < vma->vm_start ||
--			    rmap_item->address >= vma->vm_end)
-+
-+			/* Ignore the stable/unstable/sqnr flags */
-+			addr = rmap_item->address & ~KSM_FLAG_MASK;
-+
-+			if (addr < vma->vm_start || addr >= vma->vm_end)
- 				continue;
- 			/*
- 			 * Initially we examine only the vma which covers this
-@@ -1936,8 +1943,7 @@ again:
- 			if (rwc->invalid_vma && rwc->invalid_vma(vma, rwc->arg))
- 				continue;
- 
--			ret = rwc->rmap_one(page, vma,
--					rmap_item->address, rwc->arg);
-+			ret = rwc->rmap_one(page, vma, addr, rwc->arg);
- 			if (ret != SWAP_AGAIN) {
- 				anon_vma_unlock_read(anon_vma);
- 				goto out;
-
+> -	FIX_TEXT_POKE1,	/* reserve 2 pages for text_poke() */
+> -	FIX_TEXT_POKE0, /* first page is last, because allocation is backward */
+>  #ifdef	CONFIG_X86_INTEL_MID
+>  	FIX_LNW_VRTC,
+>  #endif
+> diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+> index d3ae5c26e5a0..96607ef285c3 100644
+> --- a/arch/x86/kernel/alternative.c
+> +++ b/arch/x86/kernel/alternative.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/stop_machine.h>
+>  #include <linux/slab.h>
+>  #include <linux/kdebug.h>
+> +#include <linux/mmu_context.h>
+>  #include <asm/text-patching.h>
+>  #include <asm/alternative.h>
+>  #include <asm/sections.h>
+> @@ -683,43 +684,108 @@ __ro_after_init unsigned long poking_addr;
+>  
+>  static int __text_poke(void *addr, const void *opcode, size_t len)
+>  {
+> +	bool cross_page_boundary = offset_in_page(addr) + len > PAGE_SIZE;
+> +	temporary_mm_state_t prev;
+> +	struct page *pages[2] = {NULL};
+>  	unsigned long flags;
+> -	char *vaddr;
+> -	struct page *pages[2];
+> -	int i, r = 0;
+> +	pte_t pte, *ptep;
+> +	spinlock_t *ptl;
+> +	int r = 0;
+>  
+>  	/*
+> -	 * While boot memory allocator is runnig we cannot use struct
+> -	 * pages as they are not yet initialized.
+> +	 * While boot memory allocator is running we cannot use struct pages as
+> +	 * they are not yet initialized.
+>  	 */
+>  	BUG_ON(!after_bootmem);
+>  
+>  	if (!core_kernel_text((unsigned long)addr)) {
+>  		pages[0] = vmalloc_to_page(addr);
+> -		pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
+> +		if (cross_page_boundary)
+> +			pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
+>  	} else {
+>  		pages[0] = virt_to_page(addr);
+>  		WARN_ON(!PageReserved(pages[0]));
+> -		pages[1] = virt_to_page(addr + PAGE_SIZE);
+> +		if (cross_page_boundary)
+> +			pages[1] = virt_to_page(addr + PAGE_SIZE);
+>  	}
+> -	if (!pages[0])
+> +
+> +	if (!pages[0] || (cross_page_boundary && !pages[1]))
+>  		return -EFAULT;
+> +
+>  	local_irq_save(flags);
+> -	set_fixmap(FIX_TEXT_POKE0, page_to_phys(pages[0]));
+> -	if (pages[1])
+> -		set_fixmap(FIX_TEXT_POKE1, page_to_phys(pages[1]));
+> -	vaddr = (char *)fix_to_virt(FIX_TEXT_POKE0);
+> -	memcpy(&vaddr[(unsigned long)addr & ~PAGE_MASK], opcode, len);
+> -	clear_fixmap(FIX_TEXT_POKE0);
+> -	if (pages[1])
+> -		clear_fixmap(FIX_TEXT_POKE1);
+> -	local_flush_tlb();
+> -	sync_core();
+> -	/* Could also do a CLFLUSH here to speed up CPU recovery; but
+> -	   that causes hangs on some VIA CPUs. */
+> -	for (i = 0; i < len; i++)
+> -		if (((char *)addr)[i] != ((char *)opcode)[i])
+> -			r = -EFAULT;
+> +
+> +	/*
+> +	 * The lock is not really needed, but this allows to avoid open-coding.
+> +	 */
+> +	ptep = get_locked_pte(poking_mm, poking_addr, &ptl);
+> +
+> +	/*
+> +	 * If we failed to allocate a PTE, fail. This should *never* happen,
+> +	 * since we preallocate the PTE.
+> +	 */
+> +	if (WARN_ON_ONCE(!ptep))
+> +		goto out;
+> +
+> +	pte = mk_pte(pages[0], PAGE_KERNEL);
+> +	set_pte_at(poking_mm, poking_addr, ptep, pte);
+> +
+> +	if (cross_page_boundary) {
+> +		pte = mk_pte(pages[1], PAGE_KERNEL);
+> +		set_pte_at(poking_mm, poking_addr + PAGE_SIZE, ptep + 1, pte);
+> +	}
+> +
+> +	/*
+> +	 * Loading the temporary mm behaves as a compiler barrier, which
+> +	 * guarantees that the PTE will be set at the time memcpy() is done.
+> +	 */
+> +	prev = use_temporary_mm(poking_mm);
+> +
+> +	kasan_disable_current();
+> +	memcpy((u8 *)poking_addr + offset_in_page(addr), opcode, len);
+> +	kasan_enable_current();
+> +
+> +	/*
+> +	 * Ensure that the PTE is only cleared after the instructions of memcpy
+> +	 * were issued by using a compiler barrier.
+> +	 */
+> +	barrier();
+> +
+> +	pte_clear(poking_mm, poking_addr, ptep);
+> +
+> +	/*
+> +	 * __flush_tlb_one_user() performs a redundant TLB flush when PTI is on,
+> +	 * as it also flushes the corresponding "user" address spaces, which
+> +	 * does not exist.
+> +	 *
+> +	 * Poking, however, is already very inefficient since it does not try to
+> +	 * batch updates, so we ignore this problem for the time being.
+> +	 *
+> +	 * Since the PTEs do not exist in other kernel address-spaces, we do
+> +	 * not use __flush_tlb_one_kernel(), which when PTI is on would cause
+> +	 * more unwarranted TLB flushes.
+> +	 *
+> +	 * There is a slight anomaly here: the PTE is a supervisor-only and
+> +	 * (potentially) global and we use __flush_tlb_one_user() but this
+> +	 * should be fine.
+> +	 */
+> +	__flush_tlb_one_user(poking_addr);
+> +	if (cross_page_boundary) {
+> +		pte_clear(poking_mm, poking_addr + PAGE_SIZE, ptep + 1);
+> +		__flush_tlb_one_user(poking_addr + PAGE_SIZE);
+> +	}
+> +
+> +	/*
+> +	 * Loading the previous page-table hierarchy requires a serializing
+> +	 * instruction that already allows the core to see the updated version.
+> +	 * Xen-PV is assumed to serialize execution in a similar manner.
+> +	 */
+> +	unuse_temporary_mm(prev);
+> +
+> +	pte_unmap_unlock(ptep, ptl);
+> +out:
+> +	if (memcmp(addr, opcode, len))
+> +		r = -EFAULT;
+> +
+>  	local_irq_restore(flags);
+>  	return r;
+>  }
+> -- 
+> 2.17.1
+> 
