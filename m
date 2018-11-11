@@ -7,45 +7,48 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38213C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:56:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73EE9C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:56:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02C5A20839
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:56:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AB9C20839
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:56:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rg5YZNOb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02C5A20839
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jHY/doyK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AB9C20839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732850AbeKLJqb (ORCPT
+        id S1732898AbeKLJqh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:46:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35336 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:46:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732580AbeKLISP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1732575AbeKLISP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:18:15 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 901E622360;
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C92521707;
         Sun, 11 Nov 2018 22:28:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975299;
-        bh=pobf9/BtqgtyJtRjaAvarFKm39tJb0XHJ/67eL9fC4o=;
+        bh=hTWr3X24XRC0Op1U8qGvydHrXA2AlBb6kRtUWB6u5dA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Rg5YZNObBfHXm+n5tSRvm0meM5CDHrzIi4pgF2qTb1IbuVupjYOgjb53Qh9LI5LoX
-         pTpbEVDwwJKaMmoZ2iGRUhLDrVzphcMQPXvJRlYt4x2ti+83vTapGGRS531KEeiY4Z
-         cEZDcm4RKYgkDkOLTVXrBXmhlVkFyO6vRXGSHU3U=
+        b=jHY/doyK9FU9vWK0FYsR//7lkB0msy0Qw/gb61WogKAjUuRKaBziz/aMc9Dt2EDAU
+         f6ljeF4/Sf/6YVuSJka+ID9aASbtk36k0L8caCVVvacvhohZ7hdPLnglVdAQWHyPEr
+         vxzAHfA7xTzK/0XtY+eqo8VVTBkeAT79uGUV0rrQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>,
-        Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.19 258/361] iio: ad5064: Fix regulator handling
-Date:   Sun, 11 Nov 2018 14:20:05 -0800
-Message-Id: <20181111221653.751949444@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.19 257/361] kbuild: fix kernel/bounds.c W=1 warning
+Date:   Sun, 11 Nov 2018 14:20:04 -0800
+Message-Id: <20181111221653.657445058@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -63,96 +66,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lars-Peter Clausen <lars@metafoo.de>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 8911a43bc198877fad9f4b0246a866b26bb547ab upstream.
+commit 6a32c2469c3fbfee8f25bcd20af647326650a6cf upstream.
 
-The correct way to handle errors returned by regualtor_get() and friends is
-to propagate the error since that means that an regulator was specified,
-but something went wrong when requesting it.
+Building any configuration with 'make W=1' produces a warning:
 
-For handling optional regulators, e.g. when the device has an internal
-vref, regulator_get_optional() should be used to avoid getting the dummy
-regulator that the regulator core otherwise provides.
+kernel/bounds.c:16:6: warning: no previous prototype for 'foo' [-Wmissing-prototypes]
 
-Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+When also passing -Werror, this prevents us from building any other files.
+Nobody ever calls the function, but we can't make it 'static' either
+since we want the compiler output.
+
+Calling it 'main' instead however avoids the warning, because gcc
+does not insist on having a declaration for main.
+
+Link: http://lkml.kernel.org/r/20181005083313.2088252-1-arnd@arndb.de
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reported-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: David Laight <David.Laight@ACULAB.COM>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/dac/ad5064.c |   53 +++++++++++++++++++++++++++++++++--------------
- 1 file changed, 38 insertions(+), 15 deletions(-)
+ kernel/bounds.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/iio/dac/ad5064.c
-+++ b/drivers/iio/dac/ad5064.c
-@@ -808,6 +808,40 @@ static int ad5064_set_config(struct ad50
- 	return ad5064_write(st, cmd, 0, val, 0);
- }
+--- a/kernel/bounds.c
++++ b/kernel/bounds.c
+@@ -13,7 +13,7 @@
+ #include <linux/log2.h>
+ #include <linux/spinlock_types.h>
  
-+static int ad5064_request_vref(struct ad5064_state *st, struct device *dev)
-+{
-+	unsigned int i;
-+	int ret;
-+
-+	for (i = 0; i < ad5064_num_vref(st); ++i)
-+		st->vref_reg[i].supply = ad5064_vref_name(st, i);
-+
-+	if (!st->chip_info->internal_vref)
-+		return devm_regulator_bulk_get(dev, ad5064_num_vref(st),
-+					       st->vref_reg);
-+
-+	/*
-+	 * This assumes that when the regulator has an internal VREF
-+	 * there is only one external VREF connection, which is
-+	 * currently the case for all supported devices.
-+	 */
-+	st->vref_reg[0].consumer = devm_regulator_get_optional(dev, "vref");
-+	if (!IS_ERR(st->vref_reg[0].consumer))
-+		return 0;
-+
-+	ret = PTR_ERR(st->vref_reg[0].consumer);
-+	if (ret != -ENODEV)
-+		return ret;
-+
-+	/* If no external regulator was supplied use the internal VREF */
-+	st->use_internal_vref = true;
-+	ret = ad5064_set_config(st, AD5064_CONFIG_INT_VREF_ENABLE);
-+	if (ret)
-+		dev_err(dev, "Failed to enable internal vref: %d\n", ret);
-+
-+	return ret;
-+}
-+
- static int ad5064_probe(struct device *dev, enum ad5064_type type,
- 			const char *name, ad5064_write_func write)
+-void foo(void)
++int main(void)
  {
-@@ -828,22 +862,11 @@ static int ad5064_probe(struct device *d
- 	st->dev = dev;
- 	st->write = write;
- 
--	for (i = 0; i < ad5064_num_vref(st); ++i)
--		st->vref_reg[i].supply = ad5064_vref_name(st, i);
-+	ret = ad5064_request_vref(st, dev);
-+	if (ret)
-+		return ret;
- 
--	ret = devm_regulator_bulk_get(dev, ad5064_num_vref(st),
--		st->vref_reg);
--	if (ret) {
--		if (!st->chip_info->internal_vref)
--			return ret;
--		st->use_internal_vref = true;
--		ret = ad5064_set_config(st, AD5064_CONFIG_INT_VREF_ENABLE);
--		if (ret) {
--			dev_err(dev, "Failed to enable internal vref: %d\n",
--				ret);
--			return ret;
--		}
--	} else {
-+	if (!st->use_internal_vref) {
- 		ret = regulator_bulk_enable(ad5064_num_vref(st), st->vref_reg);
- 		if (ret)
- 			return ret;
+ 	/* The enum constants to put into include/generated/bounds.h */
+ 	DEFINE(NR_PAGEFLAGS, __NR_PAGEFLAGS);
+@@ -23,4 +23,6 @@ void foo(void)
+ #endif
+ 	DEFINE(SPINLOCK_SIZE, sizeof(spinlock_t));
+ 	/* End of constants */
++
++	return 0;
+ }
 
 
