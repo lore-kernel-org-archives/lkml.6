@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E3B5C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:29:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0947CC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:29:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24B6620869
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:29:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0A072084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:29:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="A6nnKCUI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24B6620869
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DeCzq/sS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0A072084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388765AbeKLIUa (ORCPT
+        id S2388960AbeKLJTo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:20:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43864 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:19:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44954 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388728AbeKLIU2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:20:28 -0500
+        id S2388748AbeKLIUa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:30 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67507216FD;
-        Sun, 11 Nov 2018 22:30:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8FDB02154B;
+        Sun, 11 Nov 2018 22:30:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975432;
-        bh=Gg6KnuJfRy4DG6CCcvzejjeivw43DhjFWmaqrL12/kE=;
+        s=default; t=1541975433;
+        bh=TdwLRAYE1Ki5NfCIObZ0ZvTr1DIksnDCglrR2nW7R3E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A6nnKCUIu7WDyrGcB0WiudrJUbuiWZMw9o0KYJoB48MRtS9eo9V9VIkhPuQbQ/OeN
-         VewYlwjKcfHDU4NzFQ25Pu9aZfttAYhs45gHrUVwF5yE9cRK0SwIPPXnkHmPQfTQKT
-         E1QJmlEy94GSNzkNYSOnQzVSvQ5MHUhPupUXreag=
+        b=DeCzq/sSh0zoCh1AoXBKLcBM+yyiQHE22nrHSgaqOcsCGYhkWey1Ui3NaS+GMsI3f
+         iKFIFecB44mH0qmUgiid1gRc02W+NlXPS5CCBE5lZraUlrKQRs2t9/Mj2DjssAN66S
+         +Hxutud9pQBLQiGbX2ZjVIGZ9scrBxZDQyzihgtI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Moni Shoua <monis@mellanox.com>,
-        Artemy Kovalyov <artemyko@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
+        James Smart <james.smart@broadcom.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 176/350] IB/mlx5: Allow transition of DCI QP to reset
-Date:   Sun, 11 Nov 2018 14:20:40 -0800
-Message-Id: <20181111221715.393481483@linuxfoundation.org>
+Subject: [PATCH 4.18 179/350] scsi: lpfc: Correct race with abort on completion path
+Date:   Sun, 11 Nov 2018 14:20:43 -0800
+Message-Id: <20181111221715.525686144@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -65,36 +64,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Moni Shoua <monis@mellanox.com>
+From: James Smart <jsmart2021@gmail.com>
 
-[ Upstream commit 99ed748e878a99c6c7b87bbec063eefd9e47cb42 ]
+[ Upstream commit ca7fb76e091f889cfda1287c07a9358f73832b39 ]
 
-The transition is allowed from any state and the atrribute mask must be
-IB_QP_STATE.
+On io completion, the driver is taking an adapter wide lock and nulling the
+scsi command back pointer.  The nulling of the back pointer is to signify the
+io was completed and the scsi_done() routine was called.  However, the routine
+makes no check to see if the abort routine had done the same thing and
+possibly nulled the pointer. Thus it may doubly-complete the io.
 
-Fixes: c32a4f296e1d ("IB/mlx5: Add support for DC Initiator QP")
-Signed-off-by: Moni Shoua <monis@mellanox.com>
-Reviewed-by: Artemy Kovalyov <artemyko@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Make the following mods:
+
+- Check to make sure forward progress (call scsi_done()) only happens if the
+  command pointer was non-null.
+
+- As the taking of the lock, which is adapter wide, is very costly on a system
+  under load, null the pointer using an xchg operation rather than under lock.
+
+Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
+Signed-off-by: James Smart <james.smart@broadcom.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/mlx5/qp.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/scsi/lpfc/lpfc_scsi.c |   14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
---- a/drivers/infiniband/hw/mlx5/qp.c
-+++ b/drivers/infiniband/hw/mlx5/qp.c
-@@ -3264,7 +3264,9 @@ static bool modify_dci_qp_is_ok(enum ib_
- 	int req = IB_QP_STATE;
- 	int opt = 0;
+--- a/drivers/scsi/lpfc/lpfc_scsi.c
++++ b/drivers/scsi/lpfc/lpfc_scsi.c
+@@ -4140,9 +4140,17 @@ lpfc_scsi_cmd_iocb_cmpl(struct lpfc_hba
+ 	}
+ 	lpfc_scsi_unprep_dma_buf(phba, lpfc_cmd);
  
--	if (cur_state == IB_QPS_RESET && new_state == IB_QPS_INIT) {
-+	if (new_state == IB_QPS_RESET) {
-+		return is_valid_mask(attr_mask, req, opt);
-+	} else if (cur_state == IB_QPS_RESET && new_state == IB_QPS_INIT) {
- 		req |= IB_QP_PKEY_INDEX | IB_QP_PORT;
- 		return is_valid_mask(attr_mask, req, opt);
- 	} else if (cur_state == IB_QPS_INIT && new_state == IB_QPS_INIT) {
+-	spin_lock_irqsave(&phba->hbalock, flags);
+-	lpfc_cmd->pCmd = NULL;
+-	spin_unlock_irqrestore(&phba->hbalock, flags);
++	/* If pCmd was set to NULL from abort path, do not call scsi_done */
++	if (xchg(&lpfc_cmd->pCmd, NULL) == NULL) {
++		lpfc_printf_vlog(vport, KERN_INFO, LOG_FCP,
++				 "0711 FCP cmd already NULL, sid: 0x%06x, "
++				 "did: 0x%06x, oxid: 0x%04x\n",
++				 vport->fc_myDID,
++				 (pnode) ? pnode->nlp_DID : 0,
++				 phba->sli_rev == LPFC_SLI_REV4 ?
++				 lpfc_cmd->cur_iocbq.sli4_xritag : 0xffff);
++		return;
++	}
+ 
+ 	/* The sdev is not guaranteed to be valid post scsi_done upcall. */
+ 	cmd->scsi_done(cmd);
 
 
