@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF010C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:30:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D6C7C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:30:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87E682084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:30:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1431B2084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:30:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZG4pOKEC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87E682084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uy3lMPAb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1431B2084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388867AbeKLJUu (ORCPT
+        id S2388902AbeKLJVA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:20:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43864 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:21:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44954 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388655AbeKLIUX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1733139AbeKLIUX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:20:23 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F89F2154B;
-        Sun, 11 Nov 2018 22:30:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9368B2154B;
+        Sun, 11 Nov 2018 22:30:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975427;
-        bh=WSEfls8cTvfZeygyqzyMxfgBChJegQS4yJmMzN47isc=;
+        s=default; t=1541975426;
+        bh=7WddRw4tdgTfyetEHBLbNcpw732eooY1zrFy0dRERS0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZG4pOKECnPvW9fIUfvohcVeIEn+0AZaBCeNckQC2tuLwBDCBZ1oN5uPU+y/Jr66S4
-         wBdDAktwmbgNAQl+GT0H4rGqNSLi+V8fRLuZ8E8bJ5CWmXWL1R4UPO1RQ4QLIe2aoI
-         Ny05EtjqC6VFGQ4Ejg7eaMMDA5pT/c81hOfZyKxo=
+        b=uy3lMPAbsrqezuU3RUxB5I2cf/kpNpSiTTuwiJLZXO0q85ta+tjDAW9t6ABMKBntc
+         4gPsDgpuA2+oCNs5RWnZgbLa3ll495pPVCtyoN7NLpYhmV/URE3LHJ7Bbq7IzbjxUC
+         xf+Qrg23tZdEh9Hrku7EQReWpg4XkRdmC1A6Xeqk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shannon Nelson <shannon.nelson@oracle.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Sara Sharon <sara.sharon@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 129/350] ixgbe: disallow IPsec Tx offload when in SR-IOV mode
-Date:   Sun, 11 Nov 2018 14:19:53 -0800
-Message-Id: <20181111221713.165777244@linuxfoundation.org>
+Subject: [PATCH 4.18 127/350] iwlwifi: mvm: fix BAR seq ctrl reporting
+Date:   Sun, 11 Nov 2018 14:19:51 -0800
+Message-Id: <20181111221712.929007618@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -64,43 +63,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shannon Nelson <shannon.nelson@oracle.com>
+From: Sara Sharon <sara.sharon@intel.com>
 
-[ Upstream commit 47b6f50077e68bcd544f657526dad4bfdce7e87d ]
+[ Upstream commit 941ab4eb66c10bc5c7234e83a7a858b2806ed151 ]
 
-There seems to be a problem in the x540's internal switch wherein if SR-IOV
-mode is enabled and an offloaded IPsec packet is sent to a local VF,
-the packet is silently dropped.  This might never be a problem as it is
-somewhat a corner case, but if someone happens to be using IPsec offload
-from the PF to a VF that just happens to get migrated to the local box,
-communication will mysteriously fail.
+There is a bug in FW where the sequence control may be
+incorrect, and the driver overrides it with the value
+of the ieee80211 header.
 
-Not good.
+However, in BAR there is no sequence control in the header,
+which result with arbitrary sequence.
 
-A simple way to protect from this is to simply not allow any IPsec offloads
-for outgoing packets when num_vfs != 0.  This doesn't help any offloads that
-were created before SR-IOV was enabled, but we'll get to that later.
+This access to an unknown location is bad and it makes the
+logs very confusing - so fix it.
 
-Signed-off-by: Shannon Nelson <shannon.nelson@oracle.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Sara Sharon <sara.sharon@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/wireless/intel/iwlwifi/mvm/tx.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c
-@@ -676,6 +676,9 @@ static int ixgbe_ipsec_add_sa(struct xfr
- 	} else {
- 		struct tx_sa tsa;
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
+@@ -1385,6 +1385,7 @@ static void iwl_mvm_rx_tx_cmd_single(str
+ 	while (!skb_queue_empty(&skbs)) {
+ 		struct sk_buff *skb = __skb_dequeue(&skbs);
+ 		struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);
++		struct ieee80211_hdr *hdr = (void *)skb->data;
+ 		bool flushed = false;
  
-+		if (adapter->num_vfs)
-+			return -EOPNOTSUPP;
-+
- 		/* find the first unused index */
- 		ret = ixgbe_ipsec_find_empty_idx(ipsec, false);
- 		if (ret < 0) {
+ 		skb_freed++;
+@@ -1429,11 +1430,11 @@ static void iwl_mvm_rx_tx_cmd_single(str
+ 			info->flags |= IEEE80211_TX_STAT_AMPDU_NO_BACK;
+ 		info->flags &= ~IEEE80211_TX_CTL_AMPDU;
+ 
+-		/* W/A FW bug: seq_ctl is wrong when the status isn't success */
+-		if (status != TX_STATUS_SUCCESS) {
+-			struct ieee80211_hdr *hdr = (void *)skb->data;
++		/* W/A FW bug: seq_ctl is wrong upon failure / BAR frame */
++		if (ieee80211_is_back_req(hdr->frame_control))
++			seq_ctl = 0;
++		else if (status != TX_STATUS_SUCCESS)
+ 			seq_ctl = le16_to_cpu(hdr->seq_ctrl);
+-		}
+ 
+ 		if (unlikely(!seq_ctl)) {
+ 			struct ieee80211_hdr *hdr = (void *)skb->data;
 
 
