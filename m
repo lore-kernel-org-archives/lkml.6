@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBFADC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:28:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6E08C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:28:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5AA02084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:28:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EF8B2084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:28:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ymt1k9jf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5AA02084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tJev+Anu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EF8B2084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388806AbeKLIUb (ORCPT
+        id S2388996AbeKLJTD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:20:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43864 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:19:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388712AbeKLIU1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:20:27 -0500
+        id S1733202AbeKLIUb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:31 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 85C422175B;
-        Sun, 11 Nov 2018 22:30:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E82A621780;
+        Sun, 11 Nov 2018 22:30:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975430;
-        bh=F6TsBR9WP2s9Zx1r4LXY/R1vUIWTJHk7GCF4YW2ek8Q=;
+        s=default; t=1541975435;
+        bh=TpTWcZI8T/7V/su8ddPiyn9fg19xvUOQsF3SMixT20U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ymt1k9jftqN7D0kVBZvyFTe1o0qQQamnVPCg+NJaU2pvafENmz4w6vhGkT6WPb1Vi
-         guwcPuMxF3YB+sQiEEfSVD0NnvN7nFDokyyrqsgVtsSH4/GiXCdMwPvI9QtcUOoke6
-         6ib8bmjz/i3djU8ibU2+mjathmBVE7xUbZtMFzCc=
+        b=tJev+AnugHbBxUwzjLdXCEDsk8LZvkciIBH2YVCv2T38GG9qQqUJ7Hszm25Z3m0ER
+         8EeuTfG0xyFuDCSChiZUNh5YXidzTOREJ490ZyQCaMdolvqL9wDWOxBtX8JpMUoMUF
+         da3+bQcRxr/+0CsnBgzxBHVoiU8Cti+ceyiOay8o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Loic Poulain <loic.poulain@linaro.org>,
-        Peter Chen <peter.chen@nxp.com>,
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 172/350] usb: chipidea: Prevent unbalanced IRQ disable
-Date:   Sun, 11 Nov 2018 14:20:36 -0800
-Message-Id: <20181111221715.231609412@linuxfoundation.org>
+Subject: [PATCH 4.18 182/350] signal: Always deliver the kernels SIGKILL and SIGSTOP to a pid namespace init
+Date:   Sun, 11 Nov 2018 14:20:46 -0800
+Message-Id: <20181111221715.651884858@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -63,35 +63,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Loic Poulain <loic.poulain@linaro.org>
+From: "Eric W. Biederman" <ebiederm@xmission.com>
 
-[ Upstream commit 8b97d73c4d72a2abf58f8e49062a7ee1e5f1334e ]
+[ Upstream commit 3597dfe01d12f570bc739da67f857fd222a3ea66 ]
 
-The ChipIdea IRQ is disabled before scheduling the otg work and
-re-enabled on otg work completion. However if the job is already
-scheduled we have to undo the effect of disable_irq int order to
-balance the IRQ disable-depth value.
+Instead of playing whack-a-mole and changing SEND_SIG_PRIV to
+SEND_SIG_FORCED throughout the kernel to ensure a pid namespace init
+gets signals sent by the kernel, stop allowing a pid namespace init to
+ignore SIGKILL or SIGSTOP sent by the kernel.  A pid namespace init is
+only supposed to be able to ignore signals sent from itself and
+children with SIG_DFL.
 
-Fixes: be6b0c1bd0be ("usb: chipidea: using one inline function to cover queue work operations")
-Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
-Signed-off-by: Peter Chen <peter.chen@nxp.com>
+Fixes: 921cf9f63089 ("signals: protect cinit from unblocked SIG_DFL signals")
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/chipidea/otg.h |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ kernel/signal.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/chipidea/otg.h
-+++ b/drivers/usb/chipidea/otg.h
-@@ -17,7 +17,8 @@ void ci_handle_vbus_change(struct ci_hdr
- static inline void ci_otg_queue_work(struct ci_hdrc *ci)
- {
- 	disable_irq_nosync(ci->irq);
--	queue_work(ci->wq, &ci->work);
-+	if (queue_work(ci->wq, &ci->work) == false)
-+		enable_irq(ci->irq);
- }
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -1009,7 +1009,7 @@ static int __send_signal(int sig, struct
  
- #endif /* __DRIVERS_USB_CHIPIDEA_OTG_H */
+ 	result = TRACE_SIGNAL_IGNORED;
+ 	if (!prepare_signal(sig, t,
+-			from_ancestor_ns || (info == SEND_SIG_FORCED)))
++			from_ancestor_ns || (info == SEND_SIG_PRIV) || (info == SEND_SIG_FORCED)))
+ 		goto ret;
+ 
+ 	pending = group ? &t->signal->shared_pending : &t->pending;
 
 
