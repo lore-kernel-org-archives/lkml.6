@@ -7,48 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC8D9C43610
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF31DC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7325D223CB
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C5A1223DD
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RW9sMLgO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7325D223CB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ih0tY5eE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C5A1223DD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404059AbeKLIXB (ORCPT
+        id S2404127AbeKLIXE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:23:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54672 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:23:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404025AbeKLIXA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:23:00 -0500
+        id S2404039AbeKLIXB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:23:01 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C27C221780;
-        Sun, 11 Nov 2018 22:33:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B98E2241E;
+        Sun, 11 Nov 2018 22:33:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975582;
-        bh=e/tnfNPI4oZPf/VfwGTJ/A6T8avdAFuA3qAxpOszOQo=;
+        s=default; t=1541975584;
+        bh=N0hg1GwiB9XGPR/SF7YFRDCILUA0QSU+mHGARIou9As=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RW9sMLgO+1Xqr7nSQoGaElMfQm86jMJ6m/RcizLqvhC0svgNXELPZZNx4ozWWi53l
-         +77R6ZDR/n33vvnigLXNNZo9SZhHXe2pdBRUNGHznBlCY/Wz3c5lr5Z2l4gfQ7DxW9
-         f3uLgfelSFh/fVAKHRcWi22BLTnkPDqqPWlU1qXw=
+        b=ih0tY5eE1/i0uLkfDy4CFM1mDlgv/zS153LyZtd8HQFnAHI3vWq1iV2Zx/C9q7n6n
+         zd21MCBKw3rha8Cr/lr8u1iMHkA9E3swe74I7DurKaNpUT1g3Je/W6VrUooFpOMZA0
+         wClR0yDdy+j8/imwKYOUsqWyElBgUO/Mf+txAhDo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
-        Borislav Petkov <bp@suse.de>,
-        Aristeu Rozanski <aris@redhat.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-        linux-edac <linux-edac@vger.kernel.org>
-Subject: [PATCH 4.14 143/222] EDAC, {i7core,sb,skx}_edac: Fix uncorrected error counting
-Date:   Sun, 11 Nov 2018 14:24:00 -0800
-Message-Id: <20181111221700.280195206@linuxfoundation.org>
+        stable@vger.kernel.org, Lukas Czerner <lczerner@redhat.com>,
+        Theodore Tso <tytso@mit.edu>, stable@kernel.org
+Subject: [PATCH 4.14 137/222] ext4: initialize retries variable in ext4_da_write_inline_data_begin()
+Date:   Sun, 11 Nov 2018 14:23:54 -0800
+Message-Id: <20181111221659.802163680@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -66,62 +62,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tony Luck <tony.luck@intel.com>
+From: Lukas Czerner <lczerner@redhat.com>
 
-commit 432de7fd7630c84ad24f1c2acd1e3bb4ce3741ca upstream.
+commit 625ef8a3acd111d5f496d190baf99d1a815bd03e upstream.
 
-The count of errors is picked up from bits 52:38 of the machine check
-bank status register. But this is the count of *corrected* errors. If an
-uncorrected error is being logged, the h/w sets this field to 0. Which
-means that when edac_mc_handle_error() is called, the EDAC core will
-carefully add zero to the appropriate uncorrected error counts.
+Variable retries is not initialized in ext4_da_write_inline_data_begin()
+which can lead to nondeterministic number of retries in case we hit
+ENOSPC. Initialize retries to zero as we do everywhere else.
 
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-[ Massage commit message. ]
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: stable@vger.kernel.org
-Cc: Aristeu Rozanski <aris@redhat.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Link: http://lkml.kernel.org/r/20180928213934.19890-1-tony.luck@intel.com
+Signed-off-by: Lukas Czerner <lczerner@redhat.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Fixes: bc0ca9df3b2a ("ext4: retry allocation when inline->extent conversion failed")
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/edac/i7core_edac.c |    1 +
- drivers/edac/sb_edac.c     |    1 +
- drivers/edac/skx_edac.c    |    1 +
- 3 files changed, 3 insertions(+)
+ fs/ext4/inline.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/edac/i7core_edac.c
-+++ b/drivers/edac/i7core_edac.c
-@@ -1711,6 +1711,7 @@ static void i7core_mce_output_error(stru
- 	u32 errnum = find_first_bit(&error, 32);
+--- a/fs/ext4/inline.c
++++ b/fs/ext4/inline.c
+@@ -869,7 +869,7 @@ int ext4_da_write_inline_data_begin(stru
+ 	handle_t *handle;
+ 	struct page *page;
+ 	struct ext4_iloc iloc;
+-	int retries;
++	int retries = 0;
  
- 	if (uncorrected_error) {
-+		core_err_cnt = 1;
- 		if (ripv)
- 			tp_event = HW_EVENT_ERR_FATAL;
- 		else
---- a/drivers/edac/sb_edac.c
-+++ b/drivers/edac/sb_edac.c
-@@ -2891,6 +2891,7 @@ static void sbridge_mce_output_error(str
- 		recoverable = GET_BITFIELD(m->status, 56, 56);
- 
- 	if (uncorrected_error) {
-+		core_err_cnt = 1;
- 		if (ripv) {
- 			type = "FATAL";
- 			tp_event = HW_EVENT_ERR_FATAL;
---- a/drivers/edac/skx_edac.c
-+++ b/drivers/edac/skx_edac.c
-@@ -895,6 +895,7 @@ static void skx_mce_output_error(struct
- 	recoverable = GET_BITFIELD(m->status, 56, 56);
- 
- 	if (uncorrected_error) {
-+		core_err_cnt = 1;
- 		if (ripv) {
- 			type = "FATAL";
- 			tp_event = HW_EVENT_ERR_FATAL;
+ 	ret = ext4_get_inode_loc(inode, &iloc);
+ 	if (ret)
 
 
