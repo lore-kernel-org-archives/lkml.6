@@ -2,142 +2,115 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 834F0C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:00:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 752C9C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:00:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 514D020871
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:00:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 514D020871
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 43E9820871
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:00:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43E9820871
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731006AbeKLFuD (ORCPT
+        id S1730992AbeKLFuD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 12 Nov 2018 00:50:03 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51248 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730781AbeKLFsd (ORCPT
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:53607 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730752AbeKLFsd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 00:48:33 -0500
-Received: from [192.168.4.242] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1gLvst-0000tu-KX; Sun, 11 Nov 2018 19:59:03 +0000
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsV-0001fh-Dr; Sun, 11 Nov 2018 19:58:39 +0000
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id A73E8806E4; Sun, 11 Nov 2018 20:59:01 +0100 (CET)
+Date:   Sun, 11 Nov 2018 20:59:03 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        tj@kernel.org, akpm@linux-foundation.org, linux-pm@vger.kernel.org,
+        jiangshanlai@gmail.com, rafael@kernel.org, len.brown@intel.com,
+        zwisler@kernel.org, dan.j.williams@intel.com, dave.jiang@intel.com,
+        bvanassche@acm.org
+Subject: Re: [driver-core PATCH v6 2/9] async: Add support for queueing on
+ specific NUMA node
+Message-ID: <20181111195903.GA9726@amd>
+References: <154170028986.12967.2108024712555179678.stgit@ahduyck-desk1.jf.intel.com>
+ <154170041079.12967.13132220574997822111.stgit@ahduyck-desk1.jf.intel.com>
+ <20181111193208.GB8332@kroah.com>
 MIME-Version: 1.0
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        "Changbin Du" <changbin.du@intel.com>
-Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.840652693@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 225/366] tracing: Fix missing return symbol in
- function_graph output
-In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
-X-SA-Exim-Connect-IP: 192.168.4.242
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="lrZ03NoBR/3+SXJZ"
+Content-Disposition: inline
+In-Reply-To: <20181111193208.GB8332@kroah.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.61-rc1 review patch.  If anyone has any objections, please let me know.
 
-------------------
+--lrZ03NoBR/3+SXJZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-From: Changbin Du <changbin.du@intel.com>
+On Sun 2018-11-11 11:32:08, Greg KH wrote:
+> On Thu, Nov 08, 2018 at 10:06:50AM -0800, Alexander Duyck wrote:
+> > Introduce four new variants of the async_schedule_ functions that allow
+> > scheduling on a specific NUMA node.
+> >=20
+> > The first two functions are async_schedule_near and
+> > async_schedule_near_domain end up mapping to async_schedule and
+> > async_schedule_domain, but provide NUMA node specific functionality. Th=
+ey
+> > replace the original functions which were moved to inline function
+> > definitions that call the new functions while passing NUMA_NO_NODE.
+> >=20
+> > The second two functions are async_schedule_dev and
+> > async_schedule_dev_domain which provide NUMA specific functionality when
+> > passing a device as the data member and that device has a NUMA node oth=
+er
+> > than NUMA_NO_NODE.
+> >=20
+> > The main motivation behind this is to address the need to be able to
+> > schedule device specific init work on specific NUMA nodes in order to
+> > improve performance of memory initialization.
+> >=20
+> > Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+> > ---
+>=20
+> No one else from Intel has reviewed/verified this code at all?
+>=20
+> Please take advantages of the resources you have that most people do
+> not, get reviewes from your coworkers please before you send this out
+> again, as they can give you valuable help before the community has to
+> review the code...
 
-commit 1fe4293f4b8de75824935f8d8e9a99c7fc6873da upstream.
+We always said to companies we want to see code as soon as
+possible. You don't have to review their code, but discouraging the
+posting seems wrong.
 
-The function_graph tracer does not show the interrupt return marker for the
-leaf entry. On leaf entries, we see an unbalanced interrupt marker (the
-interrupt was entered, but nevern left).
+Best regards,
+									Pavel
 
-Before:
- 1)               |  SyS_write() {
- 1)               |    __fdget_pos() {
- 1)   0.061 us    |      __fget_light();
- 1)   0.289 us    |    }
- 1)               |    vfs_write() {
- 1)   0.049 us    |      rw_verify_area();
- 1) + 15.424 us   |      __vfs_write();
- 1)   ==========> |
- 1)   6.003 us    |      smp_apic_timer_interrupt();
- 1)   0.055 us    |      __fsnotify_parent();
- 1)   0.073 us    |      fsnotify();
- 1) + 23.665 us   |    }
- 1) + 24.501 us   |  }
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-After:
- 0)               |  SyS_write() {
- 0)               |    __fdget_pos() {
- 0)   0.052 us    |      __fget_light();
- 0)   0.328 us    |    }
- 0)               |    vfs_write() {
- 0)   0.057 us    |      rw_verify_area();
- 0)               |      __vfs_write() {
- 0)   ==========> |
- 0)   8.548 us    |      smp_apic_timer_interrupt();
- 0)   <========== |
- 0) + 36.507 us   |      } /* __vfs_write */
- 0)   0.049 us    |      __fsnotify_parent();
- 0)   0.066 us    |      fsnotify();
- 0) + 50.064 us   |    }
- 0) + 50.952 us   |  }
+--lrZ03NoBR/3+SXJZ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Link: http://lkml.kernel.org/r/1517413729-20411-1-git-send-email-changbin.du@intel.com
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-Fixes: f8b755ac8e0cc ("tracing/function-graph-tracer: Output arrows signal on hardirq call/return")
-Signed-off-by: Changbin Du <changbin.du@intel.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-[bwh: Backported to 3.16: Propagate return of TRACE_TYPE_PARTIAL_LINE from
- print_graph_irq()]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- kernel/trace/trace_functions_graph.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+iEYEARECAAYFAlvoigcACgkQMOfwapXb+vLM7QCeK4Ud2W9el0ctGnoUF0SqZWOD
+CbQAn0a0OEUsAiEHnhPdInZmB2mwYHnI
+=Q2CO
+-----END PGP SIGNATURE-----
 
---- a/kernel/trace/trace_functions_graph.c
-+++ b/kernel/trace/trace_functions_graph.c
-@@ -828,6 +828,7 @@ print_graph_entry_leaf(struct trace_iter
- 	struct ftrace_graph_ret *graph_ret;
- 	struct ftrace_graph_ent *call;
- 	unsigned long long duration;
-+	int cpu = iter->cpu;
- 	int ret;
- 	int i;
- 
-@@ -837,7 +838,6 @@ print_graph_entry_leaf(struct trace_iter
- 
- 	if (data) {
- 		struct fgraph_cpu_data *cpu_data;
--		int cpu = iter->cpu;
- 
- 		cpu_data = per_cpu_ptr(data->cpu_data, cpu);
- 
-@@ -874,6 +874,11 @@ print_graph_entry_leaf(struct trace_iter
- 	if (!ret)
- 		return TRACE_TYPE_PARTIAL_LINE;
- 
-+	ret = print_graph_irq(iter, graph_ret->func, TRACE_GRAPH_RET,
-+			      cpu, iter->ent->pid, flags);
-+	if (ret == TRACE_TYPE_PARTIAL_LINE)
-+		return ret;
-+
- 	return TRACE_TYPE_HANDLED;
- }
- 
-
+--lrZ03NoBR/3+SXJZ--
