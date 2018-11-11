@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D109C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCAE2C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19BB7208A3
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7742021527
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SGEMemNL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19BB7208A3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="W44v/Vil"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7742021527
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733247AbeKLISz (ORCPT
+        id S1733273AbeKLITB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:18:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39524 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:19:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730142AbeKLISx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:18:53 -0500
+        id S1730142AbeKLITA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:19:00 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A1F7A21508;
-        Sun, 11 Nov 2018 22:28:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D11F21582;
+        Sun, 11 Nov 2018 22:29:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975337;
-        bh=8953rfUyG7e7cFcUprKPzcDY6/2egAp+ZOyPYwrpftA=;
+        s=default; t=1541975344;
+        bh=apw8YlYBNGnGMRBA+HLO2jTJdDvWE2oVb8xj4laZfhM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SGEMemNLj8S/bZrLC+dCxtL1OcO5dxt0os3SYV4Hqym7S4j/HLp1tBeSSukfzAYsM
-         ionqQRdfpVMeswensT9alpjF2shuDR9pLmCmSBQvv7r+TT3Rb2GjDoBLYJoleTzwkI
-         Fsxnio5sgD0a2EgXm0sAlyOlX9D3LYKESai9yVH0=
+        b=W44v/VilaGPeOu3VLFKlaTfxAoorzxY4yxGWyd/CEFveIv4KGYah3pJR9ZdnofWMK
+         yETP2lGP+GLE0xXGn2KMmCEbfpUAkz+G+xIt2zxUwX5VVFicfUD38afnKPf+U0jsl+
+         /1U9rhdwp6K17Eity86PjEZjdeIbs3CCjH3X5IDA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.19 353/361] btrfs: dont run delayed_iputs in commit
-Date:   Sun, 11 Nov 2018 14:21:40 -0800
-Message-Id: <20181111221701.708056344@linuxfoundation.org>
+        stable@vger.kernel.org, Breno Leitao <leitao@debian.org>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.19 324/361] selftests/powerpc: Fix ptrace tm failure
+Date:   Sun, 11 Nov 2018 14:21:11 -0800
+Message-Id: <20181111221659.320523158@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -63,52 +63,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Josef Bacik <josef@toxicpanda.com>
+From: Breno Leitao <leitao@debian.org>
 
-commit 30928e9baac238a7330085a1c5747f0b5df444b4 upstream.
+commit 48dc0ef19044bfb69193302fbe3a834e3331b7ae upstream.
 
-This could result in a really bad case where we do something like
+Test ptrace-tm-spd-gpr fails on current kernel (4.19) due to a segmentation
+fault that happens on the child process prior to setting cptr[2] = 1. This
+causes the parent process to wait forever at 'while (!pptr[2])' and the test to
+be killed by the test harness framework by timeout, thus, failing.
 
-evict
-  evict_refill_and_join
-    btrfs_commit_transaction
-      btrfs_run_delayed_iputs
-        evict
-          evict_refill_and_join
-            btrfs_commit_transaction
-... forever
+The segmentation fault happens because of a inline assembly being
+generated as:
 
-We have plenty of other places where we run delayed iputs that are much
-safer, let those do the work.
+	0x10000355c <tm_spd_gpr+492>    lfs    f0, 0(0)
 
-CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+This is reading memory position 0x0 and causing the segmentation fault.
+
+This code is being generated by ASM_LOAD_FPR_SINGLE_PRECISION(flt_4), where
+flt_4 is passed to the inline assembly block as:
+
+	[flt_4] "r" (&d)
+
+Since the inline assembly 'r' constraint means any GPR, gpr0 is being
+chosen, thus causing this issue when issuing a Load Floating-Point Single
+instruction.
+
+This patch simply changes the constraint to 'b', which specify that this
+register will be used as base, and r0 is not allowed to be used, avoiding
+this issue.
+
+Other than that, removing flt_2 register from the input operands, since it
+is not used by the inline assembly code at all.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Acked-by: Segher Boessenkool <segher@kernel.crashing.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/transaction.c |    9 ---------
- 1 file changed, 9 deletions(-)
+ tools/testing/selftests/powerpc/ptrace/ptrace-tm-spd-gpr.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/fs/btrfs/transaction.c
-+++ b/fs/btrfs/transaction.c
-@@ -2280,15 +2280,6 @@ int btrfs_commit_transaction(struct btrf
- 
- 	kmem_cache_free(btrfs_trans_handle_cachep, trans);
- 
--	/*
--	 * If fs has been frozen, we can not handle delayed iputs, otherwise
--	 * it'll result in deadlock about SB_FREEZE_FS.
--	 */
--	if (current != fs_info->transaction_kthread &&
--	    current != fs_info->cleaner_kthread &&
--	    !test_bit(BTRFS_FS_FROZEN, &fs_info->flags))
--		btrfs_run_delayed_iputs(fs_info);
--
- 	return ret;
- 
- scrub_continue:
+--- a/tools/testing/selftests/powerpc/ptrace/ptrace-tm-spd-gpr.c
++++ b/tools/testing/selftests/powerpc/ptrace/ptrace-tm-spd-gpr.c
+@@ -67,8 +67,8 @@ trans:
+ 		"3: ;"
+ 		: [res] "=r" (result), [texasr] "=r" (texasr)
+ 		: [gpr_1]"i"(GPR_1), [gpr_2]"i"(GPR_2), [gpr_4]"i"(GPR_4),
+-		[sprn_texasr] "i" (SPRN_TEXASR), [flt_1] "r" (&a),
+-		[flt_2] "r" (&b), [flt_4] "r" (&d)
++		[sprn_texasr] "i" (SPRN_TEXASR), [flt_1] "b" (&a),
++		[flt_4] "b" (&d)
+ 		: "memory", "r5", "r6", "r7",
+ 		"r8", "r9", "r10", "r11", "r12", "r13", "r14", "r15",
+ 		"r16", "r17", "r18", "r19", "r20", "r21", "r22", "r23",
 
 
