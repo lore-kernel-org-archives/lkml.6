@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C47CC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:51:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB0F6C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:51:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FE6C214E0
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:51:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73D7A20872
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:51:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PMkdNe7J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FE6C214E0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FvdUE0kJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73D7A20872
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404240AbeKLIlp (ORCPT
+        id S2391040AbeKLIl4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:41:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54620 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:41:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404154AbeKLIXG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:23:06 -0500
+        id S2404124AbeKLIXF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:23:05 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D9C1421780;
-        Sun, 11 Nov 2018 22:33:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E32282241B;
+        Sun, 11 Nov 2018 22:33:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975588;
-        bh=FLdygPX7ypcFDLD/kL5uVnIyR/0wwsGBK7MEy+6ca/g=;
+        bh=3EOeQuUJC+PScKPe7aPolkBKFZQF5uFe+OToQkyacHE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PMkdNe7J35mQwITs4FEtyY1p20wGh+GeuI0rs51jTn9h16SrGiO2CDiIjTB2LytDm
-         jsyocxfnzGfGlIlCD2Mv9EkYWfGm5ZgckcQrIgrFHstBghxojKA6V1QRdwRD5n5aMy
-         laWQ8nugEtnYooqgeCAx4wsyHMOvE8xmIcr2zckY=
+        b=FvdUE0kJcxHEFkVoW5h+qwdjO77RZ3NFTfcnA0+d+lgmbD1kkaHiUMCTg3t9cMnz4
+         4jjr1OlSOk11/VN7Meh+OabsaN2xs0043q6jA20KcPXleADRw9mnCS93rutB2O+QS4
+         qO2Xl550w8wonAbXzJ8eBv07zY9Bxalzxg/R9M8Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xu Wen <wen.xu@gatech.edu>,
-        Qu Wenruo <wqu@suse.com>, David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 197/222] btrfs: Handle owner mismatch gracefully when walking up tree
-Date:   Sun, 11 Nov 2018 14:24:54 -0800
-Message-Id: <20181111221704.415752862@linuxfoundation.org>
+        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org
+Subject: [PATCH 4.14 177/222] MIPS: OCTEON: fix out of bounds array access on CN68XX
+Date:   Sun, 11 Nov 2018 14:24:34 -0800
+Message-Id: <20181111221702.910992872@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -62,118 +63,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Qu Wenruo <wqu@suse.com>
+From: Aaro Koskinen <aaro.koskinen@iki.fi>
 
-commit 65c6e82becec33731f48786e5a30f98662c86b16 upstream.
+commit c0fae7e2452b90c31edd2d25eb3baf0c76b400ca upstream.
 
-[BUG]
-When mounting certain crafted image, btrfs will trigger kernel BUG_ON()
-when trying to recover balance:
+The maximum number of interfaces is returned by
+cvmx_helper_get_number_of_interfaces(), and the value is used to access
+interface_port_count[]. When CN68XX support was added, we forgot
+to increase the array size. Fix that.
 
-  kernel BUG at fs/btrfs/extent-tree.c:8956!
-  invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
-  CPU: 1 PID: 662 Comm: mount Not tainted 4.18.0-rc1-custom+ #10
-  RIP: 0010:walk_up_proc+0x336/0x480 [btrfs]
-  RSP: 0018:ffffb53540c9b890 EFLAGS: 00010202
-  Call Trace:
-   walk_up_tree+0x172/0x1f0 [btrfs]
-   btrfs_drop_snapshot+0x3a4/0x830 [btrfs]
-   merge_reloc_roots+0xe1/0x1d0 [btrfs]
-   btrfs_recover_relocation+0x3ea/0x420 [btrfs]
-   open_ctree+0x1af3/0x1dd0 [btrfs]
-   btrfs_mount_root+0x66b/0x740 [btrfs]
-   mount_fs+0x3b/0x16a
-   vfs_kern_mount.part.9+0x54/0x140
-   btrfs_mount+0x16d/0x890 [btrfs]
-   mount_fs+0x3b/0x16a
-   vfs_kern_mount.part.9+0x54/0x140
-   do_mount+0x1fd/0xda0
-   ksys_mount+0xba/0xd0
-   __x64_sys_mount+0x21/0x30
-   do_syscall_64+0x60/0x210
-   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-[CAUSE]
-Extent tree corruption.  In this particular case, reloc tree root's
-owner is DATA_RELOC_TREE (should be TREE_RELOC), thus its backref is
-corrupted and we failed the owner check in walk_up_tree().
-
-[FIX]
-It's pretty hard to take care of every extent tree corruption, but at
-least we can remove such BUG_ON() and exit more gracefully.
-
-And since in this particular image, DATA_RELOC_TREE and TREE_RELOC share
-the same root (which is obviously invalid), we needs to make
-__del_reloc_root() more robust to detect such invalid sharing to avoid
-possible NULL dereference as root->node can be NULL in this case.
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=200411
-Reported-by: Xu Wen <wen.xu@gatech.edu>
-CC: stable@vger.kernel.org # 4.4+
-Signed-off-by: Qu Wenruo <wqu@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: 2c8c3f0201333 ("MIPS: Octeon: Support additional interfaces on CN68XX")
+Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/20949/
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Cc: linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org # v4.3+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/extent-tree.c |   18 ++++++++++++------
- fs/btrfs/relocation.c  |    2 +-
- 2 files changed, 13 insertions(+), 7 deletions(-)
+ arch/mips/cavium-octeon/executive/cvmx-helper.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/btrfs/extent-tree.c
-+++ b/fs/btrfs/extent-tree.c
-@@ -9028,15 +9028,14 @@ static noinline int walk_up_proc(struct
- 	if (eb == root->node) {
- 		if (wc->flags[level] & BTRFS_BLOCK_FLAG_FULL_BACKREF)
- 			parent = eb->start;
--		else
--			BUG_ON(root->root_key.objectid !=
--			       btrfs_header_owner(eb));
-+		else if (root->root_key.objectid != btrfs_header_owner(eb))
-+			goto owner_mismatch;
- 	} else {
- 		if (wc->flags[level + 1] & BTRFS_BLOCK_FLAG_FULL_BACKREF)
- 			parent = path->nodes[level + 1]->start;
--		else
--			BUG_ON(root->root_key.objectid !=
--			       btrfs_header_owner(path->nodes[level + 1]));
-+		else if (root->root_key.objectid !=
-+			 btrfs_header_owner(path->nodes[level + 1]))
-+			goto owner_mismatch;
- 	}
+--- a/arch/mips/cavium-octeon/executive/cvmx-helper.c
++++ b/arch/mips/cavium-octeon/executive/cvmx-helper.c
+@@ -67,7 +67,7 @@ void (*cvmx_override_pko_queue_priority)
+ void (*cvmx_override_ipd_port_setup) (int ipd_port);
  
- 	btrfs_free_tree_block(trans, root, eb, parent, wc->refs[level] == 1);
-@@ -9044,6 +9043,11 @@ out:
- 	wc->refs[level] = 0;
- 	wc->flags[level] = 0;
- 	return 0;
-+
-+owner_mismatch:
-+	btrfs_err_rl(fs_info, "unexpected tree owner, have %llu expect %llu",
-+		     btrfs_header_owner(eb), root->root_key.objectid);
-+	return -EUCLEAN;
- }
+ /* Port count per interface */
+-static int interface_port_count[5];
++static int interface_port_count[9];
  
- static noinline int walk_down_tree(struct btrfs_trans_handle *trans,
-@@ -9097,6 +9101,8 @@ static noinline int walk_up_tree(struct
- 			ret = walk_up_proc(trans, root, path, wc);
- 			if (ret > 0)
- 				return 0;
-+			if (ret < 0)
-+				return ret;
- 
- 			if (path->locks[level]) {
- 				btrfs_tree_unlock_rw(path->nodes[level],
---- a/fs/btrfs/relocation.c
-+++ b/fs/btrfs/relocation.c
-@@ -1334,7 +1334,7 @@ static void __del_reloc_root(struct btrf
- 	struct mapping_node *node = NULL;
- 	struct reloc_control *rc = fs_info->reloc_ctl;
- 
--	if (rc) {
-+	if (rc && root->node) {
- 		spin_lock(&rc->reloc_root_tree.lock);
- 		rb_node = tree_search(&rc->reloc_root_tree.rb_root,
- 				      root->node->start);
+ /**
+  * Return the number of interfaces the chip has. Each interface
 
 
