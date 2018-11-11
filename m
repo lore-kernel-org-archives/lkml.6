@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 409F9C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:26:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B14AC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:26:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AD1A21508
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:26:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AD1A21508
+	by mail.kernel.org (Postfix) with ESMTP id EC01620818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:26:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC01620818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730658AbeKLFs2 (ORCPT
+        id S1731235AbeKLGP7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 00:48:28 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50834 "EHLO
+        Mon, 12 Nov 2018 01:15:59 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50902 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730607AbeKLFs0 (ORCPT
+        by vger.kernel.org with ESMTP id S1730637AbeKLFs1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:48:26 -0500
+        Mon, 12 Nov 2018 00:48:27 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsl-0000oJ-CL; Sun, 11 Nov 2018 19:58:55 +0000
+        id 1gLvsl-0000oO-H7; Sun, 11 Nov 2018 19:58:55 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsY-0001mV-9z; Sun, 11 Nov 2018 19:58:42 +0000
+        id 1gLvsY-0001ma-B3; Sun, 11 Nov 2018 19:58:42 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -38,13 +38,17 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org,
+        "Tom Zanussi" <tom.zanussi@linux.intel.com>,
+        "Shuah Khan" <shuah@kernel.org>,
         "Masami Hiramatsu" <mhiramat@kernel.org>,
         "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        stable@vger.kerne.org
+        "Hiraku Toyooka" <hiraku.toyooka@cybertrust.co.jp>,
+        "Ingo Molnar" <mingo@redhat.com>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.260467026@decadent.org.uk>
+Message-ID: <lsq.1541965745.869359665@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 293/366] tracing: Fix double free of event_trigger_data
+Subject: [PATCH 3.16 294/366] ring_buffer: tracing: Inherit the tracing
+ setting to next ring buffer
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,110 +62,101 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-commit 1863c387259b629e4ebfb255495f67cd06aa229b upstream.
+commit 73c8d8945505acdcbae137c2e00a1232e0be709f upstream.
 
-Running the following:
+Maintain the tracing on/off setting of the ring_buffer when switching
+to the trace buffer snapshot.
 
- # cd /sys/kernel/debug/tracing
- # echo 500000 > buffer_size_kb
-[ Or some other number that takes up most of memory ]
- # echo snapshot > events/sched/sched_switch/trigger
+Taking a snapshot is done by swapping the backup ring buffer
+(max_tr_buffer). But since the tracing on/off setting is defined
+by the ring buffer, when swapping it, the tracing on/off setting
+can also be changed. This causes a strange result like below:
 
-Triggers the following bug:
+  /sys/kernel/debug/tracing # cat tracing_on
+  1
+  /sys/kernel/debug/tracing # echo 0 > tracing_on
+  /sys/kernel/debug/tracing # cat tracing_on
+  0
+  /sys/kernel/debug/tracing # echo 1 > snapshot
+  /sys/kernel/debug/tracing # cat tracing_on
+  1
+  /sys/kernel/debug/tracing # echo 1 > snapshot
+  /sys/kernel/debug/tracing # cat tracing_on
+  0
 
- ------------[ cut here ]------------
- kernel BUG at mm/slub.c:296!
- invalid opcode: 0000 [#1] SMP DEBUG_PAGEALLOC PTI
- CPU: 6 PID: 6878 Comm: bash Not tainted 4.18.0-rc6-test+ #1066
- Hardware name: Hewlett-Packard HP Compaq Pro 6300 SFF/339A, BIOS K01 v03.03 07/14/2016
- RIP: 0010:kfree+0x16c/0x180
- Code: 05 41 0f b6 72 51 5b 5d 41 5c 4c 89 d7 e9 ac b3 f8 ff 48 89 d9 48 89 da 41 b8 01 00 00 00 5b 5d 41 5c 4c 89 d6 e9 f4 f3 ff ff <0f> 0b 0f 0b 48 8b 3d d9 d8 f9 00 e9 c1 fe ff ff 0f 1f 40 00 0f 1f
- RSP: 0018:ffffb654436d3d88 EFLAGS: 00010246
- RAX: ffff91a9d50f3d80 RBX: ffff91a9d50f3d80 RCX: ffff91a9d50f3d80
- RDX: 00000000000006a4 RSI: ffff91a9de5a60e0 RDI: ffff91a9d9803500
- RBP: ffffffff8d267c80 R08: 00000000000260e0 R09: ffffffff8c1a56be
- R10: fffff0d404543cc0 R11: 0000000000000389 R12: ffffffff8c1a56be
- R13: ffff91a9d9930e18 R14: ffff91a98c0c2890 R15: ffffffff8d267d00
- FS:  00007f363ea64700(0000) GS:ffff91a9de580000(0000) knlGS:0000000000000000
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 000055c1cacc8e10 CR3: 00000000d9b46003 CR4: 00000000001606e0
- Call Trace:
-  event_trigger_callback+0xee/0x1d0
-  event_trigger_write+0xfc/0x1a0
-  __vfs_write+0x33/0x190
-  ? handle_mm_fault+0x115/0x230
-  ? _cond_resched+0x16/0x40
-  vfs_write+0xb0/0x190
-  ksys_write+0x52/0xc0
-  do_syscall_64+0x5a/0x160
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
- RIP: 0033:0x7f363e16ab50
- Code: 73 01 c3 48 8b 0d 38 83 2c 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 83 3d 79 db 2c 00 00 75 10 b8 01 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8 1e e3 01 00 48 89 04 24
- RSP: 002b:00007fff9a4c6378 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
- RAX: ffffffffffffffda RBX: 0000000000000009 RCX: 00007f363e16ab50
- RDX: 0000000000000009 RSI: 000055c1cacc8e10 RDI: 0000000000000001
- RBP: 000055c1cacc8e10 R08: 00007f363e435740 R09: 00007f363ea64700
- R10: 0000000000000073 R11: 0000000000000246 R12: 0000000000000009
- R13: 0000000000000001 R14: 00007f363e4345e0 R15: 00007f363e4303c0
- Modules linked in: ip6table_filter ip6_tables snd_hda_codec_hdmi snd_hda_codec_realtek snd_hda_codec_generic snd_hda_intel snd_hda_codec snd_hwdep snd_hda_core snd_seq snd_seq_device i915 snd_pcm snd_timer i2c_i801 snd soundcore i2c_algo_bit drm_kms_helper
-86_pkg_temp_thermal video kvm_intel kvm irqbypass wmi e1000e
- ---[ end trace d301afa879ddfa25 ]---
+We don't touch tracing_on, but snapshot changes tracing_on
+setting each time. This is an anomaly, because user doesn't know
+that each "ring_buffer" stores its own tracing-enable state and
+the snapshot is done by swapping ring buffers.
 
-The cause is because the register_snapshot_trigger() call failed to
-allocate the snapshot buffer, and then called unregister_trigger()
-which freed the data that was passed to it. Then on return to the
-function that called register_snapshot_trigger(), as it sees it
-failed to register, it frees the trigger_data again and causes
-a double free.
+Link: http://lkml.kernel.org/r/153149929558.11274.11730609978254724394.stgit@devbox
 
-By calling event_trigger_init() on the trigger_data (which only ups
-the reference counter for it), and then event_trigger_free() afterward,
-the trigger_data would not get freed by the registering trigger function
-as it would only up and lower the ref count for it. If the register
-trigger function fails, then the event_trigger_free() called after it
-will free the trigger data normally.
-
-Link: http://lkml.kernel.org/r/20180724191331.738eb819@gandalf.local.home
-
-Cc: stable@vger.kerne.org
-Fixes: 93e31ffbf417 ("tracing: Add 'snapshot' event trigger command")
-Reported-by: Masami Hiramatsu <mhiramat@kernel.org>
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
+Cc: Hiraku Toyooka <hiraku.toyooka@cybertrust.co.jp>
+Fixes: debdd57f5145 ("tracing: Make a snapshot feature available from userspace")
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+[ Updated commit log and comment in the code ]
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- kernel/trace/trace_events_trigger.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ include/linux/ring_buffer.h |  1 +
+ kernel/trace/ring_buffer.c  | 16 ++++++++++++++++
+ kernel/trace/trace.c        |  6 ++++++
+ 3 files changed, 23 insertions(+)
 
---- a/kernel/trace/trace_events_trigger.c
-+++ b/kernel/trace/trace_events_trigger.c
-@@ -663,6 +663,8 @@ event_trigger_callback(struct event_comm
- 		goto out_free;
+--- a/include/linux/ring_buffer.h
++++ b/include/linux/ring_buffer.h
+@@ -162,6 +162,7 @@ void ring_buffer_record_enable(struct ri
+ void ring_buffer_record_off(struct ring_buffer *buffer);
+ void ring_buffer_record_on(struct ring_buffer *buffer);
+ int ring_buffer_record_is_on(struct ring_buffer *buffer);
++int ring_buffer_record_is_set_on(struct ring_buffer *buffer);
+ void ring_buffer_record_disable_cpu(struct ring_buffer *buffer, int cpu);
+ void ring_buffer_record_enable_cpu(struct ring_buffer *buffer, int cpu);
  
-  out_reg:
-+	/* Up the trigger_data count to make sure reg doesn't free it on failure */
-+	event_trigger_init(trigger_ops, trigger_data);
- 	ret = cmd_ops->reg(glob, trigger_ops, trigger_data, file);
- 	/*
- 	 * The above returns on success the # of functions enabled,
-@@ -670,11 +672,13 @@ event_trigger_callback(struct event_comm
- 	 * Consider no functions a failure too.
- 	 */
- 	if (!ret) {
-+		cmd_ops->unreg(glob, trigger_ops, trigger_data, file);
- 		ret = -ENOENT;
--		goto out_free;
--	} else if (ret < 0)
--		goto out_free;
--	ret = 0;
-+	} else if (ret > 0)
-+		ret = 0;
+--- a/kernel/trace/ring_buffer.c
++++ b/kernel/trace/ring_buffer.c
+@@ -3165,6 +3165,22 @@ int ring_buffer_record_is_on(struct ring
+ }
+ 
+ /**
++ * ring_buffer_record_is_set_on - return true if the ring buffer is set writable
++ * @buffer: The ring buffer to see if write is set enabled
++ *
++ * Returns true if the ring buffer is set writable by ring_buffer_record_on().
++ * Note that this does NOT mean it is in a writable state.
++ *
++ * It may return true when the ring buffer has been disabled by
++ * ring_buffer_record_disable(), as that is a temporary disabling of
++ * the ring buffer.
++ */
++int ring_buffer_record_is_set_on(struct ring_buffer *buffer)
++{
++	return !(atomic_read(&buffer->record_disabled) & RB_BUFFER_OFF);
++}
 +
-+	/* Down the counter of trigger_data or free it if not used anymore */
-+	event_trigger_free(trigger_ops, trigger_data);
-  out:
- 	return ret;
++/**
+  * ring_buffer_record_disable_cpu - stop all writes into the cpu_buffer
+  * @buffer: The ring buffer to stop writes to.
+  * @cpu: The CPU buffer to stop
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -1046,6 +1046,12 @@ update_max_tr(struct trace_array *tr, st
  
+ 	arch_spin_lock(&tr->max_lock);
+ 
++	/* Inherit the recordable setting from trace_buffer */
++	if (ring_buffer_record_is_set_on(tr->trace_buffer.buffer))
++		ring_buffer_record_on(tr->max_buffer.buffer);
++	else
++		ring_buffer_record_off(tr->max_buffer.buffer);
++
+ 	buf = tr->trace_buffer.buffer;
+ 	tr->trace_buffer.buffer = tr->max_buffer.buffer;
+ 	tr->max_buffer.buffer = buf;
 
