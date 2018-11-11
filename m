@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F415C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:26:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 409F9C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:26:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20CFC20818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:26:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20CFC20818
+	by mail.kernel.org (Postfix) with ESMTP id 0AD1A21508
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:26:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AD1A21508
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730675AbeKLFs2 (ORCPT
+        id S1730658AbeKLFs2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 12 Nov 2018 00:48:28 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50848 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50834 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730579AbeKLFs1 (ORCPT
+        by vger.kernel.org with ESMTP id S1730607AbeKLFs0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:48:27 -0500
+        Mon, 12 Nov 2018 00:48:26 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsl-0000l8-Pl; Sun, 11 Nov 2018 19:58:56 +0000
+        id 1gLvsl-0000oJ-CL; Sun, 11 Nov 2018 19:58:55 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsY-0001mG-5j; Sun, 11 Nov 2018 19:58:42 +0000
+        id 1gLvsY-0001mV-9z; Sun, 11 Nov 2018 19:58:42 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -38,13 +38,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org,
-        "Kiran Kumar Modukuri" <kiran.modukuri@gmail.com>,
-        "David Howells" <dhowells@redhat.com>
+        "Masami Hiramatsu" <mhiramat@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        stable@vger.kerne.org
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.54947428@decadent.org.uk>
+Message-ID: <lsq.1541965745.260467026@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 290/366] fscache: Fix reference overput in
- fscache_attach_object() error handling
+Subject: [PATCH 3.16 293/366] tracing: Fix double free of event_trigger_data
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,177 +58,110 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kiran Kumar Modukuri <kiran.modukuri@gmail.com>
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-commit f29507ce66701084c39aeb1b0ae71690cbff3554 upstream.
+commit 1863c387259b629e4ebfb255495f67cd06aa229b upstream.
 
-When a cookie is allocated that causes fscache_object structs to be
-allocated, those objects are initialised with the cookie pointer, but
-aren't blessed with a ref on that cookie unless the attachment is
-successfully completed in fscache_attach_object().
+Running the following:
 
-If attachment fails because the parent object was dying or there was a
-collision, fscache_attach_object() returns without incrementing the cookie
-counter - but upon failure of this function, the object is released which
-then puts the cookie, whether or not a ref was taken on the cookie.
+ # cd /sys/kernel/debug/tracing
+ # echo 500000 > buffer_size_kb
+[ Or some other number that takes up most of memory ]
+ # echo snapshot > events/sched/sched_switch/trigger
 
-Fix this by taking a ref on the cookie when it is assigned in
-fscache_object_init(), even when we're creating a root object.
+Triggers the following bug:
 
+ ------------[ cut here ]------------
+ kernel BUG at mm/slub.c:296!
+ invalid opcode: 0000 [#1] SMP DEBUG_PAGEALLOC PTI
+ CPU: 6 PID: 6878 Comm: bash Not tainted 4.18.0-rc6-test+ #1066
+ Hardware name: Hewlett-Packard HP Compaq Pro 6300 SFF/339A, BIOS K01 v03.03 07/14/2016
+ RIP: 0010:kfree+0x16c/0x180
+ Code: 05 41 0f b6 72 51 5b 5d 41 5c 4c 89 d7 e9 ac b3 f8 ff 48 89 d9 48 89 da 41 b8 01 00 00 00 5b 5d 41 5c 4c 89 d6 e9 f4 f3 ff ff <0f> 0b 0f 0b 48 8b 3d d9 d8 f9 00 e9 c1 fe ff ff 0f 1f 40 00 0f 1f
+ RSP: 0018:ffffb654436d3d88 EFLAGS: 00010246
+ RAX: ffff91a9d50f3d80 RBX: ffff91a9d50f3d80 RCX: ffff91a9d50f3d80
+ RDX: 00000000000006a4 RSI: ffff91a9de5a60e0 RDI: ffff91a9d9803500
+ RBP: ffffffff8d267c80 R08: 00000000000260e0 R09: ffffffff8c1a56be
+ R10: fffff0d404543cc0 R11: 0000000000000389 R12: ffffffff8c1a56be
+ R13: ffff91a9d9930e18 R14: ffff91a98c0c2890 R15: ffffffff8d267d00
+ FS:  00007f363ea64700(0000) GS:ffff91a9de580000(0000) knlGS:0000000000000000
+ CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ CR2: 000055c1cacc8e10 CR3: 00000000d9b46003 CR4: 00000000001606e0
+ Call Trace:
+  event_trigger_callback+0xee/0x1d0
+  event_trigger_write+0xfc/0x1a0
+  __vfs_write+0x33/0x190
+  ? handle_mm_fault+0x115/0x230
+  ? _cond_resched+0x16/0x40
+  vfs_write+0xb0/0x190
+  ksys_write+0x52/0xc0
+  do_syscall_64+0x5a/0x160
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+ RIP: 0033:0x7f363e16ab50
+ Code: 73 01 c3 48 8b 0d 38 83 2c 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 83 3d 79 db 2c 00 00 75 10 b8 01 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 31 c3 48 83 ec 08 e8 1e e3 01 00 48 89 04 24
+ RSP: 002b:00007fff9a4c6378 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+ RAX: ffffffffffffffda RBX: 0000000000000009 RCX: 00007f363e16ab50
+ RDX: 0000000000000009 RSI: 000055c1cacc8e10 RDI: 0000000000000001
+ RBP: 000055c1cacc8e10 R08: 00007f363e435740 R09: 00007f363ea64700
+ R10: 0000000000000073 R11: 0000000000000246 R12: 0000000000000009
+ R13: 0000000000000001 R14: 00007f363e4345e0 R15: 00007f363e4303c0
+ Modules linked in: ip6table_filter ip6_tables snd_hda_codec_hdmi snd_hda_codec_realtek snd_hda_codec_generic snd_hda_intel snd_hda_codec snd_hwdep snd_hda_core snd_seq snd_seq_device i915 snd_pcm snd_timer i2c_i801 snd soundcore i2c_algo_bit drm_kms_helper
+86_pkg_temp_thermal video kvm_intel kvm irqbypass wmi e1000e
+ ---[ end trace d301afa879ddfa25 ]---
 
-Analysis from Kiran Kumar:
+The cause is because the register_snapshot_trigger() call failed to
+allocate the snapshot buffer, and then called unregister_trigger()
+which freed the data that was passed to it. Then on return to the
+function that called register_snapshot_trigger(), as it sees it
+failed to register, it frees the trigger_data again and causes
+a double free.
 
-This bug has been seen in 4.4.0-124-generic #148-Ubuntu kernel
+By calling event_trigger_init() on the trigger_data (which only ups
+the reference counter for it), and then event_trigger_free() afterward,
+the trigger_data would not get freed by the registering trigger function
+as it would only up and lower the ref count for it. If the register
+trigger function fails, then the event_trigger_free() called after it
+will free the trigger data normally.
 
-BugLink: https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1776277
+Link: http://lkml.kernel.org/r/20180724191331.738eb819@gandalf.local.home
 
-fscache cookie ref count updated incorrectly during fscache object
-allocation resulting in following Oops.
-
-kernel BUG at /build/linux-Y09MKI/linux-4.4.0/fs/fscache/internal.h:321!
-kernel BUG at /build/linux-Y09MKI/linux-4.4.0/fs/fscache/cookie.c:639!
-
-[Cause]
-Two threads are trying to do operate on a cookie and two objects.
-
-(1) One thread tries to unmount the filesystem and in process goes over a
-    huge list of objects marking them dead and deleting the objects.
-    cookie->usage is also decremented in following path:
-
-      nfs_fscache_release_super_cookie
-       -> __fscache_relinquish_cookie
-        ->__fscache_cookie_put
-        ->BUG_ON(atomic_read(&cookie->usage) <= 0);
-
-(2) A second thread tries to lookup an object for reading data in following
-    path:
-
-    fscache_alloc_object
-    1) cachefiles_alloc_object
-        -> fscache_object_init
-           -> assign cookie, but usage not bumped.
-    2) fscache_attach_object -> fails in cant_attach_object because the
-         cookie's backing object or cookie's->parent object are going away
-    3) fscache_put_object
-        -> cachefiles_put_object
-          ->fscache_object_destroy
-            ->fscache_cookie_put
-               ->BUG_ON(atomic_read(&cookie->usage) <= 0);
-
-[NOTE from dhowells] It's unclear as to the circumstances in which (2) can
-take place, given that thread (1) is in nfs_kill_super(), however a
-conflicting NFS mount with slightly different parameters that creates a
-different superblock would do it.  A backtrace from Kiran seems to show
-that this is a possibility:
-
-    kernel BUG at/build/linux-Y09MKI/linux-4.4.0/fs/fscache/cookie.c:639!
-    ...
-    RIP: __fscache_cookie_put+0x3a/0x40 [fscache]
-    Call Trace:
-     __fscache_relinquish_cookie+0x87/0x120 [fscache]
-     nfs_fscache_release_super_cookie+0x2d/0xb0 [nfs]
-     nfs_kill_super+0x29/0x40 [nfs]
-     deactivate_locked_super+0x48/0x80
-     deactivate_super+0x5c/0x60
-     cleanup_mnt+0x3f/0x90
-     __cleanup_mnt+0x12/0x20
-     task_work_run+0x86/0xb0
-     exit_to_usermode_loop+0xc2/0xd0
-     syscall_return_slowpath+0x4e/0x60
-     int_ret_from_sys_call+0x25/0x9f
-
-[Fix] Bump up the cookie usage in fscache_object_init, when it is first
-being assigned a cookie atomically such that the cookie is added and bumped
-up if its refcount is not zero.  Remove the assignment in
-fscache_attach_object().
-
-[Testcase]
-I have run ~100 hours of NFS stress tests and not seen this bug recur.
-
-[Regression Potential]
- - Limited to fscache/cachefiles.
-
-Fixes: ccc4fc3d11e9 ("FS-Cache: Implement the cookie management part of the netfs API")
-Signed-off-by: Kiran Kumar Modukuri <kiran.modukuri@gmail.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-[bwh: Backported to 3.16: Keep using atomic_inc() instead of
- fscache_cookie_get()]
+Cc: stable@vger.kerne.org
+Fixes: 93e31ffbf417 ("tracing: Add 'snapshot' event trigger command")
+Reported-by: Masami Hiramatsu <mhiramat@kernel.org>
+Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/cachefiles/bind.c | 3 ++-
- fs/fscache/cache.c   | 2 +-
- fs/fscache/cookie.c  | 7 ++++---
- fs/fscache/object.c  | 1 +
- 4 files changed, 8 insertions(+), 5 deletions(-)
+ kernel/trace/trace_events_trigger.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/fs/cachefiles/bind.c
-+++ b/fs/cachefiles/bind.c
-@@ -218,7 +218,8 @@ static int cachefiles_daemon_add_cache(s
- 			   "%s",
- 			   fsdef->dentry->d_sb->s_id);
+--- a/kernel/trace/trace_events_trigger.c
++++ b/kernel/trace/trace_events_trigger.c
+@@ -663,6 +663,8 @@ event_trigger_callback(struct event_comm
+ 		goto out_free;
  
--	fscache_object_init(&fsdef->fscache, NULL, &cache->cache);
-+	fscache_object_init(&fsdef->fscache, &fscache_fsdef_index,
-+			    &cache->cache);
- 
- 	ret = fscache_add_cache(&cache->cache, &fsdef->fscache, cache->tag);
- 	if (ret < 0)
---- a/fs/fscache/cache.c
-+++ b/fs/fscache/cache.c
-@@ -220,6 +220,7 @@ int fscache_add_cache(struct fscache_cac
- {
- 	struct fscache_cache_tag *tag;
- 
-+	ASSERTCMP(ifsdef->cookie, ==, &fscache_fsdef_index);
- 	BUG_ON(!cache->ops);
- 	BUG_ON(!ifsdef);
- 
-@@ -248,7 +249,6 @@ int fscache_add_cache(struct fscache_cac
- 	if (!cache->kobj)
- 		goto error;
- 
--	ifsdef->cookie = &fscache_fsdef_index;
- 	ifsdef->cache = cache;
- 	cache->fsdef = ifsdef;
- 
---- a/fs/fscache/cookie.c
-+++ b/fs/fscache/cookie.c
-@@ -302,6 +302,7 @@ static int fscache_alloc_object(struct f
- 		goto error;
- 	}
- 
-+	ASSERTCMP(object->cookie, ==, cookie);
- 	fscache_stat(&fscache_n_object_alloc);
- 
- 	object->debug_id = atomic_inc_return(&fscache_object_debug_id);
-@@ -356,6 +357,8 @@ static int fscache_attach_object(struct
- 
- 	_enter("{%s},{OBJ%x}", cookie->def->name, object->debug_id);
- 
-+	ASSERTCMP(object->cookie, ==, cookie);
+  out_reg:
++	/* Up the trigger_data count to make sure reg doesn't free it on failure */
++	event_trigger_init(trigger_ops, trigger_data);
+ 	ret = cmd_ops->reg(glob, trigger_ops, trigger_data, file);
+ 	/*
+ 	 * The above returns on success the # of functions enabled,
+@@ -670,11 +672,13 @@ event_trigger_callback(struct event_comm
+ 	 * Consider no functions a failure too.
+ 	 */
+ 	if (!ret) {
++		cmd_ops->unreg(glob, trigger_ops, trigger_data, file);
+ 		ret = -ENOENT;
+-		goto out_free;
+-	} else if (ret < 0)
+-		goto out_free;
+-	ret = 0;
++	} else if (ret > 0)
++		ret = 0;
 +
- 	spin_lock(&cookie->lock);
++	/* Down the counter of trigger_data or free it if not used anymore */
++	event_trigger_free(trigger_ops, trigger_data);
+  out:
+ 	return ret;
  
- 	/* there may be multiple initial creations of this object, but we only
-@@ -395,9 +398,7 @@ static int fscache_attach_object(struct
- 		spin_unlock(&cache->object_list_lock);
- 	}
- 
--	/* attach to the cookie */
--	object->cookie = cookie;
--	atomic_inc(&cookie->usage);
-+	/* Attach to the cookie.  The object already has a ref on it. */
- 	hlist_add_head(&object->cookie_link, &cookie->backing_objects);
- 
- 	fscache_objlist_add(object);
---- a/fs/fscache/object.c
-+++ b/fs/fscache/object.c
-@@ -313,6 +313,7 @@ void fscache_object_init(struct fscache_
- 	object->store_limit_l = 0;
- 	object->cache = cache;
- 	object->cookie = cookie;
-+	atomic_inc(&cookie->usage);
- 	object->parent = NULL;
- #ifdef CONFIG_FSCACHE_OBJECT_LIST
- 	RB_CLEAR_NODE(&object->objlist_link);
 
