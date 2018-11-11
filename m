@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FAFEC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:35:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5698DC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:35:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 478172241E
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:35:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D21822353
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:35:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rwUUZBpq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 478172241E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jL9pw/SV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D21822353
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405196AbeKLIZY (ORCPT
+        id S2405224AbeKLIZ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:25:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33048 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:25:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33564 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404638AbeKLIZW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:25:22 -0500
+        id S2404638AbeKLIZY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:25:24 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B8628223D8;
-        Sun, 11 Nov 2018 22:35:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 653742241B;
+        Sun, 11 Nov 2018 22:35:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975724;
-        bh=BGzS+dyvAYMm3kBgUzlxZu2tGJCEhtrXZzGOC93BEgM=;
+        s=default; t=1541975726;
+        bh=CuGLZ00Ahyl9YDdllcR543xrwnkmhRvRBeZt3dEp7Wk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rwUUZBpqJ1OccKWw2hRFeN+hLvgf1i1vRZx6qNVRizLUflYquYTTqVKXBOFYpVEwJ
-         OJStCkkEiEHkdy4Fp6HvTg2068CGFu9dxQrrR3XmVY/5HITtl9JTBJQi5a+ka4nz8S
-         598kPVGuWG911Q+SHEiniANsCQvotftXn2VII8/s=
+        b=jL9pw/SVMoDNNzrqwW1hUyuekm8qbgPSOqnBwbnUHCmbZHn9M+jH/P3cu+qdxIYHu
+         1qx6mLQ6saeHbM9us9ic1D4TmWsR7vV6TkfajNKs0/MkeJ/BGxqRf7+TaQdHBJJ2oE
+         cVmTqFEDfQvqVfUYSqxKCmacbfp1m/viJZVXHPbE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.9 102/141] iio: adc: imx25-gcq: Fix leak of device_node in mx25_gcq_setup_cfgs()
-Date:   Sun, 11 Nov 2018 14:26:01 -0800
-Message-Id: <20181111221642.215011993@linuxfoundation.org>
+        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
+        Omar Sandoval <osandov@fb.com>, David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.9 135/141] btrfs: wait on caching when putting the bg cache
+Date:   Sun, 11 Nov 2018 14:26:34 -0800
+Message-Id: <20181111221646.483588960@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
 References: <20181111221627.853046496@linuxfoundation.org>
@@ -63,73 +62,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexey Khoroshilov <khoroshilov@ispras.ru>
+From: Josef Bacik <josef@toxicpanda.com>
 
-commit d3fa21c73c391975488818b085b894c2980ea052 upstream.
+commit 3aa7c7a31c26321696b92841d5103461c6f3f517 upstream.
 
-Leaving for_each_child_of_node loop we should release child device node,
-if it is not stored for future use.
+While testing my backport I noticed there was a panic if I ran
+generic/416 generic/417 generic/418 all in a row.  This just happened to
+uncover a race where we had outstanding IO after we destroy all of our
+workqueues, and then we'd go to queue the endio work on those free'd
+workqueues.
 
-Found by Linux Driver Verification project (linuxtesting.org).
+This is because we aren't waiting for the caching threads to be done
+before freeing everything up, so to fix this make sure we wait on any
+outstanding caching that's being done before we free up the block group,
+so we're sure to be done with all IO by the time we get to
+btrfs_stop_all_workers().  This fixes the panic I was seeing
+consistently in testing.
 
-JC: I'm not sending this as a quick fix as it's been wrong for years,
-but good to pick up for stable after the merge window.
+------------[ cut here ]------------
+kernel BUG at fs/btrfs/volumes.c:6112!
+SMP PTI
+Modules linked in:
+CPU: 1 PID: 27165 Comm: kworker/u4:7 Not tainted 4.16.0-02155-g3553e54a578d-dirty #875
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-2.el7 04/01/2014
+Workqueue: btrfs-cache btrfs_cache_helper
+RIP: 0010:btrfs_map_bio+0x346/0x370
+RSP: 0000:ffffc900061e79d0 EFLAGS: 00010202
+RAX: 0000000000000000 RBX: ffff880071542e00 RCX: 0000000000533000
+RDX: ffff88006bb74380 RSI: 0000000000000008 RDI: ffff880078160000
+RBP: 0000000000000001 R08: ffff8800781cd200 R09: 0000000000503000
+R10: ffff88006cd21200 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: ffff8800781cd200 R15: ffff880071542e00
+FS:  0000000000000000(0000) GS:ffff88007fd00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000817ffc4 CR3: 0000000078314000 CR4: 00000000000006e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ btree_submit_bio_hook+0x8a/0xd0
+ submit_one_bio+0x5d/0x80
+ read_extent_buffer_pages+0x18a/0x320
+ btree_read_extent_buffer_pages+0xbc/0x200
+ ? alloc_extent_buffer+0x359/0x3e0
+ read_tree_block+0x3d/0x60
+ read_block_for_search.isra.30+0x1a5/0x360
+ btrfs_search_slot+0x41b/0xa10
+ btrfs_next_old_leaf+0x212/0x470
+ caching_thread+0x323/0x490
+ normal_work_helper+0xc5/0x310
+ process_one_work+0x141/0x340
+ worker_thread+0x44/0x3c0
+ kthread+0xf8/0x130
+ ? process_one_work+0x340/0x340
+ ? kthread_bind+0x10/0x10
+ ret_from_fork+0x35/0x40
+RIP: btrfs_map_bio+0x346/0x370 RSP: ffffc900061e79d0
+---[ end trace 827eb13e50846033 ]---
+Kernel panic - not syncing: Fatal exception
+Kernel Offset: disabled
+---[ end Kernel panic - not syncing: Fatal exception
 
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Fixes: 6df2e98c3ea56 ("iio: adc: Add imx25-gcq ADC driver")
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+Reviewed-by: Omar Sandoval <osandov@fb.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/adc/fsl-imx25-gcq.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ fs/btrfs/extent-tree.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/iio/adc/fsl-imx25-gcq.c
-+++ b/drivers/iio/adc/fsl-imx25-gcq.c
-@@ -209,12 +209,14 @@ static int mx25_gcq_setup_cfgs(struct pl
- 		ret = of_property_read_u32(child, "reg", &reg);
- 		if (ret) {
- 			dev_err(dev, "Failed to get reg property\n");
-+			of_node_put(child);
- 			return ret;
- 		}
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -9952,6 +9952,7 @@ void btrfs_put_block_group_cache(struct
  
- 		if (reg >= MX25_NUM_CFGS) {
- 			dev_err(dev,
- 				"reg value is greater than the number of available configuration registers\n");
-+			of_node_put(child);
- 			return -EINVAL;
- 		}
- 
-@@ -228,6 +230,7 @@ static int mx25_gcq_setup_cfgs(struct pl
- 			if (IS_ERR(priv->vref[refp])) {
- 				dev_err(dev, "Error, trying to use external voltage reference without a vref-%s regulator.",
- 					mx25_gcq_refp_names[refp]);
-+				of_node_put(child);
- 				return PTR_ERR(priv->vref[refp]);
- 			}
- 			priv->channel_vref_mv[reg] =
-@@ -240,6 +243,7 @@ static int mx25_gcq_setup_cfgs(struct pl
- 			break;
- 		default:
- 			dev_err(dev, "Invalid positive reference %d\n", refp);
-+			of_node_put(child);
- 			return -EINVAL;
- 		}
- 
-@@ -254,10 +258,12 @@ static int mx25_gcq_setup_cfgs(struct pl
- 
- 		if ((refp & MX25_ADCQ_CFG_REFP_MASK) != refp) {
- 			dev_err(dev, "Invalid fsl,adc-refp property value\n");
-+			of_node_put(child);
- 			return -EINVAL;
- 		}
- 		if ((refn & MX25_ADCQ_CFG_REFN_MASK) != refn) {
- 			dev_err(dev, "Invalid fsl,adc-refn property value\n");
-+			of_node_put(child);
- 			return -EINVAL;
- 		}
- 
+ 		block_group = btrfs_lookup_first_block_group(info, last);
+ 		while (block_group) {
++			wait_block_group_cache_done(block_group);
+ 			spin_lock(&block_group->lock);
+ 			if (block_group->iref)
+ 				break;
 
 
