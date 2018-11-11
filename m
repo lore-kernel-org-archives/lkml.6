@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4941CC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:30:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C8F4C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:30:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11E9C2084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:30:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1C592084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:30:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kh+byiEj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11E9C2084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NQHZ94mW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1C592084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388637AbeKLIUW (ORCPT
+        id S2388838AbeKLJVL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:20:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44750 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:21:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44860 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733139AbeKLIUV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:20:21 -0500
+        id S2388599AbeKLIUW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:22 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C5065223C8;
-        Sun, 11 Nov 2018 22:30:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 79043208A3;
+        Sun, 11 Nov 2018 22:30:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975424;
-        bh=++gigy9V3rnlCuelDxXmh/thF6VaFJzkp5wWGqcDeyA=;
+        s=default; t=1541975425;
+        bh=J0+mYqmWEHl6nmnYDQcORRn35ONVlQErLpTt1qpZP9I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kh+byiEjUQEo+N8fQB/9xYAfaknqL5y9CA5vP2aXJlROzOwhF8lGZn+SjiH8JTvBp
-         msPlleWD5rDHj7pI/aKckaNoqPo8oniY9e9Qb8wT0QeJD5u9IXPmxqv+o5Iw6JXm6Z
-         g3dkh7ByLFLZKDkR09ewo79jCHMDHFxRQBuNEAF8=
+        b=NQHZ94mWxluJsLY+KycXvUoYaKu2dVJDR8H0PnmphdqjCNyX/uMRDPwsJFjJNHwgJ
+         9bLMQ47AclkFnj2XWlUthHmIgBBxgxqf56LyRDBhTcwsMNS2IKZx4Dy1ypxL3O5iUN
+         TITvfcSloZWlQHtGtK+Lqo7eDiwPNV0eWIc8rjG8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Stable@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 155/350] Drivers: hv: vmbus: Use cpumask_var_t for on-stack cpu mask
-Date:   Sun, 11 Nov 2018 14:20:19 -0800
-Message-Id: <20181111221714.549006134@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.18 157/350] PCI / ACPI: Enable wake automatically for power managed bridges
+Date:   Sun, 11 Nov 2018 14:20:21 -0800
+Message-Id: <20181111221714.628248145@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -65,86 +65,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dexuan Cui <decui@microsoft.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-[ Upstream commit 25355252607ca288f329ee033f387764883393f6 ]
+[ Upstream commit 6299cf9ec3985cac70bede8a855b5087b81a6640 ]
 
-A cpumask structure on the stack can cause a warning with
-CONFIG_NR_CPUS=8192 (e.g. Ubuntu 16.04 and 18.04 use this):
+We enable power management automatically for bridges where
+pci_bridge_d3_possible() returns true. However, these bridges may have
+ACPI methods such as _DSW that need to be called before D3 entry. For
+example in Lenovo Thinkpad X1 Carbon 6th _DSW method is used to prepare
+D3cold for the PCIe root port hosting Thunderbolt chain. Because wake is
+not enabled _DSW method is never called and the port does not enter
+D3cold properly consuming more power than necessary.
 
-drivers/hv//channel_mgmt.c: In function ‘init_vp_index’:
-drivers/hv//channel_mgmt.c:702:1: warning: the frame size of 1032 bytes
-  is larger than 1024 bytes [-Wframe-larger-than=]
+Users can work this around by writing "enabled" to "wakeup" sysfs file
+under the device in question but that is not something an ordinary user
+is expected to do.
 
-Nowadays it looks most distros enable CONFIG_CPUMASK_OFFSTACK=y, and
-hence we can work around the warning by using cpumask_var_t.
+Since we already automatically enable power management for PCIe ports
+with ->bridge_d3 set extend that to enable wake for them as well,
+assuming the port has any ACPI wakeup related objects implemented in the
+namespace (adev->wakeup.flags.valid is true). This ensures the necessary
+ACPI methods get called at appropriate times and allows the root port in
+Thinkpad X1 Carbon 6th to go into D3cold.
 
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Cc: K. Y. Srinivasan <kys@microsoft.com>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hv/channel_mgmt.c |   14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ drivers/pci/pci-acpi.c |   16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
---- a/drivers/hv/channel_mgmt.c
-+++ b/drivers/hv/channel_mgmt.c
-@@ -606,16 +606,18 @@ static void init_vp_index(struct vmbus_c
- 	bool perf_chn = vmbus_devs[dev_type].perf_device;
- 	struct vmbus_channel *primary = channel->primary_channel;
- 	int next_node;
--	struct cpumask available_mask;
-+	cpumask_var_t available_mask;
- 	struct cpumask *alloced_mask;
+--- a/drivers/pci/pci-acpi.c
++++ b/drivers/pci/pci-acpi.c
+@@ -779,19 +779,33 @@ static void pci_acpi_setup(struct device
+ 		return;
  
- 	if ((vmbus_proto_version == VERSION_WS2008) ||
--	    (vmbus_proto_version == VERSION_WIN7) || (!perf_chn)) {
-+	    (vmbus_proto_version == VERSION_WIN7) || (!perf_chn) ||
-+	    !alloc_cpumask_var(&available_mask, GFP_KERNEL)) {
- 		/*
- 		 * Prior to win8, all channel interrupts are
- 		 * delivered on cpu 0.
- 		 * Also if the channel is not a performance critical
- 		 * channel, bind it to cpu 0.
-+		 * In case alloc_cpumask_var() fails, bind it to cpu 0.
- 		 */
- 		channel->numa_node = 0;
- 		channel->target_cpu = 0;
-@@ -653,7 +655,7 @@ static void init_vp_index(struct vmbus_c
- 		cpumask_clear(alloced_mask);
- 	}
- 
--	cpumask_xor(&available_mask, alloced_mask,
-+	cpumask_xor(available_mask, alloced_mask,
- 		    cpumask_of_node(primary->numa_node));
- 
- 	cur_cpu = -1;
-@@ -671,10 +673,10 @@ static void init_vp_index(struct vmbus_c
- 	}
- 
- 	while (true) {
--		cur_cpu = cpumask_next(cur_cpu, &available_mask);
-+		cur_cpu = cpumask_next(cur_cpu, available_mask);
- 		if (cur_cpu >= nr_cpu_ids) {
- 			cur_cpu = -1;
--			cpumask_copy(&available_mask,
-+			cpumask_copy(available_mask,
- 				     cpumask_of_node(primary->numa_node));
- 			continue;
- 		}
-@@ -704,6 +706,8 @@ static void init_vp_index(struct vmbus_c
- 
- 	channel->target_cpu = cur_cpu;
- 	channel->target_vp = hv_cpu_number_to_vp_number(cur_cpu);
+ 	device_set_wakeup_capable(dev, true);
++	/*
++	 * For bridges that can do D3 we enable wake automatically (as
++	 * we do for the power management itself in that case). The
++	 * reason is that the bridge may have additional methods such as
++	 * _DSW that need to be called.
++	 */
++	if (pci_dev->bridge_d3)
++		device_wakeup_enable(dev);
 +
-+	free_cpumask_var(available_mask);
+ 	acpi_pci_wakeup(pci_dev, false);
  }
  
- static void vmbus_wait_for_unload(void)
+ static void pci_acpi_cleanup(struct device *dev)
+ {
+ 	struct acpi_device *adev = ACPI_COMPANION(dev);
++	struct pci_dev *pci_dev = to_pci_dev(dev);
+ 
+ 	if (!adev)
+ 		return;
+ 
+ 	pci_acpi_remove_pm_notifier(adev);
+-	if (adev->wakeup.flags.valid)
++	if (adev->wakeup.flags.valid) {
++		if (pci_dev->bridge_d3)
++			device_wakeup_disable(dev);
++
+ 		device_set_wakeup_capable(dev, false);
++	}
+ }
+ 
+ static bool pci_acpi_bus_match(struct device *dev)
 
 
