@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D34B6C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:20:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF7FAC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:21:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B08B20817
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:20:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8568420869
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:21:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="doJfQFf+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B08B20817
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JyKxD1qg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8568420869
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389596AbeKLJLE (ORCPT
+        id S2389671AbeKLJLO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:11:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47942 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:11:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47988 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389462AbeKLIVR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:21:17 -0500
+        id S2389458AbeKLIVQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:16 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3DDAB223C6;
-        Sun, 11 Nov 2018 22:31:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C485922353;
+        Sun, 11 Nov 2018 22:31:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975480;
-        bh=RRajRalsw06Zqv+BPA4Hrpg+dioudxZAkboujObzrE0=;
+        s=default; t=1541975479;
+        bh=C4p4S+nQU9AqertVr9vvAgtys9D0onckXvOwjVvrcRk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=doJfQFf+1XwMzIZpWARSEZemyXC+v6sACBCmA0MTwRE7ZrMznDmCUCwiggJYmhOvk
-         vNnONR4A1QRknzpjVQejQWOfRI2+71RiXpMpAE6zUzhDsmEBcNJ3m0H3sNAOF+U/Ej
-         UhRhExd95CATl6dABRYkYNuxbV+Hdz5dyY+sh5QQ=
+        b=JyKxD1qg0SLao6uvWFpVwfZABsZ50cEjJANPXkL/wChnU2akz5K0a4jM1GjOTFn4t
+         n/C6NowRWPrylRFK3By5LFGbMgLKtYErdIVLpIMV2w2R+IjZuRv9BW8+azXCCKI5Bh
+         YXgLzn+V4e+aSD+1qroe8Wp102WTmVSSv+A3k0Vk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 4.18 267/350] dm ioctl: harden copy_params()s copy_from_user() from malicious users
-Date:   Sun, 11 Nov 2018 14:22:11 -0800
-Message-Id: <20181111221719.186621974@linuxfoundation.org>
+        stable@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+        "J. Bruce Fields" <bfields@redhat.com>
+Subject: [PATCH 4.18 266/350] lockd: fix access beyond unterminated strings in prints
+Date:   Sun, 11 Nov 2018 14:22:10 -0800
+Message-Id: <20181111221719.145415215@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -61,70 +61,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wenwen Wang <wang6495@umn.edu>
+From: Amir Goldstein <amir73il@gmail.com>
 
-commit 800a7340ab7dd667edf95e74d8e4f23a17e87076 upstream.
+commit 93f38b6fae0ea8987e22d9e6c38f8dfdccd867ee upstream.
 
-In copy_params(), the struct 'dm_ioctl' is first copied from the user
-space buffer 'user' to 'param_kernel' and the field 'data_size' is
-checked against 'minimum_data_size' (size of 'struct dm_ioctl' payload
-up to its 'data' member).  If the check fails, an error code EINVAL will be
-returned.  Otherwise, param_kernel->data_size is used to do a second copy,
-which copies from the same user-space buffer to 'dmi'.  After the second
-copy, only 'dmi->data_size' is checked against 'param_kernel->data_size'.
-Given that the buffer 'user' resides in the user space, a malicious
-user-space process can race to change the content in the buffer between
-the two copies.  This way, the attacker can inject inconsistent data
-into 'dmi' (versus previously validated 'param_kernel').
+printk format used %*s instead of %.*s, so hostname_len does not limit
+the number of bytes accessed from hostname.
 
-Fix redundant copying of 'minimum_data_size' from user-space buffer by
-using the first copy stored in 'param_kernel'.  Also remove the
-'data_size' check after the second copy because it is now unnecessary.
-
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-ioctl.c |   18 ++++++------------
- 1 file changed, 6 insertions(+), 12 deletions(-)
+ fs/lockd/host.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/md/dm-ioctl.c
-+++ b/drivers/md/dm-ioctl.c
-@@ -1720,8 +1720,7 @@ static void free_params(struct dm_ioctl
- }
+--- a/fs/lockd/host.c
++++ b/fs/lockd/host.c
+@@ -341,7 +341,7 @@ struct nlm_host *nlmsvc_lookup_host(cons
+ 	};
+ 	struct lockd_net *ln = net_generic(net, lockd_net_id);
  
- static int copy_params(struct dm_ioctl __user *user, struct dm_ioctl *param_kernel,
--		       int ioctl_flags,
--		       struct dm_ioctl **param, int *param_flags)
-+		       int ioctl_flags, struct dm_ioctl **param, int *param_flags)
- {
- 	struct dm_ioctl *dmi;
- 	int secure_data;
-@@ -1762,18 +1761,13 @@ static int copy_params(struct dm_ioctl _
+-	dprintk("lockd: %s(host='%*s', vers=%u, proto=%s)\n", __func__,
++	dprintk("lockd: %s(host='%.*s', vers=%u, proto=%s)\n", __func__,
+ 			(int)hostname_len, hostname, rqstp->rq_vers,
+ 			(rqstp->rq_prot == IPPROTO_UDP ? "udp" : "tcp"));
  
- 	*param_flags |= DM_PARAMS_MALLOC;
- 
--	if (copy_from_user(dmi, user, param_kernel->data_size))
--		goto bad;
-+	/* Copy from param_kernel (which was already copied from user) */
-+	memcpy(dmi, param_kernel, minimum_data_size);
- 
--data_copied:
--	/*
--	 * Abort if something changed the ioctl data while it was being copied.
--	 */
--	if (dmi->data_size != param_kernel->data_size) {
--		DMERR("rejecting ioctl: data size modified while processing parameters");
-+	if (copy_from_user(&dmi->data, (char __user *)user + minimum_data_size,
-+			   param_kernel->data_size - minimum_data_size))
- 		goto bad;
--	}
--
-+data_copied:
- 	/* Wipe the user buffer so we do not return it to userspace */
- 	if (secure_data && clear_user(user, param_kernel->data_size))
- 		goto bad;
 
 
