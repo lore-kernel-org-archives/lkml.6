@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B630AC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:09:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E09C0C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:10:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74F24214E0
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:09:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9992214DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:10:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yr/4xFGs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74F24214E0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BCa4+HJC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9992214DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731747AbeKLKAW (ORCPT
+        id S1731772AbeKLKAd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 05:00:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60706 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 05:00:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730961AbeKLIR1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730816AbeKLIR1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:17:27 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB91721582;
+        by mail.kernel.org (Postfix) with ESMTPSA id 86526214DB;
         Sun, 11 Nov 2018 22:27:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975251;
-        bh=HEgQJ+m8ZU14KUYuQ/psMVG1Num6eTHp7nf3G9ciF1k=;
+        bh=2NzYSp7Opf0nkDikGP2TgaxWzU3IPhkgsMNak2gPLdI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yr/4xFGsLQZf1gYkyejGkXuBQZPt0js/DKhrFagUNBnbLz2qFKjfu8KoYgUAj+1Qw
-         vEBY/hVmV/pOprcHJ+Y/VgWkOtRS3denPlrGn6T7PfO4vv/xGjwieDLYUlcW3EyT+v
-         CKG+XNOHJqpVGZqDPmt+MWmjtIXpKWkNGKdFEObc=
+        b=BCa4+HJC6YcUaUmRbiVQwAPX0/pmtMOtGrpXjQ+XtGTRjhgGYNmI8xibF2NMSvApf
+         zSmdvaRWo28RwjvC8mHM3PWrLSHcncJicoicuhGLC+kC0HhfDfDZeqsi7bpOSjl8QF
+         4onh0dGmWQTQcvlpytZZ/4IHnEpHI8OUA7JNayU4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 118/361] mt76x2u: run device cleanup routine if resume fails
-Date:   Sun, 11 Nov 2018 14:17:45 -0800
-Message-Id: <20181111221636.512561607@linuxfoundation.org>
+Subject: [PATCH 4.19 117/361] net: dsa: mv88e6xxx: Fix writing to a PHY page.
+Date:   Sun, 11 Nov 2018 14:17:44 -0800
+Message-Id: <20181111221636.379196580@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -64,50 +63,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+From: Andrew Lunn <andrew@lunn.ch>
 
-[ Upstream commit 9b2fd48d36e25b9be9ddb8be8cc1eb263a1d1843 ]
+[ Upstream commit c309b158090d788e96ee597444965cb79b040484 ]
 
-Cleanup {tx,rx} and mcu queues if resume operation fails
+After changing to the needed page, actually write the value to the
+register!
 
-Fixes: ee676cd5017c ("mt76: add driver code for MT76x2u based devices")
-Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Fixes: 09cb7dfd3f14 ("net: dsa: mv88e6xxx: describe PHY page and SerDes")
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/mediatek/mt76/mt76x2_usb.c |   14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ drivers/net/dsa/mv88e6xxx/phy.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/net/wireless/mediatek/mt76/mt76x2_usb.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt76x2_usb.c
-@@ -107,16 +107,24 @@ static int __maybe_unused mt76x2u_resume
- 			       mt76u_mcu_complete_urb,
- 			       &usb->mcu.cmpl);
- 	if (err < 0)
--		return err;
-+		goto err;
- 
- 	err = mt76u_submit_rx_buffers(&dev->mt76);
- 	if (err < 0)
--		return err;
-+		goto err;
- 
- 	tasklet_enable(&usb->rx_tasklet);
- 	tasklet_enable(&usb->tx_tasklet);
- 
--	return mt76x2u_init_hardware(dev);
-+	err = mt76x2u_init_hardware(dev);
-+	if (err < 0)
-+		goto err;
+--- a/drivers/net/dsa/mv88e6xxx/phy.c
++++ b/drivers/net/dsa/mv88e6xxx/phy.c
+@@ -110,6 +110,9 @@ int mv88e6xxx_phy_page_write(struct mv88
+ 	err = mv88e6xxx_phy_page_get(chip, phy, page);
+ 	if (!err) {
+ 		err = mv88e6xxx_phy_write(chip, phy, MV88E6XXX_PHY_PAGE, page);
++		if (!err)
++			err = mv88e6xxx_phy_write(chip, phy, reg, val);
 +
-+	return 0;
-+
-+err:
-+	mt76x2u_cleanup(dev);
-+	return err;
- }
+ 		mv88e6xxx_phy_page_put(chip, phy);
+ 	}
  
- MODULE_DEVICE_TABLE(usb, mt76x2u_device_table);
 
 
