@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FBBBC43610
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB7D7C0044C
 	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2568E223DD
+	by mail.kernel.org (Postfix) with ESMTP id A1AFA223C8
 	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="M5HNc07G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2568E223DD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OUGPXI4n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1AFA223C8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403999AbeKLIW5 (ORCPT
+        id S2404014AbeKLIW6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:22:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54672 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:22:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54620 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403979AbeKLIW4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:56 -0500
+        id S2403989AbeKLIW5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:57 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B4C12241B;
-        Sun, 11 Nov 2018 22:32:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8085C223CB;
+        Sun, 11 Nov 2018 22:33:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975579;
-        bh=wq1tv1xyMS6iEdxVGP7+pg41pVwTTeb5iR/y8wLYbw8=;
+        s=default; t=1541975580;
+        bh=t85+HlUql18Uf9kVo9t7xmiKkBdo7wkP7OwgfsMTlDs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M5HNc07Gg0/HzEH/TmlFXqtPpH3NZ8UlbH32di0j30UYxVPrkSaH1xU56cFpu44eM
-         BsRTxlste8B4xT50+231HBbm+NcXJ9semgOsM9zArAER99eqqtJiA4vLsW3ntyvE7L
-         hMd9txNebcBKfx9N20m/Nwfs6o9CAApdgTtnJOR8=
+        b=OUGPXI4n9Y4C2GH7v3LzEWmezkwNK9yEbk7SX1YEorGpBeuBbqAStrihi2nwI9CjH
+         Ri0Syf9EfzYn6/7+mb3N99Zv4GN0DKP01SBqgCEo1d1BAm3x0DUvr6fa1aaSTrgvHI
+         NOtPi9KjSFo0lW5U5LCRa3yyDwgt09d2KKfPlopw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, rostedt@goodmis.org,
-        He Zhe <zhe.he@windriver.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Petr Mladek <pmladek@suse.com>
-Subject: [PATCH 4.14 167/222] printk: Fix panic caused by passing log_buf_len to command line
-Date:   Sun, 11 Nov 2018 14:24:24 -0800
-Message-Id: <20181111221702.192267883@linuxfoundation.org>
+        stable@vger.kernel.org, Benjamin Coddington <bcodding@redhat.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>
+Subject: [PATCH 4.14 170/222] nfs: Fix a missed page unlock after pg_doio()
+Date:   Sun, 11 Nov 2018 14:24:27 -0800
+Message-Id: <20181111221702.412408857@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -64,65 +62,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: He Zhe <zhe.he@windriver.com>
+From: Benjamin Coddington <bcodding@redhat.com>
 
-commit 277fcdb2cfee38ccdbe07e705dbd4896ba0c9930 upstream.
+commit fdbd1a2e4a71adcb1ae219fcfd964930d77a7f84 upstream.
 
-log_buf_len_setup does not check input argument before passing it to
-simple_strtoull. The argument would be a NULL pointer if "log_buf_len",
-without its value, is set in command line and thus causes the following
-panic.
+We must check pg_error and call error_cleanup after any call to pg_doio.
+Currently, we are skipping the unlock of a page if we encounter an error in
+nfs_pageio_complete() before handing off the work to the RPC layer.
 
-PANIC: early exception 0xe3 IP 10:ffffffffaaeacd0d error 0 cr2 0x0
-[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc4-yocto-standard+ #1
-[    0.000000] RIP: 0010:_parse_integer_fixup_radix+0xd/0x70
-...
-[    0.000000] Call Trace:
-[    0.000000]  simple_strtoull+0x29/0x70
-[    0.000000]  memparse+0x26/0x90
-[    0.000000]  log_buf_len_setup+0x17/0x22
-[    0.000000]  do_early_param+0x57/0x8e
-[    0.000000]  parse_args+0x208/0x320
-[    0.000000]  ? rdinit_setup+0x30/0x30
-[    0.000000]  parse_early_options+0x29/0x2d
-[    0.000000]  ? rdinit_setup+0x30/0x30
-[    0.000000]  parse_early_param+0x36/0x4d
-[    0.000000]  setup_arch+0x336/0x99e
-[    0.000000]  start_kernel+0x6f/0x4ee
-[    0.000000]  x86_64_start_reservations+0x24/0x26
-[    0.000000]  x86_64_start_kernel+0x6f/0x72
-[    0.000000]  secondary_startup_64+0xa4/0xb0
-
-This patch adds a check to prevent the panic.
-
-Link: http://lkml.kernel.org/r/1538239553-81805-1-git-send-email-zhe.he@windriver.com
+Signed-off-by: Benjamin Coddington <bcodding@redhat.com>
 Cc: stable@vger.kernel.org
-Cc: rostedt@goodmis.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: He Zhe <zhe.he@windriver.com>
-Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Signed-off-by: Petr Mladek <pmladek@suse.com>
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/printk/printk.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ fs/nfs/pagelist.c |   40 +++++++++++++++++++++-------------------
+ 1 file changed, 21 insertions(+), 19 deletions(-)
 
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -1043,7 +1043,12 @@ static void __init log_buf_len_update(un
- /* save requested log_buf_len since it's too early to process it */
- static int __init log_buf_len_setup(char *str)
+--- a/fs/nfs/pagelist.c
++++ b/fs/nfs/pagelist.c
+@@ -1110,6 +1110,20 @@ static int nfs_pageio_add_request_mirror
+ 	return ret;
+ }
+ 
++static void nfs_pageio_error_cleanup(struct nfs_pageio_descriptor *desc)
++{
++	u32 midx;
++	struct nfs_pgio_mirror *mirror;
++
++	if (!desc->pg_error)
++		return;
++
++	for (midx = 0; midx < desc->pg_mirror_count; midx++) {
++		mirror = &desc->pg_mirrors[midx];
++		desc->pg_completion_ops->error_cleanup(&mirror->pg_list);
++	}
++}
++
+ int nfs_pageio_add_request(struct nfs_pageio_descriptor *desc,
+ 			   struct nfs_page *req)
  {
--	unsigned size = memparse(str, &str);
-+	unsigned int size;
-+
-+	if (!str)
-+		return -EINVAL;
-+
-+	size = memparse(str, &str);
+@@ -1160,25 +1174,11 @@ int nfs_pageio_add_request(struct nfs_pa
+ 	return 1;
  
- 	log_buf_len_update(size);
+ out_failed:
+-	/*
+-	 * We might have failed before sending any reqs over wire.
+-	 * Clean up rest of the reqs in mirror pg_list.
+-	 */
+-	if (desc->pg_error) {
+-		struct nfs_pgio_mirror *mirror;
+-		void (*func)(struct list_head *);
+-
+-		/* remember fatal errors */
+-		if (nfs_error_is_fatal(desc->pg_error))
+-			nfs_context_set_write_error(req->wb_context,
+-						    desc->pg_error);
+-
+-		func = desc->pg_completion_ops->error_cleanup;
+-		for (midx = 0; midx < desc->pg_mirror_count; midx++) {
+-			mirror = &desc->pg_mirrors[midx];
+-			func(&mirror->pg_list);
+-		}
+-	}
++	/* remember fatal errors */
++	if (nfs_error_is_fatal(desc->pg_error))
++		nfs_context_set_write_error(req->wb_context,
++						desc->pg_error);
++	nfs_pageio_error_cleanup(desc);
+ 	return 0;
+ }
  
+@@ -1250,6 +1250,8 @@ void nfs_pageio_complete(struct nfs_page
+ 	for (midx = 0; midx < desc->pg_mirror_count; midx++)
+ 		nfs_pageio_complete_mirror(desc, midx);
+ 
++	if (desc->pg_error < 0)
++		nfs_pageio_error_cleanup(desc);
+ 	if (desc->pg_ops->pg_cleanup)
+ 		desc->pg_ops->pg_cleanup(desc);
+ 	nfs_pageio_cleanup_mirroring(desc);
 
 
