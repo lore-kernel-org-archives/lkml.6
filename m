@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEAC1C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:00:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9CFCC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:00:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7854120872
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:00:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1D8820818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:00:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UqtrzMqC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7854120872
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="r+9vMhCY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1D8820818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390945AbeKLIuK (ORCPT
+        id S2390727AbeKLIWe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:50:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52752 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:22:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52394 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390729AbeKLIWf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:35 -0500
+        id S2390707AbeKLIWd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:33 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F65A21707;
-        Sun, 11 Nov 2018 22:32:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62C9E223C7;
+        Sun, 11 Nov 2018 22:32:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975558;
-        bh=4ofBdb6tUNzxyCI/ZXQ3TuBF/ULigiqN+LkN+hvBU4Y=;
+        s=default; t=1541975556;
+        bh=xUTbXpOdEJ1Ptcx9HL1jSClFvqqClXl9x8RKWSqSDwo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UqtrzMqC0IcKCSOPtEAyZOzKNO+bIP7cAMdAvZtZ+oNv2mWSTdHz1STK+K2IsToMl
-         peI5TgbDuLMyEZkq4CkkY8el1GKlbbW6GIjVDBVRUzi/5WHM/aHTqg1h0rBdlg+HkE
-         EH3XsaW+oJwYbYlpTwi34Ua5MpV4yUv6us8R41XE=
+        b=r+9vMhCYz6qyulnC33HvuRlMcD+707ZMFaL5OxqQw3+DggASKTR65w0NkM6G8f+tQ
+         EfcjcH1Lg4kYobCRqMJe/tV00Lz2evp3C+xUkPTR898SSJAeJsKw/un9osFWnGHM08
+         eX1mRbymDSDeNMy8jLvZ85bwHp1K+RlSbquzb2OI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 4.14 115/222] ARM: dts: exynos: Mark 1 GHz CPU OPP as suspend OPP on Exynos5250
-Date:   Sun, 11 Nov 2018 14:23:32 -0800
-Message-Id: <20181111221658.028044615@linuxfoundation.org>
+        stable@vger.kernel.org, Prarit Bhargava <prarit@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Stafford Horne <shorne@gmail.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 109/222] cpupower: Fix AMD Family 0x17 msr_pstate size
+Date:   Sun, 11 Nov 2018 14:23:26 -0800
+Message-Id: <20181111221657.567048289@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -65,37 +64,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Prarit Bhargava <prarit@redhat.com>
 
-commit 645b23da6f8b47f295fa87051335d41d139717a5 upstream.
+[ Upstream commit 8c22e2f695920ebd94f9a53bcf2a65eb36d4dba1 ]
 
-1 GHz CPU OPP is the default boot value for the Exynos5250 SOC, so mark it
-as suspend OPP. This fixes suspend/resume on Samsung Exynos5250 Snow
-Chomebook, which was broken since switching to generic cpufreq-dt driver
-in v4.3.
+The msr_pstate data is only 63 bits long and should be 64 bits.
 
-Cc: <stable@vger.kernel.org> # 4.3.x: cd6f55457eb4: ARM: dts: exynos: Remove "cooling-{min|max}-level" for CPU nodes
-Cc: <stable@vger.kernel.org> # 4.3.x: 672f33198bee: arm: dts: exynos: Add missing cooling device properties for CPUs
-Cc: <stable@vger.kernel.org> # 4.3.x
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Add in the missing bit from res1 for AMD Family 0x17.
+
+Reference: https://www.amd.com/system/files/TechDocs/54945_PPR_Family_17h_Models_00h-0Fh.pdf, page 138.
+
+Signed-off-by: Prarit Bhargava <prarit@redhat.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Stafford Horne <shorne@gmail.com>
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/arm/boot/dts/exynos5250.dtsi |    1 +
- 1 file changed, 1 insertion(+)
+ tools/power/cpupower/utils/helpers/amd.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -121,6 +121,7 @@
- 			opp-hz = /bits/ 64 <1000000000>;
- 			opp-microvolt = <1075000>;
- 			clock-latency-ns = <140000>;
-+			opp-suspend;
- 		};
- 		opp-1100000000 {
- 			opp-hz = /bits/ 64 <1100000000>;
+--- a/tools/power/cpupower/utils/helpers/amd.c
++++ b/tools/power/cpupower/utils/helpers/amd.c
+@@ -33,7 +33,7 @@ union msr_pstate {
+ 		unsigned vid:8;
+ 		unsigned iddval:8;
+ 		unsigned idddiv:2;
+-		unsigned res1:30;
++		unsigned res1:31;
+ 		unsigned en:1;
+ 	} fam17h_bits;
+ 	unsigned long long val;
 
 
