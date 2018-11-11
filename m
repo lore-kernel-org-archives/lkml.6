@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD68AC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:01:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E7F5C43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:01:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D48A208A3
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:01:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0465C20866
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:01:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="r9qfPTY0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D48A208A3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KE8K5Fhc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0465C20866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732210AbeKLIR4 (ORCPT
+        id S1732556AbeKLJwM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:17:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34210 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:52:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732193AbeKLIRz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:17:55 -0500
+        id S1732194AbeKLIR4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:17:56 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BAC2C2175B;
-        Sun, 11 Nov 2018 22:27:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1D3A421508;
+        Sun, 11 Nov 2018 22:28:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975279;
-        bh=MG+Ewz35oK8wOT2zaYDK/2vk2zYnQJReRm0LPmiI8rU=;
+        s=default; t=1541975280;
+        bh=NXyEpN7C1hKD9tHSDvD4125d0eHQA5kgoYaTkUNZftQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r9qfPTY0vEfN2pxQEMM+47nFVoIaO5QwNBbCiVRO0kSJwk3l5ngHwx13qRDPkL/bf
-         Y7J6GB7e++hhfm2a7gqbM5YI3jFF7WVGuZqsA3eyXuE3WGJvwybI+uqVFcMZWxL6pq
-         IJYwP8rYsmn664dUtYfpS/Cz1FPsXQRjG+z3+4WQ=
+        b=KE8K5FhcyQFwpTVcGhzcAF0D/on+UJipjEu5diZTzsC5LS+Nls/wmhq1ggAOY5B8c
+         /j29hALaRuNzRM2qQzP389Cu9SVD8utGYOwUQzcjJGZNPPWk/JOisXw70EGHbqlbVO
+         Jz595NMds5Hd8MHJF7fy5RGQBCoHKjJnDmufKcms=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -45,9 +45,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Chanwoo Choi <cw00.choi@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 4.19 197/361] ARM: dts: exynos: Convert exynos5250.dtsi to opp-v2 bindings
-Date:   Sun, 11 Nov 2018 14:19:04 -0800
-Message-Id: <20181111221648.070185120@linuxfoundation.org>
+Subject: [PATCH 4.19 198/361] ARM: dts: exynos: Mark 1 GHz CPU OPP as suspend OPP on Exynos5250
+Date:   Sun, 11 Nov 2018 14:19:05 -0800
+Message-Id: <20181111221648.195747749@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -67,10 +67,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-commit eb9e16d8573e243f8175647f851eb5085dbe97a4 upstream.
+commit 645b23da6f8b47f295fa87051335d41d139717a5 upstream.
 
-Convert Exynos5250 to OPP-v2 bindings. This is a preparation to add proper
-support for suspend operation point, which cannot be marked in opp-v1.
+1 GHz CPU OPP is the default boot value for the Exynos5250 SOC, so mark it
+as suspend OPP. This fixes suspend/resume on Samsung Exynos5250 Snow
+Chomebook, which was broken since switching to generic cpufreq-dt driver
+in v4.3.
 
 Cc: <stable@vger.kernel.org> # 4.3.x: cd6f55457eb4: ARM: dts: exynos: Remove "cooling-{min|max}-level" for CPU nodes
 Cc: <stable@vger.kernel.org> # 4.3.x: 672f33198bee: arm: dts: exynos: Add missing cooling device properties for CPUs
@@ -82,161 +84,18 @@ Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/exynos5250.dtsi |  130 +++++++++++++++++++++++++-------------
- 1 file changed, 88 insertions(+), 42 deletions(-)
+ arch/arm/boot/dts/exynos5250.dtsi |    1 +
+ 1 file changed, 1 insertion(+)
 
 --- a/arch/arm/boot/dts/exynos5250.dtsi
 +++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -54,62 +54,108 @@
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <0>;
--			clock-frequency = <1700000000>;
- 			clocks = <&clock CLK_ARM_CLK>;
- 			clock-names = "cpu";
--			clock-latency = <140000>;
--
--			operating-points = <
--				1700000 1300000
--				1600000 1250000
--				1500000 1225000
--				1400000 1200000
--				1300000 1150000
--				1200000 1125000
--				1100000 1100000
--				1000000 1075000
--				 900000 1050000
--				 800000 1025000
--				 700000 1012500
--				 600000 1000000
--				 500000  975000
--				 400000  950000
--				 300000  937500
--				 200000  925000
--			>;
-+			operating-points-v2 = <&cpu0_opp_table>;
- 			#cooling-cells = <2>; /* min followed by max */
+@@ -118,6 +118,7 @@
+ 			opp-hz = /bits/ 64 <1000000000>;
+ 			opp-microvolt = <1075000>;
+ 			clock-latency-ns = <140000>;
++			opp-suspend;
  		};
- 		cpu@1 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <1>;
--			clock-frequency = <1700000000>;
- 			clocks = <&clock CLK_ARM_CLK>;
- 			clock-names = "cpu";
--			clock-latency = <140000>;
--
--			operating-points = <
--				1700000 1300000
--				1600000 1250000
--				1500000 1225000
--				1400000 1200000
--				1300000 1150000
--				1200000 1125000
--				1100000 1100000
--				1000000 1075000
--				 900000 1050000
--				 800000 1025000
--				 700000 1012500
--				 600000 1000000
--				 500000  975000
--				 400000  950000
--				 300000  937500
--				 200000  925000
--			>;
-+			operating-points-v2 = <&cpu0_opp_table>;
- 			#cooling-cells = <2>; /* min followed by max */
- 		};
- 	};
- 
-+	cpu0_opp_table: opp_table0 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp-200000000 {
-+			opp-hz = /bits/ 64 <200000000>;
-+			opp-microvolt = <925000>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp-300000000 {
-+			opp-hz = /bits/ 64 <300000000>;
-+			opp-microvolt = <937500>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp-400000000 {
-+			opp-hz = /bits/ 64 <400000000>;
-+			opp-microvolt = <950000>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp-500000000 {
-+			opp-hz = /bits/ 64 <500000000>;
-+			opp-microvolt = <975000>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp-600000000 {
-+			opp-hz = /bits/ 64 <600000000>;
-+			opp-microvolt = <1000000>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp-700000000 {
-+			opp-hz = /bits/ 64 <700000000>;
-+			opp-microvolt = <1012500>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp-800000000 {
-+			opp-hz = /bits/ 64 <800000000>;
-+			opp-microvolt = <1025000>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp-900000000 {
-+			opp-hz = /bits/ 64 <900000000>;
-+			opp-microvolt = <1050000>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp-1000000000 {
-+			opp-hz = /bits/ 64 <1000000000>;
-+			opp-microvolt = <1075000>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp-1100000000 {
-+			opp-hz = /bits/ 64 <1100000000>;
-+			opp-microvolt = <1100000>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp-1200000000 {
-+			opp-hz = /bits/ 64 <1200000000>;
-+			opp-microvolt = <1125000>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp-1300000000 {
-+			opp-hz = /bits/ 64 <1300000000>;
-+			opp-microvolt = <1150000>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp-1400000000 {
-+			opp-hz = /bits/ 64 <1400000000>;
-+			opp-microvolt = <1200000>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp-1500000000 {
-+			opp-hz = /bits/ 64 <1500000000>;
-+			opp-microvolt = <1225000>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp-1600000000 {
-+			opp-hz = /bits/ 64 <1600000000>;
-+			opp-microvolt = <1250000>;
-+			clock-latency-ns = <140000>;
-+		};
-+		opp-1700000000 {
-+			opp-hz = /bits/ 64 <1700000000>;
-+			opp-microvolt = <1300000>;
-+			clock-latency-ns = <140000>;
-+		};
-+	};
-+
- 	soc: soc {
- 		sysram@2020000 {
- 			compatible = "mmio-sram";
+ 		opp-1100000000 {
+ 			opp-hz = /bits/ 64 <1100000000>;
 
 
