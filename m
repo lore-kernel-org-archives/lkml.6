@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71832C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:35:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E44C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:35:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38A1B2084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:35:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C1852084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:35:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yVjoICko"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38A1B2084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RpiBgvCS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C1852084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388556AbeKLJZY (ORCPT
+        id S2388611AbeKLJZc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:25:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42836 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:25:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42802 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388233AbeKLIUE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2388331AbeKLIUE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:20:04 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 98787223DD;
+        by mail.kernel.org (Postfix) with ESMTPSA id 3AA7E21508;
         Sun, 11 Nov 2018 22:30:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975408;
-        bh=U5yOMqs3SFAQ5NYi+GcVPYFhFnDRs8Hzbsok2EMeVmg=;
+        bh=pM33+j71zi9Tyqr45Q+VgMvJfU8K8TEJPOz573Y/vbU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yVjoICkop9CSEWjwibJM2lA3OkGPOJ+S62hJMuMWw8VQb9Vgvn2BvEtjPkaQYRbEz
-         iwGvbjc33KXEGzuckRXVTb6jALU8ExX3OxCiQ9ckXpe/Vtk1wCMJy6Q0SMTqYFqPZg
-         JOeMXYroETH+4KXVQruKGYCQkcAYmW2cglyLxRHY=
+        b=RpiBgvCSLQWyz+3ZWgvUfhdV4APm+Thm3yo5pzXZbMJK2xmRhF8sQwn69dXfms4lG
+         Tz0oSr+EgY7HD1is56DKdx8HrJekRWYY/I8wr+IIvqNiwk+1nhDreMDVqeDanUgxJJ
+         ShrKXCPWca7oq3TAe5Te1eVfXinBfw2kGxg1jkTw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
-        Borislav Petkov <bp@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        x86-ml <x86@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 089/350] x86/olpc: Indicate that legacy PC XO-1 platform should not register RTC
-Date:   Sun, 11 Nov 2018 14:19:13 -0800
-Message-Id: <20181111221710.836221596@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.18 115/350] ACPI / LPSS: Add alternative ACPI HIDs for Cherry Trail DMA controllers
+Date:   Sun, 11 Nov 2018 14:19:39 -0800
+Message-Id: <20181111221711.908233543@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -65,71 +64,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lubomir Rintel <lkundrak@v3.sk>
+From: Hans de Goede <hdegoede@redhat.com>
 
-[ Upstream commit d92116b800fb79a72ad26121f5011f6aa3ad94c2 ]
+[ Upstream commit 240714061c58e6b1abfb3322398a7634151c06cb ]
 
-On OLPC XO-1, the RTC is discovered via device tree from the arch
-initcall. Don't let the PC platform register another one from its device
-initcall, it's not going to work:
+Bay and Cherry Trail DSTDs represent a different set of devices depending
+on which OS the device think it is booting. One set of decices for Windows
+and another set of devices for Android which targets the Android-x86 Linux
+kernel fork (which e.g. used to have its own display driver instead of
+using the i915 driver).
 
-  sysfs: cannot create duplicate filename '/devices/platform/rtc_cmos'
-  CPU: 0 PID: 1 Comm: swapper Not tainted 4.19.0-rc6 #12
-  Hardware name: OLPC XO/XO, BIOS OLPC Ver 1.00.01 06/11/2014
-  Call Trace:
-   dump_stack+0x16/0x18
-   sysfs_warn_dup+0x46/0x58
-   sysfs_create_dir_ns+0x76/0x9b
-   kobject_add_internal+0xed/0x209
-   ? __schedule+0x3fa/0x447
-   kobject_add+0x5b/0x66
-   device_add+0x298/0x535
-   ? insert_resource_conflict+0x2a/0x3e
-   platform_device_add+0x14d/0x192
-   ? io_delay_init+0x19/0x19
-   platform_device_register+0x1c/0x1f
-   add_rtc_cmos+0x16/0x31
-   do_one_initcall+0x78/0x14a
-   ? do_early_param+0x75/0x75
-   kernel_init_freeable+0x152/0x1e0
-   ? rest_init+0xa2/0xa2
-   kernel_init+0x8/0xd5
-   ret_from_fork+0x2e/0x38
-  kobject_add_internal failed for rtc_cmos with -EEXIST, don't try to
-    register things with the same name in the same directory.
-  platform rtc_cmos: registered platform RTC device (no PNP device found)
+Which set of devices we are actually going to get is out of our control,
+this is controlled by the ACPI OSID variable, which gets either set through
+an EFI setup option, or sometimes is autodetected. So we need to support
+both.
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-CC: "H. Peter Anvin" <hpa@zytor.com>
-CC: Ingo Molnar <mingo@redhat.com>
-CC: x86-ml <x86@kernel.org>
-Link: http://lkml.kernel.org/r/20181004160808.307738-1-lkundrak@v3.sk
+This commit adds support for the 80862286 and 808622C0 ACPI HIDs which we
+get for the first resp. second DMA controller on Cherry Trail devices when
+OSID is set to Android.
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/platform/olpc/olpc-xo1-rtc.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/acpi/acpi_lpss.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/x86/platform/olpc/olpc-xo1-rtc.c
-+++ b/arch/x86/platform/olpc/olpc-xo1-rtc.c
-@@ -16,6 +16,7 @@
+--- a/drivers/acpi/acpi_lpss.c
++++ b/drivers/acpi/acpi_lpss.c
+@@ -327,9 +327,11 @@ static const struct acpi_device_id acpi_
+ 	{ "INT33FC", },
  
- #include <asm/msr.h>
- #include <asm/olpc.h>
-+#include <asm/x86_init.h>
+ 	/* Braswell LPSS devices */
++	{ "80862286", LPSS_ADDR(lpss_dma_desc) },
+ 	{ "80862288", LPSS_ADDR(bsw_pwm_dev_desc) },
+ 	{ "8086228A", LPSS_ADDR(bsw_uart_dev_desc) },
+ 	{ "8086228E", LPSS_ADDR(bsw_spi_dev_desc) },
++	{ "808622C0", LPSS_ADDR(lpss_dma_desc) },
+ 	{ "808622C1", LPSS_ADDR(bsw_i2c_dev_desc) },
  
- static void rtc_wake_on(struct device *dev)
- {
-@@ -75,6 +76,8 @@ static int __init xo1_rtc_init(void)
- 	if (r)
- 		return r;
- 
-+	x86_platform.legacy.rtc = 0;
-+
- 	device_init_wakeup(&xo1_rtc_device.dev, 1);
- 	return 0;
- }
+ 	/* Broadwell LPSS devices */
 
 
