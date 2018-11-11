@@ -2,103 +2,107 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4658C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 14:24:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08CEBC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 14:25:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA2EA21479
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 14:24:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4DF6208A3
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 14:25:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ve7etCE7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA2EA21479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="n/7jkpnQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4DF6208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728509AbeKLANY (ORCPT
+        id S1728403AbeKLAO1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 19:13:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34032 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727805AbeKLANX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 19:13:23 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A1B10208A3;
-        Sun, 11 Nov 2018 14:24:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541946281;
-        bh=S84olWzloA2eL/TKcUTClryXE2HKtkSQH5HjLz3BSOI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Ve7etCE7vQVESlqxjmP+G8SUjcbIz9WX6mG7jAKfGFuEjwI2Rf/o1LOhyAHOUSS7L
-         bXVI1ZOnxrzg1RmVc+eIgxoX3fKOPO68I+Xp8ikp1lKMRroJGvn35QkTlTJCNr6eBS
-         jja6F+iAJvl3JT3txWhaGQHma/aYDbx4ZNsZqhJs=
-Date:   Sun, 11 Nov 2018 14:24:35 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Song Qiang <songqiang1304521@gmail.com>
-Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        robh+dt@kernel.org, mark.rutland@arm.com, preid@electromag.com.au,
-        himanshujha199640@gmail.com, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v6 2/3] iio: magnetometer: Add DT support for PNI RM3100
-Message-ID: <20181111142435.136f420e@archlinux>
-In-Reply-To: <20181108092749.12167-3-songqiang1304521@gmail.com>
-References: <20181108092749.12167-1-songqiang1304521@gmail.com>
-        <20181108092749.12167-3-songqiang1304521@gmail.com>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sun, 11 Nov 2018 19:14:27 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:56070 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727817AbeKLAO1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Nov 2018 19:14:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=r3lHk6f2BDCJJvvriINBPNWtXObjWl3i/lfDmFpFcN8=; b=n/7jkpnQofBZghCSP/CgNlBsq
+        NTy86ayMb+66/hY9vTYDzQhsDbtKh+U2JxEPhkEtVRBFGxvW2j5qoHmIFmBZV7o3+/LHmn1O9DZSY
+        HQjvJS/6moiTn3BETLG7c8oKJEDEf4UlHhrk7hyZcM9jX5M/eHbStyjx34YxMlB4l6cJSCfgJrLjP
+        wWG3oomlRbPy8KXZGqsFxadObfY/jxN6j7/JpbVl4fGEsN1BaWqgAH7OMT/6Dd1H/Lt7D/WO/tUPV
+        948ct6YSE86l/FwgQG5/7nH/YacImZknwxgZQrYcoPFn/cIypcg8bYM50zBpjErlO5FrSX+NvBJMk
+        DBvX1/DIA==;
+Received: from [64.114.255.114] (helo=worktop)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gLqg2-0008Ai-5x; Sun, 11 Nov 2018 14:25:26 +0000
+Received: by worktop (Postfix, from userid 1000)
+        id A6C5B6E07F4; Sun, 11 Nov 2018 15:25:25 +0100 (CET)
+Date:   Sun, 11 Nov 2018 15:25:25 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@aculab.com>,
+        Borislav Petkov <bp@alien8.de>
+Subject: Re: [PATCH RFC 0/3] Static calls
+Message-ID: <20181111142525.GF12766@worktop.psav.com>
+References: <cover.1541711457.git.jpoimboe@redhat.com>
+ <20181109072811.GB86700@gmail.com>
+ <CAKv+Gu-3OfrgGafO3OY3hAir723tD6shEaWTLJ5Ec4YcW4yZyQ@mail.gmail.com>
+ <20181110232059.GA12766@worktop.psav.com>
+ <CAKv+Gu_y2vH3eu7rMt7d7Hzum_MvYy7=30sNe1fhnB2QLe5i5A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKv+Gu_y2vH3eu7rMt7d7Hzum_MvYy7=30sNe1fhnB2QLe5i5A@mail.gmail.com>
+User-Agent: Mutt/1.5.22.1 (2013-10-16)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu,  8 Nov 2018 17:27:48 +0800
-Song Qiang <songqiang1304521@gmail.com> wrote:
-
-> Signed-off-by: Song Qiang <songqiang1304521@gmail.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-
-Applied to the togreg branch of iio.git and pushed out as testing
-for the autobuilders to play with it.
-
-Thanks,
-
-Jonathan
-
-> ---
->  .../bindings/iio/magnetometer/pni,rm3100.txt  | 20 +++++++++++++++++++
->  1 file changed, 20 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/magnetometer/pni,rm3100.txt
+On Sun, Nov 11, 2018 at 02:42:55PM +0100, Ard Biesheuvel wrote:
+> On 11 November 2018 at 00:20, Peter Zijlstra <peterz@infradead.org> wrote:
+> > On Fri, Nov 09, 2018 at 02:50:27PM +0100, Ard Biesheuvel wrote:
+> >> On 9 November 2018 at 08:28, Ingo Molnar <mingo@kernel.org> wrote:
+> >> >> - I'm not sure about the objtool approach.  Objtool is (currently)
+> >> >>   x86-64 only, which means we have to use the "unoptimized" version
+> >> >>   everywhere else.  I may experiment with a GCC plugin instead.
+> >> >
+> >> > I'd prefer the objtool approach. It's a pretty reliable first-principles
+> >> > approach while GCC plugin would have to be replicated for Clang and any
+> >> > other compilers, etc.
+> >> >
+> >>
+> >> I implemented the GCC plugin approach here for arm64
+> >
+> > I'm confused; I though we only needed objtool for variable instruction
+> > length architectures, because we can't reliably decode our instruction
+> > stream. Otherwise we can fairly trivially use the DWARF relocation data,
+> > no?
 > 
-> diff --git a/Documentation/devicetree/bindings/iio/magnetometer/pni,rm3100.txt b/Documentation/devicetree/bindings/iio/magnetometer/pni,rm3100.txt
-> new file mode 100644
-> index 000000000000..497c932e9e39
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/magnetometer/pni,rm3100.txt
-> @@ -0,0 +1,20 @@
-> +* PNI RM3100 3-axis magnetometer sensor
-> +
-> +Required properties:
-> +
-> +- compatible : should be "pni,rm3100"
-> +- reg : the I2C address or SPI chip select number of the sensor.
-> +
-> +Optional properties:
-> +
-> +- interrupts: data ready (DRDY) from the chip.
-> +  The interrupts can be triggered on level high.
-> +
-> +Example:
-> +
-> +rm3100: rm3100@20 {
-> +	compatible = "pni,rm3100";
-> +	reg = <0x20>;
-> +	interrupt-parent = <&gpio0>;
-> +	interrupts = <4 IRQ_TYPE_LEVEL_HIGH>;
-> +};
+> How would that work? We could build vmlinux with --emit-relocs, filter
+> out the static jump/call relocations and resolve the symbol names to
+> filter the ones associated with calls to trampolines. But then, we
+> have to build the static_call_sites section and reinject it back into
+> the image in some way, which is essentially objtool, no?
 
+It's a _much_ simpler tool than objtool, but yes, we need a tool that
+reads the relocation stuff and (re)injects it in a new section -- we
+don't need it on a vmlinux level, it can be done per TU.
+
+Anyway, a GCC plugin (I still have to have a peek at your thing) sounds
+like it should work just fine too.
