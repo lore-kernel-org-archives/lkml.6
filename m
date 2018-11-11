@@ -7,44 +7,52 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE6B2C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:44:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B28DC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:44:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90AEA20818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:44:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41BF120818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:44:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="a1LYoEkp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90AEA20818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KFeMMETB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41BF120818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387556AbeKLITO (ORCPT
+        id S2387541AbeKLJea (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:19:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40380 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:34:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40408 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387540AbeKLITN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727357AbeKLITN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:19:13 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 037E821527;
-        Sun, 11 Nov 2018 22:29:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6652F21508;
+        Sun, 11 Nov 2018 22:29:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975357;
-        bh=pu9n5+l15AIitGqnhZnWPINdCPV6WNG+03VDIYHAwCk=;
+        bh=IH1d2KfKDxiFo1HhZj7IK4gIknAAcIbvQ7+/fclOn6M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a1LYoEkp8haxezC8yRcOj8BvFzFjVZhHgz97G2pZJ+cDC4xuNdwYslsDEB3d5sZl4
-         C7pPGOVQASPYHcVlfCUE8NV0/p2kDgxblx77W9ICx2EQGxj+EhjzGNMcOfzseFC/rb
-         5lMT1O8txVvR68Zc2U6CAusqvPEvc3guTOJmXAwM=
+        b=KFeMMETBdat1mezo8aPh9EFiQhmMsT58RaUh80hzCuw+ysNHTqDr0A0vOb+QD1/1S
+         AtiyVJWzKivNRJ+G7xAWFpDGe4Rmnn+Hh/XRphhqKFlwBpHRJxCAZlRi1VXdvIZwSB
+         iDRPl/zLaiAh8iV4qA1dJ2RqA4bCP+q0LbWOYzkk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Erik Schmauss <erik.schmauss@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.18 022/350] ACPICA: AML Parser: fix parse loop to correctly skip erroneous extended opcodes
-Date:   Sun, 11 Nov 2018 14:18:06 -0800
-Message-Id: <20181111221708.101723879@linuxfoundation.org>
+        stable@vger.kernel.org, Nadav Amit <namit@vmware.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, dwmw@amazon.co.uk,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.18 023/350] kprobes/x86: Use preempt_enable() in optimized_callback()
+Date:   Sun, 11 Nov 2018 14:18:07 -0800
+Message-Id: <20181111221708.139574483@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -62,57 +70,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Erik Schmauss <erik.schmauss@intel.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-commit c64baa3a6fa207d112706bc5e7fd645cd8a8663f upstream.
+commit 2e62024c265aa69315ed02835623740030435380 upstream.
 
-AML opcodes come in two lengths: 1-byte opcodes and 2-byte, extended opcodes.
-If an error occurs due to illegal opcodes during table load, the AML parser
-needs to continue loading the table. In order to do this, it needs to skip
-parsing of the offending opcode and operands associated with that opcode.
+The following commit:
 
-This change fixes the AML parse loop to correctly skip parsing of incorrect
-extended opcodes. Previously, only the short opcodes were skipped correctly.
+  a19b2e3d7839 ("kprobes/x86: Remove IRQ disabling from ftrace-based/optimized kprobes”)
 
-Signed-off-by: Erik Schmauss <erik.schmauss@intel.com>
-Cc: All applicable <stable@vger.kernel.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+removed local_irq_save/restore() from optimized_callback(), the handler
+might be interrupted by the rescheduling interrupt and might be
+rescheduled - so we must not use the preempt_enable_no_resched() macro.
+
+Use preempt_enable() instead, to not lose preemption events.
+
+[ mingo: Improved the changelog. ]
+
+Reported-by: Nadav Amit <namit@vmware.com>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: <stable@vger.kernel.org>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: dwmw@amazon.co.uk
+Fixes: a19b2e3d7839 ("kprobes/x86: Remove IRQ disabling from ftrace-based/optimized kprobes”)
+Link: http://lkml.kernel.org/r/154002887331.7627.10194920925792947001.stgit@devbox
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/acpi/acpica/psloop.c |   14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ arch/x86/kernel/kprobes/opt.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/acpi/acpica/psloop.c
-+++ b/drivers/acpi/acpica/psloop.c
-@@ -417,6 +417,7 @@ acpi_status acpi_ps_parse_loop(struct ac
- 	union acpi_parse_object *op = NULL;	/* current op */
- 	struct acpi_parse_state *parser_state;
- 	u8 *aml_op_start = NULL;
-+	u8 opcode_length;
+--- a/arch/x86/kernel/kprobes/opt.c
++++ b/arch/x86/kernel/kprobes/opt.c
+@@ -179,7 +179,7 @@ optimized_callback(struct optimized_kpro
+ 		opt_pre_handler(&op->kp, regs);
+ 		__this_cpu_write(current_kprobe, NULL);
+ 	}
+-	preempt_enable_no_resched();
++	preempt_enable();
+ }
+ NOKPROBE_SYMBOL(optimized_callback);
  
- 	ACPI_FUNCTION_TRACE_PTR(ps_parse_loop, walk_state);
- 
-@@ -540,8 +541,19 @@ acpi_status acpi_ps_parse_loop(struct ac
- 						    "Skip parsing opcode %s",
- 						    acpi_ps_get_opcode_name
- 						    (walk_state->opcode)));
-+
-+					/*
-+					 * Determine the opcode length before skipping the opcode.
-+					 * An opcode can be 1 byte or 2 bytes in length.
-+					 */
-+					opcode_length = 1;
-+					if ((walk_state->opcode & 0xFF00) ==
-+					    AML_EXTENDED_OPCODE) {
-+						opcode_length = 2;
-+					}
- 					walk_state->parser_state.aml =
--					    walk_state->aml + 1;
-+					    walk_state->aml + opcode_length;
-+
- 					walk_state->parser_state.aml =
- 					    acpi_ps_get_next_package_end
- 					    (&walk_state->parser_state);
 
 
