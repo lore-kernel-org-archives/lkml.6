@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88633C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:25:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A44C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:25:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50CBE2084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:25:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDC652084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:25:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="x1hAZPqJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50CBE2084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0vaDW8Mq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDC652084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389260AbeKLJPH (ORCPT
+        id S2389108AbeKLIUt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:15:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46672 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389098AbeKLIUt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:20:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45926 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389064AbeKLIUs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:48 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA799223DD;
-        Sun, 11 Nov 2018 22:30:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0955221707;
+        Sun, 11 Nov 2018 22:30:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975452;
-        bh=ZJUJN4WW+VVCEnKjZsXxEQBn0heqWUswiY0SI2a/nAE=;
+        s=default; t=1541975451;
+        bh=qWJeZr6dqM26Fh9etohqoDmnRq7uKy2iLR9CiwQ8eVg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x1hAZPqJwRclS1knXCxBtN75kumpZWozLKYjd6oMx9ySfnoM/HmYxgLfT6FcW3rKs
-         LGhvjzmJnFsUbFQo2Ek/UJj7RjcutCZAhH8tajUL9ew/hkNH0u4V4I7ST7owZ1dm9y
-         big8dlYLwe3Apr6aJsLIfWrWEpJCvgShOzLe80kc=
+        b=0vaDW8MqnH+oiX1fJb5+j+63KVH+sWllPS4j2TxdBPFcZdNHrU9NqEBBE0rDNvJse
+         +udZhQO3UKo2wB/WWALqtZjwSc/aZiD2GlYUxcGGpYmA1khMZOAiqdHZi8DehXMIwF
+         GAFfYwotnBB+ubcGJO2BWzmfeKXDn9A1PEyBoqiY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
-        stable@kernel.org,
-        syzbot+e81ccd4744c6c4f71354@syzkaller.appspotmail.com
-Subject: [PATCH 4.18 220/350] ext4: fix EXT4_IOC_SWAP_BOOT
-Date:   Sun, 11 Nov 2018 14:21:24 -0800
-Message-Id: <20181111221717.230621239@linuxfoundation.org>
+        stable@vger.kernel.org, Waiman.Long@hp.com, peterz@infradead.org,
+        Juergen Gross <jgross@suse.com>,
+        Jan Beulich <jbeulich@suse.com>
+Subject: [PATCH 4.18 200/350] xen: make xen_qlock_wait() nestable
+Date:   Sun, 11 Nov 2018 14:21:04 -0800
+Message-Id: <20181111221716.404667718@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -63,126 +63,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Juergen Gross <jgross@suse.com>
 
-commit 18aded17492088962ef43f00825179598b3e8c58 upstream.
+commit a856531951dc8094359dfdac21d59cee5969c18e upstream.
 
-The code EXT4_IOC_SWAP_BOOT ioctl hasn't been updated in a while, and
-it's a bit broken with respect to more modern ext4 kernels, especially
-metadata checksums.
+xen_qlock_wait() isn't safe for nested calls due to interrupts. A call
+of xen_qlock_kick() might be ignored in case a deeper nesting level
+was active right before the call of xen_poll_irq():
 
-Other problems fixed with this commit:
+CPU 1:                                   CPU 2:
+spin_lock(lock1)
+                                         spin_lock(lock1)
+                                         -> xen_qlock_wait()
+                                            -> xen_clear_irq_pending()
+                                            Interrupt happens
+spin_unlock(lock1)
+-> xen_qlock_kick(CPU 2)
+spin_lock_irqsave(lock2)
+                                         spin_lock_irqsave(lock2)
+                                         -> xen_qlock_wait()
+                                            -> xen_clear_irq_pending()
+                                               clears kick for lock1
+                                            -> xen_poll_irq()
+spin_unlock_irq_restore(lock2)
+-> xen_qlock_kick(CPU 2)
+                                            wakes up
+                                         spin_unlock_irq_restore(lock2)
+                                         IRET
+                                           resumes in xen_qlock_wait()
+                                           -> xen_poll_irq()
+                                           never wakes up
 
-* Don't allow installing a DAX, swap file, or an encrypted file as a
-  boot loader.
+The solution is to disable interrupts in xen_qlock_wait() and not to
+poll for the irq in case xen_qlock_wait() is called in nmi context.
 
-* Respect the immutable and append-only flags.
-
-* Wait until any DIO operations are finished *before* calling
-  truncate_inode_pages().
-
-* Don't swap inode->i_flags, since these flags have nothing to do with
-  the inode blocks --- and it will give the IMA/audit code heartburn
-  when the inode is evicted.
-
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org
-Reported-by: syzbot+e81ccd4744c6c4f71354@syzkaller.appspotmail.com
+Cc: stable@vger.kernel.org
+Cc: Waiman.Long@hp.com
+Cc: peterz@infradead.org
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Reviewed-by: Jan Beulich <jbeulich@suse.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/ioctl.c |   33 +++++++++++++++++++++++++++------
- 1 file changed, 27 insertions(+), 6 deletions(-)
+ arch/x86/xen/spinlock.c |   24 ++++++++++--------------
+ 1 file changed, 10 insertions(+), 14 deletions(-)
 
---- a/fs/ext4/ioctl.c
-+++ b/fs/ext4/ioctl.c
-@@ -67,7 +67,6 @@ static void swap_inode_data(struct inode
- 	ei1 = EXT4_I(inode1);
- 	ei2 = EXT4_I(inode2);
+--- a/arch/x86/xen/spinlock.c
++++ b/arch/x86/xen/spinlock.c
+@@ -39,29 +39,25 @@ static void xen_qlock_kick(int cpu)
+  */
+ static void xen_qlock_wait(u8 *byte, u8 val)
+ {
++	unsigned long flags;
+ 	int irq = __this_cpu_read(lock_kicker_irq);
  
--	swap(inode1->i_flags, inode2->i_flags);
- 	swap(inode1->i_version, inode2->i_version);
- 	swap(inode1->i_blocks, inode2->i_blocks);
- 	swap(inode1->i_bytes, inode2->i_bytes);
-@@ -85,6 +84,21 @@ static void swap_inode_data(struct inode
- 	i_size_write(inode2, isize);
+ 	/* If kicker interrupts not initialized yet, just spin */
+-	if (irq == -1)
++	if (irq == -1 || in_nmi())
+ 		return;
+ 
+-	/* If irq pending already clear it and return. */
++	/* Guard against reentry. */
++	local_irq_save(flags);
++
++	/* If irq pending already clear it. */
+ 	if (xen_test_irq_pending(irq)) {
+ 		xen_clear_irq_pending(irq);
+-		return;
++	} else if (READ_ONCE(*byte) == val) {
++		/* Block until irq becomes pending (or a spurious wakeup) */
++		xen_poll_irq(irq);
+ 	}
+ 
+-	if (READ_ONCE(*byte) != val)
+-		return;
+-
+-	/*
+-	 * If an interrupt happens here, it will leave the wakeup irq
+-	 * pending, which will cause xen_poll_irq() to return
+-	 * immediately.
+-	 */
+-
+-	/* Block until irq becomes pending (or perhaps a spurious wakeup) */
+-	xen_poll_irq(irq);
++	local_irq_restore(flags);
  }
  
-+static void reset_inode_seed(struct inode *inode)
-+{
-+	struct ext4_inode_info *ei = EXT4_I(inode);
-+	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
-+	__le32 inum = cpu_to_le32(inode->i_ino);
-+	__le32 gen = cpu_to_le32(inode->i_generation);
-+	__u32 csum;
-+
-+	if (!ext4_has_metadata_csum(inode->i_sb))
-+		return;
-+
-+	csum = ext4_chksum(sbi, sbi->s_csum_seed, (__u8 *)&inum, sizeof(inum));
-+	ei->i_csum_seed = ext4_chksum(sbi, csum, (__u8 *)&gen, sizeof(gen));
-+}
-+
- /**
-  * Swap the information from the given @inode and the inode
-  * EXT4_BOOT_LOADER_INO. It will basically swap i_data and all other
-@@ -102,10 +116,13 @@ static long swap_inode_boot_loader(struc
- 	struct inode *inode_bl;
- 	struct ext4_inode_info *ei_bl;
- 
--	if (inode->i_nlink != 1 || !S_ISREG(inode->i_mode))
-+	if (inode->i_nlink != 1 || !S_ISREG(inode->i_mode) ||
-+	    IS_SWAPFILE(inode) || IS_ENCRYPTED(inode) ||
-+	    ext4_has_inline_data(inode))
- 		return -EINVAL;
- 
--	if (!inode_owner_or_capable(inode) || !capable(CAP_SYS_ADMIN))
-+	if (IS_RDONLY(inode) || IS_APPEND(inode) || IS_IMMUTABLE(inode) ||
-+	    !inode_owner_or_capable(inode) || !capable(CAP_SYS_ADMIN))
- 		return -EPERM;
- 
- 	inode_bl = ext4_iget(sb, EXT4_BOOT_LOADER_INO);
-@@ -120,13 +137,13 @@ static long swap_inode_boot_loader(struc
- 	 * that only 1 swap_inode_boot_loader is running. */
- 	lock_two_nondirectories(inode, inode_bl);
- 
--	truncate_inode_pages(&inode->i_data, 0);
--	truncate_inode_pages(&inode_bl->i_data, 0);
--
- 	/* Wait for all existing dio workers */
- 	inode_dio_wait(inode);
- 	inode_dio_wait(inode_bl);
- 
-+	truncate_inode_pages(&inode->i_data, 0);
-+	truncate_inode_pages(&inode_bl->i_data, 0);
-+
- 	handle = ext4_journal_start(inode_bl, EXT4_HT_MOVE_EXTENTS, 2);
- 	if (IS_ERR(handle)) {
- 		err = -EINVAL;
-@@ -159,6 +176,8 @@ static long swap_inode_boot_loader(struc
- 
- 	inode->i_generation = prandom_u32();
- 	inode_bl->i_generation = prandom_u32();
-+	reset_inode_seed(inode);
-+	reset_inode_seed(inode_bl);
- 
- 	ext4_discard_preallocations(inode);
- 
-@@ -169,6 +188,7 @@ static long swap_inode_boot_loader(struc
- 			inode->i_ino, err);
- 		/* Revert all changes: */
- 		swap_inode_data(inode, inode_bl);
-+		ext4_mark_inode_dirty(handle, inode);
- 	} else {
- 		err = ext4_mark_inode_dirty(handle, inode_bl);
- 		if (err < 0) {
-@@ -178,6 +198,7 @@ static long swap_inode_boot_loader(struc
- 			/* Revert all changes: */
- 			swap_inode_data(inode, inode_bl);
- 			ext4_mark_inode_dirty(handle, inode);
-+			ext4_mark_inode_dirty(handle, inode_bl);
- 		}
- 	}
- 	ext4_journal_stop(handle);
+ static irqreturn_t dummy_handler(int irq, void *dev_id)
 
 
