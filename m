@@ -2,95 +2,137 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C9C7C43610
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 18:57:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A285AC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:02:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6351C2148E
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 18:57:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="rzWeFnqm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6351C2148E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
+	by mail.kernel.org (Postfix) with ESMTP id 68EEA2148E
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:02:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68EEA2148E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729458AbeKLEqy (ORCPT
+        id S1729486AbeKLEvy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 23:46:54 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:49120 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726848AbeKLEqy (ORCPT
+        Sun, 11 Nov 2018 23:51:54 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:52644 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729405AbeKLEvy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 23:46:54 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 887B38EE12F;
-        Sun, 11 Nov 2018 10:57:35 -0800 (PST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id rCZ4AIoDVqj8; Sun, 11 Nov 2018 10:57:35 -0800 (PST)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id E37BD8EE0A4;
-        Sun, 11 Nov 2018 10:57:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1541962655;
-        bh=tO7PhfuaNHq4sHvf0qyKforuKUAy9KVwtK/6EC6V9YM=;
-        h=Subject:From:To:Date:In-Reply-To:References:From;
-        b=rzWeFnqmIEeYvri2lvfMSIweZDI3QKntx3y+nsmUuF+AFEhvvfVOJQIhK6VA8qVZs
-         7/wQvV7xoGl0koX+1Ouh7lvK6kh/sDCZfwRCdE4UFqCi0RixhHsoLui+yOHunMqgB/
-         Up7kvWz5Oohw3zBGml4F+fnjfc3FnvkSBKHA2Sv4=
-Message-ID: <1541962653.3190.7.camel@HansenPartnership.com>
-Subject: Re: [BUG] Nuvoton NCPT650 TPM 2.0 mode not working
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>,
-        peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
-        arnd@arndb.de, linux-integrity@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Date:   Sun, 11 Nov 2018 10:57:33 -0800
-In-Reply-To: <e8eb56fdab618770917fbe5b174328dc1240f934.camel@mniewoehner.de>
-References: <776f384a81466642472beb4a34b10f26f1de88e9.camel@mniewoehner.de>
-         <1541960689.3190.4.camel@HansenPartnership.com>
-         <e8eb56fdab618770917fbe5b174328dc1240f934.camel@mniewoehner.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Sun, 11 Nov 2018 23:51:54 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 1B173806D6; Sun, 11 Nov 2018 20:02:29 +0100 (CET)
+Date:   Sun, 11 Nov 2018 20:02:30 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+Subject: Re: [PATCH v5 04/27] x86/fpu/xstate: Add XSAVES system states for
+ shadow stack
+Message-ID: <20181111190230.GA2681@amd>
+References: <20181011151523.27101-1-yu-cheng.yu@intel.com>
+ <20181011151523.27101-5-yu-cheng.yu@intel.com>
+ <20181108184038.GJ7543@zn.tnic>
+ <20181111113103.GG27666@amd>
+ <4E917DA9-5192-48E2-8857-08C3ABE08AFE@amacapital.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="azLHFNyN32YCQGCU"
+Content-Disposition: inline
+In-Reply-To: <4E917DA9-5192-48E2-8857-08C3ABE08AFE@amacapital.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-11-11 at 19:50 +0100, Michael Niewöhner wrote:
-[...]
-> > However, this makes me wonder about yours:
-> > 
-> > > [    0.003517] ACPI: TPM2 0x000000009E490ED8 000034 (v03 LENOVO
-> > > TC-
-> > > S06   00001300 AMI  00000000)
-> > 
-> > I thought the Lenovo "upgrade to 2.0" in fact disabled the external
-> > TPM in favour of the Intel PTT (software TPM in the management
-> > engine).  Since you apparently have the tpm_crb driver that should
-> > find the PTT TPM, this might be one of the attachment bugs in the
-> > CRB driver ... from your ACPI output it looks to be not specifying
-> > the Tpm2Tabl.
-> 
-> Well, there are at least two implementations I know of:
-> For my Lenovo X260 I can choose between Infineon TPM 1.2 or Intel PTT
-> TPM 2.0 This here is my ThinkStation P320 which can choose between
-> PTT 1.2, PTT 2.0,
-> Nuvoton 1.2 and 2.0. When switchting between 1.2 and 2.0 the Nuvoton
-> gets
-> reflashed with the appropriate firmware.
 
-Well, I still think the ACPI setup is incorrect.  What's in
-/sys/class/platform (should be directories of ACPI devices)?  The TPM
-is supposed to show up as MSFT0101.  If it doesn't is there any other
-device string in there that might be a TPM?
+--azLHFNyN32YCQGCU
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-James
+On Sun 2018-11-11 06:59:24, Andy Lutomirski wrote:
+>=20
+>=20
+> > On Nov 11, 2018, at 3:31 AM, Pavel Machek <pavel@ucw.cz> wrote:
+> >=20
+> > Hi!
+> >=20
+> >>> +/*
+> >>> + * State component 12 is Control flow Enforcement kernel states
+> >>> + */
+> >>> +struct cet_kernel_state {
+> >>> +    u64 kernel_ssp;    /* kernel shadow stack */
+> >>> +    u64 pl1_ssp;    /* ring-1 shadow stack */
+> >>> +    u64 pl2_ssp;    /* ring-2 shadow stack */
+> >>=20
+> >> Just write "privilege level" everywhere - not "ring".
+> >=20
+> > Please just use word "ring". It is well estabilished terminology.
+> >=20
+> > Which ring is priviledge level 1, given that we have SMM and
+> > virtualization support?
+>=20
+> To the contrary: CPL, DPL, and RPL are very well defined terms in the arc=
+hitecture manuals. =E2=80=9CPL=E2=80=9D is privilege level. PL 1 is very we=
+ll defined.
+>=20
 
+"Priviledge level" is generic term. "CPL" I may recognize as
+Intel-specific. "priviledge level" I would not. So I'd really use
+"ring" there. "CPL 1 shadow stack" would be okay, too I guess.
+
+> SMM is SMM, full stop (unless dual mode or whatever it=E2=80=99s called i=
+s on, but AFAIK no one uses it).  VMX non-root CPL 1 is *still* privilege l=
+evel 1.
+>=20
+> In contrast, the security community likes to call SMM =E2=80=9Cring -1=E2=
+=80=9D, which is cute, but wrong from a systems programmer view. For exampl=
+e, SMM=E2=80=99s CPL can still range from 0-3.
+>=20
+
+Regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--azLHFNyN32YCQGCU
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlvofMYACgkQMOfwapXb+vI9WgCfSA5mLeg0dMNk4A/6IbLq/9Ih
+RVoAnA4XuVV1d1EoMJO4lhfDC+rwf0qd
+=xaDH
+-----END PGP SIGNATURE-----
+
+--azLHFNyN32YCQGCU--
