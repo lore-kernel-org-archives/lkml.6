@@ -4,47 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 743BCC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:53:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B9D4C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:54:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31FA92154B
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:53:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 369DA206BA
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:54:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VcyI7zhs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31FA92154B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cRBaVdbl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 369DA206BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404149AbeKLIn5 (ORCPT
+        id S2404160AbeKLIoH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:43:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54672 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:44:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403979AbeKLIW6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2404000AbeKLIW6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:22:58 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 30FE8223DD;
-        Sun, 11 Nov 2018 22:33:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D3B2E223C8;
+        Sun, 11 Nov 2018 22:33:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975581;
-        bh=oWKBxqA7h1wj2n9uPh9ZxOAHvPoDNq9TX87cMlWmB4k=;
+        s=default; t=1541975580;
+        bh=R8EIzeqfEUveB8Abu+ZYsxTAOqzn7xVpRTw+DeawsMU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VcyI7zhs/us5LZIdX5RP2Bp65jSstLGHG3Rjg9xBIlIpN6CZ9n6jOfjtSL4IQj5ws
-         qOsVpXQeM0A8wVWxIVGU4JCLD/rGQ6SBRknMFaUra0fYnisvjV7y5iM7Oa/6/JI2rS
-         Qev0Lj439KhrgY8ybXBYnCa1YkRczemnvydTR2hc=
+        b=cRBaVdbl82fOJ8CabjzhdFVDU2dznrqqrsh7UepWnBgM2mrJ0H+sELA52hOtMOWDC
+         zWzqRh/wMPMVB4B46x0gRYY/NkiPmGj2fjZbZC98CtAcKs3K4y3xtaAfPduyRz9Bn9
+         PHOUX1KScu2Sni//Pg3NRfuC28b9tiDPC9PAygr4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
         "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 4.14 172/222] lockd: fix access beyond unterminated strings in prints
-Date:   Sun, 11 Nov 2018 14:24:29 -0800
-Message-Id: <20181111221702.576548291@linuxfoundation.org>
+Subject: [PATCH 4.14 171/222] nfsd: Fix an Oops in free_session()
+Date:   Sun, 11 Nov 2018 14:24:28 -0800
+Message-Id: <20181111221702.501633059@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -62,32 +62,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Amir Goldstein <amir73il@gmail.com>
+From: Trond Myklebust <trondmy@gmail.com>
 
-commit 93f38b6fae0ea8987e22d9e6c38f8dfdccd867ee upstream.
+commit bb6ad5572c0022e17e846b382d7413cdcf8055be upstream.
 
-printk format used %*s instead of %.*s, so hostname_len does not limit
-the number of bytes accessed from hostname.
+In call_xpt_users(), we delete the entry from the list, but we
+do not reinitialise it. This triggers the list poisoning when
+we later call unregister_xpt_user() in nfsd4_del_conns().
 
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Cc: stable@vger.kernel.org
 Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/lockd/host.c |    2 +-
+ net/sunrpc/svc_xprt.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/lockd/host.c
-+++ b/fs/lockd/host.c
-@@ -341,7 +341,7 @@ struct nlm_host *nlmsvc_lookup_host(cons
- 	};
- 	struct lockd_net *ln = net_generic(net, lockd_net_id);
- 
--	dprintk("lockd: %s(host='%*s', vers=%u, proto=%s)\n", __func__,
-+	dprintk("lockd: %s(host='%.*s', vers=%u, proto=%s)\n", __func__,
- 			(int)hostname_len, hostname, rqstp->rq_vers,
- 			(rqstp->rq_prot == IPPROTO_UDP ? "udp" : "tcp"));
- 
+--- a/net/sunrpc/svc_xprt.c
++++ b/net/sunrpc/svc_xprt.c
+@@ -1040,7 +1040,7 @@ static void call_xpt_users(struct svc_xp
+ 	spin_lock(&xprt->xpt_lock);
+ 	while (!list_empty(&xprt->xpt_users)) {
+ 		u = list_first_entry(&xprt->xpt_users, struct svc_xpt_user, list);
+-		list_del(&u->list);
++		list_del_init(&u->list);
+ 		u->callback(u);
+ 	}
+ 	spin_unlock(&xprt->xpt_lock);
 
 
