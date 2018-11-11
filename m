@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAC31C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:36:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DD53C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:36:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8A0620818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:36:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8A0620818
+	by mail.kernel.org (Postfix) with ESMTP id 0BC8420818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:36:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BC8420818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730337AbeKLG0W (ORCPT
+        id S1730107AbeKLFsL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:26:22 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:49710 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730069AbeKLFsL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 00:48:11 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:49664 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730054AbeKLFsK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 00:48:10 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsW-0000lG-CS; Sun, 11 Nov 2018 19:58:40 +0000
+        id 1gLvsW-0000oJ-CS; Sun, 11 Nov 2018 19:58:40 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsT-0001b4-6I; Sun, 11 Nov 2018 19:58:37 +0000
+        id 1gLvsT-0001c1-GJ; Sun, 11 Nov 2018 19:58:37 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -38,14 +38,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org,
-        "David Vrabel" <david.vrabel@citrix.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>
+        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
+        "Ben Hutchings" <ben.hutchings@codethink.co.uk>,
+        "Juergen Gross" <jgross@suse.com>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.734225939@decadent.org.uk>
+Message-ID: <lsq.1541965745.319903524@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 167/366] xen-netfront: properly destroy queues when
- removing device
+Subject: [PATCH 3.16 179/366] xen: Remove unnecessary BUG_ON from
+ __unbind_from_irq()
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,46 +59,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Vrabel <david.vrabel@citrix.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 
-commit ad0681185770716523c81b156c44b9804d7b8ed2 upstream.
+commit eef04c7b3786ff0c9cb1019278b6c6c2ea0ad4ff upstream.
 
-xennet_remove() freed the queues before freeing the netdevice which
-results in a use-after-free when free_netdev() tries to delete the
-napi instances that have already been freed.
+Commit 910f8befdf5b ("xen/pirq: fix error path cleanup when binding
+MSIs") fixed a couple of errors in error cleanup path of
+xen_bind_pirq_msi_to_irq(). This cleanup allowed a call to
+__unbind_from_irq() with an unbound irq, which would result in
+triggering the BUG_ON there.
 
-Fix this by fully destroy the queues (which includes deleting the napi
-instances) before freeing the netdevice.
+Since there is really no reason for the BUG_ON (xen_free_irq() can
+operate on unbound irqs) we can remove it.
 
-Signed-off-by: David Vrabel <david.vrabel@citrix.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[bwh: Backported to 3.16: I already backported most of this along with
- the later commit 74470954857c "xen-netfront: Delete rx_refill_timer in
-  xennet_disconnect_backend()"; don't move the del_timer_sync() again.]
+Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/drivers/net/xen-netfront.c
-+++ b/drivers/net/xen-netfront.c
-@@ -2294,7 +2294,6 @@ static const struct xenbus_device_id net
- static int xennet_remove(struct xenbus_device *dev)
- {
- 	struct netfront_info *info = dev_get_drvdata(&dev->dev);
--	unsigned int num_queues = info->netdev->real_num_tx_queues;
+ drivers/xen/events/events_base.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+--- a/drivers/xen/events/events_base.c
++++ b/drivers/xen/events/events_base.c
+@@ -636,8 +636,6 @@ static void __unbind_from_irq(unsigned i
+ 		xen_irq_info_cleanup(info);
+ 	}
  
- 	dev_dbg(&dev->dev, "%s\n", dev->nodename);
- 
-@@ -2302,11 +2301,7 @@ static int xennet_remove(struct xenbus_d
- 
- 	unregister_netdev(info->netdev);
- 
--	if (num_queues) {
--		kfree(info->queues);
--		info->queues = NULL;
--	}
+-	BUG_ON(info_for_irq(irq)->type == IRQT_UNBOUND);
 -
-+	xennet_destroy_queues(info);
- 	xennet_free_netdev(info->netdev);
+ 	xen_free_irq(irq);
+ }
  
- 	return 0;
 
