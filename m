@@ -6,48 +6,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44EF7C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D00D3C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2216223C8
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AA23223C8
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iH2GgPXI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2216223C8
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="a0bNF6TT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AA23223C8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404677AbeKLIYI (ORCPT
+        id S2404708AbeKLIYL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:24:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59082 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:24:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59252 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404612AbeKLIYF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:24:05 -0500
+        id S2403873AbeKLIYJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:24:09 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B9B1B21780;
-        Sun, 11 Nov 2018 22:34:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E5B2B22353;
+        Sun, 11 Nov 2018 22:34:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975647;
-        bh=TaLNkvJvBCiFcpLMo3EU1tVQlxjimFeWC1Y448Eoo5k=;
+        s=default; t=1541975652;
+        bh=QzP/5JSkylfFkuA4G9EL1Sx+zn4l8KGHPUE9wkoAHh8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iH2GgPXIf7qETa5OXi5+sqt5jIhInMLxTmIbrWSeBV4XMYXAgXhY0z8FAjQOEyAsq
-         bM0j2NXUdzJ00l4xavbSzJ5qpaTg1bFEwCBPIfsh7fmUzPeR5q+7cMLwC0QY/mGXyb
-         em2Yq9cSG3OSOq1m60ZHBhTDzi686Yp0m1wWVlHk=
+        b=a0bNF6TTUk24O2K/nwyGiwdbs1Hl0EFco3Zi3Ts740+8rowFqT2mwswL50MVsnAmI
+         7oA1bBdzBwnTwo1CFtC0A8EnqOOD1CO1s3rwLdmUDbdykWXG4962MG6iayaWss7B98
+         wobhEVkJ8W5gTRAMCAPxNnlyWTKSubejkzNdqBuE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Song Muchun <smuchun@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mike Galbraith <efault@gmx.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 021/141] sched/fair: Fix the min_vruntime update logic in dequeue_entity()
-Date:   Sun, 11 Nov 2018 14:24:40 -0800
-Message-Id: <20181111221630.654232583@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
+        Mathieu Malaterre <malat@debian.org>,
+        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 070/141] dmaengine: dma-jz4780: Return error if not probed from DT
+Date:   Sun, 11 Nov 2018 14:25:29 -0800
+Message-Id: <20181111221637.641763835@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
 References: <20181111221627.853046496@linuxfoundation.org>
@@ -65,44 +62,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Song Muchun <smuchun@gmail.com>
+From: Paul Cercueil <paul@crapouillou.net>
 
-[ Upstream commit 9845c49cc9bbb317a0bc9e9cf78d8e09d54c9af0 ]
+[ Upstream commit 54f919a04cf221bc1601d1193682d4379dacacbd ]
 
-The comment and the code around the update_min_vruntime() call in
-dequeue_entity() are not in agreement.
+The driver calls clk_get() with the clock name set to NULL, which means
+that the driver could only work when probed from devicetree. From now
+on, we explicitly require the driver to be probed from devicetree.
 
->From commit:
-
-  b60205c7c558 ("sched/fair: Fix min_vruntime tracking")
-
-I think that we want to update min_vruntime when a task is sleeping/migrating.
-So, the check is inverted there - fix it.
-
-Signed-off-by: Song Muchun <smuchun@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mike Galbraith <efault@gmx.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: b60205c7c558 ("sched/fair: Fix min_vruntime tracking")
-Link: http://lkml.kernel.org/r/20181014112612.2614-1-smuchun@gmail.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Tested-by: Mathieu Malaterre <malat@debian.org>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/sched/fair.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/dma/dma-jz4780.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -3502,7 +3502,7 @@ dequeue_entity(struct cfs_rq *cfs_rq, st
- 	 * put back on, and if we advance min_vruntime, we'll be placed back
- 	 * further than we started -- ie. we'll be penalized.
- 	 */
--	if ((flags & (DEQUEUE_SAVE | DEQUEUE_MOVE)) == DEQUEUE_SAVE)
-+	if ((flags & (DEQUEUE_SAVE | DEQUEUE_MOVE)) != DEQUEUE_SAVE)
- 		update_min_vruntime(cfs_rq);
- }
+--- a/drivers/dma/dma-jz4780.c
++++ b/drivers/dma/dma-jz4780.c
+@@ -754,6 +754,11 @@ static int jz4780_dma_probe(struct platf
+ 	struct resource *res;
+ 	int i, ret;
  
++	if (!dev->of_node) {
++		dev_err(dev, "This driver must be probed from devicetree\n");
++		return -EINVAL;
++	}
++
+ 	jzdma = devm_kzalloc(dev, sizeof(*jzdma), GFP_KERNEL);
+ 	if (!jzdma)
+ 		return -ENOMEM;
 
 
