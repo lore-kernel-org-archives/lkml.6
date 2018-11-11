@@ -2,1686 +2,340 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 829D9C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 17:36:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A94B9C43610
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 17:37:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1104C21104
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 17:36:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5171521104
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 17:37:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nkT8tUqq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1104C21104
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="h1/X4zJb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5171521104
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729301AbeKLD0A (ORCPT
+        id S1729327AbeKLD0G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 22:26:00 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:54697 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729222AbeKLD0A (ORCPT
+        Sun, 11 Nov 2018 22:26:06 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:33695 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729222AbeKLD0D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 22:26:00 -0500
-Received: by mail-it1-f193.google.com with SMTP id a205-v6so3968357itd.4;
-        Sun, 11 Nov 2018 09:36:49 -0800 (PST)
+        Sun, 11 Nov 2018 22:26:03 -0500
+Received: by mail-pf1-f193.google.com with SMTP id v68-v6so3162643pfk.0
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 09:36:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=hkeNWf8yTEOYSEavjA5DbYLs1d0IwQ8GgjlMjzgHqkA=;
-        b=nkT8tUqqhQSsRTWegK8EhhRzrlooh1oeVtZ8o/pJwK/LDO2YGpgIVLpNsUAzIjarxR
-         W2KHoD5w8gOgKyzYbCvL4ebptz/3fxrcnC7uWDTuTrfmzU4vt7fbBCAQg1pGKVZ1pZG/
-         BDbCKQRPrFrDnQktlzlluT+bfoHUg+dUYrw4qmqlEHl5D3f0Oq1u1NhwAfUa1JnsnjJa
-         l1Kc8sCI5x73oWAmuUaCOfYhRXL3e5Xxp9xIS9dtqVnfUULvoy+tAr6QTJBmVpQK/b5/
-         h771fTAirbWq6i/uu5TDFlvpzSo7u8C8rISlS8oJk2561POaYKB74xSeJDQUTmHhwnCI
-         HiJw==
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=224UHwwQPIKYjJLiPAKcos8WbDri7mKhgQa5fN6dAQs=;
+        b=h1/X4zJbAbYo4TR7SB7SzJFTxCVp4QFbDT0Kr+zv9AsFqanV1h5TfJhOOas2IYWKum
+         /CAA/CazcSt+q1LOqlSppPTKM/SQ9XhNXx7mzsAsPyY6AZm+jen0fZ60EsKZNmLUye3t
+         jmlsFls2gu0HgdxwK55vhEnxFXgTLZci4bGe0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=hkeNWf8yTEOYSEavjA5DbYLs1d0IwQ8GgjlMjzgHqkA=;
-        b=CQua+yMx87A3lCANRVuMiYuqQc/Sagy3sPFjlPrG5jeQZkMyyTJfsVwBhjAhl+kGPc
-         ckv/bZuuXnucVxyD1pw+GSWwKTb3WvX9NC3OqYgDxC7EgiG3pWxwh2fn0ySas3fJTqaz
-         Ze3O5FWwAQNjOPvHMfKk2dAiZX3BqqX0vE67hv7SbCf8gLGNg/23YqEgvbQv2ztSEV5c
-         cpbWrzRt0ohrVbKeQ68Q/T+1PGql2MZPMpmUteYRlseZhrd/AMQYiX2gqOnGNNKXwCt6
-         HEQbRlGwWg+WhxgDwDL5t36dH5tkuMAWlGXz3nXj0vjf88JkN8pRUPlMiPIOtaAzSeer
-         IzFg==
-X-Gm-Message-State: AGRZ1gIXbKzwEp9grZPfLYAcbyAAjgadJ9Uv1cE4t9mFpVxAT1GO2oQ+
-        kM1pnsVpS9LKyxoW98Ve5Nvlitu7n03QJ94uSSk=
-X-Google-Smtp-Source: AJdET5dU5NdoHTaOJAogVMMW/TonhiDIDuwWiB20dYCnCOulfe+2ZSmUHRug729+p/2PMOHhfA0c4rBCfKl74IM7yrc=
-X-Received: by 2002:a24:5e50:: with SMTP id h77-v6mr9122893itb.58.1541957808816;
- Sun, 11 Nov 2018 09:36:48 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=224UHwwQPIKYjJLiPAKcos8WbDri7mKhgQa5fN6dAQs=;
+        b=EUOWLR7+SEhaPtPRCX10E//HXrzzynfyUbJ5IFVbYL7PrwxjkHjU0UD1WXMIkIqfw1
+         af4lnUlcPY6Lm44OTGK7faJaE4vtf1N9c08sS2ftpuVvL+wQKOpn0gutLLdyh5Ll9mHe
+         MNw1eVTbvOpzWksEFtQEEzjsVZj0Gep7rmJEbx23RGHH471nhuWwENsLMmOCQ5V+lVLX
+         FirSP2DTdA6rHyMSk5o0wApF6gMpIJkY5VN8rNKJPbWqH48Z6XLZE6xtIQpoJ4rrktGO
+         ZJ1GdPkVRX35V5VWt+9wl0lZBq0UEGuZfNqZ6EAPBxb8zoat0tbkpo6xl3eARGDhDKiY
+         xgiw==
+X-Gm-Message-State: AGRZ1gIva500wR2CQjyi3nxhorckJurBbTi0KuoF8yA35B56rB+BosnW
+        DrEgzTAuMdTCiMaXWP2tuLbeOA==
+X-Google-Smtp-Source: AJdET5edMJGKKMz4rjy1+VgUcxwUMagkzv4qM/3F7i74gprtsqZG8u5eev3gz7DjHWVT/Brp6UoGNA==
+X-Received: by 2002:a62:4105:: with SMTP id o5-v6mr13502269pfa.85.1541957813074;
+        Sun, 11 Nov 2018 09:36:53 -0800 (PST)
+Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id g123-v6sm1789361pfc.155.2018.11.11.09.36.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 11 Nov 2018 09:36:51 -0800 (PST)
+Date:   Sun, 11 Nov 2018 09:36:50 -0800
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Daniel Colascione <dancol@google.com>,
+        Jann Horn <jannh@google.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        John Reck <jreck@google.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Todd Kjos <tkjos@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Bruce Fields <bfields@fieldses.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Khalid Aziz <khalid.aziz@oracle.com>, Lei.Yang@windriver.com,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>, marcandre.lureau@redhat.com,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        Hugh Dickins <hughd@google.com>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH v3 resend 1/2] mm: Add an F_SEAL_FUTURE_WRITE seal to
+ memfd
+Message-ID: <20181111173650.GA256781@google.com>
+References: <20181110182405.GB242356@google.com>
+ <CAKOZuesQXRtthJTEr86LByH3gPpAdT-PQM0d1jqr131=zZNRKw@mail.gmail.com>
+ <CAKOZueum8MtNvJ5P=W7_pRw62TdQdCgyjCwwbG1wezNboC1cxQ@mail.gmail.com>
+ <20181110220933.GB96924@google.com>
+ <907D942E-E321-4BD7-BED7-ACD1D96A3643@amacapital.net>
+ <20181111023808.GA174670@google.com>
+ <543A5181-3A16-438E-B372-97BEC48A74F8@amacapital.net>
+ <20181111080945.GA78191@google.com>
+ <CAKOZuethQ3eaV4uoEXiffVMc_S0hyk1FGPB3iQHHnv4NadW1UQ@mail.gmail.com>
+ <91E8E1AA-859A-457A-8978-3EA39CBBF075@amacapital.net>
 MIME-Version: 1.0
-References: <20181027150910.GA2070@syn-yoga530> <20181030205624.GC13681@bhelgaas-glaptop.roam.corp.google.com>
-In-Reply-To: <20181030205624.GC13681@bhelgaas-glaptop.roam.corp.google.com>
-From:   Elie Morisse <syniurge@gmail.com>
-Date:   Sun, 11 Nov 2018 14:36:36 -0300
-Message-ID: <CAC_JBqrEMza9p-drM1WtrQx0mG+QNpoPd0HaHi45RtLMS7FEZA@mail.gmail.com>
-Subject: Re: [PATCH v7] i2c: Add PCI and platform drivers for the AMD MP2 I2C controller
-To:     helgaas@kernel.org
-Cc:     linux-i2c@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>,
-        Nehal-bakulchandra.Shah@amd.com, Shyam-sundar.S-k@amd.com,
-        sandeep.singh@amd.com, linux-kernel@vger.kernel.org,
-        rjw@rjwysocki.net, Len Brown <lenb@kernel.org>,
-        linux-acpi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <91E8E1AA-859A-457A-8978-3EA39CBBF075@amacapital.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Sun, Nov 11, 2018 at 07:14:33AM -0800, Andy Lutomirski wrote:
+[...]
+> >>>>>>>>>> I see two reasonable solutions:
+> >>>>>>>>>> 
+> >>>>>>>>>> 1. Don’t fiddle with the struct file at all. Instead make the inode flag
+> >>>>>>>>>> work by itself.
+> >>>>>>>>> 
+> >>>>>>>>> Currently, the various VFS paths check only the struct file's f_mode to deny
+> >>>>>>>>> writes of already opened files. This would mean more checking in all those
+> >>>>>>>>> paths (and modification of all those paths).
+> >>>>>>>>> 
+> >>>>>>>>> Anyway going with that idea, we could
+> >>>>>>>>> 1. call deny_write_access(file) from the memfd's seal path which decrements
+> >>>>>>>>> the inode::i_writecount.
+> >>>>>>>>> 2. call get_write_access(inode) in the various VFS paths in addition to
+> >>>>>>>>> checking for FMODE_*WRITE and deny the write (incase i_writecount is negative)
+> >>>>>>>>> 
+> >>>>>>>>> That will prevent both reopens, and writes from succeeding. However I worry a
+> >>>>>>>>> bit about 2 not being too familiar with VFS internals, about what the
+> >>>>>>>>> consequences of doing that may be.
+> >>>>>>>> 
+> >>>>>>>> IMHO, modifying both the inode and the struct file separately is fine,
+> >>>>>>>> since they mean different things. In regular filesystems, it's fine to
+> >>>>>>>> have a read-write open file description for a file whose inode grants
+> >>>>>>>> write permission to nobody. Speaking of which: is fchmod enough to
+> >>>>>>>> prevent this attack?
+> >>>>>>> 
+> >>>>>>> Well, yes and no. fchmod does prevent reopening the file RW, but
+> >>>>>>> anyone with permissions (owner, CAP_FOWNER) can just fchmod it back. A
+> >>>>>>> seal is supposed to be irrevocable, so fchmod-as-inode-seal probably
+> >>>>>>> isn't sufficient by itself. While it might be good enough for Android
+> >>>>>>> (in the sense that it'll prevent RW-reopens from other security
+> >>>>>>> contexts to which we send an open memfd file), it's still conceptually
+> >>>>>>> ugly, IMHO. Let's go with the original approach of just tweaking the
+> >>>>>>> inode so that open-for-write is permanently blocked.
+> >>>>>> 
+> >>>>>> Agreed with the idea of modifying both file and inode flags. I was thinking
+> >>>>>> modifying i_mode may do the trick but as you pointed it probably could be
+> >>>>>> reverted by chmod or some other attribute setting calls.
+> >>>>>> 
+> >>>>>> OTOH, I don't think deny_write_access(file) can be reverted from any
+> >>>>>> user-facing path so we could do that from the seal to prevent the future
+> >>>>>> opens in write mode. I'll double check and test that out tomorrow.
+> >>>>>> 
+> >>>>>> 
+> >>>>> 
+> >>>>> This seems considerably more complicated and more fragile than needed. Just
+> >>>>> add a new F_SEAL_WRITE_FUTURE.  Grep for F_SEAL_WRITE and make the _FUTURE
+> >>>>> variant work exactly like it with two exceptions:
+> >>>>> 
+> >>>>> - shmem_mmap and maybe its hugetlbfs equivalent should check for it and act
+> >>>>> accordingly.
+> >>>> 
+> >>>> There's more to it than that, we also need to block future writes through
+> >>>> write syscall, so we have to hook into the write path too once the seal is
+> >>>> set, not just the mmap. That means we have to add code in mm/shmem.c to do
+> >>>> that in all those handlers, to check for the seal (and hope we didn't miss a
+> >>>> file_operations handler). Is that what you are proposing?
+> >>> 
+> >>> The existing code already does this. That’s why I suggested grepping :)
+> >>> 
+> >>>> 
+> >>>> Also, it means we have to keep CONFIG_TMPFS enabled so that the
+> >>>> shmem_file_operations write handlers like write_iter are hooked up. Currently
+> >>>> memfd works even with !CONFIG_TMPFS.
+> >>> 
+> >>> If so, that sounds like it may already be a bug.
+> > 
+> > Why shouldn't memfd work independently of CONFIG_TMPFS? In particular,
+> > write(2) on tmpfs FDs shouldn't work differently. If it does, that's a
+> > kernel implementation detail leaking out into userspace.
+> > 
+> >>>>> - add_seals won’t need the wait_for_pins and mapping_deny_write logic.
+> >>>>> 
+> >>>>> That really should be all that’s needed.
+> >>>> 
+> >>>> It seems a fair idea what you're saying. But I don't see how its less
+> >>>> complex.. IMO its far more simple to have VFS do the denial of the operations
+> >>>> based on the flags of its datastructures.. and if it works (which I will test
+> >>>> to be sure it will), then we should be good.
+> >>> 
+> >>> I agree it’s complicated, but the code is already written.  You should just
+> >>> need to adjust some masks.
+> >>> 
+> >> 
+> >> Its actually not that bad and a great idea, I did something like the
+> >> following and it works pretty well. I would say its cleaner than the old
+> >> approach for sure (and I also added a /proc/pid/fd/N reopen test to the
+> >> selftest and made sure that issue goes away).
+> >> 
+> >> Side note: One subtelty I discovered from the existing selftests is once the
+> >> F_SEAL_WRITE are active, an mmap of PROT_READ and MAP_SHARED region is
+> >> expected to fail. This is also evident from this code in mmap_region:
+> >>                if (vm_flags & VM_SHARED) {
+> >>                        error = mapping_map_writable(file->f_mapping);
+> >>                        if (error)
+> >>                                goto allow_write_and_free_vma;
+> >>                }
+> >> 
+> > 
+> > This behavior seems like a bug. Why should MAP_SHARED writes be denied
+> > here? There's no semantic incompatibility between shared mappings and
+> > the seal. And I think this change would represent an ABI break using
+> > memfd seals for ashmem, since ashmem currently allows MAP_SHARED
+> > mappings after changing prot_mask.
+> 
+> Hmm. I’m guessing the intent is that the mmap count should track writable
+> mappings in addition to mappings that could be made writable using
+> mprotect.  I think you could address this for SEAL_FUTURE in two ways:
+> 
+> 1. In shmem_mmap, mask off VM_MAYWRITE if SEAL_FUTURE is set, or
+> 
+> 2. Add a new vm operation that allows a vma to reject an mprotect attempt,
+> like security_file_mprotect but per vma.  Then give it reasonable semantics
+> for shmem.
+> 
+> (1) probably gives the semantics you want for SEAL_FUTURE: old maps can be
+> mprotected, but new maps can’t.
 
-In v9 the platform driver defers probe() if no MP2 devices has been
-registered in the PCI driver yet, is this an acceptable fix?
+Thanks Andy and Daniel! This occured to me too and I like the solution in (1).
+I tested that now PROT_READ + MAP_SHARED works and the mrprotect is not able
+to revert the protection. In fact (1) is exactly what we do in the ashmem
+driver.
 
-I've found examples of kernel code extracting info from the ACPI
-namespace (e.g in i2c-core-acpi.c), but this would require adding more
-code to the driver and AMDI0011 ACPI devices getting associated to a
-platform device still seem like a minor but nice bonus to me, but that
-may be the wrong way of looking at it.
+The updated patch now looks like the following:
 
-So, to get this patch accepted do I keep things this way or do I
-replace the platform driver by an ACPI namespace walker?
+---8<-----------------------
 
-Le mar. 30 oct. 2018 =C3=A0 17:56, Bjorn Helgaas <helgaas@kernel.org> a =C3=
-=A9crit :
->
-> [+cc Rafael, Len, linux-acpi]
->
-> On Sat, Oct 27, 2018 at 12:09:10PM -0300, Elie Morisse wrote:
-> > This contains two drivers:
-> >  * i2c-amd-plat-mp2: platform driver managing an i2c adapter (one of
-> > the two busses of the MP2) and routing any i2c read/write command to
-> > the PCI driver.
-> >  * i2c-amd-pci-mp2: PCI driver communicating through the C2P/P2C
-> > mailbox registers, or through DMA for more than 32 bytes transfers.
->
-> I'm dubious about this two-driver structure.  If I understand
-> correctly (and it's very possible that I don't), the PCI driver
-> (amd_mp2_pci_probe()) is the real owner of the i2c adapter: it
-> claims the PCI device, claims its BARs, and requests an IRQ.
->
-> The i2c_amd_probe() code *looks* like a platform driver that claims
-> AMDI0011 devices from the ACPI namespace, but I don't think it's
-> really a driver.  It looks like it exists mainly to extract some
-> information (bus speed and maybe a bus number?) from the namespace,
-> then to call i2c_add_adapter().
->
-> It looks like i2c_amd_probe() must run *after* amd_mp2_pci_probe(),
-> but there's no way to really enforce that ordering.
->
-> And i2c-amd-plat-mp2 contains the i2c_amd_algorithm functions, which
-> operate on the PCI device, which requires exported interfaces
-> (amd_mp2_read(), amd_mp2_write()) that are implemented in the PCI
-> driver but called from the platform part.
->
-> It seems like there should be a way to put the ACPI lookups into
-> i2c-amd-pci-mp2 so there's only one driver.
->
-> I only have a couple trivial comments below but I'm not trimming my
-> response so the ACPI folks can see the whole context.
->
-> > This is major rework of the patch submitted by Nehal-bakulchandra Shah
-> > from AMD (https://patchwork.kernel.org/patch/10597369/).
-> >
-> > Most of the event handling of v2/v3 was rewritten since it couldn't wor=
-k
-> > if more than one bus was enabled, and contains many more fixes listed
-> > in the patch changelog.
-> >
-> > With those changes both the touchpad and the touchscreen of the
-> > Ryzen-based Lenovo Yoga 530 which lie in separate busses work beautiful=
-ly.
-> >
-> > Signed-off-by: Elie Morisse <syniurge@gmail.com>
-> > ---
-> > Changes since v1:(https://www.spinics.net/lists/linux-i2c/msg34650.html=
-)
-> > -> Add fix for IOMMU
-> > -> Add depedency of ACPI
-> > -> Add locks to avoid the crash
-> >
-> > Changes since v2:(https://patchwork.ozlabs.org/patch/961270/)
-> >
-> > -> fix for review comments
-> > -> fix for more than 32 bytes write issue
-> >
-> > Changes since v3 (https://patchwork.kernel.org/patch/10597369/) by Elie=
- M.:
-> >
-> > -> support more than one bus/adapter
-> > -> support more than one slave per bus
-> > -> use the bus speed specified by the slaves declared in the DSDT inste=
-ad of
-> >    assuming speed =3D=3D 400kbits/s
-> > -> instead of kzalloc'ing a buffer for every less than 32 bytes reads, =
-simply
-> >    use i2c_msg.buf
-> > -> fix buffer overreads/overflows when (<=3D32 bytes) message lengths a=
-ren't a
-> >    multiple of 4 by using memcpy_fromio and memcpy_toio
-> > -> use streaming DMA mappings instead of allocating a coherent DMA buff=
-er for
-> >    every >32 bytes read/write
-> > -> properly check for timeouts during i2c_amd_xfer and increase it from=
- 50
-> >    jiffies to 250 msecs (which is more in line with other drivers)
-> > -> complete amd_i2c_dev.msg even if the device doesn't return a xxx_suc=
-cess
-> >    event, instead of stalling i2c_amd_xfer
-> > -> removed the spinlock and mdelay during i2c_amd_pci_configure, I didn=
-'t see
-> >    the point since it's already waiting for a i2c_busenable_complete ev=
-ent
-> > -> add an adapter-specific mutex lock for i2c_amd_xfer, since we don't =
-want
-> >    parallel calls writing to AMD_C2P_MSG0 (or AMD_C2P_MSG1)
-> > -> add a global mutex lock for registers AMD_C2P_MSG2 to AMD_C2P_MSG9, =
- which
-> >    are shared across the two busses/adapters
-> > -> add MODULE_DEVICE_TABLE to automatically load i2c-amd-platdrv if the=
- DSDT
-> >    enumerates devices with the "AMDI0011" HID
-> > -> set maximum length of reads/writes to 4095 (event's length field is =
-12 bits)
-> > -> basic PM support
-> > -> style corrections to match the kernel code style, and tried to reduc=
-e code
-> >    duplication whenever possible
-> >
-> > Changes since v4 (https://marc.info/?l=3Dlinux-kernel&m=3D1540311330198=
-35) by Elie M.:
-> >
-> > -> fix missing typecast warning
-> > -> removed the duplicated entry in Kconfig
-> >
-> > Changes since v5 by Elie M.:
-> >
-> > -> move DMA mapping from the platform driver to the PCI driver
-> > -> attempt to find the platform device's PCI parent through the _DEP AC=
-PI method
-> >    (if not found take the first MP2 device registred in the i2c-amd-pci=
--mp2
-> >    driver, like before)
-> > -> do not assume anymore that the PCI device is owned by the i2c-amd-pc=
-i-mp2
-> >    driver
-> > -> address other review comments by Bjorn Helgaas (meant for v3)
-> >
-> > Changes since v6 by Elie M.:
-> >
-> > -> remove unnecessary memcpy from the DMA buffer during i2c_amd_read_co=
-mpletion
-> >
-> >  MAINTAINERS                           |   6 +
-> >  drivers/i2c/busses/Kconfig            |  15 +
-> >  drivers/i2c/busses/Makefile           |   2 +
-> >  drivers/i2c/busses/i2c-amd-pci-mp2.c  | 706 ++++++++++++++++++++++++++
-> >  drivers/i2c/busses/i2c-amd-pci-mp2.h  | 224 ++++++++
-> >  drivers/i2c/busses/i2c-amd-plat-mp2.c | 373 ++++++++++++++
-> >  6 files changed, 1326 insertions(+)
-> >  create mode 100644 drivers/i2c/busses/i2c-amd-pci-mp2.c
-> >  create mode 100644 drivers/i2c/busses/i2c-amd-pci-mp2.h
-> >  create mode 100644 drivers/i2c/busses/i2c-amd-plat-mp2.c
-> >
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 6ac000cc006d..8ff2bddc1ac2 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -791,6 +791,12 @@ F:       drivers/gpu/drm/amd/include/vi_structs.h
-> >  F:   drivers/gpu/drm/amd/include/v9_structs.h
-> >  F:   include/uapi/linux/kfd_ioctl.h
-> >
-> > +AMD MP2 I2C DRIVER
-> > +M:   Elie Morisse <syniurge@gmail.com>
-> > +L:   linux-i2c@vger.kernel.org
-> > +S:   Maintained
-> > +F:   drivers/i2c/busses/i2c-amd-*-mp2*
-> > +
-> >  AMD POWERPLAY
-> >  M:   Rex Zhu <rex.zhu@amd.com>
-> >  M:   Evan Quan <evan.quan@amd.com>
-> > diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-> > index 451d4ae50e66..e20f2d1ce381 100644
-> > --- a/drivers/i2c/busses/Kconfig
-> > +++ b/drivers/i2c/busses/Kconfig
-> > @@ -77,6 +77,21 @@ config I2C_AMD8111
-> >         This driver can also be built as a module.  If so, the module
-> >         will be called i2c-amd8111.
-> >
-> > +config I2C_AMD_MP2_PCI
-> > +     tristate
-> > +     depends on PCI
-> > +
-> > +config I2C_AMD_MP2_PLATFORM
-> > +     tristate "AMD MP2 Platform"
-> > +     select I2C_AMD_MP2_PCI
-> > +     depends on ACPI
-> > +     help
-> > +       If you say yes to this option, support will be included for the=
- AMD MP2
-> > +       PCI I2C adapter.
-> > +
-> > +       This driver can also be built as a module.  If so, the module
-> > +       will be called i2c-amd-plat-mp2.
-> > +
-> >  config I2C_HIX5HD2
-> >       tristate "Hix5hd2 high-speed I2C driver"
-> >       depends on ARCH_HISI || ARCH_HIX5HD2 || COMPILE_TEST
-> > diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
-> > index 18b26af82b1c..16ef646d7ef5 100644
-> > --- a/drivers/i2c/busses/Makefile
-> > +++ b/drivers/i2c/busses/Makefile
-> > @@ -32,6 +32,8 @@ obj-$(CONFIG_I2C_POWERMAC)  +=3D i2c-powermac.o
-> >
-> >  # Embedded system I2C/SMBus host controller drivers
-> >  obj-$(CONFIG_I2C_ALTERA)     +=3D i2c-altera.o
-> > +obj-$(CONFIG_I2C_AMD_MP2_PCI)        +=3D i2c-amd-pci-mp2.o
-> > +obj-$(CONFIG_I2C_AMD_MP2_PLATFORM)   +=3D i2c-amd-plat-mp2.o
-> >  obj-$(CONFIG_I2C_ASPEED)     +=3D i2c-aspeed.o
-> >  obj-$(CONFIG_I2C_AT91)               +=3D i2c-at91.o
-> >  obj-$(CONFIG_I2C_AU1550)     +=3D i2c-au1550.o
-> > diff --git a/drivers/i2c/busses/i2c-amd-pci-mp2.c b/drivers/i2c/busses/=
-i2c-amd-pci-mp2.c
-> > new file mode 100644
-> > index 000000000000..eb54825f3f69
-> > --- /dev/null
-> > +++ b/drivers/i2c/busses/i2c-amd-pci-mp2.c
-> > @@ -0,0 +1,706 @@
-> > +// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
-> > +/*
-> > + * AMD PCIe MP2 Communication Driver
-> > + *
-> > + * Authors: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-> > + *          Elie Morisse <syniurge@gmail.com>
-> > + */
-> > +
-> > +#include <linux/debugfs.h>
-> > +#include <linux/dma-mapping.h>
-> > +#include <linux/interrupt.h>
-> > +#include <linux/module.h>
-> > +#include <linux/pci.h>
-> > +#include <linux/slab.h>
-> > +
-> > +#include "i2c-amd-pci-mp2.h"
-> > +
-> > +#define DRIVER_NAME  "pcie_mp2_amd"
-> > +#define DRIVER_DESC  "AMD(R) PCI-E MP2 Communication Driver"
-> > +#define DRIVER_VER   "1.0"
-> > +
-> > +static const struct file_operations amd_mp2_debugfs_info;
-> > +static struct dentry *debugfs_dir;
-> > +
-> > +#define write64 _write64
-> > +static inline void _write64(u64 val, void __iomem *mmio)
-> > +{
-> > +     writel(val, mmio);
-> > +     writel(val >> 32, mmio + sizeof(u32));
-> > +}
-> > +
-> > +#define read64 _read64
-> > +static inline u64 _read64(void __iomem *mmio)
-> > +{
-> > +     u64 low, high;
-> > +
-> > +     low =3D readl(mmio);
-> > +     high =3D readl(mmio + sizeof(u32));
-> > +     return low | (high << 32);
-> > +}
-> > +
-> > +static int amd_mp2_cmd(struct amd_mp2_dev *privdata,
-> > +                    union i2c_cmd_base i2c_cmd_base)
-> > +{
-> > +     void __iomem *reg;
-> > +
-> > +     if (i2c_cmd_base.s.bus_id > 1) {
-> > +             dev_err(ndev_dev(privdata), "%s Invalid bus id\n", __func=
-__);
-> > +             return -EINVAL;
-> > +     }
-> > +
-> > +     reg =3D privdata->mmio + ((i2c_cmd_base.s.bus_id =3D=3D 1) ?
-> > +                             AMD_C2P_MSG1 : AMD_C2P_MSG0);
-> > +     writel(i2c_cmd_base.ul, reg);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +int amd_mp2_connect(struct amd_i2c_common *i2c_common, bool enable)
-> > +{
-> > +     struct amd_mp2_dev *privdata =3D i2c_common->mp2_dev;
-> > +     union i2c_cmd_base i2c_cmd_base;
-> > +
-> > +     dev_dbg(ndev_dev(privdata), "%s id: %d\n", __func__,
-> > +             i2c_common->bus_id);
-> > +
-> > +     i2c_common->reqcmd =3D enable ? i2c_enable : i2c_disable;
-> > +
-> > +     i2c_cmd_base.ul =3D 0;
-> > +     i2c_cmd_base.s.i2c_cmd =3D i2c_common->reqcmd;
-> > +     i2c_cmd_base.s.bus_id =3D i2c_common->bus_id;
-> > +     i2c_cmd_base.s.i2c_speed =3D i2c_common->i2c_speed;
-> > +
-> > +     return amd_mp2_cmd(privdata, i2c_cmd_base);
-> > +}
-> > +EXPORT_SYMBOL_GPL(amd_mp2_connect);
-> > +
-> > +static void amd_mp2_cmd_rw_fill(struct amd_i2c_common *i2c_common,
-> > +                             union i2c_cmd_base *i2c_cmd_base,
-> > +                             enum i2c_cmd reqcmd)
-> > +{
-> > +     i2c_common->reqcmd =3D reqcmd;
-> > +
-> > +     i2c_cmd_base->s.i2c_cmd =3D reqcmd;
-> > +     i2c_cmd_base->s.bus_id =3D i2c_common->bus_id;
-> > +     i2c_cmd_base->s.i2c_speed =3D i2c_common->i2c_speed;
-> > +     i2c_cmd_base->s.slave_addr =3D i2c_common->rw_cfg.slave_addr;
-> > +     i2c_cmd_base->s.length =3D i2c_common->rw_cfg.length;
-> > +}
-> > +
-> > +static int amd_mp2_dma_map(struct amd_mp2_dev *privdata,
-> > +                        struct amd_i2c_common *i2c_common,
-> > +                        bool is_write)
-> > +{
-> > +     enum dma_data_direction dma_direction =3D is_write ?
-> > +                     DMA_TO_DEVICE : DMA_FROM_DEVICE;
-> > +
-> > +     i2c_common->rw_cfg.dma_addr =3D dma_map_single(&privdata->pci_dev=
-->dev,
-> > +                                                  i2c_common->rw_cfg.b=
-uf,
-> > +                                                  i2c_common->rw_cfg.l=
-ength,
-> > +                                                  dma_direction);
-> > +     i2c_common->rw_cfg.dma_direction =3D dma_direction;
-> > +
-> > +     if (dma_mapping_error(&privdata->pci_dev->dev,
-> > +                           i2c_common->rw_cfg.dma_addr)) {
-> > +             dev_err(ndev_dev(privdata),
-> > +                     "Error while mapping dma buffer %p\n",
-> > +                     i2c_common->rw_cfg.buf);
-> > +             return -EIO;
-> > +     }
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static void amd_mp2_dma_unmap(struct amd_mp2_dev *privdata,
-> > +                           struct amd_i2c_common *i2c_common)
-> > +{
-> > +     dma_unmap_single(&privdata->pci_dev->dev,
-> > +                      i2c_common->rw_cfg.dma_addr,
-> > +                      i2c_common->rw_cfg.length,
-> > +                      i2c_common->rw_cfg.dma_direction);
-> > +}
-> > +
-> > +int amd_mp2_read(struct amd_i2c_common *i2c_common)
-> > +{
-> > +     struct amd_mp2_dev *privdata =3D i2c_common->mp2_dev;
-> > +     union i2c_cmd_base i2c_cmd_base;
-> > +
-> > +     dev_dbg(ndev_dev(privdata), "%s addr: %x id: %d\n", __func__,
-> > +             i2c_common->rw_cfg.slave_addr, i2c_common->bus_id);
-> > +
-> > +     amd_mp2_cmd_rw_fill(i2c_common, &i2c_cmd_base, i2c_read);
-> > +
-> > +     /* there is only one data mailbox for two i2c adapters */
-> > +     mutex_lock(&privdata->c2p_lock);
-> > +
-> > +     if (!i2c_common->rw_cfg.buf) {
-> > +             dev_err(ndev_dev(privdata), "%s no mem for buf received\n=
-",
-> > +                     __func__);
-> > +             return -ENOMEM;
-> > +     }
-> > +
-> > +     if (i2c_common->rw_cfg.length <=3D 32) {
-> > +             i2c_cmd_base.s.mem_type =3D use_c2pmsg;
-> > +     } else {
-> > +             i2c_cmd_base.s.mem_type =3D use_dram;
-> > +             if (amd_mp2_dma_map(privdata, i2c_common, false))
-> > +                     return -EIO;
-> > +             write64((u64)i2c_common->rw_cfg.dma_addr,
-> > +                     privdata->mmio + AMD_C2P_MSG2);
-> > +     }
-> > +
-> > +     return amd_mp2_cmd(privdata, i2c_cmd_base);
-> > +}
-> > +EXPORT_SYMBOL_GPL(amd_mp2_read);
-> > +
-> > +int amd_mp2_write(struct amd_i2c_common *i2c_common)
-> > +{
-> > +     struct amd_mp2_dev *privdata =3D i2c_common->mp2_dev;
-> > +     union i2c_cmd_base i2c_cmd_base;
-> > +
-> > +     dev_dbg(ndev_dev(privdata), "%s addr: %x id: %d\n", __func__,
-> > +             i2c_common->rw_cfg.slave_addr, i2c_common->bus_id);
-> > +
-> > +     amd_mp2_cmd_rw_fill(i2c_common, &i2c_cmd_base, i2c_write);
-> > +
-> > +     /* there is only one data mailbox for two i2c adapters */
-> > +     mutex_lock(&privdata->c2p_lock);
-> > +
-> > +     if (i2c_common->rw_cfg.length <=3D 32) {
-> > +             i2c_cmd_base.s.mem_type =3D use_c2pmsg;
-> > +             memcpy_toio(privdata->mmio + AMD_C2P_MSG2,
-> > +                         i2c_common->rw_cfg.buf,
-> > +                         i2c_common->rw_cfg.length);
-> > +     } else {
-> > +             i2c_cmd_base.s.mem_type =3D use_dram;
-> > +             if (amd_mp2_dma_map(privdata, i2c_common, true))
-> > +                     return -EIO;
-> > +             write64((u64)i2c_common->rw_cfg.dma_addr,
-> > +                     privdata->mmio + AMD_C2P_MSG2);
-> > +     }
-> > +
-> > +     return amd_mp2_cmd(privdata, i2c_cmd_base);
-> > +}
-> > +EXPORT_SYMBOL_GPL(amd_mp2_write);
-> > +
-> > +static void amd_mp2_pci_do_work(struct work_struct *work)
-> > +{
-> > +     struct amd_i2c_common *i2c_common =3D work_amd_i2c_common(work);
-> > +     struct amd_mp2_dev *privdata =3D i2c_common->mp2_dev;
-> > +     int sts =3D i2c_common->eventval.r.status;
-> > +     int res =3D i2c_common->eventval.r.response;
-> > +     int len =3D i2c_common->eventval.r.length;
-> > +     u32 slave_addr =3D i2c_common->eventval.r.slave_addr;
-> > +
-> > +     if (len !=3D i2c_common->rw_cfg.length)
-> > +             dev_err(ndev_dev(privdata),
-> > +                     "length %d in event doesn't match buffer length %=
-d!\n",
-> > +                     len, i2c_common->rw_cfg.length);
-> > +     if (slave_addr !=3D i2c_common->rw_cfg.slave_addr)
-> > +             dev_err(ndev_dev(privdata),
-> > +                     "unexpected slave address %x (expected: %x)!\n",
-> > +                     slave_addr, i2c_common->rw_cfg.slave_addr);
-> > +
-> > +     if (res !=3D command_success) {
-> > +             if (res =3D=3D command_failed)
-> > +                     dev_err(ndev_dev(privdata), "i2c command failed!\=
-n");
-> > +             else
-> > +                     dev_err(ndev_dev(privdata), "invalid response to =
-i2c command!\n");
-> > +             return;
-> > +     }
-> > +
-> > +     switch (i2c_common->reqcmd) {
-> > +     case i2c_read:
-> > +             if (sts =3D=3D i2c_readcomplete_event) {
-> > +                     if (len <=3D 32)
-> > +                             memcpy_fromio(i2c_common->rw_cfg.buf,
-> > +                                           privdata->mmio + AMD_C2P_MS=
-G2,
-> > +                                           i2c_common->rw_cfg.length);
-> > +             } else if (sts =3D=3D i2c_readfail_event) {
-> > +                     dev_err(ndev_dev(privdata), "i2c read failed!\n")=
-;
-> > +             } else {
-> > +                     dev_err(ndev_dev(privdata), "invalid i2c status a=
-fter read!\n");
-> > +             }
-> > +
-> > +             i2c_common->ops->read_complete(&i2c_common->eventval);
-> > +             break;
-> > +     case i2c_write:
-> > +             if (sts =3D=3D i2c_writefail_event)
-> > +                     dev_err(ndev_dev(privdata), "i2c write failed!\n"=
-);
-> > +             else if (sts !=3D i2c_writecomplete_event)
-> > +                     dev_err(ndev_dev(privdata), "invalid i2c status a=
-fter write!\n");
-> > +
-> > +             i2c_common->ops->write_complete(&i2c_common->eventval);
-> > +             break;
-> > +     case i2c_enable:
-> > +             if (sts =3D=3D i2c_busdisable_failed)
-> > +                     dev_err(ndev_dev(privdata), "i2c bus enable faile=
-d!\n");
-> > +             else if (sts !=3D i2c_busenable_complete)
-> > +                     dev_err(ndev_dev(privdata), "invalid i2c status a=
-fter bus enable!\n");
-> > +
-> > +             i2c_common->ops->connect_complete(&i2c_common->eventval);
-> > +             break;
-> > +     default:
-> > +             break;
-> > +     }
-> > +
-> > +     if ((i2c_common->reqcmd =3D=3D i2c_read ||
-> > +          i2c_common->reqcmd =3D=3D i2c_write) &&
-> > +         i2c_common->rw_cfg.length > 32)
-> > +             amd_mp2_dma_unmap(privdata, i2c_common);
-> > +}
-> > +
-> > +static void amd_mp2_pci_work(struct work_struct *work)
-> > +{
-> > +     struct amd_i2c_common *i2c_common =3D work_amd_i2c_common(work);
-> > +     struct amd_mp2_dev *privdata =3D i2c_common->mp2_dev;
-> > +     enum i2c_cmd cmd =3D i2c_common->reqcmd;
-> > +
-> > +     amd_mp2_pci_do_work(work);
-> > +
-> > +     i2c_common->reqcmd =3D i2c_none;
-> > +
-> > +     if (cmd =3D=3D i2c_read || cmd =3D=3D i2c_write)
-> > +             mutex_unlock(&privdata->c2p_lock);
-> > +}
-> > +
-> > +static irqreturn_t amd_mp2_irq_isr(int irq, void *dev)
-> > +{
-> > +     struct amd_mp2_dev *privdata =3D dev;
-> > +     struct amd_i2c_common *i2c_common;
-> > +     u32 val;
-> > +     unsigned int bus_id;
-> > +     void __iomem *reg;
-> > +     unsigned long flags;
-> > +     enum irqreturn ret =3D IRQ_NONE;
-> > +
-> > +     raw_spin_lock_irqsave(&privdata->lock, flags);
-> > +
-> > +     for (bus_id =3D 0; bus_id < 2; bus_id++) {
-> > +             reg =3D privdata->mmio + ((bus_id =3D=3D 0) ?
-> > +                                     AMD_P2C_MSG1 : AMD_P2C_MSG2);
-> > +             val =3D readl(reg);
-> > +             if (val !=3D 0) {
-> > +                     i2c_common =3D privdata->plat_common[bus_id];
-> > +                     if (!i2c_common)
-> > +                             continue;
-> > +                     i2c_common->eventval.ul =3D val;
-> > +
-> > +                     writel(0, reg);
-> > +                     writel(0, privdata->mmio + AMD_P2C_MSG_INTEN);
-> > +
-> > +                     if (i2c_common->reqcmd !=3D i2c_none)
-> > +                             schedule_delayed_work(&i2c_common->work, =
-0);
-> > +
-> > +                     ret =3D IRQ_HANDLED;
-> > +             }
-> > +     }
-> > +
-> > +     raw_spin_unlock_irqrestore(&privdata->lock, flags);
-> > +     return ret;
-> > +}
-> > +
-> > +int amd_i2c_register_cb(struct amd_mp2_dev *privdata,
-> > +                     struct amd_i2c_common *i2c_common)
-> > +{
-> > +     if (i2c_common->bus_id > 1)
-> > +             return -EINVAL;
-> > +     privdata->plat_common[i2c_common->bus_id] =3D i2c_common;
-> > +
-> > +     INIT_DELAYED_WORK(&i2c_common->work, amd_mp2_pci_work);
-> > +
-> > +     return 0;
-> > +}
-> > +EXPORT_SYMBOL_GPL(amd_i2c_register_cb);
-> > +
-> > +int amd_i2c_unregister_cb(struct amd_mp2_dev *privdata,
-> > +                       struct amd_i2c_common *i2c_common)
-> > +{
-> > +     cancel_delayed_work_sync(&i2c_common->work);
-> > +     privdata->plat_common[i2c_common->bus_id] =3D NULL;
-> > +
-> > +     return 0;
-> > +}
-> > +EXPORT_SYMBOL_GPL(amd_i2c_unregister_cb);
-> > +
-> > +static ssize_t amd_mp2_debugfs_read(struct file *filp, char __user *ub=
-uf,
-> > +                                 size_t count, loff_t *offp)
-> > +{
-> > +     struct amd_mp2_dev *privdata;
-> > +     void __iomem *mmio;
-> > +     u8 *buf;
-> > +     size_t buf_size;
-> > +     ssize_t ret, off;
-> > +     u32 v32;
-> > +
-> > +     privdata =3D filp->private_data;
-> > +     mmio =3D privdata->mmio;
-> > +     buf_size =3D min_t(size_t, count, 0x800);
-> > +     buf =3D kmalloc(buf_size, GFP_KERNEL);
-> > +
-> > +     if (!buf)
-> > +             return -ENOMEM;
-> > +
-> > +     off =3D 0;
-> > +     off +=3D scnprintf(buf + off, buf_size - off,
-> > +                     "Mp2 Device Information:\n");
-> > +
-> > +     off +=3D scnprintf(buf + off, buf_size - off,
-> > +                     "=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D\n");
-> > +     off +=3D scnprintf(buf + off, buf_size - off,
-> > +                     "\tMP2 C2P Message Register Dump:\n\n");
-> > +     v32 =3D readl(privdata->mmio + AMD_C2P_MSG0);
-> > +     off +=3D scnprintf(buf + off, buf_size - off,
-> > +                     "AMD_C2P_MSG0 -\t\t\t%#06x\n", v32);
-> > +
-> > +     v32 =3D readl(privdata->mmio + AMD_C2P_MSG1);
-> > +     off +=3D scnprintf(buf + off, buf_size - off,
-> > +                     "AMD_C2P_MSG1 -\t\t\t%#06x\n", v32);
-> > +
-> > +     v32 =3D readl(privdata->mmio + AMD_C2P_MSG2);
-> > +     off +=3D scnprintf(buf + off, buf_size - off,
-> > +                     "AMD_C2P_MSG2 -\t\t\t%#06x\n", v32);
-> > +
-> > +     v32 =3D readl(privdata->mmio + AMD_C2P_MSG3);
-> > +     off +=3D scnprintf(buf + off, buf_size - off,
-> > +                     "AMD_C2P_MSG3 -\t\t\t%#06x\n", v32);
-> > +
-> > +     v32 =3D readl(privdata->mmio + AMD_C2P_MSG4);
-> > +     off +=3D scnprintf(buf + off, buf_size - off,
-> > +                     "AMD_C2P_MSG4 -\t\t\t%#06x\n", v32);
-> > +
-> > +     v32 =3D readl(privdata->mmio + AMD_C2P_MSG5);
-> > +     off +=3D scnprintf(buf + off, buf_size - off,
-> > +                     "AMD_C2P_MSG5 -\t\t\t%#06x\n", v32);
-> > +
-> > +     v32 =3D readl(privdata->mmio + AMD_C2P_MSG6);
-> > +     off +=3D scnprintf(buf + off, buf_size - off,
-> > +                     "AMD_C2P_MSG6 -\t\t\t%#06x\n", v32);
-> > +
-> > +     v32 =3D readl(privdata->mmio + AMD_C2P_MSG7);
-> > +     off +=3D scnprintf(buf + off, buf_size - off,
-> > +                     "AMD_C2P_MSG7 -\t\t\t%#06x\n", v32);
-> > +
-> > +     v32 =3D readl(privdata->mmio + AMD_C2P_MSG8);
-> > +     off +=3D scnprintf(buf + off, buf_size - off,
-> > +                     "AMD_C2P_MSG8 -\t\t\t%#06x\n", v32);
-> > +
-> > +     v32 =3D readl(privdata->mmio + AMD_C2P_MSG9);
-> > +     off +=3D scnprintf(buf + off, buf_size - off,
-> > +                     "AMD_C2P_MSG9 -\t\t\t%#06x\n", v32);
-> > +
-> > +     off +=3D scnprintf(buf + off, buf_size - off,
-> > +                     "\n\tMP2 P2C Message Register Dump:\n\n");
-> > +
-> > +     v32 =3D readl(privdata->mmio + AMD_P2C_MSG1);
-> > +     off +=3D scnprintf(buf + off, buf_size - off,
-> > +                     "AMD_P2C_MSG1 -\t\t\t%#06x\n", v32);
-> > +
-> > +     v32 =3D readl(privdata->mmio + AMD_P2C_MSG2);
-> > +     off +=3D scnprintf(buf + off, buf_size - off,
-> > +                     "AMD_P2C_MSG2 -\t\t\t%#06x\n", v32);
-> > +
-> > +     v32 =3D readl(privdata->mmio + AMD_P2C_MSG_INTEN);
-> > +     off +=3D scnprintf(buf + off, buf_size - off,
-> > +                     "AMD_P2C_MSG_INTEN -\t\t%#06x\n", v32);
-> > +
-> > +     v32 =3D readl(privdata->mmio + AMD_P2C_MSG_INTSTS);
-> > +     off +=3D scnprintf(buf + off, buf_size - off,
-> > +                     "AMD_P2C_MSG_INTSTS -\t\t%#06x\n", v32);
-> > +
-> > +     ret =3D simple_read_from_buffer(ubuf, count, offp, buf, off);
-> > +     kfree(buf);
-> > +     return ret;
-> > +}
-> > +
-> > +static void amd_mp2_init_debugfs(struct amd_mp2_dev *privdata)
-> > +{
-> > +     if (!debugfs_dir) {
-> > +             privdata->debugfs_dir =3D NULL;
-> > +             privdata->debugfs_info =3D NULL;
-> > +             return;
-> > +     }
-> > +
-> > +     privdata->debugfs_dir =3D debugfs_create_dir(ndev_name(privdata),
-> > +                                                debugfs_dir);
-> > +     if (!privdata->debugfs_dir) {
-> > +             privdata->debugfs_info =3D NULL;
-> > +     } else {
-> > +             privdata->debugfs_info =3D debugfs_create_file
-> > +                     ("info", 0400, privdata->debugfs_dir,
-> > +                      privdata, &amd_mp2_debugfs_info);
-> > +     }
-> > +}
-> > +
-> > +static void amd_mp2_deinit_debugfs(struct amd_mp2_dev *privdata)
-> > +{
-> > +     debugfs_remove_recursive(privdata->debugfs_dir);
-> > +}
-> > +
-> > +static void amd_mp2_clear_reg(struct amd_mp2_dev *privdata)
-> > +{
-> > +     int reg;
-> > +
-> > +     for (reg =3D AMD_C2P_MSG0; reg <=3D AMD_C2P_MSG9; reg +=3D 4)
-> > +             writel(0, privdata->mmio + reg);
-> > +
-> > +     for (reg =3D AMD_P2C_MSG0; reg <=3D AMD_P2C_MSG2; reg +=3D 4)
-> > +             writel(0, privdata->mmio + reg);
-> > +}
-> > +
-> > +static int amd_mp2_pci_init(struct amd_mp2_dev *privdata,
-> > +                         struct pci_dev *pci_dev)
-> > +{
-> > +     int rc;
-> > +     resource_size_t size, base;
-> > +
-> > +     pci_set_drvdata(pci_dev, privdata);
-> > +
-> > +     rc =3D pci_enable_device(pci_dev);
-> > +     if (rc)
-> > +             goto err_pci_enable;
-> > +
-> > +     rc =3D pci_request_regions(pci_dev, DRIVER_NAME);
-> > +     if (rc)
-> > +             goto err_pci_regions;
-> > +
-> > +     pci_set_master(pci_dev);
-> > +
-> > +     rc =3D pci_set_dma_mask(pci_dev, DMA_BIT_MASK(64));
-> > +     if (rc) {
-> > +             rc =3D pci_set_dma_mask(pci_dev, DMA_BIT_MASK(32));
-> > +             if (rc)
-> > +                     goto err_dma_mask;
-> > +             dev_warn(ndev_dev(privdata), "Cannot DMA highmem\n");
-> > +     }
-> > +
-> > +     rc =3D pci_set_consistent_dma_mask(pci_dev, DMA_BIT_MASK(64));
-> > +     if (rc) {
-> > +             rc =3D pci_set_consistent_dma_mask(pci_dev, DMA_BIT_MASK(=
-32));
-> > +             if (rc)
-> > +                     goto err_dma_mask;
-> > +             dev_warn(ndev_dev(privdata), "Cannot DMA consistent highm=
-em\n");
-> > +     }
-> > +
-> > +     base =3D pci_resource_start(pci_dev, 2);
-> > +     size =3D pci_resource_len(pci_dev, 2);
-> > +     dev_dbg(ndev_dev(privdata), "Base addr:%zx size:%zx\n",
-> > +             (size_t)base, (size_t)size);
->
-> You can use %pR on pci_dev->resource[2].  That uses the conventional
-> format (same as used by the PCI core).
->
-> > +
-> > +     mutex_init(&privdata->c2p_lock);
-> > +     privdata->mmio =3D ioremap(base, size);
-> > +     if (!privdata->mmio) {
-> > +             rc =3D -EIO;
-> > +             goto err_dma_mask;
-> > +     }
-> > +
-> > +     /* Try to set up intx irq */
-> > +     raw_spin_lock_init(&privdata->lock);
-> > +     pci_intx(pci_dev, 1);
-> > +     rc =3D request_irq(pci_dev->irq, amd_mp2_irq_isr, IRQF_SHARED,
-> > +                      "mp2_irq_isr", privdata);
-> > +     if (rc)
-> > +             goto err_intx_request;
-> > +
-> > +     return 0;
-> > +
-> > +err_intx_request:
-> > +     return rc;
-> > +err_dma_mask:
-> > +     pci_clear_master(pci_dev);
-> > +     pci_release_regions(pci_dev);
-> > +err_pci_regions:
-> > +     pci_disable_device(pci_dev);
-> > +err_pci_enable:
-> > +     pci_set_drvdata(pci_dev, NULL);
-> > +     return rc;
-> > +}
-> > +
-> > +static void amd_mp2_pci_deinit(struct amd_mp2_dev *privdata)
-> > +{
-> > +     struct pci_dev *pci_dev =3D ndev_pdev(privdata);
-> > +
-> > +     pci_iounmap(pci_dev, privdata->mmio);
-> > +
-> > +     pci_clear_master(pci_dev);
-> > +     pci_release_regions(pci_dev);
-> > +     pci_disable_device(pci_dev);
-> > +     pci_set_drvdata(pci_dev, NULL);
-> > +}
-> > +
-> > +static int amd_mp2_pci_probe(struct pci_dev *pci_dev,
-> > +                          const struct pci_device_id *id)
-> > +{
-> > +     struct amd_mp2_dev *privdata;
-> > +     int rc;
-> > +     static bool first_probe =3D true;
-> > +
-> > +     if (first_probe) {
-> > +             pr_info("%s: %s Version: %s\n", DRIVER_NAME,
-> > +                     DRIVER_DESC, DRIVER_VER);
-> > +             first_probe =3D false;
-> > +     }
-> > +
-> > +     dev_info(&pci_dev->dev, "MP2 device found [%04x:%04x] (rev %x)\n"=
-,
-> > +              (int)pci_dev->vendor, (int)pci_dev->device,
-> > +              (int)pci_dev->revision);
-> > +
-> > +     privdata =3D kzalloc(sizeof(*privdata), GFP_KERNEL);
-> > +     if (!privdata) {
-> > +             rc =3D -ENOMEM;
-> > +             goto err_dev;
->
-> There's nothing to clean up at this point, so just emit the message
-> and return directly:
->
->   if (!privdata) {
->     dev_err(&pci_dev->dev, "Memory Allocation Failed\n");
->     return -ENOMEM;
->   }
->
-> > +     }
-> > +
-> > +     privdata->pci_dev =3D pci_dev;
-> > +
-> > +     rc =3D amd_mp2_pci_init(privdata, pci_dev);
-> > +     if (rc)
-> > +             goto err_pci_init;
-> > +     dev_dbg(&pci_dev->dev, "pci init done.\n");
-> > +
-> > +     amd_mp2_init_debugfs(privdata);
-> > +     dev_info(&pci_dev->dev, "MP2 device registered.\n");
-> > +     return 0;
-> > +
-> > +err_pci_init:
-> > +     kfree(privdata);
-> > +err_dev:
-> > +     dev_err(&pci_dev->dev, "Memory Allocation Failed\n");
-> > +     return rc;
-> > +}
-> > +
-> > +static void amd_mp2_pci_remove(struct pci_dev *pci_dev)
-> > +{
-> > +     struct amd_mp2_dev *privdata =3D pci_get_drvdata(pci_dev);
-> > +     unsigned int bus_id;
-> > +
-> > +     for (bus_id =3D 0; bus_id < 2; bus_id++)
-> > +             if (privdata->plat_common[bus_id])
-> > +                     amd_i2c_unregister_cb(privdata,
-> > +                                           privdata->plat_common[bus_i=
-d]);
-> > +
-> > +     amd_mp2_deinit_debugfs(privdata);
-> > +     amd_mp2_clear_reg(privdata);
-> > +     free_irq(pci_dev->irq, privdata);
-> > +     pci_intx(pci_dev, 0);
-> > +     amd_mp2_pci_deinit(privdata);
-> > +     kfree(privdata);
-> > +}
-> > +
-> > +static const struct file_operations amd_mp2_debugfs_info =3D {
-> > +     .owner =3D THIS_MODULE,
-> > +     .open =3D simple_open,
-> > +     .read =3D amd_mp2_debugfs_read,
-> > +};
-> > +
-> > +static const struct pci_device_id amd_mp2_pci_tbl[] =3D {
-> > +     {PCI_VDEVICE(AMD, PCI_DEVICE_ID_AMD_MP2)},
-> > +     {0}
-> > +};
-> > +MODULE_DEVICE_TABLE(pci, amd_mp2_pci_tbl);
-> > +
-> > +#ifdef CONFIG_PM_SLEEP
-> > +static int amd_mp2_pci_device_suspend(struct pci_dev *pci_dev,
-> > +                                   pm_message_t mesg)
-> > +{
-> > +     int ret;
-> > +     struct amd_mp2_dev *privdata =3D pci_get_drvdata(pci_dev);
-> > +
-> > +     if (!privdata)
-> > +             return -EINVAL;
-> > +
-> > +     ret =3D pci_save_state(pci_dev);
-> > +     if (ret) {
-> > +             dev_err(ndev_dev(privdata),
-> > +                     "pci_save_state failed =3D %d\n", ret);
-> > +             return ret;
-> > +     }
-> > +
-> > +     pci_enable_wake(pci_dev, PCI_D3hot, 0);
-> > +     pci_disable_device(pci_dev);
-> > +     pci_set_power_state(pci_dev, pci_choose_state(pci_dev, mesg));
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int amd_mp2_pci_device_resume(struct pci_dev *pci_dev)
-> > +{
-> > +     struct amd_mp2_dev *privdata =3D pci_get_drvdata(pci_dev);
-> > +
-> > +     if (!privdata)
-> > +             return -EINVAL;
-> > +
-> > +     pci_set_power_state(pci_dev, PCI_D0);
-> > +     pci_restore_state(pci_dev);
-> > +
-> > +     if (pci_enable_device(pci_dev) < 0) {
-> > +             dev_err(ndev_dev(privdata), "pci_enable_device failed\n")=
-;
-> > +             return -EIO;
-> > +     }
-> > +
-> > +     pci_enable_wake(pci_dev, PCI_D3hot, 0);
-> > +
-> > +     return 0;
-> > +}
-> > +#endif
-> > +
-> > +static struct pci_driver amd_mp2_pci_driver =3D {
-> > +     .name           =3D DRIVER_NAME,
-> > +     .id_table       =3D amd_mp2_pci_tbl,
-> > +     .probe          =3D amd_mp2_pci_probe,
-> > +     .remove         =3D amd_mp2_pci_remove,
-> > +#ifdef CONFIG_PM_SLEEP
-> > +     .suspend                =3D amd_mp2_pci_device_suspend,
-> > +     .resume                 =3D amd_mp2_pci_device_resume,
-> > +#endif
-> > +};
-> > +
-> > +static int amd_mp2_device_match(struct device *dev, void *data)
-> > +{
-> > +     struct pci_dev *candidate =3D data;
-> > +
-> > +     if (!candidate)
-> > +             return 1;
-> > +     return (to_pci_dev(dev) =3D=3D candidate) ? 1 : 0;
-> > +}
-> > +
-> > +struct amd_mp2_dev *amd_mp2_find_device(struct pci_dev *candidate)
-> > +{
-> > +     struct device *dev;
-> > +     struct pci_dev *pci_dev;
-> > +
-> > +     dev =3D driver_find_device(&amd_mp2_pci_driver.driver, NULL, cand=
-idate,
-> > +                              amd_mp2_device_match);
-> > +     if (!dev && candidate)
-> > +             dev =3D driver_find_device(&amd_mp2_pci_driver.driver, NU=
-LL, NULL,
-> > +                                      amd_mp2_device_match);
-> > +     if (!dev)
-> > +             return NULL;
-> > +
-> > +     pci_dev =3D to_pci_dev(dev);
-> > +     return (struct amd_mp2_dev *)pci_get_drvdata(pci_dev);
-> > +}
-> > +EXPORT_SYMBOL_GPL(amd_mp2_find_device);
-> > +
-> > +static int __init amd_mp2_pci_driver_init(void)
-> > +{
-> > +     if (debugfs_initialized())
-> > +             debugfs_dir =3D debugfs_create_dir(KBUILD_MODNAME, NULL);
-> > +
-> > +     return pci_register_driver(&amd_mp2_pci_driver);
-> > +}
-> > +module_init(amd_mp2_pci_driver_init);
-> > +
-> > +static void __exit amd_mp2_pci_driver_exit(void)
-> > +{
-> > +     pci_unregister_driver(&amd_mp2_pci_driver);
-> > +     debugfs_remove_recursive(debugfs_dir);
-> > +}
-> > +module_exit(amd_mp2_pci_driver_exit);
-> > +
-> > +MODULE_DESCRIPTION(DRIVER_DESC);
-> > +MODULE_VERSION(DRIVER_VER);
-> > +MODULE_AUTHOR("Shyam Sundar S K <Shyam-sundar.S-k@amd.com>");
-> > +MODULE_AUTHOR("Elie Morisse <syniurge@gmail.com>");
-> > +MODULE_LICENSE("Dual BSD/GPL");
-> > diff --git a/drivers/i2c/busses/i2c-amd-pci-mp2.h b/drivers/i2c/busses/=
-i2c-amd-pci-mp2.h
-> > new file mode 100644
-> > index 000000000000..65601b6ba3b3
-> > --- /dev/null
-> > +++ b/drivers/i2c/busses/i2c-amd-pci-mp2.h
-> > @@ -0,0 +1,224 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause */
-> > +/*
-> > + * AMD PCIe MP2 Communication Driver
-> > + *
-> > + * Authors: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-> > + *          Elie Morisse <syniurge@gmail.com>
-> > + */
-> > +
-> > +#ifndef I2C_AMD_PCI_MP2_H
-> > +#define I2C_AMD_PCI_MP2_H
-> > +
-> > +#include <linux/pci.h>
-> > +
-> > +#define PCI_DEVICE_ID_AMD_MP2        0x15E6
-> > +
-> > +struct amd_i2c_common;
-> > +struct amd_mp2_dev;
-> > +
-> > +enum {
-> > +     /* MP2 C2P Message Registers */
-> > +     AMD_C2P_MSG0 =3D 0x10500,                 /* MP2 Message for I2C0=
- */
-> > +     AMD_C2P_MSG1 =3D 0x10504,                 /* MP2 Message for I2C1=
- */
-> > +     AMD_C2P_MSG2 =3D 0x10508,                 /* DRAM Address Lo / Da=
-ta 0 */
-> > +     AMD_C2P_MSG3 =3D 0x1050c,                 /* DRAM Address HI / Da=
-ta 1 */
-> > +     AMD_C2P_MSG4 =3D 0x10510,                 /* Data 2 */
-> > +     AMD_C2P_MSG5 =3D 0x10514,                 /* Data 3 */
-> > +     AMD_C2P_MSG6 =3D 0x10518,                 /* Data 4 */
-> > +     AMD_C2P_MSG7 =3D 0x1051c,                 /* Data 5 */
-> > +     AMD_C2P_MSG8 =3D 0x10520,                 /* Data 6 */
-> > +     AMD_C2P_MSG9 =3D 0x10524,                 /* Data 7 */
-> > +
-> > +     /* MP2 P2C Message Registers */
-> > +     AMD_P2C_MSG0 =3D 0x10680,                 /* Do not use */
-> > +     AMD_P2C_MSG1 =3D 0x10684,                 /* I2C0 interrupt regis=
-ter */
-> > +     AMD_P2C_MSG2 =3D 0x10688,                 /* I2C1 interrupt regis=
-ter */
-> > +     AMD_P2C_MSG3 =3D 0x1068C,                 /* MP2 debug info */
-> > +     AMD_P2C_MSG_INTEN =3D 0x10690,    /* MP2 interrupt gen register *=
-/
-> > +     AMD_P2C_MSG_INTSTS =3D 0x10694,   /* Interrupt status */
-> > +};
-> > +
-> > +/* Command register data structures */
-> > +
-> > +#define i2c_none (-1)
-> > +enum i2c_cmd {
-> > +     i2c_read =3D 0,
-> > +     i2c_write,
-> > +     i2c_enable,
-> > +     i2c_disable,
-> > +     number_of_sensor_discovered,
-> > +     is_mp2_active,
-> > +     invalid_cmd =3D 0xF,
-> > +};
-> > +
-> > +enum speed_enum {
-> > +     speed100k =3D 0,
-> > +     speed400k =3D 1,
-> > +     speed1000k =3D 2,
-> > +     speed1400k =3D 3,
-> > +     speed3400k =3D 4
-> > +};
-> > +
-> > +enum mem_type {
-> > +     use_dram =3D 0,
-> > +     use_c2pmsg =3D 1,
-> > +};
-> > +
-> > +/**
-> > + * union i2c_cmd_base : bit access of C2P commands
-> > + * @i2c_cmd: bit 0..3 i2c R/W command
-> > + * @bus_id: bit 4..7 i2c bus index
-> > + * @slave_addr: bit 8..15 slave address
-> > + * @length: bit 16..27 read/write length
-> > + * @i2c_speed: bit 28..30 bus speed
-> > + * @mem_type: bit 31 0-DRAM; 1-C2P msg o/p
-> > + */
-> > +union i2c_cmd_base {
-> > +     u32 ul;
-> > +     struct {
-> > +             enum i2c_cmd i2c_cmd : 4;
-> > +             u8 bus_id : 4;
-> > +             u32 slave_addr : 8;
-> > +             u32 length : 12;
-> > +             enum speed_enum i2c_speed : 3;
-> > +             enum mem_type mem_type : 1;
-> > +     } s;
-> > +};
-> > +
-> > +/* Response - Response of SFI */
-> > +enum response_type {
-> > +     invalid_response =3D 0,
-> > +     command_success =3D 1,
-> > +     command_failed =3D 2,
-> > +};
-> > +
-> > +/* Status - Command ID to indicate a command */
-> > +enum status_type {
-> > +     i2c_readcomplete_event =3D 0,
-> > +     i2c_readfail_event =3D 1,
-> > +     i2c_writecomplete_event =3D 2,
-> > +     i2c_writefail_event =3D 3,
-> > +     i2c_busenable_complete =3D 4,
-> > +     i2c_busenable_failed =3D 5,
-> > +     i2c_busdisable_complete =3D 6,
-> > +     i2c_busdisable_failed =3D 7,
-> > +     invalid_data_length =3D 8,
-> > +     invalid_slave_address =3D 9,
-> > +     invalid_i2cbus_id =3D 10,
-> > +     invalid_dram_addr =3D 11,
-> > +     invalid_command =3D 12,
-> > +     mp2_active =3D 13,
-> > +     numberof_sensors_discovered_resp =3D 14,
-> > +     i2c_bus_notinitialized
-> > +};
-> > +
-> > +/**
-> > + * union i2c_event : bit access of P2C events
-> > + * @response: bit 0..1 i2c response type
-> > + * @status: bit 2..6 status_type
-> > + * @mem_type: bit 7 0-DRAM; 1-C2P msg o/p
-> > + * @bus_id: bit 8..11 i2c bus id
-> > + * @length: bit 12..23 message length
-> > + * @slave_addr: bit 24-31 slave address
-> > + */
-> > +union i2c_event {
-> > +     u32 ul;
-> > +     struct {
-> > +             enum response_type response : 2;
-> > +             enum status_type status : 5;
-> > +             enum mem_type mem_type : 1;
-> > +             u8 bus_id : 4;
-> > +             u32 length : 12;
-> > +             u32 slave_addr : 8;
-> > +     } r;
-> > +};
-> > +
-> > +/**
-> > + * struct i2c_rw_config - i2c read/write settings
-> > + * @slave_addr: slave address
-> > + * @length: message length
-> > + * @buf: buffer address
-> > + * @dma_addr: if length > 32, holds the DMA buffer address
-> > + * @dma_direction: if length > 32, is either FROM or TO device
-> > + */
-> > +struct i2c_rw_config {
-> > +     u16 slave_addr;
-> > +     u32 length;
-> > +     u32 *buf;
-> > +     dma_addr_t dma_addr;
-> > +     enum dma_data_direction dma_direction;
-> > +};
-> > +
-> > +/**
-> > + * struct amd_i2c_pci_ops - platdrv hooks
-> > + */
-> > +struct amd_i2c_pci_ops {
-> > +     int (*read_complete)(union i2c_event *event);
-> > +     int (*write_complete)(union i2c_event *event);
-> > +     int (*connect_complete)(union i2c_event *event);
-> > +};
-> > +
-> > +/**
-> > + * struct amd_i2c_common - per bus/i2c adapter context, shared
-> > + *           between the pci and the platform driver
-> > + * @eventval: MP2 event value set by the IRQ handler to be processed
-> > + *           by the worker
-> > + * @ops: platdrv hooks
-> > + * @rw_cfg: settings for reads/writes
-> > + * @work: delayed worker struct
-> > + * @reqcmd: i2c command type requested by platdrv
-> > + * @requested: true if the interrupt answered a request from platdrv
-> > + * @bus_id: bus index
-> > + * @i2c_speed: i2c bus speed determined by the slowest slave
-> > + */
-> > +struct amd_i2c_common {
-> > +     union i2c_event eventval;
-> > +     const struct amd_i2c_pci_ops *ops;
-> > +     struct amd_mp2_dev *mp2_dev;
-> > +     struct i2c_rw_config rw_cfg;
-> > +     struct delayed_work work;
-> > +     enum i2c_cmd reqcmd;
-> > +     u8 bus_id;
-> > +     enum speed_enum i2c_speed;
-> > +};
-> > +
-> > +/**
-> > + * struct amd_mp2_dev - per PCI device context
-> > + * @pci_dev: PCI driver node
-> > + * @plat_common: MP2 devices may have up to two busses,
-> > + *           each bus corresponding to an i2c adapter
-> > + * @mmio: iommapped registers
-> > + * @lock: interrupt spinlock
-> > + * @c2p_lock: controls access to the C2P mailbox shared between
-> > + *           the two adapters
-> > + */
-> > +struct amd_mp2_dev {
-> > +     struct pci_dev *pci_dev;
-> > +     struct amd_i2c_common *plat_common[2];
-> > +     void __iomem *mmio;
-> > +     raw_spinlock_t lock;
-> > +     struct mutex c2p_lock;
-> > +     struct dentry *debugfs_dir;
-> > +     struct dentry *debugfs_info;
-> > +};
-> > +
-> > +int amd_mp2_read(struct amd_i2c_common *i2c_common);
-> > +int amd_mp2_write(struct amd_i2c_common *i2c_common);
-> > +int amd_mp2_connect(struct amd_i2c_common *i2c_common, bool enable);
-> > +
-> > +int amd_i2c_register_cb(struct amd_mp2_dev *mp2_dev,
-> > +                     struct amd_i2c_common *i2c_common);
-> > +int amd_i2c_unregister_cb(struct amd_mp2_dev *mp2_dev,
-> > +                       struct amd_i2c_common *i2c_common);
-> > +
-> > +struct amd_mp2_dev *amd_mp2_find_device(struct pci_dev *candidate);
-> > +
-> > +#define ndev_pdev(ndev) ((ndev)->pci_dev)
-> > +#define ndev_name(ndev) pci_name(ndev_pdev(ndev))
-> > +#define ndev_dev(ndev) (&ndev_pdev(ndev)->dev)
-> > +#define work_amd_i2c_common(__work) \
-> > +     container_of(__work, struct amd_i2c_common, work.work)
-> > +#define event_amd_i2c_common(__event) \
-> > +     container_of(__event, struct amd_i2c_common, eventval)
-> > +
-> > +#endif
-> > diff --git a/drivers/i2c/busses/i2c-amd-plat-mp2.c b/drivers/i2c/busses=
-/i2c-amd-plat-mp2.c
-> > new file mode 100644
-> > index 000000000000..a10bd08fe1db
-> > --- /dev/null
-> > +++ b/drivers/i2c/busses/i2c-amd-plat-mp2.c
-> > @@ -0,0 +1,373 @@
-> > +// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
-> > +/*
-> > + * AMD MP2 I2C Platform Driver
-> > + *
-> > + * Authors: Nehal Bakulchandra Shah <Nehal-bakulchandra.shah@amd.com>
-> > + *          Elie Morisse <syniurge@gmail.com>
-> > + */
-> > +
-> > +#include <linux/kernel.h>
-> > +#include <linux/module.h>
-> > +#include <linux/types.h>
-> > +#include <linux/slab.h>
-> > +#include <linux/i2c.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/acpi.h>
-> > +#include <linux/delay.h>
-> > +
-> > +#include "i2c-amd-pci-mp2.h"
-> > +#define DRIVER_NAME "i2c-amd-plat-mp2"
-> > +
-> > +#define AMD_MP2_I2C_MAX_RW_LENGTH ((1 << 12) - 1)
-> > +#define AMD_I2C_TIMEOUT (msecs_to_jiffies(250))
-> > +
-> > +/**
-> > + * struct amd_i2c_dev - MP2 bus/i2c adapter context
-> > + * @i2c_common: shared context with the MP2 pci driver
-> > + * @pdev: platform driver node
-> > + * @adapter: i2c adapter
-> > + * @xfer_lock: xfer lock
-> > + * @completion: xfer completion object
-> > + */
-> > +struct amd_i2c_dev {
-> > +     struct amd_i2c_common i2c_common;
-> > +     struct platform_device *pdev;
-> > +     struct i2c_adapter adapter;
-> > +     struct mutex xfer_lock;
-> > +     struct completion msg_complete;
-> > +     struct i2c_msg *msg_buf;
-> > +     bool is_configured;
-> > +};
-> > +
-> > +static const struct i2c_adapter_quirks amd_i2c_dev_quirks =3D {
-> > +     .max_read_len =3D AMD_MP2_I2C_MAX_RW_LENGTH,
-> > +     .max_write_len =3D AMD_MP2_I2C_MAX_RW_LENGTH,
-> > +};
-> > +
-> > +#define amd_i2c_dev_common(__common) \
-> > +     container_of(__common, struct amd_i2c_dev, i2c_common)
-> > +
-> > +static int i2c_amd_read_completion(union i2c_event *event)
-> > +{
-> > +     struct amd_i2c_common *i2c_common =3D event_amd_i2c_common(event)=
-;
-> > +     struct amd_i2c_dev *i2c_dev =3D amd_i2c_dev_common(i2c_common);
-> > +
-> > +     if (event->r.status =3D=3D i2c_readcomplete_event)
-> > +             dev_dbg(&i2c_dev->pdev->dev, "%s readdata:%*ph\n",
-> > +                     __func__, event->r.length,
-> > +                     i2c_common->rw_cfg.buf);
-> > +
-> > +     complete(&i2c_dev->msg_complete);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int i2c_amd_write_completion(union i2c_event *event)
-> > +{
-> > +     struct amd_i2c_common *i2c_common =3D event_amd_i2c_common(event)=
-;
-> > +     struct amd_i2c_dev *i2c_dev =3D amd_i2c_dev_common(i2c_common);
-> > +
-> > +     complete(&i2c_dev->msg_complete);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int i2c_amd_connect_completion(union i2c_event *event)
-> > +{
-> > +     struct amd_i2c_common *i2c_common =3D event_amd_i2c_common(event)=
-;
-> > +     struct amd_i2c_dev *i2c_dev =3D amd_i2c_dev_common(i2c_common);
-> > +
-> > +     complete(&i2c_dev->msg_complete);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static const struct amd_i2c_pci_ops data_handler =3D {
-> > +             .read_complete =3D i2c_amd_read_completion,
-> > +             .write_complete =3D i2c_amd_write_completion,
-> > +             .connect_complete =3D i2c_amd_connect_completion,
-> > +};
-> > +
-> > +static int i2c_amd_pci_configure(struct amd_i2c_dev *i2c_dev)
-> > +{
-> > +     struct amd_i2c_common *i2c_common =3D &i2c_dev->i2c_common;
-> > +
-> > +     amd_i2c_register_cb(i2c_common->mp2_dev, i2c_common);
-> > +     i2c_common->ops =3D &data_handler;
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int i2c_amd_pci_xconnect(struct amd_i2c_dev *i2c_dev, bool enab=
-le)
-> > +{
-> > +     struct amd_i2c_common *i2c_common =3D &i2c_dev->i2c_common;
-> > +     unsigned long timeout;
-> > +
-> > +     reinit_completion(&i2c_dev->msg_complete);
-> > +     amd_mp2_connect(i2c_common, enable);
-> > +     timeout =3D wait_for_completion_timeout(&i2c_dev->msg_complete,
-> > +                                           AMD_I2C_TIMEOUT);
-> > +     if (timeout =3D=3D 0) {
-> > +             dev_err(&i2c_dev->pdev->dev,
-> > +                     "i2c connection timed out\n");
-> > +             mutex_unlock(&i2c_dev->xfer_lock);
-> > +             return -ETIMEDOUT;
-> > +     }
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int i2c_amd_xfer_msg(struct amd_i2c_dev *i2c_dev, struct i2c_ms=
-g *pmsg)
-> > +{
-> > +     struct amd_i2c_common *i2c_common =3D &i2c_dev->i2c_common;
-> > +     unsigned long timeout;
-> > +     bool is_read =3D pmsg->flags & I2C_M_RD;
-> > +
-> > +     reinit_completion(&i2c_dev->msg_complete);
-> > +
-> > +     i2c_common->rw_cfg.slave_addr =3D pmsg->addr;
-> > +     i2c_common->rw_cfg.buf =3D (u32 *)pmsg->buf;
-> > +     i2c_common->rw_cfg.length =3D pmsg->len;
-> > +     i2c_dev->msg_buf =3D pmsg;
-> > +
-> > +     if (is_read)
-> > +             amd_mp2_read(i2c_common);
-> > +     else
-> > +             amd_mp2_write(i2c_common);
-> > +
-> > +     timeout =3D wait_for_completion_timeout
-> > +             (&i2c_dev->msg_complete, AMD_I2C_TIMEOUT);
-> > +     if (timeout =3D=3D 0) {
-> > +             dev_err(&i2c_dev->pdev->dev,
-> > +                     "i2c %s timed out\n",
-> > +                     is_read ? "read" : "write");
-> > +             return -ETIMEDOUT;
-> > +     }
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int i2c_amd_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs=
-, int num)
-> > +{
-> > +     struct amd_i2c_dev *dev =3D i2c_get_adapdata(adap);
-> > +     int i;
-> > +     struct i2c_msg *pmsg;
-> > +     int err;
-> > +
-> > +     mutex_lock(&dev->xfer_lock);
-> > +
-> > +     if (dev->is_configured =3D=3D 0) {
-> > +             i2c_amd_pci_configure(dev);
-> > +             i2c_amd_pci_xconnect(dev, true);
-> > +             dev->is_configured =3D 1;
-> > +     }
-> > +
-> > +     for (i =3D 0; i < num; i++) {
-> > +             pmsg =3D &msgs[i];
-> > +             err =3D i2c_amd_xfer_msg(dev, pmsg);
-> > +             if (err)
-> > +                     break;
-> > +     }
-> > +
-> > +     mutex_unlock(&dev->xfer_lock);
-> > +
-> > +     if (err)
-> > +             return err;
-> > +     return num;
-> > +}
-> > +
-> > +static u32 i2c_amd_func(struct i2c_adapter *a)
-> > +{
-> > +     return I2C_FUNC_I2C;
-> > +}
-> > +
-> > +static const struct i2c_algorithm i2c_amd_algorithm =3D {
-> > +     .master_xfer =3D i2c_amd_xfer,
-> > +     .functionality =3D i2c_amd_func,
-> > +};
-> > +
-> > +static enum speed_enum i2c_amd_get_bus_speed(struct platform_device *p=
-dev)
-> > +{
-> > +     u32 acpi_speed;
-> > +     int i;
-> > +     static const u32 supported_speeds[] =3D {
-> > +             0, 100000, 400000, 1000000, 1400000, 3400000
-> > +     };
-> > +
-> > +     acpi_speed =3D i2c_acpi_find_bus_speed(&pdev->dev);
-> > +     /* round down to the lowest standard speed */
-> > +     for (i =3D 1; i < ARRAY_SIZE(supported_speeds); i++) {
-> > +             if (acpi_speed < supported_speeds[i])
-> > +                     break;
-> > +     }
-> > +     acpi_speed =3D supported_speeds[i - 1];
-> > +
-> > +     switch (acpi_speed) {
-> > +     case 100000:
-> > +             return speed100k;
-> > +     case 400000:
-> > +             return speed400k;
-> > +     case 1000000:
-> > +             return speed1000k;
-> > +     case 1400000:
-> > +             return speed1400k;
-> > +     case 3400000:
-> > +             return speed3400k;
-> > +     default:
-> > +             return speed400k;
-> > +     }
-> > +}
-> > +
-> > +static struct device *i2c_amd_acpi_get_first_phys_node(struct acpi_dev=
-ice *adev)
-> > +{
-> > +     const struct acpi_device_physical_node *node;
-> > +
-> > +     if (list_empty(&adev->physical_node_list))
-> > +             return NULL;
-> > +
-> > +     node =3D list_first_entry(&adev->physical_node_list,
-> > +                             struct acpi_device_physical_node, node);
-> > +     return node->dev;
-> > +}
-> > +
-> > +/*
-> > + * Assume that the first device listed by the _DEP method is the paren=
-t
-> > + * MP2 device
-> > + */
-> > +static struct pci_dev *i2c_amd_find_pci_parent(struct acpi_device *ade=
-v)
-> > +{
-> > +     struct acpi_device *parent_adev;
-> > +     struct device *phys_dev;
-> > +     struct acpi_handle_list dep_devices;
-> > +     acpi_status status;
-> > +
-> > +     if (!acpi_has_method(adev->handle, "_DEP"))
-> > +             return NULL;
-> > +
-> > +     status =3D acpi_evaluate_reference(adev->handle, "_DEP", NULL,
-> > +                                      &dep_devices);
->
-> Several other callers of acpi_evaluate_reference() do call
-> acpi_has_method() first, but I'm pretty sure that's not necessary.  If
-> _DEP doesn't exist, acpi_evaluate_reference() should return an error
-> itself.
->
-> _DEP is for operation region dependencies.  I don't know enough about
-> ACPI to know why you're using it to find the PCI device related to an
-> ACPI device.  That doesn't really seem like an op region thing.
->
-> > +     if (ACPI_FAILURE(status) || !dep_devices.count)
-> > +             return NULL;
-> > +
-> > +     if (acpi_bus_get_device(dep_devices.handles[0], &parent_adev))
-> > +             return NULL;
-> > +     phys_dev =3D i2c_amd_acpi_get_first_phys_node(parent_adev);
-> > +
-> > +     if (!dev_is_pci(phys_dev))
-> > +             return NULL;
-> > +     return to_pci_dev(phys_dev);
-> > +}
-> > +
-> > +static int i2c_amd_probe(struct platform_device *pdev)
-> > +{
-> > +     int ret;
-> > +     struct amd_i2c_dev *i2c_dev;
-> > +     struct device *dev =3D &pdev->dev;
-> > +     acpi_handle handle =3D ACPI_HANDLE(&pdev->dev);
-> > +     struct acpi_device *adev;
-> > +     struct pci_dev *parent_candidate =3D NULL;
-> > +
-> > +     i2c_dev =3D devm_kzalloc(dev, sizeof(*i2c_dev), GFP_KERNEL);
-> > +     if (!i2c_dev)
-> > +             return -ENOMEM;
-> > +
-> > +     i2c_dev->pdev =3D pdev;
-> > +
-> > +     if (!acpi_bus_get_device(handle, &adev)) {
-> > +             const char *uid =3D adev->pnp.unique_id;
-> > +
-> > +             if (!uid) {
-> > +                     dev_err(&pdev->dev, "missing UID/bus id!\n");
-> > +                     return -EINVAL;
-> > +             }
-> > +
-> > +             if (strcmp(uid, "0") =3D=3D 0) {
-> > +                     i2c_dev->i2c_common.bus_id =3D 0;
-> > +             } else if (strcmp(uid, "1") =3D=3D 0) {
-> > +                     i2c_dev->i2c_common.bus_id =3D 1;
-> > +             } else {
-> > +                     dev_err(&pdev->dev,
-> > +                             "incorrect UID/bus id \"%s\"!\n", uid);
-> > +                     return -EINVAL;
-> > +             }
-> > +
-> > +             dev_dbg(&pdev->dev, "bus id is %u\n",
-> > +                     i2c_dev->i2c_common.bus_id);
-> > +
-> > +             i2c_dev->i2c_common.i2c_speed =3D i2c_amd_get_bus_speed(p=
-dev);
-> > +     } else {
-> > +             i2c_dev->i2c_common.i2c_speed =3D speed400k;
-> > +     }
-> > +
-> > +     /* setup i2c adapter description */
-> > +     i2c_dev->adapter.owner =3D THIS_MODULE;
-> > +     i2c_dev->adapter.algo =3D &i2c_amd_algorithm;
-> > +     i2c_dev->adapter.quirks =3D &amd_i2c_dev_quirks;
-> > +     i2c_dev->adapter.dev.parent =3D dev;
-> > +     i2c_dev->adapter.algo_data =3D i2c_dev;
-> > +     ACPI_COMPANION_SET(&i2c_dev->adapter.dev, ACPI_COMPANION(&pdev->d=
-ev));
-> > +     i2c_dev->adapter.dev.of_node =3D dev->of_node;
-> > +     snprintf(i2c_dev->adapter.name, sizeof(i2c_dev->adapter.name), "%=
-s-%s",
-> > +              "i2c_dev-i2c", dev_name(pdev->dev.parent));
-> > +
-> > +     if (adev)
-> > +             parent_candidate =3D i2c_amd_find_pci_parent(adev);
-> > +     i2c_dev->i2c_common.mp2_dev =3D amd_mp2_find_device(parent_candid=
-ate);
-> > +     if (!i2c_dev->i2c_common.mp2_dev) {
-> > +             dev_err(&pdev->dev,
-> > +                     "%s Could not find MP2 PCI device for i2c adapter=
-\n",
-> > +                    __func__);
-> > +             return -EINVAL;
-> > +     }
-> > +
-> > +     platform_set_drvdata(pdev, i2c_dev);
-> > +
-> > +     i2c_set_adapdata(&i2c_dev->adapter, i2c_dev);
-> > +
-> > +     init_completion(&i2c_dev->msg_complete);
-> > +     mutex_init(&i2c_dev->xfer_lock);
-> > +
-> > +     /* and finally attach to i2c layer */
-> > +     ret =3D i2c_add_adapter(&i2c_dev->adapter);
-> > +
-> > +     if (ret < 0)
-> > +             dev_err(&pdev->dev, "i2c add adapter failed =3D %d\n", re=
-t);
-> > +
-> > +     return ret;
-> > +}
-> > +
-> > +static int i2c_amd_remove(struct platform_device *pdev)
-> > +{
-> > +     struct amd_i2c_dev *i2c_dev =3D platform_get_drvdata(pdev);
-> > +     struct amd_i2c_common *i2c_common =3D &i2c_dev->i2c_common;
-> > +
-> > +     i2c_amd_pci_xconnect(i2c_dev, false);
-> > +
-> > +     amd_i2c_unregister_cb(i2c_common->mp2_dev, i2c_common);
-> > +     i2c_del_adapter(&i2c_dev->adapter);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static const struct acpi_device_id i2c_amd_acpi_match[] =3D {
-> > +             { "AMDI0011" },
-> > +             { },
-> > +};
-> > +MODULE_DEVICE_TABLE(acpi, i2c_amd_acpi_match);
-> > +
-> > +static struct platform_driver amd_i2c_plat_driver =3D {
-> > +             .probe =3D i2c_amd_probe,
-> > +             .remove =3D i2c_amd_remove,
-> > +             .driver =3D {
-> > +                             .name =3D "i2c_amd_plat_mp2",
-> > +                             .acpi_match_table =3D ACPI_PTR
-> > +                                             (i2c_amd_acpi_match),
-> > +             },
-> > +};
-> > +
-> > +module_platform_driver(amd_i2c_plat_driver);
-> > +
-> > +MODULE_DESCRIPTION("AMD MP2 I2C Platform Driver");
-> > +MODULE_AUTHOR("Nehal Shah <nehal-bakulchandra.shah@amd.com>");
-> > +MODULE_AUTHOR("Elie Morisse <syniurge@gmail.com>");
-> > +MODULE_LICENSE("Dual BSD/GPL");
-> > --
-> > 2.17.1
-> >
+From: "Joel Fernandes" <joel@joelfernandes.org>
+Subject: [PATCH] mm/memfd: implement future write seal using shmem ops
+
+Signed-off-by: Joel Fernandes <joel@joelfernandes.org>
+---
+ fs/hugetlbfs/inode.c |  2 +-
+ mm/memfd.c           | 19 -------------------
+ mm/shmem.c           | 24 +++++++++++++++++++++---
+ 3 files changed, 22 insertions(+), 23 deletions(-)
+
+diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+index 32920a10100e..1978581abfdf 100644
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -530,7 +530,7 @@ static long hugetlbfs_punch_hole(struct inode *inode, loff_t offset, loff_t len)
+ 		inode_lock(inode);
+ 
+ 		/* protected by i_mutex */
+-		if (info->seals & F_SEAL_WRITE) {
++		if (info->seals & (F_SEAL_WRITE | F_SEAL_FUTURE_WRITE)) {
+ 			inode_unlock(inode);
+ 			return -EPERM;
+ 		}
+diff --git a/mm/memfd.c b/mm/memfd.c
+index 5ba9804e9515..a9ece5fab439 100644
+--- a/mm/memfd.c
++++ b/mm/memfd.c
+@@ -220,25 +220,6 @@ static int memfd_add_seals(struct file *file, unsigned int seals)
+ 		}
+ 	}
+ 
+-	if ((seals & F_SEAL_FUTURE_WRITE) &&
+-	    !(*file_seals & F_SEAL_FUTURE_WRITE)) {
+-		/*
+-		 * The FUTURE_WRITE seal also prevents growing and shrinking
+-		 * so we need them to be already set, or requested now.
+-		 */
+-		int test_seals = (seals | *file_seals) &
+-				 (F_SEAL_GROW | F_SEAL_SHRINK);
+-
+-		if (test_seals != (F_SEAL_GROW | F_SEAL_SHRINK)) {
+-			error = -EINVAL;
+-			goto unlock;
+-		}
+-
+-		spin_lock(&file->f_lock);
+-		file->f_mode &= ~(FMODE_WRITE | FMODE_PWRITE);
+-		spin_unlock(&file->f_lock);
+-	}
+-
+ 	*file_seals |= seals;
+ 	error = 0;
+ 
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 446942677cd4..ef6039f1ea2a 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -2163,6 +2163,23 @@ int shmem_lock(struct file *file, int lock, struct user_struct *user)
+ 
+ static int shmem_mmap(struct file *file, struct vm_area_struct *vma)
+ {
++	struct shmem_inode_info *info = SHMEM_I(file_inode(file));
++
++	/*
++	 * New PROT_READ and MAP_SHARED mmaps are not allowed when "future
++	 * write" seal active.
++	 */
++	if ((vma->vm_flags & VM_SHARED) && (vma->vm_flags & VM_WRITE) &&
++	    (info->seals & F_SEAL_FUTURE_WRITE))
++		return -EPERM;
++
++	/*
++	 * Since the F_SEAL_FUTURE_WRITE seals allow for a MAP_SHARED read-only
++	 * mapping, take care to not allow mprotect to revert protections.
++	 */
++	if (info->seals & F_SEAL_FUTURE_WRITE)
++		vma->vm_flags &= ~(VM_MAYWRITE);
++
+ 	file_accessed(file);
+ 	vma->vm_ops = &shmem_vm_ops;
+ 	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGE_PAGECACHE) &&
+@@ -2391,8 +2408,9 @@ shmem_write_begin(struct file *file, struct address_space *mapping,
+ 	pgoff_t index = pos >> PAGE_SHIFT;
+ 
+ 	/* i_mutex is held by caller */
+-	if (unlikely(info->seals & (F_SEAL_WRITE | F_SEAL_GROW))) {
+-		if (info->seals & F_SEAL_WRITE)
++	if (unlikely(info->seals & (F_SEAL_GROW |
++				   F_SEAL_WRITE | F_SEAL_FUTURE_WRITE))) {
++		if (info->seals & (F_SEAL_WRITE | F_SEAL_FUTURE_WRITE))
+ 			return -EPERM;
+ 		if ((info->seals & F_SEAL_GROW) && pos + len > inode->i_size)
+ 			return -EPERM;
+@@ -2657,7 +2675,7 @@ static long shmem_fallocate(struct file *file, int mode, loff_t offset,
+ 		DECLARE_WAIT_QUEUE_HEAD_ONSTACK(shmem_falloc_waitq);
+ 
+ 		/* protected by i_mutex */
+-		if (info->seals & F_SEAL_WRITE) {
++		if (info->seals & F_SEAL_WRITE || info->seals & F_SEAL_FUTURE_WRITE) {
+ 			error = -EPERM;
+ 			goto out;
+ 		}
+-- 
+2.19.1.930.g4563a0d9d0-goog
+
