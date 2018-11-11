@@ -2,120 +2,121 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48B27C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 11:54:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B135FC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 11:57:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A65021104
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 11:54:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XeLCsnT9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A65021104
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7A6DE20871
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 11:57:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A6DE20871
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727866AbeKKVnR (ORCPT
+        id S1727767AbeKKVpi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 16:43:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36646 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727492AbeKKVnQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 16:43:16 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0345320871;
-        Sun, 11 Nov 2018 11:54:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541937294;
-        bh=mRBA81kVA/IEwzF4599vYfonGTa0bjeKL/OfE7Hy/gw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=XeLCsnT9/MPQKEHd3QuiHAbcSV1qlfGMKbV2b3ngqBxymvwOUVq9hRNSQ6+8DBrmm
-         0v0X5V2oZ5ym5zLJAt7KURmnZTDrKrxLzyLVH49h0KgMJShH7gSkYJTwzMjV+hCYqP
-         by/5CnRlB87KSrBQQk3h21pFleXmHaghDio+wDjU=
-Date:   Sun, 11 Nov 2018 11:54:49 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Stefan Popa <stefan.popa@analog.com>
-Cc:     <robh+dt@kernel.org>, <mark.rutland@arm.com>, <knaack.h@gmx.de>,
-        <lars@metafoo.de>, <pmeerw@pmeerw.net>,
-        <Michael.Hennerich@analog.com>, <gregkh@linuxfoundation.org>,
-        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 2/4] dt-bindings: iio: adc: Add common ADCs
- properties to a separate file
-Message-ID: <20181111115449.14c415cb@archlinux>
-In-Reply-To: <1541778055-7629-1-git-send-email-stefan.popa@analog.com>
-References: <1541778055-7629-1-git-send-email-stefan.popa@analog.com>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sun, 11 Nov 2018 16:45:38 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:40737 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727492AbeKKVph (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Nov 2018 16:45:37 -0500
+Received: by mail-ed1-f65.google.com with SMTP id d3so4556116edx.7
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 03:57:14 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=6tF8O2vAgtqwLVdss95ldjlv+6Xr8yAgnMoHEZdpBW4=;
+        b=ni2cyW/JCkx+8KKLUBUPhHkaSHRMrUqsi5ztm2T45gB5lXx9Z7zbDBluig4kmI9gWe
+         aV3VyYoXMtokOJ+5bRef+C0x+XpYt6H5hvBrYtYia4xkPOEDP4208x3baPzELH6lFPlG
+         sv94GaFo2WlZV4Mw9vXLUuTwSWLWu/Py48hmiS+AvPvvia95211FlOoAMGjNTXLBmIDX
+         Pzg+AQwTBcT6MVhtAwdRd7gnbASLISBJjdpgikt6z5RIj9RmZBXFl+tbRDgetfNOZquU
+         Ca2ZgBNy8NunsdU7ilcnxpsIicoBPoe4CLXV1TJFf5jqoKs9S/0+JQop3jtB7mf6b5Pe
+         cz8A==
+X-Gm-Message-State: AGRZ1gK/3LQr3SVYZxQcf1wWWut9IatTiH0aRihDR/RIX1OFOwK315vD
+        NzdvSsHXAqsqNa6bPKOn3+LirFZyCKE=
+X-Google-Smtp-Source: AJdET5cFbmE+8guyBNEcU8h0KP+EW2pC1eA4JDcH6WAliep8Uc9GWiNgJkf3VfShd3rEj0B8vAQgOg==
+X-Received: by 2002:aa7:cfc3:: with SMTP id r3-v6mr9119467edy.208.1541937434135;
+        Sun, 11 Nov 2018 03:57:14 -0800 (PST)
+Received: from dhcp-45-79.space.revspace.nl ([2a01:4f8:1c0c:6c86:74cc:2527:1001:2c5e])
+        by smtp.gmail.com with ESMTPSA id w6-v6sm3387207eds.54.2018.11.11.03.57.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 11 Nov 2018 03:57:13 -0800 (PST)
+Subject: Re: [PATCH] ACPI / battery: Fix reporting "Not charging" when
+ capacity is 100%
+To:     Daniel Drake <drake@endlessm.com>, pavel@ucw.cz
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        sebastian.reichel@collabora.co.uk,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        linux@endlessm.com,
+        =?UTF-8?Q?Jo=c3=a3o_Paulo_Rechi_Vita?= <jprvita@endlessm.com>,
+        =?UTF-8?Q?Jo=c3=a3o_Paulo_Rechi_Vita?= <jprvita@gmail.com>
+References: <20181103065732.12134-1-jprvita@endlessm.com>
+ <20181105091917.GD4439@amd>
+ <CA+A7VXXUB2CZUyPtaMya7in7ntO_unbqVnaZyfCBT_BXtAxeQQ@mail.gmail.com>
+ <CAD8Lp46Go79C_xOkzM-hq4umET1M62Ofqw48swn1JNocifET3Q@mail.gmail.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <c883a2be-e772-2e18-f074-d2ad5f27f42b@redhat.com>
+Date:   Sun, 11 Nov 2018 12:57:12 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <CAD8Lp46Go79C_xOkzM-hq4umET1M62Ofqw48swn1JNocifET3Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 9 Nov 2018 17:40:55 +0200
-Stefan Popa <stefan.popa@analog.com> wrote:
+Hi,
 
-> There are several ADC drivers that depend on the same device tree
-> bindings. Rather than continue to duplicate the properties, this patch
-> adds a common adc binding document that can be referenced. For beginning,
-> only two properties are documented.
+On 11/7/18 5:53 AM, Daniel Drake wrote:
+> On Mon, Nov 5, 2018 at 1:19 AM Pavel Machek <pavel@ucw.cz> wrote:
+>> Plus, I don't think "100% charge" is right test for "battery full". At
+>> least on thinkpads, there's configuration option, and it is common
+>> _not_ to charge batterry above 95% or so (to increase its lifetime).
 > 
-> Signed-off-by: Stefan Popa <stefan.popa@analog.com>
-Hi Stefan,
-
-Looks good to me.  Given the 'generic' nature of this one though I would
-like to leave some time for Rob and other devicetree specialists to sanity
-check it.
-
-Thanks,
-
-Jonathan
-
-> ---
-> Changes in v2, v3:
-> 	- N/A.
-> Changes in v4:
-> 	- Added this commit.
+> Hans also touched on this area in his response:
 > 
->  Documentation/devicetree/bindings/iio/adc/adc.txt | 25 +++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/adc.txt
+>> As for this kernel-side fix I do not believe that fixing thus in
+>> the kernel is the right thing to do. We try to stay away from
+>> heuristics using full_charge_capacity in the kernel since that
+>> is not really reliable / deterministic.
 > 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adc.txt b/Documentation/devicetree/bindings/iio/adc/adc.txt
-> new file mode 100644
-> index 0000000..1e3cc21
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/adc/adc.txt
-> @@ -0,0 +1,25 @@
-> +Common ADCs properties
-> +
-> +This binding is a work-in-progress
-> +
-> +Optional properties for child nodes:
-> +- bipolar : Boolean, if set the channel is used in bipolar mode.
-> +- diff-channels : Differential channels muxed for this ADC. The first value
-> +		specifies the positive input pin, the second value the negative
-> +		input pin.
-> +
-> +Example:
-> +	adc@0 {
-> +		compatible = "some,adc";
-> +		...
-> +		channel@0 {
-> +			bipolar;
-> +			diff-channels = <0 1>;
-> +			...
-> +		};
-> +
-> +		channel@1 {
-> +			diff-channels = <2 3>;
-> +			...
-> +		};
-> +	};
+> I'm not fully convinced by this argument though.
+> 
+> The ACPI spec is not very clear on what conditions you should apply to
+> decide when the battery is full. Instead, ACPI seems to provide a
+> pretty decent amount of data, and the decision about whether to
+> interpret that as "battery full" is left for consumers.
 
+Right, but in this case the "discharging" status bit is explicitly
+set, to me it feels wrong to report "full", when the firmware
+is reporting "discharging" IMHO, at best we are "not charging"
+(on AC, below the threshold where a new charge cycle starts) and
+that is what we are currently reporting.
+
+Anu heurstics to decide that "not charging" is close enough to full
+to report it as full to the user belongs in userspace IMHO.
+
+Anyways this ultimately is Rafael's call. If Rafael is ok with this
+patch then I would like to see Pavel's comment addressed and otherwise
+it is fine with me.
+
+Note that we will still often get the case where a laptop is charged,
+reports full, is unplugged for 5 minutes and then replugged and then
+reports a capacity of 97% combined with "not charging", so we will
+still need to fix userspace to handle this.
+
+Rafael, what is your take on this?
+
+Regards,
+
+Hans
