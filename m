@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCBE2C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:15:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D238FC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:15:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 924FC2084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:15:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 950A12084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:15:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="St4UmANz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 924FC2084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AMWKDgjq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 950A12084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730272AbeKLIRJ (ORCPT
+        id S1730743AbeKLKGS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:17:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59734 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 05:06:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59834 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730201AbeKLIRH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:17:07 -0500
+        id S1730231AbeKLIRJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:17:09 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 16D42223C8;
-        Sun, 11 Nov 2018 22:27:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 10CF9223C8;
+        Sun, 11 Nov 2018 22:27:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975232;
-        bh=ysx8oaMaiUOyh3GfgdCNBS/mqA02WfF0PQiw1KQ+up4=;
+        s=default; t=1541975234;
+        bh=kXcPqV+a0yFukw/0p+Y+7BTucICae2ESRjApL+LA4to=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=St4UmANzBX7d3539L8djS8CcT3H88ZUM4lyQHkiUnbpHEEV/lYSQPW71ZYhS7yHcY
-         cUTBeTUddTTuyCZDb8mUtGep40ZC+ScIsN56OzZtHynZvYfe2C7NlMtFyxAQQgli58
-         Ly/CgSVai97j1NoGYpZ+VXyxoR3QLlTu9CPXPfEQ=
+        b=AMWKDgjqcERTgnn/i7BAEWznpAWIdN6Bea6DARsWSgWHiBv0TTEZjv18Acw9Dk9IM
+         Pl7FTX8hQ2mcSm8j7mohat/yN4s8JsGwJZHcoc57m4PjVNDhlLxJrVnU3EY2PjU0el
+         6TMnUQSbO49ye5C/LaTvcBi7SNpo58rnD3smNCvQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Janosch Frank <frankja@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 058/361] s390/sthyi: Fix machine name validity indication
-Date:   Sun, 11 Nov 2018 14:16:45 -0800
-Message-Id: <20181111221628.092862253@linuxfoundation.org>
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>,
+        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 061/361] lightnvm: pblk: fix two sleep-in-atomic-context bugs
+Date:   Sun, 11 Nov 2018 14:16:48 -0800
+Message-Id: <20181111221628.496312533@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -63,51 +64,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Janosch Frank <frankja@linux.ibm.com>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-[ Upstream commit b5130dc2224d1881f24224c0590c6d97f2168d6a ]
+[ Upstream commit 7325b4bbe5952e3e939f15de812f2ee0c0d33ca9 ]
 
-When running as a level 3 guest with no host provided sthyi support
-sclp_ocf_cpc_name_copy() will only return zeroes. Zeroes are not a
-valid group name, so let's not indicate that the group name field is
-valid.
+The driver may sleep with holding a spinlock.
 
-Also the group name is not dependent on stsi, let's not return based
-on stsi before setting it.
+The function call paths (from bottom to top) in Linux-4.16 are:
 
-Fixes: 95ca2cb57985 ("KVM: s390: Add sthyi emulation")
-Signed-off-by: Janosch Frank <frankja@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+[FUNC] nvm_dev_dma_alloc(GFP_KERNEL)
+drivers/lightnvm/pblk-core.c, 754:
+	nvm_dev_dma_alloc in pblk_line_submit_smeta_io
+drivers/lightnvm/pblk-core.c, 1048:
+	pblk_line_submit_smeta_io in pblk_line_init_bb
+drivers/lightnvm/pblk-core.c, 1434:
+	pblk_line_init_bb in pblk_line_replace_data
+drivers/lightnvm/pblk-recovery.c, 980:
+	pblk_line_replace_data in pblk_recov_l2p
+drivers/lightnvm/pblk-recovery.c, 976:
+	spin_lock in pblk_recov_l2p
+
+[FUNC] bio_map_kern(GFP_KERNEL)
+drivers/lightnvm/pblk-core.c, 762:
+	bio_map_kern in pblk_line_submit_smeta_io
+drivers/lightnvm/pblk-core.c, 1048:
+	pblk_line_submit_smeta_io in pblk_line_init_bb
+drivers/lightnvm/pblk-core.c, 1434:
+	pblk_line_init_bb in pblk_line_replace_data
+drivers/lightnvm/pblk-recovery.c, 980:
+	pblk_line_replace_data in pblk_recov_l2p
+drivers/lightnvm/pblk-recovery.c, 976:
+	spin_lock in pblk_recov_l2p
+
+To fix these bugs, the call to pblk_line_replace_data()
+is moved out of the spinlock protection.
+
+These bugs are found by my static analysis tool DSAC.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Reviewed-by: Javier González <javier@cnexlabs.com>
+Signed-off-by: Matias Bjørling <mb@lightnvm.io>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/kernel/sthyi.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/lightnvm/pblk-recovery.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/arch/s390/kernel/sthyi.c
-+++ b/arch/s390/kernel/sthyi.c
-@@ -183,17 +183,19 @@ static void fill_hdr(struct sthyi_sctns
- static void fill_stsi_mac(struct sthyi_sctns *sctns,
- 			  struct sysinfo_1_1_1 *sysinfo)
- {
-+	sclp_ocf_cpc_name_copy(sctns->mac.infmname);
-+	if (*(u64 *)sctns->mac.infmname != 0)
-+		sctns->mac.infmval1 |= MAC_NAME_VLD;
-+
- 	if (stsi(sysinfo, 1, 1, 1))
- 		return;
+--- a/drivers/lightnvm/pblk-recovery.c
++++ b/drivers/lightnvm/pblk-recovery.c
+@@ -956,12 +956,14 @@ next:
+ 		}
+ 	}
  
--	sclp_ocf_cpc_name_copy(sctns->mac.infmname);
--
- 	memcpy(sctns->mac.infmtype, sysinfo->type, sizeof(sctns->mac.infmtype));
- 	memcpy(sctns->mac.infmmanu, sysinfo->manufacturer, sizeof(sctns->mac.infmmanu));
- 	memcpy(sctns->mac.infmpman, sysinfo->plant, sizeof(sctns->mac.infmpman));
- 	memcpy(sctns->mac.infmseq, sysinfo->sequence, sizeof(sctns->mac.infmseq));
+-	spin_lock(&l_mg->free_lock);
+ 	if (!open_lines) {
++		spin_lock(&l_mg->free_lock);
+ 		WARN_ON_ONCE(!test_and_clear_bit(meta_line,
+ 							&l_mg->meta_bitmap));
++		spin_unlock(&l_mg->free_lock);
+ 		pblk_line_replace_data(pblk);
+ 	} else {
++		spin_lock(&l_mg->free_lock);
+ 		/* Allocate next line for preparation */
+ 		l_mg->data_next = pblk_line_get(pblk);
+ 		if (l_mg->data_next) {
+@@ -969,8 +971,8 @@ next:
+ 			l_mg->data_next->type = PBLK_LINETYPE_DATA;
+ 			is_next = 1;
+ 		}
++		spin_unlock(&l_mg->free_lock);
+ 	}
+-	spin_unlock(&l_mg->free_lock);
  
--	sctns->mac.infmval1 |= MAC_ID_VLD | MAC_NAME_VLD;
-+	sctns->mac.infmval1 |= MAC_ID_VLD;
- }
- 
- static void fill_stsi_par(struct sthyi_sctns *sctns,
+ 	if (is_next)
+ 		pblk_line_erase(pblk, l_mg->data_next);
 
 
