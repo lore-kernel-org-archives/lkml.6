@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39D2AC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:56:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C67C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:56:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F335620866
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:56:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BD4720839
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:56:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="a3G6KNyT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F335620866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LMEuViqh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BD4720839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732832AbeKLJqu (ORCPT
+        id S1732926AbeKLJq5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:46:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35400 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:46:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732475AbeKLISN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1732552AbeKLISN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:18:13 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB2BA22353;
+        by mail.kernel.org (Postfix) with ESMTPSA id 9DF652154B;
         Sun, 11 Nov 2018 22:28:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975298;
-        bh=uYN9enrZD8/0zvjyzExjf821bQzK/PppLU+22pdh2BI=;
+        s=default; t=1541975297;
+        bh=LzDnLZgnfbRT65tqPAPG75W9XLCSUlHBTqnT2P6DJ1E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a3G6KNyThvKxtQbti9mB8FO9oWzT9QjJ70CLpjW/NufPu8Tux0w3IovEogfwr4Qpl
-         zl3iYKHOSwlexMZBKkB/WKzxxGJ9FAnIs6rQcCu54pp91NJ7aehNwPAwd8LQMdw2Ty
-         G/eJwhrYv3Jl4XfJ01tvNaPpn88anydjMAWGo85w=
+        b=LMEuViqhBNzIwKmnRnN2ZNNOEDSNs6CW0tTt8Q2lon77BNGr8WcvGPk69zvnt4yoS
+         CABF33a83DUZ71sGdz8pHrtMPqztk2+xRh7PjHXo+xKIyc5h5bA5M/ftdyhYVryktu
+         byfmX48AxNpXwY0bPmBRqNdwLqO+GdTJ25NEJLb0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
-Subject: [PATCH 4.19 208/361] usbip:vudc: BUG kmalloc-2048 (Not tainted): Poison overwritten
-Date:   Sun, 11 Nov 2018 14:19:15 -0800
-Message-Id: <20181111221649.319974572@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: [PATCH 4.19 217/361] libnvdimm: Hold reference on parent while scheduling async init
+Date:   Sun, 11 Nov 2018 14:19:24 -0800
+Message-Id: <20181111221650.286152525@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -62,67 +63,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 
-commit e28fd56ad5273be67d0fae5bedc7e1680e729952 upstream.
+commit b6eae0f61db27748606cc00dafcfd1e2c032f0a5 upstream.
 
-In rmmod path, usbip_vudc does platform_device_put() twice once from
-platform_device_unregister() and then from put_vudc_device().
+Unlike asynchronous initialization in the core we have not yet associated
+the device with the parent, and as such the device doesn't hold a reference
+to the parent.
 
-The second put results in:
+In order to resolve that we should be holding a reference on the parent
+until the asynchronous initialization has completed.
 
-BUG kmalloc-2048 (Not tainted): Poison overwritten error or
-BUG: KASAN: use-after-free in kobject_put+0x1e/0x230 if KASAN is
-enabled.
-
-[  169.042156] calling  init+0x0/0x1000 [usbip_vudc] @ 1697
-[  169.042396] =============================================================================
-[  169.043678] probe of usbip-vudc.0 returned 1 after 350 usecs
-[  169.044508] BUG kmalloc-2048 (Not tainted): Poison overwritten
-[  169.044509] -----------------------------------------------------------------------------
-...
-[  169.057849] INFO: Freed in device_release+0x2b/0x80 age=4223 cpu=3 pid=1693
-[  169.057852] 	kobject_put+0x86/0x1b0
-[  169.057853] 	0xffffffffc0c30a96
-[  169.057855] 	__x64_sys_delete_module+0x157/0x240
-
-Fix it to call platform_device_del() instead and let put_vudc_device() do
-the platform_device_put().
-
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 Cc: <stable@vger.kernel.org>
+Fixes: 4d88a97aa9e8 ("libnvdimm: ...base ... infrastructure")
+Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/usbip/vudc_main.c |   10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ drivers/nvdimm/bus.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/usb/usbip/vudc_main.c
-+++ b/drivers/usb/usbip/vudc_main.c
-@@ -73,6 +73,10 @@ static int __init init(void)
- cleanup:
- 	list_for_each_entry_safe(udc_dev, udc_dev2, &vudc_devices, dev_entry) {
- 		list_del(&udc_dev->dev_entry);
-+		/*
-+		 * Just do platform_device_del() here, put_vudc_device()
-+		 * calls the platform_device_put()
-+		 */
- 		platform_device_del(udc_dev->pdev);
- 		put_vudc_device(udc_dev);
+--- a/drivers/nvdimm/bus.c
++++ b/drivers/nvdimm/bus.c
+@@ -488,6 +488,8 @@ static void nd_async_device_register(voi
+ 		put_device(dev);
  	}
-@@ -89,7 +93,11 @@ static void __exit cleanup(void)
+ 	put_device(dev);
++	if (dev->parent)
++		put_device(dev->parent);
+ }
  
- 	list_for_each_entry_safe(udc_dev, udc_dev2, &vudc_devices, dev_entry) {
- 		list_del(&udc_dev->dev_entry);
--		platform_device_unregister(udc_dev->pdev);
-+		/*
-+		 * Just do platform_device_del() here, put_vudc_device()
-+		 * calls the platform_device_put()
-+		 */
-+		platform_device_del(udc_dev->pdev);
- 		put_vudc_device(udc_dev);
- 	}
- 	platform_driver_unregister(&vudc_driver);
+ static void nd_async_device_unregister(void *d, async_cookie_t cookie)
+@@ -507,6 +509,8 @@ void __nd_device_register(struct device
+ 	if (!dev)
+ 		return;
+ 	dev->bus = &nvdimm_bus_type;
++	if (dev->parent)
++		get_device(dev->parent);
+ 	get_device(dev);
+ 	async_schedule_domain(nd_async_device_register, dev,
+ 			&nd_async_domain);
 
 
