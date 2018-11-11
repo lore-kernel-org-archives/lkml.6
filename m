@@ -6,46 +6,44 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95BBFC43610
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:28:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5E42C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:28:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59A3220818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:28:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59A3220818
+	by mail.kernel.org (Postfix) with ESMTP id 95A8F20818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:28:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95A8F20818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731188AbeKLGSQ (ORCPT
+        id S1731270AbeKLGSQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 12 Nov 2018 01:18:16 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50594 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50584 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729629AbeKLFsX (ORCPT
+        by vger.kernel.org with ESMTP id S1730391AbeKLFsX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 00:48:23 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsi-0000l8-MK; Sun, 11 Nov 2018 19:58:52 +0000
+        id 1gLvsi-0000l7-NC; Sun, 11 Nov 2018 19:58:52 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsZ-0001qP-PT; Sun, 11 Nov 2018 19:58:43 +0000
+        id 1gLvsZ-0001qZ-SR; Sun, 11 Nov 2018 19:58:43 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Sage Weil" <sage@redhat.com>,
-        "Jeff Layton" <jlayton@redhat.com>,
-        "Bryan Henderson" <bryanh@giraffe-data.com>,
-        "Ilya Dryomov" <idryomov@gmail.com>
+CC:     akpm@linux-foundation.org, "Mike Snitzer" <snitzer@redhat.com>,
+        "Mikulas Patocka" <mpatocka@redhat.com>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.29486707@decadent.org.uk>
+Message-ID: <lsq.1541965745.522563766@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 327/366] ceph: fix endianness of getattr mask in
- ceph_d_revalidate
+Subject: [PATCH 3.16 329/366] dm bufio: drop the lock when doing GFP_NOIO
+ allocation
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,45 +57,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jeff Layton <jlayton@redhat.com>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-commit 1097680d759918ce4a8705381c0ab2ed7bd60cf1 upstream.
+commit 41c73a49df31151f4ff868f28fe4f129f113fa2c upstream.
 
-sparse says:
+If the first allocation attempt using GFP_NOWAIT fails, drop the lock
+and retry using GFP_NOIO allocation (lock is dropped because the
+allocation can take some time).
 
-    fs/ceph/dir.c:1248:50: warning: incorrect type in assignment (different base types)
-    fs/ceph/dir.c:1248:50:    expected restricted __le32 [usertype] mask
-    fs/ceph/dir.c:1248:50:    got int [signed] [assigned] mask
+Note that we won't do GFP_NOIO allocation when we loop for the second
+time, because the lock shouldn't be dropped between __wait_for_free_buffer
+and __get_unclaimed_buffer.
 
-Fixes: 200fd27c8fa2 ("ceph: use lookup request to revalidate dentry")
-Signed-off-by: Jeff Layton <jlayton@redhat.com>
-Reviewed-by: Sage Weil <sage@redhat.com>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-Cc: Bryan Henderson <bryanh@giraffe-data.com>
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Cc: Mikulas Patocka <mpatocka@redhat.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/ceph/dir.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/md/dm-bufio.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/fs/ceph/dir.c
-+++ b/fs/ceph/dir.c
-@@ -1068,7 +1068,8 @@ static int ceph_d_revalidate(struct dent
- 		struct ceph_mds_client *mdsc =
- 			ceph_sb_to_client(dir->i_sb)->mdsc;
- 		struct ceph_mds_request *req;
--		int op, mask, err;
-+		int op, err;
-+		u32 mask;
+--- a/drivers/md/dm-bufio.c
++++ b/drivers/md/dm-bufio.c
+@@ -773,6 +773,7 @@ enum new_flag {
+ static struct dm_buffer *__alloc_buffer_wait_no_callback(struct dm_bufio_client *c, enum new_flag nf)
+ {
+ 	struct dm_buffer *b;
++	bool tried_noio_alloc = false;
  
- 		op = ceph_snap(dir) == CEPH_SNAPDIR ?
- 			CEPH_MDS_OP_LOOKUPSNAP : CEPH_MDS_OP_GETATTR;
-@@ -1080,7 +1081,7 @@ static int ceph_d_revalidate(struct dent
- 			mask = CEPH_STAT_CAP_INODE | CEPH_CAP_AUTH_SHARED;
- 			if (ceph_security_xattr_wanted(dir))
- 				mask |= CEPH_CAP_XATTR_SHARED;
--			req->r_args.getattr.mask = mask;
-+			req->r_args.getattr.mask = cpu_to_le32(mask);
+ 	/*
+ 	 * dm-bufio is resistant to allocation failures (it just keeps
+@@ -797,6 +798,15 @@ static struct dm_buffer *__alloc_buffer_
+ 		if (nf == NF_PREFETCH)
+ 			return NULL;
  
- 			err = ceph_mdsc_do_request(mdsc, NULL, req);
- 			switch (err) {
++		if (dm_bufio_cache_size_latch != 1 && !tried_noio_alloc) {
++			dm_bufio_unlock(c);
++			b = alloc_buffer(c, GFP_NOIO | __GFP_NORETRY | __GFP_NOMEMALLOC | __GFP_NOWARN);
++			dm_bufio_lock(c);
++			if (b)
++				return b;
++			tried_noio_alloc = true;
++		}
++
+ 		if (!list_empty(&c->reserved_buffers)) {
+ 			b = list_entry(c->reserved_buffers.next,
+ 				       struct dm_buffer, lru_list);
 
