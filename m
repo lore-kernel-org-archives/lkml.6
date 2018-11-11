@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AA69C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD4CFC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9B7121508
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CB0B2245E
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KjSbvQwc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9B7121508
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tdN5y1Ce"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CB0B2245E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390399AbeKLIWO (ORCPT
+        id S2390438AbeKLIWP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:22:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51836 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:22:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51332 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390366AbeKLIWM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:12 -0500
+        id S2390381AbeKLIWN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:13 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 30E39224B3;
-        Sun, 11 Nov 2018 22:32:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A8B22243E;
+        Sun, 11 Nov 2018 22:32:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975535;
-        bh=0umfxAfnRNxXMuAW+CtMWxftLgRySqbAVloy5B8AQtI=;
+        s=default; t=1541975536;
+        bh=kXwuAl6oNtkGN8WDsyODNMFV5TZw2kVB/wax3GbVJqs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KjSbvQwctWkt10DjDxTobHnFxrA9yTPLflvEhOxQHYF1LrCuzs6xk1AadVL6GFFoh
-         zMzYMhZIm53kssvnvlMFg0mJvf06BXf1o9Xr+t8fEbYuRh03DT/5xjSTf4ofwAiG86
-         toX3s9DLpe54nLveCmmnQbNlcmF2jwo63Nes8yHA=
+        b=tdN5y1Ce6c5ZzRw6yaShhwy7wOoKEJVaBCla6ckcl3EL9/R6+Kg5I7UNiiOc4xu74
+         0JX7PhABzgCttxLS625QYToYPgCvpiBcJDyuKcuHy3znMed0nTN5O/I1eXqJSWiDa4
+         c/irs7mTbiXouL3646HTO/NL/qvhHHaGtKTZ55WQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sanskriti Sharma <sansharm@redhat.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 050/222] perf strbuf: Match va_{add,copy} with va_end
-Date:   Sun, 11 Nov 2018 14:22:27 -0800
-Message-Id: <20181111221652.585159577@linuxfoundation.org>
+Subject: [PATCH 4.14 027/222] xfrm: policy: use hlist rcu variants on insert
+Date:   Sun, 11 Nov 2018 14:22:04 -0800
+Message-Id: <20181111221650.718226953@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -65,59 +63,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sanskriti Sharma <sansharm@redhat.com>
+From: Florian Westphal <fw@strlen.de>
 
-[ Upstream commit ce49d8436cffa9b7a6a5f110879d53e89dbc6746 ]
+[ Upstream commit 9dffff200fd178f11dd50eb1fd8ccd0650c9284e ]
 
-Ensure that all code paths in strbuf_addv() call va_end() on the
-ap_saved copy that was made.
+bydst table/list lookups use rcu, so insertions must use rcu versions.
 
-Fixes the following coverity complaint:
-
-  Error: VARARGS (CWE-237): [#def683]
-  tools/perf/util/strbuf.c:106: missing_va_end: va_end was not called
-  for "ap_saved".
-
-Signed-off-by: Sanskriti Sharma <sansharm@redhat.com>
-Reviewed-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Joe Lawrence <joe.lawrence@redhat.com>
-Link: http://lkml.kernel.org/r/1538490554-8161-2-git-send-email-sansharm@redhat.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: a7c44247f704e ("xfrm: policy: make xfrm_policy_lookup_bytype lockless")
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/util/strbuf.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ net/xfrm/xfrm_policy.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/tools/perf/util/strbuf.c
-+++ b/tools/perf/util/strbuf.c
-@@ -98,19 +98,25 @@ static int strbuf_addv(struct strbuf *sb
- 
- 	va_copy(ap_saved, ap);
- 	len = vsnprintf(sb->buf + sb->len, sb->alloc - sb->len, fmt, ap);
--	if (len < 0)
-+	if (len < 0) {
-+		va_end(ap_saved);
- 		return len;
-+	}
- 	if (len > strbuf_avail(sb)) {
- 		ret = strbuf_grow(sb, len);
--		if (ret)
-+		if (ret) {
-+			va_end(ap_saved);
- 			return ret;
-+		}
- 		len = vsnprintf(sb->buf + sb->len, sb->alloc - sb->len, fmt, ap_saved);
- 		va_end(ap_saved);
- 		if (len > strbuf_avail(sb)) {
- 			pr_debug("this should not happen, your vsnprintf is broken");
-+			va_end(ap_saved);
- 			return -EINVAL;
+--- a/net/xfrm/xfrm_policy.c
++++ b/net/xfrm/xfrm_policy.c
+@@ -626,9 +626,9 @@ static void xfrm_hash_rebuild(struct wor
+ 				break;
  		}
+ 		if (newpos)
+-			hlist_add_behind(&policy->bydst, newpos);
++			hlist_add_behind_rcu(&policy->bydst, newpos);
+ 		else
+-			hlist_add_head(&policy->bydst, chain);
++			hlist_add_head_rcu(&policy->bydst, chain);
  	}
-+	va_end(ap_saved);
- 	return strbuf_setlen(sb, sb->len + len);
- }
  
+ 	spin_unlock_bh(&net->xfrm.xfrm_policy_lock);
+@@ -767,9 +767,9 @@ int xfrm_policy_insert(int dir, struct x
+ 			break;
+ 	}
+ 	if (newpos)
+-		hlist_add_behind(&policy->bydst, newpos);
++		hlist_add_behind_rcu(&policy->bydst, newpos);
+ 	else
+-		hlist_add_head(&policy->bydst, chain);
++		hlist_add_head_rcu(&policy->bydst, chain);
+ 	__xfrm_policy_link(policy, dir);
+ 
+ 	/* After previous checking, family can either be AF_INET or AF_INET6 */
 
 
