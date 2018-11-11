@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73089C43610
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:59:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 042A9C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:59:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F238214F1
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:59:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F238214F1
+	by mail.kernel.org (Postfix) with ESMTP id C6A4B20871
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:59:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6A4B20871
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730865AbeKLFsf (ORCPT
+        id S1730878AbeKLFsf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 12 Nov 2018 00:48:35 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51006 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51060 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730628AbeKLFs3 (ORCPT
+        by vger.kernel.org with ESMTP id S1730694AbeKLFsa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:48:29 -0500
+        Mon, 12 Nov 2018 00:48:30 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvso-0000oJ-Jx; Sun, 11 Nov 2018 19:58:58 +0000
+        id 1gLvsp-0000oU-03; Sun, 11 Nov 2018 19:58:59 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsX-0001lJ-O5; Sun, 11 Nov 2018 19:58:41 +0000
+        id 1gLvsX-0001kf-Bv; Sun, 11 Nov 2018 19:58:41 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -38,13 +38,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org,
-        "Marc Kleine-Budde" <mkl@pengutronix.de>,
-        "Nicholas Mc Guire" <hofrat@osadl.org>
+        "Himanshu Madhani" <himanshu.madhani@cavium.com>,
+        "Anil Gurumurthy" <anil.gurumurthy@cavium.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.532732100@decadent.org.uk>
+Message-ID: <lsq.1541965745.285485105@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 279/366] can: mpc5xxx_can: check of_iomap return
- before use
+Subject: [PATCH 3.16 271/366] scsi: qla2xxx: Return error when TMF returns
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,34 +58,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicholas Mc Guire <hofrat@osadl.org>
+From: Anil Gurumurthy <anil.gurumurthy@cavium.com>
 
-commit b5c1a23b17e563b656cc9bb76ce5323b997d90e8 upstream.
+commit b4146c4929ef61d5afca011474d59d0918a0cd82 upstream.
 
-of_iomap() can return NULL so that return needs to be checked and NULL
-treated as failure. While at it also take care of the missing
-of_node_put() in the error path.
+Propagate the task management completion status properly to avoid
+unnecessary waits for commands to complete.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Fixes: commit afa17a500a36 ("net/can: add driver for mscan family & mpc52xx_mscan")
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Fixes: faef62d13463 ("[SCSI] qla2xxx: Fix Task Management command asynchronous handling")
+Signed-off-by: Anil Gurumurthy <anil.gurumurthy@cavium.com>
+Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/net/can/mscan/mpc5xxx_can.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/scsi/qla2xxx/qla_init.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
---- a/drivers/net/can/mscan/mpc5xxx_can.c
-+++ b/drivers/net/can/mscan/mpc5xxx_can.c
-@@ -86,6 +86,11 @@ static u32 mpc52xx_can_get_clock(struct
- 		return 0;
- 	}
- 	cdm = of_iomap(np_cdm, 0);
-+	if (!cdm) {
-+		of_node_put(np_cdm);
-+		dev_err(&ofdev->dev, "can't map clock node!\n");
-+		return 0;
-+	}
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -323,11 +323,10 @@ qla2x00_async_tm_cmd(fc_port_t *fcport,
  
- 	if (in_8(&cdm->ipb_clk_sel) & 0x1)
- 		freq *= 2;
+ 	wait_for_completion(&tm_iocb->u.tmf.comp);
+ 
+-	rval = tm_iocb->u.tmf.comp_status == CS_COMPLETE ?
+-	    QLA_SUCCESS : QLA_FUNCTION_FAILED;
++	rval = tm_iocb->u.tmf.data;
+ 
+-	if ((rval != QLA_SUCCESS) || tm_iocb->u.tmf.data) {
+-		ql_dbg(ql_dbg_taskm, vha, 0x8030,
++	if (rval != QLA_SUCCESS) {
++		ql_log(ql_log_warn, vha, 0x8030,
+ 		    "TM IOCB failed (%x).\n", rval);
+ 	}
+ 
 
