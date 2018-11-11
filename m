@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B307EC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:29:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E80BC0044C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:29:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A3752084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:29:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 179012084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:29:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hs4fTyoK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A3752084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oEtrttrL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 179012084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388792AbeKLIUb (ORCPT
+        id S2389007AbeKLJTO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:20:31 -0500
+        Mon, 12 Nov 2018 04:19:14 -0500
 Received: from mail.kernel.org ([198.145.29.99]:45304 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733202AbeKLIU2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:20:28 -0500
+        id S2388767AbeKLIUb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:31 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 19C4422443;
-        Sun, 11 Nov 2018 22:30:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 879BE2175B;
+        Sun, 11 Nov 2018 22:30:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975431;
-        bh=d5SFOJNsqQ/+D1i9p9j2X/SXC3os1IjwiEUtumiHCFk=;
+        s=default; t=1541975434;
+        bh=3BwtYcUF9mjaA1HBbGUUt/sel3lbnkxqNaBjuVnySTw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hs4fTyoKgfGIwmERExsGZOtOQdp4h9Jkc8aI+6NC8n/IQH0DXwOuXa7t7uRBbR92U
-         RG1L6dpl0JCAvnRvTpFNvIJcri9xTm6BuUwGVlbigPdrm5dH17qiAKGe2rJtgUL2CE
-         60y68zhzygm4PVTj5UUP93NAl8WiusTFRg4bOQho=
+        b=oEtrttrL9Y1LdsUZVAocbe0vyHLhyn9dKjQBAyMU5l3m+BUtcuKWwGK6WdVULSyHC
+         3R6wnGHA0MlpsNQVVmeyWktYi69kbrpMrWZDN85C2AQVo+IPr2/2dHfImWVy+yAfIE
+         mikK4bdxhbgFI5S3fR66Rf0szT/m6zh/5wNMoQQ0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>,
+        stable@vger.kernel.org, Yunlei He <heyunlei@huawei.com>,
+        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 173/350] Smack: ptrace capability use fixes
-Date:   Sun, 11 Nov 2018 14:20:37 -0800
-Message-Id: <20181111221715.270351368@linuxfoundation.org>
+Subject: [PATCH 4.18 181/350] f2fs: report error if quota off error during umount
+Date:   Sun, 11 Nov 2018 14:20:45 -0800
+Message-Id: <20181111221715.609401862@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -62,74 +63,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Casey Schaufler <casey.schaufler@intel.com>
+From: Yunlei He <heyunlei@huawei.com>
 
-[ Upstream commit dcb569cf6ac99ca899b8109c128b6ae52477a015 ]
+[ Upstream commit cda9cc595f0bb6ffa51a4efc4b6533dfa4039b4c ]
 
-This fixes a pair of problems in the Smack ptrace checks
-related to checking capabilities. In both cases, as reported
-by Lukasz Pawelczyk, the raw capability calls are used rather
-than the Smack wrapper that check addition restrictions.
-In one case, as reported by Jann Horn, the wrong task is being
-checked for capabilities.
+Now, we depend on fsck to ensure quota file data is ok,
+so we scan whole partition if checkpoint without umount
+flag. It's same for quota off error case, which may make
+quota file data inconsistent.
 
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+generic/019 reports below error:
+
+ __quota_error: 1160 callbacks suppressed
+ Quota error (device zram1): write_blk: dquota write failed
+ Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+ Quota error (device zram1): write_blk: dquota write failed
+ Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+ Quota error (device zram1): write_blk: dquota write failed
+ Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+ Quota error (device zram1): write_blk: dquota write failed
+ Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+ Quota error (device zram1): write_blk: dquota write failed
+ Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+ VFS: Busy inodes after unmount of zram1. Self-destruct in 5 seconds.  Have a nice day...
+
+If we failed in below path due to fail to write dquot block, we will miss
+to release quota inode, fix it.
+
+- f2fs_put_super
+ - f2fs_quota_off_umount
+  - f2fs_quota_off
+   - f2fs_quota_sync   <-- failed
+   - dquot_quota_off   <-- missed to call
+
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- security/smack/smack_lsm.c |   13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ fs/f2fs/super.c |   19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -420,6 +420,7 @@ static int smk_ptrace_rule_check(struct
- 	struct smk_audit_info ad, *saip = NULL;
- 	struct task_smack *tsp;
- 	struct smack_known *tracer_known;
-+	const struct cred *tracercred;
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1820,7 +1820,9 @@ static int f2fs_quota_off(struct super_b
+ 	if (!inode || !igrab(inode))
+ 		return dquot_quota_off(sb, type);
  
- 	if ((mode & PTRACE_MODE_NOAUDIT) == 0) {
- 		smk_ad_init(&ad, func, LSM_AUDIT_DATA_TASK);
-@@ -428,7 +429,8 @@ static int smk_ptrace_rule_check(struct
- 	}
+-	f2fs_quota_sync(sb, type);
++	err = f2fs_quota_sync(sb, type);
++	if (err)
++		goto out_put;
  
- 	rcu_read_lock();
--	tsp = __task_cred(tracer)->security;
-+	tracercred = __task_cred(tracer);
-+	tsp = tracercred->security;
- 	tracer_known = smk_of_task(tsp);
- 
- 	if ((mode & PTRACE_MODE_ATTACH) &&
-@@ -438,7 +440,7 @@ static int smk_ptrace_rule_check(struct
- 			rc = 0;
- 		else if (smack_ptrace_rule == SMACK_PTRACE_DRACONIAN)
- 			rc = -EACCES;
--		else if (capable(CAP_SYS_PTRACE))
-+		else if (smack_privileged_cred(CAP_SYS_PTRACE, tracercred))
- 			rc = 0;
- 		else
- 			rc = -EACCES;
-@@ -1840,6 +1842,7 @@ static int smack_file_send_sigiotask(str
+ 	err = dquot_quota_off(sb, type);
+ 	if (err || f2fs_sb_has_quota_ino(sb))
+@@ -1839,9 +1841,20 @@ out_put:
+ void f2fs_quota_off_umount(struct super_block *sb)
  {
- 	struct smack_known *skp;
- 	struct smack_known *tkp = smk_of_task(tsk->cred->security);
-+	const struct cred *tcred;
- 	struct file *file;
- 	int rc;
- 	struct smk_audit_info ad;
-@@ -1853,8 +1856,12 @@ static int smack_file_send_sigiotask(str
- 	skp = file->f_security;
- 	rc = smk_access(skp, tkp, MAY_DELIVER, NULL);
- 	rc = smk_bu_note("sigiotask", skp, tkp, MAY_DELIVER, rc);
--	if (rc != 0 && has_capability(tsk, CAP_MAC_OVERRIDE))
-+
-+	rcu_read_lock();
-+	tcred = __task_cred(tsk);
-+	if (rc != 0 && smack_privileged_cred(CAP_MAC_OVERRIDE, tcred))
- 		rc = 0;
-+	rcu_read_unlock();
+ 	int type;
++	int err;
  
- 	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_TASK);
- 	smk_ad_setfield_u_tsk(&ad, tsk);
+-	for (type = 0; type < MAXQUOTAS; type++)
+-		f2fs_quota_off(sb, type);
++	for (type = 0; type < MAXQUOTAS; type++) {
++		err = f2fs_quota_off(sb, type);
++		if (err) {
++			int ret = dquot_quota_off(sb, type);
++
++			f2fs_msg(sb, KERN_ERR,
++				"Fail to turn off disk quota "
++				"(type: %d, err: %d, ret:%d), Please "
++				"run fsck to fix it.", type, err, ret);
++			set_sbi_flag(F2FS_SB(sb), SBI_NEED_FSCK);
++		}
++	}
+ }
+ 
+ static int f2fs_get_projid(struct inode *inode, kprojid_t *projid)
 
 
