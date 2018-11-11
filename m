@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A9C8C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:57:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D612C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:57:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13874206BA
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:57:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 637ED206BA
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:57:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XYFUdh58"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13874206BA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IEXvxC9C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 637ED206BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391116AbeKLIrI (ORCPT
+        id S2391147AbeKLIrU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:47:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54510 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:47:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54376 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390837AbeKLIWt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:49 -0500
+        id S2387600AbeKLIWr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:47 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 70D2E21780;
-        Sun, 11 Nov 2018 22:32:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 37BF321582;
+        Sun, 11 Nov 2018 22:32:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975572;
-        bh=rrjUaeXKfR2PkZOHQvQQ+sGAU4EUU/L6hbixO2V+kbQ=;
+        s=default; t=1541975569;
+        bh=nXHc6oucnsDML8PkHS1KVGsyC4/rwYYVkXIwnmQ3HuA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XYFUdh58MzbNhm0VShndNELuWcowqt2nm+hXjrlaGuXGPnpV3E3Vvk+X+wo21ANvw
-         dejt3inFp/PhQIbbwyyl5Euuq+gq9J/WuWZ+yo5eN7czUa4UjVBOWBNdmzQR5yu0oO
-         gLwMvcLD+iGbWT3LO9iYmf/wFETGDIfbeDS9QZRY=
+        b=IEXvxC9C4PhMbevzEWMTfrZT+sxt4eWvhrjnHBCBTSQH5y/2wI4pzktZN1YCc1d1a
+         MzLRLtrr5CSzgBz/RNL7yU0v9900i8uBCNu0NbCoJ2chcCFNIPglXtBtaVB5gFcsU5
+         gaBwc59bKJLTdtEzuYzQwE0+FGWU4Mc8Dcrgyw5c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bin Meng <bmeng.cn@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 4.14 147/222] PCI: Add Device IDs for Intel GPU "spurious interrupt" quirk
-Date:   Sun, 11 Nov 2018 14:24:04 -0800
-Message-Id: <20181111221700.583838437@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 108/222] ALSA: hda: Check the non-cached stream buffers more explicitly
+Date:   Sun, 11 Nov 2018 14:23:25 -0800
+Message-Id: <20181111221657.485405615@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -62,51 +62,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bin Meng <bmeng.cn@gmail.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit d0c9606b31a21028fb5b753c8ad79626292accfd upstream.
+[ Upstream commit 78c9be61c3a5cd9e2439fd27a5ffad73a81958c7 ]
 
-Add Device IDs to the Intel GPU "spurious interrupt" quirk table.
+Introduce a new flag, uc_buffer, to indicate that the controller
+requires the non-cached pages for stream buffers, either as a
+chip-specific requirement or specified via snoop=0 option.
+This improves the code-readability.
 
-For these devices, unplugging the VGA cable and plugging it in again causes
-spurious interrupts from the IGD.  Linux eventually disables the interrupt,
-but of course that disables any other devices sharing the interrupt.
+Also, this patch fixes the incorrect behavior for C-Media chip where
+the stream buffers were never handled as non-cached due to the check
+of driver_type even if you pass snoop=0 option.
 
-The theory is that this is a VGA BIOS defect: it should have disabled the
-IGD interrupt but failed to do so.
-
-See f67fd55fa96f ("PCI: Add quirk for still enabled interrupts on Intel
-Sandy Bridge GPUs") and 7c82126a94e6 ("PCI: Add new ID for Intel GPU
-"spurious interrupt" quirk") for some history.
-
-[bhelgaas: See link below for discussion about how to fix this more
-generically instead of adding device IDs for every new Intel GPU.  I hope
-this is the last patch to add device IDs.]
-
-Link: https://lore.kernel.org/linux-pci/1537974841-29928-1-git-send-email-bmeng.cn@gmail.com
-Signed-off-by: Bin Meng <bmeng.cn@gmail.com>
-[bhelgaas: changelog]
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Cc: stable@vger.kernel.org	# v3.4+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/pci/quirks.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ sound/pci/hda/hda_controller.h |    1 +
+ sound/pci/hda/hda_intel.c      |   11 ++++++++---
+ 2 files changed, 9 insertions(+), 3 deletions(-)
 
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -3163,7 +3163,11 @@ static void disable_igfx_irq(struct pci_
+--- a/sound/pci/hda/hda_controller.h
++++ b/sound/pci/hda/hda_controller.h
+@@ -160,6 +160,7 @@ struct azx {
+ 	unsigned int msi:1;
+ 	unsigned int probing:1; /* codec probing phase */
+ 	unsigned int snoop:1;
++	unsigned int uc_buffer:1; /* non-cached pages for stream buffers */
+ 	unsigned int align_buffer_size:1;
+ 	unsigned int region_requested:1;
+ 	unsigned int disabled:1; /* disabled by vga_switcheroo */
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -410,7 +410,7 @@ static void __mark_pages_wc(struct azx *
+ #ifdef CONFIG_SND_DMA_SGBUF
+ 	if (dmab->dev.type == SNDRV_DMA_TYPE_DEV_SG) {
+ 		struct snd_sg_buf *sgbuf = dmab->private_data;
+-		if (chip->driver_type == AZX_DRIVER_CMEDIA)
++		if (!chip->uc_buffer)
+ 			return; /* deal with only CORB/RIRB buffers */
+ 		if (on)
+ 			set_pages_array_wc(sgbuf->page_table, sgbuf->pages);
+@@ -1634,6 +1634,7 @@ static void azx_check_snoop_available(st
+ 		dev_info(chip->card->dev, "Force to %s mode by module option\n",
+ 			 snoop ? "snoop" : "non-snoop");
+ 		chip->snoop = snoop;
++		chip->uc_buffer = !snoop;
+ 		return;
+ 	}
  
- 	pci_iounmap(dev, regs);
+@@ -1654,8 +1655,12 @@ static void azx_check_snoop_available(st
+ 		snoop = false;
+ 
+ 	chip->snoop = snoop;
+-	if (!snoop)
++	if (!snoop) {
+ 		dev_info(chip->card->dev, "Force to non-snoop mode\n");
++		/* C-Media requires non-cached pages only for CORB/RIRB */
++		if (chip->driver_type != AZX_DRIVER_CMEDIA)
++			chip->uc_buffer = true;
++	}
  }
-+DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0042, disable_igfx_irq);
-+DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0046, disable_igfx_irq);
-+DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x004a, disable_igfx_irq);
- DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0102, disable_igfx_irq);
-+DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0106, disable_igfx_irq);
- DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x010a, disable_igfx_irq);
- DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0152, disable_igfx_irq);
  
+ static void azx_probe_work(struct work_struct *work)
+@@ -2094,7 +2099,7 @@ static void pcm_mmap_prepare(struct snd_
+ #ifdef CONFIG_X86
+ 	struct azx_pcm *apcm = snd_pcm_substream_chip(substream);
+ 	struct azx *chip = apcm->chip;
+-	if (!azx_snoop(chip) && chip->driver_type != AZX_DRIVER_CMEDIA)
++	if (chip->uc_buffer)
+ 		area->vm_page_prot = pgprot_writecombine(area->vm_page_prot);
+ #endif
+ }
 
 
