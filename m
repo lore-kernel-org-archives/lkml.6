@@ -2,52 +2,52 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BC89C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:32:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E298C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:32:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2611A20818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:32:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2611A20818
+	by mail.kernel.org (Postfix) with ESMTP id 2BD9D20818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:32:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BD9D20818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730499AbeKLGWB (ORCPT
+        id S1730556AbeKLGWH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:22:01 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50198 "EHLO
+        Mon, 12 Nov 2018 01:22:07 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50202 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730292AbeKLFsR (ORCPT
+        by vger.kernel.org with ESMTP id S1730293AbeKLFsR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 00:48:17 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsd-0000oG-Td; Sun, 11 Nov 2018 19:58:47 +0000
+        id 1gLvsd-0000tu-U9; Sun, 11 Nov 2018 19:58:47 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsb-0001ty-1X; Sun, 11 Nov 2018 19:58:45 +0000
+        id 1gLvsb-0001tt-0o; Sun, 11 Nov 2018 19:58:45 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Namhyung Kim" <namhyung@kernel.org>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "Jiri Olsa" <jolsa@kernel.org>, "David Ahern" <dsahern@gmail.com>,
+CC:     akpm@linux-foundation.org, "Wang Nan" <wangnan0@huawei.com>,
+        "Adrian Hunter" <adrian.hunter@intel.com>,
+        "David Ahern" <dsahern@gmail.com>,
         "Arnaldo Carvalho de Melo" <acme@redhat.com>,
-        "Alexander Shishkin" <alexander.shishkin@linux.intel.com>,
-        "Josh Poimboeuf" <jpoimboe@redhat.com>,
-        "Sergey Senozhatsky" <sergey.senozhatsky.work@gmail.com>
+        "Jiri Olsa" <jolsa@kernel.org>,
+        "Namhyung Kim" <namhyung@kernel.org>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.999645478@decadent.org.uk>
+Message-ID: <lsq.1541965745.610208314@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 366/366] perf tools: Fix python extension build for gcc 8
+Subject: [PATCH 3.16 365/366] perf thread_map: Correctly size buffer used
+ with dirent->dt_name
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -61,72 +61,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-commit b7a313d84e853049062011d78cb04b6decd12f5c upstream.
+commit bdf23a9a190d7ecea092fd5c4aabb7d4bd0a9980 upstream.
 
-The gcc 8 compiler won't compile the python extension code with the
-following errors (one example):
+The size of dirent->dt_name is NAME_MAX + 1, but the size for the 'path'
+buffer is hard coded at 256, which may truncate it because we also
+prepend "/proc/", so that all that into account and thank gcc 7 for this
+warning:
 
-  python.c:830:15: error: cast between incompatible  function types from              \
-  ‘PyObject * (*)(struct pyrf_evsel *, PyObject *, PyObject *)’                       \
-  uct _object * (*)(struct pyrf_evsel *, struct _object *, struct _object *)’} to     \
-  ‘PyObject * (*)(PyObject *, PyObject *)’ {aka ‘struct _object * (*)(struct _objeuct \
-  _object *)’} [-Werror=cast-function-type]
-     .ml_meth  = (PyCFunction)pyrf_evsel__open,
+  /git/linux/tools/perf/util/thread_map.c: In function 'thread_map__new_by_uid':
+  /git/linux/tools/perf/util/thread_map.c:119:39: error: '%s' directive output may be truncated writing up to 255 bytes into a region of size 250 [-Werror=format-truncation=]
+     snprintf(path, sizeof(path), "/proc/%s", dirent->d_name);
+                                         ^~
+  In file included from /usr/include/stdio.h:939:0,
+                   from /git/linux/tools/perf/util/thread_map.c:5:
+  /usr/include/bits/stdio2.h:64:10: note: '__builtin___snprintf_chk' output between 7 and 262 bytes into a destination of size 256
+     return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+          __bos (__s), __fmt, __va_arg_pack ());
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The problem with the PyMethodDef::ml_meth callback is that its type is
-determined based on the PyMethodDef::ml_flags value, which we set as
-METH_VARARGS | METH_KEYWORDS.
-
-That indicates that the callback is expecting an extra PyObject* arg, and is
-actually PyCFunctionWithKeywords type, but the base PyMethodDef::ml_meth type
-stays PyCFunction.
-
-Previous gccs did not find this, gcc8 now does. Fixing this by silencing this
-warning for python.c build.
-
-Commiter notes:
-
-Do not do that for CC=clang, as it breaks the build in some clang
-versions, like the ones in fedora up to fedora27:
-
-  fedora:25:error: unknown warning option '-Wno-cast-function-type'; did you mean '-Wno-bad-function-cast'? [-Werror,-Wunknown-warning-option]
-  fedora:26:error: unknown warning option '-Wno-cast-function-type'; did you mean '-Wno-bad-function-cast'? [-Werror,-Wunknown-warning-option]
-  fedora:27:error: unknown warning option '-Wno-cast-function-type'; did you mean '-Wno-bad-function-cast'? [-Werror,-Wunknown-warning-option]
-  #
-
-those have:
-
-  clang version 3.9.1 (tags/RELEASE_391/final)
-
-The one in rawhide accepts that:
-
-  clang version 6.0.0 (tags/RELEASE_600/final)
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: David Ahern <dsahern@gmail.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Link: http://lkml.kernel.org/r/20180319082902.4518-2-jolsa@kernel.org
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: http://lkml.kernel.org/n/tip-csy0r8zrvz5efccgd4k12c82@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- tools/perf/util/setup.py | 2 ++
- 1 file changed, 2 insertions(+)
+ tools/perf/util/thread_map.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/perf/util/setup.py
-+++ b/tools/perf/util/setup.py
-@@ -21,6 +21,7 @@ class install_lib(_install_lib):
- cflags = getenv('CFLAGS', '').split()
- # switch off several checks (need to be at the end of cflags list)
- cflags += ['-fno-strict-aliasing', '-Wno-write-strings', '-Wno-unused-parameter' ]
-+cflags += ['-Wno-cast-function-type' ]
- 
- build_lib = getenv('PYTHON_EXTBUILD_LIB')
- build_tmp = getenv('PYTHON_EXTBUILD_TMP')
+--- a/tools/perf/util/thread_map.c
++++ b/tools/perf/util/thread_map.c
+@@ -63,7 +63,7 @@ struct thread_map *thread_map__new_by_ui
+ {
+ 	DIR *proc;
+ 	int max_threads = 32, items, i;
+-	char path[256];
++	char path[NAME_MAX + 1 + 6];
+ 	struct dirent *dirent, **namelist = NULL;
+ 	struct thread_map *threads = malloc(sizeof(*threads) +
+ 					    max_threads * sizeof(pid_t));
 
