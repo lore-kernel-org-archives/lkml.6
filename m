@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 881BEC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80C4EC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F0A82154B
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46865223CA
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:29:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EV8GwWyx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F0A82154B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tukCJ2Dw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46865223CA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387872AbeKLITi (ORCPT
+        id S2387901AbeKLITj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:19:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41444 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:19:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41488 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387826AbeKLITh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:19:37 -0500
+        id S2387859AbeKLITi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:19:38 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4666F21582;
-        Sun, 11 Nov 2018 22:29:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D25542154B;
+        Sun, 11 Nov 2018 22:29:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975380;
-        bh=ISG6d3Mdh2Jqvveu+lKvwTYnZRslXhSxubj+0uUJdCs=;
+        s=default; t=1541975382;
+        bh=BtkZCaIzEZOL+3cmitvb+lpZb0mN1w43MAR2Yp+JKyk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EV8GwWyx5SQQ+7EwDaNUcBgWO3ICHe0gH4sLNJggTMwoqDQvI6xrIz8qG/ZwpczVw
-         oy3qMHEo+MUpSf3qb2/jQucVgnO5+2mejDMOlx55rNLEVoc+5hFCm3luTU5VrRNahg
-         ryr5Cz43wN9qkxQTNXRbSqcQAsJ/j9B6uaQkqEew=
+        b=tukCJ2Dwcwfx7Gq2AxhvRPw95FxPzHcFexaLP8nt5/GM5nso+xiv2x0PgjhSvFll6
+         svGlja+K3O4wvAAyD9Vr3QyKCQUZNN6BomNoU0HJph1EKTspQoIpCZdwD+nsf+Pair
+         RhiEtXqzFo+Y7+IBefpaX4JRl9qCCU7KxgWZe9Fw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Waldemar Rymarkiewicz <waldemarx.rymarkiewicz@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Subject: [PATCH 4.18 017/350] cpufreq: conservative: Take limits changes into account properly
-Date:   Sun, 11 Nov 2018 14:18:01 -0800
-Message-Id: <20181111221707.896364187@linuxfoundation.org>
+        stable@vger.kernel.org, Fengguang Wu <fengguang.wu@intel.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.18 020/350] ACPI / OSL: Use jiffies as the time bassis for acpi_os_get_timer()
+Date:   Sun, 11 Nov 2018 14:18:04 -0800
+Message-Id: <20181111221708.018543494@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -64,58 +63,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+From: Bart Van Assche <bvanassche@acm.org>
 
-commit da5e79bc70b84971d2b3a55fb252e34e51d81d48 upstream.
+commit 83b2348e2755db48fa8f40fdb791f366fabc0ba0 upstream.
 
-If the policy limits change between invocations of cs_dbs_update(),
-the requested frequency value stored in dbs_info may not be updated
-and the function may use a stale value of it next time.  Moreover, if
-idle periods are takem into account by cs_dbs_update(), the requested
-frequency value stored in dbs_info may be below the min policy limit,
-which is incorrect.
+Since acpi_os_get_timer() may be called after the timer subsystem has
+been suspended, use the jiffies counter instead of ktime_get(). This
+patch avoids that the following warning is reported during hibernation:
 
-To fix these problems, always update the requested frequency value
-in dbs_info along with the local copy of it when the previous
-requested frequency is beyond the policy limits and avoid decreasing
-the requested frequency below the min policy limit when taking
-idle periods into account.
+WARNING: CPU: 0 PID: 612 at kernel/time/timekeeping.c:751 ktime_get+0x116/0x120
+RIP: 0010:ktime_get+0x116/0x120
+Call Trace:
+ acpi_os_get_timer+0xe/0x30
+ acpi_ds_exec_begin_control_op+0x175/0x1de
+ acpi_ds_exec_begin_op+0x2c7/0x39a
+ acpi_ps_create_op+0x573/0x5e4
+ acpi_ps_parse_loop+0x349/0x1220
+ acpi_ps_parse_aml+0x25b/0x6da
+ acpi_ps_execute_method+0x327/0x41b
+ acpi_ns_evaluate+0x4e9/0x6f5
+ acpi_ut_evaluate_object+0xd9/0x2f2
+ acpi_rs_get_method_data+0x8f/0x114
+ acpi_walk_resources+0x122/0x1b6
+ acpi_pci_link_get_current.isra.2+0x157/0x280
+ acpi_pci_link_set+0x32f/0x4a0
+ irqrouter_resume+0x58/0x80
+ syscore_resume+0x84/0x380
+ hibernation_snapshot+0x20c/0x4f0
+ hibernate+0x22d/0x3a6
+ state_store+0x99/0xa0
+ kobj_attr_store+0x37/0x50
+ sysfs_kf_write+0x87/0xa0
+ kernfs_fop_write+0x1a5/0x240
+ __vfs_write+0xd2/0x410
+ vfs_write+0x101/0x250
+ ksys_write+0xab/0x120
+ __x64_sys_write+0x43/0x50
+ do_syscall_64+0x71/0x220
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Fixes: abb6627910a1 (cpufreq: conservative: Fix next frequency selection)
-Fixes: 00bfe05889e9 (cpufreq: conservative: Decrease frequency faster for deferred updates)
-Reported-by: Waldemar Rymarkiewicz <waldemarx.rymarkiewicz@intel.com>
-Cc: All applicable <stable@vger.kernel.org>
+Fixes: 164a08cee135 (ACPICA: Dispatcher: Introduce timeout mechanism for infinite loop detection)
+Reported-by: Fengguang Wu <fengguang.wu@intel.com>
+References: https://lists.01.org/pipermail/lkp/2018-April/008406.html
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Cc: 4.16+ <stable@vger.kernel.org> # 4.16+
 Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Acked-by: Waldemar Rymarkiewicz <waldemarx.rymarkiewicz@intel.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/cpufreq/cpufreq_conservative.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/acpi/osl.c |   15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
---- a/drivers/cpufreq/cpufreq_conservative.c
-+++ b/drivers/cpufreq/cpufreq_conservative.c
-@@ -80,8 +80,10 @@ static unsigned int cs_dbs_update(struct
- 	 * changed in the meantime, so fall back to current frequency in that
- 	 * case.
- 	 */
--	if (requested_freq > policy->max || requested_freq < policy->min)
-+	if (requested_freq > policy->max || requested_freq < policy->min) {
- 		requested_freq = policy->cur;
-+		dbs_info->requested_freq = requested_freq;
-+	}
+--- a/drivers/acpi/osl.c
++++ b/drivers/acpi/osl.c
+@@ -617,15 +617,18 @@ void acpi_os_stall(u32 us)
+ }
  
- 	freq_step = get_freq_step(cs_tuners, policy);
+ /*
+- * Support ACPI 3.0 AML Timer operand
+- * Returns 64-bit free-running, monotonically increasing timer
+- * with 100ns granularity
++ * Support ACPI 3.0 AML Timer operand. Returns a 64-bit free-running,
++ * monotonically increasing timer with 100ns granularity. Do not use
++ * ktime_get() to implement this function because this function may get
++ * called after timekeeping has been suspended. Note: calling this function
++ * after timekeeping has been suspended may lead to unexpected results
++ * because when timekeeping is suspended the jiffies counter is not
++ * incremented. See also timekeeping_suspend().
+  */
+ u64 acpi_os_get_timer(void)
+ {
+-	u64 time_ns = ktime_to_ns(ktime_get());
+-	do_div(time_ns, 100);
+-	return time_ns;
++	return (get_jiffies_64() - INITIAL_JIFFIES) *
++		(ACPI_100NSEC_PER_SEC / HZ);
+ }
  
-@@ -92,7 +94,7 @@ static unsigned int cs_dbs_update(struct
- 	if (policy_dbs->idle_periods < UINT_MAX) {
- 		unsigned int freq_steps = policy_dbs->idle_periods * freq_step;
- 
--		if (requested_freq > freq_steps)
-+		if (requested_freq > policy->min + freq_steps)
- 			requested_freq -= freq_steps;
- 		else
- 			requested_freq = policy->min;
+ acpi_status acpi_os_read_port(acpi_io_address port, u32 * value, u32 width)
 
 
