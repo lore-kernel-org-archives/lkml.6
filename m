@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 719ECC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:20:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA391C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:20:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34DBB20869
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:20:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6F9720869
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:20:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XZeq/lfX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34DBB20869
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="C9ui8hGG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6F9720869
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389688AbeKLJK0 (ORCPT
+        id S2389719AbeKLJKi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:10:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48232 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:10:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48166 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389457AbeKLIVU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:21:20 -0500
+        id S2389488AbeKLIVS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:18 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 261C621707;
-        Sun, 11 Nov 2018 22:31:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 60A3E208A3;
+        Sun, 11 Nov 2018 22:31:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975483;
-        bh=PEknBVHXre1//zsGvrq6VtVHO1zrF3bW9Fylndhglbg=;
+        s=default; t=1541975481;
+        bh=XjxpX01KeEakV+dwZoqTTRnKKB+JsJxbzGTdriIWsKg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XZeq/lfXULOSzc4NziQvVg1U/rg14bLihaPvtSijCCdAvjTugE/wsFmqQFdQWM3+b
-         ob5QIAEDPwDboeao1iLKceDixSIvtKlRMSNJzEnA1tOlkcZ0UN1NrcvQgX6yMDOtPX
-         0oSLZubDg443i/a73qQyNw788zwIKO6TCdufNXds=
+        b=C9ui8hGGc+gYfLWvthAWDekwc2Q9cmSoEThWFyUNReeiWEVyJmpzglaJ0G51qNdNP
+         pg9NNopJBVs1lJlRY+LkT/A8YH7nL+mUqEFu10k6F0RM0He0lJv722+yEEUtLcV/UG
+         +r0ulNwTTA5DH+cEJyBPyiWaAqgpQsF8Hv2mxcEY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.18 239/350] crypto: aesni - dont use GFP_ATOMIC allocation if the request doesnt cross a page in gcm
-Date:   Sun, 11 Nov 2018 14:21:43 -0800
-Message-Id: <20181111221718.035446001@linuxfoundation.org>
+        stable@vger.kernel.org, Damien Le Moal <damien.lemoal@wdc.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.18 269/350] dm zoned: fix various dmz_get_mblock() issues
+Date:   Sun, 11 Nov 2018 14:22:13 -0800
+Message-Id: <20181111221719.270817857@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -62,38 +62,158 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Damien Le Moal <damien.lemoal@wdc.com>
 
-commit a788848116454d753b13a4888e0e31ada3c4d393 upstream.
+commit 3d4e738311327bc4ba1d55fbe2f1da3de4a475f9 upstream.
 
-This patch fixes gcmaes_crypt_by_sg so that it won't use memory
-allocation if the data doesn't cross a page boundary.
+dmz_fetch_mblock() called from dmz_get_mblock() has a race since the
+allocation of the new metadata block descriptor and its insertion in
+the cache rbtree with the READING state is not atomic. Two different
+contexts requesting the same block may end up each adding two different
+descriptors of the same block to the cache.
 
-Authenticated encryption may be used by dm-crypt. If the encryption or
-decryption fails, it would result in I/O error and filesystem corruption.
-The function gcmaes_crypt_by_sg is using GFP_ATOMIC allocation that can
-fail anytime. This patch fixes the logic so that it won't attempt the
-failing allocation if the data doesn't cross a page boundary.
+Another problem for this function is that the BIO for processing the
+block read is allocated after the metadata block descriptor is inserted
+in the cache rbtree. If the BIO allocation fails, the metadata block
+descriptor is freed without first being removed from the rbtree.
 
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Fix the first problem by checking again if the requested block is not in
+the cache right before inserting the newly allocated descriptor,
+atomically under the mblk_lock spinlock. The second problem is fixed by
+simply allocating the BIO before inserting the new block in the cache.
+
+Finally, since dmz_fetch_mblock() also increments a block reference
+counter, rename the function to dmz_get_mblock_slow(). To be symmetric
+and clear, also rename dmz_lookup_mblock() to dmz_get_mblock_fast() and
+increment the block reference counter directly in that function rather
+than in dmz_get_mblock().
+
+Fixes: 3b1a94c88b79 ("dm zoned: drive-managed zoned block device target")
 Cc: stable@vger.kernel.org
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/crypto/aesni-intel_glue.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/dm-zoned-metadata.c |   66 ++++++++++++++++++++++++++---------------
+ 1 file changed, 42 insertions(+), 24 deletions(-)
 
---- a/arch/x86/crypto/aesni-intel_glue.c
-+++ b/arch/x86/crypto/aesni-intel_glue.c
-@@ -817,7 +817,7 @@ static int gcmaes_crypt_by_sg(bool enc,
- 	/* Linearize assoc, if not already linear */
- 	if (req->src->length >= assoclen && req->src->length &&
- 		(!PageHighMem(sg_page(req->src)) ||
--			req->src->offset + req->src->length < PAGE_SIZE)) {
-+			req->src->offset + req->src->length <= PAGE_SIZE)) {
- 		scatterwalk_start(&assoc_sg_walk, req->src);
- 		assoc = scatterwalk_map(&assoc_sg_walk);
- 	} else {
+--- a/drivers/md/dm-zoned-metadata.c
++++ b/drivers/md/dm-zoned-metadata.c
+@@ -339,10 +339,11 @@ static void dmz_insert_mblock(struct dmz
+ }
+ 
+ /*
+- * Lookup a metadata block in the rbtree.
++ * Lookup a metadata block in the rbtree. If the block is found, increment
++ * its reference count.
+  */
+-static struct dmz_mblock *dmz_lookup_mblock(struct dmz_metadata *zmd,
+-					    sector_t mblk_no)
++static struct dmz_mblock *dmz_get_mblock_fast(struct dmz_metadata *zmd,
++					      sector_t mblk_no)
+ {
+ 	struct rb_root *root = &zmd->mblk_rbtree;
+ 	struct rb_node *node = root->rb_node;
+@@ -350,8 +351,17 @@ static struct dmz_mblock *dmz_lookup_mbl
+ 
+ 	while (node) {
+ 		mblk = container_of(node, struct dmz_mblock, node);
+-		if (mblk->no == mblk_no)
++		if (mblk->no == mblk_no) {
++			/*
++			 * If this is the first reference to the block,
++			 * remove it from the LRU list.
++			 */
++			mblk->ref++;
++			if (mblk->ref == 1 &&
++			    !test_bit(DMZ_META_DIRTY, &mblk->state))
++				list_del_init(&mblk->link);
+ 			return mblk;
++		}
+ 		node = (mblk->no < mblk_no) ? node->rb_left : node->rb_right;
+ 	}
+ 
+@@ -382,32 +392,47 @@ static void dmz_mblock_bio_end_io(struct
+ }
+ 
+ /*
+- * Read a metadata block from disk.
++ * Read an uncached metadata block from disk and add it to the cache.
+  */
+-static struct dmz_mblock *dmz_fetch_mblock(struct dmz_metadata *zmd,
+-					   sector_t mblk_no)
++static struct dmz_mblock *dmz_get_mblock_slow(struct dmz_metadata *zmd,
++					      sector_t mblk_no)
+ {
+-	struct dmz_mblock *mblk;
++	struct dmz_mblock *mblk, *m;
+ 	sector_t block = zmd->sb[zmd->mblk_primary].block + mblk_no;
+ 	struct bio *bio;
+ 
+-	/* Get block and insert it */
++	/* Get a new block and a BIO to read it */
+ 	mblk = dmz_alloc_mblock(zmd, mblk_no);
+ 	if (!mblk)
+ 		return NULL;
+ 
+-	spin_lock(&zmd->mblk_lock);
+-	mblk->ref++;
+-	set_bit(DMZ_META_READING, &mblk->state);
+-	dmz_insert_mblock(zmd, mblk);
+-	spin_unlock(&zmd->mblk_lock);
+-
+ 	bio = bio_alloc(GFP_NOIO, 1);
+ 	if (!bio) {
+ 		dmz_free_mblock(zmd, mblk);
+ 		return NULL;
+ 	}
+ 
++	spin_lock(&zmd->mblk_lock);
++
++	/*
++	 * Make sure that another context did not start reading
++	 * the block already.
++	 */
++	m = dmz_get_mblock_fast(zmd, mblk_no);
++	if (m) {
++		spin_unlock(&zmd->mblk_lock);
++		dmz_free_mblock(zmd, mblk);
++		bio_put(bio);
++		return m;
++	}
++
++	mblk->ref++;
++	set_bit(DMZ_META_READING, &mblk->state);
++	dmz_insert_mblock(zmd, mblk);
++
++	spin_unlock(&zmd->mblk_lock);
++
++	/* Submit read BIO */
+ 	bio->bi_iter.bi_sector = dmz_blk2sect(block);
+ 	bio_set_dev(bio, zmd->dev->bdev);
+ 	bio->bi_private = mblk;
+@@ -509,19 +534,12 @@ static struct dmz_mblock *dmz_get_mblock
+ 
+ 	/* Check rbtree */
+ 	spin_lock(&zmd->mblk_lock);
+-	mblk = dmz_lookup_mblock(zmd, mblk_no);
+-	if (mblk) {
+-		/* Cache hit: remove block from LRU list */
+-		mblk->ref++;
+-		if (mblk->ref == 1 &&
+-		    !test_bit(DMZ_META_DIRTY, &mblk->state))
+-			list_del_init(&mblk->link);
+-	}
++	mblk = dmz_get_mblock_fast(zmd, mblk_no);
+ 	spin_unlock(&zmd->mblk_lock);
+ 
+ 	if (!mblk) {
+ 		/* Cache miss: read the block from disk */
+-		mblk = dmz_fetch_mblock(zmd, mblk_no);
++		mblk = dmz_get_mblock_slow(zmd, mblk_no);
+ 		if (!mblk)
+ 			return ERR_PTR(-ENOMEM);
+ 	}
 
 
