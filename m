@@ -7,45 +7,43 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41AE1C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:14:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F6E9C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:15:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0877B2084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:14:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7E0620871
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:14:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="e/2j+Xvh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0877B2084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="y4st63D+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7E0620871
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730847AbeKLKFR (ORCPT
+        id S1730868AbeKLKFZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 05:05:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59904 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 05:05:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730338AbeKLIRL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730341AbeKLIRL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:17:11 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D760421731;
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F16021508;
         Sun, 11 Nov 2018 22:27:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975235;
-        bh=eEeNZ/B42idF2A3i/dTfI6A5rA/R8C6tOr4VSodBISU=;
+        bh=KSonLcHyhOooC5ozSCxhIoRsROtKUfTWXXSPM7aOkTc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e/2j+Xvh5N7affdJ7rUVMAc7UO8/aKLxssUjOfGjXmP7HzcJBi2jvHpdX5uO52ngh
-         RcdFAOaLX4Ir2WwxMxYDd7nFwvV0uNrfvXy5bI/3aLeDHkPC1hzNBxuTPb1mGztAeK
-         UqdT9aGk82rEf1dhclPYvVp91Qc2c6tjPksWSNhc=
+        b=y4st63D+5WCMuJRrlQMG+us1WnfeNp4JwTTxely3zhiNkTJXv7n1tjmnQglrKTndb
+         Y/K1neOObiqRv66eWryVaJP2MzIHtNkIafJOAf/Ll28v3WNtlxI/pN5T9iTGZBLppb
+         gr8Nw9ATJaaaicV4iVyh/emN4V3TikrncLkJf7e4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?H=C3=A5vard?= <hovardslill@gmail.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.19 035/361] ALSA: hda - Fix headphone pin config for ASUS G751
-Date:   Sun, 11 Nov 2018 14:16:22 -0800
-Message-Id: <20181111221624.684977853@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.19 034/361] ALSA: hda - Add quirk for ASUS G751 laptop
+Date:   Sun, 11 Nov 2018 14:16:21 -0800
+Message-Id: <20181111221624.512053339@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -65,20 +63,19 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Takashi Iwai <tiwai@suse.de>
 
-commit 5b7c5e1f4c36b99d0f694f38b9ad910f520cb7ef upstream.
+commit 11ba6111160290ccd35562f4e05cec08942a6c4c upstream.
 
-BIOS on ASUS G751 doesn't seem to map the headphone pin (NID 0x16)
-correctly.  Add a quirk to address it, as well as chaining to the
-previous fix for the microphone.
+ASUS G751 requires the extra COEF initialization to make it microphone
+working properly.
 
-Reported-by: Håvard <hovardslill@gmail.com>
+Reported-and-tested-by: Håvard <hovardslill@gmail.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |   12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ sound/pci/hda/patch_realtek.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
 --- a/sound/pci/hda/patch_realtek.c
 +++ b/sound/pci/hda/patch_realtek.c
@@ -86,34 +83,32 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	ALC662_FIXUP_ASUS_Nx50,
  	ALC668_FIXUP_ASUS_Nx51_HEADSET_MODE,
  	ALC668_FIXUP_ASUS_Nx51,
-+	ALC668_FIXUP_MIC_COEF,
- 	ALC668_FIXUP_ASUS_G751,
++	ALC668_FIXUP_ASUS_G751,
  	ALC891_FIXUP_HEADSET_MODE,
  	ALC891_FIXUP_DELL_MIC_NO_PRESENCE,
-@@ -8008,7 +8009,7 @@ static const struct hda_fixup alc662_fix
+ 	ALC662_FIXUP_ACER_VERITON,
+@@ -8007,6 +8008,14 @@ static const struct hda_fixup alc662_fix
  		.chained = true,
  		.chain_id = ALC668_FIXUP_ASUS_Nx51_HEADSET_MODE,
  	},
--	[ALC668_FIXUP_ASUS_G751] = {
-+	[ALC668_FIXUP_MIC_COEF] = {
- 		.type = HDA_FIXUP_VERBS,
- 		.v.verbs = (const struct hda_verb[]) {
- 			{ 0x20, AC_VERB_SET_COEF_INDEX, 0xc3 },
-@@ -8016,6 +8017,15 @@ static const struct hda_fixup alc662_fix
- 			{}
- 		},
- 	},
 +	[ALC668_FIXUP_ASUS_G751] = {
-+		.type = HDA_FIXUP_PINS,
-+		.v.pins = (const struct hda_pintbl[]) {
-+			{ 0x16, 0x0421101f }, /* HP */
++		.type = HDA_FIXUP_VERBS,
++		.v.verbs = (const struct hda_verb[]) {
++			{ 0x20, AC_VERB_SET_COEF_INDEX, 0xc3 },
++			{ 0x20, AC_VERB_SET_PROC_COEF, 0x4000 },
 +			{}
 +		},
-+		.chained = true,
-+		.chain_id = ALC668_FIXUP_MIC_COEF
 +	},
  	[ALC891_FIXUP_HEADSET_MODE] = {
  		.type = HDA_FIXUP_FUNC,
  		.v.func = alc_fixup_headset_mode,
+@@ -8080,6 +8089,7 @@ static const struct snd_pci_quirk alc662
+ 	SND_PCI_QUIRK(0x1043, 0x11cd, "Asus N550", ALC662_FIXUP_ASUS_Nx50),
+ 	SND_PCI_QUIRK(0x1043, 0x13df, "Asus N550JX", ALC662_FIXUP_BASS_1A),
+ 	SND_PCI_QUIRK(0x1043, 0x129d, "Asus N750", ALC662_FIXUP_ASUS_Nx50),
++	SND_PCI_QUIRK(0x1043, 0x12ff, "ASUS G751", ALC668_FIXUP_ASUS_G751),
+ 	SND_PCI_QUIRK(0x1043, 0x1477, "ASUS N56VZ", ALC662_FIXUP_BASS_MODE4_CHMAP),
+ 	SND_PCI_QUIRK(0x1043, 0x15a7, "ASUS UX51VZH", ALC662_FIXUP_BASS_16),
+ 	SND_PCI_QUIRK(0x1043, 0x177d, "ASUS N551", ALC668_FIXUP_ASUS_Nx51),
 
 
