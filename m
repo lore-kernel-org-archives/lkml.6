@@ -3,47 +3,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 705E9C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:24:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3DE1C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:24:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BB1020818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:24:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BB1020818
+	by mail.kernel.org (Postfix) with ESMTP id B669520818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:24:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B669520818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731089AbeKLGOH (ORCPT
+        id S1730795AbeKLGOH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 12 Nov 2018 01:14:07 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51090 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51100 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730695AbeKLFsa (ORCPT
+        by vger.kernel.org with ESMTP id S1730696AbeKLFsa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 00:48:30 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsq-0000oF-Ld; Sun, 11 Nov 2018 19:59:00 +0000
+        id 1gLvsq-0000oG-He; Sun, 11 Nov 2018 19:59:00 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsW-0001k1-VY; Sun, 11 Nov 2018 19:58:40 +0000
+        id 1gLvsX-0001kG-4T; Sun, 11 Nov 2018 19:58:41 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
-        "syzbot" <syzkaller@googlegroups.com>,
-        "Eric Biggers" <ebiggers@google.com>
+CC:     akpm@linux-foundation.org, "Arnd Bergmann" <arnd@arndb.de>,
+        "Theodore Ts'o" <tytso@mit.edu>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.484128702@decadent.org.uk>
+Message-ID: <lsq.1541965745.797933760@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 263/366] KEYS: DNS: fix parsing multiple options
+Subject: [PATCH 3.16 266/366] random: mix rdrand with entropy sent in from
+ userspace
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,105 +57,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit c604cb767049b78b3075497b80ebb8fd530ea2cc upstream.
+commit 81e69df38e2911b642ec121dec319fad2a4782f3 upstream.
 
-My recent fix for dns_resolver_preparse() printing very long strings was
-incomplete, as shown by syzbot which still managed to hit the
-WARN_ONCE() in set_precision() by adding a crafted "dns_resolver" key:
+Fedora has integrated the jitter entropy daemon to work around slow
+boot problems, especially on VM's that don't support virtio-rng:
 
-    precision 50001 too large
-    WARNING: CPU: 7 PID: 864 at lib/vsprintf.c:2164 vsnprintf+0x48a/0x5a0
+    https://bugzilla.redhat.com/show_bug.cgi?id=1572944
 
-The bug this time isn't just a printing bug, but also a logical error
-when multiple options ("#"-separated strings) are given in the key
-payload.  Specifically, when separating an option string into name and
-value, if there is no value then the name is incorrectly considered to
-end at the end of the key payload, rather than the end of the current
-option.  This bypasses validation of the option length, and also means
-that specifying multiple options is broken -- which presumably has gone
-unnoticed as there is currently only one valid option anyway.
+It's understandable why they did this, but the Jitter entropy daemon
+works fundamentally on the principle: "the CPU microarchitecture is
+**so** complicated and we can't figure it out, so it *must* be
+random".  Yes, it uses statistical tests to "prove" it is secure, but
+AES_ENCRYPT(NSA_KEY, COUNTER++) will also pass statistical tests with
+flying colors.
 
-A similar problem also applied to option values, as the kstrtoul() when
-parsing the "dnserror" option will read past the end of the current
-option and into the next option.
+So if RDRAND is available, mix it into entropy submitted from
+userspace.  It can't hurt, and if you believe the NSA has backdoored
+RDRAND, then they probably have enough details about the Intel
+microarchitecture that they can reverse engineer how the Jitter
+entropy daemon affects the microarchitecture, and attack its output
+stream.  And if RDRAND is in fact an honest DRNG, it will immeasurably
+improve on what the Jitter entropy daemon might produce.
 
-Fix these bugs by correctly computing the length of the option name and
-by copying the option value, null-terminated, into a temporary buffer.
+This also provides some protection against someone who is able to read
+or set the entropy seed file.
 
-Reproducer for the WARN_ONCE() that syzbot hit:
-
-    perl -e 'print "#A#", "\0" x 50000' | keyctl padd dns_resolver desc @s
-
-Reproducer for "dnserror" option being parsed incorrectly (expected
-behavior is to fail when seeing the unknown option "foo", actual
-behavior was to read the dnserror value as "1#foo" and fail there):
-
-    perl -e 'print "#dnserror=1#foo\0"' | keyctl padd dns_resolver desc @s
-
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Fixes: 4a2d789267e0 ("DNS: If the DNS server returns an error, allow that to be cached [ver #2]")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/dns_resolver/dns_key.c | 28 ++++++++++++++++------------
- 1 file changed, 16 insertions(+), 12 deletions(-)
+ drivers/char/random.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
---- a/net/dns_resolver/dns_key.c
-+++ b/net/dns_resolver/dns_key.c
-@@ -89,35 +89,39 @@ dns_resolver_instantiate(struct key *key
- 		opt++;
- 		kdebug("options: '%s'", opt);
- 		do {
-+			int opt_len, opt_nlen;
- 			const char *eq;
--			int opt_len, opt_nlen, opt_vlen, tmp;
-+			char optval[128];
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -1418,14 +1418,22 @@ static int
+ write_pool(struct entropy_store *r, const char __user *buffer, size_t count)
+ {
+ 	size_t bytes;
+-	__u32 buf[16];
++	__u32 t, buf[16];
+ 	const char __user *p = buffer;
  
- 			next_opt = memchr(opt, '#', end - opt) ?: end;
- 			opt_len = next_opt - opt;
--			if (opt_len <= 0 || opt_len > 128) {
-+			if (opt_len <= 0 || opt_len > sizeof(optval)) {
- 				pr_warn_ratelimited("Invalid option length (%d) for dns_resolver key\n",
- 						    opt_len);
- 				return -EINVAL;
- 			}
- 
--			eq = memchr(opt, '=', opt_len) ?: end;
--			opt_nlen = eq - opt;
--			eq++;
--			opt_vlen = next_opt - eq; /* will be -1 if no value */
--
--			tmp = opt_vlen >= 0 ? opt_vlen : 0;
--			kdebug("option '%*.*s' val '%*.*s'",
--			       opt_nlen, opt_nlen, opt, tmp, tmp, eq);
-+			eq = memchr(opt, '=', opt_len);
-+			if (eq) {
-+				opt_nlen = eq - opt;
-+				eq++;
-+				memcpy(optval, eq, next_opt - eq);
-+				optval[next_opt - eq] = '\0';
-+			} else {
-+				opt_nlen = opt_len;
-+				optval[0] = '\0';
-+			}
+ 	while (count > 0) {
++		int b, i = 0;
 +
-+			kdebug("option '%*.*s' val '%s'",
-+			       opt_nlen, opt_nlen, opt, optval);
+ 		bytes = min(count, sizeof(buf));
+ 		if (copy_from_user(&buf, p, bytes))
+ 			return -EFAULT;
  
- 			/* see if it's an error number representing a DNS error
- 			 * that's to be recorded as the result in this key */
- 			if (opt_nlen == sizeof(DNS_ERRORNO_OPTION) - 1 &&
- 			    memcmp(opt, DNS_ERRORNO_OPTION, opt_nlen) == 0) {
- 				kdebug("dns error number option");
--				if (opt_vlen <= 0)
--					goto bad_option_value;
- 
--				ret = kstrtoul(eq, 10, &derrno);
-+				ret = kstrtoul(optval, 10, &derrno);
- 				if (ret < 0)
- 					goto bad_option_value;
++		for (b = bytes ; b > 0 ; b -= sizeof(__u32), i++) {
++			if (!arch_get_random_int(&t))
++				break;
++			buf[i] ^= t;
++		}
++
+ 		count -= bytes;
+ 		p += bytes;
  
 
