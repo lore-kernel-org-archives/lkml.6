@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7485C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:14:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66DC6C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:14:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A01A82148E
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:14:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A01A82148E
+	by mail.kernel.org (Postfix) with ESMTP id 2CA182080D
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:14:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CA182080D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731671AbeKLGEQ (ORCPT
+        id S1731725AbeKLGES (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:04:16 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52898 "EHLO
+        Mon, 12 Nov 2018 01:04:18 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52904 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726816AbeKLGEQ (ORCPT
+        by vger.kernel.org with ESMTP id S1726816AbeKLGER (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 01:04:16 -0500
+        Mon, 12 Nov 2018 01:04:17 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsy-0000oO-72; Sun, 11 Nov 2018 19:59:08 +0000
+        id 1gLvss-0000l8-6K; Sun, 11 Nov 2018 19:59:02 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsU-0001d9-5K; Sun, 11 Nov 2018 19:58:38 +0000
+        id 1gLvsV-0001gC-Hn; Sun, 11 Nov 2018 19:58:39 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Takashi Iwai" <tiwai@suse.de>
+CC:     akpm@linux-foundation.org, "Mikulas Patocka" <mpatocka@redhat.com>,
+        "Dave Airlie" <airlied@redhat.com>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.695293795@decadent.org.uk>
+Message-ID: <lsq.1541965745.954890705@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 193/366] ALSA: timer: Fix UBSAN warning at
- SNDRV_TIMER_IOCTL_NEXT_DEVICE ioctl
+Subject: [PATCH 3.16 230/366] drm/udl: fix display corruption of the last line
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,50 +56,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-commit b41f794f284966fd6ec634111e3b40d241389f96 upstream.
+commit 99ec9e77511dea55d81729fc80b6c63a61bfa8e0 upstream.
 
-The kernel may spew a WARNING about UBSAN undefined behavior at
-handling ALSA timer ioctl SNDRV_TIMER_IOCTL_NEXT_DEVICE:
+The displaylink hardware has such a peculiarity that it doesn't render a
+command until next command is received. This produces occasional
+corruption, such as when setting 22x11 font on the console, only the first
+line of the cursor will be blinking if the cursor is located at some
+specific columns.
 
-UBSAN: Undefined behaviour in sound/core/timer.c:1524:19
-signed integer overflow:
-2147483647 + 1 cannot be represented in type 'int'
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x122/0x1c8 lib/dump_stack.c:113
- ubsan_epilogue+0x12/0x86 lib/ubsan.c:159
- handle_overflow+0x1c2/0x21f lib/ubsan.c:190
- __ubsan_handle_add_overflow+0x2a/0x31 lib/ubsan.c:198
- snd_timer_user_next_device sound/core/timer.c:1524 [inline]
- __snd_timer_user_ioctl+0x204d/0x2520 sound/core/timer.c:1939
- snd_timer_user_ioctl+0x67/0x95 sound/core/timer.c:1994
- ....
+When we end up with a repeating pixel, the driver has a bug that it leaves
+one uninitialized byte after the command (and this byte is enough to flush
+the command and render it - thus it fixes the screen corruption), however
+whe we end up with a non-repeating pixel, there is no byte appended and
+this results in temporary screen corruption.
 
-It happens only when a value with INT_MAX is passed, as we're
-incrementing it unconditionally.  So the fix is trivial, check the
-value with INT_MAX.  Although the bug itself is fairly harmless, it's
-better to fix it so that fuzzers won't hit this again later.
+This patch fixes the screen corruption by always appending a byte 0xAF at
+the end of URB. It also removes the uninitialized byte.
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=200213
-Reported-and-tested-by: Team OWL337 <icytxw@gmail.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-[bwh: Backported to 3.16: adjust context, indentation]
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Signed-off-by: Dave Airlie <airlied@redhat.com>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/core/timer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/udl/udl_fb.c       |  5 ++++-
+ drivers/gpu/drm/udl/udl_transfer.c | 11 +++++++----
+ 2 files changed, 11 insertions(+), 5 deletions(-)
 
---- a/sound/core/timer.c
-+++ b/sound/core/timer.c
-@@ -1476,7 +1476,7 @@ static int snd_timer_user_next_device(st
- 					} else {
- 						if (id.subdevice < 0) {
- 							id.subdevice = 0;
--						} else {
-+						} else if (id.subdevice < INT_MAX) {
- 							id.subdevice++;
- 						}
- 					}
+--- a/drivers/gpu/drm/udl/udl_fb.c
++++ b/drivers/gpu/drm/udl/udl_fb.c
+@@ -234,7 +234,10 @@ int udl_handle_damage(struct udl_framebu
+ 
+ 	if (cmd > (char *) urb->transfer_buffer) {
+ 		/* Send partial buffer remaining before exiting */
+-		int len = cmd - (char *) urb->transfer_buffer;
++		int len;
++		if (cmd < (char *) urb->transfer_buffer + urb->transfer_buffer_length)
++			*cmd++ = 0xAF;
++		len = cmd - (char *) urb->transfer_buffer;
+ 		ret = udl_submit_urb(dev, urb, len);
+ 		bytes_sent += len;
+ 	} else
+--- a/drivers/gpu/drm/udl/udl_transfer.c
++++ b/drivers/gpu/drm/udl/udl_transfer.c
+@@ -149,11 +149,11 @@ static void udl_compress_hline16(
+ 		raw_pixels_count_byte = cmd++; /*  we'll know this later */
+ 		raw_pixel_start = pixel;
+ 
+-		cmd_pixel_end = pixel + (min(MAX_CMD_PIXELS + 1,
+-			min((int)(pixel_end - pixel) / bpp,
+-			    (int)(cmd_buffer_end - cmd) / 2))) * bpp;
++		cmd_pixel_end = pixel + min3(MAX_CMD_PIXELS + 1UL,
++					(unsigned long)(pixel_end - pixel) / bpp,
++					(unsigned long)(cmd_buffer_end - 1 - cmd) / 2) * bpp;
+ 
+-		prefetch_range((void *) pixel, (cmd_pixel_end - pixel) * bpp);
++		prefetch_range((void *) pixel, cmd_pixel_end - pixel);
+ 
+ 		while (pixel < cmd_pixel_end) {
+ 			const u8 *const start = pixel;
+@@ -193,6 +193,9 @@ static void udl_compress_hline16(
+ 		if (pixel > raw_pixel_start) {
+ 			/* finalize last RAW span */
+ 			*raw_pixels_count_byte = ((pixel-raw_pixel_start) / bpp) & 0xFF;
++		} else {
++			/* undo unused byte */
++			cmd--;
+ 		}
+ 
+ 		*cmd_pixels_count_byte = ((pixel - cmd_pixel_start) / bpp) & 0xFF;
 
