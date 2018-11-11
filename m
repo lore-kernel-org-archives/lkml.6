@@ -2,131 +2,226 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34B3FC0044C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 18:33:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FEA6C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 18:36:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3CDE20871
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 18:33:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3CDE20871
+	by mail.kernel.org (Postfix) with ESMTP id 42C8F20871
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 18:36:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42C8F20871
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729436AbeKLEXM (ORCPT
+        id S1729442AbeKLEZk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 23:23:12 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38782 "EHLO
+        Sun, 11 Nov 2018 23:25:40 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45152 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729390AbeKLEXL (ORCPT
+        by vger.kernel.org with ESMTP id S1726283AbeKLEZj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 23:23:11 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wABISvnh137749
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 13:33:55 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2npde80083-1
+        Sun, 11 Nov 2018 23:25:39 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wABIY6AK108336
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 13:36:22 -0500
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2npd7602rh-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 13:33:55 -0500
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 13:36:22 -0500
 Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Sun, 11 Nov 2018 18:33:52 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Sun, 11 Nov 2018 18:36:21 -0000
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 11 Nov 2018 18:33:48 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wABIXl2E6357490
+        Sun, 11 Nov 2018 18:36:18 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wABIaIZN3867040
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 11 Nov 2018 18:33:48 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DFA744C044;
-        Sun, 11 Nov 2018 18:33:47 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E09D34C040;
-        Sun, 11 Nov 2018 18:33:46 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.88.36])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sun, 11 Nov 2018 18:33:46 +0000 (GMT)
-Subject: Re: [BUG] Nuvoton NCPT650 TPM 2.0 mode not working
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>,
-        peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
-        arnd@arndb.de, linux-integrity@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Date:   Sun, 11 Nov 2018 13:33:36 -0500
-In-Reply-To: <776f384a81466642472beb4a34b10f26f1de88e9.camel@mniewoehner.de>
-References: <776f384a81466642472beb4a34b10f26f1de88e9.camel@mniewoehner.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Sun, 11 Nov 2018 18:36:18 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0AE69B2065;
+        Sun, 11 Nov 2018 18:36:18 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C8518B2064;
+        Sun, 11 Nov 2018 18:36:17 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.207.24])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Sun, 11 Nov 2018 18:36:17 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id E893B16C414A; Sun, 11 Nov 2018 10:36:18 -0800 (PST)
+Date:   Sun, 11 Nov 2018 10:36:18 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, josh@joshtriplett.org,
+        rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+        jiangshanlai@gmail.com
+Subject: Re: dyntick-idle CPU and node's qsmask
+Reply-To: paulmck@linux.ibm.com
+References: <20181110214659.GA96924@google.com>
+ <20181110230436.GL4170@linux.ibm.com>
+ <20181111030925.GA182908@google.com>
+ <20181111042210.GN4170@linux.ibm.com>
+ <20181111180916.GA25327@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181111180916.GA25327@google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 X-TM-AS-GCONF: 00
-x-cbid: 18111118-0020-0000-0000-000002E65700
+x-cbid: 18111118-0072-0000-0000-000003C6EFFB
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010028; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01115996; UDB=6.00577118; IPR=6.00896097;
+ MB=3.00024114; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-11 18:36:20
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111118-0021-0000-0000-000021355932
-Message-Id: <1541961216.3734.60.camel@linux.ibm.com>
+x-cbparentid: 18111118-0073-0000-0000-00004A132F2D
+Message-Id: <20181111183618.GY4170@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-11_12:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811110176
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811110177
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-11-11 at 18:55 +0100, Michael Niewöhner wrote:
-> Hi all,
+On Sun, Nov 11, 2018 at 10:09:16AM -0800, Joel Fernandes wrote:
+> On Sat, Nov 10, 2018 at 08:22:10PM -0800, Paul E. McKenney wrote:
+> > On Sat, Nov 10, 2018 at 07:09:25PM -0800, Joel Fernandes wrote:
+> > > On Sat, Nov 10, 2018 at 03:04:36PM -0800, Paul E. McKenney wrote:
+> > > > On Sat, Nov 10, 2018 at 01:46:59PM -0800, Joel Fernandes wrote:
+> > > > > Hi Paul and everyone,
+> > > > > 
+> > > > > I was tracing/studying the RCU code today in paul/dev branch and noticed that
+> > > > > for dyntick-idle CPUs, the RCU GP thread is clearing the rnp->qsmask
+> > > > > corresponding to the leaf node for the idle CPU, and reporting a QS on their
+> > > > > behalf.
+> > > > > 
+> > > > > rcu_sched-10    [003]    40.008039: rcu_fqs:              rcu_sched 792 0 dti
+> > > > > rcu_sched-10    [003]    40.008039: rcu_fqs:              rcu_sched 801 2 dti
+> > > > > rcu_sched-10    [003]    40.008041: rcu_quiescent_state_report: rcu_sched 805 5>0 0 0 3 0
+> > > > > 
+> > > > > That's all good but I was wondering if we can do better for the idle CPUs if
+> > > > > we can some how not set the qsmask of the node in the first place. Then no
+> > > > > reporting would be needed of quiescent state is needed for idle CPUs right?
+> > > > > And we would also not need to acquire the rnp lock I think.
+> > > > > 
+> > > > > At least for a single node tree RCU system, it seems that would avoid needing
+> > > > > to acquire the lock without complications. Anyway let me know your thoughts
+> > > > > and happy to discuss this at the hallways of the LPC as well for folks
+> > > > > attending :)
+> > > > 
+> > > > We could, but that would require consulting the rcu_data structure for
+> > > > each CPU while initializing the grace period, thus increasing the number
+> > > > of cache misses during grace-period initialization and also shortly after
+> > > > for any non-idle CPUs.  This seems backwards on busy systems where each
+> > > 
+> > > When I traced, it appears to me that rcu_data structure of a remote CPU was
+> > > being consulted anyway by the rcu_sched thread. So it seems like such cache
+> > > miss would happen anyway whether it is during grace-period initialization or
+> > > during the fqs stage? I guess I'm trying to say, the consultation of remote
+> > > CPU's rcu_data happens anyway.
+> > 
+> > Hmmm...
+> > 
+> > The rcu_gp_init() function does access an rcu_data structure, but it is
+> > that of the current CPU, so shouldn't involve a communications cache miss,
+> > at least not in the common case.
+> > 
+> > Or are you seeing these cross-CPU rcu_data accesses in rcu_gp_fqs() or
+> > functions that it calls?  In that case, please see below.
 > 
-> Nuvoton NCPT650 does not work in TPM 2.0 mode with tpm_tis / tpm_i2c_nuvoton
-> while it works in TPM 1.2 mode (I can reflash it via UEFI setup).
-> Kernel version is 4.19.1
+> Yes, it was rcu_implicit_dynticks_qs called from rcu_gp_fqs.
 > 
-> Kernel config:
+> > > > CPU will with high probability report its own quiescent state before three
+> > > > jiffies pass, in which case the cache misses on the rcu_data structures
+> > > > would be wasted motion.
+> > > 
+> > > If all the CPUs are busy and reporting their QS themselves, then I think the
+> > > qsmask is likely 0 so then rcu_implicit_dynticks_qs (called from
+> > > force_qs_rnp) wouldn't be called and so there would no cache misses on
+> > > rcu_data right?
+> > 
+> > Yes, but assuming that all CPUs report their quiescent states before
+> > the first call to rcu_gp_fqs().  One exception is when some CPU is
+> > looping in the kernel for many milliseconds without passing through a
+> > quiescent state.  This is because for recent kernels, cond_resched()
+> > is not a quiescent state until the grace period is something like 100
+> > milliseconds old.  (For older kernels, cond_resched() was never an RCU
+> > quiescent state unless it actually scheduled.)
+> > 
+> > Why wait 100 milliseconds?  Because otherwise the increase in
+> > cond_resched() overhead shows up all too well, causing 0day test robot
+> > to complain bitterly.  Besides, I would expect that in the common case,
+> > CPUs would be executing usermode code.
 > 
-> $ cat .config | egrep 'TCG|TPM|CRB|_TIS'
-> CONFIG_TCG_TPM=y
-> CONFIG_HW_RANDOM_TPM=y
-> CONFIG_TCG_TIS_CORE=y
-> CONFIG_TCG_TIS=y
-> CONFIG_TCG_TIS_SPI=y
-> # CONFIG_TCG_TIS_I2C_ATMEL is not set
-> # CONFIG_TCG_TIS_I2C_INFINEON is not set
-> CONFIG_TCG_TIS_I2C_NUVOTON=y
-> # CONFIG_TCG_NSC is not set
-> # CONFIG_TCG_ATMEL is not set
-> # CONFIG_TCG_INFINEON is not set
-> CONFIG_TCG_CRB=y
-> # CONFIG_TCG_VTPM_PROXY is not set
-> # CONFIG_TCG_TIS_ST33ZP24_I2C is not set
-> # CONFIG_TCG_TIS_ST33ZP24_SPI is not set
-> 
-> 
-> TPM 1.2 mode dmesg:
-> 
-> $ dmesg | egrep -i tis\|tpm\|crb
-> [    3.210040] tpm_tis 00:0a: 1.2 TPM (device-id 0xFE, rev-id 2)
-> 
-> 
-> TPM 2.0 mode dmesg:
-> 
-> $ dmesg | egrep -i tis\|tpm\|crb
-> [    0.000000] efi:  ACPI
-> 2.0=0x9e457000  ACPI=0x9e457000  SMBIOS=0x9ec44000  SMBIOS
-> 3.0=0x9ec43000  TPMEventLog=0x9711f018 
-> [    0.003517] ACPI: TPM2 0x000000009E490ED8 000034 (v03 LENOVO TC-
-> S06   00001300 AMI  00000000)
-> [    4.071550] ima: No TPM chip found, activating TPM-bypass!
+> Makes sense. I was also wondering about this other thing you mentioned about
+> waiting for 3 jiffies before reporting the idle CPU's quiescent state. Does
+> that mean that even if a single CPU is dyntick-idle for a long period of
+> time, then the minimum grace period duration would be atleast 3 jiffies? In
+> our mobile embedded devices, jiffies is set to 3.33ms (HZ=300) to keep power
+> consumption low. Not that I'm saying its an issue or anything (since IIUC if
+> someone wants shorter grace periods, they should just use expedited GPs), but
+> it sounds like it would be shorter GP if we just set the qsmask early on some
+> how and we can manage the overhead of doing so.
 
-It's possible that eventually the TPM is initialized, but not in time
-for IMA.  Could you you check to see if the TPM is responding to
-userspace commands after boot?
+First, there is some autotuning of the delay based on HZ:
 
-Mimi
+#define RCU_JIFFIES_TILL_FORCE_QS (1 + (HZ > 250) + (HZ > 500))
+
+So at HZ=300, you should be seeing a two-jiffy delay rather than the
+usual HZ=1000 three-jiffy delay.  Of course, this means that the delay
+is 6.67ms rather than the usual 3ms, but the theory is that lower HZ
+rates often mean slower instruction execution and thus a desire for
+lower RCU overhead.  There is further autotuning based on number of
+CPUs, but this does not kick in until you have 256 CPUs on your system,
+and I bet that smartphones aren't there yet.  Nevertheless, check out
+RCU_JIFFIES_FQS_DIV for more info on this.
+
+But you can always override this autotuning using the following kernel
+boot paramters:
+
+rcutree.jiffies_till_first_fqs
+rcutree.jiffies_till_next_fqs
+
+You can even set the first one to zero if you want the effect of pre-scanning
+for idle CPUs.  ;-)
+
+The second must be set to one or greater.
+
+Both are capped at one second (HZ).
+
+> > Ah, did you build with NO_HZ_FULL, boot with nohz_full CPUs, and then run
+> > CPU-bound usermode workloads on those CPUs?  Such CPUs would appear to
+> > be idle from an RCU perspective.  But these CPUs would never touch their
+> > rcu_data structures, so they would likely remain in the RCU grace-period
+> > kthread's cache.  So this should work well also.  Give or take that other
+> > work would likely eject them from the cache, but in that case they would
+> > be capacity cache misses rather than the aforementioned communications
+> > cache misses.  Not that this distinction matters to whoever is measuring
+> > performance.  ;-)
+> 
+> Ah ok :-) I had booted with !CONFIG_NO_HZ_FULL for this test.
+
+Never mind, then.  ;-)
+
+> > > Anyway it was just an idea that popped up when I was going through traces :)
+> > > Thanks for the discussion and happy to discuss further or try out anything.
+> > 
+> > Either way, I do appreciate your going through this.  People have found
+> > RCU bugs this way, one of which involved RCU uselessly calling a particular
+> > function twice in quick succession.  ;-)
+>  
+> Thanks.  It is my pleasure and happy to help :) I'll keep digging into it.
+
+Looking forward to further questions and patches.  ;-)
+
+							Thanx, Paul
 
