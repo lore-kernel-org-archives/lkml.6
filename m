@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF886C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:28:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31CD2C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:28:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 865682084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:28:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBB45214DB
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:28:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EkLwdbt5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 865682084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FQiw/XeA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBB45214DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388848AbeKLIUe (ORCPT
+        id S2389027AbeKLJSb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:20:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45656 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:18:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45680 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388834AbeKLIUd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:20:33 -0500
+        id S2388835AbeKLIUe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:34 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0FBF4223CA;
+        by mail.kernel.org (Postfix) with ESMTPSA id 537FD21582;
         Sun, 11 Nov 2018 22:30:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975437;
-        bh=GnR0KTixvcIvwbPHJ+gmga1blza7Q2d7N/d1SSi/n0g=;
+        bh=Bjg4SHhvZO1x/0s7m3uvc/ZMF6UHAP8lwA0KFN/pUj8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EkLwdbt5M6o/NU9/+Vk+g2x7pkvt1JPq3eoVgDWuyKnrkG5jR9z8lorLh0pvwdvwN
-         J8jsrtsFK9ntCV5VA38fRQBfREcdUn84GgPaHrTABoJPRdHHFBAGFLMVNbybSZ7SlR
-         xCUbcLe0Yu404qJM5nLoWTokWUXcl7H+yOVa+3Jg=
+        b=FQiw/XeA1i5Xmtykrfk7OsT8CpIhUd7xwNNmg8dU89AUMEyYFchFNAyPireiIDTil
+         f4VK0gxdiHt0q8JruCuB1DCSweQKPkRpYMxK0dzbZDG7sqZzXbulnSXdVGr6SYfyRC
+         W4AdfVi7DyjZJPaL1PnLBv9V444Y8cFUagahE1TQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Prarit Bhargava <prarit@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Stafford Horne <shorne@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 187/350] cpupower: Fix AMD Family 0x17 msr_pstate size
-Date:   Sun, 11 Nov 2018 14:20:51 -0800
-Message-Id: <20181111221715.855418147@linuxfoundation.org>
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH 4.18 188/350] Revert "f2fs: fix to clear PG_checked flag in set_page_dirty()"
+Date:   Sun, 11 Nov 2018 14:20:52 -0800
+Message-Id: <20181111221715.892832970@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -64,36 +62,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Prarit Bhargava <prarit@redhat.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 
-[ Upstream commit 8c22e2f695920ebd94f9a53bcf2a65eb36d4dba1 ]
+commit 164a63fa6b384e30ceb96ed80bc7dc3379bc0960 upstream.
 
-The msr_pstate data is only 63 bits long and should be 64 bits.
+This reverts commit 66110abc4c931f879d70e83e1281f891699364bf.
 
-Add in the missing bit from res1 for AMD Family 0x17.
+If we clear the cold data flag out of the writeback flow, we can miscount
+-1 by end_io, which incurs a deadlock caused by all I/Os being blocked during
+heavy GC.
 
-Reference: https://www.amd.com/system/files/TechDocs/54945_PPR_Family_17h_Models_00h-0Fh.pdf, page 138.
+Balancing F2FS Async:
+ - IO (CP:    1, Data:   -1, Flush: (   0    0    1), Discard: (   ...
 
-Signed-off-by: Prarit Bhargava <prarit@redhat.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Stafford Horne <shorne@gmail.com>
-Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+GC thread:                              IRQ
+- move_data_page()
+ - set_page_dirty()
+  - clear_cold_data()
+                                        - f2fs_write_end_io()
+                                         - type = WB_DATA_TYPE(page);
+                                           here, we get wrong type
+                                         - dec_page_count(sbi, type);
+ - f2fs_wait_on_page_writeback()
+
+Cc: <stable@vger.kernel.org>
+Reported-and-Tested-by: Park Ju Hyung <qkrwngud825@gmail.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- tools/power/cpupower/utils/helpers/amd.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/power/cpupower/utils/helpers/amd.c
-+++ b/tools/power/cpupower/utils/helpers/amd.c
-@@ -33,7 +33,7 @@ union msr_pstate {
- 		unsigned vid:8;
- 		unsigned iddval:8;
- 		unsigned idddiv:2;
--		unsigned res1:30;
-+		unsigned res1:31;
- 		unsigned en:1;
- 	} fam17h_bits;
- 	unsigned long long val;
+---
+ fs/f2fs/data.c |    4 ----
+ 1 file changed, 4 deletions(-)
+
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -2501,10 +2501,6 @@ static int f2fs_set_data_page_dirty(stru
+ 	if (!PageUptodate(page))
+ 		SetPageUptodate(page);
+ 
+-	/* don't remain PG_checked flag which was set during GC */
+-	if (is_cold_data(page))
+-		clear_cold_data(page);
+-
+ 	if (f2fs_is_atomic_file(inode) && !f2fs_is_commit_atomic_write(inode)) {
+ 		if (!IS_ATOMIC_WRITTEN_PAGE(page)) {
+ 			f2fs_register_inmem_page(inode, page);
 
 
