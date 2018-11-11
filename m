@@ -4,50 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05AEAC43441
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFA54C0044C
 	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2EF021582
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1FFE21582
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WyUA22eO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2EF021582
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="V7JHB40z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1FFE21582
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404821AbeKLIYt (ORCPT
+        id S2404834AbeKLIYu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:24:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60436 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:24:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60472 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731232AbeKLIYs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:24:48 -0500
+        id S2404820AbeKLIYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:24:50 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 131DE21582;
-        Sun, 11 Nov 2018 22:34:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 59B7221780;
+        Sun, 11 Nov 2018 22:34:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975690;
-        bh=WoqFtV62gsD+RnfJuelnS5y0Knl00lrTSYwTRR0Z3QM=;
+        s=default; t=1541975691;
+        bh=iBfGEGQXJErhGcDTjq/xP9T8jc6bDZ5AcCHawY5PArM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WyUA22eOSJVDtY+XgqkKA6BCZX7Uoj5VV16+WhmEoA1G4VVCHv7n8zjOD2t1bl3Gh
-         LP4KctQco4rjQxoEnfrEX3qEDObiNQgBm1NC4WEvzqXiJrdJSq6w1ADvQdTe2OyxF3
-         mSZtQRXN/1M/YUcjMj8Nk7Lkzm8WA4qC4sBftA1k=
+        b=V7JHB40zFQUfaL9cwqH9+XYgVKFO8Jv1nqn+AeYS7A0xS1ph2r6QL/kPMPCztR42P
+         yxSU+z3kybjKn7zwGQJnbHjh7Yqh6k/PsqIUlfXuZB9xALOvSJBZIoA3n8j2JlJgOI
+         rA830oXgRRgKy383aA6yeTlDpnRNtYq5yE6lS9os=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-        Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@suse.de>,
-        Aristeu Rozanski <aris@redhat.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-edac <linux-edac@vger.kernel.org>
-Subject: [PATCH 4.9 093/141] EDAC, skx_edac: Fix logical channel intermediate decoding
-Date:   Sun, 11 Nov 2018 14:25:52 -0800
-Message-Id: <20181111221640.980038100@linuxfoundation.org>
+        stable@vger.kernel.org, Bin Meng <bmeng.cn@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH 4.9 094/141] PCI: Add Device IDs for Intel GPU "spurious interrupt" quirk
+Date:   Sun, 11 Nov 2018 14:25:53 -0800
+Message-Id: <20181111221641.087629841@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
 References: <20181111221627.853046496@linuxfoundation.org>
@@ -65,41 +61,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+From: Bin Meng <bmeng.cn@gmail.com>
 
-commit 8f18973877204dc8ca4ce1004a5d28683b9a7086 upstream.
+commit d0c9606b31a21028fb5b753c8ad79626292accfd upstream.
 
-The code "lchan = (lchan << 1) | ~lchan" for logical channel
-intermediate decoding is wrong. The wrong intermediate decoding
-result is {0xffffffff, 0xfffffffe}.
+Add Device IDs to the Intel GPU "spurious interrupt" quirk table.
 
-Fix it by replacing '~' with '!'. The correct intermediate
-decoding result is {0x1, 0x2}.
+For these devices, unplugging the VGA cable and plugging it in again causes
+spurious interrupts from the IGD.  Linux eventually disables the interrupt,
+but of course that disables any other devices sharing the interrupt.
 
-Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-CC: Aristeu Rozanski <aris@redhat.com>
-CC: Mauro Carvalho Chehab <mchehab@kernel.org>
-CC: linux-edac <linux-edac@vger.kernel.org>
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/20181009172025.18594-1-tony.luck@intel.com
+The theory is that this is a VGA BIOS defect: it should have disabled the
+IGD interrupt but failed to do so.
+
+See f67fd55fa96f ("PCI: Add quirk for still enabled interrupts on Intel
+Sandy Bridge GPUs") and 7c82126a94e6 ("PCI: Add new ID for Intel GPU
+"spurious interrupt" quirk") for some history.
+
+[bhelgaas: See link below for discussion about how to fix this more
+generically instead of adding device IDs for every new Intel GPU.  I hope
+this is the last patch to add device IDs.]
+
+Link: https://lore.kernel.org/linux-pci/1537974841-29928-1-git-send-email-bmeng.cn@gmail.com
+Signed-off-by: Bin Meng <bmeng.cn@gmail.com>
+[bhelgaas: changelog]
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Cc: stable@vger.kernel.org	# v3.4+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/edac/skx_edac.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pci/quirks.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/edac/skx_edac.c
-+++ b/drivers/edac/skx_edac.c
-@@ -606,7 +606,7 @@ sad_found:
- 			break;
- 		case 2:
- 			lchan = (addr >> shift) % 2;
--			lchan = (lchan << 1) | ~lchan;
-+			lchan = (lchan << 1) | !lchan;
- 			break;
- 		case 3:
- 			lchan = ((addr >> shift) % 2) << 1;
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -3124,7 +3124,11 @@ static void disable_igfx_irq(struct pci_
+ 
+ 	pci_iounmap(dev, regs);
+ }
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0042, disable_igfx_irq);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0046, disable_igfx_irq);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x004a, disable_igfx_irq);
+ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0102, disable_igfx_irq);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0106, disable_igfx_irq);
+ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x010a, disable_igfx_irq);
+ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0152, disable_igfx_irq);
+ 
 
 
