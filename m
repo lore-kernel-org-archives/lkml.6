@@ -2,389 +2,119 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D65D5C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 05:47:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F36AC0044C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 05:47:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8273F20989
+	by mail.kernel.org (Postfix) with ESMTP id CDB15214C1
 	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 05:47:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iykUcICm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8273F20989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="esOoI5ut"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDB15214C1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727413AbeKKPcB (ORCPT
+        id S1727482AbeKKPez (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 10:32:01 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:35064 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727305AbeKKPcB (ORCPT
+        Sun, 11 Nov 2018 10:34:55 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:43387 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727305AbeKKPez (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 10:32:01 -0500
-Received: by mail-pg1-f196.google.com with SMTP id 32-v6so2601852pgu.2
-        for <linux-kernel@vger.kernel.org>; Sat, 10 Nov 2018 21:44:27 -0800 (PST)
+        Sun, 11 Nov 2018 10:34:55 -0500
+Received: by mail-pf1-f193.google.com with SMTP id g7-v6so2747061pfo.10;
+        Sat, 10 Nov 2018 21:47:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=TBOctfYOpPlIzLqNi4gt6PqmTVhT/HwRQN+0tcQEQKI=;
-        b=iykUcICm/lx65ZYz3eMGViQxdbaEpDYzApoll0qYtTB7vOXO7RyCNMwto8VCBXDGDj
-         TciqJjnCcVGgmneXT3rslxxx0AaMXZWeiz9aLCiqCeSR6FeRMmknJIl+0r34mY5ONrlx
-         GpqGKDPcY8ywHuZFWeupXq5/nglN4ZcZmgMSz66NUrAjnhNpXz+6wpmAftW6YSfSfTGY
-         e2gVMCk9Idr+MdBIor7E84c9liePYxUluZ/m3F86X92BHeYYCGrUEFUJGbAGlXeuZ9kS
-         KYpgjpJIGXxKHqMnpB+MNkHtoLQi8zE8mRYN+iLy5kc+lJuiKYns6pPMDCXtUzgdwsvE
-         QqzA==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=o+PWUaNabVf4M0zRALBh+Q9wc1nFH7j6Um3v8Drq0XE=;
+        b=esOoI5uty7W6Z/hPQRM4k1RbM7mVB/RodnZqrKGCNP4JICkti7uzLu69rmzjH1ay/O
+         /gc1gvSGA+L4G+gQ45UeyUKGae7a295rJP7GDh1CLeCU+J4F+jMNSmreKoHfzfE2R0df
+         j9HZsuClpnrh34KSyoQR3f+gX+zRWe8sobAcJnFncqLTVllX+Iowlb1VNma8VSQsnq80
+         KOazAV7SkoXyDiZEyw1UC/9pH2ph03GwDhgjdj7ITmSgjgTpi1Py2kSM0sJ8cCg22R+9
+         7fQTuXBDASHgMT4XTFAVK065b2uBNWnZdN9qpsZL9WzcOlI0bdvFXqfRSmewDniDBwIO
+         uIvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=TBOctfYOpPlIzLqNi4gt6PqmTVhT/HwRQN+0tcQEQKI=;
-        b=ov52wvuHEqIW4yt+mJj8kjBh/qNN50mrsU+ISQttZBZsCFaJvu/vn0F659ubhch0Yu
-         mYl+s2sET9oJMGbMLrX81cHOfc3mcsb9k4NqYZFtZhQEfGueZ+Ky9rMS0OSaa8ZGXDK6
-         wghnWizHYChrfgnkhCsTSfgOyvsksf8aW6eqEIa8GnzuPGYSDQBqYERJirBz3uyRNpNv
-         oMo9yJ62r8tbIPAUTPl4qcfZmmLT4TWVGseFR9EUh+9EIkqzFCELbYVnAxNYMNnR7hNI
-         cB3TL986pZ3S8Bv5ecX4zVerBsFG4N98GeWZqCGWmTWHnhrhONhyrePV6dnQZox1LN81
-         GqNg==
-X-Gm-Message-State: AGRZ1gLUKn7osrOKpvYfoojan7mcqZuXm1vsR2BkgK7pIXBQdewRfZP8
-        mF8QhhuIsovKlDRfVdh8fuo=
-X-Google-Smtp-Source: AJdET5eS4j5SejoIcuJJmDDny/aZP1czd9iCfaworikZD7CT2G41I99WgpiPTbhtoEVbZDBTyYk/6w==
-X-Received: by 2002:a63:d34a:: with SMTP id u10mr13528547pgi.301.1541915067350;
-        Sat, 10 Nov 2018 21:44:27 -0800 (PST)
-Received: from nishad ([106.193.161.4])
-        by smtp.gmail.com with ESMTPSA id s184sm13941023pgc.38.2018.11.10.21.44.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 10 Nov 2018 21:44:26 -0800 (PST)
-Date:   Sun, 11 Nov 2018 11:14:14 +0530
-From:   Nishad Kamdar <nishadkamdar@gmail.com>
-To:     Vaibhav Hiremath <hvaibhav.linux@gmail.com>,
-        Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: greybus: arche-apb-ctrl.c: Switch to the gpio
- descriptor interface
-Message-ID: <20181111054405.GA32548@nishad>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=o+PWUaNabVf4M0zRALBh+Q9wc1nFH7j6Um3v8Drq0XE=;
+        b=mCnBea/iEs2RGdLsPlkT5zbQmrz9cc8u8qFzSBNwqMTJC/Dn+R/zbncZa1TGCKp+Gt
+         YMsBUyz7yLq16gdgVye5XM2vt4h4gvHiNLjI1JXAuDWhwLzkCX5/4tw76jqYbpVqOsx6
+         bCkq2dNaVLeJvHncgQsR1IXjWXpBOZENLMdYtuZaqhB1tnTNiqAO/ibuPqm90vQCY0FN
+         6xgQUR+a0Cem96FlBFynakGM76ejs4o1wfcDo6dlWVBmq0KGRbydA7Zv0HqKXy+CPOgH
+         FsTh/MXq1wRJswW3Vnnup4zdXjQOSJwYFbCH/ti/3RiyCL/Aj/UflrsGnGydC6aPgZx6
+         iw2Q==
+X-Gm-Message-State: AGRZ1gLxf+UmExs9CIYjClHUETJZB4EYlLwIBg/ezoTxlXMQNkHyow8H
+        ZvJJP9gCB4q3WE78bvT6BFL7bxVmrCE=
+X-Google-Smtp-Source: AJdET5eYCH+IzZjP3+aOViPLGyvsQYcwjR83XXNwVy+WRgLrxrd+Nt+OSLRYbhjShsSc3Q3VqKTi/Q==
+X-Received: by 2002:a63:e20a:: with SMTP id q10mr12953116pgh.206.1541915241175;
+        Sat, 10 Nov 2018 21:47:21 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id f18-v6sm34393244pfh.0.2018.11.10.21.47.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 10 Nov 2018 21:47:20 -0800 (PST)
+Date:   Sat, 10 Nov 2018 21:47:19 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Ben Hutchings <ben@decadent.org.uk>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org
+Subject: Re: [PATCH 3.16 000/410] 3.16.57-rc1 review
+Message-ID: <20181111054719.GA31398@roeck-us.net>
+References: <lsq.1528380320.647747352@decadent.org.uk>
+ <20180608141426.GA5242@roeck-us.net>
+ <945ce3bb1ecd9c70249e79d2cb5572f9475c9786.camel@decadent.org.uk>
+ <bf66aa7e856d4c2c83dc78dca95eee76437a1513.camel@decadent.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <bf66aa7e856d4c2c83dc78dca95eee76437a1513.camel@decadent.org.uk>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the gpiod interface instead of the deprecated old non-descriptor
-interface.
+On Sun, Nov 11, 2018 at 12:09:03AM +0000, Ben Hutchings wrote:
+> On Sat, 2018-06-16 at 22:18 +0100, Ben Hutchings wrote:
+> > On Fri, 2018-06-08 at 07:14 -0700, Guenter Roeck wrote:
+> > > On Thu, Jun 07, 2018 at 03:05:20PM +0100, Ben Hutchings wrote:
+> > > > This is the start of the stable review cycle for the 3.16.57 release.
+> > > > There are 410 patches in this series, which will be posted as responses
+> > > > to this one.  If anyone has any issues with these being applied, please
+> > > > let me know.
+> > > > 
+> > > > Responses should be made by Thu Jun 14 18:00:00 UTC 2018.
+> > > > Anything received after that time might be too late.
+> > > > 
+> > > 
+> > > Build results:
+> > > 	total: 138 pass: 136 fail: 2
+> > > Failed builds: 
+> > > 	i386:tools/perf 
+> > > 	x86_64:tools/perf 
+> > > Qemu test results:
+> > > 	total: 116 pass: 116 fail: 0
+> > > 
+> > > tools/perf builds are new, so it is probably not entirely surprising
+> > > that they fail.
+> > > 
+> > > Deetails are available at http://kerneltests.org/builders/.
+> > 
+> > Thanks for testing.  I see you've now made the tools/perf builds work
+> > for 3.16, so thanks for that as well.
+> 
+> I looked again and for the current patch queue I see:
+> 
+>     Building i386:tools/perf ... failed (script) - skipping
+> 
+>     Building x86_64:tools/perf ... failed (script) - skipping
+>
+perf builds are currently skipped in 3.16. Let me check if I can drop that.
 
-Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
----
- drivers/staging/greybus/arche-apb-ctrl.c | 158 ++++++++++-------------
- 1 file changed, 65 insertions(+), 93 deletions(-)
-
-diff --git a/drivers/staging/greybus/arche-apb-ctrl.c b/drivers/staging/greybus/arche-apb-ctrl.c
-index cc8d6fc831b4..fd19e2394c9c 100644
---- a/drivers/staging/greybus/arche-apb-ctrl.c
-+++ b/drivers/staging/greybus/arche-apb-ctrl.c
-@@ -8,9 +8,8 @@
- 
- #include <linux/clk.h>
- #include <linux/delay.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/interrupt.h>
--#include <linux/of_gpio.h>
- #include <linux/of_irq.h>
- #include <linux/module.h>
- #include <linux/pinctrl/consumer.h>
-@@ -20,17 +19,16 @@
- #include <linux/spinlock.h>
- #include "arche_platform.h"
- 
--
- static void apb_bootret_deassert(struct device *dev);
- 
- struct arche_apb_ctrl_drvdata {
- 	/* Control GPIO signals to and from AP <=> AP Bridges */
--	int resetn_gpio;
--	int boot_ret_gpio;
--	int pwroff_gpio;
--	int wake_in_gpio;
--	int wake_out_gpio;
--	int pwrdn_gpio;
-+	struct gpio_desc *resetn;
-+	struct gpio_desc *boot_ret;
-+	struct gpio_desc *pwroff;
-+	struct gpio_desc *wake_in;
-+	struct gpio_desc *wake_out;
-+	struct gpio_desc *pwrdn;
- 
- 	enum arche_platform_state state;
- 	bool init_disabled;
-@@ -38,28 +36,28 @@ struct arche_apb_ctrl_drvdata {
- 	struct regulator *vcore;
- 	struct regulator *vio;
- 
--	int clk_en_gpio;
-+	struct gpio_desc *clk_en;
- 	struct clk *clk;
- 
- 	struct pinctrl *pinctrl;
- 	struct pinctrl_state *pin_default;
- 
- 	/* V2: SPI Bus control  */
--	int spi_en_gpio;
-+	struct gpio_desc *spi_en;
- 	bool spi_en_polarity_high;
- };
- 
- /*
-  * Note that these low level api's are active high
-  */
--static inline void deassert_reset(unsigned int gpio)
-+static inline void deassert_reset(struct gpio_desc *gpio)
- {
--	gpio_set_value(gpio, 1);
-+	gpiod_set_value(gpio, 1);
- }
- 
--static inline void assert_reset(unsigned int gpio)
-+static inline void assert_reset(struct gpio_desc *gpio)
- {
--	gpio_set_value(gpio, 0);
-+	gpiod_set_value(gpio, 0);
- }
- 
- /*
-@@ -76,11 +74,11 @@ static int coldboot_seq(struct platform_device *pdev)
- 		return 0;
- 
- 	/* Hold APB in reset state */
--	assert_reset(apb->resetn_gpio);
-+	assert_reset(apb->resetn);
- 
- 	if (apb->state == ARCHE_PLATFORM_STATE_FW_FLASHING &&
--	    gpio_is_valid(apb->spi_en_gpio))
--		devm_gpio_free(dev, apb->spi_en_gpio);
-+	    apb->spi_en)
-+		devm_gpiod_put(dev, apb->spi_en);
- 
- 	/* Enable power to APB */
- 	if (!IS_ERR(apb->vcore)) {
-@@ -102,13 +100,13 @@ static int coldboot_seq(struct platform_device *pdev)
- 	apb_bootret_deassert(dev);
- 
- 	/* On DB3 clock was not mandatory */
--	if (gpio_is_valid(apb->clk_en_gpio))
--		gpio_set_value(apb->clk_en_gpio, 1);
-+	if (apb->clk_en)
-+		gpiod_set_value(apb->clk_en, 1);
- 
- 	usleep_range(100, 200);
- 
- 	/* deassert reset to APB : Active-low signal */
--	deassert_reset(apb->resetn_gpio);
-+	deassert_reset(apb->resetn);
- 
- 	apb->state = ARCHE_PLATFORM_STATE_ACTIVE;
- 
-@@ -120,6 +118,7 @@ static int fw_flashing_seq(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct arche_apb_ctrl_drvdata *apb = platform_get_drvdata(pdev);
- 	int ret;
-+	unsigned long flags;
- 
- 	if (apb->init_disabled ||
- 	    apb->state == ARCHE_PLATFORM_STATE_FW_FLASHING)
-@@ -137,25 +136,20 @@ static int fw_flashing_seq(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	if (gpio_is_valid(apb->spi_en_gpio)) {
--		unsigned long flags;
--
--		if (apb->spi_en_polarity_high)
--			flags = GPIOF_OUT_INIT_HIGH;
--		else
--			flags = GPIOF_OUT_INIT_LOW;
-+	if (apb->spi_en_polarity_high)
-+		flags = GPIOD_OUT_HIGH;
-+	else
-+		flags = GPIOD_OUT_LOW;
- 
--		ret = devm_gpio_request_one(dev, apb->spi_en_gpio,
--					    flags, "apb_spi_en");
--		if (ret) {
--			dev_err(dev, "Failed requesting SPI bus en gpio %d\n",
--				apb->spi_en_gpio);
--			return ret;
--		}
-+	apb->spi_en = devm_gpiod_get(dev, "gb,apb_spi_en", flags);
-+	if (IS_ERR(apb->spi_en)) {
-+		ret = PTR_ERR(apb->spi_en);
-+		dev_err(dev, "Failed requesting SPI bus en GPIO: %d\n", ret);
-+		return ret;
- 	}
- 
- 	/* for flashing device should be in reset state */
--	assert_reset(apb->resetn_gpio);
-+	assert_reset(apb->resetn);
- 	apb->state = ARCHE_PLATFORM_STATE_FW_FLASHING;
- 
- 	return 0;
-@@ -178,8 +172,8 @@ static int standby_boot_seq(struct platform_device *pdev)
- 		return 0;
- 
- 	if (apb->state == ARCHE_PLATFORM_STATE_FW_FLASHING &&
--	    gpio_is_valid(apb->spi_en_gpio))
--		devm_gpio_free(dev, apb->spi_en_gpio);
-+	    apb->spi_en)
-+		devm_gpiod_put(dev, apb->spi_en);
- 
- 	/*
- 	 * As per WDM spec, do nothing
-@@ -203,12 +197,12 @@ static void poweroff_seq(struct platform_device *pdev)
- 		return;
- 
- 	if (apb->state == ARCHE_PLATFORM_STATE_FW_FLASHING &&
--	    gpio_is_valid(apb->spi_en_gpio))
--		devm_gpio_free(dev, apb->spi_en_gpio);
-+	    apb->spi_en)
-+		devm_gpiod_put(dev, apb->spi_en);
- 
- 	/* disable the clock */
--	if (gpio_is_valid(apb->clk_en_gpio))
--		gpio_set_value(apb->clk_en_gpio, 0);
-+	if (apb->clk_en)
-+		gpiod_set_value(apb->clk_en, 0);
- 
- 	if (!IS_ERR(apb->vcore) && regulator_is_enabled(apb->vcore) > 0)
- 		regulator_disable(apb->vcore);
-@@ -217,7 +211,7 @@ static void poweroff_seq(struct platform_device *pdev)
- 		regulator_disable(apb->vio);
- 
- 	/* As part of exit, put APB back in reset state */
--	assert_reset(apb->resetn_gpio);
-+	assert_reset(apb->resetn);
- 	apb->state = ARCHE_PLATFORM_STATE_OFF;
- 
- 	/* TODO: May have to send an event to SVC about this exit */
-@@ -227,7 +221,7 @@ static void apb_bootret_deassert(struct device *dev)
- {
- 	struct arche_apb_ctrl_drvdata *apb = dev_get_drvdata(dev);
- 
--	gpio_set_value(apb->boot_ret_gpio, 0);
-+	gpiod_set_value(apb->boot_ret, 0);
- }
- 
- int apb_ctrl_coldboot(struct device *dev)
-@@ -326,63 +320,44 @@ static int apb_ctrl_get_devtree_data(struct platform_device *pdev,
- 	struct device_node *np = dev->of_node;
- 	int ret;
- 
--	apb->resetn_gpio = of_get_named_gpio(np, "reset-gpios", 0);
--	if (apb->resetn_gpio < 0) {
--		dev_err(dev, "failed to get reset gpio\n");
--		return apb->resetn_gpio;
--	}
--	ret = devm_gpio_request_one(dev, apb->resetn_gpio,
--				    GPIOF_OUT_INIT_LOW, "apb-reset");
--	if (ret) {
--		dev_err(dev, "Failed requesting reset gpio %d\n",
--			apb->resetn_gpio);
-+	apb->resetn = devm_gpiod_get(dev, "gb,reset-gpios", GPIOD_OUT_LOW);
-+	if (IS_ERR(apb->resetn)) {
-+		ret = PTR_ERR(apb->resetn);
-+		dev_err(dev, "Failed requesting reset GPIO: %d\n", ret);
- 		return ret;
- 	}
- 
--	apb->boot_ret_gpio = of_get_named_gpio(np, "boot-ret-gpios", 0);
--	if (apb->boot_ret_gpio < 0) {
--		dev_err(dev, "failed to get boot retention gpio\n");
--		return apb->boot_ret_gpio;
--	}
--	ret = devm_gpio_request_one(dev, apb->boot_ret_gpio,
--				    GPIOF_OUT_INIT_LOW, "boot retention");
--	if (ret) {
--		dev_err(dev, "Failed requesting bootret gpio %d\n",
--			apb->boot_ret_gpio);
-+	apb->boot_ret = devm_gpiod_get(dev, "gb,boot-ret-gpios", GPIOD_OUT_LOW);
-+	if (IS_ERR(apb->boot_ret)) {
-+		ret = PTR_ERR(apb->boot_ret);
-+		dev_err(dev, "Failed requesting bootret GPIO: %d\n", ret);
- 		return ret;
- 	}
- 
- 	/* It's not mandatory to support power management interface */
--	apb->pwroff_gpio = of_get_named_gpio(np, "pwr-off-gpios", 0);
--	if (apb->pwroff_gpio < 0) {
--		dev_err(dev, "failed to get power off gpio\n");
--		return apb->pwroff_gpio;
--	}
--	ret = devm_gpio_request_one(dev, apb->pwroff_gpio,
--				    GPIOF_IN, "pwroff_n");
--	if (ret) {
--		dev_err(dev, "Failed requesting pwroff_n gpio %d\n",
--			apb->pwroff_gpio);
-+	apb->pwroff = devm_gpiod_get_optional(dev, "gb,pwr-off-gpios",
-+					      GPIOD_IN);
-+	if (IS_ERR(apb->pwroff)) {
-+		ret = PTR_ERR(apb->pwroff);
-+		dev_err(dev, "Failed requesting pwroff_n GPIO: %d\n", ret);
- 		return ret;
- 	}
- 
- 	/* Do not make clock mandatory as of now (for DB3) */
--	apb->clk_en_gpio = of_get_named_gpio(np, "clock-en-gpio", 0);
--	if (apb->clk_en_gpio < 0) {
--		dev_warn(dev, "failed to get clock en gpio\n");
--	} else if (gpio_is_valid(apb->clk_en_gpio)) {
--		ret = devm_gpio_request_one(dev, apb->clk_en_gpio,
--					    GPIOF_OUT_INIT_LOW, "apb_clk_en");
--		if (ret) {
--			dev_warn(dev, "Failed requesting APB clock en gpio %d\n",
--				 apb->clk_en_gpio);
--			return ret;
--		}
-+	apb->clk_en = devm_gpiod_get_optional(dev, "gb,clock-en-gpio",
-+					      GPIOD_OUT_LOW);
-+	if (IS_ERR(apb->clk_en)) {
-+		ret = PTR_ERR(apb->clk_en);
-+		dev_err(dev, "Failed requesting APB clock en GPIO: %d\n", ret);
-+		return ret;
- 	}
- 
--	apb->pwrdn_gpio = of_get_named_gpio(np, "pwr-down-gpios", 0);
--	if (apb->pwrdn_gpio < 0)
--		dev_warn(dev, "failed to get power down gpio\n");
-+	apb->pwrdn = devm_gpiod_get(dev, "gb,pwr-down-gpios", GPIOD_OUT_LOW);
-+	if (IF_ERR(apb->pwrdn)) {
-+		ret = PTR_ERR(apb->pwrdn);
-+		dev_warn(dev, "Failed requesting power down GPIO: %d\n", ret);
-+		return ret;
-+	}
- 
- 	/* Regulators are optional, as we may have fixed supply coming in */
- 	apb->vcore = devm_regulator_get(dev, "vcore");
-@@ -405,11 +380,8 @@ static int apb_ctrl_get_devtree_data(struct platform_device *pdev,
- 	}
- 
- 	/* Only applicable for platform >= V2 */
--	apb->spi_en_gpio = of_get_named_gpio(np, "spi-en-gpio", 0);
--	if (apb->spi_en_gpio >= 0) {
--		if (of_property_read_bool(pdev->dev.of_node,
--					  "spi-en-active-high"))
--			apb->spi_en_polarity_high = true;
-+	if (of_property_read_bool(pdev->dev.of_node, "gb,spi-en-active-high"))
-+		apb->spi_en_polarity_high = true;
- 	}
- 
- 	return 0;
--- 
-2.17.1
-
+Guenter
