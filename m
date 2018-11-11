@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8180AC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:47:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 130EEC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:47:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3942A21508
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:47:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C018E21527
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:47:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hM08JfPI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3942A21508
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tBK1FpYC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C018E21527
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404031AbeKLIhA (ORCPT
+        id S2404432AbeKLIhK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:37:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57044 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:37:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56992 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390304AbeKLIX3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2390901AbeKLIX3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:23:29 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 43DD322353;
-        Sun, 11 Nov 2018 22:33:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D1172223C6;
+        Sun, 11 Nov 2018 22:33:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975612;
-        bh=4wXiieLIWebUl5klsF+7vtPzF+d4r59XTXpLX4FYHvA=;
+        s=default; t=1541975611;
+        bh=4t1zG+LuCrzE0cAMtUzhVP4h6VX7iw/g9LypVBEXPhA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hM08JfPIe6Nt2A12gU8LpkSUQvDB0H4EiQ/LEY9DrFK9oosJ3PhJpxoQ2LjVLhZ7t
-         nbT2vsPIp3nuQNUrP0oFkq+9L1Z+TWt5H40l9Zzc/SIItYs3JzQNZyQ2T3+LtgmERM
-         lT5ZnaWHCsDe8sUbCex3BdX6Chjrt7ApJsgWKGtQ=
+        b=tBK1FpYC+kY8nyGJVck1W/yobYvqHlUmozKuQBjPNlhZUmDy/YQ7VnbxBy7NwssjO
+         o6qFoZfvxMehc6LKJeFZBMUPXn0Cdq/+BxTTcek56t9xw1VqMWapnYZUV2T6g4hrbo
+         MS2Huz6Fql7lWZMoFgF1uBhyvWH6Y2KZey4Z7+pc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
-        Dominik Brodowski <linux@dominikbrodowski.net>
-Subject: [PATCH 4.9 004/141] pcmcia: Implement CLKRUN protocol disabling for Ricoh bridges
-Date:   Sun, 11 Nov 2018 14:24:23 -0800
-Message-Id: <20181111221628.338284183@linuxfoundation.org>
+        stable@vger.kernel.org, stable@kernel.org,
+        Hou Tao <houtao1@huawei.com>,
+        Richard Weinberger <richard@nod.at>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: [PATCH 4.9 003/141] jffs2: free jffs2_sb_info through jffs2_kill_sb()
+Date:   Sun, 11 Nov 2018 14:24:22 -0800
+Message-Id: <20181111221628.210889804@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
 References: <20181111221627.853046496@linuxfoundation.org>
@@ -63,108 +64,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+From: Hou Tao <houtao1@huawei.com>
 
-commit 95691e3eddc41da2d1cd3cca51fecdfb46bd85bc upstream.
+commit 92e2921f7eee63450a5f953f4b15dc6210219430 upstream.
 
-Currently, "disable_clkrun" yenta_socket module parameter is only
-implemented for TI CardBus bridges.
-Add also an implementation for Ricoh bridges that have the necessary
-setting documented in publicly available datasheets.
+When an invalid mount option is passed to jffs2, jffs2_parse_options()
+will fail and jffs2_sb_info will be freed, but then jffs2_sb_info will
+be used (use-after-free) and freeed (double-free) in jffs2_kill_sb().
 
-Tested on a RL5C476II with a Sunrich C-160 CardBus NIC that doesn't work
-correctly unless the CLKRUN protocol is disabled.
+Fix it by removing the buggy invocation of kfree() when getting invalid
+mount options.
 
-Let's also make it clear in its description that the "disable_clkrun"
-module parameter only works on these two previously mentioned brands of
-CardBus bridges.
-
-Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
-Cc: stable@vger.kernel.org
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+Fixes: 92abc475d8de ("jffs2: implement mount option parsing and compression overriding")
+Cc: stable@kernel.org
+Signed-off-by: Hou Tao <houtao1@huawei.com>
+Reviewed-by: Richard Weinberger <richard@nod.at>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pcmcia/ricoh.h        |   35 +++++++++++++++++++++++++++++++++++
- drivers/pcmcia/yenta_socket.c |    3 ++-
- 2 files changed, 37 insertions(+), 1 deletion(-)
+ fs/jffs2/super.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/drivers/pcmcia/ricoh.h
-+++ b/drivers/pcmcia/ricoh.h
-@@ -119,6 +119,10 @@
- #define  RL5C4XX_MISC_CONTROL           0x2F /* 8 bit */
- #define  RL5C4XX_ZV_ENABLE              0x08
+--- a/fs/jffs2/super.c
++++ b/fs/jffs2/super.c
+@@ -285,10 +285,8 @@ static int jffs2_fill_super(struct super
+ 	sb->s_fs_info = c;
  
-+/* Misc Control 3 Register */
-+#define RL5C4XX_MISC3			0x00A2 /* 16 bit */
-+#define  RL5C47X_MISC3_CB_CLKRUN_DIS	BIT(1)
-+
- #ifdef __YENTA_H
+ 	ret = jffs2_parse_options(c, data);
+-	if (ret) {
+-		kfree(c);
++	if (ret)
+ 		return -EINVAL;
+-	}
  
- #define rl_misc(socket)		((socket)->private[0])
-@@ -156,6 +160,35 @@ static void ricoh_set_zv(struct yenta_so
-         }
- }
- 
-+static void ricoh_set_clkrun(struct yenta_socket *socket, bool quiet)
-+{
-+	u16 misc3;
-+
-+	/*
-+	 * RL5C475II likely has this setting, too, however no datasheet
-+	 * is publicly available for this chip
-+	 */
-+	if (socket->dev->device != PCI_DEVICE_ID_RICOH_RL5C476 &&
-+	    socket->dev->device != PCI_DEVICE_ID_RICOH_RL5C478)
-+		return;
-+
-+	if (socket->dev->revision < 0x80)
-+		return;
-+
-+	misc3 = config_readw(socket, RL5C4XX_MISC3);
-+	if (misc3 & RL5C47X_MISC3_CB_CLKRUN_DIS) {
-+		if (!quiet)
-+			dev_dbg(&socket->dev->dev,
-+				"CLKRUN feature already disabled\n");
-+	} else if (disable_clkrun) {
-+		if (!quiet)
-+			dev_info(&socket->dev->dev,
-+				 "Disabling CLKRUN feature\n");
-+		misc3 |= RL5C47X_MISC3_CB_CLKRUN_DIS;
-+		config_writew(socket, RL5C4XX_MISC3, misc3);
-+	}
-+}
-+
- static void ricoh_save_state(struct yenta_socket *socket)
- {
- 	rl_misc(socket) = config_readw(socket, RL5C4XX_MISC);
-@@ -172,6 +205,7 @@ static void ricoh_restore_state(struct y
- 	config_writew(socket, RL5C4XX_16BIT_IO_0, rl_io(socket));
- 	config_writew(socket, RL5C4XX_16BIT_MEM_0, rl_mem(socket));
- 	config_writew(socket, RL5C4XX_CONFIG, rl_config(socket));
-+	ricoh_set_clkrun(socket, true);
- }
- 
- 
-@@ -197,6 +231,7 @@ static int ricoh_override(struct yenta_s
- 	config_writew(socket, RL5C4XX_CONFIG, config);
- 
- 	ricoh_set_zv(socket);
-+	ricoh_set_clkrun(socket, false);
- 
- 	return 0;
- }
---- a/drivers/pcmcia/yenta_socket.c
-+++ b/drivers/pcmcia/yenta_socket.c
-@@ -26,7 +26,8 @@
- 
- static bool disable_clkrun;
- module_param(disable_clkrun, bool, 0444);
--MODULE_PARM_DESC(disable_clkrun, "If PC card doesn't function properly, please try this option");
-+MODULE_PARM_DESC(disable_clkrun,
-+		 "If PC card doesn't function properly, please try this option (TI and Ricoh bridges only)");
- 
- static bool isa_probe = 1;
- module_param(isa_probe, bool, 0444);
+ 	/* Initialize JFFS2 superblock locks, the further initialization will
+ 	 * be done later */
 
 
