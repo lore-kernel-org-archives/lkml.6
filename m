@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C23CC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:36:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81F93C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:36:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB79920818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:36:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB79920818
+	by mail.kernel.org (Postfix) with ESMTP id 4871A20818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:36:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4871A20818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730370AbeKLGZt (ORCPT
+        id S1730414AbeKLGZ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:25:49 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:49866 "EHLO
+        Mon, 12 Nov 2018 01:25:58 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:49848 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730145AbeKLFsM (ORCPT
+        by vger.kernel.org with ESMTP id S1730122AbeKLFsM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 00:48:12 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsY-0000lM-Pb; Sun, 11 Nov 2018 19:58:42 +0000
+        id 1gLvsY-0000l5-Rq; Sun, 11 Nov 2018 19:58:43 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsW-0001iy-D7; Sun, 11 Nov 2018 19:58:40 +0000
+        id 1gLvsW-0001io-BA; Sun, 11 Nov 2018 19:58:40 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Michal Hocko" <mhocko@suse.com>,
-        "Alexander Viro" <viro@zeniv.linux.org.uk>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Vlastimil Babka" <vbabka@suse.cz>
+CC:     akpm@linux-foundation.org, "Sabrina Dubroca" <sd@queasysnail.net>,
+        "Stefano Brivio" <sbrivio@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.441041233@decadent.org.uk>
+Message-ID: <lsq.1541965745.267568155@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 250/366] mm, elf: handle vm_brk error
+Subject: [PATCH 3.16 248/366] skbuff: Unconditionally copy pfmemalloc in
+ __skb_clone()
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,40 +58,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michal Hocko <mhocko@suse.com>
+From: Stefano Brivio <sbrivio@redhat.com>
 
-commit ecc2bc8ac03884266cf73f8a2a42b911465b2fbc upstream.
+commit e78bfb0751d4e312699106ba7efbed2bab1a53ca upstream.
 
-load_elf_library doesn't handle vm_brk failure although nothing really
-indicates it cannot do that because the function is allowed to fail due
-to vm_mmap failures already.  This might be not a problem now but later
-patch will make vm_brk killable (resp.  mmap_sem for write waiting will
-become killable) and so the failure will be more probable.
+Commit 8b7008620b84 ("net: Don't copy pfmemalloc flag in
+__copy_skb_header()") introduced a different handling for the
+pfmemalloc flag in copy and clone paths.
 
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+In __skb_clone(), now, the flag is set only if it was set in the
+original skb, but not cleared if it wasn't. This is wrong and
+might lead to socket buffers being flagged with pfmemalloc even
+if the skb data wasn't allocated from pfmemalloc reserves. Copy
+the flag instead of ORing it.
+
+Reported-by: Sabrina Dubroca <sd@queasysnail.net>
+Fixes: 8b7008620b84 ("net: Don't copy pfmemalloc flag in __copy_skb_header()")
+Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
+Tested-by: Sabrina Dubroca <sd@queasysnail.net>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[bwh: Backported to 3.16: We didn't set the pfmemalloc flag in either copy
+ or clone path until now]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/binfmt_elf.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -1084,8 +1084,11 @@ static int load_elf_library(struct file
- 	len = ELF_PAGESTART(eppnt->p_filesz + eppnt->p_vaddr +
- 			    ELF_MIN_ALIGN - 1);
- 	bss = eppnt->p_memsz + eppnt->p_vaddr;
--	if (bss > len)
--		vm_brk(len, bss - len);
-+	if (bss > len) {
-+		error = vm_brk(len, bss - len);
-+		if (BAD_ADDR(error))
-+			goto out_free_ph;
-+	}
- 	error = 0;
- 
- out_free_ph:
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -768,6 +768,7 @@ static struct sk_buff *__skb_clone(struc
+ 	n->cloned = 1;
+ 	n->nohdr = 0;
+ 	n->peeked = 0;
++	C(pfmemalloc);
+ 	n->destructor = NULL;
+ 	C(tail);
+ 	C(end);
 
