@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BD31C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60781C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07C2B21707
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2585B223C7
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Km1c3O8X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07C2B21707
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NT8j69UX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2585B223C7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404488AbeKLIXt (ORCPT
+        id S2391157AbeKLIXv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:23:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58246 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:23:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58346 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729181AbeKLIXs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:23:48 -0500
+        id S2391134AbeKLIXu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:23:50 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64F3A21707;
-        Sun, 11 Nov 2018 22:33:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2FD9D21707;
+        Sun, 11 Nov 2018 22:33:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975630;
-        bh=CaF/sSz/3uZurmFrUyrIxaOQpi3T1o/4LHEespK1Uo4=;
+        s=default; t=1541975632;
+        bh=ZZfsbxS12/De968meXCV8Pp/KEbjp9RS5hp5JORKqnA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Km1c3O8XAn2FmvG+KooMbTUfEl+KTN17odeIFKzwAdQ2KFZGoG5sR8tcU+CpgTqWM
-         b2dJuyEv2tKymKk7p02cGhk+I1p5WUqlPnJw9SFi1mg3N5rcARtWzgELifgBAmNSDU
-         IfqMm37GcG6n3KmPvU6YJuXVZzbNM8eURGwmFRSI=
+        b=NT8j69UXVO+KGpLGwfBshs0YLcyzlX7jLyWCNeW5pcoESl8kiM/Zz6gIpFL0RfTO/
+         yCUS6FK5ewHENBB/q4ajlJZJCxhf/DcQMdHm7szCpntYdM1i6IP1ttBr3NaStgCd/x
+         jO52H235ZBblERbT1v51LxrfsyQ4SihMaXTFYWmM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Doug Anderson <dianders@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>,
+        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
+        Stephen Boyd <sboyd@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 047/141] pinctrl: qcom: spmi-mpp: Fix drive strength setting
-Date:   Sun, 11 Nov 2018 14:25:06 -0800
-Message-Id: <20181111221633.958759708@linuxfoundation.org>
+Subject: [PATCH 4.9 049/141] pinctrl: ssbi-gpio: Fix pm8xxx_pin_config_get() to be compliant
+Date:   Sun, 11 Nov 2018 14:25:08 -0800
+Message-Id: <20181111221634.181538423@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
 References: <20181111221627.853046496@linuxfoundation.org>
@@ -65,47 +64,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stephen Boyd <swboyd@chromium.org>
+From: Douglas Anderson <dianders@chromium.org>
 
-[ Upstream commit 89c68b102f13f123aaef22b292526d6b92501334 ]
+[ Upstream commit b432414b996d32a1bd9afe2bd595bd5729c1477f ]
 
-It looks like we parse the drive strength setting here, but never
-actually write it into the hardware to update it. Parse the setting and
-then write it at the end of the pinconf setting function so that it
-actually sticks in the hardware.
+If you look at "pinconf-groups" in debugfs for ssbi-gpio you'll notice
+it looks like nonsense.
 
-Fixes: 0e948042c420 ("pinctrl: qcom: spmi-mpp: Implement support for sink mode")
-Cc: Doug Anderson <dianders@chromium.org>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+The problem is fairly well described in commit 1cf86bc21257 ("pinctrl:
+qcom: spmi-gpio: Fix pmic_gpio_config_get() to be compliant") and
+commit 05e0c828955c ("pinctrl: msm: Fix msm_config_group_get() to be
+compliant"), but it was pointed out that ssbi-gpio has the same
+problem.  Let's fix it there too.
+
+Fixes: b4c45fe974bc ("pinctrl: qcom: ssbi: Family A gpio & mpp drivers")
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pinctrl/qcom/pinctrl-spmi-mpp.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c |   28 +++++++++++++++++++++-------
+ 1 file changed, 21 insertions(+), 7 deletions(-)
 
---- a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-+++ b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
-@@ -457,7 +457,7 @@ static int pmic_mpp_config_set(struct pi
- 			pad->dtest = arg;
- 			break;
- 		case PIN_CONFIG_DRIVE_STRENGTH:
--			arg = pad->drive_strength;
-+			pad->drive_strength = arg;
- 			break;
- 		case PMIC_MPP_CONF_AMUX_ROUTE:
- 			if (arg >= PMIC_MPP_AMUX_ROUTE_ABUS4)
-@@ -504,6 +504,10 @@ static int pmic_mpp_config_set(struct pi
- 	if (ret < 0)
- 		return ret;
+--- a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
++++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
+@@ -260,22 +260,32 @@ static int pm8xxx_pin_config_get(struct
  
-+	ret = pmic_mpp_write(state, pad, PMIC_MPP_REG_SINK_CTL, pad->drive_strength);
-+	if (ret < 0)
-+		return ret;
-+
- 	val = pad->is_enabled << PMIC_MPP_REG_MASTER_EN_SHIFT;
- 
- 	return pmic_mpp_write(state, pad, PMIC_MPP_REG_EN_CTL, val);
+ 	switch (param) {
+ 	case PIN_CONFIG_BIAS_DISABLE:
+-		arg = pin->bias == PM8XXX_GPIO_BIAS_NP;
++		if (pin->bias != PM8XXX_GPIO_BIAS_NP)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_BIAS_PULL_DOWN:
+-		arg = pin->bias == PM8XXX_GPIO_BIAS_PD;
++		if (pin->bias != PM8XXX_GPIO_BIAS_PD)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_BIAS_PULL_UP:
+-		arg = pin->bias <= PM8XXX_GPIO_BIAS_PU_1P5_30;
++		if (pin->bias > PM8XXX_GPIO_BIAS_PU_1P5_30)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PM8XXX_QCOM_PULL_UP_STRENGTH:
+ 		arg = pin->pull_up_strength;
+ 		break;
+ 	case PIN_CONFIG_BIAS_HIGH_IMPEDANCE:
+-		arg = pin->disable;
++		if (!pin->disable)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_INPUT_ENABLE:
+-		arg = pin->mode == PM8XXX_GPIO_MODE_INPUT;
++		if (pin->mode != PM8XXX_GPIO_MODE_INPUT)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_OUTPUT:
+ 		if (pin->mode & PM8XXX_GPIO_MODE_OUTPUT)
+@@ -290,10 +300,14 @@ static int pm8xxx_pin_config_get(struct
+ 		arg = pin->output_strength;
+ 		break;
+ 	case PIN_CONFIG_DRIVE_PUSH_PULL:
+-		arg = !pin->open_drain;
++		if (pin->open_drain)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
+-		arg = pin->open_drain;
++		if (!pin->open_drain)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	default:
+ 		return -EINVAL;
 
 
