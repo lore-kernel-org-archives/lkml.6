@@ -2,128 +2,115 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_SBL,URIBL_SBL_A autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3DB9C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 00:09:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DEAAC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 00:19:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 908B020989
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 00:09:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 908B020989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 4F1C620892
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 00:19:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="U4wjnbR7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F1C620892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727072AbeKKJz4 (ORCPT
+        id S1727142AbeKKKGE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 04:55:56 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:42348 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725896AbeKKJzz (ORCPT
+        Sun, 11 Nov 2018 05:06:04 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45925 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726978AbeKKKGE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 04:55:55 -0500
-Received: from [192.168.4.242] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1gLdJM-0005e9-06; Sun, 11 Nov 2018 00:09:08 +0000
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1gLdJL-0003dn-Rn; Sun, 11 Nov 2018 00:09:07 +0000
-Message-ID: <bf66aa7e856d4c2c83dc78dca95eee76437a1513.camel@decadent.org.uk>
-Subject: Re: [PATCH 3.16 000/410] 3.16.57-rc1 review
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org
-Date:   Sun, 11 Nov 2018 00:09:03 +0000
-In-Reply-To: <945ce3bb1ecd9c70249e79d2cb5572f9475c9786.camel@decadent.org.uk>
-References: <lsq.1528380320.647747352@decadent.org.uk>
-         <20180608141426.GA5242@roeck-us.net>
-         <945ce3bb1ecd9c70249e79d2cb5572f9475c9786.camel@decadent.org.uk>
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-bV4Ouag1LamKcT2DGWqJ"
-User-Agent: Evolution 3.30.1-1 
-Mime-Version: 1.0
-X-SA-Exim-Connect-IP: 192.168.4.242
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+        Sun, 11 Nov 2018 05:06:04 -0500
+Received: by mail-pf1-f195.google.com with SMTP id p17-v6so2562334pfj.12
+        for <linux-kernel@vger.kernel.org>; Sat, 10 Nov 2018 16:19:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=0cuXtaAxJ9YRgdBx1q2WJD4HHmDGmieV+OJEZ7rGfc4=;
+        b=U4wjnbR7nPd6LO/VvZLyEp28uGr3JRC8XZMy+MqHtbCvzblHGMQk76JMVITIFcdHDv
+         w8PZBWGuUVIb/7VbVQzfVOFplJjdCxgtSvuVgSQaeAtyEQBgtambgJXfqwqSQFnUGn/V
+         zbenmSNkClXcMDIqqgiR/oqg1EtotXuhsSDmcDqFDz6VrLa5oe7Gu3nbzpF80+GUEC5i
+         fbsf+V4nrGPHEHp6QLQ5KR6jOxk25DE4g5larVgmZGEr2s7fCto5pTmZyTAy5jaDKopv
+         FRwjDMywV3+pYXNqcu/zh2p8KHCfl6Vsc+2nQhnMf3QkN7juqwsuLBohxxIYKgREp5wl
+         /UaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=0cuXtaAxJ9YRgdBx1q2WJD4HHmDGmieV+OJEZ7rGfc4=;
+        b=dKEc4SqeODV3faWWStT0UePB+9TzZRJCBLtr8CaSE0cHd+WvypdphYAjSZEoOLAsc7
+         vZcwTC5CQ79P2pdQL5jupv45BsqbYE0SPG6kcMqVK8IaTgfBxWijsJTt0dO9WYRgjr8h
+         WhdXxkMfAX1LB+b5RJKD0gX2ESXnzKwXi1yFcaEgyg7OVnC1PmoQl3Oyaio+CGWHNVpV
+         Mg2bpStSJFQWDyRDH9mcTu4bqzLhAVvBMR9of73CG4p6+F168w7iRCeqUEjRxOxTxBeZ
+         /h49YCypIK+MPDLNpj23KxzITTKj+x2oNlgmqPLf9ryY6pAAMPC1HQMXhCia8uJjacFA
+         g6UQ==
+X-Gm-Message-State: AGRZ1gKmMFN290j4Ov5KokvHoaXs7mYycvMEhW4OMhJ1IvykvH+KrSzk
+        niHfq4iMqMBv4edb/YKMZqQ3WQ==
+X-Google-Smtp-Source: AJdET5eZW3Kmo8zp0lf355dAUfBDjk8B7UuG9aQekuXbtt1Cip8JVFI4ZA5787pzGRR4i88AnSd0bw==
+X-Received: by 2002:a65:5c81:: with SMTP id a1-v6mr12364489pgt.390.1541895555666;
+        Sat, 10 Nov 2018 16:19:15 -0800 (PST)
+Received: from ?IPv6:2600:1010:b00a:6291:7535:ae65:b517:1e1a? ([2600:1010:b00a:6291:7535:ae65:b517:1e1a])
+        by smtp.gmail.com with ESMTPSA id r124-v6sm15702768pfr.151.2018.11.10.16.19.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 10 Nov 2018 16:19:14 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH] x86/mm/pat: Fix missing preemption disable for __native_flush_tlb()
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16A404)
+In-Reply-To: <CAPcyv4hXzBT1LkEdBYw_mkrKV+SK1LRE2PwJ5=T+e7GxWbXaNQ@mail.gmail.com>
+Date:   Sat, 10 Nov 2018 16:19:08 -0800
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        stable <stable@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <9DFD717D-857D-493D-A606-B635D72BAC21@amacapital.net>
+References: <154180834787.2060925.7738215365584115230.stgit@dwillia2-desk3.amr.corp.intel.com> <7590EF40-B0CF-40BD-9D29-FB731A2A2E3A@amacapital.net> <CAPcyv4hXzBT1LkEdBYw_mkrKV+SK1LRE2PwJ5=T+e7GxWbXaNQ@mail.gmail.com>
+To:     Dan Williams <dan.j.williams@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---=-bV4Ouag1LamKcT2DGWqJ
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Sat, 2018-06-16 at 22:18 +0100, Ben Hutchings wrote:
-> On Fri, 2018-06-08 at 07:14 -0700, Guenter Roeck wrote:
-> > On Thu, Jun 07, 2018 at 03:05:20PM +0100, Ben Hutchings wrote:
-> > > This is the start of the stable review cycle for the 3.16.57 release.
-> > > There are 410 patches in this series, which will be posted as respons=
-es
-> > > to this one.  If anyone has any issues with these being applied, plea=
-se
-> > > let me know.
-> > >=20
-> > > Responses should be made by Thu Jun 14 18:00:00 UTC 2018.
-> > > Anything received after that time might be too late.
-> > >=20
-> >=20
-> > Build results:
-> > 	total: 138 pass: 136 fail: 2
-> > Failed builds:=20
-> > 	i386:tools/perf=20
-> > 	x86_64:tools/perf=20
-> > Qemu test results:
-> > 	total: 116 pass: 116 fail: 0
-> >=20
-> > tools/perf builds are new, so it is probably not entirely surprising
-> > that they fail.
-> >=20
-> > Deetails are available at http://kerneltests.org/builders/.
+> On Nov 10, 2018, at 3:57 PM, Dan Williams <dan.j.williams@intel.com> wrote=
+:
 >=20
-> Thanks for testing.  I see you've now made the tools/perf builds work
-> for 3.16, so thanks for that as well.
+>> On Fri, Nov 9, 2018 at 4:22 PM Andy Lutomirski <luto@amacapital.net> wrot=
+e:
+>>=20
+>>=20
+>>=20
+>>> On Nov 9, 2018, at 4:05 PM, Dan Williams <dan.j.williams@intel.com> wrot=
+e:
+>>>=20
+>>> Commit f77084d96355 "x86/mm/pat: Disable preemption around
+>>> __flush_tlb_all()" addressed a case where __flush_tlb_all() is called
+>>> without preemption being disabled. It also left a warning to catch other=
 
-I looked again and for the current patch queue I see:
+>>> cases where preemption is not disabled. That warning triggers for the
+>>> memory hotplug path which is also used for persistent memory enabling:
+>>=20
+>> I don=E2=80=99t think I agree with the patch. If you call __flush_tlb_all=
+() in a context where you might be *migrated*, then there=E2=80=99s a bug. W=
+e could change the code to allow this particular use by checking that we hav=
+en=E2=80=99t done SMP init yet, perhaps.
+>=20
+> Hmm, are saying the entire kernel_physical_mapping_init() sequence
+> needs to run with pre-emption disabled?
 
-    Building i386:tools/perf ... failed (script) - skipping
-
-    Building x86_64:tools/perf ... failed (script) - skipping
-
-I can still build it here in a Debian jessie environment though.
-
-Ben.
-
---=20
-Ben Hutchings
-Kids!  Bringing about Armageddon can be dangerous.  Do not attempt it
-in your own home. - Terry Pratchett and Neil Gaiman, `Good Omens'
-
-
---=-bV4Ouag1LamKcT2DGWqJ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAlvncx8ACgkQ57/I7JWG
-EQm3dRAAstmwybgq51DIXXqUnretYBViT6gfagvlIBfozlI3c78pTj2sJhtym5Ei
-pHguvudos7I0SKja8ZlHoOH4UrJUgGWfcgVFMTMtvgMVF80qJKgm8H5h5zXUiPPA
-e6ACF7IhB+SvkPvMrAFP5ZCyFdB/X3dfVmor5/B+bR5cdA15swHdbGJaeqwMtw6z
-2qSUyBMaG1oJIjAsR9/EHWlw50A5uwXDwOnYL7G3DJSZdOqytarswQDLS1Ic7a2N
-0rtdhuqOXyNsYVucvL4CoDvvSEkXMsgu/1z8qlX8J2SjDQrKE1c+ZxRcWW1wbS6o
-/kcIvmRbaxoH/eo0nZ2TWemxbIlVoJpGbQfefRT+81z15bQwuR2lrB3XXLX876rT
-0HARP1XFw2DrfCpC1cWVp2tSPbDfP6T0HIs1P0/eo7kjYc6PhzB9zwu2WV5RVafZ
-CeG3/iVWR7dpS+7Etv8QTZo38ROQvoFVhq3nqeOXtNW1p0bD1+HJe+pAO5kNqx81
-8YGXvZhZsCn77jLfW7S/bGNp/SFYTv5KQvTzHf1O/5imLpRUq7dD6G+hKWuY85bR
-S5flnCqpxFQfB6CopdFzRpp1mNpkTXside/Ic+fLwLIgEjYfi3XRwjFJCj2x0Fff
-4gUKs5b3quR0i0OZOdj/GiWI7abtPDLi/wEWilvsxUmG+yh/3hg=
-=VtKg
------END PGP SIGNATURE-----
-
---=-bV4Ouag1LamKcT2DGWqJ--
+If it indeed can run late in boot or after boot, then it sure looks buggy. E=
+ither the __flush_tlb_all() should be removed or it should be replaced with f=
+lush_tlb_kernel_range(). It=E2=80=99s unclear to me why a flush is needed at=
+ all, but if it=E2=80=99s needed, surely all CPUs need flushing.=
