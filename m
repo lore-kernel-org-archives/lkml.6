@@ -6,45 +6,44 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C867C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:11:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24F50C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:11:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15A152080D
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:11:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15A152080D
+	by mail.kernel.org (Postfix) with ESMTP id E16BF2080D
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:11:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E16BF2080D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731643AbeKLGAh (ORCPT
+        id S1731663AbeKLGAj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:00:37 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52442 "EHLO
+        Mon, 12 Nov 2018 01:00:39 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52450 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731019AbeKLGAg (ORCPT
+        by vger.kernel.org with ESMTP id S1731019AbeKLGAi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 01:00:36 -0500
+        Mon, 12 Nov 2018 01:00:38 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvt1-0000oG-Hw; Sun, 11 Nov 2018 19:59:11 +0000
+        id 1gLvt6-0000lM-Mi; Sun, 11 Nov 2018 19:59:16 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsS-0001Y5-8C; Sun, 11 Nov 2018 19:58:36 +0000
+        id 1gLvsQ-0001Tv-D7; Sun, 11 Nov 2018 19:58:34 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Guillaume Nault" <g.nault@alphalink.fr>,
-        "David S. Miller" <davem@davemloft.net>
+CC:     akpm@linux-foundation.org, "Omar Sandoval" <osandov@fb.com>,
+        "David Sterba" <dsterba@suse.com>,
+        "Nikolay Borisov" <nborisov@suse.com>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.624627032@decadent.org.uk>
+Message-ID: <lsq.1541965745.610711467@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 139/366] l2tp: only accept PPP sessions in
- pppol2tp_connect()
+Subject: [PATCH 3.16 089/366] Btrfs: don't BUG_ON() in btrfs_truncate_inode_items()
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,37 +57,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Guillaume Nault <g.nault@alphalink.fr>
+From: Omar Sandoval <osandov@fb.com>
 
-commit 7ac6ab1f8a38ba7f8d97f95475bb6a2575db4658 upstream.
+commit 0552210997badb6a60740a26ff9d976a416510f0 upstream.
 
-l2tp_session_priv() returns a struct pppol2tp_session pointer only for
-PPPoL2TP sessions. In particular, if the session is an L2TP_PWTYPE_ETH
-pseudo-wire, l2tp_session_priv() returns a pointer to an l2tp_eth_sess
-structure, which is much smaller than struct pppol2tp_session. This
-leads to invalid memory dereference when trying to lock ps->sk_lock.
+btrfs_free_extent() can fail because of ENOMEM. There's no reason to
+panic here, we can just abort the transaction.
 
-Fixes: d9e31d17ceba ("l2tp: Add L2TP ethernet pseudowire support")
-Signed-off-by: Guillaume Nault <g.nault@alphalink.fr>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: f4b9aa8d3b87 ("btrfs_truncate")
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Signed-off-by: Omar Sandoval <osandov@fb.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+[bwh: Backported to 3.16:
+ - Also pass root to btrfs_abort_transaction()
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/l2tp/l2tp_ppp.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ fs/btrfs/inode.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/net/l2tp/l2tp_ppp.c
-+++ b/net/l2tp/l2tp_ppp.c
-@@ -756,6 +756,12 @@ static int pppol2tp_connect(struct socke
- 	session = l2tp_session_get(sock_net(sk), tunnel, session_id, false);
- 	if (session) {
- 		drop_refcnt = true;
-+
-+		if (session->pwtype != L2TP_PWTYPE_PPP) {
-+			error = -EPROTOTYPE;
-+			goto end;
-+		}
-+
- 		ps = l2tp_session_priv(session);
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -4313,7 +4313,10 @@ delete:
+ 						extent_num_bytes, 0,
+ 						btrfs_header_owner(leaf),
+ 						ino, extent_offset, 0);
+-			BUG_ON(ret);
++			if (ret) {
++				btrfs_abort_transaction(trans, root, ret);
++				break;
++			}
+ 		}
  
- 		/* Using a pre-existing session is fine as long as it hasn't
+ 		if (found_type == BTRFS_INODE_ITEM_KEY)
 
