@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31CD2C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:28:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31681C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:28:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBB45214DB
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:28:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF23E2084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:28:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FQiw/XeA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBB45214DB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="J6GZ8xaU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF23E2084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389027AbeKLJSb (ORCPT
+        id S2389060AbeKLJSj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:18:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45680 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:18:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44954 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388835AbeKLIUe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2388836AbeKLIUe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:20:34 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 537FD21582;
+        by mail.kernel.org (Postfix) with ESMTPSA id 9FD4B223CB;
         Sun, 11 Nov 2018 22:30:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975437;
-        bh=Bjg4SHhvZO1x/0s7m3uvc/ZMF6UHAP8lwA0KFN/pUj8=;
+        bh=IH0PG0jn/FPhCztNK/DjFTv/PkG54dYGEQVHscuAKx8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FQiw/XeA1i5Xmtykrfk7OsT8CpIhUd7xwNNmg8dU89AUMEyYFchFNAyPireiIDTil
-         f4VK0gxdiHt0q8JruCuB1DCSweQKPkRpYMxK0dzbZDG7sqZzXbulnSXdVGr6SYfyRC
-         W4AdfVi7DyjZJPaL1PnLBv9V444Y8cFUagahE1TQ=
+        b=J6GZ8xaUTvgo5jObW8bskAJTjqgwP2iIFhojmmgT+ghdFIbVXtFs8uhQ27AMKSABX
+         RfBBpCzj575kbzqt6Qr8aqYaq6SuEWJ//wUbroqnl+7J06ZQx4akinyhf9wvLN08N9
+         NJTmxdZ8zISIZKPw/5oeThky1/EumB9/bSVtwvOM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
         Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 4.18 188/350] Revert "f2fs: fix to clear PG_checked flag in set_page_dirty()"
-Date:   Sun, 11 Nov 2018 14:20:52 -0800
-Message-Id: <20181111221715.892832970@linuxfoundation.org>
+Subject: [PATCH 4.18 189/350] f2fs: fix to recover cold bit of inode block during POR
+Date:   Sun, 11 Nov 2018 14:20:53 -0800
+Message-Id: <20181111221715.934133358@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -62,51 +62,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Chao Yu <yuchao0@huawei.com>
 
-commit 164a63fa6b384e30ceb96ed80bc7dc3379bc0960 upstream.
+commit ef2a007134b4eaa39264c885999f296577bc87d2 upstream.
 
-This reverts commit 66110abc4c931f879d70e83e1281f891699364bf.
+Testcase to reproduce this bug:
+1. mkfs.f2fs /dev/sdd
+2. mount -t f2fs /dev/sdd /mnt/f2fs
+3. touch /mnt/f2fs/file
+4. sync
+5. chattr +A /mnt/f2fs/file
+6. xfs_io -f /mnt/f2fs/file -c "fsync"
+7. godown /mnt/f2fs
+8. umount /mnt/f2fs
+9. mount -t f2fs /dev/sdd /mnt/f2fs
+10. chattr -A /mnt/f2fs/file
+11. xfs_io -f /mnt/f2fs/file -c "fsync"
+12. umount /mnt/f2fs
+13. mount -t f2fs /dev/sdd /mnt/f2fs
+14. lsattr /mnt/f2fs/file
 
-If we clear the cold data flag out of the writeback flow, we can miscount
--1 by end_io, which incurs a deadlock caused by all I/Os being blocked during
-heavy GC.
+-----------------N- /mnt/f2fs/file
 
-Balancing F2FS Async:
- - IO (CP:    1, Data:   -1, Flush: (   0    0    1), Discard: (   ...
+But actually, we expect the corrct result is:
 
-GC thread:                              IRQ
-- move_data_page()
- - set_page_dirty()
-  - clear_cold_data()
-                                        - f2fs_write_end_io()
-                                         - type = WB_DATA_TYPE(page);
-                                           here, we get wrong type
-                                         - dec_page_count(sbi, type);
- - f2fs_wait_on_page_writeback()
+-------A---------N- /mnt/f2fs/file
 
-Cc: <stable@vger.kernel.org>
-Reported-and-Tested-by: Park Ju Hyung <qkrwngud825@gmail.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+The reason is in step 9) we missed to recover cold bit flag in inode
+block, so later, in fsync, we will skip write inode block due to below
+condition check, result in lossing data in another SPOR.
+
+f2fs_fsync_node_pages()
+	if (!IS_DNODE(page) || !is_cold_node(page))
+		continue;
+
+Note that, I guess that some non-dir inode has already lost cold bit
+during POR, so in order to reenable recovery for those inode, let's
+try to recover cold bit in f2fs_iget() to save more fsynced data.
+
+Fixes: c56675750d7c ("f2fs: remove unneeded set_cold_node()")
+Cc: <stable@vger.kernel.org> 4.17+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/f2fs/data.c |    4 ----
- 1 file changed, 4 deletions(-)
+ fs/f2fs/inode.c |    6 ++++++
+ fs/f2fs/node.c  |    2 +-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2501,10 +2501,6 @@ static int f2fs_set_data_page_dirty(stru
- 	if (!PageUptodate(page))
- 		SetPageUptodate(page);
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -287,6 +287,12 @@ static int do_read_inode(struct inode *i
+ 	if (f2fs_has_inline_data(inode) && !f2fs_exist_data(inode))
+ 		__recover_inline_status(inode, node_page);
  
--	/* don't remain PG_checked flag which was set during GC */
--	if (is_cold_data(page))
--		clear_cold_data(page);
--
- 	if (f2fs_is_atomic_file(inode) && !f2fs_is_commit_atomic_write(inode)) {
- 		if (!IS_ATOMIC_WRITTEN_PAGE(page)) {
- 			f2fs_register_inmem_page(inode, page);
++	/* try to recover cold bit for non-dir inode */
++	if (!S_ISDIR(inode->i_mode) && !is_cold_node(node_page)) {
++		set_cold_node(node_page, false);
++		set_page_dirty(node_page);
++	}
++
+ 	/* get rdev by using inline_info */
+ 	__get_inode_rdev(inode, ri);
+ 
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -2356,7 +2356,7 @@ retry:
+ 	if (!PageUptodate(ipage))
+ 		SetPageUptodate(ipage);
+ 	fill_node_footer(ipage, ino, ino, 0, true);
+-	set_cold_node(page, false);
++	set_cold_node(ipage, false);
+ 
+ 	src = F2FS_INODE(page);
+ 	dst = F2FS_INODE(ipage);
 
 
