@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F867C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E53A9C0044C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37504216FD
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA807223D0
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SWQZEvHl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37504216FD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gL84WsoD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA807223D0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732267AbeKLIR5 (ORCPT
+        id S1732296AbeKLIR7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:17:57 -0500
+        Mon, 12 Nov 2018 03:17:59 -0500
 Received: from mail.kernel.org ([198.145.29.99]:34210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732069AbeKLIR5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:17:57 -0500
+        id S1732255AbeKLIR6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:17:58 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6127A208A3;
-        Sun, 11 Nov 2018 22:28:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 596F321508;
+        Sun, 11 Nov 2018 22:28:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975281;
-        bh=K7zCT4v+Nn2ocX3mAF2b+vbr2lqMfkJeOI7Ir4eb56Q=;
+        s=default; t=1541975282;
+        bh=hv3yzZtipGVF9UMrmsjzQfpfl0aGS3fhkzmpSoAyCYE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SWQZEvHl+EuNFpfN3Tpri1BTZi80pG/sjGBvNtSSo+kTIL/ZLzzRjPSHxRxJuolPA
-         2J7PNhpJDKJSlXtYx92JOmXl2+ZK1y0G1qOusNpJlXzknCAaSuKa1Hg+sNMzWw3sTv
-         kkL+q2bHqOI9z0UcQz6pGXo96nl0wwSmqpHlJ1Ic=
+        b=gL84WsoD57zh5FxngyMNRprrVxG4JNtUrJxZbnVYTXTz7ljvEYQu+Iy93mRt7YBbG
+         LYRVun2m3DW9wGi+pgHrwdFn5PfIUa5J0S7FS/KilCvVNY7u09JrvwhsGh9yGjlEd2
+         4NOt27ePUDdsrD6DQpYJaOXt4LOKy9ucUKqibyaQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Waiman Long <longman@redhat.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 175/361] driver/dma/ioat: Call del_timer_sync() without holding prep_lock
-Date:   Sun, 11 Nov 2018 14:18:42 -0800
-Message-Id: <20181111221644.800626655@linuxfoundation.org>
+        stable@vger.kernel.org, Waiman.Long@hp.com, peterz@infradead.org,
+        Juergen Gross <jgross@suse.com>,
+        Jan Beulich <jbeulich@suse.com>
+Subject: [PATCH 4.19 204/361] xen: make xen_qlock_wait() nestable
+Date:   Sun, 11 Nov 2018 14:19:11 -0800
+Message-Id: <20181111221648.885899244@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -63,87 +63,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Waiman Long <longman@redhat.com>
+From: Juergen Gross <jgross@suse.com>
 
-[ Upstream commit cfb03be6c7e8a1591285849c361d67b09f5149f7 ]
+commit a856531951dc8094359dfdac21d59cee5969c18e upstream.
 
-The following lockdep splat was observed:
+xen_qlock_wait() isn't safe for nested calls due to interrupts. A call
+of xen_qlock_kick() might be ignored in case a deeper nesting level
+was active right before the call of xen_poll_irq():
 
-[ 1222.241750] ======================================================
-[ 1222.271301] WARNING: possible circular locking dependency detected
-[ 1222.301060] 4.16.0-10.el8+5.x86_64+debug #1 Not tainted
-[ 1222.326659] ------------------------------------------------------
-[ 1222.356565] systemd-shutdow/1 is trying to acquire lock:
-[ 1222.382660]  ((&ioat_chan->timer)){+.-.}, at: [<00000000f71e1a28>] del_timer_sync+0x5/0xf0
-[ 1222.422928]
-[ 1222.422928] but task is already holding lock:
-[ 1222.451743]  (&(&ioat_chan->prep_lock)->rlock){+.-.}, at: [<000000008ea98b12>] ioat_shutdown+0x86/0x100 [ioatdma]
-   :
-[ 1223.524987] Chain exists of:
-[ 1223.524987]   (&ioat_chan->timer) --> &(&ioat_chan->cleanup_lock)->rlock --> &(&ioat_chan->prep_lock)->rlock
-[ 1223.524987]
-[ 1223.594082]  Possible unsafe locking scenario:
-[ 1223.594082]
-[ 1223.622630]        CPU0                    CPU1
-[ 1223.645080]        ----                    ----
-[ 1223.667404]   lock(&(&ioat_chan->prep_lock)->rlock);
-[ 1223.691535]                                lock(&(&ioat_chan->cleanup_lock)->rlock);
-[ 1223.728657]                                lock(&(&ioat_chan->prep_lock)->rlock);
-[ 1223.765122]   lock((&ioat_chan->timer));
-[ 1223.784095]
-[ 1223.784095]  *** DEADLOCK ***
-[ 1223.784095]
-[ 1223.813492] 4 locks held by systemd-shutdow/1:
-[ 1223.834677]  #0:  (reboot_mutex){+.+.}, at: [<0000000056d33456>] SYSC_reboot+0x10f/0x300
-[ 1223.873310]  #1:  (&dev->mutex){....}, at: [<00000000258dfdd7>] device_shutdown+0x1c8/0x660
-[ 1223.913604]  #2:  (&dev->mutex){....}, at: [<0000000068331147>] device_shutdown+0x1d6/0x660
-[ 1223.954000]  #3:  (&(&ioat_chan->prep_lock)->rlock){+.-.}, at: [<000000008ea98b12>] ioat_shutdown+0x86/0x100 [ioatdma]
+CPU 1:                                   CPU 2:
+spin_lock(lock1)
+                                         spin_lock(lock1)
+                                         -> xen_qlock_wait()
+                                            -> xen_clear_irq_pending()
+                                            Interrupt happens
+spin_unlock(lock1)
+-> xen_qlock_kick(CPU 2)
+spin_lock_irqsave(lock2)
+                                         spin_lock_irqsave(lock2)
+                                         -> xen_qlock_wait()
+                                            -> xen_clear_irq_pending()
+                                               clears kick for lock1
+                                            -> xen_poll_irq()
+spin_unlock_irq_restore(lock2)
+-> xen_qlock_kick(CPU 2)
+                                            wakes up
+                                         spin_unlock_irq_restore(lock2)
+                                         IRET
+                                           resumes in xen_qlock_wait()
+                                           -> xen_poll_irq()
+                                           never wakes up
 
-In the ioat_shutdown() function:
+The solution is to disable interrupts in xen_qlock_wait() and not to
+poll for the irq in case xen_qlock_wait() is called in nmi context.
 
-	spin_lock_bh(&ioat_chan->prep_lock);
-	set_bit(IOAT_CHAN_DOWN, &ioat_chan->state);
-	del_timer_sync(&ioat_chan->timer);
-	spin_unlock_bh(&ioat_chan->prep_lock);
-
-According to the synchronization rule for the del_timer_sync() function,
-the caller must not hold locks which would prevent completion of the
-timer's handler.
-
-The timer structure has its own lock that manages its synchronization.
-Setting the IOAT_CHAN_DOWN bit should prevent other CPUs from
-trying to use that device anyway, there is probably no need to call
-del_timer_sync() while holding the prep_lock. So the del_timer_sync()
-call is now moved outside of the prep_lock critical section to prevent
-the circular lock dependency.
-
-Signed-off-by: Waiman Long <longman@redhat.com>
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: stable@vger.kernel.org
+Cc: Waiman.Long@hp.com
+Cc: peterz@infradead.org
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Reviewed-by: Jan Beulich <jbeulich@suse.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/dma/ioat/init.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/drivers/dma/ioat/init.c
-+++ b/drivers/dma/ioat/init.c
-@@ -1205,8 +1205,15 @@ static void ioat_shutdown(struct pci_dev
+---
+ arch/x86/xen/spinlock.c |   24 ++++++++++--------------
+ 1 file changed, 10 insertions(+), 14 deletions(-)
+
+--- a/arch/x86/xen/spinlock.c
++++ b/arch/x86/xen/spinlock.c
+@@ -39,29 +39,25 @@ static void xen_qlock_kick(int cpu)
+  */
+ static void xen_qlock_wait(u8 *byte, u8 val)
+ {
++	unsigned long flags;
+ 	int irq = __this_cpu_read(lock_kicker_irq);
  
- 		spin_lock_bh(&ioat_chan->prep_lock);
- 		set_bit(IOAT_CHAN_DOWN, &ioat_chan->state);
--		del_timer_sync(&ioat_chan->timer);
- 		spin_unlock_bh(&ioat_chan->prep_lock);
-+		/*
-+		 * Synchronization rule for del_timer_sync():
-+		 *  - The caller must not hold locks which would prevent
-+		 *    completion of the timer's handler.
-+		 * So prep_lock cannot be held before calling it.
-+		 */
-+		del_timer_sync(&ioat_chan->timer);
+ 	/* If kicker interrupts not initialized yet, just spin */
+-	if (irq == -1)
++	if (irq == -1 || in_nmi())
+ 		return;
+ 
+-	/* If irq pending already clear it and return. */
++	/* Guard against reentry. */
++	local_irq_save(flags);
 +
- 		/* this should quiesce then reset */
- 		ioat_reset_hw(ioat_chan);
++	/* If irq pending already clear it. */
+ 	if (xen_test_irq_pending(irq)) {
+ 		xen_clear_irq_pending(irq);
+-		return;
++	} else if (READ_ONCE(*byte) == val) {
++		/* Block until irq becomes pending (or a spurious wakeup) */
++		xen_poll_irq(irq);
  	}
+ 
+-	if (READ_ONCE(*byte) != val)
+-		return;
+-
+-	/*
+-	 * If an interrupt happens here, it will leave the wakeup irq
+-	 * pending, which will cause xen_poll_irq() to return
+-	 * immediately.
+-	 */
+-
+-	/* Block until irq becomes pending (or perhaps a spurious wakeup) */
+-	xen_poll_irq(irq);
++	local_irq_restore(flags);
+ }
+ 
+ static irqreturn_t dummy_handler(int irq, void *dev_id)
 
 
