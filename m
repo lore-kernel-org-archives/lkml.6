@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34EF5C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 347DEC43610
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1487223D1
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5FE322443
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ryM2xADO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1487223D1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vdzPZPnL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5FE322443
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388279AbeKLIUB (ORCPT
+        id S2388291AbeKLIUB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 12 Nov 2018 03:20:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42836 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:42802 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388231AbeKLIT7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:19:59 -0500
+        id S2388233AbeKLIUA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:00 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 80CCC208A3;
-        Sun, 11 Nov 2018 22:30:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9DB9522503;
+        Sun, 11 Nov 2018 22:30:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975402;
-        bh=D2j4m8W6UVG2o7kWISgYsHJK+lUOZsm3mp4duArBsN8=;
+        s=default; t=1541975403;
+        bh=gbcb2AHqd3b77dULjUivCYPIJPZUeaK+/t3rtNOzYmE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ryM2xADO9Tso0yklkUdRwB1J0YNOeDUzK0bWmyfEMKGug4ngAF7H6XJBlFPOooSJb
-         Y+kvIupG66LAZ2jNDZgsiha5KCFrjdIs9V9mIqb/BdxP2HVrJsysor0GTXAA2I+7PX
-         jdiKezwIRH4t3J/8DU1rllz3OW8YXbAZ6Qz3yboA=
+        b=vdzPZPnLPRxX56qNTerlEOOz7ese5MK1tyC2xi62Q6uk1NXscUdasrcBdPTfPpJF1
+         +jweXVLvS8RVwnUVnRsi9uQJUb3HFrcZIe7JOtFPMHj44J/IGYuayqCoYfX8/5Loag
+         YfxuOMwHDSO/5RrXAZKX1IUk4EOAlPqvuFdi8D4Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christian Hewitt <christianshewitt@gmail.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
+        stable@vger.kernel.org, Jian Shen <shenjian15@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 101/350] Bluetooth: btbcm: Add entry for BCM4335C0 UART bluetooth
-Date:   Sun, 11 Nov 2018 14:19:25 -0800
-Message-Id: <20181111221711.324473292@linuxfoundation.org>
+Subject: [PATCH 4.18 104/350] net: hns3: Fix ets validate issue
+Date:   Sun, 11 Nov 2018 14:19:28 -0800
+Message-Id: <20181111221711.444890560@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -64,61 +65,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christian Hewitt <christianshewitt@gmail.com>
+From: Jian Shen <shenjian15@huawei.com>
 
-[ Upstream commit a357ea098c9605f60d92a66a9073f56ce25726da ]
+[ Upstream commit adefc0a2ff465f4ac4a88450fe69d336c8b074c5 ]
 
-This patch adds the device ID for the AMPAK AP6335 combo module used
-in the 1st generation WeTek Hub Android/LibreELEC HTPC box. The WiFI
-chip identifies itself as BCM4339, while Bluetooth identifies itself
-as BCM4335 (rev C0):
+There is a defect in hclge_ets_validate(). If each member of tc_tsa is
+not IEEE_8021QAZ_TSA_ETS, the variable total_ets_bw won't be updated.
+In this case, the check for value of total_ets_bw will fail. This patch
+fixes it by checking total_ets_bw only after it has been updated.
 
-```
-[    4.864248] Bluetooth: hci0: BCM: chip id 86
-[    4.866388] Bluetooth: hci0: BCM: features 0x2f
-[    4.889317] Bluetooth: hci0: BCM4335C0
-[    4.889332] Bluetooth: hci0: BCM4335C0 (003.001.009) build 0000
-[    9.778383] Bluetooth: hci0: BCM4335C0 (003.001.009) build 0268
-```
-
-Output from hciconfig:
-
-```
-hci0:	Type: Primary  Bus: UART
-	BD Address: 43:39:00:00:1F:AC  ACL MTU: 1021:8  SCO MTU: 64:1
-	UP RUNNING
-	RX bytes:7567 acl:234 sco:0 events:386 errors:0
-	TX bytes:53844 acl:77 sco:0 commands:304 errors:0
-	Features: 0xbf 0xfe 0xcf 0xfe 0xdb 0xff 0x7b 0x87
-	Packet type: DM1 DM3 DM5 DH1 DH3 DH5 HV1 HV2 HV3
-	Link policy: RSWITCH SNIFF
-	Link mode: SLAVE ACCEPT
-	Name: 'HUB'
-	Class: 0x0c0000
-	Service Classes: Rendering, Capturing
-	Device Class: Miscellaneous,
-	HCI Version: 4.0 (0x6)  Revision: 0x10c
-	LMP Version: 4.0 (0x6)  Subversion: 0x6109
-	Manufacturer: Broadcom Corporation (15)
-```
-
-Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Fixes: cacde272dd00 ("net: hns3: Add hclge_dcb module for the support of DCB feature")
+Signed-off-by: Jian Shen <shenjian15@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/bluetooth/btbcm.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/bluetooth/btbcm.c
-+++ b/drivers/bluetooth/btbcm.c
-@@ -324,6 +324,7 @@ static const struct bcm_subver_table bcm
- 	{ 0x4103, "BCM4330B1"	},	/* 002.001.003 */
- 	{ 0x410e, "BCM43341B0"	},	/* 002.001.014 */
- 	{ 0x4406, "BCM4324B3"	},	/* 002.004.006 */
-+	{ 0x6109, "BCM4335C0"	},	/* 003.001.009 */
- 	{ 0x610c, "BCM4354"	},	/* 003.001.012 */
- 	{ 0x2122, "BCM4343A0"	},	/* 001.001.034 */
- 	{ 0x2209, "BCM43430A1"  },	/* 001.002.009 */
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
+@@ -79,6 +79,7 @@ static int hclge_ieee_getets(struct hnae
+ static int hclge_ets_validate(struct hclge_dev *hdev, struct ieee_ets *ets,
+ 			      u8 *tc, bool *changed)
+ {
++	bool has_ets_tc = false;
+ 	u32 total_ets_bw = 0;
+ 	u8 max_tc = 0;
+ 	u8 i;
+@@ -106,13 +107,14 @@ static int hclge_ets_validate(struct hcl
+ 				*changed = true;
+ 
+ 			total_ets_bw += ets->tc_tx_bw[i];
+-		break;
++			has_ets_tc = true;
++			break;
+ 		default:
+ 			return -EINVAL;
+ 		}
+ 	}
+ 
+-	if (total_ets_bw != BW_PERCENT)
++	if (has_ets_tc && total_ets_bw != BW_PERCENT)
+ 		return -EINVAL;
+ 
+ 	*tc = max_tc + 1;
 
 
