@@ -7,48 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DB20C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:37:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07DD5C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:37:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4BF821582
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:37:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2058208A3
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:37:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="y4uvODfd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4BF821582
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HENjSra+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2058208A3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391376AbeKLI1B (ORCPT
+        id S2391297AbeKLI1W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:27:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33028 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:27:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33048 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387394AbeKLIZW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:25:22 -0500
+        id S2405140AbeKLIZU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:25:20 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 159E422443;
-        Sun, 11 Nov 2018 22:35:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD7CF223D8;
+        Sun, 11 Nov 2018 22:35:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975724;
-        bh=3W8xI+9ZHvNhJ9K84ay76SKBCv4VtxgwULIKrpXV1Lk=;
+        s=default; t=1541975722;
+        bh=cQj/YysYnauaJzwwYhzSiYXehwFkk6kKoEqN6plj2W4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y4uvODfdPSxo+V65HwMAEOdEPq97Ecs6296rytGrg6D/eWRUVwR4axZdLr1W3HziG
-         6pXb2uiEVA4Ux4GIgmsB8W2SHVhJMYsdtB+8EKchZxBG4CUN9Ui4oq3kfQAQgNGkBl
-         fzLXYGT48WShGa+DrK4BJF2SByNI4HynCVL2i8pY=
+        b=HENjSra+HrlMspqOPiH8jPahm6bI40hlb+/cjnuYTN+FVIQ25NoAUX03FPh1GwJp0
+         492TZBWdML7zgo65ej8jR0mzEfRg5OjV12d97z7w6gaRQGmBOqF8epnLA0+Oiu/Swh
+         6BcJl3nQvkoYZr7RAAZxMc8oXbOy5riHY/bglBYA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 100/141] kbuild: fix kernel/bounds.c W=1 warning
-Date:   Sun, 11 Nov 2018 14:25:59 -0800
-Message-Id: <20181111221641.888495021@linuxfoundation.org>
+        stable@vger.kernel.org, Xu Wen <wen.xu@gatech.edu>,
+        Qu Wenruo <wqu@suse.com>, David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.9 130/141] btrfs: Handle owner mismatch gracefully when walking up tree
+Date:   Sun, 11 Nov 2018 14:26:29 -0800
+Message-Id: <20181111221645.727869884@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
 References: <20181111221627.853046496@linuxfoundation.org>
@@ -66,54 +62,118 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Qu Wenruo <wqu@suse.com>
 
-commit 6a32c2469c3fbfee8f25bcd20af647326650a6cf upstream.
+commit 65c6e82becec33731f48786e5a30f98662c86b16 upstream.
 
-Building any configuration with 'make W=1' produces a warning:
+[BUG]
+When mounting certain crafted image, btrfs will trigger kernel BUG_ON()
+when trying to recover balance:
 
-kernel/bounds.c:16:6: warning: no previous prototype for 'foo' [-Wmissing-prototypes]
+  kernel BUG at fs/btrfs/extent-tree.c:8956!
+  invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
+  CPU: 1 PID: 662 Comm: mount Not tainted 4.18.0-rc1-custom+ #10
+  RIP: 0010:walk_up_proc+0x336/0x480 [btrfs]
+  RSP: 0018:ffffb53540c9b890 EFLAGS: 00010202
+  Call Trace:
+   walk_up_tree+0x172/0x1f0 [btrfs]
+   btrfs_drop_snapshot+0x3a4/0x830 [btrfs]
+   merge_reloc_roots+0xe1/0x1d0 [btrfs]
+   btrfs_recover_relocation+0x3ea/0x420 [btrfs]
+   open_ctree+0x1af3/0x1dd0 [btrfs]
+   btrfs_mount_root+0x66b/0x740 [btrfs]
+   mount_fs+0x3b/0x16a
+   vfs_kern_mount.part.9+0x54/0x140
+   btrfs_mount+0x16d/0x890 [btrfs]
+   mount_fs+0x3b/0x16a
+   vfs_kern_mount.part.9+0x54/0x140
+   do_mount+0x1fd/0xda0
+   ksys_mount+0xba/0xd0
+   __x64_sys_mount+0x21/0x30
+   do_syscall_64+0x60/0x210
+   entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-When also passing -Werror, this prevents us from building any other files.
-Nobody ever calls the function, but we can't make it 'static' either
-since we want the compiler output.
+[CAUSE]
+Extent tree corruption.  In this particular case, reloc tree root's
+owner is DATA_RELOC_TREE (should be TREE_RELOC), thus its backref is
+corrupted and we failed the owner check in walk_up_tree().
 
-Calling it 'main' instead however avoids the warning, because gcc
-does not insist on having a declaration for main.
+[FIX]
+It's pretty hard to take care of every extent tree corruption, but at
+least we can remove such BUG_ON() and exit more gracefully.
 
-Link: http://lkml.kernel.org/r/20181005083313.2088252-1-arnd@arndb.de
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Reported-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: David Laight <David.Laight@ACULAB.COM>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+And since in this particular image, DATA_RELOC_TREE and TREE_RELOC share
+the same root (which is obviously invalid), we needs to make
+__del_reloc_root() more robust to detect such invalid sharing to avoid
+possible NULL dereference as root->node can be NULL in this case.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=200411
+Reported-by: Xu Wen <wen.xu@gatech.edu>
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/bounds.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/btrfs/extent-tree.c |   18 ++++++++++++------
+ fs/btrfs/relocation.c  |    2 +-
+ 2 files changed, 13 insertions(+), 7 deletions(-)
 
---- a/kernel/bounds.c
-+++ b/kernel/bounds.c
-@@ -12,7 +12,7 @@
- #include <linux/log2.h>
- #include <linux/spinlock_types.h>
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -9100,15 +9100,14 @@ static noinline int walk_up_proc(struct
+ 	if (eb == root->node) {
+ 		if (wc->flags[level] & BTRFS_BLOCK_FLAG_FULL_BACKREF)
+ 			parent = eb->start;
+-		else
+-			BUG_ON(root->root_key.objectid !=
+-			       btrfs_header_owner(eb));
++		else if (root->root_key.objectid != btrfs_header_owner(eb))
++			goto owner_mismatch;
+ 	} else {
+ 		if (wc->flags[level + 1] & BTRFS_BLOCK_FLAG_FULL_BACKREF)
+ 			parent = path->nodes[level + 1]->start;
+-		else
+-			BUG_ON(root->root_key.objectid !=
+-			       btrfs_header_owner(path->nodes[level + 1]));
++		else if (root->root_key.objectid !=
++			 btrfs_header_owner(path->nodes[level + 1]))
++			goto owner_mismatch;
+ 	}
  
--void foo(void)
-+int main(void)
- {
- 	/* The enum constants to put into include/generated/bounds.h */
- 	DEFINE(NR_PAGEFLAGS, __NR_PAGEFLAGS);
-@@ -22,4 +22,6 @@ void foo(void)
- #endif
- 	DEFINE(SPINLOCK_SIZE, sizeof(spinlock_t));
- 	/* End of constants */
+ 	btrfs_free_tree_block(trans, root, eb, parent, wc->refs[level] == 1);
+@@ -9116,6 +9115,11 @@ out:
+ 	wc->refs[level] = 0;
+ 	wc->flags[level] = 0;
+ 	return 0;
 +
-+	return 0;
++owner_mismatch:
++	btrfs_err_rl(root->fs_info, "unexpected tree owner, have %llu expect %llu",
++		     btrfs_header_owner(eb), root->root_key.objectid);
++	return -EUCLEAN;
  }
+ 
+ static noinline int walk_down_tree(struct btrfs_trans_handle *trans,
+@@ -9169,6 +9173,8 @@ static noinline int walk_up_tree(struct
+ 			ret = walk_up_proc(trans, root, path, wc);
+ 			if (ret > 0)
+ 				return 0;
++			if (ret < 0)
++				return ret;
+ 
+ 			if (path->locks[level]) {
+ 				btrfs_tree_unlock_rw(path->nodes[level],
+--- a/fs/btrfs/relocation.c
++++ b/fs/btrfs/relocation.c
+@@ -1325,7 +1325,7 @@ static void __del_reloc_root(struct btrf
+ 	struct mapping_node *node = NULL;
+ 	struct reloc_control *rc = root->fs_info->reloc_ctl;
+ 
+-	if (rc) {
++	if (rc && root->node) {
+ 		spin_lock(&rc->reloc_root_tree.lock);
+ 		rb_node = tree_search(&rc->reloc_root_tree.rb_root,
+ 				      root->node->start);
 
 
