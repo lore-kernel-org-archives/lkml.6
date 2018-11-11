@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5056EC43441
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2820C0044C
 	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:27:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F61420818
+	by mail.kernel.org (Postfix) with ESMTP id 72610214E0
 	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:27:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F61420818
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72610214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731186AbeKLGQ3 (ORCPT
+        id S1731522AbeKLGQa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:16:29 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50830 "EHLO
+        Mon, 12 Nov 2018 01:16:30 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50836 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730599AbeKLFs1 (ORCPT
+        by vger.kernel.org with ESMTP id S1730609AbeKLFs0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:48:27 -0500
+        Mon, 12 Nov 2018 00:48:26 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsl-0000lJ-GP; Sun, 11 Nov 2018 19:58:55 +0000
+        id 1gLvsl-0000lG-MD; Sun, 11 Nov 2018 19:58:55 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsY-0001nB-JP; Sun, 11 Nov 2018 19:58:42 +0000
+        id 1gLvsY-0001mL-7A; Sun, 11 Nov 2018 19:58:42 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -38,12 +38,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org,
-        "Lorenzo Bianconi" <lorenzo.bianconi@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
+        "Kiran Kumar Modukuri" <kiran.modukuri@gmail.com>,
+        "David Howells" <dhowells@redhat.com>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.786298835@decadent.org.uk>
+Message-ID: <lsq.1541965745.31400808@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 299/366] ipv4: remove BUG_ON() from fib_compute_spec_dst
+Subject: [PATCH 3.16 291/366] cachefiles: Fix missing clear of the
+ CACHEFILES_OBJECT_ACTIVE flag
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,46 +58,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+From: Kiran Kumar Modukuri <kiran.modukuri@gmail.com>
 
-commit 9fc12023d6f51551d6ca9ed7e02ecc19d79caf17 upstream.
+commit 5ce83d4bb7d8e11e8c1c687d09f4b5ae67ef3ce3 upstream.
 
-Remove BUG_ON() from fib_compute_spec_dst routine and check
-in_dev pointer during flowi4 data structure initialization.
-fib_compute_spec_dst routine can be run concurrently with device removal
-where ip_ptr net_device pointer is set to NULL. This can happen
-if userspace enables pkt info on UDP rx socket and the device
-is removed while traffic is flowing
+In cachefiles_mark_object_active(), the new object is marked active and
+then we try to add it to the active object tree.  If a conflicting object
+is already present, we want to wait for that to go away.  After the wait,
+we go round again and try to re-mark the object as being active - but it's
+already marked active from the first time we went through and a BUG is
+issued.
 
-Fixes: 35ebf65e851c ("ipv4: Create and use fib_compute_spec_dst() helper")
-Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fix this by clearing the CACHEFILES_OBJECT_ACTIVE flag before we try again.
+
+Analysis from Kiran Kumar Modukuri:
+
+[Impact]
+Oops during heavy NFS + FSCache + Cachefiles
+
+CacheFiles: Error: Overlong wait for old active object to go away.
+
+BUG: unable to handle kernel NULL pointer dereference at 0000000000000002
+
+CacheFiles: Error: Object already active kernel BUG at
+fs/cachefiles/namei.c:163!
+
+[Cause]
+In a heavily loaded system with big files being read and truncated, an
+fscache object for a cookie is being dropped and a new object being
+looked. The new object being looked for has to wait for the old object
+to go away before the new object is moved to active state.
+
+[Fix]
+Clear the flag 'CACHEFILES_OBJECT_ACTIVE' for the new object when
+retrying the object lookup.
+
+[Testcase]
+Have run ~100 hours of NFS stress tests and have not seen this bug recur.
+
+[Regression Potential]
+ - Limited to fscache/cachefiles.
+
+Fixes: 9ae326a69004 ("CacheFiles: A cache that backs onto a mounted filesystem")
+Signed-off-by: Kiran Kumar Modukuri <kiran.modukuri@gmail.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
 [bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/net/ipv4/fib_frontend.c
-+++ b/net/ipv4/fib_frontend.c
-@@ -209,19 +209,20 @@ __be32 fib_compute_spec_dst(struct sk_bu
- 		return ip_hdr(skb)->daddr;
+ fs/cachefiles/namei.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/fs/cachefiles/namei.c
++++ b/fs/cachefiles/namei.c
+@@ -189,6 +189,7 @@ try_again:
+ 	/* an old object from a previous incarnation is hogging the slot - we
+ 	 * need to wait for it to be destroyed */
+ wait_for_old_object:
++	clear_bit(CACHEFILES_OBJECT_ACTIVE, &object->flags);
+ 	if (fscache_object_is_live(&object->fscache)) {
+ 		pr_err("\n");
+ 		pr_err("Error: Unexpected object collision\n");
+@@ -250,7 +251,6 @@ wait_for_old_object:
+ 	goto try_again;
  
- 	in_dev = __in_dev_get_rcu(dev);
--	BUG_ON(!in_dev);
- 
- 	net = dev_net(dev);
- 
- 	scope = RT_SCOPE_UNIVERSE;
- 	if (!ipv4_is_zeronet(ip_hdr(skb)->saddr)) {
-+		bool vmark = in_dev && IN_DEV_SRC_VMARK(in_dev);
-+
- 		fl4.flowi4_oif = 0;
- 		fl4.flowi4_iif = LOOPBACK_IFINDEX;
- 		fl4.daddr = ip_hdr(skb)->saddr;
- 		fl4.saddr = 0;
- 		fl4.flowi4_tos = RT_TOS(ip_hdr(skb)->tos);
- 		fl4.flowi4_scope = scope;
--		fl4.flowi4_mark = IN_DEV_SRC_VMARK(in_dev) ? skb->mark : 0;
-+		fl4.flowi4_mark = vmark ? skb->mark : 0;
- 		if (!fib_lookup(net, &fl4, &res))
- 			return FIB_RES_PREFSRC(net, res);
- 	} else {
+ requeue:
+-	clear_bit(CACHEFILES_OBJECT_ACTIVE, &object->flags);
+ 	cache->cache.ops->put_object(&xobject->fscache);
+ 	_leave(" = -ETIMEDOUT");
+ 	return -ETIMEDOUT;
 
