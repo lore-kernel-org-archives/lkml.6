@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9430BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:07:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0584BC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:07:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54DDE214DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:07:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B866920871
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:07:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="idmuTZrt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54DDE214DB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gWok8Wzb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B866920871
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732038AbeKLJ6D (ORCPT
+        id S1731583AbeKLIRe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:58:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60706 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:17:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59904 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731666AbeKLIRg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:17:36 -0500
+        id S1731484AbeKLIRd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:17:33 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3C70215EA;
-        Sun, 11 Nov 2018 22:27:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC290223CA;
+        Sun, 11 Nov 2018 22:27:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975260;
-        bh=gZNaQE8QlTlaKYsxBjciVnN27KUwT9f1I1B9yK2pEjk=;
+        s=default; t=1541975257;
+        bh=YVcn8po0a9z65pjujyoKQUg33+svZvYoHl2iBPIiD3k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=idmuTZrtFsEnTW8VZL7o00/2ZcDCKwiSCE5wTAdHVC7kdGrCjX4yrR089xekZ3gYV
-         5VgomgVUhvCd5KoI27rfj/Q0c+8InQk+3wRzbZe16laKg3qKD2Sc0NFfRL+2Er761b
-         kzh0mRksWM8hJxYzqVX9zcNUKcFd7CMEhA6bCJgM=
+        b=gWok8WzbEoFjA77fUMrxAzBorCvsOswSGRhMGGEFIAr1DWf5trXftwrejZol/XdMv
+         nAubdS9W0qLTZ0E5OuPjl7nPhaNU+GYH99vv/QXe0EEgCpZuVxKeA4HsMtQ3vc2PYi
+         HHKAg5psfTENQdIbc8Ps/XY6fLKu5EKj7Lt03HyQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fuyun Liang <liangfuyun1@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 100/361] net: hns3: Check hdev state when getting link status
-Date:   Sun, 11 Nov 2018 14:17:27 -0800
-Message-Id: <20181111221633.748887699@linuxfoundation.org>
+Subject: [PATCH 4.19 133/361] f2fs: fix to account IO correctly for cgroup writeback
+Date:   Sun, 11 Nov 2018 14:18:00 -0800
+Message-Id: <20181111221639.014555185@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -65,50 +63,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peng Li <lipeng321@huawei.com>
+From: Chao Yu <yuchao0@huawei.com>
 
-[ Upstream commit 582d37bbb613b8ad86bf82845d3a74a02a5a0fa1 ]
+[ Upstream commit 78efac537de33faab9a4302cc05a70bb4a8b3b63 ]
 
-By default, HW link status is up. If hclge_update_link_status is called
-before net up, driver will print "link up". It is not suitable. hdev
-state check is needed when getting link status.
+Now, we have supported cgroup writeback, it depends on correctly IO
+account of specified filesystem.
 
-Fixes: 46a3df9f9718 ("net: hns3: Add HNS3 Acceleration Engine & Compatibility Layer Support")
-Fixes: e2cb1dec9779 ("net: hns3: Add HNS3 VF HCL(Hardware Compatibility Layer) Support")
-Signed-off-by: Fuyun Liang <liangfuyun1@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+But in commit d1b3e72d5490 ("f2fs: submit bio of in-place-update pages"),
+we split write paths from f2fs_submit_page_mbio() to two:
+- f2fs_submit_page_bio() for IPU path
+- f2fs_submit_page_bio() for OPU path
+
+But still we account write IO only in f2fs_submit_page_mbio(), result in
+incorrect IO account, fix it by adding missing IO account in IPU path.
+
+Fixes: d1b3e72d5490 ("f2fs: submit bio of in-place-update pages")
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c   |    3 +++
- drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c |    3 +++
- 2 files changed, 6 insertions(+)
+ fs/f2fs/data.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -2362,6 +2362,9 @@ static int hclge_get_mac_phy_link(struct
- 	int mac_state;
- 	int link_stat;
- 
-+	if (test_bit(HCLGE_STATE_DOWN, &hdev->state))
-+		return 0;
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -456,6 +456,10 @@ int f2fs_submit_page_bio(struct f2fs_io_
+ 		bio_put(bio);
+ 		return -EFAULT;
+ 	}
 +
- 	mac_state = hclge_get_mac_link_status(hdev);
- 
- 	if (hdev->hw.mac.phydev) {
---- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-@@ -299,6 +299,9 @@ void hclgevf_update_link_status(struct h
- 
- 	client = handle->client;
- 
-+	link_state =
-+		test_bit(HCLGEVF_STATE_DOWN, &hdev->state) ? 0 : link_state;
++	if (fio->io_wbc && !is_read_io(fio->op))
++		wbc_account_io(fio->io_wbc, page, PAGE_SIZE);
 +
- 	if (link_state != hdev->hw.mac.link) {
- 		client->ops->link_status_change(handle, !!link_state);
- 		hdev->hw.mac.link = link_state;
+ 	bio_set_op_attrs(bio, fio->op, fio->op_flags);
+ 
+ 	__submit_bio(fio->sbi, bio, fio->type);
 
 
