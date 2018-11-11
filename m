@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E65BDC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:41:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A084BC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:41:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B333420871
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:41:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B333420871
+	by mail.kernel.org (Postfix) with ESMTP id 6EB7020869
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:41:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EB7020869
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729880AbeKLFsD (ORCPT
+        id S1729866AbeKLFsD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 12 Nov 2018 00:48:03 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:49270 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:49284 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729543AbeKLFsB (ORCPT
+        by vger.kernel.org with ESMTP id S1729552AbeKLFsB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 00:48:01 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsN-0000l8-Le; Sun, 11 Nov 2018 19:58:31 +0000
+        id 1gLvsN-0000lE-Qz; Sun, 11 Nov 2018 19:58:31 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsN-0001MK-HK; Sun, 11 Nov 2018 19:58:31 +0000
+        id 1gLvsN-0001Mo-Lq; Sun, 11 Nov 2018 19:58:31 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -39,9 +39,9 @@ From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.325058879@decadent.org.uk>
+Message-ID: <lsq.1541965745.219244166@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 004/366] bcmgenet: Delete unused variable
+Subject: [PATCH 3.16 010/366] rtl8723be: Fix misleading indentation
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,25 +57,25 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ben Hutchings <ben@decadent.org.uk>
 
-I needed to add a "kdev" variable to bcmgenet_desc_rx() when
-backporting commit 8c4799ac7996 "net: bcmgenet: Utilize correct struct
-device for all DMA operations", but when I later backported commit
-d6707bec5986 "net: bcmgenet: rewrite bcmgenet_rx_refill()" it became
-unused.  Delete it.
+Fix the compiler warning:
 
-There is no corresponding upstream commit because these commits were
-applied in the opposite order and this variable was never introduced.
+drivers/net/wireless/rtlwifi/rtl8723be/hw.c:1132:2: warning: this 'else' clause does not guard...
+
+by reducing indentation of the following statement.  This was fixed
+upstream as part of commit 5c99f04fec93 "rtlwifi: rtl8723be: Update
+driver to match Realtek release of 06/28/14".
 
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-+++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-@@ -1344,7 +1344,6 @@ static unsigned int bcmgenet_desc_rx(str
- 				     unsigned int budget)
- {
- 	struct net_device *dev = priv->dev;
--	struct device *kdev = &priv->pdev->dev;
- 	struct enet_cb *cb;
- 	struct sk_buff *skb;
- 	u32 dma_length_status;
+--- a/drivers/net/wireless/rtlwifi/rtl8723be/hw.c
++++ b/drivers/net/wireless/rtlwifi/rtl8723be/hw.c
+@@ -1132,7 +1132,7 @@ static enum version_8723e _rtl8723be_rea
+ 	else
+ 		version = (enum version_8723e) VERSION_TEST_CHIP_1T1R_8723B;
+ 
+-		rtlphy->rf_type = RF_1T1R;
++	rtlphy->rf_type = RF_1T1R;
+ 
+ 	value8 = rtl_read_byte(rtlpriv, REG_ROM_VERSION);
+ 	if (value8 >= 0x02)
 
