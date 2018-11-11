@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3299C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:43:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43AA4C0044C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:43:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB62A20818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:43:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0212320871
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:43:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MGKvXB+5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB62A20818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jQEol6lB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0212320871
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387633AbeKLITR (ORCPT
+        id S2387797AbeKLJdp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:19:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40572 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:33:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40616 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387599AbeKLITQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:19:16 -0500
+        id S2387601AbeKLITR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:19:17 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 38E53208A3;
+        by mail.kernel.org (Postfix) with ESMTPSA id E236221527;
         Sun, 11 Nov 2018 22:29:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975360;
-        bh=rzYuNCNn8yCcnXQp8q6vBKrAjRjCJ+qodoNVelBr33o=;
+        s=default; t=1541975361;
+        bh=TeMYlugb65WIapj3r1DVfcOgNUQdQZ7L5ZSt7LPoaec=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MGKvXB+57sW/lkTmW0Z3k7lpPYQqC44UbPclv4qSm0HZ824YZt2l6dbAXZXhXCoTC
-         /qyFCmla3uq+Rmnp7enDdJa9DrOb2pycFMTMyoVDsX5PLca7VKFF4a52sCK+oOD+cq
-         u6Uf6Zvs7Fe2lNv9t9rbKhvB2rdpwzIdeg5m6hYU=
+        b=jQEol6lBfBUAep77U7AvQT+bsj7k78L4oSa2dfm//XifqqN37b+6YEdkg3HQTYp/4
+         anCyIVMgf/HBvLY6LIPVMA8f3JVOB8fMqzuiMhFqF3D4EbEuAAQEj1Gtv/Ls3WL5xk
+         Y8NMZ+SmrO0dwvIevHuH1WJ43F/XuKwP4+ZOKzJo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Helge Deller <deller@gmx.de>
-Subject: [PATCH 4.18 028/350] parisc: Fix map_pages() to not overwrite existing pte entries
-Date:   Sun, 11 Nov 2018 14:18:12 -0800
-Message-Id: <20181111221708.351865113@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.18 030/350] ALSA: hda - Add quirk for ASUS G751 laptop
+Date:   Sun, 11 Nov 2018 14:18:14 -0800
+Message-Id: <20181111221708.446006863@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -61,41 +61,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Helge Deller <deller@gmx.de>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 3c229b3f2dd8133f61bb81d3cb018be92f4bba39 upstream.
+commit 11ba6111160290ccd35562f4e05cec08942a6c4c upstream.
 
-Fix a long-existing small nasty bug in the map_pages() implementation which
-leads to overwriting already written pte entries with zero, *if* map_pages() is
-called a second time with an end address which isn't aligned on a pmd boundry.
-This happens for example if we want to remap only the text segment read/write
-in order to run alternative patching on the code. Exiting the loop when we
-reach the end address fixes this.
+ASUS G751 requires the extra COEF initialization to make it microphone
+working properly.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Helge Deller <deller@gmx.de>
+Reported-and-tested-by: Håvard <hovardslill@gmail.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/parisc/mm/init.c |    8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ sound/pci/hda/patch_realtek.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/arch/parisc/mm/init.c
-+++ b/arch/parisc/mm/init.c
-@@ -495,12 +495,8 @@ static void __init map_pages(unsigned lo
- 						pte = pte_mkhuge(pte);
- 				}
- 
--				if (address >= end_paddr) {
--					if (force)
--						break;
--					else
--						pte_val(pte) = 0;
--				}
-+				if (address >= end_paddr)
-+					break;
- 
- 				set_pte(pg_table, pte);
- 
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -7690,6 +7690,7 @@ enum {
+ 	ALC662_FIXUP_ASUS_Nx50,
+ 	ALC668_FIXUP_ASUS_Nx51_HEADSET_MODE,
+ 	ALC668_FIXUP_ASUS_Nx51,
++	ALC668_FIXUP_ASUS_G751,
+ 	ALC891_FIXUP_HEADSET_MODE,
+ 	ALC891_FIXUP_DELL_MIC_NO_PRESENCE,
+ 	ALC662_FIXUP_ACER_VERITON,
+@@ -7959,6 +7960,14 @@ static const struct hda_fixup alc662_fix
+ 		.chained = true,
+ 		.chain_id = ALC668_FIXUP_ASUS_Nx51_HEADSET_MODE,
+ 	},
++	[ALC668_FIXUP_ASUS_G751] = {
++		.type = HDA_FIXUP_VERBS,
++		.v.verbs = (const struct hda_verb[]) {
++			{ 0x20, AC_VERB_SET_COEF_INDEX, 0xc3 },
++			{ 0x20, AC_VERB_SET_PROC_COEF, 0x4000 },
++			{}
++		},
++	},
+ 	[ALC891_FIXUP_HEADSET_MODE] = {
+ 		.type = HDA_FIXUP_FUNC,
+ 		.v.func = alc_fixup_headset_mode,
+@@ -8032,6 +8041,7 @@ static const struct snd_pci_quirk alc662
+ 	SND_PCI_QUIRK(0x1043, 0x11cd, "Asus N550", ALC662_FIXUP_ASUS_Nx50),
+ 	SND_PCI_QUIRK(0x1043, 0x13df, "Asus N550JX", ALC662_FIXUP_BASS_1A),
+ 	SND_PCI_QUIRK(0x1043, 0x129d, "Asus N750", ALC662_FIXUP_ASUS_Nx50),
++	SND_PCI_QUIRK(0x1043, 0x12ff, "ASUS G751", ALC668_FIXUP_ASUS_G751),
+ 	SND_PCI_QUIRK(0x1043, 0x1477, "ASUS N56VZ", ALC662_FIXUP_BASS_MODE4_CHMAP),
+ 	SND_PCI_QUIRK(0x1043, 0x15a7, "ASUS UX51VZH", ALC662_FIXUP_BASS_16),
+ 	SND_PCI_QUIRK(0x1043, 0x177d, "ASUS N551", ALC668_FIXUP_ASUS_Nx51),
 
 
