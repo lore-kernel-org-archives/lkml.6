@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3784C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:19:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C04EC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:19:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AA2720817
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:19:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4441220869
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:19:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FxWKkp3+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AA2720817
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bJ+DGq1L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4441220869
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389681AbeKLJJz (ORCPT
+        id S2389856AbeKLJKE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:09:55 -0500
+        Mon, 12 Nov 2018 04:10:04 -0500
 Received: from mail.kernel.org ([198.145.29.99]:47942 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389562AbeKLIVY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:21:24 -0500
+        id S2389545AbeKLIVW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:22 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B548A223CB;
-        Sun, 11 Nov 2018 22:31:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C63C223D8;
+        Sun, 11 Nov 2018 22:31:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975487;
-        bh=gnGzfVfxQfWNEHeppXQer9+AFzyPdJ8JgFxNjVwPVjo=;
+        s=default; t=1541975485;
+        bh=Bh1SPkk7Vx7k5LPKab7lYnP7F8XpnIyXEWQlsuOkoLQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FxWKkp3+M/wrdo0I/iFRh6ztDpD155vod53c1HoNg6oTFRpOgeh3Hm8jxcy3KcPgR
-         kT/+YqIPMSSl78Ar9yTnhW60Nx1eoVGxwXHMCBQsUVXrRhGmGPJKOP0654V/xuU+uH
-         gpBqjAwLbK5BHEbhpeeGYNQ+dXVIn1w0iUIixZjc=
+        b=bJ+DGq1LE70ddCJi6RD1D1Fv1cMeGcpIkAB1b7R8m8Kw9GHBY3akKiQIKb2qIuz2O
+         9ao1TkzcTEDFBUWKkQCkQ9aa8mf7OHZD7Dt14AvyXdm9hllvrhosHDDG1XPfmUPLy6
+         GvplrhciJbc89p/KqOrD6NQ89d1Os8x0haBOsH3M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Johan Hovold <johan@kernel.org>, Rob Herring <robh@kernel.org>
-Subject: [PATCH 4.18 284/350] net: bcmgenet: fix OF child-node lookup
-Date:   Sun, 11 Nov 2018 14:22:28 -0800
-Message-Id: <20181111221719.939599956@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
+        Mimi Zohar <zohar@linux.ibm.com>
+Subject: [PATCH 4.18 244/350] ima: fix showing large violations or runtime_measurements_count
+Date:   Sun, 11 Nov 2018 14:21:48 -0800
+Message-Id: <20181111221718.246728013@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -63,41 +62,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Eric Biggers <ebiggers@google.com>
 
-commit d397dbe606120a1ea1b11b0020c3f7a3852da5ac upstream.
+commit 1e4c8dafbb6bf72fb5eca035b861e39c5896c2b7 upstream.
 
-Use the new of_get_compatible_child() helper to lookup the mdio child
-node instead of using of_find_compatible_node(), which searches the
-entire tree from a given start node and thus can return an unrelated
-(i.e. non-child) node.
+The 12 character temporary buffer is not necessarily long enough to hold
+a 'long' value.  Increase it.
 
-This also addresses a potential use-after-free (e.g. after probe
-deferral) as the tree-wide helper drops a reference to its first
-argument (i.e. the node of the device being probed).
-
-Fixes: aa09677cba42 ("net: bcmgenet: add MDIO routines")
-Cc: stable <stable@vger.kernel.org>     # 3.15
-Cc: David S. Miller <davem@davemloft.net>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/ethernet/broadcom/genet/bcmmii.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ security/integrity/ima/ima_fs.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/broadcom/genet/bcmmii.c
-+++ b/drivers/net/ethernet/broadcom/genet/bcmmii.c
-@@ -342,7 +342,7 @@ static struct device_node *bcmgenet_mii_
- 	if (!compat)
- 		return NULL;
+--- a/security/integrity/ima/ima_fs.c
++++ b/security/integrity/ima/ima_fs.c
+@@ -42,14 +42,14 @@ static int __init default_canonical_fmt_
+ __setup("ima_canonical_fmt", default_canonical_fmt_setup);
  
--	priv->mdio_dn = of_find_compatible_node(dn, NULL, compat);
-+	priv->mdio_dn = of_get_compatible_child(dn, compat);
- 	kfree(compat);
- 	if (!priv->mdio_dn) {
- 		dev_err(kdev, "unable to find MDIO bus node\n");
+ static int valid_policy = 1;
+-#define TMPBUFLEN 12
++
+ static ssize_t ima_show_htable_value(char __user *buf, size_t count,
+ 				     loff_t *ppos, atomic_long_t *val)
+ {
+-	char tmpbuf[TMPBUFLEN];
++	char tmpbuf[32];	/* greater than largest 'long' string value */
+ 	ssize_t len;
+ 
+-	len = scnprintf(tmpbuf, TMPBUFLEN, "%li\n", atomic_long_read(val));
++	len = scnprintf(tmpbuf, sizeof(tmpbuf), "%li\n", atomic_long_read(val));
+ 	return simple_read_from_buffer(buf, count, ppos, tmpbuf, len);
+ }
+ 
 
 
