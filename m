@@ -6,44 +6,47 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61DB9C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:57:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2332C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:57:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23DE020866
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:57:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87AC020866
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:57:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DVKDPJqb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23DE020866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="w5J27mYt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87AC020866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732802AbeKLJrX (ORCPT
+        id S1732701AbeKLJrX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 12 Nov 2018 04:47:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35400 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:34210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732359AbeKLISM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1732529AbeKLISM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:18:12 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1CB16215EA;
+        by mail.kernel.org (Postfix) with ESMTPSA id 6FB802154B;
         Sun, 11 Nov 2018 22:28:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975296;
-        bh=NWyAU0Iwr9qC/fZYDreHkKt4WmE3Zl8w6vvioxYAzXM=;
+        bh=RB551GqR+t9NYSzbZ24gxJajnqS2JjMDg84cjhkSBes=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DVKDPJqb8iMNG6kjFF5owE4SjBnto2uJicEY+0Avz6mSnYUNV2pdLpv+UEltSZm/l
-         h15FJiciXpJRs9DG8rGq1aq1w8h99uYvLk9UkS2O/azav8tIzIuSPfmxzvmbTipFWI
-         bY1B2IEwxUXlxujTlUrvjxF6S/EhO5mQsFnnlCDc=
+        b=w5J27mYtCdG0hFAtt7lAVkqtYaJZuMBSuzzYvxwS1QXRxgMEskDCVV+tNszJ/6mAu
+         Ha+gCx6BQan40130+tXKYoIg5vRrabh4ZKgEvOnybfPAOO3AwKgmfKRIXqot1dwk3K
+         WmjrMAKfAhQBM3peg1WJnRwcg1K/hDbd7et64PWY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Luca Coelho <luciano.coelho@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.19 212/361] iwlwifi: mvm: check return value of rs_rate_from_ucode_rate()
-Date:   Sun, 11 Nov 2018 14:19:19 -0800
-Message-Id: <20181111221649.776537046@linuxfoundation.org>
+        stable@vger.kernel.org, Stefan Nuernberger <snu@amazon.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Simon Veith <sveith@amazon.de>,
+        Paul Moore <paul@paul-moore.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 213/361] net/ipv4: defensive cipso option parsing
+Date:   Sun, 11 Nov 2018 14:19:20 -0800
+Message-Id: <20181111221649.858077991@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -61,81 +64,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Luca Coelho <luciano.coelho@intel.com>
+From: Stefan Nuernberger <snu@amazon.com>
 
-commit 3d71c3f1f50cf309bd20659422af549bc784bfff upstream.
+commit 076ed3da0c9b2f88d9157dbe7044a45641ae369e upstream.
 
-The rs_rate_from_ucode_rate() function may return -EINVAL if the rate
-is invalid, but none of the callsites check for the error, potentially
-making us access arrays with index IWL_RATE_INVALID, which is larger
-than the arrays, causing an out-of-bounds access.  This will trigger
-KASAN warnings, such as the one reported in the bugzilla issue
-mentioned below.
+commit 40413955ee26 ("Cipso: cipso_v4_optptr enter infinite loop") fixed
+a possible infinite loop in the IP option parsing of CIPSO. The fix
+assumes that ip_options_compile filtered out all zero length options and
+that no other one-byte options beside IPOPT_END and IPOPT_NOOP exist.
+While this assumption currently holds true, add explicit checks for zero
+length and invalid length options to be safe for the future. Even though
+ip_options_compile should have validated the options, the introduction of
+new one-byte options can still confuse this code without the additional
+checks.
 
-This fixes https://bugzilla.kernel.org/show_bug.cgi?id=200659
-
+Signed-off-by: Stefan Nuernberger <snu@amazon.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Simon Veith <sveith@amazon.de>
 Cc: stable@vger.kernel.org
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Acked-by: Paul Moore <paul@paul-moore.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/rs.c |   24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
+ net/ipv4/cipso_ipv4.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
---- a/drivers/net/wireless/intel/iwlwifi/mvm/rs.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/rs.c
-@@ -1239,7 +1239,11 @@ void iwl_mvm_rs_tx_status(struct iwl_mvm
- 	    !(info->flags & IEEE80211_TX_STAT_AMPDU))
- 		return;
+--- a/net/ipv4/cipso_ipv4.c
++++ b/net/ipv4/cipso_ipv4.c
+@@ -1512,7 +1512,7 @@ static int cipso_v4_parsetag_loc(const s
+  *
+  * Description:
+  * Parse the packet's IP header looking for a CIPSO option.  Returns a pointer
+- * to the start of the CIPSO option on success, NULL if one if not found.
++ * to the start of the CIPSO option on success, NULL if one is not found.
+  *
+  */
+ unsigned char *cipso_v4_optptr(const struct sk_buff *skb)
+@@ -1522,10 +1522,8 @@ unsigned char *cipso_v4_optptr(const str
+ 	int optlen;
+ 	int taglen;
  
--	rs_rate_from_ucode_rate(tx_resp_hwrate, info->band, &tx_resp_rate);
-+	if (rs_rate_from_ucode_rate(tx_resp_hwrate, info->band,
-+				    &tx_resp_rate)) {
-+		WARN_ON_ONCE(1);
-+		return;
-+	}
- 
- #ifdef CONFIG_MAC80211_DEBUGFS
- 	/* Disable last tx check if we are debugging with fixed rate but
-@@ -1290,7 +1294,10 @@ void iwl_mvm_rs_tx_status(struct iwl_mvm
- 	 */
- 	table = &lq_sta->lq;
- 	lq_hwrate = le32_to_cpu(table->rs_table[0]);
--	rs_rate_from_ucode_rate(lq_hwrate, info->band, &lq_rate);
-+	if (rs_rate_from_ucode_rate(lq_hwrate, info->band, &lq_rate)) {
-+		WARN_ON_ONCE(1);
-+		return;
-+	}
- 
- 	/* Here we actually compare this rate to the latest LQ command */
- 	if (lq_color != LQ_FLAG_COLOR_GET(table->flags)) {
-@@ -1392,8 +1399,12 @@ void iwl_mvm_rs_tx_status(struct iwl_mvm
- 		/* Collect data for each rate used during failed TX attempts */
- 		for (i = 0; i <= retries; ++i) {
- 			lq_hwrate = le32_to_cpu(table->rs_table[i]);
--			rs_rate_from_ucode_rate(lq_hwrate, info->band,
--						&lq_rate);
-+			if (rs_rate_from_ucode_rate(lq_hwrate, info->band,
-+						    &lq_rate)) {
-+				WARN_ON_ONCE(1);
-+				return;
-+			}
+-	for (optlen = iph->ihl*4 - sizeof(struct iphdr); optlen > 0; ) {
++	for (optlen = iph->ihl*4 - sizeof(struct iphdr); optlen > 1; ) {
+ 		switch (optptr[0]) {
+-		case IPOPT_CIPSO:
+-			return optptr;
+ 		case IPOPT_END:
+ 			return NULL;
+ 		case IPOPT_NOOP:
+@@ -1534,6 +1532,11 @@ unsigned char *cipso_v4_optptr(const str
+ 		default:
+ 			taglen = optptr[1];
+ 		}
++		if (!taglen || taglen > optlen)
++			return NULL;
++		if (optptr[0] == IPOPT_CIPSO)
++			return optptr;
 +
- 			/*
- 			 * Only collect stats if retried rate is in the same RS
- 			 * table as active/search.
-@@ -3262,7 +3273,10 @@ static void rs_build_rates_table_from_fi
- 	for (i = 0; i < num_rates; i++)
- 		lq_cmd->rs_table[i] = ucode_rate_le32;
- 
--	rs_rate_from_ucode_rate(ucode_rate, band, &rate);
-+	if (rs_rate_from_ucode_rate(ucode_rate, band, &rate)) {
-+		WARN_ON_ONCE(1);
-+		return;
-+	}
- 
- 	if (is_mimo(&rate))
- 		lq_cmd->mimo_delim = num_rates - 1;
+ 		optlen -= taglen;
+ 		optptr += taglen;
+ 	}
 
 
