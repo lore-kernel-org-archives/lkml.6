@@ -7,48 +7,49 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B48FAC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:17:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B13B3C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:17:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D0EA20871
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:17:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 793982084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:17:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bUFUOaCj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D0EA20871
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CNLxJVo5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 793982084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730712AbeKLKHv (ORCPT
+        id S1730491AbeKLKHv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 12 Nov 2018 05:07:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58446 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:59152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730051AbeKLIRB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730039AbeKLIRB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:17:01 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 665AC21722;
+        by mail.kernel.org (Postfix) with ESMTPSA id 10E8921104;
         Sun, 11 Nov 2018 22:27:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975226;
-        bh=AWoKtXgq2F0xyQuGfArYTz8zLzpIyrRzLBpXUdqVbeo=;
+        bh=IKP7ZDEvpA/E7zt2b+tyD2cfnFd19HNOMrd6yqGlCHs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bUFUOaCj1xpB6B3Jq4rKAAt2lXXRnShtNdk127hceFDN7WC2ol48LD0Qwhi9oTpyz
-         MeqtL9rvSGoGsskwiXB1YbDFf393s7R91l935r196VzG+8EN0qaI/u4xcMi81mJZje
-         xyzsW4CnsoXSUbddu20+ILwpF1MhczKQNOXLCHQw=
+        b=CNLxJVo5XdYdkRGtFEYMJv/gJfDQm3DV44+ujby6sXBdJuNxiWPaXyxm4XEMYAW80
+         3bI94wK/FvG+SEeGjDS9RCU8E/2qHz2dsDxojkWZndecpxfYaHaIw3CUww3HNlB30u
+         j94c+fUgFLMibcHVfv8X5FvETyHd5Jr3cbdkM7Mw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, He Zhe <zhe.he@windriver.com>,
+        stable@vger.kernel.org, Juergen Gross <jgross@suse.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        kstewart@linuxfoundation.org, pombredanne@nexb.com,
+        boris.ostrovsky@oracle.com, bp@alien8.de, corbet@lwn.net,
+        linux-doc@vger.kernel.org, xen-devel@lists.xenproject.org,
         Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.19 043/361] x86/corruption-check: Fix panic in memory_corruption_check() when boot option without value is provided
-Date:   Sun, 11 Nov 2018 14:16:30 -0800
-Message-Id: <20181111221625.902374393@linuxfoundation.org>
+Subject: [PATCH 4.19 042/361] x86/xen: Fix boot loader version reported for PVH guests
+Date:   Sun, 11 Nov 2018 14:16:29 -0800
+Message-Id: <20181111221625.728414024@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -66,87 +67,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: He Zhe <zhe.he@windriver.com>
+From: Juergen Gross <jgross@suse.com>
 
-commit ccde460b9ae5c2bd5e4742af0a7f623c2daad566 upstream.
+commit 357d291ce035d1b757568058f3c9898c60d125b1 upstream.
 
-memory_corruption_check[{_period|_size}]()'s handlers do not check input
-argument before passing it to kstrtoul() or simple_strtoull(). The argument
-would be a NULL pointer if each of the kernel parameters, without its
-value, is set in command line and thus cause the following panic.
+The boot loader version reported via sysfs is wrong in case of the
+kernel being booted via the Xen PVH boot entry. it should be 2.12
+(0x020c), but it is reported to be 2.18 (0x0212).
 
-PANIC: early exception 0xe3 IP 10:ffffffff73587c22 error 0 cr2 0x0
-[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.18-rc8+ #2
-[    0.000000] RIP: 0010:kstrtoull+0x2/0x10
-...
-[    0.000000] Call Trace
-[    0.000000]  ? set_corruption_check+0x21/0x49
-[    0.000000]  ? do_early_param+0x4d/0x82
-[    0.000000]  ? parse_args+0x212/0x330
-[    0.000000]  ? rdinit_setup+0x26/0x26
-[    0.000000]  ? parse_early_options+0x20/0x23
-[    0.000000]  ? rdinit_setup+0x26/0x26
-[    0.000000]  ? parse_early_param+0x2d/0x39
-[    0.000000]  ? setup_arch+0x2f7/0xbf4
-[    0.000000]  ? start_kernel+0x5e/0x4c2
-[    0.000000]  ? load_ucode_bsp+0x113/0x12f
-[    0.000000]  ? secondary_startup_64+0xa5/0xb0
+As the current way to set the version is error prone use the more
+readable variant (2 << 8) | 12.
 
-This patch adds checks to prevent the panic.
-
-Signed-off-by: He Zhe <zhe.he@windriver.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Cc: <stable@vger.kernel.org> # 4.12
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: gregkh@linuxfoundation.org
-Cc: kstewart@linuxfoundation.org
-Cc: pombredanne@nexb.com
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/1534260823-87917-1-git-send-email-zhe.he@windriver.com
+Cc: boris.ostrovsky@oracle.com
+Cc: bp@alien8.de
+Cc: corbet@lwn.net
+Cc: linux-doc@vger.kernel.org
+Cc: xen-devel@lists.xenproject.org
+Link: http://lkml.kernel.org/r/20181010061456.22238-2-jgross@suse.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/check.c |   15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ arch/x86/xen/enlighten_pvh.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kernel/check.c
-+++ b/arch/x86/kernel/check.c
-@@ -31,6 +31,11 @@ static __init int set_corruption_check(c
- 	ssize_t ret;
- 	unsigned long val;
+--- a/arch/x86/xen/enlighten_pvh.c
++++ b/arch/x86/xen/enlighten_pvh.c
+@@ -75,7 +75,7 @@ static void __init init_pvh_bootparams(v
+ 	 * Version 2.12 supports Xen entry point but we will use default x86/PC
+ 	 * environment (i.e. hardware_subarch 0).
+ 	 */
+-	pvh_bootparams.hdr.version = 0x212;
++	pvh_bootparams.hdr.version = (2 << 8) | 12;
+ 	pvh_bootparams.hdr.type_of_loader = (9 << 4) | 0; /* Xen loader */
  
-+	if (!arg) {
-+		pr_err("memory_corruption_check config string not provided\n");
-+		return -EINVAL;
-+	}
-+
- 	ret = kstrtoul(arg, 10, &val);
- 	if (ret)
- 		return ret;
-@@ -45,6 +50,11 @@ static __init int set_corruption_check_p
- 	ssize_t ret;
- 	unsigned long val;
- 
-+	if (!arg) {
-+		pr_err("memory_corruption_check_period config string not provided\n");
-+		return -EINVAL;
-+	}
-+
- 	ret = kstrtoul(arg, 10, &val);
- 	if (ret)
- 		return ret;
-@@ -59,6 +69,11 @@ static __init int set_corruption_check_s
- 	char *end;
- 	unsigned size;
- 
-+	if (!arg) {
-+		pr_err("memory_corruption_check_size config string not provided\n");
-+		return -EINVAL;
-+	}
-+
- 	size = memparse(arg, &end);
- 
- 	if (*end == '\0')
+ 	x86_init.acpi.get_root_pointer = pvh_get_root_pointer;
 
 
