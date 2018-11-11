@@ -6,45 +6,47 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0704C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:13:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84AB5C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:13:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F1AC20871
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:13:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43E3420871
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:13:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BJHirIh4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F1AC20871
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CwHdJlk+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43E3420871
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731409AbeKLKEB (ORCPT
+        id S1731561AbeKLKEH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 05:04:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59922 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 05:04:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730472AbeKLIRP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730430AbeKLIRP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:17:15 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB61A22360;
-        Sun, 11 Nov 2018 22:27:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E25E4208A3;
+        Sun, 11 Nov 2018 22:27:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975240;
-        bh=ToYSEaNLrF1nh8CdqspjWx57CRwfv+aShSVOd66QUkQ=;
+        s=default; t=1541975238;
+        bh=3lpF9rYrDb2PCUuFszCuUwnu5YUAMVEZpareZSVjUlc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BJHirIh4AKeTXCgYVa6yGbS7rX3VBHCS3Y2ZvHtuZ80UZukiuFu7p3CYUyhFM65xe
-         5nw4LkqNS51ospxO5SJntpKe/YVE5gJPRgtsJtJ+3CFPhINebj4INpOknbvj0oKX67
-         noB1mCf4yVEwD/lLcEbNRnFNaebiMrKD0xB3pF7Y=
+        b=CwHdJlk+y3iD8A4UdAjcm3C7mv1ZxrTc9jd42t0Yxw7EbAUMH6lBtDc5OID5shYWm
+         W+k+hvKluW6SrjoTRTY7j2wmQTU23sZXPf7hHCfeYH+RZNyKFWhzv4jMqq2Q7SrPyJ
+         HWqucIkKlk4uQT2+T4eEG587xEkAhhwthtbCzB3E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
+        stable@vger.kernel.org, Vijaya Kumar K <vkilari@codeaurora.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 082/361] cpufreq: dt: Try freeing static OPPs only if we have added them
-Date:   Sun, 11 Nov 2018 14:17:09 -0800
-Message-Id: <20181111221631.455138403@linuxfoundation.org>
+Subject: [PATCH 4.19 079/361] ACPI/PPTT: Handle architecturally unknown cache types
+Date:   Sun, 11 Nov 2018 14:17:06 -0800
+Message-Id: <20181111221631.009539705@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -62,111 +64,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Viresh Kumar <viresh.kumar@linaro.org>
+From: Jeffrey Hugo <jhugo@codeaurora.org>
 
-[ Upstream commit 51c99dd2c06b234575661fa1e0a1dea6c3ef566f ]
+[ Upstream commit 59bbff3775c0951300f7b41345a54b999438f8d0 ]
 
-We can not call dev_pm_opp_of_cpumask_remove_table() freely anymore
-since the latest OPP core updates as that uses reference counting to
-free resources. There are cases where no static OPPs are added (using
-DT) for a platform and trying to remove the OPP table may end up
-decrementing refcount which is already zero and hence generating
-warnings.
+The type of a cache might not be specified by architectural mechanisms (ie
+system registers), but its type might be specified in the PPTT.  In this
+case, we should populate the type of the cache, rather than leave it
+undefined.
 
-Lets track if we were able to add static OPPs or not and then only
-remove the table based on that. Some reshuffling of code is also done to
-do that.
+This fixes the issue where the cacheinfo driver will not populate sysfs
+for such caches, resulting in the information missing from utilities like
+lstopo and lscpu, thus degrading the user experience.
 
-Reported-by: Niklas Cassel <niklas.cassel@linaro.org>
-Tested-by: Niklas Cassel <niklas.cassel@linaro.org>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Fixes: 2bd00bcd73e5 (ACPI/PPTT: Add Processor Properties Topology Table parsing)
+Reported-by: Vijaya Kumar K <vkilari@codeaurora.org>
+Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/cpufreq/cpufreq-dt.c |   34 +++++++++++++++++++---------------
- 1 file changed, 19 insertions(+), 15 deletions(-)
+ drivers/acpi/pptt.c |   33 +++++++++++++--------------------
+ 1 file changed, 13 insertions(+), 20 deletions(-)
 
---- a/drivers/cpufreq/cpufreq-dt.c
-+++ b/drivers/cpufreq/cpufreq-dt.c
-@@ -32,6 +32,7 @@ struct private_data {
- 	struct device *cpu_dev;
- 	struct thermal_cooling_device *cdev;
- 	const char *reg_name;
-+	bool have_static_opps;
- };
+--- a/drivers/acpi/pptt.c
++++ b/drivers/acpi/pptt.c
+@@ -338,9 +338,6 @@ static struct acpi_pptt_cache *acpi_find
+ 	return found;
+ }
  
- static struct freq_attr *cpufreq_dt_attr[] = {
-@@ -204,6 +205,15 @@ static int cpufreq_init(struct cpufreq_p
+-/* total number of attributes checked by the properties code */
+-#define PPTT_CHECKED_ATTRIBUTES 4
+-
+ /**
+  * update_cache_properties() - Update cacheinfo for the given processor
+  * @this_leaf: Kernel cache info structure being updated
+@@ -357,25 +354,15 @@ static void update_cache_properties(stru
+ 				    struct acpi_pptt_cache *found_cache,
+ 				    struct acpi_pptt_processor *cpu_node)
+ {
+-	int valid_flags = 0;
+-
+ 	this_leaf->fw_token = cpu_node;
+-	if (found_cache->flags & ACPI_PPTT_SIZE_PROPERTY_VALID) {
++	if (found_cache->flags & ACPI_PPTT_SIZE_PROPERTY_VALID)
+ 		this_leaf->size = found_cache->size;
+-		valid_flags++;
+-	}
+-	if (found_cache->flags & ACPI_PPTT_LINE_SIZE_VALID) {
++	if (found_cache->flags & ACPI_PPTT_LINE_SIZE_VALID)
+ 		this_leaf->coherency_line_size = found_cache->line_size;
+-		valid_flags++;
+-	}
+-	if (found_cache->flags & ACPI_PPTT_NUMBER_OF_SETS_VALID) {
++	if (found_cache->flags & ACPI_PPTT_NUMBER_OF_SETS_VALID)
+ 		this_leaf->number_of_sets = found_cache->number_of_sets;
+-		valid_flags++;
+-	}
+-	if (found_cache->flags & ACPI_PPTT_ASSOCIATIVITY_VALID) {
++	if (found_cache->flags & ACPI_PPTT_ASSOCIATIVITY_VALID)
+ 		this_leaf->ways_of_associativity = found_cache->associativity;
+-		valid_flags++;
+-	}
+ 	if (found_cache->flags & ACPI_PPTT_WRITE_POLICY_VALID) {
+ 		switch (found_cache->attributes & ACPI_PPTT_MASK_WRITE_POLICY) {
+ 		case ACPI_PPTT_CACHE_POLICY_WT:
+@@ -402,11 +389,17 @@ static void update_cache_properties(stru
  		}
  	}
- 
-+	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
-+	if (!priv) {
-+		ret = -ENOMEM;
-+		goto out_put_regulator;
-+	}
-+
-+	priv->reg_name = name;
-+	priv->opp_table = opp_table;
-+
  	/*
- 	 * Initialize OPP tables for all policy->cpus. They will be shared by
- 	 * all CPUs which have marked their CPUs shared with OPP bindings.
-@@ -214,7 +224,8 @@ static int cpufreq_init(struct cpufreq_p
- 	 *
- 	 * OPPs might be populated at runtime, don't check for error here
+-	 * If the above flags are valid, and the cache type is NOCACHE
+-	 * update the cache type as well.
++	 * If cache type is NOCACHE, then the cache hasn't been specified
++	 * via other mechanisms.  Update the type if a cache type has been
++	 * provided.
++	 *
++	 * Note, we assume such caches are unified based on conventional system
++	 * design and known examples.  Significant work is required elsewhere to
++	 * fully support data/instruction only type caches which are only
++	 * specified in PPTT.
  	 */
--	dev_pm_opp_of_cpumask_add_table(policy->cpus);
-+	if (!dev_pm_opp_of_cpumask_add_table(policy->cpus))
-+		priv->have_static_opps = true;
- 
- 	/*
- 	 * But we need OPP table to function so if it is not there let's
-@@ -240,19 +251,10 @@ static int cpufreq_init(struct cpufreq_p
- 				__func__, ret);
- 	}
- 
--	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
--	if (!priv) {
--		ret = -ENOMEM;
--		goto out_free_opp;
--	}
--
--	priv->reg_name = name;
--	priv->opp_table = opp_table;
--
- 	ret = dev_pm_opp_init_cpufreq_table(cpu_dev, &freq_table);
- 	if (ret) {
- 		dev_err(cpu_dev, "failed to init cpufreq table: %d\n", ret);
--		goto out_free_priv;
-+		goto out_free_opp;
- 	}
- 
- 	priv->cpu_dev = cpu_dev;
-@@ -282,10 +284,11 @@ static int cpufreq_init(struct cpufreq_p
- 
- out_free_cpufreq_table:
- 	dev_pm_opp_free_cpufreq_table(cpu_dev, &freq_table);
--out_free_priv:
--	kfree(priv);
- out_free_opp:
--	dev_pm_opp_of_cpumask_remove_table(policy->cpus);
-+	if (priv->have_static_opps)
-+		dev_pm_opp_of_cpumask_remove_table(policy->cpus);
-+	kfree(priv);
-+out_put_regulator:
- 	if (name)
- 		dev_pm_opp_put_regulators(opp_table);
- out_put_clk:
-@@ -300,7 +303,8 @@ static int cpufreq_exit(struct cpufreq_p
- 
- 	cpufreq_cooling_unregister(priv->cdev);
- 	dev_pm_opp_free_cpufreq_table(priv->cpu_dev, &policy->freq_table);
--	dev_pm_opp_of_cpumask_remove_table(policy->related_cpus);
-+	if (priv->have_static_opps)
-+		dev_pm_opp_of_cpumask_remove_table(policy->related_cpus);
- 	if (priv->reg_name)
- 		dev_pm_opp_put_regulators(priv->opp_table);
+ 	if (this_leaf->type == CACHE_TYPE_NOCACHE &&
+-	    valid_flags == PPTT_CHECKED_ATTRIBUTES)
++	    found_cache->flags & ACPI_PPTT_CACHE_TYPE_VALID)
+ 		this_leaf->type = CACHE_TYPE_UNIFIED;
+ }
  
 
 
