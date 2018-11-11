@@ -2,124 +2,78 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43AA0C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 17:40:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13951C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 17:40:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F4A221104
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 17:40:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F4A221104
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id D113A2148E
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 17:40:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kQkoAn5W"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D113A2148E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729350AbeKLD3T (ORCPT
+        id S1729369AbeKLD3t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 22:29:19 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:42866 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729222AbeKLD3T (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 22:29:19 -0500
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 1310672CA65;
-        Sun, 11 Nov 2018 20:40:07 +0300 (MSK)
-Received: from beacon.altlinux.org (unknown [185.6.174.98])
-        by imap.altlinux.org (Postfix) with ESMTPSA id D62A94A4AF1;
-        Sun, 11 Nov 2018 20:40:06 +0300 (MSK)
-From:   Vitaly Chikunov <vt@altlinux.org>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Vitaly Chikunov <vt@altlinux.org>,
-        kernel-hardening@lists.openwall.com
-Subject: [PATCH v2] crypto: ecc - regularize scalar for scalar multiplication
-Date:   Sun, 11 Nov 2018 20:40:02 +0300
-Message-Id: <20181111174002.30929-1-vt@altlinux.org>
-X-Mailer: git-send-email 2.11.0
+        Sun, 11 Nov 2018 22:29:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47560 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729222AbeKLD3t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Nov 2018 22:29:49 -0500
+Received: from localhost (unknown [206.108.79.134])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC37621104;
+        Sun, 11 Nov 2018 17:40:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541958039;
+        bh=qoPu7fXr+cXHKPPB78QSHdYp7YjnHa3+9mXFj/3IvaM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kQkoAn5Wae293QaOnTNybY8q/XzHLgwG2VoOPoiJkU2vaYiIpUiGCg0QkO5VtAXsD
+         xuPQ39iwbatmJdnL6CFrjc+sHXabRyCYlXnzJP1E52pjt2xcJLWNY1KptYrn1w0J9f
+         2hkc40aHN+687nhw8rgnnAm+GolnFeSu2eC61FAY=
+Date:   Sun, 11 Nov 2018 09:40:14 -0800
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Vitor soares <vitor.soares@synopsys.com>
+Cc:     boris.brezillon@bootlin.com, wsa@the-dreams.de,
+        linux-i2c@vger.kernel.org, corbet@lwn.net,
+        linux-doc@vger.kernel.org, arnd@arndb.de, psroka@cadence.com,
+        agolec@cadence.com, adouglas@cadence.com, bfolta@cadence.com,
+        dkos@cadence.com, alicja@cadence.com, cwronka@cadence.com,
+        sureshp@cadence.com, rafalc@cadence.com,
+        thomas.petazzoni@bootlin.com, nm@ti.com, robh+dt@kernel.org,
+        pawel.moll@arm.com, mark.rutland@arm.com,
+        ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        geert@linux-m68k.org, linus.walleij@linaro.org,
+        Xiang.Lin@synaptics.com, linux-gpio@vger.kernel.org,
+        nsekhar@ti.com, pgaj@cadence.com, peda@axentia.se,
+        mshettel@codeaurora.org, swboyd@chromium.org,
+        joao.pinto@synopsys.com
+Subject: Re: [PATCH v3 0/3] Add driver for Synopsys DesignWare I3C master IP
+Message-ID: <20181111174014.GA16216@kroah.com>
+References: <1541697251-20392-1-git-send-email-soares@synopsys.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1541697251-20392-1-git-send-email-soares@synopsys.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ecc_point_mult is supposed to be used with a regularized scalar,
-otherwise, it's possible to deduce the position of the top bit of the
-scalar with timing attack. This is important when the scalar is a
-private key.
+On Thu, Nov 08, 2018 at 05:14:08PM +0000, Vitor soares wrote:
+> This patch series is a proposal for the I3C master driver for Synopsys IP.
+> This patch is to be applied on top of I3C subsystem RFC V10 submitted by
+> Boris Brezillon.
 
-ecc_point_mult is already using a regular algorithm (i.e. having an
-operation flow independent of the input scalar) but regularization step
-is not implemented.
+I'd like to get Boris's reviewed/signed-off on these before I take them.
 
-Arrange scalar to always have fixed top bit by adding a multiple of the
-curve order (n).
+thanks,
 
-References:
-The constant time regularization step is based on micro-ecc by Kenneth
-MacKay and also referenced in the literature (Bernstein, D. J., & Lange,
-T. (2017). Montgomery curves and the Montgomery ladder. (Cryptology
-ePrint Archive; Vol. 2017/293). s.l.: IACR. Chapter 4.6.2.)
-
-Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
-Cc: kernel-hardening@lists.openwall.com
----
-
-Changes from v1:
-- No code changes, only description updates to be more informative.
-
- crypto/ecc.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
-
-diff --git a/crypto/ecc.c b/crypto/ecc.c
-index 8facafd67802..adcce310f646 100644
---- a/crypto/ecc.c
-+++ b/crypto/ecc.c
-@@ -842,15 +842,23 @@ static void xycz_add_c(u64 *x1, u64 *y1, u64 *x2, u64 *y2, u64 *curve_prime,
- 
- static void ecc_point_mult(struct ecc_point *result,
- 			   const struct ecc_point *point, const u64 *scalar,
--			   u64 *initial_z, u64 *curve_prime,
-+			   u64 *initial_z, const struct ecc_curve *curve,
- 			   unsigned int ndigits)
- {
- 	/* R0 and R1 */
- 	u64 rx[2][ECC_MAX_DIGITS];
- 	u64 ry[2][ECC_MAX_DIGITS];
- 	u64 z[ECC_MAX_DIGITS];
-+	u64 sk[2][ECC_MAX_DIGITS];
-+	u64 *curve_prime = curve->p;
- 	int i, nb;
--	int num_bits = vli_num_bits(scalar, ndigits);
-+	int num_bits;
-+	int carry;
-+
-+	carry = vli_add(sk[0], scalar, curve->n, ndigits);
-+	vli_add(sk[1], sk[0], curve->n, ndigits);
-+	scalar = sk[!carry];
-+	num_bits = sizeof(u64) * ndigits * 8 + 1;
- 
- 	vli_set(rx[1], point->x, ndigits);
- 	vli_set(ry[1], point->y, ndigits);
-@@ -1004,7 +1012,7 @@ int ecc_make_pub_key(unsigned int curve_id, unsigned int ndigits,
- 		goto out;
- 	}
- 
--	ecc_point_mult(pk, &curve->g, priv, NULL, curve->p, ndigits);
-+	ecc_point_mult(pk, &curve->g, priv, NULL, curve, ndigits);
- 	if (ecc_point_is_zero(pk)) {
- 		ret = -EAGAIN;
- 		goto err_free_point;
-@@ -1090,7 +1098,7 @@ int crypto_ecdh_shared_secret(unsigned int curve_id, unsigned int ndigits,
- 		goto err_alloc_product;
- 	}
- 
--	ecc_point_mult(product, pk, priv, rand_z, curve->p, ndigits);
-+	ecc_point_mult(product, pk, priv, rand_z, curve, ndigits);
- 
- 	ecc_swap_digits(product->x, secret, ndigits);
- 
--- 
-2.11.0
-
+greg k-h
