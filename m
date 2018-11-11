@@ -6,46 +6,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 179B9C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:31:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 866BFC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:31:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCEB92084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:31:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 468F42084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:31:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0yqhh9mJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCEB92084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jhzGeqcf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 468F42084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388934AbeKLJVY (ORCPT
+        id S2388906AbeKLJVh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:21:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44750 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:21:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388620AbeKLIUW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:20:22 -0500
+        id S2388532AbeKLIUU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:20 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3DBC8224E0;
-        Sun, 11 Nov 2018 22:30:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E00A21582;
+        Sun, 11 Nov 2018 22:30:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975426;
-        bh=nHzAG7Xw69Lboec6oNyydrFe3WrTUGglvrdXT4gxbCY=;
+        s=default; t=1541975424;
+        bh=qgMriUdIHMLl3exkJoR27m6Sa+PLbIE/PT6BEoCthts=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0yqhh9mJHoG+7XVgAl7LZTewbrhbSB0Uenh/v211KlYF4RIBUra8z6nLYmfVpmrAf
-         OhEWUWWv6fk6FhvXxOmwpIcqh4YGrNRWrqyknrpoWeSKZM38COmk/UZJFYp3aEli1D
-         UC5tD6k2evn1PXr1VgQw7gS2y6L1SuP8wOvHOPjk=
+        b=jhzGeqcfkxWuZrlO4uq6otwJIFk/Nc4dcSrQsbU9AAwRHaRCrku98PM6hlGufKvdn
+         K24LY4hE63ze6F5oCjgKkjQAXCaq1HPC7fxRcXjK78J2NncDiHHZOt/jFiUHtqXgZ8
+         zhWR04PBZwi/MKTIHGnfDU54y4c5ya6Pzkp5J2Lk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Evan Green <evgreen@chromium.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
+        stable@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 159/350] irqchip/pdc: Setup all edge interrupts as rising edge at GIC
-Date:   Sun, 11 Nov 2018 14:20:23 -0800
-Message-Id: <20181111221714.703394625@linuxfoundation.org>
+Subject: [PATCH 4.18 154/350] f2fs: clear PageError on the read path
+Date:   Sun, 11 Nov 2018 14:20:18 -0800
+Message-Id: <20181111221714.510201708@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -63,35 +61,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lina Iyer <ilina@codeaurora.org>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 
-[ Upstream commit 7bae48b22c8d38c5cd50f52b6e15d134e2bb3935 ]
+[ Upstream commit fb7d70db305a1446864227abf711b756568f8242 ]
 
-The PDC irqchp can convert a falling edge or level low interrupt to a
-rising edge or level high interrupt at the GIC. We just need to setup
-the GIC correctly. Set up the interrupt type for the IRQ_TYPE_EDGE_BOTH
-as IRQ_TYPE_EDGE_RISING at the GIC.
+When running fault injection test, I hit somewhat wrong behavior in f2fs_gc ->
+gc_data_segment():
 
-Fixes: f55c73aef890 ("irqchip/pdc: Add PDC interrupt controller for QCOM SoCs")
-Reported-by: Evan Green <evgreen@chromium.org>
-Reviewed-by: Evan Green <evgreen@chromium.org>
-Signed-off-by: Lina Iyer <ilina@codeaurora.org>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+0. fault injection generated some PageError'ed pages
+
+1. gc_data_segment
+ -> f2fs_get_read_data_page(REQ_RAHEAD)
+
+2. move_data_page
+ -> f2fs_get_lock_data_page()
+  -> f2f_get_read_data_page()
+   -> f2fs_submit_page_read()
+    -> submit_bio(READ)
+  -> return EIO due to PageError
+  -> fail to move data
+
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/irqchip/qcom-pdc.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/f2fs/data.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/irqchip/qcom-pdc.c
-+++ b/drivers/irqchip/qcom-pdc.c
-@@ -124,6 +124,7 @@ static int qcom_pdc_gic_set_type(struct
- 		break;
- 	case IRQ_TYPE_EDGE_BOTH:
- 		pdc_type = PDC_EDGE_DUAL;
-+		type = IRQ_TYPE_EDGE_RISING;
- 		break;
- 	case IRQ_TYPE_LEVEL_HIGH:
- 		pdc_type = PDC_LEVEL_HIGH;
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -80,7 +80,8 @@ static void __read_end_io(struct bio *bi
+ 		/* PG_error was set if any post_read step failed */
+ 		if (bio->bi_status || PageError(page)) {
+ 			ClearPageUptodate(page);
+-			SetPageError(page);
++			/* will re-read again later */
++			ClearPageError(page);
+ 		} else {
+ 			SetPageUptodate(page);
+ 		}
+@@ -584,6 +585,7 @@ static int f2fs_submit_page_read(struct
+ 		bio_put(bio);
+ 		return -EFAULT;
+ 	}
++	ClearPageError(page);
+ 	__submit_bio(F2FS_I_SB(inode), bio, DATA);
+ 	return 0;
+ }
+@@ -1528,6 +1530,7 @@ submit_and_realloc:
+ 		if (bio_add_page(bio, page, blocksize, 0) < blocksize)
+ 			goto submit_and_realloc;
+ 
++		ClearPageError(page);
+ 		last_block_in_bio = block_nr;
+ 		goto next_page;
+ set_error_page:
 
 
