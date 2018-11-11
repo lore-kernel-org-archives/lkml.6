@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AACAC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:47:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B483C43610
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:47:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51FCE20871
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:47:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33D6820818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:47:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xdhB+kZn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51FCE20871
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZX1RDayp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33D6820818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733174AbeKLISs (ORCPT
+        id S2387545AbeKLJhh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:18:48 -0500
+        Mon, 12 Nov 2018 04:37:37 -0500
 Received: from mail.kernel.org ([198.145.29.99]:39252 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733152AbeKLISr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:18:47 -0500
+        id S1733161AbeKLISs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:18:48 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7678521508;
-        Sun, 11 Nov 2018 22:28:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9192C21780;
+        Sun, 11 Nov 2018 22:28:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975331;
-        bh=0dNY8VtQ93xABMPcA7qdOd7s4UrmGZhL70ACCt+J6/0=;
+        s=default; t=1541975332;
+        bh=QMRfcFLPkojpwkaj+58X/PIDME6X3u4urRE5qTdJWWs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xdhB+kZnZGhoovDOO7U7QUCI7vBm3XpnFy7ExTbPzhiPzFrVhvz32tt9QqtMLLgAX
-         o1N7Vq+d51k6wNJuCmFkpFcU/576cAOsDnq/xUCrIzfev3rTe1ZJgHgvXtR16mUu3H
-         XFI2nTeXtxX7uonVkov0rkX500E1kc8sMRjIdg64=
+        b=ZX1RDayp/DI2divOktMw5ZZXexAoWkpkIJ6Cuq9NQikFJZp/KSOXxlgp+yLEZJ2yU
+         whXpOV4iCjER7S4EBhvUMzkzN6nrbM1mxhyxZHkHleyespu62tz+wBhMTMc24vOErG
+         zrkB48X2Z773ATnD6+4VTUkqYltKarKpuDy1NkE0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liu Bo <bo.liu@linux.alibaba.com>,
-        Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.19 345/361] Btrfs: fix null pointer dereference on compressed write path error
-Date:   Sun, 11 Nov 2018 14:21:32 -0800
-Message-Id: <20181111221701.068568354@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>
+Subject: [PATCH 4.19 321/361] soc: qcom: rmtfs-mem: Validate that scm is available
+Date:   Sun, 11 Nov 2018 14:21:08 -0800
+Message-Id: <20181111221659.103707839@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -62,46 +62,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-commit 3527a018c00e5dbada2f9d7ed5576437b6dd5cfb upstream.
+commit 137dc5843faeacabf48fc22a8dc58c4e0b4f0927 upstream.
 
-At inode.c:compress_file_range(), under the "free_pages_out" label, we can
-end up dereferencing the "pages" pointer when it has a NULL value. This
-case happens when "start" has a value of 0 and we fail to allocate memory
-for the "pages" pointer. When that happens we jump to the "cont" label and
-then enter the "if (start == 0)" branch where we immediately call the
-cow_file_range_inline() function. If that function returns 0 (success
-creating an inline extent) or an error (like -ENOMEM for example) we jump
-to the "free_pages_out" label and then access "pages[i]" leading to a NULL
-pointer dereference, since "nr_pages" has a value greater than zero at
-that point.
+The scm device must be present in order for the rmtfs driver to
+configure memory permissions for the rmtfs memory region, so check that
+it is probed before continuing.
 
-Fix this by setting "nr_pages" to 0 when we fail to allocate memory for
-the "pages" pointer.
-
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=201119
-Fixes: 771ed689d2cd ("Btrfs: Optimize compressed writeback and reads")
-CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Liu Bo <bo.liu@linux.alibaba.com>
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Cc: stable@vger.kernel.org
+Fixes: fa65f8045137 ("soc: qcom: rmtfs-mem: Add support for assigning memory to remote")
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Andy Gross <andy.gross@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/inode.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/soc/qcom/rmtfs_mem.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -503,6 +503,7 @@ again:
- 		pages = kcalloc(nr_pages, sizeof(struct page *), GFP_NOFS);
- 		if (!pages) {
- 			/* just bail out to the uncompressed code */
-+			nr_pages = 0;
- 			goto cont;
- 		}
- 
+--- a/drivers/soc/qcom/rmtfs_mem.c
++++ b/drivers/soc/qcom/rmtfs_mem.c
+@@ -212,6 +212,11 @@ static int qcom_rmtfs_mem_probe(struct p
+ 		dev_err(&pdev->dev, "failed to parse qcom,vmid\n");
+ 		goto remove_cdev;
+ 	} else if (!ret) {
++		if (!qcom_scm_is_available()) {
++			ret = -EPROBE_DEFER;
++			goto remove_cdev;
++		}
++
+ 		perms[0].vmid = QCOM_SCM_VMID_HLOS;
+ 		perms[0].perm = QCOM_SCM_PERM_RW;
+ 		perms[1].vmid = vmid;
 
 
