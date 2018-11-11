@@ -6,47 +6,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10D2CC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:20:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D34B6C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:20:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB45120817
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:20:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B08B20817
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:20:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jM0W5kml"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB45120817
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="doJfQFf+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B08B20817
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389475AbeKLIVR (ORCPT
+        id S2389596AbeKLJLE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:21:17 -0500
+        Mon, 12 Nov 2018 04:11:04 -0500
 Received: from mail.kernel.org ([198.145.29.99]:47942 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389457AbeKLIVP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:21:15 -0500
+        id S2389462AbeKLIVR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:17 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1E0421582;
-        Sun, 11 Nov 2018 22:31:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3DDAB223C6;
+        Sun, 11 Nov 2018 22:31:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975478;
-        bh=o22BkkdQWNRQ5PCXgJ1YhR/XNBb3NMXgs488BD8h+9A=;
+        s=default; t=1541975480;
+        bh=RRajRalsw06Zqv+BPA4Hrpg+dioudxZAkboujObzrE0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jM0W5kmlTnJ12SZVt2QjvMFDJwbQ1GiVmIgAHxdiJL8mAk1uFttKs1l6vb1IbBYlz
-         CGoQJe6tTyDjjfZSF5mqgf7nhQtzrRu37zkmScqtXM+w0u4qwGHqbjJfzAS4/R0G2a
-         Gi4la/DYu1Ka2Ohw+KU2xAKQrXQLK2Xc7pAvDhLw=
+        b=doJfQFf+1XwMzIZpWARSEZemyXC+v6sACBCmA0MTwRE7ZrMznDmCUCwiggJYmhOvk
+         vNnONR4A1QRknzpjVQejQWOfRI2+71RiXpMpAE6zUzhDsmEBcNJ3m0H3sNAOF+U/Ej
+         UhRhExd95CATl6dABRYkYNuxbV+Hdz5dyY+sh5QQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Franck Lenormand <franck.lenormand@nxp.com>,
-        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.18 238/350] crypto: tcrypt - fix ghash-generic speed test
-Date:   Sun, 11 Nov 2018 14:21:42 -0800
-Message-Id: <20181111221717.990826707@linuxfoundation.org>
+        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.18 267/350] dm ioctl: harden copy_params()s copy_from_user() from malicious users
+Date:   Sun, 11 Nov 2018 14:22:11 -0800
+Message-Id: <20181111221719.186621974@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -64,40 +61,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Horia Geantă <horia.geanta@nxp.com>
+From: Wenwen Wang <wang6495@umn.edu>
 
-commit 331351f89c36bf7d03561a28b6f64fa10a9f6f3a upstream.
+commit 800a7340ab7dd667edf95e74d8e4f23a17e87076 upstream.
 
-ghash is a keyed hash algorithm, thus setkey needs to be called.
-Otherwise the following error occurs:
-$ modprobe tcrypt mode=318 sec=1
-testing speed of async ghash-generic (ghash-generic)
-tcrypt: test  0 (   16 byte blocks,   16 bytes per update,   1 updates):
-tcrypt: hashing failed ret=-126
+In copy_params(), the struct 'dm_ioctl' is first copied from the user
+space buffer 'user' to 'param_kernel' and the field 'data_size' is
+checked against 'minimum_data_size' (size of 'struct dm_ioctl' payload
+up to its 'data' member).  If the check fails, an error code EINVAL will be
+returned.  Otherwise, param_kernel->data_size is used to do a second copy,
+which copies from the same user-space buffer to 'dmi'.  After the second
+copy, only 'dmi->data_size' is checked against 'param_kernel->data_size'.
+Given that the buffer 'user' resides in the user space, a malicious
+user-space process can race to change the content in the buffer between
+the two copies.  This way, the attacker can inject inconsistent data
+into 'dmi' (versus previously validated 'param_kernel').
 
-Cc: <stable@vger.kernel.org> # 4.6+
-Fixes: 0660511c0bee ("crypto: tcrypt - Use ahash")
-Tested-by: Franck Lenormand <franck.lenormand@nxp.com>
-Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fix redundant copying of 'minimum_data_size' from user-space buffer by
+using the first copy stored in 'param_kernel'.  Also remove the
+'data_size' check after the second copy because it is now unnecessary.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/tcrypt.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/md/dm-ioctl.c |   18 ++++++------------
+ 1 file changed, 6 insertions(+), 12 deletions(-)
 
---- a/crypto/tcrypt.c
-+++ b/crypto/tcrypt.c
-@@ -1097,6 +1097,9 @@ static void test_ahash_speed_common(cons
- 			break;
- 		}
+--- a/drivers/md/dm-ioctl.c
++++ b/drivers/md/dm-ioctl.c
+@@ -1720,8 +1720,7 @@ static void free_params(struct dm_ioctl
+ }
  
-+		if (speed[i].klen)
-+			crypto_ahash_setkey(tfm, tvmem[0], speed[i].klen);
-+
- 		pr_info("test%3u "
- 			"(%5u byte blocks,%5u bytes per update,%4u updates): ",
- 			i, speed[i].blen, speed[i].plen, speed[i].blen / speed[i].plen);
+ static int copy_params(struct dm_ioctl __user *user, struct dm_ioctl *param_kernel,
+-		       int ioctl_flags,
+-		       struct dm_ioctl **param, int *param_flags)
++		       int ioctl_flags, struct dm_ioctl **param, int *param_flags)
+ {
+ 	struct dm_ioctl *dmi;
+ 	int secure_data;
+@@ -1762,18 +1761,13 @@ static int copy_params(struct dm_ioctl _
+ 
+ 	*param_flags |= DM_PARAMS_MALLOC;
+ 
+-	if (copy_from_user(dmi, user, param_kernel->data_size))
+-		goto bad;
++	/* Copy from param_kernel (which was already copied from user) */
++	memcpy(dmi, param_kernel, minimum_data_size);
+ 
+-data_copied:
+-	/*
+-	 * Abort if something changed the ioctl data while it was being copied.
+-	 */
+-	if (dmi->data_size != param_kernel->data_size) {
+-		DMERR("rejecting ioctl: data size modified while processing parameters");
++	if (copy_from_user(&dmi->data, (char __user *)user + minimum_data_size,
++			   param_kernel->data_size - minimum_data_size))
+ 		goto bad;
+-	}
+-
++data_copied:
+ 	/* Wipe the user buffer so we do not return it to userspace */
+ 	if (secure_data && clear_user(user, param_kernel->data_size))
+ 		goto bad;
 
 
