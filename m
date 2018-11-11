@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61BC2C43610
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB9E9C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26B132154B
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 825E5216FD
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:30:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="E5YpmhjU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26B132154B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0StJnGy1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 825E5216FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388866AbeKLIUe (ORCPT
+        id S2388878AbeKLIUf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:20:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45614 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:20:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45636 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388830AbeKLIUd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2388712AbeKLIUd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:20:33 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 62880208A3;
+        by mail.kernel.org (Postfix) with ESMTPSA id AF40921707;
         Sun, 11 Nov 2018 22:30:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975436;
-        bh=8LQsfpjRMNLNzS72P09dp6tGpolgmBJlFFmN5Zlxbhg=;
+        bh=jF6iVTF3FheJ2mDTXWaLwytzdCs2u4exq8gddALeclM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E5YpmhjUjyJvTS6bynZQbUg0PJIOvbKd50tUBgvV2mdv3Tg8HJKrnCnUKsTWuh95R
-         66XpqNdc5/1JI4XAdFC+NqhX4h77uxdBLeYvUcMinECjDTBWjSkbLVsZFjBgtxM29H
-         BLRYgajIBp0RypvtzBrANFr56oPhjnOD9T2p/8Uo=
+        b=0StJnGy1P1YDq7v/5dDgiwXF0kna2byAiAf3w4wmKihng5Sd+8kIBdQcMUW4QTLM/
+         s+ito4z94+h+9PjC58ag9jvWEjGvcXOeJeqaXwm3m4rCFmbjAo0iFJAigPfug40oPm
+         lY4XNskx5/dbtCKWIz2SxB0qOJTl9of3HiSmtwGk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vijay Immanuel <vijayi@attalasystems.com>,
-        Doug Ledford <dledford@redhat.com>,
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 185/350] IB/rxe: fix for duplicate request processing and ack psns
-Date:   Sun, 11 Nov 2018 14:20:49 -0800
-Message-Id: <20181111221715.770326909@linuxfoundation.org>
+Subject: [PATCH 4.18 186/350] ALSA: hda: Check the non-cached stream buffers more explicitly
+Date:   Sun, 11 Nov 2018 14:20:50 -0800
+Message-Id: <20181111221715.808026159@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -63,109 +62,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vijay Immanuel <vijayi@attalasystems.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit b97db58557f4aa6d9903f8e1deea6b3d1ed0ba43 ]
+[ Upstream commit 78c9be61c3a5cd9e2439fd27a5ffad73a81958c7 ]
 
-Don't reset the resp opcode for a replayed read response.
-The resp opcode could be in the middle of a write or send
-sequence, when the duplicate read request was received.
-An example sequence is as follows:
-- Receive read request for 12KB PSN 20. Transmit read response
-  first, middle and last with PSNs 20,21,22.
-- Receive write first PSN 23.
-  At this point the resp psn is 24 and resp opcode is write first.
-- The sender notices that PSN 20 is dropped and retransmits.
-  Receive read request for 12KB PSN 20. Transmit read response
-  first, middle and last with PSNs 20,21,22. The resp opcode is
-  set to -1, the resp psn remains 24.
-- Receive write first PSN 23. This is processed by duplicate_request().
-  The resp opcode remains -1 and resp psn remains 24.
-- Receive write middle PSN 24. check_op_seq() reports a missing
-  first error since the resp opcode is -1.
+Introduce a new flag, uc_buffer, to indicate that the controller
+requires the non-cached pages for stream buffers, either as a
+chip-specific requirement or specified via snoop=0 option.
+This improves the code-readability.
 
-When sending an ack for a duplicate send or write request,
-use the psn of the previous ack sent. Do not use the psn
-of a read response for the ack.
-An example sequence is as follows:
-- Receive write PSN 30. Transmit ACK for PSN 30.
-- Receive read request 4KB PSN 31. Transmit read response with
-  PSN 31. The resp psn is now 32.
-- The sender notices that PSN 30 is dropped and retransmits.
-  Receive write PSN 30. duplicate_request() sends an ACK with
-  PSN 31. That is incorrect since PSN 31 was a read request.
+Also, this patch fixes the incorrect behavior for C-Media chip where
+the stream buffers were never handled as non-cached due to the check
+of driver_type even if you pass snoop=0 option.
 
-Signed-off-by: Vijay Immanuel <vijayi@attalasystems.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/sw/rxe/rxe_resp.c  |    8 ++++++--
- drivers/infiniband/sw/rxe/rxe_verbs.h |    2 ++
- 2 files changed, 8 insertions(+), 2 deletions(-)
+ sound/pci/hda/hda_controller.h |    1 +
+ sound/pci/hda/hda_intel.c      |   11 ++++++++---
+ 2 files changed, 9 insertions(+), 3 deletions(-)
 
---- a/drivers/infiniband/sw/rxe/rxe_resp.c
-+++ b/drivers/infiniband/sw/rxe/rxe_resp.c
-@@ -682,6 +682,7 @@ static enum resp_states read_reply(struc
- 		rxe_advance_resp_resource(qp);
+--- a/sound/pci/hda/hda_controller.h
++++ b/sound/pci/hda/hda_controller.h
+@@ -160,6 +160,7 @@ struct azx {
+ 	unsigned int msi:1;
+ 	unsigned int probing:1; /* codec probing phase */
+ 	unsigned int snoop:1;
++	unsigned int uc_buffer:1; /* non-cached pages for stream buffers */
+ 	unsigned int align_buffer_size:1;
+ 	unsigned int region_requested:1;
+ 	unsigned int disabled:1; /* disabled by vga_switcheroo */
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -410,7 +410,7 @@ static void __mark_pages_wc(struct azx *
+ #ifdef CONFIG_SND_DMA_SGBUF
+ 	if (dmab->dev.type == SNDRV_DMA_TYPE_DEV_SG) {
+ 		struct snd_sg_buf *sgbuf = dmab->private_data;
+-		if (chip->driver_type == AZX_DRIVER_CMEDIA)
++		if (!chip->uc_buffer)
+ 			return; /* deal with only CORB/RIRB buffers */
+ 		if (on)
+ 			set_pages_array_wc(sgbuf->page_table, sgbuf->pages);
+@@ -1636,6 +1636,7 @@ static void azx_check_snoop_available(st
+ 		dev_info(chip->card->dev, "Force to %s mode by module option\n",
+ 			 snoop ? "snoop" : "non-snoop");
+ 		chip->snoop = snoop;
++		chip->uc_buffer = !snoop;
+ 		return;
+ 	}
  
- 		res->type		= RXE_READ_MASK;
-+		res->replay		= 0;
+@@ -1656,8 +1657,12 @@ static void azx_check_snoop_available(st
+ 		snoop = false;
  
- 		res->read.va		= qp->resp.va;
- 		res->read.va_org	= qp->resp.va;
-@@ -752,7 +753,8 @@ static enum resp_states read_reply(struc
- 		state = RESPST_DONE;
- 	} else {
- 		qp->resp.res = NULL;
--		qp->resp.opcode = -1;
-+		if (!res->replay)
-+			qp->resp.opcode = -1;
- 		if (psn_compare(res->cur_psn, qp->resp.psn) >= 0)
- 			qp->resp.psn = res->cur_psn;
- 		state = RESPST_CLEANUP;
-@@ -814,6 +816,7 @@ static enum resp_states execute(struct r
+ 	chip->snoop = snoop;
+-	if (!snoop)
++	if (!snoop) {
+ 		dev_info(chip->card->dev, "Force to non-snoop mode\n");
++		/* C-Media requires non-cached pages only for CORB/RIRB */
++		if (chip->driver_type != AZX_DRIVER_CMEDIA)
++			chip->uc_buffer = true;
++	}
+ }
  
- 	/* next expected psn, read handles this separately */
- 	qp->resp.psn = (pkt->psn + 1) & BTH_PSN_MASK;
-+	qp->resp.ack_psn = qp->resp.psn;
- 
- 	qp->resp.opcode = pkt->opcode;
- 	qp->resp.status = IB_WC_SUCCESS;
-@@ -1060,7 +1063,7 @@ static enum resp_states duplicate_reques
- 					  struct rxe_pkt_info *pkt)
- {
- 	enum resp_states rc;
--	u32 prev_psn = (qp->resp.psn - 1) & BTH_PSN_MASK;
-+	u32 prev_psn = (qp->resp.ack_psn - 1) & BTH_PSN_MASK;
- 
- 	if (pkt->mask & RXE_SEND_MASK ||
- 	    pkt->mask & RXE_WRITE_MASK) {
-@@ -1103,6 +1106,7 @@ static enum resp_states duplicate_reques
- 			res->state = (pkt->psn == res->first_psn) ?
- 					rdatm_res_state_new :
- 					rdatm_res_state_replay;
-+			res->replay = 1;
- 
- 			/* Reset the resource, except length. */
- 			res->read.va_org = iova;
---- a/drivers/infiniband/sw/rxe/rxe_verbs.h
-+++ b/drivers/infiniband/sw/rxe/rxe_verbs.h
-@@ -171,6 +171,7 @@ enum rdatm_res_state {
- 
- struct resp_res {
- 	int			type;
-+	int			replay;
- 	u32			first_psn;
- 	u32			last_psn;
- 	u32			cur_psn;
-@@ -195,6 +196,7 @@ struct rxe_resp_info {
- 	enum rxe_qp_state	state;
- 	u32			msn;
- 	u32			psn;
-+	u32			ack_psn;
- 	int			opcode;
- 	int			drop_msg;
- 	int			goto_error;
+ static void azx_probe_work(struct work_struct *work)
+@@ -2096,7 +2101,7 @@ static void pcm_mmap_prepare(struct snd_
+ #ifdef CONFIG_X86
+ 	struct azx_pcm *apcm = snd_pcm_substream_chip(substream);
+ 	struct azx *chip = apcm->chip;
+-	if (!azx_snoop(chip) && chip->driver_type != AZX_DRIVER_CMEDIA)
++	if (chip->uc_buffer)
+ 		area->vm_page_prot = pgprot_writecombine(area->vm_page_prot);
+ #endif
+ }
 
 
