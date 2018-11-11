@@ -7,47 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43BFAC43610
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:53:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6213EC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:53:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 037D8206BA
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:53:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2744D206BA
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:53:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UDxCAIp/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 037D8206BA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="H6tYiDYp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2744D206BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391150AbeKLIn1 (ORCPT
+        id S2404060AbeKLInn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:43:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54642 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:43:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54620 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404008AbeKLIXA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:23:00 -0500
+        id S2404015AbeKLIW7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:59 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A317223CB;
-        Sun, 11 Nov 2018 22:33:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2FB52224B3;
+        Sun, 11 Nov 2018 22:33:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975583;
-        bh=0p+SRfd9z9PFj5JjWn5VYIDC3fJ5KZ4cKzV0hl0B064=;
+        s=default; t=1541975582;
+        bh=Vu19nf84YFegTf/jGN9rFhkI+R6ZQ77xbKnirTcpA5M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UDxCAIp/GDz3GV4+vuQ1pUx+e53UK629EaTjgXjf/ny1H4JK0VMOfwdNhQ9CiHuF4
-         vP/SW48kX7EdRg1C/ParxfWzVkq6o6jSP5GV5ntvSi8BBo8uCKzRnLahdQmBXDOprk
-         GaS3Xh9Tn1RITOzZmUOdGlkLNP2WtQEyK3qVitAY=
+        b=H6tYiDYpabgR0rgd+Y8cDWSOhZ0i/S/jztyyBwxFdBhFzKXvmRzbShUYorwERm8M9
+         a/FMPW5YVWmYPcMSJLvpmTGE/7WErw0UixajX+rF+jFKG/hAesTA27W9Z/MuePZIWE
+         Bvwinr4/BRZ1SXjI3NWERZI7JIZPU8irxsHWsiRQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-        Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@suse.de>,
-        Aristeu Rozanski <aris@redhat.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-edac <linux-edac@vger.kernel.org>
-Subject: [PATCH 4.14 144/222] EDAC, skx_edac: Fix logical channel intermediate decoding
-Date:   Sun, 11 Nov 2018 14:24:01 -0800
-Message-Id: <20181111221700.353304030@linuxfoundation.org>
+        stable@vger.kernel.org, Breno Leitao <leitao@debian.org>,
+        Jiri Kosina <jkosina@suse.cz>
+Subject: [PATCH 4.14 141/222] HID: hiddev: fix potential Spectre v1
+Date:   Sun, 11 Nov 2018 14:23:58 -0800
+Message-Id: <20181111221700.125211106@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -65,41 +62,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+From: Breno Leitao <leitao@debian.org>
 
-commit 8f18973877204dc8ca4ce1004a5d28683b9a7086 upstream.
+commit f11274396a538b31bc010f782e05c2ce3f804c13 upstream.
 
-The code "lchan = (lchan << 1) | ~lchan" for logical channel
-intermediate decoding is wrong. The wrong intermediate decoding
-result is {0xffffffff, 0xfffffffe}.
+uref->usage_index can be indirectly controlled by userspace, hence leading
+to a potential exploitation of the Spectre variant 1 vulnerability.
 
-Fix it by replacing '~' with '!'. The correct intermediate
-decoding result is {0x1, 0x2}.
+This field is used as an array index by the hiddev_ioctl_usage() function,
+when 'cmd' is either HIDIOCGCOLLECTIONINDEX, HIDIOCGUSAGES or
+HIDIOCSUSAGES.
 
-Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-CC: Aristeu Rozanski <aris@redhat.com>
-CC: Mauro Carvalho Chehab <mchehab@kernel.org>
-CC: linux-edac <linux-edac@vger.kernel.org>
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/20181009172025.18594-1-tony.luck@intel.com
+For cmd == HIDIOCGCOLLECTIONINDEX case, uref->usage_index is compared to
+field->maxusage and then used as an index to dereference field->usage
+array. The same thing happens to the cmd == HIDIOC{G,S}USAGES cases, where
+uref->usage_index is checked against an array maximum value and then it is
+used as an index in an array.
+
+This is a summary of the HIDIOCGCOLLECTIONINDEX case, which matches the
+traditional Spectre V1 first load:
+
+	copy_from_user(uref, user_arg, sizeof(*uref))
+	if (uref->usage_index >= field->maxusage)
+		goto inval;
+	i = field->usage[uref->usage_index].collection_index;
+	return i;
+
+This patch fixes this by sanitizing field uref->usage_index before using it
+to index field->usage (HIDIOCGCOLLECTIONINDEX) or field->value in
+HIDIOC{G,S}USAGES arrays, thus, avoiding speculation in the first load.
+
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Breno Leitao <leitao@debian.org>
+v2: Contemplate cmd == HIDIOC{G,S}USAGES case
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/edac/skx_edac.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hid/usbhid/hiddev.c |   18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
 
---- a/drivers/edac/skx_edac.c
-+++ b/drivers/edac/skx_edac.c
-@@ -604,7 +604,7 @@ sad_found:
- 			break;
- 		case 2:
- 			lchan = (addr >> shift) % 2;
--			lchan = (lchan << 1) | ~lchan;
-+			lchan = (lchan << 1) | !lchan;
- 			break;
- 		case 3:
- 			lchan = ((addr >> shift) % 2) << 1;
+--- a/drivers/hid/usbhid/hiddev.c
++++ b/drivers/hid/usbhid/hiddev.c
+@@ -512,14 +512,24 @@ static noinline int hiddev_ioctl_usage(s
+ 			if (cmd == HIDIOCGCOLLECTIONINDEX) {
+ 				if (uref->usage_index >= field->maxusage)
+ 					goto inval;
++				uref->usage_index =
++					array_index_nospec(uref->usage_index,
++							   field->maxusage);
+ 			} else if (uref->usage_index >= field->report_count)
+ 				goto inval;
+ 		}
+ 
+-		if ((cmd == HIDIOCGUSAGES || cmd == HIDIOCSUSAGES) &&
+-		    (uref_multi->num_values > HID_MAX_MULTI_USAGES ||
+-		     uref->usage_index + uref_multi->num_values > field->report_count))
+-			goto inval;
++		if (cmd == HIDIOCGUSAGES || cmd == HIDIOCSUSAGES) {
++			if (uref_multi->num_values > HID_MAX_MULTI_USAGES ||
++			    uref->usage_index + uref_multi->num_values >
++			    field->report_count)
++				goto inval;
++
++			uref->usage_index =
++				array_index_nospec(uref->usage_index,
++						   field->report_count -
++						   uref_multi->num_values);
++		}
+ 
+ 		switch (cmd) {
+ 		case HIDIOCGUSAGE:
 
 
