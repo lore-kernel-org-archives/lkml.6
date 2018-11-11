@@ -7,43 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E717C43610
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F20CC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CDE9223C7
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0539B223C6
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="03qFNxQB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CDE9223C7
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="b1PfYFJE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0539B223C6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403883AbeKLIWv (ORCPT
+        id S2403956AbeKLIWz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:22:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54602 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:22:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729476AbeKLIWv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:51 -0500
+        id S2387733AbeKLIWy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:54 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 912AD22353;
-        Sun, 11 Nov 2018 22:32:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E24B62241B;
+        Sun, 11 Nov 2018 22:32:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975573;
-        bh=owcmn8Da8IiL6swhfcx8otGtnEODOUfi2fgk7Z8Ap7c=;
+        s=default; t=1541975576;
+        bh=YmkwQjGsLEpwILbltIrmJB4ZjAUbZmQ6SwP5nWvl8o0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=03qFNxQBzqP5qWZbPUUK3WQCHG8LgGfGyFagxlKVGRz7Z2AqTJUQgPUTXG9dejpFl
-         Uf7xczhFaQDkV93jOZlrbRUPS1X4lV+LeU7rxbL7OVsXUbRXomJOkwGp4ASxnsNa/v
-         YiMo/VuIwgD/RkwnVwoGyFbLAeZEMb/AhxDBSwKM=
+        b=b1PfYFJEhlfEAzJKMAGrts9pPP14Lm1ldZIwnXtPzR9YSa7aNbWZI78yFypvT/Ni5
+         bC9uSPivcYj0yUhiksaNl4ZJ++Bm+OX3G+ewenpVhxakg/+0iX8FI+zpnzCw8uNpJV
+         KjbVVOfdhJyAemx5oUq+tGuJoZFRtGo0UnX2/GbY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: [PATCH 4.14 150/222] signal: Guard against negative signal numbers in copy_siginfo_from_user32
-Date:   Sun, 11 Nov 2018 14:24:07 -0800
-Message-Id: <20181111221700.815082705@linuxfoundation.org>
+        stable@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.14 160/222] iio: adc: imx25-gcq: Fix leak of device_node in mx25_gcq_setup_cfgs()
+Date:   Sun, 11 Nov 2018 14:24:17 -0800
+Message-Id: <20181111221701.608463047@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -61,50 +63,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric W. Biederman <ebiederm@xmission.com>
+From: Alexey Khoroshilov <khoroshilov@ispras.ru>
 
-commit a36700589b85443e28170be59fa11c8a104130a5 upstream.
+commit d3fa21c73c391975488818b085b894c2980ea052 upstream.
 
-While fixing an out of bounds array access in known_siginfo_layout
-reported by the kernel test robot it became apparent that the same bug
-exists in siginfo_layout and affects copy_siginfo_from_user32.
+Leaving for_each_child_of_node loop we should release child device node,
+if it is not stored for future use.
 
-The straight forward fix that makes guards against making this mistake
-in the future and should keep the code size small is to just take an
-unsigned signal number instead of a signed signal number, as I did to
-fix known_siginfo_layout.
+Found by Linux Driver Verification project (linuxtesting.org).
 
-Cc: stable@vger.kernel.org
-Fixes: cc731525f26a ("signal: Remove kernel interal si_code magic")
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+JC: I'm not sending this as a quick fix as it's been wrong for years,
+but good to pick up for stable after the merge window.
+
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Fixes: 6df2e98c3ea56 ("iio: adc: Add imx25-gcq ADC driver")
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/signal.h |    2 +-
- kernel/signal.c        |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/iio/adc/fsl-imx25-gcq.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/include/linux/signal.h
-+++ b/include/linux/signal.h
-@@ -34,7 +34,7 @@ enum siginfo_layout {
- #endif
- };
+--- a/drivers/iio/adc/fsl-imx25-gcq.c
++++ b/drivers/iio/adc/fsl-imx25-gcq.c
+@@ -209,12 +209,14 @@ static int mx25_gcq_setup_cfgs(struct pl
+ 		ret = of_property_read_u32(child, "reg", &reg);
+ 		if (ret) {
+ 			dev_err(dev, "Failed to get reg property\n");
++			of_node_put(child);
+ 			return ret;
+ 		}
  
--enum siginfo_layout siginfo_layout(int sig, int si_code);
-+enum siginfo_layout siginfo_layout(unsigned sig, int si_code);
+ 		if (reg >= MX25_NUM_CFGS) {
+ 			dev_err(dev,
+ 				"reg value is greater than the number of available configuration registers\n");
++			of_node_put(child);
+ 			return -EINVAL;
+ 		}
  
- /*
-  * Define some primitives to manipulate sigset_t.
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -2700,7 +2700,7 @@ COMPAT_SYSCALL_DEFINE2(rt_sigpending, co
- }
- #endif
+@@ -228,6 +230,7 @@ static int mx25_gcq_setup_cfgs(struct pl
+ 			if (IS_ERR(priv->vref[refp])) {
+ 				dev_err(dev, "Error, trying to use external voltage reference without a vref-%s regulator.",
+ 					mx25_gcq_refp_names[refp]);
++				of_node_put(child);
+ 				return PTR_ERR(priv->vref[refp]);
+ 			}
+ 			priv->channel_vref_mv[reg] =
+@@ -240,6 +243,7 @@ static int mx25_gcq_setup_cfgs(struct pl
+ 			break;
+ 		default:
+ 			dev_err(dev, "Invalid positive reference %d\n", refp);
++			of_node_put(child);
+ 			return -EINVAL;
+ 		}
  
--enum siginfo_layout siginfo_layout(int sig, int si_code)
-+enum siginfo_layout siginfo_layout(unsigned sig, int si_code)
- {
- 	enum siginfo_layout layout = SIL_KILL;
- 	if ((si_code > SI_USER) && (si_code < SI_KERNEL)) {
+@@ -254,10 +258,12 @@ static int mx25_gcq_setup_cfgs(struct pl
+ 
+ 		if ((refp & MX25_ADCQ_CFG_REFP_MASK) != refp) {
+ 			dev_err(dev, "Invalid fsl,adc-refp property value\n");
++			of_node_put(child);
+ 			return -EINVAL;
+ 		}
+ 		if ((refn & MX25_ADCQ_CFG_REFN_MASK) != refn) {
+ 			dev_err(dev, "Invalid fsl,adc-refn property value\n");
++			of_node_put(child);
+ 			return -EINVAL;
+ 		}
+ 
 
 
