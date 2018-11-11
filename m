@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28ECDC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:10:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C624AC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:10:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAA2520817
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:10:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F1EB20817
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:10:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jn/cZg7V"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAA2520817
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q6TBmW5h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F1EB20817
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390305AbeKLJA4 (ORCPT
+        id S2390416AbeKLJBF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:00:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50552 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:01:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50474 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390149AbeKLIV6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:21:58 -0500
+        id S2388732AbeKLIV5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:57 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 78F6E208A3;
-        Sun, 11 Nov 2018 22:32:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3FCA21707;
+        Sun, 11 Nov 2018 22:32:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975521;
-        bh=xaeX8yJ6ZevKhBvQmhi0mnZ9D23dK96h4Q3iGWNszlI=;
+        s=default; t=1541975520;
+        bh=zrXT3I037duZhQ+X6irVHKiuhdAwMYuGinM7DikGUy0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jn/cZg7VBt8Gk6Ed7HE3O1vF3olB9RCaQzVbUzu8aygdzo+2PqVJkhTJbowuVmijb
-         MG8eiIqoQjWsRBGUc7TjauQvdLrqZ/eu1cX9/WXe3JDqI4OS2kV/yzgvHmk7ukR4Q5
-         ZBznQjQWtFDetEnuF4wtyRzK2kIdis5PTq3bRlMc=
+        b=Q6TBmW5hObUXIIM0lku6CCUqLtkSViULP0ao8AXyP8i9rT5Parcbd77LD6HQzjXUi
+         npqtQFP5pZV0pjFJ//uUmhYLirTWdYDFA3K5R6UbqS+Qu79DCdc21GuYFtbZANhzRS
+         LIvPMNyzlSfA9wzwlwTba9lWNIUosDNkluFFeNLk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Helge Deller <deller@gmx.de>
-Subject: [PATCH 4.14 013/222] parisc: Fix exported address of os_hpmc handler
-Date:   Sun, 11 Nov 2018 14:21:50 -0800
-Message-Id: <20181111221649.219164509@linuxfoundation.org>
+        stable@vger.kernel.org, John David Anglin <dave.anglin@bell.net>,
+        Helge Deller <deller@gmx.de>
+Subject: [PATCH 4.14 011/222] parisc: Fix address in HPMC IVA
+Date:   Sun, 11 Nov 2018 14:21:48 -0800
+Message-Id: <20181111221649.002436201@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -61,45 +62,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Helge Deller <deller@gmx.de>
+From: John David Anglin <dave.anglin@bell.net>
 
-commit 99a3ae51d557d8e38a7aece65678a31f9db215ee upstream.
+commit 1138b6718ff74d2a934459643e3754423d23b5e2 upstream.
 
-In the C-code we need to put the physical address of the hpmc handler in
-the interrupt vector table (IVA) in order to get HPMCs working.  Since
-on parisc64 function pointers are indirect (in fact they are function
-descriptors) we instead export the address as variable and not as
-function.
+Helge noticed that the address of the os_hpmc handler was not being
+correctly calculated in the hpmc macro.  As a result, PDCE_CHECK would
+fail to call os_hpmc:
 
-This reverts a small part of commit f39cce654f9a ("parisc: Add
-cfi_startproc and cfi_endproc to assembly code").
+<Cpu2> e800009802e00000  0000000000000000  CC_ERR_CHECK_HPMC
+<Cpu2> 37000f7302e00000  8040004000000000  CC_ERR_CPU_CHECK_SUMMARY
+<Cpu2> f600105e02e00000  fffffff0f0c00000  CC_MC_HPMC_MONARCH_SELECTED
+<Cpu2> 140003b202e00000  000000000000000b  CC_ERR_HPMC_STATE_ENTRY
+<Cpu2> 5600100b02e00000  00000000000001a0  CC_MC_OS_HPMC_LEN_ERR
+<Cpu2> 5600106402e00000  fffffff0f0438e70  CC_MC_BR_TO_OS_HPMC_FAILED
+<Cpu2> e800009802e00000  0000000000000000  CC_ERR_CHECK_HPMC
+<Cpu2> 37000f7302e00000  8040004000000000  CC_ERR_CPU_CHECK_SUMMARY
+<Cpu2> 4000109f02e00000  0000000000000000  CC_MC_HPMC_INITIATED
+<Cpu2> 4000101902e00000  0000000000000000  CC_MC_MULTIPLE_HPMCS
+<Cpu2> 030010d502e00000  0000000000000000  CC_CPU_STOP
 
+The address problem can be seen by dumping the fault vector:
+
+0000000040159000 <fault_vector_20>:
+    40159000:   63 6f 77 73     stb r15,-2447(dp)
+    40159004:   20 63 61 6e     ldil L%b747000,r3
+    40159008:   20 66 6c 79     ldil L%-1c3b3000,r3
+        ...
+    40159020:   08 00 02 40     nop
+    40159024:   20 6e 60 02     ldil L%15d000,r3
+    40159028:   34 63 00 00     ldo 0(r3),r3
+    4015902c:   e8 60 c0 02     bv,n r0(r3)
+    40159030:   08 00 02 40     nop
+    40159034:   00 00 00 00     break 0,0
+    40159038:   c0 00 70 00     bb,*< r0,sar,40159840 <fault_vector_20+0x840>
+    4015903c:   00 00 00 00     break 0,0
+
+Location 40159038 should contain the physical address of os_hpmc:
+
+000000004015d000 <os_hpmc>:
+    4015d000:   08 1a 02 43     copy r26,r3
+    4015d004:   01 c0 08 a4     mfctl iva,r4
+    4015d008:   48 85 00 68     ldw 34(r4),r5
+
+This patch moves the address setup into initialize_ivt to resolve the
+above problem.  I tested the change by dumping the HPMC entry after setup:
+
+0000000040209020:  8000240
+0000000040209024: 206a2004
+0000000040209028: 34630ac0
+000000004020902c: e860c002
+0000000040209030:  8000240
+0000000040209034: 1bdddce6
+0000000040209038:   15d000
+000000004020903c:      1a0
+
+Signed-off-by: John David Anglin <dave.anglin@bell.net>
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Helge Deller <deller@gmx.de>
-Cc: <stable@vger.kernel.org>    [4.9+]
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/parisc/kernel/hpmc.S |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/parisc/kernel/entry.S |    2 +-
+ arch/parisc/kernel/traps.c |    3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
---- a/arch/parisc/kernel/hpmc.S
-+++ b/arch/parisc/kernel/hpmc.S
-@@ -85,7 +85,7 @@ END(hpmc_pim_data)
- 
- 	.import intr_save, code
- 	.align 16
--ENTRY_CFI(os_hpmc)
-+ENTRY(os_hpmc)
- .os_hpmc:
- 
- 	/*
-@@ -302,7 +302,6 @@ os_hpmc_6:
- 	b .
+--- a/arch/parisc/kernel/entry.S
++++ b/arch/parisc/kernel/entry.S
+@@ -185,7 +185,7 @@
+ 	bv,n	0(%r3)
  	nop
- 	.align 16	/* make function length multiple of 16 bytes */
--ENDPROC_CFI(os_hpmc)
- .os_hpmc_end:
+ 	.word	0		/* checksum (will be patched) */
+-	.word	PA(os_hpmc)	/* address of handler */
++	.word	0		/* address of handler */
+ 	.word	0		/* length of handler */
+ 	.endm
  
+--- a/arch/parisc/kernel/traps.c
++++ b/arch/parisc/kernel/traps.c
+@@ -836,7 +836,8 @@ void __init initialize_ivt(const void *i
+ 	if (pdc_instr(&instr) == PDC_OK)
+ 		ivap[0] = instr;
+ 
+-	/* Compute Checksum for HPMC handler */
++	/* Setup IVA and compute checksum for HPMC handler */
++	ivap[6] = (u32)__pa(os_hpmc);
+ 	length = os_hpmc_size;
+ 	ivap[7] = length;
  
 
 
