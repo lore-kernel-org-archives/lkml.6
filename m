@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08E00C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:58:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7249BC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:58:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF1152154B
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:58:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 392C720818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:58:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pPPudz4H"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF1152154B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AXJYEo+c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 392C720818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390868AbeKLIse (ORCPT
+        id S2390677AbeKLIs4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:48:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52752 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:48:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53628 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403761AbeKLIWk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:40 -0500
+        id S2403758AbeKLIWj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:39 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D74A224B3;
-        Sun, 11 Nov 2018 22:32:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB5C0224E0;
+        Sun, 11 Nov 2018 22:32:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975563;
-        bh=whBubtctHN0XzGkrB9oquC7z6UDi+Qk+HBPwW0+Ecig=;
+        s=default; t=1541975562;
+        bh=h319ND3GwLGsaUqGoniAo/V0Zrnjg3fvuyJh2DlGFso=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pPPudz4HY7LQLKBxlPpBe3QA39dT85k6t3Da/dGz/fdy+tWkLxW5qzAG1pUKxbINK
-         g4BWHRrE241HZXlK0q9G/DeZY+l/nEp3mbtpFRxW5QndjCistIEafbrjILgUU1AxqN
-         tVmespqNabQ6LXXuAYm5ko97V1bEQGBzprzq29G8=
+        b=AXJYEo+cyYQ3OU9ncz6oUINH2XjlAtXzMtDnjw1Yz4NyHGt+vuARdRuOMUCnQI0u2
+         PT/yRftRsg8+K5Xlaw2SVKlRhIRCkSJe7jEjALEl4K9icLUAnSY46qb8V/jIKwXlfc
+         OfVgahMoNwvLpjXLxxQCw9MhsjKUQ/iCqIzpcY2k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
-        James Smart <james.smart@broadcom.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 102/222] scsi: lpfc: Correct race with abort on completion path
-Date:   Sun, 11 Nov 2018 14:23:19 -0800
-Message-Id: <20181111221657.031781487@linuxfoundation.org>
+        stable@vger.kernel.org, Stefan Nuernberger <snu@amazon.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Simon Veith <sveith@amazon.de>,
+        Paul Moore <paul@paul-moore.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 128/222] net/ipv4: defensive cipso option parsing
+Date:   Sun, 11 Nov 2018 14:23:45 -0800
+Message-Id: <20181111221659.077283395@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -64,55 +65,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: James Smart <jsmart2021@gmail.com>
+From: Stefan Nuernberger <snu@amazon.com>
 
-[ Upstream commit ca7fb76e091f889cfda1287c07a9358f73832b39 ]
+commit 076ed3da0c9b2f88d9157dbe7044a45641ae369e upstream.
 
-On io completion, the driver is taking an adapter wide lock and nulling the
-scsi command back pointer.  The nulling of the back pointer is to signify the
-io was completed and the scsi_done() routine was called.  However, the routine
-makes no check to see if the abort routine had done the same thing and
-possibly nulled the pointer. Thus it may doubly-complete the io.
+commit 40413955ee26 ("Cipso: cipso_v4_optptr enter infinite loop") fixed
+a possible infinite loop in the IP option parsing of CIPSO. The fix
+assumes that ip_options_compile filtered out all zero length options and
+that no other one-byte options beside IPOPT_END and IPOPT_NOOP exist.
+While this assumption currently holds true, add explicit checks for zero
+length and invalid length options to be safe for the future. Even though
+ip_options_compile should have validated the options, the introduction of
+new one-byte options can still confuse this code without the additional
+checks.
 
-Make the following mods:
-
-- Check to make sure forward progress (call scsi_done()) only happens if the
-  command pointer was non-null.
-
-- As the taking of the lock, which is adapter wide, is very costly on a system
-  under load, null the pointer using an xchg operation rather than under lock.
-
-Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
-Signed-off-by: James Smart <james.smart@broadcom.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Stefan Nuernberger <snu@amazon.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Simon Veith <sveith@amazon.de>
+Cc: stable@vger.kernel.org
+Acked-by: Paul Moore <paul@paul-moore.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/scsi/lpfc/lpfc_scsi.c |   14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
 
---- a/drivers/scsi/lpfc/lpfc_scsi.c
-+++ b/drivers/scsi/lpfc/lpfc_scsi.c
-@@ -4149,9 +4149,17 @@ lpfc_scsi_cmd_iocb_cmpl(struct lpfc_hba
+---
+ net/ipv4/cipso_ipv4.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+--- a/net/ipv4/cipso_ipv4.c
++++ b/net/ipv4/cipso_ipv4.c
+@@ -1512,7 +1512,7 @@ static int cipso_v4_parsetag_loc(const s
+  *
+  * Description:
+  * Parse the packet's IP header looking for a CIPSO option.  Returns a pointer
+- * to the start of the CIPSO option on success, NULL if one if not found.
++ * to the start of the CIPSO option on success, NULL if one is not found.
+  *
+  */
+ unsigned char *cipso_v4_optptr(const struct sk_buff *skb)
+@@ -1522,10 +1522,8 @@ unsigned char *cipso_v4_optptr(const str
+ 	int optlen;
+ 	int taglen;
  
- 	lpfc_scsi_unprep_dma_buf(phba, lpfc_cmd);
- 
--	spin_lock_irqsave(&phba->hbalock, flags);
--	lpfc_cmd->pCmd = NULL;
--	spin_unlock_irqrestore(&phba->hbalock, flags);
-+	/* If pCmd was set to NULL from abort path, do not call scsi_done */
-+	if (xchg(&lpfc_cmd->pCmd, NULL) == NULL) {
-+		lpfc_printf_vlog(vport, KERN_INFO, LOG_FCP,
-+				 "0711 FCP cmd already NULL, sid: 0x%06x, "
-+				 "did: 0x%06x, oxid: 0x%04x\n",
-+				 vport->fc_myDID,
-+				 (pnode) ? pnode->nlp_DID : 0,
-+				 phba->sli_rev == LPFC_SLI_REV4 ?
-+				 lpfc_cmd->cur_iocbq.sli4_xritag : 0xffff);
-+		return;
-+	}
- 
- 	/* The sdev is not guaranteed to be valid post scsi_done upcall. */
- 	cmd->scsi_done(cmd);
+-	for (optlen = iph->ihl*4 - sizeof(struct iphdr); optlen > 0; ) {
++	for (optlen = iph->ihl*4 - sizeof(struct iphdr); optlen > 1; ) {
+ 		switch (optptr[0]) {
+-		case IPOPT_CIPSO:
+-			return optptr;
+ 		case IPOPT_END:
+ 			return NULL;
+ 		case IPOPT_NOOP:
+@@ -1534,6 +1532,11 @@ unsigned char *cipso_v4_optptr(const str
+ 		default:
+ 			taglen = optptr[1];
+ 		}
++		if (!taglen || taglen > optlen)
++			return NULL;
++		if (optptr[0] == IPOPT_CIPSO)
++			return optptr;
++
+ 		optlen -= taglen;
+ 		optptr += taglen;
+ 	}
 
 
