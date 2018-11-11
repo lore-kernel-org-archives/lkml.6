@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4639C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:16:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E135C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:16:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4B452080D
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:16:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4B452080D
+	by mail.kernel.org (Postfix) with ESMTP id 1A8962080D
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:16:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A8962080D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731919AbeKLGFy (ORCPT
+        id S1731926AbeKLGF6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:05:54 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53156 "EHLO
+        Mon, 12 Nov 2018 01:05:58 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53168 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730727AbeKLGFx (ORCPT
+        by vger.kernel.org with ESMTP id S1731143AbeKLGF5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 01:05:53 -0500
+        Mon, 12 Nov 2018 01:05:57 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvtB-0000lM-QA; Sun, 11 Nov 2018 19:59:21 +0000
+        id 1gLvt8-0000l4-K7; Sun, 11 Nov 2018 19:59:18 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsO-0001Py-TL; Sun, 11 Nov 2018 19:58:32 +0000
+        id 1gLvsP-0001Rz-Rl; Sun, 11 Nov 2018 19:58:33 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -38,12 +38,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Evgeniy Polyakov" <zbr@ioremap.net>, "NeilBrown" <neilb@suse.de>
+        "Evgenii Smirnov" <evgenii.smirnov@profitbricks.com>,
+        "Doug Ledford" <dledford@redhat.com>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.440163028@decadent.org.uk>
+Message-ID: <lsq.1541965745.361146864@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 049/366] w1: support auto-load of w1_bq27000 module.
+Subject: [PATCH 3.16 074/366] RDMA/ipoib: Update paths on CLIENT_REREG/SM_CHANGE
+ events
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,73 +58,144 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: NeilBrown <neilb@suse.de>
+From: Doug Ledford <dledford@redhat.com>
 
-commit 4b7e4f8289c1ca60accb6c1baf31984f69bc2771 upstream.
+commit fa9391dbad4b868512ed22a7e41765f881a8a935 upstream.
 
-1/ change request_module call to zero-pad single digit
-   family numbers.  This appears to be the intention of
-   the code, but not what it actually does.
+We do a light flush on CLIENT_REREG and SM_CHANGE events.  This goes
+through and marks paths invalid. But we weren't always checking for this
+validity when we needed to, and so we could keep using a path marked
+invalid.  What's more, once we establish a path with a valid ah, we put
+a pointer to the ah in the neigh struct directly, so even if we mark the
+path as invalid, as long as the neigh has a direct pointer to the ah, it
+keeps using the old, outdated ah.
 
-   This means that the alias created for W1_FAMILY_SMEM_01
-   might actually be useful.
+To fix this we do several things.
 
-2/ Define a family name for the BQ27000 battery charge monitor.
-   Unfortunately this is the same number as W1_FAMILY_SMEM_01
-   so if both a compiled on a system, one module might need to
-   be blacklisted.
+1) Put the valid flag in the ah instead of the path struct, so when we
+put the ah pointer directly in the neigh struct, we can easily check the
+validity of the ah on send events.
+2) Check the neigh->ah and neigh->ah->valid elements in the needed
+places, and if we have an ah, but it's invalid, then invoke a refresh of
+the ah.
+3) Fix the various places that check for path, but didn't check for
+path->valid (now path->ah && path->ah->valid).
 
-3/ Add a MODULE_ALIAS for the bq27000.
-
-Acked-by: Evgeniy Polyakov <zbr@ioremap.net>
-Signed-off-by: NeilBrown <neilb@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reported-by: Evgenii Smirnov <evgenii.smirnov@profitbricks.com>
+Fixes: ee1e2c82c245 ("IPoIB: Refresh paths instead of flushing them on SM change events")
+Signed-off-by: Doug Ledford <dledford@redhat.com>
+[bwh: Backported to 3.16:
+ - s/phdr->hwaddr/cb->hdwaddr/
+ - s/ipoib_priv/netdev_priv/
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/w1/slaves/w1_bq27000.c | 4 ++--
- drivers/w1/w1.c                | 2 +-
- drivers/w1/w1_family.h         | 1 +
- 3 files changed, 4 insertions(+), 3 deletions(-)
+ drivers/infiniband/ulp/ipoib/ipoib.h      |  2 +-
+ drivers/infiniband/ulp/ipoib/ipoib_main.c | 33 ++++++++++++++++++-----
+ 2 files changed, 28 insertions(+), 7 deletions(-)
 
---- a/drivers/w1/slaves/w1_bq27000.c
-+++ b/drivers/w1/slaves/w1_bq27000.c
-@@ -88,7 +88,7 @@ static struct w1_family_ops w1_bq27000_f
+--- a/drivers/infiniband/ulp/ipoib/ipoib.h
++++ b/drivers/infiniband/ulp/ipoib/ipoib.h
+@@ -384,6 +384,7 @@ struct ipoib_ah {
+ 	struct list_head   list;
+ 	struct kref	   ref;
+ 	unsigned	   last_send;
++	int  		   valid;
  };
  
- static struct w1_family w1_bq27000_family = {
--	.fid = 1,
-+	.fid = W1_FAMILY_BQ27000,
- 	.fops = &w1_bq27000_fops,
+ struct ipoib_path {
+@@ -400,7 +401,6 @@ struct ipoib_path {
+ 
+ 	struct rb_node	      rb_node;
+ 	struct list_head      list;
+-	int  		      valid;
  };
  
-@@ -111,7 +111,7 @@ module_exit(w1_bq27000_exit);
+ struct ipoib_neigh {
+--- a/drivers/infiniband/ulp/ipoib/ipoib_main.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_main.c
+@@ -426,7 +426,8 @@ void ipoib_mark_paths_invalid(struct net
+ 		ipoib_dbg(priv, "mark path LID 0x%04x GID %pI6 invalid\n",
+ 			be16_to_cpu(path->pathrec.dlid),
+ 			path->pathrec.dgid.raw);
+-		path->valid =  0;
++		if (path->ah)
++			path->ah->valid = 0;
+ 	}
  
- module_param(F_ID, int, S_IRUSR);
- MODULE_PARM_DESC(F_ID, "1-wire slave FID for BQ device");
--
-+MODULE_ALIAS("w1-family-" __stringify(W1_FAMILY_BQ27000));
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("Texas Instruments Ltd");
- MODULE_DESCRIPTION("HDQ/1-wire slave driver bq27000 battery monitor chip");
---- a/drivers/w1/w1.c
-+++ b/drivers/w1/w1.c
-@@ -727,7 +727,7 @@ int w1_attach_slave_device(struct w1_mas
+ 	spin_unlock_irq(&priv->lock);
+@@ -535,7 +536,7 @@ static void path_rec_completion(int stat
+ 			while ((skb = __skb_dequeue(&neigh->queue)))
+ 				__skb_queue_tail(&skqueue, skb);
+ 		}
+-		path->valid = 1;
++		path->ah->valid = 1;
+ 	}
  
- 	/* slave modules need to be loaded in a context with unlocked mutex */
- 	mutex_unlock(&dev->mutex);
--	request_module("w1-family-0x%0x", rn->family);
-+	request_module("w1-family-0x%02x", rn->family);
- 	mutex_lock(&dev->mutex);
+ 	path->query = NULL;
+@@ -615,6 +616,24 @@ static int path_rec_start(struct net_dev
+ 	return 0;
+ }
  
- 	spin_lock(&w1_flock);
---- a/drivers/w1/w1_family.h
-+++ b/drivers/w1/w1_family.h
-@@ -27,6 +27,7 @@
- #include <linux/atomic.h>
++static void neigh_refresh_path(struct ipoib_neigh *neigh, u8 *daddr,
++			       struct net_device *dev)
++{
++	struct ipoib_dev_priv *priv = netdev_priv(dev);
++	struct ipoib_path *path;
++	unsigned long flags;
++
++	spin_lock_irqsave(&priv->lock, flags);
++
++	path = __path_find(dev, daddr + 4);
++	if (!path)
++		goto out;
++	if (!path->query)
++		path_rec_start(dev, path);
++out:
++	spin_unlock_irqrestore(&priv->lock, flags);
++}
++
+ static struct ipoib_neigh *neigh_add_path(struct sk_buff *skb, u8 *daddr,
+ 					  struct net_device *dev)
+ {
+@@ -651,7 +670,7 @@ static struct ipoib_neigh *neigh_add_pat
  
- #define W1_FAMILY_DEFAULT	0
-+#define W1_FAMILY_BQ27000	0x01
- #define W1_FAMILY_SMEM_01	0x01
- #define W1_FAMILY_SMEM_81	0x81
- #define W1_THERM_DS18S20 	0x10
+ 	list_add_tail(&neigh->list, &path->neigh_list);
+ 
+-	if (path->ah) {
++	if (path->ah && path->ah->valid) {
+ 		kref_get(&path->ah->ref);
+ 		neigh->ah = path->ah;
+ 
+@@ -710,7 +729,7 @@ static void unicast_arp_send(struct sk_b
+ 	spin_lock_irqsave(&priv->lock, flags);
+ 
+ 	path = __path_find(dev, cb->hwaddr + 4);
+-	if (!path || !path->valid) {
++	if (!path || !path->ah || !path->ah->valid) {
+ 		int new_path = 0;
+ 
+ 		if (!path) {
+@@ -736,7 +755,7 @@ static void unicast_arp_send(struct sk_b
+ 		return;
+ 	}
+ 
+-	if (path->ah) {
++	if (path->ah && path->ah->valid) {
+ 		ipoib_dbg(priv, "Send unicast ARP to %04x\n",
+ 			  be16_to_cpu(path->pathrec.dlid));
+ 
+@@ -818,9 +837,11 @@ send_using_neigh:
+ 			ipoib_cm_send(dev, skb, ipoib_cm_get(neigh));
+ 			goto unref;
+ 		}
+-	} else if (neigh->ah) {
++	} else if (neigh->ah && neigh->ah->valid) {
+ 		ipoib_send(dev, skb, neigh->ah, IPOIB_QPN(cb->hwaddr));
+ 		goto unref;
++	} else if (neigh->ah) {
++		neigh_refresh_path(neigh, cb->hwaddr, dev);
+ 	}
+ 
+ 	if (skb_queue_len(&neigh->queue) < IPOIB_MAX_PATH_REC_QUEUE) {
 
