@@ -2,129 +2,141 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95129C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:58:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4C4FC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:58:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 638FC20818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:58:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 638FC20818
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 6B8BA20872
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:58:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2o9pkUAP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B8BA20872
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390896AbeKLIsY (ORCPT
+        id S2403908AbeKLIse (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:48:24 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:41690 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729181AbeKLIsX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:48:23 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id D6A3514A63E75;
-        Sun, 11 Nov 2018 14:58:18 -0800 (PST)
-Date:   Sun, 11 Nov 2018 14:58:16 -0800 (PST)
-Message-Id: <20181111.145816.1004931661988682087.davem@davemloft.net>
-To:     jolsa@redhat.com
-Cc:     acme@kernel.org, linux-kernel@vger.kernel.org, namhyung@kernel.org,
-        jolsa@kernel.org
-Subject: Re: [PATCH RFC] hist lookups
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20181111224336.GA30042@krava>
-References: <20181111194132.GA3769@krava>
-        <20181111.143208.353362314504370863.davem@davemloft.net>
-        <20181111224336.GA30042@krava>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 11 Nov 2018 14:58:19 -0800 (PST)
+        Mon, 12 Nov 2018 03:48:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52394 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2403757AbeKLIWk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:40 -0500
+Received: from localhost (unknown [206.108.79.134])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 82CB3223C7;
+        Sun, 11 Nov 2018 22:32:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1541975562;
+        bh=I1xeypVHgg9D0WgoPBDj2YYCUYC31Dn4DldSJRF487I=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=2o9pkUAP5gLGFsQOaJxY7ucILvzNXNYA1L1XQ7y4Tf6sdYa0Trnd59gYb99qbPBCW
+         cK/jRq7FkwqLye7AqPpbYnsTNAr5SSF4JYxHqexn2F8ZYLqjnv4P42DgILX3vVmwh0
+         2vcxjvhAa+5YJ2EGCQ+mQ9Abqgf4A08Tz0FVAXcc=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Luca Coelho <luciano.coelho@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.14 127/222] iwlwifi: mvm: check return value of rs_rate_from_ucode_rate()
+Date:   Sun, 11 Nov 2018 14:23:44 -0800
+Message-Id: <20181111221658.999939192@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
+References: <20181111221647.665769131@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Olsa <jolsa@redhat.com>
-Date: Sun, 11 Nov 2018 23:43:36 +0100
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-> On Sun, Nov 11, 2018 at 02:32:08PM -0800, David Miller wrote:
->> From: Jiri Olsa <jolsa@redhat.com>
->> Date: Sun, 11 Nov 2018 20:41:32 +0100
->> 
->> > I added the dropping logic, it's simple so far..
->> 
->> How do you maintain your perf/fixes branch?  Do you rebase? :-/
->> 
->> I just pulled after a previous pull and got nothing but conflicts on
->> every single file.
-> 
-> yep, I rebase.. it's my devel branch, I dont keep it sane, sry ;-)
+------------------
 
-Ok, a lot of warnings on sparc, this is the patch I'm using.
+From: Luca Coelho <luciano.coelho@intel.com>
 
-The iterator variable type changes are because of comparisons between
-signed and unsigned.
+commit 3d71c3f1f50cf309bd20659422af549bc784bfff upstream.
 
-The rlimit members are long long unsigned int.
+The rs_rate_from_ucode_rate() function may return -EINVAL if the rate
+is invalid, but none of the callsites check for the error, potentially
+making us access arrays with index IWL_RATE_INVALID, which is larger
+than the arrays, causing an out-of-bounds access.  This will trigger
+KASAN warnings, such as the one reported in the bugzilla issue
+mentioned below.
 
-Etc.
+This fixes https://bugzilla.kernel.org/show_bug.cgi?id=200659
 
-diff --git a/tools/perf/bench/epoll-ctl.c b/tools/perf/bench/epoll-ctl.c
-index b6f6fc4..0128ed8 100644
---- a/tools/perf/bench/epoll-ctl.c
-+++ b/tools/perf/bench/epoll-ctl.c
-@@ -201,7 +201,7 @@ static void *workerfn(void *arg)
+Cc: stable@vger.kernel.org
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/net/wireless/intel/iwlwifi/mvm/rs.c |   24 +++++++++++++++++++-----
+ 1 file changed, 19 insertions(+), 5 deletions(-)
+
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/rs.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/rs.c
+@@ -1226,7 +1226,11 @@ void iwl_mvm_rs_tx_status(struct iwl_mvm
+ 	    !(info->flags & IEEE80211_TX_STAT_AMPDU))
+ 		return;
  
- static void init_fdmaps(struct worker *w, int pct)
- {
--	ssize_t i;
-+	unsigned int i;
- 	int inc;
- 	struct epoll_event ev;
+-	rs_rate_from_ucode_rate(tx_resp_hwrate, info->band, &tx_resp_rate);
++	if (rs_rate_from_ucode_rate(tx_resp_hwrate, info->band,
++				    &tx_resp_rate)) {
++		WARN_ON_ONCE(1);
++		return;
++	}
  
-@@ -302,7 +302,7 @@ int bench_epoll_ctl(int argc, const char **argv)
- 	struct worker *worker = NULL;
- 	struct cpu_map *cpu;
- 	struct rlimit rl, prevrl;
--	ssize_t i;
-+	unsigned int i;
+ #ifdef CONFIG_MAC80211_DEBUGFS
+ 	/* Disable last tx check if we are debugging with fixed rate but
+@@ -1277,7 +1281,10 @@ void iwl_mvm_rs_tx_status(struct iwl_mvm
+ 	 */
+ 	table = &lq_sta->lq;
+ 	lq_hwrate = le32_to_cpu(table->rs_table[0]);
+-	rs_rate_from_ucode_rate(lq_hwrate, info->band, &lq_rate);
++	if (rs_rate_from_ucode_rate(lq_hwrate, info->band, &lq_rate)) {
++		WARN_ON_ONCE(1);
++		return;
++	}
  
- 	argc = parse_options(argc, argv, options, bench_epoll_ctl_usage, 0);
- 	if (argc) {
-@@ -340,7 +340,7 @@ int bench_epoll_ctl(int argc, const char **argv)
- 	if (getrlimit(RLIMIT_NOFILE, &prevrl))
- 	    err(EXIT_FAILURE, "getrlimit");
- 	rl.rlim_cur = rl.rlim_max = nfds * nthreads * 2 + 50;
--	printinfo("Setting RLIMIT_NOFILE rlimit from %lu to: %lu\n",
-+	printinfo("Setting RLIMIT_NOFILE rlimit from %llu to: %llu\n",
- 		  prevrl.rlim_max, rl.rlim_max);
- 	if (setrlimit(RLIMIT_NOFILE, &rl) < 0)
- 		err(EXIT_FAILURE, "setrlimit");
-diff --git a/tools/perf/bench/epoll-wait.c b/tools/perf/bench/epoll-wait.c
-index 4e4efc5..d5d17e2 100644
---- a/tools/perf/bench/epoll-wait.c
-+++ b/tools/perf/bench/epoll-wait.c
-@@ -395,7 +395,7 @@ static void *writerfn(void *p)
- 		nanosleep(&ts, NULL);
- 	}
+ 	/* Here we actually compare this rate to the latest LQ command */
+ 	if (lq_color != LQ_FLAG_COLOR_GET(table->flags)) {
+@@ -1379,8 +1386,12 @@ void iwl_mvm_rs_tx_status(struct iwl_mvm
+ 		/* Collect data for each rate used during failed TX attempts */
+ 		for (i = 0; i <= retries; ++i) {
+ 			lq_hwrate = le32_to_cpu(table->rs_table[i]);
+-			rs_rate_from_ucode_rate(lq_hwrate, info->band,
+-						&lq_rate);
++			if (rs_rate_from_ucode_rate(lq_hwrate, info->band,
++						    &lq_rate)) {
++				WARN_ON_ONCE(1);
++				return;
++			}
++
+ 			/*
+ 			 * Only collect stats if retried rate is in the same RS
+ 			 * table as active/search.
+@@ -3244,7 +3255,10 @@ static void rs_build_rates_table_from_fi
+ 	for (i = 0; i < num_rates; i++)
+ 		lq_cmd->rs_table[i] = ucode_rate_le32;
  
--	printinfo("exiting writer-thread (total full-loops: %ld)\n", iter);
-+	printinfo("exiting writer-thread (total full-loops: %ld)\n", (long int) iter);
- 	return NULL;
- }
+-	rs_rate_from_ucode_rate(ucode_rate, band, &rate);
++	if (rs_rate_from_ucode_rate(ucode_rate, band, &rate)) {
++		WARN_ON_ONCE(1);
++		return;
++	}
  
-@@ -459,7 +459,7 @@ int bench_epoll_wait(int argc, const char **argv)
- 	if (getrlimit(RLIMIT_NOFILE, &prevrl))
- 		err(EXIT_FAILURE, "getrlimit");
- 	rl.rlim_cur = rl.rlim_max = nfds * nthreads * 2 + 50;
--	printinfo("Setting RLIMIT_NOFILE rlimit from %lu to: %lu\n", prevrl.rlim_max, rl.rlim_max);
-+	printinfo("Setting RLIMIT_NOFILE rlimit from %llu to: %llu\n", prevrl.rlim_max, rl.rlim_max);
- 	if (setrlimit(RLIMIT_NOFILE, &rl) < 0)
- 		err(EXIT_FAILURE, "setrlimit");
- 
+ 	if (is_mimo(&rate))
+ 		lq_cmd->mimo_delim = num_rates - 1;
+
+
