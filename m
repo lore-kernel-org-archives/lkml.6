@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF68DC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:45:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C718C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:45:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74AC820818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:45:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDE4520871
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:45:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xHEAxdyW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74AC820818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2dF6o8gl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDE4520871
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387674AbeKLJgE (ORCPT
+        id S2387416AbeKLITF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:36:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39818 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387401AbeKLITF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:19:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39860 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731062AbeKLITE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:19:04 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4AF6B21508;
-        Sun, 11 Nov 2018 22:29:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E1BB21104;
+        Sun, 11 Nov 2018 22:29:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975349;
-        bh=oR1LGesLeY46cJUrAhC2Hjj5E2UKOWnlqk9J3zu2nak=;
+        s=default; t=1541975348;
+        bh=E2GsH9iqi6ZkW5ki9lsnmQ6tle8fmacNnHGaUQqcwrM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xHEAxdyWxSHN+1iVVNqv/kjg8nPs2Y/ngF6q5I1osk+J0cxK2x5z3Lo9EKW27o1Vj
-         R7tFUCjK3C4ESM7c9rtaFDVkHi2SB9eoGJfChVeYSwLXhAWG6ewt+WOaWLJaxRPV1x
-         gqFw/5ez0PQYgR+K9LhcShuhlOK48laeKOFkjxcs=
+        b=2dF6o8gli6RLNHlsVfYspxYrNcqpBING0vsj1GcFjY/ndPmenAK2M4FDiaoGNku1V
+         wZqnbuZwhqKuwax0kX9pWsOZLkfxfG1cSCvsNKE2AAQ2PQ0ObOq5KP3qcUga70vXFJ
+         3SOLslE0hX2xCDq+Ax+7NrAjSBRsg64K51580By4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Colascione <dancol@google.com>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Chenbo Feng <fengc@google.com>
-Subject: [PATCH 4.19 360/361] bpf: wait for running BPF programs when updating map-in-map
-Date:   Sun, 11 Nov 2018 14:21:47 -0800
-Message-Id: <20181111221702.268411766@linuxfoundation.org>
+        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+        Nicolas Pitre <nico@linaro.org>
+Subject: [PATCH 4.19 358/361] vt: fix broken display when running aptitude
+Date:   Sun, 11 Nov 2018 14:21:45 -0800
+Message-Id: <20181111221702.092206116@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -64,65 +62,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Colascione <dancol@google.com>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-commit 1ae80cf31938c8f77c37a29bbe29e7f1cd492be8 upstream.
+commit 943210ba807ec50aafa2fa7b13bd6d36a478969b upstream.
 
-The map-in-map frequently serves as a mechanism for atomic
-snapshotting of state that a BPF program might record.  The current
-implementation is dangerous to use in this way, however, since
-userspace has no way of knowing when all programs that might have
-retrieved the "old" value of the map may have completed.
+If you run aptitude on framebuffer console, the display is corrupted. The
+corruption is caused by the commit d8ae7242. The patch adds "offset" to
+"start" when calling scr_memsetw, but it forgets to do the same addition
+on a subsequent call to do_update_region.
 
-This change ensures that map update operations on map-in-map map types
-always wait for all references to the old map to drop before returning
-to userspace.
-
-Signed-off-by: Daniel Colascione <dancol@google.com>
-Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Chenbo Feng <fengc@google.com>
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Fixes: d8ae72427187 ("vt: preserve unicode values corresponding to screen characters")
+Reviewed-by: Nicolas Pitre <nico@linaro.org>
+Cc: stable@vger.kernel.org	# 4.19
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/bpf/syscall.c |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/tty/vt/vt.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -741,6 +741,17 @@ err_put:
- 	return err;
+--- a/drivers/tty/vt/vt.c
++++ b/drivers/tty/vt/vt.c
+@@ -1551,7 +1551,7 @@ static void csi_K(struct vc_data *vc, in
+ 	scr_memsetw(start + offset, vc->vc_video_erase_char, 2 * count);
+ 	vc->vc_need_wrap = 0;
+ 	if (con_should_update(vc))
+-		do_update_region(vc, (unsigned long) start, count);
++		do_update_region(vc, (unsigned long)(start + offset), count);
  }
  
-+static void maybe_wait_bpf_programs(struct bpf_map *map)
-+{
-+	/* Wait for any running BPF programs to complete so that
-+	 * userspace, when we return to it, knows that all programs
-+	 * that could be running use the new map value.
-+	 */
-+	if (map->map_type == BPF_MAP_TYPE_HASH_OF_MAPS ||
-+	    map->map_type == BPF_MAP_TYPE_ARRAY_OF_MAPS)
-+		synchronize_rcu();
-+}
-+
- #define BPF_MAP_UPDATE_ELEM_LAST_FIELD flags
- 
- static int map_update_elem(union bpf_attr *attr)
-@@ -831,6 +842,7 @@ static int map_update_elem(union bpf_att
- 	}
- 	__this_cpu_dec(bpf_prog_active);
- 	preempt_enable();
-+	maybe_wait_bpf_programs(map);
- out:
- free_value:
- 	kfree(value);
-@@ -883,6 +895,7 @@ static int map_delete_elem(union bpf_att
- 	rcu_read_unlock();
- 	__this_cpu_dec(bpf_prog_active);
- 	preempt_enable();
-+	maybe_wait_bpf_programs(map);
- out:
- 	kfree(key);
- err_put:
+ static void csi_X(struct vc_data *vc, int vpar) /* erase the following vpar positions */
 
 
