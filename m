@@ -2,226 +2,149 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FEA6C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 18:36:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD832C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 18:50:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42C8F20871
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 18:36:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42C8F20871
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6892C214DB
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 18:50:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6892C214DB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729442AbeKLEZk (ORCPT
+        id S1729450AbeKLEfC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 23:25:40 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45152 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726283AbeKLEZj (ORCPT
+        Sun, 11 Nov 2018 23:35:02 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:48816 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729404AbeKLEfB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 23:25:39 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wABIY6AK108336
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 13:36:22 -0500
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2npd7602rh-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 13:36:22 -0500
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Sun, 11 Nov 2018 18:36:21 -0000
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 11 Nov 2018 18:36:18 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wABIaIZN3867040
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 11 Nov 2018 18:36:18 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0AE69B2065;
-        Sun, 11 Nov 2018 18:36:18 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C8518B2064;
-        Sun, 11 Nov 2018 18:36:17 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.207.24])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Sun, 11 Nov 2018 18:36:17 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id E893B16C414A; Sun, 11 Nov 2018 10:36:18 -0800 (PST)
-Date:   Sun, 11 Nov 2018 10:36:18 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org, josh@joshtriplett.org,
-        rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
-        jiangshanlai@gmail.com
-Subject: Re: dyntick-idle CPU and node's qsmask
-Reply-To: paulmck@linux.ibm.com
-References: <20181110214659.GA96924@google.com>
- <20181110230436.GL4170@linux.ibm.com>
- <20181111030925.GA182908@google.com>
- <20181111042210.GN4170@linux.ibm.com>
- <20181111180916.GA25327@google.com>
+        Sun, 11 Nov 2018 23:35:01 -0500
+Received: from ben by shadbolt.decadent.org.uk with local (Exim 4.89)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1gLujc-0005Xq-Gc; Sun, 11 Nov 2018 18:45:26 +0000
+Date:   Sun, 11 Nov 2018 18:45:24 +0000
+From:   Ben Hutchings <ben@decadent.org.uk>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org
+Message-ID: <20181111184524.fux4taownc6ndbx6@decadent.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="yox42ydsmjky7enj"
 Content-Disposition: inline
-In-Reply-To: <20181111180916.GA25327@google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18111118-0072-0000-0000-000003C6EFFB
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010028; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01115996; UDB=6.00577118; IPR=6.00896097;
- MB=3.00024114; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-11 18:36:20
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111118-0073-0000-0000-00004A132F2D
-Message-Id: <20181111183618.GY4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-11_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811110177
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+Subject: [PATCH] perf tools: Suppress potential format-truncation warning in
+ util/pmu.c
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on shadbolt.decadent.org.uk)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 11, 2018 at 10:09:16AM -0800, Joel Fernandes wrote:
-> On Sat, Nov 10, 2018 at 08:22:10PM -0800, Paul E. McKenney wrote:
-> > On Sat, Nov 10, 2018 at 07:09:25PM -0800, Joel Fernandes wrote:
-> > > On Sat, Nov 10, 2018 at 03:04:36PM -0800, Paul E. McKenney wrote:
-> > > > On Sat, Nov 10, 2018 at 01:46:59PM -0800, Joel Fernandes wrote:
-> > > > > Hi Paul and everyone,
-> > > > > 
-> > > > > I was tracing/studying the RCU code today in paul/dev branch and noticed that
-> > > > > for dyntick-idle CPUs, the RCU GP thread is clearing the rnp->qsmask
-> > > > > corresponding to the leaf node for the idle CPU, and reporting a QS on their
-> > > > > behalf.
-> > > > > 
-> > > > > rcu_sched-10    [003]    40.008039: rcu_fqs:              rcu_sched 792 0 dti
-> > > > > rcu_sched-10    [003]    40.008039: rcu_fqs:              rcu_sched 801 2 dti
-> > > > > rcu_sched-10    [003]    40.008041: rcu_quiescent_state_report: rcu_sched 805 5>0 0 0 3 0
-> > > > > 
-> > > > > That's all good but I was wondering if we can do better for the idle CPUs if
-> > > > > we can some how not set the qsmask of the node in the first place. Then no
-> > > > > reporting would be needed of quiescent state is needed for idle CPUs right?
-> > > > > And we would also not need to acquire the rnp lock I think.
-> > > > > 
-> > > > > At least for a single node tree RCU system, it seems that would avoid needing
-> > > > > to acquire the lock without complications. Anyway let me know your thoughts
-> > > > > and happy to discuss this at the hallways of the LPC as well for folks
-> > > > > attending :)
-> > > > 
-> > > > We could, but that would require consulting the rcu_data structure for
-> > > > each CPU while initializing the grace period, thus increasing the number
-> > > > of cache misses during grace-period initialization and also shortly after
-> > > > for any non-idle CPUs.  This seems backwards on busy systems where each
-> > > 
-> > > When I traced, it appears to me that rcu_data structure of a remote CPU was
-> > > being consulted anyway by the rcu_sched thread. So it seems like such cache
-> > > miss would happen anyway whether it is during grace-period initialization or
-> > > during the fqs stage? I guess I'm trying to say, the consultation of remote
-> > > CPU's rcu_data happens anyway.
-> > 
-> > Hmmm...
-> > 
-> > The rcu_gp_init() function does access an rcu_data structure, but it is
-> > that of the current CPU, so shouldn't involve a communications cache miss,
-> > at least not in the common case.
-> > 
-> > Or are you seeing these cross-CPU rcu_data accesses in rcu_gp_fqs() or
-> > functions that it calls?  In that case, please see below.
-> 
-> Yes, it was rcu_implicit_dynticks_qs called from rcu_gp_fqs.
-> 
-> > > > CPU will with high probability report its own quiescent state before three
-> > > > jiffies pass, in which case the cache misses on the rcu_data structures
-> > > > would be wasted motion.
-> > > 
-> > > If all the CPUs are busy and reporting their QS themselves, then I think the
-> > > qsmask is likely 0 so then rcu_implicit_dynticks_qs (called from
-> > > force_qs_rnp) wouldn't be called and so there would no cache misses on
-> > > rcu_data right?
-> > 
-> > Yes, but assuming that all CPUs report their quiescent states before
-> > the first call to rcu_gp_fqs().  One exception is when some CPU is
-> > looping in the kernel for many milliseconds without passing through a
-> > quiescent state.  This is because for recent kernels, cond_resched()
-> > is not a quiescent state until the grace period is something like 100
-> > milliseconds old.  (For older kernels, cond_resched() was never an RCU
-> > quiescent state unless it actually scheduled.)
-> > 
-> > Why wait 100 milliseconds?  Because otherwise the increase in
-> > cond_resched() overhead shows up all too well, causing 0day test robot
-> > to complain bitterly.  Besides, I would expect that in the common case,
-> > CPUs would be executing usermode code.
-> 
-> Makes sense. I was also wondering about this other thing you mentioned about
-> waiting for 3 jiffies before reporting the idle CPU's quiescent state. Does
-> that mean that even if a single CPU is dyntick-idle for a long period of
-> time, then the minimum grace period duration would be atleast 3 jiffies? In
-> our mobile embedded devices, jiffies is set to 3.33ms (HZ=300) to keep power
-> consumption low. Not that I'm saying its an issue or anything (since IIUC if
-> someone wants shorter grace periods, they should just use expedited GPs), but
-> it sounds like it would be shorter GP if we just set the qsmask early on some
-> how and we can manage the overhead of doing so.
 
-First, there is some autotuning of the delay based on HZ:
+--yox42ydsmjky7enj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-#define RCU_JIFFIES_TILL_FORCE_QS (1 + (HZ > 250) + (HZ > 500))
+Depending on which functions are inlined in util/pmu.c, the
+snprintf() calls in perf_pmu__parse_{scale,unit,per_pkg,snapshot}()
+might trigger a warning:
 
-So at HZ=300, you should be seeing a two-jiffy delay rather than the
-usual HZ=1000 three-jiffy delay.  Of course, this means that the delay
-is 6.67ms rather than the usual 3ms, but the theory is that lower HZ
-rates often mean slower instruction execution and thus a desire for
-lower RCU overhead.  There is further autotuning based on number of
-CPUs, but this does not kick in until you have 256 CPUs on your system,
-and I bet that smartphones aren't there yet.  Nevertheless, check out
-RCU_JIFFIES_FQS_DIV for more info on this.
+util/pmu.c: In function 'pmu_aliases':
+util/pmu.c:178:31: error: '%s' directive output may be truncated writing up=
+ to 255 bytes into a region of size between 0 and 4095 [-Werror=3Dformat-tr=
+uncation=3D]
+  snprintf(path, PATH_MAX, "%s/%s.unit", dir, name);
+                               ^~
 
-But you can always override this autotuning using the following kernel
-boot paramters:
+I found this when trying to build perf from Linux 3.16 with gcc 8.
+However I can reproduce the problem in mainline if I force
+__perf_pmu__new_alias() to be inlined.
 
-rcutree.jiffies_till_first_fqs
-rcutree.jiffies_till_next_fqs
+Suppress this by using scnprintf() as has been done elsewhere in
+perf.
 
-You can even set the first one to zero if you want the effect of pre-scanning
-for idle CPUs.  ;-)
+Cc: stable@vger.kernel.org
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ tools/perf/util/pmu.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-The second must be set to one or greater.
+diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+index 7799788f662f..25c7d2a4e91b 100644
+--- a/tools/perf/util/pmu.c
++++ b/tools/perf/util/pmu.c
+@@ -145,7 +145,7 @@ static int perf_pmu__parse_scale(struct perf_pmu_alias =
+*alias, char *dir, char *
+ 	int fd, ret =3D -1;
+ 	char path[PATH_MAX];
+=20
+-	snprintf(path, PATH_MAX, "%s/%s.scale", dir, name);
++	scnprintf(path, PATH_MAX, "%s/%s.scale", dir, name);
+=20
+ 	fd =3D open(path, O_RDONLY);
+ 	if (fd =3D=3D -1)
+@@ -175,7 +175,7 @@ static int perf_pmu__parse_unit(struct perf_pmu_alias *=
+alias, char *dir, char *n
+ 	ssize_t sret;
+ 	int fd;
+=20
+-	snprintf(path, PATH_MAX, "%s/%s.unit", dir, name);
++	scnprintf(path, PATH_MAX, "%s/%s.unit", dir, name);
+=20
+ 	fd =3D open(path, O_RDONLY);
+ 	if (fd =3D=3D -1)
+@@ -205,7 +205,7 @@ perf_pmu__parse_per_pkg(struct perf_pmu_alias *alias, c=
+har *dir, char *name)
+ 	char path[PATH_MAX];
+ 	int fd;
+=20
+-	snprintf(path, PATH_MAX, "%s/%s.per-pkg", dir, name);
++	scnprintf(path, PATH_MAX, "%s/%s.per-pkg", dir, name);
+=20
+ 	fd =3D open(path, O_RDONLY);
+ 	if (fd =3D=3D -1)
+@@ -223,7 +223,7 @@ static int perf_pmu__parse_snapshot(struct perf_pmu_ali=
+as *alias,
+ 	char path[PATH_MAX];
+ 	int fd;
+=20
+-	snprintf(path, PATH_MAX, "%s/%s.snapshot", dir, name);
++	scnprintf(path, PATH_MAX, "%s/%s.snapshot", dir, name);
+=20
+ 	fd =3D open(path, O_RDONLY);
+ 	if (fd =3D=3D -1)
 
-Both are capped at one second (HZ).
+--yox42ydsmjky7enj
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> > Ah, did you build with NO_HZ_FULL, boot with nohz_full CPUs, and then run
-> > CPU-bound usermode workloads on those CPUs?  Such CPUs would appear to
-> > be idle from an RCU perspective.  But these CPUs would never touch their
-> > rcu_data structures, so they would likely remain in the RCU grace-period
-> > kthread's cache.  So this should work well also.  Give or take that other
-> > work would likely eject them from the cache, but in that case they would
-> > be capacity cache misses rather than the aforementioned communications
-> > cache misses.  Not that this distinction matters to whoever is measuring
-> > performance.  ;-)
-> 
-> Ah ok :-) I had booted with !CONFIG_NO_HZ_FULL for this test.
+-----BEGIN PGP SIGNATURE-----
 
-Never mind, then.  ;-)
+iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAlvoeL8ACgkQ57/I7JWG
+EQmKAg/+LakjIvwrKOfXk6giksH7EN0IN+VK+WL5/yn7yBL9ds3CnizU9ek5jmAt
+vKLu8FnsHuTJFKgV5KtaOe3fuzQX05YUUggC0A7K2CDeHV9sijexsoO+jEiMEPjs
+80cvdi4WqoLcx3nC7gXbiEBu8wEyeUPheSCY68a/9O9Nv20S5X1HwFdcNQwiVPhh
+rtg4dVj2OzVdtZJ1vNQUDjWt+pbhdNhZ8/MHnxew5wRv83LifiM7zDAQb/1zCkIk
+RY+bjLElVL4e/kuuT00OofUplUFhJWQB37ij5ieuMu07mCrK7XzX1p2/yk11kS6u
+qeYiXf0IogqWKfinpQ4BtadWhsCliyXYMD4TOm0Fa0db+tdrFw2S8QAi/9Vw2VKT
+ayILOxk/Pod8cd1FcxB3AnpxcpxzWojGB9vbDoWphYnfYpYNv1XGEy3WVwVQnMrZ
+KpWJ/FPF1gAoq+ZvSRtEXo8aT7u2GFlpNjolhLxf4Mi2QQXCjIX7zKS+rA+cXNJ8
+giSUKptFAOMKJ36A/Q9H4Hp8kC+nVQlhWYkTIFWIZn8H2m/l5fL3kmoHPigPB0/9
+cLcewNyrXDwmaJSP1xGA2zyi8+SDMAGzWZ0ZPQcbq7tN7fIXnP1ALV5T66pYFWxg
+nCxhqakTychWXP3cd8eHTuswmdCIMgUG1RzHuKc0pnxE8nu13Kg=
+=oPvQ
+-----END PGP SIGNATURE-----
 
-> > > Anyway it was just an idea that popped up when I was going through traces :)
-> > > Thanks for the discussion and happy to discuss further or try out anything.
-> > 
-> > Either way, I do appreciate your going through this.  People have found
-> > RCU bugs this way, one of which involved RCU uselessly calling a particular
-> > function twice in quick succession.  ;-)
->  
-> Thanks.  It is my pleasure and happy to help :) I'll keep digging into it.
-
-Looking forward to further questions and patches.  ;-)
-
-							Thanx, Paul
-
+--yox42ydsmjky7enj--
