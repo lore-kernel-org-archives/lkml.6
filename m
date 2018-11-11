@@ -7,44 +7,43 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1B0EC0044C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42A01C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8DFB223D8
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A0932241E
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yFJAS4dr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8DFB223D8
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xYSVoozu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A0932241E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389516AbeKLIVT (ORCPT
+        id S2389531AbeKLIVU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:21:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48146 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:21:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47942 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389457AbeKLIVS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:21:18 -0500
+        id S2389513AbeKLIVT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:19 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1AC4223CA;
-        Sun, 11 Nov 2018 22:31:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5FC1222353;
+        Sun, 11 Nov 2018 22:31:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975481;
-        bh=hnVp0cwo60dAwPPPuCqB0ZWk8IM4tZ2GpqpP3Btp6n8=;
+        s=default; t=1541975482;
+        bh=4Kd6h17hphUdYhZc18/Bkq4iT1qRqXtk+WmiTyRN7Oc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yFJAS4drvLMRdW0X29WpgtiVivPngmJAFRfOQUkM2ogv746fEcxjhUDXGI2J4VClv
-         IDKi/1BNGnbt6H7vecgMJxzDvt2Ze19u1uPCj1qchGFfOyR+cf5luOtXWE4nVfT9tk
-         6UyCpsuI2gf5Rumw5IdwkUus92Dm0TIXZdaNkRrM=
+        b=xYSVoozu9ViRZhF9zOwnH8147wpy+l63Wqkcf0vxNq/o0uk/tsquxW4Lc5rD9XDNm
+         m848Cl/1131ee5GED0wZKWQPRIyO8l+JV0umb/yJOWnqU/dnwYWeUL12VKAb1aztuB
+         3Bxbqd34tPBLUEln4d1mFIAX8bJW2ZSlhHMtRcV0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Damien Le Moal <damien.lemoal@wdc.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 4.18 268/350] dm zoned: fix metadata block ref counting
-Date:   Sun, 11 Nov 2018 14:22:12 -0800
-Message-Id: <20181111221719.225913341@linuxfoundation.org>
+        stable@vger.kernel.org, Jan Kara <jack@suse.cz>
+Subject: [PATCH 4.18 271/350] fsnotify: Fix busy inodes during unmount
+Date:   Sun, 11 Nov 2018 14:22:15 -0800
+Message-Id: <20181111221719.354949124@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -62,102 +61,176 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Damien Le Moal <damien.lemoal@wdc.com>
+From: Jan Kara <jack@suse.cz>
 
-commit 33c2865f8d011a2ca9f67124ddab9dc89382e9f1 upstream.
+commit 721fb6fbfd2132164c2e8777cc837f9b2c1794dc upstream.
 
-Since the ref field of struct dmz_mblock is always used with the
-spinlock of struct dmz_metadata locked, there is no need to use an
-atomic_t type. Change the type of the ref field to an unsigne
-integer.
+Detaching of mark connector from fsnotify_put_mark() can race with
+unmounting of the filesystem like:
 
-Fixes: 3b1a94c88b79 ("dm zoned: drive-managed zoned block device target")
-Cc: stable@vger.kernel.org
-Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+  CPU1				CPU2
+fsnotify_put_mark()
+  spin_lock(&conn->lock);
+  ...
+  inode = fsnotify_detach_connector_from_object(conn)
+  spin_unlock(&conn->lock);
+				generic_shutdown_super()
+				  fsnotify_unmount_inodes()
+				    sees connector detached for inode
+				      -> nothing to do
+				  evict_inode()
+				    barfs on pending inode reference
+  iput(inode);
+
+Resulting in "Busy inodes after unmount" message and possible kernel
+oops. Make fsnotify_unmount_inodes() properly wait for outstanding inode
+references from detached connectors.
+
+Note that the accounting of outstanding inode references in the
+superblock can cause some cacheline contention on the counter. OTOH it
+happens only during deletion of the last notification mark from an inode
+(or during unlinking of watched inode) and that is not too bad. I have
+measured time to create & delete inotify watch 100000 times from 64
+processes in parallel (each process having its own inotify group and its
+own file on a shared superblock) on a 64 CPU machine. Average and
+standard deviation of 15 runs look like:
+
+	Avg		Stddev
+Vanilla	9.817400	0.276165
+Fixed	9.710467	0.228294
+
+So there's no statistically significant difference.
+
+Fixes: 6b3f05d24d35 ("fsnotify: Detach mark from object list when last reference is dropped")
+CC: stable@vger.kernel.org
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-zoned-metadata.c |   20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
+ fs/notify/fsnotify.c |    3 +++
+ fs/notify/mark.c     |   39 +++++++++++++++++++++++++++++++--------
+ include/linux/fs.h   |    3 +++
+ 3 files changed, 37 insertions(+), 8 deletions(-)
 
---- a/drivers/md/dm-zoned-metadata.c
-+++ b/drivers/md/dm-zoned-metadata.c
-@@ -99,7 +99,7 @@ struct dmz_mblock {
- 	struct rb_node		node;
- 	struct list_head	link;
- 	sector_t		no;
--	atomic_t		ref;
-+	unsigned int		ref;
- 	unsigned long		state;
- 	struct page		*page;
- 	void			*data;
-@@ -296,7 +296,7 @@ static struct dmz_mblock *dmz_alloc_mblo
+--- a/fs/notify/fsnotify.c
++++ b/fs/notify/fsnotify.c
+@@ -96,6 +96,9 @@ void fsnotify_unmount_inodes(struct supe
  
- 	RB_CLEAR_NODE(&mblk->node);
- 	INIT_LIST_HEAD(&mblk->link);
--	atomic_set(&mblk->ref, 0);
-+	mblk->ref = 0;
- 	mblk->state = 0;
- 	mblk->no = mblk_no;
- 	mblk->data = page_address(mblk->page);
-@@ -397,7 +397,7 @@ static struct dmz_mblock *dmz_fetch_mblo
- 		return NULL;
+ 	if (iput_inode)
+ 		iput(iput_inode);
++	/* Wait for outstanding inode references from connectors */
++	wait_var_event(&sb->s_fsnotify_inode_refs,
++		       !atomic_long_read(&sb->s_fsnotify_inode_refs));
+ }
  
- 	spin_lock(&zmd->mblk_lock);
--	atomic_inc(&mblk->ref);
-+	mblk->ref++;
- 	set_bit(DMZ_META_READING, &mblk->state);
- 	dmz_insert_mblock(zmd, mblk);
- 	spin_unlock(&zmd->mblk_lock);
-@@ -484,7 +484,8 @@ static void dmz_release_mblock(struct dm
- 
- 	spin_lock(&zmd->mblk_lock);
- 
--	if (atomic_dec_and_test(&mblk->ref)) {
-+	mblk->ref--;
-+	if (mblk->ref == 0) {
- 		if (test_bit(DMZ_META_ERROR, &mblk->state)) {
- 			rb_erase(&mblk->node, &zmd->mblk_rbtree);
- 			dmz_free_mblock(zmd, mblk);
-@@ -511,7 +512,8 @@ static struct dmz_mblock *dmz_get_mblock
- 	mblk = dmz_lookup_mblock(zmd, mblk_no);
- 	if (mblk) {
- 		/* Cache hit: remove block from LRU list */
--		if (atomic_inc_return(&mblk->ref) == 1 &&
-+		mblk->ref++;
-+		if (mblk->ref == 1 &&
- 		    !test_bit(DMZ_META_DIRTY, &mblk->state))
- 			list_del_init(&mblk->link);
+ /*
+--- a/fs/notify/mark.c
++++ b/fs/notify/mark.c
+@@ -161,15 +161,18 @@ static void fsnotify_connector_destroy_w
  	}
-@@ -753,7 +755,7 @@ int dmz_flush_metadata(struct dmz_metada
+ }
  
- 		spin_lock(&zmd->mblk_lock);
- 		clear_bit(DMZ_META_DIRTY, &mblk->state);
--		if (atomic_read(&mblk->ref) == 0)
-+		if (mblk->ref == 0)
- 			list_add_tail(&mblk->link, &zmd->mblk_lru_list);
- 		spin_unlock(&zmd->mblk_lock);
- 	}
-@@ -2308,7 +2310,7 @@ static void dmz_cleanup_metadata(struct
- 		mblk = list_first_entry(&zmd->mblk_dirty_list,
- 					struct dmz_mblock, link);
- 		dmz_dev_warn(zmd->dev, "mblock %llu still in dirty list (ref %u)",
--			     (u64)mblk->no, atomic_read(&mblk->ref));
-+			     (u64)mblk->no, mblk->ref);
- 		list_del_init(&mblk->link);
- 		rb_erase(&mblk->node, &zmd->mblk_rbtree);
- 		dmz_free_mblock(zmd, mblk);
-@@ -2326,8 +2328,8 @@ static void dmz_cleanup_metadata(struct
- 	root = &zmd->mblk_rbtree;
- 	rbtree_postorder_for_each_entry_safe(mblk, next, root, node) {
- 		dmz_dev_warn(zmd->dev, "mblock %llu ref %u still in rbtree",
--			     (u64)mblk->no, atomic_read(&mblk->ref));
--		atomic_set(&mblk->ref, 0);
-+			     (u64)mblk->no, mblk->ref);
-+		mblk->ref = 0;
- 		dmz_free_mblock(zmd, mblk);
- 	}
+-static struct inode *fsnotify_detach_connector_from_object(
+-					struct fsnotify_mark_connector *conn)
++static void *fsnotify_detach_connector_from_object(
++					struct fsnotify_mark_connector *conn,
++					unsigned int *type)
+ {
+ 	struct inode *inode = NULL;
+ 
++	*type = conn->type;
+ 	if (conn->type == FSNOTIFY_OBJ_TYPE_INODE) {
+ 		inode = conn->inode;
+ 		rcu_assign_pointer(inode->i_fsnotify_marks, NULL);
+ 		inode->i_fsnotify_mask = 0;
++		atomic_long_inc(&inode->i_sb->s_fsnotify_inode_refs);
+ 		conn->inode = NULL;
+ 		conn->type = FSNOTIFY_OBJ_TYPE_DETACHED;
+ 	} else if (conn->type == FSNOTIFY_OBJ_TYPE_VFSMOUNT) {
+@@ -193,10 +196,29 @@ static void fsnotify_final_mark_destroy(
+ 	fsnotify_put_group(group);
+ }
+ 
++/* Drop object reference originally held by a connector */
++static void fsnotify_drop_object(unsigned int type, void *objp)
++{
++	struct inode *inode;
++	struct super_block *sb;
++
++	if (!objp)
++		return;
++	/* Currently only inode references are passed to be dropped */
++	if (WARN_ON_ONCE(type != FSNOTIFY_OBJ_TYPE_INODE))
++		return;
++	inode = objp;
++	sb = inode->i_sb;
++	iput(inode);
++	if (atomic_long_dec_and_test(&sb->s_fsnotify_inode_refs))
++		wake_up_var(&sb->s_fsnotify_inode_refs);
++}
++
+ void fsnotify_put_mark(struct fsnotify_mark *mark)
+ {
+ 	struct fsnotify_mark_connector *conn;
+-	struct inode *inode = NULL;
++	void *objp = NULL;
++	unsigned int type = FSNOTIFY_OBJ_TYPE_DETACHED;
+ 	bool free_conn = false;
+ 
+ 	/* Catch marks that were actually never attached to object */
+@@ -216,7 +238,7 @@ void fsnotify_put_mark(struct fsnotify_m
+ 	conn = mark->connector;
+ 	hlist_del_init_rcu(&mark->obj_list);
+ 	if (hlist_empty(&conn->list)) {
+-		inode = fsnotify_detach_connector_from_object(conn);
++		objp = fsnotify_detach_connector_from_object(conn, &type);
+ 		free_conn = true;
+ 	} else {
+ 		__fsnotify_recalc_mask(conn);
+@@ -224,7 +246,7 @@ void fsnotify_put_mark(struct fsnotify_m
+ 	mark->connector = NULL;
+ 	spin_unlock(&conn->lock);
+ 
+-	iput(inode);
++	fsnotify_drop_object(type, objp);
+ 
+ 	if (free_conn) {
+ 		spin_lock(&destroy_lock);
+@@ -702,7 +724,8 @@ void fsnotify_destroy_marks(struct fsnot
+ {
+ 	struct fsnotify_mark_connector *conn;
+ 	struct fsnotify_mark *mark, *old_mark = NULL;
+-	struct inode *inode;
++	void *objp;
++	unsigned int type;
+ 
+ 	conn = fsnotify_grab_connector(connp);
+ 	if (!conn)
+@@ -728,11 +751,11 @@ void fsnotify_destroy_marks(struct fsnot
+ 	 * mark references get dropped. It would lead to strange results such
+ 	 * as delaying inode deletion or blocking unmount.
+ 	 */
+-	inode = fsnotify_detach_connector_from_object(conn);
++	objp = fsnotify_detach_connector_from_object(conn, &type);
+ 	spin_unlock(&conn->lock);
+ 	if (old_mark)
+ 		fsnotify_put_mark(old_mark);
+-	iput(inode);
++	fsnotify_drop_object(type, objp);
+ }
+ 
+ /*
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1416,6 +1416,9 @@ struct super_block {
+ 	/* Number of inodes with nlink == 0 but still referenced */
+ 	atomic_long_t s_remove_count;
+ 
++	/* Pending fsnotify inode refs */
++	atomic_long_t s_fsnotify_inode_refs;
++
+ 	/* Being remounted read-only */
+ 	int s_readonly_remount;
  
 
 
