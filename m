@@ -2,157 +2,87 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEB2DC43610
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:35:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A0B1C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:35:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A62FE208A3
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:35:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="y020ycrg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A62FE208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 207A2208A3
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:35:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 207A2208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391292AbeKLIZd (ORCPT
+        id S2391303AbeKLIZl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:25:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33048 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405217AbeKLIZ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:25:26 -0500
-Received: from localhost (unknown [206.108.79.134])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 694C9224E0;
-        Sun, 11 Nov 2018 22:35:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975728;
-        bh=AchCysv4RPj9kTRimTneTYcnL8EhwtBYWlDTQX+xe4M=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y020ycrgsYPp/TV+UOz89/i0PuRA5vTFPt5QNCzhnXxJEtQruhIMJly4MlBfhsRfF
-         Yq8JJ4AA3qJ7SNEF85dWFZPNfN4oSOOAkw7p8vyMrwkicXroP7O7s1Xx8+Mc9eqJQt
-         HoKSgSsIcAlv3Lc+eNvApQw9BxOB6gFPANBPKQ5g=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josef Bacik <jbacik@fb.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.9 141/141] btrfs: set max_extent_size properly
-Date:   Sun, 11 Nov 2018 14:26:40 -0800
-Message-Id: <20181111221647.411307615@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
-References: <20181111221627.853046496@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Mon, 12 Nov 2018 03:25:41 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:33687 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387595AbeKLIZk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:25:40 -0500
+Received: by mail-oi1-f195.google.com with SMTP id c206so155834oib.0;
+        Sun, 11 Nov 2018 14:35:42 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=UkPt9IOz7Je01VGAUlMhZtO9VWUeOwC6PMsArIWg7y8=;
+        b=mZD+nKS6KzgXAulO8vVkHEmwwdrXwNdn71z4s7AYm8BrjPkLJlEW0RXbLYb2yDkKh2
+         8DcMelVxLIZhE8kMAeaGJRjyPhDP/D+xT6UyP+8F5sL96ZYvmGkQ9mPeWSaWM4Ru6GcO
+         eAkW+D3aFeha6O2NhMI7usmonPPdqXOAudc1Te39DnATtg9NNuKaK1dC5XcSTOt7ta5R
+         1CNlLDkYsR4wj7JpgX9aihTsNpApkXj3r40N0ZP5inUAIppMFRgZdOTsO3g+WOP4fCbD
+         IRSc5lL2sulWFqH5MnXx7gqiLbXYd06KxmRaP9F3sxlQzAw8NQiOeJu/aseqjQBF6fho
+         dwJw==
+X-Gm-Message-State: AGRZ1gLR6JnKLIkQIX9V9OhqBBK9z/sLfaIrj5Q+vkqkJFB0Ctnh5HbT
+        8jA/qGZ9SezFhg2n9N3vitzWBu4=
+X-Google-Smtp-Source: AJdET5dhCNTHAF4AKxUJBF9tmFvSO0j6yz3NGWUnR4z3himRfsAXnKMbhLc4L9sZUatcp/5TDPoaJA==
+X-Received: by 2002:aca:48d4:: with SMTP id v203-v6mr10214122oia.69.1541975741697;
+        Sun, 11 Nov 2018 14:35:41 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id j3sm5906195ote.16.2018.11.11.14.35.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 11 Nov 2018 14:35:40 -0800 (PST)
+Date:   Sun, 11 Nov 2018 16:35:39 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc:     linux@armlinux.org.uk, bp@alien8.de, arnd@arndb.de,
+        jlu@pengutronix.de, gregory.clement@bootlin.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v6 5/9] dt-bindings: ARM: document marvell,ecc-enable
+ binding
+Message-ID: <20181111223539.GA27390@bogus>
+References: <20181109070349.20464-1-chris.packham@alliedtelesis.co.nz>
+ <20181109070349.20464-6-chris.packham@alliedtelesis.co.nz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181109070349.20464-6-chris.packham@alliedtelesis.co.nz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+On Fri,  9 Nov 2018 20:03:45 +1300, Chris Packham wrote:
+> Add documentation for the marvell,ecc-enable and marvell,ecc-disable
+> properties which can be used to enable/disable ECC on the Marvell aurora
+> cache.
+> 
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> ---
+> 
+> Notes:
+>     Changes in v6:
+>     - new (split binding doc from implementation).
+> 
+>  Documentation/devicetree/bindings/arm/l2c2x0.txt | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
 
-------------------
-
-From: Josef Bacik <jbacik@fb.com>
-
-commit ad22cf6ea47fa20fbe11ac324a0a15c0a9a4a2a9 upstream.
-
-We can't use entry->bytes if our entry is a bitmap entry, we need to use
-entry->max_extent_size in that case.  Fix up all the logic to make this
-consistent.
-
-CC: stable@vger.kernel.org # 4.4+
-Signed-off-by: Josef Bacik <jbacik@fb.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- fs/btrfs/free-space-cache.c |   30 ++++++++++++++++++++----------
- 1 file changed, 20 insertions(+), 10 deletions(-)
-
---- a/fs/btrfs/free-space-cache.c
-+++ b/fs/btrfs/free-space-cache.c
-@@ -1778,6 +1778,13 @@ static int search_bitmap(struct btrfs_fr
- 	return -1;
- }
- 
-+static inline u64 get_max_extent_size(struct btrfs_free_space *entry)
-+{
-+	if (entry->bitmap)
-+		return entry->max_extent_size;
-+	return entry->bytes;
-+}
-+
- /* Cache the size of the max extent in bytes */
- static struct btrfs_free_space *
- find_free_space(struct btrfs_free_space_ctl *ctl, u64 *offset, u64 *bytes,
-@@ -1799,8 +1806,8 @@ find_free_space(struct btrfs_free_space_
- 	for (node = &entry->offset_index; node; node = rb_next(node)) {
- 		entry = rb_entry(node, struct btrfs_free_space, offset_index);
- 		if (entry->bytes < *bytes) {
--			if (entry->bytes > *max_extent_size)
--				*max_extent_size = entry->bytes;
-+			*max_extent_size = max(get_max_extent_size(entry),
-+					       *max_extent_size);
- 			continue;
- 		}
- 
-@@ -1818,8 +1825,8 @@ find_free_space(struct btrfs_free_space_
- 		}
- 
- 		if (entry->bytes < *bytes + align_off) {
--			if (entry->bytes > *max_extent_size)
--				*max_extent_size = entry->bytes;
-+			*max_extent_size = max(get_max_extent_size(entry),
-+					       *max_extent_size);
- 			continue;
- 		}
- 
-@@ -1831,8 +1838,10 @@ find_free_space(struct btrfs_free_space_
- 				*offset = tmp;
- 				*bytes = size;
- 				return entry;
--			} else if (size > *max_extent_size) {
--				*max_extent_size = size;
-+			} else {
-+				*max_extent_size =
-+					max(get_max_extent_size(entry),
-+					    *max_extent_size);
- 			}
- 			continue;
- 		}
-@@ -2691,8 +2700,8 @@ static u64 btrfs_alloc_from_bitmap(struc
- 
- 	err = search_bitmap(ctl, entry, &search_start, &search_bytes, true);
- 	if (err) {
--		if (search_bytes > *max_extent_size)
--			*max_extent_size = search_bytes;
-+		*max_extent_size = max(get_max_extent_size(entry),
-+				       *max_extent_size);
- 		return 0;
- 	}
- 
-@@ -2729,8 +2738,9 @@ u64 btrfs_alloc_from_cluster(struct btrf
- 
- 	entry = rb_entry(node, struct btrfs_free_space, offset_index);
- 	while (1) {
--		if (entry->bytes < bytes && entry->bytes > *max_extent_size)
--			*max_extent_size = entry->bytes;
-+		if (entry->bytes < bytes)
-+			*max_extent_size = max(get_max_extent_size(entry),
-+					       *max_extent_size);
- 
- 		if (entry->bytes < bytes ||
- 		    (!entry->bitmap && entry->offset < min_start)) {
-
-
+Reviewed-by: Rob Herring <robh@kernel.org>
