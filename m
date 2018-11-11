@@ -6,44 +6,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 866BFC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:31:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF1A8C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:31:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 468F42084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:31:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A05402084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:31:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jhzGeqcf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 468F42084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YgAyqd/6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A05402084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388906AbeKLJVh (ORCPT
+        id S2388810AbeKLJVs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:21:37 -0500
+        Mon, 12 Nov 2018 04:21:48 -0500
 Received: from mail.kernel.org ([198.145.29.99]:43864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388532AbeKLIUU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:20:20 -0500
+        id S2388586AbeKLIUT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:19 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E00A21582;
-        Sun, 11 Nov 2018 22:30:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 824A521780;
+        Sun, 11 Nov 2018 22:30:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975424;
-        bh=qgMriUdIHMLl3exkJoR27m6Sa+PLbIE/PT6BEoCthts=;
+        s=default; t=1541975423;
+        bh=pZXVA8YwBK41JoQZJ8h+QYaKmH5TEQBgX7tGyFwAlHI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jhzGeqcfkxWuZrlO4uq6otwJIFk/Nc4dcSrQsbU9AAwRHaRCrku98PM6hlGufKvdn
-         K24LY4hE63ze6F5oCjgKkjQAXCaq1HPC7fxRcXjK78J2NncDiHHZOt/jFiUHtqXgZ8
-         zhWR04PBZwi/MKTIHGnfDU54y4c5ya6Pzkp5J2Lk=
+        b=YgAyqd/693aFLUVTw2Iv37pfHzUXxLP62Co2eD/3s2sOjOjhBlDmgaChBHcPQHE3k
+         tZ2UMH28f64ZqQoBBXGSYrEfTz1koWn1SZ867a6vN5LRp/29d4ZOBh8X0bzEYHpF62
+         aK3AqIbpM8mRPYKUHqKqZWWVEqm31ZL8f0C/KKqs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org,
+        Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 154/350] f2fs: clear PageError on the read path
-Date:   Sun, 11 Nov 2018 14:20:18 -0800
-Message-Id: <20181111221714.510201708@linuxfoundation.org>
+Subject: [PATCH 4.18 126/350] rsi: fix memory alignment issue in ARM32 platforms
+Date:   Sun, 11 Nov 2018 14:19:50 -0800
+Message-Id: <20181111221712.810897626@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -61,60 +63,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>
 
-[ Upstream commit fb7d70db305a1446864227abf711b756568f8242 ]
+[ Upstream commit baa8caf4ab7af2d9e84b566b99fe919a4e9e7562 ]
 
-When running fault injection test, I hit somewhat wrong behavior in f2fs_gc ->
-gc_data_segment():
+During testing in ARM32 platforms, observed below kernel panic, as driver
+accessing data beyond the allocated memory while submitting URB to USB.
 
-0. fault injection generated some PageError'ed pages
+Fix: Resolved this by specifying correct length by considering 64 bit
+alignment. so that, USB bus driver will access only allocated memory.
 
-1. gc_data_segment
- -> f2fs_get_read_data_page(REQ_RAHEAD)
+Unit-test: Tested and confirm that driver bring up and scanning,
+connection and data transfer works fine with this fix.
 
-2. move_data_page
- -> f2fs_get_lock_data_page()
-  -> f2f_get_read_data_page()
-   -> f2fs_submit_page_read()
-    -> submit_bio(READ)
-  -> return EIO due to PageError
-  -> fail to move data
+...skipping...
+[   25.389450] Unable to handle kernel paging request at virtual
+	       address 5aa11422
+[   25.403078] Internal error: Oops: 5 [#1] SMP ARM
+[   25.407703] Modules linked in: rsi_usb
+[   25.411473] CPU: 1 PID: 317 Comm: RX-Thread Not tainted 4.18.0-rc7 #1
+[   25.419221] Hardware name: Freescale i.MX6 Quad/DualLite (Device Tree)
+[   25.425764] PC is at skb_release_data+0x90/0x168
+[   25.430393] LR is at skb_release_all+0x28/0x2c
+[   25.434842] pc : [<807435b0>] lr : [<80742ba0>] psr: 200e0013 5aa1141e
+[   25.464633] Flags: nzCv  IRQs on  FIQs on  Mode SVC_32 ISA ARM Segment none
+[   25.477524] Process RX-Thread (pid: 317, stack limit = 0x(ptrval))
+[   25.483709] Stack: (0xedf69ed8 to 0xedf6a000)
+[   25.569907] Backtrace:
+[   25.572368] [<80743520>] (skb_release_data) from [<80742ba0>]
+	       (skb_release_all+0x28/0x2c)
+[   25.580555] r9:7f00258c r8:00000001 r7:ee355000 r6:eddab0d0
+	       r5:eddab000 r4:eddbb840
+[   25.588308] [<80742b78>] (skb_release_all) from [<807432cc>]
+	       (consume_skb+0x30/0x50)
+[   25.596055] r5:eddab000 r4:eddbb840
+[   25.599648] [<8074329c>] (consume_skb) from [<7f00117c>]
+	       (rsi_usb_rx_thread+0x64/0x12c [rsi_usb])
+[   25.608524] r5:eddab000 r4:eddbb840
+[   25.612116] [<7f001118>] (rsi_usb_rx_thread [rsi_usb]) from
+	       [<80142750>] (kthread+0x11c/0x15c)
+[   25.620735] r10:ee9ff9e0 r9:edcde3b8 r8:ee355000 r7:edf68000
+	       r6:edd3a780 r5:00000000
+[   25.628567] r4:edcde380
+[   25.631110] [<80142634>] (kthread) from [<801010e8>]
+	       (ret_from_fork+0x14/0x2c)
+[   25.638336] Exception stack(0xedf69fb0 to 0xedf69ff8)
+[   25.682929] ---[ end trace 8236a5496f5b5d3b ]---
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Siva Rebbagondla <siva.rebbagondla@redpinesignals.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/data.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/net/wireless/rsi/rsi_91x_usb.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -80,7 +80,8 @@ static void __read_end_io(struct bio *bi
- 		/* PG_error was set if any post_read step failed */
- 		if (bio->bi_status || PageError(page)) {
- 			ClearPageUptodate(page);
--			SetPageError(page);
-+			/* will re-read again later */
-+			ClearPageError(page);
- 		} else {
- 			SetPageUptodate(page);
- 		}
-@@ -584,6 +585,7 @@ static int f2fs_submit_page_read(struct
- 		bio_put(bio);
- 		return -EFAULT;
- 	}
-+	ClearPageError(page);
- 	__submit_bio(F2FS_I_SB(inode), bio, DATA);
- 	return 0;
- }
-@@ -1528,6 +1530,7 @@ submit_and_realloc:
- 		if (bio_add_page(bio, page, blocksize, 0) < blocksize)
- 			goto submit_and_realloc;
+--- a/drivers/net/wireless/rsi/rsi_91x_usb.c
++++ b/drivers/net/wireless/rsi/rsi_91x_usb.c
+@@ -266,15 +266,17 @@ static void rsi_rx_done_handler(struct u
+ 	if (urb->status)
+ 		goto out;
  
-+		ClearPageError(page);
- 		last_block_in_bio = block_nr;
- 		goto next_page;
- set_error_page:
+-	if (urb->actual_length <= 0) {
+-		rsi_dbg(INFO_ZONE, "%s: Zero length packet\n", __func__);
++	if (urb->actual_length <= 0 ||
++	    urb->actual_length > rx_cb->rx_skb->len) {
++		rsi_dbg(INFO_ZONE, "%s: Invalid packet length = %d\n",
++			__func__, urb->actual_length);
+ 		goto out;
+ 	}
+ 	if (skb_queue_len(&dev->rx_q) >= RSI_MAX_RX_PKTS) {
+ 		rsi_dbg(INFO_ZONE, "Max RX packets reached\n");
+ 		goto out;
+ 	}
+-	skb_put(rx_cb->rx_skb, urb->actual_length);
++	skb_trim(rx_cb->rx_skb, urb->actual_length);
+ 	skb_queue_tail(&dev->rx_q, rx_cb->rx_skb);
+ 
+ 	rsi_set_event(&dev->rx_thread.event);
+@@ -308,6 +310,7 @@ static int rsi_rx_urb_submit(struct rsi_
+ 	if (!skb)
+ 		return -ENOMEM;
+ 	skb_reserve(skb, MAX_DWORD_ALIGN_BYTES);
++	skb_put(skb, RSI_MAX_RX_USB_PKT_SIZE - MAX_DWORD_ALIGN_BYTES);
+ 	dword_align_bytes = (unsigned long)skb->data & 0x3f;
+ 	if (dword_align_bytes > 0)
+ 		skb_push(skb, dword_align_bytes);
+@@ -319,7 +322,7 @@ static int rsi_rx_urb_submit(struct rsi_
+ 			  usb_rcvbulkpipe(dev->usbdev,
+ 			  dev->bulkin_endpoint_addr[ep_num - 1]),
+ 			  urb->transfer_buffer,
+-			  RSI_MAX_RX_USB_PKT_SIZE,
++			  skb->len,
+ 			  rsi_rx_done_handler,
+ 			  rx_cb);
+ 
 
 
