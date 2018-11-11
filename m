@@ -6,45 +6,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B9D4C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:54:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A9FAC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:54:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 369DA206BA
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:54:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F87C20872
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:54:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cRBaVdbl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 369DA206BA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VUvtmdfc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F87C20872
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404160AbeKLIoH (ORCPT
+        id S2404195AbeKLIoP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:44:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54772 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:44:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54642 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404000AbeKLIW6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:58 -0500
+        id S2403884AbeKLIW5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:57 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3B2E223C8;
+        by mail.kernel.org (Postfix) with ESMTPSA id 36603223C7;
         Sun, 11 Nov 2018 22:33:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975580;
-        bh=R8EIzeqfEUveB8Abu+ZYsxTAOqzn7xVpRTw+DeawsMU=;
+        bh=iRk0cre2C0B8n18GsNgfB44Y+miMB1omj7y6XZnuOKE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cRBaVdbl82fOJ8CabjzhdFVDU2dznrqqrsh7UepWnBgM2mrJ0H+sELA52hOtMOWDC
-         zWzqRh/wMPMVB4B46x0gRYY/NkiPmGj2fjZbZC98CtAcKs3K4y3xtaAfPduyRz9Bn9
-         PHOUX1KScu2Sni//Pg3NRfuC28b9tiDPC9PAygr4=
+        b=VUvtmdfcHQu02rLqrvTvrcO9Ji+1PpsEBZAHEfd5wLC6UHkb1BtmWGrE0YMdQyp4s
+         jkL1FVdkw8xj/H+nxWiY/wukyolV+YNTpo5i6i1IxBev1nYet53SxPd1pCQhMGzi6X
+         UfzQH0rCsnX+UupKg7NdWRcbTgfuc0wMZOiTsVHE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 4.14 171/222] nfsd: Fix an Oops in free_session()
-Date:   Sun, 11 Nov 2018 14:24:28 -0800
-Message-Id: <20181111221702.501633059@linuxfoundation.org>
+        Trond Myklebust <trond.myklebust@hammerspace.com>
+Subject: [PATCH 4.14 169/222] NFSv4.1: Fix the r/wsize checking
+Date:   Sun, 11 Nov 2018 14:24:26 -0800
+Message-Id: <20181111221702.336640901@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -62,33 +61,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Trond Myklebust <trondmy@gmail.com>
+From: Trond Myklebust <trond.myklebust@hammerspace.com>
 
-commit bb6ad5572c0022e17e846b382d7413cdcf8055be upstream.
+commit 943cff67b842839f4f35364ba2db5c2d3f025d94 upstream.
 
-In call_xpt_users(), we delete the entry from the list, but we
-do not reinitialise it. This triggers the list poisoning when
-we later call unregister_xpt_user() in nfsd4_del_conns().
+The intention of nfs4_session_set_rwsize() was to cap the r/wsize to the
+buffer sizes negotiated by the CREATE_SESSION. The initial code had a
+bug whereby we would not check the values negotiated by nfs_probe_fsinfo()
+(the assumption being that CREATE_SESSION will always negotiate buffer values
+that are sane w.r.t. the server's preferred r/wsizes) but would only check
+values set by the user in the 'mount' command.
 
+The code was changed in 4.11 to _always_ set the r/wsize, meaning that we
+now never use the server preferred r/wsizes. This is the regression that
+this patch fixes.
+Also rename the function to nfs4_session_limit_rwsize() in order to avoid
+future confusion.
+
+Fixes: 033853325fe3 (NFSv4.1 respect server's max size in CREATE_SESSION")
+Cc: stable@vger.kernel.org # v4.11+
 Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/sunrpc/svc_xprt.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/nfs/nfs4client.c |   16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
---- a/net/sunrpc/svc_xprt.c
-+++ b/net/sunrpc/svc_xprt.c
-@@ -1040,7 +1040,7 @@ static void call_xpt_users(struct svc_xp
- 	spin_lock(&xprt->xpt_lock);
- 	while (!list_empty(&xprt->xpt_users)) {
- 		u = list_first_entry(&xprt->xpt_users, struct svc_xpt_user, list);
--		list_del(&u->list);
-+		list_del_init(&u->list);
- 		u->callback(u);
- 	}
- 	spin_unlock(&xprt->xpt_lock);
+--- a/fs/nfs/nfs4client.c
++++ b/fs/nfs/nfs4client.c
+@@ -925,10 +925,10 @@ EXPORT_SYMBOL_GPL(nfs4_set_ds_client);
+ 
+ /*
+  * Session has been established, and the client marked ready.
+- * Set the mount rsize and wsize with negotiated fore channel
+- * attributes which will be bound checked in nfs_server_set_fsinfo.
++ * Limit the mount rsize, wsize and dtsize using negotiated fore
++ * channel attributes.
+  */
+-static void nfs4_session_set_rwsize(struct nfs_server *server)
++static void nfs4_session_limit_rwsize(struct nfs_server *server)
+ {
+ #ifdef CONFIG_NFS_V4_1
+ 	struct nfs4_session *sess;
+@@ -941,9 +941,11 @@ static void nfs4_session_set_rwsize(stru
+ 	server_resp_sz = sess->fc_attrs.max_resp_sz - nfs41_maxread_overhead;
+ 	server_rqst_sz = sess->fc_attrs.max_rqst_sz - nfs41_maxwrite_overhead;
+ 
+-	if (!server->rsize || server->rsize > server_resp_sz)
++	if (server->dtsize > server_resp_sz)
++		server->dtsize = server_resp_sz;
++	if (server->rsize > server_resp_sz)
+ 		server->rsize = server_resp_sz;
+-	if (!server->wsize || server->wsize > server_rqst_sz)
++	if (server->wsize > server_rqst_sz)
+ 		server->wsize = server_rqst_sz;
+ #endif /* CONFIG_NFS_V4_1 */
+ }
+@@ -990,12 +992,12 @@ static int nfs4_server_common_setup(stru
+ 			(unsigned long long) server->fsid.minor);
+ 	nfs_display_fhandle(mntfh, "Pseudo-fs root FH");
+ 
+-	nfs4_session_set_rwsize(server);
+-
+ 	error = nfs_probe_fsinfo(server, mntfh, fattr);
+ 	if (error < 0)
+ 		goto out;
+ 
++	nfs4_session_limit_rwsize(server);
++
+ 	if (server->namelen == 0 || server->namelen > NFS4_MAXNAMLEN)
+ 		server->namelen = NFS4_MAXNAMLEN;
+ 
 
 
