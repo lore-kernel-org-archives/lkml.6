@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7357C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:36:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0BACC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:36:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C93520866
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:36:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EF1020818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:36:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fVwi7PFc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C93520866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BMCBeDho"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EF1020818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388463AbeKLJ0y (ORCPT
+        id S2388215AbeKLIT6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:26:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42836 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:19:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42802 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388234AbeKLIUA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:20:00 -0500
+        id S2388152AbeKLIT4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:19:56 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C55F216FD;
-        Sun, 11 Nov 2018 22:30:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A65C721582;
+        Sun, 11 Nov 2018 22:29:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975404;
-        bh=yAxeAxW90gmxGSG+qFxYF7/ud5lVerPVLCJIFyxJWak=;
+        s=default; t=1541975399;
+        bh=eUEzkuc9Pao2TMi/fceFmRWsWyYyX9vJQRWVTUgLMmc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fVwi7PFcUBKhCc7T31zqNkMQKoyz7FQ/C61hMFPIBsNVjIc0QugL4hnioWc5c5ElN
-         EsdGm1FGjrTcfo5yJD2jS2t+b3fdTIv2E48dkdWc5qdxGC8CGFbY1sgL7zcOABoy82
-         40v0WvAjMEUkuVP8yi3JJZhqhP4+JCjbc9TMtOC8=
+        b=BMCBeDho0M2PMpvY1tlGaOIGLk12gm2wTZ++pBnq/a3/fwOKqUXsbnaI5ortG5hYk
+         EHztgxSSwwCo94IPKdJ1AGpXCoN2CXwckcD3/2qtiUtkOLcVyejamsxQetPsWr9J7x
+         qxxxcSEWekFwqUc2M7zoFuL6r/JG77UHmRBTi7v0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 105/350] pinctrl: sunxi: fix pctrl->functions allocation in sunxi_pinctrl_build_state
-Date:   Sun, 11 Nov 2018 14:19:29 -0800
-Message-Id: <20181111221711.482417104@linuxfoundation.org>
+Subject: [PATCH 4.18 087/350] iwlwifi: mvm: clear HW_RESTART_REQUESTED when stopping the interface
+Date:   Sun, 11 Nov 2018 14:19:11 -0800
+Message-Id: <20181111221710.754317389@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -64,69 +64,116 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
-[ Upstream commit a4925311a5443126ecc90671a1604ea7b0f5b32e ]
+[ Upstream commit 155f7e0441cd121b1e673d465a35e99f4b9b2f0b ]
 
-fixes following Smatch static check warning:
+Fix a bug that happens in the following scenario:
+1) suspend without WoWLAN
+2) mac80211 calls drv_stop because of the suspend
+3) __iwl_mvm_mac_stop deallocates the aux station
+4) during drv_stop the firmware crashes
+5) iwlmvm:
+	* sets IWL_MVM_STATUS_HW_RESTART_REQUESTED
+	* asks mac80211 to kick the restart flow
+6) mac80211 puts the restart worker into a freezable
+   queue which means that the worker will not run for now
+   since the workqueue is already frozen
+7) ...
+8) resume
+9) mac80211 runs ieee80211_reconfig as part of the resume
+10) mac80211 detects that a restart flow has been requested
+    and that we are now resuming from suspend and cancels
+    the restart worker
+11) mac80211 calls drv_start()
+12) __iwl_mvm_mac_start checks that IWL_MVM_STATUS_HW_RESTART_REQUESTED
+    clears it, sets IWL_MVM_STATUS_IN_HW_RESTART and calls
+    iwl_mvm_restart_cleanup()
+13) iwl_fw_error_dump gets called and accesses the device
+    to get debug data
+14) iwl_mvm_up adds the aux station
+15) iwl_mvm_add_aux_sta() allocates an internal station for
+    the aux station
+16) iwl_mvm_allocate_int_sta() tests IWL_MVM_STATUS_IN_HW_RESTART
+    and doesn't really allocate a station ID for the aux
+    station
+17) a new queue is added for the aux station
 
- ./drivers/pinctrl/sunxi/pinctrl-sunxi.c:1112 sunxi_pinctrl_build_state()
- warn: passing devm_ allocated variable to kfree. 'pctrl->functions'
+Note that steps from 5 to 9 aren't really part of the
+problem but were described for the sake of completeness.
 
-As we will be calling krealloc() on pointer 'pctrl->functions', which means
-kfree() will be called in there, devm_kzalloc() shouldn't be used with
-the allocation in the first place.  Fix the warning by calling kcalloc()
-and managing the free procedure in error path on our own.
+Once the iwl_mvm_mac_stop() is called, the device is not
+accessible, meaning that step 12) can't succeed and we'll
+see the following:
 
-Fixes: 0e37f88d9ad8 ("ARM: sunxi: Add pinctrl driver for Allwinner SoCs")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+drivers/net/wireless/intel/iwlwifi/pcie/trans.c:2122 iwl_trans_pcie_grab_nic_access+0xc0/0x1d6 [iwlwifi]()
+Timeout waiting for hardware access (CSR_GP_CNTRL 0x080403d8)
+Call Trace:
+[<ffffffffc03e6ad3>] iwl_trans_pcie_grab_nic_access+0xc0/0x1d6 [iwlwifi]
+[<ffffffffc03e6a13>] iwl_trans_pcie_dump_regs+0x3fd/0x3fd [iwlwifi]
+[<ffffffffc03dad42>] iwl_fw_error_dump+0x4f5/0xe8b [iwlwifi]
+[<ffffffffc04bd43e>] __iwl_mvm_mac_start+0x5a/0x21a [iwlmvm]
+[<ffffffffc04bd6d2>] iwl_mvm_mac_start+0xd4/0x103 [iwlmvm]
+[<ffffffffc042d378>] drv_start+0xa1/0xc5 [iwl7000_mac80211]
+[<ffffffffc045a339>] ieee80211_reconfig+0x145/0xf50 [mac80211]
+[<ffffffffc044788b>] ieee80211_resume+0x62/0x66 [mac80211]
+[<ffffffffc0366c5b>] wiphy_resume+0xa9/0xc6 [cfg80211]
+
+The station id of the aux station is set to 0xff in step 3
+and because we don't really allocate a new station id for
+the auxliary station (as explained in 16), we end up sending
+a command to the firmware asking to connect the queue
+to station id 0xff. This makes the firmware crash with the
+following information:
+
+0x00002093 | ADVANCED_SYSASSERT
+0x000002F0 | trm_hw_status0
+0x00000000 | trm_hw_status1
+0x00000B38 | branchlink2
+0x0001978C | interruptlink1
+0x00000000 | interruptlink2
+0xFF080501 | data1
+0xDEADBEEF | data2
+0xDEADBEEF | data3
+Firmware error during reconfiguration - reprobe!
+FW error in SYNC CMD SCD_QUEUE_CFG
+
+Fix this by clearing IWL_MVM_STATUS_HW_RESTART_REQUESTED
+in iwl_mvm_mac_stop(). We won't be able to collect debug
+data anyway and when we will brought up again, we will
+have a clean state from the firmware perspective.
+Since we won't have IWL_MVM_STATUS_IN_HW_RESTART set in
+step 12) we won't get to the 2093 ASSERT either.
+
+Fixes: bf8b286f86fc ("iwlwifi: mvm: defer setting IWL_MVM_STATUS_IN_HW_RESTART")
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pinctrl/sunxi/pinctrl-sunxi.c |   15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-@@ -1079,10 +1079,9 @@ static int sunxi_pinctrl_build_state(str
- 	 * We suppose that we won't have any more functions than pins,
- 	 * we'll reallocate that later anyway
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
+@@ -1232,12 +1232,15 @@ void __iwl_mvm_mac_stop(struct iwl_mvm *
+ 	iwl_mvm_del_aux_sta(mvm);
+ 
+ 	/*
+-	 * Clear IN_HW_RESTART flag when stopping the hw (as restart_complete()
+-	 * won't be called in this case).
++	 * Clear IN_HW_RESTART and HW_RESTART_REQUESTED flag when stopping the
++	 * hw (as restart_complete() won't be called in this case) and mac80211
++	 * won't execute the restart.
+ 	 * But make sure to cleanup interfaces that have gone down before/during
+ 	 * HW restart was requested.
  	 */
--	pctl->functions = devm_kcalloc(&pdev->dev,
--				       pctl->ngroups,
--				       sizeof(*pctl->functions),
--				       GFP_KERNEL);
-+	pctl->functions = kcalloc(pctl->ngroups,
-+				  sizeof(*pctl->functions),
-+				  GFP_KERNEL);
- 	if (!pctl->functions)
- 		return -ENOMEM;
+-	if (test_and_clear_bit(IWL_MVM_STATUS_IN_HW_RESTART, &mvm->status))
++	if (test_and_clear_bit(IWL_MVM_STATUS_IN_HW_RESTART, &mvm->status) ||
++	    test_and_clear_bit(IWL_MVM_STATUS_HW_RESTART_REQUESTED,
++			       &mvm->status))
+ 		ieee80211_iterate_interfaces(mvm->hw, 0,
+ 					     iwl_mvm_cleanup_iterator, mvm);
  
-@@ -1133,8 +1132,10 @@ static int sunxi_pinctrl_build_state(str
- 
- 			func_item = sunxi_pinctrl_find_function_by_name(pctl,
- 									func->name);
--			if (!func_item)
-+			if (!func_item) {
-+				kfree(pctl->functions);
- 				return -EINVAL;
-+			}
- 
- 			if (!func_item->groups) {
- 				func_item->groups =
-@@ -1142,8 +1143,10 @@ static int sunxi_pinctrl_build_state(str
- 						     func_item->ngroups,
- 						     sizeof(*func_item->groups),
- 						     GFP_KERNEL);
--				if (!func_item->groups)
-+				if (!func_item->groups) {
-+					kfree(pctl->functions);
- 					return -ENOMEM;
-+				}
- 			}
- 
- 			func_grp = func_item->groups;
 
 
