@@ -3,50 +3,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD750C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:33:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81389C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:34:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9686920818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:33:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9686920818
+	by mail.kernel.org (Postfix) with ESMTP id 4D07220871
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:34:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D07220871
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731204AbeKLGXT (ORCPT
+        id S1730570AbeKLGXe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:23:19 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50116 "EHLO
+        Mon, 12 Nov 2018 01:23:34 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50108 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730254AbeKLFsQ (ORCPT
+        by vger.kernel.org with ESMTP id S1730253AbeKLFsQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 00:48:16 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsc-0000oN-1L; Sun, 11 Nov 2018 19:58:46 +0000
+        id 1gLvsc-0000oF-4T; Sun, 11 Nov 2018 19:58:46 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsZ-0001q5-In; Sun, 11 Nov 2018 19:58:43 +0000
+        id 1gLvsZ-0001pb-9Z; Sun, 11 Nov 2018 19:58:43 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Sakari Ailus" <sakari.ailus@linux.intel.com>,
-        "Hans Verkuil" <hans.verkuil@cisco.com>,
-        "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>,
-        "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>
+CC:     akpm@linux-foundation.org, "David Howells" <dhowells@redhat.com>,
+        "Al Viro" <viro@zeniv.linux.org.uk>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.84819816@decadent.org.uk>
+Message-ID: <lsq.1541965745.321731002@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 323/366] media: v4l: event: Prevent freeing event
- subscriptions while accessed
+Subject: [PATCH 3.16 317/366] VFS: Impose ordering on accesses of d_inode
+ and d_flags
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -60,152 +57,155 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
+From: David Howells <dhowells@redhat.com>
 
-commit ad608fbcf166fec809e402d548761768f602702c upstream.
+commit 4bf46a272647d89e780126b52eda04737defd9f4 upstream.
 
-The event subscriptions are added to the subscribed event list while
-holding a spinlock, but that lock is subsequently released while still
-accessing the subscription object. This makes it possible to unsubscribe
-the event --- and freeing the subscription object's memory --- while
-the subscription object is simultaneously accessed.
+Impose ordering on accesses of d_inode and d_flags to avoid the need to do
+this:
 
-Prevent this by adding a mutex to serialise the event subscription and
-unsubscription. This also gives a guarantee to the callback ops that the
-add op has returned before the del op is called.
+	if (!dentry->d_inode || d_is_negative(dentry)) {
 
-This change also results in making the elems field less special:
-subscriptions are only added to the event list once they are fully
-initialised.
+when this:
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Reviewed-by: Hans Verkuil <hans.verkuil@cisco.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Fixes: c3b5b0241f62 ("V4L/DVB: V4L: Events: Add backend")
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+	if (d_is_negative(dentry)) {
+
+should suffice.
+
+This check is especially problematic if a dentry can have its type field set
+to something other than DENTRY_MISS_TYPE when d_inode is NULL (as in
+unionmount).
+
+What we really need to do is stick a write barrier between setting d_inode and
+setting d_flags and a read barrier between reading d_flags and reading
+d_inode.
+
+Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+[bwh: Backported to 3.16:
+ - Use ACCESS_ONCE() instead of {READ,WRITE}_ONCE()
+ - There's no DCACHE_FALLTHRU flag]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/media/v4l2-core/v4l2-event.c | 38 +++++++++++++++++++-----------------
- drivers/media/v4l2-core/v4l2-fh.c    |  2 ++
- include/media/v4l2-fh.h              |  1 +
- 3 files changed, 23 insertions(+), 18 deletions(-)
+ fs/dcache.c            | 47 +++++++++++++++++++++++++++++++++++-------
+ include/linux/dcache.h | 21 +++----------------
+ 2 files changed, 42 insertions(+), 26 deletions(-)
 
---- a/drivers/media/v4l2-core/v4l2-event.c
-+++ b/drivers/media/v4l2-core/v4l2-event.c
-@@ -119,14 +119,6 @@ static void __v4l2_event_queue_fh(struct
- 	if (sev == NULL)
- 		return;
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -281,6 +281,41 @@ void release_dentry_name_snapshot(struct
+ }
+ EXPORT_SYMBOL(release_dentry_name_snapshot);
  
--	/*
--	 * If the event has been added to the fh->subscribed list, but its
--	 * add op has not completed yet elems will be 0, treat this as
--	 * not being subscribed.
--	 */
--	if (!sev->elems)
--		return;
++/*
++ * Make sure other CPUs see the inode attached before the type is set.
++ */
++static inline void __d_set_inode_and_type(struct dentry *dentry,
++					  struct inode *inode,
++					  unsigned type_flags)
++{
++	unsigned flags;
++
++	dentry->d_inode = inode;
++	smp_wmb();
++	flags = ACCESS_ONCE(dentry->d_flags);
++	flags &= ~DCACHE_ENTRY_TYPE;
++	flags |= type_flags;
++	ACCESS_ONCE(dentry->d_flags) = flags;
++}
++
++/*
++ * Ideally, we want to make sure that other CPUs see the flags cleared before
++ * the inode is detached, but this is really a violation of RCU principles
++ * since the ordering suggests we should always set inode before flags.
++ *
++ * We should instead replace or discard the entire dentry - but that sucks
++ * performancewise on mass deletion/rename.
++ */
++static inline void __d_clear_type_and_inode(struct dentry *dentry)
++{
++	unsigned flags = ACCESS_ONCE(dentry->d_flags);
++
++	flags &= ~DCACHE_ENTRY_TYPE;
++	ACCESS_ONCE(dentry->d_flags) = flags;
++	smp_wmb();
++	dentry->d_inode = NULL;
++}
++
+ static void dentry_free(struct dentry *dentry)
+ {
+ 	WARN_ON(!hlist_unhashed(&dentry->d_u.d_alias));
+@@ -317,7 +352,7 @@ static void dentry_iput(struct dentry *
+ {
+ 	struct inode *inode = dentry->d_inode;
+ 	if (inode) {
+-		dentry->d_inode = NULL;
++		__d_clear_type_and_inode(dentry);
+ 		hlist_del_init(&dentry->d_u.d_alias);
+ 		spin_unlock(&dentry->d_lock);
+ 		spin_unlock(&inode->i_lock);
+@@ -341,8 +376,7 @@ static void dentry_unlink_inode(struct d
+ 	__releases(dentry->d_inode->i_lock)
+ {
+ 	struct inode *inode = dentry->d_inode;
+-	__d_clear_type(dentry);
+-	dentry->d_inode = NULL;
++	__d_clear_type_and_inode(dentry);
+ 	hlist_del_init(&dentry->d_u.d_alias);
+ 	dentry_rcuwalk_barrier(dentry);
+ 	spin_unlock(&dentry->d_lock);
+@@ -1644,10 +1678,9 @@ static void __d_instantiate(struct dentr
+ 	unsigned add_flags = d_flags_for_inode(inode);
+ 
+ 	spin_lock(&dentry->d_lock);
+-	__d_set_type(dentry, add_flags);
+ 	if (inode)
+ 		hlist_add_head(&dentry->d_u.d_alias, &inode->i_dentry);
+-	dentry->d_inode = inode;
++	__d_set_inode_and_type(dentry, inode, add_flags);
+ 	dentry_rcuwalk_barrier(dentry);
+ 	spin_unlock(&dentry->d_lock);
+ 	fsnotify_d_instantiate(dentry, inode);
+@@ -1904,8 +1937,7 @@ struct dentry *d_obtain_alias(struct ino
+ 	add_flags = d_flags_for_inode(inode) | DCACHE_DISCONNECTED;
+ 
+ 	spin_lock(&tmp->d_lock);
+-	tmp->d_inode = inode;
+-	tmp->d_flags |= add_flags;
++	__d_set_inode_and_type(tmp, inode, add_flags);
+ 	hlist_add_head(&tmp->d_u.d_alias, &inode->i_dentry);
+ 	hlist_bl_lock(&tmp->d_sb->s_anon);
+ 	hlist_bl_add_head(&tmp->d_hash, &tmp->d_sb->s_anon);
+--- a/include/linux/dcache.h
++++ b/include/linux/dcache.h
+@@ -411,26 +411,11 @@ static inline bool d_mountpoint(const st
+ /*
+  * Directory cache entry type accessor functions.
+  */
+-static inline void __d_set_type(struct dentry *dentry, unsigned type)
+-{
+-	dentry->d_flags = (dentry->d_flags & ~DCACHE_ENTRY_TYPE) | type;
+-}
 -
- 	/* Increase event sequence number on fh. */
- 	fh->sequence++;
- 
-@@ -209,6 +201,7 @@ int v4l2_event_subscribe(struct v4l2_fh
- 	struct v4l2_subscribed_event *sev, *found_ev;
- 	unsigned long flags;
- 	unsigned i;
-+	int ret = 0;
- 
- 	if (sub->type == V4L2_EVENT_ALL)
- 		return -EINVAL;
-@@ -226,31 +219,36 @@ int v4l2_event_subscribe(struct v4l2_fh
- 	sev->flags = sub->flags;
- 	sev->fh = fh;
- 	sev->ops = ops;
-+	sev->elems = elems;
-+
-+	mutex_lock(&fh->subscribe_lock);
- 
- 	spin_lock_irqsave(&fh->vdev->fh_lock, flags);
- 	found_ev = v4l2_event_subscribed(fh, sub->type, sub->id);
--	if (!found_ev)
--		list_add(&sev->list, &fh->subscribed);
- 	spin_unlock_irqrestore(&fh->vdev->fh_lock, flags);
- 
- 	if (found_ev) {
-+		/* Already listening */
- 		kfree(sev);
--		return 0; /* Already listening */
-+		goto out_unlock;
- 	}
- 
- 	if (sev->ops && sev->ops->add) {
--		int ret = sev->ops->add(sev, elems);
-+		ret = sev->ops->add(sev, elems);
- 		if (ret) {
--			sev->ops = NULL;
--			v4l2_event_unsubscribe(fh, sub);
--			return ret;
-+			kfree(sev);
-+			goto out_unlock;
- 		}
- 	}
- 
--	/* Mark as ready for use */
--	sev->elems = elems;
-+	spin_lock_irqsave(&fh->vdev->fh_lock, flags);
-+	list_add(&sev->list, &fh->subscribed);
-+	spin_unlock_irqrestore(&fh->vdev->fh_lock, flags);
-+
-+out_unlock:
-+	mutex_unlock(&fh->subscribe_lock);
- 
--	return 0;
-+	return ret;
+-static inline void __d_clear_type(struct dentry *dentry)
+-{
+-	__d_set_type(dentry, DCACHE_MISS_TYPE);
+-}
+-
+-static inline void d_set_type(struct dentry *dentry, unsigned type)
+-{
+-	spin_lock(&dentry->d_lock);
+-	__d_set_type(dentry, type);
+-	spin_unlock(&dentry->d_lock);
+-}
+-
+ static inline unsigned __d_entry_type(const struct dentry *dentry)
+ {
+-	return dentry->d_flags & DCACHE_ENTRY_TYPE;
++	unsigned type = ACCESS_ONCE(dentry->d_flags);
++	smp_rmb();
++	return type & DCACHE_ENTRY_TYPE;
  }
- EXPORT_SYMBOL_GPL(v4l2_event_subscribe);
  
-@@ -289,6 +287,8 @@ int v4l2_event_unsubscribe(struct v4l2_f
- 		return 0;
- 	}
- 
-+	mutex_lock(&fh->subscribe_lock);
-+
- 	spin_lock_irqsave(&fh->vdev->fh_lock, flags);
- 
- 	sev = v4l2_event_subscribed(fh, sub->type, sub->id);
-@@ -306,6 +306,8 @@ int v4l2_event_unsubscribe(struct v4l2_f
- 	if (sev && sev->ops && sev->ops->del)
- 		sev->ops->del(sev);
- 
-+	mutex_unlock(&fh->subscribe_lock);
-+
- 	kfree(sev);
- 
- 	return 0;
---- a/drivers/media/v4l2-core/v4l2-fh.c
-+++ b/drivers/media/v4l2-core/v4l2-fh.c
-@@ -42,6 +42,7 @@ void v4l2_fh_init(struct v4l2_fh *fh, st
- 	INIT_LIST_HEAD(&fh->available);
- 	INIT_LIST_HEAD(&fh->subscribed);
- 	fh->sequence = -1;
-+	mutex_init(&fh->subscribe_lock);
- }
- EXPORT_SYMBOL_GPL(v4l2_fh_init);
- 
-@@ -88,6 +89,7 @@ void v4l2_fh_exit(struct v4l2_fh *fh)
- 	if (fh->vdev == NULL)
- 		return;
- 	v4l2_event_unsubscribe_all(fh);
-+	mutex_destroy(&fh->subscribe_lock);
- 	fh->vdev = NULL;
- }
- EXPORT_SYMBOL_GPL(v4l2_fh_exit);
---- a/include/media/v4l2-fh.h
-+++ b/include/media/v4l2-fh.h
-@@ -41,6 +41,7 @@ struct v4l2_fh {
- 
- 	/* Events */
- 	wait_queue_head_t	wait;
-+	struct mutex		subscribe_lock;
- 	struct list_head	subscribed; /* Subscribed events */
- 	struct list_head	available; /* Dequeueable event */
- 	unsigned int		navailable;
+ static inline bool d_can_lookup(const struct dentry *dentry)
 
