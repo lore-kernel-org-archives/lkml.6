@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6D69C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:04:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9062C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:04:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DAA120866
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:04:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 625AF21104
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:04:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XU8dc14v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DAA120866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pgYvIUnC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 625AF21104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732054AbeKLIRs (ORCPT
+        id S1732370AbeKLJyn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:17:48 -0500
+        Mon, 12 Nov 2018 04:54:43 -0500
 Received: from mail.kernel.org ([198.145.29.99]:34412 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729476AbeKLIRq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:17:46 -0500
+        id S1731952AbeKLIRs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:17:48 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E30EB21582;
-        Sun, 11 Nov 2018 22:27:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D7872175B;
+        Sun, 11 Nov 2018 22:27:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975270;
-        bh=d/6UFrNa09IIUn5ynQKof5md+F5RdpuDUc9YeHs9y+4=;
+        s=default; t=1541975272;
+        bh=GFB9fz2oQabVNNyaLVo5sv5BzFh/uMaHCbTL9OjGJpg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XU8dc14vBTPHJOtIlg/hDEXxvW3FIevpmaBxPtl+JhhRvxxMwcgPz0W7hWgDSgH7g
-         wHQeN9r7aFtXCFCBcxf3A1Ik9A8NQSEjTuNdOjl25MZWZL6jjeyCgAI617PxVt8u9K
-         l2P3o7WbOKp8hqTHwnC785Naugfq8N7lRJfdi9KI=
+        b=pgYvIUnC9+gPeVGnmwLk7OU3fHNkRGKxBwOfwlqLEPEeoDoaGAm32r+ngYMUMBPF8
+         qj1iZnoRRQ/jMEIYD0HqAP+txdxpY8ZZkE/C3ZP76abav5iYeE3GF2UNfH4i3G6k7X
+         JZZq4XBHJaVmXSPgo5g5HewmbMLyJb+HopKyxibE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tonghao Zhang <xiangxia.m.yue@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
+        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
+        Sumit Saxena <sumit.saxena@broadcom.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 169/361] PCI/MSI: Warn and return error if driver enables MSI/MSI-X twice
-Date:   Sun, 11 Nov 2018 14:18:36 -0800
-Message-Id: <20181111221644.054759569@linuxfoundation.org>
+Subject: [PATCH 4.19 141/361] scsi: megaraid_sas: fix a missing-check bug
+Date:   Sun, 11 Nov 2018 14:18:08 -0800
+Message-Id: <20181111221640.265943528@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -63,95 +64,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tonghao Zhang <xiangxia.m.yue@gmail.com>
+From: Wenwen Wang <wang6495@umn.edu>
 
-[ Upstream commit 4c1ef72e9b71a19fb405ebfcd37c0a5e16fa44ca ]
+[ Upstream commit 47db7873136a9c57c45390a53b57019cf73c8259 ]
 
-It is a serious driver defect to enable MSI or MSI-X more than once.  Doing
-so may panic the kernel as in the stack trace below:
+In megasas_mgmt_compat_ioctl_fw(), to handle the structure
+compat_megasas_iocpacket 'cioc', a user-space structure megasas_iocpacket
+'ioc' is allocated before megasas_mgmt_ioctl_fw() is invoked to handle
+the packet. Since the two data structures have different fields, the data
+is copied from 'cioc' to 'ioc' field by field. In the copy process,
+'sense_ptr' is prepared if the field 'sense_len' is not null, because it
+will be used in megasas_mgmt_ioctl_fw(). To prepare 'sense_ptr', the
+user-space data 'ioc->sense_off' and 'cioc->sense_off' are copied and
+saved to kernel-space variables 'local_sense_off' and 'user_sense_off'
+respectively. Given that 'ioc->sense_off' is also copied from
+'cioc->sense_off', 'local_sense_off' and 'user_sense_off' should have the
+same value. However, 'cioc' is in the user space and a malicious user can
+race to change the value of 'cioc->sense_off' after it is copied to
+'ioc->sense_off' but before it is copied to 'user_sense_off'. By doing
+so, the attacker can inject different values into 'local_sense_off' and
+'user_sense_off'. This can cause undefined behavior in the following
+execution, because the two variables are supposed to be same.
 
-  Call Trace:
-    sysfs_add_one+0xa5/0xd0
-    create_dir+0x7c/0xe0
-    sysfs_create_subdir+0x1c/0x20
-    internal_create_group+0x6d/0x290
-    sysfs_create_groups+0x4a/0xa0
-    populate_msi_sysfs+0x1cd/0x210
-    pci_enable_msix+0x31c/0x3e0
-    igbuio_pci_open+0x72/0x300 [igb_uio]
-    uio_open+0xcc/0x120 [uio]
-    chrdev_open+0xa1/0x1e0
-    [...]
-    do_sys_open+0xf3/0x1f0
-    SyS_open+0x1e/0x20
-    system_call_fastpath+0x16/0x1b
-    ---[ end trace 11042e2848880209 ]---
-    Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in: ffffffffa056b4fa
+This patch enforces a check on the two kernel variables 'local_sense_off'
+and 'user_sense_off' to make sure they are the same after the copy. In
+case they are not, an error code EINVAL will be returned.
 
-We want to keep the WARN_ON() and stack trace so the driver can be fixed,
-but we can avoid the kernel panic by returning an error.  We may still get
-warnings like this:
-
-  Call Trace:
-    pci_enable_msix+0x3c9/0x3e0
-    igbuio_pci_open+0x72/0x300 [igb_uio]
-    uio_open+0xcc/0x120 [uio]
-    chrdev_open+0xa1/0x1e0
-    [...]
-    do_sys_open+0xf3/0x1f0
-    SyS_open+0x1e/0x20
-    system_call_fastpath+0x16/0x1b
-    ------------[ cut here ]------------
-    WARNING: at fs/sysfs/dir.c:526 sysfs_add_one+0xa5/0xd0()
-    sysfs: cannot create duplicate filename '/devices/pci0000:00/0000:00:03.0/0000:01:00.1/msi_irqs'
-
-Signed-off-by: Tonghao Zhang <xiangxia.m.yue@gmail.com>
-[bhelgaas: changelog, fix patch whitespace, remove !!]
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+Acked-by: Sumit Saxena <sumit.saxena@broadcom.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pci/msi.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/scsi/megaraid/megaraid_sas_base.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/pci/msi.c
-+++ b/drivers/pci/msi.c
-@@ -958,7 +958,6 @@ static int __pci_enable_msix(struct pci_
- 			}
- 		}
- 	}
--	WARN_ON(!!dev->msix_enabled);
+--- a/drivers/scsi/megaraid/megaraid_sas_base.c
++++ b/drivers/scsi/megaraid/megaraid_sas_base.c
+@@ -7523,6 +7523,9 @@ static int megasas_mgmt_compat_ioctl_fw(
+ 		get_user(user_sense_off, &cioc->sense_off))
+ 		return -EFAULT;
  
- 	/* Check whether driver already requested for MSI irq */
- 	if (dev->msi_enabled) {
-@@ -1028,8 +1027,6 @@ static int __pci_enable_msi_range(struct
- 	if (!pci_msi_supported(dev, minvec))
- 		return -EINVAL;
- 
--	WARN_ON(!!dev->msi_enabled);
--
- 	/* Check whether driver already requested MSI-X irqs */
- 	if (dev->msix_enabled) {
- 		pci_info(dev, "can't enable MSI (MSI-X already enabled)\n");
-@@ -1039,6 +1036,9 @@ static int __pci_enable_msi_range(struct
- 	if (maxvec < minvec)
- 		return -ERANGE;
- 
-+	if (WARN_ON_ONCE(dev->msi_enabled))
++	if (local_sense_off != user_sense_off)
 +		return -EINVAL;
 +
- 	nvec = pci_msi_vec_count(dev);
- 	if (nvec < 0)
- 		return nvec;
-@@ -1087,6 +1087,9 @@ static int __pci_enable_msix_range(struc
- 	if (maxvec < minvec)
- 		return -ERANGE;
- 
-+	if (WARN_ON_ONCE(dev->msix_enabled))
-+		return -EINVAL;
-+
- 	for (;;) {
- 		if (affd) {
- 			nvec = irq_calc_affinity_vectors(minvec, nvec, affd);
+ 	if (local_sense_len) {
+ 		void __user **sense_ioc_ptr =
+ 			(void __user **)((u8 *)((unsigned long)&ioc->frame.raw) + local_sense_off);
 
 
