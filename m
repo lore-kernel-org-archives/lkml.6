@@ -4,47 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34068C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:53:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54685C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:53:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1B0D20872
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:53:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D1B820839
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:53:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZNp+n6/v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1B0D20872
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="a8JU1TOX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D1B820839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732999AbeKLJnU (ORCPT
+        id S1733056AbeKLJna (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:43:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37302 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:43:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37584 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729525AbeKLIS0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1732794AbeKLIS0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:18:26 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 044FD223CB;
+        by mail.kernel.org (Postfix) with ESMTPSA id 4BC1B223C6;
         Sun, 11 Nov 2018 22:28:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975311;
-        bh=9QrDgurJfpklA+V/Zreigr7MBAtuXFYMWEmHPARX4lc=;
+        s=default; t=1541975310;
+        bh=VseTyUzO7RGFuI4GSdi4NwxtHE0SzLcqJFiPJO7AYTk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZNp+n6/vhjAsfvzgh8bDrcnIpIHVxb49hJoFiyvDU2/6PY6nXR0JbqLWkK6rO1kxq
-         XBZTw9NYXyw+QuseioPcRYZrS89qP2vbHyAwzy7IpLy+63ARX8sx3zm215ekFCU0Il
-         N+ClVfllJr6p6lys5omqASkynVpTDI+jTzzB52Yk=
+        b=a8JU1TOXEf18mFHdRqkdrn/QBJ5NgYWZbFWF9wDGJnaapNh508pIbb9Skf8SB3mmh
+         7UnB89Sco+t99T9Pzcjy9sbYPYB/S7zQwwjQCUu3wOvkGW6Q/grdQ50/ty/Mgl/JXt
+         g0NHaKRZjSb+CC8cSuY/jlMf6GH4L5Zimv1kvYRg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Neuling <mikey@neuling.org>,
-        Paul Mackerras <paulus@ozlabs.org>
-Subject: [PATCH 4.19 282/361] powerpc/tm: Fix HFSCR bit for no suspend case
-Date:   Sun, 11 Nov 2018 14:20:29 -0800
-Message-Id: <20181111221655.978383172@linuxfoundation.org>
+        stable@vger.kernel.org, Ralph Campbell <rcampbell@nvidia.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.19 254/361] mm/hmm: fix race between hmm_mirror_unregister() and mmu_notifier callback
+Date:   Sun, 11 Nov 2018 14:20:01 -0800
+Message-Id: <20181111221653.420795511@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -62,56 +65,99 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Neuling <mikey@neuling.org>
+From: Ralph Campbell <rcampbell@nvidia.com>
 
-commit dd9a8c5a87395b6f05552c3b44e42fdc95760552 upstream.
+commit 86a2d59841ab0b147ffc1b7b3041af87927cf312 upstream.
 
-Currently on P9N DD2.1 we end up taking infinite TM facility
-unavailable exceptions on the first TM usage by userspace.
+In hmm_mirror_unregister(), mm->hmm is set to NULL and then
+mmu_notifier_unregister_no_release() is called.  That creates a small
+window where mmu_notifier can call mmu_notifier_ops with mm->hmm equal to
+NULL.  Fix this by first unregistering mmu notifier callbacks and then
+setting mm->hmm to NULL.
 
-In the special case of TM no suspend (P9N DD2.1), Linux is told TM is
-off via CPU dt-ftrs but told to (partially) use it via
-OPAL_REINIT_CPUS_TM_SUSPEND_DISABLED. So HFSCR[TM] will be off from
-dt-ftrs but we need to turn it on for the no suspend case.
+Similarly in hmm_register(), set mm->hmm before registering mmu_notifier
+callbacks so callback functions always see mm->hmm set.
 
-This patch fixes this by enabling HFSCR TM in this case.
-
-Cc: stable@vger.kernel.org # 4.15+
-Signed-off-by: Michael Neuling <mikey@neuling.org>
-Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
+Link: http://lkml.kernel.org/r/20181019160442.18723-4-jglisse@redhat.com
+Signed-off-by: Ralph Campbell <rcampbell@nvidia.com>
+Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
+Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
+Reviewed-by: Balbir Singh <bsingharora@gmail.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kernel/setup_64.c |   18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+ mm/hmm.c |   36 +++++++++++++++++++++---------------
+ 1 file changed, 21 insertions(+), 15 deletions(-)
 
---- a/arch/powerpc/kernel/setup_64.c
-+++ b/arch/powerpc/kernel/setup_64.c
-@@ -243,13 +243,19 @@ static void cpu_ready_for_interrupts(voi
- 	}
+--- a/mm/hmm.c
++++ b/mm/hmm.c
+@@ -91,16 +91,6 @@ static struct hmm *hmm_register(struct m
+ 	spin_lock_init(&hmm->lock);
+ 	hmm->mm = mm;
  
- 	/*
--	 * Fixup HFSCR:TM based on CPU features. The bit is set by our
--	 * early asm init because at that point we haven't updated our
--	 * CPU features from firmware and device-tree. Here we have,
--	 * so let's do it.
-+	 * Set HFSCR:TM based on CPU features:
-+	 * In the special case of TM no suspend (P9N DD2.1), Linux is
-+	 * told TM is off via the dt-ftrs but told to (partially) use
-+	 * it via OPAL_REINIT_CPUS_TM_SUSPEND_DISABLED. So HFSCR[TM]
-+	 * will be off from dt-ftrs but we need to turn it on for the
-+	 * no suspend case.
- 	 */
--	if (cpu_has_feature(CPU_FTR_HVMODE) && !cpu_has_feature(CPU_FTR_TM_COMP))
--		mtspr(SPRN_HFSCR, mfspr(SPRN_HFSCR) & ~HFSCR_TM);
-+	if (cpu_has_feature(CPU_FTR_HVMODE)) {
-+		if (cpu_has_feature(CPU_FTR_TM_COMP))
-+			mtspr(SPRN_HFSCR, mfspr(SPRN_HFSCR) | HFSCR_TM);
-+		else
-+			mtspr(SPRN_HFSCR, mfspr(SPRN_HFSCR) & ~HFSCR_TM);
-+	}
+-	/*
+-	 * We should only get here if hold the mmap_sem in write mode ie on
+-	 * registration of first mirror through hmm_mirror_register()
+-	 */
+-	hmm->mmu_notifier.ops = &hmm_mmu_notifier_ops;
+-	if (__mmu_notifier_register(&hmm->mmu_notifier, mm)) {
+-		kfree(hmm);
+-		return NULL;
+-	}
+-
+ 	spin_lock(&mm->page_table_lock);
+ 	if (!mm->hmm)
+ 		mm->hmm = hmm;
+@@ -108,12 +98,27 @@ static struct hmm *hmm_register(struct m
+ 		cleanup = true;
+ 	spin_unlock(&mm->page_table_lock);
  
- 	/* Set IR and DR in PACA MSR */
- 	get_paca()->kernel_msr = MSR_KERNEL;
+-	if (cleanup) {
+-		mmu_notifier_unregister(&hmm->mmu_notifier, mm);
+-		kfree(hmm);
+-	}
++	if (cleanup)
++		goto error;
++
++	/*
++	 * We should only get here if hold the mmap_sem in write mode ie on
++	 * registration of first mirror through hmm_mirror_register()
++	 */
++	hmm->mmu_notifier.ops = &hmm_mmu_notifier_ops;
++	if (__mmu_notifier_register(&hmm->mmu_notifier, mm))
++		goto error_mm;
+ 
+ 	return mm->hmm;
++
++error_mm:
++	spin_lock(&mm->page_table_lock);
++	if (mm->hmm == hmm)
++		mm->hmm = NULL;
++	spin_unlock(&mm->page_table_lock);
++error:
++	kfree(hmm);
++	return NULL;
+ }
+ 
+ void hmm_mm_destroy(struct mm_struct *mm)
+@@ -278,12 +283,13 @@ void hmm_mirror_unregister(struct hmm_mi
+ 	if (!should_unregister || mm == NULL)
+ 		return;
+ 
++	mmu_notifier_unregister_no_release(&hmm->mmu_notifier, mm);
++
+ 	spin_lock(&mm->page_table_lock);
+ 	if (mm->hmm == hmm)
+ 		mm->hmm = NULL;
+ 	spin_unlock(&mm->page_table_lock);
+ 
+-	mmu_notifier_unregister_no_release(&hmm->mmu_notifier, mm);
+ 	kfree(hmm);
+ }
+ EXPORT_SYMBOL(hmm_mirror_unregister);
 
 
