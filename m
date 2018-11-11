@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34474C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3429CC43610
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFE5A223D8
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F10422154B
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JquOaq8Y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFE5A223D8
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RSPYPgNh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F10422154B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732436AbeKLISH (ORCPT
+        id S1732466AbeKLISI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:18:07 -0500
+        Mon, 12 Nov 2018 03:18:08 -0500
 Received: from mail.kernel.org ([198.145.29.99]:35336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732359AbeKLISD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:18:03 -0500
+        id S1732359AbeKLISH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:18:07 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D161C21707;
-        Sun, 11 Nov 2018 22:28:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC58E208A3;
+        Sun, 11 Nov 2018 22:28:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975287;
-        bh=wBceG6ebtHTZDdroTWjRZodJU2SLFAnSTMrudbnOQzU=;
+        s=default; t=1541975291;
+        bh=VEOzE84ohE+D+/9R34MS/TrPZnCFwfN95I6ofpQhtyg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JquOaq8YQ9Vu8jm+9KvhCaihf69JP/PIxh8twizlLe98Kd/JSs5DrFVyJN1dOJUKV
-         m3DDmZoYKUQ7MY8zP/thNbvH1Qd43iyOELI2FVuGIFA+ECTVPRLOvZSFnHWgKxYZJv
-         OY2pleqBSgbxOJYPFBFaMKBVaHJOwed9vPdRW1KU=
+        b=RSPYPgNhCw9aYlDmCy1kQbAiFSPCk71aiJKq3OHGlIErOTOGpgf1bMAqS3C7xXrOv
+         VJQtAOs7ICHQuFB2G32tSIlkwi2ep4n+6ub2kiePf6jJYgfyEYgilTkG04/ofvkwh6
+         2if/NFvActY0UwejNEGhgYVruM/npjVCi+WWub5I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Seth Howell <seth.howell@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.19 223/361] IB/rxe: Revise the ib_wr_opcode enum
-Date:   Sun, 11 Nov 2018 14:19:30 -0800
-Message-Id: <20181111221650.895302485@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Jin <mikhail.jin@gmail.com>,
+        Yazen Ghannam <Yazen.Ghannam@amd.com>,
+        Borislav Petkov <bp@suse.de>
+Subject: [PATCH 4.19 234/361] EDAC, amd64: Add Family 17h, models 10h-2fh support
+Date:   Sun, 11 Nov 2018 14:19:41 -0800
+Message-Id: <20181111221651.782850394@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -62,123 +63,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jason Gunthorpe <jgg@mellanox.com>
+From: Michael Jin <mikhail.jin@gmail.com>
 
-commit 9a59739bd01f77db6fbe2955a4fce165f0f43568 upstream.
+commit 8960de4a5ca7980ed1e19e7ca5a774d3b7a55c38 upstream.
 
-This enum has become part of the uABI, as both RXE and the
-ib_uverbs_post_send() command expect userspace to supply values from this
-enum. So it should be properly placed in include/uapi/rdma.
+Add new device IDs for family 17h, models 10h-2fh.
 
-In userspace this enum is called 'enum ibv_wr_opcode' as part of
-libibverbs.h. That enum defines different values for IB_WR_LOCAL_INV,
-IB_WR_SEND_WITH_INV, and IB_WR_LSO. These were introduced (incorrectly, it
-turns out) into libiberbs in 2015.
+This is required by amd64_edac_mod in order to properly detect PCI
+device functions 0 and 6.
 
-The kernel has changed its mind on the numbering for several of the IB_WC
-values over the years, but has remained stable on IB_WR_LOCAL_INV and
-below.
-
-Based on this we can conclude that there is no real user space user of the
-values beyond IB_WR_ATOMIC_FETCH_AND_ADD, as they have never worked via
-rdma-core. This is confirmed by inspection, only rxe uses the kernel enum
-and implements the latter operations. rxe has clearly never worked with
-these attributes from userspace. Other drivers that support these opcodes
-implement the functionality without calling out to the kernel.
-
-To make IB_WR_SEND_WITH_INV and related work for RXE in userspace we
-choose to renumber the IB_WR enum in the kernel to match the uABI that
-userspace has bee using since before Soft RoCE was merged. This is an
-overall simpler configuration for the whole software stack, and obviously
-can't break anything existing.
-
-Reported-by: Seth Howell <seth.howell@intel.com>
-Tested-by: Seth Howell <seth.howell@intel.com>
-Fixes: 8700e3e7c485 ("Soft RoCE driver")
+Signed-off-by: Michael Jin <mikhail.jin@gmail.com>
+Reviewed-by: Yazen Ghannam <Yazen.Ghannam@amd.com>
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Link: http://lkml.kernel.org/r/20180816192840.31166-1-mikhail.jin@gmail.com
+Signed-off-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/rdma/ib_verbs.h           |   34 ++++++++++++++++++++--------------
- include/uapi/rdma/ib_user_verbs.h |   20 +++++++++++++++++++-
- 2 files changed, 39 insertions(+), 15 deletions(-)
+ drivers/edac/amd64_edac.c |   14 ++++++++++++++
+ drivers/edac/amd64_edac.h |    3 +++
+ 2 files changed, 17 insertions(+)
 
---- a/include/rdma/ib_verbs.h
-+++ b/include/rdma/ib_verbs.h
-@@ -1278,21 +1278,27 @@ struct ib_qp_attr {
+--- a/drivers/edac/amd64_edac.c
++++ b/drivers/edac/amd64_edac.c
+@@ -2200,6 +2200,15 @@ static struct amd64_family_type family_t
+ 			.dbam_to_cs		= f17_base_addr_to_cs_size,
+ 		}
+ 	},
++	[F17_M10H_CPUS] = {
++		.ctl_name = "F17h_M10h",
++		.f0_id = PCI_DEVICE_ID_AMD_17H_M10H_DF_F0,
++		.f6_id = PCI_DEVICE_ID_AMD_17H_M10H_DF_F6,
++		.ops = {
++			.early_channel_count	= f17_early_channel_count,
++			.dbam_to_cs		= f17_base_addr_to_cs_size,
++		}
++	},
  };
  
- enum ib_wr_opcode {
--	IB_WR_RDMA_WRITE,
--	IB_WR_RDMA_WRITE_WITH_IMM,
--	IB_WR_SEND,
--	IB_WR_SEND_WITH_IMM,
--	IB_WR_RDMA_READ,
--	IB_WR_ATOMIC_CMP_AND_SWP,
--	IB_WR_ATOMIC_FETCH_AND_ADD,
--	IB_WR_LSO,
--	IB_WR_SEND_WITH_INV,
--	IB_WR_RDMA_READ_WITH_INV,
--	IB_WR_LOCAL_INV,
--	IB_WR_REG_MR,
--	IB_WR_MASKED_ATOMIC_CMP_AND_SWP,
--	IB_WR_MASKED_ATOMIC_FETCH_AND_ADD,
-+	/* These are shared with userspace */
-+	IB_WR_RDMA_WRITE = IB_UVERBS_WR_RDMA_WRITE,
-+	IB_WR_RDMA_WRITE_WITH_IMM = IB_UVERBS_WR_RDMA_WRITE_WITH_IMM,
-+	IB_WR_SEND = IB_UVERBS_WR_SEND,
-+	IB_WR_SEND_WITH_IMM = IB_UVERBS_WR_SEND_WITH_IMM,
-+	IB_WR_RDMA_READ = IB_UVERBS_WR_RDMA_READ,
-+	IB_WR_ATOMIC_CMP_AND_SWP = IB_UVERBS_WR_ATOMIC_CMP_AND_SWP,
-+	IB_WR_ATOMIC_FETCH_AND_ADD = IB_UVERBS_WR_ATOMIC_FETCH_AND_ADD,
-+	IB_WR_LSO = IB_UVERBS_WR_TSO,
-+	IB_WR_SEND_WITH_INV = IB_UVERBS_WR_SEND_WITH_INV,
-+	IB_WR_RDMA_READ_WITH_INV = IB_UVERBS_WR_RDMA_READ_WITH_INV,
-+	IB_WR_LOCAL_INV = IB_UVERBS_WR_LOCAL_INV,
-+	IB_WR_MASKED_ATOMIC_CMP_AND_SWP =
-+		IB_UVERBS_WR_MASKED_ATOMIC_CMP_AND_SWP,
-+	IB_WR_MASKED_ATOMIC_FETCH_AND_ADD =
-+		IB_UVERBS_WR_MASKED_ATOMIC_FETCH_AND_ADD,
-+
-+	/* These are kernel only and can not be issued by userspace */
-+	IB_WR_REG_MR = 0x20,
- 	IB_WR_REG_SIG_MR,
-+
- 	/* reserve values for low level drivers' internal use.
- 	 * These values will not be used at all in the ib core layer.
- 	 */
---- a/include/uapi/rdma/ib_user_verbs.h
-+++ b/include/uapi/rdma/ib_user_verbs.h
-@@ -763,10 +763,28 @@ struct ib_uverbs_sge {
- 	__u32 lkey;
+ /*
+@@ -3188,6 +3197,11 @@ static struct amd64_family_type *per_fam
+ 		break;
+ 
+ 	case 0x17:
++		if (pvt->model >= 0x10 && pvt->model <= 0x2f) {
++			fam_type = &family_types[F17_M10H_CPUS];
++			pvt->ops = &family_types[F17_M10H_CPUS].ops;
++			break;
++		}
+ 		fam_type	= &family_types[F17_CPUS];
+ 		pvt->ops	= &family_types[F17_CPUS].ops;
+ 		break;
+--- a/drivers/edac/amd64_edac.h
++++ b/drivers/edac/amd64_edac.h
+@@ -115,6 +115,8 @@
+ #define PCI_DEVICE_ID_AMD_16H_M30H_NB_F2 0x1582
+ #define PCI_DEVICE_ID_AMD_17H_DF_F0	0x1460
+ #define PCI_DEVICE_ID_AMD_17H_DF_F6	0x1466
++#define PCI_DEVICE_ID_AMD_17H_M10H_DF_F0 0x15e8
++#define PCI_DEVICE_ID_AMD_17H_M10H_DF_F6 0x15ee
+ 
+ /*
+  * Function 1 - Address Map
+@@ -281,6 +283,7 @@ enum amd_families {
+ 	F16_CPUS,
+ 	F16_M30H_CPUS,
+ 	F17_CPUS,
++	F17_M10H_CPUS,
+ 	NUM_FAMILIES,
  };
  
-+enum ib_uverbs_wr_opcode {
-+	IB_UVERBS_WR_RDMA_WRITE = 0,
-+	IB_UVERBS_WR_RDMA_WRITE_WITH_IMM = 1,
-+	IB_UVERBS_WR_SEND = 2,
-+	IB_UVERBS_WR_SEND_WITH_IMM = 3,
-+	IB_UVERBS_WR_RDMA_READ = 4,
-+	IB_UVERBS_WR_ATOMIC_CMP_AND_SWP = 5,
-+	IB_UVERBS_WR_ATOMIC_FETCH_AND_ADD = 6,
-+	IB_UVERBS_WR_LOCAL_INV = 7,
-+	IB_UVERBS_WR_BIND_MW = 8,
-+	IB_UVERBS_WR_SEND_WITH_INV = 9,
-+	IB_UVERBS_WR_TSO = 10,
-+	IB_UVERBS_WR_RDMA_READ_WITH_INV = 11,
-+	IB_UVERBS_WR_MASKED_ATOMIC_CMP_AND_SWP = 12,
-+	IB_UVERBS_WR_MASKED_ATOMIC_FETCH_AND_ADD = 13,
-+	/* Review enum ib_wr_opcode before modifying this */
-+};
-+
- struct ib_uverbs_send_wr {
- 	__aligned_u64 wr_id;
- 	__u32 num_sge;
--	__u32 opcode;
-+	__u32 opcode;		/* see enum ib_uverbs_wr_opcode */
- 	__u32 send_flags;
- 	union {
- 		__be32 imm_data;
 
 
