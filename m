@@ -2,112 +2,126 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CBA9C0044C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:58:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FEDCC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:58:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36F7920839
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:58:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UgCvcHsW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36F7920839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id E77AD20839
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:58:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E77AD20839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732606AbeKLJtE (ORCPT
+        id S1732755AbeKLJtK convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:49:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35336 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732407AbeKLISG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:18:06 -0500
-Received: from localhost (unknown [206.108.79.134])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE2732154B;
-        Sun, 11 Nov 2018 22:28:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975290;
-        bh=rL5qz7AD4gpCm6ohzUEYMAmxoVqqdrE6uI4vGYwGUlU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UgCvcHsWZvb8TGnLoUdzj6HtbI/ZkiYow2GlHrzNeOmvnjx1Ub9R6NBfX9NDJxwrL
-         syOwaIZljF9GZ8MVjSnwwPfYG3tyDA662jtY3Vixwar9smQ9VSz3kxR1x+ZEwyMA8w
-         XtmceX346wZ37mc5VYTzkOXB9YcVBsukeHo3CaCc=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
-        Waiman Long <longman@redhat.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Paul Moore <paul@paul-moore.com>
-Subject: [PATCH 4.19 231/361] selinux: fix mounting of cgroup2 under older policies
-Date:   Sun, 11 Nov 2018 14:19:38 -0800
-Message-Id: <20181111221651.548385501@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
-References: <20181111221619.915519183@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Mon, 12 Nov 2018 04:49:10 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:54481 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732407AbeKLJtJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 04:49:09 -0500
+Received: from wld62.hos.anvin.org (c-24-5-245-234.hsd1.ca.comcast.net [24.5.245.234] (may be forged))
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id wABNwNnL3444911
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Sun, 11 Nov 2018 15:58:24 -0800
+Date:   Sun, 11 Nov 2018 15:58:16 -0800
+User-Agent: K-9 Mail for Android
+In-Reply-To: <685b425b-c816-4f65-3393-b48e59d170d8@suse.com>
+References: <20181010061456.22238-1-jgross@suse.com> <20181010061456.22238-3-jgross@suse.com> <f7c78ee7-b548-7f04-24da-7321b6c64c97@zytor.com> <685b425b-c816-4f65-3393-b48e59d170d8@suse.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: PLEASE REVERT URGENTLY: Re: [PATCH v5 2/3] x86/boot: add acpi rsdp address to setup_header
+To:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xenproject.org, x86@kernel.org,
+        linux-doc@vger.kernel.org
+CC:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, corbet@lwn.net,
+        boris.ostrovsky@oracle.com
+From:   hpa@zytor.com
+Message-ID: <9A44B94A-AEDC-4638-A8FF-DEE76FE34056@zytor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+On November 10, 2018 7:22:29 AM PST, Juergen Gross <jgross@suse.com> wrote:
+>On 09/11/2018 23:23, H. Peter Anvin wrote:
+>> I just noticed this patch -- I missed it because the cover message
+>> seemed far more harmless so I didn't notice this change.
+>> 
+>> THIS PATCH IS FATALLY WRONG AND NEEDS TO BE IMMEDIATELY REVERTED
+>BEFORE
+>> ANYONE STARTS RELYING ON IT; IT HAS THE POTENTIAL OF BREAKING THE
+>> BOOTLOADER PROTOCOL FOR ALL FUTURE.
+>> 
+>> It seems to be based on fundamental misconceptions about the various
+>> data structures in the protocol, and does so in a way that completely
+>> breaks the way the protocol is designed to work.
+>> 
+>> The protocol is specifically designed such that fields are not
+>version
+>> dependencies. The version number is strictly to inform the boot
+>loader
+>> about which capabilities the kernel has, so that the boot loader can
+>> know if a certain data field is meaningful and/or honored.
+>> 
+>>> +Protocol 2.14:	(Kernel 4.20) Added acpi_rsdp_addr holding the
+>physical
+>>> +		address of the ACPI RSDP table.
+>>> +		The bootloader updates version with:
+>>> +		0x8000 | min(kernel-version, bootloader-version)
+>>> +		kernel-version being the protocol version supported by
+>>> +		the kernel and bootloader-version the protocol version
+>>> +		supported by the bootloader.
+>> 
+>> [...]
+>> 
+>>>  **** MEMORY LAYOUT
+>>>
+>>>  The traditional memory map for the kernel loader, used for Image or
+>>> @@ -197,6 +209,7 @@ Offset	Proto	Name		Meaning
+>>>  0258/8	2.10+	pref_address	Preferred loading address
+>>>  0260/4	2.10+	init_size	Linear memory required during initialization
+>>>  0264/4	2.11+	handover_offset	Offset of handover entry point
+>>> +0268/8	2.14+	acpi_rsdp_addr	Physical address of RSDP table
+>> 
+>> NO.
+>> 
+>> That is not how struct setup_header works, nor does this belong here.
+>> 
+>> struct setup_header contains *initialized data*, and has a length
+>byte
+>> at offset 0x201.  The bootloader is responsible for copying the full
+>> structure into the appropriate offset (0x1f1) in struct boot_params.
+>> 
+>> The length byte isn't actually a requirement, since the maximum
+>possible
+>> size of this structure is 144 bytes, and the kernel will (obviously)
+>not
+>> look at the older fields anyway, but it is good practice. The kernel
+>or
+>> any other entity is free to zero out the bytes past this length
+>pointer.
+>> 
+>> There are only 24 bytes left in this structure, and this would occupy
+>8
+>> of them for no valid reason.  The *only* valid reason to put a
+>> zero-initialized field in struct setup_header is if it used by the
+>> 16-bit legacy BIOS boot, which is obviously not the case here.
+>> 
+>> This field thus belongs in struct boot_params, not struct
+>setup_header.
+>
+>Would you be okay with putting acpi_rsdp_addr at offset 0x0cc (_pad4)?
+>
+>
+>Juergen
 
-------------------
+I'd prefer if you used __pad3 offset 0x70 to keep the large block, and that way your field is also aligned.
 
-From: Stephen Smalley <sds@tycho.nsa.gov>
-
-commit 7bb185edb0306bb90029a5fa6b9cff900ffdbf4b upstream.
-
-commit 901ef845fa2469c ("selinux: allow per-file labeling for cgroupfs")
-broke mounting of cgroup2 under older SELinux policies which lacked
-a genfscon rule for cgroup2.  This prevents mounting of cgroup2 even
-when SELinux is permissive.
-
-Change the handling when there is no genfscon rule in policy to
-just mark the inode unlabeled and not return an error to the caller.
-This permits mounting and access if allowed by policy, e.g. to
-unconfined domains.
-
-I also considered changing the behavior of security_genfs_sid() to
-never return -ENOENT, but the current behavior is relied upon by
-other callers to perform caller-specific handling.
-
-Fixes: 901ef845fa2469c ("selinux: allow per-file labeling for cgroupfs")
-CC: <stable@vger.kernel.org>
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Reported-by: Waiman Long <longman@redhat.com>
-Signed-off-by: Stephen Smalley <sds@tycho.nsa.gov>
-Tested-by: Waiman Long <longman@redhat.com>
-Signed-off-by: Paul Moore <paul@paul-moore.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- security/selinux/hooks.c |    5 +++++
- 1 file changed, 5 insertions(+)
-
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -1508,6 +1508,11 @@ static int selinux_genfs_get_sid(struct
- 		}
- 		rc = security_genfs_sid(&selinux_state, sb->s_type->name,
- 					path, tclass, sid);
-+		if (rc == -ENOENT) {
-+			/* No match in policy, mark as unlabeled. */
-+			*sid = SECINITSID_UNLABELED;
-+			rc = 0;
-+		}
- 	}
- 	free_page((unsigned long)buffer);
- 	return rc;
-
-
+However, if you have some specific reason to prefer __pad4 it's no big deal, although I'm curious what it would be.
+-- 
+Sent from my Android device with K-9 Mail. Please excuse my brevity.
