@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53FA2C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:14:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A470CC43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:14:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D53E20871
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:14:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DC9C2084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:14:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="h7D6KKAm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D53E20871
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ROmcAJut"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DC9C2084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730425AbeKLIRN (ORCPT
+        id S1731848AbeKLKEk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:17:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59922 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 05:04:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59904 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730203AbeKLIRM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:17:12 -0500
+        id S1730389AbeKLIRN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:17:13 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F390223CB;
+        by mail.kernel.org (Postfix) with ESMTPSA id 6973E223C6;
         Sun, 11 Nov 2018 22:27:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975237;
-        bh=x6QAcJOEGBa61Bd+4mtno+kSNyRpjWJKCdKf+wMZhsY=;
+        bh=98CafglR/XzTGyJip2Bhq63DAgRzN6suN2XawGtJTWs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h7D6KKAmjT/eHcjw/a6TGWVT9c0gtUvJM8j4K5huZR0KmcWT9juYBhk0yYyXPjy4y
-         7ELtpBGaUBYM0vKYiGwIMsR8TcxSQAcRScJuXi/uFfre5ZYk+Z3beckRisboIpF3O8
-         a6o7BW714oUikoVcE5aN3UiNkk/SxrZXhiotZXH8=
+        b=ROmcAJutyIgMyXaFsk1c6aMMHVL71ZyxJ1uUxJLB+aBDZdijPgy8J+k4a6CCa+Gbr
+         SnlrqqXZZT1evGBQ6xh+jqm6ooH4QfOOkHNZifqM7OOiU8fY3ovM8Qt8dO9LijTXpG
+         tHY5vpKsTlogVp6i5TAhKaSobUNOutiqmCqRvjI0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shaul Triebitz <shaul.triebitz@intel.com>,
+        stable@vger.kernel.org,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
         Luca Coelho <luciano.coelho@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 073/361] iwlwifi: pcie: avoid empty free RB queue
-Date:   Sun, 11 Nov 2018 14:17:00 -0800
-Message-Id: <20181111221630.228724642@linuxfoundation.org>
+Subject: [PATCH 4.19 074/361] iwlwifi: mvm: clear HW_RESTART_REQUESTED when stopping the interface
+Date:   Sun, 11 Nov 2018 14:17:01 -0800
+Message-Id: <20181111221630.367464168@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -63,108 +64,116 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shaul Triebitz <shaul.triebitz@intel.com>
+From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
-[ Upstream commit 868a1e863f95183f00809363fefba6d4f5bcd116 ]
+[ Upstream commit 155f7e0441cd121b1e673d465a35e99f4b9b2f0b ]
 
-If all free RB queues are empty, the driver will never restock the
-free RB queue.  That's because the restocking happens in the Rx flow,
-and if the free queue is empty there will be no Rx.
+Fix a bug that happens in the following scenario:
+1) suspend without WoWLAN
+2) mac80211 calls drv_stop because of the suspend
+3) __iwl_mvm_mac_stop deallocates the aux station
+4) during drv_stop the firmware crashes
+5) iwlmvm:
+	* sets IWL_MVM_STATUS_HW_RESTART_REQUESTED
+	* asks mac80211 to kick the restart flow
+6) mac80211 puts the restart worker into a freezable
+   queue which means that the worker will not run for now
+   since the workqueue is already frozen
+7) ...
+8) resume
+9) mac80211 runs ieee80211_reconfig as part of the resume
+10) mac80211 detects that a restart flow has been requested
+    and that we are now resuming from suspend and cancels
+    the restart worker
+11) mac80211 calls drv_start()
+12) __iwl_mvm_mac_start checks that IWL_MVM_STATUS_HW_RESTART_REQUESTED
+    clears it, sets IWL_MVM_STATUS_IN_HW_RESTART and calls
+    iwl_mvm_restart_cleanup()
+13) iwl_fw_error_dump gets called and accesses the device
+    to get debug data
+14) iwl_mvm_up adds the aux station
+15) iwl_mvm_add_aux_sta() allocates an internal station for
+    the aux station
+16) iwl_mvm_allocate_int_sta() tests IWL_MVM_STATUS_IN_HW_RESTART
+    and doesn't really allocate a station ID for the aux
+    station
+17) a new queue is added for the aux station
 
-Although there's a background worker (a.k.a. allocator) allocating
-memory for RBs so that the Rx handler can restock them, the worker may
-run only after the free queue has become empty (and then it is too
-late for restocking as explained above).
+Note that steps from 5 to 9 aren't really part of the
+problem but were described for the sake of completeness.
 
-There is a solution for that called 'emergency': If the number of used
-RB's reaches half the amount of all RB's, the Rx handler will not wait
-for the allocator but immediately allocate memory for the used RB's
-and restock the free queue.
+Once the iwl_mvm_mac_stop() is called, the device is not
+accessible, meaning that step 12) can't succeed and we'll
+see the following:
 
-But, since the used RB's is per queue, it may happen that the used
-RB's are spread between the queues such that the emergency check will
-fail for each of the queues
-(and still run out of RBs, causing the above symptom).
+drivers/net/wireless/intel/iwlwifi/pcie/trans.c:2122 iwl_trans_pcie_grab_nic_access+0xc0/0x1d6 [iwlwifi]()
+Timeout waiting for hardware access (CSR_GP_CNTRL 0x080403d8)
+Call Trace:
+[<ffffffffc03e6ad3>] iwl_trans_pcie_grab_nic_access+0xc0/0x1d6 [iwlwifi]
+[<ffffffffc03e6a13>] iwl_trans_pcie_dump_regs+0x3fd/0x3fd [iwlwifi]
+[<ffffffffc03dad42>] iwl_fw_error_dump+0x4f5/0xe8b [iwlwifi]
+[<ffffffffc04bd43e>] __iwl_mvm_mac_start+0x5a/0x21a [iwlmvm]
+[<ffffffffc04bd6d2>] iwl_mvm_mac_start+0xd4/0x103 [iwlmvm]
+[<ffffffffc042d378>] drv_start+0xa1/0xc5 [iwl7000_mac80211]
+[<ffffffffc045a339>] ieee80211_reconfig+0x145/0xf50 [mac80211]
+[<ffffffffc044788b>] ieee80211_resume+0x62/0x66 [mac80211]
+[<ffffffffc0366c5b>] wiphy_resume+0xa9/0xc6 [cfg80211]
 
-To fix it, move to emergency mode if the sum of *all* used RBs (for
-all Rx queues) reaches half the amount of all RB's
+The station id of the aux station is set to 0xff in step 3
+and because we don't really allocate a new station id for
+the auxliary station (as explained in 16), we end up sending
+a command to the firmware asking to connect the queue
+to station id 0xff. This makes the firmware crash with the
+following information:
 
-Signed-off-by: Shaul Triebitz <shaul.triebitz@intel.com>
+0x00002093 | ADVANCED_SYSASSERT
+0x000002F0 | trm_hw_status0
+0x00000000 | trm_hw_status1
+0x00000B38 | branchlink2
+0x0001978C | interruptlink1
+0x00000000 | interruptlink2
+0xFF080501 | data1
+0xDEADBEEF | data2
+0xDEADBEEF | data3
+Firmware error during reconfiguration - reprobe!
+FW error in SYNC CMD SCD_QUEUE_CFG
+
+Fix this by clearing IWL_MVM_STATUS_HW_RESTART_REQUESTED
+in iwl_mvm_mac_stop(). We won't be able to collect debug
+data anyway and when we will brought up again, we will
+have a clean state from the firmware perspective.
+Since we won't have IWL_MVM_STATUS_IN_HW_RESTART set in
+step 12) we won't get to the 2093 ASSERT either.
+
+Fixes: bf8b286f86fc ("iwlwifi: mvm: defer setting IWL_MVM_STATUS_IN_HW_RESTART")
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/intel/iwlwifi/pcie/rx.c |   32 +++++++++++++++++----------
- 1 file changed, 21 insertions(+), 11 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
-@@ -1144,6 +1144,14 @@ void iwl_pcie_rx_free(struct iwl_trans *
- 	kfree(trans_pcie->rxq);
- }
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
+@@ -1233,12 +1233,15 @@ void __iwl_mvm_mac_stop(struct iwl_mvm *
+ 	iwl_mvm_del_aux_sta(mvm);
  
-+static void iwl_pcie_rx_move_to_allocator(struct iwl_rxq *rxq,
-+					  struct iwl_rb_allocator *rba)
-+{
-+	spin_lock(&rba->lock);
-+	list_splice_tail_init(&rxq->rx_used, &rba->rbd_empty);
-+	spin_unlock(&rba->lock);
-+}
-+
- /*
-  * iwl_pcie_rx_reuse_rbd - Recycle used RBDs
-  *
-@@ -1175,9 +1183,7 @@ static void iwl_pcie_rx_reuse_rbd(struct
- 	if ((rxq->used_count % RX_CLAIM_REQ_ALLOC) == RX_POST_REQ_ALLOC) {
- 		/* Move the 2 RBDs to the allocator ownership.
- 		 Allocator has another 6 from pool for the request completion*/
--		spin_lock(&rba->lock);
--		list_splice_tail_init(&rxq->rx_used, &rba->rbd_empty);
--		spin_unlock(&rba->lock);
-+		iwl_pcie_rx_move_to_allocator(rxq, rba);
+ 	/*
+-	 * Clear IN_HW_RESTART flag when stopping the hw (as restart_complete()
+-	 * won't be called in this case).
++	 * Clear IN_HW_RESTART and HW_RESTART_REQUESTED flag when stopping the
++	 * hw (as restart_complete() won't be called in this case) and mac80211
++	 * won't execute the restart.
+ 	 * But make sure to cleanup interfaces that have gone down before/during
+ 	 * HW restart was requested.
+ 	 */
+-	if (test_and_clear_bit(IWL_MVM_STATUS_IN_HW_RESTART, &mvm->status))
++	if (test_and_clear_bit(IWL_MVM_STATUS_IN_HW_RESTART, &mvm->status) ||
++	    test_and_clear_bit(IWL_MVM_STATUS_HW_RESTART_REQUESTED,
++			       &mvm->status))
+ 		ieee80211_iterate_interfaces(mvm->hw, 0,
+ 					     iwl_mvm_cleanup_iterator, mvm);
  
- 		atomic_inc(&rba->req_pending);
- 		queue_work(rba->alloc_wq, &rba->rx_alloc);
-@@ -1396,10 +1402,18 @@ restart:
- 		IWL_DEBUG_RX(trans, "Q %d: HW = SW = %d\n", rxq->id, r);
- 
- 	while (i != r) {
-+		struct iwl_rb_allocator *rba = &trans_pcie->rba;
- 		struct iwl_rx_mem_buffer *rxb;
--
--		if (unlikely(rxq->used_count == rxq->queue_size / 2))
-+		/* number of RBDs still waiting for page allocation */
-+		u32 rb_pending_alloc =
-+			atomic_read(&trans_pcie->rba.req_pending) *
-+			RX_CLAIM_REQ_ALLOC;
-+
-+		if (unlikely(rb_pending_alloc >= rxq->queue_size / 2 &&
-+			     !emergency)) {
-+			iwl_pcie_rx_move_to_allocator(rxq, rba);
- 			emergency = true;
-+		}
- 
- 		rxb = iwl_pcie_get_rxb(trans, rxq, i);
- 		if (!rxb)
-@@ -1421,17 +1435,13 @@ restart:
- 			iwl_pcie_rx_allocator_get(trans, rxq);
- 
- 		if (rxq->used_count % RX_CLAIM_REQ_ALLOC == 0 && !emergency) {
--			struct iwl_rb_allocator *rba = &trans_pcie->rba;
--
- 			/* Add the remaining empty RBDs for allocator use */
--			spin_lock(&rba->lock);
--			list_splice_tail_init(&rxq->rx_used, &rba->rbd_empty);
--			spin_unlock(&rba->lock);
-+			iwl_pcie_rx_move_to_allocator(rxq, rba);
- 		} else if (emergency) {
- 			count++;
- 			if (count == 8) {
- 				count = 0;
--				if (rxq->used_count < rxq->queue_size / 3)
-+				if (rb_pending_alloc < rxq->queue_size / 3)
- 					emergency = false;
- 
- 				rxq->read = i;
 
 
