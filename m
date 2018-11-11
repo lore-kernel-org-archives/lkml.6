@@ -2,137 +2,111 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73F72C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 11:46:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BBC2C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 11:46:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A20621104
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 11:46:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1AGE9gG1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A20621104
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D1A3A20866
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 11:46:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1A3A20866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727999AbeKKVem (ORCPT
+        id S1728024AbeKKVfG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 16:34:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55852 "EHLO mail.kernel.org"
+        Sun, 11 Nov 2018 16:35:06 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:50736 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727556AbeKKVem (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 16:34:42 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727510AbeKKVfF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Nov 2018 16:35:05 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 78AE420866;
-        Sun, 11 Nov 2018 11:46:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541936780;
-        bh=aDpqByw+K9QwAazZ0pefapYDeY09OkzhuxVheH1CfXs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=1AGE9gG1zEydAHLO64oxx5wHYG+C4rT4uB6KLTaCcDSgTaw0Bov3YksgrG9Wcn36n
-         0RDLbsvo0HPCxWfFYTMfH+YpPEzdxQqwSKUDKwvoFjOtCXKL1i6DsctY3f9JAGsarM
-         3cTS9SdVaxCG0ORqkywBqsfTV/1zFxkdeCrPLXFM=
-Date:   Sun, 11 Nov 2018 11:46:14 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Matheus Tavares <matheus.bernardino@usp.br>
-Cc:     Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-iio@vger.kernel.org,
-        devel@driverdev.osuosl.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        kernel-usp@googlegroups.com, victorcolombo@gmail.com
-Subject: Re: [PATCH 3/6] staging:iio:ad2s90: Add max frequency check at
- probe
-Message-ID: <20181111114614.7a235253@archlinux>
-In-Reply-To: <20181109220044.24843-4-matheus.bernardino@usp.br>
-References: <20181109220044.24843-1-matheus.bernardino@usp.br>
-        <20181109220044.24843-4-matheus.bernardino@usp.br>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mx1.redhat.com (Postfix) with ESMTPS id 127FF83F3C;
+        Sun, 11 Nov 2018 11:46:45 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (ovpn-116-74.ams2.redhat.com [10.36.116.74])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C7B3D5C1B4;
+        Sun, 11 Nov 2018 11:46:40 +0000 (UTC)
+From:   Florian Weimer <fweimer@redhat.com>
+To:     Willy Tarreau <w@1wt.eu>
+Cc:     "Michael Kerrisk \(man-pages\)" <mtk.manpages@gmail.com>,
+        Daniel Colascione <dancol@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Joel Fernandes <joelaf@google.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Carlos O'Donell" <carlos@redhat.com>,
+        "libc-alpha\@sourceware.org" <libc-alpha@sourceware.org>
+Subject: Re: Official Linux system wrapper library?
+References: <CAKOZuesB4R=dCz4merWQN0FSCGrXmOgUUr4ienSbStBJguNv8g@mail.gmail.com>
+        <bbc12da5-830e-99a7-95e3-d9da42947dc9@gmail.com>
+        <20181111081725.GA30248@1wt.eu>
+        <3664a508-ca74-4ff0-39a6-34543194a24e@gmail.com>
+        <20181111111143.GB4189@1wt.eu>
+Date:   Sun, 11 Nov 2018 12:46:35 +0100
+In-Reply-To: <20181111111143.GB4189@1wt.eu> (Willy Tarreau's message of "Sun,
+        11 Nov 2018 12:11:43 +0100")
+Message-ID: <87zhufvntw.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Sun, 11 Nov 2018 11:46:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri,  9 Nov 2018 20:00:41 -0200
-Matheus Tavares <matheus.bernardino@usp.br> wrote:
+* Willy Tarreau:
 
-> This patch adds a max frequency check at the beginning of ad2s90_probe
-> function so that when it is set to a value above 0.83Mhz, dev_err is
-> called with an appropriate message and -EINVAL is returned.
-> 
-> The defined limit is 0.83Mhz instead of 2Mhz, which is the chip's max
-> frequency as specified in the datasheet, because, as also specified in
-> the datasheet, a 600ns delay is expected between the application of a
-> logic LO to CS and the application of SCLK. Since the delay is not
-> implemented in the spi code, to satisfy it, SCLK's period should be at
-> most 2 * 600ns, so the max frequency should be 1 / (2 * 6e-7), which
-> gives roughly 830000Hz.
-> 
-> Signed-off-by: Matheus Tavares <matheus.bernardino@usp.br>
-> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-> ---
-> Alex's S-o-B was added because he gave the code suggestion for this
-> patch.
-If he gave the actual code then he should be the credited author
-git commit --amend --author=...
+> I think the issue is a bit more complex :
+>   - linux doesn't support a single libc
+>   - glibc doesn't support a single OS
+>
+> In practice we all know (believe?) that both statements above are
+> true but in practice 99% of the time there's a 1:1 relation between
+> these two components.
 
-If it was just a suggestion, then an informal tag such as 
-Suggested-by is usually used.
+Eh.  Most Linux systems do not run glibc at all (and use cryptography
+and other tricks to prevent users from installing it).
 
-Signed-off-by has formal legal meaning to do with the developer
-certificate of origin, it's not valid as a way of crediting someone
-with a contribution to the patch.
+> What we'd really need would be to have the libc
+> interface as part of the operating system itself. I'm perfectly fine
+> with glibc providing all the "high-level" stuff like strcpy(), FILE*
+> operations etc, and all this probably is mostly system-independent.
 
+That's a bit messy, unfortunately.
 
-> 
->  drivers/staging/iio/resolver/ad2s90.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/drivers/staging/iio/resolver/ad2s90.c b/drivers/staging/iio/resolver/ad2s90.c
-> index 95c118c48400..949ff55ac6b0 100644
-> --- a/drivers/staging/iio/resolver/ad2s90.c
-> +++ b/drivers/staging/iio/resolver/ad2s90.c
-> @@ -19,6 +19,12 @@
->  #include <linux/iio/iio.h>
->  #include <linux/iio/sysfs.h>
->  
-> +/*
-> + * Although chip's max frequency is 2Mhz, it needs 600ns between CS and the
-> + * first falling edge of SCLK, so frequency should be at most 1 / (2 * 6e-7)
-> + */
-> +#define AD2S90_MAX_SPI_FREQ_HZ  830000
-> +
->  struct ad2s90_state {
->  	struct mutex lock;
->  	struct spi_device *sdev;
-> @@ -78,6 +84,12 @@ static int ad2s90_probe(struct spi_device *spi)
->  	struct iio_dev *indio_dev;
->  	struct ad2s90_state *st;
->  
-> +	if (spi->max_speed_hz > AD2S90_MAX_SPI_FREQ_HZ) {
-> +		dev_err(&spi->dev, "SPI CLK, %d Hz exceeds %d Hz\n",
-> +			spi->max_speed_hz, AD2S90_MAX_SPI_FREQ_HZ);
-> +		return -EINVAL;
-> +	}
-Now this is interesting as a follow up to the previous and may actually
-answer the question I raised.  Let's see what Mark and Rob come
-back with. If possible I'd like us to resolve this once and for all
-with a thread to point people back to!
+The kernel does not know about TCB layout, so a lot of low-level
+threading aspects are defined by userspace.
 
-> +
->  	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
->  	if (!indio_dev)
->  		return -ENOMEM;
+The kernel does not know about POSIX cancellation.  Directly calling
+system calls breaks support for that.
 
+A lot of multi-threaded applications assume that most high-level
+functionality remains usable even after fork in a multi-threaded
+process.  (This is increasingly a problem today with all those direct
+calls to clone.)  Unfortunately, this introduces rather tricky
+low-level/high-level cross-subsystem issues, too.
+
+> But the system interface could possibly be handled easier in the
+> system itself, which would also provide a smoother adoption of new
+> syscalls and API updates. It would also limit the hassle required to
+> provide new syscalls, as if you start to have to contribute to two
+> projects at once for a single syscall, it becomes really painful.
+
+Sure, the duplication is unfortunate.
+
+Several glibc contributors deeply care about standards compliance for
+header files.  The kernel developers care not, and the result is that we
+copy definitions and declarations from the kernel header files, creating
+additional problems.
+
+We also want to use old kernel headers to compile glibc and still
+implement features which are only defined by newer (upstream) kernels,
+so that leads to more duplication.
+
+Thanks,
+Florian
