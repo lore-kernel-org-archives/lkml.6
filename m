@@ -6,29 +6,29 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D070C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 11:31:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B360C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 11:31:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCCE1208A3
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 11:31:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCCE1208A3
+	by mail.kernel.org (Postfix) with ESMTP id C0D35208A3
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 11:31:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0D35208A3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728039AbeKKVT0 (ORCPT
+        id S1728081AbeKKVTd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 16:19:26 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:44235 "EHLO
+        Sun, 11 Nov 2018 16:19:33 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:44262 "EHLO
         atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727531AbeKKVT0 (ORCPT
+        with ESMTP id S1727556AbeKKVTc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 16:19:26 -0500
+        Sun, 11 Nov 2018 16:19:32 -0500
 Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 2B8958058E; Sun, 11 Nov 2018 12:31:03 +0100 (CET)
-Date:   Sun, 11 Nov 2018 12:31:03 +0100
+        id B2508806BB; Sun, 11 Nov 2018 12:31:09 +0100 (CET)
+Date:   Sun, 11 Nov 2018 12:31:10 +0100
 From:   Pavel Machek <pavel@ucw.cz>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
+Cc:     Borislav Petkov <bp@alien8.de>, x86@kernel.org,
         "H. Peter Anvin" <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
@@ -53,15 +53,16 @@ Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
         Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
 Subject: Re: [PATCH v5 04/27] x86/fpu/xstate: Add XSAVES system states for
  shadow stack
-Message-ID: <20181111113103.GG27666@amd>
+Message-ID: <20181111113110.GH27666@amd>
 References: <20181011151523.27101-1-yu-cheng.yu@intel.com>
  <20181011151523.27101-5-yu-cheng.yu@intel.com>
  <20181108184038.GJ7543@zn.tnic>
+ <bb049aa9578bae7cfc6bd7c05b540f033f6685cc.camel@intel.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="nqkreNcslJAfgyzk"
+        protocol="application/pgp-signature"; boundary="JI+G0+mN8WmwPnOn"
 Content-Disposition: inline
-In-Reply-To: <20181108184038.GJ7543@zn.tnic>
+In-Reply-To: <bb049aa9578bae7cfc6bd7c05b540f033f6685cc.camel@intel.com>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -69,44 +70,35 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---nqkreNcslJAfgyzk
+--JI+G0+mN8WmwPnOn
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi!
-
-> > +/*
-> > + * State component 12 is Control flow Enforcement kernel states
-> > + */
-> > +struct cet_kernel_state {
-> > +	u64 kernel_ssp;	/* kernel shadow stack */
-> > +	u64 pl1_ssp;	/* ring-1 shadow stack */
-> > +	u64 pl2_ssp;	/* ring-2 shadow stack */
+> > Just write "privilege level" everywhere - not "ring".
+> >=20
+> > Btw, do you see how the type and the name of all those other fields in
+> > that file are tabulated? Except yours...
 >=20
-> Just write "privilege level" everywhere - not "ring".
+> I will fix it.
 
-Please just use word "ring". It is well estabilished terminology.
+Don't. It is not broken.
 
-Which ring is priviledge level 1, given that we have SMM and
-virtualization support?
-
-									Pavel
 --=20
 (english) http://www.livejournal.com/~pavelmachek
 (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
 g.html
 
---nqkreNcslJAfgyzk
+--JI+G0+mN8WmwPnOn
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iEYEARECAAYFAlvoEvcACgkQMOfwapXb+vKz1QCaAypyvDoDPjpZVCuUoaiXMZ/5
-uvwAoIAkSweKPnKv96HsSHiq/rCF0eRL
-=gjve
+iEYEARECAAYFAlvoEv4ACgkQMOfwapXb+vJlmQCfXkN+WFFrcGo8IZByfJiSLgka
+newAn3Vg3UYCtlU1Al+6C94Gc3MygVJJ
+=QXpp
 -----END PGP SIGNATURE-----
 
---nqkreNcslJAfgyzk--
+--JI+G0+mN8WmwPnOn--
