@@ -6,46 +6,43 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E093EC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:58:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BBF8C43610
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:58:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC0B821508
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:58:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC0B821508
+	by mail.kernel.org (Postfix) with ESMTP id 691BD21508
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 19:58:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 691BD21508
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730578AbeKLFsY (ORCPT
+        id S1730593AbeKLFsY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 12 Nov 2018 00:48:24 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50608 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50704 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730392AbeKLFsX (ORCPT
+        by vger.kernel.org with ESMTP id S1730488AbeKLFsY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:48:23 -0500
+        Mon, 12 Nov 2018 00:48:24 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsi-0000lK-Be; Sun, 11 Nov 2018 19:58:52 +0000
+        id 1gLvsk-0000tu-0Y; Sun, 11 Nov 2018 19:58:54 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsa-0001qy-1B; Sun, 11 Nov 2018 19:58:44 +0000
+        id 1gLvsZ-0001qF-M6; Sun, 11 Nov 2018 19:58:43 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Benjamin Tissoires" <benjamin.tissoires@redhat.com>,
-        "Tomasz Kramkowski" <tk@the-tk.com>,
-        "Jiri Kosina" <jkosina@suse.cz>
+CC:     akpm@linux-foundation.org, "Yan, Zheng" <zyan@redhat.com>,
+        "Bryan Henderson" <bryanh@giraffe-data.com>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.578723273@decadent.org.uk>
+Message-ID: <lsq.1541965745.343995860@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 334/366] HID: clamp input to logical range if no null
- state
+Subject: [PATCH 3.16 325/366] ceph: use lookup request to revalidate dentry
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,77 +56,111 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tomasz Kramkowski <tk@the-tk.com>
+From: "Yan, Zheng" <zyan@redhat.com>
 
-commit c3883fe06488a483658ba5d849b70e49bee15e7c upstream.
+commit 200fd27c8fa2ba8bb4529033967b69a7cbfa2c2e upstream.
 
-This patch fixes an issue in drivers/hid/hid-input.c where values
-outside of the logical range are not clamped when "null state" bit of
-the input control is not set.
+If dentry has no lease, ceph_d_revalidate() previously return 0.
+This causes VFS to invalidate the dentry and create a new dentry
+for later lookup. Invalidating a dentry also detach any underneath
+mount points. So mount point inside cephfs can disapear mystically
+(even the mount point is not modified by other hosts).
 
-This was discussed on the lists [1] and this change stems from the fact
-due to the ambiguity of the HID specification it might be appropriate to
-follow Microsoft's own interpretation of the specification. As noted in
-Microsoft's documentation [2] in the section titled "Required HID usages
-for digitizers" it is noted that values reported outside the logical
-range "will be considered as invalid data and the value will be changed
-to the nearest boundary value (logical min/max)."
+The fix is using lookup request to revalidate dentry without lease.
+This can partly solve the mount points disapear issue (as long as
+the mount point is not modified by other hosts)
 
-This patch fixes an issue where the (1292:4745) Innomedia INNEX
-GENESIS/ATARI reports out of range values for its X and Y axis of the
-DPad which, due to the null state bit being unset, are forwarded to
-userspace as is. Now these values will get clamped to the logical range
-before being forwarded to userspace. This device was also used to test
-this patch.
-
-This patch expands on commit 3f3752705dbd ("HID: reject input outside
-logical range only if null state is set").
-
-[1]: http://lkml.kernel.org/r/20170307131036.GA853@gaia.local
-[2]: https://msdn.microsoft.com/en-us/library/windows/hardware/dn672278(v=vs.85).asp
-
-Signed-off-by: Tomasz Kramkowski <tk@the-tk.com>
-Acked-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Yan, Zheng <zyan@redhat.com>
+Cc: Bryan Henderson <bryanh@giraffe-data.com>
+[bwh: Backported to 3.16: Add the ceph_security_xattr_wanted() function]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/hid/hid-input.c | 21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
+ fs/ceph/dir.c   | 34 ++++++++++++++++++++++++++++++++++
+ fs/ceph/inode.c |  1 +
+ 2 files changed, 35 insertions(+)
 
---- a/drivers/hid/hid-input.c
-+++ b/drivers/hid/hid-input.c
-@@ -1087,19 +1087,26 @@ void hidinput_hid_event(struct hid_devic
- 
- 	/*
- 	 * Ignore out-of-range values as per HID specification,
--	 * section 5.10 and 6.2.25.
-+	 * section 5.10 and 6.2.25, when NULL state bit is present.
-+	 * When it's not, clamp the value to match Microsoft's input
-+	 * driver as mentioned in "Required HID usages for digitizers":
-+	 * https://msdn.microsoft.com/en-us/library/windows/hardware/dn672278(v=vs.85).asp
- 	 *
- 	 * The logical_minimum < logical_maximum check is done so that we
- 	 * don't unintentionally discard values sent by devices which
- 	 * don't specify logical min and max.
- 	 */
- 	if ((field->flags & HID_MAIN_ITEM_VARIABLE) &&
--	    (field->flags & HID_MAIN_ITEM_NULL_STATE) &&
--	    (field->logical_minimum < field->logical_maximum) &&
--	    (value < field->logical_minimum ||
--	     value > field->logical_maximum)) {
--		dbg_hid("Ignoring out-of-range value %x\n", value);
--		return;
-+	    (field->logical_minimum < field->logical_maximum)) {
-+		if (field->flags & HID_MAIN_ITEM_NULL_STATE &&
-+		    (value < field->logical_minimum ||
-+		     value > field->logical_maximum)) {
-+			dbg_hid("Ignoring out-of-range value %x\n", value);
-+			return;
-+		}
-+		value = clamp(value,
-+			      field->logical_minimum,
-+			      field->logical_maximum);
+--- a/fs/ceph/dir.c
++++ b/fs/ceph/dir.c
+@@ -1064,6 +1064,40 @@ static int ceph_d_revalidate(struct dent
+ 			valid = 1;
  	}
  
- 	/*
++	if (!valid) {
++		struct ceph_mds_client *mdsc =
++			ceph_sb_to_client(dir->i_sb)->mdsc;
++		struct ceph_mds_request *req;
++		int op, mask, err;
++
++		op = ceph_snap(dir) == CEPH_SNAPDIR ?
++			CEPH_MDS_OP_LOOKUPSNAP : CEPH_MDS_OP_LOOKUP;
++		req = ceph_mdsc_create_request(mdsc, op, USE_ANY_MDS);
++		if (!IS_ERR(req)) {
++			req->r_dentry = dget(dentry);
++			req->r_num_caps = 2;
++
++			mask = CEPH_STAT_CAP_INODE | CEPH_CAP_AUTH_SHARED;
++			if (ceph_security_xattr_wanted(dir))
++				mask |= CEPH_CAP_XATTR_SHARED;
++			req->r_args.getattr.mask = mask;
++
++			req->r_locked_dir = dir;
++			err = ceph_mdsc_do_request(mdsc, NULL, req);
++			if (err == 0 || err == -ENOENT) {
++				if (dentry == req->r_dentry) {
++					valid = !d_unhashed(dentry);
++				} else {
++					d_invalidate(req->r_dentry);
++					err = -EAGAIN;
++				}
++			}
++			ceph_mdsc_put_request(req);
++			dout("d_revalidate %p lookup result=%d\n",
++			     dentry, err);
++		}
++	}
++
+ 	dout("d_revalidate %p %s\n", dentry, valid ? "valid" : "invalid");
+ 	if (valid) {
+ 		ceph_dentry_lru_touch(dentry);
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -1251,6 +1251,7 @@ retry_lookup:
+ 			dout(" %p links to %p %llx.%llx, not %llx.%llx\n",
+ 			     dn, dn->d_inode, ceph_vinop(dn->d_inode),
+ 			     ceph_vinop(in));
++			d_invalidate(dn);
+ 			have_lease = false;
+ 		}
+ 
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -736,6 +736,15 @@ extern void __ceph_destroy_xattrs(struct
+ extern void __init ceph_xattr_init(void);
+ extern void ceph_xattr_exit(void);
+ 
++#ifdef CONFIG_SECURITY
++extern bool ceph_security_xattr_wanted(struct inode *in);
++#else
++static inline bool ceph_security_xattr_wanted(struct inode *in)
++{
++	return false;
++}
++#endif
++
+ /* acl.c */
+ extern const struct xattr_handler *ceph_xattr_handlers[];
+ 
+--- a/fs/ceph/xattr.c
++++ b/fs/ceph/xattr.c
+@@ -1128,3 +1128,10 @@ int ceph_removexattr(struct dentry *dent
+ 
+ 	return __ceph_removexattr(dentry, name);
+ }
++
++#ifdef CONFIG_SECURITY
++bool ceph_security_xattr_wanted(struct inode *in)
++{
++	return in->i_security != NULL;
++}
++#endif
 
