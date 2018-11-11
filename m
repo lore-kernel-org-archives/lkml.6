@@ -2,95 +2,120 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38D91C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 01:28:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF6F8C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 01:29:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAF27208A3
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 01:28:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SAiBokt3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAF27208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id A025C208A3
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 01:29:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A025C208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727253AbeKKLPc (ORCPT
+        id S1727324AbeKKLQO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 06:15:32 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:38924 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726648AbeKKLPc (ORCPT
+        Sun, 11 Nov 2018 06:16:14 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:42852 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726648AbeKKLQO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 06:15:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=D3caOmTcGmtLW2FE5aQpNNxgbVwXNlmD/zZMeSKaduE=; b=SAiBokt3LZkWop7iU/yksiBKBv
-        im5YrbutiP23mKMNbt3Q21wHZClF2o/pt6TxtyEajhBAgMUuRHoiUoR0f21x1hXSvOukkiazlc/c/
-        7iIpD/jp3pQ26ICnynzt4KIataSMkc807Z1CKQzryyltp5XtFOvNEVqOcoDb8ZQnbBbn/0uhzoFBZ
-        B+DxHEc5+JKm/yg9jKGJS44WJiqVN97CIp6rQygcuZQnQyDdHkVKJy1eixumBJX8c3V9RVNDVnDag
-        ZKZKNl2gZKppEllf3ohHbevMb7jHDSuHSBYrxv1wE6eCc/ASu7ljRbhxtVlwQ/qG/3TNGLgs8oJtE
-        tPAeIHDA==;
-Received: from [64.114.255.114] (helo=worktop)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gLeY5-0007jn-RA; Sun, 11 Nov 2018 01:28:26 +0000
-Received: by worktop (Postfix, from userid 1000)
-        id 09A826E07D5; Sun, 11 Nov 2018 02:28:24 +0100 (CET)
-Date:   Sun, 11 Nov 2018 02:28:23 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-        linux-mm@kvack.org, Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Tejun Heo <tj@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [RFC PATCH 01/12] locking/lockdep: Rework
- lockdep_set_novalidate_class()
-Message-ID: <20181111012823.GB12766@worktop.psav.com>
-References: <1541709268-3766-1-git-send-email-longman@redhat.com>
- <1541709268-3766-2-git-send-email-longman@redhat.com>
- <20181110141458.GE3339@worktop.programming.kicks-ass.net>
- <bc8ef8ae-c673-f4ae-fab1-3fe1bc884087@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <bc8ef8ae-c673-f4ae-fab1-3fe1bc884087@redhat.com>
-User-Agent: Mutt/1.5.22.1 (2013-10-16)
+        Sun, 11 Nov 2018 06:16:14 -0500
+Received: from [192.168.4.242] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1gLeYs-0001Cv-RU; Sun, 11 Nov 2018 01:29:14 +0000
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1gLeYs-0003BG-Ma; Sun, 11 Nov 2018 01:29:14 +0000
+Message-ID: <27c2f1efcd6d5bca1ce99b9798a6d42921361b32.camel@decadent.org.uk>
+Subject: Re: Patch to consider for stable 3.18, 4.4 and 4.9
+From:   Ben Hutchings <ben@decadent.org.uk>
+To:     Tomasz Kramkowski <tk@the-tk.com>, stable@vger.kernel.org
+Cc:     Sasha Levin <Alexander.Levin@microsoft.com>,
+        linux-kernel@vger.kernel.org
+Date:   Sun, 11 Nov 2018 01:29:04 +0000
+In-Reply-To: <20180305204341.GB4897@gaia.local>
+References: <20180305204341.GB4897@gaia.local>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+        protocol="application/pgp-signature"; boundary="=-CI7+mYzwBcamNAe4P9Z6"
+User-Agent: Evolution 3.30.1-1 
+Mime-Version: 1.0
+X-SA-Exim-Connect-IP: 192.168.4.242
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 10, 2018 at 07:26:51PM -0500, Waiman Long wrote:
-> On 11/10/2018 09:14 AM, Peter Zijlstra wrote:
-> > On Thu, Nov 08, 2018 at 03:34:17PM -0500, Waiman Long wrote:
-> >> The current lockdep_set_novalidate_class() implementation is like
-> >> a hack. It assigns a special class key for that lock and calls
-> >> lockdep_init_map() twice.
-> > Ideally it would go away.. it is not thing that should be used.
-> 
-> Yes, I agree. Right now, lockdep_set_novalidate_class() is used in
-> 
-> drivers/base/core.c:    lockdep_set_novalidate_class(&dev->mutex);
-> drivers/md/bcache/btree.c:      lockdep_set_novalidate_class(&b->lock);
-> drivers/md/bcache/btree.c:     
-> lockdep_set_novalidate_class(&b->write_lock);
-> 
-> Do you know the history behind making them novalidate?
 
-Only of the driver/base/core.c one; there the locking order depends on
-the hardware and we never quite found a way to annotate that sanely. I
-forgot most details though.
+--=-CI7+mYzwBcamNAe4P9Z6
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The other stuff I only 'recently' found out about :-( And ideally would
-have never made it into the tree, but alas.
+On Mon, 2018-03-05 at 20:43 +0000, Tomasz Kramkowski wrote:
+> In September last year, Ben Hutchings submitted commit [9547837bdccb]
+> for 3.16.48-rc1 and I informed him that it would be useless without
+> [3f3752705dbd] (and that maybe [c3883fe06488] would be useful as well).
+> Ben dropped the patch but suggested I email this list with the
+> information of the other two patches but I never quite got around to it.
+>=20
+> Now I see Sasha Levin is submitting [3f3752705dbd] and [c3883fe06488]
+> for 4.9, 4.4 and 3.18 it would now make sense to include [9547837bdccb].
+> This patch fixes a minor problem where a certain USB adapter for Sega
+> Genesis controllers appears as one input device when it has two ports
+> for two controllers. I imagine some users of emulator distributions
+> might use stable kernels and might benefit from this fix.
+>=20
+> I'm actually not entirely sure that patch is something suitable for
+> stable but since it was already submitted once then I don't think it
+> hurts to bring it up again (despite it breaking stable-kernel-rules as
+> far as I understand it).
+>=20
+> Commits mentioned:
+> [9547837bdccb]: HID: usbhid: add quirk for innomedia INNEX GENESIS/ATARI =
+adapter
+> [3f3752705dbd]: HID: reject input outside logical range only if null stat=
+e is set
+> [c3883fe06488]: HID: clamp input to logical range if no null state
+
+I've finally queued these up for 3.16, thanks.
+
+Ben.
+
+> If the patch [9547837bdccb] is not relevant then feel free to ignore
+> this email.
+>=20
+> Thanks,
+>=20
+--=20
+Ben Hutchings
+Reality is just a crutch for people who can't handle science fiction.
+
+
+
+--=-CI7+mYzwBcamNAe4P9Z6
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAlvnheAACgkQ57/I7JWG
+EQml0g/+Pf+OXSLPvhl9LZd2YYf8Q9esdfeZPbbo2aZr8bFoqMgM9vo4XCalDEOk
+XdVPAg7kM7DiwPX2YDAAg9Bip4DL74689YvZL6lMjH3VivtF151egGD7FpxXHt1N
+gUGA05MZS9gqD8xKa6AO5YCM1yBCXydNiZXL3a+MQ/IWwAahKIpVCKTYcBg7vOrF
+G9HFpBIJXFtl+2qyJ8dgLtN4i0OrhZr9cV1GxFuvJEy0+Uf2e8/aOaP3G2NdFmq1
+PC1Se/AV82SARSb7VHWf8Y3xVhAF/mgPy9JX1s8cW7+5iXG3DgjQNTLDyAZvV6Qt
+EFiIEEFC5CyyykCWc6oE4UHMliH5snjYCpjaFwmqQuD613lG7SBZI+abiFq+tqY7
+L8l1SQc3lsHN29YQcC7YlPno85uac29URmo4iV4tCMrlfHTee4/HDliSbykHDaXs
+Kmlw6j//ob2ilvlYD3zM+18l0RcY8rcHXNlPMEqnUrxE19gJtxOyGhaKsjW0eIBE
+Vb0x0qvVZpoTQAr3FgV7Yp6m79VzYm9fHMc1BrmLhPAyWGoy/a0Z+XWmBwef0GUw
++UvRjRr5JNa2xHUQjpjFDZOO+8Wygcxh1UTqugTR3sWQYHETuAnau6tVjC37lB9a
+QDLie5ZE2DDgvwY0piPNBVdZSeNu3zRkKRl6umC0GSJLqUcCt8A=
+=OZFZ
+-----END PGP SIGNATURE-----
+
+--=-CI7+mYzwBcamNAe4P9Z6--
