@@ -6,48 +6,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA1F0C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:32:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61B78C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:32:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CC3620869
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:32:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28BB42077B
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:32:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y9wTzqFa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CC3620869
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JH4zjfI9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28BB42077B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388737AbeKLJWi (ORCPT
+        id S2388526AbeKLIUR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:22:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44504 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388501AbeKLIUR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:20:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44268 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388413AbeKLIUO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:14 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A642223D1;
-        Sun, 11 Nov 2018 22:30:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 581DE216FD;
+        Sun, 11 Nov 2018 22:30:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975420;
-        bh=/rqHyjbPYVHKyckKH+hUwDwta3vO2DCCma/xIuU9be4=;
+        s=default; t=1541975417;
+        bh=27JdIfrD6Xs0rDBUM7pOqIimtUTilsaOfDz2AHZE0lU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y9wTzqFa6+svu2AH43xstL4aRht2HmSUZ6lETgl3OqmnhYkUfPD2xlHgS0vYSrTyu
-         Bh67D0+n81Vpl6TtgX49iUwPjJPbXZ3WvSg7dvMOwfeKXbUoj+YfoYZ6VcBF7fVE5M
-         92CRCDDg/3+FiqJkZsBRcqvFMDmaoY25k+6SdBzE=
+        b=JH4zjfI9LBc7z4M34pSnOdBFxAeHlcSExO/TgHieuOf/BJcGCdWX8B2iZWSquq0R+
+         g12Mn7XhWinAVID0EJIs3GG0Gyk56nZsqjZ63+PaMNi/2VZAxct23m7bLGtGbYAKES
+         wfrB5EoLuhPegdX2sxr1O+xKAfdVeDBGEL8wwr4U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Holger=20Hoffst=C3=A4tte?= 
-        <holger@applied-asynchrony.com>, Parav Pandit <parav@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>,
+        stable@vger.kernel.org, Jack Wang <jinpu.wang@profitbricks.com>,
+        Xiao Ni <xni@redhat.com>, Shaohua Li <shli@fb.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 145/350] RDMA/core: Do not expose unsupported counters
-Date:   Sun, 11 Nov 2018 14:20:09 -0800
-Message-Id: <20181111221714.126010481@linuxfoundation.org>
+Subject: [PATCH 4.18 139/350] md: fix memleak for mempool
+Date:   Sun, 11 Nov 2018 14:20:03 -0800
+Message-Id: <20181111221713.864954585@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -65,75 +62,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Parav Pandit <parav@mellanox.com>
+From: Jack Wang <jinpu.wang@profitbricks.com>
 
-[ Upstream commit 0f6ef65d1c6ec8deb5d0f11f86631ec4cfe8f22e ]
+[ Upstream commit 6aaa58c994277647f8b05ffef3b9b225a2d08f36 ]
 
-If the provider driver (such as rdma_rxe) doesn't support pma counters,
-avoid exposing its directory similar to optional hw_counters directory.
-If core fails to read the PMA counter, return an error so that user can
-retry later if needed.
+I noticed kmemleak report memory leak when run create/stop
+md in a loop, backtrace:
+[<000000001ca975e7>] mempool_create_node+0x86/0xd0
+[<0000000095576bcd>] md_run+0x1057/0x1410 [md_mod]
+[<000000007b45c5fc>] do_md_run+0x15/0x130 [md_mod]
+[<000000001ede9ec0>] md_ioctl+0x1f49/0x25d0 [md_mod]
+[<000000004142cacf>] blkdev_ioctl+0x680/0xd00
 
-Fixes: 35c4cbb17811 ("IB/core: Create get_perf_mad function in sysfs.c")
-Reported-by: Holger Hoffstätte <holger@applied-asynchrony.com>
-Tested-by: Holger Hoffstätte <holger@applied-asynchrony.com>
-Signed-off-by: Parav Pandit <parav@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+The root cause is we alloc mddev->flush_pool and
+mddev->flush_bio_pool in md_run, but from do_md_stop
+will not call into md_stop but __md_stop, move the
+mempool_destroy to __md_stop fixes the problem for me.
+
+The bug was introduced in 5a409b4f56d5, the fixes should go to
+4.18+
+
+Fixes: 5a409b4f56d5 ("MD: fix lock contention for flush bios")
+Signed-off-by: Jack Wang <jinpu.wang@profitbricks.com>
+Reviewed-by: Xiao Ni <xni@redhat.com>
+Signed-off-by: Shaohua Li <shli@fb.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/core/sysfs.c |   19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
+ drivers/md/md.c |   16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
---- a/drivers/infiniband/core/sysfs.c
-+++ b/drivers/infiniband/core/sysfs.c
-@@ -516,7 +516,7 @@ static ssize_t show_pma_counter(struct i
- 	ret = get_perf_mad(p->ibdev, p->port_num, tab_attr->attr_id, &data,
- 			40 + offset / 8, sizeof(data));
- 	if (ret < 0)
--		return sprintf(buf, "N/A (no PMA)\n");
-+		return ret;
- 
- 	switch (width) {
- 	case 4:
-@@ -1061,10 +1061,12 @@ static int add_port(struct ib_device *de
- 		goto err_put;
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -5909,14 +5909,6 @@ static void __md_stop(struct mddev *mdde
+ 		mddev->to_remove = &md_redundancy_group;
+ 	module_put(pers->owner);
+ 	clear_bit(MD_RECOVERY_FROZEN, &mddev->recovery);
+-}
+-
+-void md_stop(struct mddev *mddev)
+-{
+-	/* stop the array and free an attached data structures.
+-	 * This is called from dm-raid
+-	 */
+-	__md_stop(mddev);
+ 	if (mddev->flush_bio_pool) {
+ 		mempool_destroy(mddev->flush_bio_pool);
+ 		mddev->flush_bio_pool = NULL;
+@@ -5925,6 +5917,14 @@ void md_stop(struct mddev *mddev)
+ 		mempool_destroy(mddev->flush_pool);
+ 		mddev->flush_pool = NULL;
  	}
- 
--	p->pma_table = get_counter_table(device, port_num);
--	ret = sysfs_create_group(&p->kobj, p->pma_table);
--	if (ret)
--		goto err_put_gid_attrs;
-+	if (device->process_mad) {
-+		p->pma_table = get_counter_table(device, port_num);
-+		ret = sysfs_create_group(&p->kobj, p->pma_table);
-+		if (ret)
-+			goto err_put_gid_attrs;
-+	}
- 
- 	p->gid_group.name  = "gids";
- 	p->gid_group.attrs = alloc_group_attrs(show_port_gid, attr.gid_tbl_len);
-@@ -1177,7 +1179,8 @@ err_free_gid:
- 	p->gid_group.attrs = NULL;
- 
- err_remove_pma:
--	sysfs_remove_group(&p->kobj, p->pma_table);
-+	if (p->pma_table)
-+		sysfs_remove_group(&p->kobj, p->pma_table);
- 
- err_put_gid_attrs:
- 	kobject_put(&p->gid_attr_group->kobj);
-@@ -1289,7 +1292,9 @@ static void free_port_list_attributes(st
- 			kfree(port->hw_stats);
- 			free_hsag(&port->kobj, port->hw_stats_ag);
- 		}
--		sysfs_remove_group(p, port->pma_table);
++}
 +
-+		if (port->pma_table)
-+			sysfs_remove_group(p, port->pma_table);
- 		sysfs_remove_group(p, &port->pkey_group);
- 		sysfs_remove_group(p, &port->gid_group);
- 		sysfs_remove_group(&port->gid_attr_group->kobj,
++void md_stop(struct mddev *mddev)
++{
++	/* stop the array and free an attached data structures.
++	 * This is called from dm-raid
++	 */
++	__md_stop(mddev);
+ 	bioset_exit(&mddev->bio_set);
+ 	bioset_exit(&mddev->sync_set);
+ }
 
 
