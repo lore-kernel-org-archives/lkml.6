@@ -6,45 +6,44 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8952EC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:06:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF9D9C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:06:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5808C2080D
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:06:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5808C2080D
+	by mail.kernel.org (Postfix) with ESMTP id AE3C72080D
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:06:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE3C72080D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731371AbeKLF4H (ORCPT
+        id S1731382AbeKLF4L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 00:56:07 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51998 "EHLO
+        Mon, 12 Nov 2018 00:56:11 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52006 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728613AbeKLF4H (ORCPT
+        by vger.kernel.org with ESMTP id S1728613AbeKLF4L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:56:07 -0500
+        Mon, 12 Nov 2018 00:56:11 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsx-0000lF-Mt; Sun, 11 Nov 2018 19:59:07 +0000
+        id 1gLvsv-0000l9-CG; Sun, 11 Nov 2018 19:59:05 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsU-0001dU-BW; Sun, 11 Nov 2018 19:58:38 +0000
+        id 1gLvsU-0001eb-Ur; Sun, 11 Nov 2018 19:58:38 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "James Morris" <james.morris@microsoft.com>,
-        "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+CC:     akpm@linux-foundation.org, "Jiri Slaby" <jslaby@suse.cz>,
+        "Fugang Duan" <fugang.duan@nxp.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.388729595@decadent.org.uk>
+Message-ID: <lsq.1541965745.209678984@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 197/366] X.509: unpack RSA signatureValue field from
- BIT STRING
+Subject: [PATCH 3.16 211/366] tty: vt, remove reduntant check
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,51 +57,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+From: Jiri Slaby <jslaby@suse.cz>
 
-commit b65c32ec5a942ab3ada93a048089a938918aba7f upstream.
+commit 182846a00f489849c55d113954f0c4a8a286ca39 upstream.
 
-The signatureValue field of a X.509 certificate is encoded as a BIT STRING.
-For RSA signatures this BIT STRING is of so-called primitive subtype, which
-contains a u8 prefix indicating a count of unused bits in the encoding.
+MAX_NR_CONSOLES and MAX_NR_USER_CONSOLES are both 63 since they were
+introduced in 1.1.54. And since vc_allocate does:
 
-We have to strip this prefix from signature data, just as we already do for
-key data in x509_extract_key_data() function.
+if (currcons >= MAX_NR_CONSOLES)
+	return -ENXIO;
 
-This wasn't noticed earlier because this prefix byte is zero for RSA key
-sizes divisible by 8. Since BIT STRING is a big-endian encoding adding zero
-prefixes has no bearing on its value.
+if (!vc_cons[currcons].d) {
+	if (currcons >= MAX_NR_USER_CONSOLES && !capable(CAP_SYS_RESOURCE))
+		return -EPERM;
+}
 
-The signature length, however was incorrect, which is a problem for RSA
-implementations that need it to be exactly correct (like AMD CCP).
+the second check is pointless. Remove both the check and the macro
+MAX_NR_USER_CONSOLES.
 
-Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
-Fixes: c26fd69fa009 ("X.509: Add a crypto key parser for binary (DER) X.509 certificates")
-Signed-off-by: James Morris <james.morris@microsoft.com>
-[bwh: Backported to 3.16:
- - x509_certificate::sig is a structure, not a pointer
- - public_key_signature::pkey_algo is an enumeration type, not a string]
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+Reported-by: Fugang Duan <fugang.duan@nxp.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- crypto/asymmetric_keys/x509_cert_parser.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/tty/vt/vt.c     | 4 ----
+ include/uapi/linux/vt.h | 1 -
+ 2 files changed, 5 deletions(-)
 
---- a/crypto/asymmetric_keys/x509_cert_parser.c
-+++ b/crypto/asymmetric_keys/x509_cert_parser.c
-@@ -205,6 +205,15 @@ int x509_note_signature(void *context, s
- 		return -EINVAL;
- 	}
+--- a/drivers/tty/vt/vt.c
++++ b/drivers/tty/vt/vt.c
+@@ -760,10 +760,6 @@ int vc_allocate(unsigned int currcons)	/
+ 	    struct vc_data *vc;
+ 	    struct vt_notifier_param param;
  
-+	if (ctx->cert->sig.pkey_algo == PKEY_ALGO_RSA) {
-+		/* Discard the BIT STRING metadata */
-+		if (vlen < 1 || *(const u8 *)value != 0)
-+			return -EBADMSG;
-+
-+		value++;
-+		vlen--;
-+	}
-+
- 	ctx->cert->raw_sig = value;
- 	ctx->cert->raw_sig_size = vlen;
- 	return 0;
+-	    /* prevent users from taking too much memory */
+-	    if (currcons >= MAX_NR_USER_CONSOLES && !capable(CAP_SYS_RESOURCE))
+-	      return -EPERM;
+-
+ 	    /* due to the granularity of kmalloc, we waste some memory here */
+ 	    /* the alloc is done in two steps, to optimize the common situation
+ 	       of a 25x80 console (structsize=216, screenbuf_size=4000) */
+--- a/include/uapi/linux/vt.h
++++ b/include/uapi/linux/vt.h
+@@ -8,7 +8,6 @@
+  */
+ #define MIN_NR_CONSOLES 1       /* must be at least 1 */
+ #define MAX_NR_CONSOLES	63	/* serial lines start at 64 */
+-#define MAX_NR_USER_CONSOLES 63	/* must be root to allocate above this */
+ 		/* Note: the ioctl VT_GETSTATE does not work for
+ 		   consoles 16 and higher (since it returns a short) */
+ 
 
