@@ -7,44 +7,47 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CDD8C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:21:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C58E6C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:21:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 440D420817
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:21:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 879D020869
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:21:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LCopc0xj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 440D420817
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XA39mrdg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 879D020869
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389697AbeKLJLW (ORCPT
+        id S2389751AbeKLJLf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:11:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47920 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:11:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47890 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389443AbeKLIVO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2389441AbeKLIVO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:21:14 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1973223CA;
-        Sun, 11 Nov 2018 22:31:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 729AD2154B;
+        Sun, 11 Nov 2018 22:31:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975477;
-        bh=LNZmu1B3EOdf62y7gYQcdY60gmDQE/6vfC2KlMqJUMw=;
+        s=default; t=1541975476;
+        bh=NQ/7Yx61gej25bFU3J4iukZNm8fxgwrW+I6VR9X8GKE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LCopc0xj7uCxSptl93WSY2z1ZY1/AH7xDB1KBZF+MXrKio8GEMEJ2WjA6t7LuaiG7
-         qDEm8nGjEU4fyBWUgn2Z8otKzWOa+yyrevpjgJLNSkuLbOK2zROMrqchLxD0fJQBUg
-         T50Cod5yx7C0fZ8JPFp1fSwIaqlZwS+r/iqyVRVg=
+        b=XA39mrdgICPCW4hxDRVdYdtuTuLpdHoQ29uGFlWGx9eTDmNAI0vUE21mZYotbIQkE
+         JCsg6GJtY/2qruHJPZJpl3KpaViuJiCeWc/Lqyi5BOIbP899WWq32bRggkH7QEtmem
+         6N6MooMVvwZun85GIwEJkNeNch1UrhYT+RsKdAwo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Benjamin Coddington <bcodding@redhat.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>
-Subject: [PATCH 4.18 263/350] nfs: Fix a missed page unlock after pg_doio()
-Date:   Sun, 11 Nov 2018 14:22:07 -0800
-Message-Id: <20181111221719.017624861@linuxfoundation.org>
+        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mathias Duckeck <m.duckeck@kunbus.de>,
+        Akshay Bhat <akshay.bhat@timesys.com>,
+        Casey Fitzpatrick <casey.fitzpatrick@timesys.com>
+Subject: [PATCH 4.18 260/350] genirq: Fix race on spurious interrupt detection
+Date:   Sun, 11 Nov 2018 14:22:04 -0800
+Message-Id: <20181111221718.890768988@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -62,85 +65,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Benjamin Coddington <bcodding@redhat.com>
+From: Lukas Wunner <lukas@wunner.de>
 
-commit fdbd1a2e4a71adcb1ae219fcfd964930d77a7f84 upstream.
+commit 746a923b863a1065ef77324e1e43f19b1a3eab5c upstream.
 
-We must check pg_error and call error_cleanup after any call to pg_doio.
-Currently, we are skipping the unlock of a page if we encounter an error in
-nfs_pageio_complete() before handing off the work to the RPC layer.
+Commit 1e77d0a1ed74 ("genirq: Sanitize spurious interrupt detection of
+threaded irqs") made detection of spurious interrupts work for threaded
+handlers by:
 
-Signed-off-by: Benjamin Coddington <bcodding@redhat.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+a) incrementing a counter every time the thread returns IRQ_HANDLED, and
+b) checking whether that counter has increased every time the thread is
+   woken.
+
+However for oneshot interrupts, the commit unmasks the interrupt before
+incrementing the counter.  If another interrupt occurs right after
+unmasking but before the counter is incremented, that interrupt is
+incorrectly considered spurious:
+
+time
+ |  irq_thread()
+ |    irq_thread_fn()
+ |      action->thread_fn()
+ |      irq_finalize_oneshot()
+ |        unmask_threaded_irq()            /* interrupt is unmasked */
+ |
+ |                  /* interrupt fires, incorrectly deemed spurious */
+ |
+ |    atomic_inc(&desc->threads_handled); /* counter is incremented */
+ v
+
+This is observed with a hi3110 CAN controller receiving data at high volume
+(from a separate machine sending with "cangen -g 0 -i -x"): The controller
+signals a huge number of interrupts (hundreds of millions per day) and
+every second there are about a dozen which are deemed spurious.
+
+In theory with high CPU load and the presence of higher priority tasks, the
+number of incorrectly detected spurious interrupts might increase beyond
+the 99,900 threshold and cause disablement of the interrupt.
+
+In practice it just increments the spurious interrupt count. But that can
+cause people to waste time investigating it over and over.
+
+Fix it by moving the accounting before the invocation of
+irq_finalize_oneshot().
+
+[ tglx: Folded change log update ]
+
+Fixes: 1e77d0a1ed74 ("genirq: Sanitize spurious interrupt detection of threaded irqs")
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Mathias Duckeck <m.duckeck@kunbus.de>
+Cc: Akshay Bhat <akshay.bhat@timesys.com>
+Cc: Casey Fitzpatrick <casey.fitzpatrick@timesys.com>
+Cc: stable@vger.kernel.org # v3.16+
+Link: https://lkml.kernel.org/r/1dfd8bbd16163940648045495e3e9698e63b50ad.1539867047.git.lukas@wunner.de
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/nfs/pagelist.c |   40 +++++++++++++++++++++-------------------
- 1 file changed, 21 insertions(+), 19 deletions(-)
+ kernel/irq/manage.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/fs/nfs/pagelist.c
-+++ b/fs/nfs/pagelist.c
-@@ -1110,6 +1110,20 @@ static int nfs_pageio_add_request_mirror
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -920,6 +920,9 @@ irq_forced_thread_fn(struct irq_desc *de
+ 
+ 	local_bh_disable();
+ 	ret = action->thread_fn(action->irq, action->dev_id);
++	if (ret == IRQ_HANDLED)
++		atomic_inc(&desc->threads_handled);
++
+ 	irq_finalize_oneshot(desc, action);
+ 	local_bh_enable();
+ 	return ret;
+@@ -936,6 +939,9 @@ static irqreturn_t irq_thread_fn(struct
+ 	irqreturn_t ret;
+ 
+ 	ret = action->thread_fn(action->irq, action->dev_id);
++	if (ret == IRQ_HANDLED)
++		atomic_inc(&desc->threads_handled);
++
+ 	irq_finalize_oneshot(desc, action);
  	return ret;
  }
+@@ -1013,8 +1019,6 @@ static int irq_thread(void *data)
+ 		irq_thread_check_affinity(desc, action);
  
-+static void nfs_pageio_error_cleanup(struct nfs_pageio_descriptor *desc)
-+{
-+	u32 midx;
-+	struct nfs_pgio_mirror *mirror;
-+
-+	if (!desc->pg_error)
-+		return;
-+
-+	for (midx = 0; midx < desc->pg_mirror_count; midx++) {
-+		mirror = &desc->pg_mirrors[midx];
-+		desc->pg_completion_ops->error_cleanup(&mirror->pg_list);
-+	}
-+}
-+
- int nfs_pageio_add_request(struct nfs_pageio_descriptor *desc,
- 			   struct nfs_page *req)
- {
-@@ -1160,25 +1174,11 @@ int nfs_pageio_add_request(struct nfs_pa
- 	return 1;
+ 		action_ret = handler_fn(desc, action);
+-		if (action_ret == IRQ_HANDLED)
+-			atomic_inc(&desc->threads_handled);
+ 		if (action_ret == IRQ_WAKE_THREAD)
+ 			irq_wake_secondary(desc, action);
  
- out_failed:
--	/*
--	 * We might have failed before sending any reqs over wire.
--	 * Clean up rest of the reqs in mirror pg_list.
--	 */
--	if (desc->pg_error) {
--		struct nfs_pgio_mirror *mirror;
--		void (*func)(struct list_head *);
--
--		/* remember fatal errors */
--		if (nfs_error_is_fatal(desc->pg_error))
--			nfs_context_set_write_error(req->wb_context,
--						    desc->pg_error);
--
--		func = desc->pg_completion_ops->error_cleanup;
--		for (midx = 0; midx < desc->pg_mirror_count; midx++) {
--			mirror = &desc->pg_mirrors[midx];
--			func(&mirror->pg_list);
--		}
--	}
-+	/* remember fatal errors */
-+	if (nfs_error_is_fatal(desc->pg_error))
-+		nfs_context_set_write_error(req->wb_context,
-+						desc->pg_error);
-+	nfs_pageio_error_cleanup(desc);
- 	return 0;
- }
- 
-@@ -1250,6 +1250,8 @@ void nfs_pageio_complete(struct nfs_page
- 	for (midx = 0; midx < desc->pg_mirror_count; midx++)
- 		nfs_pageio_complete_mirror(desc, midx);
- 
-+	if (desc->pg_error < 0)
-+		nfs_pageio_error_cleanup(desc);
- 	if (desc->pg_ops->pg_cleanup)
- 		desc->pg_ops->pg_cleanup(desc);
- 	nfs_pageio_cleanup_mirroring(desc);
 
 
