@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FC4BC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44EF7C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D1E6223C8
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2216223C8
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jFaR2xIO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D1E6223C8
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iH2GgPXI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2216223C8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404650AbeKLIYF (ORCPT
+        id S2404677AbeKLIYI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:24:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59056 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:24:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59082 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404603AbeKLIYE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:24:04 -0500
+        id S2404612AbeKLIYF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:24:05 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4844D208A3;
+        by mail.kernel.org (Postfix) with ESMTPSA id B9B1B21780;
         Sun, 11 Nov 2018 22:34:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975646;
-        bh=Nr9azpFv9eQyiLKGyE9XnWJJtwxqGV0BfMGvN0xTeWE=;
+        s=default; t=1541975647;
+        bh=TaLNkvJvBCiFcpLMo3EU1tVQlxjimFeWC1Y448Eoo5k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jFaR2xIOeUu8NoC57sqcbK5JKjoZdsXGCWWllRJ9O+0qq2Au/+YYnrdCZwDrhzYRR
-         vGQvCiIwluFa7KdSTpJdyKvO70HcnkXHDTTu9/28/286sl9yuHfK+3Zdh9PvsQ2DoZ
-         1oqDBSYETLw8h0m9wR8a2DB1LzfOuLMt/upzfNNA=
+        b=iH2GgPXIf7qETa5OXi5+sqt5jIhInMLxTmIbrWSeBV4XMYXAgXhY0z8FAjQOEyAsq
+         bM0j2NXUdzJ00l4xavbSzJ5qpaTg1bFEwCBPIfsh7fmUzPeR5q+7cMLwC0QY/mGXyb
+         em2Yq9cSG3OSOq1m60ZHBhTDzi686Yp0m1wWVlHk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Serhey Popovych <serhe.popovych@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 030/141] tun: Consistently configure generic netdev params via rtnetlink
-Date:   Sun, 11 Nov 2018 14:24:49 -0800
-Message-Id: <20181111221631.829735495@linuxfoundation.org>
+        stable@vger.kernel.org, Song Muchun <smuchun@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mike Galbraith <efault@gmx.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 021/141] sched/fair: Fix the min_vruntime update logic in dequeue_entity()
+Date:   Sun, 11 Nov 2018 14:24:40 -0800
+Message-Id: <20181111221630.654232583@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
 References: <20181111221627.853046496@linuxfoundation.org>
@@ -63,49 +65,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Serhey Popovych <serhe.popovych@gmail.com>
+From: Song Muchun <smuchun@gmail.com>
 
-[ Upstream commit df52eab23d703142c766ac00bdb8db19d71238d0 ]
+[ Upstream commit 9845c49cc9bbb317a0bc9e9cf78d8e09d54c9af0 ]
 
-Configuring generic network device parameters on tun will fail in
-presence of IFLA_INFO_KIND attribute in IFLA_LINKINFO nested attribute
-since tun_validate() always return failure.
+The comment and the code around the update_min_vruntime() call in
+dequeue_entity() are not in agreement.
 
-This can be visualized with following ip-link(8) command sequences:
+>From commit:
 
-  # ip link set dev tun0 group 100
-  # ip link set dev tun0 group 100 type tun
-  RTNETLINK answers: Invalid argument
+  b60205c7c558 ("sched/fair: Fix min_vruntime tracking")
 
-with contrast to dummy and veth drivers:
+I think that we want to update min_vruntime when a task is sleeping/migrating.
+So, the check is inverted there - fix it.
 
-  # ip link set dev dummy0 group 100
-  # ip link set dev dummy0 type dummy
-
-  # ip link set dev veth0 group 100
-  # ip link set dev veth0 group 100 type veth
-
-Fix by returning zero in tun_validate() when @data is NULL that is
-always in case since rtnl_link_ops->maxtype is zero in tun driver.
-
-Fixes: f019a7a594d9 ("tun: Implement ip link del tunXXX")
-Signed-off-by: Serhey Popovych <serhe.popovych@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Song Muchun <smuchun@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mike Galbraith <efault@gmx.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: b60205c7c558 ("sched/fair: Fix min_vruntime tracking")
+Link: http://lkml.kernel.org/r/20181014112612.2614-1-smuchun@gmail.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/tun.c |    2 ++
- 1 file changed, 2 insertions(+)
+ kernel/sched/fair.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/tun.c
-+++ b/drivers/net/tun.c
-@@ -1570,6 +1570,8 @@ static void tun_setup(struct net_device
-  */
- static int tun_validate(struct nlattr *tb[], struct nlattr *data[])
- {
-+	if (!data)
-+		return 0;
- 	return -EINVAL;
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -3502,7 +3502,7 @@ dequeue_entity(struct cfs_rq *cfs_rq, st
+ 	 * put back on, and if we advance min_vruntime, we'll be placed back
+ 	 * further than we started -- ie. we'll be penalized.
+ 	 */
+-	if ((flags & (DEQUEUE_SAVE | DEQUEUE_MOVE)) == DEQUEUE_SAVE)
++	if ((flags & (DEQUEUE_SAVE | DEQUEUE_MOVE)) != DEQUEUE_SAVE)
+ 		update_min_vruntime(cfs_rq);
  }
  
 
