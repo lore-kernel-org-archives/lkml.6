@@ -2,121 +2,93 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FB4BC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:29:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2192FC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:29:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D296720818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:29:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D296720818
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id C014820818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:29:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="po48kL6A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C014820818
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731133AbeKLGTD (ORCPT
+        id S1730846AbeKLGTZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:19:03 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50552 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730472AbeKLFsW (ORCPT
+        Mon, 12 Nov 2018 01:19:25 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:49796 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730488AbeKLGTY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:48:22 -0500
-Received: from [192.168.4.242] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsh-0000oM-LO; Sun, 11 Nov 2018 19:58:51 +0000
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsa-0001rN-7G; Sun, 11 Nov 2018 19:58:44 +0000
+        Mon, 12 Nov 2018 01:19:24 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 883FC8EE12F;
+        Sun, 11 Nov 2018 12:29:53 -0800 (PST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id g5doqlLg7xH9; Sun, 11 Nov 2018 12:29:53 -0800 (PST)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id E59588EE0A4;
+        Sun, 11 Nov 2018 12:29:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1541968193;
+        bh=IVT55bWKe6cGhRi9r8LJpxNd5rWYnmikRfGRFITafPE=;
+        h=Subject:From:To:Date:In-Reply-To:References:From;
+        b=po48kL6ALD4PTcSJvx+6DkMnxvScD16zZSzzGmfs61SAqnimlm6Ur4Yud5zktaXxY
+         Jb5+qEOWJPFw5BcdBOfsh/khIrM4dlaSaGHM7/q1pv3eGJWiSsCwK/s/D7wPLUdAXI
+         fCOgUjmcLRxCi2Qf5Q01j8HGgPohzobj0ustONos=
+Message-ID: <1541968191.3190.12.camel@HansenPartnership.com>
+Subject: Re: [BUG] Nuvoton NCPT650 TPM 2.0 mode not working
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>,
+        peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
+        arnd@arndb.de, linux-integrity@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date:   Sun, 11 Nov 2018 12:29:51 -0800
+In-Reply-To: <7d8cc5ad4bb7548d283f363de6f24c90d5d0a2b2.camel@mniewoehner.de>
+References: <776f384a81466642472beb4a34b10f26f1de88e9.camel@mniewoehner.de>
+         <1541960689.3190.4.camel@HansenPartnership.com>
+         <e8eb56fdab618770917fbe5b174328dc1240f934.camel@mniewoehner.de>
+         <1541962653.3190.7.camel@HansenPartnership.com>
+         <7d8cc5ad4bb7548d283f363de6f24c90d5d0a2b2.camel@mniewoehner.de>
 Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-MIME-Version: 1.0
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Wanpeng Li" <wanpeng.li@hotmail.com>,
-        "David Hildenbrand" <david@redhat.com>,
-        "Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?=" <rkrcmar@redhat.com>,
-        "Dmitry Vyukov" <dvyukov@google.com>,
-        "Paolo Bonzini" <pbonzini@redhat.com>
-Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.400624834@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 339/366] KVM: x86: fix escape of guest dr6 to the host
-In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
-X-SA-Exim-Connect-IP: 192.168.4.242
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.61-rc1 review patch.  If anyone has any objections, please let me know.
+On Sun, 2018-11-11 at 21:09 +0100, Michael Niewöhner wrote:
+> On Sun, 2018-11-11 at 10:57 -0800, James Bottomley wrote:
+[...]
+> > Well, I still think the ACPI setup is incorrect.  What's in
+> > /sys/class/platform (should be directories of ACPI devices)?  The
+> > TPM is supposed to show up as MSFT0101.  If it doesn't is there any
+> > other device string in there that might be a TPM?
+> 
+> Nope. I'm not sure if it should show up in ACPI... isn't TPM 2.0 I2C?
 
-------------------
+Your ACPI parser identifies it here:
 
-From: Wanpeng Li <wanpeng.li@hotmail.com>
+> [    0.003517] ACPI: TPM2 0x000000009E490ED8 000034 (v03 LENOVO TC-S06   00001300 AMI  00000000)
 
-commit efdab992813fb2ed825745625b83c05032e9cda2 upstream.
+So it has to be a device in the platform directory.  What is in this
+directory?  To find the TPM it probably has something TPM like in the
+firmware_node description:
 
-syzkaller reported:
+/sys/devices/platform/<dev>/firmware_node/description
 
-   WARNING: CPU: 0 PID: 12927 at arch/x86/kernel/traps.c:780 do_debug+0x222/0x250
-   CPU: 0 PID: 12927 Comm: syz-executor Tainted: G           OE    4.15.0-rc2+ #16
-   RIP: 0010:do_debug+0x222/0x250
-   Call Trace:
-    <#DB>
-    debug+0x3e/0x70
-   RIP: 0010:copy_user_enhanced_fast_string+0x10/0x20
-    </#DB>
-    _copy_from_user+0x5b/0x90
-    SyS_timer_create+0x33/0x80
-    entry_SYSCALL_64_fastpath+0x23/0x9a
+Mine says
 
-The testcase sets a watchpoint (with perf_event_open) on a buffer that is
-passed to timer_create() as the struct sigevent argument.  In timer_create(),
-copy_from_user()'s rep movsb triggers the BP.  The testcase also sets
-the debug registers for the guest.
+jejb@jarvis:~/git/linux/drivers> cat /sys/devices/platform/MSFT0101\:00/firmware_node/description
+TPM 2.0 Device
 
-However, KVM only restores host debug registers when the host has active
-watchpoints, which triggers a race condition when running the testcase with
-multiple threads.  The guest's DR6.BS bit can escape to the host before
-another thread invokes timer_create(), and do_debug() complains.
-
-The fix is to respect do_debug()'s dr6 invariant when leaving KVM.
-
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Wanpeng Li <wanpeng.li@hotmail.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
-[bwh: Backported to 3.16: adjust context]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- arch/x86/kvm/x86.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -2892,6 +2892,12 @@ void kvm_arch_vcpu_put(struct kvm_vcpu *
- 	kvm_x86_ops->vcpu_put(vcpu);
- 	kvm_put_guest_fpu(vcpu);
- 	vcpu->arch.last_host_tsc = native_read_tsc();
-+	/*
-+	 * If userspace has set any breakpoints or watchpoints, dr6 is restored
-+	 * on every vmexit, but if not, we might have a stale dr6 from the
-+	 * guest. do_debug expects dr6 to be cleared after it runs, do the same.
-+	 */
-+	set_debugreg(0, 6);
- }
- 
- static int kvm_vcpu_ioctl_get_lapic(struct kvm_vcpu *vcpu,
-
+James
