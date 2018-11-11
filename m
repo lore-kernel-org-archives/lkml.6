@@ -7,48 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB6CAC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:48:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40131C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:48:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3A27214E0
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:48:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09072214E0
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:48:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Aaz8q03h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3A27214E0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="T88I7NTO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09072214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391008AbeKLIiH (ORCPT
+        id S2391024AbeKLIiT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:38:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56992 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:38:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56862 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389639AbeKLIXZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:23:25 -0500
+        id S1732144AbeKLIXW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:23:22 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D459223C7;
-        Sun, 11 Nov 2018 22:33:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 221F521780;
+        Sun, 11 Nov 2018 22:33:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975607;
-        bh=peYQq1SQy9NbdEaAKSyUOjSzV6+AKAtupBserPTDXCY=;
+        s=default; t=1541975605;
+        bh=q79PoP8XtxtznvtnJVQdLX/HnLJpk2ihiSqXUN8kQDE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Aaz8q03h3/85fEBlFiXq3rml3VODtnvL3sa8sGlPtm5B6thJzlmWYgbgeVpQWrRIm
-         TLGEcy4q/NCfRAiS/SGuhUZI5g6rYjH0p/QqIUKqO/RhDcYOpL8o+OXRz1vLoJ0uSU
-         Fi7dnybkzeIS5+TdVFxfDcaBhW3oljS/FxPUC+fg=
+        b=T88I7NTOnWBiizfPAAHwJ0e4F44u9yJnjCUO7cGoDuE9RLqy/BSx+QqkoCHtxZSwZ
+         0QbSgviskwYHjg5dwX4KnJsZI2QC9MlQy9Ehmcf740+f1hErLowAoY9f6ty0zLtp4u
+         0eVAeX/6uw3WSHBj0eEwbvxwNbEhsSyFV8uwkci4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, He Zhe <zhe.he@windriver.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        kstewart@linuxfoundation.org, pombredanne@nexb.com,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 014/141] x86/corruption-check: Fix panic in memory_corruption_check() when boot option without value is provided
-Date:   Sun, 11 Nov 2018 14:24:33 -0800
-Message-Id: <20181111221629.729444617@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?H=C3=A5vard?= <hovardslill@gmail.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.9 010/141] ALSA: hda - Fix headphone pin config for ASUS G751
+Date:   Sun, 11 Nov 2018 14:24:29 -0800
+Message-Id: <20181111221629.107788806@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
 References: <20181111221627.853046496@linuxfoundation.org>
@@ -66,87 +63,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: He Zhe <zhe.he@windriver.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit ccde460b9ae5c2bd5e4742af0a7f623c2daad566 upstream.
+commit 5b7c5e1f4c36b99d0f694f38b9ad910f520cb7ef upstream.
 
-memory_corruption_check[{_period|_size}]()'s handlers do not check input
-argument before passing it to kstrtoul() or simple_strtoull(). The argument
-would be a NULL pointer if each of the kernel parameters, without its
-value, is set in command line and thus cause the following panic.
+BIOS on ASUS G751 doesn't seem to map the headphone pin (NID 0x16)
+correctly.  Add a quirk to address it, as well as chaining to the
+previous fix for the microphone.
 
-PANIC: early exception 0xe3 IP 10:ffffffff73587c22 error 0 cr2 0x0
-[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.18-rc8+ #2
-[    0.000000] RIP: 0010:kstrtoull+0x2/0x10
-...
-[    0.000000] Call Trace
-[    0.000000]  ? set_corruption_check+0x21/0x49
-[    0.000000]  ? do_early_param+0x4d/0x82
-[    0.000000]  ? parse_args+0x212/0x330
-[    0.000000]  ? rdinit_setup+0x26/0x26
-[    0.000000]  ? parse_early_options+0x20/0x23
-[    0.000000]  ? rdinit_setup+0x26/0x26
-[    0.000000]  ? parse_early_param+0x2d/0x39
-[    0.000000]  ? setup_arch+0x2f7/0xbf4
-[    0.000000]  ? start_kernel+0x5e/0x4c2
-[    0.000000]  ? load_ucode_bsp+0x113/0x12f
-[    0.000000]  ? secondary_startup_64+0xa5/0xb0
-
-This patch adds checks to prevent the panic.
-
-Signed-off-by: He Zhe <zhe.he@windriver.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: gregkh@linuxfoundation.org
-Cc: kstewart@linuxfoundation.org
-Cc: pombredanne@nexb.com
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/1534260823-87917-1-git-send-email-zhe.he@windriver.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Reported-by: Håvard <hovardslill@gmail.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/check.c |   15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ sound/pci/hda/patch_realtek.c |   12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
---- a/arch/x86/kernel/check.c
-+++ b/arch/x86/kernel/check.c
-@@ -30,6 +30,11 @@ static __init int set_corruption_check(c
- 	ssize_t ret;
- 	unsigned long val;
- 
-+	if (!arg) {
-+		pr_err("memory_corruption_check config string not provided\n");
-+		return -EINVAL;
-+	}
-+
- 	ret = kstrtoul(arg, 10, &val);
- 	if (ret)
- 		return ret;
-@@ -44,6 +49,11 @@ static __init int set_corruption_check_p
- 	ssize_t ret;
- 	unsigned long val;
- 
-+	if (!arg) {
-+		pr_err("memory_corruption_check_period config string not provided\n");
-+		return -EINVAL;
-+	}
-+
- 	ret = kstrtoul(arg, 10, &val);
- 	if (ret)
- 		return ret;
-@@ -58,6 +68,11 @@ static __init int set_corruption_check_s
- 	char *end;
- 	unsigned size;
- 
-+	if (!arg) {
-+		pr_err("memory_corruption_check_size config string not provided\n");
-+		return -EINVAL;
-+	}
-+
- 	size = memparse(arg, &end);
- 
- 	if (*end == '\0')
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -6811,6 +6811,7 @@ enum {
+ 	ALC662_FIXUP_ASUS_Nx50,
+ 	ALC668_FIXUP_ASUS_Nx51_HEADSET_MODE,
+ 	ALC668_FIXUP_ASUS_Nx51,
++	ALC668_FIXUP_MIC_COEF,
+ 	ALC668_FIXUP_ASUS_G751,
+ 	ALC891_FIXUP_HEADSET_MODE,
+ 	ALC891_FIXUP_DELL_MIC_NO_PRESENCE,
+@@ -7078,7 +7079,7 @@ static const struct hda_fixup alc662_fix
+ 		.chained = true,
+ 		.chain_id = ALC668_FIXUP_ASUS_Nx51_HEADSET_MODE,
+ 	},
+-	[ALC668_FIXUP_ASUS_G751] = {
++	[ALC668_FIXUP_MIC_COEF] = {
+ 		.type = HDA_FIXUP_VERBS,
+ 		.v.verbs = (const struct hda_verb[]) {
+ 			{ 0x20, AC_VERB_SET_COEF_INDEX, 0xc3 },
+@@ -7086,6 +7087,15 @@ static const struct hda_fixup alc662_fix
+ 			{}
+ 		},
+ 	},
++	[ALC668_FIXUP_ASUS_G751] = {
++		.type = HDA_FIXUP_PINS,
++		.v.pins = (const struct hda_pintbl[]) {
++			{ 0x16, 0x0421101f }, /* HP */
++			{}
++		},
++		.chained = true,
++		.chain_id = ALC668_FIXUP_MIC_COEF
++	},
+ 	[ALC891_FIXUP_HEADSET_MODE] = {
+ 		.type = HDA_FIXUP_FUNC,
+ 		.v.func = alc_fixup_headset_mode,
 
 
