@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C718C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09A4DC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:45:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDE4520871
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:45:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C612D20818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:45:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2dF6o8gl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDE4520871
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pH67PZhH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C612D20818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387416AbeKLITF (ORCPT
+        id S2387663AbeKLJgQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:19:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39860 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:36:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731062AbeKLITE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:19:04 -0500
+        id S2387398AbeKLITF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:19:05 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E1BB21104;
+        by mail.kernel.org (Postfix) with ESMTPSA id D961B21707;
         Sun, 11 Nov 2018 22:29:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975348;
-        bh=E2GsH9iqi6ZkW5ki9lsnmQ6tle8fmacNnHGaUQqcwrM=;
+        s=default; t=1541975349;
+        bh=mlaQI9CFS8NN7nIDYVHfW2nqwPLVZWfN7f6GrLztkHE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2dF6o8gli6RLNHlsVfYspxYrNcqpBING0vsj1GcFjY/ndPmenAK2M4FDiaoGNku1V
-         wZqnbuZwhqKuwax0kX9pWsOZLkfxfG1cSCvsNKE2AAQ2PQ0ObOq5KP3qcUga70vXFJ
-         3SOLslE0hX2xCDq+Ax+7NrAjSBRsg64K51580By4=
+        b=pH67PZhHiK801jjGCm+3IsQiviwnAeUDum8d3GDKNcHGu5s0UKuQKTPE07LiADa4o
+         gerLif/LXReuMVJ1G2GztUuQgb/1Yx1H+7gwLHULl5cf61jFXL2ptAZ7CnDVGunYmn
+         UykexVRw6T02HrUoB3Ezadvb3PE3IQiZq8DOB+R0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
-        Nicolas Pitre <nico@linaro.org>
-Subject: [PATCH 4.19 358/361] vt: fix broken display when running aptitude
-Date:   Sun, 11 Nov 2018 14:21:45 -0800
-Message-Id: <20181111221702.092206116@linuxfoundation.org>
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Subject: [PATCH 4.19 359/361] userns: also map extents in the reverse map to kernel IDs
+Date:   Sun, 11 Nov 2018 14:21:46 -0800
+Message-Id: <20181111221702.182204786@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -62,35 +62,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Jann Horn <jannh@google.com>
 
-commit 943210ba807ec50aafa2fa7b13bd6d36a478969b upstream.
+commit d2f007dbe7e4c9583eea6eb04d60001e85c6f1bd upstream.
 
-If you run aptitude on framebuffer console, the display is corrupted. The
-corruption is caused by the commit d8ae7242. The patch adds "offset" to
-"start" when calling scr_memsetw, but it forgets to do the same addition
-on a subsequent call to do_update_region.
+The current logic first clones the extent array and sorts both copies, then
+maps the lower IDs of the forward mapping into the lower namespace, but
+doesn't map the lower IDs of the reverse mapping.
 
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Fixes: d8ae72427187 ("vt: preserve unicode values corresponding to screen characters")
-Reviewed-by: Nicolas Pitre <nico@linaro.org>
-Cc: stable@vger.kernel.org	# 4.19
+This means that code in a nested user namespace with >5 extents will see
+incorrect IDs. It also breaks some access checks, like
+inode_owner_or_capable() and privileged_wrt_inode_uidgid(), so a process
+can incorrectly appear to be capable relative to an inode.
+
+To fix it, we have to make sure that the "lower_first" members of extents
+in both arrays are translated; and we have to make sure that the reverse
+map is sorted *after* the translation (since otherwise the translation can
+break the sorting).
+
+This is CVE-2018-18955.
+
+Fixes: 6397fac4915a ("userns: bump idmap limits to 340")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jann Horn <jannh@google.com>
+Tested-by: Eric W. Biederman <ebiederm@xmission.com>
+Reviewed-by: Eric W. Biederman <ebiederm@xmission.com>
+Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/vt/vt.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/user_namespace.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/drivers/tty/vt/vt.c
-+++ b/drivers/tty/vt/vt.c
-@@ -1551,7 +1551,7 @@ static void csi_K(struct vc_data *vc, in
- 	scr_memsetw(start + offset, vc->vc_video_erase_char, 2 * count);
- 	vc->vc_need_wrap = 0;
- 	if (con_should_update(vc))
--		do_update_region(vc, (unsigned long) start, count);
-+		do_update_region(vc, (unsigned long)(start + offset), count);
- }
+--- a/kernel/user_namespace.c
++++ b/kernel/user_namespace.c
+@@ -974,10 +974,6 @@ static ssize_t map_write(struct file *fi
+ 	if (!new_idmap_permitted(file, ns, cap_setid, &new_map))
+ 		goto out;
  
- static void csi_X(struct vc_data *vc, int vpar) /* erase the following vpar positions */
+-	ret = sort_idmaps(&new_map);
+-	if (ret < 0)
+-		goto out;
+-
+ 	ret = -EPERM;
+ 	/* Map the lower ids from the parent user namespace to the
+ 	 * kernel global id space.
+@@ -1004,6 +1000,14 @@ static ssize_t map_write(struct file *fi
+ 		e->lower_first = lower_first;
+ 	}
+ 
++	/*
++	 * If we want to use binary search for lookup, this clones the extent
++	 * array and sorts both copies.
++	 */
++	ret = sort_idmaps(&new_map);
++	if (ret < 0)
++		goto out;
++
+ 	/* Install the map */
+ 	if (new_map.nr_extents <= UID_GID_MAP_MAX_BASE_EXTENTS) {
+ 		memcpy(map->extent, new_map.extent,
 
 
