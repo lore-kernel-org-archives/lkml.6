@@ -6,45 +6,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3253C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:52:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E97DC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:52:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 882A521527
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:52:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAAF72154B
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:52:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="je6/gvZl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 882A521527
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aCFci5n6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAAF72154B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404212AbeKLImM (ORCPT
+        id S2404115AbeKLIXE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:42:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54620 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404103AbeKLIXE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:23:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54642 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390866AbeKLIXC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:23:02 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8AC6721582;
-        Sun, 11 Nov 2018 22:33:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45D55223CB;
+        Sun, 11 Nov 2018 22:33:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975587;
-        bh=gxABbROjOMrnswN+D7TAmu/vwt4b33lJwJ/GOmmg1EA=;
+        s=default; t=1541975585;
+        bh=ibSWNeGlobesSXXlq/4o+ITM/VkSb+/68VQgnwMBcok=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=je6/gvZl4TIZSm5qcCKsGZZca52quLreneWZpIdLRJb63e5k3c5WakAKO5OT/Y//4
-         b84iwylzJs5DLT5jqpCuVsFmFSN9TrHOTX6/dd0jdpCxvCqxhkFvuOAiLlRs2TrwHN
-         VjiAzlRhYBX6McV5ZWkezDLRywI79SoJuGqemgSM=
+        b=aCFci5n67jhl+hZzUY8BX8do2rJkNt+CokOOp+7JjQHVo2qCz977cuOnEFiuUwhda
+         MsHHg7FLVBLFYaaWJ/C425qzTSNRgd60B116CypYqyGpyPa9dqvGX/Oee7gsJdnvpr
+         LzdKPbQ1oUUSj6gDmav/+DORz1f6frfTjJWoGMHA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>,
-        Johan Hovold <johan@kernel.org>,
-        Thierry Reding <treding@nvidia.com>
-Subject: [PATCH 4.14 194/222] soc/tegra: pmc: Fix child-node lookup
-Date:   Sun, 11 Nov 2018 14:24:51 -0800
-Message-Id: <20181111221704.192458638@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.14 187/222] media: em28xx: make v4l2-compliance happier by starting sequence on zero
+Date:   Sun, 11 Nov 2018 14:24:44 -0800
+Message-Id: <20181111221703.688488683@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -62,39 +61,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-commit 1dc6bd5e39a29453bdcc17348dd2a89f1aa4004e upstream.
+commit afeaade90db4c5dab93f326d9582be1d5954a198 upstream.
 
-Fix child-node lookup during probe, which ended up searching the whole
-device tree depth-first starting at the parent rather than just matching
-on its children.
+The v4l2-compliance tool complains if a video doesn't start
+with a zero sequence number.
 
-To make things worse, the parent pmc node could end up being prematurely
-freed as of_find_node_by_name() drops a reference to its first argument.
+While this shouldn't cause any real problem for apps, let's
+make it happier, in order to better check the v4l2-compliance
+differences before and after patchsets.
 
-Fixes: 3568df3d31d6 ("soc: tegra: Add thermal reset (thermtrip) support to PMC")
-Cc: stable <stable@vger.kernel.org>     # 4.0
-Cc: Mikko Perttunen <mperttunen@nvidia.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+This is actually an old issue. It is there since at least its
+videobuf2 conversion, e. g. changeset 3829fadc461 ("[media]
+em28xx: convert to videobuf2"), if VB1 wouldn't suffer from
+the same issue.
+
+Cc: stable@vger.kernel.org
+Fixes: d3829fadc461 ("[media] em28xx: convert to videobuf2")
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/soc/tegra/pmc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/usb/em28xx/em28xx-video.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -1321,7 +1321,7 @@ static void tegra_pmc_init_tsense_reset(
- 	if (!pmc->soc->has_tsense_reset)
- 		return;
+--- a/drivers/media/usb/em28xx/em28xx-video.c
++++ b/drivers/media/usb/em28xx/em28xx-video.c
+@@ -900,6 +900,8 @@ static int em28xx_enable_analog_tuner(st
+ 	if (!mdev || !v4l2->decoder)
+ 		return 0;
  
--	np = of_find_node_by_name(pmc->dev->of_node, "i2c-thermtrip");
-+	np = of_get_child_by_name(pmc->dev->of_node, "i2c-thermtrip");
- 	if (!np) {
- 		dev_warn(dev, "i2c-thermtrip node not found, %s.\n", disabled);
- 		return;
++	dev->v4l2->field_count = 0;
++
+ 	/*
+ 	 * This will find the tuner that is connected into the decoder.
+ 	 * Technically, this is not 100% correct, as the device may be
 
 
