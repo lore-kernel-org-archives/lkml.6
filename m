@@ -6,46 +6,45 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56CADC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:30:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15DDDC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:30:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20BDA20818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:30:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20BDA20818
+	by mail.kernel.org (Postfix) with ESMTP id CE6AD2148E
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:30:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE6AD2148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730475AbeKLFsW (ORCPT
+        id S1730926AbeKLGTg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 00:48:22 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50366 "EHLO
+        Mon, 12 Nov 2018 01:19:36 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50474 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730404AbeKLFsT (ORCPT
+        by vger.kernel.org with ESMTP id S1730424AbeKLFsV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:48:19 -0500
+        Mon, 12 Nov 2018 00:48:21 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsf-0000l9-Em; Sun, 11 Nov 2018 19:58:49 +0000
+        id 1gLvsh-0000l5-BV; Sun, 11 Nov 2018 19:58:51 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsa-0001sT-EU; Sun, 11 Nov 2018 19:58:44 +0000
+        id 1gLvsa-0001rh-A7; Sun, 11 Nov 2018 19:58:44 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Ralf Baechle" <ralf@linux-mips.org>,
-        "Markos Chandras" <markos.chandras@imgtec.com>,
-        "Paul Burton" <paul.burton@imgtec.com>, linux-mips@linux-mips.org,
-        "James Hogan" <james.hogan@imgtec.com>
+CC:     akpm@linux-foundation.org, "Max Filippov" <jcmvbkbc@gmail.com>,
+        "Stephen Boyd" <sboyd@codeaurora.org>,
+        "Krzysztof Kozlowski" <k.kozlowski@samsung.com>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.811545133@decadent.org.uk>
+Message-ID: <lsq.1541965745.975907741@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 348/366] MIPS: asmmacro: Ensure 64-bit FP registers
- are used with MSA
+Subject: [PATCH 3.16 342/366] clk: si5351: Constify clock names and struct
+ regmap_config
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,100 +58,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Markos Chandras <markos.chandras@imgtec.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-commit 2bd7bc254ab1f45269db6dd7957d63b713817408 upstream.
+commit 8234caed27f7bce141c9fb1f7e76c91a2a66d248 upstream.
 
-This silences warnings like the following one when building with the
-latest binutils:
+The regmap_config struct may be const because it is not modified by the
+driver and regmap_init() accepts pointer to const.
 
-arch/mips/kernel/genex.S: Assembler messages:
-arch/mips/kernel/genex.S:438: Warning: the `msa' extension requires 64-bit FPRs
+Replace doubled const in the arrays of clock names with proper const
+pointer to const data. This fixes the warnings:
 
-[ralf@linux-mips.org: Markos says binutils 2.25 and some 2.24 snapshots
-are affected.]
+drivers/clk/clk-si5351.c:71:25: warning: duplicate const
+drivers/clk/clk-si5351.c:74:25: warning: duplicate const
+drivers/clk/clk-si5351.c:77:25: warning: duplicate const
+drivers/clk/clk-si5351.c:80:25: warning: duplicate const
 
-Signed-off-by: Markos Chandras <markos.chandras@imgtec.com>
-Reviewed-by: James Hogan <james.hogan@imgtec.com>
-Cc: Paul Burton <paul.burton@imgtec.com>
-Cc: linux-mips@linux-mips.org
-Patchwork: https://patchwork.linux-mips.org/patch/9745/
-Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reviewed-by: Max Filippov <jcmvbkbc@gmail.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/mips/include/asm/asmmacro.h | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/clk/clk-si5351.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/arch/mips/include/asm/asmmacro.h
-+++ b/arch/mips/include/asm/asmmacro.h
-@@ -209,9 +209,13 @@
- 	.endm
+--- a/drivers/clk/clk-si5351.c
++++ b/drivers/clk/clk-si5351.c
+@@ -68,16 +68,16 @@ struct si5351_driver_data {
+ 	struct si5351_hw_data	*clkout;
+ };
  
- #ifdef TOOLCHAIN_SUPPORTS_MSA
-+/* preprocessor replaces the fp in ".set fp=64" with $30 otherwise */
-+#undef fp
-+
- 	.macro	_cfcmsa	rd, cs
- 	.set	push
- 	.set	mips32r2
-+	.set	fp=64
- 	.set	msa
- 	cfcmsa	\rd, $\cs
- 	.set	pop
-@@ -220,6 +224,7 @@
- 	.macro	_ctcmsa	cd, rs
- 	.set	push
- 	.set	mips32r2
-+	.set	fp=64
- 	.set	msa
- 	ctcmsa	$\cd, \rs
- 	.set	pop
-@@ -228,6 +233,7 @@
- 	.macro	ld_d	wd, off, base
- 	.set	push
- 	.set	mips32r2
-+	.set	fp=64
- 	.set	msa
- 	ld.d	$w\wd, \off(\base)
- 	.set	pop
-@@ -236,6 +242,7 @@
- 	.macro	st_d	wd, off, base
- 	.set	push
- 	.set	mips32r2
-+	.set	fp=64
- 	.set	msa
- 	st.d	$w\wd, \off(\base)
- 	.set	pop
-@@ -244,6 +251,7 @@
- 	.macro	copy_u_w	ws, n
- 	.set	push
- 	.set	mips32r2
-+	.set	fp=64
- 	.set	msa
- 	copy_u.w $1, $w\ws[\n]
- 	.set	pop
-@@ -252,6 +260,7 @@
- 	.macro	copy_u_d	ws, n
- 	.set	push
- 	.set	mips64r2
-+	.set	fp=64
- 	.set	msa
- 	copy_u.d $1, $w\ws[\n]
- 	.set	pop
-@@ -260,6 +269,7 @@
- 	.macro	insert_w	wd, n
- 	.set	push
- 	.set	mips32r2
-+	.set	fp=64
- 	.set	msa
- 	insert.w $w\wd[\n], $1
- 	.set	pop
-@@ -268,6 +278,7 @@
- 	.macro	insert_d	wd, n
- 	.set	push
- 	.set	mips64r2
-+	.set	fp=64
- 	.set	msa
- 	insert.d $w\wd[\n], $1
- 	.set	pop
+-static const char const *si5351_input_names[] = {
++static const char * const si5351_input_names[] = {
+ 	"xtal", "clkin"
+ };
+-static const char const *si5351_pll_names[] = {
++static const char * const si5351_pll_names[] = {
+ 	"plla", "pllb", "vxco"
+ };
+-static const char const *si5351_msynth_names[] = {
++static const char * const si5351_msynth_names[] = {
+ 	"ms0", "ms1", "ms2", "ms3", "ms4", "ms5", "ms6", "ms7"
+ };
+-static const char const *si5351_clkout_names[] = {
++static const char * const si5351_clkout_names[] = {
+ 	"clk0", "clk1", "clk2", "clk3", "clk4", "clk5", "clk6", "clk7"
+ };
+ 
+@@ -207,7 +207,7 @@ static bool si5351_regmap_is_writeable(s
+ 	return true;
+ }
+ 
+-static struct regmap_config si5351_regmap_config = {
++static const struct regmap_config si5351_regmap_config = {
+ 	.reg_bits = 8,
+ 	.val_bits = 8,
+ 	.cache_type = REGCACHE_RBTREE,
 
