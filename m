@@ -7,50 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24586C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:16:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 467E0C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:16:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E21B52084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:16:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06E85215EA
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:16:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lHNPWutH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E21B52084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="W1VD0fKH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06E85215EA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730673AbeKLKHF (ORCPT
+        id S1730581AbeKLKHF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 12 Nov 2018 05:07:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59152 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:58420 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730124AbeKLIRF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730126AbeKLIRF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:17:05 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B77D22353;
+        by mail.kernel.org (Postfix) with ESMTPSA id 55251214DB;
         Sun, 11 Nov 2018 22:27:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975229;
-        bh=sqz+niQs7PNeydEtgFVeUslfSp5UbDcQscW6LMzcQns=;
+        bh=BgEVqoD1PpYSlDeOV20LX1ri4tyfnkVBrcquTzol/hc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lHNPWutHYN48zb583/UMu9p/WO5Cy5U3CMNuSURqfz0/A24ujLs/BDK/cXnUPe4ke
-         ZEpTBwvO5DGn89aN8ts0V2niekf+2lqngLjHbDJGLPeSvcXwcwjOs4bhEKsIW/z9bi
-         hfgb4CMuOMSNzT8r6u3pKRV8I0/pLAG23njENVJk=
+        b=W1VD0fKHJmRrqwCRBF/NO0HJSvu1gXqnbAlJEDPU65k0H4FMWW75hSDi+SPNZbeyY
+         jkePef7Ot2cqAHw2JLd7Wp77l+1u/dnpUDEivTQJ2e7VKKkYtyJ2AXMfUJnK7Jidkv
+         Dh3cFxrOR0to6A7uN15CoMAmKlwQtHr0krRSHyXs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Waiman Long <longman@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 050/361] locking/lockdep: Fix debug_locks off performance problem
-Date:   Sun, 11 Nov 2018 14:16:37 -0800
-Message-Id: <20181111221627.042283758@linuxfoundation.org>
+        stable@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 051/361] netfilter: xt_nat: fix DNAT target for shifted portmap ranges
+Date:   Sun, 11 Nov 2018 14:16:38 -0800
+Message-Id: <20181111221627.200856079@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -68,76 +63,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Waiman Long <longman@redhat.com>
+From: Paolo Abeni <pabeni@redhat.com>
 
-[ Upstream commit 9506a7425b094d2f1d9c877ed5a78f416669269b ]
+[ Upstream commit cb20f2d2c0507d60d94ef896991e95708f051dd1 ]
 
-It was found that when debug_locks was turned off because of a problem
-found by the lockdep code, the system performance could drop quite
-significantly when the lock_stat code was also configured into the
-kernel. For instance, parallel kernel build time on a 4-socket x86-64
-server nearly doubled.
+The commit 2eb0f624b709 ("netfilter: add NAT support for shifted
+portmap ranges") did not set the checkentry/destroy callbacks for
+the newly added DNAT target. As a result, rulesets using only
+such nat targets are not effective, as the relevant conntrack hooks
+are not enabled.
+The above affect also nft_compat rulesets.
+Fix the issue adding the missing initializers.
 
-Further analysis into the cause of the slowdown traced back to the
-frequent call to debug_locks_off() from the __lock_acquired() function
-probably due to some inconsistent lockdep states with debug_locks
-off. The debug_locks_off() function did an unconditional atomic xchg
-to write a 0 value into debug_locks which had already been set to 0.
-This led to severe cacheline contention in the cacheline that held
-debug_locks.  As debug_locks is being referenced in quite a few different
-places in the kernel, this greatly slow down the system performance.
-
-To prevent that trashing of debug_locks cacheline, lock_acquired()
-and lock_contended() now checks the state of debug_locks before
-proceeding. The debug_locks_off() function is also modified to check
-debug_locks before calling __debug_locks_off().
-
-Signed-off-by: Waiman Long <longman@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Link: http://lkml.kernel.org/r/1539913518-15598-1-git-send-email-longman@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: 2eb0f624b709 ("netfilter: add NAT support for shifted portmap ranges")
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/locking/lockdep.c |    4 ++--
- lib/debug_locks.c        |    2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ net/netfilter/xt_nat.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -4122,7 +4122,7 @@ void lock_contended(struct lockdep_map *
- {
- 	unsigned long flags;
- 
--	if (unlikely(!lock_stat))
-+	if (unlikely(!lock_stat || !debug_locks))
- 		return;
- 
- 	if (unlikely(current->lockdep_recursion))
-@@ -4142,7 +4142,7 @@ void lock_acquired(struct lockdep_map *l
- {
- 	unsigned long flags;
- 
--	if (unlikely(!lock_stat))
-+	if (unlikely(!lock_stat || !debug_locks))
- 		return;
- 
- 	if (unlikely(current->lockdep_recursion))
---- a/lib/debug_locks.c
-+++ b/lib/debug_locks.c
-@@ -37,7 +37,7 @@ EXPORT_SYMBOL_GPL(debug_locks_silent);
-  */
- int debug_locks_off(void)
- {
--	if (__debug_locks_off()) {
-+	if (debug_locks && __debug_locks_off()) {
- 		if (!debug_locks_silent) {
- 			console_verbose();
- 			return 1;
+--- a/net/netfilter/xt_nat.c
++++ b/net/netfilter/xt_nat.c
+@@ -216,6 +216,8 @@ static struct xt_target xt_nat_target_re
+ 	{
+ 		.name		= "DNAT",
+ 		.revision	= 2,
++		.checkentry	= xt_nat_checkentry,
++		.destroy	= xt_nat_destroy,
+ 		.target		= xt_dnat_target_v2,
+ 		.targetsize	= sizeof(struct nf_nat_range2),
+ 		.table		= "nat",
 
 
