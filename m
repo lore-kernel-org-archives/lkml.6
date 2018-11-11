@@ -6,53 +6,44 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9E76C43441
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9884C43610
 	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:35:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77B1620818
+	by mail.kernel.org (Postfix) with ESMTP id A598020871
 	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:35:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77B1620818
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A598020871
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731699AbeKLGYx (ORCPT
+        id S1731744AbeKLGYx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 12 Nov 2018 01:24:53 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:49940 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:49908 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730202AbeKLFsN (ORCPT
+        by vger.kernel.org with ESMTP id S1730193AbeKLFsN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 00:48:13 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsZ-0000oJ-8q; Sun, 11 Nov 2018 19:58:43 +0000
+        id 1gLvsZ-0000l7-8v; Sun, 11 Nov 2018 19:58:43 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsW-0001j8-Fv; Sun, 11 Nov 2018 19:58:40 +0000
+        id 1gLvsW-0001iF-2p; Sun, 11 Nov 2018 19:58:40 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Kees Cook" <keescook@chromium.org>,
-        "Andrea Arcangeli" <aarcange@redhat.com>,
-        "Konstantin Khlebnikov" <koct9i@gmail.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Alexander Viro" <viro@zeniv.linux.org.uk>,
-        "Chen Gang" <gang.chen.5i5j@gmail.com>,
-        "Hector Marco-Gisbert" <hecmargi@upv.es>,
-        "Michal Hocko" <mhocko@suse.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        "Ismael Ripoll Ripoll" <iripoll@upv.es>,
-        "Andrey Ryabinin" <aryabinin@virtuozzo.com>,
-        "Oleg Nesterov" <oleg@redhat.com>
+CC:     akpm@linux-foundation.org, "Ulf Hansson" <ulf.hansson@linaro.org>,
+        "Stefan Agner" <stefan@agner.ch>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.945485397@decadent.org.uk>
+Message-ID: <lsq.1541965745.197064231@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 252/366] mm: refuse wrapped vm_brk requests
+Subject: [PATCH 3.16 241/366] mmc: sdhci-esdhc-imx: allow 1.8V modes
+ without 100/200MHz pinctrl states
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -66,56 +57,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kees Cook <keescook@chromium.org>
+From: Stefan Agner <stefan@agner.ch>
 
-commit ba093a6d9397da8eafcfbaa7d95bd34255da39a0 upstream.
+commit 92748beac07c471d995fbec642b63572dc01b3dc upstream.
 
-The vm_brk() alignment calculations should refuse to overflow.  The ELF
-loader depending on this, but it has been fixed now.  No other unsafe
-callers have been found.
+If pinctrl nodes for 100/200MHz are missing, the controller should
+not select any mode which need signal frequencies 100MHz or higher.
+To prevent such speed modes the driver currently uses the quirk flag
+SDHCI_QUIRK2_NO_1_8_V. This works nicely for SD cards since 1.8V
+signaling is required for all faster modes and slower modes use 3.3V
+signaling only.
 
-Link: http://lkml.kernel.org/r/1468014494-25291-3-git-send-email-keescook@chromium.org
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Reported-by: Hector Marco-Gisbert <hecmargi@upv.es>
-Cc: Ismael Ripoll Ripoll <iripoll@upv.es>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Chen Gang <gang.chen.5i5j@gmail.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Konstantin Khlebnikov <koct9i@gmail.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-[bwh: Backported to 3.16: adjust context]
+However, there are eMMC modes which use 1.8V signaling and run below
+100MHz, e.g. DDR52 at 1.8V. With using SDHCI_QUIRK2_NO_1_8_V this
+mode is prevented. When using a fixed 1.8V regulator as vqmmc-supply
+the stack has no valid mode to use. In this tenuous situation the
+kernel continuously prints voltage switching errors:
+  mmc1: Switching to 3.3V signalling voltage failed
+
+Avoid using SDHCI_QUIRK2_NO_1_8_V and prevent faster modes by
+altering the SDHCI capability register. With that the stack is able
+to select 1.8V modes even if no faster pinctrl states are available:
+  # cat /sys/kernel/debug/mmc1/ios
+  ...
+  timing spec:    8 (mmc DDR52)
+  signal voltage: 1 (1.80 V)
+  ...
+
+Link: http://lkml.kernel.org/r/20180628081331.13051-1-stefan@agner.ch
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Fixes: ad93220de7da ("mmc: sdhci-esdhc-imx: change pinctrl state according
+to uhs mode")
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+[bwh: Backported to 3.16:
+ - There is no SDHCI_SUPPORT_HS400 flag to clear
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- mm/mmap.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -2751,16 +2751,18 @@ static inline void verify_mm_writelocked
-  *  anonymous maps.  eventually we may be able to do some
-  *  brk-specific accounting here.
-  */
--static unsigned long do_brk(unsigned long addr, unsigned long len)
-+static unsigned long do_brk(unsigned long addr, unsigned long request)
- {
- 	struct mm_struct * mm = current->mm;
- 	struct vm_area_struct * vma, * prev;
--	unsigned long flags;
-+	unsigned long flags, len;
- 	struct rb_node ** rb_link, * rb_parent;
- 	pgoff_t pgoff = addr >> PAGE_SHIFT;
- 	int error;
+--- a/drivers/mmc/host/sdhci-esdhc-imx.c
++++ b/drivers/mmc/host/sdhci-esdhc-imx.c
+@@ -261,6 +261,15 @@ static u32 esdhc_readl_le(struct sdhci_h
+ 				val = SDHCI_SUPPORT_DDR50 | SDHCI_SUPPORT_SDR104
+ 					| SDHCI_SUPPORT_SDR50
+ 					| SDHCI_USE_SDR50_TUNING;
++
++			/*
++			 * Do not advertise faster UHS modes if there are no
++			 * pinctrl states for 100MHz/200MHz.
++			 */
++			if (IS_ERR_OR_NULL(imx_data->pins_100mhz) ||
++			    IS_ERR_OR_NULL(imx_data->pins_200mhz))
++				val &= ~(SDHCI_SUPPORT_SDR50 | SDHCI_SUPPORT_DDR50
++					 | SDHCI_SUPPORT_SDR104);
+ 		}
+ 	}
  
--	len = PAGE_ALIGN(len);
-+	len = PAGE_ALIGN(request);
-+	if (len < request)
-+		return -ENOMEM;
- 	if (!len)
- 		return addr;
+@@ -1108,15 +1117,6 @@ static int sdhci_esdhc_imx_probe(struct
+ 						ESDHC_PINCTRL_STATE_100MHZ);
+ 		imx_data->pins_200mhz = pinctrl_lookup_state(imx_data->pinctrl,
+ 						ESDHC_PINCTRL_STATE_200MHZ);
+-		if (IS_ERR(imx_data->pins_100mhz) ||
+-				IS_ERR(imx_data->pins_200mhz)) {
+-			dev_warn(mmc_dev(host->mmc),
+-				"could not get ultra high speed state, work on normal mode\n");
+-			/* fall back to not support uhs by specify no 1.8v quirk */
+-			host->quirks2 |= SDHCI_QUIRK2_NO_1_8_V;
+-		}
+-	} else {
+-		host->quirks2 |= SDHCI_QUIRK2_NO_1_8_V;
+ 	}
  
+ 	err = sdhci_add_host(host);
 
