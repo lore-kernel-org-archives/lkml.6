@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C711AC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8F83C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C323223AE
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E8B9223C8
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vKQ0NOq4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C323223AE
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PmpwVl1z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E8B9223C8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732126AbeKLIRv (ORCPT
+        id S1732158AbeKLIRx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:17:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34236 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:17:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732056AbeKLIRu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:17:50 -0500
+        id S1732069AbeKLIRv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:17:51 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8EA6C215EA;
-        Sun, 11 Nov 2018 22:27:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4485D22353;
+        Sun, 11 Nov 2018 22:27:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975274;
-        bh=2dDIH2CKpijO4x5/ZhBNKUvGgWRJTqRerRuZqiQCXck=;
+        s=default; t=1541975275;
+        bh=m15dQen3davKIidG4RJ/ddGJClbMAQu+iOcmzuG/I7E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vKQ0NOq4Np6medBykwhxXvMecHgPJr/QbW2YtjGQ+Qdg0H9gZyD6M8H4n+45/xVts
-         Hs0fBldZMLmmcAoLOii2PhwEbsDuQ9/2yO8rz4yaewe95jPXV+C+1/yY71lJ9ipd5P
-         4ON6INSQCav1EOQ9HHFI6PWwPB3CUR7/Rc+eejXM=
+        b=PmpwVl1z7nB04AzS+uBJp9Q5MasvBD92MKUcqsi6FvPtyj/sid7S0s6TcilUJWmwK
+         2zM5fCeOwpgoXipopiCd8FB41TmwdvraP2/9E94+UEceWPeogbop99MTb66JoU9eb5
+         8Q5TXjK9e/FJUUeJqVSwZFBpTGtkCiG14LDxsQjA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
-        James Smart <james.smart@broadcom.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Yunlei He <heyunlei@huawei.com>,
+        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 182/361] scsi: lpfc: Correct race with abort on completion path
-Date:   Sun, 11 Nov 2018 14:18:49 -0800
-Message-Id: <20181111221645.812862248@linuxfoundation.org>
+Subject: [PATCH 4.19 184/361] f2fs: report error if quota off error during umount
+Date:   Sun, 11 Nov 2018 14:18:51 -0800
+Message-Id: <20181111221646.140564851@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -64,55 +63,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: James Smart <jsmart2021@gmail.com>
+From: Yunlei He <heyunlei@huawei.com>
 
-[ Upstream commit ca7fb76e091f889cfda1287c07a9358f73832b39 ]
+[ Upstream commit cda9cc595f0bb6ffa51a4efc4b6533dfa4039b4c ]
 
-On io completion, the driver is taking an adapter wide lock and nulling the
-scsi command back pointer.  The nulling of the back pointer is to signify the
-io was completed and the scsi_done() routine was called.  However, the routine
-makes no check to see if the abort routine had done the same thing and
-possibly nulled the pointer. Thus it may doubly-complete the io.
+Now, we depend on fsck to ensure quota file data is ok,
+so we scan whole partition if checkpoint without umount
+flag. It's same for quota off error case, which may make
+quota file data inconsistent.
 
-Make the following mods:
+generic/019 reports below error:
 
-- Check to make sure forward progress (call scsi_done()) only happens if the
-  command pointer was non-null.
+ __quota_error: 1160 callbacks suppressed
+ Quota error (device zram1): write_blk: dquota write failed
+ Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+ Quota error (device zram1): write_blk: dquota write failed
+ Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+ Quota error (device zram1): write_blk: dquota write failed
+ Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+ Quota error (device zram1): write_blk: dquota write failed
+ Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+ Quota error (device zram1): write_blk: dquota write failed
+ Quota error (device zram1): qtree_write_dquot: Error -28 occurred while creating quota
+ VFS: Busy inodes after unmount of zram1. Self-destruct in 5 seconds.  Have a nice day...
 
-- As the taking of the lock, which is adapter wide, is very costly on a system
-  under load, null the pointer using an xchg operation rather than under lock.
+If we failed in below path due to fail to write dquot block, we will miss
+to release quota inode, fix it.
 
-Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
-Signed-off-by: James Smart <james.smart@broadcom.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+- f2fs_put_super
+ - f2fs_quota_off_umount
+  - f2fs_quota_off
+   - f2fs_quota_sync   <-- failed
+   - dquot_quota_off   <-- missed to call
+
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/lpfc/lpfc_scsi.c |   14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ fs/f2fs/super.c |   19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
---- a/drivers/scsi/lpfc/lpfc_scsi.c
-+++ b/drivers/scsi/lpfc/lpfc_scsi.c
-@@ -4158,9 +4158,17 @@ lpfc_scsi_cmd_iocb_cmpl(struct lpfc_hba
- 	}
- 	lpfc_scsi_unprep_dma_buf(phba, lpfc_cmd);
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1852,7 +1852,9 @@ static int f2fs_quota_off(struct super_b
+ 	if (!inode || !igrab(inode))
+ 		return dquot_quota_off(sb, type);
  
--	spin_lock_irqsave(&phba->hbalock, flags);
--	lpfc_cmd->pCmd = NULL;
--	spin_unlock_irqrestore(&phba->hbalock, flags);
-+	/* If pCmd was set to NULL from abort path, do not call scsi_done */
-+	if (xchg(&lpfc_cmd->pCmd, NULL) == NULL) {
-+		lpfc_printf_vlog(vport, KERN_INFO, LOG_FCP,
-+				 "0711 FCP cmd already NULL, sid: 0x%06x, "
-+				 "did: 0x%06x, oxid: 0x%04x\n",
-+				 vport->fc_myDID,
-+				 (pnode) ? pnode->nlp_DID : 0,
-+				 phba->sli_rev == LPFC_SLI_REV4 ?
-+				 lpfc_cmd->cur_iocbq.sli4_xritag : 0xffff);
-+		return;
+-	f2fs_quota_sync(sb, type);
++	err = f2fs_quota_sync(sb, type);
++	if (err)
++		goto out_put;
+ 
+ 	err = dquot_quota_off(sb, type);
+ 	if (err || f2fs_sb_has_quota_ino(sb))
+@@ -1871,9 +1873,20 @@ out_put:
+ void f2fs_quota_off_umount(struct super_block *sb)
+ {
+ 	int type;
++	int err;
+ 
+-	for (type = 0; type < MAXQUOTAS; type++)
+-		f2fs_quota_off(sb, type);
++	for (type = 0; type < MAXQUOTAS; type++) {
++		err = f2fs_quota_off(sb, type);
++		if (err) {
++			int ret = dquot_quota_off(sb, type);
++
++			f2fs_msg(sb, KERN_ERR,
++				"Fail to turn off disk quota "
++				"(type: %d, err: %d, ret:%d), Please "
++				"run fsck to fix it.", type, err, ret);
++			set_sbi_flag(F2FS_SB(sb), SBI_NEED_FSCK);
++		}
 +	}
+ }
  
- 	/* The sdev is not guaranteed to be valid post scsi_done upcall. */
- 	cmd->scsi_done(cmd);
+ static int f2fs_get_projid(struct inode *inode, kprojid_t *projid)
 
 
