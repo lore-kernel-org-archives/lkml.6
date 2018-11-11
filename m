@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FC6DC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:07:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9430BC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:07:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCF1B214DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:07:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54DDE214DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:07:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bocisN7V"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCF1B214DB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="idmuTZrt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54DDE214DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732123AbeKLJ5s (ORCPT
+        id S1732038AbeKLJ6D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:57:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33864 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:58:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60706 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731707AbeKLIRg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1731666AbeKLIRg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:17:36 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 32ABA214DB;
-        Sun, 11 Nov 2018 22:27:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D3C70215EA;
+        Sun, 11 Nov 2018 22:27:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975261;
-        bh=BR2J8tkPwgagi2NbXSylo1P3SV6JupNZLebgAtefgVI=;
+        s=default; t=1541975260;
+        bh=gZNaQE8QlTlaKYsxBjciVnN27KUwT9f1I1B9yK2pEjk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bocisN7V709ppoauZtaaKM7okNr9qOmtMnvi8an67sSD3D3nyc5IhdFFPhmBBueYi
-         mNBcMYtqW+BLn9Riomk7NPw0tuDBmis/aC/WCCSMS9/T2z/Ml16PRjCdCRSduEkOx9
-         nWvY2eGEJOa2CcAqVVn2PAcCc5IFtVjanHZcPHc0=
+        b=idmuTZrtFsEnTW8VZL7o00/2ZcDCKwiSCE5wTAdHVC7kdGrCjX4yrR089xekZ3gYV
+         5VgomgVUhvCd5KoI27rfj/Q0c+8InQk+3wRzbZe16laKg3qKD2Sc0NFfRL+2Er761b
+         kzh0mRksWM8hJxYzqVX9zcNUKcFd7CMEhA6bCJgM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stan Johnson <userm57@yahoo.com>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Fuyun Liang <liangfuyun1@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 137/361] scsi: esp_scsi: Track residual for PIO transfers
-Date:   Sun, 11 Nov 2018 14:18:04 -0800
-Message-Id: <20181111221639.662534268@linuxfoundation.org>
+Subject: [PATCH 4.19 100/361] net: hns3: Check hdev state when getting link status
+Date:   Sun, 11 Nov 2018 14:17:27 -0800
+Message-Id: <20181111221633.748887699@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -65,68 +65,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Finn Thain <fthain@telegraphics.com.au>
+From: Peng Li <lipeng321@huawei.com>
 
-[ Upstream commit fd47d919d0c336e7c22862b51ee94927ffea227a ]
+[ Upstream commit 582d37bbb613b8ad86bf82845d3a74a02a5a0fa1 ]
 
-If a target disconnects during a PIO data transfer the command may fail
-when the target reconnects:
+By default, HW link status is up. If hclge_update_link_status is called
+before net up, driver will print "link up". It is not suitable. hdev
+state check is needed when getting link status.
 
-scsi host1: DMA length is zero!
-scsi host1: cur adr[04380000] len[00000000]
-
-The scsi bus is then reset. This happens because the residual reached
-zero before the transfer was completed.
-
-The usual residual calculation relies on the Transfer Count registers.
-That works for DMA transfers but not for PIO transfers. Fix the problem
-by storing the PIO transfer residual and using that to correctly
-calculate bytes_sent.
-
-Fixes: 6fe07aaffbf0 ("[SCSI] m68k: new mac_esp scsi driver")
-Tested-by: Stan Johnson <userm57@yahoo.com>
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Tested-by: Michael Schmitz <schmitzmic@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 46a3df9f9718 ("net: hns3: Add HNS3 Acceleration Engine & Compatibility Layer Support")
+Fixes: e2cb1dec9779 ("net: hns3: Add HNS3 VF HCL(Hardware Compatibility Layer) Support")
+Signed-off-by: Fuyun Liang <liangfuyun1@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/esp_scsi.c |    1 +
- drivers/scsi/esp_scsi.h |    2 ++
- drivers/scsi/mac_esp.c  |    2 ++
- 3 files changed, 5 insertions(+)
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c   |    3 +++
+ drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c |    3 +++
+ 2 files changed, 6 insertions(+)
 
---- a/drivers/scsi/esp_scsi.c
-+++ b/drivers/scsi/esp_scsi.c
-@@ -1338,6 +1338,7 @@ static int esp_data_bytes_sent(struct es
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -2362,6 +2362,9 @@ static int hclge_get_mac_phy_link(struct
+ 	int mac_state;
+ 	int link_stat;
  
- 	bytes_sent = esp->data_dma_len;
- 	bytes_sent -= ecount;
-+	bytes_sent -= esp->send_cmd_residual;
- 
- 	/*
- 	 * The am53c974 has a DMA 'pecularity'. The doc states:
---- a/drivers/scsi/esp_scsi.h
-+++ b/drivers/scsi/esp_scsi.h
-@@ -540,6 +540,8 @@ struct esp {
- 
- 	void			*dma;
- 	int			dmarev;
++	if (test_bit(HCLGE_STATE_DOWN, &hdev->state))
++		return 0;
 +
-+	u32			send_cmd_residual;
- };
+ 	mac_state = hclge_get_mac_link_status(hdev);
  
- /* A front-end driver for the ESP chip should do the following in
---- a/drivers/scsi/mac_esp.c
-+++ b/drivers/scsi/mac_esp.c
-@@ -427,6 +427,8 @@ static void mac_esp_send_pio_cmd(struct
- 			scsi_esp_cmd(esp, ESP_CMD_TI);
- 		}
- 	}
+ 	if (hdev->hw.mac.phydev) {
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
+@@ -299,6 +299,9 @@ void hclgevf_update_link_status(struct h
+ 
+ 	client = handle->client;
+ 
++	link_state =
++		test_bit(HCLGEVF_STATE_DOWN, &hdev->state) ? 0 : link_state;
 +
-+	esp->send_cmd_residual = esp_count;
- }
- 
- static int mac_esp_irq_pending(struct esp *esp)
+ 	if (link_state != hdev->hw.mac.link) {
+ 		client->ops->link_status_change(handle, !!link_state);
+ 		hdev->hw.mac.link = link_state;
 
 
