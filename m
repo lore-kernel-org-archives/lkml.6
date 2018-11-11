@@ -2,50 +2,50 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D368DC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45237C0044C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F307224E0
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C17E2243E
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:32:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ihKv9+MO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F307224E0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YdpuFX7R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C17E2243E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390336AbeKLIWK (ORCPT
+        id S2390364AbeKLIWL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:22:10 -0500
+        Mon, 12 Nov 2018 03:22:11 -0500
 Received: from mail.kernel.org ([198.145.29.99]:51248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390245AbeKLIWH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:07 -0500
+        id S2390325AbeKLIWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:10 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 94702223C8;
-        Sun, 11 Nov 2018 22:32:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 52AFF223C8;
+        Sun, 11 Nov 2018 22:32:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975530;
-        bh=AG6h5zSFbcjVBfaMNTh3VKVAqzfnWFKll207RYq0Npo=;
+        s=default; t=1541975533;
+        bh=Uz/5FMAHxGQkJPcDKRcfb0fEPFWIO23T/WpPUWiDCZo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ihKv9+MOhspnBXvfXhiQk3DrixIKIFjkNPZ4s65jefKDTAdqyEgXhi9fam2i4CunB
-         pBaPon6/RhHAStCgUf9uQ19vnzryjtWTdsEacyCc+sxdffD6CdXceElAO6e6wVuVrg
-         gRZE8awDhWUhidxXdmVj/gO20HqejU+3WZ2X3X20=
+        b=YdpuFX7R6+4PIThStBO682i115Cddsl31VFtzHDr7Xlu+mvCwg+WZwXN2k2lAHb5t
+         hKGAmc1gIjeA7UfHMWq+POp4vAJD/8x4O6Cdn9aWYQ0W1Hd/9H9+GL44Z67ql8Tjeh
+         YxWiSbi1RYd6d1kVGTTZQV/4lUCjUCqhQCZP5Ixk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
+        stable@vger.kernel.org, Thierry Reding <treding@nvidia.com>,
+        Guenter Roeck <linux@roeck-us.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 038/222] i2c: rcar: cleanup DMA for all kinds of failure
-Date:   Sun, 11 Nov 2018 14:22:15 -0800
-Message-Id: <20181111221651.602721513@linuxfoundation.org>
+Subject: [PATCH 4.14 045/222] hwmon: (pwm-fan) Set fan speed to 0 on suspend
+Date:   Sun, 11 Nov 2018 14:22:22 -0800
+Message-Id: <20181111221652.188592617@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -63,37 +63,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Thierry Reding <treding@nvidia.com>
 
-[ Upstream commit 31d86033a0749a0463ea654130b2de5c163154f1 ]
+[ Upstream commit 95dcd64bc5a27080beaa344edfe5bdcca3d2e7dc ]
 
-DMA needs to be cleaned up not only on timeout, but on all errors where
-it has been setup before.
+Technically this is not required because disabling the PWM should be
+enough. However, when support for atomic operations was implemented in
+the PWM subsystem, only actual changes to the PWM channel are applied
+during pwm_config(), which means that during after resume from suspend
+the old settings won't be applied.
 
-Fixes: 73e8b0528346 ("i2c: rcar: add DMA support")
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+One possible solution is for the PWM driver to implement its own PM
+operations such that settings from before suspend get applied on resume.
+This has the disadvantage of completely ignoring any particular ordering
+requirements that PWM user drivers might have, so it is best to leave it
+up to the user drivers to apply the settings that they want at the
+appropriate time.
+
+Another way to solve this would be to read back the current state of the
+PWM at the time of resume. That way, in case the configuration was lost
+during suspend, applying the old settings in PWM user drivers would
+actually get them applied because they differ from the current settings.
+However, not all PWM drivers support reading the hardware state, and not
+all hardware may support it.
+
+The best workaround at this point seems to be to let PWM user drivers
+tell the PWM subsystem that the PWM is turned off by, in addition to
+disabling it, also setting the duty cycle to 0. This causes the resume
+operation to apply a configuration that is different from the current
+configuration, resulting in the proper state from before suspend getting
+restored.
+
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/i2c/busses/i2c-rcar.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/hwmon/pwm-fan.c |   12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
---- a/drivers/i2c/busses/i2c-rcar.c
-+++ b/drivers/i2c/busses/i2c-rcar.c
-@@ -761,8 +761,12 @@ static int rcar_i2c_master_xfer(struct i
+--- a/drivers/hwmon/pwm-fan.c
++++ b/drivers/hwmon/pwm-fan.c
+@@ -290,9 +290,19 @@ static int pwm_fan_remove(struct platfor
+ static int pwm_fan_suspend(struct device *dev)
+ {
+ 	struct pwm_fan_ctx *ctx = dev_get_drvdata(dev);
++	struct pwm_args args;
++	int ret;
++
++	pwm_get_args(ctx->pwm, &args);
++
++	if (ctx->pwm_value) {
++		ret = pwm_config(ctx->pwm, 0, args.period);
++		if (ret < 0)
++			return ret;
  
- 	time_left = wait_event_timeout(priv->wait, priv->flags & ID_DONE,
- 				     num * adap->timeout);
--	if (!time_left) {
+-	if (ctx->pwm_value)
+ 		pwm_disable(ctx->pwm);
++	}
 +
-+	/* cleanup DMA if it couldn't complete properly due to an error */
-+	if (priv->dma_direction != DMA_NONE)
- 		rcar_i2c_cleanup_dma(priv);
-+
-+	if (!time_left) {
- 		rcar_i2c_init(priv);
- 		ret = -ETIMEDOUT;
- 	} else if (priv->flags & ID_NACK) {
+ 	return 0;
+ }
+ 
 
 
