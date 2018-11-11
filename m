@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D6C7C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:30:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4941CC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:30:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1431B2084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:30:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11E9C2084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:30:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uy3lMPAb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1431B2084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kh+byiEj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11E9C2084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388902AbeKLJVA (ORCPT
+        id S2388637AbeKLIUW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:21:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44954 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:20:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733139AbeKLIUX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:20:23 -0500
+        id S1733139AbeKLIUV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:21 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9368B2154B;
-        Sun, 11 Nov 2018 22:30:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C5065223C8;
+        Sun, 11 Nov 2018 22:30:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975426;
-        bh=7WddRw4tdgTfyetEHBLbNcpw732eooY1zrFy0dRERS0=;
+        s=default; t=1541975424;
+        bh=++gigy9V3rnlCuelDxXmh/thF6VaFJzkp5wWGqcDeyA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uy3lMPAbsrqezuU3RUxB5I2cf/kpNpSiTTuwiJLZXO0q85ta+tjDAW9t6ABMKBntc
-         4gPsDgpuA2+oCNs5RWnZgbLa3ll495pPVCtyoN7NLpYhmV/URE3LHJ7Bbq7IzbjxUC
-         xf+Qrg23tZdEh9Hrku7EQReWpg4XkRdmC1A6Xeqk=
+        b=kh+byiEjUQEo+N8fQB/9xYAfaknqL5y9CA5vP2aXJlROzOwhF8lGZn+SjiH8JTvBp
+         msPlleWD5rDHj7pI/aKckaNoqPo8oniY9e9Qb8wT0QeJD5u9IXPmxqv+o5Iw6JXm6Z
+         g3dkh7ByLFLZKDkR09ewo79jCHMDHFxRQBuNEAF8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sara Sharon <sara.sharon@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 127/350] iwlwifi: mvm: fix BAR seq ctrl reporting
-Date:   Sun, 11 Nov 2018 14:19:51 -0800
-Message-Id: <20181111221712.929007618@linuxfoundation.org>
+        stable@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Stable@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.18 155/350] Drivers: hv: vmbus: Use cpumask_var_t for on-stack cpu mask
+Date:   Sun, 11 Nov 2018 14:20:19 -0800
+Message-Id: <20181111221714.549006134@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -63,53 +65,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sara Sharon <sara.sharon@intel.com>
+From: Dexuan Cui <decui@microsoft.com>
 
-[ Upstream commit 941ab4eb66c10bc5c7234e83a7a858b2806ed151 ]
+[ Upstream commit 25355252607ca288f329ee033f387764883393f6 ]
 
-There is a bug in FW where the sequence control may be
-incorrect, and the driver overrides it with the value
-of the ieee80211 header.
+A cpumask structure on the stack can cause a warning with
+CONFIG_NR_CPUS=8192 (e.g. Ubuntu 16.04 and 18.04 use this):
 
-However, in BAR there is no sequence control in the header,
-which result with arbitrary sequence.
+drivers/hv//channel_mgmt.c: In function ‘init_vp_index’:
+drivers/hv//channel_mgmt.c:702:1: warning: the frame size of 1032 bytes
+  is larger than 1024 bytes [-Wframe-larger-than=]
 
-This access to an unknown location is bad and it makes the
-logs very confusing - so fix it.
+Nowadays it looks most distros enable CONFIG_CPUMASK_OFFSTACK=y, and
+hence we can work around the warning by using cpumask_var_t.
 
-Signed-off-by: Sara Sharon <sara.sharon@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Cc: K. Y. Srinivasan <kys@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/tx.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/hv/channel_mgmt.c |   14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
---- a/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
-@@ -1385,6 +1385,7 @@ static void iwl_mvm_rx_tx_cmd_single(str
- 	while (!skb_queue_empty(&skbs)) {
- 		struct sk_buff *skb = __skb_dequeue(&skbs);
- 		struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);
-+		struct ieee80211_hdr *hdr = (void *)skb->data;
- 		bool flushed = false;
+--- a/drivers/hv/channel_mgmt.c
++++ b/drivers/hv/channel_mgmt.c
+@@ -606,16 +606,18 @@ static void init_vp_index(struct vmbus_c
+ 	bool perf_chn = vmbus_devs[dev_type].perf_device;
+ 	struct vmbus_channel *primary = channel->primary_channel;
+ 	int next_node;
+-	struct cpumask available_mask;
++	cpumask_var_t available_mask;
+ 	struct cpumask *alloced_mask;
  
- 		skb_freed++;
-@@ -1429,11 +1430,11 @@ static void iwl_mvm_rx_tx_cmd_single(str
- 			info->flags |= IEEE80211_TX_STAT_AMPDU_NO_BACK;
- 		info->flags &= ~IEEE80211_TX_CTL_AMPDU;
+ 	if ((vmbus_proto_version == VERSION_WS2008) ||
+-	    (vmbus_proto_version == VERSION_WIN7) || (!perf_chn)) {
++	    (vmbus_proto_version == VERSION_WIN7) || (!perf_chn) ||
++	    !alloc_cpumask_var(&available_mask, GFP_KERNEL)) {
+ 		/*
+ 		 * Prior to win8, all channel interrupts are
+ 		 * delivered on cpu 0.
+ 		 * Also if the channel is not a performance critical
+ 		 * channel, bind it to cpu 0.
++		 * In case alloc_cpumask_var() fails, bind it to cpu 0.
+ 		 */
+ 		channel->numa_node = 0;
+ 		channel->target_cpu = 0;
+@@ -653,7 +655,7 @@ static void init_vp_index(struct vmbus_c
+ 		cpumask_clear(alloced_mask);
+ 	}
  
--		/* W/A FW bug: seq_ctl is wrong when the status isn't success */
--		if (status != TX_STATUS_SUCCESS) {
--			struct ieee80211_hdr *hdr = (void *)skb->data;
-+		/* W/A FW bug: seq_ctl is wrong upon failure / BAR frame */
-+		if (ieee80211_is_back_req(hdr->frame_control))
-+			seq_ctl = 0;
-+		else if (status != TX_STATUS_SUCCESS)
- 			seq_ctl = le16_to_cpu(hdr->seq_ctrl);
--		}
+-	cpumask_xor(&available_mask, alloced_mask,
++	cpumask_xor(available_mask, alloced_mask,
+ 		    cpumask_of_node(primary->numa_node));
  
- 		if (unlikely(!seq_ctl)) {
- 			struct ieee80211_hdr *hdr = (void *)skb->data;
+ 	cur_cpu = -1;
+@@ -671,10 +673,10 @@ static void init_vp_index(struct vmbus_c
+ 	}
+ 
+ 	while (true) {
+-		cur_cpu = cpumask_next(cur_cpu, &available_mask);
++		cur_cpu = cpumask_next(cur_cpu, available_mask);
+ 		if (cur_cpu >= nr_cpu_ids) {
+ 			cur_cpu = -1;
+-			cpumask_copy(&available_mask,
++			cpumask_copy(available_mask,
+ 				     cpumask_of_node(primary->numa_node));
+ 			continue;
+ 		}
+@@ -704,6 +706,8 @@ static void init_vp_index(struct vmbus_c
+ 
+ 	channel->target_cpu = cur_cpu;
+ 	channel->target_vp = hv_cpu_number_to_vp_number(cur_cpu);
++
++	free_cpumask_var(available_mask);
+ }
+ 
+ static void vmbus_wait_for_unload(void)
 
 
