@@ -6,45 +6,46 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96110C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:16:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78B57C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:17:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61CC92080D
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:16:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61CC92080D
+	by mail.kernel.org (Postfix) with ESMTP id 4498A2080D
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:17:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4498A2080D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731998AbeKLGG0 (ORCPT
+        id S1732003AbeKLGGc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:06:26 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53250 "EHLO
+        Mon, 12 Nov 2018 01:06:32 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53262 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731987AbeKLGG0 (ORCPT
+        by vger.kernel.org with ESMTP id S1730996AbeKLGGb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 01:06:26 -0500
+        Mon, 12 Nov 2018 01:06:31 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvt9-0000oJ-8T; Sun, 11 Nov 2018 19:59:19 +0000
+        id 1gLvss-0000lG-6L; Sun, 11 Nov 2018 19:59:02 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsP-0001R1-DB; Sun, 11 Nov 2018 19:58:33 +0000
+        id 1gLvsV-0001gN-Jp; Sun, 11 Nov 2018 19:58:39 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Benjamin Block" <bblock@linux.ibm.com>,
-        "Steffen Maier" <maier@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
+CC:     akpm@linux-foundation.org, "Aurelien Aptel" <aaptel@suse.com>,
+        "Paulo Alcantara" <palcantara@suse.de>,
+        "Paulo Alcantara" <paulo@paulo.ac>,
+        "Steve French" <stfrench@microsoft.com>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.859458@decadent.org.uk>
+Message-ID: <lsq.1541965745.302942432@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 062/366] scsi: zfcp: fix misleading REC trigger trace
- where erp_action setup failed
+Subject: [PATCH 3.16 232/366] cifs: Fix infinite loop when using hard
+ mount option
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,114 +59,126 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steffen Maier <maier@linux.ibm.com>
+From: Paulo Alcantara <paulo@paulo.ac>
 
-commit 512857a795cbbda5980efa4cdb3c0b6602330408 upstream.
+commit 7ffbe65578b44fafdef577a360eb0583929f7c6e upstream.
 
-If a SCSI device is deleted during scsi_eh host reset, we cannot get a
-reference to the SCSI device anymore since scsi_device_get returns !=0 by
-design. Assuming the recovery of adapter and port(s) was successful,
-zfcp_erp_strategy_followup_success() attempts to trigger a LUN reset for the
-half-gone SCSI device. Unfortunately, it causes the following confusing
-trace record which states that zfcp will do a LUN recovery as "ERP need" is
-ZFCP_ERP_ACTION_REOPEN_LUN == 1 and equals "ERP want".
+For every request we send, whether it is SMB1 or SMB2+, we attempt to
+reconnect tcon (cifs_reconnect_tcon or smb2_reconnect) before carrying
+out the request.
 
-Old example trace record formatted with zfcpdbf from s390-tools:
+So, while server->tcpStatus != CifsNeedReconnect, we wait for the
+reconnection to succeed on wait_event_interruptible_timeout(). If it
+returns, that means that either the condition was evaluated to true, or
+timeout elapsed, or it was interrupted by a signal.
 
-Tag:           : ersfs_3 ERP, trigger, unit reopen, port reopen succeeded
-LUN            : 0x<FCP_LUN>
-WWPN           : 0x<WWPN>
-D_ID           : 0x<N_Port-ID>
-Adapter status : 0x5400050b
-Port status    : 0x54000001
-LUN status     : 0x40000000     ZFCP_STATUS_COMMON_RUNNING
-                                but not ZFCP_STATUS_COMMON_UNBLOCKED as it
-                                was closed on close part of adapter reopen
-ERP want       : 0x01
-ERP need       : 0x01           misleading
+Since we're not handling the case where the process woke up due to a
+received signal (-ERESTARTSYS), the next call to
+wait_event_interruptible_timeout() will _always_ fail and we end up
+looping forever inside either cifs_reconnect_tcon() or smb2_reconnect().
 
-However, zfcp_erp_setup_act() returns NULL as it cannot get the reference.
-Hence, zfcp_erp_action_enqueue() takes an early goto out and _NO_ recovery
-actually happens.
+Here's an example of how to trigger that:
 
-We always do want the recovery trigger trace record even if no erp_action
-could be enqueued as in this case. For other cases where we did not enqueue
-an erp_action, 'need' has always been zero to indicate this. In order to
-indicate above goto out, introduce an eyecatcher "flag" to mark the "ERP
-need" as 'not needed' but still keep the information which erp_action type,
-that zfcp_erp_required_act() had decided upon, is needed.  0xc_ is chosen to
-be visibly different from 0x0_ in "ERP want".
+$ mount.cifs //foo/share /mnt/test -o
+username=foo,password=foo,vers=1.0,hard
 
-New example trace record formatted with zfcpdbf from s390-tools:
+(break connection to server before executing bellow cmd)
+$ stat -f /mnt/test & sleep 140
+[1] 2511
 
-Tag:           : ersfs_3 ERP, trigger, unit reopen, port reopen succeeded
-LUN            : 0x<FCP_LUN>
-WWPN           : 0x<WWPN>
-D_ID           : 0x<N_Port-ID>
-Adapter status : 0x5400050b
-Port status    : 0x54000001
-LUN status     : 0x40000000
-ERP want       : 0x01
-ERP need       : 0xc1           would need LUN ERP, but no action set up
-                   ^
+$ ps -aux -q 2511
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root      2511  0.0  0.0  12892  1008 pts/0    S    12:24   0:00 stat -f
+/mnt/test
 
-Before v2.6.38 commit ae0904f60fab ("[SCSI] zfcp: Redesign of the debug
-tracing for recovery actions.") we could detect this case because the
-"erp_action" field in the trace was NULL. The rework removed erp_action as
-argument and field from the trace.
+$ kill -9 2511
 
-This patch here is for tracing. A fix to allow LUN recovery in the case at
-hand is a topic for a separate patch.
+(wait for a while; process is stuck in the kernel)
+$ ps -aux -q 2511
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root      2511 83.2  0.0  12892  1008 pts/0    R    12:24  30:01 stat -f
+/mnt/test
 
-See also commit fdbd1c5e27da ("[SCSI] zfcp: Allow running unit/LUN shutdown
-without acquiring reference") for a similar case and background info.
+By using 'hard' mount point means that cifs.ko will keep retrying
+indefinitely, however we must allow the process to be killed otherwise
+it would hang the system.
 
-Signed-off-by: Steffen Maier <maier@linux.ibm.com>
-Fixes: ae0904f60fab ("[SCSI] zfcp: Redesign of the debug tracing for recovery actions.")
-Reviewed-by: Benjamin Block <bblock@linux.ibm.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Paulo Alcantara <palcantara@suse.de>
+Reviewed-by: Aurelien Aptel <aaptel@suse.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/s390/scsi/zfcp_erp.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+ fs/cifs/cifssmb.c | 10 ++++++++--
+ fs/cifs/smb2pdu.c | 18 ++++++++++++------
+ 2 files changed, 20 insertions(+), 8 deletions(-)
 
---- a/drivers/s390/scsi/zfcp_erp.c
-+++ b/drivers/s390/scsi/zfcp_erp.c
-@@ -34,11 +34,23 @@ enum zfcp_erp_steps {
- 	ZFCP_ERP_STEP_LUN_OPENING	= 0x2000,
- };
+--- a/fs/cifs/cifssmb.c
++++ b/fs/cifs/cifssmb.c
+@@ -150,8 +150,14 @@ cifs_reconnect_tcon(struct cifs_tcon *tc
+ 	 * greater than cifs socket timeout which is 7 seconds
+ 	 */
+ 	while (server->tcpStatus == CifsNeedReconnect) {
+-		wait_event_interruptible_timeout(server->response_q,
+-			(server->tcpStatus != CifsNeedReconnect), 10 * HZ);
++		rc = wait_event_interruptible_timeout(server->response_q,
++						      (server->tcpStatus != CifsNeedReconnect),
++						      10 * HZ);
++		if (rc < 0) {
++			cifs_dbg(FYI, "%s: aborting reconnect due to a received"
++				 " signal by the process\n", __func__);
++			return -ERESTARTSYS;
++		}
  
-+/**
-+ * enum zfcp_erp_act_type - Type of ERP action object.
-+ * @ZFCP_ERP_ACTION_REOPEN_LUN: LUN recovery.
-+ * @ZFCP_ERP_ACTION_REOPEN_PORT: Port recovery.
-+ * @ZFCP_ERP_ACTION_REOPEN_PORT_FORCED: Forced port recovery.
-+ * @ZFCP_ERP_ACTION_REOPEN_ADAPTER: Adapter recovery.
-+ * @ZFCP_ERP_ACTION_NONE: Eyecatcher pseudo flag to bitwise or-combine with
-+ *			  either of the other enum values.
-+ *			  Used to indicate that an ERP action could not be
-+ *			  set up despite a detected need for some recovery.
-+ */
- enum zfcp_erp_act_type {
- 	ZFCP_ERP_ACTION_REOPEN_LUN         = 1,
- 	ZFCP_ERP_ACTION_REOPEN_PORT	   = 2,
- 	ZFCP_ERP_ACTION_REOPEN_PORT_FORCED = 3,
- 	ZFCP_ERP_ACTION_REOPEN_ADAPTER     = 4,
-+	ZFCP_ERP_ACTION_NONE		   = 0xc0,
- };
+ 		/* are we still trying to reconnect? */
+ 		if (server->tcpStatus != CifsNeedReconnect)
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -158,7 +158,7 @@ out:
+ static int
+ smb2_reconnect(__le16 smb2_command, struct cifs_tcon *tcon)
+ {
+-	int rc = 0;
++	int rc;
+ 	struct nls_table *nls_codepage;
+ 	struct cifs_ses *ses;
+ 	struct TCP_Server_Info *server;
+@@ -169,10 +169,10 @@ smb2_reconnect(__le16 smb2_command, stru
+ 	 * for those three - in the calling routine.
+ 	 */
+ 	if (tcon == NULL)
+-		return rc;
++		return 0;
  
- enum zfcp_erp_act_state {
-@@ -256,8 +268,10 @@ static int zfcp_erp_action_enqueue(int w
- 		goto out;
+ 	if (smb2_command == SMB2_TREE_CONNECT)
+-		return rc;
++		return 0;
  
- 	act = zfcp_erp_setup_act(need, act_status, adapter, port, sdev);
--	if (!act)
-+	if (!act) {
-+		need |= ZFCP_ERP_ACTION_NONE; /* marker for trace */
- 		goto out;
-+	}
- 	atomic_set_mask(ZFCP_STATUS_ADAPTER_ERP_PENDING, &adapter->status);
- 	++adapter->erp_total_count;
- 	list_add_tail(&act->list, &adapter->erp_ready_head);
+ 	if (tcon->tidStatus == CifsExiting) {
+ 		/*
+@@ -215,8 +215,14 @@ smb2_reconnect(__le16 smb2_command, stru
+ 			return -EAGAIN;
+ 		}
+ 
+-		wait_event_interruptible_timeout(server->response_q,
+-			(server->tcpStatus != CifsNeedReconnect), 10 * HZ);
++		rc = wait_event_interruptible_timeout(server->response_q,
++						      (server->tcpStatus != CifsNeedReconnect),
++						      10 * HZ);
++		if (rc < 0) {
++			cifs_dbg(FYI, "%s: aborting reconnect due to a received"
++				 " signal by the process\n", __func__);
++			return -ERESTARTSYS;
++		}
+ 
+ 		/* are we still trying to reconnect? */
+ 		if (server->tcpStatus != CifsNeedReconnect)
+@@ -234,7 +240,7 @@ smb2_reconnect(__le16 smb2_command, stru
+ 	}
+ 
+ 	if (!tcon->ses->need_reconnect && !tcon->need_reconnect)
+-		return rc;
++		return 0;
+ 
+ 	nls_codepage = load_nls_default();
+ 
 
