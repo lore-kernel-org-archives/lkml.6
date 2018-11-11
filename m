@@ -2,110 +2,117 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_ADSP_ALL,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE147C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:35:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E40AC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:35:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A917F20818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:35:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A917F20818
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mniewoehner.de
+	by mail.kernel.org (Postfix) with ESMTP id 10C8720818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:35:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10C8720818
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730486AbeKLGYm convert rfc822-to-8bit (ORCPT
+        id S1731525AbeKLGYx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:24:42 -0500
-Received: from sender-of-o53.zoho.com ([135.84.80.218]:21770 "EHLO
-        sender-of-o53.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730204AbeKLGYm (ORCPT
+        Mon, 12 Nov 2018 01:24:53 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:49916 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730055AbeKLFsN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 01:24:42 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1541968499; cv=none; 
-        d=zoho.com; s=zohoarc; 
-        b=cHgYhbls4P6HQb531rTevqPTfPgXmAS7DQNP5BUFzJ4U/3tzFbxq2Xr6OJqqHfQe11ssVhmlXL3S5QmxuT5yjATIHJNa+CtdUGnEyALEKLCK9JjFoJoEVT+WMcXQY7QTyPCYYobXHxYSDsNn29551q0GLBge6zzBU5l5vBsdJGE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1541968499; h=Content-Type:Content-Transfer-Encoding:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
-        bh=6aLDq0IGvp3jYLMHDYCndMH1Bquv5hA8rwpKkaqqdjE=; 
-        b=AdceMQni3iGqC4fjtOmiTbd+JuN3LTH9RFgLr5uOBLaP2/TxIeznkyXWlpcXb0Acte7plCl1qVD1AoA+J0DNy7FHRXa15WV09Cc6RngyZ4TL55TW2OtOKCP6/bdpiZMdxAc4b0tb+ADKvPNcmWXWW+dgKVqhQjKKPkJ62VmoTm4=
-ARC-Authentication-Results: i=1; mx.zoho.com;
-        dkim=pass  header.i=mniewoehner.de;
-        spf=pass  smtp.mailfrom=linux@mniewoehner.de;
-        dmarc=pass header.from=<linux@mniewoehner.de> header.from=<linux@mniewoehner.de>
-Received: from z3r0 (31.187.91.78 [31.187.91.78]) by mx.zohomail.com
-        with SMTPS id 1541968497299726.6354990952059; Sun, 11 Nov 2018 12:34:57 -0800 (PST)
-Message-ID: <3243d0325b3ea5878d3f86b0ee4fec1498f21dc1.camel@mniewoehner.de>
-Subject: Re: [BUG] Nuvoton NCPT650 TPM 2.0 mode not working
-From:   Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
-        arnd@arndb.de, linux-integrity@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-In-Reply-To: <1541968191.3190.12.camel@HansenPartnership.com>
-References: <776f384a81466642472beb4a34b10f26f1de88e9.camel@mniewoehner.de>
-         <1541960689.3190.4.camel@HansenPartnership.com>
-         <e8eb56fdab618770917fbe5b174328dc1240f934.camel@mniewoehner.de>
-         <1541962653.3190.7.camel@HansenPartnership.com>
-         <7d8cc5ad4bb7548d283f363de6f24c90d5d0a2b2.camel@mniewoehner.de>
-         <1541968191.3190.12.camel@HansenPartnership.com>
+        Mon, 12 Nov 2018 00:48:13 -0500
+Received: from [192.168.4.242] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1gLvsZ-0000oU-9K; Sun, 11 Nov 2018 19:58:43 +0000
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1gLvsV-0001iA-Td; Sun, 11 Nov 2018 19:58:39 +0000
 Content-Type: text/plain; charset="UTF-8"
-Date:   Sun, 11 Nov 2018 21:34:54 +0100
-Mime-Version: 1.0
-X-Mailer: Evolution 3.28.5 
-Content-Transfer-Encoding: 8BIT
-X-ZohoMailClient: External
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From:   Ben Hutchings <ben@decadent.org.uk>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC:     akpm@linux-foundation.org,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Jann Horn" <jannh@google.com>
+Date:   Sun, 11 Nov 2018 19:49:05 +0000
+Message-ID: <lsq.1541965745.398856741@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 240/366] ibmasm: don't write out of bounds in read
+ handler
+In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
+X-SA-Exim-Connect-IP: 192.168.4.242
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-11-11 at 12:29 -0800, James Bottomley wrote:
-> On Sun, 2018-11-11 at 21:09 +0100, Michael Niewöhner wrote:
-> > On Sun, 2018-11-11 at 10:57 -0800, James Bottomley wrote:
-> 
-> [...]
-> > > Well, I still think the ACPI setup is incorrect.  What's in
-> > > /sys/class/platform (should be directories of ACPI devices)?  The
-> > > TPM is supposed to show up as MSFT0101.  If it doesn't is there any
-> > > other device string in there that might be a TPM?
-> > 
-> > Nope. I'm not sure if it should show up in ACPI... isn't TPM 2.0 I2C?
-> 
-> Your ACPI parser identifies it here:
-> 
-> > [    0.003517] ACPI: TPM2 0x000000009E490ED8 000034 (v03 LENOVO TC-
-> > S06   00001300 AMI  00000000)
-> 
-> So it has to be a device in the platform directory.  What is in this
-> directory?  To find the TPM it probably has something TPM like in the
-> firmware_node description:
-> 
-> /sys/devices/platform/<dev>/firmware_node/description
-> 
-> Mine says
-> 
-> jejb@jarvis:~/git/linux/drivers> cat
-> /sys/devices/platform/MSFT0101\:00/firmware_node/description
-> TPM 2.0 Device
-> 
+3.16.61-rc1 review patch.  If anyone has any objections, please let me know.
 
-Ah, yep. There is indeed a MSFT0101:
-(initramfs) cat /sys/devices/platform/MSFT0101\:00/firmware_node/description 
-TPM 2.0 Device
-(initramfs) cat /sys/devices/platform/MSFT0101\:00/firmware_node/hid 
-MSFT0101
-(in
-itramfs) cat /sys/devices/platform/MSFT0101\:00/firmware_node/path 
-\_SB_.TPM_
-(in
-itramfs) cat /sys/devices/platform/MSFT0101\:00/firmware_node/status 
-15
-(initramf
-s) cat /sys/devices/platform/MSFT0101\:00/firmware_node/uid 
-1
+------------------
 
-> James
+From: Jann Horn <jannh@google.com>
 
+commit a0341fc1981a950c1e902ab901e98f60e0e243f3 upstream.
+
+This read handler had a lot of custom logic and wrote outside the bounds of
+the provided buffer. This could lead to kernel and userspace memory
+corruption. Just use simple_read_from_buffer() with a stack buffer.
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Jann Horn <jannh@google.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ drivers/misc/ibmasm/ibmasmfs.c | 27 +++------------------------
+ 1 file changed, 3 insertions(+), 24 deletions(-)
+
+--- a/drivers/misc/ibmasm/ibmasmfs.c
++++ b/drivers/misc/ibmasm/ibmasmfs.c
+@@ -507,35 +507,14 @@ static int remote_settings_file_close(st
+ static ssize_t remote_settings_file_read(struct file *file, char __user *buf, size_t count, loff_t *offset)
+ {
+ 	void __iomem *address = (void __iomem *)file->private_data;
+-	unsigned char *page;
+-	int retval;
+ 	int len = 0;
+ 	unsigned int value;
+-
+-	if (*offset < 0)
+-		return -EINVAL;
+-	if (count == 0 || count > 1024)
+-		return 0;
+-	if (*offset != 0)
+-		return 0;
+-
+-	page = (unsigned char *)__get_free_page(GFP_KERNEL);
+-	if (!page)
+-		return -ENOMEM;
++	char lbuf[20];
+ 
+ 	value = readl(address);
+-	len = sprintf(page, "%d\n", value);
+-
+-	if (copy_to_user(buf, page, len)) {
+-		retval = -EFAULT;
+-		goto exit;
+-	}
+-	*offset += len;
+-	retval = len;
++	len = snprintf(lbuf, sizeof(lbuf), "%d\n", value);
+ 
+-exit:
+-	free_page((unsigned long)page);
+-	return retval;
++	return simple_read_from_buffer(buf, count, offset, lbuf, len);
+ }
+ 
+ static ssize_t remote_settings_file_write(struct file *file, const char __user *ubuff, size_t count, loff_t *offset)
 
