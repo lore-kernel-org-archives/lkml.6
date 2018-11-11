@@ -4,48 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09E91C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:08:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C708C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:08:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C827220871
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:08:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40A03214DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:08:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tOTLM5QD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C827220871
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="O6T4j2IZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40A03214DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732001AbeKLJ63 (ORCPT
+        id S1731459AbeKLIRc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:58:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60776 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:17:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59904 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731521AbeKLIRd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:17:33 -0500
+        id S1731346AbeKLIRc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:17:32 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6F2942175B;
-        Sun, 11 Nov 2018 22:27:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 54D5521582;
+        Sun, 11 Nov 2018 22:27:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975258;
-        bh=1cz5uYiAAt/e292wJmiu1SncGABZ+rKiQgzhQrjqFII=;
+        s=default; t=1541975256;
+        bh=LkjJpHgTvDCfd0UDe8qV77EyY+UyJiKrBEBdJEhZ+Sc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tOTLM5QDS1ZetZ+v12tanZiXMq3px4pX4504cevU9fyOts6oLaPW9/Nu1LQxJMR16
-         QNH6VcwIxf+S+l5IxfKt6TvxDykm7u+3gVUm5GJjor68vB7okk0tCTHFhis7atVtsj
-         LnjfTGSSqZTZahPKdSyXCoqwLnQbcE5zDp3o9BaQ=
+        b=O6T4j2IZN2p6QSe4Zys1hXI82te6I4/y1rN3RYECFVRgX3g0+npxJBar1c/7/6iWm
+         zjDSCpaIAgvXQk3ZiyMP6sSt0X54u8MNtVsiUMPTaX6I7SutwVHDteTpbbWXXudL85
+         j6gQQYtmcOgRhIJlfkrEBh+pEF0Xdl+V0k/IvdtQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jack Wang <jinpu.wang@profitbricks.com>,
-        Xiao Ni <xni@redhat.com>, Shaohua Li <shli@fb.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 135/361] md: fix memleak for mempool
-Date:   Sun, 11 Nov 2018 14:18:02 -0800
-Message-Id: <20181111221639.265118577@linuxfoundation.org>
+        stable@vger.kernel.org, Paolo Valente <paolo.valente@linaro.org>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 103/361] block, bfq: correctly charge and reset entity service in all cases
+Date:   Sun, 11 Nov 2018 14:17:30 -0800
+Message-Id: <20181111221634.096490080@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -63,67 +61,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jack Wang <jinpu.wang@profitbricks.com>
+From: Paolo Valente <paolo.valente@linaro.org>
 
-[ Upstream commit 6aaa58c994277647f8b05ffef3b9b225a2d08f36 ]
+[ Upstream commit cbeb869a3d1110450186b738199963c5e68c2a71 ]
 
-I noticed kmemleak report memory leak when run create/stop
-md in a loop, backtrace:
-[<000000001ca975e7>] mempool_create_node+0x86/0xd0
-[<0000000095576bcd>] md_run+0x1057/0x1410 [md_mod]
-[<000000007b45c5fc>] do_md_run+0x15/0x130 [md_mod]
-[<000000001ede9ec0>] md_ioctl+0x1f49/0x25d0 [md_mod]
-[<000000004142cacf>] blkdev_ioctl+0x680/0xd00
+BFQ schedules entities (which represent either per-process queues or
+groups of queues) as a function of their timestamps. In particular, as
+a function of their (virtual) finish times. The finish time of an
+entity is computed as a function of the budget assigned to the entity,
+assuming, tentatively, that the entity, once in service, will receive
+an amount of service equal to its budget. Then, when the entity is
+expired because it finishes to be served, this finish time is updated
+as a function of the actual service received by the entity. This
+allows the entity to be correctly charged with only the service
+received, and then to be correctly re-scheduled.
 
-The root cause is we alloc mddev->flush_pool and
-mddev->flush_bio_pool in md_run, but from do_md_stop
-will not call into md_stop but __md_stop, move the
-mempool_destroy to __md_stop fixes the problem for me.
+Yet an entity may receive service also while not being the entity in
+service (in the scheduling environment of its parent entity), for
+several reasons. If the entity remains with no backlog while receiving
+this 'unofficial' service, then it is expired. Also on such an
+expiration, the finish time of the entity should be updated to account
+for only the service actually received by the entity. Unfortunately,
+such an update is not performed for an entity expiring without being
+the entity in service.
 
-The bug was introduced in 5a409b4f56d5, the fixes should go to
-4.18+
+In a similar vein, the service counter of the entity in service is
+reset when the entity is expired, to be ready to be used for next
+service cycle. This reset too should be performed also in case an
+entity is expired because it remains empty after receiving service
+while not being the entity in service. But in this case the reset is
+not performed.
 
-Fixes: 5a409b4f56d5 ("MD: fix lock contention for flush bios")
-Signed-off-by: Jack Wang <jinpu.wang@profitbricks.com>
-Reviewed-by: Xiao Ni <xni@redhat.com>
-Signed-off-by: Shaohua Li <shli@fb.com>
+This commit performs the above update of the finish time and reset of
+the service received, also for an entity expiring while not being the
+entity in service.
+
+Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/md/md.c |   16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ block/bfq-wf2q.c |   13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -5906,14 +5906,6 @@ static void __md_stop(struct mddev *mdde
- 		mddev->to_remove = &md_redundancy_group;
- 	module_put(pers->owner);
- 	clear_bit(MD_RECOVERY_FROZEN, &mddev->recovery);
--}
--
--void md_stop(struct mddev *mddev)
--{
--	/* stop the array and free an attached data structures.
--	 * This is called from dm-raid
--	 */
--	__md_stop(mddev);
- 	if (mddev->flush_bio_pool) {
- 		mempool_destroy(mddev->flush_bio_pool);
- 		mddev->flush_bio_pool = NULL;
-@@ -5922,6 +5914,14 @@ void md_stop(struct mddev *mddev)
- 		mempool_destroy(mddev->flush_pool);
- 		mddev->flush_pool = NULL;
- 	}
-+}
+--- a/block/bfq-wf2q.c
++++ b/block/bfq-wf2q.c
+@@ -1181,10 +1181,17 @@ bool __bfq_deactivate_entity(struct bfq_
+ 	st = bfq_entity_service_tree(entity);
+ 	is_in_service = entity == sd->in_service_entity;
+ 
+-	if (is_in_service) {
+-		bfq_calc_finish(entity, entity->service);
++	bfq_calc_finish(entity, entity->service);
 +
-+void md_stop(struct mddev *mddev)
-+{
-+	/* stop the array and free an attached data structures.
-+	 * This is called from dm-raid
-+	 */
-+	__md_stop(mddev);
- 	bioset_exit(&mddev->bio_set);
- 	bioset_exit(&mddev->sync_set);
- }
++	if (is_in_service)
+ 		sd->in_service_entity = NULL;
+-	}
++	else
++		/*
++		 * Non in-service entity: nobody will take care of
++		 * resetting its service counter on expiration. Do it
++		 * now.
++		 */
++		entity->service = 0;
+ 
+ 	if (entity->tree == &st->active)
+ 		bfq_active_extract(st, entity);
 
 
