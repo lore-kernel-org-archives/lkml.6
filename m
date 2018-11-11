@@ -4,47 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F967C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:53:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9EFDC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:53:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF1AE206BA
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:53:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81D36206BA
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:53:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="caS5ut3t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF1AE206BA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IkWJ1hc5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81D36206BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391119AbeKLInM (ORCPT
+        id S2404046AbeKLIXB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:43:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54620 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:23:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387767AbeKLIXD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:23:03 -0500
+        id S2404018AbeKLIW7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:59 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E72252154B;
-        Sun, 11 Nov 2018 22:33:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 77BDF2241B;
+        Sun, 11 Nov 2018 22:33:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975586;
-        bh=XbSsyQrlBWfYObxVoIyknTPdzRinn/9eapqOgqshkTk=;
+        s=default; t=1541975582;
+        bh=pprReBp+h0AlROTN9kPzpFKNz5sH9HmiA8x4V8EknY4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=caS5ut3t+/FGK0ousiSU3aanxYDWa6pvPmLJVy86oeOp7ielUxEyvF//b87HhpkNs
-         Z4B716oOI2VA4eXHUg3H7SyEa5BcjqDBSKrOckSVpygA8w3NlVbaen2pw0TQl1/GGF
-         OteFUrasfVxG0sVgyB76JHlGiyLY6zD1GOmevECM=
+        b=IkWJ1hc5mdJ5gophawZ7knO5hNaOXDhgxsySrla2wSQMXUg8y8ywb1/kyOuVwanrO
+         nHn/cVBaWH7pkZ/6cuB+CJmtOLoLelMwRhyaK54X32akZ79nlxmwtK8/NQNx2CpyOR
+         K+uqpfsYCFAYVqUzg8kbYBbeSkrtXQF0pb+KcfjI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>,
-        Will Deacon <will.deacon@arm.com>, Tri Vo <trong@android.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 4.14 189/222] arm64: lse: remove -fcall-used-x0 flag
-Date:   Sun, 11 Nov 2018 14:24:46 -0800
-Message-Id: <20181111221703.837208325@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Jin <mikhail.jin@gmail.com>,
+        Yazen Ghannam <Yazen.Ghannam@amd.com>,
+        Borislav Petkov <bp@suse.de>
+Subject: [PATCH 4.14 142/222] EDAC, amd64: Add Family 17h, models 10h-2fh support
+Date:   Sun, 11 Nov 2018 14:23:59 -0800
+Message-Id: <20181111221700.201959496@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -62,36 +63,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tri Vo <trong@android.com>
+From: Michael Jin <mikhail.jin@gmail.com>
 
-commit 2a6c7c367de82951c98a290a21156770f6f82c84 upstream.
+commit 8960de4a5ca7980ed1e19e7ca5a774d3b7a55c38 upstream.
 
-x0 is not callee-saved in the PCS. So there is no need to specify
--fcall-used-x0.
+Add new device IDs for family 17h, models 10h-2fh.
 
-Clang doesn't currently support -fcall-used flags. This patch will help
-building the kernel with clang.
+This is required by amd64_edac_mod in order to properly detect PCI
+device functions 0 and 6.
 
-Tested-by: Nick Desaulniers <ndesaulniers@google.com>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Tri Vo <trong@android.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Michael Jin <mikhail.jin@gmail.com>
+Reviewed-by: Yazen Ghannam <Yazen.Ghannam@amd.com>
+Cc: <stable@vger.kernel.org>
+Link: http://lkml.kernel.org/r/20180816192840.31166-1-mikhail.jin@gmail.com
+Signed-off-by: Borislav Petkov <bp@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/lib/Makefile |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/edac/amd64_edac.c |   14 ++++++++++++++
+ drivers/edac/amd64_edac.h |    3 +++
+ 2 files changed, 17 insertions(+)
 
---- a/arch/arm64/lib/Makefile
-+++ b/arch/arm64/lib/Makefile
-@@ -12,7 +12,7 @@ lib-y		:= bitops.o clear_user.o delay.o
- # when supported by the CPU. Result and argument registers are handled
- # correctly, based on the function prototype.
- lib-$(CONFIG_ARM64_LSE_ATOMICS) += atomic_ll_sc.o
--CFLAGS_atomic_ll_sc.o	:= -fcall-used-x0 -ffixed-x1 -ffixed-x2		\
-+CFLAGS_atomic_ll_sc.o	:= -ffixed-x1 -ffixed-x2        		\
- 		   -ffixed-x3 -ffixed-x4 -ffixed-x5 -ffixed-x6		\
- 		   -ffixed-x7 -fcall-saved-x8 -fcall-saved-x9		\
- 		   -fcall-saved-x10 -fcall-saved-x11 -fcall-saved-x12	\
+--- a/drivers/edac/amd64_edac.c
++++ b/drivers/edac/amd64_edac.c
+@@ -2200,6 +2200,15 @@ static struct amd64_family_type family_t
+ 			.dbam_to_cs		= f17_base_addr_to_cs_size,
+ 		}
+ 	},
++	[F17_M10H_CPUS] = {
++		.ctl_name = "F17h_M10h",
++		.f0_id = PCI_DEVICE_ID_AMD_17H_M10H_DF_F0,
++		.f6_id = PCI_DEVICE_ID_AMD_17H_M10H_DF_F6,
++		.ops = {
++			.early_channel_count	= f17_early_channel_count,
++			.dbam_to_cs		= f17_base_addr_to_cs_size,
++		}
++	},
+ };
+ 
+ /*
+@@ -3188,6 +3197,11 @@ static struct amd64_family_type *per_fam
+ 		break;
+ 
+ 	case 0x17:
++		if (pvt->model >= 0x10 && pvt->model <= 0x2f) {
++			fam_type = &family_types[F17_M10H_CPUS];
++			pvt->ops = &family_types[F17_M10H_CPUS].ops;
++			break;
++		}
+ 		fam_type	= &family_types[F17_CPUS];
+ 		pvt->ops	= &family_types[F17_CPUS].ops;
+ 		break;
+--- a/drivers/edac/amd64_edac.h
++++ b/drivers/edac/amd64_edac.h
+@@ -115,6 +115,8 @@
+ #define PCI_DEVICE_ID_AMD_16H_M30H_NB_F2 0x1582
+ #define PCI_DEVICE_ID_AMD_17H_DF_F0	0x1460
+ #define PCI_DEVICE_ID_AMD_17H_DF_F6	0x1466
++#define PCI_DEVICE_ID_AMD_17H_M10H_DF_F0 0x15e8
++#define PCI_DEVICE_ID_AMD_17H_M10H_DF_F6 0x15ee
+ 
+ /*
+  * Function 1 - Address Map
+@@ -281,6 +283,7 @@ enum amd_families {
+ 	F16_CPUS,
+ 	F16_M30H_CPUS,
+ 	F17_CPUS,
++	F17_M10H_CPUS,
+ 	NUM_FAMILIES,
+ };
+ 
 
 
