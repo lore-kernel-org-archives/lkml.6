@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4716FC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:56:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 066A6C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:56:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0163E206BA
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:56:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B70AE206BA
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:56:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KiIrdsbV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0163E206BA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eBFR6GTA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B70AE206BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404043AbeKLIqR (ORCPT
+        id S2390966AbeKLIqp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:46:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54642 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:46:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54620 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403885AbeKLIWw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:52 -0500
+        id S2403866AbeKLIWv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:51 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A1B2421582;
-        Sun, 11 Nov 2018 22:32:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE5C2223C7;
+        Sun, 11 Nov 2018 22:32:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975575;
-        bh=hVzgAiNdnDK/obEIybjKUqt8S3/DnPkoy3mrQU7ZhTk=;
+        s=default; t=1541975573;
+        bh=Vg9LKaFqG0UbUsyVhhOorBp4CmIg0v8uKBUWsVqaAT8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KiIrdsbV7iHoU8k/YjsL1sHeGUP1ye3dqs1H/xbQ/8sVi66S+ePsiVxquknsDQhR3
-         Si91SdMxSgFFd/J/b9PaLXpnliWH++CWHZe9ZehgNM7uTu47rAQ54R09/5jSdGRnnZ
-         /M0pfISsDH5WrMQNlZaTx9NeDsHoUINWtEgWQxw8=
+        b=eBFR6GTAfs5vmQK4cMv1fV/+d5wgMuUg26sUEGpSgkY7yYBFs0F8bVjOOdbRWQDU2
+         iYsCgqkbC+vISrxeho4OhYWumNk5L+RYtUgFWffzMtrrQpnQZKfbb8GrzK+ImB2NJ1
+         7D/pcoHWkjGN8lhBiEGv/4clyCqo5ulcIJQgau/0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wang Shilong <wshilong@ddn.com>,
-        Theodore Tso <tytso@mit.edu>, stable@kernel.org
-Subject: [PATCH 4.14 139/222] ext4: propagate error from dquot_initialize() in EXT4_IOC_FSSETXATTR
-Date:   Sun, 11 Nov 2018 14:23:56 -0800
-Message-Id: <20181111221659.968268062@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Biggers <ebiggers@kernel.org>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.14 151/222] crypto: lrw - Fix out-of bounds access on counter overflow
+Date:   Sun, 11 Nov 2018 14:24:08 -0800
+Message-Id: <20181111221700.902130024@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -62,38 +63,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wang Shilong <wshilong@ddn.com>
+From: Ondrej Mosnacek <omosnace@redhat.com>
 
-commit 182a79e0c17147d2c2d3990a9a7b6b58a1561c7a upstream.
+commit fbe1a850b3b1522e9fc22319ccbbcd2ab05328d2 upstream.
 
-We return most failure of dquota_initialize() except
-inode evict, this could make a bit sense, for example
-we allow file removal even quota files are broken?
+When the LRW block counter overflows, the current implementation returns
+128 as the index to the precomputed multiplication table, which has 128
+entries. This patch fixes it to return the correct value (127).
 
-But it dosen't make sense to allow setting project
-if quota files etc are broken.
-
-Signed-off-by: Wang Shilong <wshilong@ddn.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org
+Fixes: 64470f1b8510 ("[CRYPTO] lrw: Liskov Rivest Wagner, a tweakable narrow block cipher mode")
+Cc: <stable@vger.kernel.org> # 2.6.20+
+Reported-by: Eric Biggers <ebiggers@kernel.org>
+Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/ioctl.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ crypto/lrw.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/fs/ext4/ioctl.c
-+++ b/fs/ext4/ioctl.c
-@@ -364,7 +364,9 @@ static int ext4_ioctl_setproject(struct
- 		brelse(iloc.bh);
+--- a/crypto/lrw.c
++++ b/crypto/lrw.c
+@@ -139,7 +139,12 @@ static inline int get_index128(be128 *bl
+ 		return x + ffz(val);
  	}
  
--	dquot_initialize(inode);
-+	err = dquot_initialize(inode);
-+	if (err)
-+		return err;
+-	return x;
++	/*
++	 * If we get here, then x == 128 and we are incrementing the counter
++	 * from all ones to all zeros. This means we must return index 127, i.e.
++	 * the one corresponding to key2*{ 1,...,1 }.
++	 */
++	return 127;
+ }
  
- 	handle = ext4_journal_start(inode, EXT4_HT_QUOTA,
- 		EXT4_QUOTA_INIT_BLOCKS(sb) +
+ static int post_crypt(struct skcipher_request *req)
 
 
