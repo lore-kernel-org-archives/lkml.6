@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44437C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:18:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7EADC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:18:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A2B120817
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:18:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63A5820869
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:18:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rkffBLPK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A2B120817
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lGF1m78D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63A5820869
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389665AbeKLIVa (ORCPT
+        id S2389816AbeKLJIj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:21:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48862 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:08:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48648 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389631AbeKLIVa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:21:30 -0500
+        id S2389532AbeKLIV2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:28 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23EC421707;
-        Sun, 11 Nov 2018 22:31:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1C7EF223C6;
+        Sun, 11 Nov 2018 22:31:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975493;
-        bh=BX1phv56J3EEsPSj3ei54XyB8ITHIoIGzpT64jYQlIA=;
+        s=default; t=1541975491;
+        bh=S0zJxH7t1OR29rKQ0rrJdltYSVzZnwkrj+vqlTpJpCo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rkffBLPKjFg6PbTskn0W5rDYIL0JS8zhGYC4zQzJQzUBGhBmYLxPb8fcgI1mznSF8
-         KSXxLhm2ydR5tRKyKBtYhI+Yvt5wAtz28A++C0Fhz4hIe5oACOXpMBq5paWgmmNagC
-         rS4rpEnjM2Zg/twdxrpBk5kKnVw326mTiFvUx1wc=
+        b=lGF1m78Dq71nBUw6wTpRE16082GqJcmoneJU4xuBsQCQ5WQxhcJLkgowwA732zuva
+         HDTGT7MwhEJg8vZJ5mWkuLP5SLuDGICeOV1pZcteKgRSYSessdCEHtu9p2a9g56KdU
+         oA1KU27Hrg+ZQ31SOaGy+RM8OEw/TpxooKy5qrTs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.18 295/350] media: cec: forgot to cancel delayed work
-Date:   Sun, 11 Nov 2018 14:22:39 -0800
-Message-Id: <20181111221720.425461490@linuxfoundation.org>
+        stable@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.18 274/350] powerpc/64s/hash: Do not use PPC_INVALIDATE_ERAT on CPUs before POWER9
+Date:   Sun, 11 Nov 2018 14:22:18 -0800
+Message-Id: <20181111221719.493833381@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -61,41 +61,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hans Verkuil <hverkuil@xs4all.nl>
+From: Nicholas Piggin <npiggin@gmail.com>
 
-commit 490d84f6d73c12f4204241cff8651eed60aae914 upstream.
+commit bc276ecba132caccb1fda5863a652c15def2b8c6 upstream.
 
-If the wait for completion was interrupted, then make sure to cancel
-any delayed work.
+PPC_INVALIDATE_ERAT is slbia IH=7 which is a new variant introduced
+with POWER9, and the result is undefined on earlier CPUs.
 
-This can only happen if a transmit is waiting for a reply, and you press
-Ctrl-C or reboot/poweroff or something like that which interrupts the
-thread waiting for the reply and then proceeds to delete the CEC message.
+Commits 7b9f71f974 ("powerpc/64s: POWER9 machine check handler") and
+d4748276ae ("powerpc/64s: Improve local TLB flush for boot and MCE on
+POWER9") caused POWER7/8 code to use this instruction. Remove it. An
+ERAT flush can be made by invalidatig the SLB, but before POWER9 that
+requires a flush and rebolt.
 
-Since the delayed work wasn't canceled, once it would trigger it referred
-to stale data and resulted in a kernel oops.
-
-Fixes: 7ec2b3b941a6 ("cec: add new tx/rx status bits to detect aborts/timeouts")
-
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Cc: <stable@vger.kernel.org>      # for v4.18 and up
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: 7b9f71f974 ("powerpc/64s: POWER9 machine check handler")
+Fixes: d4748276ae ("powerpc/64s: Improve local TLB flush for boot and MCE on POWER9")
+Cc: stable@vger.kernel.org # v4.11+
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/cec/cec-adap.c |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/powerpc/kernel/mce_power.c  |    7 +++++++
+ arch/powerpc/mm/hash_native_64.c |    4 ++--
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
---- a/drivers/media/cec/cec-adap.c
-+++ b/drivers/media/cec/cec-adap.c
-@@ -815,6 +815,8 @@ int cec_transmit_msg_fh(struct cec_adapt
- 	 */
- 	mutex_unlock(&adap->lock);
- 	wait_for_completion_killable(&data->c);
-+	if (!data->completed)
-+		cancel_delayed_work_sync(&data->work);
- 	mutex_lock(&adap->lock);
+--- a/arch/powerpc/kernel/mce_power.c
++++ b/arch/powerpc/kernel/mce_power.c
+@@ -97,6 +97,13 @@ static void flush_and_reload_slb(void)
  
- 	/* Cancel the transmit if it was interrupted */
+ static void flush_erat(void)
+ {
++#ifdef CONFIG_PPC_BOOK3S_64
++	if (!early_cpu_has_feature(CPU_FTR_ARCH_300)) {
++		flush_and_reload_slb();
++		return;
++	}
++#endif
++	/* PPC_INVALIDATE_ERAT can only be used on ISA v3 and newer */
+ 	asm volatile(PPC_INVALIDATE_ERAT : : :"memory");
+ }
+ 
+--- a/arch/powerpc/mm/hash_native_64.c
++++ b/arch/powerpc/mm/hash_native_64.c
+@@ -115,6 +115,8 @@ static void tlbiel_all_isa300(unsigned i
+ 	tlbiel_hash_set_isa300(0, is, 0, 2, 1);
+ 
+ 	asm volatile("ptesync": : :"memory");
++
++	asm volatile(PPC_INVALIDATE_ERAT "; isync" : : :"memory");
+ }
+ 
+ void hash__tlbiel_all(unsigned int action)
+@@ -140,8 +142,6 @@ void hash__tlbiel_all(unsigned int actio
+ 		tlbiel_all_isa206(POWER7_TLB_SETS, is);
+ 	else
+ 		WARN(1, "%s called on pre-POWER7 CPU\n", __func__);
+-
+-	asm volatile(PPC_INVALIDATE_ERAT "; isync" : : :"memory");
+ }
+ 
+ static inline unsigned long  ___tlbie(unsigned long vpn, int psize,
 
 
