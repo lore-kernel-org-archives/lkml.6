@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A0A3C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:47:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C9D4C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:47:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E67E20818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:47:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA37820871
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:47:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gNyU5QcC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E67E20818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zeuuB+4c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA37820871
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387551AbeKLJht (ORCPT
+        id S2387559AbeKLJh4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:37:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39292 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:37:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733160AbeKLISs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:18:48 -0500
+        id S1733144AbeKLISr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:18:47 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C4AED21582;
+        by mail.kernel.org (Postfix) with ESMTPSA id 171B8216FD;
         Sun, 11 Nov 2018 22:28:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975331;
-        bh=CDkNUAtlhT6VF4u168mUcWyUPJIPGhijKtHBfnTLbts=;
+        bh=4wnDCUSvbIuBgEOeipk4UbHBaZirCYQFI+T/y9fnKD8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gNyU5QcCmAO86aPFsk2tfA3rV6MS0xYEIi5T+vSfDTYN1g6rKnibnybTyc0eg+sdP
-         rAAccU4hMqoiNPvGUfyAsA/oKwR9LRU9rSVGAFulbtF/f6rw+tUz7ZCKLxWyesN6oe
-         Bz+h6TPi1/06+vgVpH7WDRd4VxKgCD6W9tgrGCgM=
+        b=zeuuB+4caRV947FiAIJnUUMV19Kz937jbSyLoojUkW2HdQQhnpEIqIoke05jQJQCZ
+         c8jfkSTAL7UoFMvtQahuJh8pXVJ5cn9REuJpcy/XvPwsXAk86CwZLni3jX6B1uJZGq
+         yFc0kUER5F8CpxA7mF0VXmNyUyuR2VNpXS8a1aok=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Anatoly Trosinenko <anatoly.trosinenko@gmail.com>,
-        Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.19 346/361] Btrfs: fix assertion on fsync of regular file when using no-holes feature
-Date:   Sun, 11 Nov 2018 14:21:33 -0800
-Message-Id: <20181111221701.130926155@linuxfoundation.org>
+        Misono Tomohiro <misono.tomohiro@jp.fujitsu.com>,
+        Qu Wenruo <wqu@suse.com>, David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.19 344/361] btrfs: qgroup: Dirty all qgroups before rescan
+Date:   Sun, 11 Nov 2018 14:21:31 -0800
+Message-Id: <20181111221701.004871017@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -63,59 +63,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Qu Wenruo <wqu@suse.com>
 
-commit 7ed586d0a8241e81d58c656c5b315f781fa6fc97 upstream.
+commit 9c7b0c2e8dbfbcd80a71e2cbfe02704f26c185c6 upstream.
 
-When using the NO_HOLES feature and logging a regular file, we were
-expecting that if we find an inline extent, that either its size in RAM
-(uncompressed and unenconded) matches the size of the file or if it does
-not, that it matches the sector size and it represents compressed data.
-This assertion does not cover a case where the length of the inline extent
-is smaller than the sector size and also smaller the file's size, such
-case is possible through fallocate. Example:
+[BUG]
+In the following case, rescan won't zero out the number of qgroup 1/0:
 
-  $ mkfs.btrfs -f -O no-holes /dev/sdb
-  $ mount /dev/sdb /mnt
+  $ mkfs.btrfs -fq $DEV
+  $ mount $DEV /mnt
 
-  $ xfs_io -f -c "pwrite -S 0xb60 0 21" /mnt/foobar
-  $ xfs_io -c "falloc 40 40" /mnt/foobar
-  $ xfs_io -c "fsync" /mnt/foobar
+  $ btrfs quota enable /mnt
+  $ btrfs qgroup create 1/0 /mnt
+  $ btrfs sub create /mnt/sub
+  $ btrfs qgroup assign 0/257 1/0 /mnt
 
-In the above example we trigger the assertion because the inline extent's
-length is 21 bytes while the file size is 80 bytes. The fallocate() call
-merely updated the file's size and did not touch the existing inline
-extent, as expected.
+  $ dd if=/dev/urandom of=/mnt/sub/file bs=1k count=1000
+  $ btrfs sub snap /mnt/sub /mnt/snap
+  $ btrfs quota rescan -w /mnt
+  $ btrfs qgroup show -pcre /mnt
+  qgroupid         rfer         excl     max_rfer     max_excl parent  child
+  --------         ----         ----     --------     -------- ------  -----
+  0/5          16.00KiB     16.00KiB         none         none ---     ---
+  0/257      1016.00KiB     16.00KiB         none         none 1/0     ---
+  0/258      1016.00KiB     16.00KiB         none         none ---     ---
+  1/0        1016.00KiB     16.00KiB         none         none ---     0/257
 
-So fix this by adjusting the assertion so that an inline extent length
-smaller than the file size is valid if the file size is smaller than the
-filesystem's sector size.
+So far so good, but:
 
-A test case for fstests follows soon.
+  $ btrfs qgroup remove 0/257 1/0 /mnt
+  WARNING: quotas may be inconsistent, rescan needed
+  $ btrfs quota rescan -w /mnt
+  $ btrfs qgroup show -pcre  /mnt
+  qgoupid         rfer         excl     max_rfer     max_excl parent  child
+  --------         ----         ----     --------     -------- ------  -----
+  0/5          16.00KiB     16.00KiB         none         none ---     ---
+  0/257      1016.00KiB     16.00KiB         none         none ---     ---
+  0/258      1016.00KiB     16.00KiB         none         none ---     ---
+  1/0        1016.00KiB     16.00KiB         none         none ---     ---
+	     ^^^^^^^^^^     ^^^^^^^^ not cleared
 
-Reported-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
-Fixes: a89ca6f24ffe ("Btrfs: fix fsync after truncate when no_holes feature is enabled")
-CC: stable@vger.kernel.org # 4.14+
-Link: https://lore.kernel.org/linux-btrfs/CAE5jQCfRSBC7n4pUTFJcmHh109=gwyT9mFkCOL+NKfzswmR=_Q@mail.gmail.com/
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
+[CAUSE]
+Before rescan we call qgroup_rescan_zero_tracking() to zero out all
+qgroups' accounting numbers.
+
+However we don't mark all qgroups dirty, but rely on rescan to do so.
+
+If we have any high level qgroup without children, it won't be marked
+dirty during rescan, since we cannot reach that qgroup.
+
+This will cause QGROUP_INFO items of childless qgroups never get updated
+in the quota tree, thus their numbers will stay the same in "btrfs
+qgroup show" output.
+
+[FIX]
+Just mark all qgroups dirty in qgroup_rescan_zero_tracking(), so even if
+we have childless qgroups, their QGROUP_INFO items will still get
+updated during rescan.
+
+Reported-by: Misono Tomohiro <misono.tomohiro@jp.fujitsu.com>
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+Reviewed-by: Misono Tomohiro <misono.tomohiro@jp.fujitsu.com>
+Tested-by: Misono Tomohiro <misono.tomohiro@jp.fujitsu.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/tree-log.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/btrfs/qgroup.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -4655,7 +4655,8 @@ static int btrfs_log_trailing_hole(struc
- 			ASSERT(len == i_size ||
- 			       (len == fs_info->sectorsize &&
- 				btrfs_file_extent_compression(leaf, extent) !=
--				BTRFS_COMPRESS_NONE));
-+				BTRFS_COMPRESS_NONE) ||
-+			       (len < i_size && i_size < fs_info->sectorsize));
- 			return 0;
- 		}
- 
+--- a/fs/btrfs/qgroup.c
++++ b/fs/btrfs/qgroup.c
+@@ -2897,6 +2897,7 @@ qgroup_rescan_zero_tracking(struct btrfs
+ 		qgroup->rfer_cmpr = 0;
+ 		qgroup->excl = 0;
+ 		qgroup->excl_cmpr = 0;
++		qgroup_dirty(fs_info, qgroup);
+ 	}
+ 	spin_unlock(&fs_info->qgroup_lock);
+ }
 
 
