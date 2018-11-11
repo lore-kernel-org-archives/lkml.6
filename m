@@ -4,48 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9CC0C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:39:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E7D9C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:39:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A158820818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:39:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8DFB20818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:39:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DNTa4HqY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A158820818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dwBDXPWi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8DFB20818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388040AbeKLITq (ORCPT
+        id S2388227AbeKLJ3r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:19:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42048 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:29:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42074 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387972AbeKLITq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1731086AbeKLITq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:19:46 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE8B6223C6;
-        Sun, 11 Nov 2018 22:29:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F072208A3;
+        Sun, 11 Nov 2018 22:29:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975389;
-        bh=1brLAD261fnXFqGpEzzCOyqcPuHa0a7Nba6vVJDh4fM=;
+        s=default; t=1541975390;
+        bh=CMOVyLoGn0vZDn6jo77gbhVZ1mcRxdNCNX4St7mD+Ng=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DNTa4HqYCqlhk00d6OJXa0eeOviLho1qSu442qYb0c/YZzPC1ZTiFN8L6x4NoQWqx
-         2j3X5mECkwLk9jSBalQk/yNePxMSKM5mbm6L4gfNW6Kjjb12tL2FulK0ryU6r5MZEw
-         hvahJ+yT+Cj1hCrbK5PUZfaWBqLUM1zd/hpLGJOE=
+        b=dwBDXPWiXC4DEVMkwseHwBJSe+ry5BIAyp2exf1uYp7j9REra6nAVPKwqbG8Egu/T
+         cqk6RSQ76TeQM5aF7uMflQgjGAz6Ng2yXmJIoHqDpVJMaWH+kG8yF0p4b0/eq9N+yn
+         vcs1I3ZLLXaY0uPKTCxyE4C/4a9T0y74LH42wtmM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Serhey Popovych <serhe.popovych@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Janosch Frank <frankja@linux.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 071/350] tun: Consistently configure generic netdev params via rtnetlink
-Date:   Sun, 11 Nov 2018 14:18:55 -0800
-Message-Id: <20181111221710.108719521@linuxfoundation.org>
+Subject: [PATCH 4.18 072/350] s390/sthyi: Fix machine name validity indication
+Date:   Sun, 11 Nov 2018 14:18:56 -0800
+Message-Id: <20181111221710.145781870@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -63,50 +62,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Serhey Popovych <serhe.popovych@gmail.com>
+From: Janosch Frank <frankja@linux.ibm.com>
 
-[ Upstream commit df52eab23d703142c766ac00bdb8db19d71238d0 ]
+[ Upstream commit b5130dc2224d1881f24224c0590c6d97f2168d6a ]
 
-Configuring generic network device parameters on tun will fail in
-presence of IFLA_INFO_KIND attribute in IFLA_LINKINFO nested attribute
-since tun_validate() always return failure.
+When running as a level 3 guest with no host provided sthyi support
+sclp_ocf_cpc_name_copy() will only return zeroes. Zeroes are not a
+valid group name, so let's not indicate that the group name field is
+valid.
 
-This can be visualized with following ip-link(8) command sequences:
+Also the group name is not dependent on stsi, let's not return based
+on stsi before setting it.
 
-  # ip link set dev tun0 group 100
-  # ip link set dev tun0 group 100 type tun
-  RTNETLINK answers: Invalid argument
-
-with contrast to dummy and veth drivers:
-
-  # ip link set dev dummy0 group 100
-  # ip link set dev dummy0 type dummy
-
-  # ip link set dev veth0 group 100
-  # ip link set dev veth0 group 100 type veth
-
-Fix by returning zero in tun_validate() when @data is NULL that is
-always in case since rtnl_link_ops->maxtype is zero in tun driver.
-
-Fixes: f019a7a594d9 ("tun: Implement ip link del tunXXX")
-Signed-off-by: Serhey Popovych <serhe.popovych@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 95ca2cb57985 ("KVM: s390: Add sthyi emulation")
+Signed-off-by: Janosch Frank <frankja@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/tun.c |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/s390/kernel/sthyi.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/drivers/net/tun.c
-+++ b/drivers/net/tun.c
-@@ -2304,6 +2304,8 @@ static void tun_setup(struct net_device
- static int tun_validate(struct nlattr *tb[], struct nlattr *data[],
- 			struct netlink_ext_ack *extack)
+--- a/arch/s390/kernel/sthyi.c
++++ b/arch/s390/kernel/sthyi.c
+@@ -183,17 +183,19 @@ static void fill_hdr(struct sthyi_sctns
+ static void fill_stsi_mac(struct sthyi_sctns *sctns,
+ 			  struct sysinfo_1_1_1 *sysinfo)
  {
-+	if (!data)
-+		return 0;
- 	return -EINVAL;
++	sclp_ocf_cpc_name_copy(sctns->mac.infmname);
++	if (*(u64 *)sctns->mac.infmname != 0)
++		sctns->mac.infmval1 |= MAC_NAME_VLD;
++
+ 	if (stsi(sysinfo, 1, 1, 1))
+ 		return;
+ 
+-	sclp_ocf_cpc_name_copy(sctns->mac.infmname);
+-
+ 	memcpy(sctns->mac.infmtype, sysinfo->type, sizeof(sctns->mac.infmtype));
+ 	memcpy(sctns->mac.infmmanu, sysinfo->manufacturer, sizeof(sctns->mac.infmmanu));
+ 	memcpy(sctns->mac.infmpman, sysinfo->plant, sizeof(sctns->mac.infmpman));
+ 	memcpy(sctns->mac.infmseq, sysinfo->sequence, sizeof(sctns->mac.infmseq));
+ 
+-	sctns->mac.infmval1 |= MAC_ID_VLD | MAC_NAME_VLD;
++	sctns->mac.infmval1 |= MAC_ID_VLD;
  }
  
+ static void fill_stsi_par(struct sthyi_sctns *sctns,
 
 
