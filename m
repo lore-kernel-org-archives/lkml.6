@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9238AC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5741C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CC8F22353
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E791223CA
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zyj1Us/j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CC8F22353
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0DOLbq/5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E791223CA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404333AbeKLIXQ (ORCPT
+        id S2404364AbeKLIXT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:23:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56418 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:23:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404304AbeKLIXP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:23:15 -0500
+        id S1731178AbeKLIXS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:23:18 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 97AA421780;
-        Sun, 11 Nov 2018 22:33:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83F65208A3;
+        Sun, 11 Nov 2018 22:33:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975597;
-        bh=czucewhKiRb97M8ahOGDdqsPMfEojUKjNdDw6PmX7nA=;
+        s=default; t=1541975600;
+        bh=6NYavegaDhYpR12VTyCvOnuppdRrdnC6cAQLS3RKbq8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zyj1Us/jETB7E3ZcJaIJcC1+uZkptljwzCZDWGOYv7ZDKKT3a188vSwj/jw5+oExy
-         tkFfCtBuZe1YmwbCCRNEkDDD7F/87EiUJFhYUyBsreg4oCL1ZZxuebVztweAcb1UvP
-         8zbIKeU4qs0EprqL/hhucpUV1SMg8vdWmYsrj8+E=
+        b=0DOLbq/5oNems0OhyrT/DeKAVIEXjY0lROd3BRpuKB5UaIME+OpB22brY47mmxtL1
+         8pWZ3sl7m/CzfghpqcZuoaZKdUmifL1kNdfmJNJsazf/jIcRdVj5bAaTESj3CaPmdQ
+         pjX/BFy5L131JObs0cBuTDqmmKOIMEf1mhgv2rzw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sander Eikelenboom <linux@eikelenboom.it>,
-        Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Subject: [PATCH 4.14 182/222] xen: fix xen_qlock_wait()
-Date:   Sun, 11 Nov 2018 14:24:39 -0800
-Message-Id: <20181111221703.301587880@linuxfoundation.org>
+        stable@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
+        Filipe Manana <fdmanana@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.14 215/222] btrfs: only free reserved extent if we didnt insert it
+Date:   Sun, 11 Nov 2018 14:25:12 -0800
+Message-Id: <20181111221705.648298106@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -63,82 +64,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Juergen Gross <jgross@suse.com>
+From: Josef Bacik <josef@toxicpanda.com>
 
-commit d3132b3860f6cf35ff7609a76bbcdbb814bd027c upstream.
+commit 49940bdd57779c78462da7aa5a8650b2fea8c2ff upstream.
 
-Commit a856531951dc80 ("xen: make xen_qlock_wait() nestable")
-introduced a regression for Xen guests running fully virtualized
-(HVM or PVH mode). The Xen hypervisor wouldn't return from the poll
-hypercall with interrupts disabled in case of an interrupt (for PV
-guests it does).
+When we insert the file extent once the ordered extent completes we free
+the reserved extent reservation as it'll have been migrated to the
+bytes_used counter.  However if we error out after this step we'll still
+clear the reserved extent reservation, resulting in a negative
+accounting of the reserved bytes for the block group and space info.
+Fix this by only doing the free if we didn't successfully insert a file
+extent for this extent.
 
-So instead of disabling interrupts in xen_qlock_wait() use a nesting
-counter to avoid calling xen_clear_irq_pending() in case
-xen_qlock_wait() is nested.
-
-Fixes: a856531951dc80 ("xen: make xen_qlock_wait() nestable")
-Cc: stable@vger.kernel.org
-Reported-by: Sander Eikelenboom <linux@eikelenboom.it>
-Signed-off-by: Juergen Gross <jgross@suse.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Tested-by: Sander Eikelenboom <linux@eikelenboom.it>
-Signed-off-by: Juergen Gross <jgross@suse.com>
+CC: stable@vger.kernel.org # 4.14+
+Reviewed-by: Omar Sandoval <osandov@fb.com>
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/xen/spinlock.c |   14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ fs/btrfs/inode.c |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
---- a/arch/x86/xen/spinlock.c
-+++ b/arch/x86/xen/spinlock.c
-@@ -9,6 +9,7 @@
- #include <linux/log2.h>
- #include <linux/gfp.h>
- #include <linux/slab.h>
-+#include <linux/atomic.h>
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -2966,6 +2966,7 @@ static int btrfs_finish_ordered_io(struc
+ 	bool truncated = false;
+ 	bool range_locked = false;
+ 	bool clear_new_delalloc_bytes = false;
++	bool clear_reserved_extent = true;
  
- #include <asm/paravirt.h>
- 
-@@ -20,6 +21,7 @@
- 
- static DEFINE_PER_CPU(int, lock_kicker_irq) = -1;
- static DEFINE_PER_CPU(char *, irq_name);
-+static DEFINE_PER_CPU(atomic_t, xen_qlock_wait_nest);
- static bool xen_pvspin = true;
- 
- #include <asm/qspinlock.h>
-@@ -40,25 +42,25 @@ static void xen_qlock_kick(int cpu)
-  */
- static void xen_qlock_wait(u8 *byte, u8 val)
- {
--	unsigned long flags;
- 	int irq = __this_cpu_read(lock_kicker_irq);
-+	atomic_t *nest_cnt = this_cpu_ptr(&xen_qlock_wait_nest);
- 
- 	/* If kicker interrupts not initialized yet, just spin */
- 	if (irq == -1 || in_nmi())
- 		return;
- 
--	/* Guard against reentry. */
--	local_irq_save(flags);
-+	/* Detect reentry. */
-+	atomic_inc(nest_cnt);
- 
--	/* If irq pending already clear it. */
--	if (xen_test_irq_pending(irq)) {
-+	/* If irq pending already and no nested call clear it. */
-+	if (atomic_read(nest_cnt) == 1 && xen_test_irq_pending(irq)) {
- 		xen_clear_irq_pending(irq);
- 	} else if (READ_ONCE(*byte) == val) {
- 		/* Block until irq becomes pending (or a spurious wakeup) */
- 		xen_poll_irq(irq);
+ 	if (!test_bit(BTRFS_ORDERED_NOCOW, &ordered_extent->flags) &&
+ 	    !test_bit(BTRFS_ORDERED_PREALLOC, &ordered_extent->flags) &&
+@@ -3069,10 +3070,12 @@ static int btrfs_finish_ordered_io(struc
+ 						logical_len, logical_len,
+ 						compress_type, 0, 0,
+ 						BTRFS_FILE_EXTENT_REG);
+-		if (!ret)
++		if (!ret) {
++			clear_reserved_extent = false;
+ 			btrfs_release_delalloc_bytes(fs_info,
+ 						     ordered_extent->start,
+ 						     ordered_extent->disk_len);
++		}
  	}
- 
--	local_irq_restore(flags);
-+	atomic_dec(nest_cnt);
- }
- 
- static irqreturn_t dummy_handler(int irq, void *dev_id)
+ 	unpin_extent_cache(&BTRFS_I(inode)->extent_tree,
+ 			   ordered_extent->file_offset, ordered_extent->len,
+@@ -3132,8 +3135,13 @@ out:
+ 		 * wrong we need to return the space for this ordered extent
+ 		 * back to the allocator.  We only free the extent in the
+ 		 * truncated case if we didn't write out the extent at all.
++		 *
++		 * If we made it past insert_reserved_file_extent before we
++		 * errored out then we don't need to do this as the accounting
++		 * has already been done.
+ 		 */
+ 		if ((ret || !logical_len) &&
++		    clear_reserved_extent &&
+ 		    !test_bit(BTRFS_ORDERED_NOCOW, &ordered_extent->flags) &&
+ 		    !test_bit(BTRFS_ORDERED_PREALLOC, &ordered_extent->flags))
+ 			btrfs_free_reserved_extent(fs_info,
 
 
