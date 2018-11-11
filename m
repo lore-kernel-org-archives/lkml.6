@@ -7,52 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59804C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 092E3C43610
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2128E2154B
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B92392245E
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:31:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="l6qO5f2M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2128E2154B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DtxWcNlY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B92392245E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389593AbeKLIVZ (ORCPT
+        id S2389634AbeKLIV1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:21:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48422 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:21:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387819AbeKLIVX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:21:23 -0500
+        id S2389532AbeKLIV0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:26 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 966CF22353;
-        Sun, 11 Nov 2018 22:31:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1CC3223C6;
+        Sun, 11 Nov 2018 22:31:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975485;
-        bh=ZZUnPclX9UIf+YvmVRO7v7gKJ8NJ9WgU4ce0HJrO+ew=;
+        s=default; t=1541975490;
+        bh=kb7Iv/izCLenBEkE0iSMybFSyLN1zFcA2o4l4/ZQxTc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l6qO5f2MECnDZ2pRshROKuLHQ3ozTkbzPd6QZ1blgawaEOTaGwKbtM3gRBvAzGBLN
-         WLYZQq0NGQ4enIEkF/ZXTMSb7t6q4GDfDKrm3/v4tILl4oG/Mhh0aMTHr5cRmDH9Ft
-         rQh1ysX+2L1vcO2aZO8Z9TJRG/Y8xRYne8fjJLUE=
+        b=DtxWcNlYDrF8TzefmpD8PLQfjnuFD6JX9xUE0CDFNkawF9984rmvl5oVJYG63lvPZ
+         tssd0ft0KTjIqNErdQPVDcKs2gg/JKR/K2/B45avXcqOQASB2E2h7eOU3eeZ43yx2y
+         CyVURN4IG0S9NAs8ol4/hfHgmIuKDL+GpXJueHlk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Frank Haverkamp <haver@linux.vnet.ibm.com>,
-        Joerg-Stephan Vogt <jsvogt@de.ibm.com>,
-        Michael Jung <mijung@gmx.net>,
-        Michael Ruettger <michael@ibmra.de>,
-        Kleber Sacilotto de Souza <klebers@linux.vnet.ibm.com>,
-        Sebastian Ott <sebott@linux.vnet.ibm.com>,
-        "Eberhard S. Amann" <esa@linux.vnet.ibm.com>,
-        Gabriel Krisman Bertazi <krisman@linux.vnet.ibm.com>,
-        "Guilherme G. Piccoli" <gpiccoli@linux.vnet.ibm.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: [PATCH 4.18 235/350] signal/GenWQE: Fix sending of SIGKILL
-Date:   Sun, 11 Nov 2018 14:21:39 -0800
-Message-Id: <20181111221717.869399035@linuxfoundation.org>
+        stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.18 289/350] media: cec: integrate cec_validate_phys_addr() in cec-api.c
+Date:   Sun, 11 Nov 2018 14:22:33 -0800
+Message-Id: <20181111221720.156653590@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -70,112 +62,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric W. Biederman <ebiederm@xmission.com>
+From: Hans Verkuil <hans.verkuil@cisco.com>
 
-commit 0ab93e9c99f8208c0a1a7b7170c827936268c996 upstream.
+commit e81bff39489a06384822bb38ce7a59f9e365bbe9 upstream.
 
-The genweq_add_file and genwqe_del_file by caching current without
-using reference counting embed the assumption that a file descriptor
-will never be passed from one process to another.  It even embeds the
-assumption that the the thread that opened the file will be in
-existence when the process terminates.   Neither of which are
-guaranteed to be true.
+The cec_phys_addr_validate() function will be moved to V4L2,
+so use a simplified variant of that function in cec-api.c.
+cec now no longer calls cec_phys_addr_validate() and it can
+be safely moved to V4L2.
 
-Therefore replace caching the task_struct of the opener with
-pid of the openers thread group id.  All the knowledge of the
-opener is used for is as the target of SIGKILL and a SIGKILL
-will kill the entire process group.
-
-Rename genwqe_force_sig to genwqe_terminate, remove it's unncessary
-signal argument, update it's ownly caller, and use kill_pid
-instead of force_sig.
-
-The work force_sig does in changing signal handling state is not
-relevant to SIGKILL sent as SEND_SIG_PRIV.  The exact same processess
-will be killed just with less work, and less confusion.  The work done
-by force_sig is really only needed for handling syncrhonous
-exceptions.
-
-It will still be possible to cause genwqe_device_remove to wait
-8 seconds by passing a file descriptor to another process but
-the possible user after free is fixed.
-
-Fixes: eaf4722d4645 ("GenWQE Character device and DDCB queue")
-Cc: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Frank Haverkamp <haver@linux.vnet.ibm.com>
-Cc: Joerg-Stephan Vogt <jsvogt@de.ibm.com>
-Cc: Michael Jung <mijung@gmx.net>
-Cc: Michael Ruettger <michael@ibmra.de>
-Cc: Kleber Sacilotto de Souza <klebers@linux.vnet.ibm.com>
-Cc: Sebastian Ott <sebott@linux.vnet.ibm.com>
-Cc: Eberhard S. Amann <esa@linux.vnet.ibm.com>
-Cc: Gabriel Krisman Bertazi <krisman@linux.vnet.ibm.com>
-Cc: Guilherme G. Piccoli <gpiccoli@linux.vnet.ibm.com>
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Cc: <stable@vger.kernel.org>      # for v4.17 and up
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/genwqe/card_base.h |    2 +-
- drivers/misc/genwqe/card_dev.c  |    9 +++++----
- 2 files changed, 6 insertions(+), 5 deletions(-)
+ drivers/media/cec/cec-api.c |   19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
---- a/drivers/misc/genwqe/card_base.h
-+++ b/drivers/misc/genwqe/card_base.h
-@@ -408,7 +408,7 @@ struct genwqe_file {
- 	struct file *filp;
- 
- 	struct fasync_struct *async_queue;
--	struct task_struct *owner;
-+	struct pid *opener;
- 	struct list_head list;		/* entry in list of open files */
- 
- 	spinlock_t map_lock;		/* lock for dma_mappings */
---- a/drivers/misc/genwqe/card_dev.c
-+++ b/drivers/misc/genwqe/card_dev.c
-@@ -52,7 +52,7 @@ static void genwqe_add_file(struct genwq
- {
- 	unsigned long flags;
- 
--	cfile->owner = current;
-+	cfile->opener = get_pid(task_tgid(current));
- 	spin_lock_irqsave(&cd->file_lock, flags);
- 	list_add(&cfile->list, &cd->file_list);
- 	spin_unlock_irqrestore(&cd->file_lock, flags);
-@@ -65,6 +65,7 @@ static int genwqe_del_file(struct genwqe
- 	spin_lock_irqsave(&cd->file_lock, flags);
- 	list_del(&cfile->list);
- 	spin_unlock_irqrestore(&cd->file_lock, flags);
-+	put_pid(cfile->opener);
- 
+--- a/drivers/media/cec/cec-api.c
++++ b/drivers/media/cec/cec-api.c
+@@ -101,6 +101,23 @@ static long cec_adap_g_phys_addr(struct
  	return 0;
  }
-@@ -275,7 +276,7 @@ static int genwqe_kill_fasync(struct gen
- 	return files;
- }
  
--static int genwqe_force_sig(struct genwqe_dev *cd, int sig)
-+static int genwqe_terminate(struct genwqe_dev *cd)
++static int cec_validate_phys_addr(u16 phys_addr)
++{
++	int i;
++
++	if (phys_addr == CEC_PHYS_ADDR_INVALID)
++		return 0;
++	for (i = 0; i < 16; i += 4)
++		if (phys_addr & (0xf << i))
++			break;
++	if (i == 16)
++		return 0;
++	for (i += 4; i < 16; i += 4)
++		if ((phys_addr & (0xf << i)) == 0)
++			return -EINVAL;
++	return 0;
++}
++
+ static long cec_adap_s_phys_addr(struct cec_adapter *adap, struct cec_fh *fh,
+ 				 bool block, __u16 __user *parg)
  {
- 	unsigned int files = 0;
- 	unsigned long flags;
-@@ -283,7 +284,7 @@ static int genwqe_force_sig(struct genwq
+@@ -112,7 +129,7 @@ static long cec_adap_s_phys_addr(struct
+ 	if (copy_from_user(&phys_addr, parg, sizeof(phys_addr)))
+ 		return -EFAULT;
  
- 	spin_lock_irqsave(&cd->file_lock, flags);
- 	list_for_each_entry(cfile, &cd->file_list, list) {
--		force_sig(sig, cfile->owner);
-+		kill_pid(cfile->opener, SIGKILL, 1);
- 		files++;
- 	}
- 	spin_unlock_irqrestore(&cd->file_lock, flags);
-@@ -1357,7 +1358,7 @@ static int genwqe_inform_and_stop_proces
- 		dev_warn(&pci_dev->dev,
- 			 "[%s] send SIGKILL and wait ...\n", __func__);
- 
--		rc = genwqe_force_sig(cd, SIGKILL); /* force terminate */
-+		rc = genwqe_terminate(cd);
- 		if (rc) {
- 			/* Give kill_timout more seconds to end processes */
- 			for (i = 0; (i < GENWQE_KILL_TIMEOUT) &&
+-	err = cec_phys_addr_validate(phys_addr, NULL, NULL);
++	err = cec_validate_phys_addr(phys_addr);
+ 	if (err)
+ 		return err;
+ 	mutex_lock(&adap->lock);
 
 
