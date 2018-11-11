@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB8D4C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:46:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 346D0C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:46:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93E2221508
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:46:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF3FD21508
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:46:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1xYI6DV7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93E2221508
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vkHEp7/L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF3FD21508
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391048AbeKLIXg (ORCPT
+        id S2391033AbeKLIXg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 12 Nov 2018 03:23:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57572 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:57596 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391015AbeKLIXe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:23:34 -0500
+        id S2391016AbeKLIXf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:23:35 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BAA8F223C6;
-        Sun, 11 Nov 2018 22:33:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3B10A223CA;
+        Sun, 11 Nov 2018 22:33:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975616;
-        bh=IAhx856D+QCjX7p3UiF2F0Abl5gq3xfZbLGPhUdJMlY=;
+        s=default; t=1541975617;
+        bh=RlttFMtFst2TvvU03SeAyrv/uy0AJJSe/rb+DQsWcuw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1xYI6DV7gDen2u5PCPJm2qvORVNGC95HZ4IxZnOjFDDoYkI0izh5xz3dlt6mwEaJP
-         gCWX9ozcabooExDIFNl+enbLLugeua0liz39TNCatrNLBMmczvySxV7vfZ+Rwvvkyu
-         2Tqy9tcdfhPSVCzDuC/VkpfHjWIeRs1z/l4Lwap0=
+        b=vkHEp7/LlLfaJ59cpL+xyQj3I95iuEgH9SAVjh7Se7nsNDiSLyzMVwZdmVqVn9uh7
+         /HKPOdHi74yy4zvswyhCFk7afXaeLDdSshjoeSLzLrhU0j0HLudI4w3sXMmwweVmsW
+         smJ/YPWkw96yB9CH2wr+w9Ia9eaSxIhFz4tkZCbg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -45,9 +45,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Joe Lawrence <joe.lawrence@redhat.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 033/141] perf tools: Free temporary sys string in read_event_files()
-Date:   Sun, 11 Nov 2018 14:24:52 -0800
-Message-Id: <20181111221632.144312020@linuxfoundation.org>
+Subject: [PATCH 4.9 034/141] perf tools: Cleanup trace-event-info tdata leak
+Date:   Sun, 11 Nov 2018 14:24:53 -0800
+Message-Id: <20181111221632.229520844@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
 References: <20181111221627.853046496@linuxfoundation.org>
@@ -67,48 +67,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sanskriti Sharma <sansharm@redhat.com>
 
-[ Upstream commit 1e44224fb0528b4c0cc176bde2bb31e9127eb14b ]
+[ Upstream commit faedbf3fd19f2511a39397f76359e4cc6ee93072 ]
 
-For each system in a given pevent, read_event_files() reads in a
-temporary 'sys' string.  Be sure to free this string before moving onto
-to the next system and/or leaving read_event_files().
+Free tracing_data structure in tracing_data_get() error paths.
 
-Fixes the following coverity complaints:
+Fixes the following coverity complaint:
 
   Error: RESOURCE_LEAK (CWE-772):
-
-  tools/perf/util/trace-event-read.c:343: overwrite_var: Overwriting
-  "sys" in "sys = read_string()" leaks the storage that "sys" points to.
-
-  tools/perf/util/trace-event-read.c:353: leaked_storage: Variable "sys"
-  going out of scope leaks the storage it points to.
+  leaked_storage: Variable "tdata" going out of scope leaks the storage
 
 Signed-off-by: Sanskriti Sharma <sansharm@redhat.com>
 Reviewed-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Joe Lawrence <joe.lawrence@redhat.com>
-Link: http://lkml.kernel.org/r/1538490554-8161-6-git-send-email-sansharm@redhat.com
+Link: http://lkml.kernel.org/r/1538490554-8161-3-git-send-email-sansharm@redhat.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/util/trace-event-read.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ tools/perf/util/trace-event-info.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/tools/perf/util/trace-event-read.c
-+++ b/tools/perf/util/trace-event-read.c
-@@ -334,9 +334,12 @@ static int read_event_files(struct peven
- 		for (x=0; x < count; x++) {
- 			size = read8(pevent);
- 			ret = read_event_file(pevent, sys, size);
--			if (ret)
-+			if (ret) {
-+				free(sys);
- 				return ret;
-+			}
+--- a/tools/perf/util/trace-event-info.c
++++ b/tools/perf/util/trace-event-info.c
+@@ -507,12 +507,14 @@ struct tracing_data *tracing_data_get(st
+ 			 "/tmp/perf-XXXXXX");
+ 		if (!mkstemp(tdata->temp_file)) {
+ 			pr_debug("Can't make temp file");
++			free(tdata);
+ 			return NULL;
  		}
-+		free(sys);
- 	}
- 	return 0;
- }
+ 
+ 		temp_fd = open(tdata->temp_file, O_RDWR);
+ 		if (temp_fd < 0) {
+ 			pr_debug("Can't read '%s'", tdata->temp_file);
++			free(tdata);
+ 			return NULL;
+ 		}
+ 
 
 
