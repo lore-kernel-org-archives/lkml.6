@@ -2,109 +2,160 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BBBFC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:24:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 705E9C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:24:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 461CD20818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:24:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 461CD20818
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3BB1020818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:24:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BB1020818
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730938AbeKLGNg (ORCPT
+        id S1731089AbeKLGOH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:13:36 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37436 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728704AbeKLFx4 (ORCPT
+        Mon, 12 Nov 2018 01:14:07 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51090 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730695AbeKLFsa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:53:56 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wABJwtOe063597
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 15:04:27 -0500
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2npdbntcts-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 15:04:27 -0500
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Sun, 11 Nov 2018 20:04:26 -0000
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 11 Nov 2018 20:04:21 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wABK4K9t37158948
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 11 Nov 2018 20:04:20 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 08AC9B205F;
-        Sun, 11 Nov 2018 20:04:20 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D9A33B2064;
-        Sun, 11 Nov 2018 20:04:19 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.207.24])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Sun, 11 Nov 2018 20:04:19 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 1517916C5D38; Sun, 11 Nov 2018 12:04:21 -0800 (PST)
-Date:   Sun, 11 Nov 2018 12:04:21 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org
-Subject: [PATCH tip/core/rcu 0/7] Use lockdep instead of asserting
- spin_is_locked() for v4.21/v5.0
-Reply-To: paulmck@linux.ibm.com
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        Mon, 12 Nov 2018 00:48:30 -0500
+Received: from [192.168.4.242] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1gLvsq-0000oF-Ld; Sun, 11 Nov 2018 19:59:00 +0000
+Received: from ben by deadeye with local (Exim 4.91)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1gLvsW-0001k1-VY; Sun, 11 Nov 2018 19:58:40 +0000
+Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18111120-2213-0000-0000-00000315A94C
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010028; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01116026; UDB=6.00578737; IPR=6.00896126;
- MB=3.00024114; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-11 20:04:24
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111120-2214-0000-0000-00005C3873E9
-Message-Id: <20181111200421.GA10551@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-11_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=540 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811110191
+Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+From:   Ben Hutchings <ben@decadent.org.uk>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC:     akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
+        "syzbot" <syzkaller@googlegroups.com>,
+        "Eric Biggers" <ebiggers@google.com>
+Date:   Sun, 11 Nov 2018 19:49:05 +0000
+Message-ID: <lsq.1541965745.484128702@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+Subject: [PATCH 3.16 263/366] KEYS: DNS: fix parsing multiple options
+In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
+X-SA-Exim-Connect-IP: 192.168.4.242
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
+3.16.61-rc1 review patch.  If anyone has any objections, please let me know.
 
-This series converts assertions of spin_is_locked() into
-lockdep_assert_held(), all courtesy of Lance Roy.
+------------------
 
-							Thanx, Paul
+From: Eric Biggers <ebiggers@google.com>
 
-------------------------------------------------------------------------
+commit c604cb767049b78b3075497b80ebb8fd530ea2cc upstream.
 
- arch/x86/pci/i386.c                  |    2 +-
- drivers/net/ethernet/sfc/efx.c       |    2 +-
- drivers/net/ethernet/smsc/smsc911x.h |    2 +-
- fs/userfaultfd.c                     |    2 +-
- kernel/locking/mutex-debug.c         |    4 ++--
- mm/khugepaged.c                      |    4 ++--
- mm/swap.c                            |    3 +--
- virt/kvm/arm/vgic/vgic.c             |   12 ++++++------
- 8 files changed, 15 insertions(+), 16 deletions(-)
+My recent fix for dns_resolver_preparse() printing very long strings was
+incomplete, as shown by syzbot which still managed to hit the
+WARN_ONCE() in set_precision() by adding a crafted "dns_resolver" key:
+
+    precision 50001 too large
+    WARNING: CPU: 7 PID: 864 at lib/vsprintf.c:2164 vsnprintf+0x48a/0x5a0
+
+The bug this time isn't just a printing bug, but also a logical error
+when multiple options ("#"-separated strings) are given in the key
+payload.  Specifically, when separating an option string into name and
+value, if there is no value then the name is incorrectly considered to
+end at the end of the key payload, rather than the end of the current
+option.  This bypasses validation of the option length, and also means
+that specifying multiple options is broken -- which presumably has gone
+unnoticed as there is currently only one valid option anyway.
+
+A similar problem also applied to option values, as the kstrtoul() when
+parsing the "dnserror" option will read past the end of the current
+option and into the next option.
+
+Fix these bugs by correctly computing the length of the option name and
+by copying the option value, null-terminated, into a temporary buffer.
+
+Reproducer for the WARN_ONCE() that syzbot hit:
+
+    perl -e 'print "#A#", "\0" x 50000' | keyctl padd dns_resolver desc @s
+
+Reproducer for "dnserror" option being parsed incorrectly (expected
+behavior is to fail when seeing the unknown option "foo", actual
+behavior was to read the dnserror value as "1#foo" and fail there):
+
+    perl -e 'print "#dnserror=1#foo\0"' | keyctl padd dns_resolver desc @s
+
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Fixes: 4a2d789267e0 ("DNS: If the DNS server returns an error, allow that to be cached [ver #2]")
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ net/dns_resolver/dns_key.c | 28 ++++++++++++++++------------
+ 1 file changed, 16 insertions(+), 12 deletions(-)
+
+--- a/net/dns_resolver/dns_key.c
++++ b/net/dns_resolver/dns_key.c
+@@ -89,35 +89,39 @@ dns_resolver_instantiate(struct key *key
+ 		opt++;
+ 		kdebug("options: '%s'", opt);
+ 		do {
++			int opt_len, opt_nlen;
+ 			const char *eq;
+-			int opt_len, opt_nlen, opt_vlen, tmp;
++			char optval[128];
+ 
+ 			next_opt = memchr(opt, '#', end - opt) ?: end;
+ 			opt_len = next_opt - opt;
+-			if (opt_len <= 0 || opt_len > 128) {
++			if (opt_len <= 0 || opt_len > sizeof(optval)) {
+ 				pr_warn_ratelimited("Invalid option length (%d) for dns_resolver key\n",
+ 						    opt_len);
+ 				return -EINVAL;
+ 			}
+ 
+-			eq = memchr(opt, '=', opt_len) ?: end;
+-			opt_nlen = eq - opt;
+-			eq++;
+-			opt_vlen = next_opt - eq; /* will be -1 if no value */
+-
+-			tmp = opt_vlen >= 0 ? opt_vlen : 0;
+-			kdebug("option '%*.*s' val '%*.*s'",
+-			       opt_nlen, opt_nlen, opt, tmp, tmp, eq);
++			eq = memchr(opt, '=', opt_len);
++			if (eq) {
++				opt_nlen = eq - opt;
++				eq++;
++				memcpy(optval, eq, next_opt - eq);
++				optval[next_opt - eq] = '\0';
++			} else {
++				opt_nlen = opt_len;
++				optval[0] = '\0';
++			}
++
++			kdebug("option '%*.*s' val '%s'",
++			       opt_nlen, opt_nlen, opt, optval);
+ 
+ 			/* see if it's an error number representing a DNS error
+ 			 * that's to be recorded as the result in this key */
+ 			if (opt_nlen == sizeof(DNS_ERRORNO_OPTION) - 1 &&
+ 			    memcmp(opt, DNS_ERRORNO_OPTION, opt_nlen) == 0) {
+ 				kdebug("dns error number option");
+-				if (opt_vlen <= 0)
+-					goto bad_option_value;
+ 
+-				ret = kstrtoul(eq, 10, &derrno);
++				ret = kstrtoul(optval, 10, &derrno);
+ 				if (ret < 0)
+ 					goto bad_option_value;
+ 
 
