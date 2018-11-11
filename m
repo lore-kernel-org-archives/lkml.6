@@ -6,105 +6,96 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AB74C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:18:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C83E9C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:18:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 180B620854
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:18:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 180B620854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 96CF020854
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:18:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96CF020854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731858AbeKLGFc (ORCPT
+        id S1731238AbeKLGIN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:05:32 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53100 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731493AbeKLGFb (ORCPT
+        Mon, 12 Nov 2018 01:08:13 -0500
+Received: from mout.kundenserver.de ([212.227.126.131]:53429 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726652AbeKLGIN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 01:05:31 -0500
-Received: from [192.168.4.242] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1gLvt6-0000oF-OU; Sun, 11 Nov 2018 19:59:16 +0000
-Received: from ben by deadeye with local (Exim 4.91)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsQ-0001TS-AJ; Sun, 11 Nov 2018 19:58:34 +0000
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Mon, 12 Nov 2018 01:08:13 -0500
+Received: from null ([172.19.246.153]) by mrelayeu.kundenserver.de (mreue009
+ [213.165.67.97]) with ESMTPSA (Nemesis) id 1McpW6-1fn9KX3ZXG-00a0y5; Sun, 11
+ Nov 2018 21:18:15 +0100
+Date:   Sun, 11 Nov 2018 21:18:12 +0100 (CET)
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+To:     Mike Brady <mikebrady@eircom.net>, tiwai@suse.de
+Cc:     devel@driverdev.osuosl.org, alsa-devel@alsa-project.org,
+        f.fainelli@gmail.com, Eric Anholt <eric@anholt.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, julia.lawall@lip6.fr,
+        linux-rpi-kernel@lists.infradead.org,
+        nishka.dasgupta_ug18@ashoka.edu.in,
+        Kirill Marinushkin <k.marinushkin@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Message-ID: <1197390391.186035.1541967492518@email.ionos.de>
+In-Reply-To: <B1CDD261-AB22-43CE-AF46-DFB5460B5D50@eircom.net>
+References: <B1CDD261-AB22-43CE-AF46-DFB5460B5D50@eircom.net>
+Subject: Re: [PATCH v2] ARM: staging: bcm2835-audio: interpolate audio delay
 MIME-Version: 1.0
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Felipe Balbi" <felipe.balbi@linux.intel.com>,
-        "Yoshihiro Shimoda" <yoshihiro.shimoda.uh@renesas.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.809739934@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 086/366] usb: gadget: function: printer: avoid wrong
- list handling in printer_write()
-In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
-X-SA-Exim-Connect-IP: 192.168.4.242
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Medium
+X-Mailer: Open-Xchange Mailer v7.8.4-Rev39
+X-Originating-Client: open-xchange-appsuite
+X-Provags-ID: V03:K1:2WhD7UsCKuCLCUAgyaumxBCtesA74bOMmvZUYXQTG4kZ+6W628c
+ raR3YKIY92DBdXJ72bk7ir3/oRGXWKmfGZxIsAeaYHzskU55ULI78MXvc7vgFLV922tvAIR
+ XV4z2fLiW0gGUOYKMuX0MGpBFzXC5FwMx7yH67YwdiSb9kxXm3HNw6HAHqEIViy5YLs8XNi
+ OhwB8sihnNffvZPeu0gJg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:9jkkUeVqVL8=:3kd9QtbNnQjjjuSc8Co7Qp
+ IJdrMKBnLeVMr0/t27PbMcGGuQc8DoP4hS4TtIN3jbHWlk7M818vgGfyVWXb2wkhich5/4kBB
+ /02G1aViogKOYCFU2CT15hmAInU6lji9Y9auae/nok7BVpTGlciv1d+6uEQUCEG92Z8cUbW9U
+ wh2chZirQUa/AeD+cVsvLX+XIqiHrhLNv3zuTYYyzMTPiuscK/7UR2eRNX7aCJ8//GuJApWy5
+ Auuzwknjek9MpoMQjM+rEjDP3OqHI85TY0h32/EAqPoNaSLwtynTNQ+RG2v6t4WfmX3tUniFZ
+ SZ4pWmIgK0J/YEYOxr1kDFSyCe+lEc16G8F6xwwqvVUQE65S2vuMr/nNK3Hdt9wpIAj2VxBnG
+ EPOtyvbbEvpobncopYiE0G7+oyKwJiQLj9rOLht7O3yR3zVogo5JUrLWkT5qvxW3Q5rZMKcM/
+ APghJpS2OFWoxKys+BWCUv6e4GiBjOMldd3NxHNILWz9A9D5DOSvPl4V+b+R9DbsEZeUziB3N
+ yVe7ojQCuR6t4PD+P3AO4OwfQCDNtW96ZclGVmVlgBzCGP/aiIU0q2se3iY8ly+ctDBqntr1n
+ DRi5AJr31GjtZ6Ol53uyGx5P3vzRlr/4vyXndwMMCFeNz+M4kq7ZywETwD709PqY7LJ49iQZ+
+ avD1XLSazN7VQyXSCm+Kdrtpa7eQ9B8QGUhgRGoqeI/GXAWfz9T4qbYeXmOi71wHhB3YGWvoy
+ PYX9xY5k76hYuzRMNsi/FN+aUOTanBXZZFTZAH8U3o8ICOpBUHbYulzNwDV5AKFv7fuIJwVgm
+ YhldNYeDZ0escm/NAzEeF/XB0mfX8OgQg/u34QqSI35SYMlKkQ=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.61-rc1 review patch.  If anyone has any objections, please let me know.
+Hi Mike,
 
-------------------
+> Mike Brady <mikebrady@eircom.net> hat am 11. November 2018 um 19:21 geschrieben:
+> 
+> 
+> When the BCM2835 audio output is used, userspace sees a jitter up to 10ms
+> in the audio position, aka "delay" -- the number of frames that must
+> be output before a new frame would be played.
+> Make this a bit nicer for userspace by interpolating the position
+> using the CPU clock.
+> The overhead is small -- an extra ktime_get() every time a GPU message
+> is sent -- and another call and a few calculations whenever the delay
+> is sought from userland.
+> At 48,000 frames per second, i.e. approximately 20 microseconds per
+> frame, it would take a clock inaccuracy of
+> 20 microseconds in 10 milliseconds -- 2,000 parts per million --
+> to result in an inaccurate estimate, whereas
+> crystal- or resonator-based clocks typically have an
+> inaccuracy of 10s to 100s of parts per million.
+> 
+> Signed-off-by: Mike Brady <mikebrady@eircom.net>
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+the former version of your patch has already been applied to staging-next.
 
-commit 4a014a7339f441b0851ce012f469c0fadac61c81 upstream.
+Didn't you received Greg's email?
 
-When printer_write() calls usb_ep_queue(), a udc driver (e.g.
-renesas_usbhs driver) may call usb_gadget_giveback_request() in
-the udc .queue ops immediately. Then, printer_write() calls
-list_add(&req->list, &dev->tx_reqs_active) wrongly. After that,
-if we do unbind the printer driver, WARN_ON() happens in
-printer_func_unbind() because the list entry is not removed.
+So please rebase your changes.
 
-So, this patch moves list_add(&req->list, &dev->tx_reqs_active)
-calling before usb_ep_queue().
-
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Acked-by: Felipe Balbi <felipe.balbi@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.16: adjust filename]
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- drivers/usb/gadget/printer.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
---- a/drivers/usb/gadget/printer.c
-+++ b/drivers/usb/gadget/printer.c
-@@ -667,19 +667,19 @@ printer_write(struct file *fd, const cha
- 			return -EAGAIN;
- 		}
- 
-+		list_add(&req->list, &dev->tx_reqs_active);
-+
- 		/* here, we unlock, and only unlock, to avoid deadlock. */
- 		spin_unlock(&dev->lock);
- 		value = usb_ep_queue(dev->in_ep, req, GFP_ATOMIC);
- 		spin_lock(&dev->lock);
- 		if (value) {
-+			list_del(&req->list);
- 			list_add(&req->list, &dev->tx_reqs);
- 			spin_unlock_irqrestore(&dev->lock, flags);
- 			mutex_unlock(&dev->lock_printer_io);
- 			return -EAGAIN;
- 		}
--
--		list_add(&req->list, &dev->tx_reqs_active);
--
- 	}
- 
- 	spin_unlock_irqrestore(&dev->lock, flags);
-
+Stefan
