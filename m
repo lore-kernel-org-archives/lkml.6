@@ -2,116 +2,192 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60293C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 12:40:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B551EC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 12:42:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20EE321479
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 12:40:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7010420866
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 12:42:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z9YL4K1e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20EE321479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="m28mhrX9";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="dR1hRky/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7010420866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728035AbeKKW3S (ORCPT
+        id S1728060AbeKKWbJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 17:29:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56832 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727597AbeKKW3R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 17:29:17 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Sun, 11 Nov 2018 17:31:09 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:33378 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727594AbeKKWbJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Nov 2018 17:31:09 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id B5C4560A33; Sun, 11 Nov 2018 12:42:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541940159;
+        bh=hF/omAr0+4O+t6KrEhSBC45nS/s2dupbv5nPlOR0+0A=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=m28mhrX9XOpS6LIDqkOYa1Crw0+FGDXOzSlr9UyhO5n+vZRuIrUqQjarDAONR7eT3
+         E8Le5704bR0Oyvy6hcO4zG2bXUVSP1K5rSma6v5WEtpYpbN49iFPDdmwh3+yTeUubD
+         6VafLwUlUi32WeItV7qX98vLVUeVMcVdpCTgnM30=
+Received: from [10.79.169.103] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 130D120866;
-        Sun, 11 Nov 2018 12:40:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541940048;
-        bh=JvhRP/jK66vg9VgQvU3IuGpCdhBfnzHEWe/pGGlzLKo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Z9YL4K1eAHNZUoxzWaL8DOtos8mMuyTJLAUtbzXC64jLTPw/64gJO4/f7nynhMHsL
-         iRLBRSknfYf9pSLGGBBhanyVmZtc9R9jeajcxE1PVJ26g/gtBpOMmxfh3HE+0ER6of
-         +ySN+u7jIphf2eY8hKjNCFGVDy32LrkUJiIUjuFI=
-Date:   Sun, 11 Nov 2018 12:40:44 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Baolin Wang <baolin.wang@linaro.org>
-Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        freeman.liu@unisoc.com, broonie@kernel.org,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: sc27xx: Add ADC data conversion timeout
-Message-ID: <20181111124044.52f61897@archlinux>
-In-Reply-To: <208f9043fbd9b14b7a0c2743f68fa424388f5dcd.1541733478.git.baolin.wang@linaro.org>
-References: <208f9043fbd9b14b7a0c2743f68fa424388f5dcd.1541733478.git.baolin.wang@linaro.org>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 777F060249;
+        Sun, 11 Nov 2018 12:42:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1541940158;
+        bh=hF/omAr0+4O+t6KrEhSBC45nS/s2dupbv5nPlOR0+0A=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=dR1hRky/UCSbmQJhX7BWdl3/3n71uVs3rtshOG8ggZxLFcrTLxIY4Z9JZwkUYfIRd
+         W8XAycjiCTqRnryFMA33tvMkwU59xBvPJt1PHNhB1dW1uyo0dHaw5VnptxgUq3RyTa
+         S5nKEBnDed7VMQQoCfd5aonczDQpHPZVjEapPICY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 777F060249
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH 2/2] cpufreq: qcom-hw: Add support for QCOM cpufreq HW
+ driver
+To:     Stephen Boyd <swboyd@chromium.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>, devicetree@vger.kernel.org,
+        robh@kernel.org, skannan@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, amit.kucheria@linaro.org,
+        evgreen@google.com
+References: <1539257761-23023-1-git-send-email-tdas@codeaurora.org>
+ <1539257761-23023-3-git-send-email-tdas@codeaurora.org>
+ <153981915373.5275.15971019914218464179@swboyd.mtv.corp.google.com>
+ <0c51a12e-38d3-2df5-4f5f-6a687727e9bf@codeaurora.org>
+ <154130523254.88331.12609105382114756048@swboyd.mtv.corp.google.com>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <3aa7b871-9cf9-9626-11fe-b9aa6009b477@codeaurora.org>
+Date:   Sun, 11 Nov 2018 18:12:29 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <154130523254.88331.12609105382114756048@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri,  9 Nov 2018 11:25:31 +0800
-Baolin Wang <baolin.wang@linaro.org> wrote:
+Hello Stephen,
 
-> From: Freeman Liu <freeman.liu@unisoc.com>
+Thanks for your comments.
+
+On 11/4/2018 9:50 AM, Stephen Boyd wrote:
+> Quoting Taniya Das (2018-11-02 20:06:00)
+>> Hello Stephen,
+>>
+>> On 10/18/2018 5:02 AM, Stephen Boyd wrote:
+>>> Quoting Taniya Das (2018-10-11 04:36:01)
+>>>> --- a/drivers/cpufreq/Kconfig.arm
+>>>> +++ b/drivers/cpufreq/Kconfig.arm
+>>>> @@ -121,6 +121,17 @@ config ARM_QCOM_CPUFREQ_KRYO
+>>>>
+>>>>             If in doubt, say N.
+>>>>
+>>>> +config ARM_QCOM_CPUFREQ_HW
+>>>> +       bool "QCOM CPUFreq HW driver"
+>>>
+>>> Is there any reason this can't be a module?
+>>>
+>>
+>> We do not have any use cases where we need to support it as module.
 > 
-> Sometimes the ADC controller met some problems, and it will not complete
-> the data conversion, that will can not wake up the read process any more
-> to block users. So we should add one maximum conversion time to avoid
-> this issue.
+> Ok, so it could easily be tristate then? Why not allow it?
 > 
-> Signed-off-by: Freeman Liu <freeman.liu@unisoc.com>
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-Hi.
 
-Patch looks good, but sounds like this is a fix so could I have a fixes
-tag and a patch title that makes that clear?
+I have checked other vendors CPUfreq drivers and those too support only 
+"bool".
 
-I think we will want this one back ported to stable by the sound of it.
-
-If it is just a theoretical issue then perhaps we don't need to bother.
-
-Thanks,
-
-Jonathan
-
-> ---
->  drivers/iio/adc/sc27xx_adc.c |   12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
+>>
+>>>> diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
+>>>> new file mode 100644
+>>>> index 0000000..fe1c264
+>>>> --- /dev/null
+>>>> +++ b/drivers/cpufreq/qcom-cpufreq-hw.c
+>>>> @@ -0,0 +1,354 @@
+>>>> +// SPDX-License-Identifier: GPL-2.0
+>>>> +/*
+>>>> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+>>>> + */
+> [...]
+>>>> +
+>>>> +static const u16 cpufreq_qcom_std_offsets[REG_ARRAY_SIZE] = {
+>>>
+>>> Is this going to change in the future?
+>>>
+>>
+>> Yes, they could change and that was the reason to introduce the offsets.
+>> This was discussed earlier too with Sudeep and was to add them.
+>>
+>>>> +       [REG_ENABLE]            = 0x0,
 > 
-> diff --git a/drivers/iio/adc/sc27xx_adc.c b/drivers/iio/adc/sc27xx_adc.c
-> index 7940b23..f7f7a189 100644
-> --- a/drivers/iio/adc/sc27xx_adc.c
-> +++ b/drivers/iio/adc/sc27xx_adc.c
-> @@ -52,6 +52,9 @@
->  /* Timeout (ms) for the trylock of hardware spinlocks */
->  #define SC27XX_ADC_HWLOCK_TIMEOUT	5000
->  
-> +/* Timeout (ms) for ADC data conversion according to ADC datasheet */
-> +#define SC27XX_ADC_RDY_TIMEOUT		100
-> +
->  /* Maximum ADC channel number */
->  #define SC27XX_ADC_CHANNEL_MAX		32
->  
-> @@ -223,7 +226,14 @@ static int sc27xx_adc_read(struct sc27xx_adc_data *data, int channel,
->  	if (ret)
->  		goto disable_adc;
->  
-> -	wait_for_completion(&data->completion);
-> +	ret = wait_for_completion_timeout(&data->completion,
-> +				msecs_to_jiffies(SC27XX_ADC_RDY_TIMEOUT));
-> +	if (!ret) {
-> +		dev_err(data->dev, "read ADC data timeout\n");
-> +		ret = -ETIMEDOUT;
-> +	} else {
-> +		ret = 0;
-> +	}
->  
->  disable_adc:
->  	regmap_update_bits(data->regmap, data->base + SC27XX_ADC_CTL,
+> This is only used once? Maybe it could be removed.
+> 
+>>>> +       [REG_LUT_TABLE]         = 0x110,
+> 
+> And this is only used during probe to figure out the supported
+> frequencies. So we definitely don't need to store around the registers
+> after probe in an array of iomem pointers. The only one that we need
+> after probe is the one below.
+> 
+>>>> +       [REG_PERF_STATE]        = 0x920,
+>>>> +};
+>>>> +
 
+As these address offsets could change, so I am of the opinion to leave 
+them as it is.
+
+>>>> +static struct cpufreq_qcom *qcom_freq_domain_map[NR_CPUS];
+>>>> +
+>>>> +static int
+>>>> +qcom_cpufreq_hw_target_index(struct cpufreq_policy *policy,
+>>>> +                            unsigned int index)
+>>>> +{
+>>>> +       struct cpufreq_qcom *c = policy->driver_data;
+>>>> +
+>>>> +       writel_relaxed(index, c->reg_bases[REG_PERF_STATE]);
+>>>
+>>> Why can't we avoid the indirection here and store the perf_state pointer
+>>> in probe? Then we don't have to indirect through a table to perform the
+>>> register write.
+>>>
+>>
+>> As the offsets could change and that was the reason to add this.
+> 
+> With fast switching we can avoid incurring any extra instructions, so
+> please make another iomem pointer in the cpufreq_qcom struct just for
+> writing the index or if possible, just pass the iomem pointer that
+> points to the REG_PERF_STATE as the policy->driver_data variable here.
+> Then we have the address in hand without any extra load. If my
+> understanding is correct, we don't need to keep around anything besides
+> this register address anyway so we should be able to just load it and
+> write it immediately.
+>
+
+The c->reg_bases[] is just an index to the updated bases addresses. I am 
+not clear as to why it would incur an extra instruction.
+
+The below code would already take care of it.
+
++	for (i = REG_ENABLE; i < REG_ARRAY_SIZE; i++)
++		c->reg_bases[i] = base + offsets[i];
++
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
