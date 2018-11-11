@@ -4,49 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC966C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:31:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54B35C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:32:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85AB620869
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:31:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C27B2084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:32:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jkFkoNIj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85AB620869
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0n7b9uNa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C27B2084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388669AbeKLJWI (ORCPT
+        id S2388541AbeKLIUR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:22:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44334 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:20:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43840 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732321AbeKLIUS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:20:18 -0500
+        id S2388474AbeKLIUN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:13 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F688216FD;
-        Sun, 11 Nov 2018 22:30:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F221A2154B;
+        Sun, 11 Nov 2018 22:30:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975422;
-        bh=CWxzNFMN/Adqo2kQKehOnPZHG0CEplR1yS8kPU1Nm6o=;
+        s=default; t=1541975417;
+        bh=j0LKMPnec210PfUosbtTuAmts//EQsVii0ccQXBJ+Ao=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jkFkoNIjXDj7MqsmO5rAMu1kZlDzE2RMlJm+qpewv4Jv/6JfLaxZXuRpymlnFtXJZ
-         heZ619rB6YmoniJA/WVHvVL71ZGFqfvdMWvh+OdpznUYOfMpEEZPVBTaNE6r/uCIwa
-         4srXEspCXZJ5F7Ck07j1wpVJpNR7CC+ncesOyU98=
+        b=0n7b9uNaavv1hS5j18AqMnLDTDmVICyegMq+4X1bbfnU/5znRR0JKX7aeisl816YI
+         NlaRqTCdalKsZaQ1saGYmAfFENpTTABberpNO9gAkd8Is9kYFLb34Ss7rYgW4xXLJ6
+         Z9DT12zMHDDM8zv+0dAPEJbHlyHO4c98bcPDo4NY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Honghui Zhang <honghui.zhang@mediatek.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
+        stable@vger.kernel.org, David Jeffery <djeffery@redhat.com>,
+        Xiao Ni <xni@redhat.com>, Shaohua Li <shli@fb.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 150/350] PCI: mediatek: Fix mtk_pcie_find_port() endpoint/port matching logic
-Date:   Sun, 11 Nov 2018 14:20:14 -0800
-Message-Id: <20181111221714.331863822@linuxfoundation.org>
+Subject: [PATCH 4.18 138/350] MD: Memory leak when flush bio size is zero
+Date:   Sun, 11 Nov 2018 14:20:02 -0800
+Message-Id: <20181111221713.820590641@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -64,68 +62,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Honghui Zhang <honghui.zhang@mediatek.com>
+From: Xiao Ni <xni@redhat.com>
 
-[ Upstream commit 074d6f32689ce05a084b6fa3db38445745bf11cc ]
+[ Upstream commit af9b926de9c5986ab009e64917de87c9758bab10 ]
 
-The Mediatek's host controller has two slots, each with its own control
-registers. The host driver needs to identify what slot is connected to
-what port in order to access the device's configuration space.
+flush_pool is leaked when flush bio size is zero
 
-Current code retrieving slot connected to a given endpoint device.
-
-Assuming each slot is connected to one endpoint device as below:
-
-                host bridge
-  bus 0 --> __________|_______
-           |                  |
-           |                  |
-         slot 0             slot 1
-  bus 1 -->|        bus 2 --> |
-           |                  |
-         EP 0               EP 1
-
-During PCI enumeration, system software will scan all the PCI devices on
-every bus starting from devfn 0. Using PCI_SLOT(devfn) for matching an
-endpoint to its slot is erroneous in that the devfn does not contain the
-hierarchical bus numbering in it. In order to match an endpoint with its
-slot (and related port), the PCI tree must be walked up to the root bus
-(where the root ports are situated) and then the PCI_SLOT(devfn)
-matching logic can be correctly applied for matching.
-
-This patch fixes the mtk_pcie_find_port() slot matching logic by adding
-appropriate PCI tree walking code to retrieve the slot/port a given
-endpoint is connected to.
-
-Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
-[lorenzo.pieralisi@arm.com: rewrote the commit log]
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Acked-by: Ryder Lee <ryder.lee@mediatek.com>
+Fixes: 5a409b4f56d5 ("MD: fix lock contention for flush bios")
+Signed-off-by: David Jeffery <djeffery@redhat.com>
+Signed-off-by: Xiao Ni <xni@redhat.com>
+Signed-off-by: Shaohua Li <shli@fb.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pci/controller/pcie-mediatek.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/md/md.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
---- a/drivers/pci/controller/pcie-mediatek.c
-+++ b/drivers/pci/controller/pcie-mediatek.c
-@@ -337,6 +337,17 @@ static struct mtk_pcie_port *mtk_pcie_fi
- {
- 	struct mtk_pcie *pcie = bus->sysdata;
- 	struct mtk_pcie_port *port;
-+	struct pci_dev *dev = NULL;
-+
-+	/*
-+	 * Walk the bus hierarchy to get the devfn value
-+	 * of the port in the root bus.
-+	 */
-+	while (bus && bus->number) {
-+		dev = bus->self;
-+		bus = dev->bus;
-+		devfn = dev->devfn;
-+	}
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -455,10 +455,11 @@ static void md_end_flush(struct bio *fbi
+ 	rdev_dec_pending(rdev, mddev);
  
- 	list_for_each_entry(port, &pcie->ports, list)
- 		if (port->slot == PCI_SLOT(devfn))
+ 	if (atomic_dec_and_test(&fi->flush_pending)) {
+-		if (bio->bi_iter.bi_size == 0)
++		if (bio->bi_iter.bi_size == 0) {
+ 			/* an empty barrier - all done */
+ 			bio_endio(bio);
+-		else {
++			mempool_free(fi, mddev->flush_pool);
++		} else {
+ 			INIT_WORK(&fi->flush_work, submit_flushes);
+ 			queue_work(md_wq, &fi->flush_work);
+ 		}
+@@ -512,10 +513,11 @@ void md_flush_request(struct mddev *mdde
+ 	rcu_read_unlock();
+ 
+ 	if (atomic_dec_and_test(&fi->flush_pending)) {
+-		if (bio->bi_iter.bi_size == 0)
++		if (bio->bi_iter.bi_size == 0) {
+ 			/* an empty barrier - all done */
+ 			bio_endio(bio);
+-		else {
++			mempool_free(fi, mddev->flush_pool);
++		} else {
+ 			INIT_WORK(&fi->flush_work, submit_flushes);
+ 			queue_work(md_wq, &fi->flush_work);
+ 		}
 
 
