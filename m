@@ -7,50 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52711C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:05:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F206EC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:05:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 038C920818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:05:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA2E020872
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:05:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ihk7izHS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 038C920818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="J4xFhLFy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA2E020872
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390608AbeKLIzc (ORCPT
+        id S2390571AbeKLIzv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:55:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51200 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:55:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389300AbeKLIWR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:22:17 -0500
+        id S2390369AbeKLIWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:22:15 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1BC3D223CB;
-        Sun, 11 Nov 2018 22:32:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E42721508;
+        Sun, 11 Nov 2018 22:32:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975540;
-        bh=OKPH2AO7tlzdoa7tnCFOaFLqO3PLHRUYXhkS3MOXUKU=;
+        s=default; t=1541975538;
+        bh=nz/SbS24VVlt7/gb2stBZD4We1IOIKPhxCyAmkRHdDQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ihk7izHSfUG+sOZ2rqTq7W5yukFp2d0vA21pFq0pjlDGjrUJKHD7foz3i/JXWF1My
-         Psz+Eh9BGQtELS54LWxG8xX07yw4ys/Au6A7PCKprC+ZpQYXFvA0hRlAnP/rH6eXTL
-         KMEyYddAbGjuJXN34+ZP7hf+yG6lEMW3ZKjL9UhE=
+        b=J4xFhLFy7qBCN2a/KjK7GIoDPaf3JfXOEDryuJuTW8NO7tvFfjWr8o68xOomMm2Fw
+         yNcwsBis/bhuRkhjUBXrMTHUitzMQiKyexMncwZCuj6fGGK5d00khcgTnc4V/TZLWv
+         uFgAYm2MTvcgV3FI44HnF9itxIrRzwWnGTJtzzLQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Petlan <mpetlan@redhat.com>,
-        Jiri Olsa <jolsa@kernel.org>, Andi Kleen <ak@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 028/222] perf vendor events intel: Fix wrong filter_band* values for uncore events
-Date:   Sun, 11 Nov 2018 14:22:05 -0800
-Message-Id: <20181111221650.778227990@linuxfoundation.org>
+Subject: [PATCH 4.14 057/222] cpufreq: dt: Try freeing static OPPs only if we have added them
+Date:   Sun, 11 Nov 2018 14:22:34 -0800
+Message-Id: <20181111221653.127670060@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -68,213 +63,111 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jiri Olsa <jolsa@redhat.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
 
-[ Upstream commit 94aafb74cee0002e2f2eb6dc5376f54d5951ab4d ]
+[ Upstream commit 51c99dd2c06b234575661fa1e0a1dea6c3ef566f ]
 
-Michael reported that he could not stat following event:
+We can not call dev_pm_opp_of_cpumask_remove_table() freely anymore
+since the latest OPP core updates as that uses reference counting to
+free resources. There are cases where no static OPPs are added (using
+DT) for a platform and trying to remove the OPP table may end up
+decrementing refcount which is already zero and hence generating
+warnings.
 
-  $ perf stat -e unc_p_freq_ge_1200mhz_cycles -a -- ls
-  event syntax error: '..e_1200mhz_cycles'
-                                    \___ value too big for format, maximum is 255
-  Run 'perf list' for a list of valid events
+Lets track if we were able to add static OPPs or not and then only
+remove the table based on that. Some reshuffling of code is also done to
+do that.
 
-The event is unwrapped into:
-
-  uncore_pcu/event=0xb,filter_band0=1200/
-
-where filter_band0 format says it's one byte only:
-
-  # cat uncore_pcu/format/filter_band0
-  config1:0-7
-
-while JSON files specifies bigger number:
-
-  "Filter": "filter_band0=1200",
-
-all the filter_band* formats show 1 byte width:
-
-  # cat uncore_pcu/format/filter_band1
-  config1:8-15
-  # cat uncore_pcu/format/filter_band2
-  config1:16-23
-  # cat uncore_pcu/format/filter_band3
-  config1:24-31
-
-The reason of the issue is that filter_band* values are supposed to be
-in 100Mhz units.. it's stated in the JSON help for the events, like:
-
-  filter_band3=XXX, with XXX in 100Mhz units
-
-This patch divides the filter_band* values by 100, plus there's couple
-of changes that actually change the number completely, like:
-
-  -        "Filter": "edge=1,filter_band2=4000",
-  +        "Filter": "edge=1,filter_band2=30",
-
-Reported-by: Michael Petlan <mpetlan@redhat.com>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Acked-by: Andi Kleen <ak@linux.intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20181010080339.GB15790@krava
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Reported-by: Niklas Cassel <niklas.cassel@linaro.org>
+Tested-by: Niklas Cassel <niklas.cassel@linaro.org>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/pmu-events/arch/x86/ivytown/uncore-power.json  |   16 +++++++-------
- tools/perf/pmu-events/arch/x86/jaketown/uncore-power.json |   16 +++++++-------
- 2 files changed, 16 insertions(+), 16 deletions(-)
+ drivers/cpufreq/cpufreq-dt.c |   34 +++++++++++++++++++---------------
+ 1 file changed, 19 insertions(+), 15 deletions(-)
 
---- a/tools/perf/pmu-events/arch/x86/ivytown/uncore-power.json
-+++ b/tools/perf/pmu-events/arch/x86/ivytown/uncore-power.json
-@@ -188,7 +188,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xb",
-         "EventName": "UNC_P_FREQ_GE_1200MHZ_CYCLES",
--        "Filter": "filter_band0=1200",
-+        "Filter": "filter_band0=12",
-         "MetricExpr": "(UNC_P_FREQ_GE_1200MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_1200mhz_cycles %",
-         "PerPkg": "1",
-@@ -199,7 +199,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xc",
-         "EventName": "UNC_P_FREQ_GE_2000MHZ_CYCLES",
--        "Filter": "filter_band1=2000",
-+        "Filter": "filter_band1=20",
-         "MetricExpr": "(UNC_P_FREQ_GE_2000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_2000mhz_cycles %",
-         "PerPkg": "1",
-@@ -210,7 +210,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xd",
-         "EventName": "UNC_P_FREQ_GE_3000MHZ_CYCLES",
--        "Filter": "filter_band2=3000",
-+        "Filter": "filter_band2=30",
-         "MetricExpr": "(UNC_P_FREQ_GE_3000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_3000mhz_cycles %",
-         "PerPkg": "1",
-@@ -221,7 +221,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xe",
-         "EventName": "UNC_P_FREQ_GE_4000MHZ_CYCLES",
--        "Filter": "filter_band3=4000",
-+        "Filter": "filter_band3=40",
-         "MetricExpr": "(UNC_P_FREQ_GE_4000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_4000mhz_cycles %",
-         "PerPkg": "1",
-@@ -232,7 +232,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xb",
-         "EventName": "UNC_P_FREQ_GE_1200MHZ_TRANSITIONS",
--        "Filter": "edge=1,filter_band0=1200",
-+        "Filter": "edge=1,filter_band0=12",
-         "MetricExpr": "(UNC_P_FREQ_GE_1200MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_1200mhz_cycles %",
-         "PerPkg": "1",
-@@ -243,7 +243,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xc",
-         "EventName": "UNC_P_FREQ_GE_2000MHZ_TRANSITIONS",
--        "Filter": "edge=1,filter_band1=2000",
-+        "Filter": "edge=1,filter_band1=20",
-         "MetricExpr": "(UNC_P_FREQ_GE_2000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_2000mhz_cycles %",
-         "PerPkg": "1",
-@@ -254,7 +254,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xd",
-         "EventName": "UNC_P_FREQ_GE_3000MHZ_TRANSITIONS",
--        "Filter": "edge=1,filter_band2=4000",
-+        "Filter": "edge=1,filter_band2=30",
-         "MetricExpr": "(UNC_P_FREQ_GE_3000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_3000mhz_cycles %",
-         "PerPkg": "1",
-@@ -265,7 +265,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xe",
-         "EventName": "UNC_P_FREQ_GE_4000MHZ_TRANSITIONS",
--        "Filter": "edge=1,filter_band3=4000",
-+        "Filter": "edge=1,filter_band3=40",
-         "MetricExpr": "(UNC_P_FREQ_GE_4000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_4000mhz_cycles %",
-         "PerPkg": "1",
---- a/tools/perf/pmu-events/arch/x86/jaketown/uncore-power.json
-+++ b/tools/perf/pmu-events/arch/x86/jaketown/uncore-power.json
-@@ -187,7 +187,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xb",
-         "EventName": "UNC_P_FREQ_GE_1200MHZ_CYCLES",
--        "Filter": "filter_band0=1200",
-+        "Filter": "filter_band0=12",
-         "MetricExpr": "(UNC_P_FREQ_GE_1200MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_1200mhz_cycles %",
-         "PerPkg": "1",
-@@ -198,7 +198,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xc",
-         "EventName": "UNC_P_FREQ_GE_2000MHZ_CYCLES",
--        "Filter": "filter_band1=2000",
-+        "Filter": "filter_band1=20",
-         "MetricExpr": "(UNC_P_FREQ_GE_2000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_2000mhz_cycles %",
-         "PerPkg": "1",
-@@ -209,7 +209,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xd",
-         "EventName": "UNC_P_FREQ_GE_3000MHZ_CYCLES",
--        "Filter": "filter_band2=3000",
-+        "Filter": "filter_band2=30",
-         "MetricExpr": "(UNC_P_FREQ_GE_3000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_3000mhz_cycles %",
-         "PerPkg": "1",
-@@ -220,7 +220,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xe",
-         "EventName": "UNC_P_FREQ_GE_4000MHZ_CYCLES",
--        "Filter": "filter_band3=4000",
-+        "Filter": "filter_band3=40",
-         "MetricExpr": "(UNC_P_FREQ_GE_4000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_4000mhz_cycles %",
-         "PerPkg": "1",
-@@ -231,7 +231,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xb",
-         "EventName": "UNC_P_FREQ_GE_1200MHZ_TRANSITIONS",
--        "Filter": "edge=1,filter_band0=1200",
-+        "Filter": "edge=1,filter_band0=12",
-         "MetricExpr": "(UNC_P_FREQ_GE_1200MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_1200mhz_cycles %",
-         "PerPkg": "1",
-@@ -242,7 +242,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xc",
-         "EventName": "UNC_P_FREQ_GE_2000MHZ_TRANSITIONS",
--        "Filter": "edge=1,filter_band1=2000",
-+        "Filter": "edge=1,filter_band1=20",
-         "MetricExpr": "(UNC_P_FREQ_GE_2000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_2000mhz_cycles %",
-         "PerPkg": "1",
-@@ -253,7 +253,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xd",
-         "EventName": "UNC_P_FREQ_GE_3000MHZ_TRANSITIONS",
--        "Filter": "edge=1,filter_band2=4000",
-+        "Filter": "edge=1,filter_band2=30",
-         "MetricExpr": "(UNC_P_FREQ_GE_3000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_3000mhz_cycles %",
-         "PerPkg": "1",
-@@ -264,7 +264,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xe",
-         "EventName": "UNC_P_FREQ_GE_4000MHZ_TRANSITIONS",
--        "Filter": "edge=1,filter_band3=4000",
-+        "Filter": "edge=1,filter_band3=40",
-         "MetricExpr": "(UNC_P_FREQ_GE_4000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_4000mhz_cycles %",
-         "PerPkg": "1",
+--- a/drivers/cpufreq/cpufreq-dt.c
++++ b/drivers/cpufreq/cpufreq-dt.c
+@@ -32,6 +32,7 @@ struct private_data {
+ 	struct device *cpu_dev;
+ 	struct thermal_cooling_device *cdev;
+ 	const char *reg_name;
++	bool have_static_opps;
+ };
+ 
+ static struct freq_attr *cpufreq_dt_attr[] = {
+@@ -196,6 +197,15 @@ static int cpufreq_init(struct cpufreq_p
+ 		}
+ 	}
+ 
++	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
++	if (!priv) {
++		ret = -ENOMEM;
++		goto out_put_regulator;
++	}
++
++	priv->reg_name = name;
++	priv->opp_table = opp_table;
++
+ 	/*
+ 	 * Initialize OPP tables for all policy->cpus. They will be shared by
+ 	 * all CPUs which have marked their CPUs shared with OPP bindings.
+@@ -206,7 +216,8 @@ static int cpufreq_init(struct cpufreq_p
+ 	 *
+ 	 * OPPs might be populated at runtime, don't check for error here
+ 	 */
+-	dev_pm_opp_of_cpumask_add_table(policy->cpus);
++	if (!dev_pm_opp_of_cpumask_add_table(policy->cpus))
++		priv->have_static_opps = true;
+ 
+ 	/*
+ 	 * But we need OPP table to function so if it is not there let's
+@@ -232,19 +243,10 @@ static int cpufreq_init(struct cpufreq_p
+ 				__func__, ret);
+ 	}
+ 
+-	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+-	if (!priv) {
+-		ret = -ENOMEM;
+-		goto out_free_opp;
+-	}
+-
+-	priv->reg_name = name;
+-	priv->opp_table = opp_table;
+-
+ 	ret = dev_pm_opp_init_cpufreq_table(cpu_dev, &freq_table);
+ 	if (ret) {
+ 		dev_err(cpu_dev, "failed to init cpufreq table: %d\n", ret);
+-		goto out_free_priv;
++		goto out_free_opp;
+ 	}
+ 
+ 	priv->cpu_dev = cpu_dev;
+@@ -280,10 +282,11 @@ static int cpufreq_init(struct cpufreq_p
+ 
+ out_free_cpufreq_table:
+ 	dev_pm_opp_free_cpufreq_table(cpu_dev, &freq_table);
+-out_free_priv:
+-	kfree(priv);
+ out_free_opp:
+-	dev_pm_opp_of_cpumask_remove_table(policy->cpus);
++	if (priv->have_static_opps)
++		dev_pm_opp_of_cpumask_remove_table(policy->cpus);
++	kfree(priv);
++out_put_regulator:
+ 	if (name)
+ 		dev_pm_opp_put_regulators(opp_table);
+ out_put_clk:
+@@ -298,7 +301,8 @@ static int cpufreq_exit(struct cpufreq_p
+ 
+ 	cpufreq_cooling_unregister(priv->cdev);
+ 	dev_pm_opp_free_cpufreq_table(priv->cpu_dev, &policy->freq_table);
+-	dev_pm_opp_of_cpumask_remove_table(policy->related_cpus);
++	if (priv->have_static_opps)
++		dev_pm_opp_of_cpumask_remove_table(policy->related_cpus);
+ 	if (priv->reg_name)
+ 		dev_pm_opp_put_regulators(priv->opp_table);
+ 
 
 
