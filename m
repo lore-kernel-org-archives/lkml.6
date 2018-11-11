@@ -3,48 +3,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 633FCC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:32:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FF1BC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:33:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F8EC20871
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:32:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F8EC20871
+	by mail.kernel.org (Postfix) with ESMTP id 1F6CD20871
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:33:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F6CD20871
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730630AbeKLGWY (ORCPT
+        id S1730666AbeKLGWc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:22:24 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50172 "EHLO
+        Mon, 12 Nov 2018 01:22:32 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50174 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730277AbeKLFsQ (ORCPT
+        by vger.kernel.org with ESMTP id S1730278AbeKLFsQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 00:48:16 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsc-0000oP-9t; Sun, 11 Nov 2018 19:58:46 +0000
+        id 1gLvsc-0000l7-D7; Sun, 11 Nov 2018 19:58:46 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsZ-0001pC-5V; Sun, 11 Nov 2018 19:58:43 +0000
+        id 1gLvsZ-0001ox-0w; Sun, 11 Nov 2018 19:58:43 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "syzbot" <syzkaller@googlegroups.com>,
-        "Willem de Bruijn" <willemb@google.com>,
-        "David S. Miller" <davem@davemloft.net>
+CC:     akpm@linux-foundation.org, "David S. Miller" <davem@davemloft.net>,
+        "Guillaume Nault" <g.nault@alphalink.fr>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.546405889@decadent.org.uk>
+Message-ID: <lsq.1541965745.722520331@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 312/366] packet: refine ring v3 block size test to
- hold one frame
+Subject: [PATCH 3.16 309/366] l2tp: fix missing refcount drop in
+ pppol2tp_tunnel_ioctl()
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,64 +57,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Willem de Bruijn <willemb@google.com>
+From: Guillaume Nault <g.nault@alphalink.fr>
 
-commit 4576cd469d980317c4edd9173f8b694aa71ea3a3 upstream.
+commit f664e37dcc525768280cb94321424a09beb1c992 upstream.
 
-TPACKET_V3 stores variable length frames in fixed length blocks.
-Blocks must be able to store a block header, optional private space
-and at least one minimum sized frame.
+If 'session' is not NULL and is not a PPP pseudo-wire, then we fail to
+drop the reference taken by l2tp_session_get().
 
-Frames, even for a zero snaplen packet, store metadata headers and
-optional reserved space.
-
-In the block size bounds check, ensure that the frame of the
-chosen configuration fits. This includes sockaddr_ll and optional
-tp_reserve.
-
-Syzbot was able to construct a ring with insuffient room for the
-sockaddr_ll in the header of a zero-length frame, triggering an
-out-of-bounds write in dev_parse_header.
-
-Convert the comparison to less than, as zero is a valid snap len.
-This matches the test for minimum tp_frame_size immediately below.
-
-Fixes: f6fb8f100b80 ("af-packet: TPACKET_V3 flexible buffer implementation.")
-Fixes: eb73190f4fbe ("net/packet: refine check for priv area size")
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: Willem de Bruijn <willemb@google.com>
+Fixes: ecd012e45ab5 ("l2tp: filter out non-PPP sessions in pppol2tp_tunnel_ioctl()")
+Signed-off-by: Guillaume Nault <g.nault@alphalink.fr>
 Signed-off-by: David S. Miller <davem@davemloft.net>
+[bwh: Backported to 3.16: Also call session->deref in both cases]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/packet/af_packet.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ net/l2tp/l2tp_ppp.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -3874,6 +3874,8 @@ static int packet_set_ring(struct sock *
- 	}
+--- a/net/l2tp/l2tp_ppp.c
++++ b/net/l2tp/l2tp_ppp.c
+@@ -1231,15 +1231,22 @@ static int pppol2tp_tunnel_ioctl(struct
+ 				l2tp_session_get(sock_net(sk), tunnel,
+ 						 stats.session_id, true);
  
- 	if (req->tp_block_nr) {
-+		unsigned int min_frame_size;
+-			if (session && session->pwtype == L2TP_PWTYPE_PPP) {
+-				err = pppol2tp_session_ioctl(session, cmd,
+-							     arg);
++			if (!session) {
++				err = -EBADR;
++				break;
++			}
++			if (session->pwtype != L2TP_PWTYPE_PPP) {
+ 				if (session->deref)
+ 					session->deref(session);
+ 				l2tp_session_dec_refcount(session);
+-			} else {
+ 				err = -EBADR;
++				break;
+ 			}
 +
- 		/* Sanity tests and some calculations */
- 		err = -EBUSY;
- 		if (unlikely(rb->pg_vec))
-@@ -3896,12 +3898,12 @@ static int packet_set_ring(struct sock *
- 			goto out;
- 		if (unlikely(req->tp_block_size & (PAGE_SIZE - 1)))
- 			goto out;
-+		min_frame_size = po->tp_hdrlen + po->tp_reserve;
- 		if (po->tp_version >= TPACKET_V3 &&
--		    req->tp_block_size <=
--		    BLK_PLUS_PRIV((u64)req_u->req3.tp_sizeof_priv) + sizeof(struct tpacket3_hdr))
-+		    req->tp_block_size <
-+		    BLK_PLUS_PRIV((u64)req_u->req3.tp_sizeof_priv) + min_frame_size)
- 			goto out;
--		if (unlikely(req->tp_frame_size < po->tp_hdrlen +
--					po->tp_reserve))
-+		if (unlikely(req->tp_frame_size < min_frame_size))
- 			goto out;
- 		if (unlikely(req->tp_frame_size & (TPACKET_ALIGNMENT - 1)))
- 			goto out;
++			err = pppol2tp_session_ioctl(session, cmd, arg);
++			if (session->deref)
++				session->deref(session);
++			l2tp_session_dec_refcount(session);
+ 			break;
+ 		}
+ #ifdef CONFIG_XFRM
 
