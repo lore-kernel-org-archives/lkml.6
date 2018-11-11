@@ -7,44 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44EE3C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:02:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A93EC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:02:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DDF020866
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:02:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22C8A20866
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:02:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PPzd+FeN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DDF020866
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GZTMWA53"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22C8A20866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732175AbeKLIRy (ORCPT
+        id S1732448AbeKLJxA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:17:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34236 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:53:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732159AbeKLIRx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730196AbeKLIRx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:17:53 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 741ED21582;
-        Sun, 11 Nov 2018 22:27:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7BF5E2175B;
+        Sun, 11 Nov 2018 22:27:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975278;
-        bh=9aFlQKOJfwyxwvES6+vftQY8h/W4E6w9NRt6CUlIw2o=;
+        s=default; t=1541975277;
+        bh=lVVYmhqbHLiT9w8eUll+yDptSjpJJMAfI0bmiKIrg+w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PPzd+FeN5VyJ9k+v4LIULZIuzX6F6vd1ajBCLtYeXFMFH0EVz12yR7HmwTCYpMuEu
-         krfRNZu4vAVrN3MtO4mmuVVJNc9K5GQT4NdhVVUz3c8d7mMXIuqX4pJLI/tMONLnfu
-         kUMI0O1iPDG1SjDa4zBhAeoSDhUsEP+1uZ36kp0o=
+        b=GZTMWA53S3RFJAvZ39P/3QkaHSkmv7XE4fPcR8rGQiyloXHWWM13y8GzXLC8CIXYq
+         l8vdsy/XXg9+PJ0+lhhv1fyEZs2BmCNI4O0essgAPYmr1GCp9UQc7X5hyf4Y1wS6xe
+         88mAt1IzZSTJYIz4jfbQJB2lJn3+YoHfHLzmnb9s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 4.19 193/361] f2fs: fix missing up_read
-Date:   Sun, 11 Nov 2018 14:19:00 -0800
-Message-Id: <20181111221647.547379227@linuxfoundation.org>
+        stable@vger.kernel.org, Prarit Bhargava <prarit@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Stafford Horne <shorne@gmail.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 191/361] cpupower: Fix AMD Family 0x17 msr_pstate size
+Date:   Sun, 11 Nov 2018 14:18:58 -0800
+Message-Id: <20181111221647.269594606@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -62,35 +64,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Prarit Bhargava <prarit@redhat.com>
 
-commit 89d13c38501df730cbb2e02c4499da1b5187119d upstream.
+[ Upstream commit 8c22e2f695920ebd94f9a53bcf2a65eb36d4dba1 ]
 
-This patch fixes missing up_read call.
+The msr_pstate data is only 63 bits long and should be 64 bits.
 
-Fixes: c9b60788fc76 ("f2fs: fix to do sanity check with block address in main area")
-Cc: <stable@vger.kernel.org> # 4.19+
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Add in the missing bit from res1 for AMD Family 0x17.
+
+Reference: https://www.amd.com/system/files/TechDocs/54945_PPR_Family_17h_Models_00h-0Fh.pdf, page 138.
+
+Signed-off-by: Prarit Bhargava <prarit@redhat.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Stafford Horne <shorne@gmail.com>
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/f2fs/node.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ tools/power/cpupower/utils/helpers/amd.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1542,8 +1542,10 @@ static int __write_node_page(struct page
- 	}
- 
- 	if (__is_valid_data_blkaddr(ni.blk_addr) &&
--		!f2fs_is_valid_blkaddr(sbi, ni.blk_addr, DATA_GENERIC))
-+		!f2fs_is_valid_blkaddr(sbi, ni.blk_addr, DATA_GENERIC)) {
-+		up_read(&sbi->node_write);
- 		goto redirty_out;
-+	}
- 
- 	if (atomic && !test_opt(sbi, NOBARRIER))
- 		fio.op_flags |= REQ_PREFLUSH | REQ_FUA;
+--- a/tools/power/cpupower/utils/helpers/amd.c
++++ b/tools/power/cpupower/utils/helpers/amd.c
+@@ -33,7 +33,7 @@ union msr_pstate {
+ 		unsigned vid:8;
+ 		unsigned iddval:8;
+ 		unsigned idddiv:2;
+-		unsigned res1:30;
++		unsigned res1:31;
+ 		unsigned en:1;
+ 	} fam17h_bits;
+ 	unsigned long long val;
 
 
