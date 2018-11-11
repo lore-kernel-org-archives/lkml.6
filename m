@@ -2,219 +2,184 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BD9AC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 04:18:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBBD8C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 04:22:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B58F214DB
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 04:18:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="QPZ7Jb+C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B58F214DB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	by mail.kernel.org (Postfix) with ESMTP id 93B5420862
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 04:22:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93B5420862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727442AbeKKOFo (ORCPT
+        id S1727468AbeKKOJj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 09:05:44 -0500
-Received: from mail-eopbgr1300097.outbound.protection.outlook.com ([40.107.130.97]:62150
-        "EHLO APC01-HK2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727037AbeKKOFo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 09:05:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hpnEb4WeLHWw2Gdge9EARKFlhj8K042z1Ab8QD6O/TM=;
- b=QPZ7Jb+CuIlZmgMpeftK5kmQMz8Z1fNNuX1zk0X5LAEAFRcrECscxKgAEuVST130V/7DWYtSGOcrebQrwbfNdKa2CqEX3xu1SHr4XHbm3aWaXjqitALehTAbCo9TcSLbdlLQrPvwwvl4bqyNoKMJv1IV1IvtZ/rhbVtIMaW9zCU=
-Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM (10.170.189.13) by
- PU1P153MB0172.APCP153.PROD.OUTLOOK.COM (10.170.189.16) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.1; Sun, 11 Nov 2018 04:18:03 +0000
-Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
- ([fe80::3d50:29f2:1244:8b4b]) by PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
- ([fe80::3d50:29f2:1244:8b4b%8]) with mapi id 15.20.1361.000; Sun, 11 Nov 2018
- 04:18:03 +0000
-From:   Dexuan Cui <decui@microsoft.com>
-To:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-CC:     Michael Kelley <mikelley@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
-        "olaf@aepfle.de" <olaf@aepfle.de>,
-        "apw@canonical.com" <apw@canonical.com>,
-        "jasowang@redhat.com" <jasowang@redhat.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        vkuznets <vkuznets@redhat.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        "Stable@vger.kernel.org" <Stable@vger.kernel.org>
-Subject: RE: [PATCH V2 3/5] Drivers: hv: kvp: Fix the recent regression caused
- by incorrect clean-up
-Thread-Topic: [PATCH V2 3/5] Drivers: hv: kvp: Fix the recent regression
- caused by incorrect clean-up
-Thread-Index: AQHUZqDqbasvay7PwkmlHkiKerM2nqUukUpwgAuBcqCAAUk+AIAABlNQgACgpICADhpNgA==
-Date:   Sun, 11 Nov 2018 04:18:03 +0000
-Message-ID: <PU1P153MB0169705E20DB757385F3C98BBFC00@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
-References: <20181018050835.27828-1-kys@linuxonhyperv.com>
- <20181018050932.27932-1-kys@linuxonhyperv.com>
- <20181018050932.27932-3-kys@linuxonhyperv.com>
- <CY4PR21MB077329FE239A11054FFDD661D7F60@CY4PR21MB0773.namprd21.prod.outlook.com>
- <PU1P153MB0169588D48E567E0551D4A9FBFCD0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
- <20181101185638.GB10263@kroah.com>
- <PU1P153MB01690D11050FBDACD205EC6EBFCE0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
- <20181102045412.GB11843@kroah.com>
-In-Reply-To: <20181102045412.GB11843@kroah.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2018-11-11T04:18:02.1553205Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic;
- Sensitivity=General
-x-originating-ip: [2601:600:a27f:df20:547e:90cc:f252:ead6]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;PU1P153MB0172;6:/fWfHwtECUZjWf99mmEA1z/umMW3s9V7oRy91f3YTQrDwyoE1mmXC6YSdNz540vExP2bIpkE7wwIQ/O8b4zyvnMgfU8949bugHT7/buYxZoQNth8SPhGmVBe74pe8iEjCZ6PmJ8Ior4sR8o8wcaLE+WDnDJ3eOyS7F5ZqbWFKTxJDq/EtStFFIFXM1Nw2nNROmSeCcKNtREOVHt9IdqIv/6zM6kj/8/1wODJc++Oclx7bQ6XciG1Zso+o9fXN8BwrYF2ArLUAt6L/zYMEnKLX3p6uG3Zkad/ERyytoQOuCkRh0qFFRRz5rwW48wjRKuyK+D1NMQJJL/67WQNqFKDSiaTWwIg7qjquCgHAeKxE5fLkJLuLdi9jI4+TKCnolShqpIxF1jaPVAmzJD7rSgP8FMPjG2vU1Rr4cd8Az3nX8NQne31qrOebp3LNBglWx3Hfn6WPfp565Xk8QSrNSMwzw==;5:7dT3S0pLL/8HjBsvBWQKONheFjo2F00mCpd3pPQUayKibEDjNlo35hrLkU+EYBIid3AP+sGHUNbdeBK1LRdCinUxj3sAyQPIpUOKr8IzFtgJ0vbqTrWjReEpZ04XUFw6bCcZS+6xQv1JitLsy2t4j7fgamdq5mHJQFeMg2yPvvI=;7:5uFpfupR/UF/TUwR2cnZSFSg8cqolDfh5/0/Rz14ObRQO7HMvMoKcqMHW08m1+ZEGz+KNueokY5KXB7cLPFpGLm9UEshK9XFxx/zTtEZ8o7IT+SHxfqC/4BkcY+V5DOr3B+a+LARp6z48P/HnJ/iKQ==
-x-ms-office365-filtering-correlation-id: c4d2e0a7-d7c7-4648-f317-08d6478cacb3
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390040)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:PU1P153MB0172;
-x-ms-traffictypediagnostic: PU1P153MB0172:
-x-ms-exchange-purlcount: -3
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=decui@microsoft.com; 
-x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
-x-microsoft-antispam-prvs: <PU1P153MB017297C9A027F10537B31D50BFC00@PU1P153MB0172.APCP153.PROD.OUTLOOK.COM>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(8220035)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93001095)(3231402)(944501410)(2018427008)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:PU1P153MB0172;BCL:0;PCL:0;RULEID:;SRVR:PU1P153MB0172;
-x-forefront-prvs: 08534B37A7
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(136003)(346002)(376002)(396003)(199004)(189003)(14454004)(102836004)(8990500004)(6506007)(53546011)(8936002)(6246003)(81166006)(81156014)(1730700003)(8676002)(7696005)(54906003)(33656002)(76176011)(46003)(10290500003)(6916009)(99286004)(4326008)(5660300001)(256004)(2906002)(71190400001)(86362001)(71200400001)(86612001)(97736004)(6116002)(2501003)(105586002)(106356001)(476003)(486006)(2900100001)(478600001)(186003)(93886005)(229853002)(446003)(11346002)(68736007)(6436002)(2351001)(5640700003)(25786009)(316002)(55016002)(10090500001)(7736002)(74316002)(305945005)(22452003)(53936002)(9686003);DIR:OUT;SFP:1102;SCL:1;SRVR:PU1P153MB0172;H:PU1P153MB0169.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: o4FQd6UcI/ZZsgVMWvQX2kJeNc1f4kJnO3TDip5HfVDE33bLLke0WDEOY336M3MV10bpRXqmGskvW344MuV0/Nc3bu80KSe5W7DYXort1VGrQISwWwXBjmfCCVIi1RKEhmplb0nz67L7Ec9NxvRuQV3VpDx+7aN2qeVlbNdaqv418r2/KCwEez/p3V4mgv9vakZPQeXFoe5SOPMwV0IyZhvpA9P2UkEfWl8trD4hEPA2PdTGj8zRgHujzNkgAJ8u0sYTHW0FBQNV7WgaP0ONer9QoGFBSSDPtmoFLlm5VUUeJ5v0eoc+wSKlUULujxtp7I8ArMedP1UgXvaDjtJHk2cEe6lzMjMbMHECu7awQN8=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Sun, 11 Nov 2018 09:09:39 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57106 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727037AbeKKOJj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 11 Nov 2018 09:09:39 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAB4IR5D058485
+        for <linux-kernel@vger.kernel.org>; Sat, 10 Nov 2018 23:22:15 -0500
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nnvrj5r6v-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sat, 10 Nov 2018 23:22:15 -0500
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Sun, 11 Nov 2018 04:22:14 -0000
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sun, 11 Nov 2018 04:22:11 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAB4MAxP64421908
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sun, 11 Nov 2018 04:22:10 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 28D9CB205F;
+        Sun, 11 Nov 2018 04:22:10 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E6914B2065;
+        Sun, 11 Nov 2018 04:22:09 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.207.24])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Sun, 11 Nov 2018 04:22:09 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 79EC116C5D1B; Sat, 10 Nov 2018 20:22:10 -0800 (PST)
+Date:   Sat, 10 Nov 2018 20:22:10 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, josh@joshtriplett.org,
+        rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+        jiangshanlai@gmail.com
+Subject: Re: dyntick-idle CPU and node's qsmask
+Reply-To: paulmck@linux.ibm.com
+References: <20181110214659.GA96924@google.com>
+ <20181110230436.GL4170@linux.ibm.com>
+ <20181111030925.GA182908@google.com>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c4d2e0a7-d7c7-4648-f317-08d6478cacb3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Nov 2018 04:18:03.4509
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU1P153MB0172
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181111030925.GA182908@google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18111104-0040-0000-0000-00000490567F
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010024; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01115712; UDB=6.00577119; IPR=6.00895812;
+ MB=3.00024106; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-11 04:22:13
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18111104-0041-0000-0000-000008995EA7
+Message-Id: <20181111042210.GN4170@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-11_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811110040
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: gregkh@linuxfoundation.org <gregkh@linuxfoundation.org>
-> Sent: Thursday, November 1, 2018 21:54
-> To: Dexuan Cui <decui@microsoft.com>
-> Cc: Michael Kelley <mikelley@microsoft.com>; KY Srinivasan
-> <kys@microsoft.com>; linux-kernel@vger.kernel.org;
-> devel@linuxdriverproject.org; olaf@aepfle.de; apw@canonical.com;
-> jasowang@redhat.com; Stephen Hemminger <sthemmin@microsoft.com>;
-> vkuznets <vkuznets@redhat.com>; Sasha Levin
-> <Alexander.Levin@microsoft.com>; Haiyang Zhang <haiyangz@microsoft.com>;
-> Stable@vger.kernel.org
-> Subject: Re: [PATCH V2 3/5] Drivers: hv: kvp: Fix the recent regression c=
-aused
-> by incorrect clean-up
->=20
-> On Thu, Nov 01, 2018 at 07:22:28PM +0000, Dexuan Cui wrote:
-> > > From: gregkh@linuxfoundation.org <gregkh@linuxfoundation.org>
-> > > Sent: Thursday, November 1, 2018 11:57
-> > > To: Dexuan Cui <decui@microsoft.com>
-> > >
-> > > On Wed, Oct 31, 2018 at 11:23:54PM +0000, Dexuan Cui wrote:
-> > > > > From: Michael Kelley <mikelley@microsoft.com>
-> > > > > Sent: Wednesday, October 24, 2018 08:38
-> > > > > From: kys@linuxonhyperv.com <kys@linuxonhyperv.com>  Sent:
-> > > Wednesday,
-> > > > > October 17, 2018 10:10 PM
-> > > > > > From: Dexuan Cui <decui@microsoft.com>
-> > > > > >
-> > > > > > In kvp_send_key(), we do need call process_ib_ipinfo() if
-> > > > > > message->kvp_hdr.operation is KVP_OP_GET_IP_INFO, because it
-> turns
-> > > out
-> > > > > > the userland hv_kvp_daemon needs the info of operation, adapter=
-_id
-> > > and
-> > > > > > addr_family. With the incorrect fc62c3b1977d, the host can't ge=
-t the
-> > > > > > VM's IP via KVP.
-> > > > > >
-> > > > > > And, fc62c3b1977d added a "break;", but actually forgot to init=
-ialize
-> > > > > > the key_size/value in the case of KVP_OP_SET, so the default ke=
-y_size
-> of
-> > > > > > 0 is passed to the kvp daemon, and the pool files
-> > > > > > /var/lib/hyperv/.kvp_pool_* can't be updated.
-> > > > > >
-> > > > > > This patch effectively rolls back the previous fc62c3b1977d, an=
-d
-> > > > > > correctly fixes the "this statement may fall through" warnings.
-> > > > > >
-> > > > > > This patch is tested on WS 2012 R2 and 2016.
-> > > > > >
-> > > > > > Fixes: fc62c3b1977d ("Drivers: hv: kvp: Fix two "this statement=
- may
-> fall
-> > > > > through" warnings")
-> > > > > > Signed-off-by: Dexuan Cui <decui@microsoft.com>
-> > > > > > Cc: K. Y. Srinivasan <kys@microsoft.com>
-> > > > > > Cc: Haiyang Zhang <haiyangz@microsoft.com>
-> > > > > > Cc: Stephen Hemminger <sthemmin@microsoft.com>
-> > > > > > Cc: <Stable@vger.kernel.org>
-> > > > > > Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
-> > > > > > ---
-> > > > > >  drivers/hv/hv_kvp.c | 26 ++++++++++++++++++++++----
-> > > > > >  1 file changed, 22 insertions(+), 4 deletions(-)
-> > > > > >
-> > > > > Reviewed-by: Michael Kelley <mikelley@microsoft.com>
-> > > >
-> > > > Hi Greg,
-> > > > Can you please take a look at this patch?
-> > >
-> > > Nope, I'm not the hv maintainer, they need to look at this and ack it=
-,
-> > > not me :)
-> > >
-> > > greg k-h
-> >
-> > Hi Greg,
-> > KY has added his Signed-off-by in the mail.
-> >
-> > I'll ask the other HV maintainers to take a look as well.
->=20
-> Ok, then I'll look at it after 4.20-rc1 is out, nothing I can do until
-> then anyway...
->=20
-> thanks,
->=20
-> greg k-h
+On Sat, Nov 10, 2018 at 07:09:25PM -0800, Joel Fernandes wrote:
+> On Sat, Nov 10, 2018 at 03:04:36PM -0800, Paul E. McKenney wrote:
+> > On Sat, Nov 10, 2018 at 01:46:59PM -0800, Joel Fernandes wrote:
+> > > Hi Paul and everyone,
+> > > 
+> > > I was tracing/studying the RCU code today in paul/dev branch and noticed that
+> > > for dyntick-idle CPUs, the RCU GP thread is clearing the rnp->qsmask
+> > > corresponding to the leaf node for the idle CPU, and reporting a QS on their
+> > > behalf.
+> > > 
+> > > rcu_sched-10    [003]    40.008039: rcu_fqs:              rcu_sched 792 0 dti
+> > > rcu_sched-10    [003]    40.008039: rcu_fqs:              rcu_sched 801 2 dti
+> > > rcu_sched-10    [003]    40.008041: rcu_quiescent_state_report: rcu_sched 805 5>0 0 0 3 0
+> > > 
+> > > That's all good but I was wondering if we can do better for the idle CPUs if
+> > > we can some how not set the qsmask of the node in the first place. Then no
+> > > reporting would be needed of quiescent state is needed for idle CPUs right?
+> > > And we would also not need to acquire the rnp lock I think.
+> > > 
+> > > At least for a single node tree RCU system, it seems that would avoid needing
+> > > to acquire the lock without complications. Anyway let me know your thoughts
+> > > and happy to discuss this at the hallways of the LPC as well for folks
+> > > attending :)
+> > 
+> > We could, but that would require consulting the rcu_data structure for
+> > each CPU while initializing the grace period, thus increasing the number
+> > of cache misses during grace-period initialization and also shortly after
+> > for any non-idle CPUs.  This seems backwards on busy systems where each
+> 
+> When I traced, it appears to me that rcu_data structure of a remote CPU was
+> being consulted anyway by the rcu_sched thread. So it seems like such cache
+> miss would happen anyway whether it is during grace-period initialization or
+> during the fqs stage? I guess I'm trying to say, the consultation of remote
+> CPU's rcu_data happens anyway.
 
-Hi Greg,
-Can you please take a look at the patch now?
+Hmmm...
 
-The patch has received
+The rcu_gp_init() function does access an rcu_data structure, but it is
+that of the current CPU, so shouldn't involve a communications cache miss,
+at least not in the common case.
 
-Reviewed-by: Michael Kelley <mikelley@microsoft.com>
-Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
-Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+Or are you seeing these cross-CPU rcu_data accesses in rcu_gp_fqs() or
+functions that it calls?  In that case, please see below.
 
-Thanks,
--- Dexuan
+> > CPU will with high probability report its own quiescent state before three
+> > jiffies pass, in which case the cache misses on the rcu_data structures
+> > would be wasted motion.
+> 
+> If all the CPUs are busy and reporting their QS themselves, then I think the
+> qsmask is likely 0 so then rcu_implicit_dynticks_qs (called from
+> force_qs_rnp) wouldn't be called and so there would no cache misses on
+> rcu_data right?
+
+Yes, but assuming that all CPUs report their quiescent states before
+the first call to rcu_gp_fqs().  One exception is when some CPU is
+looping in the kernel for many milliseconds without passing through a
+quiescent state.  This is because for recent kernels, cond_resched()
+is not a quiescent state until the grace period is something like 100
+milliseconds old.  (For older kernels, cond_resched() was never an RCU
+quiescent state unless it actually scheduled.)
+
+Why wait 100 milliseconds?  Because otherwise the increase in
+cond_resched() overhead shows up all too well, causing 0day test robot
+to complain bitterly.  Besides, I would expect that in the common case,
+CPUs would be executing usermode code.
+
+Ah, did you build with NO_HZ_FULL, boot with nohz_full CPUs, and then run
+CPU-bound usermode workloads on those CPUs?  Such CPUs would appear to
+be idle from an RCU perspective.  But these CPUs would never touch their
+rcu_data structures, so they would likely remain in the RCU grace-period
+kthread's cache.  So this should work well also.  Give or take that other
+work would likely eject them from the cache, but in that case they would
+be capacity cache misses rather than the aforementioned communications
+cache misses.  Not that this distinction matters to whoever is measuring
+performance.  ;-)
+
+> > Now, this does increase overhead on mostly idle systems, but the theory
+> > is that mostly idle systems are most able to absorb this extra overhead.
+> 
+> Yes. Could we use rcuperf to check the impact of such change?
+
+I would be very surprised if the overhead was large enough for rcuperf
+to be able to see it.
+
+> Anyway it was just an idea that popped up when I was going through traces :)
+> Thanks for the discussion and happy to discuss further or try out anything.
+
+Either way, I do appreciate your going through this.  People have found
+RCU bugs this way, one of which involved RCU uselessly calling a particular
+function twice in quick succession.  ;-)
+
+							Thanx, Paul
+
