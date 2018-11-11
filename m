@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D26BC0044C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE04FC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1970521780
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B45C221780
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:33:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KZS186eo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1970521780
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ojh169Vn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B45C221780
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404499AbeKLIXw (ORCPT
+        id S2404514AbeKLIXz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:23:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58408 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:23:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58596 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391153AbeKLIXv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:23:51 -0500
+        id S2391153AbeKLIXy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:23:54 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D225321707;
-        Sun, 11 Nov 2018 22:33:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7BB39223C6;
+        Sun, 11 Nov 2018 22:33:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975634;
-        bh=iGPnA6pxcK/b1SyVKQVv9UKIW1XKokgMAQKlwSzJyYs=;
+        s=default; t=1541975636;
+        bh=EYl7qWBeAFsJzIdWyyM0xDsJCOOzGiW3EM0xnbeE7Sc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KZS186eol0EVvsFQQLMk3wEFF+K4LFeaLnHTf6tsiN9wN5SckDN+wzeWPL1QhVlZE
-         LUVsQ2KR0Cj8m65hk4Z9naVxqlMe/LNtvn2wSMkk9kqYYYTv03qSuJfDdnpENQi9TM
-         UzVCLK4wrKuUvxqbcYprIyvVqHFl4uWgGDJJEh1A=
+        b=ojh169VnU3iwwrfW3bHKNhb/GsxHATZfFpcxPKHxF9LRZbdpUe5sWqQiFsaH2yaTH
+         Adgdp27ZtMhq3iEOVh6OiqsS7JW5VABlLvw5AVAlP+ld78yjZFi0f5vc4zfqcIxI2D
+         yJhC8V6G8MTs4i0GV+mtPJEY1Vaiui+nyEoSRjJw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sebastian Basierski <sebastianx.basierski@intel.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Stan Johnson <userm57@yahoo.com>,
+        Finn Thain <fthain@telegraphics.com.au>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 050/141] ixgbevf: VF2VF TCP RSS
-Date:   Sun, 11 Nov 2018 14:25:09 -0800
-Message-Id: <20181111221634.300816970@linuxfoundation.org>
+Subject: [PATCH 4.9 053/141] scsi: esp_scsi: Track residual for PIO transfers
+Date:   Sun, 11 Nov 2018 14:25:12 -0800
+Message-Id: <20181111221634.848444000@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
 References: <20181111221627.853046496@linuxfoundation.org>
@@ -64,36 +64,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sebastian Basierski <sebastianx.basierski@intel.com>
+From: Finn Thain <fthain@telegraphics.com.au>
 
-[ Upstream commit 7fb94bd58dd6650a0158e68d414e185077d8b57a ]
+[ Upstream commit fd47d919d0c336e7c22862b51ee94927ffea227a ]
 
-While VF2VF with RSS communication, RSS Type were wrongly recognized
-and RSS hash was not calculated as it should be. Packets was
-distributed on various queues by accident.
-This commit fixes that behaviour and causes proper RSS Type recognition.
+If a target disconnects during a PIO data transfer the command may fail
+when the target reconnects:
 
-Signed-off-by: Sebastian Basierski <sebastianx.basierski@intel.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+scsi host1: DMA length is zero!
+scsi host1: cur adr[04380000] len[00000000]
+
+The scsi bus is then reset. This happens because the residual reached
+zero before the transfer was completed.
+
+The usual residual calculation relies on the Transfer Count registers.
+That works for DMA transfers but not for PIO transfers. Fix the problem
+by storing the PIO transfer residual and using that to correctly
+calculate bytes_sent.
+
+Fixes: 6fe07aaffbf0 ("[SCSI] m68k: new mac_esp scsi driver")
+Tested-by: Stan Johnson <userm57@yahoo.com>
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+Tested-by: Michael Schmitz <schmitzmic@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/scsi/esp_scsi.c |    1 +
+ drivers/scsi/esp_scsi.h |    2 ++
+ drivers/scsi/mac_esp.c  |    2 ++
+ 3 files changed, 5 insertions(+)
 
---- a/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-+++ b/drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
-@@ -3419,6 +3419,10 @@ static void ixgbevf_tx_csum(struct ixgbe
- 		skb_checksum_help(skb);
- 		goto no_csum;
+--- a/drivers/scsi/esp_scsi.c
++++ b/drivers/scsi/esp_scsi.c
+@@ -1349,6 +1349,7 @@ static int esp_data_bytes_sent(struct es
+ 
+ 	bytes_sent = esp->data_dma_len;
+ 	bytes_sent -= ecount;
++	bytes_sent -= esp->send_cmd_residual;
+ 
+ 	/*
+ 	 * The am53c974 has a DMA 'pecularity'. The doc states:
+--- a/drivers/scsi/esp_scsi.h
++++ b/drivers/scsi/esp_scsi.h
+@@ -540,6 +540,8 @@ struct esp {
+ 
+ 	void			*dma;
+ 	int			dmarev;
++
++	u32			send_cmd_residual;
+ };
+ 
+ /* A front-end driver for the ESP chip should do the following in
+--- a/drivers/scsi/mac_esp.c
++++ b/drivers/scsi/mac_esp.c
+@@ -426,6 +426,8 @@ static void mac_esp_send_pio_cmd(struct
+ 			scsi_esp_cmd(esp, ESP_CMD_TI);
+ 		}
  	}
 +
-+	if (first->protocol == htons(ETH_P_IP))
-+		type_tucmd |= IXGBE_ADVTXD_TUCMD_IPV4;
-+
- 	/* update TX checksum flag */
- 	first->tx_flags |= IXGBE_TX_FLAGS_CSUM;
- 	vlan_macip_lens = skb_checksum_start_offset(skb) -
++	esp->send_cmd_residual = esp_count;
+ }
+ 
+ static int mac_esp_irq_pending(struct esp *esp)
 
 
