@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A14EFC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:22:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD8BC43610
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:22:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6600D20817
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:22:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B383420817
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:22:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fIjHemFm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6600D20817
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="igT9R67s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B383420817
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389567AbeKLJMr (ORCPT
+        id S2389335AbeKLIVG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:12:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47504 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:21:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47452 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387735AbeKLIVH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:21:07 -0500
+        id S2387732AbeKLIVG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:06 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D451B21780;
-        Sun, 11 Nov 2018 22:31:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1ABF421508;
+        Sun, 11 Nov 2018 22:31:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975469;
-        bh=paYMam38b+Z6kWUpw9SV0DOEJuMY1ebZtnRUcrOE3VA=;
+        bh=RVDlWR5Y0xBwojke47IATrTgz59Y3IVAos5gXLKvoK0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fIjHemFm20UazL4wOb4F/Faj/oz2bJNEMGw5ifif8Ka04lCQXH9Dvq1Z1Tf4KFn8i
-         7HoQ2bR797gwglftXQ/bkB2qGM/Uex2fNG1bWQcw2qKEABGWMhj3PqxoP7/7Mws3Hb
-         QzLeJ03Uppq53rsFAawV7tGGQxlvwRWpKsPkZ7KA=
+        b=igT9R67s6nq+/VUBmJKPLT2yFTtpXgp8LJiaOvhSWp9vvMogk+3KKxtc5pVtyqvCl
+         nPBGGNKxz4SVyB1ztIeAlgh1kuGho/DRRNAsOxJsazSsT450SeDRk5xvWA1Dhco3xv
+         Coh2ea5EuN7EhET0KccX+z6OzbGPARu8RPEjhHbI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Punit Agrawal <punit.agrawal@arm.com>,
-        Suzuki Poulose <suzuki.poulose@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH 4.18 248/350] KVM: arm/arm64: Ensure only THP is candidate for adjustment
-Date:   Sun, 11 Nov 2018 14:21:52 -0800
-Message-Id: <20181111221718.409304483@linuxfoundation.org>
+        stable@vger.kernel.org, Ralph Campbell <rcampbell@nvidia.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.18 246/350] mm/rmap: map_pte() was not handling private ZONE_DEVICE page properly
+Date:   Sun, 11 Nov 2018 14:21:50 -0800
+Message-Id: <20181111221718.328757832@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -64,48 +66,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Punit Agrawal <punit.agrawal@arm.com>
+From: Ralph Campbell <rcampbell@nvidia.com>
 
-commit fd2ef358282c849c193aa36dadbf4f07f7dcd29b upstream.
+commit aab8d0520e6e7c2a61f71195e6ce7007a4843afb upstream.
 
-PageTransCompoundMap() returns true for hugetlbfs and THP
-hugepages. This behaviour incorrectly leads to stage 2 faults for
-unsupported hugepage sizes (e.g., 64K hugepage with 4K pages) to be
-treated as THP faults.
+Private ZONE_DEVICE pages use a special pte entry and thus are not
+present.  Properly handle this case in map_pte(), it is already handled in
+check_pte(), the map_pte() part was lost in some rebase most probably.
 
-Tighten the check to filter out hugetlbfs pages. This also leads to
-consistently mapping all unsupported hugepage sizes as PTE level
-entries at stage 2.
+Without this patch the slow migration path can not migrate back to any
+private ZONE_DEVICE memory to regular memory.  This was found after stress
+testing migration back to system memory.  This ultimatly can lead to the
+CPU constantly page fault looping on the special swap entry.
 
-Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-Reviewed-by: Suzuki Poulose <suzuki.poulose@arm.com>
-Cc: Christoffer Dall <christoffer.dall@arm.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: stable@vger.kernel.org # v4.13+
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Link: http://lkml.kernel.org/r/20181019160442.18723-3-jglisse@redhat.com
+Signed-off-by: Ralph Campbell <rcampbell@nvidia.com>
+Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
+Reviewed-by: Balbir Singh <bsingharora@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- virt/kvm/arm/mmu.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ mm/page_vma_mapped.c |   24 +++++++++++++++++++++++-
+ 1 file changed, 23 insertions(+), 1 deletion(-)
 
---- a/virt/kvm/arm/mmu.c
-+++ b/virt/kvm/arm/mmu.c
-@@ -1201,8 +1201,14 @@ static bool transparent_hugepage_adjust(
- {
- 	kvm_pfn_t pfn = *pfnp;
- 	gfn_t gfn = *ipap >> PAGE_SHIFT;
-+	struct page *page = pfn_to_page(pfn);
- 
--	if (PageTransCompoundMap(pfn_to_page(pfn))) {
-+	/*
-+	 * PageTransCompoungMap() returns true for THP and
-+	 * hugetlbfs. Make sure the adjustment is done only for THP
-+	 * pages.
-+	 */
-+	if (!PageHuge(page) && PageTransCompoundMap(page)) {
- 		unsigned long mask;
- 		/*
- 		 * The address we faulted on is backed by a transparent huge
+--- a/mm/page_vma_mapped.c
++++ b/mm/page_vma_mapped.c
+@@ -21,7 +21,29 @@ static bool map_pte(struct page_vma_mapp
+ 			if (!is_swap_pte(*pvmw->pte))
+ 				return false;
+ 		} else {
+-			if (!pte_present(*pvmw->pte))
++			/*
++			 * We get here when we are trying to unmap a private
++			 * device page from the process address space. Such
++			 * page is not CPU accessible and thus is mapped as
++			 * a special swap entry, nonetheless it still does
++			 * count as a valid regular mapping for the page (and
++			 * is accounted as such in page maps count).
++			 *
++			 * So handle this special case as if it was a normal
++			 * page mapping ie lock CPU page table and returns
++			 * true.
++			 *
++			 * For more details on device private memory see HMM
++			 * (include/linux/hmm.h or mm/hmm.c).
++			 */
++			if (is_swap_pte(*pvmw->pte)) {
++				swp_entry_t entry;
++
++				/* Handle un-addressable ZONE_DEVICE memory */
++				entry = pte_to_swp_entry(*pvmw->pte);
++				if (!is_device_private_entry(entry))
++					return false;
++			} else if (!pte_present(*pvmw->pte))
+ 				return false;
+ 		}
+ 	}
 
 
