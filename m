@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52245C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:34:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FC7DC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:34:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 087AA2084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:34:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41F3B20866
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:34:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GarHvfzG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 087AA2084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="szhGnv44"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41F3B20866
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388596AbeKLJZC (ORCPT
+        id S2388632AbeKLJZN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:25:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43764 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:25:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388369AbeKLIUH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:20:07 -0500
+        id S2388309AbeKLIUF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:05 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 18099208A3;
-        Sun, 11 Nov 2018 22:30:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5DAB92241B;
+        Sun, 11 Nov 2018 22:30:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975411;
-        bh=zJlTtCTKZNMAG2jigTP1Fv3uZPpOgwASwwMGhDrtYqM=;
+        s=default; t=1541975409;
+        bh=8n/RxwtyYATdZyKOrp6BhPk7hd8WvhbgIR1YzNIGBgw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GarHvfzGcS4KUT/EzgfFbUEeq+D+cPjvdyUsQXE8BnU9QjAK6qX/awycv7WMX0EOj
-         CxTDUnPuabxl6CAIoPNUNOSmqOlRSLKejN8gm2dHim9Nx5pq6mwYLDqh2aRnt9evwS
-         rjF/yAxtcYkGAAy7tCkpP+uC7i+72X6BqMhF1Vfg=
+        b=szhGnv44WR/RD5yZspto/qTcL2RDGZGArpXW5xQjkCLtq57a92IeVM80A+Cvpp7CU
+         +bUh3QpyfTj9mRLXlE3UZqz8QfC7drpxVsK8kTsGMC4MkgW2M/qrv2nvO7y1A7fwgq
+         R+jb/hwqGKbiaqFeCEFJmBTv6HcT3EH/5soY8J7Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Edward Cree <ecree@solarflare.com>,
+        Alexei Starovoitov <ast@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 121/350] pinctrl: ssbi-gpio: Fix pm8xxx_pin_config_get() to be compliant
-Date:   Sun, 11 Nov 2018 14:19:45 -0800
-Message-Id: <20181111221712.240385693@linuxfoundation.org>
+Subject: [PATCH 4.18 117/350] bpf/verifier: fix verifier instability
+Date:   Sun, 11 Nov 2018 14:19:41 -0800
+Message-Id: <20181111221712.012812958@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -65,86 +63,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Douglas Anderson <dianders@chromium.org>
+From: Alexei Starovoitov <ast@kernel.org>
 
-[ Upstream commit b432414b996d32a1bd9afe2bd595bd5729c1477f ]
+[ Upstream commit a9c676bc8fc58d00eea9836fb14ee43c0346416a ]
 
-If you look at "pinconf-groups" in debugfs for ssbi-gpio you'll notice
-it looks like nonsense.
+Edward Cree says:
+In check_mem_access(), for the PTR_TO_CTX case, after check_ctx_access()
+has supplied a reg_type, the other members of the register state are set
+appropriately.  Previously reg.range was set to 0, but as it is in a
+union with reg.map_ptr, which is larger, upper bytes of the latter were
+left in place.  This then caused the memcmp() in regsafe() to fail,
+preventing some branches from being pruned (and occasionally causing the
+same program to take a varying number of processed insns on repeated
+verifier runs).
 
-The problem is fairly well described in commit 1cf86bc21257 ("pinctrl:
-qcom: spmi-gpio: Fix pmic_gpio_config_get() to be compliant") and
-commit 05e0c828955c ("pinctrl: msm: Fix msm_config_group_get() to be
-compliant"), but it was pointed out that ssbi-gpio has the same
-problem.  Let's fix it there too.
+Fix the instability by clearing bpf_reg_state in __mark_reg_[un]known()
 
-Fixes: b4c45fe974bc ("pinctrl: qcom: ssbi: Family A gpio & mpp drivers")
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Fixes: f1174f77b50c ("bpf/verifier: rework value tracking")
+Debugged-by: Edward Cree <ecree@solarflare.com>
+Acked-by: Edward Cree <ecree@solarflare.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c |   28 +++++++++++++++++++++-------
- 1 file changed, 21 insertions(+), 7 deletions(-)
+ kernel/bpf/verifier.c |   16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
---- a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-+++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-@@ -260,22 +260,32 @@ static int pm8xxx_pin_config_get(struct
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -553,7 +553,9 @@ static void __mark_reg_not_init(struct b
+  */
+ static void __mark_reg_known(struct bpf_reg_state *reg, u64 imm)
+ {
+-	reg->id = 0;
++	/* Clear id, off, and union(map_ptr, range) */
++	memset(((u8 *)reg) + sizeof(reg->type), 0,
++	       offsetof(struct bpf_reg_state, var_off) - sizeof(reg->type));
+ 	reg->var_off = tnum_const(imm);
+ 	reg->smin_value = (s64)imm;
+ 	reg->smax_value = (s64)imm;
+@@ -572,7 +574,6 @@ static void __mark_reg_known_zero(struct
+ static void __mark_reg_const_zero(struct bpf_reg_state *reg)
+ {
+ 	__mark_reg_known(reg, 0);
+-	reg->off = 0;
+ 	reg->type = SCALAR_VALUE;
+ }
  
- 	switch (param) {
- 	case PIN_CONFIG_BIAS_DISABLE:
--		arg = pin->bias == PM8XXX_GPIO_BIAS_NP;
-+		if (pin->bias != PM8XXX_GPIO_BIAS_NP)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_BIAS_PULL_DOWN:
--		arg = pin->bias == PM8XXX_GPIO_BIAS_PD;
-+		if (pin->bias != PM8XXX_GPIO_BIAS_PD)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_BIAS_PULL_UP:
--		arg = pin->bias <= PM8XXX_GPIO_BIAS_PU_1P5_30;
-+		if (pin->bias > PM8XXX_GPIO_BIAS_PU_1P5_30)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PM8XXX_QCOM_PULL_UP_STRENGTH:
- 		arg = pin->pull_up_strength;
- 		break;
- 	case PIN_CONFIG_BIAS_HIGH_IMPEDANCE:
--		arg = pin->disable;
-+		if (!pin->disable)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_INPUT_ENABLE:
--		arg = pin->mode == PM8XXX_GPIO_MODE_INPUT;
-+		if (pin->mode != PM8XXX_GPIO_MODE_INPUT)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_OUTPUT:
- 		if (pin->mode & PM8XXX_GPIO_MODE_OUTPUT)
-@@ -290,10 +300,14 @@ static int pm8xxx_pin_config_get(struct
- 		arg = pin->output_strength;
- 		break;
- 	case PIN_CONFIG_DRIVE_PUSH_PULL:
--		arg = !pin->open_drain;
-+		if (pin->open_drain)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
--		arg = pin->open_drain;
-+		if (!pin->open_drain)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	default:
- 		return -EINVAL;
+@@ -683,9 +684,12 @@ static void __mark_reg_unbounded(struct
+ /* Mark a register as having a completely unknown (scalar) value. */
+ static void __mark_reg_unknown(struct bpf_reg_state *reg)
+ {
++	/*
++	 * Clear type, id, off, and union(map_ptr, range) and
++	 * padding between 'type' and union
++	 */
++	memset(reg, 0, offsetof(struct bpf_reg_state, var_off));
+ 	reg->type = SCALAR_VALUE;
+-	reg->id = 0;
+-	reg->off = 0;
+ 	reg->var_off = tnum_unknown;
+ 	reg->frameno = 0;
+ 	__mark_reg_unbounded(reg);
+@@ -1726,9 +1730,6 @@ static int check_mem_access(struct bpf_v
+ 			else
+ 				mark_reg_known_zero(env, regs,
+ 						    value_regno);
+-			regs[value_regno].id = 0;
+-			regs[value_regno].off = 0;
+-			regs[value_regno].range = 0;
+ 			regs[value_regno].type = reg_type;
+ 		}
+ 
+@@ -2549,7 +2550,6 @@ static int check_helper_call(struct bpf_
+ 		regs[BPF_REG_0].type = PTR_TO_MAP_VALUE_OR_NULL;
+ 		/* There is no offset yet applied, variable or fixed */
+ 		mark_reg_known_zero(env, regs, BPF_REG_0);
+-		regs[BPF_REG_0].off = 0;
+ 		/* remember map_ptr, so that check_map_access()
+ 		 * can check 'value_size' boundary of memory access
+ 		 * to map element returned from bpf_map_lookup_elem()
 
 
