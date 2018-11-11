@@ -4,47 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FBE3C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:49:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6365CC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:49:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 176F820871
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:49:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A5BB20872
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:49:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZJVk3ceE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 176F820871
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HX8YJX14"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A5BB20872
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733290AbeKLJj0 (ORCPT
+        id S1733252AbeKLJj0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 12 Nov 2018 04:39:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38784 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:38760 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733041AbeKLISl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1733028AbeKLISl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:18:41 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1E3022504;
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B0A021508;
         Sun, 11 Nov 2018 22:28:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975324;
-        bh=AgZjdC4bikvZCPm2iSj9epp2orUz3RnM7DYXWl9pGvI=;
+        bh=G4DjoRHx6QNaDmeViJCdg4/l4ZWzsNQYg6nLtjfycoM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZJVk3ceEImvQcEcd3ugX4NTtmQSPeDRxBLc7uai/2POyx7gT0oDW6Uo20oXdwyJ6c
-         JQTDJe1t3OMZmJoafAVl+h2YNmf+CwoptkEeLHcFMZEmIgyXchfmpnsIhJOqrJZ+WP
-         sweNnp2EiwjOA/VMGBI3lSVC7wvxZBy6pMWwHybY=
+        b=HX8YJX14G2qG5CbiXynW2Py57ZUG+nsQqbQT0IWJE+DvvddBHR1pJAHM5JW+1GEiW
+         fJ/PWX4Fx9HOO081F3BSMWHQS5/63XLLlg0QltGAq+6XzAC8B2Jd5ecNWaLL9ewmJp
+         U/nbQgpRyRoqnH/sQZNNqEb2310MjJi4qsofnBcc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Jeff Mahoney <jeffm@suse.com>,
         David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.19 330/361] btrfs: fix error handling in btrfs_dev_replace_start
-Date:   Sun, 11 Nov 2018 14:21:17 -0800
-Message-Id: <20181111221659.823633335@linuxfoundation.org>
+Subject: [PATCH 4.19 329/361] btrfs: fix error handling in free_log_tree
+Date:   Sun, 11 Nov 2018 14:21:16 -0800
+Message-Id: <20181111221659.734304563@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -64,60 +63,88 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jeff Mahoney <jeffm@suse.com>
 
-commit 5c06147128fbbdf7a84232c5f0d808f53153defe upstream.
+commit 374b0e2d6ba5da7fd1cadb3247731ff27d011f6f upstream.
 
-When we fail to start a transaction in btrfs_dev_replace_start, we leave
-dev_replace->replace_start set to STARTED but clear ->srcdev and
-->tgtdev.  Later, that can result in an Oops in
-btrfs_dev_replace_progress when having state set to STARTED or SUSPENDED
-implies that ->srcdev is valid.
+When we hit an I/O error in free_log_tree->walk_log_tree during file system
+shutdown we can crash due to there not being a valid transaction handle.
 
-Also fix error handling when the state is already STARTED or SUSPENDED
-while starting.  That, too, will clear ->srcdev and ->tgtdev even though
-it doesn't own them.  This should be an impossible case to hit since we
-should be protected by the BTRFS_FS_EXCL_OP bit being set.  Let's add an
-ASSERT there while we're at it.
+Use btrfs_handle_fs_error when there's no transaction handle to use.
 
-Fixes: e93c89c1aaaaa (Btrfs: add new sources for device replace code)
-CC: stable@vger.kernel.org # 4.4+
+  BUG: unable to handle kernel NULL pointer dereference at 0000000000000060
+  IP: free_log_tree+0xd2/0x140 [btrfs]
+  PGD 0 P4D 0
+  Oops: 0000 [#1] SMP DEBUG_PAGEALLOC PTI
+  Modules linked in: <modules>
+  CPU: 2 PID: 23544 Comm: umount Tainted: G        W        4.12.14-kvmsmall #9 SLE15 (unreleased)
+  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
+  task: ffff96bfd3478880 task.stack: ffffa7cf40d78000
+  RIP: 0010:free_log_tree+0xd2/0x140 [btrfs]
+  RSP: 0018:ffffa7cf40d7bd10 EFLAGS: 00010282
+  RAX: 00000000fffffffb RBX: 00000000fffffffb RCX: 0000000000000002
+  RDX: 0000000000000000 RSI: ffff96c02f07d4c8 RDI: 0000000000000282
+  RBP: ffff96c013cf1000 R08: ffff96c02f07d4c8 R09: ffff96c02f07d4d0
+  R10: 0000000000000000 R11: 0000000000000002 R12: 0000000000000000
+  R13: ffff96c005e800c0 R14: ffffa7cf40d7bdb8 R15: 0000000000000000
+  FS:  00007f17856bcfc0(0000) GS:ffff96c03f600000(0000) knlGS:0000000000000000
+  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  CR2: 0000000000000060 CR3: 0000000045ed6002 CR4: 00000000003606e0
+  DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+  DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+  Call Trace:
+   ? wait_for_writer+0xb0/0xb0 [btrfs]
+   btrfs_free_log+0x17/0x30 [btrfs]
+   btrfs_drop_and_free_fs_root+0x9a/0xe0 [btrfs]
+   btrfs_free_fs_roots+0xc0/0x130 [btrfs]
+   ? wait_for_completion+0xf2/0x100
+   close_ctree+0xea/0x2e0 [btrfs]
+   ? kthread_stop+0x161/0x260
+   generic_shutdown_super+0x6c/0x120
+   kill_anon_super+0xe/0x20
+   btrfs_kill_super+0x13/0x100 [btrfs]
+   deactivate_locked_super+0x3f/0x70
+   cleanup_mnt+0x3b/0x70
+   task_work_run+0x78/0x90
+   exit_to_usermode_loop+0x77/0xa6
+   do_syscall_64+0x1c5/0x1e0
+   entry_SYSCALL_64_after_hwframe+0x42/0xb7
+  RIP: 0033:0x7f1784f90827
+  RSP: 002b:00007ffdeeb03118 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+  RAX: 0000000000000000 RBX: 0000556a60c62970 RCX: 00007f1784f90827
+  RDX: 0000000000000001 RSI: 0000000000000000 RDI: 0000556a60c62b50
+  RBP: 0000000000000000 R08: 0000000000000005 R09: 00000000ffffffff
+  R10: 0000556a60c63900 R11: 0000000000000246 R12: 0000556a60c62b50
+  R13: 00007f17854a81c4 R14: 0000000000000000 R15: 0000000000000000
+  RIP: free_log_tree+0xd2/0x140 [btrfs] RSP: ffffa7cf40d7bd10
+  CR2: 0000000000000060
+
+Fixes: 681ae50917df9 ("Btrfs: cleanup reserved space when freeing tree log on error")
+CC: <stable@vger.kernel.org> # v3.13
 Signed-off-by: Jeff Mahoney <jeffm@suse.com>
 Reviewed-by: David Sterba <dsterba@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/dev-replace.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ fs/btrfs/tree-log.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/fs/btrfs/dev-replace.c
-+++ b/fs/btrfs/dev-replace.c
-@@ -440,6 +440,7 @@ int btrfs_dev_replace_start(struct btrfs
- 		break;
- 	case BTRFS_IOCTL_DEV_REPLACE_STATE_STARTED:
- 	case BTRFS_IOCTL_DEV_REPLACE_STATE_SUSPENDED:
-+		ASSERT(0);
- 		ret = BTRFS_IOCTL_DEV_REPLACE_RESULT_ALREADY_STARTED;
- 		goto leave;
- 	}
-@@ -482,6 +483,10 @@ int btrfs_dev_replace_start(struct btrfs
- 	if (IS_ERR(trans)) {
- 		ret = PTR_ERR(trans);
- 		btrfs_dev_replace_write_lock(dev_replace);
-+		dev_replace->replace_state =
-+			BTRFS_IOCTL_DEV_REPLACE_STATE_NEVER_STARTED;
-+		dev_replace->srcdev = NULL;
-+		dev_replace->tgtdev = NULL;
- 		goto leave;
- 	}
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -3196,9 +3196,12 @@ static void free_log_tree(struct btrfs_t
+ 	};
  
-@@ -503,8 +508,6 @@ int btrfs_dev_replace_start(struct btrfs
- 	return ret;
+ 	ret = walk_log_tree(trans, log, &wc);
+-	/* I don't think this can happen but just in case */
+-	if (ret)
+-		btrfs_abort_transaction(trans, ret);
++	if (ret) {
++		if (trans)
++			btrfs_abort_transaction(trans, ret);
++		else
++			btrfs_handle_fs_error(log->fs_info, ret, NULL);
++	}
  
- leave:
--	dev_replace->srcdev = NULL;
--	dev_replace->tgtdev = NULL;
- 	btrfs_dev_replace_write_unlock(dev_replace);
- 	btrfs_destroy_dev_replace_tgtdev(tgt_device);
- 	return ret;
+ 	while (1) {
+ 		ret = find_first_extent_bit(&log->dirty_log_pages,
 
 
