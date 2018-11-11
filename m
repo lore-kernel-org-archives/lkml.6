@@ -6,48 +6,43 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EB58C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:14:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7485C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:14:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE7D32080D
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:14:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE7D32080D
+	by mail.kernel.org (Postfix) with ESMTP id A01A82148E
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:14:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A01A82148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731715AbeKLGEI (ORCPT
+        id S1731671AbeKLGEQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:04:08 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52884 "EHLO
+        Mon, 12 Nov 2018 01:04:16 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52898 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726816AbeKLGEH (ORCPT
+        by vger.kernel.org with ESMTP id S1726816AbeKLGEQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 01:04:07 -0500
+        Mon, 12 Nov 2018 01:04:16 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvtB-0000oG-Pv; Sun, 11 Nov 2018 19:59:21 +0000
+        id 1gLvsy-0000oO-72; Sun, 11 Nov 2018 19:59:08 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsO-0001Po-Qn; Sun, 11 Nov 2018 19:58:32 +0000
+        id 1gLvsU-0001d9-5K; Sun, 11 Nov 2018 19:58:38 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Dave Martin" <Dave.Martin@arm.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Wei Xu" <xuwei5@hisilicon.com>,
-        "Linus Walleij" <linus.walleij@linaro.org>,
-        "Russell King" <linux@armlinux.org.uk>,
-        "Peter Maydell" <peter.maydell@linaro.org>
+CC:     akpm@linux-foundation.org, "Takashi Iwai" <tiwai@suse.de>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.135901520@decadent.org.uk>
+Message-ID: <lsq.1541965745.695293795@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 047/366] tty: pl011: Avoid spuriously stuck-off
- interrupts
+Subject: [PATCH 3.16 193/366] ALSA: timer: Fix UBSAN warning at
+ SNDRV_TIMER_IOCTL_NEXT_DEVICE ioctl
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -61,107 +56,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dave Martin <Dave.Martin@arm.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 4a7e625ce50412a7711efa0f2ef0b96ce3826759 upstream.
+commit b41f794f284966fd6ec634111e3b40d241389f96 upstream.
 
-Commit 9b96fbacda34 ("serial: PL011: clear pending interrupts")
-clears the RX and receive timeout interrupts on pl011 startup, to
-avoid a screaming-interrupt scenario that can occur when the
-firmware or bootloader leaves these interrupts asserted.
+The kernel may spew a WARNING about UBSAN undefined behavior at
+handling ALSA timer ioctl SNDRV_TIMER_IOCTL_NEXT_DEVICE:
 
-This has been noted as an issue when running Linux on qemu [1].
+UBSAN: Undefined behaviour in sound/core/timer.c:1524:19
+signed integer overflow:
+2147483647 + 1 cannot be represented in type 'int'
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x122/0x1c8 lib/dump_stack.c:113
+ ubsan_epilogue+0x12/0x86 lib/ubsan.c:159
+ handle_overflow+0x1c2/0x21f lib/ubsan.c:190
+ __ubsan_handle_add_overflow+0x2a/0x31 lib/ubsan.c:198
+ snd_timer_user_next_device sound/core/timer.c:1524 [inline]
+ __snd_timer_user_ioctl+0x204d/0x2520 sound/core/timer.c:1939
+ snd_timer_user_ioctl+0x67/0x95 sound/core/timer.c:1994
+ ....
 
-Unfortunately, the above fix seems to lead to potential
-misbehaviour if the RX FIFO interrupt is asserted _non_ spuriously
-on driver startup, if the RX FIFO is also already full to the
-trigger level.
+It happens only when a value with INT_MAX is passed, as we're
+incrementing it unconditionally.  So the fix is trivial, check the
+value with INT_MAX.  Although the bug itself is fairly harmless, it's
+better to fix it so that fuzzers won't hit this again later.
 
-Clearing the RX FIFO interrupt does not change the FIFO fill level.
-In this scenario, because the interrupt is now clear and because
-the FIFO is already full to the trigger level, no new assertion of
-the RX FIFO interrupt can occur unless the FIFO is drained back
-below the trigger level.  This never occurs because the pl011
-driver is waiting for an RX FIFO interrupt to tell it that there is
-something to read, and does not read the FIFO at all until that
-interrupt occurs.
-
-Thus, simply clearing "spurious" interrupts on startup may be
-misguided, since there is no way to be sure that the interrupts are
-truly spurious, and things can go wrong if they are not.
-
-This patch instead clears the interrupt condition by draining the
-RX FIFO during UART startup, after clearing any potentially
-spurious interrupt.  This should ensure that an interrupt will
-definitely be asserted if the RX FIFO subsequently becomes
-sufficiently full.
-
-The drain is done at the point of enabling interrupts only.  This
-means that it will occur any time the UART is newly opened through
-the tty layer.  It will not apply to polled-mode use of the UART by
-kgdboc: since that scenario cannot use interrupts by design, this
-should not matter.  kgdboc will interact badly with "normal" use of
-the UART in any case: this patch makes no attempt to paper over
-such issues.
-
-This patch does not attempt to address the case where the RX FIFO
-fills faster than it can be drained: that is a pathological
-hardware design problem that is beyond the scope of the driver to
-work around.  As a failsafe, the number of poll iterations for
-draining the FIFO is limited to twice the FIFO size.  This will
-ensure that the kernel at least boots even if it is impossible to
-drain the FIFO for some reason.
-
-[1] [Qemu-devel] [Qemu-arm] [PATCH] pl011: do not put into fifo
-before enabled the interruption
-https://lists.gnu.org/archive/html/qemu-devel/2018-01/msg06446.html
-
-Reported-by: Wei Xu <xuwei5@hisilicon.com>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Peter Maydell <peter.maydell@linaro.org>
-Fixes: 9b96fbacda34 ("serial: PL011: clear pending interrupts")
-Signed-off-by: Dave Martin <Dave.Martin@arm.com>
-Tested-by: Wei Xu <xuwei5@hisilicon.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.16:
- - Open-code pl011_read()
- - s/REG_/UART01x_/
- - Adjust context]
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=200213
+Reported-and-tested-by: Team OWL337 <icytxw@gmail.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+[bwh: Backported to 3.16: adjust context, indentation]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/tty/serial/amba-pl011.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ sound/core/timer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/tty/serial/amba-pl011.c
-+++ b/drivers/tty/serial/amba-pl011.c
-@@ -1531,6 +1531,7 @@ static int pl011_startup(struct uart_por
- 	struct uart_amba_port *uap = (struct uart_amba_port *)port;
- 	unsigned int cr, lcr_h, fbrd, ibrd;
- 	int retval;
-+	unsigned int i;
- 
- 	retval = pl011_hwinit(port);
- 	if (retval)
-@@ -1595,6 +1596,20 @@ static int pl011_startup(struct uart_por
- 	/* Clear out any spuriously appearing RX interrupts */
- 	 writew(UART011_RTIS | UART011_RXIS,
- 		uap->port.membase + UART011_ICR);
-+
-+	/*
-+	 * RXIS is asserted only when the RX FIFO transitions from below
-+	 * to above the trigger threshold.  If the RX FIFO is already
-+	 * full to the threshold this can't happen and RXIS will now be
-+	 * stuck off.  Drain the RX FIFO explicitly to fix this:
-+	 */
-+	for (i = 0; i < uap->fifosize * 2; ++i) {
-+		if (readw(uap->port.membase + UART01x_FR) & UART01x_FR_RXFE)
-+			break;
-+
-+		readw(uap->port.membase + UART01x_DR);
-+	}
-+
- 	uap->im = UART011_RTIM;
- 	if (!pl011_dma_rx_running(uap))
- 		uap->im |= UART011_RXIM;
+--- a/sound/core/timer.c
++++ b/sound/core/timer.c
+@@ -1476,7 +1476,7 @@ static int snd_timer_user_next_device(st
+ 					} else {
+ 						if (id.subdevice < 0) {
+ 							id.subdevice = 0;
+-						} else {
++						} else if (id.subdevice < INT_MAX) {
+ 							id.subdevice++;
+ 						}
+ 					}
 
