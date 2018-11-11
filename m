@@ -7,46 +7,50 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B321CC0044C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 072CFC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C2B5208A3
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C07FE22353
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="keP7DaD3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C2B5208A3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BZayRpwP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C07FE22353
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404606AbeKLIYB (ORCPT
+        id S2404622AbeKLIYD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:24:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58838 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:24:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58910 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404500AbeKLIYA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:24:00 -0500
+        id S2404603AbeKLIYC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:24:02 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 835DB223CA;
-        Sun, 11 Nov 2018 22:34:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5247C21582;
+        Sun, 11 Nov 2018 22:34:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975641;
-        bh=k5ssaXy80Bb75mKUPupa2OCe3JoIOpJzcHnFembJHK4=;
+        s=default; t=1541975643;
+        bh=501hnhxQShVaHbGug+UMFIcwV9XelODCXf0AwDPMgN0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=keP7DaD3B3aWVL5xSCvc7L3rnuzalYXRH44mdtIDQTbQ41++takv3QRJ4alk+B6Yh
-         b+eOinBKK7jWiNgX2PHR4d0sXATNIARZarQNpKKAkYpX2F+jcLIEijCEGrxKZ8d+2W
-         dWwxh1RUKdH0d2Zu0t/E0hIQcrRKLeghJi7lt40E=
+        b=BZayRpwPTE3XhUXySa9swixxyL5mToW2bRNXGH0Z5ooStIn/LsOUEvRMhWuhbyeoF
+         /LeRurL7xhV+QpOt3mzN+gRAxIaBQ+1yxnvbgYG29DZoYapJOTS6q/WRmoYqKhyDOD
+         9Kpx0E3UQQzN7aD9QdLdYHTN96zqQuL8D8n0JR1w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 025/141] selftests: ftrace: Add synthetic event syntax testcase
-Date:   Sun, 11 Nov 2018 14:24:44 -0800
-Message-Id: <20181111221631.204970012@linuxfoundation.org>
+        stable@vger.kernel.org, Waiman Long <longman@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 027/141] locking/lockdep: Fix debug_locks off performance problem
+Date:   Sun, 11 Nov 2018 14:24:46 -0800
+Message-Id: <20181111221631.468877743@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
 References: <20181111221627.853046496@linuxfoundation.org>
@@ -64,107 +68,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Waiman Long <longman@redhat.com>
 
-[ Upstream commit ba0e41ca81b935b958006c7120466e2217357827 ]
+[ Upstream commit 9506a7425b094d2f1d9c877ed5a78f416669269b ]
 
-Add a testcase to check the syntax and field types for
-synthetic_events interface.
+It was found that when debug_locks was turned off because of a problem
+found by the lockdep code, the system performance could drop quite
+significantly when the lock_stat code was also configured into the
+kernel. For instance, parallel kernel build time on a 4-socket x86-64
+server nearly doubled.
 
-Link: http://lkml.kernel.org/r/153986838264.18251.16627517536956299922.stgit@devbox
+Further analysis into the cause of the slowdown traced back to the
+frequent call to debug_locks_off() from the __lock_acquired() function
+probably due to some inconsistent lockdep states with debug_locks
+off. The debug_locks_off() function did an unconditional atomic xchg
+to write a 0 value into debug_locks which had already been set to 0.
+This led to severe cacheline contention in the cacheline that held
+debug_locks.  As debug_locks is being referenced in quite a few different
+places in the kernel, this greatly slow down the system performance.
 
-Acked-by: Shuah Khan <shuah@kernel.org>
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+To prevent that trashing of debug_locks cacheline, lock_acquired()
+and lock_contended() now checks the state of debug_locks before
+proceeding. The debug_locks_off() function is also modified to check
+debug_locks before calling __debug_locks_off().
+
+Signed-off-by: Waiman Long <longman@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Link: http://lkml.kernel.org/r/1539913518-15598-1-git-send-email-longman@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-syntax.tc |   80 ++++++++++
- 1 file changed, 80 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-syntax.tc
+ kernel/locking/lockdep.c |    4 ++--
+ lib/debug_locks.c        |    2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-syntax.tc
-@@ -0,0 +1,80 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: event trigger - test synthetic_events syntax parser
-+
-+do_reset() {
-+    reset_trigger
-+    echo > set_event
-+    clear_trace
-+}
-+
-+fail() { #msg
-+    do_reset
-+    echo $1
-+    exit_fail
-+}
-+
-+if [ ! -f set_event ]; then
-+    echo "event tracing is not supported"
-+    exit_unsupported
-+fi
-+
-+if [ ! -f synthetic_events ]; then
-+    echo "synthetic event is not supported"
-+    exit_unsupported
-+fi
-+
-+reset_tracer
-+do_reset
-+
-+echo "Test synthetic_events syntax parser"
-+
-+echo > synthetic_events
-+
-+# synthetic event must have a field
-+! echo "myevent" >> synthetic_events
-+echo "myevent u64 var1" >> synthetic_events
-+
-+# synthetic event must be found in synthetic_events
-+grep "myevent[[:space:]]u64 var1" synthetic_events
-+
-+# it is not possible to add same name event
-+! echo "myevent u64 var2" >> synthetic_events
-+
-+# Non-append open will cleanup all events and add new one
-+echo "myevent u64 var2" > synthetic_events
-+
-+# multiple fields with different spaces
-+echo "myevent u64 var1; u64 var2;" > synthetic_events
-+grep "myevent[[:space:]]u64 var1; u64 var2" synthetic_events
-+echo "myevent u64 var1 ; u64 var2 ;" > synthetic_events
-+grep "myevent[[:space:]]u64 var1; u64 var2" synthetic_events
-+echo "myevent u64 var1 ;u64 var2" > synthetic_events
-+grep "myevent[[:space:]]u64 var1; u64 var2" synthetic_events
-+
-+# test field types
-+echo "myevent u32 var" > synthetic_events
-+echo "myevent u16 var" > synthetic_events
-+echo "myevent u8 var" > synthetic_events
-+echo "myevent s64 var" > synthetic_events
-+echo "myevent s32 var" > synthetic_events
-+echo "myevent s16 var" > synthetic_events
-+echo "myevent s8 var" > synthetic_events
-+
-+echo "myevent char var" > synthetic_events
-+echo "myevent int var" > synthetic_events
-+echo "myevent long var" > synthetic_events
-+echo "myevent pid_t var" > synthetic_events
-+
-+echo "myevent unsigned char var" > synthetic_events
-+echo "myevent unsigned int var" > synthetic_events
-+echo "myevent unsigned long var" > synthetic_events
-+grep "myevent[[:space:]]unsigned long var" synthetic_events
-+
-+# test string type
-+echo "myevent char var[10]" > synthetic_events
-+grep "myevent[[:space:]]char\[10\] var" synthetic_events
-+
-+do_reset
-+
-+exit 0
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -4010,7 +4010,7 @@ void lock_contended(struct lockdep_map *
+ {
+ 	unsigned long flags;
+ 
+-	if (unlikely(!lock_stat))
++	if (unlikely(!lock_stat || !debug_locks))
+ 		return;
+ 
+ 	if (unlikely(current->lockdep_recursion))
+@@ -4030,7 +4030,7 @@ void lock_acquired(struct lockdep_map *l
+ {
+ 	unsigned long flags;
+ 
+-	if (unlikely(!lock_stat))
++	if (unlikely(!lock_stat || !debug_locks))
+ 		return;
+ 
+ 	if (unlikely(current->lockdep_recursion))
+--- a/lib/debug_locks.c
++++ b/lib/debug_locks.c
+@@ -37,7 +37,7 @@ EXPORT_SYMBOL_GPL(debug_locks_silent);
+  */
+ int debug_locks_off(void)
+ {
+-	if (__debug_locks_off()) {
++	if (debug_locks && __debug_locks_off()) {
+ 		if (!debug_locks_silent) {
+ 			console_verbose();
+ 			return 1;
 
 
