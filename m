@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 060CFC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:38:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C50F8C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:39:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B56E420818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:38:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 870F720818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:39:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="f8cWgum1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B56E420818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TT3rqKIf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 870F720818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388320AbeKLJ3N (ORCPT
+        id S2388367AbeKLJ3V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:29:13 -0500
+        Mon, 12 Nov 2018 04:29:21 -0500
 Received: from mail.kernel.org ([198.145.29.99]:41934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388076AbeKLITt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:19:49 -0500
+        id S2387967AbeKLITr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:19:47 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C819A223C8;
-        Sun, 11 Nov 2018 22:29:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A2B8B215EA;
+        Sun, 11 Nov 2018 22:29:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975392;
-        bh=jzVa6bqisiDTjsFdnHu+SwU9mI9vQ/6yJm9VX6IHxRE=;
+        s=default; t=1541975391;
+        bh=g5CmZotGtZ4+KoKJm/KIuWj8SD5QG/xjangQJwTk/iY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f8cWgum1zxVGkaHp/3FaQAO35U2+rMywq4mSqI2ZL1RaC455ilfA/IHzt3FF2o1P6
-         +B4v4+eUk0/JJepBYms57Dm72a2MzrNUQY3B8q4+YNB2/TN1lNldsQpoBEEc0mzvuK
-         kESPltVO4IOkPROilYAWPz4xVXhFy8e9mAZdMnFg=
+        b=TT3rqKIfdTxkUmT/wBugWSHg8XIVhR/uuc+++TfHHFm9MpHJ4H7e4P6ZfZGUGA6NE
+         XjDNR7RVFTCs3oyitYFqVtkwkbigML9hkTbd+A2HmAU/WLyZVQ79DkSqWg1HeMshwt
+         UwRvLIx8j9Ru5o3FcelBKbYV0yWRvm+V4Ep6vf/I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Pieter Jansen van Vuuren 
-        <pieter.jansenvanvuuren@netronome.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 051/350] nfp: flower: fix pedit set actions for multiple partial masks
-Date:   Sun, 11 Nov 2018 14:18:35 -0800
-Message-Id: <20181111221709.291701277@linuxfoundation.org>
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@cnexlabs.com>,
+        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.18 075/350] lightnvm: pblk: fix two sleep-in-atomic-context bugs
+Date:   Sun, 11 Nov 2018 14:18:59 -0800
+Message-Id: <20181111221710.264836728@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -66,56 +64,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pieter Jansen van Vuuren <pieter.jansenvanvuuren@netronome.com>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-[ Upstream commit 8913806f166e47c6b3fe8253e9cfb9caabe64341 ]
+[ Upstream commit 7325b4bbe5952e3e939f15de812f2ee0c0d33ca9 ]
 
-Previously we did not correctly change headers when using multiple
-pedit actions with partial masks. We now take this into account and
-no longer just commit the last pedit action.
+The driver may sleep with holding a spinlock.
 
-Fixes: c0b1bd9a8b8a ("nfp: add set ipv4 header action flower offload")
-Signed-off-by: Pieter Jansen van Vuuren <pieter.jansenvanvuuren@netronome.com>
-Reviewed-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+The function call paths (from bottom to top) in Linux-4.16 are:
+
+[FUNC] nvm_dev_dma_alloc(GFP_KERNEL)
+drivers/lightnvm/pblk-core.c, 754:
+	nvm_dev_dma_alloc in pblk_line_submit_smeta_io
+drivers/lightnvm/pblk-core.c, 1048:
+	pblk_line_submit_smeta_io in pblk_line_init_bb
+drivers/lightnvm/pblk-core.c, 1434:
+	pblk_line_init_bb in pblk_line_replace_data
+drivers/lightnvm/pblk-recovery.c, 980:
+	pblk_line_replace_data in pblk_recov_l2p
+drivers/lightnvm/pblk-recovery.c, 976:
+	spin_lock in pblk_recov_l2p
+
+[FUNC] bio_map_kern(GFP_KERNEL)
+drivers/lightnvm/pblk-core.c, 762:
+	bio_map_kern in pblk_line_submit_smeta_io
+drivers/lightnvm/pblk-core.c, 1048:
+	pblk_line_submit_smeta_io in pblk_line_init_bb
+drivers/lightnvm/pblk-core.c, 1434:
+	pblk_line_init_bb in pblk_line_replace_data
+drivers/lightnvm/pblk-recovery.c, 980:
+	pblk_line_replace_data in pblk_recov_l2p
+drivers/lightnvm/pblk-recovery.c, 976:
+	spin_lock in pblk_recov_l2p
+
+To fix these bugs, the call to pblk_line_replace_data()
+is moved out of the spinlock protection.
+
+These bugs are found by my static analysis tool DSAC.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Reviewed-by: Javier González <javier@cnexlabs.com>
+Signed-off-by: Matias Bjørling <mb@lightnvm.io>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/netronome/nfp/flower/action.c |   15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ drivers/lightnvm/pblk-recovery.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/netronome/nfp/flower/action.c
-+++ b/drivers/net/ethernet/netronome/nfp/flower/action.c
-@@ -314,12 +314,14 @@ nfp_fl_set_ip4(const struct tc_action *a
+--- a/drivers/lightnvm/pblk-recovery.c
++++ b/drivers/lightnvm/pblk-recovery.c
+@@ -956,12 +956,14 @@ next:
+ 		}
+ 	}
  
- 	switch (off) {
- 	case offsetof(struct iphdr, daddr):
--		set_ip_addr->ipv4_dst_mask = mask;
--		set_ip_addr->ipv4_dst = exact;
-+		set_ip_addr->ipv4_dst_mask |= mask;
-+		set_ip_addr->ipv4_dst &= ~mask;
-+		set_ip_addr->ipv4_dst |= exact & mask;
- 		break;
- 	case offsetof(struct iphdr, saddr):
--		set_ip_addr->ipv4_src_mask = mask;
--		set_ip_addr->ipv4_src = exact;
-+		set_ip_addr->ipv4_src_mask |= mask;
-+		set_ip_addr->ipv4_src &= ~mask;
-+		set_ip_addr->ipv4_src |= exact & mask;
- 		break;
- 	default:
- 		return -EOPNOTSUPP;
-@@ -336,8 +338,9 @@ static void
- nfp_fl_set_ip6_helper(int opcode_tag, int idx, __be32 exact, __be32 mask,
- 		      struct nfp_fl_set_ipv6_addr *ip6)
- {
--	ip6->ipv6[idx % 4].mask = mask;
--	ip6->ipv6[idx % 4].exact = exact;
-+	ip6->ipv6[idx % 4].mask |= mask;
-+	ip6->ipv6[idx % 4].exact &= ~mask;
-+	ip6->ipv6[idx % 4].exact |= exact & mask;
+-	spin_lock(&l_mg->free_lock);
+ 	if (!open_lines) {
++		spin_lock(&l_mg->free_lock);
+ 		WARN_ON_ONCE(!test_and_clear_bit(meta_line,
+ 							&l_mg->meta_bitmap));
++		spin_unlock(&l_mg->free_lock);
+ 		pblk_line_replace_data(pblk);
+ 	} else {
++		spin_lock(&l_mg->free_lock);
+ 		/* Allocate next line for preparation */
+ 		l_mg->data_next = pblk_line_get(pblk);
+ 		if (l_mg->data_next) {
+@@ -969,8 +971,8 @@ next:
+ 			l_mg->data_next->type = PBLK_LINETYPE_DATA;
+ 			is_next = 1;
+ 		}
++		spin_unlock(&l_mg->free_lock);
+ 	}
+-	spin_unlock(&l_mg->free_lock);
  
- 	ip6->reserved = cpu_to_be16(0);
- 	ip6->head.jump_id = opcode_tag;
+ 	if (is_next)
+ 		pblk_line_erase(pblk, l_mg->data_next);
 
 
