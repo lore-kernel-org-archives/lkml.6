@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 318DDC0044C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:27:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F810C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:27:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED5222084C
+	by mail.kernel.org (Postfix) with ESMTP id 15A852084C
 	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:27:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WBnxeymk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED5222084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LO6iDl1l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15A852084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389156AbeKLJRS (ORCPT
+        id S2388927AbeKLIUj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:17:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45926 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388879AbeKLIUj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:20:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46000 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388908AbeKLIUi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:38 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 636FA22353;
-        Sun, 11 Nov 2018 22:30:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E9B03216FD;
+        Sun, 11 Nov 2018 22:30:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975442;
-        bh=7ZEVit67iGGqqwU4YSz68eB9o1xATKQDNrId8VU8K2E=;
+        bh=U/HvLTYcnxTwdYfIMJWB/7u6vPBy6ivBmyMZYSI3GlM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WBnxeymkAi8hAB0oVgH73WqIWtGwYXOz0o/oy7+XYYBNZXD6kv1MURr5yW54uBB47
-         AQtFJ7Z+zJT/Rz7tRvssN/hoT1voIOgyyQGlRd+UP6ubuVFdkmcOnyc/XfLXpXhVgw
-         nd24mrLxqVloVg6lSfSQ1usPmdSN/Kd4jxERmEgE=
+        b=LO6iDl1ln7y4KxpXOVTib+Q1hFIIhOMI75cU1Y3CGWKzq3hx7jdAlqSMdFPq/AUAx
+         gaUD1E+jwafWBqrGEe3STAvLkkxLYWeCPt5AzCIoHZYV4yFTDDa+yXeBunub32l//j
+         ixUo7dBOLDVHkLFO0kfUxh31B0bodRikU9lWxlo0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 164/350] nvmem: check the return value of nvmem_add_cells()
-Date:   Sun, 11 Nov 2018 14:20:28 -0800
-Message-Id: <20181111221714.905756774@linuxfoundation.org>
+        Vasilis Liaskovitis <vliaskovitis@suse.com>,
+        =?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.18 197/350] xen/blkfront: avoid NULL blkfront_info dereference on device removal
+Date:   Sun, 11 Nov 2018 14:21:01 -0800
+Message-Id: <20181111221716.275567451@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -64,43 +65,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+From: Vasilis Liaskovitis <vliaskovitis@suse.com>
 
-[ Upstream commit fa72d847d68d7833b77a4bef944cf2c5baf56f49 ]
+commit f92898e7f32e3533bfd95be174044bc349d416ca upstream.
 
-This function can fail so check its return value in nvmem_register()
-and act accordingly.
+If a block device is hot-added when we are out of grants,
+gnttab_grant_foreign_access fails with -ENOSPC (log message "28
+granting access to ring page") in this code path:
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+  talk_to_blkback ->
+	setup_blkring ->
+		xenbus_grant_ring ->
+			gnttab_grant_foreign_access
+
+and the failing path in talk_to_blkback sets the driver_data to NULL:
+
+ destroy_blkring:
+        blkif_free(info, 0);
+
+        mutex_lock(&blkfront_mutex);
+        free_info(info);
+        mutex_unlock(&blkfront_mutex);
+
+        dev_set_drvdata(&dev->dev, NULL);
+
+This results in a NULL pointer BUG when blkfront_remove and blkif_free
+try to access the failing device's NULL struct blkfront_info.
+
+Cc: stable@vger.kernel.org # 4.5 and later
+Signed-off-by: Vasilis Liaskovitis <vliaskovitis@suse.com>
+Reviewed-by: Roger Pau Monné <roger.pau@citrix.com>
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/nvmem/core.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/block/xen-blkfront.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -518,11 +518,17 @@ struct nvmem_device *nvmem_register(cons
- 			goto err_device_del;
- 	}
+--- a/drivers/block/xen-blkfront.c
++++ b/drivers/block/xen-blkfront.c
+@@ -2475,6 +2475,9 @@ static int blkfront_remove(struct xenbus
  
--	if (config->cells)
--		nvmem_add_cells(nvmem, config->cells, config->ncells);
-+	if (config->cells) {
-+		rval = nvmem_add_cells(nvmem, config->cells, config->ncells);
-+		if (rval)
-+			goto err_teardown_compat;
-+	}
+ 	dev_dbg(&xbdev->dev, "%s removed", xbdev->nodename);
  
- 	return nvmem;
++	if (!info)
++		return 0;
++
+ 	blkif_free(info, 0);
  
-+err_teardown_compat:
-+	if (config->compat)
-+		device_remove_bin_file(nvmem->base_dev, &nvmem->eeprom);
- err_device_del:
- 	device_del(&nvmem->dev);
- err_put_device:
+ 	mutex_lock(&info->mutex);
 
 
