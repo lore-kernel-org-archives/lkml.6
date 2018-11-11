@@ -7,50 +7,46 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4CCDC0044C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17EEDC43610
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94609215EA
+	by mail.kernel.org (Postfix) with ESMTP id D1E6821582
 	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qB208vmT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94609215EA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gy3GuuAS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1E6821582
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731799AbeKLIRh (ORCPT
+        id S1731820AbeKLIRi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:17:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33680 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:17:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33814 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731593AbeKLIRf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:17:35 -0500
+        id S1731776AbeKLIRh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:17:37 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C91321527;
-        Sun, 11 Nov 2018 22:27:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1AE9B21508;
+        Sun, 11 Nov 2018 22:27:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975259;
-        bh=bOV1Hj+Gar7wWxP5b+4ePYEqFWkMlJf2ecw/p1mY/wI=;
+        s=default; t=1541975262;
+        bh=KZ4k9XOt6P4z3l7C+9MnBI9aFjB+MHlfhxHjQ6XKVP8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qB208vmTSR7BGhpk3H1mrEdJr3ou+KwaFe6s1tf6+ko4N+pUO0NT1L0sUfhBJMsCL
-         9CxWuPsp9xbXnP0e1b9+mgP6dnWr1oiYPwZErWAA+VLhMnkl9tPthXeTIHOvfE7oua
-         JxdWO474Y65GLe4675DevxYofxKPPRyLQewm35Iw=
+        b=gy3GuuAS9NeWDQm75gsjWz5b/w94afKStVhE3FcSK0y+ko7YnZ1yLmMmjWpM+CQ2t
+         yGjvVXcVX0O4isE/Hnt/2kD76XdwltCBXcEH4oelNmyuH2IOFNYWCfdZjP/LFRyQCg
+         zEsreza7bbxB0ZMWHSr+NA5z4n0DXzOrpryTYn34=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 105/361] kprobes: Return error if we fail to reuse kprobe instead of BUG_ON()
-Date:   Sun, 11 Nov 2018 14:17:32 -0800
-Message-Id: <20181111221634.324038806@linuxfoundation.org>
+        stable@vger.kernel.org, Honghui Zhang <honghui.zhang@mediatek.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 148/361] PCI: mediatek: Fix mtk_pcie_find_port() endpoint/port matching logic
+Date:   Sun, 11 Nov 2018 14:18:15 -0800
+Message-Id: <20181111221641.145728287@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -68,91 +64,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Honghui Zhang <honghui.zhang@mediatek.com>
 
-[ Upstream commit 819319fc93461c07b9cdb3064f154bd8cfd48172 ]
+[ Upstream commit 074d6f32689ce05a084b6fa3db38445745bf11cc ]
 
-Make reuse_unused_kprobe() to return error code if
-it fails to reuse unused kprobe for optprobe instead
-of calling BUG_ON().
+The Mediatek's host controller has two slots, each with its own control
+registers. The host driver needs to identify what slot is connected to
+what port in order to access the device's configuration space.
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
-Cc: David S . Miller <davem@davemloft.net>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Naveen N . Rao <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/153666124040.21306.14150398706331307654.stgit@devbox
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Current code retrieving slot connected to a given endpoint device.
+
+Assuming each slot is connected to one endpoint device as below:
+
+                host bridge
+  bus 0 --> __________|_______
+           |                  |
+           |                  |
+         slot 0             slot 1
+  bus 1 -->|        bus 2 --> |
+           |                  |
+         EP 0               EP 1
+
+During PCI enumeration, system software will scan all the PCI devices on
+every bus starting from devfn 0. Using PCI_SLOT(devfn) for matching an
+endpoint to its slot is erroneous in that the devfn does not contain the
+hierarchical bus numbering in it. In order to match an endpoint with its
+slot (and related port), the PCI tree must be walked up to the root bus
+(where the root ports are situated) and then the PCI_SLOT(devfn)
+matching logic can be correctly applied for matching.
+
+This patch fixes the mtk_pcie_find_port() slot matching logic by adding
+appropriate PCI tree walking code to retrieve the slot/port a given
+endpoint is connected to.
+
+Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
+[lorenzo.pieralisi@arm.com: rewrote the commit log]
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Acked-by: Ryder Lee <ryder.lee@mediatek.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/kprobes.c |   27 ++++++++++++++++++++-------
- 1 file changed, 20 insertions(+), 7 deletions(-)
+ drivers/pci/controller/pcie-mediatek.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -700,9 +700,10 @@ static void unoptimize_kprobe(struct kpr
- }
- 
- /* Cancel unoptimizing for reusing */
--static void reuse_unused_kprobe(struct kprobe *ap)
-+static int reuse_unused_kprobe(struct kprobe *ap)
+--- a/drivers/pci/controller/pcie-mediatek.c
++++ b/drivers/pci/controller/pcie-mediatek.c
+@@ -337,6 +337,17 @@ static struct mtk_pcie_port *mtk_pcie_fi
  {
- 	struct optimized_kprobe *op;
-+	int ret;
- 
- 	BUG_ON(!kprobe_unused(ap));
- 	/*
-@@ -714,8 +715,12 @@ static void reuse_unused_kprobe(struct k
- 	/* Enable the probe again */
- 	ap->flags &= ~KPROBE_FLAG_DISABLED;
- 	/* Optimize it again (remove from op->list) */
--	BUG_ON(!kprobe_optready(ap));
-+	ret = kprobe_optready(ap);
-+	if (ret)
-+		return ret;
+ 	struct mtk_pcie *pcie = bus->sysdata;
+ 	struct mtk_pcie_port *port;
++	struct pci_dev *dev = NULL;
 +
- 	optimize_kprobe(ap);
-+	return 0;
- }
- 
- /* Remove optimized instructions */
-@@ -940,11 +945,16 @@ static void __disarm_kprobe(struct kprob
- #define kprobe_disarmed(p)			kprobe_disabled(p)
- #define wait_for_kprobe_optimizer()		do {} while (0)
- 
--/* There should be no unused kprobes can be reused without optimization */
--static void reuse_unused_kprobe(struct kprobe *ap)
-+static int reuse_unused_kprobe(struct kprobe *ap)
- {
 +	/*
-+	 * If the optimized kprobe is NOT supported, the aggr kprobe is
-+	 * released at the same time that the last aggregated kprobe is
-+	 * unregistered.
-+	 * Thus there should be no chance to reuse unused kprobe.
++	 * Walk the bus hierarchy to get the devfn value
++	 * of the port in the root bus.
 +	 */
- 	printk(KERN_ERR "Error: There should be no unused kprobe here.\n");
--	BUG_ON(kprobe_unused(ap));
-+	return -EINVAL;
- }
- 
- static void free_aggr_kprobe(struct kprobe *p)
-@@ -1318,9 +1328,12 @@ static int register_aggr_kprobe(struct k
- 			goto out;
- 		}
- 		init_aggr_kprobe(ap, orig_p);
--	} else if (kprobe_unused(ap))
-+	} else if (kprobe_unused(ap)) {
- 		/* This probe is going to die. Rescue it */
--		reuse_unused_kprobe(ap);
-+		ret = reuse_unused_kprobe(ap);
-+		if (ret)
-+			goto out;
++	while (bus && bus->number) {
++		dev = bus->self;
++		bus = dev->bus;
++		devfn = dev->devfn;
 +	}
  
- 	if (kprobe_gone(ap)) {
- 		/*
+ 	list_for_each_entry(port, &pcie->ports, list)
+ 		if (port->slot == PCI_SLOT(devfn))
 
 
