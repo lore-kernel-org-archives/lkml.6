@@ -2,122 +2,299 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73244C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 07:55:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED8E2C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 08:09:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 253C320872
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 07:55:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9899F2087C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 08:09:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FeVdD4Es"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 253C320872
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="YRRgzfV2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9899F2087C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727454AbeKKRnO (ORCPT
+        id S1727499AbeKKR5k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 12:43:14 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:33118 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727055AbeKKRnO (ORCPT
+        Sun, 11 Nov 2018 12:57:40 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:40758 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727344AbeKKR5k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 12:43:14 -0500
-Received: by mail-wm1-f68.google.com with SMTP id f19-v6so6621869wmb.0;
-        Sat, 10 Nov 2018 23:55:22 -0800 (PST)
+        Sun, 11 Nov 2018 12:57:40 -0500
+Received: by mail-pg1-f194.google.com with SMTP id z10so2666506pgp.7
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 00:09:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=joelfernandes.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=FeefSBmW6qU7F0pHDfhAGdcBWTAzDMXfpuYC1k6Z4Go=;
-        b=FeVdD4EsZHdzWgQRwn0DaEHgIyf+4nDiOM28aHYFZ7/4FMhtZtRNrd0xtYqyC8V2wK
-         0clq8Vru9r3Zyqf5q9/o/rt2aXWxn86hi8m3kK8jPfuLjPcUDzbysx/y7CyHMpMASOLa
-         Si0i4CD1egcuhOL7YjGGRCaytRtFX1xDMSIo3p/4HygGPHFtDp8RFMA94JZm4LpRe2QD
-         kc3T7JdqlMktPhL8vtATBNgcEpED4g/ZkaMYxCwsrQz/Br8+sT1RbykV5fHVwplABMry
-         QFnJVnfwHKayf+u3Ws0TiNbM+fSAD8i9e77tQ6aziXkO+D/byD4xOREvlAK/ev0T6AT/
-         jFkQ==
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=nMvC/wNYlO0B6TOz+wd5rvRIysnAzdwKx+ZUX+JpDag=;
+        b=YRRgzfV2dqUl5Dta9lHErm2XXtY8uTFKdG5KOSvykhYJ8igsu63uTwiVzJ5yipSiny
+         B+lCWxmk93agn3iAkyag7eY7U9YSlMi/KR8RAIj84cdc8Qaxe4YgZfoHMbRSOOoZQCRK
+         F2jnWtOw3pxh5YMuvGSEYUuA1aOcqVPEWCzcU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FeefSBmW6qU7F0pHDfhAGdcBWTAzDMXfpuYC1k6Z4Go=;
-        b=qG0j015k64uKyCURXBElIiOKcPixLs/Izv7p9VvGRJuKU6D40cWYklnYjopBm3g3Lk
-         od2Y2+6dXZyaowCtItkfB1AnPNKrx++641OAuuY4Bgzvyu15U7QwpKEGAz5Iv61VsRaM
-         oX5n63nAYc9biL0EF1cvtf9VaOkqXOdIy13Q0FlRSPDM96XYRLdY7MRPubsiKLRB6f7p
-         rVnL/z0ToJmzrByPdGSatewoq1KET6JWE+XW7VIy4Oo4+1zS6fWxF1GdRXPBvvIqGopD
-         PwQNUmMyOaYZPExjlI85UMFvlSHhv6i6AsDAJdfOxKrTcWllvwK0LTvppjyUBxTgxCkN
-         2eQQ==
-X-Gm-Message-State: AGRZ1gIyimVSQ3Cggp+Q1UJ1v5E7kxwj6JnvxxD98EbZIetesMxwlGZZ
-        b7U0S4Ak6YhdvtBR1byjaT0=
-X-Google-Smtp-Source: AJdET5fqsErUc3XZRC1s2WZ0Rwg4qQUdA4R95DZ2NEuFJI0oqx9E14K7MbIdQDAPVXcQfTk+0L4POg==
-X-Received: by 2002:a1c:c46:: with SMTP id 67-v6mr4284937wmm.6.1541922921816;
-        Sat, 10 Nov 2018 23:55:21 -0800 (PST)
-Received: from camaron (211.red-88-7-211.staticip.rima-tde.net. [88.7.211.211])
-        by smtp.gmail.com with ESMTPSA id m13-v6sm14542073wrw.14.2018.11.10.23.55.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 10 Nov 2018 23:55:20 -0800 (PST)
-Date:   Sun, 11 Nov 2018 08:55:18 +0100
-From:   Sergio Paracuellos <sergio.paracuellos@gmail.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        John Crispin <blogic@openwrt.org>, devel@driverdev.osuosl.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: mt7621-pinctrl: fix uninitialized variable
- ngroups
-Message-ID: <20181111075518.GA23361@camaron>
-References: <20181110232806.14255-1-colin.king@canonical.com>
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=nMvC/wNYlO0B6TOz+wd5rvRIysnAzdwKx+ZUX+JpDag=;
+        b=FbJ9VMbSRl8WCfxrOPyXSU8E+V768Nb7DvVzvBXNPEcVIjJJLSco9+zmBtGG4h9w3C
+         QJeQBywCm7nZaRcwsaVY9AYqeGR6tIKq3oO4p0YY3htQegGJPeHGXVueU5D4VRZNsUXb
+         Klhztuc15JSErZFaeAi3YT4dx7gMYpDtjZBrcJxMNrOtrxrKjst7XhOhUkBb1VAweszA
+         GG5txK6oRFcNhwq55t8fkgyrcEdnzgc7HFmXrrEAUecWpG3O/6Hi3pbrVaLv+CWfzFwm
+         zcTjv+Ngx87GnEun2DcXFymipOHMF90O3hoKwGdN0C6CZitO5e9BUeRUmc0kGe9xWU0T
+         eP2A==
+X-Gm-Message-State: AGRZ1gLFlx0IPhJdQkR92T70QRqiOlihtaINVLibbGqe7iHT9t89iH+Q
+        U0ZtrlFZyLTdZ1MxbuYpn/oMyA==
+X-Google-Smtp-Source: AJdET5ejCNgr651+kir05etqfg8Jrr77KvI/QajgFLILhtCPlzKZVC4O7XSuhhrMLb6I3g7T7TRBfg==
+X-Received: by 2002:a62:d452:: with SMTP id u18-v6mr7407811pfl.32.1541923787348;
+        Sun, 11 Nov 2018 00:09:47 -0800 (PST)
+Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id g7-v6sm13029361pfo.139.2018.11.11.00.09.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 11 Nov 2018 00:09:46 -0800 (PST)
+Date:   Sun, 11 Nov 2018 00:09:45 -0800
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Daniel Colascione <dancol@google.com>,
+        Jann Horn <jannh@google.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        John Reck <jreck@google.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Todd Kjos <tkjos@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Bruce Fields <bfields@fieldses.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Khalid Aziz <khalid.aziz@oracle.com>, Lei.Yang@windriver.com,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>, marcandre.lureau@redhat.com,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        Hugh Dickins <hughd@google.com>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH v3 resend 1/2] mm: Add an F_SEAL_FUTURE_WRITE seal to
+ memfd
+Message-ID: <20181111080945.GA78191@google.com>
+References: <CAG48ez0kQ4d566bXTFOYANDgii-stL-Qj-oyaBzvfxdV=PU-7g@mail.gmail.com>
+ <20181110032005.GA22238@google.com>
+ <69CE06CC-E47C-4992-848A-66EB23EE6C74@amacapital.net>
+ <20181110182405.GB242356@google.com>
+ <CAKOZuesQXRtthJTEr86LByH3gPpAdT-PQM0d1jqr131=zZNRKw@mail.gmail.com>
+ <CAKOZueum8MtNvJ5P=W7_pRw62TdQdCgyjCwwbG1wezNboC1cxQ@mail.gmail.com>
+ <20181110220933.GB96924@google.com>
+ <907D942E-E321-4BD7-BED7-ACD1D96A3643@amacapital.net>
+ <20181111023808.GA174670@google.com>
+ <543A5181-3A16-438E-B372-97BEC48A74F8@amacapital.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181110232806.14255-1-colin.king@canonical.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <543A5181-3A16-438E-B372-97BEC48A74F8@amacapital.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 10, 2018 at 11:28:06PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Sat, Nov 10, 2018 at 07:40:10PM -0800, Andy Lutomirski wrote:
+[...]
+> >>>>>>> I see two reasonable solutions:
+> >>>>>>> 
+> >>>>>>> 1. Don’t fiddle with the struct file at all. Instead make the inode flag
+> >>>>>>> work by itself.
+> >>>>>> 
+> >>>>>> Currently, the various VFS paths check only the struct file's f_mode to deny
+> >>>>>> writes of already opened files. This would mean more checking in all those
+> >>>>>> paths (and modification of all those paths).
+> >>>>>> 
+> >>>>>> Anyway going with that idea, we could
+> >>>>>> 1. call deny_write_access(file) from the memfd's seal path which decrements
+> >>>>>> the inode::i_writecount.
+> >>>>>> 2. call get_write_access(inode) in the various VFS paths in addition to
+> >>>>>> checking for FMODE_*WRITE and deny the write (incase i_writecount is negative)
+> >>>>>> 
+> >>>>>> That will prevent both reopens, and writes from succeeding. However I worry a
+> >>>>>> bit about 2 not being too familiar with VFS internals, about what the
+> >>>>>> consequences of doing that may be.
+> >>>>> 
+> >>>>> IMHO, modifying both the inode and the struct file separately is fine,
+> >>>>> since they mean different things. In regular filesystems, it's fine to
+> >>>>> have a read-write open file description for a file whose inode grants
+> >>>>> write permission to nobody. Speaking of which: is fchmod enough to
+> >>>>> prevent this attack?
+> >>>> 
+> >>>> Well, yes and no. fchmod does prevent reopening the file RW, but
+> >>>> anyone with permissions (owner, CAP_FOWNER) can just fchmod it back. A
+> >>>> seal is supposed to be irrevocable, so fchmod-as-inode-seal probably
+> >>>> isn't sufficient by itself. While it might be good enough for Android
+> >>>> (in the sense that it'll prevent RW-reopens from other security
+> >>>> contexts to which we send an open memfd file), it's still conceptually
+> >>>> ugly, IMHO. Let's go with the original approach of just tweaking the
+> >>>> inode so that open-for-write is permanently blocked.
+> >>> 
+> >>> Agreed with the idea of modifying both file and inode flags. I was thinking
+> >>> modifying i_mode may do the trick but as you pointed it probably could be
+> >>> reverted by chmod or some other attribute setting calls.
+> >>> 
+> >>> OTOH, I don't think deny_write_access(file) can be reverted from any
+> >>> user-facing path so we could do that from the seal to prevent the future
+> >>> opens in write mode. I'll double check and test that out tomorrow.
+> >>> 
+> >>> 
+> >> 
+> >> This seems considerably more complicated and more fragile than needed. Just
+> >> add a new F_SEAL_WRITE_FUTURE.  Grep for F_SEAL_WRITE and make the _FUTURE
+> >> variant work exactly like it with two exceptions:
+> >> 
+> >> - shmem_mmap and maybe its hugetlbfs equivalent should check for it and act
+> >> accordingly.
+> > 
+> > There's more to it than that, we also need to block future writes through
+> > write syscall, so we have to hook into the write path too once the seal is
+> > set, not just the mmap. That means we have to add code in mm/shmem.c to do
+> > that in all those handlers, to check for the seal (and hope we didn't miss a
+> > file_operations handler). Is that what you are proposing?
 > 
-> Currently the for_each_node_with_property loop us incrementing variable
-> ngroups however it was not initialized and hence will contain garbage.
-> Fix this by initializing ngroups to zero.
+> The existing code already does this. That’s why I suggested grepping :)
 > 
-> Detected with static analysis with cppcheck:
+> > 
+> > Also, it means we have to keep CONFIG_TMPFS enabled so that the
+> > shmem_file_operations write handlers like write_iter are hooked up. Currently
+> > memfd works even with !CONFIG_TMPFS.
 > 
-> drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c:89]: (error) Uninitialized
-> variable: ngroups
+> If so, that sounds like it may already be a bug.
 > 
-> Fixes: e12a1a6e087b ("staging: mt7621-pinctrl: refactor rt2880_pinctrl_dt_node_to_map function")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> >> - add_seals won’t need the wait_for_pins and mapping_deny_write logic.
+> >> 
+> >> That really should be all that’s needed.
+> > 
+> > It seems a fair idea what you're saying. But I don't see how its less
+> > complex.. IMO its far more simple to have VFS do the denial of the operations
+> > based on the flags of its datastructures.. and if it works (which I will test
+> > to be sure it will), then we should be good.
 > 
-> diff --git a/drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c b/drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c
-> index b8566ed898f1..aa98fbb17013 100644
-> --- a/drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c
-> +++ b/drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c
-> @@ -82,7 +82,7 @@ static int rt2880_pinctrl_dt_node_to_map(struct pinctrl_dev *pctrldev,
->  	struct property *prop;
->  	const char *function_name, *group_name;
->  	int ret;
-> -	int ngroups;
-> +	int ngroups = 0;
->  	unsigned int reserved_maps = 0;
->  
->  	for_each_node_with_property(np_config, "group")
-> -- 
-> 2.19.1
+> I agree it’s complicated, but the code is already written.  You should just
+> need to adjust some masks.
 > 
 
-Thanks, Colin. Looks good.
+Its actually not that bad and a great idea, I did something like the
+following and it works pretty well. I would say its cleaner than the old
+approach for sure (and I also added a /proc/pid/fd/N reopen test to the
+selftest and made sure that issue goes away).
 
-Reviewed-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Side note: One subtelty I discovered from the existing selftests is once the
+F_SEAL_WRITE are active, an mmap of PROT_READ and MAP_SHARED region is
+expected to fail. This is also evident from this code in mmap_region:
+		if (vm_flags & VM_SHARED) {
+			error = mapping_map_writable(file->f_mapping);
+			if (error)
+				goto allow_write_and_free_vma;
+		}
 
-Best regards,
-    Sergio Paracuellos
+---8<-----------------------
+
+From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Subject: [PATCH] mm/memfd: implement future write seal using shmem ops
+
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+---
+ fs/hugetlbfs/inode.c |  2 +-
+ mm/memfd.c           | 19 -------------------
+ mm/shmem.c           | 13 ++++++++++---
+ 3 files changed, 11 insertions(+), 23 deletions(-)
+
+diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+index 32920a10100e..1978581abfdf 100644
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -530,7 +530,7 @@ static long hugetlbfs_punch_hole(struct inode *inode, loff_t offset, loff_t len)
+ 		inode_lock(inode);
+ 
+ 		/* protected by i_mutex */
+-		if (info->seals & F_SEAL_WRITE) {
++		if (info->seals & (F_SEAL_WRITE | F_SEAL_FUTURE_WRITE)) {
+ 			inode_unlock(inode);
+ 			return -EPERM;
+ 		}
+diff --git a/mm/memfd.c b/mm/memfd.c
+index 5ba9804e9515..a9ece5fab439 100644
+--- a/mm/memfd.c
++++ b/mm/memfd.c
+@@ -220,25 +220,6 @@ static int memfd_add_seals(struct file *file, unsigned int seals)
+ 		}
+ 	}
+ 
+-	if ((seals & F_SEAL_FUTURE_WRITE) &&
+-	    !(*file_seals & F_SEAL_FUTURE_WRITE)) {
+-		/*
+-		 * The FUTURE_WRITE seal also prevents growing and shrinking
+-		 * so we need them to be already set, or requested now.
+-		 */
+-		int test_seals = (seals | *file_seals) &
+-				 (F_SEAL_GROW | F_SEAL_SHRINK);
+-
+-		if (test_seals != (F_SEAL_GROW | F_SEAL_SHRINK)) {
+-			error = -EINVAL;
+-			goto unlock;
+-		}
+-
+-		spin_lock(&file->f_lock);
+-		file->f_mode &= ~(FMODE_WRITE | FMODE_PWRITE);
+-		spin_unlock(&file->f_lock);
+-	}
+-
+ 	*file_seals |= seals;
+ 	error = 0;
+ 
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 446942677cd4..7dad7efd8b99 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -2163,6 +2163,12 @@ int shmem_lock(struct file *file, int lock, struct user_struct *user)
+ 
+ static int shmem_mmap(struct file *file, struct vm_area_struct *vma)
+ {
++	struct shmem_inode_info *info = SHMEM_I(file_inode(file));
++
++	/* New shared mmaps are not allowed when "future write" seal active. */
++	if ((vma->vm_flags & VM_SHARED) && (info->seals & F_SEAL_FUTURE_WRITE))
++		return -EPERM;
++
+ 	file_accessed(file);
+ 	vma->vm_ops = &shmem_vm_ops;
+ 	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGE_PAGECACHE) &&
+@@ -2391,8 +2397,9 @@ shmem_write_begin(struct file *file, struct address_space *mapping,
+ 	pgoff_t index = pos >> PAGE_SHIFT;
+ 
+ 	/* i_mutex is held by caller */
+-	if (unlikely(info->seals & (F_SEAL_WRITE | F_SEAL_GROW))) {
+-		if (info->seals & F_SEAL_WRITE)
++	if (unlikely(info->seals & (F_SEAL_GROW |
++				   F_SEAL_WRITE | F_SEAL_FUTURE_WRITE))) {
++		if (info->seals & (F_SEAL_WRITE | F_SEAL_FUTURE_WRITE))
+ 			return -EPERM;
+ 		if ((info->seals & F_SEAL_GROW) && pos + len > inode->i_size)
+ 			return -EPERM;
+@@ -2657,7 +2664,7 @@ static long shmem_fallocate(struct file *file, int mode, loff_t offset,
+ 		DECLARE_WAIT_QUEUE_HEAD_ONSTACK(shmem_falloc_waitq);
+ 
+ 		/* protected by i_mutex */
+-		if (info->seals & F_SEAL_WRITE) {
++		if (info->seals & F_SEAL_WRITE || info->seals & F_SEAL_FUTURE_WRITE) {
+ 			error = -EPERM;
+ 			goto out;
+ 		}
+-- 
+2.19.1.930.g4563a0d9d0-goog
+
