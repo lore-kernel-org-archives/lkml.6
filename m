@@ -3,48 +3,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 145FAC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:01:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2491C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:01:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC9D9214E0
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:01:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC9D9214E0
+	by mail.kernel.org (Postfix) with ESMTP id 7E954214E0
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:01:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E954214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728760AbeKLFus (ORCPT
+        id S1730794AbeKLFsc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 00:50:48 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51182 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730729AbeKLFsc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 00:48:32 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51040 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730691AbeKLFsa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 00:48:30 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsr-0000oJ-L8; Sun, 11 Nov 2018 19:59:01 +0000
+        id 1gLvsp-0000l9-3F; Sun, 11 Nov 2018 19:58:59 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsW-0001jh-Pb; Sun, 11 Nov 2018 19:58:40 +0000
+        id 1gLvsX-0001kL-5y; Sun, 11 Nov 2018 19:58:41 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, "Ben Skeggs" <bskeggs@redhat.com>,
-        "Lyude Paul" <lyude@redhat.com>,
-        "Daniel Vetter" <daniel.vetter@ffwll.ch>
+CC:     akpm@linux-foundation.org, "Paul Menzel" <pmenzel@molgen.mpg.de>,
+        "Marcos Paulo de Souza" <marcos.souza.org@gmail.com>,
+        "Vojtech Pavlik" <vojtech@suse.cz>,
+        "Dmitry Torokhov" <dmitry.torokhov@gmail.com>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.339231463@decadent.org.uk>
+Message-ID: <lsq.1541965745.955471192@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 259/366] drm/nouveau: Remove bogus crtc check in
- pmops_runtime_idle
+Subject: [PATCH 3.16 267/366] Input: i8042 - add TUXEDO BU1406 (N24_25BU)
+ to the nomux list
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,46 +59,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lyude Paul <lyude@redhat.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-commit 68fe23a626b67b56c912c496ea43ed537ea9708f upstream.
+commit a4c2a13129f7c5bcf81704c06851601593303fd5 upstream.
 
-This both uses the legacy modesetting structures in a racy manner, and
-additionally also doesn't even check the right variable (enabled != the
-CRTC is actually turned on for atomic).
+TUXEDO BU1406 does not implement active multiplexing mode properly,
+and takes around 550 ms in i8042_set_mux_mode(). Given that the
+device does not have external AUX port, there is no downside in
+disabling the MUX mode.
 
-This fixes issues on my P50 regarding the dedicated GPU not entering
-runtime suspend.
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
-[bwh: Backported to 3.16:
- - Preserve local variables that are still needed
- - Adjust context]
+Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
+Suggested-by: Vojtech Pavlik <vojtech@suse.cz>
+Reviewed-by: Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/drivers/gpu/drm/nouveau/nouveau_drm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
-@@ -927,7 +927,6 @@ static int nouveau_pmops_runtime_idle(st
- 	struct pci_dev *pdev = to_pci_dev(dev);
- 	struct drm_device *drm_dev = pci_get_drvdata(pdev);
- 	struct nouveau_drm *drm = nouveau_drm(drm_dev);
--	struct drm_crtc *crtc;
+ drivers/input/serio/i8042-x86ia64io.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+--- a/drivers/input/serio/i8042-x86ia64io.h
++++ b/drivers/input/serio/i8042-x86ia64io.h
+@@ -513,6 +513,13 @@ static const struct dmi_system_id __init
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "IC4I"),
+ 		},
+ 	},
++	{
++		/* TUXEDO BU1406 */
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Notebook"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "N24_25BU"),
++		},
++	},
+ 	{ }
+ };
  
- 	if (nouveau_runtime_pm == 0) {
- 		pm_runtime_forbid(dev);
-@@ -950,12 +949,6 @@ static int nouveau_pmops_runtime_idle(st
- 		}
- 	}
- 
--	list_for_each_entry(crtc, &drm->dev->mode_config.crtc_list, head) {
--		if (crtc->enabled) {
--			DRM_DEBUG_DRIVER("failing to power off - crtc active\n");
--			return -EBUSY;
--		}
--	}
- 	pm_runtime_mark_last_busy(dev);
- 	pm_runtime_autosuspend(dev);
- 	/* we don't want the main rpm_idle to call suspend - we want to autosuspend */
 
