@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50DC4C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:02:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83FCBC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:02:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14CD920871
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:02:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14CD920871
+	by mail.kernel.org (Postfix) with ESMTP id 4747B20871
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:02:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4747B20871
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730451AbeKLFvT (ORCPT
+        id S1730858AbeKLFvz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 00:51:19 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57604 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729696AbeKLFvS (ORCPT
+        Mon, 12 Nov 2018 00:51:55 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41492 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729718AbeKLFvT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:51:18 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wABJx9jn075860
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 15:01:50 -0500
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2npdvs99a1-1
+        Mon, 12 Nov 2018 00:51:19 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wABJwuhZ030905
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 15:01:51 -0500
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2npdbgj0mx-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 15:01:49 -0500
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 15:01:50 -0500
 Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
         Sun, 11 Nov 2018 20:01:49 -0000
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 11 Nov 2018 20:01:44 -0000
+        Sun, 11 Nov 2018 20:01:45 -0000
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wABK1hhp26673400
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wABK1hCW37290016
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 11 Nov 2018 20:01:43 GMT
+        Sun, 11 Nov 2018 20:01:44 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C5E92B2070;
+        by IMSVA (Postfix) with ESMTP id C5E19B206E;
         Sun, 11 Nov 2018 20:01:43 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A1669B2065;
+        by IMSVA (Postfix) with ESMTP id 96591B205F;
         Sun, 11 Nov 2018 20:01:43 +0000 (GMT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.85.207.24])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
         Sun, 11 Nov 2018 20:01:43 +0000 (GMT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id D70C916C5D5F; Sun, 11 Nov 2018 12:01:44 -0800 (PST)
+        id C9BA016C5D38; Sun, 11 Nov 2018 12:01:44 -0800 (PST)
 From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -60,21 +60,22 @@ Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH tip/core/rcu 3/8] rcutorture: Make initrd/init execute in userspace
-Date:   Sun, 11 Nov 2018 12:01:38 -0800
+        Connor Shu <Connor.Shu@ibm.com>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: [PATCH tip/core/rcu 1/8] rcutorture: Automatically create initrd directory
+Date:   Sun, 11 Nov 2018 12:01:36 -0800
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181111200127.GA9511@linux.ibm.com>
 References: <20181111200127.GA9511@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18111120-0072-0000-0000-000003C6F49F
+x-cbid: 18111120-0040-0000-0000-0000049089E8
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00010028; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01116024; UDB=6.00577118; IPR=6.00896125;
- MB=3.00024114; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-11 20:01:48
+ PH=3.00000004; SC=3.00000270; SDB=6.01116025; UDB=6.00577119; IPR=6.00896125;
+ MB=3.00024114; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-11 20:01:49
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111120-0073-0000-0000-00004A134E9E
-Message-Id: <20181111200143.10177-3-paulmck@linux.ibm.com>
+x-cbparentid: 18111120-0041-0000-0000-000008999295
+Message-Id: <20181111200143.10177-1-paulmck@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-11_13:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -87,89 +88,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+From: Connor Shu <Connor.Shu@ibm.com>
 
-Currently, the initrd/init script and executable remain blocked almost
-all the time.  However, it is necessary to test nohz_full userspace
-execution, which both variants of initrd/init fail to do.  This commit
-therefore causes initrd/init to spend about a millisecond per second
-executing in userspace.
+The rcutorture scripts currently expect the user to create the
+tools/testing/selftests/rcutorture/initrd directory.  Should the user
+fail to do this, the kernel build will fail with obscure and confusing
+error messages.  This commit therefore adds explicit checks for the
+tools/testing/selftests/rcutorture/initrd directory, and if not present,
+creates one on systems on which dracut is installed.  If this directory
+could not be created, a less obscure error message is emitted and the
+test is aborted.
 
-Reported-by: Josh Triplett <josh@joshtriplett.org>
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Connor Shu <Connor.Shu@ibm.com>
+[ paulmck: Adapt the script to fit into the rcutorture framework and
+  severely abbreviate the initrd/init script. ]
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 ---
- .../selftests/rcutorture/bin/mkinitrd.sh      | 43 +++++++++++++++++--
- 1 file changed, 39 insertions(+), 4 deletions(-)
+ tools/testing/selftests/rcutorture/bin/kvm.sh |  8 +++
+ .../selftests/rcutorture/bin/mkinitrd.sh      | 60 +++++++++++++++++++
+ 2 files changed, 68 insertions(+)
+ create mode 100755 tools/testing/selftests/rcutorture/bin/mkinitrd.sh
 
-diff --git a/tools/testing/selftests/rcutorture/bin/mkinitrd.sh b/tools/testing/selftests/rcutorture/bin/mkinitrd.sh
-index 87a87ffeaa85..b48c504edfe1 100755
---- a/tools/testing/selftests/rcutorture/bin/mkinitrd.sh
-+++ b/tools/testing/selftests/rcutorture/bin/mkinitrd.sh
-@@ -39,9 +39,22 @@ mkdir $T
- 
- cat > $T/init << '__EOF___'
- #!/bin/sh
-+# Run in userspace a few milliseconds every second.  This helps to
-+# exercise the NO_HZ_FULL portions of RCU.
- while :
- do
--	sleep 1000000
-+	q=
-+	for i in \
-+		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a \
-+		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a \
-+		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a \
-+		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a \
-+		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a \
-+		a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a
-+	do
-+		q="$q $i"
-+	done
-+	sleep 1
+diff --git a/tools/testing/selftests/rcutorture/bin/kvm.sh b/tools/testing/selftests/rcutorture/bin/kvm.sh
+index 5a7a62d76a50..19864f1cb27a 100755
+--- a/tools/testing/selftests/rcutorture/bin/kvm.sh
++++ b/tools/testing/selftests/rcutorture/bin/kvm.sh
+@@ -194,6 +194,14 @@ do
+ 	shift
  done
- __EOF___
  
-@@ -70,15 +83,37 @@ mkdir initrd
- cd initrd
- cat > init.c << '___EOF___'
- #include <unistd.h>
-+#include <sys/time.h>
++if test -z "$TORTURE_INITRD" || tools/testing/selftests/rcutorture/bin/mkinitrd.sh
++then
++	:
++else
++	echo No initrd and unable to create one, aborting test >&2
++	exit 1
++fi
 +
-+volatile unsigned long delaycount;
+ CONFIGFRAG=${KVM}/configs/${TORTURE_SUITE}; export CONFIGFRAG
  
- int main(int argc, int argv[])
- {
--	for (;;)
--		sleep(1000*1000*1000); /* One gigasecond is ~30 years. */
-+	int i;
-+	struct timeval tv;
-+	struct timeval tvb;
+ if test -z "$configs"
+diff --git a/tools/testing/selftests/rcutorture/bin/mkinitrd.sh b/tools/testing/selftests/rcutorture/bin/mkinitrd.sh
+new file mode 100755
+index 000000000000..ae773760f396
+--- /dev/null
++++ b/tools/testing/selftests/rcutorture/bin/mkinitrd.sh
+@@ -0,0 +1,60 @@
++#!/bin/bash
++#
++# Create an initrd directory if one does not already exist.
++#
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 2 of the License, or
++# (at your option) any later version.
++#
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with this program; if not, you can access it online at
++# http://www.gnu.org/licenses/gpl-2.0.html.
++#
++# Copyright (C) IBM Corporation, 2013
++#
++# Author: Connor Shu <Connor.Shu@ibm.com>
 +
-+	for (;;) {
-+		sleep(1);
-+		/* Need some userspace time. */
-+		if (gettimeofday(&tvb, NULL))
-+			continue;
-+		do {
-+			for (i = 0; i < 1000 * 100; i++)
-+				delaycount = i * i;
-+			if (gettimeofday(&tv, NULL))
-+				break;
-+			tv.tv_sec -= tvb.tv_sec;
-+			if (tv.tv_sec > 1)
-+				break;
-+			tv.tv_usec += tv.tv_sec * 1000 * 1000;
-+			tv.tv_usec -= tvb.tv_usec;
-+		} while (tv.tv_usec < 1000);
-+	}
- 	return 0;
- }
- ___EOF___
--gcc -static -Os -o init init.c
-+cc -static -Os -o init init.c
- strip init
- rm init.c
- echo "Done creating a statically linked C-language initrd"
++D=tools/testing/selftests/rcutorture
++
++# Prerequisite checks
++[ -z "$D" ] && echo >&2 "No argument supplied" && exit 1
++if [ ! -d "$D" ]; then
++    echo >&2 "$D does not exist: Malformed kernel source tree?"
++    exit 1
++fi
++if [ -d "$D/initrd" ]; then
++    echo "$D/initrd already exists, no need to create it"
++    exit 0
++fi
++
++T=${TMPDIR-/tmp}/mkinitrd.sh.$$
++trap 'rm -rf $T' 0 2
++mkdir $T
++
++cat > $T/init << '__EOF___'
++#!/bin/sh
++while :
++do
++	sleep 1000000
++done
++__EOF___
++
++# Try using dracut to create initrd
++command -v dracut >/dev/null 2>&1 || { echo >&2 "Dracut not installed"; exit 1; }
++echo Creating $D/initrd using dracut.
++
++# Filesystem creation
++dracut --force --no-hostonly --no-hostonly-cmdline --module "base" $T/initramfs.img
++cd $D
++mkdir initrd
++cd initrd
++zcat $T/initramfs.img | cpio -id
++cp $T/init init
++echo Done creating $D/initrd using dracut
++exit 0
 -- 
 2.17.1
 
