@@ -4,46 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 051E8C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:49:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF0AFC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:49:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C09B020871
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:49:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A980F20871
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:49:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2Js1mZZS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C09B020871
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="h5I3Cf9G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A980F20871
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733042AbeKLISk (ORCPT
+        id S1733022AbeKLISj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:18:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37302 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733024AbeKLISj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:18:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38646 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733008AbeKLISi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:18:38 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB8AE21508;
-        Sun, 11 Nov 2018 22:28:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 985B022502;
+        Sun, 11 Nov 2018 22:28:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975323;
-        bh=IfMqtevymZZf/ey43tq66lw0O67I9lhL+wFEX6fTunQ=;
+        s=default; t=1541975322;
+        bh=ZYknWdB9gz+w2r8yDu45eykRgA9Tp/bRwz1Tj27IRiI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2Js1mZZSRDjlahiWc0WnTCbrp5ar5kGGJPC52psBoysRNi2p21U7MBwG7OgRNMgJd
-         CKSt1/U/28owgWfcUmOb5kxKR0RTx4CZhTUapsH4GSKaYTdiIiTf0ufM6+64TpdsEJ
-         eNHw636fA8oBugZf/JoEUuLRlBceQzDACYnIK+Vk=
+        b=h5I3Cf9G7gIk50lAC4ybwIGsnEmQLvsR5xAkNfk9OPBRWnM7ONtavGIazA5JMUgXU
+         tE7ylkfgtYyLJz6gl4D4TCfQSCpJ4casc5f6ipiA8gln8Fr5U0VEy0mfngc87L58hP
+         udBpPNsOPCXkindxu7oEXKY9Nh/lB0+2dwrboAeU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thor Thayer <thor.thayer@linux.intel.com>,
-        Dinh Nguyen <dinguyen@kernel.org>
-Subject: [PATCH 4.19 319/361] ARM: dts: socfpga: Fix SDRAM node address for Arria10
-Date:   Sun, 11 Nov 2018 14:21:06 -0800
-Message-Id: <20181111221658.951487652@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Christophe Lombard <clombard@linux.vnet.ibm.com>,
+        Frederic Barrat <fbarrat@linux.vnet.ibm.com>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.19 289/361] ocxl: Fix access to the AFU Descriptor Data
+Date:   Sun, 11 Nov 2018 14:20:36 -0800
+Message-Id: <20181111221656.532050290@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -61,33 +65,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thor Thayer <thor.thayer@linux.intel.com>
+From: Christophe Lombard <clombard@linux.vnet.ibm.com>
 
-commit ce3bf934f919a7d675c5b7fa4cc233ded9c6256e upstream.
+commit 6f8e45f7eb1bee5efdbe4a9cfe4a45627403c5fb upstream.
 
-The address in the SDRAM node was incorrect. Fix this to agree with the
-correct address and to match the reg definition block.
+The AFU Information DVSEC capability is a means to extract common,
+general information about all of the AFUs associated with a Function
+independent of the specific functionality that each AFU provides.
+Write in the AFU Index field allows to access to the descriptor data
+for each AFU.
 
-Cc: stable@vger.kernel.org
-Fixes: 54b4a8f57848b("arm: socfpga: dts: Add Arria10 SDRAM EDAC DTS support")
-Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+With the current code, we are not able to access to these specific data
+when the index >= 1 because we are writing to the wrong location.
+All requests to the data of each AFU are pointing to those of the AFU 0,
+which could have impacts when using a card with more than one AFU per
+function.
+
+This patch fixes the access to the AFU Descriptor Data indexed by the
+AFU Info Index field.
+
+Fixes: 5ef3166e8a32 ("ocxl: Driver code for 'generic' opencapi devices")
+Cc: stable <stable@vger.kernel.org>     # 4.16
+Signed-off-by: Christophe Lombard <clombard@linux.vnet.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- arch/arm/boot/dts/socfpga_arria10.dtsi |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
+Acked-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 
---- a/arch/arm/boot/dts/socfpga_arria10.dtsi
-+++ b/arch/arm/boot/dts/socfpga_arria10.dtsi
-@@ -613,7 +613,7 @@
- 			status = "disabled";
- 		};
+---
+ drivers/misc/ocxl/config.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+--- a/drivers/misc/ocxl/config.c
++++ b/drivers/misc/ocxl/config.c
+@@ -280,7 +280,9 @@ int ocxl_config_check_afu_index(struct p
+ 	u32 val;
+ 	int rc, templ_major, templ_minor, len;
  
--		sdr: sdr@ffc25000 {
-+		sdr: sdr@ffcfb100 {
- 			compatible = "altr,sdr-ctl", "syscon";
- 			reg = <0xffcfb100 0x80>;
- 		};
+-	pci_write_config_word(dev, fn->dvsec_afu_info_pos, afu_idx);
++	pci_write_config_byte(dev,
++			fn->dvsec_afu_info_pos + OCXL_DVSEC_AFU_INFO_AFU_IDX,
++			afu_idx);
+ 	rc = read_afu_info(dev, fn, OCXL_DVSEC_TEMPL_VERSION, &val);
+ 	if (rc)
+ 		return rc;
 
 
