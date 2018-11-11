@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90739C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:31:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B16FC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:31:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5547520818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:31:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5547520818
+	by mail.kernel.org (Postfix) with ESMTP id 5915120818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:31:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5915120818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731160AbeKLGVP (ORCPT
+        id S1731314AbeKLGV1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 01:21:15 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50306 "EHLO
+        Mon, 12 Nov 2018 01:21:27 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:50298 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730379AbeKLFsS (ORCPT
+        by vger.kernel.org with ESMTP id S1730363AbeKLFsS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 00:48:18 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsc-0000lK-Ad; Sun, 11 Nov 2018 19:58:46 +0000
+        id 1gLvse-0000l5-CT; Sun, 11 Nov 2018 19:58:48 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsZ-0001p2-3B; Sun, 11 Nov 2018 19:58:43 +0000
+        id 1gLvsa-0001tj-Vq; Sun, 11 Nov 2018 19:58:44 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -38,14 +38,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org,
-        "Herbert Xu" <herbert@gondor.apana.org.au>,
-        "Dmitry Safonov" <dima@arista.com>, netdev@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        "Steffen Klassert" <steffen.klassert@secunet.com>
+        "Adrian Hunter" <adrian.hunter@intel.com>,
+        "David Ahern" <dsahern@gmail.com>,
+        "Arnaldo Carvalho de Melo" <acme@redhat.com>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "Eric Engestrom" <eric.engestrom@imgtec.com>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.747958107@decadent.org.uk>
+Message-ID: <lsq.1541965745.915332956@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 310/366] netlink: Don't shift on 64 for ngroups
+Subject: [PATCH 3.16 363/366] perf tools: Remove duplicate const qualifier
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,43 +60,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry Safonov <dima@arista.com>
+From: Eric Engestrom <eric.engestrom@imgtec.com>
 
-commit 91874ecf32e41b5d86a4cb9d60e0bee50d828058 upstream.
+commit 3b556bced46aa6b1873da7faa18eff235e896adc upstream.
 
-It's legal to have 64 groups for netlink_sock.
-
-As user-supplied nladdr->nl_groups is __u32, it's possible to subscribe
-only to first 32 groups.
-
-The check for correctness of .bind() userspace supplied parameter
-is done by applying mask made from ngroups shift. Which broke Android
-as they have 64 groups and the shift for mask resulted in an overflow.
-
-Fixes: 61f4b23769f0 ("netlink: Don't shift with UB on nlk->ngroups")
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Steffen Klassert <steffen.klassert@secunet.com>
-Cc: netdev@vger.kernel.org
-Reported-and-Tested-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Dmitry Safonov <dima@arista.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Eric Engestrom <eric.engestrom@imgtec.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/1461577678-29517-1-git-send-email-eric.engestrom@imgtec.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/netlink/af_netlink.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/util/thread.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/netlink/af_netlink.c
-+++ b/net/netlink/af_netlink.c
-@@ -930,8 +930,8 @@ static int netlink_bind(struct socket *s
- 
- 	if (nlk->ngroups == 0)
- 		groups = 0;
--	else
--		groups &= (1ULL << nlk->ngroups) - 1;
-+	else if (nlk->ngroups < 8*sizeof(groups))
-+		groups &= (1UL << nlk->ngroups) - 1;
- 
- 	if (nlk->portid)
- 		if (nladdr->nl_pid != nlk->portid)
+--- a/tools/perf/util/thread.c
++++ b/tools/perf/util/thread.c
+@@ -177,7 +177,7 @@ void thread__find_cpumode_addr_location(
+ 					struct addr_location *al)
+ {
+ 	size_t i;
+-	const u8 const cpumodes[] = {
++	const u8 cpumodes[] = {
+ 		PERF_RECORD_MISC_USER,
+ 		PERF_RECORD_MISC_KERNEL,
+ 		PERF_RECORD_MISC_GUEST_USER,
 
