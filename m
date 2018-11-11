@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E4ADC04EB9
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F7A3C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0DA22154B
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAE372175B
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:28:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="k/AJ+3J6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0DA22154B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="deL9jEFg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAE372175B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732484AbeKLISJ (ORCPT
+        id S1732497AbeKLISK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:18:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34210 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:18:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732359AbeKLISI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1732425AbeKLISI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:18:08 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23A962241E;
-        Sun, 11 Nov 2018 22:28:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD307223D0;
+        Sun, 11 Nov 2018 22:28:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975293;
-        bh=ez/82esUj1UqRkw7RtQ2cPu2Nin5mbsNZOtXKtqmvtQ=;
+        s=default; t=1541975292;
+        bh=yyz2p1Bu8+EdLR4KAsSVXLbonGoeL3B6LmlqKvw7yd0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k/AJ+3J6lMzBr2xhvejWcSbSwZHLdaHlMVZ2s3kE04Zw+gwgO+XgharGxPl+0E20z
-         voaDADmYbW8HjAMLvMz0z6CxtduWm78KcHfKR+o0s1OD34rZPvs4TSht5crnzRxpPg
-         oP+k3sIiLhbaFcH+99kflDPT8YWsehC0XayvMvJM=
+        b=deL9jEFg60mHCYqFR+Nov7fa/BzDRoutVxJDEhBCExtaicrAS1oagPhySx5eSY2VS
+         WPnq8B2OrowEwv9FsOk0H+bFFEaT6CFvslCUIDAgdq3a1vTFmj4mVpmNIu0pB6RTN9
+         8KQ19JxdqeO0SlKrTME+w88RD2DbbXKTVWtaZe1E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>
-Subject: [PATCH 4.19 211/361] mt76: mt76x2: fix multi-interface beacon configuration
-Date:   Sun, 11 Nov 2018 14:19:18 -0800
-Message-Id: <20181111221649.667904028@linuxfoundation.org>
+        stable@vger.kernel.org, Vignesh R <vigneshr@ti.com>,
+        Tony Lindgren <tony@atomide.com>
+Subject: [PATCH 4.19 237/361] ARM: dts: dra7: Fix up unaligned access setting for PCIe EP
+Date:   Sun, 11 Nov 2018 14:19:44 -0800
+Message-Id: <20181111221652.015979415@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -61,36 +62,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Felix Fietkau <nbd@nbd.name>
+From: Vignesh R <vigneshr@ti.com>
 
-commit 5289976ad887deb07c76df7eecf553c264aeebed upstream.
+commit 6d0af44a82be87c13f2320821e9fbb8b8cf5a56f upstream.
 
-If the first virtual interface is a station (or an AP with beacons
-temporarily disabled), the beacon of the second interface needs to
-occupy hardware beacon slot 0.
-For some reason the beacon index was incorrectly masked with the
-virtual interface beacon mask, which prevents the secondary
-interface from sending beacons unless the first one also does.
+Bit positions of PCIE_SS1_AXI2OCP_LEGACY_MODE_ENABLE and
+PCIE_SS1_AXI2OCP_LEGACY_MODE_ENABLE in CTRL_CORE_SMA_SW_7 are
+incorrectly documented in the TRM. In fact, the bit positions are
+swapped. Update the DT bindings for PCIe EP to reflect the same.
 
+Fixes: d23f3839fe97 ("ARM: dts: DRA7: Add pcie1 dt node for EP mode")
 Cc: stable@vger.kernel.org
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
+Signed-off-by: Vignesh R <vigneshr@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/mediatek/mt76/mt76x2_mac.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/arm/boot/dts/dra7.dtsi |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/wireless/mediatek/mt76/mt76x2_mac.c
-+++ b/drivers/net/wireless/mediatek/mt76/mt76x2_mac.c
-@@ -128,8 +128,7 @@ __mt76x2_mac_set_beacon(struct mt76x2_de
- 	if (skb) {
- 		ret = mt76_write_beacon(dev, beacon_addr, skb);
- 		if (!ret)
--			dev->beacon_data_mask |= BIT(bcn_idx) &
--						 dev->beacon_mask;
-+			dev->beacon_data_mask |= BIT(bcn_idx);
- 	} else {
- 		dev->beacon_data_mask &= ~BIT(bcn_idx);
- 		for (i = 0; i < beacon_len; i += 4)
+--- a/arch/arm/boot/dts/dra7.dtsi
++++ b/arch/arm/boot/dts/dra7.dtsi
+@@ -354,7 +354,7 @@
+ 				ti,hwmods = "pcie1";
+ 				phys = <&pcie1_phy>;
+ 				phy-names = "pcie-phy0";
+-				ti,syscon-unaligned-access = <&scm_conf1 0x14 2>;
++				ti,syscon-unaligned-access = <&scm_conf1 0x14 1>;
+ 				status = "disabled";
+ 			};
+ 		};
 
 
