@@ -7,44 +7,43 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E55BFC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:55:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8E7AC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:55:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEB6F20839
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:55:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACDA320839
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:55:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FIWJ8XMU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEB6F20839
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="H861wqtB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACDA320839
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732987AbeKLJpj (ORCPT
+        id S1732661AbeKLISS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:45:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37238 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:18:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732619AbeKLIST (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:18:19 -0500
+        id S1732622AbeKLISQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:18:16 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DDCEB215EA;
-        Sun, 11 Nov 2018 22:28:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CECAD21508;
+        Sun, 11 Nov 2018 22:28:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975303;
-        bh=OxqoB3U0UqRa9EepOiuIIJg50XpkAyFB1Vz90F3aV+M=;
+        s=default; t=1541975301;
+        bh=tkcqaUFyHNS2oGNzVMWqGXlvaMGyceZGZIAv2e2TqPA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FIWJ8XMUUELe1sewVNaMjsVQUeGuWlw/ZNaWKjSdckDTI2b04LFwugVq7/0jaCvYy
-         XtVBGe207a3AmgKvpSjFwRd8CFn6go9Vhz2N8QhenZxR484T7vCtc9N6L6ipzibbBW
-         FMpc027YDXMMN41ZDYukLYxwU1XdbMySmz9U3XPg=
+        b=H861wqtBqqgh+XdWmqv69Xjrby3wzdhDDrQ+RWZjMvfQB8e2USmrQBkMu79s3ozel
+         BcA96NWemKmbvXt2UJBkO225+UipNWxCF5MksKFEOUCJtLAnR8Uagqt9TVbaSrnw7h
+         LF3vCAPgbIRzQGBKahmqe3e17Hhh1ag/IcUyqPB4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH 4.19 268/361] tpm: fix response size validation in tpm_get_random()
-Date:   Sun, 11 Nov 2018 14:20:15 -0800
-Message-Id: <20181111221654.813027669@linuxfoundation.org>
+        stable@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH 4.19 262/361] w1: omap-hdq: fix missing bus unregister at removal
+Date:   Sun, 11 Nov 2018 14:20:09 -0800
+Message-Id: <20181111221654.070863395@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -62,49 +61,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+From: Andreas Kemnade <andreas@kemnade.info>
 
-commit 84b59f6487d82d3ab4247a099aba66d4d17e8b08 upstream.
+commit a007734618fee1bf35556c04fa498d41d42c7301 upstream.
 
-When checking whether the response is large enough to be able to contain
-the received random bytes in tpm_get_random() and tpm2_get_random(),
-they fail to take account the header size, which should be added to the
-minimum size. This commit fixes this issue.
+The bus master was not removed after unloading the module
+or unbinding the driver. That lead to oopses like this
 
-Cc: stable@vger.kernel.org
-Fixes: c659af78eb7b ("tpm: Check size of response before accessing data")
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+[  127.842987] Unable to handle kernel paging request at virtual address bf01d04c
+[  127.850646] pgd = 70e3cd9a
+[  127.853698] [bf01d04c] *pgd=8f908811, *pte=00000000, *ppte=00000000
+[  127.860412] Internal error: Oops: 80000007 [#1] PREEMPT SMP ARM
+[  127.866668] Modules linked in: bq27xxx_battery overlay [last unloaded: omap_hdq]
+[  127.874542] CPU: 0 PID: 1022 Comm: w1_bus_master1 Not tainted 4.19.0-rc4-00001-g2d51da718324 #12
+[  127.883819] Hardware name: Generic OMAP36xx (Flattened Device Tree)
+[  127.890441] PC is at 0xbf01d04c
+[  127.893798] LR is at w1_search_process_cb+0x4c/0xfc
+[  127.898956] pc : [<bf01d04c>]    lr : [<c05f9580>]    psr: a0070013
+[  127.905609] sp : cf885f48  ip : bf01d04c  fp : ddf1e11c
+[  127.911132] r10: cf8fe040  r9 : c05f8d00  r8 : cf8fe040
+[  127.916656] r7 : 000000f0  r6 : cf8fe02c  r5 : cf8fe000  r4 : cf8fe01c
+[  127.923553] r3 : c05f8d00  r2 : 000000f0  r1 : cf8fe000  r0 : dde1ef10
+[  127.930450] Flags: NzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+[  127.938018] Control: 10c5387d  Table: 8f8f0019  DAC: 00000051
+[  127.944091] Process w1_bus_master1 (pid: 1022, stack limit = 0x9135699f)
+[  127.951171] Stack: (0xcf885f48 to 0xcf886000)
+[  127.955810] 5f40:                   cf8fe000 00000000 cf884000 cf8fe090 000003e8 c05f8d00
+[  127.964477] 5f60: dde5fc34 c05f9700 ddf1e100 ddf1e540 cf884000 cf8fe000 c05f9694 00000000
+[  127.973114] 5f80: dde5fc34 c01499a4 00000000 ddf1e540 c0149874 00000000 00000000 00000000
+[  127.981781] 5fa0: 00000000 00000000 00000000 c01010e8 00000000 00000000 00000000 00000000
+[  127.990447] 5fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[  127.999114] 5fe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
+[  128.007781] [<c05f9580>] (w1_search_process_cb) from [<c05f9700>] (w1_process+0x6c/0x118)
+[  128.016479] [<c05f9700>] (w1_process) from [<c01499a4>] (kthread+0x130/0x148)
+[  128.024047] [<c01499a4>] (kthread) from [<c01010e8>] (ret_from_fork+0x14/0x2c)
+[  128.031677] Exception stack(0xcf885fb0 to 0xcf885ff8)
+[  128.037017] 5fa0:                                     00000000 00000000 00000000 00000000
+[  128.045684] 5fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[  128.054351] 5fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+[  128.061340] Code: bad PC value
+[  128.064697] ---[ end trace af066e33c0e14119 ]---
+
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/tpm/tpm-interface.c |    3 ++-
- drivers/char/tpm/tpm2-cmd.c      |    4 +++-
- 2 files changed, 5 insertions(+), 2 deletions(-)
+ drivers/w1/masters/omap_hdq.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -1322,7 +1322,8 @@ int tpm_get_random(struct tpm_chip *chip
- 		}
+--- a/drivers/w1/masters/omap_hdq.c
++++ b/drivers/w1/masters/omap_hdq.c
+@@ -763,6 +763,8 @@ static int omap_hdq_remove(struct platfo
+ 	/* remove module dependency */
+ 	pm_runtime_disable(&pdev->dev);
  
- 		rlength = be32_to_cpu(tpm_cmd.header.out.length);
--		if (rlength < offsetof(struct tpm_getrandom_out, rng_data) +
-+		if (rlength < TPM_HEADER_SIZE +
-+			      offsetof(struct tpm_getrandom_out, rng_data) +
- 			      recd) {
- 			total = -EFAULT;
- 			break;
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -329,7 +329,9 @@ int tpm2_get_random(struct tpm_chip *chi
- 			&buf.data[TPM_HEADER_SIZE];
- 		recd = min_t(u32, be16_to_cpu(out->size), num_bytes);
- 		if (tpm_buf_length(&buf) <
--		    offsetof(struct tpm2_get_random_out, buffer) + recd) {
-+		    TPM_HEADER_SIZE +
-+		    offsetof(struct tpm2_get_random_out, buffer) +
-+		    recd) {
- 			err = -EFAULT;
- 			goto out;
- 		}
++	w1_remove_master_device(&omap_w1_master);
++
+ 	return 0;
+ }
+ 
 
 
