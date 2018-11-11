@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1DCAC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:14:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12BD8C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:14:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAE0720817
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:14:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA37C20862
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:14:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SGXsUt6b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAE0720817
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fGsnlJWU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA37C20862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389997AbeKLJEr (ORCPT
+        id S2389898AbeKLIVp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:04:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49866 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389893AbeKLIVp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:21:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49820 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726674AbeKLIVo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:44 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B8A1F21508;
-        Sun, 11 Nov 2018 22:31:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E0123216FD;
+        Sun, 11 Nov 2018 22:31:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975508;
-        bh=Ml0Wv1rmMEytyRPZkJETKPWNy5xesbz2Gjp1ucqFcgk=;
+        s=default; t=1541975507;
+        bh=5T5e1PI/kKWDO3cFRZRQtHdDfe/o/SVrmCyo/WXHtX8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SGXsUt6bmEZhbfWJvYoD8X+bhnH6HLQHeihcQH39tYr0DovNxciBj/GUuG0VSbO6A
-         ui7In2YvoVEmvFL/JCaec5Kwp2NLTb6FjShqiRIomi/23Cc5zwAE3Pt4TXjeM4jykY
-         VlFcjZXp68YZ5yPV+jpTMRpYk8w09d4BPeTsXLBQ=
+        b=fGsnlJWUYkVD7jEJpaXEkXDAMMfSrjXexltxlTe13rbf+46z5por42imgT66RyP+O
+         l9sABA2xto1bIAYezmJ8Ymq9z/GeZskk3veYAHoHRlMzq+9e5MKVePVyTEba7LSzq/
+         pUgWWleTAT2CsW2FxqZ7vQiPS9Y5Z8oWCoy0p+uo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liu Bo <bo.liu@linux.alibaba.com>,
-        Josef Bacik <jbacik@fb.com>, David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.18 331/350] btrfs: reset max_extent_size on clear in a bitmap
-Date:   Sun, 11 Nov 2018 14:23:15 -0800
-Message-Id: <20181111221721.939342053@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>
+Subject: [PATCH 4.18 312/350] soc: qcom: rmtfs-mem: Validate that scm is available
+Date:   Sun, 11 Nov 2018 14:22:56 -0800
+Message-Id: <20181111221721.119630670@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -62,34 +63,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Josef Bacik <jbacik@fb.com>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-commit 553cceb49681d60975d00892877d4c871bf220f9 upstream.
+commit 137dc5843faeacabf48fc22a8dc58c4e0b4f0927 upstream.
 
-We need to clear the max_extent_size when we clear bits from a bitmap
-since it could have been from the range that contains the
-max_extent_size.
+The scm device must be present in order for the rmtfs driver to
+configure memory permissions for the rmtfs memory region, so check that
+it is probed before continuing.
 
-CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Liu Bo <bo.liu@linux.alibaba.com>
-Signed-off-by: Josef Bacik <jbacik@fb.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Cc: stable@vger.kernel.org
+Fixes: fa65f8045137 ("soc: qcom: rmtfs-mem: Add support for assigning memory to remote")
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Andy Gross <andy.gross@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/free-space-cache.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/soc/qcom/rmtfs_mem.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/fs/btrfs/free-space-cache.c
-+++ b/fs/btrfs/free-space-cache.c
-@@ -1694,6 +1694,8 @@ static inline void __bitmap_clear_bits(s
- 	bitmap_clear(info->bitmap, start, count);
- 
- 	info->bytes -= bytes;
-+	if (info->max_extent_size > ctl->unit)
-+		info->max_extent_size = 0;
- }
- 
- static void bitmap_clear_bits(struct btrfs_free_space_ctl *ctl,
+--- a/drivers/soc/qcom/rmtfs_mem.c
++++ b/drivers/soc/qcom/rmtfs_mem.c
+@@ -212,6 +212,11 @@ static int qcom_rmtfs_mem_probe(struct p
+ 		dev_err(&pdev->dev, "failed to parse qcom,vmid\n");
+ 		goto remove_cdev;
+ 	} else if (!ret) {
++		if (!qcom_scm_is_available()) {
++			ret = -EPROBE_DEFER;
++			goto remove_cdev;
++		}
++
+ 		perms[0].vmid = QCOM_SCM_VMID_HLOS;
+ 		perms[0].perm = QCOM_SCM_PERM_RW;
+ 		perms[1].vmid = vmid;
 
 
