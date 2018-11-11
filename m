@@ -6,44 +6,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4691FC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:36:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09769C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:36:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B91F2084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:36:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C103F2084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:36:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="T0OTcnOs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B91F2084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FaQgoZpH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C103F2084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388448AbeKLJ0o (ORCPT
+        id S2388521AbeKLJ0y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:26:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42214 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:26:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42802 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388238AbeKLIUA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:20:00 -0500
+        id S2388205AbeKLIT6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:19:58 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7EF41223C8;
-        Sun, 11 Nov 2018 22:30:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0884F2241B;
+        Sun, 11 Nov 2018 22:30:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975404;
-        bh=OIcNgAYZZPWbWINwiwycYIS9FeVTIoA91wuP2mL3QNc=;
+        s=default; t=1541975402;
+        bh=H5dqA70ss3Ia46ag+hXXPkZNsnqKPEnMNPfqjhtA9vY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=T0OTcnOsuC0w+pvaIdLEBekz03cwdFVEKsdnp50FGdDxol7KER/6GmWT1idxDYDPN
-         b3ojfa7kbJ9sEPtQCdqbnWqG8X2H8paHOfaJGJHME7peQQ2hH5gNuH0w4Rao/RGaWw
-         BHdGwMxb5OU3rk7njNEzQ4V3jJRP67ha7s9QoPls=
+        b=FaQgoZpH4vtOo/1tn7wVJ0gJc8DDDjNoGniUTUVMO6wzrCh7YNYPZFmuBty3NEVu8
+         vj/SYi65yspg8DqL8LT9paPd+NTTy0tXDelPedCo3UFs141uMMJJVm/Kqa5o76h9gf
+         7uMm74l4E63tp1zttLn5wm7fFPnB/TSOkdn/JHAw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Luca Coelho <luciano.coelho@intel.com>,
+        stable@vger.kernel.org, Yunsheng Lin <linyunsheng@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 088/350] iwlwifi: mvm: check for n_profiles validity in EWRD ACPI
-Date:   Sun, 11 Nov 2018 14:19:12 -0800
-Message-Id: <20181111221710.795734286@linuxfoundation.org>
+Subject: [PATCH 4.18 100/350] net: hns3: Fix for packet buffer setting bug
+Date:   Sun, 11 Nov 2018 14:19:24 -0800
+Message-Id: <20181111221711.288346472@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -61,43 +64,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Luca Coelho <luciano.coelho@intel.com>
+From: Yunsheng Lin <linyunsheng@huawei.com>
 
-[ Upstream commit 2e1976bb75263fbad918e82184b16a23bd721546 ]
+[ Upstream commit 996ff91840eb6f288826e472685abde78bac20ea ]
 
-When reading the profiles from the EWRD table in ACPI, we loop over
-the data and set it into our internal table.  We use the number of
-profiles specified in ACPI without checking its validity, so if the
-ACPI table is corrupted and the number is larger than our array size,
-we will try to make an out-of-bounds access.
+The hardware expects a unit of 128 bytes when setting
+packet buffer. When calculating the packet buffer size,
+hclge_rx_buffer_calc does not round up the size as a unit
+of 128 byte, which may casue packet lost problem when stress
+testing.
 
-Fix this by making sure the value specified in the ACPI table is
-valid.
+This patch fixes it by rounding up packet size when calculating.
 
-Fixes: 6996490501ed ("iwlwifi: mvm: add support for EWRD (Dynamic SAR) ACPI table")
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Fixes: 46a3df9f9718 ("net: hns3: Add HNS3 Acceleration Engine & Compatibility Layer Support")
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/fw.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c |   14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
---- a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
-@@ -669,8 +669,12 @@ static int iwl_mvm_sar_get_ewrd_table(st
- 	enabled = !!(wifi_pkg->package.elements[1].integer.value);
- 	n_profiles = wifi_pkg->package.elements[2].integer.value;
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -1669,11 +1669,13 @@ static int hclge_tx_buffer_calc(struct h
+ static int hclge_rx_buffer_calc(struct hclge_dev *hdev,
+ 				struct hclge_pkt_buf_alloc *buf_alloc)
+ {
+-	u32 rx_all = hdev->pkt_buf_size;
++#define HCLGE_BUF_SIZE_UNIT	128
++	u32 rx_all = hdev->pkt_buf_size, aligned_mps;
+ 	int no_pfc_priv_num, pfc_priv_num;
+ 	struct hclge_priv_buf *priv;
+ 	int i;
  
--	/* in case of BIOS bug */
--	if (n_profiles <= 0) {
-+	/*
-+	 * Check the validity of n_profiles.  The EWRD profiles start
-+	 * from index 1, so the maximum value allowed here is
-+	 * ACPI_SAR_PROFILES_NUM - 1.
-+	 */
-+	if (n_profiles <= 0 || n_profiles >= ACPI_SAR_PROFILE_NUM) {
- 		ret = -EINVAL;
- 		goto out_free;
++	aligned_mps = round_up(hdev->mps, HCLGE_BUF_SIZE_UNIT);
+ 	rx_all -= hclge_get_tx_buff_alloced(buf_alloc);
+ 
+ 	/* When DCB is not supported, rx private
+@@ -1692,13 +1694,13 @@ static int hclge_rx_buffer_calc(struct h
+ 		if (hdev->hw_tc_map & BIT(i)) {
+ 			priv->enable = 1;
+ 			if (hdev->tm_info.hw_pfc_map & BIT(i)) {
+-				priv->wl.low = hdev->mps;
+-				priv->wl.high = priv->wl.low + hdev->mps;
++				priv->wl.low = aligned_mps;
++				priv->wl.high = priv->wl.low + aligned_mps;
+ 				priv->buf_size = priv->wl.high +
+ 						HCLGE_DEFAULT_DV;
+ 			} else {
+ 				priv->wl.low = 0;
+-				priv->wl.high = 2 * hdev->mps;
++				priv->wl.high = 2 * aligned_mps;
+ 				priv->buf_size = priv->wl.high;
+ 			}
+ 		} else {
+@@ -1730,11 +1732,11 @@ static int hclge_rx_buffer_calc(struct h
+ 
+ 		if (hdev->tm_info.hw_pfc_map & BIT(i)) {
+ 			priv->wl.low = 128;
+-			priv->wl.high = priv->wl.low + hdev->mps;
++			priv->wl.high = priv->wl.low + aligned_mps;
+ 			priv->buf_size = priv->wl.high + HCLGE_DEFAULT_DV;
+ 		} else {
+ 			priv->wl.low = 0;
+-			priv->wl.high = hdev->mps;
++			priv->wl.high = aligned_mps;
+ 			priv->buf_size = priv->wl.high;
+ 		}
  	}
 
 
