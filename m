@@ -3,37 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A996EC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 08:11:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25E40C43610
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 08:11:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 675512087C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 08:11:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 675512087C
+	by mail.kernel.org (Postfix) with ESMTP id ACFE72087C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 08:11:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACFE72087C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727745AbeKKR7H (ORCPT
+        id S1727790AbeKKR7J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 12:59:07 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:49428 "EHLO
+        Sun, 11 Nov 2018 12:59:09 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:49416 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727601AbeKKR7H (ORCPT
+        with ESMTP id S1727408AbeKKR7I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 12:59:07 -0500
+        Sun, 11 Nov 2018 12:59:08 -0500
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1gLkpo-00073F-Vb; Sun, 11 Nov 2018 09:11:09 +0100
-Subject: [GIT pull] x86 fixes for 4.20
-Message-ID: <154192381794.5458.10890229157221223080.tglx@nanos.tec.linutronix.de>
+        id 1gLkpn-00072x-Iq; Sun, 11 Nov 2018 09:11:07 +0100
+Subject: [GIT pull] perf fixes for 4.20
+Message-ID: <154192381794.5458.16178371210631422655.tglx@nanos.tec.linutronix.de>
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
 References: <154192381794.5458.5498732290895334242.tglx@nanos.tec.linutronix.de>
-Date:   Sun, 11 Nov 2018 09:11:09 +0100
+Date:   Sun, 11 Nov 2018 09:11:07 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -41,29 +41,28 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Linus,
 
-please pull the latest x86-urgent-for-linus git tree from:
+please pull the latest perf-urgent-for-linus git tree from:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-for-linus
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf-urgent-for-linus
 
-A set of x86 fixes:
+A bunch of perf tooling fixes:
 
-  - Cure the LDT remapping to user space on 5 level paging which ended up
-    in the KASLR space
+  - Make the Intel PT SQL viewer more robust
+  - Make the Intel PT debug log more useful
 
-  - Remove LDT mapping before freeing the LDT pages
+  - Support weak groups in perf record so it's behaving the same way as
+    perf stat
 
-  - Make NFIT MCE handling more robust
+  - Display the LBR stats in callchain entries properly in perf top
 
-  - Unbreak the VSMP build by removing the dependency on paravirt ops
+  - Handle different PMu names with common prefix properlin in pert stat
 
-  - Support broken PIT emulation on  Microsoft hyperV
+  - Start syscall augmenting in perf trace. Preparation for architecture
+    independent eBPF instrumentation of syscalls.
+  
+` - Fix build breakage in JVMTI perf lib
 
-  - Don't trace vmware_sched_clock() to avoid tracer recursion
-
-  - Remove -pipe from KBUILD CFLAGS which breaks clang and is also slower
-    on GCC
-
-  - Trivial coding style and typo fixes
+  - Fix arm64 tools build failure wrt smp_load_{acquire,release}.
 
 
 Thanks,
@@ -71,645 +70,1421 @@ Thanks,
 	tglx
 
 ------------------>
-Eial Czerwacki (1):
-      x86/vsmp: Remove dependency on pv_irq_ops
+Adrian Hunter (6):
+      perf scripts python: exported-sql-viewer.py: Fall back to /usr/local/lib/libxed.so
+      perf scripts python: exported-sql-viewer.py: Add Selected branches report
+      perf scripts python: exported-sql-viewer.py: Add help window
+      perf scripts python: exported-sql-viewer.py: Fix table find when table re-ordered
+      perf intel-pt: Add more event information to debug log
+      perf intel-pt: Add MTC and CYC timestamps to debug log
 
-Kirill A. Shutemov (3):
-      x86/mm: Move LDT remap out of KASLR region on 5-level paging
-      x86/ldt: Unmap PTEs for the slot before freeing LDT pages
-      x86/ldt: Remove unused variable in map_ldt_struct()
+Andi Kleen (2):
+      perf evlist: Move perf_evsel__reset_weak_group into evlist
+      perf record: Support weak groups
 
-Michael Kelley (2):
-      clockevents/drivers/i8253: Add support for PIT shutdown quirk
-      x86/hyper-v: Enable PIT shutdown quirk
+Arnaldo Carvalho de Melo (5):
+      perf examples bpf: Start augmenting raw_syscalls:sys_{start,exit}
+      perf trace: When augmenting raw_syscalls plug raw_syscalls:sys_exit too
+      perf trace: Fix setting of augmented payload when using eBPF + raw_syscalls
+      perf augmented_syscalls: Start collecting pathnames in the BPF program
+      perf beauty: Use SRCARCH, ARCH=x86_64 must map to "x86" to find the headers
 
-Nathan Chancellor (1):
-      x86/build: Remove -pipe from KBUILD_CFLAGS
+Gustavo Romero (1):
+      perf tools: Fix undefined symbol scnprintf in libperf-jvmti.so
 
-Randy Dunlap (1):
-      Documentation/x86: Fix typo in zero-page.txt
+Jin Yao (1):
+      perf top: Display the LBR stats in callchain entry
 
-Steven Rostedt (VMware) (1):
-      x86/cpu/vmware: Do not trace vmware_sched_clock()
+Jiri Olsa (1):
+      perf tools: Do not zero sample_id_all for group members
 
-Vishal Verma (2):
-      acpi/nfit, x86/mce: Handle only uncorrectable machine checks
-      acpi/nfit, x86/mce: Validate a MCE's address before using it
+Martin Schwidefsky (1):
+      compiler: remove __no_sanitize_address_or_inline again
 
-Yi Wang (1):
-      x86/hyper-v: Fix indentation in hv_do_fast_hypercall16()
+Thomas Richter (1):
+      perf stat: Handle different PMU names with common prefix
+
+Will Deacon (1):
+      tools headers barrier: Fix arm64 tools build failure wrt smp_load_{acquire,release}
 
 
- Documentation/x86/x86_64/mm.txt         | 34 ++++++-------
- Documentation/x86/zero-page.txt         |  2 +-
- arch/x86/Kconfig                        |  1 -
- arch/x86/Makefile                       |  4 +-
- arch/x86/include/asm/mce.h              |  2 +
- arch/x86/include/asm/mshyperv.h         |  2 +-
- arch/x86/include/asm/page_64_types.h    | 12 +++--
- arch/x86/include/asm/pgtable_64_types.h |  4 +-
- arch/x86/kernel/cpu/mcheck/mce.c        |  6 ++-
- arch/x86/kernel/cpu/mshyperv.c          | 11 +++++
- arch/x86/kernel/cpu/vmware.c            |  2 +-
- arch/x86/kernel/ldt.c                   | 59 ++++++++++++++---------
- arch/x86/kernel/vsmp_64.c               | 84 +++------------------------------
- arch/x86/xen/mmu_pv.c                   |  6 +--
- drivers/acpi/nfit/mce.c                 |  8 +++-
- drivers/clocksource/i8253.c             | 14 +++++-
- include/linux/i8253.h                   |  1 +
- 17 files changed, 114 insertions(+), 138 deletions(-)
+ arch/s390/include/asm/processor.h                  |   4 +-
+ include/linux/compiler-gcc.h                       |  12 -
+ include/linux/compiler.h                           |   2 +-
+ tools/arch/arm64/include/asm/barrier.h             | 133 +++---
+ tools/perf/Documentation/perf-list.txt             |   1 -
+ tools/perf/Makefile.perf                           |   2 +-
+ tools/perf/builtin-record.c                        |   7 +-
+ tools/perf/builtin-stat.c                          |  28 +-
+ tools/perf/builtin-top.c                           |   3 +
+ tools/perf/builtin-trace.c                         |  34 +-
+ tools/perf/examples/bpf/augmented_raw_syscalls.c   | 131 ++++++
+ tools/perf/jvmti/jvmti_agent.c                     |  49 +-
+ tools/perf/scripts/python/exported-sql-viewer.py   | 493 ++++++++++++++++++++-
+ tools/perf/tests/attr/test-record-group-sampling   |   1 -
+ tools/perf/util/evlist.c                           |  27 ++
+ tools/perf/util/evlist.h                           |   3 +
+ tools/perf/util/evsel.c                            |   1 -
+ .../perf/util/intel-pt-decoder/intel-pt-decoder.c  |   4 +
+ tools/perf/util/intel-pt-decoder/intel-pt-log.c    |   5 +
+ tools/perf/util/intel-pt-decoder/intel-pt-log.h    |   1 +
+ tools/perf/util/intel-pt.c                         |  16 +-
+ tools/perf/util/pmu.c                              |   2 +-
+ 22 files changed, 823 insertions(+), 136 deletions(-)
+ create mode 100644 tools/perf/examples/bpf/augmented_raw_syscalls.c
 
-diff --git a/Documentation/x86/x86_64/mm.txt b/Documentation/x86/x86_64/mm.txt
-index 73aaaa3da436..804f9426ed17 100644
---- a/Documentation/x86/x86_64/mm.txt
-+++ b/Documentation/x86/x86_64/mm.txt
-@@ -34,23 +34,24 @@ __________________|____________|__________________|_________|___________________
- ____________________________________________________________|___________________________________________________________
-                   |            |                  |         |
-  ffff800000000000 | -128    TB | ffff87ffffffffff |    8 TB | ... guard hole, also reserved for hypervisor
-- ffff880000000000 | -120    TB | ffffc7ffffffffff |   64 TB | direct mapping of all physical memory (page_offset_base)
-- ffffc80000000000 |  -56    TB | ffffc8ffffffffff |    1 TB | ... unused hole
-+ ffff880000000000 | -120    TB | ffff887fffffffff |  0.5 TB | LDT remap for PTI
-+ ffff888000000000 | -119.5  TB | ffffc87fffffffff |   64 TB | direct mapping of all physical memory (page_offset_base)
-+ ffffc88000000000 |  -55.5  TB | ffffc8ffffffffff |  0.5 TB | ... unused hole
-  ffffc90000000000 |  -55    TB | ffffe8ffffffffff |   32 TB | vmalloc/ioremap space (vmalloc_base)
-  ffffe90000000000 |  -23    TB | ffffe9ffffffffff |    1 TB | ... unused hole
-  ffffea0000000000 |  -22    TB | ffffeaffffffffff |    1 TB | virtual memory map (vmemmap_base)
-  ffffeb0000000000 |  -21    TB | ffffebffffffffff |    1 TB | ... unused hole
-  ffffec0000000000 |  -20    TB | fffffbffffffffff |   16 TB | KASAN shadow memory
-- fffffc0000000000 |   -4    TB | fffffdffffffffff |    2 TB | ... unused hole
--                  |            |                  |         | vaddr_end for KASLR
-- fffffe0000000000 |   -2    TB | fffffe7fffffffff |  0.5 TB | cpu_entry_area mapping
-- fffffe8000000000 |   -1.5  TB | fffffeffffffffff |  0.5 TB | LDT remap for PTI
-- ffffff0000000000 |   -1    TB | ffffff7fffffffff |  0.5 TB | %esp fixup stacks
- __________________|____________|__________________|_________|____________________________________________________________
-                                                             |
--                                                            | Identical layout to the 47-bit one from here on:
-+                                                            | Identical layout to the 56-bit one from here on:
- ____________________________________________________________|____________________________________________________________
-                   |            |                  |         |
-+ fffffc0000000000 |   -4    TB | fffffdffffffffff |    2 TB | ... unused hole
-+                  |            |                  |         | vaddr_end for KASLR
-+ fffffe0000000000 |   -2    TB | fffffe7fffffffff |  0.5 TB | cpu_entry_area mapping
-+ fffffe8000000000 |   -1.5  TB | fffffeffffffffff |  0.5 TB | ... unused hole
-+ ffffff0000000000 |   -1    TB | ffffff7fffffffff |  0.5 TB | %esp fixup stacks
-  ffffff8000000000 | -512    GB | ffffffeeffffffff |  444 GB | ... unused hole
-  ffffffef00000000 |  -68    GB | fffffffeffffffff |   64 GB | EFI region mapping space
-  ffffffff00000000 |   -4    GB | ffffffff7fffffff |    2 GB | ... unused hole
-@@ -83,7 +84,7 @@ Notes:
- __________________|____________|__________________|_________|___________________________________________________________
-                   |            |                  |         |
-  0000800000000000 |  +64    PB | ffff7fffffffffff | ~16K PB | ... huge, still almost 64 bits wide hole of non-canonical
--                  |            |                  |         |     virtual memory addresses up to the -128 TB
-+                  |            |                  |         |     virtual memory addresses up to the -64 PB
-                   |            |                  |         |     starting offset of kernel mappings.
- __________________|____________|__________________|_________|___________________________________________________________
-                                                             |
-@@ -91,23 +92,24 @@ __________________|____________|__________________|_________|___________________
- ____________________________________________________________|___________________________________________________________
-                   |            |                  |         |
-  ff00000000000000 |  -64    PB | ff0fffffffffffff |    4 PB | ... guard hole, also reserved for hypervisor
-- ff10000000000000 |  -60    PB | ff8fffffffffffff |   32 PB | direct mapping of all physical memory (page_offset_base)
-- ff90000000000000 |  -28    PB | ff9fffffffffffff |    4 PB | LDT remap for PTI
-+ ff10000000000000 |  -60    PB | ff10ffffffffffff | 0.25 PB | LDT remap for PTI
-+ ff11000000000000 |  -59.75 PB | ff90ffffffffffff |   32 PB | direct mapping of all physical memory (page_offset_base)
-+ ff91000000000000 |  -27.75 PB | ff9fffffffffffff | 3.75 PB | ... unused hole
-  ffa0000000000000 |  -24    PB | ffd1ffffffffffff | 12.5 PB | vmalloc/ioremap space (vmalloc_base)
-  ffd2000000000000 |  -11.5  PB | ffd3ffffffffffff |  0.5 PB | ... unused hole
-  ffd4000000000000 |  -11    PB | ffd5ffffffffffff |  0.5 PB | virtual memory map (vmemmap_base)
-  ffd6000000000000 |  -10.5  PB | ffdeffffffffffff | 2.25 PB | ... unused hole
-  ffdf000000000000 |   -8.25 PB | fffffdffffffffff |   ~8 PB | KASAN shadow memory
-- fffffc0000000000 |   -4    TB | fffffdffffffffff |    2 TB | ... unused hole
--                  |            |                  |         | vaddr_end for KASLR
-- fffffe0000000000 |   -2    TB | fffffe7fffffffff |  0.5 TB | cpu_entry_area mapping
-- fffffe8000000000 |   -1.5  TB | fffffeffffffffff |  0.5 TB | ... unused hole
-- ffffff0000000000 |   -1    TB | ffffff7fffffffff |  0.5 TB | %esp fixup stacks
- __________________|____________|__________________|_________|____________________________________________________________
-                                                             |
-                                                             | Identical layout to the 47-bit one from here on:
- ____________________________________________________________|____________________________________________________________
-                   |            |                  |         |
-+ fffffc0000000000 |   -4    TB | fffffdffffffffff |    2 TB | ... unused hole
-+                  |            |                  |         | vaddr_end for KASLR
-+ fffffe0000000000 |   -2    TB | fffffe7fffffffff |  0.5 TB | cpu_entry_area mapping
-+ fffffe8000000000 |   -1.5  TB | fffffeffffffffff |  0.5 TB | ... unused hole
-+ ffffff0000000000 |   -1    TB | ffffff7fffffffff |  0.5 TB | %esp fixup stacks
-  ffffff8000000000 | -512    GB | ffffffeeffffffff |  444 GB | ... unused hole
-  ffffffef00000000 |  -68    GB | fffffffeffffffff |   64 GB | EFI region mapping space
-  ffffffff00000000 |   -4    GB | ffffffff7fffffff |    2 GB | ... unused hole
-diff --git a/Documentation/x86/zero-page.txt b/Documentation/x86/zero-page.txt
-index 97b7adbceda4..68aed077f7b6 100644
---- a/Documentation/x86/zero-page.txt
-+++ b/Documentation/x86/zero-page.txt
-@@ -25,7 +25,7 @@ Offset	Proto	Name		Meaning
- 0C8/004	ALL	ext_cmd_line_ptr  cmd_line_ptr high 32bits
- 140/080	ALL	edid_info	Video mode setup (struct edid_info)
- 1C0/020	ALL	efi_info	EFI 32 information (struct efi_info)
--1E0/004	ALL	alk_mem_k	Alternative mem check, in KB
-+1E0/004	ALL	alt_mem_k	Alternative mem check, in KB
- 1E4/004	ALL	scratch		Scratch field for the kernel setup code
- 1E8/001	ALL	e820_entries	Number of entries in e820_table (below)
- 1E9/001	ALL	eddbuf_entries	Number of entries in eddbuf (below)
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index ba7e3464ee92..9d734f3c8234 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -525,7 +525,6 @@ config X86_VSMP
- 	bool "ScaleMP vSMP"
- 	select HYPERVISOR_GUEST
- 	select PARAVIRT
--	select PARAVIRT_XXL
- 	depends on X86_64 && PCI
- 	depends on X86_EXTENDED_PLATFORM
- 	depends on SMP
-diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-index 5b562e464009..88398fdf8129 100644
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -213,8 +213,6 @@ ifdef CONFIG_X86_64
- KBUILD_LDFLAGS += $(call ld-option, -z max-page-size=0x200000)
- endif
+diff --git a/arch/s390/include/asm/processor.h b/arch/s390/include/asm/processor.h
+index 302795c47c06..81038ab357ce 100644
+--- a/arch/s390/include/asm/processor.h
++++ b/arch/s390/include/asm/processor.h
+@@ -236,7 +236,7 @@ static inline unsigned long current_stack_pointer(void)
+ 	return sp;
+ }
  
--# Speed up the build
--KBUILD_CFLAGS += -pipe
- # Workaround for a gcc prelease that unfortunately was shipped in a suse release
- KBUILD_CFLAGS += -Wno-sign-compare
- #
-@@ -239,7 +237,7 @@ archheaders:
- archmacros:
- 	$(Q)$(MAKE) $(build)=arch/x86/kernel arch/x86/kernel/macros.s
+-static __no_sanitize_address_or_inline unsigned short stap(void)
++static __no_kasan_or_inline unsigned short stap(void)
+ {
+ 	unsigned short cpu_address;
  
--ASM_MACRO_FLAGS = -Wa,arch/x86/kernel/macros.s -Wa,-
-+ASM_MACRO_FLAGS = -Wa,arch/x86/kernel/macros.s
- export ASM_MACRO_FLAGS
- KBUILD_CFLAGS += $(ASM_MACRO_FLAGS)
- 
-diff --git a/arch/x86/include/asm/mce.h b/arch/x86/include/asm/mce.h
-index 4da9b1c58d28..c1a812bd5a27 100644
---- a/arch/x86/include/asm/mce.h
-+++ b/arch/x86/include/asm/mce.h
-@@ -221,6 +221,8 @@ static inline void mce_hygon_feature_init(struct cpuinfo_x86 *c) { return mce_am
- 
- int mce_available(struct cpuinfo_x86 *c);
- bool mce_is_memory_error(struct mce *m);
-+bool mce_is_correctable(struct mce *m);
-+int mce_usable_address(struct mce *m);
- 
- DECLARE_PER_CPU(unsigned, mce_exception_count);
- DECLARE_PER_CPU(unsigned, mce_poll_count);
-diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
-index 0d6271cce198..1d0a7778e163 100644
---- a/arch/x86/include/asm/mshyperv.h
-+++ b/arch/x86/include/asm/mshyperv.h
-@@ -232,7 +232,7 @@ static inline u64 hv_do_fast_hypercall16(u16 code, u64 input1, u64 input2)
- 				      : "cc");
- 	}
+@@ -330,7 +330,7 @@ static inline void __load_psw(psw_t psw)
+  * Set PSW mask to specified value, while leaving the
+  * PSW addr pointing to the next instruction.
+  */
+-static __no_sanitize_address_or_inline void __load_psw_mask(unsigned long mask)
++static __no_kasan_or_inline void __load_psw_mask(unsigned long mask)
+ {
+ 	unsigned long addr;
+ 	psw_t psw;
+diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
+index c0f5db3a9621..2010493e1040 100644
+--- a/include/linux/compiler-gcc.h
++++ b/include/linux/compiler-gcc.h
+@@ -143,18 +143,6 @@
+ #define KASAN_ABI_VERSION 3
  #endif
--		return hv_status;
-+	return hv_status;
- }
  
- /*
-diff --git a/arch/x86/include/asm/page_64_types.h b/arch/x86/include/asm/page_64_types.h
-index cd0cf1c568b4..8f657286d599 100644
---- a/arch/x86/include/asm/page_64_types.h
-+++ b/arch/x86/include/asm/page_64_types.h
-@@ -33,12 +33,14 @@
- 
- /*
-  * Set __PAGE_OFFSET to the most negative possible address +
-- * PGDIR_SIZE*16 (pgd slot 272).  The gap is to allow a space for a
-- * hypervisor to fit.  Choosing 16 slots here is arbitrary, but it's
-- * what Xen requires.
-+ * PGDIR_SIZE*17 (pgd slot 273).
-+ *
-+ * The gap is to allow a space for LDT remap for PTI (1 pgd slot) and space for
-+ * a hypervisor (16 slots). Choosing 16 slots for a hypervisor is arbitrary,
-+ * but it's what Xen requires.
-  */
--#define __PAGE_OFFSET_BASE_L5	_AC(0xff10000000000000, UL)
--#define __PAGE_OFFSET_BASE_L4	_AC(0xffff880000000000, UL)
-+#define __PAGE_OFFSET_BASE_L5	_AC(0xff11000000000000, UL)
-+#define __PAGE_OFFSET_BASE_L4	_AC(0xffff888000000000, UL)
- 
- #ifdef CONFIG_DYNAMIC_MEMORY_LAYOUT
- #define __PAGE_OFFSET           page_offset_base
-diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
-index 04edd2d58211..84bd9bdc1987 100644
---- a/arch/x86/include/asm/pgtable_64_types.h
-+++ b/arch/x86/include/asm/pgtable_64_types.h
-@@ -111,9 +111,7 @@ extern unsigned int ptrs_per_p4d;
-  */
- #define MAXMEM			(1UL << MAX_PHYSMEM_BITS)
- 
--#define LDT_PGD_ENTRY_L4	-3UL
--#define LDT_PGD_ENTRY_L5	-112UL
--#define LDT_PGD_ENTRY		(pgtable_l5_enabled() ? LDT_PGD_ENTRY_L5 : LDT_PGD_ENTRY_L4)
-+#define LDT_PGD_ENTRY		-240UL
- #define LDT_BASE_ADDR		(LDT_PGD_ENTRY << PGDIR_SHIFT)
- #define LDT_END_ADDR		(LDT_BASE_ADDR + PGDIR_SIZE)
- 
-diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
-index 8c66d2fc8f81..36d2696c9563 100644
---- a/arch/x86/kernel/cpu/mcheck/mce.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce.c
-@@ -485,7 +485,7 @@ static void mce_report_event(struct pt_regs *regs)
-  * be somewhat complicated (e.g. segment offset would require an instruction
-  * parser). So only support physical addresses up to page granuality for now.
-  */
--static int mce_usable_address(struct mce *m)
-+int mce_usable_address(struct mce *m)
- {
- 	if (!(m->status & MCI_STATUS_ADDRV))
- 		return 0;
-@@ -505,6 +505,7 @@ static int mce_usable_address(struct mce *m)
- 
- 	return 1;
- }
-+EXPORT_SYMBOL_GPL(mce_usable_address);
- 
- bool mce_is_memory_error(struct mce *m)
- {
-@@ -534,7 +535,7 @@ bool mce_is_memory_error(struct mce *m)
- }
- EXPORT_SYMBOL_GPL(mce_is_memory_error);
- 
--static bool mce_is_correctable(struct mce *m)
-+bool mce_is_correctable(struct mce *m)
- {
- 	if (m->cpuvendor == X86_VENDOR_AMD && m->status & MCI_STATUS_DEFERRED)
- 		return false;
-@@ -547,6 +548,7 @@ static bool mce_is_correctable(struct mce *m)
- 
- 	return true;
- }
-+EXPORT_SYMBOL_GPL(mce_is_correctable);
- 
- static bool cec_add_mce(struct mce *m)
- {
-diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
-index 1c72f3819eb1..e81a2db42df7 100644
---- a/arch/x86/kernel/cpu/mshyperv.c
-+++ b/arch/x86/kernel/cpu/mshyperv.c
-@@ -20,6 +20,7 @@
- #include <linux/interrupt.h>
- #include <linux/irq.h>
- #include <linux/kexec.h>
-+#include <linux/i8253.h>
- #include <asm/processor.h>
- #include <asm/hypervisor.h>
- #include <asm/hyperv-tlfs.h>
-@@ -295,6 +296,16 @@ static void __init ms_hyperv_init_platform(void)
- 	if (efi_enabled(EFI_BOOT))
- 		x86_platform.get_nmi_reason = hv_get_nmi_reason;
- 
-+	/*
-+	 * Hyper-V VMs have a PIT emulation quirk such that zeroing the
-+	 * counter register during PIT shutdown restarts the PIT. So it
-+	 * continues to interrupt @18.2 HZ. Setting i8253_clear_counter
-+	 * to false tells pit_shutdown() not to zero the counter so that
-+	 * the PIT really is shutdown. Generation 2 VMs don't have a PIT,
-+	 * and setting this value has no effect.
-+	 */
-+	i8253_clear_counter_on_shutdown = false;
-+
- #if IS_ENABLED(CONFIG_HYPERV)
- 	/*
- 	 * Setup the hook to get control post apic initialization.
-diff --git a/arch/x86/kernel/cpu/vmware.c b/arch/x86/kernel/cpu/vmware.c
-index d9ab49bed8af..0eda91f8eeac 100644
---- a/arch/x86/kernel/cpu/vmware.c
-+++ b/arch/x86/kernel/cpu/vmware.c
-@@ -77,7 +77,7 @@ static __init int setup_vmw_sched_clock(char *s)
- }
- early_param("no-vmw-sched-clock", setup_vmw_sched_clock);
- 
--static unsigned long long vmware_sched_clock(void)
-+static unsigned long long notrace vmware_sched_clock(void)
- {
- 	unsigned long long ns;
- 
-diff --git a/arch/x86/kernel/ldt.c b/arch/x86/kernel/ldt.c
-index ab18e0884dc6..6135ae8ce036 100644
---- a/arch/x86/kernel/ldt.c
-+++ b/arch/x86/kernel/ldt.c
-@@ -199,14 +199,6 @@ static void sanity_check_ldt_mapping(struct mm_struct *mm)
- /*
-  * If PTI is enabled, this maps the LDT into the kernelmode and
-  * usermode tables for the given mm.
-- *
-- * There is no corresponding unmap function.  Even if the LDT is freed, we
-- * leave the PTEs around until the slot is reused or the mm is destroyed.
-- * This is harmless: the LDT is always in ordinary memory, and no one will
-- * access the freed slot.
-- *
-- * If we wanted to unmap freed LDTs, we'd also need to do a flush to make
-- * it useful, and the flush would slow down modify_ldt().
-  */
- static int
- map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
-@@ -214,8 +206,7 @@ map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
- 	unsigned long va;
- 	bool is_vmalloc;
- 	spinlock_t *ptl;
--	pgd_t *pgd;
--	int i;
-+	int i, nr_pages;
- 
- 	if (!static_cpu_has(X86_FEATURE_PTI))
- 		return 0;
-@@ -229,16 +220,11 @@ map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
- 	/* Check if the current mappings are sane */
- 	sanity_check_ldt_mapping(mm);
- 
--	/*
--	 * Did we already have the top level entry allocated?  We can't
--	 * use pgd_none() for this because it doens't do anything on
--	 * 4-level page table kernels.
--	 */
--	pgd = pgd_offset(mm, LDT_BASE_ADDR);
--
- 	is_vmalloc = is_vmalloc_addr(ldt->entries);
- 
--	for (i = 0; i * PAGE_SIZE < ldt->nr_entries * LDT_ENTRY_SIZE; i++) {
-+	nr_pages = DIV_ROUND_UP(ldt->nr_entries * LDT_ENTRY_SIZE, PAGE_SIZE);
-+
-+	for (i = 0; i < nr_pages; i++) {
- 		unsigned long offset = i << PAGE_SHIFT;
- 		const void *src = (char *)ldt->entries + offset;
- 		unsigned long pfn;
-@@ -272,13 +258,39 @@ map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
- 	/* Propagate LDT mapping to the user page-table */
- 	map_ldt_struct_to_user(mm);
- 
--	va = (unsigned long)ldt_slot_va(slot);
--	flush_tlb_mm_range(mm, va, va + LDT_SLOT_STRIDE, PAGE_SHIFT, false);
--
- 	ldt->slot = slot;
- 	return 0;
- }
- 
-+static void unmap_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt)
-+{
-+	unsigned long va;
-+	int i, nr_pages;
-+
-+	if (!ldt)
-+		return;
-+
-+	/* LDT map/unmap is only required for PTI */
-+	if (!static_cpu_has(X86_FEATURE_PTI))
-+		return;
-+
-+	nr_pages = DIV_ROUND_UP(ldt->nr_entries * LDT_ENTRY_SIZE, PAGE_SIZE);
-+
-+	for (i = 0; i < nr_pages; i++) {
-+		unsigned long offset = i << PAGE_SHIFT;
-+		spinlock_t *ptl;
-+		pte_t *ptep;
-+
-+		va = (unsigned long)ldt_slot_va(ldt->slot) + offset;
-+		ptep = get_locked_pte(mm, va, &ptl);
-+		pte_clear(mm, va, ptep);
-+		pte_unmap_unlock(ptep, ptl);
-+	}
-+
-+	va = (unsigned long)ldt_slot_va(ldt->slot);
-+	flush_tlb_mm_range(mm, va, va + nr_pages * PAGE_SIZE, PAGE_SHIFT, false);
-+}
-+
- #else /* !CONFIG_PAGE_TABLE_ISOLATION */
- 
- static int
-@@ -286,6 +298,10 @@ map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
- {
- 	return 0;
- }
-+
-+static void unmap_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt)
-+{
-+}
- #endif /* CONFIG_PAGE_TABLE_ISOLATION */
- 
- static void free_ldt_pgtables(struct mm_struct *mm)
-@@ -524,6 +540,7 @@ static int write_ldt(void __user *ptr, unsigned long bytecount, int oldmode)
- 	}
- 
- 	install_ldt(mm, new_ldt);
-+	unmap_ldt_struct(mm, old_ldt);
- 	free_ldt_struct(old_ldt);
- 	error = 0;
- 
-diff --git a/arch/x86/kernel/vsmp_64.c b/arch/x86/kernel/vsmp_64.c
-index 1eae5af491c2..891a75dbc131 100644
---- a/arch/x86/kernel/vsmp_64.c
-+++ b/arch/x86/kernel/vsmp_64.c
-@@ -26,65 +26,8 @@
- 
- #define TOPOLOGY_REGISTER_OFFSET 0x10
- 
--#if defined CONFIG_PCI && defined CONFIG_PARAVIRT_XXL
 -/*
-- * Interrupt control on vSMPowered systems:
-- * ~AC is a shadow of IF.  If IF is 'on' AC should be 'off'
-- * and vice versa.
+- * Because __no_sanitize_address conflicts with inlining:
+- *   https://gcc.gnu.org/bugzilla/show_bug.cgi?id=67368
+- * we do one or the other. 
 - */
--
--asmlinkage __visible unsigned long vsmp_save_fl(void)
--{
--	unsigned long flags = native_save_fl();
--
--	if (!(flags & X86_EFLAGS_IF) || (flags & X86_EFLAGS_AC))
--		flags &= ~X86_EFLAGS_IF;
--	return flags;
--}
--PV_CALLEE_SAVE_REGS_THUNK(vsmp_save_fl);
--
--__visible void vsmp_restore_fl(unsigned long flags)
--{
--	if (flags & X86_EFLAGS_IF)
--		flags &= ~X86_EFLAGS_AC;
--	else
--		flags |= X86_EFLAGS_AC;
--	native_restore_fl(flags);
--}
--PV_CALLEE_SAVE_REGS_THUNK(vsmp_restore_fl);
--
--asmlinkage __visible void vsmp_irq_disable(void)
--{
--	unsigned long flags = native_save_fl();
--
--	native_restore_fl((flags & ~X86_EFLAGS_IF) | X86_EFLAGS_AC);
--}
--PV_CALLEE_SAVE_REGS_THUNK(vsmp_irq_disable);
--
--asmlinkage __visible void vsmp_irq_enable(void)
--{
--	unsigned long flags = native_save_fl();
--
--	native_restore_fl((flags | X86_EFLAGS_IF) & (~X86_EFLAGS_AC));
--}
--PV_CALLEE_SAVE_REGS_THUNK(vsmp_irq_enable);
--
--static unsigned __init vsmp_patch(u8 type, void *ibuf,
--				  unsigned long addr, unsigned len)
--{
--	switch (type) {
--	case PARAVIRT_PATCH(irq.irq_enable):
--	case PARAVIRT_PATCH(irq.irq_disable):
--	case PARAVIRT_PATCH(irq.save_fl):
--	case PARAVIRT_PATCH(irq.restore_fl):
--		return paravirt_patch_default(type, ibuf, addr, len);
--	default:
--		return native_patch(type, ibuf, addr, len);
--	}
--
--}
--
--static void __init set_vsmp_pv_ops(void)
-+#ifdef CONFIG_PCI
-+static void __init set_vsmp_ctl(void)
- {
- 	void __iomem *address;
- 	unsigned int cap, ctl, cfg;
-@@ -109,28 +52,12 @@ static void __init set_vsmp_pv_ops(void)
- 	}
- #endif
- 
--	if (cap & ctl & (1 << 4)) {
--		/* Setup irq ops and turn on vSMP  IRQ fastpath handling */
--		pv_ops.irq.irq_disable = PV_CALLEE_SAVE(vsmp_irq_disable);
--		pv_ops.irq.irq_enable = PV_CALLEE_SAVE(vsmp_irq_enable);
--		pv_ops.irq.save_fl = PV_CALLEE_SAVE(vsmp_save_fl);
--		pv_ops.irq.restore_fl = PV_CALLEE_SAVE(vsmp_restore_fl);
--		pv_ops.init.patch = vsmp_patch;
--		ctl &= ~(1 << 4);
--	}
- 	writel(ctl, address + 4);
- 	ctl = readl(address + 4);
- 	pr_info("vSMP CTL: control set to:0x%08x\n", ctl);
- 
- 	early_iounmap(address, 8);
- }
+-#ifdef CONFIG_KASAN
+-#define __no_sanitize_address_or_inline					\
+-	__no_sanitize_address __maybe_unused notrace
 -#else
--static void __init set_vsmp_pv_ops(void)
--{
--}
+-#define __no_sanitize_address_or_inline inline
 -#endif
 -
--#ifdef CONFIG_PCI
- static int is_vsmp = -1;
- 
- static void __init detect_vsmp_box(void)
-@@ -164,11 +91,14 @@ static int is_vsmp_box(void)
- {
- 	return 0;
- }
-+static void __init set_vsmp_ctl(void)
-+{
-+}
+ #if GCC_VERSION >= 50100
+ #define COMPILER_HAS_GENERIC_BUILTIN_OVERFLOW 1
  #endif
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index 18c80cfa4fc4..06396c1cf127 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -189,7 +189,7 @@ void __read_once_size(const volatile void *p, void *res, int size)
+  * 	https://gcc.gnu.org/bugzilla/show_bug.cgi?id=67368
+  * '__maybe_unused' allows us to avoid defined-but-not-used warnings.
+  */
+-# define __no_kasan_or_inline __no_sanitize_address __maybe_unused
++# define __no_kasan_or_inline __no_sanitize_address notrace __maybe_unused
+ #else
+ # define __no_kasan_or_inline __always_inline
+ #endif
+diff --git a/tools/arch/arm64/include/asm/barrier.h b/tools/arch/arm64/include/asm/barrier.h
+index 12835ea0e417..378c051fa177 100644
+--- a/tools/arch/arm64/include/asm/barrier.h
++++ b/tools/arch/arm64/include/asm/barrier.h
+@@ -14,74 +14,75 @@
+ #define wmb()		asm volatile("dmb ishst" ::: "memory")
+ #define rmb()		asm volatile("dmb ishld" ::: "memory")
  
- static void __init vsmp_cap_cpus(void)
- {
--#if !defined(CONFIG_X86_VSMP) && defined(CONFIG_SMP)
-+#if !defined(CONFIG_X86_VSMP) && defined(CONFIG_SMP) && defined(CONFIG_PCI)
- 	void __iomem *address;
- 	unsigned int cfg, topology, node_shift, maxcpus;
+-#define smp_store_release(p, v)					\
+-do {								\
+-	union { typeof(*p) __val; char __c[1]; } __u =		\
+-		{ .__val = (__force typeof(*p)) (v) }; 		\
+-								\
+-	switch (sizeof(*p)) {					\
+-	case 1:							\
+-		asm volatile ("stlrb %w1, %0"			\
+-				: "=Q" (*p)			\
+-				: "r" (*(__u8 *)__u.__c)	\
+-				: "memory");			\
+-		break;						\
+-	case 2:							\
+-		asm volatile ("stlrh %w1, %0"			\
+-				: "=Q" (*p)			\
+-				: "r" (*(__u16 *)__u.__c)	\
+-				: "memory");			\
+-		break;						\
+-	case 4:							\
+-		asm volatile ("stlr %w1, %0"			\
+-				: "=Q" (*p)			\
+-				: "r" (*(__u32 *)__u.__c)	\
+-				: "memory");			\
+-		break;						\
+-	case 8:							\
+-		asm volatile ("stlr %1, %0"			\
+-				: "=Q" (*p)			\
+-				: "r" (*(__u64 *)__u.__c)	\
+-				: "memory");			\
+-		break;						\
+-	default:						\
+-		/* Only to shut up gcc ... */			\
+-		mb();						\
+-		break;						\
+-	}							\
++#define smp_store_release(p, v)						\
++do {									\
++	union { typeof(*p) __val; char __c[1]; } __u =			\
++		{ .__val = (v) }; 					\
++									\
++	switch (sizeof(*p)) {						\
++	case 1:								\
++		asm volatile ("stlrb %w1, %0"				\
++				: "=Q" (*p)				\
++				: "r" (*(__u8_alias_t *)__u.__c)	\
++				: "memory");				\
++		break;							\
++	case 2:								\
++		asm volatile ("stlrh %w1, %0"				\
++				: "=Q" (*p)				\
++				: "r" (*(__u16_alias_t *)__u.__c)	\
++				: "memory");				\
++		break;							\
++	case 4:								\
++		asm volatile ("stlr %w1, %0"				\
++				: "=Q" (*p)				\
++				: "r" (*(__u32_alias_t *)__u.__c)	\
++				: "memory");				\
++		break;							\
++	case 8:								\
++		asm volatile ("stlr %1, %0"				\
++				: "=Q" (*p)				\
++				: "r" (*(__u64_alias_t *)__u.__c)	\
++				: "memory");				\
++		break;							\
++	default:							\
++		/* Only to shut up gcc ... */				\
++		mb();							\
++		break;							\
++	}								\
+ } while (0)
  
-@@ -221,6 +151,6 @@ void __init vsmp_init(void)
+-#define smp_load_acquire(p)					\
+-({								\
+-	union { typeof(*p) __val; char __c[1]; } __u;		\
+-								\
+-	switch (sizeof(*p)) {					\
+-	case 1:							\
+-		asm volatile ("ldarb %w0, %1"			\
+-			: "=r" (*(__u8 *)__u.__c)		\
+-			: "Q" (*p) : "memory");			\
+-		break;						\
+-	case 2:							\
+-		asm volatile ("ldarh %w0, %1"			\
+-			: "=r" (*(__u16 *)__u.__c)		\
+-			: "Q" (*p) : "memory");			\
+-		break;						\
+-	case 4:							\
+-		asm volatile ("ldar %w0, %1"			\
+-			: "=r" (*(__u32 *)__u.__c)		\
+-			: "Q" (*p) : "memory");			\
+-		break;						\
+-	case 8:							\
+-		asm volatile ("ldar %0, %1"			\
+-			: "=r" (*(__u64 *)__u.__c)		\
+-			: "Q" (*p) : "memory");			\
+-		break;						\
+-	default:						\
+-		/* Only to shut up gcc ... */			\
+-		mb();						\
+-		break;						\
+-	}							\
+-	__u.__val;						\
++#define smp_load_acquire(p)						\
++({									\
++	union { typeof(*p) __val; char __c[1]; } __u =			\
++		{ .__c = { 0 } };					\
++									\
++	switch (sizeof(*p)) {						\
++	case 1:								\
++		asm volatile ("ldarb %w0, %1"				\
++			: "=r" (*(__u8_alias_t *)__u.__c)		\
++			: "Q" (*p) : "memory");				\
++		break;							\
++	case 2:								\
++		asm volatile ("ldarh %w0, %1"				\
++			: "=r" (*(__u16_alias_t *)__u.__c)		\
++			: "Q" (*p) : "memory");				\
++		break;							\
++	case 4:								\
++		asm volatile ("ldar %w0, %1"				\
++			: "=r" (*(__u32_alias_t *)__u.__c)		\
++			: "Q" (*p) : "memory");				\
++		break;							\
++	case 8:								\
++		asm volatile ("ldar %0, %1"				\
++			: "=r" (*(__u64_alias_t *)__u.__c)		\
++			: "Q" (*p) : "memory");				\
++		break;							\
++	default:							\
++		/* Only to shut up gcc ... */				\
++		mb();							\
++		break;							\
++	}								\
++	__u.__val;							\
+ })
  
- 	vsmp_cap_cpus();
+ #endif /* _TOOLS_LINUX_ASM_AARCH64_BARRIER_H */
+diff --git a/tools/perf/Documentation/perf-list.txt b/tools/perf/Documentation/perf-list.txt
+index 236b9b97dfdb..667c14e56031 100644
+--- a/tools/perf/Documentation/perf-list.txt
++++ b/tools/perf/Documentation/perf-list.txt
+@@ -55,7 +55,6 @@ counted. The following modifiers exist:
+  S - read sample value (PERF_SAMPLE_READ)
+  D - pin the event to the PMU
+  W - group is weak and will fallback to non-group if not schedulable,
+-     only supported in 'perf stat' for now.
  
--	set_vsmp_pv_ops();
-+	set_vsmp_ctl();
- 	return;
+ The 'p' modifier can be used for specifying how precise the instruction
+ address should be. The 'p' modifier can be specified multiple times:
+diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+index 3ccb4f0bf088..d95655489f7e 100644
+--- a/tools/perf/Makefile.perf
++++ b/tools/perf/Makefile.perf
+@@ -387,7 +387,7 @@ SHELL = $(SHELL_PATH)
+ 
+ linux_uapi_dir := $(srctree)/tools/include/uapi/linux
+ asm_generic_uapi_dir := $(srctree)/tools/include/uapi/asm-generic
+-arch_asm_uapi_dir := $(srctree)/tools/arch/$(ARCH)/include/uapi/asm/
++arch_asm_uapi_dir := $(srctree)/tools/arch/$(SRCARCH)/include/uapi/asm/
+ 
+ beauty_outdir := $(OUTPUT)trace/beauty/generated
+ beauty_ioctl_outdir := $(beauty_outdir)/ioctl
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index 10cf889c6d75..488779bc4c8d 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -391,7 +391,12 @@ static int record__open(struct record *rec)
+ 					ui__warning("%s\n", msg);
+ 				goto try_again;
+ 			}
+-
++			if ((errno == EINVAL || errno == EBADF) &&
++			    pos->leader != pos &&
++			    pos->weak_group) {
++			        pos = perf_evlist__reset_weak_group(evlist, pos);
++				goto try_again;
++			}
+ 			rc = -errno;
+ 			perf_evsel__open_strerror(pos, &opts->target,
+ 						  errno, msg, sizeof(msg));
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index d1028d7755bb..a635abfa77b6 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -383,32 +383,6 @@ static bool perf_evsel__should_store_id(struct perf_evsel *counter)
+ 	return STAT_RECORD || counter->attr.read_format & PERF_FORMAT_ID;
  }
-diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
-index 0d7b3ae4960b..a5d7ed125337 100644
---- a/arch/x86/xen/mmu_pv.c
-+++ b/arch/x86/xen/mmu_pv.c
-@@ -1905,7 +1905,7 @@ void __init xen_setup_kernel_pagetable(pgd_t *pgd, unsigned long max_pfn)
- 	init_top_pgt[0] = __pgd(0);
  
- 	/* Pre-constructed entries are in pfn, so convert to mfn */
--	/* L4[272] -> level3_ident_pgt  */
-+	/* L4[273] -> level3_ident_pgt  */
- 	/* L4[511] -> level3_kernel_pgt */
- 	convert_pfn_mfn(init_top_pgt);
+-static struct perf_evsel *perf_evsel__reset_weak_group(struct perf_evsel *evsel)
+-{
+-	struct perf_evsel *c2, *leader;
+-	bool is_open = true;
+-
+-	leader = evsel->leader;
+-	pr_debug("Weak group for %s/%d failed\n",
+-			leader->name, leader->nr_members);
+-
+-	/*
+-	 * for_each_group_member doesn't work here because it doesn't
+-	 * include the first entry.
+-	 */
+-	evlist__for_each_entry(evsel_list, c2) {
+-		if (c2 == evsel)
+-			is_open = false;
+-		if (c2->leader == leader) {
+-			if (is_open)
+-				perf_evsel__close(c2);
+-			c2->leader = c2;
+-			c2->nr_members = 0;
+-		}
+-	}
+-	return leader;
+-}
+-
+ static bool is_target_alive(struct target *_target,
+ 			    struct thread_map *threads)
+ {
+@@ -477,7 +451,7 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+ 			if ((errno == EINVAL || errno == EBADF) &&
+ 			    counter->leader != counter &&
+ 			    counter->weak_group) {
+-				counter = perf_evsel__reset_weak_group(counter);
++				counter = perf_evlist__reset_weak_group(evsel_list, counter);
+ 				goto try_again;
+ 			}
  
-@@ -1925,8 +1925,8 @@ void __init xen_setup_kernel_pagetable(pgd_t *pgd, unsigned long max_pfn)
- 	addr[0] = (unsigned long)pgd;
- 	addr[1] = (unsigned long)l3;
- 	addr[2] = (unsigned long)l2;
--	/* Graft it onto L4[272][0]. Note that we creating an aliasing problem:
--	 * Both L4[272][0] and L4[511][510] have entries that point to the same
-+	/* Graft it onto L4[273][0]. Note that we creating an aliasing problem:
-+	 * Both L4[273][0] and L4[511][510] have entries that point to the same
- 	 * L2 (PMD) tables. Meaning that if you modify it in __va space
- 	 * it will be also modified in the __ka space! (But if you just
- 	 * modify the PMD table to point to other PTE's or none, then you
-diff --git a/drivers/acpi/nfit/mce.c b/drivers/acpi/nfit/mce.c
-index e9626bf6ca29..d6c1b10f6c25 100644
---- a/drivers/acpi/nfit/mce.c
-+++ b/drivers/acpi/nfit/mce.c
-@@ -25,8 +25,12 @@ static int nfit_handle_mce(struct notifier_block *nb, unsigned long val,
- 	struct acpi_nfit_desc *acpi_desc;
- 	struct nfit_spa *nfit_spa;
+diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+index b2838de13de0..aa0c73e57924 100644
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -1429,6 +1429,9 @@ int cmd_top(int argc, const char **argv)
+ 		}
+ 	}
  
--	/* We only care about memory errors */
--	if (!mce_is_memory_error(mce))
-+	/* We only care about uncorrectable memory errors */
-+	if (!mce_is_memory_error(mce) || mce_is_correctable(mce))
-+		return NOTIFY_DONE;
++	if (opts->branch_stack && callchain_param.enabled)
++		symbol_conf.show_branchflag_count = true;
 +
-+	/* Verify the address reported in the MCE is valid. */
-+	if (!mce_usable_address(mce))
- 		return NOTIFY_DONE;
+ 	sort__mode = SORT_MODE__TOP;
+ 	/* display thread wants entries to be collapsed in a different tree */
+ 	perf_hpp_list.need_collapse = 1;
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index dc8a6c4986ce..835619476370 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -108,6 +108,7 @@ struct trace {
+ 	} stats;
+ 	unsigned int		max_stack;
+ 	unsigned int		min_stack;
++	bool			raw_augmented_syscalls;
+ 	bool			not_ev_qualifier;
+ 	bool			live;
+ 	bool			full_time;
+@@ -1724,13 +1725,28 @@ static int trace__fprintf_sample(struct trace *trace, struct perf_evsel *evsel,
+ 	return printed;
+ }
+ 
+-static void *syscall__augmented_args(struct syscall *sc, struct perf_sample *sample, int *augmented_args_size)
++static void *syscall__augmented_args(struct syscall *sc, struct perf_sample *sample, int *augmented_args_size, bool raw_augmented)
+ {
+ 	void *augmented_args = NULL;
++	/*
++	 * For now with BPF raw_augmented we hook into raw_syscalls:sys_enter
++	 * and there we get all 6 syscall args plus the tracepoint common
++	 * fields (sizeof(long)) and the syscall_nr (another long). So we check
++	 * if that is the case and if so don't look after the sc->args_size,
++	 * but always after the full raw_syscalls:sys_enter payload, which is
++	 * fixed.
++	 *
++	 * We'll revisit this later to pass s->args_size to the BPF augmenter
++	 * (now tools/perf/examples/bpf/augmented_raw_syscalls.c, so that it
++	 * copies only what we need for each syscall, like what happens when we
++	 * use syscalls:sys_enter_NAME, so that we reduce the kernel/userspace
++	 * traffic to just what is needed for each syscall.
++	 */
++	int args_size = raw_augmented ? (8 * (int)sizeof(long)) : sc->args_size;
+ 
+-	*augmented_args_size = sample->raw_size - sc->args_size;
++	*augmented_args_size = sample->raw_size - args_size;
+ 	if (*augmented_args_size > 0)
+-		augmented_args = sample->raw_data + sc->args_size;
++		augmented_args = sample->raw_data + args_size;
+ 
+ 	return augmented_args;
+ }
+@@ -1780,7 +1796,7 @@ static int trace__sys_enter(struct trace *trace, struct perf_evsel *evsel,
+ 	 * here and avoid using augmented syscalls when the evsel is the raw_syscalls one.
+ 	 */
+ 	if (evsel != trace->syscalls.events.sys_enter)
+-		augmented_args = syscall__augmented_args(sc, sample, &augmented_args_size);
++		augmented_args = syscall__augmented_args(sc, sample, &augmented_args_size, trace->raw_augmented_syscalls);
+ 	ttrace->entry_time = sample->time;
+ 	msg = ttrace->entry_str;
+ 	printed += scnprintf(msg + printed, trace__entry_str_size - printed, "%s(", sc->name);
+@@ -1833,7 +1849,7 @@ static int trace__fprintf_sys_enter(struct trace *trace, struct perf_evsel *evse
+ 		goto out_put;
+ 
+ 	args = perf_evsel__sc_tp_ptr(evsel, args, sample);
+-	augmented_args = syscall__augmented_args(sc, sample, &augmented_args_size);
++	augmented_args = syscall__augmented_args(sc, sample, &augmented_args_size, trace->raw_augmented_syscalls);
+ 	syscall__scnprintf_args(sc, msg, sizeof(msg), args, augmented_args, augmented_args_size, trace, thread);
+ 	fprintf(trace->output, "%s", msg);
+ 	err = 0;
+@@ -3501,7 +3517,15 @@ int cmd_trace(int argc, const char **argv)
+ 		evsel->handler = trace__sys_enter;
+ 
+ 		evlist__for_each_entry(trace.evlist, evsel) {
++			bool raw_syscalls_sys_exit = strcmp(perf_evsel__name(evsel), "raw_syscalls:sys_exit") == 0;
++
++			if (raw_syscalls_sys_exit) {
++				trace.raw_augmented_syscalls = true;
++				goto init_augmented_syscall_tp;
++			}
++
+ 			if (strstarts(perf_evsel__name(evsel), "syscalls:sys_exit_")) {
++init_augmented_syscall_tp:
+ 				perf_evsel__init_augmented_syscall_tp(evsel);
+ 				perf_evsel__init_augmented_syscall_tp_ret(evsel);
+ 				evsel->handler = trace__sys_exit;
+diff --git a/tools/perf/examples/bpf/augmented_raw_syscalls.c b/tools/perf/examples/bpf/augmented_raw_syscalls.c
+new file mode 100644
+index 000000000000..90a19336310b
+--- /dev/null
++++ b/tools/perf/examples/bpf/augmented_raw_syscalls.c
+@@ -0,0 +1,131 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Augment the raw_syscalls tracepoints with the contents of the pointer arguments.
++ *
++ * Test it with:
++ *
++ * perf trace -e tools/perf/examples/bpf/augmented_raw_syscalls.c cat /etc/passwd > /dev/null
++ *
++ * This exactly matches what is marshalled into the raw_syscall:sys_enter
++ * payload expected by the 'perf trace' beautifiers.
++ *
++ * For now it just uses the existing tracepoint augmentation code in 'perf
++ * trace', in the next csets we'll hook up these with the sys_enter/sys_exit
++ * code that will combine entry/exit in a strace like way.
++ */
++
++#include <stdio.h>
++#include <linux/socket.h>
++
++/* bpf-output associated map */
++struct bpf_map SEC("maps") __augmented_syscalls__ = {
++	.type = BPF_MAP_TYPE_PERF_EVENT_ARRAY,
++	.key_size = sizeof(int),
++	.value_size = sizeof(u32),
++	.max_entries = __NR_CPUS__,
++};
++
++struct syscall_enter_args {
++	unsigned long long common_tp_fields;
++	long		   syscall_nr;
++	unsigned long	   args[6];
++};
++
++struct syscall_exit_args {
++	unsigned long long common_tp_fields;
++	long		   syscall_nr;
++	long		   ret;
++};
++
++struct augmented_filename {
++	unsigned int	size;
++	int		reserved;
++	char		value[256];
++};
++
++#define SYS_OPEN 2
++#define SYS_OPENAT 257
++
++SEC("raw_syscalls:sys_enter")
++int sys_enter(struct syscall_enter_args *args)
++{
++	struct {
++		struct syscall_enter_args args;
++		struct augmented_filename filename;
++	} augmented_args;
++	unsigned int len = sizeof(augmented_args);
++	const void *filename_arg = NULL;
++
++	probe_read(&augmented_args.args, sizeof(augmented_args.args), args);
++	/*
++	 * Yonghong and Edward Cree sayz:
++	 *
++	 * https://www.spinics.net/lists/netdev/msg531645.html
++	 *
++	 * >>   R0=inv(id=0) R1=inv2 R6=ctx(id=0,off=0,imm=0) R7=inv64 R10=fp0,call_-1
++	 * >> 10: (bf) r1 = r6
++	 * >> 11: (07) r1 += 16
++	 * >> 12: (05) goto pc+2
++	 * >> 15: (79) r3 = *(u64 *)(r1 +0)
++	 * >> dereference of modified ctx ptr R1 off=16 disallowed
++	 * > Aha, we at least got a different error message this time.
++	 * > And indeed llvm has done that optimisation, rather than the more obvious
++	 * > 11: r3 = *(u64 *)(r1 +16)
++	 * > because it wants to have lots of reads share a single insn.  You may be able
++	 * > to defeat that optimisation by adding compiler barriers, idk.  Maybe someone
++	 * > with llvm knowledge can figure out how to stop it (ideally, llvm would know
++	 * > when it's generating for bpf backend and not do that).  -O0?  ¯\_(ツ)_/¯
++	 *
++	 * The optimization mostly likes below:
++	 *
++	 *	br1:
++	 * 	...
++	 *	r1 += 16
++	 *	goto merge
++	 *	br2:
++	 *	...
++	 *	r1 += 20
++	 *	goto merge
++	 *	merge:
++	 *	*(u64 *)(r1 + 0)
++	 *
++	 * The compiler tries to merge common loads. There is no easy way to
++	 * stop this compiler optimization without turning off a lot of other
++	 * optimizations. The easiest way is to add barriers:
++	 *
++	 * 	 __asm__ __volatile__("": : :"memory")
++	 *
++	 * 	 after the ctx memory access to prevent their down stream merging.
++	 */
++	switch (augmented_args.args.syscall_nr) {
++	case SYS_OPEN:	 filename_arg = (const void *)args->args[0];
++			__asm__ __volatile__("": : :"memory");
++			 break;
++	case SYS_OPENAT: filename_arg = (const void *)args->args[1];
++			 break;
++	}
++
++	if (filename_arg != NULL) {
++		augmented_args.filename.reserved = 0;
++		augmented_args.filename.size = probe_read_str(&augmented_args.filename.value,
++							      sizeof(augmented_args.filename.value),
++							      filename_arg);
++		if (augmented_args.filename.size < sizeof(augmented_args.filename.value)) {
++			len -= sizeof(augmented_args.filename.value) - augmented_args.filename.size;
++			len &= sizeof(augmented_args.filename.value) - 1;
++		}
++	} else {
++		len = sizeof(augmented_args.args);
++	}
++
++	perf_event_output(args, &__augmented_syscalls__, BPF_F_CURRENT_CPU, &augmented_args, len);
++	return 0;
++}
++
++SEC("raw_syscalls:sys_exit")
++int sys_exit(struct syscall_exit_args *args)
++{
++	return 1; /* 0 as soon as we start copying data returned by the kernel, e.g. 'read' */
++}
++
++license(GPL);
+diff --git a/tools/perf/jvmti/jvmti_agent.c b/tools/perf/jvmti/jvmti_agent.c
+index ac1bcdc17dae..f7eb63cbbc65 100644
+--- a/tools/perf/jvmti/jvmti_agent.c
++++ b/tools/perf/jvmti/jvmti_agent.c
+@@ -125,7 +125,7 @@ perf_get_timestamp(void)
+ }
+ 
+ static int
+-debug_cache_init(void)
++create_jit_cache_dir(void)
+ {
+ 	char str[32];
+ 	char *base, *p;
+@@ -144,8 +144,13 @@ debug_cache_init(void)
+ 
+ 	strftime(str, sizeof(str), JIT_LANG"-jit-%Y%m%d", &tm);
+ 
+-	snprintf(jit_path, PATH_MAX - 1, "%s/.debug/", base);
+-
++	ret = snprintf(jit_path, PATH_MAX, "%s/.debug/", base);
++	if (ret >= PATH_MAX) {
++		warnx("jvmti: cannot generate jit cache dir because %s/.debug/"
++			" is too long, please check the cwd, JITDUMPDIR, and"
++			" HOME variables", base);
++		return -1;
++	}
+ 	ret = mkdir(jit_path, 0755);
+ 	if (ret == -1) {
+ 		if (errno != EEXIST) {
+@@ -154,20 +159,32 @@ debug_cache_init(void)
+ 		}
+ 	}
+ 
+-	snprintf(jit_path, PATH_MAX - 1, "%s/.debug/jit", base);
++	ret = snprintf(jit_path, PATH_MAX, "%s/.debug/jit", base);
++	if (ret >= PATH_MAX) {
++		warnx("jvmti: cannot generate jit cache dir because"
++			" %s/.debug/jit is too long, please check the cwd,"
++			" JITDUMPDIR, and HOME variables", base);
++		return -1;
++	}
+ 	ret = mkdir(jit_path, 0755);
+ 	if (ret == -1) {
+ 		if (errno != EEXIST) {
+-			warn("cannot create jit cache dir %s", jit_path);
++			warn("jvmti: cannot create jit cache dir %s", jit_path);
+ 			return -1;
+ 		}
+ 	}
+ 
+-	snprintf(jit_path, PATH_MAX - 1, "%s/.debug/jit/%s.XXXXXXXX", base, str);
+-
++	ret = snprintf(jit_path, PATH_MAX, "%s/.debug/jit/%s.XXXXXXXX", base, str);
++	if (ret >= PATH_MAX) {
++		warnx("jvmti: cannot generate jit cache dir because"
++			" %s/.debug/jit/%s.XXXXXXXX is too long, please check"
++			" the cwd, JITDUMPDIR, and HOME variables",
++			base, str);
++		return -1;
++	}
+ 	p = mkdtemp(jit_path);
+ 	if (p != jit_path) {
+-		warn("cannot create jit cache dir %s", jit_path);
++		warn("jvmti: cannot create jit cache dir %s", jit_path);
+ 		return -1;
+ 	}
+ 
+@@ -228,7 +245,7 @@ void *jvmti_open(void)
+ {
+ 	char dump_path[PATH_MAX];
+ 	struct jitheader header;
+-	int fd;
++	int fd, ret;
+ 	FILE *fp;
+ 
+ 	init_arch_timestamp();
+@@ -245,12 +262,22 @@ void *jvmti_open(void)
+ 
+ 	memset(&header, 0, sizeof(header));
+ 
+-	debug_cache_init();
++	/*
++	 * jitdump file dir
++	 */
++	if (create_jit_cache_dir() < 0)
++		return NULL;
  
  	/*
-diff --git a/drivers/clocksource/i8253.c b/drivers/clocksource/i8253.c
-index 9c38895542f4..d4350bb10b83 100644
---- a/drivers/clocksource/i8253.c
-+++ b/drivers/clocksource/i8253.c
-@@ -20,6 +20,13 @@
- DEFINE_RAW_SPINLOCK(i8253_lock);
- EXPORT_SYMBOL(i8253_lock);
- 
-+/*
-+ * Handle PIT quirk in pit_shutdown() where zeroing the counter register
-+ * restarts the PIT, negating the shutdown. On platforms with the quirk,
-+ * platform specific code can set this to false.
-+ */
-+bool i8253_clear_counter_on_shutdown __ro_after_init = true;
-+
- #ifdef CONFIG_CLKSRC_I8253
- /*
-  * Since the PIT overflows every tick, its not very useful
-@@ -109,8 +116,11 @@ static int pit_shutdown(struct clock_event_device *evt)
- 	raw_spin_lock(&i8253_lock);
- 
- 	outb_p(0x30, PIT_MODE);
--	outb_p(0, PIT_CH0);
--	outb_p(0, PIT_CH0);
-+
-+	if (i8253_clear_counter_on_shutdown) {
-+		outb_p(0, PIT_CH0);
-+		outb_p(0, PIT_CH0);
+ 	 * jitdump file name
+ 	 */
+-	scnprintf(dump_path, PATH_MAX, "%s/jit-%i.dump", jit_path, getpid());
++	ret = snprintf(dump_path, PATH_MAX, "%s/jit-%i.dump", jit_path, getpid());
++	if (ret >= PATH_MAX) {
++		warnx("jvmti: cannot generate jitdump file full path because"
++			" %s/jit-%i.dump is too long, please check the cwd,"
++			" JITDUMPDIR, and HOME variables", jit_path, getpid());
++		return NULL;
 +	}
  
- 	raw_spin_unlock(&i8253_lock);
- 	return 0;
-diff --git a/include/linux/i8253.h b/include/linux/i8253.h
-index e6bb36a97519..8336b2f6f834 100644
---- a/include/linux/i8253.h
-+++ b/include/linux/i8253.h
-@@ -21,6 +21,7 @@
- #define PIT_LATCH	((PIT_TICK_RATE + HZ/2) / HZ)
+ 	fd = open(dump_path, O_CREAT|O_TRUNC|O_RDWR, 0666);
+ 	if (fd == -1)
+diff --git a/tools/perf/scripts/python/exported-sql-viewer.py b/tools/perf/scripts/python/exported-sql-viewer.py
+index 24cb0bd56afa..f278ce5ebab7 100755
+--- a/tools/perf/scripts/python/exported-sql-viewer.py
++++ b/tools/perf/scripts/python/exported-sql-viewer.py
+@@ -119,6 +119,14 @@ def dsoname(name):
+ 		return "[kernel]"
+ 	return name
  
- extern raw_spinlock_t i8253_lock;
-+extern bool i8253_clear_counter_on_shutdown;
- extern struct clock_event_device i8253_clockevent;
- extern void clockevent_i8253_init(bool oneshot);
++def findnth(s, sub, n, offs=0):
++	pos = s.find(sub)
++	if pos < 0:
++		return pos
++	if n <= 1:
++		return offs + pos
++	return findnth(s[pos + 1:], sub, n - 1, offs + pos + 1)
++
+ # Percent to one decimal place
+ 
+ def PercentToOneDP(n, d):
+@@ -1464,6 +1472,317 @@ class BranchWindow(QMdiSubWindow):
+ 		else:
+ 			self.find_bar.NotFound()
+ 
++# Dialog data item converted and validated using a SQL table
++
++class SQLTableDialogDataItem():
++
++	def __init__(self, glb, label, placeholder_text, table_name, match_column, column_name1, column_name2, parent):
++		self.glb = glb
++		self.label = label
++		self.placeholder_text = placeholder_text
++		self.table_name = table_name
++		self.match_column = match_column
++		self.column_name1 = column_name1
++		self.column_name2 = column_name2
++		self.parent = parent
++
++		self.value = ""
++
++		self.widget = QLineEdit()
++		self.widget.editingFinished.connect(self.Validate)
++		self.widget.textChanged.connect(self.Invalidate)
++		self.red = False
++		self.error = ""
++		self.validated = True
++
++		self.last_id = 0
++		self.first_time = 0
++		self.last_time = 2 ** 64
++		if self.table_name == "<timeranges>":
++			query = QSqlQuery(self.glb.db)
++			QueryExec(query, "SELECT id, time FROM samples ORDER BY id DESC LIMIT 1")
++			if query.next():
++				self.last_id = int(query.value(0))
++				self.last_time = int(query.value(1))
++			QueryExec(query, "SELECT time FROM samples WHERE time != 0 ORDER BY id LIMIT 1")
++			if query.next():
++				self.first_time = int(query.value(0))
++			if placeholder_text:
++				placeholder_text += ", between " + str(self.first_time) + " and " + str(self.last_time)
++
++		if placeholder_text:
++			self.widget.setPlaceholderText(placeholder_text)
++
++	def ValueToIds(self, value):
++		ids = []
++		query = QSqlQuery(self.glb.db)
++		stmt = "SELECT id FROM " + self.table_name + " WHERE " + self.match_column + " = '" + value + "'"
++		ret = query.exec_(stmt)
++		if ret:
++			while query.next():
++				ids.append(str(query.value(0)))
++		return ids
++
++	def IdBetween(self, query, lower_id, higher_id, order):
++		QueryExec(query, "SELECT id FROM samples WHERE id > " + str(lower_id) + " AND id < " + str(higher_id) + " ORDER BY id " + order + " LIMIT 1")
++		if query.next():
++			return True, int(query.value(0))
++		else:
++			return False, 0
++
++	def BinarySearchTime(self, lower_id, higher_id, target_time, get_floor):
++		query = QSqlQuery(self.glb.db)
++		while True:
++			next_id = int((lower_id + higher_id) / 2)
++			QueryExec(query, "SELECT time FROM samples WHERE id = " + str(next_id))
++			if not query.next():
++				ok, dbid = self.IdBetween(query, lower_id, next_id, "DESC")
++				if not ok:
++					ok, dbid = self.IdBetween(query, next_id, higher_id, "")
++					if not ok:
++						return str(higher_id)
++				next_id = dbid
++				QueryExec(query, "SELECT time FROM samples WHERE id = " + str(next_id))
++			next_time = int(query.value(0))
++			if get_floor:
++				if target_time > next_time:
++					lower_id = next_id
++				else:
++					higher_id = next_id
++				if higher_id <= lower_id + 1:
++					return str(higher_id)
++			else:
++				if target_time >= next_time:
++					lower_id = next_id
++				else:
++					higher_id = next_id
++				if higher_id <= lower_id + 1:
++					return str(lower_id)
++
++	def ConvertRelativeTime(self, val):
++		print "val ", val
++		mult = 1
++		suffix = val[-2:]
++		if suffix == "ms":
++			mult = 1000000
++		elif suffix == "us":
++			mult = 1000
++		elif suffix == "ns":
++			mult = 1
++		else:
++			return val
++		val = val[:-2].strip()
++		if not self.IsNumber(val):
++			return val
++		val = int(val) * mult
++		if val >= 0:
++			val += self.first_time
++		else:
++			val += self.last_time
++		return str(val)
++
++	def ConvertTimeRange(self, vrange):
++		print "vrange ", vrange
++		if vrange[0] == "":
++			vrange[0] = str(self.first_time)
++		if vrange[1] == "":
++			vrange[1] = str(self.last_time)
++		vrange[0] = self.ConvertRelativeTime(vrange[0])
++		vrange[1] = self.ConvertRelativeTime(vrange[1])
++		print "vrange2 ", vrange
++		if not self.IsNumber(vrange[0]) or not self.IsNumber(vrange[1]):
++			return False
++		print "ok1"
++		beg_range = max(int(vrange[0]), self.first_time)
++		end_range = min(int(vrange[1]), self.last_time)
++		if beg_range > self.last_time or end_range < self.first_time:
++			return False
++		print "ok2"
++		vrange[0] = self.BinarySearchTime(0, self.last_id, beg_range, True)
++		vrange[1] = self.BinarySearchTime(1, self.last_id + 1, end_range, False)
++		print "vrange3 ", vrange
++		return True
++
++	def AddTimeRange(self, value, ranges):
++		print "value ", value
++		n = value.count("-")
++		if n == 1:
++			pass
++		elif n == 2:
++			if value.split("-")[1].strip() == "":
++				n = 1
++		elif n == 3:
++			n = 2
++		else:
++			return False
++		pos = findnth(value, "-", n)
++		vrange = [value[:pos].strip() ,value[pos+1:].strip()]
++		if self.ConvertTimeRange(vrange):
++			ranges.append(vrange)
++			return True
++		return False
++
++	def InvalidValue(self, value):
++		self.value = ""
++		palette = QPalette()
++		palette.setColor(QPalette.Text,Qt.red)
++		self.widget.setPalette(palette)
++		self.red = True
++		self.error = self.label + " invalid value '" + value + "'"
++		self.parent.ShowMessage(self.error)
++
++	def IsNumber(self, value):
++		try:
++			x = int(value)
++		except:
++			x = 0
++		return str(x) == value
++
++	def Invalidate(self):
++		self.validated = False
++
++	def Validate(self):
++		input_string = self.widget.text()
++		self.validated = True
++		if self.red:
++			palette = QPalette()
++			self.widget.setPalette(palette)
++			self.red = False
++		if not len(input_string.strip()):
++			self.error = ""
++			self.value = ""
++			return
++		if self.table_name == "<timeranges>":
++			ranges = []
++			for value in [x.strip() for x in input_string.split(",")]:
++				if not self.AddTimeRange(value, ranges):
++					return self.InvalidValue(value)
++			ranges = [("(" + self.column_name1 + " >= " + r[0] + " AND " + self.column_name1 + " <= " + r[1] + ")") for r in ranges]
++			self.value = " OR ".join(ranges)
++		elif self.table_name == "<ranges>":
++			singles = []
++			ranges = []
++			for value in [x.strip() for x in input_string.split(",")]:
++				if "-" in value:
++					vrange = value.split("-")
++					if len(vrange) != 2 or not self.IsNumber(vrange[0]) or not self.IsNumber(vrange[1]):
++						return self.InvalidValue(value)
++					ranges.append(vrange)
++				else:
++					if not self.IsNumber(value):
++						return self.InvalidValue(value)
++					singles.append(value)
++			ranges = [("(" + self.column_name1 + " >= " + r[0] + " AND " + self.column_name1 + " <= " + r[1] + ")") for r in ranges]
++			if len(singles):
++				ranges.append(self.column_name1 + " IN (" + ",".join(singles) + ")")
++			self.value = " OR ".join(ranges)
++		elif self.table_name:
++			all_ids = []
++			for value in [x.strip() for x in input_string.split(",")]:
++				ids = self.ValueToIds(value)
++				if len(ids):
++					all_ids.extend(ids)
++				else:
++					return self.InvalidValue(value)
++			self.value = self.column_name1 + " IN (" + ",".join(all_ids) + ")"
++			if self.column_name2:
++				self.value = "( " + self.value + " OR " + self.column_name2 + " IN (" + ",".join(all_ids) + ") )"
++		else:
++			self.value = input_string.strip()
++		self.error = ""
++		self.parent.ClearMessage()
++
++	def IsValid(self):
++		if not self.validated:
++			self.Validate()
++		if len(self.error):
++			self.parent.ShowMessage(self.error)
++			return False
++		return True
++
++# Selected branch report creation dialog
++
++class SelectedBranchDialog(QDialog):
++
++	def __init__(self, glb, parent=None):
++		super(SelectedBranchDialog, self).__init__(parent)
++
++		self.glb = glb
++
++		self.name = ""
++		self.where_clause = ""
++
++		self.setWindowTitle("Selected Branches")
++		self.setMinimumWidth(600)
++
++		items = (
++			("Report name:", "Enter a name to appear in the window title bar", "", "", "", ""),
++			("Time ranges:", "Enter time ranges", "<timeranges>", "", "samples.id", ""),
++			("CPUs:", "Enter CPUs or ranges e.g. 0,5-6", "<ranges>", "", "cpu", ""),
++			("Commands:", "Only branches with these commands will be included", "comms", "comm", "comm_id", ""),
++			("PIDs:", "Only branches with these process IDs will be included", "threads", "pid", "thread_id", ""),
++			("TIDs:", "Only branches with these thread IDs will be included", "threads", "tid", "thread_id", ""),
++			("DSOs:", "Only branches with these DSOs will be included", "dsos", "short_name", "samples.dso_id", "to_dso_id"),
++			("Symbols:", "Only branches with these symbols will be included", "symbols", "name", "symbol_id", "to_symbol_id"),
++			("Raw SQL clause: ", "Enter a raw SQL WHERE clause", "", "", "", ""),
++			)
++		self.data_items = [SQLTableDialogDataItem(glb, *x, parent=self) for x in items]
++
++		self.grid = QGridLayout()
++
++		for row in xrange(len(self.data_items)):
++			self.grid.addWidget(QLabel(self.data_items[row].label), row, 0)
++			self.grid.addWidget(self.data_items[row].widget, row, 1)
++
++		self.status = QLabel()
++
++		self.ok_button = QPushButton("Ok", self)
++		self.ok_button.setDefault(True)
++		self.ok_button.released.connect(self.Ok)
++		self.ok_button.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
++
++		self.cancel_button = QPushButton("Cancel", self)
++		self.cancel_button.released.connect(self.reject)
++		self.cancel_button.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
++
++		self.hbox = QHBoxLayout()
++		#self.hbox.addStretch()
++		self.hbox.addWidget(self.status)
++		self.hbox.addWidget(self.ok_button)
++		self.hbox.addWidget(self.cancel_button)
++
++		self.vbox = QVBoxLayout()
++		self.vbox.addLayout(self.grid)
++		self.vbox.addLayout(self.hbox)
++
++		self.setLayout(self.vbox);
++
++	def Ok(self):
++		self.name = self.data_items[0].value
++		if not self.name:
++			self.ShowMessage("Report name is required")
++			return
++		for d in self.data_items:
++			if not d.IsValid():
++				return
++		for d in self.data_items[1:]:
++			if len(d.value):
++				if len(self.where_clause):
++					self.where_clause += " AND "
++				self.where_clause += d.value
++		if len(self.where_clause):
++			self.where_clause = " AND ( " + self.where_clause + " ) "
++		else:
++			self.ShowMessage("No selection")
++			return
++		self.accept()
++
++	def ShowMessage(self, msg):
++		self.status.setText("<font color=#FF0000>" + msg)
++
++	def ClearMessage(self):
++		self.status.setText("")
++
+ # Event list
+ 
+ def GetEventList(db):
+@@ -1656,7 +1975,7 @@ class TableWindow(QMdiSubWindow, ResizeColumnsToContentsBase):
+ 	def FindDone(self, row):
+ 		self.find_bar.Idle()
+ 		if row >= 0:
+-			self.view.setCurrentIndex(self.model.index(row, 0, QModelIndex()))
++			self.view.setCurrentIndex(self.model.mapFromSource(self.data_model.index(row, 0, QModelIndex())))
+ 		else:
+ 			self.find_bar.NotFound()
+ 
+@@ -1765,6 +2084,149 @@ class WindowMenu():
+ 	def setActiveSubWindow(self, nr):
+ 		self.mdi_area.setActiveSubWindow(self.mdi_area.subWindowList()[nr - 1])
+ 
++# Help text
++
++glb_help_text = """
++<h1>Contents</h1>
++<style>
++p.c1 {
++    text-indent: 40px;
++}
++p.c2 {
++    text-indent: 80px;
++}
++}
++</style>
++<p class=c1><a href=#reports>1. Reports</a></p>
++<p class=c2><a href=#callgraph>1.1 Context-Sensitive Call Graph</a></p>
++<p class=c2><a href=#allbranches>1.2 All branches</a></p>
++<p class=c2><a href=#selectedbranches>1.3 Selected branches</a></p>
++<p class=c1><a href=#tables>2. Tables</a></p>
++<h1 id=reports>1. Reports</h1>
++<h2 id=callgraph>1.1 Context-Sensitive Call Graph</h2>
++The result is a GUI window with a tree representing a context-sensitive
++call-graph. Expanding a couple of levels of the tree and adjusting column
++widths to suit will display something like:
++<pre>
++                                         Call Graph: pt_example
++Call Path                          Object      Count   Time(ns)  Time(%)  Branch Count   Branch Count(%)
++v- ls
++    v- 2638:2638
++        v- _start                  ld-2.19.so    1     10074071   100.0         211135            100.0
++          |- unknown               unknown       1        13198     0.1              1              0.0
++          >- _dl_start             ld-2.19.so    1      1400980    13.9          19637              9.3
++          >- _d_linit_internal     ld-2.19.so    1       448152     4.4          11094              5.3
++          v-__libc_start_main@plt  ls            1      8211741    81.5         180397             85.4
++             >- _dl_fixup          ld-2.19.so    1         7607     0.1            108              0.1
++             >- __cxa_atexit       libc-2.19.so  1        11737     0.1             10              0.0
++             >- __libc_csu_init    ls            1        10354     0.1             10              0.0
++             |- _setjmp            libc-2.19.so  1            0     0.0              4              0.0
++             v- main               ls            1      8182043    99.6         180254             99.9
++</pre>
++<h3>Points to note:</h3>
++<ul>
++<li>The top level is a command name (comm)</li>
++<li>The next level is a thread (pid:tid)</li>
++<li>Subsequent levels are functions</li>
++<li>'Count' is the number of calls</li>
++<li>'Time' is the elapsed time until the function returns</li>
++<li>Percentages are relative to the level above</li>
++<li>'Branch Count' is the total number of branches for that function and all functions that it calls
++</ul>
++<h3>Find</h3>
++Ctrl-F displays a Find bar which finds function names by either an exact match or a pattern match.
++The pattern matching symbols are ? for any character and * for zero or more characters.
++<h2 id=allbranches>1.2 All branches</h2>
++The All branches report displays all branches in chronological order.
++Not all data is fetched immediately. More records can be fetched using the Fetch bar provided.
++<h3>Disassembly</h3>
++Open a branch to display disassembly. This only works if:
++<ol>
++<li>The disassembler is available. Currently, only Intel XED is supported - see <a href=#xed>Intel XED Setup</a></li>
++<li>The object code is available. Currently, only the perf build ID cache is searched for object code.
++The default directory ~/.debug can be overridden by setting environment variable PERF_BUILDID_DIR.
++One exception is kcore where the DSO long name is used (refer dsos_view on the Tables menu),
++or alternatively, set environment variable PERF_KCORE to the kcore file name.</li>
++</ol>
++<h4 id=xed>Intel XED Setup</h4>
++To use Intel XED, libxed.so must be present.  To build and install libxed.so:
++<pre>
++git clone https://github.com/intelxed/mbuild.git mbuild
++git clone https://github.com/intelxed/xed
++cd xed
++./mfile.py --share
++sudo ./mfile.py --prefix=/usr/local install
++sudo ldconfig
++</pre>
++<h3>Find</h3>
++Ctrl-F displays a Find bar which finds substrings by either an exact match or a regular expression match.
++Refer to Python documentation for the regular expression syntax.
++All columns are searched, but only currently fetched rows are searched.
++<h2 id=selectedbranches>1.3 Selected branches</h2>
++This is the same as the <a href=#allbranches>All branches</a> report but with the data reduced
++by various selection criteria. A dialog box displays available criteria which are AND'ed together.
++<h3>1.3.1 Time ranges</h3>
++The time ranges hint text shows the total time range. Relative time ranges can also be entered in
++ms, us or ns. Also, negative values are relative to the end of trace.  Examples:
++<pre>
++	81073085947329-81073085958238	From 81073085947329 to 81073085958238
++	100us-200us		From 100us to 200us
++	10ms-			From 10ms to the end
++	-100ns			The first 100ns
++	-10ms-			The last 10ms
++</pre>
++N.B. Due to the granularity of timestamps, there could be no branches in any given time range.
++<h1 id=tables>2. Tables</h1>
++The Tables menu shows all tables and views in the database. Most tables have an associated view
++which displays the information in a more friendly way. Not all data for large tables is fetched
++immediately. More records can be fetched using the Fetch bar provided. Columns can be sorted,
++but that can be slow for large tables.
++<p>There are also tables of database meta-information.
++For SQLite3 databases, the sqlite_master table is included.
++For PostgreSQL databases, information_schema.tables/views/columns are included.
++<h3>Find</h3>
++Ctrl-F displays a Find bar which finds substrings by either an exact match or a regular expression match.
++Refer to Python documentation for the regular expression syntax.
++All columns are searched, but only currently fetched rows are searched.
++<p>N.B. Results are found in id order, so if the table is re-ordered, find-next and find-previous
++will go to the next/previous result in id order, instead of display order.
++"""
++
++# Help window
++
++class HelpWindow(QMdiSubWindow):
++
++	def __init__(self, glb, parent=None):
++		super(HelpWindow, self).__init__(parent)
++
++		self.text = QTextBrowser()
++		self.text.setHtml(glb_help_text)
++		self.text.setReadOnly(True)
++		self.text.setOpenExternalLinks(True)
++
++		self.setWidget(self.text)
++
++		AddSubWindow(glb.mainwindow.mdi_area, self, "Exported SQL Viewer Help")
++
++# Main window that only displays the help text
++
++class HelpOnlyWindow(QMainWindow):
++
++	def __init__(self, parent=None):
++		super(HelpOnlyWindow, self).__init__(parent)
++
++		self.setMinimumSize(200, 100)
++		self.resize(800, 600)
++		self.setWindowTitle("Exported SQL Viewer Help")
++		self.setWindowIcon(self.style().standardIcon(QStyle.SP_MessageBoxInformation))
++
++		self.text = QTextBrowser()
++		self.text.setHtml(glb_help_text)
++		self.text.setReadOnly(True)
++		self.text.setOpenExternalLinks(True)
++
++		self.setCentralWidget(self.text)
++
+ # Font resize
+ 
+ def ResizeFont(widget, diff):
+@@ -1851,6 +2313,9 @@ class MainWindow(QMainWindow):
+ 
+ 		self.window_menu = WindowMenu(self.mdi_area, menu)
+ 
++		help_menu = menu.addMenu("&Help")
++		help_menu.addAction(CreateAction("&Exported SQL Viewer Help", "Helpful information", self.Help, self, QKeySequence.HelpContents))
++
+ 	def Find(self):
+ 		win = self.mdi_area.activeSubWindow()
+ 		if win:
+@@ -1888,6 +2353,8 @@ class MainWindow(QMainWindow):
+ 			if event == "branches":
+ 				label = "All branches" if branches_events == 1 else "All branches " + "(id=" + dbid + ")"
+ 				reports_menu.addAction(CreateAction(label, "Create a new window displaying branch events", lambda x=dbid: self.NewBranchView(x), self))
++				label = "Selected branches" if branches_events == 1 else "Selected branches " + "(id=" + dbid + ")"
++				reports_menu.addAction(CreateAction(label, "Create a new window displaying branch events", lambda x=dbid: self.NewSelectedBranchView(x), self))
+ 
+ 	def TableMenu(self, tables, menu):
+ 		table_menu = menu.addMenu("&Tables")
+@@ -1900,9 +2367,18 @@ class MainWindow(QMainWindow):
+ 	def NewBranchView(self, event_id):
+ 		BranchWindow(self.glb, event_id, "", "", self)
+ 
++	def NewSelectedBranchView(self, event_id):
++		dialog = SelectedBranchDialog(self.glb, self)
++		ret = dialog.exec_()
++		if ret:
++			BranchWindow(self.glb, event_id, dialog.name, dialog.where_clause, self)
++
+ 	def NewTableView(self, table_name):
+ 		TableWindow(self.glb, table_name, self)
+ 
++	def Help(self):
++		HelpWindow(self.glb, self)
++
+ # XED Disassembler
+ 
+ class xed_state_t(Structure):
+@@ -1929,7 +2405,12 @@ class XEDInstruction():
+ class LibXED():
+ 
+ 	def __init__(self):
+-		self.libxed = CDLL("libxed.so")
++		try:
++			self.libxed = CDLL("libxed.so")
++		except:
++			self.libxed = None
++		if not self.libxed:
++			self.libxed = CDLL("/usr/local/lib/libxed.so")
+ 
+ 		self.xed_tables_init = self.libxed.xed_tables_init
+ 		self.xed_tables_init.restype = None
+@@ -2097,10 +2578,16 @@ class DBRef():
+ 
+ def Main():
+ 	if (len(sys.argv) < 2):
+-		print >> sys.stderr, "Usage is: exported-sql-viewer.py <database name>"
++		print >> sys.stderr, "Usage is: exported-sql-viewer.py {<database name> | --help-only}"
+ 		raise Exception("Too few arguments")
+ 
+ 	dbname = sys.argv[1]
++	if dbname == "--help-only":
++		app = QApplication(sys.argv)
++		mainwindow = HelpOnlyWindow()
++		mainwindow.show()
++		err = app.exec_()
++		sys.exit(err)
+ 
+ 	is_sqlite3 = False
+ 	try:
+diff --git a/tools/perf/tests/attr/test-record-group-sampling b/tools/perf/tests/attr/test-record-group-sampling
+index 8a33ca4f9e1f..f0729c454f16 100644
+--- a/tools/perf/tests/attr/test-record-group-sampling
++++ b/tools/perf/tests/attr/test-record-group-sampling
+@@ -37,4 +37,3 @@ sample_freq=0
+ sample_period=0
+ freq=0
+ write_backward=0
+-sample_id_all=0
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index e88e6f9b1463..668d2a9ef0f4 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -1810,3 +1810,30 @@ void perf_evlist__force_leader(struct perf_evlist *evlist)
+ 		leader->forced_leader = true;
+ 	}
+ }
++
++struct perf_evsel *perf_evlist__reset_weak_group(struct perf_evlist *evsel_list,
++						 struct perf_evsel *evsel)
++{
++	struct perf_evsel *c2, *leader;
++	bool is_open = true;
++
++	leader = evsel->leader;
++	pr_debug("Weak group for %s/%d failed\n",
++			leader->name, leader->nr_members);
++
++	/*
++	 * for_each_group_member doesn't work here because it doesn't
++	 * include the first entry.
++	 */
++	evlist__for_each_entry(evsel_list, c2) {
++		if (c2 == evsel)
++			is_open = false;
++		if (c2->leader == leader) {
++			if (is_open)
++				perf_evsel__close(c2);
++			c2->leader = c2;
++			c2->nr_members = 0;
++		}
++	}
++	return leader;
++}
+diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
+index dc66436add98..9919eed6d15b 100644
+--- a/tools/perf/util/evlist.h
++++ b/tools/perf/util/evlist.h
+@@ -312,4 +312,7 @@ bool perf_evlist__exclude_kernel(struct perf_evlist *evlist);
+ 
+ void perf_evlist__force_leader(struct perf_evlist *evlist);
+ 
++struct perf_evsel *perf_evlist__reset_weak_group(struct perf_evlist *evlist,
++						 struct perf_evsel *evsel);
++
+ #endif /* __PERF_EVLIST_H */
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index 6d187059a373..d37bb1566cd9 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -956,7 +956,6 @@ void perf_evsel__config(struct perf_evsel *evsel, struct record_opts *opts,
+ 		attr->sample_freq    = 0;
+ 		attr->sample_period  = 0;
+ 		attr->write_backward = 0;
+-		attr->sample_id_all  = 0;
+ 	}
+ 
+ 	if (opts->no_samples)
+diff --git a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
+index 58f6a9ceb590..4503f3ca45ab 100644
+--- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
++++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
+@@ -1474,6 +1474,8 @@ static void intel_pt_calc_mtc_timestamp(struct intel_pt_decoder *decoder)
+ 		decoder->have_calc_cyc_to_tsc = false;
+ 		intel_pt_calc_cyc_to_tsc(decoder, true);
+ 	}
++
++	intel_pt_log_to("Setting timestamp", decoder->timestamp);
+ }
+ 
+ static void intel_pt_calc_cbr(struct intel_pt_decoder *decoder)
+@@ -1514,6 +1516,8 @@ static void intel_pt_calc_cyc_timestamp(struct intel_pt_decoder *decoder)
+ 		decoder->timestamp = timestamp;
+ 
+ 	decoder->timestamp_insn_cnt = 0;
++
++	intel_pt_log_to("Setting timestamp", decoder->timestamp);
+ }
+ 
+ /* Walk PSB+ packets when already in sync. */
+diff --git a/tools/perf/util/intel-pt-decoder/intel-pt-log.c b/tools/perf/util/intel-pt-decoder/intel-pt-log.c
+index e02bc7b166a0..5e64da270f97 100644
+--- a/tools/perf/util/intel-pt-decoder/intel-pt-log.c
++++ b/tools/perf/util/intel-pt-decoder/intel-pt-log.c
+@@ -31,6 +31,11 @@ static FILE *f;
+ static char log_name[MAX_LOG_NAME];
+ bool intel_pt_enable_logging;
+ 
++void *intel_pt_log_fp(void)
++{
++	return f;
++}
++
+ void intel_pt_log_enable(void)
+ {
+ 	intel_pt_enable_logging = true;
+diff --git a/tools/perf/util/intel-pt-decoder/intel-pt-log.h b/tools/perf/util/intel-pt-decoder/intel-pt-log.h
+index 45b64f93f358..cc084937f701 100644
+--- a/tools/perf/util/intel-pt-decoder/intel-pt-log.h
++++ b/tools/perf/util/intel-pt-decoder/intel-pt-log.h
+@@ -22,6 +22,7 @@
+ 
+ struct intel_pt_pkt;
+ 
++void *intel_pt_log_fp(void);
+ void intel_pt_log_enable(void);
+ void intel_pt_log_disable(void);
+ void intel_pt_log_set_name(const char *name);
+diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
+index 86cc9a64e982..149ff361ca78 100644
+--- a/tools/perf/util/intel-pt.c
++++ b/tools/perf/util/intel-pt.c
+@@ -206,6 +206,16 @@ static void intel_pt_dump_event(struct intel_pt *pt, unsigned char *buf,
+ 	intel_pt_dump(pt, buf, len);
+ }
+ 
++static void intel_pt_log_event(union perf_event *event)
++{
++	FILE *f = intel_pt_log_fp();
++
++	if (!intel_pt_enable_logging || !f)
++		return;
++
++	perf_event__fprintf(event, f);
++}
++
+ static int intel_pt_do_fix_overlap(struct intel_pt *pt, struct auxtrace_buffer *a,
+ 				   struct auxtrace_buffer *b)
+ {
+@@ -2010,9 +2020,9 @@ static int intel_pt_process_event(struct perf_session *session,
+ 		 event->header.type == PERF_RECORD_SWITCH_CPU_WIDE)
+ 		err = intel_pt_context_switch(pt, event, sample);
+ 
+-	intel_pt_log("event %s (%u): cpu %d time %"PRIu64" tsc %#"PRIx64"\n",
+-		     perf_event__name(event->header.type), event->header.type,
+-		     sample->cpu, sample->time, timestamp);
++	intel_pt_log("event %u: cpu %d time %"PRIu64" tsc %#"PRIx64" ",
++		     event->header.type, sample->cpu, sample->time, timestamp);
++	intel_pt_log_event(event);
+ 
+ 	return err;
+ }
+diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+index 7799788f662f..7e49baad304d 100644
+--- a/tools/perf/util/pmu.c
++++ b/tools/perf/util/pmu.c
+@@ -773,7 +773,7 @@ static void pmu_add_cpu_aliases(struct list_head *head, struct perf_pmu *pmu)
+ 
+ 		if (!is_arm_pmu_core(name)) {
+ 			pname = pe->pmu ? pe->pmu : "cpu";
+-			if (strncmp(pname, name, strlen(pname)))
++			if (strcmp(pname, name))
+ 				continue;
+ 		}
  
 
