@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93817C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:51:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C424C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:51:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50EDB214E0
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:51:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08265214E0
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:51:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="L+LZMWgC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50EDB214E0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dTr9dRUt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08265214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391038AbeKLIld (ORCPT
+        id S2404169AbeKLIXG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:41:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54772 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404155AbeKLIXG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:23:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54672 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404047AbeKLIXF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:23:05 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 389012154B;
-        Sun, 11 Nov 2018 22:33:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 357B521582;
+        Sun, 11 Nov 2018 22:33:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975589;
-        bh=JwIiKnLRpEx4aGZGAR5RlAekbppAhgbr+9rG0Ui5cFU=;
+        s=default; t=1541975588;
+        bh=/EPWfoYsszQ8SpP8mmrSf7ynesryXKHQ+feuK5bbDPs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L+LZMWgCJ3w5qxTi2pZGdIAk/Bno7QvQ7QSowjqh32ABiSc0BelkOxXvTr6Z0Li42
-         /Qw5t9/9SeMOpgZLtHbjNgfb574W92H5rCCVJsxN/2SDaiX43qsZFtlm8ULMtM6/r8
-         Idtq5CoinrInve80AtANxIPdvLoLTg+ux46ecRTQ=
+        b=dTr9dRUt6+rzMryizj/g0orjyR9xWIUpv8Lj5y+keB9EBx+OqOqgePgskrZ0aiTb5
+         y21suPfEr2KVPdHV1s4FGmYvW2fyC65DUkBjSdZ+Tw+SbcuH88vrUwM6bZAv5t2lkV
+         WkNeVZGguBBF0vT5zx0r1dgrFF451g8q8oQVH24Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xu Wen <wen.xu@gatech.edu>,
-        Qu Wenruo <wqu@suse.com>, David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 198/222] btrfs: locking: Add extra check in btrfs_init_new_buffer() to avoid deadlock
-Date:   Sun, 11 Nov 2018 14:24:55 -0800
-Message-Id: <20181111221704.495904534@linuxfoundation.org>
+        stable@vger.kernel.org, Breno Leitao <leitao@debian.org>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.14 195/222] selftests/powerpc: Fix ptrace tm failure
+Date:   Sun, 11 Nov 2018 14:24:52 -0800
+Message-Id: <20181111221704.257267154@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -62,130 +63,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Qu Wenruo <wqu@suse.com>
+From: Breno Leitao <leitao@debian.org>
 
-commit b72c3aba09a53fc7c1824250d71180ca154517a7 upstream.
+commit 48dc0ef19044bfb69193302fbe3a834e3331b7ae upstream.
 
-[BUG]
-For certain crafted image, whose csum root leaf has missing backref, if
-we try to trigger write with data csum, it could cause deadlock with the
-following kernel WARN_ON():
+Test ptrace-tm-spd-gpr fails on current kernel (4.19) due to a segmentation
+fault that happens on the child process prior to setting cptr[2] = 1. This
+causes the parent process to wait forever at 'while (!pptr[2])' and the test to
+be killed by the test harness framework by timeout, thus, failing.
 
-  WARNING: CPU: 1 PID: 41 at fs/btrfs/locking.c:230 btrfs_tree_lock+0x3e2/0x400
-  CPU: 1 PID: 41 Comm: kworker/u4:1 Not tainted 4.18.0-rc1+ #8
-  Workqueue: btrfs-endio-write btrfs_endio_write_helper
-  RIP: 0010:btrfs_tree_lock+0x3e2/0x400
-  Call Trace:
-   btrfs_alloc_tree_block+0x39f/0x770
-   __btrfs_cow_block+0x285/0x9e0
-   btrfs_cow_block+0x191/0x2e0
-   btrfs_search_slot+0x492/0x1160
-   btrfs_lookup_csum+0xec/0x280
-   btrfs_csum_file_blocks+0x2be/0xa60
-   add_pending_csums+0xaf/0xf0
-   btrfs_finish_ordered_io+0x74b/0xc90
-   finish_ordered_fn+0x15/0x20
-   normal_work_helper+0xf6/0x500
-   btrfs_endio_write_helper+0x12/0x20
-   process_one_work+0x302/0x770
-   worker_thread+0x81/0x6d0
-   kthread+0x180/0x1d0
-   ret_from_fork+0x35/0x40
+The segmentation fault happens because of a inline assembly being
+generated as:
 
-[CAUSE]
-That crafted image has missing backref for csum tree root leaf.  And
-when we try to allocate new tree block, since there is no
-EXTENT/METADATA_ITEM for csum tree root, btrfs consider it's free slot
-and use it.
+	0x10000355c <tm_spd_gpr+492>    lfs    f0, 0(0)
 
-The extent tree of the image looks like:
+This is reading memory position 0x0 and causing the segmentation fault.
 
-  Normal image                      |       This fuzzed image
-  ----------------------------------+--------------------------------
-  BG 29360128                       | BG 29360128
-   One empty slot                   |  One empty slot
-  29364224: backref to UUID tree    | 29364224: backref to UUID tree
-   Two empty slots                  |  Two empty slots
-  29376512: backref to CSUM tree    |  One empty slot (bad type) <<<
-  29380608: backref to D_RELOC tree | 29380608: backref to D_RELOC tree
-  ...                               | ...
+This code is being generated by ASM_LOAD_FPR_SINGLE_PRECISION(flt_4), where
+flt_4 is passed to the inline assembly block as:
 
-Since bytenr 29376512 has no METADATA/EXTENT_ITEM, when btrfs try to
-alloc tree block, it's an valid slot for btrfs.
+	[flt_4] "r" (&d)
 
-And for finish_ordered_write, when we need to insert csum, we try to CoW
-csum tree root.
+Since the inline assembly 'r' constraint means any GPR, gpr0 is being
+chosen, thus causing this issue when issuing a Load Floating-Point Single
+instruction.
 
-By accident, empty slots at bytenr BG_OFFSET, BG_OFFSET + 8K,
-BG_OFFSET + 12K is already used by tree block COW for other trees, the
-next empty slot is BG_OFFSET + 16K, which should be the backref for CSUM
-tree.
+This patch simply changes the constraint to 'b', which specify that this
+register will be used as base, and r0 is not allowed to be used, avoiding
+this issue.
 
-But due to the bad type, btrfs can recognize it and still consider it as
-an empty slot, and will try to use it for csum tree CoW.
+Other than that, removing flt_2 register from the input operands, since it
+is not used by the inline assembly code at all.
 
-Then in the following call trace, we will try to lock the new tree
-block, which turns out to be the old csum tree root which is already
-locked:
-
-btrfs_search_slot() called on csum tree root, which is at 29376512
-|- btrfs_cow_block()
-   |- btrfs_set_lock_block()
-   |  |- Now locks tree block 29376512 (old csum tree root)
-   |- __btrfs_cow_block()
-      |- btrfs_alloc_tree_block()
-         |- btrfs_reserve_extent()
-            | Now it returns tree block 29376512, which extent tree
-            | shows its empty slot, but it's already hold by csum tree
-            |- btrfs_init_new_buffer()
-               |- btrfs_tree_lock()
-                  | Triggers WARN_ON(eb->lock_owner == current->pid)
-                  |- wait_event()
-                     Wait lock owner to release the lock, but it's
-                     locked by ourself, so it will deadlock
-
-[FIX]
-This patch will do the lock_owner and current->pid check at
-btrfs_init_new_buffer().
-So above deadlock can be avoided.
-
-Since such problem can only happen in crafted image, we will still
-trigger kernel warning for later aborted transaction, but with a little
-more meaningful warning message.
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=200405
-Reported-by: Xu Wen <wen.xu@gatech.edu>
-CC: stable@vger.kernel.org # 4.4+
-Signed-off-by: Qu Wenruo <wqu@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Acked-by: Segher Boessenkool <segher@kernel.crashing.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/extent-tree.c |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ tools/testing/selftests/powerpc/ptrace/ptrace-tm-spd-gpr.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/fs/btrfs/extent-tree.c
-+++ b/fs/btrfs/extent-tree.c
-@@ -8398,6 +8398,19 @@ btrfs_init_new_buffer(struct btrfs_trans
- 	if (IS_ERR(buf))
- 		return buf;
- 
-+	/*
-+	 * Extra safety check in case the extent tree is corrupted and extent
-+	 * allocator chooses to use a tree block which is already used and
-+	 * locked.
-+	 */
-+	if (buf->lock_owner == current->pid) {
-+		btrfs_err_rl(fs_info,
-+"tree block %llu owner %llu already locked by pid=%d, extent tree corruption detected",
-+			buf->start, btrfs_header_owner(buf), current->pid);
-+		free_extent_buffer(buf);
-+		return ERR_PTR(-EUCLEAN);
-+	}
-+
- 	btrfs_set_header_generation(buf, trans->transid);
- 	btrfs_set_buffer_lockdep_class(root->root_key.objectid, buf, level);
- 	btrfs_tree_lock(buf);
+--- a/tools/testing/selftests/powerpc/ptrace/ptrace-tm-spd-gpr.c
++++ b/tools/testing/selftests/powerpc/ptrace/ptrace-tm-spd-gpr.c
+@@ -67,8 +67,8 @@ trans:
+ 		"3: ;"
+ 		: [res] "=r" (result), [texasr] "=r" (texasr)
+ 		: [gpr_1]"i"(GPR_1), [gpr_2]"i"(GPR_2), [gpr_4]"i"(GPR_4),
+-		[sprn_texasr] "i" (SPRN_TEXASR), [flt_1] "r" (&a),
+-		[flt_2] "r" (&b), [flt_4] "r" (&d)
++		[sprn_texasr] "i" (SPRN_TEXASR), [flt_1] "b" (&a),
++		[flt_4] "b" (&d)
+ 		: "memory", "r5", "r6", "r7",
+ 		"r8", "r9", "r10", "r11", "r12", "r13", "r14", "r15",
+ 		"r16", "r17", "r18", "r19", "r20", "r21", "r22", "r23",
 
 
