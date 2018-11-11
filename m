@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80C5FC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:24:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B9E5C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:24:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4189220869
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:24:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 316D82084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:24:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PPLrEfPa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4189220869
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QukuCdtC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 316D82084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389408AbeKLJOp (ORCPT
+        id S2389250AbeKLJO6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:14:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46824 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:14:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389138AbeKLIUw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:20:52 -0500
+        id S2389116AbeKLIUv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:51 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D638E223CA;
-        Sun, 11 Nov 2018 22:30:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8CF73223CA;
+        Sun, 11 Nov 2018 22:30:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975455;
-        bh=1lexSSlfRbFJguZq5DZd+hEbIfcqE04NDwjXEoF3ZhU=;
+        s=default; t=1541975453;
+        bh=bX4LD6uaZsQij4VsxEjNXdY2axteV0kM2QPD8m9kFsI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PPLrEfPaUDbaAf0/0D1xWy+0yKu0XPqDlv0F0Too7RYmAGlcgiKETKZq+NJXo5Hwt
-         qrt7U1/us34b4VlhQZSZmsQc2dld+uU9kjSjUEJgFjTUs7Tcivgd/LgFLgwoRxK0fF
-         tVcoS11QzEuhoVzQVwdtqAhsi3iPSrdMChhraeH0=
+        b=QukuCdtCLZsDaAcB3dP2IxVwqSoXiRATHirqqqffmA3kX+uIhboIhTxAxZmWqt64c
+         MUkXNaB0JZAO9GNVLPje5EzUjm5uIYNZuUzohjTgVQnf3JtvDZboBgucR4VozyunaE
+         TsWZUIafqdETm4LE7Q1ZllNPuRiAXmyONWJBSIlw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Breno Leitao <leitao@debian.org>,
-        Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 4.18 227/350] HID: hiddev: fix potential Spectre v1
-Date:   Sun, 11 Nov 2018 14:21:31 -0800
-Message-Id: <20181111221717.526203966@linuxfoundation.org>
+        stable@vger.kernel.org, Wang Shilong <wshilong@ddn.com>,
+        Theodore Tso <tytso@mit.edu>,
+        Andreas Dilger <adilger@dilger.ca>, stable@kernel.org
+Subject: [PATCH 4.18 222/350] ext4: fix setattr project check in fssetxattr ioctl
+Date:   Sun, 11 Nov 2018 14:21:26 -0800
+Message-Id: <20181111221717.309260501@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -62,76 +63,156 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Breno Leitao <leitao@debian.org>
+From: Wang Shilong <wangshilong1991@gmail.com>
 
-commit f11274396a538b31bc010f782e05c2ce3f804c13 upstream.
+commit dc7ac6c4cae3b58724c2f1e21a7c05ce19ecd5a8 upstream.
 
-uref->usage_index can be indirectly controlled by userspace, hence leading
-to a potential exploitation of the Spectre variant 1 vulnerability.
+Currently, project quota could be changed by fssetxattr
+ioctl, and existed permission check inode_owner_or_capable()
+is obviously not enough, just think that common users could
+change project id of file, that could make users to
+break project quota easily.
 
-This field is used as an array index by the hiddev_ioctl_usage() function,
-when 'cmd' is either HIDIOCGCOLLECTIONINDEX, HIDIOCGUSAGES or
-HIDIOCSUSAGES.
+This patch try to follow same regular of xfs project
+quota:
 
-For cmd == HIDIOCGCOLLECTIONINDEX case, uref->usage_index is compared to
-field->maxusage and then used as an index to dereference field->usage
-array. The same thing happens to the cmd == HIDIOC{G,S}USAGES cases, where
-uref->usage_index is checked against an array maximum value and then it is
-used as an index in an array.
+"Project Quota ID state is only allowed to change from
+within the init namespace. Enforce that restriction only
+if we are trying to change the quota ID state.
+Everything else is allowed in user namespaces."
 
-This is a summary of the HIDIOCGCOLLECTIONINDEX case, which matches the
-traditional Spectre V1 first load:
+Besides that, check and set project id'state should
+be an atomic operation, protect whole operation with
+inode lock, ext4_ioctl_setproject() is only used for
+ioctl EXT4_IOC_FSSETXATTR, we have held mnt_want_write_file()
+before ext4_ioctl_setflags(), and ext4_ioctl_setproject()
+is called after ext4_ioctl_setflags(), we could share
+codes, so remove it inside ext4_ioctl_setproject().
 
-	copy_from_user(uref, user_arg, sizeof(*uref))
-	if (uref->usage_index >= field->maxusage)
-		goto inval;
-	i = field->usage[uref->usage_index].collection_index;
-	return i;
-
-This patch fixes this by sanitizing field uref->usage_index before using it
-to index field->usage (HIDIOCGCOLLECTIONINDEX) or field->value in
-HIDIOC{G,S}USAGES arrays, thus, avoiding speculation in the first load.
-
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Breno Leitao <leitao@debian.org>
-v2: Contemplate cmd == HIDIOC{G,S}USAGES case
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Wang Shilong <wshilong@ddn.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Reviewed-by: Andreas Dilger <adilger@dilger.ca>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/usbhid/hiddev.c |   18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+ fs/ext4/ioctl.c |   60 ++++++++++++++++++++++++++++++++++----------------------
+ 1 file changed, 37 insertions(+), 23 deletions(-)
 
---- a/drivers/hid/usbhid/hiddev.c
-+++ b/drivers/hid/usbhid/hiddev.c
-@@ -512,14 +512,24 @@ static noinline int hiddev_ioctl_usage(s
- 			if (cmd == HIDIOCGCOLLECTIONINDEX) {
- 				if (uref->usage_index >= field->maxusage)
- 					goto inval;
-+				uref->usage_index =
-+					array_index_nospec(uref->usage_index,
-+							   field->maxusage);
- 			} else if (uref->usage_index >= field->report_count)
- 				goto inval;
- 		}
+--- a/fs/ext4/ioctl.c
++++ b/fs/ext4/ioctl.c
+@@ -360,19 +360,14 @@ static int ext4_ioctl_setproject(struct
+ 	if (projid_eq(kprojid, EXT4_I(inode)->i_projid))
+ 		return 0;
  
--		if ((cmd == HIDIOCGUSAGES || cmd == HIDIOCSUSAGES) &&
--		    (uref_multi->num_values > HID_MAX_MULTI_USAGES ||
--		     uref->usage_index + uref_multi->num_values > field->report_count))
--			goto inval;
-+		if (cmd == HIDIOCGUSAGES || cmd == HIDIOCSUSAGES) {
-+			if (uref_multi->num_values > HID_MAX_MULTI_USAGES ||
-+			    uref->usage_index + uref_multi->num_values >
-+			    field->report_count)
-+				goto inval;
+-	err = mnt_want_write_file(filp);
+-	if (err)
+-		return err;
+-
+ 	err = -EPERM;
+-	inode_lock(inode);
+ 	/* Is it quota file? Do not allow user to mess with it */
+ 	if (ext4_is_quota_file(inode))
+-		goto out_unlock;
++		return err;
+ 
+ 	err = ext4_get_inode_loc(inode, &iloc);
+ 	if (err)
+-		goto out_unlock;
++		return err;
+ 
+ 	raw_inode = ext4_raw_inode(&iloc);
+ 	if (!EXT4_FITS_IN_INODE(raw_inode, ei, i_projid)) {
+@@ -380,7 +375,7 @@ static int ext4_ioctl_setproject(struct
+ 					      EXT4_SB(sb)->s_want_extra_isize,
+ 					      &iloc);
+ 		if (err)
+-			goto out_unlock;
++			return err;
+ 	} else {
+ 		brelse(iloc.bh);
+ 	}
+@@ -390,10 +385,8 @@ static int ext4_ioctl_setproject(struct
+ 	handle = ext4_journal_start(inode, EXT4_HT_QUOTA,
+ 		EXT4_QUOTA_INIT_BLOCKS(sb) +
+ 		EXT4_QUOTA_DEL_BLOCKS(sb) + 3);
+-	if (IS_ERR(handle)) {
+-		err = PTR_ERR(handle);
+-		goto out_unlock;
+-	}
++	if (IS_ERR(handle))
++		return PTR_ERR(handle);
+ 
+ 	err = ext4_reserve_inode_write(handle, inode, &iloc);
+ 	if (err)
+@@ -421,9 +414,6 @@ out_dirty:
+ 		err = rc;
+ out_stop:
+ 	ext4_journal_stop(handle);
+-out_unlock:
+-	inode_unlock(inode);
+-	mnt_drop_write_file(filp);
+ 	return err;
+ }
+ #else
+@@ -647,6 +637,30 @@ group_add_out:
+ 	return err;
+ }
+ 
++static int ext4_ioctl_check_project(struct inode *inode, struct fsxattr *fa)
++{
++	/*
++	 * Project Quota ID state is only allowed to change from within the init
++	 * namespace. Enforce that restriction only if we are trying to change
++	 * the quota ID state. Everything else is allowed in user namespaces.
++	 */
++	if (current_user_ns() == &init_user_ns)
++		return 0;
 +
-+			uref->usage_index =
-+				array_index_nospec(uref->usage_index,
-+						   field->report_count -
-+						   uref_multi->num_values);
-+		}
++	if (__kprojid_val(EXT4_I(inode)->i_projid) != fa->fsx_projid)
++		return -EINVAL;
++
++	if (ext4_test_inode_flag(inode, EXT4_INODE_PROJINHERIT)) {
++		if (!(fa->fsx_xflags & FS_XFLAG_PROJINHERIT))
++			return -EINVAL;
++	} else {
++		if (fa->fsx_xflags & FS_XFLAG_PROJINHERIT)
++			return -EINVAL;
++	}
++
++	return 0;
++}
++
+ long ext4_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ {
+ 	struct inode *inode = file_inode(filp);
+@@ -1046,19 +1060,19 @@ resizefs_out:
+ 			return err;
  
- 		switch (cmd) {
- 		case HIDIOCGUSAGE:
+ 		inode_lock(inode);
++		err = ext4_ioctl_check_project(inode, &fa);
++		if (err)
++			goto out;
+ 		flags = (ei->i_flags & ~EXT4_FL_XFLAG_VISIBLE) |
+ 			 (flags & EXT4_FL_XFLAG_VISIBLE);
+ 		err = ext4_ioctl_setflags(inode, flags);
+-		inode_unlock(inode);
+-		mnt_drop_write_file(filp);
+ 		if (err)
+-			return err;
+-
++			goto out;
+ 		err = ext4_ioctl_setproject(filp, fa.fsx_projid);
+-		if (err)
+-			return err;
+-
+-		return 0;
++out:
++		inode_unlock(inode);
++		mnt_drop_write_file(filp);
++		return err;
+ 	}
+ 	case EXT4_IOC_SHUTDOWN:
+ 		return ext4_shutdown(sb, arg);
 
 
