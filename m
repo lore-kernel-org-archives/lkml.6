@@ -7,44 +7,50 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D13C7C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:16:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24586C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:16:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98FD92084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:16:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E21B52084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:16:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="N0Px5jU8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98FD92084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lHNPWutH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E21B52084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730381AbeKLKGx (ORCPT
+        id S1730673AbeKLKHF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 05:06:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59016 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 05:07:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730143AbeKLIRF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730124AbeKLIRF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:17:05 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0EAF721731;
-        Sun, 11 Nov 2018 22:27:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B77D22353;
+        Sun, 11 Nov 2018 22:27:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975230;
-        bh=Xr8FZkb3HCb9JMRi1reZF4/jkW8cBy1hRZ8zgeR6wWI=;
+        s=default; t=1541975229;
+        bh=sqz+niQs7PNeydEtgFVeUslfSp5UbDcQscW6LMzcQns=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N0Px5jU8aIbNdQMwQKlJyLO4FrNPKdiA0BuBj7e1w4M4k2yHVHFyXbXRnovEaSMQS
-         0eGRHLFa5uzkEZN0+i1lSA/K2UbU4+uAKg6ZqvyYJZ9mZsuyeuBwLGPBt/edw8gSMq
-         etD5n6Io7d+H6InVV6nnId1WOzBujHcM8pMhRUX0=
+        b=lHNPWutHYN48zb583/UMu9p/WO5Cy5U3CMNuSURqfz0/A24ujLs/BDK/cXnUPe4ke
+         ZEpTBwvO5DGn89aN8ts0V2niekf+2lqngLjHbDJGLPeSvcXwcwjOs4bhEKsIW/z9bi
+         hfgb4CMuOMSNzT8r6u3pKRV8I0/pLAG23njENVJk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 053/361] swim: fix cleanup on setup error
-Date:   Sun, 11 Nov 2018 14:16:40 -0800
-Message-Id: <20181111221627.524949331@linuxfoundation.org>
+        stable@vger.kernel.org, Waiman Long <longman@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 050/361] locking/lockdep: Fix debug_locks off performance problem
+Date:   Sun, 11 Nov 2018 14:16:37 -0800
+Message-Id: <20181111221627.042283758@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -62,43 +68,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Omar Sandoval <osandov@fb.com>
+From: Waiman Long <longman@redhat.com>
 
-[ Upstream commit 1448a2a5360ae06f25e2edc61ae070dff5c0beb4 ]
+[ Upstream commit 9506a7425b094d2f1d9c877ed5a78f416669269b ]
 
-If we fail to allocate the request queue for a disk, we still need to
-free that disk, not just the previous ones. Additionally, we need to
-cleanup the previous request queues.
+It was found that when debug_locks was turned off because of a problem
+found by the lockdep code, the system performance could drop quite
+significantly when the lock_stat code was also configured into the
+kernel. For instance, parallel kernel build time on a 4-socket x86-64
+server nearly doubled.
 
-Signed-off-by: Omar Sandoval <osandov@fb.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Further analysis into the cause of the slowdown traced back to the
+frequent call to debug_locks_off() from the __lock_acquired() function
+probably due to some inconsistent lockdep states with debug_locks
+off. The debug_locks_off() function did an unconditional atomic xchg
+to write a 0 value into debug_locks which had already been set to 0.
+This led to severe cacheline contention in the cacheline that held
+debug_locks.  As debug_locks is being referenced in quite a few different
+places in the kernel, this greatly slow down the system performance.
+
+To prevent that trashing of debug_locks cacheline, lock_acquired()
+and lock_contended() now checks the state of debug_locks before
+proceeding. The debug_locks_off() function is also modified to check
+debug_locks before calling __debug_locks_off().
+
+Signed-off-by: Waiman Long <longman@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Link: http://lkml.kernel.org/r/1539913518-15598-1-git-send-email-longman@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/block/swim.c |   13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ kernel/locking/lockdep.c |    4 ++--
+ lib/debug_locks.c        |    2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/block/swim.c
-+++ b/drivers/block/swim.c
-@@ -887,8 +887,17 @@ static int swim_floppy_init(struct swim_
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -4122,7 +4122,7 @@ void lock_contended(struct lockdep_map *
+ {
+ 	unsigned long flags;
  
- exit_put_disks:
- 	unregister_blkdev(FLOPPY_MAJOR, "fd");
--	while (drive--)
--		put_disk(swd->unit[drive].disk);
-+	do {
-+		struct gendisk *disk = swd->unit[drive].disk;
-+
-+		if (disk) {
-+			if (disk->queue) {
-+				blk_cleanup_queue(disk->queue);
-+				disk->queue = NULL;
-+			}
-+			put_disk(disk);
-+		}
-+	} while (drive--);
- 	return err;
- }
+-	if (unlikely(!lock_stat))
++	if (unlikely(!lock_stat || !debug_locks))
+ 		return;
  
+ 	if (unlikely(current->lockdep_recursion))
+@@ -4142,7 +4142,7 @@ void lock_acquired(struct lockdep_map *l
+ {
+ 	unsigned long flags;
+ 
+-	if (unlikely(!lock_stat))
++	if (unlikely(!lock_stat || !debug_locks))
+ 		return;
+ 
+ 	if (unlikely(current->lockdep_recursion))
+--- a/lib/debug_locks.c
++++ b/lib/debug_locks.c
+@@ -37,7 +37,7 @@ EXPORT_SYMBOL_GPL(debug_locks_silent);
+  */
+ int debug_locks_off(void)
+ {
+-	if (__debug_locks_off()) {
++	if (debug_locks && __debug_locks_off()) {
+ 		if (!debug_locks_silent) {
+ 			console_verbose();
+ 			return 1;
 
 
