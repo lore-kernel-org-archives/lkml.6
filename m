@@ -2,216 +2,130 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4EFBC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 04:43:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADC21C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 05:00:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28A3F20871
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 04:43:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A35B20854
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 05:00:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="AJVTS5p2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28A3F20871
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AkrX3P7S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A35B20854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727500AbeKKOao (ORCPT
+        id S1727430AbeKKOrj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 11 Nov 2018 09:30:44 -0500
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:59170 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727334AbeKKOao (ORCPT
+        Sun, 11 Nov 2018 09:47:39 -0500
+Received: from mail-wr1-f54.google.com ([209.85.221.54]:41540 "EHLO
+        mail-wr1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727184AbeKKOrj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 11 Nov 2018 09:30:44 -0500
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id wAB4h8sY018063;
-        Sun, 11 Nov 2018 13:43:08 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com wAB4h8sY018063
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1541911389;
-        bh=AMx0IRW0lFgq8CMH/dmn+u4HOsMczgDQa5mYtN7flLI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=AJVTS5p2qonVbWDX3EkhWghHc3PTgNIzdU8D6X18guZlSBNPYgCIiPSDfSLrxk9+r
-         PF17sHUAuaN/q+qB9XTrXQFYaJQn0v4geKQuduF1XZw0AxC3dEgLgJGk2KBV+fXWks
-         5KT90FT0OW1inQb81oe2v0xSj7igzRPhw3fTEjgNulCVJrWH4k3lB15+aOQZXjW03O
-         WhtcKtYlMumJCwtqQP6LsqJJWcv7dy7CRtAxWV6KH0zWUKaWF8xYqQKrAh6yK5PAeO
-         W+EU9sxguOBZrKLMMkpS1wZtATTvlzn3Z5XB1xcijv7r6qZHgiIFPfCidfB23n5Nef
-         4bz6jJhQFYS1A==
-X-Nifty-SrcIP: [209.85.221.180]
-Received: by mail-vk1-f180.google.com with SMTP id w72so1288034vkd.5;
-        Sat, 10 Nov 2018 20:43:08 -0800 (PST)
-X-Gm-Message-State: AGRZ1gIDRbgx2BPEKmS0M4etLo7ynsEz3q961kiy3fHyhhlaR8kXBKR5
-        /I1ggrJPa4wdOMT26wHX1n39+ofI/bRG18K7+WA=
-X-Google-Smtp-Source: AJdET5cDX5XYmnsJ2KmJRJsTWjDtHH9WfeBegq4CuBNdCMuOEK/TaSBLQjXoGkIt/+QeiZxMaEvT2q5q8aVLweopxWI=
-X-Received: by 2002:a1f:91cb:: with SMTP id t194mr6540430vkd.74.1541911387201;
- Sat, 10 Nov 2018 20:43:07 -0800 (PST)
-MIME-Version: 1.0
-References: <20181108194434.16568-1-anders.roxell@linaro.org>
-In-Reply-To: <20181108194434.16568-1-anders.roxell@linaro.org>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Sun, 11 Nov 2018 13:42:31 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATU+h3_ytHx4TSUf_breGfxLzHfsOKbGTFprNxYHh9-0g@mail.gmail.com>
-Message-ID: <CAK7LNATU+h3_ytHx4TSUf_breGfxLzHfsOKbGTFprNxYHh9-0g@mail.gmail.com>
-Subject: Re: [PATCH v2] scripts/kconfig/merge_config: don't redefine 'y' to 'm'
-To:     Anders Roxell <anders.roxell@linaro.org>
-Cc:     dvhart@infradead.org, Arnd Bergmann <arnd@arndb.de>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Sun, 11 Nov 2018 09:47:39 -0500
+Received: by mail-wr1-f54.google.com with SMTP id v18-v6so5841653wrt.8
+        for <linux-kernel@vger.kernel.org>; Sat, 10 Nov 2018 21:00:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=3ZR0GX6zV5AaJMlllNZlFYuW1k9FVmH5E45X0UbSiao=;
+        b=AkrX3P7SQXmtssqNKNhvpUjnF8+6pRvDZji8k/ICQLBrDdAP/2ZY2DDsqAKYg1gDMu
+         qQjC6XTNt6LvVqN2CDqlgyDqmcymqe7GyTc9oi0sGHBUOBA9uqaMJJKtTo7AH8nRH0RQ
+         yO4uuHL2UN5/427kAJGgV+EmijOHT9OEwmSvY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=3ZR0GX6zV5AaJMlllNZlFYuW1k9FVmH5E45X0UbSiao=;
+        b=PZnO0A5OJ7ya2KvVKKz74fVSi0U55pgBDj74u4COvfwhrH76vSnhfOFLDuUNvD4ftH
+         yvP07j6/u2shrlNmpANNBvILoH8wkCmSY9vRo3Fcr9p+EJQzDVCZFGppiZnMK3ic2vQH
+         8xnXDg7W4nVfzJDFNkL182hARfK/tMNxVcVCKu/kAajNub2fOyKGW3UUt3Q+GyYQiRqk
+         vF/J9heCRnLt/67v44h17TIDB9Tds28bDED5SqEDVu+cWQuVspgWbN8prjueSlEl3GNE
+         feMwkWRF2gwdFslYjocJGHdddjyGuckgGXdzjQr746GdHe2pSz/3DUicqCQ7ieerI57I
+         n2Ig==
+X-Gm-Message-State: AGRZ1gKVsiJoclgp6c4+fqjk2Ex2y5UW6gdqBX6DRkkKexmsIancJXzy
+        f2m8u1/bPqTx3vZm6vUvRUA2HQ==
+X-Google-Smtp-Source: AJdET5e/ktTXgZblQHmQThOFqcWrBxgP7mm6cv65+2fWvEn4rAUpYcsq9vlYrFeupWyaG/KvLDao/Q==
+X-Received: by 2002:adf:80c8:: with SMTP id 66-v6mr12951009wrl.57.1541912409657;
+        Sat, 10 Nov 2018 21:00:09 -0800 (PST)
+Received: from localhost.localdomain ([209.250.228.18])
+        by smtp.gmail.com with ESMTPSA id t187-v6sm4463802wmt.45.2018.11.10.21.00.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sat, 10 Nov 2018 21:00:08 -0800 (PST)
+From:   Leo Yan <leo.yan@linaro.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Mike Leach <mike.leach@linaro.org>,
+        Robert Walker <robert.walker@arm.com>,
+        Al Grant <Al.Grant@arm.com>,
+        Coresight ML <coresight@lists.linaro.org>
+Cc:     Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v1 0/5] perf cs-etm: Correct packets handling
+Date:   Sun, 11 Nov 2018 12:59:38 +0800
+Message-Id: <1541912383-19915-1-git-send-email-leo.yan@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 9, 2018 at 4:45 AM Anders Roxell <anders.roxell@linaro.org> wrote:
->
-> In today's merge_config.sh the order of the config fragment files dictates
-> the output of a config option. With this approach we will get different
-> .config files depending on the order of the config fragment files.
->
-> So doing something like:
-> $ ./merge/kconfig/merge_config.sh selftest.config drm.config
->
-> Where selftest.config defines DRM=y and drm.config defines DRM=m, the
-> result will be "DRM=m".
->
-> Rework to add a switch to get builtin '=y' precedence over modules '=m',
-> this will result in "DRM=y". If we do something like this:
->
-> $ ./merge/kconfig/merge_config.sh -y selftest.config drm.config
->
-> Suggested-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> ---
->  scripts/kconfig/merge_config.sh | 34 +++++++++++++++++++++++++++------
->  1 file changed, 28 insertions(+), 6 deletions(-)
->
-> diff --git a/scripts/kconfig/merge_config.sh b/scripts/kconfig/merge_config.sh
-> index da66e7742282..fcd18f642fc7 100755
-> --- a/scripts/kconfig/merge_config.sh
-> +++ b/scripts/kconfig/merge_config.sh
-> @@ -22,6 +22,7 @@
->
->  clean_up() {
->         rm -f $TMP_FILE
-> +       rm -f $MERGE_FILE
->         exit
->  }
->  trap clean_up HUP INT TERM
-> @@ -32,6 +33,7 @@ usage() {
->         echo "  -m    only merge the fragments, do not execute the make command"
->         echo "  -n    use allnoconfig instead of alldefconfig"
->         echo "  -r    list redundant entries when merging fragments"
-> +       echo "  -y    make builtin have precedence over modules"
->         echo "  -O    dir to put generated output files.  Consider setting \$KCONFIG_CONFIG instead."
->         echo
->         echo "Used prefix: '$CONFIG_PREFIX'. You can redefine it with \$CONFIG_ environment variable."
-> @@ -40,6 +42,8 @@ usage() {
->  RUNMAKE=true
->  ALLTARGET=alldefconfig
->  WARNREDUN=false
-> +BUILTIN=false
-> +BUILTIN_FLAG=false
+perf cs-etm module converts decoder elements to packets and then we have
+more context crossing packets to generate synthenize samples, finally
+perf tool can faciliate samples for statistics and report the results.
+
+This patch series is to address several issues found related with
+packets handling and samples generation when worked firstly on branch
+sample flags support for Arm CoreSight trace data,  so this patch series
+also is dependency for another patch series for sample flags.
+
+The first two patches are mainly to fix issues in cs_etm__flush():
+Patch 0001 corrects packets swapping in cs_etm__flush() and this can fix
+the wrong branch sample caused by the missed packets swapping; patch
+0002 is to fix the wrong samples generation with stale packets at the
+end of every trace buffer.
+
+Patch 0003 is used to support NO_SYNC packet, otherwise the trace
+decoding cannot reflect the tracing discontinuity caused by NO_SYNC
+packet.
+
+Patch 0004/0005 has been published in the patch series 'perf cs-etm: Add
+support for sample flags' before but at this time I move them into this
+patch series due these two patches are more relative with packets
+handling.  Patch 0004 is used to generate branch sample for exception
+packets; and patch 0005 is to track the exception number.
+
+This patch series is applied on the acme's perf core branch [1] with the
+latest commit f1d23afaf677 ("perf bpf: Reduce the hardcoded .max_entries
+for pid_maps") and has one prerequisite from Rob's patch 'perf: Support
+for Arm A32/T32 instruction sets in CoreSight trace' [2].
+
+With applying the dependency patch, this patch series has been tested
+for branch samples dumping with below command on Juno board:
+
+  # perf script -F,-time,+ip,+sym,+dso,+addr,+symoff -k vmlinux
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git/log/?h=perf/core
+[2] http://archive.armlinux.org.uk/lurker/message/20181109.091126.9d69489d.en.html
 
 
-Could you move the initialization of BUILTIN_FLAG
-into the inner for-loop ?
+Leo Yan (5):
+  perf cs-etm: Correct packets swapping in cs_etm__flush()
+  perf cs-etm: Avoid stale branch samples when flush packet
+  perf cs-etm: Support for NO_SYNC packet
+  perf cs-etm: Generate branch sample for exception packet
+  perf cs-etm: Track exception number
 
-
-
->  OUTPUT=.
->  CONFIG_PREFIX=${CONFIG_-CONFIG_}
->
-> @@ -64,6 +68,11 @@ while true; do
->                 shift
->                 continue
->                 ;;
-> +       "-y")
-> +               BUILTIN=true
-> +               shift
-> +               continue
-> +               ;;
->         "-O")
->                 if [ -d $2 ];then
->                         OUTPUT=$(echo $2 | sed 's/\/*$//')
-> @@ -105,13 +114,15 @@ MERGE_LIST=$*
->  SED_CONFIG_EXP="s/^\(# \)\{0,1\}\(${CONFIG_PREFIX}[a-zA-Z0-9_]*\)[= ].*/\2/p"
->
->  TMP_FILE=$(mktemp ./.tmp.config.XXXXXXXXXX)
-> +MERGE_FILE=$(mktemp ./.merge_tmp.config.XXXXXXXXXX)
->
->  echo "Using $INITFILE as base"
->  cat $INITFILE > $TMP_FILE
->
->  # Merge files, printing warnings on overridden values
-> -for MERGE_FILE in $MERGE_LIST ; do
-> -       echo "Merging $MERGE_FILE"
-> +for ORIG_MERGE_FILE in $MERGE_LIST ; do
-> +       cat $ORIG_MERGE_FILE > $MERGE_FILE
-
-
-This 'cat' should be moved after the check
-of the presence of '$ORIG_MERGE_FILE'.
-
-
-> +       echo "Merging $ORIG_MERGE_FILE"
->         if [ ! -r "$MERGE_FILE" ]; then
-
-This check always returns false now.
-
-
->                 echo "The merge file '$MERGE_FILE' does not exist.  Exit." >&2
->                 exit 1
-> @@ -122,15 +133,26 @@ for MERGE_FILE in $MERGE_LIST ; do
->                 grep -q -w $CFG $TMP_FILE || continue
->                 PREV_VAL=$(grep -w $CFG $TMP_FILE)
->                 NEW_VAL=$(grep -w $CFG $MERGE_FILE)
-
-Could you add 'BUILTIN_FLAG=false' here?
-
-
-
-> -               if [ "x$PREV_VAL" != "x$NEW_VAL" ] ; then
-> -                       echo Value of $CFG is redefined by fragment $MERGE_FILE:
-> +               if [ "$BUILTIN" = "true" ] && [ "${NEW_VAL#CONFIG_*=}" = "m" ] && [ "${PREV_VAL#CONFIG_*=}" = "y" ]; then
-> +                       echo Previous  value: $PREV_VAL
-> +                       echo New value:       $NEW_VAL
-> +                       echo -y passed, will not demote y to m
-> +                       echo
-> +                       BUILTIN_FLAG=true
-> +               elif [ "x$PREV_VAL" != "x$NEW_VAL" ] ; then
-> +                       echo Value of $CFG is redefined by fragment $ORIG_MERGE_FILE:
->                         echo Previous  value: $PREV_VAL
->                         echo New value:       $NEW_VAL
->                         echo
->                 elif [ "$WARNREDUN" = "true" ]; then
-> -                       echo Value of $CFG is redundant by fragment $MERGE_FILE:
-> +                       echo Value of $CFG is redundant by fragment $ORIG_MERGE_FILE:
-> +               fi
-> +               if [ "$BUILTIN_FLAG" = "false" ]; then
-> +                       sed -i "/$CFG[ =]/d" $TMP_FILE
-> +               else
-> +                       sed -i "/$CFG[ =]/d" $MERGE_FILE
-> +                       BUILTIN_FLAG=false
-
-
-Then this 'BUILTIN_FLAG=false' can go away.
-
-Thanks.
-
-
->                 fi
-> -               sed -i "/$CFG[ =]/d" $TMP_FILE
->         done
->         cat $MERGE_FILE >> $TMP_FILE
->  done
-> --
-> 2.19.1
->
-
+ tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 91 ++++++++++++++++++++++---
+ tools/perf/util/cs-etm-decoder/cs-etm-decoder.h | 11 +--
+ tools/perf/util/cs-etm.c                        | 65 +++++++++++++++---
+ 3 files changed, 146 insertions(+), 21 deletions(-)
 
 -- 
-Best Regards
-Masahiro Yamada
+2.7.4
+
