@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83453C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:13:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0704C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:13:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CD942084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:13:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F1AC20871
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:13:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2S0Qq0mV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CD942084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BJHirIh4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F1AC20871
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730514AbeKLIRP (ORCPT
+        id S1731409AbeKLKEB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:17:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59948 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 05:04:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59922 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730385AbeKLIRP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730472AbeKLIRP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:17:15 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E11E21527;
+        by mail.kernel.org (Postfix) with ESMTPSA id EB61A22360;
         Sun, 11 Nov 2018 22:27:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975239;
-        bh=ZS7I+ZhbHOQF2RaaUxaJmL7R2ZtgEegalzzQr6Tqbtc=;
+        s=default; t=1541975240;
+        bh=ToYSEaNLrF1nh8CdqspjWx57CRwfv+aShSVOd66QUkQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2S0Qq0mVgmSWMTUCZwJg5iT6iP4ODLaCxCGj3v4F3O5eb3DXZARLyqjIKzrKCD29y
-         nKTIwokLBtn78vCboQ4NGeKFTtNxF69Yg2X128Wk27K+V9raifErc1JztwY/mQPQEZ
-         3u5JN9TZ5L0oe7sqdqXomocUosOcspcx2kcnY/0Y=
+        b=BJHirIh4AKeTXCgYVa6yGbS7rX3VBHCS3Y2ZvHtuZ80UZukiuFu7p3CYUyhFM65xe
+         5nw4LkqNS51ospxO5SJntpKe/YVE5gJPRgtsJtJ+3CFPhINebj4INpOknbvj0oKX67
+         noB1mCf4yVEwD/lLcEbNRnFNaebiMrKD0xB3pF7Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dou Liyang <douly.fnst@cn.fujitsu.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, Niklas Cassel <niklas.cassel@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 081/361] ACPI / processor: Fix the return value of acpi_processor_ids_walk()
-Date:   Sun, 11 Nov 2018 14:17:08 -0800
-Message-Id: <20181111221631.288215540@linuxfoundation.org>
+Subject: [PATCH 4.19 082/361] cpufreq: dt: Try freeing static OPPs only if we have added them
+Date:   Sun, 11 Nov 2018 14:17:09 -0800
+Message-Id: <20181111221631.455138403@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -62,55 +62,111 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dou Liyang <douly.fnst@cn.fujitsu.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
 
-[ Upstream commit d0381bf4f80c571dde1244fe5b85dc35e8b3f546 ]
+[ Upstream commit 51c99dd2c06b234575661fa1e0a1dea6c3ef566f ]
 
-ACPI driver should make sure all the processor IDs in their ACPI Namespace
-are unique. the driver performs a depth-first walk of the namespace tree
-and calls the acpi_processor_ids_walk() to check the duplicate IDs.
+We can not call dev_pm_opp_of_cpumask_remove_table() freely anymore
+since the latest OPP core updates as that uses reference counting to
+free resources. There are cases where no static OPPs are added (using
+DT) for a platform and trying to remove the OPP table may end up
+decrementing refcount which is already zero and hence generating
+warnings.
 
-But, the acpi_processor_ids_walk() mistakes the return value. If a
-processor is checked, it returns true which causes the walk break
-immediately, and other processors will never be checked.
+Lets track if we were able to add static OPPs or not and then only
+remove the table based on that. Some reshuffling of code is also done to
+do that.
 
-Repace the value with AE_OK which is the standard acpi_status value.
-And don't abort the namespace walk even on error.
-
-Fixes: 8c8cb30f49b8 (acpi/processor: Implement DEVICE operator for processor enumeration)
-Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reported-by: Niklas Cassel <niklas.cassel@linaro.org>
+Tested-by: Niklas Cassel <niklas.cassel@linaro.org>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/acpi/acpi_processor.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/cpufreq/cpufreq-dt.c |   34 +++++++++++++++++++---------------
+ 1 file changed, 19 insertions(+), 15 deletions(-)
 
---- a/drivers/acpi/acpi_processor.c
-+++ b/drivers/acpi/acpi_processor.c
-@@ -643,7 +643,7 @@ static acpi_status __init acpi_processor
+--- a/drivers/cpufreq/cpufreq-dt.c
++++ b/drivers/cpufreq/cpufreq-dt.c
+@@ -32,6 +32,7 @@ struct private_data {
+ 	struct device *cpu_dev;
+ 	struct thermal_cooling_device *cdev;
+ 	const char *reg_name;
++	bool have_static_opps;
+ };
  
- 	status = acpi_get_type(handle, &acpi_type);
- 	if (ACPI_FAILURE(status))
--		return false;
-+		return status;
- 
- 	switch (acpi_type) {
- 	case ACPI_TYPE_PROCESSOR:
-@@ -663,11 +663,12 @@ static acpi_status __init acpi_processor
+ static struct freq_attr *cpufreq_dt_attr[] = {
+@@ -204,6 +205,15 @@ static int cpufreq_init(struct cpufreq_p
+ 		}
  	}
  
- 	processor_validated_ids_update(uid);
--	return true;
-+	return AE_OK;
++	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
++	if (!priv) {
++		ret = -ENOMEM;
++		goto out_put_regulator;
++	}
++
++	priv->reg_name = name;
++	priv->opp_table = opp_table;
++
+ 	/*
+ 	 * Initialize OPP tables for all policy->cpus. They will be shared by
+ 	 * all CPUs which have marked their CPUs shared with OPP bindings.
+@@ -214,7 +224,8 @@ static int cpufreq_init(struct cpufreq_p
+ 	 *
+ 	 * OPPs might be populated at runtime, don't check for error here
+ 	 */
+-	dev_pm_opp_of_cpumask_add_table(policy->cpus);
++	if (!dev_pm_opp_of_cpumask_add_table(policy->cpus))
++		priv->have_static_opps = true;
  
- err:
-+	/* Exit on error, but don't abort the namespace walk */
- 	acpi_handle_info(handle, "Invalid processor object\n");
--	return false;
-+	return AE_OK;
+ 	/*
+ 	 * But we need OPP table to function so if it is not there let's
+@@ -240,19 +251,10 @@ static int cpufreq_init(struct cpufreq_p
+ 				__func__, ret);
+ 	}
  
- }
+-	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+-	if (!priv) {
+-		ret = -ENOMEM;
+-		goto out_free_opp;
+-	}
+-
+-	priv->reg_name = name;
+-	priv->opp_table = opp_table;
+-
+ 	ret = dev_pm_opp_init_cpufreq_table(cpu_dev, &freq_table);
+ 	if (ret) {
+ 		dev_err(cpu_dev, "failed to init cpufreq table: %d\n", ret);
+-		goto out_free_priv;
++		goto out_free_opp;
+ 	}
+ 
+ 	priv->cpu_dev = cpu_dev;
+@@ -282,10 +284,11 @@ static int cpufreq_init(struct cpufreq_p
+ 
+ out_free_cpufreq_table:
+ 	dev_pm_opp_free_cpufreq_table(cpu_dev, &freq_table);
+-out_free_priv:
+-	kfree(priv);
+ out_free_opp:
+-	dev_pm_opp_of_cpumask_remove_table(policy->cpus);
++	if (priv->have_static_opps)
++		dev_pm_opp_of_cpumask_remove_table(policy->cpus);
++	kfree(priv);
++out_put_regulator:
+ 	if (name)
+ 		dev_pm_opp_put_regulators(opp_table);
+ out_put_clk:
+@@ -300,7 +303,8 @@ static int cpufreq_exit(struct cpufreq_p
+ 
+ 	cpufreq_cooling_unregister(priv->cdev);
+ 	dev_pm_opp_free_cpufreq_table(priv->cpu_dev, &policy->freq_table);
+-	dev_pm_opp_of_cpumask_remove_table(policy->related_cpus);
++	if (priv->have_static_opps)
++		dev_pm_opp_of_cpumask_remove_table(policy->related_cpus);
+ 	if (priv->reg_name)
+ 		dev_pm_opp_put_regulators(priv->opp_table);
  
 
 
