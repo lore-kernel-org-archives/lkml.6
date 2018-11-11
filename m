@@ -6,46 +6,47 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25E88C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:10:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CA13C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:10:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D639F20871
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:10:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3312214DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:10:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RlXwxjQv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D639F20871
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BD4dZqZV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3312214DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731832AbeKLKBD (ORCPT
+        id S1731847AbeKLKBR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 05:01:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60278 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 05:01:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60706 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730704AbeKLIRY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730731AbeKLIRY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:17:24 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D111215EA;
-        Sun, 11 Nov 2018 22:27:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2674D214DB;
+        Sun, 11 Nov 2018 22:27:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975249;
-        bh=e/bIhPxoE2ySsFZe0BEakIHjmRQ+RQ1Sb/jsTwa/940=;
+        s=default; t=1541975248;
+        bh=To9ZBeK/OgdizYlejYz0ynHrahyTLhiaYF06SCOxlOk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RlXwxjQvbWCz8GhxeS1esNYhM4j9fgHGkt32+C+WoieCO1mg4q+AR09TE00zTE2Rr
-         44rYYeg56i0waaY8gN7iG9Azcn5Hyamc78o+mCUVjkkVD2S0bPoY7rWgayjD3UhU2D
-         MJ0450YV5Gy64dcX3aYMTsdFBGb0wy1dmds/l1FM=
+        b=BD4dZqZVEcmfOGX4PKexw097JzSyPqMx1PQj/xF+dL+qvIJrV2XgwNPLIVP47Mtlv
+         mChOhC4c764zJQqRpnMTuYyWGfH53QPytAhSsWoILukV3Qc2GD2Lm7/X25jgWvgvwG
+         SpoF+0pJmhGhupIe3xlsa8sRmN1NAPx+2eeZrUCs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        Sridhar Samudrala <sridhar.samudrala@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 110/361] failover: Add missing check to validate slave_dev in net_failover_slave_unregister
-Date:   Sun, 11 Nov 2018 14:17:37 -0800
-Message-Id: <20181111221635.102448420@linuxfoundation.org>
+Subject: [PATCH 4.19 072/361] mtd: rawnand: denali: set SPARE_AREA_SKIP_BYTES register to 8 if unset
+Date:   Sun, 11 Nov 2018 14:16:59 -0800
+Message-Id: <20181111221630.112167800@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -63,40 +64,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-[ Upstream commit 9e7e6cabf371cc008cb2244a04c012b516753693 ]
+[ Upstream commit 0d55c668b218a1db68b5044bce4de74e1bd0f0c8 ]
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+NAND devices need additional data area (OOB) for error correction,
+but it is also used for Bad Block Marker (BBM).  In many cases, the
+first byte in OOB is used for BBM, but the location actually depends
+on chip vendors.  The NAND controller should preserve the precious
+BBM to keep track of bad blocks.
 
-drivers/net/net_failover.c: In function 'net_failover_slave_unregister':
-drivers/net/net_failover.c:598:35: warning:
- variable 'primary_dev' set but not used [-Wunused-but-set-variable]
+In Denali IP, the SPARE_AREA_SKIP_BYTES register is used to specify
+the number of bytes to skip from the start of OOB.  The ECC engine
+will automatically skip the specified number of bytes when it gets
+access to OOB area.
 
-There should check the validity of 'slave_dev'.
+The same value for SPARE_AREA_SKIP_BYTES should be used between
+firmware and the operating system if you intend to use the NAND
+device across the control hand-off.
 
-Fixes: cfc80d9a1163 ("net: Introduce net_failover driver")
+In fact, the current denali.c code expects firmware to have already
+set the SPARE_AREA_SKIP_BYTES register, then reads the value out.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Acked-by: Sridhar Samudrala <sridhar.samudrala@intel.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+If no firmware (or bootloader) has initialized the controller, the
+register value is zero, which is the default after power-on-reset.
+In other words, the Linux driver cannot initialize the controller
+by itself.
+
+Some possible solutions are:
+
+ [1] Add a DT property to specify the skipped bytes in OOB
+ [2] Associate the preferred value with compatible
+ [3] Hard-code the default value in the driver
+
+My first attempt was [1], but in the review process, [3] was suggested
+as a counter-implementation.
+(https://lore.kernel.org/patchwork/patch/983055/)
+
+The default value 8 was chosen to match to the boot ROM of the UniPhier
+platform.  The preferred value may vary by platform.  If so, please
+trade up to a different solution.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/net_failover.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/mtd/nand/raw/denali.c |   14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
---- a/drivers/net/net_failover.c
-+++ b/drivers/net/net_failover.c
-@@ -603,6 +603,9 @@ static int net_failover_slave_unregister
- 	primary_dev = rtnl_dereference(nfo_info->primary_dev);
- 	standby_dev = rtnl_dereference(nfo_info->standby_dev);
+--- a/drivers/mtd/nand/raw/denali.c
++++ b/drivers/mtd/nand/raw/denali.c
+@@ -28,6 +28,7 @@
+ MODULE_LICENSE("GPL");
  
-+	if (WARN_ON_ONCE(slave_dev != primary_dev && slave_dev != standby_dev))
-+		return -ENODEV;
+ #define DENALI_NAND_NAME    "denali-nand"
++#define DENALI_DEFAULT_OOB_SKIP_BYTES	8
+ 
+ /* for Indexed Addressing */
+ #define DENALI_INDEXED_CTRL	0x00
+@@ -1105,12 +1106,17 @@ static void denali_hw_init(struct denali
+ 		denali->revision = swab16(ioread32(denali->reg + REVISION));
+ 
+ 	/*
+-	 * tell driver how many bit controller will skip before
+-	 * writing ECC code in OOB, this register may be already
+-	 * set by firmware. So we read this value out.
+-	 * if this value is 0, just let it be.
++	 * Set how many bytes should be skipped before writing data in OOB.
++	 * If a non-zero value has already been set (by firmware or something),
++	 * just use it.  Otherwise, set the driver default.
+ 	 */
+ 	denali->oob_skip_bytes = ioread32(denali->reg + SPARE_AREA_SKIP_BYTES);
++	if (!denali->oob_skip_bytes) {
++		denali->oob_skip_bytes = DENALI_DEFAULT_OOB_SKIP_BYTES;
++		iowrite32(denali->oob_skip_bytes,
++			  denali->reg + SPARE_AREA_SKIP_BYTES);
++	}
 +
- 	vlan_vids_del_by_dev(slave_dev, failover_dev);
- 	dev_uc_unsync(slave_dev, failover_dev);
- 	dev_mc_unsync(slave_dev, failover_dev);
+ 	denali_detect_max_banks(denali);
+ 	iowrite32(0x0F, denali->reg + RB_PIN_ENABLED);
+ 	iowrite32(CHIP_EN_DONT_CARE__FLAG, denali->reg + CHIP_ENABLE_DONT_CARE);
 
 
