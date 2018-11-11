@@ -7,44 +7,48 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27434C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C05BC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1D3921582
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 341C3208A3
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:34:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="O3+hUXqZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1D3921582
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WI7TAymI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 341C3208A3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404810AbeKLIYn (ORCPT
+        id S2391264AbeKLIYp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:24:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60304 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:24:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60340 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731232AbeKLIYm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:24:42 -0500
+        id S1731232AbeKLIYo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:24:44 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E30421707;
-        Sun, 11 Nov 2018 22:34:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D61B208A3;
+        Sun, 11 Nov 2018 22:34:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975684;
-        bh=WLG8CwGt7GS0EQg29XY2XlnY89rTBsd96EoAOuNFC8U=;
+        s=default; t=1541975686;
+        bh=E0NTk6Y8IRz00wyVoZz5dDzGvgRhaYE5Z8U2Dzg/pgE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O3+hUXqZaQQs3awAOwAzGYjqCX0r5G/RINGaOcHmnpqve9xbitmDssDjKNfeguhqJ
-         6rG5I5Zteqpk3JAyyFJCLCd7vgXzOno8/uRNmOq6iVUDFSTDcAg6MqIMXp51Ck5Cs6
-         ncpcQODfIUhYiIXBbQ7ZUbcevZjCzCYx8WBoTWXg=
+        b=WI7TAymI6IlHgNqvUuLIa0nZyr4VUgIGoHTifmcNfI4yArywDsJmpszUWijEFirYX
+         rVJoekJaQxXE7KcRY6tbwzpStN5OHVGQyIlWA5/e0aUVe2yGQrZltjweYfQIBzT6Gk
+         Qoe6qSiTifP8xMq0YRsyt6WUvNF5XmgvLrBfcT8s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Breno Leitao <leitao@debian.org>,
-        Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 4.9 091/141] HID: hiddev: fix potential Spectre v1
-Date:   Sun, 11 Nov 2018 14:25:50 -0800
-Message-Id: <20181111221640.779038211@linuxfoundation.org>
+        stable@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
+        Borislav Petkov <bp@suse.de>,
+        Aristeu Rozanski <aris@redhat.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+        linux-edac <linux-edac@vger.kernel.org>
+Subject: [PATCH 4.9 092/141] EDAC, {i7core,sb,skx}_edac: Fix uncorrected error counting
+Date:   Sun, 11 Nov 2018 14:25:51 -0800
+Message-Id: <20181111221640.885894319@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
 References: <20181111221627.853046496@linuxfoundation.org>
@@ -62,76 +66,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Breno Leitao <leitao@debian.org>
+From: Tony Luck <tony.luck@intel.com>
 
-commit f11274396a538b31bc010f782e05c2ce3f804c13 upstream.
+commit 432de7fd7630c84ad24f1c2acd1e3bb4ce3741ca upstream.
 
-uref->usage_index can be indirectly controlled by userspace, hence leading
-to a potential exploitation of the Spectre variant 1 vulnerability.
+The count of errors is picked up from bits 52:38 of the machine check
+bank status register. But this is the count of *corrected* errors. If an
+uncorrected error is being logged, the h/w sets this field to 0. Which
+means that when edac_mc_handle_error() is called, the EDAC core will
+carefully add zero to the appropriate uncorrected error counts.
 
-This field is used as an array index by the hiddev_ioctl_usage() function,
-when 'cmd' is either HIDIOCGCOLLECTIONINDEX, HIDIOCGUSAGES or
-HIDIOCSUSAGES.
-
-For cmd == HIDIOCGCOLLECTIONINDEX case, uref->usage_index is compared to
-field->maxusage and then used as an index to dereference field->usage
-array. The same thing happens to the cmd == HIDIOC{G,S}USAGES cases, where
-uref->usage_index is checked against an array maximum value and then it is
-used as an index in an array.
-
-This is a summary of the HIDIOCGCOLLECTIONINDEX case, which matches the
-traditional Spectre V1 first load:
-
-	copy_from_user(uref, user_arg, sizeof(*uref))
-	if (uref->usage_index >= field->maxusage)
-		goto inval;
-	i = field->usage[uref->usage_index].collection_index;
-	return i;
-
-This patch fixes this by sanitizing field uref->usage_index before using it
-to index field->usage (HIDIOCGCOLLECTIONINDEX) or field->value in
-HIDIOC{G,S}USAGES arrays, thus, avoiding speculation in the first load.
-
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Breno Leitao <leitao@debian.org>
-v2: Contemplate cmd == HIDIOC{G,S}USAGES case
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+[ Massage commit message. ]
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: stable@vger.kernel.org
+Cc: Aristeu Rozanski <aris@redhat.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Link: http://lkml.kernel.org/r/20180928213934.19890-1-tony.luck@intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/usbhid/hiddev.c |   18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+ drivers/edac/i7core_edac.c |    1 +
+ drivers/edac/sb_edac.c     |    1 +
+ drivers/edac/skx_edac.c    |    1 +
+ 3 files changed, 3 insertions(+)
 
---- a/drivers/hid/usbhid/hiddev.c
-+++ b/drivers/hid/usbhid/hiddev.c
-@@ -521,14 +521,24 @@ static noinline int hiddev_ioctl_usage(s
- 			if (cmd == HIDIOCGCOLLECTIONINDEX) {
- 				if (uref->usage_index >= field->maxusage)
- 					goto inval;
-+				uref->usage_index =
-+					array_index_nospec(uref->usage_index,
-+							   field->maxusage);
- 			} else if (uref->usage_index >= field->report_count)
- 				goto inval;
- 		}
+--- a/drivers/edac/i7core_edac.c
++++ b/drivers/edac/i7core_edac.c
+@@ -1711,6 +1711,7 @@ static void i7core_mce_output_error(stru
+ 	u32 errnum = find_first_bit(&error, 32);
  
--		if ((cmd == HIDIOCGUSAGES || cmd == HIDIOCSUSAGES) &&
--		    (uref_multi->num_values > HID_MAX_MULTI_USAGES ||
--		     uref->usage_index + uref_multi->num_values > field->report_count))
--			goto inval;
-+		if (cmd == HIDIOCGUSAGES || cmd == HIDIOCSUSAGES) {
-+			if (uref_multi->num_values > HID_MAX_MULTI_USAGES ||
-+			    uref->usage_index + uref_multi->num_values >
-+			    field->report_count)
-+				goto inval;
-+
-+			uref->usage_index =
-+				array_index_nospec(uref->usage_index,
-+						   field->report_count -
-+						   uref_multi->num_values);
-+		}
+ 	if (uncorrected_error) {
++		core_err_cnt = 1;
+ 		if (ripv)
+ 			tp_event = HW_EVENT_ERR_FATAL;
+ 		else
+--- a/drivers/edac/sb_edac.c
++++ b/drivers/edac/sb_edac.c
+@@ -2934,6 +2934,7 @@ static void sbridge_mce_output_error(str
+ 		recoverable = GET_BITFIELD(m->status, 56, 56);
  
- 		switch (cmd) {
- 		case HIDIOCGUSAGE:
+ 	if (uncorrected_error) {
++		core_err_cnt = 1;
+ 		if (ripv) {
+ 			type = "FATAL";
+ 			tp_event = HW_EVENT_ERR_FATAL;
+--- a/drivers/edac/skx_edac.c
++++ b/drivers/edac/skx_edac.c
+@@ -897,6 +897,7 @@ static void skx_mce_output_error(struct
+ 	recoverable = GET_BITFIELD(m->status, 56, 56);
+ 
+ 	if (uncorrected_error) {
++		core_err_cnt = 1;
+ 		if (ripv) {
+ 			type = "FATAL";
+ 			tp_event = HW_EVENT_ERR_FATAL;
 
 
