@@ -4,51 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E90DDC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:13:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83453C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:13:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2C732084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:13:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CD942084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:13:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="raSMigKZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2C732084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2S0Qq0mV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CD942084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731354AbeKLKDq (ORCPT
+        id S1730514AbeKLIRP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 05:03:46 -0500
+        Mon, 12 Nov 2018 03:17:15 -0500
 Received: from mail.kernel.org ([198.145.29.99]:59948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730420AbeKLIRQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:17:16 -0500
+        id S1730385AbeKLIRP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:17:15 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1B242154B;
-        Sun, 11 Nov 2018 22:27:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E11E21527;
+        Sun, 11 Nov 2018 22:27:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975241;
-        bh=q7opT+EaDE7aYma98OrY3+zku8FzLbvUjxF78nU/hkg=;
+        s=default; t=1541975239;
+        bh=ZS7I+ZhbHOQF2RaaUxaJmL7R2ZtgEegalzzQr6Tqbtc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=raSMigKZH7TMRS3j8m+OgkGvxhpnssa+C8c0tzHtA99j26kJ4nZs+Xyxx7fzGvWr3
-         +f/7Q8wetFGKaSD1JVOK2RSrMPdvUSlyOvUqmG6mHV1lXJS8pq504LLoJreCbebKrv
-         5AsqOg155kJyZxZuSQ2jVoQYk/g2mluSQKaXomDY=
+        b=2S0Qq0mVgmSWMTUCZwJg5iT6iP4ODLaCxCGj3v4F3O5eb3DXZARLyqjIKzrKCD29y
+         nKTIwokLBtn78vCboQ4NGeKFTtNxF69Yg2X128Wk27K+V9raifErc1JztwY/mQPQEZ
+         3u5JN9TZ5L0oe7sqdqXomocUosOcspcx2kcnY/0Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
+        stable@vger.kernel.org, Dou Liyang <douly.fnst@cn.fujitsu.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 084/361] mtd: rawnand: atmel: Fix potential NULL pointer dereference
-Date:   Sun, 11 Nov 2018 14:17:11 -0800
-Message-Id: <20181111221631.682136291@linuxfoundation.org>
+Subject: [PATCH 4.19 081/361] ACPI / processor: Fix the return value of acpi_processor_ids_walk()
+Date:   Sun, 11 Nov 2018 14:17:08 -0800
+Message-Id: <20181111221631.288215540@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -66,42 +62,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+From: Dou Liyang <douly.fnst@cn.fujitsu.com>
 
-[ Upstream commit fbed20280d912449cfb40c382cb55e3d11502587 ]
+[ Upstream commit d0381bf4f80c571dde1244fe5b85dc35e8b3f546 ]
 
-There is a potential execution path in which function
-of_find_compatible_node() returns NULL. In such a case,
-we end up having a NULL pointer dereference when accessing
-pointer *nfc_np* in function of_clk_get().
+ACPI driver should make sure all the processor IDs in their ACPI Namespace
+are unique. the driver performs a depth-first walk of the namespace tree
+and calls the acpi_processor_ids_walk() to check the duplicate IDs.
 
-So, we better don't take any chances and fix this by null
-checking pointer *nfc_np* before calling of_clk_get().
+But, the acpi_processor_ids_walk() mistakes the return value. If a
+processor is checked, it returns true which causes the walk break
+immediately, and other processors will never be checked.
 
-Addresses-Coverity-ID: 1473052 ("Dereference null return value")
-Fixes: f88fc122cc34 ("mtd: nand: Cleanup/rework the atmel_nand driver")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Acked-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Repace the value with AE_OK which is the standard acpi_status value.
+And don't abort the namespace walk even on error.
+
+Fixes: 8c8cb30f49b8 (acpi/processor: Implement DEVICE operator for processor enumeration)
+Signed-off-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mtd/nand/raw/atmel/nand-controller.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/acpi/acpi_processor.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/drivers/mtd/nand/raw/atmel/nand-controller.c
-+++ b/drivers/mtd/nand/raw/atmel/nand-controller.c
-@@ -2063,6 +2063,10 @@ atmel_hsmc_nand_controller_legacy_init(s
- 	nand_np = dev->of_node;
- 	nfc_np = of_find_compatible_node(dev->of_node, NULL,
- 					 "atmel,sama5d3-nfc");
-+	if (!nfc_np) {
-+		dev_err(dev, "Could not find device node for sama5d3-nfc\n");
-+		return -ENODEV;
-+	}
+--- a/drivers/acpi/acpi_processor.c
++++ b/drivers/acpi/acpi_processor.c
+@@ -643,7 +643,7 @@ static acpi_status __init acpi_processor
  
- 	nc->clk = of_clk_get(nfc_np, 0);
- 	if (IS_ERR(nc->clk)) {
+ 	status = acpi_get_type(handle, &acpi_type);
+ 	if (ACPI_FAILURE(status))
+-		return false;
++		return status;
+ 
+ 	switch (acpi_type) {
+ 	case ACPI_TYPE_PROCESSOR:
+@@ -663,11 +663,12 @@ static acpi_status __init acpi_processor
+ 	}
+ 
+ 	processor_validated_ids_update(uid);
+-	return true;
++	return AE_OK;
+ 
+ err:
++	/* Exit on error, but don't abort the namespace walk */
+ 	acpi_handle_info(handle, "Invalid processor object\n");
+-	return false;
++	return AE_OK;
+ 
+ }
+ 
 
 
