@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA6A0C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:33:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 702CAC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:34:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B31D62084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:33:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3662F2084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:34:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="n60ltEir"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B31D62084C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OcTAk+SQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3662F2084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388680AbeKLJYN (ORCPT
+        id S2388703AbeKLJYV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:24:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43886 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:24:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43918 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388417AbeKLIUL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:20:11 -0500
+        id S2388421AbeKLIUK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:20:10 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2588721707;
+        by mail.kernel.org (Postfix) with ESMTPSA id 85A94208A3;
         Sun, 11 Nov 2018 22:30:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975414;
-        bh=BMLa2PooLHBl+wU0Nn80e/xOWHzmcI0OHLORUbRQxqE=;
+        bh=vsgjvSblDrMVuW6CNpqSCsq9vLKJZnqmYOd6ScTrTJ4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n60ltEirknJ2X01ltkt68FxzoiMKDXml4VUPfTJtv+yW+OpzuT3geboPhz8zQ/HAm
-         JnHTR1bfMOFqgnTNPL06dIkN/PktIlq6xcWAVqKhPpSdr5w1y/JKG2j8Dr8qDyUbPy
-         XINKgfD9kuCsggncVb9ZPrizrDK09JD9obRkI5qI=
+        b=OcTAk+SQASPaHstpB58KDJ+mog/aquGFFO9xVmKRSIhCxhQkcX3DWKuOjKSJjcCBO
+         79BV30Fsdq+m0ChBgbGMPWw6lU7GlJjM3bNo0K9r9s5flnoDJKJAjovMKhaEEd6ZTK
+         umggF6R4iqw+GKpWrBxQq+e1I5AHurObbsmMGvgE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shaul Triebitz <shaul.triebitz@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
+        stable@vger.kernel.org, Yunsheng Lin <linyunsheng@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 086/350] iwlwifi: pcie: avoid empty free RB queue
-Date:   Sun, 11 Nov 2018 14:19:10 -0800
-Message-Id: <20181111221710.715055534@linuxfoundation.org>
+Subject: [PATCH 4.18 124/350] net: hns3: Fix for vf vlan delete failed problem
+Date:   Sun, 11 Nov 2018 14:19:48 -0800
+Message-Id: <20181111221712.521842995@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -63,108 +65,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shaul Triebitz <shaul.triebitz@intel.com>
+From: Yunsheng Lin <linyunsheng@huawei.com>
 
-[ Upstream commit 868a1e863f95183f00809363fefba6d4f5bcd116 ]
+[ Upstream commit 41dafea2af781d8e3ab8626d236b52e4172905a3 ]
 
-If all free RB queues are empty, the driver will never restock the
-free RB queue.  That's because the restocking happens in the Rx flow,
-and if the free queue is empty there will be no Rx.
+There are only 128 entries in vf vlan table, if user has added
+more than 128 vlan, fw will ignore it and disable the vf vlan
+table. So when user deletes the vlan entry that has not been
+set to vf vlan table, fw will return not found result and driver
+treat that as error, which will cause vlan delete failed problem.
 
-Although there's a background worker (a.k.a. allocator) allocating
-memory for RBs so that the Rx handler can restock them, the worker may
-run only after the free queue has become empty (and then it is too
-late for restocking as explained above).
+This patch fixes it by returning ok when fw returns not found
+result.
 
-There is a solution for that called 'emergency': If the number of used
-RB's reaches half the amount of all RB's, the Rx handler will not wait
-for the allocator but immediately allocate memory for the used RB's
-and restock the free queue.
-
-But, since the used RB's is per queue, it may happen that the used
-RB's are spread between the queues such that the emergency check will
-fail for each of the queues
-(and still run out of RBs, causing the above symptom).
-
-To fix it, move to emergency mode if the sum of *all* used RBs (for
-all Rx queues) reaches half the amount of all RB's
-
-Signed-off-by: Shaul Triebitz <shaul.triebitz@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Fixes: 6c251711b37f ("net: hns3: Disable vf vlan filter when vf vlan table is full")
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/wireless/intel/iwlwifi/pcie/rx.c |   32 +++++++++++++++++----------
- 1 file changed, 21 insertions(+), 11 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/rx.c
-@@ -1050,6 +1050,14 @@ void iwl_pcie_rx_free(struct iwl_trans *
- 	kfree(trans_pcie->rxq);
- }
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -4686,9 +4686,17 @@ static int hclge_set_vf_vlan_common(stru
+ 			"Add vf vlan filter fail, ret =%d.\n",
+ 			req0->resp_code);
+ 	} else {
++#define HCLGE_VF_VLAN_DEL_NO_FOUND	1
+ 		if (!req0->resp_code)
+ 			return 0;
  
-+static void iwl_pcie_rx_move_to_allocator(struct iwl_rxq *rxq,
-+					  struct iwl_rb_allocator *rba)
-+{
-+	spin_lock(&rba->lock);
-+	list_splice_tail_init(&rxq->rx_used, &rba->rbd_empty);
-+	spin_unlock(&rba->lock);
-+}
-+
- /*
-  * iwl_pcie_rx_reuse_rbd - Recycle used RBDs
-  *
-@@ -1081,9 +1089,7 @@ static void iwl_pcie_rx_reuse_rbd(struct
- 	if ((rxq->used_count % RX_CLAIM_REQ_ALLOC) == RX_POST_REQ_ALLOC) {
- 		/* Move the 2 RBDs to the allocator ownership.
- 		 Allocator has another 6 from pool for the request completion*/
--		spin_lock(&rba->lock);
--		list_splice_tail_init(&rxq->rx_used, &rba->rbd_empty);
--		spin_unlock(&rba->lock);
-+		iwl_pcie_rx_move_to_allocator(rxq, rba);
- 
- 		atomic_inc(&rba->req_pending);
- 		queue_work(rba->alloc_wq, &rba->rx_alloc);
-@@ -1261,10 +1267,18 @@ restart:
- 		IWL_DEBUG_RX(trans, "Q %d: HW = SW = %d\n", rxq->id, r);
- 
- 	while (i != r) {
-+		struct iwl_rb_allocator *rba = &trans_pcie->rba;
- 		struct iwl_rx_mem_buffer *rxb;
--
--		if (unlikely(rxq->used_count == rxq->queue_size / 2))
-+		/* number of RBDs still waiting for page allocation */
-+		u32 rb_pending_alloc =
-+			atomic_read(&trans_pcie->rba.req_pending) *
-+			RX_CLAIM_REQ_ALLOC;
-+
-+		if (unlikely(rb_pending_alloc >= rxq->queue_size / 2 &&
-+			     !emergency)) {
-+			iwl_pcie_rx_move_to_allocator(rxq, rba);
- 			emergency = true;
++		if (req0->resp_code == HCLGE_VF_VLAN_DEL_NO_FOUND) {
++			dev_warn(&hdev->pdev->dev,
++				 "vlan %d filter is not in vf vlan table\n",
++				 vlan);
++			return 0;
 +		}
- 
- 		if (trans->cfg->mq_rx_supported) {
- 			/*
-@@ -1307,17 +1321,13 @@ restart:
- 			iwl_pcie_rx_allocator_get(trans, rxq);
- 
- 		if (rxq->used_count % RX_CLAIM_REQ_ALLOC == 0 && !emergency) {
--			struct iwl_rb_allocator *rba = &trans_pcie->rba;
--
- 			/* Add the remaining empty RBDs for allocator use */
--			spin_lock(&rba->lock);
--			list_splice_tail_init(&rxq->rx_used, &rba->rbd_empty);
--			spin_unlock(&rba->lock);
-+			iwl_pcie_rx_move_to_allocator(rxq, rba);
- 		} else if (emergency) {
- 			count++;
- 			if (count == 8) {
- 				count = 0;
--				if (rxq->used_count < rxq->queue_size / 3)
-+				if (rb_pending_alloc < rxq->queue_size / 3)
- 					emergency = false;
- 
- 				rxq->read = i;
++
+ 		dev_err(&hdev->pdev->dev,
+ 			"Kill vf vlan filter fail, ret =%d.\n",
+ 			req0->resp_code);
 
 
