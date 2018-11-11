@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C52C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:18:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44437C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:18:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A62420817
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:18:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A2B120817
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:18:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="v2Nm1quw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A62420817
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rkffBLPK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A2B120817
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389784AbeKLJIX (ORCPT
+        id S2389665AbeKLIVa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:08:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48890 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:21:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48862 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389650AbeKLIVb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:21:31 -0500
+        id S2389631AbeKLIVa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:30 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B19512243E;
+        by mail.kernel.org (Postfix) with ESMTPSA id 23EC421707;
         Sun, 11 Nov 2018 22:31:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975493;
-        bh=C5hsL6/yqZKCBXIIRiE6oWABnzIBMU7dbuWG9sZcuEo=;
+        bh=BX1phv56J3EEsPSj3ei54XyB8ITHIoIGzpT64jYQlIA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=v2Nm1quwRBONGKLtWttRS64WWrT1CO34BWJEhyf/DYDlRFvacbQjBzPtFQqNVwkQy
-         zwSyQdgEk16uX5GHgbqPnqr05nVbNrKOj5Lu+RBtf9byjgYGC27SyOnZI9vnu/kFSk
-         YTTrIMKWHtRxQ3gMqciYbY3V+ROmD5XVzD8khCx4=
+        b=rkffBLPKjFg6PbTskn0W5rDYIL0JS8zhGYC4zQzJQzUBGhBmYLxPb8fcgI1mznSF8
+         KSXxLhm2ydR5tRKyKBtYhI+Yvt5wAtz28A++C0Fhz4hIe5oACOXpMBq5paWgmmNagC
+         rS4rpEnjM2Zg/twdxrpBk5kKnVw326mTiFvUx1wc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
+        stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.18 296/350] media: em28xx: use a default format if TRY_FMT fails
-Date:   Sun, 11 Nov 2018 14:22:40 -0800
-Message-Id: <20181111221720.475244984@linuxfoundation.org>
+Subject: [PATCH 4.18 295/350] media: cec: forgot to cancel delayed work
+Date:   Sun, 11 Nov 2018 14:22:39 -0800
+Message-Id: <20181111221720.425461490@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -61,40 +61,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+From: Hans Verkuil <hverkuil@xs4all.nl>
 
-commit f823ce2a1202d47110a7ef86b65839f0be8adc38 upstream.
+commit 490d84f6d73c12f4204241cff8651eed60aae914 upstream.
 
-Follow the V4L2 spec, as warned by v4l2-compliance:
+If the wait for completion was interrupted, then make sure to cancel
+any delayed work.
 
-	warn: v4l2-test-formats.cpp(732): TRY_FMT cannot handle an invalid pixelformat.
-	warn: v4l2-test-formats.cpp(733): This may or may not be a problem. For more information see:
+This can only happen if a transmit is waiting for a reply, and you press
+Ctrl-C or reboot/poweroff or something like that which interrupts the
+thread waiting for the reply and then proceeds to delete the CEC message.
 
-warn: v4l2-test-formats.cpp(734): http://www.mail-archive.com/linux-media@vger.kernel.org/msg56550.html
+Since the delayed work wasn't canceled, once it would trigger it referred
+to stale data and resulted in a kernel oops.
 
-Cc: stable@vger.kernel.org
-Fixes: bddcf63313c6 ("V4L/DVB (9927): em28xx: use a more standard way to specify video formats")
+Fixes: 7ec2b3b941a6 ("cec: add new tx/rx status bits to detect aborts/timeouts")
+
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Cc: <stable@vger.kernel.org>      # for v4.18 and up
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/usb/em28xx/em28xx-video.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/media/cec/cec-adap.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/media/usb/em28xx/em28xx-video.c
-+++ b/drivers/media/usb/em28xx/em28xx-video.c
-@@ -1471,9 +1471,9 @@ static int vidioc_try_fmt_vid_cap(struct
+--- a/drivers/media/cec/cec-adap.c
++++ b/drivers/media/cec/cec-adap.c
+@@ -815,6 +815,8 @@ int cec_transmit_msg_fh(struct cec_adapt
+ 	 */
+ 	mutex_unlock(&adap->lock);
+ 	wait_for_completion_killable(&data->c);
++	if (!data->completed)
++		cancel_delayed_work_sync(&data->work);
+ 	mutex_lock(&adap->lock);
  
- 	fmt = format_by_fourcc(f->fmt.pix.pixelformat);
- 	if (!fmt) {
--		em28xx_videodbg("Fourcc format (%08x) invalid.\n",
--				f->fmt.pix.pixelformat);
--		return -EINVAL;
-+		fmt = &format[0];
-+		em28xx_videodbg("Fourcc format (%08x) invalid. Using default (%08x).\n",
-+				f->fmt.pix.pixelformat, fmt->fourcc);
- 	}
- 
- 	if (dev->board.is_em2800) {
+ 	/* Cancel the transmit if it was interrupted */
 
 
