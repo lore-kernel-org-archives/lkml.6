@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05ACBC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94959C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:11:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2E5A20871
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:11:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 597BD20871
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:11:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xkdHpFu+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2E5A20871
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dEZ1IC77"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 597BD20871
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731339AbeKLKBk (ORCPT
+        id S1731419AbeKLKBx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 05:01:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60278 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 05:01:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60706 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730599AbeKLIRX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:17:23 -0500
+        id S1730601AbeKLIRW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:17:22 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 79D9421582;
-        Sun, 11 Nov 2018 22:27:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8BE65208A3;
+        Sun, 11 Nov 2018 22:27:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975247;
-        bh=jeXfFLvaqa0weiquCPdLv1YnOC6yHFfjSjsrXZT9Vng=;
+        s=default; t=1541975246;
+        bh=j3JN7QI56ABj/bA4OfriFR3EeislfXctw8H2E05+acM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xkdHpFu+PBVc8OCVQDn2UpeQzGV9cfi0brn5yQE2q25Jqy4mLVYfVNLi6vqcsSR7P
-         K+QxmacuBR8UzInRM2ANIBU32k+aosl6+7916iNDZbQyxEIqSOo1oYFmv8sv0mn4bK
-         oZPGdIOSh5NMpTDq3a+8gJJkHDYtwJzKbrrzqd98=
+        b=dEZ1IC77PLUsQaEpxAmMpDx7Ksjq89WL9trcCqu240RECveonBPNIdNubPIblFQxU
+         AUBlrt7yYwjvaT/m7XP+M16y7EV5lWsqDPPzFPuQ41RJVM7/B+gXMEJoJqoe3IcQ+3
+         an8YDqfY4NGT6eSBl3XcU2vhiiPEGchG16DhOmbs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yu Zhao <yuzhao@google.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+        stable@vger.kernel.org, Sanskriti Sharma <sansharm@redhat.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 070/361] mmc: sdhci-pci-o2micro: Add quirk for O2 Micro dev 0x8620 rev 0x01
-Date:   Sun, 11 Nov 2018 14:16:57 -0800
-Message-Id: <20181111221629.851793510@linuxfoundation.org>
+Subject: [PATCH 4.19 067/361] perf strbuf: Match va_{add,copy} with va_end
+Date:   Sun, 11 Nov 2018 14:16:54 -0800
+Message-Id: <20181111221629.441014188@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -63,57 +65,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yu Zhao <yuzhao@google.com>
+From: Sanskriti Sharma <sansharm@redhat.com>
 
-[ Upstream commit 5169894982bb67486d93cc1e10151712bb86bcb6 ]
+[ Upstream commit ce49d8436cffa9b7a6a5f110879d53e89dbc6746 ]
 
-This device reports SDHCI_CLOCK_INT_STABLE even though it's not
-ready to take SDHCI_CLOCK_CARD_EN. The symptom is that reading
-SDHCI_CLOCK_CONTROL after enabling the clock shows absence of the
-bit from the register (e.g. expecting 0x0000fa07 = 0x0000fa03 |
-SDHCI_CLOCK_CARD_EN but only observed the first operand).
+Ensure that all code paths in strbuf_addv() call va_end() on the
+ap_saved copy that was made.
 
-mmc1: Timeout waiting for hardware cmd interrupt.
-mmc1: sdhci: ============ SDHCI REGISTER DUMP ===========
-mmc1: sdhci: Sys addr:  0x00000000 | Version:  0x00000603
-mmc1: sdhci: Blk size:  0x00000000 | Blk cnt:  0x00000000
-mmc1: sdhci: Argument:  0x00000000 | Trn mode: 0x00000000
-mmc1: sdhci: Present:   0x01ff0001 | Host ctl: 0x00000001
-mmc1: sdhci: Power:     0x0000000f | Blk gap:  0x00000000
-mmc1: sdhci: Wake-up:   0x00000000 | Clock:    0x0000fa03
-mmc1: sdhci: Timeout:   0x00000000 | Int stat: 0x00000000
-mmc1: sdhci: Int enab:  0x00ff0083 | Sig enab: 0x00ff0083
-mmc1: sdhci: AC12 err:  0x00000000 | Slot int: 0x00000000
-mmc1: sdhci: Caps:      0x25fcc8bf | Caps_1:   0x00002077
-mmc1: sdhci: Cmd:       0x00000000 | Max curr: 0x005800c8
-mmc1: sdhci: Resp[0]:   0x00000000 | Resp[1]:  0x00000000
-mmc1: sdhci: Resp[2]:   0x00000000 | Resp[3]:  0x00000000
-mmc1: sdhci: Host ctl2: 0x00000008
-mmc1: sdhci: ADMA Err:  0x00000000 | ADMA Ptr: 0x00000000
-mmc1: sdhci: ============================================
+Fixes the following coverity complaint:
 
-The problem happens during wakeup from S3. Adding a delay quirk
-after power up reliably fixes the problem.
+  Error: VARARGS (CWE-237): [#def683]
+  tools/perf/util/strbuf.c:106: missing_va_end: va_end was not called
+  for "ap_saved".
 
-Signed-off-by: Yu Zhao <yuzhao@google.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Sanskriti Sharma <sansharm@redhat.com>
+Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Joe Lawrence <joe.lawrence@redhat.com>
+Link: http://lkml.kernel.org/r/1538490554-8161-2-git-send-email-sansharm@redhat.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mmc/host/sdhci-pci-o2micro.c |    3 +++
- 1 file changed, 3 insertions(+)
+ tools/perf/util/strbuf.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/drivers/mmc/host/sdhci-pci-o2micro.c
-+++ b/drivers/mmc/host/sdhci-pci-o2micro.c
-@@ -490,6 +490,9 @@ int sdhci_pci_o2_probe(struct sdhci_pci_
- 		pci_write_config_byte(chip->pdev, O2_SD_LOCK_WP, scratch);
- 		break;
- 	case PCI_DEVICE_ID_O2_SEABIRD0:
-+		if (chip->pdev->revision == 0x01)
-+			chip->quirks |= SDHCI_QUIRK_DELAY_AFTER_POWER;
-+		/* fall through */
- 	case PCI_DEVICE_ID_O2_SEABIRD1:
- 		/* UnLock WP */
- 		ret = pci_read_config_byte(chip->pdev,
+--- a/tools/perf/util/strbuf.c
++++ b/tools/perf/util/strbuf.c
+@@ -98,19 +98,25 @@ static int strbuf_addv(struct strbuf *sb
+ 
+ 	va_copy(ap_saved, ap);
+ 	len = vsnprintf(sb->buf + sb->len, sb->alloc - sb->len, fmt, ap);
+-	if (len < 0)
++	if (len < 0) {
++		va_end(ap_saved);
+ 		return len;
++	}
+ 	if (len > strbuf_avail(sb)) {
+ 		ret = strbuf_grow(sb, len);
+-		if (ret)
++		if (ret) {
++			va_end(ap_saved);
+ 			return ret;
++		}
+ 		len = vsnprintf(sb->buf + sb->len, sb->alloc - sb->len, fmt, ap_saved);
+ 		va_end(ap_saved);
+ 		if (len > strbuf_avail(sb)) {
+ 			pr_debug("this should not happen, your vsnprintf is broken");
++			va_end(ap_saved);
+ 			return -EINVAL;
+ 		}
+ 	}
++	va_end(ap_saved);
+ 	return strbuf_setlen(sb, sb->len + len);
+ }
+ 
 
 
