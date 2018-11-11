@@ -6,45 +6,47 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B43C7C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:01:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2192C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:01:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70FCC20818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:01:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 942D920818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:01:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="u6VkEmUE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70FCC20818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HHzLZMRt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 942D920818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390807AbeKLIvI (ORCPT
+        id S2390840AbeKLIvP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:51:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53192 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:51:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390666AbeKLIWc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2390690AbeKLIWc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:22:32 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 575B92154B;
-        Sun, 11 Nov 2018 22:32:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 003D822443;
+        Sun, 11 Nov 2018 22:32:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975555;
-        bh=lA9o59XAIbiRPSSTwTeCFIoKQb0yJfPpQr2uKMRt/DY=;
+        bh=QdEHpqWdNLv4O2e7iWhxdrseszvCW9hdLH0wk6h6MTA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u6VkEmUE0LQ3pAntoUmJ7Nhjy9i79YXqwGt1dbA+YSQ2o1X1/98PnDKdknQsRWyJI
-         IieBKtfIP2tT2c4TaRi5s1JVFQrAb74akAeloQXvjcxp+D8d7EVnJ3+OQSVpiRpXOL
-         VodG1KMoV1MCB/QiGV4FPgRPvO7Yk1SO1ZNR+1OU=
+        b=HHzLZMRtuGnpzyA8zVFkPFhjgB3WxAeYnhNMvcwkBDgp6sTOwgYM6FPvgsyAasKu8
+         2CHqkldNLyZpSA82ZTMsuQVri/g4C27tH+zY1hQyH5yvZKdHdGBbrM8SoUWNS0rI0Y
+         5SmtcyWQ9BPEumTcGJ3ECocMV/FQ7Z/jsvMUlKXI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 071/222] net: dsa: mv88e6xxx: Fix writing to a PHY page.
-Date:   Sun, 11 Nov 2018 14:22:48 -0800
-Message-Id: <20181111221654.491589444@linuxfoundation.org>
+Subject: [PATCH 4.14 070/222] pinctrl: ssbi-gpio: Fix pm8xxx_pin_config_get() to be compliant
+Date:   Sun, 11 Nov 2018 14:22:47 -0800
+Message-Id: <20181111221654.343988265@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
 References: <20181111221647.665769131@linuxfoundation.org>
@@ -62,33 +64,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andrew Lunn <andrew@lunn.ch>
+From: Douglas Anderson <dianders@chromium.org>
 
-[ Upstream commit c309b158090d788e96ee597444965cb79b040484 ]
+[ Upstream commit b432414b996d32a1bd9afe2bd595bd5729c1477f ]
 
-After changing to the needed page, actually write the value to the
-register!
+If you look at "pinconf-groups" in debugfs for ssbi-gpio you'll notice
+it looks like nonsense.
 
-Fixes: 09cb7dfd3f14 ("net: dsa: mv88e6xxx: describe PHY page and SerDes")
-Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+The problem is fairly well described in commit 1cf86bc21257 ("pinctrl:
+qcom: spmi-gpio: Fix pmic_gpio_config_get() to be compliant") and
+commit 05e0c828955c ("pinctrl: msm: Fix msm_config_group_get() to be
+compliant"), but it was pointed out that ssbi-gpio has the same
+problem.  Let's fix it there too.
+
+Fixes: b4c45fe974bc ("pinctrl: qcom: ssbi: Family A gpio & mpp drivers")
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/dsa/mv88e6xxx/phy.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c |   28 +++++++++++++++++++++-------
+ 1 file changed, 21 insertions(+), 7 deletions(-)
 
---- a/drivers/net/dsa/mv88e6xxx/phy.c
-+++ b/drivers/net/dsa/mv88e6xxx/phy.c
-@@ -110,6 +110,9 @@ int mv88e6xxx_phy_page_write(struct mv88
- 	err = mv88e6xxx_phy_page_get(chip, phy, page);
- 	if (!err) {
- 		err = mv88e6xxx_phy_write(chip, phy, MV88E6XXX_PHY_PAGE, page);
-+		if (!err)
-+			err = mv88e6xxx_phy_write(chip, phy, reg, val);
-+
- 		mv88e6xxx_phy_page_put(chip, phy);
- 	}
+--- a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
++++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
+@@ -260,22 +260,32 @@ static int pm8xxx_pin_config_get(struct
  
+ 	switch (param) {
+ 	case PIN_CONFIG_BIAS_DISABLE:
+-		arg = pin->bias == PM8XXX_GPIO_BIAS_NP;
++		if (pin->bias != PM8XXX_GPIO_BIAS_NP)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_BIAS_PULL_DOWN:
+-		arg = pin->bias == PM8XXX_GPIO_BIAS_PD;
++		if (pin->bias != PM8XXX_GPIO_BIAS_PD)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_BIAS_PULL_UP:
+-		arg = pin->bias <= PM8XXX_GPIO_BIAS_PU_1P5_30;
++		if (pin->bias > PM8XXX_GPIO_BIAS_PU_1P5_30)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PM8XXX_QCOM_PULL_UP_STRENGTH:
+ 		arg = pin->pull_up_strength;
+ 		break;
+ 	case PIN_CONFIG_BIAS_HIGH_IMPEDANCE:
+-		arg = pin->disable;
++		if (!pin->disable)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_INPUT_ENABLE:
+-		arg = pin->mode == PM8XXX_GPIO_MODE_INPUT;
++		if (pin->mode != PM8XXX_GPIO_MODE_INPUT)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_OUTPUT:
+ 		if (pin->mode & PM8XXX_GPIO_MODE_OUTPUT)
+@@ -290,10 +300,14 @@ static int pm8xxx_pin_config_get(struct
+ 		arg = pin->output_strength;
+ 		break;
+ 	case PIN_CONFIG_DRIVE_PUSH_PULL:
+-		arg = !pin->open_drain;
++		if (pin->open_drain)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
+-		arg = pin->open_drain;
++		if (!pin->open_drain)
++			return -EINVAL;
++		arg = 1;
+ 		break;
+ 	default:
+ 		return -EINVAL;
 
 
