@@ -2,50 +2,52 @@ Return-Path: <SRS0=p8q0=NW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE576C0044C
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AACBC04EBA
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 977B121731
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10FEB223C6
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 22:27:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SyLRd+X5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 977B121731
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="s0DQDGsP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10FEB223C6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730226AbeKLIRJ (ORCPT
+        id S1730316AbeKLIRK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 03:17:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59760 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 03:17:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59220 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730202AbeKLIRI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:17:08 -0500
+        id S1730158AbeKLIRH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:17:07 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6620E223CA;
-        Sun, 11 Nov 2018 22:27:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4D4F216FD;
+        Sun, 11 Nov 2018 22:27:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975232;
-        bh=kY+9To193i7Jbj/kpP/H6SN/r6UMDnxAQAY6H1wI6VU=;
+        s=default; t=1541975230;
+        bh=5hnr1Rmyob4ry1WzG0VAzPyEh/SadHV+wnJ4Kd6zz9Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SyLRd+X5QHEKUB1WVYI8dtXuZI7MNBk5UTISFGxsYcPaHT2plu58fWA3bA9R0esyk
-         Tkp1dOrtU0h3cdBjTPBLpuPsH5KuItURniuEWWIBo6Ie8OiybSI4dHngUqStgKP8c8
-         YksTO3UntabGY/z5GEyw2QgZCI3dbfwXpwSpAVPk=
+        b=s0DQDGsPenBogtYgi08NWxudEVVBd1GtJD1fUXXtfQGZjOkXnqecwMituCrultY3m
+         8RdA55b0DJAUS4zbuS7J5KNfXGNqssNROX5lgsfojko9Nwpo6TO3ycFmnHo1AMWaR1
+         hFJS/MYDksVAAKXXPj+YRbsddXze3G1rH1huIlxE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thierry Reding <treding@nvidia.com>,
-        Guenter Roeck <linux@roeck-us.net>,
+        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 059/361] hwmon: (pwm-fan) Set fan speed to 0 on suspend
-Date:   Sun, 11 Nov 2018 14:16:46 -0800
-Message-Id: <20181111221628.253067614@linuxfoundation.org>
+Subject: [PATCH 4.19 055/361] hv_netvsc: fix vf serial matching with pci slot info
+Date:   Sun, 11 Nov 2018 14:16:42 -0800
+Message-Id: <20181111221627.767521037@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
 References: <20181111221619.915519183@linuxfoundation.org>
@@ -63,66 +65,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thierry Reding <treding@nvidia.com>
+From: Haiyang Zhang <haiyangz@microsoft.com>
 
-[ Upstream commit 95dcd64bc5a27080beaa344edfe5bdcca3d2e7dc ]
+[ Upstream commit 005479556197f80139771960dda0dfdcd2d2aad5 ]
 
-Technically this is not required because disabling the PWM should be
-enough. However, when support for atomic operations was implemented in
-the PWM subsystem, only actual changes to the PWM channel are applied
-during pwm_config(), which means that during after resume from suspend
-the old settings won't be applied.
+The VF device's serial number is saved as a string in PCI slot's
+kobj name, not the slot->number. This patch corrects the netvsc
+driver, so the VF device can be successfully paired with synthetic
+NIC.
 
-One possible solution is for the PWM driver to implement its own PM
-operations such that settings from before suspend get applied on resume.
-This has the disadvantage of completely ignoring any particular ordering
-requirements that PWM user drivers might have, so it is best to leave it
-up to the user drivers to apply the settings that they want at the
-appropriate time.
-
-Another way to solve this would be to read back the current state of the
-PWM at the time of resume. That way, in case the configuration was lost
-during suspend, applying the old settings in PWM user drivers would
-actually get them applied because they differ from the current settings.
-However, not all PWM drivers support reading the hardware state, and not
-all hardware may support it.
-
-The best workaround at this point seems to be to let PWM user drivers
-tell the PWM subsystem that the PWM is turned off by, in addition to
-disabling it, also setting the duty cycle to 0. This causes the resume
-operation to apply a configuration that is different from the current
-configuration, resulting in the proper state from before suspend getting
-restored.
-
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Fixes: 00d7ddba1143 ("hv_netvsc: pair VF based on serial number")
+Reported-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
+Reviewed-by: Stephen Hemminger <sthemmin@microsoft.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hwmon/pwm-fan.c |   12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ drivers/net/hyperv/netvsc_drv.c |   15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
---- a/drivers/hwmon/pwm-fan.c
-+++ b/drivers/hwmon/pwm-fan.c
-@@ -290,9 +290,19 @@ static int pwm_fan_remove(struct platfor
- static int pwm_fan_suspend(struct device *dev)
- {
- 	struct pwm_fan_ctx *ctx = dev_get_drvdata(dev);
-+	struct pwm_args args;
-+	int ret;
-+
-+	pwm_get_args(ctx->pwm, &args);
-+
-+	if (ctx->pwm_value) {
-+		ret = pwm_config(ctx->pwm, 0, args.period);
-+		if (ret < 0)
-+			return ret;
+--- a/drivers/net/hyperv/netvsc_drv.c
++++ b/drivers/net/hyperv/netvsc_drv.c
+@@ -2022,14 +2022,15 @@ static void netvsc_vf_setup(struct work_
+ 	rtnl_unlock();
+ }
  
--	if (ctx->pwm_value)
- 		pwm_disable(ctx->pwm);
+-/* Find netvsc by VMBus serial number.
+- * The PCI hyperv controller records the serial number as the slot.
++/* Find netvsc by VF serial number.
++ * The PCI hyperv controller records the serial number as the slot kobj name.
+  */
+ static struct net_device *get_netvsc_byslot(const struct net_device *vf_netdev)
+ {
+ 	struct device *parent = vf_netdev->dev.parent;
+ 	struct net_device_context *ndev_ctx;
+ 	struct pci_dev *pdev;
++	u32 serial;
+ 
+ 	if (!parent || !dev_is_pci(parent))
+ 		return NULL; /* not a PCI device */
+@@ -2040,16 +2041,22 @@ static struct net_device *get_netvsc_bys
+ 		return NULL;
+ 	}
+ 
++	if (kstrtou32(pci_slot_name(pdev->slot), 10, &serial)) {
++		netdev_notice(vf_netdev, "Invalid vf serial:%s\n",
++			      pci_slot_name(pdev->slot));
++		return NULL;
 +	}
 +
- 	return 0;
+ 	list_for_each_entry(ndev_ctx, &netvsc_dev_list, list) {
+ 		if (!ndev_ctx->vf_alloc)
+ 			continue;
+ 
+-		if (ndev_ctx->vf_serial == pdev->slot->number)
++		if (ndev_ctx->vf_serial == serial)
+ 			return hv_get_drvdata(ndev_ctx->device_ctx);
+ 	}
+ 
+ 	netdev_notice(vf_netdev,
+-		      "no netdev found for slot %u\n", pdev->slot->number);
++		      "no netdev found for vf serial:%u\n", serial);
+ 	return NULL;
  }
  
 
