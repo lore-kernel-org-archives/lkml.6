@@ -4,47 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88BF9C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:19:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5018C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:19:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49AC020817
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:19:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BFCD20817
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:19:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fT6w7C26"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49AC020817
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ebSDOl4J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BFCD20817
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389802AbeKLJJJ (ORCPT
+        id S2389606AbeKLIV0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:09:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48648 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389589AbeKLIV0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 03:21:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48494 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389561AbeKLIVX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:21:23 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3269C2154B;
-        Sun, 11 Nov 2018 22:31:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 945FD2154B;
+        Sun, 11 Nov 2018 22:31:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975489;
-        bh=wk49Ydr5qUm6LlVNLUCreBt1UVG9uw10eITPwC+90Ok=;
+        s=default; t=1541975486;
+        bh=SyJ9pSRTHMCF0h9jdFuho0K9PUZRa7u4ip+p45FKRhE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fT6w7C26sYZCWzqPgYNXCoHQ4WDvAqbCCSol/0vErs8U7UR8MDTLfWLBBHxLWV7aH
-         h7dM/rdKU9n3mUjpZ7jHyncgneEfuWwQyRjYdBou26JN4U5x8PN6fKxxPfIrNeoA5Q
-         Cjpm4xsmERMwz6TCZl801Rb57IoCpcyNtrmruXYI=
+        b=ebSDOl4JI+Qvnrug67KIt23gvEmXBm3PsXg1vPzWrZTbHShEoJ1EJdukJZ/oVjt7b
+         ynvbdtpVfX4Pi9Fu/y4pGzIVaJjBbZ7IpD+m9LsN5qWyRqTocHVSUAoMnsc9egnL/S
+         3xb6KqnLtAFFrbn4ypoBDvMSuU3LFsVGUyZVQ2vM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, jason.wessel@windriver.com,
-        jslaby@suse.com, He Zhe <zhe.he@windriver.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>
-Subject: [PATCH 4.18 287/350] kgdboc: Passing ekgdboc to command line causes panic
-Date:   Sun, 11 Nov 2018 14:22:31 -0800
-Message-Id: <20181111221720.072759414@linuxfoundation.org>
+        stable@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.18 282/350] iommu/arm-smmu: Ensure that page-table updates are visible before TLBI
+Date:   Sun, 11 Nov 2018 14:22:26 -0800
+Message-Id: <20181111221719.852735595@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -62,59 +62,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: He Zhe <zhe.he@windriver.com>
+From: Will Deacon <will.deacon@arm.com>
 
-commit 1bd54d851f50dea6af30c3e6ff4f3e9aab5558f9 upstream.
+commit 7d321bd3542500caf125249f44dc37cb4e738013 upstream.
 
-kgdboc_option_setup does not check input argument before passing it
-to strlen. The argument would be a NULL pointer if "ekgdboc", without
-its value, is set in command line and thus cause the following panic.
+The IO-pgtable code relies on the driver TLB invalidation callbacks to
+ensure that all page-table updates are visible to the IOMMU page-table
+walker.
 
-PANIC: early exception 0xe3 IP 10:ffffffff8fbbb620 error 0 cr2 0x0
-[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.18-rc8+ #1
-[    0.000000] RIP: 0010:strlen+0x0/0x20
-...
-[    0.000000] Call Trace
-[    0.000000]  ? kgdboc_option_setup+0x9/0xa0
-[    0.000000]  ? kgdboc_early_init+0x6/0x1b
-[    0.000000]  ? do_early_param+0x4d/0x82
-[    0.000000]  ? parse_args+0x212/0x330
-[    0.000000]  ? rdinit_setup+0x26/0x26
-[    0.000000]  ? parse_early_options+0x20/0x23
-[    0.000000]  ? rdinit_setup+0x26/0x26
-[    0.000000]  ? parse_early_param+0x2d/0x39
-[    0.000000]  ? setup_arch+0x2f7/0xbf4
-[    0.000000]  ? start_kernel+0x5e/0x4c2
-[    0.000000]  ? load_ucode_bsp+0x113/0x12f
-[    0.000000]  ? secondary_startup_64+0xa5/0xb0
+In the case that the page-table walker is cache-coherent, we cannot rely
+on an implicit DSB from the DMA-mapping code, so we must ensure that we
+execute a DSB in our tlb_add_flush() callback prior to triggering the
+invalidation.
 
-This patch adds a check to prevent the panic.
-
-Cc: stable@vger.kernel.org
-Cc: jason.wessel@windriver.com
-Cc: gregkh@linuxfoundation.org
-Cc: jslaby@suse.com
-Signed-off-by: He Zhe <zhe.he@windriver.com>
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: <stable@vger.kernel.org>
+Cc: Robin Murphy <robin.murphy@arm.com>
+Fixes: 2df7a25ce4a7 ("iommu/arm-smmu: Clean up DMA API usage")
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/kgdboc.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/iommu/arm-smmu.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/tty/serial/kgdboc.c
-+++ b/drivers/tty/serial/kgdboc.c
-@@ -130,6 +130,11 @@ static void kgdboc_unregister_kbd(void)
+--- a/drivers/iommu/arm-smmu.c
++++ b/drivers/iommu/arm-smmu.c
+@@ -469,6 +469,9 @@ static void arm_smmu_tlb_inv_range_nosyn
+ 	bool stage1 = cfg->cbar != CBAR_TYPE_S2_TRANS;
+ 	void __iomem *reg = ARM_SMMU_CB(smmu_domain->smmu, cfg->cbndx);
  
- static int kgdboc_option_setup(char *opt)
- {
-+	if (!opt) {
-+		pr_err("kgdboc: config string not provided\n");
-+		return -EINVAL;
-+	}
++	if (smmu_domain->smmu->features & ARM_SMMU_FEAT_COHERENT_WALK)
++		wmb();
 +
- 	if (strlen(opt) >= MAX_CONFIG_LEN) {
- 		printk(KERN_ERR "kgdboc: config string too long\n");
- 		return -ENOSPC;
+ 	if (stage1) {
+ 		reg += leaf ? ARM_SMMU_CB_S1_TLBIVAL : ARM_SMMU_CB_S1_TLBIVA;
+ 
+@@ -510,6 +513,9 @@ static void arm_smmu_tlb_inv_vmid_nosync
+ 	struct arm_smmu_domain *smmu_domain = cookie;
+ 	void __iomem *base = ARM_SMMU_GR0(smmu_domain->smmu);
+ 
++	if (smmu_domain->smmu->features & ARM_SMMU_FEAT_COHERENT_WALK)
++		wmb();
++
+ 	writel_relaxed(smmu_domain->cfg.vmid, base + ARM_SMMU_GR0_TLBIVMID);
+ }
+ 
 
 
