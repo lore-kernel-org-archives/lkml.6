@@ -6,44 +6,46 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C12EC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:40:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87CBDC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:41:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58A7F20869
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:40:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58A7F20869
+	by mail.kernel.org (Postfix) with ESMTP id 4A61820869
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 20:41:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A61820869
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730148AbeKLGa3 (ORCPT
+        id S1730104AbeKLGa3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 12 Nov 2018 01:30:29 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:49388 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:49438 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729849AbeKLFsD (ORCPT
+        by vger.kernel.org with ESMTP id S1729548AbeKLFsE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 00:48:03 -0500
+        Mon, 12 Nov 2018 00:48:04 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsQ-0000lM-GO; Sun, 11 Nov 2018 19:58:34 +0000
+        id 1gLvsQ-0000lJ-Go; Sun, 11 Nov 2018 19:58:34 +0000
 Received: from ben by deadeye with local (Exim 4.91)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gLvsO-0001OM-6p; Sun, 11 Nov 2018 19:58:32 +0000
+        id 1gLvsO-0001OH-69; Sun, 11 Nov 2018 19:58:32 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org,
-        "Alexander Sverdlin" <alexander.sverdlin@gmail.com>,
-        "Mark Brown" <broonie@kernel.org>
+CC:     akpm@linux-foundation.org, "Xin Long" <lucien.xin@gmail.com>,
+        "Marcelo Ricardo Leitner" <marcelo.leitner@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Neil Horman" <nhorman@tuxdriver.com>
 Date:   Sun, 11 Nov 2018 19:49:05 +0000
-Message-ID: <lsq.1541965745.778371948@decadent.org.uk>
+Message-ID: <lsq.1541965745.359690416@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
-Subject: [PATCH 3.16 029/366] ASoC: cirrus: i2s: Fix LRCLK configuration
+Subject: [PATCH 3.16 028/366] sctp: fix identification of new acks for
+ SFR-CACC
 In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,77 +59,117 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
 
-commit 2d534113be9a2aa532a1ae127a57e83558aed358 upstream.
+commit 51446780fc33e45cb790c05a7fa2c5bf7e8bc53b upstream.
 
-The bit responsible for LRCLK polarity is i2s_tlrs (0), not i2s_trel (2)
-(refer to "EP93xx User's Guide").
+It's currently written as:
 
-Previously card drivers which specified SND_SOC_DAIFMT_NB_IF actually got
-SND_SOC_DAIFMT_NB_NF, an adaptation is necessary to retain the old
-behavior.
+if (!tchunk->tsn_gap_acked) {   [1]
+	tchunk->tsn_gap_acked = 1;
+	...
+}
 
-Signed-off-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+if (TSN_lte(tsn, sack_ctsn)) {
+	if (!tchunk->tsn_gap_acked) {
+		/* SFR-CACC processing */
+		...
+	}
+}
+
+Which causes the SFR-CACC processing on ack reception to never process,
+as tchunk->tsn_gap_acked is always true by then. Block [1] was
+moved to that position by the commit marked below.
+
+This patch fixes it by doing SFR-CACC processing earlier, before
+tsn_gap_acked is set to true.
+
+Fixes: 31b02e154940 ("sctp: Failover transmitted list on transport delete")
+Signed-off-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Reviewed-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/soc/cirrus/edb93xx.c     | 2 +-
- sound/soc/cirrus/ep93xx-i2s.c  | 8 ++++----
- sound/soc/cirrus/snappercl15.c | 2 +-
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ net/sctp/outqueue.c | 48 ++++++++++++++++++++++-----------------------
+ 1 file changed, 23 insertions(+), 25 deletions(-)
 
---- a/sound/soc/cirrus/edb93xx.c
-+++ b/sound/soc/cirrus/edb93xx.c
-@@ -67,7 +67,7 @@ static struct snd_soc_dai_link edb93xx_d
- 	.cpu_dai_name	= "ep93xx-i2s",
- 	.codec_name	= "spi0.0",
- 	.codec_dai_name	= "cs4271-hifi",
--	.dai_fmt	= SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_IF |
-+	.dai_fmt	= SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
- 			  SND_SOC_DAIFMT_CBS_CFS,
- 	.ops		= &edb93xx_ops,
- };
---- a/sound/soc/cirrus/ep93xx-i2s.c
-+++ b/sound/soc/cirrus/ep93xx-i2s.c
-@@ -213,24 +213,24 @@ static int ep93xx_i2s_set_dai_fmt(struct
- 	switch (fmt & SND_SOC_DAIFMT_INV_MASK) {
- 	case SND_SOC_DAIFMT_NB_NF:
- 		/* Negative bit clock, lrclk low on left word */
--		clk_cfg &= ~(EP93XX_I2S_CLKCFG_CKP | EP93XX_I2S_CLKCFG_REL);
-+		clk_cfg &= ~(EP93XX_I2S_CLKCFG_CKP | EP93XX_I2S_CLKCFG_LRS);
- 		break;
+--- a/net/sctp/outqueue.c
++++ b/net/sctp/outqueue.c
+@@ -1346,7 +1346,7 @@ static void sctp_check_transmitted(struc
+ 			 * the outstanding bytes for this chunk, so only
+ 			 * count bytes associated with a transport.
+ 			 */
+-			if (transport) {
++			if (transport && !tchunk->tsn_gap_acked) {
+ 				/* If this chunk is being used for RTT
+ 				 * measurement, calculate the RTT and update
+ 				 * the RTO using this value.
+@@ -1358,14 +1358,34 @@ static void sctp_check_transmitted(struc
+ 				 * first instance of the packet or a later
+ 				 * instance).
+ 				 */
+-				if (!tchunk->tsn_gap_acked &&
+-				    !tchunk->resent &&
++				if (!tchunk->resent &&
+ 				    tchunk->rtt_in_progress) {
+ 					tchunk->rtt_in_progress = 0;
+ 					rtt = jiffies - tchunk->sent_at;
+ 					sctp_transport_update_rto(transport,
+ 								  rtt);
+ 				}
++
++				if (TSN_lte(tsn, sack_ctsn)) {
++					/*
++					 * SFR-CACC algorithm:
++					 * 2) If the SACK contains gap acks
++					 * and the flag CHANGEOVER_ACTIVE is
++					 * set the receiver of the SACK MUST
++					 * take the following action:
++					 *
++					 * B) For each TSN t being acked that
++					 * has not been acked in any SACK so
++					 * far, set cacc_saw_newack to 1 for
++					 * the destination that the TSN was
++					 * sent to.
++					 */
++					if (sack->num_gap_ack_blocks &&
++					    q->asoc->peer.primary_path->cacc.
++					    changeover_active)
++						transport->cacc.cacc_saw_newack
++							= 1;
++				}
+ 			}
  
- 	case SND_SOC_DAIFMT_NB_IF:
- 		/* Negative bit clock, lrclk low on right word */
- 		clk_cfg &= ~EP93XX_I2S_CLKCFG_CKP;
--		clk_cfg |= EP93XX_I2S_CLKCFG_REL;
-+		clk_cfg |= EP93XX_I2S_CLKCFG_LRS;
- 		break;
+ 			/* If the chunk hasn't been marked as ACKED,
+@@ -1397,28 +1417,6 @@ static void sctp_check_transmitted(struc
+ 				restart_timer = 1;
+ 				forward_progress = true;
  
- 	case SND_SOC_DAIFMT_IB_NF:
- 		/* Positive bit clock, lrclk low on left word */
- 		clk_cfg |= EP93XX_I2S_CLKCFG_CKP;
--		clk_cfg &= ~EP93XX_I2S_CLKCFG_REL;
-+		clk_cfg &= ~EP93XX_I2S_CLKCFG_LRS;
- 		break;
- 
- 	case SND_SOC_DAIFMT_IB_IF:
- 		/* Positive bit clock, lrclk low on right word */
--		clk_cfg |= EP93XX_I2S_CLKCFG_CKP | EP93XX_I2S_CLKCFG_REL;
-+		clk_cfg |= EP93XX_I2S_CLKCFG_CKP | EP93XX_I2S_CLKCFG_LRS;
- 		break;
- 	}
- 
---- a/sound/soc/cirrus/snappercl15.c
-+++ b/sound/soc/cirrus/snappercl15.c
-@@ -72,7 +72,7 @@ static struct snd_soc_dai_link snappercl
- 	.codec_dai_name	= "tlv320aic23-hifi",
- 	.codec_name	= "tlv320aic23-codec.0-001a",
- 	.platform_name	= "ep93xx-i2s",
--	.dai_fmt	= SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_IF |
-+	.dai_fmt	= SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
- 			  SND_SOC_DAIFMT_CBS_CFS,
- 	.ops		= &snappercl15_ops,
- };
+-				if (!tchunk->tsn_gap_acked) {
+-					/*
+-					 * SFR-CACC algorithm:
+-					 * 2) If the SACK contains gap acks
+-					 * and the flag CHANGEOVER_ACTIVE is
+-					 * set the receiver of the SACK MUST
+-					 * take the following action:
+-					 *
+-					 * B) For each TSN t being acked that
+-					 * has not been acked in any SACK so
+-					 * far, set cacc_saw_newack to 1 for
+-					 * the destination that the TSN was
+-					 * sent to.
+-					 */
+-					if (transport &&
+-					    sack->num_gap_ack_blocks &&
+-					    q->asoc->peer.primary_path->cacc.
+-					    changeover_active)
+-						transport->cacc.cacc_saw_newack
+-							= 1;
+-				}
+-
+ 				list_add_tail(&tchunk->transmitted_list,
+ 					      &q->sacked);
+ 			} else {
 
