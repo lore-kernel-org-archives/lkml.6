@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B63D9C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:38:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C32D1C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:38:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78B2520818
-	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:38:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8966920818
+	for <linux-kernel@archiver.kernel.org>; Sun, 11 Nov 2018 23:38:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="W29Ao9M2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78B2520818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BpvWBUoC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8966920818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388373AbeKLJ2W (ORCPT
+        id S2388330AbeKLJ2h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 04:28:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42214 "EHLO mail.kernel.org"
+        Mon, 12 Nov 2018 04:28:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729612AbeKLITw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:19:52 -0500
+        id S1730015AbeKLITv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 03:19:51 -0500
 Received: from localhost (unknown [206.108.79.134])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA03E223AE;
-        Sun, 11 Nov 2018 22:29:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE7E722360;
+        Sun, 11 Nov 2018 22:29:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1541975395;
-        bh=XOyOj4CyfGld2zh9c8I2iU8qv7YAUYi6fmTuVDbR/so=;
+        bh=qCj6gan9hzBAV6KrmKnmek6xbJSbPkJvAVNbZ7IPzeM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W29Ao9M2+j2X6d6IZgt4jNrMOoYR86jlTSqyiwiU4kZOpouRy7GDfrxMKdgFFgBPk
-         6TS2JuwG9bY8KZO8NhkAd0k7/uJFHbP6x7YArUOXkAo6aw3Kd6aCXJ4Q4XtTTTfPHk
-         0x6TqsXxbIjCQ48OcQM1NXgntlLYCHAL1o/9uP+U=
+        b=BpvWBUoC+cRR9ylBpXVGa9XHEYpSHHdwygETpT4iZOTbyIBCVkRJ0YaboZpGdzckv
+         OunlCTIG2LJ7D/VlNDTrS/VlPtDy9N2vaWCBByiIlzwgLzt2nlZNSxGqFBCtM2C/Wm
+         X/RAbgUdVsmrXReQMCp6vE9fG2VLysix1LUu23iE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Wang Dongsheng <dongsheng.wang@hxt-semitech.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+        stable@vger.kernel.org, Ben Peddell <klightspeed@killerwolves.net>,
+        Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 084/350] sdhci: acpi: add free_slot callback
-Date:   Sun, 11 Nov 2018 14:19:08 -0800
-Message-Id: <20181111221710.639198907@linuxfoundation.org>
+Subject: [PATCH 4.18 082/350] bcache: Populate writeback_rate_minimum attribute
+Date:   Sun, 11 Nov 2018 14:19:06 -0800
+Message-Id: <20181111221710.552278055@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
 References: <20181111221707.043394111@linuxfoundation.org>
@@ -65,52 +63,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
+From: Ben Peddell <klightspeed@killerwolves.net>
 
-[ Upstream commit c7eabbee3de99347105faa7fd925a500ccf43baf ]
+[ Upstream commit 7567c2a2ad9e80a2ce977eef535e64b61899633e ]
 
-The device specific resource can be free in free_slot after
-removing host controller.
+Forgot to include the maintainers with my first email.
 
-Signed-off-by: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Somewhere between Michael Lyle's original
+"bcache: PI controller for writeback rate V2" patch dated 07 Sep 2017
+and 1d316e6 bcache: implement PI controller for writeback rate,
+the mapping of the writeback_rate_minimum attribute was dropped.
+
+Re-add the missing sysfs writeback_rate_minimum attribute mapping to
+"allow the user to specify a minimum rate at which dirty blocks are
+retired."
+
+Fixes: 1d316e6 ("bcache: implement PI controller for writeback rate")
+Signed-off-by: Ben Peddell <klightspeed@killerwolves.net>
+Signed-off-by: Coly Li <colyli@suse.de>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mmc/host/sdhci-acpi.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/md/bcache/sysfs.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/mmc/host/sdhci-acpi.c
-+++ b/drivers/mmc/host/sdhci-acpi.c
-@@ -76,6 +76,7 @@ struct sdhci_acpi_slot {
- 	size_t		priv_size;
- 	int (*probe_slot)(struct platform_device *, const char *, const char *);
- 	int (*remove_slot)(struct platform_device *);
-+	int (*free_slot)(struct platform_device *pdev);
- 	int (*setup_host)(struct platform_device *pdev);
- };
+--- a/drivers/md/bcache/sysfs.c
++++ b/drivers/md/bcache/sysfs.c
+@@ -263,6 +263,7 @@ STORE(__cached_dev)
+ 			    1, WRITEBACK_RATE_UPDATE_SECS_MAX);
+ 	d_strtoul(writeback_rate_i_term_inverse);
+ 	d_strtoul_nonzero(writeback_rate_p_term_inverse);
++	d_strtoul_nonzero(writeback_rate_minimum);
  
-@@ -756,6 +757,9 @@ static int sdhci_acpi_probe(struct platf
- err_cleanup:
- 	sdhci_cleanup_host(c->host);
- err_free:
-+	if (c->slot && c->slot->free_slot)
-+		c->slot->free_slot(pdev);
-+
- 	sdhci_free_host(c->host);
- 	return err;
- }
-@@ -777,6 +781,10 @@ static int sdhci_acpi_remove(struct plat
+ 	sysfs_strtoul_clamp(io_error_limit, dc->error_limit, 0, INT_MAX);
  
- 	dead = (sdhci_readl(c->host, SDHCI_INT_STATUS) == ~0);
- 	sdhci_remove_host(c->host, dead);
-+
-+	if (c->slot && c->slot->free_slot)
-+		c->slot->free_slot(pdev);
-+
- 	sdhci_free_host(c->host);
- 
- 	return 0;
+@@ -389,6 +390,7 @@ static struct attribute *bch_cached_dev_
+ 	&sysfs_writeback_rate_update_seconds,
+ 	&sysfs_writeback_rate_i_term_inverse,
+ 	&sysfs_writeback_rate_p_term_inverse,
++	&sysfs_writeback_rate_minimum,
+ 	&sysfs_writeback_rate_debug,
+ 	&sysfs_errors,
+ 	&sysfs_io_error_limit,
 
 
