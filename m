@@ -2,133 +2,258 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D784EC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:35:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45C64C43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:35:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6FD7223C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:35:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6FD7223C8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 10755223C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:35:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10755223C8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729355AbeKLU1z (ORCPT
+        id S1729280AbeKLU2f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 15:27:55 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:43088 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727204AbeKLU1z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 15:27:55 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 9C70880708; Mon, 12 Nov 2018 11:35:11 +0100 (CET)
-Date:   Mon, 12 Nov 2018 11:35:13 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, robh@kernel.org,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Daniel Mack <daniel@zonque.org>, Dan Murphy <dmurphy@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Oleh Kravchenko <oleg@kaa.org.ua>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Simon Shields <simon@lineageos.org>,
-        Xiaotong Lu <xiaotong.lu@spreadtrum.com>
-Subject: Re: [PATCH 02/24] leds: core: Add support for composing LED class
- device names
-Message-ID: <20181112103513.GB5695@amd>
-References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
- <1541542052-10081-3-git-send-email-jacek.anaszewski@gmail.com>
- <20181111120234.GA28794@amd>
- <a640167b-3a3e-daea-b377-6e82b653c5e8@gmail.com>
- <20181111201605.GA20160@amd>
- <57b77d4e-39a0-aaf2-5952-c2c25dc58593@gmail.com>
+        Mon, 12 Nov 2018 15:28:35 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32745 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727156AbeKLU2f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 15:28:35 -0500
+Received: from lhreml701-cah.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 71379A7DBF1BC;
+        Mon, 12 Nov 2018 10:33:35 +0000 (GMT)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.153)
+ by smtpsuk.huawei.com (10.201.108.42) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Mon, 12 Nov 2018 10:33:29 +0000
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <dhowells@redhat.com>, <dwmw2@infradead.org>,
+        <herbert@gondor.apana.org.au>, <davem@davemloft.net>
+CC:     <keyrings@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+        <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <silviu.vlasceanu@huawei.com>
+Subject: [RFC][PATCH 11/12] KEYS: Provide a function to load keys from a PGP keyring blob
+Date:   Mon, 12 Nov 2018 11:24:22 +0100
+Message-ID: <20181112102423.30415-12-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181112102423.30415-1-roberto.sassu@huawei.com>
+References: <20181112102423.30415-1-roberto.sassu@huawei.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="EuxKj2iCbKjpUGkD"
-Content-Disposition: inline
-In-Reply-To: <57b77d4e-39a0-aaf2-5952-c2c25dc58593@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.153]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: David Howells <dhowells@redhat.com>
 
---EuxKj2iCbKjpUGkD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Provide a function to load keys from a PGP keyring blob for use in
+initialising the module signing key keyring:
 
-Hi!
+	int preload_pgp_keys(const u8 *pgpdata, size_t pgpdatalen,
+			     struct key *keyring);
 
-> >> It's overcomplicating the naming again. In every case you can tweak
-> >> the function name to eth0_link, eth1_link etc.
-> >=20
-> > Well, but in such case it would be good to keep existing scheme.
-> >=20
-> > My system looks like this:
-> >=20
-> > input16::capslock    tpacpi::bay_active    tpacpi::standby
-> > input16::numlock     tpacpi::dock_active   tpacpi::thinklight
-> > input16::scrolllock  tpacpi::dock_batt	      tpacpi::thinkvantage
-> > input5::capslock     tpacpi::dock_status1  tpacpi::unknown_led
-> > input5::numlock      tpacpi::dock_status2  tpacpi::unknown_led2
-> > input5::scrolllock   tpacpi:green:batt	      tpacpi::unknown_led3
-> >=20
-> > I agree that we should get rid of "tpacpi:" part in some cases. But
-> > it does not make sense to get rid of "input16:" part -- it tells you
-> > if the LED is on USB or on built-in keyboard.
-> >=20
-> > Ideally, tpacpi::thinklight would be input5::frontlight (as it is
-> > frontlight for the keyboard).
-> >=20
-> > Yes we should simplify, but it still needs to work in all cases.
->=20
-> Well, label is not being removed. You still can use it an the old
-> fashion, even when using new led_compose_name().
->=20
-> Maybe removing the description of the old LED naming from
-> Documentation/leds/leds-class.txt was too drastic move.
-> I'll keep it next to the new one, and only add a note that
-> it is kept only for backwards compatibility.
+Descriptions are generated from user ID notes and key fingerprints.  The
+keys will actually be identified by the ID calculated from the PGP data
+rather than by the description, so this shouldn't be a problem.
 
-I agree that removing it is "just too drastic".
+The keys are attached to the keyring supplied.
 
-But it is not just for backwards compatibility. See my examples above,
-it is needed to tell which device the LED is asociated with, and it is
-absolutely required for USB devices (for example).
+Looking as root in /proc/keys after the module signing keyring has been
+loaded:
 
-And even for "embedded" stuff like routers, we want eth0:green:link,
-eth0:yellow:activity and not some kind of hack.
+383a00c1 I------     1 perm 1f030000     0     0 asymmetri \
+				Red Hat, Inc. dbeca166: PGP.DSA dbeca166 []
 
-Ideally, colors would come from fixed list, functions would come from
-fixed list, and device part would come from name used elsewhere in the
-kernel.
+Thanks to Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> for some
+pointing out some errors.
 
-(And yes, it probably means we should have something in device tree to
-link LED to its device. device =3D "name" would be good start...)
+Changelog
 
-									Pavel
+v0:
+- avoid Kconfig circular dependency (Roberto Sassu)
+- modify flags passed to key_create_or_update() (Roberto Sassu)
+- don't process Public-Subkey packets (Roberto Sassu)
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+Signed-off-by: David Howells <dhowells@redhat.com>
+Co-developed-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ crypto/asymmetric_keys/Kconfig       |   8 ++
+ crypto/asymmetric_keys/Makefile      |   1 +
+ crypto/asymmetric_keys/pgp_preload.c | 118 +++++++++++++++++++++++++++
+ include/linux/pgp_sig.h              |   3 +
+ 4 files changed, 130 insertions(+)
+ create mode 100644 crypto/asymmetric_keys/pgp_preload.c
 
---EuxKj2iCbKjpUGkD
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+diff --git a/crypto/asymmetric_keys/Kconfig b/crypto/asymmetric_keys/Kconfig
+index 8226d06fe1e0..f0b4e3ccf1b8 100644
+--- a/crypto/asymmetric_keys/Kconfig
++++ b/crypto/asymmetric_keys/Kconfig
+@@ -123,4 +123,12 @@ config PGP_TEST_KEY
+ 
+ 	  This is intended for testing the PGP parser.
+ 
++config PGP_PRELOAD
++	bool "PGP public key preloading facility"
++	select PGP_KEY_PARSER
++	help
++	  This option provides a facility for the kernel to preload PGP-wrapped
++	  bundles of keys during boot.  It is used by module signing to load
++	  the module signing keys for example.
++
+ endif # ASYMMETRIC_KEY_TYPE
+diff --git a/crypto/asymmetric_keys/Makefile b/crypto/asymmetric_keys/Makefile
+index 48bbe2b1d446..c04a103a99c5 100644
+--- a/crypto/asymmetric_keys/Makefile
++++ b/crypto/asymmetric_keys/Makefile
+@@ -91,6 +91,7 @@ $(obj)/tpm.asn1.o: $(obj)/tpm.asn1.c $(obj)/tpm.asn1.h
+ # PGP handling
+ #
+ obj-$(CONFIG_PGP_LIBRARY) += pgp_library.o
++obj-$(CONFIG_PGP_PRELOAD) += pgp_preload.o
+ 
+ obj-$(CONFIG_PGP_KEY_PARSER) += pgp_key_parser.o
+ pgp_key_parser-y := \
+diff --git a/crypto/asymmetric_keys/pgp_preload.c b/crypto/asymmetric_keys/pgp_preload.c
+new file mode 100644
+index 000000000000..7cabade16780
+--- /dev/null
++++ b/crypto/asymmetric_keys/pgp_preload.c
+@@ -0,0 +1,118 @@
++/* Cryptographic key request handling
++ *
++ * Copyright (C) 2011 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells@redhat.com)
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public Licence
++ * as published by the Free Software Foundation; either version
++ * 2 of the Licence, or (at your option) any later version.
++ *
++ * See Documentation/security/keys-crypto.txt
++ */
++
++#include <linux/module.h>
++#include <linux/key.h>
++#include <linux/pgp_sig.h>
++#include <linux/pgplib.h>
++#include <linux/err.h>
++#include <keys/asymmetric-type.h>
++
++struct preload_pgp_keys_context {
++	struct pgp_parse_context pgp;
++	key_ref_t keyring;
++	const u8 *key_start;
++	const u8 *key_end;
++	bool found_key;
++};
++
++/*
++ * Create a key.
++ */
++static int __init create_pgp_key(struct preload_pgp_keys_context *ctx)
++{
++	key_ref_t key;
++
++	key = key_create_or_update(ctx->keyring,
++				   "asymmetric",
++				   NULL,
++				   ctx->key_start,
++				   ctx->key_end - ctx->key_start,
++				   ((KEY_POS_ALL & ~KEY_POS_SETATTR) |
++				    KEY_USR_VIEW | KEY_USR_READ),
++				   KEY_ALLOC_NOT_IN_QUOTA |
++				   KEY_ALLOC_BUILT_IN |
++				   KEY_ALLOC_BYPASS_RESTRICTION);
++	if (IS_ERR(key))
++		return PTR_ERR(key);
++
++	pr_notice("Loaded PGP key '%s'\n",
++		  key_ref_to_ptr(key)->description);
++
++	key_ref_put(key);
++	return 0;
++}
++
++/*
++ * Extract a public key or subkey from the PGP stream.
++ */
++static int __init found_pgp_key(struct pgp_parse_context *context,
++				enum pgp_packet_tag type, u8 headerlen,
++				const u8 *data, size_t datalen)
++{
++	struct preload_pgp_keys_context *ctx =
++		container_of(context, struct preload_pgp_keys_context, pgp);
++	int ret;
++
++	if (ctx->found_key) {
++		ctx->key_end = data - headerlen;
++		ret = create_pgp_key(ctx);
++		if (ret < 0)
++			return ret;
++	}
++
++	ctx->key_start = data - headerlen;
++	ctx->found_key = true;
++	return 0;
++}
++
++/**
++ * preload_pgp_keys - Load keys from a PGP keyring blob
++ * @pgpdata: The PGP keyring blob containing the keys.
++ * @pgpdatalen: The size of the @pgpdata blob.
++ * @keyring: The keyring to add the new keys to.
++ *
++ * Preload a pack of keys from a PGP keyring blob.
++ *
++ * The keys have their descriptions generated from the user ID and fingerprint
++ * in the PGP stream.  Since keys can be matched on their key IDs independently
++ * of the key description, the description is mostly irrelevant apart from the
++ * fact that keys of the same description displace one another from a keyring.
++ *
++ * The caller should override the current creds if they want the keys to be
++ * owned by someone other than the current process's owner.  Keys will not be
++ * accounted towards the owner's quota.
++ *
++ * This function may only be called whilst the kernel is booting.
++ */
++int __init preload_pgp_keys(const u8 *pgpdata, size_t pgpdatalen,
++			    struct key *keyring)
++{
++	struct preload_pgp_keys_context ctx;
++	int ret;
++
++	ctx.pgp.types_of_interest = (1 << PGP_PKT_PUBLIC_KEY);
++	ctx.pgp.process_packet = found_pgp_key;
++	ctx.keyring = make_key_ref(keyring, 1);
++	ctx.found_key = false;
++
++	ret = pgp_parse_packets(pgpdata, pgpdatalen, &ctx.pgp);
++	if (ret < 0)
++		return ret;
++
++	if (ctx.found_key) {
++		ctx.key_end = pgpdata + pgpdatalen;
++		return create_pgp_key(&ctx);
++	}
++	return 0;
++}
+diff --git a/include/linux/pgp_sig.h b/include/linux/pgp_sig.h
+index d7c6fb6c61aa..c0114cfc2f20 100644
+--- a/include/linux/pgp_sig.h
++++ b/include/linux/pgp_sig.h
+@@ -18,4 +18,7 @@ int pgp_verify_sig(struct key *keyring, const u8 *raw_data, size_t raw_datalen,
+ 		   const u8 *digest, size_t digest_size, const u8 *sig_data,
+ 		   size_t sig_datalen);
+ 
++int __init preload_pgp_keys(const u8 *pgpdata, size_t pgpdatalen,
++			    struct key *keyring);
++
+ #endif /* _LINUX_PGP_SIG_H */
+-- 
+2.17.1
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlvpV2EACgkQMOfwapXb+vJHygCfZngO0ozX1gBL+B+xCkXI/KeM
-YvwAoJQTbDB5UxyDTDl2rTh8xZe+Unvn
-=WFvx
------END PGP SIGNATURE-----
-
---EuxKj2iCbKjpUGkD--
