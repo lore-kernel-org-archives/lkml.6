@@ -2,117 +2,83 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5586AC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:03:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F248DC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:03:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1ED0222504
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:03:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="B+y2LVa7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ED0222504
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id BD84A20817
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:03:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD84A20817
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730248AbeKMD5V (ORCPT
+        id S1730260AbeKMD6D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 22:57:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42480 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727247AbeKMD5V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 22:57:21 -0500
-Received: from localhost (unknown [206.108.79.134])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B50DE20817;
-        Mon, 12 Nov 2018 18:03:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542045781;
-        bh=XinHxmC+riPbXbpt0nW9pFDCl+wztNnruSbPNMb3WsY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=B+y2LVa7KMZAPpMFeVznoPrMpLjkJZHpyHx7hvLoT1jb6BrdSc/6zbZYLBXW1vaiL
-         QO96/Kz/nV57HASA5DMlW+VAfRHMG1dU5tb7/5xARXmoE/GzA0i9acic/XhgQUZHYe
-         hgM2PCs0NOTAF2BnkW+UYC4ZmRkU/6U5a/FYMw40=
-Date:   Mon, 12 Nov 2018 10:03:01 -0800
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jassi Brar <jassisinghbrar@gmail.com>,
-        Jiri Slaby <jslaby@suse.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Timo Alho <talho@nvidia.com>, Pekka Pessi <ppessi@nvidia.com>,
-        Mika Liljeberg <mliljeberg@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-serial@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 7/9] serial: Add Tegra Combined UART driver
-Message-ID: <20181112180301.GB28739@kroah.com>
-References: <20181026111638.10759-1-thierry.reding@gmail.com>
- <20181026111638.10759-8-thierry.reding@gmail.com>
- <20181109170526.GB14151@kroah.com>
- <20181112153014.GA29481@ulmo>
+        Mon, 12 Nov 2018 22:58:03 -0500
+Received: from out01.mta.xmission.com ([166.70.13.231]:45755 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727247AbeKMD6D (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 22:58:03 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gMDvk-0005iJ-R0; Mon, 12 Nov 2018 08:15:12 -0700
+Received: from 67-3-154-154.omah.qwest.net ([67.3.154.154] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gMDvj-0006cf-VK; Mon, 12 Nov 2018 08:15:12 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Benjamin Coddington <bcodding@redhat.com>
+Date:   Mon, 12 Nov 2018 09:15:06 -0600
+Message-ID: <87o9auiayt.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181112153014.GA29481@ulmo>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-XM-SPF: eid=1gMDvj-0006cf-VK;;;mid=<87o9auiayt.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=67.3.154.154;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19Evgk4nXCA7RzQfe8X97Dv6eJqpyPDnco=
+X-SA-Exim-Connect-IP: 67.3.154.154
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: [GIT PULL] namespace fix for v4.20-rc3
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 04:30:14PM +0100, Thierry Reding wrote:
-> On Fri, Nov 09, 2018 at 09:05:26AM -0800, Greg Kroah-Hartman wrote:
-> > On Fri, Oct 26, 2018 at 01:16:36PM +0200, Thierry Reding wrote:
-> > > From: Thierry Reding <treding@nvidia.com>
-> > > 
-> > > The Tegra Combined UART (TCU) is a mailbox-based mechanism that allows
-> > > multiplexing multiple "virtual UARTs" into a single hardware serial
-> > > port. The TCU is the primary serial port on Tegra194 devices.
-> > > 
-> > > Add a TCU driver utilizing the mailbox framework, as the used mailboxes
-> > > are part of Tegra HSP blocks that are already controlled by the Tegra
-> > > HSP mailbox driver.
-> > > 
-> > > Based on work by  Mikko Perttunen <mperttunen@nvidia.com>.
-> > > 
-> > > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > 
-> > Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> 
-> Thanks. I just sent out v2 addressing Pekka's comments on the series.
-> But I'm slightly confused now. Are you expecting anyone else to pick
-> this up? There are technically no build time dependencies between any
-> of these patches, so it should be fine to pick them all into the
-> corresponding subsystem trees.
+Linus,
 
-Ah, I thought there was a built-time dependancy, that's why I gave my
-ack.
+Please pull the for-linus branch from the git tree:
 
-> Perhaps the only thing to note is that there is a runtime dependency
-> from this patch on patches 1 and 2 in the series. Patch 1 is required to
-> make blocking a mailbox possible in interrupt context, which we need in
-> the TCU driver because the TTY and console paths do end up calling the
-> mbox_send_message() from interrupt context. Patch 2 is only required at
-> runtime if the two mailboxes are provided by different instances of the
-> HSP block (which they are for TCU on Tegra194).
-> 
-> Would you prefer for Jassi to pick up the TCU patch along with the
-> mailbox core and driver changes so that we deal with the runtime
-> dependencies that way?
-> 
-> Alternatively, if Jassi is okay with the mailbox changes, I can pick up
-> all of the v2 series of the patches into stable branches for v4.21, deal
-> with the dependencies there and send out pull requests for everyone to
-> merge into their subsystem trees.
+   git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git for-linus
 
-I don't really care either way, whatever is easiest for you all is fine
-with me.
+   HEAD: 1e9c75fb9c47a75a9aec0cd17db5f6dc36b58e00 mnt: fix __detach_mounts infinite loop
 
-thanks,
+Benjamin Coddington noticed an unkillable busy loop in the kernel that
+anyone who is sufficiently motivated can trigger.  This bug did not
+exist in earlier kernels making this bug a regression.
 
-greg k-h
+I have tested the change personally and confirmed that the bug exists
+and that the fix works.  This fix has been picked up by linux-next and
+hopefully the automated testing bots and no problems have been reported
+from those sources.
+
+Ordinarily I would let something like this sit a little longer but I am
+going to be away at Linux Plumbers the rest of this week and I am afraid
+if I don't send the pull request now this fix will get lost.
+
+Benjamin Coddington (1):
+      mnt: fix __detach_mounts infinite loop
+
+ fs/namespace.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+Eric
