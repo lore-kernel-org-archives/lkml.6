@@ -2,113 +2,126 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72D18C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:16:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BEF8C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:17:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B20D22419
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:16:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B20D22419
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0471922419
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:17:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0471922419
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729385AbeKMDKb (ORCPT
+        id S1729879AbeKMDLI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 22:10:31 -0500
-Received: from mga04.intel.com ([192.55.52.120]:37584 "EHLO mga04.intel.com"
+        Mon, 12 Nov 2018 22:11:08 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:51234 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727530AbeKMDKb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 22:10:31 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Nov 2018 09:16:22 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,496,1534834800"; 
-   d="scan'208";a="107438438"
-Received: from orsmsx102.amr.corp.intel.com ([10.22.225.129])
-  by fmsmga001.fm.intel.com with ESMTP; 12 Nov 2018 09:16:22 -0800
-Received: from orsmsx112.amr.corp.intel.com (10.22.240.13) by
- ORSMSX102.amr.corp.intel.com (10.22.225.129) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Mon, 12 Nov 2018 09:16:21 -0800
-Received: from orsmsx110.amr.corp.intel.com ([169.254.10.166]) by
- ORSMSX112.amr.corp.intel.com ([169.254.3.8]) with mapi id 14.03.0415.000;
- Mon, 12 Nov 2018 09:16:21 -0800
-From:   "Schmauss, Erik" <erik.schmauss@intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Jean-Marc Lenoir <archlinux@jihemel.com>,
-        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>
-Subject: RE: [PATCH 4.14 009/222] ACPICA: AML interpreter: add region
- addresses in global list during initialization
-Thread-Topic: [PATCH 4.14 009/222] ACPICA: AML interpreter: add region
- addresses in global list during initialization
-Thread-Index: AQHUeg5iQNe5nx4eb0uQcIEPT1lgyqVMYf6w
-Date:   Mon, 12 Nov 2018 17:16:19 +0000
-Message-ID: <CF6A88132359CE47947DB4C6E1709ED53BB9FAB9@ORSMSX110.amr.corp.intel.com>
-References: <20181111221647.665769131@linuxfoundation.org>
- <20181111221648.772697504@linuxfoundation.org>
-In-Reply-To: <20181111221648.772697504@linuxfoundation.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.22.254.139]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1727185AbeKMDLI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 22:11:08 -0500
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id jgcWnNCMph3J; Mon, 12 Nov 2018 18:16:57 +0100 (CET)
+Received: from zn.tnic (p200300EC2BE56F00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2be5:6f00:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 534641EC02D1;
+        Mon, 12 Nov 2018 18:16:57 +0100 (CET)
+Date:   Mon, 12 Nov 2018 18:16:38 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Moger, Babu" <Babu.Moger@amd.com>
+Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
+        "reinette.chatre@intel.com" <reinette.chatre@intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "pombredanne@nexb.com" <pombredanne@nexb.com>,
+        "rafael@kernel.org" <rafael@kernel.org>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "qianyue.zj@alibaba-inc.com" <qianyue.zj@alibaba-inc.com>,
+        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "Singh, Brijesh" <brijesh.singh@amd.com>,
+        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "jannh@google.com" <jannh@google.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "rian@alum.mit.edu" <rian@alum.mit.edu>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v7 01/13] arch/x86: Start renaming the rdt files to more
+ generic names
+Message-ID: <20181112171638.GH8167@zn.tnic>
+References: <20181109205153.14811-1-babu.moger@amd.com>
+ <20181109205153.14811-2-babu.moger@amd.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181109205153.14811-2-babu.moger@amd.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEdyZWcgS3JvYWgtSGFydG1h
-biBbbWFpbHRvOmdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnXQ0KPiBTZW50OiBTdW5kYXksIE5v
-dmVtYmVyIDExLCAyMDE4IDI6MjIgUE0NCj4gVG86IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5v
-cmcNCj4gQ2M6IEdyZWcgS3JvYWgtSGFydG1hbiA8Z3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5vcmc+
-Ow0KPiBzdGFibGVAdmdlci5rZXJuZWwub3JnOyBKZWFuLU1hcmMgTGVub2lyIDxhcmNobGludXhA
-amloZW1lbC5jb20+Ow0KPiBTY2htYXVzcywgRXJpayA8ZXJpay5zY2htYXVzc0BpbnRlbC5jb20+
-OyBXeXNvY2tpLCBSYWZhZWwgSg0KPiA8cmFmYWVsLmoud3lzb2NraUBpbnRlbC5jb20+DQo+IFN1
-YmplY3Q6IFtQQVRDSCA0LjE0IDAwOS8yMjJdIEFDUElDQTogQU1MIGludGVycHJldGVyOiBhZGQg
-cmVnaW9uDQo+IGFkZHJlc3NlcyBpbiBnbG9iYWwgbGlzdCBkdXJpbmcgaW5pdGlhbGl6YXRpb24N
-Cj4gDQpIaSBHcmVnLA0KDQo+IDQuMTQtc3RhYmxlIHJldmlldyBwYXRjaC4gIElmIGFueW9uZSBo
-YXMgYW55IG9iamVjdGlvbnMsIHBsZWFzZSBsZXQgbWUga25vdy4NCg0KVGhpcyBwYXRjaCBpcyBv
-bmx5IG1lYW50IHRvIGJlIGFkZGVkIGZvciBrZXJuZWxzIHRoYXQgYXJlIDQuMTcgb3IgbGF0ZXIu
-DQoNClBsZWFzZSBkcm9wIHRoaXMgZnJvbSBrZXJuZWwgNC4xNiBvciBvbGRlci4NCg0KVGhhbmtz
-LA0KRXJpaw0KPiANCj4gLS0tLS0tLS0tLS0tLS0tLS0tDQo+IA0KPiBGcm9tOiBFcmlrIFNjaG1h
-dXNzIDxlcmlrLnNjaG1hdXNzQGludGVsLmNvbT4NCj4gDQo+IGNvbW1pdCA0YWJiOTUxYjczZmYw
-YThhOTc5MTEzZWYxODU2NTFhYTNjOGRhMTliIHVwc3RyZWFtLg0KPiANCj4gVGhlIHRhYmxlIGxv
-YWQgcHJvY2VzcyBvbWl0dGVkIGFkZGluZyB0aGUgb3BlcmF0aW9uIHJlZ2lvbiBhZGRyZXNzIHJh
-bmdlIHRvDQo+IHRoZSBnbG9iYWwgbGlzdC4gVGhpcyBvbWlzc2lvbiBpcyBwcm9ibGVtYXRpYyBi
-ZWNhdXNlIHRoZSBPUyBxdWVyaWVzIHRoZSBnbG9iYWwNCj4gbGlzdCB0byBjaGVjayBmb3IgYWRk
-cmVzcyByYW5nZSBjb25mbGljdHMgYmVmb3JlIGRlY2lkaW5nIHdoaWNoIGRyaXZlcnMgdG8gbG9h
-ZC4NCj4gVGhpcyBjb21taXQgbWF5IHJlc3VsdCBpbiB3YXJuaW5nIG1lc3NhZ2VzIHRoYXQgbG9v
-ayBsaWtlIHRoZSBmb2xsb3dpbmc6DQo+IA0KPiBbICAgIDcuODcxNzYxXSBBQ1BJIFdhcm5pbmc6
-IHN5c3RlbV9JTyByYW5nZSAweDAwMDAwNDI4LTB4MDAwMDA0MkYNCj4gY29uZmxpY3RzIHdpdGgg
-b3BfcmVnaW9uIDB4MDAwMDA0MDAtMHgwMDAwMDQ3RiAoXFBNSU8pDQo+ICgyMDE4MDUzMS91dGFk
-ZHJlc3MtMjEzKQ0KPiBbICAgIDcuODcxNzY5XSBBQ1BJOiBJZiBhbiBBQ1BJIGRyaXZlciBpcyBh
-dmFpbGFibGUgZm9yIHRoaXMgZGV2aWNlLCB5b3Ugc2hvdWxkIHVzZQ0KPiBpdCBpbnN0ZWFkIG9m
-IHRoZSBuYXRpdmUgZHJpdmVyDQo+IA0KPiBIb3dldmVyLCB0aGVzZSBtZXNzYWdlcyBkbyBub3Qg
-c2lnbmlmeSByZWdyZXNzaW9ucy4gSXQgaXMgYSByZXN1bHQgb2YgcHJvcGVybHkNCj4gYWRkaW5n
-IGFkZHJlc3MgcmFuZ2VzIHdpdGhpbiB0aGUgZ2xvYmFsIGFkZHJlc3MgbGlzdC4NCj4gDQo+IExp
-bms6IGh0dHBzOi8vYnVnemlsbGEua2VybmVsLm9yZy9zaG93X2J1Zy5jZ2k/aWQ9MjAwMDExDQo+
-IFRlc3RlZC1ieTogSmVhbi1NYXJjIExlbm9pciA8YXJjaGxpbnV4QGppaGVtZWwuY29tPg0KPiBT
-aWduZWQtb2ZmLWJ5OiBFcmlrIFNjaG1hdXNzIDxlcmlrLnNjaG1hdXNzQGludGVsLmNvbT4NCj4g
-Q2M6IEFsbCBhcHBsaWNhYmxlIDxzdGFibGVAdmdlci5rZXJuZWwub3JnPg0KPiBTaWduZWQtb2Zm
-LWJ5OiBSYWZhZWwgSi4gV3lzb2NraSA8cmFmYWVsLmoud3lzb2NraUBpbnRlbC5jb20+DQo+IFNp
-Z25lZC1vZmYtYnk6IEdyZWcgS3JvYWgtSGFydG1hbiA8Z3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5v
-cmc+DQo+IA0KPiAtLS0NCj4gIGRyaXZlcnMvYWNwaS9hY3BpY2EvZHNvcGNvZGUuYyB8ICAgIDQg
-KysrKw0KPiAgMSBmaWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygrKQ0KPiANCj4gLS0tIGEvZHJp
-dmVycy9hY3BpL2FjcGljYS9kc29wY29kZS5jDQo+ICsrKyBiL2RyaXZlcnMvYWNwaS9hY3BpY2Ev
-ZHNvcGNvZGUuYw0KPiBAQCAtNDUxLDYgKzQ1MSwxMCBAQCBhY3BpX2RzX2V2YWxfcmVnaW9uX29w
-ZXJhbmRzKHN0cnVjdCBhY3BpDQo+ICAJCQkgIEFDUElfRk9STUFUX1VJTlQ2NChvYmpfZGVzYy0+
-cmVnaW9uLmFkZHJlc3MpLA0KPiAgCQkJICBvYmpfZGVzYy0+cmVnaW9uLmxlbmd0aCkpOw0KPiAN
-Cj4gKwlzdGF0dXMgPSBhY3BpX3V0X2FkZF9hZGRyZXNzX3JhbmdlKG9ial9kZXNjLT5yZWdpb24u
-c3BhY2VfaWQsDQo+ICsJCQkJCSAgIG9ial9kZXNjLT5yZWdpb24uYWRkcmVzcywNCj4gKwkJCQkJ
-ICAgb2JqX2Rlc2MtPnJlZ2lvbi5sZW5ndGgsIG5vZGUpOw0KPiArDQo+ICAJLyogTm93IHRoZSBh
-ZGRyZXNzIGFuZCBsZW5ndGggYXJlIHZhbGlkIGZvciB0aGlzIG9wcmVnaW9uICovDQo+IA0KPiAg
-CW9ial9kZXNjLT5yZWdpb24uZmxhZ3MgfD0gQU9QT0JKX0RBVEFfVkFMSUQ7DQo+IA0KDQo=
+
+ Subject: [PATCH v7 01/13] arch/x86: Start renaming the rdt files to more generic names
+
+I guess the subject prefix for all those should be "arch/resctrl:" or so now.
+
+On Fri, Nov 09, 2018 at 08:52:25PM +0000, Moger, Babu wrote:
+> New generation of AMD processors start supporting RDT(or QOS) features.
+> With more than one vendors supporting these features, it seems more
+> appropriate to rename these files.
+> 
+> Changed intel_rdt to resctrl where applicable.
+> 
+> Signed-off-by: Babu Moger <babu.moger@amd.com>
+> ---
+>  arch/x86/include/asm/{intel_rdt_sched.h => resctrl_sched.h} | 0
+>  arch/x86/kernel/cpu/Makefile                                | 6 +++---
+>  arch/x86/kernel/cpu/{intel_rdt.c => resctrl.c}              | 4 ++--
+>  arch/x86/kernel/cpu/{intel_rdt.h => resctrl.h}              | 6 +++---
+>  .../cpu/{intel_rdt_ctrlmondata.c => resctrl_ctrlmondata.c}  | 2 +-
+>  .../kernel/cpu/{intel_rdt_monitor.c => resctrl_monitor.c}   | 2 +-
+>  .../cpu/{intel_rdt_pseudo_lock.c => resctrl_pseudo_lock.c}  | 6 +++---
+>  ..._rdt_pseudo_lock_event.h => resctrl_pseudo_lock_event.h} | 2 +-
+>  .../kernel/cpu/{intel_rdt_rdtgroup.c => resctrl_rdtgroup.c} | 4 ++--
+>  arch/x86/kernel/process_32.c                                | 2 +-
+>  arch/x86/kernel/process_64.c                                | 2 +-
+>  11 files changed, 18 insertions(+), 18 deletions(-)
+>  rename arch/x86/include/asm/{intel_rdt_sched.h => resctrl_sched.h} (100%)
+>  rename arch/x86/kernel/cpu/{intel_rdt.c => resctrl.c} (99%)
+>  rename arch/x86/kernel/cpu/{intel_rdt.h => resctrl.h} (99%)
+>  rename arch/x86/kernel/cpu/{intel_rdt_ctrlmondata.c => resctrl_ctrlmondata.c} (99%)
+>  rename arch/x86/kernel/cpu/{intel_rdt_monitor.c => resctrl_monitor.c} (99%)
+>  rename arch/x86/kernel/cpu/{intel_rdt_pseudo_lock.c => resctrl_pseudo_lock.c} (99%)
+>  rename arch/x86/kernel/cpu/{intel_rdt_pseudo_lock_event.h => resctrl_pseudo_lock_event.h} (95%)
+>  rename arch/x86/kernel/cpu/{intel_rdt_rdtgroup.c => resctrl_rdtgroup.c} (99%)
+
+Other than that and FWIW:
+
+Reviewed-by: Borislav Petkov <bp@suse.de>
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
