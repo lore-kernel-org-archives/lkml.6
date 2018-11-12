@@ -2,110 +2,128 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7A83C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 22:23:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E3E4C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 22:27:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59882223AE
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 22:23:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qck16Sbl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59882223AE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 28F1520685
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 22:27:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28F1520685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730707AbeKMISs (ORCPT
+        id S1730638AbeKMIWl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 03:18:48 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41765 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727847AbeKMISs (ORCPT
+        Tue, 13 Nov 2018 03:22:41 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:56494 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726006AbeKMIWk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 03:18:48 -0500
-Received: by mail-wr1-f67.google.com with SMTP id v18-v6so11101959wrt.8
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 14:23:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=h8FyXYiX1JYlhpgok0kX7/UtLhabN87KEZsebfJjrnE=;
-        b=Qck16Sbl4aXrZ/tvIdmunxAGBs9uLuGiPyLRy9zCGbhbNXUkdO+NT0s4myaIKGgk1C
-         fYAjRT5rBAzOvBmNzTZFemXvYT2fCZnJ1C/rVQpT1yKRvkWZxnUsGOG69emQbm7YSp2R
-         zK3HSEv/OG1pZSieR1+SsTd7YuBgnXm7TFWpA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=h8FyXYiX1JYlhpgok0kX7/UtLhabN87KEZsebfJjrnE=;
-        b=kcshSf/OYdZFRTtRYLTS/cKNFC0gcIypw7Y2Dp6SKaV2uCYdB0AfOzoKljEfc5DWT2
-         pqjwAfIG7/CKXSqbMwWjzRX8/8NMuK9lWvXnE9bnQFXAqVtIHFeuKa8/YlzTUUwPhsQU
-         Fhunva/K11b6I/7MJPPikq1gZXn1TxmcTNYjbpgjL+VaL7PZsQywgT+aOi960KlfNZ2h
-         rFldRVQ5XQpTo2Y2S/ROEJN5nMjMSfQtQnRIKpUPdHk/UYh0dX2YOIrdz4ezZA25oLqI
-         f6PDLPhOvOdn9FEJeGf/flx19cT61tvfwglhz3uAajUvZJayhDR0v2MHoyTUKPY0WDbB
-         aAGQ==
-X-Gm-Message-State: AGRZ1gJr9+f/pCgj8NKZbwUANj+q9MxPI1huR0MijNG1iR4yrjaNkVJf
-        49wBdGIge4R4BVA53f7cjgk6OQKzqzgGxE9Xnuvm9w==
-X-Google-Smtp-Source: AJdET5eCTuS6gohMODOqbWPL8qWlUCRX6EDAxOohsigtMGbUwnomJXrtxlXsroaNmpW/lMcME8LjGYImHY/oP13+j88=
-X-Received: by 2002:adf:a20a:: with SMTP id p10-v6mr2507800wra.249.1542061418184;
- Mon, 12 Nov 2018 14:23:38 -0800 (PST)
+        Tue, 13 Nov 2018 03:22:40 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: sre)
+        with ESMTPSA id C1B9D263974
+Received: by earth.universe (Postfix, from userid 1000)
+        id BC4793C08D6; Mon, 12 Nov 2018 23:27:26 +0100 (CET)
+Date:   Mon, 12 Nov 2018 23:27:26 +0100
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc:     Andreas Kemnade <andreas@kemnade.info>,
+        devicetree <devicetree@vger.kernel.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>
+Subject: Re: [Letux-kernel] [PATCH RFC] bluetooth: add uart h4 devices via
+ serdev/devicetree
+Message-ID: <20181112222726.73m2oca7hankvcjs@earth.universe>
+References: <20181110232034.17277-1-andreas@kemnade.info>
+ <20181111024648.7rt7rlhaqihtqecv@earth.universe>
+ <20181112215812.18ebca35@aktux>
+ <2C74C837-A6D3-47C9-BE59-CCA594289B94@goldelico.com>
 MIME-Version: 1.0
-Received: by 2002:a1c:4054:0:0:0:0:0 with HTTP; Mon, 12 Nov 2018 14:23:37
- -0800 (PST)
-In-Reply-To: <20181112185651.17138-1-mzhivich@akamai.com>
-References: <20181112185651.17138-1-mzhivich@akamai.com>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Mon, 12 Nov 2018 14:23:37 -0800
-Message-ID: <CALAqxLVCwWATXruj+PAAtKMuE4TDCgHCeQAmpz39k33xFm_68Q@mail.gmail.com>
-Subject: Re: [PATCH] Revert "clocksource: Make clocksource validation work for
- all clocksources"
-To:     Michael Zhivich <mzhivich@akamai.com>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jason Wessel <jason.wessel@windriver.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ze4zhyyztanyefel"
+Content-Disposition: inline
+In-Reply-To: <2C74C837-A6D3-47C9-BE59-CCA594289B94@goldelico.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 10:56 AM, Michael Zhivich <mzhivich@akamai.com> wrote:
-> Revert commit 1f45f1f33c8c ("clocksource: Make clocksource validation work
-> for all clocksources") to restore correct clocksource_delta() computation
-> for clocksources that wrap frequently, while retaining the check for tsc
-> drifting.
->
-> Truncating result of clocksource_delta() to 0 causes incorrect behavior for
-> clocksources that wrap frequently (e.g. acpi_pm which is only 24-bit wide).
-> In particular, large time deltas (e.g. last = 0x000000, now = 0x800000)
-> will be incorrectly computed as 0.
->
-> If acpi_pm is used as the clocksource watchdog, and machine is under heavy
-> load, the time period for the watchdog check may be significantly longer
-> than the requested 0.5 seconds.  If the watchdog check is delayed by 2
-> seconds (observed behavior), then acpi_pm time delta will be
->
->         2.5 sec * 3579545 ticks/sec = 8948863 = 0x888c3f
->
-> which will be treated as negative and truncated to 0.  This behavior will
-> cause tsc to be incorrectly declared unstable in clocksource_watchdog(), as
-> it no longer agrees with acpi_pm.
 
-Thanks for raising this issue and submitting the patch!
+--ze4zhyyztanyefel
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yea, this is a concern particularly with quick wrapping clocksources.
-Though I worry that if you're already blocking the watchdog from
-running for 2.5 seconds, you're likely to also block the watchdog for
-more then 5 seconds, which if I'm remembering would result in the same
-problem?  In other words, does this really solve the problem, or does
-it just push the bar a little further out?
+Hi,
 
-So, I'm wondering to really fix this, do we need to find some way to
-raise the priority of the clocksource watchdog, so it isn't deferred
-for quite so long?
+On Mon, Nov 12, 2018 at 10:19:02PM +0100, H. Nikolaus Schaller wrote:
+> > Am 12.11.2018 um 21:59 schrieb Andreas Kemnade <andreas@kemnade.info>:
+> > On Sun, 11 Nov 2018 03:46:48 +0100
+> > Sebastian Reichel <sebastian.reichel@collabora.com> wrote:
+> >> On Sun, Nov 11, 2018 at 12:20:34AM +0100, Andreas Kemnade wrote:
+> >>> This is a first try to be able to use h4 devices specified in
+> >>> the devicetree, so you do not need to call hciattach and
+> >>> it can be automatically probed.
+> >>>=20
+> >>> Of course, proper devicetree bindings documentation is
+> >>> missing. And also you would extend that by regulator/
+> >>> enable gpio settings.
+> >>>=20
+> >>> But before proceeding further it should be checked if the
+> >>> general way of doing things is right.
+> >>>=20
+> >>> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> >>> --- =20
+> >>=20
+> >> Patch looks good to me, just one note
+> >>=20
+> > I found one thing myself:
+> > Shouldn't we have a generic compatible string like "generic-h4".
+> > ehci-platform.c has for example:
+> >        { .compatible =3D "generic-ehci", },
+>=20
+> There might be differences in h4 compatible devices (e.g. default
+> baud rate) so that I would not bet there a "generic-h4" suffices
+> in the long run.
 
-thanks
--john
+My suggestion is to use this in DT:
+
+compatible =3D "wi2wi,w2cbw003-bluetooth", "<something generic>";
+
+The driver can start with supporting just the generic compatible
+string. If somebody finds some incompatible differences, the driver
+can add a custom handler for the wi2wi chip without breaking DT
+ABI.
+
+-- Sebastian
+
+--ze4zhyyztanyefel
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlvp/ksACgkQ2O7X88g7
++poHVg/7BoyvAyCiJONVG/I/lUUFzZO05ADwRgWs1GsR4Q1HwTy5in8qptYBNgU3
+MR8xJ5ou91KrarNONScppcqfhMpl3HIGi/u15OIy86lU2ZjLdU4G4tEgAthY8Fgj
+B+lNyiEd4j6omKrf2Y/2yXACS3J61n8goVL8X9aOx1EtuQxkU0MFRLsabRwMWLD1
+wmAHUTFkrxLC2NAGJIElUyu3MxsWyoVAlGvxdBseFJjADk2tjwwUJIvz284CJ2qn
+MG30ZsEiXrhBSSBFz6tJ9x7zI5ty55Uhtgtsro/R2lEdSL2IrdNxML9QxavzA/Q1
+DfMfBBaFdeEBmIVycj8eaNJriP07dKqxwVnoy81bwE9V5DQF7yeSlHTDZJoz36Y5
+1qIpKcTdx4EEK2Z6TMXY7kshGlg/MB4gxsaJspTtUszgFgVxJ9uN59ZW3yca+RYL
+YYxfQkA4wnCC+FqyFJKgPqzoR1Xy6l3iJiRDRIgb8EmvRFwRPqhW2ygVmLJOS3iG
+Ai0AscnY9IUoOynEcpt1WD06mlpYQSHhG5TU+ZXqxG1wPMzCckRsalVfeQNUd3YF
+k/9jUoipLHgTw/m085aT2N5HTFM6W3uOteADUoG8fAAuGSbELON5Og3tMhe86WSi
+4uRJrN7O2ZcivXtd6+mqnfcfei3k+oAIHAe/34DmzE9YcUKZ7Hk=
+=ngpR
+-----END PGP SIGNATURE-----
+
+--ze4zhyyztanyefel--
