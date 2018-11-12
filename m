@@ -2,109 +2,99 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99395C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 07:17:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFCE0C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 07:20:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B40E21582
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 07:17:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HP8PO4Lg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B40E21582
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 90D5D21582
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 07:20:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90D5D21582
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726317AbeKLRJP (ORCPT
+        id S1726475AbeKLRMO convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 12:09:15 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:43785 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725829AbeKLRJP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 12:09:15 -0500
-Received: by mail-pf1-f193.google.com with SMTP id g7-v6so3861456pfo.10
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 23:17:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Xh2jCcjbc9FzyXMznbLS6EB6drG14LywQij89/UVNpw=;
-        b=HP8PO4LgY/ttCFDDNrtUUacOYEIIiipx5uZns/iBWx/Aqm18xc5wInQ5EoskNm3Dba
-         yTbY8mhVLcf+IUv0LNU3uIGiyhnqG7WyB2wLZp1+rSOPir9D967XQWmboCzdh506HEuU
-         muuavWrU3d+Vvq7b7VZE0Zcp6HqcWVtQpbjzI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Xh2jCcjbc9FzyXMznbLS6EB6drG14LywQij89/UVNpw=;
-        b=XaQI0osVNKajypWmfo0JQTbBDKWQD/v0ADfm8z3sHE1Vq42QXU5r+rmgeHrL+1s4kQ
-         Nmqw1eIJsa61PKXepWcVPUBxXqN5zLjWprNq+mxmUjkdg17IXRyObBt8H4hHQwovazTe
-         v8WAT+3sP4CEl9O5SwW380j+u5vhyd3lhUYv/hZYyyKa4rvZvMb5uh/JIaTyWrBD4GsB
-         6jjaCq10ihej5xUIxwr3dP8T705mSxEfdAKAsn3h7s7cpSHKgp5SOg8nUS+TnDGyeuBH
-         vn/FdEW6rCHqbvMjUlqIJvVSx8fGbxicUbmhSoJpeyyAHniKElKuu8bdSVv6WjSY4ZPU
-         qfIg==
-X-Gm-Message-State: AGRZ1gItwqQggQoDTXTb+Cs5BJc1cHZhmAp/zbJvsHPYpJtTZcLkcPhA
-        XQVmB8Rj+3H4PGTQ5evahDzU
-X-Google-Smtp-Source: AJdET5dTudN9Rp614Ez54RN22qtPpb1LYMUDiYih5AgOROUo0ZYDgNkElYbNLPy9Rmahxa3NL379JQ==
-X-Received: by 2002:a63:a30a:: with SMTP id s10mr15526522pge.234.1542007038066;
-        Sun, 11 Nov 2018 23:17:18 -0800 (PST)
-Received: from mani ([103.59.133.81])
-        by smtp.gmail.com with ESMTPSA id i189-v6sm29453177pfc.16.2018.11.11.23.17.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 11 Nov 2018 23:17:17 -0800 (PST)
-Date:   Mon, 12 Nov 2018 12:47:08 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     xuwei5@hisilicon.com
-Cc:     linus.walleij@linaro.org, Rob Herring <robh+dt@kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/5] Add Pinctrl and GPIO support for HI3670 SoC
-Message-ID: <20181112071708.GA6689@mani>
-References: <20181023190655.12004-1-manivannan.sadhasivam@linaro.org>
- <CACRpkdbMSYt5aH9fwRijtO=VG1nLAnfxTsfxGza+_Z2iGj2+-A@mail.gmail.com>
+        Mon, 12 Nov 2018 12:12:14 -0500
+Received: from mga07.intel.com ([134.134.136.100]:64591 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725829AbeKLRMN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 12:12:13 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Nov 2018 23:20:16 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,494,1534834800"; 
+   d="scan'208";a="107483548"
+Received: from fmsmsx104.amr.corp.intel.com ([10.18.124.202])
+  by orsmga001.jf.intel.com with ESMTP; 11 Nov 2018 23:20:15 -0800
+Received: from fmsmsx161.amr.corp.intel.com (10.18.125.9) by
+ fmsmsx104.amr.corp.intel.com (10.18.124.202) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Sun, 11 Nov 2018 23:20:14 -0800
+Received: from shsmsx151.ccr.corp.intel.com (10.239.6.50) by
+ FMSMSX161.amr.corp.intel.com (10.18.125.9) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Sun, 11 Nov 2018 23:20:14 -0800
+Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.117]) by
+ SHSMSX151.ccr.corp.intel.com ([169.254.3.199]) with mapi id 14.03.0415.000;
+ Mon, 12 Nov 2018 15:20:12 +0800
+From:   "Liu, Yi L" <yi.l.liu@intel.com>
+To:     Lu Baolu <baolu.lu@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>
+CC:     "Raj, Ashok" <ashok.raj@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+Subject: RE: [PATCH v2 1/1] iommu/vtd: Cleanup dma_remapping.h header
+Thread-Topic: [PATCH v2 1/1] iommu/vtd: Cleanup dma_remapping.h header
+Thread-Index: AQHUelL5vO25VX8S5EiXaajcsd/f6KVLupFg
+Date:   Mon, 12 Nov 2018 07:20:11 +0000
+Message-ID: <A2975661238FB949B60364EF0F2C257439D6242F@SHSMSX104.ccr.corp.intel.com>
+References: <20181112064008.2102-1-baolu.lu@linux.intel.com>
+In-Reply-To: <20181112064008.2102-1-baolu.lu@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMzQxZjdhYWItMjJkZC00ODRhLWI1ZDgtNTJiMDUzZTU3NTdjIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiR0t5aDJYd3JYZFJOXC9HY3RmcWx3TE9CMk0wN1ZkZ1VqeldCTW9aMm1oUlNjRDhnSXhQbVZ2VkI3T09HSTRaXC92In0=
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbMSYt5aH9fwRijtO=VG1nLAnfxTsfxGza+_Z2iGj2+-A@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 10:43:00AM +0100, Linus Walleij wrote:
-> On Tue, Oct 23, 2018 at 9:07 PM Manivannan Sadhasivam
-> <manivannan.sadhasivam@linaro.org> wrote:
+> bounces@lists.linux-foundation.org] On Behalf Of Lu Baolu
+> Sent: Monday, November 12, 2018 2:40 PM
+> Subject: [PATCH v2 1/1] iommu/vtd: Cleanup dma_remapping.h header
 > 
-> > This patchset adds Pinctrl and GPIO support for HI3670 SoC from HiSilicon
-> > found in the HiKey970 developement board. Also, the remaining UARTs are
-> > enabled and GPIO line names are added based on the Schematics and the
-> > 96Boards Consumer Edition spec.
-> >
-> > Note: These patches are based on the below common clk patches pushed
-> > earlier:
-> >
-> > arm64: dts: hisilicon: Add clock nodes for Hi3670 SoC
-> > arm64: dts: hisilicon: Source SoC clock for UART6
+> Commit e61d98d8dad00 ("x64, x2apic/intr-remap: Intel vt-d, IOMMU
+> code reorganization") moved dma_remapping.h from drivers/pci/ to
+> current place. It is entirely VT-d specific, but uses a generic
+> name. This merges dma_remapping.h with include/linux/intel-iommu.h
+> and removes dma_remapping.h as the result.
 > 
-> All looks good to me.
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> for the series.
->
+> Cc: Ashok Raj <ashok.raj@intel.com>
+> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> Cc: Sohil Mehta <sohil.mehta@intel.com>
+> Suggested-by: Christoph Hellwig <hch@infradead.org>
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> ---
 
-Hi Wei,
+Reviewed-by: Liu, Yi L <yi.l.liu@intel.com>
 
-Any update on this patchset?
+Just out of curious, did you considered to modify the original file
+name to be an intel specific file name? What makes you believe
+merging the file content to intel-iommu.h is better?
 
-Thanks,
-Mani
- 
-> Yours,
-> Linus Walleij
+Regards,
+Yi Liu
