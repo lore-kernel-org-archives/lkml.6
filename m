@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92FDAC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:37:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 876D0C0044B
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:37:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BE8922419
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:37:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5073C2087A
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:37:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XhlEwHfg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BE8922419
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="W0TRRdEc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5073C2087A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729465AbeKLU3l (ORCPT
+        id S1729495AbeKLU3n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 15:29:41 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46410 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729409AbeKLU3k (ORCPT
+        Mon, 12 Nov 2018 15:29:43 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45841 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729391AbeKLU3l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 15:29:40 -0500
-Received: by mail-wr1-f68.google.com with SMTP id 74-v6so8704957wrb.13
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 02:37:01 -0800 (PST)
+        Mon, 12 Nov 2018 15:29:41 -0500
+Received: by mail-wr1-f65.google.com with SMTP id k15-v6so8692153wre.12
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 02:37:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=dSzyRYCj+DB3PSpFskdzVkVAIM/Xjweh2bjnaCEiMfA=;
-        b=XhlEwHfg3LEQdDgBsTAmCd705FSzwvTzZdEZ5wEnOU8ssVJqg5FlJn1ZIADgseYXLz
-         KWflbNRYE7srjfF2oyiURxKYqTwBETX/cwfAebAtbsKLezI3YUqtAFJ4D3TQCtNQB1VO
-         vmYbmbhlDutGw0BIiqSJENHGJpaaniZssIEdg=
+        bh=jI0WqACAlT+BW1LXg2YNMxvnK2/0hl/3M5gxbeCL2ls=;
+        b=W0TRRdEcKW14hfSgcWBO8o1CwYUuZyCgxN9+4TeflcMN/YRDGiHEaYQvhi6IdB3T8V
+         OALabzdWqSG4wPHDv5OW6CrDlsxajhl3soo4pbPd7G0+8wb+x/8A/CykgZ/MKXw/yYBz
+         GRr6HAvYNPRMC8N/h7gciNHHjzjeJou3M+hT0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=dSzyRYCj+DB3PSpFskdzVkVAIM/Xjweh2bjnaCEiMfA=;
-        b=FnqYpCHRseLpvGUUYdzRD+oZ5PWClI313HeLETUeTgfyy4THS3yNTgHd41EE27qh2L
-         Yr9B4U9XocTueiGOqYejurSVRvruOgjCPX5AEfOnHEMSZC89IWVtCPEG0siIyFLhCvJf
-         FHc8PiEtvWo8BrZIxpAu7uu1R9V0/TTz0TZJkpSCUbuvF2shCSObxPOwaqaBqFVVFWpQ
-         q5kRI5PxJvXVrmPTFIqvq7ww6mcRTYHZAn4leD+lXKST7NtVlY6TI1jSSzV2Ll676GHE
-         cuyS58a1REZgktcmZHhYCmvZwXz81QikJFMtKNqM0T1e5HuLoifK+0DhcIXbAKMREccx
-         y6ag==
-X-Gm-Message-State: AGRZ1gJ9AKnwCWrifBL7eTobQC5gZJRTU1MFcJw68r1OdTfBLmZq64i0
-        eVoXainRUyPeI5Jf24VOtAZyNg==
-X-Google-Smtp-Source: AJdET5ePCPHnC8H/tyeuPjgtzdwJd0KcNcFSgv2zTzVJoe2tao4LlsGAuMAv6u1iYueKv0g1y0WCKQ==
-X-Received: by 2002:adf:ebd2:: with SMTP id v18-v6mr440722wrn.109.1542019020776;
-        Mon, 12 Nov 2018 02:37:00 -0800 (PST)
+        bh=jI0WqACAlT+BW1LXg2YNMxvnK2/0hl/3M5gxbeCL2ls=;
+        b=UZ1Bjlb5umL1pew9oDrhpgvxobTctgbul3tTOwkL+GWINTMhuaOgxdg7ukrnMPBWeq
+         YSfaOEEDoHCgVUSlS3TYyNGlmV/TIS/Hs864PDQud78MrKjv6hkvlqjJkXrDNl/GH/WV
+         ZSGiD6dq8YCKRfPdekhN5vU4RENQDwA2D9XUPAwY6FezUoUZumzEhOtuDR9+QEyoJok0
+         wQeHfXLOQlXpmU+MDgQjuM268VxdGR4ZiLbxRI5nN8k2UXxYgtKakOZOOn4HAJp3g8jT
+         05e3tzlbJC0lQ3UiNgohh+Vbs5SX5jc1gUc1xzdWOkaEoB+1kz2pymAOugcrZgHX6pUP
+         VIeg==
+X-Gm-Message-State: AGRZ1gIT00Gzeyo74errTLb79VzYBFVwXgXuFrLUO49ZvK5lAoF8B+9m
+        SR1FskYX04Ur2mlgiwcgkxBi9g==
+X-Google-Smtp-Source: AJdET5empmpMJ7AZRIiRWLrdp/RpdJ6CIJFo3IUn2FOKdnA1UyvXujq1ZthVMW2ZczcBrltcDlFdRg==
+X-Received: by 2002:a5d:4b8b:: with SMTP id b11-v6mr481275wrt.72.1542019021985;
+        Mon, 12 Nov 2018 02:37:01 -0800 (PST)
 Received: from localhost.localdomain (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.gmail.com with ESMTPSA id z17-v6sm13747187wrm.65.2018.11.12.02.36.59
+        by smtp.gmail.com with ESMTPSA id z17-v6sm13747187wrm.65.2018.11.12.02.37.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 12 Nov 2018 02:37:00 -0800 (PST)
+        Mon, 12 Nov 2018 02:37:01 -0800 (PST)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     marc.zyngier@arm.com
 Cc:     sudeep.holla@arm.com, tglx@linutronix.de, jason@lakedaemon.net,
@@ -64,9 +64,9 @@ Cc:     sudeep.holla@arm.com, tglx@linutronix.de, jason@lakedaemon.net,
         bjorn.andersson@linaro.org, nicolas.dechesne@linaro.org,
         ctatlor97@gmail.com, vkoul@kernel.org,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [RFC PATCH v3 3/4] irqchip: gic-v3: Add quirk for msm8996 secured registers
-Date:   Mon, 12 Nov 2018 10:33:39 +0000
-Message-Id: <20181112103340.24702-4-srinivas.kandagatla@linaro.org>
+Subject: [RFC PATCH v3 4/4] arm64: dts: add msm8996 compatible to gicv3
+Date:   Mon, 12 Nov 2018 10:33:40 +0000
+Message-Id: <20181112103340.24702-5-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181112103340.24702-1-srinivas.kandagatla@linaro.org>
 References: <20181112103340.24702-1-srinivas.kandagatla@linaro.org>
@@ -77,92 +77,24 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Access to GICR_WAKER is restricted on msm8996 SoC in Hypervisor.
-Its been more than 2+ years of wait for this to be fixed, which has
-no hopes to be fixed. This change was introduced for the "lead device"
-on msm8996 platform. It looks like all publicly available msm8996 and
-other qcom SoCs have this implementation.
-
-So add a quirk to not access this register on msm8996.
-
-With this quirk MSM8996 can at least boot out of mainline,
-which can help community to work with boards based on MSM8996 and other
-SoCs with have this restrictions. This Quirk is based on device tree
-compatible string.
-
-Without this patch Qualcomm DB820c board reboots when GICR_WAKER
-is accessed.
-
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/irqchip/irq-gic-v3.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ arch/arm64/boot/dts/qcom/msm8996.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index 8f87f40c9460..4bd3bbe1b7ce 100644
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -41,6 +41,8 @@
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index 16c3fc0f4e69..e38da221f9a9 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -902,7 +902,7 @@
+ 		};
  
- #include "irq-gic-common.h"
- 
-+#define FLAGS_WORKAROUND_GICR_WAKER_MSM8996	(1ULL << 0)
-+
- struct redist_region {
- 	void __iomem		*redist_base;
- 	phys_addr_t		phys_base;
-@@ -55,6 +57,7 @@ struct gic_chip_data {
- 	struct irq_domain	*domain;
- 	u64			redist_stride;
- 	u32			nr_redist_regions;
-+	u64			flags;
- 	bool			has_rss;
- 	unsigned int		irq_nr;
- 	struct partition_desc	*ppi_descs[16];
-@@ -139,6 +142,9 @@ static void gic_enable_redist(bool enable)
- 	u32 count = 1000000;	/* 1s! */
- 	u32 val;
- 
-+	if (gic_data.flags & FLAGS_WORKAROUND_GICR_WAKER_MSM8996)
-+		return;
-+
- 	rbase = gic_data_rdist_rd_base();
- 
- 	val = readl_relaxed(rbase + GICR_WAKER);
-@@ -1067,6 +1073,23 @@ static const struct irq_domain_ops partition_domain_ops = {
- 	.select = gic_irq_domain_select,
- };
- 
-+static bool __maybe_unused gic_enable_quirk_msm8996(void *data)
-+{
-+	struct gic_chip_data *d = data;
-+
-+	d->flags |= FLAGS_WORKAROUND_GICR_WAKER_MSM8996;
-+
-+	return true;
-+}
-+
-+static const struct gic_quirk gic_quirks[] = {
-+	{
-+		.desc	= "GICv3: Qualcomm MSM8996 skip GICR_WAKER Read/Write",
-+		.compatible = "qcom,msm8996-gic-v3", /* MSM8996 */
-+		.init	= gic_enable_quirk_msm8996,
-+	},
-+};
-+
- static int __init gic_init_bases(void __iomem *dist_base,
- 				 struct redist_region *rdist_regs,
- 				 u32 nr_redist_regions,
-@@ -1126,6 +1149,9 @@ static int __init gic_init_bases(void __iomem *dist_base,
- 
- 	gic_update_vlpi_properties();
- 
-+	if (is_of_node(handle))
-+		gic_enable_of_quirks(to_of_node(handle), gic_quirks, &gic_data);
-+
- 	gic_smp_init();
- 	gic_dist_init();
- 	gic_cpu_init();
+ 		intc: interrupt-controller@9bc0000 {
+-			compatible = "arm,gic-v3";
++			compatible = "qcom,msm8996-gic-v3", "arm,gic-v3";
+ 			#interrupt-cells = <3>;
+ 			interrupt-controller;
+ 			#redistributor-regions = <1>;
 -- 
 2.19.1
 
