@@ -2,136 +2,481 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FC67C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:27:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03539C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:27:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61D26223AE
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:27:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="numwVFBg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61D26223AE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 9DA2B223AE
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:27:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DA2B223AE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730094AbeKMCVR (ORCPT
+        id S1730172AbeKMCVV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 21:21:17 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:43146 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728416AbeKMCVQ (ORCPT
+        Mon, 12 Nov 2018 21:21:21 -0500
+Received: from mail-out.m-online.net ([212.18.0.10]:52036 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729715AbeKMCVU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 21:21:16 -0500
-Received: by mail-lj1-f194.google.com with SMTP id g26-v6so8135829lja.10
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 08:27:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=43BxuzNc4524qU/znys73ykza2ZaFxC6mmrB9EdAkz8=;
-        b=numwVFBgMsucLxSwNRwPNmrg55rPBd6JbDVSItc2iiY4ApjMw+uw6ACFZrBXCPrVPK
-         sTFK17iceBBNukPaVtqAGnVqg7HkcB0cfzfjmNWu6CxmwPQ9TASSVG6FtL1DPRiajIe/
-         qhQ6okQfI/RtW7jifmIx+rX1oZqj0A23M2GucZYgr+j72YJ3dNQRcBX0gKpeN/R/4Vn9
-         zOUV3C+drkBrUPEc1aPPNb1XL5XOug8YFQhxqPCWvOhgEnduGC1B7tflOm6Ect178fOe
-         mx30ZLXTxJzz1uS9d5ZPbhjrjHRurP9uZkXjYFs5tWjQ/ePkrCIF0jM1/DcGp3sUUtIu
-         MmVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=43BxuzNc4524qU/znys73ykza2ZaFxC6mmrB9EdAkz8=;
-        b=jxu1RD91fcgESnoX/Kw1bRgvgQz9MQ7kdXBcv9o3PTJMwyrxyRoc+TFASSFs7O7quF
-         MY0mb2IIqpGbSOnwZbisPUzA+UgeAsyxTnZWF5QoPMLXTTUfpOhy0GE4CKv1OAfE67Xb
-         ue5+aN8ELq1pu9PlB7qN6PeoArGGoO9bnEtrc51sfS3bIdm4uDtxhAy0Ab/LOiKX9oUJ
-         cBjvyRxSX6v8tZ48psDBJUiHmitlO9H0UJQ/psHJT8EtjTD5qjO78n8vYAjAJmFTDUNZ
-         9KmwCt1LMQEVF0cbmHBIyiza08HQW0rQzWly3RMXvmm9OqsKeuk0TYLaeSMI1TG0hgEW
-         dciA==
-X-Gm-Message-State: AGRZ1gKy1LMxYQx4t+ifETBlbBb8OyeonJ0V+ogkCHKF1Trdull/yX5C
-        jhjgc4Y+mYgLSMuCFg3tJfwrguZMAQ8bqsxbPRU=
-X-Google-Smtp-Source: AJdET5ewPPoc5BgEsBnBvVc2Pnfye0DwudqbrbmI8yq5Vr50sCrMy6qxXrDyPwEUoHqwMZQF48OpCk12cLJPbI2f9So=
-X-Received: by 2002:a2e:9819:: with SMTP id a25-v6mr1232928ljj.6.1542040036991;
- Mon, 12 Nov 2018 08:27:16 -0800 (PST)
+        Mon, 12 Nov 2018 21:21:20 -0500
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 42tx453Vqqz1qyCC;
+        Mon, 12 Nov 2018 17:27:15 +0100 (CET)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 42tx4352XJz1qr27;
+        Mon, 12 Nov 2018 17:27:15 +0100 (CET)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id IHjlWTAfkwIk; Mon, 12 Nov 2018 17:27:13 +0100 (CET)
+X-Auth-Info: 4iPUs5OZZjCdL24trmqYs7i8YVTp+50FNkaNygR0pqY=
+Received: from antares.denx.de (unknown [62.91.23.180])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Mon, 12 Nov 2018 17:27:13 +0100 (CET)
+Cc:     Saravanan Sekar <sravanhome@gmail.com>, pn@denx.de,
+        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        afaerber@suse.de, catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        mp-cs@actions-semi.com, jeff.chen@actions-semi.com,
+        thomas.liau@actions-semi.com, linux@cubietech.com
+Subject: Re: [PATCH v5 1/5] pinctrl: actions: define constructor generic to
+ Actions Semi SoC's
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+References: <20180829082413.2512005-1-sravanhome@gmail.com>
+ <20180829082413.2512005-2-sravanhome@gmail.com>
+ <20180829152049.GA21136@Mani-XPS-13-9360>
+ <7fc376ac-5998-57b6-8989-908d7a0abfd0@gmail.com>
+ <72d4911a-588f-9bf3-4fad-a0b34692ecd4@denx.de>
+From:   Parthiban Nallathambi <pn@denx.de>
+Message-ID: <4a54e87e-cf8d-7037-7b7a-4e30e27338da@denx.de>
+Date:   Mon, 12 Nov 2018 17:27:12 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <CGME20180823084348eucas1p2157ab1089290298cf43647e522b8be4f@eucas1p2.samsung.com>
- <1535013819-1646-1-git-send-email-huijin.park@samsung.com> <20181031150225.175ec1d4@bbrezillon>
-In-Reply-To: <20181031150225.175ec1d4@bbrezillon>
-From:   Huijin Park <bbanghj.park@gmail.com>
-Date:   Tue, 13 Nov 2018 01:27:05 +0900
-Message-ID: <CAMy0x0nSjhRrG913NBeood68NfYAYngg=PAL+pmy4U4=WRuJxg@mail.gmail.com>
-Subject: Re: [PATCH] mtd: change len type from signed to unsigned type
-To:     boris.brezillon@bootlin.com
-Cc:     huijin.park@samsung.com, marek.vasut@gmail.com,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <72d4911a-588f-9bf3-4fad-a0b34692ecd4@denx.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
+Hi Mani,
 
-On Wed, Oct 31, 2018 at 11:02 PM Boris Brezillon
-<boris.brezillon@bootlin.com> wrote:
->
-> Hi Huijin,
->
-> On Thu, 23 Aug 2018 04:43:39 -0400
-> Huijin Park <huijin.park@samsung.com> wrote:
->
-> > From: "huijin.park" <huijin.park@samsung.com>
-> >
-> > assign of a signed value which has type 'int' to a variable of
-> > a bigger unsigned integer type 'uint64_t'.
->
-> Why are you mentioning u64? AFAICT, the len passed to erase_write() is
-> always an unsigned int.
+On 11/6/18 5:43 PM, Parthiban Nallathambi wrote:
+> ping on this patch series!
+> 
+> On 9/4/18 8:41 PM, Saravanan Sekar wrote:
+>>
+>>
+>> On 08/29/18 17:20, Manivannan Sadhasivam wrote:
+>>> Hi Saravanan,
+>>>
+>>> On Wed, Aug 29, 2018 at 10:24:09AM +0200, Saravanan Sekar wrote:
+>>>> Move generic defines common to the Owl family out of S900 driver.
+>>>>
+>>>> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
+>>>> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
+>>>> ---
+>>>>   drivers/pinctrl/actions/pinctrl-owl.h  | 131 
+>>>> +++++++++++++++++++++++++++++++
+>>>>   drivers/pinctrl/actions/pinctrl-s900.c | 139 
+>>>> ++-------------------------------
+>>>>   2 files changed, 137 insertions(+), 133 deletions(-)
+>>>>
+>>>> diff --git a/drivers/pinctrl/actions/pinctrl-owl.h 
+>>>> b/drivers/pinctrl/actions/pinctrl-owl.h
+>>>> index a724d1d406d4..31cc33d7c4a5 100644
+>>>> --- a/drivers/pinctrl/actions/pinctrl-owl.h
+>>>> +++ b/drivers/pinctrl/actions/pinctrl-owl.h
+>>>> @@ -15,6 +15,136 @@
+>>>>   #define OWL_PINCONF_SLEW_SLOW 0
+>>>>   #define OWL_PINCONF_SLEW_FAST 1
+>>>> +#define MUX_PG(group_name, reg, shift, width)                \
+>>>> +    {                                \
+>>>> +        .name = #group_name,                    \
+>>>> +        .pads = group_name##_pads,                \
+>>>> +        .npads = ARRAY_SIZE(group_name##_pads),            \
+>>>> +        .funcs = group_name##_funcs,                \
+>>>> +        .nfuncs = ARRAY_SIZE(group_name##_funcs),        \
+>>>> +        .mfpctl_reg  = MFCTL##reg,                \
+>>>> +        .mfpctl_shift = shift,                    \
+>>>> +        .mfpctl_width = width,                    \
+>>>> +        .drv_reg = -1,                        \
+>>>> +        .drv_shift = -1,                    \
+>>>> +        .drv_width = -1,                    \
+>>>> +        .sr_reg = -1,                        \
+>>>> +        .sr_shift = -1,                        \
+>>>> +        .sr_width = -1,                        \
+>>>> +    }
+>>>> +
+>>>> +#define DRV_PG(group_name, reg, shift, width)                \
+>>>> +    {                                \
+>>>> +        .name = #group_name,                    \
+>>>> +        .pads = group_name##_pads,                \
+>>>> +        .npads = ARRAY_SIZE(group_name##_pads),            \
+>>>> +        .mfpctl_reg  = -1,                    \
+>>>> +        .mfpctl_shift = -1,                    \
+>>>> +        .mfpctl_width = -1,                    \
+>>>> +        .drv_reg = PAD_DRV##reg,                \
+>>>> +        .drv_shift = shift,                    \
+>>>> +        .drv_width = width,                    \
+>>>> +        .sr_reg = -1,                        \
+>>>> +        .sr_shift = -1,                        \
+>>>> +        .sr_width = -1,                        \
+>>>> +    }
+>>>> +
+>>>> +#define SR_PG(group_name, reg, shift, width)                \
+>>>> +    {                                \
+>>>> +        .name = #group_name,                    \
+>>>> +        .pads = group_name##_pads,                \
+>>>> +        .npads = ARRAY_SIZE(group_name##_pads),            \
+>>>> +        .mfpctl_reg  = -1,                    \
+>>>> +        .mfpctl_shift = -1,                    \
+>>>> +        .mfpctl_width = -1,                    \
+>>>> +        .drv_reg = -1,                        \
+>>>> +        .drv_shift = -1,                    \
+>>>> +        .drv_width = -1,                    \
+>>>> +        .sr_reg = PAD_SR##reg,                    \
+>>>> +        .sr_shift = shift,                    \
+>>>> +        .sr_width = width,                    \
+>>>> +    }
+>>>> +
+>>>> +#define FUNCTION(fname)                    \
+>>>> +    {                        \
+>>>> +        .name = #fname,                \
+>>>> +        .groups = fname##_groups,        \
+>>>> +        .ngroups = ARRAY_SIZE(fname##_groups),    \
+>>>> +    }
+>>>> +
+>>>> +/* PAD PULL UP/DOWN CONFIGURES */
+>>>> +#define PULLCTL_CONF(pull_reg, pull_sft, pull_wdt)    \
+>>>> +    {                        \
+>>>> +        .reg = PAD_PULLCTL##pull_reg,        \
+>>>> +        .shift = pull_sft,            \
+>>>> +        .width = pull_wdt,            \
+>>>> +    }
+>>>> +
+>>>> +#define PAD_PULLCTL_CONF(pad_name, pull_reg, pull_sft, pull_wdt)    \
+>>>> +    struct owl_pullctl pad_name##_pullctl_conf            \
+>>>> +        = PULLCTL_CONF(pull_reg, pull_sft, pull_wdt)
+>>>> +
+>>>> +#define ST_CONF(st_reg, st_sft, st_wdt)            \
+>>>> +    {                        \
+>>>> +        .reg = PAD_ST##st_reg,            \
+>>>> +        .shift = st_sft,            \
+>>>> +        .width = st_wdt,            \
+>>>> +    }
+>>>> +
+>>>> +#define PAD_ST_CONF(pad_name, st_reg, st_sft, st_wdt)    \
+>>>> +    struct owl_st pad_name##_st_conf        \
+>>>> +        = ST_CONF(st_reg, st_sft, st_wdt)
+>>>> +
+>>>> +#define PAD_INFO(name)                    \
+>>>> +    {                        \
+>>>> +        .pad = name,                \
+>>>> +        .pullctl = NULL,            \
+>>>> +        .st = NULL,                \
+>>>> +    }
+>>>> +
+>>>> +#define PAD_INFO_ST(name)                \
+>>>> +    {                        \
+>>>> +        .pad = name,                \
+>>>> +        .pullctl = NULL,            \
+>>>> +        .st = &name##_st_conf,            \
+>>>> +    }
+>>>> +
+>>>> +#define PAD_INFO_PULLCTL(name)                \
+>>>> +    {                        \
+>>>> +        .pad = name,                \
+>>>> +        .pullctl = &name##_pullctl_conf,    \
+>>>> +        .st = NULL,                \
+>>>> +    }
+>>>> +
+>>>> +#define PAD_INFO_PULLCTL_ST(name)            \
+>>>> +    {                        \
+>>>> +        .pad = name,                \
+>>>> +        .pullctl = &name##_pullctl_conf,    \
+>>>> +        .st = &name##_st_conf,            \
+>>>> +    }
+>>>> +
+>>>> +#define OWL_GPIO_PORT_A        0
+>>>> +#define OWL_GPIO_PORT_B        1
+>>>> +#define OWL_GPIO_PORT_C        2
+>>>> +#define OWL_GPIO_PORT_D        3
+>>>> +#define OWL_GPIO_PORT_E        4
+>>>> +#define OWL_GPIO_PORT_F        5
+>>>> +
+>>>> +#define OWL_GPIO_PORT(port, base, count, _outen, _inen, _dat, 
+>>>> _intc_ctl,\
+>>>> +            _intc_pd, _intc_msk, _intc_type, _share)    \
+>>>> +    [OWL_GPIO_PORT_##port] = {                \
+>>>> +        .offset = base,                    \
+>>>> +        .pins = count,                    \
+>>>> +        .outen = _outen,                \
+>>>> +        .inen = _inen,                    \
+>>>> +        .dat = _dat,                    \
+>>>> +        .intc_ctl = _intc_ctl,                \
+>>>> +        .intc_pd = _intc_pd,                \
+>>>> +        .intc_msk = _intc_msk,                \
+>>>> +        .intc_type = _intc_type,            \
+>>>> +        .shared_ctl_offset = _share,            \
+>>>
+>>> Above member addition is not related to this patch. What is the purpose
+>>> of this? Either move this to a separate commit if it is needed by S700
+>>> or justify in this patch itself.
+>>>
+>>
+>> This is introduced for S700 as registers are shared, it is not case in
+>> S900. There is impact on S900 also, which needs another seperate patch
+>> which is unlikely as we cleaning S700 related stuffs here
 
-It's my mistake.
-Messages about u64 are not related to this patch.
+S700 shares the control register (INTC_GPIOCTL) for all the GPIO ports.
+Hence this is introduced only for s700 to offset into the control
+register for configuring (int pending/enable/clock select).
 
->
-> > this is ok most of the time, but can lead to unexpectedly large
-> > resulting value if the original signed value is negative.
-> > in addtion, the callers of the erase_write() pass the len parameter
->
->   ^In addition,
->
-> > as unsigned type.
-> >
-> > Signed-off-by: huijin.park <huijin.park@samsung.com>
-> > ---
-> >  drivers/mtd/mtdblock.c |    2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/mtd/mtdblock.c b/drivers/mtd/mtdblock.c
-> > index a5b1933..b2d5ed1 100644
-> > --- a/drivers/mtd/mtdblock.c
-> > +++ b/drivers/mtd/mtdblock.c
-> > @@ -56,7 +56,7 @@ struct mtdblk_dev {
-> >   */
-> >
-> >  static int erase_write (struct mtd_info *mtd, unsigned long pos,
-> > -                     int len, const char *buf)
-> > +                     unsigned int len, const char *buf)
->
-> The diff looks good, but the commit message is not clear at all. Can
-> you reword it?
->
-> Thanks,
->
-> Boris
->
-> >  {
-> >       struct erase_info erase;
-> >       size_t retlen;
->
+So should it be separate commit still? As mentioned Saravanan above,
+this has the impact in s900 as well.
 
-I will send again patch after reword the commit message.
+>>
+>>> Btw, this patch is not applying cleanly.
 
-Thanks & best regards,
+Will send v6 based on current mainline master!
 
-Huijin
+Thanks,
+Parthi
+
+>>>
+>>>> +    }
+>>>> +
+>>>>   enum owl_pinconf_pull {
+>>>>       OWL_PINCONF_PULL_HIZ,
+>>>>       OWL_PINCONF_PULL_DOWN,
+>>>> @@ -148,6 +278,7 @@ struct owl_gpio_port {
+>>>>       unsigned int intc_pd;
+>>>>       unsigned int intc_msk;
+>>>>       unsigned int intc_type;
+>>>> +    u8 shared_ctl_offset;
+>>>
+>>> Same as above.
+>>>
+>>> Regards,
+>>> Mani
+>>>
+>>>>   };
+>>>>   /**
+>>>> diff --git a/drivers/pinctrl/actions/pinctrl-s900.c 
+>>>> b/drivers/pinctrl/actions/pinctrl-s900.c
+>>>> index ea67b14ef93b..0597009d8369 100644
+>>>> --- a/drivers/pinctrl/actions/pinctrl-s900.c
+>>>> +++ b/drivers/pinctrl/actions/pinctrl-s900.c
+>>>> @@ -33,13 +33,6 @@
+>>>>   #define PAD_SR1            (0x0274)
+>>>>   #define PAD_SR2            (0x0278)
+>>>> -#define OWL_GPIO_PORT_A        0
+>>>> -#define OWL_GPIO_PORT_B        1
+>>>> -#define OWL_GPIO_PORT_C        2
+>>>> -#define OWL_GPIO_PORT_D        3
+>>>> -#define OWL_GPIO_PORT_E        4
+>>>> -#define OWL_GPIO_PORT_F        5
+>>>> -
+>>>>   #define _GPIOA(offset)        (offset)
+>>>>   #define _GPIOB(offset)        (32 + (offset))
+>>>>   #define _GPIOC(offset)        (64 + (offset))
+>>>> @@ -892,55 +885,6 @@ static unsigned int i2c2_sr_pads[]        = { 
+>>>> I2C2_SCLK, I2C2_SDATA };
+>>>>   static unsigned int sensor0_sr_pads[]        = { SENSOR0_PCLK,
+>>>>                               SENSOR0_CKOUT };
+>>>> -#define MUX_PG(group_name, reg, shift, width)                \
+>>>> -    {                                \
+>>>> -        .name = #group_name,                    \
+>>>> -        .pads = group_name##_pads,                \
+>>>> -        .npads = ARRAY_SIZE(group_name##_pads),            \
+>>>> -        .funcs = group_name##_funcs,                \
+>>>> -        .nfuncs = ARRAY_SIZE(group_name##_funcs),        \
+>>>> -        .mfpctl_reg  = MFCTL##reg,                \
+>>>> -        .mfpctl_shift = shift,                    \
+>>>> -        .mfpctl_width = width,                    \
+>>>> -        .drv_reg = -1,                        \
+>>>> -        .drv_shift = -1,                    \
+>>>> -        .drv_width = -1,                    \
+>>>> -        .sr_reg = -1,                        \
+>>>> -        .sr_shift = -1,                        \
+>>>> -        .sr_width = -1,                        \
+>>>> -    }
+>>>> -
+>>>> -#define DRV_PG(group_name, reg, shift, width)                \
+>>>> -    {                                \
+>>>> -        .name = #group_name,                    \
+>>>> -        .pads = group_name##_pads,                \
+>>>> -        .npads = ARRAY_SIZE(group_name##_pads),            \
+>>>> -        .mfpctl_reg  = -1,                    \
+>>>> -        .mfpctl_shift = -1,                    \
+>>>> -        .mfpctl_width = -1,                    \
+>>>> -        .drv_reg = PAD_DRV##reg,                \
+>>>> -        .drv_shift = shift,                    \
+>>>> -        .drv_width = width,                    \
+>>>> -        .sr_reg = -1,                        \
+>>>> -        .sr_shift = -1,                        \
+>>>> -        .sr_width = -1,                        \
+>>>> -    }
+>>>> -
+>>>> -#define SR_PG(group_name, reg, shift, width)                \
+>>>> -    {                                \
+>>>> -        .name = #group_name,                    \
+>>>> -        .pads = group_name##_pads,                \
+>>>> -        .npads = ARRAY_SIZE(group_name##_pads),            \
+>>>> -        .mfpctl_reg  = -1,                    \
+>>>> -        .mfpctl_shift = -1,                    \
+>>>> -        .mfpctl_width = -1,                    \
+>>>> -        .drv_reg = -1,                        \
+>>>> -        .drv_shift = -1,                    \
+>>>> -        .drv_width = -1,                    \
+>>>> -        .sr_reg = PAD_SR##reg,                    \
+>>>> -        .sr_shift = shift,                    \
+>>>> -        .sr_width = width,                    \
+>>>> -    }
+>>>>   /* Pinctrl groups */
+>>>>   static const struct owl_pingroup s900_groups[] = {
+>>>> @@ -1442,13 +1386,6 @@ static const char * const sirq2_groups[] = {
+>>>>       "sirq2_dummy",
+>>>>   };
+>>>> -#define FUNCTION(fname)                    \
+>>>> -    {                        \
+>>>> -        .name = #fname,                \
+>>>> -        .groups = fname##_groups,        \
+>>>> -        .ngroups = ARRAY_SIZE(fname##_groups),    \
+>>>> -    }
+>>>> -
+>>>>   static const struct owl_pinmux_func s900_functions[] = {
+>>>>       [S900_MUX_ERAM] = FUNCTION(eram),
+>>>>       [S900_MUX_ETH_RMII] = FUNCTION(eth_rmii),
+>>>> @@ -1500,28 +1437,6 @@ static const struct owl_pinmux_func 
+>>>> s900_functions[] = {
+>>>>       [S900_MUX_SIRQ1] = FUNCTION(sirq1),
+>>>>       [S900_MUX_SIRQ2] = FUNCTION(sirq2)
+>>>>   };
+>>>> -/* PAD PULL UP/DOWN CONFIGURES */
+>>>> -#define PULLCTL_CONF(pull_reg, pull_sft, pull_wdt)            \
+>>>> -    {                                \
+>>>> -        .reg = PAD_PULLCTL##pull_reg,                \
+>>>> -        .shift = pull_sft,                    \
+>>>> -        .width = pull_wdt,                    \
+>>>> -    }
+>>>> -
+>>>> -#define PAD_PULLCTL_CONF(pad_name, pull_reg, pull_sft, pull_wdt)    \
+>>>> -    struct owl_pullctl pad_name##_pullctl_conf            \
+>>>> -        = PULLCTL_CONF(pull_reg, pull_sft, pull_wdt)
+>>>> -
+>>>> -#define ST_CONF(st_reg, st_sft, st_wdt)                    \
+>>>> -    {                                \
+>>>> -        .reg = PAD_ST##st_reg,                    \
+>>>> -        .shift = st_sft,                    \
+>>>> -        .width = st_wdt,                    \
+>>>> -    }
+>>>> -
+>>>> -#define PAD_ST_CONF(pad_name, st_reg, st_sft, st_wdt)            \
+>>>> -    struct owl_st pad_name##_st_conf                \
+>>>> -        = ST_CONF(st_reg, st_sft, st_wdt)
+>>>>   /* PAD_PULLCTL0 */
+>>>>   static PAD_PULLCTL_CONF(ETH_RXER, 0, 18, 2);
+>>>> @@ -1639,34 +1554,6 @@ static PAD_ST_CONF(SPI0_SS, 1, 2, 1);
+>>>>   static PAD_ST_CONF(I2S_BCLK0, 1, 1, 1);
+>>>>   static PAD_ST_CONF(I2S_MCLK0, 1, 0, 1);
+>>>> -#define PAD_INFO(name)                            \
+>>>> -    {                                \
+>>>> -        .pad = name,                        \
+>>>> -        .pullctl = NULL,                    \
+>>>> -        .st = NULL,                        \
+>>>> -    }
+>>>> -
+>>>> -#define PAD_INFO_ST(name)                        \
+>>>> -    {                                \
+>>>> -        .pad = name,                        \
+>>>> -        .pullctl = NULL,                    \
+>>>> -        .st = &name##_st_conf,                    \
+>>>> -    }
+>>>> -
+>>>> -#define PAD_INFO_PULLCTL(name)                        \
+>>>> -    {                                \
+>>>> -        .pad = name,                        \
+>>>> -        .pullctl = &name##_pullctl_conf,            \
+>>>> -        .st = NULL,                        \
+>>>> -    }
+>>>> -
+>>>> -#define PAD_INFO_PULLCTL_ST(name)                    \
+>>>> -    {                                \
+>>>> -        .pad = name,                        \
+>>>> -        .pullctl = &name##_pullctl_conf,            \
+>>>> -        .st = &name##_st_conf,                    \
+>>>> -    }
+>>>> -
+>>>>   /* Pad info table */
+>>>>   static struct owl_padinfo s900_padinfo[NUM_PADS] = {
+>>>>       [ETH_TXD0] = PAD_INFO_ST(ETH_TXD0),
+>>>> @@ -1821,27 +1708,13 @@ static struct owl_padinfo 
+>>>> s900_padinfo[NUM_PADS] = {
+>>>>       [SGPIO3] = PAD_INFO_PULLCTL_ST(SGPIO3)
+>>>>   };
+>>>> -#define OWL_GPIO_PORT(port, base, count, _outen, _inen, _dat,        \
+>>>> -            _intc_ctl, _intc_pd, _intc_msk, _intc_type)    \
+>>>> -    [OWL_GPIO_PORT_##port] = {                    \
+>>>> -        .offset = base,                        \
+>>>> -        .pins = count,                        \
+>>>> -        .outen = _outen,                    \
+>>>> -        .inen = _inen,                        \
+>>>> -        .dat = _dat,                        \
+>>>> -        .intc_ctl = _intc_ctl,                    \
+>>>> -        .intc_pd = _intc_pd,                    \
+>>>> -        .intc_msk = _intc_msk,                    \
+>>>> -        .intc_type = _intc_type,                \
+>>>> -    }
+>>>> -
+>>>>   static const struct owl_gpio_port s900_gpio_ports[] = {
+>>>> -    OWL_GPIO_PORT(A, 0x0000, 32, 0x0, 0x4, 0x8, 0x204, 0x208, 
+>>>> 0x20C, 0x240),
+>>>> -    OWL_GPIO_PORT(B, 0x000C, 32, 0x0, 0x4, 0x8, 0x534, 0x204, 
+>>>> 0x208, 0x23C),
+>>>> -    OWL_GPIO_PORT(C, 0x0018, 12, 0x0, 0x4, 0x8, 0x52C, 0x200, 
+>>>> 0x204, 0x238),
+>>>> -    OWL_GPIO_PORT(D, 0x0024, 30, 0x0, 0x4, 0x8, 0x524, 0x1FC, 
+>>>> 0x200, 0x234),
+>>>> -    OWL_GPIO_PORT(E, 0x0030, 32, 0x0, 0x4, 0x8, 0x51C, 0x1F8, 
+>>>> 0x1FC, 0x230),
+>>>> -    OWL_GPIO_PORT(F, 0x00F0, 8, 0x0, 0x4, 0x8, 0x460, 0x140, 0x144, 
+>>>> 0x178)
+>>>> +    OWL_GPIO_PORT(A, 0x0000, 32, 0x0, 0x4, 0x8, 0x204, 0x208, 
+>>>> 0x20C, 0x240, 0),
+>>>> +    OWL_GPIO_PORT(B, 0x000C, 32, 0x0, 0x4, 0x8, 0x534, 0x204, 
+>>>> 0x208, 0x23C, 0),
+>>>> +    OWL_GPIO_PORT(C, 0x0018, 12, 0x0, 0x4, 0x8, 0x52C, 0x200, 
+>>>> 0x204, 0x238, 0),
+>>>> +    OWL_GPIO_PORT(D, 0x0024, 30, 0x0, 0x4, 0x8, 0x524, 0x1FC, 
+>>>> 0x200, 0x234, 0),
+>>>> +    OWL_GPIO_PORT(E, 0x0030, 32, 0x0, 0x4, 0x8, 0x51C, 0x1F8, 
+>>>> 0x1FC, 0x230, 0),
+>>>> +    OWL_GPIO_PORT(F, 0x00F0, 8, 0x0, 0x4, 0x8, 0x460, 0x140, 0x144, 
+>>>> 0x178, 0)
+>>>>   };
+>>>>   static struct owl_pinctrl_soc_data s900_pinctrl_data = {
+>>>> -- 
+>>>> 2.14.4
+>>>>
+>>
+> 
+
+-- 
+Thanks,
+Parthiban N
+
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-22 Fax: (+49)-8142-66989-80 Email: pn@denx.de
