@@ -2,182 +2,127 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A8D7C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:34:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00400C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:35:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E22A216FD
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:34:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACD9C216FD
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:34:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="BXg0cWxh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E22A216FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="al0LhlCg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACD9C216FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731571AbeKLPZq (ORCPT
+        id S1731267AbeKLP0e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 10:25:46 -0500
-Received: from mail-eopbgr690065.outbound.protection.outlook.com ([40.107.69.65]:14251
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731042AbeKLPZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 10:25:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pie8MTmVnWsE4MZx2fY3vNr0/mw0muYPynLs9HUAPU0=;
- b=BXg0cWxhfzo87LIXDu+U7nnrdG4qv/cyoI1oZ0E8qrEx1ZdvdktKrmOz5lla98zAQRbxAiyMAFA87ILNkhRrWS3cM081BVibR7I8t5UZdrMltzfDVCYC+tIM5ajOsUw9t0NOHHoweRMY48LwMDt5Q/+N0p0TjCvbcsMbE9QqVNA=
-Received: from BN6PR1201CA0014.namprd12.prod.outlook.com
- (2603:10b6:405:4c::24) by SN1PR12MB0431.namprd12.prod.outlook.com
- (2a01:111:e400:5865::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1294.27; Mon, 12 Nov
- 2018 05:34:06 +0000
-Received: from CO1NAM03FT009.eop-NAM03.prod.protection.outlook.com
- (2a01:111:f400:7e48::204) by BN6PR1201CA0014.outlook.office365.com
- (2603:10b6:405:4c::24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1294.21 via Frontend
- Transport; Mon, 12 Nov 2018 05:34:06 +0000
-Authentication-Results: spf=none (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; diasemi.com; dkim=none (message not signed)
- header.d=none;diasemi.com; dmarc=permerror action=none header.from=amd.com;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-Received: from SATLEXCHOV01.amd.com (165.204.84.17) by
- CO1NAM03FT009.mail.protection.outlook.com (10.152.80.67) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1339.10 via Frontend Transport; Mon, 12 Nov 2018 05:34:06 +0000
-Received: from LinuxHost.amd.com (10.34.1.3) by SATLEXCHOV01.amd.com
- (10.181.40.71) with Microsoft SMTP Server id 14.3.389.1; Sun, 11 Nov 2018
- 23:34:03 -0600
-From:   Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-CC:     <vijendar.mukunda@amd.com>, <Alexander.Deucher@amd.com>,
-        <Vishnuvardhanrao.Ravulapati@amd.com>,
-        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-        Maruthi Bayyavarapu <maruthi.bayyavarapu@amd.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        "Mark Brown" <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Akshu Agrawal <akshu.agrawal@amd.com>,
-        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>
-Subject: [PATCH 11/11] ASoC: amd: enable acp3x drivers build
-Date:   Mon, 12 Nov 2018 11:05:02 +0530
-Message-ID: <1542000903-19020-12-git-send-email-Vijendar.Mukunda@amd.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1542000903-19020-1-git-send-email-Vijendar.Mukunda@amd.com>
-References: <1542000903-19020-1-git-send-email-Vijendar.Mukunda@amd.com>
+        Mon, 12 Nov 2018 10:26:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55454 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730979AbeKLP0e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 10:26:34 -0500
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0183F223CE
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 05:34:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542000897;
+        bh=edNjwfl6DjLQ/ViI74m6jOCSqKOuP8oJ5IqQwsPa6M0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=al0LhlCgl1kuOpq7IXGQP6hfJWae2IQs/bv8jpeai6s5oZfHghSDcUafkeuX/R55a
+         cQXwkcRizI6+Imu/Hm/kuq2vHxg8vIIkp+j9QPy68OiqpbnjnVJAH17ca+f1noYKHv
+         ubjZuCiKRlDuWQ/qshqz5mR7MlN6WtLRIVKASf2U=
+Received: by mail-wm1-f48.google.com with SMTP id w7-v6so7146388wmc.1
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 21:34:56 -0800 (PST)
+X-Gm-Message-State: AGRZ1gJoS/bPlHzO8F5SOn69EqmLPOMuu716XfmFzvDooQFe1aKZ1tJl
+        VmBkqM+lKwjfG8laSLJYjNXzJcT9/RTJQs9lmOX8QA==
+X-Google-Smtp-Source: AJdET5d8SawewvIPiQVjH3irXCD3rL3cfmiOsEhZN1Vi/oCiNwTWx+HH7GIs6K+pzTE38Db8+rgarKVrUbOSEzRxg3Q=
+X-Received: by 2002:a1c:410a:: with SMTP id o10-v6mr6561587wma.19.1542000895301;
+ Sun, 11 Nov 2018 21:34:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(376002)(136003)(346002)(396003)(2980300002)(428003)(189003)(199004)(105586002)(106466001)(48376002)(186003)(39060400002)(426003)(1671002)(5660300001)(50466002)(53416004)(4326008)(77096007)(26005)(305945005)(126002)(336012)(86362001)(2616005)(476003)(486006)(2906002)(11346002)(446003)(316002)(16586007)(356004)(72206003)(50226002)(104016004)(51416003)(97736004)(7696005)(76176011)(36756003)(54906003)(47776003)(478600001)(81156014)(81166006)(68736007)(8676002)(8936002)(53936002)(109986005)(42413003)(266003)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR12MB0431;H:SATLEXCHOV01.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: 1;CO1NAM03FT009;1:hpG6248axAKL/DKEXQf1N0hta0Wf/1gbweG3kUdNiBwy+YRdmL7Zb52TkafFE6qz43/AfzML3fhmeR2gbg4QGTAkGR8t4U00sGSS61LOeANcT0UWvhF8Am4AcoYYgNWe
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 72b0557a-6e98-4aa2-df2c-08d64860769c
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390040)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060);SRVR:SN1PR12MB0431;
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0431;3:/H2wQxjVfBFShkMT9UWSCtcYlKZxFwV8S1XNrDRQCV/t8dNZEINMVeisFpq12Nj1yl/5s9RwwJxYDtA3+InPro6oK4fWYuk72C3RxrB5bSKEHbIUG7ASSAF68oN4CfI+IlA6KCJ7ZHrOxApFY4RThWZHfJ+2KjJkFN43FHCOys7xQyk8P75M9ZHgcQryDzGVBXvfa9VZO7SO2CleMfy9YS0qlGuU5+MAF7Gapiby1Dr8UnGo0tF3LB4TsQiWsfA0R0Rzz8KlzZ4uGSVIITJrMIv7uxaqTVVdZDWqwVA5VLBaQGeQr19z+itBI7FSBZ5W/iISVhnLe7vNSzX/+0HWNKHSKaAm9xcEvr7wbNcUdzg=;25:dwsFY6JhUI/+ZTq43Yn/qxSa/j/MQoc/5LqNZBnEIEto+0UNYyWjj3hw4O9/88dO/kpemveJ4sHPpNmA2C9qoxGWviJodq4h5lRMVCP5GIL5gOfAmI53EaKtTjHwsNPvKToV39XF/yeFOv4OSTO2QJeE81v7r7fwEjfi7YKJxwEOaXFCereaZa5xsZI86AnBc6BEK2mNA5vdJvzax+GOt6CdwXrUpR+J4M1ldgkYQfzxjyPZj7m0oK4IvOGfBlq3uvyMk/Hn5XtsIF4EeQfd+V9P4ibsMjA2tNeUCO2w5TxCJQYiyCuIgqFJ3z30Odm0pVVmZiUElYSc2AbrbelavTTLmABUfgESMiDDX2SyOmU=
-X-MS-TrafficTypeDiagnostic: SN1PR12MB0431:
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0431;31:xO3JeVEKGHNHw4PBomOckaTXDDGmb1h1eUgaQvTTHX1i/Nmjv0CvOhV6OoBtcLZLNWe87VRR39B4+ppr6+MIUYpWARv8g5gjr4Iy80B+UYPN3RrW07WlAYe8q/MrOuz64PRZk3wThCBbWbg4uoz8fzajgoA+b0q3CTUEvW5nGifrkbMB7KUdPEfbXDcwFw1CpzOhfhPPZLVcTYLCE/62SsdnlcKObhhLpiJezVvBBLo=;20:1pScwxapOcG7IK4J2hcR9fNzkmj/30EOW0N4K6q4xIBuP/B1sJs0dBQ+PQQ5R9fKDSvXeuJFeYfuydU5Xgi5JWnM1V/hteD9nG6/XH1vsOxjZsN48Tn1trZwj412VlzzuBwZZzHF0WyFTs8nzLh2akgMzN6EfmygBu5XVi32Fl08zWoiZeCJNPTuvxy8R6fQm/CKQAPhThkE/JK5GshtCPunB4KMC+I++9ilCUREjWWogHTb++JS9FUvH8kygt6sXyJ0iZKklrWMBjkeotR4DPl1YdlvOQfCD3zqw8VBQytQV9MXYslIcpnjPiuKohf7Kr0QNbh4MheiJirO6v+7A92u8O1TBPTwcG9tM2p19ZEisDPQm4aSKq7wj9CgrDj/gjW5+lupaGsztfRRBRR9S/JkyLiIAOL+GUMrdQSPh8GEvkiuVm9a8ec4GhgyBDiBJzUGo/gG+3FVyNeh8RmWBZV7PSsC136+0nh4WN0RRaTAlKPJq8z2wQU72a2q0+WK
-X-Microsoft-Antispam-PRVS: <SN1PR12MB043187E066BD496DE15E281997C10@SN1PR12MB0431.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231382)(944501410)(52105112)(10201501046)(93006095)(93003095)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:SN1PR12MB0431;BCL:0;PCL:0;RULEID:;SRVR:SN1PR12MB0431;
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0431;4:5FsoEcCOkv3rGpIREJGb+i1m0MuVHIvh/gcfWaKQbrZatFQyE4htbgLuZ/AYoSuRiuJ3LgrBGmL6ECstFjBIpmLGxuwUjVRqbhNSAQz1aVr+QtepbYbQKjHygfxHlyv/Roy1XNl+C8QY9OyM8UMxu3/xvregYo1pZ8eC2FRPU/h4EAr7pTKEpNbuCYs1BcXIMTMuKrevWbEQpNaPGipXAuV6d/xJTe3QMrJ7iHqiS2w2jrJoefxgeckwkZjzQfHQ5np275F5KRtd15yoyR96Z942D3ugUw7+vunjcQuQ/naVNbEKkJwr2RmQyUnm5kIa
-X-Forefront-PRVS: 0854128AF0
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN1PR12MB0431;23:2er0PULP3T5qP2vo0q0RAsYcb03uYwuycQydUlacE?=
- =?us-ascii?Q?BqQgsg9zU1t3+4Xi+DMGHJf9xUd+iucwyywy4RZJrdFyb1WJuyTqN7rYaLIZ?=
- =?us-ascii?Q?bUewGlC8H3GoEk7wNrfdTo7d4WQdFnJHSqb2Csg9BlAH192LXw92ZP3PfsXo?=
- =?us-ascii?Q?8xg3YvRWt+Vuy4di+sP/d4iwdnX4VsSaj4lHTtQSQnXyAwDgIX0wFJOfH0GX?=
- =?us-ascii?Q?TkFM7FtbIuYW2RjnM8fQ222i0bH/J+bqhriZ/45xCi9Q1xiEJVMQOD5+Wi5D?=
- =?us-ascii?Q?K3I+BHak2ClYbm0xJUqp4NdY/489l+wlmIOOZVz4KT7fE9CZPuPkTtoV7HQp?=
- =?us-ascii?Q?D5D+rBEHslgT6uds0MUzXs3mGZAq+rG1sGxa0LxCaTlw2rHYFfDLhby8rDds?=
- =?us-ascii?Q?UYg1ts5/6n2D1y4cZTQNetuG8blnV5rLkW5Xapvfo0Rn40IWC5jFNYM6RG42?=
- =?us-ascii?Q?e0D8QXZmw4hwLKlM3fEvRAJeg7b30JD2cAYASQT/co18Aa/RrCCmLjz9TsmK?=
- =?us-ascii?Q?LhIqwOfHDeaACmwQDw29pe7ym/NCQb3EqdOHZ5NH5hCj/JV1JvPTP5trDX7t?=
- =?us-ascii?Q?ivzhG6EFwUsUDpcpZma85hagEPjjGlUks3nLD0sNPw7ZGGtCa0DCQqMwwcG6?=
- =?us-ascii?Q?+3XccmEJt3TE4LjO56M5bpwLLUURRrQ61yTMtJS1rrahpTkUXXpxa0MkUMtA?=
- =?us-ascii?Q?LE5DWlHklMnflwdTTPPVQ2OIK3aZY/r0aOzzkeG9nP7DDmHQVbv1bW6L3eYx?=
- =?us-ascii?Q?d5ETGa7uQ+nRJkEOjQ3cKMq0Hhu5p0VwQ5hsZFxsNh7rIEp0se3qgeJRhyo9?=
- =?us-ascii?Q?trFwQYuwki67gpyzT1EOqFw6ZxV/2jYpeW9YMgRSyLJNgThrIo0qINkIFxQA?=
- =?us-ascii?Q?H6vhrSd6yIiDRfmcvhR5aMAGai9NSDOkJvkdw+IR8Zjj+upq/x1gUgNjpID4?=
- =?us-ascii?Q?5HdisfpLN5SGh7ioAYsPqK7tjpRwojIgssybvtQw3T9O0bOJzhm6EIn47GpS?=
- =?us-ascii?Q?C62iJU1w7KfLDOWGw5pMBH7+OtolM/lOf7V+zlnN8eBJyvOrQIns5d/pWBIU?=
- =?us-ascii?Q?JaL7FQKBa4zwcGz0uSHIGiDBsr37rWcJOvuh87Aeq9TktR2m9iq0r5jkjYPS?=
- =?us-ascii?Q?s0uAdejp1uetBRLzNRlmh2D9lHOyJ9R/yKIZ4un6w9bYYPqstQ2MrYLhxTPt?=
- =?us-ascii?Q?SX8vespw2cKFl/6Fjb8V1bENh0HV38FuVNrJuZcLs7ceOWrB3Jsg14ZpetBo?=
- =?us-ascii?Q?FT3E//sCI8SHBXQ6W8=3D?=
-X-Microsoft-Antispam-Message-Info: B9xOsigAoI1NM+ayzm8BPd+PIttereoDUGNMSg4LyogHHdqsdLqcbP0yc0+PQpSluV2LnJ033p+etlz5ZI1yWm/IdhPO7CJdzvoicoenJfk5yROczkjEPWE0VfYEF3gF+TOsyi7o5DBVei24RsfFkKq66/jGbo47ciebeUP4KhmldGdMPEwsFNyqy9VbZ1cIjT+PzUJhxJQ6yRRJxo5uxFb547871Zj6qZQ9YXWf3hvBBAiul5o0D+P5fG92/RaMoGQmkMnLqBQe0iiGpwnOqFX9ZUtoAbKlSM3sUoAhC8m1pOQpO2WcRc00PCONEWiiXxk8DIDazPSZ15WglMGBsGMAzhoCnlHJ/OPs3H/h3OQ=
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0431;6:u0VjhAbX9WzR4vfD4ySkr24xrUfrZXz0fhVUZQ1tV9je2FfvDhFqX0g9TcK3chl7GMET9aXDorvtVpqSlygt0uOZWibgl2gJbkBNE20PqlPccsUmfFFbdTyp0Uf4YpgAZ83J6BE+9xFenX21lbkeVuBgw4rWygk8jDpY8R2gr+vnyw6y4fyjjvxgQOidhTp8+ocfuGzt4Wo1fWweuys83VgAvWGaACM+gE7jRKqgaHibKqwTCRlSvBMF7VHkdKxPsRyOjyZRbwTlYNaKm3ErjZLZiNUu2hI1PKfX/7Xv551c4lCvG1skZribH+6m0arQVpDFhKeIKk/X5ubX1y3DyQ5QdYCC+i2e6WZsyMmL2qMBCU0H01Rja+hc/Maq0RJO0Xn5IejzmAIhFsq1WRty8SxQMfMqw1kQtA0QIKKnxdgI5IodW7+c8HsORaXkpcnz5YOxMeO2/cATBPBsdK6OuQ==;5:EOj3gnjT9iLigLUJ0yoGvPhmdEpcZ2VdgRcPm69odjzmZXQHekxRJajRFNubsC7WX6klFjrGZiT+523hWFHIaViERigJaXyZOzx4BJzTpDA5FswI1he/8YrqUDd6+YVXxZPg4UO20sRYYXe89COxbwDVvZr+9+yw4Jpxw0VoaE0=;7:luYKjNeu8SnaU2j2Pf3ZeqYdfmeAcLovWYID/9BQLuMcRI/NXnbNUZXuBJ/aO5qpHrV5h33bb0DtotVZ6Ffii8gYXjDWs9UFITArir2CZ9tXY2bH5u9uAgEVrssjq1wF75zz0z0/NrBJrlklWu1SEw==
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0431;20:o6YBltxYu6OyYemv0QHeY0wo3q2stMvdkWN4ABih3MrNwpALCxHR2k0plgdzmo/tiXWdY8VKV3Bbki4yGtWGpgYGDhErvfG9WlDQspUcUeNTPkFAa2XwLZoTCKgEokvrlIjB4bAVQmhti5yVGbPnrnoB3pB0ijMEw9NXkubq+csXRQa2sP4id1AJ/GPxtxdip10jluhEksivsAOK/YdQLtun5ijPDr/1I1megeOhjqCmxRtWfTPVbv1uGlylXJz8
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2018 05:34:06.0118
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 72b0557a-6e98-4aa2-df2c-08d64860769c
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXCHOV01.amd.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB0431
-To:     unlisted-recipients:; (no To-header on input)
+References: <cover.1541711457.git.jpoimboe@redhat.com> <20181109072811.GB86700@gmail.com>
+ <20181109144501.aqhcv3vdjuqlp7pz@treble> <20181112050241.GB28219@gmail.com>
+In-Reply-To: <20181112050241.GB28219@gmail.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Sun, 11 Nov 2018 21:34:42 -0800
+X-Gmail-Original-Message-ID: <CALCETrUBptKGkDGx7a29mX=aj6E5bGCV2eJHgVRz6ymBgoSPZg@mail.gmail.com>
+Message-ID: <CALCETrUBptKGkDGx7a29mX=aj6E5bGCV2eJHgVRz6ymBgoSPZg@mail.gmail.com>
+Subject: Re: [PATCH RFC 0/3] Static calls
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@aculab.com>,
+        Borislav Petkov <bp@alien8.de>, Juergen Gross <jgross@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ACP3x drivers can be built by selecting necessary kernel config option.
-The patch enables build support of the same.
+On Sun, Nov 11, 2018 at 9:02 PM Ingo Molnar <mingo@kernel.org> wrote:
+>
+>
+> * Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+>
+> > On Fri, Nov 09, 2018 at 08:28:11AM +0100, Ingo Molnar wrote:
+> > > > - I'm not sure about the objtool approach.  Objtool is (currently)
+> > > >   x86-64 only, which means we have to use the "unoptimized" version
+> > > >   everywhere else.  I may experiment with a GCC plugin instead.
+> > >
+> > > I'd prefer the objtool approach. It's a pretty reliable first-principles
+> > > approach while GCC plugin would have to be replicated for Clang and any
+> > > other compilers, etc.
+> >
+> > The benefit of a plugin is that we'd only need two of them: GCC and
+> > Clang.  And presumably, they'd share a lot of code.
+> >
+> > The prospect of porting objtool to all architectures is going to be much
+> > more of a daunting task (though we are at least already considering it
+> > for some arches).
+>
+> Which architectures would benefit from ORC support the most?
+>
+> I really think that hard reliance on GCC plugins is foolish - but maybe
+> Clang's plugin infrastructure is a guarantee that it remains a sane and
+> usable interface.
+>
+> > > I'd be very happy with a demonstrated paravirt optimization already -
+> > > i.e. seeing the before/after effect on the vmlinux with an x86 distro
+> > > config.
+> > >
+> > > All major Linux distributions enable CONFIG_PARAVIRT=y and
+> > > CONFIG_PARAVIRT_XXL=y on x86 at the moment, so optimizing it away as much
+> > > as possible in the 99.999% cases where it's not used is a primary
+> > > concern.
+> >
+> > For paravirt, I was thinking of it as more of a cleanup than an
+> > optimization.  The paravirt patching code already replaces indirect
+> > branches with direct ones -- see paravirt_patch_default().
+> >
+> > Though it *would* reduce the instruction footprint a bit, as the 7-byte
+> > indirect calls (later patched to 5-byte direct + 2-byte nop) would
+> > instead be 5-byte direct calls to begin with.
+>
+> Yes.
 
-Signed-off-by: Maruthi Bayyavarapu <maruthi.bayyavarapu@amd.com>
-Tested-by: Ravulapati Vishnu vardhan Rao <Vishnuvardhanrao.Ravulapati@amd.com>
-Signed-off-by: Vijendar Mukunda <vijendar.mukunda@amd.com>
----
- sound/soc/amd/Kconfig        | 5 +++++
- sound/soc/amd/Makefile       | 1 +
- sound/soc/amd/raven/Makefile | 4 ++++
- 3 files changed, 10 insertions(+)
- create mode 100644 sound/soc/amd/raven/Makefile
-
-diff --git a/sound/soc/amd/Kconfig b/sound/soc/amd/Kconfig
-index 58c1dcb..5f3b560 100644
---- a/sound/soc/amd/Kconfig
-+++ b/sound/soc/amd/Kconfig
-@@ -19,3 +19,8 @@ config SND_SOC_AMD_CZ_RT5645_MACH
- 	depends on SND_SOC_AMD_ACP && I2C
- 	help
- 	 This option enables machine driver for rt5645.
-+
-+config SND_SOC_AMD_ACP3x
-+	tristate "AMD Audio Coprocessor-v3.x support"
-+	help
-+	 This option enables ACP v3.x I2S support on AMD platform
-diff --git a/sound/soc/amd/Makefile b/sound/soc/amd/Makefile
-index 79b0622..8e1c571 100644
---- a/sound/soc/amd/Makefile
-+++ b/sound/soc/amd/Makefile
-@@ -5,3 +5,4 @@ snd-soc-acp-rt5645-mach-objs := acp-rt5645.o
- obj-$(CONFIG_SND_SOC_AMD_ACP) += acp_audio_dma.o
- obj-$(CONFIG_SND_SOC_AMD_CZ_DA7219MX98357_MACH) += snd-soc-acp-da7219mx98357-mach.o
- obj-$(CONFIG_SND_SOC_AMD_CZ_RT5645_MACH) += snd-soc-acp-rt5645-mach.o
-+obj-$(CONFIG_SND_SOC_AMD_ACP3x) += raven/
-diff --git a/sound/soc/amd/raven/Makefile b/sound/soc/amd/raven/Makefile
-new file mode 100644
-index 0000000..8c03e6f
---- /dev/null
-+++ b/sound/soc/amd/raven/Makefile
-@@ -0,0 +1,4 @@
-+snd-pci-acp3x-objs	:= pci-acp3x.o
-+snd-acp3x-pcm-dma-objs	:= acp3x-pcm-dma.o
-+obj-$(CONFIG_SND_SOC_AMD_ACP3x)	 += snd-pci-acp3x.o
-+obj-$(CONFIG_SND_SOC_AMD_ACP3x)	 += snd-acp3x-pcm-dma.o
--- 
-2.7.4
-
+It would be a huge cleanup IMO -- the existing PVOP call stuff is
+really quite ugly IMO.  Also, the existing stuff tries to emulate the
+semantics of passing parameters of unknown types using asm
+constraints, and I just don't believe that GCC does what we want it to
+do.  In general, passing the *value* of a pointer to asm doesn't seem
+to convince gcc that the pointed-to value is used by the asm, and this
+makes me nervous.  See commit 715bd9d12f84d8f5cc8ad21d888f9bc304a8eb0b
+as an example of this.  In a similar vein, the existing PVOP calls
+have a "memory" clobber, and that's not free.
