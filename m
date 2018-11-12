@@ -2,120 +2,132 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E561BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:18:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32B11C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:20:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6F1F22360
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:18:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6F1F22360
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 0345522360
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:20:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0345522360
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sony.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728779AbeKLSKt (ORCPT
+        id S1728746AbeKLSMR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 13:10:49 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:9180 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727296AbeKLSKt (ORCPT
+        Mon, 12 Nov 2018 13:12:17 -0500
+Received: from seldsegrel01.sonyericsson.com ([37.139.156.29]:4437 "EHLO
+        SELDSEGREL01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727296AbeKLSMR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 13:10:49 -0500
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id wAC8DaVo017726;
-        Mon, 12 Nov 2018 09:18:15 +0100
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2nnnywt6wu-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 12 Nov 2018 09:18:15 +0100
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 840EE34;
-        Mon, 12 Nov 2018 08:18:12 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 2851B15FD;
-        Mon, 12 Nov 2018 08:18:12 +0000 (GMT)
-Received: from [10.201.21.58] (10.75.127.50) by SFHDAG3NODE2.st.com
- (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 12 Nov
- 2018 09:18:11 +0100
-Subject: Re: [PATCH v2 1/4] dt-bindings: hwlock: Document STM32 hwspinlock
- bindings
-To:     Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        <ohad@wizery.com>, <bjorn.andersson@linaro.org>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC:     <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-References: <20181108090502.14543-1-benjamin.gaignard@st.com>
- <20181108090502.14543-2-benjamin.gaignard@st.com>
-From:   Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <427f9053-22c2-92f7-c60a-d54505185068@st.com>
-Date:   Mon, 12 Nov 2018 09:18:10 +0100
+        Mon, 12 Nov 2018 13:12:17 -0500
+X-Greylist: delayed 602 seconds by postgrey-1.27 at vger.kernel.org; Mon, 12 Nov 2018 13:12:15 EST
+Subject: Re: [PATCH 3.16 298/366] kthread, tracing: Don't expose half-written
+ comm when creating kthreads
+To:     Ben Hutchings <ben@decadent.org.uk>,
+        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
+CC:     <akpm@linux-foundation.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+References: <lsq.1541965745.673358820@decadent.org.uk>
+From:   Snild Dolkow <snild@sony.com>
+Message-ID: <17edd54d-a979-b66d-1b30-1d1f9b1142a3@sony.com>
+Date:   Mon, 12 Nov 2018 09:10:07 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181108090502.14543-2-benjamin.gaignard@st.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <lsq.1541965745.673358820@decadent.org.uk>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.50]
-X-ClientProxiedBy: SFHDAG6NODE1.st.com (10.75.127.16) To SFHDAG3NODE2.st.com
- (10.75.127.8)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-12_06:,,
- signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Benjamin
-
-On 11/8/18 10:04 AM, Benjamin Gaignard wrote:
-> Add bindings for STM32 hardware spinlock device
+On 11/11/18 8:49 PM, Ben Hutchings wrote:
+> 3.16.61-rc1 review patch.  If anyone has any objections, please let me know.
 > 
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+> ------------------
+> 
+> From: Snild Dolkow <snild@sony.com>
+> 
+> commit 3e536e222f2930534c252c1cc7ae799c725c5ff9 upstream.
+> 
+> There is a window for racing when printing directly to task->comm,
+> allowing other threads to see a non-terminated string. The vsnprintf
+> function fills the buffer, counts the truncated chars, then finally
+> writes the \0 at the end.
+> 
+> 	creator                     other
+> 	vsnprintf:
+> 	  fill (not terminated)
+> 	  count the rest            trace_sched_waking(p):
+> 	  ...                         memcpy(comm, p->comm, TASK_COMM_LEN)
+> 	  write \0
+> 
+> The consequences depend on how 'other' uses the string. In our case,
+> it was copied into the tracing system's saved cmdlines, a buffer of
+> adjacent TASK_COMM_LEN-byte buffers (note the 'n' where 0 should be):
+> 
+> 	crash-arm64> x/1024s savedcmd->saved_cmdlines | grep 'evenk'
+> 	0xffffffd5b3818640:     "irq/497-pwr_evenkworker/u16:12"
+> 
+> ...and a strcpy out of there would cause stack corruption:
+> 
+> 	[224761.522292] Kernel panic - not syncing: stack-protector:
+> 	    Kernel stack is corrupted in: ffffff9bf9783c78
+> 
+> 	crash-arm64> kbt | grep 'comm\|trace_print_context'
+> 	#6  0xffffff9bf9783c78 in trace_print_context+0x18c(+396)
+> 	      comm (char [16]) =  "irq/497-pwr_even"
+> 
+> 	crash-arm64> rd 0xffffffd4d0e17d14 8
+> 	ffffffd4d0e17d14:  2f71726900000000 5f7277702d373934   ....irq/497-pwr_
+> 	ffffffd4d0e17d24:  726f776b6e657665 3a3631752f72656b   evenkworker/u16:
+> 	ffffffd4d0e17d34:  f9780248ff003231 cede60e0ffffff9b   12..H.x......`..
+> 	ffffffd4d0e17d44:  cede60c8ffffffd4 00000fffffffffd4   .....`..........
+> 
+> The workaround in e09e28671 (use strlcpy in __trace_find_cmdline) was
+> likely needed because of this same bug.
+> 
+> Solved by vsnprintf:ing to a local buffer, then using set_task_comm().
+> This way, there won't be a window where comm is not terminated.
+> 
+> Link: http://lkml.kernel.org/r/20180726071539.188015-1-snild@sony.com
+> 
+> Fixes: bc0c38d139ec7 ("ftrace: latency tracer infrastructure")
+> Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> Signed-off-by: Snild Dolkow <snild@sony.com>
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> [bwh: Backported to 3.16: adjust context]
+> Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 > ---
-> version 2 :
-> - change clock name from hwspinlock to hsem to be align with hardware
->    documentation
+>  kernel/kthread.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
 > 
->   .../bindings/hwlock/st,stm32-hwspinlock.txt        | 23 ++++++++++++++++++++++
->   1 file changed, 23 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt
+> --- a/kernel/kthread.c
+> +++ b/kernel/kthread.c
+> @@ -309,10 +309,16 @@ struct task_struct *kthread_create_on_no
+>  	if (!IS_ERR(task)) {
+>  		static const struct sched_param param = { .sched_priority = 0 };
+>  		va_list args;
+> +		char name[TASK_COMM_LEN];
+>  
+> +		/*
+> +		 * task is already visible to other tasks, so updating
+> +		 * COMM must be protected.
+> +		 */
+>  		va_start(args, namefmt);
+> -		vsnprintf(task->comm, sizeof(task->comm), namefmt, args);
+> +		vsnprintf(name, sizeof(name), namefmt, args);
+>  		va_end(args);
+> +		set_task_comm(task, name);
+>  		/*
+>  		 * root may have changed our (kthreadd's) priority or CPU mask.
+>  		 * The kernel thread should not inherit these properties.
 > 
-> diff --git a/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt b/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt
-> new file mode 100644
-> index 000000000000..6e933b218574
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt
-> @@ -0,0 +1,23 @@
-> +STM32 Hardware Spinlock Device Binding
-> +-------------------------------------
-> +
-> +Required properties :
-> +- compatible : should be "st,stm32-hwspinlock".
-> +- reg : the register address of hwspinlock.
-> +- #hwlock-cells : hwlock users only use the hwlock id to represent a specific
-> +	hwlock, so the number of cells should be <1> here.
-> +- clock-names : Must contain "hwspinlock".
 
-"hwspinlock" --> "hsem" ?
+Reviewed-by: Snild Dolkow <snild@sony.com>
 
-> +- clocks : Must contain a phandle entry for the clock in clock-names, see the
-> +	common clock bindings.
-> +
-> +Please look at the generic hwlock binding for usage information for consumers,
-> +"Documentation/devicetree/bindings/hwlock/hwlock.txt"
-> +
-> +Example of hwlock provider:
-> +	hwspinlock@4c000000 {
-> +		compatible = "st,stm32-hwspinlock";
-> +		#hwlock-cells = <1>;
-> +		reg = <0x4c000000 0x400>;
-> +		clocks = <&rcc HSEM>;
-> +		clock-names = "hsem";
-> +	};
-> 
