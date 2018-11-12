@@ -2,91 +2,108 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F107FC43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 22:30:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E0B7C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 22:31:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC130223DD
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 22:30:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC130223DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id D051E2250E
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 22:31:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="oZN+UzTV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D051E2250E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730657AbeKMIZR (ORCPT
+        id S1730709AbeKMI0X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 03:25:17 -0500
-Received: from smtprelay0164.hostedemail.com ([216.40.44.164]:43755 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728030AbeKMIZR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 03:25:17 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 0579D100E86D4;
-        Mon, 12 Nov 2018 22:30:06 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: beast30_74ed5e0c58a5f
-X-Filterd-Recvd-Size: 2375
-Received: from XPS-9350 (unknown [172.58.27.5])
-        (Authenticated sender: joe@perches.com)
-        by omf18.hostedemail.com (Postfix) with ESMTPA;
-        Mon, 12 Nov 2018 22:30:03 +0000 (UTC)
-Message-ID: <bd3806ccc911989c7ef1fed9e8d26a4a5ad347a9.camel@perches.com>
-Subject: Re: [PATCH] xfs: Remove noinline from #define STATIC
-From:   Joe Perches <joe@perches.com>
-To:     Dave Chinner <david@fromorbit.com>,
-        Eric Sandeen <sandeen@sandeen.net>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Date:   Mon, 12 Nov 2018 14:30:01 -0800
-In-Reply-To: <20181112214515.GN19305@dastard>
-References: <7302f4a13c1cbf62b07f636878ce25fcca84b6c4.camel@perches.com>
-         <6420cf91-89c8-a876-7a0d-25ab8ba428b8@sandeen.net>
-         <20181112214515.GN19305@dastard>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 13 Nov 2018 03:26:23 -0500
+Received: from ozlabs.org ([203.11.71.1]:36943 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728030AbeKMI0X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 03:26:23 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42v57y32ckz9s0n;
+        Tue, 13 Nov 2018 09:31:10 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1542061870;
+        bh=IWOoimvEOMs1BYZ9mOGBa2FpLEkLzJM28GGSKTVdNsQ=;
+        h=Date:From:To:Cc:Subject:From;
+        b=oZN+UzTVKAZHnjqA8Ir2XuaNKAYHGA/gREuKIop8V5b3iMdk4eRHjk5Gk1y86FY++
+         6ruRlRbkjjpaE7DYxhRsZcoPpP3GKBA6R/qgSBDh36W5zt/t2uWExd/MrkBw8lH1T/
+         v5LhB9zlNTjyRjm2F1HJjiK+7JQiBPGdf6G9cIjNl7zC5hhDtgJdB5oodj9P7SlxcM
+         oAbYxpXJ4MHJxwg2aJMCIKQBXt3Us7VRnyn+vxOx+/EXqRRsNDjb/suzgu2rGL+XZv
+         VOBfQ1FE9dKaroX+mWCa2gMYafXrRVEMOVFgFOvcGC3IX4pY5tGTpjWet0k+5haz4I
+         kjZnlNde+LFFA==
+Date:   Tue, 13 Nov 2018 09:30:50 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Changbin Du <changbin.du@gmail.com>
+Subject: linux-next: manual merge of the kbuild tree with the kbuild-current
+ tree
+Message-ID: <20181113093050.6785eec5@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Z.WKk4aE08LlmMrFOkFR+GV"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-11-13 at 08:45 +1100, Dave Chinner wrote:
-> On Mon, Nov 12, 2018 at 02:12:08PM -0600, Eric Sandeen wrote:
-> > On 11/10/18 7:21 PM, Joe Perches wrote:
-> > > Reduce total object size quite a bit (~32KB) and presumably
-> > > improve performance at the same time.
-> > > 
-> > > Total object size old vs new (x86-64 defconfig with xfs)
-> > > 
-> > >     text	   data	    bss	    dec	    hex	filename
-> > > - 959351	 165573	    632	1125556	 112cb4	(TOTALS) (old)
-> > > + 924683	 165669	    632	1090984	 10a5a8	(TOTALS) (new)
-> > 
-> > And what does it do to maximum stack excursions?
-> 
-> Better yet: what does it do to corruption stack traces and debugging
-> tools like profiling traces?
-> 
-> i.e. this noinline directive isn't about stack usage, this is about
-> being able to debug production code. Basically the compiler inliner
-> is so agressive on static functions that it makes it impossible to
-> decipher the stack traces. It flattens them way too much to
-> be able to tell how we got to a specific location in the code.
-> 
-> In reality, being able to find problems quickly and efficiently is
-> far more important to us than being able to run everything at
-> ludicrous speed....
+--Sig_/Z.WKk4aE08LlmMrFOkFR+GV
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Is that really a compelling argument given thw ~50:50
-split of static/STATIC uses in xfs?
+Hi all,
 
-$ git grep -w STATIC fs/xfs/ | wc -l
-1064
-$ git grep -w static fs/xfs/ | wc -l
-942
+Today's linux-next merge of the kbuild tree got a conflict in:
 
+  init/Kconfig
 
+between commit:
+
+  f9af851aa8e7 ("kernel hacking: support building kernel with -Og optimizat=
+ion level")
+
+from the kbuild-current tree and commit:
+
+  a4219aff51b8 ("kernel hacking: support building kernel with -Og optimizat=
+ion level")
+
+from the kbuild tree.
+
+I fixed it up (I used the kbuild-current tree version) and can carry the
+fix as necessary. This is now fixed as far as linux-next is concerned,
+but any non trivial conflicts should be mentioned to your upstream
+maintainer when your tree is submitted for merging.  You may also want
+to consider cooperating with the maintainer of the conflicting tree to
+minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Z.WKk4aE08LlmMrFOkFR+GV
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvp/xoACgkQAVBC80lX
+0GwrrQf/ZZFknZNh1+SpQvjKmllbRqc549c4i9odUL5r/bfu+tJOFYf++KksxeaA
+oMION/jNRZKqfrL+Epmna+VRYf5bAA0biH3GvJnJpBHH322jn7fsFdLY5ndInXqS
+rxiIl8fbvDQUAQe6GbnU5emXA3147OydgcL28ng2NG9BaqCjc2SNLOPjWvDGLAez
+n4NzUIWbBOETfmtwH2PLAV43JrgYY4XiX2KNB7D/O3cljLL1assWYKDV7q/jFT0h
+Qo2sh2q7ACofMsESLcCTuZW6qmgMW1QYl5C8Jm3/qEnwsYpjl5orh6gv7OuD4RLj
+8yLF21Hu3jtSG3Jo79+rxYqyn6U9wA==
+=XOFO
+-----END PGP SIGNATURE-----
+
+--Sig_/Z.WKk4aE08LlmMrFOkFR+GV--
