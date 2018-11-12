@@ -2,239 +2,93 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1CE6C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:45:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63AD5C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:46:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9797022504
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:45:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9797022504
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 29B2022504
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:46:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="P3yiOMTC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29B2022504
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730155AbeKMDjg (ORCPT
+        id S1729453AbeKMDkw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 22:39:36 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:54402 "EHLO mail.bootlin.com"
+        Mon, 12 Nov 2018 22:40:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36426 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727185AbeKMDjg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 22:39:36 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 66916208A0; Mon, 12 Nov 2018 18:45:19 +0100 (CET)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id CBAD4206D8;
-        Mon, 12 Nov 2018 18:45:18 +0100 (CET)
-Date:   Mon, 12 Nov 2018 18:45:18 +0100
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Liang Yang <liang.yang@amlogic.com>, Rob Herring <robh@kernel.org>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
-        Jian Hu <jian.hu@amlogic.com>, linux-mtd@lists.infradead.org,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        linux-amlogic@lists.infradead.org,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH v6 2/2] mtd: rawnand: meson: add support for Amlogic
- NAND flash controller
-Message-ID: <20181112184518.6c02ac6d@bbrezillon>
-In-Reply-To: <20181112175416.247e3203@bbrezillon>
-References: <1541090542-19618-1-git-send-email-jianxin.pan@amlogic.com>
- <1541090542-19618-3-git-send-email-jianxin.pan@amlogic.com>
- <20181105165321.7ea2b45f@bbrezillon>
- <a571904e-6296-bf62-e1fe-e25bf90040bb@amlogic.com>
- <20181106102851.61deb97a@bbrezillon>
- <ff02373e-c97b-182d-5b43-83d1e8f6d51a@amlogic.com>
- <20181106112206.65a70a81@bbrezillon>
- <20181112171351.4ac3506b@xps13>
- <20181112175416.247e3203@bbrezillon>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727185AbeKMDkw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 22:40:52 -0500
+Received: from localhost (unknown [206.108.79.134])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93DD42243E;
+        Mon, 12 Nov 2018 17:46:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542044796;
+        bh=JYiASsp0Xa0mAJ9+8h/1fxDPLl4gq4PMos7jFrzWpJs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=P3yiOMTCwNZsNj57DcmOourhVMox7FunuDs1SnlJee/lnNE4BH7JstOCO1o45kiGj
+         eDjn2L73HL5yL5ZzHjccydMIDNgQCJ661XoLoXdgnATvCla6kopSgLcsFinZV61viv
+         Aqj4C8aA0ms6XOZuejDni/nLlaZvnE4+rMRb78iM=
+Date:   Mon, 12 Nov 2018 09:46:36 -0800
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     "Schmauss, Erik" <erik.schmauss@intel.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Jean-Marc Lenoir <archlinux@jihemel.com>,
+        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>
+Subject: Re: [PATCH 4.14 009/222] ACPICA: AML interpreter: add region
+ addresses in global list during initialization
+Message-ID: <20181112174636.GA15484@kroah.com>
+References: <20181111221647.665769131@linuxfoundation.org>
+ <20181111221648.772697504@linuxfoundation.org>
+ <CF6A88132359CE47947DB4C6E1709ED53BB9FAB9@ORSMSX110.amr.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CF6A88132359CE47947DB4C6E1709ED53BB9FAB9@ORSMSX110.amr.corp.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 12 Nov 2018 17:54:16 +0100
-Boris Brezillon <boris.brezillon@bootlin.com> wrote:
-
-> +Wolfram to give some inputs on the DMA issue.
+On Mon, Nov 12, 2018 at 05:16:19PM +0000, Schmauss, Erik wrote:
 > 
-> On Mon, 12 Nov 2018 17:13:51 +0100
-> Miquel Raynal <miquel.raynal@bootlin.com> wrote:
-> 
-> > Hello,
+> > -----Original Message-----
+> > From: Greg Kroah-Hartman [mailto:gregkh@linuxfoundation.org]
+> > Sent: Sunday, November 11, 2018 2:22 PM
+> > To: linux-kernel@vger.kernel.org
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>;
+> > stable@vger.kernel.org; Jean-Marc Lenoir <archlinux@jihemel.com>;
+> > Schmauss, Erik <erik.schmauss@intel.com>; Wysocki, Rafael J
+> > <rafael.j.wysocki@intel.com>
+> > Subject: [PATCH 4.14 009/222] ACPICA: AML interpreter: add region
+> > addresses in global list during initialization
 > > 
-> > Boris Brezillon <boris.brezillon@bootlin.com> wrote on Tue, 6 Nov 2018
-> > 11:22:06 +0100:
-> >   
-> > > On Tue, 6 Nov 2018 18:00:37 +0800
-> > > Liang Yang <liang.yang@amlogic.com> wrote:
-> > >     
-> > > > On 2018/11/6 17:28, Boris Brezillon wrote:      
-> > > > > On Tue, 6 Nov 2018 17:08:00 +0800
-> > > > > Liang Yang <liang.yang@amlogic.com> wrote:
-> > > > >         
-> > > > >> On 2018/11/5 23:53, Boris Brezillon wrote:        
-> > > > >>> On Fri, 2 Nov 2018 00:42:21 +0800
-> > > > >>> Jianxin Pan <jianxin.pan@amlogic.com> wrote:
-> > > > >>>            
-> > > > >>>> +
-> > > > >>>> +static inline u8 meson_nfc_read_byte(struct mtd_info *mtd)
-> > > > >>>> +{
-> > > > >>>> +	struct nand_chip *nand = mtd_to_nand(mtd);
-> > > > >>>> +	struct meson_nfc *nfc = nand_get_controller_data(nand);
-> > > > >>>> +	u32 cmd;
-> > > > >>>> +
-> > > > >>>> +	cmd = nfc->param.chip_select | NFC_CMD_DRD | 0;
-> > > > >>>> +	writel(cmd, nfc->reg_base + NFC_REG_CMD);
-> > > > >>>> +
-> > > > >>>> +	meson_nfc_drain_cmd(nfc);        
-> > > > >>>
-> > > > >>> You probably don't want to drain the FIFO every time you read a byte on
-> > > > >>> the bus, and I guess the INPUT FIFO is at least as big as the CMD
-> > > > >>> FIFO, right? If that's the case, you should queue as much DRD cmd as
-> > > > >>> possible and only sync when the user explicitly requests it or when
-> > > > >>> the INPUT/READ FIFO is full.
-> > > > >>>            
-> > > > >> Register 'NFC_REG_BUF' can holds only 4 bytes, also DRD sends only one
-> > > > >> nand cycle to read one byte and covers the 1st byte every time reading.
-> > > > >> i think nfc controller is faster than nand cycle, but really it is not
-> > > > >> high efficiency when reading so many bytes once.
-> > > > >> Or use dma command here like read_page and read_page_raw.        
-> > > > > 
-> > > > > Yep, that's also an alternative, though you'll have to make sure the
-> > > > > buffer passed through the nand_op_inst is DMA-safe, and use a bounce
-> > > > > buffer when that's not the case.
-> > > > >         
-> > > > ok, i will try dma here.      
-> > > 
-> > > We should probably expose the bounce buf handling as generic helpers at
-> > > the rawnand level:
-> > > 
-> > > void *nand_op_get_dma_safe_input_buf(struct nand_op_instr *instr)
-> > > {
-> > > 	void *buf;
-> > > 
-> > > 	if (WARN_ON(instr->type != NAND_OP_DATA_IN_INSTR))
-> > > 		return NULL;
-> > > 
-> > > 	if (virt_addr_valid(instr->data.in) &&
-> > > 	    !object_is_on_stack(instr->data.buf.in))
-> > > 		return instr->data.buf.in;
-> > > 
-> > > 	return kzalloc(instr->data.len, GFP_KERNEL);
-> > > }
-> > > 
-> > > void nand_op_put_dma_safe_input_buf(struct nand_op_instr *instr,
-> > > 				    void *buf)
-> > > {
-> > > 	if (WARN_ON(instr->type != NAND_OP_DATA_IN_INSTR) ||
-> > > 	    WARN_ON(!buf))
-> > > 		return;
-> > > 
-> > > 	if (buf == instr->data.buf.in)
-> > > 		return;
-> > > 
-> > > 	memcpy(instr->data.buf.in, buf, instr->data.len);
-> > > 	kfree(buf);
-> > > }
-> > > 
-> > > const void *nand_op_get_dma_safe_output_buf(struct nand_op_instr *instr)
-> > > {
-> > > 	void *buf;
-> > > 
-> > > 	if (WARN_ON(instr->type != NAND_OP_DATA_OUT_INSTR))
-> > > 		return NULL;
-> > > 
-> > > 	if (virt_addr_valid(instr->data.out) &&
-> > > 	    !object_is_on_stack(instr->data.buf.out))
-> > > 		return instr->data.buf.out;
-> > > 
-> > > 	return kmemdup(instr->data.buf.out, GFP_KERNEL);
-> > > }
-> > > 
-> > > void nand_op_put_dma_safe_output_buf(struct nand_op_instr *instr,
-> > > 				    void *buf)
-> > > {
-> > > 	if (WARN_ON(instr->type != NAND_OP_DATA_OUT_INSTR) ||
-> > > 	    WARN_ON(!buf))
-> > > 		return;
-> > > 
-> > > 	if (buf != instr->data.buf.out)
-> > > 		kfree(buf);
-> > > }    
-> > 
-> > Not that I am against such function, but maybe they should come with
-> > comments stating that there is no reliable way to find if a buffer is
-> > DMA-able at runtime and these are just sanity checks (ie. required, but
-> > probably not enough).  
+> Hi Greg,
 > 
-> It's not 100% reliable, but it should cover most cases. Note that the
-> NAND framework already uses virt_addr_valid() to decide when to use its
-> internal bounce buffer, so this should be fixed too if we want a fully
-> reliable solution.
+> > 4.14-stable review patch.  If anyone has any objections, please let me know.
 > 
-> > This is my understanding of Wolfram's recent talk
-> > at ELCE [1].  
+> This patch is only meant to be added for kernels that are 4.17 or later.
 > 
-> Yes, you're right, but the NAND framework does not provide any guarantee
-> on the buf passed to ->exec_op() simply because the MTD layer does not
-> provide such a guarantee. Reworking that to match how the i2c framework
-> handles it is possible (with a flag set when the buffer is known to be
-> DMA-safe), but it requires rewriting all MTD users if we want to keep
-> decent perfs (the amount of data transfered to a flash is an order of
-> magnitude bigger than what you usually receive/send from/to an I2C
-> device). Also, I'm not even sure the DMA_SAFE flag covers all weird
-> cases like the "DMA engine embedded in the controller is not able to
-> access the whole physical memory range" one.
+> Please drop this from kernel 4.16 or older.
 
-I forgot that this problem was handled at dma_map time (a bounce
-buffer is allocated if needed, and this decision is based on
-dev->dma_mask).
+Ok, but next time be a bit more careful when you add a line like this to
+the patch:
 
-> So ideally we should have
-> something that checks if a pointer is DMA-safe at the device level and
-> then at the arch level.
-> 
-> A temporary solution would be to add a hook at the nand_controller
-> level:
-> 
-> 	bool (*buf_is_dma_safe)(struct nand_chip *chip, void *buf,
-> 				size_t len);
-> 
-> And then fallback to the default implementation when it's not
-> implemented:
-> 
-> static bool nand_buf_is_dma_safe(struct nand_chip *chip, void *buf,
-> 				 size_t len)
-> {
-> 	if (chip->controller->ops && chip->controller->ops->is_dma_safe)
-> 		return chip->controller->ops->is_dma_safe(chip, buf,
-> 							  len);
-> 
-> 	return virt_addr_valid(buf) && !object_is_on_stack(buf);
-> }
-> 
-> > I suppose using the CONFIG_DMA_API_DEBUG option could help
-> > more reliably to find such issues.  
-> 
-> Actually, the problem is not only about detecting offenders but being
-> able to detect when a buffer is not DMA-safe at runtime in order to
-> allocate/use a bounce buffer.
+> > Cc: All applicable <stable@vger.kernel.org>
 
+I take this to mean "everything it can apply cleanly to".
+
+I'll go drop it from the 3.18.y, 4.4.y, and 4.9.y stable queues as well.
+
+thanks,
+
+greg k-h
