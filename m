@@ -2,120 +2,110 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C72B3C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:55:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F169C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:56:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DB2322419
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:55:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B82122419
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:56:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="znatyHsE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DB2322419
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dPH7BNza"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B82122419
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730149AbeKMEuL (ORCPT
+        id S1730295AbeKMEuf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 23:50:11 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:54037 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727354AbeKMEuL (ORCPT
+        Mon, 12 Nov 2018 23:50:35 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40371 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727354AbeKMEuf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 23:50:11 -0500
-Received: by mail-it1-f195.google.com with SMTP id r12-v6so14207584ita.3
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 10:55:41 -0800 (PST)
+        Mon, 12 Nov 2018 23:50:35 -0500
+Received: by mail-pg1-f193.google.com with SMTP id z10so4463613pgp.7
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 10:56:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Jy8dt7nfYXm2bU+vklele1Ugeqqnphq1OlnLRaIukdw=;
-        b=znatyHsE9yS2g0pHtK+OorkFiwHBjP3w5RVDZsXwtCEwt1zTBaKjbmTpUM9YuG9JMC
-         s9cf+D/QWyTrjTlwXEAPGDZLz6qmUxeQYVy8KNCIdDH6xwblEFyA3AF5hpXt+2/cq5HE
-         eHdHS5p7gDbEDEwPEX2jdY1m6ik3p4tM0XzhqsokstepMO3Ue7XCkEBtG0Rgv3P56M3U
-         szRnNIGwTDOd4Nt09xJK+a2+plILEDwnyBWj+G7xP4jamH5x9YjRUV34Wc2fZXq2TAx6
-         XJzg3Vz0RouwQL9eindq+USAKurlP6yWL9LZzyFZ9hwEWPmcPpNMx9XoXwM+Q44uJqcD
-         GtKA==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=D7zJOfAchvRNktzeAWQkae2R/fEUK7VwwkzZ8LQ4i/E=;
+        b=dPH7BNzaoiRjfH6sTPW5q8GWsRlrsp4wuWUspJF3mphlpQ5Qk4GApMJM3HthT7iRld
+         qJWWhjqxPkC6uG9FQF3My1wxYSUU/l+WvlJUI5CncULx1aEIx4vhCs62XnhUrDj8aFMW
+         IVtPfpQXe0bSrxT6/4crKHJJOAlq8oYS4pTOfHcgE+FWMd+vzyESiNQrCLttKTd4elaO
+         pRqa0ILAAp7BISlhydp50AVOHhp552eXAlGIVWWoTvS5G5Oj8rw2Cmkc0WIepPEGgkkw
+         7QUEFdvFoerVXN3eBIfNf6RQCrpwPv9meYDVWQKUCi/kW3Mduebuh1LI2Ukqnczmk0G/
+         Apkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Jy8dt7nfYXm2bU+vklele1Ugeqqnphq1OlnLRaIukdw=;
-        b=Jjs7VX98EMq0zp1K+fKDuY5bS6M2mpNTqDUo+fg4MP/4si6WeU3YSxpCuB+ocVg7CV
-         NH8qydheENXlpj/Gd01X85vJH8F32HMnb8L8Lx1R5fJmk7pR9Db5tZzk2vc2FVzXlCBi
-         lNy8LdTuk6xkGX7fCmGLHHprHlRYP089hLJXTIXgCC2LZNsH+LfDyHdZ3gMOFpm0bDXW
-         +5CqN/AbXd+OSrvZboqv9DCdG6Py6rUSkMCKSs9UY1xJj+p3Yt/DlfQqUTaco2tfdygP
-         sS0VGWcpBB+96iLMiPJi8KAnKr3OVL6+/pd/spPJkhPAKCXy4jAMd9lVYyxgv5nEpQ6i
-         +07A==
-X-Gm-Message-State: AGRZ1gIzzDDGQwr3uWc+6TAcWhPatoPJ+BTn30rTEYNGaJ6JFhDeXqkx
-        hbs1UIJn+PGQNQXFHLSONLRTPw==
-X-Google-Smtp-Source: AJdET5ek3hsuAD6k7/6ic18zepkQX2uVIYmoJCKnlKR6O5SqeqdZWvphcKrGMQU4eY1D4hPRBRXfbA==
-X-Received: by 2002:a02:330d:: with SMTP id c13-v6mr1933850jae.86.1542048940589;
-        Mon, 12 Nov 2018 10:55:40 -0800 (PST)
-Received: from cisco (75-166-182-157.hlrn.qwest.net. [75.166.182.157])
-        by smtp.gmail.com with ESMTPSA id m142-v6sm5384949itm.8.2018.11.12.10.55.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 12 Nov 2018 10:55:39 -0800 (PST)
-Date:   Mon, 12 Nov 2018 11:55:38 -0700
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Kees Cook <keescook@chromium.org>, Oleg Nesterov <oleg@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: siginfo pid not populated from ptrace?
-Message-ID: <20181112185538.GK3645@cisco>
-References: <20181112171144.GI3645@cisco>
- <87efbqi1xa.fsf@xmission.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=D7zJOfAchvRNktzeAWQkae2R/fEUK7VwwkzZ8LQ4i/E=;
+        b=LCuQqrS93eM5axfeoU9q+po/LD3QUjfGFv9aBflVKV9T9D7CNRpC6lXEUCn2S8pT/V
+         N/DgxXLwpIBE5J6hi6dr4y74zy+LiRHlvmD/LJaYlOCboDDAkUSZgLNRa8ZJHeChdnOo
+         iOaDmR/NuxppUEYs3l/leJ+AA39nyEIDfvDhsbJRbZWl7gcFxaqFIBawiOqWuZ4fotXZ
+         Wzd9VxeYuTBwbXEw/0hZdIlAagniCiQTfhkZHwHR/A8qWqrvww5ioTd0OlyqmXTQOwAu
+         1NMJ/fUGfAi4tFQl5q8cJ0aggJyah7PJueO/bodyKYM0CaAwAgypky++0h/KBsZkQ5/a
+         4IqQ==
+X-Gm-Message-State: AGRZ1gJebRTBu0+zBK/54ZnXyFHvVlj+CZ4+cSkW8ySKPMi9oy593I/J
+        NHw5uK1HIeV4FxHQd0+snDO0+TIlTW2ksJwrP/kIrw==
+X-Google-Smtp-Source: AJdET5dlj72dkILax3Mhs9zY8pCeVi8qBTCkLko0bMkImG68ygOgCEWX7t0ijeuZ3n/XDrVC395qAdiE5xFknc6TkKc=
+X-Received: by 2002:a63:42c1:: with SMTP id p184mr1809818pga.202.1542048964587;
+ Mon, 12 Nov 2018 10:56:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87efbqi1xa.fsf@xmission.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181112042116.5271-1-joel@jms.id.au> <20181112042116.5271-2-joel@jms.id.au>
+In-Reply-To: <20181112042116.5271-2-joel@jms.id.au>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 12 Nov 2018 10:55:53 -0800
+Message-ID: <CAKwvOdnBMFYXvS+GH0cUiczgkpLWtBinPRjkTJBQGrKjxktUUg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] Makefile: Export clang toolchain variables
+To:     joel@jms.id.au
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        mpe@ellerman.id.au, Michal Marek <michal.lkml@markovi.net>,
+        dja@axtens.net,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 12:30:25PM -0600, Eric W. Biederman wrote:
-> Tycho Andersen <tycho@tycho.ws> writes:
-> 
-> > Hi Oleg,
-> >
-> > I've been running some tests on my seccomp series, and in one of the
-> > tests on v4.20-rc2, I noticed,
-> >
-> > [ RUN      ] global.syscall_restart
-> > seccomp_bpf.c:2784:global.syscall_restart:Expected getpid() (1492) == info._sifields._kill.si_pid (0)
-> > global.syscall_restart: Test failed at step #22
-> >
-> > which seems unrelated to my series (the kernel was stock v4.20 with my
-> > patches on top).
-> >
-> > I've been running a lot of tests, and only seen this once, so it seems
-> > like a fairly rare race. I tried to look through the code but didn't
-> > see anything obvious. Thoughts?
-> 
-> My guess would be pid namespaces, or stopping for a signal other than
-> SIGSTOP.
-> 
-> If you can get this to reproduce at all it would be interesting to see
-> si_signo and si_code.  So that we can see just which signal is in info,
-> and how it should be decoded. 
+On Sun, Nov 11, 2018 at 8:21 PM Joel Stanley <joel@jms.id.au> wrote:
+>
+> The powerpc makefile will use these in it's boot wrapper.
+>
+> Signed-off-by: Joel Stanley <joel@jms.id.au>
+> ---
+>  Makefile | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/Makefile b/Makefile
+> index 09278330282d..840efe6eb54c 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -495,6 +495,7 @@ endif
+>  ifneq ($(GCC_TOOLCHAIN),)
+>  CLANG_FLAGS    += --gcc-toolchain=$(GCC_TOOLCHAIN)
+>  endif
+> +export CLANG_FLAGS
+>  CLANG_FLAGS    += -no-integrated-as
 
-Sure, here's what I see,
+Does this export CLANG_FLAGS before `-no-integrated-as` is set?
+Either way, I think it would be clearer to export this after all the
+relevant flags are set.
 
-seccomp_bpf.c:2784:global.syscall_restart:Expected getpid() (2195) == info._sifields._kill.si_pid (0)
-seccomp_bpf.c:2785:global.syscall_restart:si_signo: 19
-seccomp_bpf.c:2786:global.syscall_restart:si_code: 0
+>  KBUILD_CFLAGS  += $(CLANG_FLAGS)
+>  KBUILD_AFLAGS  += $(CLANG_FLAGS)
+> --
+> 2.19.1
+>
 
-> I see this test at line 2736 in 4.20-rc1 so there are almost 50 lines of
-> change in your version of seccomp_bpf.c.  So I hope I am reading the
-> proper test.
 
-Yes, sorry, that's additional test stuff from my user trap series. I
-haven't manage to reproduce it on stock v4.20-rc2, unfortunately. It
-could be that this is some memory corruption introduced by my series,
-but I'm running these tests with KASAN so hopefully it would complain?
-
-Tycho
+-- 
+Thanks,
+~Nick Desaulniers
