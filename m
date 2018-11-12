@@ -2,178 +2,124 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A6ACC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 14:27:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EA33C43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 14:27:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24240223D0
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 14:27:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24240223D0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cyphar.com
+	by mail.kernel.org (Postfix) with ESMTP id 2FF9B223D0
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 14:27:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FF9B223D0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729246AbeKMAUk (ORCPT
+        id S1729670AbeKMAUl convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 19:20:40 -0500
-Received: from mx2.mailbox.org ([80.241.60.215]:55656 "EHLO mx2.mailbox.org"
+        Mon, 12 Nov 2018 19:20:41 -0500
+Received: from foss.arm.com ([217.140.101.70]:37280 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726385AbeKMAUk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729129AbeKMAUk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 19:20:40 -0500
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id BA602A114E;
-        Mon, 12 Nov 2018 15:27:07 +0100 (CET)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter02.heinlein-hosting.de (spamfilter02.heinlein-hosting.de [80.241.56.116]) (amavisd-new, port 10030)
-        with ESMTP id KGvNlcRgC_2C; Mon, 12 Nov 2018 15:27:06 +0100 (CET)
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Jann Horn <jannh@google.com>,
-        Christian Brauner <christian@brauner.io>,
-        David Drysdale <drysdale@google.com>,
-        containers@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        Aleksa Sarai <asarai@suse.de>, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org
-Subject: [PATCH v4 0/4] namei: O_* flags to restrict path resolution
-Date:   Tue, 13 Nov 2018 01:26:50 +1100
-Message-Id: <20181112142654.341-1-cyphar@cyphar.com>
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AE4F280D;
+        Mon, 12 Nov 2018 06:27:10 -0800 (PST)
+Received: from donnerap.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9D6883F5BD;
+        Mon, 12 Nov 2018 06:27:09 -0800 (PST)
+Date:   Mon, 12 Nov 2018 14:27:03 +0000
+From:   Andre Przywara <andre.przywara@arm.com>
+To:     Grygorii Strashko <grygorii.strashko@ti.com>
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-rt-users@vger.kernel.org,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: arm64 + ARM64_64K_PAGES=y
+Message-ID: <20181112142703.0d6ceb57@donnerap.cambridge.arm.com>
+In-Reply-To: <274c9742-0aa9-b4a5-11cb-b506aeef7761@ti.com>
+References: <1ab7ee03-64fe-384a-c88f-f6d519b965db@ti.com>
+        <20181108120040.pzupzyqnsxeuv5ne@linutronix.de>
+        <99e0b883-cf9f-2ab9-5003-d4506bfa461d@ti.com>
+        <274c9742-0aa9-b4a5-11cb-b506aeef7761@ti.com>
+Organization: ARM
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sorry for not sending a series earlier, I've been busy with assignments.
+On Fri, 9 Nov 2018 13:15:47 -0600
+Grygorii Strashko <grygorii.strashko@ti.com> wrote:
 
-Patch changelog:
-  v4:
-    * Remove AT_* flag reservations, as they require more discussion.
-    * Switch to path_is_under() over __d_path() for breakout checking.
-    * Make O_XDEV no longer block openat("/tmp", "/", O_XDEV) -- dirfd
-      is now ignored for absolute paths to match other flags.
-    * Improve the dirfd_path_init() refactor and move it to a separate
-      commit.
-    * Remove reference to Linux-capsicum.
-    * Switch "proclink" name to "magic link".
-  v3: [resend]
-  v2:
-    * Made ".." resolution with AT_THIS_ROOT and AT_BENEATH safe(r) with
-      some semi-aggressive __d_path checking (see patch 3).
-    * Disallowed "proclinks" with AT_THIS_ROOT and AT_BENEATH, in the
-      hopes they can be re-enabled once safe.
-    * Removed the selftests as they will be reimplemented as xfstests.
-    * Removed stat(2) support, since you can already get it through
-      O_PATH and fstatat(2).
+Hi,
 
-The need for some sort of control over VFS's path resolution (to avoid
-malicious paths resulting in inadvertent breakouts) has been a very
-long-standing desire of many userspace applications. This patchset is a
-revival of Al Viro's old AT_NO_JUMPS[1,2] patchset (which was a variant
-of David Drysdale's O_BENEATH patchset[3] which was a spin-off of the
-Capsicum project[4]) with a few additions and changes made based on the
-previous discussion within [5] as well as others I felt were useful.
+> On 11/8/18 12:14 PM, Grygorii Strashko wrote:
+> > 
+> > 
+> > On 11/8/18 6:00 AM, Sebastian Andrzej Siewior wrote:  
+> >> On 2018-11-06 15:34:55 [-0600], Grygorii Strashko wrote:  
+> >>> Hi All,  
+> >> Hi,
+> >>  
+> >>> Do anybody tried to use ARM64 RT with 76K pages enabled?  
+> >>
+> >> 75 would be an off by one but this :)  
+> > 
+> > Ops 8-). at least subj is correct.
+> >   
+> >>  
+> >>> My attempt shows that enabling  CONFIG_ARM64_64K_PAGES=y
+> >>> increases latencies by ~30%
 
-In line with the conclusions of the original discussion of AT_NO_JUMPS,
-the flag has been split up into separate flags:
+That's not really surprising. Performance on systems using a bigger page
+size granules might have some trade-offs (bigger memory overhead, worse
+cache utilization), so 64K pages might not be really great for your
+particular workload. You would probably need a real performance
+analysis (using perf, for instance) to pinpoint TLB misses as your
+bottleneck.
 
-  * O_XDEV blocks all mountpoint crossings (upwards, downwards, or
-    through absolute links). Absolute pathnames alone in openat(2) do
-    not trigger this.
+> >>> cyclictest -n -m -Sp98 -q -D2m with  =y
+> >>>
+> >>>
+> >>> T: 0 (  772) P:98 I:1000 C: 120000 Min:      7 Act:   13 Avg:
+> >>> 10 Max:      85 T: 1 (  773) P:98 I:1500 C:  79998 Min:      7
+> >>> Act:   13 Avg:   10 Max:      71 T: 2 (  774) P:98 I:2000 C:
+> >>> 59997 Min:      7 Act:   11 Avg:   11 Max:      64 T: 3 (  775)
+> >>> P:98 I:2500 C:  47996 Min:      7 Act:   14 Avg:   12 Max:      66
+> >>>
+> >>>
+> >>> cyclictest -n -m -Sp98 -q -D2m with CONFIG_ARM64_64K_PAGES=n
+> >>>
+> >>>
+> >>> T: 0 (  697) P:98 I:1000 C: 120000 Min:      7 Act:   10 Avg:
+> >>> 9 Max:      38 T: 1 (  698) P:98 I:1500 C:  79987 Min:      7
+> >>> Act:   10 Avg:   10 Max:      32 T: 2 (  699) P:98 I:2000 C:
+> >>> 59981 Min:      7 Act:   14 Avg:   11 Max:      46 T: 3 (  700)
+> >>> P:98 I:2500 C:  47977 Min:      6 Act:   11 Avg:   10 Max:
+> >>> 45  
+> >>
+> >> So this is an idle system?  
+> > 
+> > Yes (in general) - it's collected with systemd, so some daemons are
+> > active. 
+> >> The Kconfig help says "faster TLB lookup". Interesting.
+> >> Are the 16k pages in between (latency wise) by any chance?  
+> > 
+> > I'll try it.  
+> 
+> no i'll not, at least not fast. with 16k pages enabled I can't boot
+> TI 4.14 kernel
+> -  4.14.71-rt44.
+> No msg in log, just "Starting kernel ..."
 
-  * O_NOMAGICLINKS blocks resolution through /proc/$pid/fd-style links.
-    This is done by blocking the usage of nd_jump_link() during
-    resolution in a filesystem. The term "magic links" is used to match
-    with the only reference to these links in Documentation/, but I'm
-    happy to change the name.
+You need a core that actually supports 16K pages (supporting
+certain page size granules is architecturally optional).
+From the Arm Ltd. cores it's Cortex-A73, A75 or A55, possibly other
+newer ones as well. Cortex-A53, A57 and A72 do not support 16k pages.
 
-    It should be noted that this is different to the scope of O_NOFOLLOW
-    in that it applies to all path components. However, you can do
-    open(O_NOFOLLOW|O_NOMAGICLINKS|O_PATH) on a "magic link" and it will
-    *not* fail (assuming that no parent component was a "magic link"),
-    and you will have an fd for the "magic link".
-
-  * O_BENEATH disallows escapes to outside the starting dirfd's tree,
-    using techniques such as ".." or absolute links. Absolute paths in
-    openat(2) are also disallowed. Conceptually this flag is to ensure
-    you "stay below" a certain point in the filesystem tree -- but this
-    requires some additional to protect against various races that would
-    allow escape using ".." (see patch 4 for more detail).
-
-    Currently O_BENEATH implies O_NOMAGICLINKS, because it can trivially
-    beam you around the filesystem (breaking the protection). In future,
-    there might be similar safety checks as in patch 4, but that
-    requires more discussion.
-
-In addition, two new flags were added that expand on the above ideas:
-
-  * O_NOSYMLINKS does what it says on the tin. No symlink resolution is
-    allowed at all, including "magic links". Just as with O_NOMAGICLINKS
-    this can still be used with (O_PATH|O_NOFOLLOW) to open an fd for
-    the symlink as long as no parent path had a symlink component.
-
-  * O_THISROOT is an extension of O_BENEATH that, rather than blocking
-    attempts to move past the root, forces all such movements to be
-    scoped to the starting point. This provides chroot(2)-like
-    protection but without the cost of a chroot(2) for each filesystem
-    operation, as well as being safe against race attacks that chroot(2)
-    is not.
-
-    If a race is detected (as with O_BENEATH) then an error is
-    generated, and similar to O_BENEATH it is not permitted to cross
-    "magic links" with O_THISROOT.
-
-    The primary need for this is from container runtimes, which
-    currently need to do symlink scoping in userspace[6] when opening
-    paths in a potentially malicious container. There is a long list of
-    CVEs that could have bene mitigated by having O_THISROOT (such as
-    CVE-2017-1002101, CVE-2017-1002102, CVE-2018-15664, to name a few).
-
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Eric Biederman <ebiederm@xmission.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Jann Horn <jannh@google.com>
-Cc: Christian Brauner <christian@brauner.io>
-Cc: David Drysdale <drysdale@google.com>
-Cc: <containers@lists.linux-foundation.org>
-Cc: <linux-fsdevel@vger.kernel.org>
-Cc: <linux-api@vger.kernel.org>
-
-[1]: https://lwn.net/Articles/721443/
-[2]: https://lore.kernel.org/patchwork/patch/784221/
-[3]: https://lwn.net/Articles/619151/
-[4]: https://lwn.net/Articles/603929/
-[5]: https://lwn.net/Articles/723057/
-[6]: https://github.com/cyphar/filepath-securejoin
-
-Aleksa Sarai (4):
-  namei: split out nd->dfd handling to dirfd_path_init
-  namei: O_BENEATH-style path resolution flags
-  namei: O_THISROOT: chroot-like path resolution
-  namei: aggressively check for nd->root escape on ".." resolution
-
- fs/fcntl.c                       |   2 +-
- fs/namei.c                       | 205 ++++++++++++++++++++++---------
- fs/open.c                        |  13 +-
- include/linux/fcntl.h            |   3 +-
- include/linux/namei.h            |   8 ++
- include/uapi/asm-generic/fcntl.h |  20 +++
- 6 files changed, 189 insertions(+), 62 deletions(-)
-
--- 
-2.19.1
-
+Cheers,
+Andre.
