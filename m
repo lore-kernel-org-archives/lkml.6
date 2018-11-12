@@ -2,95 +2,109 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB868C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 12:57:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A12EC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 13:00:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 905F32243E
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 12:57:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 905F32243E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id 5847E2243E
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 13:00:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5847E2243E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729570AbeKLWup (ORCPT
+        id S1729575AbeKLWx3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 17:50:45 -0500
-Received: from ozlabs.org ([203.11.71.1]:56725 "EHLO ozlabs.org"
+        Mon, 12 Nov 2018 17:53:29 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:56106 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726693AbeKLWuo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 17:50:44 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1729460AbeKLWx2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 17:53:28 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42trPz5YtKz9s4s;
-        Mon, 12 Nov 2018 23:57:27 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Jeremy Kerr <jk@ozlabs.org>, Jonathan Corbet <corbet@lwn.net>,
-        Colin King <colin.king@canonical.com>,
-        Geoff Levand <geoff@infradead.org>
-Cc:     David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, linuxppc-dev@lists.ozlabs.org,
-        linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH] Documentation: fix spelling mistake, EACCESS -> EACCES
-In-Reply-To: <d1048515-239a-2686-e897-fb2a2b8d180f@ozlabs.org>
-References: <20181026172549.3628-1-colin.king@canonical.com> <20181107153104.71eddf4d@lwn.net> <d1048515-239a-2686-e897-fb2a2b8d180f@ozlabs.org>
-Date:   Mon, 12 Nov 2018 23:57:22 +1100
-Message-ID: <87bm6ua1xp.fsf@concordia.ellerman.id.au>
-MIME-Version: 1.0
-Content-Type: text/plain
+        by mx1.redhat.com (Postfix) with ESMTPS id 1117B5F722;
+        Mon, 12 Nov 2018 13:00:17 +0000 (UTC)
+Received: from krava.redhat.com (ovpn-204-208.brq.redhat.com [10.40.204.208])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D17385D9D6;
+        Mon, 12 Nov 2018 13:00:13 +0000 (UTC)
+From:   Jiri Olsa <jolsa@kernel.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Adam Lee <leeadamrobert@gmail.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: [PATCH perf/urgent] perf tools: Fix crash on synthesizing the unit
+Date:   Mon, 12 Nov 2018 14:00:12 +0100
+Message-Id: <20181112130012.5424-1-jolsa@kernel.org>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 12 Nov 2018 13:00:18 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jeremy Kerr <jk@ozlabs.org> writes:
-> Hi Jon,
->
->>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->>> ---
->>>   Documentation/filesystems/spufs.txt | 2 +-
->>>   Documentation/gpu/drm-uapi.rst      | 4 ++--
->>>   2 files changed, 3 insertions(+), 3 deletions(-)
->> 
->> Applied, thanks.
->> 
->> This is the first patch to spufs.txt since 2006...I wonder if that stuff
->> is being used by anybody...
->
-> Anyone who is using the vector processors on the Cell BE processors will
-> be using it. However, that hardware is becoming pretty rare now.
->
-> We'll want to remove the spufs bits if/when we drop support for the cell
-> platforms (IBM QSxx, PS3, celleb). mpe: any ides on that? Do you have a 
-> policy for dropping platform support?
+Adam reported a record command crash for simple session like:
+  $ perf record -e cpu-clock ls
 
-I don't have a policy. We discussed it a bit at maintainer summit, that
-basically boiled down to stuff should get removed when it is not used
-much and/or is causing undue maintenance burden - both of which are
-fairly arbitrary criteria.
+with following backtrace:
 
-My feeling is spufs is not causing anyone much work, it does get hit by
-some VFS updates but it's just one of many many filesystems, so the
-incremental overhead is pretty small I think - though VFS people may
-disagree :)
+  Program received signal SIGSEGV, Segmentation fault.
+  3543            ev = event_update_event__new(size + 1, PERF_EVENT_UPDATE__UNIT, evsel->id[0]);
+  (gdb) bt
+  #0  perf_event__synthesize_event_update_unit
+  #1  0x000000000051e469 in perf_event__synthesize_extra_attr
+  #2  0x00000000004445cb in record__synthesize
+  #3  0x0000000000444bc5 in __cmd_record
+  ...
 
-I still have a working IBM QS22, and Geoff is still maintaining PS3,
-celleb is gone.
+We synthesize an update event that needs to touch the evsel id array, which is
+not defined at that time. Fixing this by forcing the id allocation for events
+with their unit defined.
 
-Basically we're keeping it around in case people are still using it on
-their PS3s. I don't know how we gauge how many people that is without
-removing support and seeing who is annoyed. But even if we did that a
-lot of folks will probably not notice for months to years, and when they
-do notice they'll just bin their PS3s rather than telling us.
+Reflecting possible read_format ID bit in the attr tests.
 
-But maybe Geoff has a better feel for how many people (other than him)
-are still running upstream on PS3s.
+Cc: Adam Lee <leeadamrobert@gmail.com>
+Reported-by: Yongxin Liu <yongxin.liu@outlook.com>
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=201477
+Fixes: bfd8f72c2778 ("perf record: Synthesize unit/scale/... in event update")
+Link: http://lkml.kernel.org/n/tip-hmt7oavo3w97btxl8sfq8n0i@git.kernel.org
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+---
+ tools/perf/tests/attr/base-record | 2 +-
+ tools/perf/util/evsel.c           | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-cheers
+diff --git a/tools/perf/tests/attr/base-record b/tools/perf/tests/attr/base-record
+index 37940665f736..efd0157b9d22 100644
+--- a/tools/perf/tests/attr/base-record
++++ b/tools/perf/tests/attr/base-record
+@@ -9,7 +9,7 @@ size=112
+ config=0
+ sample_period=*
+ sample_type=263
+-read_format=0
++read_format=0|4
+ disabled=1
+ inherit=1
+ pinned=0
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index d37bb1566cd9..dbc0466db368 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -1092,7 +1092,7 @@ void perf_evsel__config(struct perf_evsel *evsel, struct record_opts *opts,
+ 		attr->exclude_user   = 1;
+ 	}
+ 
+-	if (evsel->own_cpus)
++	if (evsel->own_cpus || evsel->unit)
+ 		evsel->attr.read_format |= PERF_FORMAT_ID;
+ 
+ 	/*
+-- 
+2.17.2
+
