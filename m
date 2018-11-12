@@ -6,81 +6,84 @@ X-Spam-Status: No, score=1.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23CB9C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:02:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45283C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:10:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDDCE214F1
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:02:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 046F8216FD
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:10:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Abe6gUvm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDDCE214F1
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o/BI0QQM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 046F8216FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731079AbeKLOyQ (ORCPT
+        id S1730824AbeKLPCK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 09:54:16 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46725 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730939AbeKLOyQ (ORCPT
+        Mon, 12 Nov 2018 10:02:10 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40758 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727297AbeKLPCK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 09:54:16 -0500
-Received: by mail-wr1-f68.google.com with SMTP id 74-v6so7775297wrb.13
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 21:02:45 -0800 (PST)
+        Mon, 12 Nov 2018 10:02:10 -0500
+Received: by mail-wr1-f66.google.com with SMTP id w14-v6so2348529wrt.7
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 21:10:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=aCPzndRLoGXrQBUqefife/Sscs/jdXGFkYHMfyL/hAE=;
-        b=Abe6gUvmaY2QzJohV3wDVG9LDVdGGsDYfeaLmAvN5CamRKuC7G6gMOulOw0NzttvZw
-         VNVI5HIbLUib7Wv4SB5vVAjetilDriojysKZI+MHk/xYOdoLubIkF09Jjk0tzm737DuG
-         jhIKAExfzTPr4BGWwyhO7yKQ5mlSauONQnZwarrTVpG15EGNvuocKua5B6mngisSwd4z
-         PCVwLlY36UG170R2eQzv6HzRj3o8RGy4Qhx3ImgWXurapwg8DzxaN5KYLbufq6+jTalC
-         Hrym03dQ7PkpiuQPC5PMjsUHhjWMhS8VG5LfivK/2ciDB1sHd3Xn7dZCGmAjF1Yp0JQ0
-         e/3Q==
+        bh=Rib+a1LmXHll7Q1LBkgSwoIu3qcWwcpm0bzXN17ejlk=;
+        b=o/BI0QQMH8XUUokTo9vzadnYwhrPgCVxBvK7oYRtn8JXJZLNBgTdulNtSCqsWfffTP
+         ZZ+alu8WCEXfNr5zlw4t9NUo0YBLTs2jxMmxKp6VDYFvES/4xARAd1ukvBHxbqxJI4bL
+         Erh4UwD/LE87+fBxx4+4nQZLr9vOkNhrKBO0PnOLxsc4bIHiWWLM8VRJPwP2blqL+Nob
+         mpxB5tmPgyzxTm5y9kzd70PEX5ySRqDU2JdMVtH1+xZ2+VPPZIzKLqTvz1/HhjyuADNW
+         dZ3OUYKdZ03n2dKJcln2mqrThg4zBBFd9R5kyipvRe+oVG0wrT6E5HtfkLGVp5WHjMeF
+         d2UA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=aCPzndRLoGXrQBUqefife/Sscs/jdXGFkYHMfyL/hAE=;
-        b=rabvgDjZYe1uzEUbdK7hItavRm7vWDPzN7gTeriE9Hoq/i94Qa024A4OPvNbKlr07i
-         EgfWLLooEbhB1OL3+qdWSIhWSV7z+6Ie3H2Zhqqkal3ewEJpXieGLPQcFspn2nIAiqqF
-         o4UqYwnVYY1HwHr/6xJQimHXBGXFH4tQMG32kWNth83+N91ISYMLrlEXLo7Qpui9iFcH
-         OUfcVXhvbVBr6+392jFKwpchvder2e2qMurl6j7Y/wu5yQcmccXxiXiJZhhXbLBveGgD
-         4hEtti86SGhN6oDCzewHZipVJHREQ1MtcpNhYoglGOPb6FFMdzvf3dfxCPVGpr/k2EfI
-         8SbQ==
-X-Gm-Message-State: AGRZ1gK/qSDjOhBHOwjhR2nDKw3/XRzHWSsoB4giaegPh2O0pCzsyeps
-        V0Zzqh8U5WQpmUOPV/dqkJc=
-X-Google-Smtp-Source: AJdET5fBoJivJikcPV4EponuxitgYb5vdis12Yin9K/w5jMmEzWvB/ZSaZIHhSua7mCgh5SNsnDIxw==
-X-Received: by 2002:adf:a20a:: with SMTP id p10-v6mr15199180wra.249.1541998964672;
-        Sun, 11 Nov 2018 21:02:44 -0800 (PST)
+        bh=Rib+a1LmXHll7Q1LBkgSwoIu3qcWwcpm0bzXN17ejlk=;
+        b=FFYja0DxkEhS4KzBeouPOH82IDsSFZrldQuldO+Uzsc/WGjRKgwL4zLBFln2hd1HDB
+         mlorGs2SOQkTHPdTrUPaG8hmU5OBLIqKKHoxUceV3bJUP0d1+quCURywy5Qh5wwqx2lw
+         PKuVmMGpCzDVwV8wyHvF5yM4C9eQ+K41EjBgrkTDshSHu5rc1Lvf9TscGl0vsmiKcmHl
+         8WE7y15te5GiklkLBCZFSxCGDpwxxTW6zVFZx5UJnY+X5EKXi8NbV2veXQEf3RjwKSpR
+         aUU9MzOiCa6q9jbVcuUu6rGSNsn2O3WEsN+0aLWt4GrSBtD5Kt5Cb0IjU8VKnoSvTBIT
+         o7Ow==
+X-Gm-Message-State: AGRZ1gKxrccXWwXa98wAJQ4uRAhDOM6J/IMAVE/zQ5PiXAG/l/OVLUue
+        ZavvwumjMtUEBNvjh5I65cM=
+X-Google-Smtp-Source: AJdET5e7zr+AAGusO4lLU/OZ9D9QveGE0tvR0SiDQ0cEYFa/yLhmpTKgdMzT2lt5JtYAWB2X4Sa93Q==
+X-Received: by 2002:a5d:4907:: with SMTP id x7-v6mr15848095wrq.272.1541999437437;
+        Sun, 11 Nov 2018 21:10:37 -0800 (PST)
 Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id j129-v6sm8855439wmb.47.2018.11.11.21.02.43
+        by smtp.gmail.com with ESMTPSA id q12sm464929wmf.2.2018.11.11.21.10.35
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 11 Nov 2018 21:02:43 -0800 (PST)
-Date:   Mon, 12 Nov 2018 06:02:41 +0100
+        Sun, 11 Nov 2018 21:10:36 -0800 (PST)
+Date:   Mon, 12 Nov 2018 06:10:33 +0100
 From:   Ingo Molnar <mingo@kernel.org>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
+To:     Waiman Long <longman@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Borislav Petkov <bp@alien8.de>, Juergen Gross <jgross@suse.com>
-Subject: Re: [PATCH RFC 0/3] Static calls
-Message-ID: <20181112050241.GB28219@gmail.com>
-References: <cover.1541711457.git.jpoimboe@redhat.com>
- <20181109072811.GB86700@gmail.com>
- <20181109144501.aqhcv3vdjuqlp7pz@treble>
+        linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
+        linux-mm@kvack.org, Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Tejun Heo <tj@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [RFC PATCH 00/12] locking/lockdep: Add a new class of terminal
+ locks
+Message-ID: <20181112051033.GA123204@gmail.com>
+References: <1541709268-3766-1-git-send-email-longman@redhat.com>
+ <20181109080412.GC86700@gmail.com>
+ <20181110141045.GD3339@worktop.programming.kicks-ass.net>
+ <dfa0a2fa-0094-3ae0-4f27-2930233132a3@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181109144501.aqhcv3vdjuqlp7pz@treble>
+In-Reply-To: <dfa0a2fa-0094-3ae0-4f27-2930233132a3@redhat.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -88,66 +91,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-* Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+* Waiman Long <longman@redhat.com> wrote:
 
-> On Fri, Nov 09, 2018 at 08:28:11AM +0100, Ingo Molnar wrote:
-> > > - I'm not sure about the objtool approach.  Objtool is (currently)
-> > >   x86-64 only, which means we have to use the "unoptimized" version
-> > >   everywhere else.  I may experiment with a GCC plugin instead.
-> > 
-> > I'd prefer the objtool approach. It's a pretty reliable first-principles 
-> > approach while GCC plugin would have to be replicated for Clang and any 
-> > other compilers, etc.
+> On 11/10/2018 09:10 AM, Peter Zijlstra wrote:
+> > On Fri, Nov 09, 2018 at 09:04:12AM +0100, Ingo Molnar wrote:
+> >> BTW., if you are interested in more radical approaches to optimize 
+> >> lockdep, we could also add a static checker via objtool driven call graph 
+> >> analysis, and mark those locks terminal that we can prove are terminal.
+> >>
+> >> This would require the unified call graph of the kernel image and of all 
+> >> modules to be examined in a final pass, but that's within the principal 
+> >> scope of objtool. (This 'final pass' could also be done during bootup, at 
+> >> least in initial versions.)
+> >
+> > Something like this is needed for objtool LTO support as well. I just
+> > dread the build time 'regressions' this will introduce :/
+> >
+> > The final link pass is already by far the most expensive part (as
+> > measured in wall-time) of building a kernel, adding more work there
+> > would really suck :/
 > 
-> The benefit of a plugin is that we'd only need two of them: GCC and
-> Clang.  And presumably, they'd share a lot of code.
-> 
-> The prospect of porting objtool to all architectures is going to be much
-> more of a daunting task (though we are at least already considering it
-> for some arches).
-
-Which architectures would benefit from ORC support the most?
-
-I really think that hard reliance on GCC plugins is foolish - but maybe 
-Clang's plugin infrastructure is a guarantee that it remains a sane and 
-usable interface.
-
-> > I'd be very happy with a demonstrated paravirt optimization already - 
-> > i.e. seeing the before/after effect on the vmlinux with an x86 distro 
-> > config.
-> > 
-> > All major Linux distributions enable CONFIG_PARAVIRT=y and 
-> > CONFIG_PARAVIRT_XXL=y on x86 at the moment, so optimizing it away as much 
-> > as possible in the 99.999% cases where it's not used is a primary 
-> > concern.
-> 
-> For paravirt, I was thinking of it as more of a cleanup than an
-> optimization.  The paravirt patching code already replaces indirect
-> branches with direct ones -- see paravirt_patch_default().
-> 
-> Though it *would* reduce the instruction footprint a bit, as the 7-byte
-> indirect calls (later patched to 5-byte direct + 2-byte nop) would
-> instead be 5-byte direct calls to begin with.
-
-Yes.
-
-> > All other usecases are bonus, but it would certainly be interesting to 
-> > investigate the impact of using these APIs for tracing: that too is a 
-> > feature enabled everywhere but utilized only by a small fraction of Linux 
-> > users - so literally every single cycle or instruction saved or hot-path 
-> > shortened is a major win.
-> 
-> With retpolines, and with tracepoints enabled, it's definitely a major
-> win.  Steve measured an 8.9% general slowdown on hackbench caused by
-> retpolines.
-
-How much of that slowdown is reversed?
-
-> But with tracepoints disabled, I believe static jumps are used, which
-> already minimizes the impact on hot paths.
+> I think the idea is to make objtool have the capability to do that. It
+> doesn't mean we need to turn it on by default in every build.
 
 Yeah.
 
+Also note that much of the objtool legwork would be on a per file basis 
+which is reasonably parallelized already. On x86 it's also already done 
+for every ORC build i.e. every distro build and the incremental overhead 
+from also extracting locking dependencies should be reasonably small.
+
+The final search of the global graph would be serialized but still 
+reasonably fast as these are all 'class' level dependencies which are 
+much less numerous than runtime dependencies.
+
+I.e. I think we are talking about tens of thousands of dependencies, not 
+tens of millions.
+
+At least in theory. ;-)
+
 Thanks,
 
-	Ing
+	Ingo
