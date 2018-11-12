@@ -2,233 +2,99 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FAAEC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 15:09:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41794C04EBC
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 15:09:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E7F6223D0
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 15:09:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E7F6223D0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fieldses.org
+	by mail.kernel.org (Postfix) with ESMTP id 04C36223D0
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 15:09:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G5vU9eWP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04C36223D0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729821AbeKMBDH (ORCPT
+        id S1729930AbeKMBDJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 20:03:07 -0500
-Received: from fieldses.org ([173.255.197.46]:45032 "EHLO fieldses.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726912AbeKMBDH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 20:03:07 -0500
-Received: by fieldses.org (Postfix, from userid 2815)
-        id EB5C42016; Mon, 12 Nov 2018 10:09:26 -0500 (EST)
-Date:   Mon, 12 Nov 2018 10:09:26 -0500
-From:   "J. Bruce Fields" <bfields@fieldses.org>
-To:     NeilBrown <neilb@suse.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Martin Wilck <mwilck@suse.de>, linux-fsdevel@vger.kernel.org,
-        Frank Filz <ffilzlnx@mindspring.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 10/12] fs/locks: create a tree of dependent requests.
-Message-ID: <20181112150926.GC16755@fieldses.org>
-References: <154198490921.14364.13726904731989686092.stgit@noble>
- <154198528925.14364.1689720543542941272.stgit@noble>
+        Mon, 12 Nov 2018 20:03:09 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:41820 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726912AbeKMBDI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 20:03:08 -0500
+Received: by mail-oi1-f194.google.com with SMTP id g188-v6so7396885oif.8;
+        Mon, 12 Nov 2018 07:09:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XewShTb8OK7Ia+MHfRiVu1VBL0Z96GKD2pViMG0gi1Q=;
+        b=G5vU9eWPGgxV9GnYcYP4UJovDwnFeJT8WdXRROV+BapLaI36i5n/C/Ryfmh32n9VKk
+         9Yh97DoF44YWgtiFmeOspoHRYzN5jDVFZpmMnfG8bjBV7NBPbE8j8l426L12mupK5lLl
+         KaZYT68upiSuXB6rm9rDSjxvKZE4AoD18QhK1NhHXKfJlV4sKpY/b5dfucHzVta+NhFl
+         X0H0GKl+exnJl/w6P7i1w4ql7MQ49ruxPc7CISb8VJdZamB76H0dxcyjklOTZunL/r7+
+         wr0+Xmmnweksw+yJmOJks5wXJOGIF+ef4ZIR+st7OzGOIi6v+wEf+mMEae+9ZYWLo2YJ
+         2puQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XewShTb8OK7Ia+MHfRiVu1VBL0Z96GKD2pViMG0gi1Q=;
+        b=AJUuA9WNW/BEO02SZNJ3NttCL7+3YfiIYrlUaEI4zqUH9FHdk680CnZvUX58U5coGp
+         LUtClntgF5DLE7vzz4xdRV1qmsw8vQ5AxhI9Nfrrc8U7uUlMzzG5VNDEPt3pj+uDB2+6
+         clr7gsjBIx0u5oriBbedK/RtF0eAHJ5vJO1oYstc8AfXAUzlvoX71zwFjHpMJdqxksGM
+         ruAxGI4Vtb2582KLocY7C8TRsSerCIIWYgq/cAKKc1gLP1rs/AChboFhbBEplORFrRnu
+         zCBvDPIrPmRU8HYhS4Kj+Wbe3+qzF946ewgRUsmKnqTB4xbfYhKn6XDlb6pAaCIYXivR
+         Ix7Q==
+X-Gm-Message-State: AGRZ1gIthApg1AHGvhWxq7QwvkNPcuesUhhHZQrvmw+7A3bi05oJUJ96
+        tgW2XWxRMhQc5+28mPJBWzz0YjKORxqIymC4nbg=
+X-Google-Smtp-Source: AJdET5fK0VK+RHGItRprNXN2FMhe3FsZ8CsQUETdJ1n4WxerPBmmgM+sWi1JWQWPODHB2sOs1I+OuuqT8LMDVyt3g8o=
+X-Received: by 2002:aca:308b:: with SMTP id w133-v6mr736370oiw.67.1542035368545;
+ Mon, 12 Nov 2018 07:09:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <154198528925.14364.1689720543542941272.stgit@noble>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <1541871439-4882-1-git-send-email-martin@kaiser.cx> <AM0PR04MB4211FE365D78EDEB0003D74380C10@AM0PR04MB4211.eurprd04.prod.outlook.com>
+In-Reply-To: <AM0PR04MB4211FE365D78EDEB0003D74380C10@AM0PR04MB4211.eurprd04.prod.outlook.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Mon, 12 Nov 2018 13:09:26 -0200
+Message-ID: <CAOMZO5DbuuVr7JVpK+DCsE4G=tksTg6CRrCGwyaNO55WDuyRzw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: imx: make sure that maps are fully initialized
+To:     Dong Aisheng <aisheng.dong@nxp.com>
+Cc:     Martin Kaiser <martin@kaiser.cx>, Shawn Guo <shawnguo@kernel.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Leonard Crestez <leonard.crestez@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 12:14:49PM +1100, NeilBrown wrote:
-> When we find an existing lock which conflicts with a request,
-> and the request wants to wait, we currently add the request
-> to a list.  When the lock is removed, the whole list is woken.
-> This can cause the thundering-herd problem.
-> To reduce the problem, we make use of the (new) fact that
-> a pending request can itself have a list of blocked requests.
-> When we find a conflict, we look through the existing blocked requests.
-> If any one of them blocks the new request, the new request is attached
-> below that request, otherwise it is added to the list of blocked
-> requests, which are now known to be mutually non-conflicting.
-> 
-> This way, when the lock is released, only a set of non-conflicting
-> locks will be woken, the rest can stay asleep.
-> If the lock request cannot be granted and the request needs to be
-> requeued, all the other requests it blocks will then be woken
-> 
-> To make this more concrete:
-> 
->   If you have a many-core machine, and have many threads all wanting to
->   briefly lock a give file (udev is known to do this), you can get quite
->   poor performance.
-> 
->   When one thread releases a lock, it wakes up all other threads that
->   are waiting (classic thundering-herd) - one will get the lock and the
->   others go to sleep.
->   When you have few cores, this is not very noticeable: by the time the
->   4th or 5th thread gets enough CPU time to try to claim the lock, the
->   earlier threads have claimed it, done what was needed, and released.
->   So with few cores, many of the threads don't end up contending.
->   With 50+ cores, lost of threads can get the CPU at the same time,
->   and the contention can easily be measured.
-> 
->   This patchset creates a tree of pending lock requests in which siblings
->   don't conflict and each lock request does conflict with its parent.
->   When a lock is released, only requests which don't conflict with each
->   other a woken.
-> 
->   Testing shows that lock-acquisitions-per-second is now fairly stable
->   even as the number of contending process goes to 1000.  Without this
->   patch, locks-per-second drops off steeply after a few 10s of
->   processes.
-> 
->   There is a small cost to this extra complexity.
->   At 20 processes running a particular test on 72 cores, the lock
->   acquisitions per second drops from 1.8 million to 1.4 million with
->   this patch.  For 100 processes, this patch still provides 1.4 million
->   while without this patch there are about 700,000.
-> 
-> 
-> Reported-and-tested-by: Martin Wilck <mwilck@suse.de>
-> Signed-off-by: NeilBrown <neilb@suse.com>
-> ---
->  fs/locks.c |   69 +++++++++++++++++++++++++++++++++++++++++++++++++++++++-----
->  1 file changed, 63 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/locks.c b/fs/locks.c
-> index 74b24191d6e6..1006b566ddf5 100644
-> --- a/fs/locks.c
-> +++ b/fs/locks.c
-> @@ -112,6 +112,46 @@
->   *  Leases and LOCK_MAND
->   *  Matthew Wilcox <willy@debian.org>, June, 2000.
->   *  Stephen Rothwell <sfr@canb.auug.org.au>, June, 2000.
-> + *
-> + * Locking conflicts and dependencies:
-> + * If multiple threads attempt to lock the same byte (or flock the same file)
-> + * only one can be granted the lock, and other must wait their turn.
-> + * The first lock has been "applied" or "granted", the others are "waiting"
-> + * and are "blocked" by the "applied" lock..
-> + *
-> + * Waiting and applied locks are all kept in trees whose properties are:
-> + *
-> + *	- the root of a tree may be an applied or waiting lock.
-> + *	- every other node in the tree is a waiting lock that
-> + *	  conflicts with every ancestor of that node.
-> + *
-> + * Every such tree begins life as a waiting singleton which obviously
-> + * satisfies the above properties.
-> + *
-> + * The only ways we modify trees preserve these properties:
-> + *
-> + *	1. We may add a new child, but only after first verifying that it
+Hi Dong,
 
-Oops, I meant to write "leaf node" there, I think that's more accurate
-than "child".
+On Mon, Nov 12, 2018 at 1:04 PM A.s. Dong <aisheng.dong@nxp.com> wrote:
 
-All looks good otherwise, thanks!
+> Thanks for reporting this issue.
+> The original code intended to save 3 common lines for both SCU and MMIO pads,
+> but it did change the code logic a bit which resulted in a regression specificly
+> for NO_PAD_CTL cases used on a few legacy boards. (NO_PAD_CTL is deprecated
+> for new boards dts).
 
---b.
+Just a clarification: NO_PAD_CTL is not deprecated.
 
-> + *	   conflicts with all of its ancestors.
-> + *	2. We may remove the root of a tree, creating a new singleton
-> + *	   tree from the root and N new trees rooted in the immediate
-> + *	   children.
-> + *	3. If the root of a tree is not currently an applied lock, we may
-> + *	   apply it (if possible).
-> + *	4. We may upgrade the root of the tree (either extend its range,
-> + *	   or upgrade its entire range from read to write).
-> + *
-> + * When an applied lock is modified in a way that reduces or downgrades any
-> + * part of its range, we remove all its children (2 above).  This particularly
-> + * happens when a lock is unlocked.
-> + *
-> + * For each of those child trees we "wake up" the thread which is
-> + * waiting for the lock so it can continue handling as follows: if the
-> + * root of the tree applies, we do so (3).  If it doesn't, it must
-> + * conflict with some applied lock.  We remove (wake up) all of its children
-> + * (2), and add it is a new leaf to the tree rooted in the applied
-> + * lock (1).  We then repeat the process recursively with those
-> + * children.
-> + *
->   */
->  
->  #include <linux/capability.h>
-> @@ -719,11 +759,25 @@ static void locks_delete_block(struct file_lock *waiter)
->   * but by ensuring that the flc_lock is also held on insertions we can avoid
->   * taking the blocked_lock_lock in some cases when we see that the
->   * fl_blocked_requests list is empty.
-> + *
-> + * Rather than just adding to the list, we check for conflicts with any existing
-> + * waiters, and add beneath any waiter that blocks the new waiter.
-> + * Thus wakeups don't happen until needed.
->   */
->  static void __locks_insert_block(struct file_lock *blocker,
-> -					struct file_lock *waiter)
-> +				 struct file_lock *waiter,
-> +				 bool conflict(struct file_lock *,
-> +					       struct file_lock *))
->  {
-> +	struct file_lock *fl;
->  	BUG_ON(!list_empty(&waiter->fl_blocked_member));
-> +
-> +new_blocker:
-> +	list_for_each_entry(fl, &blocker->fl_blocked_requests, fl_blocked_member)
-> +		if (conflict(fl, waiter)) {
-> +			blocker =  fl;
-> +			goto new_blocker;
-> +		}
->  	waiter->fl_blocker = blocker;
->  	list_add_tail(&waiter->fl_blocked_member, &blocker->fl_blocked_requests);
->  	if (IS_POSIX(blocker) && !IS_OFDLCK(blocker))
-> @@ -738,10 +792,12 @@ static void __locks_insert_block(struct file_lock *blocker,
->  
->  /* Must be called with flc_lock held. */
->  static void locks_insert_block(struct file_lock *blocker,
-> -					struct file_lock *waiter)
-> +			       struct file_lock *waiter,
-> +			       bool conflict(struct file_lock *,
-> +					     struct file_lock *))
->  {
->  	spin_lock(&blocked_lock_lock);
-> -	__locks_insert_block(blocker, waiter);
-> +	__locks_insert_block(blocker, waiter, conflict);
->  	spin_unlock(&blocked_lock_lock);
->  }
->  
-> @@ -1000,7 +1056,7 @@ static int flock_lock_inode(struct inode *inode, struct file_lock *request)
->  		if (!(request->fl_flags & FL_SLEEP))
->  			goto out;
->  		error = FILE_LOCK_DEFERRED;
-> -		locks_insert_block(fl, request);
-> +		locks_insert_block(fl, request, flock_locks_conflict);
->  		goto out;
->  	}
->  	if (request->fl_flags & FL_ACCESS)
-> @@ -1075,7 +1131,8 @@ static int posix_lock_inode(struct inode *inode, struct file_lock *request,
->  			spin_lock(&blocked_lock_lock);
->  			if (likely(!posix_locks_deadlock(request, fl))) {
->  				error = FILE_LOCK_DEFERRED;
-> -				__locks_insert_block(fl, request);
-> +				__locks_insert_block(fl, request,
-> +						     posix_locks_conflict);
->  			}
->  			spin_unlock(&blocked_lock_lock);
->  			goto out;
-> @@ -1546,7 +1603,7 @@ int __break_lease(struct inode *inode, unsigned int mode, unsigned int type)
->  		break_time -= jiffies;
->  	if (break_time == 0)
->  		break_time++;
-> -	locks_insert_block(fl, new_fl);
-> +	locks_insert_block(fl, new_fl, leases_conflict);
->  	trace_break_lease_block(inode, new_fl);
->  	spin_unlock(&ctx->flc_lock);
->  	percpu_up_read_preempt_enable(&file_rwsem);
-> 
+It is not recommended for new dts as we should not rely on the
+bootloader pinctrl settings.
+
+> As you both had a patch, i'm not sure who i'm going to expect for a updated one,
+> so I would send it my own with both of your tags.
+
+Yes, please send a patch putting a Reported-by tag from Martin and a
+Suggested-by tag from Leonard.
+
+Thanks
