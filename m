@@ -2,294 +2,109 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90B97C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:02:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D840C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:03:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 439E322419
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:02:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E008522419
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:03:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="juos8+dN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 439E322419
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="gPkJ3CXJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E008522419
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730120AbeKMB4g (ORCPT
+        id S1730160AbeKMB5D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 20:56:36 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:39207 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727659AbeKMB4g (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 20:56:36 -0500
-Received: by mail-lf1-f67.google.com with SMTP id n18so6552906lfh.6;
-        Mon, 12 Nov 2018 08:02:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=OGpDVYZZ33etyb6iQsfc/st4tQbzCM1IdvbraAxu2po=;
-        b=juos8+dNkapcwNW/AFpmwEEL1UAjZ/jBUKhUFC2FelJZsDhw2pq7zhxJMT3FkXUTZn
-         j3bbi9AOomjIEqDrcoivlw+WJDm9QjDOtA4dcZ5XehL6OyJDidY6qegXgxb1mHe2N2tq
-         ToigtyS764S5nyKotFtX9xZtD4AOvAD2Ovg5ubS88810MaSjWFusmwD4fYG9vtUPcWQC
-         dvrCtN9ro21XlE25YZRodtbi4rHvywJyOXlv7ON5ihmoPhUkZ5oDRiwvShPh1An6L4oG
-         blVapnai/dOIzk1PMx+1kyHCjoTsU2lHfcrUxmmUxuwkskimis9gtpgrMAp4lDU45UZc
-         nP3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=OGpDVYZZ33etyb6iQsfc/st4tQbzCM1IdvbraAxu2po=;
-        b=OuRwJVvu+841nuq8tsvHMT9Uy3ltXcTZDmBsjobo3oqqsE6YgAmogOLV+8nml2Tr/o
-         /Ju1uGGRQHG19jkKSYAppTot2uDp08a6VLJysMkiNjxM7gvncI6syqUkUZicbI00NvK5
-         +9iyLuMj+32graN3m4cAxAcYs0OtnoRuEus0M6ithlIX4NvCB8ThpukeE/rX5GItpKQ1
-         RpwJF5DZBgqpfFUuS+COeOk7kZ8JCt1yK1VhZxuQEU2Jr5fwuNt6KTQl7HMOdqkyx6XR
-         l17t0fR4Zbov9drGVv5XEbtliLDZLD0VNDxYEvIcyzPLM3VgzxiJznPvkH6y3zbgzTq1
-         UfAw==
-X-Gm-Message-State: AGRZ1gLQYgPKLMNu5HYDBV9yiScbIgug/CB9ybKGyAmIxPuZpLgFdUV0
-        b86IgKkEDv0G46z0YhDDnqY=
-X-Google-Smtp-Source: AJdET5cJj07HepOorg31ewpMw8wP22Y7wS1Zxb0HvgogJCE3DtFk8qkZNKbqid9YUJWmQfy1PRXXpQ==
-X-Received: by 2002:a19:280f:: with SMTP id o15mr968396lfo.0.1542038562978;
-        Mon, 12 Nov 2018 08:02:42 -0800 (PST)
-Received: from [192.168.1.18] (bgt69.neoplus.adsl.tpnet.pl. [83.28.83.69])
-        by smtp.gmail.com with ESMTPSA id h21sm3135442lfk.41.2018.11.12.08.02.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 12 Nov 2018 08:02:42 -0800 (PST)
-Subject: Re: [PATCH 04/24] dt-bindings: leds: Add function and color
- properties
-To:     =?UTF-8?B?VmVzYSBKw6TDpHNrZWzDpGluZW4=?= <dachaac@gmail.com>,
-        linux-leds@vger.kernel.org
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pavel@ucw.cz, robh@kernel.org,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Daniel Mack <daniel@zonque.org>, Dan Murphy <dmurphy@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Oleh Kravchenko <oleg@kaa.org.ua>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Simon Shields <simon@lineageos.org>,
-        Xiaotong Lu <xiaotong.lu@spreadtrum.com>
-References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
- <1541542052-10081-5-git-send-email-jacek.anaszewski@gmail.com>
- <bdd18dc6-0dee-5957-81d4-39254c7ad74d@gmail.com>
- <be4e75ed-746e-ed55-0bbe-0fd710bd4162@gmail.com>
- <12fb34ec-7175-1ac4-a96e-e1d5d424c9eb@gmail.com>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <d1ef315d-1216-7e63-f24f-5c6fee8793be@gmail.com>
-Date:   Mon, 12 Nov 2018 17:02:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <12fb34ec-7175-1ac4-a96e-e1d5d424c9eb@gmail.com>
-Content-Type: text/plain; charset=utf-8
+        Mon, 12 Nov 2018 20:57:03 -0500
+Received: from mail-eopbgr30077.outbound.protection.outlook.com ([40.107.3.77]:48576
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726385AbeKMB5D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 20:57:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qEzUD7Yn8anvcAbFvMl8ypdLdAvbBfUrRJl2atMrinU=;
+ b=gPkJ3CXJvFgRANQQiTn/TIRooEXjrttXW/IkC5FP/tFz8iPEQoQmZXAdiPhejYZbr3A4JAGwAOymWi2Oyb0mLQXapkq78VRjlp9utdYhTXDpT7WF0xLT13goDJz6KpnKlwgVact16Nl03R6it/jVjcWHrEQx+AuI0W+2DI+l0vQ=
+Received: from DB6PR0402MB2727.eurprd04.prod.outlook.com (10.172.245.17) by
+ DB6PR0402MB2774.eurprd04.prod.outlook.com (10.172.246.11) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.26; Mon, 12 Nov 2018 16:03:09 +0000
+Received: from DB6PR0402MB2727.eurprd04.prod.outlook.com
+ ([fe80::e012:b6c0:4c6c:c314]) by DB6PR0402MB2727.eurprd04.prod.outlook.com
+ ([fe80::e012:b6c0:4c6c:c314%4]) with mapi id 15.20.1294.044; Mon, 12 Nov 2018
+ 16:03:09 +0000
+From:   Roy Pledge <roy.pledge@nxp.com>
+To:     Ioana Ciornei <ioana.ciornei@nxp.com>,
+        Youri Querry <youri.querry_1@nxp.com>,
+        Leo Li <leoyang.li@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+CC:     Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>,
+        Horia Geanta <horia.geanta@nxp.com>
+Subject: Re: [PATCH 0/2] soc: fsl: dpio: cleanup on the remove path
+Thread-Topic: [PATCH 0/2] soc: fsl: dpio: cleanup on the remove path
+Thread-Index: AQHUdOoyw508LA/2JU+iwo1j5rjn1Q==
+Date:   Mon, 12 Nov 2018 16:03:08 +0000
+Message-ID: <DB6PR0402MB2727CB4ED8267C5CED85B65786C10@DB6PR0402MB2727.eurprd04.prod.outlook.com>
+References: <1541410219-9943-1-git-send-email-ioana.ciornei@nxp.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=roy.pledge@nxp.com; 
+x-originating-ip: [72.142.119.78]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB6PR0402MB2774;6:4RzGPjLes/iC5pUJw7P6nIYiZiiIC566kHoMDZpxB7EtYn0Ey0paeWJjZrbQ1d3nxlHWlKeqB/eH0nb0rNraAUQOUBbtFYljuZGIX3pkpuUUetq6EluasrxilbKioTgdRW06ZnnJVuqKHjpVEeN+0bWL7rOY9i1owQugioB6L/05RsoKhbmxsfBhG86NlwM5TuzCsUSjJ81djE2uwdSzeX0MMFB5xHXOIA6jr1tygNBS/akXgrc0ySBQmu6Lubv5RxIN0ThRVa6Pb36pP9B7pj4fo4LUEw0/RjftFuC6m7Wy4Wkys+qO3GfhE6O/AIlfRqCENa7r1hPvqy/m0VDLfPX0JG9fVcuxHy/hbL5BwfSitqtM5DG0eB29riP02U/1Z88oIdMGLfEn/DCydfGOaXu7Z6HJVLzGlpS0k0qYE2Tk2M+MOm/Zu32GFohivuPtXq+uykiz/xjZTTcKoIbbXA==;5:aUcU2ibjCCM3XNVoxaF5uwXC3G7+z7gTSfaoskidz1FLf7APZC7gvTq8Z9VBW5iADr5cboraEbF6CKPfw1W0xr23R1etTZ1RxRhFPYoTrugx8b2wdnYIYp5yqrnkjmfnLQN4J2JWhn5HQEUYqCIXVrXT9hada76cOPXhqtWbvlQ=;7:sXVARqet0Pnn/cwDbMQ20Gdqp88pmDH8aU0qgr9PR6Ja8PBp0yLwfFEnyLJMXmzybxTAZ0Lct0RzpuCgZAksv3ll/F3XICfc9I4PaZj/PxkgW7ethfSgaunyjw8HC6ByvrFo6C/0yO9KXSQdqUQaDg==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 49f38943-5dfc-444d-22bf-08d648b8570a
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390040)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB6PR0402MB2774;
+x-ms-traffictypediagnostic: DB6PR0402MB2774:
+x-microsoft-antispam-prvs: <DB6PR0402MB2774E370CC02140C2416B57D86C10@DB6PR0402MB2774.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(185117386973197);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231402)(944501410)(52105112)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:DB6PR0402MB2774;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0402MB2774;
+x-forefront-prvs: 0854128AF0
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(376002)(396003)(39860400002)(136003)(189003)(199004)(105586002)(106356001)(4326008)(2906002)(478600001)(33656002)(66066001)(74316002)(7736002)(305945005)(25786009)(2201001)(44832011)(86362001)(446003)(68736007)(476003)(186003)(229853002)(486006)(14454004)(2501003)(53936002)(6436002)(5660300001)(6246003)(55016002)(9686003)(8936002)(26005)(71190400001)(71200400001)(81156014)(8676002)(54906003)(81166006)(97736004)(6506007)(53546011)(76176011)(6116002)(256004)(7696005)(3846002)(110136005)(2900100001)(102836004)(99286004)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0402MB2774;H:DB6PR0402MB2727.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: fgn/zAL4SS3g8VKEKcw/19pTV7N4bxAbd7jOr8SaFMymu1NFLx3qQRkEgej6LV6fW2+v02JSEr66lp0j3/Wc13M9ZEwHXLR1MVy/s24OYBO/Z6mNqi6I2i7bFBuXD0HnSUU61ARiPF0q0ZcaU12wwDiUkKGdFlcI3+GoF2qDh8E1TSpQQ7bOMNmjQKleqPWGkQc1q1nkSpPwfE8LN7imxrHnMzbQuNZoAMduvfFEp39EmPEARpolqUY8AM2rFWiV4UxvHSgnjE9fWiA9SqgkUl+ZwmYhwWZILDseE08mo1RTjFzr1THoLg4w0XpPXM2N38BPydGX2u4Kplbl+VbMKDNdYrcECI3htrorKopqKyY=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 49f38943-5dfc-444d-22bf-08d648b8570a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Nov 2018 16:03:08.9877
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0402MB2774
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vesa,
-
-On 11/10/2018 06:19 PM, Vesa Jääskeläinen wrote:
-> Hi Jacek,
-> 
-> On 09/11/2018 22.42, Jacek Anaszewski wrote:
->> Hi Vesa,
->>
->> On 11/09/2018 09:32 AM, Vesa Jääskeläinen wrote:
->>> On 07/11/2018 0.07, Jacek Anaszewski wrote:
->>>> Introduce dedicated properties for conveying information about
->>>> LED function and color. Mark old "label" property as deprecated.
->>>>
->>>> Signed-off-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
->>>> Cc: Baolin Wang <baolin.wang@linaro.org>
->>>> Cc: Daniel Mack <daniel@zonque.org>
->>>> Cc: Dan Murphy <dmurphy@ti.com>
->>>> Cc: Linus Walleij <linus.walleij@linaro.org>
->>>> Cc: Oleh Kravchenko <oleg@kaa.org.ua>
->>>> Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
->>>> Cc: Simon Shields <simon@lineageos.org>
->>>> Cc: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
->>>> ---
->>>>    Documentation/devicetree/bindings/leds/common.txt | 52
->>>> +++++++++++++++++++----
->>>>    1 file changed, 44 insertions(+), 8 deletions(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/leds/common.txt
->>>> b/Documentation/devicetree/bindings/leds/common.txt
->>>> index aa13998..3efc826 100644
->>>> --- a/Documentation/devicetree/bindings/leds/common.txt
->>>> +++ b/Documentation/devicetree/bindings/leds/common.txt
->>>> @@ -10,14 +10,20 @@ can influence the way of the LED device
->>>> initialization, the LED components
->>>>    have to be tightly coupled with the LED device binding. They are
->>>> represented
->>>>    by child nodes of the parent LED device binding.
->>>>    +
->>>>    Optional properties for child nodes:
->>>>    - led-sources : List of device current outputs the LED is connected
->>>> to. The
->>>>            outputs are identified by the numbers that must be defined
->>>>            in the LED device binding documentation.
->>>> +- function: LED functon. Use one of the LED_FUNCTION_* prefixed
->>>> definitions
->>>> +        from the header include/dt-bindings/leds/functions.h.
->>>> +        If there is no matching LED_FUNCTION available, add a new one.
->>>> +- color : Color of the LED.
->>>
->>> We have had for years out-of-tree patch for multi color gpio led driver
->>> which extends this concept with multiple colors. Then in sysfs there has
->>> been possibility to control the color and otherwise use blinking or
->>> other features.
->>>
->>> Our need is multi color status led of the device which includes
->>> different kind of blinkings and colors on different situations.
->>>
->>> Current in-tree gpio led driver just wasn't atomic enough and a bit
->>> clumsy interface for handling this.
->>>
->>> Now that this is being looked at could we come up with solution that we
->>> could define multiple colors for one led in device tree and then we
->>> could work on getting the driver upstreamed?
->>>
->>> What we did was generally:
->>>
->>> leds-multi {
->>>      compatible = "gpio-multi-leds";
->>>
->>>      status {
->>>          gpios = <...>;
->>>          linux,default-trigger = "none";
->>>          deafult-state = "keep";
->>>
->>>          color-red {
->>>              pin-mask = <0x01>;
->>>          };
->>>
->>>          color-green {
->>>              pin-mask = <0x02>;
->>>          };
->>>
->>>          color-orange {
->>>              pin-mask = <0x03>;
->>>          };
->>>      };
->>> };
->>>
->>
->> Device Tree node implementation doesn't actually say too much
->> about the sysfs interface you came up with, which is most vital
->> in this case.
-> 
-> In our case it is very simple. There is "color" named sysfs node under
-> gpio instance.
-> 
-> It creates own led instance for each children in this case it is named
-> as "status" and then uses properties under it to define operation.
-> 
-> Currently we do have fixed list of color names in driver to require
-> "standardized" names but that could be easily changed to be dynamic.
-> 
-> Driver registers all GPIOs defined in "gpios" under the instance.
-> 
-> So one can say:
-> 
-> echo "orange" > color
-> 
-> This setting goes to the driver, it figures out logical name "orange"
-> and the configure all listed GPIO's to its "pin-mask" state. Polarity of
-> the GPIO's is configured in GPIO definition so this is more or less turn
-> this particular pin to activate state.
-> 
-> So in this case it changes led's color to orange and still lets one to
-> use standard led triggers. Eg. set periodic blinking or so.
-> 
-> If one cat's "color" it lists all available colors for user and shows
-> which one is active.
-> 
-> When brightness is configured as zero the all registered go to off state
-> and when non-zero then it goes to state what ever is configured with
-> "color" sysfs entry.
-> 
->> Support for RGB LEDs, or other variations of LED synchronization
->> have been approached several times, but without satisfying result
->> so far.
->>
->> Generally the problem boils down to the issue of how triggers
->> should handle multiple synchronized LED class devices in a backwards
->> compatible way with monochrome LEDs.
->>
->> At some point the HSV [0] approach was proposed, but there was a problem
->> with getting uniform colors across devices. Especially white.
->> Certainly a calibration mechanism would be required.
->>
->> [0] https://lkml.org/lkml/2017/8/30/423
-> 
-> We do not usually use PWM controlled leds so our calibration has been HW
-> engineer tuning the resistors for the leds to get acceptable color for
-> different colors variations.
-> 
-> If one wants to have fixed colors for such device then one could use
-> this similar method to define them or/and free form interface to enter
-> RGB values there. Thou with PWM RGB leds you probably want to have more
-> animation there which probably would require some additional support code.
-> 
-> One way to do atomic PWM RGB color change with sysfs could be:
-> 
-> echo "21 223 242" > color
-> 
-> or
-> 
-> echo "21 223 242" > rgb
-> 
-> or:
-> 
-> echo "r:21 g:232 b:242" > color (or something similar)
-> 
-> and if there is know registered name then just write it to "color" which
-> would pick registered color rgb values to led instances rgb value.
-> 
-> Now for PWM RGB led one could use "brightness" and "rgb" value to
-> calculate actual color with some color space formula (like hsv in [0]).
-> 
-> Doing white with RGB LED is a bit hard so usually you want to get RGBW
-> LED (or RGBAW LED) if "real" white is something that is needed. This
-> could then be "rgbw" entry and "color" to pick from fixed set.
-> 
-> These presets in device tree for "color" could be considered one way of
-> doing calibration for particular hardware.
-> 
-> So in device tree for RGB PWM led it could be like:
-> 
-> color-orange {
->     rgb = <249 197 9>
-> }
-> 
-> color-warm-white {
->     rgb = <255 253 249>
-> }
-> 
-> How would that sound like?
-
-Thank you for the description of your approach.
-
-Predefined DT color definitions make an interesting option. Nonetheless,
-your design assumes that for RGB LEDs max_brightness would have to be
-always 1.
-
-While it would solve the issue, it wouldn't allow to benefit from
-the whole potential of RGB LEDs - think of having adjustable "color
-brightness" (like in HSV color model).
-
-How abut allowing for providing an array of color intensity/brightness
-levels per each color? In the simplest case there could be a single
-level per color, but it should be possible to provide up to 255 levels.
-
--- 
-Best regards,
-Jacek Anaszewski
+On 11/5/2018 4:30 AM, Ioana Ciornei wrote:=0A=
+> This patch series cleans up the remove path in the dpio driver so that=0A=
+> successive bind/unbind commands behave properly.=0A=
+>=0A=
+> Ioana Ciornei (2):=0A=
+>   soc: fsl: dpio: cleanup the cpu array on dpaa2_io_down=0A=
+>   soc: fsl: dpio: use a cpumask to identify which cpus are unused=0A=
+>=0A=
+>  drivers/soc/fsl/dpio/dpio-driver.c  | 25 ++++++++++++++++---------=0A=
+>  drivers/soc/fsl/dpio/dpio-service.c | 11 +++++++++++=0A=
+>  include/soc/fsl/dpaa2-io.h          |  2 ++=0A=
+>  3 files changed, 29 insertions(+), 9 deletions(-)=0A=
+>=0A=
+Reviewed-by: Roy Pledge <roy.pledge@nxp.com>=0A=
+=0A=
+=0A=
