@@ -2,148 +2,96 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 209F5C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 06:56:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3514BC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 06:56:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D02A0216FD
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 06:56:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F038B2175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 06:56:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="g7S31B3p";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XeBNR4aS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D02A0216FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YyACUyJx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F038B2175B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731949AbeKLQsn (ORCPT
+        id S1732009AbeKLQss (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 11:48:43 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:53542 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731846AbeKLQsn (ORCPT
+        Mon, 12 Nov 2018 11:48:48 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37130 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729816AbeKLQss (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 11:48:43 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 60D0760A33; Mon, 12 Nov 2018 06:56:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542005808;
-        bh=r3VEdAXqEBU7L/dxRbNm17Ok5k9vbVAenxilkJ00vYM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=g7S31B3pM1iokPW98vHtejbVDRdWRTdiRWoG9jus+ItCVNLdqmNCvOp4t9eLlMPK8
-         fldyYi9Hj2nBQj2dh2OgY6R6LoscCFtEX94UGWdtYVzJ/gO7RPL/C+VsCUFPxQn8nX
-         LXFnYoBgiwHVxSq62XgKQ0SDHbPEmsTgM7Mf4+fY=
-Received: from [10.252.220.119] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vbadigan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E648B601C3;
-        Mon, 12 Nov 2018 06:56:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542005807;
-        bh=r3VEdAXqEBU7L/dxRbNm17Ok5k9vbVAenxilkJ00vYM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=XeBNR4aSpiyeCU4S43Sd8nV9smWekwmnnKDS4CY3JbXSUQY6ak0tdgbckX2kYTxc3
-         EMq10OzpIdHGmx63kCy+3vYAVyND6ILK/P+XYhbgZtnelgRyapMMiJBUYDzy2fOOoV
-         Ry/dtkDvjMIXdxO1TI8K5f2WjbV4hLbG/Xh/ygy4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E648B601C3
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vbadigan@codeaurora.org
-Subject: Re: [PATCH V2 1/2] dt-bindings: mmc: sdhci-msm: Add SoC-specific
- compatible strings
-To:     adrian.hunter@intel.com, ulf.hansson@linaro.org,
-        robh+dt@kernel.org, evgreen@chromium.org, dianders@google.com
-Cc:     asutoshd@codeaurora.org, riteshh@codeaurora.org,
-        stummala@codeaurora.org, sayalil@codeaurora.org,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>
-References: <1542004704-17066-1-git-send-email-vbadigan@codeaurora.org>
- <1542004704-17066-2-git-send-email-vbadigan@codeaurora.org>
-From:   Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
-Message-ID: <06819c2d-15bc-0b90-1504-232d2f327326@codeaurora.org>
-Date:   Mon, 12 Nov 2018 12:26:34 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 12 Nov 2018 11:48:48 -0500
+Received: by mail-wm1-f66.google.com with SMTP id p2-v6so6990783wmc.2
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 22:56:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=fJSVjBY7z7TVE9l5S0IYUWqit7PdZWXsGxgVWo7GwlU=;
+        b=YyACUyJxuJfSfTQqO/+86APyf3UAhGxV6NLRSjos+5Z5lMfTaOSqJ0W4L/1jfy4gcw
+         RLOAV36fA3Mk2+lWc7RlN/Up2EGkYD+h1WdAVs4+zwV7s7fnspESQx0bbeBiRjotdhPf
+         +mn6oVkxAdCFJ9VmIfJ7hWObFahUBv6c3DB+8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=fJSVjBY7z7TVE9l5S0IYUWqit7PdZWXsGxgVWo7GwlU=;
+        b=mIgpGl/kAL2iSdrb4DgLK5X0NSwyKvA+TilETGx0zPN9hsIX6+hYCdcKQzJYyy43r2
+         P/HEW7Yqj33GGH+0EITLjp+qRjVMe71DEr2X4tmfpOm8BLaU1TPjQyjX8a1tQKH7SFsB
+         naQLa2lqamG6agwkN0pYQAjVDK5t51dW9Asp60P+XI0085XzfOxMqg7O1nEOrF+3VUt6
+         uwRcSVwpi+K9yVBcUR65IM/8BNSPMEFAcHYA50++HHITJqmbhV/IB0dUHMp71h4s2Icx
+         1iJF2L5S6iSluO8hZzAuzZFR21uAHlycfxOAiKJRE0J6qUrRxsyCsSBy9q2f/5xa4U+e
+         Zwyg==
+X-Gm-Message-State: AGRZ1gJJ6ogmq/RyF0llVwR9kzymexPqVraqawaX66rOEnQl382GOMnA
+        5rSybHKbcUjwR9wMWQvE4pRLSw==
+X-Google-Smtp-Source: AJdET5eRyMIGi4DeQjeh0rJH4QQx23KD2hKuuYI/2y+dgK6GM2IpWXKPKWC6EzFHk2XRCvpZIXKIwA==
+X-Received: by 2002:a1c:1f43:: with SMTP id f64mr293378wmf.64.1542005812199;
+        Sun, 11 Nov 2018 22:56:52 -0800 (PST)
+Received: from [192.168.0.40] (233.25.136.77.rev.sfr.net. [77.136.25.233])
+        by smtp.googlemail.com with ESMTPSA id m192-v6sm13009230wmb.29.2018.11.11.22.56.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 11 Nov 2018 22:56:51 -0800 (PST)
+Subject: Re: [PATCH 05/17] clocksource: bcm2835: Switch to SPDX identifier
+To:     Stefan Wahren <stefan.wahren@i2se.com>,
+        Eric Anholt <eric@anholt.net>
+Cc:     linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Simon Arlott <simon@arlott.org>
+References: <1541863719-7244-1-git-send-email-stefan.wahren@i2se.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <dbc12f84-ebb1-998f-dd42-5ad936635744@linaro.org>
+Date:   Mon, 12 Nov 2018 07:56:50 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <1542004704-17066-2-git-send-email-vbadigan@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1541863719-7244-1-git-send-email-stefan.wahren@i2se.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-Please ignore this patch set. Right patch-set is V5. 
-https://patchwork.kernel.org/project/linux-mmc/list/?series=41661
-
-Sorry for the inconvenience.
-
-Thanks
-
-Veera
-
-
-On 11/12/2018 12:08 PM, Veerabhadrarao Badiganti wrote:
-> Add SoC-specific compatible strings for qcom-sdhci controller.
->
-> Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+On 10/11/2018 16:28, Stefan Wahren wrote:
+> Adopt the SPDX license identifier headers to ease license compliance
+> management. Also drop the FSF address.
+> 
+> Cc: Simon Arlott <simon@arlott.org>
+> Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
 > ---
->   Documentation/devicetree/bindings/mmc/sdhci-msm.txt | 21 +++++++++++++++++----
->   1 file changed, 17 insertions(+), 4 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-> index 502b3b8..b72871a 100644
-> --- a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-> +++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
-> @@ -4,12 +4,25 @@ This file documents differences between the core properties in mmc.txt
->   and the properties used by the sdhci-msm driver.
->   
->   Required properties:
-> -- compatible: Should contain:
-> +- compatible: Should contain a SoC-specific string and a IP version string:
-> +	version strings:
->   		"qcom,sdhci-msm-v4" for sdcc versions less than 5.0
-> -		"qcom,sdhci-msm-v5" for sdcc versions >= 5.0
-> +		"qcom,sdhci-msm-v5" for sdcc version 5.0
->   		For SDCC version 5.0.0, MCI registers are removed from SDCC
->   		interface and some registers are moved to HC. New compatible
->   		string is added to support this change - "qcom,sdhci-msm-v5".
-> +	full compatible strings with SoC and version:
-> +		"qcom,apq8084-sdhci", "qcom,sdhci-msm-v4"
-> +		"qcom,msm8974-sdhci", "qcom,sdhci-msm-v4"
-> +		"qcom,msm8916-sdhci", "qcom,sdhci-msm-v4"
-> +		"qcom,msm8992-sdhci", "qcom,sdhci-msm-v4"
-> +		"qcom,msm8996-sdhci", "qcom,sdhci-msm-v4"
-> +		"qcom,sdm845-sdhci", "qcom,sdhci-msm-v5"
-> +		"qcom,qcs404-sdhci", "qcom,sdhci-msm-v5"
-> +	NOTE that some old device tree files may be floating around that only
-> +	have the string "qcom,sdhci-msm-v4" without the SoC compatible string
-> +	but doing that should be considered a deprecated practice.
-> +
->   - reg: Base address and length of the register in the following order:
->   	- Host controller register map (required)
->   	- SD Core register map (required)
-> @@ -29,7 +42,7 @@ Required properties:
->   Example:
->   
->   	sdhc_1: sdhci@f9824900 {
-> -		compatible = "qcom,sdhci-msm-v4";
-> +		compatible = "qcom,msm8974-sdhci", "qcom,sdhci-msm-v4";
->   		reg = <0xf9824900 0x11c>, <0xf9824000 0x800>;
->   		interrupts = <0 123 0>;
->   		bus-width = <8>;
-> @@ -46,7 +59,7 @@ Example:
->   	};
->   
->   	sdhc_2: sdhci@f98a4900 {
-> -		compatible = "qcom,sdhci-msm-v4";
-> +		compatible = "qcom,msm8974-sdhci", "qcom,sdhci-msm-v4";
->   		reg = <0xf98a4900 0x11c>, <0xf98a4000 0x800>;
->   		interrupts = <0 125 0>;
->   		bus-width = <4>;
+
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
