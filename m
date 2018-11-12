@@ -2,83 +2,100 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F248DC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:03:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EC0AC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:05:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD84A20817
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:03:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD84A20817
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id C4A7122504
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:05:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VKVnz3lq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4A7122504
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730260AbeKMD6D (ORCPT
+        id S1729917AbeKMD76 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 22:58:03 -0500
-Received: from out01.mta.xmission.com ([166.70.13.231]:45755 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727247AbeKMD6D (ORCPT
+        Mon, 12 Nov 2018 22:59:58 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:37705 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727247AbeKMD76 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 22:58:03 -0500
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gMDvk-0005iJ-R0; Mon, 12 Nov 2018 08:15:12 -0700
-Received: from 67-3-154-154.omah.qwest.net ([67.3.154.154] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gMDvj-0006cf-VK; Mon, 12 Nov 2018 08:15:12 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Benjamin Coddington <bcodding@redhat.com>
-Date:   Mon, 12 Nov 2018 09:15:06 -0600
-Message-ID: <87o9auiayt.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Mon, 12 Nov 2018 22:59:58 -0500
+Received: by mail-ot1-f66.google.com with SMTP id 40so8813551oth.4;
+        Mon, 12 Nov 2018 10:05:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=W45tdmnTUMqJa9S+3GFX4jmGWxMPKZsZBREyPZUn6OQ=;
+        b=VKVnz3lqAebX8s68kNQwwTdiTQmkhapCtmsVJqRhbgEMIJei1cRjJ05qWRJ/EcesxX
+         TLtTzRTHMoyg6PFLjnlJ4xab1DUgFjR5W5t3dxMG8IpeevYVgcNGk6oEkUcfhOBmc7YN
+         nFdQjW87UxdIfz6JBQFuoY1FWjSo/gGXdbLZsiFPev4V3/cT3hcoU7gAXlZU/tezJ6ko
+         Nn7D2l+DUgxAHoeQ19XWChWzs2GjteIs+rmmv3ehPr35gvnAMdZ0PplMatfMLozoWn3/
+         33Nc2Yx335MdlWj82ddjQQ5mw6n9z6F9akdfd6zkKq8T0yu6abMAs6qfikOe5YCz10kL
+         +0gA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=W45tdmnTUMqJa9S+3GFX4jmGWxMPKZsZBREyPZUn6OQ=;
+        b=Me93jD2aLgFBPGUXfQOdeRsDd/xVFv5TMddzWE9CckmnsEeRyOlF4TpwdsLCNCA/hm
+         bwbA/Smmg2c9w5q95UK+lONithLWBbfkLYrrMJ+KDdDMP23A/gRMuFny0ls/o4riR/qP
+         ANDmCsVOtxD8vM4HHCMA4RLMSuQOc9pSlk6jGAWFesHFmViFJy5350htdfgtQlNoXOJx
+         yXhsWaK+uDwmvAHOGJi2B/EGMXIDVqwsUKP6Z1TyMQmsFGjxoJcvkwz9m0/rEAaN+cbn
+         qJWpLQ+oBhzv7MseO9OhXVo+FV2YXv9VYF6oseuASfTr1hgp1tr67H0TFDPCTpmRQexN
+         /XWw==
+X-Gm-Message-State: AGRZ1gLUP3ICbWB8nhhdGOgqLh2uUPuuKaf6q9I1MYRJTljMKV69LH4K
+        uxhFvVu1hfngjauqnNAU7U3JKKJyHy4gSo5CPLQ=
+X-Google-Smtp-Source: AJdET5ew5+ooa50hfsd/ftys6+5CGfTgfVgQztSl2V+KrYMhMKE8UmIQKPtAsBMW3/8T2WYdJhHvtEGodtgYYfZ9FA4=
+X-Received: by 2002:a9d:2c65:: with SMTP id f92mr1213759otb.18.1542045938038;
+ Mon, 12 Nov 2018 10:05:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1gMDvj-0006cf-VK;;;mid=<87o9auiayt.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=67.3.154.154;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19Evgk4nXCA7RzQfe8X97Dv6eJqpyPDnco=
-X-SA-Exim-Connect-IP: 67.3.154.154
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: [GIT PULL] namespace fix for v4.20-rc3
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+References: <20181104155501.14767-1-TheSven73@googlemail.com>
+ <20181104155501.14767-6-TheSven73@googlemail.com> <CAK8P3a1ZUaxJzfzYoqAK+_ZBazHzF6nG1V2aiZSoiQr6nDhiSQ@mail.gmail.com>
+ <CAGngYiW5=oc486wq15yLbRLvO243PNALmouTDEh7QpO6GLO9Mg@mail.gmail.com> <CAK8P3a3QvQrOKeUs-9sFjDdzfesK27VP6fH7KVUjMW-gkmq-=Q@mail.gmail.com>
+In-Reply-To: <CAK8P3a3QvQrOKeUs-9sFjDdzfesK27VP6fH7KVUjMW-gkmq-=Q@mail.gmail.com>
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+Date:   Mon, 12 Nov 2018 13:05:26 -0500
+Message-ID: <CAGngYiUzA-GGOyX3+joUvf53zTELjiCU_TFLwaWAFgJXM4VHQQ@mail.gmail.com>
+Subject: Re: [PATCH anybus v3 5/6] dt-bindings: anybuss-host: document
+ devicetree binding
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Sven Van Asbroeck <svendev@arcx.com>, robh+dt@kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>, mark.rutland@arm.com,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        treding@nvidia.com, David Lechner <david@lechnology.com>,
+        noralf@tronnes.org, johan@kernel.org,
+        Michal Simek <monstr@monstr.eu>, michal.vokac@ysoft.com,
+        gregkh@linuxfoundation.org, john.garry@huawei.com,
+        geert+renesas@glider.be, robin.murphy@arm.com,
+        paul.gortmaker@windriver.com,
+        sebastien.bourdelin@savoirfairelinux.com, icenowy@aosc.io,
+        Stuart Yoder <stuyoder@gmail.com>, maxime.ripard@bootlin.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On Thu, Nov 8, 2018 at 9:27 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> We do the same thing on PCI and USB, where normally everything
+> is probed through hardware access, but a device driver can look
+> at dev->of_node to see if that contains any further properties.
+>
 
-Please pull the for-linus branch from the git tree:
+This is very interesting. Spent some time trying to find an example of this
+for pci/usb, but drew a blank. Could you point me to an example?
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git for-linus
-
-   HEAD: 1e9c75fb9c47a75a9aec0cd17db5f6dc36b58e00 mnt: fix __detach_mounts infinite loop
-
-Benjamin Coddington noticed an unkillable busy loop in the kernel that
-anyone who is sufficiently motivated can trigger.  This bug did not
-exist in earlier kernels making this bug a regression.
-
-I have tested the change personally and confirmed that the bug exists
-and that the fix works.  This fix has been picked up by linux-next and
-hopefully the automated testing bots and no problems have been reported
-from those sources.
-
-Ordinarily I would let something like this sit a little longer but I am
-going to be away at Linux Plumbers the rest of this week and I am afraid
-if I don't send the pull request now this fix will get lost.
-
-Benjamin Coddington (1):
-      mnt: fix __detach_mounts infinite loop
-
- fs/namespace.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-Eric
+One of our products has pcie ethernet, but we have to patch it so it can
+grab its mac address from the bootloader. You are saying that there is
+a standard way to accomplish this?
