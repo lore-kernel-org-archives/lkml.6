@@ -2,103 +2,82 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4551FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 20:20:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6C37C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 20:23:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E414B22506
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 20:20:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E414B22506
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 7733C22504
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 20:23:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7733C22504
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729428AbeKMGPa (ORCPT
+        id S1730373AbeKMGRz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 01:15:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58694 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725834AbeKMGPa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 01:15:30 -0500
-Received: from vmware.local.home (unknown [64.114.255.114])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 10CC7224E0;
-        Mon, 12 Nov 2018 20:20:41 +0000 (UTC)
-Date:   Mon, 12 Nov 2018 15:20:37 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, dhowells@redhat.com,
-        edumazet@google.com, fweisbec@gmail.com, oleg@redhat.com,
-        joel@joelfernandes.org, Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH tip/core/rcu 23/41] sched: Replace synchronize_sched()
- with synchronize_rcu()
-Message-ID: <20181112152037.451d8b10@vmware.local.home>
-In-Reply-To: <20181112181741.GA3097@worktop.psav.com>
-References: <20181111194104.GA4787@linux.ibm.com>
-        <20181111194410.6368-23-paulmck@linux.ibm.com>
-        <20181112001233.GC3056@worktop>
-        <20181112004528.GA4170@linux.ibm.com>
-        <20181112005329.GG3056@worktop>
-        <20181112014736.GB4170@linux.ibm.com>
-        <20181112020710.GJ3056@worktop>
-        <20181112022455.GD4170@linux.ibm.com>
-        <20181112090047.GN3056@worktop>
-        <20181112132852.GH4170@linux.ibm.com>
-        <20181112181741.GA3097@worktop.psav.com>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 13 Nov 2018 01:17:55 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:36658 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725834AbeKMGRz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 01:17:55 -0500
+Received: by mail-ed1-f66.google.com with SMTP id a2-v6so8486593edt.3;
+        Mon, 12 Nov 2018 12:23:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=z3nwaoqzW3DowhvR2zzUu/qK2xyNTRxEAOnb40IHVms=;
+        b=Vkq+TEMnt07G1LzbNbZuhHj7CkidAe6dB+X+h/62/JAnkbxtwOQR0UN0pjaGKsUFaJ
+         sDGDYAH5m8oLVParybpIbpjRumtZxrMBZpDvBo8gwhr8iimg32Rbwv4y7CMGKk5fDm5F
+         YbnSUHZlLhsW3i8oShlzG5so/rSgIuxR8HSanTL2s3NGY4K5+9RTNA+SuBMonsvyiPWj
+         C6T93SyKkDapJEFLPvHTj/i8RRKU8oexzoxloQosqtWPJC+KdsMLHAH9rCqO4oZcbXqU
+         3X8xCgv9bCcHz4hC9NiVLr6kz1PX/iaxFxMYDjLE7kkXWWwaRkrLiJYzmZUTUDvMuU6C
+         wdCQ==
+X-Gm-Message-State: AGRZ1gLU/D7yZ8Eu/8N54iQPZExkA8+nlfWj+ctZV5oPqFO1dZ26PPyR
+        Bj0gZIKrHj/+mMg6bK3EhWQ=
+X-Google-Smtp-Source: AJdET5e+ktiVQewzYxS7iwJtmGd+oKH86DYlzcxuENmeOAd6xblfkP4aTsTm/AY4wuV/yx4dWIrsow==
+X-Received: by 2002:a50:a307:: with SMTP id 7-v6mr13497802edn.231.1542054184293;
+        Mon, 12 Nov 2018 12:23:04 -0800 (PST)
+Received: from kozik-lap ([178.38.103.27])
+        by smtp.googlemail.com with ESMTPSA id h51-v6sm4757018edh.91.2018.11.12.12.23.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 12 Nov 2018 12:23:03 -0800 (PST)
+Date:   Mon, 12 Nov 2018 21:23:01 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     Kukjin Kim <kgene@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: EXYNOS: remove no longer needed s3c_pm_check_*()
+ calls
+Message-ID: <20181112202301.GA25275@kozik-lap>
+References: <CGME20181015134828eucas1p1b0b3287b5a330591e0976a3a83edbf11@eucas1p1.samsung.com>
+ <20181015134828eucas1p1b0b3287b5a330591e0976a3a83edbf11~dzFPt-ZL_1531815318eucas1p1t@eucas1p1.samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181015134828eucas1p1b0b3287b5a330591e0976a3a83edbf11~dzFPt-ZL_1531815318eucas1p1t@eucas1p1.samsung.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 12 Nov 2018 19:17:41 +0100
-Peter Zijlstra <peterz@infradead.org> wrote:
-
-> On Mon, Nov 12, 2018 at 05:28:52AM -0800, Paul E. McKenney wrote:
-> > On Mon, Nov 12, 2018 at 10:00:47AM +0100, Peter Zijlstra wrote:  
+On Mon, Oct 15, 2018 at 03:48:27PM +0200, Bartlomiej Zolnierkiewicz wrote:
+> Since commit 6862fdf2201a ("ARM: samsung: Limit SAMSUNG_PM_CHECK
+> config option to non-Exynos platforms") s3c_pm_check_*() calls
+> are redundant and can be removed.
 > 
-> > > Still, better safe than sorry. It was a rather big change in behaviour,
-> > > so it wouldn't have been strange to call that out.  
-> > 
-> > This guy:
-> > 
-> > 45975c7d21a1 ("rcu: Define RCU-sched API in terms of RCU for Tree RCU PREEMPT builds")
-> > 
-> > Has a commit log that says:
-> > 
-> > 	Now that RCU-preempt knows about preemption disabling, its
-> > 	implementation of synchronize_rcu() works for synchronize_sched(),
-> > 	and likewise for the other RCU-sched update-side API members.
-> > 	This commit therefore confines the RCU-sched update-side code
-> > 	to CONFIG_PREEMPT=n builds, and defines RCU-sched's update-side
-> > 	API members in terms of those of RCU-preempt.
-> > 
-> > That last phrase seems pretty explicit.  What am I missing here?  
-> 
-> That does not explicitly state that because RCU-preempt
-> synchornize_rcu() can take _much_ longer, the new synchronize_sched()
-> can now take _much_ longer too.
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  arch/arm/mach-exynos/suspend.c |    7 -------
 
-I'm curious. Are there measurements to see how much longer they can
-take? Saying "_much_ longer" would require that one has done the
-timings to see what the actual impact is.
+Thanks, applied.
 
-> 
-> So when someone bisects a problem to this commit; and he reads the
-> Changelog, he might get the impression that was unexpected.
+Best regards,
+Krzysztof
 
-It may well be unexpected. What is the timing differences between a
-normal synchronize_rcu and a synchronize_sched. Of course, 99% of users
-wont see any difference as 99% don't run CONFIG_PREEMPT.
-
--- Steve
