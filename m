@@ -2,88 +2,106 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5990C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:49:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43056C07E85
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:49:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E8F022504
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:49:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E8F022504
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 15F642245E
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:49:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15F642245E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730166AbeKMDni (ORCPT
+        id S1730214AbeKMDnx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 22:43:38 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:14649 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727354AbeKMDni (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 22:43:38 -0500
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 0D1206B4BF807;
-        Tue, 13 Nov 2018 01:49:19 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.41) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.408.0; Tue, 13 Nov 2018
- 01:49:14 +0800
-Subject: Re: [PATCH] scsi: libsas: Remove pcidev reference
-To:     Joe Perches <joe@perches.com>, <jejb@linux.vnet.ibm.com>,
-        <martin.petersen@oracle.com>
-References: <1542043689-214071-1-git-send-email-john.garry@huawei.com>
- <584e7b4fcd6f95fe0c581f6f9472852685c754d1.camel@perches.com>
-CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <310504a2-f33c-183b-d00a-fa067b273dfd@huawei.com>
-Date:   Mon, 12 Nov 2018 17:49:09 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        Mon, 12 Nov 2018 22:43:53 -0500
+Received: from mga12.intel.com ([192.55.52.136]:35021 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727354AbeKMDnx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 22:43:53 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Nov 2018 09:49:37 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,496,1534834800"; 
+   d="scan'208";a="91456544"
+Received: from araj-mobl1.jf.intel.com ([10.7.201.24])
+  by orsmga008.jf.intel.com with ESMTP; 12 Nov 2018 09:49:36 -0800
+Date:   Mon, 12 Nov 2018 09:49:36 -0800
+From:   "Raj, Ashok" <ashok.raj@intel.com>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Jacob jun Pan <jacob.jun.pan@intel.com>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Lukas Wunner <lukas@wunner.de>,
+        Christian Kellner <ckellner@redhat.com>,
+        Mario.Limonciello@dell.com,
+        Anthony Wong <anthony.wong@canonical.com>,
+        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ashok Raj <ashok.raj@intel.com>
+Subject: Re: [PATCH 2/4] iommu/vt-d: Force IOMMU on for platform opt in hint
+Message-ID: <20181112174936.GB30341@araj-mobl1.jf.intel.com>
+References: <20181112160628.86620-1-mika.westerberg@linux.intel.com>
+ <20181112160628.86620-3-mika.westerberg@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <584e7b4fcd6f95fe0c581f6f9472852685c754d1.camel@perches.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.41]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181112160628.86620-3-mika.westerberg@linux.intel.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/11/2018 17:32, Joe Perches wrote:
-> On Tue, 2018-11-13 at 01:28 +0800, John Garry wrote:
->> Not all host drivers are PCI drivers - like hisi_sas, which supports a
->> platform driver - so remove reference to "pcidev".
->>
->> The debug level is also downgraded to KERN_ERR for the same message.
-> []
->> diff --git a/drivers/scsi/libsas/sas_discover.c b/drivers/scsi/libsas/sas_discover.c
-> []
->> @@ -186,7 +186,7 @@ int sas_notify_lldd_dev_found(struct domain_device *dev)
->>
->>  	res = i->dft->lldd_dev_found(dev);
->>  	if (res) {
->> -		printk("sas: driver on pcidev %s cannot handle "
->> +		pr_err("sas: driver on host %s cannot handle "
->>  		       "device %llx, error:%d\n",
->
-> As a printk without a KERN_<LEVEL> is printed at whatever
-> CONFIG_MESSAGE_LOGLEVEL_DEFAULT is set to (default: 4 and
-> rarely unchanged), this is effectively upgraded from a
-> KERN_WARNING to KERN_ERR.
+On Mon, Nov 12, 2018 at 07:06:26PM +0300, Mika Westerberg wrote:
+> From: Lu Baolu <baolu.lu@linux.intel.com>
+> 
+> Intel VT-d spec added a new DMA_CTRL_PLATFORM_OPT_IN_FLAG flag
+> in DMAR ACPI table for BIOS to report compliance about platform
+> initiated DMA restricted to RMRR ranges when transferring control
+> to the OS. The OS treats this as a hint that the IOMMU should be
+> enabled to prevent DMA attacks from possible malicious devices.
+> 
+> A use of this flag is Kernel DMA protection for Thunderbolt[1]
+> which in practice means that IOMMU should be enabled for PCIe
+> devices connected to the Thunderbolt ports. With IOMMU enabled
+> for these devices, all DMA operations are limited in the range
+> reserved for it, thus the DMA attacks are prevented. All these
+> devices are enumerated in the PCI/PCIe module and marked with
+> an is_external flag.
+> 
+> This forces IOMMU to be enabled if DMA_CTRL_PLATFORM_OPT_IN_FLAG
+> is set in DMAR ACPI table and there are PCIe devices marked as
+> is_external in the system. This can be turned off by adding
+> "intel_iommu=off" in the kernel command line, if any problems are
+> found.
+> 
+> [1] https://docs.microsoft.com/en-us/windows/security/information-protection/kernel-dma-protection-for-thunderbolt
+> 
+> Cc: Ashok Raj <ashok.raj@intel.com>
+> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> Cc: Sohil Mehta <sohil.mehta@intel.com>
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-ah, I thought that it was printed always.
+Looks good to me
 
-So maybe I'll just leave as-is.
+Reviewed-by: Ashok Raj <ashok.raj@intel.com>
 
-Thanks,
-John
-
->
->
->
-> .
->
-
-
+> ---
+>  drivers/iommu/dmar.c        | 25 +++++++++++++++++
+>  drivers/iommu/intel-iommu.c | 55 +++++++++++++++++++++++++++++++++++--
+>  include/linux/dmar.h        |  8 ++++++
+>  3 files changed, 86 insertions(+), 2 deletions(-)
+ 
