@@ -2,255 +2,90 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F02C2C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 20:02:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1612C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 20:03:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A8DB223DD
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 20:02:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bX9ZC2jK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A8DB223DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 831402245E
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 20:03:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 831402245E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=applied-asynchrony.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727487AbeKMF5W (ORCPT
+        id S1729461AbeKMF6M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 00:57:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55242 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725832AbeKMF5W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 00:57:22 -0500
-Received: from localhost (unknown [206.108.79.134])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F3893223AE;
-        Mon, 12 Nov 2018 20:02:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542052957;
-        bh=n2IlSV9FdhvSwUnkqCIKgHmLyNx3gREn07Pp0pD+8VE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bX9ZC2jKeak+gp+PqlE99nB7buOqVhVhzahA6JNMaRykei1cLfnXUolhwsmaEVpBz
-         tVPlz9tQFT/m985TLB31Sv1ey7Naoa3MgWYT1/B5e1/pyhLDrYul9Hybhq7ZBgXP9L
-         BZOPy2Qsw8f015W2ce5V7qjRrd0ePpOST0/GvwnI=
-Date:   Mon, 12 Nov 2018 12:02:36 -0800
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Ming Lei <ming.lei@redhat.com>, Ming Lei <tom.leiming@gmail.com>,
-        Jens Axboe <axboe@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hannes Reinecke <hare@suse.de>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        linux-scsi@vger.kernel.org
-Subject: Re: kobject lifetime issues in blk-mq
-Message-ID: <20181112200236.GA4415@kroah.com>
-References: <20181109203518.GA7130@roeck-us.net>
- <20181112092051.GA391@ming.t460p>
- <20181112094406.GB391@ming.t460p>
- <20181112164848.GA1790@roeck-us.net>
+        Tue, 13 Nov 2018 00:58:12 -0500
+Received: from mail02.iobjects.de ([188.40.134.68]:53964 "EHLO
+        mail02.iobjects.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725832AbeKMF6M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 00:58:12 -0500
+Received: from tux.wizards.de (p3EE2F45F.dip0.t-ipconnect.de [62.226.244.95])
+        by mail02.iobjects.de (Postfix) with ESMTPSA id 9E216416A1FC;
+        Mon, 12 Nov 2018 21:03:25 +0100 (CET)
+Received: from [192.168.100.223] (ragnarok.applied-asynchrony.com [192.168.100.223])
+        by tux.wizards.de (Postfix) with ESMTP id 42F03EEB923;
+        Mon, 12 Nov 2018 21:03:25 +0100 (CET)
+Subject: Re: [PATCH 4.19 025/361] ACPICA: AML interpreter: add region
+ addresses in global list during initialization
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Jean-Marc Lenoir <archlinux@jihemel.com>,
+        Erik Schmauss <erik.schmauss@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+References: <20181111221619.915519183@linuxfoundation.org>
+ <20181111221623.163909820@linuxfoundation.org>
+ <9da1c8e8-d237-11b3-8918-859a4bbdbcc4@applied-asynchrony.com>
+ <20181112192546.GB2263@kroah.com>
+From:   =?UTF-8?Q?Holger_Hoffst=c3=a4tte?= <holger@applied-asynchrony.com>
+Organization: Applied Asynchrony, Inc.
+Message-ID: <04e2dacd-7425-56e6-61e9-54c2a1d6c888@applied-asynchrony.com>
+Date:   Mon, 12 Nov 2018 21:03:25 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181112164848.GA1790@roeck-us.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181112192546.GB2263@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 08:48:48AM -0800, Guenter Roeck wrote:
-> On Mon, Nov 12, 2018 at 05:44:07PM +0800, Ming Lei wrote:
-> > On Mon, Nov 12, 2018 at 05:20:51PM +0800, Ming Lei wrote:
-> > > On Fri, Nov 09, 2018 at 12:35:18PM -0800, Guenter Roeck wrote:
-> > > > Hi,
-> > > > 
-> > > > Images with CONFIG_DEBUG_KOBJECT=y, CONFIG_DEBUG_KOBJECT_RELEASE=y
-> > > > enabled report kobject lifetime issues when booting an image in qemu
-> > > > using virtio-scsi-pci.
-> > > > 
-> > > > Bisect points to two different commits, depending on the kernel
-> > > > configuration.
-> > > > 
-> > > > 1st configuration: defconfig plus:
-> > > > 
-> > > > CONFIG_VIRTIO_BLK=y
-> > > > CONFIG_SCSI_LOWLEVEL=y
-> > > > CONFIG_SCSI_VIRTIO=y
-> > > > CONFIG_VIRTIO_PCI=y
-> > > > CONFIG_VIRTIO_MMIO=y
-> > > > CONFIG_DEBUG_OBJECTS=y
-> > > > CONFIG_DEBUG_OBJECTS_FREE=y
-> > > > CONFIG_DEBUG_OBJECTS_TIMERS=y
-> > > > CONFIG_DEBUG_KOBJECT=y
-> > > > CONFIG_DEBUG_KOBJECT_RELEASE=y
-> > > > 
-> > > > Bisecting this configuration points to commit b5b6e8c8d3b4 ("scsi:
-> > > > virtio_scsi: fix IO hang caused by automatic irq vector affinity")
-> > > > as the culprit. This commit enforces the use of blk-mq for virtio_scsi;
-> > > > the bisect log is therefore a bit misleading.
-> > > > 
-> > > > 2nd configuration: As above, plus:
-> > > > CONFIG_SCSI_MQ_DEFAULT=y
-> > > > 
-> > > > With this configuration, bisect points to commit 7ea5fe31c12d
-> > > > ("blk-mq: make lifetime consitent between q/ctx and its kobject").
-> > > > 
-> > > > The qemu command line used to reproduce the problem is as follows.
-> > > > The qemu version does not seem to matter (I tested with qemu versions
-> > > > 2.5, 2.11, and 3.0).
-> > > > 
-> > > > qemu-system-x86_64 \
-> > > > 	-kernel arch/x86/boot/bzImage \
-> > > > 	-device virtio-scsi-pci,id=scsi \
-> > > > 	-device scsi-hd,bus=scsi.0,drive=d0 \
-> > > > 	-drive file=./wheezy.img,format=raw,if=none,id=d0 \
-> > > > 	-snapshot \
-> > > > 	-m 2G -smp 4 -enable-kvm \
-> > > > 	-net user,host=10.0.2.10,hostfwd=tcp::10022-:22 -net nic \
-> > > > 	-nographic -monitor none \
-> > > > 	-no-reboot \
-> > > > 	-append "console=ttyS0 root=/dev/sda earlyprintk=serial panic_on_warn=1 panic=-1"
-> > > > 
-> > > > Root file system:
-> > > > 	https://storage.googleapis.com/syzkaller/wheezy.img
-> > > > or:
-> > > > 	https://github.com/groeck/linux-build-test/blob/master/rootfs/x86_64/rootfs.ext2.gz
-> > > > 
-> > > > It seems that any root file system can be used to reproduce the problem.
-> > > > Also, the problem is not limited to virtio-scsi-pci. I also tried
-> > > > am53c974, lsi53c810, and lsi53c895a (after enabling the respective
-> > > > drivers), with the same result.
-> > > > 
-> > > > Overall, this suggests that the problem is related to blk-mq and was
-> > > > indeed introduced with commit 7ea5fe31c12d.
-> > > > 
-> > > > For reference, I attached an actual crash log as well as a set of bisect
-> > > > logs below.
-> > > > 
-> > > > Unfortunately, my understanding of blk-mq is not good enough to find the
-> > > > underlying problem and suggest a fix. Please let me know if there is
-> > > > anything else I can do to help fixing the problem.
-> > > > 
-> > > > Note that the problem was originally reported by syzbot running a test
-> > > > on chromeos-4.14. It may well be that the problem has already been
-> > > > reported and is being worked on. If so, please apologize the noise.
-> > > > 
-> > > > Thanks,
-> > > > Guenter
-> > > > 
-> > > > ---
-> > > > [    8.700038] ------------[ cut here ]------------
-> > > > [    8.700376] ODEBUG: free active (active state 0) object type: timer_list hint: delayed_work_timer_fn+0x0/0x10
-> > > > [    8.701032] WARNING: CPU: 0 PID: 0 at lib/debugobjects.c:329 debug_print_object+0x6a/0x80
-> > > > [    8.701032] Kernel panic - not syncing: panic_on_warn set ...
-> > > > [    8.701032] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.20.0-rc1 #30
-> > > > [    8.701032] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-> > > > [    8.701032] Call Trace:
-> > > > [    8.701032]  <IRQ>
-> > > > [    8.701032]  dump_stack+0x46/0x5b
-> > > > [    8.701032]  panic+0xf3/0x246
-> > > > [    8.701032]  ? debug_print_object+0x6a/0x80
-> > > > [    8.701032]  __warn+0xeb/0xf0
-> > > > [    8.701032]  ? debug_print_object+0x6a/0x80
-> > > > [    8.701032]  ? debug_print_object+0x6a/0x80
-> > > > [    8.701032]  report_bug+0xb1/0x120
-> > > > [    8.701032]  fixup_bug.part.10+0x13/0x30
-> > > > [    8.701032]  do_error_trap+0x8f/0xb0
-> > > > [    8.701032]  do_invalid_op+0x31/0x40
-> > > > [    8.701032]  ? debug_print_object+0x6a/0x80
-> > > > [    8.701032]  invalid_op+0x14/0x20
-> > > > [    8.701032] RIP: 0010:debug_print_object+0x6a/0x80
-> > > > [    8.701032] Code: 8b 43 10 83 c2 01 8b 4b 14 89 15 c1 e2 78 01 4c 8b 45 00 4c
-> > > > 89 e6 48 c7 c7 f0 ca 41 a6 48 8b 14 c5 a0 f7 24 a6 e8 06 8e cc ff <0f> 0b 5b 83
-> > > > 05 70 47 1a 01 01 5d 41 5c c3 83 05 65 47 1a 01 01 c3
-> > > > [    8.701032] RSP: 0018:ffff89b9fda03e48 EFLAGS: 00010082
-> > > > [    8.701032] RAX: 0000000000000000 RBX: ffff89b9fd49d0c8 RCX: ffffffffa6646e18
-> > > > [    8.701032] RDX: 0000000000000001 RSI: 0000000000000082 RDI: ffffffffa6cc596c
-> > > > [    8.701032] RBP: ffffffffa664a5c0 R08: 79616c6564203a74 R09: 5f6b726f775f6465
-> > > > [    8.701032] R10: ffff89b9fda03f10 R11: 3178302f3078302b R12: ffffffffa6403e22
-> > > > [    8.701032] R13: 0000000000000001 R14: ffffffffa6d4d458 R15: ffff89b9fc4c8780
-> > > > [    8.701032]  ? debug_print_object+0x6a/0x80
-> > > > [    8.701032]  debug_check_no_obj_freed+0x1b8/0x1ea
-> > > > [    8.701032]  ? rcu_process_callbacks+0x2a7/0x750
-> > > > [    8.701032]  kmem_cache_free+0x6e/0x1a0
-> > > > [    8.701032]  ? __blk_release_queue+0x150/0x150
-> > > > [    8.701032]  rcu_process_callbacks+0x2a7/0x750
-> > > > [    8.701032]  __do_softirq+0xf2/0x2c7
-> > > > [    8.701032]  irq_exit+0xb7/0xc0
-> > > > [    8.701032]  smp_apic_timer_interrupt+0x67/0x130
-> > > > [    8.701032]  apic_timer_interrupt+0xf/0x20
-> > > > [    8.701032]  </IRQ>
-> > > > [    8.701032] RIP: 0010:default_idle+0x12/0x140
-> > > > [    8.701032] Code: fe ff ff c6 43 08 00 fb eb b0 31 c0 eb b4 e8 65 c8 60 ff 90
-> > > > 90 90 90 90 41 54 55 53 65 8b 2d 15 c4 3b 5a 66 66 66 66 90 fb f4 <65> 8b 2d 07
-> > > > c4 3b 5a 66 66 66 66 90 5b 5d 41 5c c3 65 8b 05 f6 c3
-> > > > [    8.701032] RSP: 0018:ffffffffa6603e98 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
-> > > > [    8.701032] RAX: ffffffffa5c52d10 RBX: 0000000000000000 RCX: 0000000000000000
-> > > > [    8.701032] RDX: 0000000000000001 RSI: 0000000000000000 RDI: 000000020605092a
-> > > > [    8.701032] RBP: 0000000000000000 R08: ffffffffcff7766a R09: ffff89b9fda20b00
-> > > > [    8.701032] R10: 0000000000000000 R11: 0000000000002400 R12: ffffffffa6611740
-> > > > [    8.701032] R13: 0000000000000000 R14: 0000000000000000 R15: ffffffffa6611740
-> > > > [    8.701032]  ? __sched_text_end+0x5/0x5
-> > > > [    8.701032]  do_idle+0x19c/0x230
-> > > > [    8.701032]  cpu_startup_entry+0x14/0x20
-> > > > [    8.701032]  start_kernel+0x491/0x4b1
-> > > > [    8.701032]  secondary_startup_64+0xa4/0xb0
-> > > > [    8.701032] Kernel Offset: 0x24200000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
-> > > > 
-> > > 
-> > > That is simply caused by enabling DEBUG_KOBJECT_RELEASE itself, which
-> > > tries to do kboject_release() after delaying a while.
-> > > 
-> > > Wrt. this issue, q->mq_kobj is embedded in 'request_queue' whose
-> > > instance is freed in release handler of q->kobj. So when one instance
-> > > of 'request_queue' is freed, DEBUG_KOBJECT_RELEASE still expects that
-> > > the q->mq_kobj is active.
-> > > 
-> > > The release handler of q->mq_kobj is NOP actually, so in reality it won't
-> > > be one issue at all.
-> > 
-> > Given we have removed legacy IO path completely, it should be fine to
-> > remove q->mq_kobj and simply put everything under the kobj of queue,
-> > especially any attributes under mq aren't marked as stable ABI.
+On 11/12/18 8:25 PM, Greg Kroah-Hartman wrote:
+> On Mon, Nov 12, 2018 at 07:30:57PM +0100, Holger Hoffstätte wrote:
+>> On 11/11/18 11:16 PM, Greg Kroah-Hartman wrote:
+>>> 4.19-stable review patch.  If anyone has any objections, please let me know.
+>>
+>> As probably expected this patch causes problems. In my case one server
+>> can no longer load the nct6775 hwmon module, which means the fan cannot be
+>> monitored, and therefore my monitoring system promptly starts spamming me with
+>> alerts that my fan has failed - which is of course not true.
+>>
+>> --snip--
+>> Nov 12 18:08:56 tux kernel: nct6775: Found NCT6776D/F or compatible chip at 0x2e:0x290
+>> Nov 12 18:08:56 tux kernel: ACPI Warning: SystemIO range 0x0000000000000295-0x0000000000000296 conflicts with OpRegion 0x0000000000000290-0x
+>> Nov 12 18:08:56 tux kernel: ACPI: If an ACPI driver is available for this device, you should use it instead of the native driver
+>> --snip--
+>>
+>> This is certainly caused by my old BIOS and its broken ACPI implementation,
+>> however since it's working perfectly fine otherwise I see no reason to replace
+>> it. That being said, I must be able to monitor my fan, so for now reverting
+>> the patch immediately "fixed" the problem for me - the fan entries appeared
+>> in sysfs again after successfully loading the module.
+>>
+>> Idea, workarounds or patches welcome.
 > 
-> That might be possible going forward, but that does not appear to be
-> a feasible solution for stable releases. I am not sure though if the
-> "stable ABI" argument is valid. Almost all sysfs attributes are not
-> marked stable. If there are applications using it, removing the atttributes
-> would still break userspace.
+> So Linus's tree is also "broken" for your hardware?
 
-Yeah, don't move attributes around for no good reason, you will make
-userspace grumpy :)
+Not tested yet (should I?) but I assume it will be, since it seems to be my
+old BIOS' ACPI implemnetation's fault. As I wrote to Erik, I just added
+acpi_enforce_resources=lax to the boot flags, and as expected it gives a
+warning for the hwmon module, but still lets it pass and work, as before
+or with the patch reverted. So I'm good for now.
 
-> Since the release function of mq_kobj is NOP (for reference, I assume
-> we are talking about blk_mq_sysfs_release), can it just be NULL ?
-
-Someone tried to work around the internal kernel warning that comes
-about when you set a release function to NULL.  As per the in-kernel
-documentation, I now get to make fun of that author by saying "do you
-think I added those checks and message just for no good reason?  Don't
-try to be smarter than the driver core by providing an empty release
-function to make the kernel be quiet.  That's NOT what the kernel is
-trying to tell you here at all."
-
-So fix this, that is the correct thing to do.  Memory is freed in a
-release function, to not do so is almost always a sign of a design bug.
-
-> That it is an empty function seems to be just as good or bad as having
-> no function at all. An empty function just avoids the "broken" debug
-> message. That message is still better than rendering DEBUG_KOBJECT_RELEASE
-> useless.
-> 
-> Copying GregKH for input.
-
-Thanks, this code is broken and needs to be fixed.
-
-greg k-h
+thanks,
+Holger
