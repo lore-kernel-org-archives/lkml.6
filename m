@@ -2,638 +2,561 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10C95C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:33:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 175D2C0044B
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:33:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5C6A223C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:33:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5C6A223C8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+	by mail.kernel.org (Postfix) with ESMTP id B6B70223C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:33:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6B70223C8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728802AbeKLUZs (ORCPT
+        id S1729181AbeKLU0a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 15:25:48 -0500
-Received: from mail-out.m-online.net ([212.18.0.10]:57943 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727156AbeKLUZs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 15:25:48 -0500
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 42tnCD68kxz1qxpF;
-        Mon, 12 Nov 2018 11:32:56 +0100 (CET)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 42tnCC5xm4z1qtfC;
-        Mon, 12 Nov 2018 11:32:55 +0100 (CET)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id YtUTbuJ3cXwe; Mon, 12 Nov 2018 11:32:51 +0100 (CET)
-X-Auth-Info: kPr4nXpqKS2rumN1vgDB/aWt3vGzt4g5SWx/D3ZfkIA=
-Received: from antares.denx.de (unknown [62.91.23.180])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Mon, 12 Nov 2018 11:32:51 +0100 (CET)
-Cc:     pn@denx.de, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        sravanhome@gmail.com, thomas.liau@actions-semi.com,
-        mp-cs@actions-semi.com, linux@cubietech.com,
-        edgar.righi@lsitec.org.br, laisa.costa@lsitec.org.br,
-        guilherme.simoes@lsitec.org.br, mkzuffo@lsi.usp.br
-Subject: Re: [PATCH v2 2/3] drivers/irqchip: Add Actions external interrupts
- support
-To:     Marc Zyngier <marc.zyngier@arm.com>, tglx@linutronix.de,
-        jason@lakedaemon.net, robh+dt@kernel.org, mark.rutland@arm.com,
-        afaerber@suse.de, catalin.marinas@arm.com, will.deacon@arm.com,
-        manivannan.sadhasivam@linaro.org
-References: <20180812122215.1079590-1-pn@denx.de>
- <20180812122215.1079590-3-pn@denx.de>
- <64b9ae63-c2b9-a2e0-f648-4bf80f34a57a@arm.com>
- <e8ff35c7-813c-2597-ab51-781336d551c5@denx.de>
- <769542dc-0fc4-cb24-6640-aad6672af0fb@arm.com>
-From:   Parthiban Nallathambi <pn@denx.de>
-Message-ID: <2f89e380-cf7b-df3d-8f95-e9baebe8fbef@denx.de>
-Date:   Mon, 12 Nov 2018 11:32:51 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 12 Nov 2018 15:26:30 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32742 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727156AbeKLU03 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 15:26:29 -0500
+Received: from lhreml701-cah.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 20767A48BFF49;
+        Mon, 12 Nov 2018 10:31:59 +0000 (GMT)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.153)
+ by smtpsuk.huawei.com (10.201.108.42) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Mon, 12 Nov 2018 10:31:54 +0000
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <dhowells@redhat.com>, <dwmw2@infradead.org>,
+        <herbert@gondor.apana.org.au>, <davem@davemloft.net>
+CC:     <keyrings@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+        <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <silviu.vlasceanu@huawei.com>
+Subject: [RFC][PATCH 08/12] KEYS: PGP-based public key signature verification
+Date:   Mon, 12 Nov 2018 11:24:19 +0100
+Message-ID: <20181112102423.30415-9-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181112102423.30415-1-roberto.sassu@huawei.com>
+References: <20181112102423.30415-1-roberto.sassu@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <769542dc-0fc4-cb24-6640-aad6672af0fb@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.153]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: David Howells <dhowells@redhat.com>
 
+Provide handlers for PGP-based public-key algorithm signature verification.
+This does most of the work involved in signature verification as most of it
+is public-key algorithm agnostic.  The public-key verification algorithm
+itself is just the last little bit and is supplied the complete hash data
+to process.
 
-On 11/8/18 6:03 PM, Marc Zyngier wrote:
-> On 26/08/18 16:20, Parthiban Nallathambi wrote:
->> Hello Marc,
->>
->> Thanks for your feedback.
->>
->> On 8/13/18 1:46 PM, Marc Zyngier wrote:
->>> On 12/08/18 13:22, Parthiban Nallathambi wrote:
->>>> Actions Semi Owl family SoC's S500, S700 and S900 provides support
->>>> for 3 external interrupt controllers through SIRQ pins.
->>>>
->>>> Each line can be independently configured as interrupt and triggers
->>>> on either of the edges (raising or falling) or either of the levels
->>>> (high or low) . Each line can also be masked independently.
->>>>
->>>> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
->>>> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
->>>> ---
->>>>   drivers/irqchip/Makefile       |   1 +
->>>>   drivers/irqchip/irq-owl-sirq.c | 305 +++++++++++++++++++++++++++++++++++++++++
->>>>   2 files changed, 306 insertions(+)
->>>>   create mode 100644 drivers/irqchip/irq-owl-sirq.c
->>>>
->>>> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
->>>> index 15f268f646bf..072c4409e7c4 100644
->>>> --- a/drivers/irqchip/Makefile
->>>> +++ b/drivers/irqchip/Makefile
->>>> @@ -7,6 +7,7 @@ obj-$(CONFIG_ATH79)			+= irq-ath79-misc.o
->>>>   obj-$(CONFIG_ARCH_BCM2835)		+= irq-bcm2835.o
->>>>   obj-$(CONFIG_ARCH_BCM2835)		+= irq-bcm2836.o
->>>>   obj-$(CONFIG_ARCH_EXYNOS)		+= exynos-combiner.o
->>>> +obj-$(CONFIG_ARCH_ACTIONS)		+= irq-owl-sirq.o
->>>>   obj-$(CONFIG_FARADAY_FTINTC010)		+= irq-ftintc010.o
->>>>   obj-$(CONFIG_ARCH_HIP04)		+= irq-hip04.o
->>>>   obj-$(CONFIG_ARCH_LPC32XX)		+= irq-lpc32xx.o
->>>> diff --git a/drivers/irqchip/irq-owl-sirq.c b/drivers/irqchip/irq-owl-sirq.c
->>>> new file mode 100644
->>>> index 000000000000..b69301388300
->>>> --- /dev/null
->>>> +++ b/drivers/irqchip/irq-owl-sirq.c
->>>> @@ -0,0 +1,305 @@
->>>> +// SPDX-License-Identifier: GPL-2.0+
->>>> +/*
->>>> + *
->>>> + * Actions Semi Owl SoCs SIRQ interrupt controller driver
->>>> + *
->>>> + * Copyright (C) 2014 Actions Semi Inc.
->>>> + * David Liu <liuwei@actions-semi.com>
->>>> + *
->>>> + * Author: Parthiban Nallathambi <pn@denx.de>
->>>> + * Author: Saravanan Sekar <sravanhome@gmail.com>
->>>> + */
->>>> +
->>>> +#include <linux/interrupt.h>
->>>> +#include <linux/irqchip.h>
->>>> +#include <linux/of_irq.h>
->>>> +#include <linux/of_address.h>
->>>> +
->>>> +#include <dt-bindings/interrupt-controller/arm-gic.h>
->>>> +
->>>> +#define INTC_GIC_INTERRUPT_PIN		13
->>>
->>> Why isn't that coming from the DT?
->>
->> DT numbering is taken irqchip local, by which hwirq is directly used to
->> calculate the offset into register when it is shared. Even if this is
->> directly from DT, I need the value to offset into the register. So maintianed
->> inside the driver.
-> 
-> This is normally shown as a property from DT, and is relative to the
-> parent irqchip. And I don't understand what you mean by "offset into the
-> register". The only use of this is to allocate the corresponding GIC
+This requires glue logic putting on top to make use of it - something the
+next patch provides.
 
-We have two SoC's (s500, s700) with shared external interrupt control
-register and one (s900) with dedicated register for each external
-interrupt line. So the DT property "actions,sirq-offset" was introduced
-to access the register.
+Changelog
 
-In case of s500, s700 when it's shared, the idea is to use the "hwirq"
-variable value to offset into the control register INTC_EXTCTL. Even if
-3 cell GIC value is directly used like
+v0:
+- replace algorithm identifiers with strings (Roberto Sassu)
+- don't check key capabilities (Roberto Sassu)
+- replace "public_key:%08x%08x" with "id:%08x%08x" (Roberto Sassu)
+- switch from session to user keyring (Roberto Sassu)
+- search user keyring only if no keyring was provided, so that the
+  trustworthiness of the signature depends on the type of keyring
+  containing the key used for signature verification (Roberto Sassu)
+- don't parse MPIs (Roberto Sassu)
+- introduce pgp_verify_sig() (Roberto Sassu)
+- fix digest calculation for V3 signature packets (Roberto Sassu)
+- fix style issues (Roberto Sassu)
 
-interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
+Signed-off-by: David Howells <dhowells@redhat.com>
+Co-developed-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ crypto/asymmetric_keys/Makefile        |   3 +-
+ crypto/asymmetric_keys/pgp_signature.c | 428 +++++++++++++++++++++++++
+ include/linux/pgp_sig.h                |  21 ++
+ 3 files changed, 451 insertions(+), 1 deletion(-)
+ create mode 100644 crypto/asymmetric_keys/pgp_signature.c
+ create mode 100644 include/linux/pgp_sig.h
 
-then hwirq - 13 is needed internally everywhere in this driver.
+diff --git a/crypto/asymmetric_keys/Makefile b/crypto/asymmetric_keys/Makefile
+index a68f9a5d1746..e2aeb2a4b6a6 100644
+--- a/crypto/asymmetric_keys/Makefile
++++ b/crypto/asymmetric_keys/Makefile
+@@ -94,4 +94,5 @@ obj-$(CONFIG_PGP_LIBRARY) += pgp_library.o
+ 
+ obj-$(CONFIG_PGP_KEY_PARSER) += pgp_key_parser.o
+ pgp_key_parser-y := \
+-	pgp_public_key.o
++	pgp_public_key.o \
++	pgp_signature.o
+diff --git a/crypto/asymmetric_keys/pgp_signature.c b/crypto/asymmetric_keys/pgp_signature.c
+new file mode 100644
+index 000000000000..771cdabf5cf9
+--- /dev/null
++++ b/crypto/asymmetric_keys/pgp_signature.c
+@@ -0,0 +1,428 @@
++/* PGP public key signature verification [RFC 4880]
++ *
++ * Copyright (C) 2011 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells@redhat.com)
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public Licence
++ * as published by the Free Software Foundation; either version
++ * 2 of the Licence, or (at your option) any later version.
++ */
++
++#define pr_fmt(fmt) "PGPSIG: "fmt
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/slab.h>
++#include <linux/mpi.h>
++#include <linux/sched.h>
++#include <linux/cred.h>
++#include <linux/key.h>
++#include <linux/pgp_sig.h>
++#include <linux/pgplib.h>
++#include <linux/err.h>
++#include <keys/asymmetric-type.h>
++#include <crypto/public_key.h>
++#include <crypto/hash.h>
++#include <crypto/hash_info.h>
++#include "pgp_parser.h"
++
++static const struct {
++	enum hash_algo algo : 8;
++} pgp_pubkey_hash[PGP_HASH__LAST] = {
++	[PGP_HASH_MD5].algo		= HASH_ALGO_MD5,
++	[PGP_HASH_SHA1].algo		= HASH_ALGO_SHA1,
++	[PGP_HASH_RIPE_MD_160].algo	= HASH_ALGO_RIPE_MD_160,
++	[PGP_HASH_SHA256].algo		= HASH_ALGO_SHA256,
++	[PGP_HASH_SHA384].algo		= HASH_ALGO_SHA384,
++	[PGP_HASH_SHA512].algo		= HASH_ALGO_SHA512,
++	[PGP_HASH_SHA224].algo		= HASH_ALGO_SHA224,
++};
++
++struct pgp_sig_verify {
++	struct public_key_signature sig;
++	const struct public_key *pub;
++	struct key *key;
++	u8 signed_hash_msw[2];
++	struct shash_desc hash;
++};
++
++/*
++ * Find a key in the given keyring by issuer and authority.
++ */
++static struct key *pgp_request_asymmetric_key(struct key *keyring,
++					      struct pgp_sig_parameters *params)
++{
++	key_ref_t key;
++	char *id;
++
++	if (params->pubkey_algo >= PGP_PUBKEY__LAST) {
++		WARN(1, "Unknown public key algorithm %d\n",
++		     params->pubkey_algo);
++		return ERR_PTR(-EINVAL);
++	}
++
++	/* Construct an identifier. */
++	id = kasprintf(GFP_KERNEL,
++		       "id:%08x%08x",
++		       be32_to_cpu(params->issuer32[0]),
++		       be32_to_cpu(params->issuer32[1]));
++	if (!id)
++		return ERR_PTR(-ENOMEM);
++
++	pr_debug("Look up key: \"%s\"\n", id);
++
++	if (!keyring)
++		keyring = current_cred()->user->uid_keyring;
++
++	if (!keyring)
++		return ERR_PTR(-ENOKEY);
++
++	key = keyring_search(make_key_ref(keyring, 1),
++			     &key_type_asymmetric, id);
++
++	if (IS_ERR(key))
++		pr_debug("Request for public key '%s' err %ld\n",
++			 id, PTR_ERR(key));
++
++	kfree(id);
++
++	if (IS_ERR(key)) {
++		switch (PTR_ERR(key)) {
++			/* Hide some search errors */
++		case -EACCES:
++		case -ENOTDIR:
++		case -EAGAIN:
++			return ERR_PTR(-ENOKEY);
++		default:
++			return ERR_CAST(key);
++		}
++	}
++
++	kleave(" = 0 [%x]", key_serial(key_ref_to_ptr(key)));
++	return key_ref_to_ptr(key);
++}
++
++struct pgp_sig_parse_context {
++	struct pgp_parse_context pgp;
++	struct pgp_sig_parameters params;
++};
++
++static int pgp_parse_signature(struct pgp_parse_context *context,
++			       enum pgp_packet_tag type,
++			       u8 headerlen,
++			       const u8 *data,
++			       size_t datalen)
++{
++	struct pgp_sig_parse_context *ctx =
++		container_of(context, struct pgp_sig_parse_context, pgp);
++
++	return pgp_parse_sig_params(&data, &datalen, &ctx->params);
++}
++
++/**
++ * pgp_verify_sig_begin - Begin the process of verifying a signature
++ * @keyring: Ring of keys to search for the public key
++ * @sigdata: Signature blob
++ * @siglen: Length of signature blob
++ *
++ * This involves allocating the hash into which first the data and then the
++ * metadata will be put, and parsing the signature to check that it matches one
++ * of the keys in the supplied keyring.
++ */
++static struct pgp_sig_verify *pgp_verify_sig_begin(struct key *keyring,
++						   const u8 *sigdata,
++						   size_t siglen)
++{
++	struct pgp_sig_parse_context p;
++	const struct public_key *pub;
++	struct pgp_sig_verify *ctx;
++	struct crypto_shash *tfm;
++	struct key *key;
++	const char *pkey_algo;
++	size_t digest_size, desc_size;
++	int ret;
++
++	kenter(",,%zu", siglen);
++
++	p.pgp.types_of_interest = (1 << PGP_PKT_SIGNATURE);
++	p.pgp.process_packet = pgp_parse_signature;
++	ret = pgp_parse_packets(sigdata, siglen, &p.pgp);
++	if (ret < 0)
++		return ERR_PTR(ret);
++
++	/* Check the signature itself for usefulness */
++	if (p.params.pubkey_algo >= PGP_PUBKEY__LAST)
++		goto unsupported_pkey_algo;
++	pkey_algo = pgp_to_public_key_algo[p.params.pubkey_algo];
++	if (!pkey_algo)
++		goto unsupported_pkey_algo;
++
++	if (p.params.hash_algo >= PGP_HASH__LAST ||
++	    !pgp_hash_algorithms[p.params.hash_algo]) {
++		pr_debug("Unsupported hash algorithm %u\n",
++			 p.params.hash_algo);
++		return ERR_PTR(-ENOPKG);
++	}
++
++	pr_debug("Signature generated with %s hash\n",
++		 pgp_hash_algorithms[p.params.hash_algo]);
++
++	if (p.params.signature_type != PGP_SIG_BINARY_DOCUMENT_SIG &&
++	    p.params.signature_type != PGP_SIG_STANDALONE_SIG) {
++		/* We don't want to canonicalise */
++		kleave(" = -EOPNOTSUPP [canon]");
++		return ERR_PTR(-EOPNOTSUPP);
++	}
++
++	/* Now we need to find a key to use */
++	key = pgp_request_asymmetric_key(keyring, &p.params);
++	if (IS_ERR(key)) {
++		kleave(" = %ld [reqkey]", PTR_ERR(key));
++		return ERR_CAST(key);
++	}
++	pub = key->payload.data[asym_crypto];
++
++	if (strcmp(pkey_algo, pub->pkey_algo)) {
++		kleave(" = -EKEYREJECTED [wrong pk algo]");
++		ret = -EKEYREJECTED;
++		goto error_have_key;
++	}
++
++	/* Allocate the hashing algorithm we're going to need and find out how
++	 * big the hash operational data will be.
++	 */
++	tfm = crypto_alloc_shash(pgp_hash_algorithms[p.params.hash_algo], 0, 0);
++	if (IS_ERR(tfm)) {
++		ret = (PTR_ERR(tfm) == -ENOENT ? -ENOPKG : PTR_ERR(tfm));
++		goto error_have_key;
++	}
++
++	desc_size = crypto_shash_descsize(tfm);
++	digest_size = crypto_shash_digestsize(tfm);
++
++	/* We allocate the hash operational data storage on the end of our
++	 * context data.
++	 */
++	ctx = kzalloc(sizeof(*ctx) + desc_size + digest_size, GFP_KERNEL);
++	if (!ctx) {
++		ret = -ENOMEM;
++		goto error_have_shash;
++	}
++
++	ctx->key		= key;
++	ctx->pub		= pub;
++	ctx->sig.encoding	= "pkcs1";
++	ctx->sig.pkey_algo	= pub->pkey_algo;
++	ctx->sig.hash_algo	= pgp_hash_algorithms[p.params.hash_algo];
++	ctx->sig.digest		= (u8 *)ctx + sizeof(*ctx) + desc_size;
++	ctx->sig.digest_size	= digest_size;
++	ctx->hash.tfm		= tfm;
++	ctx->hash.flags		= CRYPTO_TFM_REQ_MAY_SLEEP;
++
++	ret = crypto_shash_init(&ctx->hash);
++	if (ret < 0)
++		goto error_have_shash;
++
++	kleave(" = %p", ctx);
++	return ctx;
++
++error_have_shash:
++	crypto_free_shash(tfm);
++error_have_key:
++	key_put(key);
++	return ERR_PTR(ret);
++
++unsupported_pkey_algo:
++	pr_debug("Unsupported public key algorithm %u\n",
++		 p.params.pubkey_algo);
++	return ERR_PTR(-ENOPKG);
++}
++
++/*
++ * Load data into the hash
++ */
++static int pgp_verify_sig_add_data(struct pgp_sig_verify *ctx,
++				   const void *data, size_t datalen)
++{
++	return crypto_shash_update(&ctx->hash, data, datalen);
++}
++
++struct pgp_sig_digest_context {
++	struct pgp_parse_context pgp;
++	struct pgp_sig_verify *ctx;
++};
++
++/*
++ * Extract required metadata from the signature packet and add what we need to
++ * to the hash.
++ */
++static int pgp_digest_signature(struct pgp_parse_context *context,
++				enum pgp_packet_tag type,
++				u8 headerlen,
++				const u8 *data,
++				size_t datalen)
++{
++	struct pgp_sig_digest_context *pgp_ctx =
++		container_of(context, struct pgp_sig_digest_context, pgp);
++	struct pgp_sig_verify *ctx = pgp_ctx->ctx;
++	struct public_key_signature *sig = &ctx->sig;
++	enum pgp_signature_version version;
++	unsigned int nbytes, nbytes_alloc;
++	int ret;
++
++	kenter(",%u,%u,,%zu", type, headerlen, datalen);
++
++	version = *data;
++	if (version == PGP_SIG_VERSION_3) {
++		/* We just include an excerpt of the metadata from a V3
++		 * signature.
++		 */
++		crypto_shash_update(&ctx->hash, data + 2, 5);
++		data += sizeof(struct pgp_signature_v3_packet);
++		datalen -= sizeof(struct pgp_signature_v3_packet);
++	} else if (version == PGP_SIG_VERSION_4) {
++		/* We add the whole metadata header and some of the hashed data
++		 * for a V4 signature, plus a trailer.
++		 */
++		size_t hashedsz, unhashedsz;
++		u8 trailer[6];
++
++		hashedsz = 4 + 2 + (data[4] << 8) + data[5];
++		crypto_shash_update(&ctx->hash, data, hashedsz);
++
++		trailer[0] = version;
++		trailer[1] = 0xffU;
++		trailer[2] = hashedsz >> 24;
++		trailer[3] = hashedsz >> 16;
++		trailer[4] = hashedsz >> 8;
++		trailer[5] = hashedsz;
++
++		crypto_shash_update(&ctx->hash, trailer, 6);
++		data += hashedsz;
++		datalen -= hashedsz;
++
++		unhashedsz = 2 + (data[0] << 8) + data[1];
++		data += unhashedsz;
++		datalen -= unhashedsz;
++	}
++
++	if (datalen <= 2) {
++		kleave(" = -EBADMSG");
++		return -EBADMSG;
++	}
++
++	/* There's a quick check on the hash available. */
++	ctx->signed_hash_msw[0] = *data++;
++	ctx->signed_hash_msw[1] = *data++;
++	datalen -= 2;
++
++	/* And then the cryptographic data, which we'll need for the
++	 * algorithm.
++	 */
++	ret = mpi_key_length(data, datalen, NULL, &nbytes);
++	if (ret < 0)
++		return ret;
++
++	if (datalen != nbytes + 2) {
++		kleave(" = -EBADMSG [trailer %zu]", datalen);
++		return -EBADMSG;
++	}
++
++	nbytes_alloc = DIV_ROUND_UP(nbytes, 8) * 8;
++
++	sig->s = kzalloc(nbytes_alloc, GFP_KERNEL);
++	if (!sig->s)
++		return -ENOMEM;
++
++	memcpy(sig->s + nbytes_alloc - nbytes, data + 2, nbytes);
++	sig->s_size = nbytes_alloc;
++
++	kleave(" = 0");
++	return 0;
++}
++
++/*
++ * The data is now all loaded into the hash; load the metadata, finalise the
++ * hash and perform the verification step.
++ */
++static int pgp_verify_sig_end(struct pgp_sig_verify *ctx,
++			      const u8 *digest, size_t digest_size,
++			      const u8 *sigdata, size_t siglen)
++{
++	struct pgp_sig_digest_context p;
++	int ret;
++
++	kenter("");
++
++	/* Firstly we add metadata, starting with some of the data from the
++	 * signature packet
++	 */
++	p.pgp.types_of_interest = (1 << PGP_PKT_SIGNATURE);
++	p.pgp.process_packet = pgp_digest_signature;
++	p.ctx = ctx;
++	ret = pgp_parse_packets(sigdata, siglen, &p.pgp);
++	if (ret < 0)
++		goto error;
++
++	ret = crypto_shash_final(&ctx->hash, ctx->sig.digest);
++	if (ret < 0)
++		goto error;
++
++	if (digest && digest_size == crypto_shash_digestsize(ctx->hash.tfm))
++		memcpy(ctx->sig.digest, digest, digest_size);
++
++	pr_debug("hash: %*phN\n", ctx->sig.digest_size, ctx->sig.digest);
++
++	if (ctx->sig.digest[0] != ctx->signed_hash_msw[0] ||
++	    ctx->sig.digest[1] != ctx->signed_hash_msw[1]) {
++		pr_err("Hash (%02x%02x) mismatch against quick check (%02x%02x)\n",
++		       ctx->sig.digest[0], ctx->sig.digest[1],
++		       ctx->signed_hash_msw[0], ctx->signed_hash_msw[1]);
++		ret = -EKEYREJECTED;
++		return ret;
++	}
++
++	ret = verify_signature(ctx->key, &ctx->sig);
++
++error:
++	kleave(" = %d", ret);
++	return ret;
++}
++
++/*
++ * Cancel an in-progress data loading
++ */
++static void pgp_verify_sig_cancel(struct pgp_sig_verify *ctx)
++{
++	kenter("");
++
++	/* !!! Do we need to tell the crypto layer to cancel too? */
++	key_put(ctx->key);
++	crypto_free_shash(ctx->hash.tfm);
++	kfree(ctx->sig.s);
++	kfree(ctx);
++
++	kleave("");
++}
++
++int pgp_verify_sig(struct key *keyring, const u8 *raw_data, size_t raw_datalen,
++		   const u8 *digest, size_t digest_size, const u8 *sig_data,
++		   size_t sig_datalen)
++{
++	struct pgp_sig_verify *sig;
++	int ret;
++
++	sig = pgp_verify_sig_begin(keyring, sig_data, sig_datalen);
++	if (IS_ERR(sig))
++		return PTR_ERR(sig);
++
++	ret = pgp_verify_sig_add_data(sig, raw_data, raw_datalen);
++	if (ret < 0)
++		goto error_cancel;
++
++	ret = pgp_verify_sig_end(sig, digest, digest_size,
++				 sig_data, sig_datalen);
++error_cancel:
++	pgp_verify_sig_cancel(sig);
++	return ret;
++}
+diff --git a/include/linux/pgp_sig.h b/include/linux/pgp_sig.h
+new file mode 100644
+index 000000000000..d7c6fb6c61aa
+--- /dev/null
++++ b/include/linux/pgp_sig.h
+@@ -0,0 +1,21 @@
++/* PGP signature processing
++ *
++ * Copyright (C) 2014 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells@redhat.com)
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public Licence
++ * as published by the Free Software Foundation; either version
++ * 2 of the Licence, or (at your option) any later version.
++ */
++
++#ifndef _LINUX_PGP_SIG_H
++#define _LINUX_PGP_SIG_H
++
++struct key;
++
++int pgp_verify_sig(struct key *keyring, const u8 *raw_data, size_t raw_datalen,
++		   const u8 *digest, size_t digest_size, const u8 *sig_data,
++		   size_t sig_datalen);
++
++#endif /* _LINUX_PGP_SIG_H */
+-- 
+2.17.1
 
-In short, this value is defined inside driver for the ease of referring
-the offset with the register.
-
-Yes, it is possible to change the driver logic and use 3 cell interrupts
-from DT.
-
-> interrupt, and this definitely shouldn't be harcoded.
-> 
->>
->> Should it make sense to move it to DT and use another macro (different name)
->> for offsetting?
->>
->>>
->>>> +#define INTC_EXTCTL_PENDING		BIT(0)
->>>> +#define INTC_EXTCTL_CLK_SEL		BIT(4)
->>>> +#define INTC_EXTCTL_EN			BIT(5)
->>>> +#define	INTC_EXTCTL_TYPE_MASK		GENMASK(6, 7)
->>>> +#define	INTC_EXTCTL_TYPE_HIGH		0
->>>> +#define	INTC_EXTCTL_TYPE_LOW		BIT(6)
->>>> +#define	INTC_EXTCTL_TYPE_RISING		BIT(7)
->>>> +#define	INTC_EXTCTL_TYPE_FALLING	(BIT(6) | BIT(7))
->>>> +
->>>> +#define get_sirq_offset(x)	chip_data->sirq[x].offset
->>>> +
->>>> +/* Per SIRQ data */
->>>> +struct owl_sirq {
->>>> +	u16 offset;
->>>> +	/* software is responsible to clear interrupt pending bit when
->>>> +	 * type is edge triggered. This value is for per SIRQ line.
->>>> +	 */
->>>
->>> Please follow the normal multi-line comment style:
->>>
->>> /*
->>>   * This is a comment, starting with a capital letter and ending with
->>>   * a full stop.
->>>   */
->>
->> Sure, thanks.
->>
->>>
->>>> +	bool type_edge;
->>>> +};
->>>> +
->>>> +struct owl_sirq_chip_data {
->>>> +	void __iomem *base;
->>>> +	raw_spinlock_t lock;
->>>> +	/* some SoC's share the register for all SIRQ lines, so maintain
->>>> +	 * register is shared or not here. This value is from DT.
->>>> +	 */
->>>> +	bool shared_reg;
->>>> +	struct owl_sirq *sirq;
->>>
->>> Given that this driver handles at most 3 interrupts, do we need the
->>> overhead of a pointer and an additional allocation, while we could store
->>> all of this data in the space taken by the pointer itself?
->>>
->>> Something like:
->>>
->>> 	u16 offset[3];
->>> 	u8  trigger; // Bit mask indicating edge-triggered interrupts
->>>
->>> and we're done.
->>
->> Sure, I will modify with one allocation.
->>
->>>
->>>> +};
->>>> +
->>>> +static struct owl_sirq_chip_data *sirq_data;
->>>> +
->>>> +static unsigned int sirq_read_extctl(struct irq_data *data)
->>>
->>> Why isn't this taking a struct owl_sirq_chip_data as a parameter instead
->>> of always passing irq_data?
->>>
->>> Also, this should return a well defined size, which "unsigned int"
->>> isn't. Make that u32.
->>
->> Sure, will adapt this.
->>
->>>
->>>> +{
->>>> +	struct owl_sirq_chip_data *chip_data = data->chip_data;
->>>> +	unsigned int val;
->>>
->>> u32;
->>
->> Sure.
->>
->>>
->>>> +
->>>> +	val = readl_relaxed(chip_data->base + get_sirq_offset(data->hwirq));
->>>> +	if (chip_data->shared_reg)
->>>> +		val = (val >> (2 - data->hwirq) * 8) & 0xff;
->>>> +
->>>> +	return val;
->>>> +}
->>>> +
->>>> +static void sirq_write_extctl(struct irq_data *data, unsigned int extctl)
->>>
->>> Same comments.
->>
->> Sure.
->>
->>>
->>>> +{
->>>> +	struct owl_sirq_chip_data *chip_data = data->chip_data;
->>>> +	unsigned int val;
->>>
->>> u32;
->>
->> Sure.
->>
->>>
->>>> +
->>>> +	if (chip_data->shared_reg) {
->>>> +		val = readl_relaxed(chip_data->base +
->>>> +				get_sirq_offset(data->hwirq));
->>>
->>> Single line, please.
->>
->> Sure.
->>
->>>
->>>> +		val &= ~(0xff << (2 - data->hwirq) * 8);
->>>> +		extctl &= 0xff;
->>>> +		extctl = (extctl << (2 - data->hwirq) * 8) | val;
->>>> +	}
->>>> +
->>>> +	writel_relaxed(extctl, chip_data->base +
->>>> +			get_sirq_offset(data->hwirq));
->>>
->>> Single line.
->>
->> Sure.
->>
->>>
->>>> +}
->>>> +
->>>> +static void owl_sirq_ack(struct irq_data *data)
->>>> +{
->>>> +	struct owl_sirq_chip_data *chip_data = data->chip_data;
->>>> +	unsigned int extctl;
->>>> +	unsigned long flags;
->>>> +
->>>> +	/* software must clear external interrupt pending, when interrupt type
->>>> +	 * is edge triggered, so we need per SIRQ based clearing.
->>>> +	 */
->>>> +	if (chip_data->sirq[data->hwirq].type_edge) {
->>>> +		raw_spin_lock_irqsave(&chip_data->lock, flags);
->>>> +
->>>> +		extctl = sirq_read_extctl(data);
->>>> +		extctl |= INTC_EXTCTL_PENDING;
->>>> +		sirq_write_extctl(data, extctl);
->>>> +
->>>> +		raw_spin_unlock_irqrestore(&chip_data->lock, flags);
->>>
->>> It would make a lot more sense if the lock was taken inside the accessor
->>> so that the rest of the driver doesn't have to deal with it. Something
->>> along of the line of:
->>>
->>> static void sirq_clear_set_extctl(struct owl_sirq_chip_data *d,
->>>                                    u32 clear, u32 set)
->>> {
->>> 	unsigned long flags;
->>> 	u32 val;
->>>
->>> 	raw_spin_lock_irqsave(&d->lock, flags);
->>> 	val = sirq_read_extctl(d);
->>> 	val &= ~clear;
->>> 	val |= set;
->>> 	sirq_write_extctl(d, val);
->>> 	raw_spin_unlock_irqrestore(&d->lock, flags)
->>> }
->>>
->>> And use that throughout the driver.
->>
->> Thanks for sharing the function with lock, will update it.
->>
->>>
->>>> +	}
->>>> +	irq_chip_ack_parent(data);
->>>
->>> That being said, I'm terribly sceptical about this whole function. At
->>> the end of the day, the flow handler used by the GIC is
->>> handle_fasteoi_irq, which doesn't call the ack callback at all. So how
->>> does this work?
->>
->> That's my mistake. I will move this function for ".irq_eoi". Will that be fine?
->> In short, all the devices/interrupt controller connected to sirq lines are level
->> triggered in my board. So, I couldn't test this part last time.
-> 
-> If you don't have any way to test it, is it worth it to have that code
-> in? I'd prefer you add code that actually works, even if that's for a
-> subset of the capability of the HW, rather than add code that cannot be
-> exercised.
-
-Ok, it wasn't case now. I have the hardware connected on these lines and
-tested ok with the implementation moved to .irq.eoi.
-
-> 
->>
->>>
->>>> +}
->>>> +
->>>> +static void owl_sirq_mask(struct irq_data *data)
->>>> +{
->>>> +	struct owl_sirq_chip_data *chip_data = data->chip_data;
->>>> +	unsigned int extctl;
->>>> +	unsigned long flags;
->>>> +
->>>> +	raw_spin_lock_irqsave(&chip_data->lock, flags);
->>>> +
->>>> +	extctl = sirq_read_extctl(data);
->>>> +	extctl &= ~(INTC_EXTCTL_EN);
->>>> +	sirq_write_extctl(data, extctl);
->>>> +
->>>> +	raw_spin_unlock_irqrestore(&chip_data->lock, flags);
->>>> +	irq_chip_mask_parent(data);
->>>> +}
->>>> +
->>>> +static void owl_sirq_unmask(struct irq_data *data)
->>>> +{
->>>> +	struct owl_sirq_chip_data *chip_data = data->chip_data;
->>>> +	unsigned int extctl;
->>>> +	unsigned long flags;
->>>> +
->>>> +	raw_spin_lock_irqsave(&chip_data->lock, flags);
->>>> +
->>>> +	extctl = sirq_read_extctl(data);
->>>> +	extctl |= INTC_EXTCTL_EN;
->>>> +	sirq_write_extctl(data, extctl);
->>>> +
->>>> +	raw_spin_unlock_irqrestore(&chip_data->lock, flags);
->>>> +	irq_chip_unmask_parent(data);
->>>> +}
->>>> +
->>>> +/* PAD_PULLCTL needs to be defined in pinctrl */
->>>> +static int owl_sirq_set_type(struct irq_data *data, unsigned int flow_type)
->>>> +{
->>>> +	struct owl_sirq_chip_data *chip_data = data->chip_data;
->>>> +	unsigned int extctl, type;
->>>> +	unsigned long flags;
->>>> +
->>>> +	switch (flow_type) {
->>>> +	case IRQF_TRIGGER_LOW:
->>>> +		type = INTC_EXTCTL_TYPE_LOW;
->>>> +		break;
->>>> +	case IRQF_TRIGGER_HIGH:
->>>> +		type = INTC_EXTCTL_TYPE_HIGH;
->>>> +		break;
->>>> +	case IRQF_TRIGGER_FALLING:
->>>> +		type = INTC_EXTCTL_TYPE_FALLING;
->>>> +		chip_data->sirq[data->hwirq].type_edge = true;
->>>> +		break;
->>>> +	case IRQF_TRIGGER_RISING:
->>>> +		type = INTC_EXTCTL_TYPE_RISING;
->>>> +		chip_data->sirq[data->hwirq].type_edge = true;
->>>> +		break;
->>>
->>> So let's say I configure an interrupt as edge, then switch it to level.
->>> The edge setting remains and bad things will happen.
->>
->> Ok, I will update the value to false for edge cases.
->>
->>>
->>>> +	default:
->>>> +		return  -EINVAL;
->>>> +	}
->>>> +
->>>> +	raw_spin_lock_irqsave(&chip_data->lock, flags);
->>>> +
->>>> +	extctl = sirq_read_extctl(data);
->>>> +	extctl &= ~INTC_EXTCTL_TYPE_MASK;
->>>> +	extctl |= type;
->>>> +	sirq_write_extctl(data, extctl);
->>>> +
->>>> +	raw_spin_unlock_irqrestore(&chip_data->lock, flags);
->>>> +	data = data->parent_data;
->>>> +	return irq_chip_set_type_parent(data, flow_type);
->>>> +}
->>>> +
->>>> +static struct irq_chip owl_sirq_chip = {
->>>> +	.name		= "owl-sirq",
->>>> +	.irq_ack	= owl_sirq_ack,
->>>> +	.irq_mask	= owl_sirq_mask,
->>>> +	.irq_unmask	= owl_sirq_unmask,
->>>> +	.irq_set_type	= owl_sirq_set_type,
->>>> +	.irq_eoi	= irq_chip_eoi_parent,
->>>> +	.irq_retrigger	= irq_chip_retrigger_hierarchy,
->>>> +};
->>>> +
->>>> +static int owl_sirq_domain_alloc(struct irq_domain *domain, unsigned int virq,
->>>> +				 unsigned int nr_irqs, void *arg)
->>>> +{
->>>> +	struct irq_fwspec *fwspec = arg;
->>>> +	struct irq_fwspec parent_fwspec = {
->>>> +		.param_count	= 3,
->>>> +		.param[0]	= GIC_SPI,
->>>> +		.param[1]	= fwspec->param[0] + INTC_GIC_INTERRUPT_PIN,
->>>> +		.param[2]	= fwspec->param[1],
->>>
->>> param[2] is supposed to be the trigger configuration. Your driver
->>> supports LEVEL_LOW and EDGE_FALLING, which the GIC cannot handle. And
->>> yet you're passing it directly.
->>
->> That's my mistake. I will translate and restrict LEVEL_HIGH and EDGE_RISING
->> for GIC here. Thanks.
->>
->>>
->>>> +		.fwnode		= domain->parent->fwnode,
->>>> +	};
->>>> +
->>>> +	if (WARN_ON(nr_irqs != 1))
->>>> +		return -EINVAL;
->>>> +
->>>> +	irq_domain_set_hwirq_and_chip(domain, virq, fwspec->param[0],
->>>> +				      &owl_sirq_chip,
->>>> +				      domain->host_data);
->>>> +
->>>> +	return irq_domain_alloc_irqs_parent(domain, virq, nr_irqs,
->>>> +					    &parent_fwspec);
->>>> +}
->>>> +
->>>> +static const struct irq_domain_ops sirq_domain_ops = {
->>>> +	.alloc	= owl_sirq_domain_alloc,
->>>> +	.free	= irq_domain_free_irqs_common,
->>>
->>> No translation method? Again, how does this work?
->>
->> Missed this part, I will update this next version.
->>
->>>
->>>> +};
->>>> +
->>>> +static void owl_sirq_clk_init(int offset, int hwirq)
->>>> +{
->>>> +	unsigned int val;
->>>> +
->>>> +	/* register default clock is 32Khz, change to 24Mhz only when defined */
->>>> +	val = readl_relaxed(sirq_data->base + offset);
->>>> +	if (sirq_data->shared_reg)
->>>> +		val |= INTC_EXTCTL_CLK_SEL << (2 - hwirq) * 8;
->>>> +	else
->>>> +		val |= INTC_EXTCTL_CLK_SEL;
->>>> +
->>>> +	writel_relaxed(val, sirq_data->base + offset);
->>>> +}
->>>
->>> I've asked questions about this in the first review, and you didn't
->>> answer. Why is it even configurable? How do you choose the sample rate?
->>> What's the drawback of always setting it one way or the other?
->>
->> The provision for selecting sampling rate here seems meant for power
->> management, which I wasn't aware of. So this configuration doesn't need
->> to come from DT.
->>
->> Possibly this needs to be implemented as "syscore_ops" suspend and resume
->> calls. Should I register this as "register_syscore_ops" or leaving 32MHz
->> is fine?
-> 
-> I think this should be entirely hidden from the interrupt controller,
-> and set by firmware or by the platform clock setup.
-
-Agreed!
-
-> 
->>
->>>
->>>> +
->>>> +static int __init owl_sirq_of_init(struct device_node *node,
->>>> +					struct device_node *parent)
->>>> +{
->>>> +	struct irq_domain *domain, *domain_parent;
->>>> +	int ret = 0, i, sirq_cnt = 0;
->>>> +	struct owl_sirq_chip_data *chip_data;
->>>> +
->>>> +	sirq_cnt = of_property_count_u32_elems(node, "actions,sirq-offset");
->>>> +	if (sirq_cnt <= 0) {
->>>> +		pr_err("owl_sirq: register offset not specified\n");
->>>> +		return -EINVAL;
->>>> +	}
->>>> +
->>>> +	chip_data = kzalloc(sizeof(*chip_data), GFP_KERNEL);
->>>> +	if (!chip_data)
->>>> +		return -ENOMEM;
->>>> +	sirq_data = chip_data;
->>>> +
->>>> +	chip_data->sirq = kcalloc(sirq_cnt, sizeof(*chip_data->sirq),
->>>> +				GFP_KERNEL);
->>>> +	if (!chip_data->sirq)
->>>> +		goto out_free;
->>>> +
->>>> +	raw_spin_lock_init(&chip_data->lock);
->>>> +	chip_data->base = of_iomap(node, 0);
->>>> +	if (!chip_data->base) {
->>>> +		pr_err("owl_sirq: unable to map sirq register\n");
->>>> +		ret = -ENXIO;
->>>> +		goto out_free;
->>>> +	}
->>>> +
->>>> +	chip_data->shared_reg = of_property_read_bool(node,
->>>> +						"actions,sirq-shared-reg");
->>>> +	for (i = 0; i < sirq_cnt; i++) {
->>>> +		u32 value;
->>>> +
->>>> +		ret = of_property_read_u32_index(node, "actions,sirq-offset",
->>>> +						i, &value);
->>>> +		if (ret)
->>>> +			goto out_unmap;
->>>> +
->>>> +		get_sirq_offset(i) = (u16)value;
->>>> +
->>>> +		ret = of_property_read_u32_index(node, "actions,sirq-clk-sel",
->>>> +						i, &value);
->>>> +		if (ret || !value)
->>>> +			continue;
->>>> +
->>>> +		/* external interrupt controller can be either connect to 32Khz/
->>>> +		 * 24Mhz external/internal clock. This shall be configured for
->>>> +		 * per SIRQ line. It can be defined from DT, failing defaults to
->>>> +		 * 24Mhz clock.
->>>> +		 */
->>>> +		owl_sirq_clk_init(get_sirq_offset(i), i);
->>>> +	}
->>>> +
->>>> +	domain_parent = irq_find_host(parent);
->>>> +	if (!domain_parent) {
->>>> +		pr_err("owl_sirq: interrupt-parent not found\n");
->>>> +		goto out_unmap;
->>>> +	}
->>>> +
->>>> +	domain = irq_domain_add_hierarchy(domain_parent, 0,
->>>> +			sirq_cnt, node,
->>>> +			&sirq_domain_ops, chip_data);
->>>> +	if (!domain) {
->>>> +		ret = -ENOMEM;
->>>> +		goto out_unmap;
->>>> +	}
->>>> +
->>>> +	return 0;
->>>> +
->>>> +out_unmap:
->>>> +	iounmap(chip_data->base);
->>>> +out_free:
->>>> +	kfree(chip_data);
->>>> +	kfree(chip_data->sirq);
->>>> +	return ret;
->>>> +}
->>>> +
->>>> +IRQCHIP_DECLARE(owl_sirq, "actions,owl-sirq", owl_sirq_of_init);
->>>>
->>>
->>> As it stands, this driver is nowhere near ready. I don't even understand
->>> how edge signalling works. Also, I'd appreciate if you could answer my
->>> comments before respining another version.
->>
->> As the previous version wasn't based on hierarchy, which I was working on
->> after your feedback. Apologize!
-> 
-> I must say I've lost track of this driver a while ago. Can you please
-> send whatever you have come up with, and we'll take it from there.
-
-Sure, there is one thing changed, tested the eoi part with the PMIC
-connected on this interrupt line and it works.
-
-Should I send v3 using 3 interrupt cells and re-define the usage of
-hwirq to offsetting?
-
-Thanks,
-Parthi
-
-> 
-> Thanks,
-> 
-> 	M.
-> 
