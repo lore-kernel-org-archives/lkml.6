@@ -7,70 +7,70 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3800C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 04:10:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E316C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 04:10:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B9E82154B
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 04:10:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C6F720871
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 04:10:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="1G3xAoB+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B9E82154B
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="CT3fcOTm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C6F720871
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730873AbeKLOBr (ORCPT
+        id S1730809AbeKLOBr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 12 Nov 2018 09:01:47 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40812 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730691AbeKLOBq (ORCPT
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39742 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730681AbeKLOBq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 09:01:46 -0500
-Received: by mail-wr1-f68.google.com with SMTP id w14-v6so2268499wrt.7
+Received: by mail-wr1-f66.google.com with SMTP id b13so7702472wrx.6
         for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 20:10:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20150623.gappssmtp.com; s=20150623;
         h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
          :references:subject:to:from:cc;
-        bh=Ymv+DfedSWse1fGcGucdcVtGurVXymjViLDtbKDWnp8=;
-        b=1G3xAoB+TJXg7HcUlZatTAQDaXf7+FSg9lNQ4KzW6MO6nlhLXDvlJlPnw619RKwr8M
-         IcNjj1g1ezYD5NPMUYVfVN4P7TGDFwppAJpmznE6iZbauTuwzHiUrz7jMHgeduNWl+/m
-         8xJ4d0D5qQKdzbkXtEIWYsFqET1B1G9OXmA7kADYnarJDvgZVtzxv3OEDwmVBaVVMWSs
-         ZKdZ6jmXu5c8/Wk3mT8Eb4WfFb3t34rWJq02FOc2l7++66BBu8H4MBWefJisGUThDJFp
-         INFMaFMURVOR6ikJxnI+2ig0H4MP8Zmrv/V8ztSCGKLXOjTsz/cggsiQ9bRDiROTNKW/
-         j2mQ==
+        bh=mQtEIYyyCk+GXzdqOc04OLO19t/vZLT1R+ebldxvoRw=;
+        b=CT3fcOTm/B8Kw/oie1zLYfRRIvdnGeb80+y0Yajw8b77s2sp+Aa6quxZezLVkdvF21
+         iBSAZO47roRs0bW+MhriM+Pz+yAyAHJbjTLPcH1NJkRjPb0nEUwMa6+xEPsuFn9jz47O
+         KXuBtK3jioPggG99KqGBHfQdlClFdafvssYoEi4aoYBCRMzvMubbebf7STFrhgruhJ90
+         To/Fcjbu/enJCBjr3wTwI1mxVAXt6HkHQ9ZKVhbZmANnlWUABhGVHoFQDcckXbntwqOK
+         VlBMvnhAMEr5YrSdYcPTxtS9F/oQwJHF/gVXgo4+SUN/QXgrlbRr3s9MWqopHXjdJ+Ip
+         VHvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:date:mime-version
          :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
-        bh=Ymv+DfedSWse1fGcGucdcVtGurVXymjViLDtbKDWnp8=;
-        b=rdiYXcTar/SfRd+u6uxbYDTfD5s8j+R7/16FakMYtmTmVFBs3sqcJMsl3eIXzYDkOA
-         B++xxQYnp+FzZEnNBV0Hp31UcLSI2zR60bjLETSKE4SJeXZBL67mhHOltIE6rZwVVfZB
-         +WTmFig919NxwDzduOFy9H4EnpGDK7Pt9oocO+DV5m4/goFslKzNJutVNaPsBqdpgt9u
-         1lET+QwcRtqUMu1MJRRJf8/is6nlRvhVUw4dhw/ytHw2Je0IuFQGBk1doS5qON40vScm
-         jtf9eTiFJX3SGgFK/R9uqCA8J39uCArre1XzBbY9xdq+sadZK37TefNnHFF8n1g5JOHU
-         xeeQ==
-X-Gm-Message-State: AGRZ1gKkoRsLG5CJBlaJQ3Jl5UxqaZLXXNmZzTUNdOsqlCVdNYQ4hZRc
-        nAZMG2QDlOLaeoUt0S+on32O3g==
-X-Google-Smtp-Source: AJdET5dovg85GrbnCHE2CfumJCJaEVuJNvu+W3raFjQ4YGaOaHCrFA6cIdXLz/GmuOPsJoXx/S6ElQ==
-X-Received: by 2002:adf:9170:: with SMTP id j103-v6mr16280726wrj.217.1541995824845;
+        bh=mQtEIYyyCk+GXzdqOc04OLO19t/vZLT1R+ebldxvoRw=;
+        b=kDOgCzrmDORDvujQnjkBcN3DOPdUJ5tT73+5RpsE5saOM64Yjj5wvqCo0nyrYoiCjO
+         DXpZYAfwb5yKEEsUEToCv/XigFnZTa7EvT+4xuorJyEg5qwZy6QSAmOKWBrsHIrd3ydF
+         I6Ba4GsIzNn7LdQwaCnO2C3cYDCMT/mGc89wRG4qCE3+yutOd/XbF7w+e+ga4CfW6hmt
+         NYuEZ2V+U8P4UQ6/w64tLEBD/lRbvJi8DSjdeafDWg8livsS1me4v8vs1UgUBdMH2zgR
+         vGSdzwahD1vUHUAcageBsaPYO05Q/BT/gXdPbuhVouWG52E1nRJiMaG8caRgZeJVFhet
+         VBwQ==
+X-Gm-Message-State: AGRZ1gLyBaXRbtdTyP8M4BruomyvUCZUZH83NefoHe2hbQZMfD0V9Jhi
+        i2D5mjuhFFPpu4h8kY5M/8ZvlA==
+X-Google-Smtp-Source: AJdET5c7F4ZWIUvtKde8VwnVpC88TVf0lV0W6aPv0LQXAyiqcxXE7UOWtQypjvV+YCPugWAMZgGpgA==
+X-Received: by 2002:adf:94e2:: with SMTP id 89-v6mr15550796wrr.25.1541995824322;
         Sun, 11 Nov 2018 20:10:24 -0800 (PST)
 Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id 6-v6sm2425432wmd.45.2018.11.11.20.10.23
+        by smtp.gmail.com with ESMTPSA id f18-v6sm5462727wre.57.2018.11.11.20.10.23
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 11 Nov 2018 20:10:24 -0800 (PST)
-Message-ID: <5be8fd30.1c69fb81.ad760.c822@mx.google.com>
-Date:   Sun, 11 Nov 2018 20:10:24 -0800 (PST)
+        Sun, 11 Nov 2018 20:10:23 -0800 (PST)
+Message-ID: <5be8fd2f.1c69fb81.d2041.c16d@mx.google.com>
+Date:   Sun, 11 Nov 2018 20:10:23 -0800 (PST)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v4.14.80-223-gaa871c61a152
-X-Kernelci-Branch: linux-4.14.y
+X-Kernelci-Kernel: v4.18.18-351-g3c7d01cd1ddb
+X-Kernelci-Branch: linux-4.18.y
 X-Kernelci-Tree: stable-rc
-In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
-References: <20181111221647.665769131@linuxfoundation.org>
-Subject: Re: [PATCH 4.14 000/222] 4.14.81-stable review
+In-Reply-To: <20181111221707.043394111@linuxfoundation.org>
+References: <20181111221707.043394111@linuxfoundation.org>
+Subject: Re: [PATCH 4.18 000/350] 4.18.19-stable review
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
 From:   "kernelci.org bot" <bot@kernelci.org>
@@ -84,21 +84,21 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-stable-rc/linux-4.14.y boot: 94 boots: 4 failed, 66 passed with 16 offline,=
- 8 conflicts (v4.14.80-223-gaa871c61a152)
+stable-rc/linux-4.18.y boot: 100 boots: 9 failed, 67 passed with 16 offline=
+, 8 conflicts (v4.18.18-351-g3c7d01cd1ddb)
 
 Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.14.y/kernel/v4.14.80-223-gaa871c61a152/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.14.=
-y/kernel/v4.14.80-223-gaa871c61a152/
+-4.18.y/kernel/v4.18.18-351-g3c7d01cd1ddb/
+Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.18.=
+y/kernel/v4.18.18-351-g3c7d01cd1ddb/
 
 Tree: stable-rc
-Branch: linux-4.14.y
-Git Describe: v4.14.80-223-gaa871c61a152
-Git Commit: aa871c61a15249c475462be9156df7a359395ecf
+Branch: linux-4.18.y
+Git Describe: v4.18.18-351-g3c7d01cd1ddb
+Git Commit: 3c7d01cd1ddbc9a886879493eb0fc25482f399d8
 Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
 -rc.git
-Tested: 54 unique boards, 21 SoC families, 15 builds out of 185
+Tested: 57 unique boards, 21 SoC families, 15 builds out of 187
 
 Boot Regressions Detected:
 
@@ -106,53 +106,58 @@ arm:
 
     bcm2835_defconfig:
         bcm2837-rpi-3-b:
-            lab-baylibre: failing since 1 day (last pass: v4.14.79-32-g24f4=
-53c41e18 - first fail: v4.14.80)
+            lab-baylibre: failing since 1 day (last pass: v4.18.17-35-g46c8=
+6a0ac4a1 - first fail: v4.18.18)
 
     multi_v7_defconfig:
         imx6q-sabrelite:
-            lab-baylibre: failing since 1 day (last pass: v4.14.79 - first =
-fail: v4.14.80)
+            lab-baylibre: new failure (last pass: v4.18.17)
         meson8b-odroidc1:
-            lab-baylibre: failing since 1 day (last pass: v4.14.79 - first =
-fail: v4.14.80)
+            lab-baylibre: new failure (last pass: v4.18.17)
         qemu:
-            lab-baylibre: failing since 1 day (last pass: v4.14.79 - first =
-fail: v4.14.80)
+            lab-baylibre: new failure (last pass: v4.18.17)
+        sun8i-h2-plus-libretech-all-h3-cc:
+            lab-baylibre: new failure (last pass: v4.18.17)
+        sun8i-h3-libretech-all-h3-cc:
+            lab-baylibre: new failure (last pass: v4.18.17)
+
+    sunxi_defconfig:
+        sun8i-h2-plus-libretech-all-h3-cc:
+            lab-baylibre: failing since 1 day (last pass: v4.18.17-35-g46c8=
+6a0ac4a1 - first fail: v4.18.18)
+        sun8i-h3-libretech-all-h3-cc:
+            lab-baylibre: failing since 1 day (last pass: v4.18.17-35-g46c8=
+6a0ac4a1 - first fail: v4.18.18)
 
     vexpress_defconfig:
         qemu:
-            lab-baylibre: failing since 1 day (last pass: v4.14.79 - first =
-fail: v4.14.80)
+            lab-baylibre: failing since 1 day (last pass: v4.18.17-35-g46c8=
+6a0ac4a1 - first fail: v4.18.18)
 
 arm64:
 
     defconfig:
         bcm2837-rpi-3-b:
-            lab-baylibre: failing since 1 day (last pass: v4.14.79 - first =
-fail: v4.14.80)
+            lab-baylibre: new failure (last pass: v4.18.17-35-g46c86a0ac4a1)
         meson-gxbb-nanopi-k2:
-            lab-baylibre: failing since 1 day (last pass: v4.14.79 - first =
-fail: v4.14.80)
+            lab-baylibre: new failure (last pass: v4.18.17-35-g46c86a0ac4a1)
         meson-gxbb-p200:
-            lab-baylibre: failing since 1 day (last pass: v4.14.79 - first =
-fail: v4.14.80)
+            lab-baylibre: new failure (last pass: v4.18.17-35-g46c86a0ac4a1)
         meson-gxl-s905x-khadas-vim:
-            lab-baylibre: failing since 1 day (last pass: v4.14.79 - first =
-fail: v4.14.80)
+            lab-baylibre: new failure (last pass: v4.18.17-35-g46c86a0ac4a1)
         meson-gxl-s905x-libretech-cc:
-            lab-baylibre: failing since 1 day (last pass: v4.14.79 - first =
-fail: v4.14.80)
+            lab-baylibre: new failure (last pass: v4.18.17-35-g46c86a0ac4a1)
         qemu:
-            lab-baylibre: failing since 1 day (last pass: v4.14.79 - first =
-fail: v4.14.80)
+            lab-baylibre: new failure (last pass: v4.18.17-35-g46c86a0ac4a1)
+        sun50i-h5-libretech-all-h3-cc:
+            lab-baylibre: new failure (last pass: v4.18.17-35-g46c86a0ac4a1)
 
 x86:
 
     x86_64_defconfig:
         qemu:
-            lab-baylibre: failing since 1 day (last pass: v4.14.79-32-g24f4=
-53c41e18 - first fail: v4.14.80)
+            lab-baylibre: failing since 1 day (last pass: v4.18.17-35-g46c8=
+6a0ac4a1 - first fail: v4.18.18)
 
 Boot Failures Detected:
 
@@ -161,14 +166,21 @@ arm:
     bcm2835_defconfig
         bcm2837-rpi-3-b: 1 failed lab
 
+    sunxi_defconfig
+        sun8i-h2-plus-libretech-all-h3-cc: 1 failed lab
+        sun8i-h3-libretech-all-h3-cc: 1 failed lab
+
     multi_v7_defconfig
         imx6q-sabrelite: 1 failed lab
+        sun8i-h2-plus-libretech-all-h3-cc: 1 failed lab
+        sun8i-h3-libretech-all-h3-cc: 1 failed lab
 
 arm64:
 
     defconfig
         meson-gxbb-nanopi-k2: 1 failed lab
         meson-gxl-s905x-libretech-cc: 1 failed lab
+        sun50i-h5-libretech-all-h3-cc: 1 failed lab
 
 Offline Platforms:
 
@@ -212,12 +224,12 @@ Conflicting Boot Failures Detected: (These likely are not failures as other=
 arm:
 
     multi_v7_defconfig:
-        meson8b-odroidc1:
-            lab-baylibre: FAIL
-            lab-baylibre-seattle: PASS
         qemu:
             lab-baylibre: FAIL
             lab-mhart: PASS
+        meson8b-odroidc1:
+            lab-baylibre: FAIL
+            lab-baylibre-seattle: PASS
 
     vexpress_defconfig:
         qemu:
@@ -227,16 +239,17 @@ arm:
 arm64:
 
     defconfig:
+        bcm2837-rpi-3-b:
+            lab-baylibre: FAIL
+            lab-mhart: PASS
+            lab-baylibre-seattle: PASS
+        meson-gxbb-p200:
+            lab-baylibre: FAIL
+            lab-baylibre-seattle: PASS
         meson-gxl-s905x-khadas-vim:
             lab-baylibre: FAIL
             lab-baylibre-seattle: PASS
         qemu:
-            lab-baylibre: FAIL
-            lab-mhart: PASS
-        meson-gxbb-p200:
-            lab-baylibre: FAIL
-            lab-baylibre-seattle: PASS
-        bcm2837-rpi-3-b:
             lab-baylibre: FAIL
             lab-mhart: PASS
 
