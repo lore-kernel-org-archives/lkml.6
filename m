@@ -2,65 +2,52 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07490C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 02:27:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C46EC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 02:29:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1E0A20862
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 02:27:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1E0A20862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id E845D20871
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 02:29:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E845D20871
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=inbox.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730015AbeKLMSV (ORCPT
+        id S1729986AbeKLMUo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 07:18:21 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:44380 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729482AbeKLMSV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 07:18:21 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 7BA8914B94501;
-        Sun, 11 Nov 2018 18:27:24 -0800 (PST)
-Date:   Sun, 11 Nov 2018 18:20:06 -0800 (PST)
-Message-Id: <20181111.182006.2236972282509498071.davem@davemloft.net>
-To:     yuehaibing@huawei.com
-Cc:     andrew@lunn.ch, f.fainelli@gmail.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net-next] net: phy: marvell: remove set but not used
- variable 'pause'
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1541987250-18687-1-git-send-email-yuehaibing@huawei.com>
-References: <1541987250-18687-1-git-send-email-yuehaibing@huawei.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 11 Nov 2018 18:27:24 -0800 (PST)
+        Mon, 12 Nov 2018 07:20:44 -0500
+Received: from [159.65.145.91] ([159.65.145.91]:45078 "EHLO mail.hanqfast.gq"
+        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S1727492AbeKLMUo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 07:20:44 -0500
+Received: by mail.hanqfast.gq (Postfix, from userid 48)
+        id D37546C6780; Mon, 12 Nov 2018 01:49:51 +0000 (UTC)
+To:     linux-kernel@vger.kernel.org
+Subject: Price enquiry
+X-PHP-Originating-Script: 0:dageed.php
+From:   Daniel Murray <daniel-murray@inbox.ru>
+Reply-To: daniel-murray@list.ru
+MIME-Version: 1.0
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Message-Id: <20181112014953.D37546C6780@mail.hanqfast.gq>
+Date:   Mon, 12 Nov 2018 01:49:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Mon, 12 Nov 2018 01:47:30 +0000
+Hi,friend,
+ 
+This is Daniel Murray and i am from Sinara Group Co.Ltd Group Co.,LTD in Russia.
+We are glad to know about your company from the web and we are interested in your products.
+Could you kindly send us your Latest catalog and price list for our trial order.
+ 
+Best Regards,
+ 
+Daniel Murray
+Purchasing Manager
 
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/net/phy/marvell.c: In function 'm88e1510_config_init':
-> drivers/net/phy/marvell.c:850:7: warning:
->  variable 'pause' set but not used [-Wunused-but-set-variable]
-> 
-> It not used any more after commit 3c1bcc8614db ("net: ethernet: Convert phydev
-> advertize and supported from u32 to link mode")
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Applied.
