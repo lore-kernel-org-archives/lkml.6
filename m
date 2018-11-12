@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C59E2C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 07:07:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F636C43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 07:07:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B00E21582
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 07:07:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6310D21582
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 07:07:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=birdec.tech header.i=@birdec.tech header.b="R6z0QuqR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B00E21582
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=birdec.tech header.i=@birdec.tech header.b="rJKFQUQ3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6310D21582
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=birdec.tech
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731969AbeKLQ7D (ORCPT
+        id S1732033AbeKLQ7H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 11:59:03 -0500
-Received: from host.euro-space.net ([87.117.239.2]:48675 "EHLO
+        Mon, 12 Nov 2018 11:59:07 -0500
+Received: from host.euro-space.net ([87.117.239.2]:53354 "EHLO
         host.euro-space.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729816AbeKLQ7D (ORCPT
+        with ESMTP id S1729816AbeKLQ7G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 11:59:03 -0500
+        Mon, 12 Nov 2018 11:59:06 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=birdec.tech
         ; s=default; h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=KajoBBNZ7pUWOgk7j0GbDhQ7N3Nxsut1xojxqObaNtg=; b=R6z0QuqRvs8ELqTjDpakrl9YuE
-        WxQPB4SW/F4TmYyuhaFqe/oXCDuaQbg2nkcrIdSQVSaTk1M2BR+L4vO+Ovt2e339t9LipRTK4m+ZP
-        1yXyxmSJL6DbVK52Z2rsH7uekRLtz7mOfpgekaSXoM+ZU7nuIE4fykZaLwDcpLO2Q00QbrtotR7dC
-        HQVMZF1TpBDsI8ilkr5hRLsxonWTtpwQCTgIK1AmvVsnKw9U68Sj5nVlcTHocJIHbN74EMgNJpBud
-        5BC58PC+IXfxReodSC9uziFM8OBLEi+wosdF+bLfAfAeZy8MWe+6pgRSud6TWuEU+ZBdcVD7qd+gN
-        X6H5j5lw==;
+        bh=whYD6MxC+aJt0lLAkurxqD0uuCnoZcibs2tNJ2nqJwU=; b=rJKFQUQ3MaSQzzdLLQyRnHZzKv
+        W1pKOsWUqdE1uFJCd3+9Hsrv3fzre2LWKYKl8doeJDccWURrbn/1v8x5yp8/AZiAoblE9KXxXC2Wc
+        aKbLUApLJyezd2429P9U80IqCJa8U5VEIX16Mhu/EW9C2E7UZjDooNZuXjMxAjUi9n5IDa9h07N1a
+        vkadABoDvimTtGSsG/bvWdeWRY/SeoKZwzpeBhA+RUCO9a53eYbJNQ5aO2xtwxILtS8GNWhJMC8NB
+        7+Ja8Z1Vlcw+IAg6xgGsrZxEoDT1J57PYeK+cTEL0q4MgHlzjsgSbOKpPBHWD3t6kR+KGBKcn5MUs
+        j4maKaNQ==;
 Received: from x4e33ae63.dyn.telefonica.de ([78.51.174.99]:51016 helo=gentoo0.localdomain)
         by host.euro-space.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
         (Exim 4.91)
         (envelope-from <kmarinushkin@birdec.tech>)
-        id 1gM6JN-0002vg-Tb; Mon, 12 Nov 2018 07:07:05 +0000
+        id 1gM6JR-0002vg-MN; Mon, 12 Nov 2018 07:07:09 +0000
 From:   Kirill Marinushkin <kmarinushkin@birdec.tech>
 To:     Mark Brown <broonie@kernel.org>
 Cc:     Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
         Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org,
-        Kirill Marinushkin <kmarinushkin@birdec.tech>,
-        devicetree@vger.kernel.org
-Subject: [PATCH v2 1/3] dt-bindings: sound: Add documentation for pcm3060 property out-single-ended
-Date:   Mon, 12 Nov 2018 08:08:32 +0100
-Message-Id: <20181112070834.16979-1-kmarinushkin@birdec.tech>
+        Kirill Marinushkin <kmarinushkin@birdec.tech>
+Subject: [PATCH v2 2/3] ASoC: pcm3060: Add DT property for single-ended output
+Date:   Mon, 12 Nov 2018 08:08:33 +0100
+Message-Id: <20181112070834.16979-2-kmarinushkin@birdec.tech>
 X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20181105112036.GC5365@sirena.org.uk>
+In-Reply-To: <20181112070834.16979-1-kmarinushkin@birdec.tech>
 References: <20181105112036.GC5365@sirena.org.uk>
+ <20181112070834.16979-1-kmarinushkin@birdec.tech>
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
 X-AntiAbuse: Primary Hostname - host.euro-space.net
 X-AntiAbuse: Original Domain - vger.kernel.org
@@ -71,34 +71,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Output of pcm3060 codec may be configured as single-ended or differential
+DAC output may be differential (default) or single-ended.
 
 Signed-off-by: Kirill Marinushkin <kmarinushkin@birdec.tech>
-Cc: devicetree@vger.kernel.org
 ---
- Documentation/devicetree/bindings/sound/pcm3060.txt | 6 ++++++
- 1 file changed, 6 insertions(+)
+ sound/soc/codecs/pcm3060.c | 14 ++++++++++++++
+ sound/soc/codecs/pcm3060.h |  1 +
+ 2 files changed, 15 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/sound/pcm3060.txt b/Documentation/devicetree/bindings/sound/pcm3060.txt
-index 90fcb8523099..97de66932d44 100644
---- a/Documentation/devicetree/bindings/sound/pcm3060.txt
-+++ b/Documentation/devicetree/bindings/sound/pcm3060.txt
-@@ -9,9 +9,15 @@ Required properties:
- - reg : the I2C address of the device for I2C, the chip select
-         number for SPI.
+diff --git a/sound/soc/codecs/pcm3060.c b/sound/soc/codecs/pcm3060.c
+index 494d9d662be8..5f479aa61097 100644
+--- a/sound/soc/codecs/pcm3060.c
++++ b/sound/soc/codecs/pcm3060.c
+@@ -274,9 +274,23 @@ EXPORT_SYMBOL(pcm3060_regmap);
  
-+Optional properties:
-+
-+- ti,out-single-ended: "true" if output is single-ended;
-+                       "false" or not specified if output is differential.
-+
- Examples:
+ /* device */
  
- 	pcm3060: pcm3060@46 {
- 		 compatible = "ti,pcm3060";
- 		 reg = <0x46>;
-+		 ti,out-single-ended = "true";
- 	};
++static void pcm3060_parse_dt(const struct device_node *np,
++			     struct pcm3060_priv *priv)
++{
++	priv->out_se = of_property_read_bool(np, "ti,out-single-ended");
++}
++
+ int pcm3060_probe(struct device *dev)
+ {
+ 	int rc;
++	struct pcm3060_priv *priv = dev_get_drvdata(dev);
++
++	if (dev->of_node)
++		pcm3060_parse_dt(dev->of_node, priv);
++
++	if (priv->out_se)
++		regmap_update_bits(priv->regmap, PCM3060_REG64,
++				   PCM3060_REG_SE, PCM3060_REG_SE);
+ 
+ 	rc = devm_snd_soc_register_component(dev, &pcm3060_soc_comp_driver,
+ 					     pcm3060_dai,
+diff --git a/sound/soc/codecs/pcm3060.h b/sound/soc/codecs/pcm3060.h
+index fd89a68aa8a7..c895cf40ee10 100644
+--- a/sound/soc/codecs/pcm3060.h
++++ b/sound/soc/codecs/pcm3060.h
+@@ -25,6 +25,7 @@ struct pcm3060_priv_dai {
+ struct pcm3060_priv {
+ 	struct regmap *regmap;
+ 	struct pcm3060_priv_dai dai[PCM3060_DAI_IDS_NUM];
++	u8 out_se: 1;
+ };
+ 
+ int pcm3060_probe(struct device *dev);
 -- 
 2.13.6
 
