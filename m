@@ -2,41 +2,42 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10433C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 02:30:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD399C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 02:30:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF4FF214DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 02:30:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF4FF214DB
+	by mail.kernel.org (Postfix) with ESMTP id 9FACE20871
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 02:30:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FACE20871
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730088AbeKLMVn (ORCPT
+        id S1730174AbeKLMVo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 07:21:43 -0500
-Received: from shell.v3.sk ([90.176.6.54]:59271 "EHLO shell.v3.sk"
+        Mon, 12 Nov 2018 07:21:44 -0500
+Received: from shell.v3.sk ([90.176.6.54]:59277 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727492AbeKLMVm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 07:21:42 -0500
+        id S1729612AbeKLMVn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 07:21:43 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 583C7C6A0A;
-        Mon, 12 Nov 2018 03:30:41 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id 81C81C6A16;
+        Mon, 12 Nov 2018 03:30:42 +0100 (CET)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id EgWjU8VWJL53; Mon, 12 Nov 2018 03:30:35 +0100 (CET)
+        with ESMTP id p7slc0alCFBa; Mon, 12 Nov 2018 03:30:37 +0100 (CET)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 2728EC6A0D;
-        Mon, 12 Nov 2018 03:30:35 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id A2958C6A0E;
+        Mon, 12 Nov 2018 03:30:36 +0100 (CET)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id tghRzvknKbwN; Mon, 12 Nov 2018 03:30:34 +0100 (CET)
+        with ESMTP id dxBOCzpjfh8N; Mon, 12 Nov 2018 03:30:35 +0100 (CET)
 Received: from belphegor.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 1BC0AC6A0A;
+        by zimbra.v3.sk (Postfix) with ESMTPSA id E33FCC6A0C;
         Mon, 12 Nov 2018 03:30:34 +0100 (CET)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
@@ -46,10 +47,12 @@ Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v2 0/6] OLPC 1.75 Keyboard/Touchpad fixes
-Date:   Mon, 12 Nov 2018 03:30:23 +0100
-Message-Id: <20181112023029.648408-1-lkundrak@v3.sk>
+Subject: [PATCH v2 2/6] dt-bindings: marvell,mmp2: Add clock id for the SP clock
+Date:   Mon, 12 Nov 2018 03:30:25 +0100
+Message-Id: <20181112023029.648408-3-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181112023029.648408-1-lkundrak@v3.sk>
+References: <20181112023029.648408-1-lkundrak@v3.sk>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
@@ -57,20 +60,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This makes keyboard/touchpad work on a DT MMP2 platform.
+This is the clock for the "security processor" core.
 
-Changes since v1:
-- Collected Acks
-- Replaced "Input: olpc_apsp: depend on CONFIG_OF" patch with "Input:
-  olpc_apsp: drop CONFIG_OLPC dependency", since it was correctly
-  pointed out that the driver doesn't actually depend on OF.
-- Dropped "Input: olpc_apsp: allocate the GPIOs used" and "dt-bindings:
-  olpc,ap-sp: add GPIO lines" since at the moment they are not useful
-  for much more than documenting the lines the SP uses and actually
-  claiming them was deemed not to be a good idea.
-- Fixed error handling in the "enable the SP clock" patch.
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+---
+ include/dt-bindings/clock/marvell,mmp2.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-Cheers
-Lubo
-
+diff --git a/include/dt-bindings/clock/marvell,mmp2.h b/include/dt-bindin=
+gs/clock/marvell,mmp2.h
+index 228a5e234af0..7b24fc791146 100644
+--- a/include/dt-bindings/clock/marvell,mmp2.h
++++ b/include/dt-bindings/clock/marvell,mmp2.h
+@@ -71,6 +71,7 @@
+ #define MMP2_CLK_CCIC1_MIX		117
+ #define MMP2_CLK_CCIC1_PHY		118
+ #define MMP2_CLK_CCIC1_SPHY		119
++#define MMP2_CLK_SP			120
+=20
+ #define MMP2_NR_CLKS			200
+ #endif
+--=20
+2.19.1
 
