@@ -2,228 +2,138 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B69E8C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:54:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53613C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:54:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75591224E0
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:54:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75591224E0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 1904B22419
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:54:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="NZXlTDlD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1904B22419
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729909AbeKMCsX (ORCPT
+        id S1730025AbeKMCsr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 21:48:23 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:53102 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727530AbeKMCsX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 21:48:23 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 5067B207BD; Mon, 12 Nov 2018 17:54:17 +0100 (CET)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id B52AE20701;
-        Mon, 12 Nov 2018 17:54:16 +0100 (CET)
-Date:   Mon, 12 Nov 2018 17:54:16 +0100
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Liang Yang <liang.yang@amlogic.com>, Rob Herring <robh@kernel.org>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
-        Jian Hu <jian.hu@amlogic.com>, linux-mtd@lists.infradead.org,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        linux-amlogic@lists.infradead.org,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH v6 2/2] mtd: rawnand: meson: add support for Amlogic
- NAND flash controller
-Message-ID: <20181112175416.247e3203@bbrezillon>
-In-Reply-To: <20181112171351.4ac3506b@xps13>
-References: <1541090542-19618-1-git-send-email-jianxin.pan@amlogic.com>
- <1541090542-19618-3-git-send-email-jianxin.pan@amlogic.com>
- <20181105165321.7ea2b45f@bbrezillon>
- <a571904e-6296-bf62-e1fe-e25bf90040bb@amlogic.com>
- <20181106102851.61deb97a@bbrezillon>
- <ff02373e-c97b-182d-5b43-83d1e8f6d51a@amlogic.com>
- <20181106112206.65a70a81@bbrezillon>
- <20181112171351.4ac3506b@xps13>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 12 Nov 2018 21:48:47 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:39580 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727530AbeKMCsr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 21:48:47 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wACGs7Q9051431;
+        Mon, 12 Nov 2018 16:54:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=4CXtc7phf7AOqv+BDqaOZkb3mLV0A7j8oEgmpc86S4E=;
+ b=NZXlTDlDfqCouB+tfazby0ximc9f9FBog3YmTFOwl0NWbfOyqS7+q3gNNRGD82kNbri9
+ MB27g50Pri9BV6vJsnw4rFGVuC4XfGth+gjeg54Tm1RZWA4oqR21AJ63B3kFITKvcQgZ
+ /f2viQO/yc2LxnUkBf9gQfJZdJXmrjpT6g4GQMtalxbrkzk3sq9wMXgm0TYA3w2ORIjh
+ YHE6wd4mO51QCDBE65F77rJits6rrQ1FsCRg3GvNKWu//6Vn60bUv4haJjgHz0u38B8k
+ au0z1kPaQVGaKUvAsKScNBmDS0xbKpdjboC0dFZcZ5R/r2XbJicHk8jv43EPaY9MIGIi jQ== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2nnwc0eb0g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 12 Nov 2018 16:54:07 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wACGs5Va032019
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 12 Nov 2018 16:54:06 GMT
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wACGs43r001514;
+        Mon, 12 Nov 2018 16:54:04 GMT
+Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 12 Nov 2018 08:54:04 -0800
+Date:   Mon, 12 Nov 2018 08:54:12 -0800
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     "Elliott, Robert (Persistent Memory)" <elliott@hpe.com>
+Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "aarcange@redhat.com" <aarcange@redhat.com>,
+        "aaron.lu@intel.com" <aaron.lu@intel.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "bsd@redhat.com" <bsd@redhat.com>,
+        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "jgg@mellanox.com" <jgg@mellanox.com>,
+        "jwadams@google.com" <jwadams@google.com>,
+        "jiangshanlai@gmail.com" <jiangshanlai@gmail.com>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        "mike.kravetz@oracle.com" <mike.kravetz@oracle.com>,
+        "Pavel.Tatashin@microsoft.com" <Pavel.Tatashin@microsoft.com>,
+        "prasad.singamsetty@oracle.com" <prasad.singamsetty@oracle.com>,
+        "rdunlap@infradead.org" <rdunlap@infradead.org>,
+        "steven.sistare@oracle.com" <steven.sistare@oracle.com>,
+        "tim.c.chen@intel.com" <tim.c.chen@intel.com>,
+        "tj@kernel.org" <tj@kernel.org>, "vbabka@suse.cz" <vbabka@suse.cz>
+Subject: Re: [RFC PATCH v4 11/13] mm: parallelize deferred struct page
+ initialization within each node
+Message-ID: <20181112165412.vizeiv6oimsuxkbk@ca-dmjordan1.us.oracle.com>
+References: <20181105165558.11698-1-daniel.m.jordan@oracle.com>
+ <20181105165558.11698-12-daniel.m.jordan@oracle.com>
+ <AT5PR8401MB1169798EBEF1EE5EBA3ABFFFABC70@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <AT5PR8401MB1169798EBEF1EE5EBA3ABFFFABC70@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
+User-Agent: NeoMutt/20180323-268-5a959c
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9075 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1811120148
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Wolfram to give some inputs on the DMA issue.
-
-On Mon, 12 Nov 2018 17:13:51 +0100
-Miquel Raynal <miquel.raynal@bootlin.com> wrote:
-
-> Hello,
+On Sat, Nov 10, 2018 at 03:48:14AM +0000, Elliott, Robert (Persistent Memory) wrote:
+> > -----Original Message-----
+> > From: linux-kernel-owner@vger.kernel.org <linux-kernel-
+> > owner@vger.kernel.org> On Behalf Of Daniel Jordan
+> > Sent: Monday, November 05, 2018 10:56 AM
+> > Subject: [RFC PATCH v4 11/13] mm: parallelize deferred struct page
+> > initialization within each node
+> > 
+> > ...  The kernel doesn't
+> > know the memory bandwidth of a given system to get the most efficient
+> > number of threads, so there's some guesswork involved.  
 > 
-> Boris Brezillon <boris.brezillon@bootlin.com> wrote on Tue, 6 Nov 2018
-> 11:22:06 +0100:
+> The ACPI HMAT (Heterogeneous Memory Attribute Table) is designed to report
+> that kind of information, and could facilitate automatic tuning.
 > 
-> > On Tue, 6 Nov 2018 18:00:37 +0800
-> > Liang Yang <liang.yang@amlogic.com> wrote:
-> >   
-> > > On 2018/11/6 17:28, Boris Brezillon wrote:    
-> > > > On Tue, 6 Nov 2018 17:08:00 +0800
-> > > > Liang Yang <liang.yang@amlogic.com> wrote:
-> > > >       
-> > > >> On 2018/11/5 23:53, Boris Brezillon wrote:      
-> > > >>> On Fri, 2 Nov 2018 00:42:21 +0800
-> > > >>> Jianxin Pan <jianxin.pan@amlogic.com> wrote:
-> > > >>>          
-> > > >>>> +
-> > > >>>> +static inline u8 meson_nfc_read_byte(struct mtd_info *mtd)
-> > > >>>> +{
-> > > >>>> +	struct nand_chip *nand = mtd_to_nand(mtd);
-> > > >>>> +	struct meson_nfc *nfc = nand_get_controller_data(nand);
-> > > >>>> +	u32 cmd;
-> > > >>>> +
-> > > >>>> +	cmd = nfc->param.chip_select | NFC_CMD_DRD | 0;
-> > > >>>> +	writel(cmd, nfc->reg_base + NFC_REG_CMD);
-> > > >>>> +
-> > > >>>> +	meson_nfc_drain_cmd(nfc);      
-> > > >>>
-> > > >>> You probably don't want to drain the FIFO every time you read a byte on
-> > > >>> the bus, and I guess the INPUT FIFO is at least as big as the CMD
-> > > >>> FIFO, right? If that's the case, you should queue as much DRD cmd as
-> > > >>> possible and only sync when the user explicitly requests it or when
-> > > >>> the INPUT/READ FIFO is full.
-> > > >>>          
-> > > >> Register 'NFC_REG_BUF' can holds only 4 bytes, also DRD sends only one
-> > > >> nand cycle to read one byte and covers the 1st byte every time reading.
-> > > >> i think nfc controller is faster than nand cycle, but really it is not
-> > > >> high efficiency when reading so many bytes once.
-> > > >> Or use dma command here like read_page and read_page_raw.      
-> > > > 
-> > > > Yep, that's also an alternative, though you'll have to make sure the
-> > > > buffer passed through the nand_op_inst is DMA-safe, and use a bounce
-> > > > buffer when that's not the case.
-> > > >       
-> > > ok, i will try dma here.    
-> > 
-> > We should probably expose the bounce buf handling as generic helpers at
-> > the rawnand level:
-> > 
-> > void *nand_op_get_dma_safe_input_buf(struct nand_op_instr *instr)
-> > {
-> > 	void *buf;
-> > 
-> > 	if (WARN_ON(instr->type != NAND_OP_DATA_IN_INSTR))
-> > 		return NULL;
-> > 
-> > 	if (virt_addr_valid(instr->data.in) &&
-> > 	    !object_is_on_stack(instr->data.buf.in))
-> > 		return instr->data.buf.in;
-> > 
-> > 	return kzalloc(instr->data.len, GFP_KERNEL);
-> > }
-> > 
-> > void nand_op_put_dma_safe_input_buf(struct nand_op_instr *instr,
-> > 				    void *buf)
-> > {
-> > 	if (WARN_ON(instr->type != NAND_OP_DATA_IN_INSTR) ||
-> > 	    WARN_ON(!buf))
-> > 		return;
-> > 
-> > 	if (buf == instr->data.buf.in)
-> > 		return;
-> > 
-> > 	memcpy(instr->data.buf.in, buf, instr->data.len);
-> > 	kfree(buf);
-> > }
-> > 
-> > const void *nand_op_get_dma_safe_output_buf(struct nand_op_instr *instr)
-> > {
-> > 	void *buf;
-> > 
-> > 	if (WARN_ON(instr->type != NAND_OP_DATA_OUT_INSTR))
-> > 		return NULL;
-> > 
-> > 	if (virt_addr_valid(instr->data.out) &&
-> > 	    !object_is_on_stack(instr->data.buf.out))
-> > 		return instr->data.buf.out;
-> > 
-> > 	return kmemdup(instr->data.buf.out, GFP_KERNEL);
-> > }
-> > 
-> > void nand_op_put_dma_safe_output_buf(struct nand_op_instr *instr,
-> > 				    void *buf)
-> > {
-> > 	if (WARN_ON(instr->type != NAND_OP_DATA_OUT_INSTR) ||
-> > 	    WARN_ON(!buf))
-> > 		return;
-> > 
-> > 	if (buf != instr->data.buf.out)
-> > 		kfree(buf);
-> > }  
+> There was discussion last year about kernel support for it:
+> https://lore.kernel.org/lkml/20171214021019.13579-1-ross.zwisler@linux.intel.com/
+
+Thanks for bringing this up.  I'm traveling but will take a closer look when I
+get back.
+
+> > In testing, a reasonable value turned out to be about a quarter of the
+> > CPUs on the node.
+> ...
+> > +	/*
+> > +	 * We'd like to know the memory bandwidth of the chip to
+> >         calculate the
+> > +	 * most efficient number of threads to start, but we can't.
+> > +	 * In testing, a good value for a variety of systems was a
+> >         quarter of the CPUs on the node.
+> > +	 */
+> > +	nr_node_cpus = DIV_ROUND_UP(cpumask_weight(cpumask), 4);
 > 
-> Not that I am against such function, but maybe they should come with
-> comments stating that there is no reliable way to find if a buffer is
-> DMA-able at runtime and these are just sanity checks (ie. required, but
-> probably not enough).
+> 
+> You might want to base that calculation on and limit the threads to
+> physical cores, not hyperthreaded cores.
 
-It's not 100% reliable, but it should cover most cases. Note that the
-NAND framework already uses virt_addr_valid() to decide when to use its
-internal bounce buffer, so this should be fixed too if we want a fully
-reliable solution.
-
-> This is my understanding of Wolfram's recent talk
-> at ELCE [1].
-
-Yes, you're right, but the NAND framework does not provide any guarantee
-on the buf passed to ->exec_op() simply because the MTD layer does not
-provide such a guarantee. Reworking that to match how the i2c framework
-handles it is possible (with a flag set when the buffer is known to be
-DMA-safe), but it requires rewriting all MTD users if we want to keep
-decent perfs (the amount of data transfered to a flash is an order of
-magnitude bigger than what you usually receive/send from/to an I2C
-device). Also, I'm not even sure the DMA_SAFE flag covers all weird
-cases like the "DMA engine embedded in the controller is not able to
-access the whole physical memory range" one. So ideally we should have
-something that checks if a pointer is DMA-safe at the device level and
-then at the arch level.
-
-A temporary solution would be to add a hook at the nand_controller
-level:
-
-	bool (*buf_is_dma_safe)(struct nand_chip *chip, void *buf,
-				size_t len);
-
-And then fallback to the default implementation when it's not
-implemented:
-
-static bool nand_buf_is_dma_safe(struct nand_chip *chip, void *buf,
-				 size_t len)
-{
-	if (chip->controller->ops && chip->controller->ops->is_dma_safe)
-		return chip->controller->ops->is_dma_safe(chip, buf,
-							  len);
-
-	return virt_addr_valid(buf) && !object_is_on_stack(buf);
-}
-
-> I suppose using the CONFIG_DMA_API_DEBUG option could help
-> more reliably to find such issues.
-
-Actually, the problem is not only about detecting offenders but being
-able to detect when a buffer is not DMA-safe at runtime in order to
-allocate/use a bounce buffer.
+Why?  Hyperthreads can be beneficial when waiting on memory.  That said, I
+don't have data that shows that in this case.
