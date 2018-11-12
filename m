@@ -2,91 +2,153 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 014FFC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:24:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3010C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:25:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1309224E0
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:24:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93E66224E0
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:25:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="RG5TDmfO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1309224E0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="pdSXh3ou"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93E66224E0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727313AbeKMFTV (ORCPT
+        id S1727469AbeKMFTl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 00:19:21 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:55788 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725749AbeKMFTV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 00:19:21 -0500
-Received: by mail-it1-f196.google.com with SMTP id o19so5154493itg.5
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 11:24:45 -0800 (PST)
+        Tue, 13 Nov 2018 00:19:41 -0500
+Received: from mail-eopbgr770058.outbound.protection.outlook.com ([40.107.77.58]:18653
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725749AbeKMFTl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 00:19:41 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=gO9kZ/RcbfPPpFGJDhchCr3tmKyBwqby0MPifK87gqs=;
-        b=RG5TDmfOxUEnYzhdoVr1s03oys+KhRMqHCzUsqxJzgO44z7FKsM6+2K24BSO7/ayDj
-         DdIW/2B+DR78R9vvDz6eCAInjaePowvSx0clDgz9sFib5uMVeTQr4HywKkrIRXCEocSQ
-         jloxqpjlXeppgBgyYDH1N/OZELk6+4KUFdIpk9H3Z5B56sWD1W6HYBukotGiL4ZcqBy6
-         YLYqMSUH4HZFwa3ooPInyg3kXChtm4GDEWJ87RMv2TGCcj/TaSk4SsV0HCvxBDtKuO/e
-         mNCNsgPeIHpP+RCB6lpLf7x1idKbO6DRVBA5ha4Lr44g1yvpZ7T2USKZdzURaj+x/lnb
-         xOVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gO9kZ/RcbfPPpFGJDhchCr3tmKyBwqby0MPifK87gqs=;
-        b=uFKkGycOXFYthoifQCcVJ1rmQKLiQRKxlWCRYLhPeWj0E8V2AD4XmQopELO7v9NTqE
-         v6npcl0v3jhX5Qo24URu3baLHdPgSWapqcSM+SWHjQ9H6N8qs6bD11WK0khx+gydEgSj
-         jGX3/Q9qIIQDXQ/pmzYL5NR9Ax+myZMiHfIa2kcPGrBOyfFczwtAASdJAKp5sz5FDErH
-         UX8i1DhI/xAOFc4pnZtjI8pSh3nK830nJfvbxU+yg2djWC2WbDHO0oucxliFdSMy48zm
-         c+rwF4j/sIX+5xDc2ZiZLyxea0d1XanlVVpW3vDCiCqgraEQ+j0VdKVlvYdvePz+Ydps
-         QGiA==
-X-Gm-Message-State: AGRZ1gLy4xbK2bUJ8wvW46tCJLJ7/+a98yQ6ZjPtOQEQqDSMFLorrtCe
-        F6L5nsl6ZDgXoBQDHJc7ZPN1uw==
-X-Google-Smtp-Source: AJdET5chLFfCe5Ub7EX7YTJBVttGPrSu53upkuwdvuWxec/XEdXgR/8s9yZtwBp8+9P/3L+7/HQgkQ==
-X-Received: by 2002:a24:2ecf:: with SMTP id i198-v6mr870862ita.74.1542050685004;
-        Mon, 12 Nov 2018 11:24:45 -0800 (PST)
-Received: from cisco (75-166-182-157.hlrn.qwest.net. [75.166.182.157])
-        by smtp.gmail.com with ESMTPSA id q131-v6sm5068218itb.5.2018.11.12.11.24.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 12 Nov 2018 11:24:44 -0800 (PST)
-Date:   Mon, 12 Nov 2018 12:24:43 -0700
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Kees Cook <keescook@chromium.org>, Oleg Nesterov <oleg@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: siginfo pid not populated from ptrace?
-Message-ID: <20181112192443.GL3645@cisco>
-References: <20181112171144.GI3645@cisco>
- <87efbqi1xa.fsf@xmission.com>
- <20181112185538.GK3645@cisco>
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7Atv5UxUbn4vkFo27QWN4sZFLv2ZlabqzudmB0JN1Ic=;
+ b=pdSXh3ouQA05nwCanskOoXg1TpDUJHdE7NLwAfwJrnM4UhWmT//Nn2kkhw/H3kN3RMB8uQmgEt4s+rmqiCKNkVjlTZDFAQdVaKER6HX/7ARaoVxdYUd/Z7hP9E6zYK/tdVHTBRQrojwaHeifBEaeQWH3EwRXg4nL+gjGc1xHah8=
+Received: from DM5PR12MB2471.namprd12.prod.outlook.com (52.132.141.138) by
+ DM5PR12MB1450.namprd12.prod.outlook.com (10.172.38.139) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.20; Mon, 12 Nov 2018 19:25:02 +0000
+Received: from DM5PR12MB2471.namprd12.prod.outlook.com
+ ([fe80::4c23:f551:bc6a:554e]) by DM5PR12MB2471.namprd12.prod.outlook.com
+ ([fe80::4c23:f551:bc6a:554e%4]) with mapi id 15.20.1294.045; Mon, 12 Nov 2018
+ 19:25:02 +0000
+From:   "Moger, Babu" <Babu.Moger@amd.com>
+To:     Borislav Petkov <bp@alien8.de>
+CC:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
+        "reinette.chatre@intel.com" <reinette.chatre@intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "pombredanne@nexb.com" <pombredanne@nexb.com>,
+        "rafael@kernel.org" <rafael@kernel.org>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "qianyue.zj@alibaba-inc.com" <qianyue.zj@alibaba-inc.com>,
+        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "Singh, Brijesh" <brijesh.singh@amd.com>,
+        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "jannh@google.com" <jannh@google.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "rian@alum.mit.edu" <rian@alum.mit.edu>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v7 02/13] arch/x86: Rename the RDT functions and
+ definitions
+Thread-Topic: [PATCH v7 02/13] arch/x86: Rename the RDT functions and
+ definitions
+Thread-Index: AQHUeG4fqjo7t998rUWNtgkgxfyZ6KVMcSAAgAAY0YA=
+Date:   Mon, 12 Nov 2018 19:25:02 +0000
+Message-ID: <539bf8ea-b13f-186a-f1c7-71b1eaa63aa7@amd.com>
+References: <20181109205153.14811-1-babu.moger@amd.com>
+ <20181109205153.14811-3-babu.moger@amd.com> <20181112175610.GI8167@zn.tnic>
+In-Reply-To: <20181112175610.GI8167@zn.tnic>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SN2PR01CA0083.prod.exchangelabs.com (2603:10b6:800::51) To
+ DM5PR12MB2471.namprd12.prod.outlook.com (2603:10b6:4:b5::10)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Babu.Moger@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [165.204.78.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR12MB1450;20:556V5LvWSX9V574Iri/u7j2ev+jXnocZvZWAhmI2V8mfe62I2L3TAWYmSA5Y7h4jYJrHmh4Riy+9l03giy7vPKi+NrJhjT+xXSta54CZsiVqRIl5tMm4jSKPG08oUsjO4k6YrtmQ6ydgI2r6CZmXmxexOPIexVfpj0zs9bv9gvlW4+SibPNlKJwSymL5gtp8iKEMjeA3HWSMCt7KpuqoMKFp8hwbkkBYcl+QS2N/NIqf2Qkchms6zp5R3j/R6v3p
+x-ms-office365-filtering-correlation-id: 838513c4-70e8-468a-3577-08d648d48adc
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390040)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB1450;
+x-ms-traffictypediagnostic: DM5PR12MB1450:
+x-microsoft-antispam-prvs: <DM5PR12MB1450027E6C0ACC6FAB470CEE95C10@DM5PR12MB1450.namprd12.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(788757137089)(767451399110);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231382)(944501410)(52105112)(3002001)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:DM5PR12MB1450;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1450;
+x-forefront-prvs: 0854128AF0
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(396003)(376002)(366004)(39860400002)(136003)(189003)(199004)(2616005)(52116002)(486006)(76176011)(71200400001)(186003)(71190400001)(102836004)(26005)(446003)(11346002)(6436002)(53936002)(6512007)(476003)(66066001)(2906002)(31696002)(53546011)(6506007)(386003)(6486002)(86362001)(7406005)(106356001)(36756003)(6116002)(3846002)(31686004)(54906003)(7416002)(7736002)(99286004)(305945005)(6916009)(5660300001)(105586002)(316002)(68736007)(229853002)(97736004)(25786009)(256004)(8936002)(2900100001)(4326008)(8676002)(72206003)(81156014)(81166006)(14454004)(6246003)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1450;H:DM5PR12MB2471.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: RYyekLQMqswiW1k7B/R8+3cplzG7ppN4fvTRm1RoSizLrPY8BTXt2HcnRgnb0Ys8pZm8RB536WipRkYNOr4Tk7fIfplPcJ5gF0WAvSNXAeN9tPb9t2wSxf0KO07tIubJOqm7QEXWuoN5AWgnYpj5LzZJDviiu//SXU4ynoRpwduhYCB1jQh1KWfmhIjZQxEVFy8IGiJLBSHsbYODAgUzBSW9VEze3+//W53/GxNCcgbBzevYJJ/sCQluKOUtHPPRPbQcUq0fLRIOC0V+DU6bp0IrlIpCrAgbwfmFE3ZWGoZqAe7gOvPbX54pfnaygFW5nnXiRXEb1y+XEZ4uXjsO29tA6oRbSAqFAnvwbkGzzSY=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <2ED800B33C63E241A2F449395391AE15@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181112185538.GK3645@cisco>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 838513c4-70e8-468a-3577-08d648d48adc
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Nov 2018 19:25:02.3450
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1450
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 11:55:38AM -0700, Tycho Andersen wrote:
-> I haven't manage to reproduce it on stock v4.20-rc2, unfortunately.
-
-Ok, now I have,
-
-seccomp_bpf.c:2736:global.syscall_restart:Expected getpid() (1493) == info._sifields._kill.si_pid (0)
-global.syscall_restart: Test failed at step #22
-
-That line number should match up with v4.20-rc2, but it's in a
-different point in the test than the first failure I reported.
-
-Tycho
+Qm9yaXMsDQoNCk9uIDExLzEyLzE4IDExOjU2IEFNLCBCb3Jpc2xhdiBQZXRrb3Ygd3JvdGU6DQo+
+IE9uIEZyaSwgTm92IDA5LCAyMDE4IGF0IDA4OjUyOjI3UE0gKzAwMDAsIE1vZ2VyLCBCYWJ1IHdy
+b3RlOg0KPj4gQXMgQU1EIGlzIHN0YXJ0aW5nIHRvIHN1cHBvcnQgUkRUKG9yIFFPUykgZmVhdHVy
+ZXMsIHJlbmFtZQ0KPj4gdGhlIFJEVCBmdW5jdGlvbnMgYW5kIGRlZmluaXRpb25zIHRvIG1vcmUg
+Z2VuZXJpYyBuYW1lcy4NCj4+DQo+PiBSZXBsYWNlIGludGVsX3JkdCB0byByZXNjdHJsIHdoZXJl
+IGFwcGxpY2FibGUuDQo+Pg0KPj4gU2lnbmVkLW9mZi1ieTogQmFidSBNb2dlciA8YmFidS5tb2dl
+ckBhbWQuY29tPg0KPj4gLS0tDQo+PiAgYXJjaC94ODYvaW5jbHVkZS9hc20vcmVzY3RybF9zY2hl
+ZC5oICAgfCAyNCArKysrKysrKysrKystLS0tLS0tLS0tLS0NCj4+ICBhcmNoL3g4Ni9rZXJuZWwv
+Y3B1L3Jlc2N0cmwuYyAgICAgICAgICB8IDI2ICsrKysrKysrKysrKystLS0tLS0tLS0tLS0tDQo+
+PiAgYXJjaC94ODYva2VybmVsL2NwdS9yZXNjdHJsLmggICAgICAgICAgfCAgMiArLQ0KPj4gIGFy
+Y2gveDg2L2tlcm5lbC9jcHUvcmVzY3RybF9tb25pdG9yLmMgIHwgMTEgKysrKysrLS0tLS0NCj4+
+ICBhcmNoL3g4Ni9rZXJuZWwvY3B1L3Jlc2N0cmxfcmR0Z3JvdXAuYyB8IDEwICsrKysrLS0tLS0N
+Cj4+ICBhcmNoL3g4Ni9rZXJuZWwvcHJvY2Vzc18zMi5jICAgICAgICAgICB8ICAyICstDQo+PiAg
+YXJjaC94ODYva2VybmVsL3Byb2Nlc3NfNjQuYyAgICAgICAgICAgfCAgMiArLQ0KPj4gIDcgZmls
+ZXMgY2hhbmdlZCwgMzkgaW5zZXJ0aW9ucygrKSwgMzggZGVsZXRpb25zKC0pDQo+IA0KPiBBcyB3
+aXRoIHBhdGNoIDEsIHBscyBmaXggc3ViamVjdCBwcmVmaXguDQo+IA0KT2suIFN1cmUuDQoNCj4+
+IEBAIC02MzcsMTAgKzYzNywxMSBAQCBpbnQgcmR0X2dldF9tb25fbDNfY29uZmlnKHN0cnVjdCBy
+ZHRfcmVzb3VyY2UgKnIpDQo+PiAgCSAqDQo+PiAgCSAqIEZvciBhIDM1TUIgTExDIGFuZCA1NiBS
+TUlEcywgdGhpcyBpcyB+MS44JSBvZiB0aGUgTExDLg0KPj4gIAkgKi8NCj4+IC0JaW50ZWxfY3Ft
+X3RocmVzaG9sZCA9IGJvb3RfY3B1X2RhdGEueDg2X2NhY2hlX3NpemUgKiAxMDI0IC8gci0+bnVt
+X3JtaWQ7DQo+PiArCXJlc2N0cmxfY3FtX3RocmVzaG9sZCA9IGJvb3RfY3B1X2RhdGEueDg2X2Nh
+Y2hlX3NpemUgKiAxMDI0IC8NCj4+ICsJCQkJci0+bnVtX3JtaWQ7DQo+IA0KPiBObyBuZWVkIHRv
+IGJyZWFrIHRoYXQgbGluZSBoZXJlLg0KDQpXaXRob3V0IHRoZSBsaW5lIGJyZWFrLCBjaGVja3Bh
+dGNoIGNvbXBsYWlucyBmb3IgImxpbmUgb3ZlciA4MA0KY2hhcmFjdGVycyIuICBEbyB5b3UgdGhp
+bmsgd2UgY2FuIGlnbm9yZSB0aG9zZT8NCj4gDQo+IFdpdGggdGhhdCBhZGRyZXNzZWQgYW5kIEZX
+SVc6DQo+IA0KPiBSZXZpZXdlZC1ieTogQm9yaXNsYXYgUGV0a292IDxicEBzdXNlLmRlPg0KPiAN
+Cg==
