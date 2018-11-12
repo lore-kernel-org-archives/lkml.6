@@ -2,146 +2,110 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E112C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 22:23:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7A83C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 22:23:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58EE522510
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 22:23:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58EE522510
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 59882223AE
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 22:23:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qck16Sbl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59882223AE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730650AbeKMISI (ORCPT
+        id S1730707AbeKMISs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 03:18:08 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:51362 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727847AbeKMISI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 03:18:08 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7408D3DDB8;
-        Mon, 12 Nov 2018 22:22:59 +0000 (UTC)
-Received: from treble (ovpn-121-1.rdu2.redhat.com [10.10.121.1])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id DDE1F6090A;
-        Mon, 12 Nov 2018 22:22:52 +0000 (UTC)
-Date:   Mon, 12 Nov 2018 16:22:50 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Waiman Long <longman@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-        linux-mm@kvack.org, Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Tejun Heo <tj@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [RFC PATCH 00/12] locking/lockdep: Add a new class of terminal
- locks
-Message-ID: <20181112222250.h37hkrj6warqewkd@treble>
-References: <1541709268-3766-1-git-send-email-longman@redhat.com>
- <20181109080412.GC86700@gmail.com>
- <20181110141045.GD3339@worktop.programming.kicks-ass.net>
- <dfa0a2fa-0094-3ae0-4f27-2930233132a3@redhat.com>
- <20181112051033.GA123204@gmail.com>
- <20181112055324.f7div2ahx5emkbbe@treble>
- <20181112063050.GB61749@gmail.com>
+        Tue, 13 Nov 2018 03:18:48 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41765 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727847AbeKMISs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 03:18:48 -0500
+Received: by mail-wr1-f67.google.com with SMTP id v18-v6so11101959wrt.8
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 14:23:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=h8FyXYiX1JYlhpgok0kX7/UtLhabN87KEZsebfJjrnE=;
+        b=Qck16Sbl4aXrZ/tvIdmunxAGBs9uLuGiPyLRy9zCGbhbNXUkdO+NT0s4myaIKGgk1C
+         fYAjRT5rBAzOvBmNzTZFemXvYT2fCZnJ1C/rVQpT1yKRvkWZxnUsGOG69emQbm7YSp2R
+         zK3HSEv/OG1pZSieR1+SsTd7YuBgnXm7TFWpA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=h8FyXYiX1JYlhpgok0kX7/UtLhabN87KEZsebfJjrnE=;
+        b=kcshSf/OYdZFRTtRYLTS/cKNFC0gcIypw7Y2Dp6SKaV2uCYdB0AfOzoKljEfc5DWT2
+         pqjwAfIG7/CKXSqbMwWjzRX8/8NMuK9lWvXnE9bnQFXAqVtIHFeuKa8/YlzTUUwPhsQU
+         Fhunva/K11b6I/7MJPPikq1gZXn1TxmcTNYjbpgjL+VaL7PZsQywgT+aOi960KlfNZ2h
+         rFldRVQ5XQpTo2Y2S/ROEJN5nMjMSfQtQnRIKpUPdHk/UYh0dX2YOIrdz4ezZA25oLqI
+         f6PDLPhOvOdn9FEJeGf/flx19cT61tvfwglhz3uAajUvZJayhDR0v2MHoyTUKPY0WDbB
+         aAGQ==
+X-Gm-Message-State: AGRZ1gJr9+f/pCgj8NKZbwUANj+q9MxPI1huR0MijNG1iR4yrjaNkVJf
+        49wBdGIge4R4BVA53f7cjgk6OQKzqzgGxE9Xnuvm9w==
+X-Google-Smtp-Source: AJdET5eCTuS6gohMODOqbWPL8qWlUCRX6EDAxOohsigtMGbUwnomJXrtxlXsroaNmpW/lMcME8LjGYImHY/oP13+j88=
+X-Received: by 2002:adf:a20a:: with SMTP id p10-v6mr2507800wra.249.1542061418184;
+ Mon, 12 Nov 2018 14:23:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181112063050.GB61749@gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 12 Nov 2018 22:22:59 +0000 (UTC)
+Received: by 2002:a1c:4054:0:0:0:0:0 with HTTP; Mon, 12 Nov 2018 14:23:37
+ -0800 (PST)
+In-Reply-To: <20181112185651.17138-1-mzhivich@akamai.com>
+References: <20181112185651.17138-1-mzhivich@akamai.com>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Mon, 12 Nov 2018 14:23:37 -0800
+Message-ID: <CALAqxLVCwWATXruj+PAAtKMuE4TDCgHCeQAmpz39k33xFm_68Q@mail.gmail.com>
+Subject: Re: [PATCH] Revert "clocksource: Make clocksource validation work for
+ all clocksources"
+To:     Michael Zhivich <mzhivich@akamai.com>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Jason Wessel <jason.wessel@windriver.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 07:30:50AM +0100, Ingo Molnar wrote:
-> 
-> * Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-> 
-> > On Mon, Nov 12, 2018 at 06:10:33AM +0100, Ingo Molnar wrote:
-> > > 
-> > > * Waiman Long <longman@redhat.com> wrote:
-> > > 
-> > > > On 11/10/2018 09:10 AM, Peter Zijlstra wrote:
-> > > > > On Fri, Nov 09, 2018 at 09:04:12AM +0100, Ingo Molnar wrote:
-> > > > >> BTW., if you are interested in more radical approaches to optimize 
-> > > > >> lockdep, we could also add a static checker via objtool driven call graph 
-> > > > >> analysis, and mark those locks terminal that we can prove are terminal.
-> > > > >>
-> > > > >> This would require the unified call graph of the kernel image and of all 
-> > > > >> modules to be examined in a final pass, but that's within the principal 
-> > > > >> scope of objtool. (This 'final pass' could also be done during bootup, at 
-> > > > >> least in initial versions.)
-> > > > >
-> > > > > Something like this is needed for objtool LTO support as well. I just
-> > > > > dread the build time 'regressions' this will introduce :/
-> > > > >
-> > > > > The final link pass is already by far the most expensive part (as
-> > > > > measured in wall-time) of building a kernel, adding more work there
-> > > > > would really suck :/
-> > > > 
-> > > > I think the idea is to make objtool have the capability to do that. It
-> > > > doesn't mean we need to turn it on by default in every build.
-> > > 
-> > > Yeah.
-> > > 
-> > > Also note that much of the objtool legwork would be on a per file basis 
-> > > which is reasonably parallelized already. On x86 it's also already done 
-> > > for every ORC build i.e. every distro build and the incremental overhead 
-> > > from also extracting locking dependencies should be reasonably small.
-> > > 
-> > > The final search of the global graph would be serialized but still 
-> > > reasonably fast as these are all 'class' level dependencies which are 
-> > > much less numerous than runtime dependencies.
-> > > 
-> > > I.e. I think we are talking about tens of thousands of dependencies, not 
-> > > tens of millions.
-> > > 
-> > > At least in theory. ;-)
-> > 
-> > Generating a unified call graph sounds very expensive (and very far
-> > beyond what objtool can do today).
-> 
-> Well, objtool already goes through the instruction stream and recognizes 
-> function calls - so it can in effect generate a stream of "function x 
-> called by function y" data, correct?
+On Mon, Nov 12, 2018 at 10:56 AM, Michael Zhivich <mzhivich@akamai.com> wrote:
+> Revert commit 1f45f1f33c8c ("clocksource: Make clocksource validation work
+> for all clocksources") to restore correct clocksource_delta() computation
+> for clocksources that wrap frequently, while retaining the check for tsc
+> drifting.
+>
+> Truncating result of clocksource_delta() to 0 causes incorrect behavior for
+> clocksources that wrap frequently (e.g. acpi_pm which is only 24-bit wide).
+> In particular, large time deltas (e.g. last = 0x000000, now = 0x800000)
+> will be incorrectly computed as 0.
+>
+> If acpi_pm is used as the clocksource watchdog, and machine is under heavy
+> load, the time period for the watchdog check may be significantly longer
+> than the requested 0.5 seconds.  If the watchdog check is delayed by 2
+> seconds (observed behavior), then acpi_pm time delta will be
+>
+>         2.5 sec * 3579545 ticks/sec = 8948863 = 0x888c3f
+>
+> which will be treated as negative and truncated to 0.  This behavior will
+> cause tsc to be incorrectly declared unstable in clocksource_watchdog(), as
+> it no longer agrees with acpi_pm.
 
-Yeah, though it would be quite simple to get the same data with a simple
-awk script at link time.
+Thanks for raising this issue and submitting the patch!
 
-> >  Also, what about function pointers?
-> 
-> So maybe it's possible to enumerate all potential values for function 
-> pointers with a reasonably simple compiler plugin and work from there?
+Yea, this is a concern particularly with quick wrapping clocksources.
+Though I worry that if you're already blocking the watchdog from
+running for 2.5 seconds, you're likely to also block the watchdog for
+more then 5 seconds, which if I'm remembering would result in the same
+problem?  In other words, does this really solve the problem, or does
+it just push the bar a little further out?
 
-I think this would be somewhere between very difficult and impossible to
-do properly.  I can't even imagine how this would be implemented in a
-compiler plugin.  But I'd love to be proven wrong on that.
+So, I'm wondering to really fix this, do we need to find some way to
+raise the priority of the clocksource watchdog, so it isn't deferred
+for quite so long?
 
-> One complication would be function pointers encoded as opaque data 
-> types...
-> 
-> > BTW there's another kernel static analysis tool which attempts to 
-> > create such a call graph already: smatch.
-> 
-> It's not included in the kernel tree though and I'd expect tight coupling 
-> (or at least lock-step improvements) between tooling and lockdep here.
-
-Fair enough.  Smatch's call tree isn't perfect anyway, but I don't think
-perfect is attainable.
-
--- 
-Josh
+thanks
+-john
