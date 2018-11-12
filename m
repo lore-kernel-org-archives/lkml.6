@@ -2,96 +2,120 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19879C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:53:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C72B3C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:55:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7603223AE
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:53:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DB2322419
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:55:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=soleen.com header.i=@soleen.com header.b="NVXngCwa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7603223AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="znatyHsE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DB2322419
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729339AbeKMEra (ORCPT
+        id S1730149AbeKMEuL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 23:47:30 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:36904 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727354AbeKMEra (ORCPT
+        Mon, 12 Nov 2018 23:50:11 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:54037 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727354AbeKMEuL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 23:47:30 -0500
-Received: by mail-qk1-f196.google.com with SMTP id 131so15172269qkd.4
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 10:53:00 -0800 (PST)
+        Mon, 12 Nov 2018 23:50:11 -0500
+Received: by mail-it1-f195.google.com with SMTP id r12-v6so14207584ita.3
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 10:55:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google;
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=oivDryuzftKKjZBJnUP8ukmsaZuxrqxB1OJMJalty3c=;
-        b=NVXngCwaQeV/Ly0Y8jVtwM8ZoCXdgvKoZr0jnHKOKCLLhwu9M8E6iHeDqSsdTC29BB
-         RtuhwBR1peG+FpjNNgMCvF7nD1MJ7czrvFw+shMSdsVtI5MabtElHfoNtqFRSI/nYrmB
-         pBJc2HGth4IQmXrZHo0r1QBIqu2nZT71/nbW1n8UlcE2zgu/IF1Wc9ioNobZzuzi68qj
-         eFW7HdTzwuYWD4HBG86VeoyEaGl8PNsVGlZcLJLCyZydv6quQ4Wsc5rk7VLh0bRnzQlZ
-         6XCUugYmCZlUDkm3kvBOMVEXwmYwG/gwH22mLc0+1UFzRg/80o0i3K99JnCMlcQayoC4
-         b9Tw==
+        bh=Jy8dt7nfYXm2bU+vklele1Ugeqqnphq1OlnLRaIukdw=;
+        b=znatyHsE9yS2g0pHtK+OorkFiwHBjP3w5RVDZsXwtCEwt1zTBaKjbmTpUM9YuG9JMC
+         s9cf+D/QWyTrjTlwXEAPGDZLz6qmUxeQYVy8KNCIdDH6xwblEFyA3AF5hpXt+2/cq5HE
+         eHdHS5p7gDbEDEwPEX2jdY1m6ik3p4tM0XzhqsokstepMO3Ue7XCkEBtG0Rgv3P56M3U
+         szRnNIGwTDOd4Nt09xJK+a2+plILEDwnyBWj+G7xP4jamH5x9YjRUV34Wc2fZXq2TAx6
+         XJzg3Vz0RouwQL9eindq+USAKurlP6yWL9LZzyFZ9hwEWPmcPpNMx9XoXwM+Q44uJqcD
+         GtKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=oivDryuzftKKjZBJnUP8ukmsaZuxrqxB1OJMJalty3c=;
-        b=nWASEnZhdB2JLo9UFcyA6V5/xButmCQfW6R9U3zmy+x1TrP/n8V/w2T13kwnVKTqci
-         QO9+yhMmV31HyZcVg3Imf+YcXOigkz4G2oC1nJZLxKR8IUYuD24qdCJnhEMX9jbV38Qw
-         ERN432gcSCUjusaUclcSDSNuKfhV/uAbwvoOAGe8k2e6+/mEqtcctj6s96Ac1f+16/El
-         dPYCizFqoo1qojmLtBMogkbJaRFkUMbz9ORqFOBtFbTNR7MQfwmqFhAf5nQhDcrDRvlF
-         iiVqGhO5OvBB13OEngZktSB9Lk4DSJWYLND77AZmlFoYxQSVuxa+NlZ9iEDK30CXZsj4
-         c0Qg==
-X-Gm-Message-State: AGRZ1gLWNYpCXaUIzZBnixhjLVG/GM3nvyU0rhV+pq93YoLgsHDIYZa4
-        ojE8TC5G59gu0JeNa/CBFwtFRA==
-X-Google-Smtp-Source: AJdET5fmmUOlQu1ShKrkLZ7p4pwK2lhECazXTgWeohIauR0EnkwR+eg+N0oRvbksnpNR1aHX7YnSyg==
-X-Received: by 2002:ac8:38e2:: with SMTP id g31mr2043458qtc.55.1542048780169;
-        Mon, 12 Nov 2018 10:53:00 -0800 (PST)
-Received: from soleen.tm1wkky2jk1uhgkn0ivaxijq1c.bx.internal.cloudapp.net ([40.117.208.181])
-        by smtp.gmail.com with ESMTPSA id t40sm8598383qth.46.2018.11.12.10.52.58
+        bh=Jy8dt7nfYXm2bU+vklele1Ugeqqnphq1OlnLRaIukdw=;
+        b=Jjs7VX98EMq0zp1K+fKDuY5bS6M2mpNTqDUo+fg4MP/4si6WeU3YSxpCuB+ocVg7CV
+         NH8qydheENXlpj/Gd01X85vJH8F32HMnb8L8Lx1R5fJmk7pR9Db5tZzk2vc2FVzXlCBi
+         lNy8LdTuk6xkGX7fCmGLHHprHlRYP089hLJXTIXgCC2LZNsH+LfDyHdZ3gMOFpm0bDXW
+         +5CqN/AbXd+OSrvZboqv9DCdG6Py6rUSkMCKSs9UY1xJj+p3Yt/DlfQqUTaco2tfdygP
+         sS0VGWcpBB+96iLMiPJi8KAnKr3OVL6+/pd/spPJkhPAKCXy4jAMd9lVYyxgv5nEpQ6i
+         +07A==
+X-Gm-Message-State: AGRZ1gIzzDDGQwr3uWc+6TAcWhPatoPJ+BTn30rTEYNGaJ6JFhDeXqkx
+        hbs1UIJn+PGQNQXFHLSONLRTPw==
+X-Google-Smtp-Source: AJdET5ek3hsuAD6k7/6ic18zepkQX2uVIYmoJCKnlKR6O5SqeqdZWvphcKrGMQU4eY1D4hPRBRXfbA==
+X-Received: by 2002:a02:330d:: with SMTP id c13-v6mr1933850jae.86.1542048940589;
+        Mon, 12 Nov 2018 10:55:40 -0800 (PST)
+Received: from cisco (75-166-182-157.hlrn.qwest.net. [75.166.182.157])
+        by smtp.gmail.com with ESMTPSA id m142-v6sm5384949itm.8.2018.11.12.10.55.39
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 12 Nov 2018 10:52:59 -0800 (PST)
-Date:   Mon, 12 Nov 2018 18:52:56 +0000
-From:   Pavel Tatashin <pasha.tatashin@soleen.com>
-To:     Oscar Salvador <osalvador@techadventures.net>
-Cc:     akpm@linux-foundation.org, mhocko@suse.com,
-        dan.j.williams@intel.com, yasu.isimatu@gmail.com,
-        rppt@linux.vnet.ibm.com, malat@debian.org,
-        linux-kernel@vger.kernel.org, pavel.tatashin@microsoft.com,
-        jglisse@redhat.com, Jonathan.Cameron@huawei.com, rafael@kernel.org,
-        david@redhat.com, dave.jiang@intel.com, linux-mm@kvack.org,
-        alexander.h.duyck@linux.intel.com,
-        Oscar Salvador <osalvador@suse.de>
-Subject: Re: [PATCH 1/5] mm/memory_hotplug: Add nid parameter to
- arch_remove_memory
-Message-ID: <20181112185256.dbintostrvyoddf5@soleen.tm1wkky2jk1uhgkn0ivaxijq1c.bx.internal.cloudapp.net>
-References: <20181015153034.32203-1-osalvador@techadventures.net>
- <20181015153034.32203-2-osalvador@techadventures.net>
+        Mon, 12 Nov 2018 10:55:39 -0800 (PST)
+Date:   Mon, 12 Nov 2018 11:55:38 -0700
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Kees Cook <keescook@chromium.org>, Oleg Nesterov <oleg@redhat.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: siginfo pid not populated from ptrace?
+Message-ID: <20181112185538.GK3645@cisco>
+References: <20181112171144.GI3645@cisco>
+ <87efbqi1xa.fsf@xmission.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181015153034.32203-2-osalvador@techadventures.net>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <87efbqi1xa.fsf@xmission.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18-10-15 17:30:30, Oscar Salvador wrote:
-> From: Oscar Salvador <osalvador@suse.de>
+On Mon, Nov 12, 2018 at 12:30:25PM -0600, Eric W. Biederman wrote:
+> Tycho Andersen <tycho@tycho.ws> writes:
 > 
-> This patch is only a preparation for the following-up patches.
-> The idea of passing the nid is that will allow us to get rid
-> of the zone parameter in the patches that follow
+> > Hi Oleg,
+> >
+> > I've been running some tests on my seccomp series, and in one of the
+> > tests on v4.20-rc2, I noticed,
+> >
+> > [ RUN      ] global.syscall_restart
+> > seccomp_bpf.c:2784:global.syscall_restart:Expected getpid() (1492) == info._sifields._kill.si_pid (0)
+> > global.syscall_restart: Test failed at step #22
+> >
+> > which seems unrelated to my series (the kernel was stock v4.20 with my
+> > patches on top).
+> >
+> > I've been running a lot of tests, and only seen this once, so it seems
+> > like a fairly rare race. I tried to look through the code but didn't
+> > see anything obvious. Thoughts?
 > 
-> Signed-off-by: Oscar Salvador <osalvador@suse.de>
-> Reviewed-by: David Hildenbrand <david@redhat.com>
+> My guess would be pid namespaces, or stopping for a signal other than
+> SIGSTOP.
+> 
+> If you can get this to reproduce at all it would be interesting to see
+> si_signo and si_code.  So that we can see just which signal is in info,
+> and how it should be decoded. 
 
-Reviewed-by: Pavel Tatashin <pasha.tatashin@soleen.com>
+Sure, here's what I see,
+
+seccomp_bpf.c:2784:global.syscall_restart:Expected getpid() (2195) == info._sifields._kill.si_pid (0)
+seccomp_bpf.c:2785:global.syscall_restart:si_signo: 19
+seccomp_bpf.c:2786:global.syscall_restart:si_code: 0
+
+> I see this test at line 2736 in 4.20-rc1 so there are almost 50 lines of
+> change in your version of seccomp_bpf.c.  So I hope I am reading the
+> proper test.
+
+Yes, sorry, that's additional test stuff from my user trap series. I
+haven't manage to reproduce it on stock v4.20-rc2, unfortunately. It
+could be that this is some memory corruption introduced by my series,
+but I'm running these tests with KASAN so hopefully it would complain?
+
+Tycho
