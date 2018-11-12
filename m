@@ -2,106 +2,178 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF601C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 14:24:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A6ACC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 14:27:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 930FC223D0
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 14:24:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 930FC223D0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 24240223D0
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 14:27:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24240223D0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cyphar.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727826AbeKMASI (ORCPT
+        id S1729246AbeKMAUk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 19:18:08 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:55746 "EHLO mx1.redhat.com"
+        Mon, 12 Nov 2018 19:20:40 -0500
+Received: from mx2.mailbox.org ([80.241.60.215]:55656 "EHLO mx2.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726385AbeKMASI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 19:18:08 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726385AbeKMAUk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 19:20:40 -0500
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2909885A07;
-        Mon, 12 Nov 2018 14:24:38 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8C1B25D6AA;
-        Mon, 12 Nov 2018 14:24:37 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id wACEObYL005700;
-        Mon, 12 Nov 2018 09:24:37 -0500
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id wACEOZCt005696;
-        Mon, 12 Nov 2018 09:24:35 -0500
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Mon, 12 Nov 2018 09:24:35 -0500 (EST)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Alexey Khoroshilov <khoroshilov@ispras.ru>
-cc:     Bernie Thompson <bernie@plugable.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org
-Subject: Re: [PATCH] udlfb: fix NULL pointer dereference in
- dlfb_usb_probe()
-In-Reply-To: <1541795110-3179-1-git-send-email-khoroshilov@ispras.ru>
-Message-ID: <alpine.LRH.2.02.1811120923520.3272@file01.intranet.prod.int.rdu2.redhat.com>
-References: <1541795110-3179-1-git-send-email-khoroshilov@ispras.ru>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        by mx2.mailbox.org (Postfix) with ESMTPS id BA602A114E;
+        Mon, 12 Nov 2018 15:27:07 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter02.heinlein-hosting.de (spamfilter02.heinlein-hosting.de [80.241.56.116]) (amavisd-new, port 10030)
+        with ESMTP id KGvNlcRgC_2C; Mon, 12 Nov 2018 15:27:06 +0100 (CET)
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jann Horn <jannh@google.com>,
+        Christian Brauner <christian@brauner.io>,
+        David Drysdale <drysdale@google.com>,
+        containers@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        Aleksa Sarai <asarai@suse.de>, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org
+Subject: [PATCH v4 0/4] namei: O_* flags to restrict path resolution
+Date:   Tue, 13 Nov 2018 01:26:50 +1100
+Message-Id: <20181112142654.341-1-cyphar@cyphar.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Mon, 12 Nov 2018 14:24:39 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Sorry for not sending a series earlier, I've been busy with assignments.
 
+Patch changelog:
+  v4:
+    * Remove AT_* flag reservations, as they require more discussion.
+    * Switch to path_is_under() over __d_path() for breakout checking.
+    * Make O_XDEV no longer block openat("/tmp", "/", O_XDEV) -- dirfd
+      is now ignored for absolute paths to match other flags.
+    * Improve the dirfd_path_init() refactor and move it to a separate
+      commit.
+    * Remove reference to Linux-capsicum.
+    * Switch "proclink" name to "magic link".
+  v3: [resend]
+  v2:
+    * Made ".." resolution with AT_THIS_ROOT and AT_BENEATH safe(r) with
+      some semi-aggressive __d_path checking (see patch 3).
+    * Disallowed "proclinks" with AT_THIS_ROOT and AT_BENEATH, in the
+      hopes they can be re-enabled once safe.
+    * Removed the selftests as they will be reimplemented as xfstests.
+    * Removed stat(2) support, since you can already get it through
+      O_PATH and fstatat(2).
 
-On Fri, 9 Nov 2018, Alexey Khoroshilov wrote:
+The need for some sort of control over VFS's path resolution (to avoid
+malicious paths resulting in inadvertent breakouts) has been a very
+long-standing desire of many userspace applications. This patchset is a
+revival of Al Viro's old AT_NO_JUMPS[1,2] patchset (which was a variant
+of David Drysdale's O_BENEATH patchset[3] which was a spin-off of the
+Capsicum project[4]) with a few additions and changes made based on the
+previous discussion within [5] as well as others I felt were useful.
 
-> If memory allocation for dlfb fails, error handling code
-> unconditionally dereference NULL pointer.
-> 
-> Found by Linux Driver Verification project (linuxtesting.org).
-> 
-> Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-> Fixes: 68a958a915ca ("udlfb: handle unplug properly")
+In line with the conclusions of the original discussion of AT_NO_JUMPS,
+the flag has been split up into separate flags:
 
-Reviewed-by: Mikulas Patocka <mpatocka@redhat.com>
+  * O_XDEV blocks all mountpoint crossings (upwards, downwards, or
+    through absolute links). Absolute pathnames alone in openat(2) do
+    not trigger this.
 
-> ---
->  drivers/video/fbdev/udlfb.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/video/fbdev/udlfb.c b/drivers/video/fbdev/udlfb.c
-> index 070026a7e55a..9643fe7c8349 100644
-> --- a/drivers/video/fbdev/udlfb.c
-> +++ b/drivers/video/fbdev/udlfb.c
-> @@ -1590,7 +1590,7 @@ static int dlfb_usb_probe(struct usb_interface *intf,
->  	int i;
->  	const struct device_attribute *attr;
->  	struct dlfb_data *dlfb;
-> -	struct fb_info *info;
-> +	struct fb_info *info = NULL;
->  	int retval = -ENOMEM;
->  	struct usb_device *usbdev = interface_to_usbdev(intf);
->  
-> @@ -1701,8 +1701,8 @@ static int dlfb_usb_probe(struct usb_interface *intf,
->  	return 0;
->  
->  error:
-> -	if (dlfb->info) {
-> -		dlfb_ops_destroy(dlfb->info);
-> +	if (info) {
-> +		dlfb_ops_destroy(info);
->  	} else if (dlfb) {
->  		usb_put_dev(dlfb->udev);
->  		kfree(dlfb);
-> -- 
-> 2.7.4
-> 
+  * O_NOMAGICLINKS blocks resolution through /proc/$pid/fd-style links.
+    This is done by blocking the usage of nd_jump_link() during
+    resolution in a filesystem. The term "magic links" is used to match
+    with the only reference to these links in Documentation/, but I'm
+    happy to change the name.
+
+    It should be noted that this is different to the scope of O_NOFOLLOW
+    in that it applies to all path components. However, you can do
+    open(O_NOFOLLOW|O_NOMAGICLINKS|O_PATH) on a "magic link" and it will
+    *not* fail (assuming that no parent component was a "magic link"),
+    and you will have an fd for the "magic link".
+
+  * O_BENEATH disallows escapes to outside the starting dirfd's tree,
+    using techniques such as ".." or absolute links. Absolute paths in
+    openat(2) are also disallowed. Conceptually this flag is to ensure
+    you "stay below" a certain point in the filesystem tree -- but this
+    requires some additional to protect against various races that would
+    allow escape using ".." (see patch 4 for more detail).
+
+    Currently O_BENEATH implies O_NOMAGICLINKS, because it can trivially
+    beam you around the filesystem (breaking the protection). In future,
+    there might be similar safety checks as in patch 4, but that
+    requires more discussion.
+
+In addition, two new flags were added that expand on the above ideas:
+
+  * O_NOSYMLINKS does what it says on the tin. No symlink resolution is
+    allowed at all, including "magic links". Just as with O_NOMAGICLINKS
+    this can still be used with (O_PATH|O_NOFOLLOW) to open an fd for
+    the symlink as long as no parent path had a symlink component.
+
+  * O_THISROOT is an extension of O_BENEATH that, rather than blocking
+    attempts to move past the root, forces all such movements to be
+    scoped to the starting point. This provides chroot(2)-like
+    protection but without the cost of a chroot(2) for each filesystem
+    operation, as well as being safe against race attacks that chroot(2)
+    is not.
+
+    If a race is detected (as with O_BENEATH) then an error is
+    generated, and similar to O_BENEATH it is not permitted to cross
+    "magic links" with O_THISROOT.
+
+    The primary need for this is from container runtimes, which
+    currently need to do symlink scoping in userspace[6] when opening
+    paths in a potentially malicious container. There is a long list of
+    CVEs that could have bene mitigated by having O_THISROOT (such as
+    CVE-2017-1002101, CVE-2017-1002102, CVE-2018-15664, to name a few).
+
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Christian Brauner <christian@brauner.io>
+Cc: David Drysdale <drysdale@google.com>
+Cc: <containers@lists.linux-foundation.org>
+Cc: <linux-fsdevel@vger.kernel.org>
+Cc: <linux-api@vger.kernel.org>
+
+[1]: https://lwn.net/Articles/721443/
+[2]: https://lore.kernel.org/patchwork/patch/784221/
+[3]: https://lwn.net/Articles/619151/
+[4]: https://lwn.net/Articles/603929/
+[5]: https://lwn.net/Articles/723057/
+[6]: https://github.com/cyphar/filepath-securejoin
+
+Aleksa Sarai (4):
+  namei: split out nd->dfd handling to dirfd_path_init
+  namei: O_BENEATH-style path resolution flags
+  namei: O_THISROOT: chroot-like path resolution
+  namei: aggressively check for nd->root escape on ".." resolution
+
+ fs/fcntl.c                       |   2 +-
+ fs/namei.c                       | 205 ++++++++++++++++++++++---------
+ fs/open.c                        |  13 +-
+ include/linux/fcntl.h            |   3 +-
+ include/linux/namei.h            |   8 ++
+ include/uapi/asm-generic/fcntl.h |  20 +++
+ 6 files changed, 189 insertions(+), 62 deletions(-)
+
+-- 
+2.19.1
+
