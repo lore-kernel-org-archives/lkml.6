@@ -1,115 +1,132 @@
 Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F5E1C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 06:19:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB9E2C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 06:19:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE382216FD
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 06:19:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83553216FD
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 06:19:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JOBXVVn7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE382216FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NiKnSwwz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83553216FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730676AbeKLQLC (ORCPT
+        id S1731704AbeKLQLe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 11:11:02 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:45767 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726558AbeKLQLB (ORCPT
+        Mon, 12 Nov 2018 11:11:34 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:33349 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726558AbeKLQLe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 11:11:01 -0500
-Received: by mail-ot1-f67.google.com with SMTP id 32so6423618ota.12
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 22:19:14 -0800 (PST)
+        Mon, 12 Nov 2018 11:11:34 -0500
+Received: by mail-wm1-f67.google.com with SMTP id f19-v6so8092181wmb.0
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 22:19:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=H6U+tqLICzGYJyvAoJyRXt8ctDXLaB3KKit/SZjRgoE=;
-        b=JOBXVVn7TVzzX5VjiPakncIqGx0mH91BCywaJ5InsQ3tDor4qK63UaYZqG2myz1W6m
-         4KA5BJBwZOcJuHEuHOSeR3hzVRIpd30kJr509GtTLieq40ZaGqcGJbwE7+hrO+OYJbSp
-         vFKQzSSvDeXmHkVHYnmGAgQwj+txtcJe6o5KMBUZkf826GBLO8ENSxmMMf8HO4M6K8Bx
-         FdxRujGFnkJ2VMYTb/83XCmNr9rQq9xXSJVcLYdfc09SMxSh49jYvbwUDnt6JczUut+6
-         aVvu6dWbS6fvgCJEfKu8YjEyQbgfxeRyKCLMIZmKfdDh7PV75JBmHr+6jvItDMNP9u50
-         /ong==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=pAU/BkGy4lxEJCXrEr3I7o3fol/UhLvyIVhr2Jkvoyg=;
+        b=NiKnSwwzICFLuM14vgebYXadTY/ZUd+Yd+b+UbvTcLTuP2lCFtW5fpproAhog07/BT
+         EIJHnZIaoCH9eBoMCfSTAy4L24OXskxMUi9IatijMYt1P/nk23aCeiGIUi9F7BTQUoDx
+         Iz5yuuZpX3UxJ+CPb9bSpHgJSQBa1sCDsJtRFZsRmN7y1Bf1ibHg+KMYysIgStv5CFkV
+         P2sGYuPNIb414kGsNi+h8cocC/G93N0ruP//sD/xTQYeN1bRcYDMHi1RaNZuib9QA0H8
+         D4Vkj/njQC1IuMaIeAAofqW8D7Cw2jF841PAy6SMs9WbR5kSDx8B2N95+gOJyJYpLiZX
+         qb0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=H6U+tqLICzGYJyvAoJyRXt8ctDXLaB3KKit/SZjRgoE=;
-        b=euYncdpGWURfACCfCCqIX3JUIFLjU9rFMaAHOv+Jp7n7JJsDlB1DzUupY+ZhaIWmGH
-         6qZ+UbPmPdoJ62PTS9MTstJS7Szl+U0DksFdtYKwjaAowC5flTvcMOYJO/DaY/3Z04Zx
-         WsCtHsLf1STdlbPbTUfcnR6kMUdeGv/9FA+uztuiXsNzO3aa13tOEGbCoYv+JzzvDooC
-         2OhJLH8itEujQKJe6Qo5cS+Jy+aS5eYVG6d8RUmK8hGb4E7Ijrzl/C4xPn8q8fembere
-         eIeBdKtAEHOIcmLd7qDI/ERm5v4KbLOj76nrn+/XWqlXUK2ncQU7MM7M21kTwtXcuSv/
-         MnnQ==
-X-Gm-Message-State: AGRZ1gI2qu1sLB/c7L5Tgx3Hi4gm0VfQrF8bWc1OesS0qT4vO5ToLA0c
-        lq3L/lIVwLsRpXi22DL3buzxum9x/RQCJg8R1sM=
-X-Google-Smtp-Source: AJdET5efhSUJ9qFEDZSnIua0x+YB7n8X5WIOSWoWzEktyG4fofHoHLTaobbWsmH58qZ1qu93c/i0yhx6A6iy1yZG+dU=
-X-Received: by 2002:a9d:3fb0:: with SMTP id r45mr10728204otc.110.1542003553581;
- Sun, 11 Nov 2018 22:19:13 -0800 (PST)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=pAU/BkGy4lxEJCXrEr3I7o3fol/UhLvyIVhr2Jkvoyg=;
+        b=rooTB4krnBGGOPLJqc+YgtQ81sRVoKW8wHsW16APcS23+VRv06ZczbQJkQcsqcl0yw
+         NohxE/2rLDau+znqw+jqlOKSmqo1F9yqMLvGQNI9hlfSAnCYxfkhegYirUsiPFVmNWEH
+         ZqCtXfFVimcehUJAjVf0/hRGDga58AdtE5JowJyiz0DiTTH0S+qC3PF4ZonMcYpOh3TQ
+         Wv5wIbHmQTVP3qnaR/dJBPbpbojvnp1I96oqn1K7UaxnHx2t36qjGsF0RQQni41qfS//
+         /57I0ar0MT9196SabRfB33YVA+FF74JfTfNwB1iHHTo3NAr6taJoqEI6s9dBwFz4QbFX
+         CguQ==
+X-Gm-Message-State: AGRZ1gLB+/R5FcofWReIRDegLraNLwlFAecVJc6UqKqcWVTQS+Jjp+4A
+        7Q1JA7ESrHGShS0t7ukXw5E=
+X-Google-Smtp-Source: AJdET5e5SXdOB5ysLQsxKjbt1ADDlTlZS72qCw4MaN7Yx3+8nvl44GGp5sMxXAifNBA13PT4+y/CTQ==
+X-Received: by 2002:a1c:6c0f:: with SMTP id h15-v6mr6297234wmc.123.1542003583862;
+        Sun, 11 Nov 2018 22:19:43 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id l42-v6sm11892257wre.37.2018.11.11.22.19.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 11 Nov 2018 22:19:43 -0800 (PST)
+Date:   Mon, 12 Nov 2018 07:19:40 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     "H. Peter Anvin" <hpa@zytor.com>
+Cc:     Li Zhijian <zhijianx.li@intel.com>,
+        Juergen Gross <jgross@suse.com>,
+        Li Zhijian <lizhijian@cn.fujitsu.com>,
+        Peter Maydell <peter.maydell@linaro.org>, x86@kernel.org,
+        bp@alien8.de, mingo@redhat.com, tglx@linutronix.de,
+        QEMU Developers <qemu-devel@nongnu.org>,
+        Philip Li <philip.li@intel.com>, linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [Qemu-devel] [RFC/PoC PATCH 1/3] i386: set initrd_max to 4G - 1
+ to allow up to 4G initrd
+Message-ID: <20181112061940.GA61749@gmail.com>
+References: <1541674784-25936-2-git-send-email-lizhijian@cn.fujitsu.com>
+ <CAFEAcA_47wyar3WNhuBmNPdr02RHx-wn_TeyFaajpjzvzG8j5Q@mail.gmail.com>
+ <c50d103e-95c3-c44c-d852-b6d7f8114b3a@cn.fujitsu.com>
+ <20181109072015.GA86700@gmail.com>
+ <38905d35-29af-b522-1629-b13e98a47a42@intel.com>
+ <d30b404d-624e-0497-879a-2d5df2eb9f31@suse.com>
+ <b7b608dc-1743-5e1f-3b88-94d784c4cab2@intel.com>
+ <d9c293bd-b43f-999c-55f1-3b90a6020065@zytor.com>
+ <20181112045624.GA28219@gmail.com>
+ <fcf1d6b5-e64f-3aea-f794-99237e1988cf@zytor.com>
 MIME-Version: 1.0
-References: <cover.1541995312.git.zongbox@gmail.com> <41e8cb18d321244ab7000f7dc0467b6ebc5cab8f.1541995312.git.zongbox@gmail.com>
-In-Reply-To: <41e8cb18d321244ab7000f7dc0467b6ebc5cab8f.1541995312.git.zongbox@gmail.com>
-From:   David Abdurachmanov <david.abdurachmanov@gmail.com>
-Date:   Mon, 12 Nov 2018 07:19:02 +0100
-Message-ID: <CAEn-LTpXnzSG-rVVvv_2cbxqY2vTchOKn6M0isRBovoq4jpZGw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] RISC-V: Request stat64 on RV32
-To:     zongbox@gmail.com
-Cc:     Palmer Dabbelt <palmer@sifive.com>, aou@eecs.berkeley.edu,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        zong@andestech.com,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fcf1d6b5-e64f-3aea-f794-99237e1988cf@zytor.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 5:10 AM Zong Li <zongbox@gmail.com> wrote:
->
-> The stat64 family that is used on 32-bit architectures to replace
-> newstat.
->
-> Since commit 67314ec7b0250290cc85eaa7a2f88a8ddb9e8547 ("RISC-V: Request
-> newstat syscalls"), the RV32 build fail with undeclared 'sys_fstatat64'
->
-> Signed-off-by: Zong Li <zong@andestech.com>
-> ---
->  arch/riscv/include/asm/unistd.h | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/arch/riscv/include/asm/unistd.h b/arch/riscv/include/asm/unistd.h
-> index eff7aa9..a4aade9 100644
-> --- a/arch/riscv/include/asm/unistd.h
-> +++ b/arch/riscv/include/asm/unistd.h
-> @@ -18,5 +18,6 @@
->
->  #define __ARCH_WANT_NEW_STAT
->  #define __ARCH_WANT_SYS_CLONE
-> +#define __ARCH_WANT_STAT64
->  #include <uapi/asm/unistd.h>
->  #include <uapi/asm/syscalls.h>
-> --
 
-See: http://lists.infradead.org/pipermail/linux-riscv/2018-November/002087.html
+* H. Peter Anvin <hpa@zytor.com> wrote:
 
-The plan is not to have old stat syscalls and support statx on
-riscv32, which is y2038 safe.
+> > Such an extended header could use a more modern (self-extending) ABI as 
+> > well.
+> 
+> Yes, although I don't really think it is as much of an issue as it seems at
+> this point.
+> 
+> The limit comes from having used a one-byte jump instruction at the beginning;
+> however, these days that limit is functionally walled.
+> 
+> It is of course possible to address this if it should become necessary,
+> however, the current protocol has lasted for 23 years so far and we haven't
+> run out yet, even with occasional missteps. As such, I don't think we are in a
+> huge hurry to address this particular aspect.
 
-The issue you see is a bug in include/uapi/asm-generic/unistd.h.
-Marcin (CC) already sent a patch to Arnd (CC) IIRC. Basically without
-__ARCH_WANT_NEW_STAT or __ARCH_WANT_STAT64 two macros are not defined:
-__NR3264_fstatat and __NR3264_fstat. Which is later used (without any
-guards):
+Agreed, fair enough!
 
-763 #define __NR_newfstatat __NR3264_fstatat
-764 #define __NR_fstat __NR3264_fstat
+> In part as a result of this exchange I have spent some time thinking 
+> about the boot protocol and its dependencies, and there is, in fact, a 
+> much more serious problem that needs to be addressed: it is not 
+> currently possible in a forward-compatible way to map all data areas 
+> that may be occupied by bootloader-provided data. The kernel proper has 
+> an advantage here, in that the kernel will by definition always be the 
+> "owner of the protocol" (anything the kernel doesn't know how to map 
+> won't be used by the kernel anyway), but it really isn't a good 
+> situation. So I'm currently trying to think up a way to make that 
+> possible.
+
+I might be a bit dense early in the morning, but could you elaborate? 
+What do you mean by mapping all data areas?
+
+Thanks,
+
+	Ingo
