@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31751C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 07:34:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0013C43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 07:34:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04CF221722
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 07:34:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04CF221722
+	by mail.kernel.org (Postfix) with ESMTP id B4D3621722
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 07:34:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4D3621722
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727220AbeKLR00 (ORCPT
+        id S1727364AbeKLR01 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 12:26:26 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:50591 "EHLO
+        Mon, 12 Nov 2018 12:26:27 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:16495 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727143AbeKLR0Z (ORCPT
+        with ESMTP id S1726971AbeKLR00 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 12:26:25 -0500
-X-UUID: b91e327d10c34a9ab42dceb53f16f16d-20181112
-X-UUID: b91e327d10c34a9ab42dceb53f16f16d-20181112
+        Mon, 12 Nov 2018 12:26:26 -0500
+X-UUID: 96b39717492f48c88fa6820196486667-20181112
+X-UUID: 96b39717492f48c88fa6820196486667-20181112
 Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
         (envelope-from <ryder.lee@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1717830483; Mon, 12 Nov 2018 15:34:01 +0800
+        with ESMTP id 1053846219; Mon, 12 Nov 2018 15:34:01 +0800
 Received: from mtkcas08.mediatek.inc (172.21.101.126) by
  mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 12 Nov 2018 15:33:59 +0800
+ 15.0.1395.4; Mon, 12 Nov 2018 15:33:58 +0800
 Received: from mtkslt306.mediatek.inc (10.21.14.136) by mtkcas08.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 12 Nov 2018 15:33:59 +0800
+ Transport; Mon, 12 Nov 2018 15:33:58 +0800
 From:   Ryder Lee <ryder.lee@mediatek.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
 CC:     Rob Herring <robh+dt@kernel.org>, <llinux-pwm@vger.kernel.org>,
@@ -43,41 +43,106 @@ CC:     Rob Herring <robh+dt@kernel.org>, <llinux-pwm@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
-        Ryder Lee <ryder.lee@mediatek.com>
-Subject: [PATCH v1 3/3] dt-bindings: pwm: update bindings for MT7629 SoC
-Date:   Mon, 12 Nov 2018 15:33:57 +0800
-Message-ID: <630234ce3f13d93650c820be8f1724b84dd3c0ba.1542007642.git.ryder.lee@mediatek.com>
+        Ryder Lee <ryder.lee@mediatek.com>,
+        John Crispin <john@phrozen.org>
+Subject: [PATCH v1 1/3] pwm: mediatek: drop flag 'has_clks'
+Date:   Mon, 12 Nov 2018 15:33:55 +0800
+Message-ID: <4c9044427b1aab373acd6ac76f0c905e2be79784.1542007642.git.ryder.lee@mediatek.com>
 X-Mailer: git-send-email 1.9.1
-In-Reply-To: <4c9044427b1aab373acd6ac76f0c905e2be79784.1542007642.git.ryder.lee@mediatek.com>
-References: <4c9044427b1aab373acd6ac76f0c905e2be79784.1542007642.git.ryder.lee@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: 14FF2CD7B5E919DCB3244DE2E7A5433404ED33E998F77B697A39853FBCD8A84B2000:8
+X-TM-SNTS-SMTP: 9CC1BC1682D59B70097A40A4036CFB37126FE60CAC2EC16B44782C046213A3A72000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This updates bindings for MT7629 pwm controller.
+The flag 'has_clks' and related checks are superfluous as the CCF
+subsystem does this for you.
 
+Cc: John Crispin <john@phrozen.org>
 Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
 ---
- Documentation/devicetree/bindings/pwm/pwm-mediatek.txt | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pwm/pwm-mediatek.c | 20 +++++---------------
+ 1 file changed, 5 insertions(+), 15 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pwm/pwm-mediatek.txt b/Documentation/devicetree/bindings/pwm/pwm-mediatek.txt
-index 991728c..4a2885b 100644
---- a/Documentation/devicetree/bindings/pwm/pwm-mediatek.txt
-+++ b/Documentation/devicetree/bindings/pwm/pwm-mediatek.txt
-@@ -6,6 +6,7 @@ Required properties:
-    - "mediatek,mt7622-pwm": found on mt7622 SoC.
-    - "mediatek,mt7623-pwm": found on mt7623 SoC.
-    - "mediatek,mt7628-pwm": found on mt7628 SoC.
-+   - "mediatek,mt7629-pwm": found on mt7629 SoC.
-  - reg: physical base address and length of the controller's registers.
-  - #pwm-cells: must be 2. See pwm.txt in this directory for a description of
-    the cell format.
+diff --git a/drivers/pwm/pwm-mediatek.c b/drivers/pwm/pwm-mediatek.c
+index eb6674c..9400c41 100644
+--- a/drivers/pwm/pwm-mediatek.c
++++ b/drivers/pwm/pwm-mediatek.c
+@@ -57,7 +57,6 @@ enum {
+ struct mtk_pwm_platform_data {
+ 	unsigned int num_pwms;
+ 	bool pwm45_fixup;
+-	bool has_clks;
+ };
+ 
+ /**
+@@ -87,9 +86,6 @@ static int mtk_pwm_clk_enable(struct pwm_chip *chip, struct pwm_device *pwm)
+ 	struct mtk_pwm_chip *pc = to_mtk_pwm_chip(chip);
+ 	int ret;
+ 
+-	if (!pc->soc->has_clks)
+-		return 0;
+-
+ 	ret = clk_prepare_enable(pc->clks[MTK_CLK_TOP]);
+ 	if (ret < 0)
+ 		return ret;
+@@ -116,9 +112,6 @@ static void mtk_pwm_clk_disable(struct pwm_chip *chip, struct pwm_device *pwm)
+ {
+ 	struct mtk_pwm_chip *pc = to_mtk_pwm_chip(chip);
+ 
+-	if (!pc->soc->has_clks)
+-		return;
+-
+ 	clk_disable_unprepare(pc->clks[MTK_CLK_PWM1 + pwm->hwpwm]);
+ 	clk_disable_unprepare(pc->clks[MTK_CLK_MAIN]);
+ 	clk_disable_unprepare(pc->clks[MTK_CLK_TOP]);
+@@ -246,12 +239,13 @@ static int mtk_pwm_probe(struct platform_device *pdev)
+ 	if (IS_ERR(pc->regs))
+ 		return PTR_ERR(pc->regs);
+ 
+-	for (i = 0; i < data->num_pwms + 2 && pc->soc->has_clks; i++) {
++	for (i = 0; i < data->num_pwms + 2; i++) {
+ 		pc->clks[i] = devm_clk_get(&pdev->dev, mtk_pwm_clk_name[i]);
+ 		if (IS_ERR(pc->clks[i])) {
+-			dev_err(&pdev->dev, "clock: %s fail: %ld\n",
+-				mtk_pwm_clk_name[i], PTR_ERR(pc->clks[i]));
+-			return PTR_ERR(pc->clks[i]);
++			if (PTR_ERR(pc->clks[i]) == -EPROBE_DEFER)
++				return -EPROBE_DEFER;
++
++			pc->clks[i] = NULL;
+ 		}
+ 	}
+ 
+@@ -281,25 +275,21 @@ static int mtk_pwm_remove(struct platform_device *pdev)
+ static const struct mtk_pwm_platform_data mt2712_pwm_data = {
+ 	.num_pwms = 8,
+ 	.pwm45_fixup = false,
+-	.has_clks = true,
+ };
+ 
+ static const struct mtk_pwm_platform_data mt7622_pwm_data = {
+ 	.num_pwms = 6,
+ 	.pwm45_fixup = false,
+-	.has_clks = true,
+ };
+ 
+ static const struct mtk_pwm_platform_data mt7623_pwm_data = {
+ 	.num_pwms = 5,
+ 	.pwm45_fixup = true,
+-	.has_clks = true,
+ };
+ 
+ static const struct mtk_pwm_platform_data mt7628_pwm_data = {
+ 	.num_pwms = 4,
+ 	.pwm45_fixup = true,
+-	.has_clks = false,
+ };
+ 
+ static const struct of_device_id mtk_pwm_of_match[] = {
 -- 
 1.9.1
 
