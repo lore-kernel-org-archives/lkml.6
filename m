@@ -2,92 +2,91 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BBFAC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:10:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE9CEC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:11:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FCA322503
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:10:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EFD52245E
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:11:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="kmXb/r+T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FCA322503
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="DZ5mM2jD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EFD52245E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729968AbeKMDEa (ORCPT
+        id S1729992AbeKMDF4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 22:04:30 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:32882 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727659AbeKMDEa (ORCPT
+        Mon, 12 Nov 2018 22:05:56 -0500
+Received: from mail-io1-f49.google.com ([209.85.166.49]:36183 "EHLO
+        mail-io1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727659AbeKMDF4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 22:04:30 -0500
-Received: by mail-pg1-f194.google.com with SMTP id z11so1709094pgu.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 09:10:22 -0800 (PST)
+        Mon, 12 Nov 2018 22:05:56 -0500
+Received: by mail-io1-f49.google.com with SMTP id m19so1074827ioh.3
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 09:11:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ej2zWVNDkKDNwVA+EVbiOGWXtvZFOLaPlACrw1hHV7k=;
-        b=kmXb/r+TPkHme/w723MEjEX1OmHpW0Rzgx7MIqmYbImnpm7bgEJJFyKtMTgh+aQVte
-         agicwsN632siixG/62KiWdGhoU46apMOF1brZjdXFJo2mgEK9HrjoOb55+V8JJPKQmj0
-         ti08t693wG1g4M5YwSIPIqIQXBzq19GG4j+OuLtRXOqn8/2oFn6SXOcXh7HdYqVFD6bE
-         AdtKnoNSsJQvNP62bXDvoSRh+lDcqpKt+ZzoR9M/j+dq5gnYH3mDLtkgblIsxSZnPV2u
-         V6hUZaKHXLAgEDKbb2CvJvv2WW+Ae9xaNC5/NUMBNMzk9qsdXXHHfZZeVRzZ5WfOyAeP
-         9QrQ==
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=4vEPWJVZfoDgyB1Z8MZMXCxjG8os+I0SeNm1EVItpcA=;
+        b=DZ5mM2jDwSWgEDkjaSnRVZFup7zw7enqYz42GWXc7ThI1GtLzoVNsZp+4CAa+ODXV4
+         4GdiKu55qNIWITnBKvV116mwKk+AFC6PML0PFE5HopXNybGIsptnlDEjaFup1x6sl/HR
+         TzwlVczOl7F137UAPRJErckzl46Nn66foH3+e5Gw0aVCS2vVe6Q3ty20IpfjtirU+rje
+         UBF8tRteB8m93nOYVW2UPk3tgsift0/bygmYr02bHzK0gxHMFNQrahUSXjSDwaG8TgyW
+         TRF/3+osgPzWm54uhpCOooTlMcG9SDs5NViCKdEkH6uKFkQVlkQCkCSZatUEgPwyIOw7
+         Dxkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ej2zWVNDkKDNwVA+EVbiOGWXtvZFOLaPlACrw1hHV7k=;
-        b=AC86VS2LTVlmIFq81GDbE/SMsb8EGtodLl3/D5js0+KaNC0Vx2OSA12b9QC9W/Ltoh
-         PQitud9ok3tS42Kor2AbP7vMTxEIDyewINs0WZqx8r/mY+4cKCocFvx9oqjnIPvPXyVL
-         b84sLTfqPbdK7eUP3Mn995tw/+kO6Bacx7l+Q6Yb/tallp9o+0QOXaPmTxpmuTZeX9y7
-         iRUCtAGrfpgQolZOEtMwtEy3sJKs5cAN/vn8hX065n36Am+oDmUi6sODamh44OQO/TBZ
-         wXT5wbHEI2aJcafvr6ihCacYu8shVxSLrl0Gj4oNgS5pJXd69PLnjU/YYnK5NwcBXZ5e
-         74Uw==
-X-Gm-Message-State: AGRZ1gLwHMLD99iYJvYBlaW2n5eI+pUSSoIQ3raGz3SxSV0l/CLnBLaX
-        mNMrQiODF4JSWcz6kLZp1QnQPARp3bA=
-X-Google-Smtp-Source: AJdET5fNMpBXSVwTARCXCIhhgisnHkPzwszZOFeYF6eVG46zcK2imqa2HIyMDB12ukhRBLBV8biyIg==
-X-Received: by 2002:a62:3a82:: with SMTP id v2mr1661841pfj.174.1542042620858;
-        Mon, 12 Nov 2018 09:10:20 -0800 (PST)
-Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
-        by smtp.gmail.com with ESMTPSA id u82-v6sm204925pfj.131.2018.11.12.09.10.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 12 Nov 2018 09:10:19 -0800 (PST)
-Subject: Re: [PATCH V5 1/6] blk-mq: make __blk_mq_issue_directly be able to
- accept NULL cookie pointer
-To:     Jianchao Wang <jianchao.w.wang@oracle.com>
-Cc:     ming.lei@redhat.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1542014609-1769-1-git-send-email-jianchao.w.wang@oracle.com>
- <1542014609-1769-2-git-send-email-jianchao.w.wang@oracle.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <01bd2f70-cc78-9bfd-aa30-b73c44eaa9bb@kernel.dk>
-Date:   Mon, 12 Nov 2018 10:10:16 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=4vEPWJVZfoDgyB1Z8MZMXCxjG8os+I0SeNm1EVItpcA=;
+        b=dz9Zr3vNl9PI9qp3MV8OhY2iZIbYAftijL/jSXpf6c0M1UteeZ1kEmmaw4W2mhMAXC
+         4kohRIZSbo2ZPbfw2RId9JVjQpoTXc0u3txar5c6ipKv8hARCi08t5Mj4g0yMUxaJwrX
+         lnfip6XX5X7kNtTNJA9yz0LNXs76Vy7wqaXypGCa74xxpDBy9O1cl0MOsJmsysMH3rc6
+         itJw9N8cmxyUl7sj1mNigyKzlDuppc/V1I96jW45I5zVT8okt+8hmRPVJ+02fwLvvz/k
+         BWpPR8zt+1NWGmRGDHVQdusyQFULvd3vBMZeTt7fJkXxfyNGk7SVTAPNpgjhOzTYDKcs
+         V2+g==
+X-Gm-Message-State: AGRZ1gJN3fNlLEg0509gMSmOFSBELrIDABnY59heQSMlBsUMmvl/vdGg
+        x0J25N5JQmVyiuQ0NJ3xEQt1cA==
+X-Google-Smtp-Source: AJdET5eObN7Fbq6VBIJZpziCax1Wm4IlX/N6L2diSYC0h5u7SYk+0uCPVTxBAAe64B83ZHUcbzG48Q==
+X-Received: by 2002:a6b:ef02:: with SMTP id k2-v6mr1482460ioh.78.1542042707183;
+        Mon, 12 Nov 2018 09:11:47 -0800 (PST)
+Received: from cisco ([128.107.241.180])
+        by smtp.gmail.com with ESMTPSA id l70-v6sm4693914itb.29.2018.11.12.09.11.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 12 Nov 2018 09:11:46 -0800 (PST)
+Date:   Mon, 12 Nov 2018 10:11:44 -0700
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Kees Cook <keescook@chromium.org>, Oleg Nesterov <oleg@redhat.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: siginfo pid not populated from ptrace?
+Message-ID: <20181112171144.GI3645@cisco>
 MIME-Version: 1.0
-In-Reply-To: <1542014609-1769-2-git-send-email-jianchao.w.wang@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/12/18 2:23 AM, Jianchao Wang wrote:
-> Make __blk_mq_issue_directly be able to accept a NULL cookie pointer
-> and remove the dummy unused_cookie in blk_mq_request_issue_directly.
+Hi Oleg,
 
-What's the reasoning behind this? Seems faster to store the cookie
-always, instead of introducing a branch to the hot path.
+I've been running some tests on my seccomp series, and in one of the
+tests on v4.20-rc2, I noticed,
 
--- 
-Jens Axboe
+[ RUN      ] global.syscall_restart
+seccomp_bpf.c:2784:global.syscall_restart:Expected getpid() (1492) == info._sifields._kill.si_pid (0)
+global.syscall_restart: Test failed at step #22
 
+which seems unrelated to my series (the kernel was stock v4.20 with my
+patches on top).
+
+I've been running a lot of tests, and only seen this once, so it seems
+like a fairly rare race. I tried to look through the code but didn't
+see anything obvious. Thoughts?
+
+Tycho
