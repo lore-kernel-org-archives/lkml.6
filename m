@@ -2,116 +2,149 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA5BDC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 09:01:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35BE1C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 09:02:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90CAF223C6
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 09:01:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Uwgjpo1E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90CAF223C6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 04C64223C6
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 09:02:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04C64223C6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729176AbeKLSxY (ORCPT
+        id S1729197AbeKLSya (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 13:53:24 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:39374 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728400AbeKLSxY (ORCPT
+        Mon, 12 Nov 2018 13:54:30 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:39420 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728400AbeKLSya (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 13:53:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=VTRX66HXL1eoQPasuf74XvFsWBt0U52yRurmwc48kbA=; b=Uwgjpo1EfhAPUdN6QtBDiTxFd
-        xxXUbFJAqSQFpF0eSSkWFrDvx88scxx9u+m8cN3AXAFktvHWeXrbk3FfNO77xvZoMNe+4RIyJO88X
-        MbPkJW0Tn0Z82SA+FMXyiDTvSVk35quJGiock5C9QZfPFt3gPexh2gRU1iqjsdgD60e0aUVABkTSG
-        NzljVMJ2iAmYjm9xaOutTXQTSHl2lL//O/cskCO0WmZQmxfmT18H33L9e09l7ygzHt1ieSTyxyG2z
-        1BV3Fj0T2UQcA4j4lB6S/flzqIcIp6s8QEnSpaI0cUQYMhXjkLU0rnURXkgjOhEmrU1f1PW1sq7v8
-        P8QQslfsA==;
-Received: from [64.114.255.114] (helo=worktop)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gM85R-0006rF-2K; Mon, 12 Nov 2018 09:00:49 +0000
-Received: by worktop (Postfix, from userid 1000)
-        id E7CD46E03B0; Mon, 12 Nov 2018 10:00:47 +0100 (CET)
-Date:   Mon, 12 Nov 2018 10:00:47 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, rostedt@goodmis.org,
-        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
-        oleg@redhat.com, joel@joelfernandes.org,
-        Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH tip/core/rcu 23/41] sched: Replace synchronize_sched()
- with synchronize_rcu()
-Message-ID: <20181112090047.GN3056@worktop>
-References: <20181111194104.GA4787@linux.ibm.com>
- <20181111194410.6368-23-paulmck@linux.ibm.com>
- <20181112001233.GC3056@worktop>
- <20181112004528.GA4170@linux.ibm.com>
- <20181112005329.GG3056@worktop>
- <20181112014736.GB4170@linux.ibm.com>
- <20181112020710.GJ3056@worktop>
- <20181112022455.GD4170@linux.ibm.com>
+        Mon, 12 Nov 2018 13:54:30 -0500
+Received: by mail-vs1-f65.google.com with SMTP id h78so4652246vsi.6
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 01:02:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8FI96f/QiRAl7mcgh6YM+M4riGclTfraQs4QqFLvAsU=;
+        b=F1BTWTxqHiuycASscBrBkpHm6hifFQJAOGgH1Q6+/p77zYYLJc3Y+qdV2GncIfZaOy
+         ygkAhh+u19raYfOH6FpMNTVYJo9zFhACKPfUpN5hkCwtGiTJVoisjuiiVlH5NVrQ+F1V
+         fEEt6myx2jYoQz2dAc3Jxj7cUftnyR1oo7Z3vy5dz97wraUHmQIuoTeuSeoTrMPD5wZz
+         1GnlrOvTiyx+KL6T6f8Nn1XpJJz7aO27+CMPtI3AA0hyuKmPJMGPvcrMrv2gV6r7Kw8S
+         Qr3PokfIc/v06cBjo5Fyc1F1RAaRM8fill8U5ZpW3Hrd5S3zvE907eYIMkY1NldJIFGe
+         3tyg==
+X-Gm-Message-State: AGRZ1gKtronG/c86Giv/TYx3cCZ9csVuMlyvXmKmjrVyKtC45y5sSW2f
+        40jKsT1zMxVHcqtFxVzWc+sQELGw77vlEH6//y4=
+X-Google-Smtp-Source: AJdET5fjTJ/Ljp6McOWsVIx/9Cc8rPynqACEZTIh3teK+qbZ676rh57UE5G1qg05Avvst5DUrN+3W7lnKlXgDJ9NMw8=
+X-Received: by 2002:a67:f43:: with SMTP id 64mr54905vsp.166.1542013334742;
+ Mon, 12 Nov 2018 01:02:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181112022455.GD4170@linux.ibm.com>
-User-Agent: Mutt/1.5.22.1 (2013-10-16)
+References: <cover.1541995959.git.fthain@telegraphics.com.au> <cbfa6a4e8a1a36e22969e63b703015007abe8593.1541995959.git.fthain@telegraphics.com.au>
+In-Reply-To: <cbfa6a4e8a1a36e22969e63b703015007abe8593.1541995959.git.fthain@telegraphics.com.au>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 12 Nov 2018 10:02:02 +0100
+Message-ID: <CAMuHMdU15gaEcwG4JCFxDwsA-dm0uHzZe_EmtoSLgOV2XAgWbQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 07/13] m68k: amiga: Convert to clocksource API
+To:     Finn Thain <fthain@telegraphics.com.au>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Stephen N Chivers <schivers@csc.com.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 11, 2018 at 06:24:55PM -0800, Paul E. McKenney wrote:
+Hi Finn,
 
-> > > There were quite a few commits involved in making this happen.  Perhaps
-> > > the most pertinent are these:
-> > > 
-> > > 3e3100989869 ("rcu: Defer reporting RCU-preempt quiescent states when disabled")
-> > > 45975c7d21a1 ("rcu: Define RCU-sched API in terms of RCU for Tree RCU PREEMPT builds")
-> > 
-> > The latter; it does not mention that this will possible make
-> > synchronize_sched() quite a bit more expensive on PREEMPT=y builds :/
-> 
-> In theory, sure.  In practice, people have switched any number of
-> things from RCU-sched to RCU and back without problems.
+On Mon, Nov 12, 2018 at 5:46 AM Finn Thain <fthain@telegraphics.com.au> wrote:
+> Add a platform clocksource by adapting the existing arch_gettimeoffset
+> implementation.
+>
+> Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 
-Still, better safe than sorry. It was a rather big change in behaviour,
-so it wouldn't have been strange to call that out.
+Thanks for your patch!
 
-> > But for PREEMPT=y synchronize_sched() can be quite a bit shorter than
-> > synchronize_rcu(), since we don't have to wait for preempted read side
-> > stuff.
-> 
-> Again, there are quite a few places that have managed that transition
-> without issue.  Why do you expect this change to have problems that have
-> not been seen elsewhere?
+> --- a/arch/m68k/amiga/config.c
+> +++ b/arch/m68k/amiga/config.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/mm.h>
+>  #include <linux/seq_file.h>
+>  #include <linux/tty.h>
+> +#include <linux/clocksource.h>
+>  #include <linux/console.h>
+>  #include <linux/rtc.h>
+>  #include <linux/init.h>
+> @@ -461,7 +462,30 @@ void __init config_amiga(void)
+>                 *(unsigned char *)ZTWO_VADDR(0xde0002) |= 0x80;
+>  }
+>
+> +static u64 amiga_read_clk(struct clocksource *cs);
+> +
+> +static struct clocksource amiga_clk = {
+> +       .name   = "ciab",
+> +       .rating = 250,
+> +       .read   = amiga_read_clk,
+> +       .mask   = CLOCKSOURCE_MASK(32),
+> +       .flags  = CLOCK_SOURCE_IS_CONTINUOUS,
+> +};
+> +
+>  static unsigned short jiffy_ticks;
+> +static u32 clk_total;
 
-I'm not, I'm just taking issue with the Changelog.
+Shouldn't clk_total be u64?
 
-> > Again, the patch didn't say that.
-> > 
-> > If the Changelog would've read something like:
-> > 
-> > "Since synchronize_sched() is now equivalent to synchronize_rcu(),
-> > replace the synchronize_sched() usage such that we can eventually remove
-> > the interface."
-> > 
-> > It would've been clear that the patch is a nop and what the purpose
-> > was.
-> 
-> I can easily make that change.
+> +
+> +static irqreturn_t ciab_timer_handler(int irq, void *data)
+> +{
+> +       irq_handler_t timer_routine = data;
+> +       unsigned long flags;
+> +
+> +       local_irq_save(flags);
+> +       clk_total += jiffy_ticks;
+> +       local_irq_restore(flags);
+> +
+> +       return timer_routine(irq, data);
+> +}
 
-Please, sufficient doesn't imply necessary etc.. A changelog should
-always clarify why we do the patch.
+[...]
+
+> -static u32 amiga_gettimeoffset(void)
+> +static u64 amiga_read_clk(struct clocksource *cs)
+>  {
+>         unsigned long flags;
+>         unsigned short hi, lo, hi2;
+> @@ -512,14 +537,13 @@ static u32 amiga_gettimeoffset(void)
+>         if (ticks > jiffy_ticks / 2)
+>                 /* check for pending interrupt */
+>                 if (cia_set_irq(&ciab_base, 0) & CIA_ICR_TA)
+> -                       offset = 10000;
+> +                       offset = jiffy_ticks;
+>
+>         local_irq_restore(flags);
+>
+>         ticks = jiffy_ticks - ticks;
+> -       ticks = (10000 * ticks) / jiffy_ticks;
+>
+> -       return (ticks + offset) * 1000;
+> +       return clk_total + ticks + offset;
+
+... to return a full 64-bit value here?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
