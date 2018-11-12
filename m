@@ -3,146 +3,143 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0013C43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 07:34:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 531D8C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 07:34:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4D3621722
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 07:34:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4D3621722
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 25D0822353
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 07:34:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25D0822353
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=asix.com.tw
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727364AbeKLR01 (ORCPT
+        id S1728118AbeKLR0w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 12:26:27 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:16495 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726971AbeKLR00 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 12:26:26 -0500
-X-UUID: 96b39717492f48c88fa6820196486667-20181112
-X-UUID: 96b39717492f48c88fa6820196486667-20181112
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
-        (envelope-from <ryder.lee@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1053846219; Mon, 12 Nov 2018 15:34:01 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 12 Nov 2018 15:33:58 +0800
-Received: from mtkslt306.mediatek.inc (10.21.14.136) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 12 Nov 2018 15:33:58 +0800
-From:   Ryder Lee <ryder.lee@mediatek.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     Rob Herring <robh+dt@kernel.org>, <llinux-pwm@vger.kernel.org>,
-        Weijie Gao <weijie.gao@mediatek.com>,
-        Roy Luo <cheng-hao.luo@mediatek.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        John Crispin <john@phrozen.org>
-Subject: [PATCH v1 1/3] pwm: mediatek: drop flag 'has_clks'
-Date:   Mon, 12 Nov 2018 15:33:55 +0800
-Message-ID: <4c9044427b1aab373acd6ac76f0c905e2be79784.1542007642.git.ryder.lee@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 9CC1BC1682D59B70097A40A4036CFB37126FE60CAC2EC16B44782C046213A3A72000:8
-X-MTK:  N
+        Mon, 12 Nov 2018 12:26:52 -0500
+Received: from asix.com.tw ([113.196.140.82]:28897 "EHLO freebsd2.asix.com.tw"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727721AbeKLR0w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 12:26:52 -0500
+X-Greylist: delayed 1107 seconds by postgrey-1.27 at vger.kernel.org; Mon, 12 Nov 2018 12:26:51 EST
+Received: from localhost.localdomain ([10.1.2.57])
+        (authenticated bits=0)
+        by freebsd2.asix.com.tw (8.15.2/8.15.2) with ESMTPA id wAC7EoFb026779;
+        Mon, 12 Nov 2018 15:14:55 +0800 (CST)
+        (envelope-from jackychou@asix.com.tw)
+Authentication-Results: freebsd2.asix.com.tw; sender-id=permerror header.from=jackychou@asix.com.tw; auth=pass (LOGIN); spf=permerror smtp.mfrom=jackychou@asix.com.tw
+X-Authentication-Warning: freebsd2.asix.com.tw: Host [10.1.2.57] claimed to be localhost.localdomain
+From:   Jackychou <jackychou@asix.com.tw>
+To:     johan@kernel.org
+Cc:     gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, louis@asix.com.tw,
+        jackychou@asix.com.tw
+Subject: [PATCH] USB: serial: mos7840: Add a product ID for the new product
+Date:   Mon, 12 Nov 2018 15:16:05 +0800
+Message-Id: <20181112071605.7014-1-jackychou@asix.com.tw>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The flag 'has_clks' and related checks are superfluous as the CCF
-subsystem does this for you.
+From: JackyChou <jackychou@asix.com.tw>
 
-Cc: John Crispin <john@phrozen.org>
-Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+Add a new PID 0x7843 to the driver.
+Let the new products be able to set up 3 serial ports with the driver.
+
+Signed-off-by: JackyChou <jackychou@asix.com.tw>
 ---
- drivers/pwm/pwm-mediatek.c | 20 +++++---------------
- 1 file changed, 5 insertions(+), 15 deletions(-)
+ drivers/usb/serial/mos7840.c | 26 ++++++++++++++++++--------
+ 1 file changed, 18 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/pwm/pwm-mediatek.c b/drivers/pwm/pwm-mediatek.c
-index eb6674c..9400c41 100644
---- a/drivers/pwm/pwm-mediatek.c
-+++ b/drivers/pwm/pwm-mediatek.c
-@@ -57,7 +57,6 @@ enum {
- struct mtk_pwm_platform_data {
- 	unsigned int num_pwms;
- 	bool pwm45_fixup;
--	bool has_clks;
- };
+diff --git a/drivers/usb/serial/mos7840.c b/drivers/usb/serial/mos7840.c
+index b42bad85097a..7667b22fa2f7 100644
+--- a/drivers/usb/serial/mos7840.c
++++ b/drivers/usb/serial/mos7840.c
+@@ -94,6 +94,7 @@
+ /* The native mos7840/7820 component */
+ #define USB_VENDOR_ID_MOSCHIP           0x9710
+ #define MOSCHIP_DEVICE_ID_7840          0x7840
++#define MOSCHIP_DEVICE_ID_7843          0x7843
+ #define MOSCHIP_DEVICE_ID_7820          0x7820
+ #define MOSCHIP_DEVICE_ID_7810          0x7810
+ /* The native component can have its vendor/device id's overridden
+@@ -176,6 +177,7 @@ enum mos7840_flag {
  
- /**
-@@ -87,9 +86,6 @@ static int mtk_pwm_clk_enable(struct pwm_chip *chip, struct pwm_device *pwm)
- 	struct mtk_pwm_chip *pc = to_mtk_pwm_chip(chip);
- 	int ret;
+ static const struct usb_device_id id_table[] = {
+ 	{USB_DEVICE(USB_VENDOR_ID_MOSCHIP, MOSCHIP_DEVICE_ID_7840)},
++	{USB_DEVICE(USB_VENDOR_ID_MOSCHIP, MOSCHIP_DEVICE_ID_7843)},
+ 	{USB_DEVICE(USB_VENDOR_ID_MOSCHIP, MOSCHIP_DEVICE_ID_7820)},
+ 	{USB_DEVICE(USB_VENDOR_ID_MOSCHIP, MOSCHIP_DEVICE_ID_7810)},
+ 	{USB_DEVICE(USB_VENDOR_ID_BANDB, BANDB_DEVICE_ID_USO9ML2_2)},
+@@ -298,7 +300,7 @@ static int mos7840_set_uart_reg(struct usb_serial_port *port, __u16 reg,
+ 	val = val & 0x00ff;
+ 	/* For the UART control registers, the application number need
+ 	   to be Or'ed */
+-	if (port->serial->num_ports == 4) {
++	if (port->serial->num_ports == 4 || port->serial->num_ports == 3) {
+ 		val |= ((__u16)port->port_number + 1) << 8;
+ 	} else {
+ 		if (port->port_number == 0) {
+@@ -332,7 +334,7 @@ static int mos7840_get_uart_reg(struct usb_serial_port *port, __u16 reg,
+ 		return -ENOMEM;
  
--	if (!pc->soc->has_clks)
--		return 0;
--
- 	ret = clk_prepare_enable(pc->clks[MTK_CLK_TOP]);
- 	if (ret < 0)
- 		return ret;
-@@ -116,9 +112,6 @@ static void mtk_pwm_clk_disable(struct pwm_chip *chip, struct pwm_device *pwm)
- {
- 	struct mtk_pwm_chip *pc = to_mtk_pwm_chip(chip);
+ 	/* Wval  is same as application number */
+-	if (port->serial->num_ports == 4) {
++	if (port->serial->num_ports == 4 || port->serial->num_ports == 3) {
+ 		Wval = ((__u16)port->port_number + 1) << 8;
+ 	} else {
+ 		if (port->port_number == 0) {
+@@ -2071,9 +2073,12 @@ static int mos7840_probe(struct usb_serial *serial,
+ 			VENDOR_READ_LENGTH, MOS_WDR_TIMEOUT);
  
--	if (!pc->soc->has_clks)
--		return;
--
- 	clk_disable_unprepare(pc->clks[MTK_CLK_PWM1 + pwm->hwpwm]);
- 	clk_disable_unprepare(pc->clks[MTK_CLK_MAIN]);
- 	clk_disable_unprepare(pc->clks[MTK_CLK_TOP]);
-@@ -246,12 +239,13 @@ static int mtk_pwm_probe(struct platform_device *pdev)
- 	if (IS_ERR(pc->regs))
- 		return PTR_ERR(pc->regs);
+ 	/* For a MCS7840 device GPIO0 must be set to 1 */
+-	if (buf[0] & 0x01)
+-		device_type = MOSCHIP_DEVICE_ID_7840;
+-	else if (mos7810_check(serial))
++	if (buf[0] & 0x01) {
++		if (product == MOSCHIP_DEVICE_ID_7843)
++			device_type = MOSCHIP_DEVICE_ID_7843;
++		else
++			device_type = MOSCHIP_DEVICE_ID_7840;
++	} else if (mos7810_check(serial))
+ 		device_type = MOSCHIP_DEVICE_ID_7810;
+ 	else
+ 		device_type = MOSCHIP_DEVICE_ID_7820;
+@@ -2091,7 +2096,10 @@ static int mos7840_calc_num_ports(struct usb_serial *serial,
+ 	int device_type = (unsigned long)usb_get_serial_data(serial);
+ 	int num_ports;
  
--	for (i = 0; i < data->num_pwms + 2 && pc->soc->has_clks; i++) {
-+	for (i = 0; i < data->num_pwms + 2; i++) {
- 		pc->clks[i] = devm_clk_get(&pdev->dev, mtk_pwm_clk_name[i]);
- 		if (IS_ERR(pc->clks[i])) {
--			dev_err(&pdev->dev, "clock: %s fail: %ld\n",
--				mtk_pwm_clk_name[i], PTR_ERR(pc->clks[i]));
--			return PTR_ERR(pc->clks[i]);
-+			if (PTR_ERR(pc->clks[i]) == -EPROBE_DEFER)
-+				return -EPROBE_DEFER;
-+
-+			pc->clks[i] = NULL;
- 		}
- 	}
+-	num_ports = (device_type >> 4) & 0x000F;
++	if (device_type == MOSCHIP_DEVICE_ID_7843)
++		num_ports = 3;
++	else
++		num_ports = (device_type >> 4) & 0x000F;
  
-@@ -281,25 +275,21 @@ static int mtk_pwm_remove(struct platform_device *pdev)
- static const struct mtk_pwm_platform_data mt2712_pwm_data = {
- 	.num_pwms = 8,
- 	.pwm45_fixup = false,
--	.has_clks = true,
- };
- 
- static const struct mtk_pwm_platform_data mt7622_pwm_data = {
- 	.num_pwms = 6,
- 	.pwm45_fixup = false,
--	.has_clks = true,
- };
- 
- static const struct mtk_pwm_platform_data mt7623_pwm_data = {
- 	.num_pwms = 5,
- 	.pwm45_fixup = true,
--	.has_clks = true,
- };
- 
- static const struct mtk_pwm_platform_data mt7628_pwm_data = {
- 	.num_pwms = 4,
- 	.pwm45_fixup = true,
--	.has_clks = false,
- };
- 
- static const struct of_device_id mtk_pwm_of_match[] = {
+ 	/*
+ 	 * num_ports is currently never zero as device_type is one of
+@@ -2146,7 +2154,8 @@ static int mos7840_port_probe(struct usb_serial_port *port)
+ 		mos7840_port->SpRegOffset = 0x0;
+ 		mos7840_port->ControlRegOffset = 0x1;
+ 		mos7840_port->DcrRegOffset = 0x4;
+-	} else if ((mos7840_port->port_num == 2) && (serial->num_ports == 4)) {
++	} else if ((mos7840_port->port_num == 2) &&
++		   ((serial->num_ports == 4) || (serial->num_ports == 3))) {
+ 		mos7840_port->SpRegOffset = 0x8;
+ 		mos7840_port->ControlRegOffset = 0x9;
+ 		mos7840_port->DcrRegOffset = 0x16;
+@@ -2154,7 +2163,8 @@ static int mos7840_port_probe(struct usb_serial_port *port)
+ 		mos7840_port->SpRegOffset = 0xa;
+ 		mos7840_port->ControlRegOffset = 0xb;
+ 		mos7840_port->DcrRegOffset = 0x19;
+-	} else if ((mos7840_port->port_num == 3) && (serial->num_ports == 4)) {
++	} else if ((mos7840_port->port_num == 3) &&
++		   ((serial->num_ports == 4) || (serial->num_ports == 3))) {
+ 		mos7840_port->SpRegOffset = 0xa;
+ 		mos7840_port->ControlRegOffset = 0xb;
+ 		mos7840_port->DcrRegOffset = 0x19;
 -- 
-1.9.1
+2.17.1
 
