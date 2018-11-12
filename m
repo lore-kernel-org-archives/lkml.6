@@ -2,164 +2,117 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF3D6C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 11:51:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7DD7C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 11:51:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1FF62241E
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 11:51:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1FF62241E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id 8F2432243B
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 11:51:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="L8vZEJDV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F2432243B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729370AbeKLVoJ (ORCPT
+        id S1729429AbeKLVoM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 16:44:09 -0500
-Received: from verein.lst.de ([213.95.11.211]:50058 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728302AbeKLVoJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 16:44:09 -0500
-Received: by newverein.lst.de (Postfix, from userid 2005)
-        id 152A967358; Mon, 12 Nov 2018 12:51:13 +0100 (CET)
-Date:   Mon, 12 Nov 2018 12:51:13 +0100
-From:   Torsten Duwe <duwe@lst.de>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        live-patching@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] arm64: implement ftrace with regs
-Message-ID: <20181112115112.GB30967@lst.de>
-References: <20181026142008.D922868C94@newverein.lst.de> <20181026142148.6353A68C94@newverein.lst.de> <CAKv+Gu-rNeCj5jySq4H5mRONtWfoLy7ADsowWNW+LUBLMWnV+A@mail.gmail.com>
+        Mon, 12 Nov 2018 16:44:12 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:39356 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728302AbeKLVoM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 16:44:12 -0500
+Received: by mail-wr1-f67.google.com with SMTP id b13so8972535wrx.6
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 03:51:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=rHtabUXDENQZmvVaPd87M9fjQtwGmPBo8F2MdS91W+4=;
+        b=L8vZEJDVb4trY3MFB7wM/9cfXYtpHSog9oWSSKHQ+yJeyUq0k2JE9hzzHk7FSrtguM
+         CrHZlw7Rm06B94fmZd9VORY9epyw+0VFu829v2KAaOQogyak606W6Pljp9Jp1T7knwPL
+         YWIy/WEFaUYKoKwhz1rSfj3ro9dMfMt4Zuxz4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=rHtabUXDENQZmvVaPd87M9fjQtwGmPBo8F2MdS91W+4=;
+        b=ZXypwcGvkiqTN32XduRyEoYFY8cz4QuDIxfPtmVfL/ZIkRZjqHtwBpen8fmTVIjaFf
+         V6xu91S4j51txnRCthmfvVPb6w98xBM5pfP1b/RvU3/ahn/L0URo/acK0tf3lCpKl1Wj
+         Wkz0G0rJOzxqGIGPhLrrSt4SQLkNpd8TBfz9YhsPdp7YPhw37zhw0YG6jT9ThI0kq6KH
+         447IuDkudCXUnmqClmtn/iMzKpGW80wr/RWgNmO65EZ6dP+b2KhWiOQUf9jQTpvU+1rk
+         v6EzIrlFYd2LATTrQl4uBVbbMAQW4SZGHffG9hoiKbKXXJdpeHb5xV/qpPro/SucVgbe
+         QpHQ==
+X-Gm-Message-State: AGRZ1gLiamDyIFAz8QbfT3PzQy+xtKT1F11WBs+EjirOENM/XT1AwEod
+        YH8eYvVKAZ3kzLhvg+E1eFulKw==
+X-Google-Smtp-Source: AJdET5fWOnf3RQMCFhjFDiHPeWeVPUbjDlbUTZX7Gk634h8aoT38lG40AluZ5HdxwdnqJyHnXVLlmw==
+X-Received: by 2002:adf:9403:: with SMTP id 3-v6mr695678wrq.54.1542023475422;
+        Mon, 12 Nov 2018 03:51:15 -0800 (PST)
+Received: from [192.168.27.209] ([37.157.136.206])
+        by smtp.googlemail.com with ESMTPSA id x16-v6sm11230600wro.28.2018.11.12.03.51.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 12 Nov 2018 03:51:14 -0800 (PST)
+Subject: Re: [PATCH] media: venus: change the default value of GOP size
+To:     Malathi Gottam <mgottam@codeaurora.org>, hverkuil@xs4all.nl,
+        mchehab@kernel.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, acourbot@chromium.org,
+        vgarodia@codeaurora.org
+References: <1542013562-18968-1-git-send-email-mgottam@codeaurora.org>
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <fe5d4fc2-94bb-2224-fea2-91490e28aed0@linaro.org>
+Date:   Mon, 12 Nov 2018 13:51:11 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKv+Gu-rNeCj5jySq4H5mRONtWfoLy7ADsowWNW+LUBLMWnV+A@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <1542013562-18968-1-git-send-email-mgottam@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 01:12:42PM +0100, Ard Biesheuvel wrote:
+Hi Malathi,
+
+Thanks for the patch!
+
+On 11/12/18 11:06 AM, Malathi Gottam wrote:
+> When the client doesn't explicitly set any GOP size, current
+> default value is low and overshoots bitrate beyond  tolerance.
+> Hence default value is modified so as to have intra period of 1sec.
 > 
-> On 26 October 2018 at 16:21, Torsten Duwe <duwe@lst.de> wrote:
-> > @@ -162,6 +165,114 @@ ftrace_graph_call:                        // ftrace_graph_cal
-> >
-> >         mcount_exit
-> >  ENDPROC(ftrace_caller)
-> > +#else /* CONFIG_DYNAMIC_FTRACE_WITH_REGS */
-> > +
-> > +/*
-> > + * Since no -pg or similar compiler flag is used, there should really be
-> > + * no reference to _mcount; so do not define one. Only some value for
-> > + * MCOUNT_ADDR is needed for comparison. Let it point here to have some
-> > + * sort of magic value that can be recognised when debugging.
-> > + */
-> > +       .global _mcount
-> > +_mcount:
-> > +       ret     /* make it differ from regs caller */
-> > +
-> > +ENTRY(ftrace_regs_caller)
-> > +       /* callee's preliminary stack frame: */
-> > +       stp     fp, x9, [sp, #-16]!
+> Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
+> ---
+>  drivers/media/platform/qcom/venus/venc_ctrls.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Does the 'fp' alias for x29 work with older assemblers? I guess it
-> does not matter gor GCC 8+ code, but be careful when you rewrite
-> existing stuff.
 
-I had gotten the impression the fp alias was there ever since, so I used
-it for readability. Thanks for the notification, I'll double check.
+Sounds reasonable :
 
-> > +       mov     fp, sp
-> > +
-> > +       /* our stack frame: */
-> > +       stp     fp, lr, [sp, #-S_FRAME_SIZE]!
+Acked-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+
+> diff --git a/drivers/media/platform/qcom/venus/venc_ctrls.c b/drivers/media/platform/qcom/venus/venc_ctrls.c
+> index 45910172..e6a43e9 100644
+> --- a/drivers/media/platform/qcom/venus/venc_ctrls.c
+> +++ b/drivers/media/platform/qcom/venus/venc_ctrls.c
+> @@ -295,7 +295,7 @@ int venc_ctrl_init(struct venus_inst *inst)
+>  		0, INTRA_REFRESH_MBS_MAX, 1, 0);
+>  
+>  	v4l2_ctrl_new_std(&inst->ctrl_handler, &venc_ctrl_ops,
+> -		V4L2_CID_MPEG_VIDEO_GOP_SIZE, 0, (1 << 16) - 1, 1, 12);
+> +		V4L2_CID_MPEG_VIDEO_GOP_SIZE, 0, (1 << 16) - 1, 1, 30);
+>  
+>  	v4l2_ctrl_new_std(&inst->ctrl_handler, &venc_ctrl_ops,
+>  		V4L2_CID_MPEG_VIDEO_VPX_MIN_QP, 1, 128, 1, 1);
 > 
-> If sizeof(struct pt_regs) == S_FRAME_SIZE), you should subtract 16
-> additional bytes here
 
-This is intentional :-]
-
-At the end of pt_regs there's a "stackframe", which now aligns with the
-"preliminary" frame I create for the callee. Please tell me what the struct
-member is good for if not for an actual callee stack frame...
-I thought it was a neat idea.
-
-> > +
-> > +ftrace_common:
-> > +       /*
-> > +        * At this point we have 2 new stack frames, and x9 pointing
-> > +        * at a pt_regs which we can populate as needed.
-> > +        */
-> > +
-> > +       /* save function arguments */
-> > +       stp     x0, x1, [x9]
-> > +       stp     x2, x3, [x9, #S_X2]
-> > +       stp     x4, x5, [x9, #S_X4]
-> > +       stp     x6, x7, [x9, #S_X6]
-> > +       stp     x8, x9, [x9, #S_X8]
-> > +
-> 
-> x9 is not a function argument, and if it were, you'd have clobbered it
-> by now. Please use a single 'str' and store x8 only
-
-This way the x9 slot in pt_regs will be undefined. Is that ok with everybody?
-
-> > +ftrace_common_return:
-> > +       add     x9, sp, #16     /* advance to pt_regs for restore */
-> > +
-> > +       ldp     x0, x1, [x9]
-> > +       ldp     x2, x3, [x9, #S_X2]
-> > +       ldp     x4, x5, [x9, #S_X4]
-> > +       ldp     x6, x7, [x9, #S_X6]
-> > +       ldp     x8, x9, [x9, #S_X8]
-> > +
-> 
-> Same as above. It also deserves a mention that you are relying on the
-> absence of IPA-RA, and so x9..x18 are guaranteed to be dead at
-> function entry, and so they don't need to be restored here.
-
-Sure, I can quote some ABI spec here :-/
-I just wish all arm code was such well documented.
-
-> > --- a/arch/arm64/kernel/ftrace.c
-> > +++ b/arch/arm64/kernel/ftrace.c
-> > @@ -65,18 +65,61 @@ int ftrace_update_ftrace_func(ftrace_fun
-> >         return ftrace_modify_code(pc, 0, new, false);
-> >  }
-> >
-> > +#ifdef CONFIG_ARM64_MODULE_PLTS
-> > +static int install_ftrace_trampoline(struct module *mod, unsigned long *addr)
-> > +{
-> > +       struct plt_entry trampoline, *mod_trampoline;
-> > +       trampoline = get_plt_entry(*addr);
-> > +
-> > +       if (*addr == FTRACE_ADDR)
-> > +               mod_trampoline = mod->arch.ftrace_trampoline;
-> > +       else if (*addr == FTRACE_REGS_ADDR)
-> > +               mod_trampoline = mod->arch.ftrace_regs_trampoline;
-> 
-> Could we do something like
-> 
-> if (*addr == FTRACE_ADDR)
->     mod_trampoline = &mod->arch.ftrace_trampoline[0];
-> else if (*addr == FTRACE_REGS_ADDR)
->     mod_trampoline = &mod->arch.ftrace_trampoline[1];
-> 
-> and get rid of the additional struct field and pointer?
-
-"0" and "1" won't make it obvious which one has the regs tracing, but besides
-that, I like the idea of making this a small array. Other opinions?
-
-	Torsten
-
+-- 
+regards,
+Stan
