@@ -2,181 +2,163 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E10CCC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 22:15:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25AB0C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 22:16:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79B462243E
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 22:15:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79B462243E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hpe.com
+	by mail.kernel.org (Postfix) with ESMTP id D875F2241E
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 22:16:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D875F2241E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730689AbeKMILA convert rfc822-to-8bit (ORCPT
+        id S1730695AbeKMILx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 03:11:00 -0500
-Received: from g2t1383g.austin.hpe.com ([15.233.16.89]:19606 "EHLO
-        g2t1383g.austin.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729293AbeKMIK7 (ORCPT
+        Tue, 13 Nov 2018 03:11:53 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47628 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726006AbeKMILx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 03:10:59 -0500
-Received: from g4t3425.houston.hpe.com (g4t3425.houston.hpe.com [15.241.140.78])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by g2t1383g.austin.hpe.com (Postfix) with ESMTPS id 27EEF1372;
-        Mon, 12 Nov 2018 22:15:52 +0000 (UTC)
-Received: from G1W8107.americas.hpqcorp.net (g1w8107.austin.hp.com [16.193.72.59])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by g4t3425.houston.hpe.com (Postfix) with ESMTPS id D70A5A9;
-        Mon, 12 Nov 2018 22:15:50 +0000 (UTC)
-Received: from G9W8453.americas.hpqcorp.net (2002:10d8:a0d3::10d8:a0d3) by
- G1W8107.americas.hpqcorp.net (2002:10c1:483b::10c1:483b) with Microsoft SMTP
- Server (TLS) id 15.0.1367.3; Mon, 12 Nov 2018 22:15:50 +0000
-Received: from NAM03-CO1-obe.outbound.protection.outlook.com (15.241.52.12) by
- G9W8453.americas.hpqcorp.net (16.216.160.211) with Microsoft SMTP Server
- (TLS) id 15.0.1367.3 via Frontend Transport; Mon, 12 Nov 2018 22:15:50 +0000
-Received: from AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM (10.169.8.145) by
- AT5PR8401MB0321.NAMPRD84.PROD.OUTLOOK.COM (10.169.2.135) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.27; Mon, 12 Nov 2018 22:15:46 +0000
-Received: from AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM
- ([fe80::548c:301b:e018:77e4]) by AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM
- ([fe80::548c:301b:e018:77e4%5]) with mapi id 15.20.1294.045; Mon, 12 Nov 2018
- 22:15:46 +0000
-From:   "Elliott, Robert (Persistent Memory)" <elliott@hpe.com>
-To:     Daniel Jordan <daniel.m.jordan@oracle.com>
-CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "aarcange@redhat.com" <aarcange@redhat.com>,
-        "aaron.lu@intel.com" <aaron.lu@intel.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "bsd@redhat.com" <bsd@redhat.com>,
-        "darrick.wong@oracle.com" <darrick.wong@oracle.com>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "jgg@mellanox.com" <jgg@mellanox.com>,
-        "jwadams@google.com" <jwadams@google.com>,
-        "jiangshanlai@gmail.com" <jiangshanlai@gmail.com>,
-        "mhocko@kernel.org" <mhocko@kernel.org>,
-        "mike.kravetz@oracle.com" <mike.kravetz@oracle.com>,
-        "Pavel.Tatashin@microsoft.com" <Pavel.Tatashin@microsoft.com>,
-        "prasad.singamsetty@oracle.com" <prasad.singamsetty@oracle.com>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "steven.sistare@oracle.com" <steven.sistare@oracle.com>,
-        "tim.c.chen@intel.com" <tim.c.chen@intel.com>,
-        "tj@kernel.org" <tj@kernel.org>, "vbabka@suse.cz" <vbabka@suse.cz>
-Subject: RE: [RFC PATCH v4 11/13] mm: parallelize deferred struct page
- initialization within each node
-Thread-Topic: [RFC PATCH v4 11/13] mm: parallelize deferred struct page
- initialization within each node
-Thread-Index: AQHUdSj7cDxnfAHYlE+9G8mzBVcDKqVIX+eQgAQGcwCAAFfMgA==
-Date:   Mon, 12 Nov 2018 22:15:46 +0000
-Message-ID: <AT5PR8401MB1169B05F889BCF8EF113E053ABC10@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
-References: <20181105165558.11698-1-daniel.m.jordan@oracle.com>
- <20181105165558.11698-12-daniel.m.jordan@oracle.com>
- <AT5PR8401MB1169798EBEF1EE5EBA3ABFFFABC70@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
- <20181112165412.vizeiv6oimsuxkbk@ca-dmjordan1.us.oracle.com>
-In-Reply-To: <20181112165412.vizeiv6oimsuxkbk@ca-dmjordan1.us.oracle.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=elliott@hpe.com; 
-x-originating-ip: [108.188.176.171]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AT5PR8401MB0321;6:rcNjvXa8Nlaxev/FpDvPs+CZMplgr+0QIWHzdgrF+PiPin+XmdIUmA44yDf1Y60+znn9cqvF8MuBLQwdYFGwqPCSqDgYwKLaF5l9qSl7SpKWH46Fh9Pxg1k62hSvEClxOBX1k1OOjCDjxR8lT+eoJy/dByfbDX9HYc2fsri2BDRzDwCVgA5beJNotkmVSETDu/koswdKYDgxfZn270JoSRwMONPqF3a1AnwlDOvhu7dsO0lyn1n/1CaHQ51qWjHx0ugAXv6dZkL9r5GJrpFvGRG4I8QgEQDe1jWKGMIedtfRVJ6P2JbqOS9tc3XbxZWHWERIMmGMrSkfL6V7Fr8hcmVkIAaOmWhOLwdhIdiBCQeK7evYFOe4PgbSj5uHlZIe2DN/bnI7QbQ6BAzzBFx4nXFlBh98W66B8GBjBKuqIH7g3QjxpcVYivjcIKfoKhseF89aPxWcB4r1EICrSx4elA==;5:eSRvGwJkRbnI6CtmJUfBjjD1WzeKp4ktLuD9nWgQlrtz3M8v25Gnlmo60wyAxH5/GkTCm3Hx3VvqT5uFSdpqruw3sNjmfsTjFQT4tSKSmygvkLT53MdPuPKLCsdGHOHnQnUp1LZGiHT2Ezdg79ppCKc4Ytemdyie+fxkVynmZB4=;7:ayBtlNP0znmAwTmqkDPH6J4/kyvi4nODQkiOWJqp/OAPdAY1Qw4FEcwHhZL6FE0NE3XL0gTNZ2m+JdWyjG9epkdRXBjOkI2BrkL9IhrCRLYEsaTxpdpbMDPAhqW3ZskQJzoQra1wktWDUx1LwYTV4A==
-x-ms-office365-filtering-correlation-id: 51f658dd-2555-43b8-7622-08d648ec652c
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390040)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AT5PR8401MB0321;
-x-ms-traffictypediagnostic: AT5PR8401MB0321:
-x-microsoft-antispam-prvs: <AT5PR8401MB032107F460A3EC103D9E7603ABC10@AT5PR8401MB0321.NAMPRD84.PROD.OUTLOOK.COM>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(228905959029699)(146099531331640)(211936372134217)(85827821059158)(28532068793085)(222181515654134)(227479698468861);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3231382)(944501410)(52105112)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:AT5PR8401MB0321;BCL:0;PCL:0;RULEID:;SRVR:AT5PR8401MB0321;
-x-forefront-prvs: 0854128AF0
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(366004)(376002)(39860400002)(346002)(136003)(51444003)(189003)(199004)(13464003)(2906002)(71200400001)(39060400002)(106356001)(217873002)(105586002)(71190400001)(4326008)(6436002)(9686003)(53936002)(486006)(6916009)(476003)(5660300001)(6116002)(7416002)(3846002)(446003)(66066001)(11346002)(86362001)(74316002)(305945005)(2900100001)(478600001)(7736002)(97736004)(81156014)(8676002)(54906003)(7696005)(26005)(8936002)(6506007)(53546011)(76176011)(45080400002)(316002)(256004)(14444005)(68736007)(6246003)(55016002)(93886005)(14454004)(102836004)(186003)(99286004)(33656002)(229853002)(25786009)(81166006);DIR:OUT;SFP:1102;SCL:1;SRVR:AT5PR8401MB0321;H:AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: hpe.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: iRd/YnWW8+NMOYlZPFkwS82B7ASaHwKkASZ3tBq+aZ4g210hBKvQHPEHNJkKEX0TRheF58iyS23lTfkHXO8cjrTdKiRp3ZnQtqHEWfhvT0ORtqhze1Wrq9z4FCpggFhAj0c21ZFtbV/ytKzoAKDm+4gJyINlgJ/C2IEWfwEOVdG+CQuXUASdEX4vD57C9sJehvr1SGsZV/dbT8vtyglS37wmitQCOhgcy46zm12jPBOWAZcfZbXXIitqc8yHN5c62H5aWH0l26ObsZQ5kpg/HKIFj/R6HkqUtWGVj+uFYEyqIih22yVpTu8qtWKmUzZGPTYF5rAu/iU+Dr5mzisqct9kLRihYMcOnutnFKfOm54=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Tue, 13 Nov 2018 03:11:53 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wACMDKkh142704
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 17:16:45 -0500
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nqg31w74w-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 17:16:44 -0500
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Mon, 12 Nov 2018 22:16:43 -0000
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 12 Nov 2018 22:16:39 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wACMGcaf46596268
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 12 Nov 2018 22:16:38 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 201B5B206B;
+        Mon, 12 Nov 2018 22:16:38 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2B84AB2064;
+        Mon, 12 Nov 2018 22:16:35 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.181.27])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 12 Nov 2018 22:16:35 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 88F4716C5DA8; Mon, 12 Nov 2018 14:16:35 -0800 (PST)
+Date:   Mon, 12 Nov 2018 14:16:35 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        dipankar <dipankar@in.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        rostedt <rostedt@goodmis.org>,
+        David Howells <dhowells@redhat.com>,
+        Eric Dumazet <edumazet@google.com>,
+        fweisbec <fweisbec@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
+        "Joel Fernandes, Google" <joel@joelfernandes.org>,
+        kernel-team <kernel-team@android.com>
+Subject: Re: [PATCH tip/core/rcu 0/41] More RCU flavor consolidation cleanup
+ for v4.21/v5.0
+Reply-To: paulmck@linux.ibm.com
+References: <20181111194104.GA4787@linux.ibm.com>
+ <2113574714.3779.1542031670315.JavaMail.zimbra@efficios.com>
+ <20181112160137.GI4170@linux.ibm.com>
+ <20181112214023.GA64029@sasha-vm>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 51f658dd-2555-43b8-7622-08d648ec652c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Nov 2018 22:15:46.5304
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 105b2061-b669-4b31-92ac-24d304d195dc
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AT5PR8401MB0321
-X-OriginatorOrg: hpe.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181112214023.GA64029@sasha-vm>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18111222-0072-0000-0000-000003C79C1C
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010037; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01116542; UDB=6.00577118; IPR=6.00896650;
+ MB=3.00024134; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-12 22:16:43
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18111222-0073-0000-0000-00004A1645B1
+Message-Id: <20181112221635.GV4170@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-12_14:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811120190
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-> -----Original Message-----
-> From: Daniel Jordan <daniel.m.jordan@oracle.com>
-> Sent: Monday, November 12, 2018 11:54 AM
-> To: Elliott, Robert (Persistent Memory) <elliott@hpe.com>
-> Cc: Daniel Jordan <daniel.m.jordan@oracle.com>; linux-mm@kvack.org;
-> kvm@vger.kernel.org; linux-kernel@vger.kernel.org; aarcange@redhat.com;
-> aaron.lu@intel.com; akpm@linux-foundation.org; alex.williamson@redhat.com;
-> bsd@redhat.com; darrick.wong@oracle.com; dave.hansen@linux.intel.com;
-> jgg@mellanox.com; jwadams@google.com; jiangshanlai@gmail.com;
-> mhocko@kernel.org; mike.kravetz@oracle.com; Pavel.Tatashin@microsoft.com;
-> prasad.singamsetty@oracle.com; rdunlap@infradead.org;
-> steven.sistare@oracle.com; tim.c.chen@intel.com; tj@kernel.org;
-> vbabka@suse.cz
-> Subject: Re: [RFC PATCH v4 11/13] mm: parallelize deferred struct page
-> initialization within each node
-> 
-> On Sat, Nov 10, 2018 at 03:48:14AM +0000, Elliott, Robert (Persistent
-> Memory) wrote:
-> > > -----Original Message-----
-> > > From: linux-kernel-owner@vger.kernel.org <linux-kernel-
-> > > owner@vger.kernel.org> On Behalf Of Daniel Jordan
-> > > Sent: Monday, November 05, 2018 10:56 AM
-> > > Subject: [RFC PATCH v4 11/13] mm: parallelize deferred struct page
-> > > initialization within each node
-> > >
-...
-> > > In testing, a reasonable value turned out to be about a quarter of the
-> > > CPUs on the node.
-> > ...
-> > > +	/*
-> > > +	 * We'd like to know the memory bandwidth of the chip to
-> > >         calculate the
-> > > +	 * most efficient number of threads to start, but we can't.
-> > > +	 * In testing, a good value for a variety of systems was a
-> > >         quarter of the CPUs on the node.
-> > > +	 */
-> > > +	nr_node_cpus = DIV_ROUND_UP(cpumask_weight(cpumask), 4);
+On Mon, Nov 12, 2018 at 04:40:23PM -0500, Sasha Levin wrote:
+> On Mon, Nov 12, 2018 at 08:01:37AM -0800, Paul E. McKenney wrote:
+> >On Mon, Nov 12, 2018 at 09:07:50AM -0500, Mathieu Desnoyers wrote:
+> >>----- On Nov 11, 2018, at 2:41 PM, paulmck paulmck@linux.ibm.com wrote:
+> >>
+> >>> Hello!
+> >>>
+> >>> This series does additional cleanup for the RCU flavor consolidation,
+> >>> focusing primarily on uses of old API members, for example, so that
+> >>> call_rcu_bh() becomes call_rcu().  There are also a few straggling
+> >>> internal-to-RCU cleanups.
+> >>>
+> >>> 1.	Remove unused rcu_state externs, courtesy of Joel Fernandes.
+> >>>
+> >>> 2.	Fix rcu_{node,data} comments about gp_seq_needed, courtesy of
+> >>>	Joel Fernandes.
+> >>>
+> >>> 3.	Eliminate synchronize_rcu_mult() and its sole caller.
+> >>>
+> >>> 4.	Consolidate the RCU update functions invoked by sync.c.
+> >>>
+> >>> 5-41.	Replace old flavorful RCU API calls with the corresponding
+> >>>	vanilla calls.
+> >>
+> >>Hi Paul,
+> >>
+> >>Just a heads up: we might want to spell out warnings in very big letters
+> >>for anyone trying to backport code using RCU from post-4.21 kernels
+> >>back to older kernels. I fear that newer code will build just fine
+> >>on older kernels, but will spectacularly fail in hard-to-debug ways at
+> >>runtime.
+> >>
+> >>Renaming synchronize_rcu() and call_rcu() to something that did not
+> >>exist in prior kernels would prevent that. It may not be as pretty
+> >>though.
 > >
-> >
-> > You might want to base that calculation on and limit the threads to
-> > physical cores, not hyperthreaded cores.
+> >From v4.20 rather than v4.21, but yes.  Would it make sense to have Sasha
+> >automatically flag -stable candidates going back past that boundary that
+> >contain call_rcu(), synchronize_rcu(), etc.?  Adding Sasha on CC, and
+> >I might be able to touch base with him this week.
 > 
-> Why?  Hyperthreads can be beneficial when waiting on memory.  That said, I
-> don't have data that shows that in this case.
+> We had a similar issue recently with a vfs change
+> (https://patchwork.kernel.org/patch/10604339/) leading to potentially
+> the same results as described above, we took it as is to avoid these
+> issues in the future, though this is a much smaller change than what's
+> proposed here.
+> 
+> We can look into an good way to solve this. While I can alert on
+> post-4.20 stable tagged patches that touch rcu, do you really want to be
+> dealing with this for the next 10+ years? It'll also means each of those
+> patches will need a manual backport.
+> 
+> Let's talk at Plumbers :)
 
-I think that's only if there are some register-based calculations to do while
-waiting. If both threads are just doing memory accesses, they'll both stall, and
-there doesn't seem to be any benefit in having two contexts generate the IOs
-rather than one (at least on the systems I've used). I think it takes longer
-to switch contexts than to just turnaround the next IO.
+Sounds like a plan!  ;-)
 
-
----
-Robert Elliott, HPE Persistent Memory
-
-
+							Thanx, Paul
 
