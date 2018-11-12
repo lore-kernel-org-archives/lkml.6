@@ -1,132 +1,153 @@
 Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E391DC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:02:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23CB9C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:02:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A15C5214F1
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:02:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDDCE214F1
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:02:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="P3X13xXM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A15C5214F1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Abe6gUvm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDDCE214F1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730912AbeKLOyE (ORCPT
+        id S1731079AbeKLOyQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 09:54:04 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:34934 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727297AbeKLOyE (ORCPT
+        Mon, 12 Nov 2018 09:54:16 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46725 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730939AbeKLOyQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 09:54:04 -0500
-Received: by mail-it1-f193.google.com with SMTP id v11so11502302itj.0
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 21:02:34 -0800 (PST)
+        Mon, 12 Nov 2018 09:54:16 -0500
+Received: by mail-wr1-f68.google.com with SMTP id 74-v6so7775297wrb.13
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 21:02:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=HinaT8KymDNWwd0EK9K+PO9iDLejU4LJurjBuIuseZE=;
-        b=P3X13xXMfE2zkpBpifh56bJXn2mIz7ARItOppRy0m5lH7M+nlca/qmX6UaxvfX/xxV
-         29pMMy3AK0Ar/xIxWfaUcZoDcCY2hIPdm6oZog/lXSrXCYxsnPoyL8YuherYowYE0PQM
-         reHli8L9EFhJYn4G7w/wRBN7lPBcfYXDebMbU=
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=aCPzndRLoGXrQBUqefife/Sscs/jdXGFkYHMfyL/hAE=;
+        b=Abe6gUvmaY2QzJohV3wDVG9LDVdGGsDYfeaLmAvN5CamRKuC7G6gMOulOw0NzttvZw
+         VNVI5HIbLUib7Wv4SB5vVAjetilDriojysKZI+MHk/xYOdoLubIkF09Jjk0tzm737DuG
+         jhIKAExfzTPr4BGWwyhO7yKQ5mlSauONQnZwarrTVpG15EGNvuocKua5B6mngisSwd4z
+         PCVwLlY36UG170R2eQzv6HzRj3o8RGy4Qhx3ImgWXurapwg8DzxaN5KYLbufq6+jTalC
+         Hrym03dQ7PkpiuQPC5PMjsUHhjWMhS8VG5LfivK/2ciDB1sHd3Xn7dZCGmAjF1Yp0JQ0
+         e/3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=HinaT8KymDNWwd0EK9K+PO9iDLejU4LJurjBuIuseZE=;
-        b=f0Kbbf3vek8rqtz0ZPxEw73pMjPfcfKtF4U5/ZWtb20/yuvPEkpsxnSS6LOtZlmxeb
-         2cfUayc4x1zjYOJzo22bb8eRsSgoWx50cQ0Qg/jbkL76YzSJehbIAqypWhcAGMC79tM/
-         84RVhHr4gXaxe/9i0PT8Xr+7La6HB6GPDhAVTFaOASpl1ubpCC5BCCsFNs9qj6ulFCGr
-         AIYoTGKwk6aoOXgetF4P1d/ng/Dl2wdheYwqsO/ToOkgUoNlZaj/zFCJZbwQ9ZvFbSYp
-         F2P1dXzSkuzVxoanjabROO2ew6ad9T8H0GbYZ1vEmMBhnfyLU9V11hV8marI6iItY3Gm
-         LGoA==
-X-Gm-Message-State: AGRZ1gLiTP9nP2I1/fAv0D2FsJGuIyocpRabVg3xZ/x9Qnzn6SxhoO0x
-        CA2BdvrjlpLrpCUs7kBiM56xn1NWONhWyJxg800aPw==
-X-Google-Smtp-Source: AJdET5dC6+EFRtVhuqzOlN4/KR+A1d7pEoXzjlD+lLvz3n3YsFR538aOsNxbBQ4+vclTruPY1voZiboPzU+2OQu4ztg=
-X-Received: by 2002:a24:2190:: with SMTP id e138-v6mr10915336ita.71.1541998953821;
- Sun, 11 Nov 2018 21:02:33 -0800 (PST)
-MIME-Version: 1.0
-Received: by 2002:a6b:4f16:0:0:0:0:0 with HTTP; Sun, 11 Nov 2018 21:02:33
- -0800 (PST)
-In-Reply-To: <20181112045629.3gwex4ekeglfas64@treble>
-References: <3cf04e113d71c9f8e4be95fb84a510f085aa4afa.1541711457.git.jpoimboe@redhat.com>
- <20181109133337.63487e3a@gandalf.local.home> <20181109193505.5p5iddrtgpk2cpb4@treble>
- <20181109145746.0037da3f@gandalf.local.home> <20181109203459.wbftlkxcvfnwo2bm@treble>
- <20181110001023.57f27312@vmware.local.home> <CAKv+Gu-y=O6=dSbCXSaMxkj7LxfL9txzJ4r8Bcf1U0G6JQNUng@mail.gmail.com>
- <20181110080917.29af5d66@vmware.local.home> <20181112030722.da5cxslvlmdgttsw@treble>
- <CAKv+Gu-hs7cRjkAAzk7hUqoXWw1vQDvUGQaKnyALrPvW-TTLzA@mail.gmail.com> <20181112045629.3gwex4ekeglfas64@treble>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 12 Nov 2018 06:02:33 +0100
-Message-ID: <CAKv+Gu8ycHvg3PG0wjBU8uBS5KaiwWMC45_2cVWWXWMWc3NqRw@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/3] static_call: Add static call infrastructure
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=aCPzndRLoGXrQBUqefife/Sscs/jdXGFkYHMfyL/hAE=;
+        b=rabvgDjZYe1uzEUbdK7hItavRm7vWDPzN7gTeriE9Hoq/i94Qa024A4OPvNbKlr07i
+         EgfWLLooEbhB1OL3+qdWSIhWSV7z+6Ie3H2Zhqqkal3ewEJpXieGLPQcFspn2nIAiqqF
+         o4UqYwnVYY1HwHr/6xJQimHXBGXFH4tQMG32kWNth83+N91ISYMLrlEXLo7Qpui9iFcH
+         OUfcVXhvbVBr6+392jFKwpchvder2e2qMurl6j7Y/wu5yQcmccXxiXiJZhhXbLBveGgD
+         4hEtti86SGhN6oDCzewHZipVJHREQ1MtcpNhYoglGOPb6FFMdzvf3dfxCPVGpr/k2EfI
+         8SbQ==
+X-Gm-Message-State: AGRZ1gK/qSDjOhBHOwjhR2nDKw3/XRzHWSsoB4giaegPh2O0pCzsyeps
+        V0Zzqh8U5WQpmUOPV/dqkJc=
+X-Google-Smtp-Source: AJdET5fBoJivJikcPV4EponuxitgYb5vdis12Yin9K/w5jMmEzWvB/ZSaZIHhSua7mCgh5SNsnDIxw==
+X-Received: by 2002:adf:a20a:: with SMTP id p10-v6mr15199180wra.249.1541998964672;
+        Sun, 11 Nov 2018 21:02:44 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id j129-v6sm8855439wmb.47.2018.11.11.21.02.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 11 Nov 2018 21:02:43 -0800 (PST)
+Date:   Mon, 12 Nov 2018 06:02:41 +0100
+From:   Ingo Molnar <mingo@kernel.org>
 To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Andy Lutomirski <luto@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@aculab.com>,
-        Borislav Petkov <bp@alien8.de>
-Content-Type: text/plain; charset="UTF-8"
+        David Laight <David.Laight@ACULAB.COM>,
+        Borislav Petkov <bp@alien8.de>, Juergen Gross <jgross@suse.com>
+Subject: Re: [PATCH RFC 0/3] Static calls
+Message-ID: <20181112050241.GB28219@gmail.com>
+References: <cover.1541711457.git.jpoimboe@redhat.com>
+ <20181109072811.GB86700@gmail.com>
+ <20181109144501.aqhcv3vdjuqlp7pz@treble>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181109144501.aqhcv3vdjuqlp7pz@treble>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12 November 2018 at 05:56, Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-> On Mon, Nov 12, 2018 at 05:39:38AM +0100, Ard Biesheuvel wrote:
->> On 12 November 2018 at 04:07, Josh Poimboeuf <jpoimboe@redhat.com> wrote:
->> > On Sat, Nov 10, 2018 at 08:09:17AM -0500, Steven Rostedt wrote:
->> >> On Sat, 10 Nov 2018 12:58:08 +0100
->> >> Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
->> >>
->> >>
->> >> > > The complaint is on:
->> >> > >
->> >> > >         DEFINE_STATIC_CALL(__tp_func_##name, __tracepoint_iter_##name);
->> >> > >
->> >> > > And the previous definition is on:
->> >> > >
->> >> > >         DECLARE_STATIC_CALL(__tp_func_##name, __tracepoint_iter_##name); \
->> >> > >
->> >> >
->> >> > Does the DECLARE really need the __ADDRESSABLE? Its purpose is to
->> >> > ensure that symbols with static linkage are not optimized away, but
->> >> > since the reference is from a header file, the symbol should have
->> >> > external linkage anyway.
->> >
->> > Yes, DECLARE needs the __ADDRESSABLE.  In the case where DECLARE
->> > is used, but DEFINE is not, GCC strips the symbol.
->> >
->>
->> I assume DECLARE() is intended for use in header files, and DEFINE()
->> for source files, no?
->
-> Right.
->
->> Doesn't that mean that whatever symbol __ADDRESSABLE() refers to
->> should have external linkage, in which case it it addressable anyway?
->> Or are we talking about some LTO / --gc-sections use case here?
->
-> If the key is declared, but not used, GCC doesn't put the key's ELF
-> symbol in the binary's symbol table.  That makes objtool's life harder,
-> because if the file has a call site, then objtool has to add the key
-> symbol to the symbol table, so that it can create a relocation (in the
-> call site table) which references the symbol.
->
 
-Ah, right. So this is specific to objtool rather than a generic issue.
+* Josh Poimboeuf <jpoimboe@redhat.com> wrote:
 
-Should we perhaps wrap __ADDRESSABLE() into something else that
-resolves to a NOP unless on X86, and give it a clear name?
+> On Fri, Nov 09, 2018 at 08:28:11AM +0100, Ingo Molnar wrote:
+> > > - I'm not sure about the objtool approach.  Objtool is (currently)
+> > >   x86-64 only, which means we have to use the "unoptimized" version
+> > >   everywhere else.  I may experiment with a GCC plugin instead.
+> > 
+> > I'd prefer the objtool approach. It's a pretty reliable first-principles 
+> > approach while GCC plugin would have to be replicated for Clang and any 
+> > other compilers, etc.
+> 
+> The benefit of a plugin is that we'd only need two of them: GCC and
+> Clang.  And presumably, they'd share a lot of code.
+> 
+> The prospect of porting objtool to all architectures is going to be much
+> more of a daunting task (though we are at least already considering it
+> for some arches).
+
+Which architectures would benefit from ORC support the most?
+
+I really think that hard reliance on GCC plugins is foolish - but maybe 
+Clang's plugin infrastructure is a guarantee that it remains a sane and 
+usable interface.
+
+> > I'd be very happy with a demonstrated paravirt optimization already - 
+> > i.e. seeing the before/after effect on the vmlinux with an x86 distro 
+> > config.
+> > 
+> > All major Linux distributions enable CONFIG_PARAVIRT=y and 
+> > CONFIG_PARAVIRT_XXL=y on x86 at the moment, so optimizing it away as much 
+> > as possible in the 99.999% cases where it's not used is a primary 
+> > concern.
+> 
+> For paravirt, I was thinking of it as more of a cleanup than an
+> optimization.  The paravirt patching code already replaces indirect
+> branches with direct ones -- see paravirt_patch_default().
+> 
+> Though it *would* reduce the instruction footprint a bit, as the 7-byte
+> indirect calls (later patched to 5-byte direct + 2-byte nop) would
+> instead be 5-byte direct calls to begin with.
+
+Yes.
+
+> > All other usecases are bonus, but it would certainly be interesting to 
+> > investigate the impact of using these APIs for tracing: that too is a 
+> > feature enabled everywhere but utilized only by a small fraction of Linux 
+> > users - so literally every single cycle or instruction saved or hot-path 
+> > shortened is a major win.
+> 
+> With retpolines, and with tracepoints enabled, it's definitely a major
+> win.  Steve measured an 8.9% general slowdown on hackbench caused by
+> retpolines.
+
+How much of that slowdown is reversed?
+
+> But with tracepoints disabled, I believe static jumps are used, which
+> already minimizes the impact on hot paths.
+
+Yeah.
+
+Thanks,
+
+	Ing
