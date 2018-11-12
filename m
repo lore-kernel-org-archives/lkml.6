@@ -2,149 +2,174 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DA90C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 14:15:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9667C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 14:18:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 068D52241E
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 14:15:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CtbYU7Ar"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 068D52241E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 9778F224E0
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 14:18:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9778F224E0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729861AbeKMAI3 (ORCPT
+        id S1729751AbeKMAL2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 19:08:29 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:44840 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727103AbeKMAI2 (ORCPT
+        Mon, 12 Nov 2018 19:11:28 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39814 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727530AbeKMAL2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 19:08:28 -0500
-Received: by mail-wr1-f67.google.com with SMTP id j17-v6so9498830wrq.11;
-        Mon, 12 Nov 2018 06:15:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Bfc7PnchO9DzEg2NP/9/1u6MbdYgzrMscQcD90PF9ag=;
-        b=CtbYU7ArE7ACYPHaS8NEPoz+8AtFx+wUm7BaPWCpyFSLiuRDYPMwC1mOucfXOsQsnD
-         EI1liODs/Pq0hrLofeKzdwV1fktPxhXNQTw+95nqK5OZ/Li9og/NQ5pYD+RhvHhp4suu
-         wtSvEdoZvX9O8MhPqmkp0JaL0KtXZeI8vGx/0vuagVxTGrVIrXfUhC2/a/DannWxmc4M
-         t5ObKZMdwLn6vAluBvQTnFnSWhr8pHahY2fy7XU81HUNKGJY3r8lRsbUi5cKwBg0A0Dn
-         j9ryO3pVKGzSzrhlr/yAhnk8HPqVJHXURSXDha50aewVVUIfeXvdXuQo8tfxdU8oflKC
-         1GqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Bfc7PnchO9DzEg2NP/9/1u6MbdYgzrMscQcD90PF9ag=;
-        b=thwbFDl3jMhHs5qYBh9YRrD7TgmVRVVwMlFGCcMP5EQUlFYRCrQiNO0bvRGVvDBx/4
-         0U8VCDjWkNIoFHUHt0RdPDdG+sOUiocKfJfYD8feTJz6inlJOvS3U8IddiKuA2ioPUFO
-         CJWVBzY5bv9sN6YjRHRn0SoG5qz1cOb/KdSaI5ASzrHtFTtQ8HDYheBtPUCXuPVfs1+2
-         ydu5MrqfSM3XompA4yUT8oCDyEZvZHxa71/mWVlPxnazUzWzT3q7AOAK3aoRW+P4iuuT
-         HQPmFWaYhbfgWfiE1AdTRNbQ38YpNZ3USVlQB/Uqy9974pqShH/qIouEqR0gdH2aqozX
-         GI7Q==
-X-Gm-Message-State: AGRZ1gIcwXA4byG7unFT3I1F9kqxtUIfQwyssCxkawQdGFAbWL2VZISe
-        F81lWjNurRXCF3n8nHJ5azwxqnU=
-X-Google-Smtp-Source: AJdET5fLwdDG0ZRHVyy2mmaNXaFWL6a3iWo7sU6DTe4ZvgA7OmnBMF/XWoRaqNjGHU+OqgbUh59GgA==
-X-Received: by 2002:adf:b50a:: with SMTP id a10-v6mr1053008wrd.273.1542032099788;
-        Mon, 12 Nov 2018 06:14:59 -0800 (PST)
-Received: from avx2 (nat5-minsk-pool-46-53-217-92.telecom.by. [46.53.217.92])
-        by smtp.gmail.com with ESMTPSA id r1sm17432787wrx.15.2018.11.12.06.14.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 12 Nov 2018 06:14:59 -0800 (PST)
-Date:   Mon, 12 Nov 2018 17:14:57 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     Rafael David Tinoco <rafael.tinoco@linaro.org>
-Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        gorcunov@gmail.com, linux-kselftest@vger.kernel.org,
-        shuah@kernel.org
-Subject: Re: [PATCH] proc: fixup map_files test on arm
-Message-ID: <20181112141456.GA15690@avx2>
-References: <20181110184920.GA18252@avx2>
- <1541904527.857883.1572718104.2AE8D0DA@webmail.messagingengine.com>
+        Mon, 12 Nov 2018 19:11:28 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wACEAcKY043312
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 09:17:59 -0500
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nq8sfpnmy-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 09:17:59 -0500
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Mon, 12 Nov 2018 14:17:57 -0000
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 12 Nov 2018 14:17:51 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wACEHowF19529974
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 12 Nov 2018 14:17:50 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4D64382714;
+        Mon, 12 Nov 2018 14:06:59 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4468B13B94F;
+        Mon, 12 Nov 2018 13:28:51 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.207.24])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 12 Nov 2018 13:28:51 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 01CE316C5D2C; Mon, 12 Nov 2018 05:28:52 -0800 (PST)
+Date:   Mon, 12 Nov 2018 05:28:52 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, rostedt@goodmis.org,
+        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
+        oleg@redhat.com, joel@joelfernandes.org,
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH tip/core/rcu 23/41] sched: Replace synchronize_sched()
+ with synchronize_rcu()
+Reply-To: paulmck@linux.ibm.com
+References: <20181111194104.GA4787@linux.ibm.com>
+ <20181111194410.6368-23-paulmck@linux.ibm.com>
+ <20181112001233.GC3056@worktop>
+ <20181112004528.GA4170@linux.ibm.com>
+ <20181112005329.GG3056@worktop>
+ <20181112014736.GB4170@linux.ibm.com>
+ <20181112020710.GJ3056@worktop>
+ <20181112022455.GD4170@linux.ibm.com>
+ <20181112090047.GN3056@worktop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1541904527.857883.1572718104.2AE8D0DA@webmail.messagingengine.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181112090047.GN3056@worktop>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18111214-0060-0000-0000-000002D16578
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010034; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01116382; UDB=6.00578955; IPR=6.00896490;
+ MB=3.00024127; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-12 14:17:56
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18111214-0061-0000-0000-0000472C0783
+Message-Id: <20181112132852.GH4170@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-12_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811120127
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 11, 2018 at 12:48:47AM -0200, Rafael David Tinoco wrote:
-> Including Shuah and kselftest list...
+On Mon, Nov 12, 2018 at 10:00:47AM +0100, Peter Zijlstra wrote:
+> On Sun, Nov 11, 2018 at 06:24:55PM -0800, Paul E. McKenney wrote:
 > 
-> On Sat, Nov 10, 2018, at 4:49 PM, Alexey Dobriyan wrote:
-> > https://bugs.linaro.org/show_bug.cgi?id=3782
+> > > > There were quite a few commits involved in making this happen.  Perhaps
+> > > > the most pertinent are these:
+> > > > 
+> > > > 3e3100989869 ("rcu: Defer reporting RCU-preempt quiescent states when disabled")
+> > > > 45975c7d21a1 ("rcu: Define RCU-sched API in terms of RCU for Tree RCU PREEMPT builds")
+> > > 
+> > > The latter; it does not mention that this will possible make
+> > > synchronize_sched() quite a bit more expensive on PREEMPT=y builds :/
 > > 
-> > Turns out arm doesn't allow to map address 0, so try minimum virtual
-> > address instead.
-> > 
-> > Reported-by: Rafael David Tinoco <rafael.tinoco@linaro.org>
-> > Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
-> > ---
-> > 
-> >  tools/testing/selftests/proc/proc-self-map-files-002.c |    9 +++++++--
-> >  1 file changed, 7 insertions(+), 2 deletions(-)
-> > 
-> > --- a/tools/testing/selftests/proc/proc-self-map-files-002.c
-> > +++ b/tools/testing/selftests/proc/proc-self-map-files-002.c
-> > @@ -13,7 +13,7 @@
-> >   * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT 
-> > OF
-> >   * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-> >   */
-> > -/* Test readlink /proc/self/map_files/... with address 0. */
-> > +/* Test readlink /proc/self/map_files/... with minimum address. */
-> >  #include <errno.h>
-> >  #include <sys/types.h>
-> >  #include <sys/stat.h>
-> > @@ -47,6 +47,11 @@ static void fail(const char *fmt, unsigned long a, 
-> > unsigned long b)
-> >  int main(void)
-> >  {
-> >  	const unsigned int PAGE_SIZE = sysconf(_SC_PAGESIZE);
-> > +#ifdef __arm__
-> > +	unsigned long va = 2 * PAGE_SIZE;
-> > +#else
-> > +	unsigned long va = 0;
-> > +#endif
-> >  	void *p;
-> >  	int fd;
-> >  	unsigned long a, b;
-> > @@ -55,7 +60,7 @@ int main(void)
-> >  	if (fd == -1)
-> >  		return 1;
-> >  
-> > -	p = mmap(NULL, PAGE_SIZE, PROT_NONE, MAP_PRIVATE|MAP_FILE|MAP_FIXED, fd, 0);
-> > +	p = mmap(va, PAGE_SIZE, PROT_NONE, MAP_PRIVATE|MAP_FILE|MAP_FIXED, fd, 0);
-> >  	if (p == MAP_FAILED) {
-> >  		if (errno == EPERM)
-> >  			return 2;
+> > In theory, sure.  In practice, people have switched any number of
+> > things from RCU-sched to RCU and back without problems.
 > 
-> I have sent a patch removing proc-self-map-files-002 AND making 001 to use as a
-> HINT for mmap (MAP_FIXED) *at least*  *(2 * PAGE_SIZE), which would, likely,
-> attend all  architectures, avoiding trying to make the test specific to one,
-> and, still, test the symlinks for issues (like bad chars, spaces, so on).
+> Still, better safe than sorry. It was a rather big change in behaviour,
+> so it wouldn't have been strange to call that out.
 
-If the goal is to test the lowest address then going for 2*PAGE_SIZE is
-a mistake.
+This guy:
 
-Which BTW hints to add a test for the highest address.
+45975c7d21a1 ("rcu: Define RCU-sched API in terms of RCU for Tree RCU PREEMPT builds")
 
-> Both tests (001 and 002) have pretty much the same code, while they could have 2
-> tests in a single code, using kselftest framework. Is NULL hint + MAP_FIXED
-> something imperative for this test ? Why not to have all in a single test ?
+Has a commit log that says:
 
-I dislike tests which lump everything together into one process.
+	Now that RCU-preempt knows about preemption disabling, its
+	implementation of synchronize_rcu() works for synchronize_sched(),
+	and likewise for the other RCU-sched update-side API members.
+	This commit therefore confines the RCU-sched update-side code
+	to CONFIG_PREEMPT=n builds, and defines RCU-sched's update-side
+	API members in terms of those of RCU-preempt.
 
-> Are you keeping the NULL hint just to test mmap, apart" from the core of
-> this test ?
+That last phrase seems pretty explicit.  What am I missing here?
+
+Not that it matters, given that I know of no way to change a mainlined
+commit log.  I suppose I could ask Jon if he would be willing to take
+a 2018 RCU API LWN article, if that would help.
+
+> > > But for PREEMPT=y synchronize_sched() can be quite a bit shorter than
+> > > synchronize_rcu(), since we don't have to wait for preempted read side
+> > > stuff.
+> > 
+> > Again, there are quite a few places that have managed that transition
+> > without issue.  Why do you expect this change to have problems that have
+> > not been seen elsewhere?
+> 
+> I'm not, I'm just taking issue with the Changelog.
+
+OK, good.
+
+> > > Again, the patch didn't say that.
+> > > 
+> > > If the Changelog would've read something like:
+> > > 
+> > > "Since synchronize_sched() is now equivalent to synchronize_rcu(),
+> > > replace the synchronize_sched() usage such that we can eventually remove
+> > > the interface."
+> > > 
+> > > It would've been clear that the patch is a nop and what the purpose
+> > > was.
+> > 
+> > I can easily make that change.
+> 
+> Please, sufficient doesn't imply necessary etc.. A changelog should
+> always clarify why we do the patch.
+
+???  Did you mean to say "necessary doesn't imply sufficient"?  If so,
+what else do you feel is missing?
+
+If not, color me confused.
+
+							Thanx, Paul
+
