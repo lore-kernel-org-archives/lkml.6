@@ -2,258 +2,578 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B243CC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:42:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A48BC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:43:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EC462241E
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:42:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="ahh0MWMl";
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="LjEYNpIs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EC462241E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
+	by mail.kernel.org (Postfix) with ESMTP id 1426F2241E
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:43:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1426F2241E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730162AbeKMCgU (ORCPT
+        id S1730179AbeKMChU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 21:36:20 -0500
-Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:53196 "EHLO
-        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727976AbeKMCgT (ORCPT
+        Mon, 12 Nov 2018 21:37:20 -0500
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:55134 "EHLO
+        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727976AbeKMChU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 21:36:19 -0500
-Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
-        by mx0b-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wACGcOvr009962;
-        Mon, 12 Nov 2018 08:42:13 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=proofpoint;
- bh=scTxhGAJ//e7gUkoBWM8p/s0Lg1US/mBn4du4yZf9l0=;
- b=ahh0MWMlOs5a8HDUgu7127/hS9yNYJ0guDaMs8NeFJ7jfdOmgQbz7ExgA9RgncHD5vcG
- Au5nlLHTvt1RUItSaVIXrnzYs70bnAAyh00atQAKO/dR7wdbzLdR1jt2TyQEadEF4u4a
- QGml8mRfja5cuEtPnboA7isqdqCvzGkUFfjxG0oQhz8KCTXx9nDSeSrKZLHXAliMIrHB
- GiIXatZx4QCNpp+iMJFggcsmIUZGnrACefGB7naZRq+qg9oKdgYmdijdMjen0WpKefsr
- gY4sFd60b9t8iYNfu2sIUmcbu7Bw6aN6RmPIslhHcPoeTAvDKyv+rvfkWJjxdNrQV+2E Qg== 
-Authentication-Results: cadence.com;
-        spf=pass smtp.mailfrom=adouglas@cadence.com
-Received: from nam05-dm3-obe.outbound.protection.outlook.com (mail-dm3nam05lp0119.outbound.protection.outlook.com [216.32.181.119])
-        by mx0b-0014ca01.pphosted.com with ESMTP id 2nnut7kc21-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 12 Nov 2018 08:42:13 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=scTxhGAJ//e7gUkoBWM8p/s0Lg1US/mBn4du4yZf9l0=;
- b=LjEYNpIsY0nlWZiyBM77m4vVPfKHDf2jvqZd23b8H8Q9K3nKGsWFV9T36ZHcH7JkxE6j5OkRCCkeUuBNLEjieoiw2BwX6nRJB3TDfnTEfg9yyarg6vMo8aIxH7PLnEd+PtsfVgf5w8mxdRKDiuVgrfaJcWby4rtLPHrksUZrp6A=
-Received: from BYAPR07CA0063.namprd07.prod.outlook.com (2603:10b6:a03:60::40)
- by BL0PR07MB4098.namprd07.prod.outlook.com (2603:10b6:207:4c::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1294.26; Mon, 12 Nov
- 2018 16:42:10 +0000
-Received: from DM3NAM05FT040.eop-nam05.prod.protection.outlook.com
- (2a01:111:f400:7e51::206) by BYAPR07CA0063.outlook.office365.com
- (2603:10b6:a03:60::40) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1294.21 via Frontend
- Transport; Mon, 12 Nov 2018 16:42:10 +0000
-Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
- cadence.com discourages use of 199.43.4.28 as permitted sender)
-Received: from rmmaillnx1.cadence.com (199.43.4.28) by
- DM3NAM05FT040.mail.protection.outlook.com (10.152.98.154) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1339.3 via Frontend Transport; Mon, 12 Nov 2018 16:42:09 +0000
-Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
-        by rmmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id wACGg5us008872
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Mon, 12 Nov 2018 11:42:07 -0500
-X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
-Received: from maileu3.global.cadence.com (10.160.88.99) by
- maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3; Mon, 12 Nov 2018 17:42:09 +0100
-Received: from lvloginb.cadence.com (10.165.177.11) by
- maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server id
- 15.0.1367.3 via Frontend Transport; Mon, 12 Nov 2018 17:42:09 +0100
-Received: from lvloginb.cadence.com (localhost [127.0.0.1])
-        by lvloginb.cadence.com (8.14.4/8.14.4) with ESMTP id wACGg5ZQ010600;
-        Mon, 12 Nov 2018 16:42:05 GMT
-Received: (from adouglas@localhost)
-        by lvloginb.cadence.com (8.14.4/8.14.4/Submit) id wACGg4oJ010594;
-        Mon, 12 Nov 2018 16:42:04 GMT
-From:   Alan Douglas <adouglas@cadence.com>
-To:     <kishon@ti.com>, <linux-kernel@vger.kernel.org>,
-        <mark.rutland@arm.com>, <robh+dt@kernel.org>,
-        <devicetree@vger.kernel.org>
-CC:     Alan Douglas <adouglas@cadence.com>
-Subject: [PATCH v3 1/2] dt-bindings: phy: Document cadence Sierra PHY bindings
-Date:   Mon, 12 Nov 2018 16:42:01 +0000
-Message-ID: <1542040921-10187-1-git-send-email-adouglas@cadence.com>
-X-Mailer: git-send-email 1.9.0
-MIME-Version: 1.0
-Content-Type: text/plain
-X-OrganizationHeadersPreserved: maileu3.global.cadence.com
-X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:199.43.4.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(979002)(376002)(396003)(39860400002)(136003)(346002)(2980300002)(36092001)(199004)(189003)(86362001)(105596002)(186003)(53936002)(50226002)(2201001)(87636003)(478600001)(336012)(126002)(26826003)(486006)(107886003)(48376002)(51416003)(2616005)(426003)(50466002)(106466001)(110136005)(42186006)(8676002)(8936002)(476003)(81166006)(16586007)(26005)(316002)(81156014)(97736004)(356004)(6666004)(4326008)(305945005)(47776003)(5660300001)(14444005)(69596002)(68736007)(36756003)(2906002)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:BL0PR07MB4098;H:rmmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;DM3NAM05FT040;1:5i2MYe7CeQ8BETUk/xkLrNZ+HOtwS3p61jNZdX0hYtYwG6MSCp4LNTmYTQsWOBgTXOOh9iVdlqQHSHJ9Wl2ZX5IItnMbZvNjKakOWywleRnHXOJAjlyFCDgP26QF8tDQ
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 47f24a50-a547-482c-e76e-08d648bdca5f
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390040)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:BL0PR07MB4098;
-X-Microsoft-Exchange-Diagnostics: 1;BL0PR07MB4098;3:D5qYvry8H9v8WxT6oDEWHLssKbvOnmyMYMP6pp/QjvMHDmHJomW+Zm3LuqiDr590ZxIr6mFVxj1MtWHM5vopbVy668hyN9iji7YbzbBlF5mUX6y33J7aggjHcfZ1wiwIvtEgdBnXmIlNgnRHQuatta2kSF1L2TCre0j4CpDcRfROvd+VmF3xP2gwSC81RwMNZRbudoJZjAvK3qhtYOPRCpYWODn6v8Mi9EFDGvY5Evc0W99XUS8ubYF+ZOiBv1bHvoz9ZPqS+npmVNBqVVai9FBt0eiW1UNsdT3ZWFffYqBE7WJlyvUYHdtfZsvKjMn9w7g7xyrg6jkbqVEeL9FG4g==;25:WE30njeSXCZ014s/Q6ZS0XgRsU91Dg7tOfu1/53UgcljzoXjX0ESWe+S7jA2hknUtaEbtKyCooDo/Q/d5M/qn0LGTUAI3Qg1eYBwfBAaO5S4jLgdyYqmXgbKiJiIwlNnuAFvDeSgzpoOn4Gknw83Qjr3Do8HtXSw6BJDwVbyeqiCo9xH+VnJdbVdGb8icZq3QcQJxdgfrwZCUgN0aQe3/h7/JuHxqsX5CKA7dDEAprmk4RQm3shAmV/e88hnVjM+bi7ZBxZ5cUuJmgc7i0nkQOyEXro/0hCFM2+nQVhmfhWxwgjGnss+2YqOeObZq7TmU0crGcp89rSVuYIUpPhLvw==;31:HShVw+0F/2rqI2lIK9ZP8wOP1jhC45uvHvsygLu8P/hsk/BDmelg5LHmCxKM0g/SCqdJ3SrZVm1eR4st7hFf+Xfh6h9mbxzjDQdaLBRwyJvc/eW6y15ViNaZsA0+q7qkURAdloGPJ4wkf0Q98KF2q2l+a8+bdC8UpM32IuDDAB3QxAlt6POfWIYAAP+VkMRvbL9yZbvbAlDfh+hVaSlBnbJ8GjaP+kpim3JZTra4tPg=
-X-MS-TrafficTypeDiagnostic: BL0PR07MB4098:
-X-Microsoft-Exchange-Diagnostics: 1;BL0PR07MB4098;20:Gq+8jU8+joETX9OGbvayCj0uGBk86sqpXVEaImTue0h+udgFps3vLhuBbe8yPaaCjSl+acyoyfbWX1wLFVFzBrPMgScKTLZgvNrsPa+vDUemy6yjw3ugZwB4ew3sZy+oXYXC/jvDw0BYacOS8Yg/dTNB2I9vlfOPJJL6clkqZZ5GW9pGzniJNxtson6YhOXRKMVQSe7tLdfMaEkQgTQ4vOS29kdvYklZO2pLFLmv2O2mh/KN6O1oEGwuwH52SNVTHcfz3qmzsbSJSGgSyN+wo5zbXQbKGDRvDhFckZ+wncFgCKDPTYWhN6d28N1W+YURPWTjhrk8wmqZ5cEwhj4nnuMW2+FEy/QG2I3w75KlXJJFHsr28l4R3/D0TWQFtJDEGJCAUx6GOCiQoLbEgYR5HjREfZDQ53LPy1mtHiANZmpHL7GDqw7+9+Q71tMT+4rjT6LFNw6qh9x8iqu6bd2wYrSizrVd8SW/H58/8oXh+oWPWXwaOGaNSDdXu8AFNvBE;4:Cc5rVsl3y+0ijLasWrruiiDUiPGgLgNJNJ6fYJ+XY7lovXg5DTsmSNGlX75qypZtLBaNgaRNDSMK72HbYzwRtYTeKc4VI5FKXns32lz7XTy78dE+v7X1TjvKyLnMmqrrglb257yCSRnB2Lk+d1EyLgr0jV9oB9pI0BR+JSFYGvKJyxtJq75Aew/9/hyol3FPhOc4S7lPeyClRMqqUAMyakRFS0AnTqMsNU54JV0YKZe0iI12ggOIK+0oSFh/Xt0yha7HKVQibOUcuTg8Gzeikyn/aYLe+JwtinyPhIdTPDgG37S7E7lfRowYpMEETWvc
-X-Microsoft-Antispam-PRVS: <BL0PR07MB4098D98E871C69BCBE9BA76DD8C10@BL0PR07MB4098.namprd07.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(72806322054110);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231382)(944501410)(52105112)(93006095)(93003095)(148016)(149066)(150057)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:BL0PR07MB4098;BCL:0;PCL:0;RULEID:;SRVR:BL0PR07MB4098;
-X-Forefront-PRVS: 0854128AF0
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BL0PR07MB4098;23:WFykm3SM94UGQ7ljNOH4BQPeCo1UAW6G3W+Vd1JY1?=
- =?us-ascii?Q?yJgBKaDOL/a6senjrskdCRGEDmJSBWsm08b0FgEhd5LV/5uQSpl/Z5DNvH1c?=
- =?us-ascii?Q?oywi7i/UAyiiorfS1mPr/VwN3pt5wuhTu4WbV1KkN11TgiqnvkUTcNyA3l2E?=
- =?us-ascii?Q?0iRMPNNt2dgVT0ILpyLBDal5Fhj4Qrz+qVWl0GNEddXlrd2QsGXQ0fS4FaNU?=
- =?us-ascii?Q?h5ZRchxbDI8v9Y41T46cmb8oCRBPrNK7hNje/zRaKgqmqunmC8ip1+awCq9+?=
- =?us-ascii?Q?0XOIHlJBuLoMpEwnMG54uEpuaoNcHBi8iHMm82f57iKQtABaBsy+JLsNPIID?=
- =?us-ascii?Q?kZcPLyOHi3NrnwH3JZkZrXtuqVxgFlBnFUEqF0D6BZxQSeZR4VWs17lp64/K?=
- =?us-ascii?Q?YtTOf03bxs1p1rmQGmM7H8MatZE1KmtMH2l5hzr5YLDSCizFrGwUiKCucAGv?=
- =?us-ascii?Q?bUPRwYIGZcHPCePy4q4VnIjcbhtpt0WITgBi4J77Qtda1kYicuvR2SKCXckD?=
- =?us-ascii?Q?nYwIJ76fpbRfCEBVbtArqg2F9vRoZ8ACwRzYFZ/bAdO7HN/yx16kWYYkm909?=
- =?us-ascii?Q?AJQKPiWYF8Ccqd6VvKLhs/XEaJ5CBtfi2UfW87FZnQt4QGxKiNWXgxDg1KTe?=
- =?us-ascii?Q?29pPz0WSrraZHtLD6dk5CaWkWPK0ctUMxK5XRtcNfxRpWTdI3XurgV0MIRNO?=
- =?us-ascii?Q?CkEHDPuia+KfbrTtlLVZs5P1UeKuySQnxUT0ytGljecg8wyBJtNFu30TL+Xl?=
- =?us-ascii?Q?kdfSSl1shx4FqHUjjI8R8xsl1YbPF9kPF/Umk7gL+DJJxLWK4Oq0qNFwIp1c?=
- =?us-ascii?Q?4IFnqxUTlK9GZpIbU2TVt8b3OlAl+TyL6PpR8T6qRecFcMNW9h5uKM7pqnXk?=
- =?us-ascii?Q?4dqJGp3PgIaooJw/88ZI45qNUtRX1HPIwpucrLU7m8GcD8QG2MrkkBYJSH0H?=
- =?us-ascii?Q?C+KhYO9prh8hJjKK9xCaX8czp5yeDpk4TPrbC/cAPtQdywOxUbu1OGSYqr1F?=
- =?us-ascii?Q?NrSPl1ce0PDT54bdpAj4Vd/zSzRomI4vc+FxbAFRGdzpPQ6naCNJDdD/u58V?=
- =?us-ascii?Q?SmYRI9/3Mt9p2ZdABT38XEuM4tVmh2dmR+3hZa5lFyJUGKU/rDMEJ+unV/yI?=
- =?us-ascii?Q?Bvvd9p5TT/n7a+Ag3EvZXJAJWe5yqN4A1O9Bg0+PxLVpvmQLFCP+ljw3kvnr?=
- =?us-ascii?Q?miOcTc+IqjQ8urH4ExddFZ0rIZU9PSzJt+UeljR8eP607HNz7nk4wF6qw=3D?=
- =?us-ascii?Q?=3D?=
-X-Microsoft-Antispam-Message-Info: p2DKtJkVZf5msVWMN8zhwl6r5x9F8GGoMN3Jd6MXEQ9CXSfJU/TDxV+FA2l7uf9y4xzCOumJvO+J+QnQuGQAisKxJscf/lGb+fbdEnvWqdyQbtiYaDQha6BEq3t5oht+tFru+SO6dnviS7K5CvV8qjrS4U++JwuS4l5YBOqU/TsvbCLadAlSvqhzuL94Y+fzYP+EZsaGSECAbIluM2Ac/AqoFRMs/9fARpV+mtKM8xCFipdeM8Cg3HCG4x5fBrQBGm6NvLQnqrDwlJnpjyzCAOI6hOGXrtWIqZGKHW8FN7lIsViuQStM7RsqygBfPGvwhiHoMtJMkLKVkvczrh8SHB0uXJZuDspMAGWt3A1ux9g=
-X-Microsoft-Exchange-Diagnostics: 1;BL0PR07MB4098;6:gixckMz0NYdhmWeenlbvamDMpbqn7P4yGxgSwl4p1crzFS45ZSF9wD55o3xgbfZWWf6VICshwRShvtL2H4Cb/+/pilWefk+jIWObqTtJB3s1VS9etR57M5P5pUUG2JxXmWoDrSmdL1x0QICYHdaXnAyAG39M/JwUxi4AfFT4YtND8xr4Y0qg4ByioYfRJpM7Yv/ggHBHPl5Uqcx5C8UW8cbgga/mevjtdHe+kuRgqlM2Mg8RFK6ejY/OZG2MUqRgTsupIOMz+kKKcumrh54HCrhoEio+b73tXLgu9ribS9BT9klOEi93tHzHfaP67bMQYoQg7lUR3rHfOFjFSKvvCiVSQULe/w5wkGAhSE8lnNS+IozYXaFtwef5zQCLGtuzSvmNGQMFmW1fAVBBQBClz2en7bF2vf8MVo86aRR74DAODqGhiHWe/NJ5nE4wpqdAq3HHFEn+2SCxpZoN7dNGzQ==;5:Ny4iPSuYDNFRNChEvQYvLbp0XWMCSCX+FXCV7ayIWJ6QZq93dOYBcI5ruJafDQ1zKomI+z+UKzQTiBc3B2seTQS78JJI6gj6Jf0TEdXeXh/QgYBbem+1qnNQH1szHWx+bZXRXroLDfUjPT35ZpHIgr5YrsK/esWfhGGfM1stNcU=;7:UJSEsRcm9xra91iKTAxyAYjOunKAyCZT4LZbvmJ/fZ8fh7vRr8tMdRnCjcvB1CukayQhD1IwZKyAvDWomCHZHqw7E8gEmkBwUFNw2w7qygo4DAl2O6C15R82Tvwi3XphtwTlR2SKhXK87tEL+F/wpQ==
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BL0PR07MB4098;20:gJPhwwlPLiYug4IoUCB0yltOEcnXI4kzIVgduFF2Q4us82SjbkBgAaO1gg3MteiSVUyRXjnML0aBYBj5YAr4Mpqy+7BNJNztJqw1/fkzpmgWjG1ilVlPYyQFkNluyIS5zuwtBmNcuBXu1mL4b08lC2TW7Qu3AQ8GB+sIm6Qp49st6F24+BfZX0UfD6z4JN8os85JqBBnIhTxuzgIyc35QnJPlN913EpOeLpznc65PCU9RyaXFc1B65E2xzWVWOd5
-X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2018 16:42:09.7367
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 47f24a50-a547-482c-e76e-08d648bdca5f
-X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[199.43.4.28];Helo=[rmmaillnx1.cadence.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR07MB4098
-X-Proofpoint-SPF-Result: pass
-X-Proofpoint-SPF-Record: v=spf1 a:mx-sanjose2.Cadence.COM a:mx-sanjose4.Cadence.COM
- a:mx-sanjose5.Cadence.COM include:mktomail.com
- include:spf-0014ca01.pphosted.com include:spf.protection.outlook.com
- include:auth.msgapp.com include:spf.mandrillapp.com ~all
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-12_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
- priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
- spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811120146
+        Mon, 12 Nov 2018 21:37:20 -0500
+Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id wACGCjmW030402;
+        Mon, 12 Nov 2018 18:12:45 +0200
+Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
+        id 1DE28630C8; Mon, 12 Nov 2018 18:42:44 +0200 (IST)
+From:   Tomer Maimon <tmaimon77@gmail.com>
+To:     broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        yuenn@google.com, venture@google.com, brendanhiggins@google.com,
+        avifishman70@gmail.com, joel@jms.id.au
+Cc:     linux-spi@vger.kernel.org, openbmc@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Tomer Maimon <tmaimon77@gmail.com>
+Subject: [PATCH v1 2/2] spi: npcm: add NPCM PSPI controller driver
+Date:   Mon, 12 Nov 2018 18:42:32 +0200
+Message-Id: <20181112164232.435629-3-tmaimon77@gmail.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20181112164232.435629-1-tmaimon77@gmail.com>
+References: <20181112164232.435629-1-tmaimon77@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add DT binding documentation for Sierra PHY.  The PHY supports
-a number of different protocols, including PCIe and USB.
+Add Nuvoton NPCM BMC Peripheral SPI controller driver.
 
-The PHY lanes may be configured as single or multi-lane links.
-Each link is treated as a separate sub-node.  For example, if
-there are 4 lanes in total the first 2 might be configured as
-a multi-lane PCIe link while the other two are single lane
-USB links, and in this case there would be 3 sub-nodes.
-
-There are two resets for the PHY block (one for APB register
-access, one for the PHY link) and separate resets for each
-link.  For multi-lane links, the reset corresponds to the
-reset line on the master lane, the resets on other lanes
-have no effect.
-
-Signed-off-by: Alan Douglas <adouglas@cadence.com>
+Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
 ---
- .../devicetree/bindings/phy/phy-cadence-sierra.txt | 67 ++++++++++++++++++++++
- 1 file changed, 67 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/phy/phy-cadence-sierra.txt
+ drivers/spi/Kconfig         |   7 +
+ drivers/spi/Makefile        |   1 +
+ drivers/spi/spi-npcm-pspi.c | 480 ++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 488 insertions(+)
+ create mode 100644 drivers/spi/spi-npcm-pspi.c
 
-diff --git a/Documentation/devicetree/bindings/phy/phy-cadence-sierra.txt b/Documentation/devicetree/bindings/phy/phy-cadence-sierra.txt
+diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+index 7d3a5c94727e..21eb08405127 100644
+--- a/drivers/spi/Kconfig
++++ b/drivers/spi/Kconfig
+@@ -397,6 +397,13 @@ config SPI_MT65XX
+ 	  say Y or M here.If you are not sure, say N.
+ 	  SPI drivers for Mediatek MT65XX and MT81XX series ARM SoCs.
+ 
++config SPI_NPCM_PSPI
++	tristate "Nuvoton NPCM PSPI Controller"
++	depends on ARCH_NPCM || COMPILE_TEST
++	help
++	  This driver provides support for Nuvoton NPCM BMC
++	  Peripheral SPI controller in master mode.
++
+ config SPI_NUC900
+ 	tristate "Nuvoton NUC900 series SPI"
+ 	depends on ARCH_W90X900
+diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
+index 3575205c5c27..d40a3611809c 100644
+--- a/drivers/spi/Makefile
++++ b/drivers/spi/Makefile
+@@ -59,6 +59,7 @@ obj-$(CONFIG_SPI_MPC52xx_PSC)		+= spi-mpc52xx-psc.o
+ obj-$(CONFIG_SPI_MPC52xx)		+= spi-mpc52xx.o
+ obj-$(CONFIG_SPI_MT65XX)                += spi-mt65xx.o
+ obj-$(CONFIG_SPI_MXS)			+= spi-mxs.o
++obj-$(CONFIG_SPI_NPCM_PSPI)		+= spi-npcm-pspi.o
+ obj-$(CONFIG_SPI_NUC900)		+= spi-nuc900.o
+ obj-$(CONFIG_SPI_OC_TINY)		+= spi-oc-tiny.o
+ spi-octeon-objs				:= spi-cavium.o spi-cavium-octeon.o
+diff --git a/drivers/spi/spi-npcm-pspi.c b/drivers/spi/spi-npcm-pspi.c
 new file mode 100644
-index 0000000..6e1b47b
+index 000000000000..51777515c83f
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/phy/phy-cadence-sierra.txt
-@@ -0,0 +1,67 @@
-+Cadence Sierra PHY
-+-----------------------
++++ b/drivers/spi/spi-npcm-pspi.c
+@@ -0,0 +1,480 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2018 Nuvoton Technology corporation.
 +
-+Required properties:
-+- compatible:	cdns,sierra-phy-t0
-+- clocks:	Must contain an entry in clock-names.
-+		See ../clocks/clock-bindings.txt for details.
-+- clock-names:	Must be "phy_clk"
-+- resets:	Must contain an entry for each in reset-names.
-+		See ../reset/reset.txt for details.
-+- reset-names:	Must include "sierra_reset" and "sierra_apb".
-+		"sierra_reset" must control the reset line to the PHY.
-+		"sierra_apb" must control the reset line to the APB PHY
-+		interface.
-+- reg:		register range for the PHY.
-+- #address-cells: Must be 1
-+- #size-cells:	Must be 0
++#include <linux/kernel.h>
++#include <linux/bitfield.h>
++#include <linux/bitops.h>
++#include <linux/clk.h>
++#include <linux/interrupt.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/spi/spi.h>
++#include <linux/gpio.h>
++#include <linux/of_gpio.h>
 +
-+Optional properties:
-+- cdns,autoconf:	A boolean property whose presence indicates that the
-+			PHY registers will be configured by hardware. If not
-+			present, all sub-node optional properties must be
-+			provided.
++#include <asm/unaligned.h>
 +
-+Sub-nodes:
-+  Each group of PHY lanes with a single master lane should be represented as
-+  a sub-node. Note that the actual configuration of each lane is determined by
-+  hardware strapping, and must match the configuration specified here.
++#include <linux/regmap.h>
++#include <linux/mfd/syscon.h>
 +
-+Sub-node required properties:
-+- #phy-cells:	Generic PHY binding; must be 0.
-+- reg:		The master lane number.  This is the lowest numbered lane
-+		in the lane group.
-+- resets:	Must contain one entry which controls the reset line for the
-+		master lane of the sub-node.
-+		See ../reset/reset.txt for details.
++struct npcm_pspi {
++	struct completion xfer_done;
++	struct regmap *rst_regmap;
++	struct spi_master *master;
++	unsigned int tx_bytes;
++	unsigned int rx_bytes;
++	void __iomem *base;
++	bool is_save_param;
++	u8 bits_per_word;
++	const u8 *tx_buf;
++	struct clk *clk;
++	u32 speed_hz;
++	u8 *rx_buf;
++	u16 mode;
++	u32 id;
++};
 +
-+Sub-node optional properties:
-+- cdns,num-lanes:	Number of lanes in this group.  From 1 to 4.  The
-+			group is made up of consecutive lanes.
-+- cdns,phy-type:	Can be PHY_TYPE_PCIE or PHY_TYPE_USB3, depending on
-+			configuration of lanes.
++#define DRIVER_NAME "npcm-pspi"
 +
-+Example:
-+	pcie_phy4: pcie-phy@fd240000 {
-+		compatible = "cdns,sierra-phy-t0";
-+		reg = <0x0 0xfd240000 0x0 0x40000>;
-+		resets = <&phyrst 0>, <&phyrst 1>;
-+		reset-names = "sierra_reset", "sierra_apb";
-+		clocks = <&phyclock>;
-+		clock-names = "phy_clk";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		pcie0_phy0: pcie-phy@0 {
-+				reg = <0>;
-+				resets = <&phyrst 2>;
-+				cdns,num-lanes = <2>;
-+				#phy-cells = <0>;
-+				cdns,phy-type = <PHY_TYPE_PCIE>;
-+		};
-+		pcie0_phy1: pcie-phy@2 {
-+				reg = <2>;
-+				resets = <&phyrst 4>;
-+				cdns,num-lanes = <1>;
-+				#phy-cells = <0>;
-+				cdns,phy-type = <PHY_TYPE_PCIE>;
-+		};
++#define NPCM_PSPI_DATA		0x00
++#define NPCM_PSPI_CTL1		0x02
++#define NPCM_PSPI_STAT		0x04
++
++/* definitions for control and status register */
++#define NPCM_PSPI_CTL1_SPIEN	BIT(0)
++#define NPCM_PSPI_CTL1_MOD	BIT(2)
++#define NPCM_PSPI_CTL1_EIR	BIT(5)
++#define NPCM_PSPI_CTL1_EIW	BIT(6)
++#define NPCM_PSPI_CTL1_SCM	BIT(7)
++#define NPCM_PSPI_CTL1_SCIDL	BIT(8)
++#define NPCM_PSPI_CTL1_SCDV6_0	GENMASK(15, 9)
++
++#define NPCM_PSPI_STAT_BSY	BIT(0)
++#define NPCM_PSPI_STAT_RBF	BIT(1)
++
++/* general definitions */
++#define NPCM_PSPI_TIMEOUT_MS		2000
++#define NPCM_PSPI_MAX_CLK_DIVIDER	256
++#define NPCM_PSPI_MIN_CLK_DIVIDER	4
++#define NPCM_PSPI_DEFAULT_CLK		25000000
++
++/* reset register */
++#define NPCM7XX_IPSRST2_OFFSET	0x24
++
++#define NPCM7XX_PSPI1_RESET	BIT(22)
++#define NPCM7XX_PSPI2_RESET	BIT(23)
++
++static inline unsigned int bytes_per_word(unsigned int bits)
++{
++	return bits <= 8 ? 1 : 2;
++}
++
++static inline void npcm_pspi_irq_enable(struct npcm_pspi *priv, u16 mask)
++{
++	u16 val;
++
++	val = ioread16(priv->base + NPCM_PSPI_CTL1);
++	val |= mask;
++	iowrite16(val, priv->base + NPCM_PSPI_CTL1);
++}
++
++static inline void npcm_pspi_irq_disable(struct npcm_pspi *priv, u16 mask)
++{
++	u16 val;
++
++	val = ioread16(priv->base + NPCM_PSPI_CTL1);
++	val &= ~mask;
++	iowrite16(val, priv->base + NPCM_PSPI_CTL1);
++}
++
++static inline void npcm_pspi_enable(struct npcm_pspi *priv)
++{
++	u16 val;
++
++	val = ioread16(priv->base + NPCM_PSPI_CTL1);
++	val |= NPCM_PSPI_CTL1_SPIEN;
++	iowrite16(val, priv->base + NPCM_PSPI_CTL1);
++}
++
++static inline void npcm_pspi_disable(struct npcm_pspi *priv)
++{
++	u16 val;
++
++	val = ioread16(priv->base + NPCM_PSPI_CTL1);
++	val &= ~NPCM_PSPI_CTL1_SPIEN;
++	iowrite16(val, priv->base + NPCM_PSPI_CTL1);
++}
++
++static void npcm_pspi_set_mode(struct spi_device *spi)
++{
++	struct npcm_pspi *priv = spi_master_get_devdata(spi->master);
++	u16 regtemp;
++	u16 mode_val;
++
++	switch (spi->mode & (SPI_CPOL | SPI_CPHA)) {
++	case SPI_MODE_0:
++		mode_val = 0;
++		break;
++	case SPI_MODE_1:
++		mode_val = NPCM_PSPI_CTL1_SCIDL;
++		break;
++	case SPI_MODE_2:
++		mode_val = NPCM_PSPI_CTL1_SCM;
++		break;
++	case SPI_MODE_3:
++		mode_val = NPCM_PSPI_CTL1_SCIDL | NPCM_PSPI_CTL1_SCM;
++		break;
++	}
++
++	regtemp = ioread16(priv->base + NPCM_PSPI_CTL1);
++	regtemp &= ~(NPCM_PSPI_CTL1_SCM | NPCM_PSPI_CTL1_SCIDL);
++	iowrite16(regtemp | mode_val, priv->base + NPCM_PSPI_CTL1);
++}
++
++static void npcm_pspi_set_transfer_size(struct npcm_pspi *priv, int size)
++{
++	u16 regtemp;
++
++	regtemp = ioread16(NPCM_PSPI_CTL1 + priv->base);
++
++	switch (size) {
++	case 8:
++		regtemp &= ~NPCM_PSPI_CTL1_MOD;
++		break;
++	case 16:
++		regtemp |= NPCM_PSPI_CTL1_MOD;
++		break;
++	}
++
++	iowrite16(regtemp, NPCM_PSPI_CTL1 + priv->base);
++}
++
++static void npcm_pspi_set_baudrate(struct npcm_pspi *priv, unsigned int speed)
++{
++	u32 ckdiv;
++	u16 regtemp;
++
++	/* the supported rates are numbers from 4 to 256. */
++	ckdiv = DIV_ROUND_CLOSEST(clk_get_rate(priv->clk), (2 * speed)) - 1;
++
++	regtemp = ioread16(NPCM_PSPI_CTL1 + priv->base);
++	regtemp &= ~NPCM_PSPI_CTL1_SCDV6_0;
++	iowrite16(regtemp | (ckdiv << 9), NPCM_PSPI_CTL1 + priv->base);
++}
++
++static void npcm_pspi_setup_transfer(struct spi_device *spi,
++				     struct spi_transfer *t)
++{
++	struct npcm_pspi *priv = spi_master_get_devdata(spi->master);
++
++	priv->tx_buf = t->tx_buf;
++	priv->rx_buf = t->rx_buf;
++	priv->tx_bytes = t->len;
++	priv->rx_bytes = t->len;
++
++	if (!priv->is_save_param || priv->mode != spi->mode) {
++		npcm_pspi_set_mode(spi);
++		priv->mode = spi->mode;
++	}
++
++	if (!priv->is_save_param || priv->bits_per_word != t->bits_per_word) {
++		npcm_pspi_set_transfer_size(priv, t->bits_per_word);
++		priv->bits_per_word = t->bits_per_word;
++	}
++
++	if (!priv->is_save_param || priv->speed_hz != t->speed_hz) {
++		npcm_pspi_set_baudrate(priv, t->speed_hz);
++		priv->speed_hz = t->speed_hz;
++	}
++
++	if (!priv->is_save_param)
++		priv->is_save_param = true;
++}
++
++static void npcm_pspi_send(struct npcm_pspi *priv)
++{
++	int wsize;
++
++	wsize = min(bytes_per_word(priv->bits_per_word), priv->tx_bytes);
++	priv->tx_bytes -= wsize;
++
++	if (priv->tx_buf) {
++		if (wsize == 1)
++			iowrite8(*priv->tx_buf, NPCM_PSPI_DATA + priv->base);
++		if (wsize == 2)
++			iowrite16(*priv->tx_buf, NPCM_PSPI_DATA + priv->base);
++
++		priv->tx_buf += wsize;
++	}
++}
++
++static void npcm_pspi_recv(struct npcm_pspi *priv)
++{
++	int rsize;
++	u16 val;
++
++	rsize = min(bytes_per_word(priv->bits_per_word), priv->rx_bytes);
++	priv->rx_bytes -= rsize;
++
++	if (priv->rx_buf) {
++		if (rsize == 1)
++			val = ioread8(priv->base + NPCM_PSPI_DATA);
++		if (rsize == 2)
++			val = ioread16(priv->base + NPCM_PSPI_DATA);
++
++		*priv->rx_buf = val;
++		priv->rx_buf += rsize;
++	}
++}
++
++static int npcm_pspi_transfer_one(struct spi_master *master,
++				  struct spi_device *spi,
++				  struct spi_transfer *t)
++{
++	struct npcm_pspi *priv = spi_master_get_devdata(master);
++	int status;
++
++	npcm_pspi_setup_transfer(spi, t);
++	reinit_completion(&priv->xfer_done);
++	npcm_pspi_enable(priv);
++	status = wait_for_completion_timeout(&priv->xfer_done,
++					     msecs_to_jiffies
++					     (NPCM_PSPI_TIMEOUT_MS));
++	if (status == 0) {
++		npcm_pspi_disable(priv);
++		return -ETIMEDOUT;
++	}
++
++	return 0;
++}
++
++static int npcm_pspi_prepare_transfer_hardware(struct spi_master *master)
++{
++	struct npcm_pspi *priv = spi_master_get_devdata(master);
++
++	npcm_pspi_irq_enable(priv, NPCM_PSPI_CTL1_EIR | NPCM_PSPI_CTL1_EIW);
++
++	return 0;
++}
++
++static int npcm_pspi_unprepare_transfer_hardware(struct spi_master *master)
++{
++	struct npcm_pspi *priv = spi_master_get_devdata(master);
++
++	npcm_pspi_irq_disable(priv, NPCM_PSPI_CTL1_EIR | NPCM_PSPI_CTL1_EIW);
++
++	return 0;
++}
++
++static void npcm_pspi_reset_hw(struct npcm_pspi *priv)
++{
++	regmap_write(priv->rst_regmap, NPCM7XX_IPSRST2_OFFSET,
++		     NPCM7XX_PSPI1_RESET << priv->id);
++	regmap_write(priv->rst_regmap, NPCM7XX_IPSRST2_OFFSET, 0x0);
++}
++
++static irqreturn_t npcm_pspi_handler(int irq, void *dev_id)
++{
++	struct npcm_pspi *priv = dev_id;
++	u16 val;
++	u8 stat;
++
++	stat = ioread8(priv->base + NPCM_PSPI_STAT);
++
++	if (!priv->tx_buf && !priv->rx_buf)
++		return IRQ_NONE;
++
++	if (priv->tx_buf) {
++		if (stat & NPCM_PSPI_STAT_RBF) {
++			val = ioread8(NPCM_PSPI_DATA + priv->base);
++			if (priv->tx_bytes == 0) {
++				npcm_pspi_disable(priv);
++				complete(&priv->xfer_done);
++				return IRQ_HANDLED;
++			}
++		}
++
++		if ((stat & NPCM_PSPI_STAT_BSY) == 0)
++			if (priv->tx_bytes)
++				npcm_pspi_send(priv);
++	}
++
++	if (priv->rx_buf) {
++		if (stat & NPCM_PSPI_STAT_RBF) {
++			if (!priv->rx_bytes)
++				return IRQ_NONE;
++
++			npcm_pspi_recv(priv);
++
++			if (!priv->rx_bytes) {
++				npcm_pspi_disable(priv);
++				complete(&priv->xfer_done);
++				return IRQ_HANDLED;
++			}
++		}
++
++		if (((stat & NPCM_PSPI_STAT_BSY) == 0) && !priv->tx_buf)
++			iowrite8(0x0, NPCM_PSPI_DATA + priv->base);
++	}
++
++	return IRQ_HANDLED;
++}
++
++static int npcm_pspi_probe(struct platform_device *pdev)
++{
++	struct npcm_pspi *priv;
++	struct spi_master *master;
++	struct resource *res;
++	unsigned long clk_hz;
++	struct device_node *np = pdev->dev.of_node;
++	int num_cs, i;
++	u32 csgpio;
++	int irq;
++	int ret;
++
++	num_cs = of_gpio_named_count(np, "cs-gpios");
++	if (num_cs < 0)
++		return num_cs;
++
++	pdev->id = of_alias_get_id(np, "spi");
++	if (pdev->id < 0)
++		pdev->id = 0;
++
++	master = spi_alloc_master(&pdev->dev, sizeof(*priv));
++	if (!master)
++		return -ENOMEM;
++
++	platform_set_drvdata(pdev, master);
++
++	priv = spi_master_get_devdata(master);
++	priv->master = master;
++	priv->is_save_param = false;
++	priv->id = pdev->id;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	priv->base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(priv->base)) {
++		ret = PTR_ERR(priv->base);
++		goto out_master_put;
++	}
++
++	priv->clk = devm_clk_get(&pdev->dev, NULL);
++	if (IS_ERR(priv->clk)) {
++		dev_err(&pdev->dev, "failed to get clock\n");
++		ret = PTR_ERR(priv->clk);
++		goto out_master_put;
++	}
++
++	ret = clk_prepare_enable(priv->clk);
++	if (ret)
++		goto out_master_put;
++
++	irq = platform_get_irq(pdev, 0);
++	if (irq < 0) {
++		dev_err(&pdev->dev, "failed to get IRQ\n");
++		ret = irq;
++		goto out_disable_clk;
++	}
++
++	priv->rst_regmap =
++		syscon_regmap_lookup_by_compatible("nuvoton,npcm750-rst");
++	if (IS_ERR(priv->rst_regmap)) {
++		dev_err(&pdev->dev, "failed to find nuvoton,npcm750-rst\n");
++		return IS_ERR(priv->rst_regmap);
++	}
++
++	/* reset SPI-HW block */
++	npcm_pspi_reset_hw(priv);
++
++	ret = devm_request_irq(&pdev->dev, irq, npcm_pspi_handler, 0,
++			       "npcm-pspi", priv);
++	if (ret) {
++		dev_err(&pdev->dev, "failed to request IRQ\n");
++		goto out_disable_clk;
++	}
++
++	init_completion(&priv->xfer_done);
++
++	clk_hz = clk_get_rate(priv->clk);
++
++	master->max_speed_hz = DIV_ROUND_UP(clk_hz, NPCM_PSPI_MIN_CLK_DIVIDER);
++	master->min_speed_hz = DIV_ROUND_UP(clk_hz, NPCM_PSPI_MAX_CLK_DIVIDER);
++	master->mode_bits = SPI_CPHA | SPI_CPOL;
++	master->dev.of_node = pdev->dev.of_node;
++	master->bus_num = pdev->id;
++	master->bits_per_word_mask = SPI_BPW_MASK(8) | SPI_BPW_MASK(16);
++	master->transfer_one = npcm_pspi_transfer_one;
++	master->prepare_transfer_hardware =
++		npcm_pspi_prepare_transfer_hardware;
++	master->unprepare_transfer_hardware =
++		npcm_pspi_unprepare_transfer_hardware;
++	master->num_chipselect = num_cs;
++
++	for (i = 0; i < num_cs; i++) {
++		csgpio = of_get_named_gpio(np, "cs-gpios", i);
++		if (csgpio < 0) {
++			dev_err(&pdev->dev, "failed to get csgpio#%u\n", i);
++			goto out_disable_clk;
++		}
++		dev_dbg(&pdev->dev, "csgpio#%u = %u\n", i, csgpio);
++		ret = devm_gpio_request_one(&pdev->dev, csgpio,
++					    GPIOF_OUT_INIT_HIGH, DRIVER_NAME);
++		if (ret < 0) {
++			dev_err(&pdev->dev,
++				"failed to configure csgpio#%u %u\n"
++				, i, csgpio);
++			goto out_disable_clk;
++		}
++	}
++
++	/* set to default clock rate */
++	npcm_pspi_set_baudrate(priv, NPCM_PSPI_DEFAULT_CLK);
++
++	ret = devm_spi_register_master(&pdev->dev, master);
++	if (ret)
++		goto out_disable_clk;
++
++	pr_info("NPCM Peripheral SPI %d probed\n", pdev->id);
++
++	return 0;
++
++out_disable_clk:
++	clk_disable_unprepare(priv->clk);
++
++out_master_put:
++	spi_master_put(master);
++	return ret;
++}
++
++static int npcm_pspi_remove(struct platform_device *pdev)
++{
++	struct npcm_pspi *priv = platform_get_drvdata(pdev);
++
++	npcm_pspi_reset_hw(priv);
++	clk_disable_unprepare(priv->clk);
++
++	return 0;
++}
++
++static const struct of_device_id npcm_pspi_match[] = {
++	{ .compatible = "nuvoton,npcm750-pspi", .data = NULL },
++	{}
++};
++MODULE_DEVICE_TABLE(of, npcm_pspi_match);
++
++static struct platform_driver npcm_pspi_driver = {
++	.driver		= {
++		.name		= DRIVER_NAME,
++		.of_match_table	= npcm_pspi_match,
++		.owner		= THIS_MODULE,
++	},
++	.probe		= npcm_pspi_probe,
++	.remove		= npcm_pspi_remove,
++};
++module_platform_driver(npcm_pspi_driver);
++
++MODULE_DESCRIPTION("NPCM peripheral SPI Controller driver");
++MODULE_AUTHOR("Tomer Maimon <tomer.maimon@nuvoton.com>");
++MODULE_LICENSE("GPL v2");
++
 -- 
-1.9.0
+2.14.1
 
