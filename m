@@ -2,172 +2,398 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2DCFC07E85
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 20:05:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAC3EC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 20:06:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C6522245E
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 20:05:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FDC122504
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 20:06:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dellteam.com header.i=@dellteam.com header.b="F9IA4/9a"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C6522245E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=Dellteam.com
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="HGQJVTS2";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="iP/Hb6KJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FDC122504
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729204AbeKMGAc (ORCPT
+        id S1730360AbeKMGBO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 01:00:32 -0500
-Received: from esa4.dell-outbound.iphmx.com ([68.232.149.214]:15683 "EHLO
-        esa4.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725832AbeKMGAb (ORCPT
+        Tue, 13 Nov 2018 01:01:14 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:41504 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725832AbeKMGBO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 01:00:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=dellteam.com; i=@dellteam.com; q=dns/txt; s=smtpout;
-  t=1542053146; x=1573589146;
-  h=cc:from:to:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=sbp8gIVMNq2z7wKV+Us/Oh58FM+BMMhE1vtMpIoI/NI=;
-  b=F9IA4/9aKLO4NnV/HJWzpQB/avCaLTpo1D17iCc7Kg533vGxZybUyBZX
-   u3/MP5xEhiuYrR1CrQW8fHfYxmQYsmwdc0Szp/av12dK3p79cu/3pbcOU
-   ooaRMdiFu7b2EbILq86AiFgd37kh0yDuHRLVUEX3U901+SSwE5GdGknbO
-   s=;
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2EMAACO2+lbhiWd50NkGwEBAQEDAQE?=
- =?us-ascii?q?BBwMBAQGBUwQBAQELAYNrJwqMZYsbgg2XNRSBZgsBAYRsgzAiNgsNAQMBAQI?=
- =?us-ascii?q?BAQIBAQIQAQEBCgkLCCkvgjYigmMBAQEBAgESKD8QAgEIGB4QVwIEARIIFgS?=
- =?us-ascii?q?Cf4F6CJ1IAoEQiVgBAQGCHYotjACCFoERgxKESwESAQcGEiyFLwKKfpN8VQk?=
- =?us-ascii?q?FkRAggViFAoMihnSCdZRcAgQCBAUCFIFKB4EPcXCDPII1G44KQAExi1aBH4E?=
- =?us-ascii?q?fAQE?=
-X-IPAS-Result: =?us-ascii?q?A2EMAACO2+lbhiWd50NkGwEBAQEDAQEBBwMBAQGBUwQBA?=
- =?us-ascii?q?QELAYNrJwqMZYsbgg2XNRSBZgsBAYRsgzAiNgsNAQMBAQIBAQIBAQIQAQEBC?=
- =?us-ascii?q?gkLCCkvgjYigmMBAQEBAgESKD8QAgEIGB4QVwIEARIIFgSCf4F6CJ1IAoEQi?=
- =?us-ascii?q?VgBAQGCHYotjACCFoERgxKESwESAQcGEiyFLwKKfpN8VQkFkRAggViFAoMih?=
- =?us-ascii?q?nSCdZRcAgQCBAUCFIFKB4EPcXCDPII1G44KQAExi1aBH4EfAQE?=
-Received: from mx0b-00154901.pphosted.com ([67.231.157.37])
-  by esa4.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 12 Nov 2018 14:05:45 -0600
-Received: from pps.filterd (m0144104.ppops.net [127.0.0.1])
-        by mx0b-00154901.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wACJwkkp072710;
-        Mon, 12 Nov 2018 15:05:44 -0500
-Received: from esa4.dell-outbound2.iphmx.com (esa4.dell-outbound2.iphmx.com [68.232.154.98])
-        by mx0b-00154901.pphosted.com with ESMTP id 2nqepsrg5k-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 12 Nov 2018 15:05:44 -0500
-Cc:     <keith.busch@intel.com>, <helgaas@kernel.org>,
-        <mr.nuke.me@gmail.com>, <linux-pci@vger.kernel.org>,
-        <Austin.Bolen@dell.com>, <Shyam.Iyer@dell.com>,
-        <linux-kernel@vger.kernel.org>, <jonathan.derrick@intel.com>,
-        <lukas@wunner.de>, <ruscur@russell.cc>, <sbobroff@linux.ibm.com>,
-        <linuxppc-dev@lists.ozlabs.org>
-Received: from ausc60pc101.us.dell.com ([143.166.85.206])
-  by esa4.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 13 Nov 2018 02:05:42 +0600
-X-LoopCount0: from 10.166.134.88
-X-IronPort-AV: E=Sophos;i="5.54,496,1534827600"; 
-   d="scan'208";a="1324590346"
-From:   <Alex_Gagniuc@Dellteam.com>
-To:     <oohall@gmail.com>, <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v2] PCI/MSI: Don't touch MSI bits when the PCI device is
- disconnected
-Thread-Topic: [PATCH v2] PCI/MSI: Don't touch MSI bits when the PCI device is
- disconnected
-Thread-Index: AQHUT50UQ290XPGvJEGnaSTTjbCF+g==
+        Tue, 13 Nov 2018 01:01:14 -0500
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+        by m0089730.ppops.net (8.16.0.22/8.16.0.22) with SMTP id wACK2NtM018907;
+        Mon, 12 Nov 2018 12:06:00 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=RfOqhltkXjhGqxkAGr3PWvQLalfAIROyEAtSaGtQzkw=;
+ b=HGQJVTS2RDDyw4zHVtLqiYN22Lw2Xncbmu/thvoH0xrUtnKNEEgn7NG5zKTlKb0hbzFG
+ 490OMnDy2p10Pi5ppyTNSX7XR0jycQJiIOSgPvoEHI04omV7MxBj7CV6GaeEHyFcHsSf
+ qBd4UcocoefUdrjeE5208pwBvuTXoTgdH24= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by m0089730.ppops.net with ESMTP id 2nqdxy8h3u-4
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Mon, 12 Nov 2018 12:06:00 -0800
+Received: from frc-hub04.TheFacebook.com (2620:10d:c021:18::174) by
+ frc-hub04.TheFacebook.com (2620:10d:c021:18::174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Mon, 12 Nov 2018 12:05:47 -0800
+Received: from NAM01-SN1-obe.outbound.protection.outlook.com (192.168.183.28)
+ by o365-in.thefacebook.com (192.168.177.74) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
+ via Frontend Transport; Mon, 12 Nov 2018 12:05:47 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RfOqhltkXjhGqxkAGr3PWvQLalfAIROyEAtSaGtQzkw=;
+ b=iP/Hb6KJQIIoApzIMpGfVJXWcOcYOMnVUgP/tAmGNRqAdpFx71WbefFZAcwCsHKrYEM44dcqfjQixEP0p4IkcEWVu1EstYXfhbcbRjhqSL4j6oNoOs5REexyMD7dmbCq3A1Is7wEBVz1igSnClZ46ew4nwyOBcIu31EpdS5FEy4=
+Received: from MWHPR15MB1790.namprd15.prod.outlook.com (10.174.255.19) by
+ MWHPR15MB1566.namprd15.prod.outlook.com (10.173.235.139) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.21; Mon, 12 Nov 2018 20:05:42 +0000
+Received: from MWHPR15MB1790.namprd15.prod.outlook.com
+ ([fe80::c56f:45c:1647:a419]) by MWHPR15MB1790.namprd15.prod.outlook.com
+ ([fe80::c56f:45c:1647:a419%4]) with mapi id 15.20.1294.045; Mon, 12 Nov 2018
+ 20:05:42 +0000
+From:   Martin Lau <kafai@fb.com>
+To:     Matt Mullins <mmullins@fb.com>
+CC:     "ast@kernel.org" <ast@kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>, Jessica Yu <jeyu@kernel.org>,
+        "Steven Rostedt" <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH bpf-next] bpf: support raw tracepoints in modules
+Thread-Topic: [PATCH bpf-next] bpf: support raw tracepoints in modules
+Thread-Index: AQHUeHi0sGCTL06GVk6d1TS/CZtC0qVMlTiA
 Date:   Mon, 12 Nov 2018 20:05:41 +0000
-Message-ID: <df85813c9860463d85f6c302dfe07b12@ausx13mps321.AMER.DELL.COM>
-References: <20180918221501.13112-1-mr.nuke.me@gmail.com>
- <20181107234257.GC41183@google.com> <20181108200855.GE41183@google.com>
- <20181108220117.GA11466@kroah.com>
- <20181108223258.GD2932@localhost.localdomain>
- <20181108224255.GA20619@kroah.com>
- <20d68e586fff4dcca5616d5056f6fc21@ausx13mps321.AMER.DELL.COM>
- <20181108225109.GA3023@kroah.com>
- <16bf9d14bc5f4a90b2b88dd2eb165186@ausx13mps321.AMER.DELL.COM>
- <5da8d8aa9f3818af649b1ac547bc4e6062626ddf.camel@gmail.com>
+Message-ID: <20181112200539.fclawehoyphxy5na@kafai-mbp.dhcp.thefacebook.com>
+References: <20181109220632.3944136-1-mmullins@fb.com>
+In-Reply-To: <20181109220632.3944136-1-mmullins@fb.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.177.49.166]
+x-clientproxiedby: MWHPR11CA0036.namprd11.prod.outlook.com
+ (2603:10b6:300:115::22) To MWHPR15MB1790.namprd15.prod.outlook.com
+ (2603:10b6:301:4e::19)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [2620:10d:c090:180::1:3bcf]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR15MB1566;20:wDbZA90ShftjkMFSwvPXt6brW/7kAvDUMujZnByG1xjUgn0IjpPmX2nx+Z/yvTTkwDX5lB2nk/kEZwhLuxYzpd7yRaZyDntMGlriCzjMHhslC+AwYtGHKNBOAarBAlLWtHH8pgCZQraqZ8/iW0TMHdBvOZkNM8gXrUdFqb8jmNQ=
+x-ms-office365-filtering-correlation-id: 7e106666-764a-44ed-30e0-08d648da38a5
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390040)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR15MB1566;
+x-ms-traffictypediagnostic: MWHPR15MB1566:
+x-microsoft-antispam-prvs: <MWHPR15MB15666D711883F9439F7125DAD5C10@MWHPR15MB1566.namprd15.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(67672495146484);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823302103)(3231382)(11241501184)(944501410)(52105112)(3002001)(10201501046)(93006095)(93001095)(148016)(149066)(150057)(6041310)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:MWHPR15MB1566;BCL:0;PCL:0;RULEID:;SRVR:MWHPR15MB1566;
+x-forefront-prvs: 0854128AF0
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(136003)(396003)(346002)(376002)(366004)(189003)(199004)(2900100001)(6636002)(46003)(478600001)(6486002)(6436002)(53936002)(5024004)(7736002)(229853002)(6512007)(14454004)(14444005)(9686003)(305945005)(6246003)(86362001)(256004)(6862004)(446003)(71200400001)(386003)(5660300001)(71190400001)(33896004)(106356001)(76176011)(6506007)(54906003)(316002)(1076002)(2906002)(6116002)(4326008)(486006)(105586002)(8676002)(68736007)(102836004)(97736004)(186003)(8936002)(11346002)(99286004)(81166006)(81156014)(476003)(25786009)(52116002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1566;H:MWHPR15MB1790.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: fXjHDztkRhhtgnHbpDZNMerVi5hb49G6MzNYWV4pogmlTAneoyQoBkeG4FOpaY3fG8TbFfXSSiL5jvqcpQeG6p2g2WiNGw7oH56osvoHcsmNQDMPKJeWsSyygV02aUoPDO5tBOct0bqh6w5crVD6/PhQnq0wT1NWonNfNKkXmuul6/51duxotd5jIg6bB938DFrqmk7L1UJXtdQ5uzrACWZM+k29FSt1oS4cdcXSfedGTf7BDB/neKyZqhxfFqc/ckFz05OXJY73+UaAJZjOp/FW6Rth3BpiNTUDEGx+RSnkgtfvU8RVewGqxZmKlTGpE/wWMi3bEQIvAHhV/lrecMV4iXM0NmOWlo02oTfj3QE=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="us-ascii"
+Content-ID: <F086A4D3568C7B4F9C06097FAE9F97EB@namprd15.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7e106666-764a-44ed-30e0-08d648da38a5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Nov 2018 20:05:42.0773
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1566
+X-OriginatorOrg: fb.com
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-12_13:,,
  signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811120173
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/11/2018 11:50 PM, Oliver O'Halloran wrote:=0A=
-> =0A=
-> [EXTERNAL EMAIL]=0A=
-> Please report any suspicious attachments, links, or requests for sensitiv=
-e information.=0A=
-> =0A=
-> =0A=
-> On Thu, 2018-11-08 at 23:06 +0000, Alex_Gagniuc@Dellteam.com wrote:=0A=
->> On 11/08/2018 04:51 PM, Greg KH wrote:=0A=
->>> On Thu, Nov 08, 2018 at 10:49:08PM +0000, Alex_Gagniuc@Dellteam.com wro=
-te:=0A=
->>>> In the case that we're trying to fix, this code executing is a result =
-of=0A=
->>>> the device being gone, so we can guarantee race-free operation. I agre=
-e=0A=
->>>> that there is a race, in the general case. As far as checking the resu=
-lt=0A=
->>>> for all F's, that's not an option when firmware crashes the system as =
-a=0A=
->>>> result of the mmio read/write. It's never pretty when firmware gets=0A=
->>>> involved.=0A=
->>>=0A=
->>> If you have firmware that crashes the system when you try to read from =
-a=0A=
->>> PCI device that was hot-removed, that is broken firmware and needs to b=
-e=0A=
->>> fixed.  The kernel can not work around that as again, you will never wi=
-n=0A=
->>> that race.=0A=
->>=0A=
->> But it's not the firmware that crashes. It's linux as a result of a=0A=
->> fatal error message from the firmware. And we can't fix that because FFS=
-=0A=
->> handling requires that the system reboots [1].=0A=
-> =0A=
-> Do we know the exact circumsances that result in firmware requesting a=0A=
-> reboot? If it happen on any PCIe error I don't see what we can do to=0A=
-> prevent that beyond masking UEs entirely (are we even allowed to do=0A=
-> that on FFS systems?).=0A=
-=0A=
-Pull a drive out at an angle, push two drives in at the same time, pull =0A=
-out a drive really slow. If an error is even reported to the OS depends =0A=
-on PD state, and proprietary mechanisms and logic in the HW and FW. OS =0A=
-is not supposed to mask errors (touch AER bits) on FFS.=0A=
-=0A=
-Sadly, with FFS, behavior can and does change from BIOS version to BIOS =0A=
-version. On one product, for example, we eliminated a lot of crashes by =0A=
-simply not reporting some classes of PCIe errors to the OS.=0A=
-=0A=
-Alex=0A=
-=0A=
->> If we're going to say that we don't want to support FFS because it's a=
-=0A=
->> separate code path, and different flow, that's fine. I am myself, not a=
-=0A=
->> fan of FFS. But if we're going to continue supporting it, I think we'll=
-=0A=
->> continue to have to resolve these sort of unintended consequences.=0A=
->>=0A=
->> Alex=0A=
->>=0A=
->> [1] ACPI 6.2, 18.1 - Hardware Errors and Error Sources=0A=
-> =0A=
-> =0A=
-=0A=
+On Fri, Nov 09, 2018 at 02:06:32PM -0800, Matt Mullins wrote:
+> Distributions build drivers as modules, including network and filesystem
+> drivers which export numerous tracepoints.  This enables
+> bpf(BPF_RAW_TRACEPOINT_OPEN) to attach to those tracepoints.
+>=20
+> Signed-off-by: Matt Mullins <mmullins@fb.com>
+> ---
+> My apologies if this got duplicated to some of the recipients; I think I =
+have
+> SMTP working now.
+>=20
+>  include/linux/module.h       |  4 ++
+>  include/linux/trace_events.h |  8 ++-
+>  kernel/bpf/syscall.c         | 11 +++--
+>  kernel/module.c              |  5 ++
+>  kernel/trace/bpf_trace.c     | 96 +++++++++++++++++++++++++++++++++++-
+>  5 files changed, 117 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/include/linux/module.h b/include/linux/module.h
+> index fce6b4335e36..5f147dd5e709 100644
+> --- a/include/linux/module.h
+> +++ b/include/linux/module.h
+> @@ -432,6 +432,10 @@ struct module {
+>  	unsigned int num_tracepoints;
+>  	tracepoint_ptr_t *tracepoints_ptrs;
+>  #endif
+> +#ifdef CONFIG_BPF_EVENTS
+> +	unsigned int num_bpf_raw_events;
+> +	struct bpf_raw_event_map *bpf_raw_events;
+> +#endif
+>  #ifdef HAVE_JUMP_LABEL
+>  	struct jump_entry *jump_entries;
+>  	unsigned int num_jump_entries;
+> diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
+> index 4130a5497d40..8a62731673f7 100644
+> --- a/include/linux/trace_events.h
+> +++ b/include/linux/trace_events.h
+> @@ -471,7 +471,8 @@ void perf_event_detach_bpf_prog(struct perf_event *ev=
+ent);
+>  int perf_event_query_prog_array(struct perf_event *event, void __user *i=
+nfo);
+>  int bpf_probe_register(struct bpf_raw_event_map *btp, struct bpf_prog *p=
+rog);
+>  int bpf_probe_unregister(struct bpf_raw_event_map *btp, struct bpf_prog =
+*prog);
+> -struct bpf_raw_event_map *bpf_find_raw_tracepoint(const char *name);
+> +struct bpf_raw_event_map *bpf_get_raw_tracepoint(const char *name);
+> +void bpf_put_raw_tracepoint(struct bpf_raw_event_map *btp);
+>  int bpf_get_perf_event_info(const struct perf_event *event, u32 *prog_id=
+,
+>  			    u32 *fd_type, const char **buf,
+>  			    u64 *probe_offset, u64 *probe_addr);
+> @@ -502,10 +503,13 @@ static inline int bpf_probe_unregister(struct bpf_r=
+aw_event_map *btp, struct bpf
+>  {
+>  	return -EOPNOTSUPP;
+>  }
+> -static inline struct bpf_raw_event_map *bpf_find_raw_tracepoint(const ch=
+ar *name)
+> +static inline struct bpf_raw_event_map *bpf_get_raw_tracepoint(const cha=
+r *name)
+>  {
+>  	return NULL;
+>  }
+> +static inline void bpf_put_raw_tracepoint(struct bpf_raw_event_map *btp)
+> +{
+> +}
+>  static inline int bpf_get_perf_event_info(const struct perf_event *event=
+,
+>  					  u32 *prog_id, u32 *fd_type,
+>  					  const char **buf, u64 *probe_offset,
+> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+> index cf5040fd5434..c447aa1ce770 100644
+> --- a/kernel/bpf/syscall.c
+> +++ b/kernel/bpf/syscall.c
+> @@ -1597,6 +1597,7 @@ static int bpf_raw_tracepoint_release(struct inode =
+*inode, struct file *filp)
+>  		bpf_probe_unregister(raw_tp->btp, raw_tp->prog);
+>  		bpf_prog_put(raw_tp->prog);
+>  	}
+> +	bpf_put_raw_tracepoint(raw_tp->btp);
+>  	kfree(raw_tp);
+>  	return 0;
+>  }
+> @@ -1622,13 +1623,15 @@ static int bpf_raw_tracepoint_open(const union bp=
+f_attr *attr)
+>  		return -EFAULT;
+>  	tp_name[sizeof(tp_name) - 1] =3D 0;
+> =20
+> -	btp =3D bpf_find_raw_tracepoint(tp_name);
+> +	btp =3D bpf_get_raw_tracepoint(tp_name);
+>  	if (!btp)
+>  		return -ENOENT;
+> =20
+>  	raw_tp =3D kzalloc(sizeof(*raw_tp), GFP_USER);
+> -	if (!raw_tp)
+> -		return -ENOMEM;
+> +	if (!raw_tp) {
+> +		err =3D -ENOMEM;
+> +		goto out_put_btp;
+> +	}
+>  	raw_tp->btp =3D btp;
+> =20
+>  	prog =3D bpf_prog_get_type(attr->raw_tracepoint.prog_fd,
+> @@ -1656,6 +1659,8 @@ static int bpf_raw_tracepoint_open(const union bpf_=
+attr *attr)
+>  	bpf_prog_put(prog);
+>  out_free_tp:
+>  	kfree(raw_tp);
+> +out_put_btp:
+> +	bpf_put_raw_tracepoint(btp);
+>  	return err;
+>  }
+> =20
+> diff --git a/kernel/module.c b/kernel/module.c
+> index 49a405891587..06ec68f08387 100644
+> --- a/kernel/module.c
+> +++ b/kernel/module.c
+> @@ -3093,6 +3093,11 @@ static int find_module_sections(struct module *mod=
+, struct load_info *info)
+>  					     sizeof(*mod->tracepoints_ptrs),
+>  					     &mod->num_tracepoints);
+>  #endif
+> +#ifdef CONFIG_BPF_EVENTS
+> +	mod->bpf_raw_events =3D section_objs(info, "__bpf_raw_tp_map",
+> +					   sizeof(*mod->bpf_raw_events),
+> +					   &mod->num_bpf_raw_events);
+> +#endif
+>  #ifdef HAVE_JUMP_LABEL
+>  	mod->jump_entries =3D section_objs(info, "__jump_table",
+>  					sizeof(*mod->jump_entries),
+> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+> index 08fcfe440c63..a12d28c123eb 100644
+> --- a/kernel/trace/bpf_trace.c
+> +++ b/kernel/trace/bpf_trace.c
+> @@ -17,6 +17,43 @@
+>  #include "trace_probe.h"
+>  #include "trace.h"
+> =20
+> +#ifdef CONFIG_MODULES
+> +struct bpf_trace_module {
+> +	struct module *module;
+> +	struct list_head list;
+> +};
+> +
+> +static LIST_HEAD(bpf_trace_modules);
+> +static DEFINE_MUTEX(bpf_module_mutex);
+> +
+> +static struct bpf_raw_event_map *bpf_get_raw_tracepoint_module(const cha=
+r *name)
+> +{
+> +	struct bpf_raw_event_map *btp, *ret =3D NULL;
+> +	struct bpf_trace_module *btm;
+> +	unsigned int i;
+> +
+Nit. May be check for list_empty() first before taking mutex?
+
+> +	mutex_lock(&bpf_module_mutex);
+> +	list_for_each_entry(btm, &bpf_trace_modules, list) {
+> +		for (i =3D 0; i < btm->module->num_bpf_raw_events; ++i) {
+> +			btp =3D &btm->module->bpf_raw_events[i];
+> +			if (!strcmp(btp->tp->name, name)) {
+> +				if (try_module_get(btm->module))
+> +					ret =3D btp;
+> +				goto out;
+> +			}
+> +		}
+> +	}
+> +out:
+> +	mutex_unlock(&bpf_module_mutex);
+> +	return ret;
+> +}
+> +#else
+> +static struct bpf_raw_event_map *bpf_get_raw_tracepoint_module(const cha=
+r *name)
+> +{
+> +	return NULL;
+> +}
+> +#endif /* CONFIG_MODULES */
+> +
+>  u64 bpf_get_stackid(u64 r1, u64 r2, u64 r3, u64 r4, u64 r5);
+>  u64 bpf_get_stack(u64 r1, u64 r2, u64 r3, u64 r4, u64 r5);
+> =20
+> @@ -1074,7 +1111,7 @@ int perf_event_query_prog_array(struct perf_event *=
+event, void __user *info)
+>  extern struct bpf_raw_event_map __start__bpf_raw_tp[];
+>  extern struct bpf_raw_event_map __stop__bpf_raw_tp[];
+> =20
+> -struct bpf_raw_event_map *bpf_find_raw_tracepoint(const char *name)
+> +struct bpf_raw_event_map *bpf_get_raw_tracepoint(const char *name)
+>  {
+>  	struct bpf_raw_event_map *btp =3D __start__bpf_raw_tp;
+> =20
+> @@ -1082,7 +1119,16 @@ struct bpf_raw_event_map *bpf_find_raw_tracepoint(=
+const char *name)
+>  		if (!strcmp(btp->tp->name, name))
+>  			return btp;
+>  	}
+> -	return NULL;
+> +
+> +	return bpf_get_raw_tracepoint_module(name);
+> +}
+> +
+> +void bpf_put_raw_tracepoint(struct bpf_raw_event_map *btp)
+> +{
+> +	struct module *mod =3D __module_address((unsigned long)btp);
+> +
+> +	if (mod)
+> +		module_put(mod);
+>  }
+> =20
+>  static __always_inline
+> @@ -1220,3 +1266,49 @@ int bpf_get_perf_event_info(const struct perf_even=
+t *event, u32 *prog_id,
+> =20
+>  	return err;
+>  }
+> +
+> +#ifdef CONFIG_MODULES
+> +int bpf_event_notify(struct notifier_block *nb, unsigned long op, void *=
+module)
+> +{
+> +	struct bpf_trace_module *btm, *tmp;
+> +	struct module *mod =3D module;
+> +
+> +	if (mod->num_bpf_raw_events =3D=3D 0)
+Also check for MODULE_STATE_GOING and MODULE_STATE_COMING
+before taking the mutex.
+
+> +		return 0;
+> +
+> +	mutex_lock(&bpf_module_mutex);
+> +
+> +	switch (op) {
+> +	case MODULE_STATE_COMING:
+> +		btm =3D kzalloc(sizeof(*btm), GFP_KERNEL);
+Check for !btm.
+
+> +		btm->module =3D module;
+> +		list_add(&btm->list, &bpf_trace_modules);
+> +		break;
+> +	case MODULE_STATE_GOING:
+> +		list_for_each_entry_safe(btm, tmp, &bpf_trace_modules, list) {
+Is the "_safe" version needed?
+
+> +			if (btm->module =3D=3D module) {
+> +				list_del(&btm->list);
+> +				kfree(btm);
+> +				break;
+> +			}
+> +		}
+> +		break;
+> +	}
+> +
+> +	mutex_unlock(&bpf_module_mutex);
+> +
+> +	return 0;
+> +}
+> +
+> +static struct notifier_block bpf_module_nb =3D {
+> +	.notifier_call =3D bpf_event_notify,
+> +};
+> +
+> +int __init bpf_event_init(void)
+> +{
+> +	register_module_notifier(&bpf_module_nb);
+> +	return 0;
+> +}
+> +
+> +fs_initcall(bpf_event_init);
+> +#endif /* CONFIG_MODULES */
+> --=20
+> 2.17.1
+>=20
