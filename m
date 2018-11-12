@@ -2,119 +2,99 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74C7EC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:36:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E759C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:36:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 440FA20866
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:36:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 440FA20866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
+	by mail.kernel.org (Postfix) with ESMTP id 31A2320866
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:36:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XCznycJ6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31A2320866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730007AbeKLK0e (ORCPT
+        id S1730230AbeKLK1X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 05:26:34 -0500
-Received: from shell.v3.sk ([90.176.6.54]:57425 "EHLO shell.v3.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729780AbeKLK0c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 05:26:32 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id CC34AC67B8;
-        Mon, 12 Nov 2018 01:35:56 +0100 (CET)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id Hjz-3XA4U-Uz; Mon, 12 Nov 2018 01:35:35 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id ECFEAC67A7;
-        Mon, 12 Nov 2018 01:35:29 +0100 (CET)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id lroMoT6zcn-u; Mon, 12 Nov 2018 01:35:26 +0100 (CET)
-Received: from belphegor.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id C3E07C67A5;
-        Mon, 12 Nov 2018 01:35:25 +0100 (CET)
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-media@vger.kernel.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        James Cameron <quozl@laptop.org>, Pavel Machek <pavel@ucw.cz>,
-        Libin Yang <lbyang@marvell.com>,
-        Albert Wang <twang13@marvell.com>
-Subject: [PATCH v2 04/11] [media] marvell-ccic: fix DMA s/g desc number calculation
-Date:   Mon, 12 Nov 2018 01:35:13 +0100
-Message-Id: <20181112003520.577592-5-lkundrak@v3.sk>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181112003520.577592-1-lkundrak@v3.sk>
-References: <20181112003520.577592-1-lkundrak@v3.sk>
+        Mon, 12 Nov 2018 05:27:23 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:35318 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729482AbeKLK1X (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 05:27:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=pzpoDWHhT7ek0tQS7IcyOew/G2DS0MvOWPxB8UkCUDo=; b=XCznycJ6e4KEyqWZUxBnAherQ8
+        f8Sh1QV43lDk8t1pGI9NKMtSvwMl4rcxB/jmBusPGkE9+yuv4NGpyU0/GKxU3vperh1XEu4+fUbAP
+        or5FUnMer3GtSL8FWbPAqNIiaEn8vDGQsi+RTI2HJoXhB6/t6ms6AMvM/4vdM2hR7SZNrcxXqdoTg
+        jKd1zpq4zQNrr+0QWW5W6+hkRhQ2hWzdXcLW22MLbQSn5jVrxef3o98Llkki9A1S5n1tJ1wVmfVxw
+        eqggsexVtyKyRuK2FM6thSdZZCUJank44Vo2L+uiJ9KbuR9z3609wdV6Gkdb8/EKM1j+auc+L6Qne
+        v9dpDPIg==;
+Received: from [64.114.255.97] (helo=worktop)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gM0DX-0004WC-EF; Mon, 12 Nov 2018 00:36:39 +0000
+Received: by worktop (Postfix, from userid 1000)
+        id 8CECA6E061A; Mon, 12 Nov 2018 01:36:38 +0100 (CET)
+Date:   Mon, 12 Nov 2018 01:36:38 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Nadav Amit <namit@vmware.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH v4 06/10] x86/alternative: use temporary mm for text
+ poking
+Message-ID: <20181112003638.GA3082@worktop>
+References: <20181110231732.15060-1-namit@vmware.com>
+ <20181110231732.15060-7-namit@vmware.com>
+ <20181111145936.GA3021@worktop>
+ <43C8C690-F079-4513-82CD-46A62DBA5A3B@vmware.com>
+ <20181111235220.GB3056@worktop>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181111235220.GB3056@worktop>
+User-Agent: Mutt/1.5.22.1 (2013-10-16)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The commit d790b7eda953 ("[media] vb2-dma-sg: move dma_(un)map_sg here")
-left dma_desc_nent unset. It previously contained the number of DMA
-descriptors as returned from dma_map_sg().
+On Mon, Nov 12, 2018 at 12:52:20AM +0100, Peter Zijlstra wrote:
+> On Sun, Nov 11, 2018 at 08:53:07PM +0000, Nadav Amit wrote:
+> 
+> > >> +	/*
+> > >> +	 * The lock is not really needed, but this allows to avoid open-coding.
+> > >> +	 */
+> > >> +	ptep = get_locked_pte(poking_mm, poking_addr, &ptl);
+> > >> +
+> > >> +	/*
+> > >> +	 * If we failed to allocate a PTE, fail. This should *never* happen,
+> > >> +	 * since we preallocate the PTE.
+> > >> +	 */
+> > >> +	if (WARN_ON_ONCE(!ptep))
+> > >> +		goto out;
+> > > 
+> > > Since we hard rely on init getting that right; can't we simply get rid
+> > > of this?
 
-We can now (since the commit referred to above) obtain the same value fro=
-m
-the sg_table and drop dma_desc_nent altogether.
+> > If it is about the way the source code looks - I guess it doesn’t sore my
+> > eyes as hard as some other stuff, and I cannot do much about it (other than
+> > removing it as you asked).
 
-Tested on OLPC XO-1.75 machine. Doesn't affect the OLPC XO-1's Cafe
-driver, since that one doesn't do DMA.
-
-Fixes: d790b7eda953df474f470169ebdf111c02fa7a2d
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
----
- drivers/media/platform/marvell-ccic/mcam-core.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/platform/marvell-ccic/mcam-core.c b/drivers/me=
-dia/platform/marvell-ccic/mcam-core.c
-index f1b301810260..d97f39bde9bd 100644
---- a/drivers/media/platform/marvell-ccic/mcam-core.c
-+++ b/drivers/media/platform/marvell-ccic/mcam-core.c
-@@ -200,7 +200,6 @@ struct mcam_vb_buffer {
- 	struct list_head queue;
- 	struct mcam_dma_desc *dma_desc;	/* Descriptor virtual address */
- 	dma_addr_t dma_desc_pa;		/* Descriptor physical address */
--	int dma_desc_nent;		/* Number of mapped descriptors */
- };
-=20
- static inline struct mcam_vb_buffer *vb_to_mvb(struct vb2_v4l2_buffer *v=
-b)
-@@ -608,9 +607,11 @@ static void mcam_dma_contig_done(struct mcam_camera =
-*cam, int frame)
- static void mcam_sg_next_buffer(struct mcam_camera *cam)
- {
- 	struct mcam_vb_buffer *buf;
-+	struct sg_table *sg_table;
-=20
- 	buf =3D list_first_entry(&cam->buffers, struct mcam_vb_buffer, queue);
- 	list_del_init(&buf->queue);
-+	sg_table =3D vb2_dma_sg_plane_desc(&buf->vb_buf.vb2_buf, 0);
- 	/*
- 	 * Very Bad Not Good Things happen if you don't clear
- 	 * C1_DESC_ENA before making any descriptor changes.
-@@ -618,7 +619,7 @@ static void mcam_sg_next_buffer(struct mcam_camera *c=
-am)
- 	mcam_reg_clear_bit(cam, REG_CTRL1, C1_DESC_ENA);
- 	mcam_reg_write(cam, REG_DMA_DESC_Y, buf->dma_desc_pa);
- 	mcam_reg_write(cam, REG_DESC_LEN_Y,
--			buf->dma_desc_nent*sizeof(struct mcam_dma_desc));
-+			sg_table->nents*sizeof(struct mcam_dma_desc));
- 	mcam_reg_write(cam, REG_DESC_LEN_U, 0);
- 	mcam_reg_write(cam, REG_DESC_LEN_V, 0);
- 	mcam_reg_set_bit(cam, REG_CTRL1, C1_DESC_ENA);
---=20
-2.19.1
-
+FWIW per the same argument we should be checking if poking_mm is !NULL.
+We also don't do that.
