@@ -2,57 +2,57 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F45EC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:32:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA7E7C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:32:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEEC5216FD
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:32:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 669B3216FD
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:32:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="JuYCHrlF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEEC5216FD
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="cz3HfFrz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 669B3216FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731369AbeKLPXv (ORCPT
+        id S1731392AbeKLPYZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 10:23:51 -0500
-Received: from mail-sn1nam02on0087.outbound.protection.outlook.com ([104.47.36.87]:43671
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        Mon, 12 Nov 2018 10:24:25 -0500
+Received: from mail-eopbgr810078.outbound.protection.outlook.com ([40.107.81.78]:29600
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727243AbeKLPXv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 10:23:51 -0500
+        id S1730976AbeKLPYZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 10:24:25 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=si7r9IPs+b9ppnK7NZiu2sONYcqcnOQKd5E4+ZSb7M4=;
- b=JuYCHrlFNhPa5fyUYJYzkSD3fJZ0RVy1xAVlcfq1OwXwtTj2/allEqkgkfwItW1Aom6T9dcMCEve1g1BXBr9uXc+DlgiNFK4uspbau5a2mgyaHNQx93KSTRAB/vTRY1CeLCunAMaYnPErCoXe+tqqMAXhAIQvwscYgdCNsp8zrY=
-Received: from SN1PR12CA0093.namprd12.prod.outlook.com (2603:10b6:802:21::28)
- by CY1PR12MB0425.namprd12.prod.outlook.com (2a01:111:e400:5192::30) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1294.26; Mon, 12 Nov
- 2018 05:32:08 +0000
-Received: from CO1NAM03FT041.eop-NAM03.prod.protection.outlook.com
- (2a01:111:f400:7e48::208) by SN1PR12CA0093.outlook.office365.com
- (2603:10b6:802:21::28) with Microsoft SMTP Server (version=TLS1_2,
+ bh=Tp7HEclraTkGRT3T+PPVhue20IIJzbgWXrHx5uEldTs=;
+ b=cz3HfFrz2O2gEa/cDfOc5L6DsmSphpVaVA84VKyXgJdeWc/Z/iIMQeaCTHWZ4XVtxS/Oi/2An6NZ6TFmdW7LNMdoEC+fMMT1jOZYak3Vr6Yvsg0m6SgOEBXfjSj6XY6Yaxx15zZ9nb1NmVbyvFz2Sb3Y3UucXdyPuTEP+58B+n8=
+Received: from BN6PR1201CA0010.namprd12.prod.outlook.com
+ (2603:10b6:405:4c::20) by CY1PR12MB0618.namprd12.prod.outlook.com
+ (2a01:111:e400:c43c::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1294.20; Mon, 12 Nov
+ 2018 05:32:41 +0000
+Received: from CO1NAM03FT026.eop-NAM03.prod.protection.outlook.com
+ (2a01:111:f400:7e48::201) by BN6PR1201CA0010.outlook.office365.com
+ (2603:10b6:405:4c::20) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1294.21 via Frontend
- Transport; Mon, 12 Nov 2018 05:32:07 +0000
+ Transport; Mon, 12 Nov 2018 05:32:40 +0000
 Authentication-Results: spf=none (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; suse.com; dkim=none (message not signed)
  header.d=none;suse.com; dmarc=permerror action=none header.from=amd.com;
 Received-SPF: None (protection.outlook.com: amd.com does not designate
  permitted sender hosts)
 Received: from SATLEXCHOV01.amd.com (165.204.84.17) by
- CO1NAM03FT041.mail.protection.outlook.com (10.152.81.163) with Microsoft SMTP
+ CO1NAM03FT026.mail.protection.outlook.com (10.152.80.162) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1339.10 via Frontend Transport; Mon, 12 Nov 2018 05:32:07 +0000
+ 15.20.1339.10 via Frontend Transport; Mon, 12 Nov 2018 05:32:39 +0000
 Received: from LinuxHost.amd.com (10.34.1.3) by SATLEXCHOV01.amd.com
  (10.181.40.71) with Microsoft SMTP Server id 14.3.389.1; Sun, 11 Nov 2018
- 23:32:05 -0600
+ 23:32:37 -0600
 From:   Vijendar Mukunda <Vijendar.Mukunda@amd.com>
 CC:     <vijendar.mukunda@amd.com>, <Alexander.Deucher@amd.com>,
         <Vishnuvardhanrao.Ravulapati@amd.com>,
@@ -63,12 +63,12 @@ CC:     <vijendar.mukunda@amd.com>, <Alexander.Deucher@amd.com>,
         Jaroslav Kysela <perex@perex.cz>,
         Takashi Iwai <tiwai@suse.com>,
         Sanju R Mehta <sanju.mehta@amd.com>,
-        open list <linux-kernel@vger.kernel.org>,
         "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>
-Subject: [PATCH 04/11] ASoC: amd: add ACP3x PCM platform driver
-Date:   Mon, 12 Nov 2018 11:04:55 +0530
-Message-ID: <1542000903-19020-5-git-send-email-Vijendar.Mukunda@amd.com>
+        <alsa-devel@alsa-project.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: [PATCH 06/11] ASoC: amd: add acp3x pcm driver dma ops
+Date:   Mon, 12 Nov 2018 11:04:57 +0530
+Message-ID: <1542000903-19020-7-git-send-email-Vijendar.Mukunda@amd.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1542000903-19020-1-git-send-email-Vijendar.Mukunda@amd.com>
 References: <1542000903-19020-1-git-send-email-Vijendar.Mukunda@amd.com>
@@ -76,362 +76,387 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(396003)(39860400002)(346002)(376002)(2980300002)(428003)(199004)(189003)(105586002)(54906003)(39060400002)(109986005)(77096007)(426003)(316002)(4326008)(16586007)(53936002)(86362001)(50226002)(336012)(81166006)(81156014)(8936002)(106466001)(104016004)(51416003)(26005)(7696005)(8676002)(186003)(76176011)(53416004)(36756003)(97736004)(47776003)(5660300001)(478600001)(72206003)(2906002)(19627235002)(356004)(68736007)(6666004)(14444005)(48376002)(476003)(126002)(2616005)(50466002)(1671002)(305945005)(486006)(446003)(11346002)(266003)(2004002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR12MB0425;H:SATLEXCHOV01.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;CO1NAM03FT041;1:FOh76GAVZfIMforRPBjvDmPMW1T3TsXnuz3ZxAygNvvgzc87Lnj9oRwA6v+CDfQoLyc2FfXdi+gJP0cDEbqThOpBEMD9vyJI8EtRUrMSspz6vQMXzy0znYsgf6/Hyuor
+X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(376002)(396003)(136003)(39860400002)(2980300002)(428003)(199004)(189003)(81166006)(8676002)(81156014)(8936002)(68736007)(47776003)(50226002)(106466001)(72206003)(39060400002)(305945005)(2906002)(6666004)(104016004)(356004)(36756003)(76176011)(11346002)(5660300001)(478600001)(426003)(1671002)(336012)(186003)(26005)(126002)(53416004)(50466002)(77096007)(14444005)(48376002)(7696005)(51416003)(86362001)(19627235002)(476003)(2616005)(53936002)(105586002)(16586007)(316002)(54906003)(446003)(4326008)(97736004)(109986005)(486006)(42413003)(266003)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR12MB0618;H:SATLEXCHOV01.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;CO1NAM03FT026;1:uNnbUqtQaYBzPoIEW6J3bmxflO823VTG5WIRdeVCRyL2jTLg5CUnQ09VHk0XtfQ9Bcoui4d5IxkTSGGkQMS8SsTxYve8JqVObnzNZXdyJDCiKfiSPQ+7glyneSu+KaEa
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 752e2bb5-d49f-4648-3fd9-08d648602fbd
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390040)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060);SRVR:CY1PR12MB0425;
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0425;3:Xnkq123lYHhTC3cLdHBFdv+GHuX4IvD69tR6PHnWnmZLw3HB35RwO5MFl1eY/8Nr99I9v5bs4OJZKJuE9x+jjRcBg5PISe5/b4k1NJVk2tKvYph0Slpw+/+xSvRD3lcqjws9558z9ZlNuv8Z71gRHbX4fsmQIRXDcfjTS9y74gGo+xi6iV/ljIr/TkNXQmjL2lH/FPDVVn4kt2L2wFv79B68o1bjNxpEyViiFswtpeBVr30Kwu83GXCjIwVN9uXBzbCubTOhSLnPRcixAfRzyF9sSxhSZ68sZ/BQty9VSz1nKQlRGhQgbLy99SLXMSO9B8iMlr0F/4sS0IF4p6LNlMnE6nH7S4QBKcajA567ArI=;25:S510Mtrf6v3MhMJgPvH/B9L5ePJaZA7DE2QjHVhNPXB1ip9hy8uaTIg38uZQ4PjIWBH23Q8wKPtbJUFnUo2Pu6hlLAJBNjAtuF8c4xZLFWh0fyGCbhc6brxpEQBoRi45eb1l+PXa9ZUNBImHRNpfcLQ04cl2M3Z8tLUKT6WoHpXEYwK4vdDnd0SH73DdLruG6FeXHuSHPwiWTT4ddnkag6MFW+tdEDDq9LJ29WJR8R3fjAO5OJfE13Y9YcRGLEyLfoX06JFhXBkFFb5WUFEXeChb8kzRGOcs+UMCdlVY1R+ScK31ykk6dbMVsYkqngWwGTTQ8TUXxNXIkEXx8yVLfm6wb6EzrfEBN6U311R5aUA=
-X-MS-TrafficTypeDiagnostic: CY1PR12MB0425:
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0425;31:13NfIh3crMrtFt2Qs5cnChzwhc3IAvWKs9ndf2jdcnSZbzbeA3UZsVgF+hW0QcNQBvr2GPM0wtX6jv7ZgSFmasWJkJXWMO3Z0kb5f+umPptpdgVEr4am3DdbAFQ8u7TuTi0uPyS8v3wYV7lDEXgQrvyE/F2ShCJrHGM++nlZyIUuWnLb//Joc+JoiOFZqMIQqSK+NtKyKQNiaCHRf1dmmvfq/KpbVBA7lyu0xa0rofI=;20:TIF2jip28ni1JQpHMTyuKacnKA6Hibn29g+aY5UyNh2vfYMnGLl/EqR/bI/UsgrMkSTDvFWAnFHcIJEcqumIs6wC0YslVgvYqSZeHmudKodMealAgMrWLnlrRLKFYsXx91kU6Q+R8L4Mfxx6c6xjVhrIDXokdb+N7INs9L/C8VK2mbrA5saAaAmaOyefcbmpzeO96XwakIyin9BKTW3GXEWd7hZRJKt/cdy9Tj6C3Z34SMR+yUm53fuOVNbsqxulKkF2cS8j54Sj+NUMGZ/L567YraMvF4/d4i0IgeafJuU5vnedSqEmB8VgsVKAcz75qlySPZ6uCKSEIlOb0QOK+2sA2mjeHPjEl1/gcglGoF16bpJDl+XEvr2Q1KXNnjt8Vpgv8oGnmMcdUeRBjHZWUdtHFiqdyIMarqfll94jgEAES+A29PLEJwNEjKosf7Pbry3U47W/NYgpLuPilU2SNB5J5Zr7ESkJ1PaNSSLRSv6lq684xabu92X3W0dxoSaS
-X-Microsoft-Antispam-PRVS: <CY1PR12MB0425CE795A050D508383265F97C10@CY1PR12MB0425.namprd12.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 0efa729d-1f70-46b3-6b80-08d648604317
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390040)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060);SRVR:CY1PR12MB0618;
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0618;3:lr2h+4rVFHdQBUkX6NxA2XSGjnQ/ktHkCZRjLhctoiAmVaZDHZNGD8TmFGUX876IcrjAPr3ffQbkTw8XDmwLL4RLFwcH3mcoNgjTyNCLLlDzEj/eO+nyGLhqqCm2HrQL0L4XiPTxzmMMf1FeHPZNUv/rHTpEo/+SWkov3GaNe86bgHKHy7AJTo33eWbSiA5k+PvCWx1lvVPoE5J8k24G0N8pSvwt1FlEojF8zFJ8vC2bw0J7z92DmIKB5oKv7ycLWwWpg+yimfNDXu38U95JUJzpZrHCSz/AioWHzVxJPCGnnRVngPcde9uvvvSpX6MUiS066AoF9kTOegLJLi9Y5F+M8kjGg62LFtXlqTZXFhc=;25:Syg7H4QyZR8CxVzh7jv27XvvHwYhUEzwTVM1Kn2w7rHNWN82jyHFfRuHkEZxd+jbD6TtAtoHfYqYZ6wIup4C0PNFAVoVzNUbEH3jdXR7bWFGQRWQgxd8ubC1RvLaUny9yd4hHXKAubkcmWZZvM0jVFx3u48u+nscFVDApm64oQFJOpoQtiFxWUAdN2zg9/jutwkKKuZijl+N8Zh+qLpozT9W6ZVuVI6x6H8LfCAF/o0GcrOZ6VFSW+VAU0c5D/DCkrBfFd2vJPHpZy/vgZevvUyRg51Hl2W0TRH9gyGHewm61ZZQ60LDv3YZN8xMKPLnjTvkRg1nolsdviKrJDuRK15wOkUpdCbQk7GwDOk3Lq8=
+X-MS-TrafficTypeDiagnostic: CY1PR12MB0618:
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0618;31:GAwdYL6eh/zOR1ZewkJadyTK0mnhHKIgI+lLk838NP2h+Z2i3wuvlTkKQOEvOBkPnO6kxs1jMbvSVlz0eqo/cD1QlqIrR+BfbsISpLDQR4jJ1a1vEsU9gYK3wjAiby1/YbeaaYJw2r4FdV0I0TwH7Ph4xK0rZYGFlCjaTeJkfXR4wyaN1qF3gIzodq2iAd4XsigPMcvD3HAhIg1q7Tx04YwpcYzAsM0yXbpHQUV5eeA=;20:OjTme/FI9Bi6SqCoPUOqxTLBqgNBRhOI+xRoYT72qecPdugzOO7sxGUYX22H5AIJ8x0HYXJNeC9Y02KBVUY2YDj69c6/rc8mYkJpHz9+RdTdcraTZ4MJPF/xBvya2cHhTaCBFDwjusAXT2iA3UhfJO/u9HpLQg8Ln2eNpTJF24uEVq1G5H1A74ect2bcf0W1zUsxd0Zy/ak9NR4NiLVvk9K2dkJSYkVZ46p+DrtnhDQrc6in7dzH5EYJmPv1LDTZeQu136JMq7D24haFwHWem2ryoHB2F/MGQU0zww8wcsP1zwngTHh/Fkhg9cEWjXv+oHUIwtRhvB/SPmPQVY2D/p0JAD5Y7Yl6FDAXwrV0+/TnaxgvVajUU9ZiQWgUmGYWsLcQdvihJ3rQIv+f5ieNYKd7/VS1mocf0XVtaS9OE+drUjAf37ON0quouemxjrrO9ongrGcrRZu2LenXCJMkW59UG93hx3/DEqo5H/Lnz1Rwz9X94yeeJaB+8LSwWiVo
+X-Microsoft-Antispam-PRVS: <CY1PR12MB0618C46E9EAB45690A05894097C10@CY1PR12MB0618.namprd12.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93003095)(3231382)(944501410)(52105112)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:CY1PR12MB0425;BCL:0;PCL:0;RULEID:;SRVR:CY1PR12MB0425;
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0425;4:Sr+s9+yxEM5/v6CDUcMC0N9kHAyDWdp3WtdVmCiG+ZYugzYWI+BGtSSGSRMUDvcV/Oy9Ymf4QRAFFjTQt+vVUe/rj06CS2/jsqIwwJvHIo9NApNYFhZXsWY8HXpNVvAYpyEFPUenSqOwQIQlX6i2PIMb4babxU2JmDfa/7qku9y6sMCZCYqjC/PFGdCuAD1zIciOc3BO7v4EjoUi6zU/S9JqGdhZWcEXG9ZD59drHSPJOTyR7fQS4C6QOaYdCGJ20aklU0mZAOybSpn9tySsOvfvAT7cztSfPJO3kEDAA2f+RHscZ7pzsbd5Xk3CQNSV
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231402)(944501410)(52105112)(93006095)(93003095)(10201501046)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:CY1PR12MB0618;BCL:0;PCL:0;RULEID:;SRVR:CY1PR12MB0618;
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0618;4:a6VmfmOb9/BmntC0c+d+apAwbOxcFJiDAL81H7r0SxLPH0pkkXEGCtK+vDb4BkgIcMNslEQINXHrExsINO/Go0yWTJTNoY69KrOBJ8hXxaZqRutb00zq+c118lM/SCAIp3S6ekwiFFJ2Elf96zu6z0on/6hV+e4sbBj7b5NASTXYj6TqNiK4Oi0ca9oHoS0AXUSIxhqLR4rXjzoCQgiP6G/yZS2QYP377WXqlLAyBzMXN6syM7I7WPPImCI8loHUwqljbuyDJwjXSSDYwcZKwe31FdJeTq0ky3nfKxY5ryawxe0ZRodSc7X2rM+TqBai
 X-Forefront-PRVS: 0854128AF0
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY1PR12MB0425;23:5lzcserCdiP5yts6UmcoyLraXbFHG0wkxD9V4dqdH?=
- =?us-ascii?Q?txikfxBACyxBtzRyW6776sHw4g2ZC8YqKjtXHsUd2SvsYox/x9aT7Nprhcoc?=
- =?us-ascii?Q?gQATOisMuuPAo/bWxMmrA5kE9D1gng1y6UUee0wwBBGzQeH+Z/4/PBR9BCEQ?=
- =?us-ascii?Q?o6iUFYXVEx0ufr9X9eIvGYLcwggbjs6EVPcNwkQIrCI928ospcynunTYuzqG?=
- =?us-ascii?Q?lVxziclckQMn4lTETihAgz8R4e1IzV7seGTXg31+q83+DMLznqzALv8gaKAn?=
- =?us-ascii?Q?i3SCiYSHEAe/SRHG2A3OfhT4sDtOUWTL18YJfXGCB0d/5biXikmInSOQCz7p?=
- =?us-ascii?Q?48czVpQiTSCiv44+YGMtWcaGJJBBaVZHP/EozyssVC5gdriaujF4ajQkbTIa?=
- =?us-ascii?Q?q5tCc4FwfnjmOGybq+0Bw8qWeobj39GgtmjghPzRP99yii3nUSnMoAmHoRFM?=
- =?us-ascii?Q?5iH8XlMkeW86nIwpisUi6+SB/Y0TZDVUJHiv6U9fz7ok+CxWDkTwltlqx049?=
- =?us-ascii?Q?hW/LOsQez35uCa6OQEhPYUK18HDYj84PBI95h+hAsS6gimnHbFKuvrqx8Pus?=
- =?us-ascii?Q?wEO8oJhyeLur0WMxgyfHp7f1WnNyVjvQiVwFi7jrfmrOACU4fiXeoNQCViaF?=
- =?us-ascii?Q?l4nkTbNUdJ8Tmt8pd/xdqOkJ0Q2iavtpsaNQKcjFb+do+/UbM/olbVMPcIz6?=
- =?us-ascii?Q?Iwm6WdEd96OLx+THnyCJ/aL+Bfs/Ueh4STsxwZaOYmmYFr1a1K1y6IdRWvmp?=
- =?us-ascii?Q?wvLWC2fgIgGcJq8b0Jd2ssjurjWUvCN5lAt//RuQHi1fZONTiki3AuG5v/u8?=
- =?us-ascii?Q?dtXVSkVB7R1TvEgl2LyG2Z+bFs+uO5GR9dow0pCKbJX0C2nASvSYYYvCBrU7?=
- =?us-ascii?Q?kj/cx53R7duATmBKh+zy1NrA/m9rq7R1WCoBJAsqFqc9gzACygUofI/I7/U0?=
- =?us-ascii?Q?gddWi9U2F0UFZpftO+AuF7AuUdxLX0gkuSrljcW30I90T9oYeFfTlu7/dkw1?=
- =?us-ascii?Q?uG5uxirRTKXkXOamhZczYICez7vW7PfAE+9Yu2uSkPi7mefndC+2l6uFHCuF?=
- =?us-ascii?Q?1PzMOJAhCIEtEtLBk1POQp9ESvSklocXyqnFJCUKhw7FNCLQRifJ4GWWDBu3?=
- =?us-ascii?Q?NgxZp3WUlPsTdRbim7K55MWa/mwWeZfjROVRDByBXycsxczRBqTdl2pst66F?=
- =?us-ascii?Q?ArHiDe+nvtqcK4KrTmkbM0+WPF1colrOf7F7ZA5wblUzMM+Bo6+DbRmqHZj8?=
- =?us-ascii?Q?81w3ipuwvYWKldFeEaEt1+5w/4LHrXdvgAcVDdRhFHJlnW4HNAUeH2iDghp2?=
- =?us-ascii?Q?amUThdhgtube0EdY/q2SoQ=3D?=
-X-Microsoft-Antispam-Message-Info: 8qoDqmwSASTqgCClNPIqYaX1CEjsSznE6ukSIGCYf2n+hgvxjdKADDTiqi5Xkjf8KfG5qFncCyUpCNZ5SXeX+6y2WLNWNT+wTHcJx12ymy+DTJGFWHXS8cBPwybecYnWu5cy7qRbGKE2Y1rEA9ceuPLOArP4pPbzp/GpxwI2TlLvzfZ6jIjlmtwRLax5ugLCSWHmzVytsWs+LorH/UFubKopshtHh1vU2mX6B7mGNN7SKNTJcxMKWhY2MOqrVDUFt1KlXExtXnSi2Df00MNczOnCxCc4N1mV/Akg5zcYqzWqowNRa8/1YyU6rGtCBQiIT2HZDbLvBAwCq+qe31sl8ZQaw+xoDdqgj4I4DDEE3FU=
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0425;6:Nd28HHkwqNs3PP4RwgMbR0lHERVW6kJSFn/4/zgx2MJkf/qe76q4N5wz4TlJv6XlRoqNLVPmSscCJc8JnkBMrQuL1ERwqjUNoeYEaKJDDfNa3SLIhpJOweBDhrPCrJL/+vUM1sq9Zu6FNjWtU/ybbxUbTkVIMB+TDcGhWRiRsuCTWM6ETe5WooCcj6NACJ2JClHzNbeYgFnwH3mDdlI7cMET+s/DTJMkb0a2+f9wgIrLajPJWz8TWDFboqBkl9HzyxMpnyhwaSu/26j6XZ/KEM1twRRcPqOwuSDjoSMcRItPbctpqYqiemzjibwW8FGzjXoEMXCglbWfk7wPfdCjZkXT+Rcjbxi24/SOFRrvLqpuf5Nm02bw/PMs+ZoAQq0Sc3LGfenIYxlSvDU9rzf+b2kEIC6aWkFPdMZ40/oQRbdaFLKog2yQ0j13IOphW1+EYMuhC+ruG8wN91t+yZOWOA==;5:Q79MGdE76XMBWIDX1GE04L+qSeSDS7VCdtrZBE5E35X9FeOU4WVOAZoVGQeRxAKJCfMg9R0o2fJTUi4VMUAIQUkzfCpJAW3sjj4v2Fwf6TxMsJ3eVCivcOcr+jDovisgo1I1fZ/04nxKXT8YXF89bjsqhi6ev9khSGS7xNzax+I=;7:jO8U1bTh6cCJBdwDN0nYbbYz00xWnNyuMqb6WcpfAWmLSCW42IwYc5aNL6+kdhstrjFyGHe8xN+dKhx263ffYA+D/qi/3CYAYpLBbEReCt6m1Vubd5fEaEafsbdpTHggMlxKTf5/KoD+H31IAETDLQ==
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY1PR12MB0618;23:807sKDs6OjQVdpfq5UVp9KZCgKMj8e4WhGBPiCkF2?=
+ =?us-ascii?Q?kQTo8wmfv2kb3I3w+1scsu4l4Yfb+2V50EpqV748fJIaxyLXlNbY9ZXK9Qii?=
+ =?us-ascii?Q?Y8N8jQ29+rRX7HpB5xBE6HR0+cAAmi4eBMQB+YJNduE8ZhTjH8Yi7e4+OocF?=
+ =?us-ascii?Q?hF38P6LfBoXOPwUOLbfczA36y3aGFmy8gXSVU1IWLXedVvwwHeSD2ocLKnMi?=
+ =?us-ascii?Q?VukW5hqQ7R4gJsn3fcLa3RrCatNEYqM0gGzn23gxRQhvVpwYEOkChn0p5voH?=
+ =?us-ascii?Q?+NOFqJ9ZVWHl0ULa/pwfQayQm4WjuVr0MLWECoJo5oziC24dj6yB4nrLQ7g8?=
+ =?us-ascii?Q?Wp9SCZvM5seuEwlmfheP8DK2s8I9DKdjruTIGjsW0KNouJOsPRGcXwENkSem?=
+ =?us-ascii?Q?/8U99ZI5M5kTi+KfOyiRjxJ5LompL0ag+sK4vigW7wM9iv9V0tebImoHYh8d?=
+ =?us-ascii?Q?8f6nxhfO/VxkfwpVzH+NGeGc+6TlSdHPWahIAwC+CnDcT0DeBKk0mZ53ruGF?=
+ =?us-ascii?Q?EVkPQimUhp4iWsnO68utGcRu6lt1qlM1lzMb+NGIBAhKVwxV3ysp/u30Mdt4?=
+ =?us-ascii?Q?jtoX0mNMc+47Rp08onK5s0gwpbnXA1n/Wk6yc2O941+GP7rygzpEL26uS6wc?=
+ =?us-ascii?Q?gsKWo/GrNKxK/lNZujAse//cIuAZ582X4/jI5d6QJmbo2ghWKRKB/D8cPWgk?=
+ =?us-ascii?Q?K1AZafaGv5WWRsFmoyQWoYBZEWeC5oyc9pXP9DzrTUzOnlrAMnz1GtWqn1eo?=
+ =?us-ascii?Q?HW+4ZO3dGDwves+74pfs1lw3A9f5SkqsuvrZB8/2SNsQq3O2lPIDlSyJsCbJ?=
+ =?us-ascii?Q?WH/EWv0l9+RnuEfXIzzwtpe74OLQt6GoBEVtgG6r7AKBK8tw0HD9SHO15o1W?=
+ =?us-ascii?Q?MvxUbJv6sRMzyg98gmTL9l10emq+WqguoktagT6L9ie4jrEdKHZ2NUz8Sce/?=
+ =?us-ascii?Q?RED4Zb1va2S1FBm1ZRFfY5dNQMmdG4DYqxKC+OOFcOGBikfVCBY1evmOAih0?=
+ =?us-ascii?Q?pNM0w8n9xwI96Fsz2zAnbMVHT+1CL/RyPix/KEcs+/JbKJTDhBZ/VXao8yl2?=
+ =?us-ascii?Q?iE5fV2Okjwtfj1ZWKywd8N4ExKSejRLKDXqWDbehbkwbusZw3ePbqQBLGb48?=
+ =?us-ascii?Q?AFDOybsSQwflvUfrAeB0a/ecJ8ZzJ/hUuLoAaEvM0Tl5r+zv+A94zQ8DYoNu?=
+ =?us-ascii?Q?8ymqfKcZYsSSI5C6L9cChG2koPRZvrn5RRg0Ay4OLc5vyyOh7XYVBaAaMtEr?=
+ =?us-ascii?Q?eJeqcoITnE49v5ZeoYbRR6krIPA6zGpbMv/wPbjyzQnLwvTGVmHJvrh7YAwN?=
+ =?us-ascii?Q?+Vza0oUEaQP62R/70itVi0=3D?=
+X-Microsoft-Antispam-Message-Info: uNAVd0A7TnoTKsLoQL2Z9sL94uNGcjV87t2AKK70IgmfT/rBVVj7UpUIcl4nloLuIBovclW6XCC68fT2+2RQD1JabLBntaqfyHrlbBXh9LE85RYJX//iQ1L39MZ3z2Zli1JoqkLyHWH1n1+qk+80Pp6QxrFpEDmOcnEAeRzwxacjFbf5ubBB136ecsZ/8owZcq4ifyhtq4yQ348MvOSoIsUFmw09B44SkPQiY894DDvAhmPS5oUtpZu0NUobdfrGbLp/SUv9LcVBKlXkN0XEU8k2qXuy6Ps7d0He3hRGR1SIZgCDN07J4qLnxuvshX09wJaGO77NK05VempfGqqm40/a3mWRetP3wlm27/1pSIA=
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0618;6:/Y7cTzbMyYOw70pHP8ZeRbGbU5EpgmkhR1m/bT1gc0nxDbXDYGmiB+thi3eCCULHv6emeRYfaY6x8RE9Qozg75Am2jUGxzYoeFTqwxK5P4bOZ1+eK4lP1qh5Q+h0L0VRrRbgBySVeO1JvdEx7gsjtwxwLLsONoUAejdtk80u+27WtTaqdJmr9hdxLedjTDsntXMRtM5MWIwQrSe6otLuXw6XT0moXrdcJWuSSKRhp0CarSD0nx5MX2jPsZLN8tAiniIn9qrEpq5QoJoi/3e2A+gnKEp7bDxUCbdhohhIT2iI2U94FSFa6YsQIitqn1nqQ3Y7J2bQ7+BWu1TQNxersHyjKokx9c50b3OeFmsw7O4LoxilOGh5ZqCwronDquSaJJOtMEKK5H951eFYG0JYOFEeW8FZhXgmX6REOZjdru3Nlnt6ojEbX2wy7qRPWCyNa/rkBRrW3gPiMD8fYt1pPQ==;5:KQ+7yRRAYZT+GXzBIhxQO5mNNU5QIRXF4t/FsS1/Yd5QVIIskhEhkRB+UwLILyqz8hyN+5IrBqsYsfhickRPh77HZtpNXd0+Sp2YXQGpneEB1Zm3gOEzF/T2WRWHLl6oZeQxp8ox6Be4Fe/WeeqHFMn/AytTksxivqSnNhPlfdI=;7:mgsEiDLJL/JG/DanNyrg2xgrcPCwkfuBCR1uSi3cKj/TRCCtMJedqKIKOMMSM2YSqhvOp9EZhKnTRKHA0ZcNx10qVHTg5M6Y3fQRR6sGfZyFi3Y2H3pBQM4NyBcleUWlyGjVfxa4zLhpygE6Kdb5ew==
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0425;20:XhyPTqyw+fran4VI2AyXpWZTOa2xJtYIese7WlS16veQrPQTRUdiFQbNo41CkT6a584nOb10xYXT/9P+EQT7M/aUIx79PkLAP4B4JEKuGgYeaykRPI5DmqbzLSJiRSvvjrt2zsFEx6z++HVjlCxybt9qXSVNcMCwVt5Mcf7y9zwhUtT71088Mh1XyELqn+k7AGigEEiKYwnBTXP1mrf+V1qH2u9UyCrXnhmdtZqfFf+vEujDVQqSvV9juSujechK
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0618;20:ZsY784dDjUmb+nH1olUiveNy7mMdrQU6jTCj+aR/jMxWptAGWFNLcxi7xCjtmOdJphF9MixYF/30/zdn8eBJd7WRGiyT/UWn7tAV4AQNboW77C8nqqwLMwtsA6B3FH9euvklA6qngbIJRrigh1P2j5ak/76DWPISbXZxCUVjg7Wlr8DPzoXXCRF+y8dwtZwl/lEg5P4IZrfko8Kr/fi1Wmsx5mdh95W19DQKgntU2hX4VmIGzTEPRZOtluf5l2Kh
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2018 05:32:07.1214
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2018 05:32:39.4797
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 752e2bb5-d49f-4648-3fd9-08d648602fbd
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0efa729d-1f70-46b3-6b80-08d648604317
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXCHOV01.amd.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR12MB0425
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR12MB0618
 To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PCM platform driver binds to the platform device created by ACP3x PCI
-device. PCM driver registers ALSA DMA and CPU DAI components with ASoC
-framework.
+ACP3x has a DMA controller to access system memory.
+This controller transfers data from/to system memory
+to/from the ACP internal FIFO.
+The patch adds PCM driver DMA operations.
 
 Signed-off-by: Maruthi Bayyavarapu <maruthi.bayyavarapu@amd.com>
 Tested-by: Ravulapati Vishnu vardhan Rao <Vishnuvardhanrao.Ravulapati@amd.com>
 Signed-off-by: Vijendar Mukunda <vijendar.mukunda@amd.com>
 ---
- sound/soc/amd/raven/acp3x-pcm-dma.c | 263 ++++++++++++++++++++++++++++++++++++
- sound/soc/amd/raven/acp3x.h         |   7 +
- 2 files changed, 270 insertions(+)
- create mode 100644 sound/soc/amd/raven/acp3x-pcm-dma.c
+ sound/soc/amd/raven/acp3x-pcm-dma.c | 262 +++++++++++++++++++++++++++++++++++-
+ sound/soc/amd/raven/acp3x.h         |  20 +++
+ 2 files changed, 275 insertions(+), 7 deletions(-)
 
 diff --git a/sound/soc/amd/raven/acp3x-pcm-dma.c b/sound/soc/amd/raven/acp3x-pcm-dma.c
-new file mode 100644
-index 0000000..3e806f7
---- /dev/null
+index 94f915a..06c1985 100644
+--- a/sound/soc/amd/raven/acp3x-pcm-dma.c
 +++ b/sound/soc/amd/raven/acp3x-pcm-dma.c
-@@ -0,0 +1,263 @@
-+/*
-+ * AMD ALSA SoC PCM Driver
-+ *
-+ * Copyright 2016 Advanced Micro Devices, Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ */
-+
-+#include <linux/platform_device.h>
-+#include <linux/module.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <sound/pcm.h>
-+#include <sound/pcm_params.h>
-+#include <sound/soc.h>
-+#include <sound/soc-dai.h>
-+
-+#include "acp3x.h"
-+
-+#define DRV_NAME "acp3x-i2s-audio"
-+
-+struct i2s_dev_data {
+@@ -33,6 +33,54 @@ struct i2s_dev_data {
+ 	struct snd_pcm_substream *capture_stream;
+ };
+ 
++struct i2s_stream_instance {
++	u16 num_pages;
++	u16 channels;
++	u32 xfer_resolution;
++	struct page *pg;
 +	void __iomem *acp3x_base;
-+	struct snd_pcm_substream *play_stream;
-+	struct snd_pcm_substream *capture_stream;
 +};
 +
-+static int acp3x_power_on(void __iomem *acp3x_base, bool on)
-+{
-+	u16 val, mask;
-+	u32 timeout;
++static const struct snd_pcm_hardware acp3x_pcm_hardware_playback = {
++	.info = SNDRV_PCM_INFO_INTERLEAVED |
++		SNDRV_PCM_INFO_BLOCK_TRANSFER |
++		SNDRV_PCM_INFO_BATCH |
++		SNDRV_PCM_INFO_PAUSE | SNDRV_PCM_INFO_RESUME,
++	.formats = SNDRV_PCM_FMTBIT_S16_LE |  SNDRV_PCM_FMTBIT_S8 |
++		   SNDRV_PCM_FMTBIT_U8 | SNDRV_PCM_FMTBIT_S24_LE |
++		   SNDRV_PCM_FMTBIT_S32_LE,
++	.channels_min = 2,
++	.channels_max = 8,
++	.rates = SNDRV_PCM_RATE_8000_96000,
++	.rate_min = 8000,
++	.rate_max = 96000,
++	.buffer_bytes_max = PLAYBACK_MAX_NUM_PERIODS * PLAYBACK_MAX_PERIOD_SIZE,
++	.period_bytes_min = PLAYBACK_MIN_PERIOD_SIZE,
++	.period_bytes_max = PLAYBACK_MAX_PERIOD_SIZE,
++	.periods_min = PLAYBACK_MIN_NUM_PERIODS,
++	.periods_max = PLAYBACK_MAX_NUM_PERIODS,
++};
 +
-+	if (on == true) {
-+		val = 1;
-+		mask = ACP3x_POWER_ON;
-+	} else {
++static const struct snd_pcm_hardware acp3x_pcm_hardware_capture = {
++	.info = SNDRV_PCM_INFO_INTERLEAVED |
++		SNDRV_PCM_INFO_BLOCK_TRANSFER |
++		SNDRV_PCM_INFO_BATCH |
++	    SNDRV_PCM_INFO_PAUSE | SNDRV_PCM_INFO_RESUME,
++	.formats = SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S8 |
++		   SNDRV_PCM_FMTBIT_U8 | SNDRV_PCM_FMTBIT_S24_LE |
++		   SNDRV_PCM_FMTBIT_S32_LE,
++	.channels_min = 2,
++	.channels_max = 2,
++	.rates = SNDRV_PCM_RATE_8000_48000,
++	.rate_min = 8000,
++	.rate_max = 48000,
++	.buffer_bytes_max = CAPTURE_MAX_NUM_PERIODS * CAPTURE_MAX_PERIOD_SIZE,
++	.period_bytes_min = CAPTURE_MIN_PERIOD_SIZE,
++	.period_bytes_max = CAPTURE_MAX_PERIOD_SIZE,
++	.periods_min = CAPTURE_MIN_NUM_PERIODS,
++	.periods_max = CAPTURE_MAX_NUM_PERIODS,
++};
++
+ static int acp3x_power_on(void __iomem *acp3x_base, bool on)
+ {
+ 	u16 val, mask;
+@@ -165,14 +213,214 @@ static irqreturn_t i2s_irq_handler(int irq, void *dev_id)
+ 		return IRQ_NONE;
+ }
+ 
++static void config_acp3x_dma(struct i2s_stream_instance *rtd, int direction)
++{
++	u16 page_idx;
++	u64 addr;
++	u32 low, high, val, acp_fifo_addr;
++	struct page *pg = rtd->pg;
++
++	/* 8 scratch registers used to map one 64 bit address */
++	if (direction == SNDRV_PCM_STREAM_PLAYBACK)
 +		val = 0;
-+		mask = ACP3x_POWER_OFF;
++	else
++		val = rtd->num_pages * 8;
++
++	/* Group Enable */
++	rv_writel(ACP_SRAM_PTE_OFFSET | BIT(31), rtd->acp3x_base +
++		  mmACPAXI2AXI_ATU_BASE_ADDR_GRP_1);
++	rv_writel(PAGE_SIZE_4K_ENABLE, rtd->acp3x_base +
++		  mmACPAXI2AXI_ATU_PAGE_SIZE_GRP_1);
++
++	for (page_idx = 0; page_idx < rtd->num_pages; page_idx++) {
++		/* Load the low address of page int ACP SRAM through SRBM */
++		addr = page_to_phys(pg);
++		low = lower_32_bits(addr);
++		high = upper_32_bits(addr);
++
++		rv_writel(low, rtd->acp3x_base + mmACP_SCRATCH_REG_0 + val);
++		high |= BIT(31);
++		rv_writel(high, rtd->acp3x_base + mmACP_SCRATCH_REG_0 + val
++				+ 4);
++		/* Move to next physically contiguos page */
++		val += 8;
++		pg++;
 +	}
 +
-+	rv_writel(val, acp3x_base + mmACP_PGFSM_CONTROL);
-+	timeout = 0;
-+	while (true) {
-+		val = rv_readl(acp3x_base + mmACP_PGFSM_STATUS);
-+		if ((val & ACP3x_POWER_OFF_IN_PROGRESS) == mask)
-+			break;
-+		if (timeout > 100) {
-+			pr_err("ACP3x power state change failure\n");
-+			return -ENODEV;
-+		}
-+		timeout++;
-+		cpu_relax();
++	if (direction == SNDRV_PCM_STREAM_PLAYBACK) {
++		/* Config ringbuffer */
++		rv_writel(MEM_WINDOW_START, rtd->acp3x_base +
++			  mmACP_BT_TX_RINGBUFADDR);
++		rv_writel(MAX_BUFFER, rtd->acp3x_base +
++			  mmACP_BT_TX_RINGBUFSIZE);
++		rv_writel(DMA_SIZE, rtd->acp3x_base + mmACP_BT_TX_DMA_SIZE);
++
++		/* Config audio fifo */
++		acp_fifo_addr = ACP_SRAM_PTE_OFFSET + (rtd->num_pages * 8)
++				+ PLAYBACK_FIFO_ADDR_OFFSET;
++		rv_writel(acp_fifo_addr, rtd->acp3x_base +
++			  mmACP_BT_TX_FIFOADDR);
++		rv_writel(FIFO_SIZE, rtd->acp3x_base + mmACP_BT_TX_FIFOSIZE);
++	} else {
++		/* Config ringbuffer */
++		rv_writel(MEM_WINDOW_START + MAX_BUFFER, rtd->acp3x_base +
++			  mmACP_BT_RX_RINGBUFADDR);
++		rv_writel(MAX_BUFFER, rtd->acp3x_base +
++			  mmACP_BT_RX_RINGBUFSIZE);
++		rv_writel(DMA_SIZE, rtd->acp3x_base + mmACP_BT_RX_DMA_SIZE);
++
++		/* Config audio fifo */
++		acp_fifo_addr = ACP_SRAM_PTE_OFFSET +
++				(rtd->num_pages * 8) + CAPTURE_FIFO_ADDR_OFFSET;
++		rv_writel(acp_fifo_addr, rtd->acp3x_base +
++			  mmACP_BT_RX_FIFOADDR);
++		rv_writel(FIFO_SIZE, rtd->acp3x_base + mmACP_BT_RX_FIFOSIZE);
 +	}
-+	return 0;
++
++	/* Enable  watermark/period interrupt to host */
++	rv_writel(BIT(BT_TX_THRESHOLD) | BIT(BT_RX_THRESHOLD),
++		  rtd->acp3x_base + mmACP_EXTERNAL_INTR_CNTL);
 +}
 +
-+static int acp3x_reset(void __iomem *acp3x_base)
++static int acp3x_dma_open(struct snd_pcm_substream *substream)
 +{
-+	u32 val, timeout;
++	int ret = 0;
 +
-+	rv_writel(1, acp3x_base + mmACP_SOFT_RESET);
-+	timeout = 0;
-+	while (true) {
-+		val = rv_readl(acp3x_base + mmACP_SOFT_RESET);
-+		if ((val & ACP3x_SOFT_RESET__SoftResetAudDone_MASK) ||
-+		     timeout > 100) {
-+			if (val & ACP3x_SOFT_RESET__SoftResetAudDone_MASK)
-+				break;
-+			return -ENODEV;
-+		}
-+		timeout++;
-+		cpu_relax();
++	struct snd_pcm_runtime *runtime = substream->runtime;
++	struct snd_soc_pcm_runtime *prtd = substream->private_data;
++	struct snd_soc_component *component = snd_soc_rtdcom_lookup(prtd,
++								    DRV_NAME);
++	struct i2s_dev_data *adata = dev_get_drvdata(component->dev);
++
++	struct i2s_stream_instance *i2s_data = kzalloc(sizeof(struct i2s_stream_instance),
++						       GFP_KERNEL);
++	if (!i2s_data)
++		return -EINVAL;
++
++	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
++		runtime->hw = acp3x_pcm_hardware_playback;
++	else
++		runtime->hw = acp3x_pcm_hardware_capture;
++
++	ret = snd_pcm_hw_constraint_integer(runtime,
++					    SNDRV_PCM_HW_PARAM_PERIODS);
++	if (ret < 0) {
++		dev_err(component->dev, "set integer constraint failed\n");
++		return ret;
 +	}
 +
-+	rv_writel(0, acp3x_base + mmACP_SOFT_RESET);
-+	timeout = 0;
-+	while (true) {
-+		val = rv_readl(acp3x_base + mmACP_SOFT_RESET);
-+		if (!val || timeout > 100) {
-+			if (!val)
-+				break;
-+			return -ENODEV;
-+		}
-+		timeout++;
-+		cpu_relax();
-+	}
++	if (!adata->play_stream && !adata->capture_stream)
++		rv_writel(1, adata->acp3x_base + mmACP_EXTERNAL_INTR_ENB);
++
++	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
++		adata->play_stream = substream;
++	else
++		adata->capture_stream = substream;
++
++	i2s_data->acp3x_base = adata->acp3x_base;
++	runtime->private_data = i2s_data;
 +	return 0;
 +}
 +
-+static int acp3x_init(void __iomem *acp3x_base)
-+{
-+	int ret;
-+
-+	/* power on */
-+	ret = acp3x_power_on(acp3x_base, true);
-+	if (ret) {
-+		pr_err("ACP3x power on failed\n");
-+		return ret;
-+	}
-+	/* Reset */
-+	ret = acp3x_reset(acp3x_base);
-+	if (ret) {
-+		pr_err("ACP3x reset failed\n");
-+		return ret;
-+	}
-+	return 0;
-+}
-+
-+static int acp3x_deinit(void __iomem *acp3x_base)
-+{
-+	int ret;
-+
-+	/* Reset */
-+	ret = acp3x_reset(acp3x_base);
-+	if (ret) {
-+		pr_err("ACP3x reset failed\n");
-+		return ret;
-+	}
-+	/* power off */
-+	ret = acp3x_power_on(acp3x_base, false);
-+	if (ret) {
-+		pr_err("ACP3x power off failed\n");
-+		return ret;
-+	}
-+	return 0;
-+}
-+
-+static struct snd_pcm_ops acp3x_dma_ops = {
-+	.open = NULL,
-+	.close = NULL,
-+	.ioctl = NULL,
-+	.hw_params = NULL,
-+	.hw_free = NULL,
-+	.pointer = NULL,
-+	.mmap = NULL,
-+};
-+
-+struct snd_soc_dai_ops acp3x_dai_i2s_ops = {
-+	.hw_params = NULL,
-+	.trigger   = NULL,
-+	.set_fmt = NULL,
-+};
-+
-+static struct snd_soc_dai_driver acp3x_i2s_dai_driver = {
-+	.playback = {
-+		.rates = SNDRV_PCM_RATE_8000_96000,
-+		.formats = SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S8 |
-+					SNDRV_PCM_FMTBIT_U8 |
-+					SNDRV_PCM_FMTBIT_S24_LE |
-+					SNDRV_PCM_FMTBIT_S32_LE,
-+		.channels_min = 2,
-+		.channels_max = 8,
-+
-+		.rate_min = 8000,
-+		.rate_max = 96000,
-+	},
-+	.capture = {
-+		.rates = SNDRV_PCM_RATE_8000_48000,
-+		.formats = SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S8 |
-+					SNDRV_PCM_FMTBIT_U8 |
-+					SNDRV_PCM_FMTBIT_S24_LE |
-+					SNDRV_PCM_FMTBIT_S32_LE,
-+		.channels_min = 2,
-+		.channels_max = 2,
-+		.rate_min = 8000,
-+		.rate_max = 48000,
-+	},
-+	.ops = &acp3x_dai_i2s_ops,
-+};
-+
-+static const struct snd_soc_component_driver acp3x_i2s_component = {
-+	.name           = DRV_NAME,
-+	.ops		= &acp3x_dma_ops,
-+	.pcm_new	= acp3x_dma_new,
-+};
-+
-+static int acp3x_audio_probe(struct platform_device *pdev)
++static int acp3x_dma_hw_params(struct snd_pcm_substream *substream,
++			       struct snd_pcm_hw_params *params)
 +{
 +	int status;
-+	struct resource *res;
-+	struct i2s_dev_data *adata;
-+	unsigned int irqflags;
++	u64 size;
++	struct snd_dma_buffer *dma_buffer;
++	struct page *pg;
++	struct snd_pcm_runtime *runtime = substream->runtime;
++	struct i2s_stream_instance *rtd = runtime->private_data;
 +
-+	if (!pdev->dev.platform_data) {
-+		dev_err(&pdev->dev, "platform_data not retrieved\n");
-+		return -ENODEV;
++	if (!rtd)
++		return -EINVAL;
++
++	dma_buffer = &substream->dma_buffer;
++	size = params_buffer_bytes(params);
++	status = snd_pcm_lib_malloc_pages(substream, size);
++	if (status < 0)
++		return status;
++
++	memset(substream->runtime->dma_area, 0, params_buffer_bytes(params));
++	pg = virt_to_page(substream->dma_buffer.area);
++	if (pg) {
++		rtd->pg = pg;
++		rtd->num_pages = (PAGE_ALIGN(size) >> PAGE_SHIFT);
++		config_acp3x_dma(rtd, substream->stream);
++		status = 0;
++	} else {
++		status = -ENOMEM;
 +	}
-+	irqflags = *((unsigned int *)(pdev->dev.platform_data));
-+
-+	adata = devm_kzalloc(&pdev->dev, sizeof(struct i2s_dev_data),
-+			     GFP_KERNEL);
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!res) {
-+		dev_err(&pdev->dev, "IORESOURCE_IRQ FAILED\n");
-+			return -ENODEV;
-+	}
-+
-+	adata->acp3x_base = devm_ioremap(&pdev->dev, res->start,
-+					 resource_size(res));
-+
-+	adata->play_stream = NULL;
-+	adata->capture_stream = NULL;
-+
-+	dev_set_drvdata(&pdev->dev, adata);
-+	/* Initialize ACP */
-+	status = acp3x_init(adata->acp3x_base);
-+	if (status)
-+		return -ENODEV;
-+	status = devm_snd_soc_register_component(&pdev->dev,
-+						 &acp3x_i2s_component,
-+						 &acp3x_i2s_dai_driver, 1);
-+	if (status) {
-+		dev_err(&pdev->dev, "Fail to register acp i2s dai\n");
-+		goto dev_err;
-+	}
-+
-+	return 0;
-+dev_err:
-+	status = acp3x_deinit(adata->acp3x_base);
-+	if (status)
-+		dev_err(&pdev->dev, "ACP de-init failed\n");
-+	else
-+		dev_info(&pdev->dev, "ACP de-initialized\n");
-+	/*ignore device status and return driver probe error*/
-+	return -ENODEV;
++	return status;
 +}
 +
-+static int acp3x_audio_remove(struct platform_device *pdev)
++static snd_pcm_uframes_t acp3x_dma_pointer(struct snd_pcm_substream *substream)
 +{
-+	int ret;
-+	struct i2s_dev_data *adata = dev_get_drvdata(&pdev->dev);
++	u32 pos = 0;
++	struct i2s_stream_instance *rtd = substream->runtime->private_data;
 +
-+	ret = acp3x_deinit(adata->acp3x_base);
-+	if (ret)
-+		dev_err(&pdev->dev, "ACP de-init failed\n");
++	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
++		pos = rv_readl(rtd->acp3x_base +
++			       mmACP_BT_TX_LINKPOSITIONCNTR);
 +	else
-+		dev_info(&pdev->dev, "ACP de-initialized\n");
++		pos = rv_readl(rtd->acp3x_base +
++			       mmACP_BT_RX_LINKPOSITIONCNTR);
 +
++	if (pos >= MAX_BUFFER)
++		pos = 0;
++
++	return bytes_to_frames(substream->runtime, pos);
++}
++
++static int acp3x_dma_new(struct snd_soc_pcm_runtime *rtd)
++{
++	return snd_pcm_lib_preallocate_pages_for_all(rtd->pcm,
++						     SNDRV_DMA_TYPE_DEV,
++						     NULL, MIN_BUFFER,
++						     MAX_BUFFER);
++}
++
++static int acp3x_dma_hw_free(struct snd_pcm_substream *substream)
++{
++	return snd_pcm_lib_free_pages(substream);
++}
++
++static int acp3x_dma_mmap(struct snd_pcm_substream *substream,
++			  struct vm_area_struct *vma)
++{
++	return snd_pcm_lib_default_mmap(substream, vma);
++}
++
++static int acp3x_dma_close(struct snd_pcm_substream *substream)
++{
++	struct snd_soc_pcm_runtime *prtd = substream->private_data;
++	struct i2s_stream_instance *rtd = substream->runtime->private_data;
++	struct snd_soc_component *component = snd_soc_rtdcom_lookup(prtd,
++								    DRV_NAME);
++	struct i2s_dev_data *adata = dev_get_drvdata(component->dev);
++
++	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
++		adata->play_stream = NULL;
++	else
++		adata->capture_stream = NULL;
++
++	/* Disable ACP irq, when the current stream is being closed and
++	 * another stream is also not active.
++	 */
++	if (!adata->play_stream && !adata->capture_stream)
++		rv_writel(0, adata->acp3x_base + mmACP_EXTERNAL_INTR_ENB);
++	kfree(rtd);
 +	return 0;
 +}
 +
-+static struct platform_driver acp3x_dma_driver = {
-+	.probe = acp3x_audio_probe,
-+	.remove = acp3x_audio_remove,
-+	.driver = {
-+		.name = "acp3x_rv_i2s",
-+	},
-+};
-+
-+module_platform_driver(acp3x_dma_driver);
-+
-+MODULE_AUTHOR("Maruthi.Bayyavarapu@amd.com");
-+MODULE_AUTHOR("Vijendar.Mukunda@amd.com");
-+MODULE_DESCRIPTION("AMD ACP 3.x PCM Driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:" DRV_NAME);
+ static struct snd_pcm_ops acp3x_dma_ops = {
+-	.open = NULL,
+-	.close = NULL,
+-	.ioctl = NULL,
+-	.hw_params = NULL,
+-	.hw_free = NULL,
+-	.pointer = NULL,
+-	.mmap = NULL,
++	.open = acp3x_dma_open,
++	.close = acp3x_dma_close,
++	.ioctl = snd_pcm_lib_ioctl,
++	.hw_params = acp3x_dma_hw_params,
++	.hw_free = acp3x_dma_hw_free,
++	.pointer = acp3x_dma_pointer,
++	.mmap = acp3x_dma_mmap,
+ };
+ 
+ struct snd_soc_dai_ops acp3x_dai_i2s_ops = {
 diff --git a/sound/soc/amd/raven/acp3x.h b/sound/soc/amd/raven/acp3x.h
-index 83b1ed8..f3d3e51 100644
+index f3d3e51..9f33e34 100644
 --- a/sound/soc/amd/raven/acp3x.h
 +++ b/sound/soc/amd/raven/acp3x.h
-@@ -5,6 +5,13 @@
- #define	ACP3x_REG_START	0x1240000
- #define	ACP3x_REG_END	0x1250200
- #define I2S_MODE	0x04
-+#define	BT_TX_THRESHOLD 26
-+#define	BT_RX_THRESHOLD 25
-+#define ACP3x_POWER_ON 0x00
-+#define ACP3x_POWER_ON_IN_PROGRESS 0x01
-+#define ACP3x_POWER_OFF 0x02
-+#define ACP3x_POWER_OFF_IN_PROGRESS 0x03
-+#define ACP3x_SOFT_RESET__SoftResetAudDone_MASK	0x00010001
+@@ -13,6 +13,26 @@
+ #define ACP3x_POWER_OFF_IN_PROGRESS 0x03
+ #define ACP3x_SOFT_RESET__SoftResetAudDone_MASK	0x00010001
  
++#define ACP_SRAM_PTE_OFFSET	0x02050000
++#define PAGE_SIZE_4K_ENABLE 0x2
++#define MEM_WINDOW_START	0x4000000
++#define PLAYBACK_FIFO_ADDR_OFFSET 0x400
++#define CAPTURE_FIFO_ADDR_OFFSET  0x500
++
++#define PLAYBACK_MIN_NUM_PERIODS    2
++#define PLAYBACK_MAX_NUM_PERIODS    8
++#define PLAYBACK_MAX_PERIOD_SIZE    16384
++#define PLAYBACK_MIN_PERIOD_SIZE    4096
++#define CAPTURE_MIN_NUM_PERIODS     2
++#define CAPTURE_MAX_NUM_PERIODS     8
++#define CAPTURE_MAX_PERIOD_SIZE     16384
++#define CAPTURE_MIN_PERIOD_SIZE     4096
++
++#define MAX_BUFFER (PLAYBACK_MAX_PERIOD_SIZE * PLAYBACK_MAX_NUM_PERIODS)
++#define MIN_BUFFER MAX_BUFFER
++#define FIFO_SIZE 0x100
++#define DMA_SIZE 0x40
++
  static inline u32 rv_readl(void __iomem *base_addr)
  {
+ 	return readl(base_addr - ACP3x_PHY_BASE_ADDRESS);
 -- 
 2.7.4
 
