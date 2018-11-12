@@ -2,101 +2,120 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2E14C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:55:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66919C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:56:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D9CD2241E
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:55:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D9CD2241E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 395EC2241E
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:56:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 395EC2241E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729839AbeKMDts (ORCPT
+        id S1730097AbeKMDug (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 22:49:48 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:47383 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727185AbeKMDts (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 22:49:48 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id A35AAB90739D9;
-        Tue, 13 Nov 2018 01:55:28 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.41) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.408.0; Tue, 13 Nov 2018
- 01:55:23 +0800
-Subject: Re: [PATCH] scsi: libsas: Remove pcidev reference
-To:     Joe Perches <joe@perches.com>, <jejb@linux.vnet.ibm.com>,
-        <martin.petersen@oracle.com>
-References: <1542043689-214071-1-git-send-email-john.garry@huawei.com>
- <584e7b4fcd6f95fe0c581f6f9472852685c754d1.camel@perches.com>
- <310504a2-f33c-183b-d00a-fa067b273dfd@huawei.com>
-CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <3b62b0ad-53ba-37c2-817c-591d94eed838@huawei.com>
-Date:   Mon, 12 Nov 2018 17:55:19 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        Mon, 12 Nov 2018 22:50:36 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:52732 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727185AbeKMDuf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 22:50:35 -0500
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id ZAf4JIMm6mJ9; Mon, 12 Nov 2018 18:56:16 +0100 (CET)
+Received: from zn.tnic (p200300EC2BE56F00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2be5:6f00:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B2FEA1EC0266;
+        Mon, 12 Nov 2018 18:56:16 +0100 (CET)
+Date:   Mon, 12 Nov 2018 18:56:10 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Moger, Babu" <Babu.Moger@amd.com>
+Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
+        "reinette.chatre@intel.com" <reinette.chatre@intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "pombredanne@nexb.com" <pombredanne@nexb.com>,
+        "rafael@kernel.org" <rafael@kernel.org>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "qianyue.zj@alibaba-inc.com" <qianyue.zj@alibaba-inc.com>,
+        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "Singh, Brijesh" <brijesh.singh@amd.com>,
+        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "jannh@google.com" <jannh@google.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "rian@alum.mit.edu" <rian@alum.mit.edu>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v7 02/13] arch/x86: Rename the RDT functions and
+ definitions
+Message-ID: <20181112175610.GI8167@zn.tnic>
+References: <20181109205153.14811-1-babu.moger@amd.com>
+ <20181109205153.14811-3-babu.moger@amd.com>
 MIME-Version: 1.0
-In-Reply-To: <310504a2-f33c-183b-d00a-fa067b273dfd@huawei.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.41]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181109205153.14811-3-babu.moger@amd.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/11/2018 17:49, John Garry wrote:
-> On 12/11/2018 17:32, Joe Perches wrote:
->> On Tue, 2018-11-13 at 01:28 +0800, John Garry wrote:
->>> Not all host drivers are PCI drivers - like hisi_sas, which supports a
->>> platform driver - so remove reference to "pcidev".
->>>
->>> The debug level is also downgraded to KERN_ERR for the same message.
->> []
->>> diff --git a/drivers/scsi/libsas/sas_discover.c
->>> b/drivers/scsi/libsas/sas_discover.c
->> []
->>> @@ -186,7 +186,7 @@ int sas_notify_lldd_dev_found(struct
->>> domain_device *dev)
->>>
->>>      res = i->dft->lldd_dev_found(dev);
->>>      if (res) {
->>> -        printk("sas: driver on pcidev %s cannot handle "
->>> +        pr_err("sas: driver on host %s cannot handle "
->>>                 "device %llx, error:%d\n",
->>
->> As a printk without a KERN_<LEVEL> is printed at whatever
->> CONFIG_MESSAGE_LOGLEVEL_DEFAULT is set to (default: 4 and
->> rarely unchanged), this is effectively upgraded from a
->> KERN_WARNING to KERN_ERR.
->
-> ah, I thought that it was printed always.
->
-> So maybe I'll just leave as-is.
+On Fri, Nov 09, 2018 at 08:52:27PM +0000, Moger, Babu wrote:
+> As AMD is starting to support RDT(or QOS) features, rename
+> the RDT functions and definitions to more generic names.
+> 
+> Replace intel_rdt to resctrl where applicable.
+> 
+> Signed-off-by: Babu Moger <babu.moger@amd.com>
+> ---
+>  arch/x86/include/asm/resctrl_sched.h   | 24 ++++++++++++------------
+>  arch/x86/kernel/cpu/resctrl.c          | 26 +++++++++++++-------------
+>  arch/x86/kernel/cpu/resctrl.h          |  2 +-
+>  arch/x86/kernel/cpu/resctrl_monitor.c  | 11 ++++++-----
+>  arch/x86/kernel/cpu/resctrl_rdtgroup.c | 10 +++++-----
+>  arch/x86/kernel/process_32.c           |  2 +-
+>  arch/x86/kernel/process_64.c           |  2 +-
+>  7 files changed, 39 insertions(+), 38 deletions(-)
 
-I forgot to mention that checkpatch complains about using printk() - 
-that's why I changed it.
+As with patch 1, pls fix subject prefix.
 
-Thanks,
-John
+> @@ -637,10 +637,11 @@ int rdt_get_mon_l3_config(struct rdt_resource *r)
+>  	 *
+>  	 * For a 35MB LLC and 56 RMIDs, this is ~1.8% of the LLC.
+>  	 */
+> -	intel_cqm_threshold = boot_cpu_data.x86_cache_size * 1024 / r->num_rmid;
+> +	resctrl_cqm_threshold = boot_cpu_data.x86_cache_size * 1024 /
+> +				r->num_rmid;
 
->
->>
->>
->>
->> .
->>
->
->
->
-> .
->
+No need to break that line here.
 
+With that addressed and FWIW:
 
+Reviewed-by: Borislav Petkov <bp@suse.de>
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
