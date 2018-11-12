@@ -2,107 +2,106 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2271BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 15:17:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89BBBC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 15:22:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D81F122503
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 15:17:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35CDD224E0
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 15:22:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dAjNUMGA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D81F122503
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VMthWeah"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35CDD224E0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729434AbeKMBL2 (ORCPT
+        id S1729395AbeKMBPt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 20:11:28 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:38847 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726385AbeKMBL2 (ORCPT
+        Mon, 12 Nov 2018 20:15:49 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:46513 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726385AbeKMBPs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 20:11:28 -0500
-Received: by mail-lf1-f65.google.com with SMTP id p86so6437762lfg.5
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 07:17:46 -0800 (PST)
+        Mon, 12 Nov 2018 20:15:48 -0500
+Received: by mail-pl1-f195.google.com with SMTP id t13so1538958ply.13;
+        Mon, 12 Nov 2018 07:22:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=yJzZzu4l/GzcmzzhCEPtk7cQimxwv9IYN7JlcYNfDqE=;
-        b=dAjNUMGALkaPm2M7j6Tz5pOwFLqbvBN3sckwW/6Hj/9dE0QRv2oyla6EapAD8kHn2a
-         KalIuE+V3nq+OKG4xTIuswMcWk2XbpYe8WX2uyUEePVcMsVbbSyuTRmGsy05o0kzQUn3
-         kKBkpCg36DCC0oHMLzBfGaU5RRlksqGoIhmlryQVg8WqTq7IEonaSbtMRjM/99jKNa8i
-         PDgwbiWoG+DJmtwgSidBGjMvsskt5CvV9KAOjMtXgi5v4Df+apozNf109SD/jeDIDXXT
-         1McWokzwTcYGYyECh4fd+rpIClcMapdkmTLHE4MpuUO5qwdHzFYtpEGAhhohQB9cyAFL
-         w4CQ==
+        h=message-id:date:from:to:cc:subject:mime-version:content-disposition
+         :user-agent;
+        bh=EP970EtUPPmxMSocrXllAaTbi8u+T/xBMhYPnG+pMuY=;
+        b=VMthWeahRdNi6bG33YW4SCPHVS/ge8U0oIa0ibzf9peagXeuzlGhATJMfRdPbaclXQ
+         BWkDQ8tg0sZC6YbOSRKevflg0k1yA6W6K6TgUslJ5FwRn4UzkRpeSwJW9dAftX2oeZP2
+         vZMXk2DOAYwHu7xl92LDlbDVQI8t2jxfqsGaP8tRR4mOAVElEXGKhUV+CK3chsrXbpRW
+         y40Mf6cZmgFUoWwAsB/oN/okm1AfBwy9dPrUbGibtrqlR59wRaaD5ZwfwCdal0Os2mdj
+         xGVzFkdUUIxgo3r7nb0Pfd5yCBmYzrBv3M4T3FiOCx63Yj0AfMVMN7FLO4/4nEA13d9u
+         zTSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yJzZzu4l/GzcmzzhCEPtk7cQimxwv9IYN7JlcYNfDqE=;
-        b=ZruCjShw0+eYvkH5kAfs+zmrd1vmUpzeaWS+4gpouSDfmBNRFpNUxzoO7N3XqahVMm
-         R/dyD4oRHooJjAegfAXNonN3vrh/4BeWeYime7UvtSBd6mp7hLZhJ519gD3qSn29F8DA
-         Gx3LQwvJRjM+2pguhgSmycBF7yk5PU9eaV6aPpCX7bOb8JwdCc0HTDPllyAA1bNp2VP4
-         HCfbtiycy8ZiG8QsnAUqAbmjkAmZX5BOx7jv71SDdJ18NqPj6fSTvYDZBg1CEB135X4P
-         PLC1s0mUPAzjAprcux64KnS1Tcm5HQqP+uZLGJiWzYcxzCLNWBTD19fncWRlrq8t/1p+
-         p/Vw==
-X-Gm-Message-State: AGRZ1gKhtuPsGGa1THXxYekyNm8lbQpQs+34I12JXQmi4vn+ZovCodNs
-        Zku05tp7TItgvYpOYG2SpBk=
-X-Google-Smtp-Source: AJdET5fHI2+l0GzbrIEzt+YB5hV2b8cdeW4AfXss58m6fK3MfYd4eHivCN4htFb2b9pzlrahDDHfcw==
-X-Received: by 2002:a19:c954:: with SMTP id z81mr849436lff.150.1542035865866;
-        Mon, 12 Nov 2018 07:17:45 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id b69sm3088299lfl.28.2018.11.12.07.17.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 12 Nov 2018 07:17:43 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gMDy7-00034i-Op; Mon, 12 Nov 2018 16:17:39 +0100
-Date:   Mon, 12 Nov 2018 16:17:39 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Nishad Kamdar <nishadkamdar@gmail.com>
-Cc:     Vaibhav Hiremath <hvaibhav.linux@gmail.com>,
-        Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: greybus: arche-apb-ctrl.c: Switch to the gpio
- descriptor interface
-Message-ID: <20181112151739.GI13311@localhost>
-References: <20181111054405.GA32548@nishad>
+        h=x-gm-message-state:message-id:date:from:to:cc:subject:mime-version
+         :content-disposition:user-agent;
+        bh=EP970EtUPPmxMSocrXllAaTbi8u+T/xBMhYPnG+pMuY=;
+        b=dh9VbnIIZqFgJPMQ4z0LeA+ScnE633fbGpkog+LCyz5tiXeKw7E0+ilxhZ5eQNhUSn
+         RQOqx3c2zI6qPi5b3m8oYdFjQpLdSK1K1+4yGeVo3TxfHNWROaVk8T5h6LOF3nFq6LUR
+         2GPWWM4WXtnnJkDvdb6P2asPfH98PRmjw7riKmCmXEWXYO+qDxlxJQ8G1kWgYYXOEYBc
+         URIkUiEfFRP9FVhRbFN2L+McAfg/p0H5YwRflRFSbICb4ngYJ5BSE0e72hawx5DBpvyU
+         GlMTDCXtjsvXy+dnTinRrf+F8Iq8/R3C9buMZUOYfypeNBfus1f+cSm//kN80gWrYua5
+         vVCw==
+X-Gm-Message-State: AGRZ1gK/qmjqGEgeKN+BHsw4M9YKxyJSznXl6QvUnfeXiisqWb+BlUKq
+        uy2kbUsByjz05+aAs5Hca4U=
+X-Google-Smtp-Source: AJdET5fNk7r69o9WWy3iKN4f6No1xd/kjVykQcvQrQ1zluZzK3C8yI6D5oAJIBui1h60BEwAUUaiBA==
+X-Received: by 2002:a17:902:f208:: with SMTP id gn8mr1304772plb.6.1542036126872;
+        Mon, 12 Nov 2018 07:22:06 -0800 (PST)
+Received: from sabyasachi ([2405:205:6189:c1f1:2151:b4c2:f56b:842])
+        by smtp.gmail.com with ESMTPSA id r81-v6sm34685576pfa.110.2018.11.12.07.22.04
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 12 Nov 2018 07:22:06 -0800 (PST)
+Message-ID: <5be99a9e.1c69fb81.87c65.4ec2@mx.google.com>
+X-Google-Original-Message-ID: <20181112152159.GA3155@sabyasachi.linux@gmail.com>
+Date:   Mon, 12 Nov 2018 20:51:59 +0530
+From:   Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+To:     swise@chelsio.com, dledford@redhat.com, jgg@ziepe.ca
+Cc:     jrdr.linux@gmail.com, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, brajeswar.linux@gmail.com
+Subject: [PATCH] infiniband/hw/cxgb4/qp.c: Use dma_zalloc_coherent
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181111054405.GA32548@nishad>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 11, 2018 at 11:14:14AM +0530, Nishad Kamdar wrote:
-> Use the gpiod interface instead of the deprecated old non-descriptor
-> interface.
-> 
-> Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
-> ---
->  drivers/staging/greybus/arche-apb-ctrl.c | 158 ++++++++++-------------
->  1 file changed, 65 insertions(+), 93 deletions(-)
+Replaced dma_alloc_coherent + memset with dma_zalloc_coherent
 
-> -	apb->pwrdn_gpio = of_get_named_gpio(np, "pwr-down-gpios", 0);
-> -	if (apb->pwrdn_gpio < 0)
-> -		dev_warn(dev, "failed to get power down gpio\n");
-> +	apb->pwrdn = devm_gpiod_get(dev, "gb,pwr-down-gpios", GPIOD_OUT_LOW);
-> +	if (IF_ERR(apb->pwrdn)) {
+Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+---
+ drivers/infiniband/hw/cxgb4/qp.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Looks like you didn't even compile test this one. :(
+diff --git a/drivers/infiniband/hw/cxgb4/qp.c b/drivers/infiniband/hw/cxgb4/qp.c
+index 13478f3..5a8030b 100644
+--- a/drivers/infiniband/hw/cxgb4/qp.c
++++ b/drivers/infiniband/hw/cxgb4/qp.c
+@@ -2564,13 +2564,12 @@ static int alloc_srq_queue(struct c4iw_srq *srq, struct c4iw_dev_ucontext *uctx,
+ 	wq->rqt_abs_idx = (wq->rqt_hwaddr - rdev->lldi.vr->rq.start) >>
+ 		T4_RQT_ENTRY_SHIFT;
+ 
+-	wq->queue = dma_alloc_coherent(&rdev->lldi.pdev->dev,
++	wq->queue = dma_zalloc_coherent(&rdev->lldi.pdev->dev,
+ 				       wq->memsize, &wq->dma_addr,
+ 			GFP_KERNEL);
+ 	if (!wq->queue)
+ 		goto err_free_rqtpool;
+ 
+-	memset(wq->queue, 0, wq->memsize);
+ 	dma_unmap_addr_set(wq, mapping, wq->dma_addr);
+ 
+ 	wq->bar2_va = c4iw_bar2_addrs(rdev, wq->qid, CXGB4_BAR2_QTYPE_EGRESS,
+-- 
+2.7.4
 
-> +		ret = PTR_ERR(apb->pwrdn);
-> +		dev_warn(dev, "Failed requesting power down GPIO: %d\n", ret);
-> +		return ret;
-> +	}
-
-Johan
