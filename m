@@ -2,144 +2,118 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F1C7C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 11:12:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55147C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 11:13:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29586223DD
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 11:12:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29586223DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=keep-it-simple.com
+	by mail.kernel.org (Postfix) with ESMTP id 2174F223DD
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 11:13:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2174F223DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729243AbeKLVFA (ORCPT
+        id S1729295AbeKLVF5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 16:05:00 -0500
-Received: from martinlund.org ([173.255.130.145]:49530 "EHLO
-        slmp-550-86.slc.westdc.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728302AbeKLVE7 (ORCPT
+        Mon, 12 Nov 2018 16:05:57 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:35342 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728350AbeKLVF5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 16:04:59 -0500
-X-Greylist: delayed 988 seconds by postgrey-1.27 at vger.kernel.org; Mon, 12 Nov 2018 16:04:59 EST
-Received: from mail-oi1-f174.google.com ([209.85.167.174]:39630)
-        by slmp-550-86.slc.westdc.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <martin.lund@keep-it-simple.com>)
-        id 1gM9sh-005Ttu-TH
-        for linux-kernel@vger.kernel.org; Mon, 12 Nov 2018 03:55:47 -0700
-Received: by mail-oi1-f174.google.com with SMTP id 192-v6so6795514oii.6
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 02:55:47 -0800 (PST)
-X-Gm-Message-State: AGRZ1gJ1iIGsnOfokgO8pX7rzDHIAplpE+X69ippyQbdZtf8VDGHegkk
-        oSoFbr2dA4sxJqATwdJgR3etgfJzC6ZlfBBHGgo=
-X-Google-Smtp-Source: AJdET5fI7mM9sJDXpWm3a2xroGDVvjdbMM8lhceqTdaxXjcMqrmtuL4HqSEtLJACXB142g+IFcgmKIcNCKoBcsGZRj8=
-X-Received: by 2002:aca:654a:: with SMTP id j10-v6mr213773oiw.178.1542020147437;
- Mon, 12 Nov 2018 02:55:47 -0800 (PST)
+        Mon, 12 Nov 2018 16:05:57 -0500
+Received: by mail-qk1-f193.google.com with SMTP id w204so12531100qka.2
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 03:13:09 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CswHIA8tEHqpVzkXyUcR6WukXg8wl5xzBLmn9jSwykM=;
+        b=jkrqiynaSfAMsuoyVFubIcW4ZzQKRpnxrwB9DbYLecknm2TsjKbPfe49f4LRTEPOQu
+         i6ZUt1tziVTMvpSF9A/xU3rsrlP73AkltKBsUJ/n2OpJpIVd/gPuPYxoTdIpZmyqHlzU
+         GxvUFJn24uGd/LBvzmBZSCOJzgR/T/OBi41Bp1855dWE6m2eRU6ctTa3zNoMAdShAHQ+
+         mUXbxLEuk71jlEYsVTySxony/mLf5jyMVwfqF9/X6SwKUhvRdkVLeal13u4qxuLl3Og8
+         hqOlYG2dP+52LP6oGEKBJ4SqPqKXiv7oTT/F1QcbLGrxmrl8Hku3/E26MvlYUswHGOE6
+         eVXQ==
+X-Gm-Message-State: AGRZ1gJdaxQl2rx2X3GtmuGiVmAsOJgACt0aTmVX470BKEtrErH8YyVA
+        iAn3PwkRteVTQVadbii4MXh1DABy1/HsY+cQ/EdsMA==
+X-Google-Smtp-Source: AJdET5ecWO8Sc6Qtrln5KXPtVcm0s+UfWiZEzOkNVrVimiDzgIigRxjcpsf/FctEmKjF/JXhFIzGTepdK5LThqr65T8=
+X-Received: by 2002:ac8:1a38:: with SMTP id v53mr409221qtj.362.1542021189314;
+ Mon, 12 Nov 2018 03:13:09 -0800 (PST)
 MIME-Version: 1.0
-References: <1541739641-17789-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
- <1541739641-17789-4-git-send-email-naga.sureshkumar.relli@xilinx.com>
-In-Reply-To: <1541739641-17789-4-git-send-email-naga.sureshkumar.relli@xilinx.com>
-From:   Martin Lund <martin.lund@keep-it-simple.com>
-Date:   Mon, 12 Nov 2018 11:55:36 +0100
-X-Gmail-Original-Message-ID: <CAB7pii1WbALtH1AHjocpC976ytrCV5gM6JGXawoN--scvEx8Mw@mail.gmail.com>
-Message-ID: <CAB7pii1WbALtH1AHjocpC976ytrCV5gM6JGXawoN--scvEx8Mw@mail.gmail.com>
-Subject: Re: [LINUX PATCH v12 3/3] mtd: rawnand: arasan: Add support for
- Arasan NAND Flash Controller
-To:     naga.sureshkumar.relli@xilinx.com
-Cc:     boris.brezillon@bootlin.com, miquel.raynal@bootlin.com,
-        richard@nod.at, dwmw2@infradead.org, computersforpeace@gmail.com,
-        marek.vasut@gmail.com, michals@xilinx.com, nagasuresh12@gmail.com,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        robh@kernel.org
+References: <20181108235921.62193-1-bleung@chromium.org> <CAO-hwJ+FpX6evn-6J1TU6RmXq-3OhGGB21Qb4LdfNNcRuYkQEQ@mail.gmail.com>
+In-Reply-To: <CAO-hwJ+FpX6evn-6J1TU6RmXq-3OhGGB21Qb4LdfNNcRuYkQEQ@mail.gmail.com>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Mon, 12 Nov 2018 12:12:57 +0100
+Message-ID: <CAO-hwJJSn=dhoh_JuNhBDMz8w4w1xfcgxiHE_SbOXJucLUQ93g@mail.gmail.com>
+Subject: Re: [PATCH] HID: input: Ignore battery reported by Symbol DS4308
+To:     bleung@chromium.org
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Dmitry Torokhov <dtor@chromium.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - slmp-550-86.slc.westdc.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - keep-it-simple.com
-X-Get-Message-Sender-Via: slmp-550-86.slc.westdc.net: authenticated_id: martin.lund+keep-it-simple.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: slmp-550-86.slc.westdc.net: martin.lund@keep-it-simple.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Naga,
+On Fri, Nov 9, 2018 at 9:50 AM Benjamin Tissoires
+<benjamin.tissoires@redhat.com> wrote:
+>
+> On Fri, Nov 9, 2018 at 12:59 AM Benson Leung <bleung@chromium.org> wrote:
+> >
+> > The Motorola/Zebra Symbol DS4308-HD is a handheld USB barcode scanner
+> > which does not have a battery, but reports one anyway that always has
+> > capacity 2.
+> >
+> > Let's apply the IGNORE quirk to prevent it from being treated like a
+> > power supply so that userspaces don't get confused that this
+> > accessory is almost out of power and warn the user that they need to charge
+> > their wired barcode scanner.
+> >
+> > Reported here: https://bugs.chromium.org/p/chromium/issues/detail?id=804720
+> >
+> > Signed-off-by: Benson Leung <bleung@chromium.org>
+> > ---
+>
+> Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
-Just a few review comments for the v12 version.
+And applied, thanks
 
-On Fri, Nov 9, 2018 at 6:00 AM Naga Sureshkumar Relli
-<naga.sureshkumar.relli@xilinx.com> wrote:
-> +#define PKT_OFST               0x00
-> +#define PKT_CNT_SHIFT          12
-> +
-> +#define MEM_ADDR1_OFST         0x04
-> +#define MEM_ADDR2_OFST         0x08
-
-For the sake of readability I think *_OFFSET is preferred, especially
-since the driver already includes short macro names. I think this is
-similar to the EVNT vs EVENT point.
-The majority of drivers in the Linux kernel do not shorten OFFSET -> OFST.
-
-
-> +static void anfc_rw_pio_op(struct mtd_info *mtd, u8 *buf, int len,
-> +                          bool do_read, int prog, int pktcount, int pktsize)
-> +{
-> +       struct nand_chip *chip = mtd_to_nand(mtd);
-> +       struct anfc_nand_controller *nfc = to_anfc(chip->controller);
-> +       struct anfc_nand_chip *achip = to_anfc_nand(chip);
-> +       u32 *bufptr = (u32 *)buf;
-> +       u32 cnt = 0, intr = 0;
-> +
-> +       anfc_config_dma(nfc, 0);
-> +
-> +       if (pktsize == 0)
-> +               pktsize = len;
-> +
-> +       anfc_setpktszcnt(nfc, pktsize, pktcount);
-> +
-> +       if (!achip->strength)
-> +               intr = MBIT_ERROR;
-> +
-> +       if (do_read)
-> +               intr |= READ_READY;
-> +       else
-> +               intr |= WRITE_READY;
-> +       anfc_enable_intrs(nfc, intr);
-> +       writel(prog, nfc->base + PROG_OFST);
-> +       while (cnt < pktcount) {
-> +               anfc_wait_for_event(nfc);
-> +               cnt++;
-> +               if (cnt == pktcount)
-> +                       anfc_enable_intrs(nfc, XFER_COMPLETE);
-> +               if (do_read)
-> +                       ioread32_rep(nfc->base + DATA_PORT_OFST, bufptr,
-> +                                    pktsize / 4);
-> +               else
-> +                       iowrite32_rep(nfc->base + DATA_PORT_OFST, bufptr,
-> +                                     pktsize / 4);
-> +               bufptr += (pktsize / 4);
-> +               if (cnt < pktcount)
-> +                       anfc_enable_intrs(nfc, intr);
-> +       }
-> +       anfc_wait_for_event(nfc);
-> +}
-
-Throughout the driver all calls to anfc_wait_for_event() ignores the
-timeout return value. It would be nice to see some error handling in
-case it times out - at minimum consider printing out an error message
-since timeout on NAND operations are fairly critical and should
-generally not occur. Perhaps even an argument can be made for
-returning -ETIMEDOUT in case of timeout.
-
-I'm putting a focus on this because I see the original non-upstream
-Arasan driver sometimes timeout on NAND operations when I stress test
-it via the UBI stress test. Not sure what the cause for the timeout is
-yet but either way an error message would have been helpful.
-
-Br, Martin
+>
+> >  drivers/hid/hid-ids.h   | 1 +
+> >  drivers/hid/hid-input.c | 3 +++
+> >  2 files changed, 4 insertions(+)
+> >
+> > diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+> > index c0d668944dbe..07f6348b9f86 100644
+> > --- a/drivers/hid/hid-ids.h
+> > +++ b/drivers/hid/hid-ids.h
+> > @@ -1043,6 +1043,7 @@
+> >  #define USB_VENDOR_ID_SYMBOL           0x05e0
+> >  #define USB_DEVICE_ID_SYMBOL_SCANNER_1 0x0800
+> >  #define USB_DEVICE_ID_SYMBOL_SCANNER_2 0x1300
+> > +#define USB_DEVICE_ID_SYMBOL_SCANNER_3 0x1200
+> >
+> >  #define USB_VENDOR_ID_SYNAPTICS                0x06cb
+> >  #define USB_DEVICE_ID_SYNAPTICS_TP     0x0001
+> > diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
+> > index a2f74e6adc70..44ea8e7c71a9 100644
+> > --- a/drivers/hid/hid-input.c
+> > +++ b/drivers/hid/hid-input.c
+> > @@ -325,6 +325,9 @@ static const struct hid_device_id hid_battery_quirks[] = {
+> >         { HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_ELECOM,
+> >                 USB_DEVICE_ID_ELECOM_BM084),
+> >           HID_BATTERY_QUIRK_IGNORE },
+> > +       { HID_USB_DEVICE(USB_VENDOR_ID_SYMBOL,
+> > +               USB_DEVICE_ID_SYMBOL_SCANNER_3),
+> > +         HID_BATTERY_QUIRK_IGNORE },
+> >         {}
+> >  };
+> >
+> > --
+> > 2.19.1.930.g4563a0d9d0-goog
+> >
