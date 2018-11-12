@@ -2,97 +2,112 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 160DFC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 20:25:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F703C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 20:25:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA0472243E
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 20:25:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D0iGLiKS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA0472243E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1ECF72243E
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 20:25:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ECF72243E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730361AbeKMGT5 (ORCPT
+        id S1730427AbeKMGUh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 01:19:57 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:37365 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725834AbeKMGT5 (ORCPT
+        Tue, 13 Nov 2018 01:20:37 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:35902 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725790AbeKMGUh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 01:19:57 -0500
-Received: by mail-ed1-f66.google.com with SMTP id h15so3687169edb.4;
-        Mon, 12 Nov 2018 12:25:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=loVmp6tvQQOcCP7QeK8oMGkh5eedM2eY+bnfEKqwg9Q=;
-        b=D0iGLiKSFCKRSjv2BUYzeysowPd/5VzIYQisnQMmiKYFFQ9LOMR1b8v+zvqfEuxNPj
-         yb8ppBDHAibzmewTJAkIqtVfuqFdztUzq2k3jqMXJwfuzIpQoUZRdcwnQTjUjf2oTFT1
-         IOr+gyjrWMJZkwveBBpBFPN0Qz+I/1zL5LI5GpaHaMZ28WwMgL7eoWG4atE6GltmV/Xg
-         C7rdYJVwcODjnI3x3LMLn7z5UfYlSlAdTSqEc25zlzywp6XbgiuzGd/pwwOV4iHDgmvA
-         bGB5s2+g+eyeoKlyqHDSSwUOHS6GZ47za1OeucWmcb7FmiTvH5nBZ4WyRr+yyCM6FXr8
-         FYiw==
+        Tue, 13 Nov 2018 01:20:37 -0500
+Received: by mail-ed1-f68.google.com with SMTP id a2-v6so8492363edt.3;
+        Mon, 12 Nov 2018 12:25:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=loVmp6tvQQOcCP7QeK8oMGkh5eedM2eY+bnfEKqwg9Q=;
-        b=HiogQAv+tj9ZMRTFmCj5Rp38wJGGZOQr65MQzYrbFIz23du9U/jKksQw5Xmau0vnjO
-         yO2zOSSEniBmvvvO5a0p9HmCACpCv1AJXCzqR6ymIixsJG3HzCIr2hIwAQaKjC1Uv/DE
-         GiRvnt6aDz7p7hG5EZrGRl0bJWb3Z9nwW7EKTw1Rm9I2iKn2VjzKmnDaQTV2v7cNe0LN
-         Mce/DBBrVc/Ja8IRVCEuXFE7RJ3zON+kjgqfrGDuO1gWUH8b5MMTcpnqvxuTI25hrRPc
-         heO3MpQYG4J66EgGF8CHGoUFFCG3qThY0tQYv9i6I6nTpmuzt6jC620qSuyQuCxwMQGe
-         Jtmw==
-X-Gm-Message-State: AGRZ1gKOy+FZK9KImtUcoblE9IgAAYr3dUcubq7qKEoM7E83PsaHnYfb
-        M1ImQpZGSbfPoptIM3XGH7g=
-X-Google-Smtp-Source: AJdET5fvLdSko5FNrIxjNt6+7QMPqTDyHhft8RSLwA7183HQUczIxeqZ/POeD/woWytTHAPMN0LdaQ==
-X-Received: by 2002:a17:906:1001:: with SMTP id 1-v6mr10358191ejm.91.1542054305657;
-        Mon, 12 Nov 2018 12:25:05 -0800 (PST)
-Received: from localhost.localdomain ([159.100.241.215])
-        by smtp.googlemail.com with ESMTPSA id e10-v6sm2484527ejf.28.2018.11.12.12.25.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 12 Nov 2018 12:25:05 -0800 (PST)
-From:   Jean-Philippe Menil <jpmenil@gmail.com>
-To:     mathias.nyman@intel.com
-Cc:     jpmenil@gmail.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] usb: xhci: fix build warning - missing prototype
-Date:   Mon, 12 Nov 2018 20:24:35 +0000
-Message-Id: <20181112202436.20547-1-jpmenil@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9NIY2tdVyIPsE6eduVs2bUOxdhUrf9Xkdb76WSFQKcc=;
+        b=pehnmvBbiVd/1YQ9mIG0c8XP0eOH1T7Rz4xfAR8SdKX0Lx9yYpz6/wujvdyYveTtQL
+         Mlz5/f7+1Re8b5z/ss9eq0nu+mRBXZ8KCb1PcM1FnlEbzQPaIIwbslspGhfqBUgIFKHV
+         qiOhv3UQFwo6QCuEnNzX99qoxiXvXAFWyvKI9rB62K3vqO025uFCqJsgUgR6dPuMj46P
+         yXs9HonkrK4g7sQR7TgnXQNSZe4woirZcJk7hy9rkGAIj7uR6h24JOhxlh5p/bQU7YJ4
+         QgCMon63IhTpIfQY/lLpTQ8wzQSMDBq5g7EUw0LODfVu7z8f7vkYLssMGRHBnCaN7cdZ
+         5DxA==
+X-Gm-Message-State: AGRZ1gLqGoDN4j2jJZoV2WydUnfWsGeIwd5BkEpJrrUghiYV4pWYiWkK
+        0kPGx/4DQrpN/uXa3HdDM10=
+X-Google-Smtp-Source: AJdET5e2OyzMpM4ETbW1vhIPY48WS/LlA+IEG2WMTfamD+epeeCAsSu1w+wQCJBBEoNq7RA2kdb9aw==
+X-Received: by 2002:a17:906:95c2:: with SMTP id n2-v6mr10013011ejy.205.1542054345819;
+        Mon, 12 Nov 2018 12:25:45 -0800 (PST)
+Received: from kozik-lap ([178.38.103.27])
+        by smtp.googlemail.com with ESMTPSA id m90-v6sm4814267ede.58.2018.11.12.12.25.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 12 Nov 2018 12:25:44 -0800 (PST)
+Date:   Mon, 12 Nov 2018 21:25:43 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     =?utf-8?Q?Bart=C5=82omiej_=C5=BBo=C5=82nierkiewicz?= 
+        <b.zolnierkie@samsung.com>
+Cc:     kgene@kernel.org, linux@armlinux.org.uk,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] ARM: SAMSUNG: limit SAMSUNG_PM_DEBUG config option to
+ non-Exynos platforms
+Message-ID: <20181112202543.GB25275@kozik-lap>
+References: <CGME20181015155001eucas1p249f539be47eaff0d10ddc74e1f681b37@eucas1p2.samsung.com>
+ <20181015155001eucas1p249f539be47eaff0d10ddc74e1f681b37~d0vYKtP7-2027420274eucas1p2g@eucas1p2.samsung.com>
+ <CAJKOXPcFnkwZfCg8q429L6HRfNxubTaoa+BRZ-1h3ti3Q2EAxw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAJKOXPcFnkwZfCg8q429L6HRfNxubTaoa+BRZ-1h3ti3Q2EAxw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix build warning when building drivers/usb/host/xhci-mem.o due to missing
-prototype for xhci_free_virt_devices_depth_first.
+On Tue, Oct 16, 2018 at 03:04:52PM +0200, Krzysztof Kozlowski wrote:
+> On Mon, 15 Oct 2018 at 17:50, Bartlomiej Zolnierkiewicz
+> <b.zolnierkie@samsung.com> wrote:
+> >
+> > "Samsung PM Suspend debug" feature (controlled by SAMSUNG_PM_DEBUG
+> > config option) is not working properly (debug messages are not
+> > displayed after resume) on Exynos platforms because GPIOs restore
+> > code is not implemented.
+> >
+> > Add PLAT_S3C24XX, ARCH_S3C64XX and ARCH_S5PV210 dependencies to
+> > SAMSUNG_PM_DEBUG config option to hide it on Exynos platforms.
+> > Then convert Exynos code to not require <plat/pm-common.h>
+> > header (use pr_debug() directly instead of S3C_PMDBG() macro and
+> > remove redundant s3c_pm_*() calls).
+> >
+> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> > ---
+> > v3:
+> > - don't move PM to the line below in Kconfig
+> >
+> > v2:
+> > - convert Exynos code to not require <plat/pm-common.h> header
+> >
+> > Should by applied on top of "[PATCH] ARM: EXYNOS: remove no longer
+> > needed s3c_pm_check_*() calls".
+> >
+> >  arch/arm/mach-exynos/suspend.c |   14 ++++----------
+> >  arch/arm/plat-samsung/Kconfig  |    1 +
+> >  2 files changed, 5 insertions(+), 10 deletions(-)
+> 
+> Thanks. This and the other one (removing s3c_pm_check_*()) look OK
+> although it is too late for another pull so this will wait for next
+> cycle.
 
-This function is only used in xhci-mem.c so just make it static.
+Hi,
 
-Signed-off-by: Jean-Philippe Menil <jpmenil@gmail.com>
----
- drivers/usb/host/xhci-mem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This does not longer apply. Probably because of my changes around eint
+wakeup mask. Could you rebase?
 
-diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
-index b1f27aa38b10..c5236f5d917a 100644
---- a/drivers/usb/host/xhci-mem.c
-+++ b/drivers/usb/host/xhci-mem.c
-@@ -933,7 +933,7 @@ void xhci_free_virt_device(struct xhci_hcd *xhci, int slot_id)
-  * that tt_info, then free the child first. Recursive.
-  * We can't rely on udev at this point to find child-parent relationships.
-  */
--void xhci_free_virt_devices_depth_first(struct xhci_hcd *xhci, int slot_id)
-+static void xhci_free_virt_devices_depth_first(struct xhci_hcd *xhci, int slot_id)
- {
- 	struct xhci_virt_device *vdev;
- 	struct list_head *tt_list_head;
--- 
-2.17.1
+Best regards,
+Krzysztof
 
