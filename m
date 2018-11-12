@@ -5,59 +5,60 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DDF2C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:00:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F1B1C43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:00:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8F342175B
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:00:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A3BC2175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:00:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="txqw74Bh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8F342175B
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C7WF6LhP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A3BC2175B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728927AbeKLRwQ (ORCPT
+        id S1729088AbeKLRwk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 12:52:16 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:34788 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728237AbeKLRwQ (ORCPT
+        Mon, 12 Nov 2018 12:52:40 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:43056 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728237AbeKLRwj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 12:52:16 -0500
-Received: by mail-pf1-f193.google.com with SMTP id y18-v6so3933903pfn.1;
-        Mon, 12 Nov 2018 00:00:12 -0800 (PST)
+        Mon, 12 Nov 2018 12:52:39 -0500
+Received: by mail-pg1-f194.google.com with SMTP id n10-v6so3689436pgv.10;
+        Mon, 12 Nov 2018 00:00:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=CY3vB0FeuERzEd1T3PSQ+FurLD9j89gsR0xONZvoPyI=;
-        b=txqw74Bh7+oGNsYzqhrc6FRfyWpptCq1yZx48UdwlOQ4a846j/MccSbfGNPF9LN6WL
-         MyKqkuFXPn1HxDjBKsunfSjeaJN+iNkZlq31AYooDca9RyvRKvGMTeLDe/r9zCNryIMo
-         YrbR7U7r9aBKmP8T9aBDh4y4Zx0dmNGh4YBaCc8GMrsdofqsuKKrNgRid5+D7dt8XmVI
-         hRTaid7OXlesI36EFTx7klswmsBfpyxvdfkXAT2N2oaxBLIthjJUteEtDFBy8XWNoeT5
-         noSt7iDEi9Xqzezu9LNYb02IHKP9qLsJpB4l+9JLZlyvH0uA07rBfkXhqZ/Bf/mQbEId
-         Xmsg==
+        bh=kgNzw5lGQtouZ5L9IJuVZ4AdNTN71bbUQnUWmbQz5gE=;
+        b=C7WF6LhPnW7xrxkwVnkYk9tsPbszuO4pGOlw6zw9PFwaabfns0qEXhYo1iufnj+XJf
+         F7e4lyBZlwLilNa0X13nBHNB1IGjIDpi1CWS6BnZC79u3mUBws5G5U1JpZ21BmOq6KI1
+         VrMyc9Qeo+G2DGhiAwFPeuPLX0TtSDK2DtEYvEA8//DkkOg0cprLFIXkCVO7OsxaoAAj
+         24EAmV99EO1h27VcxpMiTfwZi+PwEoLtuN29QK+9ZPmkVSB+iGZpViEIzF4jeu51E/9h
+         aqMcaHA5iuRICxIuH59fSCc9rgyMODq1BDTLtZocV4pxE+NPR8th99O2WSTGcG0yb41F
+         SNxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=CY3vB0FeuERzEd1T3PSQ+FurLD9j89gsR0xONZvoPyI=;
-        b=ZvQE4EwXzBNhMJ1W1iqNgpJlOZ8CjDJNuhAYNIPtO9Ogp4N9GDF8JR+I4Usg7XrXnO
-         UlYpjW0cSYS5+og6JbjlgJnWdqchdqFNXkgzrRVSKY/WWz8cu/IQ6kNmdBk/01rv481k
-         ycLkWuxJC38dsa9Ly+xw9RTW/kF0k3nckXCpsWQf3D1Lqyn23wdMAA/LwjwmrY7VOrTY
-         HMMR06rZRKKMjTrTKkVlG/AIYd4q1iflGXXeuKnNkQacr3CAadBjUervu5h1o7E/hL5R
-         OlJwL1Ipe5SqQpargqEycBCzDQhsWCm5QQuzhlTu3mhJ6aFh2Btx2lShir67XzYnop4b
-         AyNg==
-X-Gm-Message-State: AGRZ1gJHn80V1lx/LytO/YjihOIJEFFPbSPR29HXoCIgAHB8GOl8C3l3
-        IyVlWAiTvKH1al6kD+6gO8c=
-X-Google-Smtp-Source: AJdET5c0LpttBGmFWO2mLfi8mfuhamTgnFAd8HvfdJCHgQATAX61xmU4GKlwuKu9sLrtQDTnJd2/MQ==
-X-Received: by 2002:a62:f5da:: with SMTP id b87mr2270462pfm.253.1542009611858;
-        Mon, 12 Nov 2018 00:00:11 -0800 (PST)
+        bh=kgNzw5lGQtouZ5L9IJuVZ4AdNTN71bbUQnUWmbQz5gE=;
+        b=TLXZzd5J7cVTd/QICl3KUdbSr9dFYkjXCFNuYmwV8PjjVLpeZ0V8L5B/EDfioeMPtf
+         VubWkB3XHckTDyq2r+Nr5QvuM6bJtzr05bFfHXtk2JPWA1ErRRuLO7wYFzhI10vIyes5
+         9x5X2suvTGc/JVD/dRrtpjMC/iGOMF99XzvPHAmGUkVPxe6+mHEaYYXUUqymgn+87xkH
+         eRusCAKYpOygyB+8FXV69+cPGGFVxZAAKnAJV4rdhepDjh46bhLtUCu6Xvd+Qg/v5IiC
+         xNovG2NG+OoQ400kDF456hQGt5YQCPpj4XXludUF8wM/W6sXiW5vC5lhynFurjpuFh/6
+         JH0Q==
+X-Gm-Message-State: AGRZ1gLpsN1Ndq5gJbcPn2p7Pfvgj51gnmbok+bckbgM/W8hoGV5xKqc
+        t3EcarhoUmQPE/SUlcLsIB4=
+X-Google-Smtp-Source: AJdET5eFHJJOjFhJmL7zA/md08p48QEncnXuX4VYEzkiDgxppOgFqry4vDr3oO7KTxTqFdaeoSdkYA==
+X-Received: by 2002:a62:3707:: with SMTP id e7-v6mr19091061pfa.70.1542009635275;
+        Mon, 12 Nov 2018 00:00:35 -0800 (PST)
 Received: from localhost.localdomain ([45.41.180.77])
-        by smtp.gmail.com with ESMTPSA id u2-v6sm17050816pfn.50.2018.11.11.23.59.41
+        by smtp.gmail.com with ESMTPSA id u2-v6sm17050816pfn.50.2018.11.12.00.00.12
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 12 Nov 2018 00:00:11 -0800 (PST)
+        Mon, 12 Nov 2018 00:00:34 -0800 (PST)
 From:   Kenneth Lee <nek.in.cn@gmail.com>
 To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Tim Sell <timothy.sell@unisys.com>,
@@ -81,9 +82,9 @@ To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
 Cc:     linuxarm@huawei.com, guodong.xu@linaro.org,
         zhangfei.gao@foxmail.com, haojian.zhuang@linaro.org,
         Kenneth Lee <liguozhu@hisilicon.com>
-Subject: [RFCv3 PATCH 3/6] crypto/hisilicon: add hisilicon Queue Manager driver
-Date:   Mon, 12 Nov 2018 15:58:04 +0800
-Message-Id: <20181112075807.9291-4-nek.in.cn@gmail.com>
+Subject: [RFCv3 PATCH 4/6] crypto/hisilicon: add Hisilicon zip driver
+Date:   Mon, 12 Nov 2018 15:58:05 +0800
+Message-Id: <20181112075807.9291-5-nek.in.cn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181112075807.9291-1-nek.in.cn@gmail.com>
 References: <20181112075807.9291-1-nek.in.cn@gmail.com>
@@ -94,1076 +95,697 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kenneth Lee <liguozhu@hisilicon.com>
 
-Hisilicon QM is a general IP used by some Hisilicon accelerators. It
-provides a general PCIE device interface for the CPU and the accelerator
-to share a group of queues.
+The Hisilicon ZIP accelerator implements the zlib and gzip algorithm. It
+uses Hisilicon QM as the interface to the CPU.
 
-QM is implemented as an End Point of the virtual PCI-E bus in Hisilicon
-SoC. It is actually a interface wrapper of ARM SMMU and GIC standard.
-
-A QM provides 1024 channels, namely queue pairs, to the CPU. It also
-support SR-IOV with maximum 64 VFs. The queue pairs can be distributed
-to the PF or VFs according to configuration to the PF. The hardware
-configuration and notification is done in the VF/PF BAR space, while the
-queue elements are stored in memory.  Software application sends
-requests as messages to the accelerator via the queue protocol, which is
-FIFO ring buffer protocol based on share memory.
-
-The accelerator integrating a QM, has its own vendor, device ID, and
-message format. The QM just forwards the message accordingly. Every QM
-has its own SMMU (Unit) for address translation. It does not support
-ATS/PRI, but it support SMMU stall mode. So it can do page fault from
-the devices side.
-
-This patch includes a library used by the accelerator driver to access
-the QM hardware.
+This patch provides PCIE driver to the accelerator and register it to
+the crypto subsystem.
 
 Signed-off-by: Kenneth Lee <liguozhu@hisilicon.com>
 Signed-off-by: Zhou Wang <wangzhou1@hisilicon.com>
 Signed-off-by: Hao Fang <fanghao11@huawei.com>
 ---
- drivers/crypto/hisilicon/Kconfig     |   5 +-
- drivers/crypto/hisilicon/Makefile    |   1 +
- drivers/crypto/hisilicon/qm.c        | 743 +++++++++++++++++++++++++++
- drivers/crypto/hisilicon/qm.h        | 213 ++++++++
- drivers/crypto/hisilicon/qm_usr_if.h |  32 ++
- 5 files changed, 993 insertions(+), 1 deletion(-)
- create mode 100644 drivers/crypto/hisilicon/qm.c
- create mode 100644 drivers/crypto/hisilicon/qm.h
- create mode 100644 drivers/crypto/hisilicon/qm_usr_if.h
+ drivers/crypto/hisilicon/Kconfig          |   7 +
+ drivers/crypto/hisilicon/Makefile         |   1 +
+ drivers/crypto/hisilicon/zip/Makefile     |   2 +
+ drivers/crypto/hisilicon/zip/zip.h        |  57 ++++
+ drivers/crypto/hisilicon/zip/zip_crypto.c | 362 ++++++++++++++++++++++
+ drivers/crypto/hisilicon/zip/zip_crypto.h |  18 ++
+ drivers/crypto/hisilicon/zip/zip_main.c   | 174 +++++++++++
+ 7 files changed, 621 insertions(+)
+ create mode 100644 drivers/crypto/hisilicon/zip/Makefile
+ create mode 100644 drivers/crypto/hisilicon/zip/zip.h
+ create mode 100644 drivers/crypto/hisilicon/zip/zip_crypto.c
+ create mode 100644 drivers/crypto/hisilicon/zip/zip_crypto.h
+ create mode 100644 drivers/crypto/hisilicon/zip/zip_main.c
 
 diff --git a/drivers/crypto/hisilicon/Kconfig b/drivers/crypto/hisilicon/Kconfig
-index 8ca9c503bcb0..0e40f4a6666b 100644
+index 0e40f4a6666b..ce9deefbf037 100644
 --- a/drivers/crypto/hisilicon/Kconfig
 +++ b/drivers/crypto/hisilicon/Kconfig
-@@ -1,5 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0
--
- config CRYPTO_DEV_HISI_SEC
- 	tristate "Support for Hisilicon SEC crypto block cipher accelerator"
- 	select CRYPTO_BLKCIPHER
-@@ -12,3 +11,7 @@ config CRYPTO_DEV_HISI_SEC
- 
- 	  To compile this as a module, choose M here: the module
- 	  will be called hisi_sec.
+@@ -15,3 +15,10 @@ config CRYPTO_DEV_HISI_SEC
+ config CRYPTO_DEV_HISI_QM
+ 	tristate
+ 	depends on ARM64 && PCI
 +
-+config CRYPTO_DEV_HISI_QM
-+	tristate
-+	depends on ARM64 && PCI
++config CRYPTO_DEV_HISI_ZIP
++	tristate "Support for HISI ZIP Driver"
++	depends on ARM64
++	select CRYPTO_DEV_HISI_QM
++	help
++	  Support for HiSilicon HIP08 ZIP Driver.
 diff --git a/drivers/crypto/hisilicon/Makefile b/drivers/crypto/hisilicon/Makefile
-index 463f46ace182..05e9052e0f52 100644
+index 05e9052e0f52..c97c5b27c3cb 100644
 --- a/drivers/crypto/hisilicon/Makefile
 +++ b/drivers/crypto/hisilicon/Makefile
-@@ -1,2 +1,3 @@
+@@ -1,3 +1,4 @@
  # SPDX-License-Identifier: GPL-2.0
  obj-$(CONFIG_CRYPTO_DEV_HISI_SEC) += sec/
-+obj-$(CONFIG_CRYPTO_DEV_HISI_QM) += qm.o
-diff --git a/drivers/crypto/hisilicon/qm.c b/drivers/crypto/hisilicon/qm.c
+ obj-$(CONFIG_CRYPTO_DEV_HISI_QM) += qm.o
++obj-$(CONFIG_CRYPTO_DEV_HISI_ZIP) += zip/
+diff --git a/drivers/crypto/hisilicon/zip/Makefile b/drivers/crypto/hisilicon/zip/Makefile
 new file mode 100644
-index 000000000000..5b810a6f4dd5
+index 000000000000..a936f099ee22
 --- /dev/null
-+++ b/drivers/crypto/hisilicon/qm.c
-@@ -0,0 +1,743 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+#include <asm/page.h>
-+#include <linux/bitmap.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/io.h>
-+#include <linux/irqreturn.h>
-+#include <linux/log2.h>
-+#include "qm.h"
++++ b/drivers/crypto/hisilicon/zip/Makefile
+@@ -0,0 +1,2 @@
++obj-$(CONFIG_CRYPTO_DEV_HISI_ZIP) += hisi_zip.o
++hisi_zip-objs = zip_main.o zip_crypto.o
+diff --git a/drivers/crypto/hisilicon/zip/zip.h b/drivers/crypto/hisilicon/zip/zip.h
+new file mode 100644
+index 000000000000..26d72f7153b0
+--- /dev/null
++++ b/drivers/crypto/hisilicon/zip/zip.h
+@@ -0,0 +1,57 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++#ifndef HISI_ZIP_H
++#define HISI_ZIP_H
 +
-+#define QM_DEF_Q_NUM			128
++#include <linux/list.h>
++#include "../qm.h"
 +
-+/* eq/aeq irq enable */
-+#define QM_VF_AEQ_INT_SOURCE		0x0
-+#define QM_VF_AEQ_INT_MASK		0x4
-+#define QM_VF_EQ_INT_SOURCE		0x8
-+#define QM_VF_EQ_INT_MASK		0xc
++#define HZIP_SQE_SIZE			128
++#define HZIP_SQ_SIZE			(HZIP_SQE_SIZE * QM_Q_DEPTH)
++#define QM_CQ_SIZE			(QM_CQE_SIZE * QM_Q_DEPTH)
++#define HZIP_PF_DEF_Q_NUM		64
++#define HZIP_PF_DEF_Q_BASE		0
 +
-+/* mailbox */
-+#define MAILBOX_CMD_SQC			0x0
-+#define MAILBOX_CMD_CQC			0x1
-+#define MAILBOX_CMD_EQC			0x2
-+#define MAILBOX_CMD_AEQC		0x3
-+#define MAILBOX_CMD_SQC_BT		0x4
-+#define MAILBOX_CMD_CQC_BT		0x5
++struct hisi_zip {
++	struct qm_info qm;
++	struct list_head list;
 +
-+#define MAILBOX_CMD_SEND_BASE		0x300
-+#define MAILBOX_EVENT_SHIFT		8
-+#define MAILBOX_STATUS_SHIFT		9
-+#define MAILBOX_BUSY_SHIFT		13
-+#define MAILBOX_OP_SHIFT		14
-+#define MAILBOX_QUEUE_SHIFT		16
-+
-+/* sqc shift */
-+#define SQ_HEAD_SHIFT			0
-+#define SQ_TAIL_SHIFT			16
-+#define SQ_HOP_NUM_SHIFT		0
-+#define SQ_PAGE_SIZE_SHIFT		4
-+#define SQ_BUF_SIZE_SHIFT		8
-+#define SQ_SQE_SIZE_SHIFT		12
-+#define SQ_HEAD_IDX_SIG_SHIFT		0
-+#define SQ_TAIL_IDX_SIG_SHIFT		0
-+#define SQ_CQN_SHIFT			0
-+#define SQ_PRIORITY_SHIFT		0
-+#define SQ_ORDERS_SHIFT			4
-+#define SQ_TYPE_SHIFT			8
-+
-+#define SQ_TYPE_MASK			0xf
-+
-+/* cqc shift */
-+#define CQ_HEAD_SHIFT			0
-+#define CQ_TAIL_SHIFT			16
-+#define CQ_HOP_NUM_SHIFT		0
-+#define CQ_PAGE_SIZE_SHIFT		4
-+#define CQ_BUF_SIZE_SHIFT		8
-+#define CQ_SQE_SIZE_SHIFT		12
-+#define CQ_PASID			0
-+#define CQ_HEAD_IDX_SIG_SHIFT		0
-+#define CQ_TAIL_IDX_SIG_SHIFT		0
-+#define CQ_CQN_SHIFT			0
-+#define CQ_PRIORITY_SHIFT		16
-+#define CQ_ORDERS_SHIFT			0
-+#define CQ_TYPE_SHIFT			0
-+#define CQ_PHASE_SHIFT			0
-+#define CQ_FLAG_SHIFT			1
-+
-+#define CQC_HEAD_INDEX(cqc)		((cqc)->cq_head)
-+#define CQC_PHASE(cqc)			(((cqc)->dw6) & 0x1)
-+#define CQC_CQ_ADDRESS(cqc)		(((u64)((cqc)->cq_base_h) << 32) | \
-+					 ((cqc)->cq_base_l))
-+#define CQC_PHASE_BIT			0x1
-+
-+/* eqc shift */
-+#define MB_EQC_EQE_SHIFT		12
-+#define MB_EQC_PHASE_SHIFT		16
-+
-+#define EQC_HEAD_INDEX(eqc)		((eqc)->eq_head)
-+#define EQC_TAIL_INDEX(eqc)		((eqc)->eq_tail)
-+#define EQC_PHASE(eqc)			((((eqc)->dw6) >> 16) & 0x1)
-+
-+#define EQC_PHASE_BIT			0x00010000
-+
-+/* aeqc shift */
-+#define MB_AEQC_AEQE_SHIFT		12
-+#define MB_AEQC_PHASE_SHIFT		16
-+
-+/* cqe shift */
-+#define CQE_PHASE(cqe)			((cqe)->w7 & 0x1)
-+
-+/* eqe shift */
-+#define EQE_PHASE(eqe)			(((eqe)->dw0 >> 16) & 0x1)
-+#define EQE_CQN(eqe)			(((eqe)->dw0) & 0xffff)
-+
-+#define QM_EQE_CQN_MASK			0xffff
-+
-+/* doorbell */
-+#define DOORBELL_CMD_SQ			0
-+#define DOORBELL_CMD_CQ			1
-+#define DOORBELL_CMD_EQ			2
-+#define DOORBELL_CMD_AEQ		3
-+
-+#define DOORBELL_CMD_SEND_BASE		0x340
-+
-+#define QM_MEM_START_INIT		0x100040
-+#define QM_MEM_INIT_DONE		0x100044
-+#define QM_VFT_CFG_RDY			0x10006c
-+#define QM_VFT_CFG_OP_WR		0x100058
-+#define QM_VFT_CFG_TYPE			0x10005c
-+#define QM_SQC_VFT			0x0
-+#define QM_CQC_VFT			0x1
-+#define QM_VFT_CFG_ADDRESS		0x100060
-+#define QM_VFT_CFG_OP_ENABLE		0x100054
-+
-+#define QM_VFT_CFG_DATA_L		0x100064
-+#define QM_VFT_CFG_DATA_H		0x100068
-+#define QM_SQC_VFT_BUF_SIZE		(7ULL << 8)
-+#define QM_SQC_VFT_SQC_SIZE		(5ULL << 12)
-+#define QM_SQC_VFT_INDEX_NUMBER		(1ULL << 16)
-+#define QM_SQC_VFT_BT_INDEX_SHIFT	22
-+#define QM_SQC_VFT_START_SQN_SHIFT	28
-+#define QM_SQC_VFT_VALID		(1ULL << 44)
-+#define QM_CQC_VFT_BUF_SIZE		(7ULL << 8)
-+#define QM_CQC_VFT_SQC_SIZE		(5ULL << 12)
-+#define QM_CQC_VFT_INDEX_NUMBER		(1ULL << 16)
-+#define QM_CQC_VFT_BT_INDEX_SHIFT	22
-+#define QM_CQC_VFT_VALID		(1ULL << 28)
-+
-+
-+#define QM_MK_SQC_DW3(hop_num, page_sz, buf_sz, sqe_sz) \
-+	((hop_num << SQ_HOP_NUM_SHIFT) | \
-+	 (page_sz << SQ_PAGE_SIZE_SHIFT) | \
-+	 (buf_sz << SQ_BUF_SIZE_SHIFT) | \
-+	 (sqe_sz << SQ_SQE_SIZE_SHIFT))
-+#define QM_MK_SQC_W13(priority, orders, type) \
-+	((priority << SQ_PRIORITY_SHIFT) | \
-+	 (orders << SQ_ORDERS_SHIFT) | \
-+	 ((type & SQ_TYPE_MASK) << SQ_TYPE_SHIFT))
-+#define QM_MK_CQC_DW3(hop_num, page_sz, buf_sz, sqe_sz) \
-+	((hop_num << CQ_HOP_NUM_SHIFT) | \
-+	 (page_sz << CQ_PAGE_SIZE_SHIFT) | \
-+	 (buf_sz << CQ_BUF_SIZE_SHIFT) | \
-+	 (sqe_sz << CQ_SQE_SIZE_SHIFT))
-+#define QM_MK_CQC_DW6(phase, flag) \
-+	((phase << CQ_PHASE_SHIFT) | (flag << CQ_FLAG_SHIFT))
-+
-+static inline void qm_writel(struct qm_info *qm, u32 val, u32 offset)
-+{
-+	writel(val, qm->io_base + offset);
-+}
-+
-+struct qm_info;
-+
-+struct hisi_acc_qm_hw_ops {
-+	int (*vft_config)(struct qm_info *qm, u16 base, u32 number);
++#ifdef CONFIG_UACCE
++	struct uacce *uacce;
++#endif
 +};
 +
-+static inline int hacc_qm_mb_is_busy(struct qm_info *qm)
-+{
-+	u32 val;
++struct hisi_zip_sqe {
++	__u32 consumed;
++	__u32 produced;
++	__u32 comp_data_length;
++	__u32 dw3;
++	__u32 input_data_length;
++	__u32 lba_l;
++	__u32 lba_h;
++	__u32 dw7;
++	__u32 dw8;
++	__u32 dw9;
++	__u32 dw10;
++	__u32 priv_info;
++	__u32 dw12;
++	__u32 tag;
++	__u32 dest_avail_out;
++	__u32 rsvd0;
++	__u32 comp_head_addr_l;
++	__u32 comp_head_addr_h;
++	__u32 source_addr_l;
++	__u32 source_addr_h;
++	__u32 dest_addr_l;
++	__u32 dest_addr_h;
++	__u32 stream_ctx_addr_l;
++	__u32 stream_ctx_addr_h;
++	__u32 cipher_key1_addr_l;
++	__u32 cipher_key1_addr_h;
++	__u32 cipher_key2_addr_l;
++	__u32 cipher_key2_addr_h;
++	__u32 rsvd1[4];
++};
 +
-+	return readl_relaxed_poll_timeout(QM_ADDR(qm, MAILBOX_CMD_SEND_BASE),
-+		val, !((val >> MAILBOX_BUSY_SHIFT) & 0x1), 10, 1000);
-+}
++extern struct list_head hisi_zip_list;
 +
-+static inline void qm_mb_write(struct qm_info *qm, void *src)
-+{
-+	void __iomem *fun_base = QM_ADDR(qm, MAILBOX_CMD_SEND_BASE);
-+	unsigned long tmp0 = 0, tmp1 = 0;
-+
-+	asm volatile("ldp %0, %1, %3\n"
-+		     "stp %0, %1, %2\n"
-+		     "dsb sy\n"
-+		     : "=&r" (tmp0),
-+		       "=&r" (tmp1),
-+		       "+Q" (*((char *)fun_base))
-+		     : "Q" (*((char *)src))
-+		     : "memory");
-+}
-+
-+static int qm_mb(struct qm_info *qm, u8 cmd, phys_addr_t phys_addr, u16 queue,
-+		   bool op, bool event)
-+{
-+	struct mailbox mailbox;
-+	int ret;
-+
-+	dev_dbg(&qm->pdev->dev, "QM HW request to q-%u: %d-%llx\n", queue, cmd,
-+		phys_addr);
-+
-+	mailbox.w0 = cmd |
-+		     (event ? 0x1 << MAILBOX_EVENT_SHIFT : 0) |
-+		     (op ? 0x1 << MAILBOX_OP_SHIFT : 0) |
-+		     (0x1 << MAILBOX_BUSY_SHIFT);
-+	mailbox.queue_num = queue;
-+	mailbox.base_l = lower_32_bits(phys_addr);
-+	mailbox.base_h = upper_32_bits(phys_addr);
-+	mailbox.rsvd = 0;
-+
-+	mutex_lock(&qm->mailbox_lock);
-+
-+	ret = hacc_qm_mb_is_busy(qm);
-+	if (unlikely(ret))
-+		goto out_with_lock;
-+
-+	qm_mb_write(qm, &mailbox);
-+	ret = hacc_qm_mb_is_busy(qm);
-+	if (unlikely(ret))
-+		goto out_with_lock;
-+
-+out_with_lock:
-+	mutex_unlock(&qm->mailbox_lock);
-+	return ret;
-+}
-+
-+static void qm_db(struct qm_info *qm, u16 qn, u8 cmd, u16 index, u8 priority)
-+{
-+	u64 doorbell = 0;
-+
-+	dev_dbg(&qm->pdev->dev, "doorbell(qn=%d, cmd=%d, index=%d, pri=%d)\n",
-+		qn, cmd, index, priority);
-+
-+	doorbell = qn | (cmd << 16) | ((u64)((index | (priority << 16)))) << 32;
-+	writeq(doorbell, QM_ADDR(qm, DOORBELL_CMD_SEND_BASE));
-+}
-+
-+/* @return 0 - cq/eq event, 1 - async event, 2 - abnormal error */
-+static u32 qm_get_irq_source(struct qm_info *qm)
-+{
-+	return readl(QM_ADDR(qm, QM_VF_EQ_INT_SOURCE));
-+}
-+
-+static inline struct hisi_qp *to_hisi_qp(struct qm_info *qm, struct eqe *eqe)
-+{
-+	u16 cqn = eqe->dw0 & QM_EQE_CQN_MASK;
-+	struct hisi_qp *qp;
-+
-+	read_lock(&qm->qps_lock);
-+	qp = qm->qp_array[cqn];
-+	read_unlock(&qm->qps_lock);
-+
-+	return qp;
-+}
-+
-+static inline void qm_cq_head_update(struct hisi_qp *qp)
-+{
-+	if (qp->qp_status.cq_head == QM_Q_DEPTH - 1) {
-+		qp->cqc->dw6 = qp->cqc->dw6 ^ CQC_PHASE_BIT;
-+		qp->qp_status.cq_head = 0;
-+	} else {
-+		qp->qp_status.cq_head++;
-+	}
-+}
-+
-+static inline void qm_poll_qp(struct hisi_qp *qp, struct qm_info *qm)
-+{
-+	struct cqe *cqe;
-+
-+	cqe = qp->cqe + qp->qp_status.cq_head;
-+
-+	if (qp->req_cb) {
-+		while (CQE_PHASE(cqe) == CQC_PHASE(qp->cqc)) {
-+			dma_rmb();
-+			qp->req_cb(qp, (unsigned long)(qp->sqe +
-+				   qm->sqe_size * cqe->sq_head));
-+			qm_cq_head_update(qp);
-+			cqe = qp->cqe + qp->qp_status.cq_head;
-+		}
-+	} else if (qp->event_cb) {
-+		qp->event_cb(qp);
-+		qm_cq_head_update(qp);
-+		cqe = qp->cqe + qp->qp_status.cq_head;
-+	}
-+
-+	qm_db(qm, qp->queue_id, DOORBELL_CMD_CQ, qp->qp_status.cq_head, 0);
-+	qm_db(qm, qp->queue_id, DOORBELL_CMD_CQ, qp->qp_status.cq_head, 1);
-+}
-+
-+static irqreturn_t qm_irq_thread(int irq, void *data)
-+{
-+	struct qm_info *qm = data;
-+	struct eqe *eqe = qm->eqe + qm->eq_head;
-+	struct eqc *eqc = qm->eqc;
-+	struct hisi_qp *qp;
-+
-+	while (EQE_PHASE(eqe) == EQC_PHASE(eqc)) {
-+		qp = to_hisi_qp(qm, eqe);
-+		if (qp)
-+			qm_poll_qp(qp, qm);
-+
-+		if (qm->eq_head == QM_Q_DEPTH - 1) {
-+			eqc->dw6 = eqc->dw6 ^ EQC_PHASE_BIT;
-+			eqe = qm->eqe;
-+			qm->eq_head = 0;
-+		} else {
-+			eqe++;
-+			qm->eq_head++;
-+		}
-+	}
-+
-+	qm_db(qm, 0, DOORBELL_CMD_EQ, qm->eq_head, 0);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static void qm_init_qp_status(struct hisi_qp *qp)
-+{
-+	struct hisi_acc_qp_status *qp_status = &qp->qp_status;
-+
-+	qp_status->sq_tail = 0;
-+	qp_status->sq_head = 0;
-+	qp_status->cq_head = 0;
-+	qp_status->sqn = 0;
-+	qp_status->cqc_phase = 1;
-+	qp_status->is_sq_full = 0;
-+}
-+
-+/* check if bit in regs is 1 */
-+static inline int qm_reg_wait_bit(struct qm_info *qm, u32 offset, u32 bit)
-+{
-+	int val;
-+
-+	return readl_relaxed_poll_timeout(QM_ADDR(qm, offset), val,
-+					  val & BIT(bit), 10, 1000);
-+}
-+
-+/* the config should be conducted after hisi_acc_init_qm_mem() */
-+static int qm_vft_common_config(struct qm_info *qm, u16 base, u32 number)
-+{
-+	u64 tmp;
-+	int ret;
-+
-+	ret = qm_reg_wait_bit(qm, QM_VFT_CFG_RDY, 0);
-+	if (ret)
-+		return ret;
-+	qm_writel(qm, 0x0, QM_VFT_CFG_OP_WR);
-+	qm_writel(qm, QM_SQC_VFT, QM_VFT_CFG_TYPE);
-+	qm_writel(qm, qm->pdev->devfn, QM_VFT_CFG_ADDRESS);
-+
-+	tmp = QM_SQC_VFT_BUF_SIZE			|
-+	      QM_SQC_VFT_SQC_SIZE			|
-+	      QM_SQC_VFT_INDEX_NUMBER			|
-+	      QM_SQC_VFT_VALID				|
-+	      (u64)base << QM_SQC_VFT_START_SQN_SHIFT;
-+
-+	qm_writel(qm, tmp & 0xffffffff, QM_VFT_CFG_DATA_L);
-+	qm_writel(qm, tmp >> 32, QM_VFT_CFG_DATA_H);
-+
-+	qm_writel(qm, 0x0, QM_VFT_CFG_RDY);
-+	qm_writel(qm, 0x1, QM_VFT_CFG_OP_ENABLE);
-+	ret = qm_reg_wait_bit(qm, QM_VFT_CFG_RDY, 0);
-+	if (ret)
-+		return ret;
-+	tmp = 0;
-+
-+	qm_writel(qm, 0x0, QM_VFT_CFG_OP_WR);
-+	qm_writel(qm, QM_CQC_VFT, QM_VFT_CFG_TYPE);
-+	qm_writel(qm, qm->pdev->devfn, QM_VFT_CFG_ADDRESS);
-+
-+	tmp = QM_CQC_VFT_BUF_SIZE			|
-+	      QM_CQC_VFT_SQC_SIZE			|
-+	      QM_CQC_VFT_INDEX_NUMBER			|
-+	      QM_CQC_VFT_VALID;
-+
-+	qm_writel(qm, tmp & 0xffffffff, QM_VFT_CFG_DATA_L);
-+	qm_writel(qm, tmp >> 32, QM_VFT_CFG_DATA_H);
-+
-+	qm_writel(qm, 0x0, QM_VFT_CFG_RDY);
-+	qm_writel(qm, 0x1, QM_VFT_CFG_OP_ENABLE);
-+	ret = qm_reg_wait_bit(qm, QM_VFT_CFG_RDY, 0);
-+	if (ret)
-+		return ret;
-+	return 0;
-+}
-+
++#endif
+diff --git a/drivers/crypto/hisilicon/zip/zip_crypto.c b/drivers/crypto/hisilicon/zip/zip_crypto.c
+new file mode 100644
+index 000000000000..104e5140bf4b
+--- /dev/null
++++ b/drivers/crypto/hisilicon/zip/zip_crypto.c
+@@ -0,0 +1,362 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
 +/*
-+ * v1: For Hi1620ES
-+ * v2: For Hi1620CS (Not implemented yet)
++ * Copyright 2018 (c) HiSilicon Limited.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
 + */
-+static struct hisi_acc_qm_hw_ops qm_hw_ops_v1 = {
-+	.vft_config = qm_vft_common_config,
++
++#include <linux/crypto.h>
++#include <linux/dma-mapping.h>
++#include <linux/pci.h>
++#include <linux/topology.h>
++#include "../qm.h"
++#include "zip.h"
++
++#define INPUT_BUFFER_SIZE	(64 * 1024)
++#define OUTPUT_BUFFER_SIZE	(64 * 1024)
++
++#define COMP_NAME_TO_TYPE(alg_name)			\
++	(!strcmp((alg_name), "zlib-deflate") ? 0x02 :	\
++	 !strcmp((alg_name), "gzip") ? 0x03 : 0)	\
++
++struct hisi_zip_buffer {
++	u8 *input;
++	dma_addr_t input_dma;
++	u8 *output;
++	dma_addr_t output_dma;
 +};
 +
-+struct hisi_qp *hisi_qm_create_qp(struct qm_info *qm, u8 alg_type)
-+{
++struct hisi_zip_qp_ctx {
++	struct hisi_zip_buffer buffer;
 +	struct hisi_qp *qp;
-+	int qp_index;
-+	int ret;
++	struct hisi_zip_sqe zip_sqe;
++};
 +
-+	write_lock(&qm->qps_lock);
-+	qp_index = find_first_zero_bit(qm->qp_bitmap, qm->qp_num);
-+	if (qp_index >= qm->qp_num) {
-+		write_unlock(&qm->qps_lock);
-+		return ERR_PTR(-EBUSY);
-+	}
++struct hisi_zip_ctx {
++#define QPC_COMP	0
++#define QPC_DECOMP	1
++	struct hisi_zip_qp_ctx qp_ctx[2];
++};
 +
-+	qp = kzalloc(sizeof(*qp), GFP_KERNEL);
-+	if (!qp) {
-+		ret = -ENOMEM;
-+		write_unlock(&qm->qps_lock);
-+		goto err_with_bitset;
-+	}
-+
-+	qp->queue_id = qp_index;
-+	qp->qm = qm;
-+	qp->alg_type = alg_type;
-+	qm_init_qp_status(qp);
-+	set_bit(qp_index, qm->qp_bitmap);
-+
-+	write_unlock(&qm->qps_lock);
-+	return qp;
-+
-+err_with_bitset:
-+	write_unlock(&qm->qps_lock);
-+	return ERR_PTR(ret);
-+}
-+EXPORT_SYMBOL_GPL(hisi_qm_create_qp);
-+
-+int hisi_qm_start_qp(struct hisi_qp *qp, unsigned long arg)
++static struct hisi_zip *find_zip_device(int node)
 +{
-+	struct qm_info *qm = qp->qm;
-+	struct device *dev = &qm->pdev->dev;
-+	int ret;
-+	struct sqc *sqc;
-+	struct cqc *cqc;
-+	int qp_index = qp->queue_id;
-+	int pasid = arg;
-+	size_t off = 0;
++	struct hisi_zip *hisi_zip, *ret = NULL;
++	struct device *dev;
++	int min_distance = 100;
 +
-+#define QP_INIT_BUF(qp, type, size) do { \
-+	(qp)->type = (struct type *)((void *)(qp)->qdma.va + (off)); \
-+	(qp)->type##_dma = (qp)->qdma.dma + (off); \
-+	off += size; \
-+} while (0)
-+
-+	sqc = qp->sqc = qm->sqc + qp_index;
-+	cqc = qp->cqc = qm->cqc + qp_index;
-+	qp->sqc_dma = qm->sqc_dma + qp_index * sizeof(struct sqc);
-+	qp->cqc_dma = qm->cqc_dma + qp_index * sizeof(struct cqc);
-+
-+	qp->qdma.size = qm->sqe_size * QM_Q_DEPTH +
-+			sizeof(struct cqe) * QM_Q_DEPTH,
-+	qp->qdma.va = dma_alloc_coherent(dev, qp->qdma.size,
-+					 &qp->qdma.dma,
-+					 GFP_KERNEL | __GFP_ZERO);
-+	dev_dbg(dev, "allocate qp dma buf(va=%p, dma=%pad, size=%lx)\n",
-+		qp->qdma.va, &qp->qdma.dma, qp->qdma.size);
-+
-+	if (!qp->qdma.va) {
-+		dev_err(dev, "cannot get qm dma buffer\n");
-+		return -ENOMEM;
-+	}
-+
-+	QP_INIT_BUF(qp, sqe, qm->sqe_size * QM_Q_DEPTH);
-+	QP_INIT_BUF(qp, cqe, sizeof(struct cqe) * QM_Q_DEPTH);
-+
-+	INIT_QC(sqc, qp->sqe_dma);
-+	sqc->pasid = pasid;
-+	sqc->dw3 = QM_MK_SQC_DW3(0, 0, 0, ilog2(qm->sqe_size));
-+	sqc->cq_num = qp_index;
-+	sqc->w13 = QM_MK_SQC_W13(0, 1, qp->alg_type);
-+
-+	ret = qm_mb(qm, MAILBOX_CMD_SQC, qp->sqc_dma, qp_index, 0, 0);
-+	if (ret)
-+		return ret;
-+
-+	INIT_QC(cqc, qp->cqe_dma);
-+	cqc->dw3 = QM_MK_CQC_DW3(0, 0, 0, 4);
-+	cqc->dw6 = QM_MK_CQC_DW6(1, 1);
-+	ret = qm_mb(qm, MAILBOX_CMD_CQC, (u64)qp->cqc_dma, qp_index, 0, 0);
-+	if (ret)
-+		return ret;
-+
-+	write_lock(&qm->qps_lock);
-+	qm->qp_array[qp_index] = qp;
-+	init_completion(&qp->completion);
-+	write_unlock(&qm->qps_lock);
-+
-+	dev_dbg(&qm->pdev->dev, "qp %d started\n", qp_index);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(hisi_qm_start_qp);
-+
-+void hisi_qm_release_qp(struct hisi_qp *qp)
-+{
-+	struct qm_info *qm = qp->qm;
-+	struct qm_dma *qdma = &qp->qdma;
-+	struct device *dev = &qm->pdev->dev;
-+	int qid = qp->queue_id;
-+
-+	write_lock(&qm->qps_lock);
-+	qm->qp_array[qp->queue_id] = NULL;
-+	bitmap_clear(qm->qp_bitmap, qid, 1);
-+	write_unlock(&qm->qps_lock);
-+
-+	dma_free_coherent(dev, qdma->size, qdma->va, qdma->dma);
-+
-+	kfree(qp);
-+}
-+EXPORT_SYMBOL_GPL(hisi_qm_release_qp);
-+
-+static void *qm_get_avail_sqe(struct hisi_qp *qp)
-+{
-+	struct hisi_acc_qp_status *qp_status = &qp->qp_status;
-+	u16 sq_tail = qp_status->sq_tail;
-+
-+	if (qp_status->is_sq_full == 1)
-+		return NULL;
-+
-+	return qp->sqe + sq_tail * qp->qm->sqe_size;
-+}
-+
-+int hisi_qp_send(struct hisi_qp *qp, void *msg)
-+{
-+	struct hisi_acc_qp_status *qp_status = &qp->qp_status;
-+	u16 sq_tail = qp_status->sq_tail;
-+	u16 sq_tail_next = (sq_tail + 1) % QM_Q_DEPTH;
-+	unsigned long timeout = 100;
-+	void *sqe = qm_get_avail_sqe(qp);
-+
-+	if (!sqe)
-+		return -EBUSY;
-+
-+	memcpy(sqe, msg, qp->qm->sqe_size);
-+
-+	qm_db(qp->qm, qp->queue_id, DOORBELL_CMD_SQ, sq_tail_next, 0);
-+
-+	/* wait until job finished */
-+	wait_for_completion_timeout(&qp->completion, timeout);
-+
-+	qp_status->sq_tail = sq_tail_next;
-+
-+	if (qp_status->sq_tail == qp_status->sq_head)
-+		qp_status->is_sq_full = 1;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(hisi_qp_send);
-+
-+static irqreturn_t qm_irq(int irq, void *data)
-+{
-+	struct qm_info *qm = data;
-+	u32 int_source;
-+
-+	int_source = qm_get_irq_source(qm);
-+	if (int_source)
-+		return IRQ_WAKE_THREAD;
-+
-+	dev_err(&qm->pdev->dev, "invalid int source %d\n", int_source);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+/* put qm into init state, so the acce config become available */
-+static int hisi_qm_mem_start(struct qm_info *qm)
-+{
-+	u32 val;
-+
-+	qm_writel(qm, 0x1, QM_MEM_START_INIT);
-+	return readl_relaxed_poll_timeout(QM_ADDR(qm, QM_MEM_INIT_DONE), val,
-+					  val & BIT(0), 10, 1000);
-+}
-+
-+/* todo: The VF case is not considerred carefullly */
-+int hisi_qm_init(struct qm_info *qm)
-+{
-+	int ret;
-+	u16 ecam_val16;
-+	struct pci_dev *pdev = qm->pdev;
-+	struct device *dev = &pdev->dev;
-+
-+	pci_set_power_state(pdev, PCI_D0);
-+	ecam_val16 = PCI_COMMAND_MASTER | PCI_COMMAND_MEMORY;
-+	pci_write_config_word(pdev, PCI_COMMAND, ecam_val16);
-+
-+	ret = pci_enable_device_mem(pdev);
-+	if (ret < 0) {
-+		dev_err(dev, "Can't enable device mem!\n");
-+		return ret;
-+	}
-+
-+	ret = pci_request_mem_regions(pdev, dev_name(dev));
-+	if (ret < 0) {
-+		dev_err(dev, "Can't request mem regions!\n");
-+		goto err_with_pcidev;
-+	}
-+
-+	qm->phys_base = pci_resource_start(pdev, 2);
-+	qm->size = pci_resource_len(qm->pdev, 2);
-+	qm->io_base = devm_ioremap(dev, qm->phys_base, qm->size);
-+	if (!qm->io_base) {
-+		dev_err(dev, "Map IO space fail!\n");
-+		ret = -EIO;
-+		goto err_with_mem_regions;
-+	}
-+
-+	dma_set_mask_and_coherent(dev, DMA_BIT_MASK(64));
-+	pci_set_master(pdev);
-+
-+	ret = pci_alloc_irq_vectors(pdev, 1, 1, PCI_IRQ_MSI);
-+	if (ret < 0) {
-+		dev_err(dev, "Enable MSI vectors fail!\n");
-+		goto err_with_mem_regions;
-+	}
-+
-+	qm->eq_head = 0;
-+	mutex_init(&qm->mailbox_lock);
-+	rwlock_init(&qm->qps_lock);
-+
-+	if (qm->ver == 1)
-+		qm->ops = &qm_hw_ops_v1;
-+	else {
-+		dev_err(dev, "qm version not support %d\n", qm->ver);
-+		return -EINVAL;
-+	}
-+
-+	ret = devm_request_threaded_irq(dev, pci_irq_vector(pdev, 0),
-+					qm_irq, qm_irq_thread, IRQF_SHARED,
-+					dev_name(dev), qm);
-+	if (ret)
-+		goto err_with_irq_vec;
-+
-+	qm->qp_bitmap = devm_kcalloc(dev, BITS_TO_LONGS(qm->qp_num),
-+				     sizeof(long), GFP_KERNEL);
-+	qm->qp_array = devm_kcalloc(dev, qm->qp_num,
-+				    sizeof(struct hisi_qp *), GFP_KERNEL);
-+	if (!qm->qp_bitmap || !qm->qp_array) {
-+		ret = -ENOMEM;
-+		goto err_with_irq;
-+	}
-+
-+	if (pdev->is_physfn) {
-+		ret = hisi_qm_mem_start(qm);
-+		if (ret) {
-+			dev_err(dev, "mem start fail\n");
-+			goto err_with_irq;
++	list_for_each_entry(hisi_zip, &hisi_zip_list, list) {
++		dev = &hisi_zip->qm.pdev->dev;
++		if (node_distance(dev->numa_node, node) < min_distance) {
++			ret = hisi_zip;
++			min_distance = node_distance(dev->numa_node, node);
 +		}
 +	}
 +
-+	qm->qdma.size = max_t(size_t, sizeof(struct eqc),
-+			      sizeof(struct aeqc)) +
-+			sizeof(struct eqe) * QM_Q_DEPTH +
-+			sizeof(struct sqc) * qm->qp_num +
-+			sizeof(struct cqc) * qm->qp_num;
-+	qm->qdma.va = dma_alloc_coherent(dev, qm->qdma.size,
-+					 &qm->qdma.dma,
-+					 GFP_KERNEL | __GFP_ZERO);
-+	dev_dbg(dev, "allocate qm dma buf(va=%p, dma=%pad, size=%lx)\n",
-+		qm->qdma.va, &qm->qdma.dma, qm->qdma.size);
-+	ret = qm->qdma.va ? 0 : -ENOMEM;
-+
-+	if (ret)
-+		goto err_with_irq;
-+
-+	return 0;
-+
-+err_with_irq:
-+	/* even for devm, it should be removed for the irq vec to be freed */
-+	devm_free_irq(dev, pci_irq_vector(pdev, 0), qm);
-+err_with_irq_vec:
-+	pci_free_irq_vectors(pdev);
-+err_with_mem_regions:
-+	pci_release_mem_regions(pdev);
-+err_with_pcidev:
-+	pci_disable_device(pdev);
 +	return ret;
 +}
-+EXPORT_SYMBOL_GPL(hisi_qm_init);
 +
-+void hisi_qm_uninit(struct qm_info *qm)
++static void hisi_zip_qp_event_notifier(struct hisi_qp *qp)
 +{
-+	struct pci_dev *pdev = qm->pdev;
-+
-+	dma_free_coherent(&pdev->dev, qm->qdma.size, qm->qdma.va, qm->qdma.dma);
-+
-+	devm_free_irq(&pdev->dev, pci_irq_vector(pdev, 0), qm);
-+	pci_free_irq_vectors(pdev);
-+	pci_release_mem_regions(pdev);
-+	pci_disable_device(pdev);
++	complete(&qp->completion);
 +}
-+EXPORT_SYMBOL_GPL(hisi_qm_uninit);
 +
-+int hisi_qm_start(struct qm_info *qm)
++static int hisi_zip_fill_sqe_v1(void *sqe, void *q_parm, u32 len)
 +{
-+	size_t off = 0;
-+	int ret;
++	struct hisi_zip_sqe *zip_sqe = (struct hisi_zip_sqe *)sqe;
++	struct hisi_zip_qp_ctx *qp_ctx = (struct hisi_zip_qp_ctx *)q_parm;
++	struct hisi_zip_buffer *buffer = &qp_ctx->buffer;
 +
-+#define QM_INIT_BUF(qm, type, size) do { \
-+	(qm)->type = (struct type *)((void *)(qm)->qdma.va + (off)); \
-+	(qm)->type##_dma = (qm)->qdma.dma + (off); \
-+	off += size; \
-+} while (0)
++	memset(zip_sqe, 0, sizeof(struct hisi_zip_sqe));
 +
-+	if (!qm->qdma.va)
-+		return -EINVAL;
-+
-+	if (qm->pdev->is_physfn)
-+		qm->ops->vft_config(qm, qm->qp_base, qm->qp_num);
-+
-+	/*
-+	 * notes: the order is important because the buffer should be stay in
-+	 * alignment boundary
-+	 */
-+	QM_INIT_BUF(qm, eqe, sizeof(struct eqe) * QM_Q_DEPTH);
-+	QM_INIT_BUF(qm, sqc, sizeof(struct sqc) * qm->qp_num);
-+	QM_INIT_BUF(qm, cqc, sizeof(struct cqc) * qm->qp_num);
-+	QM_INIT_BUF(qm, eqc,
-+		    max_t(size_t, sizeof(struct eqc), sizeof(struct aeqc)));
-+
-+	qm->eqc->base_l = lower_32_bits(qm->eqe_dma);
-+	qm->eqc->base_h = upper_32_bits(qm->eqe_dma);
-+	qm->eqc->dw3 = 2 << MB_EQC_EQE_SHIFT;
-+	qm->eqc->dw6 = (QM_Q_DEPTH - 1) | (1 << MB_EQC_PHASE_SHIFT);
-+	ret = qm_mb(qm, MAILBOX_CMD_EQC, qm->eqc_dma, 0, 0, 0);
-+	if (ret)
-+		return ret;
-+
-+	ret = qm_mb(qm, MAILBOX_CMD_SQC_BT, qm->sqc_dma, 0, 0, 0);
-+	if (ret)
-+		return ret;
-+
-+	ret = qm_mb(qm, MAILBOX_CMD_CQC_BT, qm->cqc_dma, 0, 0, 0);
-+	if (ret)
-+		return ret;
-+
-+	writel(0x0, QM_ADDR(qm, QM_VF_EQ_INT_MASK));
-+
-+	dev_dbg(&qm->pdev->dev, "qm started\n");
++	zip_sqe->input_data_length = len;
++	zip_sqe->dw9 = qp_ctx->qp->req_type;
++	zip_sqe->dest_avail_out = OUTPUT_BUFFER_SIZE;
++	zip_sqe->source_addr_l = lower_32_bits(buffer->input_dma);
++	zip_sqe->source_addr_h = upper_32_bits(buffer->input_dma);
++	zip_sqe->dest_addr_l = lower_32_bits(buffer->output_dma);
++	zip_sqe->dest_addr_h = upper_32_bits(buffer->output_dma);
 +
 +	return 0;
 +}
-+EXPORT_SYMBOL_GPL(hisi_qm_start);
 +
-+
-+void hisi_qm_stop(struct qm_info *qm)
++/* let's allocate one buffer now, may have problem in async case */
++static int hisi_zip_alloc_qp_buffer(struct hisi_zip_qp_ctx *hisi_zip_qp_ctx)
 +{
-+	/* todo: recheck if this is the right way to disable the hw irq */
-+	writel(0x1, QM_ADDR(qm, QM_VF_EQ_INT_MASK));
++	struct hisi_zip_buffer *buffer = &hisi_zip_qp_ctx->buffer;
++	struct hisi_qp *qp = hisi_zip_qp_ctx->qp;
++	struct device *dev = &qp->qm->pdev->dev;
++	int ret;
 +
++	/* todo: we are using dma api here. it should be updated to uacce api
++	 * for user and kernel mode working at the same time
++	 */
++	buffer->input = dma_alloc_coherent(dev, INPUT_BUFFER_SIZE,
++					   &buffer->input_dma, GFP_KERNEL);
++	if (!buffer->input)
++		return -ENOMEM;
++
++	buffer->output = dma_alloc_coherent(dev, OUTPUT_BUFFER_SIZE,
++					    &buffer->output_dma, GFP_KERNEL);
++	if (!buffer->output) {
++		ret = -ENOMEM;
++		goto err_alloc_output_buffer;
++	}
++
++	return 0;
++
++err_alloc_output_buffer:
++	dma_free_coherent(dev, INPUT_BUFFER_SIZE, buffer->input,
++			  buffer->input_dma);
++	return ret;
 +}
-+EXPORT_SYMBOL_GPL(hisi_qm_stop);
++
++static void hisi_zip_free_qp_buffer(struct hisi_zip_qp_ctx *hisi_zip_qp_ctx)
++{
++	struct hisi_zip_buffer *buffer = &hisi_zip_qp_ctx->buffer;
++	struct hisi_qp *qp = hisi_zip_qp_ctx->qp;
++	struct device *dev = &qp->qm->pdev->dev;
++
++	dma_free_coherent(dev, INPUT_BUFFER_SIZE, buffer->input,
++			  buffer->input_dma);
++	dma_free_coherent(dev, OUTPUT_BUFFER_SIZE, buffer->output,
++			  buffer->output_dma);
++}
++
++static int hisi_zip_create_qp(struct qm_info *qm, struct hisi_zip_qp_ctx *ctx,
++			      int alg_type, int req_type)
++{
++	struct hisi_qp *qp;
++	int ret;
++
++	qp = hisi_qm_create_qp(qm, alg_type);
++
++	if (IS_ERR(qp))
++		return PTR_ERR(qp);
++
++	qp->event_cb = hisi_zip_qp_event_notifier;
++	qp->req_type = req_type;
++
++	qp->qp_ctx = ctx;
++	ctx->qp = qp;
++
++	ret = hisi_zip_alloc_qp_buffer(ctx);
++	if (ret)
++		goto err_with_qp;
++
++	ret = hisi_qm_start_qp(qp, 0);
++	if (ret)
++		goto err_with_qp_buffer;
++
++	return 0;
++err_with_qp_buffer:
++	hisi_zip_free_qp_buffer(ctx);
++err_with_qp:
++	hisi_qm_release_qp(qp);
++	return ret;
++}
++
++static void hisi_zip_release_qp(struct hisi_zip_qp_ctx *ctx)
++{
++	hisi_qm_release_qp(ctx->qp);
++	hisi_zip_free_qp_buffer(ctx);
++}
++
++static int hisi_zip_alloc_comp_ctx(struct crypto_tfm *tfm)
++{
++	struct hisi_zip_ctx *hisi_zip_ctx = crypto_tfm_ctx(tfm);
++	const char *alg_name = crypto_tfm_alg_name(tfm);
++	struct hisi_zip *hisi_zip;
++	struct qm_info *qm;
++	int ret, i, j;
++	u8 req_type = COMP_NAME_TO_TYPE(alg_name);
++
++	pr_debug("hisi_zip init %s \n", alg_name);
++
++	/* find the proper zip device */
++	hisi_zip = find_zip_device(cpu_to_node(smp_processor_id()));
++	if (!hisi_zip) {
++		pr_err("Can not find proper ZIP device!\n");
++		return -1;
++	}
++	qm = &hisi_zip->qm;
++
++	for (i = 0; i < 2; i++) {
++	/* it is just happen that 0 is compress, 1 is decompress on alg_type */
++		ret = hisi_zip_create_qp(qm, &hisi_zip_ctx->qp_ctx[i], i,
++					 req_type);
++		if (ret)
++			goto err;
++	}
++
++	return 0;
++err:
++	for (j = i-1; j >= 0; j--)
++		hisi_zip_release_qp(&hisi_zip_ctx->qp_ctx[j]);
++
++	return ret;
++}
++
++static void hisi_zip_free_comp_ctx(struct crypto_tfm *tfm)
++{
++	struct hisi_zip_ctx *hisi_zip_ctx = crypto_tfm_ctx(tfm);
++	int i;
++
++	/* release the qp */
++	for (i = 1; i >= 0; i--)
++		hisi_zip_release_qp(&hisi_zip_ctx->qp_ctx[i]);
++}
++
++static int hisi_zip_copy_data_to_buffer(struct hisi_zip_qp_ctx *qp_ctx,
++					const u8 *src, unsigned int slen)
++{
++	struct hisi_zip_buffer *buffer = &qp_ctx->buffer;
++
++	if (slen > INPUT_BUFFER_SIZE)
++		return -EINVAL;
++
++	memcpy(buffer->input, src, slen);
++
++	return 0;
++}
++
++static struct hisi_zip_sqe *hisi_zip_get_writeback_sqe(struct hisi_qp *qp)
++{
++	struct hisi_acc_qp_status *qp_status = &qp->qp_status;
++	struct hisi_zip_sqe *sq_base = qp->sqe;
++	u16 sq_head = qp_status->sq_head;
++
++	return sq_base + sq_head;
++}
++
++static int hisi_zip_copy_data_from_buffer(struct hisi_zip_qp_ctx *qp_ctx,
++					   u8 *dst, unsigned int *dlen)
++{
++	struct hisi_zip_buffer *buffer = &qp_ctx->buffer;
++	struct hisi_qp *qp = qp_ctx->qp;
++	struct hisi_zip_sqe *zip_sqe = hisi_zip_get_writeback_sqe(qp);
++	u32 status = zip_sqe->dw3 & 0xff;
++
++	if (status != 0) {
++		pr_err("hisi zip: %s fail!\n", (qp->alg_type == 0) ?
++		       "compression" : "decompression");
++		return status;
++	}
++
++	if (zip_sqe->produced > OUTPUT_BUFFER_SIZE)
++		return -ENOMEM;
++
++	memcpy(dst, buffer->output, zip_sqe->produced);
++	*dlen = zip_sqe->produced;
++	qp->qp_status.sq_head++;
++
++	return 0;
++}
++
++static int hisi_zip_compress(struct crypto_tfm *tfm, const u8 *src,
++			     unsigned int slen, u8 *dst, unsigned int *dlen)
++{
++	struct hisi_zip_ctx *hisi_zip_ctx = crypto_tfm_ctx(tfm);
++	struct hisi_zip_qp_ctx *qp_ctx = &hisi_zip_ctx->qp_ctx[QPC_COMP];
++	struct hisi_qp *qp = qp_ctx->qp;
++	struct hisi_zip_sqe *zip_sqe = &qp_ctx->zip_sqe;
++	int ret;
++
++	ret = hisi_zip_copy_data_to_buffer(qp_ctx, src, slen);
++	if (ret < 0)
++		return ret;
++
++	hisi_zip_fill_sqe_v1(zip_sqe, qp_ctx, slen);
++
++	/* send command to start the compress job */
++	hisi_qp_send(qp, zip_sqe);
++
++	return hisi_zip_copy_data_from_buffer(qp_ctx, dst, dlen);
++}
++
++static int hisi_zip_decompress(struct crypto_tfm *tfm, const u8 *src,
++			       unsigned int slen, u8 *dst, unsigned int *dlen)
++{
++	struct hisi_zip_ctx *hisi_zip_ctx = crypto_tfm_ctx(tfm);
++	struct hisi_zip_qp_ctx *qp_ctx = &hisi_zip_ctx->qp_ctx[QPC_DECOMP];
++	struct hisi_qp *qp = qp_ctx->qp;
++	struct hisi_zip_sqe *zip_sqe = &qp_ctx->zip_sqe;
++	int ret;
++
++	ret = hisi_zip_copy_data_to_buffer(qp_ctx, src, slen);
++	if (ret < 0)
++		return ret;
++
++	hisi_zip_fill_sqe_v1(zip_sqe, qp_ctx, slen);
++
++	/* send command to start the compress job */
++	hisi_qp_send(qp, zip_sqe);
++
++	return hisi_zip_copy_data_from_buffer(qp_ctx, dst, dlen);
++}
++
++static struct crypto_alg hisi_zip_zlib = {
++	.cra_name		= "zlib-deflate",
++	.cra_flags		= CRYPTO_ALG_TYPE_COMPRESS,
++	.cra_ctxsize		= sizeof(struct hisi_zip_ctx),
++	.cra_priority           = 300,
++	.cra_module		= THIS_MODULE,
++	.cra_init		= hisi_zip_alloc_comp_ctx,
++	.cra_exit		= hisi_zip_free_comp_ctx,
++	.cra_u			= {
++		.compress = {
++			.coa_compress	= hisi_zip_compress,
++			.coa_decompress	= hisi_zip_decompress
++		}
++	}
++};
++
++static struct crypto_alg hisi_zip_gzip = {
++	.cra_name		= "gzip",
++	.cra_flags		= CRYPTO_ALG_TYPE_COMPRESS,
++	.cra_ctxsize		= sizeof(struct hisi_zip_ctx),
++	.cra_priority           = 300,
++	.cra_module		= THIS_MODULE,
++	.cra_init		= hisi_zip_alloc_comp_ctx,
++	.cra_exit		= hisi_zip_free_comp_ctx,
++	.cra_u			= {
++		.compress = {
++			.coa_compress	= hisi_zip_compress,
++			.coa_decompress	= hisi_zip_decompress
++		}
++	}
++};
++
++int hisi_zip_register_to_crypto(void)
++{
++	int ret;
++
++	ret = crypto_register_alg(&hisi_zip_zlib);
++	if (ret) {
++		pr_err("Zlib algorithm registration failed\n");
++		return ret;
++	} else
++		pr_debug("hisi_zip: registered algorithm zlib\n");
++
++	ret = crypto_register_alg(&hisi_zip_gzip);
++	if (ret) {
++		pr_err("Gzip algorithm registration failed\n");
++		goto err_unregister_zlib;
++	} else
++		pr_debug("hisi_zip: registered algorithm gzip\n");
++
++	return 0;
++
++err_unregister_zlib:
++	crypto_unregister_alg(&hisi_zip_zlib);
++
++	return ret;
++}
++
++void hisi_zip_unregister_from_crypto(void)
++{
++	crypto_unregister_alg(&hisi_zip_zlib);
++	crypto_unregister_alg(&hisi_zip_gzip);
++}
+diff --git a/drivers/crypto/hisilicon/zip/zip_crypto.h b/drivers/crypto/hisilicon/zip/zip_crypto.h
+new file mode 100644
+index 000000000000..6fae34b4df3a
+--- /dev/null
++++ b/drivers/crypto/hisilicon/zip/zip_crypto.h
+@@ -0,0 +1,18 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++/*
++ * Copyright (c) 2018 HiSilicon Limited.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ */
++
++#ifndef HISI_ZIP_CRYPTO_H
++#define HISI_ZIP_CRYPTO_H
++
++int hisi_zip_register_to_crypto(void);
++void hisi_zip_unregister_from_crypto(void);
++
++#endif
+diff --git a/drivers/crypto/hisilicon/zip/zip_main.c b/drivers/crypto/hisilicon/zip/zip_main.c
+new file mode 100644
+index 000000000000..f4f3b6d89340
+--- /dev/null
++++ b/drivers/crypto/hisilicon/zip/zip_main.c
+@@ -0,0 +1,174 @@
++// SPDX-License-Identifier: GPL-2.0+
++#include <linux/io.h>
++#include <linux/bitops.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/pci.h>
++#include "zip.h"
++#include "zip_crypto.h"
++
++#define HZIP_VF_NUM			63
++#define HZIP_QUEUE_NUM_V1		4096
++#define HZIP_QUEUE_NUM_V2		1024
++
++#define HZIP_FSM_MAX_CNT		0x301008
++
++#define HZIP_PORT_ARCA_CHE_0		0x301040
++#define HZIP_PORT_ARCA_CHE_1		0x301044
++#define HZIP_PORT_AWCA_CHE_0		0x301060
++#define HZIP_PORT_AWCA_CHE_1		0x301064
++
++#define HZIP_BD_RUSER_32_63		0x301110
++#define HZIP_SGL_RUSER_32_63		0x30111c
++#define HZIP_DATA_RUSER_32_63		0x301128
++#define HZIP_DATA_WUSER_32_63		0x301134
++#define HZIP_BD_WUSER_32_63		0x301140
++
++LIST_HEAD(hisi_zip_list);
++DEFINE_MUTEX(hisi_zip_list_lock);
++
++static const char hisi_zip_name[] = "hisi_zip";
++
++static const struct pci_device_id hisi_zip_dev_ids[] = {
++	{ PCI_DEVICE(PCI_VENDOR_ID_HUAWEI, 0xa250) },
++	{ 0, }
++};
++
++static inline void hisi_zip_add_to_list(struct hisi_zip *hisi_zip)
++{
++	mutex_lock(&hisi_zip_list_lock);
++	list_add_tail(&hisi_zip->list, &hisi_zip_list);
++	mutex_unlock(&hisi_zip_list_lock);
++}
++
++static void hisi_zip_set_user_domain_and_cache(struct hisi_zip *hisi_zip)
++{
++	u32 val;
++
++	/* qm user domain */
++	writel(0x40001070, hisi_zip->qm.io_base + QM_ARUSER_M_CFG_1);
++	writel(0xfffffffe, hisi_zip->qm.io_base + QM_ARUSER_M_CFG_ENABLE);
++	writel(0x40001070, hisi_zip->qm.io_base + QM_AWUSER_M_CFG_1);
++	writel(0xfffffffe, hisi_zip->qm.io_base + QM_AWUSER_M_CFG_ENABLE);
++	writel(0xffffffff, hisi_zip->qm.io_base + QM_WUSER_M_CFG_ENABLE);
++	writel(0x4893,     hisi_zip->qm.io_base + QM_CACHE_CTL);
++
++	val = readl(hisi_zip->qm.io_base + QM_PEH_AXUSER_CFG);
++	val |= (1 << 11);
++	writel(val, hisi_zip->qm.io_base + QM_PEH_AXUSER_CFG);
++
++	/* qm cache */
++	writel(0xffff,     hisi_zip->qm.io_base + QM_AXI_M_CFG);
++	writel(0xffffffff, hisi_zip->qm.io_base + QM_AXI_M_CFG_ENABLE);
++	writel(0xffffffff, hisi_zip->qm.io_base + QM_PEH_AXUSER_CFG_ENABLE);
++
++	/* cache */
++	writel(0xffffffff, hisi_zip->qm.io_base + HZIP_PORT_ARCA_CHE_0);
++	writel(0xffffffff, hisi_zip->qm.io_base + HZIP_PORT_ARCA_CHE_1);
++	writel(0xffffffff, hisi_zip->qm.io_base + HZIP_PORT_AWCA_CHE_0);
++	writel(0xffffffff, hisi_zip->qm.io_base + HZIP_PORT_AWCA_CHE_1);
++	/* user domain configurations */
++	writel(0x40001070, hisi_zip->qm.io_base + HZIP_BD_RUSER_32_63);
++	writel(0x40001070, hisi_zip->qm.io_base + HZIP_SGL_RUSER_32_63);
++	writel(0x40001071, hisi_zip->qm.io_base + HZIP_DATA_RUSER_32_63);
++	writel(0x40001071, hisi_zip->qm.io_base + HZIP_DATA_WUSER_32_63);
++	writel(0x40001070, hisi_zip->qm.io_base + HZIP_BD_WUSER_32_63);
++
++	/* fsm count */
++	writel(0xfffffff, hisi_zip->qm.io_base + HZIP_FSM_MAX_CNT);
++
++	/* clock gating, core, decompress verify enable */
++	writel(0x10005, hisi_zip->qm.io_base + 0x301004);
++}
++
++static int hisi_zip_probe(struct pci_dev *pdev, const struct pci_device_id *id)
++{
++	struct hisi_zip *hisi_zip;
++	struct qm_info *qm;
++	int ret;
++	u8 rev_id;
++
++	hisi_zip = devm_kzalloc(&pdev->dev, sizeof(*hisi_zip), GFP_KERNEL);
++	if (!hisi_zip)
++		return -ENOMEM;
++	hisi_zip_add_to_list(hisi_zip); //todo: this is needed only by crypto
++
++	qm = &hisi_zip->qm;
++	qm->pdev = pdev;
++	qm->qp_base = HZIP_PF_DEF_Q_BASE;
++	qm->qp_num = HZIP_PF_DEF_Q_NUM;
++	qm->sqe_size = HZIP_SQE_SIZE;
++
++	pci_set_drvdata(pdev, hisi_zip);
++
++	pci_read_config_byte(pdev, PCI_REVISION_ID, &rev_id);
++	if (rev_id == 0x20)
++		qm->ver = 1;
++
++	ret = hisi_qm_init(qm);
++	if (ret)
++		return ret;
++
++	if (pdev->is_physfn)
++		hisi_zip_set_user_domain_and_cache(hisi_zip);
++
++	ret = hisi_qm_start(qm);
++	if (ret)
++		goto err_with_qm_init;
++
++	return 0;
++
++err_with_qm_init:
++	hisi_qm_uninit(qm);
++	return ret;
++}
++
++static void hisi_zip_remove(struct pci_dev *pdev)
++{
++	struct hisi_zip *hisi_zip = pci_get_drvdata(pdev);
++	struct qm_info *qm = &hisi_zip->qm;
++
++	hisi_qm_stop(qm);
++	hisi_qm_uninit(qm);
++}
++
++static struct pci_driver hisi_zip_pci_driver = {
++	.name		= "hisi_zip",
++	.id_table	= hisi_zip_dev_ids,
++	.probe		= hisi_zip_probe,
++	.remove		= hisi_zip_remove,
++};
++
++static int __init hisi_zip_init(void)
++{
++	int ret;
++
++	ret = pci_register_driver(&hisi_zip_pci_driver);
++	if (ret < 0) {
++		pr_err("zip: can't register hisi zip driver.\n");
++		return ret;
++	}
++
++	ret = hisi_zip_register_to_crypto();
++	if (ret < 0) {
++		pci_unregister_driver(&hisi_zip_pci_driver);
++		return ret;
++	}
++
++	return 0;
++}
++
++static void __exit hisi_zip_exit(void)
++{
++	hisi_zip_unregister_from_crypto();
++	pci_unregister_driver(&hisi_zip_pci_driver);
++}
++
++module_init(hisi_zip_init);
++module_exit(hisi_zip_exit);
 +
 +MODULE_LICENSE("GPL v2");
 +MODULE_AUTHOR("Zhou Wang <wangzhou1@hisilicon.com>");
-+MODULE_DESCRIPTION("HiSilicon Accelerator queue manager driver");
-diff --git a/drivers/crypto/hisilicon/qm.h b/drivers/crypto/hisilicon/qm.h
-new file mode 100644
-index 000000000000..6d124d948738
---- /dev/null
-+++ b/drivers/crypto/hisilicon/qm.h
-@@ -0,0 +1,213 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+#ifndef HISI_ACC_QM_H
-+#define HISI_ACC_QM_H
-+
-+#include <linux/dmapool.h>
-+#include <linux/iopoll.h>
-+#include <linux/module.h>
-+#include <linux/pci.h>
-+#include <linux/slab.h>
-+#include "qm_usr_if.h"
-+
-+/* qm user domain */
-+#define QM_ARUSER_M_CFG_1		0x100088
-+#define QM_ARUSER_M_CFG_ENABLE		0x100090
-+#define QM_AWUSER_M_CFG_1		0x100098
-+#define QM_AWUSER_M_CFG_ENABLE		0x1000a0
-+#define QM_WUSER_M_CFG_ENABLE		0x1000a8
-+
-+/* qm cache */
-+#define QM_CACHE_CTL			0x100050
-+#define QM_AXI_M_CFG			0x1000ac
-+#define QM_AXI_M_CFG_ENABLE		0x1000b0
-+#define QM_PEH_AXUSER_CFG		0x1000cc
-+#define QM_PEH_AXUSER_CFG_ENABLE	0x1000d0
-+
-+struct eqe {
-+	__le32 dw0;
-+};
-+
-+struct aeqe {
-+	__le32 dw0;
-+};
-+
-+struct sqc {
-+	__le16 head;
-+	__le16 tail;
-+	__le32 base_l;
-+	__le32 base_h;
-+	__le32 dw3;
-+	__le16 qes;
-+	__le16 rsvd0;
-+	__le16 pasid;
-+	__le16 w11;
-+	__le16 cq_num;
-+	__le16 w13;
-+	__le32 rsvd1;
-+};
-+
-+struct cqc {
-+	__le16 head;
-+	__le16 tail;
-+	__le32 base_l;
-+	__le32 base_h;
-+	__le32 dw3;
-+	__le16 qes;
-+	__le16 rsvd0;
-+	__le16 pasid;
-+	__le16 w11;
-+	__le32 dw6;
-+	__le32 rsvd1;
-+};
-+
-+#define INIT_QC(qc, base) do { \
-+	(qc)->head = 0; \
-+	(qc)->tail = 0; \
-+	(qc)->base_l = lower_32_bits((unsigned long)base); \
-+	(qc)->base_h = upper_32_bits((unsigned long)base); \
-+	(qc)->pasid = 0; \
-+	(qc)->w11 = 0; \
-+	(qc)->rsvd1 = 0; \
-+	(qc)->qes = QM_Q_DEPTH - 1; \
-+} while (0)
-+
-+struct eqc {
-+	__le16 head;
-+	__le16 tail;
-+	__le32 base_l;
-+	__le32 base_h;
-+	__le32 dw3;
-+	__le32 rsvd[2];
-+	__le32 dw6;
-+};
-+
-+struct aeqc {
-+	__le16 head;
-+	__le16 tail;
-+	__le32 base_l;
-+	__le32 base_h;
-+	__le32 rsvd[3];
-+	__le32 dw6;
-+};
-+
-+struct mailbox {
-+	__le16 w0;
-+	__le16 queue_num;
-+	__le32 base_l;
-+	__le32 base_h;
-+	__le32 rsvd;
-+};
-+
-+struct doorbell {
-+	__le16 queue_num;
-+	__le16 cmd;
-+	__le16 index;
-+	__le16 priority;
-+};
-+
-+struct qm_dma {
-+	void *va;
-+	dma_addr_t dma;
-+	size_t size;
-+};
-+
-+struct qm_info {
-+	int ver;
-+	struct pci_dev *pdev;
-+
-+	resource_size_t phys_base;
-+	resource_size_t size;
-+	void __iomem *io_base;
-+
-+	u32 sqe_size;
-+	u32 qp_base;
-+	u32 qp_num;
-+
-+	struct qm_dma qdma;
-+	struct sqc *sqc;
-+	struct cqc *cqc;
-+	struct eqc *eqc;
-+	struct eqe *eqe;
-+	struct aeqc *aeqc;
-+	struct aeqe *aeqe;
-+	unsigned long sqc_dma,
-+		      cqc_dma,
-+		      eqc_dma,
-+		      eqe_dma,
-+		      aeqc_dma,
-+		      aeqe_dma;
-+
-+	u32 eq_head;
-+
-+	rwlock_t qps_lock;
-+	unsigned long *qp_bitmap;
-+	struct hisi_qp **qp_array;
-+
-+	struct mutex mailbox_lock;
-+
-+	struct hisi_acc_qm_hw_ops *ops;
-+};
-+#define QM_ADDR(qm, off) ((qm)->io_base + off)
-+
-+struct hisi_acc_qp_status {
-+	u16 sq_tail;
-+	u16 sq_head;
-+	u16 cq_head;
-+	u16 sqn;
-+	bool cqc_phase;
-+	int is_sq_full;
-+};
-+
-+struct hisi_qp;
-+
-+struct hisi_qp_ops {
-+	int (*fill_sqe)(void *sqe, void *q_parm, void *d_parm);
-+};
-+
-+struct hisi_qp {
-+	/* sq number in this function */
-+	u32 queue_id;
-+	u8 alg_type;
-+	u8 req_type;
-+	int pasid;
-+
-+	struct qm_dma qdma;
-+	struct sqc *sqc;
-+	struct cqc *cqc;
-+	void *sqe;
-+	struct cqe *cqe;
-+
-+	unsigned long sqc_dma,
-+		      cqc_dma,
-+		      sqe_dma,
-+		      cqe_dma;
-+
-+	struct hisi_acc_qp_status qp_status;
-+
-+	struct qm_info *qm;
-+
-+	/* for crypto sync API */
-+	struct completion completion;
-+
-+	struct hisi_qp_ops *hw_ops;
-+	void *qp_ctx;
-+	void (*event_cb)(struct hisi_qp *qp);
-+	void (*req_cb)(struct hisi_qp *qp, unsigned long data);
-+};
-+
-+/* QM external interface for accelerator driver.
-+ * To use qm:
-+ * 1. Set qm with pdev, and sqe_size set accordingly
-+ * 2. hisi_qm_init()
-+ * 3. config the accelerator hardware
-+ * 4. hisi_qm_start()
-+ */
-+extern int hisi_qm_init(struct qm_info *qm);
-+extern void hisi_qm_uninit(struct qm_info *qm);
-+extern int hisi_qm_start(struct qm_info *qm);
-+extern void hisi_qm_stop(struct qm_info *qm);
-+extern struct hisi_qp *hisi_qm_create_qp(struct qm_info *qm, u8 alg_type);
-+extern int hisi_qm_start_qp(struct hisi_qp *qp, unsigned long arg);
-+extern void hisi_qm_release_qp(struct hisi_qp *qp);
-+extern int hisi_qp_send(struct hisi_qp *qp, void *msg);
-+#endif
-diff --git a/drivers/crypto/hisilicon/qm_usr_if.h b/drivers/crypto/hisilicon/qm_usr_if.h
-new file mode 100644
-index 000000000000..13aab94adb05
---- /dev/null
-+++ b/drivers/crypto/hisilicon/qm_usr_if.h
-@@ -0,0 +1,32 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+#ifndef HISI_QM_USR_IF_H
-+#define HISI_QM_USR_IF_H
-+
-+#define QM_CQE_SIZE			16
-+
-+/* default queue depth for sq/cq/eq */
-+#define QM_Q_DEPTH			1024
-+
-+/* page number for queue file region */
-+#define QM_DOORBELL_PAGE_NR	1
-+#define QM_DKO_PAGE_NR		3
-+#define QM_DUS_PAGE_NR		36
-+
-+#define QM_DOORBELL_PG_START 0
-+#define QM_DKO_PAGE_START (QM_DOORBELL_PG_START + QM_DOORBELL_PAGE_NR)
-+#define QM_DUS_PAGE_START (QM_DKO_PAGE_START + QM_DKO_PAGE_NR)
-+#define QM_SS_PAGE_START (QM_DUS_PAGE_START + QM_DUS_PAGE_NR)
-+
-+#define QM_DOORBELL_OFFSET      0x340
-+
-+struct cqe {
-+	__le32 rsvd0;
-+	__le16 cmd_id;
-+	__le16 rsvd1;
-+	__le16 sq_head;
-+	__le16 sq_num;
-+	__le16 rsvd2;
-+	__le16 w7;
-+};
-+
-+#endif
++MODULE_DESCRIPTION("Driver for HiSilicon ZIP accelerator");
++MODULE_DEVICE_TABLE(pci, hisi_zip_dev_ids);
 -- 
 2.17.1
 
