@@ -2,289 +2,120 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60DD0C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 23:22:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88811C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 23:27:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 034062241E
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 23:22:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="Q0bRagzY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 034062241E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=cisco.com
+	by mail.kernel.org (Postfix) with ESMTP id 486A92241E
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 23:27:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 486A92241E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codesourcery.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728030AbeKMJRe (ORCPT
+        id S1730325AbeKMJWZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 04:17:34 -0500
-Received: from rcdn-iport-8.cisco.com ([173.37.86.79]:44453 "EHLO
-        rcdn-iport-8.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726078AbeKMJRe (ORCPT
+        Tue, 13 Nov 2018 04:22:25 -0500
+Received: from relay1.mentorg.com ([192.94.38.131]:53473 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726078AbeKMJWZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 04:17:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=6952; q=dns/txt; s=iport;
-  t=1542064933; x=1543274533;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=0m+QCKshc19lL3G72RcJnIOaoQHblaynbqMCK/tcmqU=;
-  b=Q0bRagzY6ptj2qq6Ynsm79BT6/+eFXGBmBWQcGKO4+KH5hs1pVK+9TyG
-   754ux90PrRv9W/8zUfrVGabFdUYNSpeTzXKWQm/0EH8EMSg0PRDdddfgJ
-   3ZNoycTrcJ+n9YxhTLKMjvgwcLPpIA/rpAjpk311hUHuqG/dKE4jRcYmv
-   U=;
-X-IronPort-AV: E=Sophos;i="5.54,497,1534809600"; 
-   d="scan'208";a="478585839"
-Received: from rcdn-core-1.cisco.com ([173.37.93.152])
-  by rcdn-iport-8.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Nov 2018 23:22:13 +0000
-Received: from [10.154.208.147] ([10.154.208.147])
-        by rcdn-core-1.cisco.com (8.15.2/8.15.2) with ESMTP id wACNM93F018652;
-        Mon, 12 Nov 2018 23:22:10 GMT
-Subject: Re: [PATCH v5] kernel/signal: Signal-based pre-coredump notification
-To:     Oleg Nesterov <oleg@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Helge Deller <deller@gmx.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <christian@brauner.io>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Jann Horn <jannh@google.com>, Kees Cook <keescook@chromium.org>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org,
-        "Victor Kamensky (kamensky)" <kamensky@cisco.com>,
-        xe-linux-external@cisco.com, Stefan Strogin <sstrogin@cisco.com>,
-        Enke Chen <enkechen@cisco.com>
-References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
- <458c04d8-d189-4a26-729a-bb1d1d751534@cisco.com>
- <7741efa7-a3f8-62a1-ba52-613883164643@cisco.com>
- <84460a77-a111-404e-4bad-88104a6e246e@cisco.com>
- <20181026082812.GA10581@redhat.com>
- <21f678a8-4001-df36-c26e-e96cf203b1b1@cisco.com>
- <20181029111804.GA24820@redhat.com>
- <0c197608-3b7e-ffd1-8943-801a60beb917@cisco.com>
-From:   Enke Chen <enkechen@cisco.com>
-Message-ID: <ed8e0231-2b28-7cc0-4ae4-7cfcae3e0865@cisco.com>
-Date:   Mon, 12 Nov 2018 15:22:07 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Tue, 13 Nov 2018 04:22:25 -0500
+Received: from nat-ies.mentorg.com ([192.94.31.2] helo=SVR-IES-MBX-03.mgc.mentorg.com)
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1gMLbi-00022a-PD from joseph_myers@mentor.com ; Mon, 12 Nov 2018 15:27:02 -0800
+Received: from digraph.polyomino.org.uk (137.202.0.90) by
+ SVR-IES-MBX-03.mgc.mentorg.com (139.181.222.3) with Microsoft SMTP Server
+ (TLS) id 15.0.1320.4; Mon, 12 Nov 2018 23:26:59 +0000
+Received: from jsm28 (helo=localhost)
+        by digraph.polyomino.org.uk with local-esmtp (Exim 4.90_1)
+        (envelope-from <joseph@codesourcery.com>)
+        id 1gMLbe-0005Rs-Hg; Mon, 12 Nov 2018 23:26:58 +0000
+Date:   Mon, 12 Nov 2018 23:26:58 +0000
+From:   Joseph Myers <joseph@codesourcery.com>
+X-X-Sender: jsm28@digraph.polyomino.org.uk
+To:     Daniel Colascione <dancol@google.com>
+CC:     Florian Weimer <fweimer@redhat.com>,
+        Zack Weinberg <zackw@panix.com>,
+        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Joel Fernandes <joelaf@google.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Willy Tarreau <w@1wt.eu>, Vlastimil Babka <vbabka@suse.cz>,
+        Carlos O'Donell <carlos@redhat.com>,
+        GNU C Library <libc-alpha@sourceware.org>
+Subject: Re: Official Linux system wrapper library?
+In-Reply-To: <CAKOZueuM=3pxuXaJU4v571daWFCTJ1LYO-ApD6MrD7313RNYfQ@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1811122313000.18130@digraph.polyomino.org.uk>
+References: <CAKOZuesB4R=dCz4merWQN0FSCGrXmOgUUr4ienSbStBJguNv8g@mail.gmail.com> <bbc12da5-830e-99a7-95e3-d9da42947dc9@gmail.com> <877ehjx447.fsf@oldenburg.str.redhat.com> <CAKOZues5SEESpJU=6MDTrPXTA1KTZFGNQE4Lw4t0fO-WBTU62w@mail.gmail.com>
+ <875zx2vhpd.fsf@oldenburg.str.redhat.com> <CAKOZuetdgk1QYhx1538-98rFpogMin=8DkPnCtU9_=ip23Vk7w@mail.gmail.com> <CAKCAbMiHC9r54h=XeW7CkBZ1Z5eHr9MPH3Rn7KTc9DjoHG=8UA@mail.gmail.com> <CAKOZuev7zqq+xpjyDA2mSdy-zwyNjECCzLsBELF6_v1rwar_mA@mail.gmail.com>
+ <87lg5ym7qi.fsf@oldenburg.str.redhat.com> <CAKOZues2bQo1y_1ynxFMHGTvtTjABsqVpKJt5MYMdZBq6-ikHA@mail.gmail.com> <alpine.DEB.2.21.1811122236240.18130@digraph.polyomino.org.uk> <CAKOZueuM=3pxuXaJU4v571daWFCTJ1LYO-ApD6MrD7313RNYfQ@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <0c197608-3b7e-ffd1-8943-801a60beb917@cisco.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Auto-Response-Suppress: DR, OOF, AutoReply
-X-Outbound-SMTP-Client: 10.154.208.147, [10.154.208.147]
-X-Outbound-Node: rcdn-core-1.cisco.com
+Content-Type: text/plain; charset="US-ASCII"
+X-Originating-IP: [137.202.0.90]
+X-ClientProxiedBy: SVR-IES-MBX-08.mgc.mentorg.com (139.181.222.8) To
+ SVR-IES-MBX-03.mgc.mentorg.com (139.181.222.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Folks:
+On Mon, 12 Nov 2018, Daniel Colascione wrote:
 
-Could you please take care of this patch [PATCH 5]?
+> I initially wanted to put the APIs in libc. I still do. But that's
+> proving to be impractical, for the reasons we're discussing on this
+> thread.
 
-Thanks.  -- Enke
+Well, your proposed APIs didn't attract consensus among libc developers.
 
-On 10/29/18 3:31 PM, Enke Chen wrote:
-> For simplicity and consistency, this patch provides an implementation
-> for signal-based fault notification prior to the coredump of a child
-> process. A new prctl command, PR_SET_PREDUMP_SIG, is defined that can
-> be used by an application to express its interest and to specify the
-> signal for such a notification.
+> > (I can imagine *other* parts of the toolchain being involved, if e.g. you
+> > want to have a good way of checking "is the address of the instruction
+> > causing this signal in this library?" that works with static as well as
+> > dynamic linking - for dynamic linking, I expect something could be done
+> > using libc_nonshared and __dso_handle to identify code in the library
+> > calling some registering function.  And indeed there might also be new
+> > kernel interfaces that help improve signal handling.)
 > 
-> Changes to prctl(2):
+> Again: you're blocking a practical solution for the sake of some
+> elegant theoretical implementation that will never arrive, and so the
+
+I'm not - I'm observing various areas that might be open to improvements 
+related to signal handling, not saying improvements in one area are a 
+prerequisite to improvements in another.  I'm exploring the problem and 
+solution space, and collectively exploring the problem and solution space 
+is an important part of trying to work out where there might be useful 
+future improvements related to the general issue of signal handling.
+
+Exploring the problem and solution space can include coming to the 
+conclusion that an idea that seems obvious is in fact a bad idea, or in 
+fact orthogonal to other ideas that are independently useful - those 
+things are still useful in yielding a better rationale for taking a given 
+approach.
+
+> > In the absence of consensus for adding such a new API for signals to
+> > glibc, it's unlikely one would get consensus for glibc to depend on some
+> > other library providing such an API either.
 > 
->    PR_SET_PREDUMP_SIG (since Linux 4.20.x)
->           Set the child pre-coredump signal of the calling process to
->           arg2 (either a signal value in the range 1..maxsig, or 0 to
->           clear). This is the signal that the calling process will get
->           prior to the coredump of a child process. This value is
->           cleared across execve(2), or for the child of a fork(2).
-> 
->    PR_GET_PREDUMP_SIG (since Linux 4.20.x)
->           Return the current value of the child pre-coredump signal,
->           in the location pointed to by (int *) arg2.
-> 
-> Background:
-> 
-> As the coredump of a process may take time, in certain time-sensitive
-> applications it is necessary for a parent process (e.g., a process
-> manager) to be notified of a child's imminent death before the coredump
-> so that the parent process can act sooner, such as re-spawning an
-> application process, or initiating a control-plane fail-over.
-> 
-> One application is BFD. The early fault notification is a critical
-> component for maintaining BFD sessions (with a timeout value of
-> 50 msec or 100 msec) across a control-plane failure.
-> 
-> Currently there are two ways for a parent process to be notified of a
-> child process's state change. One is to use the POSIX signal, and
-> another is to use the kernel connector module. The specific events and
-> actions are summarized as follows:
-> 
-> Process Event    POSIX Signal                Connector-based
-> ----------------------------------------------------------------------
-> ptrace_attach()  do_notify_parent_cldstop()  proc_ptrace_connector()
->                  SIGCHLD / CLD_STOPPED
-> 
-> ptrace_detach()  do_notify_parent_cldstop()  proc_ptrace_connector()
->                  SIGCHLD / CLD_CONTINUED
-> 
-> pre_coredump/    N/A                         proc_coredump_connector()
-> get_signal()
-> 
-> post_coredump/   do_notify_parent()          proc_exit_connector()
-> do_exit()        SIGCHLD / exit_signal
-> ----------------------------------------------------------------------
-> 
-> As shown in the table, the signal-based pre-coredump notification is not
-> currently available. In some cases using a connector-based notification
-> can be quite complicated (e.g., when a process manager is written in shell
-> scripts and thus is subject to certain inherent limitations), and a
-> signal-based notification would be simpler and better suited.
-> 
-> Signed-off-by: Enke Chen <enkechen@cisco.com>
-> Reviewed-by: Oleg Nesterov <oleg@redhat.com>
-> ---
-> v4 -> v5:
-> Addressed review comments from Oleg Nesterov:
-> o use rcu_read_lock instead.
-> o revert back to notify the real_parent.
-> 
->  fs/coredump.c                | 23 +++++++++++++++++++++++
->  fs/exec.c                    |  3 +++
->  include/linux/sched/signal.h |  3 +++
->  include/uapi/linux/prctl.h   |  4 ++++
->  kernel/sys.c                 | 13 +++++++++++++
->  5 files changed, 46 insertions(+)
-> 
-> diff --git a/fs/coredump.c b/fs/coredump.c
-> index e42e17e..740b1bb 100644
-> --- a/fs/coredump.c
-> +++ b/fs/coredump.c
-> @@ -536,6 +536,24 @@ static int umh_pipe_setup(struct subprocess_info *info, struct cred *new)
->  	return err;
->  }
->  
-> +/*
-> + * While do_notify_parent() notifies the parent of a child's death post
-> + * its coredump, this function lets the parent (if so desired) know about
-> + * the imminent death of a child just prior to its coredump.
-> + */
-> +static void do_notify_parent_predump(void)
-> +{
-> +	struct task_struct *parent;
-> +	int sig;
-> +
-> +	rcu_read_lock();
-> +	parent = rcu_dereference(current->real_parent);
-> +	sig = parent->signal->predump_signal;
-> +	if (sig != 0)
-> +		do_send_sig_info(sig, SEND_SIG_NOINFO, parent, PIDTYPE_TGID);
-> +	rcu_read_unlock();
-> +}
-> +
->  void do_coredump(const kernel_siginfo_t *siginfo)
->  {
->  	struct core_state core_state;
-> @@ -590,6 +608,11 @@ void do_coredump(const kernel_siginfo_t *siginfo)
->  	if (retval < 0)
->  		goto fail_creds;
->  
-> +	/*
-> +	 * Send the pre-coredump signal to the parent if requested.
-> +	 */
-> +	do_notify_parent_predump();
-> +
->  	old_cred = override_creds(cred);
->  
->  	ispipe = format_corename(&cn, &cprm);
-> diff --git a/fs/exec.c b/fs/exec.c
-> index fc281b7..7714da7 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -1181,6 +1181,9 @@ static int de_thread(struct task_struct *tsk)
->  	/* we have changed execution domain */
->  	tsk->exit_signal = SIGCHLD;
->  
-> +	/* Clear the pre-coredump signal before loading a new binary */
-> +	sig->predump_signal = 0;
-> +
->  #ifdef CONFIG_POSIX_TIMERS
->  	exit_itimers(sig);
->  	flush_itimer_signals();
-> diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
-> index 13789d1..728ef68 100644
-> --- a/include/linux/sched/signal.h
-> +++ b/include/linux/sched/signal.h
-> @@ -112,6 +112,9 @@ struct signal_struct {
->  	int			group_stop_count;
->  	unsigned int		flags; /* see SIGNAL_* flags below */
->  
-> +	/* The signal sent prior to a child's coredump */
-> +	int			predump_signal;
-> +
->  	/*
->  	 * PR_SET_CHILD_SUBREAPER marks a process, like a service
->  	 * manager, to re-parent orphan (double-forking) child processes
-> diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-> index c0d7ea0..79f0a8a 100644
-> --- a/include/uapi/linux/prctl.h
-> +++ b/include/uapi/linux/prctl.h
-> @@ -219,4 +219,8 @@ struct prctl_mm_map {
->  # define PR_SPEC_DISABLE		(1UL << 2)
->  # define PR_SPEC_FORCE_DISABLE		(1UL << 3)
->  
-> +/* Whether to receive signal prior to child's coredump */
-> +#define PR_SET_PREDUMP_SIG	54
-> +#define PR_GET_PREDUMP_SIG	55
-> +
->  #endif /* _LINUX_PRCTL_H */
-> diff --git a/kernel/sys.c b/kernel/sys.c
-> index 123bd73..39aa3b8 100644
-> --- a/kernel/sys.c
-> +++ b/kernel/sys.c
-> @@ -2476,6 +2476,19 @@ int __weak arch_prctl_spec_ctrl_set(struct task_struct *t, unsigned long which,
->  			return -EINVAL;
->  		error = arch_prctl_spec_ctrl_set(me, arg2, arg3);
->  		break;
-> +	case PR_SET_PREDUMP_SIG:
-> +		if (arg3 || arg4 || arg5)
-> +			return -EINVAL;
-> +		if (!valid_signal((int)arg2))
-> +			return -EINVAL;
-> +		me->signal->predump_signal = (int)arg2;
-> +		break;
-> +	case PR_GET_PREDUMP_SIG:
-> +		if (arg3 || arg4 || arg5)
-> +			return -EINVAL;
-> +		error = put_user(me->signal->predump_signal,
-> +				 (int __user *)arg2);
-> +		break;
->  	default:
->  		error = -EINVAL;
->  		break;
-> 
+> glibc would continue using an unsupported legacy system call
+> interfaces in lieu of a supported low-level interface library?
+
+The Linux kernel supports the interfaces that people actually use, on the 
+principle of not breaking userspace, not the interfaces that someone would 
+like to declare to be the supported ones.  We'd use the interfaces that 
+seem suitable for use by glibc, and direct syscalls seem more suitable to 
+me than any kernel-provided userspace library.
+
+Naturally a library invented in the kernel on the basis of not liking what 
+libc people are doing or not doing is unlikely to be suitable for use by 
+libc (and use together with libc of anything in it that interferes with 
+libc functionality such as sigaction might be explicitly discouraged by 
+libc maintainers, just as e.g. direct use of clone can be discouraged) - 
+whereas interfaces developed collaboratively with libc implementations and 
+getting consensus from those users are more likely to be of use to libc 
+implementations.
+
+-- 
+Joseph S. Myers
+joseph@codesourcery.com
