@@ -2,278 +2,136 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27FEAC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:55:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E0CFC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:57:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D191E21722
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:55:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30B0921722
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:57:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="sQhEANfa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D191E21722
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="WrFlN5iS";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="j6JBcVuD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30B0921722
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731402AbeKLPrL (ORCPT
+        id S1731501AbeKLPtf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 10:47:11 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:37530 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728269AbeKLPrL (ORCPT
+        Mon, 12 Nov 2018 10:49:35 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:49106 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728269AbeKLPte (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 10:47:11 -0500
-Received: by mail-pg1-f194.google.com with SMTP id 80so3547699pge.4
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 21:55:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=SYR6fS30aatFFhnOk6MmgadwC6xWSDexCl9TuLKHYXs=;
-        b=sQhEANfaG0eK5sUFtPMxtcU87IoBnWKMDMvGsi5827t7LIPP4tiYc49nn8KhwibHZH
-         zTILiIosQSNRAkTh+A/EkqPXgJuWqLJ+8IKRKwJW/JLK6kIxFtIxduTgOtaw1D3O7iJ/
-         if52FnZafybRTPt2sxugSa7oEy1/NdS8/HWztfG0Rx9jETWoqvzprD2jsf7CBoNbgipJ
-         pkwGi/I7s6IXdVLVT2VU744HUfa8KQVyUcbmZYbDeocHPw6KkLMHdofgNDuiKkgifYxS
-         SwWDwFa1+ChBxIlyE8YQEeAU3XFdvL3EUGIJhMappjlfeLgtC5enHWQJQ+Qvin/+ebSY
-         mNjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=SYR6fS30aatFFhnOk6MmgadwC6xWSDexCl9TuLKHYXs=;
-        b=o4Pqq/ARgGSII7vngfz2bAn6NcwbvBgTrICdeJjS8rg0DIJ2pggWangJ/1RrkM3G3W
-         eY/ZCZEo3nfYBVFmHBFJbZ+S7u5RzewRWXPuDcWmH+mmC2sCk77gJSNtrhSFUf2lPEfb
-         TmJZga7b8Opk7BDBKhozIuV9sndKemuxkbb9dBXYGFUtoPx9Ejj4lTkkbgb+NrqWlc8A
-         0rerLV5aFrzpY9WoKNwbYFXGQVquy0BVhUkpHQcZpKftLwkJjhXPizHA5LkmFZbYbzn2
-         ECQfMl/UFkju1s/ViTcpWb8CeWCRUZDvLTn24kXZRWAGiHCYa1JrVajoU11m5lK9G5px
-         AsjQ==
-X-Gm-Message-State: AGRZ1gKJNNZ/kW8dEHmx4MHHer2JCmGOScehkN2bi7LuJ97naTodeCPp
-        dlW0wG8Yfmz8nUR7F6zqY/vqig==
-X-Google-Smtp-Source: AJdET5eiGyEFp7BCNGC3LaGI5IYYm3/k38mtLjDuZeCtknmHlY4o0tbgTjTNL2d2UK+3oJJOqRAoJw==
-X-Received: by 2002:a65:624c:: with SMTP id q12mr2895654pgv.379.1542002128062;
-        Sun, 11 Nov 2018 21:55:28 -0800 (PST)
-Received: from anup-ubuntu64.qualcomm.com ([106.51.30.16])
-        by smtp.googlemail.com with ESMTPSA id 124-v6sm34463799pfb.132.2018.11.11.21.55.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 11 Nov 2018 21:55:27 -0800 (PST)
-From:   Anup Patel <anup@brainfault.org>
-To:     Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>
-Cc:     Atish Patra <atish.patra@wdc.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Anup Patel <anup@brainfault.org>
-Subject: [PATCH] RISC-V: Build flat and compressed kernel images
-Date:   Mon, 12 Nov 2018 11:25:15 +0530
-Message-Id: <20181112055515.20341-1-anup@brainfault.org>
-X-Mailer: git-send-email 2.17.1
+        Mon, 12 Nov 2018 10:49:34 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 894E260A33; Mon, 12 Nov 2018 05:57:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1542002271;
+        bh=m7SrXHq7Rg/lm5piacVD9MCbGRWBAHGfhjMa++YxWAY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=WrFlN5iSikXOhvW9dp8fLF6ialktyDPskdlOKePCVbmuzPj5h5JF3VRNeZ9T7mSQD
+         f25j8monqxsbwtQK/QBaOBkdW/jxUN8IwBaTHYJTnr8CR3AXLOxFW91djLej7pqlD4
+         2IkFs9GoHkeY17W8GTNoyK30717hlrOp3rS2BMMA=
+Received: from vbadigan-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vbadigan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E50A3601D3;
+        Mon, 12 Nov 2018 05:57:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1542002270;
+        bh=m7SrXHq7Rg/lm5piacVD9MCbGRWBAHGfhjMa++YxWAY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=j6JBcVuDsi5+CycjtwcI08v97Cg1V5BcDKkugfe43fDasI+tefJjr1kjHM3FKB96x
+         fbxRE0Y4vJVbx+pBdEfMi6naaUUXXLT9jn4/0t8c3S8ap9QIRttGhuHh5ZL/MpOV+6
+         PHhJPAVvEopfy+cz+cqWHhZPYz6KvD8I/4eAbz8E=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E50A3601D3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vbadigan@codeaurora.org
+From:   Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
+To:     adrian.hunter@intel.com, ulf.hansson@linaro.org,
+        robh+dt@kernel.org, evgreen@chromium.org, dianders@google.com
+Cc:     asutoshd@codeaurora.org, riteshh@codeaurora.org,
+        stummala@codeaurora.org, sayalil@codeaurora.org,
+        Veerabhadrarao Badiganti <vbadigan@codeaurora.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-mmc@vger.kernel.org (open list:MULTIMEDIA CARD (MMC), SECURE
+        DIGITAL (SD) AND...),
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH V4 1/2] dt-bindings: mmc: sdhci-msm: Add SoC-specific compatible strings
+Date:   Mon, 12 Nov 2018 11:26:48 +0530
+Message-Id: <1542002209-1510-2-git-send-email-vbadigan@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1542002209-1510-1-git-send-email-vbadigan@codeaurora.org>
+References: <1542002209-1510-1-git-send-email-vbadigan@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch extends Linux RISC-V build system to build and install:
-Image - Flat uncompressed kernel image
-Image.gz - Flat and GZip compressed kernel image
+Add SoC-specific compatible strings for qcom-sdhci controller.
 
-Quiet a few bootloaders (such as Uboot, UEFI, etc) are capable of
-booting flat and compressed kernel images. In case of Uboot, booting
-Image or Image.gz is achieved using bootm command.
-
-The flat and uncompressed kernel image (i.e. Image) is very useful
-in pre-silicon developent and testing because we can create back-door
-HEX files for RAM on FPGAs from Image.
-
-Signed-off-by: Anup Patel <anup@brainfault.org>
+Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
 ---
- arch/riscv/Makefile             | 15 ++++++++-
- arch/riscv/boot/.gitignore      |  2 ++
- arch/riscv/boot/Makefile        | 33 ++++++++++++++++++
- arch/riscv/boot/install.sh      | 60 +++++++++++++++++++++++++++++++++
- arch/riscv/kernel/head.S        | 10 ++++++
- arch/riscv/kernel/vmlinux.lds.S |  2 +-
- 6 files changed, 120 insertions(+), 2 deletions(-)
- create mode 100644 arch/riscv/boot/.gitignore
- create mode 100644 arch/riscv/boot/Makefile
- create mode 100644 arch/riscv/boot/install.sh
+ Documentation/devicetree/bindings/mmc/sdhci-msm.txt | 21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
 
-diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
-index d10146197533..d117a60362eb 100644
---- a/arch/riscv/Makefile
-+++ b/arch/riscv/Makefile
-@@ -71,10 +71,23 @@ KBUILD_CFLAGS += $(call cc-option,-mstrict-align)
- # arch specific predefines for sparse
- CHECKFLAGS += -D__riscv -D__riscv_xlen=$(BITS)
+diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
+index 502b3b8..b72871a 100644
+--- a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
++++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
+@@ -4,12 +4,25 @@ This file documents differences between the core properties in mmc.txt
+ and the properties used by the sdhci-msm driver.
  
-+# Default target when executing plain make
-+boot		:= arch/riscv/boot
-+KBUILD_IMAGE	:= $(boot)/Image.gz
+ Required properties:
+-- compatible: Should contain:
++- compatible: Should contain a SoC-specific string and a IP version string:
++	version strings:
+ 		"qcom,sdhci-msm-v4" for sdcc versions less than 5.0
+-		"qcom,sdhci-msm-v5" for sdcc versions >= 5.0
++		"qcom,sdhci-msm-v5" for sdcc version 5.0
+ 		For SDCC version 5.0.0, MCI registers are removed from SDCC
+ 		interface and some registers are moved to HC. New compatible
+ 		string is added to support this change - "qcom,sdhci-msm-v5".
++	full compatible strings with SoC and version:
++		"qcom,apq8084-sdhci", "qcom,sdhci-msm-v4"
++		"qcom,msm8974-sdhci", "qcom,sdhci-msm-v4"
++		"qcom,msm8916-sdhci", "qcom,sdhci-msm-v4"
++		"qcom,msm8992-sdhci", "qcom,sdhci-msm-v4"
++		"qcom,msm8996-sdhci", "qcom,sdhci-msm-v4"
++		"qcom,sdm845-sdhci", "qcom,sdhci-msm-v5"
++		"qcom,qcs404-sdhci", "qcom,sdhci-msm-v5"
++	NOTE that some old device tree files may be floating around that only
++	have the string "qcom,sdhci-msm-v4" without the SoC compatible string
++	but doing that should be considered a deprecated practice.
 +
- head-y := arch/riscv/kernel/head.o
+ - reg: Base address and length of the register in the following order:
+ 	- Host controller register map (required)
+ 	- SD Core register map (required)
+@@ -29,7 +42,7 @@ Required properties:
+ Example:
  
- core-y += arch/riscv/kernel/ arch/riscv/mm/
+ 	sdhc_1: sdhci@f9824900 {
+-		compatible = "qcom,sdhci-msm-v4";
++		compatible = "qcom,msm8974-sdhci", "qcom,sdhci-msm-v4";
+ 		reg = <0xf9824900 0x11c>, <0xf9824000 0x800>;
+ 		interrupts = <0 123 0>;
+ 		bus-width = <8>;
+@@ -46,7 +59,7 @@ Example:
+ 	};
  
- libs-y += arch/riscv/lib/
- 
--all: vmlinux
-+all: Image.gz
-+
-+Image: vmlinux
-+	$(Q)$(MAKE) $(build)=$(boot) $(boot)/$@
-+
-+Image.%: Image
-+	$(Q)$(MAKE) $(build)=$(boot) $(boot)/$@
-+
-+zinstall install:
-+	$(Q)$(MAKE) $(build)=$(boot) $@
-diff --git a/arch/riscv/boot/.gitignore b/arch/riscv/boot/.gitignore
-new file mode 100644
-index 000000000000..8dab0bb6ae66
---- /dev/null
-+++ b/arch/riscv/boot/.gitignore
-@@ -0,0 +1,2 @@
-+Image
-+Image.gz
-diff --git a/arch/riscv/boot/Makefile b/arch/riscv/boot/Makefile
-new file mode 100644
-index 000000000000..0990a9fdbe5d
---- /dev/null
-+++ b/arch/riscv/boot/Makefile
-@@ -0,0 +1,33 @@
-+#
-+# arch/riscv/boot/Makefile
-+#
-+# This file is included by the global makefile so that you can add your own
-+# architecture-specific flags and dependencies.
-+#
-+# This file is subject to the terms and conditions of the GNU General Public
-+# License.  See the file "COPYING" in the main directory of this archive
-+# for more details.
-+#
-+# Copyright (C) 2018, Anup Patel.
-+# Author: Anup Patel <anup@brainfault.org>
-+#
-+# Based on the ia64 and arm64 boot/Makefile.
-+#
-+
-+OBJCOPYFLAGS_Image :=-O binary -R .note -R .note.gnu.build-id -R .comment -S
-+
-+targets := Image
-+
-+$(obj)/Image: vmlinux FORCE
-+	$(call if_changed,objcopy)
-+
-+$(obj)/Image.gz: $(obj)/Image FORCE
-+	$(call if_changed,gzip)
-+
-+install:
-+	$(CONFIG_SHELL) $(srctree)/$(src)/install.sh $(KERNELRELEASE) \
-+	$(obj)/Image System.map "$(INSTALL_PATH)"
-+
-+zinstall:
-+	$(CONFIG_SHELL) $(srctree)/$(src)/install.sh $(KERNELRELEASE) \
-+	$(obj)/Image.gz System.map "$(INSTALL_PATH)"
-diff --git a/arch/riscv/boot/install.sh b/arch/riscv/boot/install.sh
-new file mode 100644
-index 000000000000..18c39159c0ff
---- /dev/null
-+++ b/arch/riscv/boot/install.sh
-@@ -0,0 +1,60 @@
-+#!/bin/sh
-+#
-+# arch/riscv/boot/install.sh
-+#
-+# This file is subject to the terms and conditions of the GNU General Public
-+# License.  See the file "COPYING" in the main directory of this archive
-+# for more details.
-+#
-+# Copyright (C) 1995 by Linus Torvalds
-+#
-+# Adapted from code in arch/i386/boot/Makefile by H. Peter Anvin
-+# Adapted from code in arch/i386/boot/install.sh by Russell King
-+#
-+# "make install" script for the RISC-V Linux port
-+#
-+# Arguments:
-+#   $1 - kernel version
-+#   $2 - kernel image file
-+#   $3 - kernel map file
-+#   $4 - default install path (blank if root directory)
-+#
-+
-+verify () {
-+	if [ ! -f "$1" ]; then
-+		echo ""                                                   1>&2
-+		echo " *** Missing file: $1"                              1>&2
-+		echo ' *** You need to run "make" before "make install".' 1>&2
-+		echo ""                                                   1>&2
-+		exit 1
-+	fi
-+}
-+
-+# Make sure the files actually exist
-+verify "$2"
-+verify "$3"
-+
-+# User may have a custom install script
-+if [ -x ~/bin/${INSTALLKERNEL} ]; then exec ~/bin/${INSTALLKERNEL} "$@"; fi
-+if [ -x /sbin/${INSTALLKERNEL} ]; then exec /sbin/${INSTALLKERNEL} "$@"; fi
-+
-+if [ "$(basename $2)" = "Image.gz" ]; then
-+# Compressed install
-+  echo "Installing compressed kernel"
-+  base=vmlinuz
-+else
-+# Normal install
-+  echo "Installing normal kernel"
-+  base=vmlinux
-+fi
-+
-+if [ -f $4/$base-$1 ]; then
-+  mv $4/$base-$1 $4/$base-$1.old
-+fi
-+cat $2 > $4/$base-$1
-+
-+# Install system map file
-+if [ -f $4/System.map-$1 ]; then
-+  mv $4/System.map-$1 $4/System.map-$1.old
-+fi
-+cp $3 $4/System.map-$1
-diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
-index 711190d473d4..fe884cd69abd 100644
---- a/arch/riscv/kernel/head.S
-+++ b/arch/riscv/kernel/head.S
-@@ -44,6 +44,16 @@ ENTRY(_start)
- 	amoadd.w a3, a2, (a3)
- 	bnez a3, .Lsecondary_start
- 
-+	/* Clear BSS for flat non-ELF images */
-+	la a3, __bss_start
-+	la a4, __bss_stop
-+	ble a4, a3, clear_bss_done
-+clear_bss:
-+	REG_S zero, (a3)
-+	add a3, a3, RISCV_SZPTR
-+	blt a3, a4, clear_bss
-+clear_bss_done:
-+
- 	/* Save hart ID and DTB physical address */
- 	mv s0, a0
- 	mv s1, a1
-diff --git a/arch/riscv/kernel/vmlinux.lds.S b/arch/riscv/kernel/vmlinux.lds.S
-index ece84991609c..65df1dfdc303 100644
---- a/arch/riscv/kernel/vmlinux.lds.S
-+++ b/arch/riscv/kernel/vmlinux.lds.S
-@@ -74,7 +74,7 @@ SECTIONS
- 		*(.sbss*)
- 	}
- 
--	BSS_SECTION(0, 0, 0)
-+	BSS_SECTION(PAGE_SIZE, PAGE_SIZE, 0)
- 
- 	EXCEPTION_TABLE(0x10)
- 	NOTES
+ 	sdhc_2: sdhci@f98a4900 {
+-		compatible = "qcom,sdhci-msm-v4";
++		compatible = "qcom,msm8974-sdhci", "qcom,sdhci-msm-v4";
+ 		reg = <0xf98a4900 0x11c>, <0xf98a4000 0x800>;
+ 		interrupts = <0 125 0>;
+ 		bus-width = <4>;
 -- 
-2.17.1
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
 
