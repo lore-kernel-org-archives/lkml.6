@@ -2,139 +2,154 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59CCEC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 09:17:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E599C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 09:20:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B4BF223C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 09:17:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EyVtJ/lW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B4BF223C8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 28D5D223C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 09:20:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28D5D223C8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729108AbeKLTJq (ORCPT
+        id S1728704AbeKLTNI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 14:09:46 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:40016 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726161AbeKLTJq (ORCPT
+        Mon, 12 Nov 2018 14:13:08 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:52236 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726161AbeKLTNH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 14:09:46 -0500
-Received: by mail-lf1-f65.google.com with SMTP id v5so5619124lfe.7;
-        Mon, 12 Nov 2018 01:17:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=FUxzGvRCkWdcKejoL+2aA4B96whZZp8toJDHjAK1AF0=;
-        b=EyVtJ/lWHTNZwFd66RGsq9SmKWzudvOG7Wmt3AtEjTCAdAf2K+VtkJOKoUU47u8OV6
-         1V5dZ/uYnmRhp9LZYXjj6GUhxuBrhaATX7LqfaG3s7mtQY5obcboiEs/V9rF2Y5UiVBu
-         Th0wk0gcC16TPiXhjwZz/ordcQUQxv+vu4n4N3pAHYNPb/D1MMfkGC5HdjbUWXvXj3AC
-         2q1k43cBRcRQkeuLd3yZ2QCXA19vbZbtAejMmqWME73lG9zUo2YfquC/Uh5r1j7NQwLo
-         DEaHGpEIzRlINDp8LVn9m3MiKrnIWL5uq2WPue8fo21MquQ5g7SHn12nX70+TzZfTVQJ
-         +jyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FUxzGvRCkWdcKejoL+2aA4B96whZZp8toJDHjAK1AF0=;
-        b=LlOzFQCiqjFrWqtqJBA7seCLCCMCOUOrbJDpRx+FF9zsrXgdbqk4OTZYtvMAeDT8Ky
-         /rxDRGSQOjnEIukmKwnb3snApQ2GOoYYVCduseM2FqVS1q1UrLMAEdl6xHyWg9dX/0mo
-         DSv3MMimxgfmlR/S7deUKbFZW6OxA4a1N6GS8Y55Zp2JSnJLN8vktU33nc347mKweMyP
-         PkZVqi5eB7ZsFbcmAnskOzQCqnNHOi3x6Ql1zMulTFXkczFREYbHFGiKnEaQjI63Ky6U
-         jxo96ldBdwJ9rNoARHBSGL0NhN/9IdEklUz3OL1vY5HmwfYe94Wd6WCbgva044ukAKFs
-         gvIA==
-X-Gm-Message-State: AGRZ1gJYOx0E8VZZDrnQyBeDxQFrW7qqx8B8vgwN1SUSLHDO3bS0ev6q
-        0/kQAzO4oekN9rS6Qw5FBD0=
-X-Google-Smtp-Source: AJdET5fYcEqtVlaUGOL4eiyD/ghgJk0kQWhBz0wb568D3kqHyDEmxmCpyjDDBwfzmXOeZ+Qa5SWgHA==
-X-Received: by 2002:a19:c4cc:: with SMTP id u195mr95486lff.141.1542014245643;
-        Mon, 12 Nov 2018 01:17:25 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id m21sm2649185lfl.97.2018.11.12.01.17.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 12 Nov 2018 01:17:24 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gM8LQ-0005BB-6Z; Mon, 12 Nov 2018 10:17:20 +0100
-Date:   Mon, 12 Nov 2018 10:17:20 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Dashi Cao <dscao999@gmail.com>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org,
-        Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: Re: [PATCH] Add support of TI ICDI to USB simple serial device
-Message-ID: <20181112091720.GC13311@localhost>
-References: <20181026113807.20735-1-dscao999@gmail.com>
+        Mon, 12 Nov 2018 14:13:07 -0500
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by kvm5.telegraphics.com.au (Postfix) with ESMTP id 23541297DB;
+        Mon, 12 Nov 2018 04:20:43 -0500 (EST)
+Date:   Mon, 12 Nov 2018 20:21:02 +1100 (AEDT)
+From:   Finn Thain <fthain@telegraphics.com.au>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+cc:     Arnd Bergmann <arnd@arndb.de>,
+        Stephen N Chivers <schivers@csc.com.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 07/13] m68k: amiga: Convert to clocksource API
+In-Reply-To: <CAMuHMdU15gaEcwG4JCFxDwsA-dm0uHzZe_EmtoSLgOV2XAgWbQ@mail.gmail.com>
+Message-ID: <alpine.LNX.2.21.1811122007531.351@nippy.intranet>
+References: <cover.1541995959.git.fthain@telegraphics.com.au> <cbfa6a4e8a1a36e22969e63b703015007abe8593.1541995959.git.fthain@telegraphics.com.au> <CAMuHMdU15gaEcwG4JCFxDwsA-dm0uHzZe_EmtoSLgOV2XAgWbQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181026113807.20735-1-dscao999@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 26, 2018 at 07:38:07PM +0800, Dashi Cao wrote:
-> TI In-Circuit Debug Interface (ICDI) is a debugging interface for TI ARM microcontrollers. It has four USB interfaces and the first two of them are presented as standard ACM serial device. The 3rd interface is the debugging interface and it can be driven as a Linux USB simple serial device. With it, debugging sessions and firmware up/down loading are supported on Linux.
+On Mon, 12 Nov 2018, Geert Uytterhoeven wrote:
 
-Please break your lines at 72 column or so.
-
-And use the common subject prefix (e.g. "USB: serial: add support
-of TI ICD...").
-
-> Signed-off-by: Dashi Cao <dscao999@gmail.com>
-
-You never replied to Felipe's question whether you had verified that this
-doesn't break OpenOCD?
-
-> ---
->  drivers/usb/serial/usb-serial-simple.c | 7 +++++++
->  1 file changed, 7 insertions(+)
+> Hi Finn,
 > 
-> diff --git a/drivers/usb/serial/usb-serial-simple.c b/drivers/usb/serial/usb-serial-simple.c
-> index 4d0273508043..ae43088b659e 100644
-> --- a/drivers/usb/serial/usb-serial-simple.c
-> +++ b/drivers/usb/serial/usb-serial-simple.c
-> @@ -109,6 +109,11 @@ DEVICE(suunto, SUUNTO_IDS);
->  	{ USB_DEVICE(0x908, 0x0004) }
->  DEVICE(siemens_mpi, SIEMENS_IDS);
->  
-> +/* TI In-Circuit Debug Interface */
-> +#define ICDI_IDS()              \
-> +	{ USB_DEVICE_INTERFACE_CLASS(0x1cbe, 0x00fd, USB_CLASS_VENDOR_SPEC) }
-> +DEVICE(ti_icdi, ICDI_IDS);
+> On Mon, Nov 12, 2018 at 5:46 AM Finn Thain <fthain@telegraphics.com.au> wrote:
+> > Add a platform clocksource by adapting the existing arch_gettimeoffset
+> > implementation.
+> >
+> > Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+> 
+> Thanks for your patch!
+> 
 
-Please use a TI_ prefix for ICDI_IDS as well.
+Thanks for your review.
 
-Can you post the lsusb -v output (or usb-devices) for the device for
-reference?
+> > --- a/arch/m68k/amiga/config.c
+> > +++ b/arch/m68k/amiga/config.c
+> > @@ -17,6 +17,7 @@
+> >  #include <linux/mm.h>
+> >  #include <linux/seq_file.h>
+> >  #include <linux/tty.h>
+> > +#include <linux/clocksource.h>
+> >  #include <linux/console.h>
+> >  #include <linux/rtc.h>
+> >  #include <linux/init.h>
+> > @@ -461,7 +462,30 @@ void __init config_amiga(void)
+> >                 *(unsigned char *)ZTWO_VADDR(0xde0002) |= 0x80;
+> >  }
+> >
+> > +static u64 amiga_read_clk(struct clocksource *cs);
+> > +
+> > +static struct clocksource amiga_clk = {
+> > +       .name   = "ciab",
+> > +       .rating = 250,
+> > +       .read   = amiga_read_clk,
+> > +       .mask   = CLOCKSOURCE_MASK(32),
+> > +       .flags  = CLOCK_SOURCE_IS_CONTINUOUS,
+> > +};
+> > +
+> >  static unsigned short jiffy_ticks;
+> > +static u32 clk_total;
+> 
+> Shouldn't clk_total be u64?
+> 
 
-> +
->  /* All of the above structures mushed into two lists */
->  static struct usb_serial_driver * const serial_drivers[] = {
->  	&carelink_device,
-> @@ -124,6 +129,7 @@ static struct usb_serial_driver * const serial_drivers[] = {
->  	&hp4x_device,
->  	&suunto_device,
->  	&siemens_mpi_device,
-> +	&ti_icdi_device,
->  	NULL
->  };
->  
-> @@ -141,6 +147,7 @@ static const struct usb_device_id id_table[] = {
->  	HP4X_IDS(),
->  	SUUNTO_IDS(),
->  	SIEMENS_IDS(),
-> +	ICDI_IDS(),
->  	{ },
->  };
->  MODULE_DEVICE_TABLE(usb, id_table);
+Well, it was intentionally u32, and amiga_clk.mask was intentionally 
+CLOCKSOURCE_MASK(32)...
 
-Thanks,
-Johan
+> > +
+> > +static irqreturn_t ciab_timer_handler(int irq, void *data)
+> > +{
+> > +       irq_handler_t timer_routine = data;
+> > +       unsigned long flags;
+> > +
+> > +       local_irq_save(flags);
+> > +       clk_total += jiffy_ticks;
+> > +       local_irq_restore(flags);
+> > +
+> > +       return timer_routine(irq, data);
+> > +}
+> 
+> [...]
+> 
+> > -static u32 amiga_gettimeoffset(void)
+> > +static u64 amiga_read_clk(struct clocksource *cs)
+> >  {
+> >         unsigned long flags;
+> >         unsigned short hi, lo, hi2;
+> > @@ -512,14 +537,13 @@ static u32 amiga_gettimeoffset(void)
+> >         if (ticks > jiffy_ticks / 2)
+> >                 /* check for pending interrupt */
+> >                 if (cia_set_irq(&ciab_base, 0) & CIA_ICR_TA)
+> > -                       offset = 10000;
+> > +                       offset = jiffy_ticks;
+> >
+> >         local_irq_restore(flags);
+> >
+> >         ticks = jiffy_ticks - ticks;
+> > -       ticks = (10000 * ticks) / jiffy_ticks;
+> >
+> > -       return (ticks + offset) * 1000;
+> > +       return clk_total + ticks + offset;
+> 
+> ... to return a full 64-bit value here?
+> 
+
+It's certainly possible. Is it better? It sounds like a question about the 
+cost of wrap-around in the clocksource core vs. the cost of 64-bit 
+additions in the arch code.
+
+Looking at __clocksource_update_freq_scale() there are some consequences 
+to choosing a 32-bit mask --
+
+                 * For clocksources which have a mask > 32-bit
+                 * we need to limit the max sleep time to have a good
+                 * conversion precision.
+
+I don't know the answer, sorry.
+
+-- 
+
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> 
