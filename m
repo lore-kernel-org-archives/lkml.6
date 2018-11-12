@@ -2,162 +2,174 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53872C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 22:52:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34B09C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 22:56:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17033223DD
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 22:52:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17033223DD
+	by mail.kernel.org (Postfix) with ESMTP id DBCFA223DD
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 22:56:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBCFA223DD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730211AbeKMIrZ (ORCPT
+        id S1727330AbeKMIv0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 03:47:25 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:49716 "EHLO mx1.redhat.com"
+        Tue, 13 Nov 2018 03:51:26 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38792 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725973AbeKMIrY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 03:47:24 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        id S1725973AbeKMIv0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 03:51:26 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8D3EF4E90D;
-        Mon, 12 Nov 2018 22:52:09 +0000 (UTC)
-Received: from treble (ovpn-121-1.rdu2.redhat.com [10.10.121.1])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id F258119743;
-        Mon, 12 Nov 2018 22:52:06 +0000 (UTC)
-Date:   Mon, 12 Nov 2018 16:52:04 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
+        by mx1.redhat.com (Postfix) with ESMTPS id 9A17981F0C;
+        Mon, 12 Nov 2018 22:56:09 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-117-67.phx2.redhat.com [10.3.117.67])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0A6565D968;
+        Mon, 12 Nov 2018 22:56:07 +0000 (UTC)
+Subject: Re: [RFC PATCH 00/12] locking/lockdep: Add a new class of terminal
+ locks
+To:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@aculab.com>,
-        Borislav Petkov <bp@alien8.de>, Juergen Gross <jgross@suse.com>
-Subject: Re: [PATCH RFC 0/3] Static calls
-Message-ID: <20181112225204.45q6qw3ezcb3s3r5@treble>
-References: <cover.1541711457.git.jpoimboe@redhat.com>
- <20181109072811.GB86700@gmail.com>
- <20181109144501.aqhcv3vdjuqlp7pz@treble>
- <20181112050241.GB28219@gmail.com>
- <20181112053055.hdcv5x7md47ehunv@treble>
- <CAKv+Gu8etgVmqPq+fNRBkb55ePrtY=5kxFu5+O4Wsqk=CWzG8w@mail.gmail.com>
+        linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
+        linux-mm@kvack.org, Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Tejun Heo <tj@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <1541709268-3766-1-git-send-email-longman@redhat.com>
+ <20181109080412.GC86700@gmail.com>
+ <20181110141045.GD3339@worktop.programming.kicks-ass.net>
+ <dfa0a2fa-0094-3ae0-4f27-2930233132a3@redhat.com>
+ <20181112051033.GA123204@gmail.com> <20181112055324.f7div2ahx5emkbbe@treble>
+ <20181112063050.GB61749@gmail.com> <20181112222250.h37hkrj6warqewkd@treble>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <74a54ce2-e71c-d64a-af46-83eb840b96b8@redhat.com>
+Date:   Mon, 12 Nov 2018 14:56:09 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <20181112222250.h37hkrj6warqewkd@treble>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAKv+Gu8etgVmqPq+fNRBkb55ePrtY=5kxFu5+O4Wsqk=CWzG8w@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Mon, 12 Nov 2018 22:52:09 +0000 (UTC)
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 12 Nov 2018 22:56:10 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 10:39:52AM +0100, Ard Biesheuvel wrote:
-> On Mon, 12 Nov 2018 at 06:31, Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-> >
-> > On Mon, Nov 12, 2018 at 06:02:41AM +0100, Ingo Molnar wrote:
-> > >
-> > > * Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-> > >
-> > > > On Fri, Nov 09, 2018 at 08:28:11AM +0100, Ingo Molnar wrote:
-> > > > > > - I'm not sure about the objtool approach.  Objtool is (currently)
-> > > > > >   x86-64 only, which means we have to use the "unoptimized" version
-> > > > > >   everywhere else.  I may experiment with a GCC plugin instead.
-> > > > >
-> > > > > I'd prefer the objtool approach. It's a pretty reliable first-principles
-> > > > > approach while GCC plugin would have to be replicated for Clang and any
-> > > > > other compilers, etc.
-> > > >
-> > > > The benefit of a plugin is that we'd only need two of them: GCC and
-> > > > Clang.  And presumably, they'd share a lot of code.
-> > > >
-> 
-> Having looked into this, I don't think they will share any code at
-> all, to be honest. Perhaps some macros and string templates, that's
-> all.
+On 11/12/2018 02:22 PM, Josh Poimboeuf wrote:
+> On Mon, Nov 12, 2018 at 07:30:50AM +0100, Ingo Molnar wrote:
+>> * Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+>>
+>>> On Mon, Nov 12, 2018 at 06:10:33AM +0100, Ingo Molnar wrote:
+>>>> * Waiman Long <longman@redhat.com> wrote:
+>>>>
+>>>>> On 11/10/2018 09:10 AM, Peter Zijlstra wrote:
+>>>>>> On Fri, Nov 09, 2018 at 09:04:12AM +0100, Ingo Molnar wrote:
+>>>>>>> BTW., if you are interested in more radical approaches to optimize 
+>>>>>>> lockdep, we could also add a static checker via objtool driven call graph 
+>>>>>>> analysis, and mark those locks terminal that we can prove are terminal.
+>>>>>>>
+>>>>>>> This would require the unified call graph of the kernel image and of all 
+>>>>>>> modules to be examined in a final pass, but that's within the principal 
+>>>>>>> scope of objtool. (This 'final pass' could also be done during bootup, at 
+>>>>>>> least in initial versions.)
+>>>>>> Something like this is needed for objtool LTO support as well. I just
+>>>>>> dread the build time 'regressions' this will introduce :/
+>>>>>>
+>>>>>> The final link pass is already by far the most expensive part (as
+>>>>>> measured in wall-time) of building a kernel, adding more work there
+>>>>>> would really suck :/
+>>>>> I think the idea is to make objtool have the capability to do that. It
+>>>>> doesn't mean we need to turn it on by default in every build.
+>>>> Yeah.
+>>>>
+>>>> Also note that much of the objtool legwork would be on a per file basis 
+>>>> which is reasonably parallelized already. On x86 it's also already done 
+>>>> for every ORC build i.e. every distro build and the incremental overhead 
+>>>> from also extracting locking dependencies should be reasonably small.
+>>>>
+>>>> The final search of the global graph would be serialized but still 
+>>>> reasonably fast as these are all 'class' level dependencies which are 
+>>>> much less numerous than runtime dependencies.
+>>>>
+>>>> I.e. I think we are talking about tens of thousands of dependencies, not 
+>>>> tens of millions.
+>>>>
+>>>> At least in theory. ;-)
+>>> Generating a unified call graph sounds very expensive (and very far
+>>> beyond what objtool can do today).
+>> Well, objtool already goes through the instruction stream and recognizes 
+>> function calls - so it can in effect generate a stream of "function x 
+>> called by function y" data, correct?
+> Yeah, though it would be quite simple to get the same data with a simple
+> awk script at link time.
+>
+>>>  Also, what about function pointers?
+>> So maybe it's possible to enumerate all potential values for function 
+>> pointers with a reasonably simple compiler plugin and work from there?
+> I think this would be somewhere between very difficult and impossible to
+> do properly.  I can't even imagine how this would be implemented in a
+> compiler plugin.  But I'd love to be proven wrong on that.
 
-Oh well.  That should still be easier to maintain than objtool across
-all arches at this point.
+I would say we have to assume for the worst when a function pointer is
+being called while holding a lock unless we are able to find out all its
+possible targets.
 
-> > > > The prospect of porting objtool to all architectures is going to be much
-> > > > more of a daunting task (though we are at least already considering it
-> > > > for some arches).
-> > >
-> > > Which architectures would benefit from ORC support the most?
-> >
-> > According to my (limited and potentially flawed) knowledge, I think
-> > arm64 would benefit the most performance-wise, whereas powerpc and s390
-> > gains would be quite a bit less.
-> >
-> 
-> What would arm64 gain from ORC and/or objtool?
-
-Other than live patching, the biggest benefit would be an
-across-the-board performance improvement from disabling frame pointers.
-It would be interesting to see some arm64 performance numbers there, for
-a kernel compiled with -fomit-frame-pointer.
-
-For more details (and benefits of) ORC see
-Documentation/x86/orc-unwinder.txt.
-
-Objtool has also come in handy for other cases, like ensuring retpolines
-are used everywhere.
-
-Over time, I would like to move some objtool functionality to compiler
-plugins, such that it would be easier to port it to other arches.
-
-> > We may have to port objtool to arm64 anyway, for live patching.
-> 
-> Is this about the reliable stack traces, i.e., the ability to detect
-> non-leaf functions that don't create stack frames? I think we should
-> be able to manage this without objtool on arm64 tbh.
-
-Hm?  How else would you ensure all functions honor CONFIG_FRAME_POINTER,
-and continue to do so indefinitely?
-
-> >  But
-> > that will be a lot more work than it took for Ard to write a GCC plugin.
-> >
-> > > I really think that hard reliance on GCC plugins is foolish
-> >
-> > Funny, I feel the same way about hard reliance on objtool :-)
-> >
-> 
-> I tend to agree here. I think objtool is a necessary evil (as are
-> compiler plugins, for that matter) which I hope does not spread to
-> other architectures.
-
-I agree that it's a necessary evil, but it may be necessary on arm64 for
-live patching.
-
-> But the main difference is that the GCC plugin is only ~50 lines (for
-> this particular use case, and minus another 50 lines of boilerplate),
-> whereas objtool (AIUI) duplicates lots and lots of functionality of
-> the compiler, assembler and/or linker, to mangle relocations, create
-> new sections etc etc. Porting this to other architectures is going to
-> be a major maintenance effort, especially when I think of, e.g.,
-> 32-bit ARM with its Thumb2 quirks and other idiosyncrasies that are
-> currently hidden in the toolchain. Other architectures should be first
-> class citizens if objtool gains support for them, which means that the
-> x86 people that own it currently are on the hook for testing their
-> changes against architectures they are not familiar with.
-
-Sounds like we could use you as a co-maintainer then :-)
-
-BTW, AFAIK, there are no plans to support live patching for 32-bit ARM.
-
--- 
-Josh
+Cheers,
+Longman
