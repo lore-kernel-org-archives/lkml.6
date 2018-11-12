@@ -6,40 +6,38 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA9E2C43441
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E949CC0044B
 	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 11:58:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D180223DD
+	by mail.kernel.org (Postfix) with ESMTP id BA4192243B
 	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 11:58:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D180223DD
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA4192243B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729944AbeKLVu4 (ORCPT
+        id S1729970AbeKLVu5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 16:50:56 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34668 "EHLO
+        Mon, 12 Nov 2018 16:50:57 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34686 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729756AbeKLVuy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 16:50:54 -0500
+        id S1729756AbeKLVu4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 16:50:56 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5287580D;
-        Mon, 12 Nov 2018 03:57:58 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5EB861650;
+        Mon, 12 Nov 2018 03:58:00 -0800 (PST)
 Received: from e112298-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3F7F23F5A0;
-        Mon, 12 Nov 2018 03:57:56 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 91C193F5A0;
+        Mon, 12 Nov 2018 03:57:58 -0800 (PST)
 From:   Julien Thierry <julien.thierry@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
         joel@joelfernandes.org, marc.zyngier@arm.com,
         christoffer.dall@arm.com, james.morse@arm.com,
         catalin.marinas@arm.com, will.deacon@arm.com,
-        Julien Thierry <julien.thierry@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>
-Subject: [PATCH v6 14/24] irqchip/gic-v3: Factor group0 detection into functions
-Date:   Mon, 12 Nov 2018 11:57:05 +0000
-Message-Id: <1542023835-21446-15-git-send-email-julien.thierry@arm.com>
+        Julien Thierry <julien.thierry@arm.com>
+Subject: [PATCH v6 15/24] arm64: Switch to PMR masking when starting CPUs
+Date:   Mon, 12 Nov 2018 11:57:06 +0000
+Message-Id: <1542023835-21446-16-git-send-email-julien.thierry@arm.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1542023835-21446-1-git-send-email-julien.thierry@arm.com>
 References: <1542023835-21446-1-git-send-email-julien.thierry@arm.com>
@@ -48,100 +46,116 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The code to detect whether Linux has access to group0 interrupts can
-prove useful in other parts of the driver.
+Once the boot CPU has been prepared or a new secondary CPU has been
+brought up, use ICC_PMR_EL1 to mask interrupts on that CPU and clear
+PSR.I bit.
 
-Provide a separate function to do this.
+Since ICC_PMR_EL1 is initialized at CPU bringup, avoid overwriting
+it in the GICv3 driver.
 
 Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Jason Cooper <jason@lakedaemon.net>
+Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: James Morse <james.morse@arm.com>
 Cc: Marc Zyngier <marc.zyngier@arm.com>
 ---
- drivers/irqchip/irq-gic-v3.c | 55 +++++++++++++++++++++++++++++---------------
- 1 file changed, 36 insertions(+), 19 deletions(-)
+ arch/arm64/kernel/smp.c      | 27 +++++++++++++++++++++++++++
+ drivers/irqchip/irq-gic-v3.c |  8 +++++++-
+ 2 files changed, 34 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index e5d8c14..dbf5247 100644
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -399,6 +399,39 @@ static asmlinkage void __exception_irq_entry gic_handle_irq(struct pt_regs *regs
- 	}
+diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
+index 8dc9dde..e495360 100644
+--- a/arch/arm64/kernel/smp.c
++++ b/arch/arm64/kernel/smp.c
+@@ -35,6 +35,7 @@
+ #include <linux/smp.h>
+ #include <linux/seq_file.h>
+ #include <linux/irq.h>
++#include <linux/irqchip/arm-gic-v3.h>
+ #include <linux/percpu.h>
+ #include <linux/clockchips.h>
+ #include <linux/completion.h>
+@@ -175,6 +176,25 @@ int __cpu_up(unsigned int cpu, struct task_struct *idle)
+ 	return ret;
  }
  
-+static u32 gic_get_pribits(void)
++static void init_gic_priority_masking(void)
 +{
-+	u32 pribits;
++	u32 gic_sre = gic_read_sre();
++	u32 cpuflags;
 +
-+	pribits = gic_read_ctlr();
-+	pribits &= ICC_CTLR_EL1_PRI_BITS_MASK;
-+	pribits >>= ICC_CTLR_EL1_PRI_BITS_SHIFT;
-+	pribits++;
++	if (WARN_ON(!(gic_sre & ICC_SRE_EL1_SRE)))
++		return;
 +
-+	return pribits;
++	WARN_ON(!irqs_disabled());
++
++	gic_write_pmr(GIC_PRIO_IRQOFF);
++
++	cpuflags = read_sysreg(daif);
++
++	/* We can only unmask PSR.I if we can take aborts */
++	if (!(cpuflags & PSR_A_BIT))
++		write_sysreg(cpuflags & ~PSR_I_BIT, daif);
 +}
 +
-+static bool gic_has_group0(void)
-+{
-+	u32 val;
+ /*
+  * This is the secondary CPU boot entry.  We're using this CPUs
+  * idle thread stack, but a set of temporary page tables.
+@@ -211,6 +231,9 @@ asmlinkage notrace void secondary_start_kernel(void)
+ 	 */
+ 	check_local_cpu_capabilities();
+ 
++	if (system_supports_irq_prio_masking())
++		init_gic_priority_masking();
 +
-+	/*
-+	 * Let's find out if Group0 is under control of EL3 or not by
-+	 * setting the highest possible, non-zero priority in PMR.
-+	 *
-+	 * If SCR_EL3.FIQ is set, the priority gets shifted down in
-+	 * order for the CPU interface to set bit 7, and keep the
-+	 * actual priority in the non-secure range. In the process, it
-+	 * looses the least significant bit and the actual priority
-+	 * becomes 0x80. Reading it back returns 0, indicating that
-+	 * we're don't have access to Group0.
-+	 */
-+	gic_write_pmr(BIT(8 - gic_get_pribits()));
-+	val = gic_read_pmr();
+ 	if (cpu_ops[cpu]->cpu_postboot)
+ 		cpu_ops[cpu]->cpu_postboot();
+ 
+@@ -421,6 +444,10 @@ void __init smp_prepare_boot_cpu(void)
+ 	 * and/or scheduling is enabled.
+ 	 */
+ 	apply_boot_alternatives();
 +
-+	return val != 0;
-+}
-+
- static void __init gic_dist_init(void)
++	/* Conditionally switch to GIC PMR for interrupt masking */
++	if (system_supports_irq_prio_masking())
++		init_gic_priority_masking();
+ }
+ 
+ static u64 __init of_get_cpu_mpidr(struct device_node *dn)
+diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+index dbf5247..7f0b2e8 100644
+--- a/drivers/irqchip/irq-gic-v3.c
++++ b/drivers/irqchip/irq-gic-v3.c
+@@ -414,6 +414,9 @@ static u32 gic_get_pribits(void)
+ static bool gic_has_group0(void)
  {
- 	unsigned int i;
-@@ -540,7 +573,7 @@ static void gic_cpu_sys_reg_init(void)
- 	u64 mpidr = cpu_logical_map(cpu);
- 	u64 need_rss = MPIDR_RS(mpidr);
- 	bool group0;
--	u32 val, pribits;
-+	u32 pribits;
+ 	u32 val;
++	u32 old_pmr;
++
++	old_pmr = gic_read_pmr();
  
  	/*
- 	 * Need to check that the SRE bit has actually been set. If
-@@ -552,25 +585,9 @@ static void gic_cpu_sys_reg_init(void)
- 	if (!gic_enable_sre())
- 		pr_err("GIC: unable to set SRE (disabled at EL2), panic ahead\n");
+ 	 * Let's find out if Group0 is under control of EL3 or not by
+@@ -429,6 +432,8 @@ static bool gic_has_group0(void)
+ 	gic_write_pmr(BIT(8 - gic_get_pribits()));
+ 	val = gic_read_pmr();
  
--	pribits = gic_read_ctlr();
--	pribits &= ICC_CTLR_EL1_PRI_BITS_MASK;
--	pribits >>= ICC_CTLR_EL1_PRI_BITS_SHIFT;
--	pribits++;
-+	pribits = gic_get_pribits();
++	gic_write_pmr(old_pmr);
++
+ 	return val != 0;
+ }
  
--	/*
--	 * Let's find out if Group0 is under control of EL3 or not by
--	 * setting the highest possible, non-zero priority in PMR.
--	 *
--	 * If SCR_EL3.FIQ is set, the priority gets shifted down in
--	 * order for the CPU interface to set bit 7, and keep the
--	 * actual priority in the non-secure range. In the process, it
--	 * looses the least significant bit and the actual priority
--	 * becomes 0x80. Reading it back returns 0, indicating that
--	 * we're don't have access to Group0.
--	 */
--	write_gicreg(BIT(8 - pribits), ICC_PMR_EL1);
--	val = read_gicreg(ICC_PMR_EL1);
--	group0 = val != 0;
-+	group0 = gic_has_group0();
+@@ -590,7 +595,8 @@ static void gic_cpu_sys_reg_init(void)
+ 	group0 = gic_has_group0();
  
  	/* Set priority mask register */
- 	write_gicreg(DEFAULT_PMR_VALUE, ICC_PMR_EL1);
+-	write_gicreg(DEFAULT_PMR_VALUE, ICC_PMR_EL1);
++	if (!gic_prio_masking_enabled())
++		write_gicreg(DEFAULT_PMR_VALUE, ICC_PMR_EL1);
+ 
+ 	/*
+ 	 * Some firmwares hand over to the kernel with the BPR changed from
 -- 
 1.9.1
 
