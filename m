@@ -2,109 +2,103 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF1E8C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 15:44:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 044B0C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 15:45:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76C7422504
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 15:44:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dVlpnkTd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76C7422504
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C879C224E0
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 15:45:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C879C224E0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729653AbeKMBiI (ORCPT
+        id S1729719AbeKMBiq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 20:38:08 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:45785 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729356AbeKMBiH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 20:38:07 -0500
-Received: by mail-pl1-f193.google.com with SMTP id r3-v6so3790551pls.12;
-        Mon, 12 Nov 2018 07:44:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=KWj7ZzFJX6mi6HS0+SSOYC44j85K4Wyg5t+RgwkzpHo=;
-        b=dVlpnkTdZNdtWC8raWla3CoJa46uef+ge2Dc9ozhndluW9IWohM1g0czGUijJro8cp
-         zr4sjRtc2DqOeHoyurcsCQ1UU7q4JZjZA8ZDl0jO2LhZSQJZrtBKtpbThbHOVlYOWkM2
-         PJ3sCZUCP4UV/gLeAEEeY3QlpslGdj72+Ycs6Cs1/A3hoGjuwRUsCRg0NKBWzWrhHNuq
-         XdVKvoh+mYpsyUuWAs1bzs+rx3iDRoRtOKJ7QsAnjKPUqZGVW3UM64AN8eW/XXo5dP3o
-         KLIbXK8LiWxZvIo1pT4rhTDPzN/yC1xDAivAisp3l4cDBHtvfBQvJduwKoY6JacwtYSo
-         pDOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=KWj7ZzFJX6mi6HS0+SSOYC44j85K4Wyg5t+RgwkzpHo=;
-        b=SyWDsGdV0qgeZqhPbjeobDEEMdwH/jBhU2OGmQiC3wiETcYH+ebglEGw/NWxzhiU6o
-         JWsaNGDUeEHAvF1jnI/XqmFlWwCHm7jozJN4daNOEIBK2UGb25L9uYi4zHM8ZARpbR8P
-         92UQYFXYvpXEkSqJgm5ifs+13TqvHj318PxSDvqJbi8xSkYnY1voREoHAVpEUkBNZAPD
-         5IbtGIuZhUT5byA4/nI7hzrMDhtKvIWsH4s7xDov+asUrLoNfXrv4GCdVjjQ35H56Kgu
-         idfxHeNzPZac7RgGXRoUkUjjFHCEjtMbLQQRTTZbB10nEd9eouW4Tz5ER3RGyYvxGFO/
-         UDSg==
-X-Gm-Message-State: AGRZ1gK8LVwKMkh0DYdmbMSVK97iIYsPsN1ITqFBG3imFUr/1I9DkXKh
-        Xdt2SLtfbo0jRyIiEphqIr4=
-X-Google-Smtp-Source: AJdET5dE0Kde/52fdw5Klwh86HEjpx8kY5WWAiMXu4+jWk7VyIX767pvwXDVnjAK/viKG3zMBG5/Ag==
-X-Received: by 2002:a17:902:7281:: with SMTP id d1-v6mr1407093pll.284.1542037460816;
-        Mon, 12 Nov 2018 07:44:20 -0800 (PST)
-Received: from [192.168.86.235] (c-67-180-167-114.hsd1.ca.comcast.net. [67.180.167.114])
-        by smtp.gmail.com with ESMTPSA id z79-v6sm26397488pfl.33.2018.11.12.07.44.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 12 Nov 2018 07:44:19 -0800 (PST)
-Subject: Re: [PATCH 1/2] mm/page_alloc: free order-0 pages through PCP in
- page_frag_free()
-To:     Alexander Duyck <alexander.duyck@gmail.com>,
-        =?UTF-8?Q?Pawe=c5=82_Staszewski?= <pstaszewski@itcare.pl>
-Cc:     aaron.lu@intel.com, linux-mm <linux-mm@kvack.org>,
+        Mon, 12 Nov 2018 20:38:46 -0500
+Received: from mga11.intel.com ([192.55.52.93]:50229 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726981AbeKMBiq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 20:38:46 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Nov 2018 07:44:59 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,495,1534834800"; 
+   d="scan'208";a="88685885"
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by orsmga007.jf.intel.com with ESMTP; 12 Nov 2018 07:44:58 -0800
+Date:   Mon, 12 Nov 2018 08:41:27 -0700
+From:   Keith Busch <keith.busch@intel.com>
+To:     john.hubbard@gmail.com
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        ilias.apalodimas@linaro.org, yoel@kviknet.dk,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>, dave.hansen@linux.intel.com
-References: <20181105085820.6341-1-aaron.lu@intel.com>
- <CAKgT0UdvYVTA8OjgLhXo9tRUOGikrCi3zJXSrqM0ZmeHb5P2mA@mail.gmail.com>
- <b8b1fbb7-9139-9455-69b8-8c1bed4f7c74@itcare.pl>
- <CAKgT0UdhcXF-ohPHPbg8onRjFabEMnbpXGmLm-27skCNzGKOgw@mail.gmail.com>
- <bd33633b-2f6c-0034-a130-38a8468531db@itcare.pl>
- <CAKgT0UeOBF0yPJLOTBBb3m7nTkmSDxzkCur+iGzJ++Y-jWaw9g@mail.gmail.com>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <6edcec1a-eefa-7861-1af4-cdf7fa45184c@gmail.com>
-Date:   Mon, 12 Nov 2018 07:44:18 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH v2 1/6] mm/gup: finish consolidating error handling
+Message-ID: <20181112154127.GA8247@localhost.localdomain>
+References: <20181110085041.10071-1-jhubbard@nvidia.com>
+ <20181110085041.10071-2-jhubbard@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <CAKgT0UeOBF0yPJLOTBBb3m7nTkmSDxzkCur+iGzJ++Y-jWaw9g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181110085041.10071-2-jhubbard@nvidia.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Nov 10, 2018 at 12:50:36AM -0800, john.hubbard@gmail.com wrote:
+> From: John Hubbard <jhubbard@nvidia.com>
+> 
+> An upcoming patch wants to be able to operate on each page that
+> get_user_pages has retrieved. In order to do that, it's best to
+> have a common exit point from the routine. Most of this has been
+> taken care of by commit df06b37ffe5a4 ("mm/gup: cache dev_pagemap while
+> pinning pages"), but there was one case remaining.
+> 
+> Also, there was still an unnecessary shadow declaration (with a
+> different type) of the "ret" variable, which this commit removes.
+> 
+> Cc: Keith Busch <keith.busch@intel.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Cc: Dave Hansen <dave.hansen@intel.com>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> ---
+>  mm/gup.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/mm/gup.c b/mm/gup.c
+> index f76e77a2d34b..55a41dee0340 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -696,12 +696,11 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+>  		if (!vma || start >= vma->vm_end) {
+>  			vma = find_extend_vma(mm, start);
+>  			if (!vma && in_gate_area(mm, start)) {
+> -				int ret;
+>  				ret = get_gate_page(mm, start & PAGE_MASK,
+>  						gup_flags, &vma,
+>  						pages ? &pages[i] : NULL);
+>  				if (ret)
+> -					return i ? : ret;
+> +					goto out;
+>  				ctx.page_mask = 0;
+>  				goto next_page;
+>  			}
 
+This also fixes a potentially leaked dev_pagemap reference count if a
+failure occurs when an iteration crosses a vma boundary. I don't think
+it's normal to have different vma's on a users mapped zone device memory,
+but good to fix anyway.
 
-On 11/12/2018 07:30 AM, Alexander Duyck wrote:
-
-> It sounds to me like XDP would probably be your best bet. With that
-> you could probably get away with smaller ring sizes, higher interrupt
-> rates, and get the advantage of it batching the Tx without having to
-> drop packets.
-
-Add to this that with XDP (or anything lowering per packet processing costs)
-you can reduce number of cpus/queues, get better latencies, and bigger TX batches.
+Reviewed-by: Keith Busch <keith.busch@intel.com>
