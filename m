@@ -2,165 +2,128 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7082FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:38:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A550C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:40:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AAC3224E0
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:38:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AAC3224E0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 22986224E0
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:40:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ftujaPWA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22986224E0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729876AbeKMCc4 (ORCPT
+        id S1729633AbeKMCey (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 21:32:56 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51080 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726221AbeKMCcz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 21:32:55 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wACGYtrl102275
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 11:38:55 -0500
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nqcgkjepk-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 11:38:54 -0500
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 12 Nov 2018 16:38:53 -0000
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 12 Nov 2018 16:38:47 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wACGck2225886750
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 12 Nov 2018 16:38:47 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 29FBFB2065;
-        Mon, 12 Nov 2018 16:38:46 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0607EB2064;
-        Mon, 12 Nov 2018 16:38:45 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.198.12])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 12 Nov 2018 16:38:45 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id CC95F16C3418; Mon, 12 Nov 2018 08:28:54 -0800 (PST)
-Date:   Mon, 12 Nov 2018 08:28:54 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Corey Minyard <minyard@acm.org>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        openipmi-developer@lists.sourceforge.net
-Subject: Re: [PATCH tip/core/rcu 10/41] drivers/ipmi: Replace
- synchronize_sched() with synchronize_rcu()
-Reply-To: paulmck@linux.ibm.com
-References: <20181111194104.GA4787@linux.ibm.com>
- <20181111194410.6368-10-paulmck@linux.ibm.com>
- <16c19493-44b0-18e3-d3cb-4d6c2f9f9f53@acm.org>
- <20181112160425.GJ4170@linux.ibm.com>
- <465ebdbb-188c-c4b8-935b-58205b9f98e5@acm.org>
+        Mon, 12 Nov 2018 21:34:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37660 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726221AbeKMCey (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 21:34:54 -0500
+Received: from jouet.infradead.org (d66-183-243-195.bchsia.telus.net [66.183.243.195])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E6A492241E;
+        Mon, 12 Nov 2018 16:40:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542040853;
+        bh=opE0t8+K0Fkm2x3TwXwZnE6kfbux/t4qSkmgTYLIkLc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ftujaPWAcgik4oPEXiW7RY/a8ujtTglHDyVX0yzQioZ24HqHozV3bdOaJKVK/TdTr
+         7k8nMh/eoYiYO7KaQ9s2fLUOwvNi4qUYOjwefeUdlSIeqUOwKsbeXKJvO6LK2kkFFa
+         oYiLHZ5rvyhMYQHAcz2NbRkEOZoIhw5eHPRaYaJc=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id ACD2F1443D0; Mon, 12 Nov 2018 08:40:53 -0800 (PST)
+Date:   Mon, 12 Nov 2018 08:40:53 -0800
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Jiri Olsa <jolsa@kernel.org>
+Cc:     Adam Lee <leeadamrobert@gmail.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: [PATCH perf/urgent] perf tools: Fix crash on synthesizing the
+ unit
+Message-ID: <20181112164053.GF1111@kernel.org>
+References: <20181112130012.5424-1-jolsa@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <465ebdbb-188c-c4b8-935b-58205b9f98e5@acm.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18111216-0064-0000-0000-00000372B684
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010035; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01116429; UDB=6.00577118; IPR=6.00896537;
- MB=3.00024128; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-12 16:38:52
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111216-0065-0000-0000-00003B4F9BB0
-Message-Id: <20181112162854.GK4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-12_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811120145
+In-Reply-To: <20181112130012.5424-1-jolsa@kernel.org>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 10:15:41AM -0600, Corey Minyard wrote:
-> On 11/12/18 10:04 AM, Paul E. McKenney wrote:
-> >On Mon, Nov 12, 2018 at 09:38:55AM -0600, Corey Minyard wrote:
-> >>On 11/11/18 1:43 PM, Paul E. McKenney wrote:
-> >>>Now that synchronize_rcu() waits for preempt-disable regions of code
-> >>>as well as RCU read-side critical sections, synchronize_sched() can be
-> >>>replaced by synchronize_rcu().  This commit therefore makes this change.
-> >>Assuming the above is true, this looks fine to me.
-> >>
-> >>Acked-by: Corey MInyard <cminyard@mvista.com>
-> 
-> Dang, that's
-> 
-> Acked-by: Corey Minyard <cminyard@mvista.com>
+Em Mon, Nov 12, 2018 at 02:00:12PM +0100, Jiri Olsa escreveu:
+> Adam reported a record command crash for simple session like:
+>   $ perf record -e cpu-clock ls
 
-Just in time, applied, thank you!  ;-)
+Thanks, tested, confirmed it fixes the problem, applied.
 
-> >Thank you!
-> >
-> >>Or I can take it in my tree, either way.
-> >I will carry it unless/until I send it upstream (this coming merge
-> >window) or I see it already upstream.
-> >
-> >So your choice.  ;-)
+- Arnaldo
+ 
+> with following backtrace:
 > 
-> Ok, if you don't mind, you can carry it.
-
-Sounds good!
-
-							Thanx, Paul
-
-> Thanks,
+>   Program received signal SIGSEGV, Segmentation fault.
+>   3543            ev = event_update_event__new(size + 1, PERF_EVENT_UPDATE__UNIT, evsel->id[0]);
+>   (gdb) bt
+>   #0  perf_event__synthesize_event_update_unit
+>   #1  0x000000000051e469 in perf_event__synthesize_extra_attr
+>   #2  0x00000000004445cb in record__synthesize
+>   #3  0x0000000000444bc5 in __cmd_record
+>   ...
 > 
-> -corey
+> We synthesize an update event that needs to touch the evsel id array, which is
+> not defined at that time. Fixing this by forcing the id allocation for events
+> with their unit defined.
 > 
+> Reflecting possible read_format ID bit in the attr tests.
 > 
-> >							Thanx, Paul
-> >
-> >>-corey
-> >>
-> >>
-> >>>Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
-> >>>Cc: Corey Minyard <minyard@acm.org>
-> >>>Cc: Arnd Bergmann <arnd@arndb.de>
-> >>>Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> >>>Cc: <openipmi-developer@lists.sourceforge.net>
-> >>>---
-> >>>  drivers/char/ipmi/ipmi_si_intf.c | 2 +-
-> >>>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>
-> >>>diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
-> >>>index 677618e6f1f7..dc8603d34320 100644
-> >>>--- a/drivers/char/ipmi/ipmi_si_intf.c
-> >>>+++ b/drivers/char/ipmi/ipmi_si_intf.c
-> >>>@@ -2187,7 +2187,7 @@ static void shutdown_smi(void *send_info)
-> >>>  	 * handlers might have been running before we freed the
-> >>>  	 * interrupt.
-> >>>  	 */
-> >>>-	synchronize_sched();
-> >>>+	synchronize_rcu();
-> >>>  	/*
-> >>>  	 * Timeouts are stopped, now make sure the interrupts are off
-> >>
+> Cc: Adam Lee <leeadamrobert@gmail.com>
+> Reported-by: Yongxin Liu <yongxin.liu@outlook.com>
+> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=201477
+> Fixes: bfd8f72c2778 ("perf record: Synthesize unit/scale/... in event update")
+> Link: http://lkml.kernel.org/n/tip-hmt7oavo3w97btxl8sfq8n0i@git.kernel.org
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  tools/perf/tests/attr/base-record | 2 +-
+>  tools/perf/util/evsel.c           | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 > 
-
+> diff --git a/tools/perf/tests/attr/base-record b/tools/perf/tests/attr/base-record
+> index 37940665f736..efd0157b9d22 100644
+> --- a/tools/perf/tests/attr/base-record
+> +++ b/tools/perf/tests/attr/base-record
+> @@ -9,7 +9,7 @@ size=112
+>  config=0
+>  sample_period=*
+>  sample_type=263
+> -read_format=0
+> +read_format=0|4
+>  disabled=1
+>  inherit=1
+>  pinned=0
+> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+> index d37bb1566cd9..dbc0466db368 100644
+> --- a/tools/perf/util/evsel.c
+> +++ b/tools/perf/util/evsel.c
+> @@ -1092,7 +1092,7 @@ void perf_evsel__config(struct perf_evsel *evsel, struct record_opts *opts,
+>  		attr->exclude_user   = 1;
+>  	}
+>  
+> -	if (evsel->own_cpus)
+> +	if (evsel->own_cpus || evsel->unit)
+>  		evsel->attr.read_format |= PERF_FORMAT_ID;
+>  
+>  	/*
+> -- 
+> 2.17.2
