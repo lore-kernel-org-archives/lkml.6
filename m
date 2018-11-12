@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEC43C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 15:06:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FAAEC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 15:09:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 634A62243E
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 15:06:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 634A62243E
+	by mail.kernel.org (Postfix) with ESMTP id 1E7F6223D0
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 15:09:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E7F6223D0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fieldses.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730044AbeKMA7r (ORCPT
+        id S1729821AbeKMBDH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 19:59:47 -0500
-Received: from fieldses.org ([173.255.197.46]:45014 "EHLO fieldses.org"
+        Mon, 12 Nov 2018 20:03:07 -0500
+Received: from fieldses.org ([173.255.197.46]:45032 "EHLO fieldses.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727208AbeKMA7r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 19:59:47 -0500
+        id S1726912AbeKMBDH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 20:03:07 -0500
 Received: by fieldses.org (Postfix, from userid 2815)
-        id 4F5CB571; Mon, 12 Nov 2018 10:06:08 -0500 (EST)
-Date:   Mon, 12 Nov 2018 10:06:08 -0500
+        id EB5C42016; Mon, 12 Nov 2018 10:09:26 -0500 (EST)
+Date:   Mon, 12 Nov 2018 10:09:26 -0500
 From:   "J. Bruce Fields" <bfields@fieldses.org>
 To:     NeilBrown <neilb@suse.com>
 Cc:     Jeff Layton <jlayton@kernel.org>,
@@ -32,320 +32,203 @@ Cc:     Jeff Layton <jlayton@kernel.org>,
         Martin Wilck <mwilck@suse.de>, linux-fsdevel@vger.kernel.org,
         Frank Filz <ffilzlnx@mindspring.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/12] fs/locks: rename some lists and pointers.
-Message-ID: <20181112150608.GB16755@fieldses.org>
+Subject: Re: [PATCH 10/12] fs/locks: create a tree of dependent requests.
+Message-ID: <20181112150926.GC16755@fieldses.org>
 References: <154198490921.14364.13726904731989686092.stgit@noble>
- <154198528889.14364.12474140856679526233.stgit@noble>
+ <154198528925.14364.1689720543542941272.stgit@noble>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <154198528889.14364.12474140856679526233.stgit@noble>
+In-Reply-To: <154198528925.14364.1689720543542941272.stgit@noble>
 User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 12:14:48PM +1100, NeilBrown wrote:
-> struct file lock contains an 'fl_next' pointer which
-> is used to point to the lock that this request is blocked
-> waiting for.  So rename it to fl_blocker.
+On Mon, Nov 12, 2018 at 12:14:49PM +1100, NeilBrown wrote:
+> When we find an existing lock which conflicts with a request,
+> and the request wants to wait, we currently add the request
+> to a list.  When the lock is removed, the whole list is woken.
+> This can cause the thundering-herd problem.
+> To reduce the problem, we make use of the (new) fact that
+> a pending request can itself have a list of blocked requests.
+> When we find a conflict, we look through the existing blocked requests.
+> If any one of them blocks the new request, the new request is attached
+> below that request, otherwise it is added to the list of blocked
+> requests, which are now known to be mutually non-conflicting.
 > 
-> The fl_blocked list_head in an active lock is the head of a list of
-> blocked requests.  In a request it is a node in that list.
-> These are two distinct uses, so replace with two list_heads
-> with different names.
-> fl_blocked_requests is the head of a list of blocked requests
-> fl_blocked_member is a node in a member of that list.
+> This way, when the lock is released, only a set of non-conflicting
+> locks will be woken, the rest can stay asleep.
+> If the lock request cannot be granted and the request needs to be
+> requeued, all the other requests it blocks will then be woken
+> 
+> To make this more concrete:
+> 
+>   If you have a many-core machine, and have many threads all wanting to
+>   briefly lock a give file (udev is known to do this), you can get quite
+>   poor performance.
+> 
+>   When one thread releases a lock, it wakes up all other threads that
+>   are waiting (classic thundering-herd) - one will get the lock and the
+>   others go to sleep.
+>   When you have few cores, this is not very noticeable: by the time the
+>   4th or 5th thread gets enough CPU time to try to claim the lock, the
+>   earlier threads have claimed it, done what was needed, and released.
+>   So with few cores, many of the threads don't end up contending.
+>   With 50+ cores, lost of threads can get the CPU at the same time,
+>   and the contention can easily be measured.
+> 
+>   This patchset creates a tree of pending lock requests in which siblings
+>   don't conflict and each lock request does conflict with its parent.
+>   When a lock is released, only requests which don't conflict with each
+>   other a woken.
+> 
+>   Testing shows that lock-acquisitions-per-second is now fairly stable
+>   even as the number of contending process goes to 1000.  Without this
+>   patch, locks-per-second drops off steeply after a few 10s of
+>   processes.
+> 
+>   There is a small cost to this extra complexity.
+>   At 20 processes running a particular test on 72 cores, the lock
+>   acquisitions per second drops from 1.8 million to 1.4 million with
+>   this patch.  For 100 processes, this patch still provides 1.4 million
+>   while without this patch there are about 700,000.
+> 
+> 
+> Reported-and-tested-by: Martin Wilck <mwilck@suse.de>
+> Signed-off-by: NeilBrown <neilb@suse.com>
+> ---
+>  fs/locks.c |   69 +++++++++++++++++++++++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 63 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/locks.c b/fs/locks.c
+> index 74b24191d6e6..1006b566ddf5 100644
+> --- a/fs/locks.c
+> +++ b/fs/locks.c
+> @@ -112,6 +112,46 @@
+>   *  Leases and LOCK_MAND
+>   *  Matthew Wilcox <willy@debian.org>, June, 2000.
+>   *  Stephen Rothwell <sfr@canb.auug.org.au>, June, 2000.
+> + *
+> + * Locking conflicts and dependencies:
+> + * If multiple threads attempt to lock the same byte (or flock the same file)
+> + * only one can be granted the lock, and other must wait their turn.
+> + * The first lock has been "applied" or "granted", the others are "waiting"
+> + * and are "blocked" by the "applied" lock..
+> + *
+> + * Waiting and applied locks are all kept in trees whose properties are:
+> + *
+> + *	- the root of a tree may be an applied or waiting lock.
+> + *	- every other node in the tree is a waiting lock that
+> + *	  conflicts with every ancestor of that node.
+> + *
+> + * Every such tree begins life as a waiting singleton which obviously
+> + * satisfies the above properties.
+> + *
+> + * The only ways we modify trees preserve these properties:
+> + *
+> + *	1. We may add a new child, but only after first verifying that it
 
-That solution's a little verbose, but for me at least, worth it to make
-it a little easier to remember..... Thanks!
+Oops, I meant to write "leaf node" there, I think that's more accurate
+than "child".
+
+All looks good otherwise, thanks!
 
 --b.
 
-> 
-> The two different list_heads are never used at the same time, but that
-> will change in a future patch.
-> 
-> Note that a tracepoint is changed to report fl_blocker instead
-> of fl_next.
-> 
-> Signed-off-by: NeilBrown <neilb@suse.com>
-> ---
->  fs/cifs/file.c                  |    2 +
->  fs/locks.c                      |   59 ++++++++++++++++++++-------------------
->  include/linux/fs.h              |    9 +++++-
->  include/trace/events/filelock.h |   16 +++++------
->  4 files changed, 47 insertions(+), 39 deletions(-)
-> 
-> diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-> index 74c33d5fafc8..d7ed895e05d1 100644
-> --- a/fs/cifs/file.c
-> +++ b/fs/cifs/file.c
-> @@ -1103,7 +1103,7 @@ cifs_posix_lock_set(struct file *file, struct file_lock *flock)
->  	rc = posix_lock_file(file, flock, NULL);
->  	up_write(&cinode->lock_sem);
->  	if (rc == FILE_LOCK_DEFERRED) {
-> -		rc = wait_event_interruptible(flock->fl_wait, !flock->fl_next);
-> +		rc = wait_event_interruptible(flock->fl_wait, !flock->fl_blocker);
->  		if (!rc)
->  			goto try_again;
->  		posix_unblock_lock(flock);
-> diff --git a/fs/locks.c b/fs/locks.c
-> index 2ecb4db8c840..c6df0c8b3d13 100644
-> --- a/fs/locks.c
-> +++ b/fs/locks.c
-> @@ -189,9 +189,9 @@ static DEFINE_HASHTABLE(blocked_hash, BLOCKED_HASH_BITS);
->   * This lock protects the blocked_hash. Generally, if you're accessing it, you
->   * want to be holding this lock.
->   *
-> - * In addition, it also protects the fl->fl_block list, and the fl->fl_next
-> - * pointer for file_lock structures that are acting as lock requests (in
-> - * contrast to those that are acting as records of acquired locks).
-> + * In addition, it also protects the fl->fl_blocked_requests list, and the
-> + * fl->fl_blocker pointer for file_lock structures that are acting as lock
-> + * requests (in contrast to those that are acting as records of acquired locks).
->   *
->   * Note that when we acquire this lock in order to change the above fields,
->   * we often hold the flc_lock as well. In certain cases, when reading the fields
-> @@ -293,7 +293,8 @@ static void locks_init_lock_heads(struct file_lock *fl)
->  {
->  	INIT_HLIST_NODE(&fl->fl_link);
->  	INIT_LIST_HEAD(&fl->fl_list);
-> -	INIT_LIST_HEAD(&fl->fl_block);
-> +	INIT_LIST_HEAD(&fl->fl_blocked_requests);
-> +	INIT_LIST_HEAD(&fl->fl_blocked_member);
->  	init_waitqueue_head(&fl->fl_wait);
->  }
+> + *	   conflicts with all of its ancestors.
+> + *	2. We may remove the root of a tree, creating a new singleton
+> + *	   tree from the root and N new trees rooted in the immediate
+> + *	   children.
+> + *	3. If the root of a tree is not currently an applied lock, we may
+> + *	   apply it (if possible).
+> + *	4. We may upgrade the root of the tree (either extend its range,
+> + *	   or upgrade its entire range from read to write).
+> + *
+> + * When an applied lock is modified in a way that reduces or downgrades any
+> + * part of its range, we remove all its children (2 above).  This particularly
+> + * happens when a lock is unlocked.
+> + *
+> + * For each of those child trees we "wake up" the thread which is
+> + * waiting for the lock so it can continue handling as follows: if the
+> + * root of the tree applies, we do so (3).  If it doesn't, it must
+> + * conflict with some applied lock.  We remove (wake up) all of its children
+> + * (2), and add it is a new leaf to the tree rooted in the applied
+> + * lock (1).  We then repeat the process recursively with those
+> + * children.
+> + *
+>   */
 >  
-> @@ -332,7 +333,8 @@ void locks_free_lock(struct file_lock *fl)
->  {
->  	BUG_ON(waitqueue_active(&fl->fl_wait));
->  	BUG_ON(!list_empty(&fl->fl_list));
-> -	BUG_ON(!list_empty(&fl->fl_block));
-> +	BUG_ON(!list_empty(&fl->fl_blocked_requests));
-> +	BUG_ON(!list_empty(&fl->fl_blocked_member));
->  	BUG_ON(!hlist_unhashed(&fl->fl_link));
->  
->  	locks_release_private(fl);
-> @@ -666,8 +668,8 @@ static void locks_delete_global_blocked(struct file_lock *waiter)
->  static void __locks_delete_block(struct file_lock *waiter)
->  {
->  	locks_delete_global_blocked(waiter);
-> -	list_del_init(&waiter->fl_block);
-> -	waiter->fl_next = NULL;
-> +	list_del_init(&waiter->fl_blocked_member);
-> +	waiter->fl_blocker = NULL;
->  }
->  
->  static void locks_delete_block(struct file_lock *waiter)
-> @@ -683,16 +685,17 @@ static void locks_delete_block(struct file_lock *waiter)
->   * it seems like the reasonable thing to do.
->   *
->   * Must be called with both the flc_lock and blocked_lock_lock held. The
-> - * fl_block list itself is protected by the blocked_lock_lock, but by ensuring
-> - * that the flc_lock is also held on insertions we can avoid taking the
-> - * blocked_lock_lock in some cases when we see that the fl_block list is empty.
-> + * fl_blocked_requests list itself is protected by the blocked_lock_lock,
-> + * but by ensuring that the flc_lock is also held on insertions we can avoid
-> + * taking the blocked_lock_lock in some cases when we see that the
-> + * fl_blocked_requests list is empty.
+>  #include <linux/capability.h>
+> @@ -719,11 +759,25 @@ static void locks_delete_block(struct file_lock *waiter)
+>   * but by ensuring that the flc_lock is also held on insertions we can avoid
+>   * taking the blocked_lock_lock in some cases when we see that the
+>   * fl_blocked_requests list is empty.
+> + *
+> + * Rather than just adding to the list, we check for conflicts with any existing
+> + * waiters, and add beneath any waiter that blocks the new waiter.
+> + * Thus wakeups don't happen until needed.
 >   */
 >  static void __locks_insert_block(struct file_lock *blocker,
->  					struct file_lock *waiter)
+> -					struct file_lock *waiter)
+> +				 struct file_lock *waiter,
+> +				 bool conflict(struct file_lock *,
+> +					       struct file_lock *))
 >  {
-> -	BUG_ON(!list_empty(&waiter->fl_block));
-> -	waiter->fl_next = blocker;
-> -	list_add_tail(&waiter->fl_block, &blocker->fl_block);
-> +	BUG_ON(!list_empty(&waiter->fl_blocked_member));
-> +	waiter->fl_blocker = blocker;
-> +	list_add_tail(&waiter->fl_blocked_member, &blocker->fl_blocked_requests);
+> +	struct file_lock *fl;
+>  	BUG_ON(!list_empty(&waiter->fl_blocked_member));
+> +
+> +new_blocker:
+> +	list_for_each_entry(fl, &blocker->fl_blocked_requests, fl_blocked_member)
+> +		if (conflict(fl, waiter)) {
+> +			blocker =  fl;
+> +			goto new_blocker;
+> +		}
+>  	waiter->fl_blocker = blocker;
+>  	list_add_tail(&waiter->fl_blocked_member, &blocker->fl_blocked_requests);
 >  	if (IS_POSIX(blocker) && !IS_OFDLCK(blocker))
->  		locks_insert_global_blocked(waiter);
->  }
-> @@ -716,19 +719,19 @@ static void locks_wake_up_blocks(struct file_lock *blocker)
->  	/*
->  	 * Avoid taking global lock if list is empty. This is safe since new
->  	 * blocked requests are only added to the list under the flc_lock, and
-> -	 * the flc_lock is always held here. Note that removal from the fl_block
-> -	 * list does not require the flc_lock, so we must recheck list_empty()
-> -	 * after acquiring the blocked_lock_lock.
-> +	 * the flc_lock is always held here. Note that removal from the
-> +	 * fl_blocked_requests list does not require the flc_lock, so we must
-> +	 * recheck list_empty() after acquiring the blocked_lock_lock.
->  	 */
-> -	if (list_empty(&blocker->fl_block))
-> +	if (list_empty(&blocker->fl_blocked_requests))
->  		return;
+> @@ -738,10 +792,12 @@ static void __locks_insert_block(struct file_lock *blocker,
 >  
+>  /* Must be called with flc_lock held. */
+>  static void locks_insert_block(struct file_lock *blocker,
+> -					struct file_lock *waiter)
+> +			       struct file_lock *waiter,
+> +			       bool conflict(struct file_lock *,
+> +					     struct file_lock *))
+>  {
 >  	spin_lock(&blocked_lock_lock);
-> -	while (!list_empty(&blocker->fl_block)) {
-> +	while (!list_empty(&blocker->fl_blocked_requests)) {
->  		struct file_lock *waiter;
+> -	__locks_insert_block(blocker, waiter);
+> +	__locks_insert_block(blocker, waiter, conflict);
+>  	spin_unlock(&blocked_lock_lock);
+>  }
 >  
-> -		waiter = list_first_entry(&blocker->fl_block,
-> -				struct file_lock, fl_block);
-> +		waiter = list_first_entry(&blocker->fl_blocked_requests,
-> +				struct file_lock, fl_blocked_member);
->  		__locks_delete_block(waiter);
->  		if (waiter->fl_lmops && waiter->fl_lmops->lm_notify)
->  			waiter->fl_lmops->lm_notify(waiter);
-> @@ -878,7 +881,7 @@ static struct file_lock *what_owner_is_waiting_for(struct file_lock *block_fl)
->  
->  	hash_for_each_possible(blocked_hash, fl, fl_link, posix_owner_key(block_fl)) {
->  		if (posix_same_owner(fl, block_fl))
-> -			return fl->fl_next;
-> +			return fl->fl_blocker;
+> @@ -1000,7 +1056,7 @@ static int flock_lock_inode(struct inode *inode, struct file_lock *request)
+>  		if (!(request->fl_flags & FL_SLEEP))
+>  			goto out;
+>  		error = FILE_LOCK_DEFERRED;
+> -		locks_insert_block(fl, request);
+> +		locks_insert_block(fl, request, flock_locks_conflict);
+>  		goto out;
 >  	}
->  	return NULL;
->  }
-> @@ -1237,7 +1240,7 @@ static int posix_lock_inode_wait(struct inode *inode, struct file_lock *fl)
->  		error = posix_lock_inode(inode, fl, NULL);
->  		if (error != FILE_LOCK_DEFERRED)
->  			break;
-> -		error = wait_event_interruptible(fl->fl_wait, !fl->fl_next);
-> +		error = wait_event_interruptible(fl->fl_wait, !fl->fl_blocker);
->  		if (!error)
->  			continue;
->  
-> @@ -1324,7 +1327,7 @@ int locks_mandatory_area(struct inode *inode, struct file *filp, loff_t start,
->  		error = posix_lock_inode(inode, &fl, NULL);
->  		if (error != FILE_LOCK_DEFERRED)
->  			break;
-> -		error = wait_event_interruptible(fl.fl_wait, !fl.fl_next);
-> +		error = wait_event_interruptible(fl.fl_wait, !fl.fl_blocker);
->  		if (!error) {
->  			/*
->  			 * If we've been sleeping someone might have
-> @@ -1518,7 +1521,7 @@ int __break_lease(struct inode *inode, unsigned int mode, unsigned int type)
->  
->  	locks_dispose_list(&dispose);
->  	error = wait_event_interruptible_timeout(new_fl->fl_wait,
-> -						!new_fl->fl_next, break_time);
-> +						!new_fl->fl_blocker, break_time);
->  
->  	percpu_down_read_preempt_disable(&file_rwsem);
->  	spin_lock(&ctx->flc_lock);
-> @@ -1931,7 +1934,7 @@ static int flock_lock_inode_wait(struct inode *inode, struct file_lock *fl)
->  		error = flock_lock_inode(inode, fl);
->  		if (error != FILE_LOCK_DEFERRED)
->  			break;
-> -		error = wait_event_interruptible(fl->fl_wait, !fl->fl_next);
-> +		error = wait_event_interruptible(fl->fl_wait, !fl->fl_blocker);
->  		if (!error)
->  			continue;
->  
-> @@ -2210,7 +2213,7 @@ static int do_lock_file_wait(struct file *filp, unsigned int cmd,
->  		error = vfs_lock_file(filp, cmd, fl, NULL);
->  		if (error != FILE_LOCK_DEFERRED)
->  			break;
-> -		error = wait_event_interruptible(fl->fl_wait, !fl->fl_next);
-> +		error = wait_event_interruptible(fl->fl_wait, !fl->fl_blocker);
->  		if (!error)
->  			continue;
->  
-> @@ -2581,7 +2584,7 @@ posix_unblock_lock(struct file_lock *waiter)
->  	int status = 0;
->  
->  	spin_lock(&blocked_lock_lock);
-> -	if (waiter->fl_next)
-> +	if (waiter->fl_blocker)
->  		__locks_delete_block(waiter);
->  	else
->  		status = -ENOENT;
-> @@ -2707,7 +2710,7 @@ static int locks_show(struct seq_file *f, void *v)
->  
->  	lock_get_status(f, fl, iter->li_pos, "");
->  
-> -	list_for_each_entry(bfl, &fl->fl_block, fl_block)
-> +	list_for_each_entry(bfl, &fl->fl_blocked_requests, fl_blocked_member)
->  		lock_get_status(f, bfl, iter->li_pos, " ->");
->  
->  	return 0;
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index c95c0807471f..16df3a7df378 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1044,10 +1044,15 @@ bool opens_in_grace(struct net *);
->   * Obviously, the last two criteria only matter for POSIX locks.
->   */
->  struct file_lock {
-> -	struct file_lock *fl_next;	/* singly linked list for this inode  */
-> +	struct file_lock *fl_blocker;	/* The lock, that is blocking us */
->  	struct list_head fl_list;	/* link into file_lock_context */
->  	struct hlist_node fl_link;	/* node in global lists */
-> -	struct list_head fl_block;	/* circular list of blocked processes */
-> +	struct list_head fl_blocked_requests;	/* list of requests with
-> +						 * ->fl_blocker pointing here
-> +						 */
-> +	struct list_head fl_blocked_member;	/* node in
-> +						 * ->fl_blocker->fl_blocked_requests
-> +						 */
->  	fl_owner_t fl_owner;
->  	unsigned int fl_flags;
->  	unsigned char fl_type;
-> diff --git a/include/trace/events/filelock.h b/include/trace/events/filelock.h
-> index 68b17c116907..fad7befa612d 100644
-> --- a/include/trace/events/filelock.h
-> +++ b/include/trace/events/filelock.h
-> @@ -68,7 +68,7 @@ DECLARE_EVENT_CLASS(filelock_lock,
->  		__field(struct file_lock *, fl)
->  		__field(unsigned long, i_ino)
->  		__field(dev_t, s_dev)
-> -		__field(struct file_lock *, fl_next)
-> +		__field(struct file_lock *, fl_blocker)
->  		__field(fl_owner_t, fl_owner)
->  		__field(unsigned int, fl_pid)
->  		__field(unsigned int, fl_flags)
-> @@ -82,7 +82,7 @@ DECLARE_EVENT_CLASS(filelock_lock,
->  		__entry->fl = fl ? fl : NULL;
->  		__entry->s_dev = inode->i_sb->s_dev;
->  		__entry->i_ino = inode->i_ino;
-> -		__entry->fl_next = fl ? fl->fl_next : NULL;
-> +		__entry->fl_blocker = fl ? fl->fl_blocker : NULL;
->  		__entry->fl_owner = fl ? fl->fl_owner : NULL;
->  		__entry->fl_pid = fl ? fl->fl_pid : 0;
->  		__entry->fl_flags = fl ? fl->fl_flags : 0;
-> @@ -92,9 +92,9 @@ DECLARE_EVENT_CLASS(filelock_lock,
->  		__entry->ret = ret;
->  	),
->  
-> -	TP_printk("fl=0x%p dev=0x%x:0x%x ino=0x%lx fl_next=0x%p fl_owner=0x%p fl_pid=%u fl_flags=%s fl_type=%s fl_start=%lld fl_end=%lld ret=%d",
-> +	TP_printk("fl=0x%p dev=0x%x:0x%x ino=0x%lx fl_blocker=0x%p fl_owner=0x%p fl_pid=%u fl_flags=%s fl_type=%s fl_start=%lld fl_end=%lld ret=%d",
->  		__entry->fl, MAJOR(__entry->s_dev), MINOR(__entry->s_dev),
-> -		__entry->i_ino, __entry->fl_next, __entry->fl_owner,
-> +		__entry->i_ino, __entry->fl_blocker, __entry->fl_owner,
->  		__entry->fl_pid, show_fl_flags(__entry->fl_flags),
->  		show_fl_type(__entry->fl_type),
->  		__entry->fl_start, __entry->fl_end, __entry->ret)
-> @@ -125,7 +125,7 @@ DECLARE_EVENT_CLASS(filelock_lease,
->  		__field(struct file_lock *, fl)
->  		__field(unsigned long, i_ino)
->  		__field(dev_t, s_dev)
-> -		__field(struct file_lock *, fl_next)
-> +		__field(struct file_lock *, fl_blocker)
->  		__field(fl_owner_t, fl_owner)
->  		__field(unsigned int, fl_flags)
->  		__field(unsigned char, fl_type)
-> @@ -137,7 +137,7 @@ DECLARE_EVENT_CLASS(filelock_lease,
->  		__entry->fl = fl ? fl : NULL;
->  		__entry->s_dev = inode->i_sb->s_dev;
->  		__entry->i_ino = inode->i_ino;
-> -		__entry->fl_next = fl ? fl->fl_next : NULL;
-> +		__entry->fl_blocker = fl ? fl->fl_blocker : NULL;
->  		__entry->fl_owner = fl ? fl->fl_owner : NULL;
->  		__entry->fl_flags = fl ? fl->fl_flags : 0;
->  		__entry->fl_type = fl ? fl->fl_type : 0;
-> @@ -145,9 +145,9 @@ DECLARE_EVENT_CLASS(filelock_lease,
->  		__entry->fl_downgrade_time = fl ? fl->fl_downgrade_time : 0;
->  	),
->  
-> -	TP_printk("fl=0x%p dev=0x%x:0x%x ino=0x%lx fl_next=0x%p fl_owner=0x%p fl_flags=%s fl_type=%s fl_break_time=%lu fl_downgrade_time=%lu",
-> +	TP_printk("fl=0x%p dev=0x%x:0x%x ino=0x%lx fl_blocker=0x%p fl_owner=0x%p fl_flags=%s fl_type=%s fl_break_time=%lu fl_downgrade_time=%lu",
->  		__entry->fl, MAJOR(__entry->s_dev), MINOR(__entry->s_dev),
-> -		__entry->i_ino, __entry->fl_next, __entry->fl_owner,
-> +		__entry->i_ino, __entry->fl_blocker, __entry->fl_owner,
->  		show_fl_flags(__entry->fl_flags),
->  		show_fl_type(__entry->fl_type),
->  		__entry->fl_break_time, __entry->fl_downgrade_time)
+>  	if (request->fl_flags & FL_ACCESS)
+> @@ -1075,7 +1131,8 @@ static int posix_lock_inode(struct inode *inode, struct file_lock *request,
+>  			spin_lock(&blocked_lock_lock);
+>  			if (likely(!posix_locks_deadlock(request, fl))) {
+>  				error = FILE_LOCK_DEFERRED;
+> -				__locks_insert_block(fl, request);
+> +				__locks_insert_block(fl, request,
+> +						     posix_locks_conflict);
+>  			}
+>  			spin_unlock(&blocked_lock_lock);
+>  			goto out;
+> @@ -1546,7 +1603,7 @@ int __break_lease(struct inode *inode, unsigned int mode, unsigned int type)
+>  		break_time -= jiffies;
+>  	if (break_time == 0)
+>  		break_time++;
+> -	locks_insert_block(fl, new_fl);
+> +	locks_insert_block(fl, new_fl, leases_conflict);
+>  	trace_break_lease_block(inode, new_fl);
+>  	spin_unlock(&ctx->flc_lock);
+>  	percpu_up_read_preempt_enable(&file_rwsem);
 > 
