@@ -2,127 +2,106 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B12CFC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:45:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33F0FC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:49:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A75120871
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:45:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A75120871
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id D830021104
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:49:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="q6BvRBfr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D830021104
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729820AbeKLKgM (ORCPT
+        id S1729844AbeKLKkd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 05:36:12 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39752 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726816AbeKLKgM (ORCPT
+        Mon, 12 Nov 2018 05:40:33 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:34215 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729181AbeKLKkd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 05:36:12 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAC0dFnD001600
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 19:45:35 -0500
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2npx34t6ws-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 19:45:34 -0500
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 12 Nov 2018 00:45:34 -0000
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 12 Nov 2018 00:45:28 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAC0jRvJ39190632
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 12 Nov 2018 00:45:27 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B834EB2064;
-        Mon, 12 Nov 2018 00:45:27 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 95322B205F;
-        Mon, 12 Nov 2018 00:45:27 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.207.24])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 12 Nov 2018 00:45:27 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 0109616C5D4F; Sun, 11 Nov 2018 16:45:28 -0800 (PST)
-Date:   Sun, 11 Nov 2018 16:45:28 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, rostedt@goodmis.org,
-        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
-        oleg@redhat.com, joel@joelfernandes.org,
-        Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH tip/core/rcu 23/41] sched: Replace synchronize_sched()
- with synchronize_rcu()
-Reply-To: paulmck@linux.ibm.com
-References: <20181111194104.GA4787@linux.ibm.com>
- <20181111194410.6368-23-paulmck@linux.ibm.com>
- <20181112001233.GC3056@worktop>
+        Mon, 12 Nov 2018 05:40:33 -0500
+Received: by mail-pl1-f196.google.com with SMTP id f12-v6so3460209plo.1;
+        Sun, 11 Nov 2018 16:49:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=xjSh9IEeLwxH8OYYNLpYFM6p8XZN0FQyzo1oAiZRkkA=;
+        b=q6BvRBfr+PQTzT9l3oyCY9r7ch1thXhQpR2rTd0BiJYHifmD7hpJAh1pGhwfF3Eozy
+         w61UB7NyrqNgjr3A14Y9TPRxc1eFDSGe2Mq6m079Qtts3NfWwrYlt8cI5bsUDeFcZDv/
+         6jxPMBFO626JpCDvwkHXdOqQuZ+MZKeKvZMMqzTxlP5fQ0gSQIdgNeAJ6EjlPea/OMB6
+         N9HOUI7wpUS89TAnrGcqxw/6QGUbpyMrX6z/YO6jh2JoIzz9TrzEowzZwK9gSt4JRv9u
+         5hmcJ9OlEC51ER6goQdxraBM4T7VNxULaTKeQnhVilYqjIbtCQ3CCIW9asBOC+hDQOfT
+         /9ZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=xjSh9IEeLwxH8OYYNLpYFM6p8XZN0FQyzo1oAiZRkkA=;
+        b=d+oyFUzqjXkAIt5GZnOJZ6F/89Baedt2Y6ArOXSKyfhX81j2YnLCyMMfwvupvje2Q/
+         32t0vxHJ8rtCzgnFr/Ap+yDsPPt9uQ7JQlpTLLMLeV5iYBar2ieKRjZBmKZqRv4AI+Nl
+         62tEMmW4REr0hy4qkbJVgTUcz/u4p6IeiYG/J6TUMocsA7fgihZ2Z4MQaP8FWMeV3wI8
+         eujoVL8R9MVUz9P5Rk0XD0y/L8YzEIhzpX0zSrD+fvJuIGFg9oBIOFCEHl5naxrqcvZj
+         4byo8uf5LpnPdMUlQ2yDvM0uoKzgaiForGLTG05jV81jaDHdSAKPgm+5TtFWCb7YmtwD
+         t4nw==
+X-Gm-Message-State: AGRZ1gICsrsrOCJlqqdT2PC/0vvFMZf52DzELGkRqznd1x2A11TmxtrK
+        AJahrVP9CbGK6hHGa//D3WM=
+X-Google-Smtp-Source: AJdET5ePHvk3DqYgoflARKCWCrFRjAQm62K7Mqfd8q3TucMljfKqz6s2ZDoQBr/7JCirFyfLRpZW+A==
+X-Received: by 2002:a17:902:a614:: with SMTP id u20-v6mr17960921plq.77.1541983796211;
+        Sun, 11 Nov 2018 16:49:56 -0800 (PST)
+Received: from myunghoj-Precision-5530 (cpe-76-88-98-70.san.res.rr.com. [76.88.98.70])
+        by smtp.gmail.com with ESMTPSA id p6-v6sm18242940pfg.30.2018.11.11.16.49.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 11 Nov 2018 16:49:56 -0800 (PST)
+Date:   Sun, 11 Nov 2018 16:49:53 -0800
+From:   Myungho Jung <mhjungk@gmail.com>
+To:     pawel@osciak.com, m.szyprowski@samsung.com,
+        kyungmin.park@samsung.com, mchehab@kernel.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] media: videobuf2-core: Fix error handling when fileio is
+ deallocated
+Message-ID: <20181112004951.GA3948@myunghoj-Precision-5530>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181112001233.GC3056@worktop>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18111200-0052-0000-0000-000003544460
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010029; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01116111; UDB=6.00578793; IPR=6.00896220;
- MB=3.00024116; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-12 00:45:33
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111200-0053-0000-0000-00005EBBAB3C
-Message-Id: <20181112004528.GA4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-11_16:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=977 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811120004
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 01:12:33AM +0100, Peter Zijlstra wrote:
-> On Sun, Nov 11, 2018 at 11:43:52AM -0800, Paul E. McKenney wrote:
-> > Now that synchronize_rcu() waits for preempt-disable regions of code
-> > as well as RCU read-side critical sections, synchronize_sched() can be
-> > replaced by synchronize_rcu().  This commit therefore makes this change.
-> 
-> Yes, but it also waits for an actual RCU quiestent state, which makes
-> synchoinize_rcu() potentially much more expensive than an actual
-> synchronize_sched().
+The mutex that is held from vb2_fop_read() can be unlocked while waiting
+for a buffer if the queue is streaming and blocking. Meanwhile, fileio
+can be released. So, it should return an error if the fileio address is
+changed.
 
-None of the readers have changed.
+Signed-off-by: Myungho Jung <mhjungk@gmail.com>
+Reported-by: syzbot+4180ff9ca6810b06c1e9@syzkaller.appspotmail.com
+---
+ drivers/media/common/videobuf2/videobuf2-core.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-For the updaters, if CONFIG_PREEMPT=n, synchronize_rcu() and
-synchronize_sched() always were one and the same.  When CONFIG_PREEMPT=y,
-synchronize_rcu() and synchronize_sched() are now one and the same.
-
-> So why are we doing this?
-
-Given that synchronize_rcu() and synchronize_sched() are now always one
-and the same, this is a distinction without a difference.  So we might
-as well get rid of the _bh and _sched APIs.  (See the tail end of current
-mainline's include/linux/rcupdate.h.)
-
-If you are instead asking why the RCU flavors (RCU-bh, RCU-preempt,
-and RCU-sched) got merged, it was due to a security incident stemming
-from confusion between two of the flavor, with the resulting bug turning
-out to be exploitable.  Linus therefore requested that I do something
-to make this not happen again, which I did.
-
-							Thanx, Paul
+diff --git a/drivers/media/common/videobuf2/videobuf2-core.c b/drivers/media/common/videobuf2/videobuf2-core.c
+index 975ff5669f72..bff94752eb27 100644
+--- a/drivers/media/common/videobuf2/videobuf2-core.c
++++ b/drivers/media/common/videobuf2/videobuf2-core.c
+@@ -2564,6 +2564,10 @@ static size_t __vb2_perform_fileio(struct vb2_queue *q, char __user *data, size_
+ 		dprintk(5, "vb2_dqbuf result: %d\n", ret);
+ 		if (ret)
+ 			return ret;
++		if (fileio != q->fileio) {
++			dprintk(3, "fileio deallocated\n");
++			return -EFAULT;
++		}
+ 		fileio->dq_count += 1;
+ 
+ 		fileio->cur_index = index;
+-- 
+2.17.1
 
