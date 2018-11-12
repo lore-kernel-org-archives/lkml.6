@@ -2,143 +2,144 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA0E0C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 20:34:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 066C1C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 20:37:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AADB922504
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 20:34:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AADB922504
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B8E0222504
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 20:37:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="Yq3LbNln"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8E0222504
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730493AbeKMG2z (ORCPT
+        id S1730384AbeKMGcf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 01:28:55 -0500
-Received: from mail-it1-f198.google.com ([209.85.166.198]:53993 "EHLO
-        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725861AbeKMG2y (ORCPT
+        Tue, 13 Nov 2018 01:32:35 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:35019 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725861AbeKMGcf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 01:28:54 -0500
-Received: by mail-it1-f198.google.com with SMTP id l200-v6so13741130ita.3
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 12:34:03 -0800 (PST)
+        Tue, 13 Nov 2018 01:32:35 -0500
+Received: by mail-qk1-f193.google.com with SMTP id w204so15743893qka.2
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 12:37:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=4CDInkZUoTOv8ilWmD4SOAmz61ScUtKiWAoUQGQWJ/o=;
+        b=Yq3LbNlnDMAi1af9mqNKRbbXEymSQYYkJzQXy9MT2tXsF72IkHVed+8vjgUMAzQDsb
+         WBn7SxLp2VlIsaDiK2nGfWV9BGASP+MhnabfVGTeHStoUDfhu1ww4P+PhOzxTSEKzaDU
+         1p0UOSic7x/WIglG231bYe2vlFMrltpZRq29W1CZPZWbrkhUl4j4pTOQmp+gAm8TLVOt
+         Xjs7Sn/eK3JN37B8FCxj+pYHgtKdyU225dmtqr0jk84Pqtu14Bh/aYbuAGWbAPTrxolk
+         vuTQ819+jZ2gpWXmyaQkCrESPsXF82zDa1Qe28nd6a+PTqdg3nNTmNIQXafp0ufa/+ga
+         uq6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=+TM5yEBMyjgsHt1bxDZ5vvjRCaDoPpFeOTyNTRc4j4o=;
-        b=c24fIsZ7S+i+M353LlQ6HBlV3orDAlWmkrTFlAdU+mzfZu/iUmkc2r2lmK5ZC9wfYP
-         KBNRQJm4iNq6dqXHsDITHNEdV/4BKkHcJeQhzZhV6v4hBmPg02pkhlVd6020W36or70I
-         3gLoXMvSVI8kNbDlxtk4KysSaU6HcROSq7C+EAOs4gw8BmFoEvyHbsfdMiaJLL2inVwU
-         Ej5nm7Hgi+6urExkrVwxUMPBY02kIwBiKKuJeBVp53qe15DQpGn+OHzP3WUUH4khBEOb
-         oIqSbNnPRmtKdrIciVH95Vu3uHtLY0ptL9t700qfn9gikSwG0zRuy75EkECxBsOMthM2
-         yQAg==
-X-Gm-Message-State: AGRZ1gLPtHjSMXp3ozTVNRMdSS4L54yqNnUW5Hv33XHN8R4Klr9WExcO
-        eD6D2T7Ac352daLCtCxpbaI5LdaJC10FyZD1LcgEivDjcxRT
-X-Google-Smtp-Source: AJdET5eHwRfh2xMIoDwfihshP2rxczjYagLgLQIG56wBLMGpHbR/UKQx4wtfD1Ma0Gckne3eeNSrqOKTFeB12aa1pjbklqyRIcfO
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4CDInkZUoTOv8ilWmD4SOAmz61ScUtKiWAoUQGQWJ/o=;
+        b=it9hpNxZBT3ctBMG5KJTOEJ+hzfA7eaLs6jx8hqE2W6530OF51/8NIykvvjcoZWMyg
+         RPUwQmWdelsrz8yikMNHPU6Kkv/t2FFB8+NZqp78nkEUhTVslfhDxdJ2r/DEgh1q2Ro5
+         CUrmtX49OxkSYWaUR6j6PpRTkFx9uNsDyp6a5NQfZkg7fiI1XxH+qaM/dI0FkVbvebzn
+         J5+hWnWj5pqtCEWzCRbtQQ8t36NL7cls0n3CrP4O/aflDRkINcK1jOUCKpHMoEy1LY2J
+         WDB3iEJqvDo0OYinIVhW4TJbFC65kPfgHsLrkvB9qzIRbMVebX/SOREgsfbOuN8wJ58n
+         7+8A==
+X-Gm-Message-State: AGRZ1gKfMP8A1Lr0pFhZTSFm4OcA4w772vy9vtvRzaof6gPo658L30c8
+        rBO3C8i/WDKdm4aSgXKt+a7lSA==
+X-Google-Smtp-Source: AJdET5f1r8EmChHeICX5OHcTKuiTqTyaBksV/SY4wKbYQTekrimL773rkyGQfP9GDrDceGJxbI0Ryw==
+X-Received: by 2002:a0c:fc09:: with SMTP id z9mr2520755qvo.157.1542055062275;
+        Mon, 12 Nov 2018 12:37:42 -0800 (PST)
+Received: from soleen.tm1wkky2jk1uhgkn0ivaxijq1c.bx.internal.cloudapp.net ([40.117.208.181])
+        by smtp.gmail.com with ESMTPSA id b17sm9599505qkj.69.2018.11.12.12.37.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 12 Nov 2018 12:37:40 -0800 (PST)
+Date:   Mon, 12 Nov 2018 20:37:37 +0000
+From:   Pavel Tatashin <pasha.tatashin@soleen.com>
+To:     Alexander Duyck <alexander.duyck@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        alexander.h.duyck@linux.intel.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux-mm <linux-mm@kvack.org>, sparclinux@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, linux-nvdimm@lists.01.org,
+        David Miller <davem@davemloft.net>,
+        pavel.tatashin@microsoft.com, Michal Hocko <mhocko@suse.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        dan.j.williams@intel.com, dave.jiang@intel.com,
+        rppt@linux.vnet.ibm.com, Matthew Wilcox <willy@infradead.org>,
+        Vlastimil Babka <vbabka@suse.cz>, khalid.aziz@oracle.com,
+        ldufour@linux.vnet.ibm.com,
+        Mel Gorman <mgorman@techsingularity.net>,
+        yi.z.zhang@linux.intel.com
+Subject: Re: [mm PATCH v5 0/7] Deferred page init improvements
+Message-ID: <20181112203737.e4jnsp4rxpie4trr@soleen.tm1wkky2jk1uhgkn0ivaxijq1c.bx.internal.cloudapp.net>
+References: <20181109211521.5ospn33pp552k2xv@xakep.localdomain>
+ <18b6634b912af7b4ec01396a2b0f3b31737c9ea2.camel@linux.intel.com>
+ <20181110000006.tmcfnzynelaznn7u@xakep.localdomain>
+ <0d8782742d016565870c578848138aaedf873a7c.camel@linux.intel.com>
+ <20181110011652.2wozbvfimcnhogfj@xakep.localdomain>
+ <CAKgT0UdDYC5RvZ1XgLTamFpBe3foPMs+SV_kSUVNDWLvxSC_1Q@mail.gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a24:5f84:: with SMTP id r126-v6mr252540itb.39.1542054842867;
- Mon, 12 Nov 2018 12:34:02 -0800 (PST)
-Date:   Mon, 12 Nov 2018 12:34:02 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000222b58057a7d9f39@google.com>
-Subject: KASAN: use-after-free Read in locks_delete_block
-From:   syzbot <syzbot+a4a3d526b4157113ec6a@syzkaller.appspotmail.com>
-To:     bfields@fieldses.org, jlayton@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKgT0UdDYC5RvZ1XgLTamFpBe3foPMs+SV_kSUVNDWLvxSC_1Q@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 18-11-12 11:10:35, Alexander Duyck wrote:
+> 
+> The point I was trying to make is that it doesn't. You say it is an
+> order of magnitude better but it is essentially 3.5x vs 3.8x and to
+> achieve the 3.8x you are using a ton of system resources. My approach
+> is meant to do more with less, while this approach will throw a
+> quarter of the system at  page initialization.
 
-syzbot found the following crash on:
+3.8x is a bug, that is going to be fixed before ktasks are accepted. The
+final results will be close to time/nthreads.
+Using more resources to initialize pages is fine, because other CPUs are
+idling during this time in boot.
 
-HEAD commit:    442b8cea2477 Add linux-next specific files for 20181109
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=115dbad5400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2f72bdb11df9fbe8
-dashboard link: https://syzkaller.appspot.com/bug?extid=a4a3d526b4157113ec6a
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+Lets wait for what Daniel finds out after Linux Plumber. And we can
+continue this discussion in ktask thread.
 
-Unfortunately, I don't have any reproducer for this crash yet.
+> 
+> An added advantage to my approach is that it speeds up things
+> regardless of the number of cores used, whereas the scaling approach
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+a4a3d526b4157113ec6a@syzkaller.appspotmail.com
+Yes, I agree, I like your approach. It is clean, simplifies, and
+improves the performance. I have tested it on both ARM and x86, and
+verified the performance improvements. So:
 
-device loop0 blocksize: 4096
-__find_get_block_slow() failed. block=1, b_blocknr=8
-b_state=0x00000029, b_size=512
-device loop0 blocksize: 4096
-==================================================================
-BUG: KASAN: use-after-free in __list_del_entry_valid+0xf1/0x100  
-lib/list_debug.c:51
-Read of size 8 at addr ffff88017eb47b70 by task syz-executor3/13461
-
-CPU: 0 PID: 13461 Comm: syz-executor3 Not tainted 4.20.0-rc1-next-20181109+  
-#110
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  __list_del_entry_valid+0xf1/0x100 lib/list_debug.c:51
-  __list_del_entry include/linux/list.h:117 [inline]
-  list_del_init include/linux/list.h:159 [inline]
-  __locks_delete_block fs/locks.c:683 [inline]
-  locks_delete_block+0xce/0x3d0 fs/locks.c:716
-  locks_mandatory_area+0x48b/0x6a0 fs/locks.c:1398
-  rw_verify_area+0x2f2/0x360 fs/read_write.c:386
-  vfs_write+0x149/0x560 fs/read_write.c:544
-  ksys_write+0x101/0x260 fs/read_write.c:598
-  __do_sys_write fs/read_write.c:610 [inline]
-  __se_sys_write fs/read_write.c:607 [inline]
-  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457569
-Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ff2e8194c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457569
-RDX: 0000000000000010 RSI: 0000000020000180 RDI: 0000000000000006
-RBP: 000000000072c0e0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ff2e81956d4
-R13: 00000000004c571f R14: 00000000004d9360 R15: 00000000ffffffff
-
-The buggy address belongs to the page:
-page:ffffea0005fad1c0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
-flags: 0x2fffc0000000000()
-raw: 02fffc0000000000 0000000000000000 ffffea0005fad1c8 0000000000000000
-raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff88017eb47a00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-  ffff88017eb47a80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> ffff88017eb47b00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-                                                              ^
-  ffff88017eb47b80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-  ffff88017eb47c00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-==================================================================
+Tested-by: Pavel Tatashin <pasha.tatashin@soleen.com>
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> requires that there be more cores available to use. So for example on
+> some of the new AMD Zen stuff I am not sure the benefit would be all
+> that great since if I am not mistaken each tile is only 8 processors
+> so at most you are only doubling the processing power applied to the
+> initialization. In such a case it is likely that my approach would
+> fare much better then this approach since I don't require additional
+> cores to achieve the same results.
+> 
+> Anyway there are tradeoffs we have to take into account.
+> 
+> I will go over the changes you suggested after Plumbers. I just need
+> to figure out if I am doing incremental changes, or if Andrew wants me
+> to just resubmit the whole set. I can probably deal with these changes
+> either way since most of them are pretty small.
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+Send the full series again, Andrew is very good at taking only
+incremental  changes once a new version is posted of something
+that is already in mm-tree.
+
+Thank you,
+Pasha
