@@ -2,119 +2,250 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C08AFC07E85
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 20:59:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F2DDC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 21:00:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84FDF224E0
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 20:59:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="Jm+4Ie3z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84FDF224E0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
+	by mail.kernel.org (Postfix) with ESMTP id E00EE22504
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 21:00:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E00EE22504
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730158AbeKMGym (ORCPT
+        id S1730533AbeKMGzh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 01:54:42 -0500
-Received: from mail.andi.de1.cc ([85.214.239.24]:33622 "EHLO
-        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725861AbeKMGym (ORCPT
+        Tue, 13 Nov 2018 01:55:37 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55478 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730470AbeKMGzg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 01:54:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
-        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=tGOAz8gw/uAQySRartYdRIvcbf1KlRooSE+XehrA7Eg=; b=Jm+4Ie3ztGhHpE8OCN9aoV+Xg
-        HI2zEW8HbyBNQbvULYE5/0axg08j8hxATfMzU/svlw/4N9aKl6X9e6zE8xrm6rjq9cbrq5i+5TxwZ
-        mGYXsZ1aHZRHTfv1+10XoLlBirRny7PNuuJQ4G/bKp9u9vKZULfsSjVJlZguzV84STjDU=;
-Received: from pd9e2f2f1.dip0.t-ipconnect.de ([217.226.242.241] helo=aktux)
-        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1gMJJ8-0004NB-UJ; Mon, 12 Nov 2018 21:59:43 +0100
-Date:   Mon, 12 Nov 2018 21:59:34 +0100
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, letux-kernel@openphoenux.org
-Subject: Re: [PATCH RFC] bluetooth: add uart h4 devices via
- serdev/devicetree
-Message-ID: <20181112215812.18ebca35@aktux>
-In-Reply-To: <20181111024648.7rt7rlhaqihtqecv@earth.universe>
-References: <20181110232034.17277-1-andreas@kemnade.info>
-        <20181111024648.7rt7rlhaqihtqecv@earth.universe>
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/aWdB_CefDoLhkjCidefch86"; protocol="application/pgp-signature"
+        Tue, 13 Nov 2018 01:55:36 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wACKhoqe052266
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 16:00:39 -0500
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nqg31tf3g-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 16:00:39 -0500
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <eajames@linux.ibm.com>;
+        Mon, 12 Nov 2018 21:00:37 -0000
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 12 Nov 2018 21:00:35 -0000
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wACL0Ypf38207590
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 12 Nov 2018 21:00:34 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 18F90112063;
+        Mon, 12 Nov 2018 21:00:34 +0000 (GMT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4A8DE112064;
+        Mon, 12 Nov 2018 21:00:33 +0000 (GMT)
+Received: from talon7.ibm.com (unknown [9.41.179.222])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 12 Nov 2018 21:00:33 +0000 (GMT)
+From:   Eddie James <eajames@linux.ibm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     hverkuil@xs4all.nl, mchehab@kernel.org,
+        linux-media@vger.kernel.org, robh+dt@kernel.org, andrew@aj.id.au,
+        linux-aspeed@lists.ozlabs.org, devicetree@vger.kernel.org,
+        mark.rutland@arm.com, Eddie James <eajames@linux.vnet.ibm.com>
+Subject: [PATCH v5 0/2] media: platform: Add Aspeed Video Engine Driver
+Date:   Mon, 12 Nov 2018 15:00:29 -0600
+X-Mailer: git-send-email 1.8.3.1
+X-TM-AS-GCONF: 00
+x-cbid: 18111221-0040-0000-0000-000004912BA0
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010036; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01116516; UDB=6.00577119; IPR=6.00896625;
+ MB=3.00024132; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-12 21:00:37
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18111221-0041-0000-0000-0000089A3521
+Message-Id: <1542056431-18146-1-git-send-email-eajames@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-12_14:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811120179
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/aWdB_CefDoLhkjCidefch86
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Eddie James <eajames@linux.vnet.ibm.com>
 
-Hi,
+The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs
+can capture and compress video data from digital or analog sources. With
+the Aspeed chip acting as a service processor, the Video Engine can
+capture the host processor graphics output.
 
-On Sun, 11 Nov 2018 03:46:48 +0100
-Sebastian Reichel <sebastian.reichel@collabora.com> wrote:
+This series adds a V4L2 driver for the VE, providing the usual V4L2 streaming
+interface by way of videobuf2. Each frame, the driver triggers the hardware to
+capture the host graphics output and compress it to JPEG format.
 
-> Hi,
->=20
-> On Sun, Nov 11, 2018 at 12:20:34AM +0100, Andreas Kemnade wrote:
-> > This is a first try to be able to use h4 devices specified in
-> > the devicetree, so you do not need to call hciattach and
-> > it can be automatically probed.
-> >=20
-> > Of course, proper devicetree bindings documentation is
-> > missing. And also you would extend that by regulator/
-> > enable gpio settings.
-> >=20
-> > But before proceeding further it should be checked if the
-> > general way of doing things is right.
-> >=20
-> > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> > --- =20
->=20
-> Patch looks good to me, just one note
->=20
-I found one thing myself:
-Shouldn't we have a generic compatible string like "generic-h4".
-ehci-platform.c has for example:
-        { .compatible =3D "generic-ehci", },
+v4l-utils HEAD dd3ff81f58c4e1e6f33765dc61ad33c48ae6bb07
 
-Regards,
-Andreas
+v4l2-compliance SHA: not available, 32 bits
 
---Sig_/aWdB_CefDoLhkjCidefch86
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Compliance test for device /dev/video0:
 
------BEGIN PGP SIGNATURE-----
+Driver Info:
+	Driver name      : aspeed-video
+	Card type        : Aspeed Video Engine
+	Bus info         : platform:aspeed-video
+	Driver version   : 4.18.12
+	Capabilities     : 0x85200001
+		Video Capture
+		Read/Write
+		Streaming
+		Extended Pix Format
+		Device Capabilities
+	Device Caps      : 0x05200001
+		Video Capture
+		Read/Write
+		Streaming
+		Extended Pix Format
 
-iQIzBAEBCAAdFiEE7sDbhY5mwNpwYgrAfb1qx03ikyQFAlvp6bcACgkQfb1qx03i
-kyQjnBAAvdRtlj7zGjvLbgzTX7vCh9rFv3v3Nw28EezbMuaKmMAZmp3FSibfRUbx
-D6BkAHc2244r8gy3cizNUzOCeN3w2MjDFCp3ZBka1ff+oonW7nQTiV4fZt/XCW5h
-ieSMHH8pem5fpuGdgYVSnH51VbrDcSB2adw1Y1SHBTAeYpSIl4AGtx+Yavn8qS+9
-RsbUTGd1fAE38KbpOoRNgjN/UtagBD8a9rrj39c+6l44RX4YioLFivY8xP21cZNW
-pEgUFEhr6hCs4EathF5vmmMVYjwA6Tx69rPjuAfd+Cle14FcAQVgVrDa8y8J/s4X
-dMpEYc1ZJL2JTkvBW+TqKmhs3TQiR0gbGLDgdRyf3DLJGRFbcqskzErk1ZhyWqnu
-E5R/cwjBTuSu5JEN7guPefrbfN9slKnfTOdYWG+33v0U47uftt7F+zGNDBG2zjoL
-sznthXrDLsLoqoCXsnmqQp/RHUB80gzk1tPtFe2jMj0QvHJi53EVd5GLqsK7/7B3
-Ai7OOMuF34KMSvZ9I/sMkw6Yg9nwtdL09NHyfJXABbNgkFskseGV849JngeyeLiT
-Dlrc3l08yovs3dYZBJnDCD8U1iaXBaXx653B1+m0xtVeY9o+wfRbtgL/tDNsaqBf
-4KlfOWUxWUvhojh7MPSfD4oMji0QDeEpSM3BvY6WhVTXrLkeZGc=
-=49KN
------END PGP SIGNATURE-----
+Required ioctls:
+	test VIDIOC_QUERYCAP: OK
 
---Sig_/aWdB_CefDoLhkjCidefch86--
+Allow for multiple opens:
+	test second /dev/video0 open: OK
+	test VIDIOC_QUERYCAP: OK
+	test VIDIOC_G/S_PRIORITY: OK
+	test for unlimited opens: OK
+
+Debug ioctls:
+	test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+	test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+	test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+	test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+	test VIDIOC_ENUMAUDIO: OK (Not Supported)
+	test VIDIOC_G/S/ENUMINPUT: OK
+	test VIDIOC_G/S_AUDIO: OK (Not Supported)
+	Inputs: 1 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+	test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+	test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+	test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+	test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+	test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+	Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+	test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+	test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK
+	test VIDIOC_DV_TIMINGS_CAP: OK
+	test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls (Input 0):
+	test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+	test VIDIOC_QUERYCTRL: OK
+	test VIDIOC_G/S_CTRL: OK
+	test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+		fail: v4l2-test-controls.cpp(823): failed to find event for control 'Chroma Subsampling'
+	test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: FAIL
+	test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+	Standard Controls: 3 Private Controls: 0
+
+Format ioctls (Input 0):
+	test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+	test VIDIOC_G/S_PARM: OK
+	test VIDIOC_G_FBUF: OK (Not Supported)
+	test VIDIOC_G_FMT: OK
+	test VIDIOC_TRY_FMT: OK
+	test VIDIOC_S_FMT: OK
+	test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+	test Cropping: OK (Not Supported)
+	test Composing: OK (Not Supported)
+	test Scaling: OK (Not Supported)
+
+Codec ioctls (Input 0):
+	test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+	test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+	test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls (Input 0):
+		fail: v4l2-test-buffers.cpp(422): dmabuf_valid ^ !!(caps & V4L2_BUF_CAP_SUPPORTS_DMABUF)
+	test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: FAIL
+	test VIDIOC_EXPBUF: OK (Not Supported)
+
+Test input 0:
+
+Streaming ioctls:
+	test read/write: OK
+	test blocking wait: OK
+	test MMAP: OK                                     
+	test USERPTR: OK (Not Supported)
+		fail: v4l2-test-buffers.cpp(1102): exp_q.reqbufs(expbuf_node, q.g_buffers())
+		fail: v4l2-test-buffers.cpp(1192): setupDmaBuf(expbuf_node, node, q, exp_q)
+	test DMABUF: FAIL
+
+Total: 48, Succeeded: 45, Failed: 3, Warnings: 0
+
+The apparent rate of change to the v4l2/vb2 API makes it difficult to pass
+these tests. None of the failing tests even ran last time I submitted my
+series. And V4L2_BUF_CAP_SUPPORTS_DMABUF is undefined in 4.19.
+
+Changes since v4:
+ - Set real min and max resolution in enum_dv_timings
+ - Add check for vb2_is_busy before settings the timings
+ - Set max frame rate to the actual max rather than max + 1
+ - Correct the input status to 0.
+ - Rework resolution change to only set the relevant h/w regs during startup or
+   when set_timings is called.
+
+Changes since v3:
+ - Switch update reg function to use u32 clear rather than unsigned long mask
+ - Add timing information from host VGA signal
+ - Fix binding documentation mispelling
+ - Fix upper case hex values
+ - Add wait_prepare and wait_finish
+ - Set buffer state to queued (rather than error) if streaming fails to start
+ - Switch engine busy print statement to error
+ - Removed a couple unecessary type assignments in v4l2 ioctls
+ - Added query_dv_timings, fixed get_dv_timings
+ - Corrected source change event to fire if and only if size actually changes
+ - Locked open and release
+
+Changes since v2:
+ - Switch to streaming interface. This involved a lot of changes.
+ - Rework memory allocation due to using videobuf2 buffers, but also only
+   allocate the necessary size of source buffer rather than the max size
+
+Changes since v1:
+ - Removed le32_to_cpu calls for JPEG header data
+ - Reworked v4l2 ioctls to be compliant.
+ - Added JPEG controls
+ - Updated devicetree docs according to Rob's suggestions.
+ - Added myself to MAINTAINERS
+
+Eddie James (2):
+  dt-bindings: media: Add Aspeed Video Engine binding documentation
+  media: platform: Add Aspeed Video Engine driver
+
+ .../devicetree/bindings/media/aspeed-video.txt     |   26 +
+ MAINTAINERS                                        |    8 +
+ drivers/media/platform/Kconfig                     |    9 +
+ drivers/media/platform/Makefile                    |    1 +
+ drivers/media/platform/aspeed-video.c              | 1711 ++++++++++++++++++++
+ 5 files changed, 1755 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/aspeed-video.txt
+ create mode 100644 drivers/media/platform/aspeed-video.c
+
+-- 
+1.8.3.1
+
