@@ -3,88 +3,106 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF6C3C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 09:10:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5478BC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 09:13:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE604223AE
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 09:10:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE604223AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 1D280223AE
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 09:13:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D280223AE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729255AbeKLTDL (ORCPT
+        id S1728740AbeKLTFX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 14:03:11 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:57955 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728740AbeKLTDL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 14:03:11 -0500
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id wAC8x1fQ007727;
-        Mon, 12 Nov 2018 10:10:32 +0100
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2nnnp22j8k-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 12 Nov 2018 10:10:32 +0100
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0E22431;
-        Mon, 12 Nov 2018 09:10:32 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id D2B66244B;
-        Mon, 12 Nov 2018 09:10:31 +0000 (GMT)
-Received: from [10.201.21.58] (10.75.127.49) by SFHDAG3NODE2.st.com
- (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 12 Nov
- 2018 10:10:30 +0100
-Subject: Re: [PATCH 0/3] ARM: dts: stm32: add dmas to stm32mp157c timers
-To:     Fabrice Gasnier <fabrice.gasnier@st.com>
-CC:     <robh+dt@kernel.org>, <mcoquelin.stm32@gmail.com>,
-        <mark.rutland@arm.com>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <1538579465-7854-1-git-send-email-fabrice.gasnier@st.com>
-From:   Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <f490c7c8-7920-2c28-8e1f-80021516db24@st.com>
-Date:   Mon, 12 Nov 2018 10:10:30 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 12 Nov 2018 14:05:23 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:41161 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727036AbeKLTFX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 14:05:23 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 62B6420798; Mon, 12 Nov 2018 10:13:03 +0100 (CET)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 83DBD20711;
+        Mon, 12 Nov 2018 10:12:52 +0100 (CET)
+Date:   Mon, 12 Nov 2018 10:12:52 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Vitor soares <vitor.soares@synopsys.com>
+Cc:     wsa@the-dreams.de, linux-i2c@vger.kernel.org, corbet@lwn.net,
+        linux-doc@vger.kernel.org, gregkh@linuxfoundation.org,
+        arnd@arndb.de, psroka@cadence.com, agolec@cadence.com,
+        adouglas@cadence.com, bfolta@cadence.com, dkos@cadence.com,
+        alicja@cadence.com, cwronka@cadence.com, sureshp@cadence.com,
+        rafalc@cadence.com, thomas.petazzoni@bootlin.com, nm@ti.com,
+        robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
+        ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        geert@linux-m68k.org, linus.walleij@linaro.org,
+        Xiang.Lin@synaptics.com, linux-gpio@vger.kernel.org,
+        nsekhar@ti.com, pgaj@cadence.com, peda@axentia.se,
+        mshettel@codeaurora.org, swboyd@chromium.org,
+        joao.pinto@synopsys.com
+Subject: Re: [PATCH v3 0/3] Add driver for Synopsys DesignWare I3C master IP
+Message-ID: <20181112101252.51435335@bbrezillon>
+In-Reply-To: <1541697251-20392-1-git-send-email-soares@synopsys.com>
+References: <1541697251-20392-1-git-send-email-soares@synopsys.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <1538579465-7854-1-git-send-email-fabrice.gasnier@st.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.49]
-X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SFHDAG3NODE2.st.com
- (10.75.127.8)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-12_07:,,
- signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Fabrice
+On Thu,  8 Nov 2018 17:14:08 +0000
+Vitor soares <vitor.soares@synopsys.com> wrote:
 
-On 10/3/18 5:11 PM, Fabrice Gasnier wrote:
-> This series adds dmas description to stm32mp157c device tree file.
-> But dmas are kept disabled by default on all boards. They are only
-> necessary for PWM capture. So, spare them for other usage by default.
+> This patch series is a proposal for the I3C master driver for Synopsys IP.
+> This patch is to be applied on top of I3C subsystem RFC V10 submitted by
+> Boris Brezillon.
+
+The patch series looks to me. I'm just waiting an ack from Rob on the
+bindings to queue it to the i3c/next branch.
+
+Thanks,
+
+Boris
+
 > 
-> Fabrice Gasnier (3):
->    ARM: dts: stm32: Add dmas to timer on stm32mp157c
->    ARM: dts: stm32: don't use timers dmas on stm32mp157c-ed1
->    ARM: dts: stm32: don't use timers dmas on stm32mp157c-ev1
+> Supported features:
+>   Regular CCC commands.
+>   I3C private transfers.
+>   I2C transfers.
 > 
->   arch/arm/boot/dts/stm32mp157c-ed1.dts |  3 ++
->   arch/arm/boot/dts/stm32mp157c-ev1.dts |  7 +++++
->   arch/arm/boot/dts/stm32mp157c.dtsi    | 58 +++++++++++++++++++++++++++++++++++
->   3 files changed, 68 insertions(+)
+> Missing functionalities:
+>   Support DMA interface.
+>   Support for I3C_BUS_MODE_MIXED_SLOW.
+>   Hot-join.
+>   IBI.
+> 
+> Main change between v2 and v3:
+> - Minor fixes. They are described in each patch
+> 
+> Main change between v1 and v2:
+> - Add controller version on dt-binding
+> - The driver now calls writesl/readsl() instead readl/writel
+> - Rename some variables in the driver
+> 
+> Vitor soares (3):
+>   i3c: master: Add driver for Synopsys DesignWare IP
+>   dt-bindings: i3c: Document Synopsys DesignWare I3C master bindings
+>   MAINTAINERS: Add myself as the dw-i3c-master module maintainer
+> 
+>  .../devicetree/bindings/i3c/snps,dw-i3c-master.txt |   42 +
+>  MAINTAINERS                                        |    6 +
+>  drivers/i3c/master/Kconfig                         |   15 +
+>  drivers/i3c/master/Makefile                        |    1 +
+>  drivers/i3c/master/dw-i3c-master.c                 | 1216 ++++++++++++++++++++
+>  5 files changed, 1280 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt
+>  create mode 100644 drivers/i3c/master/dw-i3c-master.c
 > 
 
-Series applied on stm32-next.
-
-Thanks!
-
-Alex
