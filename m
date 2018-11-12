@@ -2,55 +2,56 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0
+X-Spam-Status: No, score=-12.0 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED4A0C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 06:02:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BC63C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 06:03:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4DEC2175B
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 06:02:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4DEC2175B
+	by mail.kernel.org (Postfix) with ESMTP id 61F6921722
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 06:03:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61F6921722
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731816AbeKLPyT (ORCPT
+        id S1731672AbeKLPzA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 10:54:19 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:48415 "EHLO
+        Mon, 12 Nov 2018 10:55:00 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:46981 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731226AbeKLPyS (ORCPT
+        with ESMTP id S1731226AbeKLPzA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 10:54:18 -0500
+        Mon, 12 Nov 2018 10:55:00 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAC6290Z3546647
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAC62jNF3546727
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sun, 11 Nov 2018 22:02:09 -0800
+        Sun, 11 Nov 2018 22:02:45 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAC629F83546644;
-        Sun, 11 Nov 2018 22:02:09 -0800
-Date:   Sun, 11 Nov 2018 22:02:09 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAC62jXm3546724;
+        Sun, 11 Nov 2018 22:02:45 -0800
+Date:   Sun, 11 Nov 2018 22:02:45 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Kan Liang <tipbot@zytor.com>
-Message-ID: <tip-c10a8de0d32e95b0b8c7c17b6dc09baea5a5a899@git.kernel.org>
-Cc:     acme@redhat.com, kan.liang@linux.intel.com,
-        torvalds@linux-foundation.org, eranian@google.com,
-        mingo@kernel.org, peterz@infradead.org, vincent.weaver@maine.edu,
-        linux-kernel@vger.kernel.org, jolsa@redhat.com, hpa@zytor.com,
-        alexander.shishkin@linux.intel.com, tglx@linutronix.de
-Reply-To: hpa@zytor.com, jolsa@redhat.com, linux-kernel@vger.kernel.org,
-          tglx@linutronix.de, alexander.shishkin@linux.intel.com,
-          mingo@kernel.org, eranian@google.com,
-          torvalds@linux-foundation.org, kan.liang@linux.intel.com,
-          acme@redhat.com, vincent.weaver@maine.edu, peterz@infradead.org
-In-Reply-To: <20181019170419.378-1-kan.liang@linux.intel.com>
-References: <20181019170419.378-1-kan.liang@linux.intel.com>
+Message-ID: <tip-4d47d6407ac7b4b442a4e717488a3bb137398b6c@git.kernel.org>
+Cc:     alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        eranian@google.com, peterz@infradead.org, hpa@zytor.com,
+        vincent.weaver@maine.edu, acme@redhat.com,
+        torvalds@linux-foundation.org, kan.liang@linux.intel.com,
+        mingo@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de
+Reply-To: vincent.weaver@maine.edu, hpa@zytor.com, acme@redhat.com,
+          torvalds@linux-foundation.org,
+          alexander.shishkin@linux.intel.com, peterz@infradead.org,
+          eranian@google.com, jolsa@redhat.com, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org, mingo@kernel.org,
+          kan.liang@linux.intel.com
+In-Reply-To: <20181019170419.378-2-kan.liang@linux.intel.com>
+References: <20181019170419.378-2-kan.liang@linux.intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf/x86/intel/uncore: Add more IMC PCI IDs for
- KabyLake and CoffeeLake CPUs
-Git-Commit-ID: c10a8de0d32e95b0b8c7c17b6dc09baea5a5a899
+Subject: [tip:perf/urgent] perf/x86/intel/uncore: Support CoffeeLake 8th
+ CBOX
+Git-Commit-ID: 4d47d6407ac7b4b442a4e717488a3bb137398b6c
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -64,19 +65,24 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  c10a8de0d32e95b0b8c7c17b6dc09baea5a5a899
-Gitweb:     https://git.kernel.org/tip/c10a8de0d32e95b0b8c7c17b6dc09baea5a5a899
+Commit-ID:  4d47d6407ac7b4b442a4e717488a3bb137398b6c
+Gitweb:     https://git.kernel.org/tip/4d47d6407ac7b4b442a4e717488a3bb137398b6c
 Author:     Kan Liang <kan.liang@linux.intel.com>
-AuthorDate: Fri, 19 Oct 2018 10:04:18 -0700
+AuthorDate: Fri, 19 Oct 2018 10:04:19 -0700
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 12 Nov 2018 05:03:24 +0100
+CommitDate: Mon, 12 Nov 2018 05:03:26 +0100
 
-perf/x86/intel/uncore: Add more IMC PCI IDs for KabyLake and CoffeeLake CPUs
+perf/x86/intel/uncore: Support CoffeeLake 8th CBOX
 
-KabyLake and CoffeeLake CPUs have the same client uncore events as SkyLake.
+Coffee Lake has 8 core products which has 8 Cboxes. The 8th CBOX is
+mapped into different MSR space.
 
-Add the PCI IDs for the KabyLake Y, U, S processor lines and CoffeeLake U,
-H, S processor lines.
+Increase the num_boxes to 8 to handle the new products. It will not
+impact the previous platforms, SkyLake, KabyLake and earlier CoffeeLake.
+Because the num_boxes will be recalculated in uncore_cpu_init and
+doesn't exceed the x86_max_cores.
+
+Introduce a new box flag bit to indicate the 8th CBOX.
 
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
@@ -88,149 +94,90 @@ Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Stephane Eranian <eranian@google.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Vince Weaver <vincent.weaver@maine.edu>
-Link: http://lkml.kernel.org/r/20181019170419.378-1-kan.liang@linux.intel.com
+Link: http://lkml.kernel.org/r/20181019170419.378-2-kan.liang@linux.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/events/intel/uncore_snb.c | 115 ++++++++++++++++++++++++++++++++++++-
- 1 file changed, 114 insertions(+), 1 deletion(-)
+ arch/x86/events/intel/uncore.h     | 33 +++++++++++++++++++++++++--------
+ arch/x86/events/intel/uncore_snb.c |  6 +++++-
+ 2 files changed, 30 insertions(+), 9 deletions(-)
 
+diff --git a/arch/x86/events/intel/uncore.h b/arch/x86/events/intel/uncore.h
+index e17ab885b1e9..cb46d602a6b8 100644
+--- a/arch/x86/events/intel/uncore.h
++++ b/arch/x86/events/intel/uncore.h
+@@ -129,8 +129,15 @@ struct intel_uncore_box {
+ 	struct intel_uncore_extra_reg shared_regs[0];
+ };
+ 
+-#define UNCORE_BOX_FLAG_INITIATED	0
+-#define UNCORE_BOX_FLAG_CTL_OFFS8	1 /* event config registers are 8-byte apart */
++/* CFL uncore 8th cbox MSRs */
++#define CFL_UNC_CBO_7_PERFEVTSEL0		0xf70
++#define CFL_UNC_CBO_7_PER_CTR0			0xf76
++
++#define UNCORE_BOX_FLAG_INITIATED		0
++/* event config registers are 8-byte apart */
++#define UNCORE_BOX_FLAG_CTL_OFFS8		1
++/* CFL 8th CBOX has different MSR space */
++#define UNCORE_BOX_FLAG_CFL8_CBOX_MSR_OFFS	2
+ 
+ struct uncore_event_desc {
+ 	struct kobj_attribute attr;
+@@ -297,17 +304,27 @@ unsigned int uncore_freerunning_counter(struct intel_uncore_box *box,
+ static inline
+ unsigned uncore_msr_event_ctl(struct intel_uncore_box *box, int idx)
+ {
+-	return box->pmu->type->event_ctl +
+-		(box->pmu->type->pair_ctr_ctl ? 2 * idx : idx) +
+-		uncore_msr_box_offset(box);
++	if (test_bit(UNCORE_BOX_FLAG_CFL8_CBOX_MSR_OFFS, &box->flags)) {
++		return CFL_UNC_CBO_7_PERFEVTSEL0 +
++		       (box->pmu->type->pair_ctr_ctl ? 2 * idx : idx);
++	} else {
++		return box->pmu->type->event_ctl +
++		       (box->pmu->type->pair_ctr_ctl ? 2 * idx : idx) +
++		       uncore_msr_box_offset(box);
++	}
+ }
+ 
+ static inline
+ unsigned uncore_msr_perf_ctr(struct intel_uncore_box *box, int idx)
+ {
+-	return box->pmu->type->perf_ctr +
+-		(box->pmu->type->pair_ctr_ctl ? 2 * idx : idx) +
+-		uncore_msr_box_offset(box);
++	if (test_bit(UNCORE_BOX_FLAG_CFL8_CBOX_MSR_OFFS, &box->flags)) {
++		return CFL_UNC_CBO_7_PER_CTR0 +
++		       (box->pmu->type->pair_ctr_ctl ? 2 * idx : idx);
++	} else {
++		return box->pmu->type->perf_ctr +
++		       (box->pmu->type->pair_ctr_ctl ? 2 * idx : idx) +
++		       uncore_msr_box_offset(box);
++	}
+ }
+ 
+ static inline
 diff --git a/arch/x86/events/intel/uncore_snb.c b/arch/x86/events/intel/uncore_snb.c
-index 8527c3e1038b..bfa25814fe5f 100644
+index bfa25814fe5f..2593b0d7aeee 100644
 --- a/arch/x86/events/intel/uncore_snb.c
 +++ b/arch/x86/events/intel/uncore_snb.c
-@@ -15,6 +15,25 @@
- #define PCI_DEVICE_ID_INTEL_SKL_HQ_IMC	0x1910
- #define PCI_DEVICE_ID_INTEL_SKL_SD_IMC	0x190f
- #define PCI_DEVICE_ID_INTEL_SKL_SQ_IMC	0x191f
-+#define PCI_DEVICE_ID_INTEL_KBL_Y_IMC	0x590c
-+#define PCI_DEVICE_ID_INTEL_KBL_U_IMC	0x5904
-+#define PCI_DEVICE_ID_INTEL_KBL_UQ_IMC	0x5914
-+#define PCI_DEVICE_ID_INTEL_KBL_SD_IMC	0x590f
-+#define PCI_DEVICE_ID_INTEL_KBL_SQ_IMC	0x591f
-+#define PCI_DEVICE_ID_INTEL_CFL_2U_IMC	0x3ecc
-+#define PCI_DEVICE_ID_INTEL_CFL_4U_IMC	0x3ed0
-+#define PCI_DEVICE_ID_INTEL_CFL_4H_IMC	0x3e10
-+#define PCI_DEVICE_ID_INTEL_CFL_6H_IMC	0x3ec4
-+#define PCI_DEVICE_ID_INTEL_CFL_2S_D_IMC	0x3e0f
-+#define PCI_DEVICE_ID_INTEL_CFL_4S_D_IMC	0x3e1f
-+#define PCI_DEVICE_ID_INTEL_CFL_6S_D_IMC	0x3ec2
-+#define PCI_DEVICE_ID_INTEL_CFL_8S_D_IMC	0x3e30
-+#define PCI_DEVICE_ID_INTEL_CFL_4S_W_IMC	0x3e18
-+#define PCI_DEVICE_ID_INTEL_CFL_6S_W_IMC	0x3ec6
-+#define PCI_DEVICE_ID_INTEL_CFL_8S_W_IMC	0x3e31
-+#define PCI_DEVICE_ID_INTEL_CFL_4S_S_IMC	0x3e33
-+#define PCI_DEVICE_ID_INTEL_CFL_6S_S_IMC	0x3eca
-+#define PCI_DEVICE_ID_INTEL_CFL_8S_S_IMC	0x3e32
+@@ -221,6 +221,10 @@ static void skl_uncore_msr_init_box(struct intel_uncore_box *box)
+ 		wrmsrl(SKL_UNC_PERF_GLOBAL_CTL,
+ 			SNB_UNC_GLOBAL_CTL_EN | SKL_UNC_GLOBAL_CTL_CORE_ALL);
+ 	}
++
++	/* The 8th CBOX has different MSR space */
++	if (box->pmu->pmu_idx == 7)
++		__set_bit(UNCORE_BOX_FLAG_CFL8_CBOX_MSR_OFFS, &box->flags);
+ }
  
- /* SNB event control */
- #define SNB_UNC_CTL_EV_SEL_MASK			0x000000ff
-@@ -569,7 +588,82 @@ static const struct pci_device_id skl_uncore_pci_ids[] = {
- 		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_SKL_SQ_IMC),
- 		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
- 	},
--
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_KBL_Y_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_KBL_U_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_KBL_UQ_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_KBL_SD_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_KBL_SQ_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_2U_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_4U_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_4H_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_6H_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_2S_D_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_4S_D_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_6S_D_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_8S_D_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_4S_W_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_6S_W_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_8S_W_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_4S_S_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_6S_S_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
-+	{ /* IMC */
-+		PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_INTEL_CFL_8S_S_IMC),
-+		.driver_data = UNCORE_PCI_DEV_DATA(SNB_PCI_UNCORE_IMC, 0),
-+	},
- 	{ /* end: all zeroes */ },
- };
- 
-@@ -618,6 +712,25 @@ static const struct imc_uncore_pci_dev desktop_imc_pci_ids[] = {
- 	IMC_DEV(SKL_HQ_IMC, &skl_uncore_pci_driver),  /* 6th Gen Core H Quad Core */
- 	IMC_DEV(SKL_SD_IMC, &skl_uncore_pci_driver),  /* 6th Gen Core S Dual Core */
- 	IMC_DEV(SKL_SQ_IMC, &skl_uncore_pci_driver),  /* 6th Gen Core S Quad Core */
-+	IMC_DEV(KBL_Y_IMC, &skl_uncore_pci_driver),  /* 7th Gen Core Y */
-+	IMC_DEV(KBL_U_IMC, &skl_uncore_pci_driver),  /* 7th Gen Core U */
-+	IMC_DEV(KBL_UQ_IMC, &skl_uncore_pci_driver),  /* 7th Gen Core U Quad Core */
-+	IMC_DEV(KBL_SD_IMC, &skl_uncore_pci_driver),  /* 7th Gen Core S Dual Core */
-+	IMC_DEV(KBL_SQ_IMC, &skl_uncore_pci_driver),  /* 7th Gen Core S Quad Core */
-+	IMC_DEV(CFL_2U_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core U 2 Cores */
-+	IMC_DEV(CFL_4U_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core U 4 Cores */
-+	IMC_DEV(CFL_4H_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core H 4 Cores */
-+	IMC_DEV(CFL_6H_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core H 6 Cores */
-+	IMC_DEV(CFL_2S_D_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 2 Cores Desktop */
-+	IMC_DEV(CFL_4S_D_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 4 Cores Desktop */
-+	IMC_DEV(CFL_6S_D_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 6 Cores Desktop */
-+	IMC_DEV(CFL_8S_D_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 8 Cores Desktop */
-+	IMC_DEV(CFL_4S_W_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 4 Cores Work Station */
-+	IMC_DEV(CFL_6S_W_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 6 Cores Work Station */
-+	IMC_DEV(CFL_8S_W_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 8 Cores Work Station */
-+	IMC_DEV(CFL_4S_S_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 4 Cores Server */
-+	IMC_DEV(CFL_6S_S_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 6 Cores Server */
-+	IMC_DEV(CFL_8S_S_IMC, &skl_uncore_pci_driver),  /* 8th Gen Core S 8 Cores Server */
- 	{  /* end marker */ }
- };
- 
+ static void skl_uncore_msr_enable_box(struct intel_uncore_box *box)
+@@ -247,7 +251,7 @@ static struct intel_uncore_ops skl_uncore_msr_ops = {
+ static struct intel_uncore_type skl_uncore_cbox = {
+ 	.name		= "cbox",
+ 	.num_counters   = 4,
+-	.num_boxes	= 5,
++	.num_boxes	= 8,
+ 	.perf_ctr_bits	= 44,
+ 	.fixed_ctr_bits	= 48,
+ 	.perf_ctr	= SNB_UNC_CBO_0_PER_CTR0,
