@@ -2,88 +2,301 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70BBEC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:30:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CE86C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:30:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E5262245E
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:30:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E5262245E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id 0D0752245E
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:30:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D0752245E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730270AbeKMEY5 (ORCPT
+        id S1730348AbeKMEZB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 23:24:57 -0500
-Received: from out01.mta.xmission.com ([166.70.13.231]:54555 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727354AbeKMEY5 (ORCPT
+        Mon, 12 Nov 2018 23:25:01 -0500
+Received: from smtprelay0053.hostedemail.com ([216.40.44.53]:39656 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727354AbeKMEY6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 23:24:57 -0500
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gMGym-0002Sy-1F; Mon, 12 Nov 2018 11:30:32 -0700
-Received: from 67-3-154-154.omah.qwest.net ([67.3.154.154] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gMGyl-0005jW-2g; Mon, 12 Nov 2018 11:30:31 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Tycho Andersen <tycho@tycho.ws>
-Cc:     Kees Cook <keescook@chromium.org>, Oleg Nesterov <oleg@redhat.com>,
-        linux-kernel@vger.kernel.org
-References: <20181112171144.GI3645@cisco>
-Date:   Mon, 12 Nov 2018 12:30:25 -0600
-In-Reply-To: <20181112171144.GI3645@cisco> (Tycho Andersen's message of "Mon,
-        12 Nov 2018 10:11:44 -0700")
-Message-ID: <87efbqi1xa.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1gMGyl-0005jW-2g;;;mid=<87efbqi1xa.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=67.3.154.154;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18H2nkmPl5PiWGFUOdV+DY4jJJn4dYivog=
-X-SA-Exim-Connect-IP: 67.3.154.154
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: siginfo pid not populated from ptrace?
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+        Mon, 12 Nov 2018 23:24:58 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id BD87E180A8142;
+        Mon, 12 Nov 2018 18:30:32 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: clam75_3ea21afce1b12
+X-Filterd-Recvd-Size: 10008
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf16.hostedemail.com (Postfix) with ESMTPA;
+        Mon, 12 Nov 2018 18:30:30 +0000 (UTC)
+Message-ID: <31d224e8c4b9bcebc3657c17fa50302f7da90e64.camel@perches.com>
+Subject: Re: [PATCH] scsi: libsas: Remove pcidev reference
+From:   Joe Perches <joe@perches.com>
+To:     John Garry <john.garry@huawei.com>, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxarm@huawei.com
+Date:   Mon, 12 Nov 2018 10:30:29 -0800
+In-Reply-To: <3b62b0ad-53ba-37c2-817c-591d94eed838@huawei.com>
+References: <1542043689-214071-1-git-send-email-john.garry@huawei.com>
+         <584e7b4fcd6f95fe0c581f6f9472852685c754d1.camel@perches.com>
+         <310504a2-f33c-183b-d00a-fa067b273dfd@huawei.com>
+         <3b62b0ad-53ba-37c2-817c-591d94eed838@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tycho Andersen <tycho@tycho.ws> writes:
+On Mon, 2018-11-12 at 17:55 +0000, John Garry wrote:
+> On 12/11/2018 17:49, John Garry wrote:
+> > On 12/11/2018 17:32, Joe Perches wrote:
+> > > On Tue, 2018-11-13 at 01:28 +0800, John Garry wrote:
+> > > > Not all host drivers are PCI drivers - like hisi_sas, which supports a
+> > > > platform driver - so remove reference to "pcidev".
+> > > > 
+> > > > The debug level is also downgraded to KERN_ERR for the same message.
+> > > []
+> > > > diff --git a/drivers/scsi/libsas/sas_discover.c
+> > > > b/drivers/scsi/libsas/sas_discover.c
+> > > []
+> > > > @@ -186,7 +186,7 @@ int sas_notify_lldd_dev_found(struct
+> > > > domain_device *dev)
+> > > > 
+> > > >      res = i->dft->lldd_dev_found(dev);
+> > > >      if (res) {
+> > > > -        printk("sas: driver on pcidev %s cannot handle "
+> > > > +        pr_err("sas: driver on host %s cannot handle "
+> > > >                 "device %llx, error:%d\n",
+> > > 
+> > > As a printk without a KERN_<LEVEL> is printed at whatever
+> > > CONFIG_MESSAGE_LOGLEVEL_DEFAULT is set to (default: 4 and
+> > > rarely unchanged), this is effectively upgraded from a
+> > > KERN_WARNING to KERN_ERR.
+> > 
+> > ah, I thought that it was printed always.
+> > 
+> > So maybe I'll just leave as-is.
+> 
+> I forgot to mention that checkpatch complains about using printk() - 
+> that's why I changed it.
 
-> Hi Oleg,
->
-> I've been running some tests on my seccomp series, and in one of the
-> tests on v4.20-rc2, I noticed,
->
-> [ RUN      ] global.syscall_restart
-> seccomp_bpf.c:2784:global.syscall_restart:Expected getpid() (1492) == info._sifields._kill.si_pid (0)
-> global.syscall_restart: Test failed at step #22
->
-> which seems unrelated to my series (the kernel was stock v4.20 with my
-> patches on top).
->
-> I've been running a lot of tests, and only seen this once, so it seems
-> like a fairly rare race. I tried to look through the code but didn't
-> see anything obvious. Thoughts?
+I believe that always assigning a KERN_<LEVEL>
+is good thing so I am not against this change.
 
-My guess would be pid namespaces, or stopping for a signal other than
-SIGSTOP.
+Describing the change a bit more correctly than
+'debug level downgraded' would be useful.
 
-If you can get this to reproduce at all it would be interesting to see
-si_signo and si_code.  So that we can see just which signal is in info,
-and how it should be decoded. 
+My preference is a patch like this which
+always prefixes "sas: " to each log message
+by adding a #define pr_fmt and converts the
+bare printks to pr_notice, and converts the
+slightly odd sas_printk macro and uses with
+a hidden KERN_NOTICE to pr_notice.
 
-I see this test at line 2736 in 4.20-rc1 so there are almost 50 lines of
-change in your version of seccomp_bpf.c.  So I hope I am reading the
-proper test.
+---
+ drivers/scsi/libsas/sas_discover.c |  9 ++++-----
+ drivers/scsi/libsas/sas_expander.c | 33 ++++++++++++++++-----------------
+ drivers/scsi/libsas/sas_init.c     | 10 +++++-----
+ drivers/scsi/libsas/sas_internal.h |  5 ++++-
+ drivers/scsi/libsas/sas_phy.c      | 10 +++++-----
+ drivers/scsi/libsas/sas_port.c     |  3 +--
+ 6 files changed, 35 insertions(+), 35 deletions(-)
 
-Eric
+diff --git a/drivers/scsi/libsas/sas_discover.c b/drivers/scsi/libsas/sas_discover.c
+index dde433aa59c2..193d7a1ebeb3 100644
+--- a/drivers/scsi/libsas/sas_discover.c
++++ b/drivers/scsi/libsas/sas_discover.c
+@@ -128,7 +128,8 @@ static int sas_get_port_device(struct asd_sas_port *port)
+ 					  SAS_FANOUT_EXPANDER_DEVICE);
+ 		break;
+ 	default:
+-		printk("ERROR: Unidentified device type %d\n", dev->dev_type);
++		pr_notice("ERROR: Unidentified device type %d\n",
++			  dev->dev_type);
+ 		rphy = NULL;
+ 		break;
+ 	}
+@@ -186,10 +187,8 @@ int sas_notify_lldd_dev_found(struct domain_device *dev)
+ 
+ 	res = i->dft->lldd_dev_found(dev);
+ 	if (res) {
+-		printk("sas: driver on pcidev %s cannot handle "
+-		       "device %llx, error:%d\n",
+-		       dev_name(sas_ha->dev),
+-		       SAS_ADDR(dev->sas_addr), res);
++		pr_notice("driver on pcidev %s cannot handle device %llx, error:%d\n",
++			  dev_name(sas_ha->dev), SAS_ADDR(dev->sas_addr), res);
+ 	}
+ 	set_bit(SAS_DEV_FOUND, &dev->state);
+ 	kref_get(&dev->kref);
+diff --git a/drivers/scsi/libsas/sas_expander.c b/drivers/scsi/libsas/sas_expander.c
+index 0d1f72752ca2..922253f1b05f 100644
+--- a/drivers/scsi/libsas/sas_expander.c
++++ b/drivers/scsi/libsas/sas_expander.c
+@@ -393,7 +393,7 @@ static int sas_ex_phy_discover_helper(struct domain_device *dev, u8 *disc_req,
+ 		return res;
+ 	dr = &((struct smp_resp *)disc_resp)->disc;
+ 	if (memcmp(dev->sas_addr, dr->attached_sas_addr, SAS_ADDR_SIZE) == 0) {
+-		sas_printk("Found loopback topology, just ignore it!\n");
++		pr_notice("Found loopback topology, just ignore it!\n");
+ 		return 0;
+ 	}
+ 	sas_set_ex_phy(dev, single, disc_resp);
+@@ -1262,19 +1262,18 @@ static void sas_print_parent_topology_bug(struct domain_device *child,
+ 	};
+ 	struct domain_device *parent = child->parent;
+ 
+-	sas_printk("%s ex %016llx phy 0x%x <--> %s ex %016llx "
+-		   "phy 0x%x has %c:%c routing link!\n",
++	pr_notice("%s ex %016llx phy 0x%x <--> %s ex %016llx phy 0x%x has %c:%c routing link!\n",
+ 
+-		   ex_type[parent->dev_type],
+-		   SAS_ADDR(parent->sas_addr),
+-		   parent_phy->phy_id,
++		  ex_type[parent->dev_type],
++		  SAS_ADDR(parent->sas_addr),
++		  parent_phy->phy_id,
+ 
+-		   ex_type[child->dev_type],
+-		   SAS_ADDR(child->sas_addr),
+-		   child_phy->phy_id,
++		  ex_type[child->dev_type],
++		  SAS_ADDR(child->sas_addr),
++		  child_phy->phy_id,
+ 
+-		   sas_route_char(parent, parent_phy),
+-		   sas_route_char(child, child_phy));
++		  sas_route_char(parent, parent_phy),
++		  sas_route_char(child, child_phy));
+ }
+ 
+ static int sas_check_eeds(struct domain_device *child,
+@@ -2154,23 +2153,23 @@ void sas_smp_handler(struct bsg_job *job, struct Scsi_Host *shost,
+ 	case SAS_FANOUT_EXPANDER_DEVICE:
+ 		break;
+ 	default:
+-		printk("%s: can we send a smp request to a device?\n",
+-		       __func__);
++		pr_notice("%s: can we send a smp request to a device?\n",
++			  __func__);
+ 		goto out;
+ 	}
+ 
+ 	dev = sas_find_dev_by_rphy(rphy);
+ 	if (!dev) {
+-		printk("%s: fail to find a domain_device?\n", __func__);
++		pr_notice("%s: fail to find a domain_device?\n", __func__);
+ 		goto out;
+ 	}
+ 
+ 	/* do we need to support multiple segments? */
+ 	if (job->request_payload.sg_cnt > 1 ||
+ 	    job->reply_payload.sg_cnt > 1) {
+-		printk("%s: multiple segments req %u, rsp %u\n",
+-		       __func__, job->request_payload.payload_len,
+-		       job->reply_payload.payload_len);
++		pr_notice("%s: multiple segments req %u, rsp %u\n",
++			  __func__, job->request_payload.payload_len,
++			  job->reply_payload.payload_len);
+ 		goto out;
+ 	}
+ 
+diff --git a/drivers/scsi/libsas/sas_init.c b/drivers/scsi/libsas/sas_init.c
+index ede0af78144f..221340ee8651 100644
+--- a/drivers/scsi/libsas/sas_init.c
++++ b/drivers/scsi/libsas/sas_init.c
+@@ -128,19 +128,19 @@ int sas_register_ha(struct sas_ha_struct *sas_ha)
+ 
+ 	error = sas_register_phys(sas_ha);
+ 	if (error) {
+-		printk(KERN_NOTICE "couldn't register sas phys:%d\n", error);
++		pr_notice("couldn't register sas phys:%d\n", error);
+ 		return error;
+ 	}
+ 
+ 	error = sas_register_ports(sas_ha);
+ 	if (error) {
+-		printk(KERN_NOTICE "couldn't register sas ports:%d\n", error);
++		pr_notice("couldn't register sas ports:%d\n", error);
+ 		goto Undo_phys;
+ 	}
+ 
+ 	error = sas_init_events(sas_ha);
+ 	if (error) {
+-		printk(KERN_NOTICE "couldn't start event thread:%d\n", error);
++		pr_notice("couldn't start event thread:%d\n", error);
+ 		goto Undo_ports;
+ 	}
+ 
+@@ -623,8 +623,8 @@ struct asd_sas_event *sas_alloc_event(struct asd_sas_phy *phy)
+ 	if (atomic_read(&phy->event_nr) > phy->ha->event_thres) {
+ 		if (i->dft->lldd_control_phy) {
+ 			if (cmpxchg(&phy->in_shutdown, 0, 1) == 0) {
+-				sas_printk("The phy%02d bursting events, shut it down.\n",
+-					phy->id);
++				pr_notice("The phy%02d bursting events, shut it down.\n",
++					  phy->id);
+ 				sas_notify_phy_event(phy, PHYE_SHUTDOWN);
+ 			}
+ 		} else {
+diff --git a/drivers/scsi/libsas/sas_internal.h b/drivers/scsi/libsas/sas_internal.h
+index 50e12d662ffe..263cb41853c2 100644
+--- a/drivers/scsi/libsas/sas_internal.h
++++ b/drivers/scsi/libsas/sas_internal.h
+@@ -32,7 +32,10 @@
+ #include <scsi/libsas.h>
+ #include <scsi/sas_ata.h>
+ 
+-#define sas_printk(fmt, ...) printk(KERN_NOTICE "sas: " fmt, ## __VA_ARGS__)
++#ifdef pr_fmt
++#undef pr_fmt
++#endif
++#define pr_fmt(fmt) "sas: " fmt
+ 
+ #define SAS_DPRINTK(fmt, ...) printk(KERN_DEBUG "sas: " fmt, ## __VA_ARGS__)
+ 
+diff --git a/drivers/scsi/libsas/sas_phy.c b/drivers/scsi/libsas/sas_phy.c
+index bf3e1b979ca6..d628c0e6289d 100644
+--- a/drivers/scsi/libsas/sas_phy.c
++++ b/drivers/scsi/libsas/sas_phy.c
+@@ -122,11 +122,11 @@ static void sas_phye_shutdown(struct work_struct *work)
+ 		phy->enabled = 0;
+ 		ret = i->dft->lldd_control_phy(phy, PHY_FUNC_DISABLE, NULL);
+ 		if (ret)
+-			sas_printk("lldd disable phy%02d returned %d\n",
+-				phy->id, ret);
+-	} else
+-		sas_printk("phy%02d is not enabled, cannot shutdown\n",
+-			phy->id);
++			pr_notice("lldd disable phy%02d returned %d\n",
++				  phy->id, ret);
++	} else {
++		pr_notice("phy%02d is not enabled, cannot shutdown\n", phy->id);
++	}
+ }
+ 
+ /* ---------- Phy class registration ---------- */
+diff --git a/drivers/scsi/libsas/sas_port.c b/drivers/scsi/libsas/sas_port.c
+index fad23dd39114..f2a25cef85b7 100644
+--- a/drivers/scsi/libsas/sas_port.c
++++ b/drivers/scsi/libsas/sas_port.c
+@@ -147,8 +147,7 @@ static void sas_form_port(struct asd_sas_phy *phy)
+ 	}
+ 
+ 	if (i >= sas_ha->num_phys) {
+-		printk(KERN_NOTICE "%s: couldn't find a free port, bug?\n",
+-		       __func__);
++		pr_notice("%s: couldn't find a free port, bug?\n", __func__);
+ 		spin_unlock_irqrestore(&sas_ha->phy_port_lock, flags);
+ 		return;
+ 	}
+
+
