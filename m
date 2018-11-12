@@ -2,357 +2,146 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5087C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:34:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43F29C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:34:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EE15223C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:34:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EE15223C8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 163B2223C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:34:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 163B2223C8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729282AbeKLU1S (ORCPT
+        id S1729310AbeKLU1V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 15:27:18 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32744 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727204AbeKLU1R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 15:27:17 -0500
-Received: from lhreml701-cah.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id ED43034A485B0;
-        Mon, 12 Nov 2018 10:32:59 +0000 (GMT)
-Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.153)
- by smtpsuk.huawei.com (10.201.108.42) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Mon, 12 Nov 2018 10:32:54 +0000
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <dhowells@redhat.com>, <dwmw2@infradead.org>,
-        <herbert@gondor.apana.org.au>, <davem@davemloft.net>
-CC:     <keyrings@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-        <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <silviu.vlasceanu@huawei.com>
-Subject: [RFC][PATCH 10/12] PGP: Provide a key type for testing PGP signatures
-Date:   Mon, 12 Nov 2018 11:24:21 +0100
-Message-ID: <20181112102423.30415-11-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181112102423.30415-1-roberto.sassu@huawei.com>
-References: <20181112102423.30415-1-roberto.sassu@huawei.com>
+        Mon, 12 Nov 2018 15:27:21 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:54275 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728667AbeKLU1T (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 15:27:19 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wACAXqMY3655534
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 12 Nov 2018 02:33:52 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wACAXpXE3655529;
+        Mon, 12 Nov 2018 02:33:51 -0800
+Date:   Mon, 12 Nov 2018 02:33:51 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Waiman Long <tipbot@zytor.com>
+Message-ID: <tip-1d8ca3be86ebc6a38dad8236f45c7a9c61681e78@git.kernel.org>
+Cc:     riel@surriel.com, mingo@kernel.org, longman@redhat.com,
+        luto@kernel.org, dave.hansen@linux.intel.com,
+        linux-kernel@vger.kernel.org, brgerst@gmail.com,
+        torvalds@linux-foundation.org, bp@alien8.de, hpa@zytor.com,
+        dvlasenk@redhat.com, peterz@infradead.org, tglx@linutronix.de
+Reply-To: dvlasenk@redhat.com, bp@alien8.de, hpa@zytor.com,
+          torvalds@linux-foundation.org, brgerst@gmail.com,
+          tglx@linutronix.de, peterz@infradead.org, mingo@kernel.org,
+          luto@kernel.org, longman@redhat.com, riel@surriel.com,
+          linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com
+In-Reply-To: <1541535149-31963-1-git-send-email-longman@redhat.com>
+References: <1541535149-31963-1-git-send-email-longman@redhat.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/mm] x86/mm/fault: Allow stack access below %rsp
+Git-Commit-ID: 1d8ca3be86ebc6a38dad8236f45c7a9c61681e78
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.204.65.153]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
+Commit-ID:  1d8ca3be86ebc6a38dad8236f45c7a9c61681e78
+Gitweb:     https://git.kernel.org/tip/1d8ca3be86ebc6a38dad8236f45c7a9c61681e78
+Author:     Waiman Long <longman@redhat.com>
+AuthorDate: Tue, 6 Nov 2018 15:12:29 -0500
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 12 Nov 2018 11:06:19 +0100
 
-Provide a key type for testing the PGP signature parser.  It is given a
-non-detached PGP message as payload:
+x86/mm/fault: Allow stack access below %rsp
 
-	keyctl padd pgp_test a @s <content.txt.gpg
+The current x86 page fault handler allows stack access below the stack
+pointer if it is no more than 64k+256 bytes. Any access beyond the 64k+
+limit will cause a segmentation fault.
 
-A suitable message can be generated like this:
+The gcc -fstack-check option generates code to probe the stack for
+large stack allocation to see if the stack is accessible. The newer gcc
+does that while updating the %rsp simultaneously. Older gcc's like gcc4
+doesn't do that. As a result, an application compiled with an old gcc
+and the -fstack-check option may fail to start at all:
 
-	echo "This is a test attached-signed content" >content.txt
-	gpg --compress-algo=none -s content.txt
+  $ cat test.c
+  int main() {
+	char tmp[1024*128];
+	printf("### ok\n");
+	return 0;
+  }
 
-Changelog
+  $ gcc -fstack-check -g -o test test.c
 
-v0:
-- use verify_pgp_signature() to verify signatures with builtin_trusted_keys
-  or secondary_trusted_keys (Roberto Sassu)
-- use pgp_verify_sig() to verify signatures with keys in the user keyring
-  (Roberto Sassu)
-- replace user_instantiate with generic_key_instantiate (Roberto Sassu)
-- remove .def_lookup_type and .match methods (Roberto Sassu)
-- fix style issues (Roberto Sassu)
+  $ ./test
+  Segmentation fault
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-Co-developed-by: Roberto Sassu <roberto.sassu@huawei.com>
+The old binary was working in older kernels where expand_stack() was
+somehow called before the check. But it is not working in newer kernels.
+Besides, the 64k+ limit check is kind of crude and will not catch a
+lot of mistakes that userspace applications may be misbehaving anyway.
+I think the kernel isn't the right place for this kind of tests. We
+should leave it to userspace instrumentation tools to perform them.
+
+The 64k+ limit check is now removed to just let expand_stack() decide
+if a segmentation fault should happen, when the RLIMIT_STACK limit is
+exceeded, for example.
+
+Signed-off-by: Waiman Long <longman@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/1541535149-31963-1-git-send-email-longman@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- crypto/asymmetric_keys/Kconfig        |  13 +++
- crypto/asymmetric_keys/Makefile       |   4 +
- crypto/asymmetric_keys/pgp_library.c  |  64 +++++++++++++
- crypto/asymmetric_keys/pgp_test_key.c | 132 ++++++++++++++++++++++++++
- include/linux/pgplib.h                |  15 +++
- 5 files changed, 228 insertions(+)
- create mode 100644 crypto/asymmetric_keys/pgp_test_key.c
+ arch/x86/mm/fault.c | 12 ------------
+ 1 file changed, 12 deletions(-)
 
-diff --git a/crypto/asymmetric_keys/Kconfig b/crypto/asymmetric_keys/Kconfig
-index 356b85fc34bd..8226d06fe1e0 100644
---- a/crypto/asymmetric_keys/Kconfig
-+++ b/crypto/asymmetric_keys/Kconfig
-@@ -110,4 +110,17 @@ config PGP_KEY_PARSER
- 	  for key data and provides the ability to instantiate a crypto key
- 	  from a public key packet found inside the blob.
- 
-+config PGP_TEST_KEY
-+	tristate "PGP testing key type"
-+	depends on PGP_KEY_PARSER
-+	depends on SYSTEM_DATA_VERIFICATION
-+	help
-+	  This option provides a type of key that can be loaded up from a
-+	  PGP message - provided the message is signed by a trusted key.  If
-+	  it is, the PGP wrapper is discarded and reading the key returns
-+	  just the payload.  If it isn't, adding the key will fail with an
-+	  error.
-+
-+	  This is intended for testing the PGP parser.
-+
- endif # ASYMMETRIC_KEY_TYPE
-diff --git a/crypto/asymmetric_keys/Makefile b/crypto/asymmetric_keys/Makefile
-index e2aeb2a4b6a6..48bbe2b1d446 100644
---- a/crypto/asymmetric_keys/Makefile
-+++ b/crypto/asymmetric_keys/Makefile
-@@ -96,3 +96,7 @@ obj-$(CONFIG_PGP_KEY_PARSER) += pgp_key_parser.o
- pgp_key_parser-y := \
- 	pgp_public_key.o \
- 	pgp_signature.o
-+obj-$(CONFIG_PGP_TEST_KEY) += pgp_test.o
-+pgp_test-y := \
-+	pgp_test_key.o \
-+	pgp_signature.o
-diff --git a/crypto/asymmetric_keys/pgp_library.c b/crypto/asymmetric_keys/pgp_library.c
-index 13bfc9db1ae4..3a2bd73f1915 100644
---- a/crypto/asymmetric_keys/pgp_library.c
-+++ b/crypto/asymmetric_keys/pgp_library.c
-@@ -559,3 +559,67 @@ int pgp_parse_sig_params(const u8 **_data, size_t *_datalen,
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(pgp_parse_sig_params);
-+
-+#if IS_ENABLED(CONFIG_PGP_TEST_KEY)
-+
-+/**
-+ * pgp_parse_literal_data - Parse basic params from a PGP literal data packet
-+ * @data: Content of packet
-+ * @datalen: Length of packet remaining
-+ * @p: The basic parameters
-+ *
-+ * Parse the basic parameters from a PGP literal data packet [RFC 4880: 5.9]
-+ * that are needed to work out what form the data is in and where it is.
-+ *
-+ * Returns 0 if successful or a negative error code.
-+ */
-+int pgp_parse_literal_data(const u8 *data, size_t datalen,
-+			   struct pgp_literal_data_parameters *p)
-+{
-+	unsigned int tmp;
-+
-+	pr_devel("-->%s(,%zu,,)\n", __func__, datalen);
-+
-+	if (datalen < 6)
-+		goto too_short;
-+	datalen -= 6;
-+
-+	p->format = *data++;
-+	switch (p->format) {
-+	case PGP_LIT_FORMAT_BINARY:
-+	case PGP_LIT_FORMAT_TEXT:
-+	case PGP_LIT_FORMAT_TEXT_UTF8:
-+		break;
-+	default:
-+		pr_debug("Literal data packet with unhandled format %02x\n",
-+			 p->format);
-+		return -EBADMSG;
-+	}
-+
-+	p->filename_len = *data++;
-+	p->filename_offset = 2;
-+	if (datalen < p->filename_len)
-+		goto too_short;
-+	data += p->filename_len;
-+	datalen -= p->filename_len;
-+
-+	tmp  = *data++ << 24;
-+	tmp |= *data++ << 16;
-+	tmp |= *data++ << 8;
-+	tmp |= *data++;
-+	p->time = tmp;
-+
-+	p->content_offset = 6 + p->filename_len;
-+	p->content_len = datalen;
-+
-+	pr_devel("%x,%u,%x,%u\n",
-+		 p->format, p->filename_len, p->time, p->content_len);
-+	return 0;
-+
-+too_short:
-+	pr_debug("Literal data packet too short\n");
-+	return -EBADMSG;
-+}
-+EXPORT_SYMBOL_GPL(pgp_parse_literal_data);
-+
-+#endif /* CONFIG_PGP_TEST_KEY */
-diff --git a/crypto/asymmetric_keys/pgp_test_key.c b/crypto/asymmetric_keys/pgp_test_key.c
-new file mode 100644
-index 000000000000..55bc6cad8559
---- /dev/null
-+++ b/crypto/asymmetric_keys/pgp_test_key.c
-@@ -0,0 +1,132 @@
-+/* Testing module to load key from trusted PGP message
-+ *
-+ * Copyright (C) 2014 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells@redhat.com)
-+ *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public Licence
-+ * as published by the Free Software Foundation; either version
-+ * 2 of the Licence, or (at your option) any later version.
-+ */
-+
-+#define pr_fmt(fmt) "PGPtest: "fmt
-+#include <linux/key.h>
-+#include <linux/key-type.h>
-+#include <linux/cred.h>
-+#include <linux/err.h>
-+#include <linux/pgp.h>
-+#include <linux/pgplib.h>
-+#include <linux/pgp_sig.h>
-+#include <linux/module.h>
-+#include <linux/verification.h>
-+#include <keys/user-type.h>
-+#include <keys/system_keyring.h>
-+#include "pgp_parser.h"
-+
-+MODULE_LICENSE("GPL");
-+
-+struct pgp_test_parse_context {
-+	struct pgp_parse_context pgp;
-+	struct pgp_literal_data_parameters params;
-+	const void *content;
-+};
-+
-+static int pgp_test_parse_data(struct pgp_parse_context *context,
-+			       enum pgp_packet_tag type,
-+			       u8 headerlen,
-+			       const u8 *data,
-+			       size_t datalen)
-+{
-+	struct pgp_test_parse_context *ctx =
-+		container_of(context, struct pgp_test_parse_context, pgp);
-+	int ret;
-+
-+	kenter("");
-+
-+	ret = pgp_parse_literal_data(data, datalen, &ctx->params);
-+	if (ret == 0)
-+		ctx->content = data + ctx->params.content_offset;
-+	return ret;
-+}
-+
-+/*
-+ * Instantiate a PGP wrapped and validated key.
-+ */
-+static int pgp_test_instantiate(struct key *key,
-+				struct key_preparsed_payload *prep)
-+{
-+	struct pgp_test_parse_context p;
-+	const void *saved_prep_data;
-+	size_t saved_prep_datalen;
-+	int ret;
-+
-+	kenter("");
-+
-+	if (!current_cred()->user->uid_keyring)
-+		return -ENOKEY;
-+
-+	memset(&p, 0, sizeof(p));
-+	p.pgp.types_of_interest = (1 << PGP_PKT_LITERAL_DATA);
-+	p.pgp.process_packet = pgp_test_parse_data;
-+	ret = pgp_parse_packets(prep->data, prep->datalen, &p.pgp);
-+	if (ret < 0) {
-+		kleave(" = %d [parse]", ret);
-+		return ret;
-+	}
-+
-+	if (!p.params.content_len) {
-+		kleave(" = -ENODATA [no literal data");
-+		return -ENODATA;
-+	}
-+
-+	ret = verify_pgp_signature(p.content, p.params.content_len,
-+				   NULL, 0, prep->data, prep->datalen, NULL);
-+	if (ret < 0) {
-+		ret = pgp_verify_sig(NULL, p.content, p.params.content_len,
-+				     NULL, 0, prep->data, prep->datalen);
-+		if (ret < 0)
-+			goto error;
-+
-+		pr_warn("PGP message doesn't chain back to a trusted key\n");
-+	}
-+
-+	saved_prep_data = prep->data;
-+	saved_prep_datalen = prep->datalen;
-+	prep->data = p.content;
-+	prep->datalen = p.params.content_len;
-+	ret = generic_key_instantiate(key, prep);
-+	prep->data = saved_prep_data;
-+	prep->datalen = saved_prep_datalen;
-+error:
-+	kleave(" = %d", ret);
-+	return ret;
-+}
-+
-+/*
-+ * user defined keys take an arbitrary string as the description and an
-+ * arbitrary blob of data as the payload
-+ */
-+static struct key_type key_type_pgp_test = {
-+	.name			= "pgp_test",
-+	.instantiate		= pgp_test_instantiate,
-+	.revoke			= user_revoke,
-+	.destroy		= user_destroy,
-+	.describe		= user_describe,
-+	.read			= user_read,
-+};
-+
-+/*
-+ * Module stuff
-+ */
-+static int __init pgp_key_init(void)
-+{
-+	return register_key_type(&key_type_pgp_test);
-+}
-+
-+static void __exit pgp_key_cleanup(void)
-+{
-+	unregister_key_type(&key_type_pgp_test);
-+}
-+
-+module_init(pgp_key_init);
-+module_exit(pgp_key_cleanup);
-diff --git a/include/linux/pgplib.h b/include/linux/pgplib.h
-index 44c8a07b32e3..21999bfe8e2a 100644
---- a/include/linux/pgplib.h
-+++ b/include/linux/pgplib.h
-@@ -66,6 +66,21 @@ struct pgp_sig_parameters {
- extern int pgp_parse_sig_params(const u8 **_data, size_t *_datalen,
- 				struct pgp_sig_parameters *p);
- 
-+#if IS_ENABLED(CONFIG_PGP_TEST_KEY)
-+
-+struct pgp_literal_data_parameters {
-+	enum pgp_literal_data_format format : 8;
-+	u8 filename_len;
-+	u8 filename_offset;
-+	u8 content_offset;
-+	u32 content_len;
-+	u32 time;
-+};
-+
-+extern int pgp_parse_literal_data(const u8 *data, size_t datalen,
-+				  struct pgp_literal_data_parameters *p);
-+
-+#endif /* CONFIG_PGP_TEST_KEY */
- 
- #endif /* CONFIG_PGP_LIBRARY */
- 
--- 
-2.17.1
-
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index 71d4b9d4d43f..29525cf21100 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -1380,18 +1380,6 @@ retry:
+ 		bad_area(regs, sw_error_code, address);
+ 		return;
+ 	}
+-	if (sw_error_code & X86_PF_USER) {
+-		/*
+-		 * Accessing the stack below %sp is always a bug.
+-		 * The large cushion allows instructions like enter
+-		 * and pusha to work. ("enter $65535, $31" pushes
+-		 * 32 pointers and then decrements %sp by 65535.)
+-		 */
+-		if (unlikely(address + 65536 + 32 * sizeof(unsigned long) < regs->sp)) {
+-			bad_area(regs, sw_error_code, address);
+-			return;
+-		}
+-	}
+ 	if (unlikely(expand_stack(vma, address))) {
+ 		bad_area(regs, sw_error_code, address);
+ 		return;
