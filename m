@@ -2,91 +2,183 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DA92C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:30:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90ACBC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:31:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E32DD22506
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:30:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="Evbz7ZiD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E32DD22506
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id 5BEFF22506
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:31:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BEFF22506
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726065AbeKMFZd (ORCPT
+        id S1727354AbeKMF00 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 00:25:33 -0500
-Received: from mail-it1-f177.google.com ([209.85.166.177]:52891 "EHLO
-        mail-it1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725790AbeKMFZd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 00:25:33 -0500
-Received: by mail-it1-f177.google.com with SMTP id t190-v6so14362401itb.2
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 11:30:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=pFdWEy6L/wpBh/kv+SS3VaJUhrcx9veBghHtlmz36QI=;
-        b=Evbz7ZiDrpZgp6rHzPkEUiQaoPUakZI+OU7CsikSYBSMcv5LMH8nO23lsx629mUdjg
-         5iy7LAX0X5xYhcEc5+CajtnvTBSpr1rStyWcfI4wQ5mwGBYSNQrajNSfyh3XDg9I31KB
-         cjzPgC0AotP3GKLDOhfxXmUuPwLaBKK66RE7V4LP+eVn60CfDDXaj1UTjPmUrWeUu4Ud
-         ygA4zUCwd5CtQLWLdD3U7qe/589x4KPLZXn4odJt9/whqiME0hZvEqVR4mlvwp84ecJg
-         JJiYujs9i7d7Yq/mColeWMdC73z8hB7WrESUNNrA44omSJw2EEoXoxGq3XWSts8v5VnH
-         RkDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=pFdWEy6L/wpBh/kv+SS3VaJUhrcx9veBghHtlmz36QI=;
-        b=K9OBG+ISrEuIDJ3Zee8EtrpKZ2S4/E4Vk3jS2NI2ZbdDwCAr5/07v37ZJmAA8y41Es
-         tCC+D8Y/1vFRB55wfShLQbJbZYk6m8hNCP+y2o1x+TQ9TYGC3x2U1V4AAyYqrQTy8AkI
-         zPQvX3QyA5zhBOuXeFtdLsDVhYRvHFTUfR3RuSyuXsU0hfToN0q+dsetgh0USX+/MXlH
-         kBXPU/Q1ijMnUsQSK2jixW5Ck039cTvTLtZzobMv+rItYMaKUopnWQmzn1Czp+RIXvBt
-         +A/EtFHWWum5ihmA9zv1HvjArngWhzgyl1PGTaUgcEbaISJ3Lq2xZeBcFVyvYlcNwArx
-         uwlQ==
-X-Gm-Message-State: AGRZ1gLs5vlcrC6vC2NUq4DstnOG7697ty1nJ1qRAAFUY4x9qS4XIcVt
-        lvQEQRjMPPqpxkP13uadmEBtkA==
-X-Google-Smtp-Source: AJdET5dSj6s/vVELbl/nnokXV5IEq4UbqvBSuFJNOIt8zK9mxhTrH4jXRxf1pAv5/k4t7wvm9EMdpw==
-X-Received: by 2002:a24:1706:: with SMTP id 6-v6mr898356ith.169.1542051055122;
-        Mon, 12 Nov 2018 11:30:55 -0800 (PST)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id h128-v6sm5923024iof.38.2018.11.12.11.30.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 12 Nov 2018 11:30:54 -0800 (PST)
-Subject: Re: [PATCH RESEND] Blacklist SAMSUNG MZ7TD256HAFV-000L9 SSD
-To:     Diego Viola <diego.viola@gmail.com>
-Cc:     hdegoede@redhat.com, tj@kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-References: <20181112192252.3911-1-diego.viola@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <ce81ea56-cdcb-c739-42b9-1d48188c86da@kernel.dk>
-Date:   Mon, 12 Nov 2018 12:30:53 -0700
+        Tue, 13 Nov 2018 00:26:26 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60318 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725832AbeKMF00 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 00:26:26 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7EB41307D90E;
+        Mon, 12 Nov 2018 19:31:47 +0000 (UTC)
+Received: from [10.36.112.25] (ovpn-112-25.ams2.redhat.com [10.36.112.25])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4858C608F8;
+        Mon, 12 Nov 2018 19:31:41 +0000 (UTC)
+Subject: Re: [PATCH 2/2] kvm: Use huge pages for DAX-backed files
+To:     Barret Rhoden <brho@google.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ross Zwisler <zwisler@kernel.org>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
+Cc:     linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        kvm@vger.kernel.org, yu.c.zhang@intel.com, yi.z.zhang@intel.com
+References: <20181109203921.178363-1-brho@google.com>
+ <20181109203921.178363-3-brho@google.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <861c4adb-e2f0-2caf-8f6e-9f09ecb0b624@redhat.com>
+Date:   Mon, 12 Nov 2018 20:31:37 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <20181112192252.3911-1-diego.viola@gmail.com>
+In-Reply-To: <20181109203921.178363-3-brho@google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Mon, 12 Nov 2018 19:31:47 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/12/18 12:22 PM, Diego Viola wrote:
-> med_power_with_dipm still causes freezes after updating the firmware to
-> the latest version (DXT04L5Q).
+On 09/11/2018 21:39, Barret Rhoden wrote:
+> This change allows KVM to map DAX-backed files made of huge pages with
+> huge mappings in the EPT/TDP.
 > 
-> Set model_rev to NULL and blacklist the device.
+> DAX pages are not PageTransCompound.  The existing check is trying to
+> determine if the mapping for the pfn is a huge mapping or not.  For
+> non-DAX maps, e.g. hugetlbfs, that means checking PageTransCompound.
+> For DAX, we can check the page table itself.
+> 
+> Note that KVM already faulted in the page (or huge page) in the host's
+> page table, and we hold the KVM mmu spinlock (grabbed before checking
+> the mmu seq).
+> 
+> Signed-off-by: Barret Rhoden <brho@google.com>
+> ---
+>  arch/x86/kvm/mmu.c | 34 ++++++++++++++++++++++++++++++++--
+>  1 file changed, 32 insertions(+), 2 deletions(-)
 
-Thanks, applied.
+Looks good.  What's the plan for removing PageReserved from DAX pages?
 
--- 
-Jens Axboe
+Thanks,
+
+Paolo
+
+> diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+> index cf5f572f2305..2df8c459dc6a 100644
+> --- a/arch/x86/kvm/mmu.c
+> +++ b/arch/x86/kvm/mmu.c
+> @@ -3152,6 +3152,36 @@ static int kvm_handle_bad_page(struct kvm_vcpu *vcpu, gfn_t gfn, kvm_pfn_t pfn)
+>  	return -EFAULT;
+>  }
+>  
+> +static bool pfn_is_huge_mapped(struct kvm *kvm, gfn_t gfn, kvm_pfn_t pfn)
+> +{
+> +	struct page *page = pfn_to_page(pfn);
+> +	unsigned long hva, map_shift;
+> +
+> +	if (!is_zone_device_page(page))
+> +		return PageTransCompoundMap(page);
+> +
+> +	/*
+> +	 * DAX pages do not use compound pages.  The page should have already
+> +	 * been mapped into the host-side page table during try_async_pf(), so
+> +	 * we can check the page tables directly.
+> +	 */
+> +	hva = gfn_to_hva(kvm, gfn);
+> +	if (kvm_is_error_hva(hva))
+> +		return false;
+> +
+> +	/*
+> +	 * Our caller grabbed the KVM mmu_lock with a successful
+> +	 * mmu_notifier_retry, so we're safe to walk the page table.
+> +	 */
+> +	map_shift = dev_pagemap_mapping_shift(hva, current->mm);
+> +	switch (map_shift) {
+> +	case PMD_SHIFT:
+> +	case PUD_SIZE:
+> +		return true;
+> +	}
+> +	return false;
+> +}
+> +
+>  static void transparent_hugepage_adjust(struct kvm_vcpu *vcpu,
+>  					gfn_t *gfnp, kvm_pfn_t *pfnp,
+>  					int *levelp)
+> @@ -3168,7 +3198,7 @@ static void transparent_hugepage_adjust(struct kvm_vcpu *vcpu,
+>  	 */
+>  	if (!is_error_noslot_pfn(pfn) && !kvm_is_reserved_pfn(pfn) &&
+>  	    level == PT_PAGE_TABLE_LEVEL &&
+> -	    PageTransCompoundMap(pfn_to_page(pfn)) &&
+> +	    pfn_is_huge_mapped(vcpu->kvm, gfn, pfn) &&
+>  	    !mmu_gfn_lpage_is_disallowed(vcpu, gfn, PT_DIRECTORY_LEVEL)) {
+>  		unsigned long mask;
+>  		/*
+> @@ -5678,7 +5708,7 @@ static bool kvm_mmu_zap_collapsible_spte(struct kvm *kvm,
+>  		 */
+>  		if (sp->role.direct &&
+>  			!kvm_is_reserved_pfn(pfn) &&
+> -			PageTransCompoundMap(pfn_to_page(pfn))) {
+> +			pfn_is_huge_mapped(kvm, sp->gfn, pfn)) {
+>  			pte_list_remove(rmap_head, sptep);
+>  			need_tlb_flush = 1;
+>  			goto restart;
+> 
 
