@@ -2,529 +2,83 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED863C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 09:53:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53D20C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 09:55:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB154223C6
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 09:53:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB154223C6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 23244223C6
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 09:55:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23244223C6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727665AbeKLTpx (ORCPT
+        id S1727823AbeKLTrs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 14:45:53 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:50048 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725873AbeKLTpw (ORCPT
+        Mon, 12 Nov 2018 14:47:48 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:47027 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725873AbeKLTrs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 14:45:52 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAC9qW1l120526;
-        Mon, 12 Nov 2018 03:52:32 -0600
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAC9qW6R098880
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 12 Nov 2018 03:52:32 -0600
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 12
- Nov 2018 03:52:32 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Mon, 12 Nov 2018 03:52:32 -0600
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAC9qSKO013934;
-        Mon, 12 Nov 2018 03:52:28 -0600
-Subject: Re: [PATCH v2 8/9] phy: Add Cadence D-PHY support
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-CC:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        <linux-media@vger.kernel.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Chen-Yu Tsai <wens@csie.org>, <linux-kernel@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Krzysztof Witos <kwitos@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>
-References: <cover.c2c2ae47383b9dbbdee6b69cafdd7391c06dde4f.1541516029.git-series.maxime.ripard@bootlin.com>
- <4ec9e47fb5aa9794f69a8e75a04108055094c056.1541516029.git-series.maxime.ripard@bootlin.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <5f5bcc06-51b2-d565-56a0-083c66c1f01a@ti.com>
-Date:   Mon, 12 Nov 2018 15:21:56 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <4ec9e47fb5aa9794f69a8e75a04108055094c056.1541516029.git-series.maxime.ripard@bootlin.com>
-Content-Type: text/plain; charset="utf-8"
+        Mon, 12 Nov 2018 14:47:48 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by dkim.mimecast.com with ESMTP id
+ uk-mta-140-niB-I7VRPtSO0Uple3pKuw-1; Mon, 12 Nov 2018 09:55:18 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Mon, 12 Nov 2018 09:55:23 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Mon, 12 Nov 2018 09:55:23 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Vlastimil Babka' <vbabka@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>
+CC:     'Bart Van Assche' <bvanassche@acm.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Christoph Lameter <cl@linux.com>, Roman Gushchin <guro@fb.com>,
+        "Darryl T. Agostinelli" <dagostinelli@gmail.com>
+Subject: RE: [PATCH] slab.h: Avoid using & for logical and of booleans
+Thread-Topic: [PATCH] slab.h: Avoid using & for logical and of booleans
+Thread-Index: AQHUdUfJjxPqMWIPVkCDxWbeIJk+/6VCg0ZQgAAHZYCAAAoxEIAAH18AgAFtI9CAA7ZBaYAEF9og
+Date:   Mon, 12 Nov 2018 09:55:23 +0000
+Message-ID: <bf7c2a6b801a4430bf842fc20e826db6@AcuMS.aculab.com>
+References: <20181105204000.129023-1-bvanassche@acm.org>
+ <62188a351f2249188ce654ee03c894b1@AcuMS.aculab.com>
+ <e44e6c8b-e4e4-e7cb-a5ca-88e9559eb0d7@suse.cz>
+ <3c9adab0f1f74c46a60b3d4401030337@AcuMS.aculab.com>
+ <60deb90d-e521-39e5-5072-fc9efb98e365@suse.cz>
+ <9af3ac1d43bb422cb3c41e7e8e422e6e@AcuMS.aculab.com>
+ <cbc1fc52-dc8c-aa38-8f29-22da8bcd91c1@suse.cz>
+ <20181109110019.c82fba8125d4e2891fbe4a6c@linux-foundation.org>
+ <b8ffd59b-0d15-9c98-b9ea-ad71e4c0c734@suse.cz>
+In-Reply-To: <b8ffd59b-0d15-9c98-b9ea-ad71e4c0c734@suse.cz>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
+MIME-Version: 1.0
+X-MC-Unique: niB-I7VRPtSO0Uple3pKuw-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maxime,
+RnJvbTogVmxhc3RpbWlsIEJhYmthIFttYWlsdG86dmJhYmthQHN1c2UuY3pdDQo+IFNlbnQ6IDA5
+IE5vdmVtYmVyIDIwMTggMTk6MTYNCi4uLg0KPiBUaGlzPyBOb3QgdGVycmlibHkgZWxlZ2FudCwg
+YnV0IEkgZG9uJ3Qgc2VlIGEgbmljZXIgd2F5IHJpZ2h0IG5vdy4uLg0KDQpNYXliZSBqdXN0IGhh
+dmUgdHdvIGNvcGllcyBvZiB0aGUgZnVuY3Rpb24gYm9keT8NCg0KIHN0YXRpYyBfX2Fsd2F5c19p
+bmxpbmUgZW51bSBrbWFsbG9jX2NhY2hlX3R5cGUga21hbGxvY190eXBlKGdmcF90IGZsYWdzKQ0K
+ew0KI2lmbmRlZiBDT05GSUdfWk9ORV9ETUENCglyZXR1cm4gZmxhZ3MgJiBfX0dGUF9SRUNMQUlN
+QUJMRSA/IEtNQUxMT0NfUkVDTEFJTSA6IEtNQUxMT0NfTk9STUFMOw0KI2Vsc2UNCglpZiAobGlr
+ZWx5KChmbGFncyAmIChfX0dGUF9ETUEgfCBfX0dGUF9SRUNMQUlNQUJMRSkpID09IDApKQ0KCQly
+ZXR1cm4gS01BTExPQ19OT1JNQUw7DQoJcmV0dXJuIGZsYWdzICYgX19HRlBfRE1BID8gS01BTExP
+Q19ETUEgOiBLTUFMTE9DX1JFQ0xBSU07DQojZW5kaWYNCn0NCg0KCURhdmlkDQoNCi0NClJlZ2lz
+dGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24g
+S2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
 
-On 06/11/18 8:24 PM, Maxime Ripard wrote:
-> Cadence has designed a D-PHY that can be used by the, currently in tree,
-> DSI bridge (DRM), CSI Transceiver and CSI Receiver (v4l2) drivers.
-> 
-> Only the DSI driver has an ad-hoc driver for that phy at the moment, while
-> the v4l2 drivers are completely missing any phy support. In order to make
-> that phy support available to all these drivers, without having to
-> duplicate that code three times, let's create a generic phy framework
-> driver.
-> 
-> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> ---
->  Documentation/devicetree/bindings/display/bridge/cdns,dsi.txt |  21 +-
->  Documentation/devicetree/bindings/phy/cdns,dphy.txt           |  20 +-
->  drivers/phy/cadence/Kconfig                                   |  13 +-
->  drivers/phy/cadence/Makefile                                  |   1 +-
->  drivers/phy/cadence/cdns-dphy.c                               | 459 +++++++-
->  5 files changed, 492 insertions(+), 22 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/phy/cdns,dphy.txt
->  create mode 100644 drivers/phy/cadence/cdns-dphy.c
-> 
-> diff --git a/Documentation/devicetree/bindings/display/bridge/cdns,dsi.txt b/Documentation/devicetree/bindings/display/bridge/cdns,dsi.txt
-> index f5725bb6c61c..525a4bfd8634 100644
-> --- a/Documentation/devicetree/bindings/display/bridge/cdns,dsi.txt
-> +++ b/Documentation/devicetree/bindings/display/bridge/cdns,dsi.txt
-> @@ -31,28 +31,7 @@ Required subnodes:
->  - one subnode per DSI device connected on the DSI bus. Each DSI device should
->    contain a reg property encoding its virtual channel.
->  
-> -Cadence DPHY
-> -============
-> -
-> -Cadence DPHY block.
-> -
-> -Required properties:
-> -- compatible: should be set to "cdns,dphy".
-> -- reg: physical base address and length of the DPHY registers.
-> -- clocks: DPHY reference clocks.
-> -- clock-names: must contain "psm" and "pll_ref".
-> -- #phy-cells: must be set to 0.
-> -
-> -
->  Example:
-> -	dphy0: dphy@fd0e0000{
-> -		compatible = "cdns,dphy";
-> -		reg = <0x0 0xfd0e0000 0x0 0x1000>;
-> -		clocks = <&psm_clk>, <&pll_ref_clk>;
-> -		clock-names = "psm", "pll_ref";
-> -		#phy-cells = <0>;
-> -	};
-> -
->  	dsi0: dsi@fd0c0000 {
->  		compatible = "cdns,dsi";
->  		reg = <0x0 0xfd0c0000 0x0 0x1000>;
-> diff --git a/Documentation/devicetree/bindings/phy/cdns,dphy.txt b/Documentation/devicetree/bindings/phy/cdns,dphy.txt
-> new file mode 100644
-> index 000000000000..1095bc4e72d9
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/cdns,dphy.txt
-> @@ -0,0 +1,20 @@
-> +Cadence DPHY
-> +============
-> +
-> +Cadence DPHY block.
-> +
-> +Required properties:
-> +- compatible: should be set to "cdns,dphy".
-> +- reg: physical base address and length of the DPHY registers.
-> +- clocks: DPHY reference clocks.
-> +- clock-names: must contain "psm" and "pll_ref".
-> +- #phy-cells: must be set to 0.
-> +
-> +Example:
-> +	dphy0: dphy@fd0e0000{
-> +		compatible = "cdns,dphy";
-> +		reg = <0x0 0xfd0e0000 0x0 0x1000>;
-> +		clocks = <&psm_clk>, <&pll_ref_clk>;
-> +		clock-names = "psm", "pll_ref";
-> +		#phy-cells = <0>;
-> +	};
-> diff --git a/drivers/phy/cadence/Kconfig b/drivers/phy/cadence/Kconfig
-> index 57fff7de4031..240effa81046 100644
-> --- a/drivers/phy/cadence/Kconfig
-> +++ b/drivers/phy/cadence/Kconfig
-> @@ -1,6 +1,7 @@
->  #
-> -# Phy driver for Cadence MHDP DisplayPort controller
-> +# Phy drivers for Cadence IPs
->  #
-> +
->  config PHY_CADENCE_DP
->  	tristate "Cadence MHDP DisplayPort PHY driver"
->  	depends on OF
-> @@ -8,3 +9,13 @@ config PHY_CADENCE_DP
->  	select GENERIC_PHY
->  	help
->  	  Support for Cadence MHDP DisplayPort PHY.
-> +
-> +config PHY_CADENCE_DPHY
-> +	tristate "Cadence D-PHY Support"
-> +	depends on HAS_IOMEM && OF
-> +	select GENERIC_PHY
-> +	select GENERIC_PHY_MIPI_DPHY
-> +	help
-> +	  Choose this option if you have a Cadence D-PHY in your
-> +	  system. If M is selected, the module will be called
-> +	  cdns-csi.
-> diff --git a/drivers/phy/cadence/Makefile b/drivers/phy/cadence/Makefile
-> index e5b0a11cf28a..64cb9ea66ceb 100644
-> --- a/drivers/phy/cadence/Makefile
-> +++ b/drivers/phy/cadence/Makefile
-> @@ -1 +1,2 @@
->  obj-$(CONFIG_PHY_CADENCE_DP)	+= phy-cadence-dp.o
-> +obj-$(CONFIG_PHY_CADENCE_DPHY)	+= cdns-dphy.o
-> diff --git a/drivers/phy/cadence/cdns-dphy.c b/drivers/phy/cadence/cdns-dphy.c
-> new file mode 100644
-> index 000000000000..a398b401e5d3
-> --- /dev/null
-> +++ b/drivers/phy/cadence/cdns-dphy.c
-> @@ -0,0 +1,459 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Copyright: 2017-2018 Cadence Design Systems, Inc.
-> + */
-> +
-> +#include <linux/bitops.h>
-> +#include <linux/clk.h>
-> +#include <linux/io.h>
-> +#include <linux/module.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/reset.h>
-> +
-> +#include <linux/phy/phy.h>
-> +#include <linux/phy/phy-mipi-dphy.h>
-> +
-> +#define REG_WAKEUP_TIME_NS		800
-> +#define DPHY_PLL_RATE_HZ		108000000
-> +
-> +/* DPHY registers */
-> +#define DPHY_PMA_CMN(reg)		(reg)
-> +#define DPHY_PMA_LCLK(reg)		(0x100 + (reg))
-> +#define DPHY_PMA_LDATA(lane, reg)	(0x200 + ((lane) * 0x100) + (reg))
-> +#define DPHY_PMA_RCLK(reg)		(0x600 + (reg))
-> +#define DPHY_PMA_RDATA(lane, reg)	(0x700 + ((lane) * 0x100) + (reg))
-> +#define DPHY_PCS(reg)			(0xb00 + (reg))
-> +
-> +#define DPHY_CMN_SSM			DPHY_PMA_CMN(0x20)
-> +#define DPHY_CMN_SSM_EN			BIT(0)
-> +#define DPHY_CMN_TX_MODE_EN		BIT(9)
-> +
-> +#define DPHY_CMN_PWM			DPHY_PMA_CMN(0x40)
-> +#define DPHY_CMN_PWM_DIV(x)		((x) << 20)
-> +#define DPHY_CMN_PWM_LOW(x)		((x) << 10)
-> +#define DPHY_CMN_PWM_HIGH(x)		(x)
-> +
-> +#define DPHY_CMN_FBDIV			DPHY_PMA_CMN(0x4c)
-> +#define DPHY_CMN_FBDIV_VAL(low, high)	(((high) << 11) | ((low) << 22))
-> +#define DPHY_CMN_FBDIV_FROM_REG		(BIT(10) | BIT(21))
-> +
-> +#define DPHY_CMN_OPIPDIV		DPHY_PMA_CMN(0x50)
-> +#define DPHY_CMN_IPDIV_FROM_REG		BIT(0)
-> +#define DPHY_CMN_IPDIV(x)		((x) << 1)
-> +#define DPHY_CMN_OPDIV_FROM_REG		BIT(6)
-> +#define DPHY_CMN_OPDIV(x)		((x) << 7)
-> +
-> +#define DPHY_PSM_CFG			DPHY_PCS(0x4)
-> +#define DPHY_PSM_CFG_FROM_REG		BIT(0)
-> +#define DPHY_PSM_CLK_DIV(x)		((x) << 1)
-> +
-> +#define DSI_HBP_FRAME_OVERHEAD		12
-> +#define DSI_HSA_FRAME_OVERHEAD		14
-> +#define DSI_HFP_FRAME_OVERHEAD		6
-> +#define DSI_HSS_VSS_VSE_FRAME_OVERHEAD	4
-> +#define DSI_BLANKING_FRAME_OVERHEAD	6
-> +#define DSI_NULL_FRAME_OVERHEAD		6
-> +#define DSI_EOT_PKT_SIZE		4
-> +
-> +struct cdns_dphy_cfg {
-> +	u8 pll_ipdiv;
-> +	u8 pll_opdiv;
-> +	u16 pll_fbdiv;
-> +	unsigned int nlanes;
-> +};
-> +
-> +enum cdns_dphy_clk_lane_cfg {
-> +	DPHY_CLK_CFG_LEFT_DRIVES_ALL = 0,
-> +	DPHY_CLK_CFG_LEFT_DRIVES_RIGHT = 1,
-> +	DPHY_CLK_CFG_LEFT_DRIVES_LEFT = 2,
-> +	DPHY_CLK_CFG_RIGHT_DRIVES_ALL = 3,
-> +};
-> +
-> +struct cdns_dphy;
-> +struct cdns_dphy_ops {
-> +	int (*probe)(struct cdns_dphy *dphy);
-> +	void (*remove)(struct cdns_dphy *dphy);
-> +	void (*set_psm_div)(struct cdns_dphy *dphy, u8 div);
-> +	void (*set_clk_lane_cfg)(struct cdns_dphy *dphy,
-> +				 enum cdns_dphy_clk_lane_cfg cfg);
-> +	void (*set_pll_cfg)(struct cdns_dphy *dphy,
-> +			    const struct cdns_dphy_cfg *cfg);
-> +	unsigned long (*get_wakeup_time_ns)(struct cdns_dphy *dphy);
-> +};
-> +
-> +struct cdns_dphy {
-> +	struct cdns_dphy_cfg cfg;
-> +	void __iomem *regs;
-> +	struct clk *psm_clk;
-> +	struct clk *pll_ref_clk;
-> +	const struct cdns_dphy_ops *ops;
-> +	struct phy *phy;
-> +};
-> +
-> +static int cdns_dsi_get_dphy_pll_cfg(struct cdns_dphy *dphy,
-> +				     struct cdns_dphy_cfg *cfg,
-> +				     struct phy_configure_opts_mipi_dphy *opts,
-> +				     unsigned int *dsi_hfp_ext)
-> +{
-> +	u64 dlane_bps, dlane_bps_max, fbdiv, fbdiv_max, adj_dsi_htotal;
-> +	unsigned long pll_ref_hz = clk_get_rate(dphy->pll_ref_clk);
-> +
-> +	memset(cfg, 0, sizeof(*cfg));
-> +
-> +	if (pll_ref_hz < 9600000 || pll_ref_hz >= 150000000)
-> +		return -EINVAL;
-> +	else if (pll_ref_hz < 19200000)
-> +		cfg->pll_ipdiv = 1;
-> +	else if (pll_ref_hz < 38400000)
-> +		cfg->pll_ipdiv = 2;
-> +	else if (pll_ref_hz < 76800000)
-> +		cfg->pll_ipdiv = 4;
-> +	else
-> +		cfg->pll_ipdiv = 8;
-> +
-> +	dlane_bps = opts->hs_clk_rate;
-> +
-> +	if (dlane_bps > 2500000000UL || dlane_bps < 160000000UL)
-> +		return -EINVAL;
-> +	else if (dlane_bps >= 1250000000)
-> +		cfg->pll_opdiv = 1;
-> +	else if (dlane_bps >= 630000000)
-> +		cfg->pll_opdiv = 2;
-> +	else if (dlane_bps >= 320000000)
-> +		cfg->pll_opdiv = 4;
-> +	else if (dlane_bps >= 160000000)
-> +		cfg->pll_opdiv = 8;
-> +
-> +	/*
-> +	 * Allow a deviation of 0.2% on the per-lane data rate to try to
-> +	 * recover a potential mismatch between DPI and PPI clks.
-> +	 */
-> +	dlane_bps_max = dlane_bps + DIV_ROUND_DOWN_ULL(dlane_bps, 500);
-> +	fbdiv_max = DIV_ROUND_DOWN_ULL(dlane_bps_max * 2 *
-> +				       cfg->pll_opdiv * cfg->pll_ipdiv,
-> +				       pll_ref_hz);
-> +	fbdiv = DIV_ROUND_UP_ULL(dlane_bps * 2 * cfg->pll_opdiv *
-> +				 cfg->pll_ipdiv,
-> +				 pll_ref_hz);
-> +
-> +	/*
-> +	 * Iterate over all acceptable fbdiv and try to find an adjusted DSI
-> +	 * htotal length providing an exact match.
-> +	 *
-> +	 * Note that we could do something even trickier by relying on the fact
-> +	 * that a new line is not necessarily aligned on a lane boundary, so,
-> +	 * by making adj_dsi_htotal non aligned on a dsi_lanes we can improve a
-> +	 * bit the precision. With this, the step would be
-> +	 *
-> +	 *	pll_ref_hz / (2 * opdiv * ipdiv * nlanes)
-> +	 *
-> +	 * instead of
-> +	 *
-> +	 *	pll_ref_hz / (2 * opdiv * ipdiv)
-> +	 *
-> +	 * The drawback of this approach is that we would need to make sure the
-> +	 * number or lines is a multiple of the realignment periodicity which is
-> +	 * a function of the number of lanes and the original misalignment. For
-> +	 * example, for NLANES = 4 and HTOTAL % NLANES = 3, it takes 4 lines
-> +	 * to realign on a lane:
-> +	 * LINE 0: expected number of bytes, starts emitting first byte of
-> +	 *	   LINE 1 on LANE 3
-> +	 * LINE 1: expected number of bytes, starts emitting first 2 bytes of
-> +	 *	   LINE 2 on LANES 2 and 3
-> +	 * LINE 2: expected number of bytes, starts emitting first 3 bytes of
-> +	 *	   of LINE 3 on LANES 1, 2 and 3
-> +	 * LINE 3: one byte less, now things are realigned on LANE 0 for LINE 4
-> +	 *
-> +	 * I figured this extra complexity was not worth the benefit, but if
-> +	 * someone really has unfixable mismatch, that would be something to
-> +	 * investigate.
-> +	 */
-> +	for (; fbdiv <= fbdiv_max; fbdiv++) {
-> +		u32 rem;
-> +
-> +		/*
-> +		 * Do the division in 2 steps to avoid an overflow on the
-> +		 * divider.
-> +		 */
-> +		rem = do_div(adj_dsi_htotal, opts->hs_clk_rate);
-> +		if (rem)
-> +			continue;
-> +
-> +		rem = do_div(adj_dsi_htotal,
-> +			     cfg->pll_opdiv * cfg->pll_ipdiv * 2 * 8);
-> +		if (rem)
-> +			continue;
-> +
-> +		cfg->pll_fbdiv = fbdiv;
-> +		break;
-> +	}
-> +
-> +	/* No match, let's just reject the display mode. */
-> +	if (!cfg->pll_fbdiv)
-> +		return -EINVAL;
-> +
-> +	return 0;
-> +}
-> +
-> +static int cdns_dphy_setup_psm(struct cdns_dphy *dphy)
-> +{
-> +	unsigned long psm_clk_hz = clk_get_rate(dphy->psm_clk);
-> +	unsigned long psm_div;
-> +
-> +	if (!psm_clk_hz || psm_clk_hz > 100000000)
-> +		return -EINVAL;
-> +
-> +	psm_div = DIV_ROUND_CLOSEST(psm_clk_hz, 1000000);
-> +	if (dphy->ops->set_psm_div)
-> +		dphy->ops->set_psm_div(dphy, psm_div);
-> +
-> +	return 0;
-> +}
-> +
-> +static void cdns_dphy_set_clk_lane_cfg(struct cdns_dphy *dphy,
-> +				       enum cdns_dphy_clk_lane_cfg cfg)
-> +{
-> +	if (dphy->ops->set_clk_lane_cfg)
-> +		dphy->ops->set_clk_lane_cfg(dphy, cfg);
-> +}
-> +
-> +static void cdns_dphy_set_pll_cfg(struct cdns_dphy *dphy,
-> +				  const struct cdns_dphy_cfg *cfg)
-> +{
-> +	if (dphy->ops->set_pll_cfg)
-> +		dphy->ops->set_pll_cfg(dphy, cfg);
-> +}
-> +
-> +static unsigned long cdns_dphy_get_wakeup_time_ns(struct cdns_dphy *dphy)
-> +{
-> +	return dphy->ops->get_wakeup_time_ns(dphy);
-> +}
-> +
-> +static unsigned long cdns_dphy_ref_get_wakeup_time_ns(struct cdns_dphy *dphy)
-> +{
-> +	/* Default wakeup time is 800 ns (in a simulated environment). */
-> +	return 800;
-> +}
-> +
-> +static void cdns_dphy_ref_set_pll_cfg(struct cdns_dphy *dphy,
-> +				      const struct cdns_dphy_cfg *cfg)
-> +{
-> +	u32 fbdiv_low, fbdiv_high;
-> +
-> +	fbdiv_low = (cfg->pll_fbdiv / 4) - 2;
-> +	fbdiv_high = cfg->pll_fbdiv - fbdiv_low - 2;
-> +
-> +	writel(DPHY_CMN_IPDIV_FROM_REG | DPHY_CMN_OPDIV_FROM_REG |
-> +	       DPHY_CMN_IPDIV(cfg->pll_ipdiv) |
-> +	       DPHY_CMN_OPDIV(cfg->pll_opdiv),
-> +	       dphy->regs + DPHY_CMN_OPIPDIV);
-> +	writel(DPHY_CMN_FBDIV_FROM_REG |
-> +	       DPHY_CMN_FBDIV_VAL(fbdiv_low, fbdiv_high),
-> +	       dphy->regs + DPHY_CMN_FBDIV);
-> +	writel(DPHY_CMN_PWM_HIGH(6) | DPHY_CMN_PWM_LOW(0x101) |
-> +	       DPHY_CMN_PWM_DIV(0x8),
-> +	       dphy->regs + DPHY_CMN_PWM);
-> +}
-> +
-> +static void cdns_dphy_ref_set_psm_div(struct cdns_dphy *dphy, u8 div)
-> +{
-> +	writel(DPHY_PSM_CFG_FROM_REG | DPHY_PSM_CLK_DIV(div),
-> +	       dphy->regs + DPHY_PSM_CFG);
-> +}
-> +
-> +/*
-> + * This is the reference implementation of DPHY hooks. Specific integration of
-> + * this IP may have to re-implement some of them depending on how they decided
-> + * to wire things in the SoC.
-> + */
-> +static const struct cdns_dphy_ops ref_dphy_ops = {
-> +	.get_wakeup_time_ns = cdns_dphy_ref_get_wakeup_time_ns,
-> +	.set_pll_cfg = cdns_dphy_ref_set_pll_cfg,
-> +	.set_psm_div = cdns_dphy_ref_set_psm_div,
-> +};
-> +
-> +static int cdns_dphy_config_from_opts(struct phy *phy,
-> +				      struct phy_configure_opts_mipi_dphy *opts,
-> +				      struct cdns_dphy_cfg *cfg)
-> +{
-> +	struct cdns_dphy *dphy = phy_get_drvdata(phy);
-> +	unsigned int dsi_hfp_ext = 0;
-> +	int ret;
-> +
-> +	ret = phy_mipi_dphy_config_validate(opts);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = cdns_dsi_get_dphy_pll_cfg(dphy, cfg,
-> +					opts, &dsi_hfp_ext);
-> +	if (ret)
-> +		return ret;
-> +
-> +	opts->wakeup = cdns_dphy_get_wakeup_time_ns(dphy);
-> +
-> +	return 0;
-> +}
-> +
-> +static int cdns_dphy_init(struct phy *phy)
-> +{
-> +	struct cdns_dphy *dphy = phy_get_drvdata(phy);
-> +
-> +	clk_prepare_enable(dphy->psm_clk);
-> +	clk_prepare_enable(dphy->pll_ref_clk);
-> +
-> +	return 0;
-> +}
-> +
-> +static int cdns_dphy_validate(struct phy *phy, enum phy_mode mode,
-> +			      union phy_configure_opts *opts)
-> +{
-> +	struct cdns_dphy_cfg cfg = { 0 };
-> +
-> +	if (mode != PHY_MODE_MIPI_DPHY)
-> +		return -EINVAL;
-> +
-> +	return cdns_dphy_config_from_opts(phy, &opts->mipi_dphy, &cfg);
-> +}
-> +
-> +static int cdns_dphy_configure(struct phy *phy, union phy_configure_opts *opts)
-> +{
-> +	struct cdns_dphy *dphy = phy_get_drvdata(phy);
-> +	struct cdns_dphy_cfg cfg = { 0 };
-> +	int ret;
-> +
-> +	ret = cdns_dphy_config_from_opts(phy, &opts->mipi_dphy, &cfg);
-> +	if (ret)
-> +		return ret;
-
-Can you explain why you need the same function to be invoked from both validate
-and configure callback? I see this to be redundant.
-
-Thanks
-Kishon
