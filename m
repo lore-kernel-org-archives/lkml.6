@@ -2,57 +2,57 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91BC1C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:33:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A8D7C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:34:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45DA4216FD
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:33:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E22A216FD
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:34:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="MrTxHoXq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45DA4216FD
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="BXg0cWxh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E22A216FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731548AbeKLPZW (ORCPT
+        id S1731571AbeKLPZq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 10:25:22 -0500
-Received: from mail-eopbgr710086.outbound.protection.outlook.com ([40.107.71.86]:59968
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        Mon, 12 Nov 2018 10:25:46 -0500
+Received: from mail-eopbgr690065.outbound.protection.outlook.com ([40.107.69.65]:14251
+        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731042AbeKLPZW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 10:25:22 -0500
+        id S1731042AbeKLPZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 10:25:46 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CCAO4ZUf6UeO/NWbRWAidAwihnT8i1sbrPmRcJyIqbk=;
- b=MrTxHoXqQ2DwCru5esFif7QKnZAkM4krpyCySOSAyx1aWRrGJ8NQfyS26C+lea0jFkN1hX0Icn0PZ91YWWtCNRYoS16QX2rdCXDcZjVPWui2zyzHHfRhVOuq2EGI1ZuFksRhSh6hDjDV+Eth3UUQC4E8K2gJNfd099Hfm0xoqK4=
-Received: from BN6PR12CA0025.namprd12.prod.outlook.com (2603:10b6:405:70::11)
- by BLUPR12MB0417.namprd12.prod.outlook.com (2a01:111:e400:516a::30) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1294.29; Mon, 12 Nov
- 2018 05:33:42 +0000
-Received: from CO1NAM03FT040.eop-NAM03.prod.protection.outlook.com
- (2a01:111:f400:7e48::201) by BN6PR12CA0025.outlook.office365.com
- (2603:10b6:405:70::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1294.26 via Frontend
- Transport; Mon, 12 Nov 2018 05:33:41 +0000
+ bh=pie8MTmVnWsE4MZx2fY3vNr0/mw0muYPynLs9HUAPU0=;
+ b=BXg0cWxhfzo87LIXDu+U7nnrdG4qv/cyoI1oZ0E8qrEx1ZdvdktKrmOz5lla98zAQRbxAiyMAFA87ILNkhRrWS3cM081BVibR7I8t5UZdrMltzfDVCYC+tIM5ajOsUw9t0NOHHoweRMY48LwMDt5Q/+N0p0TjCvbcsMbE9QqVNA=
+Received: from BN6PR1201CA0014.namprd12.prod.outlook.com
+ (2603:10b6:405:4c::24) by SN1PR12MB0431.namprd12.prod.outlook.com
+ (2a01:111:e400:5865::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1294.27; Mon, 12 Nov
+ 2018 05:34:06 +0000
+Received: from CO1NAM03FT009.eop-NAM03.prod.protection.outlook.com
+ (2a01:111:f400:7e48::204) by BN6PR1201CA0014.outlook.office365.com
+ (2603:10b6:405:4c::24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1294.21 via Frontend
+ Transport; Mon, 12 Nov 2018 05:34:06 +0000
 Authentication-Results: spf=none (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; suse.com; dkim=none (message not signed)
- header.d=none;suse.com; dmarc=permerror action=none header.from=amd.com;
+ smtp.mailfrom=amd.com; diasemi.com; dkim=none (message not signed)
+ header.d=none;diasemi.com; dmarc=permerror action=none header.from=amd.com;
 Received-SPF: None (protection.outlook.com: amd.com does not designate
  permitted sender hosts)
 Received: from SATLEXCHOV01.amd.com (165.204.84.17) by
- CO1NAM03FT040.mail.protection.outlook.com (10.152.81.183) with Microsoft SMTP
+ CO1NAM03FT009.mail.protection.outlook.com (10.152.80.67) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1339.10 via Frontend Transport; Mon, 12 Nov 2018 05:33:41 +0000
+ 15.20.1339.10 via Frontend Transport; Mon, 12 Nov 2018 05:34:06 +0000
 Received: from LinuxHost.amd.com (10.34.1.3) by SATLEXCHOV01.amd.com
  (10.181.40.71) with Microsoft SMTP Server id 14.3.389.1; Sun, 11 Nov 2018
- 23:33:39 -0600
+ 23:34:03 -0600
 From:   Vijendar Mukunda <Vijendar.Mukunda@amd.com>
 CC:     <vijendar.mukunda@amd.com>, <Alexander.Deucher@amd.com>,
         <Vishnuvardhanrao.Ravulapati@amd.com>,
@@ -62,12 +62,15 @@ CC:     <vijendar.mukunda@amd.com>, <Alexander.Deucher@amd.com>,
         "Mark Brown" <broonie@kernel.org>,
         Jaroslav Kysela <perex@perex.cz>,
         Takashi Iwai <tiwai@suse.com>,
+        Akshu Agrawal <akshu.agrawal@amd.com>,
+        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        open list <linux-kernel@vger.kernel.org>,
         "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: [PATCH 10/11] ASoC: amd: add acp3x system resume pm op
-Date:   Mon, 12 Nov 2018 11:05:01 +0530
-Message-ID: <1542000903-19020-11-git-send-email-Vijendar.Mukunda@amd.com>
+        <alsa-devel@alsa-project.org>
+Subject: [PATCH 11/11] ASoC: amd: enable acp3x drivers build
+Date:   Mon, 12 Nov 2018 11:05:02 +0530
+Message-ID: <1542000903-19020-12-git-send-email-Vijendar.Mukunda@amd.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1542000903-19020-1-git-send-email-Vijendar.Mukunda@amd.com>
 References: <1542000903-19020-1-git-send-email-Vijendar.Mukunda@amd.com>
@@ -75,139 +78,106 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(979002)(136003)(376002)(346002)(39860400002)(396003)(2980300002)(428003)(199004)(189003)(336012)(446003)(2616005)(8676002)(11346002)(126002)(476003)(8936002)(86362001)(1671002)(426003)(305945005)(81166006)(486006)(186003)(81156014)(50226002)(68736007)(106466001)(97736004)(53416004)(105586002)(36756003)(51416003)(109986005)(53936002)(5660300001)(76176011)(50466002)(77096007)(7696005)(48376002)(47776003)(54906003)(14444005)(16586007)(39060400002)(72206003)(2906002)(104016004)(316002)(356004)(6666004)(26005)(478600001)(4326008)(42413003)(266003)(32563001)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:BLUPR12MB0417;H:SATLEXCHOV01.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;CO1NAM03FT040;1:6WbYB/cqCf7B1X0yO2UFUCNc/cNd7oiIIbOnPN3klRDgpoQ7OEJZ3sMhPmwCaNOzN0stOzw/0BGnsVScS5qaUx81s5kQ/79Zg6u6UaZIyWOc/833uCThBZU11nZC/YTS
+X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(376002)(136003)(346002)(396003)(2980300002)(428003)(189003)(199004)(105586002)(106466001)(48376002)(186003)(39060400002)(426003)(1671002)(5660300001)(50466002)(53416004)(4326008)(77096007)(26005)(305945005)(126002)(336012)(86362001)(2616005)(476003)(486006)(2906002)(11346002)(446003)(316002)(16586007)(356004)(72206003)(50226002)(104016004)(51416003)(97736004)(7696005)(76176011)(36756003)(54906003)(47776003)(478600001)(81156014)(81166006)(68736007)(8676002)(8936002)(53936002)(109986005)(42413003)(266003)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR12MB0431;H:SATLEXCHOV01.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;CO1NAM03FT009;1:hpG6248axAKL/DKEXQf1N0hta0Wf/1gbweG3kUdNiBwy+YRdmL7Zb52TkafFE6qz43/AfzML3fhmeR2gbg4QGTAkGR8t4U00sGSS61LOeANcT0UWvhF8Am4AcoYYgNWe
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 8f1c7e2e-2206-44ed-62b9-08d6486067c3
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390040)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:BLUPR12MB0417;
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR12MB0417;3:WylATZjVpMd7pJPw2n3igrvHHgb4He3AB8F4ATFME6zmWG9MCd4kROzOrhpgVWBYfil0T2yZAxMROTTsln+pd5+qcbKzGmFVoC3DO6n8YX50+NWKdnRj5dbJa7WpYKzKddk6B+6s+ucF8eYduTbR2DpGcRJfM2DzpZfqRlDbUnvm1IRPpbasuOqgblaOMqjQXHmcBEqCgFnqrc4GhKQxSfnTd3CbAyHXos2wcQaIzAo6eKyMrYG9FXZ25R9FZABe0c1cr3aB19tjpyc5huZEGcWQXXc4caACTTV74FGRbBYChzsEnBoVqsaOCVbeKM6/DM1a6kDtBpcEpiyH+dDic0N3ya1/zIVDONnWgfvw/dE=;25:lg17G+iGeJbpOeUSQ5kS9u6wRXrR2z8V3X8A+mviXe2Hl6yoCkSTEU3xKSrQDtfkJNlxrM0E99BIvYohGyhpLk8GAPcxnWWJaHeJB/Mzf0hcXjzlmrt3yeksDlHdudKF8ALDUU4hFU8iuB7pbSGptKNdoD+hb0H9sQo8WLUzT3LNjYmS79PFBbjtYGXMsbWX2aUZBEIYuscrusfHHn/zTF6SugooEk38mgjoK2Y6tZjA0c7lAD7hOQw8yINMEovM+kYchdymzf+XcTjtsKDPhGledKqFB3U36PwlhHIU10EadF1iYdEVQ+b2yniup1cGr3UUlQYWeoQh1xLk1J/WkcH22HI9BeDWs7+LARR8Agw=
-X-MS-TrafficTypeDiagnostic: BLUPR12MB0417:
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR12MB0417;31:UT0Y2WwXMvxvslzsbYi19dxv7Nd8l7aXShPaeKO8A6fPZoHgmX1Qccq6CZ12QLaskICQSke5lwt4zvgaWXz2Htb+k6jFycQa/15G7GrpG3OULr2t2HqsTmjaqQ39+unuVflVtP2Zg0zuPTC6eyUjv/w8m7lsc01o+wtGiOWj6MYTwpZgQG4pLLb4cE6NcXWucb6DKzF/bQdEZSAZyGw4zdXQtTQhxglYZ7PAu+OYubA=;20:rcHQaHzswtBGy7eOPywbSMO9C0zU7rpHqDlUlvY8hFvd1QHrBgw36axYYZdaqZ6HYAA7vLxklrhewZmwUqlfrw1VEkcW7XHVuBV2HTYt6Na2D5eyn0NXvs/cigQG0sSYe1s1BF+U5iYuaQca/dcO4l3tJU/Ey3HPpyr+ZohGvOtrbgysyA3iqB5qf/vTy0sdpZKWG4IULilUaCHrTCoAE+3pPVTXF1cQEruQybFb6ajiHItLtYwcJ4WFm5vAuCXeijbisZPBb4cKtzTz/gWBLu0hwwVZwGDz2MKVTKOqe5VZhNmlv5z4Dx8mHoCTm8WYKTWKMd4QCjw7C6tBtsKLSGOz2ffPSEbZQmnm1a1rZNM+4b6mfd6nLNlPHTOGAxKucORSbKGxHhVJKP43QvVW7z16Y6DggRg42sWnlVR3J66/tcBRzCh8f9VWDqBwVuCJP3jDPW2VbVJYSd9H6tZ8STVapDXpIZ8OdeH0afil/q70ZcENukXRXYdDpqcyl220
-X-Microsoft-Antispam-PRVS: <BLUPR12MB04173C36E0B72B5FF3C722AD97C10@BLUPR12MB0417.namprd12.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 72b0557a-6e98-4aa2-df2c-08d64860769c
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390040)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060);SRVR:SN1PR12MB0431;
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0431;3:/H2wQxjVfBFShkMT9UWSCtcYlKZxFwV8S1XNrDRQCV/t8dNZEINMVeisFpq12Nj1yl/5s9RwwJxYDtA3+InPro6oK4fWYuk72C3RxrB5bSKEHbIUG7ASSAF68oN4CfI+IlA6KCJ7ZHrOxApFY4RThWZHfJ+2KjJkFN43FHCOys7xQyk8P75M9ZHgcQryDzGVBXvfa9VZO7SO2CleMfy9YS0qlGuU5+MAF7Gapiby1Dr8UnGo0tF3LB4TsQiWsfA0R0Rzz8KlzZ4uGSVIITJrMIv7uxaqTVVdZDWqwVA5VLBaQGeQr19z+itBI7FSBZ5W/iISVhnLe7vNSzX/+0HWNKHSKaAm9xcEvr7wbNcUdzg=;25:dwsFY6JhUI/+ZTq43Yn/qxSa/j/MQoc/5LqNZBnEIEto+0UNYyWjj3hw4O9/88dO/kpemveJ4sHPpNmA2C9qoxGWviJodq4h5lRMVCP5GIL5gOfAmI53EaKtTjHwsNPvKToV39XF/yeFOv4OSTO2QJeE81v7r7fwEjfi7YKJxwEOaXFCereaZa5xsZI86AnBc6BEK2mNA5vdJvzax+GOt6CdwXrUpR+J4M1ldgkYQfzxjyPZj7m0oK4IvOGfBlq3uvyMk/Hn5XtsIF4EeQfd+V9P4ibsMjA2tNeUCO2w5TxCJQYiyCuIgqFJ3z30Odm0pVVmZiUElYSc2AbrbelavTTLmABUfgESMiDDX2SyOmU=
+X-MS-TrafficTypeDiagnostic: SN1PR12MB0431:
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0431;31:xO3JeVEKGHNHw4PBomOckaTXDDGmb1h1eUgaQvTTHX1i/Nmjv0CvOhV6OoBtcLZLNWe87VRR39B4+ppr6+MIUYpWARv8g5gjr4Iy80B+UYPN3RrW07WlAYe8q/MrOuz64PRZk3wThCBbWbg4uoz8fzajgoA+b0q3CTUEvW5nGifrkbMB7KUdPEfbXDcwFw1CpzOhfhPPZLVcTYLCE/62SsdnlcKObhhLpiJezVvBBLo=;20:1pScwxapOcG7IK4J2hcR9fNzkmj/30EOW0N4K6q4xIBuP/B1sJs0dBQ+PQQ5R9fKDSvXeuJFeYfuydU5Xgi5JWnM1V/hteD9nG6/XH1vsOxjZsN48Tn1trZwj412VlzzuBwZZzHF0WyFTs8nzLh2akgMzN6EfmygBu5XVi32Fl08zWoiZeCJNPTuvxy8R6fQm/CKQAPhThkE/JK5GshtCPunB4KMC+I++9ilCUREjWWogHTb++JS9FUvH8kygt6sXyJ0iZKklrWMBjkeotR4DPl1YdlvOQfCD3zqw8VBQytQV9MXYslIcpnjPiuKohf7Kr0QNbh4MheiJirO6v+7A92u8O1TBPTwcG9tM2p19ZEisDPQm4aSKq7wj9CgrDj/gjW5+lupaGsztfRRBRR9S/JkyLiIAOL+GUMrdQSPh8GEvkiuVm9a8ec4GhgyBDiBJzUGo/gG+3FVyNeh8RmWBZV7PSsC136+0nh4WN0RRaTAlKPJq8z2wQU72a2q0+WK
+X-Microsoft-Antispam-PRVS: <SN1PR12MB043187E066BD496DE15E281997C10@SN1PR12MB0431.namprd12.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231382)(944501410)(52105112)(3002001)(93006095)(93003095)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:BLUPR12MB0417;BCL:0;PCL:0;RULEID:;SRVR:BLUPR12MB0417;
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR12MB0417;4:bqj4reqaw3DqXlWtETlIcF9r+rghh0Zu74PoUoCW4xf/Xd6t2Uh/dFXuVVGuhZoJyukU127/Ov1K78nfVDZ3V7cmNtR44dvrbQB/RO14G8FJrg9cP6Rgpgt4qlFAbk4DPJRxqYg/+43hF+jkxDSJTxb96DovVqvj19suwRbAXa0LK5yUgL+LJzWTbQErQQWL3Gq3tHVtQrELDv9IjUetAQefdkIUNSlh58tUhr4misW2tXamg2lupWSgbtaKVRoufscWDt8/CkxMkVOI/fMged0oHlmObkUba/mab9Vw1/FLOe3jsCpfinUiOTwhhiPq
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231382)(944501410)(52105112)(10201501046)(93006095)(93003095)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:SN1PR12MB0431;BCL:0;PCL:0;RULEID:;SRVR:SN1PR12MB0431;
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0431;4:5FsoEcCOkv3rGpIREJGb+i1m0MuVHIvh/gcfWaKQbrZatFQyE4htbgLuZ/AYoSuRiuJ3LgrBGmL6ECstFjBIpmLGxuwUjVRqbhNSAQz1aVr+QtepbYbQKjHygfxHlyv/Roy1XNl+C8QY9OyM8UMxu3/xvregYo1pZ8eC2FRPU/h4EAr7pTKEpNbuCYs1BcXIMTMuKrevWbEQpNaPGipXAuV6d/xJTe3QMrJ7iHqiS2w2jrJoefxgeckwkZjzQfHQ5np275F5KRtd15yoyR96Z942D3ugUw7+vunjcQuQ/naVNbEKkJwr2RmQyUnm5kIa
 X-Forefront-PRVS: 0854128AF0
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BLUPR12MB0417;23:6+w6XTQiQxPd7VlzvBXfz9Nyh51KH16pSlVUe2SMK?=
- =?us-ascii?Q?R7DfeAdN6zly9x7jwkloendduYBLYOyzIEvzgbDCywMTKe8P55r7E7xGQzUg?=
- =?us-ascii?Q?X97eqUOW52gS7zqaUlu5LaCJIa2U5i3odBwAioZkiUPr4QedG75BecWDud9E?=
- =?us-ascii?Q?6yi5XVWHt/B9IxzjdMInxnj6XjYtNLaLzB7h836V4uKnlYwSqHeS3OFHuOoM?=
- =?us-ascii?Q?kO3F5t+gcNxAX1Ke2y7CE8l+SFN0Lw17ed+m01oVRwqJwgiORFfIk64+i3RP?=
- =?us-ascii?Q?I+34v5aLwo72x9IIeJc+ZR3T2chEb2pEgVKXXzvNL4BdoY3DRkbt0XtlTLNj?=
- =?us-ascii?Q?XRyYJgI9DJrkWu2jxxbnCPKhicCql8i+vN4+zi0mXU5MhIoH0LgbFDhHCr1g?=
- =?us-ascii?Q?0iz3gjzSglNA+1TfOshuFAAnLixs8VWe+ffSXakVH07R1eQbFLoKV0STVkcd?=
- =?us-ascii?Q?oDK9ayeyyzPoIjQA3j0bZAXaT2iy7A11SxKiAQEI3R8AHebQZomRLy06ed/w?=
- =?us-ascii?Q?Oh3FHMe6EJvY57SQGNns9bUfWjH+rivhfYYlQgEmOcuVejP+0yxJi5jlfbh4?=
- =?us-ascii?Q?tRULdRAzBhdURH6JDybC/FEcHoPVnW/z6Rp6cq/jmxVhf8dBYt7iQgmUuNTx?=
- =?us-ascii?Q?YakjGYRnctRxhiA+TJ5IN4LmdLbmSyswgQIOHbKHIILQowuJhtDGCcbvHzhP?=
- =?us-ascii?Q?PvAqwA2qr1ZdwASnl/Zs8CXeisMiNZjTPfokj0moC50G49jNeAgjASV7/d3z?=
- =?us-ascii?Q?PpFR9xrfIDAxRIumh485aX3HNwoKRrQhIRBQ3flo+f35NKvmDc2jR8y/n6Ed?=
- =?us-ascii?Q?td+wJQki1nMtwzUg2eYJCqSGPpd6XJzXwJGDyJFs2YIUdSjdkVrftIZ7i68k?=
- =?us-ascii?Q?iLlN+qYTQNmOzqGrJw8a68h2NoXrXXX8lS1Rza88PiVMzwtMkyw5tZVQD2Ac?=
- =?us-ascii?Q?IWWqfHmFK3TdV6bRcE4xKADKm4aghVE9TThAOB7vl2K3xcXicFEG7FcTqjvR?=
- =?us-ascii?Q?8nce7RsG5tsoUqy/xrIlPhZ1h2gCIdSe7/9bthjk0WFH+/alJtM1Ktq0KuhN?=
- =?us-ascii?Q?bP8bxJsHGCib/gEyIyl8HMoWPtEqvqAZ3q9A9M62oIUOQOXJnnQgr0pXWaKJ?=
- =?us-ascii?Q?W46kuWGVJXG73KdJwh0qhGt3f1rbqW0il7UGi2ZxcNAYpBlRWOS6Y77+NyWB?=
- =?us-ascii?Q?W8k23+GTUWyuzxDiQRjLZfSEcVhCawHoGR1hg9tKr8+KgScXv6qf0ZebYuaf?=
- =?us-ascii?Q?TpryWGwpHsamDNl5VLhXir/5iy7aajsEWFLrpTndYR4HEr4q5XDT2bXzC1cj?=
- =?us-ascii?Q?o8gRpUPkseOiMe4Z2wCTABWKjYAt7t+AdYIPqui7YwXh5HJfzEcdrC7+eT8R?=
- =?us-ascii?Q?26Ln/HIGwVJiPLSYxh7H8puYs8=3D?=
-X-Microsoft-Antispam-Message-Info: qsqKzCvjLvHqyDnD2sGCzTqVoyq0mGOt+/C2y5Y48vMYr+ThIukuU1rOFS7XRAwJ784nYRPIEDnis7kFWVz7ok700byfURM74iQwPKiQqZOrK2zBYGSjIqaM3zJn09PFjo70RB3z6iIC3jbAi1/JbVWNkTBdwKJqVYJ9Hk7wvInwsL0CEgwuP5R/Dvo8PFbTfsGhTCNvNYZrwxESnj4kW22oorZvwGKA2WlHvDdFOkgKc3BzlTK2gDZJ2v13D0IRggCYO3nGxsUjKtOmtdLJ6W8hNTzXWfNV1ZJhnwm4qfiNvq6gSUP8RBownigSinoO5Wci5xsOR6pFquYZ3kiJtedg1+dFN7Ct4HByAUW+RCo=
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR12MB0417;6:d4ec44filtF9LlCak8nYG3MCVymJemq8Kvi9jR9PEZzU0/9YuERTRsGaM1Hy20M5nR7klVRz6p9rRRxZLIflK0Hj+pYBB5uYiQuYDZ724Sd1AvjjjHMwVO4s5anwPcBwkz1TcUsOCX4YatkHKitB7dmDexBeN08Oz3tZUFLE/FcVboeGaGmnvX5/iLDTuqdjwhQjrsUWutRFivV6BYp8bDtd4TxP13bOMskgbkBfPMLr9MGJSmeJU+jc/xzR80LRFHa5s29p5DqOGGTFolZ/wzhEqsDVzFLD007P6YuvlZxzfbfvyoKAJZ9TmYzl4CJ9l0zS+nMCFgrCHuecyYJCNju6aCuddxMdaPxE9hA7fJd5ygYXmS69HXFeEAr+qrhhkoe30lfrunIeP++fvmQ3MOCBV37jUCYl+yhOeniwP48j4P7fGGLQf818iALEc7aWCgt2vlUX1FmdfwFEgKHnmw==;5:Avn4EVKMqY2H5y5MSQsnFcFnceGPV6sPkguBKDUyiuld4VP4VKV+dowmacKnY7473QwwCQjWf/srGs1UN+0desuk2DsVvdyixYeAW1lKBiH/Wvq/BP5XYlz8WkuPF7lYKZxO7GNmLsK1p0kjcM8EzXs1gXVGfE18cQvVbq8gNwM=;7:dR4h5ivqp2h4yOi9O/PXb3cnD+Kq963NHNBpncqfTB1OlaL7/93sq9s1eZYYjkXpL2gpU7SqTOYztAhu8icNoAlX7nHKCWqDytA9o0xJLID2Q4PM0ow5FF8Feq6kmQt9+MmBOoDEB/IGQqYh/4q8Bg==
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN1PR12MB0431;23:2er0PULP3T5qP2vo0q0RAsYcb03uYwuycQydUlacE?=
+ =?us-ascii?Q?BqQgsg9zU1t3+4Xi+DMGHJf9xUd+iucwyywy4RZJrdFyb1WJuyTqN7rYaLIZ?=
+ =?us-ascii?Q?bUewGlC8H3GoEk7wNrfdTo7d4WQdFnJHSqb2Csg9BlAH192LXw92ZP3PfsXo?=
+ =?us-ascii?Q?8xg3YvRWt+Vuy4di+sP/d4iwdnX4VsSaj4lHTtQSQnXyAwDgIX0wFJOfH0GX?=
+ =?us-ascii?Q?TkFM7FtbIuYW2RjnM8fQ222i0bH/J+bqhriZ/45xCi9Q1xiEJVMQOD5+Wi5D?=
+ =?us-ascii?Q?K3I+BHak2ClYbm0xJUqp4NdY/489l+wlmIOOZVz4KT7fE9CZPuPkTtoV7HQp?=
+ =?us-ascii?Q?D5D+rBEHslgT6uds0MUzXs3mGZAq+rG1sGxa0LxCaTlw2rHYFfDLhby8rDds?=
+ =?us-ascii?Q?UYg1ts5/6n2D1y4cZTQNetuG8blnV5rLkW5Xapvfo0Rn40IWC5jFNYM6RG42?=
+ =?us-ascii?Q?e0D8QXZmw4hwLKlM3fEvRAJeg7b30JD2cAYASQT/co18Aa/RrCCmLjz9TsmK?=
+ =?us-ascii?Q?LhIqwOfHDeaACmwQDw29pe7ym/NCQb3EqdOHZ5NH5hCj/JV1JvPTP5trDX7t?=
+ =?us-ascii?Q?ivzhG6EFwUsUDpcpZma85hagEPjjGlUks3nLD0sNPw7ZGGtCa0DCQqMwwcG6?=
+ =?us-ascii?Q?+3XccmEJt3TE4LjO56M5bpwLLUURRrQ61yTMtJS1rrahpTkUXXpxa0MkUMtA?=
+ =?us-ascii?Q?LE5DWlHklMnflwdTTPPVQ2OIK3aZY/r0aOzzkeG9nP7DDmHQVbv1bW6L3eYx?=
+ =?us-ascii?Q?d5ETGa7uQ+nRJkEOjQ3cKMq0Hhu5p0VwQ5hsZFxsNh7rIEp0se3qgeJRhyo9?=
+ =?us-ascii?Q?trFwQYuwki67gpyzT1EOqFw6ZxV/2jYpeW9YMgRSyLJNgThrIo0qINkIFxQA?=
+ =?us-ascii?Q?H6vhrSd6yIiDRfmcvhR5aMAGai9NSDOkJvkdw+IR8Zjj+upq/x1gUgNjpID4?=
+ =?us-ascii?Q?5HdisfpLN5SGh7ioAYsPqK7tjpRwojIgssybvtQw3T9O0bOJzhm6EIn47GpS?=
+ =?us-ascii?Q?C62iJU1w7KfLDOWGw5pMBH7+OtolM/lOf7V+zlnN8eBJyvOrQIns5d/pWBIU?=
+ =?us-ascii?Q?JaL7FQKBa4zwcGz0uSHIGiDBsr37rWcJOvuh87Aeq9TktR2m9iq0r5jkjYPS?=
+ =?us-ascii?Q?s0uAdejp1uetBRLzNRlmh2D9lHOyJ9R/yKIZ4un6w9bYYPqstQ2MrYLhxTPt?=
+ =?us-ascii?Q?SX8vespw2cKFl/6Fjb8V1bENh0HV38FuVNrJuZcLs7ceOWrB3Jsg14ZpetBo?=
+ =?us-ascii?Q?FT3E//sCI8SHBXQ6W8=3D?=
+X-Microsoft-Antispam-Message-Info: B9xOsigAoI1NM+ayzm8BPd+PIttereoDUGNMSg4LyogHHdqsdLqcbP0yc0+PQpSluV2LnJ033p+etlz5ZI1yWm/IdhPO7CJdzvoicoenJfk5yROczkjEPWE0VfYEF3gF+TOsyi7o5DBVei24RsfFkKq66/jGbo47ciebeUP4KhmldGdMPEwsFNyqy9VbZ1cIjT+PzUJhxJQ6yRRJxo5uxFb547871Zj6qZQ9YXWf3hvBBAiul5o0D+P5fG92/RaMoGQmkMnLqBQe0iiGpwnOqFX9ZUtoAbKlSM3sUoAhC8m1pOQpO2WcRc00PCONEWiiXxk8DIDazPSZ15WglMGBsGMAzhoCnlHJ/OPs3H/h3OQ=
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0431;6:u0VjhAbX9WzR4vfD4ySkr24xrUfrZXz0fhVUZQ1tV9je2FfvDhFqX0g9TcK3chl7GMET9aXDorvtVpqSlygt0uOZWibgl2gJbkBNE20PqlPccsUmfFFbdTyp0Uf4YpgAZ83J6BE+9xFenX21lbkeVuBgw4rWygk8jDpY8R2gr+vnyw6y4fyjjvxgQOidhTp8+ocfuGzt4Wo1fWweuys83VgAvWGaACM+gE7jRKqgaHibKqwTCRlSvBMF7VHkdKxPsRyOjyZRbwTlYNaKm3ErjZLZiNUu2hI1PKfX/7Xv551c4lCvG1skZribH+6m0arQVpDFhKeIKk/X5ubX1y3DyQ5QdYCC+i2e6WZsyMmL2qMBCU0H01Rja+hc/Maq0RJO0Xn5IejzmAIhFsq1WRty8SxQMfMqw1kQtA0QIKKnxdgI5IodW7+c8HsORaXkpcnz5YOxMeO2/cATBPBsdK6OuQ==;5:EOj3gnjT9iLigLUJ0yoGvPhmdEpcZ2VdgRcPm69odjzmZXQHekxRJajRFNubsC7WX6klFjrGZiT+523hWFHIaViERigJaXyZOzx4BJzTpDA5FswI1he/8YrqUDd6+YVXxZPg4UO20sRYYXe89COxbwDVvZr+9+yw4Jpxw0VoaE0=;7:luYKjNeu8SnaU2j2Pf3ZeqYdfmeAcLovWYID/9BQLuMcRI/NXnbNUZXuBJ/aO5qpHrV5h33bb0DtotVZ6Ffii8gYXjDWs9UFITArir2CZ9tXY2bH5u9uAgEVrssjq1wF75zz0z0/NrBJrlklWu1SEw==
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR12MB0417;20:D5a4FgpGZZhm6T/EoXnGK5+KJVOlweQcVEZlnev/TANKzzueNMyXBL5gU241YzYEg138jYAy0OG4Qdbkq/iqsoUjNH3WQONX6tWR3n5mkjNVbS4aYPeN5+JUMsZAVp9ULUzu/45GhYNTsqhdSBouWj3PZmoax2oRdNHUthQ1mhXikWovWPHOpo2PXYX1W/QB7tIQZ64FIkRysN7r+GEDrOgrcVet09yRhd1XL3/L0uLwtvodxjrsluGf7GB6orO1
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB0431;20:o6YBltxYu6OyYemv0QHeY0wo3q2stMvdkWN4ABih3MrNwpALCxHR2k0plgdzmo/tiXWdY8VKV3Bbki4yGtWGpgYGDhErvfG9WlDQspUcUeNTPkFAa2XwLZoTCKgEokvrlIjB4bAVQmhti5yVGbPnrnoB3pB0ijMEw9NXkubq+csXRQa2sP4id1AJ/GPxtxdip10jluhEksivsAOK/YdQLtun5ijPDr/1I1megeOhjqCmxRtWfTPVbv1uGlylXJz8
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2018 05:33:41.0984
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2018 05:34:06.0118
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8f1c7e2e-2206-44ed-62b9-08d6486067c3
+X-MS-Exchange-CrossTenant-Network-Message-Id: 72b0557a-6e98-4aa2-df2c-08d64860769c
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXCHOV01.amd.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLUPR12MB0417
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB0431
 To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When system wide suspend happens, ACP will be powered off.
-When system resumes, all the runtime configuration data for
-ACP needs to be programmed again.
-Added 'resume'pm call back to ACP pm ops.
+ACP3x drivers can be built by selecting necessary kernel config option.
+The patch enables build support of the same.
 
 Signed-off-by: Maruthi Bayyavarapu <maruthi.bayyavarapu@amd.com>
 Tested-by: Ravulapati Vishnu vardhan Rao <Vishnuvardhanrao.Ravulapati@amd.com>
 Signed-off-by: Vijendar Mukunda <vijendar.mukunda@amd.com>
 ---
- sound/soc/amd/raven/acp3x-pcm-dma.c | 46 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+ sound/soc/amd/Kconfig        | 5 +++++
+ sound/soc/amd/Makefile       | 1 +
+ sound/soc/amd/raven/Makefile | 4 ++++
+ 3 files changed, 10 insertions(+)
+ create mode 100644 sound/soc/amd/raven/Makefile
 
-diff --git a/sound/soc/amd/raven/acp3x-pcm-dma.c b/sound/soc/amd/raven/acp3x-pcm-dma.c
-index 710c5c5..2e61cef 100644
---- a/sound/soc/amd/raven/acp3x-pcm-dma.c
-+++ b/sound/soc/amd/raven/acp3x-pcm-dma.c
-@@ -690,6 +690,51 @@ static int acp3x_audio_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static int acp3x_resume(struct device *dev)
-+{
-+	int status;
-+	u32 val;
-+	struct i2s_dev_data *adata = dev_get_drvdata(dev);
+diff --git a/sound/soc/amd/Kconfig b/sound/soc/amd/Kconfig
+index 58c1dcb..5f3b560 100644
+--- a/sound/soc/amd/Kconfig
++++ b/sound/soc/amd/Kconfig
+@@ -19,3 +19,8 @@ config SND_SOC_AMD_CZ_RT5645_MACH
+ 	depends on SND_SOC_AMD_ACP && I2C
+ 	help
+ 	 This option enables machine driver for rt5645.
 +
-+	status = acp3x_init(adata->acp3x_base);
-+	if (status)
-+		return -ENODEV;
-+
-+	if (adata->play_stream && adata->play_stream->runtime) {
-+		struct i2s_stream_instance *rtd =
-+			adata->play_stream->runtime->private_data;
-+		config_acp3x_dma(rtd, SNDRV_PCM_STREAM_PLAYBACK);
-+		rv_writel((rtd->xfer_resolution  << 3),
-+			  rtd->acp3x_base + mmACP_BTTDM_ITER);
-+		if (adata->tdm_mode == true) {
-+			rv_writel(adata->tdm_fmt, adata->acp3x_base +
-+				  mmACP_BTTDM_TXFRMT);
-+			val = rv_readl(adata->acp3x_base + mmACP_BTTDM_ITER);
-+			rv_writel((val | 0x2), adata->acp3x_base +
-+				  mmACP_BTTDM_ITER);
-+		}
-+	}
-+
-+	if (adata->capture_stream && adata->capture_stream->runtime) {
-+		struct i2s_stream_instance *rtd =
-+			adata->capture_stream->runtime->private_data;
-+		config_acp3x_dma(rtd, SNDRV_PCM_STREAM_CAPTURE);
-+		rv_writel((rtd->xfer_resolution  << 3),
-+			  rtd->acp3x_base + mmACP_BTTDM_IRER);
-+		if (adata->tdm_mode == true) {
-+			rv_writel(adata->tdm_fmt, adata->acp3x_base +
-+				  mmACP_BTTDM_RXFRMT);
-+			val = rv_readl(adata->acp3x_base + mmACP_BTTDM_IRER);
-+			rv_writel((val | 0x2), adata->acp3x_base +
-+				  mmACP_BTTDM_IRER);
-+		}
-+	}
-+
-+	rv_writel(1, adata->acp3x_base + mmACP_EXTERNAL_INTR_ENB);
-+	return 0;
-+}
-+
-+
- static int acp3x_pcm_runtime_suspend(struct device *dev)
- {
- 	int status;
-@@ -721,6 +766,7 @@ static int acp3x_pcm_runtime_resume(struct device *dev)
- static const struct dev_pm_ops acp3x_pm_ops = {
- 	.runtime_suspend = acp3x_pcm_runtime_suspend,
- 	.runtime_resume = acp3x_pcm_runtime_resume,
-+	.resume = acp3x_resume,
- };
- 
- static struct platform_driver acp3x_dma_driver = {
++config SND_SOC_AMD_ACP3x
++	tristate "AMD Audio Coprocessor-v3.x support"
++	help
++	 This option enables ACP v3.x I2S support on AMD platform
+diff --git a/sound/soc/amd/Makefile b/sound/soc/amd/Makefile
+index 79b0622..8e1c571 100644
+--- a/sound/soc/amd/Makefile
++++ b/sound/soc/amd/Makefile
+@@ -5,3 +5,4 @@ snd-soc-acp-rt5645-mach-objs := acp-rt5645.o
+ obj-$(CONFIG_SND_SOC_AMD_ACP) += acp_audio_dma.o
+ obj-$(CONFIG_SND_SOC_AMD_CZ_DA7219MX98357_MACH) += snd-soc-acp-da7219mx98357-mach.o
+ obj-$(CONFIG_SND_SOC_AMD_CZ_RT5645_MACH) += snd-soc-acp-rt5645-mach.o
++obj-$(CONFIG_SND_SOC_AMD_ACP3x) += raven/
+diff --git a/sound/soc/amd/raven/Makefile b/sound/soc/amd/raven/Makefile
+new file mode 100644
+index 0000000..8c03e6f
+--- /dev/null
++++ b/sound/soc/amd/raven/Makefile
+@@ -0,0 +1,4 @@
++snd-pci-acp3x-objs	:= pci-acp3x.o
++snd-acp3x-pcm-dma-objs	:= acp3x-pcm-dma.o
++obj-$(CONFIG_SND_SOC_AMD_ACP3x)	 += snd-pci-acp3x.o
++obj-$(CONFIG_SND_SOC_AMD_ACP3x)	 += snd-acp3x-pcm-dma.o
 -- 
 2.7.4
 
