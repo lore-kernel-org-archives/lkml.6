@@ -2,275 +2,140 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D05C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:17:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EC69C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:19:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DC3122419
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:17:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DC3122419
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
+	by mail.kernel.org (Postfix) with ESMTP id BF8BB223D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:19:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BK4i63bU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF8BB223D8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729209AbeKLUKO (ORCPT
+        id S1728231AbeKLUMS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 15:10:14 -0500
-Received: from mail1.windriver.com ([147.11.146.13]:59838 "EHLO
-        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728854AbeKLUKN (ORCPT
+        Mon, 12 Nov 2018 15:12:18 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:53123 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725873AbeKLUMS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 15:10:13 -0500
-Received: from ALA-HCB.corp.ad.wrs.com ([147.11.189.41])
-        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id wACAHL5E014418
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Mon, 12 Nov 2018 02:17:22 -0800 (PST)
-Received: from pek-lpg-core2.corp.ad.wrs.com (128.224.153.41) by
- ALA-HCB.corp.ad.wrs.com (147.11.189.41) with Microsoft SMTP Server id
- 14.3.408.0; Mon, 12 Nov 2018 02:17:21 -0800
-From:   <zhe.he@windriver.com>
-To:     <catalin.marinas@arm.com>, <stable@vger.kernel.org>,
-        <bigeasy@linutronix.de>, <tglx@linutronix.de>,
-        <rostedt@goodmis.org>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>, <linux-rt-users@vger.kernel.org>
-Subject: [PATCH] kmemleak: Turn kmemleak_lock to raw spinlock on RT
-Date:   Mon, 12 Nov 2018 18:17:15 +0800
-Message-ID: <1542017835-431346-1-git-send-email-zhe.he@windriver.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 12 Nov 2018 15:12:18 -0500
+Received: by mail-wm1-f67.google.com with SMTP id r11-v6so7865479wmb.2;
+        Mon, 12 Nov 2018 02:19:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=PIW2d66vHTApqG4+T89kd3a3Y0+9UA9ghJAF2Ej0Thk=;
+        b=BK4i63bUfRSgN+h2pkCIRKekrCxh+BW3d26O/cx+fL1d9byICV17rogfRrT4ZXvXIV
+         UHQpsh5wBgNY6NxC3tHMKwZjkwmyw2s2YZFSTe1TvBfiTMs0RKd4DumOsznUspyGgmzp
+         pA0AzBvHZxSGQt4QaHrvvzhbnQT9p2GLcHA4qtCDcjEHlHFmkqMdR9fmVfBI+36jAPQc
+         /fPMyMF+VV1oSSsaVt1+eczYqz+o0+D9N58XMpNVfwU96OQTpM+49QgpoEpdckz1cdiU
+         dajaSD+Wy8gJXBIJlgFfHB9f6KdSzGLUgMYXSwo0e6KcHBTeYlEjAWrBBnN+LpHiiXkA
+         9mjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:references:from:openpgp
+         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=PIW2d66vHTApqG4+T89kd3a3Y0+9UA9ghJAF2Ej0Thk=;
+        b=VT5rA+eg13Lc+5LtfumiZvEbFbe46PyxXPiwa3Rmj0LiDlNqj9yw/jbsil5jecXA3R
+         kNRBjnBskQKmVNXiw44HW4OIdnzOr46ocy8SphjRvWmlHzPI3oAfz7vVyV+2sghvl2/M
+         KZoSKChIG/JXLjaFj1mWK5+6xam051173jwImjsLWVZ6kZx/ExQa+KpZbbzwb/9QJwtv
+         K87IA5ODB11I3r3MJh6ZHW7JJxrpM2vacy9XE9stbphWnXvV5DlVkzfeneVuH2cq0Sd4
+         8eMjlyEgOpchhLqNIKkk7YTSZuFYL3ZXuTsXlfZHGCtLM5FiPsdGst2ssLF4B/aw1Tzl
+         7OJg==
+X-Gm-Message-State: AGRZ1gIIOn/jbWix5CfAoMH9va8DAELtEX4lO+FoMVMAf6jLARMkcJpP
+        s50WKm+8fXSRKFRMuBjm+lU=
+X-Google-Smtp-Source: AJdET5fbR7BAyD2OUMb2o5ms+U8dCYlVY9c3jyCzGvOWGAg0Pbi57JbZSVSa1tmVG56u3iDGsc9XMw==
+X-Received: by 2002:a1c:c483:: with SMTP id u125mr836794wmf.14.1542017981853;
+        Mon, 12 Nov 2018 02:19:41 -0800 (PST)
+Received: from [192.168.10.165] ([93.56.166.5])
+        by smtp.googlemail.com with ESMTPSA id y138sm1141586wmc.16.2018.11.12.02.19.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 12 Nov 2018 02:19:41 -0800 (PST)
+Subject: Re: [PATCH 0/3] SG_IO command filtering via sysfs
+To:     Christoph Hellwig <hch@infradead.org>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>
+References: <1541867733-7836-1-git-send-email-pbonzini@redhat.com>
+ <20181111131445.GB25441@infradead.org> <20181111134241.GA2447@thunk.org>
+ <20181112082013.GA9307@infradead.org>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+Message-ID: <79d7d4b2-e9b3-00b4-2ad0-789888f7ee36@redhat.com>
+Date:   Mon, 12 Nov 2018 11:17:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20181112082013.GA9307@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: He Zhe <zhe.he@windriver.com>
+On 12/11/2018 09:20, Christoph Hellwig wrote:
+> On Sun, Nov 11, 2018 at 08:42:42AM -0500, Theodore Y. Ts'o wrote:
+>> It really depends on the security model being used on a particular
+>> system.  I can easily imagine scenarios where userspace is allowed
+>> full access to the device with respect to read/write/open, but the
+>> security model doesn't want to allow access to various SCSI commands
+>> such as firmware upload commands, TCG commads, the
+>> soon-to-be-standardized Zone Activation Commands (which allow dynamic
+>> conversion of HDD recording modes between CMR and SMR), etc.
+> 
+> Well, that's what we have the security_file_ioctl() LSM hook for so that
+> your security model can arbitrate access to ioctls.
 
-kmemleak_lock, as a rwlock on RT, can possibly be held in atomic context and
-causes the follow BUG.
+Doesn't that have TOC-TOU races by design?
 
-BUG: scheduling while atomic: migration/15/132/0x00000002
-Modules linked in: iTCO_wdt iTCO_vendor_support intel_rapl pcc_cpufreq
-pnd2_edac intel_powerclamp coretemp crct10dif_pclmul crct10dif_common
-aesni_intel matroxfb_base aes_x86_64 matroxfb_g450 matroxfb_accel
-crypto_simd matroxfb_DAC1064 cryptd glue_helper g450_pll matroxfb_misc
-i2c_ismt i2c_i801 acpi_cpufreq
-Preemption disabled at:
-[<ffffffff8c927c11>] cpu_stopper_thread+0x71/0x100
-CPU: 15 PID: 132 Comm: migration/15 Not tainted 4.19.0-rt1-preempt-rt #1
-Hardware name: Intel Corp. Harcuvar/Server, BIOS HAVLCRB1.X64.0015.D62.1708310404 08/31/2017
-Call Trace:
- dump_stack+0x4f/0x6a
- ? cpu_stopper_thread+0x71/0x100
- __schedule_bug.cold.16+0x38/0x55
- __schedule+0x484/0x6c0
- schedule+0x3d/0xe0
- rt_spin_lock_slowlock_locked+0x118/0x2a0
- rt_spin_lock_slowlock+0x57/0x90
- __rt_spin_lock+0x26/0x30
- __write_rt_lock+0x23/0x1a0
- ? intel_pmu_cpu_dying+0x67/0x70
- rt_write_lock+0x2a/0x30
- find_and_remove_object+0x1e/0x80
- delete_object_full+0x10/0x20
- kmemleak_free+0x32/0x50
- kfree+0x104/0x1f0
- ? x86_pmu_starting_cpu+0x30/0x30
- intel_pmu_cpu_dying+0x67/0x70
- x86_pmu_dying_cpu+0x1a/0x30
- cpuhp_invoke_callback+0x92/0x700
- take_cpu_down+0x70/0xa0
- multi_cpu_stop+0x62/0xc0
- ? cpu_stop_queue_work+0x130/0x130
- cpu_stopper_thread+0x79/0x100
- smpboot_thread_fn+0x20f/0x2d0
- kthread+0x121/0x140
- ? sort_range+0x30/0x30
- ? kthread_park+0x90/0x90
- ret_from_fork+0x35/0x40
+Also, what about SG_IO giving write access to files that are only opened
+read-only (and only have read permissions)?
 
-And on v4.18 stable tree the following call trace, caused by grabbing
-kmemleak_lock again, is also observed.
-
-kernel BUG at kernel/locking/rtmutex.c:1048! 
-invalid opcode: 0000 [#1] PREEMPT SMP PTI 
-CPU: 5 PID: 689 Comm: mkfs.ext4 Not tainted 4.18.16-rt9-preempt-rt #1 
-Hardware name: Intel Corp. Harcuvar/Server, BIOS HAVLCRB1.X64.0015.D62.1708310404 08/31/2017 
-RIP: 0010:rt_spin_lock_slowlock_locked+0x277/0x2a0 
-Code: e8 5e 64 61 ff e9 bc fe ff ff e8 54 64 61 ff e9 b7 fe ff ff 0f 0b e8 98 57 53 ff e9 43 fe ff ff e8 8e 57 53 ff e9 74 ff ff ff <0f> 0b 0f 0b 0f 0b 48 8b 43 10 48 85 c0 74 06 48 3b 58 38 75 0b 49 
-RSP: 0018:ffff936846d4f3b0 EFLAGS: 00010046 
-RAX: ffff8e3680361e00 RBX: ffffffff83a8b240 RCX: 0000000000000001 
-RDX: 0000000000000000 RSI: ffff8e3680361e00 RDI: ffffffff83a8b258 
-RBP: ffff936846d4f3e8 R08: ffff8e3680361e01 R09: ffffffff82adfdf0 
-R10: ffffffff827ede18 R11: 0000000000000000 R12: ffff936846d4f3f8 
-R13: ffff8e3680361e00 R14: ffff936846d4f3f8 R15: 0000000000000246 
-FS: 00007fc8b6bfd780(0000) GS:ffff8e369f340000(0000) knlGS:0000000000000000 
-CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033 
-CR2: 000055fb5659e000 CR3: 00000007fdd14000 CR4: 00000000003406e0 
-Call Trace: 
- ? preempt_count_add+0x74/0xc0 
- rt_spin_lock_slowlock+0x57/0x90 
- ? __kernel_text_address+0x12/0x40 
- ? __save_stack_trace+0x75/0x100 
- __rt_spin_lock+0x26/0x30 
- __write_rt_lock+0x23/0x1a0 
- rt_write_lock+0x2a/0x30 
- create_object+0x17d/0x2b0 
- kmemleak_alloc+0x34/0x50 
- kmem_cache_alloc+0x146/0x220 
- ? mempool_alloc_slab+0x15/0x20 
- mempool_alloc_slab+0x15/0x20 
- mempool_alloc+0x65/0x170 
- sg_pool_alloc+0x21/0x60 
- __sg_alloc_table+0x101/0x160 
- ? sg_free_table_chained+0x30/0x30 
- sg_alloc_table_chained+0x8b/0xb0 
- scsi_init_sgtable+0x31/0x90 
- scsi_init_io+0x44/0x130 
- sd_setup_write_same16_cmnd+0xef/0x150 
- sd_init_command+0x6bf/0xaa0 
- ? cgroup_base_stat_cputime_account_end.isra.0+0x26/0x60 
- ? elv_rb_del+0x2a/0x40 
- scsi_setup_cmnd+0x8e/0x140 
- scsi_prep_fn+0x5d/0x140 
- blk_peek_request+0xda/0x2f0 
- scsi_request_fn+0x33/0x550 
- ? cfq_rb_erase+0x23/0x40 
- __blk_run_queue+0x43/0x60 
- cfq_insert_request+0x2f3/0x5d0 
- __elv_add_request+0x160/0x290 
- blk_flush_plug_list+0x204/0x230 
- schedule+0x87/0xe0 
- __write_rt_lock+0x18b/0x1a0 
- rt_write_lock+0x2a/0x30 
- create_object+0x17d/0x2b0 
- kmemleak_alloc+0x34/0x50 
- __kmalloc_node+0x1cd/0x340 
- alloc_request_size+0x30/0x70 
- mempool_alloc+0x65/0x170 
- ? ioc_lookup_icq+0x54/0x70 
- get_request+0x4e3/0x8d0 
- ? wait_woken+0x80/0x80 
- blk_queue_bio+0x153/0x470 
- generic_make_request+0x1dc/0x3f0 
- submit_bio+0x49/0x140 
- ? next_bio+0x38/0x40 
- submit_bio_wait+0x59/0x90 
- blkdev_issue_discard+0x7a/0xd0 
- ? _raw_spin_unlock_irqrestore+0x18/0x50 
- blk_ioctl_discard+0xc7/0x110 
- blkdev_ioctl+0x57e/0x960 
- ? __wake_up+0x13/0x20 
- block_ioctl+0x3d/0x50 
- do_vfs_ioctl+0xa8/0x610 
- ? vfs_write+0x166/0x1b0 
- ksys_ioctl+0x67/0x90 
- __x64_sys_ioctl+0x1a/0x20 
- do_syscall_64+0x4d/0xf0 
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-kmemleak is an error detecting feature. We would not expect as good performance
-as without it. As there is no raw rwlock defining helpers, we turn kmemleak_lock
-to a raw spinlock.
-
-Signed-off-by: He Zhe <zhe.he@windriver.com>
-Cc: stable@vger.kernel.org
-Cc: catalin.marinas@arm.com
-Cc: bigeasy@linutronix.de
-Cc: tglx@linutronix.de
-Cc: rostedt@goodmis.org
----
- mm/kmemleak.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
-
-diff --git a/mm/kmemleak.c b/mm/kmemleak.c
-index 17dd883..b68a3d0 100644
---- a/mm/kmemleak.c
-+++ b/mm/kmemleak.c
-@@ -26,7 +26,7 @@
-  *
-  * The following locks and mutexes are used by kmemleak:
-  *
-- * - kmemleak_lock (rwlock): protects the object_list modifications and
-+ * - kmemleak_lock (raw spinlock): protects the object_list modifications and
-  *   accesses to the object_tree_root. The object_list is the main list
-  *   holding the metadata (struct kmemleak_object) for the allocated memory
-  *   blocks. The object_tree_root is a red black tree used to look-up
-@@ -197,7 +197,7 @@ static LIST_HEAD(gray_list);
- /* search tree for object boundaries */
- static struct rb_root object_tree_root = RB_ROOT;
- /* rw_lock protecting the access to object_list and object_tree_root */
--static DEFINE_RWLOCK(kmemleak_lock);
-+static DEFINE_RAW_SPINLOCK(kmemleak_lock);
- 
- /* allocation caches for kmemleak internal data */
- static struct kmem_cache *object_cache;
-@@ -491,9 +491,9 @@ static struct kmemleak_object *find_and_get_object(unsigned long ptr, int alias)
- 	struct kmemleak_object *object;
- 
- 	rcu_read_lock();
--	read_lock_irqsave(&kmemleak_lock, flags);
-+	raw_spin_lock_irqsave(&kmemleak_lock, flags);
- 	object = lookup_object(ptr, alias);
--	read_unlock_irqrestore(&kmemleak_lock, flags);
-+	raw_spin_unlock_irqrestore(&kmemleak_lock, flags);
- 
- 	/* check whether the object is still available */
- 	if (object && !get_object(object))
-@@ -513,13 +513,13 @@ static struct kmemleak_object *find_and_remove_object(unsigned long ptr, int ali
- 	unsigned long flags;
- 	struct kmemleak_object *object;
- 
--	write_lock_irqsave(&kmemleak_lock, flags);
-+	raw_spin_lock_irqsave(&kmemleak_lock, flags);
- 	object = lookup_object(ptr, alias);
- 	if (object) {
- 		rb_erase(&object->rb_node, &object_tree_root);
- 		list_del_rcu(&object->object_list);
- 	}
--	write_unlock_irqrestore(&kmemleak_lock, flags);
-+	raw_spin_unlock_irqrestore(&kmemleak_lock, flags);
- 
- 	return object;
- }
-@@ -593,7 +593,7 @@ static struct kmemleak_object *create_object(unsigned long ptr, size_t size,
- 	/* kernel backtrace */
- 	object->trace_len = __save_stack_trace(object->trace);
- 
--	write_lock_irqsave(&kmemleak_lock, flags);
-+	raw_spin_lock_irqsave(&kmemleak_lock, flags);
- 
- 	min_addr = min(min_addr, ptr);
- 	max_addr = max(max_addr, ptr + size);
-@@ -624,7 +624,7 @@ static struct kmemleak_object *create_object(unsigned long ptr, size_t size,
- 
- 	list_add_tail_rcu(&object->object_list, &object_list);
- out:
--	write_unlock_irqrestore(&kmemleak_lock, flags);
-+	raw_spin_unlock_irqrestore(&kmemleak_lock, flags);
- 	return object;
- }
- 
-@@ -1310,7 +1310,7 @@ static void scan_block(void *_start, void *_end,
- 	unsigned long *end = _end - (BYTES_PER_POINTER - 1);
- 	unsigned long flags;
- 
--	read_lock_irqsave(&kmemleak_lock, flags);
-+	raw_spin_lock_irqsave(&kmemleak_lock, flags);
- 	for (ptr = start; ptr < end; ptr++) {
- 		struct kmemleak_object *object;
- 		unsigned long pointer;
-@@ -1367,7 +1367,7 @@ static void scan_block(void *_start, void *_end,
- 			spin_unlock(&object->lock);
- 		}
- 	}
--	read_unlock_irqrestore(&kmemleak_lock, flags);
-+	raw_spin_unlock_irqrestore(&kmemleak_lock, flags);
- }
- 
- /*
--- 
-2.7.4
-
+Paolo
