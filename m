@@ -2,120 +2,81 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66919C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:56:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A0F5C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:59:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 395EC2241E
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:56:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 395EC2241E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 0512F2243E
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:59:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0512F2243E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730097AbeKMDug (ORCPT
+        id S1729373AbeKMDyA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 22:50:36 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:52732 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727185AbeKMDuf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 22:50:35 -0500
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id ZAf4JIMm6mJ9; Mon, 12 Nov 2018 18:56:16 +0100 (CET)
-Received: from zn.tnic (p200300EC2BE56F00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2be5:6f00:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B2FEA1EC0266;
-        Mon, 12 Nov 2018 18:56:16 +0100 (CET)
-Date:   Mon, 12 Nov 2018 18:56:10 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Moger, Babu" <Babu.Moger@amd.com>
-Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
-        "reinette.chatre@intel.com" <reinette.chatre@intel.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "pombredanne@nexb.com" <pombredanne@nexb.com>,
-        "rafael@kernel.org" <rafael@kernel.org>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "qianyue.zj@alibaba-inc.com" <qianyue.zj@alibaba-inc.com>,
-        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "Singh, Brijesh" <brijesh.singh@amd.com>,
-        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "jannh@google.com" <jannh@google.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "rian@alum.mit.edu" <rian@alum.mit.edu>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH v7 02/13] arch/x86: Rename the RDT functions and
- definitions
-Message-ID: <20181112175610.GI8167@zn.tnic>
-References: <20181109205153.14811-1-babu.moger@amd.com>
- <20181109205153.14811-3-babu.moger@amd.com>
+        Mon, 12 Nov 2018 22:54:00 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40740 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727363AbeKMDyA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 22:54:00 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 29853A78;
+        Mon, 12 Nov 2018 09:59:42 -0800 (PST)
+Received: from [10.1.196.93] (en101.cambridge.arm.com [10.1.196.93])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C69133F5A0;
+        Mon, 12 Nov 2018 09:59:40 -0800 (PST)
+Subject: Re: [PATCH] MAINTAINERS: Add reviewer for CoreSight sub-system
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        mchehab+samsung@kernel.org, gregkh@linuxfoundation.org,
+        davem@davemloft.net, akpm@linux-foundation.org
+Cc:     nicolas.ferre@microchip.com, arnd@arndb.de,
+        linux-kernel@vger.kernel.org
+References: <1542042347-12389-1-git-send-email-mathieu.poirier@linaro.org>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <fa47727b-26f3-e86a-0b34-5a981d8d6a86@arm.com>
+Date:   Mon, 12 Nov 2018 17:59:39 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181109205153.14811-3-babu.moger@amd.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1542042347-12389-1-git-send-email-mathieu.poirier@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 09, 2018 at 08:52:27PM +0000, Moger, Babu wrote:
-> As AMD is starting to support RDT(or QOS) features, rename
-> the RDT functions and definitions to more generic names.
+
+
+On 12/11/2018 17:05, Mathieu Poirier wrote:
+> On top of providing useful review and comments, Suzuki has done good work
+> in the CoreSight sub-system over the past couple of years.  As agreed
+> during a recent face-to-face converstation, adding him as a reviewer to
+> lessen the maintenance workload.
 > 
-> Replace intel_rdt to resctrl where applicable.
-> 
-> Signed-off-by: Babu Moger <babu.moger@amd.com>
+> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 > ---
->  arch/x86/include/asm/resctrl_sched.h   | 24 ++++++++++++------------
->  arch/x86/kernel/cpu/resctrl.c          | 26 +++++++++++++-------------
->  arch/x86/kernel/cpu/resctrl.h          |  2 +-
->  arch/x86/kernel/cpu/resctrl_monitor.c  | 11 ++++++-----
->  arch/x86/kernel/cpu/resctrl_rdtgroup.c | 10 +++++-----
->  arch/x86/kernel/process_32.c           |  2 +-
->  arch/x86/kernel/process_64.c           |  2 +-
->  7 files changed, 39 insertions(+), 38 deletions(-)
+>   MAINTAINERS | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 0abecc528dac..4f93b877c4eb 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1426,6 +1426,7 @@ F:	arch/arm/mach-ep93xx/micro9.c
+>   
+>   ARM/CORESIGHT FRAMEWORK AND DRIVERS
+>   M:	Mathieu Poirier <mathieu.poirier@linaro.org>
+> +R:	Suzuki K Poulose <suzuki.poulose@arm.com>
+>   L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+>   S:	Maintained
+>   F:	drivers/hwtracing/coresight/*
+> 
 
-As with patch 1, pls fix subject prefix.
+Acked-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-> @@ -637,10 +637,11 @@ int rdt_get_mon_l3_config(struct rdt_resource *r)
->  	 *
->  	 * For a 35MB LLC and 56 RMIDs, this is ~1.8% of the LLC.
->  	 */
-> -	intel_cqm_threshold = boot_cpu_data.x86_cache_size * 1024 / r->num_rmid;
-> +	resctrl_cqm_threshold = boot_cpu_data.x86_cache_size * 1024 /
-> +				r->num_rmid;
 
-No need to break that line here.
-
-With that addressed and FWIW:
-
-Reviewed-by: Borislav Petkov <bp@suse.de>
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
