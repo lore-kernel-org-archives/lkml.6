@@ -2,142 +2,182 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0243FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:13:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DBFDC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:13:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B508622419
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:13:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d9QMNLq3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B508622419
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 020982241E
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:13:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 020982241E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729945AbeKMCG4 (ORCPT
+        id S1729976AbeKMCHs convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 21:06:56 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:36539 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727976AbeKMCG4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 21:06:56 -0500
-Received: by mail-lf1-f67.google.com with SMTP id h192so6586515lfg.3
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 08:13:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mRGD8zhWkHchDC7PtnDjUMIqDk/KRXDdmAqSruj1iLw=;
-        b=d9QMNLq3cmEL9CJrN/2CUAK05loDMefJA0Ng4yQG1UH+KlJukkbQBoyeFna1nAvMmG
-         Pcl54xW7DyKCO0+RRBeZ0mk2cxLhljXRmd7C9w1fSuks9Iu68WhCU5Yb0BYFaBormdzD
-         QP3eGQ+tbnMk62sQcvb3CxJFpxK35pdK92XeS4p1vBhloXShbP9rxU2rbHxLtup8V9/Z
-         TJhzf5kCBgOt6B0u0xoyyqp9g7DiLSM339ybognmK22cUod17Y2whA45B0E9RN87S+xD
-         2vitrbUvqon7+7MGEc0oyKtAs8iTzkWym0k3APmBLYzJZAAWVitUxLlwfKIoKkq3sl5R
-         NuSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mRGD8zhWkHchDC7PtnDjUMIqDk/KRXDdmAqSruj1iLw=;
-        b=RmVIzdhVZcyO/V7D4Ps5vH3a986Yhp29UPycMzLG51htxa7YfNTj6ZU6c4pzVcNW/O
-         4XC7boTiwAmtel4DPEwG3uKKTftiDlzBMcCUc8mTiXfgb3WVrhgL3TG4b9RFKtlWamv0
-         u+wTo0JQlTomkJOn5edScwtgR4fRLAb6VHviqn1Kblu23jyYP3PR34x4KsUlYJZZRpu5
-         BTia2jGyutAZTPy94GnGPDZyuJTr2f7aRDZ/50GrW90IyD5JiUPtVdbALjHh1zPm7NgZ
-         pa2GePbUlRxSF9JC3AKzrfhQYjvRhPGUr903jaH6bGWq5+axAazLEgethWcv9rkBG+wG
-         5xdw==
-X-Gm-Message-State: AGRZ1gIYyDFikTavugUOAAwt3i60D4Bus7MoRKMZtN1XfOPqnkE3f64r
-        cPk9iDGO58CPhxnPelp14JWWpbBXklvV7Nb61Uw=
-X-Google-Smtp-Source: AJdET5fbvqplKPxURfxXQPuGjQFie79/hCzricrhYMwZPYNZRoileyv+NP21wX0mV4LETs+8xXpbPXsDfpiKu7jAUyY=
-X-Received: by 2002:a19:ae03:: with SMTP id f3mr1048624lfc.86.1542039180489;
- Mon, 12 Nov 2018 08:13:00 -0800 (PST)
+        Mon, 12 Nov 2018 21:07:48 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:52020 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727976AbeKMCHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 21:07:48 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id BF088207CF; Mon, 12 Nov 2018 17:13:51 +0100 (CET)
+Received: from xps13 (aaubervilliers-681-1-30-49.w90-88.abo.wanadoo.fr [90.88.15.49])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 4923320701;
+        Mon, 12 Nov 2018 17:13:51 +0100 (CET)
+Date:   Mon, 12 Nov 2018 17:13:51 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Liang Yang <liang.yang@amlogic.com>, Rob Herring <robh@kernel.org>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        Jian Hu <jian.hu@amlogic.com>, linux-mtd@lists.infradead.org,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        linux-amlogic@lists.infradead.org,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Jerome Brunet <jbrunet@baylibre.com>
+Subject: Re: [PATCH v6 2/2] mtd: rawnand: meson: add support for Amlogic
+ NAND flash controller
+Message-ID: <20181112171351.4ac3506b@xps13>
+In-Reply-To: <20181106112206.65a70a81@bbrezillon>
+References: <1541090542-19618-1-git-send-email-jianxin.pan@amlogic.com>
+        <1541090542-19618-3-git-send-email-jianxin.pan@amlogic.com>
+        <20181105165321.7ea2b45f@bbrezillon>
+        <a571904e-6296-bf62-e1fe-e25bf90040bb@amlogic.com>
+        <20181106102851.61deb97a@bbrezillon>
+        <ff02373e-c97b-182d-5b43-83d1e8f6d51a@amlogic.com>
+        <20181106112206.65a70a81@bbrezillon>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <CGME20180823072813eucas1p2a534b4be94a3a2bc3480adcefca2ca22@eucas1p2.samsung.com>
- <1535009282-1480-1-git-send-email-huijin.park@samsung.com> <20181031145505.6b034b84@bbrezillon>
-In-Reply-To: <20181031145505.6b034b84@bbrezillon>
-From:   Huijin Park <bbanghj.park@gmail.com>
-Date:   Tue, 13 Nov 2018 01:12:48 +0900
-Message-ID: <CAMy0x0ngjNugPO0aN0c0hACsw3qQE0rgLwfuMaX5+L7+DhXp2w@mail.gmail.com>
-Subject: Re: [PATCH] mtd: cast to u64 to avoid unexpected error
-To:     boris.brezillon@bootlin.com
-Cc:     huijin.park@samsung.com, marek.vasut@gmail.com,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris
+Hello,
 
-Thanks for review.
-I will send patch again.
+Boris Brezillon <boris.brezillon@bootlin.com> wrote on Tue, 6 Nov 2018
+11:22:06 +0100:
 
-On Wed, Oct 31, 2018 at 10:55 PM Boris Brezillon
-<boris.brezillon@bootlin.com> wrote:
->
-> Hi Huijin,
->
-> Subject prefix should be "mtd: spi-nor: ...", and please replace
-> "unexpected error" by "unsigned int overflows".
->
-> On Thu, 23 Aug 2018 03:28:02 -0400
-> Huijin Park <huijin.park@samsung.com> wrote:
->
-> > From: "huijin.park" <huijin.park@samsung.com>
-> >
-> > the params->size is defined as "u64"
-> > and, "info->sector_size" and "info->n_sectors" is defined as unsgined and u16
->
->                                                  ^ are          ^ unsigned
->
-> > thus, u64 data might have strange data(loss data) if data is overflow.
->
->                                                     ^ if the result
-> overflows an unsigned int.
->
-> > this patch cast it to u64.
->
->              ^casts info->sector_size to an u64.
->
-> >
-> > Signed-off-by: huijin.park <huijin.park@samsung.com>
-> > ---
-> >  drivers/mtd/spi-nor/spi-nor.c |    2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-> > index d9c368c..527f281 100644
-> > --- a/drivers/mtd/spi-nor/spi-nor.c
-> > +++ b/drivers/mtd/spi-nor/spi-nor.c
-> > @@ -2459,7 +2459,7 @@ static int spi_nor_init_params(struct spi_nor *nor,
-> >       memset(params, 0, sizeof(*params));
-> >
-> >       /* Set SPI NOR sizes. */
-> > -     params->size = info->sector_size * info->n_sectors;
-> > +     params->size = (u64)info->sector_size * (u64)info->n_sectors;
->
->                                                 ^ this cast is not needed.
->
-> BTW, I doubt we'll ever have to deal with NORs that are more than 4GB,
-> but making static code analysis tools happy and enforcing code
-> correctness is important too.
->
+> On Tue, 6 Nov 2018 18:00:37 +0800
+> Liang Yang <liang.yang@amlogic.com> wrote:
+> 
+> > On 2018/11/6 17:28, Boris Brezillon wrote:  
+> > > On Tue, 6 Nov 2018 17:08:00 +0800
+> > > Liang Yang <liang.yang@amlogic.com> wrote:
+> > >     
+> > >> On 2018/11/5 23:53, Boris Brezillon wrote:    
+> > >>> On Fri, 2 Nov 2018 00:42:21 +0800
+> > >>> Jianxin Pan <jianxin.pan@amlogic.com> wrote:
+> > >>>        
+> > >>>> +
+> > >>>> +static inline u8 meson_nfc_read_byte(struct mtd_info *mtd)
+> > >>>> +{
+> > >>>> +	struct nand_chip *nand = mtd_to_nand(mtd);
+> > >>>> +	struct meson_nfc *nfc = nand_get_controller_data(nand);
+> > >>>> +	u32 cmd;
+> > >>>> +
+> > >>>> +	cmd = nfc->param.chip_select | NFC_CMD_DRD | 0;
+> > >>>> +	writel(cmd, nfc->reg_base + NFC_REG_CMD);
+> > >>>> +
+> > >>>> +	meson_nfc_drain_cmd(nfc);    
+> > >>>
+> > >>> You probably don't want to drain the FIFO every time you read a byte on
+> > >>> the bus, and I guess the INPUT FIFO is at least as big as the CMD
+> > >>> FIFO, right? If that's the case, you should queue as much DRD cmd as
+> > >>> possible and only sync when the user explicitly requests it or when
+> > >>> the INPUT/READ FIFO is full.
+> > >>>        
+> > >> Register 'NFC_REG_BUF' can holds only 4 bytes, also DRD sends only one
+> > >> nand cycle to read one byte and covers the 1st byte every time reading.
+> > >> i think nfc controller is faster than nand cycle, but really it is not
+> > >> high efficiency when reading so many bytes once.
+> > >> Or use dma command here like read_page and read_page_raw.    
+> > > 
+> > > Yep, that's also an alternative, though you'll have to make sure the
+> > > buffer passed through the nand_op_inst is DMA-safe, and use a bounce
+> > > buffer when that's not the case.
+> > >     
+> > ok, i will try dma here.  
+> 
+> We should probably expose the bounce buf handling as generic helpers at
+> the rawnand level:
+> 
+> void *nand_op_get_dma_safe_input_buf(struct nand_op_instr *instr)
+> {
+> 	void *buf;
+> 
+> 	if (WARN_ON(instr->type != NAND_OP_DATA_IN_INSTR))
+> 		return NULL;
+> 
+> 	if (virt_addr_valid(instr->data.in) &&
+> 	    !object_is_on_stack(instr->data.buf.in))
+> 		return instr->data.buf.in;
+> 
+> 	return kzalloc(instr->data.len, GFP_KERNEL);
+> }
+> 
+> void nand_op_put_dma_safe_input_buf(struct nand_op_instr *instr,
+> 				    void *buf)
+> {
+> 	if (WARN_ON(instr->type != NAND_OP_DATA_IN_INSTR) ||
+> 	    WARN_ON(!buf))
+> 		return;
+> 
+> 	if (buf == instr->data.buf.in)
+> 		return;
+> 
+> 	memcpy(instr->data.buf.in, buf, instr->data.len);
+> 	kfree(buf);
+> }
+> 
+> const void *nand_op_get_dma_safe_output_buf(struct nand_op_instr *instr)
+> {
+> 	void *buf;
+> 
+> 	if (WARN_ON(instr->type != NAND_OP_DATA_OUT_INSTR))
+> 		return NULL;
+> 
+> 	if (virt_addr_valid(instr->data.out) &&
+> 	    !object_is_on_stack(instr->data.buf.out))
+> 		return instr->data.buf.out;
+> 
+> 	return kmemdup(instr->data.buf.out, GFP_KERNEL);
+> }
+> 
+> void nand_op_put_dma_safe_output_buf(struct nand_op_instr *instr,
+> 				    void *buf)
+> {
+> 	if (WARN_ON(instr->type != NAND_OP_DATA_OUT_INSTR) ||
+> 	    WARN_ON(!buf))
+> 		return;
+> 
+> 	if (buf != instr->data.buf.out)
+> 		kfree(buf);
+> }
 
-I agree that enforcing code correctness is important as your said too.
+Not that I am against such function, but maybe they should come with
+comments stating that there is no reliable way to find if a buffer is
+DMA-able at runtime and these are just sanity checks (ie. required, but
+probably not enough). This is my understanding of Wolfram's recent talk
+at ELCE [1]. I suppose using the CONFIG_DMA_API_DEBUG option could help
+more reliably to find such issues.
 
-> >       params->page_size = info->page_size;
-> >
-> >       /* (Fast) Read settings. */
->
-> Regards,
->
-> Boris
+[1] https://www.youtube.com/watch?v=JDwaMClvV-s
 
-Thanks & best regards,
-
-Huijin
+Thanks,
+Miquèl
