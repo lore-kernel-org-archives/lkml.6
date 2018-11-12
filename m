@@ -2,90 +2,157 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05997C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:25:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D1D7C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:26:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC2B922506
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:25:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48C2222506
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:26:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="spHKbV/Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC2B922506
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="po6TpHpe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48C2222506
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730279AbeKMFUX (ORCPT
+        id S1726160AbeKMFVb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 00:20:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59970 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725749AbeKMFUW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 00:20:22 -0500
-Received: from localhost (unknown [206.108.79.134])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 52D1F224E0;
-        Mon, 12 Nov 2018 19:25:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542050746;
-        bh=Ukokohd912ilOG7C7y94gXll2lQNx2UWRe0u1z5U6lY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=spHKbV/ZZ3MGgdlP1Hv/bu4cayRtHHdLNyO45+jqIAIRUV5JjlwApWqAg9wI/R1db
-         a8aWsQBp1t1QrIg1aMqHCphUctTS4gEeopwhsLiMxzFDYBGRACGAk5d4wHV/oeYBAf
-         3lltUFUD2xT727sXfeumg9hi98Acp5Rwk6UI8MxQ=
-Date:   Mon, 12 Nov 2018 11:25:46 -0800
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Holger =?iso-8859-1?Q?Hoffst=E4tte?= 
-        <holger@applied-asynchrony.com>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Jean-Marc Lenoir <archlinux@jihemel.com>,
-        Erik Schmauss <erik.schmauss@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: Re: [PATCH 4.19 025/361] ACPICA: AML interpreter: add region
- addresses in global list during initialization
-Message-ID: <20181112192546.GB2263@kroah.com>
-References: <20181111221619.915519183@linuxfoundation.org>
- <20181111221623.163909820@linuxfoundation.org>
- <9da1c8e8-d237-11b3-8918-859a4bbdbcc4@applied-asynchrony.com>
+        Tue, 13 Nov 2018 00:21:31 -0500
+Received: from mail-vk1-f179.google.com ([209.85.221.179]:42208 "EHLO
+        mail-vk1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725790AbeKMFVb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 00:21:31 -0500
+Received: by mail-vk1-f179.google.com with SMTP id y14so2217515vky.9
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 11:26:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=nkJNME0hKQObx3H83kU8pvC0TbOAY5SjRYkRmAXv2qc=;
+        b=po6TpHpeZUQpnpzLCiBNbLTrkZMYvWSD1szQVk6HqWjFyZMkzXq7suHl5neZlVSva1
+         n/6drcdDZqfbfOsQmEzGR6TtO4MA5FToBUhNz6JcWY+9zb4S95D04m4y+bY6zv333k+I
+         Sqyf5mxyCH6ReYT6OqAWIN6aRluecXWhkPFlIvvNIWZz6PiEiDQ1h2J5rRwYxD3cZ5S5
+         QM7L8WFfbaoGiJnEAqPOn0LfJe9HHLyjE36DCeoNf/KcBgszY2aCvvx3voiwnpLLViPo
+         y5QzDjk5moi8J5NWvjhp8QpTaHKM8niq7ubj/pL9KwKGJVB7TXbtKZ/Hrvse/7hJuxLc
+         X/SQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=nkJNME0hKQObx3H83kU8pvC0TbOAY5SjRYkRmAXv2qc=;
+        b=bs0Mx1fvKkMKWiTWQnaAdatht/TRJgTefMJChJ6cyoM8XXmv8ySswE56k5H8TWP4zS
+         hWfalj2BPzjrb5WZ2dUJS7q7MBZ9ngxfw73ifmY9+sLPYJl9lH4L12YR8ub+KCPEVgvs
+         7/XbFbwjHlGYen9i1r6lnt9LsQid4Wd939L+AxlRmcPVHOsluyU5ZF7khsD3GZft54Zv
+         aEWBAQCqwlCB3h+Et5R3ptwsFtsf/uiAvRxD8F0xmxRCVVYPM93lBzSIm1omEx5FIY2G
+         kKX6gcxopvUqdMVZytx626lwyOvD2kpHy7qU8L5EZCBda2MO5ovxgEQWgd8dJtQ7J1FC
+         lyww==
+X-Gm-Message-State: AGRZ1gJ3gYRPNY3+nsnz8cZpw4UPqWMP1lqusLp36KuKNzTzWfnOybki
+        PcdQd09fZ+IpZg9NTlbcKn4D65W8ecmWM+2HrFPBgw==
+X-Google-Smtp-Source: AJdET5ftrdpA6CnDWCUe07KXvy3gxGwqGYiVbYmaCFKLJbVZOzG0g1Cnt8gAmNJN6c0a4vO3cLph75gKtc/SXlykxMI=
+X-Received: by 2002:a1f:f203:: with SMTP id q3mr968323vkh.54.1542050813423;
+ Mon, 12 Nov 2018 11:26:53 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9da1c8e8-d237-11b3-8918-859a4bbdbcc4@applied-asynchrony.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a67:f48d:0:0:0:0:0 with HTTP; Mon, 12 Nov 2018 11:26:51
+ -0800 (PST)
+In-Reply-To: <87lg5ym7qi.fsf@oldenburg.str.redhat.com>
+References: <CAKOZuesB4R=dCz4merWQN0FSCGrXmOgUUr4ienSbStBJguNv8g@mail.gmail.com>
+ <bbc12da5-830e-99a7-95e3-d9da42947dc9@gmail.com> <877ehjx447.fsf@oldenburg.str.redhat.com>
+ <CAKOZues5SEESpJU=6MDTrPXTA1KTZFGNQE4Lw4t0fO-WBTU62w@mail.gmail.com>
+ <875zx2vhpd.fsf@oldenburg.str.redhat.com> <CAKOZuetdgk1QYhx1538-98rFpogMin=8DkPnCtU9_=ip23Vk7w@mail.gmail.com>
+ <CAKCAbMiHC9r54h=XeW7CkBZ1Z5eHr9MPH3Rn7KTc9DjoHG=8UA@mail.gmail.com>
+ <CAKOZuev7zqq+xpjyDA2mSdy-zwyNjECCzLsBELF6_v1rwar_mA@mail.gmail.com> <87lg5ym7qi.fsf@oldenburg.str.redhat.com>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Mon, 12 Nov 2018 11:26:51 -0800
+Message-ID: <CAKOZues2bQo1y_1ynxFMHGTvtTjABsqVpKJt5MYMdZBq6-ikHA@mail.gmail.com>
+Subject: Re: Official Linux system wrapper library?
+To:     Florian Weimer <fweimer@redhat.com>
+Cc:     Zack Weinberg <zackw@panix.com>,
+        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Joel Fernandes <joelaf@google.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Willy Tarreau <w@1wt.eu>, Vlastimil Babka <vbabka@suse.cz>,
+        "Carlos O'Donell" <carlos@redhat.com>,
+        GNU C Library <libc-alpha@sourceware.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 07:30:57PM +0100, Holger Hoffstätte wrote:
-> On 11/11/18 11:16 PM, Greg Kroah-Hartman wrote:
-> > 4.19-stable review patch.  If anyone has any objections, please let me know.
-> 
-> As probably expected this patch causes problems. In my case one server
-> can no longer load the nct6775 hwmon module, which means the fan cannot be
-> monitored, and therefore my monitoring system promptly starts spamming me with
-> alerts that my fan has failed - which is of course not true.
-> 
-> --snip--
-> Nov 12 18:08:56 tux kernel: nct6775: Found NCT6776D/F or compatible chip at 0x2e:0x290
-> Nov 12 18:08:56 tux kernel: ACPI Warning: SystemIO range 0x0000000000000295-0x0000000000000296 conflicts with OpRegion 0x0000000000000290-0x
-> Nov 12 18:08:56 tux kernel: ACPI: If an ACPI driver is available for this device, you should use it instead of the native driver
-> --snip--
-> 
-> This is certainly caused by my old BIOS and its broken ACPI implementation,
-> however since it's working perfectly fine otherwise I see no reason to replace
-> it. That being said, I must be able to monitor my fan, so for now reverting
-> the patch immediately "fixed" the problem for me - the fan entries appeared
-> in sysfs again after successfully loading the module.
-> 
-> Idea, workarounds or patches welcome.
+On Mon, Nov 12, 2018 at 11:11 AM, Florian Weimer <fweimer@redhat.com> wrote:
+> * Daniel Colascione:
+>
+>> What about off_t differences? Again, it doesn't matter. From the
+>> *kernel's* point of view, there's one width of offset parameter per
+>> system call per architecture. The library I'm proposing would expose
+>> this parameter literally.
+>
+> Does this mean the application author needs to know when to split an
+> off_t argument into two, and when to pass it as a single argument, and
+> when to insert dummy arguments for alignment, depending on the
+> architecture?
 
-So Linus's tree is also "broken" for your hardware?
+No, I wouldn't make callers go to that trouble. I don't see any
+barrier to common-sense local data transformations. These
+transformations don't have external dependencies, after all. I want a
+thin interface to the kernel, but not so thin as to be a direct
+mapping onto register locations. I don't see value in that level of
+correspondence.
 
-thanks,
+>>> And that means you wouldn't get as much
+>>> decoupling from the C and POSIX standards -- both of which specify at
+>>> least part of those semantics -- as you want, and we would still be
+>>> having these arguments.  For example, it would be every bit as
+>>> troublesome for liblinuxabi.so.1 to export set_robust_list as it would
+>>> be for libc.so.6 to do that.
+>>
+>> Why? Such an exported function would cause no trouble until called,
+>> and there are legitimate reasons for calling such a function. Not
+>> everyone, as mentioned, wants to write a program that relies on libc.
+>
+> For that use case, a machine-readable system call ABI specification is
+> the only reasonable approach:
 
-greg k-h
+> The challenge here is to come up with a
+> uniform description of the system call interface for all architectures,
+
+This is another example in which we should remember the old aphorism
+that the perfect is the enemy of the good. There's no reason that the
+kernel couldn't simply provide a library with conventional functions
+exported in the conventional way doing the conventional things that
+functions do, one that would free users from relying on direct use of
+syscall(2). If this library were to interact with errno and
+cancelation properly, so much the better. There's no reason to avoid
+this work in favor of some theoretically-elegant
+abstract-function-description metadata-based approach that will likely
+never materialize.
+
+(Alternatively: just regard C as the uniform description language.)
+
+>> This stance in the paragraph I've quoted is another example of glibc's
+>> misplaced idealism. As I've elaborated elsewhere, people use signals
+>> for many purposes today. The current signals API is extremely
+>> difficult to use correctly in a process in which multiple unrelated
+>> components want to take advantage of signal-handling functionality.
+>> Users deserve a cleaner, modern, and safe API. It's not productive
+>> withhold improvements to the signal API and gate them on unrelated
+>> features like process handles merely because, in the personal
+>> judgement of the glibc maintainers, developers should use signals for
+>> fewer things.
+>
+> The two aren't unrelated.  If you take asynchronous signals out of the
+> picture, the design becomes simpler and easier to use.
+
+The two features *are* unrelated. The design I've proposed works
+equally well for synchronous and asynchronous signals, and limiting it
+to synchronous signals doesn't simplify it. Even if it were the case
+that the design were simpler and easier to use when limited to
+synchronous signals --- which it isn't, unless you want to go in the
+SEH direction, which is more, not less complicated --- that wouldn't
+be a reason to block the work until some form of process handle
+landed. The objections I've seen have all essentially amounted to "we
+don't think people should use signals".
