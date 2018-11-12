@@ -2,216 +2,143 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0E5BC07E85
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:01:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B0C2C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:01:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9886C22419
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:01:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9886C22419
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id F326A22419
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:01:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F326A22419
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729869AbeKMBzh (ORCPT
+        id S1729987AbeKMBzp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 20:55:37 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:50307 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728619AbeKMBzg (ORCPT
+        Mon, 12 Nov 2018 20:55:45 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:4141 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727976AbeKMBzo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 20:55:36 -0500
-Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7] helo=dude.pengutronix.de.)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1gMEel-00012b-L1; Mon, 12 Nov 2018 17:01:43 +0100
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
-        Vinod Koul <vkoul@kernel.org>, kernel@pengutronix.de,
-        patchwork-lst@pengutronix.de
-Subject: [PATCH v2 1/2] firmware: add nowarn variant of request_firmware_nowait()
-Date:   Mon, 12 Nov 2018 17:01:42 +0100
-Message-Id: <20181112160143.4459-1-l.stach@pengutronix.de>
-X-Mailer: git-send-email 2.19.1
+        Mon, 12 Nov 2018 20:55:44 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wACG0xNJ139769
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 11:01:52 -0500
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2nqb4651q7-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 11:01:49 -0500
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Mon, 12 Nov 2018 16:01:45 -0000
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 12 Nov 2018 16:01:40 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wACG1dKP28049432
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 12 Nov 2018 16:01:39 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4F4F8B2071;
+        Mon, 12 Nov 2018 16:01:38 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 30C73B206B;
+        Mon, 12 Nov 2018 16:01:37 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.198.12])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 12 Nov 2018 16:01:37 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 891E516C5DA0; Mon, 12 Nov 2018 08:01:37 -0800 (PST)
+Date:   Mon, 12 Nov 2018 08:01:37 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        dipankar <dipankar@in.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        rostedt <rostedt@goodmis.org>,
+        David Howells <dhowells@redhat.com>,
+        Eric Dumazet <edumazet@google.com>,
+        fweisbec <fweisbec@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
+        "Joel Fernandes, Google" <joel@joelfernandes.org>,
+        kernel-team <kernel-team@android.com>, sashal@kernel.org
+Subject: Re: [PATCH tip/core/rcu 0/41] More RCU flavor consolidation cleanup
+ for v4.21/v5.0
+Reply-To: paulmck@linux.ibm.com
+References: <20181111194104.GA4787@linux.ibm.com>
+ <2113574714.3779.1542031670315.JavaMail.zimbra@efficios.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2113574714.3779.1542031670315.JavaMail.zimbra@efficios.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18111216-0072-0000-0000-000003C77530
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010035; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01116417; UDB=6.00577118; IPR=6.00896525;
+ MB=3.00024128; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-12 16:01:43
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18111216-0073-0000-0000-00004A158C54
+Message-Id: <20181112160137.GI4170@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-12_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811120139
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Device drivers with optional firmware may still want to use the
-asynchronous firmware loading interface. To avoid printing a
-warining into the kernel log when the optional firmware is
-absent, add a nowarn variant of this interface.
+On Mon, Nov 12, 2018 at 09:07:50AM -0500, Mathieu Desnoyers wrote:
+> ----- On Nov 11, 2018, at 2:41 PM, paulmck paulmck@linux.ibm.com wrote:
+> 
+> > Hello!
+> > 
+> > This series does additional cleanup for the RCU flavor consolidation,
+> > focusing primarily on uses of old API members, for example, so that
+> > call_rcu_bh() becomes call_rcu().  There are also a few straggling
+> > internal-to-RCU cleanups.
+> > 
+> > 1.	Remove unused rcu_state externs, courtesy of Joel Fernandes.
+> > 
+> > 2.	Fix rcu_{node,data} comments about gp_seq_needed, courtesy of
+> >	Joel Fernandes.
+> > 
+> > 3.	Eliminate synchronize_rcu_mult() and its sole caller.
+> > 
+> > 4.	Consolidate the RCU update functions invoked by sync.c.
+> > 
+> > 5-41.	Replace old flavorful RCU API calls with the corresponding
+> >	vanilla calls.
+> 
+> Hi Paul,
+> 
+> Just a heads up: we might want to spell out warnings in very big letters
+> for anyone trying to backport code using RCU from post-4.21 kernels
+> back to older kernels. I fear that newer code will build just fine
+> on older kernels, but will spectacularly fail in hard-to-debug ways at
+> runtime.
+> 
+> Renaming synchronize_rcu() and call_rcu() to something that did not
+> exist in prior kernels would prevent that. It may not be as pretty
+> though.
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
----
-v2: Add missing documentation, as pointed out by 0-day bot.
----
- drivers/base/firmware_loader/main.c | 92 ++++++++++++++++++++---------
- include/linux/firmware.h            | 12 ++++
- 2 files changed, 77 insertions(+), 27 deletions(-)
+From v4.20 rather than v4.21, but yes.  Would it make sense to have Sasha
+automatically flag -stable candidates going back past that boundary that
+contain call_rcu(), synchronize_rcu(), etc.?  Adding Sasha on CC, and
+I might be able to touch base with him this week.
 
-diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
-index 8e9213b36e31..9fa4ee154147 100644
---- a/drivers/base/firmware_loader/main.c
-+++ b/drivers/base/firmware_loader/main.c
-@@ -790,34 +790,11 @@ static void request_firmware_work_func(struct work_struct *work)
- 	kfree(fw_work);
- }
- 
--/**
-- * request_firmware_nowait() - asynchronous version of request_firmware
-- * @module: module requesting the firmware
-- * @uevent: sends uevent to copy the firmware image if this flag
-- *	is non-zero else the firmware copy must be done manually.
-- * @name: name of firmware file
-- * @device: device for which firmware is being loaded
-- * @gfp: allocation flags
-- * @context: will be passed over to @cont, and
-- *	@fw may be %NULL if firmware request fails.
-- * @cont: function will be called asynchronously when the firmware
-- *	request is over.
-- *
-- *	Caller must hold the reference count of @device.
-- *
-- *	Asynchronous variant of request_firmware() for user contexts:
-- *		- sleep for as small periods as possible since it may
-- *		  increase kernel boot time of built-in device drivers
-- *		  requesting firmware in their ->probe() methods, if
-- *		  @gfp is GFP_KERNEL.
-- *
-- *		- can't sleep at all if @gfp is GFP_ATOMIC.
-- **/
--int
--request_firmware_nowait(
-+
-+static int _request_firmware_nowait(
- 	struct module *module, bool uevent,
- 	const char *name, struct device *device, gfp_t gfp, void *context,
--	void (*cont)(const struct firmware *fw, void *context))
-+	void (*cont)(const struct firmware *fw, void *context), bool nowarn)
- {
- 	struct firmware_work *fw_work;
- 
-@@ -835,7 +812,8 @@ request_firmware_nowait(
- 	fw_work->context = context;
- 	fw_work->cont = cont;
- 	fw_work->opt_flags = FW_OPT_NOWAIT |
--		(uevent ? FW_OPT_UEVENT : FW_OPT_USERHELPER);
-+		(uevent ? FW_OPT_UEVENT : FW_OPT_USERHELPER) |
-+		(nowarn ? FW_OPT_NO_WARN : 0);
- 
- 	if (!uevent && fw_cache_is_setup(device, name)) {
- 		kfree_const(fw_work->name);
-@@ -854,8 +832,68 @@ request_firmware_nowait(
- 	schedule_work(&fw_work->work);
- 	return 0;
- }
-+
-+/**
-+ * request_firmware_nowait() - asynchronous version of request_firmware
-+ * @module: module requesting the firmware
-+ * @uevent: sends uevent to copy the firmware image if this flag
-+ *	is non-zero else the firmware copy must be done manually.
-+ * @name: name of firmware file
-+ * @device: device for which firmware is being loaded
-+ * @gfp: allocation flags
-+ * @context: will be passed over to @cont, and
-+ *	@fw may be %NULL if firmware request fails.
-+ * @cont: function will be called asynchronously when the firmware
-+ *	request is over.
-+ *
-+ *	Caller must hold the reference count of @device.
-+ *
-+ *	Asynchronous variant of request_firmware() for user contexts:
-+ *		- sleep for as small periods as possible since it may
-+ *		  increase kernel boot time of built-in device drivers
-+ *		  requesting firmware in their ->probe() methods, if
-+ *		  @gfp is GFP_KERNEL.
-+ *
-+ *		- can't sleep at all if @gfp is GFP_ATOMIC.
-+ **/
-+int request_firmware_nowait(
-+	struct module *module, bool uevent,
-+	const char *name, struct device *device, gfp_t gfp, void *context,
-+	void (*cont)(const struct firmware *fw, void *context))
-+{
-+	return _request_firmware_nowait(module, uevent, name, device, gfp,
-+					context, cont, false);
-+
-+}
- EXPORT_SYMBOL(request_firmware_nowait);
- 
-+/**
-+ * request_firmware_nowait_nowarn() - async version of request_firmware_nowarn
-+ * @module: module requesting the firmware
-+ * @uevent: sends uevent to copy the firmware image if this flag
-+ *	is non-zero else the firmware copy must be done manually.
-+ * @name: name of firmware file
-+ * @device: device for which firmware is being loaded
-+ * @gfp: allocation flags
-+ * @context: will be passed over to @cont, and
-+ *	@fw may be %NULL if firmware request fails.
-+ * @cont: function will be called asynchronously when the firmware
-+ *	request is over.
-+ *
-+ * Similar in function to request_firmware_nowait(), but doesn't print a warning
-+ * when the firmware file could not be found.
-+ */
-+int request_firmware_nowait_nowarn(
-+	struct module *module, bool uevent,
-+	const char *name, struct device *device, gfp_t gfp, void *context,
-+	void (*cont)(const struct firmware *fw, void *context))
-+{
-+	return _request_firmware_nowait(module, uevent, name, device, gfp,
-+					context, cont, true);
-+
-+}
-+EXPORT_SYMBOL(request_firmware_nowait_nowarn);
-+
- #ifdef CONFIG_PM_SLEEP
- static ASYNC_DOMAIN_EXCLUSIVE(fw_cache_domain);
- 
-diff --git a/include/linux/firmware.h b/include/linux/firmware.h
-index 2dd566c91d44..a6d0bc8273a4 100644
---- a/include/linux/firmware.h
-+++ b/include/linux/firmware.h
-@@ -48,6 +48,10 @@ int request_firmware_nowait(
- 	struct module *module, bool uevent,
- 	const char *name, struct device *device, gfp_t gfp, void *context,
- 	void (*cont)(const struct firmware *fw, void *context));
-+int request_firmware_nowait_nowarn(
-+	struct module *module, bool uevent,
-+	const char *name, struct device *device, gfp_t gfp, void *context,
-+	void (*cont)(const struct firmware *fw, void *context));
- int request_firmware_direct(const struct firmware **fw, const char *name,
- 			    struct device *device);
- int request_firmware_into_buf(const struct firmware **firmware_p,
-@@ -77,6 +81,14 @@ static inline int request_firmware_nowait(
- 	return -EINVAL;
- }
- 
-+static inline int request_firmware_nowait_nowarn(
-+	struct module *module, bool uevent,
-+	const char *name, struct device *device, gfp_t gfp, void *context,
-+	void (*cont)(const struct firmware *fw, void *context))
-+{
-+	return -EINVAL;
-+}
-+
- static inline void release_firmware(const struct firmware *fw)
- {
- }
--- 
-2.19.1
+							Thanx, Paul
 
