@@ -2,113 +2,115 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.9 required=3.0 tests=DATE_IN_PAST_03_06,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61644C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 01:38:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6AC9C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 01:39:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E975224E0
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 01:38:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y0nZI6MY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E975224E0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id B1A76224E0
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 01:39:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1A76224E0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730408AbeKMLeh (ORCPT
+        id S1730463AbeKMLf0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 06:34:37 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:38740 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727551AbeKMLeh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 06:34:37 -0500
-Received: by mail-lj1-f193.google.com with SMTP id q186-v6so9359244ljb.5
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 17:38:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Jcqal1Ij8XZjgmjiD+PRXTqgn4mseCDDcj0QyHCQnLE=;
-        b=Y0nZI6MYDgHimcC8J88pDmZxZtjpYCemYP4qB4gyKUym373osSQmProoFqPuy/MRWW
-         8iB/0RlGqrrOEGMy08eQHSthRAuqi3fdl7I6lBtW+8XxUunw08QSEkOA69I7iOHxE3Us
-         4kChT9O0jXIVGC+lGXQ5tInl7dReoArLY/jz0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Jcqal1Ij8XZjgmjiD+PRXTqgn4mseCDDcj0QyHCQnLE=;
-        b=Xr2TnFUSSIQKrhJUACNOZzMGTyAoWjgKuta0BqgbDsw8KCJe5orVpHiVk9ScRjxtk9
-         PGqKOBlQqUjrM7pT9M2fLv209v3VB/EYNvdR0qIPdmFWic4zPjvRJ77dtERCXfP15jBe
-         /rnnfU8N6vJxJJVwr+ia293SqlT5DPYHwbHn+lAqqSV0nz4NkCg78bQqAOMxP4TlYyJ8
-         bJMoySkXjROQ2iZpm6Lx/E9HD5zt3g/E4cbHqwX/ziAzxyWFGAwLl/TTl7Zy3VutXnAE
-         y23tPIya1cK29pgGjJ096o6LKZyGeKiH3RcRBNcpdBdZqxGmKv3MujdZqnAOOURNIOBU
-         P4PA==
-X-Gm-Message-State: AGRZ1gKC0roM0TtEl7XrBGyhlJbdXbog9kT+RqcN/FrX4TUpbOLeAfq9
-        ZZqSdCbd4gMzjA/i/dKYGr0NfExLgFhACWhd9QfU9Ae5Siyveg==
-X-Google-Smtp-Source: AJdET5c4tWK+9zthf1w3mYBpynTAevQG5MVmgbVZku3zfPqo9hpigEwcr1iYcUIYNpWC0m7VWyK+AcR/026TFcZaW28=
-X-Received: by 2002:a2e:2f1b:: with SMTP id v27-v6mr1931358ljv.31.1542073129318;
- Mon, 12 Nov 2018 17:38:49 -0800 (PST)
+        Tue, 13 Nov 2018 06:35:26 -0500
+Received: from foss.arm.com ([217.140.101.70]:45688 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726198AbeKMLfZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 06:35:25 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 37D531596;
+        Mon, 12 Nov 2018 17:39:39 -0800 (PST)
+Received: from mbp (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 24CB93F718;
+        Mon, 12 Nov 2018 17:39:39 -0800 (PST)
+Received: from cmarinas by mbp with local (Exim 4.89)
+        (envelope-from <catalin.marinas@arm.com>)
+        id 1gMKke-0001BP-Me; Mon, 12 Nov 2018 22:32:12 +0000
+Date:   Mon, 12 Nov 2018 22:32:12 +0000
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Christoffer Dall <christoffer.dall@arm.com>
+Cc:     Amit Daniel Kachhap <amit.kachhap@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
+        kvmarm@lists.cs.columbia.edu,
+        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 2/7] arm64/kvm: context-switch ptrauth registers
+Message-ID: <20181112223212.5o4ipc5kt5ziuupt@localhost>
+References: <1539773280-4159-1-git-send-email-amit.kachhap@arm.com>
+ <1539773280-4159-3-git-send-email-amit.kachhap@arm.com>
+ <20181102083725.GV12057@e113682-lin.lund.arm.com>
 MIME-Version: 1.0
-Received: by 2002:a2e:95ca:0:0:0:0:0 with HTTP; Mon, 12 Nov 2018 17:38:48
- -0800 (PST)
-In-Reply-To: <3736c0f9-9f2c-bc74-22c2-677c42a2a630@infradead.org>
-References: <3736c0f9-9f2c-bc74-22c2-677c42a2a630@infradead.org>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Tue, 13 Nov 2018 09:38:48 +0800
-Message-ID: <CAMz4kuKwvSOV4vU7_iVoyigdkMRDYMoNLLuiCFs33=E7br4wDw@mail.gmail.com>
-Subject: Re: [PATCH -next] power/supply: fix sc27xx_fuel_gauge build errors
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Sebastian Reichel <sre@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181102083725.GV12057@e113682-lin.lund.arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Randy,
+On Fri, Nov 02, 2018 at 09:37:25AM +0100, Christoffer Dall wrote:
+> On Wed, Oct 17, 2018 at 04:17:55PM +0530, Amit Daniel Kachhap wrote:
+> > From: Mark Rutland <mark.rutland@arm.com>
+> > 
+> > When pointer authentication is supported, a guest may wish to use it.
+> > This patch adds the necessary KVM infrastructure for this to work.
+> > 
+> > When we schedule a vcpu, we enable guest usage of pointer
+> > authentication instructions and accesses to the keys. After these are
+> > enabled, we allow context-switching the keys.
+> > 
+> > Pointer authentication consists of address authentication and generic
+> > authentication, and CPUs in a system might have varied support for
+> > either. Where support for either feature is not uniform, it is hidden
+> > from guests via ID register emulation, as a result of the cpufeature
+> > framework in the host.
+> > 
+> > Unfortunately, address authentication and generic authentication cannot
+> > be trapped separately, as the architecture provides a single EL2 trap
+> > covering both. If we wish to expose one without the other, we cannot
+> > prevent a (badly-written) guest from intermittently using a feature
+> > which is not uniformly supported (when scheduled on a physical CPU which
+> > supports the relevant feature). When the guest is scheduled on a
+> > physical CPU lacking the feature, these attempts will result in an UNDEF
+> > being taken by the guest.
+> > 
+> > Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+> > Signed-off-by: Amit Daniel Kachhap <amit.kachhap@arm.com>
+> > Cc: Marc Zyngier <marc.zyngier@arm.com>
+> > Cc: Christoffer Dall <christoffer.dall@arm.com>
+> > Cc: kvmarm@lists.cs.columbia.edu
+[...] 
+> Two questions:
+> 
+>  - Can we limit all ptrauth functionality to VHE systems so that we
+>    don't need to touch the non-VHE path and so that we don't need any of
+>    the __hyp_text stuff?
 
-On 13 November 2018 at 01:06, Randy Dunlap <rdunlap@infradead.org> wrote:
-> From: Randy Dunlap <rdunlap@infradead.org>
->
-> Fix build errors when FUEL_GUAGE_SC27XX is enabled but IIO is either
-> not enabled or IIO=m and FUEL_GUAGE_SC27XX=y.
->
-> ld: drivers/power/supply/sc27xx_fuel_gauge.o: in function `sc27xx_fgu_get_temp':
-> sc27xx_fuel_gauge.c:(.text+0x1d2): undefined reference to `iio_read_channel_processed'
-> ld: drivers/power/supply/sc27xx_fuel_gauge.o: in function `sc27xx_fgu_probe':
-> sc27xx_fuel_gauge.c:(.text+0x97f): undefined reference to `devm_iio_channel_get'
->
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Sebastian Reichel <sre@kernel.org>
-> Cc: linux-pm@vger.kernel.org
-> ---
+I would say yes. ARMv8.3 implies v8.1, so can enable ptrauth only when
+VHE is built into the kernel and present in the CPU implementation.
 
-Thanks for fixing this issue.
-Acked-by: Baolin Wang <baolin.wang@linaro.org>
+>  - Can we move all the save/restore logic to vcpu load/put as long as
+>    the host kernel itself isn't using ptrauth, and if the host kernel at
+>    some point begins to use ptrauth, can we have a hook to save/restore
+>    at that time (similar to what we do for FPSIMD) to avoid this
+>    overhead on every switch?
 
->  drivers/power/supply/Kconfig |    1 +
->  1 file changed, 1 insertion(+)
->
-> --- linux-next-20181112.orig/drivers/power/supply/Kconfig
-> +++ linux-next-20181112/drivers/power/supply/Kconfig
-> @@ -655,6 +655,7 @@ config CHARGER_SC2731
->  config FUEL_GAUGE_SC27XX
->         tristate "Spreadtrum SC27XX fuel gauge driver"
->         depends on MFD_SC27XX_PMIC || COMPILE_TEST
-> +       depends on IIO
->         help
->          Say Y here to enable support for fuel gauge with SC27XX
->          PMIC chips.
->
->
-
-
+We will probably enable ptrauth for the kernel as well fairly soon, so I
+don't think we should base the KVM assumption on the no ptrauth in
+kernel use-case.
 
 -- 
-Baolin Wang
-Best Regards
+Catalin
