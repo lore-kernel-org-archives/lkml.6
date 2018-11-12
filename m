@@ -2,130 +2,106 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EE68C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 14:22:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF601C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 14:24:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A658223D0
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 14:22:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A658223D0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 930FC223D0
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 14:24:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 930FC223D0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730005AbeKMAQN (ORCPT
+        id S1727826AbeKMASI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 19:16:13 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32747 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729380AbeKMAQN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 19:16:13 -0500
-Received: from LHREML713-CAH.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 532C14A254C41;
-        Mon, 12 Nov 2018 14:22:40 +0000 (GMT)
-Received: from [10.204.65.144] (10.204.65.144) by smtpsuk.huawei.com
- (10.201.108.36) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 12 Nov
- 2018 14:22:36 +0000
-Subject: Re: [RFC][PATCH 08/12] KEYS: PGP-based public key signature
- verification
-To:     David Howells <dhowells@redhat.com>
-CC:     <dwmw2@infradead.org>, <herbert@gondor.apana.org.au>,
-        <davem@davemloft.net>, <keyrings@vger.kernel.org>,
-        <linux-crypto@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
-References: <20181112102423.30415-9-roberto.sassu@huawei.com>
- <20181112102423.30415-1-roberto.sassu@huawei.com>
- <19985.1542026635@warthog.procyon.org.uk>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <e55a9f80-d2ea-f28f-06ab-3d99786096c4@huawei.com>
-Date:   Mon, 12 Nov 2018 15:22:31 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 12 Nov 2018 19:18:08 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:55746 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726385AbeKMASI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 19:18:08 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2909885A07;
+        Mon, 12 Nov 2018 14:24:38 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8C1B25D6AA;
+        Mon, 12 Nov 2018 14:24:37 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id wACEObYL005700;
+        Mon, 12 Nov 2018 09:24:37 -0500
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id wACEOZCt005696;
+        Mon, 12 Nov 2018 09:24:35 -0500
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Mon, 12 Nov 2018 09:24:35 -0500 (EST)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Alexey Khoroshilov <khoroshilov@ispras.ru>
+cc:     Bernie Thompson <bernie@plugable.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org
+Subject: Re: [PATCH] udlfb: fix NULL pointer dereference in
+ dlfb_usb_probe()
+In-Reply-To: <1541795110-3179-1-git-send-email-khoroshilov@ispras.ru>
+Message-ID: <alpine.LRH.2.02.1811120923520.3272@file01.intranet.prod.int.rdu2.redhat.com>
+References: <1541795110-3179-1-git-send-email-khoroshilov@ispras.ru>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-In-Reply-To: <19985.1542026635@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.204.65.144]
-X-CFilter-Loop: Reflected
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Mon, 12 Nov 2018 14:24:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/12/2018 1:43 PM, David Howells wrote:
-> Roberto Sassu <roberto.sassu@huawei.com> wrote:
+
+
+On Fri, 9 Nov 2018, Alexey Khoroshilov wrote:
+
+> If memory allocation for dlfb fails, error handling code
+> unconditionally dereference NULL pointer.
 > 
->> - switch from session to user keyring (Roberto Sassu)
->> - search user keyring only if no keyring was provided, so that the
->>    trustworthiness of the signature depends on the type of keyring
->>    containing the key used for signature verification (Roberto Sassu)
+> Found by Linux Driver Verification project (linuxtesting.org).
 > 
-> Er.  No.  You should search the session keyring.  This may contain a link to
-> the user keyring (pam_keyinit emplaces one).
+> Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+> Fixes: 68a958a915ca ("udlfb: handle unplug properly")
 
-Ok. Unfortunately, I was encountering some issues:
----
-[   20.477851] BUG: sleeping function called from invalid context at 
-mm/slab.h:421
-[   20.486987] in_atomic(): 0, irqs_disabled(): 0, pid: 739, name: keyctl
-[   20.497393] 4 locks held by keyctl/739:
-[   20.500056]  #0: 00000000bd9d7a18 (key_types_sem){....}, at: 
-key_type_lookup+0x16/0x80
-[   20.503065]  #1: 000000009f5fc7ec (&type->lock_class){....}, at: 
-__key_link_begin+0x3f/0x100
-[   20.506062]  #2: 00000000cc8bdc61 (key_construction_mutex){....}, at: 
-__key_instantiate_and_link+0x30/0x150
-[   20.509335]  #3: 000000001dff342f (rcu_read_lock){....}, at: 
-pgp_verify_sig+0x57e/0x6a0
-[   20.511998] Preemption disabled at:
-[   20.512015] [<ffffffff818bc86f>] __mutex_lock+0x5f/0x940
-[   20.514885] CPU: 7 PID: 739 Comm: keyctl Not tainted 4.20.0-rc2+ #1138
-[   20.516911] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), 
-BIOS 1.10.2-1ubuntu1 04/01/2014
-[   20.519577] Call Trace:
-[   20.520384]  dump_stack+0x5c/0x7b
-[   20.521423]  ? __mutex_lock+0x5f/0x940
-[   20.523296]  ___might_sleep+0x12f/0x180
-[   20.524458]  __kmalloc+0x24c/0x300
-[   20.525505]  ? asymmetric_key_hex_to_key_id.part.8+0x30/0x80
-[   20.527181]  ? keyring_search_aux+0xbb/0xf0
-[   20.528430]  asymmetric_key_hex_to_key_id.part.8+0x30/0x80
-[   20.530025]  ? asymmetric_key_id_partial+0x40/0x40
-[   20.531422]  asymmetric_key_match_preparse+0x6b/0x90
-[   20.532868]  keyring_search+0x79/0xd0
-[   20.533938]  ? keyring_alloc+0x80/0x80
-[   20.535068]  pgp_verify_sig+0x5d1/0x6a0
-[   20.536212]  ? pgp_verify_sig+0x57e/0x6a0
-[   20.537389]  ? pgp_key_parse+0x2a0/0x2a0
-[   20.538565]  ? __mutex_lock+0x89/0x940
-[   20.539701]  ? pgp_test_instantiate+0xb9/0x150 [pgp_test]
-[   20.541276]  pgp_test_instantiate+0xb9/0x150 [pgp_test]
----
+Reviewed-by: Mikulas Patocka <mpatocka@redhat.com>
 
-> You need to consider what it is that the patch trying to achieve.
-
-I understood that the purpose is to check PGP signatures with built-in
-keys or keys provided by the user. Since using the session keyring
-caused the issue I reported, I thought it was ok to use the user
-keyring.
-
-Just a note: the original patches were relying on KEY_FLAG_TRUSTED to
-determine if a key is trusted; now the trustworthiness depends on the
-type of keyring passed to pgp_verify_sig(). I removed the additional key
-search in the user (session) keyring to prevent that signature
-verification is done with a key provided by the user even when the
-caller of pgp_verify_sig() expects that a trusted key is used. The
-search in the session keyring is done if the caller of pgp_verify_sig()
-sets the keyring pointer to NULL.
-
-Roberto
-
-
-> David
+> ---
+>  drivers/video/fbdev/udlfb.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+> diff --git a/drivers/video/fbdev/udlfb.c b/drivers/video/fbdev/udlfb.c
+> index 070026a7e55a..9643fe7c8349 100644
+> --- a/drivers/video/fbdev/udlfb.c
+> +++ b/drivers/video/fbdev/udlfb.c
+> @@ -1590,7 +1590,7 @@ static int dlfb_usb_probe(struct usb_interface *intf,
+>  	int i;
+>  	const struct device_attribute *attr;
+>  	struct dlfb_data *dlfb;
+> -	struct fb_info *info;
+> +	struct fb_info *info = NULL;
+>  	int retval = -ENOMEM;
+>  	struct usb_device *usbdev = interface_to_usbdev(intf);
+>  
+> @@ -1701,8 +1701,8 @@ static int dlfb_usb_probe(struct usb_interface *intf,
+>  	return 0;
+>  
+>  error:
+> -	if (dlfb->info) {
+> -		dlfb_ops_destroy(dlfb->info);
+> +	if (info) {
+> +		dlfb_ops_destroy(info);
+>  	} else if (dlfb) {
+>  		usb_put_dev(dlfb->udev);
+>  		kfree(dlfb);
+> -- 
+> 2.7.4
+> 
