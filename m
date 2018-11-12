@@ -2,151 +2,358 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5989DC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 20:51:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0855C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 20:52:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C68BC22419
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 20:51:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9ADF522360
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 20:52:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="DXspFMcf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C68BC22419
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vS7nfoO4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ADF522360
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730402AbeKMGqp (ORCPT
+        id S1730465AbeKMGrx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 01:46:45 -0500
-Received: from mail-eopbgr690071.outbound.protection.outlook.com ([40.107.69.71]:9002
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725861AbeKMGqo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 01:46:44 -0500
+        Tue, 13 Nov 2018 01:47:53 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:44149 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725817AbeKMGrx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 01:47:53 -0500
+Received: by mail-qk1-f196.google.com with SMTP id n12so15808360qkh.11;
+        Mon, 12 Nov 2018 12:52:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DthPW8SXIR/DvDXVNS1LKFpoECboW1BLgvoPSMTYSxg=;
- b=DXspFMcfZ1UGrwHt4YKo4+hGd6CD07dr7PjWcExg6QlX1182ifCKpbE71QuAIWlmpGUV8Xf7Kro6DFziV0fK/EU37bzjg8OAMMUT8pO/hKOYqZli0HS1PVvHZrc6kSQ02porEoYchulBRfEBF7dlD+ddMf5+dpgTPxGZwLEpI8M=
-Received: from DM5PR12MB2471.namprd12.prod.outlook.com (52.132.141.138) by
- DM5PR12MB1612.namprd12.prod.outlook.com (10.172.40.18) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.26; Mon, 12 Nov 2018 20:51:45 +0000
-Received: from DM5PR12MB2471.namprd12.prod.outlook.com
- ([fe80::4c23:f551:bc6a:554e]) by DM5PR12MB2471.namprd12.prod.outlook.com
- ([fe80::4c23:f551:bc6a:554e%4]) with mapi id 15.20.1294.045; Mon, 12 Nov 2018
- 20:51:45 +0000
-From:   "Moger, Babu" <Babu.Moger@amd.com>
-To:     Borislav Petkov <bp@alien8.de>
-CC:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
-        "reinette.chatre@intel.com" <reinette.chatre@intel.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "pombredanne@nexb.com" <pombredanne@nexb.com>,
-        "rafael@kernel.org" <rafael@kernel.org>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "qianyue.zj@alibaba-inc.com" <qianyue.zj@alibaba-inc.com>,
-        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "Singh, Brijesh" <brijesh.singh@amd.com>,
-        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "jannh@google.com" <jannh@google.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "rian@alum.mit.edu" <rian@alum.mit.edu>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH v7 02/13] arch/x86: Rename the RDT functions and
- definitions
-Thread-Topic: [PATCH v7 02/13] arch/x86: Rename the RDT functions and
- definitions
-Thread-Index: AQHUeG4fqjo7t998rUWNtgkgxfyZ6KVMcSAA//+0O4CAAGp1AIAAElsA
-Date:   Mon, 12 Nov 2018 20:51:45 +0000
-Message-ID: <8085e1cc-484a-ff75-38ef-7f4da9fb847d@amd.com>
-References: <20181109205153.14811-1-babu.moger@amd.com>
- <20181109205153.14811-3-babu.moger@amd.com> <20181112175610.GI8167@zn.tnic>
- <539bf8ea-b13f-186a-f1c7-71b1eaa63aa7@amd.com>
- <20181112194600.GJ8167@zn.tnic>
-In-Reply-To: <20181112194600.GJ8167@zn.tnic>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SN4PR0501CA0034.namprd05.prod.outlook.com
- (2603:10b6:803:40::47) To DM5PR12MB2471.namprd12.prod.outlook.com
- (2603:10b6:4:b5::10)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Babu.Moger@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.204.78.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR12MB1612;20:a6XvyX/13bRSsbkpkKC1giYsEokozADJRTKbe7jR5kaA7usX43kfG8ITI8pfLuJ5Rrz5hTjIQvfAwojauW4ExwN1vErycdHTMxDNUyCV5jXxONRSRXENvZTZKGnIjfTzkXgC+PBsgf9U65mSUkW2l3NlcMJBlDc2M5CBIOc0auQ7ykvMdlOjghkZBJnSgtLpLgo71Hpr9FHkpzl2jzy7pqpoS5a0S97Atl0NuPJ33mMSVT3/quO3kFAiLNmgU7Sf
-x-ms-office365-filtering-correlation-id: 85bcb831-8979-4393-7725-08d648e0a834
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390040)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB1612;
-x-ms-traffictypediagnostic: DM5PR12MB1612:
-x-microsoft-antispam-prvs: <DM5PR12MB16123C154D1ACF608DAE94B595C10@DM5PR12MB1612.namprd12.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231382)(944501410)(52105112)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:DM5PR12MB1612;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1612;
-x-forefront-prvs: 0854128AF0
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(346002)(136003)(376002)(396003)(366004)(199004)(189003)(68736007)(99286004)(36756003)(72206003)(5660300001)(76176011)(97736004)(52116002)(31686004)(2616005)(476003)(486006)(86362001)(25786009)(7736002)(305945005)(11346002)(93886005)(256004)(8936002)(105586002)(7416002)(7406005)(31696002)(66066001)(446003)(186003)(106356001)(8676002)(316002)(71200400001)(26005)(71190400001)(4326008)(2906002)(229853002)(3846002)(6916009)(54906003)(53936002)(6436002)(6512007)(6506007)(53546011)(102836004)(386003)(478600001)(2900100001)(6486002)(6116002)(6246003)(14454004)(81166006)(81156014);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1612;H:DM5PR12MB2471.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: dlUZ6xv9fYZ9WWn85QiA/aV3p/N0pjSyyvrJhMD8/t6AmL4vz1Jms4AGlWdkLmSP5kL++9cmpf1zy/DOyx01WlU95I3bTQltqWUBQ/7qJxQwynnABXSWYf+4yaznGIt1UkcxJ5pfC3SFeLzSaZ5JiofjpLF4hmkJ9mFQmAVNceWDTvHX7/UanKX4IkZccWYYZSSmtWSHpJyUzclqn8AW3LC2GgUZRNEqHOv7Osbr7aCD94MbHvqYXedL4tg83jJGAg3uQ4uEnvs0GCxOggSPm+tumgunJXSEWuknhH8aIaCsOOdWZC7+IfzAhCLYYtki7mHtnUoblGBIa0r6HX1L4lqv+edExR9mXYX1Cbuheao=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <92E7B0DD40253648896E286986E0B574@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=EyhaaBWejdtPNavc6SvJLFUDLhvZt4KZx1TQfdCh/Eo=;
+        b=vS7nfoO4YriqEgp6uJNQt+Ia+TaDkWkNt5EeHSdYicS6IxFTYx45gm//FjGEk9GB8S
+         WyzV3RSrV/W/NmvIUthBfcVt/ZdDUVIb7MNoGzkv8ESWGm91TwgENXF2WDwoef3yrHin
+         tGVqndZEXULiF0zYYzDsHJvyN3ZdOjGwW6irySw4pEdjRnlAHd0lZ4RNoUlYt5JXtx0E
+         nPNSTHbSd4rAc+42A+G6xVROlinBCP1Vci2A37AniPZaFy6r8Fju8TVUqOynOdZGKxrT
+         kUHp8W8luxVJRRjNaQXcMFbVgmQRdFqaRW/k348vX00zww5+L0sSL+VYHy6ufh9cLM4Z
+         rbaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=EyhaaBWejdtPNavc6SvJLFUDLhvZt4KZx1TQfdCh/Eo=;
+        b=lEkf2qIQzeuFP4EGMCu1DqAx+u3q1Cw4peNQs1Vk+mqXWRpDyoLNV+JNvYtkAgbtSB
+         Lrvdl4iw0Pl4LOngaYb1i3k4EjHmu9jvpLinFFfrt9oQM3zcI37N3bTfZTrDf7YUfAwl
+         jB3MwkUX/m+ZJZ+0k+wv9kVz4zHzH/IbJVx/IvbTfxFanLop1Drw05W4dvWknFZMLVOE
+         NORFAp3IdV8TStGomMm72TZYNt5KOgIXdy2NnS8CQlyQTLofz3WITHyEPAVa3Jyu1xzQ
+         8uF6gGAFa4GXIo0EhkyEiRR6vTkWZ2kT1qX9Ulfb9+KYz3cq337l45m2GM7v5igxFcSf
+         FGBQ==
+X-Gm-Message-State: AGRZ1gKqcBTKNlQT3bU7CMkIEziw/keGM+I/3VN+bA6e48mmSb+O5T38
+        fNNY4umffHx3hSy4jkSIUQ==
+X-Google-Smtp-Source: AJdET5ca1MCJohOoDGG+ZlLV+iPf9iS2u9SX1yM3Z+jxBdCuk1cU7wZJxkyuxnZSa5J0tuNWQYvTFA==
+X-Received: by 2002:a0c:cb09:: with SMTP id o9mr2513793qvk.96.1542055976678;
+        Mon, 12 Nov 2018 12:52:56 -0800 (PST)
+Received: from gabell (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id p3sm11272486qkp.48.2018.11.12.12.52.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 12 Nov 2018 12:52:56 -0800 (PST)
+Date:   Mon, 12 Nov 2018 15:52:54 -0500
+From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
+To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-efi@vger.kernel.org, linux-acpi@vger.kernel.org,
+        bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        keescook@chromium.org, bhe@redhat.com, indou.takao@jp.fujitsu.com,
+        caoj.fnst@cn.fujitsu.com
+Subject: Re: [PATCH v11 4/5] x86/boot: Dig out SRAT table from RSDP and find
+ immovable memory
+Message-ID: <20181112205253.ji3fm37haferjpqa@gabell>
+References: <20181112094645.4879-1-fanc.fnst@cn.fujitsu.com>
+ <20181112094645.4879-5-fanc.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 85bcb831-8979-4393-7725-08d648e0a834
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Nov 2018 20:51:45.5301
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1612
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181112094645.4879-5-fanc.fnst@cn.fujitsu.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDExLzEyLzE4IDE6NDYgUE0sIEJvcmlzbGF2IFBldGtvdiB3cm90ZToNCj4gT24gTW9u
-LCBOb3YgMTIsIDIwMTggYXQgMDc6MjU6MDJQTSArMDAwMCwgTW9nZXIsIEJhYnUgd3JvdGU6DQo+
-Pj4+IEBAIC02MzcsMTAgKzYzNywxMSBAQCBpbnQgcmR0X2dldF9tb25fbDNfY29uZmlnKHN0cnVj
-dCByZHRfcmVzb3VyY2UgKnIpDQo+Pj4+ICAJICoNCj4+Pj4gIAkgKiBGb3IgYSAzNU1CIExMQyBh
-bmQgNTYgUk1JRHMsIHRoaXMgaXMgfjEuOCUgb2YgdGhlIExMQy4NCj4+Pj4gIAkgKi8NCj4+Pj4g
-LQlpbnRlbF9jcW1fdGhyZXNob2xkID0gYm9vdF9jcHVfZGF0YS54ODZfY2FjaGVfc2l6ZSAqIDEw
-MjQgLyByLT5udW1fcm1pZDsNCj4+Pj4gKwlyZXNjdHJsX2NxbV90aHJlc2hvbGQgPSBib290X2Nw
-dV9kYXRhLng4Nl9jYWNoZV9zaXplICogMTAyNCAvDQo+Pj4+ICsJCQkJci0+bnVtX3JtaWQ7DQo+
-Pj4NCj4+PiBObyBuZWVkIHRvIGJyZWFrIHRoYXQgbGluZSBoZXJlLg0KPj4NCj4+IFdpdGhvdXQg
-dGhlIGxpbmUgYnJlYWssIGNoZWNrcGF0Y2ggY29tcGxhaW5zIGZvciAibGluZSBvdmVyIDgwDQo+
-PiBjaGFyYWN0ZXJzIi4gIERvIHlvdSB0aGluayB3ZSBjYW4gaWdub3JlIHRob3NlPw0KPiANCj4g
-VG8gcXVvdGUgZnJvbSB0aGUgdGlwIGhhbmRib29rIHdoaWNoIGlzIGluIHByZXBhcmF0aW9uIHJp
-Z2h0IG5vdzoNCj4gDQo+ICIrVGhlIDgwIGNoYXJhY3RlciBydWxlIGlzIG5vdCBhIHN0cmljdCBy
-dWxlLCBzbyBwbGVhc2UgdXNlIGNvbW1vbiBzZW5zZSB3aGVuDQo+ICArYnJlYWtpbmcgbGluZXMu
-Ig0KPiANCj4gSW4gdGhpcyBwYXJ0aWN1bGFyIGNhc2UsIGl0IGlzIG1vcmUgcmVhZGFibGUgSU1P
-IHRvIGxlYXZlIHRoZSBsaW5lIHVuYnJva2VuOg0KPiANCj4gCXJlc2N0cmxfY3FtX3RocmVzaG9s
-ZCA9IGJvb3RfY3B1X2RhdGEueDg2X2NhY2hlX3NpemUgKiAxMDI0IC8gci0+bnVtX3JtaWQ7DQo+
-IA0KPiBXaGF0IGlzIGV2ZW4gbW9yZSByZWFkYWJsZSB0aG91Z2ggaXM6DQo+IA0KPiAJdW5zaWdu
-ZWQgaW50IGNsX3NpemUgPSBib290X2NwdV9kYXRhLng4Nl9jYWNoZV9zaXplOw0KPiANCj4gCS4u
-Lg0KPiANCj4gCXJlc2N0cmxfY3FtX3RocmVzaG9sZCA9IGNsX3NpemUgKiAxMDI0IC8gci0+bnVt
-X3JtaWQ7DQo+IA0KPiBhbmQgbm93IHlvdSBoYXZlIGEgd2luLXdpbiBzaXR1YXRpb24uIDopDQoN
-Clllcy4gTWFrZXMgc2Vuc2UuIFRoYW5rcw0KDQo+IA0KPiBUaHguDQo+IA0K
+On Mon, Nov 12, 2018 at 05:46:44PM +0800, Chao Fan wrote:
+> To avoid KASLR extracting kernel on movable memory, slove the
+> conflict between KASLR and movable_node feature, dig the SRAT tables
+> from RSDP pointer. Walk the SRAT tables and store the immovable
+> memory regions in immovable_mem[].
+> 
+> There are three methods to get RSDP pointer: KEXEC condition,
+> EFI confition, BIOS condition.
+> If KEXEC add 'acpi_rsdp' to cmdline, use it.
+> Otherwise, parse EFI table for RSDP.
+> Then, search memory for RSDP.
+> 
+> Imitate from ACPI code, based on acpi_os_get_root_pointer().
+> Process: RSDP->RSDT/XSDT->ACPI root table->SRAT.
+> 
+> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+> ---
+>  arch/x86/boot/compressed/Makefile |   4 +
+>  arch/x86/boot/compressed/acpitb.c | 139 ++++++++++++++++++++++++++++++
+>  arch/x86/boot/compressed/kaslr.c  |   4 -
+>  arch/x86/boot/compressed/misc.h   |  15 ++++
+>  4 files changed, 158 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
+> index 466f66c8a7f8..b51f7629b8ef 100644
+> --- a/arch/x86/boot/compressed/Makefile
+> +++ b/arch/x86/boot/compressed/Makefile
+> @@ -84,6 +84,10 @@ ifdef CONFIG_X86_64
+>  	vmlinux-objs-y += $(obj)/pgtable_64.o
+>  endif
+>  
+> +#if (defined CONFIG_MEMORY_HOTREMOVE) && (defined CONFIG_RANDOMIZE_BASE)
+> +vmlinux-objs-$(CONFIG_RANDOMIZE_BASE) += $(obj)/acpitb.o
+> +#endif
+> +
+>  $(obj)/eboot.o: KBUILD_CFLAGS += -fshort-wchar -mno-red-zone
+>  
+>  vmlinux-objs-$(CONFIG_EFI_STUB) += $(obj)/eboot.o $(obj)/efi_stub_$(BITS).o \
+> diff --git a/arch/x86/boot/compressed/acpitb.c b/arch/x86/boot/compressed/acpitb.c
+> index 5cfb4efa5a19..161f21a7fb3b 100644
+> --- a/arch/x86/boot/compressed/acpitb.c
+> +++ b/arch/x86/boot/compressed/acpitb.c
+> @@ -14,6 +14,11 @@
+>  #define BOOT_STRING
+>  #include "../string.h"
+>  
+> +#ifdef CONFIG_MEMORY_HOTREMOVE
+> +/* Store the immovable memory regions */
+> +struct mem_vector immovable_mem[MAX_NUMNODES*2];
+> +#endif
+> +
+>  /* Search EFI table for RSDP table. */
+>  static void efi_get_rsdp_addr(acpi_physical_address *rsdp_addr)
+>  {
+> @@ -226,3 +231,137 @@ static void get_acpi_rsdp(acpi_physical_address *rsdp_addr)
+>  	}
+>  #endif
+>  }
+> +
+> +/*
+> + * Used to dig RSDP table from EFI table or BIOS.
+> + * If RSDP table found in EFI table, use it. Or search BIOS.
+> + * Based on acpi_os_get_root_pointer().
+> + */
+> +static acpi_physical_address get_rsdp_addr(void)
+> +{
+> +	acpi_physical_address pa = 0;
+> +
+> +	get_acpi_rsdp(&pa);
+> +
+> +	if (!pa)
+> +		efi_get_rsdp_addr(&pa);
+> +
+> +	if (!pa)
+> +		bios_get_rsdp_addr(&pa);
+> +
+> +	return pa;
+> +}
+> +
+> +static struct acpi_table_header *get_acpi_srat_table(void)
+> +{
+> +	acpi_physical_address acpi_table;
+> +	acpi_physical_address root_table;
+> +	struct acpi_table_header *header;
+> +	struct acpi_table_rsdp *rsdp;
+> +	bool acpi_use_rsdt = false;
+> +	char *signature;
+> +	char arg[10];
+> +	u8 *entry;
+> +	u32 count;
+> +	u32 size;
+> +	int i, j;
+> +	int ret;
+> +	u32 len;
+> +
+> +	rsdp = (struct acpi_table_rsdp *)get_rsdp_addr();
+> +	if (!rsdp)
+> +		return NULL;
+
+> +
+> +	ret = cmdline_find_option("acpi", arg, sizeof(arg));
+> +	if (ret == 4 && !strncmp(arg, "rsdt", 4))
+> +		acpi_use_rsdt = true;
+
+All have to do for ret is checking whether it's above 0, right?
+So how about the following?
+
+	if ((cmdline_find_option("acpi", arg, sizeof(arg)) > 0) &&
+		!strncmp(arg, "rsdt", 4))
+		acpi_use_rsdt = true;
+
+> +
+> +	/* Get RSDT or XSDT from RSDP. */
+> +	if (!acpi_use_rsdt &&
+> +	    rsdp->xsdt_physical_address && rsdp->revision > 1) {
+> +		root_table = rsdp->xsdt_physical_address;
+> +		size = ACPI_XSDT_ENTRY_SIZE;
+> +	} else {
+> +		root_table = rsdp->rsdt_physical_address;
+> +		size = ACPI_RSDT_ENTRY_SIZE;
+> +	}
+> +
+> +	/* Get ACPI root table from RSDT or XSDT.*/
+> +	header = (struct acpi_table_header *)root_table;
+> +	len = header->length;
+> +	count = (u32)((len - sizeof(struct acpi_table_header)) / size);
+> +	entry = ACPI_ADD_PTR(u8, header, sizeof(struct acpi_table_header));
+> +
+> +	for (i = 0; i < count; i++) {
+> +		u64 address64;
+> +
+> +		if (size == ACPI_RSDT_ENTRY_SIZE)
+> +			acpi_table = ((acpi_physical_address)
+> +				      (*ACPI_CAST_PTR(u32, entry)));
+> +		else {
+> +			*(u64 *)(void *)&address64 = *(u64 *)(void *)entry;
+> +			acpi_table = (acpi_physical_address) address64;
+> +		}
+> +
+> +		if (acpi_table) {
+> +			header = (struct acpi_table_header *)acpi_table;
+
+> +			signature = header->signature;
+
+this isn't needed.
+
+> +
+> +			if (ACPI_COMPARE_NAME(header->signature, ACPI_SIG_SRAT))
+> +				return header;
+> +		}
+> +		entry += size;
+> +	}
+> +	return NULL;
+> +}
+> +
+> +/*
+> + * According to ACPI table, filter the immvoable memory regions
+> + * and store them in immovable_mem[].
+> + */
+> +void get_immovable_mem(void)
+> +{
+> +	struct acpi_table_header *table_header;
+> +	struct acpi_subtable_header *table;
+> +	struct acpi_srat_mem_affinity *ma;
+> +	unsigned long table_end;
+> +	char arg[10];
+> +	int i = 0;
+> +	int ret;
+> +
+
+> +	ret = cmdline_find_option("acpi", arg, sizeof(arg));
+> +	if (ret == 3 && !strncmp(arg, "off", 3))
+> +		return;
+
+Same as above.
+
+	if ((cmdline_find_option("acpi", arg, sizeof(arg)) > 0) &&
+		!strncmp(arg, "off", 3))
+		return;
+> +
+> +	if (!cmdline_find_option_bool("movable_node"))
+> +		return;
+
+I think this check isn't needed.
+The SRAT parsing is needed to the kaslr issue which I'm trying
+to fix. The issue may happen even if movable_node isn't set.
+
+> +
+> +	table_header = get_acpi_srat_table();
+> +	if (!table_header)
+> +		return;
+> +
+> +	table_end = (unsigned long)table_header + table_header->length;
+> +
+> +	table = (struct acpi_subtable_header *)
+> +		((unsigned long)table_header + sizeof(struct acpi_table_srat));
+> +
+> +	while (((unsigned long)table) +
+> +		       sizeof(struct acpi_subtable_header) < table_end) {
+> +		if (table->type == ACPI_SRAT_TYPE_MEMORY_AFFINITY) {
+> +			ma = (struct acpi_srat_mem_affinity *)table;
+> +			if (!(ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE)) {
+> +				immovable_mem[i].start = ma->base_address;
+> +				immovable_mem[i].size = ma->length;
+> +				i++;
+> +			}
+> +
+> +			if (i >= MAX_NUMNODES*2) {
+> +				debug_putstr("Too many immovable memory regions, aborted.\n");
+
+I'm not sure this statement gets true actually,
+but if so, should it be set 0 to fallback in process_mem_region()?
+
+Thanks,
+Masa
+
+> +				break;
+> +			}
+> +		}
+> +		table = (struct acpi_subtable_header *)
+> +			((unsigned long)table + table->length);
+> +	}
+> +	num_immovable_mem = i;
+> +}
+> diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
+> index 9ed9709d9947..b251572e77af 100644
+> --- a/arch/x86/boot/compressed/kaslr.c
+> +++ b/arch/x86/boot/compressed/kaslr.c
+> @@ -87,10 +87,6 @@ static unsigned long get_boot_seed(void)
+>  #define KASLR_COMPRESSED_BOOT
+>  #include "../../lib/kaslr.c"
+>  
+> -struct mem_vector {
+> -	unsigned long long start;
+> -	unsigned long long size;
+> -};
+>  
+>  /* Only supporting at most 4 unusable memmap regions with kaslr */
+>  #define MAX_MEMMAP_REGIONS	4
+> diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
+> index a1d5918765f3..4a3645fda0ed 100644
+> --- a/arch/x86/boot/compressed/misc.h
+> +++ b/arch/x86/boot/compressed/misc.h
+> @@ -77,6 +77,11 @@ void choose_random_location(unsigned long input,
+>  			    unsigned long *output,
+>  			    unsigned long output_size,
+>  			    unsigned long *virt_addr);
+> +struct mem_vector {
+> +	unsigned long long start;
+> +	unsigned long long size;
+> +};
+> +
+>  /* cpuflags.c */
+>  bool has_cpuflag(int flag);
+>  #else
+> @@ -116,3 +121,13 @@ static inline void console_init(void)
+>  void set_sev_encryption_mask(void);
+>  
+>  #endif
+> +
+> +/* acpitb.c */
+> +#ifdef CONFIG_RANDOMIZE_BASE
+> +int num_immovable_mem;
+> +#ifdef CONFIG_MEMORY_HOTREMOVE
+> +/* Store the amount of immovable memory regions */
+> +#define ACPI_MAX_TABLES                128
+> +void get_immovable_mem(void);
+> +#endif
+> +#endif
+> -- 
+> 2.19.1
+> 
+> 
+> 
