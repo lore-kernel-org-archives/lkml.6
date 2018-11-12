@@ -2,87 +2,292 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0F7EC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:58:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E474C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:58:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4D9222419
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:58:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4D9222419
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id EA09322419
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:58:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GBakHZZP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA09322419
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729936AbeKMEwr (ORCPT
+        id S1730311AbeKMEwv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 23:52:47 -0500
-Received: from smtprelay0252.hostedemail.com ([216.40.44.252]:51180 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727530AbeKMEwr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 23:52:47 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id B52FF2827;
-        Mon, 12 Nov 2018 18:58:15 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: limit38_db533c51f058
-X-Filterd-Recvd-Size: 2013
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf13.hostedemail.com (Postfix) with ESMTPA;
-        Mon, 12 Nov 2018 18:58:14 +0000 (UTC)
-Message-ID: <3470156e35390d1810a6a5e4a554a77493c0d44f.camel@perches.com>
-Subject: Re: [PATCH] scsi: libsas: Remove pcidev reference
-From:   Joe Perches <joe@perches.com>
-To:     John Garry <john.garry@huawei.com>, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxarm@huawei.com
-Date:   Mon, 12 Nov 2018 10:58:12 -0800
-In-Reply-To: <dd39734e-4113-f9fd-6890-a83e80093c7e@huawei.com>
-References: <1542043689-214071-1-git-send-email-john.garry@huawei.com>
-         <584e7b4fcd6f95fe0c581f6f9472852685c754d1.camel@perches.com>
-         <310504a2-f33c-183b-d00a-fa067b273dfd@huawei.com>
-         <3b62b0ad-53ba-37c2-817c-591d94eed838@huawei.com>
-         <31d224e8c4b9bcebc3657c17fa50302f7da90e64.camel@perches.com>
-         <dd39734e-4113-f9fd-6890-a83e80093c7e@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 12 Nov 2018 23:52:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55704 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727530AbeKMEwu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 23:52:50 -0500
+Received: from gmail.com (unknown [104.132.1.85])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C95562251A;
+        Mon, 12 Nov 2018 18:58:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542049099;
+        bh=hLCmYmKktqzJt2m40Ao0+v3CdQUKgEOf2i/kXzjxsDo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GBakHZZP5+6SUwt0mIerlWZLtzohqN0eWymbeUsEyD2LS1Jj0qFYRkdtPjKPsjcWd
+         FPuyMzBuKaWo7LK3sS+42JgR67uzqg7WUN/6JMhf8Xp/EMn+WcpqeVPBYsmpULiVpG
+         cAJ8SwCBhlbjNBH5c5LpNJru4oQg5jxGBu2kC5fY=
+Date:   Mon, 12 Nov 2018 10:58:17 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>, linux-fscrypt@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Paul Crowley <paulcrowley@google.com>,
+        Greg Kaiser <gkaiser@google.com>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Samuel Neves <samuel.c.p.neves@gmail.com>,
+        Tomer Ashur <tomer.ashur@esat.kuleuven.be>
+Subject: Re: [RFC PATCH v3 10/15] crypto: poly1305 - use structures for key
+ and accumulator
+Message-ID: <20181112185816.GA8663@gmail.com>
+References: <20181105232526.173947-1-ebiggers@kernel.org>
+ <20181105232526.173947-11-ebiggers@kernel.org>
+ <CAKv+Gu-o0khD5=0EOkv2PiczMs5uZ=XP9V=G2ogBNMK8Kb93sw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKv+Gu-o0khD5=0EOkv2PiczMs5uZ=XP9V=G2ogBNMK8Kb93sw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-11-12 at 18:48 +0000, John Garry wrote:
-> On 12/11/2018 18:30, Joe Perches wrote:
-[]
-> > diff --git a/drivers/scsi/libsas/sas_internal.h b/drivers/scsi/libsas/sas_internal.h
-[]
-> > @@ -32,7 +32,10 @@
-> >  #include <scsi/libsas.h>
-> >  #include <scsi/sas_ata.h>
-> > 
-> > -#define sas_printk(fmt, ...) printk(KERN_NOTICE "sas: " fmt, ## __VA_ARGS__)
-> > +#ifdef pr_fmt
-> > +#undef pr_fmt
-> > +#endif
-> > +#define pr_fmt(fmt) "sas: " fmt
+Hi Ard,
+
+On Tue, Nov 06, 2018 at 03:28:24PM +0100, Ard Biesheuvel wrote:
+> On 6 November 2018 at 00:25, Eric Biggers <ebiggers@kernel.org> wrote:
+> > From: Eric Biggers <ebiggers@google.com>
+> >
+> > In preparation for exposing a low-level Poly1305 API which implements
+> > the ε-almost-∆-universal (εA∆U) hash function underlying the Poly1305
+> > MAC and supports block-aligned inputs only, create structures
+> > poly1305_key and poly1305_state which hold the limbs of the Poly1305
+> > "r" key and accumulator, respectively.
+> >
+> > Signed-off-by: Eric Biggers <ebiggers@google.com>
+> > ---
+> >  arch/x86/crypto/poly1305_glue.c | 20 +++++++------
+> >  crypto/poly1305_generic.c       | 52 ++++++++++++++++-----------------
+> >  include/crypto/poly1305.h       | 12 ++++++--
+> >  3 files changed, 47 insertions(+), 37 deletions(-)
+> >
+> > diff --git a/arch/x86/crypto/poly1305_glue.c b/arch/x86/crypto/poly1305_glue.c
+> > index f012b7e28ad1..88cc01506c84 100644
+> > --- a/arch/x86/crypto/poly1305_glue.c
+> > +++ b/arch/x86/crypto/poly1305_glue.c
+> > @@ -83,35 +83,37 @@ static unsigned int poly1305_simd_blocks(struct poly1305_desc_ctx *dctx,
+> >         if (poly1305_use_avx2 && srclen >= POLY1305_BLOCK_SIZE * 4) {
+> >                 if (unlikely(!sctx->wset)) {
+> >                         if (!sctx->uset) {
+> > -                               memcpy(sctx->u, dctx->r, sizeof(sctx->u));
+> > -                               poly1305_simd_mult(sctx->u, dctx->r);
+> > +                               memcpy(sctx->u, dctx->r.r, sizeof(sctx->u));
+> > +                               poly1305_simd_mult(sctx->u, dctx->r.r);
+> >                                 sctx->uset = true;
+> >                         }
+> >                         memcpy(sctx->u + 5, sctx->u, sizeof(sctx->u));
+> > -                       poly1305_simd_mult(sctx->u + 5, dctx->r);
+> > +                       poly1305_simd_mult(sctx->u + 5, dctx->r.r);
+> >                         memcpy(sctx->u + 10, sctx->u + 5, sizeof(sctx->u));
+> > -                       poly1305_simd_mult(sctx->u + 10, dctx->r);
+> > +                       poly1305_simd_mult(sctx->u + 10, dctx->r.r);
+> >                         sctx->wset = true;
+> >                 }
+> >                 blocks = srclen / (POLY1305_BLOCK_SIZE * 4);
+> > -               poly1305_4block_avx2(dctx->h, src, dctx->r, blocks, sctx->u);
+> > +               poly1305_4block_avx2(dctx->h.h, src, dctx->r.r, blocks,
+> > +                                    sctx->u);
+> >                 src += POLY1305_BLOCK_SIZE * 4 * blocks;
+> >                 srclen -= POLY1305_BLOCK_SIZE * 4 * blocks;
+> >         }
+> >  #endif
+> >         if (likely(srclen >= POLY1305_BLOCK_SIZE * 2)) {
+> >                 if (unlikely(!sctx->uset)) {
+> > -                       memcpy(sctx->u, dctx->r, sizeof(sctx->u));
+> > -                       poly1305_simd_mult(sctx->u, dctx->r);
+> > +                       memcpy(sctx->u, dctx->r.r, sizeof(sctx->u));
+> > +                       poly1305_simd_mult(sctx->u, dctx->r.r);
+> >                         sctx->uset = true;
+> >                 }
+> >                 blocks = srclen / (POLY1305_BLOCK_SIZE * 2);
+> > -               poly1305_2block_sse2(dctx->h, src, dctx->r, blocks, sctx->u);
+> > +               poly1305_2block_sse2(dctx->h.h, src, dctx->r.r, blocks,
+> > +                                    sctx->u);
+> >                 src += POLY1305_BLOCK_SIZE * 2 * blocks;
+> >                 srclen -= POLY1305_BLOCK_SIZE * 2 * blocks;
+> >         }
+> >         if (srclen >= POLY1305_BLOCK_SIZE) {
+> > -               poly1305_block_sse2(dctx->h, src, dctx->r, 1);
+> > +               poly1305_block_sse2(dctx->h.h, src, dctx->r.r, 1);
+> >                 srclen -= POLY1305_BLOCK_SIZE;
+> >         }
+> >         return srclen;
+> > diff --git a/crypto/poly1305_generic.c b/crypto/poly1305_generic.c
+> > index 47d3a6b83931..a23173f351b7 100644
+> > --- a/crypto/poly1305_generic.c
+> > +++ b/crypto/poly1305_generic.c
+> > @@ -38,7 +38,7 @@ int crypto_poly1305_init(struct shash_desc *desc)
+> >  {
+> >         struct poly1305_desc_ctx *dctx = shash_desc_ctx(desc);
+> >
+> > -       memset(dctx->h, 0, sizeof(dctx->h));
+> > +       memset(dctx->h.h, 0, sizeof(dctx->h.h));
+> >         dctx->buflen = 0;
+> >         dctx->rset = false;
+> >         dctx->sset = false;
+> > @@ -50,11 +50,11 @@ EXPORT_SYMBOL_GPL(crypto_poly1305_init);
+> >  static void poly1305_setrkey(struct poly1305_desc_ctx *dctx, const u8 *key)
+> >  {
+> >         /* r &= 0xffffffc0ffffffc0ffffffc0fffffff */
+> > -       dctx->r[0] = (get_unaligned_le32(key +  0) >> 0) & 0x3ffffff;
+> > -       dctx->r[1] = (get_unaligned_le32(key +  3) >> 2) & 0x3ffff03;
+> > -       dctx->r[2] = (get_unaligned_le32(key +  6) >> 4) & 0x3ffc0ff;
+> > -       dctx->r[3] = (get_unaligned_le32(key +  9) >> 6) & 0x3f03fff;
+> > -       dctx->r[4] = (get_unaligned_le32(key + 12) >> 8) & 0x00fffff;
+> > +       dctx->r.r[0] = (get_unaligned_le32(key +  0) >> 0) & 0x3ffffff;
+> > +       dctx->r.r[1] = (get_unaligned_le32(key +  3) >> 2) & 0x3ffff03;
+> > +       dctx->r.r[2] = (get_unaligned_le32(key +  6) >> 4) & 0x3ffc0ff;
+> > +       dctx->r.r[3] = (get_unaligned_le32(key +  9) >> 6) & 0x3f03fff;
+> > +       dctx->r.r[4] = (get_unaligned_le32(key + 12) >> 8) & 0x00fffff;
+> >  }
+> >
+> >  static void poly1305_setskey(struct poly1305_desc_ctx *dctx, const u8 *key)
+> > @@ -107,22 +107,22 @@ static unsigned int poly1305_blocks(struct poly1305_desc_ctx *dctx,
+> >                 srclen = datalen;
+> >         }
+> >
+> > -       r0 = dctx->r[0];
+> > -       r1 = dctx->r[1];
+> > -       r2 = dctx->r[2];
+> > -       r3 = dctx->r[3];
+> > -       r4 = dctx->r[4];
+> > +       r0 = dctx->r.r[0];
+> > +       r1 = dctx->r.r[1];
+> > +       r2 = dctx->r.r[2];
+> > +       r3 = dctx->r.r[3];
+> > +       r4 = dctx->r.r[4];
+> >
+> >         s1 = r1 * 5;
+> >         s2 = r2 * 5;
+> >         s3 = r3 * 5;
+> >         s4 = r4 * 5;
+> >
+> > -       h0 = dctx->h[0];
+> > -       h1 = dctx->h[1];
+> > -       h2 = dctx->h[2];
+> > -       h3 = dctx->h[3];
+> > -       h4 = dctx->h[4];
+> > +       h0 = dctx->h.h[0];
+> > +       h1 = dctx->h.h[1];
+> > +       h2 = dctx->h.h[2];
+> > +       h3 = dctx->h.h[3];
+> > +       h4 = dctx->h.h[4];
+> >
+> >         while (likely(srclen >= POLY1305_BLOCK_SIZE)) {
+> >
+> > @@ -157,11 +157,11 @@ static unsigned int poly1305_blocks(struct poly1305_desc_ctx *dctx,
+> >                 srclen -= POLY1305_BLOCK_SIZE;
+> >         }
+> >
+> > -       dctx->h[0] = h0;
+> > -       dctx->h[1] = h1;
+> > -       dctx->h[2] = h2;
+> > -       dctx->h[3] = h3;
+> > -       dctx->h[4] = h4;
+> > +       dctx->h.h[0] = h0;
+> > +       dctx->h.h[1] = h1;
+> > +       dctx->h.h[2] = h2;
+> > +       dctx->h.h[3] = h3;
+> > +       dctx->h.h[4] = h4;
+> >
+> >         return srclen;
+> >  }
+> > @@ -220,11 +220,11 @@ int crypto_poly1305_final(struct shash_desc *desc, u8 *dst)
+> >         }
+> >
+> >         /* fully carry h */
+> > -       h0 = dctx->h[0];
+> > -       h1 = dctx->h[1];
+> > -       h2 = dctx->h[2];
+> > -       h3 = dctx->h[3];
+> > -       h4 = dctx->h[4];
+> > +       h0 = dctx->h.h[0];
+> > +       h1 = dctx->h.h[1];
+> > +       h2 = dctx->h.h[2];
+> > +       h3 = dctx->h.h[3];
+> > +       h4 = dctx->h.h[4];
+> >
+> >         h2 += (h1 >> 26);     h1 = h1 & 0x3ffffff;
+> >         h3 += (h2 >> 26);     h2 = h2 & 0x3ffffff;
+> > diff --git a/include/crypto/poly1305.h b/include/crypto/poly1305.h
+> > index f718a19da82f..493244c46664 100644
+> > --- a/include/crypto/poly1305.h
+> > +++ b/include/crypto/poly1305.h
+> > @@ -13,13 +13,21 @@
+> >  #define POLY1305_KEY_SIZE      32
+> >  #define POLY1305_DIGEST_SIZE   16
+> >
+> > +struct poly1305_key {
+> > +       u32 r[5];       /* key, base 2^26 */
+> > +};
+> > +
+> > +struct poly1305_state {
+> > +       u32 h[5];       /* accumulator, base 2^26 */
+> > +};
+> > +
 > 
-> Some other subsystem may try to include this header, and gets its 
-> message prefix overwritten. Just a consequence for doing something bad, 
-> right?
+> Sorry to bikeshed, but wouldn't it make more sense to have single definition
+> 
+> struct poly1305_val {
+>     u32  v[5]; /* base 2^26 */
+> };
+> 
+> and have 'key' and 'accum[ulator]' fields of type struct poly1305_val
+> in the struct below?
+> 
 
-Right.
+I prefer separate types so that the type system enforces that a key is never
+accidentally used as an accumulator, and vice versa.  Then the poly1305_core_*
+functions will be harder to misuse, and the Poly1305 MAC implementations harder
+to get wrong.
 
-And as this file is internal to drivers/scsi/libsas
-that seems very unlikely to occur.
+The key also has certain bits clear whereas the accumulator does not.  In the
+future, the Poly1305 C implementation might use base 2^32 and take advantage of
+this.  In that case, the two inputs to each multiplication won't be
+interchangeable, so using the same type for both would be extra confusing.
 
-It also might useful to use the common debugging
-mechanisms and convert SAS_DPRINTK to pr_debug
-which would use the same #define pr_fmt.
+Having a poly1305_val nested inside poly1305_key and poly1305_state would work,
+but seemed excessive.
 
+> >  struct poly1305_desc_ctx {
+> >         /* key */
+> > -       u32 r[5];
+> > +       struct poly1305_key r;
+> >         /* finalize key */
+> >         u32 s[4];
+> >         /* accumulator */
+> > -       u32 h[5];
+> > +       struct poly1305_state h;
+> >         /* partial buffer */
+> >         u8 buf[POLY1305_BLOCK_SIZE];
+> >         /* bytes used in partial buffer */
+> > --
 
+Thanks,
+
+- Eric
