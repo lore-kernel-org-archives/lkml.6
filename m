@@ -2,191 +2,135 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8984BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:39:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC57BC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:39:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 445EF223AE
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:39:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iR3Rg4kF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 445EF223AE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 7CB332175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:39:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CB332175B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728472AbeKLSbP (ORCPT
+        id S1728698AbeKLSbl convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 13:31:15 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:36018 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726207AbeKLSbP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 13:31:15 -0500
-Received: by mail-lj1-f196.google.com with SMTP id s15-v6so6834486lji.3
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 00:39:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=vjypBDJ8anHNmrmKCJ+Oif0eoN5UWIkM5fakhOis4p4=;
-        b=iR3Rg4kF0o29g3wsDRZ8lHH38b7htlUMra23pzFQ2A6KeMvm7PdutxwIL+bbxTxp4K
-         aOrQLgqhqSvacElWGGqd34AUVL5d2g9FjpFJ8hutLC1mNwVOsVM/bKJM/htmKfJlDSxk
-         /t5qvTswPoDxKFtsqhx87B9o2siaGIgi4vfHM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=vjypBDJ8anHNmrmKCJ+Oif0eoN5UWIkM5fakhOis4p4=;
-        b=rZewKm3rAYunTsMcGRkgvBZKrzc99hipGIRs1IqCzW2b2QKnXcCVogTNzfGKbxcpHq
-         iTfTibGXuuHf9DUgQF2zdomwb86K/ba1c0dwr2sDFm0JmHcMZKGGUTTxLoYXPMwSPvzX
-         VNrzpuDSYTgrcjYc0+FH+6KwuaJctkDEZ66B1WgEob0hg8aISuUP1Abvmfom5O3rLuCE
-         qIrLdO8vKVpLR5p8IpUtQhivpuMkJXCaKoHM/TGqFQ5xYl/Lix3Ol5maSRUOEJCcK0f3
-         rIobAjD6YWJkg1fd2vRbi6r535U7ROD2398iRvjQgnrLBBs0m9PyfCZ1/TBo6siNf6Ud
-         7sMA==
-X-Gm-Message-State: AGRZ1gLKnrDC1j+K92DRCCbpIKO9MfQx3wwf+vssW6+WP8Eif7IITonu
-        l3sBlhr7PYn0YeFpWks5nDmGiA==
-X-Google-Smtp-Source: AJdET5ceKGJhl8nrT0ZylPswoSVDOaEu8xRc8vMcJkWLnHdXxV1/rEgATgY/kJM5mVM22fYng4r7fA==
-X-Received: by 2002:a2e:2d01:: with SMTP id t1-v6mr27434ljt.159.1542011943851;
-        Mon, 12 Nov 2018 00:39:03 -0800 (PST)
-Received: from localhost (c-732171d5.07-21-73746f28.bbcust.telenor.se. [213.113.33.115])
-        by smtp.gmail.com with ESMTPSA id d126-v6sm2911443lfe.75.2018.11.12.00.39.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 12 Nov 2018 00:39:03 -0800 (PST)
-From:   Anders Roxell <anders.roxell@linaro.org>
-To:     yamada.masahiro@socionext.com, dvhart@infradead.org
-Cc:     arnd@arndb.de, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH v3] scripts/kconfig/merge_config: don't redefine 'y' to 'm'
-Date:   Mon, 12 Nov 2018 09:38:55 +0100
-Message-Id: <20181112083855.27917-1-anders.roxell@linaro.org>
-X-Mailer: git-send-email 2.19.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 12 Nov 2018 13:31:41 -0500
+Received: from foss.arm.com ([217.140.101.70]:60020 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726207AbeKLSbk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 13:31:40 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 48CBD80D;
+        Mon, 12 Nov 2018 00:39:31 -0800 (PST)
+Received: from big-swifty.misterjones.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 951473F5A0;
+        Mon, 12 Nov 2018 00:39:29 -0800 (PST)
+Date:   Mon, 12 Nov 2018 08:39:26 +0000
+Message-ID: <86lg5yelkx.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Qian Cai <cai@gmx.us>
+Cc:     Sudeep Holla <sudeep.holla@arm.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jason Cooper <jason@lakedaemon.net>
+Subject: Re: WARNING: CPU: 0 PID: 0 at drivers/irqchip/irq-gic-v3-its.c
+In-Reply-To: <960D7493-0D43-40A3-9441-CF7F0D76A534@gmx.us>
+References: <1541710771.12945.7.camel@gmx.us>
+        <c8ff3004-33ee-19d5-8eb8-38d41f78c8ee@arm.com>
+        <trinity-e1d06dde-12e1-4e2a-8871-d6c5f4af9f51-1541766480902@msvc-mesg-gmx023>
+        <b23b62b4-9ecb-8b76-57e5-d323cc9926ce@arm.com>
+        <13A11479-97FB-4EFD-A182-61DA63CB64D6@gmx.us>
+        <b74e43d3-a7e1-08e9-c176-5584ad379629@arm.com>
+        <F47320A5-4A6B-4AEB-A0DC-E4EBC6B4EC2A@gmx.us>
+        <930d61db-6e44-8501-983d-09cd3759d153@arm.com>
+        <CAPKp9uY7DOV9xMhCQcAC8yh0z3-=2U-CmZq064Br=d4VYrcg=A@mail.gmail.com>
+        <0e926f4b-1148-289b-39a1-ef76baa8cf9d@arm.com>
+        <960D7493-0D43-40A3-9441-CF7F0D76A534@gmx.us>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In today's merge_config.sh the order of the config fragment files dictates
-the output of a config option. With this approach we will get different
-.config files depending on the order of the config fragment files.
+On Fri, 09 Nov 2018 18:41:03 +0000,
+Qian Cai <cai@gmx.us> wrote:
+> 
+> 
+> 
+> > On Nov 9, 2018, at 12:41 PM, Marc Zyngier <marc.zyngier@arm.com> wrote:
+> > 
+> > On 09/11/18 17:28, Sudeep Holla wrote:
+> >> On Fri, Nov 9, 2018 at 4:10 PM Marc Zyngier <marc.zyngier@arm.com> wrote:
+> >>> 
+> >> [...]
+> >> 
+> >>> 
+> >>> See bb42ca474010 and d003d029cea8 for details.
+> >>> 
+> >>> Now, activating this workaround leads to lockdep being really angry,
+> >>> most likely because the cpus_read_lock is not taken, which is a change
+> >>> in behaviour...
+> >>> 
+> >>> I'm trying to dig into this now.
+> >>> 
+> >> 
+> >> Yes we found similar issue in kernel/sched/core.c sched_init_smp
+> >> There's a fix with detailed description in -next
+> >> (Commit 40fa3780bac2 ("sched/core: Take the hotplug lock in sched_init_smp()")
+> >> 
+> >> The behaviour changed since  commit cb538267ea1e ("jump_label/lockdep:
+> >> Assert we hold the hotplug lock for _cpuslocked() operations")
+> > 
+> > I indeed came to the same conclusion, but the fix is slightly less than
+> > obvious. I have the following arm64-specific crap, but it is pretty
+> > terrible:
+> > 
+> > diff --git a/arch/arm64/kernel/time.c b/arch/arm64/kernel/time.c
+> > index f258636273c9..9e96e9eaca9b 100644
+> > --- a/arch/arm64/kernel/time.c
+> > +++ b/arch/arm64/kernel/time.c
+> > @@ -36,6 +36,7 @@
+> > #include <linux/clocksource.h>
+> > #include <linux/clk-provider.h>
+> > #include <linux/acpi.h>
+> > +#include <linux/cpu.h>
+> > 
+> > #include <clocksource/arm_arch_timer.h>
+> > 
+> > @@ -69,7 +70,9 @@ void __init time_init(void)
+> > 	u32 arch_timer_rate;
+> > 
+> > 	of_clk_init(NULL);
+> > +	cpus_read_lock();
+> > 	timer_probe();
+> > +	cpus_read_unlock();
+> > 
+> > 	tick_setup_hrtimer_broadcast();
+> > 
+> > Qian, can you please let me know if this helps? If it does, we'll have
+> > to think of something a bit better…
+> After applied the above patch, the original warning is gone but there
+> Is now a new warning.
 
-So doing something like:
-$ ./merge/kconfig/merge_config.sh selftest.config drm.config
+[...]
 
-Where selftest.config defines DRM=y and drm.config defines DRM=m, the
-result will be "DRM=m".
+Which was ful;ly expected, given that I've taken the cpu lock at some
+semi-random location. I'll try to talk to PeterZ this week to try and
+solve this.
 
-Rework to add a switch to get builtin '=y' precedence over modules '=m',
-this will result in "DRM=y". If we do something like this:
+Thanks,
 
-$ ./merge/kconfig/merge_config.sh -y selftest.config drm.config
+	M.
 
-Suggested-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
----
- scripts/kconfig/merge_config.sh | 37 ++++++++++++++++++++++++++-------
- 1 file changed, 29 insertions(+), 8 deletions(-)
-
-diff --git a/scripts/kconfig/merge_config.sh b/scripts/kconfig/merge_config.sh
-index 0ef906499646..9b89791b202c 100755
---- a/scripts/kconfig/merge_config.sh
-+++ b/scripts/kconfig/merge_config.sh
-@@ -22,6 +22,7 @@
- 
- clean_up() {
- 	rm -f $TMP_FILE
-+	rm -f $MERGE_FILE
- 	exit
- }
- trap clean_up HUP INT TERM
-@@ -32,6 +33,7 @@ usage() {
- 	echo "  -m    only merge the fragments, do not execute the make command"
- 	echo "  -n    use allnoconfig instead of alldefconfig"
- 	echo "  -r    list redundant entries when merging fragments"
-+	echo "  -y    make builtin have precedence over modules"
- 	echo "  -O    dir to put generated output files.  Consider setting \$KCONFIG_CONFIG instead."
- 	echo
- 	echo "Used prefix: '$CONFIG_PREFIX'. You can redefine it with \$CONFIG_ environment variable."
-@@ -40,6 +42,7 @@ usage() {
- RUNMAKE=true
- ALLTARGET=alldefconfig
- WARNREDUN=false
-+BUILTIN=false
- OUTPUT=.
- CONFIG_PREFIX=${CONFIG_-CONFIG_}
- 
-@@ -64,6 +67,11 @@ while true; do
- 		shift
- 		continue
- 		;;
-+	"-y")
-+		BUILTIN=true
-+		shift
-+		continue
-+		;;
- 	"-O")
- 		if [ -d $2 ];then
- 			OUTPUT=$(echo $2 | sed 's/\/*$//')
-@@ -106,32 +114,45 @@ SED_CONFIG_EXP1="s/^\(${CONFIG_PREFIX}[a-zA-Z0-9_]*\)=.*/\1/p"
- SED_CONFIG_EXP2="s/^# \(${CONFIG_PREFIX}[a-zA-Z0-9_]*\) is not set$/\1/p"
- 
- TMP_FILE=$(mktemp ./.tmp.config.XXXXXXXXXX)
-+MERGE_FILE=$(mktemp ./.merge_tmp.config.XXXXXXXXXX)
- 
- echo "Using $INITFILE as base"
- cat $INITFILE > $TMP_FILE
- 
- # Merge files, printing warnings on overridden values
--for MERGE_FILE in $MERGE_LIST ; do
--	echo "Merging $MERGE_FILE"
--	if [ ! -r "$MERGE_FILE" ]; then
--		echo "The merge file '$MERGE_FILE' does not exist.  Exit." >&2
-+for ORIG_MERGE_FILE in $MERGE_LIST ; do
-+	echo "Merging $ORIG_MERGE_FILE"
-+	if [ ! -r "$ORIG_MERGE_FILE" ]; then
-+		echo "The merge file '$ORIG_MERGE_FILE' does not exist.  Exit." >&2
- 		exit 1
- 	fi
-+	cat $ORIG_MERGE_FILE > $MERGE_FILE
- 	CFG_LIST=$(sed -n -e "$SED_CONFIG_EXP1" -e "$SED_CONFIG_EXP2" $MERGE_FILE)
- 
- 	for CFG in $CFG_LIST ; do
- 		grep -q -w $CFG $TMP_FILE || continue
- 		PREV_VAL=$(grep -w $CFG $TMP_FILE)
- 		NEW_VAL=$(grep -w $CFG $MERGE_FILE)
--		if [ "x$PREV_VAL" != "x$NEW_VAL" ] ; then
--			echo Value of $CFG is redefined by fragment $MERGE_FILE:
-+		BUILTIN_FLAG=false
-+		if [ "$BUILTIN" = "true" ] && [ "${NEW_VAL#CONFIG_*=}" = "m" ] && [ "${PREV_VAL#CONFIG_*=}" = "y" ]; then
-+			echo Previous  value: $PREV_VAL
-+			echo New value:       $NEW_VAL
-+			echo -y passed, will not demote y to m
-+			echo
-+			BUILTIN_FLAG=true
-+		elif [ "x$PREV_VAL" != "x$NEW_VAL" ] ; then
-+			echo Value of $CFG is redefined by fragment $ORIG_MERGE_FILE:
- 			echo Previous  value: $PREV_VAL
- 			echo New value:       $NEW_VAL
- 			echo
- 		elif [ "$WARNREDUN" = "true" ]; then
--			echo Value of $CFG is redundant by fragment $MERGE_FILE:
-+			echo Value of $CFG is redundant by fragment $ORIG_MERGE_FILE:
-+		fi
-+		if [ "$BUILTIN_FLAG" = "false" ]; then
-+			sed -i "/$CFG[ =]/d" $TMP_FILE
-+		else
-+			sed -i "/$CFG[ =]/d" $MERGE_FILE
- 		fi
--		sed -i "/$CFG[ =]/d" $TMP_FILE
- 	done
- 	cat $MERGE_FILE >> $TMP_FILE
- done
 -- 
-2.19.1
-
+Jazz is not dead, it just smell funny.
