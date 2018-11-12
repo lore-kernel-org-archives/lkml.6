@@ -3,291 +3,118 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 804C6C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 06:48:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54BFEC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 06:48:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3993B21722
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 06:48:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3993B21722
+	by mail.kernel.org (Postfix) with ESMTP id 233302175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 06:48:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 233302175B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731992AbeKLQjx (ORCPT
+        id S1732029AbeKLQj5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 11:39:53 -0500
-Received: from mga02.intel.com ([134.134.136.20]:8017 "EHLO mga02.intel.com"
+        Mon, 12 Nov 2018 11:39:57 -0500
+Received: from mga17.intel.com ([192.55.52.151]:53355 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728340AbeKLQjx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1731284AbeKLQjx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 11:39:53 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Nov 2018 22:42:58 -0800
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Nov 2018 22:48:00 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,494,1534834800"; 
-   d="scan'208";a="88578333"
+   d="scan'208";a="88579665"
 Received: from allen-box.sh.intel.com ([10.239.161.122])
-  by orsmga007.jf.intel.com with ESMTP; 11 Nov 2018 22:42:55 -0800
+  by orsmga007.jf.intel.com with ESMTP; 11 Nov 2018 22:47:57 -0800
 From:   Lu Baolu <baolu.lu@linux.intel.com>
 To:     Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>
-Cc:     ashok.raj@intel.com, Christoph Hellwig <hch@infradead.org>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Sohil Mehta <sohil.mehta@intel.com>
-Subject: [PATCH v2 1/1] iommu/vtd: Cleanup dma_remapping.h header
-Date:   Mon, 12 Nov 2018 14:40:08 +0800
-Message-Id: <20181112064008.2102-1-baolu.lu@linux.intel.com>
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>
+Cc:     ashok.raj@intel.com, sanjay.k.kumar@intel.com,
+        jacob.jun.pan@intel.com, kevin.tian@intel.com,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        yi.l.liu@intel.com, yi.y.sun@intel.com, peterx@redhat.com,
+        tiwei.bie@intel.com, Zeng Xin <xin.zeng@intel.com>,
+        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Lu Baolu <baolu.lu@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: [RFC PATCH 2/5] iommu/vt-d: Initialize a PASID consumer
+Date:   Mon, 12 Nov 2018 14:44:58 +0800
+Message-Id: <20181112064501.2290-3-baolu.lu@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181112064501.2290-1-baolu.lu@linux.intel.com>
+References: <20181112064501.2290-1-baolu.lu@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit e61d98d8dad00 ("x64, x2apic/intr-remap: Intel vt-d, IOMMU
-code reorganization") moved dma_remapping.h from drivers/pci/ to
-current place. It is entirely VT-d specific, but uses a generic
-name. This merges dma_remapping.h with include/linux/intel-iommu.h
-and removes dma_remapping.h as the result.
+This adds the Intel vt-d specific ops to initialize a PASID
+consumer.
 
 Cc: Ashok Raj <ashok.raj@intel.com>
 Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc: Sohil Mehta <sohil.mehta@intel.com>
-Suggested-by: Christoph Hellwig <hch@infradead.org>
+Cc: Kevin Tian <kevin.tian@intel.com>
+Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
 Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/x86/kernel/tboot.c                    |  2 +-
- drivers/gpu/drm/i915/i915_gem_execbuffer.c |  2 +-
- drivers/gpu/drm/i915/intel_display.c       |  2 +-
- drivers/gpu/drm/vmwgfx/vmwgfx_drv.c        |  2 +-
- drivers/misc/mic/scif/scif_rma.c           |  2 +-
- drivers/misc/mic/scif/scif_rma.h           |  2 +-
- include/linux/dma_remapping.h              | 58 ----------------------
- include/linux/intel-iommu.h                | 49 +++++++++++++++++-
- 8 files changed, 53 insertions(+), 66 deletions(-)
- delete mode 100644 include/linux/dma_remapping.h
+ drivers/iommu/intel-iommu.c | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-diff --git a/arch/x86/kernel/tboot.c b/arch/x86/kernel/tboot.c
-index a2486f444073..6e5ef8fb8a02 100644
---- a/arch/x86/kernel/tboot.c
-+++ b/arch/x86/kernel/tboot.c
-@@ -19,7 +19,7 @@
-  *
-  */
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index 49a278a699b0..769b7059d52f 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -5597,6 +5597,35 @@ static int intel_iommu_domain_get_attr(struct iommu_domain *domain,
+ 	return ret;
+ }
  
--#include <linux/dma_remapping.h>
-+#include <linux/intel-iommu.h>
- #include <linux/init_task.h>
- #include <linux/spinlock.h>
- #include <linux/export.h>
-diff --git a/drivers/gpu/drm/i915/i915_gem_execbuffer.c b/drivers/gpu/drm/i915/i915_gem_execbuffer.c
-index 09187286d346..d8ccc77fdbaf 100644
---- a/drivers/gpu/drm/i915/i915_gem_execbuffer.c
-+++ b/drivers/gpu/drm/i915/i915_gem_execbuffer.c
-@@ -26,7 +26,7 @@
-  *
-  */
- 
--#include <linux/dma_remapping.h>
-+#include <linux/intel-iommu.h>
- #include <linux/reservation.h>
- #include <linux/sync_file.h>
- #include <linux/uaccess.h>
-diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
-index 9741cc419e1b..45334a84fab1 100644
---- a/drivers/gpu/drm/i915/intel_display.c
-+++ b/drivers/gpu/drm/i915/intel_display.c
-@@ -47,7 +47,7 @@
- #include <drm/drm_plane_helper.h>
- #include <drm/drm_rect.h>
- #include <drm/drm_atomic_uapi.h>
--#include <linux/dma_remapping.h>
-+#include <linux/intel-iommu.h>
- #include <linux/reservation.h>
- 
- /* Primary plane formats for gen <= 3 */
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-index 61a84b958d67..c3e80a3b09fc 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
-@@ -34,7 +34,7 @@
- #include <drm/ttm/ttm_placement.h>
- #include <drm/ttm/ttm_bo_driver.h>
- #include <drm/ttm/ttm_module.h>
--#include <linux/dma_remapping.h>
-+#include <linux/intel-iommu.h>
- 
- #define VMWGFX_DRIVER_DESC "Linux drm driver for VMware graphics devices"
- #define VMWGFX_CHIP_SVGAII 0
-diff --git a/drivers/misc/mic/scif/scif_rma.c b/drivers/misc/mic/scif/scif_rma.c
-index c824329f7012..b441f6b0c743 100644
---- a/drivers/misc/mic/scif/scif_rma.c
-+++ b/drivers/misc/mic/scif/scif_rma.c
-@@ -15,7 +15,7 @@
-  * Intel SCIF driver.
-  *
-  */
--#include <linux/dma_remapping.h>
-+#include <linux/intel-iommu.h>
- #include <linux/pagemap.h>
- #include <linux/sched/mm.h>
- #include <linux/sched/signal.h>
-diff --git a/drivers/misc/mic/scif/scif_rma.h b/drivers/misc/mic/scif/scif_rma.h
-index fa6722279196..d90a06d4e93b 100644
---- a/drivers/misc/mic/scif/scif_rma.h
-+++ b/drivers/misc/mic/scif/scif_rma.h
-@@ -53,7 +53,7 @@
- #ifndef SCIF_RMA_H
- #define SCIF_RMA_H
- 
--#include <linux/dma_remapping.h>
-+#include <linux/intel-iommu.h>
- #include <linux/mmu_notifier.h>
- 
- #include "../bus/scif_bus.h"
-diff --git a/include/linux/dma_remapping.h b/include/linux/dma_remapping.h
-deleted file mode 100644
-index 21b3e7d33d68..000000000000
---- a/include/linux/dma_remapping.h
-+++ /dev/null
-@@ -1,58 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#ifndef _DMA_REMAPPING_H
--#define _DMA_REMAPPING_H
--
--/*
-- * VT-d hardware uses 4KiB page size regardless of host page size.
-- */
--#define VTD_PAGE_SHIFT		(12)
--#define VTD_PAGE_SIZE		(1UL << VTD_PAGE_SHIFT)
--#define VTD_PAGE_MASK		(((u64)-1) << VTD_PAGE_SHIFT)
--#define VTD_PAGE_ALIGN(addr)	(((addr) + VTD_PAGE_SIZE - 1) & VTD_PAGE_MASK)
--
--#define VTD_STRIDE_SHIFT        (9)
--#define VTD_STRIDE_MASK         (((u64)-1) << VTD_STRIDE_SHIFT)
--
--#define DMA_PTE_READ (1)
--#define DMA_PTE_WRITE (2)
--#define DMA_PTE_LARGE_PAGE (1 << 7)
--#define DMA_PTE_SNP (1 << 11)
--
--#define CONTEXT_TT_MULTI_LEVEL	0
--#define CONTEXT_TT_DEV_IOTLB	1
--#define CONTEXT_TT_PASS_THROUGH 2
--/* Extended context entry types */
--#define CONTEXT_TT_PT_PASID	4
--#define CONTEXT_TT_PT_PASID_DEV_IOTLB 5
--#define CONTEXT_TT_MASK (7ULL << 2)
--
--#define CONTEXT_DINVE		(1ULL << 8)
--#define CONTEXT_PRS		(1ULL << 9)
--#define CONTEXT_PASIDE		(1ULL << 11)
--
--struct intel_iommu;
--struct dmar_domain;
--struct root_entry;
--
--
--#ifdef CONFIG_INTEL_IOMMU
--extern int iommu_calculate_agaw(struct intel_iommu *iommu);
--extern int iommu_calculate_max_sagaw(struct intel_iommu *iommu);
--extern int dmar_disabled;
--extern int intel_iommu_enabled;
--extern int intel_iommu_tboot_noforce;
--#else
--static inline int iommu_calculate_agaw(struct intel_iommu *iommu)
--{
--	return 0;
--}
--static inline int iommu_calculate_max_sagaw(struct intel_iommu *iommu)
--{
--	return 0;
--}
--#define dmar_disabled	(1)
--#define intel_iommu_enabled (0)
--#endif
--
--
--#endif
-diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
-index b0ae25837361..a58bc05d6798 100644
---- a/include/linux/intel-iommu.h
-+++ b/include/linux/intel-iommu.h
-@@ -26,7 +26,6 @@
- #include <linux/iova.h>
- #include <linux/io.h>
- #include <linux/idr.h>
--#include <linux/dma_remapping.h>
- #include <linux/mmu_notifier.h>
- #include <linux/list.h>
- #include <linux/iommu.h>
-@@ -37,9 +36,36 @@
- #include <asm/iommu.h>
- 
- /*
-- * Intel IOMMU register specification per version 1.0 public spec.
-+ * VT-d hardware uses 4KiB page size regardless of host page size.
-  */
-+#define VTD_PAGE_SHIFT		(12)
-+#define VTD_PAGE_SIZE		(1UL << VTD_PAGE_SHIFT)
-+#define VTD_PAGE_MASK		(((u64)-1) << VTD_PAGE_SHIFT)
-+#define VTD_PAGE_ALIGN(addr)	(((addr) + VTD_PAGE_SIZE - 1) & VTD_PAGE_MASK)
-+
-+#define VTD_STRIDE_SHIFT        (9)
-+#define VTD_STRIDE_MASK         (((u64)-1) << VTD_STRIDE_SHIFT)
-+
-+#define DMA_PTE_READ (1)
-+#define DMA_PTE_WRITE (2)
-+#define DMA_PTE_LARGE_PAGE (1 << 7)
-+#define DMA_PTE_SNP (1 << 11)
-+
-+#define CONTEXT_TT_MULTI_LEVEL	0
-+#define CONTEXT_TT_DEV_IOTLB	1
-+#define CONTEXT_TT_PASS_THROUGH 2
-+/* Extended context entry types */
-+#define CONTEXT_TT_PT_PASID	4
-+#define CONTEXT_TT_PT_PASID_DEV_IOTLB 5
-+#define CONTEXT_TT_MASK (7ULL << 2)
-+
-+#define CONTEXT_DINVE		(1ULL << 8)
-+#define CONTEXT_PRS		(1ULL << 9)
-+#define CONTEXT_PASIDE		(1ULL << 11)
- 
-+/*
-+ * Intel IOMMU register specification per version 1.0 public spec.
-+ */
- #define	DMAR_VER_REG	0x0	/* Arch version supported by this IOMMU */
- #define	DMAR_CAP_REG	0x8	/* Hardware supported capabilities */
- #define	DMAR_ECAP_REG	0x10	/* Extended capabilities supported */
-@@ -632,4 +658,23 @@ bool context_present(struct context_entry *context);
- struct context_entry *iommu_context_addr(struct intel_iommu *iommu, u8 bus,
- 					 u8 devfn, int alloc);
- 
-+#ifdef CONFIG_INTEL_IOMMU
-+extern int iommu_calculate_agaw(struct intel_iommu *iommu);
-+extern int iommu_calculate_max_sagaw(struct intel_iommu *iommu);
-+extern int dmar_disabled;
-+extern int intel_iommu_enabled;
-+extern int intel_iommu_tboot_noforce;
-+#else
-+static inline int iommu_calculate_agaw(struct intel_iommu *iommu)
++static int intel_iommu_pasid_init(struct iommu_pasid *pasid)
 +{
++	struct dmar_drhd_unit *drhd;
++	struct intel_iommu *iommu = NULL, *temp;
++
++	/*
++	 *  Iterate the iommu units and get a scalable mode capable one
++	 *  for virtual command usages. Return failure if scalable mode
++	 *  doesn't support by any unit.
++	 */
++	rcu_read_lock();
++	for_each_active_iommu(temp, drhd) {
++		if (sm_supported(temp)) {
++			iommu = temp;
++			break;
++		}
++	}
++	rcu_read_unlock();
++
++	if (!iommu)
++		return -ENODEV;
++
++	pasid->max = intel_pasid_max_id;
++	pasid->min = PASID_MIN;
++	pasid->priv = iommu;
++
 +	return 0;
 +}
-+static inline int iommu_calculate_max_sagaw(struct intel_iommu *iommu)
-+{
-+	return 0;
-+}
-+#define dmar_disabled	(1)
-+#define intel_iommu_enabled (0)
-+#endif
 +
- #endif
+ const struct iommu_ops intel_iommu_ops = {
+ 	.capable		= intel_iommu_capable,
+ 	.domain_alloc		= intel_iommu_domain_alloc,
+@@ -5616,6 +5645,7 @@ const struct iommu_ops intel_iommu_ops = {
+ 	.domain_get_attr	= intel_iommu_domain_get_attr,
+ 	.get_dev_attr		= intel_iommu_get_dev_attr,
+ 	.set_dev_attr		= intel_iommu_set_dev_attr,
++	.pasid_init		= intel_iommu_pasid_init,
+ 	.pgsize_bitmap		= INTEL_IOMMU_PGSIZES,
+ };
+ 
 -- 
 2.17.1
 
