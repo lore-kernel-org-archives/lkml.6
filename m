@@ -2,273 +2,251 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B8D8C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:39:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09C87C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:39:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03F9F208A3
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:39:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=mendozajonas.com header.i=@mendozajonas.com header.b="frP8DxlE";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HPJK6J6o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03F9F208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mendozajonas.com
+	by mail.kernel.org (Postfix) with ESMTP id B660921104
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:39:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B660921104
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=itcare.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729848AbeKLK3f (ORCPT
+        id S1729886AbeKLKab (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 05:29:35 -0500
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:54279 "EHLO
-        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726816AbeKLK3f (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 05:29:35 -0500
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailout.west.internal (Postfix) with ESMTP id 518BBA11;
-        Sun, 11 Nov 2018 19:38:58 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Sun, 11 Nov 2018 19:38:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        mendozajonas.com; h=message-id:subject:from:to:cc:date
-        :in-reply-to:references:content-type:mime-version
-        :content-transfer-encoding; s=fm1; bh=loRrjAZIEO9LPbzMDCQ/pdxJrY
-        U6ADNA11xkOPbn6cE=; b=frP8DxlE+OV3IGFj+dV4FQjjyhY8T0o6MbOOycAyTd
-        jEx+04ewQwpc6a8cyMJ7VW2NFykUmEAHymhXWhPViW8B1thXq0Lk86+KCWd/OThC
-        Pkxm5nvZdR2yvQDo4b9U6wmHjsIPhWseCHY9BpVX5nmnLgXw1IsFFrmPD+IzqeUC
-        YkHwpdlOBPBi+xXfl4KrIi6p2N/w3cOIqBXSyGFWCd7Dn6fzfs4qop6UjPll3J7+
-        1Rxc5GAMOptRPFASVfgrOdVIql6Xwt9DQT68jYuFjcFPJlYgv8xGVgPK+CDin/I1
-        1gw2n/PZVDe+8KN8quY1pNGAFphFGuJms5NfL/8uQRZw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=loRrjAZIEO9LPbzMDCQ/pdxJrYU6ADNA11xkOPbn6
-        cE=; b=HPJK6J6o1BoImhIPr7mohUIckkEoj6VOXgLaksSZFJdxvNo9shABNTxAf
-        81RsDdj6QR4NiuNUr7DIwLwXhv6qKVTMb7WTfh9RBnoOYAIp1uLbZYPbEvfkR5Fl
-        wnFdUeBptgN2z0Wk3tFUpJFfvM/HrMItrQhrF9vXlyZIZbtn0FCxbjqGR98oDSeh
-        yne7MqH92aTKzsgIA+UsQIz2d6q2R4MyPZBlVdg3W11s79k95g1vpSQQTDDd0aCi
-        kJ6FiBTMFXYpr4THpN3x/qPbbOQAnHA2X+hXmKZvz46XHjg5T9RXU5V1zNbtPvnz
-        cbBsiVVzIdFbdB5ZRahFKf7m+ekLQ==
-X-ME-Sender: <xms:ocvoW8JGnAEKtAS0v6cZMIVWOLDqZYcDGrEA_Fcv17DGqtRw5fj8Ng>
-X-ME-Proxy: <xmx:ocvoW2eGJdpEZ719ua9NB8G2ByA5hqgvSV6Fpre3N0WhgAkDduJozg>
-    <xmx:ocvoW9yf8rzN_Nw9M5fB1mYheJ2klIM8wrb5eMB4VFn5LlKECDvV6Q>
-    <xmx:ocvoW98mbSQznWEm2cJMPvxgB0ORLheZu-NK4g5XKgUlCkksxHBR5g>
-    <xmx:ocvoW1i7rhJHV5Ef0TwCfEoJlFlVvffftUWwZ2g36K7D1YGgy1TNaw>
-    <xmx:ocvoW0E0JEgIJ3EN3El6vdXqCoKX9lqBwQWDUAzY9fIvBt4-teXneQ>
-    <xmx:ocvoW3PAMY6eUbWPDKQx2FUyRzLR-S14Xbma3WT5qkhZHAo7lMF2Yg>
-Received: from v4 (unknown [122.99.82.10])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 6A183E4750;
-        Sun, 11 Nov 2018 19:38:55 -0500 (EST)
-Message-ID: <cfeab378a2b226c1c0ba62912d18c5a254de8daa.camel@mendozajonas.com>
-Subject: Re: [PATCH net-next v3 6/6] net/ncsi: Configure multi-package,
- multi-channel modes with failover
-From:   Samuel Mendoza-Jonas <sam@mendozajonas.com>
-To:     Justin.Lee1@Dell.com, netdev@vger.kernel.org
-Cc:     davem@davemloft.net, linux-kernel@vger.kernel.org,
-        openbmc@lists.ozlabs.org
-Date:   Mon, 12 Nov 2018 11:38:52 +1100
-In-Reply-To: <b2c6aea94f1648648dd349d23ce61bf6@AUSX13MPS302.AMER.DELL.COM>
-References: <20181108024909.9897-1-sam@mendozajonas.com>
-         <20181108024909.9897-7-sam@mendozajonas.com>
-         <f9d0309dafe248a6aac8198f96f9bc4b@AUSX13MPS306.AMER.DELL.COM>
-         <ce6a678b1a0673050bc8070cb99dd68d1929c227.camel@mendozajonas.com>
-         <b2c6aea94f1648648dd349d23ce61bf6@AUSX13MPS302.AMER.DELL.COM>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 12 Nov 2018 05:30:31 -0500
+Received: from smtp7.iq.pl ([86.111.240.244]:53171 "EHLO smtp7.iq.pl"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726816AbeKLKab (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 05:30:31 -0500
+Received: from [192.168.2.200] (unknown [185.78.72.18])
+        (Authenticated sender: pstaszewski@itcare.pl)
+        by smtp.iq.pl (Postfix) with ESMTPSA id 42tX2v2GX6z3wjZ;
+        Mon, 12 Nov 2018 01:39:51 +0100 (CET)
+Subject: Re: [PATCH 1/2] mm/page_alloc: free order-0 pages through PCP in
+ page_frag_free()
+To:     Alexander Duyck <alexander.duyck@gmail.com>
+Cc:     aaron.lu@intel.com, linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        ilias.apalodimas@linaro.org, yoel@kviknet.dk,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>, dave.hansen@linux.intel.com
+References: <20181105085820.6341-1-aaron.lu@intel.com>
+ <CAKgT0UdvYVTA8OjgLhXo9tRUOGikrCi3zJXSrqM0ZmeHb5P2mA@mail.gmail.com>
+ <b8b1fbb7-9139-9455-69b8-8c1bed4f7c74@itcare.pl>
+ <CAKgT0UdhcXF-ohPHPbg8onRjFabEMnbpXGmLm-27skCNzGKOgw@mail.gmail.com>
+From:   =?UTF-8?Q?Pawe=c5=82_Staszewski?= <pstaszewski@itcare.pl>
+Message-ID: <bd33633b-2f6c-0034-a130-38a8468531db@itcare.pl>
+Date:   Mon, 12 Nov 2018 01:39:53 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+In-Reply-To: <CAKgT0UdhcXF-ohPHPbg8onRjFabEMnbpXGmLm-27skCNzGKOgw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: pl
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-11-09 at 21:58 +0000, Justin.Lee1@Dell.com wrote:
-> Hi Samuel,
-> 
-> After running more testing, I notice that the extra patch causing failover function
-> to fail. Also, occasionally, I will see two channels having TX enabled if I
-> send netlink command back-to-back.
-> 
-> cat /sys/kernel/debug/ncsi_protocol/ncsi_device_
-> IFIDX IFNAME NAME   PID CID RX TX MP MC WP WC PC CS PS LS RU CR NQ HA
-> =====================================================================
->   2   eth2   ncsi0  000 000 1  1  1  1  1  1  1  2  1  1  1  1  0  1
->   2   eth2   ncsi1  000 001 1  1  1  1  1  1  0  2  1  1  1  1  0  1
->   2   eth2   ncsi2  001 000 0  0  1  1  0  0  0  1  0  1  1  1  0  1
->   2   eth2   ncsi3  001 001 0  0  1  1  0  0  0  1  0  1  1  1  0  1
-> =====================================================================
-> MP: Multi-mode Package  WP: Whitelist Package
-> MC: Multi-mode Channel  WC: Whitelist Channel
-> PC: Primary Channel     CS: Channel State IA/A/IV 1/2/3
-> PS: Poll Status         LS: Link Status
-> RU: Running             CR: Carrier OK
-> NQ: Queue Stopped       HA: Hardware Arbitration
-> 
-> Thanks,
-> Justin
-> 
-> 
-> > From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-> > From: Samuel Mendoza-Jonas <sam@mendozajonas.com>
-> > Date: Fri, 9 Nov 2018 13:11:03 +1100
-> > Subject: [PATCH] net/ncsi: Reset state fixes, single-channel LSC
-> > 
-> > ---
-> >  net/ncsi/ncsi-aen.c    |  8 +++++---
-> >  net/ncsi/ncsi-manage.c | 19 +++++++++++++++----
-> >  2 files changed, 20 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/net/ncsi/ncsi-aen.c b/net/ncsi/ncsi-aen.c
-> > index 39c2e9eea2ba..034cb1dc5566 100644
-> > --- a/net/ncsi/ncsi-aen.c
-> > +++ b/net/ncsi/ncsi-aen.c
-> > @@ -93,14 +93,16 @@ static int ncsi_aen_handler_lsc(struct ncsi_dev_priv *ndp,
-> >  	if ((had_link == has_link) || chained)
-> >  		return 0;
-> >  
-> > -	if (!ndp->multi_package && !nc->package->multi_channel) {
-> > -		if (had_link)
-> > -			ndp->flags |= NCSI_DEV_RESHUFFLE;
-> > +	if (!ndp->multi_package && !nc->package->multi_channel && had_link) {
-> > +		ndp->flags |= NCSI_DEV_RESHUFFLE;
-> >  		ncsi_stop_channel_monitor(nc);
-> >  		spin_lock_irqsave(&ndp->lock, flags);
-> >  		list_add_tail_rcu(&nc->link, &ndp->channel_queue);
-> >  		spin_unlock_irqrestore(&ndp->lock, flags);
-> >  		return ncsi_process_next_channel(ndp);
-> > +	} else {
-> > +		/* Configured channel came up */
-> > +		return 0;
-> 
-> It is always going to else statement if multi_package and/or mutlit_channel is enabled.
->  
-> npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_aen_handler_lsc() - pkg 0 ch 0 state down
-> npcm7xx-emc f0825000.eth eth2: NCSI: ncsi_aen_handler_lsc() - had_link 1, has_link 0, chained 0
-> 
-> These codes have no chance to run.
-> 	if (had_link) {
-> 		ncm = &nc->modes[NCSI_MODE_TX_ENABLE];
-> 		if (ncsi_channel_is_last(ndp, nc)) {
-> 			/* No channels left, reconfigure */
-> 			return ncsi_reset_dev(&ndp->ndev);
-> 		} else if (ncm->enable) {
-> 			/* Need to failover Tx channel */
-> 			ncsi_update_tx_channel(ndp, nc->package, nc, NULL);
-> 		}
-> 
-> >  	}
-> > 
 
-Oops, wrote that patch a little fast it seems. This may also affect the
-double-Tx above since ncsi_update_tx_channel() won't be reached.
-I've attached a fixed up version below.
+W dniu 12.11.2018 o 00:05, Alexander Duyck pisze:
+> On Sat, Nov 10, 2018 at 3:54 PM Paweł Staszewski <pstaszewski@itcare.pl> wrote:
+>>
+>>
+>> W dniu 05.11.2018 o 16:44, Alexander Duyck pisze:
+>>> On Mon, Nov 5, 2018 at 12:58 AM Aaron Lu <aaron.lu@intel.com> wrote:
+>>>> page_frag_free() calls __free_pages_ok() to free the page back to
+>>>> Buddy. This is OK for high order page, but for order-0 pages, it
+>>>> misses the optimization opportunity of using Per-Cpu-Pages and can
+>>>> cause zone lock contention when called frequently.
+>>>>
+>>>> Paweł Staszewski recently shared his result of 'how Linux kernel
+>>>> handles normal traffic'[1] and from perf data, Jesper Dangaard Brouer
+>>>> found the lock contention comes from page allocator:
+>>>>
+>>>>     mlx5e_poll_tx_cq
+>>>>     |
+>>>>      --16.34%--napi_consume_skb
+>>>>                |
+>>>>                |--12.65%--__free_pages_ok
+>>>>                |          |
+>>>>                |           --11.86%--free_one_page
+>>>>                |                     |
+>>>>                |                     |--10.10%--queued_spin_lock_slowpath
+>>>>                |                     |
+>>>>                |                      --0.65%--_raw_spin_lock
+>>>>                |
+>>>>                |--1.55%--page_frag_free
+>>>>                |
+>>>>                 --1.44%--skb_release_data
+>>>>
+>>>> Jesper explained how it happened: mlx5 driver RX-page recycle
+>>>> mechanism is not effective in this workload and pages have to go
+>>>> through the page allocator. The lock contention happens during
+>>>> mlx5 DMA TX completion cycle. And the page allocator cannot keep
+>>>> up at these speeds.[2]
+>>>>
+>>>> I thought that __free_pages_ok() are mostly freeing high order
+>>>> pages and thought this is an lock contention for high order pages
+>>>> but Jesper explained in detail that __free_pages_ok() here are
+>>>> actually freeing order-0 pages because mlx5 is using order-0 pages
+>>>> to satisfy its page pool allocation request.[3]
+>>>>
+>>>> The free path as pointed out by Jesper is:
+>>>> skb_free_head()
+>>>>     -> skb_free_frag()
+>>>>       -> skb_free_frag()
+>>>>         -> page_frag_free()
+>>>> And the pages being freed on this path are order-0 pages.
+>>>>
+>>>> Fix this by doing similar things as in __page_frag_cache_drain() -
+>>>> send the being freed page to PCP if it's an order-0 page, or
+>>>> directly to Buddy if it is a high order page.
+>>>>
+>>>> With this change, Paweł hasn't noticed lock contention yet in
+>>>> his workload and Jesper has noticed a 7% performance improvement
+>>>> using a micro benchmark and lock contention is gone.
+>>>>
+>>>> [1]: https://www.spinics.net/lists/netdev/msg531362.html
+>>>> [2]: https://www.spinics.net/lists/netdev/msg531421.html
+>>>> [3]: https://www.spinics.net/lists/netdev/msg531556.html
+>>>> Reported-by: Paweł Staszewski <pstaszewski@itcare.pl>
+>>>> Analysed-by: Jesper Dangaard Brouer <brouer@redhat.com>
+>>>> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+>>>> ---
+>>>>    mm/page_alloc.c | 10 ++++++++--
+>>>>    1 file changed, 8 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>>>> index ae31839874b8..91a9a6af41a2 100644
+>>>> --- a/mm/page_alloc.c
+>>>> +++ b/mm/page_alloc.c
+>>>> @@ -4555,8 +4555,14 @@ void page_frag_free(void *addr)
+>>>>    {
+>>>>           struct page *page = virt_to_head_page(addr);
+>>>>
+>>>> -       if (unlikely(put_page_testzero(page)))
+>>>> -               __free_pages_ok(page, compound_order(page));
+>>>> +       if (unlikely(put_page_testzero(page))) {
+>>>> +               unsigned int order = compound_order(page);
+>>>> +
+>>>> +               if (order == 0)
+>>>> +                       free_unref_page(page);
+>>>> +               else
+>>>> +                       __free_pages_ok(page, order);
+>>>> +       }
+>>>>    }
+>>>>    EXPORT_SYMBOL(page_frag_free);
+>>>>
+>>> One thing I would suggest for Pawel to try would be to reduce the Tx
+>>> qdisc size on his transmitting interfaces, Reduce the Tx ring size,
+>>> and possibly increase the Tx interrupt rate. Ideally we shouldn't have
+>>> too many packets in-flight and I suspect that is the issue that Pawel
+>>> is seeing that is leading to the page pool allocator freeing up the
+>>> memory. I know we like to try to batch things but the issue is
+>>> processing too many Tx buffers in one batch leads to us eating up too
+>>> much memory and causing evictions from the cache. Ideally the Rx and
+>>> Tx rings and queues should be sized as small as possible while still
+>>> allowing us to process up to our NAPI budget. Usually I run things
+>>> with a 128 Rx / 128 Tx setup and then reduce the Tx queue length so we
+>>> don't have more buffers stored there than we can place in the Tx ring.
+>>> Then we can avoid the extra thrash of having to pull/push memory into
+>>> and out of the freelists. Essentially the issue here ends up being
+>>> another form of buffer bloat.
+>> Thanks Aleksandar - yes it can be - but in my scenario setting RX buffer
+>> <4096 producing more interface rx drops - and no_rx_buffer on network
+>> controller that is receiving more packets
+>> So i need to stick with 3000-4000 on RX - and yes i was trying to lower
+>> the TX buff on connectx4 - but that changed nothing before Aaron patch
+>>
+>> After Aaron patch - decreasing TX buffer influencing total bandwidth
+>> that can be handled by the router/server
+>> Dono why before this patch there was no difference there no matter what
+>> i set there there was always page_alloc/slowpath on top in perf
+>>
+>>
+>> Currently testing RX4096/TX256 - this helps with bandwidth like +10%
+>> more bandwidth with less interrupts...
+> The problem is if you are going for less interrupts you are setting
+> yourself up for buffer bloat. Basically you are going to use much more
+> cache and much more memory then you actually need and if things are
+> properly configured NAPI should take care of the interrupts anyway
+> since under maximum load you shouldn't stop polling normally.
 
-For the failover issue you're seeing in your previous email the issue is
-likely in the ncsi_dev_state_suspend_gls state. This should send a GLS
-command to all available channels, but it only does it for the current
-package. Since not all packages are necessarily enabled in single-channel 
-mode I'll need to have a think about the neatest way to handle that, but
-it's a separate issue from this patch.
+Im trying to balance here - there is problem cause server is forwarding 
+all kingd of protocols packets/different size etc
 
-Cheers,
-Sam
+The problem is im trying to go in high interrupt rate - but
 
+Setting coalescence to adaptative for rx killing cpu's at 22Gbit/s RX 
+and 22Gbit with rly high interrupt rate
 
-From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
-From: Samuel Mendoza-Jonas <sam@mendozajonas.com>
-Date: Fri, 9 Nov 2018 13:11:03 +1100
-Subject: [PATCH] net/ncsi: Reset state fixes, single-channel LSC
-
----
- net/ncsi/ncsi-aen.c    | 16 ++++++++++------
- net/ncsi/ncsi-manage.c | 19 +++++++++++++++----
- 2 files changed, 25 insertions(+), 10 deletions(-)
-
-diff --git a/net/ncsi/ncsi-aen.c b/net/ncsi/ncsi-aen.c
-index 39c2e9eea2ba..76559d0eeea8 100644
---- a/net/ncsi/ncsi-aen.c
-+++ b/net/ncsi/ncsi-aen.c
-@@ -94,13 +94,17 @@ static int ncsi_aen_handler_lsc(struct ncsi_dev_priv *ndp,
- 		return 0;
- 
- 	if (!ndp->multi_package && !nc->package->multi_channel) {
--		if (had_link)
-+		if (had_link) {
- 			ndp->flags |= NCSI_DEV_RESHUFFLE;
--		ncsi_stop_channel_monitor(nc);
--		spin_lock_irqsave(&ndp->lock, flags);
--		list_add_tail_rcu(&nc->link, &ndp->channel_queue);
--		spin_unlock_irqrestore(&ndp->lock, flags);
--		return ncsi_process_next_channel(ndp);
-+			ncsi_stop_channel_monitor(nc);
-+			spin_lock_irqsave(&ndp->lock, flags);
-+			list_add_tail_rcu(&nc->link, &ndp->channel_queue);
-+			spin_unlock_irqrestore(&ndp->lock, flags);
-+			return ncsi_process_next_channel(ndp);
-+		} else {
-+			/* Configured channel came up */
-+			return 0;
-+		}
- 	}
- 
- 	if (had_link) {
-diff --git a/net/ncsi/ncsi-manage.c b/net/ncsi/ncsi-manage.c
-index fa3c2144f5ba..92e59f07f9a7 100644
---- a/net/ncsi/ncsi-manage.c
-+++ b/net/ncsi/ncsi-manage.c
-@@ -1063,17 +1063,17 @@ static void ncsi_configure_channel(struct ncsi_dev_priv *ndp)
- 	case ncsi_dev_state_config_done:
- 		netdev_dbg(ndp->ndev.dev, "NCSI: channel %u config done\n",
- 			   nc->id);
-+		spin_lock_irqsave(&nc->lock, flags);
-+		nc->state = NCSI_CHANNEL_ACTIVE;
-+
- 		if (ndp->flags & NCSI_DEV_RESET) {
- 			/* A reset event happened during config, start it now */
--			spin_lock_irqsave(&nc->lock, flags);
- 			nc->reconfigure_needed = false;
- 			spin_unlock_irqrestore(&nc->lock, flags);
--			nd->state = ncsi_dev_state_functional;
- 			ncsi_reset_dev(nd);
- 			break;
- 		}
- 
--		spin_lock_irqsave(&nc->lock, flags);
- 		if (nc->reconfigure_needed) {
- 			/* This channel's configuration has been updated
- 			 * part-way during the config state - start the
-@@ -1092,7 +1092,6 @@ static void ncsi_configure_channel(struct ncsi_dev_priv *ndp)
- 			break;
- 		}
- 
--		nc->state = NCSI_CHANNEL_ACTIVE;
- 		if (nc->modes[NCSI_MODE_LINK].data[2] & 0x1) {
- 			hot_nc = nc;
- 		} else {
-@@ -1803,6 +1802,18 @@ int ncsi_reset_dev(struct ncsi_dev *nd)
- 			spin_unlock_irqrestore(&ndp->lock, flags);
- 			return 0;
- 		}
-+	} else {
-+		switch (nd->state) {
-+		case ncsi_dev_state_suspend_done:
-+		case ncsi_dev_state_config_done:
-+		case ncsi_dev_state_functional:
-+			/* Ok */
-+			break;
-+		default:
-+			/* Current reset operation happening */
-+			spin_unlock_irqrestore(&ndp->lock, flags);
-+			return 0;
-+		}
- 	}
- 
- 	if (!list_empty(&ndp->channel_queue)) {
--- 
-2.19.1
+So adding a little more latency i can turn off adaptative rx and setup 
+rx-usecs from range 16-64 - and this gives me more or less interrupts - 
+but the problem is - always same bandwidth as maximum
 
 
+>
+> One issue I have seen is people delay interrupts for as long as
+> possible which isn't really a good thing since most network
+> controllers will use NAPI which will disable the interrupts and leave
+> them disabled whenever the system is under heavy stress so you should
+> be able to get the maximum performance by configuring an adapter with
+> small ring sizes and for high interrupt rates.
 
+Sure this is bad to setup rx-usec for high values - cause at some point 
+this will add high latency for packet traversing both sides - and start 
+to hurt buffers
+
+But my problem is a little different now i have no problems with RX side 
+- cause i can setup anything like:
+
+coalescence from 16 to 64
+
+rx ring from 3000 to max 8192
+
+And it does not change my max bw - only produces less or more interrupts.
+
+So I start to change params for TX side - and for now i know that the 
+best for me is
+
+coalescence adaptative on
+
+TX buffer 128
+
+This helps with max BW that for now is close to 70Gbit/s RX and 70Gbit 
+TX but after this change i have increasing DROPS on TX side for vlan 
+interfaces.
+
+And only 50% cpu (max was 50% for 70Gbit/s)
+
+
+> It is easiest to think of it this way. Your total packet rate is equal
+> to your interrupt rate times the number of buffers you will store in
+> the ring. So if you have some fixed rate "X" for packets and an
+> interrupt rate of "i" then your optimal ring size should be "X/i". So
+> if you lower the interrupt rate you end up hurting the throughput
+> unless you increase the buffer size. However at a certain point the
+> buffer size starts becoming an issue. For example with UDP flows I
+> often see massive packet drops if you tune the interrupt rate too low
+> and then put the system under heavy stress.
+
+Yes - in normal life traffic - most of ddos'es are like this many pps 
+with small frames.
+
+
+
+> - Alex
+>
