@@ -2,182 +2,128 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DBFDC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:13:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19C59C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:15:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 020982241E
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:13:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 020982241E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id C7B2622419
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:15:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="coRj8185"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7B2622419
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729976AbeKMCHs convert rfc822-to-8bit (ORCPT
+        id S1729982AbeKMCIx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 21:07:48 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:52020 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727976AbeKMCHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 21:07:48 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id BF088207CF; Mon, 12 Nov 2018 17:13:51 +0100 (CET)
-Received: from xps13 (aaubervilliers-681-1-30-49.w90-88.abo.wanadoo.fr [90.88.15.49])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 4923320701;
-        Mon, 12 Nov 2018 17:13:51 +0100 (CET)
-Date:   Mon, 12 Nov 2018 17:13:51 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Liang Yang <liang.yang@amlogic.com>, Rob Herring <robh@kernel.org>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
-        Jian Hu <jian.hu@amlogic.com>, linux-mtd@lists.infradead.org,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        linux-amlogic@lists.infradead.org,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Jerome Brunet <jbrunet@baylibre.com>
-Subject: Re: [PATCH v6 2/2] mtd: rawnand: meson: add support for Amlogic
- NAND flash controller
-Message-ID: <20181112171351.4ac3506b@xps13>
-In-Reply-To: <20181106112206.65a70a81@bbrezillon>
-References: <1541090542-19618-1-git-send-email-jianxin.pan@amlogic.com>
-        <1541090542-19618-3-git-send-email-jianxin.pan@amlogic.com>
-        <20181105165321.7ea2b45f@bbrezillon>
-        <a571904e-6296-bf62-e1fe-e25bf90040bb@amlogic.com>
-        <20181106102851.61deb97a@bbrezillon>
-        <ff02373e-c97b-182d-5b43-83d1e8f6d51a@amlogic.com>
-        <20181106112206.65a70a81@bbrezillon>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 12 Nov 2018 21:08:53 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:38125 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729385AbeKMCIx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 21:08:53 -0500
+Received: by mail-ot1-f65.google.com with SMTP id u3so3363611ota.5
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 08:14:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RltqjB6WknPo5WVhdLpo3P+BHU6hFjajwUt/QgylrpE=;
+        b=coRj8185dEjue8EQcunrAJIZa/cbKsxqICTNFeDoipe9+/Bd0NaM9MoNr0fjcdr71u
+         QoYrYR+3txwkJws8n1s2I31VlzbZt2jgcnYeV2uJ/n3xPKxbTSpiQ5/iOdJAHymv7Pq2
+         Xb6TG+/pshEqRgBzPmK4OQOFGOVU51cT6k0BFw6OOi3wNlkUXlmXf4TSrkTje15OQ33L
+         +Wiq6cDJoZBzsPOz5NHKcgzJEcBdclAQhDlmKTctGcB/DR1RluSZujkjyP+oRZzLfBEp
+         pqVqOUeyoulJUAvLO8SxFSPTnY8fonXxIsncgZ4Jni+mtN0FjW1kjQC0VvnfKgNAnp4l
+         XDpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RltqjB6WknPo5WVhdLpo3P+BHU6hFjajwUt/QgylrpE=;
+        b=AICeYbIAwSTKHiOjtU2SKzSMVkm/1+BCse7sRzMkCr1E2HKBemeqpCzC9Iksn6G9Ot
+         msefA9N/ZWw2++FM13ABWD6HE20F9+E2jb73SeEMiFMJg3riytTD7HmGNqZtHKo1VooE
+         ChKR+gY2A5TRmHnRD3LkInHu+jhUkn7gGU6L+0Yzrr1uO6xewVD/x99P0J5pa3J1jFdg
+         kN9CvaDqmD+CaEiGfflkFiz9UteRzIw6Z69juFnTk8AzW2wBo1ep2hzyuMy+XzGQKcYt
+         v2h08kLGlH/SCg4484wR2XnVr6hD+GGYzyKxZhwc1HPf1Hxxdh5hSoWDCi3akDeJ/7wK
+         +i5Q==
+X-Gm-Message-State: AGRZ1gI7G58lIgA4hHJroIUha8f47ruztH/PqlgHahRYjbO2uu/kbXZ6
+        LhIGFix7mgC8DNfeww5gwelsrYZ2ccEPpyhgfJL4jA==
+X-Google-Smtp-Source: AJdET5c6lbtZrwLUM4Wq0Jp8IMghUkC9y32PbgxhEuw/EWh7VvRIhREKZl1db7ndbzO/Fri88cMF7Ka/PWPS3I6mQag=
+X-Received: by 2002:a9d:775a:: with SMTP id t26mr881395otl.32.1542039298030;
+ Mon, 12 Nov 2018 08:14:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+References: <20181110085041.10071-1-jhubbard@nvidia.com> <20181110085041.10071-2-jhubbard@nvidia.com>
+ <20181112154127.GA8247@localhost.localdomain>
+In-Reply-To: <20181112154127.GA8247@localhost.localdomain>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Mon, 12 Nov 2018 08:14:46 -0800
+Message-ID: <CAPcyv4j7nqLOFD5dZEe_nBysHDL2pQ-tRO9Crp9oyTUP7RoDHw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/6] mm/gup: finish consolidating error handling
+To:     Keith Busch <keith.busch@intel.com>
+Cc:     John Hubbard <john.hubbard@gmail.com>,
+        Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Mon, Nov 12, 2018 at 7:45 AM Keith Busch <keith.busch@intel.com> wrote:
+>
+> On Sat, Nov 10, 2018 at 12:50:36AM -0800, john.hubbard@gmail.com wrote:
+> > From: John Hubbard <jhubbard@nvidia.com>
+> >
+> > An upcoming patch wants to be able to operate on each page that
+> > get_user_pages has retrieved. In order to do that, it's best to
+> > have a common exit point from the routine. Most of this has been
+> > taken care of by commit df06b37ffe5a4 ("mm/gup: cache dev_pagemap while
+> > pinning pages"), but there was one case remaining.
+> >
+> > Also, there was still an unnecessary shadow declaration (with a
+> > different type) of the "ret" variable, which this commit removes.
+> >
+> > Cc: Keith Busch <keith.busch@intel.com>
+> > Cc: Dan Williams <dan.j.williams@intel.com>
+> > Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> > Cc: Dave Hansen <dave.hansen@intel.com>
+> > Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> > ---
+> >  mm/gup.c | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
+> >
+> > diff --git a/mm/gup.c b/mm/gup.c
+> > index f76e77a2d34b..55a41dee0340 100644
+> > --- a/mm/gup.c
+> > +++ b/mm/gup.c
+> > @@ -696,12 +696,11 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+> >               if (!vma || start >= vma->vm_end) {
+> >                       vma = find_extend_vma(mm, start);
+> >                       if (!vma && in_gate_area(mm, start)) {
+> > -                             int ret;
+> >                               ret = get_gate_page(mm, start & PAGE_MASK,
+> >                                               gup_flags, &vma,
+> >                                               pages ? &pages[i] : NULL);
+> >                               if (ret)
+> > -                                     return i ? : ret;
+> > +                                     goto out;
+> >                               ctx.page_mask = 0;
+> >                               goto next_page;
+> >                       }
+>
+> This also fixes a potentially leaked dev_pagemap reference count if a
+> failure occurs when an iteration crosses a vma boundary. I don't think
+> it's normal to have different vma's on a users mapped zone device memory,
+> but good to fix anyway.
 
-Boris Brezillon <boris.brezillon@bootlin.com> wrote on Tue, 6 Nov 2018
-11:22:06 +0100:
-
-> On Tue, 6 Nov 2018 18:00:37 +0800
-> Liang Yang <liang.yang@amlogic.com> wrote:
-> 
-> > On 2018/11/6 17:28, Boris Brezillon wrote:  
-> > > On Tue, 6 Nov 2018 17:08:00 +0800
-> > > Liang Yang <liang.yang@amlogic.com> wrote:
-> > >     
-> > >> On 2018/11/5 23:53, Boris Brezillon wrote:    
-> > >>> On Fri, 2 Nov 2018 00:42:21 +0800
-> > >>> Jianxin Pan <jianxin.pan@amlogic.com> wrote:
-> > >>>        
-> > >>>> +
-> > >>>> +static inline u8 meson_nfc_read_byte(struct mtd_info *mtd)
-> > >>>> +{
-> > >>>> +	struct nand_chip *nand = mtd_to_nand(mtd);
-> > >>>> +	struct meson_nfc *nfc = nand_get_controller_data(nand);
-> > >>>> +	u32 cmd;
-> > >>>> +
-> > >>>> +	cmd = nfc->param.chip_select | NFC_CMD_DRD | 0;
-> > >>>> +	writel(cmd, nfc->reg_base + NFC_REG_CMD);
-> > >>>> +
-> > >>>> +	meson_nfc_drain_cmd(nfc);    
-> > >>>
-> > >>> You probably don't want to drain the FIFO every time you read a byte on
-> > >>> the bus, and I guess the INPUT FIFO is at least as big as the CMD
-> > >>> FIFO, right? If that's the case, you should queue as much DRD cmd as
-> > >>> possible and only sync when the user explicitly requests it or when
-> > >>> the INPUT/READ FIFO is full.
-> > >>>        
-> > >> Register 'NFC_REG_BUF' can holds only 4 bytes, also DRD sends only one
-> > >> nand cycle to read one byte and covers the 1st byte every time reading.
-> > >> i think nfc controller is faster than nand cycle, but really it is not
-> > >> high efficiency when reading so many bytes once.
-> > >> Or use dma command here like read_page and read_page_raw.    
-> > > 
-> > > Yep, that's also an alternative, though you'll have to make sure the
-> > > buffer passed through the nand_op_inst is DMA-safe, and use a bounce
-> > > buffer when that's not the case.
-> > >     
-> > ok, i will try dma here.  
-> 
-> We should probably expose the bounce buf handling as generic helpers at
-> the rawnand level:
-> 
-> void *nand_op_get_dma_safe_input_buf(struct nand_op_instr *instr)
-> {
-> 	void *buf;
-> 
-> 	if (WARN_ON(instr->type != NAND_OP_DATA_IN_INSTR))
-> 		return NULL;
-> 
-> 	if (virt_addr_valid(instr->data.in) &&
-> 	    !object_is_on_stack(instr->data.buf.in))
-> 		return instr->data.buf.in;
-> 
-> 	return kzalloc(instr->data.len, GFP_KERNEL);
-> }
-> 
-> void nand_op_put_dma_safe_input_buf(struct nand_op_instr *instr,
-> 				    void *buf)
-> {
-> 	if (WARN_ON(instr->type != NAND_OP_DATA_IN_INSTR) ||
-> 	    WARN_ON(!buf))
-> 		return;
-> 
-> 	if (buf == instr->data.buf.in)
-> 		return;
-> 
-> 	memcpy(instr->data.buf.in, buf, instr->data.len);
-> 	kfree(buf);
-> }
-> 
-> const void *nand_op_get_dma_safe_output_buf(struct nand_op_instr *instr)
-> {
-> 	void *buf;
-> 
-> 	if (WARN_ON(instr->type != NAND_OP_DATA_OUT_INSTR))
-> 		return NULL;
-> 
-> 	if (virt_addr_valid(instr->data.out) &&
-> 	    !object_is_on_stack(instr->data.buf.out))
-> 		return instr->data.buf.out;
-> 
-> 	return kmemdup(instr->data.buf.out, GFP_KERNEL);
-> }
-> 
-> void nand_op_put_dma_safe_output_buf(struct nand_op_instr *instr,
-> 				    void *buf)
-> {
-> 	if (WARN_ON(instr->type != NAND_OP_DATA_OUT_INSTR) ||
-> 	    WARN_ON(!buf))
-> 		return;
-> 
-> 	if (buf != instr->data.buf.out)
-> 		kfree(buf);
-> }
-
-Not that I am against such function, but maybe they should come with
-comments stating that there is no reliable way to find if a buffer is
-DMA-able at runtime and these are just sanity checks (ie. required, but
-probably not enough). This is my understanding of Wolfram's recent talk
-at ELCE [1]. I suppose using the CONFIG_DMA_API_DEBUG option could help
-more reliably to find such issues.
-
-[1] https://www.youtube.com/watch?v=JDwaMClvV-s
-
-Thanks,
-Miquèl
+Does not sound abnormal to me, we should promote this as a fix for the
+current cycle with an updated changelog.
