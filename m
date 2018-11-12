@@ -2,102 +2,60 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E028C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 13:23:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AEBCC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 13:23:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 080C5223DD
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 13:23:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 080C5223DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 4D7B4223DD
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 13:23:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D7B4223DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729645AbeKLXQr (ORCPT
+        id S1729684AbeKLXQt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 18:16:47 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:14648 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727103AbeKLXQr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 18:16:47 -0500
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id E9208F07630ED;
-        Mon, 12 Nov 2018 21:23:15 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.408.0; Mon, 12 Nov 2018 21:23:06 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     Dave Airlie <airlied@redhat.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        "David Airlie" <airlied@linux.ie>
-CC:     YueHaibing <yuehaibing@huawei.com>,
-        <virtualization@lists.linux-foundation.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] drm/qxl: remove set but not used variables 'driver, qbo'
-Date:   Mon, 12 Nov 2018 13:32:36 +0000
-Message-ID: <1542029556-88107-1-git-send-email-yuehaibing@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+        Mon, 12 Nov 2018 18:16:49 -0500
+Received: from 8bytes.org ([81.169.241.247]:39548 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729648AbeKLXQt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 18:16:49 -0500
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id A2155533; Mon, 12 Nov 2018 14:23:31 +0100 (CET)
+Date:   Mon, 12 Nov 2018 14:23:27 +0100
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Lu Baolu <baolu.lu@linux.intel.com>
+Cc:     David Woodhouse <dwmw2@infradead.org>, ashok.raj@intel.com,
+        Christoph Hellwig <hch@infradead.org>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Sohil Mehta <sohil.mehta@intel.com>
+Subject: Re: [PATCH v2 1/1] iommu/vtd: Cleanup dma_remapping.h header
+Message-ID: <20181112132327.mo5vpunwzsgv6vkm@8bytes.org>
+References: <20181112064008.2102-1-baolu.lu@linux.intel.com>
 MIME-Version: 1.0
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181112064008.2102-1-baolu.lu@linux.intel.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+On Mon, Nov 12, 2018 at 02:40:08PM +0800, Lu Baolu wrote:
+>  arch/x86/kernel/tboot.c                    |  2 +-
+>  drivers/gpu/drm/i915/i915_gem_execbuffer.c |  2 +-
+>  drivers/gpu/drm/i915/intel_display.c       |  2 +-
+>  drivers/gpu/drm/vmwgfx/vmwgfx_drv.c        |  2 +-
+>  drivers/misc/mic/scif/scif_rma.c           |  2 +-
+>  drivers/misc/mic/scif/scif_rma.h           |  2 +-
+>  include/linux/dma_remapping.h              | 58 ----------------------
+>  include/linux/intel-iommu.h                | 49 +++++++++++++++++-
+>  8 files changed, 53 insertions(+), 66 deletions(-)
+>  delete mode 100644 include/linux/dma_remapping.h
 
-drivers/gpu/drm/qxl/qxl_release.c: In function 'qxl_release_fence_buffer_objects':
-drivers/gpu/drm/qxl/qxl_release.c:431:17: warning:
- variable 'qbo' set but not used [-Wunused-but-set-variable]
-
-drivers/gpu/drm/qxl/qxl_release.c:430:24: warning:
- variable 'driver' set but not used [-Wunused-but-set-variable]
-
-'qbo' not used since commit f2c24b83ae90 ("drm/ttm: flip the switch, and convert
-to dma_fence")
-
-And 'driver' never used since introduction in
-8002db6336dd ("qxl: convert qxl driver to proper use for reservations")
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/gpu/drm/qxl/qxl_release.c | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/qxl/qxl_release.c b/drivers/gpu/drm/qxl/qxl_release.c
-index 3813ec1..0a693fe 100644
---- a/drivers/gpu/drm/qxl/qxl_release.c
-+++ b/drivers/gpu/drm/qxl/qxl_release.c
-@@ -427,8 +427,6 @@ void qxl_release_fence_buffer_objects(struct qxl_release *release)
- 	struct ttm_buffer_object *bo;
- 	struct ttm_bo_global *glob;
- 	struct ttm_bo_device *bdev;
--	struct ttm_bo_driver *driver;
--	struct qxl_bo *qbo;
- 	struct ttm_validate_buffer *entry;
- 	struct qxl_device *qdev;
- 
-@@ -449,14 +447,12 @@ void qxl_release_fence_buffer_objects(struct qxl_release *release)
- 		       release->id | 0xf0000000, release->base.seqno);
- 	trace_dma_fence_emit(&release->base);
- 
--	driver = bdev->driver;
- 	glob = bdev->glob;
- 
- 	spin_lock(&glob->lru_lock);
- 
- 	list_for_each_entry(entry, &release->bos, head) {
- 		bo = entry->bo;
--		qbo = to_qxl_bo(bo);
- 
- 		reservation_object_add_shared_fence(bo->resv, &release->base);
- 		ttm_bo_add_to_lru(bo);
-
-
+Applied, thanks.
 
