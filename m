@@ -2,223 +2,73 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE3ABC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:19:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBB4DC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:21:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CDD02245E
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:19:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FeYlWIgH";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QxlE3Ffs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CDD02245E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 75A1C2245E
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:21:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75A1C2245E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730023AbeKMDN5 (ORCPT
+        id S1729786AbeKMDQA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 22:13:57 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:43554 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728149AbeKMDN5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 22:13:57 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 8658A60866; Mon, 12 Nov 2018 17:19:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542043186;
-        bh=kusS9hfRkrzE/GpLpfoiuMBZ8mMfyBL4lFU2F/JnRKI=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=FeYlWIgHbiD3uk4pQRVbvRjX9rbqkH8hMSgOV0xIJ4CKx/jBqhrihIP4s/pUdrlBM
-         1mC9xL6aU6SyoA2e5+f/6pUROhQADz40zA5/wzNCGKFMHIHHHe8UlcgFFOsvmCuRnQ
-         S2qqyxFN3loDxwIKoLA/y20xIuMuoI+6HT3uG9fY=
-Received: from [192.168.0.104] (unknown [183.83.73.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Mon, 12 Nov 2018 22:16:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50684 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727185AbeKMDQA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 22:16:00 -0500
+Received: from vmware.local.home (unknown [64.114.255.114])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: vbadigan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id F329560600;
-        Mon, 12 Nov 2018 17:19:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542043185;
-        bh=kusS9hfRkrzE/GpLpfoiuMBZ8mMfyBL4lFU2F/JnRKI=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=QxlE3FfsEhewgxX76/qq243oHndFGgCxkwmsdRvhQpDPg5llQWRGq3QbbWlKsDxIa
-         OZ2kICYrNt6vfEugv3Lf/YeL1ECbqqCeZVJh7nJhSpY5ROk6jpjf99iSeUkBCJg5ys
-         VngnoLVAB/Uqo16gjQH+8oD/4q2k2YXksq93PKhY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F329560600
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vbadigan@codeaurora.org
-Subject: Re: [PATCH V3 1/3] mmc: sdhci: Allow platform controlled voltage
- switching
-To:     Evan Green <evgreen@chromium.org>
-Cc:     adrian.hunter@intel.com, Ulf Hansson <ulf.hansson@linaro.org>,
-        robh+dt@kernel.org, Doug Anderson <dianders@google.com>,
-        asutoshd@codeaurora.org, riteshh@codeaurora.org,
-        stummala@codeaurora.org, sayali <sayalil@codeaurora.org>,
-        linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        vviswana@codeaurora.org, linux-kernel@vger.kernel.org
-References: <1539004739-32060-1-git-send-email-vbadigan@codeaurora.org>
- <1539004739-32060-2-git-send-email-vbadigan@codeaurora.org>
- <CAE=gft631u+ie3PRFkc5t1f3iYwuhbxDbxKUqvdZS5cFJaJbsA@mail.gmail.com>
-From:   Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
-Message-ID: <dcb4a579-b308-76c0-7cc3-22bb95147470@codeaurora.org>
-Date:   Mon, 12 Nov 2018 22:49:36 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E57222419;
+        Mon, 12 Nov 2018 17:21:49 +0000 (UTC)
+Date:   Mon, 12 Nov 2018 12:21:48 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Alexander Popov <alex.popov@linux.com>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        kernel-hardening@lists.openwall.com,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Ingo Molnar <mingo@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Joerg Roedel <joro@8bytes.org>, Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Jan Kara <jack@suse.cz>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] stackleak: Disable ftrace for stackleak.c
+Message-ID: <20181112122148.0fab4c7f@vmware.local.home>
+In-Reply-To: <31b45d77-7b49-3984-a1e5-17993f50eee3@linux.com>
+References: <1541887530-16610-1-git-send-email-alex.popov@linux.com>
+        <20181110183011.2290fc20@gandalf.local.home>
+        <eeb7f5ee-1e2e-d37b-cca2-e0a29826e8eb@linux.com>
+        <20181111205351.1874bb1e@vmware.local.home>
+        <20181112115058.39e98750750c91eeb349cfdf@kernel.org>
+        <31b45d77-7b49-3984-a1e5-17993f50eee3@linux.com>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <CAE=gft631u+ie3PRFkc5t1f3iYwuhbxDbxKUqvdZS5cFJaJbsA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 12 Nov 2018 19:51:00 +0300
+Alexander Popov <alex.popov@linux.com> wrote:
 
-On 10/17/2018 3:39 AM, Evan Green wrote:
-> On Mon, Oct 8, 2018 at 6:22 AM Veerabhadrarao Badiganti
-> <vbadigan@codeaurora.org> wrote:
->> From: Vijay Viswanath <vviswana@codeaurora.org>
->>
->> Some controllers can have internal mechanism to inform the SW that it
->> is ready for voltage switching. For such controllers, changing voltage
->> before the HW is ready can result in various issues.
->>
->> During setup/cleanup of host, check whether regulator enable/disable
->> was already done by platform driver.
->>
->> Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
->> Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
->> ---
->>   drivers/mmc/host/sdhci.c | 32 +++++++++++++++++++-------------
->>   drivers/mmc/host/sdhci.h |  1 +
->>   2 files changed, 20 insertions(+), 13 deletions(-)
->>
->> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
->> index 99bdae5..ea7ce1d 100644
->> --- a/drivers/mmc/host/sdhci.c
->> +++ b/drivers/mmc/host/sdhci.c
->> @@ -3616,6 +3616,7 @@ int sdhci_setup_host(struct sdhci_host *host)
->>          unsigned int override_timeout_clk;
->>          u32 max_clk;
->>          int ret;
->> +       bool enable_vqmmc = false;
->>
->>          WARN_ON(host == NULL);
->>          if (host == NULL)
->> @@ -3629,9 +3630,12 @@ int sdhci_setup_host(struct sdhci_host *host)
->>           * the host can take the appropriate action if regulators are not
->>           * available.
->>           */
->> -       ret = mmc_regulator_get_supply(mmc);
->> -       if (ret)
->> -               return ret;
->> +       if (!mmc->supply.vqmmc) {
->> +               ret = mmc_regulator_get_supply(mmc);
->> +               if (ret)
->> +                       return ret;
->> +               enable_vqmmc  = true;
->> +       }
-> Did you not like my suggestion in the previous patch of changing
-> mmc_regulator_get_supply to only get supplies that were not set
-> previously? What you have here is almost the same, except you've got
-> this weird coupling where if vqmmc is already present, you implicitly
-> skip looking at vmmc entirely (since mmc_regulator_get_supply does
-> more than just get vqmmc).
+> By the way, are there any other tracing/instrumentation mechanisms that should
+> be disabled?
 
-sure. Will update mmc_regulator_get_supply() as you suggested.
+ftrace and kprobes are pretty much the only ones that currently do self
+modification of code all over the kernel. Kprobes even more so than
+ftrace.
 
->>          DBG("Version:   0x%08x | Present:  0x%08x\n",
->>              sdhci_readw(host, SDHCI_HOST_VERSION),
->> @@ -3880,7 +3884,15 @@ int sdhci_setup_host(struct sdhci_host *host)
->>                  mmc->caps |= MMC_CAP_NEEDS_POLL;
->>
->>          if (!IS_ERR(mmc->supply.vqmmc)) {
->> -               ret = regulator_enable(mmc->supply.vqmmc);
->> +               if (enable_vqmmc) {
->> +                       ret = regulator_enable(mmc->supply.vqmmc);
->> +                       if (ret) {
->> +                               pr_warn("%s: Failed to enable vqmmc regulator: %d\n",
->> +                                       mmc_hostname(mmc), ret);
->> +                               mmc->supply.vqmmc = ERR_PTR(-EINVAL);
->> +                       }
->> +                       host->vqmmc_enabled = !ret;
->> +               }
->>
->>                  /* If vqmmc provides no 1.8V signalling, then there's no UHS */
->>                  if (!regulator_is_supported_voltage(mmc->supply.vqmmc, 1700000,
->> @@ -3893,12 +3905,6 @@ int sdhci_setup_host(struct sdhci_host *host)
->>                  if (!regulator_is_supported_voltage(mmc->supply.vqmmc, 2700000,
->>                                                      3600000))
->>                          host->flags &= ~SDHCI_SIGNALING_330;
->> -
->> -               if (ret) {
->> -                       pr_warn("%s: Failed to enable vqmmc regulator: %d\n",
->> -                               mmc_hostname(mmc), ret);
->> -                       mmc->supply.vqmmc = ERR_PTR(-EINVAL);
->> -               }
->>          }
->>
->>          if (host->quirks2 & SDHCI_QUIRK2_NO_1_8_V) {
->> @@ -4136,7 +4142,7 @@ int sdhci_setup_host(struct sdhci_host *host)
->>          return 0;
->>
->>   unreg:
->> -       if (!IS_ERR(mmc->supply.vqmmc))
->> +       if (host->vqmmc_enabled)
->>                  regulator_disable(mmc->supply.vqmmc);
->>   undma:
->>          if (host->align_buffer)
->> @@ -4154,7 +4160,7 @@ void sdhci_cleanup_host(struct sdhci_host *host)
->>   {
->>          struct mmc_host *mmc = host->mmc;
->>
->> -       if (!IS_ERR(mmc->supply.vqmmc))
->> +       if (host->vqmmc_enabled)
->>                  regulator_disable(mmc->supply.vqmmc);
->>
->>          if (host->align_buffer)
->> @@ -4287,7 +4293,7 @@ void sdhci_remove_host(struct sdhci_host *host, int dead)
->>
->>          tasklet_kill(&host->finish_tasklet);
->>
->> -       if (!IS_ERR(mmc->supply.vqmmc))
->> +       if (host->vqmmc_enabled)
->>                  regulator_disable(mmc->supply.vqmmc);
->>
->>          if (host->align_buffer)
->> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
->> index b001cf4..3c28152 100644
->> --- a/drivers/mmc/host/sdhci.h
->> +++ b/drivers/mmc/host/sdhci.h
->> @@ -524,6 +524,7 @@ struct sdhci_host {
->>          bool pending_reset;     /* Cmd/data reset is pending */
->>          bool irq_wake_enabled;  /* IRQ wakeup is enabled */
->>          bool v4_mode;           /* Host Version 4 Enable */
->> +       bool vqmmc_enabled;     /* Vqmmc is enabled */
-> I still don't love this, since it doesn't mean what it says. Everyone
-> else that has a vqmmc_enabled member uses it to actually mean "vqmmc
-> is enabled", but this doesn't mean that. For example, you don't clear
-> this when you disable the regulator in patch 3, so this would be set
-> even if the regulator is disabled, and you don't set it when sdhci
-> enables the regulator, so the regulator is on when this flag is not
-> set.
->
-> At the very least, I think a rename is in order. I'm struggling with
-> the rename, since
-> "vqmmc_pltfrm_enable_but_feel_free_to_call_set_voltage_anywhere" is
-> too long. I guess vqmmc_pltfrm_enabled is the best I've got for now.
-
-Sure. Will rename it.
-
->>          struct mmc_request *mrqs_done[SDHCI_MAX_MRQS];  /* Requests done */
->>          struct mmc_command *cmd;        /* Current command */
->> --
->> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
->> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
->>
-
+-- Steve
