@@ -2,155 +2,176 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2759C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 20:11:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D8F5C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 20:11:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 911CE22504
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 20:11:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B223224E0
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 20:11:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BRVtqkKt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 911CE22504
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EU/53N/P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B223224E0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729394AbeKMGGH (ORCPT
+        id S1730351AbeKMGGZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 01:06:07 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:42000 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725834AbeKMGGH (ORCPT
+        Tue, 13 Nov 2018 01:06:25 -0500
+Received: from mail-ed1-f42.google.com ([209.85.208.42]:40053 "EHLO
+        mail-ed1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725834AbeKMGGY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 01:06:07 -0500
-Received: by mail-io1-f68.google.com with SMTP id h19-v6so7128148iog.9
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 12:11:19 -0800 (PST)
+        Tue, 13 Nov 2018 01:06:24 -0500
+Received: by mail-ed1-f42.google.com with SMTP id d3so7854292edx.7;
+        Mon, 12 Nov 2018 12:11:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=G4cJi4rjeVqw5//2Rb5uT8ty823OadA78ByrL+zVCq4=;
-        b=BRVtqkKtVUhUJtS3ny6fqbVF7eANd2Sv9248fhNoHUvyRsOSPzEzI8jBbWYZChjJBA
-         w9aAPpYyIuy+N37SZhaAId1ke0ArICaPnHjVE8EkZO9BkFnyJuRxXysASJuK/Pq6kZOC
-         WxGW3fA8ucV586MtpiPQimsTsAyIdY7poFn8Csfsm7M6g1ZZHqW2KY+qpQOfX7cyBBkl
-         lPWOSE8mJw279+a1qW1m+my3FpnE0f+h9hteQK4feSAl24uKYqIWv9ixrVfdERg/WGqr
-         5QWOy0PhmHEE8jPBrrmOG0WlMUJfkGuC7J0pbu2B9mJNUXXq+V30SGy+g67DHIPqIIj6
-         XcXg==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=xU8J2F2zBaN0j+XnjETUs+1pKeb65Q4acGoxUbM7zkQ=;
+        b=EU/53N/PJwQ2KvfbdcXv2KfAJwGINVnEH3iVWLE9UbCzXvCGChHrmjRdnZX6AUU46x
+         PtuLCj2cD3Lxv/K79csw1X+gHfZgniWWryU42OnGne3DHL1MTjeCupnQWmCEHKZ/QH2B
+         DgdvxFhKDnHVEt0th7Fh/cuiREFeF/CREx4IAMuZCxmlVr72uJEhBIH44T1qIq8a6FgL
+         fcWpnlmA6G/otAG3MYbiJ+wIVeI+rpmgzOkcq/NQSz/OysxlFSsK6/oX9bo1VIHHEL8c
+         nCVhXQv8S/8/Ii1hvHDhuBx0Ux72rhqazYpOS9ajb15EyJqEMOlVbA1nVqssS9k8rnQO
+         e+KA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=G4cJi4rjeVqw5//2Rb5uT8ty823OadA78ByrL+zVCq4=;
-        b=hleoUAHu0Vb3t9SS2MOFImzIPg4/ex8TM8ZlV4SIGJKSrHnaNKUfdSK4vZFGuXPv9U
-         qb9jvYHkVEDZ1WNNNO+tA6v6qrslScc0H1geD/Q8OfxMi4jXuyl3iiOFXYLf+bRRcF1q
-         RgghGWlR5OOUwZ4Ydm09+URVQT9LyV5n8i809QkaNCZI6Vtv37TgnDzWT3obT74ch4R5
-         T807QLCYjvZDK+gpioCsBRKS6n5zC6F38zYO68g36A8hBF6Ii3qi8fI31e31lDC8wars
-         kWgJb7LkR9TvxIf+/7peEydGR+cdujWhL4jryLqnF5NGGaB9jmwKGjPAMNqlMGco2Vjb
-         zGPg==
-X-Gm-Message-State: AGRZ1gIlaMDqZ3DZG+HhGNzoymNGZH95OkcAqRFcCXOsHP6/dJWJ2Z5n
-        bQ2UpND6t58TIncQSbJ7QRn7oXYn
-X-Google-Smtp-Source: AJdET5ftTkgofk9MYsw+ngKOJkHQpBaIkB88cA6EZRl+qgYLxIVWRAYIpnpS0zFtX4lnFgCOiQP31w==
-X-Received: by 2002:a6b:3fc5:: with SMTP id m188-v6mr1938951ioa.188.1542053479466;
-        Mon, 12 Nov 2018 12:11:19 -0800 (PST)
-Received: from rdeal-VirtualBox (cpe-174-98-59-17.cinci.res.rr.com. [174.98.59.17])
-        by smtp.gmail.com with ESMTPSA id a185-v6sm4994857itc.14.2018.11.12.12.11.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 12 Nov 2018 12:11:18 -0800 (PST)
-Date:   Fri, 9 Nov 2018 22:48:49 -0500
-From:   Robert Deal <robert.edward.deal@gmail.com>
-To:     Rob Springer <rspringer@google.com>,
-        Todd Poynor <toddpoynor@google.com>,
-        Ben Chan <benchan@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] help conform gasket page table to style
-Message-ID: <20181110034849.GA18111@rdeal-VirtualBox>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=xU8J2F2zBaN0j+XnjETUs+1pKeb65Q4acGoxUbM7zkQ=;
+        b=tzWMsNdRNAqGrQCODJxAslj5iZwZLqLHngNkNEcUx4Y94l3rrgbXG5CUTzPgocLIvG
+         uOfBS26aLT9RZ+mc4t+V6T8gGhELItvQVrHlGeLsJI4ZVLig82ZXV9rjERO3aSaKYsb0
+         tNkgiIM20b/+3D7SedMF98+9gdOMwWb7NfNE1pyfR8oEk/g7frrogvix95nlLgsAyStu
+         YHkfyyFb+O7ORZsSbt4YnTtXnP5UnQGPaszMSxSIseHymQSnvuO6e45q6G9OdSyeTqqa
+         qOdTCZJTMWGUysXR2vyTpLGabfKqwhKbRNfl0hp8dTDdCSzBHRXqt0cdN8lYaU/KO+Po
+         Gynw==
+X-Gm-Message-State: AGRZ1gJgQd4wm5ETWpZr0Z+7gkArsu7V4IAPpo+LbOhAH2P46yR0IWOa
+        L4RZRAe4fV1o+/6f7tmrRrU=
+X-Google-Smtp-Source: AJdET5fQmZxECumddbowXhTy391NQUHpf+OJKHUolUPyjB9fS+mGPi+ga7iR5Fi/FrUZ5PF6j5M2ow==
+X-Received: by 2002:a50:ad0b:: with SMTP id y11mr9672328edc.113.1542053495781;
+        Mon, 12 Nov 2018 12:11:35 -0800 (PST)
+Received: from [192.168.1.18] (bgt69.neoplus.adsl.tpnet.pl. [83.28.83.69])
+        by smtp.gmail.com with ESMTPSA id gz20-v6sm1234373ejb.56.2018.11.12.12.11.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 12 Nov 2018 12:11:35 -0800 (PST)
+Subject: Re: [PATCH 02/24] leds: core: Add support for composing LED class
+ device names
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, robh@kernel.org,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Daniel Mack <daniel@zonque.org>, Dan Murphy <dmurphy@ti.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Oleh Kravchenko <oleg@kaa.org.ua>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Simon Shields <simon@lineageos.org>,
+        Xiaotong Lu <xiaotong.lu@spreadtrum.com>
+References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
+ <1541542052-10081-3-git-send-email-jacek.anaszewski@gmail.com>
+ <20181111120234.GA28794@amd> <a640167b-3a3e-daea-b377-6e82b653c5e8@gmail.com>
+ <20181111201605.GA20160@amd> <57b77d4e-39a0-aaf2-5952-c2c25dc58593@gmail.com>
+ <20181112103513.GB5695@amd> <662c02ba-455b-e2bf-a5e2-ae3933161894@gmail.com>
+ <20181112190554.GA13959@amd>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <b167cfc1-e392-eec6-6455-5983dc1c7212@gmail.com>
+Date:   Mon, 12 Nov 2018 21:11:32 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181112190554.GA13959@amd>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Formating arguments in gasket_page_table.c functions to conform to
-the kernel style.
+On 11/12/2018 08:05 PM, Pavel Machek wrote:
+> Hi!
+> 
+>>>>> My system looks like this:
+>>>>>
+>>>>> input16::capslock    tpacpi::bay_active    tpacpi::standby
+>>>>> input16::numlock     tpacpi::dock_active   tpacpi::thinklight
+>>>>> input16::scrolllock  tpacpi::dock_batt	      tpacpi::thinkvantage
+>>>>> input5::capslock     tpacpi::dock_status1  tpacpi::unknown_led
+>>>>> input5::numlock      tpacpi::dock_status2  tpacpi::unknown_led2
+>>>>> input5::scrolllock   tpacpi:green:batt	      tpacpi::unknown_led3
+> 
+>>> But it is not just for backwards compatibility. See my examples above,
+>>> it is needed to tell which device the LED is asociated with, and it is
+>>> absolutely required for USB devices (for example).
+>>
+>> For USB devices there is already ledtrig-usbport available, which
+>> provides sysfs interface for defining and reading the usb ports,
+>> the status of which the LED indicates. Since the USB devices can be
+>> attached/removed dynamically, it would be impossible to reflect
+>> the associations in the LED class device name.
+> 
+> I'm not talking USB activity. I'm talking USB devices with LEDs on
+> them, like for example keyboards.
+> 
+> Please take a look at example above. input16::numlock ;
+> input5::numlock . You absolutely need device part.
 
-This is my first patch and I apologise in advance if this email and or patch
-is not correct, or if i sent it to the wrong maintainers.
+It would be redundant since there is "device" symbolic link
+created in given LED class device sysfs directory, pointing to the
+corresponding input device directory, like in case of my USB keyboard:
 
-Signed-off-by: Robert Deal <robert.edward.deal@gmail.com>
----
- drivers/staging/gasket/gasket_page_table.c | 24 ++++++++++------------
- 1 file changed, 11 insertions(+), 13 deletions(-)
+#/sys/class/leds/input5::scrolllock$ ls -l
+total 0
+-rw-r--r-- 1 root root 4096 Nov 12 20:22 brightness
+lrwxrwxrwx 1 root root    0 Nov 12 20:22 device -> ../../input5
+-r--r--r-- 1 root root 4096 Nov 12 20:22 max_brightness
+drwxr-xr-x 2 root root    0 Nov 12 20:22 power
+lrwxrwxrwx 1 root root    0 Nov 12 20:04 subsystem ->
+../../../../../../../../../../../class/leds
+-rw-r--r-- 1 root root 4096 Nov 12 20:22 trigger
 
-diff --git a/drivers/staging/gasket/gasket_page_table.c b/drivers/staging/gasket/gasket_page_table.c
-index f5253ba9a430..26755d9ca41d 100644
---- a/drivers/staging/gasket/gasket_page_table.c
-+++ b/drivers/staging/gasket/gasket_page_table.c
-@@ -1088,9 +1088,9 @@ void gasket_page_table_reset(struct gasket_page_table *pg_tbl)
- }
- 
- /* See gasket_page_table.h for description. */
--int gasket_page_table_lookup_page(
--	struct gasket_page_table *pg_tbl, ulong dev_addr, struct page **ppage,
--	ulong *poffset)
-+int gasket_page_table_lookup_page(struct gasket_page_table *pg_tbl,
-+				  ulong dev_addr, struct page **ppage,
-+				  ulong *poffset)
- {
- 	uint page_num;
- 	struct gasket_page_table_entry *pte;
-@@ -1134,9 +1134,9 @@ int gasket_page_table_lookup_page(
- }
- 
- /* See gasket_page_table.h for description. */
--bool gasket_page_table_are_addrs_bad(
--	struct gasket_page_table *pg_tbl, ulong host_addr, ulong dev_addr,
--	ulong bytes)
-+bool gasket_page_table_are_addrs_bad(struct gasket_page_table *pg_tbl,
-+				     ulong host_addr, ulong dev_addr,
-+				     ulong bytes)
- {
- 	if (host_addr & (PAGE_SIZE - 1)) {
- 		dev_err(pg_tbl->device,
-@@ -1150,8 +1150,8 @@ bool gasket_page_table_are_addrs_bad(
- EXPORT_SYMBOL(gasket_page_table_are_addrs_bad);
- 
- /* See gasket_page_table.h for description. */
--bool gasket_page_table_is_dev_addr_bad(
--	struct gasket_page_table *pg_tbl, ulong dev_addr, ulong bytes)
-+bool gasket_page_table_is_dev_addr_bad(struct gasket_page_table *pg_tbl,
-+				       ulong dev_addr, ulong bytes)
- {
- 	uint num_pages = bytes / PAGE_SIZE;
- 
-@@ -1226,9 +1226,8 @@ int gasket_page_table_system_status(struct gasket_page_table *page_table)
- }
- 
- /* Record the host_addr to coherent dma memory mapping. */
--int gasket_set_user_virt(
--	struct gasket_dev *gasket_dev, u64 size, dma_addr_t dma_address,
--	ulong vma)
-+int gasket_set_user_virt(struct gasket_dev *gasket_dev, u64 size,
-+			 dma_addr_t dma_address, ulong vma)
- {
- 	int j;
- 	struct gasket_page_table *pg_tbl;
-@@ -1346,8 +1345,7 @@ int gasket_free_coherent_memory(struct gasket_dev *gasket_dev, u64 size,
- }
- 
- /* Release all coherent memory. */
--void gasket_free_coherent_memory_all(
--	struct gasket_dev *gasket_dev, u64 index)
-+void gasket_free_coherent_memory_all(struct gasket_dev *gasket_dev, u64 index)
- {
- 	if (!gasket_dev->page_table[index])
- 		return;
+
+>>> And even for "embedded" stuff like routers, we want eth0:green:link,
+>>> eth0:yellow:activity and not some kind of hack.
+>>
+>> eth0 is not something you can be certain of at the stage of defining DT
+>> node.
+> 
+> In the common case DT is used for, yes, you can, because whole system
+> is in one box.
+
+Only when all kernel modules are built-in.
+
+> (And really DT does not matter. We are talking kernel <-> user
+> interface here).
+
+OK, I was fixed on the devicename understood as LED controller name.
+
+
+>>> Ideally, colors would come from fixed list, functions would come from
+>>> fixed list, and device part would come from name used elsewhere in the
+>>> kernel.
+>>>
+>>> (And yes, it probably means we should have something in device tree to
+>>> link LED to its device. device = "name" would be good start...)
+>>
+>> Why would you need such link?
+> 
+> Because userspace needs that information?
+> 
+> Say you have raid array, with "error" leds for each drive (your list
+> already contains "hdderr"). Now userland detects problem with hdparm
+> on /dev/sdi. It would like to turn on corresponding LED.
+> 
+> How do you propose we do that?
+
+Similarly as in case of USB keyboard.
+
 -- 
-2.17.1
-
+Best regards,
+Jacek Anaszewski
