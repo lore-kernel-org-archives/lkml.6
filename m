@@ -2,140 +2,89 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37638C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:12:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1744C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:15:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDFC421722
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:12:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lZkOfhga"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDFC421722
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 7F6E3223AE
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:15:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F6E3223AE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728643AbeKLSE0 (ORCPT
+        id S1728523AbeKLSH3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 13:04:26 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:45876 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727996AbeKLSEZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 13:04:25 -0500
-Received: by mail-oi1-f196.google.com with SMTP id p144-v6so6436030oic.12
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 00:12:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nzbsk/bOFk8/i7j3o7JZPo8TdZ/5fbTkMiMFdETMO5Q=;
-        b=lZkOfhgal5Y/eHaqtLQLq0ocXIebiubf3vMGLRwVELlJbe0/IKSHSSu+HqYINMBhyx
-         NntHfuhsbMxtX5K0XPfdPSQafi3ZAH38zM57snuSpq76q7RKTrQPE5jS+DO1dbt7i5nd
-         xu0JA7tqgxwukNowhbzJ0abQXS4N9WekU0az4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nzbsk/bOFk8/i7j3o7JZPo8TdZ/5fbTkMiMFdETMO5Q=;
-        b=hmREygh+JPe7IPEzUD6/c4mTVyTkAoXGiiG4JFp9TBh/jTufKvSIggYgb92mWWAOtj
-         yV6NDh73/H7tHBCCs0Wi33HNZkbVz2lfErJB2NuUnYItPGaKy1kzFDc39M5lTkL5sxp7
-         H0dKqvOa2w4JAjAVXy3it12beyYcYeLk16XrqLx9a2WJwxH129vadMTDIsxS+09ZU1fY
-         6TYDrP+L22TA8xx4onZq5V++GKvdGu7hlFPfrh25UmRc9jAlAPVD8q7p/oDqMOg7X2BY
-         X3dHRsjuaQZ6Gd8PLENzN6RKD8dYebFcblr9gUvqtGQuyOZWfuw30Xlk++eL6vMjKRWZ
-         6OQA==
-X-Gm-Message-State: AGRZ1gJBocQv6+WsW1vMkHsLU3ySvJefInNyYtRTcxc4299emJyTuXvs
-        dLcb6M0xO/6Eo0Q3UFg7yx1csEEcG+G+1g==
-X-Google-Smtp-Source: AJdET5fWVobTF8wRfEtFA17XUc0qIJ8uip0OCOsidL/GUYiuTdJ5cXAIkKCGdMUPlb5uw5sT6dOjOA==
-X-Received: by 2002:aca:4a10:: with SMTP id x16-v6mr9906814oia.11.1542010340047;
-        Mon, 12 Nov 2018 00:12:20 -0800 (PST)
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com. [209.85.167.180])
-        by smtp.gmail.com with ESMTPSA id j197-v6sm6605209oih.22.2018.11.12.00.12.18
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 12 Nov 2018 00:12:18 -0800 (PST)
-Received: by mail-oi1-f180.google.com with SMTP id v198-v6so6475092oif.2
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 00:12:18 -0800 (PST)
-X-Received: by 2002:aca:6ad3:: with SMTP id f202-v6mr4092oic.50.1542010338068;
- Mon, 12 Nov 2018 00:12:18 -0800 (PST)
+        Mon, 12 Nov 2018 13:07:29 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:42000 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727296AbeKLSH2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 13:07:28 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3AA0030832EE;
+        Mon, 12 Nov 2018 08:15:23 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.34.27.30])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 2EDED5C1B4;
+        Mon, 12 Nov 2018 08:15:18 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Mon, 12 Nov 2018 09:15:22 +0100 (CET)
+Date:   Mon, 12 Nov 2018 09:15:18 +0100
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Chanho Min <chanho.min@lge.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Christian Brauner <christian@brauner.io>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Seungho Park <seungho1.park@lge.com>,
+        Inkyu Hwang <inkyu.hwang@lge.com>,
+        Donghwan Jung <donghwan.jung@lge.com>,
+        Jongsung Kim <neidhard.kim@lge.com>
+Subject: Re: [PATCH v2] exec: make de_thread() freezable
+Message-ID: <20181112081517.GA23178@redhat.com>
+References: <1541994885-20059-1-git-send-email-chanho.min@lge.com>
 MIME-Version: 1.0
-References: <1538222432-25894-1-git-send-email-sgorle@codeaurora.org>
- <1538222432-25894-6-git-send-email-sgorle@codeaurora.org> <a331a717-199d-6d6c-c88d-54f911b942d4@linaro.org>
-In-Reply-To: <a331a717-199d-6d6c-c88d-54f911b942d4@linaro.org>
-From:   Alexandre Courbot <acourbot@chromium.org>
-Date:   Mon, 12 Nov 2018 17:12:06 +0900
-X-Gmail-Original-Message-ID: <CAPBb6MVio_kYK-P+eASFMzdxbvBMWwQC7-ZjPxP3aaqpMsnEdA@mail.gmail.com>
-Message-ID: <CAPBb6MVio_kYK-P+eASFMzdxbvBMWwQC7-ZjPxP3aaqpMsnEdA@mail.gmail.com>
-Subject: Re: [PATCH v1 5/5] media: venus: update number of bytes used field
- properly for EOS frames
-To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc:     sgorle@codeaurora.org, Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, vgarodia@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1541994885-20059-1-git-send-email-chanho.min@lge.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Mon, 12 Nov 2018 08:15:23 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stan,
-
-On Thu, Nov 8, 2018 at 7:16 PM Stanimir Varbanov
-<stanimir.varbanov@linaro.org> wrote:
+On 11/12, Chanho Min wrote:
 >
-> Hi,
->
-> On 9/29/18 3:00 PM, Srinu Gorle wrote:
-> > - In video decoder session, update number of bytes used for
-> >   yuv buffers appropriately for EOS buffers.
-> >
-> > Signed-off-by: Srinu Gorle <sgorle@codeaurora.org>
-> > ---
-> >  drivers/media/platform/qcom/venus/vdec.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> NACK, that was already discussed see:
->
-> https://patchwork.kernel.org/patch/10630411/
+> @@ -1083,7 +1084,7 @@ static int de_thread(struct task_struct *tsk)
+>  	while (sig->notify_count) {
+>  		__set_current_state(TASK_KILLABLE);
+>  		spin_unlock_irq(lock);
+> -		schedule();
+> +		freezable_schedule();
+>  		if (unlikely(__fatal_signal_pending(tsk)))
+>  			goto killed;
+>  		spin_lock_irq(lock);
+> @@ -1111,7 +1112,7 @@ static int de_thread(struct task_struct *tsk)
+>  			__set_current_state(TASK_KILLABLE);
+>  			write_unlock_irq(&tasklist_lock);
+>  			cgroup_threadgroup_change_end(tsk);
+> -			schedule();
+> +			freezable_schedule();
+>  			if (unlikely(__fatal_signal_pending(tsk)))
+>  				goto killed;
+>  		}
 
-I believe you are referring to this discussion?
+Thanks, looks good to me.
 
-https://lkml.org/lkml/2018/10/2/302
+Acked-by: Oleg Nesterov <oleg@redhat.com>
 
-In this case, with https://patchwork.kernel.org/patch/10630411/
-applied, I am seeing the troublesome case of having the last (empty)
-buffer being returned with a payload of obs_sz, which I believe is
-incorrect. The present patch seems to restore the correct behavior.
-
-An alternative would be to set the payload as follows:
-
-vb2_set_plane_payload(vb, 0, bytesused);
-
-This works for SDM845, but IIRC we weren't sure that this would
-display the correct behavior with all firmware versions?
-
->
-> >
-> > diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-> > index 311f209..a48eed1 100644
-> > --- a/drivers/media/platform/qcom/venus/vdec.c
-> > +++ b/drivers/media/platform/qcom/venus/vdec.c
-> > @@ -978,7 +978,7 @@ static void vdec_buf_done(struct venus_inst *inst, unsigned int buf_type,
-> >
-> >               if (vbuf->flags & V4L2_BUF_FLAG_LAST) {
-> >                       const struct v4l2_event ev = { .type = V4L2_EVENT_EOS };
-> > -
-> > +                     vb->planes[0].bytesused = bytesused;
-> >                       v4l2_event_queue_fh(&inst->fh, &ev);
-> >               }
-> >       } else {
-> >
->
-> --
-> regards,
-> Stan
