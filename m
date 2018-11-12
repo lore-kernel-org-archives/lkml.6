@@ -2,117 +2,366 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A2A6C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:41:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 396F1C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:44:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2E3622504
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:41:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB05522504
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:44:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="KTV4uo5X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2E3622504
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="othKJmlK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB05522504
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730250AbeKMEfn (ORCPT
+        id S1730261AbeKMEi5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 23:35:43 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42616 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727247AbeKMEfm (ORCPT
+        Mon, 12 Nov 2018 23:38:57 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:45427 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727530AbeKMEi4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 23:35:42 -0500
-Received: by mail-wr1-f68.google.com with SMTP id u5-v6so5238615wrn.9
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 10:41:15 -0800 (PST)
+        Mon, 12 Nov 2018 23:38:56 -0500
+Received: by mail-qk1-f193.google.com with SMTP id d135so15110935qkc.12;
+        Mon, 12 Nov 2018 10:44:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=iuAX5TYkA3a3jJaJm+03pdZzSpJ7OiC/CynShEo+Iy4=;
-        b=KTV4uo5X+KCYBd7YptF9gsa7JNL2YfLnmQcAP7xvFTxUqVrkqUdvc48uGn9ZGOeitp
-         D7gN7PURRLA7QN4NU5UQcL5pZDF43JDUZ0biRGlsE1RNA43Z5/ckQuw1aBtnHopGHIhD
-         71mfa/IpcTpUAl3IBbJdQAMjH4aeiEKTkhzxwNlWfKJZG2CgwZ5GOlK9VSSfSlSA0vzY
-         osWR6RUB+wKfs2x5tctSCcBV5AlwMqKifZTpK8szli7CX7CIdayHgE5bRnB062dNpFzF
-         em6cX3W8qZggiQsnkzLWqWnMcmwk2UBlJnW5RugH5M8ZIS80tmlAzsSSJW3g4efw+Dbw
-         wsWg==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=e1DVwQEiQVZvUa1rYsGOrhj0Kcpt+WtrHl52JQz/N4U=;
+        b=othKJmlKte43454ldG7dz/VLqcnA1/AGGUwhQSqemhr6e29JIMOGay3XNBm2nCzqZf
+         7oKhyO99DbPZ+wQoUD93gwoQwiWqAigpsn0OR3G+cRof2eC81F10sFZyrZJpmKAqslOU
+         QfDT2T+eFXdkdoPzQREAS5NmZDIEtcVcRYcals2YhfDeUqCC5VEHvUJGEE46j2L7deW+
+         9CS9Av90d4J9ZjzKoBPNU49SxlP18bfMJHEWCbI32gK+3gYT6YDE/ubaAICGAm+UN7yJ
+         GubhTQhVnsFdB8xn9KS5iwajgYLeeh9XRZQjuHZUX6ECbFAn3L8xZrbcd5/5/DTrKRWJ
+         mssg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=iuAX5TYkA3a3jJaJm+03pdZzSpJ7OiC/CynShEo+Iy4=;
-        b=hmWS1ve798jztQxqSAVMyAHItCIvu7AewuJC0mS/q1tiK+KDfZ6JVi4xmluyqWOQrw
-         wvQXAs39GZQdX8SBPoncmUWg5qU1JslCdM/jUqQWzIka5nQUUp1s9kg0JmBNLACgXQKE
-         k7nxMdgKQZ5mb0DsFb4ymeR8JlVc5A0z3qmJJ2Rw3zvzSI3IHxSKioigO3zYdlDTl36f
-         I/WR1pY5yFP4lLuvLMoK2HkmS+vpL9/Nl/4ruYA9w7shd9tNVCZWTC+SUA/IpPJd5cry
-         hFwbw8ieJS41sJr8qw4eklf5xCDGtOgua1F/gLbakM4gXzolXqK8AU/HdjlrZUYui1OM
-         NE3A==
-X-Gm-Message-State: AGRZ1gLcLuutHGdczvoEdC59k43CwxdcnnV8VToEZ5xqzMLyDEDZ1oE+
-        7H1wXOz2qLzvK0lCD2dAAJomng==
-X-Google-Smtp-Source: AJdET5dpmxVrYLXxDsd/bDPpuhPisHwFp8cCm4mnSBlTTfZf0jLHWgDdMxsIUxeTWFtwhmx9C9r5OA==
-X-Received: by 2002:adf:b6a8:: with SMTP id j40-v6mr1927777wre.55.1542048074434;
-        Mon, 12 Nov 2018 10:41:14 -0800 (PST)
-Received: from localhost.localdomain (12.red-95-121-90.dynamicip.rima-tde.net. [95.121.90.12])
-        by smtp.gmail.com with ESMTPSA id h198-v6sm9750315wmd.31.2018.11.12.10.41.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 12 Nov 2018 10:41:13 -0800 (PST)
-From:   Jorge Ramirez-Ortiz <jramirez@baylibre.com>
-To:     jramirez@baylibre.com, narmstrong@baylibre.com, airlied@linux.ie,
-        carlo@caione.org, khilman@baylibre.com
-Cc:     dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/meson: venc: dmt mode must use encp
-Date:   Mon, 12 Nov 2018 19:41:09 +0100
-Message-Id: <1542048069-22603-1-git-send-email-jramirez@baylibre.com>
-X-Mailer: git-send-email 2.7.4
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=e1DVwQEiQVZvUa1rYsGOrhj0Kcpt+WtrHl52JQz/N4U=;
+        b=g4bUu+ZBKDPkLoSQ1LhRPfMs4qtkT4zqElz4ZsJ0VwQcIjq3RzuPE8W3fIffGFfPDL
+         lAFkfOtIOdkU2ES1eS6onl8kSFhhDIbjBKaRHZ1jlKDK1H5j6m2faO+iaFTQiPllIpZo
+         FTYQKLNqI9X6pQVEQF4rnzUkb/n1nDrd+BdnE6DS/yfT3lCEsG4y0NGswh7gETC2CdUz
+         HteF9IHFKw5+s7xvFY/fqp5hw/zet07cJ74z/oAC8VFVeqbyOL3LYylelbV0vFKaWD+t
+         m9TE+nYaqDD8TVmyNd2d/TDhi0htLIBhgkfEz3dWdGfgaYSbyRMNq/somwmyhmlAXBGu
+         Uefg==
+X-Gm-Message-State: AGRZ1gLRTbKxAQL5zCmoJkV3sNjk9fZFgk6spyb4QfzPy3P37mmrg0h2
+        CDqZfxiQHfGaHIMpF3u28SjrWNq0s8ycCgPYJSI=
+X-Google-Smtp-Source: AJdET5cLSZHQMsNK9c4W0ZHv1PsD5sxg1xPnDLvA0vLbFeOa54x/kHKIX7XizYrzyLtsLvaQXUes1t5+4gKDGSVqfOs=
+X-Received: by 2002:a37:77c5:: with SMTP id s188mr1955614qkc.174.1542048267694;
+ Mon, 12 Nov 2018 10:44:27 -0800 (PST)
+MIME-Version: 1.0
+References: <154180517736.2047781.13819458479548681732.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <154180517736.2047781.13819458479548681732.stgit@dwillia2-desk3.amr.corp.intel.com>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Mon, 12 Nov 2018 10:44:09 -0800
+Message-ID: <CAHbLzkpXvvU=EDb+MCEgDcg=X25s1+mny+92QTTeMpUPX2K7Jw@mail.gmail.com>
+Subject: Re: [PATCH] acpi/nfit, device-dax: Identify differentiated memory
+ with a unique numa-node
+To:     dan.j.williams@intel.com
+Cc:     linux-nvdimm@lists.01.org, fan.du@intel.com, mpe@ellerman.id.au,
+        oohall@gmail.com, dave.hansen@linux.intel.com, jglisse@redhat.com,
+        linux-acpi@vger.kernel.org, Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jorge Ramirez-Ortiz <jorge.ramirez.ortiz@gmail.com>
+On Fri, Nov 9, 2018 at 3:24 PM Dan Williams <dan.j.williams@intel.com> wrot=
+e:
+>
+> Persistent memory, as described by the ACPI NFIT (NVDIMM Firmware
+> Interface Table), is the first known instance of a memory range
+> described by a unique "target" proximity domain. Where "initiator" and
+> "target" proximity domains is an approach that the ACPI HMAT
+> (Heterogeneous Memory Attributes Table) uses to described the unique
+> performance properties of a memory range relative to a given initiator
+> (e.g. CPU or DMA device).
+>
+> Currently the numa-node for a /dev/pmemX block-device or /dev/daxX.Y
+> char-device follows the traditional notion of 'numa-node' where the
+> attribute conveys the closest online numa-node. That numa-node attribute
+> is useful for cpu-binding and memory-binding processes *near* the
+> device. However, when the memory range backing a 'pmem', or 'dax' device
+> is onlined (memory hot-add) the memory-only-numa-node representing that
+> address needs to be differentiated from the set of online nodes. In
+> other words, the numa-node association of the device depends on whether
+> you can bind processes *near* the cpu-numa-node in the offline
+> device-case, or bind process *on* the memory-range directly after the
+> backing address range is onlined.
+>
+> Allow for the case that platform firmware describes persistent memory
+> with a unique proximity domain, i.e. when it is distinct from the
+> proximity of DRAM and CPUs that are on the same socket. Plumb the Linux
+> numa-node translation of that proximity through the libnvdimm region
+> device to namespaces that are in device-dax mode. With this in place the
+> proposed kmem driver [1] can optionally discover a unique numa-node
+> number for the address range as it transitions the memory from an
+> offline state managed by a device-driver to an online memory range
+> managed by the core-mm.
+>
+> [1]: https://lkml.org/lkml/2018/10/23/9
+>
+> Reported-by: Fan Du <fan.du@intel.com>
 
-The video mode for DMT is only populated to support encp.
+Thanks for coming up with the patch quickly. We reported the problem
+to Fan Du, and did a very similar, but preliminary,  in-house
+implementation.
 
-Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez.ortiz@gmail.com>
----
- drivers/gpu/drm/meson/meson_venc.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+This implementation looks good to me. Reviewed-by: Yang Shi
+<yang.shi@linux.alibaba.com>
 
-diff --git a/drivers/gpu/drm/meson/meson_venc.c b/drivers/gpu/drm/meson/meson_venc.c
-index 514245e..acbbad3 100644
---- a/drivers/gpu/drm/meson/meson_venc.c
-+++ b/drivers/gpu/drm/meson/meson_venc.c
-@@ -854,6 +854,13 @@ void meson_venc_hdmi_mode_set(struct meson_drm *priv, int vic,
- 	unsigned int sof_lines;
- 	unsigned int vsync_lines;
- 
-+	/* Use VENCI for 480i and 576i and double HDMI pixels */
-+	if (mode->flags & DRM_MODE_FLAG_DBLCLK) {
-+		hdmi_repeat = true;
-+		use_enci = true;
-+		venc_hdmi_latency = 1;
-+	}
-+
- 	if (meson_venc_hdmi_supported_vic(vic)) {
- 		vmode = meson_venc_hdmi_get_vic_vmode(vic);
- 		if (!vmode) {
-@@ -865,13 +872,7 @@ void meson_venc_hdmi_mode_set(struct meson_drm *priv, int vic,
- 	} else {
- 		meson_venc_hdmi_get_dmt_vmode(mode, &vmode_dmt);
- 		vmode = &vmode_dmt;
--	}
--
--	/* Use VENCI for 480i and 576i and double HDMI pixels */
--	if (mode->flags & DRM_MODE_FLAG_DBLCLK) {
--		hdmi_repeat = true;
--		use_enci = true;
--		venc_hdmi_latency = 1;
-+		use_enci = false;
- 	}
- 
- 	/* Repeat VENC pixels for 480/576i/p, 720p50/60 and 1080p50/60 */
--- 
-2.7.4
-
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: "Oliver O'Halloran" <oohall@gmail.com>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: J=C3=A9r=C3=B4me Glisse <jglisse@redhat.com>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> ---
+>  arch/powerpc/platforms/pseries/papr_scm.c |    1 +
+>  drivers/acpi/nfit/core.c                  |    8 ++++++--
+>  drivers/acpi/numa.c                       |    1 +
+>  drivers/dax/bus.c                         |    4 +++-
+>  drivers/dax/bus.h                         |    3 ++-
+>  drivers/dax/dax-private.h                 |    4 ++++
+>  drivers/dax/pmem/core.c                   |    4 +++-
+>  drivers/nvdimm/e820.c                     |    1 +
+>  drivers/nvdimm/nd.h                       |    2 +-
+>  drivers/nvdimm/of_pmem.c                  |    1 +
+>  drivers/nvdimm/region_devs.c              |    1 +
+>  include/linux/libnvdimm.h                 |    1 +
+>  12 files changed, 25 insertions(+), 6 deletions(-)
+>
+> diff --git a/arch/powerpc/platforms/pseries/papr_scm.c b/arch/powerpc/pla=
+tforms/pseries/papr_scm.c
+> index ee9372b65ca5..6a0a35b872d1 100644
+> --- a/arch/powerpc/platforms/pseries/papr_scm.c
+> +++ b/arch/powerpc/platforms/pseries/papr_scm.c
+> @@ -233,6 +233,7 @@ static int papr_scm_nvdimm_init(struct papr_scm_priv =
+*p)
+>         memset(&ndr_desc, 0, sizeof(ndr_desc));
+>         ndr_desc.attr_groups =3D region_attr_groups;
+>         ndr_desc.numa_node =3D dev_to_node(&p->pdev->dev);
+> +       ndr_desc.target_node =3D ndr_desc.numa_node;
+>         ndr_desc.res =3D &p->res;
+>         ndr_desc.of_node =3D p->dn;
+>         ndr_desc.provider_data =3D p;
+> diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
+> index f8c638f3c946..2225e3de33ac 100644
+> --- a/drivers/acpi/nfit/core.c
+> +++ b/drivers/acpi/nfit/core.c
+> @@ -2825,11 +2825,15 @@ static int acpi_nfit_register_region(struct acpi_=
+nfit_desc *acpi_desc,
+>         ndr_desc->res =3D &res;
+>         ndr_desc->provider_data =3D nfit_spa;
+>         ndr_desc->attr_groups =3D acpi_nfit_region_attribute_groups;
+> -       if (spa->flags & ACPI_NFIT_PROXIMITY_VALID)
+> +       if (spa->flags & ACPI_NFIT_PROXIMITY_VALID) {
+>                 ndr_desc->numa_node =3D acpi_map_pxm_to_online_node(
+>                                                 spa->proximity_domain);
+> -       else
+> +               ndr_desc->target_node =3D acpi_map_pxm_to_node(
+> +                               spa->proximity_domain);
+> +       } else {
+>                 ndr_desc->numa_node =3D NUMA_NO_NODE;
+> +               ndr_desc->target_node =3D NUMA_NO_NODE;
+> +       }
+>
+>         /*
+>          * Persistence domain bits are hierarchical, if
+> diff --git a/drivers/acpi/numa.c b/drivers/acpi/numa.c
+> index 274699463b4f..b9d86babb13a 100644
+> --- a/drivers/acpi/numa.c
+> +++ b/drivers/acpi/numa.c
+> @@ -84,6 +84,7 @@ int acpi_map_pxm_to_node(int pxm)
+>
+>         return node;
+>  }
+> +EXPORT_SYMBOL(acpi_map_pxm_to_node);
+>
+>  /**
+>   * acpi_map_pxm_to_online_node - Map proximity ID to online node
+> diff --git a/drivers/dax/bus.c b/drivers/dax/bus.c
+> index 568168500217..c620ad52d7e5 100644
+> --- a/drivers/dax/bus.c
+> +++ b/drivers/dax/bus.c
+> @@ -214,7 +214,7 @@ static void dax_region_unregister(void *region)
+>  }
+>
+>  struct dax_region *alloc_dax_region(struct device *parent, int region_id=
+,
+> -               struct resource *res, unsigned int align,
+> +               struct resource *res, int target_node, unsigned int align=
+,
+>                 unsigned long pfn_flags)
+>  {
+>         struct dax_region *dax_region;
+> @@ -244,6 +244,7 @@ struct dax_region *alloc_dax_region(struct device *pa=
+rent, int region_id,
+>         dax_region->id =3D region_id;
+>         dax_region->align =3D align;
+>         dax_region->dev =3D parent;
+> +       dax_region->target_node =3D target_node;
+>         if (sysfs_create_groups(&parent->kobj, dax_region_attribute_group=
+s)) {
+>                 kfree(dax_region);
+>                 return NULL;
+> @@ -348,6 +349,7 @@ struct dev_dax *__devm_create_dev_dax(struct dax_regi=
+on *dax_region, int id,
+>
+>         dev_dax->dax_dev =3D dax_dev;
+>         dev_dax->region =3D dax_region;
+> +       dev_dax->target_node =3D dax_region->target_node;
+>         kref_get(&dax_region->kref);
+>
+>         inode =3D dax_inode(dax_dev);
+> diff --git a/drivers/dax/bus.h b/drivers/dax/bus.h
+> index ce977552ffb5..8619e3299943 100644
+> --- a/drivers/dax/bus.h
+> +++ b/drivers/dax/bus.h
+> @@ -10,7 +10,8 @@ struct dax_device;
+>  struct dax_region;
+>  void dax_region_put(struct dax_region *dax_region);
+>  struct dax_region *alloc_dax_region(struct device *parent, int region_id=
+,
+> -               struct resource *res, unsigned int align, unsigned long f=
+lags);
+> +               struct resource *res, int target_node, unsigned int align=
+,
+> +               unsigned long flags);
+>
+>  enum dev_dax_subsys {
+>         DEV_DAX_BUS,
+> diff --git a/drivers/dax/dax-private.h b/drivers/dax/dax-private.h
+> index a82ce48f5884..a45612148ca0 100644
+> --- a/drivers/dax/dax-private.h
+> +++ b/drivers/dax/dax-private.h
+> @@ -26,6 +26,7 @@ void dax_bus_exit(void);
+>  /**
+>   * struct dax_region - mapping infrastructure for dax devices
+>   * @id: kernel-wide unique region for a memory range
+> + * @target_node: effective numa node if this memory range is onlined
+>   * @kref: to pin while other agents have a need to do lookups
+>   * @dev: parent device backing this region
+>   * @align: allocation and mapping alignment for child dax devices
+> @@ -34,6 +35,7 @@ void dax_bus_exit(void);
+>   */
+>  struct dax_region {
+>         int id;
+> +       int target_node;
+>         struct kref kref;
+>         struct device *dev;
+>         unsigned int align;
+> @@ -46,6 +48,7 @@ struct dax_region {
+>   * data while the device is activated in the driver.
+>   * @region - parent region
+>   * @dax_dev - core dax functionality
+> + * @target_node: effective numa node if dev_dax memory range is onlined
+>   * @dev - device core
+>   * @pgmap - pgmap for memmap setup / lifetime (driver owned)
+>   * @ref: pgmap reference count (driver owned)
+> @@ -54,6 +57,7 @@ struct dax_region {
+>  struct dev_dax {
+>         struct dax_region *region;
+>         struct dax_device *dax_dev;
+> +       int target_node;
+>         struct device dev;
+>         struct dev_pagemap pgmap;
+>         struct percpu_ref ref;
+> diff --git a/drivers/dax/pmem/core.c b/drivers/dax/pmem/core.c
+> index bdcff1b14e95..f71019ce0647 100644
+> --- a/drivers/dax/pmem/core.c
+> +++ b/drivers/dax/pmem/core.c
+> @@ -20,6 +20,7 @@ struct dev_dax *__dax_pmem_probe(struct device *dev, en=
+um dev_dax_subsys subsys)
+>         struct nd_namespace_common *ndns;
+>         struct nd_dax *nd_dax =3D to_nd_dax(dev);
+>         struct nd_pfn *nd_pfn =3D &nd_dax->nd_pfn;
+> +       struct nd_region *nd_region =3D to_nd_region(dev->parent);
+>
+>         ndns =3D nvdimm_namespace_common_probe(dev);
+>         if (IS_ERR(ndns))
+> @@ -52,7 +53,8 @@ struct dev_dax *__dax_pmem_probe(struct device *dev, en=
+um dev_dax_subsys subsys)
+>         memcpy(&res, &pgmap.res, sizeof(res));
+>         res.start +=3D offset;
+>         dax_region =3D alloc_dax_region(dev, region_id, &res,
+> -                       le32_to_cpu(pfn_sb->align), PFN_DEV|PFN_MAP);
+> +                       nd_region->target_node, le32_to_cpu(pfn_sb->align=
+),
+> +                       PFN_DEV|PFN_MAP);
+>         if (!dax_region)
+>                 return ERR_PTR(-ENOMEM);
+>
+> diff --git a/drivers/nvdimm/e820.c b/drivers/nvdimm/e820.c
+> index 521eaf53a52a..36be9b619187 100644
+> --- a/drivers/nvdimm/e820.c
+> +++ b/drivers/nvdimm/e820.c
+> @@ -47,6 +47,7 @@ static int e820_register_one(struct resource *res, void=
+ *data)
+>         ndr_desc.res =3D res;
+>         ndr_desc.attr_groups =3D e820_pmem_region_attribute_groups;
+>         ndr_desc.numa_node =3D e820_range_to_nid(res->start);
+> +       ndr_desc.target_node =3D ndr_desc.numa_node;
+>         set_bit(ND_REGION_PAGEMAP, &ndr_desc.flags);
+>         if (!nvdimm_pmem_region_create(nvdimm_bus, &ndr_desc))
+>                 return -ENXIO;
+> diff --git a/drivers/nvdimm/nd.h b/drivers/nvdimm/nd.h
+> index e79cc8e5c114..623216545cc8 100644
+> --- a/drivers/nvdimm/nd.h
+> +++ b/drivers/nvdimm/nd.h
+> @@ -153,7 +153,7 @@ struct nd_region {
+>         u16 ndr_mappings;
+>         u64 ndr_size;
+>         u64 ndr_start;
+> -       int id, num_lanes, ro, numa_node;
+> +       int id, num_lanes, ro, numa_node, target_node;
+>         void *provider_data;
+>         struct kernfs_node *bb_state;
+>         struct badblocks bb;
+> diff --git a/drivers/nvdimm/of_pmem.c b/drivers/nvdimm/of_pmem.c
+> index 0a701837dfc0..ecaaa27438e2 100644
+> --- a/drivers/nvdimm/of_pmem.c
+> +++ b/drivers/nvdimm/of_pmem.c
+> @@ -68,6 +68,7 @@ static int of_pmem_region_probe(struct platform_device =
+*pdev)
+>                 memset(&ndr_desc, 0, sizeof(ndr_desc));
+>                 ndr_desc.attr_groups =3D region_attr_groups;
+>                 ndr_desc.numa_node =3D dev_to_node(&pdev->dev);
+> +               ndr_desc.target_node =3D ndr_desc.numa_node;
+>                 ndr_desc.res =3D &pdev->resource[i];
+>                 ndr_desc.of_node =3D np;
+>                 set_bit(ND_REGION_PAGEMAP, &ndr_desc.flags);
+> diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
+> index 174a418cb171..86cd425b786d 100644
+> --- a/drivers/nvdimm/region_devs.c
+> +++ b/drivers/nvdimm/region_devs.c
+> @@ -1060,6 +1060,7 @@ static struct nd_region *nd_region_create(struct nv=
+dimm_bus *nvdimm_bus,
+>         nd_region->flags =3D ndr_desc->flags;
+>         nd_region->ro =3D ro;
+>         nd_region->numa_node =3D ndr_desc->numa_node;
+> +       nd_region->target_node =3D ndr_desc->target_node;
+>         ida_init(&nd_region->ns_ida);
+>         ida_init(&nd_region->btt_ida);
+>         ida_init(&nd_region->pfn_ida);
+> diff --git a/include/linux/libnvdimm.h b/include/linux/libnvdimm.h
+> index 097072c5a852..941102c0c81f 100644
+> --- a/include/linux/libnvdimm.h
+> +++ b/include/linux/libnvdimm.h
+> @@ -124,6 +124,7 @@ struct nd_region_desc {
+>         void *provider_data;
+>         int num_lanes;
+>         int numa_node;
+> +       int target_node;
+>         unsigned long flags;
+>         struct device_node *of_node;
+>  };
+>
