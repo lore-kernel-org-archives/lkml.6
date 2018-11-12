@@ -2,84 +2,550 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2303C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 03:22:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAB8EC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 03:22:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7423D20881
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 03:22:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7423D20881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
+	by mail.kernel.org (Postfix) with ESMTP id 531B92084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 03:22:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 531B92084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730455AbeKLNMI (ORCPT
+        id S1730502AbeKLNNp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 08:12:08 -0500
-Received: from shell.v3.sk ([90.176.6.54]:59585 "EHLO shell.v3.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729989AbeKLNMH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 08:12:07 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id E6C9BC6A2A;
-        Mon, 12 Nov 2018 04:20:54 +0100 (CET)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id EURzCtKKcbXH; Mon, 12 Nov 2018 04:20:41 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id BBD79C6A2E;
-        Mon, 12 Nov 2018 04:20:38 +0100 (CET)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id lzVDq2v5IkvT; Mon, 12 Nov 2018 04:20:36 +0100 (CET)
-Received: from belphegor.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id EA47FC6A23;
-        Mon, 12 Nov 2018 04:20:35 +0100 (CET)
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Eric Miao <eric.y.miao@gmail.com>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v3 02/18] DT: marvell,mmp2: fix the gpio interrupt cell number
-Date:   Mon, 12 Nov 2018 04:20:11 +0100
-Message-Id: <20181112032027.653931-3-lkundrak@v3.sk>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181112032027.653931-1-lkundrak@v3.sk>
-References: <20181112032027.653931-1-lkundrak@v3.sk>
+        Mon, 12 Nov 2018 08:13:45 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:39789 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730079AbeKLNNp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 08:13:45 -0500
+Received: from mail-ed1-f69.google.com ([209.85.208.69])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <gavin.guo@canonical.com>)
+        id 1gM2o2-0000Uw-Qi
+        for linux-kernel@vger.kernel.org; Mon, 12 Nov 2018 03:22:30 +0000
+Received: by mail-ed1-f69.google.com with SMTP id h25-v6so4085205eds.21
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 19:22:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CMk+Gs1eZTZCsPqZlEWyeDo4njAjYNTa30jp7n3dcrw=;
+        b=JnBXq69OE/pf98fuOOVm4quM1gbM2KPJaYPoWPiWwFzLe3bLaPHEMEMprKp8xDEzlB
+         wpCCcijlGNAMOeBzrDflj4Gr8byXkhXOPbJAjZYCYpSFyRBDGC4OJoG/sJx28p8G8hib
+         VM89hV6uwwspk5X39eeL2+vRMnlTb/e/k4OGf8zYq/60TAEdZB0ZabxIzhCBHRmsDV9h
+         48WhDJGnU6kBRalCtJ4LwjPcUQRDY1iC+gQtYzL8ZrmcfSBd5Pxo0y6OAduAuhLaKiqI
+         I59C+hpypP8/OggrsjOjgT4EfpfUZRb2rh+qzjk/Jga4d01bwZh5gLWeCjWCXlEPIkDJ
+         YlSw==
+X-Gm-Message-State: AGRZ1gLA8k3m+5NBu+yEw/gC+z9s8y/Od9l8yaRCWPDtv/YMl0vavxPL
+        xPpMfGJcJEIvBGiOWk9JtG7wylyJisPAKD9h0BjFkxdZBOYvH4n/5oBtUFrJGWjjiyIXqbeoe15
+        ljiiXR5mQRxEDwtVcZowJj+Nrcye7ISAtFqX15g0VO0UeqslQDWgLUH2NPQ==
+X-Received: by 2002:a50:86b7:: with SMTP id r52mr2097240eda.227.1541992949928;
+        Sun, 11 Nov 2018 19:22:29 -0800 (PST)
+X-Google-Smtp-Source: AJdET5fvjgKwXKJ/xeY/oX2THlFw/KeQ+Vk7z1QlsuGhlD0lqs04EYo/YsktaXHvuSXKpdoE9RI/O0j3WnloNdEHagU=
+X-Received: by 2002:a50:86b7:: with SMTP id r52mr2097224eda.227.1541992949456;
+ Sun, 11 Nov 2018 19:22:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+References: <20181023141415.GJ4170@linux.ibm.com>
+In-Reply-To: <20181023141415.GJ4170@linux.ibm.com>
+From:   Gavin Guo <gavin.guo@canonical.com>
+Date:   Mon, 12 Nov 2018 11:22:17 +0800
+Message-ID: <CA+eFSM0Ob4MqmFPhht2qNUKVMpUFonWT7bzzLuqVFbHSjTLxTA@mail.gmail.com>
+Subject: Re: srcu hung task panic
+To:     Dennis.Krein@netapp.com
+Cc:     paulmck@linux.ibm.com, linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-gpio-pxa uses two cell to encode the interrupt source: the pin number
-and the trigger type. Adjust the device node accordingly.
+On Tue, Oct 23, 2018 at 10:14 PM Paul E. McKenney <paulmck@linux.ibm.com> wrote:
+>
+> On Mon, Oct 22, 2018 at 8:11 AM Krein, Dennis <Dennis.Krein@netapp.com> wrote:
+> > Hi Paul,
+> >
+> > My name is Dennis Krein - I am a software engineer at Netapp/Solidfire.  I
+> > was referred to you by a tech lead in my departement, Marshalll McMullen.
+> > We have encountered a bug in Linux kernel - lately occurring in 4.14.67,
+> > but seen earlier in 4.13.15.  This is a hung task panic that comes up in
+> > synchronize_srcu() where the callback to complete never gets called.
+> >
+> > I have tracked this down to a corrupted srcu_data structure for one of the
+> > CPUs.  See attached debug notes for details - dump_201809261610.txt.  The
+> > problem is with the srcu_callback contained in the srcu_data.  The head
+> > points to a callback_head, but all the tails entries point to head.  I have
+> > gone over the code countless times and I can't determine a way that this
+> > can happen.  It almost seems like a memory barrier type of issue.
+> >
+> >
+> > I have managed to come up with a repro scenario.  In the attached tgz file
+> > there is a program called demo_inotify.  I use that along with srcutorture
+> > and can reproduce the hung task panic in a few hours pretty reliably.
+> >
+> > Here are the steps
+> >
+> >
+> >    - run rcutorture - modprobe rcutorture torture_type=srcu
+> >    - Run the demo_inotify program in a shell loop
+> >       - while 1 do ./demo_ifotify foo
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Acked-by: Pavel Machek <pavel@ucw.cz>
----
- arch/arm/boot/dts/mmp2.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Will it be any possibilities that you can share the demo_inotify.c reproducer?
 
-diff --git a/arch/arm/boot/dts/mmp2.dtsi b/arch/arm/boot/dts/mmp2.dtsi
-index 766bbb8495b6..db15d1186cd0 100644
---- a/arch/arm/boot/dts/mmp2.dtsi
-+++ b/arch/arm/boot/dts/mmp2.dtsi
-@@ -180,7 +180,7 @@
- 				clocks =3D <&soc_clocks MMP2_CLK_GPIO>;
- 				resets =3D <&soc_clocks MMP2_CLK_GPIO>;
- 				interrupt-controller;
--				#interrupt-cells =3D <1>;
-+				#interrupt-cells =3D <2>;
- 				ranges;
-=20
- 				gcb0: gpio@d4019000 {
---=20
-2.19.1
+We also hit the problem on the 4.15 kernel and it will be helpful to
+have the reproducer.
 
+I tried to search on the web, it seems from The Linux Programming
+Interface sample code:
+https://github.com/bradfa/tlpi-dist/blob/master/inotify/demo_inotify.c
+
+> > I have done this repro scenario 4 times and have hit the bug within 12
+> > hours or less each time - once in only 2 hours.
+> >
+> >
+> > I am in the process of putting in some bug checks and other
+> > instrumentation - any help you might be able to provide would be greatly
+> > appreciated.  This appears to be a known bug.  I have found instances of
+> > this on the kernel mailing list, such as
+> > https://lkml.org/lkml/2018/4/19/669
+>
+> Have you tried running your tests with CONFIG_DEBUG_OBJECTS_RCU_HEAD=y?
+> If not, could you please try this?  It can be very helpful in finding
+> issues with the callback lists.
+>
+> Also, could you please send your .config file?
+>
+> And yes, the pointers in your rcu_data structure's callback list do
+> indeed look odd.
+>
+>                                                         Thanx, Paul
+>
+> u64$ crash2 vmlinux-ember-x86_64-4.14.67-solidfire1 B304-191_sodium-11.0.0.740_09262018_163802_node_bundle.B304-191/crash/dump.201809261610
+> crash 7.2.0++
+> ...
+> WARNING: kernel relocated [832MB]: patching 82981 gdb minimal_symbol values
+>
+> WARNING: kernel version inconsistency between vmlinux and dumpfile
+>
+>       KERNEL: vmlinux-ember-x86_64-4.14.67-solidfire1
+>     DUMPFILE: B304-191_sodium-11.0.0.740_09262018_163802_node_bundle.B304-191/crash/dump.201809261610  [PARTIAL DUMP]
+>         CPUS: 56
+>         DATE: Wed Sep 26 10:09:52 2018
+>       UPTIME: 21:20:03
+> LOAD AVERAGE: 117.82, 109.58, 96.44
+>        TASKS: 2340
+>     NODENAME: B304-191
+>      RELEASE: 4.14.67-solidfire1
+>      VERSION: #1 SMP Mon Sep 24 17:14:08 UTC 2018
+>      MACHINE: x86_64  (2200 Mhz)
+>       MEMORY: 702.7 GB
+>        PANIC: "Kernel panic - not syncing: hung_task: blocked tasks"
+>          PID: 350
+>      COMMAND: "khungtaskd"
+>         TASK: ffff9d2672f60000  [THREAD_INFO: ffff9d2672f60000]
+>          CPU: 32
+>        STATE: TASK_RUNNING (PANIC)
+>
+> crash> bt
+> PID: 350    TASK: ffff9d2672f60000  CPU: 32  COMMAND: "khungtaskd"
+>  #0 [ffffb26259807d30] machine_kexec at ffffffffb503e4bf
+>  #1 [ffffb26259807d88] __crash_kexec at ffffffffb50e5cee
+>  #2 [ffffb26259807e40] panic at ffffffffb5060a83
+>  #3 [ffffb26259807ec0] watchdog at ffffffffb5112c47
+>  #4 [ffffb26259807f10] kthread at ffffffffb507efa9
+>  #5 [ffffb26259807f50] ret_from_fork at ffffffffb5800205
+>
+> +++++++++++++++++++++++ from dmesg
+> [76800.726654] INFO: task systemd:1 blocked for more than 60 seconds.
+> [76800.726657]       Tainted: G           OE   4.14.67-solidfire1 #1
+> [76800.726657] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> [76800.726659] systemd         D    0     1      0 0x00000000
+> [76800.726662] Call Trace:
+> [76800.726673]  ? __schedule+0x27f/0x870
+> [76800.726676]  schedule+0x28/0x80
+> [76800.726679]  schedule_timeout+0x1e7/0x340
+> [76800.726685]  ? check_preempt_wakeup+0x102/0x230
+> [76800.726687]  ? wait_for_completion+0xb0/0x120
+> [76800.726689]  wait_for_completion+0xb0/0x120
+> [76800.726693]  ? wake_up_q+0x70/0x70
+> [76800.726698]  flush_work+0x10d/0x1c0
+> [76800.726700]  ? worker_detach_from_pool+0xa0/0xa0
+> [76800.726706]  fsnotify_destroy_group+0x34/0xa0
+> [76800.726708]  ? SyS_epoll_ctl+0x1d4/0xe50
+> [76800.726710]  inotify_release+0x1a/0x50
+> [76800.726714]  __fput+0xd8/0x220
+> [76800.726717]  task_work_run+0x8a/0xb0
+> [76800.726721]  exit_to_usermode_loop+0xb9/0xc0
+> [76800.726723]  do_syscall_64+0x10b/0x120
+> [76800.726727]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+> [76800.726730] RIP: 0033:0x7fb6957ff900
+> [76800.726731] RSP: 002b:00007ffc685fdd60 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
+> [76800.726733] RAX: 0000000000000000 RBX: 0000000000000012 RCX: 00007fb6957ff900
+> [76800.726735] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000012
+> [76800.726736] RBP: 00007fb697167088 R08: 000055ae6c9224c0 R09: 000055ae6ace92ad
+> [76800.726737] R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000000
+> [76800.726738] R13: 0000000000000000 R14: 0000000000079de4 R15: 0000000000000000
+> [76800.727130] INFO: task kworker/u113:1:29214 blocked for more than 60 seconds.
+>
+> crash> set 29214
+>     PID: 29214
+> COMMAND: "kworker/u113:1"
+>    TASK: ffff9d2673f70000  [THREAD_INFO: ffff9d2673f70000]
+>     CPU: 5
+>   STATE: TASK_UNINTERRUPTIBLE
+> crash> bt
+> PID: 29214  TASK: ffff9d2673f70000  CPU: 5   COMMAND: "kworker/u113:1"
+>  #0 [ffffb2627ff07ca0] __schedule at ffffffffb5765eaf
+>  #1 [ffffb2627ff07d30] schedule at ffffffffb57664c8
+>  #2 [ffffb2627ff07d38] schedule_timeout at ffffffffb5769e37
+>  #3 [ffffb2627ff07dc0] wait_for_completion at ffffffffb5766e90
+>  #4 [ffffb2627ff07e08] __synchronize_srcu at ffffffffb50bd6c6
+>  #5 [ffffb2627ff07e70] fsnotify_mark_destroy_workfn at ffffffffb5249e57
+>  #6 [ffffb2627ff07e98] process_one_work at ffffffffb507941a
+>  #7 [ffffb2627ff07ed8] worker_thread at ffffffffb507982f
+>  #8 [ffffb2627ff07f10] kthread at ffffffffb507efa9
+>  #9 [ffffb2627ff07f50] ret_from_fork at ffffffffb5800205
+>
+> ====================================================================== full stack
+> crash> bt -f
+> PID: 29214  TASK: ffff9d2673f70000  CPU: 5   COMMAND: "kworker/u113:1"
+>  #0 [ffffb2627ff07ca0] __schedule at ffffffffb5765eaf
+>     ffffb2627ff07ca8: 0000000000000000 ffff9d2673f70000
+>     ffffb2627ff07cb8: ffff9d26732f8000 ffff9d2680b60fc0
+>     ffffb2627ff07cc8: ffffb2627ff07d28 ffffffffb5765eaf
+>     ffffb2627ff07cd8: ffff9d2680ea1028 0000000073f70080
+>     ffffb2627ff07ce8: ffff9d2680b60fc0 ffff9d2680ea0fc0
+>     ffffb2627ff07cf8: ffff9d2600000004 7fffffffffffffff
+>     ffffb2627ff07d08: ffffb2627ff07e20 0000000000000000
+>     ffffb2627ff07d18: 0ffff9d2673f4200 ffff9d2671a395c0
+>     ffffb2627ff07d28: ffffb2627ff07db0 ffffffffb57664c8
+>  #1 [ffffb2627ff07d30] schedule at ffffffffb57664c8
+>     ffffb2627ff07d38: ffffffffb5769e37
+>  #2 [ffffb2627ff07d38] schedule_timeout at ffffffffb5769e37
+>     ffffb2627ff07d40: ffffffffb58001a0 ffffffffb50929c1
+>     ffffb2627ff07d50: ffff9d2680b61028 ffff9d26732f8080
+>     ffffb2627ff07d60: ffff9d2673f70080 0000000000000009
+>     ffffb2627ff07d70: 0000000000000000 0000000000020fc0
+>     ffffb2627ff07d80: ffffb2627ff07e28 ffffb2627ff07dc8
+>     ffffb2627ff07d90: ffffb2627ff07e20 0000000000000000
+>     ffffb2627ff07da0: 0ffff9d2673f4200 ffff9d2671a395c0
+>     ffffb2627ff07db0: 7fffffffffffffff ffffffffb5766e90
+>     ffffb2627ff07dc0: ffffffffb5766e90
+>  #3 [ffffb2627ff07dc0] wait_for_completion at ffffffffb5766e90
+>     ffffb2627ff07dc8: 0000000000000001 ffff9d2673f70000
+>     ffffb2627ff07dd8: ffffffffb5089380 ffffb2627ff07e30
+>     ffffb2627ff07de8: ffffb2627ff07e30 0000000000000001
+>     ffffb2627ff07df8: ffffb2627ff07e60 ffffffffb66bae60     <=== old %rbp == ffffb2627ff07e60 (struct srcu_struct *)sp == ffffffffb66bae60
+>     ffffb2627ff07e08: ffffffffb50bd6c6
+>  #4 [ffffb2627ff07e08] __synchronize_srcu at ffffffffb50bd6c6
+>     ffffb2627ff07e10: 0000000000000000 ffffffffb50bbb50
+>     ffffb2627ff07e20: ffff9d2600000000 ffff9d2600000000
+>     ffffb2627ff07e30: ffffb2627ff07de0 ffffb2627ff07de0
+>     ffffb2627ff07e40: ffffffffb5088ed4 ffffffffb608db60
+>     ffffb2627ff07e50: ffffb2627ff07e78 ffff9d2673f42000
+>     ffffb2627ff07e60: ffffb2627ff07e78 ffffffffb5249e57
+>     ffffb2627ff07e70: ffffffffb5249e57
+>  #5 [ffffb2627ff07e70] fsnotify_mark_destroy_workfn at ffffffffb5249e57
+>     ffffb2627ff07e78: ffff9d0e6ed9c1a0 ffff9d0cfbbf5420
+>     ffffb2627ff07e88: ffffffffb608db60 ffff9d268042fc00     <=== work == ffffffffb608db60
+>     ffffb2627ff07e98: ffffffffb507941a
+>  #6 [ffffb2627ff07e98] process_one_work at ffffffffb507941a
+>     ffffb2627ff07ea0: 000000008042fc00 ffff9d268042fc00
+>     ffffb2627ff07eb0: ffff9d268042fc00 ffff9d268042fc20
+>     ffffb2627ff07ec0: ffff9d2671a395f0 ffff9d268042fc78
+>     ffffb2627ff07ed0: ffff9d2671a395c0 ffffffffb507982f     <=== worker == ffff9d2671a395c0
+>  #7 [ffffb2627ff07ed8] worker_thread at ffffffffb507982f
+>     ffffb2627ff07ee0: ffff9d2666dde480 ffff9d82d540d940
+>     ffffb2627ff07ef0: ffffb2627606fdc8 ffff9d2673f70000
+>     ffffb2627ff07f00: ffff9d2671a395c0 ffffffffb5079610
+>     ffffb2627ff07f10: ffffffffb507efa9
+>  #8 [ffffb2627ff07f10] kthread at ffffffffb507efa9
+>     ffffb2627ff07f18: ffff9d2666dde4b8 ffffffffb507ee90
+>     ffffb2627ff07f28: 0000000000000000 ffff9d82d540d940
+>     ffffb2627ff07f38: 0000000000000000 0000000000000000
+>     ffffb2627ff07f48: 0000000000000000 ffffffffb5800205
+>  #9 [ffffb2627ff07f50] ret_from_fork at ffffffffb5800205
+>
+> crash> p *((struct worker *)0xffff9d2671a395c0)
+> $3 = {
+>   {
+>     entry = {
+>       next = 0x0,
+>       prev = 0xffff9d268042fcb0
+>     },
+>     hentry = {
+>       next = 0x0,
+>       pprev = 0xffff9d268042fcb0
+>     }
+>   },
+>   current_work = 0xffffffffb608db60,                        <=== matches work from stack
+>   current_func = 0xffffffffb5249df0,
+>   current_pwq = 0xffff9d2673f42000,
+>   desc_valid = false,
+>   scheduled = {
+>     next = 0xffffb2624006fdf8,
+>     prev = 0xffffffffb608db68
+>   },
+>   task = 0xffff9d2673f70000,
+>   pool = 0xffff9d268042fc00,
+>   node = {
+>     next = 0xffff9d26730fe950,
+>     prev = 0xffff9d268042fed0
+>   },
+>   last_active = 4302606550,                                 <=== 11062 jiffies (110.62 secs) ago
+>   flags = 128,
+>   id = 1,
+>   desc = "flush-259:12\000\000\000\000\000\000\000\000\000\000\000",
+>   rescue_wq = 0x0
+> }
+> crash> p jiffies
+> jiffies = $4 = 4302617612
+> crash> p/x *((struct work_struct *)0xffffffffb608db60)
+> $6 = {
+>   data = {
+>     counter = 0xffff9d2673f42005
+>   },
+>   entry = {
+>     next = 0xffff9d2671a395f0,
+>     prev = 0xffffb2624006fdf8
+>   },
+>   func = 0xffffffffb5249df0                                 <=== fsnotify_mark_destroy_workfn
+> }
+> crash> p &((struct work_struct *)0xffffffffb608db60)->entry
+> $7 = (struct list_head *) 0xffffffffb608db68                <=== came from worker->scheduled
+> crash> list -H 0xffffffffb608db68 | wc -l
+> 2
+> crash> p &fsnotify_mark_srcu
+> $11 = (struct srcu_struct *) 0xffffffffb66bae60                 <=== matches sp from stack
+>
+> ====================================================================== rcu
+> crash> p ((struct rcu_synchronize *)(0xffffb2627ff07e60-0x50))  <=== ffffb2627ff07e60 is saved %rbp from stack
+> $9 = (struct rcu_synchronize *) 0xffffb2627ff07e10
+> crash> p *((struct rcu_synchronize *) 0xffffb2627ff07e10)
+> $10 = {
+>   head = {
+>     next = 0x0,
+>     func = 0xffffffffb50bbb50   <=== wakeme_after_rcu
+>   },
+>   completion = {
+>     done = 0,
+>     wait = {
+>       lock = {
+>         {
+>           rlock = {
+>             raw_lock = {
+>               val = {
+>                 counter = 0
+>               }
+>             }
+>           }
+>         }
+>       },
+>       head = {
+>         next = 0xffffb2627ff07de0,
+>         prev = 0xffffb2627ff07de0
+>       }
+>     }
+>   }
+> }
+> crash> sym 0xffffffffb50bbb50
+> ffffffffb50bbb50 (T) wakeme_after_rcu
+> crash> search 0xffffb2627ff07e10
+> ffff9d2680b66748: ffffb2627ff07e10                              <=== on srcu callback list +++ see below
+> crash> p fsnotify_mark_srcu.sda
+> $13 = (struct srcu_data *) 0x26700
+> crash> p/x __per_cpu_offset[5]                                  <=== hung task is on CPU 5
+> $14 = 0xffff9d2680b40000
+> crash> p ((struct srcu_data *)(0xffff9d2680b40000+0x26700))
+> $15 = (struct srcu_data *) 0xffff9d2680b66700
+> crash> eval 0xffff9d2680b66748-0xffff9d2680b66700
+> hexadecimal: 48
+> crash> srcu_data.srcu_cblist -x
+> struct srcu_data {
+>    [0x48] struct rcu_segcblist srcu_cblist;
+> }
+> crash> p &((struct srcu_data *) 0xffff9d2680b66700)->srcu_cblist.head
+> $20 = (struct callback_head **) 0xffff9d2680b66748
+> crash> p *((struct srcu_data *) 0xffff9d2680b66700)
+> $16 = {
+>   srcu_lock_count = {619057, 595119},
+>   srcu_unlock_count = {619057, 595119},
+>   lock = {
+>     raw_lock = {
+>       val = {
+>         counter = 0
+>       }
+>     }
+>   },
+>   srcu_cblist = {
+>     head = 0xffffb2627ff07e10,
+>     tails = {0xffff9d2680b66748, 0xffff9d2680b66748, 0xffff9d2680b66748, 0xffff9d2680b66748},   <=== all point to head
+>     gp_seq = {0, 56844, 56844, 0},
+>     len = 1,                                                        <=== only 1 waiting
+>     len_lazy = 0
+>   },
+>   srcu_gp_seq_needed = 56840,
+>   srcu_gp_seq_needed_exp = 56836,
+>   srcu_cblist_invoking = false,
+>   work = {
+>     work = {
+>       data = {
+>         counter = 3616
+>       },
+>       entry = {
+>         next = 0xffff9d2680b667c0,                                  <=== empty
+>         prev = 0xffff9d2680b667c0
+>       },
+>       func = 0xffffffffb50bcd20                                     <=== srcu_invoke_callbacks
+>     },
+>     timer = {
+>       entry = {
+>         next = 0xdead000000000200,
+>         pprev = 0x0
+>       },
+>       expires = 4302606551,                                         <=== 11061 jiffies (110.61 secs) ago
+>       function = 0xffffffffb50778c0,                                <=== delayed_work_timer_fn
+>       data = 18446635387426596792,
+>       flags = 102760453
+>     },
+>     wq = 0xffff9d2680411800,
+>     cpu = 5
+>   },
+>   srcu_barrier_head = {
+>     next = 0x0,
+>     func = 0x0
+>   },
+>   mynode = 0xffffffffb66baec0,
+>   grpmask = 32,
+>   cpu = 5,
+>   sp = 0xffffffffb66bae60
+> }
+>
+> ======================================================================
+> crash> dis worker_thread 15
+> 0xffffffffb5079610 <worker_thread>:     nopl   0x0(%rax,%rax,1) [FTRACE NOP]
+> 0xffffffffb5079615 <worker_thread+5>:   push   %r15
+> 0xffffffffb5079617 <worker_thread+7>:   mov    %rdi,%r15                        <=== worker in %r15
+> 0xffffffffb507961a <worker_thread+10>:  push   %r14
+> 0xffffffffb507961c <worker_thread+12>:  push   %r13
+> 0xffffffffb507961e <worker_thread+14>:  push   %r12
+> 0xffffffffb5079620 <worker_thread+16>:  push   %rbp
+> 0xffffffffb5079621 <worker_thread+17>:  push   %rbx
+> 0xffffffffb5079622 <worker_thread+18>:  mov    0x40(%rdi),%rax
+> 0xffffffffb5079626 <worker_thread+22>:  mov    0x48(%rdi),%rbx
+> 0xffffffffb507962a <worker_thread+26>:  orl    $0x20,0x24(%rax)
+> 0xffffffffb507962e <worker_thread+30>:  jmpq   0xffffffffb50796c3 <worker_thread+179>
+> 0xffffffffb5079633 <worker_thread+35>:  mov    %r15,%rdi
+> 0xffffffffb5079636 <worker_thread+38>:  callq  0xffffffffb5079240 <process_one_work>
+> 0xffffffffb507963b <worker_thread+43>:  mov    0x30(%r15),%rax
+>
+> crash> dis process_one_work 15
+> 0xffffffffb5079240 <process_one_work>:  nopl   0x0(%rax,%rax,1) [FTRACE NOP]
+> 0xffffffffb5079245 <process_one_work+5>:        push   %r15                     <=== worker on stack
+> 0xffffffffb5079247 <process_one_work+7>:        push   %r14
+> 0xffffffffb5079249 <process_one_work+9>:        push   %r13
+> 0xffffffffb507924b <process_one_work+11>:       push   %r12
+> 0xffffffffb507924d <process_one_work+13>:       push   %rbp
+> 0xffffffffb507924e <process_one_work+14>:       push   %rbx
+> 0xffffffffb507924f <process_one_work+15>:       mov    %rsi,%rbx                <=== work in %rbx
+> 0xffffffffb5079252 <process_one_work+18>:       sub    $0x8,%rsp
+> 0xffffffffb5079256 <process_one_work+22>:       mov    (%rsi),%rax
+> 0xffffffffb5079259 <process_one_work+25>:       mov    0x48(%rdi),%rbp
+> 0xffffffffb507925d <process_one_work+29>:       mov    %rax,%r12
+> 0xffffffffb5079260 <process_one_work+32>:       xor    %r12b,%r12b
+> 0xffffffffb5079263 <process_one_work+35>:       test   $0x4,%al
+> 0xffffffffb5079265 <process_one_work+37>:       mov    $0x0,%eax
+>
+> crash> dis fsnotify_mark_destroy_workfn 15
+> 0xffffffffb5249df0 <fsnotify_mark_destroy_workfn>:      nopl   0x0(%rax,%rax,1) [FTRACE NOP]
+> 0xffffffffb5249df5 <fsnotify_mark_destroy_workfn+5>:    push   %rbp
+> 0xffffffffb5249df6 <fsnotify_mark_destroy_workfn+6>:    mov    $0xffffffffb66bb308,%rdi
+> 0xffffffffb5249dfd <fsnotify_mark_destroy_workfn+13>:   push   %rbx             <=== work on stack
+> 0xffffffffb5249dfe <fsnotify_mark_destroy_workfn+14>:   sub    $0x10,%rsp
+> 0xffffffffb5249e02 <fsnotify_mark_destroy_workfn+18>:   callq  0xffffffffb576b530 <_raw_spin_lock>
+> 0xffffffffb5249e07 <fsnotify_mark_destroy_workfn+23>:   mov    0xe43db2(%rip),%rdx        # 0xffffffffb608dbc0
+> 0xffffffffb5249e0e <fsnotify_mark_destroy_workfn+30>:   mov    $0xffffffffb608dbc0,%rax
+> 0xffffffffb5249e15 <fsnotify_mark_destroy_workfn+37>:   mov    $0xffffffffb66bb308,%rdi
+> 0xffffffffb5249e1c <fsnotify_mark_destroy_workfn+44>:   mov    %rsp,%rbp
+> 0xffffffffb5249e1f <fsnotify_mark_destroy_workfn+47>:   mov    %rbp,0x8(%rdx)
+> 0xffffffffb5249e23 <fsnotify_mark_destroy_workfn+51>:   mov    %rdx,(%rsp)
+> 0xffffffffb5249e27 <fsnotify_mark_destroy_workfn+55>:   mov    0xe43d9a(%rip),%rdx        # 0xffffffffb608dbc8
+> 0xffffffffb5249e2e <fsnotify_mark_destroy_workfn+62>:   mov    %rdx,0x8(%rsp)
+> 0xffffffffb5249e33 <fsnotify_mark_destroy_workfn+67>:   mov    %rbp,(%rdx)
+>
+> crash> dis -l __synchronize_srcu
+> /usr/src/linux/kernel/rcu/srcutree.c: 881
+> 0xffffffffb50bd650 <__synchronize_srcu>:        nopl   0x0(%rax,%rax,1) [FTRACE NOP]
+> 0xffffffffb50bd655 <__synchronize_srcu+5>:      lea    0x8(%rsp),%r10
+> 0xffffffffb50bd65a <__synchronize_srcu+10>:     and    $0xfffffffffffffff0,%rsp
+> 0xffffffffb50bd65e <__synchronize_srcu+14>:     pushq  -0x8(%r10)
+> 0xffffffffb50bd662 <__synchronize_srcu+18>:     push   %rbp
+> 0xffffffffb50bd663 <__synchronize_srcu+19>:     mov    %rsp,%rbp
+> 0xffffffffb50bd666 <__synchronize_srcu+22>:     push   %r12
+> 0xffffffffb50bd668 <__synchronize_srcu+24>:     mov    %rdi,%r12                <=== sp in %r12
+> 0xffffffffb50bd66b <__synchronize_srcu+27>:     push   %r10
+> 0xffffffffb50bd66d <__synchronize_srcu+29>:     push   %rbx
+> 0xffffffffb50bd66e <__synchronize_srcu+30>:     mov    %esi,%ebx
+> 0xffffffffb50bd670 <__synchronize_srcu+32>:     sub    $0x38,%rsp
+> /usr/src/linux/kernel/rcu/srcutree.c: 893
+> 0xffffffffb50bd674 <__synchronize_srcu+36>:     callq  0xffffffffb57666c0 <_cond_resched>
+> /usr/src/linux/kernel/rcu/srcutree.c: 894
+> 0xffffffffb50bd679 <__synchronize_srcu+41>:     mov    %r12,%rdi
+> 0xffffffffb50bd67c <__synchronize_srcu+44>:     callq  0xffffffffb50bc9d0 <check_init_srcu_struct>
+> /usr/src/linux/./include/linux/completion.h: 120
+> 0xffffffffb50bd681 <__synchronize_srcu+49>:     lea    -0x50(%rbp),%rax
+> 0xffffffffb50bd685 <__synchronize_srcu+53>:     mov    $0xffffffffb6658124,%rdx
+> 0xffffffffb50bd68c <__synchronize_srcu+60>:     mov    $0xffffffffb5e23732,%rsi
+> 0xffffffffb50bd693 <__synchronize_srcu+67>:     lea    0x18(%rax),%rdi
+> /usr/src/linux/./include/linux/completion.h: 119
+> 0xffffffffb50bd697 <__synchronize_srcu+71>:     movl   $0x0,-0x40(%rbp)
+> /usr/src/linux/./include/linux/completion.h: 120
+> 0xffffffffb50bd69e <__synchronize_srcu+78>:     callq  0xffffffffb50a01b0 <__init_waitqueue_head>
+> /usr/src/linux/kernel/rcu/srcutree.c: 897
+> 0xffffffffb50bd6a3 <__synchronize_srcu+83>:     lea    -0x50(%rbp),%rsi         <=== &rcu-head
+> 0xffffffffb50bd6a7 <__synchronize_srcu+87>:     movzbl %bl,%ecx
+> 0xffffffffb50bd6aa <__synchronize_srcu+90>:     mov    %r12,%rdi
+> 0xffffffffb50bd6ad <__synchronize_srcu+93>:     mov    $0xffffffffb50bbb50,%rdx
+> 0xffffffffb50bd6b4 <__synchronize_srcu+100>:    callq  0xffffffffb50bd2f0 <__call_srcu>
+> /usr/src/linux/kernel/rcu/srcutree.c: 898
+> 0xffffffffb50bd6b9 <__synchronize_srcu+105>:    lea    -0x50(%rbp),%rax
+> 0xffffffffb50bd6bd <__synchronize_srcu+109>:    lea    0x10(%rax),%rdi
+> 0xffffffffb50bd6c1 <__synchronize_srcu+113>:    callq  0xffffffffb5766de0 <wait_for_completion>
+> /usr/src/linux/kernel/rcu/srcutree.c: 908
+> 0xffffffffb50bd6c6 <__synchronize_srcu+118>:    mfence                          <=== RA
+> /usr/src/linux/kernel/rcu/srcutree.c: 909
+> 0xffffffffb50bd6c9 <__synchronize_srcu+121>:    add    $0x38,%rsp
+> 0xffffffffb50bd6cd <__synchronize_srcu+125>:    pop    %rbx
+> 0xffffffffb50bd6ce <__synchronize_srcu+126>:    pop    %r10
+> 0xffffffffb50bd6d0 <__synchronize_srcu+128>:    pop    %r12
+> 0xffffffffb50bd6d2 <__synchronize_srcu+130>:    pop    %rbp
+> 0xffffffffb50bd6d3 <__synchronize_srcu+131>:    lea    -0x8(%r10),%rsp
+> 0xffffffffb50bd6d7 <__synchronize_srcu+135>:    retq
+> 0xffffffffb50bd6d8 <__synchronize_srcu+136>:    nopl   0x0(%rax,%rax,1)
+>
+> crash> dis wait_for_completion 15
+> 0xffffffffb5766de0 <wait_for_completion>:       nopl   0x0(%rax,%rax,1) [FTRACE NOP]
+> 0xffffffffb5766de5 <wait_for_completion+5>:     push   %r12                 <=== sp on stack
+> 0xffffffffb5766de7 <wait_for_completion+7>:     mov    %rdi,%r12
+> 0xffffffffb5766dea <wait_for_completion+10>:    push   %rbp                 <=== %rbp on stack
+> 0xffffffffb5766deb <wait_for_completion+11>:    push   %rbx
+> 0xffffffffb5766dec <wait_for_completion+12>:    lea    0x8(%r12),%rbx
+> 0xffffffffb5766df1 <wait_for_completion+17>:    sub    $0x28,%rsp
+> 0xffffffffb5766df5 <wait_for_completion+21>:    callq  0xffffffffb57666c0 <_cond_resched>
+> 0xffffffffb5766dfa <wait_for_completion+26>:    mov    %rbx,%rdi
+> 0xffffffffb5766dfd <wait_for_completion+29>:    callq  0xffffffffb576b550 <_raw_spin_lock_irq>
+> 0xffffffffb5766e02 <wait_for_completion+34>:    mov    (%r12),%eax
+> 0xffffffffb5766e06 <wait_for_completion+38>:    test   %eax,%eax
+> 0xffffffffb5766e08 <wait_for_completion+40>:    jne    0xffffffffb5766ed6 <wait_for_completion+246>
+> 0xffffffffb5766e0e <wait_for_completion+46>:    mov    %gs:0x14d00,%rax
+> 0xffffffffb5766e17 <wait_for_completion+55>:    mov    %rax,0x8(%rsp)
+>
+>
+>
+> ----- End forwarded message -----
+>
