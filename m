@@ -2,494 +2,140 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C14D3C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 13:31:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06F54C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 13:32:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74B3A223DD
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 13:31:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74B3A223DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id BE89A20869
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 13:32:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hnqdKo+b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE89A20869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729888AbeKLXZH (ORCPT
+        id S1729903AbeKLX0C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 18:25:07 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:47645 "EHLO mail.bootlin.com"
+        Mon, 12 Nov 2018 18:26:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58756 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729351AbeKLXYb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 18:24:31 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 39D1E2217E; Mon, 12 Nov 2018 14:31:11 +0100 (CET)
-Received: from localhost (unknown [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 0623D20717;
-        Mon, 12 Nov 2018 14:31:11 +0100 (CET)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc:     Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH v3 4/7] ARM: dts: at91: at91sam9261: switch to new clock bindings
-Date:   Mon, 12 Nov 2018 14:31:05 +0100
-Message-Id: <20181112133108.31021-5-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181112133108.31021-1-alexandre.belloni@bootlin.com>
-References: <20181112133108.31021-1-alexandre.belloni@bootlin.com>
+        id S1729351AbeKLX0C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 18:26:02 -0500
+Received: from localhost (unknown [206.108.79.134])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18E5120869;
+        Mon, 12 Nov 2018 13:32:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542029564;
+        bh=UUdYIfU8IPLaJ0KANgLWI2q0Hl1LCY+aTtQTtVUZgAs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hnqdKo+brJdPn84dN3FcbyuTLWeH4sk0S+gPAAlKNglkjqHrDIhc/aIZcAn6o24j8
+         mNnxnWkdEK5fGSn/HvVwjuaj2WO0KH5NjzgsYJdNUUcRonLss/236uok6JSz89RZ2G
+         wstoAClv9HabzHQ+V1NUhqAyA0vb8iKm6EqLDyYw=
+Date:   Mon, 12 Nov 2018 05:32:43 -0800
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Rafael David Tinoco <rafael.tinoco@linaro.org>
+Cc:     Sasha Levin <sashal@kernel.org>, stable@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Prarit Bhargava <prarit@redhat.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Stafford Horne <shorne@gmail.com>
+Subject: Re: [PATCH AUTOSEL 4.4 07/32] cpupower: Fix coredump on VMWare
+Message-ID: <20181112133243.GA22022@kroah.com>
+References: <20181031231137.29429-1-sashal@kernel.org>
+ <20181031231137.29429-7-sashal@kernel.org>
+ <a5f213e5-a671-d587-5329-5b919965134e@linaro.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <a5f213e5-a671-d587-5329-5b919965134e@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch at91sam9261 boards to the new PMC clock bindings.
+On Mon, Nov 12, 2018 at 08:29:27AM -0200, Rafael David Tinoco wrote:
+> On 10/31/18 9:11 PM, Sasha Levin wrote:
+> > From: Prarit Bhargava <prarit@redhat.com>
+> > 
+> > [ Upstream commit f69ffc5d3db8f1f03fd6d1df5930f9a1fbd787b6 ]
+> > 
+> > cpupower crashes on VMWare guests.  The guests have the AMD PStateDef MSR
+> > (0xC0010064 + state number) set to zero.  As a result fid and did are zero
+> > and the crash occurs because of a divide by zero (cof = fid/did).  This
+> > can be prevented by checking the enable bit in the PStateDef MSR before
+> > calculating cof.  By doing this the value of pstate[i] remains zero and
+> > the value can be tested before displaying the active Pstates.
+> > 
+> > Check the enable bit in the PstateDef register for all supported families
+> > and only print out enabled Pstates.
+> > 
+> > Signed-off-by: Prarit Bhargava <prarit@redhat.com>
+> > Cc: Shuah Khan <shuah@kernel.org>
+> > Cc: Stafford Horne <shorne@gmail.com>
+> > Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+> > Signed-off-by: Sasha Levin <sashal@kernel.org>
+> > ---
+> >   tools/power/cpupower/utils/cpufreq-info.c | 2 ++
+> >   tools/power/cpupower/utils/helpers/amd.c  | 5 +++++
+> >   2 files changed, 7 insertions(+)
+> > 
+> > diff --git a/tools/power/cpupower/utils/cpufreq-info.c b/tools/power/cpupower/utils/cpufreq-info.c
+> > index 0e6764330241..f9b064ac8d94 100644
+> > --- a/tools/power/cpupower/utils/cpufreq-info.c
+> > +++ b/tools/power/cpupower/utils/cpufreq-info.c
+> > @@ -200,6 +200,8 @@ static int get_boost_mode(unsigned int cpu)
+> >   		printf(_("    Boost States: %d\n"), b_states);
+> >   		printf(_("    Total States: %d\n"), pstate_no);
+> >   		for (i = 0; i < pstate_no; i++) {
+> > +			if (!pstates[i])
+> > +				continue;
+> >   			if (i < b_states)
+> >   				printf(_("    Pstate-Pb%d: %luMHz (boost state)"
+> >   					 "\n"), i, pstates[i]);
+> > diff --git a/tools/power/cpupower/utils/helpers/amd.c b/tools/power/cpupower/utils/helpers/amd.c
+> > index 6437ef39aeea..82adfb33d7a5 100644
+> > --- a/tools/power/cpupower/utils/helpers/amd.c
+> > +++ b/tools/power/cpupower/utils/helpers/amd.c
+> > @@ -103,6 +103,11 @@ int decode_pstates(unsigned int cpu, unsigned int cpu_family,
+> >   		}
+> >   		if (read_msr(cpu, MSR_AMD_PSTATE + i, &pstate.val))
+> >   			return -1;
+> > +		if ((cpu_family == 0x17) && (!pstate.fam17h_bits.en))
+> > +			continue;
+> > +		else if (!pstate.bits.en)
+> > +			continue;
+> > +
+> >   		pstates[i] = get_cof(cpu_family, pstate);
+> >   	}
+> >   	*no = i;
+> > 
+> 
+> Sasha,
+> 
+> This commit is causing:
+> 
+> $ make V=1 -C tools/power/cpupower all
+> 
+> gcc -fPIC -DVERSION=\"4.4.163.99.g0d9e7b\" -DPACKAGE=\"cpupower\"
+> -DPACKAGE_BUGREPORT=\"linux-pm@vger.kernel.org\" -D_GNU_SOURCE -pipe -DNLS
+> -Wall -Wchar-subscripts -Wpointer-arith -Wsign-compare -Wno-pointer-sign
+> -Wdeclaration-after-statement -Wshadow -O1 -g -DDEBUG -I./lib -I ./utils -o
+> utils/helpers/amd.o -c utils/helpers/amd.c
+> utils/helpers/amd.c: In function ‘decode_pstates’:
+> utils/helpers/amd.c:106:39: error: ‘union msr_pstate’ has no member named
+> ‘fam17h_bits’
+>    if ((cpu_family == 0x17) && (!pstate.fam17h_bits.en))
+> 
+> I think it should be dropped from v4.4 and v4.9 RCs, since this is a fix for
+> a CPU that isn't supported for those 2.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- arch/arm/boot/dts/at91sam9261.dtsi | 287 +++--------------------------
- 1 file changed, 23 insertions(+), 264 deletions(-)
+Now dropped from both queues now.  Thanks for testing and finding these.
 
-diff --git a/arch/arm/boot/dts/at91sam9261.dtsi b/arch/arm/boot/dts/at91sam9261.dtsi
-index 33f09d5ea020..01d700b63b45 100644
---- a/arch/arm/boot/dts/at91sam9261.dtsi
-+++ b/arch/arm/boot/dts/at91sam9261.dtsi
-@@ -75,7 +75,7 @@
- 			compatible = "atmel,at91rm9200-ohci", "usb-ohci";
- 			reg = <0x00500000 0x100000>;
- 			interrupts = <20 IRQ_TYPE_LEVEL_HIGH 2>;
--			clocks = <&ohci_clk>, <&hclk0>, <&uhpck>;
-+			clocks = <&pmc PMC_TYPE_PERIPHERAL 20>, <&pmc PMC_TYPE_SYSTEM 16>, <&pmc PMC_TYPE_SYSTEM 6>;
- 			clock-names = "ohci_clk", "hclk", "uhpck";
- 			status = "disabled";
- 		};
-@@ -86,7 +86,7 @@
- 			interrupts = <21 IRQ_TYPE_LEVEL_HIGH 3>;
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&pinctrl_fb>;
--			clocks = <&lcd_clk>, <&hclk1>;
-+			clocks = <&pmc PMC_TYPE_PERIPHERAL 21>, <&pmc PMC_TYPE_SYSTEM 17>;
- 			clock-names = "lcdc_clk", "hclk";
- 			status = "disabled";
- 		};
-@@ -106,7 +106,7 @@
- 				  0x5 0x0 0x60000000 0x10000000
- 				  0x6 0x0 0x70000000 0x10000000
- 				  0x7 0x0 0x80000000 0x10000000>;
--			clocks = <&mck>;
-+			clocks = <&pmc PMC_TYPE_CORE PMC_MCK>;
- 			status = "disabled";
- 
- 			nand_controller: nand-controller {
-@@ -132,7 +132,7 @@
- 				interrupts = <17 IRQ_TYPE_LEVEL_HIGH 0>,
- 					     <18 IRQ_TYPE_LEVEL_HIGH 0>,
- 					     <19 IRQ_TYPE_LEVEL_HIGH 0>;
--				clocks = <&tc0_clk>, <&tc1_clk>, <&tc2_clk>, <&slow_xtal>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 17>, <&pmc PMC_TYPE_PERIPHERAL 18>, <&pmc PMC_TYPE_PERIPHERAL 19>, <&slow_xtal>;
- 				clock-names = "t0_clk", "t1_clk", "t2_clk", "slow_clk";
- 			};
- 
-@@ -140,7 +140,7 @@
- 				compatible = "atmel,at91sam9261-udc";
- 				reg = <0xfffa4000 0x4000>;
- 				interrupts = <10 IRQ_TYPE_LEVEL_HIGH 2>;
--				clocks = <&udc_clk>, <&udpck>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 10>, <&pmc PMC_TYPE_SYSTEM 7>;
- 				clock-names = "pclk", "hclk";
- 				atmel,matrix = <&matrix>;
- 				status = "disabled";
-@@ -154,7 +154,7 @@
- 				pinctrl-0 = <&pinctrl_mmc0_clk>, <&pinctrl_mmc0_slot0_cmd_dat0>, <&pinctrl_mmc0_slot0_dat1_3>;
- 				#address-cells = <1>;
- 				#size-cells = <0>;
--				clocks = <&mci0_clk>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 9>;
- 				clock-names = "mci_clk";
- 				status = "disabled";
- 			};
-@@ -167,7 +167,7 @@
- 				interrupts = <11 IRQ_TYPE_LEVEL_HIGH 6>;
- 				#address-cells = <1>;
- 				#size-cells = <0>;
--				clocks = <&twi0_clk>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 11>;
- 				status = "disabled";
- 			};
- 
-@@ -179,7 +179,7 @@
- 				atmel,use-dma-tx;
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&pinctrl_usart0>;
--				clocks = <&usart0_clk>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 6>;
- 				clock-names = "usart";
- 				status = "disabled";
- 			};
-@@ -192,7 +192,7 @@
- 				atmel,use-dma-tx;
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&pinctrl_usart1>;
--				clocks = <&usart1_clk>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 7>;
- 				clock-names = "usart";
- 				status = "disabled";
- 			};
-@@ -205,7 +205,7 @@
- 				atmel,use-dma-tx;
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&pinctrl_usart2>;
--				clocks = <&usart2_clk>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 8>;
- 				clock-names = "usart";
- 				status = "disabled";
- 			};
-@@ -216,7 +216,7 @@
- 				interrupts = <14 IRQ_TYPE_LEVEL_HIGH 5>;
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&pinctrl_ssc0_tx &pinctrl_ssc0_rx>;
--				clocks = <&ssc0_clk>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 14>;
- 				clock-names = "pclk";
- 				status = "disabled";
- 			};
-@@ -227,7 +227,7 @@
- 				interrupts = <15 IRQ_TYPE_LEVEL_HIGH 5>;
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&pinctrl_ssc1_tx &pinctrl_ssc1_rx>;
--				clocks = <&ssc1_clk>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 15>;
- 				clock-names = "pclk";
- 				status = "disabled";
- 			};
-@@ -238,7 +238,7 @@
- 				interrupts = <16 IRQ_TYPE_LEVEL_HIGH 5>;
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&pinctrl_ssc2_tx &pinctrl_ssc2_rx>;
--				clocks = <&ssc2_clk>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 16>;
- 				clock-names = "pclk";
- 				status = "disabled";
- 			};
-@@ -252,7 +252,7 @@
- 				interrupts = <12 IRQ_TYPE_LEVEL_HIGH 3>;
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&pinctrl_spi0>;
--				clocks = <&spi0_clk>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 12>;
- 				clock-names = "spi_clk";
- 				status = "disabled";
- 			};
-@@ -265,7 +265,7 @@
- 				interrupts = <13 IRQ_TYPE_LEVEL_HIGH 3>;
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&pinctrl_spi1>;
--				clocks = <&spi1_clk>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 13>;
- 				clock-names = "spi_clk";
- 				status = "disabled";
- 			};
-@@ -299,7 +299,7 @@
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&pinctrl_dbgu>;
--				clocks = <&mck>;
-+				clocks = <&pmc PMC_TYPE_CORE PMC_MCK>;
- 				clock-names = "usart";
- 				status = "disabled";
- 			};
-@@ -563,7 +563,7 @@
- 					gpio-controller;
- 					interrupt-controller;
- 					#interrupt-cells = <2>;
--					clocks = <&pioA_clk>;
-+					clocks = <&pmc PMC_TYPE_PERIPHERAL 2>;
- 				};
- 
- 				pioB: gpio@fffff600 {
-@@ -574,7 +574,7 @@
- 					gpio-controller;
- 					interrupt-controller;
- 					#interrupt-cells = <2>;
--					clocks = <&pioB_clk>;
-+					clocks = <&pmc PMC_TYPE_PERIPHERAL 3>;
- 				};
- 
- 				pioC: gpio@fffff800 {
-@@ -585,7 +585,7 @@
- 					gpio-controller;
- 					interrupt-controller;
- 					#interrupt-cells = <2>;
--					clocks = <&pioC_clk>;
-+					clocks = <&pmc PMC_TYPE_PERIPHERAL 4>;
- 				};
- 			};
- 
-@@ -593,250 +593,9 @@
- 				compatible = "atmel,at91sam9261-pmc", "syscon";
- 				reg = <0xfffffc00 0x100>;
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
--				interrupt-controller;
--				#address-cells = <1>;
--				#size-cells = <0>;
--				#interrupt-cells = <1>;
--
--				main_osc: main_osc {
--					compatible = "atmel,at91rm9200-clk-main-osc";
--					#clock-cells = <0>;
--					interrupts-extended = <&pmc AT91_PMC_MOSCS>;
--					clocks = <&main_xtal>;
--				};
--
--				main: mainck {
--					compatible = "atmel,at91rm9200-clk-main";
--					#clock-cells = <0>;
--					clocks = <&main_osc>;
--				};
--
--				plla: pllack {
--					compatible = "atmel,at91rm9200-clk-pll";
--					#clock-cells = <0>;
--					interrupts-extended = <&pmc AT91_PMC_LOCKA>;
--					clocks = <&main>;
--					reg = <0>;
--					atmel,clk-input-range = <1000000 32000000>;
--					#atmel,pll-clk-output-range-cells = <4>;
--					atmel,pll-clk-output-ranges = <80000000 200000000 0 1>,
--								<190000000 240000000 2 1>;
--				};
--
--				pllb: pllbck {
--					compatible = "atmel,at91rm9200-clk-pll";
--					#clock-cells = <0>;
--					interrupts-extended = <&pmc AT91_PMC_LOCKB>;
--					clocks = <&main>;
--					reg = <1>;
--					atmel,clk-input-range = <1000000 5000000>;
--					#atmel,pll-clk-output-range-cells = <4>;
--					atmel,pll-clk-output-ranges = <70000000 130000000 1 1>;
--				};
--
--				mck: masterck {
--					compatible = "atmel,at91rm9200-clk-master";
--					#clock-cells = <0>;
--					interrupts-extended = <&pmc AT91_PMC_MCKRDY>;
--					clocks = <&slow_xtal>, <&main>, <&plla>, <&pllb>;
--					atmel,clk-output-range = <0 94000000>;
--					atmel,clk-divisors = <1 2 4 0>;
--				};
--
--				usb: usbck {
--					compatible = "atmel,at91rm9200-clk-usb";
--					#clock-cells = <0>;
--					atmel,clk-divisors = <1 2 4 0>;
--					clocks = <&pllb>;
--				};
--
--				prog: progck {
--					compatible = "atmel,at91rm9200-clk-programmable";
--					#address-cells = <1>;
--					#size-cells = <0>;
--					interrupt-parent = <&pmc>;
--					clocks = <&slow_xtal>, <&main>, <&plla>, <&pllb>;
--
--					prog0: prog0 {
--						#clock-cells = <0>;
--						reg = <0>;
--						interrupts = <AT91_PMC_PCKRDY(0)>;
--					};
--
--					prog1: prog1 {
--						#clock-cells = <0>;
--						reg = <1>;
--						interrupts = <AT91_PMC_PCKRDY(1)>;
--					};
--
--					prog2: prog2 {
--						#clock-cells = <0>;
--						reg = <2>;
--						interrupts = <AT91_PMC_PCKRDY(2)>;
--					};
--
--					prog3: prog3 {
--						#clock-cells = <0>;
--						reg = <3>;
--						interrupts = <AT91_PMC_PCKRDY(3)>;
--					};
--				};
--
--				systemck {
--					compatible = "atmel,at91rm9200-clk-system";
--					#address-cells = <1>;
--					#size-cells = <0>;
--
--					uhpck: uhpck {
--						#clock-cells = <0>;
--						reg = <6>;
--						clocks = <&usb>;
--					};
--
--					udpck: udpck {
--						#clock-cells = <0>;
--						reg = <7>;
--						clocks = <&usb>;
--					};
--
--					pck0: pck0 {
--						#clock-cells = <0>;
--						reg = <8>;
--						clocks = <&prog0>;
--					};
--
--					pck1: pck1 {
--						#clock-cells = <0>;
--						reg = <9>;
--						clocks = <&prog1>;
--					};
--
--					pck2: pck2 {
--						#clock-cells = <0>;
--						reg = <10>;
--						clocks = <&prog2>;
--					};
--
--					pck3: pck3 {
--						#clock-cells = <0>;
--						reg = <11>;
--						clocks = <&prog3>;
--					};
--
--					hclk0: hclk0 {
--						#clock-cells = <0>;
--						reg = <16>;
--						clocks = <&mck>;
--					};
--
--					hclk1: hclk1 {
--						#clock-cells = <0>;
--						reg = <17>;
--						clocks = <&mck>;
--					};
--				};
--
--				periphck {
--					compatible = "atmel,at91rm9200-clk-peripheral";
--					#address-cells = <1>;
--					#size-cells = <0>;
--					clocks = <&mck>;
--
--					pioA_clk: pioA_clk {
--						#clock-cells = <0>;
--						reg = <2>;
--					};
--
--					pioB_clk: pioB_clk {
--						#clock-cells = <0>;
--						reg = <3>;
--					};
--
--					pioC_clk: pioC_clk {
--						#clock-cells = <0>;
--						reg = <4>;
--					};
--
--					usart0_clk: usart0_clk {
--						#clock-cells = <0>;
--						reg = <6>;
--					};
--
--					usart1_clk: usart1_clk {
--						#clock-cells = <0>;
--						reg = <7>;
--					};
--
--					usart2_clk: usart2_clk {
--						#clock-cells = <0>;
--						reg = <8>;
--					};
--
--					mci0_clk: mci0_clk {
--						#clock-cells = <0>;
--						reg = <9>;
--					};
--
--					udc_clk: udc_clk {
--						#clock-cells = <0>;
--						reg = <10>;
--					};
--
--					twi0_clk: twi0_clk {
--						reg = <11>;
--						#clock-cells = <0>;
--					};
--
--					spi0_clk: spi0_clk {
--						#clock-cells = <0>;
--						reg = <12>;
--					};
--
--					spi1_clk: spi1_clk {
--						#clock-cells = <0>;
--						reg = <13>;
--					};
--
--					ssc0_clk: ssc0_clk {
--						#clock-cells = <0>;
--						reg = <14>;
--					};
--
--					ssc1_clk: ssc1_clk {
--						#clock-cells = <0>;
--						reg = <15>;
--					};
--
--					ssc2_clk: ssc2_clk {
--						#clock-cells = <0>;
--						reg = <16>;
--					};
--
--					tc0_clk: tc0_clk {
--						#clock-cells = <0>;
--						reg = <17>;
--					};
--
--					tc1_clk: tc1_clk {
--						#clock-cells = <0>;
--						reg = <18>;
--					};
--
--					tc2_clk: tc2_clk {
--						#clock-cells = <0>;
--						reg = <19>;
--					};
--
--					ohci_clk: ohci_clk {
--						#clock-cells = <0>;
--						reg = <20>;
--					};
--
--					lcd_clk: lcd_clk {
--						#clock-cells = <0>;
--						reg = <21>;
--					};
--				};
-+				#clock-cells = <2>;
-+				clocks = <&slow_xtal>, <&main_xtal>;
-+				clock-names = "slow_xtal", "main_xtal";
- 			};
- 
- 			rstc@fffffd00 {
-@@ -855,7 +614,7 @@
- 				compatible = "atmel,at91sam9260-pit";
- 				reg = <0xfffffd30 0xf>;
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
--				clocks = <&mck>;
-+				clocks = <&pmc PMC_TYPE_CORE PMC_MCK>;
- 			};
- 
- 			rtc@fffffd20 {
--- 
-2.19.1
-
+greg k-h
