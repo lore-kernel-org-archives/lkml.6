@@ -2,156 +2,148 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0221C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:15:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA871C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:16:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A80782241E
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:15:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C5562241E
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:16:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SUBsExjJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A80782241E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	dkim=pass (2048-bit key) header.d=synesis-ru.20150623.gappssmtp.com header.i=@synesis-ru.20150623.gappssmtp.com header.b="Tr9F/gdO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C5562241E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=synesis.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730085AbeKMCJk (ORCPT
+        id S1729925AbeKMCKr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 21:09:40 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:37848 "EHLO
+        Mon, 12 Nov 2018 21:10:47 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:44658 "EHLO
         mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727808AbeKMCJk (ORCPT
+        with ESMTP id S1727976AbeKMCKq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 21:09:40 -0500
-Received: by mail-oi1-f196.google.com with SMTP id w66-v6so7613359oiw.4
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 08:15:44 -0800 (PST)
+        Mon, 12 Nov 2018 21:10:46 -0500
+Received: by mail-oi1-f196.google.com with SMTP id p82-v6so7584134oih.11
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 08:16:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:reply-to:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=WCxdd0//IIzUxm+lNrxUD5GYI7ABQ6z+wT+ygV3jmFQ=;
-        b=SUBsExjJjdpDAR1Iy+5c4raa8Vi3vz9pVDrZuFx39Et8oZ6cqMz5F25gAeehCSOvLj
-         3qpDDvLsDOFkvckIsDJ7iI/5MtdHgIq9Vxhqh8KRVzULOPXy1N8mViqk0F8HScHtQ6CQ
-         HGHDgPjq93TmkKaHtWrc3ltTHaLQHZ4pRbVCRfJkNWbEAmTSSSU9L8sAI2rPjHP/8S+H
-         JQQhgYv+M9nPQH0y1CImI5UKivbgOZS8lx7ymfo7AXZmiLn+fT9qQEgIfMZVYWmS+NCm
-         sa6JEgB+WzuQ6F0ID+4hCzNSMGfWb1d59/b/coE+QaJSQA3sVgCdpX8b/jQ2vDKpVJ/L
-         QK7Q==
+        d=synesis-ru.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=LcPRtZZv6rKs/BOykeACgr9FCLAs5Zf0D5AlPGCzhpE=;
+        b=Tr9F/gdOLgQnRDoLU449pU9saMCf4gG2m4a6FIjkz7AK4MxwXE+n/iCBFtcAmtgR6V
+         Qd8lGQXfivw6xX8KODxJWLFB5T5rxEiEQQfacKpK1zq+xhU73/nR7ZV9/dCBWZfk7nMb
+         b4gopyhIqGB15frdDTHofn2yjoGfIQOxwmDKLu27VOUV2w2nxaBWs7OqGcreLt5Jn3+Y
+         E7sjOy49E6eIHhNRLPUcPfrlrNiwd5h5eeFMPjacjqZHT7Dyu1nlwaz5yySiclXK4WMo
+         3Kyuij/HattpJY2UwBrfhhWnV71uYkh0XosRHWUtnZoU7uEUFe0rdtXpcYWcQ6W0PSN7
+         SVqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:reply-to:subject:to:cc:references:from
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-transfer-encoding:content-language;
-        bh=WCxdd0//IIzUxm+lNrxUD5GYI7ABQ6z+wT+ygV3jmFQ=;
-        b=UE9esHk2corRoWWYlSq8Om5QQK7jORw1kGerd1b42YiK1NslYx5ryTQG5yK5804sD/
-         /lo+yFTEc7S0mBOlBfy6E4U0NZOurVMKA8VrUeZjm2aTicyK9YbpC5T4bbxd/krGR8NO
-         ToxIuGXQTS30pXG1YDTg/HHV5pDU1C4JKdXyzPgWZEfnIGy9akcZJ3ECofu3lmPvNBem
-         6V/9OCPNghI6lS3iW9QI/gY3cSD1nWTKopWj7N5nWjjGGd+m1ZJpTxskZbzDuCR5y/QH
-         epjxRfyTwE3KaYxqYgkxHs0svoTc7de6Y70LQNug+CPL/uiuDBj2zlD1YhNU+qANe9Cs
-         Dovw==
-X-Gm-Message-State: AGRZ1gJNFeRroHu6XOhXEsrZMLVX2R5YjdpAJyiy+OWrACVOU+pcsVhc
-        Iduq5hNgnX3NH5chm6MtXA==
-X-Google-Smtp-Source: AJdET5dBBZluLDSJbLWmwGkpQwh3JKTX41hFPa50VEERqGk8U2eWDI9fScI+BNRHl4ONzZ1QF646Ug==
-X-Received: by 2002:aca:b183:: with SMTP id a125-v6mr928806oif.44.1542039344038;
-        Mon, 12 Nov 2018 08:15:44 -0800 (PST)
-Received: from serve.minyard.net ([47.184.128.64])
-        by smtp.gmail.com with ESMTPSA id 43sm8299603otz.66.2018.11.12.08.15.42
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=LcPRtZZv6rKs/BOykeACgr9FCLAs5Zf0D5AlPGCzhpE=;
+        b=grg+gTPxUhkkrXn2WJ/Zan/KiRYAZmDb9WWH6NkHf44kfnLeT3Iy6g327IA19KDsfb
+         QymhQRrIpCI8tATioEQtjVtDMleqeRS0zylC70HdfsRFNuO2Rdj954ARyks6CPRkUf7r
+         VJ9CtQcquPbCl8XtTIb6fKh/EXb9jxZP1LS4iyooaFL2xtXkxcBKb2JSnn1j6/IBdflK
+         OwnS1CKpoM10bvkJPm7lco2hcmbFfhHyRSHerDacvwN8sylgDRGrb4G5d/2CC8T4/VQy
+         xUiaMNTko/DRge6rIuIfbvxNS3K0dzdX+qP9y1IXy3kDD2b7+OoW9Fv8yJG1nChDWukf
+         I+QA==
+X-Gm-Message-State: AGRZ1gK0LJe+uDWj93WjNs7gtCtC4+J0HOcOROrp6RMOW6BkRiJv7huE
+        TLtIXzN8qQgAiDwrUjRm2ovsZfJHTuoSIA==
+X-Google-Smtp-Source: AJdET5fPm6Xdi9Nz8jIo/+aFvNszpTPJrQmJTAThuGvH008jcTTsTp2eA/PmprXeg44FvbihQtn2/A==
+X-Received: by 2002:aca:6910:: with SMTP id e16-v6mr914656oic.117.1542039410325;
+        Mon, 12 Nov 2018 08:16:50 -0800 (PST)
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com. [209.85.167.179])
+        by smtp.gmail.com with ESMTPSA id e75-v6sm11831797oih.41.2018.11.12.08.16.48
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 12 Nov 2018 08:15:43 -0800 (PST)
-Received: from [192.168.27.3] (t430m.minyard.net [192.168.27.3])
-        by serve.minyard.net (Postfix) with ESMTPSA id BFB09941;
-        Mon, 12 Nov 2018 10:15:41 -0600 (CST)
-Reply-To: minyard@acm.org
-Subject: Re: [PATCH tip/core/rcu 10/41] drivers/ipmi: Replace
- synchronize_sched() with synchronize_rcu()
-To:     paulmck@linux.ibm.com
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        openipmi-developer@lists.sourceforge.net
-References: <20181111194104.GA4787@linux.ibm.com>
- <20181111194410.6368-10-paulmck@linux.ibm.com>
- <16c19493-44b0-18e3-d3cb-4d6c2f9f9f53@acm.org>
- <20181112160425.GJ4170@linux.ibm.com>
-From:   Corey Minyard <minyard@acm.org>
-Message-ID: <465ebdbb-188c-c4b8-935b-58205b9f98e5@acm.org>
-Date:   Mon, 12 Nov 2018 10:15:41 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 12 Nov 2018 08:16:48 -0800 (PST)
+Received: by mail-oi1-f179.google.com with SMTP id c206so2054582oib.0;
+        Mon, 12 Nov 2018 08:16:48 -0800 (PST)
+X-Received: by 2002:aca:f40d:: with SMTP id s13-v6mr929111oih.102.1542039407789;
+ Mon, 12 Nov 2018 08:16:47 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181112160425.GJ4170@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
+References: <20181111212610.25213-1-timofey.titovets@synesis.ru> <20181112035838.GF21824@bombadil.infradead.org>
+In-Reply-To: <20181112035838.GF21824@bombadil.infradead.org>
+From:   Timofey Titovets <timofey.titovets@synesis.ru>
+Date:   Mon, 12 Nov 2018 19:16:11 +0300
+X-Gmail-Original-Message-ID: <CAGqmi7610QBdEp=xUOgPEbMhfB11ZF6cFCBS-T3BoCb2Sbj1ug@mail.gmail.com>
+Message-ID: <CAGqmi7610QBdEp=xUOgPEbMhfB11ZF6cFCBS-T3BoCb2Sbj1ug@mail.gmail.com>
+Subject: Re: [PATCH v2] ksm: allow dedup all tasks memory
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Linux Kernel <linux-kernel@vger.kernel.org>,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/12/18 10:04 AM, Paul E. McKenney wrote:
-> On Mon, Nov 12, 2018 at 09:38:55AM -0600, Corey Minyard wrote:
->> On 11/11/18 1:43 PM, Paul E. McKenney wrote:
->>> Now that synchronize_rcu() waits for preempt-disable regions of code
->>> as well as RCU read-side critical sections, synchronize_sched() can be
->>> replaced by synchronize_rcu().  This commit therefore makes this change.
->> Assuming the above is true, this looks fine to me.
->>
->> Acked-by: Corey MInyard <cminyard@mvista.com>
-
-
-Dang, that's
-
-Acked-by: Corey Minyard <cminyard@mvista.com>
-
-
-> Thank you!
+=D0=BF=D0=BD, 12 =D0=BD=D0=BE=D1=8F=D0=B1. 2018 =D0=B3. =D0=B2 6:58, Matthe=
+w Wilcox <willy@infradead.org>:
 >
->> Or I can take it in my tree, either way.
-> I will carry it unless/until I send it upstream (this coming merge
-> window) or I see it already upstream.
+> On Mon, Nov 12, 2018 at 12:26:10AM +0300, Timofey Titovets wrote:
+> > ksm by default working only on memory that added by
+> > madvice().
+> >
+> > And only way get that work on other applications:
+> >  - Use LD_PRELOAD and libraries
+> >  - Patch kernel
+> >
+> > Lets use kernel task list in ksm_scan_thread and add logic to allow ksm
+> > import VMA from tasks.
+> > That behaviour controlled by new attribute: mode
+> > I try mimic hugepages attribute, so mode have two states:
+> >  - normal       - old default behaviour
+> >  - always [new] - allow ksm to get tasks vma and try working on that.
+> >
+> > To reduce CPU load & tasklist locking time,
+> > ksm try import VMAs from one task per loop.
+> >
+> > So add new attribute "mode"
+> > Two passible values:
+> >  - normal [default] - ksm use only madvice
+> >  - always [new]     - ksm will search vma over all processes memory and
+> >                       add it to the dedup list
 >
-> So your choice.  ;-)
+> Do you have any numbers for how much difference this change makes with
+> various different workloads?
+
+Yep, i got some non KVM numbers,
+Formulas:
+ Percentage - (pages_sharing - pages_shared)/pages_unshared
+ Memory saved - (pages_sharing - pages_shared)*4/1024 MiB
+
+- My working laptop: 5% - ~100 MiB saved ~2GiB used
+  Many different chrome based apps + KDE
+
+- K8s test VM:  40% - ~160 MiB saved ~920MiB used
+  With some small running docker images
+
+- Ceph test VM: 20% - ~60MiB saved ~600MiB used
+  With ceph mon, osd.
+
+Develop cluster servers:
+- K8s server backend: 72%, ~5800 MiB saved ~35.7 GiB used
+  (With backend apps: C, java, go & etc server apps)
+
+- K8s server processing: 55%, ~2600 MiB saved ~28 GiB used
+  (90% of load many instance of one CPU intensive application)
+
+- Ceph node: 2%, ~190 MiB saved ~11.7 GiB used
+  (OSD only)
 
 
-Ok, if you don't mind, you can carry it.
+So numbers, as always depends on the load.
 
-Thanks,
+Thanks!
+- - -
+P.S.
+On recent kernels (4.19) i see BUG_ON message, that ksmd scheduled
+while in critical section/atomic context,
+not sure how to properly fix that.
+(If i understood correctly, i can use preempt_disable(); but that
+looks more like hack, not a fix).
 
--corey
-
-
-> 							Thanx, Paul
->
->> -corey
->>
->>
->>> Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
->>> Cc: Corey Minyard <minyard@acm.org>
->>> Cc: Arnd Bergmann <arnd@arndb.de>
->>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>> Cc: <openipmi-developer@lists.sourceforge.net>
->>> ---
->>>   drivers/char/ipmi/ipmi_si_intf.c | 2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
->>> index 677618e6f1f7..dc8603d34320 100644
->>> --- a/drivers/char/ipmi/ipmi_si_intf.c
->>> +++ b/drivers/char/ipmi/ipmi_si_intf.c
->>> @@ -2187,7 +2187,7 @@ static void shutdown_smi(void *send_info)
->>>   	 * handlers might have been running before we freed the
->>>   	 * interrupt.
->>>   	 */
->>> -	synchronize_sched();
->>> +	synchronize_rcu();
->>>   	/*
->>>   	 * Timeouts are stopped, now make sure the interrupts are off
->>
-
+Any feedback are welcome.
