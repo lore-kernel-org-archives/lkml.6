@@ -2,101 +2,215 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 623C3C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 09:43:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 408AFC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 09:44:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A0F6223CB
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 09:43:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A0F6223CB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id E8F18223CB
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 09:44:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8F18223CB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727120AbeKLTfY (ORCPT
+        id S1727622AbeKLTgo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 14:35:24 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:36444 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725873AbeKLTfY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 14:35:24 -0500
-Received: by mail-ua1-f66.google.com with SMTP id j3so2812584uap.3;
-        Mon, 12 Nov 2018 01:42:59 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yL4lIIwoehOZCmTS+YcIMJIxIGekmiJLuRWURAF6dC4=;
-        b=XQfKoaaAXGUKEnVtFmVO+suZLjdGaf2Uix60gS0oDPUrfktP+1KfEhNulSKGS/P2dW
-         humeR5p0hziC9Y6UFEF3j5rIVAjQ3VzAHzGXaf3PAH1g/NeRqz7eFGmIodP1zWdoVRZ7
-         wUbVOV+I3JqJAyw567/3j4Gd02vilyv2k0nsx7IYWeaz9jt0NKkpwlLbrn5nWJ21izIa
-         lAA28L153YcBgv14ErQs3v2mlh9Biekws1n4kZzDWJSCeZvKZP6514p7oWA9IGY+o+Yu
-         cFYM1zBSKYjj8aGYyl+vsQTCTFWkBhAQ/qUV4OYHJO1M1ufTsAoY3GhMgzTEof+QPv9r
-         leBw==
-X-Gm-Message-State: AGRZ1gKCVeEyP5Mp//2vn9kVLVtVMgpsTebBf/0VVluku1DRBIryGuDh
-        rTx8BLPxQxxGXa7ms2xUV8M8UKQ1EmZQTOde18o=
-X-Google-Smtp-Source: AJdET5fjynKZfzZcoORQnAJ61VqiHTSSEnIa/bN68opeEsLWoDHgzNJE7VSXmI/E/g5GGsl0QnRoma9/AhCdyOX4qfQ=
-X-Received: by 2002:ab0:7251:: with SMTP id d17mr119184uap.0.1542015779233;
- Mon, 12 Nov 2018 01:42:59 -0800 (PST)
+        Mon, 12 Nov 2018 14:36:44 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38960 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725873AbeKLTgo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 14:36:44 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5DA5930842A9;
+        Mon, 12 Nov 2018 09:44:19 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-18.pek2.redhat.com [10.72.8.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8BC835D736;
+        Mon, 12 Nov 2018 09:44:11 +0000 (UTC)
+Date:   Mon, 12 Nov 2018 17:44:07 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Ming Lei <tom.leiming@gmail.com>, Jens Axboe <axboe@fb.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Hannes Reinecke <hare@suse.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        linux-scsi@vger.kernel.org
+Subject: Re: kobject lifetime issues in blk-mq
+Message-ID: <20181112094406.GB391@ming.t460p>
+References: <20181109203518.GA7130@roeck-us.net>
+ <20181112092051.GA391@ming.t460p>
 MIME-Version: 1.0
-References: <1541623464-49041-1-git-send-email-carmeli.tamir@gmail.com> <1541623464-49041-2-git-send-email-carmeli.tamir@gmail.com>
-In-Reply-To: <1541623464-49041-2-git-send-email-carmeli.tamir@gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 12 Nov 2018 10:42:47 +0100
-Message-ID: <CAMuHMdXqAbWHCFKD6L_JqJQ1J17=QtopHFihXnWcWufkUJqrTw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] staging: emxx_udc: Added static modifier to udc_controller
-To:     carmeli.tamir@gmail.com
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        chrisadr@gentoo.org, areklis909@gmail.com,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        driverdevel <devel@driverdev.osuosl.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181112092051.GA391@ming.t460p>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Mon, 12 Nov 2018 09:44:19 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Carmeli,
+On Mon, Nov 12, 2018 at 05:20:51PM +0800, Ming Lei wrote:
+> On Fri, Nov 09, 2018 at 12:35:18PM -0800, Guenter Roeck wrote:
+> > Hi,
+> > 
+> > Images with CONFIG_DEBUG_KOBJECT=y, CONFIG_DEBUG_KOBJECT_RELEASE=y
+> > enabled report kobject lifetime issues when booting an image in qemu
+> > using virtio-scsi-pci.
+> > 
+> > Bisect points to two different commits, depending on the kernel
+> > configuration.
+> > 
+> > 1st configuration: defconfig plus:
+> > 
+> > CONFIG_VIRTIO_BLK=y
+> > CONFIG_SCSI_LOWLEVEL=y
+> > CONFIG_SCSI_VIRTIO=y
+> > CONFIG_VIRTIO_PCI=y
+> > CONFIG_VIRTIO_MMIO=y
+> > CONFIG_DEBUG_OBJECTS=y
+> > CONFIG_DEBUG_OBJECTS_FREE=y
+> > CONFIG_DEBUG_OBJECTS_TIMERS=y
+> > CONFIG_DEBUG_KOBJECT=y
+> > CONFIG_DEBUG_KOBJECT_RELEASE=y
+> > 
+> > Bisecting this configuration points to commit b5b6e8c8d3b4 ("scsi:
+> > virtio_scsi: fix IO hang caused by automatic irq vector affinity")
+> > as the culprit. This commit enforces the use of blk-mq for virtio_scsi;
+> > the bisect log is therefore a bit misleading.
+> > 
+> > 2nd configuration: As above, plus:
+> > CONFIG_SCSI_MQ_DEFAULT=y
+> > 
+> > With this configuration, bisect points to commit 7ea5fe31c12d
+> > ("blk-mq: make lifetime consitent between q/ctx and its kobject").
+> > 
+> > The qemu command line used to reproduce the problem is as follows.
+> > The qemu version does not seem to matter (I tested with qemu versions
+> > 2.5, 2.11, and 3.0).
+> > 
+> > qemu-system-x86_64 \
+> > 	-kernel arch/x86/boot/bzImage \
+> > 	-device virtio-scsi-pci,id=scsi \
+> > 	-device scsi-hd,bus=scsi.0,drive=d0 \
+> > 	-drive file=./wheezy.img,format=raw,if=none,id=d0 \
+> > 	-snapshot \
+> > 	-m 2G -smp 4 -enable-kvm \
+> > 	-net user,host=10.0.2.10,hostfwd=tcp::10022-:22 -net nic \
+> > 	-nographic -monitor none \
+> > 	-no-reboot \
+> > 	-append "console=ttyS0 root=/dev/sda earlyprintk=serial panic_on_warn=1 panic=-1"
+> > 
+> > Root file system:
+> > 	https://storage.googleapis.com/syzkaller/wheezy.img
+> > or:
+> > 	https://github.com/groeck/linux-build-test/blob/master/rootfs/x86_64/rootfs.ext2.gz
+> > 
+> > It seems that any root file system can be used to reproduce the problem.
+> > Also, the problem is not limited to virtio-scsi-pci. I also tried
+> > am53c974, lsi53c810, and lsi53c895a (after enabling the respective
+> > drivers), with the same result.
+> > 
+> > Overall, this suggests that the problem is related to blk-mq and was
+> > indeed introduced with commit 7ea5fe31c12d.
+> > 
+> > For reference, I attached an actual crash log as well as a set of bisect
+> > logs below.
+> > 
+> > Unfortunately, my understanding of blk-mq is not good enough to find the
+> > underlying problem and suggest a fix. Please let me know if there is
+> > anything else I can do to help fixing the problem.
+> > 
+> > Note that the problem was originally reported by syzbot running a test
+> > on chromeos-4.14. It may well be that the problem has already been
+> > reported and is being worked on. If so, please apologize the noise.
+> > 
+> > Thanks,
+> > Guenter
+> > 
+> > ---
+> > [    8.700038] ------------[ cut here ]------------
+> > [    8.700376] ODEBUG: free active (active state 0) object type: timer_list hint: delayed_work_timer_fn+0x0/0x10
+> > [    8.701032] WARNING: CPU: 0 PID: 0 at lib/debugobjects.c:329 debug_print_object+0x6a/0x80
+> > [    8.701032] Kernel panic - not syncing: panic_on_warn set ...
+> > [    8.701032] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.20.0-rc1 #30
+> > [    8.701032] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+> > [    8.701032] Call Trace:
+> > [    8.701032]  <IRQ>
+> > [    8.701032]  dump_stack+0x46/0x5b
+> > [    8.701032]  panic+0xf3/0x246
+> > [    8.701032]  ? debug_print_object+0x6a/0x80
+> > [    8.701032]  __warn+0xeb/0xf0
+> > [    8.701032]  ? debug_print_object+0x6a/0x80
+> > [    8.701032]  ? debug_print_object+0x6a/0x80
+> > [    8.701032]  report_bug+0xb1/0x120
+> > [    8.701032]  fixup_bug.part.10+0x13/0x30
+> > [    8.701032]  do_error_trap+0x8f/0xb0
+> > [    8.701032]  do_invalid_op+0x31/0x40
+> > [    8.701032]  ? debug_print_object+0x6a/0x80
+> > [    8.701032]  invalid_op+0x14/0x20
+> > [    8.701032] RIP: 0010:debug_print_object+0x6a/0x80
+> > [    8.701032] Code: 8b 43 10 83 c2 01 8b 4b 14 89 15 c1 e2 78 01 4c 8b 45 00 4c
+> > 89 e6 48 c7 c7 f0 ca 41 a6 48 8b 14 c5 a0 f7 24 a6 e8 06 8e cc ff <0f> 0b 5b 83
+> > 05 70 47 1a 01 01 5d 41 5c c3 83 05 65 47 1a 01 01 c3
+> > [    8.701032] RSP: 0018:ffff89b9fda03e48 EFLAGS: 00010082
+> > [    8.701032] RAX: 0000000000000000 RBX: ffff89b9fd49d0c8 RCX: ffffffffa6646e18
+> > [    8.701032] RDX: 0000000000000001 RSI: 0000000000000082 RDI: ffffffffa6cc596c
+> > [    8.701032] RBP: ffffffffa664a5c0 R08: 79616c6564203a74 R09: 5f6b726f775f6465
+> > [    8.701032] R10: ffff89b9fda03f10 R11: 3178302f3078302b R12: ffffffffa6403e22
+> > [    8.701032] R13: 0000000000000001 R14: ffffffffa6d4d458 R15: ffff89b9fc4c8780
+> > [    8.701032]  ? debug_print_object+0x6a/0x80
+> > [    8.701032]  debug_check_no_obj_freed+0x1b8/0x1ea
+> > [    8.701032]  ? rcu_process_callbacks+0x2a7/0x750
+> > [    8.701032]  kmem_cache_free+0x6e/0x1a0
+> > [    8.701032]  ? __blk_release_queue+0x150/0x150
+> > [    8.701032]  rcu_process_callbacks+0x2a7/0x750
+> > [    8.701032]  __do_softirq+0xf2/0x2c7
+> > [    8.701032]  irq_exit+0xb7/0xc0
+> > [    8.701032]  smp_apic_timer_interrupt+0x67/0x130
+> > [    8.701032]  apic_timer_interrupt+0xf/0x20
+> > [    8.701032]  </IRQ>
+> > [    8.701032] RIP: 0010:default_idle+0x12/0x140
+> > [    8.701032] Code: fe ff ff c6 43 08 00 fb eb b0 31 c0 eb b4 e8 65 c8 60 ff 90
+> > 90 90 90 90 41 54 55 53 65 8b 2d 15 c4 3b 5a 66 66 66 66 90 fb f4 <65> 8b 2d 07
+> > c4 3b 5a 66 66 66 66 90 5b 5d 41 5c c3 65 8b 05 f6 c3
+> > [    8.701032] RSP: 0018:ffffffffa6603e98 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+> > [    8.701032] RAX: ffffffffa5c52d10 RBX: 0000000000000000 RCX: 0000000000000000
+> > [    8.701032] RDX: 0000000000000001 RSI: 0000000000000000 RDI: 000000020605092a
+> > [    8.701032] RBP: 0000000000000000 R08: ffffffffcff7766a R09: ffff89b9fda20b00
+> > [    8.701032] R10: 0000000000000000 R11: 0000000000002400 R12: ffffffffa6611740
+> > [    8.701032] R13: 0000000000000000 R14: 0000000000000000 R15: ffffffffa6611740
+> > [    8.701032]  ? __sched_text_end+0x5/0x5
+> > [    8.701032]  do_idle+0x19c/0x230
+> > [    8.701032]  cpu_startup_entry+0x14/0x20
+> > [    8.701032]  start_kernel+0x491/0x4b1
+> > [    8.701032]  secondary_startup_64+0xa4/0xb0
+> > [    8.701032] Kernel Offset: 0x24200000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+> > 
+> 
+> That is simply caused by enabling DEBUG_KOBJECT_RELEASE itself, which
+> tries to do kboject_release() after delaying a while.
+> 
+> Wrt. this issue, q->mq_kobj is embedded in 'request_queue' whose
+> instance is freed in release handler of q->kobj. So when one instance
+> of 'request_queue' is freed, DEBUG_KOBJECT_RELEASE still expects that
+> the q->mq_kobj is active.
+> 
+> The release handler of q->mq_kobj is NOP actually, so in reality it won't
+> be one issue at all.
 
-CC Magnus
+Given we have removed legacy IO path completely, it should be fine to
+remove q->mq_kobj and simply put everything under the kobj of queue,
+especially any attributes under mq aren't marked as stable ABI.
 
-(staging drivers receive so may janitorial changes that the original author is
- lost in the git shortlog noise)
 
-On Wed, Nov 7, 2018 at 9:46 PM Carmeli Tamir <carmeli.tamir@gmail.com> wrote:
-> Added static modifier to the udc_controller, since it's only
-> required within emxx_udc.c.
->
-> Signed-off-by: Carmeli Tamir <carmeli.tamir@gmail.com>
-
-Thanks for your patch!
-
-> --- a/drivers/staging/emxx_udc/emxx_udc.c
-> +++ b/drivers/staging/emxx_udc/emxx_udc.c
-> @@ -56,7 +56,7 @@ static void _nbu2ss_fifo_flush(struct nbu2ss_udc *, struct nbu2ss_ep *);
->
->  /*===========================================================================*/
->  /* Global */
-> -struct nbu2ss_udc udc_controller;
-> +static struct nbu2ss_udc udc_controller;
-
-What about the "Global" comment?
-Perhaps this was intentional?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks,
+Ming
