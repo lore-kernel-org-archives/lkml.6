@@ -6,92 +6,91 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37AF6C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 01:19:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67787C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 01:20:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 061702087F
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 01:19:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 061702087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id 3792F2087F
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 01:20:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3792F2087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729852AbeKLLKW (ORCPT
+        id S1729902AbeKLLLG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 06:10:22 -0500
-Received: from out01.mta.xmission.com ([166.70.13.231]:33795 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726674AbeKLLKV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 06:10:21 -0500
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gM0t6-0000zq-EH; Sun, 11 Nov 2018 18:19:36 -0700
-Received: from 67-3-154-154.omah.qwest.net ([67.3.154.154] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gM0t5-0007AX-ET; Sun, 11 Nov 2018 18:19:36 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     'Daniel Colascione' <dancol@google.com>,
-        Tycho Andersen <tycho@tycho.ws>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Tim Murray <timmurray@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        "Suren Baghdasaryan" <surenb@google.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Christian Brauner" <christian.brauner@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Oleg Nesterov <oleg@redhat.com>
-References: <20181029221037.87724-1-dancol@google.com>
-        <20181031155912.45088-1-dancol@google.com>
-        <20181031175448.GC2180@cisco>
-        <CAKOZuevrFxWLY1J1DVPNGaEy8UbkD1r_M9T9FQTOtSrqp-G0qw@mail.gmail.com>
-        <20181031181717.GD2180@cisco>
-        <CAKOZuetdSK8jhD1snja8p4AQTNPrLOugQrVn642RCH8S4QBGFg@mail.gmail.com>
-        <c49f552e34784e8dbb40a43015bed642@AcuMS.aculab.com>
-Date:   Sun, 11 Nov 2018 19:19:30 -0600
-In-Reply-To: <c49f552e34784e8dbb40a43015bed642@AcuMS.aculab.com> (David
-        Laight's message of "Thu, 1 Nov 2018 11:33:29 +0000")
-Message-ID: <87d0rbks7x.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Mon, 12 Nov 2018 06:11:06 -0500
+Received: from mga11.intel.com ([192.55.52.93]:55903 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727280AbeKLLLG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 06:11:06 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Nov 2018 17:20:22 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,493,1534834800"; 
+   d="scan'208";a="95502808"
+Received: from allen-box.sh.intel.com (HELO [10.239.161.122]) ([10.239.161.122])
+  by FMSMGA003.fm.intel.com with ESMTP; 11 Nov 2018 17:20:20 -0800
+Cc:     baolu.lu@linux.intel.com, Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>, ashok.raj@intel.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Sohil Mehta <sohil.mehta@intel.com>
+Subject: Re: [PATCH 1/1] iommu/vtd: Cleanup dma_remapping.h header
+To:     Christoph Hellwig <hch@infradead.org>
+References: <20181110070844.28353-1-baolu.lu@linux.intel.com>
+ <20181110083506.GB28614@infradead.org>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <518f02b4-8c4f-9451-68f1-cb014c4cc6eb@linux.intel.com>
+Date:   Mon, 12 Nov 2018 09:17:44 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1gM0t5-0007AX-ET;;;mid=<87d0rbks7x.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=67.3.154.154;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+f9hP2PcpR7gGkNaAxwChOly4LZu7+WxM=
-X-SA-Exim-Connect-IP: 67.3.154.154
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH v3] Implement /proc/pid/kill
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+In-Reply-To: <20181110083506.GB28614@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-David Laight <David.Laight@ACULAB.COM> writes:
+Hi,
 
-> From: Daniel Colascione
->> Sent: 31 October 2018 19:33
-> ...
->> You can't do it today with kill. The idea that keeping a open file
->> descriptor to a /proc/pid or a file within it prevents PID reuse is
->> widespread, but incorrect.
->
-> Is there a real good reason why that shouldn't be the case?
-> ie Holding a reference on the 'struct pid' being enough to stop reuse.
->
-> A patch to do that would be more generally useful.
+On 11/10/18 4:35 PM, Christoph Hellwig wrote:
+> On Sat, Nov 10, 2018 at 03:08:44PM +0800, Lu Baolu wrote:
+>> Commit e61d98d8dad00 ("x64, x2apic/intr-remap: Intel vt-d, IOMMU
+>> code reorganization") moved dma_remapping.h from drivers/pci/ to
+>> current place. It is entirely VT-d specific, but uses a generic
+>> name. This merges dma_remapping.h with include/linux/intel-iommu.h
+>> and removes dma_remapping.h as the result.
+> 
+> This looks fine to me, thanks for doing the work.
+> 
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-Holding an open file descriptor to /proc/pid is enough to prevent pid
-reuse problems.  If a pid number is reused a new 'struct pid' is
-generated.  There is not 'struct pid' reuse.
+Thank you.
 
-So in solving this the kernel data structure you would need to hold onto
-is a 'struct pid'.  It is just necessary to add an interface to sending
-signals to that 'struct pid' and not looking up the 'struct pid' again
-by number.
+> 
+>> --- a/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
+>> +++ b/drivers/gpu/drm/vmwgfx/vmwgfx_drv.c
+>> @@ -34,7 +34,7 @@
+>>   #include <drm/ttm/ttm_placement.h>
+>>   #include <drm/ttm/ttm_bo_driver.h>
+>>   #include <drm/ttm/ttm_module.h>
+>> -#include <linux/dma_remapping.h>
+>> +#include <linux/intel-iommu.h>
+> 
+> Btw, I don't think this driver has any business looking at Intel
+> IOMMU driver internals, and the code doing so is more than gross.
+> 
+> Not really your job, but vmw_dma_select_mode really needs a rewrite with
+> someone that has at least half a clue, and some taste.
+> 
+> Eventually we should also drop the intel_iommu_enabled export.
+> 
 
-Eric
+Yes. Fair enough.
+
+Best regards,
+Lu Baolu
