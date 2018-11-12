@@ -2,139 +2,115 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF37CC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:53:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AAA0C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:53:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75D0221722
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:53:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="axBrE55N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75D0221722
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
+	by mail.kernel.org (Postfix) with ESMTP id E096821722
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:53:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E096821722
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731521AbeKLPpH (ORCPT
+        id S1731607AbeKLPpN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 10:45:07 -0500
-Received: from m50-135.163.com ([123.125.50.135]:56750 "EHLO m50-135.163.com"
+        Mon, 12 Nov 2018 10:45:13 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:36864 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731004AbeKLPpH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 10:45:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=FgcRd2b4juOl77/Wq+
-        fjJ8rXj5ZhF0dhwhk50Q27hZ4=; b=axBrE55NvPPZaahsECJ/TlLGrjx8YnkUX2
-        EHdHoTtn+4Aj6j1u6gyN4IL0GXJ8WAYENjFveEDT/i3039OGUVl1G2bRh5AiWOGH
-        q2yDGVP3QjHovByM5il8IlzAX1vBpZ/OOjcZYo2X+dTP7hCoVAg9WCx6VTSh8+Kc
-        WqHroRly8=
-Received: from localhost.localdomain (unknown [221.0.93.75])
-        by smtp5 (Coremail) with SMTP id D9GowADnSFRGFelbfYSgAQ--.50S2;
-        Mon, 12 Nov 2018 13:53:20 +0800 (CST)
-From:   zoro <long17.cool@163.com>
-To:     lgirdwood@gmail.com
-Cc:     broonie@kernel.org, linux-kernel@vger.kernel.org,
-        zoro <long17.cool@163.com>
-Subject: [PATCH 4/4] regulator/of_get_regulator: add child path to find the regulator supplier
-Date:   Mon, 12 Nov 2018 13:53:07 +0800
-Message-Id: <1542001987-8352-1-git-send-email-long17.cool@163.com>
-X-Mailer: git-send-email 1.7.9.5
-X-CM-TRANSID: D9GowADnSFRGFelbfYSgAQ--.50S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7uw45Jw1UJFy8XF4ftr15XFb_yoW8Kw17pr
-        4DWF9IkrsY9a4xuw4Syr12ya4Ygrn5Ca97Ar95Gw4fC3s5Jas3Jr1UAF1Yv3Z5Jr4kGw4j
-        yrW8AF1xCF15XFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UBBTrUUUUU=
-X-Originating-IP: [221.0.93.75]
-X-CM-SenderInfo: 5orqwi2xof00ro6rljoofrz/1tbiDRD8F1QHKm73IwAAs1
+        id S1728269AbeKLPpN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 10:45:13 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F04743083392;
+        Mon, 12 Nov 2018 05:53:31 +0000 (UTC)
+Received: from treble (ovpn-121-1.rdu2.redhat.com [10.10.121.1])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A97EA1019626;
+        Mon, 12 Nov 2018 05:53:26 +0000 (UTC)
+Date:   Sun, 11 Nov 2018 23:53:24 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Waiman Long <longman@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
+        linux-mm@kvack.org, Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Tejun Heo <tj@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [RFC PATCH 00/12] locking/lockdep: Add a new class of terminal
+ locks
+Message-ID: <20181112055324.f7div2ahx5emkbbe@treble>
+References: <1541709268-3766-1-git-send-email-longman@redhat.com>
+ <20181109080412.GC86700@gmail.com>
+ <20181110141045.GD3339@worktop.programming.kicks-ass.net>
+ <dfa0a2fa-0094-3ae0-4f27-2930233132a3@redhat.com>
+ <20181112051033.GA123204@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181112051033.GA123204@gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Mon, 12 Nov 2018 05:53:32 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-when the VIR_LDO1 regulator supplier is it's brother,
-we can't find the supplier.
+On Mon, Nov 12, 2018 at 06:10:33AM +0100, Ingo Molnar wrote:
+> 
+> * Waiman Long <longman@redhat.com> wrote:
+> 
+> > On 11/10/2018 09:10 AM, Peter Zijlstra wrote:
+> > > On Fri, Nov 09, 2018 at 09:04:12AM +0100, Ingo Molnar wrote:
+> > >> BTW., if you are interested in more radical approaches to optimize 
+> > >> lockdep, we could also add a static checker via objtool driven call graph 
+> > >> analysis, and mark those locks terminal that we can prove are terminal.
+> > >>
+> > >> This would require the unified call graph of the kernel image and of all 
+> > >> modules to be examined in a final pass, but that's within the principal 
+> > >> scope of objtool. (This 'final pass' could also be done during bootup, at 
+> > >> least in initial versions.)
+> > >
+> > > Something like this is needed for objtool LTO support as well. I just
+> > > dread the build time 'regressions' this will introduce :/
+> > >
+> > > The final link pass is already by far the most expensive part (as
+> > > measured in wall-time) of building a kernel, adding more work there
+> > > would really suck :/
+> > 
+> > I think the idea is to make objtool have the capability to do that. It
+> > doesn't mean we need to turn it on by default in every build.
+> 
+> Yeah.
+> 
+> Also note that much of the objtool legwork would be on a per file basis 
+> which is reasonably parallelized already. On x86 it's also already done 
+> for every ORC build i.e. every distro build and the incremental overhead 
+> from also extracting locking dependencies should be reasonably small.
+> 
+> The final search of the global graph would be serialized but still 
+> reasonably fast as these are all 'class' level dependencies which are 
+> much less numerous than runtime dependencies.
+> 
+> I.e. I think we are talking about tens of thousands of dependencies, not 
+> tens of millions.
+> 
+> At least in theory. ;-)
 
-example code :
-&vir_regulator {
-	ldo0_vir: ldo0-virtual {
- 		regulator-compatible = "VIR_LDO0";
-                regulator-name= "VIR_LDO0";
-                regulator-min-microvolt = <1000000>;
-                regulator-max-microvolt = <2000000>;
-            };
-            ldo1_vir: ldo1-virtual {
-                regulator-compatible = "VIR_LDO1";
-                regulator-name= "VIR_LDO1";
-                regulator-min-microvolt = <1000000>;
-                regulator-max-microvolt = <3000000>;
-                ldo1-supply = <&ldo0_vir>;
-            };
-	}
-	...
-}
+Generating a unified call graph sounds very expensive (and very far
+beyond what objtool can do today).  Also, what about function pointers?
 
-so we add the child ptah to find the suppier.
+BTW there's another kernel static analysis tool which attempts to create
+such a call graph already: smatch.
 
-Signed-off-by: zoro <long17.cool@163.com>
----
- drivers/regulator/core.c |   33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
-
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 2c66b52..d328a84 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -228,6 +228,35 @@ static void regulator_unlock_supply(struct regulator_dev *rdev)
- }
- 
- /**
-+ * of_get_child_regulator - get a child regulator device node
-+ * based on supply name
-+ * @parent: Parent device node
-+ * @prop_name: Combination regulator supply name and "-supply"
-+ *
-+ * Traverse all child nodes.
-+ * Extract the child regulator device node corresponding to the supply name.
-+ * returns the device node corresponding to the regulator if found, else
-+ * returns NULL.
-+ */
-+static struct device_node *of_get_child_regulator(struct device_node *parent,
-+	const char *prop_name)
-+{
-+	struct device_node *regnode = NULL;
-+	struct device_node *child = NULL;
-+
-+	for_each_child_of_node(parent, child) {
-+		regnode = of_parse_phandle(child, prop_name, 0);
-+		if (!regnode) {
-+			regnode = of_get_child_regulator(child, prop_name);
-+			if (regnode)
-+				return regnode;
-+		} else
-+			return regnode;
-+	}
-+	return NULL;
-+}
-+
-+/**
-  * of_get_regulator - get a regulator device node based on supply name
-  * @dev: Device pointer for the consumer (of regulator) device
-  * @supply: regulator supply name
-@@ -247,6 +276,10 @@ static struct device_node *of_get_regulator(struct device *dev, const char *supp
- 	regnode = of_parse_phandle(dev->of_node, prop_name, 0);
- 
- 	if (!regnode) {
-+		regnode = of_get_child_regulator(dev->of_node, prop_name);
-+		if (regnode)
-+			return regnode;
-+
- 		dev_dbg(dev, "Looking up %s property in node %pOF failed\n",
- 				prop_name, dev->of_node);
- 		return NULL;
 -- 
-1.7.9.5
-
-
+Josh
