@@ -2,83 +2,165 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4998FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:37:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7082FC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:38:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 095C7224E0
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:37:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sGSMrb72"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 095C7224E0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3AAC3224E0
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:38:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AAC3224E0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729815AbeKMCbZ (ORCPT
+        id S1729876AbeKMCc4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 21:31:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37326 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726221AbeKMCbZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 21:31:25 -0500
-Received: from jouet.infradead.org (d66-183-243-195.bchsia.telus.net [66.183.243.195])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A168F2241E;
-        Mon, 12 Nov 2018 16:37:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542040645;
-        bh=N7BMNsdZicdRqjC94IQ6YRaNnFZ2e2dDeQEuNOUUxQg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sGSMrb72SNu/1MXMR5JR1vZ8+lgQBMqop8rDbfnXtmHx4BjXgGWnlGXWiwUMT7oNz
-         Juc/jfDglKpCcPMWqptnNu9hRIIdv9BKd/G65S645zMM2++U1UpnSrDQoohLOcgM25
-         QkYAe3oxXeqlKZJ1zjoShuXzLZWK/NlqoHxVNOKw=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 5A0F81443D0; Mon, 12 Nov 2018 08:37:20 -0800 (PST)
-Date:   Mon, 12 Nov 2018 08:37:20 -0800
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ben Hutchings <ben@decadent.org.uk>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf tools: Suppress potential format-truncation warning
- in util/pmu.c
-Message-ID: <20181112163720.GE1111@kernel.org>
-References: <20181111184524.fux4taownc6ndbx6@decadent.org.uk>
+        Mon, 12 Nov 2018 21:32:56 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51080 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726221AbeKMCcz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 21:32:55 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wACGYtrl102275
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 11:38:55 -0500
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nqcgkjepk-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 11:38:54 -0500
+Received: from localhost
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Mon, 12 Nov 2018 16:38:53 -0000
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 12 Nov 2018 16:38:47 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wACGck2225886750
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 12 Nov 2018 16:38:47 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 29FBFB2065;
+        Mon, 12 Nov 2018 16:38:46 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0607EB2064;
+        Mon, 12 Nov 2018 16:38:45 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.198.12])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 12 Nov 2018 16:38:45 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id CC95F16C3418; Mon, 12 Nov 2018 08:28:54 -0800 (PST)
+Date:   Mon, 12 Nov 2018 08:28:54 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Corey Minyard <minyard@acm.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
+        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        openipmi-developer@lists.sourceforge.net
+Subject: Re: [PATCH tip/core/rcu 10/41] drivers/ipmi: Replace
+ synchronize_sched() with synchronize_rcu()
+Reply-To: paulmck@linux.ibm.com
+References: <20181111194104.GA4787@linux.ibm.com>
+ <20181111194410.6368-10-paulmck@linux.ibm.com>
+ <16c19493-44b0-18e3-d3cb-4d6c2f9f9f53@acm.org>
+ <20181112160425.GJ4170@linux.ibm.com>
+ <465ebdbb-188c-c4b8-935b-58205b9f98e5@acm.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181111184524.fux4taownc6ndbx6@decadent.org.uk>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <465ebdbb-188c-c4b8-935b-58205b9f98e5@acm.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18111216-0064-0000-0000-00000372B684
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010035; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01116429; UDB=6.00577118; IPR=6.00896537;
+ MB=3.00024128; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-12 16:38:52
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18111216-0065-0000-0000-00003B4F9BB0
+Message-Id: <20181112162854.GK4170@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-12_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811120145
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Sun, Nov 11, 2018 at 06:45:24PM +0000, Ben Hutchings escreveu:
-> Depending on which functions are inlined in util/pmu.c, the
-> snprintf() calls in perf_pmu__parse_{scale,unit,per_pkg,snapshot}()
-> might trigger a warning:
+On Mon, Nov 12, 2018 at 10:15:41AM -0600, Corey Minyard wrote:
+> On 11/12/18 10:04 AM, Paul E. McKenney wrote:
+> >On Mon, Nov 12, 2018 at 09:38:55AM -0600, Corey Minyard wrote:
+> >>On 11/11/18 1:43 PM, Paul E. McKenney wrote:
+> >>>Now that synchronize_rcu() waits for preempt-disable regions of code
+> >>>as well as RCU read-side critical sections, synchronize_sched() can be
+> >>>replaced by synchronize_rcu().  This commit therefore makes this change.
+> >>Assuming the above is true, this looks fine to me.
+> >>
+> >>Acked-by: Corey MInyard <cminyard@mvista.com>
 > 
-> util/pmu.c: In function 'pmu_aliases':
-> util/pmu.c:178:31: error: '%s' directive output may be truncated writing up to 255 bytes into a region of size between 0 and 4095 [-Werror=format-truncation=]
->   snprintf(path, PATH_MAX, "%s/%s.unit", dir, name);
->                                ^~
+> Dang, that's
 > 
-> I found this when trying to build perf from Linux 3.16 with gcc 8.
-> However I can reproduce the problem in mainline if I force
-> __perf_pmu__new_alias() to be inlined.
-> 
-> Suppress this by using scnprintf() as has been done elsewhere in
-> perf.
+> Acked-by: Corey Minyard <cminyard@mvista.com>
 
-Thanks, applied.
+Just in time, applied, thank you!  ;-)
 
-- Arnaldo
+> >Thank you!
+> >
+> >>Or I can take it in my tree, either way.
+> >I will carry it unless/until I send it upstream (this coming merge
+> >window) or I see it already upstream.
+> >
+> >So your choice.  ;-)
+> 
+> Ok, if you don't mind, you can carry it.
+
+Sounds good!
+
+							Thanx, Paul
+
+> Thanks,
+> 
+> -corey
+> 
+> 
+> >							Thanx, Paul
+> >
+> >>-corey
+> >>
+> >>
+> >>>Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+> >>>Cc: Corey Minyard <minyard@acm.org>
+> >>>Cc: Arnd Bergmann <arnd@arndb.de>
+> >>>Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> >>>Cc: <openipmi-developer@lists.sourceforge.net>
+> >>>---
+> >>>  drivers/char/ipmi/ipmi_si_intf.c | 2 +-
+> >>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>
+> >>>diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
+> >>>index 677618e6f1f7..dc8603d34320 100644
+> >>>--- a/drivers/char/ipmi/ipmi_si_intf.c
+> >>>+++ b/drivers/char/ipmi/ipmi_si_intf.c
+> >>>@@ -2187,7 +2187,7 @@ static void shutdown_smi(void *send_info)
+> >>>  	 * handlers might have been running before we freed the
+> >>>  	 * interrupt.
+> >>>  	 */
+> >>>-	synchronize_sched();
+> >>>+	synchronize_rcu();
+> >>>  	/*
+> >>>  	 * Timeouts are stopped, now make sure the interrupts are off
+> >>
+> 
+
