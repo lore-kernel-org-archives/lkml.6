@@ -2,140 +2,127 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FBF9C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:41:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B12CFC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:45:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15057215EA
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:41:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="u7yYS1FS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15057215EA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 7A75120871
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:45:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A75120871
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729819AbeKLKcX (ORCPT
+        id S1729820AbeKLKgM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 05:32:23 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:35402 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726816AbeKLKcW (ORCPT
+        Mon, 12 Nov 2018 05:36:12 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39752 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726816AbeKLKgM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 05:32:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=x+V/mpkFJL350jC6rpFriOnnIh0JqQqhLM0py63U4ic=; b=u7yYS1FS0m5tLC26vNjK/hS2lC
-        9q48ZNVjylegLxaMQ1nOvj1YXhVLHFEl0U5qJReyGe0mCh0dJHhsgwpZoYn4uHcB6bT6SavyY6CMo
-        q2jw28bIWDv6iRW5eh+IsLWPifcOMFU0AaTwbL19017qGryWM1KHYQo1wNs/+ekAw+Jn0nFbqipyJ
-        kq1iSjN+d+7mQRD1CeobNKe8jY0p4Dp+RHNFIVf8vOHPDT0TfjAI5+KSJL5NOlpjoRvAFG6igiCX/
-        0hjWfSdlV8iZbXj59XNoHKh71erudyVDgHWHIO6AsWVh4ZbDL7Q7bSLMSXTHZjNuxdRBTzVIWl9lS
-        dlnRTxCw==;
-Received: from [64.114.255.97] (helo=worktop)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gM0IO-0004YT-To; Mon, 12 Nov 2018 00:41:41 +0000
-Received: by worktop (Postfix, from userid 1000)
-        id 326296E061A; Mon, 12 Nov 2018 01:41:40 +0100 (CET)
-Date:   Mon, 12 Nov 2018 01:41:40 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH v4 06/10] x86/alternative: use temporary mm for text
- poking
-Message-ID: <20181112004140.GF3056@worktop>
-References: <20181110231732.15060-1-namit@vmware.com>
- <20181110231732.15060-7-namit@vmware.com>
- <20181111145936.GA3021@worktop>
- <43C8C690-F079-4513-82CD-46A62DBA5A3B@vmware.com>
- <20181111235220.GB3056@worktop>
- <70EACCF7-D854-4051-9F71-4E966FD6C37B@vmware.com>
+        Mon, 12 Nov 2018 05:36:12 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAC0dFnD001600
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 19:45:35 -0500
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2npx34t6ws-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 19:45:34 -0500
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Mon, 12 Nov 2018 00:45:34 -0000
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 12 Nov 2018 00:45:28 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAC0jRvJ39190632
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 12 Nov 2018 00:45:27 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B834EB2064;
+        Mon, 12 Nov 2018 00:45:27 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 95322B205F;
+        Mon, 12 Nov 2018 00:45:27 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.207.24])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 12 Nov 2018 00:45:27 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 0109616C5D4F; Sun, 11 Nov 2018 16:45:28 -0800 (PST)
+Date:   Sun, 11 Nov 2018 16:45:28 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, rostedt@goodmis.org,
+        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
+        oleg@redhat.com, joel@joelfernandes.org,
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH tip/core/rcu 23/41] sched: Replace synchronize_sched()
+ with synchronize_rcu()
+Reply-To: paulmck@linux.ibm.com
+References: <20181111194104.GA4787@linux.ibm.com>
+ <20181111194410.6368-23-paulmck@linux.ibm.com>
+ <20181112001233.GC3056@worktop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <70EACCF7-D854-4051-9F71-4E966FD6C37B@vmware.com>
-User-Agent: Mutt/1.5.22.1 (2013-10-16)
+In-Reply-To: <20181112001233.GC3056@worktop>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18111200-0052-0000-0000-000003544460
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010029; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01116111; UDB=6.00578793; IPR=6.00896220;
+ MB=3.00024116; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-12 00:45:33
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18111200-0053-0000-0000-00005EBBAB3C
+Message-Id: <20181112004528.GA4170@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-11_16:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=977 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811120004
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 12:09:32AM +0000, Nadav Amit wrote:
-> > On Sun, Nov 11, 2018 at 08:53:07PM +0000, Nadav Amit wrote:
-> > 
-> >>>> +	/*
-> >>>> +	 * The lock is not really needed, but this allows to avoid open-coding.
-> >>>> +	 */
-> >>>> +	ptep = get_locked_pte(poking_mm, poking_addr, &ptl);
-> >>>> +
-> >>>> +	/*
-> >>>> +	 * If we failed to allocate a PTE, fail. This should *never* happen,
-> >>>> +	 * since we preallocate the PTE.
-> >>>> +	 */
-> >>>> +	if (WARN_ON_ONCE(!ptep))
-> >>>> +		goto out;
-> >>> 
-> >>> Since we hard rely on init getting that right; can't we simply get rid
-> >>> of this?
-
-> I understand. So the question is - what would you prefer: something like
-> PARANOID_WARN_ON_ONCE() or should I just remove the assertion?
-
-Something like:
-
-	/*
-	 * @ptep cannot be NULL per construction in poking_init().
-	 */
-
-And then leave it at that. If it ever comes unstuck we'll get the NULL
-deref, which is just as good as a BUG_ON().
-
-> >>>> +out:
-> >>>> +	if (memcmp(addr, opcode, len))
-> >>>> +		r = -EFAULT;
-> >>> 
-> >>> How could this ever fail? And how can we reliably recover from that?
-> >> 
-> >> This code has been there before (with slightly uglier code). Before this
-> >> patch, a BUG_ON() was used here. However, I noticed that kgdb actually
-> >> checks that text_poke() succeeded after calling it and gracefully fail.
-> >> However, this was useless, since text_poke() would panic before kgdb gets
-> >> the chance to do anything (see patch 7).
-> > 
-> > Yes, I know it was there before, and I did see kgdb do it too. But aside
-> > from that out-label case, which we also should never hit, how can we
-> > realistically ever fail that memcmp()?
-> > 
-> > If we fail here, something is _seriously_ buggered.
+On Mon, Nov 12, 2018 at 01:12:33AM +0100, Peter Zijlstra wrote:
+> On Sun, Nov 11, 2018 at 11:43:52AM -0800, Paul E. McKenney wrote:
+> > Now that synchronize_rcu() waits for preempt-disable regions of code
+> > as well as RCU read-side critical sections, synchronize_sched() can be
+> > replaced by synchronize_rcu().  This commit therefore makes this change.
 > 
-> I agree. But as it may be useful at least to warn in such a case, as
-> debugging of SMC/CMC is hard. For example, if there is some sort of a race
-> between module (un)loading and static-keys - such a check might be
-> beneficial to indicate so. Having said that, changing it into VM_BUG_ON() or
-> something similar may make more sense.
-> 
-> Personally, I don’t care much - I’m just worried that I made some intrusive
-> changes *and* you want me to remove the assertion that checks that I didn’t
-> screw up.
+> Yes, but it also waits for an actual RCU quiestent state, which makes
+> synchoinize_rcu() potentially much more expensive than an actual
+> synchronize_sched().
 
-Ah, so I'm perfectly fine with something like:
+None of the readers have changed.
 
-	VM_BUG_ON(memcmp());
+For the updaters, if CONFIG_PREEMPT=n, synchronize_rcu() and
+synchronize_sched() always were one and the same.  When CONFIG_PREEMPT=y,
+synchronize_rcu() and synchronize_sched() are now one and the same.
 
-I just don't see value in the whole return code here. If this comes
-unstuck, we're buggered beyond repair.
+> So why are we doing this?
+
+Given that synchronize_rcu() and synchronize_sched() are now always one
+and the same, this is a distinction without a difference.  So we might
+as well get rid of the _bh and _sched APIs.  (See the tail end of current
+mainline's include/linux/rcupdate.h.)
+
+If you are instead asking why the RCU flavors (RCU-bh, RCU-preempt,
+and RCU-sched) got merged, it was due to a security incident stemming
+from confusion between two of the flavor, with the resulting bug turning
+out to be exploitable.  Linus therefore requested that I do something
+to make this not happen again, which I did.
+
+							Thanx, Paul
+
