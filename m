@@ -2,172 +2,78 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1180AC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:12:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5001C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:12:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC8CA2084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:12:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89A892084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 00:12:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ElbIAPSj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC8CA2084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sgJGCcsC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89A892084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730919AbeKLKDR (ORCPT
+        id S1731182AbeKLKDX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 05:03:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60196 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730559AbeKLIRR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 03:17:17 -0500
-Received: from localhost (unknown [206.108.79.134])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF0DA214F1;
-        Sun, 11 Nov 2018 22:27:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541975241;
-        bh=0OhGz4qhAHAYNCMzQHEX8+88VazVbE9X0UUFJHK76gQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ElbIAPSjcIxoTsZz5WYnEFJuNQChvFNE+OoxqdecNi7KgJFGp8IyRO+3X4N989saM
-         FIx9gHVyLj3bd4Nz43I2hbc/Ne47emrhga59WPEPSETlKzQjJwCYyYOXvo7tSntJnN
-         zch2wCzoTrTZL9q+3w3LuHoIG0get/UDuQyVhrr8=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Steve McIntyre <steve.mcintyre@arm.com>,
-        Steve McIntyre <93sam@debian.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 087/361] signal: Introduce COMPAT_SIGMINSTKSZ for use in compat_sys_sigaltstack
-Date:   Sun, 11 Nov 2018 14:17:14 -0800
-Message-Id: <20181111221632.025807083@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181111221619.915519183@linuxfoundation.org>
-References: <20181111221619.915519183@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Mon, 12 Nov 2018 05:03:23 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:35084 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730559AbeKLKDW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 05:03:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=4PdzBjvYV7GribIfKWnTnyw2oELOvvEA5Bx4pMp6eCc=; b=sgJGCcsCYGo2fKYMms6AajQlU
+        uD9vgz8TN9xsqJXaPhA0jgl11nhu5WdyY4XuwBwf35GBFslELOTbusRa1z6bPxI1DYCmpMCqBpQy5
+        yzJIVBtYocagLUIXlw1G/+GUXnwvOokq9TbgXJAoD1y6bUjZQWqYEoaqVECiRin51pxubJTW1eZEO
+        haYOmsLg5agm7Dmu39YmWR1Mkoh7f0xQYNxfoufhMjbvFJ9V9I5auDoIjCsnr8qmdkWIr58IyK8cK
+        pZFgRi/z+ntmWMhhVfyQiPd7WpmyvioRxd4orCXGpLKGLJDnR/7pVELLfbsMHC3kERe5ekVhKTFqw
+        21CIrcBrw==;
+Received: from [64.114.255.97] (helo=worktop)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gLzqE-0004N7-Pm; Mon, 12 Nov 2018 00:12:34 +0000
+Received: by worktop (Postfix, from userid 1000)
+        id 6A1C46E061A; Mon, 12 Nov 2018 01:12:33 +0100 (CET)
+Date:   Mon, 12 Nov 2018 01:12:33 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, rostedt@goodmis.org,
+        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
+        oleg@redhat.com, joel@joelfernandes.org,
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH tip/core/rcu 23/41] sched: Replace synchronize_sched()
+ with synchronize_rcu()
+Message-ID: <20181112001233.GC3056@worktop>
+References: <20181111194104.GA4787@linux.ibm.com>
+ <20181111194410.6368-23-paulmck@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181111194410.6368-23-paulmck@linux.ibm.com>
+User-Agent: Mutt/1.5.22.1 (2013-10-16)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+On Sun, Nov 11, 2018 at 11:43:52AM -0800, Paul E. McKenney wrote:
+> Now that synchronize_rcu() waits for preempt-disable regions of code
+> as well as RCU read-side critical sections, synchronize_sched() can be
+> replaced by synchronize_rcu().  This commit therefore makes this change.
 
-------------------
+Yes, but it also waits for an actual RCU quiestent state, which makes
+synchoinize_rcu() potentially much more expensive than an actual
+synchronize_sched().
 
-From: Will Deacon <will.deacon@arm.com>
-
-[ Upstream commit 22839869f21ab3850fbbac9b425ccc4c0023926f ]
-
-The sigaltstack(2) system call fails with -ENOMEM if the new alternative
-signal stack is found to be smaller than SIGMINSTKSZ. On architectures
-such as arm64, where the native value for SIGMINSTKSZ is larger than
-the compat value, this can result in an unexpected error being reported
-to a compat task. See, for example:
-
-  https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=904385
-
-This patch fixes the problem by extending do_sigaltstack to take the
-minimum signal stack size as an additional parameter, allowing the
-native and compat system call entry code to pass in their respective
-values. COMPAT_SIGMINSTKSZ is just defined as SIGMINSTKSZ if it has not
-been defined by the architecture.
-
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Reported-by: Steve McIntyre <steve.mcintyre@arm.com>
-Tested-by: Steve McIntyre <93sam@debian.org>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/linux/compat.h |    3 +++
- kernel/signal.c        |   14 +++++++++-----
- 2 files changed, 12 insertions(+), 5 deletions(-)
-
---- a/include/linux/compat.h
-+++ b/include/linux/compat.h
-@@ -103,6 +103,9 @@ typedef struct compat_sigaltstack {
- 	compat_size_t			ss_size;
- } compat_stack_t;
- #endif
-+#ifndef COMPAT_MINSIGSTKSZ
-+#define COMPAT_MINSIGSTKSZ	MINSIGSTKSZ
-+#endif
- 
- #define compat_jiffies_to_clock_t(x)	\
- 		(((unsigned long)(x) * COMPAT_USER_HZ) / HZ)
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -3460,7 +3460,8 @@ int do_sigaction(int sig, struct k_sigac
- }
- 
- static int
--do_sigaltstack (const stack_t *ss, stack_t *oss, unsigned long sp)
-+do_sigaltstack (const stack_t *ss, stack_t *oss, unsigned long sp,
-+		size_t min_ss_size)
- {
- 	struct task_struct *t = current;
- 
-@@ -3490,7 +3491,7 @@ do_sigaltstack (const stack_t *ss, stack
- 			ss_size = 0;
- 			ss_sp = NULL;
- 		} else {
--			if (unlikely(ss_size < MINSIGSTKSZ))
-+			if (unlikely(ss_size < min_ss_size))
- 				return -ENOMEM;
- 		}
- 
-@@ -3508,7 +3509,8 @@ SYSCALL_DEFINE2(sigaltstack,const stack_
- 	if (uss && copy_from_user(&new, uss, sizeof(stack_t)))
- 		return -EFAULT;
- 	err = do_sigaltstack(uss ? &new : NULL, uoss ? &old : NULL,
--			      current_user_stack_pointer());
-+			      current_user_stack_pointer(),
-+			      MINSIGSTKSZ);
- 	if (!err && uoss && copy_to_user(uoss, &old, sizeof(stack_t)))
- 		err = -EFAULT;
- 	return err;
-@@ -3519,7 +3521,8 @@ int restore_altstack(const stack_t __use
- 	stack_t new;
- 	if (copy_from_user(&new, uss, sizeof(stack_t)))
- 		return -EFAULT;
--	(void)do_sigaltstack(&new, NULL, current_user_stack_pointer());
-+	(void)do_sigaltstack(&new, NULL, current_user_stack_pointer(),
-+			     MINSIGSTKSZ);
- 	/* squash all but EFAULT for now */
- 	return 0;
- }
-@@ -3553,7 +3556,8 @@ static int do_compat_sigaltstack(const c
- 		uss.ss_size = uss32.ss_size;
- 	}
- 	ret = do_sigaltstack(uss_ptr ? &uss : NULL, &uoss,
--			     compat_user_stack_pointer());
-+			     compat_user_stack_pointer(),
-+			     COMPAT_MINSIGSTKSZ);
- 	if (ret >= 0 && uoss_ptr)  {
- 		compat_stack_t old;
- 		memset(&old, 0, sizeof(old));
-
-
+So why are we doing this?
