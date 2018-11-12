@@ -2,115 +2,96 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCFC0C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 22:11:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 166DDC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 22:11:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A80752241E
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 22:11:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A80752241E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id CB6242243E
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 22:11:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WNDXj5dB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB6242243E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730654AbeKMIGO (ORCPT
+        id S1730686AbeKMIG6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 03:06:14 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:59633 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726006AbeKMIGO (ORCPT
+        Tue, 13 Nov 2018 03:06:58 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:38419 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730297AbeKMIG6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 03:06:14 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id EC72F80706; Mon, 12 Nov 2018 23:11:02 +0100 (CET)
-Date:   Mon, 12 Nov 2018 23:11:04 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     dachaac@gmail.com, Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        linux-leds@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Daniel Mack <daniel@zonque.org>, dmurphy@ti.com,
-        oleg@kaa.org.ua, Sakari Ailus <sakari.ailus@linux.intel.com>,
-        simon@lineageos.org, xiaotong.lu@spreadtrum.com
-Subject: LEDs on USB keyboards was Re: [PATCH 02/24] leds: core: Add support
- for composing LED class device names
-Message-ID: <20181112221104.GC11942@amd>
-References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
- <1541542052-10081-3-git-send-email-jacek.anaszewski@gmail.com>
- <20181111120234.GA28794@amd>
- <a640167b-3a3e-daea-b377-6e82b653c5e8@gmail.com>
- <20181111201605.GA20160@amd>
- <57b77d4e-39a0-aaf2-5952-c2c25dc58593@gmail.com>
- <e72ac342-5253-851a-e54f-b1bd752be628@gmail.com>
- <CACRpkdZwgZ=PmX3PEpR-F76BZ5g9hzvQYc_3QfFYhHvBHqp4Tw@mail.gmail.com>
+        Tue, 13 Nov 2018 03:06:58 -0500
+Received: by mail-pg1-f193.google.com with SMTP id f8-v6so4668800pgq.5
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 14:11:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kJ5qY9PDhNvQvRrFMXl2pc8K9tKhezALSPu3zjgvVVI=;
+        b=WNDXj5dBhYZ8UxJ2c1aM8MQm9nn8Twf6IAIXjFeQh0bvCaay5n6DtxQ2hEdenprohZ
+         ThVMdSWV5APtLy4NI7GMc0fe+l7has9pwOGJNgWJ2EA1vU9qzfH/x4zkLWQRUWbiuuZ5
+         kYcsVw1O/7vK7lviX7Sazp0NyM7pZi540TQRY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kJ5qY9PDhNvQvRrFMXl2pc8K9tKhezALSPu3zjgvVVI=;
+        b=o9T+q+Bz8UCed4++dd5NCZRnlUVS8D3J1uTxa8xZ0lXZlU6zZ5o8Ejuoe13XNAgolB
+         H6F6VznEOBQByexhBzpfOyuqw8xPgco+gfWE8l7SSYqHgzgOnXd3YywsZKd+b3Le/8sR
+         1M++dujBbHGbMKsrMp4w6lXfKGvzKfP66SV3fmV19E/yD33gojTQQhJxhedBQxvatvX6
+         g3TUU7Rla2xK9ONELVwYKJzJqlDiPXjNHODZso+1Ngo6MPUeOomd2Rq4OKObcde7H6VG
+         ZPTaumSl6AgyjkyqtA2EMkqsP4/Ekgca6ljVRzUf6svyCIidEP6YeEhQJzdmiaD54XHm
+         F1Mw==
+X-Gm-Message-State: AGRZ1gJxQAqkdr0dKOCu6/+BYtMxNnTCuVmZFisKipaSdrX6fQRJJP/k
+        FIrIRqa7JI0Vdd50G/KbdFp4SQ==
+X-Google-Smtp-Source: AJdET5fmbVxWA2tBLZcenqdrOyqWUjqeZU8M9WPHGl/wN3MiMHo58BVFqNyDeXmNx3939gi2/DkQig==
+X-Received: by 2002:a62:5904:: with SMTP id n4mr2561467pfb.120.1542060711047;
+        Mon, 12 Nov 2018 14:11:51 -0800 (PST)
+Received: from mka.mtv.corp.google.com ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
+        by smtp.gmail.com with ESMTPSA id z2sm16166706pgu.4.2018.11.12.14.11.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 12 Nov 2018 14:11:50 -0800 (PST)
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc:     linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH v6 0/2] arm64: dts: qcom: pm8998: Add die temperature channel node to the ADC
+Date:   Mon, 12 Nov 2018 14:11:24 -0800
+Message-Id: <20181112221126.27142-1-mka@chromium.org>
+X-Mailer: git-send-email 2.19.1.930.g4563a0d9d0-goog
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="lMM8JwqTlfDpEaS6"
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZwgZ=PmX3PEpR-F76BZ5g9hzvQYc_3QfFYhHvBHqp4Tw@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This series adds a channel for the die temperature to the QCOM SPMI
+PMIC5 ADC. It also fixes an example in the DT documentation.
 
---lMM8JwqTlfDpEaS6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Matthias Kaehlcke (2):
+  dt-bindings: iio: vadc: Add unit address to ADC channel node in
+    example
+  arm64: dts: qcom: pm8998: Add die temperature channel node to the ADC
 
-Hi!
+ .../devicetree/bindings/iio/adc/qcom,spmi-vadc.txt          | 6 +++++-
+ arch/arm64/boot/dts/qcom/pm8998.dtsi                        | 5 +++++
+ 2 files changed, 10 insertions(+), 1 deletion(-)
 
-> > Couldn't we have here multiple variants that would then be chosen based
-> > on device tree definition?
->=20
-> It needs to be subsystem specific or something.
-> What you say make sense for things based on device
-> tree.
->=20
-> The problem hit me on an Intel laptop with several
-> USB keyboards.
->=20
-> OK maybe I am stupid for plugging in two USB keyboards,
-> but we should definately support it. Input/HID supports it
-> well.
+-- 
+2.19.1.930.g4563a0d9d0-goog
 
-Plugging two USB keyboards should be supported.
-
-Can we get some details... kernel version, architecture, maybe
-=2Econfig, where/how it fails?
-
-On my systems, keyboard leds are prefixed with device name, so I see
-no chance for duplicities...
-
-input5::capslock/   =20
-input5::numlock/    =20
-input5::scrolllock/
-
-Thanks,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---lMM8JwqTlfDpEaS6
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlvp+ngACgkQMOfwapXb+vLqywCdFaqE3SM9L6Df8+cbZl/qYHAi
-7BEAoI8ogyxXrej9w7IRZ6vlaCjzxYNi
-=SadW
------END PGP SIGNATURE-----
-
---lMM8JwqTlfDpEaS6--
