@@ -2,128 +2,188 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E4C9C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 23:10:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FAC8C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 23:11:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA496223D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 23:10:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CE482245E
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 23:11:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PdjQqI8T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA496223D8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XZDPlxMa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CE482245E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729715AbeKMJFu (ORCPT
+        id S1730258AbeKMJG5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 04:05:50 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:39378 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbeKMJFt (ORCPT
+        Tue, 13 Nov 2018 04:06:57 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:39366 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726014AbeKMJG4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 04:05:49 -0500
-Received: by mail-ua1-f68.google.com with SMTP id k10so3658100ual.6
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 15:10:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=sXvHHT6tiHBL+9VcRX4ZfaeM5bRD+9nM4CbmGQiTRUY=;
-        b=PdjQqI8T9unmYxPs6mYWu1I1HWk3BUlX0JMWX3UNMcsrWMO3D2m1ehDNEGcmFtFxnj
-         lNBNvAh3uiphE+Jg4FknvmLxxXqf/q1Jbkh0aahKTp/v1ujoAACD1ODIzpLtHl7IMnuZ
-         Jhadx6zYCSyGkwifmcs9DhH92aLB5favvnGURfUD8PkBKAIINZaiCFD6qgOuSMiOi/Zz
-         9gsfUWNb71+yY+wr2seg95At0NxoccEVSxtPgs5KXG5NNdjK7SKGBXBh9+d7EJw+BbeY
-         bw3L+GXE58dla6IttWQaaN01+1Nebal3j4O+5D3yqucjrX56aKVo3j3rr3KSLuGbQSDy
-         KwSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=sXvHHT6tiHBL+9VcRX4ZfaeM5bRD+9nM4CbmGQiTRUY=;
-        b=C61ZPQidvJijL2MbQxZ76dEr5qSZTju5UIlHTjzHQRmqMY3vu5vENnKVAManeUAbAh
-         MppnfLURwUpcdJKnlXnlXjOKAOl5y8wSRKP/ZDinXZDyeL4WiwOL+489qTKWrqNmj0Tr
-         DyFsLmS2wcn0ISKjtZ1rfLd041EiwquBLEYlnZrjjpQ9NPFSfO0ChMWMC5RTSy6jJLYc
-         TIls3X9LsimAH9FxnkhIsvHk8IPIsXO0mVj1/Gs4I0Y2HQSupSrji9dZyWbkIyVk+P3F
-         CH0ZgOmJXDsf8kwfpD1LQT1oul5jdfjepacqtGXZSxiI/uM2quUyBZsaL66j+Xdhpohd
-         xwwA==
-X-Gm-Message-State: AGRZ1gKH2o3E9l+NEOeAcrQ7J0vxDkYr6x0vzSlvmjgqepuPqeWa4onM
-        cr1dXFafMOFT3k+4Cx8f2U+xt2Py4Q4+yd7qGZHv1A==
-X-Google-Smtp-Source: AJdET5ffGWRFuAws3AJPGk3V8qgs13+UHqd5tH6VkhBCg/063gRDs0oZwkePz+Lm1cBDzKO+26ReMMPvLBBJd9nz/E8=
-X-Received: by 2002:ab0:45e2:: with SMTP id u89mr1304912uau.13.1542064229356;
- Mon, 12 Nov 2018 15:10:29 -0800 (PST)
-MIME-Version: 1.0
-Received: by 2002:a67:9883:0:0:0:0:0 with HTTP; Mon, 12 Nov 2018 15:10:24
- -0800 (PST)
-In-Reply-To: <alpine.DEB.2.21.1811122236240.18130@digraph.polyomino.org.uk>
-References: <CAKOZuesB4R=dCz4merWQN0FSCGrXmOgUUr4ienSbStBJguNv8g@mail.gmail.com>
- <bbc12da5-830e-99a7-95e3-d9da42947dc9@gmail.com> <877ehjx447.fsf@oldenburg.str.redhat.com>
- <CAKOZues5SEESpJU=6MDTrPXTA1KTZFGNQE4Lw4t0fO-WBTU62w@mail.gmail.com>
- <875zx2vhpd.fsf@oldenburg.str.redhat.com> <CAKOZuetdgk1QYhx1538-98rFpogMin=8DkPnCtU9_=ip23Vk7w@mail.gmail.com>
- <CAKCAbMiHC9r54h=XeW7CkBZ1Z5eHr9MPH3Rn7KTc9DjoHG=8UA@mail.gmail.com>
- <CAKOZuev7zqq+xpjyDA2mSdy-zwyNjECCzLsBELF6_v1rwar_mA@mail.gmail.com>
- <87lg5ym7qi.fsf@oldenburg.str.redhat.com> <CAKOZues2bQo1y_1ynxFMHGTvtTjABsqVpKJt5MYMdZBq6-ikHA@mail.gmail.com>
- <alpine.DEB.2.21.1811122236240.18130@digraph.polyomino.org.uk>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Mon, 12 Nov 2018 15:10:24 -0800
-Message-ID: <CAKOZueuM=3pxuXaJU4v571daWFCTJ1LYO-ApD6MrD7313RNYfQ@mail.gmail.com>
-Subject: Re: Official Linux system wrapper library?
-To:     Joseph Myers <joseph@codesourcery.com>
-Cc:     Florian Weimer <fweimer@redhat.com>,
-        Zack Weinberg <zackw@panix.com>,
-        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Joel Fernandes <joelaf@google.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Willy Tarreau <w@1wt.eu>, Vlastimil Babka <vbabka@suse.cz>,
-        "Carlos O'Donell" <carlos@redhat.com>,
-        GNU C Library <libc-alpha@sourceware.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 13 Nov 2018 04:06:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Mime-Version:Content-Type:References:
+        In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=GdjJqkqqH3kS+iQvQXwuop26IugNkBNDgqDm38cAeyQ=; b=XZDPlxMakz4DLQQYhD4RsIEi8
+        QEg9IjU80hiB0yOqOh7NcJGrd3bHm9ZCUQDsqgdjKRntZqimRcIzxGv7ryjMcVzkhF6E4Rp0giGvA
+        sICHk67sWN218o72ytzY6L8+VFY+PUJ/hUjKF8ueMTow+5cPcrfUYoqB3Xm9GHy7sdlop1y8aG2kL
+        XWNfqKsSOJcGHqjPp7oBc/MYqV54/6avyV8dPzv60yxRFPBM+GBSfpPFcVC0Kg1VLxUr+Yv2HTQtT
+        T03gpYxWbYAh/434fmhKUQ6zJQjOO7ZwjIn38+sINRZV9iTn/fMfzcr3n/488ZyYbAAi4yHXpqdUh
+        Ad2GLJTvg==;
+Received: from 54-240-196-172.amazon.com ([54.240.196.172] helo=vpn-10-50-58-187.ias2.amazon.com)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gMLMj-00067E-8j; Mon, 12 Nov 2018 23:11:34 +0000
+Message-ID: <f64aa222a15467dc667deb5fc1bbcae1e477482a.camel@infradead.org>
+Subject: Re: [PATCH] jffs2: implement mount option to configure endianness
+From:   David Woodhouse <dwmw2@infradead.org>
+To:     Daniel Walker <danielwa@cisco.com>
+Cc:     "Nikunj Kela (nkela)" <nkela@cisco.com>,
+        Richard Weinberger <richard.weinberger@gmail.com>,
+        "linux-mtd @ lists . infradead . org" <linux-mtd@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "xe-linux-external(mailer list)" <xe-linux-external@cisco.com>
+Date:   Mon, 12 Nov 2018 15:11:32 -0800
+In-Reply-To: <20181112225015.jyuro3z3ygavnvrp@zorba>
+References: <20181106214928.40020-1-nkela@cisco.com>
+         <921b0f78cf67d7307a0555e1fd6f2c2976310adc.camel@infradead.org>
+         <591D4732-BC3E-4F85-9277-25E049FFF4BA@cisco.com>
+         <CAFLxGvz8QgK1P6d-_biSRk4fyYEobio315_tUP+cRXTvt+m1hA@mail.gmail.com>
+         <01b82f6eb37b674effc6c8b0fa4a014deb401a85.camel@infradead.org>
+         <B1D7CC34-C9D3-4745-94A1-3F713C1CB216@cisco.com>
+         <897867ec09af82ca76c642b48ad23a7f08838dcf.camel@infradead.org>
+         <20181112214333.lplffcc722hta43v@zorba>
+         <20181112225015.jyuro3z3ygavnvrp@zorba>
+Content-Type: multipart/signed; micalg="sha-256";
+        protocol="application/x-pkcs7-signature";
+        boundary="=-q54yKuRJib47GZPfgNs2"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 2:51 PM, Joseph Myers <joseph@codesourcery.com> wrote:
-> I see no obvious reason why a kernel-provided
-> library, with all the problems that entails, should need to be involved,
-> rather than putting new APIs either in libc
 
-I initially wanted to put the APIs in libc. I still do. But that's
-proving to be impractical, for the reasons we're discussing on this
-thread.
+--=-q54yKuRJib47GZPfgNs2
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> or in a completely separate
-> libsignal
+On Mon, 2018-11-12 at 14:50 -0800, Daniel Walker wrote:
+>  Performance counter stats for 'mount -t jffs2 /dev/mtdblock7 /mnt':
 
-A separate library can't prevent some use of sigaction elsewhere in
-the program stomping on its handler. One of the key aspects of the
-registered-handler design is that registered handlers get to run
-*before* the legacy process-wide handler. The only non-hacky way to do
-that is to put the signal handler registration logic in the same logic
-component that houses the legacy signal registration machinery.
+Hm, how many decades will it take for the 'mtdblock' thing to die?
+JFFS2 doesn't use block devices :)
 
-> (I can imagine *other* parts of the toolchain being involved, if e.g. you
-> want to have a good way of checking "is the address of the instruction
-> causing this signal in this library?" that works with static as well as
-> dynamic linking - for dynamic linking, I expect something could be done
-> using libc_nonshared and __dso_handle to identify code in the library
-> calling some registering function.  And indeed there might also be new
-> kernel interfaces that help improve signal handling.)
+> It looks like the took slightly more than twice as long to mount.
 
-Again: you're blocking a practical solution for the sake of some
-elegant theoretical implementation that will never arrive, and so the
-world remains in a poor state indefinitely. Incremental improvement is
-good. Nothing about the registered signal handler approach precludes
-this sort of enhancement in the future. The same goes for the system
-call metadata database you've described: nice-to-have; shouldn't block
-simpler and more immediately practical work.
+Assuming that's repeatable, it seems moderately suboptimal.
 
-> In the absence of consensus for adding such a new API for signals to
-> glibc, it's unlikely one would get consensus for glibc to depend on some
-> other library providing such an API either.
+--=-q54yKuRJib47GZPfgNs2
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
 
-glibc would continue using an unsupported legacy system call
-interfaces in lieu of a supported low-level interface library?
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
+ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
+VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
+dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
+NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
+AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
+hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
+5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
+3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
+3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
+5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
+ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
+AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
+AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
+UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
+aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
+SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
+U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
+BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
+QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
+XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
+TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
+7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
+PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
+hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
+MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
+TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
+MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
+YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
+xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
+5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
+Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
+kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
+tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
+HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
+AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
+RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
+Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
+Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
+BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
+bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
+Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
+hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
+HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
+w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
+WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
+U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
+EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
+ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
+QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
+DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
+cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
+aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
+dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
+A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
+nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
+xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
+jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
+4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
+7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
+HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
+Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
+BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
+T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
+DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
+7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
+4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
+Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
+vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
+ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
+uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
+mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
+N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
+px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
+ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
+QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
+U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
+hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODExMTIyMzExMzJaMC8GCSqG
+SIb3DQEJBDEiBCDe5jdBTSLW9+WJEx2oiVmKsilYoB3yRc75GileZCsz8jCBvQYJKwYBBAGCNxAE
+MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
+VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
+IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
+jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
+cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
+aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
+dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAAMVDbIiWAAH
+wXscTD4PY0x9BqDXsHEPF2XZ8pHfrfRK7J0Y6bxCJI9O3Fs9VSJ3RBGB0yfngP0SxzUXi33+gZTg
+/brqBgPrsQikBjhxjhcrfK4e7duAiFRfFUfPkRGyz3KQNYZTaoeoh4P1WgxVM/6P3SkSBgIW9lby
+/E35E+/9Cv9yynkj5CXGFdaiuRBk6hX4NWEGtVQVahygJWLFMwYHFHf359W1y+YLqZxlzDSAQGN+
+8SDFTopOKA3ZHBN33OllmPyGK1U8QW0bZNmyD5pPMggJEtD5mwJCU55vV8KzJs6Tw+c+KuFdMlTZ
+vZNGR4tCWNM2LVEVqKWdQF8/z/QAAAAAAAA=
+
+
+--=-q54yKuRJib47GZPfgNs2--
+
