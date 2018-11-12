@@ -2,148 +2,117 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06EBAC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:02:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5586AC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:03:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C607E2243E
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:02:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C607E2243E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1ED0222504
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:03:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="B+y2LVa7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ED0222504
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730197AbeKMD5D (ORCPT
+        id S1730248AbeKMD5V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 22:57:03 -0500
-Received: from foss.arm.com ([217.140.101.70]:40840 "EHLO foss.arm.com"
+        Mon, 12 Nov 2018 22:57:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42480 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727247AbeKMD5D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 22:57:03 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2C4F8A78;
-        Mon, 12 Nov 2018 10:02:44 -0800 (PST)
-Received: from [10.1.196.93] (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 795C13F5A0;
-        Mon, 12 Nov 2018 10:02:42 -0800 (PST)
-Subject: Re: [PATCH v6 03/24] arm64: cpufeature: Add cpufeature for IRQ
- priority masking
-To:     Julien Thierry <julien.thierry@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
-        joel@joelfernandes.org, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, james.morse@arm.com,
-        catalin.marinas@arm.com, will.deacon@arm.com
-References: <1542023835-21446-1-git-send-email-julien.thierry@arm.com>
- <1542023835-21446-4-git-send-email-julien.thierry@arm.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <c17e8470-ad13-ca1d-d8aa-71feebd1a32d@arm.com>
-Date:   Mon, 12 Nov 2018 18:02:41 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1727247AbeKMD5V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 22:57:21 -0500
+Received: from localhost (unknown [206.108.79.134])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B50DE20817;
+        Mon, 12 Nov 2018 18:03:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542045781;
+        bh=XinHxmC+riPbXbpt0nW9pFDCl+wztNnruSbPNMb3WsY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=B+y2LVa7KMZAPpMFeVznoPrMpLjkJZHpyHx7hvLoT1jb6BrdSc/6zbZYLBXW1vaiL
+         QO96/Kz/nV57HASA5DMlW+VAfRHMG1dU5tb7/5xARXmoE/GzA0i9acic/XhgQUZHYe
+         hgM2PCs0NOTAF2BnkW+UYC4ZmRkU/6U5a/FYMw40=
+Date:   Mon, 12 Nov 2018 10:03:01 -0800
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jassi Brar <jassisinghbrar@gmail.com>,
+        Jiri Slaby <jslaby@suse.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Timo Alho <talho@nvidia.com>, Pekka Pessi <ppessi@nvidia.com>,
+        Mika Liljeberg <mliljeberg@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-serial@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 7/9] serial: Add Tegra Combined UART driver
+Message-ID: <20181112180301.GB28739@kroah.com>
+References: <20181026111638.10759-1-thierry.reding@gmail.com>
+ <20181026111638.10759-8-thierry.reding@gmail.com>
+ <20181109170526.GB14151@kroah.com>
+ <20181112153014.GA29481@ulmo>
 MIME-Version: 1.0
-In-Reply-To: <1542023835-21446-4-git-send-email-julien.thierry@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181112153014.GA29481@ulmo>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Nov 12, 2018 at 04:30:14PM +0100, Thierry Reding wrote:
+> On Fri, Nov 09, 2018 at 09:05:26AM -0800, Greg Kroah-Hartman wrote:
+> > On Fri, Oct 26, 2018 at 01:16:36PM +0200, Thierry Reding wrote:
+> > > From: Thierry Reding <treding@nvidia.com>
+> > > 
+> > > The Tegra Combined UART (TCU) is a mailbox-based mechanism that allows
+> > > multiplexing multiple "virtual UARTs" into a single hardware serial
+> > > port. The TCU is the primary serial port on Tegra194 devices.
+> > > 
+> > > Add a TCU driver utilizing the mailbox framework, as the used mailboxes
+> > > are part of Tegra HSP blocks that are already controlled by the Tegra
+> > > HSP mailbox driver.
+> > > 
+> > > Based on work by  Mikko Perttunen <mperttunen@nvidia.com>.
+> > > 
+> > > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > 
+> > Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> Thanks. I just sent out v2 addressing Pekka's comments on the series.
+> But I'm slightly confused now. Are you expecting anyone else to pick
+> this up? There are technically no build time dependencies between any
+> of these patches, so it should be fine to pick them all into the
+> corresponding subsystem trees.
 
+Ah, I thought there was a built-time dependancy, that's why I gave my
+ack.
 
-On 12/11/2018 11:56, Julien Thierry wrote:
-> Add a cpufeature indicating whether a cpu supports masking interrupts
-> by priority.
+> Perhaps the only thing to note is that there is a runtime dependency
+> from this patch on patches 1 and 2 in the series. Patch 1 is required to
+> make blocking a mailbox possible in interrupt context, which we need in
+> the TCU driver because the TTY and console paths do end up calling the
+> mbox_send_message() from interrupt context. Patch 2 is only required at
+> runtime if the two mailboxes are provided by different instances of the
+> HSP block (which they are for TCU on Tegra194).
 > 
-> The feature will be properly enabled in a later patch.
+> Would you prefer for Jassi to pick up the TCU patch along with the
+> mailbox core and driver changes so that we deal with the runtime
+> dependencies that way?
 > 
-> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
->   arch/arm64/include/asm/cpucaps.h    |  3 ++-
->   arch/arm64/include/asm/cpufeature.h |  6 ++++++
->   arch/arm64/kernel/cpufeature.c      | 23 +++++++++++++++++++++++
->   3 files changed, 31 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
-> index 6e2d254..f367e5c 100644
-> --- a/arch/arm64/include/asm/cpucaps.h
-> +++ b/arch/arm64/include/asm/cpucaps.h
-> @@ -54,7 +54,8 @@
->   #define ARM64_HAS_CRC32				33
->   #define ARM64_SSBS				34
->   #define ARM64_WORKAROUND_1188873		35
-> +#define ARM64_HAS_IRQ_PRIO_MASKING		36
->   
-> -#define ARM64_NCAPS				36
-> +#define ARM64_NCAPS				37
->   
->   #endif /* __ASM_CPUCAPS_H */
-> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-> index 7e2ec64..a6e063f 100644
-> --- a/arch/arm64/include/asm/cpufeature.h
-> +++ b/arch/arm64/include/asm/cpufeature.h
-> @@ -514,6 +514,12 @@ static inline bool system_supports_cnp(void)
->   		cpus_have_const_cap(ARM64_HAS_CNP);
->   }
->   
-> +static inline bool system_supports_irq_prio_masking(void)
-> +{
-> +	return IS_ENABLED(CONFIG_ARM64_PSEUDO_NMI) &&
-> +	       cpus_have_const_cap(ARM64_HAS_IRQ_PRIO_MASKING);
-> +}
-> +
->   #define ARM64_SSBD_UNKNOWN		-1
->   #define ARM64_SSBD_FORCE_DISABLE	0
->   #define ARM64_SSBD_KERNEL		1
-> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-> index 03a9d96..1b5b553 100644
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@ -1145,6 +1145,14 @@ static void cpu_clear_disr(const struct arm64_cpu_capabilities *__unused)
->   }
->   #endif /* CONFIG_ARM64_RAS_EXTN */
->   
-> +#ifdef CONFIG_ARM64_PSEUDO_NMI
-> +static bool can_use_gic_priorities(const struct arm64_cpu_capabilities *entry,
-> +				   int scope)
-> +{
-> +	return false;
-> +}
-> +#endif
-> +
->   static const struct arm64_cpu_capabilities arm64_features[] = {
->   	{
->   		.desc = "GIC system register CPU interface",
-> @@ -1368,6 +1376,21 @@ static void cpu_clear_disr(const struct arm64_cpu_capabilities *__unused)
->   		.cpu_enable = cpu_enable_cnp,
->   	},
->   #endif
-> +#ifdef CONFIG_ARM64_PSEUDO_NMI
-> +	{
-> +		/*
-> +		 * Depends on having GICv3
-> +		 */
-> +		.desc = "IRQ priority masking",
-> +		.capability = ARM64_HAS_IRQ_PRIO_MASKING,
-> +		.type = ARM64_CPUCAP_STRICT_BOOT_CPU_FEATURE,
-> +		.matches = can_use_gic_priorities,
-> +		.sys_reg = SYS_ID_AA64PFR0_EL1,
-> +		.field_pos = ID_AA64PFR0_GIC_SHIFT,
-> +		.sign = FTR_UNSIGNED,
-> +		.min_field_value = 1,
-> +	},
-> +#endif
->   	{},
->   };
->   
-> 
+> Alternatively, if Jassi is okay with the mailbox changes, I can pick up
+> all of the v2 series of the patches into stable branches for v4.21, deal
+> with the dependencies there and send out pull requests for everyone to
+> merge into their subsystem trees.
 
-Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+I don't really care either way, whatever is easiest for you all is fine
+with me.
+
+thanks,
+
+greg k-h
