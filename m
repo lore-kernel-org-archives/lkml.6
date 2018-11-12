@@ -6,56 +6,54 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7B3EC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 13:36:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0758C43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 13:36:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73265224E0
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 13:36:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73265224E0
+	by mail.kernel.org (Postfix) with ESMTP id A08C2223DD
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 13:36:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A08C2223DD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729707AbeKLXaG (ORCPT
+        id S1729746AbeKLXaH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 18:30:06 -0500
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:37694 "EHLO
+        Mon, 12 Nov 2018 18:30:07 -0500
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:37696 "EHLO
         mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729460AbeKLXaG (ORCPT
+        by vger.kernel.org with ESMTP id S1729421AbeKLXaG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 18:30:06 -0500
 Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wACDYVh9022752;
+        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wACDYWv2022766;
         Mon, 12 Nov 2018 07:36:41 -0600
 Authentication-Results: ppops.net;
         spf=none smtp.mailfrom=rf@opensource.cirrus.com
 Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2nnwm9u5yv-1;
+        by mx0a-001ae601.pphosted.com with ESMTP id 2nnwm9u5yw-1;
         Mon, 12 Nov 2018 07:36:41 -0600
 Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail1.cirrus.com (Postfix) with ESMTP id D1F4A611E120;
-        Mon, 12 Nov 2018 07:36:40 -0600 (CST)
+        by mail1.cirrus.com (Postfix) with ESMTP id 367EB611E125;
+        Mon, 12 Nov 2018 07:36:41 -0600 (CST)
 Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
  (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Mon, 12 Nov 2018
  13:36:40 +0000
 Received: from edi-sw-dsktp006.ad.cirrus.com (edi-sw-dsktp006.ad.cirrus.com
  [198.90.251.121])      by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id
- wACDadd8012949;        Mon, 12 Nov 2018 13:36:40 GMT
+ wACDadd7012949;        Mon, 12 Nov 2018 13:36:39 GMT
 From:   Richard Fitzgerald <rf@opensource.cirrus.com>
 To:     <broonie@kernel.org>
 CC:     <patches@opensource.cirrus.com>, <alsa-devel@alsa-project.org>,
         <linux-kernel@vger.kernel.org>,
         Richard Fitzgerald <rf@opensource.cirrus.com>
-Subject: [PATCH 2/2] ASoC: wm_adsp: Factor out common init code
-Date:   Mon, 12 Nov 2018 13:36:39 +0000
-Message-ID: <20181112133639.13444-2-rf@opensource.cirrus.com>
+Subject: [PATCH 1/2] ASoC: wm_adsp: Fix dma-unsafe read of scratch registers
+Date:   Mon, 12 Nov 2018 13:36:38 +0000
+Message-ID: <20181112133639.13444-1-rf@opensource.cirrus.com>
 X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20181112133639.13444-1-rf@opensource.cirrus.com>
-References: <20181112133639.13444-1-rf@opensource.cirrus.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=829 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
  definitions=main-1811120123
 Sender: linux-kernel-owner@vger.kernel.org
@@ -63,74 +61,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Factor out the duplicated initialization statements from
-wm_adsp1_init() and wm_adsp2_init() into new function
-wm_adsp_common_init().
+Stack memory isn't DMA-safe so it isn't safe to use either
+regmap_raw_read or regmap_bulk_read to read into stack memory.
 
-The entire content of wm_adsp1_init() is the common code
-but it is convenient to retain this exported function
-to hide what we currently treat as common init (which might
-change in the future) and also make clear the difference
-between an ADSP1 entry point and common code.
+The two functions to read the scratch registers were using
+stack memory and regmap_raw_read. It's not worth allocating
+memory just for this trivial read, and it isn't time-critical.
+A simple regmap_read for each register is sufficient.
 
 Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
 ---
- sound/soc/codecs/wm_adsp.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ sound/soc/codecs/wm_adsp.c | 37 ++++++++++++++++++++-----------------
+ 1 file changed, 20 insertions(+), 17 deletions(-)
 
 diff --git a/sound/soc/codecs/wm_adsp.c b/sound/soc/codecs/wm_adsp.c
-index 66501b8dc46f..1dd291cebe67 100644
+index a53dc174bbf0..66501b8dc46f 100644
 --- a/sound/soc/codecs/wm_adsp.c
 +++ b/sound/soc/codecs/wm_adsp.c
-@@ -2419,7 +2419,7 @@ static int wm_adsp_create_name(struct wm_adsp *dsp)
- 	return 0;
- }
+@@ -765,38 +765,41 @@ static unsigned int wm_adsp_region_to_reg(struct wm_adsp_region const *mem,
  
--int wm_adsp1_init(struct wm_adsp *dsp)
-+static int wm_adsp_common_init(struct wm_adsp *dsp)
+ static void wm_adsp2_show_fw_status(struct wm_adsp *dsp)
  {
+-	u16 scratch[4];
++	unsigned int scratch[4];
++	unsigned int addr = dsp->base + ADSP2_SCRATCH0;
++	unsigned int i;
  	int ret;
  
-@@ -2428,11 +2428,17 @@ int wm_adsp1_init(struct wm_adsp *dsp)
- 		return ret;
- 
- 	INIT_LIST_HEAD(&dsp->alg_regions);
-+	INIT_LIST_HEAD(&dsp->ctl_list);
- 
- 	mutex_init(&dsp->pwr_lock);
- 
- 	return 0;
- }
-+
-+int wm_adsp1_init(struct wm_adsp *dsp)
-+{
-+	return wm_adsp_common_init(dsp);
-+}
- EXPORT_SYMBOL_GPL(wm_adsp1_init);
- 
- int wm_adsp1_event(struct snd_soc_dapm_widget *w,
-@@ -2917,7 +2923,7 @@ int wm_adsp2_init(struct wm_adsp *dsp)
- {
- 	int ret;
- 
--	ret = wm_adsp_create_name(dsp);
-+	ret = wm_adsp_common_init(dsp);
- 	if (ret)
- 		return ret;
- 
-@@ -2939,12 +2945,8 @@ int wm_adsp2_init(struct wm_adsp *dsp)
- 		break;
+-	ret = regmap_raw_read(dsp->regmap, dsp->base + ADSP2_SCRATCH0,
+-				scratch, sizeof(scratch));
+-	if (ret) {
+-		adsp_err(dsp, "Failed to read SCRATCH regs: %d\n", ret);
+-		return;
++	for (i = 0; i < ARRAY_SIZE(scratch); ++i) {
++		ret = regmap_read(dsp->regmap, addr + i, &scratch[i]);
++		if (ret) {
++			adsp_err(dsp, "Failed to read SCRATCH%u: %d\n", i, ret);
++			return;
++		}
  	}
  
--	INIT_LIST_HEAD(&dsp->alg_regions);
--	INIT_LIST_HEAD(&dsp->ctl_list);
- 	INIT_WORK(&dsp->boot_work, wm_adsp2_boot_work);
- 
--	mutex_init(&dsp->pwr_lock);
--
- 	return 0;
+ 	adsp_dbg(dsp, "FW SCRATCH 0:0x%x 1:0x%x 2:0x%x 3:0x%x\n",
+-		 be16_to_cpu(scratch[0]),
+-		 be16_to_cpu(scratch[1]),
+-		 be16_to_cpu(scratch[2]),
+-		 be16_to_cpu(scratch[3]));
++		 scratch[0], scratch[1], scratch[2], scratch[3]);
  }
- EXPORT_SYMBOL_GPL(wm_adsp2_init);
+ 
+ static void wm_adsp2v2_show_fw_status(struct wm_adsp *dsp)
+ {
+-	u32 scratch[2];
++	unsigned int scratch[2];
+ 	int ret;
+ 
+-	ret = regmap_raw_read(dsp->regmap, dsp->base + ADSP2V2_SCRATCH0_1,
+-			      scratch, sizeof(scratch));
+-
++	ret = regmap_read(dsp->regmap, dsp->base + ADSP2V2_SCRATCH0_1,
++			  &scratch[0]);
+ 	if (ret) {
+-		adsp_err(dsp, "Failed to read SCRATCH regs: %d\n", ret);
++		adsp_err(dsp, "Failed to read SCRATCH0_1: %d\n", ret);
+ 		return;
+ 	}
+ 
+-	scratch[0] = be32_to_cpu(scratch[0]);
+-	scratch[1] = be32_to_cpu(scratch[1]);
++	ret = regmap_read(dsp->regmap, dsp->base + ADSP2V2_SCRATCH2_3,
++			  &scratch[1]);
++	if (ret) {
++		adsp_err(dsp, "Failed to read SCRATCH2_3: %d\n", ret);
++		return;
++	}
+ 
+ 	adsp_dbg(dsp, "FW SCRATCH 0:0x%x 1:0x%x 2:0x%x 3:0x%x\n",
+ 		 scratch[0] & 0xFFFF,
 -- 
 2.11.0
 
