@@ -2,112 +2,149 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F703C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 20:25:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03813C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 20:26:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1ECF72243E
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 20:25:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ECF72243E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B97E72243E
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 20:26:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S+mqrY17"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B97E72243E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730427AbeKMGUh (ORCPT
+        id S1730437AbeKMGVn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 01:20:37 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:35902 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725790AbeKMGUh (ORCPT
+        Tue, 13 Nov 2018 01:21:43 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:36238 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725834AbeKMGVn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 01:20:37 -0500
-Received: by mail-ed1-f68.google.com with SMTP id a2-v6so8492363edt.3;
-        Mon, 12 Nov 2018 12:25:46 -0800 (PST)
+        Tue, 13 Nov 2018 01:21:43 -0500
+Received: by mail-wr1-f67.google.com with SMTP id z13-v6so10819582wrs.3;
+        Mon, 12 Nov 2018 12:26:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jf1wzNuzV+bOfaMyZTWfvnvVRhiebj+W0LYPCEcsELo=;
+        b=S+mqrY17L7ElhWba5PRQ4PsBdhCONjtGkkEQ8DxpTtOs4gFpvONPLzFIKUkQhbFn3S
+         qI6jQ7+vxWOuI23LzewhXu57umEw9uoNURZAPKKEKzHrleMIuKF+N4jeZvjtKAkES4fv
+         GF9K5yb0y7JaedDPpitHgRew0ZKIkCqYwXDvZzOY9QKjUEoxgKdudS3bJ09waE4+ScV6
+         T9wxRHMZ6svFuYTEYnX8ioAWBeZCER7up53XVs4XJ3u6j6UF38xInmxl+OKFpqVZXxeU
+         VI/2A48wJA8N3GN7PsZnSc/ss7bvW82nL6LjRwarmrykH4nr31yPRfinqJmkBANhcgJ1
+         UqPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9NIY2tdVyIPsE6eduVs2bUOxdhUrf9Xkdb76WSFQKcc=;
-        b=pehnmvBbiVd/1YQ9mIG0c8XP0eOH1T7Rz4xfAR8SdKX0Lx9yYpz6/wujvdyYveTtQL
-         Mlz5/f7+1Re8b5z/ss9eq0nu+mRBXZ8KCb1PcM1FnlEbzQPaIIwbslspGhfqBUgIFKHV
-         qiOhv3UQFwo6QCuEnNzX99qoxiXvXAFWyvKI9rB62K3vqO025uFCqJsgUgR6dPuMj46P
-         yXs9HonkrK4g7sQR7TgnXQNSZe4woirZcJk7hy9rkGAIj7uR6h24JOhxlh5p/bQU7YJ4
-         QgCMon63IhTpIfQY/lLpTQ8wzQSMDBq5g7EUw0LODfVu7z8f7vkYLssMGRHBnCaN7cdZ
-         5DxA==
-X-Gm-Message-State: AGRZ1gLqGoDN4j2jJZoV2WydUnfWsGeIwd5BkEpJrrUghiYV4pWYiWkK
-        0kPGx/4DQrpN/uXa3HdDM10=
-X-Google-Smtp-Source: AJdET5e2OyzMpM4ETbW1vhIPY48WS/LlA+IEG2WMTfamD+epeeCAsSu1w+wQCJBBEoNq7RA2kdb9aw==
-X-Received: by 2002:a17:906:95c2:: with SMTP id n2-v6mr10013011ejy.205.1542054345819;
-        Mon, 12 Nov 2018 12:25:45 -0800 (PST)
-Received: from kozik-lap ([178.38.103.27])
-        by smtp.googlemail.com with ESMTPSA id m90-v6sm4814267ede.58.2018.11.12.12.25.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 12 Nov 2018 12:25:44 -0800 (PST)
-Date:   Mon, 12 Nov 2018 21:25:43 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     =?utf-8?Q?Bart=C5=82omiej_=C5=BBo=C5=82nierkiewicz?= 
-        <b.zolnierkie@samsung.com>
-Cc:     kgene@kernel.org, linux@armlinux.org.uk,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] ARM: SAMSUNG: limit SAMSUNG_PM_DEBUG config option to
- non-Exynos platforms
-Message-ID: <20181112202543.GB25275@kozik-lap>
-References: <CGME20181015155001eucas1p249f539be47eaff0d10ddc74e1f681b37@eucas1p2.samsung.com>
- <20181015155001eucas1p249f539be47eaff0d10ddc74e1f681b37~d0vYKtP7-2027420274eucas1p2g@eucas1p2.samsung.com>
- <CAJKOXPcFnkwZfCg8q429L6HRfNxubTaoa+BRZ-1h3ti3Q2EAxw@mail.gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jf1wzNuzV+bOfaMyZTWfvnvVRhiebj+W0LYPCEcsELo=;
+        b=qfxJkHtwButifdn65k7CNDRfeGnn48/aiBYSVj242IUdKFBmo357hlfvsFtPaiep09
+         KYgvV+MRb785y8vAOtuui3jSWDROE0c7s3PbKktvBywp4RAZb8sfV9jQ5t5+2eRIBJrg
+         of/rvHc4eF7ivdmSDeUvZO9bQtPBSJKeuBlw9TxPhTl06YR8piCnbWyAwVJvudSy6H26
+         DDuB1ERPqOGmRUyIE6fLOD7+4BQXO+TqhLn0cDWCK3mZRWqZSjDMXcdVWm7ZJYm7SS5e
+         L+NlSTSlKhy67MS9UN8mKy0OmhDPyxAHz/i7QthPBb8EWjGdPCGZrQcb28/+t2l+WZVq
+         3/jg==
+X-Gm-Message-State: AGRZ1gICiksH1WSmFYm0JuXefSkq0c5jZ1mayd7ThF3IIv/hUxQx3/r6
+        XDXCB87Z4RXwVFsDEFWjYg==
+X-Google-Smtp-Source: AJdET5cKEoV1ikDT33HDLbCxBvdsmM1wuJWxp2wgvbVVmUICdDH7AtGNeEZpscdl9xyFWvSoYkR7xA==
+X-Received: by 2002:adf:bd0f:: with SMTP id j15-v6mr2233705wrh.267.1542054411402;
+        Mon, 12 Nov 2018 12:26:51 -0800 (PST)
+Received: from arch.home (host86-147-12-72.range86-147.btcentralplus.com. [86.147.12.72])
+        by smtp.googlemail.com with ESMTPSA id x194-v6sm34948582wmd.41.2018.11.12.12.26.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 12 Nov 2018 12:26:50 -0800 (PST)
+From:   Craig Tatlor <ctatlor97@gmail.com>
+Cc:     ctatlor97@gmail.com, linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] pinctrl: sdm660: Set tile property for pingroups
+Date:   Mon, 12 Nov 2018 20:25:53 +0000
+Message-Id: <20181112202553.1410-1-ctatlor97@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAJKOXPcFnkwZfCg8q429L6HRfNxubTaoa+BRZ-1h3ti3Q2EAxw@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 03:04:52PM +0200, Krzysztof Kozlowski wrote:
-> On Mon, 15 Oct 2018 at 17:50, Bartlomiej Zolnierkiewicz
-> <b.zolnierkie@samsung.com> wrote:
-> >
-> > "Samsung PM Suspend debug" feature (controlled by SAMSUNG_PM_DEBUG
-> > config option) is not working properly (debug messages are not
-> > displayed after resume) on Exynos platforms because GPIOs restore
-> > code is not implemented.
-> >
-> > Add PLAT_S3C24XX, ARCH_S3C64XX and ARCH_S5PV210 dependencies to
-> > SAMSUNG_PM_DEBUG config option to hide it on Exynos platforms.
-> > Then convert Exynos code to not require <plat/pm-common.h>
-> > header (use pr_debug() directly instead of S3C_PMDBG() macro and
-> > remove redundant s3c_pm_*() calls).
-> >
-> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > ---
-> > v3:
-> > - don't move PM to the line below in Kconfig
-> >
-> > v2:
-> > - convert Exynos code to not require <plat/pm-common.h> header
-> >
-> > Should by applied on top of "[PATCH] ARM: EXYNOS: remove no longer
-> > needed s3c_pm_check_*() calls".
-> >
-> >  arch/arm/mach-exynos/suspend.c |   14 ++++----------
-> >  arch/arm/plat-samsung/Kconfig  |    1 +
-> >  2 files changed, 5 insertions(+), 10 deletions(-)
-> 
-> Thanks. This and the other one (removing s3c_pm_check_*()) look OK
-> although it is too late for another pull so this will wait for next
-> cycle.
+This was missed when tiles support was added in a revison and
+causes the driver to fail to load.
 
-Hi,
+Fixes: 9cf0c526bc58 ("pinctrl: qcom: Add sdm660 pinctrl driver")
+Signed-off-by: Craig Tatlor <ctatlor97@gmail.com>
+---
+ drivers/pinctrl/qcom/pinctrl-sdm660.c | 28 ++++++++++++++-------------
+ 1 file changed, 15 insertions(+), 13 deletions(-)
 
-This does not longer apply. Probably because of my changes around eint
-wakeup mask. Could you rebase?
-
-Best regards,
-Krzysztof
+diff --git a/drivers/pinctrl/qcom/pinctrl-sdm660.c b/drivers/pinctrl/qcom/pinctrl-sdm660.c
+index 6838b38555a1..1bfb0ae6b387 100644
+--- a/drivers/pinctrl/qcom/pinctrl-sdm660.c
++++ b/drivers/pinctrl/qcom/pinctrl-sdm660.c
+@@ -33,7 +33,7 @@ enum {
+ 	}
+ 
+ 
+-#define PINGROUP(id, base, f1, f2, f3, f4, f5, f6, f7, f8, f9)	\
++#define PINGROUP(id, _tile, f1, f2, f3, f4, f5, f6, f7, f8, f9)	\
+ 	{					        \
+ 		.name = "gpio" #id,			\
+ 		.pins = gpio##id##_pins,		\
+@@ -51,11 +51,12 @@ enum {
+ 			msm_mux_##f9			\
+ 		},				        \
+ 		.nfuncs = 10,				\
+-		.ctl_reg = base + REG_SIZE * id,	\
+-		.io_reg = base + 0x4 + REG_SIZE * id,		\
+-		.intr_cfg_reg = base + 0x8 + REG_SIZE * id,		\
+-		.intr_status_reg = base + 0xc + REG_SIZE * id,	\
+-		.intr_target_reg = base + 0x8 + REG_SIZE * id,	\
++		.ctl_reg = REG_SIZE * id,		\
++		.io_reg = 0x4 + REG_SIZE * id,		\
++		.intr_cfg_reg = 0x8 + REG_SIZE * id,	\
++		.intr_status_reg = 0xc + REG_SIZE * id,	\
++		.intr_target_reg = 0x8 + REG_SIZE * id,	\
++		.tile = _tile,			\
+ 		.mux_bit = 2,			\
+ 		.pull_bit = 0,			\
+ 		.drv_bit = 6,			\
+@@ -82,6 +83,7 @@ enum {
+ 		.intr_cfg_reg = 0,			\
+ 		.intr_status_reg = 0,			\
+ 		.intr_target_reg = 0,			\
++		.tile = NORTH,				\
+ 		.mux_bit = -1,				\
+ 		.pull_bit = pull,			\
+ 		.drv_bit = drv,				\
+@@ -1397,13 +1399,13 @@ static const struct msm_pingroup sdm660_groups[] = {
+ 	PINGROUP(111, SOUTH, _, _, _, _, _, _, _, _, _),
+ 	PINGROUP(112, SOUTH, _, _, _, _, _, _, _, _, _),
+ 	PINGROUP(113, SOUTH, _, _, _, _, _, _, _, _, _),
+-	SDC_QDSD_PINGROUP(sdc1_clk, 0x99a000, 13, 6),
+-	SDC_QDSD_PINGROUP(sdc1_cmd, 0x99a000, 11, 3),
+-	SDC_QDSD_PINGROUP(sdc1_data, 0x99a000, 9, 0),
+-	SDC_QDSD_PINGROUP(sdc2_clk, 0x99b000, 14, 6),
+-	SDC_QDSD_PINGROUP(sdc2_cmd, 0x99b000, 11, 3),
+-	SDC_QDSD_PINGROUP(sdc2_data, 0x99b000, 9, 0),
+-	SDC_QDSD_PINGROUP(sdc1_rclk, 0x99a000, 15, 0),
++	SDC_QDSD_PINGROUP(sdc1_clk, 0x9a000, 13, 6),
++	SDC_QDSD_PINGROUP(sdc1_cmd, 0x9a000, 11, 3),
++	SDC_QDSD_PINGROUP(sdc1_data, 0x9a000, 9, 0),
++	SDC_QDSD_PINGROUP(sdc2_clk, 0x9b000, 14, 6),
++	SDC_QDSD_PINGROUP(sdc2_cmd, 0x9b000, 11, 3),
++	SDC_QDSD_PINGROUP(sdc2_data, 0x9b000, 9, 0),
++	SDC_QDSD_PINGROUP(sdc1_rclk, 0x9a000, 15, 0),
+ };
+ 
+ static const struct msm_pinctrl_soc_data sdm660_pinctrl = {
+-- 
+2.19.1
 
