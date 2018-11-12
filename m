@@ -2,86 +2,92 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2108C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:09:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 456DFC43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:12:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1E2B22419
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:09:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1E2B22419
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codesourcery.com
+	by mail.kernel.org (Postfix) with ESMTP id 1084422504
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:12:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1084422504
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730135AbeKMEES (ORCPT
+        id S1730146AbeKMEGi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 23:04:18 -0500
-Received: from relay1.mentorg.com ([192.94.38.131]:45103 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727247AbeKMEES (ORCPT
+        Mon, 12 Nov 2018 23:06:38 -0500
+Received: from bmailout3.hostsharing.net ([176.9.242.62]:36337 "EHLO
+        bmailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727247AbeKMEGi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 23:04:18 -0500
-Received: from nat-ies.mentorg.com ([192.94.31.2] helo=SVR-IES-MBX-03.mgc.mentorg.com)
-        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1gMGeo-0003fi-Lo from joseph_myers@mentor.com ; Mon, 12 Nov 2018 10:09:54 -0800
-Received: from digraph.polyomino.org.uk (137.202.0.90) by
- SVR-IES-MBX-03.mgc.mentorg.com (139.181.222.3) with Microsoft SMTP Server
- (TLS) id 15.0.1320.4; Mon, 12 Nov 2018 18:09:51 +0000
-Received: from jsm28 (helo=localhost)
-        by digraph.polyomino.org.uk with local-esmtp (Exim 4.90_1)
-        (envelope-from <joseph@codesourcery.com>)
-        id 1gMGek-0005Om-PC; Mon, 12 Nov 2018 18:09:50 +0000
-Date:   Mon, 12 Nov 2018 18:09:50 +0000
-From:   Joseph Myers <joseph@codesourcery.com>
-X-X-Sender: jsm28@digraph.polyomino.org.uk
-To:     Greg KH <gregkh@linuxfoundation.org>
-CC:     Willy Tarreau <w@1wt.eu>, Florian Weimer <fweimer@redhat.com>,
-        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
-        Daniel Colascione <dancol@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Joel Fernandes <joelaf@google.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Carlos O'Donell <carlos@redhat.com>,
-        "libc-alpha@sourceware.org" <libc-alpha@sourceware.org>
-Subject: Re: Official Linux system wrapper library?
-In-Reply-To: <20181112175305.GB15484@kroah.com>
-Message-ID: <alpine.DEB.2.21.1811121803520.6607@digraph.polyomino.org.uk>
-References: <CAKOZuesB4R=dCz4merWQN0FSCGrXmOgUUr4ienSbStBJguNv8g@mail.gmail.com> <bbc12da5-830e-99a7-95e3-d9da42947dc9@gmail.com> <20181111081725.GA30248@1wt.eu> <3664a508-ca74-4ff0-39a6-34543194a24e@gmail.com> <20181111111143.GB4189@1wt.eu>
- <87zhufvntw.fsf@oldenburg.str.redhat.com> <20181111120910.GA4425@1wt.eu> <alpine.DEB.2.21.1811121723210.6607@digraph.polyomino.org.uk> <20181112175305.GB15484@kroah.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 12 Nov 2018 23:06:38 -0500
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
+        by bmailout3.hostsharing.net (Postfix) with ESMTPS id 58B7B100DA1DF;
+        Mon, 12 Nov 2018 19:12:15 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+        id BA7C04D2DB; Mon, 12 Nov 2018 19:12:14 +0100 (CET)
+Date:   Mon, 12 Nov 2018 19:12:14 +0100
+From:   Lukas Wunner <lukas@wunner.de>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Jacob jun Pan <jacob.jun.pan@intel.com>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Christian Kellner <ckellner@redhat.com>,
+        Mario.Limonciello@dell.com,
+        Anthony Wong <anthony.wong@canonical.com>,
+        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] PCI / iommu / thunderbolt: IOMMU based DMA protection
+Message-ID: <20181112181214.xaahc5wni4vuwl6h@wunner.de>
+References: <20181112160628.86620-1-mika.westerberg@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-X-Originating-IP: [137.202.0.90]
-X-ClientProxiedBy: SVR-IES-MBX-03.mgc.mentorg.com (139.181.222.3) To
- SVR-IES-MBX-03.mgc.mentorg.com (139.181.222.3)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181112160628.86620-1-mika.westerberg@linux.intel.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 12 Nov 2018, Greg KH wrote:
+On Mon, Nov 12, 2018 at 07:06:24PM +0300, Mika Westerberg wrote:
+> Recent systems shipping with Windows 10 version 1803 or newer may be
+> utilizing IOMMU to prevent DMA attacks via Thunderbolt ports. This is
+> different from the previous security level based scheme because the
+> connected device cannot access system memory outside of the regions
+> allocated for it by the driver.
+> 
+> When enabled the BIOS makes sure no device can do DMA outside of RMRR
+> (Reserved Memory Region Record) regions. This means that during OS boot,
+> before it enables IOMMU, none of the connected devices can bypass DMA
+> protection for instance by overwriting the data structures used by the
+> IOMMU. The BIOS communicates support for this to the OS by setting a new
+> bit in ACPI DMAR table [1].
+> 
+> Because these systems utilize an IOMMU to block possible DMA attacks,
+> typically (but not always) the Thunderbolt security level is set to "none"
+> which means that all PCIe devices are immediately usable. This also means
+> that Linux needs to follow Windows 10 and enable IOMMU automatically when
+> running on such system otherwise connected devices can read/write system
+> memory pretty much without any restrictions.
 
-> If there are still problems with this, please let us know and we will be
-> glad to resolve them.
+What if the system is booted from a Thunderbolt-attached disk?
+Won't this suddenly break with these patches?  That would seem like a
+pretty significant regression.  What if the only GPU in the system is
+Thunderbolt-attached?  Is it possible to recognize such scenarios and
+automatically exempt affected devices from IOMMU blocking?
 
-With headers installed from Linus's latest tree, I retried (for x86_64) 
-the case of a source file containing the single line
+Thanks,
 
-#include <linux/elfcore.h>
-
-which (as previously discussed, and Arnd had an RFC patch) I want to use 
-in a glibc test of header consistency.  It gives errors "unknown type name 
-'elf_greg_t'" etc. (for lots more types as well) - but even before getting 
-onto those errors, there's
-
-asm/signal.h:127:2: error: unknown type name 'size_t'
-
-from a header included from linux/elfcore.h.  So this doesn't seem to be 
-working as I'd expect yet.
-
--- 
-Joseph S. Myers
-joseph@codesourcery.com
+Lukas
