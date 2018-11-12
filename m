@@ -2,107 +2,112 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52E85C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 12:27:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78AD7C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 12:28:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1561C2245E
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 12:27:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4209B22443
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 12:28:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QPBSqUzw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1561C2245E
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZWidSFSf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4209B22443
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729576AbeKLWUj (ORCPT
+        id S1729611AbeKLWVb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 17:20:39 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:35998 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726725AbeKLWUh (ORCPT
+        Mon, 12 Nov 2018 17:21:31 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:54222 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729396AbeKLWVa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 17:20:37 -0500
-Received: by mail-ed1-f65.google.com with SMTP id a2-v6so7228586edt.3
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 04:27:33 -0800 (PST)
+        Mon, 12 Nov 2018 17:21:30 -0500
+Received: by mail-wm1-f67.google.com with SMTP id f10-v6so8288790wme.3
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 04:28:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=UVFQHQKwJWclm9eD07zuiBHdhuKOYMmHPa/AOdWQ654=;
-        b=QPBSqUzwOghjSCXd6ePIPl/Sz6utjR/GeGPYkX2JIN4Kusqs5UxS+Edj3mwPmh0J5D
-         6aW+M8l96InS4SJ2FANCLxE0sdQ/+1UFlvGSfTdjP5DxJyCyZ4gZRq8xs77pl5BCGGnv
-         C+bW6fcW2vHMgdLhCKTQBQx7BnhgoX2XY5dUQ=
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=JQXN4uT/zOm4FKa7x9tk0m7XnRHRwKm5gqDaXQ67OcY=;
+        b=ZWidSFSfZyIPG0Ywf8hJdO/QbGaGovSWwZIc68Lmr98flxopyrFHsWq9NwA52F1UwC
+         nuNRpjDw+0yRmB42RV6ZuEEUQgkED6X3LMchUjogpb5lE8xioqk5NC/krx18m4ztIGQi
+         5Q/BFoyFt2dgoGrnQGiM2TVhB0tdZzSNCpcD0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=UVFQHQKwJWclm9eD07zuiBHdhuKOYMmHPa/AOdWQ654=;
-        b=PsU7+CIcsWLeNdEwmQz1ARJYQlApU3qYphFrWUc2gzWdcgNb4pdsejqnI8ooWXUTLM
-         MdwzwCJ+O7KcibIquuBSsOcsGs6nVbZ3DBt0zWgP9l/U7+id7Z2lK7AIlgsBIm4EYUdv
-         RMlIQ7EmTXpAb40aPy5ranLS9AR0myIz4BqNcp71fqRThZktLxe9hYu6niX+TfRbh4OD
-         24t7Dh9zU3CQhKMimZWEela3lDcnYiCrtKdhlAdHk/OaEa7zY6a1oGWZ2oqnWcAMGTkY
-         sDWCVZnkKR2Cq0dzlW8arERyfAfl3IAg+wHZqT0eLikw0ovtdrs3dBD8Lszo8c6xqmoh
-         0cUg==
-X-Gm-Message-State: AGRZ1gKGTRW0xFikU0eafVUv61UFpmwNXogq1hE8b0rek17BP+KaQp2C
-        cc562X1HhRjdKMrPiigVq90IzQ==
-X-Google-Smtp-Source: AJdET5cm/DZPHlgt1Z52tkjnrjuaev32vaAi4zxkef0+WrNnGvc2YyzTj1GiEgDUi2YUr8n8VKn3ZQ==
-X-Received: by 2002:a50:ba3d:: with SMTP id g58-v6mr12294375edc.214.1542025652248;
-        Mon, 12 Nov 2018 04:27:32 -0800 (PST)
-Received: from localhost.localdomain (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.gmail.com with ESMTPSA id f11-v6sm4358545eds.23.2018.11.12.04.27.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 12 Nov 2018 04:27:31 -0800 (PST)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     gregkh@linuxfoundation.org
-Cc:     niklas.cassel@linaro.org, linux-kernel@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 2/2] slimbus: ngd: QCOM_QMI_HELPERS has to be selected
-Date:   Mon, 12 Nov 2018 12:25:26 +0000
-Message-Id: <20181112122526.10337-3-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181112122526.10337-1-srinivas.kandagatla@linaro.org>
-References: <20181112122526.10337-1-srinivas.kandagatla@linaro.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=JQXN4uT/zOm4FKa7x9tk0m7XnRHRwKm5gqDaXQ67OcY=;
+        b=jWf2nZgcPfVSyxD87ejhMOU5jYVcnrLl5/XqC/R9COPcRfpFZUyO/vIcA1NAgFgxwg
+         +QlmZdxr8L/0fN9jbPVsfv/cIN8hEKJaT4boi2CioIfIl5P8Yx2TxA/xo4B2Hs2ok0bL
+         VQMRGqgh9Y3z+I1wO4FGacLaIKT1EVNhWyrHn84OmBkFZmxAf1VgIi3rQuQuWmWCq93t
+         zmtKpJeBn5McNxvQ0knJirw6aGQo7PeCb0sIgsiFm3XWefI2DqlyQx8I91XYixoV6ZF/
+         40ofyieWk4yWw81C2W8STUJRznXkoD8G0tVeaRtCR2uYztXI+vmZbsFCKyfK/fI1FVdO
+         TG1g==
+X-Gm-Message-State: AGRZ1gKKu3d/ZZD0xbpSDyIxEs3jRj8bEAAV+FiXlCBM+14miHiDTxYg
+        7uMutFk6sEQSDwRMpV475X5cH8daZ/U=
+X-Google-Smtp-Source: AJdET5eW5rgY26vUjmTs0Qxt18gXtyMfLx5r2wY1QbUICDcZ7XJ91TKbR05yQNHUIDWvW3Ow1dc+JQ==
+X-Received: by 2002:a1c:8604:: with SMTP id i4-v6mr7839777wmd.23.1542025704916;
+        Mon, 12 Nov 2018 04:28:24 -0800 (PST)
+Received: from [192.168.27.209] ([37.157.136.206])
+        by smtp.googlemail.com with ESMTPSA id 197-v6sm9757129wmh.44.2018.11.12.04.28.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 12 Nov 2018 04:28:24 -0800 (PST)
+Subject: Re: [PATCH] media: venus: amend buffer size for bitstream plane
+To:     Malathi Gottam <mgottam@codeaurora.org>, hverkuil@xs4all.nl,
+        mchehab@kernel.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, acourbot@chromium.org,
+        vgarodia@codeaurora.org
+References: <1539071530-1441-1-git-send-email-mgottam@codeaurora.org>
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <48f90d4d-8ae3-65ae-2096-eebf047c1c0c@linaro.org>
+Date:   Mon, 12 Nov 2018 14:28:22 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1539071530-1441-1-git-send-email-mgottam@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Niklas Cassel <niklas.cassel@linaro.org>
+Hi Malathi,
 
-QCOM_QMI_HELPERS is a hidden kconfig, so the proper usage is
-to select it, not depend upon it.
+Thanks for the patch!
 
-Because of this change, we now also need to depend on the same
-Kconfigs as QCOM_QMI_HELPERS depends on.
+On 10/9/18 10:52 AM, Malathi Gottam wrote:
+> For lower resolutions, incase of encoder, the compressed
+> frame size is more than half of the corresponding input
+> YUV. Keep the size as same as YUV considering worst case.
+> 
+> Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
+> ---
+>  drivers/media/platform/qcom/venus/helpers.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
+> index 2679adb..05c5423 100644
+> --- a/drivers/media/platform/qcom/venus/helpers.c
+> +++ b/drivers/media/platform/qcom/venus/helpers.c
+> @@ -649,7 +649,7 @@ u32 venus_helper_get_framesz(u32 v4l2_fmt, u32 width, u32 height)
+>  	}
+>  
+>  	if (compressed) {
+> -		sz = ALIGN(height, 32) * ALIGN(width, 32) * 3 / 2 / 2;
+> +		sz = ALIGN(height, 32) * ALIGN(width, 32) * 3 / 2;
 
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- drivers/slimbus/Kconfig | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Could you drop this division by 2 only for lower resolutions and also
+only for the encoder session? I do not want to waste memory if it is not
+absolutely needed.
 
-diff --git a/drivers/slimbus/Kconfig b/drivers/slimbus/Kconfig
-index 9d73ad806698..8cd595148d17 100644
---- a/drivers/slimbus/Kconfig
-+++ b/drivers/slimbus/Kconfig
-@@ -22,8 +22,9 @@ config SLIM_QCOM_CTRL
- 
- config SLIM_QCOM_NGD_CTRL
- 	tristate "Qualcomm SLIMbus Satellite Non-Generic Device Component"
--	depends on QCOM_QMI_HELPERS
--	depends on HAS_IOMEM && DMA_ENGINE
-+	depends on HAS_IOMEM && DMA_ENGINE && NET
-+	depends on ARCH_QCOM || COMPILE_TEST
-+	select QCOM_QMI_HELPERS
- 	help
- 	  Select driver if Qualcomm's SLIMbus Satellite Non-Generic Device
- 	  Component is programmed using Linux kernel.
 -- 
-2.19.1
-
+regards,
+Stan
