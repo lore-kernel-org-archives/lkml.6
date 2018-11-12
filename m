@@ -2,173 +2,101 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DB57C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 09:40:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 623C3C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 09:43:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E14CB223C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 09:40:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HUGbCZil"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E14CB223C8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 1A0F6223CB
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 09:43:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A0F6223CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727170AbeKLTch (ORCPT
+        id S1727120AbeKLTfY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 14:32:37 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:40987 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725873AbeKLTcg (ORCPT
+        Mon, 12 Nov 2018 14:35:24 -0500
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:36444 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725873AbeKLTfY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 14:32:36 -0500
-Received: by mail-io1-f67.google.com with SMTP id r6-v6so2976634ioj.8
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 01:40:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=m+FJEbbbgzXsx0prDG1KnMJk+leq5MmCaB9pPB7rmsM=;
-        b=HUGbCZilD2pqGaCXcIR4zf+V/ZR/65Tx7zRjlvR22XzGxQ9SBZ+p2bozao2/IUcYZE
-         qWr613kUfBWtEw53t3uss2n4IsOlgX3r5oROe5jn/nZE1kWQoXVeI84+9T8JGb99xh1T
-         Z+5zJWS6LKDo1CG656POVSW6bNHGF9hgz3esQ=
+        Mon, 12 Nov 2018 14:35:24 -0500
+Received: by mail-ua1-f66.google.com with SMTP id j3so2812584uap.3;
+        Mon, 12 Nov 2018 01:42:59 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=m+FJEbbbgzXsx0prDG1KnMJk+leq5MmCaB9pPB7rmsM=;
-        b=uD64MjhU8dr541Ic8DwfZVDasTEvuAxOw7LxChaWLwj5rGoVJNQH0I50VSp98/5Ie3
-         KYm5zhQwhRbklcKfo1rvE/aMC0Cz/4nJ2NWaevBxm79NDA7Cn4bgHMr/renqj2v1CkNz
-         F7qDyLuY/S+QvOf0Db3rxgrjuO4IwjIfbyxN/Ot7175KF16FFIf0S168bxaPPVF+s9yg
-         H4GSudtxIOdh7TpxUCW/gkT0miFaHs6efafLRjDHcPQAo09N9oVwMZgafJ5LrcRIRYMd
-         BPHW3gKSDP5mJf2Z0h9PZEHC2xhNRQsBOfQjgZZDigb+DY3OvEYVcfEwJfevSTdep42C
-         driQ==
-X-Gm-Message-State: AGRZ1gKpxLGMzGZGPlC77tJ3O7z9tkFZiFeNGm2DK3FWD2+pO26Stgci
-        lbWPlQPeZzg38z/CJAJT59l9zVd92XA4igPem4LbYA==
-X-Google-Smtp-Source: AJdET5cGwTM/awqi1mqt8oDCQCPi5t8AeL5r0JwJKfbhIPLl2MdrVRCvXriwqSyrwecwXOV6IJu/xo+i2xcaMRytH9k=
-X-Received: by 2002:a6b:5d01:: with SMTP id r1mr146724iob.170.1542015612539;
- Mon, 12 Nov 2018 01:40:12 -0800 (PST)
+        bh=yL4lIIwoehOZCmTS+YcIMJIxIGekmiJLuRWURAF6dC4=;
+        b=XQfKoaaAXGUKEnVtFmVO+suZLjdGaf2Uix60gS0oDPUrfktP+1KfEhNulSKGS/P2dW
+         humeR5p0hziC9Y6UFEF3j5rIVAjQ3VzAHzGXaf3PAH1g/NeRqz7eFGmIodP1zWdoVRZ7
+         wUbVOV+I3JqJAyw567/3j4Gd02vilyv2k0nsx7IYWeaz9jt0NKkpwlLbrn5nWJ21izIa
+         lAA28L153YcBgv14ErQs3v2mlh9Biekws1n4kZzDWJSCeZvKZP6514p7oWA9IGY+o+Yu
+         cFYM1zBSKYjj8aGYyl+vsQTCTFWkBhAQ/qUV4OYHJO1M1ufTsAoY3GhMgzTEof+QPv9r
+         leBw==
+X-Gm-Message-State: AGRZ1gKCVeEyP5Mp//2vn9kVLVtVMgpsTebBf/0VVluku1DRBIryGuDh
+        rTx8BLPxQxxGXa7ms2xUV8M8UKQ1EmZQTOde18o=
+X-Google-Smtp-Source: AJdET5fjynKZfzZcoORQnAJ61VqiHTSSEnIa/bN68opeEsLWoDHgzNJE7VSXmI/E/g5GGsl0QnRoma9/AhCdyOX4qfQ=
+X-Received: by 2002:ab0:7251:: with SMTP id d17mr119184uap.0.1542015779233;
+ Mon, 12 Nov 2018 01:42:59 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1541711457.git.jpoimboe@redhat.com> <20181109072811.GB86700@gmail.com>
- <20181109144501.aqhcv3vdjuqlp7pz@treble> <20181112050241.GB28219@gmail.com> <20181112053055.hdcv5x7md47ehunv@treble>
-In-Reply-To: <20181112053055.hdcv5x7md47ehunv@treble>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 12 Nov 2018 10:39:52 +0100
-Message-ID: <CAKv+Gu8etgVmqPq+fNRBkb55ePrtY=5kxFu5+O4Wsqk=CWzG8w@mail.gmail.com>
-Subject: Re: [PATCH RFC 0/3] Static calls
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
+References: <1541623464-49041-1-git-send-email-carmeli.tamir@gmail.com> <1541623464-49041-2-git-send-email-carmeli.tamir@gmail.com>
+In-Reply-To: <1541623464-49041-2-git-send-email-carmeli.tamir@gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 12 Nov 2018 10:42:47 +0100
+Message-ID: <CAMuHMdXqAbWHCFKD6L_JqJQ1J17=QtopHFihXnWcWufkUJqrTw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] staging: emxx_udc: Added static modifier to udc_controller
+To:     carmeli.tamir@gmail.com
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        chrisadr@gentoo.org, areklis909@gmail.com,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        driverdevel <devel@driverdev.osuosl.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@aculab.com>,
-        Borislav Petkov <bp@alien8.de>, Juergen Gross <jgross@suse.com>
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 12 Nov 2018 at 06:31, Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+Hi Carmeli,
+
+CC Magnus
+
+(staging drivers receive so may janitorial changes that the original author is
+ lost in the git shortlog noise)
+
+On Wed, Nov 7, 2018 at 9:46 PM Carmeli Tamir <carmeli.tamir@gmail.com> wrote:
+> Added static modifier to the udc_controller, since it's only
+> required within emxx_udc.c.
 >
-> On Mon, Nov 12, 2018 at 06:02:41AM +0100, Ingo Molnar wrote:
-> >
-> > * Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-> >
-> > > On Fri, Nov 09, 2018 at 08:28:11AM +0100, Ingo Molnar wrote:
-> > > > > - I'm not sure about the objtool approach.  Objtool is (currently)
-> > > > >   x86-64 only, which means we have to use the "unoptimized" version
-> > > > >   everywhere else.  I may experiment with a GCC plugin instead.
-> > > >
-> > > > I'd prefer the objtool approach. It's a pretty reliable first-principles
-> > > > approach while GCC plugin would have to be replicated for Clang and any
-> > > > other compilers, etc.
-> > >
-> > > The benefit of a plugin is that we'd only need two of them: GCC and
-> > > Clang.  And presumably, they'd share a lot of code.
-> > >
+> Signed-off-by: Carmeli Tamir <carmeli.tamir@gmail.com>
 
-Having looked into this, I don't think they will share any code at
-all, to be honest. Perhaps some macros and string templates, that's
-all.
+Thanks for your patch!
 
-> > > The prospect of porting objtool to all architectures is going to be much
-> > > more of a daunting task (though we are at least already considering it
-> > > for some arches).
-> >
-> > Which architectures would benefit from ORC support the most?
+> --- a/drivers/staging/emxx_udc/emxx_udc.c
+> +++ b/drivers/staging/emxx_udc/emxx_udc.c
+> @@ -56,7 +56,7 @@ static void _nbu2ss_fifo_flush(struct nbu2ss_udc *, struct nbu2ss_ep *);
 >
-> According to my (limited and potentially flawed) knowledge, I think
-> arm64 would benefit the most performance-wise, whereas powerpc and s390
-> gains would be quite a bit less.
->
+>  /*===========================================================================*/
+>  /* Global */
+> -struct nbu2ss_udc udc_controller;
+> +static struct nbu2ss_udc udc_controller;
 
-What would arm64 gain from ORC and/or objtool?
+What about the "Global" comment?
+Perhaps this was intentional?
 
-> We may have to port objtool to arm64 anyway, for live patching.
+Gr{oetje,eeting}s,
 
-Is this about the reliable stack traces, i.e., the ability to detect
-non-leaf functions that don't create stack frames? I think we should
-be able to manage this without objtool on arm64 tbh.
+                        Geert
 
->  But
-> that will be a lot more work than it took for Ard to write a GCC plugin.
->
-> > I really think that hard reliance on GCC plugins is foolish
->
-> Funny, I feel the same way about hard reliance on objtool :-)
->
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-I tend to agree here. I think objtool is a necessary evil (as are
-compiler plugins, for that matter) which I hope does not spread to
-other architectures.
-
-But the main difference is that the GCC plugin is only ~50 lines (for
-this particular use case, and minus another 50 lines of boilerplate),
-whereas objtool (AIUI) duplicates lots and lots of functionality of
-the compiler, assembler and/or linker, to mangle relocations, create
-new sections etc etc. Porting this to other architectures is going to
-be a major maintenance effort, especially when I think of, e.g.,
-32-bit ARM with its Thumb2 quirks and other idiosyncrasies that are
-currently hidden in the toolchain. Other architectures should be first
-class citizens if objtool gains support for them, which means that the
-x86 people that own it currently are on the hook for testing their
-changes against architectures they are not familiar with.
-
-This obviously applies equally to compiler plugins, but those have a
-lot more focus.
-
-
-> > - but maybe Clang's plugin infrastructure is a guarantee that it
-> > remains a sane and usable interface.
->
-> Hopefully so.  If it breaks, we could always write another tool, as the
-> work is straightforward.  Or we could make it an objtool subcommand
-> which works on all arches.
->
-> > > > All other usecases are bonus, but it would certainly be interesting to
-> > > > investigate the impact of using these APIs for tracing: that too is a
-> > > > feature enabled everywhere but utilized only by a small fraction of Linux
-> > > > users - so literally every single cycle or instruction saved or hot-path
-> > > > shortened is a major win.
-> > >
-> > > With retpolines, and with tracepoints enabled, it's definitely a major
-> > > win.  Steve measured an 8.9% general slowdown on hackbench caused by
-> > > retpolines.
-> >
-> > How much of that slowdown is reversed?
->
-> In theory, it should reverse all of the slowdown, and actually may even
-> speed it up a little.  Steve is working on measuring that now.
->
-> --
-> Josh
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
