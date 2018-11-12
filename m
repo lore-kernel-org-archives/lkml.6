@@ -2,66 +2,176 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C50A4C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 03:28:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B9A4C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 03:29:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C85F20881
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 03:28:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C85F20881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id EC2092080F
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 03:29:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="EH8wJGh5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC2092080F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730262AbeKLNTz (ORCPT
+        id S1730523AbeKLNUV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 08:19:55 -0500
-Received: from mga14.intel.com ([192.55.52.115]:29993 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726619AbeKLNTz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 08:19:55 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Nov 2018 19:28:44 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,493,1534834800"; 
-   d="scan'208";a="103550090"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
-  by fmsmga002.fm.intel.com with ESMTP; 11 Nov 2018 19:28:44 -0800
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id EE67D300E46; Sun, 11 Nov 2018 19:28:43 -0800 (PST)
-Date:   Sun, 11 Nov 2018 19:28:43 -0800
-From:   Andi Kleen <ak@linux.intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Jiri Olsa <jolsa@kernel.org>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Subject: Re: [PATCH] perf/x86/intel: Init early callchain for bts event
-Message-ID: <20181112032843.GH6218@tassilo.jf.intel.com>
-References: <20181111181650.4839-1-jolsa@kernel.org>
- <20181112002637.GD3056@worktop>
+        Mon, 12 Nov 2018 08:20:21 -0500
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:34740 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726619AbeKLNUU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 08:20:20 -0500
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id wAC3T2iO002423;
+        Mon, 12 Nov 2018 12:29:03 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com wAC3T2iO002423
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1541993343;
+        bh=rrO05wm73tPB3UeW7NA/fPQEeVRu0RZ8cacGop4OV2s=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=EH8wJGh5uVd04UX2H91lMeVxCUxjCBRfFrjQ2p+kvjq6ZwvEJDq6EVRj+WY0zgQRq
+         KBRXAZ8h29IzfnGZvoYwox4rDuB1SPeOPMiApSr6Qkh1SAchmW0nFSiECJkWBg6yc7
+         Th+Q0z3xNjb8Afki/gGtezkfriCi3eu39VW067P7RCGmjgsNqePfaVbiIeAcxj3Bmd
+         0H4iyxUEKuFRP3qdekqcw0Swbet6dw4078QALisDirqMeKb1nhSjlPjwgCUZU96dZq
+         CXTkHs+p8M2UL0tCzG7+t3o4AZzMlmvOdS9T4yGO2iPGFVxO+izFYOdul0jIGoBV/k
+         88sQMfbi6iUJQ==
+X-Nifty-SrcIP: [209.85.222.54]
+Received: by mail-ua1-f54.google.com with SMTP id p9so2568598uaa.5;
+        Sun, 11 Nov 2018 19:29:03 -0800 (PST)
+X-Gm-Message-State: AGRZ1gJw+bEkQvjVkN4HgOAZTLiYVsWV51q/4WxgGIWCNoAr9vjReLeo
+        LQj/cSrnbQott1EhXSFZgLrLmn7nAADWyjQ553U=
+X-Google-Smtp-Source: AJdET5eSJ2GGwQ7szfWe7yzvy4zHjo2pyUrNK4TsBmHdAEf1dvByD7UGkNvtIN7Ctr0Pl6E530yxIAfu/F3W20OnxOE=
+X-Received: by 2002:a9f:3f41:: with SMTP id i1mr7548814uaj.42.1541993341942;
+ Sun, 11 Nov 2018 19:29:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181112002637.GD3056@worktop>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1541473495-25262-1-git-send-email-yamada.masahiro@socionext.com>
+ <1541473495-25262-2-git-send-email-yamada.masahiro@socionext.com>
+ <CAKwvOd=JwjVu=uk3egVJxTm9vPcF=Jx2Bexx1Wx=Z-PC38X3Uw@mail.gmail.com>
+ <9c4868dd-82fa-aa5c-843e-e1f78ffbc7e2@google.com> <CAK7LNAR32=QWy4jss3M3VSNj0XY=tvgWWTG5ajVEpyYD2J+Z1Q@mail.gmail.com>
+ <87pnvb9kc3.fsf@concordia.ellerman.id.au>
+In-Reply-To: <87pnvb9kc3.fsf@concordia.ellerman.id.au>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Mon, 12 Nov 2018 12:28:25 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATsY3_wy8DL9+g+-AytY6mStwFoeA+CMQdVFkXZ2SKdyA@mail.gmail.com>
+Message-ID: <CAK7LNATsY3_wy8DL9+g+-AytY6mStwFoeA+CMQdVFkXZ2SKdyA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] kbuild: consolidate Clang compiler flags
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Greg Hackmann <ghackmann@google.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> 
-> So in my mind disallowing precise_ip on BTS would be the simplest fix.
-> 
-> Hmm?
+On Mon, Nov 12, 2018 at 10:05 AM Michael Ellerman <mpe@ellerman.id.au> wrote:
+>
+> Masahiro Yamada <yamada.masahiro@socionext.com> writes:
+> > On Sat, Nov 10, 2018 at 3:35 AM Greg Hackmann <ghackmann@google.com> wrote:
+> >>
+> >> On 11/09/2018 10:29 AM, Nick Desaulniers wrote:
+> >> > On Mon, Nov 5, 2018 at 7:05 PM Masahiro Yamada
+> >> > <yamada.masahiro@socionext.com> wrote:
+> >> >>
+> >> >> Collect basic Clang options such as --target, --prefix, --gcc-toolchain,
+> >> >> -no-integrated-as into a single variable CLANG_FLAGS so that it can be
+> >> >> easily reused in other parts of Makefile.
+> >> >>
+> >> >> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> >> >> ---
+> >> >>
+> >> >> Changes in v2:
+> >> >>   - Use := flavor instead of = because $(CLANG_FLAGS) is expanded soon anyway
+> >> >>
+> >> >>   Makefile | 13 ++++++-------
+> >> >>   1 file changed, 6 insertions(+), 7 deletions(-)
+> >> >>
+> >> >> diff --git a/Makefile b/Makefile
+> >> >> index da11700..e173a73 100644
+> >> >> --- a/Makefile
+> >> >> +++ b/Makefile
+> >> >> @@ -487,18 +487,17 @@ endif
+> >> >>
+> >> >>   ifneq ($(shell $(CC) --version 2>&1 | head -n 1 | grep clang),)
+> >> >>   ifneq ($(CROSS_COMPILE),)
+> >> >> -CLANG_TARGET   := --target=$(notdir $(CROSS_COMPILE:%-=%))
+> >> >> +CLANG_FLAGS    := --target=$(notdir $(CROSS_COMPILE:%-=%))
+> >> >>   GCC_TOOLCHAIN_DIR := $(dir $(shell which $(LD)))
+> >> >> -CLANG_PREFIX   := --prefix=$(GCC_TOOLCHAIN_DIR)
+> >> >> +CLANG_FLAGS    += --prefix=$(GCC_TOOLCHAIN_DIR)
+> >> >>   GCC_TOOLCHAIN  := $(realpath $(GCC_TOOLCHAIN_DIR)/..)
+> >> >>   endif
+> >> >>   ifneq ($(GCC_TOOLCHAIN),)
+> >> >> -CLANG_GCC_TC   := --gcc-toolchain=$(GCC_TOOLCHAIN)
+> >> >> +CLANG_FLAGS    += --gcc-toolchain=$(GCC_TOOLCHAIN)
+> >> >>   endif
+> >> >> -KBUILD_CFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC) $(CLANG_PREFIX)
+> >> >> -KBUILD_AFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC) $(CLANG_PREFIX)
+> >> >> -KBUILD_CFLAGS += -no-integrated-as
+> >> >> -KBUILD_AFLAGS += -no-integrated-as
+> >> >> +CLANG_FLAGS    += -no-integrated-as
+> >> >> +KBUILD_CFLAGS  += $(CLANG_FLAGS)
+> >> >> +KBUILD_AFLAGS  += $(CLANG_FLAGS)
+> >> >>   endif
+> >> >>
+> >> >>   RETPOLINE_CFLAGS_GCC := -mindirect-branch=thunk-extern -mindirect-branch-register
+> >> >> --
+> >> >> 2.7.4
+> >> >>
+> >> >
+> >> > Thanks for this patch, Masahiro, it's a good simplification.
+> >> > Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+> >> > Tested-by: Nick Desaulniers <ndesaulniers@google.com>
+> >> >
+> >> > Would you mind waiting for a tested-by from Stefan, and maybe an ack
+> >> > from Greg (added to cc)?
+> >> >
+> >>
+> >> Acked-by: Greg Hackmann <ghackmann@google.com>
+> >
+> >
+> > Thanks for your review!
+> >
+> >
+> > So, how to organize this series, and Joel's one together?
+> >
+> > I'd like Joel to use this series as a base for his work.
+> > (https://lore.kernel.org/patchwork/patch/1006696/)
+> >
+> > It will be much cleaner.
+> >
+> >
+> > Shall I merge all the patches to kbuild tree, or
+> > maybe will they go through powerpc tree?
+>
+> Joel's changes are fairly small so you may as well merge them along with
+> the rest of the series, if that's OK with you and Joel.
 
-Both seem reasonable to me.
 
--Andi
+OK, I will.
+
+
+Joel,
+If you send v2, I will merge it to kbuild tree.
+
+
+
+Thanks.
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
