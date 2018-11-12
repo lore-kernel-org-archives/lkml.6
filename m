@@ -2,259 +2,118 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F738C43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 12:00:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF579C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 12:00:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BD472241E
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 12:00:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BD472241E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id C0C02223DD
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 12:00:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0C02223DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730132AbeKLVxO (ORCPT
+        id S1730103AbeKLVxN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 16:53:14 -0500
-Received: from foss.arm.com ([217.140.101.70]:35012 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729556AbeKLVxN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 16:53:13 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BC19A80D;
-        Mon, 12 Nov 2018 04:00:15 -0800 (PST)
-Received: from [10.1.197.36] (e112298-lin.cambridge.arm.com [10.1.197.36])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8CC0F3F5A0;
-        Mon, 12 Nov 2018 04:00:13 -0800 (PST)
-Subject: Re: [PATCH v6 00/24] arm64: provide pseudo NMI with GICv3
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
-        joel@joelfernandes.org, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, james.morse@arm.com,
-        catalin.marinas@arm.com, will.deacon@arm.com
-References: <1542023835-21446-1-git-send-email-julien.thierry@arm.com>
-From:   Julien Thierry <julien.thierry@arm.com>
-Message-ID: <c0d5c4e8-a4cd-4289-24cc-31faf8efd0b6@arm.com>
-Date:   Mon, 12 Nov 2018 12:00:11 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <1542023835-21446-1-git-send-email-julien.thierry@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: from relay.sw.ru ([185.231.240.75]:43202 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729569AbeKLVxL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 16:53:11 -0500
+Received: from [172.16.24.163] (helo=snorch.sw.ru)
+        by relay.sw.ru with esmtp (Exim 4.90_1)
+        (envelope-from <ptikhomirov@virtuozzo.com>)
+        id 1gMAsv-0006JV-RC; Mon, 12 Nov 2018 15:00:05 +0300
+From:   Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Vasily Averin <vvs@virtuozzo.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Konstantin Khorenko <khorenko@virtuozzo.com>,
+        Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andi Kleen <ak@linux.intel.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] mm: cleancache: fix corruption on missed inode invalidation
+Date:   Mon, 12 Nov 2018 15:00:03 +0300
+Message-Id: <20181112120003.23245-1-ptikhomirov@virtuozzo.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181112113153.GC7175@quack2.suse.cz>
+References: <20181112113153.GC7175@quack2.suse.cz>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+If all pages are deleted from the mapping by memory reclaim and also
+moved to the cleancache:
 
-I currently have an issue with my public repository, I'll try to post a 
-branch to fetch this series from as soon as possible.
+__delete_from_page_cache
+  (no shadow case)
+  unaccount_page_cache_page
+    cleancache_put_page
+  page_cache_delete
+    mapping->nrpages -= nr
+    (nrpages becomes 0)
 
-Thanks,
+We don't clean the cleancache for an inode after final file truncation
+(removal).
 
-Julien
+truncate_inode_pages_final
+  check (nrpages || nrexceptional) is false
+    no truncate_inode_pages
+      no cleancache_invalidate_inode(mapping)
 
-On 12/11/18 11:56, Julien Thierry wrote:
-> Hi,
-> 
-> This series is a continuation of the work started by Daniel [1]. The goal
-> is to use GICv3 interrupt priorities to simulate an NMI.
-> 
-> The patches depend on the core API for NMIs patches [2].
-> 
-> To achieve this, set two priorities, one for standard interrupts and
-> another, higher priority, for NMIs. Whenever we want to disable interrupts,
-> we mask the standard priority instead so NMIs can still be raised. Some
-> corner cases though still require to actually mask all interrupts
-> effectively disabling the NMI.
-> 
-> Daniel Thompson ran some benchmarks [3] on a previous version showing a
-> small (<1%) performance drop when using interrupt priorities on Cortex-A53
-> and GIC-500.
-> 
-> Currently, only PPIs and SPIs can be set as NMIs. IPIs being currently
-> hardcoded IRQ numbers, there isn't a generic interface to set SGIs as NMI
-> for now. LPIs being controlled by the ITS cannot be delivered as NMI.
-> When an NMI is active on a CPU, no other NMI can be triggered on the CPU.
-> 
-> Requirements to use this:
-> - Have GICv3
-> - SCR_EL3.FIQ is set to 1 when linux runs or have single security state
-> - Select Kernel Feature -> Use ICC system registers for IRQ masking
-> 
-> * Patches 1 and 2 are just a bit of cleanup
-> 
-> * Patch 3 introduces a CPU feature to check if priority masking should be
->    used
-> 
-> * Patches 4 and 5 add the support for priority masking in GICv3 driver
-> 
-> * Patches 6 to 11 add the support for priority masking the arch/arm64
->    code
-> 
-> * Patches 12 and 13 allow us to apply alternatives earlier in the boot
->    process
-> 
-> * Patches 14 to 16 starts the PMR masking on cpu startup and provides
->    primitives for arm64 GICv3 driver to perform priority masking
-> 
-> * Patches 17 to 20 Add support for pseudo-NMIs in GICv3 driver
-> 
-> * Patches 21 to 23 Add support for receiving NMIs in arch/arm64
-> 
-> * Patch 24 adds the build config and command line option to enable
->    pseudo-NMIs
-> 
-> Changes since v5[4]:
-> * Rebased on v4.20-rc2
-> * Reorganized patches again
-> * Renamed compile option + PMR values defines
-> * Write PMR enablement for cpu startup in C
-> * Fix wrong array size passed to __apply_alternatives
-> * Do not touch PMR in pt_regs when not using irq masking
-> * Remove ISB between PMR and IAR -> turns out it is not needed
-> * Simplify irqflags code after introducing PMR in it
-> * Use ref count API to track PPIs set as NMI
-> * Simplify NMI exit path
-> 
-> Changes since V4[5]:
-> * Rebased to v4.19-rc1
-> * Adapted GIC driver to the core NMI API
-> * Added option to disable priority masking on command line
-> * Added Daniel's Tested-by on patches related replacing PSR.I toggling with
->    PMR masking
-> * Fix scope matching for alternative features.
-> * Spotted some more places using PSR.I or daif and replaced with generic
->    interrupt functions
-> 
-> Changes since V3[6]:
-> * Big refactoring. As suggested by Marc Z., some of the bigger patches
->    needed to be split into smaller one.
-> * Try to reduce the amount of #ifdef for the new feature by introducing
->    an individual cpufeature for priority masking
-> * Do not track which alternatives have been applied (was a bit dodgy
->    anyway), and use an alternative for VHE cpu_enable callback
-> * Fix a build failure with arm by adding the correct RPR accessors
-> * Added Suggested-by tags for changes from comming or inspired by Daniel's
->    series. Do let me know if you feel I missed something and am not giving
->    you due credit.
-> 
-> Changes since V2[7]:
-> * Series rebase to v4.17-rc6
-> * Adapt pathces 1 and 2 to the rework of cpufeatures framework
-> * Use the group0 detection scheme in the GICv3 driver to identify
->    the priority view, and drop the use of a fake interrupt
-> * Add the case for a GIC configured in a single security state
-> * Use local_daif_restore instead of local_irq_enable the first time
->    we enable interrupts after a bp hardening in the handling of a kernel
->    entry. Otherwise PRS.I remains set...
-> 
-> Changes since V1[8]:
-> * Series rebased to v4.15-rc8.
-> * Check for arm64_early_features in this_cpu_has_cap (spotted by Suzuki).
-> * Fix issue where debug exception were not masked when enabling debug in
->    mdscr_el1.
-> 
-> Changes since RFC[9]:
-> * The series was rebased to v4.15-rc2 which implied some changes mainly
->    related to the work on exception entries and daif flags by James Morse.
->    - The first patch in the previous series was dropped because no longer
->      applicable.
->    - With the semantics James introduced of "inheriting" daif flags,
->      handling of PMR on exception entry is simplified as PMR is not altered
->      by taking an exception and already inherited from previous state.
->    - James pointed out that taking a PseudoNMI before reading the FAR_EL1
->      register should not be allowed as per the TRM (D10.2.29):
->      "FAR_EL1 is made UNKNOWN on an exception return from EL1."
->      So in this submission PSR.I bit is cleared only after FAR_EL1 is read.
-> * For KVM, only deal with PMR unmasking/restoring in common code, and VHE
->    specific code makes sure PSR.I bit is set when necessary.
-> * When detecting the GIC priority view (patch 5), wait for an actual
->    interrupt instead of trying only once.
-> 
-> 
-> [1] http://www.spinics.net/lists/arm-kernel/msg525077.html
-> [2] https://lkml.org/lkml/2018/11/12/2113
-> [3] https://lkml.org/lkml/2018/7/20/803
-> [4] https://lkml.org/lkml/2018/8/28/693
-> [5] https://lkml.org/lkml/2018/7/24/321
-> [6] https://lkml.org/lkml/2018/5/21/276
-> [7] https://lkml.org/lkml/2018/1/17/335
-> [8] https://www.spinics.net/lists/arm-kernel/msg620763.html
-> [9] https://www.spinics.net/lists/arm-kernel/msg610736.html
-> 
-> Cheers,
-> 
-> Julien
-> 
-> -->
-> 
-> Daniel Thompson (1):
->    arm64: alternative: Apply alternatives early in boot process
-> 
-> Julien Thierry (23):
->    arm64: Remove unused daif related functions/macros
->    arm64: cpufeature: Set SYSREG_GIC_CPUIF as a boot system feature
->    arm64: cpufeature: Add cpufeature for IRQ priority masking
->    arm/arm64: gic-v3: Add PMR and RPR accessors
->    irqchip/gic-v3: Switch to PMR masking before calling IRQ handler
->    arm64: ptrace: Provide definitions for PMR values
->    arm64: Make PMR part of task context
->    arm64: Unmask PMR before going idle
->    arm64: kvm: Unmask PMR before entering guest
->    arm64: irqflags: Use ICC_PMR_EL1 for interrupt masking
->    arm64: daifflags: Include PMR in daifflags restore operations
->    arm64: alternative: Allow alternative status checking per cpufeature
->    irqchip/gic-v3: Factor group0 detection into functions
->    arm64: Switch to PMR masking when starting CPUs
->    arm64: gic-v3: Implement arch support for priority masking
->    irqchip/gic-v3: Detect if GIC can support pseudo-NMIs
->    irqchip/gic-v3: Handle pseudo-NMIs
->    irqchip/gic: Add functions to access irq priorities
->    irqchip/gic-v3: Allow interrupts to be set as pseudo-NMI
->    arm64: Handle serror in NMI context
->    arm64: Skip preemption when exiting an NMI
->    arm64: Skip irqflags tracing for NMI in IRQs disabled context
->    arm64: Enable the support of pseudo-NMIs
-> 
->   Documentation/admin-guide/kernel-parameters.txt |   6 +
->   Documentation/arm64/booting.txt                 |   5 +
->   arch/arm/include/asm/arch_gicv3.h               |  33 ++++
->   arch/arm64/Kconfig                              |  14 ++
->   arch/arm64/include/asm/alternative.h            |   4 +-
->   arch/arm64/include/asm/arch_gicv3.h             |  32 +++
->   arch/arm64/include/asm/assembler.h              |  10 +-
->   arch/arm64/include/asm/cpucaps.h                |   3 +-
->   arch/arm64/include/asm/cpufeature.h             |  10 +
->   arch/arm64/include/asm/daifflags.h              |  20 +-
->   arch/arm64/include/asm/efi.h                    |   3 +-
->   arch/arm64/include/asm/irqflags.h               | 132 ++++++++++---
->   arch/arm64/include/asm/kvm_host.h               |  12 ++
->   arch/arm64/include/asm/processor.h              |   3 +
->   arch/arm64/include/asm/ptrace.h                 |  20 +-
->   arch/arm64/kernel/alternative.c                 |  60 +++++-
->   arch/arm64/kernel/asm-offsets.c                 |   1 +
->   arch/arm64/kernel/cpufeature.c                  |  42 +++-
->   arch/arm64/kernel/entry.S                       |  40 ++++
->   arch/arm64/kernel/process.c                     |   6 +
->   arch/arm64/kernel/smp.c                         |  34 ++++
->   arch/arm64/kernel/traps.c                       |   8 +-
->   arch/arm64/kvm/hyp/switch.c                     |  16 ++
->   arch/arm64/mm/proc.S                            |  18 ++
->   drivers/irqchip/irq-gic-common.c                |  10 +
->   drivers/irqchip/irq-gic-common.h                |   2 +
->   drivers/irqchip/irq-gic-v3.c                    | 250 +++++++++++++++++++++---
->   include/linux/irqchip/arm-gic-common.h          |   2 +-
->   28 files changed, 695 insertions(+), 101 deletions(-)
-> 
-> --
-> 1.9.1
-> 
+These way when reading the new file created with same inode we may get
+these trash leftover pages from cleancache and see wrong data instead of
+the contents of the new file.
 
+Fix it by always doing truncate_inode_pages which is already ready for
+nrpages == 0 && nrexceptional == 0 case and just invalidates inode.
+
+v2: add comment
+
+Fixes: commit 91b0abe36a7b ("mm + fs: store shadow entries in page cache")
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Mel Gorman <mgorman@techsingularity.net>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org
+Reviewed-by: Vasily Averin <vvs@virtuozzo.com>
+Reviewed-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+---
+ mm/truncate.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/mm/truncate.c b/mm/truncate.c
+index 45d68e90b703..2c5285767ce5 100644
+--- a/mm/truncate.c
++++ b/mm/truncate.c
+@@ -517,9 +517,14 @@ void truncate_inode_pages_final(struct address_space *mapping)
+ 		 */
+ 		xa_lock_irq(&mapping->i_pages);
+ 		xa_unlock_irq(&mapping->i_pages);
+-
+-		truncate_inode_pages(mapping, 0);
+ 	}
++
++	/*
++	 * Cleancache needs notification even if there are no pages or shadow
++	 * entries, else we will leave leftover pages in the cleancache for
++	 * a deleted inode.
++	 */
++	truncate_inode_pages(mapping, 0);
+ }
+ EXPORT_SYMBOL(truncate_inode_pages_final);
+ 
 -- 
-Julien Thierry
+2.17.1
+
