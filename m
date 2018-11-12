@@ -2,100 +2,106 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C40EC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:12:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71933C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:14:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1EC82077B
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:12:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1EC82077B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3361722419
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:14:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XQyjtBlo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3361722419
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730235AbeKMEGy (ORCPT
+        id S1729607AbeKMEIx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 23:06:54 -0500
-Received: from mga03.intel.com ([134.134.136.65]:34028 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727247AbeKMEGy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 23:06:54 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Nov 2018 10:12:31 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,496,1534834800"; 
-   d="scan'208";a="273411131"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga005.jf.intel.com with ESMTP; 12 Nov 2018 10:12:31 -0800
-Received: from [10.54.74.33] (skuppusw-desk.jf.intel.com [10.54.74.33])
-        by linux.intel.com (Postfix) with ESMTP id 49E505803C5;
-        Mon, 12 Nov 2018 10:12:31 -0800 (PST)
-Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
-Subject: Re: [PATCH v1 1/1] usb: dwc3: Fix NULL pointer exception in
- dwc3_pci_remove()
-To:     balbi@kernel.org, gregkh@linuxfoundation.org
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-References: <2972befa36441a5dea1de9efb1e1355f8406d7b6.1539801494.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-From:   sathyanarayanan kuppuswamy 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>
-Organization: Intel
-Message-ID: <5cbf08e5-6c6a-4817-a370-8b193b04314a@linux.intel.com>
-Date:   Mon, 12 Nov 2018 10:11:32 -0800
+        Mon, 12 Nov 2018 23:08:53 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:55130 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727354AbeKMEIx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 23:08:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=NsM5+RMQeQTvhBZ57KpyZK+cMdmO6CIALUMjPboMH8c=; b=XQyjtBloNLHkQJyPI3fAUvKnQ
+        QuyU+TL0QDs6uxOzNpOJwCNLL8LWI0eZ7y2/FpT68W31BZ0ROU4RiTne+a7dJSGPOMA/BIO1sgmpC
+        RN3heh+4znfWszDjqCKuZtvhtina8iw2rdIbCj/Nk0vQA6CQit0K+kZp4h/5ajVol+r+whG8tuDWX
+        l+V58EyuDLc2cItr0138NS8XygzslTkZijCJPusMMeRKTtPeh5p8B6UD+aipXDT2CBjfhJl640CjJ
+        bsEmenlm2sulxdYocrOJeMRnjKmH4Kz07bIgd0/crH0l+yMggbPuxThXm3QbJluV22ZYiWNX5jI7j
+        yppG2x5PA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gMGjD-0002nu-SL; Mon, 12 Nov 2018 18:14:28 +0000
+Subject: Re: Official Linux system wrapper library?
+To:     Joseph Myers <joseph@codesourcery.com>,
+        Greg KH <gregkh@linuxfoundation.org>
+Cc:     Willy Tarreau <w@1wt.eu>, Florian Weimer <fweimer@redhat.com>,
+        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
+        Daniel Colascione <dancol@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Joel Fernandes <joelaf@google.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Carlos O'Donell <carlos@redhat.com>,
+        "libc-alpha@sourceware.org" <libc-alpha@sourceware.org>
+References: <CAKOZuesB4R=dCz4merWQN0FSCGrXmOgUUr4ienSbStBJguNv8g@mail.gmail.com>
+ <bbc12da5-830e-99a7-95e3-d9da42947dc9@gmail.com>
+ <20181111081725.GA30248@1wt.eu>
+ <3664a508-ca74-4ff0-39a6-34543194a24e@gmail.com>
+ <20181111111143.GB4189@1wt.eu> <87zhufvntw.fsf@oldenburg.str.redhat.com>
+ <20181111120910.GA4425@1wt.eu>
+ <alpine.DEB.2.21.1811121723210.6607@digraph.polyomino.org.uk>
+ <20181112175305.GB15484@kroah.com>
+ <alpine.DEB.2.21.1811121803520.6607@digraph.polyomino.org.uk>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <a67f4f9c-701f-f607-e708-b8545d80549e@infradead.org>
+Date:   Mon, 12 Nov 2018 10:14:26 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <2972befa36441a5dea1de9efb1e1355f8406d7b6.1539801494.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <alpine.DEB.2.21.1811121803520.6607@digraph.polyomino.org.uk>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Felipe/Greg,
+On 11/12/18 10:09 AM, Joseph Myers wrote:
+> On Mon, 12 Nov 2018, Greg KH wrote:
+> 
+>> If there are still problems with this, please let us know and we will be
+>> glad to resolve them.
+> 
+> With headers installed from Linus's latest tree, I retried (for x86_64) 
+> the case of a source file containing the single line
+> 
+> #include <linux/elfcore.h>
+> 
+> which (as previously discussed, and Arnd had an RFC patch) I want to use 
+> in a glibc test of header consistency.  It gives errors "unknown type name 
+> 'elf_greg_t'" etc. (for lots more types as well) - but even before getting 
+> onto those errors, there's
+> 
+> asm/signal.h:127:2: error: unknown type name 'size_t'
+> 
+> from a header included from linux/elfcore.h.  So this doesn't seem to be 
+> working as I'd expect yet.
 
-Any comments ?
 
-On 10/17/18 11:40 AM, Kuppuswamy Sathyanarayanan wrote:
-> In dwc3_pci_quirks() function, gpiod lookup table is only registered for
-> baytrail SOC. But in dwc3_pci_remove(), we try to unregistered it
-> without any checks. This leads to NULL pointer de-reference exception in
-> gpiod_remove_lookup_table() when unloading the module for non baytrail
-> SOCs. This patch fixes this issue.
->
-> Fixes: 5741022cbdf3 ("usb: dwc3: pci: Add GPIO lookup table on platforms
-> without ACPI GPIO resources")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-> Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> ---
->   drivers/usb/dwc3/dwc3-pci.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/usb/dwc3/dwc3-pci.c b/drivers/usb/dwc3/dwc3-pci.c
-> index 1286076a8890..842795856bf4 100644
-> --- a/drivers/usb/dwc3/dwc3-pci.c
-> +++ b/drivers/usb/dwc3/dwc3-pci.c
-> @@ -283,8 +283,10 @@ static int dwc3_pci_probe(struct pci_dev *pci, const struct pci_device_id *id)
->   static void dwc3_pci_remove(struct pci_dev *pci)
->   {
->   	struct dwc3_pci		*dwc = pci_get_drvdata(pci);
-> +	struct pci_dev		*pdev = dwc->pci;
->   
-> -	gpiod_remove_lookup_table(&platform_bytcr_gpios);
-> +	if (pdev->device == PCI_DEVICE_ID_INTEL_BYT)
-> +		gpiod_remove_lookup_table(&platform_bytcr_gpios);
->   #ifdef CONFIG_PM
->   	cancel_work_sync(&dwc->wakeup_work);
->   #endif
+Yes, someone from Google (iirc) and also David Howells had some tests
+that would point out all of the problems.  I thought (expected) more follow-up
+from them with patches...
+
 
 -- 
-Sathyanarayanan Kuppuswamy
-Linux kernel developer
-
+~Randy
