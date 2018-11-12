@@ -2,93 +2,88 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5ED3C07E85
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:51:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BE6EC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:52:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82EA822506
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:51:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82EA822506
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 34EB22245E
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:52:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34EB22245E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727582AbeKMFqE (ORCPT
+        id S1729318AbeKMFr3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 00:46:04 -0500
-Received: from mga01.intel.com ([192.55.52.88]:11230 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725790AbeKMFqD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 00:46:03 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Nov 2018 11:51:22 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,496,1534834800"; 
-   d="scan'208";a="273433761"
-Received: from araj-mobl1.jf.intel.com ([10.24.14.254])
-  by orsmga005.jf.intel.com with ESMTP; 12 Nov 2018 11:51:21 -0800
-Date:   Mon, 12 Nov 2018 11:51:21 -0800
-From:   "Raj, Ashok" <ashok.raj@intel.com>
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        iommu@lists.linux-foundation.org, Mario.Limonciello@dell.com,
-        Michael Jamet <michael.jamet@intel.com>,
-        Christian Kellner <ckellner@redhat.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Anthony Wong <anthony.wong@canonical.com>,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        Jacob jun Pan <jacob.jun.pan@intel.com>,
-        linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-        linux-acpi@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>,
-        linux-kernel@vger.kernel.org, Ashok Raj <ashok.raj@intel.com>
-Subject: Re: [PATCH 2/4] iommu/vt-d: Force IOMMU on for platform opt in hint
-Message-ID: <20181112195121.GC5367@araj-mobl1.jf.intel.com>
-References: <20181112160628.86620-1-mika.westerberg@linux.intel.com>
- <20181112160628.86620-3-mika.westerberg@linux.intel.com>
- <20181112110900.16cfee48@t450s.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181112110900.16cfee48@t450s.home>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        Tue, 13 Nov 2018 00:47:29 -0500
+Received: from smtprelay0181.hostedemail.com ([216.40.44.181]:59936 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725790AbeKMFr2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 00:47:28 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 09E0B4BA;
+        Mon, 12 Nov 2018 19:52:45 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: cry60_34ef39d8bfd43
+X-Filterd-Recvd-Size: 2197
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf18.hostedemail.com (Postfix) with ESMTPA;
+        Mon, 12 Nov 2018 19:52:43 +0000 (UTC)
+Message-ID: <dda6fafd2096845ef503921703652f511d4f0daa.camel@perches.com>
+Subject: Re: [PATCH] scsi: libsas: Remove pcidev reference
+From:   Joe Perches <joe@perches.com>
+To:     John Garry <john.garry@huawei.com>, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxarm@huawei.com
+Date:   Mon, 12 Nov 2018 11:52:42 -0800
+In-Reply-To: <39f56211-cf15-8ca5-a48f-3e4cc347cdb0@huawei.com>
+References: <1542043689-214071-1-git-send-email-john.garry@huawei.com>
+         <584e7b4fcd6f95fe0c581f6f9472852685c754d1.camel@perches.com>
+         <310504a2-f33c-183b-d00a-fa067b273dfd@huawei.com>
+         <3b62b0ad-53ba-37c2-817c-591d94eed838@huawei.com>
+         <31d224e8c4b9bcebc3657c17fa50302f7da90e64.camel@perches.com>
+         <dd39734e-4113-f9fd-6890-a83e80093c7e@huawei.com>
+         <3470156e35390d1810a6a5e4a554a77493c0d44f.camel@perches.com>
+         <39f56211-cf15-8ca5-a48f-3e4cc347cdb0@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 11:09:00AM -0700, Alex Williamson wrote:
-> On Mon, 12 Nov 2018 19:06:26 +0300
-> Mika Westerberg <mika.westerberg@linux.intel.com> wrote:
-> 
-> > From: Lu Baolu <baolu.lu@linux.intel.com>
+On Mon, 2018-11-12 at 19:31 +0000, John Garry wrote:
+> On 12/11/2018 18:58, Joe Perches wrote:
+> > > > +#define pr_fmt(fmt) "sas: " fmt
+> > > > 
+> > > > Some other subsystem may try to include this header, and gets its
+> > > > message prefix overwritten. Just a consequence for doing something bad,
+> > > > right?
+> > Right.
 > > 
-> > Intel VT-d spec added a new DMA_CTRL_PLATFORM_OPT_IN_FLAG flag
-> > in DMAR ACPI table for BIOS to report compliance about platform
-> > initiated DMA restricted to RMRR ranges when transferring control
-> > to the OS. The OS treats this as a hint that the IOMMU should be
-> > enabled to prevent DMA attacks from possible malicious devices.
+> > And as this file is internal to drivers/scsi/libsas
+> > that seems very unlikely to occur.
+> > 
+> > It also might useful to use the common debugging
+> > mechanisms and convert SAS_DPRINTK to pr_debug
+> > which would use the same #define pr_fmt.
+> > 
 > 
-> Does this in any way suggest that there are additional recommended uses
-> cases from Intel for RMRRs?  My concern here is the incompatibility we
-> have with RMRRs and device assignment as we currently cannot assign
-> devices where the IOVA address space is encumbered by RMRR
-> requirements.  Unfortunately RMRRs do not indicate any sort or
-> lifespan, so firmware enabling an RMRR simply to support some boot-time
-> DMA encumbers the device with that RMRR for the life of that boot,
-> unless we have VT-d code that decides it knows better.  Thanks,
+> OK, I will try to put this all together as a marginally wider scope tidy-up.
 
-IMO any new platform that requires RMRR should be a bug. It was designed 
-originally for some legacy keyboard emulation etc.
+Thanks.
 
-The best behavior is to continue to not allow devices with RMRR be direct assigned.
+Another thing that could be done is to change
+the #define pr_fmt(fmt) to KBUILD_MODNAME as
+that would prefix "libsas" instead of just "sas".
 
-Technically ignoring RMRR's and continuing to assign those devices is risky.
-The problem is IF BIOS/SMM initiates some IO in the RMRR range and it happens to be
-mapped by the direct assigned GPA its going to be ugly failure.
+I think that would be better but I didn't do that
+as it should be in a separate patch.
+
+
