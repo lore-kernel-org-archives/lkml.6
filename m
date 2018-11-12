@@ -2,95 +2,104 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2591C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:56:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B04B6C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:58:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8EF3223C6
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:56:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="as6pH9A9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8EF3223C6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 57494223CA
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:58:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57494223CA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728613AbeKLStG (ORCPT
+        id S1728804AbeKLSuU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 13:49:06 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:34580 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727208AbeKLStF (ORCPT
+        Mon, 12 Nov 2018 13:50:20 -0500
+Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:46764 "EHLO
+        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726220AbeKLSuU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 13:49:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=hnuroTyDW2i5GN4XkKKngIjHBnLFpctUGkvwhs7Hyrg=; b=as6pH9A9yTcM3DRNzSQr9FmeX
-        +w8c5MY8lJlTNWSEE6Qv02XgOlv9Cgx4A5CPUQdsxUg6pEoTp5rAJGRPqaKpgpwz3H/q5Pzg/8LP/
-        PrQi5W2R1wEGFhVpR+xG0uJLKWIRlb+CwZ+INzygPrwXMRwRGfy9hvAcR+3m4NVICLjtI8B5zdY2M
-        tmTNCqr1N5exLE8oSjSzfMd0fqk0VBeu68YUrWyVQqzl2Vi1/LwvTfoZI+gsSbPTUpkxF5O3ccmZd
-        JUH5ARZU5jJg7ycCdmPsBqkQHnEQQnz732NUJKYTlJ3VWrgvHONNuJuCopgae5R3EAfkNFU++uYfV
-        XnY+kwDSw==;
-Received: from [64.114.255.114] (helo=worktop)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gM81a-0007i6-QD; Mon, 12 Nov 2018 08:56:50 +0000
-Received: by worktop (Postfix, from userid 1000)
-        id 130126E03B0; Mon, 12 Nov 2018 09:56:50 +0100 (CET)
-Date:   Mon, 12 Nov 2018 09:56:50 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Aubrey Li <aubrey.li@intel.com>, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com, ak@linux.intel.com,
-        tim.c.chen@linux.intel.com, arjan@linux.intel.com,
-        linux-kernel@vger.kernel.org, Aubrey Li <aubrey.li@linux.intel.com>
-Subject: Re: [RFC PATCH v1 2/2] proc: add /proc/<pid>/thread_state
-Message-ID: <20181112085650.GM3056@worktop>
-References: <1541528590-30296-1-git-send-email-aubrey.li@intel.com>
- <1541528590-30296-2-git-send-email-aubrey.li@intel.com>
- <20181108063246.GA13233@gmail.com>
- <20181108101729.GP9761@hirez.programming.kicks-ass.net>
- <20181112053147.GA78520@gmail.com>
+        Mon, 12 Nov 2018 13:50:20 -0500
+Received: from [192.168.2.10] ([212.251.195.8])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id M82jg0s3MSskCM82mgmv0s; Mon, 12 Nov 2018 09:58:05 +0100
+Subject: Re: [GIT PULL for v4.20-rc1] new experimental media request API
+To:     Pavel Machek <pavel@ucw.cz>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-media@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181030105328.0667ec68@coco.lan>
+ <CAHk-=whQKCA18MEi7FT=10c0HVa=kxSyYBJeAQH-C2mA5gBhbg@mail.gmail.com>
+ <20181031154030.3fab5a00@coco.lan> <20181111202850.GA9704@amd>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <c5ff4492-9b53-3585-16b3-ddc73c667a82@xs4all.nl>
+Date:   Mon, 12 Nov 2018 09:58:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181112053147.GA78520@gmail.com>
-User-Agent: Mutt/1.5.22.1 (2013-10-16)
+In-Reply-To: <20181111202850.GA9704@amd>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfMMLeh7QOOP+BeMxsmNNDfdqWQgS7FIKODUCQ7Kjjrp4wq5oPuKyXM/dxq5Sq9MsD6WahuQBpHjB+Sos/sVAzbT7qI2zAQuJ1uEBPxgDDyEBAtNLDQG2
+ Z97pGOpFY/cIJHuUcUihxJWAdiSaiK1KzVZFP9y3kQzYz61qLtzmlVkF7ze6CRCaVDd5VgS+eOX/sO3yZpaa0uAlVwG3bsNvuGXhv2XigrfHeaMLemZOrtSa
+ gnhaJe+ZpF/263X+7GC+1t+kAbfwAIfmWuDKRBm+FQAtM6rU3FoSyQ4mxhku5792VNWNAjycQkNMC4nspIuKS9NlClRREipRrXVHyUuOS2Xks0/aK96YpJ9O
+ HBvfSTlVe4S3WfgXPFAroS4c0vUWXhpUSj35bsL00GDCEHydZls=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 06:31:47AM +0100, Ingo Molnar wrote:
+On 11/11/2018 09:28 PM, Pavel Machek wrote:
+> Hi!
 > 
-> * Peter Zijlstra <peterz@infradead.org> wrote:
+>> Em Wed, 31 Oct 2018 11:05:09 -0700
+>> Linus Torvalds <torvalds@linux-foundation.org> escreveu:
+>>
+>>> On Tue, Oct 30, 2018 at 6:53 AM Mauro Carvalho Chehab
+>>> <mchehab+samsung@kernel.org> wrote:
+>>>>
+>>>> For a new media API: the request API  
+>>>
+>>> Ugh. I don't know how much being in staging matters - if people start
+>>> using it, they start using it.
+>>>
+>>> "Staging" does not mean "regressions don't matter".
+>>
+>> Yes, I know.
+>>
+>> This shouldn't affect normal cameras and generic V4L2 apps, as this
+>> is for very advanced use cases. So, we hope that people won't start
+>> using it for a while. 
+>>
+>> The main interested party on this is Google CromeOS. We're working 
+>> together with them in order to do upstream first. They are well aware
+>> that the API may change. So, I don't expect any complaints from their
+>> side if the API would require further changes.
 > 
-> > On Thu, Nov 08, 2018 at 07:32:46AM +0100, Ingo Molnar wrote:
-> > > 
-> > > * Aubrey Li <aubrey.li@intel.com> wrote:
-> > > 
-> > > > Expose the per-task cpu specific thread state value, it's helpful
-> > > > for userland to classify and schedule the tasks by different policies
-> > > 
-> > > That's pretty vague - what exactly would use this information? I'm sure 
-> > > you have a usecase in mind - could you please describe it?
-> > 
-> > Yeah, "thread_state" is a pretty terrible name for this. The use-case is
-> > detectoring which tasks use AVX3 such that a userspace component (think
-> > job scheduler) can cluster them together.
+> You may want to simply disable it in Kconfig... ChromeOS people can
+> enable it easily, and if it never worked in the mainline, you get some
+> wiggle room :-).
+> 								Pavel
 > 
-> I'd prefer the kernel to do such clustering...
 
-I think that is a next step.
+For the record: there are no known issues with the Request API. The
+only outstanding issue is with a control introduced in the staging cedrus
+driver which will have to change since the method used to refer to MPEG
+reference frames is wrong. We're working on that and should have this
+fixed soon (patches have been posted and I'm waiting for test feedback).
 
-Also, while the kernel can do this at a best effort basis, it cannot
-take into account things the kernel doesn't know about, like high
-priority job peak load etc.., things a job scheduler would know.
+This control has nothing to do with the Request API, so I see no reason
+to put the Request API under a config option. Drivers needs to explicit
+enable support for the Request API anyway, so all existing drivers will
+return an error if userspace attempts to use this API.
 
-Then again, a job scheduler would likely already know about the AVX
-state anyway.
+Regards,
+
+	Hans
