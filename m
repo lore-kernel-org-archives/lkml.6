@@ -6,38 +6,41 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66F63C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 11:58:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C00D9C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 11:58:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 385E22241E
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 11:58:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 385E22241E
+	by mail.kernel.org (Postfix) with ESMTP id 82D112241E
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 11:58:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82D112241E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730001AbeKLVu7 (ORCPT
+        id S1730016AbeKLVvC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 16:50:59 -0500
-Received: from foss.arm.com ([217.140.101.70]:34700 "EHLO foss.arm.com"
+        Mon, 12 Nov 2018 16:51:02 -0500
+Received: from foss.arm.com ([217.140.101.70]:34716 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729756AbeKLVu7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 16:50:59 -0500
+        id S1729973AbeKLVvB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 16:51:01 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 45BFB15BF;
-        Mon, 12 Nov 2018 03:58:02 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 981171682;
+        Mon, 12 Nov 2018 03:58:04 -0800 (PST)
 Received: from e112298-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9C2EF3F5A0;
-        Mon, 12 Nov 2018 03:58:00 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 853633F5A0;
+        Mon, 12 Nov 2018 03:58:02 -0800 (PST)
 From:   Julien Thierry <julien.thierry@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
         joel@joelfernandes.org, marc.zyngier@arm.com,
         christoffer.dall@arm.com, james.morse@arm.com,
         catalin.marinas@arm.com, will.deacon@arm.com,
-        Julien Thierry <julien.thierry@arm.com>
-Subject: [PATCH v6 16/24] arm64: gic-v3: Implement arch support for priority masking
-Date:   Mon, 12 Nov 2018 11:57:07 +0000
-Message-Id: <1542023835-21446-17-git-send-email-julien.thierry@arm.com>
+        Julien Thierry <julien.thierry@arm.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+Subject: [PATCH v6 17/24] irqchip/gic-v3: Detect if GIC can support pseudo-NMIs
+Date:   Mon, 12 Nov 2018 11:57:08 +0000
+Message-Id: <1542023835-21446-18-git-send-email-julien.thierry@arm.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1542023835-21446-1-git-send-email-julien.thierry@arm.com>
 References: <1542023835-21446-1-git-send-email-julien.thierry@arm.com>
@@ -46,67 +49,157 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement architecture specific primitive allowing the GICv3 driver to
-use priorities to mask interrupts.
+The values non secure EL1 needs to use for PMR and RPR registers depends on
+the value of SCR_EL3.FIQ.
 
-Lower the default priority of interrupts to a value maskable with
-priority mask used for PMR. This is safe to do as both arm and arm64
-only use one priority and are do not currently care about which priority
-value it is, as long as all interrupts use the same priority.
+The values non secure EL1 sees from the distributor and redistributor
+depend on whether security is enabled for the GIC or not.
+
+To avoid having to deal with two sets of values for PMR
+masking/unmasking, only enable pseudo-NMIs when GIC has non-secure view
+of priorities.
+
+Also, add firmware requirements related to SCR_EL3.
 
 Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
 ---
- arch/arm64/include/asm/arch_gicv3.h    | 8 ++++----
- include/linux/irqchip/arm-gic-common.h | 2 +-
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ Documentation/arm64/booting.txt |  5 ++++
+ drivers/irqchip/irq-gic-v3.c    | 58 ++++++++++++++++++++++++++++++++++++-----
+ 2 files changed, 57 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/include/asm/arch_gicv3.h b/arch/arm64/include/asm/arch_gicv3.h
-index 3f8d5f4..154612a 100644
---- a/arch/arm64/include/asm/arch_gicv3.h
-+++ b/arch/arm64/include/asm/arch_gicv3.h
-@@ -22,6 +22,7 @@
+diff --git a/Documentation/arm64/booting.txt b/Documentation/arm64/booting.txt
+index 8d0df62..e387938 100644
+--- a/Documentation/arm64/booting.txt
++++ b/Documentation/arm64/booting.txt
+@@ -188,6 +188,11 @@ Before jumping into the kernel, the following conditions must be met:
+   the kernel image will be entered must be initialised by software at a
+   higher exception level to prevent execution in an UNKNOWN state.
  
- #ifndef __ASSEMBLY__
++  - SCR_EL3.FIQ must have the same value across all CPUs the kernel is
++    executing on.
++  - The value of SCR_EL3.FIQ must be the same as the one present at boot
++    time whenever the kernel is executing.
++
+   For systems with a GICv3 interrupt controller to be used in v3 mode:
+   - If EL3 is present:
+     ICC_SRE_EL3.Enable (bit 3) must be initialiased to 0b1.
+diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+index 7f0b2e8..5245791 100644
+--- a/drivers/irqchip/irq-gic-v3.c
++++ b/drivers/irqchip/irq-gic-v3.c
+@@ -63,6 +63,31 @@ struct gic_chip_data {
+ static struct gic_chip_data gic_data __read_mostly;
+ static DEFINE_STATIC_KEY_TRUE(supports_deactivate_key);
  
-+#include <linux/irqchip/arm-gic-common.h>
- #include <linux/stringify.h>
- #include <asm/barrier.h>
- #include <asm/cacheflush.h>
-@@ -162,14 +163,13 @@ static inline bool gic_prio_masking_enabled(void)
++/*
++ * The behaviours of RPR and PMR registers differ depending on the value of
++ * SCR_EL3.FIQ, and the behaviour of non-secure priority registers of the
++ * distributor and redistributors depends on whether security is enabled in the
++ * GIC.
++ *
++ * When security is enabled, non-secure priority values from the (re)distributor
++ * are presented to the GIC CPUIF as follow:
++ *     (GIC_(R)DIST_PRI[irq] >> 1) | 0x80;
++ *
++ * If SCR_EL3.FIQ == 1, the values writen to/read from PMR and RPR at non-secure
++ * EL1 are subject to a similar operation thus matching the priorities presented
++ * from the (re)distributor when security is enabled.
++ *
++ * see GICv3/GICv4 Architecture Specification (IHI0069D):
++ * - section 4.8.1 Non-secure accesses to register fields for Secure interrupt
++ *   priorities.
++ * - Figure 4-7 Secure read of the priority field for a Non-secure Group 1
++ *   interrupt.
++ *
++ * For now, we only support pseudo-NMIs if we have non-secure view of
++ * priorities.
++ */
++static DEFINE_STATIC_KEY_FALSE(supports_pseudo_nmis);
++
+ static struct gic_kvm_info gic_v3_kvm_info;
+ static DEFINE_PER_CPU(bool, has_rss);
  
- static inline void gic_pmr_mask_irqs(void)
- {
--	/* Should not get called yet. */
--	WARN_ON_ONCE(true);
-+	BUILD_BUG_ON(GICD_INT_DEF_PRI <= GIC_PRIO_IRQOFF);
-+	gic_write_pmr(GIC_PRIO_IRQOFF);
+@@ -226,6 +251,12 @@ static void gic_unmask_irq(struct irq_data *d)
+ 	gic_poke_irq(d, GICD_ISENABLER);
  }
  
- static inline void gic_arch_enable_irqs(void)
++static inline bool gic_supports_nmi(void)
++{
++	return IS_ENABLED(CONFIG_ARM64_PSEUDO_NMI) &&
++	       static_branch_likely(&supports_pseudo_nmis);
++}
++
+ static int gic_irq_set_irqchip_state(struct irq_data *d,
+ 				     enum irqchip_irq_state which, bool val)
  {
--	/* Should not get called yet. */
--	WARN_ON_ONCE(true);
-+	asm volatile ("msr daifclr, #2" : : : "memory");
+@@ -572,6 +603,12 @@ static void gic_update_vlpi_properties(void)
+ 		!gic_data.rdists.has_direct_lpi ? "no " : "");
  }
  
- #endif /* __ASSEMBLY__ */
-diff --git a/include/linux/irqchip/arm-gic-common.h b/include/linux/irqchip/arm-gic-common.h
-index 9a1a479..2c9a4b3 100644
---- a/include/linux/irqchip/arm-gic-common.h
-+++ b/include/linux/irqchip/arm-gic-common.h
-@@ -13,7 +13,7 @@
- #include <linux/types.h>
- #include <linux/ioport.h>
++/* Check whether it's single security state view */
++static inline bool gic_dist_security_disabled(void)
++{
++	return readl_relaxed(gic_data.dist_base + GICD_CTLR) & GICD_CTLR_DS;
++}
++
+ static void gic_cpu_sys_reg_init(void)
+ {
+ 	int i, cpu = smp_processor_id();
+@@ -597,6 +634,9 @@ static void gic_cpu_sys_reg_init(void)
+ 	/* Set priority mask register */
+ 	if (!gic_prio_masking_enabled())
+ 		write_gicreg(DEFAULT_PMR_VALUE, ICC_PMR_EL1);
++	else if (gic_supports_nmi() && group0)
++		/* Mismatch configuration with boot CPU */
++		WARN_ON(!gic_dist_security_disabled());
  
--#define GICD_INT_DEF_PRI		0xa0
-+#define GICD_INT_DEF_PRI		0xc0
- #define GICD_INT_DEF_PRI_X4		((GICD_INT_DEF_PRI << 24) |\
- 					(GICD_INT_DEF_PRI << 16) |\
- 					(GICD_INT_DEF_PRI << 8) |\
+ 	/*
+ 	 * Some firmwares hand over to the kernel with the BPR changed from
+@@ -851,12 +891,6 @@ static int gic_set_affinity(struct irq_data *d, const struct cpumask *mask_val,
+ #endif
+ 
+ #ifdef CONFIG_CPU_PM
+-/* Check whether it's single security state view */
+-static bool gic_dist_security_disabled(void)
+-{
+-	return readl_relaxed(gic_data.dist_base + GICD_CTLR) & GICD_CTLR_DS;
+-}
+-
+ static int gic_cpu_pm_notifier(struct notifier_block *self,
+ 			       unsigned long cmd, void *v)
+ {
+@@ -1100,6 +1134,11 @@ static int partition_domain_translate(struct irq_domain *d,
+ 	.select = gic_irq_domain_select,
+ };
+ 
++static void gic_enable_nmi_support(void)
++{
++	static_branch_enable(&supports_pseudo_nmis);
++}
++
+ static int __init gic_init_bases(void __iomem *dist_base,
+ 				 struct redist_region *rdist_regs,
+ 				 u32 nr_redist_regions,
+@@ -1169,6 +1208,13 @@ static int __init gic_init_bases(void __iomem *dist_base,
+ 		its_cpu_init();
+ 	}
+ 
++	if (gic_prio_masking_enabled()) {
++		if (!gic_has_group0() || gic_dist_security_disabled())
++			gic_enable_nmi_support();
++		else
++			pr_warn("SCR_EL3.FIQ is cleared, cannot enable use of pseudo-NMIs\n");
++	}
++
+ 	return 0;
+ 
+ out_free:
 -- 
 1.9.1
 
