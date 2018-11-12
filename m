@@ -2,193 +2,190 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42DC7C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 03:24:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29B37C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 03:24:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECA0F20881
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 03:24:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j+w/zUdN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECA0F20881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id E6B2020881
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 03:24:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6B2020881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730460AbeKLNPq (ORCPT
+        id S1730526AbeKLNPv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 08:15:46 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:41542 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726270AbeKLNPq (ORCPT
+        Mon, 12 Nov 2018 08:15:51 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35664 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726270AbeKLNPv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 08:15:46 -0500
-Received: by mail-oi1-f193.google.com with SMTP id g188-v6so6042543oif.8
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 19:24:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:cc:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=pn5046+rUwy0GXMaW8cVYFZgBGkhWejDIdB57BoQJ1Q=;
-        b=j+w/zUdNJcXaRdOt10v7IBSXn/K6aFP00I/hT/NNIwvAlKe4DHFE2FhUFGoUqLDqmF
-         Eqq0pq+dtBPT/BqM7FABMTQUNHXPz2wjwSIcmdVue1N+x7wOw1cKE8O9Yq2scH4VXNJn
-         jwSJKkYgWR9TJIiV9C2OvaT2x/FPVeVn2qg+FP861J2kuhwcQyf0WyttkhfLZMbdgtxD
-         W226MXB4Mbaz2fX4yj3z1hNcu7V4Q7aj7nCipYRt0UJJLyi0PysEdrfR4FrD9qydSQEn
-         GKgzQ1V2vuTwNF5C3FpgPqiFkuusz8fwEgHMvNBgjYyrDQfY1qCBj/7loagzojPu6tIF
-         Xgyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:cc:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=pn5046+rUwy0GXMaW8cVYFZgBGkhWejDIdB57BoQJ1Q=;
-        b=ZKfAg0qikP3HyBF4jF23HBQnT7+TrZUerxlT4veBXIm/sQYbj3B/zORGyUS7xCsBDR
-         6YWODhpGZNsYfkHLHgeqw03RYwmNgVt1XCcFICxs6TxZgyRJhgHmjf12PcPp/VRrPTHI
-         j/Jdfwb0pWSCTv789nwzeHB4BAHS6t4DGBtjHBDlGywS1/VOXUe0YEsAMZatj9DgnWWs
-         z/kgleuAh7ooeMBSvwe45lk6Fn0HegRcxJmuxEReM7ZWWS4mve9Tx6vZ8VQDYbFolMu/
-         MuQ/ck0GtjErMWppUxpLtoucVJtrHZ+QAKkkgRSQR4y3tN7UU3MCf5yyriy/II9yIxPL
-         d8eg==
-X-Gm-Message-State: AGRZ1gIbgIA+SIS25fu8Yp9hA4SqBzbLvp/3pWyHlgRcw7/95ABt9GHf
-        r42AH/WYSvKUQsXL3OY0Yp8uWZDK
-X-Google-Smtp-Source: AJdET5eO7akKKipOLCwJJ9D4w4HNgaxulhOdQmNj21JFGzM0QWEVAxrL1L7mew7YvlPSaThFeUVB6w==
-X-Received: by 2002:aca:54d2:: with SMTP id i201-v6mr9773255oib.238.1541993075891;
-        Sun, 11 Nov 2018 19:24:35 -0800 (PST)
-Received: from [10.211.55.3] ([47.89.83.35])
-        by smtp.gmail.com with ESMTPSA id u8sm6102530otc.11.2018.11.11.19.24.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 11 Nov 2018 19:24:35 -0800 (PST)
-Subject: Re: [PATCH] mm:vmalloc add vm_struct for vm_map_ram
-To:     Zhaoyang Huang <huangzhaoyang@gmail.com>
-References: <1541675689-13363-1-git-send-email-huangzhaoyang@gmail.com>
-From:   Xishi Qiu <qiuxishi@gmail.com>
-Cc:     Chintan Pandya <cpandya@codeaurora.org>,
-        David Rientjes <rientjes@google.com>,
-        Joe Perches <joe@perches.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Message-ID: <bdd6deb0-9c28-9353-e445-5bf5c893d64d@gmail.com>
-Date:   Mon, 12 Nov 2018 11:24:08 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 12 Nov 2018 08:15:51 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAC3O6F8046500
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 22:24:41 -0500
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2npxswnk6r-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 22:24:40 -0500
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Mon, 12 Nov 2018 03:24:39 -0000
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 12 Nov 2018 03:24:34 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAC3OXMI62849130
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 12 Nov 2018 03:24:33 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 92E31B2519;
+        Mon, 12 Nov 2018 03:19:25 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 59E0FB2513;
+        Mon, 12 Nov 2018 03:19:15 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.207.24])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 12 Nov 2018 03:19:15 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id A27C616C39E4; Sun, 11 Nov 2018 19:19:16 -0800 (PST)
+Date:   Sun, 11 Nov 2018 19:19:16 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
+        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
+        "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH tip/core/rcu 20/41] kprobes: eplace synchronize_sched()
+ with synchronize_rcu()
+Reply-To: paulmck@linux.ibm.com
+References: <20181111194104.GA4787@linux.ibm.com>
+ <20181111194410.6368-20-paulmck@linux.ibm.com>
+ <20181112120048.12b3fb7549f4b292fea1eefd@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <1541675689-13363-1-git-send-email-huangzhaoyang@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181112120048.12b3fb7549f4b292fea1eefd@kernel.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18111203-0052-0000-0000-0000035465EE
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010030; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01116164; UDB=6.00578824; IPR=6.00896273;
+ MB=3.00024116; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-12 03:24:39
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18111203-0053-0000-0000-00005EBC075B
+Message-Id: <20181112031916.GF4170@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-12_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811120030
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2018/11/8 19:14, Zhaoyang Huang wrote:
-> From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+On Mon, Nov 12, 2018 at 12:00:48PM +0900, Masami Hiramatsu wrote:
+> On Sun, 11 Nov 2018 11:43:49 -0800
+> "Paul E. McKenney" <paulmck@linux.ibm.com> wrote:
 > 
-> There is no caller and pages information etc for the area which is
-> created by vm_map_ram as well as the page count > VMAP_MAX_ALLOC.
-> Add them on in this commit.
+> > Now that synchronize_rcu() waits for preempt-disable regions of code
+> > as well as RCU read-side critical sections, synchronize_sched() can be
+> > replaced by synchronize_rcu().  This commit therefore makes this change.
 > 
-> Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
-> ---
->  mm/vmalloc.c | 30 ++++++++++++++++++++----------
->  1 file changed, 20 insertions(+), 10 deletions(-)
+> Would you mean synchronize_rcu() can ensure that any interrupt handler
+> (which should run under preempt-disable state) run out (even on non-preemptive
+> kernel)?
+
+Yes, but only as of this merge window.  See this commit:
+
+3e3100989869 ("rcu: Defer reporting RCU-preempt quiescent states when disabled")
+
+Don't try this in v4.19 or earlier, but v4.20 and later is OK.  ;-)
+
+							Thanx, Paul
+
+> If so, I agree with these changes.
 > 
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index cfea25b..819b690 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -45,7 +45,8 @@ struct vfree_deferred {
->  static DEFINE_PER_CPU(struct vfree_deferred, vfree_deferred);
->  
->  static void __vunmap(const void *, int);
-> -
-> +static void setup_vmalloc_vm(struct vm_struct *vm, struct vmap_area *va,
-> +			      unsigned long flags, const void *caller);
->  static void free_work(struct work_struct *w)
->  {
->  	struct vfree_deferred *p = container_of(w, struct vfree_deferred, wq);
-> @@ -1138,6 +1139,7 @@ void vm_unmap_ram(const void *mem, unsigned int count)
->  	BUG_ON(!va);
->  	debug_check_no_locks_freed((void *)va->va_start,
->  				    (va->va_end - va->va_start));
-> +	kfree(va->vm);
->  	free_unmap_vmap_area(va);
->  }
->  EXPORT_SYMBOL(vm_unmap_ram);
-> @@ -1170,6 +1172,8 @@ void *vm_map_ram(struct page **pages, unsigned int count, int node, pgprot_t pro
->  		addr = (unsigned long)mem;
->  	} else {
->  		struct vmap_area *va;
-> +		struct vm_struct *area;
-> +
->  		va = alloc_vmap_area(size, PAGE_SIZE,
->  				VMALLOC_START, VMALLOC_END, node, GFP_KERNEL);
->  		if (IS_ERR(va))
-> @@ -1177,11 +1181,17 @@ void *vm_map_ram(struct page **pages, unsigned int count, int node, pgprot_t pro
->  
->  		addr = va->va_start;
->  		mem = (void *)addr;
-> +		area = kzalloc_node(sizeof(*area), GFP_KERNEL, node);
-> +		if (likely(area)) {
-> +			setup_vmalloc_vm(area, va, 0, __builtin_return_address(0));
-> +			va->flags &= ~VM_VM_AREA;
-> +		}
-Hi Zhaoyang，
-
-I think if we set the flag VM_VM_AREA, that means we have some info,
-so how about do not clear the flag after setup_vmalloc_vm, and just
-update the print in s_show.
-
-	...
-	if (v->flags & VM_ALLOC)
-		seq_puts(m, " vmalloc");
-+	if (v->flags & VM_MAP_RAM)  // add a new flag for vm_map_ram?
-+		seq_puts(m, " vm_map_ram");
-	...
-
-Thanks,
-Xishi QIu
->  	}
->  	if (vmap_page_range(addr, addr + size, prot, pages) < 0) {
->  		vm_unmap_ram(mem, count);
->  		return NULL;
->  	}
-> +
->  	return mem;
->  }
->  EXPORT_SYMBOL(vm_map_ram);
-> @@ -2688,19 +2698,19 @@ static int s_show(struct seq_file *m, void *p)
->  	 * s_show can encounter race with remove_vm_area, !VM_VM_AREA on
->  	 * behalf of vmap area is being tear down or vm_map_ram allocation.
->  	 */
-> -	if (!(va->flags & VM_VM_AREA)) {
-> -		seq_printf(m, "0x%pK-0x%pK %7ld %s\n",
-> -			(void *)va->va_start, (void *)va->va_end,
-> -			va->va_end - va->va_start,
-> -			va->flags & VM_LAZY_FREE ? "unpurged vm_area" : "vm_map_ram");
-> -
-> +	if (!(va->flags & VM_VM_AREA) && !va->vm)
->  		return 0;
-> -	}
->  
->  	v = va->vm;
->  
-> -	seq_printf(m, "0x%pK-0x%pK %7ld",
-> -		v->addr, v->addr + v->size, v->size);
-> +	if (!(va->flags & VM_VM_AREA))
-> +		seq_printf(m, "0x%pK-0x%pK %7ld %s\n",
-> +				(void *)va->va_start, (void *)va->va_end,
-> +				va->va_end - va->va_start,
-> +				va->flags & VM_LAZY_FREE ? "unpurged vm_area" : "vm_map_ram");
-> +	else
-> +		seq_printf(m, "0x%pK-0x%pK %7ld",
-> +				v->addr, v->addr + v->size, v->size);
->  
->  	if (v->caller)
->  		seq_printf(m, " %pS", v->caller);
+> Thank you,
 > 
+> > 
+> > Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+> > Cc: "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>
+> > Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+> > Cc: "David S. Miller" <davem@davemloft.net>
+> > Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> > ---
+> >  kernel/kprobes.c | 10 +++++-----
+> >  1 file changed, 5 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+> > index 90e98e233647..08e31d863191 100644
+> > --- a/kernel/kprobes.c
+> > +++ b/kernel/kprobes.c
+> > @@ -229,7 +229,7 @@ static int collect_garbage_slots(struct kprobe_insn_cache *c)
+> >  	struct kprobe_insn_page *kip, *next;
+> >  
+> >  	/* Ensure no-one is interrupted on the garbages */
+> > -	synchronize_sched();
+> > +	synchronize_rcu();
+> >  
+> >  	list_for_each_entry_safe(kip, next, &c->pages, list) {
+> >  		int i;
+> > @@ -1382,7 +1382,7 @@ static int register_aggr_kprobe(struct kprobe *orig_p, struct kprobe *p)
+> >  			if (ret) {
+> >  				ap->flags |= KPROBE_FLAG_DISABLED;
+> >  				list_del_rcu(&p->list);
+> > -				synchronize_sched();
+> > +				synchronize_rcu();
+> >  			}
+> >  		}
+> >  	}
+> > @@ -1597,7 +1597,7 @@ int register_kprobe(struct kprobe *p)
+> >  		ret = arm_kprobe(p);
+> >  		if (ret) {
+> >  			hlist_del_rcu(&p->hlist);
+> > -			synchronize_sched();
+> > +			synchronize_rcu();
+> >  			goto out;
+> >  		}
+> >  	}
+> > @@ -1776,7 +1776,7 @@ void unregister_kprobes(struct kprobe **kps, int num)
+> >  			kps[i]->addr = NULL;
+> >  	mutex_unlock(&kprobe_mutex);
+> >  
+> > -	synchronize_sched();
+> > +	synchronize_rcu();
+> >  	for (i = 0; i < num; i++)
+> >  		if (kps[i]->addr)
+> >  			__unregister_kprobe_bottom(kps[i]);
+> > @@ -1966,7 +1966,7 @@ void unregister_kretprobes(struct kretprobe **rps, int num)
+> >  			rps[i]->kp.addr = NULL;
+> >  	mutex_unlock(&kprobe_mutex);
+> >  
+> > -	synchronize_sched();
+> > +	synchronize_rcu();
+> >  	for (i = 0; i < num; i++) {
+> >  		if (rps[i]->kp.addr) {
+> >  			__unregister_kprobe_bottom(&rps[i]->kp);
+> > -- 
+> > 2.17.1
+> > 
+> 
+> 
+> -- 
+> Masami Hiramatsu <mhiramat@kernel.org>
+> 
+
