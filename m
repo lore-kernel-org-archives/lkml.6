@@ -2,208 +2,164 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CFE6C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 11:48:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF3D6C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 11:51:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 202D1223D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 11:48:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="WZHPikkn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 202D1223D8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	by mail.kernel.org (Postfix) with ESMTP id B1FF62241E
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 11:51:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1FF62241E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729538AbeKLVky (ORCPT
+        id S1729370AbeKLVoJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 16:40:54 -0500
-Received: from mail-eopbgr790054.outbound.protection.outlook.com ([40.107.79.54]:2080
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729513AbeKLVky (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 16:40:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NcVuLxgdCjZsKm/x5dKuRrp2dz5WUpr8+nvTfUXH6Mw=;
- b=WZHPikknk/acWRhMtNrK1uNVD9F/ujJncYfGX4h9CftpOgyhFyMD9CmlzGNvKgOzpbleYbXV7ZGUjbK8KGdKY59nv9RRb7j2Nbv2+XpbXtijyYf/iYjgPhw8sY0BCzt5c3vdC0dgnCKRo9enup/qGpudXeYaA9OjFlSWIoCtsGQ=
-Received: from BN6PR12MB1714.namprd12.prod.outlook.com (10.175.101.11) by
- BN6PR12MB1521.namprd12.prod.outlook.com (10.172.17.151) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.26; Mon, 12 Nov 2018 11:47:57 +0000
-Received: from BN6PR12MB1714.namprd12.prod.outlook.com
- ([fe80::5472:26e2:affa:2b41]) by BN6PR12MB1714.namprd12.prod.outlook.com
- ([fe80::5472:26e2:affa:2b41%7]) with mapi id 15.20.1294.044; Mon, 12 Nov 2018
- 11:47:57 +0000
-From:   "Koenig, Christian" <Christian.Koenig@amd.com>
-To:     Chris Wilson <chris@chris-wilson.co.uk>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        =?utf-8?B?Q2hyaXN0aWFuIEvDtm5pZw==?= 
-        <ckoenig.leichtzumerken@gmail.com>, Eric Anholt <eric@anholt.net>,
-        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>
-CC:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] drm: Revert syncobj timeline changes.
-Thread-Topic: [PATCH 2/2] drm: Revert syncobj timeline changes.
-Thread-Index: AQHUd3y8jj33F8u6206Ye3csXp/f9aVGC2sAgAAMmgCAAKLAgIABN6KAgAAVRgCAA+rFgIAACTUAgAAQdIA=
-Date:   Mon, 12 Nov 2018 11:47:56 +0000
-Message-ID: <2c580da6-da64-a930-fad2-80705ac3bf5f@amd.com>
-References: <20181108160422.17743-1-eric@anholt.net>
- <20181108160422.17743-3-eric@anholt.net>
- <635caa27-eb0b-a4d6-5a1d-3fbe5382bd6b@amd.com>
- <c5af6df2-d5d5-5276-3628-4bac0fd53c98@gmail.com>
- <d9d76fbc-44ad-891d-e535-34d0e8f615de@amd.com> <87d0rex8h2.fsf@anholt.net>
- <87y3a1sx8t.fsf@anholt.net> <199c35bc-e684-fbc4-dcef-d7105d82f0ff@gmail.com>
- <154201973877.16646.5745251436337959698@skylake-alporthouse-com>
-In-Reply-To: <154201973877.16646.5745251436337959698@skylake-alporthouse-com>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-x-originating-ip: [2a02:908:1257:4460:1ab8:55c1:a639:6740]
-x-clientproxiedby: AM5PR0701CA0004.eurprd07.prod.outlook.com
- (2603:10a6:203:51::14) To BN6PR12MB1714.namprd12.prod.outlook.com
- (2603:10b6:404:106::11)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Christian.Koenig@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR12MB1521;20:xGG5gcdt5cRN5X2KAk1ZdtumTzAW70red14qd2C4PfDq5ALxVlCO9EQVcijgKH3+BK28Cxa6MZAzgxQWbEY/A54Up5Pi65Q97lWItfAKOPw5BwMEqIS5tmKKYyMTnhxs6ztxr8wDU9JvuQGNUNEsArgSGRNK6FQFUtuGUw4sphy3EXpVdS/5Pq7Xh3QpkHUTyIJsXXP1qCQiZjMHFXNOGrs0jmdjEm5Lq8j0BULzFEP/wNZ9XketsY8yh36HBCoo
-x-ms-office365-filtering-correlation-id: 641bcdb1-a7fa-407f-6f2c-08d64894afdd
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390040)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BN6PR12MB1521;
-x-ms-traffictypediagnostic: BN6PR12MB1521:
-x-microsoft-antispam-prvs: <BN6PR12MB1521EC4EAC075E650FA0DD9183C10@BN6PR12MB1521.namprd12.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(767451399110);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231382)(944501410)(52105112)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:BN6PR12MB1521;BCL:0;PCL:0;RULEID:;SRVR:BN6PR12MB1521;
-x-forefront-prvs: 0854128AF0
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(366004)(346002)(396003)(39860400002)(199004)(51914003)(189003)(446003)(486006)(476003)(2616005)(11346002)(39060400002)(46003)(6512007)(52116002)(31686004)(4326008)(386003)(102836004)(6506007)(53936002)(76176011)(99286004)(105586002)(2900100001)(65806001)(14454004)(65956001)(186003)(68736007)(6436002)(71200400001)(6246003)(66574009)(71190400001)(64126003)(305945005)(2906002)(7736002)(106356001)(14444005)(256004)(65826007)(6116002)(316002)(93886005)(54906003)(110136005)(58126008)(478600001)(81166006)(72206003)(6636002)(8676002)(229853002)(36756003)(31696002)(86362001)(81156014)(4001150100001)(25786009)(97736004)(6486002)(2501003)(8936002)(5660300001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR12MB1521;H:BN6PR12MB1714.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 7S8qbWnqsJaonj8/FSCVbvzIBGAuP5cvr1/y8HdpL9oYyKthPXt2uFOExwmWvImoBUFn8a8iCQ4Mp6mTA39aBpmFy+J/y1oHHBHmlXhvq0BnLM+RREqryJrh57fcbNcLsyZ4m70/LZ460xQas+aD4hTvTbPyZ8QPiH3CPQcQAbFiWve0cnrKxVzk5TbvArw+va2739yn3r4wPJIClTinv7cb4lAolDut/hvuHWkZRHwxlixTLdYLESRi2X5y/Am/bBRo8f68o0/aaizZu17m4wwKFTV1yiMlUTrmyYnP8tqdHXIZIP/5mPRSqvSkmMewChp6LYn1Z3/+yyxA89r/VRkPa4xqAl+Jh3ALh/qond0=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <7ABBC64051A31F4F9A5E37511450A702@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Mon, 12 Nov 2018 16:44:09 -0500
+Received: from verein.lst.de ([213.95.11.211]:50058 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728302AbeKLVoJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 16:44:09 -0500
+Received: by newverein.lst.de (Postfix, from userid 2005)
+        id 152A967358; Mon, 12 Nov 2018 12:51:13 +0100 (CET)
+Date:   Mon, 12 Nov 2018 12:51:13 +0100
+From:   Torsten Duwe <duwe@lst.de>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        live-patching@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] arm64: implement ftrace with regs
+Message-ID: <20181112115112.GB30967@lst.de>
+References: <20181026142008.D922868C94@newverein.lst.de> <20181026142148.6353A68C94@newverein.lst.de> <CAKv+Gu-rNeCj5jySq4H5mRONtWfoLy7ADsowWNW+LUBLMWnV+A@mail.gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 641bcdb1-a7fa-407f-6f2c-08d64894afdd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Nov 2018 11:47:56.8753
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR12MB1521
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKv+Gu-rNeCj5jySq4H5mRONtWfoLy7ADsowWNW+LUBLMWnV+A@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QW0gMTIuMTEuMTggdW0gMTE6NDggc2NocmllYiBDaHJpcyBXaWxzb246DQo+IFF1b3RpbmcgQ2hy
-aXN0aWFuIEvDtm5pZyAoMjAxOC0xMS0xMiAxMDoxNjowMSkNCj4+IEFtIDA5LjExLjE4IHVtIDIz
-OjI2IHNjaHJpZWIgRXJpYyBBbmhvbHQ6DQo+Pg0KPj4gICAgICBFcmljIEFuaG9sdCA8ZXJpY0Bh
-bmhvbHQubmV0PiB3cml0ZXM6DQo+Pg0KPj4NCj4+ICAgICAgICAgIFsgVW5rbm93biBzaWduYXR1
-cmUgc3RhdHVzIF0NCj4+ICAgICAgICAgIHpob3VjbTEgPHpob3VjbTFAYW1kLmNvbT4gd3JpdGVz
-Og0KPj4NCj4+DQo+PiAgICAgICAgICAgICAgT24gMjAxOOW5tDEx5pyIMDnml6UgMDA6NTIsIENo
-cmlzdGlhbiBLw7ZuaWcgd3JvdGU6DQo+Pg0KPj4gICAgICAgICAgICAgICAgICBBbSAwOC4xMS4x
-OCB1bSAxNzowNyBzY2hyaWViIEtvZW5pZywgQ2hyaXN0aWFuOg0KPj4NCj4+ICAgICAgICAgICAg
-ICAgICAgICAgIEFtIDA4LjExLjE4IHVtIDE3OjA0IHNjaHJpZWIgRXJpYyBBbmhvbHQ6DQo+Pg0K
-Pj4gICAgICAgICAgICAgICAgICAgICAgICAgIERhbmllbCBzdWdnZXN0ZWQgSSBzdWJtaXQgdGhp
-cywgc2luY2Ugd2UncmUgc3RpbGwgc2VlaW5nIHJlZ3Jlc3Npb25zDQo+PiAgICAgICAgICAgICAg
-ICAgICAgICAgICAgZnJvbSBpdC7CoCBUaGlzIGlzIGEgcmV2ZXJ0IHRvIGJlZm9yZSA0ODE5N2Jj
-NTY0YzcgKCJkcm06IGFkZCBzeW5jb2JqDQo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgdGlt
-ZWxpbmUgc3VwcG9ydCB2OSIpIGFuZCBpdHMgZm9sbG93b24gZml4ZXMuDQo+Pg0KPj4gICAgICAg
-ICAgICAgICAgICAgICAgVGhpcyBpcyBhIGhhcm1sZXNzIGZhbHNlIHBvc2l0aXZlIGZyb20gbG9j
-a2RlcCwgQ2hvdW1pbmcgYW5kIEkgYXJlDQo+PiAgICAgICAgICAgICAgICAgICAgICBhbHJlYWR5
-IHdvcmtpbmcgb24gYSBmaXguDQo+Pg0KPj4gICAgICAgICAgICAgICAgICBPbiB0aGUgb3RoZXIg
-aGFuZCB3ZSBoYWQgZW5vdWdoIHRyb3VibGUgd2l0aCB0aGF0IHBhdGNoLCBzbyBpZiBpdA0KPj4g
-ICAgICAgICAgICAgICAgICByZWFsbHkgYm90aGVycyB5b3UgZmVlbCBmcmVlIHRvIGFkZCBteSBB
-Y2tlZC1ieTogQ2hyaXN0aWFuIEvDtm5pZw0KPj4gICAgICAgICAgICAgICAgICA8Y2hyaXN0aWFu
-LmtvZW5pZ0BhbWQuY29tPiBhbmQgcHVzaCBpdC4NCj4+DQo+PiAgICAgICAgICAgICAgTkFLLCBw
-bGVhc2Ugbm8sIEkgZG9uJ3QgdGhpbmsgdGhpcyBuZWVkZWQsIHRoZSBXYXJuaW5nIHRvdGFsbHkg
-aXNuJ3QNCj4+ICAgICAgICAgICAgICByZWxhdGVkIHRvIHN5bmNvYmogdGltZWxpbmUsIGJ1dCBm
-ZW5jZS1hcnJheSBpbXBsZW1lbnRhdGlvbiBmbGF3LCBqdXN0DQo+PiAgICAgICAgICAgICAgZXhw
-b3NlZCBieSBzeW5jb2JqLg0KPj4gICAgICAgICAgICAgIEluIGFkZGl0aW9uLCBDaHJpc3RpYW4g
-YWxyZWFkeSBoYXMgYSBmaXggZm9yIHRoaXMgV2FybmluZywgSSd2ZSB0ZXN0ZWQuDQo+PiAgICAg
-ICAgICAgICAgUGxlYXNlIENocmlzdGlhbiBzZW5kIHRvIHB1YmxpYyByZXZpZXcuDQo+Pg0KPj4g
-ICAgICAgICAgSSBiYWNrZWQgb3V0IG15IHJldmVydCBvZiAjMiAoIzEgc3RpbGwgbmVjZXNzYXJ5
-KSBhZnRlciBhZGRpbmcgdGhlDQo+PiAgICAgICAgICBsb2NrZGVwIHJlZ3Jlc3Npb24gZml4LCBh
-bmQgbm93IG15IENUUyBydW4gZ290IG9vbWtpbGxlZCBhZnRlciBqdXN0IGENCj4+ICAgICAgICAg
-IGZldyBob3Vycywgd2l0aCB0aGVzZSBub3RhYmxlIGxpbmVzIGluIHRoZSB1bnJlY2xhaW1hYmxl
-IHNsYWIgaW5mbyBsaXN0Og0KPj4NCj4+ICAgICAgICAgIFsgNjMxNC4zNzMwOTldIGRybV9zY2hl
-ZF9mZW5jZSAgICAgICAgNjkwOTVLQiAgICAgIDY5MDk1S0INCj4+ICAgICAgICAgIFsgNjMxNC4z
-NzM2NTNdIGttZW1sZWFrX29iamVjdCAgICAgICA0MjgyNDlLQiAgICAgNDI4Mzg0S0INCj4+ICAg
-ICAgICAgIFsgNjMxNC4zNzM3MzZdIGttYWxsb2MtMjYyMTQ0ICAgICAgICAgICAyNTZLQiAgICAg
-ICAgMjU2S0INCj4+ICAgICAgICAgIFsgNjMxNC4zNzM3NDNdIGttYWxsb2MtMTMxMDcyICAgICAg
-ICAgICAxMjhLQiAgICAgICAgMTI4S0INCj4+ICAgICAgICAgIFsgNjMxNC4zNzM3NTBdIGttYWxs
-b2MtNjU1MzYgICAgICAgICAgICAgNjRLQiAgICAgICAgIDY0S0INCj4+ICAgICAgICAgIFsgNjMx
-NC4zNzM3NTZdIGttYWxsb2MtMzI3NjggICAgICAgICAgIDE0NzJLQiAgICAgICAxNzI4S0INCj4+
-ICAgICAgICAgIFsgNjMxNC4zNzM3NjNdIGttYWxsb2MtMTYzODQgICAgICAgICAgICAgNjRLQiAg
-ICAgICAgIDY0S0INCj4+ICAgICAgICAgIFsgNjMxNC4zNzM3NzBdIGttYWxsb2MtODE5MiAgICAg
-ICAgICAgICAyMDhLQiAgICAgICAgMjA4S0INCj4+ICAgICAgICAgIFsgNjMxNC4zNzM3NzhdIGtt
-YWxsb2MtNDA5NiAgICAgICAgICAgIDI0MDhLQiAgICAgICAyNDA4S0INCj4+ICAgICAgICAgIFsg
-NjMxNC4zNzM3ODRdIGttYWxsb2MtMjA0OCAgICAgICAgICAgICAyODhLQiAgICAgICAgMzM2S0IN
-Cj4+ICAgICAgICAgIFsgNjMxNC4zNzM3OTJdIGttYWxsb2MtMTAyNCAgICAgICAgICAgIDE0NTdL
-QiAgICAgICAxNTEyS0INCj4+ICAgICAgICAgIFsgNjMxNC4zNzM4MDBdIGttYWxsb2MtNTEyICAg
-ICAgICAgICAgICA4NTRLQiAgICAgICAxMDQ4S0INCj4+ICAgICAgICAgIFsgNjMxNC4zNzM4MDhd
-IGttYWxsb2MtMjU2ICAgICAgICAgICAgICAxODhLQiAgICAgICAgMjY4S0INCj4+ICAgICAgICAg
-IFsgNjMxNC4zNzM4MTddIGttYWxsb2MtMTkyICAgICAgICAgICAgNjkxNDFLQiAgICAgIDY5MTQy
-S0INCj4+ICAgICAgICAgIFsgNjMxNC4zNzM4MjRdIGttYWxsb2MtNjQgICAgICAgICAgICAgNDc3
-MDNLQiAgICAgIDQ3NzA0S0INCj4+ICAgICAgICAgIFsgNjMxNC4zNzM4ODZdIGttYWxsb2MtMTI4
-ICAgICAgICAgICAgNDYzOTZLQiAgICAgIDQ2Mzk2S0INCj4+ICAgICAgICAgIFsgNjMxNC4zNzM4
-OTRdIGttZW1fY2FjaGUgICAgICAgICAgICAgICAgMzFLQiAgICAgICAgIDM1S0INCj4+DQo+PiAg
-ICAgICAgICBObyByZXN1bHRzIGZyb20ga21lbWxlYWssIHRob3VnaC4NCj4+DQo+PiAgICAgIE9L
-LCBpdCBsb29rcyBsaWtlIHRoZSAjMiByZXZlcnQgcHJvYmFibHkgaXNuJ3QgcmVsYXRlZCB0byB0
-aGUgT09NIGlzc3VlLg0KPj4gICAgICBSdW5uaW5nIGEgc2luZ2xlIGpvYiBvbiBvdGhlcndpc2Ug
-dW51c2VkIERSTSwgd2F0Y2hpbmcgL3Byb2Mvc2xhYmluZm8NCj4+ICAgICAgZXZlcnkgc2Vjb25k
-IGZvciBkcm1fc2NoZWRfZmVuY2UsIEkgZ2V0Og0KPj4NCj4+ICAgICAgZHJtX3NjaGVkX2ZlbmNl
-ICAgICAgICAwICAgICAgMCAgICAxOTIgICAyMSAgICAxIDogdHVuYWJsZXMgICAzMiAgIDE2ICAg
-IDggOiBzbGFiZGF0YSAgICAgIDAgICAgICAwICAgICAgMCA6IGdsb2JhbHN0YXQgICAgICAgMCAg
-ICAgIDAgICAgIDAgICAgMCAgICAwICAgIDAgICAgMCAgICAwICAgIDAgOiBjcHVzdGF0ICAgICAg
-MCAgICAgIDAgICAgICAwICAgICAgMA0KPj4gICAgICBkcm1fc2NoZWRfZmVuY2UgICAgICAgMTYg
-ICAgIDIxICAgIDE5MiAgIDIxICAgIDEgOiB0dW5hYmxlcyAgIDMyICAgMTYgICAgOCA6IHNsYWJk
-YXRhICAgICAgMSAgICAgIDEgICAgICAwIDogZ2xvYmFsc3RhdCAgICAgIDE2ICAgICAxNiAgICAg
-MSAgICAwICAgIDAgICAgMCAgICAwICAgIDAgICAgMCA6IGNwdXN0YXQgICAgICA1ICAgICAgMSAg
-ICAgIDYgICAgICAwDQo+PiAgICAgIGRybV9zY2hlZF9mZW5jZSAgICAgICAxMyAgICAgMjEgICAg
-MTkyICAgMjEgICAgMSA6IHR1bmFibGVzICAgMzIgICAxNiAgICA4IDogc2xhYmRhdGEgICAgICAx
-ICAgICAgMSAgICAgIDAgOiBnbG9iYWxzdGF0ICAgICAgMTYgICAgIDE2ICAgICAxICAgIDAgICAg
-MCAgICAwICAgIDAgICAgMCAgICAwIDogY3B1c3RhdCAgICAgIDUgICAgICAxICAgICAgNiAgICAg
-IDANCj4+ICAgICAgZHJtX3NjaGVkX2ZlbmNlICAgICAgICA2ICAgICAyMSAgICAxOTIgICAyMSAg
-ICAxIDogdHVuYWJsZXMgICAzMiAgIDE2ICAgIDggOiBzbGFiZGF0YSAgICAgIDEgICAgICAxICAg
-ICAgMCA6IGdsb2JhbHN0YXQgICAgICAxNiAgICAgMTYgICAgIDEgICAgMCAgICAwICAgIDAgICAg
-MCAgICAwICAgIDAgOiBjcHVzdGF0ICAgICAgNSAgICAgIDEgICAgICA2ICAgICAgMA0KPj4gICAg
-ICBkcm1fc2NoZWRfZmVuY2UgICAgICAgIDQgICAgIDIxICAgIDE5MiAgIDIxICAgIDEgOiB0dW5h
-YmxlcyAgIDMyICAgMTYgICAgOCA6IHNsYWJkYXRhICAgICAgMSAgICAgIDEgICAgICAwIDogZ2xv
-YmFsc3RhdCAgICAgIDE2ICAgICAxNiAgICAgMSAgICAwICAgIDAgICAgMCAgICAwICAgIDAgICAg
-MCA6IGNwdXN0YXQgICAgICA1ICAgICAgMSAgICAgIDYgICAgICAwDQo+PiAgICAgIGRybV9zY2hl
-ZF9mZW5jZSAgICAgICAgMiAgICAgMjEgICAgMTkyICAgMjEgICAgMSA6IHR1bmFibGVzICAgMzIg
-ICAxNiAgICA4IDogc2xhYmRhdGEgICAgICAxICAgICAgMSAgICAgIDAgOiBnbG9iYWxzdGF0ICAg
-ICAgMTYgICAgIDE2ICAgICAxICAgIDAgICAgMCAgICAwICAgIDAgICAgMCAgICAwIDogY3B1c3Rh
-dCAgICAgIDUgICAgICAxICAgICAgNiAgICAgIDANCj4+ICAgICAgZHJtX3NjaGVkX2ZlbmNlICAg
-ICAgICAwICAgICAyMSAgICAxOTIgICAyMSAgICAxIDogdHVuYWJsZXMgICAzMiAgIDE2ICAgIDgg
-OiBzbGFiZGF0YSAgICAgIDAgICAgICAxICAgICAgMCA6IGdsb2JhbHN0YXQgICAgICAxNiAgICAg
-MTYgICAgIDEgICAgMCAgICAwICAgIDAgICAgMCAgICAwICAgIDAgOiBjcHVzdGF0ICAgICAgNSAg
-ICAgIDEgICAgICA2ICAgICAgMA0KPj4NCj4+ICAgICAgU28gd2UgZ2VuZXJhdGUgYSB0b24gb2Yg
-ZmVuY2VzLCBhbmQgSSBndWVzcyBmcmVlIHRoZW0gc2xvd2x5IGJlY2F1c2Ugb2YNCj4+ICAgICAg
-UkNVPyAgQW5kIHByZXN1bWFibHkga21lbWxlYWsgd2FzIHN1Y2tpbmcgdXAgbG90cyBvZiBtZW1v
-cnkgYmVjYXVzZSBvZg0KPj4gICAgICBob3cgbWFueSBvZiB0aGVzZSBvYmplY3RzIHdlcmUgbGF5
-aW5nIGFyb3VuZC4NCj4+DQo+Pg0KPj4gVGhhdCBpcyBjZXJ0YWlubHkgcG9zc2libGUuIEFub3Ro
-ZXIgcG9zc2liaWxpdHkgaXMgdGhhdCB3ZSBkb24ndCBkcm9wIHRoZQ0KPj4gcmVmZXJlbmNlIGlu
-IGRtYS1mZW5jZS1hcnJheSBlYXJseSBlbm91Z2guDQo+Pg0KPj4gRS5nLiB0aGUgZG1hLWZlbmNl
-LWFycmF5IHdpbGwga2VlcCB0aGUgcmVmZXJlbmNlIHRvIGl0cyBmZW5jZXMgdW50aWwgaXQgaXMN
-Cj4+IGRlc3Ryb3llZCwgd2hpY2ggaXMgYSBiaXQgbGF0ZSB3aGVuIHlvdSBjaGFpbiBtdWx0aXBs
-ZSBkbWEtZmVuY2UtYXJyYXkgb2JqZWN0cw0KPj4gdG9nZXRoZXIuDQo+Pg0KPj4gRGF2aWQgY2Fu
-IHlvdSB0YWtlIGEgbG9vayBhdCB0aGlzIGFuZCBwcm9wb3NlIGEgZml4PyBUaGF0IHdvdWxkIHBy
-b2JhYmx5IGJlDQo+PiBnb29kIHRvIGhhdmUgZml4ZWQgaW4gZG1hLWZlbmNlLWFycmF5IHNlcGFy
-YXRlbHkgdG8gdGhlIHRpbWVsaW5lIHdvcmsuDQo+IE5vdGUgdGhhdCBkcm1fc3luY29ial9yZXBs
-YWNlX2ZlbmNlKCkgbGVha3MgYW55IGV4aXN0aW5nIGZlbmNlIGZvcg0KPiAhdGltZWxpbmUgc3lu
-Y29ianMuIFdoaWNoIGNvdXBsZWQgd2l0aCB0aGUgbGluZWFyIHNlYXJjaCBlbmRzIHVwIHdpdGgN
-Cj4gYSBzZXZlcmUgcmVncmVzc2lvbiBpbiBib3RoIHRpbWUgYW5kIG1lbW9yeS4NCg0KT2ssIGVu
-b3VnaCBpcyBlbm91Z2guIEknbSBnb2luZyB0byByZXZlcnQgdGhpcy4NCg0KVGhhbmtzIGZvciB0
-aGUgaW5mbywNCkNocmlzdGlhbi4NCg0KPiAtQ2hyaXMNCg0K
+On Thu, Nov 08, 2018 at 01:12:42PM +0100, Ard Biesheuvel wrote:
+> 
+> On 26 October 2018 at 16:21, Torsten Duwe <duwe@lst.de> wrote:
+> > @@ -162,6 +165,114 @@ ftrace_graph_call:                        // ftrace_graph_cal
+> >
+> >         mcount_exit
+> >  ENDPROC(ftrace_caller)
+> > +#else /* CONFIG_DYNAMIC_FTRACE_WITH_REGS */
+> > +
+> > +/*
+> > + * Since no -pg or similar compiler flag is used, there should really be
+> > + * no reference to _mcount; so do not define one. Only some value for
+> > + * MCOUNT_ADDR is needed for comparison. Let it point here to have some
+> > + * sort of magic value that can be recognised when debugging.
+> > + */
+> > +       .global _mcount
+> > +_mcount:
+> > +       ret     /* make it differ from regs caller */
+> > +
+> > +ENTRY(ftrace_regs_caller)
+> > +       /* callee's preliminary stack frame: */
+> > +       stp     fp, x9, [sp, #-16]!
+> 
+> Does the 'fp' alias for x29 work with older assemblers? I guess it
+> does not matter gor GCC 8+ code, but be careful when you rewrite
+> existing stuff.
+
+I had gotten the impression the fp alias was there ever since, so I used
+it for readability. Thanks for the notification, I'll double check.
+
+> > +       mov     fp, sp
+> > +
+> > +       /* our stack frame: */
+> > +       stp     fp, lr, [sp, #-S_FRAME_SIZE]!
+> 
+> If sizeof(struct pt_regs) == S_FRAME_SIZE), you should subtract 16
+> additional bytes here
+
+This is intentional :-]
+
+At the end of pt_regs there's a "stackframe", which now aligns with the
+"preliminary" frame I create for the callee. Please tell me what the struct
+member is good for if not for an actual callee stack frame...
+I thought it was a neat idea.
+
+> > +
+> > +ftrace_common:
+> > +       /*
+> > +        * At this point we have 2 new stack frames, and x9 pointing
+> > +        * at a pt_regs which we can populate as needed.
+> > +        */
+> > +
+> > +       /* save function arguments */
+> > +       stp     x0, x1, [x9]
+> > +       stp     x2, x3, [x9, #S_X2]
+> > +       stp     x4, x5, [x9, #S_X4]
+> > +       stp     x6, x7, [x9, #S_X6]
+> > +       stp     x8, x9, [x9, #S_X8]
+> > +
+> 
+> x9 is not a function argument, and if it were, you'd have clobbered it
+> by now. Please use a single 'str' and store x8 only
+
+This way the x9 slot in pt_regs will be undefined. Is that ok with everybody?
+
+> > +ftrace_common_return:
+> > +       add     x9, sp, #16     /* advance to pt_regs for restore */
+> > +
+> > +       ldp     x0, x1, [x9]
+> > +       ldp     x2, x3, [x9, #S_X2]
+> > +       ldp     x4, x5, [x9, #S_X4]
+> > +       ldp     x6, x7, [x9, #S_X6]
+> > +       ldp     x8, x9, [x9, #S_X8]
+> > +
+> 
+> Same as above. It also deserves a mention that you are relying on the
+> absence of IPA-RA, and so x9..x18 are guaranteed to be dead at
+> function entry, and so they don't need to be restored here.
+
+Sure, I can quote some ABI spec here :-/
+I just wish all arm code was such well documented.
+
+> > --- a/arch/arm64/kernel/ftrace.c
+> > +++ b/arch/arm64/kernel/ftrace.c
+> > @@ -65,18 +65,61 @@ int ftrace_update_ftrace_func(ftrace_fun
+> >         return ftrace_modify_code(pc, 0, new, false);
+> >  }
+> >
+> > +#ifdef CONFIG_ARM64_MODULE_PLTS
+> > +static int install_ftrace_trampoline(struct module *mod, unsigned long *addr)
+> > +{
+> > +       struct plt_entry trampoline, *mod_trampoline;
+> > +       trampoline = get_plt_entry(*addr);
+> > +
+> > +       if (*addr == FTRACE_ADDR)
+> > +               mod_trampoline = mod->arch.ftrace_trampoline;
+> > +       else if (*addr == FTRACE_REGS_ADDR)
+> > +               mod_trampoline = mod->arch.ftrace_regs_trampoline;
+> 
+> Could we do something like
+> 
+> if (*addr == FTRACE_ADDR)
+>     mod_trampoline = &mod->arch.ftrace_trampoline[0];
+> else if (*addr == FTRACE_REGS_ADDR)
+>     mod_trampoline = &mod->arch.ftrace_trampoline[1];
+> 
+> and get rid of the additional struct field and pointer?
+
+"0" and "1" won't make it obvious which one has the regs tracing, but besides
+that, I like the idea of making this a small array. Other opinions?
+
+	Torsten
+
