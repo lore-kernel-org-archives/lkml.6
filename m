@@ -6,38 +6,37 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4D0FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 04:47:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6E61C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 04:47:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93B01214DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 04:47:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93B01214DB
+	by mail.kernel.org (Postfix) with ESMTP id 87C54216FD
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 04:47:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87C54216FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731363AbeKLOjD (ORCPT
+        id S1731420AbeKLOjL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 09:39:03 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:48682 "EHLO
+        Mon, 12 Nov 2018 09:39:11 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:48672 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730827AbeKLOiX (ORCPT
+        with ESMTP id S1730706AbeKLOiX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 12 Nov 2018 09:38:23 -0500
 Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id 293A8297ED; Sun, 11 Nov 2018 23:46:56 -0500 (EST)
+        id E7075297EA; Sun, 11 Nov 2018 23:46:55 -0500 (EST)
 To:     Geert Uytterhoeven <geert@linux-m68k.org>
 Cc:     Arnd Bergmann <arnd@arndb.de>,
         Stephen N Chivers <schivers@csc.com.au>,
         Thomas Gleixner <tglx@linutronix.de>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         John Stultz <john.stultz@linaro.org>,
-        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
-        Philip Blundell <philb@gnu.org>
-Message-Id: <6fd1919c60b88c0383be6d3555190a6411ebe2d4.1541995959.git.fthain@telegraphics.com.au>
+        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
+Message-Id: <cbfa6a4e8a1a36e22969e63b703015007abe8593.1541995959.git.fthain@telegraphics.com.au>
 In-Reply-To: <cover.1541995959.git.fthain@telegraphics.com.au>
 References: <cover.1541995959.git.fthain@telegraphics.com.au>
 From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [RFC PATCH 10/13] m68k: hp300: Convert to clocksource API
+Subject: [RFC PATCH 07/13] m68k: amiga: Convert to clocksource API
 Date:   Mon, 12 Nov 2018 15:12:39 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -47,99 +46,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Add a platform clocksource by adapting the existing arch_gettimeoffset
 implementation.
 
-Cc: Philip Blundell <philb@gnu.org>
 Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 ---
- arch/m68k/hp300/time.c | 33 ++++++++++++++++++++++++++++-----
- 1 file changed, 28 insertions(+), 5 deletions(-)
+ arch/m68k/amiga/config.c | 38 +++++++++++++++++++++++++++++++-------
+ 1 file changed, 31 insertions(+), 7 deletions(-)
 
-diff --git a/arch/m68k/hp300/time.c b/arch/m68k/hp300/time.c
-index 5cf711fd0858..ff2fc65bc5e7 100644
---- a/arch/m68k/hp300/time.c
-+++ b/arch/m68k/hp300/time.c
-@@ -8,6 +8,7 @@
-  */
- 
- #include <asm/ptrace.h>
+diff --git a/arch/m68k/amiga/config.c b/arch/m68k/amiga/config.c
+index a575ad419b23..40ebd471cc3c 100644
+--- a/arch/m68k/amiga/config.c
++++ b/arch/m68k/amiga/config.c
+@@ -17,6 +17,7 @@
+ #include <linux/mm.h>
+ #include <linux/seq_file.h>
+ #include <linux/tty.h>
 +#include <linux/clocksource.h>
- #include <linux/types.h>
+ #include <linux/console.h>
+ #include <linux/rtc.h>
  #include <linux/init.h>
- #include <linux/sched.h>
-@@ -19,6 +20,18 @@
- #include <asm/traps.h>
- #include <asm/blinken.h>
+@@ -461,7 +462,30 @@ void __init config_amiga(void)
+ 		*(unsigned char *)ZTWO_VADDR(0xde0002) |= 0x80;
+ }
  
-+static u64 hp300_read_clk(struct clocksource *cs);
++static u64 amiga_read_clk(struct clocksource *cs);
 +
-+static struct clocksource hp300_clk = {
-+	.name   = "timer",
++static struct clocksource amiga_clk = {
++	.name   = "ciab",
 +	.rating = 250,
-+	.read   = hp300_read_clk,
++	.read   = amiga_read_clk,
 +	.mask   = CLOCKSOURCE_MASK(32),
 +	.flags  = CLOCK_SOURCE_IS_CONTINUOUS,
 +};
 +
+ static unsigned short jiffy_ticks;
 +static u32 clk_total;
 +
- /* Clock hardware definitions */
- 
- #define CLOCKBASE	0xf05f8000
-@@ -32,22 +45,29 @@
- #define	CLKMSB3		0xD
- 
- /* This is for machines which generate the exact clock. */
--#define USECS_PER_JIFFY (1000000/HZ)
- 
--#define INTVAL ((10000 / 4) - 1)
-+#define HP300_TIMER_CLOCK_FREQ 250000
-+#define HP300_TIMER_CYCLES     (HP300_TIMER_CLOCK_FREQ / HZ)
-+#define INTVAL                 (HP300_TIMER_CYCLES - 1)
- 
- static irqreturn_t hp300_tick(int irq, void *dev_id)
- {
++static irqreturn_t ciab_timer_handler(int irq, void *data)
++{
++	irq_handler_t timer_routine = data;
 +	unsigned long flags;
- 	unsigned long tmp;
- 	irq_handler_t vector = dev_id;
 +
 +	local_irq_save(flags);
- 	in_8(CLOCKBASE + CLKSR);
- 	asm volatile ("movpw %1@(5),%0" : "=d" (tmp) : "a" (CLOCKBASE));
-+	clk_total += INTVAL;
++	clk_total += jiffy_ticks;
 +	local_irq_restore(flags);
 +
- 	/* Turn off the network and SCSI leds */
- 	blinken_leds(0, 0xe0);
- 	return vector(irq, NULL);
- }
++	return timer_routine(irq, data);
++}
  
--u32 hp300_gettimeoffset(void)
-+static u64 hp300_read_clk(struct clocksource *cs)
+ static void __init amiga_sched_init(irq_handler_t timer_routine)
  {
-   unsigned long flags;
-   unsigned char lsb, msb1, msb2;
-@@ -66,7 +86,8 @@ u32 hp300_gettimeoffset(void)
-   local_irq_restore(flags);
+@@ -481,15 +505,16 @@ static void __init amiga_sched_init(irq_handler_t timer_routine)
+ 	 * Please don't change this to use ciaa, as it interferes with the
+ 	 * SCSI code. We'll have to take a look at this later
+ 	 */
+-	if (request_irq(IRQ_AMIGA_CIAB_TA, timer_routine, 0, "timer", NULL))
++	if (request_irq(IRQ_AMIGA_CIAB_TA, ciab_timer_handler, IRQF_TIMER,
++			"timer", timer_routine))
+ 		pr_err("Couldn't register timer interrupt\n");
+ 	/* start timer */
+ 	ciab.cra |= 0x11;
+-}
  
-   ticks = INTVAL - ((msb2 << 8) | lsb);
--  return ((USECS_PER_JIFFY * ticks) / INTVAL) * 1000;
-+
-+  return clk_total + ticks;
+-#define TICK_SIZE 10000
++	clocksource_register_hz(&amiga_clk, amiga_eclock);
++}
+ 
+-static u32 amiga_gettimeoffset(void)
++static u64 amiga_read_clk(struct clocksource *cs)
+ {
+ 	unsigned long flags;
+ 	unsigned short hi, lo, hi2;
+@@ -512,14 +537,13 @@ static u32 amiga_gettimeoffset(void)
+ 	if (ticks > jiffy_ticks / 2)
+ 		/* check for pending interrupt */
+ 		if (cia_set_irq(&ciab_base, 0) & CIA_ICR_TA)
+-			offset = 10000;
++			offset = jiffy_ticks;
+ 
+ 	local_irq_restore(flags);
+ 
+ 	ticks = jiffy_ticks - ticks;
+-	ticks = (10000 * ticks) / jiffy_ticks;
+ 
+-	return (ticks + offset) * 1000;
++	return clk_total + ticks + offset;
  }
  
- void __init hp300_sched_init(irq_handler_t vector)
-@@ -76,9 +97,11 @@ void __init hp300_sched_init(irq_handler_t vector)
- 
-   asm volatile(" movpw %0,%1@(5)" : : "d" (INTVAL), "a" (CLOCKBASE));
- 
--  if (request_irq(IRQ_AUTO_6, hp300_tick, 0, "timer tick", vector))
-+  if (request_irq(IRQ_AUTO_6, hp300_tick, IRQF_TIMER, "timer tick", vector))
-     pr_err("Couldn't register timer interrupt\n");
- 
-   out_8(CLOCKBASE + CLKCR2, 0x1);		/* select CR1 */
-   out_8(CLOCKBASE + CLKCR1, 0x40);		/* enable irq */
-+
-+  clocksource_register_hz(&hp300_clk, HP300_TIMER_CLOCK_FREQ);
- }
+ static void amiga_reset(void)  __noreturn;
 -- 
 2.18.1
 
