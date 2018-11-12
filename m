@@ -2,157 +2,164 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D1D7C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:26:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48FD8C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:27:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48C2222506
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:26:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04E3822506
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:27:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="po6TpHpe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48C2222506
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=soleen.com header.i=@soleen.com header.b="jRLM9XR8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04E3822506
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726160AbeKMFVb (ORCPT
+        id S1726510AbeKMFWT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 00:21:31 -0500
-Received: from mail-vk1-f179.google.com ([209.85.221.179]:42208 "EHLO
-        mail-vk1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725790AbeKMFVb (ORCPT
+        Tue, 13 Nov 2018 00:22:19 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:42315 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725790AbeKMFWT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 00:21:31 -0500
-Received: by mail-vk1-f179.google.com with SMTP id y14so2217515vky.9
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 11:26:54 -0800 (PST)
+        Tue, 13 Nov 2018 00:22:19 -0500
+Received: by mail-qk1-f195.google.com with SMTP id m5so15384422qka.9
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 11:27:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=nkJNME0hKQObx3H83kU8pvC0TbOAY5SjRYkRmAXv2qc=;
-        b=po6TpHpeZUQpnpzLCiBNbLTrkZMYvWSD1szQVk6HqWjFyZMkzXq7suHl5neZlVSva1
-         n/6drcdDZqfbfOsQmEzGR6TtO4MA5FToBUhNz6JcWY+9zb4S95D04m4y+bY6zv333k+I
-         Sqyf5mxyCH6ReYT6OqAWIN6aRluecXWhkPFlIvvNIWZz6PiEiDQ1h2J5rRwYxD3cZ5S5
-         QM7L8WFfbaoGiJnEAqPOn0LfJe9HHLyjE36DCeoNf/KcBgszY2aCvvx3voiwnpLLViPo
-         y5QzDjk5moi8J5NWvjhp8QpTaHKM8niq7ubj/pL9KwKGJVB7TXbtKZ/Hrvse/7hJuxLc
-         X/SQ==
+        d=soleen.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=9bK+gzQLuKY79RPbvo3kKmdJhCipAQkgVnNU9Jm1Kn8=;
+        b=jRLM9XR8onQUSbnerEGcxqGmWdALddDoA16gmxoEE4pu/yjB4jUxSlq5pfa4kC6unW
+         wj82NAy+oPRvLXwjy0yjzy0DbftczMB1iZ7/orzO4CPsFyP54bcmyp3pOSh0gZROml+f
+         XL49Gk4u8TFuO2a6zIrgJ9Bu+W+BHRRD2CZwptu0zRl580k5XI+Qp4bUxfOXRRF4rnml
+         EEYfATltzvKt5DjnN8B2F+soMy+9e9xFxZ35ORP8RlDu5sw0Gh8l/EU+6h7a1s8drwGW
+         mWV52xHoFGLDtNBZbKEXPE2UfkA21a5mlVsk1HZO1JVj1qyJhxg7cWk0b+/RtC/9ZkDC
+         8Ufw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=nkJNME0hKQObx3H83kU8pvC0TbOAY5SjRYkRmAXv2qc=;
-        b=bs0Mx1fvKkMKWiTWQnaAdatht/TRJgTefMJChJ6cyoM8XXmv8ySswE56k5H8TWP4zS
-         hWfalj2BPzjrb5WZ2dUJS7q7MBZ9ngxfw73ifmY9+sLPYJl9lH4L12YR8ub+KCPEVgvs
-         7/XbFbwjHlGYen9i1r6lnt9LsQid4Wd939L+AxlRmcPVHOsluyU5ZF7khsD3GZft54Zv
-         aEWBAQCqwlCB3h+Et5R3ptwsFtsf/uiAvRxD8F0xmxRCVVYPM93lBzSIm1omEx5FIY2G
-         kKX6gcxopvUqdMVZytx626lwyOvD2kpHy7qU8L5EZCBda2MO5ovxgEQWgd8dJtQ7J1FC
-         lyww==
-X-Gm-Message-State: AGRZ1gJ3gYRPNY3+nsnz8cZpw4UPqWMP1lqusLp36KuKNzTzWfnOybki
-        PcdQd09fZ+IpZg9NTlbcKn4D65W8ecmWM+2HrFPBgw==
-X-Google-Smtp-Source: AJdET5ftrdpA6CnDWCUe07KXvy3gxGwqGYiVbYmaCFKLJbVZOzG0g1Cnt8gAmNJN6c0a4vO3cLph75gKtc/SXlykxMI=
-X-Received: by 2002:a1f:f203:: with SMTP id q3mr968323vkh.54.1542050813423;
- Mon, 12 Nov 2018 11:26:53 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9bK+gzQLuKY79RPbvo3kKmdJhCipAQkgVnNU9Jm1Kn8=;
+        b=gOuM1hGqHXwqb/g3PllnDha9NjyhUUzWRucHftBgmLaOUc5n6qee2khVrUZOjqvCTT
+         ZXb4igrkfTP3Xbbsw75FFyCbHBVZQHKml9LptWuBUND3X6mUqQkWdU25PAacDX0klETD
+         acqhZHbqGCLfIWqR9unzIzuqksroMCQ0N+EPREZJ3QSMI6NCLEv6Gwi+XqR7JZagLOC/
+         q37uCYA3LpdjEPtFShYnR9ZSjh3nMIuofw0xyYRmYvvP0YgAcEB0jkLFy08lNLcSWiIp
+         rpgniSlnOCp1Wjs1cR8pLKVj6PV3My9aAxejy9qJ2/1W07M1g2pXgwcD5jnN6pxVRRgX
+         1qYw==
+X-Gm-Message-State: AGRZ1gIWF4KEeMGBuSHKmgUbmr00mCJCnoBbQwNrB61wo/aUd+M1sIrl
+        fmtW2e9PA/QwRj40keEvimdtgQ==
+X-Google-Smtp-Source: AJdET5fe4oe1LywYx62/sAVCzk4ctvhE3zjihbxo18wKcOi8no/FUoqoOSbJMKOpv4Y9uenj45pkQQ==
+X-Received: by 2002:ac8:36d9:: with SMTP id b25mr2229258qtc.49.1542050861754;
+        Mon, 12 Nov 2018 11:27:41 -0800 (PST)
+Received: from soleen.tm1wkky2jk1uhgkn0ivaxijq1c.bx.internal.cloudapp.net ([40.117.208.181])
+        by smtp.gmail.com with ESMTPSA id b17sm9486891qkj.69.2018.11.12.11.27.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 12 Nov 2018 11:27:40 -0800 (PST)
+Date:   Mon, 12 Nov 2018 19:27:38 +0000
+From:   Pavel Tatashin <pasha.tatashin@soleen.com>
+To:     Oscar Salvador <osalvador@techadventures.net>
+Cc:     akpm@linux-foundation.org, mhocko@suse.com,
+        dan.j.williams@intel.com, yasu.isimatu@gmail.com,
+        rppt@linux.vnet.ibm.com, malat@debian.org,
+        linux-kernel@vger.kernel.org, pavel.tatashin@microsoft.com,
+        jglisse@redhat.com, Jonathan.Cameron@huawei.com, rafael@kernel.org,
+        david@redhat.com, dave.jiang@intel.com, linux-mm@kvack.org,
+        alexander.h.duyck@linux.intel.com,
+        Oscar Salvador <osalvador@suse.de>
+Subject: Re: [PATCH 3/5] mm/memory_hotplug: Check for IORESOURCE_SYSRAM in
+ release_mem_region_adjustable
+Message-ID: <20181112192738.n3cbsgtbjokikvco@soleen.tm1wkky2jk1uhgkn0ivaxijq1c.bx.internal.cloudapp.net>
+References: <20181015153034.32203-1-osalvador@techadventures.net>
+ <20181015153034.32203-4-osalvador@techadventures.net>
 MIME-Version: 1.0
-Received: by 2002:a67:f48d:0:0:0:0:0 with HTTP; Mon, 12 Nov 2018 11:26:51
- -0800 (PST)
-In-Reply-To: <87lg5ym7qi.fsf@oldenburg.str.redhat.com>
-References: <CAKOZuesB4R=dCz4merWQN0FSCGrXmOgUUr4ienSbStBJguNv8g@mail.gmail.com>
- <bbc12da5-830e-99a7-95e3-d9da42947dc9@gmail.com> <877ehjx447.fsf@oldenburg.str.redhat.com>
- <CAKOZues5SEESpJU=6MDTrPXTA1KTZFGNQE4Lw4t0fO-WBTU62w@mail.gmail.com>
- <875zx2vhpd.fsf@oldenburg.str.redhat.com> <CAKOZuetdgk1QYhx1538-98rFpogMin=8DkPnCtU9_=ip23Vk7w@mail.gmail.com>
- <CAKCAbMiHC9r54h=XeW7CkBZ1Z5eHr9MPH3Rn7KTc9DjoHG=8UA@mail.gmail.com>
- <CAKOZuev7zqq+xpjyDA2mSdy-zwyNjECCzLsBELF6_v1rwar_mA@mail.gmail.com> <87lg5ym7qi.fsf@oldenburg.str.redhat.com>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Mon, 12 Nov 2018 11:26:51 -0800
-Message-ID: <CAKOZues2bQo1y_1ynxFMHGTvtTjABsqVpKJt5MYMdZBq6-ikHA@mail.gmail.com>
-Subject: Re: Official Linux system wrapper library?
-To:     Florian Weimer <fweimer@redhat.com>
-Cc:     Zack Weinberg <zackw@panix.com>,
-        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Joel Fernandes <joelaf@google.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Willy Tarreau <w@1wt.eu>, Vlastimil Babka <vbabka@suse.cz>,
-        "Carlos O'Donell" <carlos@redhat.com>,
-        GNU C Library <libc-alpha@sourceware.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181015153034.32203-4-osalvador@techadventures.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 11:11 AM, Florian Weimer <fweimer@redhat.com> wrote:
-> * Daniel Colascione:
->
->> What about off_t differences? Again, it doesn't matter. From the
->> *kernel's* point of view, there's one width of offset parameter per
->> system call per architecture. The library I'm proposing would expose
->> this parameter literally.
->
-> Does this mean the application author needs to know when to split an
-> off_t argument into two, and when to pass it as a single argument, and
-> when to insert dummy arguments for alignment, depending on the
-> architecture?
+On 18-10-15 17:30:32, Oscar Salvador wrote:
+> From: Oscar Salvador <osalvador@suse.de>
+> 
+> This is a preparation for the next patch.
+> 
+> Currently, we only call release_mem_region_adjustable() in __remove_pages
+> if the zone is not ZONE_DEVICE, because resources that belong to
+> HMM/devm are being released by themselves with devm_release_mem_region.
+> 
+> Since we do not want to touch any zone/page stuff during the removing
+> of the memory (but during the offlining), we do not want to check for
+> the zone here.
+> So we need another way to tell release_mem_region_adjustable() to not
+> realease the resource in case it belongs to HMM/devm.
+> 
+> HMM/devm acquires/releases a resource through
+> devm_request_mem_region/devm_release_mem_region.
+> 
+> These resources have the flag IORESOURCE_MEM, while resources acquired by
+> hot-add memory path (register_memory_resource()) contain
+> IORESOURCE_SYSTEM_RAM.
+> 
+> So, we can check for this flag in release_mem_region_adjustable, and if
+> the resource does not contain such flag, we know that we are dealing with
+> a HMM/devm resource, so we can back off.
+> 
+> Signed-off-by: Oscar Salvador <osalvador@suse.de>
+> ---
+>  kernel/resource.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/kernel/resource.c b/kernel/resource.c
+> index 81937830a42f..c45decd7d6af 100644
+> --- a/kernel/resource.c
+> +++ b/kernel/resource.c
+> @@ -1272,6 +1272,22 @@ int release_mem_region_adjustable(struct resource *parent,
+>  			continue;
+>  		}
+>  
+> +		/*
+> +		 * All memory regions added from memory-hotplug path
+> +		 * have the flag IORESOURCE_SYSTEM_RAM.
+> +		 * If the resource does not have this flag, we know that
+> +		 * we are dealing with a resource coming from HMM/devm.
+> +		 * HMM/devm use another mechanism to add/release a resource.
+> +		 * This goes via devm_request_mem_region and
+> +		 * devm_release_mem_region.
+> +		 * HMM/devm take care to release their resources when they want,
+> +		 * so if we are dealing with them, let us just back off here.
+> +		 */
+> +		if (!(res->flags & IORESOURCE_SYSRAM)) {
+> +			ret = 0;
+> +			break;
+> +		}
+> +
+>  		if (!(res->flags & IORESOURCE_MEM))
+>  			break;
 
-No, I wouldn't make callers go to that trouble. I don't see any
-barrier to common-sense local data transformations. These
-transformations don't have external dependencies, after all. I want a
-thin interface to the kernel, but not so thin as to be a direct
-mapping onto register locations. I don't see value in that level of
-correspondence.
+Reviewed-by: Pavel Tatashin <pasha.tatashin@soleen.com>
 
->>> And that means you wouldn't get as much
->>> decoupling from the C and POSIX standards -- both of which specify at
->>> least part of those semantics -- as you want, and we would still be
->>> having these arguments.  For example, it would be every bit as
->>> troublesome for liblinuxabi.so.1 to export set_robust_list as it would
->>> be for libc.so.6 to do that.
->>
->> Why? Such an exported function would cause no trouble until called,
->> and there are legitimate reasons for calling such a function. Not
->> everyone, as mentioned, wants to write a program that relies on libc.
->
-> For that use case, a machine-readable system call ABI specification is
-> the only reasonable approach:
+A couple nits, re-format above comment block to fill 80-char limit:
+      /*
+       * All memory regions added from memory-hotplug path have the
+       * flag IORESOURCE_SYSTEM_RAM.  If the resource does not have
+       * this flag, we know that we are dealing with a resource coming
+       * from HMM/devm.  HMM/devm use another mechanism to add/release
+       * a resource.  This goes via devm_request_mem_region and
+       * devm_release_mem_region.  HMM/devm take care to release their
+       * resources when they want, so if we are dealing with them, let
+       * us just back off here.
+       */
 
-> The challenge here is to come up with a
-> uniform description of the system call interface for all architectures,
+I would set ret = 0, at the beginning instead of -EINVAL, and change
+returns accordingly.
 
-This is another example in which we should remember the old aphorism
-that the perfect is the enemy of the good. There's no reason that the
-kernel couldn't simply provide a library with conventional functions
-exported in the conventional way doing the conventional things that
-functions do, one that would free users from relying on direct use of
-syscall(2). If this library were to interact with errno and
-cancelation properly, so much the better. There's no reason to avoid
-this work in favor of some theoretically-elegant
-abstract-function-description metadata-based approach that will likely
-never materialize.
 
-(Alternatively: just regard C as the uniform description language.)
-
->> This stance in the paragraph I've quoted is another example of glibc's
->> misplaced idealism. As I've elaborated elsewhere, people use signals
->> for many purposes today. The current signals API is extremely
->> difficult to use correctly in a process in which multiple unrelated
->> components want to take advantage of signal-handling functionality.
->> Users deserve a cleaner, modern, and safe API. It's not productive
->> withhold improvements to the signal API and gate them on unrelated
->> features like process handles merely because, in the personal
->> judgement of the glibc maintainers, developers should use signals for
->> fewer things.
->
-> The two aren't unrelated.  If you take asynchronous signals out of the
-> picture, the design becomes simpler and easier to use.
-
-The two features *are* unrelated. The design I've proposed works
-equally well for synchronous and asynchronous signals, and limiting it
-to synchronous signals doesn't simplify it. Even if it were the case
-that the design were simpler and easier to use when limited to
-synchronous signals --- which it isn't, unless you want to go in the
-SEH direction, which is more, not less complicated --- that wouldn't
-be a reason to block the work until some form of process handle
-landed. The objections I've seen have all essentially amounted to "we
-don't think people should use signals".
+Thank you,
+Pasha
